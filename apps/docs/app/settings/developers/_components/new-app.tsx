@@ -2,6 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  ConfirmIdentityProvider,
+  useConfirmation,
+} from "@/components/confirm-identity/provider";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
@@ -9,10 +13,20 @@ import { createOAuthAppAction } from "../_lib/actions";
 import { EMPTY_APP_VALUES, OAuthAppForm } from "./oauth-app-form";
 import { ClientSecretDialog } from "./secret-dialog";
 
+/** A new app's client secret asks "Confirm it's you" first. */
 export function NewOAuthApp({ storageEnabled }: { storageEnabled: boolean }) {
+  return (
+    <ConfirmIdentityProvider>
+      <NewOAuthAppForm storageEnabled={storageEnabled} />
+    </ConfirmIdentityProvider>
+  );
+}
+
+function NewOAuthAppForm({ storageEnabled }: { storageEnabled: boolean }) {
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const showLimit = useShowLimit();
+  const { withConfirmation } = useConfirmation();
   const [created, setCreated] = useState<{
     id: string;
     clientId: string;
@@ -24,7 +38,11 @@ export function NewOAuthApp({ storageEnabled }: { storageEnabled: boolean }) {
       <OAuthAppForm
         initial={EMPTY_APP_VALUES}
         onSubmit={async (input) => {
-          const result = await createOAuthAppAction(input);
+          const result = await withConfirmation(
+            () => createOAuthAppAction(input),
+            "create-oauth-app",
+          );
+          if (result === null) return null;
           if (!result.ok) {
             // 402 is the plan's app cap (LIMIT_REACHED): its limit card,
             // which offers the upgrade only to those who can buy it.

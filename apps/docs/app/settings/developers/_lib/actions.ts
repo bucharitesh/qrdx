@@ -3,7 +3,9 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
 import { HttpError } from "@/lib/error-response";
+import { canManageOAuthApps } from "@/lib/oauth-apps/access";
 import {
   createOAuthApp,
   deleteOAuthApp,
@@ -56,10 +58,23 @@ async function run<T>(
   action: string,
   limiters: (typeof mutationLimiter)[],
   body: (scope: ActiveScope) => Promise<T>,
-  { revalidate = true }: { revalidate?: boolean } = {},
+  {
+    revalidate = true,
+    confirm = false,
+  }: {
+    revalidate?: boolean;
+    /** Mints a client secret: needs a recent "Confirm it's you" */
+    confirm?: boolean;
+  } = {},
 ): Promise<OAuthAppActionResult<T>> {
   try {
     const scope = await getActiveScope();
+    // Before the limits, so the round trip that asks doesn't use one up.
+    // Someone who can't manage apps gets the service's refusal instead.
+    if (confirm && canManageOAuthApps(scope)) {
+      const needed = await confirmationNeededFor(scope);
+      if (needed) return needed;
+    }
     await enforceRateLimits(
       limiters.map((limiter, index) => ({
         limiter,
@@ -87,7 +102,7 @@ export async function createOAuthAppAction(
     "create",
     [mutationLimiter, createLimiter],
     (scope) => createOAuthApp(scope, parsed.data),
-    { revalidate: false },
+    { revalidate: false, confirm: true },
   );
 }
 
@@ -113,7 +128,10 @@ export async function setOAuthAppActiveAction(input: {
   );
 }
 
-/** The new secret is returned once; the old one stops working immediately. */
+/**
+ * The new secret is returned once; the old one stops working immediately.
+ * Like creating an app, it needs a recent "Confirm it's you".
+ */
 export async function regenerateOAuthAppSecretAction(input: {
   id: string;
 }): Promise<
@@ -121,8 +139,11 @@ export async function regenerateOAuthAppSecretAction(input: {
 > {
   const parsed = idSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  return run("secret", [mutationLimiter, secretLimiter], (scope) =>
-    regenerateOAuthAppSecret(scope, parsed.data.id),
+  return run(
+    "secret",
+    [mutationLimiter, secretLimiter],
+    (scope) => regenerateOAuthAppSecret(scope, parsed.data.id),
+    { confirm: true },
   );
 }
 

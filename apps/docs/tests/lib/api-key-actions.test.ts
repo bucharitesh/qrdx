@@ -1,7 +1,8 @@
 // Settings → Developers, API keys: the server actions (validation, the
-// messages people see, which ones refresh the page) and the origin the
-// ready-to-paste curl is built from. The service, scope and rate limits are
-// fakes; nothing connects to a database.
+// messages people see, which ones refresh the page, "Confirm it's you" before
+// a key is made) and the origin the ready-to-paste curl is built from. The
+// service, scope, confirmation and rate limits are fakes; nothing connects to
+// a database.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mocks = vi.hoisted(() => ({
@@ -9,6 +10,10 @@ const mocks = vi.hoisted(() => ({
   createApiKey: vi.fn(),
   revokeApiKey: vi.fn(),
   signedIn: true,
+  role: "member" as string,
+  /** This session confirmed it's them in the last 10 minutes */
+  confirmed: true,
+  asked: 0,
 }));
 
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
@@ -23,10 +28,22 @@ vi.mock("@/lib/scope", async () => {
   return {
     getActiveScope: async () => {
       if (!mocks.signedIn) throw new UnauthorizedError();
-      return { userId: "u_alice", organizationId: "org_acme", role: "member" };
+      return {
+        userId: "u_alice",
+        organizationId: "org_acme",
+        role: mocks.role,
+      };
     },
   };
 });
+vi.mock("@/lib/account/confirmation-scope", () => ({
+  confirmationNeededFor: async () => {
+    mocks.asked += 1;
+    return mocks.confirmed
+      ? null
+      : { ok: false, error: "CONFIRMATION_REQUIRED" };
+  },
+}));
 vi.mock("@/lib/api-keys/service", async () => {
   class ApiKeysUnavailableError extends Error {
     constructor() {
@@ -54,6 +71,9 @@ beforeEach(() => {
   mocks.createApiKey.mockReset();
   mocks.revokeApiKey.mockReset();
   mocks.signedIn = true;
+  mocks.role = "member";
+  mocks.confirmed = true;
+  mocks.asked = 0;
 });
 
 describe("createApiKeyAction", () => {
@@ -120,6 +140,45 @@ describe("createApiKeyAction", () => {
       ok: false,
       error: "Sign in to manage API keys.",
     });
+  });
+});
+
+describe("createApiKeyAction and Confirm it's you", () => {
+  it("asks first and makes no key until this session has confirmed", async () => {
+    mocks.confirmed = false;
+    expect(await createApiKeyAction(input)).toEqual({
+      ok: false,
+      error: "CONFIRMATION_REQUIRED",
+    });
+    expect(mocks.createApiKey).not.toHaveBeenCalled();
+
+    mocks.confirmed = true;
+    mocks.createApiKey.mockResolvedValue({
+      key: "qrdx_y",
+      apiKey: { id: "k2" },
+    });
+    expect(await createApiKeyAction(input)).toMatchObject({ ok: true });
+    expect(mocks.createApiKey).toHaveBeenCalledTimes(1);
+  });
+
+  it("doesn't ask someone whose role can't make keys: they get the refusal", async () => {
+    mocks.role = "viewer";
+    mocks.confirmed = false;
+    mocks.createApiKey.mockRejectedValueOnce(
+      new HttpError(403, "FORBIDDEN", "You're a viewer here."),
+    );
+    expect(await createApiKeyAction(input)).toEqual({
+      ok: false,
+      error: "You're a viewer here.",
+    });
+    expect(mocks.asked).toBe(0);
+  });
+
+  it("revoking a key never asks", async () => {
+    mocks.confirmed = false;
+    mocks.revokeApiKey.mockResolvedValue({ id: "k1" });
+    expect(await revokeApiKeyAction({ id: "k1" })).toMatchObject({ ok: true });
+    expect(mocks.asked).toBe(0);
   });
 });
 
