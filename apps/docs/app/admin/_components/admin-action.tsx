@@ -30,6 +30,7 @@ import {
 } from "../codes/actions";
 import {
   cancelImportAction,
+  changeEmailAction,
   deleteUserAccountAction,
   disconnectIntegrationAction,
   markEmailVerifiedAction,
@@ -54,6 +55,7 @@ const ACTIONS = {
   setCodeActive: setDynamicCodeActiveAction,
   setCodePaused: setDynamicCodePausedAction,
   markEmailVerified: markEmailVerifiedAction,
+  changeEmail: changeEmailAction,
   unlinkSignIn: unlinkSignInMethodAction,
   resetTwoFactor: resetTwoFactorAction,
   retryDelivery: retryWebhookDeliveryAction,
@@ -101,6 +103,8 @@ export interface AdminActionProps {
   typeToConfirm?: string;
   /** An extra whole-number field, e.g. ban length in days */
   numberField?: { name: string; label: string; min?: number; max?: number };
+  /** An extra required email field, e.g. the address to move an account to */
+  emailField?: { name: string; label: string };
   disabled?: boolean;
   disabledHint?: string;
   /** Where to go after success (e.g. the user list after a delete) */
@@ -122,6 +126,7 @@ export function AdminAction({
   reasonOptional = false,
   typeToConfirm,
   numberField,
+  emailField,
   disabled = false,
   disabledHint,
   redirectTo,
@@ -132,6 +137,7 @@ export function AdminAction({
   const [reason, setReason] = useState("");
   const [typed, setTyped] = useState("");
   const [number, setNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -139,11 +145,13 @@ export function AdminAction({
   const typedOk =
     !typeToConfirm ||
     typed.trim().toLowerCase() === typeToConfirm.trim().toLowerCase();
+  const emailOk = !emailField || email.trim().includes("@");
 
   const reset = () => {
     setReason("");
     setTyped("");
     setNumber("");
+    setEmail("");
     setError(null);
   };
 
@@ -154,6 +162,7 @@ export function AdminAction({
       extra[numberField.name] = Number.parseInt(number, 10);
     }
     if (typeToConfirm) extra.confirmation = typed.trim();
+    if (emailField) extra[emailField.name] = email.trim();
     startTransition(async () => {
       const run = ACTIONS[action] as AnyAction;
       try {
@@ -204,9 +213,24 @@ export function AdminAction({
           className="space-y-3"
           onSubmit={(event) => {
             event.preventDefault();
-            if (reasonOk && typedOk && !isPending) submit();
+            if (reasonOk && typedOk && emailOk && !isPending) submit();
           }}
         >
+          {emailField && (
+            <div className="space-y-1.5">
+              <Label htmlFor={`${id}-email`}>{emailField.label}</Label>
+              <Input
+                autoComplete="off"
+                id={`${id}-email`}
+                maxLength={254}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                spellCheck={false}
+                type="email"
+                value={email}
+              />
+            </div>
+          )}
           {numberField && (
             <div className="space-y-1.5">
               <Label htmlFor={`${id}-number`}>{numberField.label}</Label>
@@ -264,7 +288,7 @@ export function AdminAction({
               Cancel
             </Button>
             <Button
-              disabled={!(reasonOk && typedOk) || isPending}
+              disabled={!(reasonOk && typedOk && emailOk) || isPending}
               type="submit"
               variant={destructive ? "destructive" : "default"}
             >
