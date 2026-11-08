@@ -50,6 +50,7 @@ import {
   CONFIRMATION_CODE_MINUTES,
   CONFIRMATION_MESSAGES,
   CONFIRMATION_MINUTES,
+  CONFIRMATION_REASONS,
   CONFIRMATION_RESEND_SECONDS,
   type ConfirmationAction,
   type ConfirmationOptions,
@@ -574,6 +575,7 @@ export function ConfirmIdentityDialog({
   );
   const others = methods.filter((entry) => entry !== method);
   const action = request ? CONFIRMATION_ACTIONS[request.action] : "";
+  const reason = request ? CONFIRMATION_REASONS[request.action] : undefined;
 
   let body: ReactNode;
   if (loadError) {
@@ -856,16 +858,20 @@ export function ConfirmIdentityDialog({
 
         <Collapsible className="group/why">
           <CollapsibleTrigger className="text-muted-foreground hover:text-foreground -my-2 flex min-h-10 items-center gap-1 rounded-sm text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-0 sm:my-0">
-            Why am I asked again?
+            {reason ? "Why am I asked?" : "Why am I asked again?"}
             <ArrowDown2
               aria-hidden
               className="size-3 transition-transform group-data-[state=open]/why:rotate-180 motion-reduce:transition-none"
             />
           </CollapsibleTrigger>
           <CollapsibleContent className="text-muted-foreground pt-2 text-xs text-pretty">
-            We check it's you before changes to your account's security. It
-            lasts {CONFIRMATION_MINUTES} minutes, so a few changes in a row only
-            ask once.
+            {reason ?? (
+              <>
+                We check it's you before changes to your account's security. It
+                lasts {CONFIRMATION_MINUTES} minutes, so a few changes in a row
+                only ask once.
+              </>
+            )}
           </CollapsibleContent>
         </Collapsible>
 
