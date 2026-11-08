@@ -62,6 +62,7 @@ import {
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
+import { unprovenAccessCleanup } from "./unproven-access";
 import { allUserInfoChecks, validateSocialSignUp } from "./verified-sign-up";
 import {
   assertDeletable,
@@ -376,6 +377,9 @@ export const auth = betterAuth({
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
     // joins the workspace).
     ...(ssoLicensed ? [sso(ssoOptions), ssoGate()] : []),
+    // Proving an unproven account's address clears what an earlier holder
+    // left behind (./unproven-access.ts).
+    unprovenAccessCleanup(),
     // New sign-in alerts (./new-sign-in.ts). Last, so it sees each sign-in
     // after the challenge has had its say.
     newSignIn(),
