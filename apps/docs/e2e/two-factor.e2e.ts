@@ -35,12 +35,18 @@
 // runs against a local dev server whose output goes to E2E_DEV_LOG:
 //
 //   E2E_BASE_URL=http://localhost:3111 E2E_DEV_LOG=/path/to/dev.log \
+//   E2E_DB_SQL='<command that runs SQL on the LOCAL database, reading stdin>' \
 //   E2E_SHOTS=/path/to/shots pnpm exec tsx e2e/two-factor.e2e.ts
+//
+// A finished sign-in counts as "Confirm it's you" for 10 minutes
+// (packages/auth/new-sign-in.ts), so before each change that should ask,
+// E2E_DB_SQL ends the account's confirmations early ("10 minutes later").
 //
 // E2E_ADMIN_EMAIL (default admin@qrdx.test) must be listed in ADMIN_EMAILS.
 // Accounts are new @qrdx.test addresses per run. Skips (exit 0) without a
 // server, a log or Chrome.
 /** biome-ignore-all lint/performance/useDomNodeTextContent: checks must only match text a person can see */
+import { execSync } from "node:child_process";
 import { createHmac } from "node:crypto";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -58,6 +64,7 @@ const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
   "",
 );
 const DEV_LOG = process.env.E2E_DEV_LOG ?? "";
+const DB_SQL = process.env.E2E_DB_SQL ?? "";
 const SHOTS = process.env.E2E_SHOTS ?? "";
 /** E2E_VIEWPORT=mobile: a 390 x 844 phone (DPR 2, touch) instead of desktop. */
 const MOBILE = process.env.E2E_VIEWPORT === "mobile";
@@ -120,6 +127,21 @@ function wrongCode(secret: string): string {
   for (let n = 111_111; ; n++) {
     if (!valid.has(String(n))) return String(n);
   }
+}
+
+// ─── The local database ─────────────────────────────────────────────────────
+
+/**
+ * "10 minutes later": confirmations end now, so the next change asks. The
+ * app stores UTC wall times in `timestamp` columns, so `now()` is taken in
+ * UTC. Local databases only.
+ */
+function expireConfirmations() {
+  execSync(DB_SQL, {
+    input: `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%';`,
+    encoding: "utf8",
+    stdio: ["pipe", "pipe", "inherit"],
+  });
 }
 
 // ─── The dev server's log ───────────────────────────────────────────────────
@@ -621,6 +643,7 @@ async function dialogOrMainText(page: Page) {
 async function setUpPasskeyAccount(page: Page) {
   await page.goto(`${BASE_URL}/settings/account#two-factor`);
   await waitForText(page, "Two-step verification");
+  expireConfirmations();
   await clickButton(page, "Turn on");
   await confirmByEmail(page, PASSKEY_EMAIL);
   await chooseAuthenticatorApp(page);
@@ -1094,6 +1117,12 @@ async function main() {
     console.log("SKIP: set E2E_DEV_LOG to the dev server's log file");
     return;
   }
+  if (!/(localhost|127\.0\.0\.1)/.test(DB_SQL)) {
+    console.log(
+      "SKIP: set E2E_DB_SQL to a command that runs SQL on the local database",
+    );
+    return;
+  }
   if (!(await serverIsUp(BASE_URL))) {
     console.log(`SKIP: no server at ${BASE_URL}`);
     return;
@@ -1155,6 +1184,8 @@ async function main() {
         ?.scrollIntoView({ block: "center" }),
     );
     await shot(page, "01-settings-off");
+    // Signing up confirmed this session; 10 minutes later it asks.
+    expireConfirmations();
     await clickButton(page, "Turn on");
     // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
     // stepper: the authenticator app.
@@ -1466,6 +1497,9 @@ async function main() {
       [movedEmail, false],
       [USER_EMAIL, true],
     ];
+    // The sign-in just above (its second step answered) confirmed; 10
+    // minutes later the change asks.
+    expireConfirmations();
     for (const [index, [to, back]] of moves.entries()) {
       await page.goto(`${BASE_URL}/settings/account`);
       await clickButton(page, "Change");
@@ -1545,12 +1579,14 @@ async function main() {
     await clickButton(page, "Done");
     await waitForText(page, "10 of 10 left");
 
-    // Turning off from a new sign-in asks again: with a backup code.
+    // Turning off from a new sign-in, once its confirmation has run out,
+    // asks again: with a backup code.
     await clearCookies(page);
     await emailCodeStep(page, USER_EMAIL, "/settings/account");
     await waitForText(page, "Your account asks for a second step");
     await enterTotp(page, totp(secret, Date.now() + 30_000));
     await landedOn(page, "/settings/account");
+    expireConfirmations();
     noticeSince = logSize();
     await clickButton(page, "Turn off");
     await waitForText(page, "Turn off two-step verification?");
@@ -1584,6 +1620,7 @@ async function main() {
     // Turn it on again (fresh sign-in just above).
     await page.goto(`${BASE_URL}/settings/account#two-factor`);
     await waitForText(page, "Two-step verification");
+    expireConfirmations();
     await clickButton(page, "Turn on");
     // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
     // stepper: the authenticator app.
@@ -1669,6 +1706,7 @@ async function main() {
     // Turn it on again (signed in just above, so recently enough).
     await page.goto(`${BASE_URL}/settings/account#two-factor`);
     await waitForText(page, "Two-step verification");
+    expireConfirmations();
     await clickButton(page, "Turn on");
     // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
     // stepper: the authenticator app.
@@ -1713,6 +1751,7 @@ async function main() {
     await waitForText(page, "Your account asks for a second step");
     await enterTotp(page, totp(secret, Date.now() + 30_000));
     await landedOn(page, "/settings/account");
+    expireConfirmations();
     await page.evaluate(() =>
       document.getElementById("danger")?.scrollIntoView({ block: "center" }),
     );
@@ -1775,6 +1814,7 @@ async function main() {
     );
 
     // With 2FA off, "Confirm it's you" emails a code to the account.
+    expireConfirmations();
     await page.goto(`${BASE_URL}/settings/account#danger`);
     await waitForText(page, "Danger zone");
     await clickButton(page, "Delete account…");

@@ -411,7 +411,7 @@ describe("the HTTP gate", () => {
     fakeDb.seed("verification", [
       {
         id: "v_other",
-        identifier: rules.confirmedSessionIdentifier(SESSION),
+        identifier: rules.confirmedIdentifier(SESSION),
         value: "user_2",
         expiresAt: new Date(Date.now() + 60_000),
         createdAt: new Date(),
@@ -457,8 +457,8 @@ describe("the HTTP gate", () => {
   it("reads the row the app's recordConfirmation writes", async () => {
     await confirm();
     const [row] = fakeDb.rows("verification");
-    expect(row?.identifier).toBe(rules.confirmedSessionIdentifier(SESSION));
-    expect(row?.identifier).toBe(`${rules.CONFIRMED_SESSION_PREFIX}${SESSION}`);
+    expect(row?.identifier).toBe(rules.confirmedIdentifier(SESSION));
+    expect(row?.identifier).toBe(`${rules.CONFIRMED_IDENTIFIER_PREFIX}${SESSION}`);
     expect(await gate.sessionConfirmed(SESSION, USER)).toBe(true);
   });
 });

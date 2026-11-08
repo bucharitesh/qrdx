@@ -5,7 +5,7 @@ import {
   createAuthMiddleware,
   getSessionFromCtx,
 } from "better-auth/api";
-import { confirmedSessionIdentifier } from "./confirm-sign-in-rules";
+import { confirmedIdentifier } from "./confirm-sign-in-rules";
 
 // "Confirm it's you" for Better Auth's own endpoints, over HTTP. The app's
 // server actions ask first (apps/docs/lib/account/confirmation-server.tsx)
@@ -71,7 +71,7 @@ export async function sessionConfirmed(
     .from(verification)
     .where(
       and(
-        eq(verification.identifier, confirmedSessionIdentifier(sessionId)),
+        eq(verification.identifier, confirmedIdentifier(sessionId)),
         eq(verification.value, userId)
       )
     );
