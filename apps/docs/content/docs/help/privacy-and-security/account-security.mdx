@@ -14,16 +14,16 @@ That makes your email account, and your Google or GitHub account, keys to QRdx. 
 [Two-step verification](/docs/help/privacy-and-security/two-step-verification) makes QRdx ask for a second step after you sign in, whichever way you sign in: <IfAvailable feature="passkeys">your passkey or </IfAvailable>a code from an authenticator app. Someone who gets into your email or your Google account still can't get into QRdx without it. You get 10 backup codes for when you can't do the second step.
 
 <IfAvailable feature="passkeys" title="Add a passkey">
-A [passkey](/docs/help/privacy-and-security/passkeys) checks it's you with your fingerprint, face or screen lock. It only works on QRdx's own site, so a look-alike site can't collect it. It can sign you in on its own with **Continue with passkey**, or be your second step. Adding your first passkey turns two-step verification on.
+A [passkey](/docs/help/privacy-and-security/passkeys) checks it's you with your fingerprint, face or screen lock. It only works on QRdx's own site, so a look-alike site can't collect it. It can sign you in on its own with **Continue with passkey**, or be your second step. Adding a passkey while two-step verification is off turns it on.
 </IfAvailable>
 
 ## Changes ask you to confirm it's you
 
 Before a change to your account's security, QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), even though you're signed in: changing your email address, deleting your account, turning two-step verification on or off, new backup codes, or changing your second-step methods.<IfAvailable feature="sso"> So do changes to a workspace's single sign-on connection.</IfAvailable>
 
-With two-step verification on, you confirm with <IfAvailable feature="passkeys">your passkey, </IfAvailable>an authenticator code or a backup code, never with an emailed code. Without it, QRdx emails you a 6-digit code. A confirmation lasts 10 minutes in that browser.
+With two-step verification on, you confirm with <IfAvailable feature="passkeys">your passkey, </IfAvailable>an authenticator code or a backup code, never with an emailed code. Without it, you can use a 6-digit code QRdx emails you<IfAvailable feature="passkeys">, your passkey if you have one,</IfAvailable> or sign in again with a Google or GitHub account you've linked<IfAvailable feature="sso"> (or your workspace's single sign-on, when it uses OIDC)</IfAvailable>. A confirmation lasts 10 minutes in that browser.
 
-Changing your email address also needs a code sent to the new address.
+Changing your email address also needs a code sent to the new address. Afterwards you're signed out everywhere else, and the old address gets an email saying it changed. Lost access to your email? See [what to do](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
 
 ## Emails about your account's security
 

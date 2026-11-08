@@ -49,6 +49,7 @@ import {
   maskEmail,
 } from "./confirmation";
 import { isRecentSignIn } from "./deletion";
+import { linkedSignInsFor } from "./linked-sign-ins-server";
 import { PASSKEY_MESSAGES } from "./passkeys";
 import { signInCodesAvailable } from "./reauth";
 import { hasAuthenticatorApp } from "./two-factor-methods";
@@ -61,11 +62,12 @@ import {
 
 // "Confirm it's you" on the server (./confirmation.ts has the rules). A
 // confirmation is a `verification` row keyed by the session's id, holding the
-// user's id, for 10 minutes; no schema change. Wrong answers count toward
-// the same lockout as sign-in codes (reserveCodeAttempt): 10 in a row lock
-// the account's codes and passkey checks for 15 minutes. Emailed codes, for
-// accounts without two-step verification, are HMAC'd with the auth secret
-// and allow 3 tries each.
+// user's id, for 10 minutes; no schema change. With two-step verification on,
+// wrong answers count toward the same lockout as sign-in codes
+// (reserveCodeAttempt): 10 in a row lock the account's codes and passkey
+// checks for 15 minutes. Emailed codes, for accounts without it, are HMAC'd
+// with the auth secret and allow 3 tries each. Signing in again with Google,
+// GitHub or SSO is ./confirmation-sign-in-server.ts.
 
 export type ConfirmResult = { ok: true } | { ok: false; error: string };
 
@@ -79,10 +81,14 @@ export interface ConfirmableSession {
 }
 
 const CONFIRMED_PREFIX = "qrdx-confirmed-";
+// Next to it, when the confirmation used a passkey, an authenticator code or
+// a backup code: what support actions ask of an admin (requireStrong…).
+const STRONG_PREFIX = "qrdx-confirmed-strong-";
 const CODE_PREFIX = "qrdx-confirm-code-";
 
 const confirmedIdentifier = (sessionId: string) =>
   `${CONFIRMED_PREFIX}${sessionId}`;
+const strongIdentifier = (sessionId: string) => `${STRONG_PREFIX}${sessionId}`;
 const codeIdentifier = (sessionId: string) => `${CODE_PREFIX}${sessionId}`;
 
 // Per user, on top of the account lockout (auth.api calls skip Better Auth's
@@ -132,22 +138,37 @@ export async function currentSession(): Promise<ConfirmableSession | null> {
 
 // ─── The confirmation record ─────────────────────────────────────────────────
 
-/** This session confirmed within the last 10 minutes. */
-export async function hasRecentConfirmation(
-  session: Pick<ConfirmableSession, "userId" | "sessionId">,
-): Promise<boolean> {
+async function hasRow(identifier: string, userId: string): Promise<boolean> {
   const [row] = await db
     .select({ id: verification.id })
     .from(verification)
     .where(
       and(
-        eq(verification.identifier, confirmedIdentifier(session.sessionId)),
-        eq(verification.value, session.userId),
+        eq(verification.identifier, identifier),
+        eq(verification.value, userId),
         gt(verification.expiresAt, new Date()),
       ),
     )
     .limit(1);
   return Boolean(row);
+}
+
+/** This session confirmed within the last 10 minutes. */
+export function hasRecentConfirmation(
+  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+): Promise<boolean> {
+  return hasRow(confirmedIdentifier(session.sessionId), session.userId);
+}
+
+/**
+ * This session confirmed within the last 10 minutes with a passkey, an
+ * authenticator code or a backup code: never an emailed code or signing in
+ * again, which getting into a mailbox or a Google account is enough for.
+ */
+export function hasRecentStrongConfirmation(
+  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+): Promise<boolean> {
+  return hasRow(strongIdentifier(session.sessionId), session.userId);
 }
 
 /**
@@ -188,18 +209,37 @@ export async function confirmedSession(
   return { ok: true, session };
 }
 
-/** Starts (or restarts) this session's 10 minutes. */
+/**
+ * Starts (or restarts) this session's 10 minutes; `strong` when it used a
+ * passkey, an authenticator code or a backup code.
+ */
 export async function recordConfirmation(
   session: Pick<ConfirmableSession, "userId" | "sessionId">,
+  { strong = false }: { strong?: boolean } = {},
 ): Promise<void> {
-  const identifier = confirmedIdentifier(session.sessionId);
+  await writeConfirmationRow(
+    confirmedIdentifier(session.sessionId),
+    session.userId,
+  );
+  if (strong) {
+    await writeConfirmationRow(
+      strongIdentifier(session.sessionId),
+      session.userId,
+    );
+  }
+}
+
+async function writeConfirmationRow(
+  identifier: string,
+  userId: string,
+): Promise<void> {
   const now = new Date();
   await db.batch([
     db.delete(verification).where(eq(verification.identifier, identifier)),
     db.insert(verification).values({
       id: randomUUID(),
       identifier,
-      value: session.userId,
+      value: userId,
       expiresAt: new Date(now.getTime() + CONFIRMATION_MINUTES * 60_000),
       createdAt: now,
       updatedAt: now,
@@ -226,16 +266,18 @@ export async function carryConfirmation(
     )
     .limit(1);
   if (!next) return;
-  await db
-    .update(verification)
-    .set({ identifier: confirmedIdentifier(next.id), updatedAt: new Date() })
-    .where(
-      and(
-        eq(verification.identifier, confirmedIdentifier(from.sessionId)),
-        eq(verification.value, from.userId),
-        gt(verification.expiresAt, new Date()),
-      ),
-    );
+  for (const identifier of [confirmedIdentifier, strongIdentifier]) {
+    await db
+      .update(verification)
+      .set({ identifier: identifier(next.id), updatedAt: new Date() })
+      .where(
+        and(
+          eq(verification.identifier, identifier(from.sessionId)),
+          eq(verification.value, from.userId),
+          gt(verification.expiresAt, new Date()),
+        ),
+      );
+  }
 }
 
 /**
@@ -271,6 +313,7 @@ export async function loadConfirmationOptions(
       authenticatorApp: facts.on && hasAuthenticatorApp(facts.row),
       passkeys: passkeysWorkHere(session.requestHeaders) ? facts.passkeys : 0,
       emailCodes: signInCodesAvailable(),
+      signIns: facts.on ? [] : await linkedSignInsFor(session),
     }),
     maskedEmail: maskEmail(session.email),
     mailProvider: mailProviderFor(session.email),
@@ -353,7 +396,7 @@ export async function confirmWithCode(input: unknown): Promise<ConfirmResult> {
     if (!session) return fail(CONFIRMATION_MESSAGES.signedOut);
     const check = await checkSecondFactorCode(session, parsed.data.code);
     if (!check.ok) return check;
-    await recordConfirmation(session);
+    await recordConfirmation(session, { strong: true });
     return { ok: true };
   } catch (error) {
     logError(error as Error, { action: "account.confirmWithCode" });
@@ -452,9 +495,10 @@ export async function startPasskeyConfirmation(): Promise<
     const session = await currentSession();
     if (!session) return fail(CONFIRMATION_MESSAGES.signedOut);
     const facts = await loadTwoFactorFacts(session.userId);
-    // A passkey confirms only as a second step (decision: without two-step
-    // verification, the emailed code is the way).
-    if (!(facts.on && facts.passkeys > 0)) {
+    // Any passkey of the person's own confirms, two-step verification on or
+    // off: it checks the person on their device, which a stolen session
+    // cookie can't.
+    if (facts.passkeys === 0) {
       return fail(CONFIRMATION_MESSAGES.passkeyUnavailable);
     }
     return await passkeyAssertionOptions(session);
@@ -477,14 +521,18 @@ export async function confirmWithPasskey(
     const session = await currentSession();
     if (!session) return fail(CONFIRMATION_MESSAGES.signedOut);
     const facts = await loadTwoFactorFacts(session.userId);
-    if (!(facts.on && facts.passkeys > 0)) {
+    if (facts.passkeys === 0) {
       return fail(CONFIRMATION_MESSAGES.passkeyUnavailable);
     }
     if (!(await answerLimiter.limit(session.userId)).success) {
       return fail(CONFIRMATION_MESSAGES.rateLimited);
     }
-    const attempt = await reserveCodeAttempt(session.userId);
-    if (!attempt.ok) {
+    // With two-step verification on, a passkey shares the account's lockout
+    // with codes. Without it there's no `two_factor` row to count on, and
+    // none is needed: an assertion is a signature from the person's own
+    // device over a single-use challenge, so it can't be guessed.
+    const attempt = facts.on ? await reserveCodeAttempt(session.userId) : null;
+    if (attempt && !attempt.ok) {
       return fail(
         attempt.reason === "locked"
           ? TWO_FACTOR_MESSAGES.locked
@@ -493,12 +541,12 @@ export async function confirmWithPasskey(
     }
     const check = await verifyOwnPasskey(session, parsed.data.response);
     if (!check.ok) {
-      return attempt.attempts >= LOCKOUT_FAILURES
+      return attempt?.ok && attempt.attempts >= LOCKOUT_FAILURES
         ? fail(TWO_FACTOR_MESSAGES.locked)
         : check;
     }
-    await clearCodeFailures(attempt.id);
-    await recordConfirmation(session);
+    if (attempt?.ok) await clearCodeFailures(attempt.id);
+    await recordConfirmation(session, { strong: true });
     return { ok: true };
   } catch (error) {
     logError(error as Error, { action: "account.confirmWithPasskey" });

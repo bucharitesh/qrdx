@@ -5,6 +5,8 @@
   "exports": {
     "./server": "./server.ts",
     "./admin": "./admin.ts",
+    "./confirm-sign-in": "./confirm-sign-in.ts",
+    "./confirm-sign-in-rules": "./confirm-sign-in-rules.ts",
     "./email-otp": "./email-otp.ts",
     "./forward-cookies": "./forward-cookies.ts",
     "./client": "./client.ts",
