@@ -89,7 +89,10 @@ const scope = (userId: string, role: Role) => ({
   role,
 });
 
-function seed({ verified = true, metadata = { ssoJoinRole: "viewer" } } = {}) {
+function seed({
+  verified = true,
+  metadata = { ssoJoinRole: "viewer" } as Record<string, unknown>,
+} = {}) {
   fakeDb.reset();
   const now = new Date();
   fakeDb.seed("ssoProvider", [
