@@ -458,7 +458,9 @@ describe("the HTTP gate", () => {
     await confirm();
     const [row] = fakeDb.rows("verification");
     expect(row?.identifier).toBe(rules.confirmedIdentifier(SESSION));
-    expect(row?.identifier).toBe(`${rules.CONFIRMED_IDENTIFIER_PREFIX}${SESSION}`);
+    expect(row?.identifier).toBe(
+      `${rules.CONFIRMED_IDENTIFIER_PREFIX}${SESSION}`,
+    );
     expect(await gate.sessionConfirmed(SESSION, USER)).toBe(true);
   });
 });
