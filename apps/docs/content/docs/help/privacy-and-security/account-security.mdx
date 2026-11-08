@@ -19,7 +19,7 @@ A [passkey](/docs/help/privacy-and-security/passkeys) checks it's you with your 
 
 ## Changes ask you to confirm it's you
 
-Before a change to your account's security, QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), even though you're signed in: changing your email address, deleting your account, turning two-step verification on or off, new backup codes, or changing your second-step methods.<IfAvailable feature="sso"> So do changes to a workspace's single sign-on connection.</IfAvailable>
+Before a change to your account's security, QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), even though you're signed in: changing your email address, deleting your account, turning two-step verification on or off, new backup codes, changing your second-step methods, or linking or unlinking Google or GitHub. So do creating an API key or an OAuth app's client secret, and, in a workspace, deleting it, changing someone's role, removing someone or inviting an admin.<IfAvailable feature="sso"> So do changes to a workspace's single sign-on connection.</IfAvailable>
 
 With two-step verification on, you confirm with <IfAvailable feature="passkeys">your passkey, </IfAvailable>an authenticator code or a backup code, never with an emailed code. Without it, you can use a 6-digit code QRdx emails you<IfAvailable feature="passkeys">, your passkey if you have one,</IfAvailable> or sign in again with a Google or GitHub account you've linked<IfAvailable feature="sso"> (or your workspace's single sign-on)</IfAvailable>. A confirmation lasts 10 minutes in that browser.
 
@@ -51,7 +51,7 @@ One exception: when you sign in through your workspace's SAML identity provider 
 
 ## Sign out other devices
 
-Go to **Settings** → **Profile & security**. Under **Sessions**, sign out of one device, or click **Sign out everywhere else**.
+Go to **Settings** → **Profile & security**. Under **Sessions**, sign out of one device, or click **Sign out everywhere else**. This never asks you to confirm it's you, so you can do it straight away.
 
 ## Remove apps you connected
 
