@@ -25,11 +25,13 @@
 //   E2E_BASE_URL=http://localhost:3261 E2E_DEV_LOG=/path/to/dev.log \
 //   E2E_SHOTS=/path/to/shots pnpm exec tsx e2e/two-factor-lifecycle.e2e.ts
 //
-// E2E_VIEWPORT=mobile runs it at 390 x 844. E2E_ADMIN_EMAIL (default
+// E2E_DB_SQL='<command that runs SQL on the LOCAL database, reading stdin>'
+// is needed for the "Confirm it's you" step. E2E_VIEWPORT=mobile runs it at 390 x 844. E2E_ADMIN_EMAIL (default
 // admin@qrdx.test) must be listed in ADMIN_EMAILS. Accounts are new
 // @qrdx.test addresses per run. Skips (exit 0) without a server, a log or
 // Chrome.
 /** biome-ignore-all lint/performance/useDomNodeTextContent: checks must only match text a person can see */
+import { execSync } from "node:child_process";
 import { createHmac } from "node:crypto";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -424,6 +426,18 @@ async function openSettings(page: Page) {
 
 const CONFIRM_DIALOG = "Confirm it's you";
 
+// SQL on the LOCAL database, read from stdin (E2E_DB_SQL, as in
+// two-factor.e2e.ts): ends this run's confirmations early.
+const DB_SQL = process.env.E2E_DB_SQL ?? "";
+function expireConfirmations() {
+  if (!DB_SQL) throw new Error("Set E2E_DB_SQL to run the confirm step");
+  execSync(DB_SQL, {
+    input: `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%';`,
+    encoding: "utf8",
+    stdio: ["pipe", "pipe", "inherit"],
+  });
+}
+
 const confirmOpen = (page: Page) =>
   page.evaluate(
     (t: string) => Boolean(window.__e2e.byRole("dialog", t)),
@@ -447,9 +461,18 @@ async function clickInConfirm(page: Page, name: string) {
 
 /** "Confirm it's you" with a code emailed to the account (2FA off). */
 async function confirmByEmail(page: Page, email: string) {
-  await page.waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
-    args: [CONFIRM_DIALOG] as never[],
-  });
+  const asked = await page
+    .waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
+      args: [CONFIRM_DIALOG] as never[],
+      timeout: 5000,
+    })
+    .then(
+      () => true,
+      () => false,
+    );
+  // A sign-in in the last 10 minutes already counts as confirming
+  // (packages/auth/new-sign-in.ts): nothing to answer.
+  if (!asked) return;
   const since = logSize();
   await clickInConfirm(page, "Send code");
   const [, code] = await waitForLogLine(
@@ -743,11 +766,14 @@ async function appFlow(page: Page) {
   );
 
   // ── confirm: a backup code in "Confirm it's you" ──
-  // A new sign-in in this browser: its session hasn't confirmed anything.
+  // A new sign-in in this browser. Answering its second step counts as
+  // confirming for 10 minutes (packages/auth/new-sign-in.ts), so that ends
+  // early here ("10 minutes later").
   await leaveSignedIn(page);
   await emailCodeStep(page, APP_EMAIL);
   // The passkey answers the second step on its own.
   await landedOn(page, "/dashboard");
+  expireConfirmations();
   await openSettings(page);
   await clickButton(page, "New codes");
   await waitForText(page, "Make new backup codes?");
