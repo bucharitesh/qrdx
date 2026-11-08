@@ -107,6 +107,7 @@ vi.mock("@repo/database", () => {
     organization: table("organization"),
     qrCode: table("qr_code"),
     qrPreset: table("qr_preset"),
+    session: table("session"),
     user: table("user"),
     webhookDelivery: table("webhook_delivery"),
     webhookEndpoint: table("webhook_endpoint"),
@@ -202,6 +203,15 @@ vi.mock("@/lib/account/export/entries", () => ({
   exportEntries: vi.fn(() => []),
 }));
 vi.mock("@/lib/shared", () => ({ logError: vi.fn() }));
+vi.mock("@/lib/account/email-change-server", () => ({
+  afterEmailChanged: vi.fn(async () => {}),
+}));
+vi.mock("next/server", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("next/server")>()),
+  after: (run: () => unknown) => {
+    void run();
+  },
+}));
 
 const modules = {
   "app/admin/actions": () => import("@/app/admin/actions"),
@@ -233,6 +243,7 @@ const sampleInput = {
   invitationId: "inv_1",
   role: "user",
   confirmation: "target@example.com",
+  newEmail: "new@example.com",
 };
 
 type Action = (input: unknown) => Promise<{ ok: boolean; error?: string }>;
@@ -383,6 +394,102 @@ describe("with an admin", () => {
     });
     expect(result).toEqual({ ok: true });
     expect(auditInserts()).toEqual([]);
+  });
+
+  it("moves an account to a new email: verified, signed out, old address told by support", async () => {
+    const { changeEmailAction } = await import(
+      "@/app/admin/users/support-actions"
+    );
+    const { afterEmailChanged } = await import(
+      "@/lib/account/email-change-server"
+    );
+    state.results = [
+      [{ id: "user_target", email: "lost@example.com", emailVerified: true }],
+      [], // nobody has the new address
+      [], // the batch
+      [], // audit
+    ];
+    const result = await changeEmailAction({
+      userId: "user_target",
+      newEmail: "  New@Example.com ",
+      reason: "Lost-email policy: invoice matched, 7 days passed, ticket 99",
+    });
+    expect(result).toEqual({ ok: true });
+    const update = state.calls.find(
+      (call) => call.root === "update" && call.table === "user",
+    );
+    expect(
+      update?.steps.find(([step]) => step === "set")?.[1][0],
+    ).toMatchObject({ email: "new@example.com", emailVerified: true });
+    expect(
+      state.calls.some(
+        (call) => call.root === "delete" && call.table === "session",
+      ),
+    ).toBe(true);
+    expect(state.calls.some((call) => call.root === "batch")).toBe(true);
+    expect(afterEmailChanged).toHaveBeenCalledWith({
+      userId: "user_target",
+      previousEmail: "lost@example.com",
+      newEmail: "new@example.com",
+      bySupport: true,
+    });
+    expect(auditValues()).toEqual([
+      expect.objectContaining({
+        action: "user.change_email",
+        targetId: "user_target",
+        metadata: expect.objectContaining({
+          targetEmail: "lost@example.com",
+          newEmail: "new@example.com",
+        }),
+      }),
+    ]);
+  });
+
+  it("won't move an account to its own address or one another account has", async () => {
+    const { changeEmailAction } = await import(
+      "@/app/admin/users/support-actions"
+    );
+    state.results = [
+      [{ id: "user_target", email: "same@example.com", emailVerified: true }],
+    ];
+    expect(
+      await changeEmailAction({
+        userId: "user_target",
+        newEmail: "SAME@example.com",
+        reason: "Ticket 1",
+      }),
+    ).toMatchObject({ ok: false });
+    state.results = [
+      [{ id: "user_target", email: "lost@example.com", emailVerified: true }],
+      [{ id: "someone_else" }],
+    ];
+    expect(
+      await changeEmailAction({
+        userId: "user_target",
+        newEmail: "taken@example.com",
+        reason: "Ticket 1",
+      }),
+    ).toMatchObject({ ok: false, error: expect.stringMatching(/another/) });
+    expect(
+      state.calls.some(
+        (call) => call.root === "update" || call.root === "batch",
+      ),
+    ).toBe(false);
+    expect(auditInserts()).toEqual([]);
+  });
+
+  it("refuses an address that isn't one", async () => {
+    const { changeEmailAction } = await import(
+      "@/app/admin/users/support-actions"
+    );
+    expect(
+      await changeEmailAction({
+        userId: "user_target",
+        newEmail: "not an email",
+        reason: "Ticket 1",
+      }),
+    ).toMatchObject({ ok: false });
+    expect(state.calls).toEqual([]);
   });
 
   it("never unlinks the last sign-in method", async () => {

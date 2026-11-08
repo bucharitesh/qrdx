@@ -68,17 +68,31 @@ export function SignInSection({ profile }: { profile: UserProfile }) {
           </>
         }
         actions={
-          !user.emailVerified && (
+          <>
+            {!user.emailVerified && (
+              <AdminAction
+                action="markEmailVerified"
+                confirmLabel="Mark verified"
+                description={`Only when ${user.email} is confirmed to belong to this person (e.g. they replied from it).`}
+                input={{ userId: user.id }}
+                label="Mark verified"
+                success="Email marked verified"
+                title="Mark email verified"
+              />
+            )}
             <AdminAction
-              action="markEmailVerified"
-              confirmLabel="Mark verified"
-              description={`Only when ${user.email} is confirmed to belong to this person (e.g. they replied from it).`}
+              action="changeEmail"
+              confirmLabel="Change email"
+              description={`Only for someone who lost ${user.email} and has no passkey or linked sign-in, after every step of the lost-email policy (help: Sign-in methods → Lost access to your email), including the 7 days' notice to the old address. Every session is signed out and the old address gets a notice.`}
+              destructive
+              emailField={{ name: "newEmail", label: "New email address" }}
               input={{ userId: user.id }}
-              label="Mark verified"
-              success="Email marked verified"
-              title="Mark email verified"
+              label="Change email"
+              success="Email changed and every session signed out"
+              title="Move this account to a new email"
+              variant="ghost"
             />
-          )
+          </>
         }
       />
       <Row

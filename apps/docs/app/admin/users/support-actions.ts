@@ -9,6 +9,7 @@ import {
   member,
   oauthApp,
   organization,
+  session,
   user,
   webhookDelivery,
   webhookEndpoint,
@@ -17,6 +18,8 @@ import { and, count, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
+import { isSameEmail, MAX_EMAIL_LENGTH } from "@/lib/account/email-change";
+import { afterEmailChanged } from "@/lib/account/email-change-server";
 import { sendTwoFactorNotice } from "@/lib/account/two-factor-notice-server";
 import { resetTwoFactor } from "@/lib/account/two-factor-server";
 import { revokeStoredToken } from "@/lib/connected-accounts/server";
@@ -117,6 +120,68 @@ export async function resetTwoFactorAction(
           targetId: userId,
           subjectUserId: userId,
           metadata: { targetEmail: target.email },
+        },
+      };
+    },
+  );
+}
+
+const changeEmailSchema = userReason.extend({
+  newEmail: z.string().trim().toLowerCase().email().max(MAX_EMAIL_LENGTH),
+});
+
+/**
+ * For someone who lost their mailbox and has no other way to confirm it's
+ * them, only after the checks in the lost-email policy (the help page
+ * content/docs/help/account-and-billing/sign-in.mdx, "Lost access to your
+ * email"). The account moves to the new address, marked verified (support
+ * had a reply from it); every session is signed out, and the old address
+ * gets the "email changed" notice, by QRdx support.
+ */
+export async function changeEmailAction(
+  input: z.input<typeof changeEmailSchema>,
+): Promise<AdminActionResult> {
+  return runAdminAction(
+    {
+      action: "user.change_email",
+      schema: changeEmailSchema,
+      limit: "sensitive",
+    },
+    input,
+    async (_admin, { userId, newEmail }) => {
+      const target = await findUser(userId);
+      if (isSameEmail(target.email, newEmail)) {
+        throw adminError("That's already this account's email.");
+      }
+      const [taken] = await db
+        .select({ id: user.id })
+        .from(user)
+        .where(eq(user.email, newEmail))
+        .limit(1);
+      if (taken) {
+        throw adminError("That email already belongs to another QRdx account.");
+      }
+      await db.batch([
+        db
+          .update(user)
+          .set({ email: newEmail, emailVerified: true, updatedAt: new Date() })
+          .where(eq(user.id, userId)),
+        db.delete(session).where(eq(session.userId, userId)),
+      ]);
+      after(() =>
+        afterEmailChanged({
+          userId,
+          previousEmail: target.email,
+          newEmail,
+          bySupport: true,
+        }),
+      );
+      return {
+        audit: {
+          targetType: "user",
+          targetId: userId,
+          subjectUserId: userId,
+          metadata: { targetEmail: target.email, newEmail },
         },
       };
     },
