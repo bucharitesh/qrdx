@@ -40,6 +40,8 @@ const SAFARI_IPHONE_18 =
 
 const state = vi.hoisted(() => ({
   signedIn: true,
+  /** This deployment can email codes */
+  codesAvailable: true,
   /** The request's user agent and country */
   userAgent: "",
   country: null as string | null,
@@ -87,7 +89,9 @@ vi.mock("@repo/auth/passkey-rp", () => ({
   passkeyRelyingParty: () => ({ rpID: "localhost", origin: "x" }),
   isPasskeyOrigin: () => true,
 }));
-vi.mock("@/lib/account/reauth", () => ({ signInCodesAvailable: () => true }));
+vi.mock("@/lib/account/reauth", () => ({
+  signInCodesAvailable: () => state.codesAvailable,
+}));
 vi.mock("@/lib/account/linked-sign-ins-server", () => ({
   linkedSignInsFor: async () => [],
   configuredSocialProviders: () => [],
@@ -198,6 +202,7 @@ const sentCode = () => {
 beforeEach(() => {
   fakeDb.resetAll();
   state.signedIn = true;
+  state.codesAvailable = true;
   state.queries = [];
   state.logged = [];
   state.errors = [];
@@ -338,6 +343,24 @@ describe("Confirm it's you for a held session", () => {
     const home = await server.currentSession();
     if (!home) throw new Error("no session");
     expect(await server.requireRecentConfirmation(home)).toBeNull();
+  });
+
+  it("doesn't count a fresh sign-in where codes can't be emailed", async () => {
+    // Without email, a sign-in in the last 10 minutes counts as confirming;
+    // a copy of that sign-in used elsewhere must not.
+    state.codesAvailable = false;
+    signedIn();
+    at(CHROME_MAC, "IN");
+    const home = await server.currentSession();
+    if (!home) throw new Error("no session");
+    expect(await server.requireRecentConfirmation(home)).toBeNull();
+    at(FIREFOX_WINDOWS, "US");
+    const copy = await server.currentSession();
+    if (!copy) throw new Error("no session");
+    expect(await server.requireRecentConfirmation(copy)).toEqual({
+      ok: false,
+      error: CONFIRMATION_REQUIRED,
+    });
   });
 
   it("lets the session go once answered, from where it is now", async () => {
