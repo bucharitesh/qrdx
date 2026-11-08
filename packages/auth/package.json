@@ -30,7 +30,9 @@
     "./unproven-access": "./unproven-access.ts",
     "./verified-sign-up": "./verified-sign-up.ts",
     "./workspace-hooks": "./workspace-hooks.ts",
-    "./workspace-rules": "./workspace-rules.ts"
+    "./workspace-rules": "./workspace-rules.ts",
+    "./workspace-two-factor": "./workspace-two-factor.ts",
+    "./workspace-two-factor-rules": "./workspace-two-factor-rules.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
