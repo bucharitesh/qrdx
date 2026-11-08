@@ -1,4 +1,5 @@
 import { safeNextPath } from "@/lib/safe-redirect";
+import { isSocialSignIn, type SocialSignIn } from "./error-message";
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
@@ -11,14 +12,18 @@ export interface SignInPageParams {
   next: string;
   /** Arrived from /sign-out: say so. */
   signedOut: boolean;
-  /** A single sign-on that failed on the way back (?error=, ee/sso/messages.ts). */
-  ssoError: string | null;
+  /** A sign-in that failed on the way back (?error=, ./error-message.ts). */
+  error: string | null;
+  /** It was Google or GitHub (?via=); otherwise workspace single sign-on. */
+  via: SocialSignIn | null;
 }
 
 export function readSignInParams(params: SearchParams): SignInPageParams {
+  const via = first(params.via);
   return {
     next: safeNextPath(first(params.next)),
     signedOut: first(params.signedOut) === "1",
-    ssoError: first(params.error) ?? null,
+    error: first(params.error) ?? null,
+    via: isSocialSignIn(via) ? via : null,
   };
 }

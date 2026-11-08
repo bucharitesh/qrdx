@@ -14,6 +14,18 @@ Once you've [added a passkey](/docs/help/privacy-and-security/passkeys), you can
 
 The first time you sign in, QRdx creates your account. There's no password to remember.
 
+With Google or GitHub, QRdx only creates the account if they've verified your email address. If yours isn't verified there, verify it first (GitHub lists your addresses under **Settings** → **Emails**), or sign in with an email code instead.
+
+## An account for your address you didn't make
+
+If QRdx already has an account for your address and you didn't make it, sign in with an email code. Once that proves the address is yours, QRdx removes what the earlier sign-up could use to get back in:
+
+- its Google and GitHub links, and every session;
+- its two-step verification and trusted devices<IfAvailable feature="passkeys">, and its passkeys</IfAvailable>;
+- its API keys, and the apps it allowed to use the account.
+
+Everything else in the account stays, so check its workspaces and their members afterwards.
+
 ## Link Google or GitHub
 
 Go to **Settings** → **Profile & security** → **Sign-in methods**.

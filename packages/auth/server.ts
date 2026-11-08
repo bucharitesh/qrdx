@@ -64,6 +64,8 @@ import {
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
+import { unprovenAccessCleanup } from "./unproven-access";
+import { allUserInfoChecks, validateSocialSignUp } from "./verified-sign-up";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -191,9 +193,14 @@ export const auth = betterAuth({
       allowUnlinkingAll: true,
     },
   },
-  // Checks what an identity provider sent before an SSO sign-in creates,
-  // links or signs in an account (./ee/sso.ts). Other methods pass.
-  user: ssoLicensed ? { validateUserInfo: validateSsoUserInfo } : undefined,
+  // Checks what a provider sent before an account is created, linked or
+  // signed in to: no Google or GitHub sign-up from an unverified address
+  // (./verified-sign-up.ts), and SSO's checks (./ee/sso.ts).
+  user: {
+    validateUserInfo: ssoLicensed
+      ? allUserInfoChecks(validateSsoUserInfo, validateSocialSignUp)
+      : validateSocialSignUp,
+  },
   // Codes live in the core `verification` table. Identifiers hold addresses
   // ("sign-in-otp-<email>", "change-email-otp-<old>-<new>"), so they are
   // hashed like the codes themselves.
@@ -377,8 +384,12 @@ export const auth = betterAuth({
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
     // joins the workspace).
     ...(ssoLicensed ? [sso(ssoOptions), ssoGate()] : []),
-    // New sign-in alerts (./new-sign-in.ts). Last, so it sees each sign-in
-    // after the challenge has had its say.
+    // Proving an unproven account's address clears what an earlier holder
+    // left behind (./unproven-access.ts).
+    unprovenAccessCleanup(),
+    // New sign-in alerts, and a finished sign-in counting as "Confirm it's
+    // you" (./new-sign-in.ts). Last, so it sees each sign-in after the
+    // challenge has had its say.
     newSignIn(),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.

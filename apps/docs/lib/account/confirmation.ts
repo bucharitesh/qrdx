@@ -13,6 +13,11 @@
  *   ./confirmation-sign-in-server.ts). Where this deployment can't send
  *   codes, a sign-in within the last 10 minutes also counts.
  *
+ * A finished sign-in counts too, for its new session: any sign-in with
+ * two-step verification off, and with it on only one whose second step was
+ * answered or a passkey sign-in, never one a trusted device let skip it
+ * (packages/auth/new-sign-in.ts).
+ *
  * Each of these is something a stolen session cookie alone doesn't give.
  *
  * A confirmation lasts 10 minutes for the session that made it, so several
@@ -27,9 +32,10 @@ import {
   CONFIRM_RETURNED,
   CONFIRM_SIGN_IN_WRONG_ACCOUNT,
 } from "@repo/auth/confirm-sign-in-rules";
+import { UNVERIFIED_SIGN_UP_ERROR } from "@repo/auth/verified-sign-up";
 
-/** How long a confirmation lasts for its session. */
-export const CONFIRMATION_MINUTES = 10;
+/** How long a confirmation lasts for its session (a finished sign-in too). */
+export { CONFIRMATION_MINUTES } from "@repo/auth/confirm-sign-in-rules";
 /** An emailed confirmation code lasts this long and allows this many tries. */
 export const CONFIRMATION_CODE_MINUTES = 10;
 export const CONFIRMATION_CODE_ATTEMPTS = 3;
@@ -278,6 +284,11 @@ export function confirmSignInErrorMessage(code: string | null): string {
     case "unable_to_create_session":
     case "account_not_linked":
     case "signup_disabled":
+    // A provider that hasn't verified the address never makes an account
+    // (packages/auth/verified-sign-up.ts), so it can't be the linked one.
+    case UNVERIFIED_SIGN_UP_ERROR.github:
+    case UNVERIFIED_SIGN_UP_ERROR.google:
+    case UNVERIFIED_SIGN_UP_ERROR.other:
       return CONFIRMATION_MESSAGES.signInNotLinked;
     default:
       return CONFIRMATION_MESSAGES.signInFailed;

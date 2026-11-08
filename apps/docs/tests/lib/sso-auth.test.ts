@@ -330,8 +330,53 @@ describe("what the identity provider says about the address", () => {
       context as never,
     );
 
-  it("runs on every sign-in, link and new account", () => {
-    expect(auth.options.user?.validateUserInfo).toBe(validateSsoUserInfo);
+  it("runs on every sign-in, link and new account, with the Google and GitHub sign-up check", async () => {
+    // The server's check is SSO's plus packages/auth/verified-sign-up.ts.
+    const validate = auth.options.user?.validateUserInfo as (
+      ...args: Parameters<typeof validateSsoUserInfo>
+    ) => ReturnType<typeof validateSsoUserInfo>;
+    const send = (
+      source: Record<string, unknown>,
+      user: Row = { email: "ana@acme.com" },
+    ) => validate({ user, source } as Check, {} as never);
+    for (const action of ["create-user", "link-account", "sign-in"]) {
+      expect(
+        await send({
+          method: "sso-oidc",
+          action,
+          sso: {
+            providerId: "sso-abcdefabcdef",
+            profile: { email_verified: false },
+          },
+        }),
+      ).toMatchObject({ error: "sso_email_unverified" });
+      expect(
+        await send({
+          method: "sso-oidc",
+          action,
+          sso: {
+            providerId: "sso-abcdefabcdef",
+            profile: { email_verified: true },
+          },
+        }),
+      ).toBeUndefined();
+    }
+    expect(
+      await send(
+        {
+          method: "oauth",
+          action: "create-user",
+          oauth: { providerId: "github" },
+        },
+        { email: "ana@acme.com", emailVerified: false },
+      ),
+    ).toMatchObject({ error: "github_email_unverified" });
+    expect(
+      await send(
+        { method: "oauth", action: "sign-in", oauth: { providerId: "github" } },
+        { email: "ana@acme.com", emailVerified: false },
+      ),
+    ).toBeUndefined();
   });
 
   it("refuses an explicit no, for new accounts, links and returning sign-ins", async () => {
