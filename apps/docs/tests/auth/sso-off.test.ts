@@ -82,6 +82,15 @@ describe("without QRDX_EE_LICENSE", () => {
     }
   });
 
+  it("registers the address-proof cleanup, and new sign-ins (alerts and confirmations) after the challenge", async () => {
+    const { auth } = await load(undefined);
+    const ids = (auth.options.plugins ?? []).map((plugin) => plugin.id);
+    expect(ids).toContain("qrdx-unproven-access");
+    expect(ids.indexOf("qrdx-new-sign-in")).toBeGreaterThan(
+      ids.indexOf("qrdx-sign-in-challenge"),
+    );
+  });
+
   it("still refuses a Google or GitHub sign-up the provider hasn't verified", async () => {
     const { auth } = await load(undefined);
     const validate = (
