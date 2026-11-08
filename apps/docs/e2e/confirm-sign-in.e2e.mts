@@ -73,14 +73,22 @@ const { cdp, evaluate, goto, waitFor } = browser;
 const csp = await recordCspViolations(browser);
 const cspOn = await cspEnforced(BASE);
 
-async function shot(name: string) {
-  if (!SHOTS) return;
-  // The cookie banner would cover the page.
+/**
+ * The cookie banner would cover the page. Never while a dialog is open: a
+ * click outside a dialog closes it.
+ */
+async function dismissCookieBanner() {
   await evaluate(() => {
+    if (document.querySelector('[role="dialog"]')) return;
     const reject = window.__e2e.byRole("button", "Reject all", { exact: true });
     if (reject) window.__e2e.click(reject);
   });
   await sleep(300);
+}
+
+async function shot(name: string) {
+  if (!SHOTS) return;
+  await dismissCookieBanner();
   mkdirSync(SHOTS, { recursive: true });
   for (const scheme of ["light", "dark"] as const) {
     await cdp.send("Emulation.setEmulatedMedia", {
@@ -268,6 +276,7 @@ async function startEmailChange(newEmail: string) {
   await goto(`${BASE}/settings/account`, { wait: 2500 });
   // The dialog starts with the method that worked last in this browser.
   await evaluate(() => localStorage.removeItem("qrdx:confirm-method"));
+  await dismissCookieBanner();
   await evaluate(() =>
     window.__e2e.click(
       window.__e2e.byRole("button", "Change", { exact: true }) as HTMLElement,
