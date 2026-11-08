@@ -49,6 +49,7 @@ import {
 } from "./passkey";
 import { passkeyRelyingParty } from "./passkey-rp";
 import { hasEntitledSubscription, workspacePlanTier } from "./plan";
+import { sessionLifetime } from "./session-lifetime";
 import { signInChallenge } from "./sign-in-challenge";
 import {
   BACKUP_CODE_COUNT,
@@ -280,6 +281,9 @@ export const auth = betterAuth({
     }),
   },
   plugins: [
+    // A sign-in lasts at most 30 days, however much it's used
+    // (./session-lifetime.ts). First, so every session read goes through it.
+    sessionLifetime(),
     // Signing in again to confirm it's you: the provider's chooser, and the
     // cookie cleared on sign-out (./confirm-sign-in.ts).
     confirmSignIn(),

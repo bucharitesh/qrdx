@@ -1,4 +1,5 @@
 import { auth } from "@repo/auth/server";
+import { SESSION_MAX_MS } from "@repo/auth/session-lifetime";
 import { database as db, session as sessionTable } from "@repo/database";
 import { and, desc, eq, gt } from "drizzle-orm";
 import type { Metadata } from "next";
@@ -101,7 +102,16 @@ export default async function AccountPage({
         })
         .from(sessionTable)
         .where(
-          and(eq(sessionTable.userId, userId), gt(sessionTable.expiresAt, now)),
+          and(
+            eq(sessionTable.userId, userId),
+            gt(sessionTable.expiresAt, now),
+            // Past the 30-day cap a session no longer works, whatever its
+            // row says (packages/auth/session-lifetime.ts).
+            gt(
+              sessionTable.createdAt,
+              new Date(now.getTime() - SESSION_MAX_MS),
+            ),
+          ),
         )
         .orderBy(desc(sessionTable.updatedAt))
         .limit(SESSION_LIMIT),
