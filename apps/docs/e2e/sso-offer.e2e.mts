@@ -349,10 +349,16 @@ async function enterCode(code: string) {
 /** "Confirm it's you" with an emailed code (an owner without two-step). */
 async function confirmByEmail(email: string) {
   const title = "Confirm it's you";
-  await waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
-    args: [title] as never[],
-    timeout: 20_000,
-  });
+  const asked = await waitFor(
+    (t: string) => Boolean(window.__e2e.byRole("dialog", t)),
+    { args: [title] as never[], timeout: 5000 },
+  ).then(
+    () => true,
+    () => false,
+  );
+  // A sign-in in the last 10 minutes already counts as confirming
+  // (packages/auth/new-sign-in.ts): nothing to answer.
+  if (!asked) return;
   const since = logSize();
   await waitFor(
     (t: string) => {

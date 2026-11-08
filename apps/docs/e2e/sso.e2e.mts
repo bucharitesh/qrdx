@@ -1164,6 +1164,12 @@ try {
       }) as HTMLElement,
     ),
   );
+  // Removing someone asks "Confirm it's you" unless this session confirmed
+  // (or signed in) in the last 10 minutes.
+  if (await confirmAsked(4000)) {
+    await confirmByEmail(owner);
+    check("Removing a member asks to confirm it's you first", true);
+  }
   await waitText(`Removed ${ben.split("@")[0]}`).catch(() => null);
   await sleep(1000);
   check(
