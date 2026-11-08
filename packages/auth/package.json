@@ -17,6 +17,7 @@
     "./passkey": "./passkey.ts",
     "./passkey-client": "./passkey-client.ts",
     "./passkey-rp": "./passkey-rp.ts",
+    "./session-lifetime": "./session-lifetime.ts",
     "./sign-in-method": "./sign-in-method.ts",
     "./keys": "./keys.ts",
     "./new-sign-in": "./new-sign-in.ts",
