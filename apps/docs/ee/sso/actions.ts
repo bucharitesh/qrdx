@@ -10,12 +10,14 @@ import {
   deleteSsoConnection,
   type SsoConnectionView,
   setSsoJoinRole,
+  setSsoRequired,
   type UpdateSsoInput,
   updateSsoConnection,
   verifySsoDomain,
 } from "@/ee/sso/connections";
 import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
 import {
+  type ConfirmableSession,
   currentSession,
   requireRecentConfirmation,
 } from "@/lib/account/confirmation-server";
@@ -28,9 +30,10 @@ import { UnauthorizedError } from "@/types/errors";
 
 // Settings → Single sign-on. ee/sso/connections.ts does the checks (role,
 // Business plan) and calls the plugin through auth.api.
-// Creating, editing, verifying and removing the connection also need a
-// recent "Confirm it's you" (lib/account/confirmation-server.ts); without
-// one they answer CONFIRMATION_REQUIRED and the page asks, then retries.
+// Creating, editing, verifying and removing the connection, and turning
+// "Require single sign-on" on or off, also need a recent "Confirm it's you"
+// (lib/account/confirmation-server.ts); without one they answer
+// CONFIRMATION_REQUIRED and the page asks, then retries.
 
 export type SsoActionResult<T> =
   | { success: true; data: T }
@@ -86,7 +89,11 @@ const confirmationRequired = (): SsoActionResult<never> => ({
 /** The workspace always comes from the session and the URL, never the client. */
 async function mutate<T>(
   action: string,
-  fn: (scope: ActiveScope, requestHeaders: Headers) => Promise<T>,
+  fn: (
+    scope: ActiveScope,
+    requestHeaders: Headers,
+    session: ConfirmableSession | null,
+  ) => Promise<T>,
   { confirm = false }: { confirm?: boolean } = {},
 ): Promise<SsoActionResult<T>> {
   try {
@@ -104,8 +111,9 @@ async function mutate<T>(
     await enforceRateLimits([
       { limiter: mutationLimiter, key: `sso:user:${scope.userId}` },
     ]);
+    let session: ConfirmableSession | null = null;
     if (confirm) {
-      const session = await currentSession();
+      session = await currentSession();
       if (!session || session.userId !== scope.userId) {
         throw new UnauthorizedError();
       }
@@ -113,7 +121,7 @@ async function mutate<T>(
         return confirmationRequired();
       }
     }
-    const data = await fn(scope, requestHeaders);
+    const data = await fn(scope, requestHeaders, session);
     revalidatePath("/dashboard", "layout");
     return { success: true, data };
   } catch (error) {
@@ -196,4 +204,30 @@ export async function setSsoRole(
     }
     return setSsoJoinRole(scope, requestHeaders, role);
   });
+}
+
+/**
+ * "Require single sign-on for <domain>". Turning it on signs the people it
+ * applies to out of sessions that didn't come from SSO; `signedOut` says how
+ * many.
+ */
+export async function setSsoRequirement(
+  on: boolean,
+): Promise<SsoActionResult<{ on: boolean; signedOut: number }>> {
+  return mutate(
+    "setSsoRequirement",
+    (scope, requestHeaders, session) => {
+      if (typeof on !== "boolean") {
+        throw new HttpError(400, "VALIDATION_ERROR", "Choose on or off.");
+      }
+      if (!session) throw new UnauthorizedError();
+      return setSsoRequired(
+        scope,
+        requestHeaders,
+        { sessionId: session.sessionId, email: session.email },
+        on,
+      );
+    },
+    { confirm: true },
+  );
 }

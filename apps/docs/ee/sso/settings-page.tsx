@@ -7,6 +7,7 @@ import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { getSsoOverview } from "@/ee/sso/connections";
 import { SsoManager } from "@/ee/sso/sso-manager";
+import { currentSession } from "@/lib/account/confirmation-server";
 import { forbiddenMessage } from "@/lib/permissions";
 import { cheapestPlanWith } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -21,7 +22,12 @@ const DOCS_HREF = "/docs/help/teams/single-sign-on";
 /** The workspace's SSO connection (OIDC or SAML): Business plan. */
 export default async function SsoSettingsPage() {
   const scope = await requireDashboardScope();
-  const overview = await getSsoOverview(scope, await headers());
+  const session = await currentSession();
+  const overview = await getSsoOverview(
+    scope,
+    await headers(),
+    session ? { sessionId: session.sessionId, email: session.email } : null,
+  );
   const { plan, allowed, canManage, connection } = overview;
   const ssoPlan = cheapestPlanWith((limits) => limits.sso);
 
