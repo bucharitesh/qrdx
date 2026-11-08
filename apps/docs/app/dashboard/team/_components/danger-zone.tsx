@@ -18,6 +18,10 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { deleteTeam, leaveTeam } from "@/actions/organizations";
+import {
+  ConfirmIdentityProvider,
+  useConfirmation,
+} from "@/components/confirm-identity/provider";
 import { useRefreshTeams } from "@/components/org-switcher";
 
 export function LeaveTeamButton({
@@ -83,7 +87,23 @@ export function LeaveTeamButton({
   );
 }
 
-export function DeleteTeamButton({
+/**
+ * Deleting a workspace asks "Confirm it's you" after the typed URL, when
+ * this session hasn't recently. Leaving one never does.
+ */
+export function DeleteTeamButton(props: {
+  organizationId: string;
+  teamName: string;
+  teamSlug: string;
+}) {
+  return (
+    <ConfirmIdentityProvider>
+      <DeleteTeamDialog {...props} />
+    </ConfirmIdentityProvider>
+  );
+}
+
+function DeleteTeamDialog({
   organizationId,
   teamName,
   teamSlug,
@@ -94,13 +114,18 @@ export function DeleteTeamButton({
 }) {
   const refresh = useRefreshTeams();
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const [open, setOpen] = useState(false);
   const [confirmSlug, setConfirmSlug] = useState("");
   const [isPending, startTransition] = useTransition();
 
   const remove = () =>
     startTransition(async () => {
-      const result = await deleteTeam({ organizationId, confirmSlug });
+      const result = await withConfirmation(
+        () => deleteTeam({ organizationId, confirmSlug }),
+        "delete-workspace",
+      );
+      if (result === null) return;
       if (!result.ok) {
         toast.error(result.error);
         return;
