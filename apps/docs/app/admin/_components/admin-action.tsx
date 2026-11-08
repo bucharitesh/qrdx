@@ -31,6 +31,7 @@ import {
 } from "../codes/actions";
 import {
   cancelImportAction,
+  cancelTwoFactorResetAction,
   changeEmailAction,
   deleteUserAccountAction,
   disconnectIntegrationAction,
@@ -59,6 +60,7 @@ const ACTIONS = {
   changeEmail: changeEmailAction,
   unlinkSignIn: unlinkSignInMethodAction,
   resetTwoFactor: resetTwoFactorAction,
+  cancelTwoFactorReset: cancelTwoFactorResetAction,
   retryDelivery: retryWebhookDeliveryAction,
   requeueImport: requeueImportAction,
   cancelImport: cancelImportAction,
@@ -82,6 +84,9 @@ function describeResult(success: string, data: unknown): string {
   }
   if (value.emailed === false) {
     return `${success}. No email was sent from this environment; share the invite link instead.`;
+  }
+  if (typeof value.dueAt === "string") {
+    return `${success} ${value.dueAt.slice(0, 10)} (UTC)`;
   }
   return success;
 }

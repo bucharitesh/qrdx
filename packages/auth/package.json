@@ -28,6 +28,7 @@
     "./ee-license": "./ee-license.ts",
     "./sso": "./ee/sso.ts",
     "./sso-rules": "./ee/sso-rules.ts",
+    "./two-factor-reset": "./two-factor-reset.ts",
     "./unproven-access": "./unproven-access.ts",
     "./verified-sign-up": "./verified-sign-up.ts",
     "./workspace-hooks": "./workspace-hooks.ts",
