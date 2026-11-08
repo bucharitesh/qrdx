@@ -101,11 +101,11 @@ export function SignInSection({ profile }: { profile: UserProfile }) {
             <AdminAction
               action="resetTwoFactor"
               confirmLabel="Turn off"
-              description={`Only after ${user.email} wrote to support from that address and lost their authenticator app and backup codes. Their secret, backup codes and trusted devices are deleted, and the address gets a notice.`}
+              description={`Only after ${user.email} wrote to support from that address and lost their authenticator app and backup codes. Their secret, backup codes and trusted devices are deleted, every session is signed out, and the address gets a notice.`}
               destructive
               input={{ userId: user.id }}
               label="Turn off"
-              success="Two-step verification turned off"
+              success="Two-step verification turned off and every session signed out"
               title="Turn off two-step verification"
               variant="ghost"
             />

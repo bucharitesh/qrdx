@@ -5,6 +5,7 @@ import {
   regenerateBackupCodes as regenerate,
   removeAuthenticatorApp as removeApp,
   startAuthenticatorSetup as start,
+  type TurnedOn,
   type TwoFactorResult,
   turnOffTwoFactor as turnOff,
   turnOnWithExistingPasskey as turnOnWithExisting,
@@ -49,9 +50,12 @@ export async function existingPasskeyOptions(): Promise<
   return existingOptions();
 }
 
-/** Then the passkey's answer turns it on; returns the backup codes. */
+/**
+ * Then the passkey's answer turns it on (signing out the account's other
+ * sessions); returns the backup codes.
+ */
 export async function turnOnWithExistingPasskey(
   input: unknown,
-): Promise<TwoFactorResult<{ backupCodes: string[] }>> {
+): Promise<TwoFactorResult<TurnedOn>> {
   return turnOnWithExisting(input);
 }
