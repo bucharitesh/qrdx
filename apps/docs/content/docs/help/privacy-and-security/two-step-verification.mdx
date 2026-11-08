@@ -89,7 +89,18 @@ So does creating, editing, verifying or deleting a workspace's single sign-on co
 
 With two-step verification on, confirm with <IfAvailable feature="passkeys">your passkey, </IfAvailable>a code from your authenticator app, or a backup code (which is then used up). QRdx doesn't offer an emailed code here, so getting into your email isn't enough to change your security.
 
-With it off, QRdx emails you a 6-digit code instead.
+With it off, confirm with any of these:
+
+- a 6-digit code QRdx emails you;
+- signing in again with a Google or GitHub account you've linked<IfAvailable feature="sso">, or your workspace's single sign-on</IfAvailable>.
+
+<IfAvailable feature="passkeys">
+Your passkey works too, if you have one.
+</IfAvailable>
+
+Signing in again takes you to that sign-in and back to the same page. Your change isn't saved while you're away, so make it again when you're back. Use the account you linked: QRdx won't switch you to another account or create one.
+
+So if you can't get into your email, you can still confirm another way. With none of them, see [Lost access to your email](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
 
 A confirmation lasts 10 minutes in that browser, so several changes in a row ask once.
 
