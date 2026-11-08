@@ -677,7 +677,11 @@ describe("a backup code used to confirm it's you", () => {
     expect(await server.confirmWithCode({ code: "ABCDE-FGH23" })).toEqual({
       ok: true,
     });
-    expect(confirmedFor()).toEqual([`qrdx-confirmed-${SESSION}`]);
+    // A backup code confirms, and strongly (support actions ask for that).
+    expect(confirmedFor()).toEqual([
+      `qrdx-confirmed-${SESSION}`,
+      `qrdx-confirmed-strong-${SESSION}`,
+    ]);
     expect(state.errors).toContain("account.backupCodeNotice: notice exploded");
   });
 });
