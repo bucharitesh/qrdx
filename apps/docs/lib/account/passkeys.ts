@@ -159,6 +159,9 @@ export function signInFailureMessage(error: {
       return "That passkey isn't linked to a QRdx account anymore. Sign in another way.";
     case "BANNED_USER":
       return "This account is suspended. Contact support if you think that's a mistake.";
+    // The account's address is at a domain whose company requires SSO.
+    case "sso_required":
+      return "Your company requires single sign-on for this account. Sign in with SSO.";
     default:
       return "That passkey didn't work. Try again, or sign in another way.";
   }

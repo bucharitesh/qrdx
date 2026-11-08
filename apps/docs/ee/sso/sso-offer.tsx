@@ -22,14 +22,22 @@ interface SsoOfferProps {
   onError: (message: string | null) => void;
   /** "Email me a code" is in progress. */
   sendingCode: boolean;
-  onEmailCode: () => void;
+  /**
+   * "Email me a code"; absent when a code sign-in was just refused because
+   * the domain requires SSO.
+   */
+  onEmailCode?: () => void;
   onBack: () => void;
+  /** The domain requires SSO (only the workspace's owners can use a code). */
+  required?: boolean;
 }
 
 /**
  * The email step's answer when the address's domain signs in with SSO
- * (ee/sso/sign-in-offer.ts): Continue with SSO, or an email code anyway,
- * since SSO isn't required. The sign-in panel shows the heading.
+ * (ee/sso/sign-in-offer.ts): Continue with SSO, or an email code anyway.
+ * Where the domain requires SSO, the code is still offered (the workspace's
+ * owners keep it) until a code sign-in is refused. The sign-in panel shows
+ * the heading.
  */
 export function SsoOffer({
   email,
@@ -40,6 +48,7 @@ export function SsoOffer({
   sendingCode,
   onEmailCode,
   onBack,
+  required = false,
 }: SsoOfferProps) {
   const id = useId();
   const [starting, setStarting] = useState(false);
@@ -90,7 +99,10 @@ export function SsoOffer({
         id={statusId}
         role={error ? "alert" : undefined}
       >
-        {error ?? "You'll continue on your company's sign-in page."}
+        {error ??
+          (required
+            ? "Your company requires it for this address. You'll continue on its sign-in page."
+            : "You'll continue on your company's sign-in page.")}
       </p>
 
       {/* The 40 px tap targets keep the code step's spacing and edges. */}
@@ -103,14 +115,16 @@ export function SsoOffer({
         >
           Use a different email
         </button>
-        <button
-          className={TEXT_ACTION}
-          disabled={busy}
-          onClick={onEmailCode}
-          type="button"
-        >
-          {sendingCode ? "Sending…" : "Email me a code"}
-        </button>
+        {onEmailCode && (
+          <button
+            className={TEXT_ACTION}
+            disabled={busy}
+            onClick={onEmailCode}
+            type="button"
+          >
+            {sendingCode ? "Sending…" : "Email me a code"}
+          </button>
+        )}
       </div>
     </div>
   );

@@ -4,6 +4,7 @@
 // else is a workspace single sign-on and keeps SSO's own messages
 // (ee/sso/messages.ts). Pure and client-safe.
 
+import { SSO_REQUIRED_ERROR } from "@repo/auth/sso-required-rules";
 import { UNVERIFIED_SIGN_UP_ERROR } from "@repo/auth/verified-sign-up";
 import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { signInPath } from "@/lib/safe-redirect";
@@ -37,6 +38,9 @@ export function signInErrorMessage(
       return "Google hasn't verified this email address, so QRdx can't create an account with it. Sign in with an email code instead.";
     case UNVERIFIED_SIGN_UP_ERROR.other:
       return "That account's email address isn't verified, so QRdx can't create an account with it. Sign in with an email code instead.";
+    // Google or GitHub for an address whose company requires SSO.
+    case SSO_REQUIRED_ERROR:
+      return ssoSignInErrorMessage(code);
   }
   if (!via) return ssoSignInErrorMessage(code);
   const label = LABELS[via];

@@ -1,6 +1,8 @@
 // Workspace SSO copy shared by the sign-in panel, the /sign-in page and the
 // settings page. Pure and client-safe.
 
+import type { EmailChangeSsoProblem } from "@repo/auth/sso-required-rules";
+
 /** Codes the plugin and packages/auth/ee/sso.ts send back (?error= or JSON). */
 export function ssoSignInErrorMessage(
   code: string | null | undefined,
@@ -13,6 +15,8 @@ export function ssoSignInErrorMessage(
     case "SSO_NOT_AVAILABLE":
       // The server's message names the domain.
       return description || "SSO isn't set up for that address.";
+    case "sso_required":
+      return "Your company requires single sign-on for this address. Sign in with SSO.";
     case "sso_unavailable":
       return "Single sign-on isn't available for this workspace right now. Sign in another way.";
     case "sso_email_outside_domain":
@@ -35,4 +39,11 @@ export function ssoSignInErrorMessage(
     default:
       return "Single sign-on didn't work. Try again, or sign in another way.";
   }
+}
+
+/** Why an email change was refused: a domain that requires single sign-on. */
+export function ssoEmailChangeMessage(problem: EmailChangeSsoProblem): string {
+  return problem.kind === "off"
+    ? `Your company requires single sign-on for ${problem.domain}, so your account can't move to an address elsewhere. Ask your workspace admin.`
+    : `Your company requires single sign-on for ${problem.domain}. To use an address there, sign in with SSO instead.`;
 }
