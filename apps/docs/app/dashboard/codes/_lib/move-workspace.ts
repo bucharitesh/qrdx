@@ -13,7 +13,12 @@ import { can, forbiddenMessage } from "@/lib/permissions";
 import { assertCan } from "@/lib/permissions-server";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";
-import { findWorkspaceById, listWorkspaces } from "@/lib/workspaces";
+import {
+  findWorkspaceById,
+  listWorkspaces,
+  shutsOut,
+  TwoFactorRequiredError,
+} from "@/lib/workspaces";
 import { countUnarchived, getCode, type QrCodeView } from "./qr-codes";
 
 // Moving a dynamic code to another workspace (the code row menu, "Move to
@@ -31,17 +36,25 @@ export interface MoveTarget {
   logo: string | null;
 }
 
-/** Workspaces the person may add codes to, other than the open one. */
+/**
+ * Workspaces the person may add codes to, other than the open one (not one
+ * that requires two-step verification they haven't turned on).
+ */
 export async function listMoveTargets(
   scope: ActiveScope,
 ): Promise<MoveTarget[]> {
-  const workspaces = await listWorkspaces(scope.userId);
+  const workspaces = (await listWorkspaces(scope.userId)).filter(
+    (workspace) =>
+      workspace.id !== scope.organizationId &&
+      can(workspace.role, "content.write"),
+  );
+  const open = await Promise.all(
+    workspaces.map(
+      async (workspace) => !(await shutsOut(scope.userId, workspace)),
+    ),
+  );
   return workspaces
-    .filter(
-      (workspace) =>
-        workspace.id !== scope.organizationId &&
-        can(workspace.role, "content.write"),
-    )
+    .filter((_, index) => open[index])
     .map(({ id, name, slug, logo }) => ({ id, name, slug, logo }));
 }
 
@@ -88,6 +101,7 @@ export async function moveCodeToWorkspace(
       `You can't add codes to ${target.name}. ${forbiddenMessage(target.role, "content.write")}`,
     );
   }
+  if (await shutsOut(scope.userId, target)) throw new TwoFactorRequiredError();
 
   const [row] = await db
     .select()

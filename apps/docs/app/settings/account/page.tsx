@@ -35,6 +35,7 @@ import {
   SignInMethodsSection,
 } from "./_components/sign-in-methods-section";
 import { TwoFactorSection } from "./_components/two-factor-section";
+import { WorkspaceTwoFactorNotice } from "./_components/workspace-two-factor-notice";
 
 export const metadata: Metadata = {
   title: "Profile & security",
@@ -127,6 +128,9 @@ export default async function AccountPage({
           description="Your profile, how you sign in, where you're signed in, and your data."
           title="Profile & security"
         />
+
+        {/* Sent here by a workspace that requires two-step verification. */}
+        <WorkspaceTwoFactorNotice next={first(params.next)} userId={userId} />
 
         <ProfileSection
           profile={{
