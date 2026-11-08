@@ -138,6 +138,7 @@ export const CONFIRMATION_ACTIONS = {
   "add-authenticator": "set up an authenticator app",
   "remove-authenticator": "remove your authenticator app",
   sso: "change single sign-on",
+  "support-change": "make this change for someone",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
@@ -204,6 +205,8 @@ export const CONFIRMATION_MESSAGES = {
     "That took longer than 10 minutes, so nothing changed. Try again.",
   signInDifferentAccount:
     "You signed in to a different QRdx account, so nothing changed here. Sign out, then sign in to the account you want to change.",
+  signInTwoFactorOn:
+    "Two-step verification is on now, so confirm with it instead: your passkey, authenticator app or a backup code.",
   signInConfirmed:
     "Thanks, that's confirmed. You can make your change in the next 10 minutes.",
 } as const;

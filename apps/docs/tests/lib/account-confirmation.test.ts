@@ -370,7 +370,20 @@ function account({
 const confirmedRows = () =>
   fakeDb
     .rows("verification")
-    .filter((row) => String(row.identifier).startsWith("qrdx-confirmed-"));
+    .filter(
+      (row) =>
+        String(row.identifier).startsWith("qrdx-confirmed-") &&
+        !String(row.identifier).startsWith("qrdx-confirmed-strong-"),
+    );
+/** Confirmations made with a passkey, an authenticator or a backup code. */
+const strongRows = () =>
+  fakeDb
+    .rows("verification")
+    .filter((row) =>
+      String(row.identifier).startsWith("qrdx-confirmed-strong-"),
+    );
+const strongNow = (sessionId = SESSION) =>
+  server.hasRecentStrongConfirmation({ userId: USER, sessionId });
 
 async function confirmNow() {
   await server.recordConfirmation({ userId: USER, sessionId: state.sessionId });
@@ -718,7 +731,10 @@ describe("a confirmation", () => {
         expiresAt: new Date(Date.now() + 1000),
       },
     ]);
-    await confirmNow();
+    await server.recordConfirmation(
+      { userId: USER, sessionId: SESSION },
+      { strong: true },
+    );
     await server.carryConfirmation(
       { userId: USER, sessionId: SESSION },
       "better-auth.session_token=token_2.sig; Path=/",
@@ -726,6 +742,26 @@ describe("a confirmation", () => {
     expect(confirmedRows().map((row) => row.identifier)).toEqual([
       "qrdx-confirmed-session_2",
     ]);
+    expect(await strongNow("session_2")).toBe(true);
+    expect(await strongNow(SESSION)).toBe(false);
+  });
+
+  it("is strong only with a passkey, an authenticator or a backup code", async () => {
+    account({ on: true, app: true, passkeys: 1 });
+    expect(await server.confirmWithCode({ code: TOTP })).toEqual({ ok: true });
+    expect(await strongNow()).toBe(true);
+    fakeDb.resetAll();
+    account({ on: true, passkeys: 1 });
+    expect(await server.confirmWithCode({ code: "ABCDE-FGH23" })).toEqual({
+      ok: true,
+    });
+    expect(await strongNow()).toBe(true);
+    fakeDb.resetAll();
+    account({ passkeys: 1 });
+    expect(await server.confirmWithPasskey({ response: { id: "c1" } })).toEqual(
+      { ok: true },
+    );
+    expect(await strongNow()).toBe(true);
   });
 });
 
@@ -917,6 +953,8 @@ describe("confirming with an emailed code", () => {
     );
     expect(await server.confirmWithEmailCode({ code })).toEqual({ ok: true });
     expect(confirmedRows()).toHaveLength(1);
+    // An emailed code is never strong: the mailbox is enough for it.
+    expect(strongRows()).toHaveLength(0);
     expect(await server.confirmWithEmailCode({ code })).toMatchObject({
       ok: false,
       codeDead: true,
