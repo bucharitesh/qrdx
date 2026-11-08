@@ -17,7 +17,16 @@
 // The sign-in page asks which address to sign in as. ?auto=<email> on the
 // authorize/SSO URL skips the form (scripted runs). SAML extras for negative
 // tests, as query parameters on the SSO URL: unsigned=1 (no signature),
-// notimes=1 (no NotBefore/NotOnOrAfter).
+// notimes=1 (no NotBefore/NotOnOrAfter), noexpiry=1 (NotBefore only),
+// sha1=1 (signed with RSA-SHA1).
+//
+// Sign-in started here, like a tile in an IdP's app dashboard (IdP-initiated
+// SAML): GET /saml/tile?provider=<QRdx connection id>, which asks who to sign
+// in as (or ?auto=<email>), then posts a response that answers no request
+// (no InResponseTo) to that connection's ACS on MOCK_IDP_SP_ORIGIN, with
+// ?relay=<RelayState> if given. The flags above work there too, and
+// format=json returns { acs, SAMLResponse, RelayState } instead of posting
+// (scripted replays).
 
 import { execFileSync } from "node:child_process";
 import {
@@ -236,16 +245,21 @@ async function samlRespond(res, url, email) {
   const metadata = await (await fetch(metadataUrl)).text();
   const sp = saml.ServiceProvider({ metadata });
   const provider = idp();
+  // None when the sign-in started here (/saml/tile).
   const requestId = url.searchParams.get("rid");
+  const answers = requestId ? ` InResponseTo="${escapeHtml(requestId)}"` : "";
   const now = new Date();
   const later = new Date(now.getTime() + 5 * 60 * 1000);
   const id = `_${randomBytes(16).toString("hex")}`;
   const assertionId = `_${randomBytes(16).toString("hex")}`;
   const noTimes = url.searchParams.get("notimes") === "1";
-  const conditions = noTimes
-    ? `<saml:Conditions><saml:AudienceRestriction><saml:Audience>${escapeHtml(sp.entityMeta.getEntityID())}</saml:Audience></saml:AudienceRestriction></saml:Conditions>`
-    : `<saml:Conditions NotBefore="${now.toISOString()}" NotOnOrAfter="${later.toISOString()}"><saml:AudienceRestriction><saml:Audience>${escapeHtml(sp.entityMeta.getEntityID())}</saml:Audience></saml:AudienceRestriction></saml:Conditions>`;
-  const assertion = `<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="${assertionId}" Version="2.0" IssueInstant="${now.toISOString()}"><saml:Issuer>${SAML_ENTITY_ID}</saml:Issuer><saml:Subject><saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">${escapeHtml(email)}</saml:NameID><saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"><saml:SubjectConfirmationData NotOnOrAfter="${later.toISOString()}" Recipient="${escapeHtml(acs)}" InResponseTo="${escapeHtml(requestId)}"/></saml:SubjectConfirmation></saml:Subject>${conditions}<saml:AuthnStatement AuthnInstant="${now.toISOString()}" SessionIndex="${assertionId}"><saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef></saml:AuthnContext></saml:AuthnStatement><saml:AttributeStatement><saml:Attribute Name="email"><saml:AttributeValue>${escapeHtml(email)}</saml:AttributeValue></saml:Attribute><saml:Attribute Name="displayName"><saml:AttributeValue>${escapeHtml(email.split("@")[0])}</saml:AttributeValue></saml:Attribute></saml:AttributeStatement></saml:Assertion>`;
+  const times = noTimes
+    ? ""
+    : url.searchParams.get("noexpiry") === "1"
+      ? ` NotBefore="${now.toISOString()}"`
+      : ` NotBefore="${now.toISOString()}" NotOnOrAfter="${later.toISOString()}"`;
+  const conditions = `<saml:Conditions${times}><saml:AudienceRestriction><saml:Audience>${escapeHtml(sp.entityMeta.getEntityID())}</saml:Audience></saml:AudienceRestriction></saml:Conditions>`;
+  const assertion = `<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="${assertionId}" Version="2.0" IssueInstant="${now.toISOString()}"><saml:Issuer>${SAML_ENTITY_ID}</saml:Issuer><saml:Subject><saml:NameID Format="urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress">${escapeHtml(email)}</saml:NameID><saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer"><saml:SubjectConfirmationData NotOnOrAfter="${later.toISOString()}" Recipient="${escapeHtml(acs)}"${answers}/></saml:SubjectConfirmation></saml:Subject>${conditions}<saml:AuthnStatement AuthnInstant="${now.toISOString()}" SessionIndex="${assertionId}"><saml:AuthnContext><saml:AuthnContextClassRef>urn:oasis:names:tc:SAML:2.0:ac:classes:PasswordProtectedTransport</saml:AuthnContextClassRef></saml:AuthnContext></saml:AuthnStatement><saml:AttributeStatement><saml:Attribute Name="email"><saml:AttributeValue>${escapeHtml(email)}</saml:AttributeValue></saml:Attribute><saml:Attribute Name="displayName"><saml:AttributeValue>${escapeHtml(email.split("@")[0])}</saml:AttributeValue></saml:Attribute></saml:AttributeStatement></saml:Assertion>`;
   let signedAssertion = assertion;
   if (url.searchParams.get("unsigned") !== "1") {
     signedAssertion = saml.SamlLib.constructSAMLSignature({
@@ -253,7 +267,10 @@ async function samlRespond(res, url, email) {
       referenceTagXPath: "/*[local-name(.)='Assertion']",
       privateKey: samlKey,
       privateKeyPass: undefined,
-      signatureAlgorithm: "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+      signatureAlgorithm:
+        url.searchParams.get("sha1") === "1"
+          ? "http://www.w3.org/2000/09/xmldsig#rsa-sha1"
+          : "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
       signingCert: provider.entityMeta.getX509Certificate("signing"),
       isBase64Output: false,
       signatureConfig: {
@@ -265,12 +282,16 @@ async function samlRespond(res, url, email) {
       },
     });
   }
-  const response = `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="${id}" Version="2.0" IssueInstant="${now.toISOString()}" Destination="${escapeHtml(acs)}" InResponseTo="${escapeHtml(requestId)}"><saml:Issuer>${SAML_ENTITY_ID}</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status>${signedAssertion}</samlp:Response>`;
+  const response = `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="${id}" Version="2.0" IssueInstant="${now.toISOString()}" Destination="${escapeHtml(acs)}"${answers}><saml:Issuer>${SAML_ENTITY_ID}</saml:Issuer><samlp:Status><samlp:StatusCode Value="urn:oasis:names:tc:SAML:2.0:status:Success"/></samlp:Status>${signedAssertion}</samlp:Response>`;
   const relay = url.searchParams.get("relay") ?? "";
+  const encoded = Buffer.from(response).toString("base64");
+  if (url.searchParams.get("format") === "json") {
+    return json(res, { acs, SAMLResponse: encoded, RelayState: relay });
+  }
   html(
     res,
     `<p>Posting the SAML response to QRdx…</p>
-<form method="post" action="${escapeHtml(acs)}"><input type="hidden" name="SAMLResponse" value="${Buffer.from(response).toString("base64")}"><input type="hidden" name="RelayState" value="${escapeHtml(relay)}"><noscript><button>Continue</button></noscript></form>
+<form method="post" action="${escapeHtml(acs)}"><input type="hidden" name="SAMLResponse" value="${encoded}"><input type="hidden" name="RelayState" value="${escapeHtml(relay)}"><noscript><button>Continue</button></noscript></form>
 <script>document.forms[0].submit()</script>`,
   );
 }
@@ -360,7 +381,7 @@ const server = createServer(async (req, res) => {
       next.searchParams.set("rid", requestId);
       next.searchParams.set("acs", acs);
       next.searchParams.set("relay", url.searchParams.get("RelayState") ?? "");
-      for (const flag of ["unsigned", "notimes", "auto"]) {
+      for (const flag of ["unsigned", "notimes", "noexpiry", "sha1", "auto"]) {
         if (url.searchParams.get(flag))
           next.searchParams.set(flag, url.searchParams.get(flag));
       }
@@ -381,6 +402,42 @@ const server = createServer(async (req, res) => {
     }
     if (url.pathname === "/saml/approve") {
       return samlRespond(res, url, url.searchParams.get("email"));
+    }
+    if (url.pathname === "/saml/tile") {
+      // A tile in the app dashboard: the sign-in starts here, so the
+      // response answers no request (no rid). Only a connection id is taken
+      // from the request; the ACS is on SP_ORIGIN.
+      const provider = url.searchParams.get("provider") ?? "";
+      const next = new URL(`${ORIGIN}/saml/approve`);
+      next.searchParams.set(
+        "acs",
+        `${SP_ORIGIN}/api/auth/sso/saml2/sp/acs/${encodeURIComponent(provider)}`,
+      );
+      for (const flag of [
+        "relay",
+        "unsigned",
+        "notimes",
+        "noexpiry",
+        "sha1",
+        "format",
+      ]) {
+        if (url.searchParams.has(flag))
+          next.searchParams.set(flag, url.searchParams.get(flag));
+      }
+      if (url.searchParams.get("auto")) {
+        return samlRespond(res, next, url.searchParams.get("auto"));
+      }
+      const hidden = [...next.searchParams]
+        .map(
+          ([k, v]) =>
+            `<input type="hidden" name="${escapeHtml(k)}" value="${escapeHtml(v)}">`,
+        )
+        .join("");
+      return html(
+        res,
+        `<h1>Mock IdP: QRdx tile</h1><p class="note">Test identity provider for QRdx SSO. Not a real sign-in.</p>
+<form method="get" action="/saml/approve">${hidden}<label>Sign in as<input name="email"></label><button>Open QRdx</button></form>`,
+      );
     }
     res.writeHead(404);
     res.end("not found");
