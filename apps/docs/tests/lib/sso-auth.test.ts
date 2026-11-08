@@ -9,6 +9,7 @@ import {
   SSO_SERVER_ONLY_PATHS,
   SSO_SIGN_IN_PATH,
   SSO_UNUSED_PATHS,
+  ssoConfirmsFor,
   ssoGate,
   ssoRejoinDomains,
   validateSsoUserInfo,
@@ -64,6 +65,44 @@ function stubDb({
 }
 
 afterEach(() => vi.restoreAllMocks());
+
+describe("signing in again through SSO to confirm it's you", () => {
+  /** The person's `account` row for a connection, or none. */
+  function stubAccount(row: Row | undefined) {
+    const q = database.query as unknown as Record<
+      string,
+      Record<string, (...args: unknown[]) => unknown>
+    >;
+    return vi.spyOn(q.account, "findFirst").mockResolvedValue(row as never);
+  }
+
+  it("counts when their address's connection is usable and they sign in through it", async () => {
+    stubDb({ providers: [provider()] });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(true);
+  });
+
+  it("not for someone who has never signed in through it", async () => {
+    stubDb({ providers: [provider()] });
+    stubAccount(undefined);
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
+  });
+
+  it("not when the workspace left Business, or the domain isn't verified or covered", async () => {
+    stubDb({ providers: [provider()], plan: "pro" });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
+    vi.restoreAllMocks();
+    stubDb({ providers: [provider({ domainVerified: false })] });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
+    vi.restoreAllMocks();
+    stubDb({ providers: [provider()] });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@gmail.com")).toBe(false);
+    expect(await ssoConfirmsFor("u-1", "not an address")).toBe(false);
+  });
+});
 
 async function apiError(call: Promise<unknown>) {
   try {

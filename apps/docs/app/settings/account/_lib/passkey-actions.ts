@@ -30,8 +30,8 @@ import { logError } from "@/lib/shared";
 // Auth's endpoints for adding, renaming and removing passkeys are off over
 // HTTP (packages/auth/passkey.ts), so these actions are the only way in.
 // Each needs a recent "Confirm it's you" (lib/account/confirmation-server.ts)
-// and answers CONFIRMATION_REQUIRED without one. Adding the first passkey
-// turns two-step verification on (and returns the backup codes); removing
+// and answers CONFIRMATION_REQUIRED without one. Adding a passkey while two-
+// step verification is off turns it on (and returns the backup codes); removing
 // the last method turns it off. Every change is limited per user, and adding
 // or removing one emails the account's address.
 //

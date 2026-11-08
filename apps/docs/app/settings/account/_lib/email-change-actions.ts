@@ -2,7 +2,9 @@
 
 import { registerEmailChangeCodeSender } from "@repo/auth/email-otp";
 import { auth } from "@repo/auth/server";
+import { database as db, session as sessionTable } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
+import { and, eq, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
@@ -21,11 +23,13 @@ import { logError } from "@/lib/shared";
 
 // Settings → Account → Email. Better Auth's email-change endpoints are off
 // over HTTP (packages/auth/server.ts), so these actions are the only way in:
-// both steps need a recent "Confirm it's you" (lib/account/
-// confirmation-server.ts: a passkey, authenticator or backup code with
-// two-step verification on, else a code to the current address) and answer
-// CONFIRMATION_REQUIRED without one. They limit each user and tell the old
-// address. The plugin emails the code through the sender registered here.
+// both steps need a recent "Confirm it's you" (lib/account/confirmation.ts:
+// a passkey, authenticator or backup code with two-step verification on;
+// without it a passkey, a code to the current address, or signing in again
+// with a linked Google, GitHub or SSO account) and answer
+// CONFIRMATION_REQUIRED without one. They limit each user, sign out the
+// account's other sessions and tell the old address. The plugin emails the
+// code through the sender registered here.
 registerEmailChangeCodeSender(sendEmailChangeCode);
 
 export type EmailChangeResult =
@@ -63,6 +67,7 @@ const codeSchema = z.string().regex(/^\d{6}$/);
 interface Allowed {
   userId: string;
   email: string;
+  sessionId: string;
   requestHeaders: Headers;
 }
 
@@ -83,6 +88,7 @@ async function mayChange(
     user: {
       userId: session.userId,
       email: session.email,
+      sessionId: session.sessionId,
       requestHeaders: session.requestHeaders,
     },
   };
@@ -159,8 +165,24 @@ export async function confirmEmailChange(
     return fail(EMAIL_CHANGE_MESSAGES.failed);
   }
 
-  // Changed. The notice and Polar run after the response, best effort, and
-  // never undo it.
+  // Changed. Every other session is signed out, so a browser someone else
+  // had open doesn't carry on under the new address; this one stays.
+  try {
+    await db
+      .delete(sessionTable)
+      .where(
+        and(
+          eq(sessionTable.userId, user.userId),
+          ne(sessionTable.id, user.sessionId),
+        ),
+      );
+  } catch (error) {
+    // The email has changed either way; Sessions in Settings still works.
+    logError(error as Error, { action: "account.confirmEmailChange.sessions" });
+  }
+
+  // The notice and Polar run after the response, best effort, and never
+  // undo it.
   const changed = {
     userId: user.userId,
     previousEmail: user.email,
