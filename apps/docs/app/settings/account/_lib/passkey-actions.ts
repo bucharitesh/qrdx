@@ -31,9 +31,10 @@ import { logError } from "@/lib/shared";
 // HTTP (packages/auth/passkey.ts), so these actions are the only way in.
 // Each needs a recent "Confirm it's you" (lib/account/confirmation-server.ts)
 // and answers CONFIRMATION_REQUIRED without one. Adding a passkey while two-
-// step verification is off turns it on (and returns the backup codes); removing
-// the last method turns it off. Every change is limited per user, and adding
-// or removing one emails the account's address.
+// step verification is off turns it on (and returns the backup codes), which
+// signs out the account's other sessions; adding one while it's on signs
+// nobody out. Removing the last method turns it off. Every change is limited
+// per user, and adding or removing one emails the account's address.
 //
 // The passkey plugin's own "fresh session" rule (a sign-in within a day) is
 // off for adding passkeys (packages/auth/passkey.ts): confirming it's you
@@ -120,6 +121,11 @@ export interface AddedPasskey {
    * once. Null when it was already on.
    */
   backupCodes: string[] | null;
+  /**
+   * Turned on: whether the account's other sessions were signed out (false
+   * when that failed; it's logged).
+   */
+  signedOutElsewhere?: boolean;
   /** Saved, but two-step verification couldn't be turned on (try again). */
   turnOnFailed?: boolean;
 }
@@ -156,10 +162,16 @@ export async function addPasskey(
   revalidatePath(PATH);
   if (wasOn) return { ok: true, data: { id: saved.id, backupCodes: null } };
 
-  // The first method: two-step verification turns on.
+  // The first method: two-step verification turns on, and the account's
+  // other sessions are signed out (this one stays).
   try {
-    const backupCodes = await turnOnWithPasskeys(session);
-    return { ok: true, data: { id: saved.id, backupCodes } };
+    const turnedOn = await turnOnWithPasskeys(session);
+    return {
+      ok: true,
+      data: turnedOn
+        ? { id: saved.id, ...turnedOn }
+        : { id: saved.id, backupCodes: null },
+    };
   } catch (error) {
     logError(error as Error, { action: "account.addPasskey.turnOn" });
     return {

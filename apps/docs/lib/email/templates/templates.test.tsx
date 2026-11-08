@@ -420,6 +420,7 @@ describe("email templates", () => {
       />,
     );
     assert.match(text, /By:\s+QRdx support/);
+    assert.match(text, /signed it out on every device/);
     assert.match(text, /Time:\s+Nov 7, 2026/);
     assert.doesNotMatch(text, /Chrome on macOS|203\.0\.113\.24|Mumbai/);
     assert.doesNotMatch(text, /If this was you/);
