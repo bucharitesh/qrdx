@@ -5,8 +5,8 @@
 // Covers: every way of turning it on signs out the account's other sessions
 // and keeps this one with its "Confirm it's you"; adding a second method
 // signs nobody out; a refused or failed step signs nobody out; a sign-out
-// that fails is reported, not hidden; support's reset signs out every
-// session; and a backup code used in "Confirm it's you" is emailed (and
+// that fails is reported, not hidden; support's reset, once its wait is
+// over, signs out every session; and a backup code used in "Confirm it's you" is emailed (and
 // never fails the confirmation). Nothing connects to a database.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
@@ -314,6 +314,7 @@ const passkeyActions = await import(
 const { resetTwoFactorAction } = await import(
   "@/app/admin/users/support-actions"
 );
+const reset = await import("@/lib/account/two-factor-reset-server");
 
 /** The account, optionally with 2FA on (passkeys only, or with the app). */
 function account({
@@ -594,6 +595,8 @@ describe("what doesn't sign anyone out", () => {
 // ─── Support's reset ─────────────────────────────────────────────────────────
 
 describe("support turning it off", () => {
+  // Scheduling and cancelling it are in two-factor-reset.test.ts; this is the
+  // reset itself, when the daily cron completes it after the 7 days.
   it("signs out every session of the account, and nobody else's", async () => {
     account({ on: true, app: true });
     sessions();
@@ -607,15 +610,24 @@ describe("support turning it off", () => {
         updatedAt: new Date(),
       },
     ]);
-    expect(
-      await resetTwoFactorAction({ userId: USER, reason: "Ticket 1234" }),
-    ).toEqual({ ok: true });
+    await reset.scheduleTwoFactorReset({
+      userId: USER,
+      admin: state.admin,
+      now: new Date(Date.now() - 8 * DAY),
+    });
+    // Scheduled: nothing changed yet.
+    expect(sessionIds()).toHaveLength(4);
+    expect(await reset.completeDueTwoFactorResets()).toEqual({
+      completed: 1,
+      dropped: 0,
+      failed: 0,
+    });
     expect(sessionIds()).toEqual(["session_other_person"]);
     expect(fakeDb.find("user", { id: USER })?.twoFactorEnabled).toBe(false);
     expect(fakeDb.rows("twoFactor")).toHaveLength(0);
     expect(fakeDb.find("verification", { id: "v_trust" })).toBeUndefined();
     expect(state.notices).toEqual([{ kind: "support-off", extra: undefined }]);
-    expect(state.audit).toEqual(["user.reset_two_factor"]);
+    expect(state.audit).toEqual(["user.reset_two_factor_complete"]);
   });
 
   it("does nothing when it's already off", async () => {

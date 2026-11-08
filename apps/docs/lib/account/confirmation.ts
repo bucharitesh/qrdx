@@ -155,6 +155,10 @@ export const CONFIRMATION_ACTIONS = {
   "remove-member": "remove someone from this workspace",
   "invite-admin": "invite an admin",
   "admin-join-link": "let a join link add admins",
+  "cancel-two-factor-reset": "cancel support's turn-off",
+  "authorize-app": "let this app use your account",
+  "reveal-webhook-secret": "show a signing secret",
+  "rotate-webhook-secret": "make a new signing secret",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;

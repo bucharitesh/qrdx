@@ -65,6 +65,7 @@ import {
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
+import { twoFactorResetCancel } from "./two-factor-reset";
 import { unprovenAccessCleanup } from "./unproven-access";
 import { allUserInfoChecks, validateSocialSignUp } from "./verified-sign-up";
 import {
@@ -391,6 +392,9 @@ export const auth = betterAuth({
     // Proving an unproven account's address clears what an earlier holder
     // left behind (./unproven-access.ts).
     unprovenAccessCleanup(),
+    // Signing in with the second step cancels support's pending turn-off of
+    // two-step verification (./two-factor-reset.ts).
+    twoFactorResetCancel(),
     // New sign-in alerts, and a finished sign-in counting as "Confirm it's
     // you" (./new-sign-in.ts). Last, so it sees each sign-in after the
     // challenge has had its say.
