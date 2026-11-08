@@ -29,6 +29,7 @@
 // the account's other sessions; support's "Change email" in the admin panel.
 // Screenshots of each screen in light and dark.
 import { execSync } from "node:child_process";
+import { createHmac } from "node:crypto";
 import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { cspEnforced, launch, recordCspViolations, sleep } from "./cdp.mjs";
@@ -234,6 +235,104 @@ async function confirmByEmail(email: string) {
   await waitFor((t: string) => !window.__e2e.byRole("dialog", t), {
     args: [CONFIRM] as never[],
   });
+}
+
+function base32Decode(input: string): Buffer {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0;
+  let value = 0;
+  const out: number[] = [];
+  for (const char of input.replace(/[\s=]+/g, "").toUpperCase()) {
+    value = (value << 5) | alphabet.indexOf(char);
+    bits += 5;
+    if (bits >= 8) {
+      out.push((value >>> (bits - 8)) & 255);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(out);
+}
+const step = () => Math.floor(Date.now() / 30_000);
+let lastStep = 0;
+/** A TOTP code from a 30-second window no earlier code came from. */
+async function freshTotp(secret: string): Promise<string> {
+  while (step() <= lastStep) await sleep(1000);
+  lastStep = step();
+  const counter = Buffer.alloc(8);
+  counter.writeBigUInt64BE(BigInt(lastStep));
+  const hash = createHmac("sha1", base32Decode(secret))
+    .update(counter)
+    .digest();
+  const offset = (hash.at(-1) ?? 0) & 15;
+  return String((hash.readUInt32BE(offset) & 0x7fffffff) % 1_000_000).padStart(
+    6,
+    "0",
+  );
+}
+
+/** Turns on two-step verification with an authenticator app; its secret. */
+async function turnOnTwoFactor(email: string): Promise<string> {
+  await emailSignIn(email);
+  await goto(`${BASE}/settings/account#two-factor`, { wait: 3000 });
+  await dismissCookieBanner();
+  await evaluate(() => localStorage.removeItem("qrdx:confirm-method"));
+  await waitText("Two-step verification");
+  await evaluate(() => {
+    const e = window.__e2e;
+    const button =
+      e.byRole("button", "Turn on", { exact: true }) ??
+      e.byRole("button", "Turn on");
+    if (button) e.click(button);
+  });
+  await confirmByEmail(email);
+  await waitFor(() => {
+    const radio = document.querySelector(
+      '[role="dialog"] [role="radio"][value="app"]',
+    ) as HTMLElement | null;
+    if (!radio) return false;
+    window.__e2e.click(radio);
+    return radio.getAttribute("aria-checked") === "true";
+  });
+  await evaluate(() => {
+    const dialog = window.__e2e.byRole(
+      "dialog",
+      "Turn on two-step verification",
+    );
+    const button = dialog
+      ? window.__e2e.byRole("button", "Continue", { exact: true, root: dialog })
+      : null;
+    if (button) window.__e2e.click(button);
+  });
+  await waitText("Set up your authenticator app");
+  await waitFor(() => Boolean(document.querySelector('[role="dialog"] code')));
+  const secret = (
+    (await evaluate(
+      () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
+    )) as string
+  ).replace(/\s+/g, "");
+  const code = await freshTotp(secret);
+  await evaluate((c: string) => {
+    const field = window.__e2e.byLabel("Code from your authenticator app");
+    if (field) {
+      field.focus();
+      window.__e2e.setValue(field, c);
+    }
+  }, code);
+  await waitText("Save your backup codes");
+  await evaluate(() => {
+    const box = window.__e2e.byLabel("I've saved my backup codes");
+    if (box) window.__e2e.click(box);
+  });
+  await sleep(300);
+  await evaluate(() => {
+    const dialog = document.querySelector('[role="dialog"]');
+    const done = [...(dialog?.querySelectorAll("button") ?? [])].find(
+      (b) => b.textContent?.trim() === "Done",
+    );
+    if (done) window.__e2e.click(done);
+  });
+  await waitText("10 of 10 left");
+  return secret;
 }
 
 /** At the mock IdP's form: sign in as `email`. */
@@ -456,6 +555,12 @@ try {
   );
   await shot("02-confirm-sso");
   await clickInConfirm("Continue with SSO");
+  await waitFor(() => location.host === "localhost:4455", { timeout: 20_000 });
+  check(
+    "The identity provider is asked for its sign-in screen",
+    new URL(await href()).searchParams.get("prompt") === "login",
+    await href(),
+  );
   await idpSignIn(owner);
   const toast = await toastText();
   check(
@@ -608,6 +713,31 @@ try {
   );
   await dismissToasts();
 
+  console.log("signing out clears a confirmation that was never finished");
+  await emailSignIn(owner);
+  await startEmailChange(`owner-left-${RUN}@other.test`);
+  await confirmAsked();
+  await clickInConfirm("Use another method");
+  await clickInConfirm("Sign in with SSO");
+  await clickInConfirm("Continue with SSO");
+  await waitFor(() => location.host === "localhost:4455", { timeout: 20_000 });
+  check(
+    "The cookie is set while it's under way",
+    (await browserCookie("qrdx_confirm_sign_in")) !== "",
+  );
+  await goto(`${BASE}/settings/account`, { wait: 2000 });
+  await evaluate(async () => {
+    await fetch("/api/auth/sign-out", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+  });
+  check(
+    "Signing out clears it",
+    (await browserCookie("qrdx_confirm_sign_in")) === "",
+  );
+
   console.log("someone without SSO isn't offered it");
   await emailSignIn(plain);
   await startEmailChange(`plain-new-${RUN}@other.test`);
@@ -626,40 +756,80 @@ try {
   const admin = "admin@qrdx.test";
   await emailSignIn(admin);
   const plainId = userId(plain);
-  await goto(`${BASE}/admin/users/${plainId}`, { wait: 3000 });
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Change email", {
-        exact: true,
-      }) as HTMLElement,
-    ),
-  );
-  await waitFor(() =>
-    Boolean(window.__e2e.byRole("dialog", "Move this account to a new email")),
-  );
   const moved = `plain-moved-${RUN}@other.test`;
+  /** Opens Change email on the user page and submits it. */
+  const submitChangeEmail = async (shotName?: string) => {
+    await goto(`${BASE}/admin/users/${plainId}`, { wait: 3000 });
+    await dismissCookieBanner();
+    await evaluate(() =>
+      window.__e2e.click(
+        window.__e2e.byRole("button", "Change email", {
+          exact: true,
+        }) as HTMLElement,
+      ),
+    );
+    await waitFor(() =>
+      Boolean(
+        window.__e2e.byRole("dialog", "Move this account to a new email"),
+      ),
+    );
+    await evaluate((value: string) => {
+      const e = window.__e2e;
+      e.setValue(e.byLabel("New email address") as HTMLElement, value);
+      e.setValue(
+        e.byLabel("Reason") as HTMLElement,
+        "Lost-email policy: invoice matched, 7 days passed, e2e",
+      );
+    }, moved);
+    if (shotName) await shot(shotName);
+    await evaluate(() => {
+      const dialog = window.__e2e.byRole(
+        "dialog",
+        "Move this account to a new email",
+      );
+      window.__e2e.click(
+        window.__e2e.byRole("button", "Change email", {
+          exact: true,
+          root: dialog ?? document,
+        }) as HTMLElement,
+      );
+    });
+  };
+  await submitChangeEmail("05-admin-change-email");
+  await waitText("Turn on two-step verification for your own account first.");
+  check(
+    "Refused while the admin has no two-step verification",
+    sql(`select email from "user" where id=${q(plainId)}`) === plain,
+  );
+  await shot("06-admin-needs-two-factor");
+
+  const adminSecret = await turnOnTwoFactor(admin);
+  // Turning it on confirmed with an emailed code: not enough for this.
+  await submitChangeEmail();
+  check("Asks the admin to confirm it's them", await confirmAsked(20_000));
+  await sleep(800);
+  const adminMethods = await dialogText();
+  check(
+    "With an authenticator or backup code, never an emailed code",
+    adminMethods.includes("authenticator app") &&
+      !adminMethods.includes("We'll email"),
+    adminMethods.replace(/\s+/g, " ").slice(0, 200),
+  );
+  await shot("07-admin-confirm");
   const supportSince = statSync(DEV_LOG).size;
-  await evaluate((value: string) => {
-    const e = window.__e2e;
-    e.setValue(e.byLabel("New email address") as HTMLElement, value);
-    e.setValue(
-      e.byLabel("Reason") as HTMLElement,
-      "Lost-email policy: invoice matched, 7 days passed, e2e",
-    );
-  }, moved);
-  await shot("05-admin-change-email");
-  await evaluate(() => {
-    const dialog = window.__e2e.byRole(
-      "dialog",
-      "Move this account to a new email",
-    );
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Change email", {
-        exact: true,
-        root: dialog ?? document,
-      }) as HTMLElement,
-    );
-  });
+  const adminCode = await freshTotp(adminSecret);
+  await waitFor(
+    (t: string, value: string) => {
+      const input = window.__e2e
+        .byRole("dialog", t)
+        ?.querySelector("[data-input-otp]") as HTMLInputElement | null;
+      if (!input || input.disabled) return false;
+      input.focus();
+      window.__e2e.setValue(input, value);
+      return true;
+    },
+    { args: [CONFIRM, adminCode] as never[] },
+  );
   await waitText("Email changed and every session signed out");
   check(
     "Support moved the account",

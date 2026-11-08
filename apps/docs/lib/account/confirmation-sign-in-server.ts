@@ -3,7 +3,10 @@ import "server-only";
 import { randomBytes, randomUUID } from "node:crypto";
 import {
   CONFIRM_SIGN_IN_COOKIE,
+  CONFIRM_SIGN_IN_IDENTIFIER_PREFIX,
   CONFIRM_SIGN_IN_MINUTES,
+  CONFIRM_SIGN_IN_SECURE_COOKIE,
+  confirmSignInCookieName,
   confirmSignInIdentifier,
   parseConfirmSignInIntent,
 } from "@repo/auth/confirm-sign-in";
@@ -13,7 +16,7 @@ import {
   verification,
 } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
-import { and, eq } from "drizzle-orm";
+import { and, eq, like, lte } from "drizzle-orm";
 import { cookies } from "next/headers";
 import { z } from "zod";
 import { logError } from "@/lib/shared";
@@ -28,6 +31,7 @@ import {
   loadConfirmationOptions,
   recordConfirmation,
 } from "./confirmation-server";
+import { loadTwoFactorFacts } from "./two-factor-server";
 
 // "Confirm it's you" by signing in again with a linked Google, GitHub or
 // workspace SSO account, for accounts without two-step verification. The
@@ -88,6 +92,18 @@ export async function startSignInConfirmation(
     const expiresAt = new Date(
       now.getTime() + CONFIRM_SIGN_IN_MINUTES * 60_000,
     );
+    // Ones that were started and never finished, anyone's.
+    await db
+      .delete(verification)
+      .where(
+        and(
+          like(
+            verification.identifier,
+            `${CONFIRM_SIGN_IN_IDENTIFIER_PREFIX}%`,
+          ),
+          lte(verification.expiresAt, now),
+        ),
+      );
     await db.insert(verification).values({
       id: randomUUID(),
       identifier: confirmSignInIdentifier(nonce),
@@ -101,10 +117,11 @@ export async function startSignInConfirmation(
       updatedAt: now,
     });
     const jar = await cookies();
-    jar.set(CONFIRM_SIGN_IN_COOKIE, nonce, {
+    const secure = process.env.NODE_ENV === "production";
+    jar.set(confirmSignInCookieName(secure), nonce, {
       httpOnly: true,
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production",
+      secure,
       path: "/",
       maxAge: CONFIRM_SIGN_IN_MINUTES * 60,
     });
@@ -164,8 +181,16 @@ export async function finishSignInConfirmation(
   }
   try {
     const jar = await cookies();
-    const nonce = jar.get(CONFIRM_SIGN_IN_COOKIE)?.value ?? null;
-    if (nonce) jar.delete(CONFIRM_SIGN_IN_COOKIE);
+    let nonce: string | null = null;
+    for (const name of [
+      CONFIRM_SIGN_IN_SECURE_COOKIE,
+      CONFIRM_SIGN_IN_COOKIE,
+    ]) {
+      const value = jar.get(name)?.value;
+      if (!value) continue;
+      nonce ??= value;
+      jar.delete(name);
+    }
     const [row] = nonce
       ? await db
           .delete(verification)
@@ -196,6 +221,11 @@ export async function finishSignInConfirmation(
       now,
     });
     if (problem) return { ok: false, error: problem };
+    // Turned on meanwhile (another tab): a sign-in no longer confirms, and
+    // one that skipped the second step on a trusted device mustn't.
+    if ((await loadTwoFactorFacts(session.userId)).on) {
+      return { ok: false, error: CONFIRMATION_MESSAGES.signInTwoFactorOn };
+    }
 
     await recordConfirmation(session);
     // The session this browser had before: its cookie was replaced, so

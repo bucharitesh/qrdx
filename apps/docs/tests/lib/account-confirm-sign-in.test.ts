@@ -307,8 +307,39 @@ describe("the rules", () => {
         headers: new Headers({ cookie: `x${COOKIE}=no; ${COOKIE}x=no` }),
       }),
     ).toBeNull();
-    expect(hooks.allowUserCreation({ path: "/callback/github", headers })).toBe(
-      false,
+    // The secure name, over HTTPS.
+    expect(
+      hooks.confirmSignInNonce({
+        path: "/callback/google",
+        headers: new Headers({ cookie: `__Host-${COOKIE}=nonce-456` }),
+      }),
+    ).toBe("nonce-456");
+  });
+
+  it("asks the provider for its chooser or sign-in screen, keeping other values", () => {
+    expect(
+      hooks.withProviderPrompt(
+        "https://accounts.google.com/o/oauth2/auth?client_id=x&state=s",
+        "google",
+      ),
+    ).toBe(
+      "https://accounts.google.com/o/oauth2/auth?client_id=x&state=s&prompt=select_account",
+    );
+    expect(
+      hooks.withProviderPrompt(
+        "https://github.com/login/oauth/authorize?a=1",
+        "github",
+      ),
+    ).toContain("prompt=select_account");
+    expect(
+      hooks.withProviderPrompt("https://idp.acme.test/authorize?a=1", "sso"),
+    ).toContain("prompt=login");
+    expect(
+      hooks.withProviderPrompt("https://idp.acme.test/a?prompt=consent", "sso"),
+    ).toBe("https://idp.acme.test/a?prompt=consent");
+    expect(hooks.withProviderPrompt("not a url", "google")).toBe("not a url");
+    expect(hooks.withProviderPrompt("https://x.test/a", "passkey")).toBe(
+      "https://x.test/a",
     );
   });
 
@@ -423,6 +454,41 @@ describe("the sign-ins that can confirm", () => {
 // ─── Starting ────────────────────────────────────────────────────────────────
 
 describe("starting a sign-in to confirm", () => {
+  it("clears out intents nobody finished, anyone's", async () => {
+    account({ linked: ["google"] });
+    fakeDb.seed("verification", [
+      {
+        id: "stale",
+        identifier: hooks.confirmSignInIdentifier("someone-elses"),
+        value: "{}",
+        expiresAt: new Date(Date.now() - 60_000),
+        createdAt: new Date(Date.now() - 20 * 60_000),
+        updatedAt: new Date(),
+      },
+      {
+        id: "live",
+        identifier: hooks.confirmSignInIdentifier("still-going"),
+        value: "{}",
+        expiresAt: new Date(Date.now() + 60_000),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        id: "other-kind",
+        identifier: "qrdx-confirmed-session_x",
+        value: USER,
+        expiresAt: new Date(Date.now() - 60_000),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
+    await server.startSignInConfirmation({ provider: "google" });
+    const ids = fakeDb.rows("verification").map((row) => row.id);
+    expect(ids).not.toContain("stale");
+    expect(ids).toContain("live");
+    expect(ids).toContain("other-kind");
+  });
+
   it("notes who asked and sets an HttpOnly, Lax cookie for 10 minutes", async () => {
     account({ linked: ["google"] });
     const result = await server.startSignInConfirmation({
@@ -505,18 +571,35 @@ describe("on the provider's callback", () => {
       path: "/callback/google",
       getCookie: (name: string) => state.jar.get(name),
     };
-    expect(hooks.allowUserCreation(ctx)).toBe(false);
+    expect(await hooks.allowUserCreation(ctx)).toBe(false);
     // Other sign-ups, and the same browser without the cookie, are untouched.
     expect(
-      hooks.allowUserCreation({ ...ctx, path: "/sign-in/email-otp" }),
+      await hooks.allowUserCreation({ ...ctx, path: "/sign-in/email-otp" }),
     ).toBe(true);
     expect(
-      hooks.allowUserCreation({
+      await hooks.allowUserCreation({
         path: "/callback/google",
         getCookie: () => null,
       }),
     ).toBe(true);
-    expect(hooks.allowUserCreation(null)).toBe(true);
+    expect(await hooks.allowUserCreation(null)).toBe(true);
+  });
+
+  it("a cookie left behind (used or expired) blocks nobody's sign-up", async () => {
+    account({ linked: ["google"] });
+    await server.startSignInConfirmation({ provider: "google" });
+    const nonce = state.jar.get(COOKIE) as string;
+    const ctx = {
+      path: "/callback/github",
+      getCookie: (name: string) => (name === COOKIE ? nonce : null),
+    };
+    // Expired.
+    vi.useFakeTimers({ now: Date.now() + 11 * 60_000 });
+    expect(await hooks.allowUserCreation(ctx)).toBe(true);
+    vi.useRealTimers();
+    // Used: the finishing step took the row.
+    await server.finishSignInConfirmation({ failed: true, error: null });
+    expect(await hooks.allowUserCreation(ctx)).toBe(true);
   });
 
   it("only the person who asked is signed in", async () => {
@@ -612,6 +695,21 @@ describe("finishing on the page it came back to", () => {
     expect(confirmedRows()).toHaveLength(0);
     // Not the other account's to sign out.
     expect(fakeDb.find("session", { id: OLD_SESSION })).toBeDefined();
+  });
+
+  it("counts nothing once two-step verification was turned on meanwhile", async () => {
+    account({ linked: ["google"] });
+    await server.startSignInConfirmation({ provider: "google" });
+    await providerSignsIn(USER);
+    const owner = fakeDb.find("user", { id: USER });
+    if (owner) owner.twoFactorEnabled = true;
+    expect(
+      await server.finishSignInConfirmation({ failed: false, error: null }),
+    ).toEqual({
+      ok: false,
+      error: CONFIRMATION_MESSAGES.signInTwoFactorOn,
+    });
+    expect(confirmedRows()).toHaveLength(0);
   });
 
   it("counts nothing after 10 minutes", async () => {
