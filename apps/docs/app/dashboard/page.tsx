@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { signInPath } from "@/lib/safe-redirect";
-import { getActiveWorkspace } from "@/lib/scope";
+import { peekActiveWorkspace } from "@/lib/scope";
 import { entryPath, workspaceHref } from "@/lib/workspace-paths";
 import { UnauthorizedError } from "@/types/errors";
 
@@ -14,7 +14,9 @@ type SearchParams = Record<string, string | string[] | undefined>;
 
 /**
  * /dashboard opens the person's default workspace: the one last opened,
- * else their own (made now for accounts from before workspaces). Links that
+ * else their own (made now for accounts from before workspaces), passing
+ * over workspaces that require two-step verification they haven't turned on
+ * (when every one does, its page says what to do). Links that
  * can't know the slug (docs, API messages) add ?to=<section>, e.g.
  * /dashboard?to=settings/developers; other query parameters are kept.
  */
@@ -35,7 +37,7 @@ export default async function DashboardIndex({
 
   let slug: string | null = null;
   try {
-    slug = (await getActiveWorkspace()).workspace.slug;
+    slug = (await peekActiveWorkspace()).workspace.slug;
   } catch (error) {
     if (!(error instanceof UnauthorizedError)) throw error;
   }
