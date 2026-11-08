@@ -119,6 +119,9 @@ vi.mock("@/lib/account/two-factor-notice-server", () => ({
   sendTwoFactorNotice: async (kind: string) => {
     state.notices.push(`two-factor:${kind}`);
   },
+  sendBackupCodeUsedNotice: async ({ usedFor }: { usedFor: string }) => {
+    state.notices.push(`backup-code-used:${usedFor}`);
+  },
 }));
 vi.mock("@/lib/account/passkeys-server", () => ({
   sendPasskeyNotice: async ({ change }: { change: string }) => {
@@ -1325,6 +1328,7 @@ describe("removing the last passkey", () => {
       await manage.turnOnWithPasskeys({
         userId: USER,
         email: EMAIL,
+        sessionId: SESSION,
         requestHeaders: new Headers(),
       }),
     ).toBeNull();

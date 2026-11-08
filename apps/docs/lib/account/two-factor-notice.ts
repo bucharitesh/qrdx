@@ -1,12 +1,16 @@
 /**
  * The notice emailed after a two-step verification change (turned on or off,
  * new backup codes, an authenticator app added or removed, turned off by
- * support). Pure; the sender is ./two-factor-notice-server.tsx.
+ * support, a backup code used). Pure; the sender is
+ * ./two-factor-notice-server.tsx.
  */
-import type { TwoFactorNoticeKind } from "@/lib/email/templates/two-factor-notice";
+import type {
+  TwoFactorNoticeExtra,
+  TwoFactorNoticeKind,
+} from "@/lib/email/templates/two-factor-notice";
 import type { NoticeDeliveryDeps } from "./email-change";
 
-export type { TwoFactorNoticeKind };
+export type { TwoFactorNoticeExtra, TwoFactorNoticeKind };
 
 const DESCRIPTIONS: Record<TwoFactorNoticeKind, string> = {
   on: "two-step verification turned on",
@@ -14,8 +18,28 @@ const DESCRIPTIONS: Record<TwoFactorNoticeKind, string> = {
   "backup-codes": "new backup codes",
   "app-added": "authenticator app added",
   "app-removed": "authenticator app removed",
-  "support-off": "two-step verification turned off by support",
+  "support-off":
+    "two-step verification turned off by support, every session signed out",
+  "backup-code-used": "a backup code was used",
 };
+
+/** What the notice says, in a few words (for the local dev log). */
+export function describeTwoFactorNotice(
+  kind: TwoFactorNoticeKind,
+  extra: TwoFactorNoticeExtra = {},
+): string {
+  const parts = [DESCRIPTIONS[kind]];
+  if (kind === "on" && extra.signedOutElsewhere) {
+    parts.push("other sessions signed out");
+  }
+  if (kind === "backup-code-used") {
+    parts[0] = `${DESCRIPTIONS[kind]} to ${extra.usedFor === "confirm" ? "confirm it's you" : "sign in"}`;
+    if (typeof extra.codesLeft === "number") {
+      parts.push(`${extra.codesLeft} left`);
+    }
+  }
+  return parts.join(", ");
+}
 
 /**
  * Emails the notice where outbound delivery is on, writes it to the console
@@ -23,7 +47,11 @@ const DESCRIPTIONS: Record<TwoFactorNoticeKind, string> = {
  * reported (and logged by the caller), never undone.
  */
 export async function deliverTwoFactorNotice(
-  { kind, email }: { kind: TwoFactorNoticeKind; email: string },
+  {
+    kind,
+    email,
+    extra,
+  }: { kind: TwoFactorNoticeKind; email: string; extra?: TwoFactorNoticeExtra },
   deps: NoticeDeliveryDeps,
 ): Promise<"emailed" | "logged" | "not-sent"> {
   try {
@@ -33,7 +61,7 @@ export async function deliverTwoFactorNotice(
     }
     if (deps.nodeEnv === "production") return "not-sent";
     deps.log(
-      `[dev only] QRdx security notice for ${email}: ${DESCRIPTIONS[kind]} (not emailed: delivery is off outside production)`,
+      `[dev only] QRdx security notice for ${email}: ${describeTwoFactorNotice(kind, extra)} (not emailed: delivery is off outside production)`,
     );
     return "logged";
   } catch {
