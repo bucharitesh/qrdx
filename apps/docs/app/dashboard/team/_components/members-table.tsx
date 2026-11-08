@@ -25,6 +25,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { removeMember, updateMemberRole } from "@/actions/organizations";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { assignableRoles, can } from "@/lib/permissions";
 import { formatUtcDate, TEAM_ROLE_LABELS, type TeamRole } from "../_lib/team";
 import { RoleSelect } from "./role-select";
@@ -51,6 +52,9 @@ export function MembersTable({
   ssoDomains?: string[];
 }) {
   const router = useRouter();
+  // Role changes and removals ask "Confirm it's you" first when this session
+  // hasn't recently (the page's ConfirmIdentityProvider).
+  const { withConfirmation } = useConfirmation();
   const [isPending, startTransition] = useTransition();
   const [removing, setRemoving] = useState<MemberRow | null>(null);
   const canManage = can(currentRole, "members.manage");
@@ -76,7 +80,11 @@ export function MembersTable({
 
   const changeRole = (target: MemberRow, role: TeamRole) =>
     startTransition(async () => {
-      const result = await updateMemberRole({ memberId: target.id, role });
+      const result = await withConfirmation(
+        () => updateMemberRole({ memberId: target.id, role }),
+        "change-member-role",
+      );
+      if (result === null) return;
       if (!result.ok) {
         toast.error(result.error);
         return;
@@ -96,7 +104,11 @@ export function MembersTable({
     const target = removing;
     if (!target) return;
     startTransition(async () => {
-      const result = await removeMember({ memberId: target.id });
+      const result = await withConfirmation(
+        () => removeMember({ memberId: target.id }),
+        "remove-member",
+      );
+      if (result === null) return;
       if (!result.ok) {
         toast.error(result.error);
         return;

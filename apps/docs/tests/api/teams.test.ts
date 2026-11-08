@@ -57,6 +57,12 @@ vi.mock("@/lib/events/emails", () => ({
   sendTeamInviteEmail: async () => false,
 }));
 vi.mock("@/lib/shared", () => ({ logError: () => {} }));
+// "Confirm it's you" before role changes, removals, admin invitations and
+// deleting a team is tested in tests/lib/account-confirm-more-actions.test.ts;
+// here every session has just confirmed.
+vi.mock("@/lib/account/confirmation-scope", () => ({
+  confirmationNeededFor: async () => null,
+}));
 
 // Better Auth's organization endpoints, reduced to what these actions rely on.
 vi.mock("@repo/auth/server", async () => {
