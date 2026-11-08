@@ -1,11 +1,13 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { useRouter } from "next/navigation";
 import {
   createContext,
   type ReactNode,
   useCallback,
   useContext,
+  useEffect,
   useRef,
   useState,
 } from "react";
@@ -13,7 +15,9 @@ import {
   CONFIRMATION_MESSAGES,
   type ConfirmationAction,
   needsConfirmation,
+  readConfirmReturn,
 } from "@/lib/account/confirmation";
+import { finishSignInConfirmation } from "./actions";
 import {
   type ConfirmationRequest,
   ConfirmIdentityDialog,
@@ -37,6 +41,30 @@ export function ConfirmIdentityProvider({ children }: { children: ReactNode }) {
   const resolver = useRef<((confirmed: boolean) => void) | null>(null);
   // Two gated actions at once share one dialog.
   const pending = useRef<Promise<boolean> | null>(null);
+
+  // Back from signing in again with Google, GitHub or SSO (?confirm=…): the
+  // server checks it was this person, signing in just now. The page reloaded
+  // on the way, so the change itself is made again. The address loses the
+  // keys through the router (a plain history call is undone by it), which
+  // also refreshes the page's data (the old session is gone).
+  const router = useRouter();
+  const returnHandled = useRef(false);
+  useEffect(() => {
+    if (returnHandled.current) return;
+    const returned = readConfirmReturn(window.location.href);
+    if (!returned) return;
+    returnHandled.current = true;
+    finishSignInConfirmation({
+      failed: returned.failed,
+      error: returned.error,
+    })
+      .then((result) => {
+        if (result.ok) toast.success(CONFIRMATION_MESSAGES.signInConfirmed);
+        else toast.error(result.error);
+      })
+      .catch(() => toast.error(CONFIRMATION_MESSAGES.failed))
+      .finally(() => router.replace(returned.cleanPath, { scroll: false }));
+  }, [router]);
 
   const ask = useCallback((action: ConfirmationAction) => {
     if (pending.current) return pending.current;

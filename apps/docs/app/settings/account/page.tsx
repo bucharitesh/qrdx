@@ -1,4 +1,3 @@
-import { keys as authKeys } from "@repo/auth/keys";
 import { auth } from "@repo/auth/server";
 import { database as db, session as sessionTable } from "@repo/database";
 import { and, desc, eq, gt } from "drizzle-orm";
@@ -6,17 +5,18 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
+import { CONFIRM_RETURN_PARAM } from "@/lib/account/confirmation";
 import {
   describeDeletionPlan,
   planAccountDeletion,
 } from "@/lib/account/deletion";
 import { loadDeletionFacts } from "@/lib/account/deletion-server";
+import { configuredSocialProviders } from "@/lib/account/linked-sign-ins-server";
 import { toSessionViews } from "@/lib/account/sessions";
 import {
   isSocialProvider,
   type LinkedAccount,
   linkableProviders,
-  type SocialProvider,
   toSignInMethods,
 } from "@/lib/account/sign-in-methods";
 import { getMyCommunityProfile } from "@/lib/community/profiles";
@@ -50,21 +50,17 @@ const formatDate = (date: Date) => DATE_FORMAT.format(date);
 // Sessions listed at most (newest first); older ones still end on expiry.
 const SESSION_LIMIT = 50;
 
-/** Social providers with both a client id and secret on this server. */
-function configuredProviders(): SocialProvider[] {
-  const env = authKeys();
-  return [
-    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET ? ["google"] : []),
-    ...(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET ? ["github"] : []),
-  ] as SocialProvider[];
-}
-
 function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-/** Back from Better Auth's link flow: ?linked=<provider> or ?error=<code>. */
+/**
+ * Back from Better Auth's link flow: ?linked=<provider> or ?error=<code>.
+ * An error after signing in again to confirm it's you (?confirm=…) belongs
+ * to the "Confirm it's you" dialog instead.
+ */
 function linkOutcome(params: Record<string, string | string[] | undefined>) {
+  if (first(params[CONFIRM_RETURN_PARAM])) return null;
   const linked = first(params.linked);
   const error = first(params.error);
   if (error) {
@@ -145,7 +141,7 @@ export default async function AccountPage({
 
         <SignInMethodsSection
           email={session.user.email}
-          linkable={linkableProviders(accounts, configuredProviders())}
+          linkable={linkableProviders(accounts, configuredSocialProviders())}
           methods={toSignInMethods(accounts, formatDate)}
           outcome={linkOutcome(params)}
         />

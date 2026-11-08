@@ -22,6 +22,11 @@ import {
 } from "better-auth/plugins/organization/access";
 import { getAdminUserIds } from "./admin";
 import {
+  allowSessionCreation,
+  allowUserCreation,
+  confirmSignInRefused,
+} from "./confirm-sign-in";
+import {
   SSO_SERVER_ONLY_PATHS,
   SSO_SIGN_IN_PATH,
   SSO_UNUSED_PATHS,
@@ -132,8 +137,8 @@ const UNUSED_EMAIL_OTP_PATHS = [
 ];
 // Email change is on, but never over HTTP: only the app's server actions call
 // it, through auth.api (apps/docs/app/settings/account/_lib/
-// email-change-actions.ts). They add what the plugin doesn't: a recent
-// sign-in, per-user limits and the notice to the old address, so a direct
+// email-change-actions.ts). They add what the plugin doesn't: "Confirm it's
+// you", per-user limits and the notice to the old address, so a direct
 // request can't skip them.
 const SERVER_ONLY_EMAIL_OTP_PATHS = [
   "/email-otp/request-email-change",
@@ -144,8 +149,8 @@ const SERVER_ONLY_EMAIL_OTP_PATHS = [
 // no codes by email or SMS as a second factor, so the plugin's OTP endpoints
 // are off. Turning it on or off and new backup codes only go through the
 // app's server actions (apps/docs/app/settings/account/_lib/
-// two-factor-actions.ts), which add a recent sign-in, a current code, limits
-// and the notice email. Over HTTP only the challenge's own endpoints remain.
+// two-factor-actions.ts), which add "Confirm it's you", limits and the
+// notice email. Over HTTP only the challenge's own endpoints remain.
 const twoFactorPlugin = twoFactor({
   issuer: "QRdx",
   // QRdx has no passwords; the app's actions check a code instead.
@@ -201,7 +206,10 @@ export const auth = betterAuth({
       create: {
         // Email-code sign-ups arrive without a name; start with the address's
         // local part so invites and member lists never show a blank.
-        before: (user) => {
+        before: (user, ctx) => {
+          // Signing in again to confirm it's you never makes an account
+          // (./confirm-sign-in.ts).
+          if (!allowUserCreation(ctx)) throw confirmSignInRefused();
           if (user.name?.trim()) return Promise.resolve();
           const name = user.email.split("@")[0] || user.email;
           return Promise.resolve({ data: { ...user, name } });
@@ -220,7 +228,12 @@ export const auth = betterAuth({
     session: {
       create: {
         // Sign-in opens the workspace last opened anywhere, else your own.
-        before: async (session) => {
+        before: async (session, ctx) => {
+          // Signing in again to confirm it's you only signs in the person
+          // who asked (./confirm-sign-in.ts).
+          if (!(await allowSessionCreation(session.userId, ctx))) {
+            throw confirmSignInRefused();
+          }
           if (session.activeOrganizationId) return;
           try {
             const activeOrganizationId = await initialWorkspaceId(
@@ -270,8 +283,8 @@ export const auth = betterAuth({
       allowedAttempts: 3,
       storeOTP: "hashed",
       disableSignUp: false,
-      // The code goes to the new address; the app requires a recent sign-in
-      // instead of a second code to the current one (see above).
+      // The code goes to the new address; the app asks "Confirm it's you"
+      // first instead of a second code to the current one (see above).
       changeEmail: { enabled: true },
       sendVerificationOTP,
     }),

@@ -3,7 +3,8 @@
 // TOTP, backup-code and passkey checks behave like the plugins' (including
 // the twoFactor plugin's session path, which doesn't look at `verified`).
 // Covers: the 10-minute confirmation per session, each method (passkey,
-// authenticator code, backup code, emailed code), the shared lockout, a
+// authenticator code, backup code, emailed code), which methods each kind of
+// account gets (including a dead inbox), the shared lockout, a
 // passkey-only account refusing TOTP everywhere, turning on with a passkey
 // or an app, adding a second method, removing the last one, and that every
 // gated action answers CONFIRMATION_REQUIRED before doing anything.
@@ -46,6 +47,8 @@ const state = vi.hoisted(() => ({
   logged: [] as string[],
   errors: [] as string[],
   cookies: [] as string[],
+  /** linkedSignInsFor's answer: Google, GitHub or SSO the account can use */
+  signIns: [] as ("google" | "github" | "sso")[],
   secretSeq: 0,
   codeSeq: 0,
 }));
@@ -97,6 +100,11 @@ vi.mock("@/lib/feature-availability", () => ({
 }));
 vi.mock("@/lib/account/reauth", () => ({
   signInCodesAvailable: () => state.codesAvailable,
+}));
+// Which sign-ins are linked is tested in account-confirm-sign-in.test.ts.
+vi.mock("@/lib/account/linked-sign-ins-server", () => ({
+  linkedSignInsFor: async () => [...state.signIns],
+  configuredSocialProviders: () => ["google", "github"],
 }));
 vi.mock("@/lib/delivery-guard", () => ({
   isOutboundDeliveryAllowed: () => false,
@@ -385,6 +393,7 @@ beforeEach(() => {
   state.logged = [];
   state.errors = [];
   state.cookies = [];
+  state.signIns = [];
   state.secretSeq = 0;
   state.codeSeq = 0;
   info = vi
@@ -421,12 +430,42 @@ describe("the confirmation rules", () => {
     ).toEqual(["passkey", "backup"]);
     expect(
       confirmationMethodsFor({
+        twoFactorOn: true,
+        authenticatorApp: true,
+        passkeys: 0,
+        emailCodes: true,
+        signIns: ["google", "sso"],
+      }),
+    ).toEqual(["totp", "backup"]);
+  });
+
+  it("without two-step: a passkey, the emailed code, then linked sign-ins", () => {
+    expect(
+      confirmationMethodsFor({
         twoFactorOn: false,
         authenticatorApp: false,
         passkeys: 3,
         emailCodes: true,
       }),
-    ).toEqual(["email"]);
+    ).toEqual(["passkey", "email"]);
+    expect(
+      confirmationMethodsFor({
+        twoFactorOn: false,
+        authenticatorApp: false,
+        passkeys: 0,
+        emailCodes: true,
+        signIns: ["sso", "github", "google"],
+      }),
+    ).toEqual(["email", "google", "github", "sso"]);
+    expect(
+      confirmationMethodsFor({
+        twoFactorOn: false,
+        authenticatorApp: false,
+        passkeys: 1,
+        emailCodes: false,
+        signIns: ["github"],
+      }),
+    ).toEqual(["passkey", "github", "sign-in-again"]);
     expect(
       confirmationMethodsFor({
         twoFactorOn: false,
@@ -540,6 +579,75 @@ describe("the methods model", () => {
 });
 
 // ─── The confirmation record ────────────────────────────────────────────────
+
+// The kinds of account #246 shipped with, plus a mailbox that no longer
+// works: what each can confirm with. "Dead inbox" means the emailed code is
+// useless to them, so they need something else on this list.
+describe("what each kind of account can confirm with", () => {
+  const session = () => ({
+    userId: USER,
+    email: EMAIL,
+    sessionId: SESSION,
+    sessionCreatedAt: new Date(),
+    requestHeaders: new Headers({ host: "localhost:3000" }),
+  });
+  const methods = async () =>
+    (await server.loadConfirmationOptions(session())).methods;
+
+  it("1. email codes only: the emailed code", async () => {
+    account();
+    expect(await methods()).toEqual(["email"]);
+  });
+
+  it("2. Google or GitHub linked: the code, or signing in with them again", async () => {
+    account();
+    state.signIns = ["google", "github"];
+    expect(await methods()).toEqual(["email", "google", "github"]);
+  });
+
+  it("3. a passkey without two-step: the passkey first", async () => {
+    account({ passkeys: 1 });
+    expect(await methods()).toEqual(["passkey", "email"]);
+  });
+
+  it("4. two-step with passkeys only: passkey or backup code, never email or Google", async () => {
+    account({ on: true, passkeys: 1 });
+    state.signIns = ["google"];
+    expect(await methods()).toEqual(["passkey", "backup"]);
+  });
+
+  it("5. two-step with an authenticator app: app or backup code", async () => {
+    account({ on: true, app: true });
+    expect(await methods()).toEqual(["totp", "backup"]);
+  });
+
+  it("6. workspace SSO: the code, or signing in through SSO again", async () => {
+    account();
+    state.signIns = ["sso"];
+    expect(await methods()).toEqual(["email", "sso"]);
+  });
+
+  it("dead inbox with a passkey: the passkey works without the mailbox", async () => {
+    account({ passkeys: 2 });
+    expect((await methods()).filter((method) => method !== "email")).toEqual([
+      "passkey",
+    ]);
+  });
+
+  it("dead inbox with Google linked: signing in with Google works without the mailbox", async () => {
+    account();
+    state.signIns = ["google"];
+    expect((await methods()).filter((method) => method !== "email")).toEqual([
+      "google",
+    ]);
+  });
+
+  it("a passkey this page can't use isn't offered (a preview URL)", async () => {
+    account({ passkeys: 1 });
+    state.passkeysHere = false;
+    expect(await methods()).toEqual(["email"]);
+  });
+});
 
 describe("a confirmation", () => {
   it("is required, then lasts 10 minutes for this session only", async () => {
@@ -698,8 +806,36 @@ describe("confirming with a passkey", () => {
     });
   });
 
-  it("is a two-step method only", async () => {
+  it("works without two-step verification too, and counts no lockout", async () => {
     account({ passkeys: 1 });
+    expect(await server.startPasskeyConfirmation()).toMatchObject({
+      ok: true,
+      options: { userVerification: "required" },
+    });
+    expect(await server.confirmWithPasskey({ response: { id: "c1" } })).toEqual(
+      { ok: true },
+    );
+    expect(confirmedRows()).toHaveLength(1);
+    expect(fakeDb.find("session", { token: "passkey_token" })).toBeUndefined();
+    expect(state.attempts.count).toBe(0);
+  });
+
+  it("without two-step, still refuses another person's passkey or no verification", async () => {
+    account({ passkeys: 1 });
+    state.passkeyOwner = "someone_else";
+    expect(
+      await server.confirmWithPasskey({ response: { id: "x" } }),
+    ).toMatchObject({ ok: false });
+    state.passkeyOwner = USER;
+    state.passkeyUserVerified = false;
+    expect(
+      await server.confirmWithPasskey({ response: { id: "c1" } }),
+    ).toMatchObject({ ok: false, error: expect.stringMatching(/PIN/) });
+    expect(confirmedRows()).toHaveLength(0);
+  });
+
+  it("needs a passkey of the account's own", async () => {
+    account();
     expect(await server.startPasskeyConfirmation()).toMatchObject({
       ok: false,
     });
@@ -896,6 +1032,57 @@ describe("every gated action asks first, and does nothing until confirmed", () =
       "email-change",
       "delete-account",
     ]);
+  });
+
+  it("an email change signs out the account's other sessions, not this one", async () => {
+    account();
+    const sessionRow = (id: string, userId = USER) => ({
+      id,
+      token: `token_${id}`,
+      userId,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      expiresAt: new Date(Date.now() + 86_400_000),
+    });
+    fakeDb.seed("session", [
+      sessionRow(SESSION),
+      sessionRow("session_phone"),
+      sessionRow("session_other_person", "user_2"),
+    ]);
+    await confirmNow();
+    expect(
+      await emailActions.confirmEmailChange({
+        newEmail: "new@qrdx.test",
+        code: "123456",
+      }),
+    ).toEqual({ ok: true });
+    expect(
+      fakeDb
+        .rows("session")
+        .map((row) => row.id)
+        .sort(),
+    ).toEqual([SESSION, "session_other_person"]);
+  });
+
+  it("a refused email change signs nobody out", async () => {
+    account();
+    fakeDb.seed("session", [
+      {
+        id: "session_phone",
+        token: "token_phone",
+        userId: USER,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        expiresAt: new Date(Date.now() + 86_400_000),
+      },
+    ]);
+    expect(
+      await emailActions.confirmEmailChange({
+        newEmail: "new@qrdx.test",
+        code: "123456",
+      }),
+    ).toEqual({ ok: false, error: CONFIRMATION_REQUIRED });
+    expect(fakeDb.find("session", { id: "session_phone" })).toBeDefined();
   });
 
   it("still needs the typed confirmation to delete", async () => {

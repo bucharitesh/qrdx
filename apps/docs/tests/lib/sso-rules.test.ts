@@ -428,6 +428,34 @@ describe("ssoFailureRedirect", () => {
     ).toBe("/sign-in?next=%2Finvite%2Fabc%3Fx%3D1&error=account_not_linked");
   });
 
+  it("sends a refused 'Confirm it's you' sign-in back to the page that asked", () => {
+    expect(
+      ssoFailureRedirect(
+        `${app}/settings/account?tab=x&confirm=sign-in-failed&error=confirm_sign_in_wrong_account&error_description=no`,
+        app,
+      ),
+    ).toBe(
+      "/settings/account?tab=x&confirm=sign-in-failed&error=confirm_sign_in_wrong_account",
+    );
+    // The SAML plugin sends some failures to the success URL.
+    expect(
+      ssoFailureRedirect(
+        `${app}/settings/account?confirm=signed-in&error=account%20not%20linked`,
+        app,
+      ),
+    ).toBe("/settings/account?confirm=sign-in-failed&error=account_not_linked");
+    // Never another site or the auth API, even with the marker.
+    expect(
+      ssoFailureRedirect(
+        "https://evil.test/x?confirm=sign-in-failed&error=e",
+        app,
+      ),
+    ).toBe("/sign-in?error=e");
+    expect(
+      ssoFailureRedirect(`${app}/api/auth/x?confirm=signed-in&error=e`, app),
+    ).toBe("/sign-in?error=e");
+  });
+
   it("never keeps the auth API or another site as next", () => {
     expect(
       ssoFailureRedirect(`${app}/api/auth/error?error=invalid_state`, app),
