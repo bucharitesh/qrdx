@@ -546,6 +546,14 @@ async function main() {
     await step(
       "Turn on asks to confirm it's you with an emailed code",
       async () => {
+        // Signing up just confirmed this session (a finished sign-in counts
+        // for 10 minutes, packages/auth/new-sign-in.ts), so Turn on wouldn't
+        // ask yet: end that confirmation first.
+        if (!DB_SQL) {
+          await clickInSection(page, "Turn on", "Two-step verification");
+          return "SKIPPED: E2E_DB_SQL not set (signing up just confirmed this session)";
+        }
+        expireConfirmations();
         await clickInSection(page, "Turn on", "Two-step verification");
         await dialogOpen(page, CONFIRM);
         const text = await dialogText(page, CONFIRM);
