@@ -2,6 +2,7 @@ import "server-only";
 
 import { keys as authKeys } from "@repo/auth/keys";
 import { ssoConfirmsFor } from "@repo/auth/sso";
+import { boundSsoRequirement } from "@repo/auth/sso-required";
 import { account as accountTable, database as db } from "@repo/database";
 import { eq } from "drizzle-orm";
 import { isFeatureAvailable } from "@/lib/feature-availability";
@@ -21,7 +22,9 @@ export function configuredSocialProviders(): SocialProvider[] {
 /**
  * The sign-ins that can confirm it's you for this person (./confirmation.ts):
  * Google and GitHub when linked and configured here, workspace SSO when
- * their address's connection is usable and they sign in through it.
+ * their address's connection is usable and they sign in through it. Where
+ * their company requires SSO, Google and GitHub can't sign them in
+ * (packages/auth/ee/sso-required.ts), so they aren't offered.
  */
 export async function linkedSignInsFor({
   userId,
@@ -35,10 +38,13 @@ export async function linkedSignInsFor({
     .from(accountTable)
     .where(eq(accountTable.userId, userId));
   const linked = new Set(rows.map((row) => row.providerId));
-  const found: ConfirmSignInProvider[] = configuredSocialProviders().filter(
-    (provider) => linked.has(provider),
-  );
-  if (isFeatureAvailable("sso") && (await ssoConfirmsFor(userId, email))) {
+  const sso = isFeatureAvailable("sso");
+  const ssoOnly =
+    sso && (await boundSsoRequirement(userId, email, { fresh: true })) !== null;
+  const found: ConfirmSignInProvider[] = ssoOnly
+    ? []
+    : configuredSocialProviders().filter((provider) => linked.has(provider));
+  if (sso && (await ssoConfirmsFor(userId, email))) {
     found.push("sso");
   }
   return found;
