@@ -3,7 +3,7 @@ title: Single sign-on (SSO)
 description: Let your team sign in to QRdx with your company's identity provider, over OIDC or SAML 2.0. Part of the Business plan.
 ---
 
-Single sign-on lets people at your company sign in to QRdx through your identity provider instead of an email code, Google or GitHub. You set up one connection for one email domain, prove you own the domain, and people at that domain are offered single sign-on when they enter their work email to sign in. Signing in that way makes them a member of your workspace.
+Single sign-on lets people at your company sign in to QRdx through your identity provider instead of an email code, Google or GitHub. You set up one connection for one email domain, prove you own the domain, and people at that domain are offered single sign-on when they enter their work email to sign in. Signing in that way makes them a member of your workspace. You can also [require it](#require-single-sign-on), so your identity provider is the only way in for that domain.
 
 Single sign-on is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
 
@@ -13,7 +13,7 @@ Single sign-on is a Business feature under the QRdx commercial license. A self-h
 
 - You need to be an **owner** or **admin** of the workspace.
 - You need to be able to add a DNS record for your email domain, like `acme.com`.
-- Setting up, changing, verifying or removing the connection asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first: with your passkey or a two-step verification code, or, if two-step verification is off, with a code we email you or, for an OIDC connection, by signing in through it again. One confirmation covers your changes for the next 10 minutes.
+- Setting up, changing, verifying or removing the connection, and requiring single sign-on, asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first: with your passkey or a two-step verification code, or, if two-step verification is off, with a code we email you or, for an OIDC connection, by signing in through it again. One confirmation covers your changes for the next 10 minutes.
 
 QRdx uses the standard OIDC and SAML 2.0 settings that identity providers ask for. The steps below list the values; where to paste them depends on your provider.
 
@@ -64,11 +64,11 @@ A verified domain covers its subdomains too, so `acme.com` also covers `eu.acme.
 2. Before sending a code, QRdx checks the address's domain. For your verified domain, it says your company signs in with single sign-on and offers **Continue with SSO**. No code is sent unless they ask for one.
 3. **Continue with SSO** sends them to your identity provider, then back to QRdx, signed in and in your workspace.
 
-They can choose **Email me a code** instead, since single sign-on isn't required. **Sign in with SSO**, below the email field, also still works: it asks for their work email and goes straight to your identity provider.
+They can choose **Email me a code** instead, unless you [require single sign-on](#require-single-sign-on). **Sign in with SSO**, below the email field, also still works: it asks for their work email and goes straight to your identity provider.
 
 QRdx offers single sign-on only while the domain is verified and the workspace is on Business. The check looks at the domain alone, so it never shows whether someone has a QRdx account.
 
-If someone turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification), QRdx still asks for their authenticator code after your identity provider signs them in, unless they chose not to be asked again on that device.
+If someone turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification), QRdx still asks for their second step after your identity provider signs them in, unless they chose not to be asked again on that device. That's the same when single sign-on is required.
 
 Every SSO sign-in makes sure the person is in your workspace:
 
@@ -80,11 +80,35 @@ This includes people you removed from the workspace: they rejoin the next time t
 
 If someone already has a QRdx account with the same email address, signing in with SSO uses that account. They keep their own workspace and everything in it.
 
-QRdx only signs someone in through your connection if the address your provider sends is at your verified domain. Their other ways to sign in, like an email code to the same address, keep working.
+QRdx only signs someone in through your connection if the address your provider sends is at your verified domain. Their other ways to sign in, like an email code to the same address, keep working unless you require single sign-on.
 
 Email addresses have to be verified in your identity provider. If it tells QRdx an address isn't verified (OIDC's `email_verified` claim, or a SAML `email_verified` or `emailVerified` attribute, set to false), QRdx doesn't sign the person in, doesn't create an account for them and doesn't link an existing one. They see a message asking your admin to verify addresses there. If your provider doesn't say either way, QRdx trusts it for your verified domain.
 
 Signing out of QRdx doesn't sign anyone out of your identity provider. While they're still signed in there, their next SSO sign-in goes straight through without asking for their password. On a shared computer, sign out of your identity provider too.
+
+## Require single sign-on
+
+Once your domain is verified, you can make your identity provider the only way in for people at it. On the **Single sign-on** page, turn on **Require single sign-on for** your domain. It covers subdomains too, like the connection.
+
+While it's on, for an address at your domain:
+
+- Email codes, Google and GitHub don't sign them in<IfAvailable feature="passkeys">, and nor does **Continue with passkey**</IfAvailable>. They see that your company requires single sign-on, and **Continue with SSO**.
+- Their [two-step verification](/docs/help/privacy-and-security/two-step-verification) still applies after your identity provider signs them in.<IfAvailable feature="passkeys"> A passkey still works as that second step.</IfAvailable>
+- A sign-in lasts 24 hours at most. Then they go through your identity provider again, so someone you unassign there can't sign in to QRdx again, and is signed out within a day.
+- Their QRdx email can't be changed to an address elsewhere, and nobody else's can be changed to one at your domain. Signing in with single sign-on is how an address there gets into QRdx.
+
+Turning it on signs everyone at your domain out of sessions that didn't start with single sign-on, and the ones that did end 24 hours after that sign-in. Nobody gets an email about it; they're asked to sign in with SSO next time.
+
+**Owners keep their other ways to sign in.** None of this applies to the workspace's owners: they can still use an email code, Google or GitHub<IfAvailable feature="passkeys">, or a passkey</IfAvailable>, their sessions aren't cut short, and they can change their email. So a problem with your identity provider can't lock everyone out of this setting. Keep the owner role to the few people who need it.
+
+To turn it on:
+
+- You need to be an **owner** or **admin** on the Business plan, with a verified domain, and you'll be asked to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+- If you're an admin with an address at the domain, sign in with single sign-on first. Turning it on would otherwise sign you out, and signing in that way shows the connection works.
+
+Turning it off, removing the connection, or the workspace leaving Business stops requiring it. People keep the sessions they have, and can use their other ways to sign in again.
+
+Single sign-on is about signing in. API keys aren't sign-ins, so requiring it doesn't stop them; removing someone on the **Team** page does stop the API keys they made for the workspace.
 
 ## Remove someone for good
 
@@ -93,21 +117,22 @@ Because every SSO sign-in adds the person back, removing them on the **Team** pa
 1. In your identity provider, unassign them from the QRdx app (or turn off their account there), so it can't sign them in to QRdx.
 2. Then remove them on the **Team** page. The remove dialog reminds you when the person's address is at your verified domain.
 
-Removing someone from the workspace doesn't delete their QRdx account. They can still sign in to their own workspace with an email code, Google or GitHub.
+If you [require single sign-on](#require-single-sign-on), step 1 also signs them out of QRdx within 24 hours. Remove them on the **Team** page too, so they're no longer a member and their API keys for the workspace stop working.
+
+Removing someone from the workspace doesn't delete their QRdx account. Unless single sign-on is required for their address, they can still sign in to their own workspace with an email code, Google or GitHub.
 
 ## Change or remove the connection
 
 - **Replace secret** (OIDC) or **Replace certificate** (SAML) updates the connection when you rotate them at your identity provider. A SAML connection set up from metadata XML is changed by removing it and setting it up again.
-- **Remove** turns single sign-on off. Everyone stays in the workspace and can sign in with an email code, Google or GitHub.
+- **Remove** turns single sign-on off, and stops requiring it. Everyone stays in the workspace and can sign in with an email code, Google or GitHub.
 
 ## If the plan changes
 
-If the workspace is no longer on Business, nobody can sign in with SSO, including halfway through a sign-in. People see a message and can sign in another way. The connection is kept, so it works again when the workspace is back on Business, and you can still remove it.
+If the workspace is no longer on Business, nobody can sign in with SSO, including halfway through a sign-in, and single sign-on stops being required. People see a message and can sign in another way. The connection and its settings are kept, so they work again when the workspace is back on Business, and you can still remove it.
 
 ## What isn't supported
 
-- Requiring SSO: email codes, Google and GitHub keep working for everyone.
-- Automatic provisioning and removal (SCIM). Removing someone from your identity provider doesn't remove them from the workspace or end their QRdx sessions; remove them on the **Team** page too (see [Remove someone for good](#remove-someone-for-good)).
+- Automatic provisioning and removal (SCIM). Removing someone from your identity provider doesn't remove them from the workspace. Without [required single sign-on](#require-single-sign-on) it doesn't end their QRdx sessions either; remove them on the **Team** page too (see [Remove someone for good](#remove-someone-for-good)).
 - Roles or groups from your identity provider. Everyone joins with the role under **New members**.
 - More than one connection, or more than one domain, per workspace.
 - Sign-in started from your identity provider's app dashboard (IdP-initiated SAML), SAML single logout, and encrypted assertions.
