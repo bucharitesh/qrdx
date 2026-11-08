@@ -5,6 +5,7 @@ import * as schema from "@repo/database";
 import { and, database as db, eq } from "@repo/database";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
+import { eeLicensed } from "../ee-license";
 import { workspacePlanTier } from "../plan";
 import {
   domainCovers,
@@ -12,6 +13,7 @@ import {
   emailDomain,
   emailInSsoDomain,
   looksLikeEmail,
+  normalizeSsoDomain,
   SAML_DIGEST_ALGORITHMS,
   SAML_RESPONSE_MAX_CHARS,
   SAML_SIGNATURE_ALGORITHMS,
@@ -81,6 +83,33 @@ async function verifiedProvidersFor(domain: string): Promise<ProviderRow[]> {
     where: (table, { eq: equals }) => equals(table.domainVerified, true),
   });
   return rows.filter((row) => domainCovers(row.domain, domain));
+}
+
+/**
+ * The connection a sign-in with an address in `domain` goes through: the one
+ * verified connection covering it, or null when none does, or more than one
+ * (there's no telling which; verifySsoDomain keeps that from happening).
+ */
+async function signInProviderFor(domain: string): Promise<ProviderRow | null> {
+  const providers = await verifiedProvidersFor(domain);
+  return providers.length === 1 ? (providers[0] ?? null) : null;
+}
+
+/**
+ * Read-only, for the sign-in panel's email step (apps/docs/ee/sso/
+ * sign-in-offer.ts): true when "Sign in with SSO" with an address in `domain`
+ * would go to an identity provider, by the same checks as the /sign-in/sso
+ * hook below (one verified connection covers the domain, and its workspace
+ * is on Business). It takes a domain, never an address, so its answer is the
+ * same for everyone there, with an account or without. False on servers
+ * without a licence key.
+ */
+export async function ssoSignInOffered(domain: string): Promise<boolean> {
+  if (!eeLicensed(process.env)) return false;
+  const normalized = normalizeSsoDomain(domain);
+  if (!normalized) return false;
+  const provider = await signInProviderFor(normalized);
+  return provider !== null && (await ssoProviderUsable(provider));
 }
 
 /** True when the connection may sign people in today. */
@@ -492,9 +521,8 @@ export const ssoGate = () =>
                 message: "Enter your work email.",
               });
             }
-            const providers = await verifiedProvidersFor(domain);
-            const [provider] = providers;
-            if (!provider || providers.length > 1) {
+            const provider = await signInProviderFor(domain);
+            if (!provider) {
               throw new APIError("NOT_FOUND", {
                 code: SSO_ERROR.notFound,
                 message: `No SSO is set up for ${domain}.`,

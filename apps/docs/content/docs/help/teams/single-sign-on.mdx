@@ -3,7 +3,7 @@ title: Single sign-on (SSO)
 description: Let your team sign in to QRdx with your company's identity provider, over OIDC or SAML 2.0. Part of the Business plan.
 ---
 
-Single sign-on lets people at your company sign in to QRdx through your identity provider instead of an email code, Google or GitHub. You set up one connection for one email domain, prove you own the domain, and people at that domain can sign in with **Sign in with SSO**. Signing in that way makes them a member of your workspace.
+Single sign-on lets people at your company sign in to QRdx through your identity provider instead of an email code, Google or GitHub. You set up one connection for one email domain, prove you own the domain, and people at that domain are offered single sign-on when they enter their work email to sign in. Signing in that way makes them a member of your workspace.
 
 Single sign-on is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
 
@@ -60,8 +60,13 @@ A verified domain covers its subdomains too, so `acme.com` also covers `eu.acme.
 
 ## What your team sees
 
-1. On the sign-in page, they click **Sign in with SSO** and enter their work email.
-2. QRdx sends them to your identity provider, then back to QRdx, signed in and in your workspace.
+1. On the sign-in page, they enter their work email and click **Email me a code**, like any email sign-in.
+2. Before sending a code, QRdx checks the address's domain. For your verified domain, it says your company signs in with single sign-on and offers **Continue with SSO**. No code is sent unless they ask for one.
+3. **Continue with SSO** sends them to your identity provider, then back to QRdx, signed in and in your workspace.
+
+They can choose **Email me a code** instead, since single sign-on isn't required. **Sign in with SSO**, below the email field, also still works: it asks for their work email and goes straight to your identity provider.
+
+QRdx offers single sign-on only while the domain is verified and the workspace is on Business. The check looks at the domain alone, so it never shows whether someone has a QRdx account.
 
 If someone turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification), QRdx still asks for their authenticator code after your identity provider signs them in, unless they chose not to be asked again on that device.
 
@@ -79,7 +84,7 @@ QRdx only signs someone in through your connection if the address your provider 
 
 Email addresses have to be verified in your identity provider. If it tells QRdx an address isn't verified (OIDC's `email_verified` claim, or a SAML `email_verified` or `emailVerified` attribute, set to false), QRdx doesn't sign the person in, doesn't create an account for them and doesn't link an existing one. They see a message asking your admin to verify addresses there. If your provider doesn't say either way, QRdx trusts it for your verified domain.
 
-Signing out of QRdx doesn't sign anyone out of your identity provider. While they're still signed in there, the next **Sign in with SSO** goes straight through without asking for their password. On a shared computer, sign out of your identity provider too.
+Signing out of QRdx doesn't sign anyone out of your identity provider. While they're still signed in there, their next SSO sign-in goes straight through without asking for their password. On a shared computer, sign out of your identity provider too.
 
 ## Remove someone for good
 
