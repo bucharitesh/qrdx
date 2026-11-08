@@ -6,6 +6,7 @@ import {
   randomUUID,
   timingSafeEqual,
 } from "node:crypto";
+import { confirmedSessionIdentifier } from "@repo/auth/confirm-sign-in-rules";
 import { cookiesToSet } from "@repo/auth/passkey";
 import { auth } from "@repo/auth/server";
 import { LOCKOUT_FAILURES } from "@repo/auth/sign-in-challenge-rules";
@@ -80,11 +81,10 @@ export interface ConfirmableSession {
   requestHeaders: Headers;
 }
 
-const CONFIRMED_PREFIX = "qrdx-confirmed-";
 const CODE_PREFIX = "qrdx-confirm-code-";
 
-const confirmedIdentifier = (sessionId: string) =>
-  `${CONFIRMED_PREFIX}${sessionId}`;
+// Shared with packages/auth/confirm-gate.ts, which reads it over HTTP.
+const confirmedIdentifier = confirmedSessionIdentifier;
 const codeIdentifier = (sessionId: string) => `${CODE_PREFIX}${sessionId}`;
 
 // Per user, on top of the account lockout (auth.api calls skip Better Auth's
