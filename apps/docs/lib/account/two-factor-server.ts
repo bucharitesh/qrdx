@@ -85,10 +85,7 @@ export async function loadTwoFactorMethods(
   };
   if (!(facts.on && facts.row)) return methods;
   try {
-    const { backupCodes } = await auth.api.viewBackupCodes({
-      body: { userId },
-    });
-    return { ...methods, backupCodesLeft: backupCodes.length };
+    return { ...methods, backupCodesLeft: await countBackupCodes(userId) };
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -159,6 +156,14 @@ export async function resetTwoFactor(userId: string): Promise<void> {
         ),
       ),
   ]);
+}
+
+/** How many backup codes the account has left (never the codes). */
+export async function countBackupCodes(userId: string): Promise<number> {
+  const { backupCodes } = await auth.api.viewBackupCodes({
+    body: { userId },
+  });
+  return backupCodes.length;
 }
 
 export type CodeAttempt =

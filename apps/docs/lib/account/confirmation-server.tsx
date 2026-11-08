@@ -17,6 +17,7 @@ import {
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, eq, gt } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
+import { after } from "next/server";
 import { z } from "zod";
 import {
   addressKey,
@@ -53,6 +54,7 @@ import { linkedSignInsFor } from "./linked-sign-ins-server";
 import { PASSKEY_MESSAGES } from "./passkeys";
 import { signInCodesAvailable } from "./reauth";
 import { hasAuthenticatorApp } from "./two-factor-methods";
+import { sendBackupCodeUsedNotice } from "./two-factor-notice-server";
 import {
   clearCodeFailures,
   loadTwoFactorFacts,
@@ -286,10 +288,12 @@ export async function loadConfirmationOptions(
  * Checks an authenticator or backup code (a backup code is used up) against
  * the shared lockout. An account without an authenticator app (passkeys
  * only, or a setup that was never confirmed) never gets as far as the
- * plugin's TOTP check.
+ * plugin's TOTP check. A backup code that worked is emailed to the
+ * account's address, after the response: that never holds up or fails the
+ * check.
  */
 export async function checkSecondFactorCode(
-  session: Pick<ConfirmableSession, "userId" | "requestHeaders">,
+  session: Pick<ConfirmableSession, "userId" | "email" | "requestHeaders">,
   rawCode: string,
 ): Promise<ConfirmResult> {
   const totpCode = isTotpCode(rawCode.trim()) ? rawCode.trim() : null;
@@ -345,6 +349,20 @@ export async function checkSecondFactorCode(
     );
   }
   await clearCodeFailures(attempt.id);
+  if (backupCode) {
+    try {
+      after(() =>
+        sendBackupCodeUsedNotice({
+          userId: session.userId,
+          email: session.email,
+          usedFor: "confirm",
+          headers: session.requestHeaders,
+        }),
+      );
+    } catch (error) {
+      logError(error as Error, { action: "account.backupCodeNotice" });
+    }
+  }
   return { ok: true };
 }
 
