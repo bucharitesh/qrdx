@@ -28,6 +28,7 @@ import type { PgColumn } from "drizzle-orm/pg-core";
 import { isbot } from "isbot";
 import { env } from "@/lib/env";
 import { getClientIp } from "@/lib/request-guards";
+import { scanGeo } from "./request-geo";
 import { parseUserAgent } from "./user-agent";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -38,42 +39,9 @@ export { type ParsedUserAgent, parseUserAgent } from "./user-agent";
 
 // ─── Request details ─────────────────────────────────────────────────────────
 
-function headerText(
-  headers: Headers,
-  name: string,
-  maxLength: number,
-): string | null {
-  const raw = headers.get(name);
-  if (!raw) return null;
-  let value = raw;
-  try {
-    value = decodeURIComponent(raw);
-  } catch {
-    // Keep the raw value when it is not percent-encoded.
-  }
-  return value.trim().slice(0, maxLength) || null;
-}
-
-/** Vercel geo headers (absent when self-hosted; Cloudflare's country is a fallback). */
-export function scanGeo(headers: Headers): {
-  country: string | null;
-  region: string | null;
-  city: string | null;
-} {
-  const country = (
-    headerText(headers, "x-vercel-ip-country", 8) ??
-    headerText(headers, "cf-ipcountry", 8)
-  )?.toUpperCase();
-  return {
-    // "XX" = unknown on Cloudflare
-    country:
-      country && country !== "XX" && /^[A-Z]{2}$/.test(country)
-        ? country
-        : null,
-    region: headerText(headers, "x-vercel-ip-country-region", 16),
-    city: headerText(headers, "x-vercel-ip-city", 100),
-  };
-}
+// The country, region and city from the platform's headers live in
+// ./request-geo.ts (no server imports), shared with the session check.
+export { scanGeo } from "./request-geo";
 
 /** Host of an http(s) referrer; paths and queries are never stored. */
 export function refererHost(value: string | null): string | null {
