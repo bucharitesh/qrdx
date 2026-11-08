@@ -5,7 +5,7 @@
 //
 // Needs, all local:
 //   node e2e/sso/dns-stub.mjs <records.json> 5399
-//   node e2e/sso/mock-idp.mjs 4455
+//   node e2e/sso/mock-idp.mjs 4455   (or another port: SSO_E2E_IDP)
 //   NODE_OPTIONS="--require $PWD/e2e/sso/dns-preload.cjs" \
 //   BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:4455 \
 //     pnpm exec next dev -p <port> > <dev.log>
@@ -44,7 +44,10 @@ const DEV_LOG = process.env.SSO_E2E_DEV_LOG ?? "";
 const DNS_FILE = process.env.SSO_E2E_DNS_FILE ?? "";
 const PSQL = process.env.SSO_E2E_PSQL ?? "";
 const SHOTS = process.env.SSO_E2E_SHOTS ?? "";
-const IDP = "http://localhost:4455";
+const IDP = (process.env.SSO_E2E_IDP ?? "http://localhost:4455").replace(
+  /\/$/,
+  "",
+);
 const RUN = Date.now().toString(36);
 const DOMAIN = `acme-${RUN}.test`;
 
@@ -348,6 +351,24 @@ async function emailSignIn(email: string) {
     latestCode(email),
   );
   if (status !== 200) throw new Error(`sign in ${status}`);
+  await forgetSignInConfirmation();
+}
+
+/**
+ * A finished sign-in counts as "Confirm it's you" for 10 minutes
+ * (packages/auth/new-sign-in.ts). The checks here are about the dialog, so
+ * the new session's own confirmation ends at once ("10 minutes later"); a
+ * confirmation an earlier session made still never carries over.
+ */
+async function forgetSignInConfirmation() {
+  const id = await evaluate(async () => {
+    const response = await fetch("/api/auth/get-session");
+    return response.ok ? ((await response.json())?.session?.id ?? "") : "";
+  });
+  if (id)
+    sql(
+      `delete from verification where identifier=${q(`qrdx-confirmed-${id}`)}`,
+    );
 }
 
 const CONFIRM = "Confirm it's you";
@@ -1435,7 +1456,7 @@ try {
   const firstPost = acsPost(mark);
   check(
     "SAML cross-site: the ACS POST came from the IdP's site",
-    firstPost?.origin === "http://127.0.0.1:4455",
+    firstPost?.origin === `http://127.0.0.1:${new URL(IDP).port}`,
     firstPost?.origin,
   );
   check(
