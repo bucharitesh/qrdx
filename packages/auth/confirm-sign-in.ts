@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { database as db, eq, verification } from "@repo/database";
-import { APIError } from "better-auth/api";
+import type { BetterAuthPlugin } from "better-auth";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { CONFIRM_SIGN_IN_WRONG_ACCOUNT } from "./confirm-sign-in-rules";
 
 // "Confirm it's you" by signing in again with Google, GitHub or workspace SSO
@@ -10,15 +11,27 @@ import { CONFIRM_SIGN_IN_WRONG_ACCOUNT } from "./confirm-sign-in-rules";
 // row saying who asked. On the OAuth and SSO callbacks that cookie keeps the
 // sign-in to that person (./server.ts databaseHooks): no new account is made,
 // and a sign-in as anyone else is refused, so the browser stays signed in as
-// it was. The SAML ACS is a cross-site POST, which doesn't carry the cookie;
-// the app's finishing step catches a different account there instead.
+// it was. That needs the cookie on the callback, so only OIDC connections
+// confirm: a SAML ACS is a cross-site POST, which a Lax cookie isn't sent
+// with (ee/sso.ts ssoConfirmsFor). The provider is also asked to show its
+// account chooser or sign-in screen (confirmSignIn below).
 
-/** HttpOnly, SameSite=Lax, 10 minutes: set by the app when it starts. */
+/**
+ * HttpOnly, SameSite=Lax, 10 minutes: set by the app when it starts. Over
+ * HTTPS it carries the `__Host-` prefix (Secure, Path=/, no Domain).
+ */
 export const CONFIRM_SIGN_IN_COOKIE = "qrdx_confirm_sign_in";
+export const CONFIRM_SIGN_IN_SECURE_COOKIE = `__Host-${CONFIRM_SIGN_IN_COOKIE}`;
+
+/** The cookie's name for a site served over HTTPS or not. */
+export const confirmSignInCookieName = (secure: boolean) =>
+  secure ? CONFIRM_SIGN_IN_SECURE_COOKIE : CONFIRM_SIGN_IN_COOKIE;
 /** How long the sign-in has to finish. */
 export const CONFIRM_SIGN_IN_MINUTES = 10;
 
-const IDENTIFIER_PREFIX = "qrdx-confirm-sign-in-";
+/** Every intent row's `verification.identifier` starts with this. */
+export const CONFIRM_SIGN_IN_IDENTIFIER_PREFIX = "qrdx-confirm-sign-in-";
+const IDENTIFIER_PREFIX = CONFIRM_SIGN_IN_IDENTIFIER_PREFIX;
 
 /** The `verification` identifier for a cookie value (never the value). */
 export function confirmSignInIdentifier(nonce: string): string {
@@ -97,12 +110,20 @@ export function cookieFrom(ctx: HookContext, name: string): string | null {
   return null;
 }
 
+/** The cookie's value, under either name, else null. */
+export function confirmSignInCookie(ctx: HookContext): string | null {
+  return (
+    cookieFrom(ctx, CONFIRM_SIGN_IN_SECURE_COOKIE) ??
+    cookieFrom(ctx, CONFIRM_SIGN_IN_COOKIE)
+  );
+}
+
 /** The cookie's value on a sign-in callback, else null. */
 export function confirmSignInNonce(
   ctx: HookContext | null | undefined
 ): string | null {
   if (!(ctx && isSignInCallbackPath(ctx.path))) return null;
-  return cookieFrom(ctx, CONFIRM_SIGN_IN_COOKIE);
+  return confirmSignInCookie(ctx);
 }
 
 /** The unexpired intent the cookie names, else null. */
@@ -131,15 +152,21 @@ export function confirmSignInRefused(): APIError {
   });
 }
 
+type FindIntent = (nonce: string) => Promise<ConfirmSignInIntent | null>;
+
 /**
  * user.create.before: while confirming, a sign-in never makes an account
  * (someone who picks a Google account that isn't linked would otherwise get
- * a new, empty one).
+ * a new, empty one). Only while the intent is live: a cookie left behind
+ * after it expired or was used (on a shared computer, say) changes nothing.
  */
-export function allowUserCreation(
-  ctx: HookContext | null | undefined
-): boolean {
-  return confirmSignInNonce(ctx) === null;
+export async function allowUserCreation(
+  ctx: HookContext | null | undefined,
+  find: FindIntent = findConfirmSignInIntent
+): Promise<boolean> {
+  const nonce = confirmSignInNonce(ctx);
+  if (!nonce) return true;
+  return (await find(nonce)) === null;
 }
 
 /**
@@ -150,9 +177,7 @@ export function allowUserCreation(
 export async function allowSessionCreation(
   userId: string,
   ctx: HookContext | null | undefined,
-  find: (
-    nonce: string
-  ) => Promise<ConfirmSignInIntent | null> = findConfirmSignInIntent
+  find: FindIntent = findConfirmSignInIntent
 ): Promise<boolean> {
   const nonce = confirmSignInNonce(ctx);
   if (!nonce) return true;
@@ -162,3 +187,82 @@ export async function allowSessionCreation(
   if (!intent) return true;
   return intent.userId === userId;
 }
+
+/**
+ * Asks the provider to show its account chooser (Google, GitHub) or sign-in
+ * screen (workspace SSO over OIDC) instead of passing straight through, so
+ * confirming takes the person's own hand at the provider. Best effort: a
+ * provider can still skip it (GitHub shows its chooser only when more than
+ * one account is signed in or the app wasn't authorised), and nothing on our
+ * side can prove it was shown. Already-set values are kept.
+ */
+export function withProviderPrompt(url: string, provider: string): string {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    return url;
+  }
+  if (parsed.searchParams.has("prompt")) return url;
+  if (provider === "google" || provider === "github") {
+    parsed.searchParams.set("prompt", "select_account");
+  } else if (provider === "sso") {
+    parsed.searchParams.set("prompt", "login");
+  } else {
+    return url;
+  }
+  return parsed.toString();
+}
+
+const START_PATHS = new Set(["/sign-in/social", "/sign-in/sso"]);
+
+/**
+ * The plugin side of confirming by signing in again:
+ * - on /sign-in/social and /sign-in/sso, while an intent is live, the
+ *   provider URL asks for the chooser or sign-in screen (withProviderPrompt);
+ * - signing out clears the cookie, so nothing is left for the next person.
+ */
+export const confirmSignIn = (find: FindIntent = findConfirmSignInIntent) =>
+  ({
+    id: "qrdx-confirm-sign-in",
+    hooks: {
+      after: [
+        {
+          matcher: (ctx) => START_PATHS.has(ctx.path ?? ""),
+          handler: createAuthMiddleware(async (ctx) => {
+            const nonce = confirmSignInCookie(ctx);
+            if (!nonce) return;
+            const returned = ctx.context.returned as
+              | { url?: unknown; redirect?: unknown }
+              | undefined;
+            if (!returned || typeof returned.url !== "string") return;
+            const intent = await find(nonce);
+            if (!intent) return;
+            return ctx.json({
+              ...returned,
+              url: withProviderPrompt(returned.url, intent.provider),
+            });
+          }),
+        },
+        {
+          matcher: (ctx) => ctx.path === "/sign-out",
+          handler: createAuthMiddleware((ctx) => {
+            if (!confirmSignInCookie(ctx)) return Promise.resolve();
+            for (const name of [
+              CONFIRM_SIGN_IN_COOKIE,
+              CONFIRM_SIGN_IN_SECURE_COOKIE,
+            ]) {
+              ctx.setCookie(name, "", {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: name === CONFIRM_SIGN_IN_SECURE_COOKIE,
+                path: "/",
+                maxAge: 0,
+              });
+            }
+            return Promise.resolve();
+          }),
+        },
+      ],
+    },
+  }) satisfies BetterAuthPlugin;

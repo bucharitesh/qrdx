@@ -76,28 +76,36 @@ describe("signing in again through SSO to confirm it's you", () => {
     return vi.spyOn(q.account, "findFirst").mockResolvedValue(row as never);
   }
 
-  it("counts when their address's connection is usable and they sign in through it", async () => {
-    stubDb({ providers: [provider()] });
+  const oidc = { oidcConfig: '{"issuer":"https://idp.acme.com"}' };
+
+  it("counts when their address's OIDC connection is usable and they sign in through it", async () => {
+    stubDb({ providers: [provider(oidc)] });
     stubAccount({ id: "acc_1" });
     expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(true);
   });
 
+  it("never through SAML (its ACS can't carry the Lax cookie)", async () => {
+    stubDb({ providers: [provider({ samlConfig: "<saml/>" })] });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
+  });
+
   it("not for someone who has never signed in through it", async () => {
-    stubDb({ providers: [provider()] });
+    stubDb({ providers: [provider(oidc)] });
     stubAccount(undefined);
     expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
   });
 
   it("not when the workspace left Business, or the domain isn't verified or covered", async () => {
-    stubDb({ providers: [provider()], plan: "pro" });
+    stubDb({ providers: [provider(oidc)], plan: "pro" });
     stubAccount({ id: "acc_1" });
     expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
     vi.restoreAllMocks();
-    stubDb({ providers: [provider({ domainVerified: false })] });
+    stubDb({ providers: [provider({ ...oidc, domainVerified: false })] });
     stubAccount({ id: "acc_1" });
     expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
     vi.restoreAllMocks();
-    stubDb({ providers: [provider()] });
+    stubDb({ providers: [provider(oidc)] });
     stubAccount({ id: "acc_1" });
     expect(await ssoConfirmsFor("u-1", "ada@gmail.com")).toBe(false);
     expect(await ssoConfirmsFor("u-1", "not an address")).toBe(false);

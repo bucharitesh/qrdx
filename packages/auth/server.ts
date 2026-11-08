@@ -24,6 +24,7 @@ import { getAdminUserIds } from "./admin";
 import {
   allowSessionCreation,
   allowUserCreation,
+  confirmSignIn,
   confirmSignInRefused,
 } from "./confirm-sign-in";
 import {
@@ -206,13 +207,13 @@ export const auth = betterAuth({
       create: {
         // Email-code sign-ups arrive without a name; start with the address's
         // local part so invites and member lists never show a blank.
-        before: (user, ctx) => {
+        before: async (user, ctx) => {
           // Signing in again to confirm it's you never makes an account
           // (./confirm-sign-in.ts).
-          if (!allowUserCreation(ctx)) throw confirmSignInRefused();
-          if (user.name?.trim()) return Promise.resolve();
+          if (!(await allowUserCreation(ctx))) throw confirmSignInRefused();
+          if (user.name?.trim()) return;
           const name = user.email.split("@")[0] || user.email;
-          return Promise.resolve({ data: { ...user, name } });
+          return { data: { ...user, name } };
         },
         // Every account gets a workspace of its own straight away. If this
         // fails, the first dashboard visit makes it (apps/docs/lib/workspaces.ts).
@@ -271,6 +272,9 @@ export const auth = betterAuth({
     }),
   },
   plugins: [
+    // Signing in again to confirm it's you: the provider's chooser, and the
+    // cookie cleared on sign-out (./confirm-sign-in.ts).
+    confirmSignIn(),
     lastLoginMethod({
       // Email codes, passkeys and workspace SSO (./sign-in-method.ts); null
       // falls back to the plugin's own detection (Google, GitHub).
