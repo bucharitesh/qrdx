@@ -342,6 +342,7 @@ describe("email templates", () => {
       ["app-added", /Authenticator app added/i],
       ["app-removed", /Two-step verification stays on/],
       ["support-off", /QRdx support turned off two-step verification/],
+      ["backup-code-used", /backup codes was just used to sign in/],
     ];
     for (const [kind, line] of kinds) {
       const { html, text } = await both(
@@ -353,6 +354,62 @@ describe("email templates", () => {
       assertSecurityLinks(html, kind);
       if (kind !== "support-off") assertDetails(text, kind);
     }
+  });
+
+  it("a used backup code says what for, how many are left, and when to make new ones", async () => {
+    const plenty = await both(
+      <TwoFactorNoticeEmail
+        details={DETAILS}
+        extra={{ usedFor: "sign-in", codesLeft: 7 }}
+        kind="backup-code-used"
+      />,
+    );
+    assert.match(plenty.text, /A backup code was used/i);
+    assert.match(plenty.text, /just used to sign in to your QRdx account/);
+    assert.match(plenty.text, /You have 7 backup codes left\./);
+    assert.doesNotMatch(plenty.text, /Make new ones/);
+    assert.match(plenty.text, /If this was you, there's nothing else to do/);
+    assertDetails(plenty.text, "backup code, plenty left");
+    assertSecurityLinks(plenty.html, "backup code, plenty left");
+
+    const low = await both(
+      <TwoFactorNoticeEmail
+        details={DETAILS}
+        extra={{ usedFor: "confirm", codesLeft: 1 }}
+        kind="backup-code-used"
+      />,
+    );
+    assert.match(low.text, /to confirm it's you before a security change/);
+    assert.match(low.text, /You have 1 backup code left\. Make new ones/);
+    assert.doesNotMatch(low.text, /nothing else to do/);
+    assertSecurityLinks(low.html, "backup code, few left");
+
+    const last = await both(
+      <TwoFactorNoticeEmail
+        details={DETAILS}
+        extra={{ usedFor: "sign-in", codesLeft: 0 }}
+        kind="backup-code-used"
+      />,
+    );
+    assert.match(last.text, /That was your last backup code\. Make new ones/);
+  });
+
+  it("turning it on says the other devices were signed out, when they were", async () => {
+    const { text } = await both(
+      <TwoFactorNoticeEmail
+        details={DETAILS}
+        extra={{ signedOutElsewhere: true }}
+        kind="on"
+      />,
+    );
+    assert.match(
+      text,
+      /Every other device signed in to your account was signed out/,
+    );
+    const quiet = await both(
+      <TwoFactorNoticeEmail details={DETAILS} kind="on" />,
+    );
+    assert.doesNotMatch(quiet.text, /was signed out/);
   });
 
   it("a change by support names support, not the device it was made from", async () => {
