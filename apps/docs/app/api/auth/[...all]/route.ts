@@ -2,6 +2,7 @@ import { registerSignInCodeSender } from "@repo/auth/email-otp";
 import { registerNewSignInNotifier } from "@repo/auth/new-sign-in";
 import { registerBackupCodeNotifier } from "@repo/auth/sign-in-challenge";
 import { notifyNewSignIn } from "@/lib/account/new-sign-in-notice-server";
+import { registerAppSessionOriginReader } from "@/lib/account/session-origin";
 import { notifyBackupCodeUsed } from "@/lib/account/two-factor-notice-server";
 import { sendSignInCode } from "@/lib/auth/sign-in-code";
 
@@ -11,5 +12,8 @@ import { sendSignInCode } from "@/lib/auth/sign-in-code";
 registerSignInCodeSender(sendSignInCode);
 registerNewSignInNotifier(notifyNewSignIn);
 registerBackupCodeNotifier(notifyBackupCodeUsed);
+// Where each new session starts, and the check on the ones it holds
+// (lib/account/session-origin.ts). instrumentation.ts does this at start-up.
+registerAppSessionOriginReader();
 
 export { GET, POST } from "@repo/auth/handlers";

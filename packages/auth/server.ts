@@ -49,6 +49,7 @@ import {
 } from "./passkey";
 import { passkeyRelyingParty } from "./passkey-rp";
 import { hasEntitledSubscription, workspacePlanTier } from "./plan";
+import { sessionOriginGuard } from "./session-origin";
 import { signInChallenge } from "./sign-in-challenge";
 import {
   BACKUP_CODE_COUNT,
@@ -280,6 +281,9 @@ export const auth = betterAuth({
     }),
   },
   plugins: [
+    // A session used from a new country and browser confirms it's you first
+    // (./session-origin.ts). First, so it refuses before anything else runs.
+    sessionOriginGuard(),
     // Signing in again to confirm it's you: the provider's chooser, and the
     // cookie cleared on sign-out (./confirm-sign-in.ts).
     confirmSignIn(),

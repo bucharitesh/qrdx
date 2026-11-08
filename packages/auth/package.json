@@ -22,6 +22,8 @@
     "./new-sign-in": "./new-sign-in.ts",
     "./provider": "./provider.tsx",
     "./own-workspace-id": "./own-workspace-id.ts",
+    "./session-origin": "./session-origin.ts",
+    "./session-origin-rules": "./session-origin-rules.ts",
     "./sign-in-challenge": "./sign-in-challenge.ts",
     "./sign-in-challenge-rules": "./sign-in-challenge-rules.ts",
     "./ee-license": "./ee-license.ts",
