@@ -156,12 +156,12 @@ vi.mock("@repo/auth/server", async () => {
           db
             .rows("account")
             .filter((row) => row.userId === state.session?.userId),
-        linkSocial: async ({
+        linkSocialAccount: async ({
           body,
         }: {
           body: { provider: string; disableRedirect?: boolean };
         }) => {
-          state.calls.push(`linkSocial ${JSON.stringify(body)}`);
+          state.calls.push(`linkSocialAccount ${JSON.stringify(body)}`);
           if (body.provider === "google") {
             throw authError("PROVIDER_NOT_FOUND");
           }
@@ -269,7 +269,7 @@ const confirm = (sessionId = SESSION) =>
   confirmation.recordConfirmation({ userId: USER, sessionId });
 
 const mutations = () =>
-  state.calls.filter((call) => !call.startsWith("linkSocial"));
+  state.calls.filter((call) => !call.startsWith("linkSocialAccount"));
 
 beforeEach(() => {
   fakeDb.reset();
@@ -521,7 +521,7 @@ describe("linking Google or GitHub", () => {
       url: "https://github.com/login/oauth/authorize?state=state_1",
     });
     expect(state.calls).toEqual([
-      `linkSocial ${JSON.stringify({
+      `linkSocialAccount ${JSON.stringify({
         provider: "github",
         callbackURL: "/settings/account?linked=github#sign-in",
         errorCallbackURL: "/settings/account",

@@ -247,16 +247,17 @@ export async function linkSignInMethod(
     if (!(await securityLimiter.limit(session.userId)).success) {
       return linkFail(RATE_LIMITED);
     }
-    const { headers: responseHeaders, response } = await auth.api.linkSocial({
-      headers: session.requestHeaders,
-      body: {
-        provider,
-        callbackURL: `${PATH}?linked=${provider}#sign-in`,
-        errorCallbackURL: PATH,
-        disableRedirect: true,
-      },
-      returnHeaders: true,
-    });
+    const { headers: responseHeaders, response } =
+      await auth.api.linkSocialAccount({
+        headers: session.requestHeaders,
+        body: {
+          provider,
+          callbackURL: `${PATH}?linked=${provider}#sign-in`,
+          errorCallbackURL: PATH,
+          disableRedirect: true,
+        },
+        returnHeaders: true,
+      });
     const url = (response as { url?: unknown } | null)?.url;
     if (typeof url !== "string" || !url.startsWith("https://")) {
       throw new Error("The link flow returned no provider URL");
