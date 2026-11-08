@@ -57,6 +57,11 @@ import { isRecentSignIn } from "./deletion";
 import { linkedSignInsFor } from "./linked-sign-ins-server";
 import { PASSKEY_MESSAGES } from "./passkeys";
 import { signInCodesAvailable } from "./reauth";
+import {
+  getSessionAllowingHold,
+  isSessionHeld,
+  moveSessionOrigin,
+} from "./session-origin-server";
 import { hasAuthenticatorApp } from "./two-factor-methods";
 import { sendBackupCodeUsedNotice } from "./two-factor-notice-server";
 import {
@@ -74,6 +79,12 @@ import {
 // checks for 15 minutes. Emailed codes, for accounts without it, are HMAC'd
 // with the auth secret and allow 3 tries each. Signing in again with Google,
 // GitHub or SSO is ./confirmation-sign-in-server.ts.
+//
+// A held session (used from a new country and browser: ./session-origin.ts)
+// is seen here, unlike everywhere else, so it can confirm: until it does,
+// every gated action answers CONFIRMATION_REQUIRED, even with a confirmation
+// recorded before it was held. Every confirmation moves the session's
+// origin to where it is now.
 
 export type ConfirmResult = { ok: true } | { ok: false; error: string };
 
@@ -84,6 +95,11 @@ export interface ConfirmableSession {
   sessionId: string;
   sessionCreatedAt: Date;
   requestHeaders: Headers;
+  /**
+   * Used from a different country and browser than where it started: it
+   * must confirm before anything else.
+   */
+  held?: boolean;
 }
 
 const CODE_PREFIX = "qrdx-confirm-code-";
@@ -120,17 +136,18 @@ const fail = (error: string): ConfirmResult => ({ ok: false, error });
 const authErrorCode = (error: unknown): string | undefined =>
   (error as { body?: { code?: string } } | null)?.body?.code;
 
-/** The signed-in session, read from the request. */
+/** The signed-in session, read from the request, held or not. */
 export async function currentSession(): Promise<ConfirmableSession | null> {
   const requestHeaders = await headers();
-  const found = await auth.api.getSession({ headers: requestHeaders });
-  if (!(found?.user?.id && found.session?.id)) return null;
+  const found = await getSessionAllowingHold(requestHeaders);
+  if (!found?.session?.id) return null;
   return {
     userId: found.user.id,
     email: found.user.email,
     sessionId: found.session.id,
     sessionCreatedAt: new Date(found.session.createdAt),
     requestHeaders,
+    held: await isSessionHeld(found.session, requestHeaders),
   };
 }
 
@@ -151,10 +168,11 @@ async function hasRow(identifier: string, userId: string): Promise<boolean> {
   return Boolean(row);
 }
 
-/** This session confirmed within the last 10 minutes. */
-export function hasRecentConfirmation(
-  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+/** This session confirmed within the last 10 minutes (and isn't held). */
+export async function hasRecentConfirmation(
+  session: Pick<ConfirmableSession, "userId" | "sessionId" | "held">,
 ): Promise<boolean> {
+  if (session.held) return false;
   return hasRow(confirmedIdentifier(session.sessionId), session.userId);
 }
 
@@ -162,10 +180,12 @@ export function hasRecentConfirmation(
  * This session confirmed within the last 10 minutes with a passkey, an
  * authenticator code or a backup code: never an emailed code or signing in
  * again, which getting into a mailbox or a Google account is enough for.
+ * Never while the session is held.
  */
-export function hasRecentStrongConfirmation(
-  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+export async function hasRecentStrongConfirmation(
+  session: Pick<ConfirmableSession, "userId" | "sessionId" | "held">,
 ): Promise<boolean> {
+  if (session.held) return false;
   return hasRow(strongIdentifier(session.sessionId), session.userId);
 }
 
@@ -173,14 +193,15 @@ export function hasRecentStrongConfirmation(
  * For gated actions: null when this session confirmed in the last 10 minutes
  * (or, without two-step verification on a deployment that can't send codes,
  * signed in within them), else the result the action returns so the client
- * asks.
+ * asks. A held session always asks.
  */
 export async function requireRecentConfirmation(
   session: Pick<
     ConfirmableSession,
-    "userId" | "sessionId" | "sessionCreatedAt"
+    "userId" | "sessionId" | "sessionCreatedAt" | "held"
   >,
 ): Promise<ConfirmationRequired | null> {
+  if (session.held) return confirmationRequired();
   if (await hasRecentConfirmation(session)) return null;
   if (!signInCodesAvailable()) {
     const { on } = await loadTwoFactorFacts(session.userId);
@@ -209,10 +230,13 @@ export async function confirmedSession(
 
 /**
  * Starts (or restarts) this session's 10 minutes; `strong` when it used a
- * passkey, an authenticator code or a backup code.
+ * passkey, an authenticator code or a backup code. With the request's
+ * headers, where the session is now also becomes its origin (a held session
+ * is let go).
  */
 export async function recordConfirmation(
-  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+  session: Pick<ConfirmableSession, "userId" | "sessionId"> &
+    Partial<Pick<ConfirmableSession, "requestHeaders">>,
   { strong = false }: { strong?: boolean } = {},
 ): Promise<void> {
   await writeConfirmationRow(
@@ -224,6 +248,9 @@ export async function recordConfirmation(
       strongIdentifier(session.sessionId),
       session.userId,
     );
+  }
+  if (session.requestHeaders) {
+    await moveSessionOrigin(session, session.requestHeaders);
   }
 }
 

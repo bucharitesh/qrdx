@@ -155,9 +155,21 @@ export const CONFIRMATION_ACTIONS = {
   "remove-member": "remove someone from this workspace",
   "invite-admin": "invite an admin",
   "admin-join-link": "let a join link add admins",
+  "continue-session": "continue",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
+
+/**
+ * The dialog's "Why am I asked?" for an action with a reason of its own;
+ * the others share the one about security changes.
+ */
+export const CONFIRMATION_REASONS: Partial<Record<ConfirmationAction, string>> =
+  {
+    // A session used from a new country and browser (./session-origin.ts).
+    "continue-session":
+      "This sign-in is being used from a different country and a different browser than where it started, so we check it's you before anything else.",
+  };
 
 /** "r…@gmail.com": enough to recognise the address, not to read it out. */
 export function maskEmail(email: string): string {
