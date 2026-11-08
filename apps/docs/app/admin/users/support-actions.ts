@@ -1,6 +1,6 @@
 "use server";
 
-import { hasAdminRole } from "@repo/auth/admin";
+import { hasAdminRole, isAdmin } from "@repo/auth/admin";
 import {
   account,
   database as db,
@@ -18,10 +18,18 @@ import { and, count, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
+import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
+import {
+  currentSession,
+  hasRecentStrongConfirmation,
+} from "@/lib/account/confirmation-server";
 import { isSameEmail, MAX_EMAIL_LENGTH } from "@/lib/account/email-change";
 import { afterEmailChanged } from "@/lib/account/email-change-server";
 import { sendTwoFactorNotice } from "@/lib/account/two-factor-notice-server";
-import { resetTwoFactor } from "@/lib/account/two-factor-server";
+import {
+  resetTwoFactor,
+  twoFactorEnabledFor,
+} from "@/lib/account/two-factor-server";
 import { revokeStoredToken } from "@/lib/connected-accounts/server";
 import { cleanupDataConnection } from "@/lib/data-connections/server";
 import { claimDueDeliveries, processClaimed } from "@/lib/events/deliveries";
@@ -137,6 +145,12 @@ const changeEmailSchema = userReason.extend({
  * email"). The account moves to the new address, marked verified (support
  * had a reply from it); every session is signed out, and the old address
  * gets the "email changed" notice, by QRdx support.
+ *
+ * This hands an account to whoever controls the new address, so a stolen
+ * admin cookie must not be enough: the admin needs two-step verification
+ * on their own account and a confirmation in the last 10 minutes with a
+ * passkey, an authenticator code or a backup code (CONFIRMATION_REQUIRED
+ * opens that dialog). Never for an admin's account or the admin's own.
  */
 export async function changeEmailAction(
   input: z.input<typeof changeEmailSchema>,
@@ -148,15 +162,47 @@ export async function changeEmailAction(
       limit: "sensitive",
     },
     input,
-    async (_admin, { userId, newEmail }) => {
-      const target = await findUser(userId);
+    async (admin, { userId, newEmail }) => {
+      if (userId === admin.id) {
+        throw adminError(
+          "You can't move your own account here. Use Settings → Profile & security.",
+        );
+      }
+      const [target] = await db
+        .select({
+          id: user.id,
+          email: user.email,
+          emailVerified: user.emailVerified,
+          role: user.role,
+        })
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1);
+      if (!target) throw adminError("User not found", 404);
+      if (isAdmin(target)) {
+        throw adminError("An admin's account can't be moved here.");
+      }
+      if (!(await twoFactorEnabledFor(admin.id))) {
+        throw adminError(
+          "Turn on two-step verification for your own account first.",
+        );
+      }
+      const adminSession = await currentSession();
+      if (
+        !(
+          adminSession?.userId === admin.id &&
+          (await hasRecentStrongConfirmation(adminSession))
+        )
+      ) {
+        throw adminError(CONFIRMATION_REQUIRED, 403);
+      }
       if (isSameEmail(target.email, newEmail)) {
         throw adminError("That's already this account's email.");
       }
       const [taken] = await db
         .select({ id: user.id })
         .from(user)
-        .where(eq(user.email, newEmail))
+        .where(sql`lower(${user.email}) = ${newEmail}`)
         .limit(1);
       if (taken) {
         throw adminError("That email already belongs to another QRdx account.");

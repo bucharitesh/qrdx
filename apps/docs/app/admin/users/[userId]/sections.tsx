@@ -83,7 +83,7 @@ export function SignInSection({ profile }: { profile: UserProfile }) {
             <AdminAction
               action="changeEmail"
               confirmLabel="Change email"
-              description={`Only for someone who lost ${user.email} and has no passkey or linked sign-in, after every step of the lost-email policy (help: Sign-in methods → Lost access to your email), including the 7 days' notice to the old address. Every session is signed out and the old address gets a notice.`}
+              description={`Only for someone who lost ${user.email} and has no passkey or linked sign-in, after every step of the lost-email policy (help: Sign-in methods → Lost access to your email), including the 7 days' notice to the old address. Every session is signed out and the old address gets a notice. You'll confirm it's you with your passkey, authenticator app or a backup code.`}
               destructive
               emailField={{ name: "newEmail", label: "New email address" }}
               input={{ userId: user.id }}

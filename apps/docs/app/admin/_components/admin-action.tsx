@@ -16,6 +16,7 @@ import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useId, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import type { AdminActionResult } from "../_lib/action";
 import {
   banUserAction,
@@ -140,6 +141,9 @@ export function AdminAction({
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Actions that hand over an account ask the admin to confirm it's them
+  // (with a second factor) first; the others never answer that.
+  const { withConfirmation } = useConfirmation();
 
   const reasonOk = reasonOptional || reason.trim().length >= 3;
   const typedOk =
@@ -166,11 +170,17 @@ export function AdminAction({
     startTransition(async () => {
       const run = ACTIONS[action] as AnyAction;
       try {
-        const result = await run({
-          ...input,
-          ...extra,
-          reason: reason.trim() || undefined,
-        } as never);
+        const result = await withConfirmation(
+          () =>
+            run({
+              ...input,
+              ...extra,
+              reason: reason.trim() || undefined,
+            } as never),
+          "support-change",
+        );
+        // Cancelled "Confirm it's you": nothing happened.
+        if (result === null) return;
         if (result.ok) {
           toast.success(describeResult(success, result.data));
           setOpen(false);

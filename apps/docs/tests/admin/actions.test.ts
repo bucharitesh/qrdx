@@ -20,6 +20,9 @@ const state = vi.hoisted(() => ({
   results: [] as unknown[],
   auth: [] as string[],
   limited: false,
+  /** The signed-in admin's own two-step verification and confirmation */
+  adminTwoFactor: true,
+  adminStrongConfirmation: true,
 }));
 
 // A value that absorbs any property access or call (drizzle operators, tables).
@@ -203,6 +206,24 @@ vi.mock("@/lib/account/export/entries", () => ({
   exportEntries: vi.fn(() => []),
 }));
 vi.mock("@/lib/shared", () => ({ logError: vi.fn() }));
+vi.mock("@/lib/account/two-factor-server", () => ({
+  resetTwoFactor: vi.fn(async () => {}),
+  twoFactorEnabledFor: vi.fn(async () => state.adminTwoFactor),
+}));
+vi.mock("@/lib/account/confirmation-server", () => ({
+  currentSession: vi.fn(async () =>
+    state.admin
+      ? {
+          userId: state.admin.id,
+          email: state.admin.email,
+          sessionId: "admin_session",
+          sessionCreatedAt: new Date(),
+          requestHeaders: new Headers(),
+        }
+      : null,
+  ),
+  hasRecentStrongConfirmation: vi.fn(async () => state.adminStrongConfirmation),
+}));
 vi.mock("@/lib/account/email-change-server", () => ({
   afterEmailChanged: vi.fn(async () => {}),
 }));
@@ -282,6 +303,8 @@ beforeEach(() => {
   state.results = [];
   state.auth = [];
   state.limited = false;
+  state.adminTwoFactor = true;
+  state.adminStrongConfirmation = true;
 });
 
 describe("admin guard", () => {
@@ -404,7 +427,14 @@ describe("with an admin", () => {
       "@/lib/account/email-change-server"
     );
     state.results = [
-      [{ id: "user_target", email: "lost@example.com", emailVerified: true }],
+      [
+        {
+          id: "user_target",
+          email: "lost@example.com",
+          emailVerified: true,
+          role: "user",
+        },
+      ],
       [], // nobody has the new address
       [], // the batch
       [], // audit
@@ -443,6 +473,76 @@ describe("with an admin", () => {
         }),
       }),
     ]);
+  });
+
+  it("won't move an account without the admin's own second-factor confirmation", async () => {
+    const { changeEmailAction } = await import(
+      "@/app/admin/users/support-actions"
+    );
+    const target = [
+      { id: "user_target", email: "lost@example.com", emailVerified: true },
+    ];
+    const input = {
+      userId: "user_target",
+      newEmail: "new@example.com",
+      reason: "Ticket 1",
+    };
+    // No two-step verification on the admin's own account.
+    state.adminTwoFactor = false;
+    state.results = [target];
+    expect(await changeEmailAction(input)).toMatchObject({
+      ok: false,
+      error: expect.stringMatching(/two-step verification/),
+    });
+    // On, but no recent confirmation with a passkey or code: the dialog.
+    state.adminTwoFactor = true;
+    state.adminStrongConfirmation = false;
+    state.results = [target];
+    expect(await changeEmailAction(input)).toEqual({
+      ok: false,
+      error: "CONFIRMATION_REQUIRED",
+    });
+    expect(
+      state.calls.some(
+        (call) => call.root === "update" || call.root === "batch",
+      ),
+    ).toBe(false);
+    expect(auditInserts()).toEqual([]);
+  });
+
+  it("never moves an admin's account or the admin's own", async () => {
+    const { changeEmailAction } = await import(
+      "@/app/admin/users/support-actions"
+    );
+    state.results = [
+      [
+        {
+          id: "other_admin",
+          email: "boss@example.com",
+          emailVerified: true,
+          role: "admin",
+        },
+      ],
+    ];
+    expect(
+      await changeEmailAction({
+        userId: "other_admin",
+        newEmail: "new@example.com",
+        reason: "Ticket 1",
+      }),
+    ).toMatchObject({ ok: false, error: expect.stringMatching(/admin/) });
+    expect(
+      await changeEmailAction({
+        userId: "admin_1",
+        newEmail: "new@example.com",
+        reason: "Ticket 1",
+      }),
+    ).toMatchObject({ ok: false, error: expect.stringMatching(/own account/) });
+    expect(
+      state.calls.some(
+        (call) => call.root === "update" || call.root === "batch",
+      ),
+    ).toBe(false);
   });
 
   it("won't move an account to its own address or one another account has", async () => {

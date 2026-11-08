@@ -81,10 +81,14 @@ export interface ConfirmableSession {
 }
 
 const CONFIRMED_PREFIX = "qrdx-confirmed-";
+// Next to it, when the confirmation used a passkey, an authenticator code or
+// a backup code: what support actions ask of an admin (requireStrong…).
+const STRONG_PREFIX = "qrdx-confirmed-strong-";
 const CODE_PREFIX = "qrdx-confirm-code-";
 
 const confirmedIdentifier = (sessionId: string) =>
   `${CONFIRMED_PREFIX}${sessionId}`;
+const strongIdentifier = (sessionId: string) => `${STRONG_PREFIX}${sessionId}`;
 const codeIdentifier = (sessionId: string) => `${CODE_PREFIX}${sessionId}`;
 
 // Per user, on top of the account lockout (auth.api calls skip Better Auth's
@@ -134,22 +138,37 @@ export async function currentSession(): Promise<ConfirmableSession | null> {
 
 // ─── The confirmation record ─────────────────────────────────────────────────
 
-/** This session confirmed within the last 10 minutes. */
-export async function hasRecentConfirmation(
-  session: Pick<ConfirmableSession, "userId" | "sessionId">,
-): Promise<boolean> {
+async function hasRow(identifier: string, userId: string): Promise<boolean> {
   const [row] = await db
     .select({ id: verification.id })
     .from(verification)
     .where(
       and(
-        eq(verification.identifier, confirmedIdentifier(session.sessionId)),
-        eq(verification.value, session.userId),
+        eq(verification.identifier, identifier),
+        eq(verification.value, userId),
         gt(verification.expiresAt, new Date()),
       ),
     )
     .limit(1);
   return Boolean(row);
+}
+
+/** This session confirmed within the last 10 minutes. */
+export function hasRecentConfirmation(
+  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+): Promise<boolean> {
+  return hasRow(confirmedIdentifier(session.sessionId), session.userId);
+}
+
+/**
+ * This session confirmed within the last 10 minutes with a passkey, an
+ * authenticator code or a backup code: never an emailed code or signing in
+ * again, which getting into a mailbox or a Google account is enough for.
+ */
+export function hasRecentStrongConfirmation(
+  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+): Promise<boolean> {
+  return hasRow(strongIdentifier(session.sessionId), session.userId);
 }
 
 /**
@@ -190,18 +209,37 @@ export async function confirmedSession(
   return { ok: true, session };
 }
 
-/** Starts (or restarts) this session's 10 minutes. */
+/**
+ * Starts (or restarts) this session's 10 minutes; `strong` when it used a
+ * passkey, an authenticator code or a backup code.
+ */
 export async function recordConfirmation(
   session: Pick<ConfirmableSession, "userId" | "sessionId">,
+  { strong = false }: { strong?: boolean } = {},
 ): Promise<void> {
-  const identifier = confirmedIdentifier(session.sessionId);
+  await writeConfirmationRow(
+    confirmedIdentifier(session.sessionId),
+    session.userId,
+  );
+  if (strong) {
+    await writeConfirmationRow(
+      strongIdentifier(session.sessionId),
+      session.userId,
+    );
+  }
+}
+
+async function writeConfirmationRow(
+  identifier: string,
+  userId: string,
+): Promise<void> {
   const now = new Date();
   await db.batch([
     db.delete(verification).where(eq(verification.identifier, identifier)),
     db.insert(verification).values({
       id: randomUUID(),
       identifier,
-      value: session.userId,
+      value: userId,
       expiresAt: new Date(now.getTime() + CONFIRMATION_MINUTES * 60_000),
       createdAt: now,
       updatedAt: now,
@@ -228,16 +266,18 @@ export async function carryConfirmation(
     )
     .limit(1);
   if (!next) return;
-  await db
-    .update(verification)
-    .set({ identifier: confirmedIdentifier(next.id), updatedAt: new Date() })
-    .where(
-      and(
-        eq(verification.identifier, confirmedIdentifier(from.sessionId)),
-        eq(verification.value, from.userId),
-        gt(verification.expiresAt, new Date()),
-      ),
-    );
+  for (const identifier of [confirmedIdentifier, strongIdentifier]) {
+    await db
+      .update(verification)
+      .set({ identifier: identifier(next.id), updatedAt: new Date() })
+      .where(
+        and(
+          eq(verification.identifier, identifier(from.sessionId)),
+          eq(verification.value, from.userId),
+          gt(verification.expiresAt, new Date()),
+        ),
+      );
+  }
 }
 
 /**
@@ -356,7 +396,7 @@ export async function confirmWithCode(input: unknown): Promise<ConfirmResult> {
     if (!session) return fail(CONFIRMATION_MESSAGES.signedOut);
     const check = await checkSecondFactorCode(session, parsed.data.code);
     if (!check.ok) return check;
-    await recordConfirmation(session);
+    await recordConfirmation(session, { strong: true });
     return { ok: true };
   } catch (error) {
     logError(error as Error, { action: "account.confirmWithCode" });
@@ -506,7 +546,7 @@ export async function confirmWithPasskey(
         : check;
     }
     if (attempt?.ok) await clearCodeFailures(attempt.id);
-    await recordConfirmation(session);
+    await recordConfirmation(session, { strong: true });
     return { ok: true };
   } catch (error) {
     logError(error as Error, { action: "account.confirmWithPasskey" });
