@@ -21,6 +21,7 @@ import {
   memberAc,
 } from "better-auth/plugins/organization/access";
 import { getAdminUserIds } from "./admin";
+import { confirmGate } from "./confirm-gate";
 import {
   allowSessionCreation,
   allowUserCreation,
@@ -370,6 +371,8 @@ export const auth = betterAuth({
       )
     ),
     passkeyPolicy(),
+    // Linking, unlinking and workspace changes over HTTP need "Confirm it's you" (./confirm-gate.ts).
+    confirmGate(),
     // Workspace single sign-on, Business plan only, licensed servers only
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
     // joins the workspace).

@@ -5,6 +5,7 @@
   "exports": {
     "./server": "./server.ts",
     "./admin": "./admin.ts",
+    "./confirm-gate": "./confirm-gate.ts",
     "./confirm-sign-in": "./confirm-sign-in.ts",
     "./confirm-sign-in-rules": "./confirm-sign-in-rules.ts",
     "./email-otp": "./email-otp.ts",

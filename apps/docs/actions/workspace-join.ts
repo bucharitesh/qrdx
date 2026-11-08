@@ -4,6 +4,8 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
+import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
 import { HttpError } from "@/lib/error-response";
 import {
   canAssignRole,
@@ -29,6 +31,11 @@ import { UnauthorizedError } from "@/types/errors";
 // Join links: owners and admins turn the open workspace's link on, reset it,
 // change its role or turn it off (Settings → Team); anyone signed in joins
 // with one at /join/<token>. lib/workspace-join.ts holds the rules.
+//
+// A link that adds people as admins is an admin invitation anyone holding it
+// can use, so making one (or giving an existing link that role) needs a
+// recent "Confirm it's you", like inviting an admin by email
+// (actions/organizations.ts). Turning a link off never asks.
 
 export type JoinActionResult<T = null> =
   | { ok: true; data: T }
@@ -90,6 +97,20 @@ function revalidateTeam() {
 }
 
 /**
+ * Null when a link with `role` may be made now, else the CONFIRMATION_REQUIRED
+ * result (the client opens "Confirm it's you" and tries again).
+ */
+async function confirmationForRole(
+  scope: { userId: string },
+  role: WorkspaceRole,
+): Promise<JoinActionResult<never> | null> {
+  if (role !== "admin" && role !== "owner") return null;
+  return (await confirmationNeededFor(scope))
+    ? fail(CONFIRMATION_REQUIRED, CONFIRMATION_REQUIRED)
+    : null;
+}
+
+/**
  * Turns the link on, or resets it (a new token: the old link stops
  * working). Returns the path, shown once; only its hash is kept.
  */
@@ -113,6 +134,8 @@ export async function issueWorkspaceJoinLink(input: {
         `Only owners can reset a link that gives the ${WORKSPACE_ROLE_LABELS[role]} role.`,
       );
     }
+    const needed = await confirmationForRole(scope, role);
+    if (needed) return needed;
     const { token } = await issueJoinLink({
       organizationId: scope.organizationId,
       role,
@@ -142,6 +165,8 @@ export async function setWorkspaceJoinLinkRole(input: {
         `Only owners can change a link that gives the ${WORKSPACE_ROLE_LABELS[current.role]} role.`,
       );
     }
+    const needed = await confirmationForRole(scope, parsed.data);
+    if (needed) return needed;
     await setJoinLinkRole(scope.organizationId, parsed.data);
     revalidateTeam();
     return { ok: true, data: null };

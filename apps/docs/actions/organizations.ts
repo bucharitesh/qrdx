@@ -18,6 +18,7 @@ import { and, count, eq, gt, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
 import {
   can,
   canAssignRole,
@@ -49,6 +50,12 @@ import { UnauthorizedError } from "@/types/errors";
 // (packages/auth/workspace-hooks.ts); these actions add input validation,
 // plan gating and rate limits on top. The workspace acted on is the one in
 // the page's URL (lib/scope.ts).
+//
+// Deleting a workspace, changing someone's role, removing someone and
+// inviting an admin also need a recent "Confirm it's you"
+// (lib/account/confirmation.ts), asked once every other check has passed;
+// without one they answer CONFIRMATION_REQUIRED and change nothing. The same
+// plugin endpoints over HTTP are gated in packages/auth/confirm-gate.ts.
 
 export type TeamActionResult<T = null> =
   | { ok: true; data: T }
@@ -216,6 +223,11 @@ function roleChangeError(
     return `Only owners can give or take away the ${WORKSPACE_ROLE_LABELS.billing} role, since it decides who pays for the workspace.`;
   }
   return forbiddenMessage(actor, "members.manage");
+}
+
+/** Inviting someone as one of these needs "Confirm it's you". */
+function isPrivilegedRole(role: WorkspaceRole): boolean {
+  return role === "admin" || role === "owner";
 }
 
 function revalidateTeam() {
@@ -418,6 +430,10 @@ export async function inviteMember(input: {
       return fail(RATE_LIMITED);
     const seatError = await seatLimitError(organizationId, parsed.data.email);
     if (seatError) return fail(seatError, true);
+    if (isPrivilegedRole(parsed.data.role)) {
+      const needed = await confirmationNeededFor(scope);
+      if (needed) return needed;
+    }
 
     // resend: re-inviting a pending email extends and returns the same invitation.
     const invitation = (await auth.api.createInvitation({
@@ -497,6 +513,8 @@ export async function updateMemberRole(input: {
     if (!canAssignRole(scope.role, target.role, parsed.data.role)) {
       return fail(roleChangeError(scope.role, target.role, parsed.data.role));
     }
+    const needed = await confirmationNeededFor(scope);
+    if (needed) return needed;
 
     await auth.api.updateMemberRole({
       headers: await headers(),
@@ -538,6 +556,9 @@ export async function removeMember(input: {
           : "Only owners can remove a billing member from the workspace.",
       );
     }
+
+    const needed = await confirmationNeededFor(scope);
+    if (needed) return needed;
 
     // Codes the member created stay with the workspace (organization_id is kept).
     await auth.api.removeMember({
@@ -604,6 +625,8 @@ export async function deleteTeam(input: {
       return fail("Type the workspace URL exactly to confirm.");
     }
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
+    const needed = await confirmationNeededFor(scope);
+    if (needed) return needed;
 
     // Every row goes to the own workspace of the member who created it
     // (packages/auth/workspace-hooks.ts), so codes keep working.

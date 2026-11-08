@@ -6,6 +6,7 @@ import {
   randomUUID,
   timingSafeEqual,
 } from "node:crypto";
+import { confirmedSessionIdentifier } from "@repo/auth/confirm-sign-in-rules";
 import { cookiesToSet } from "@repo/auth/passkey";
 import { auth } from "@repo/auth/server";
 import { LOCKOUT_FAILURES } from "@repo/auth/sign-in-challenge-rules";
@@ -82,14 +83,14 @@ export interface ConfirmableSession {
   requestHeaders: Headers;
 }
 
-const CONFIRMED_PREFIX = "qrdx-confirmed-";
-// Next to it, when the confirmation used a passkey, an authenticator code or
-// a backup code: what support actions ask of an admin (requireStrong…).
-const STRONG_PREFIX = "qrdx-confirmed-strong-";
 const CODE_PREFIX = "qrdx-confirm-code-";
 
-const confirmedIdentifier = (sessionId: string) =>
-  `${CONFIRMED_PREFIX}${sessionId}`;
+// Shared with packages/auth/confirm-gate.ts, which reads it over HTTP.
+const confirmedIdentifier = confirmedSessionIdentifier;
+// Next to it, when the confirmation used a passkey, an authenticator code or
+// a backup code: what support actions ask of an admin
+// (hasRecentStrongConfirmation).
+const STRONG_PREFIX = "qrdx-confirmed-strong-";
 const strongIdentifier = (sessionId: string) => `${STRONG_PREFIX}${sessionId}`;
 const codeIdentifier = (sessionId: string) => `${CODE_PREFIX}${sessionId}`;
 

@@ -139,6 +139,16 @@ export const CONFIRMATION_ACTIONS = {
   "remove-authenticator": "remove your authenticator app",
   sso: "change single sign-on",
   "support-change": "make this change for someone",
+  "link-sign-in": "link a sign-in method",
+  "unlink-sign-in": "unlink a sign-in method",
+  "create-api-key": "create an API key",
+  "create-oauth-app": "create an OAuth app",
+  "new-client-secret": "make a new client secret",
+  "delete-workspace": "delete this workspace",
+  "change-member-role": "change someone's role",
+  "remove-member": "remove someone from this workspace",
+  "invite-admin": "invite an admin",
+  "admin-join-link": "let a join link add admins",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
