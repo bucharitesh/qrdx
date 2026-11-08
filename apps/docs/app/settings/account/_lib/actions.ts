@@ -1,12 +1,17 @@
 "use server";
 
+import { cookiesToSet } from "@repo/auth/passkey";
 import { auth } from "@repo/auth/server";
-import { database as db, session as sessionTable } from "@repo/database";
+import {
+  account as accountTable,
+  database as db,
+  session as sessionTable,
+} from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { z } from "zod";
 import {
   AVATAR_MAX_BYTES,
@@ -14,8 +19,11 @@ import {
   avatarKey,
   avatarKeyFromImage,
 } from "@/lib/account/avatar";
+import { confirmedSession } from "@/lib/account/confirmation-server";
 import {
   type LinkedAccount,
+  PROVIDER_LABELS,
+  SOCIAL_PROVIDERS,
   UNLINK_BLOCK_MESSAGES,
   unlinkBlockReason,
 } from "@/lib/account/sign-in-methods";
@@ -31,6 +39,13 @@ import {
 
 // Settings → Account. auth.api calls bypass Better Auth's HTTP rate limiter,
 // so every action is limited per user here.
+//
+// Linking and unlinking Google or GitHub change how the account can be
+// signed in to, so both need a recent "Confirm it's you"
+// (lib/account/confirmation.ts) and answer CONFIRMATION_REQUIRED without one.
+// Over HTTP, Better Auth's /link-social and /unlink-account ask the same
+// (packages/auth/confirm-gate.ts). Signing out sessions never asks: someone
+// whose account is under attack must be able to sign the attacker out at once.
 
 export type AccountActionResult = { ok: true } | { ok: false; error: string };
 
@@ -68,7 +83,7 @@ async function signedIn(): Promise<SignedIn | null> {
   };
 }
 
-/** Better Auth APIError code (e.g. "SESSION_NOT_FRESH"), if any. */
+/** Better Auth APIError code (e.g. "PROVIDER_NOT_FOUND"), if any. */
 function authErrorCode(error: unknown): string | undefined {
   return (error as { body?: { code?: string } })?.body?.code;
 }
@@ -201,45 +216,112 @@ export async function removeAvatar(): Promise<AccountActionResult> {
 // ─── Sign-in methods ────────────────────────────────────────────────────────
 
 const idSchema = z.string().trim().min(1).max(128);
+const SIGNED_OUT_METHODS = "Sign in to manage sign-in methods.";
 
+export type LinkStartResult =
+  | { ok: true; url: string }
+  | { ok: false; error: string };
+
+const linkFail = (error: string): LinkStartResult => ({ ok: false, error });
+
+/**
+ * "Link" for Google or GitHub: after a recent "Confirm it's you", starts
+ * Better Auth's link flow and answers the provider's URL for the browser to
+ * open. The flow's state cookie is passed on to the browser; the provider
+ * comes back to Better Auth's callback, which links the account (same email
+ * only) and returns to Settings with ?linked= or ?error=.
+ */
+export async function linkSignInMethod(
+  input: unknown,
+): Promise<LinkStartResult> {
+  const parsed = z
+    .object({ provider: z.enum(SOCIAL_PROVIDERS) })
+    .safeParse(input);
+  if (!parsed.success) return linkFail("That sign-in method can't be linked.");
+  const { provider } = parsed.data;
+  const unavailable = `${PROVIDER_LABELS[provider]} can't be linked right now.`;
+  try {
+    const allowed = await confirmedSession(SIGNED_OUT_METHODS);
+    if (!allowed.ok) return allowed;
+    const { session } = allowed;
+    if (!(await securityLimiter.limit(session.userId)).success) {
+      return linkFail(RATE_LIMITED);
+    }
+    const { headers: responseHeaders, response } = await auth.api.linkSocial({
+      headers: session.requestHeaders,
+      body: {
+        provider,
+        callbackURL: `${PATH}?linked=${provider}#sign-in`,
+        errorCallbackURL: PATH,
+        disableRedirect: true,
+      },
+      returnHeaders: true,
+    });
+    const url = (response as { url?: unknown } | null)?.url;
+    if (typeof url !== "string" || !url.startsWith("https://")) {
+      throw new Error("The link flow returned no provider URL");
+    }
+    const jar = await cookies();
+    for (const cookie of cookiesToSet(responseHeaders)) {
+      jar.set(cookie.name, cookie.value, cookie.options);
+    }
+    return { ok: true, url };
+  } catch (error) {
+    // Not set up on this server: nothing to log.
+    if (authErrorCode(error) !== "PROVIDER_NOT_FOUND") {
+      logError(error as Error, { action: "account.link" });
+    }
+    return linkFail(unavailable);
+  }
+}
+
+/**
+ * "Unlink": after a recent "Confirm it's you", removes a Google or GitHub
+ * link of this account. Better Auth's own unlink also wants a sign-in within
+ * the last day, a weaker check than the confirmation (and one a confirmed
+ * person would then be asked for again), so the row is deleted here, for
+ * this user only, once the same checks have passed.
+ */
 export async function unlinkSignInMethod(
   input: unknown,
 ): Promise<AccountActionResult> {
   const parsed = z.object({ accountId: idSchema }).safeParse(input);
   if (!parsed.success) return fail("Invalid sign-in method.");
   try {
-    const user = await signedIn();
-    if (!user) return fail("Sign in to manage sign-in methods.");
-    if (!(await securityLimiter.limit(user.userId)).success) {
+    const allowed = await confirmedSession(SIGNED_OUT_METHODS);
+    if (!allowed.ok) return allowed;
+    const { session } = allowed;
+    if (!(await securityLimiter.limit(session.userId)).success) {
       return fail(RATE_LIMITED);
     }
     const accounts: LinkedAccount[] = await auth.api.listUserAccounts({
-      headers: user.requestHeaders,
+      headers: session.requestHeaders,
     });
     const blocked = unlinkBlockReason(accounts, parsed.data.accountId);
     if (blocked) return fail(UNLINK_BLOCK_MESSAGES[blocked]);
 
-    await auth.api.unlinkAccount({
-      headers: user.requestHeaders,
-      body: { accountId: parsed.data.accountId },
-    });
+    const removed = await db
+      .delete(accountTable)
+      .where(
+        and(
+          eq(accountTable.id, parsed.data.accountId),
+          eq(accountTable.userId, session.userId),
+        ),
+      )
+      .returning({ id: accountTable.id });
+    if (removed.length === 0) return fail(UNLINK_BLOCK_MESSAGES["not-found"]);
     revalidatePath(PATH);
     return { ok: true };
   } catch (error) {
-    switch (authErrorCode(error)) {
-      case "SESSION_NOT_FRESH":
-        return fail(
-          "For your security, sign out and sign in again before removing a sign-in method.",
-        );
-      case "ACCOUNT_NOT_FOUND":
-        return fail(UNLINK_BLOCK_MESSAGES["not-found"]);
-    }
     logError(error as Error, { action: "account.unlink" });
     return fail(SOMETHING_WRONG);
   }
 }
 
 // ─── Sessions ───────────────────────────────────────────────────────────────
+
+// Never "Confirm it's you" here: someone whose account is under attack must
+// be able to sign the attacker's sessions out at once.
 
 export async function revokeSession(
   input: unknown,
