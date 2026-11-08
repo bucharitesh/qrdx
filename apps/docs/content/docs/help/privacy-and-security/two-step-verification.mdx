@@ -26,13 +26,13 @@ For a passkey, keep the suggested name (your browser and system, like "Chrome on
 
 For an authenticator app, scan the QR code with the app, or type the key shown under it. Enter the 6-digit code the app shows and click **Verify**.
 
-Two-step verification is now on.<IfAvailable feature="passkeys"> To add the other method later, use the same section. You keep the backup codes you already have.</IfAvailable>
+Two-step verification is now on, and every other browser or device signed in to your account is signed out. Each one has to sign in again, now with the second step. The browser you turned it on in stays signed in.<IfAvailable feature="passkeys"> To add the other method later, use the same section. You keep the backup codes you already have, and nobody is signed out.</IfAvailable>
 
 <IfAvailable feature="passkeys">
-If you added a passkey before two-step verification could use one, Settings says **Your passkey is ready to be your second step**. Click **Turn on**, confirm it's you, check it's you with that passkey, and save your backup codes.
+If you added a passkey before two-step verification could use one, Settings says **Your passkey is ready to be your second step**. Click **Turn on**, confirm it's you, check it's you with that passkey, and save your backup codes. This signs out your other devices too.
 </IfAvailable>
 
-We email your account's address whenever two-step verification is turned on or off, a method is added or removed, or new backup codes are made.
+We email your account's address whenever two-step verification is turned on or off, a method is added or removed, new backup codes are made, or a backup code is used.
 
 ## Sign in with it
 
@@ -54,7 +54,9 @@ The step expires after 10 minutes. If it does, sign in again.
 
 A backup code works instead of your second step, for when you don't have your phone<IfAvailable feature="passkeys"> or your passkey</IfAvailable>. On the second step, click **Use a backup code** and enter one. Codes look like `ABCDE-FGH23`: capital letters and the digits 2 to 9, with no 0, O, 1 or I to mix up. You can type them in lower case, and with or without the dash. Each code works once.
 
-Settings shows how many codes you have left. To get a fresh set, click **New codes** and confirm it's you. Your old codes stop working.
+Each time a backup code is used, to sign in or to confirm it's you, we email your account's address with how many codes you have left. If it wasn't you, someone has your backup codes: contact support straight away.
+
+Settings shows how many codes you have left. When you're down to 2 or fewer, make new ones: click **New codes** and confirm it's you. Your old codes stop working.
 
 ## Trusted devices
 
@@ -110,4 +112,4 @@ Go to **Settings** → **Profile & security**, click **Turn off** under **Two-st
 
 ## Lost your phone and your backup codes
 
-Email [support@qrdx.dev](mailto:support@qrdx.dev) from your account's email address and tell us what happened. Once we've confirmed the request came from that address, we turn off two-step verification for your account and email you to say so. You can then sign in as usual and turn it on again.
+Email [support@qrdx.dev](mailto:support@qrdx.dev) from your account's email address and tell us what happened. Once we've confirmed the request came from that address, we turn off two-step verification for your account, sign it out on every device, and email you to say so. You can then sign in as usual and turn it on again.

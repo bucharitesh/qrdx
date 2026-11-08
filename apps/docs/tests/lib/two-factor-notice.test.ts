@@ -1,8 +1,10 @@
 // The two-step verification notices: what the "backup code used" and "on"
 // notices say, the sender that counts the codes left (and still sends when
-// it can't) and the notifier registered with @repo/auth for sign-ins.
-// Nothing is emailed: outside production the notice is written to the log,
-// which these tests read.
+// it can't), the notifier registered with @repo/auth for sign-ins, and the
+// help page quoting the "few codes left" number. Nothing is emailed: outside
+// production the notice is written to the log, which these tests read.
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const state = vi.hoisted(() => ({
@@ -195,5 +197,22 @@ describe("sending the backup code notice", () => {
         "a backup code was used to sign in, 3 left",
       ),
     );
+  });
+});
+
+describe("the help page", () => {
+  it('quotes the "few codes left" number and the new behavior', () => {
+    const page = readFileSync(
+      path.resolve(
+        import.meta.dirname,
+        "../../content/docs/help/privacy-and-security/two-step-verification.mdx",
+      ),
+      "utf8",
+    );
+    expect(page).toContain(
+      `When you're down to ${template.BACKUP_CODES_LOW} or fewer, make new ones`,
+    );
+    expect(page).toContain("or a backup code is used.");
+    expect(page).toContain("every other browser or device signed in to");
   });
 });
