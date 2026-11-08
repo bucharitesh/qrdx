@@ -63,7 +63,9 @@ vi.mock("next/headers", () => ({
       return value === undefined ? undefined : { name, value };
     },
     set: (name: string, value: string, options: Record<string, unknown>) => {
-      state.jar.set(name, value);
+      // maxAge 0 is how a browser is told to drop it.
+      if (options?.maxAge === 0) state.jar.delete(name);
+      else state.jar.set(name, value);
       state.setOptions.set(name, options);
     },
     delete: (name: string) => {
@@ -643,6 +645,25 @@ describe("finishing on the page it came back to", () => {
     expect(fakeDb.find("session", { id: OLD_SESSION })).toBeUndefined();
     expect(intentRows()).toHaveLength(0);
     expect(state.jar.has(COOKIE)).toBe(false);
+  });
+
+  it("clears the HTTPS (__Host-) cookie with Secure, so browsers accept it", async () => {
+    account({ linked: ["google"] });
+    await server.startSignInConfirmation({ provider: "google" });
+    const nonce = state.jar.get(COOKIE) as string;
+    // As the browser holds it over HTTPS.
+    state.jar.delete(COOKIE);
+    state.jar.set(`__Host-${COOKIE}`, nonce);
+    await providerSignsIn(USER);
+    expect(
+      await server.finishSignInConfirmation({ failed: false, error: null }),
+    ).toEqual({ ok: true });
+    expect(state.jar.has(`__Host-${COOKIE}`)).toBe(false);
+    expect(state.setOptions.get(`__Host-${COOKIE}`)).toMatchObject({
+      secure: true,
+      path: "/",
+      maxAge: 0,
+    });
   });
 
   it("is single use", async () => {
