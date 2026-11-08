@@ -407,10 +407,23 @@ const browserSession = () =>
     user?: { email?: string };
     session?: { id?: string };
   } | null>;
-const intentRows = () =>
+/** This person's unfinished "sign in again" intents. */
+const intentRows = (email = `owner@${DOMAIN}`) =>
   sql(
-    "select count(*) from verification where identifier like 'qrdx-confirm-sign-in-%'",
+    `select count(*) from verification where identifier like 'qrdx-confirm-sign-in-%' and value like ${q(`%${userId(email)}%`)}`,
   );
+
+const ADMIN = "admin@qrdx.test";
+/**
+ * The admin account is shared with the other suites (two-factor.e2e.ts signs
+ * it in with a code alone): its two-step verification is turned off before
+ * and after this run, which turns it on.
+ */
+function resetAdminTwoFactor() {
+  sql(
+    `update "user" set two_factor_enabled=false where email=${q(ADMIN)}; delete from two_factor where user_id in (select id from "user" where email=${q(ADMIN)}); delete from verification where identifier like 'trust-device-%' and value in (select id from "user" where email=${q(ADMIN)})`,
+  );
+}
 async function browserCookie(name: string): Promise<string> {
   const { cookies } = (await cdp.send("Network.getCookies", {
     urls: [BASE],
@@ -436,6 +449,7 @@ const dismissToasts = () =>
   });
 
 try {
+  resetAdminTwoFactor();
   const owner = `owner@${DOMAIN}`;
   const stranger = `new-${RUN}@${DOMAIN}`; // never had an account
   const bob = `bob@${DOMAIN}`; // has an account of his own
@@ -753,7 +767,7 @@ try {
 
   // ─── Support's "Change email" ───────────────────────────────────────────
   console.log("support moves an account");
-  const admin = "admin@qrdx.test";
+  const admin = ADMIN;
   await emailSignIn(admin);
   const plainId = userId(plain);
   const moved = `plain-moved-${RUN}@other.test`;
@@ -856,6 +870,12 @@ try {
   console.log(`  ✗ stopped: ${(error as Error).message}`);
   await shot("zz-failure").catch(() => {});
 } finally {
+  try {
+    resetAdminTwoFactor();
+  } catch (error) {
+    failures++;
+    console.log(`  ✗ couldn't reset the admin: ${(error as Error).message}`);
+  }
   await browser.close();
 }
 const cspResult = csp.result(cspOn);
