@@ -380,8 +380,9 @@ export const auth = betterAuth({
     // Proving an unproven account's address clears what an earlier holder
     // left behind (./unproven-access.ts).
     unprovenAccessCleanup(),
-    // New sign-in alerts (./new-sign-in.ts). Last, so it sees each sign-in
-    // after the challenge has had its say.
+    // New sign-in alerts, and a finished sign-in counting as "Confirm it's
+    // you" (./new-sign-in.ts). Last, so it sees each sign-in after the
+    // challenge has had its say.
     newSignIn(),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
