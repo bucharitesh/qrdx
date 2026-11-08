@@ -93,7 +93,7 @@ https://qrdx.dev/api/oauth/authorize
   &code_challenge_method=S256
 ```
 
-`redirect_uri` must exactly match a registered URL, and `scope` (space or comma separated) may only ask for the app's scopes. PKCE is recommended, and required for apps that turn on **Require PKCE**. `S256` is the only method: a `plain` challenge gets `invalid_request`. People sign in if needed, then approve your app on the QRdx consent screen, which shows its name, logo, website, who built it and the requested permissions. QRdx then redirects to `redirect_uri` with `code` and your `state`, or with `error=access_denied` if they cancel. The code is valid for 10 minutes and can be used once.
+`redirect_uri` must exactly match a registered URL, and `scope` (space or comma separated) may only ask for the app's scopes. PKCE is recommended, and required for apps that turn on **Require PKCE**. `S256` is the only method: a `plain` challenge gets `invalid_request`. People sign in if needed, then approve your app on the QRdx consent screen, which shows its name, logo, website, who built it and the requested permissions, and confirm it's them. QRdx then redirects to `redirect_uri` with `code` and your `state`, or with `error=access_denied` if they cancel. The code is valid for 10 minutes and can be used once.
 
 ### 3. Exchange the code for tokens
 

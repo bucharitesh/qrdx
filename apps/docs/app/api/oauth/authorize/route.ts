@@ -1,6 +1,10 @@
 import { auth } from "@repo/auth/server";
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
+import {
+  currentSession,
+  requireRecentConfirmation,
+} from "@/lib/account/confirmation-server";
 import { baseUrl } from "@/lib/metadata";
 import { oauthError } from "@/lib/oauth";
 import {
@@ -16,6 +20,9 @@ import {
 // a redirect (the redirect_uri can't be trusted until it has been checked).
 // People who are signed out, or haven't approved this app for these scopes
 // yet, continue on the consent page (/oauth/authorize), which POSTs back here.
+// A repeat authorization for scopes already approved skips the page (and
+// "Confirm it's you"): it grants nothing new, and the code is only good to
+// the app's own registered redirect URI with its client secret.
 
 function consentPage(req: NextRequest, entries: [string, string][]) {
   const url = new URL("/oauth/authorize", req.nextUrl.origin);
@@ -87,10 +94,25 @@ export async function POST(req: NextRequest) {
   const check = await checkAuthorizeRequest(params);
   if (!check.ok) return oauthError(check.error, check.description);
 
-  const session = await auth.api.getSession({ headers: await headers() });
-  const userId = session?.user?.id;
-  if (!userId) {
+  const session = await currentSession();
+  const userId = session?.userId;
+  if (!(session && userId)) {
     // Signed out in another tab: sign in again on the consent page.
+    return Response.redirect(
+      consentPage(req, authorizeParamEntries(params)).toString(),
+      303,
+    );
+  }
+
+  // Approving lets the app keep using the account after this browser signs
+  // out, so it asks "Confirm it's you" (the page asks before it posts). A
+  // stolen session cookie alone can't approve an app of its own. Without a
+  // confirmation in the last 10 minutes (it ran out, or the post didn't come
+  // from the page's button), back to the page, where Authorize asks.
+  if (
+    field("decision") === "allow" &&
+    (await requireRecentConfirmation(session))
+  ) {
     return Response.redirect(
       consentPage(req, authorizeParamEntries(params)).toString(),
       303,
