@@ -16,6 +16,7 @@ import { useAvailability } from "@/components/availability-provider";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { SsoSignIn } from "@/ee/sso/sso-sign-in";
+import { socialSignInErrorPath } from "../sign-in/_lib/error-message";
 import { EmailCodeSignIn } from "./email-code-sign-in";
 import { PasskeySignIn } from "./passkey-sign-in";
 import { SECOND_STEP_TITLES, type SecondStep } from "./second-step";
@@ -91,9 +92,13 @@ export function SignInPanel({
   ) => {
     setLoading(true);
     try {
+      const next = callbackURL();
       const { error } = await authClient.signIn.social({
         provider,
-        callbackURL: callbackURL(),
+        callbackURL: next,
+        // A refusal (an unverified address, say) comes back to /sign-in,
+        // which says why (sign-in/_lib/error-message.ts).
+        errorCallbackURL: socialSignInErrorPath(next, provider),
       });
       // e.g. the provider is not configured on this server
       if (error) throw error;

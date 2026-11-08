@@ -82,6 +82,30 @@ describe("without QRDX_EE_LICENSE", () => {
     }
   });
 
+  it("still refuses a Google or GitHub sign-up the provider hasn't verified", async () => {
+    const { auth } = await load(undefined);
+    const validate = (
+      auth.options as {
+        user?: {
+          validateUserInfo?: (data: unknown, ctx: unknown) => unknown;
+        };
+      }
+    ).user?.validateUserInfo;
+    expect(
+      await validate?.(
+        {
+          user: { email: "a@b.test", emailVerified: false },
+          source: {
+            method: "oauth",
+            action: "create-user",
+            oauth: { providerId: "github" },
+          },
+        },
+        {},
+      ),
+    ).toMatchObject({ error: "github_email_unverified" });
+  });
+
   it("doesn't offer SSO in the app: feature, settings page, help page", async () => {
     const { isFeatureAvailable, isPathAvailable } = await load(undefined);
     expect(isFeatureAvailable("sso")).toBe(false);

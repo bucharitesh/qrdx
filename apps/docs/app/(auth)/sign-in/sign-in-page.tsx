@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { SignInPanel } from "../components/sign-in-panel";
+import { type SocialSignIn, signInErrorMessage } from "./_lib/error-message";
 
 function Heading({
   className,
@@ -33,12 +33,15 @@ function Lead({
 export function SignInPage({
   next,
   signedOut,
-  ssoError = null,
+  error = null,
+  via = null,
 }: {
   next: string;
   signedOut: boolean;
-  /** Code from a failed single sign-on; its description isn't shown (it's from the URL). */
-  ssoError?: string | null;
+  /** Code from a failed sign-in; its description isn't shown (it's from the URL). */
+  error?: string | null;
+  /** Google or GitHub; otherwise single sign-on. */
+  via?: SocialSignIn | null;
 }) {
   return (
     <main className="bg-background flex min-h-svh flex-col items-center justify-center gap-4 px-4 py-10">
@@ -47,8 +50,8 @@ export function SignInPage({
           callbackURL={() => next}
           Description={Lead}
           notice={
-            ssoError
-              ? ssoSignInErrorMessage(ssoError)
+            error
+              ? signInErrorMessage(error, via)
               : signedOut
                 ? "You're signed out."
                 : undefined

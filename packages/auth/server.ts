@@ -62,6 +62,7 @@ import {
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
+import { allUserInfoChecks, validateSocialSignUp } from "./verified-sign-up";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -189,9 +190,14 @@ export const auth = betterAuth({
       allowUnlinkingAll: true,
     },
   },
-  // Checks what an identity provider sent before an SSO sign-in creates,
-  // links or signs in an account (./ee/sso.ts). Other methods pass.
-  user: ssoLicensed ? { validateUserInfo: validateSsoUserInfo } : undefined,
+  // Checks what a provider sent before an account is created, linked or
+  // signed in to: no Google or GitHub sign-up from an unverified address
+  // (./verified-sign-up.ts), and SSO's checks (./ee/sso.ts).
+  user: {
+    validateUserInfo: ssoLicensed
+      ? allUserInfoChecks(validateSsoUserInfo, validateSocialSignUp)
+      : validateSocialSignUp,
+  },
   // Codes live in the core `verification` table. Identifiers hold addresses
   // ("sign-in-otp-<email>", "change-email-otp-<old>-<new>"), so they are
   // hashed like the codes themselves.
