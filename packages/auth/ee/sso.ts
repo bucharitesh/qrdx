@@ -92,6 +92,38 @@ export async function ssoProviderUsable(provider: {
   return (await workspacePlanTier(provider.organizationId)) === "business";
 }
 
+/**
+ * Whether signing in again through SSO can confirm it's you (the app's
+ * "Confirm it's you" dialog): the connection a sign-in with this address
+ * would use is usable today, it's OIDC, and this person already signs in
+ * through it (an `account` row for that connection). Their own address
+ * picks it, as on the sign-in page. Never SAML: its ACS is a cross-site POST
+ * without the Lax cookie that holds the sign-in to the person who asked
+ * (../confirm-sign-in.ts), so the wrong identity could make an account or
+ * switch the browser.
+ */
+export async function ssoConfirmsFor(
+  userId: string,
+  email: string
+): Promise<boolean> {
+  const domain = emailDomain(email);
+  if (!domain) return false;
+  const providers = await verifiedProvidersFor(domain);
+  const [provider] = providers;
+  if (!provider || providers.length > 1) return false;
+  if (!provider.oidcConfig || provider.samlConfig) return false;
+  if (!(await ssoProviderUsable(provider))) return false;
+  const linked = await db.query.account.findFirst({
+    columns: { id: true },
+    where: (table, { and: both, eq: equals }) =>
+      both(
+        equals(table.userId, userId),
+        equals(table.providerId, provider.providerId)
+      ),
+  });
+  return Boolean(linked);
+}
+
 async function providerById(providerId: unknown): Promise<ProviderRow | null> {
   if (typeof providerId !== "string") return null;
   const row = await db.query.ssoProvider.findFirst({

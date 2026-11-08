@@ -17,6 +17,12 @@ import {
   sendConfirmationCode as sendCode,
   startPasskeyConfirmation as startPasskey,
 } from "@/lib/account/confirmation-server";
+import {
+  finishSignInConfirmation as finishSignIn,
+  type SignInFinishResult,
+  type SignInStartResult,
+  startSignInConfirmation as startSignIn,
+} from "@/lib/account/confirmation-sign-in-server";
 import { logError } from "@/lib/shared";
 
 // "Confirm it's you" (lib/account/confirmation.ts): the dialog's server
@@ -78,4 +84,18 @@ export async function confirmWithEmailCode(
   input: unknown,
 ): Promise<EmailCodeResult> {
   return checkEmailCode(input);
+}
+
+/** Before signing in again with Google, GitHub or SSO to confirm. */
+export async function startSignInConfirmation(
+  input: unknown,
+): Promise<SignInStartResult> {
+  return startSignIn(input);
+}
+
+/** Back on the page after signing in again (`?confirm=…`). */
+export async function finishSignInConfirmation(
+  input: unknown,
+): Promise<SignInFinishResult> {
+  return finishSignIn(input);
 }

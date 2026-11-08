@@ -8,6 +8,11 @@
 // "eu.acme.com" addresses to an "acme.com" connection), so two workspaces
 // may never hold overlapping verified domains.
 
+import {
+  CONFIRM_RETURN_FAILED,
+  CONFIRM_RETURN_PARAM,
+} from "../confirm-sign-in-rules";
+
 /** Where Better Auth is mounted (apps/docs/app/api/auth/[...all]). */
 export const AUTH_BASE_PATH = "/api/auth";
 
@@ -215,6 +220,18 @@ export function ssoFailureRedirect(
   if (!error) return null;
   const code = ssoErrorCode(error, url.searchParams.get("error_description"));
   const sameSite = url.origin === new URL(appOrigin).origin;
+  // Back to the page that asked "Confirm it's you" (../confirm-sign-in.ts):
+  // it says what went wrong, and the person is still signed in there.
+  if (
+    sameSite &&
+    url.searchParams.has(CONFIRM_RETURN_PARAM) &&
+    !url.pathname.startsWith(AUTH_BASE_PATH)
+  ) {
+    url.searchParams.set(CONFIRM_RETURN_PARAM, CONFIRM_RETURN_FAILED);
+    url.searchParams.set("error", code);
+    url.searchParams.delete("error_description");
+    return `${url.pathname}?${url.searchParams}`;
+  }
   if (sameSite && url.pathname === SIGN_IN_PATH) {
     if (code === error) return null;
     url.searchParams.set("error", code);

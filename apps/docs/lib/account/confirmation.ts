@@ -5,16 +5,28 @@
  * is ./confirmation-server.ts and the dialog components/confirm-identity/.
  *
  * - Two-step verification on: a passkey, a code from the authenticator app
- *   or a backup code. Never an emailed code: getting into the mailbox must
- *   not get around the second step.
- * - Off: a 6-digit code emailed to the account's address. Where this
- *   deployment can't send codes, a sign-in within the last 10 minutes.
+ *   or a backup code. Never an emailed code or another sign-in: getting into
+ *   the mailbox or a Google account must not get around the second step.
+ * - Off: a passkey when the account has one, a 6-digit code emailed to the
+ *   account's address, or signing in again with a linked Google, GitHub or
+ *   workspace SSO account (the provider checks the person again; see
+ *   ./confirmation-sign-in-server.ts). Where this deployment can't send
+ *   codes, a sign-in within the last 10 minutes also counts.
+ *
+ * Each of these is something a stolen session cookie alone doesn't give.
  *
  * A confirmation lasts 10 minutes for the session that made it, so several
  * changes in a row ask once. A gated server action answers
  * `{ ok: false, error: "CONFIRMATION_REQUIRED" }` without one; the client's
  * useConfirmation() opens the dialog and tries the action again.
  */
+
+import {
+  CONFIRM_RETURN_FAILED,
+  CONFIRM_RETURN_PARAM,
+  CONFIRM_RETURNED,
+  CONFIRM_SIGN_IN_WRONG_ACCOUNT,
+} from "@repo/auth/confirm-sign-in-rules";
 
 /** How long a confirmation lasts for its session. */
 export const CONFIRMATION_MINUTES = 10;
@@ -57,15 +69,27 @@ export function needsConfirmation(result: unknown): boolean {
   );
 }
 
+/** Signing in again with one of these confirms, without two-step on. */
+export const CONFIRM_SIGN_IN_PROVIDERS = ["google", "github", "sso"] as const;
+export type ConfirmSignInProvider = (typeof CONFIRM_SIGN_IN_PROVIDERS)[number];
+
+export function isConfirmSignInProvider(
+  value: unknown,
+): value is ConfirmSignInProvider {
+  return (CONFIRM_SIGN_IN_PROVIDERS as readonly unknown[]).includes(value);
+}
+
 /**
- * The ways to confirm. "sign-in-again" is the fallback for accounts without
- * two-step verification on a deployment that can't send codes.
+ * The ways to confirm. "sign-in-again" (sign out, sign in, come back within
+ * 10 minutes) is the fallback for accounts without two-step verification on
+ * a deployment that can't send codes.
  */
 export type ConfirmMethod =
   | "passkey"
   | "totp"
   | "backup"
   | "email"
+  | ConfirmSignInProvider
   | "sign-in-again";
 
 /** The account's methods, preferred first. */
@@ -74,6 +98,7 @@ export function confirmationMethodsFor({
   authenticatorApp,
   passkeys,
   emailCodes,
+  signIns = [],
 }: {
   twoFactorOn: boolean;
   /** An authenticator app is set up (not only started) */
@@ -82,15 +107,22 @@ export function confirmationMethodsFor({
   passkeys: number;
   /** This deployment can deliver a code to the account's address */
   emailCodes: boolean;
+  /** Linked sign-ins this deployment offers (Google, GitHub, workspace SSO) */
+  signIns?: readonly ConfirmSignInProvider[];
 }): ConfirmMethod[] {
+  const methods: ConfirmMethod[] = [];
+  if (passkeys > 0) methods.push("passkey");
   if (twoFactorOn) {
-    const methods: ConfirmMethod[] = [];
-    if (passkeys > 0) methods.push("passkey");
     if (authenticatorApp) methods.push("totp");
     methods.push("backup");
     return methods;
   }
-  return [emailCodes ? "email" : "sign-in-again"];
+  if (emailCodes) methods.push("email");
+  for (const provider of CONFIRM_SIGN_IN_PROVIDERS) {
+    if (signIns.includes(provider)) methods.push(provider);
+  }
+  if (!emailCodes) methods.push("sign-in-again");
+  return methods;
 }
 
 /** What the dialog says it's for: "Before you <action>, …". */
@@ -106,6 +138,7 @@ export const CONFIRMATION_ACTIONS = {
   "add-authenticator": "set up an authenticator app",
   "remove-authenticator": "remove your authenticator app",
   sso: "change single sign-on",
+  "support-change": "make this change for someone",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
@@ -162,7 +195,84 @@ export const CONFIRMATION_MESSAGES = {
   signInAgain:
     "For your security, sign out and sign in again, then try again within 10 minutes.",
   stillRequired: "We couldn't confirm it's you. Try again.",
+  signInUnavailable:
+    "That sign-in isn't linked to your account. Use another method.",
+  signInFailed:
+    "That sign-in didn't go through, so nothing changed. Try again or use another method.",
+  signInNotLinked:
+    "That account isn't linked to your QRdx account, so nothing changed. Sign in with the one you linked, or use another method.",
+  signInExpired:
+    "That took longer than 10 minutes, so nothing changed. Try again.",
+  signInDifferentAccount:
+    "You signed in to a different QRdx account, so nothing changed here. Sign out, then sign in to the account you want to change.",
+  signInTwoFactorOn:
+    "Two-step verification is on now, so confirm with it instead: your passkey, authenticator app or a backup code.",
+  signInConfirmed:
+    "Thanks, that's confirmed. You can make your change in the next 10 minutes.",
 } as const;
+
+/** Where the dialog came back to after signing in again: `?confirm=…`. */
+export {
+  CONFIRM_RETURN_FAILED,
+  CONFIRM_RETURN_PARAM,
+  CONFIRM_RETURNED,
+} from "@repo/auth/confirm-sign-in-rules";
+
+/** The query keys the return adds (ours and Better Auth's). */
+export const CONFIRM_RETURN_KEYS = [
+  CONFIRM_RETURN_PARAM,
+  "error",
+  "error_description",
+] as const;
+
+/**
+ * Where signing in again comes back to: this page (path and query), without
+ * an earlier outcome or Better Auth error, plus `?confirm=<outcome>`.
+ * Same-origin and relative, as Better Auth's callback URLs need.
+ */
+export function confirmReturnPath(href: string, outcome: string): string {
+  const url = new URL(href);
+  for (const key of CONFIRM_RETURN_KEYS) url.searchParams.delete(key);
+  url.searchParams.set(CONFIRM_RETURN_PARAM, outcome);
+  return `${url.pathname}${url.search}`;
+}
+
+/**
+ * Back on the page after signing in again: what happened, and the address
+ * without the keys the return added. Null when this load isn't a return.
+ */
+export function readConfirmReturn(href: string): {
+  failed: boolean;
+  error: string | null;
+  cleanPath: string;
+} | null {
+  const url = new URL(href);
+  const outcome = url.searchParams.get(CONFIRM_RETURN_PARAM);
+  if (outcome !== CONFIRM_RETURNED && outcome !== CONFIRM_RETURN_FAILED) {
+    return null;
+  }
+  const error = url.searchParams.get("error")?.slice(0, 64) ?? null;
+  for (const key of CONFIRM_RETURN_KEYS) url.searchParams.delete(key);
+  return {
+    failed: outcome === CONFIRM_RETURN_FAILED,
+    error,
+    cleanPath: `${url.pathname}${url.search}${url.hash}`,
+  };
+}
+
+/** Better Auth's callback errors (`?error=`) after signing in again. */
+export function confirmSignInErrorMessage(code: string | null): string {
+  switch (code) {
+    case CONFIRM_SIGN_IN_WRONG_ACCOUNT:
+    case "unable_to_create_user":
+    case "unable_to_create_session":
+    case "account_not_linked":
+    case "signup_disabled":
+      return CONFIRMATION_MESSAGES.signInNotLinked;
+    default:
+      return CONFIRMATION_MESSAGES.signInFailed;
+  }
+}
 
 /** The dialog's starting point, from the server. */
 export interface ConfirmationOptions {

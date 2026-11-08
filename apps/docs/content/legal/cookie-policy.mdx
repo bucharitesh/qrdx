@@ -1,7 +1,7 @@
 ---
 title: Cookie Policy
 description: Every cookie and browser storage item QRdx uses, what it is for, how long it lasts, and how to change your choices.
-lastUpdated: 2026-11-07
+lastUpdated: 2026-11-08
 ---
 
 import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
@@ -43,6 +43,7 @@ On your first visit to qrdx.dev we ask which optional categories you allow. Noth
 | `better-auth.trust_device` (named `__Secure-better-auth.trust_device` over HTTPS) | QRdx | Remembers that you chose "Don't ask again on this device", so this browser skips the second step | 30 days | Necessary |
 | `better-auth.better-auth-passkey` (named `__Secure-better-auth.better-auth-passkey` over HTTPS) | QRdx | Holds the one-time challenge while you use or add a passkey | 5 minutes | Necessary |
 | `qrdx_device` | QRdx | Recognises this browser, so a sign-in from a browser your account hasn't used is emailed to you. Only a fingerprint of it (a hash) is stored on our servers. | 400 days | Necessary |
+| `qrdx_confirm_sign_in` (named `__Host-qrdx_confirm_sign_in` over HTTPS) | QRdx | While you sign in again with Google, GitHub or single sign-on to confirm it's you, ties that sign-in to the request that asked for it, so it only counts for your own account. Only a hash of it is stored on our servers. Removed when you're back or sign out. | 10 minutes | Necessary |
 | `<integration>_oauth_state` and `<integration>_code_verifier` | QRdx | Secure the step where you connect an integration such as Dub or Google Drive | 10 minutes | Necessary |
 | `qrdx_currency` | QRdx | Remembers the currency you chose on the pricing page | 1 year | Necessary |
 | `c15t` | QRdx | Remembers your cookie choices | Up to 12 months | Necessary |
