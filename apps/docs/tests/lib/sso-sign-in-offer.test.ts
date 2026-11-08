@@ -10,6 +10,7 @@ const state = vi.hoisted(() => ({
   licensed: true,
   ip: "203.0.113.1",
   offered: true as boolean | Error,
+  required: false,
   lookups: [] as string[],
   logged: [] as { message: string; context: unknown }[],
 }));
@@ -33,6 +34,10 @@ vi.mock("@repo/auth/sso", () => ({
   },
 }));
 
+vi.mock("@repo/auth/sso-required", () => ({
+  ssoRequiredForDomain: async () => state.required,
+}));
+
 const { ssoSignInOffer } = await import("@/ee/sso/sign-in-offer");
 
 // The limiter is per IP and lives for the module, so each test signs in
@@ -44,6 +49,7 @@ beforeEach(() => {
   state.licensed = true;
   state.ip = freshIp();
   state.offered = true;
+  state.required = false;
   state.lookups = [];
   state.logged = [];
 });
@@ -66,6 +72,17 @@ describe("offering SSO from the email step", () => {
   it("answers with a yes or no and nothing else (no connection or workspace)", async () => {
     const answer = await ssoSignInOffer("ana@acme.com");
     expect(Object.keys(answer)).toEqual(["sso"]);
+  });
+
+  it("says when the domain requires SSO, still from the domain alone", async () => {
+    state.required = true;
+    expect(await ssoSignInOffer("ana@acme.com")).toEqual({
+      sso: true,
+      required: true,
+    });
+    // Never "required" without the offer itself.
+    state.offered = false;
+    expect(await ssoSignInOffer("ana@acme.com")).toEqual({ sso: false });
   });
 
   it("doesn't run without a licence key", async () => {
