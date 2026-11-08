@@ -32,6 +32,7 @@ import {
   TEAM_ROLE_LABELS,
 } from "@/app/dashboard/team/_lib/team";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { can, WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";
 import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
@@ -105,145 +106,149 @@ export default async function TeamPage() {
   const seats = getPlanLimits(teamPlan).teamMembers;
   const ownWorkspace = isOwnWorkspaceOf(team.id, scope.userId);
 
+  // Role changes, removals, admin invitations and admin join links ask
+  // "Confirm it's you" first; one dialog serves the whole page.
   return (
-    <div className="space-y-6">
-      <SettingsHeader
-        description={`Who can work in ${team.name}, and what they can do.`}
-        title="Team"
-      />
+    <ConfirmIdentityProvider>
+      <div className="space-y-6">
+        <SettingsHeader
+          description={`Who can work in ${team.name}, and what they can do.`}
+          title="Team"
+        />
 
-      {received.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Invitations for you</CardTitle>
-            <CardDescription>
-              Pending invitations sent to {user.email}.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {received.map((invite) => (
-              <div
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3"
-                key={invite.id}
-              >
-                <div>
-                  <div className="font-medium">{invite.teamName}</div>
-                  <div className="text-muted-foreground text-xs">
-                    {TEAM_ROLE_LABELS[invite.role]} · expires{" "}
-                    {formatUtcDateTime(invite.expiresAt)}
-                  </div>
-                </div>
-                <Link
-                  className="text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
-                  href={invitePath(invite.id)}
-                >
-                  View invitation
-                </Link>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
-      <Card>
-        <CardHeader>
-          <div className="flex flex-wrap items-center gap-2">
-            <CardTitle>Members</CardTitle>
-            <Badge
-              title={WORKSPACE_ROLE_DESCRIPTIONS[scope.role]}
-              variant="outline"
-            >
-              {TEAM_ROLE_LABELS[scope.role]}
-            </Badge>
-            <Badge variant={teamPlan !== "free" ? "default" : "secondary"}>
-              {PLAN_NAMES[teamPlan]}
-            </Badge>
-          </div>
-          <CardDescription>
-            {members.length} member{members.length === 1 ? "" : "s"}
-            {Number.isFinite(seats) ? ` of ${seats}` : ""}. Seats follow the
-            plan of the workspace's owners and billing members.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <MembersTable
-            currentRole={scope.role}
-            currentUserId={scope.userId}
-            members={members.map((m) => ({
-              id: m.id,
-              userId: m.userId,
-              name: m.name,
-              email: m.email,
-              role: m.role,
-              joinedAt: m.joinedAt.toISOString(),
-            }))}
-            ssoDomains={ssoDomains}
-          />
-        </CardContent>
-      </Card>
-
-      {canManage &&
-        (seats > 1 ? (
+        {received.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>Invite people</CardTitle>
+              <CardTitle>Invitations for you</CardTitle>
               <CardDescription>
-                Invite links expire after 48 hours and only work for the invited
-                email address.
+                Pending invitations sent to {user.email}.
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <InviteForm currentRole={scope.role} />
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium">Pending invitations</h3>
-                <PendingInvitations
-                  invitations={invitations.map((i) => ({
-                    id: i.id,
-                    email: i.email,
-                    role: i.role,
-                    expiresAt: i.expiresAt.toISOString(),
-                    inviterName: i.inviterName,
-                  }))}
-                />
-              </div>
+            <CardContent className="space-y-2">
+              {received.map((invite) => (
+                <div
+                  className="flex flex-wrap items-center justify-between gap-2 rounded-md border p-3"
+                  key={invite.id}
+                >
+                  <div>
+                    <div className="font-medium">{invite.teamName}</div>
+                    <div className="text-muted-foreground text-xs">
+                      {TEAM_ROLE_LABELS[invite.role]} · expires{" "}
+                      {formatUtcDateTime(invite.expiresAt)}
+                    </div>
+                  </div>
+                  <Link
+                    className="text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+                    href={invitePath(invite.id)}
+                  >
+                    View invitation
+                  </Link>
+                </div>
+              ))}
             </CardContent>
           </Card>
-        ) : (
-          <Card className="flex-col items-start gap-3 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
-            <div className="space-y-0.5">
-              <p className="font-medium">Invite your colleagues</p>
-              <p className="text-muted-foreground text-sm text-pretty">
-                {ownWorkspace || can(scope.role, "billing.manage")
-                  ? `Members are part of ${PLAN_NAMES.pro} and ${PLAN_NAMES.business}.`
-                  : "Ask a workspace owner or billing member to upgrade to add members."}
-              </p>
-            </div>
-            {can(scope.role, "billing.manage") && <UpgradeButton size="sm" />}
-          </Card>
-        ))}
+        )}
 
-      {canManage && seats > 1 && (
         <Card>
           <CardHeader>
-            <CardTitle>Join link</CardTitle>
-            <CardDescription className="text-pretty">
-              One link for the whole team: anyone signed in who opens it joins
-              this workspace, while it has free seats. Reset it or turn it off
-              any time.
+            <div className="flex flex-wrap items-center gap-2">
+              <CardTitle>Members</CardTitle>
+              <Badge
+                title={WORKSPACE_ROLE_DESCRIPTIONS[scope.role]}
+                variant="outline"
+              >
+                {TEAM_ROLE_LABELS[scope.role]}
+              </Badge>
+              <Badge variant={teamPlan !== "free" ? "default" : "secondary"}>
+                {PLAN_NAMES[teamPlan]}
+              </Badge>
+            </div>
+            <CardDescription>
+              {members.length} member{members.length === 1 ? "" : "s"}
+              {Number.isFinite(seats) ? ` of ${seats}` : ""}. Seats follow the
+              plan of the workspace's owners and billing members.
             </CardDescription>
           </CardHeader>
           <CardContent>
-            {joinLink === "unavailable" ? (
-              <p className="text-muted-foreground text-sm">
-                Join links aren't set up on this server yet. Invite people by
-                email for now.
-              </p>
-            ) : (
-              <JoinLinkCard currentRole={scope.role} link={joinLink} />
-            )}
+            <MembersTable
+              currentRole={scope.role}
+              currentUserId={scope.userId}
+              members={members.map((m) => ({
+                id: m.id,
+                userId: m.userId,
+                name: m.name,
+                email: m.email,
+                role: m.role,
+                joinedAt: m.joinedAt.toISOString(),
+              }))}
+              ssoDomains={ssoDomains}
+            />
           </CardContent>
         </Card>
-      )}
-    </div>
+
+        {canManage &&
+          (seats > 1 ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Invite people</CardTitle>
+                <CardDescription>
+                  Invite links expire after 48 hours and only work for the
+                  invited email address.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <InviteForm currentRole={scope.role} />
+                <div className="space-y-2">
+                  <h3 className="text-sm font-medium">Pending invitations</h3>
+                  <PendingInvitations
+                    invitations={invitations.map((i) => ({
+                      id: i.id,
+                      email: i.email,
+                      role: i.role,
+                      expiresAt: i.expiresAt.toISOString(),
+                      inviterName: i.inviterName,
+                    }))}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="flex-col items-start gap-3 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="space-y-0.5">
+                <p className="font-medium">Invite your colleagues</p>
+                <p className="text-muted-foreground text-sm text-pretty">
+                  {ownWorkspace || can(scope.role, "billing.manage")
+                    ? `Members are part of ${PLAN_NAMES.pro} and ${PLAN_NAMES.business}.`
+                    : "Ask a workspace owner or billing member to upgrade to add members."}
+                </p>
+              </div>
+              {can(scope.role, "billing.manage") && <UpgradeButton size="sm" />}
+            </Card>
+          ))}
+
+        {canManage && seats > 1 && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Join link</CardTitle>
+              <CardDescription className="text-pretty">
+                One link for the whole team: anyone signed in who opens it joins
+                this workspace, while it has free seats. Reset it or turn it off
+                any time.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {joinLink === "unavailable" ? (
+                <p className="text-muted-foreground text-sm">
+                  Join links aren't set up on this server yet. Invite people by
+                  email for now.
+                </p>
+              ) : (
+                <JoinLinkCard currentRole={scope.role} link={joinLink} />
+              )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </ConfirmIdentityProvider>
   );
 }

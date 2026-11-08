@@ -13,3 +13,14 @@ export const CONFIRM_RETURN_FAILED = "sign-in-failed";
  * else's.
  */
 export const CONFIRM_SIGN_IN_WRONG_ACCOUNT = "confirm_sign_in_wrong_account";
+
+/**
+ * "Confirm it's you" lasts 10 minutes for the session that made it: a
+ * `verification` row named by this prefix and the session's id, holding the
+ * user's id (apps/docs/lib/account/confirmation-server.tsx records it,
+ * ./confirm-gate.ts reads it).
+ */
+export const CONFIRMED_SESSION_PREFIX = "qrdx-confirmed-";
+
+export const confirmedSessionIdentifier = (sessionId: string): string =>
+  `${CONFIRMED_SESSION_PREFIX}${sessionId}`;

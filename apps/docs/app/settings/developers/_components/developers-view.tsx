@@ -3,6 +3,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Add } from "iconsax-reactjs";
 import Link from "next/link";
 import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
+import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import type { OAuthAppsOverview } from "@/lib/oauth-apps/service";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -96,7 +97,11 @@ function OAuthAppsSection({
   );
 }
 
-/** Settings → API keys & apps: API keys, then OAuth apps, of the open workspace. */
+/**
+ * Settings → API keys & apps: API keys, then OAuth apps, of the open
+ * workspace. Creating a key asks "Confirm it's you" first (one dialog for the
+ * page).
+ */
 export function DevelopersView({
   overview,
   keys,
@@ -112,28 +117,30 @@ export function DevelopersView({
   openCreate: boolean;
 }) {
   return (
-    <div className="space-y-10">
-      <SettingsHeader
-        description="API keys and OAuth apps for the QRdx REST API."
-        title="API keys & apps"
-      >
-        <Button asChild size="sm" variant="outline">
-          <Link href={QUICKSTART_HREF}>Docs</Link>
-        </Button>
-      </SettingsHeader>
+    <ConfirmIdentityProvider>
+      <div className="space-y-10">
+        <SettingsHeader
+          description="API keys and OAuth apps for the QRdx REST API."
+          title="API keys & apps"
+        >
+          <Button asChild size="sm" variant="outline">
+            <Link href={QUICKSTART_HREF}>Docs</Link>
+          </Button>
+        </SettingsHeader>
 
-      <ApiKeysSection
-        apiBase={apiBase}
-        emptyFigure={
-          <HairlineFigure className="mx-auto h-24 w-36" figure="Terminal" />
-        }
-        isTeam={overview.isTeam}
-        openCreate={openCreate}
-        state={keys}
-        workspaceName={overview.workspaceName}
-      />
+        <ApiKeysSection
+          apiBase={apiBase}
+          emptyFigure={
+            <HairlineFigure className="mx-auto h-24 w-36" figure="Terminal" />
+          }
+          isTeam={overview.isTeam}
+          openCreate={openCreate}
+          state={keys}
+          workspaceName={overview.workspaceName}
+        />
 
-      <OAuthAppsSection base={base} overview={overview} />
-    </div>
+        <OAuthAppsSection base={base} overview={overview} />
+      </div>
+    </ConfirmIdentityProvider>
   );
 }
