@@ -664,6 +664,30 @@ async function licensedRun() {
       ),
     ),
   );
+  const linkPerson = `link-${RUN}@${DOMAIN}`;
+  await evaluate((e: string) => {
+    window.__e2e.setValue(window.__e2e.byLabel("Work email") as HTMLElement, e);
+  }, linkPerson);
+  await clickButton("Continue");
+  await waitFor((idp: string) => location.href.startsWith(idp), {
+    args: [IDP] as never[],
+    timeout: 20_000,
+  }).catch(() => {});
+  await evaluate((e: string) => {
+    window.__e2e.setValue(window.__e2e.byLabel("Sign in as") as HTMLElement, e);
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Sign in", { exact: true }) as HTMLElement,
+    );
+  }, linkPerson);
+  await waitFor((base: string) => location.href.startsWith(base), {
+    args: [BASE] as never[],
+    timeout: 30_000,
+  });
+  await sleep(2500);
+  check(
+    "…and still signs in through the identity provider",
+    (await sessionEmail()) === linkPerson,
+  );
 
   console.log("the per-IP limit");
   await openPanel();
