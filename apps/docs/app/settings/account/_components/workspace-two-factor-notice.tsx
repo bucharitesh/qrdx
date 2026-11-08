@@ -7,6 +7,7 @@ import Link from "next/link";
 import { workspaceSlugFromPath } from "@/lib/workspace-paths";
 import {
   TWO_FACTOR_SECTION_ID,
+  WORKSPACE_NOTICE_ID,
   workspaceReturnPath,
 } from "@/lib/workspace-two-factor";
 import { findWorkspaceBySlug } from "@/lib/workspaces";
@@ -14,8 +15,10 @@ import { findWorkspaceBySlug } from "@/lib/workspaces";
 /**
  * Profile & security, opened from a workspace that requires two-step
  * verification (?next=/dashboard/<slug>/…): says why, and once it's on,
- * links back. Nothing for a path outside a workspace, one the person isn't
- * a member of, or one that doesn't require it.
+ * links back. It sits just above the two-step verification section, where
+ * the link lands, so it stays in view while the person turns it on. Nothing
+ * for a path outside a workspace, one the person isn't a member of, or one
+ * that doesn't require it.
  */
 export async function WorkspaceTwoFactorNotice({
   next,
@@ -38,7 +41,8 @@ export async function WorkspaceTwoFactorNotice({
 
   return (
     <div
-      className="flex flex-col gap-3 rounded-lg border p-4 text-sm sm:flex-row sm:items-center sm:justify-between"
+      className="flex scroll-mt-24 flex-col gap-3 rounded-lg border p-4 text-sm sm:flex-row sm:items-center sm:justify-between"
+      id={WORKSPACE_NOTICE_ID}
       role="status"
     >
       <p className="text-muted-foreground text-pretty">

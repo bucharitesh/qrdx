@@ -8,6 +8,8 @@ import { workspaceSlugFromPath } from "@/lib/workspace-paths";
 /** Profile & security's two-step verification section. */
 export const TWO_FACTOR_SETTINGS_PATH = "/settings/account";
 export const TWO_FACTOR_SECTION_ID = "two-factor";
+/** The notice just above it that leads back to the workspace. */
+export const WORKSPACE_NOTICE_ID = "workspace-two-factor";
 
 /** The query key that brings Profile & security back to a workspace. */
 export const RETURN_PARAM = "next";
@@ -19,7 +21,9 @@ export const RETURN_PARAM = "next";
 export function twoFactorSetupHref(returnPath: string): string {
   const next = workspaceReturnPath(returnPath);
   const query = next ? `?${new URLSearchParams({ [RETURN_PARAM]: next })}` : "";
-  return `${TWO_FACTOR_SETTINGS_PATH}${query}#${TWO_FACTOR_SECTION_ID}`;
+  return next
+    ? `${TWO_FACTOR_SETTINGS_PATH}${query}#${WORKSPACE_NOTICE_ID}`
+    : `${TWO_FACTOR_SETTINGS_PATH}#${TWO_FACTOR_SECTION_ID}`;
 }
 
 /**
