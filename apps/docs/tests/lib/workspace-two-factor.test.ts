@@ -739,7 +739,7 @@ describe("moving a code into a workspace that shuts you out", () => {
 describe("Turn on two-step verification, and back", () => {
   it("goes to Profile & security with the workspace page to come back to", () => {
     expect(appRules.twoFactorSetupHref("/dashboard/team/codes")).toBe(
-      "/settings/account?next=%2Fdashboard%2Fteam%2Fcodes#two-factor",
+      "/settings/account?next=%2Fdashboard%2Fteam%2Fcodes#workspace-two-factor",
     );
   });
 

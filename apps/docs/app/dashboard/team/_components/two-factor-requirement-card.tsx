@@ -144,7 +144,7 @@ export function TwoFactorRequirementCard({
     note =
       membersWithout === 0
         ? "Everyone in this workspace has it on."
-        : `${membersWithoutTwoFactor(membersWithout)} They're asked to when they next open the workspace.`;
+        : `${membersWithoutTwoFactor(membersWithout)} They're asked to turn it on when they next open the workspace.`;
   }
 
   return (

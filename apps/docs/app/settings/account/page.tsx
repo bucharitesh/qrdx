@@ -129,9 +129,6 @@ export default async function AccountPage({
           title="Profile & security"
         />
 
-        {/* Sent here by a workspace that requires two-step verification. */}
-        <WorkspaceTwoFactorNotice next={first(params.next)} userId={userId} />
-
         <ProfileSection
           profile={{
             name: session.user.name ?? "",
@@ -149,6 +146,10 @@ export default async function AccountPage({
           methods={toSignInMethods(accounts, formatDate)}
           outcome={linkOutcome(params)}
         />
+
+        {/* Sent here by a workspace that requires two-step verification:
+            just above the section, where its link lands. */}
+        <WorkspaceTwoFactorNotice next={first(params.next)} userId={userId} />
 
         <TwoFactorSection email={session.user.email} userId={userId} />
 
