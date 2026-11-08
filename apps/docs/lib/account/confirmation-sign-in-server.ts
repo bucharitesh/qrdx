@@ -189,7 +189,15 @@ export async function finishSignInConfirmation(
       const value = jar.get(name)?.value;
       if (!value) continue;
       nonce ??= value;
-      jar.delete(name);
+      // Not jar.delete(name): it sends no Secure, and browsers ignore a
+      // Set-Cookie for a __Host- name without it.
+      jar.set(name, "", {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: name === CONFIRM_SIGN_IN_SECURE_COOKIE,
+        path: "/",
+        maxAge: 0,
+      });
     }
     const [row] = nonce
       ? await db
