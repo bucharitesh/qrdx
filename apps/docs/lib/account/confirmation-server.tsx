@@ -289,8 +289,8 @@ export async function loadConfirmationOptions(
  * the shared lockout. An account without an authenticator app (passkeys
  * only, or a setup that was never confirmed) never gets as far as the
  * plugin's TOTP check. A backup code that worked is emailed to the
- * account's address, after the response: that never holds up or fails the
- * check.
+ * account's address, without waiting for it: that never holds up or fails
+ * the check.
  */
 export async function checkSecondFactorCode(
   session: Pick<ConfirmableSession, "userId" | "email" | "requestHeaders">,
@@ -351,14 +351,15 @@ export async function checkSecondFactorCode(
   await clearCodeFailures(attempt.id);
   if (backupCode) {
     try {
-      after(() =>
-        sendBackupCodeUsedNotice({
-          userId: session.userId,
-          email: session.email,
-          usedFor: "confirm",
-          headers: session.requestHeaders,
-        }),
-      );
+      // Started now (the count of codes left is read before the action
+      // this confirms can make new ones), never awaited.
+      const sending = sendBackupCodeUsedNotice({
+        userId: session.userId,
+        email: session.email,
+        usedFor: "confirm",
+        headers: session.requestHeaders,
+      });
+      after(() => sending);
     } catch (error) {
       logError(error as Error, { action: "account.backupCodeNotice" });
     }

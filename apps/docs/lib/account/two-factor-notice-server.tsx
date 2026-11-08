@@ -88,6 +88,11 @@ export async function sendTwoFactorNotice(
  * A backup code was used (to finish a sign-in, or to confirm it's you):
  * emails the account's address with how many codes are left. Best effort and
  * never throws; it never holds up or undoes what the code was used for.
+ * Call it as soon as the code was used and don't await it (keep the request
+ * alive with `after(() => sending)`): the count is read straight away,
+ * before anything else can change the codes (such as new ones made right
+ * after "Confirm it's you"), and the email goes out without delaying the
+ * response.
  */
 export async function sendBackupCodeUsedNotice({
   userId,
@@ -121,20 +126,20 @@ export async function sendBackupCodeUsedNotice({
 
 /**
  * Registered with @repo/auth in app/api/auth/[...all]/route.ts: a backup
- * code finished someone's sign-in. Sends after the response, so it never
- * slows a sign-in down; outside a request (no `after`), straight away.
+ * code finished someone's sign-in. Never awaited by the sign-in, so it never
+ * slows one down; `after` keeps the request alive until it's sent (outside
+ * a request, the caller waits).
  */
 export const notifyBackupCodeUsed: BackupCodeNotifier = ({ user, headers }) => {
-  const send = () =>
-    sendBackupCodeUsedNotice({
-      userId: user.id,
-      email: user.email,
-      usedFor: "sign-in",
-      headers,
-    });
+  const sending = sendBackupCodeUsedNotice({
+    userId: user.id,
+    email: user.email,
+    usedFor: "sign-in",
+    headers,
+  });
   try {
-    after(send);
+    after(() => sending);
   } catch {
-    return send();
+    return sending;
   }
 };

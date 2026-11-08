@@ -30,6 +30,9 @@ const state = vi.hoisted(() => ({
   failSignOut: false,
   /** sendBackupCodeUsedNotice throws when it's scheduled */
   failBackupNotice: false,
+  /** after() callbacks wait for responseEnds() instead of running at once */
+  deferAfter: false,
+  afterQueue: [] as (() => unknown)[],
   calls: [] as string[],
   notices: [] as { kind: string; extra?: unknown }[],
   backupNotices: [] as Record<string, unknown>[],
@@ -62,7 +65,8 @@ vi.mock("next/headers", () => ({
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 vi.mock("next/server", () => ({
   after: (run: () => unknown) => {
-    void run();
+    if (state.deferAfter) state.afterQueue.push(run);
+    else void run();
   },
 }));
 vi.mock("@repo/rate-limit", () => ({
@@ -106,9 +110,14 @@ vi.mock("@/lib/account/two-factor-notice-server", () => ({
   ) => {
     state.notices.push({ kind, extra: options?.extra });
   },
+  // Records the codes left when it's called: the real one counts them then.
   sendBackupCodeUsedNotice: (args: Record<string, unknown>) => {
     if (state.failBackupNotice) throw new Error("notice exploded");
-    state.backupNotices.push({ ...args, headers: undefined });
+    state.backupNotices.push({
+      ...args,
+      headers: undefined,
+      codesLeftWhenCalled: state.backupCodes.length,
+    });
     return Promise.resolve();
   },
 }));
@@ -380,6 +389,8 @@ beforeEach(() => {
   state.swapWithoutCookie = false;
   state.failSignOut = false;
   state.failBackupNotice = false;
+  state.deferAfter = false;
+  state.afterQueue = [];
   state.calls = [];
   state.notices = [];
   state.backupNotices = [];
@@ -631,9 +642,24 @@ describe("a backup code used to confirm it's you", () => {
         email: EMAIL,
         usedFor: "confirm",
         headers: undefined,
+        codesLeftWhenCalled: 2,
       },
     ]);
     expect(state.backupCodes).toEqual(["ABCDE-FGH23", "STUVW-XYZ67"]);
+  });
+
+  it("is started when the code is used, before the confirmed action can make new codes", async () => {
+    account({ on: true, app: true });
+    state.deferAfter = true;
+    expect(await server.confirmWithCode({ code: "ABCDE-FGH23" })).toEqual({
+      ok: true,
+    });
+    // The action it confirmed: new backup codes, before the response ends.
+    state.backupCodes = ["NEWAA-AAA22", "NEWBB-BBB22", "NEWCC-CCC22"];
+    for (const run of state.afterQueue.splice(0)) await run();
+    expect(state.backupNotices).toMatchObject([
+      { usedFor: "confirm", codesLeftWhenCalled: 2 },
+    ]);
   });
 
   it("an authenticator code or a wrong backup code sends nothing", async () => {

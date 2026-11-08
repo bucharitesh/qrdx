@@ -11,6 +11,8 @@ const state = vi.hoisted(() => ({
   codes: ["ABCDE-FGH23", "JKLMN-PQR45", "STUVW-XYZ67"] as string[],
   countFails: false,
   afterCalls: 0,
+  /** Callbacks given to after(), run when the test says (the response ends) */
+  afterQueue: [] as (() => unknown)[],
   info: [] as string[],
   errors: [] as string[],
 }));
@@ -18,9 +20,15 @@ const state = vi.hoisted(() => ({
 vi.mock("next/server", () => ({
   after: (run: () => unknown) => {
     state.afterCalls += 1;
-    void run();
+    state.afterQueue.push(run);
   },
 }));
+
+/** The response has ended: after() callbacks run. */
+async function responseEnds() {
+  const queue = state.afterQueue.splice(0);
+  await Promise.all(queue.map((run) => run()));
+}
 vi.mock("@/lib/delivery-guard", () => ({
   isOutboundDeliveryAllowed: () => false,
 }));
@@ -58,6 +66,7 @@ beforeEach(() => {
   state.codes = ["ABCDE-FGH23", "JKLMN-PQR45", "STUVW-XYZ67"];
   state.countFails = false;
   state.afterCalls = 0;
+  state.afterQueue = [];
   state.info = [];
   state.errors = [];
   vi.spyOn(console, "info").mockImplementation((line: unknown) => {
@@ -186,17 +195,30 @@ describe("sending the backup code notice", () => {
     expect(state.errors[0]).not.toContain("user_1");
   });
 
-  it("the sign-in notifier sends after the response, as a sign-in", async () => {
+  it("the sign-in notifier keeps the request alive until it's sent, as a sign-in", async () => {
     await sender.notifyBackupCodeUsed({
       user: { id: "user_1", email: "ada@qrdx.test" },
       headers: new Headers(),
     });
     expect(state.afterCalls).toBe(1);
-    await vi.waitFor(() =>
-      expect(state.info.join("\n")).toContain(
-        "a backup code was used to sign in, 3 left",
-      ),
+    await responseEnds();
+    expect(state.info.join("\n")).toContain(
+      "a backup code was used to sign in, 3 left",
     );
+  });
+
+  it("counts the codes when the code is used, not after the response", async () => {
+    await sender.notifyBackupCodeUsed({
+      user: { id: "user_1", email: "ada@qrdx.test" },
+      headers: new Headers(),
+    });
+    // New codes made straight after (another request) don't change it.
+    state.codes = Array.from({ length: 10 }, (_, i) => `CODE${i}`);
+    await responseEnds();
+    expect(state.info.join("\n")).toContain(
+      "a backup code was used to sign in, 3 left",
+    );
+    expect(state.info.join("\n")).not.toContain("10 left");
   });
 });
 
