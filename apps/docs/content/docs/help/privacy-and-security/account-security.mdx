@@ -11,10 +11,10 @@ That makes your email account, and your Google or GitHub account, keys to QRdx. 
 
 ## Turn on two-step verification
 
-[Two-step verification](/docs/help/privacy-and-security/two-step-verification) makes QRdx ask for a second step after you sign in, whichever way you sign in: <IfAvailable feature="passkeys">your passkey or </IfAvailable>a code from an authenticator app. Someone who gets into your email or your Google account still can't get into QRdx without it. You get 10 backup codes for when you can't do the second step.
+[Two-step verification](/docs/help/privacy-and-security/two-step-verification) makes QRdx ask for a second step after you sign in, whichever way you sign in: <IfAvailable feature="passkeys">your passkey or </IfAvailable>a code from an authenticator app. Someone who gets into your email or your Google account still can't get into QRdx without it. You get 10 backup codes for when you can't do the second step. Turning it on signs out every other browser or device signed in to your account, so each one has to sign in again with the second step.
 
 <IfAvailable feature="passkeys" title="Add a passkey">
-A [passkey](/docs/help/privacy-and-security/passkeys) checks it's you with your fingerprint, face or screen lock. It only works on QRdx's own site, so a look-alike site can't collect it. It can sign you in on its own with **Continue with passkey**, or be your second step. Adding a passkey while two-step verification is off turns it on.
+A [passkey](/docs/help/privacy-and-security/passkeys) checks it's you with your fingerprint, face or screen lock. It only works on QRdx's own site, so a look-alike site can't collect it. It can sign you in on its own with **Continue with passkey**, or be your second step. Adding a passkey while two-step verification is off turns it on, which signs out your other devices.
 </IfAvailable>
 
 ## Changes ask you to confirm it's you
@@ -31,6 +31,7 @@ We email your account's address when:
 
 - a browser or device signs in to your account for the first time;
 - two-step verification is turned on or off, an authenticator app<IfAvailable feature="passkeys"> or a passkey</IfAvailable> is added or removed, or new backup codes are made;
+- a backup code is used, to sign in or to confirm it's you, with how many codes you have left;
 - your email address is changed (to the old address).
 
 Each one says what happened, on which device and browser (like "Chrome on macOS"), roughly where, from which IP address and when. **Review security** opens your security settings. If it wasn't you, follow the steps in the email and contact support.
@@ -52,6 +53,8 @@ One exception: when you sign in through your workspace's SAML identity provider 
 ## Sign out other devices
 
 Go to **Settings** → **Profile & security**. Under **Sessions**, sign out of one device, or click **Sign out everywhere else**.
+
+Turning on two-step verification signs out every other device too. If support turns it off for you, every device is signed out, including the one you're using.
 
 ## Remove apps you connected
 
