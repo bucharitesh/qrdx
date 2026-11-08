@@ -1,7 +1,14 @@
 import { createHash, randomBytes } from "node:crypto";
 import type { BetterAuthPlugin } from "better-auth";
 import { createAuthMiddleware, isAPIError } from "better-auth/api";
-import { CHALLENGE_CONTINUE_PATH } from "./sign-in-challenge-rules";
+import {
+  CONFIRMATION_MINUTES,
+  confirmedIdentifier,
+} from "./confirm-sign-in-rules";
+import {
+  CHALLENGE_CONTINUE_PATH,
+  PASSKEY_SIGN_IN_PATH,
+} from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
 
 // New sign-in alerts. After a sign-in has really finished (any way in, and
@@ -36,6 +43,12 @@ import { signInMethodForPath } from "./sign-in-method";
 // browsers are recorded without one. `alerted_at` marks the browsers that got
 // one.
 //
+// The same finished sign-in also counts as "Confirm it's you" for its new
+// session, for CONFIRMATION_MINUTES, when it proved what a confirmation would
+// (signInConfirms, below): the row the app writes when someone confirms
+// (./confirm-sign-in-rules.ts). So right after signing in, a security change
+// doesn't ask again.
+//
 // It never blocks or fails a sign-in: errors are logged and the sign-in goes
 // on. It must run after the challenge's hook, so it's registered after it.
 
@@ -65,6 +78,22 @@ const SECOND_STEPS: Record<string, SecondStep> = {
 };
 // A trusted device skipped the second step.
 const COMPLETION_WITHOUT_STEP = [CHALLENGE_CONTINUE_PATH];
+
+/**
+ * Whether a finished sign-in counts as "Confirm it's you" for its session.
+ * - Two-step verification off: any sign-in. Confirming then takes an
+ *   emailed code, a passkey or signing in again with a linked Google,
+ *   GitHub or SSO account, which is what signing in is.
+ * - On: only when the second step was answered (a passkey, an
+ *   authenticator code or a backup code) or with "Continue with passkey",
+ *   two factors on its own. Never when a trusted device skipped the second
+ *   step: that sign-in was one factor, which doesn't confirm anything once
+ *   two-step verification is on.
+ */
+export function signInConfirms(path: string, twoFactorOn: boolean): boolean {
+  if (!twoFactorOn) return true;
+  return Object.hasOwn(SECOND_STEPS, path) || path === PASSKEY_SIGN_IN_PATH;
+}
 
 export interface NewSignIn {
   user: { id: string; email: string; name: string | null };
@@ -111,7 +140,7 @@ function describeError(error: unknown) {
 type HookContext = Parameters<Parameters<typeof createAuthMiddleware>[0]>[0];
 
 interface NewSession {
-  session: { token: string };
+  session: { id: string; token: string };
   user: { id: string; email?: string | null; name?: string | null };
 }
 
@@ -220,15 +249,39 @@ async function alertThrottled(adapter: Adapter, userId: string, now: Date) {
   return alerted.length >= ALERTS_PER_DAY;
 }
 
-async function recordSignIn(ctx: HookContext): Promise<void> {
+/**
+ * The session this response finished signing in, or null when it isn't a
+ * finished sign-in over HTTP (see the top of this file).
+ */
+async function finishedSignIn(ctx: HookContext): Promise<NewSession | null> {
   const data = ctx.context.newSession as NewSession | null;
-  if (!data) return;
-  if (!(ctx.request instanceof Request)) return;
+  if (!data) return null;
+  if (!(ctx.request instanceof Request)) return null;
   const returned = ctx.context.returned;
-  if (isAPIError(returned) && returned.statusCode >= 400) return;
-  if (!sessionCookieSet(ctx, data.session.token)) return;
-  if ((await requestSessionToken(ctx)) === data.session.token) return;
+  if (isAPIError(returned) && returned.statusCode >= 400) return null;
+  if (!sessionCookieSet(ctx, data.session.token)) return null;
+  if ((await requestSessionToken(ctx)) === data.session.token) return null;
+  return data;
+}
 
+/** Starts the new session's "Confirm it's you" when the sign-in counts. */
+async function recordConfirmation(ctx: HookContext, data: NewSession) {
+  // The switch is read from the database, as the challenge does.
+  const user = (await ctx.context.internalAdapter.findUserById(
+    data.user.id
+  )) as { twoFactorEnabled?: boolean | null } | null;
+  if (!user) return;
+  if (!signInConfirms(ctx.path ?? "", user.twoFactorEnabled === true)) return;
+  await ctx.context.internalAdapter.createVerificationValue({
+    identifier: confirmedIdentifier(data.session.id),
+    value: data.user.id,
+    expiresAt: new Date(Date.now() + CONFIRMATION_MINUTES * 60_000),
+  });
+}
+
+async function recordDevice(ctx: HookContext, data: NewSession) {
+  const request = ctx.request;
+  if (!(request instanceof Request)) return;
   const device = deviceId(ctx);
   if (!device) {
     log("info", { outcome: "no-device-cookie" });
@@ -246,8 +299,7 @@ async function recordSignIn(ctx: HookContext): Promise<void> {
 
   const userId = data.user.id;
   const deviceHash = sha256(device.id);
-  const userAgent =
-    ctx.request.headers.get("user-agent")?.slice(0, 512) || null;
+  const userAgent = request.headers.get("user-agent")?.slice(0, 512) || null;
   const now = new Date();
   const adapter = ctx.context.adapter;
   const find = (where: { field: string; value: string }[]) =>
@@ -314,7 +366,7 @@ async function recordSignIn(ctx: HookContext): Promise<void> {
       user: { id: userId, email: user.email, name: user.name ?? null },
       method: signInMethod(ctx, path),
       secondStep: SECOND_STEPS[path] ?? null,
-      headers: new Headers(ctx.request.headers),
+      headers: new Headers(request.headers),
     });
   } catch (error) {
     log("error", { outcome: "not-sent", ...describeError(error) });
@@ -354,8 +406,24 @@ export function newSignIn() {
         {
           matcher: () => true,
           handler: createAuthMiddleware(async (ctx) => {
+            let data: NewSession | null;
             try {
-              await recordSignIn(ctx);
+              data = await finishedSignIn(ctx);
+            } catch (error) {
+              log("error", { outcome: "failed", ...describeError(error) });
+              return;
+            }
+            if (!data) return;
+            try {
+              await recordConfirmation(ctx, data);
+            } catch (error) {
+              log("error", {
+                outcome: "confirmation-failed",
+                ...describeError(error),
+              });
+            }
+            try {
+              await recordDevice(ctx, data);
             } catch (error) {
               log("error", { outcome: "failed", ...describeError(error) });
             }
