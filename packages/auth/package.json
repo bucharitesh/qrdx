@@ -37,6 +37,8 @@
     "./unproven-access": "./unproven-access.ts",
     "./verified-sign-up": "./verified-sign-up.ts",
     "./workspace-hooks": "./workspace-hooks.ts",
+    "./workspace-role-rules": "./workspace-role-rules.ts",
+    "./workspace-roles": "./workspace-roles.ts",
     "./workspace-rules": "./workspace-rules.ts",
     "./workspace-two-factor": "./workspace-two-factor.ts",
     "./workspace-two-factor-rules": "./workspace-two-factor-rules.ts"

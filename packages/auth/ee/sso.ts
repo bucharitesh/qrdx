@@ -8,6 +8,10 @@ import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { eeLicensed } from "../ee-license";
 import { workspacePlanTier } from "../plan";
 import {
+  isWorkspaceRoleName,
+  type WorkspaceRoleName,
+} from "../workspace-role-rules";
+import {
   domainCovers,
   domainsOverlap,
   emailDomain,
@@ -205,10 +209,11 @@ async function providerById(providerId: unknown): Promise<ProviderRow | null> {
  * signs them in. Removing someone for good means unassigning them in the IdP
  * first. Members keep the role
  * they have. A pending invitation is accepted with the role it was sent
- * with (an admin chose it); anyone else joins with the workspace's SSO join
- * role (member or viewer, never owner, admin or billing). Only for an
- * address in the connection's verified domain, while the workspace is on
- * Business.
+ * with (an admin chose it), when that's exactly one of the workspace's roles
+ * (../workspace-role-rules.ts); anyone else, and anyone whose invitation
+ * holds anything else, joins with the workspace's SSO join role (member or
+ * viewer, never owner, admin or billing). Only for an address in the
+ * connection's verified domain, while the workspace is on Business.
  */
 export async function joinWorkspace(userId: string, providerId: unknown) {
   const provider = await providerById(providerId);
@@ -249,7 +254,19 @@ export async function joinWorkspace(userId: string, providerId: unknown) {
   ]);
   if (existing || !workspace) return;
 
-  if (invitation) {
+  // An invitation stored with a role that isn't exact (from before roles
+  // were checked) is never accepted, here or by the plugin: it stays pending
+  // for an admin to revoke.
+  if (invitation && !isWorkspaceRoleName(invitation.role)) {
+    console.warn(
+      JSON.stringify({
+        event: "sso.join_invitation_skipped",
+        reason: "role-not-exact",
+        organizationId,
+      })
+    );
+  }
+  if (invitation && isWorkspaceRoleName(invitation.role)) {
     // Like the organization plugin's accept-invitation: claim the
     // invitation (pending → accepted, so it's accepted once), then add the
     // member with its role; put it back if that fails.
@@ -262,11 +279,11 @@ export async function joinWorkspace(userId: string, providerId: unknown) {
           eq(schema.invitation.status, "pending")
         )
       )
-      .returning({ role: schema.invitation.role });
+      .returning({ id: schema.invitation.id });
     // Claimed by a sign-in running at the same moment: it adds them.
     if (!claimed) return;
     try {
-      await addMember(organizationId, userId, claimed.role || "member");
+      await addMember(organizationId, userId, invitation.role);
     } catch (error) {
       await db
         .update(schema.invitation)
@@ -288,7 +305,11 @@ export async function joinWorkspace(userId: string, providerId: unknown) {
   );
 }
 
-async function addMember(organizationId: string, userId: string, role: string) {
+async function addMember(
+  organizationId: string,
+  userId: string,
+  role: WorkspaceRoleName
+) {
   // Two SSO sign-ins at once: the unique (workspace, user) index keeps one.
   await db
     .insert(schema.member)
