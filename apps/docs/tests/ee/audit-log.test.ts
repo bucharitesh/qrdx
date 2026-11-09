@@ -734,12 +734,29 @@ describe("retention", () => {
     expect(rows().map((row) => row.id)).toEqual(["recent"]);
   });
 
-  it("deletes rows of workspaces that no longer exist", async () => {
-    seedRows(3, (index) => ({
-      organizationId: index === 0 ? "org_gone" : ORG,
+  it("deletes rows of workspaces that no longer exist, once a day old", async () => {
+    seedRows(4, (index) => ({
+      organizationId: index < 2 ? "org_gone" : ORG,
+      createdAt: new Date(NOW.getTime() - (index === 0 ? 0 : 2 * DAY)),
     }));
+    // The fresh orphan (a workspace still being set up, say) stays for now.
     expect(await purgeAuditEvents()).toBe(1);
-    expect(rows()).toHaveLength(2);
+    expect(rows().map((row) => row.id)).toEqual([
+      "log_00000",
+      "log_00002",
+      "log_00003",
+    ]);
+  });
+
+  it("stops at its deadline and leaves the rest for the next run", async () => {
+    seedRows(30, (index) => ({
+      createdAt: new Date(NOW.getTime() - 400 * DAY - index * 1000),
+    }));
+    expect(
+      await purgeAuditEvents({ batch: 10, deadline: Date.now() - 1 }),
+    ).toBe(0);
+    expect(rows()).toHaveLength(30);
+    expect(await purgeAuditEvents({ batch: 10 })).toBe(30);
   });
 
   it("deletes a deleted workspace's rows, and no one else's", async () => {
