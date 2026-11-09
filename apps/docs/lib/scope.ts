@@ -29,6 +29,20 @@ export interface ActiveScope {
   organizationId: string;
   /** The user's role in it */
   role: ScopeRole;
+  /**
+   * The API key or OAuth app the request authenticated with, set by the API
+   * layer (app/api/v1/codes/_lib/api.ts); absent for a browser session. The
+   * audit log names it as the actor.
+   */
+  credential?: ApiCredential;
+}
+
+export interface ApiCredential {
+  type: "api_key" | "oauth_app";
+  /** api_key.id or oauth_app.id */
+  id: string;
+  /** The key's or the app's name */
+  name: string | null;
 }
 
 export interface ActiveWorkspace {

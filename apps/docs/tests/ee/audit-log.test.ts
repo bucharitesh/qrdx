@@ -407,23 +407,16 @@ describe("recording", () => {
     await vi.waitFor(() => expect(rows()).toHaveLength(1));
   });
 
-  it("names the API key behind a request", async () => {
-    const { hashApiKey } = await import("@/lib/api-keys/crypto");
-    const key = `qrdx_${"A".repeat(40)}`;
-    fakeDb.seed("apiKey", [
+  it("names the API key the request authenticated with, and whose it is", async () => {
+    state.headers = new Headers({ "user-agent": "curl/8.7.1" });
+    recordAuditEvent(
       {
-        id: "key_ci",
-        name: "CI deploy",
-        keyHash: hashApiKey(key),
         userId: "u_ben",
         organizationId: ORG,
+        credential: { type: "api_key", id: "key_ci", name: "CI deploy" },
       },
-    ]);
-    state.headers = new Headers({
-      authorization: `Bearer ${key}`,
-      "user-agent": "curl/8.7.1",
-    });
-    recordAuditEvent({ userId: "u_ben", organizationId: ORG }, event);
+      event,
+    );
     await flush();
     expect(rows()[0]).toMatchObject({
       actorType: "api_key",
@@ -432,32 +425,95 @@ describe("recording", () => {
       apiKeyId: "key_ci",
       oauthAppId: null,
       device: "curl",
+      // A snapshot of the person, so the row reads right after they change.
+      metadata: { actingFor: "Ben <ben@acme.test>" },
     });
-    expect(JSON.stringify(rows())).not.toContain(key);
   });
 
-  it("names the OAuth app behind a request", async () => {
-    const token = "oauth-access-token";
-    fakeDb.seed("oauthApp", [
-      { id: "app_zap", name: "Zapier", isActive: true },
-    ]);
-    fakeDb.seed("oauthToken", [
+  it("names the OAuth app the request authenticated with", async () => {
+    recordAuditEvent(
       {
-        id: "tok_1",
-        appId: "app_zap",
-        userId: "u_ana",
-        accessTokenHash: createHash("sha256").update(token).digest("hex"),
+        ...owner,
+        credential: { type: "oauth_app", id: "app_zap", name: "Zapier" },
       },
-    ]);
-    state.headers = new Headers({ authorization: `Bearer ${token}` });
-    recordAuditEvent(owner, event);
+      event,
+    );
     await flush();
     expect(rows()[0]).toMatchObject({
       actorType: "oauth_app",
       actorUserId: "u_ana",
       actorLabel: "Zapier",
       oauthAppId: "app_zap",
+      apiKeyId: null,
     });
+  });
+
+  it("never trusts an Authorization header the API layer didn't authenticate", async () => {
+    // A teammate's (even revoked) key, or any app's token, sent along with a
+    // dashboard change: the change is still the signed-in person's.
+    const { hashApiKey } = await import("@/lib/api-keys/crypto");
+    const key = `qrdx_${"A".repeat(40)}`;
+    fakeDb.seed("apiKey", [
+      {
+        id: "key_ben",
+        name: "Ben's key",
+        keyHash: hashApiKey(key),
+        userId: "u_ben",
+        organizationId: ORG,
+        revokedAt: new Date(0),
+      },
+    ]);
+    fakeDb.seed("oauthApp", [{ id: "app_zap", name: "Zapier" }]);
+    fakeDb.seed("oauthToken", [
+      {
+        id: "tok_1",
+        appId: "app_zap",
+        userId: "u_ben",
+        accessTokenHash: createHash("sha256").update("tok").digest("hex"),
+      },
+    ]);
+    for (const authorization of [`Bearer ${key}`, "Bearer tok"]) {
+      state.headers = new Headers({ authorization });
+      recordAuditEvent(owner, event);
+    }
+    await flush();
+    expect(rows().map((row) => [row.actorType, row.actorUserId])).toEqual([
+      ["user", "u_ana"],
+      ["user", "u_ana"],
+    ]);
+  });
+
+  it("records thousands of events in INSERTs of at most 500 rows", async () => {
+    const { database } = (await import("@repo/database")) as unknown as {
+      database: {
+        insert: (table: unknown) => { values: (rows: unknown[]) => unknown };
+      };
+    };
+    const insert = database.insert.bind(database);
+    const sizes: number[] = [];
+    const spy = vi.spyOn(database, "insert").mockImplementation((table) => {
+      const query = insert(table);
+      const values = query.values.bind(query);
+      query.values = (batch: unknown[]) => {
+        sizes.push(batch.length);
+        return values(batch);
+      };
+      return query;
+    });
+    const many = Array.from({ length: 5_000 }, (_, index) => ({
+      action: "code.deleted" as const,
+      target: {
+        type: "code" as const,
+        id: `c${index}`,
+        label: `Code ${index}`,
+      },
+    }));
+    // 5,000 rows × 15 columns would be 75,000 parameters in one INSERT.
+    expect(await writeAuditEvents(owner, many)).toBe(5_000);
+    spy.mockRestore();
+    expect(rows()).toHaveLength(5_000);
+    expect(sizes).toHaveLength(10);
+    expect(Math.max(...sizes) * 15).toBeLessThan(65_535);
   });
 
   it("records system events without a person, IP or device", async () => {

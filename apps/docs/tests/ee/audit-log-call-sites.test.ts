@@ -217,13 +217,17 @@ describe("codes through the REST API", () => {
         device: "curl",
       });
     }
+    // The key's owner, as a snapshot (the key itself is the actor).
+    const actingFor = "Ana Diaz <ana@acme.test>";
     expect(rows()[1]?.metadata).toEqual({
       before: { destinationUrl: "https://example.com/menu" },
       after: { destinationUrl: "https://example.com/summer" },
+      actingFor,
     });
     expect(rows()[2]?.metadata).toEqual({
       before: { title: "Spring menu" },
       after: { title: "Summer menu" },
+      actingFor,
     });
   });
 
