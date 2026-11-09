@@ -5,7 +5,6 @@ import {
   database as db,
   landingPage,
   qrCode,
-  user,
   webhookEndpoint,
   workspaceAuditLog,
 } from "@repo/database";
@@ -233,30 +232,16 @@ function targetHref(
   }
 }
 
-/** Current names of the people behind keys and apps on this page. */
-async function peopleBehind(rows: AuditRow[]): Promise<Map<string, string>> {
-  const ids = [
-    ...new Set(
-      rows
-        .filter((row) => row.actorType !== "user" && row.actorUserId)
-        .map((row) => row.actorUserId as string),
-    ),
-  ];
-  if (ids.length === 0) return new Map();
-  const people = await db
-    .select({ id: user.id, name: user.name, email: user.email })
-    .from(user)
-    .where(inArray(user.id, ids));
-  return new Map(
-    people.map((person) => [person.id, person.name || person.email]),
-  );
-}
+/** The snapshot of the person a key or an app acted for (record.ts). */
+const actingFor = (row: AuditRow): string | null => {
+  const value = (row.metadata as Record<string, unknown> | null)?.actingFor;
+  return typeof value === "string" ? value : null;
+};
 
 function toView(
   row: AuditRow,
   slug: string,
   existing: Set<string>,
-  people: Map<string, string>,
 ): AuditEventView {
   return {
     id: row.id,
@@ -270,10 +255,7 @@ function toView(
     actor: {
       type: row.actorType,
       label: row.actorLabel,
-      person:
-        row.actorType !== "user" && row.actorUserId
-          ? (people.get(row.actorUserId) ?? null)
-          : null,
+      person: row.actorType !== "user" ? actingFor(row) : null,
     },
     target: {
       type: row.targetType,
@@ -301,13 +283,10 @@ export async function listAuditEvents(
     limit + 1,
   );
   const page = rows.slice(0, limit);
-  const [existing, people] = await Promise.all([
-    existingTargets(workspace.organizationId, page),
-    peopleBehind(page),
-  ]);
+  const existing = await existingTargets(workspace.organizationId, page);
   const last = page.at(-1);
   return {
-    events: page.map((row) => toView(row, workspace.slug, existing, people)),
+    events: page.map((row) => toView(row, workspace.slug, existing)),
     nextCursor: rows.length > limit && last ? encodeCursor(last) : null,
   };
 }
@@ -349,47 +328,51 @@ export interface AuditActorOption {
 
 /**
  * The people in the filter's "Who" list: everyone who has done something
- * in the log (members who left included), named as they are now when their
- * account still exists.
+ * in the log (members who left included), named as the log recorded them
+ * (their latest row), never as their account reads now.
  */
 export async function listAuditActors(
   organizationId: string,
 ): Promise<AuditActorOption[]> {
-  const rows = await db
-    .selectDistinct({
-      id: workspaceAuditLog.actorUserId,
-      label: workspaceAuditLog.actorLabel,
-      type: workspaceAuditLog.actorType,
-    })
-    .from(workspaceAuditLog)
-    .where(
-      and(
-        eq(workspaceAuditLog.organizationId, organizationId),
-        isNotNull(workspaceAuditLog.actorUserId),
-      ),
-    )
-    .limit(1000);
-  const ids = [...new Set(rows.map((row) => row.id as string))].slice(0, 500);
-  if (ids.length === 0) return [];
-  const people = await db
-    .select({ id: user.id, name: user.name, email: user.email })
-    .from(user)
-    .where(inArray(user.id, ids));
-  const current = new Map(
-    people.map((person) => [
-      person.id,
-      person.name && person.name !== person.email
-        ? `${person.name} (${person.email})`
-        : person.email,
-    ]),
-  );
-  return ids
-    .map((id) => ({
-      id,
-      label:
-        current.get(id) ??
-        rows.find((row) => row.id === id && row.type === "user")?.label ??
-        "Former member",
-    }))
+  const inWorkspace = eq(workspaceAuditLog.organizationId, organizationId);
+  const latest = (people: boolean) =>
+    db
+      .selectDistinctOn([workspaceAuditLog.actorUserId], {
+        id: workspaceAuditLog.actorUserId,
+        label: workspaceAuditLog.actorLabel,
+        metadata: workspaceAuditLog.metadata,
+      })
+      .from(workspaceAuditLog)
+      .where(
+        and(
+          inWorkspace,
+          isNotNull(workspaceAuditLog.actorUserId),
+          people
+            ? eq(workspaceAuditLog.actorType, "user")
+            : inArray(workspaceAuditLog.actorType, ["api_key", "oauth_app"]),
+        ),
+      )
+      .orderBy(workspaceAuditLog.actorUserId, desc(workspaceAuditLog.createdAt))
+      .limit(500);
+  const [asPeople, throughKeys] = await Promise.all([
+    latest(true),
+    latest(false),
+  ]);
+  const labels = new Map<string, string>();
+  for (const row of asPeople) {
+    if (row.id && row.label) labels.set(row.id, row.label);
+  }
+  for (const row of throughKeys) {
+    if (!row.id || labels.has(row.id)) continue;
+    const person = (row.metadata as Record<string, unknown> | null)?.actingFor;
+    labels.set(
+      row.id,
+      typeof person === "string"
+        ? person
+        : `Someone using ${row.label ? `“${row.label}”` : "an API key or app"}`,
+    );
+  }
+  return [...labels]
+    .map(([id, label]) => ({ id, label }))
     .sort((a, b) => a.label.localeCompare(b.label));
 }

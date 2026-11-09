@@ -9,9 +9,13 @@ import {
   csvLine,
 } from "@/ee/audit-log/csv";
 import { parseAuditFilter } from "@/ee/audit-log/filter";
-import { AUDIT_EXPORT_MAX_ROWS, auditExportRows } from "@/ee/audit-log/queries";
-import { recordAuditEvent, userLabel } from "@/ee/audit-log/record";
-import { handleError } from "@/lib/error-response";
+import {
+  AUDIT_EXPORT_MAX_ROWS,
+  auditExportRows,
+  listAuditActors,
+} from "@/ee/audit-log/queries";
+import { recordAuditEvent } from "@/ee/audit-log/record";
+import { HttpError, handleError } from "@/lib/error-response";
 import { logError } from "@/lib/log-error";
 import { getActiveWorkspace } from "@/lib/scope";
 
@@ -29,10 +33,22 @@ export async function exportAuditLog(request: Request): Promise<Response> {
     const filter = parseAuditFilter(new URL(request.url).searchParams);
     const now = new Date();
 
-    // The filter used, readable: who by name, the category's label.
-    const who = filter.actor
-      ? ((await userLabel(filter.actor).catch(() => null)) ?? filter.actor)
-      : null;
+    // "Who" must be someone in this workspace's own log: the name comes from
+    // there, never from another workspace's people.
+    let who: string | null = null;
+    if (filter.actor) {
+      const actor = (await listAuditActors(scope.organizationId)).find(
+        (option) => option.id === filter.actor,
+      );
+      if (!actor) {
+        throw new HttpError(
+          400,
+          "VALIDATION_ERROR",
+          "Pick someone from this workspace's audit log.",
+        );
+      }
+      who = actor.label;
+    }
     recordAuditEvent(scope, {
       action: "audit_log.exported",
       metadata: Object.fromEntries(

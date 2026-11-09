@@ -9,7 +9,11 @@ import {
 import cuid from "cuid";
 import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
-import { changedFields } from "@/ee/audit-log/metadata";
+import {
+  changedFields,
+  endpointUrlChange,
+  maskedEndpointUrl,
+} from "@/ee/audit-log/metadata";
 import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
 import { can } from "@/lib/permissions";
@@ -254,10 +258,14 @@ export async function createEndpoint(
     })
     .returning();
   invalidateSubscribers(scope);
-  // URL and events only: never the signing secret.
+  // The URL's origin and the events only: never its path, query or secret.
   recordAuditEvent(scope, {
     action: "webhook.created",
-    target: { type: "webhook", id: (row as EndpointRow).id, label: input.url },
+    target: {
+      type: "webhook",
+      id: (row as EndpointRow).id,
+      label: maskedEndpointUrl(input.url),
+    },
     metadata: { events: input.events },
   });
   return { endpoint: toView(row as EndpointRow), secret };
@@ -292,13 +300,29 @@ export async function updateEndpoint(
   invalidateSubscribers(scope);
   recordAuditEvent(scope, {
     action: "webhook.updated",
-    target: { type: "webhook", id, label: row.url },
-    metadata: changedFields(
-      { url: current.url, events: current.events, active: current.active },
-      values,
-    ),
+    target: { type: "webhook", id, label: maskedEndpointUrl(row.url) },
+    metadata: auditEndpointChange(current, values),
   });
   return toView(row);
+}
+
+/** An edit's before and after for the audit log, with the URL masked. */
+function auditEndpointChange(
+  current: { url: string; events: unknown; active: boolean },
+  values: { url?: string; events?: unknown; active?: boolean },
+) {
+  const { before, after } = changedFields(
+    { events: current.events, active: current.active },
+    { events: values.events, active: values.active },
+  );
+  if (values.url === undefined || values.url === current.url) {
+    return { before, after };
+  }
+  const url = endpointUrlChange(current.url, values.url);
+  return {
+    before: { ...url.before, ...before },
+    after: { ...url.after, ...after },
+  };
 }
 
 /** Deleting is allowed on every plan; its deliveries go with it. */
@@ -315,7 +339,11 @@ export async function deleteEndpoint(
   invalidateSubscribers(scope);
   recordAuditEvent(scope, {
     action: "webhook.deleted",
-    target: { type: "webhook", id, label: deleted[0]?.url ?? null },
+    target: {
+      type: "webhook",
+      id,
+      label: deleted[0] ? maskedEndpointUrl(deleted[0].url) : null,
+    },
   });
   return { id };
 }
@@ -345,7 +373,7 @@ export async function rotateSecret(
   // That it changed, never the secret.
   recordAuditEvent(scope, {
     action: "webhook.updated",
-    target: { type: "webhook", id, label: row.url },
+    target: { type: "webhook", id, label: maskedEndpointUrl(row.url) },
     metadata: { replaced: "Signing secret" },
   });
   return secret;

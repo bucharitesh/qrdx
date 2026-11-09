@@ -180,7 +180,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 
 ## Reverse proxy and HTTPS
 
-Put the app behind a reverse proxy such as Caddy, nginx or Traefik that terminates TLS, and don't expose port 3000 to the internet directly. Rate limiting reads the client IP from `X-Real-IP` and then `X-Forwarded-For`, so the proxy must set these headers and the app must only be reachable through it.
+Put the app behind a reverse proxy such as Caddy, nginx or Traefik that terminates TLS, and don't expose port 3000 to the internet directly. Rate limiting, the security emails and the [audit log](/docs/help/teams/audit-log) read the client IP from `X-Real-IP` and then the first `X-Forwarded-For` address, so the proxy must set these headers and the app must only be reachable through it. Have the proxy set `X-Real-IP` to the address it received the connection from (in nginx, `proxy_set_header X-Real-IP $remote_addr;`). A proxy that only appends to `X-Forwarded-For` lets a client put any address first.
 
 Once HTTPS is set up, change `NEXT_PUBLIC_APP_URL` and `BETTER_AUTH_URL` to the `https://` URL, update the OAuth callback URLs, and rebuild.
 

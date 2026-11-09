@@ -54,7 +54,8 @@ describe("requestDetails", () => {
     expect(details).toEqual({
       device: "Chrome on macOS",
       location: "São Paulo, Brazil",
-      ip: "203.0.113.24",
+      // The platform's header, not the first X-Forwarded-For hop.
+      ip: "198.51.100.7",
       time: "Nov 7, 2026, 6:34 AM GMT-3",
       timeZone: "America/Sao_Paulo",
     });
@@ -85,6 +86,25 @@ describe("requestDetails", () => {
     );
     expect(details.location).toBe("India");
     expect(details.time).toBe("Nov 7, 2026, 3:04 PM GMT+5:30");
+  });
+
+  it("prefers the platform's address to a forwarded one a client can forge", () => {
+    const ip = (headers: Record<string, string>) =>
+      requestDetails(new Headers(headers), NOW).ip;
+    expect(
+      ip({
+        "x-forwarded-for": "6.6.6.6, 203.0.113.24",
+        "x-vercel-forwarded-for": "203.0.113.24",
+      }),
+    ).toBe("203.0.113.24");
+    // Without a platform header, the first forwarded hop.
+    expect(ip({ "x-forwarded-for": "203.0.113.24, 10.0.0.1" })).toBe(
+      "203.0.113.24",
+    );
+    // A malformed platform value falls through to the next header.
+    expect(
+      ip({ "x-real-ip": "unknown", "x-forwarded-for": "203.0.113.24" }),
+    ).toBe("203.0.113.24");
   });
 
   it("ignores values that aren't addresses or zones", () => {

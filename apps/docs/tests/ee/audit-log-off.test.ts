@@ -81,7 +81,7 @@ describe("copy", () => {
   it("states the retention the code applies", async () => {
     const { AUDIT_RETENTION_DAYS } = await import("@/ee/audit-log/limits");
     expect(read("content/legal/privacy-policy.mdx")).toContain(
-      `| Workspace audit log | ${AUDIT_RETENTION_DAYS} days, and deleted with the workspace |`,
+      `| Workspace audit log | ${AUDIT_RETENTION_DAYS} days, and deleted with the workspace. Entries keep the name, email address and IP address of the person who made each change for those ${AUDIT_RETENTION_DAYS} days, also after that person leaves the workspace or deletes their account |`,
     );
   });
 
