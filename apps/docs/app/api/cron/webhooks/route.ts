@@ -108,8 +108,15 @@ export async function GET(request: Request) {
       );
     }
   }
-  // Workspace audit log rows past 365 days (ee/audit-log/retention.ts).
-  const auditEventsPurged = trigger === "daily" ? await purgeAuditEvents() : 0;
+  // Workspace audit log rows past 365 days (ee/audit-log/retention.ts): at
+  // most 5 s, ending by 45 s so the syncs' 12 s fit in maxDuration; the
+  // rest goes in the next daily run.
+  const auditEventsPurged =
+    trigger === "daily"
+      ? await purgeAuditEvents({
+          deadline: Math.min(Date.now() + 5_000, startedAt + 45_000),
+        })
+      : 0;
   // Data-out streams (Google Sheets, HubSpot, Mailchimp) ride the same cron.
   const integrations = await runIntegrationSyncs({ budgetMs: 12_000 });
 
