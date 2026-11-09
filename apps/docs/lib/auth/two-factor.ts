@@ -60,6 +60,14 @@ export function challengeFailure(
       return { message: TWO_FACTOR_MESSAGES.locked, over: true };
     case "INVALID_TWO_FACTOR_COOKIE":
       return { message: TWO_FACTOR_MESSAGES.expired, over: true };
+    // A sign-in started with an email code just as the workspace began
+    // requiring SSO for the address (packages/auth/ee/sso-required.ts).
+    case "sso_required":
+      return {
+        message:
+          "Your company now requires single sign-on for this address. Start again and sign in with SSO.",
+        over: true,
+      };
   }
   if (error.status === 429) {
     return { message: TWO_FACTOR_MESSAGES.rateLimited, over: false };

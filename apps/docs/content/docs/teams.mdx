@@ -26,13 +26,15 @@ Owners and admins invite people from [Settings → Team](/dashboard?to=settings/
 2. QRdx emails them an invitation. Every invitation also has a link you can copy and send yourself.
 3. They open the link, sign in with the invited email address and click **Accept invitation**. The workspace then opens for them.
 
+Inviting someone as an admin asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, unless you did in that browser in the last 10 minutes.
+
 Invitations expire after 48 hours and only work for the email address they were sent to, so a forwarded link can't be used by someone else. Pending invitations take up a seat until they are accepted, so revoke the ones you no longer need.
 
 ## Join link
 
 A join link is one link for the whole team: anyone signed in who opens it joins the workspace, while it has free seats. Owners and admins manage it in [Settings → Team](/dashboard?to=settings/team), on Pro and Business:
 
-1. Pick the role people get when they join (**Member** by default; never owner, and only owners can make a **Billing** link) and click **Create join link**.
+1. Pick the role people get when they join (**Member** by default; never owner, and only owners can make a **Billing** link) and click **Create join link**. A link that adds people as admins asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first.
 2. Copy the link and share it. For safety it's shown only once; QRdx keeps a fingerprint of it, not the link.
 3. Lost it, or it went somewhere it shouldn't? Click **Reset link**: the old one stops working and you get a new one. **Turn off** stops it for good.
 
@@ -71,8 +73,8 @@ These are in the workspace's [Settings → General](/dashboard?to=settings).
 - **Rename:** owners and admins change the name and the URL. Links to the old URL stop working; printed codes don't change.
 - **Logo:** owners and admins upload a logo (when file storage is set up on the server) or use an https image URL. It shows in the workspace switcher; without one the switcher shows the first letter of the name.
 - **Leave:** click **Leave workspace** in the danger zone. The last owner can't leave: make another member an owner first, or delete the workspace. Nobody can leave their own workspace.
-- **Remove a member:** in [Settings → Team](/dashboard?to=settings/team). The codes and pages they created stay in the workspace. Nobody can be removed from their own workspace.
-- **Delete a workspace:** owners only, and never someone's own workspace. You confirm by typing the workspace URL. Nothing stops working: codes, pages, files, domains and other items move to the own workspace of whoever created them. The workspace's API keys are deleted with it.
+- **Remove a member:** in [Settings → Team](/dashboard?to=settings/team). The codes and pages they created stay in the workspace. Nobody can be removed from their own workspace. Removing someone, like changing their role, asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first.
+- **Delete a workspace:** owners only, and never someone's own workspace. You confirm by typing the workspace URL, and QRdx asks you to confirm it's you. Nothing stops working: codes, pages, files, domains and other items move to the own workspace of whoever created them. The workspace's API keys are deleted with it.
 
 ## Move a code to another workspace
 

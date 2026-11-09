@@ -23,6 +23,7 @@ import {
   issueWorkspaceJoinLink,
   setWorkspaceJoinLinkRole,
 } from "@/actions/workspace-join";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
 import {
   assignableRoles,
@@ -50,6 +51,9 @@ export function JoinLinkCard({
   currentRole: WorkspaceRole;
 }) {
   const router = useRouter();
+  // A link that adds admins asks "Confirm it's you" first (the server
+  // decides).
+  const { withConfirmation } = useConfirmation();
   // The card follows each action's result at once; the page refresh that
   // follows (other parts of the page) never holds the buttons.
   const [link, setLink] = useState(savedLink);
@@ -78,9 +82,11 @@ export function JoinLinkCard({
 
   const issue = (nextRole?: WorkspaceRole) =>
     busy(async () => {
-      const result = await issueWorkspaceJoinLink(
-        nextRole ? { role: nextRole } : {},
+      const result = await withConfirmation(
+        () => issueWorkspaceJoinLink(nextRole ? { role: nextRole } : {}),
+        "admin-join-link",
       );
+      if (result === null) return false;
       setConfirm(null);
       if (!result.ok) {
         toast.error(result.error);
@@ -102,7 +108,14 @@ export function JoinLinkCard({
     const current = link;
     if (!current) return;
     void busy(async () => {
-      const result = await setWorkspaceJoinLinkRole({ role: next });
+      const result = await withConfirmation(
+        () => setWorkspaceJoinLinkRole({ role: next }),
+        "admin-join-link",
+      );
+      if (result === null) {
+        setRole(current.role);
+        return false;
+      }
       if (!result.ok) {
         setRole(current.role);
         toast.error(result.error);

@@ -26,7 +26,7 @@
 //   manage     changing the email, new backup codes and turning it off ask
 //              "Confirm it's you" (an authenticator or backup code, never an
 //              emailed one)
-//   admin      an admin turns it off from the user's 360 page (audited)
+//   (support's turn-off: e2e/sign-in-security-e.e2e.mts)
 //   delete     with it on, deleting the account is confirmed with an
 //              authenticator code and emails nothing; with it off, with an
 //              emailed confirmation code
@@ -35,12 +35,17 @@
 // runs against a local dev server whose output goes to E2E_DEV_LOG:
 //
 //   E2E_BASE_URL=http://localhost:3111 E2E_DEV_LOG=/path/to/dev.log \
+//   E2E_DB_SQL='<command that runs SQL on the LOCAL database, reading stdin>' \
 //   E2E_SHOTS=/path/to/shots pnpm exec tsx e2e/two-factor.e2e.ts
 //
-// E2E_ADMIN_EMAIL (default admin@qrdx.test) must be listed in ADMIN_EMAILS.
+// A finished sign-in counts as "Confirm it's you" for 10 minutes
+// (packages/auth/new-sign-in.ts), so before each change that should ask,
+// E2E_DB_SQL ends the account's confirmations early ("10 minutes later").
+//
 // Accounts are new @qrdx.test addresses per run. Skips (exit 0) without a
 // server, a log or Chrome.
 /** biome-ignore-all lint/performance/useDomNodeTextContent: checks must only match text a person can see */
+import { execSync } from "node:child_process";
 import { createHmac } from "node:crypto";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
@@ -58,12 +63,12 @@ const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
   "",
 );
 const DEV_LOG = process.env.E2E_DEV_LOG ?? "";
+const DB_SQL = process.env.E2E_DB_SQL ?? "";
 const SHOTS = process.env.E2E_SHOTS ?? "";
 /** E2E_VIEWPORT=mobile: a 390 x 844 phone (DPR 2, touch) instead of desktop. */
 const MOBILE = process.env.E2E_VIEWPORT === "mobile";
 /** Mobile layout findings per screenshot, printed at the end. */
 const layout: string[] = [];
-const ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL ?? "admin@qrdx.test";
 const RUN = Date.now().toString(36);
 const USER_EMAIL = `e2e-2fa-${RUN}@qrdx.test`;
 const PLAIN_EMAIL = `e2e-plain-${RUN}@qrdx.test`;
@@ -120,6 +125,21 @@ function wrongCode(secret: string): string {
   for (let n = 111_111; ; n++) {
     if (!valid.has(String(n))) return String(n);
   }
+}
+
+// ─── The local database ─────────────────────────────────────────────────────
+
+/**
+ * "10 minutes later": this run's confirmations end now, so the next change asks. The
+ * app stores UTC wall times in `timestamp` columns, so `now()` is taken in
+ * UTC. Local databases only.
+ */
+function expireConfirmations() {
+  execSync(DB_SQL, {
+    input: `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%' and value in (select id from "user" where email like '%${RUN}%');`,
+    encoding: "utf8",
+    stdio: ["pipe", "pipe", "inherit"],
+  });
 }
 
 // ─── The dev server's log ───────────────────────────────────────────────────
@@ -621,6 +641,7 @@ async function dialogOrMainText(page: Page) {
 async function setUpPasskeyAccount(page: Page) {
   await page.goto(`${BASE_URL}/settings/account#two-factor`);
   await waitForText(page, "Two-step verification");
+  expireConfirmations();
   await clickButton(page, "Turn on");
   await confirmByEmail(page, PASSKEY_EMAIL);
   await chooseAuthenticatorApp(page);
@@ -1094,6 +1115,12 @@ async function main() {
     console.log("SKIP: set E2E_DEV_LOG to the dev server's log file");
     return;
   }
+  if (!/(localhost|127\.0\.0\.1)/.test(DB_SQL)) {
+    console.log(
+      "SKIP: set E2E_DB_SQL to a command that runs SQL on the local database",
+    );
+    return;
+  }
   if (!(await serverIsUp(BASE_URL))) {
     console.log(`SKIP: no server at ${BASE_URL}`);
     return;
@@ -1155,6 +1182,8 @@ async function main() {
         ?.scrollIntoView({ block: "center" }),
     );
     await shot(page, "01-settings-off");
+    // Signing up confirmed this session; 10 minutes later it asks.
+    expireConfirmations();
     await clickButton(page, "Turn on");
     // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
     // stepper: the authenticator app.
@@ -1466,6 +1495,9 @@ async function main() {
       [movedEmail, false],
       [USER_EMAIL, true],
     ];
+    // The sign-in just above (its second step answered) confirmed; 10
+    // minutes later the change asks.
+    expireConfirmations();
     for (const [index, [to, back]] of moves.entries()) {
       await page.goto(`${BASE_URL}/settings/account`);
       await clickButton(page, "Change");
@@ -1545,12 +1577,14 @@ async function main() {
     await clickButton(page, "Done");
     await waitForText(page, "10 of 10 left");
 
-    // Turning off from a new sign-in asks again: with a backup code.
+    // Turning off from a new sign-in, once its confirmation has run out,
+    // asks again: with a backup code.
     await clearCookies(page);
     await emailCodeStep(page, USER_EMAIL, "/settings/account");
     await waitForText(page, "Your account asks for a second step");
     await enterTotp(page, totp(secret, Date.now() + 30_000));
     await landedOn(page, "/settings/account");
+    expireConfirmations();
     noticeSince = logSize();
     await clickButton(page, "Turn off");
     await waitForText(page, "Turn off two-step verification?");
@@ -1581,94 +1615,17 @@ async function main() {
     );
 
     // ── admin turns it off ──
-    // Turn it on again (fresh sign-in just above).
-    await page.goto(`${BASE_URL}/settings/account#two-factor`);
-    await waitForText(page, "Two-step verification");
-    await clickButton(page, "Turn on");
-    // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
-    // stepper: the authenticator app.
-    await confirmByEmail(page, USER_EMAIL);
-    await chooseAuthenticatorApp(page);
-    await waitForText(page, "Set up your authenticator app");
-    // The secret is made when the step opens.
-    await page.waitFor(() =>
-      Boolean(document.querySelector('[role="dialog"] code')),
-    );
-    secret = (
-      (await page.evaluate(
-        () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
-      )) as string
-    ).replace(/\s+/g, "");
-    await fill(page, "Code from your authenticator app", totp(secret));
-    await waitForText(page, "Save your backup codes");
-
-    await clearCookies(page);
-    await emailCodeStep(page, ADMIN_EMAIL, `/admin/users/${userId}`);
-    await landedOn(page, "/admin/users");
-    await waitForText(page, "Two-step verification");
-    await page.evaluate(() =>
-      document.getElementById("sign-in")?.scrollIntoView({ block: "center" }),
-    );
-    await shot(page, "15-admin-row-on");
-    noticeSince = logSize();
-    const opened = await page.evaluate(() => {
-      const row = [...document.querySelectorAll("#sign-in *")].find(
-        (el) =>
-          el.textContent?.startsWith("Two-step verification") &&
-          el.querySelector("button"),
-      );
-      const button = row?.querySelector("button");
-      if (!button) return false;
-      window.__e2e.click(button);
-      return true;
-    });
-    if (!opened) throw new Error("No admin Turn off button");
-    await waitForText(page, "Turn off two-step verification");
-    await page.evaluate(() => {
-      const box = document.querySelector(
-        '[role="dialog"] textarea',
-      ) as HTMLTextAreaElement | null;
-      if (box)
-        window.__e2e.setValue(
-          box,
-          "E2E: lost phone, confirmed from the account address",
-        );
-    });
-    await shot(page, "16-admin-confirm");
-    await page.evaluate(() => {
-      const dialog = document.querySelector('[role="dialog"]');
-      const buttons = [...(dialog?.querySelectorAll("button") ?? [])];
-      const confirm = buttons
-        .reverse()
-        .find((b) => b.textContent?.trim() === "Turn off");
-      if (confirm) window.__e2e.click(confirm);
-    });
-    await waitForLogLine(
-      new RegExp(
-        `security notice for ${escapeRegExp(USER_EMAIL)}: two-step verification turned off by support`,
-      ),
-      noticeSince,
-    );
-    check("admin reset sends the notice", true);
-    await page.goto(`${BASE_URL}/admin/users/${userId}`);
-    await waitForText(page, "Not set up.");
-    check("admin row shows it off", true);
-    await page.goto(`${BASE_URL}/admin/audit-log`);
-    await waitForText(page, "user.reset_two_factor");
-    check("the reset is in the audit log", true);
-
-    await clearCookies(page);
-    await emailCodeStep(page, USER_EMAIL);
-    await landedOn(page, "/dashboard");
-    check(
-      "after the admin reset, sign-in isn't challenged",
-      (await session(page))?.user?.id === userId,
-    );
+    // Support's turn-off now waits 7 days, needs the admin's own two-step
+    // verification and is completed by the daily cron: covered end to end
+    // by e2e/sign-in-security-e.e2e.mts, and the reset itself by
+    // tests/lib/two-factor-reset.test.ts. Two-step verification is off here
+    // (turned off just above), as the next part expects.
 
     // ── deleting the account needs a current code too ──
     // Turn it on again (signed in just above, so recently enough).
     await page.goto(`${BASE_URL}/settings/account#two-factor`);
     await waitForText(page, "Two-step verification");
+    expireConfirmations();
     await clickButton(page, "Turn on");
     // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
     // stepper: the authenticator app.
@@ -1713,6 +1670,7 @@ async function main() {
     await waitForText(page, "Your account asks for a second step");
     await enterTotp(page, totp(secret, Date.now() + 30_000));
     await landedOn(page, "/settings/account");
+    expireConfirmations();
     await page.evaluate(() =>
       document.getElementById("danger")?.scrollIntoView({ block: "center" }),
     );
@@ -1775,6 +1733,7 @@ async function main() {
     );
 
     // With 2FA off, "Confirm it's you" emails a code to the account.
+    expireConfirmations();
     await page.goto(`${BASE_URL}/settings/account#danger`);
     await waitForText(page, "Danger zone");
     await clickButton(page, "Delete account…");

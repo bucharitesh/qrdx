@@ -56,6 +56,12 @@ export interface PlanLimits {
   folderPermissions: boolean;
   /** Workspace single sign-on, OIDC and SAML (packages/auth/ee/sso.ts) */
   sso: boolean;
+  /**
+   * The workspace may require two-step verification of its members
+   * (packages/auth/workspace-two-factor.ts, which checks the same plan as
+   * workspacePlanTier "business").
+   */
+  requireTwoFactor: boolean;
   auditLog: boolean;
   /** Password, start/expiry dates and scan limits (lib/redirect/lifecycle.ts) */
   linkControls: boolean;
@@ -105,6 +111,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teamMembers: 1,
     folderPermissions: false,
     sso: false,
+    requireTwoFactor: false,
     auditLog: false,
     linkControls: false,
     routing: false,
@@ -138,6 +145,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teamMembers: 3,
     folderPermissions: false,
     sso: false,
+    requireTwoFactor: false,
     auditLog: false,
     linkControls: true,
     routing: true,
@@ -173,6 +181,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teamMembers: UNLIMITED,
     folderPermissions: true,
     sso: true,
+    requireTwoFactor: true,
     auditLog: true,
     linkControls: true,
     routing: true,

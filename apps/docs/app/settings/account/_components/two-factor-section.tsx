@@ -4,6 +4,10 @@ import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { toPasskeyViews } from "@/lib/account/passkeys";
 import {
+  formatTwoFactorResetDate,
+  loadPendingTwoFactorReset,
+} from "@/lib/account/two-factor-reset-server";
+import {
   loadTwoFactorMethods,
   passkeysWorkHere,
 } from "@/lib/account/two-factor-server";
@@ -35,7 +39,7 @@ export async function TwoFactorSection({
   // (auth.api.listPasskeys) throws if the session ends while the page renders
   // (signed out in another tab), which took the whole page down. Keys and
   // counters aren't selected.
-  const [methods, rows] = await Promise.all([
+  const [methods, rows, pendingReset] = await Promise.all([
     loadTwoFactorMethods(userId),
     passkeysHere
       ? db
@@ -50,6 +54,7 @@ export async function TwoFactorSection({
           .from(passkey)
           .where(eq(passkey.userId, userId))
       : Promise.resolve([]),
+    loadPendingTwoFactorReset(userId),
   ]);
   const passkeys = toPasskeyViews(rows, {
     formatDate: (date) => DATE_FORMAT.format(date),
@@ -62,6 +67,11 @@ export async function TwoFactorSection({
       methods={methods}
       passkeys={passkeys}
       passkeysHere={passkeysHere}
+      resetDueDate={
+        methods.on && pendingReset
+          ? formatTwoFactorResetDate(pendingReset.dueAt)
+          : null
+      }
     />
   );
 }

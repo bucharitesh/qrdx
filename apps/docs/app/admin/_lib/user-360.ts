@@ -44,6 +44,7 @@ import {
   type SQL,
   sql,
 } from "drizzle-orm";
+import { loadPendingTwoFactorReset } from "@/lib/account/two-factor-reset-server";
 import { readJobs, summarizeJob } from "@/lib/migrate/jobs";
 import { JOB_STORE_PROVIDER } from "@/lib/migrate/server/repo";
 import { listAuthorizedApps } from "@/lib/oauth-apps/authorized";
@@ -85,7 +86,7 @@ export async function loadProfile(userId: string) {
     .limit(1);
   if (!found) return null;
 
-  const [accounts, [sessions]] = await Promise.all([
+  const [accounts, [sessions], twoFactorReset] = await Promise.all([
     db
       .select({
         id: account.id,
@@ -104,6 +105,8 @@ export async function loadProfile(userId: string) {
       })
       .from(session)
       .where(eq(session.userId, userId)),
+    // Support's pending turn-off of two-step verification, if any.
+    loadPendingTwoFactorReset(userId),
   ]);
 
   return {
@@ -111,6 +114,7 @@ export async function loadProfile(userId: string) {
     accounts,
     liveSessions: sessions?.live ?? 0,
     lastActiveAt: sessions?.lastActiveAt ?? null,
+    twoFactorReset,
   };
 }
 
@@ -172,7 +176,8 @@ export async function loadTeams(userId: string, email: string) {
   const teamIds = memberships.map((row) => row.organizationId);
   const managed = memberships
     .filter((row) =>
-      row.role.split(",").some((r) => ["owner", "admin"].includes(r.trim())),
+      // Parts matched exactly, as Better Auth reads them: " owner" is no owner.
+      row.role.split(",").some((r) => r === "owner" || r === "admin"),
     )
     .map((row) => row.organizationId);
 

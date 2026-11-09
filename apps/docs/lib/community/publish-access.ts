@@ -1,6 +1,7 @@
 import "server-only";
 
 import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
+import { lacksRequiredTwoFactor } from "@repo/auth/workspace-two-factor";
 import {
   communityItem,
   database as db,
@@ -73,7 +74,9 @@ export const WORKSPACE_PUBLISH_REFUSAL =
 /**
  * Whether `userId` may unpublish an item someone else published from a
  * shared workspace: as an owner or admin of the workspace the page or theme
- * is in (items stay on the publisher's profile; brand profiles come later).
+ * is in (items stay on the publisher's profile; brand profiles come later),
+ * and only while the workspace doesn't shut them out for lacking two-step
+ * verification (lib/workspaces.ts shutsOut).
  */
 export async function workspaceCanUnpublish(
   userId: string,
@@ -111,5 +114,8 @@ export async function workspaceCanUnpublish(
       and(eq(member.userId, userId), eq(member.organizationId, organizationId)),
     )
     .limit(1);
-  return row ? can(strongestRole(row.role), "content.manageAll") : false;
+  if (!(row && can(strongestRole(row.role), "content.manageAll"))) {
+    return false;
+  }
+  return !(await lacksRequiredTwoFactor(userId, organizationId));
 }

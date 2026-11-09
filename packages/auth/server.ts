@@ -21,6 +21,8 @@ import {
   memberAc,
 } from "better-auth/plugins/organization/access";
 import { getAdminUserIds } from "./admin";
+import { ADMIN_HTTP_PATHS, adminHttpOff } from "./admin-http";
+import { confirmGate } from "./confirm-gate";
 import {
   allowSessionCreation,
   allowUserCreation,
@@ -35,6 +37,7 @@ import {
   ssoOptions,
   validateSsoUserInfo,
 } from "./ee/sso";
+import { ssoRequirementGate } from "./ee/sso-required";
 import { eeLicensed } from "./ee-license";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
@@ -48,6 +51,8 @@ import {
 } from "./passkey";
 import { passkeyRelyingParty } from "./passkey-rp";
 import { hasEntitledSubscription, workspacePlanTier } from "./plan";
+import { sessionLifetime } from "./session-lifetime";
+import { sessionOriginGuard } from "./session-origin";
 import { signInChallenge } from "./sign-in-challenge";
 import {
   BACKUP_CODE_COUNT,
@@ -63,6 +68,9 @@ import {
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
+import { twoFactorResetCancel } from "./two-factor-reset";
+import { unprovenAccessCleanup } from "./unproven-access";
+import { allUserInfoChecks, validateSocialSignUp } from "./verified-sign-up";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -71,6 +79,8 @@ import {
   handRowsBackToCreators,
   initialWorkspaceId,
 } from "./workspace-hooks";
+import { workspaceRoleGate, workspaceRoleHooks } from "./workspace-roles";
+import { workspaceTwoFactorGate } from "./workspace-two-factor";
 
 // Members per team, owner included, by the best plan among its owners and
 // billing members (workspacePlanTier in ./plan.ts). Keep in sync with
@@ -190,9 +200,14 @@ export const auth = betterAuth({
       allowUnlinkingAll: true,
     },
   },
-  // Checks what an identity provider sent before an SSO sign-in creates,
-  // links or signs in an account (./ee/sso.ts). Other methods pass.
-  user: ssoLicensed ? { validateUserInfo: validateSsoUserInfo } : undefined,
+  // Checks what a provider sent before an account is created, linked or
+  // signed in to: no Google or GitHub sign-up from an unverified address
+  // (./verified-sign-up.ts), and SSO's checks (./ee/sso.ts).
+  user: {
+    validateUserInfo: ssoLicensed
+      ? allUserInfoChecks(validateSsoUserInfo, validateSocialSignUp)
+      : validateSocialSignUp,
+  },
   // Codes live in the core `verification` table. Identifiers hold addresses
   // ("sign-in-otp-<email>", "change-email-otp-<old>-<new>"), so they are
   // hashed like the codes themselves.
@@ -272,6 +287,14 @@ export const auth = betterAuth({
     }),
   },
   plugins: [
+    // A session used from a new country and browser confirms it's you first
+    // (./session-origin.ts). First, so it refuses before anything else runs.
+    sessionOriginGuard(),
+    // A sign-in lasts at most 30 days, however much it's used
+    // (./session-lifetime.ts). Before every other plugin's hooks, so their
+    // session reads go through the cap; a session the guard above already
+    // read is read again through it.
+    sessionLifetime(),
     // Signing in again to confirm it's you: the provider's chooser, and the
     // cookie cleared on sign-out (./confirm-sign-in.ts).
     confirmSignIn(),
@@ -293,6 +316,8 @@ export const auth = betterAuth({
       sendVerificationOTP,
     }),
     admin({ adminUserIds: getAdminUserIds() }),
+    // And any other path under /admin/ (a future endpoint) over HTTP.
+    adminHttpOff(),
     // Workspaces. Everyone has their own (made at sign-up, above); Pro and
     // Business users can create more (any entitled subscription, ./plan.ts).
     organization({
@@ -313,8 +338,12 @@ export const auth = betterAuth({
       sendInvitationEmail: () => Promise.resolve(),
       // Invite links can be forwarded, so only the verified invitee may accept.
       requireEmailVerificationOnInvitation: true,
-      // Workspace URLs and everyone's own workspace (./workspace-hooks.ts).
+      // Workspace URLs and everyone's own workspace (./workspace-hooks.ts);
+      // only exact role names stored (./workspace-roles.ts).
       organizationHooks: {
+        beforeCreateInvitation: workspaceRoleHooks.beforeCreateInvitation,
+        beforeAcceptInvitation: workspaceRoleHooks.beforeAcceptInvitation,
+        beforeAddMember: workspaceRoleHooks.beforeAddMember,
         beforeCreateOrganization: ({ organization: org }) => {
           assertWorkspaceSlug(org.slug);
           return Promise.resolve();
@@ -335,15 +364,15 @@ export const auth = betterAuth({
           );
           return Promise.resolve();
         },
-        beforeUpdateMemberRole: ({ member, newRole, organization: org }) => {
-          if (!newRole.split(",").some((role) => role.trim() === "owner")) {
+        beforeUpdateMemberRole: async (data) => {
+          await workspaceRoleHooks.beforeUpdateMemberRole(data);
+          if (data.newRole !== "owner") {
             assertNotOwnMember(
-              org.id,
-              member.userId,
+              data.organization.id,
+              data.member.userId,
               "The person whose own workspace this is stays an owner."
             );
           }
-          return Promise.resolve();
         },
       },
     }),
@@ -370,18 +399,35 @@ export const auth = betterAuth({
       )
     ),
     passkeyPolicy(),
+    // Linking, unlinking and workspace changes over HTTP need "Confirm it's you" (./confirm-gate.ts).
+    confirmGate(),
+    // Workspaces that require two-step verification, over HTTP (./workspace-two-factor.ts).
+    workspaceTwoFactorGate(),
+    // Inviting someone or changing a role takes exactly one role name,
+    // before the plugin trims what was sent, and only owners give or take
+    // away owner and billing (./workspace-roles.ts).
+    workspaceRoleGate(),
     // Workspace single sign-on, Business plan only, licensed servers only
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
-    // joins the workspace).
-    ...(ssoLicensed ? [sso(ssoOptions), ssoGate()] : []),
-    // New sign-in alerts (./new-sign-in.ts). Last, so it sees each sign-in
-    // after the challenge has had its say.
+    // joins the workspace); ./ee/sso-required.ts enforces "Require single
+    // sign-on" for a domain.
+    ...(ssoLicensed ? [sso(ssoOptions), ssoGate(), ssoRequirementGate()] : []),
+    // Proving an unproven account's address clears what an earlier holder
+    // left behind (./unproven-access.ts).
+    unprovenAccessCleanup(),
+    // Signing in with an authenticator code or a backup code cancels
+    // support's pending turn-off of two-step verification (never a passkey:
+    // ./two-factor-reset.ts).
+    twoFactorResetCancel(),
+    // New sign-in alerts, and a finished sign-in counting as "Confirm it's
+    // you" (./new-sign-in.ts). Last, so it sees each sign-in after the
+    // challenge has had its say.
     newSignIn(),
   ],
-  // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
+  // The admin panel calls the admin plugin server-side only (auth.api), never
+  // over HTTP: every admin endpoint is off the HTTP surface (./admin-http.ts).
   disabledPaths: [
-    "/admin/impersonate-user",
-    "/admin/set-user-password",
+    ...ADMIN_HTTP_PATHS,
     ...UNUSED_EMAIL_OTP_PATHS,
     ...SERVER_ONLY_EMAIL_OTP_PATHS,
     // Two-step verification (Lane A)
@@ -426,9 +472,9 @@ export const auth = betterAuth({
       [PASSKEY_SIGN_IN_PATH]: { window: 60, max: 10 },
       // Starting an SSO sign-in, and the IdP's return (licensed servers
       // only). Per IP, and a whole company can sit behind one office address
-      // at 9am, so these are looser than the email-code limits. Each callback
-      // still needs the state from its own sign-in start, so they can't be
-      // replayed.
+      // at 9am, so these are looser than the email-code limits. They can't be
+      // replayed: an OIDC callback needs the state from its own sign-in
+      // start, and each SAML assertion is accepted once (./ee/sso.ts).
       ...(ssoLicensed
         ? {
             [SSO_SIGN_IN_PATH]: { window: 60, max: 60 },

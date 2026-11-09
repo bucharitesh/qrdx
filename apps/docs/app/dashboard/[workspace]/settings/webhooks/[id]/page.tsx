@@ -10,6 +10,7 @@ import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
 import { DELIVERY_STATUS_LABELS } from "@/app/dashboard/webhooks/_lib/format";
 import { DeliveriesTable } from "@/app/dashboard/webhooks/[id]/_components/deliveries-table";
 import { EndpointSecret } from "@/app/dashboard/webhooks/[id]/_components/endpoint-secret";
+import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { HttpError } from "@/lib/error-response";
 import {
   canManageWebhooks,
@@ -98,10 +99,13 @@ export default async function WebhookDeliveriesPage({
       </div>
 
       {canManage && (
-        <EndpointSecret
-          endpointId={endpoint.id}
-          secretPreview={endpoint.secretPreview}
-        />
+        // Showing or rotating the secret asks "Confirm it's you".
+        <ConfirmIdentityProvider>
+          <EndpointSecret
+            endpointId={endpoint.id}
+            secretPreview={endpoint.secretPreview}
+          />
+        </ConfirmIdentityProvider>
       )}
 
       <section className="space-y-3">

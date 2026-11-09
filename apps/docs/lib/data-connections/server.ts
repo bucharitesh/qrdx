@@ -1,5 +1,6 @@
 import "server-only";
 
+import { TWO_FACTOR_REQUIRED } from "@repo/auth/workspace-two-factor-rules";
 import {
   database as db,
   integration,
@@ -396,7 +397,9 @@ export async function prepareDataConnect(
           ? "plan_required"
           : error.code === "LIMIT_REACHED"
             ? "limit_reached"
-            : "unexpected_error"
+            : error.code === TWO_FACTOR_REQUIRED
+              ? "two_factor_required"
+              : "unexpected_error"
         : "provider_rejected";
     console.error(
       JSON.stringify({

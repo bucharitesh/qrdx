@@ -15,11 +15,7 @@ import { isTeamMember } from "@/app/dashboard/team/_lib/queries";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import { HttpError } from "@/lib/error-response";
 import { logError } from "@/lib/log-error";
-import {
-  JOINABLE_ROLES,
-  strongestRole,
-  type WorkspaceRole,
-} from "@/lib/permissions";
+import { JOINABLE_ROLES, type WorkspaceRole } from "@/lib/permissions";
 import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { isUniqueViolation } from "@/lib/slug-claims";
@@ -80,10 +76,15 @@ async function guarded<T>(query: () => Promise<T>): Promise<T> {
   }
 }
 
-/** A stored role, never owner (a row can only be written by this module). */
-function joinRole(stored: string): WorkspaceRole {
-  const role = strongestRole(stored);
-  return JOINABLE_ROLES.includes(role) ? role : "member";
+/**
+ * A stored role, exactly one a link may give (never owner), or null: a row
+ * holding anything else makes no link at all. Only this module writes the
+ * rows, always with a joinable role.
+ */
+function joinRole(stored: string): WorkspaceRole | null {
+  return (JOINABLE_ROLES as readonly string[]).includes(stored)
+    ? (stored as WorkspaceRole)
+    : null;
 }
 
 export interface JoinLinkState {
@@ -110,7 +111,8 @@ export async function getJoinLink(
       .where(eq(workspaceJoinLink.organizationId, organizationId))
       .limit(1),
   );
-  return row ? { ...row, role: joinRole(row.role) } : null;
+  const role = row ? joinRole(row.role) : null;
+  return row && role ? { ...row, role } : null;
 }
 
 /**
@@ -218,8 +220,9 @@ export async function findJoinTarget(
   ) {
     return null;
   }
-  const { tokenHash: _hash, role, ...target } = row;
-  return { ...target, role: joinRole(role) };
+  const { tokenHash: _hash, role: stored, ...target } = row;
+  const role = joinRole(stored);
+  return role ? { ...target, role } : null;
 }
 
 /** 402 LIMIT_REACHED: the plan's teamMembers seats are all taken. */

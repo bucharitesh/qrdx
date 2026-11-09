@@ -7,6 +7,7 @@ import {
 } from "@repo/integrations";
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
+import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { env } from "@/lib/env";
 import {
   getIntegrationAvailability,
@@ -64,20 +65,22 @@ export default async function IntegrationPage({
       : settingsListing(availability, slug, Boolean(stored));
     if (listing !== "no-longer-available" || !stored) notFound();
     return (
-      <IntegrationDetail
-        slug={integration.slug}
-        name={integration.name}
-        description={integration.description}
-        logos={integration.logos}
-        capabilities={[]}
-        features={[]}
-        category={[]}
-        isConfigured={false}
-        isConnected
-        noLongerAvailable
-        status={stored.status}
-        connectedAt={stored.createdAt}
-      />
+      <ConfirmIdentityProvider>
+        <IntegrationDetail
+          slug={integration.slug}
+          name={integration.name}
+          description={integration.description}
+          logos={integration.logos}
+          capabilities={[]}
+          features={[]}
+          category={[]}
+          isConfigured={false}
+          isConnected
+          noLongerAvailable
+          status={stored.status}
+          connectedAt={stored.createdAt}
+        />
+      </ConfirmIdentityProvider>
     );
   }
 
@@ -104,25 +107,29 @@ export default async function IntegrationPage({
     }
   }
 
+  // Connecting Slack or a data-out tool asks "Confirm it's you" first
+  // (lib/data-connections/connect-confirmation.ts); one dialog for the page.
   return (
-    <IntegrationDetail
-      slug={integration.slug}
-      name={integration.name}
-      description={integration.description}
-      logos={integration.logos}
-      capabilities={integration.capabilities}
-      features={integration.features}
-      developedBy={integration.developedBy}
-      website={integration.website}
-      category={integration.category}
-      isConfigured={isConfigured}
-      needsSetup={setupNeeded(availability, slug)}
-      oauthConfigured={isOAuthConfigured(slug)}
-      apiKey={integration.apiKey}
-      isConnected={isConnected}
-      status={status}
-      connectedAt={connectedAt}
-      metadata={metadata}
-    />
+    <ConfirmIdentityProvider>
+      <IntegrationDetail
+        slug={integration.slug}
+        name={integration.name}
+        description={integration.description}
+        logos={integration.logos}
+        capabilities={integration.capabilities}
+        features={integration.features}
+        developedBy={integration.developedBy}
+        website={integration.website}
+        category={integration.category}
+        isConfigured={isConfigured}
+        needsSetup={setupNeeded(availability, slug)}
+        oauthConfigured={isOAuthConfigured(slug)}
+        apiKey={integration.apiKey}
+        isConnected={isConnected}
+        status={status}
+        connectedAt={connectedAt}
+        metadata={metadata}
+      />
+    </ConfirmIdentityProvider>
   );
 }

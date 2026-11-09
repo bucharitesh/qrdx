@@ -9,6 +9,7 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { ArrowLeft2, Sms } from "iconsax-reactjs";
 import Link from "next/link";
+import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
 import type { OAuthAppView } from "@/lib/oauth-apps/service";
 import { SettingsHeader } from "../../components/settings-header";
@@ -33,7 +34,10 @@ function listingMailto(app: { name: string; clientId: string }): string {
   return `mailto:${SUPPORT_EMAIL}?${new URLSearchParams({ subject, body }).toString().replaceAll("+", "%20")}`;
 }
 
-/** One app: credentials, install URL, settings, listing, pause and delete. */
+/**
+ * One app: credentials, install URL, settings, listing, pause and delete. A
+ * new client secret asks "Confirm it's you" first.
+ */
 export function OAuthAppDetailView({
   app,
   canManage,
@@ -51,79 +55,81 @@ export function OAuthAppDetailView({
   origin: string;
 }) {
   return (
-    <div className="space-y-6">
-      <Link
-        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
-        href={base}
-      >
-        <ArrowLeft2 aria-hidden className="size-3.5" />
-        API keys & apps
-      </Link>
+    <ConfirmIdentityProvider>
+      <div className="space-y-6">
+        <Link
+          className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
+          href={base}
+        >
+          <ArrowLeft2 aria-hidden className="size-3.5" />
+          API keys & apps
+        </Link>
 
-      <SettingsHeader
-        description={`Created ${formatDate(app.createdAt)} · Updated ${formatDate(app.updatedAt)}`}
-        title={
-          <span className="flex min-w-0 items-center gap-3">
-            <OAuthAppLogo logoUrl={app.logoUrl} name={app.name} size="sm" />
-            <span className="truncate">{app.name}</span>
-          </span>
-        }
-      >
-        <Badge variant={app.verified ? "secondary" : "outline"}>
-          {app.verified ? "Verified" : "Unverified"}
-        </Badge>
-        {!app.active && <Badge variant="outline">Paused</Badge>}
-      </SettingsHeader>
+        <SettingsHeader
+          description={`Created ${formatDate(app.createdAt)} · Updated ${formatDate(app.updatedAt)}`}
+          title={
+            <span className="flex min-w-0 items-center gap-3">
+              <OAuthAppLogo logoUrl={app.logoUrl} name={app.name} size="sm" />
+              <span className="truncate">{app.name}</span>
+            </span>
+          }
+        >
+          <Badge variant={app.verified ? "secondary" : "outline"}>
+            {app.verified ? "Verified" : "Unverified"}
+          </Badge>
+          {!app.active && <Badge variant="outline">Paused</Badge>}
+        </SettingsHeader>
 
-      {!canManage && (
-        <p className="text-muted-foreground rounded-lg border p-4 text-sm">
-          Only team owners can change this app or its secret.
-        </p>
-      )}
+        {!canManage && (
+          <p className="text-muted-foreground rounded-lg border p-4 text-sm">
+            Only team owners can change this app or its secret.
+          </p>
+        )}
 
-      <AppCredentials
-        appId={app.id}
-        canManage={canManage}
-        clientId={app.clientId}
-        createdAt={app.createdAt}
-        secretRotatedAt={app.secretRotatedAt}
-      />
-
-      {app.redirectUris[0] && (
-        <AuthorizeExample
+        <AppCredentials
+          appId={app.id}
+          canManage={canManage}
           clientId={app.clientId}
-          origin={origin}
-          redirectUri={app.redirectUris[0]}
-          scopes={app.scopes}
+          createdAt={app.createdAt}
+          secretRotatedAt={app.secretRotatedAt}
         />
-      )}
 
-      <EditOAuthApp
-        app={app}
-        canManage={canManage}
-        storageEnabled={storageEnabled}
-      />
+        {app.redirectUris[0] && (
+          <AuthorizeExample
+            clientId={app.clientId}
+            origin={origin}
+            redirectUri={app.redirectUris[0]}
+            scopes={app.scopes}
+          />
+        )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Get listed</CardTitle>
-          <CardDescription>
-            Once your integration works end to end, ask to have it added to the
-            QRdx integrations directory as a community integration. Listed apps
-            are reviewed and marked verified.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Button asChild size="sm" variant="outline">
-            <a href={listingMailto(app)}>
-              <Sms />
-              Email {SUPPORT_EMAIL}
-            </a>
-          </Button>
-        </CardContent>
-      </Card>
+        <EditOAuthApp
+          app={app}
+          canManage={canManage}
+          storageEnabled={storageEnabled}
+        />
 
-      {canManage && <AppDangerZone app={app} />}
-    </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Get listed</CardTitle>
+            <CardDescription>
+              Once your integration works end to end, ask to have it added to
+              the QRdx integrations directory as a community integration. Listed
+              apps are reviewed and marked verified.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button asChild size="sm" variant="outline">
+              <a href={listingMailto(app)}>
+                <Sms />
+                Email {SUPPORT_EMAIL}
+              </a>
+            </Button>
+          </CardContent>
+        </Card>
+
+        {canManage && <AppDangerZone app={app} />}
+      </div>
+    </ConfirmIdentityProvider>
   );
 }

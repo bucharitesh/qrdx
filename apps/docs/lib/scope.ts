@@ -7,6 +7,8 @@ import { WORKSPACE_HEADER } from "@/lib/workspace-paths";
 import {
   defaultWorkspace,
   findWorkspaceBySlug,
+  shutsOut,
+  TwoFactorRequiredError,
   type Workspace,
   WorkspaceNotFoundError,
   type WorkspaceRole,
@@ -14,7 +16,10 @@ import {
 } from "@/lib/workspaces";
 import { UnauthorizedError } from "@/types/errors";
 
-export { WorkspaceNotFoundError } from "@/lib/workspaces";
+export {
+  TwoFactorRequiredError,
+  WorkspaceNotFoundError,
+} from "@/lib/workspaces";
 
 export type ScopeRole = WorkspaceRole;
 
@@ -35,8 +40,18 @@ export interface ActiveWorkspace {
   sessionWorkspaceId: string | null;
 }
 
+/** The resolved workspace, and whether it shuts this person out. */
+interface Resolved {
+  active: ActiveWorkspace;
+  /**
+   * The workspace requires two-step verification and this person hasn't
+   * turned it on (packages/auth/workspace-two-factor.ts).
+   */
+  shutOut: boolean;
+}
+
 const resolve = cache(
-  async (requestHeaders: Headers | undefined): Promise<ActiveWorkspace> => {
+  async (requestHeaders: Headers | undefined): Promise<Resolved> => {
     const source = requestHeaders ?? (await headers());
     const session = await auth.api.getSession({ headers: source });
     if (!session?.user?.id) {
@@ -54,41 +69,84 @@ const resolve = cache(
     // their workspace; proxy.ts puts it in this header. A slug the user
     // isn't a member of is a 404, never a quiet fallback to another
     // workspace, so nothing is ever created in the wrong one.
+    //
+    // A workspace that requires two-step verification shuts out members who
+    // haven't turned it on: named in the URL, it's refused (the getters
+    // below throw); as the default, the next one they can open is used.
     const slug = source.get(WORKSPACE_HEADER);
-    const workspace = slug
-      ? await findWorkspaceBySlug(person.id, slug)
-      : await defaultWorkspace(person, sessionWorkspaceId);
-    if (!workspace) throw new WorkspaceNotFoundError();
+    let workspace: Workspace;
+    let shutOut: boolean;
+    if (slug) {
+      const found = await findWorkspaceBySlug(person.id, slug);
+      if (!found) throw new WorkspaceNotFoundError();
+      workspace = found;
+      shutOut = await shutsOut(person.id, found);
+    } else {
+      ({ workspace, shutOut } = await defaultWorkspace(
+        person,
+        sessionWorkspaceId,
+      ));
+    }
 
     return {
-      scope: {
-        userId: person.id,
-        organizationId: workspace.id,
-        role: workspace.role,
+      active: {
+        scope: {
+          userId: person.id,
+          organizationId: workspace.id,
+          role: workspace.role,
+        },
+        workspace,
+        user: person,
+        sessionWorkspaceId,
       },
-      workspace,
-      user: person,
-      sessionWorkspaceId,
+      shutOut,
     };
   },
 );
 
+// Only sessions are refused. API keys and OAuth tokens (app/api/v1, the MCP
+// server) don't come through here and keep working for a member without
+// two-step verification: two-step verification protects signing in, and a
+// key or token is a credential of its own that no sign-in step would guard.
+// A new one can't be made for the workspace without passing this guard (and
+// "Confirm it's you"), a key's secret is never shown again, and the
+// workspace's admins see and can revoke everyone's keys (Settings →
+// Developers). Refusing them would quietly break the workspace's
+// integrations instead.
+
 /**
  * The signed-in user's workspace: the one in the URL (/dashboard/<slug>/...),
  * else their default (the session's, else their own). Throws
- * UnauthorizedError when signed out and WorkspaceNotFoundError for a slug
- * they can't open.
+ * UnauthorizedError when signed out, WorkspaceNotFoundError for a slug they
+ * can't open, and TwoFactorRequiredError for a workspace that requires
+ * two-step verification they haven't turned on.
  */
 export async function getActiveWorkspace(
   requestHeaders?: Headers,
 ): Promise<ActiveWorkspace> {
-  return resolve(requestHeaders);
+  const { active, shutOut } = await resolve(requestHeaders);
+  if (shutOut) throw new TwoFactorRequiredError();
+  return active;
 }
 
 export async function getActiveScope(
   requestHeaders?: Headers,
 ): Promise<ActiveScope> {
-  return (await resolve(requestHeaders)).scope;
+  return (await getActiveWorkspace(requestHeaders)).scope;
+}
+
+/**
+ * Like getActiveWorkspace, but a workspace that requires two-step
+ * verification the person hasn't turned on comes back with `shutOut` instead
+ * of throwing. Only for telling them so (the [workspace] layout) and sending
+ * them there (/dashboard): never read or change the workspace's contents
+ * with it.
+ */
+export async function peekActiveWorkspace(
+  requestHeaders?: Headers,
+): Promise<ActiveWorkspace & { shutOut: boolean }> {
+  const { active, shutOut } = await resolve(requestHeaders);
+  return { ...active, shutOut };
 }
 
 /**
