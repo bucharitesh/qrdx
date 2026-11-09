@@ -11,6 +11,7 @@ import {
   strongConfirmedIdentifier as strongIdentifier,
 } from "@repo/auth/confirm-sign-in-rules";
 import { cookiesToSet } from "@repo/auth/passkey";
+import { checkPasskeyWithoutSignIn } from "@repo/auth/passkey-check";
 import { auth } from "@repo/auth/server";
 import { LOCKOUT_FAILURES } from "@repo/auth/sign-in-challenge-rules";
 import {
@@ -69,6 +70,7 @@ import {
   clearCodeFailures,
   loadTwoFactorFacts,
   passkeysWorkHere,
+  releaseCodeAttempt,
   reserveCodeAttempt,
 } from "./two-factor-server";
 
@@ -231,14 +233,14 @@ export async function confirmedSession(
 
 /**
  * Starts (or restarts) this session's 10 minutes; `strong` when it used a
- * passkey, an authenticator code or a backup code. With the request's
- * headers, where the session is now also becomes its origin (a held session
- * is let go).
+ * passkey, or a "code" (an authenticator code or a backup code). With the
+ * request's headers, where the session is now also becomes its origin (a
+ * held session is let go).
  */
 export async function recordConfirmation(
   session: Pick<ConfirmableSession, "userId" | "sessionId"> &
     Partial<Pick<ConfirmableSession, "requestHeaders">>,
-  { strong = false }: { strong?: boolean } = {},
+  { strong }: { strong?: "code" | "passkey" } = {},
 ): Promise<void> {
   await writeConfirmationRow(
     confirmedIdentifier(session.sessionId),
@@ -249,8 +251,12 @@ export async function recordConfirmation(
       strongIdentifier(session.sessionId),
       session.userId,
     );
-    // They still have their second step, so support's pending turn-off of
-    // it (if any) is cancelled (./two-factor-reset-server.ts).
+  }
+  if (strong === "code") {
+    // They still have their authenticator app or backup codes, so support's
+    // pending turn-off (if any) is cancelled (./two-factor-reset-server.ts).
+    // Never on a passkey alone: the reset is for a lost device, and a
+    // passkey on it mustn't block recovery. Cancel in Settings still works.
     await cancelTwoFactorResetQuietly({ id: session.userId });
   }
   if (session.requestHeaders) {
@@ -446,7 +452,7 @@ export async function confirmWithCode(input: unknown): Promise<ConfirmResult> {
     if (!session) return fail(CONFIRMATION_MESSAGES.signedOut);
     const check = await checkSecondFactorCode(session, parsed.data.code);
     if (!check.ok) return check;
-    await recordConfirmation(session, { strong: true });
+    await recordConfirmation(session, { strong: "code" });
     return { ok: true };
   } catch (error) {
     logError(error as Error, { action: "account.confirmWithCode" });
@@ -501,7 +507,11 @@ const PASSKEY_REFUSALS = new Set([
  * passkey plugin: the signature, the challenge (once), the origin, user
  * verification (packages/auth/passkey.ts refuses without it) and the
  * counter. The plugin then signs in as the passkey's owner; that session
- * is deleted straight away and its token never leaves the server.
+ * is deleted straight away and its token never leaves the server. The call
+ * is marked as no sign-in (packages/auth/passkey-check.ts), so a rule about
+ * how someone may sign in (their domain requires single sign-on) doesn't
+ * refuse it. An unexpected refusal is thrown: not an answer that didn't
+ * check out.
  */
 export async function verifyOwnPasskey(
   session: Pick<ConfirmableSession, "userId" | "requestHeaders">,
@@ -510,10 +520,12 @@ export async function verifyOwnPasskey(
   let created: { session?: { token?: string }; user?: { id?: string } } | null =
     null;
   try {
-    created = await auth.api.verifyPasskeyAuthentication({
-      headers: session.requestHeaders,
-      body: { response },
-    });
+    created = await checkPasskeyWithoutSignIn(() =>
+      auth.api.verifyPasskeyAuthentication({
+        headers: session.requestHeaders,
+        body: { response },
+      }),
+    );
   } catch (error) {
     const code = authErrorCode(error);
     if (code === "PASSKEY_USER_VERIFICATION_REQUIRED") {
@@ -589,14 +601,23 @@ export async function confirmWithPasskey(
           : CONFIRMATION_MESSAGES.failed,
       );
     }
-    const check = await verifyOwnPasskey(session, parsed.data.response);
+    let check: ConfirmResult;
+    try {
+      check = await verifyOwnPasskey(session, parsed.data.response);
+    } catch (error) {
+      // Something other than the answer failed (the database, or a rule
+      // refusing the plugin's throwaway session): not the person's wrong
+      // answer, so it doesn't count toward the lockout. A plain failure.
+      if (attempt?.ok) await releaseCodeAttempt(attempt.id);
+      throw error;
+    }
     if (!check.ok) {
       return attempt?.ok && attempt.attempts >= LOCKOUT_FAILURES
         ? fail(TWO_FACTOR_MESSAGES.locked)
         : check;
     }
     if (attempt?.ok) await clearCodeFailures(attempt.id);
-    await recordConfirmation(session, { strong: true });
+    await recordConfirmation(session, { strong: "passkey" });
     return { ok: true };
   } catch (error) {
     logError(error as Error, { action: "account.confirmWithPasskey" });

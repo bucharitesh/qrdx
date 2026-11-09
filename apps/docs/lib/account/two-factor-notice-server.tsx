@@ -19,6 +19,7 @@ import {
   deliverTwoFactorNotice,
   type TwoFactorNoticeExtra,
   type TwoFactorNoticeKind,
+  type TwoFactorNoticeOutcome,
 } from "./two-factor-notice";
 import { countBackupCodes } from "./two-factor-server";
 
@@ -35,13 +36,13 @@ const loggable = (error: unknown) =>
  * device, place and time of the request that made it (read here from the
  * current request, or from `headers` when the caller has them). Best effort
  * and never throws; a notice that wasn't sent is logged loudly (no address
- * in the log).
+ * in the log). Resolves with what became of it, for a caller that must know.
  */
 export async function sendTwoFactorNotice(
   kind: TwoFactorNoticeKind,
   email: string,
   { extra, headers }: { extra?: TwoFactorNoticeExtra; headers?: Headers } = {},
-): Promise<void> {
+): Promise<TwoFactorNoticeOutcome> {
   try {
     const request = headers
       ? requestDetails(headers)
@@ -79,6 +80,7 @@ export async function sendTwoFactorNotice(
     console[level](
       JSON.stringify({ event: "account.two_factor_notice", kind, outcome }),
     );
+    return outcome;
   } catch (error) {
     console.error(
       JSON.stringify({
@@ -88,6 +90,7 @@ export async function sendTwoFactorNotice(
         error: loggable(error),
       }),
     );
+    return "not-sent";
   }
 }
 

@@ -18,17 +18,20 @@ import {
 import { eq, like } from "drizzle-orm";
 import { writeAuditLog } from "@/app/admin/_lib/audit";
 import type { TwoFactorResetCancelledBy } from "@/lib/email/templates/two-factor-notice";
+import type { TwoFactorNoticeOutcome } from "./two-factor-notice";
 import { sendTwoFactorNotice } from "./two-factor-notice-server";
 import { resetTwoFactor } from "./two-factor-server";
 
 // Support turning off someone's two-step verification waits 7 days with a
 // notice to the account's address (packages/auth/two-factor-reset.ts has the
 // rules and the record). Support schedules it on the admin user page
-// (app/admin/users/support-actions.ts); the person can cancel it in Settings,
-// by signing in with their second step, or by confirming it's them with it;
-// support can cancel it too. The daily cron (app/api/cron/webhooks) completes
-// the ones that are due: the same reset as before, signing out every session,
-// and the "turned off by support" notice.
+// (app/admin/users/support-actions.ts), only once the notice went out; the
+// person can cancel it in Settings, or by signing in or confirming it's them
+// with an authenticator code or a backup code (never a passkey: the reset is
+// for a lost device, and a passkey on it mustn't block recovery); support can
+// cancel it too. The daily cron (app/api/cron/webhooks) completes the ones
+// that are due: the same reset as before, signing out every session, and the
+// "turned off by support" notice.
 
 export interface PendingTwoFactorReset {
   dueAt: Date;
@@ -72,7 +75,8 @@ export async function loadPendingTwoFactorReset(
 
 /**
  * Starts the wait (replacing an earlier pending reset of the account) and
- * returns it. The caller emails the notice.
+ * returns it. The caller sends the notice first, with the due day from the
+ * same `now` (twoFactorResetDueAt), and schedules only when it went out.
  */
 export async function scheduleTwoFactorReset({
   userId,
@@ -131,7 +135,7 @@ async function takePendingReset(
 export function notifyTwoFactorResetScheduled(
   email: string,
   pending: Pick<PendingTwoFactorReset, "dueAt">,
-): Promise<void> {
+): Promise<TwoFactorNoticeOutcome> {
   return sendTwoFactorNotice("support-reset-scheduled", email, {
     extra: { dueDate: formatTwoFactorResetDate(pending.dueAt) },
   });
@@ -187,9 +191,9 @@ export async function cancelTwoFactorReset(
 }
 
 /**
- * Best effort, for when the person showed they still have their second step
- * (confirming it's them with it): never throws, never holds up what it was
- * for.
+ * Best effort, for when the person showed they still have their
+ * authenticator app or backup codes (confirming it's them with one): never
+ * throws, never holds up what it was for.
  */
 export async function cancelTwoFactorResetQuietly(
   person: { id: string; email?: string },
@@ -207,8 +211,9 @@ export async function cancelTwoFactorResetQuietly(
 
 /**
  * Registered with @repo/auth in app/api/auth/[...all]/route.ts: a sign-in
- * that answered the second step cancelled a pending reset (Better Auth
- * already deleted the row). Emails the account and audits it.
+ * that answered the second step with an authenticator code or a backup code
+ * cancelled a pending reset (Better Auth already deleted the row). Emails
+ * the account and audits it.
  */
 export const notifyTwoFactorResetCancelled: TwoFactorResetCancelledNotifier =
   async ({ user, record, headers }) => {

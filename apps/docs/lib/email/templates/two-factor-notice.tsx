@@ -120,7 +120,7 @@ export function twoFactorNoticeLines(
     return [
       NOTICES[kind].body,
       `Support will turn it off ${when} and sign your account out on every device. Until then, nothing changes.`,
-      "If you asked for this, there's nothing to do. If you didn't, sign in to QRdx with your passkey, authenticator app or a backup code: that cancels it. Or cancel it in Settings → Profile & security, or reply to this email.",
+      "If you asked for this, there's nothing to do. If you didn't, sign in to QRdx with your authenticator app or a backup code: that cancels it. Or cancel it in Settings → Profile & security, or reply to this email.",
     ];
   }
   if (kind === "support-reset-cancelled") {
@@ -128,7 +128,7 @@ export function twoFactorNoticeLines(
       person:
         "You cancelled support's request to turn off two-step verification for your QRdx account.",
       "sign-in":
-        "You signed in with your second step, so support's request to turn off two-step verification for your QRdx account was cancelled.",
+        "You signed in with your authenticator app or a backup code, so support's request to turn off two-step verification for your QRdx account was cancelled.",
       support:
         "QRdx support cancelled the request to turn off two-step verification for your account.",
     };

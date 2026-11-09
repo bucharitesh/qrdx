@@ -10,8 +10,9 @@ import { logError } from "@/lib/shared";
  * Cancels support's pending turn-off of this account's two-step verification
  * (lib/account/two-factor-reset-server.ts). It asks "Confirm it's you", which
  * with two-step verification on takes a passkey, an authenticator code or a
- * backup code: what someone who really lost them can't give. Confirming that
- * way cancels it on its own; this then finds nothing left and says it's done.
+ * backup code: what someone who really lost them can't give. Confirming with
+ * a code cancels it on its own (this then finds nothing left and says it's
+ * done); confirming with a passkey doesn't, so this cancels it.
  */
 export async function cancelSupportTwoFactorReset(): Promise<
   { ok: true } | { ok: false; error: string }

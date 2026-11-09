@@ -919,6 +919,10 @@ export const repoDatabase: Record<string, unknown> = {
   database,
   and: drizzle.and,
   eq: drizzle.eq,
+  inArray: drizzle.inArray,
+  isNull: drizzle.isNull,
+  like: drizzle.like,
+  or: drizzle.or,
   ...Object.fromEntries(STRING_LISTS),
   ...Object.fromEntries(TABLE_NAMES.map((name) => [name, table(name)])),
 };
