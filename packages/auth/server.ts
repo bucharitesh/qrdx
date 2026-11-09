@@ -33,6 +33,7 @@ import {
   SSO_SIGN_IN_PATH,
   SSO_UNUSED_PATHS,
   ssoGate,
+  ssoIdpInitiatedLanding,
   ssoOptions,
   validateSsoUserInfo,
 } from "./ee/sso";
@@ -355,6 +356,10 @@ export const auth = betterAuth({
         },
       },
     }),
+    // A SAML sign-in started at the identity provider lands on the page its
+    // RelayState names (./ee/sso.ts). Before the challenge below, which
+    // sends the person there after their second step.
+    ...(ssoLicensed ? [ssoIdpInitiatedLanding()] : []),
     // Sign-in security (packages/database/manual-sql/0019_sign_in_security.sql).
     // Two-step verification (Lane A): the plugin, then the challenge after
     // every session-creating endpoint (./sign-in-challenge.ts), answered with
@@ -440,9 +445,9 @@ export const auth = betterAuth({
       [PASSKEY_SIGN_IN_PATH]: { window: 60, max: 10 },
       // Starting an SSO sign-in, and the IdP's return (licensed servers
       // only). Per IP, and a whole company can sit behind one office address
-      // at 9am, so these are looser than the email-code limits. Each callback
-      // still needs the state from its own sign-in start, so they can't be
-      // replayed.
+      // at 9am, so these are looser than the email-code limits. They can't be
+      // replayed: an OIDC callback needs the state from its own sign-in
+      // start, and each SAML assertion is accepted once (./ee/sso.ts).
       ...(ssoLicensed
         ? {
             [SSO_SIGN_IN_PATH]: { window: 60, max: 60 },
