@@ -130,13 +130,13 @@ function wrongCode(secret: string): string {
 // ─── The local database ─────────────────────────────────────────────────────
 
 /**
- * "10 minutes later": confirmations end now, so the next change asks. The
+ * "10 minutes later": this run's confirmations end now, so the next change asks. The
  * app stores UTC wall times in `timestamp` columns, so `now()` is taken in
  * UTC. Local databases only.
  */
 function expireConfirmations() {
   execSync(DB_SQL, {
-    input: `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%';`,
+    input: `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%' and value in (select id from "user" where email like '%${RUN}%');`,
     encoding: "utf8",
     stdio: ["pipe", "pipe", "inherit"],
   });
