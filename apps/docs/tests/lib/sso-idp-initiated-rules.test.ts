@@ -166,6 +166,24 @@ describe("what QRdx refuses from a sign-in started at the IdP", () => {
     expect(samlIdpInitiatedProblem(bad as never)).toMatch(/expiry/);
   });
 
+  it("only counts the expiry inside the assertion, which the signature covers", () => {
+    // Conditions written outside the Assertion (unsigned) don't count.
+    const outside = readSamlResponse(
+      `<samlp:Response><saml:Conditions NotOnOrAfter="2099-01-01T00:00:00Z"/><saml:Assertion ID="_a"><saml:Subject/></saml:Assertion></samlp:Response>`,
+    );
+    expect(outside?.conditionsNotOnOrAfter).toEqual([]);
+    expect(samlIdpInitiatedProblem(outside as never)).toMatch(/expiry/);
+    const after = readSamlResponse(
+      `<samlp:Response><saml:Assertion ID="_a"><saml:Subject/></saml:Assertion><saml:Conditions NotOnOrAfter="2099-01-01T00:00:00Z"/></samlp:Response>`,
+    );
+    expect(after?.conditionsNotOnOrAfter).toEqual([]);
+    const inside = readSamlResponse(
+      `<samlp:Response><saml:Assertion ID="_a"><saml:Conditions NotOnOrAfter="2099-01-01T00:00:00Z"/></saml:Assertion></samlp:Response>`,
+    );
+    expect(inside?.conditionsNotOnOrAfter).toEqual(["2099-01-01T00:00:00Z"]);
+    expect(samlIdpInitiatedProblem(inside as never)).toBeNull();
+  });
+
   it("refuses an answer to a request it doesn't name", () => {
     // The plugin would see no InResponseTo and skip its request check.
     expect(problem({ ...base, confirmationInResponseTo: "_req1" })).toMatch(
