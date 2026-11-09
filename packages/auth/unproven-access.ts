@@ -55,7 +55,11 @@ import { CONFIRMED_IDENTIFIER_PREFIX } from "./confirm-sign-in-rules";
 // - sessions: deleted again, in case one was made between Better Auth's
 //   sign-out and this, before the methods above were gone.
 //
-// Workspaces and everything in them stay.
+// The webhook endpoints and Slack and Discord alert targets go wherever the
+// account made them, other teams' workspaces included, and its data-out syncs
+// stop there too: all of them are found by the account that set them up, not
+// by workspace. Everything else stays: workspaces, memberships, codes, pages
+// and their data, and the endpoints, alerts and syncs other members set up.
 //
 // All of it in one batch, one statement per table (however many rows),
 // two-step verification first, before the address is marked verified and
