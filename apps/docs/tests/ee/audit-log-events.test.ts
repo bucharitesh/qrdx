@@ -128,13 +128,33 @@ describe("plan changes from billing", () => {
   });
 });
 
-describe("team and workspace", () => {
+describe("team and workspace changes from the organization plugin", () => {
+  const record = team.recordWorkspaceChange;
+
   it("records role changes, removals and people leaving, by name", async () => {
-    team.auditRoleChanged(scope, { userId: "u_ben", role: "member" }, "admin");
-    team.auditRoleChanged(scope, { userId: "u_ben", role: "admin" }, "admin");
-    team.auditMemberRemoved(scope, { userId: "u_ben", role: "admin" });
-    team.auditMemberRemoved(scope, null);
-    team.auditMemberLeft("u_ben", ORG);
+    const base = { organizationId: ORG, actorUserId: "u_ana" };
+    record({
+      ...base,
+      kind: "role_changed",
+      userId: "u_ben",
+      from: "member",
+      to: "admin",
+    });
+    // The same role again isn't a change.
+    record({
+      ...base,
+      kind: "role_changed",
+      userId: "u_ben",
+      from: "admin",
+      to: "admin",
+    });
+    record({ ...base, kind: "removed", userId: "u_ben", role: "admin" });
+    record({
+      kind: "left",
+      organizationId: ORG,
+      userId: "u_ben",
+      role: "member",
+    });
     await flush();
     expect(
       rows().map((row) => [
@@ -151,35 +171,39 @@ describe("team and workspace", () => {
         { before: { role: "Member" }, after: { role: "Admin" } },
       ],
       ["member.removed", "u_ana", "Ben <ben@acme.test>", { role: "Admin" }],
-      ["member.left", "u_ben", "Ben <ben@acme.test>", null],
+      ["member.left", "u_ben", "Ben <ben@acme.test>", { role: "Member" }],
     ]);
   });
 
   it("records joining, with how and the role", async () => {
-    team.auditMemberJoined("u_ben", ORG, "join link", "viewer");
-    team.auditMemberJoined("u_ben", ORG, "invitation");
+    const joined = {
+      kind: "joined",
+      organizationId: ORG,
+      userId: "u_ben",
+    } as const;
+    record({ ...joined, role: "viewer", via: "added" });
+    record({ ...joined, role: "member", via: "invitation" });
     await flush();
-    expect(rows().map((row) => row.metadata)).toEqual([
-      { via: "Join link", role: "Viewer" },
-      { via: "Invitation", role: "Member" },
+    expect(rows().map((row) => [row.actorUserId, row.metadata])).toEqual([
+      ["u_ben", { via: "Join link", role: "Viewer" }],
+      ["u_ben", { via: "Invitation", role: "Member" }],
     ]);
   });
 
   it("records invitations and their revocation with the email", async () => {
-    fakeDb.seed("invitation", [
-      {
-        id: "inv_1",
-        email: "cy@acme.test",
-        role: "admin",
-        organizationId: ORG,
-      },
-    ]);
-    team.auditInvited(scope, {
-      id: "inv_1",
-      email: "cy@acme.test",
-      role: "admin",
+    const invitation = { id: "inv_1", email: "cy@acme.test", role: "admin" };
+    record({
+      kind: "invited",
+      organizationId: ORG,
+      actorUserId: "u_ana",
+      invitation,
     });
-    team.auditInvitationRevoked(scope, "inv_1");
+    record({
+      kind: "invitation_cancelled",
+      organizationId: ORG,
+      actorUserId: "u_ana",
+      invitation,
+    });
     await flush();
     expect(
       rows().map((row) => [row.action, row.targetLabel, row.metadata]),
@@ -187,6 +211,48 @@ describe("team and workspace", () => {
       ["member.invited", "cy@acme.test", { role: "Admin" }],
       ["invitation.revoked", "cy@acme.test", { role: "Admin" }],
     ]);
+  });
+
+  it("records a rename and a new URL as two events, and nothing else", async () => {
+    const update = {
+      kind: "updated",
+      organizationId: ORG,
+      actorUserId: "u_ana",
+      before: { name: "Acme", slug: "acme" },
+    } as const;
+    record({ ...update, after: { name: "Acme Inc", slug: "acme-inc" } });
+    // A logo or settings change keeps the name and URL.
+    record({ ...update, after: { name: "Acme", slug: "acme" } });
+    await flush();
+    expect(rows().map((row) => [row.action, row.metadata])).toEqual([
+      [
+        "workspace.renamed",
+        { before: { name: "Acme" }, after: { name: "Acme Inc" } },
+      ],
+      [
+        "workspace.slug_changed",
+        { before: { slug: "acme" }, after: { slug: "acme-inc" } },
+      ],
+    ]);
+  });
+
+  it("deletes a deleted workspace's rows only once it's gone", async () => {
+    fakeDb.seed("workspaceAuditLog", [
+      {
+        id: "a",
+        organizationId: ORG,
+        actorType: "user",
+        action: "code.created",
+        createdAt: NOW,
+      },
+    ]);
+    record({ kind: "deleted", organizationId: ORG, actorUserId: "u_ana" });
+    await flush();
+    expect(rows()).toHaveLength(1); // the workspace still exists
+    fakeDb.rows("organization").splice(0);
+    record({ kind: "deleted", organizationId: ORG, actorUserId: "u_ana" });
+    await flush();
+    expect(rows()).toHaveLength(0);
   });
 
   it("records the join link turned on, changed and off", async () => {
@@ -201,26 +267,6 @@ describe("team and workspace", () => {
         { before: { role: "Member" }, after: { role: "Viewer" } },
       ],
       ["join_link.disabled", null],
-    ]);
-  });
-
-  it("records a rename and a new URL as two events", async () => {
-    const before = await team.workspaceBefore(ORG);
-    team.auditWorkspaceUpdated(scope, before, {
-      name: "Acme Inc",
-      slug: "acme-inc",
-    });
-    team.auditWorkspaceUpdated(scope, before, { name: "Acme" });
-    await flush();
-    expect(rows().map((row) => [row.action, row.metadata])).toEqual([
-      [
-        "workspace.renamed",
-        { before: { name: "Acme" }, after: { name: "Acme Inc" } },
-      ],
-      [
-        "workspace.slug_changed",
-        { before: { slug: "acme" }, after: { slug: "acme-inc" } },
-      ],
     ]);
   });
 });

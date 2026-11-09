@@ -12,7 +12,8 @@ import {
 } from "@repo/database";
 import { and, count, eq, gt, ne } from "drizzle-orm";
 import { isTeamMember } from "@/app/dashboard/team/_lib/queries";
-import { auditMemberJoined } from "@/ee/audit-log/team-events";
+// Joining through addMember is recorded by packages/auth/workspace-audit.ts.
+import "@/ee/audit-log/auth-changes";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import { HttpError } from "@/lib/error-response";
 import { logError } from "@/lib/log-error";
@@ -330,6 +331,5 @@ export async function joinWithLink(
     }
     throw error;
   }
-  auditMemberJoined(person.id, target.organizationId, "join link", target.role);
   return { status: "joined", slug: target.slug, role: target.role };
 }

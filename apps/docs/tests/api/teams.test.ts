@@ -680,6 +680,25 @@ describe("who manages a team", () => {
     expect(state.calls).toHaveLength(0);
   });
 
+  it("revokes the open team's invitations only", async () => {
+    // An admin of two teams, on Acme's page, can't revoke Beta's invitation
+    // (the plugin would allow it: it checks the role in Beta).
+    fakeDb.seed("organization", [
+      { id: "org_beta", name: "Beta", slug: "beta", createdAt: NOW },
+    ]);
+    join("org_beta", "u_admin", "admin");
+    const beta = invite("org_beta", "x@example.com");
+    signIn("u_admin", "org_acme");
+    expect(await teams.cancelInvitation({ invitationId: beta })).toEqual({
+      ok: false,
+      error: "Invalid invitation.",
+    });
+    expect(calls("cancelInvitation")).toEqual([]);
+    const own = invite("org_acme", "y@example.com");
+    expect((await teams.cancelInvitation({ invitationId: own })).ok).toBe(true);
+    expect(calls("cancelInvitation")).toHaveLength(1);
+  });
+
   it("removes members in the open team only", async () => {
     signIn("u_admin", "org_acme");
     expect((await teams.removeMember({ memberId: "m_3" })).ok).toBe(true);
