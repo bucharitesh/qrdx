@@ -1,6 +1,7 @@
 "use server";
 
 import { hasAdminRole, isAdmin } from "@repo/auth/admin";
+import { twoFactorResetDueAt } from "@repo/auth/two-factor-reset";
 import {
   account,
   database as db,
@@ -25,6 +26,7 @@ import {
 } from "@/lib/account/confirmation-server";
 import { isSameEmail, MAX_EMAIL_LENGTH } from "@/lib/account/email-change";
 import { afterEmailChanged } from "@/lib/account/email-change-server";
+import { resetNoticeDelivered } from "@/lib/account/two-factor-notice";
 import {
   cancelTwoFactorReset,
   loadPendingTwoFactorReset,
@@ -131,14 +133,19 @@ async function requireStrongAdmin(admin: { id: string }): Promise<void> {
  * once they wrote to support from the account's address. Nothing changes
  * yet: the reset waits 7 days (lib/account/two-factor-reset-server.ts) and
  * the address is told the day, so an owner who didn't ask can cancel it
- * (in Settings, or by signing in with their second step) or reply. On that
- * day the daily cron turns two-step verification off (secret, backup codes
- * and trusted devices gone), signs out every session of the account and
- * emails the address.
+ * (in Settings, or by signing in with an authenticator code or a backup
+ * code) or reply. On that day the daily cron turns two-step verification
+ * off (secret, backup codes and trusted devices gone), signs out every
+ * session of the account and emails the address.
+ *
+ * The notice is the point of the wait, so it goes out first, and nothing is
+ * scheduled unless it did (resetNoticeDelivered: never from a server that
+ * can't email, such as a preview or local server on the shared database).
  *
  * Whoever wrote in may not be the owner, so a stolen admin cookie must not be
  * enough to start it: requireStrongAdmin, as for changing the email. Never
- * for an admin's account or the admin's own.
+ * for an admin's account (a role, or ADMIN_EMAILS / ADMIN_USER_IDS) or the
+ * admin's own.
  */
 export async function resetTwoFactorAction(
   input: z.input<typeof userReason>,
@@ -156,6 +163,8 @@ export async function resetTwoFactorAction(
         .select({
           id: user.id,
           email: user.email,
+          // isAdmin also counts ADMIN_EMAILS, for verified addresses only.
+          emailVerified: user.emailVerified,
           on: user.twoFactorEnabled,
           role: user.role,
         })
@@ -173,8 +182,27 @@ export async function resetTwoFactorAction(
         throw adminError("A reset is already waiting for this account.");
       }
       await requireStrongAdmin(admin);
-      const pending = await scheduleTwoFactorReset({ userId, admin });
-      after(() => notifyTwoFactorResetScheduled(target.email, pending));
+      // The notice first, with the day the reset will have; the reset only
+      // if it went out. (Should saving it then fail, the address was told
+      // about a reset that isn't waiting: the admin sees the error, and the
+      // day passes with nothing changed.)
+      const now = new Date();
+      const notice = await notifyTwoFactorResetScheduled(target.email, {
+        dueAt: twoFactorResetDueAt(now),
+      });
+      if (
+        !resetNoticeDelivered(notice, {
+          nodeEnv: process.env.NODE_ENV,
+          databaseUrl: process.env.DATABASE_URL,
+        })
+      ) {
+        throw adminError(
+          notice === "logged"
+            ? "This server doesn't send email, so the account's address can't be told and nothing was scheduled. Start the reset from production."
+            : "The email to the account's address couldn't be sent, so nothing was scheduled. Try again in a few minutes.",
+        );
+      }
+      const pending = await scheduleTwoFactorReset({ userId, admin, now });
       return {
         audit: {
           targetType: "user",
@@ -193,7 +221,9 @@ export async function resetTwoFactorAction(
 
 /**
  * Stops a pending reset (say the owner replied that it wasn't them). Two-step
- * verification stays as it is, and the address is told.
+ * verification stays as it is, and the address is told. Cancelling one the
+ * owner really asked for leaves them locked out, so it takes the same
+ * requireStrongAdmin as starting one: not a stolen admin cookie alone.
  */
 export async function cancelTwoFactorResetAction(
   input: z.input<typeof userReason>,
@@ -201,8 +231,12 @@ export async function cancelTwoFactorResetAction(
   return runAdminAction(
     { action: "user.reset_two_factor_cancel", schema: userReason },
     input,
-    async (_admin, { userId }) => {
+    async (admin, { userId }) => {
       const target = await findUser(userId);
+      if (!(await loadPendingTwoFactorReset(userId))) {
+        throw adminError("No reset is waiting for this account.");
+      }
+      await requireStrongAdmin(admin);
       const cancelled = await cancelTwoFactorReset(
         { id: userId, email: target.email },
         "support",
