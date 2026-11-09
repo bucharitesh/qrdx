@@ -76,6 +76,21 @@ describe("the admin plugin over HTTP", () => {
     expect(isAdminHttpPath(`${BASE}/administrator-notes`, BASE)).toBe(false);
     expect(isAdminHttpPath(`${BASE}/admin/list-users`, BASE)).toBe(true);
   });
+
+  it("collapses repeated slashes and trailing slashes on the base path", () => {
+    expect(isAdminHttpPath(`${BASE}///admin//update-user`, BASE)).toBe(true);
+    expect(isAdminHttpPath(`//api//auth//admin`, `${BASE}///`)).toBe(true);
+    expect(isAdminHttpPath(`${BASE}//get-session`, `${BASE}/`)).toBe(false);
+  });
+
+  it("stays linear on long runs of slashes", () => {
+    // Runs on every auth request: a path of many "/" must not be slow.
+    const slashes = "/".repeat(200_000);
+    const started = performance.now();
+    expect(isAdminHttpPath(`${slashes}get-session`, BASE)).toBe(false);
+    expect(isAdminHttpPath(`${BASE}/x`, `${BASE}${slashes}x`)).toBe(false);
+    expect(performance.now() - started).toBeLessThan(200);
+  });
 });
 
 // The admin panel's calls go through auth.api, which doesn't pass the HTTP
