@@ -50,6 +50,47 @@ export function describeTwoFactorNotice(
   return parts.join(", ");
 }
 
+/** What became of a notice: emailed, written to the local dev log, or neither. */
+export type TwoFactorNoticeOutcome = "emailed" | "logged" | "not-sent";
+
+/** A database on this machine (localhost, 127.0.0.1 or ::1). */
+export function isLocalDatabaseUrl(url: string | undefined): boolean {
+  if (!url) return false;
+  try {
+    return ["localhost", "127.0.0.1", "[::1]"].includes(new URL(url).hostname);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Whether support's turn-off of two-step verification may be scheduled after
+ * its notice went out this way. The notice is the point of the 7-day wait: it
+ * lets an owner who didn't ask stop it. So:
+ * - emailed: yes;
+ * - written to the dev log: only in local development against a database on
+ *   this machine, where the account is a test one and the production cron
+ *   never sees the reset (the local end-to-end tests run like that). Never
+ *   in production, and never against any other database: local dev and
+ *   previews can share the production one, whose daily cron would turn off
+ *   a real person's two-step verification after a notice nobody saw;
+ * - not sent: no.
+ */
+export function resetNoticeDelivered(
+  outcome: TwoFactorNoticeOutcome,
+  {
+    nodeEnv,
+    databaseUrl,
+  }: { nodeEnv: string | undefined; databaseUrl: string | undefined },
+): boolean {
+  if (outcome === "emailed") return true;
+  return (
+    outcome === "logged" &&
+    nodeEnv !== "production" &&
+    isLocalDatabaseUrl(databaseUrl)
+  );
+}
+
 /**
  * Emails the notice where outbound delivery is on, writes it to the console
  * in local dev. Never throws: the change has happened, so a failed notice is
@@ -62,7 +103,7 @@ export async function deliverTwoFactorNotice(
     extra,
   }: { kind: TwoFactorNoticeKind; email: string; extra?: TwoFactorNoticeExtra },
   deps: NoticeDeliveryDeps,
-): Promise<"emailed" | "logged" | "not-sent"> {
+): Promise<TwoFactorNoticeOutcome> {
   try {
     if (deps.deliveryAllowed && deps.nodeEnv !== "test") {
       const result = await deps.send();

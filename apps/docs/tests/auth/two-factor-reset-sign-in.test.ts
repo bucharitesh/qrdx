@@ -1,21 +1,34 @@
-// Signing in with the second step cancels support's pending turn-off of
-// two-step verification (packages/auth/two-factor-reset.ts), inside Better
-// Auth: a real betterAuth instance (memory adapter, no database or network)
-// with the same plugin order as packages/auth/server.ts (email codes, two-step
-// verification and its challenge, then the cancel), driven through
-// auth.handler like a browser. The app's notifier is replaced by one that
-// records what it's given.
-import { createHmac } from "node:crypto";
+// Signing in with an authenticator code or a backup code cancels support's
+// pending turn-off of two-step verification (packages/auth/two-factor-reset
+// .ts); a passkey never does, as the second step or with "Continue with
+// passkey" (the reset is for a lost device). Inside Better Auth: a real
+// betterAuth instance (memory adapter, no database or network) with the same
+// plugin order as packages/auth/server.ts (email codes, two-step verification
+// and its challenge, passkeys, then the cancel), driven through auth.handler
+// like a browser, with a software authenticator (P-256) for passkeys. The
+// app's notifier is replaced by one that records what it's given.
+import {
+  createHash,
+  createHmac,
+  generateKeyPairSync,
+  type KeyObject,
+  randomBytes,
+  sign,
+} from "node:crypto";
 import { realpathSync } from "node:fs";
 import path from "node:path";
 import { signInIsStrong } from "@repo/auth/new-sign-in";
 import {
   PASSKEY_SIGN_IN_PATH,
+  PASSKEY_STEP_OPTIONS_PATH,
+  PASSKEY_STEP_VERIFY_PATH,
   SERVER_ONLY_TWO_FACTOR_PATHS,
   UNUSED_TWO_FACTOR_PATHS,
 } from "@repo/auth/sign-in-challenge-rules";
 import {
+  RESET_CANCELLING_SIGN_IN_PATHS,
   registerTwoFactorResetCancelledNotifier,
+  signInCancelsTwoFactorReset,
   type TwoFactorResetCancelled,
   twoFactorResetIdentifier,
 } from "@repo/auth/two-factor-reset";
@@ -27,8 +40,15 @@ const betterAuthDir = realpathSync(
     "../../../../packages/auth/node_modules/better-auth",
   ),
 );
+const passkeyDir = realpathSync(
+  path.resolve(
+    import.meta.dirname,
+    "../../../../packages/auth/node_modules/@better-auth/passkey",
+  ),
+);
 
 const ORIGIN = "http://localhost:3000";
+const RP_ID = "localhost";
 const SECRET = "test-secret-at-least-32-characters-long";
 const DAY = 86_400_000;
 
@@ -72,17 +92,25 @@ class Browser {
       .join("; ");
   }
 
-  async post(pathAndQuery: string, body: unknown = {}) {
+  get(pathAndQuery: string) {
+    return this.post(pathAndQuery, undefined, "GET");
+  }
+
+  async post(
+    pathAndQuery: string,
+    body: unknown = {},
+    method: "GET" | "POST" = "POST",
+  ) {
     const response = await this.handler(
       new Request(`${ORIGIN}/api/auth${pathAndQuery}`, {
-        method: "POST",
+        method,
         headers: {
           origin: ORIGIN,
           cookie: this.cookieHeader(),
           "content-type": "application/json",
           "user-agent": "test-browser",
         },
-        body: JSON.stringify(body),
+        body: method === "GET" ? undefined : JSON.stringify(body),
       }),
     );
     for (const line of response.headers.getSetCookie()) {
@@ -102,6 +130,81 @@ class Browser {
   }
 }
 
+// ─── A software authenticator ───────────────────────────────────────────────
+
+interface Authenticator {
+  credentialId: string;
+  privateKey: KeyObject;
+  count: number;
+}
+
+/** A P-256 key pair and its passkey row (COSE public key, as stored). */
+function newAuthenticator(userId: string): Authenticator {
+  const pair = generateKeyPairSync("ec", { namedCurve: "P-256" });
+  const jwk = pair.publicKey.export({ format: "jwk" });
+  const x = Buffer.from(String(jwk.x), "base64url");
+  const y = Buffer.from(String(jwk.y), "base64url");
+  // COSE_Key {1: 2 (EC2), 3: -7 (ES256), -1: 1 (P-256), -2: x, -3: y}
+  const cose = Buffer.concat([
+    Buffer.from([0xa5, 0x01, 0x02, 0x03, 0x26, 0x20, 0x01, 0x21, 0x58, 0x20]),
+    x,
+    Buffer.from([0x22, 0x58, 0x20]),
+    y,
+  ]);
+  const credentialId = randomBytes(16).toString("base64url");
+  db.passkey.push({
+    id: `pk-${credentialId}`,
+    name: "Phone",
+    publicKey: cose.toString("base64"),
+    userId,
+    credentialID: credentialId,
+    counter: 0,
+    deviceType: "singleDevice",
+    backedUp: false,
+    transports: "internal",
+    createdAt: new Date(),
+  });
+  return { credentialId, privateKey: pair.privateKey, count: 0 };
+}
+
+/** An assertion over `challenge` by `key`, user verified. */
+function assertion(key: Authenticator, challenge: string) {
+  const clientDataJSON = Buffer.from(
+    JSON.stringify({
+      type: "webauthn.get",
+      challenge,
+      origin: ORIGIN,
+      crossOrigin: false,
+    }),
+  );
+  const counter = Buffer.alloc(4);
+  counter.writeUInt32BE(++key.count);
+  const authenticatorData = Buffer.concat([
+    createHash("sha256").update(RP_ID).digest(),
+    Buffer.from([0x01 | 0x04]),
+    counter,
+  ]);
+  const signature = sign(
+    "sha256",
+    Buffer.concat([
+      authenticatorData,
+      createHash("sha256").update(clientDataJSON).digest(),
+    ]),
+    key.privateKey,
+  );
+  return {
+    id: key.credentialId,
+    rawId: key.credentialId,
+    type: "public-key",
+    clientExtensionResults: {},
+    response: {
+      clientDataJSON: clientDataJSON.toString("base64url"),
+      authenticatorData: authenticatorData.toString("base64url"),
+      signature: signature.toString("base64url"),
+    },
+  };
+}
+
 const sentCodes = new Map<string, string>();
 const cancelled: TwoFactorResetCancelled[] = [];
 let auth: any;
@@ -115,11 +218,19 @@ beforeAll(async () => {
   const { memoryAdapter } = await import(
     `${betterAuthDir}/dist/adapters/memory-adapter/index.mjs`
   );
+  const { passkey } = await import(`${passkeyDir}/dist/index.mjs`);
   const { signInChallenge } = await import("@repo/auth/sign-in-challenge");
   const { twoFactorResetCancel } = await import("@repo/auth/two-factor-reset");
   const rules = await import("@repo/auth/sign-in-challenge-rules");
 
-  db = { user: [], session: [], account: [], verification: [], twoFactor: [] };
+  db = {
+    user: [],
+    session: [],
+    account: [],
+    verification: [],
+    twoFactor: [],
+    passkey: [],
+  };
   const twoFactorPlugin = twoFactor({
     issuer: "QRdx",
     allowPasswordless: true,
@@ -157,7 +268,10 @@ beforeAll(async () => {
         },
       }),
       twoFactorPlugin,
-      signInChallenge(twoFactorPlugin, { relyingParty: null }),
+      signInChallenge(twoFactorPlugin, {
+        relyingParty: { rpID: RP_ID, origin: ORIGIN },
+      }),
+      passkey({ rpID: RP_ID, rpName: "QRdx", origin: ORIGIN }),
       twoFactorResetCancel(),
     ],
   });
@@ -349,8 +463,52 @@ describe("signing in with the second step", () => {
     expect(cancelled).toEqual([]);
   });
 
-  it('counts "Continue with passkey" as a sign-in with the second step', () => {
-    expect(signInIsStrong(PASSKEY_SIGN_IN_PATH)).toBe(true);
-    expect(signInIsStrong("/sign-in/email-otp")).toBe(false);
+  it("only an authenticator code or a backup code cancels it, never a passkey", () => {
+    expect([...RESET_CANCELLING_SIGN_IN_PATHS]).toEqual([
+      "/two-factor/verify-totp",
+      "/two-factor/verify-backup-code",
+    ]);
+    for (const path of [PASSKEY_STEP_VERIFY_PATH, PASSKEY_SIGN_IN_PATH]) {
+      expect(signInCancelsTwoFactorReset(path), path).toBe(false);
+      // Both still count as strong for "Confirm it's you".
+      expect(signInIsStrong(path), path).toBe(true);
+    }
+    expect(signInCancelsTwoFactorReset("/sign-in/email-otp")).toBe(false);
+  });
+});
+
+describe("signing in with a passkey", () => {
+  it("as the second step: signed in, and the reset still waits", async () => {
+    const { userId } = await pendingAccount("step@qrdx.test");
+    const key = newAuthenticator(userId);
+    const browser = new Browser(auth.handler);
+    const challenged = await emailCodeSignIn(browser, "step@qrdx.test");
+    expect(challenged.json?.twoFactorRedirect).toBe(true);
+    const options = await browser.post(PASSKEY_STEP_OPTIONS_PATH, {});
+    expect(options.status).toBe(200);
+    const done = await browser.post(PASSKEY_STEP_VERIFY_PATH, {
+      response: assertion(key, String(options.json?.challenge)),
+    });
+    expect(done.status).toBe(200);
+    expect(db.session.some((row) => row.userId === userId)).toBe(true);
+    expect(pending(userId)).toBe(true);
+    expect(cancelled).toEqual([]);
+  });
+
+  it('with "Continue with passkey": signed in, and the reset still waits', async () => {
+    const { userId } = await pendingAccount("continue@qrdx.test");
+    const key = newAuthenticator(userId);
+    const browser = new Browser(auth.handler);
+    const options = await browser.get("/passkey/generate-authenticate-options");
+    expect(options.status).toBe(200);
+    const sessionsBefore = db.session.length;
+    const done = await browser.post(PASSKEY_SIGN_IN_PATH, {
+      response: assertion(key, String(options.json?.challenge)),
+    });
+    expect(done.status).toBe(200);
+    expect(done.json?.twoFactorRedirect).toBeUndefined();
+    expect(db.session.length).toBe(sessionsBefore + 1);
+    expect(pending(userId)).toBe(true);
+    expect(cancelled).toEqual([]);
   });
 });

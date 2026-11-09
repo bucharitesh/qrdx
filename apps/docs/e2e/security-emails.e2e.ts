@@ -7,8 +7,8 @@
 //                is recorded (qrdx_device, HttpOnly)
 //   same         signing in again in that browser: no alert
 //   new          another browser signs in: the alert, with its device, place,
-//                address, time in the place's zone and how it signed in (geo
-//                headers set as the hosting platform would)
+//                address, time and how it signed in (a geo header set as the
+//                hosting platform would)
 //   every        a third new browser straight after is alerted too
 //   notices      a second account turns
 //                two-step verification on (Confirm it's you with an emailed
@@ -42,12 +42,12 @@ const EMAIL = `e2e-alerts-${RUN}@qrdx.test`;
 const TWO_STEP_EMAIL = `e2e-alerts-2fa-${RUN}@qrdx.test`;
 
 // What the hosting platform adds to each request (lib/security/
-// request-details.ts reads them).
+// request-details.ts reads them). A local server isn't on Vercel, so it only
+// trusts Cloudflare's country (lib/request-geo.ts); Vercel's city and time
+// zone are covered by tests/lib/security-request-details.test.ts.
 const GEO_HEADERS = {
   "x-forwarded-for": "203.0.113.24",
-  "x-vercel-ip-city": "Mumbai",
-  "x-vercel-ip-country": "IN",
-  "x-vercel-ip-timezone": "Asia/Kolkata",
+  "cf-ipcountry": "IN",
 };
 
 type Page = Awaited<ReturnType<typeof launch>>;
@@ -321,9 +321,9 @@ async function main() {
     check(
       "the alert names the device, place, address and way in",
       /Chrome on macOS/.test(summary) &&
-        /Mumbai, India/.test(summary) &&
+        /India/.test(summary) &&
         /203\.0\.113\.24/.test(summary) &&
-        /GMT\+5:30/.test(summary) &&
+        /UTC/.test(summary) &&
         /Email code$/.test(summary),
       summary,
     );

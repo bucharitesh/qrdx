@@ -13,5 +13,5 @@ if (DATABASE_HTTP_ENDPOINT) {
 const client = neon(DATABASE_URL);
 export const database = drizzle({ client, schema });
 
-export { and, eq } from "drizzle-orm";
+export { and, eq, inArray, isNull, like, or } from "drizzle-orm";
 export * from "./schema";

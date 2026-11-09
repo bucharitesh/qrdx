@@ -1,6 +1,5 @@
 import type { BetterAuthPlugin } from "better-auth";
 import { createAuthMiddleware, isAPIError } from "better-auth/api";
-import { signInIsStrong } from "./new-sign-in";
 
 // Support turning off someone's two-step verification (they lost their
 // authenticator app, passkeys and backup codes) waits TWO_FACTOR_RESET_WAIT
@@ -8,8 +7,13 @@ import { signInIsStrong } from "./new-sign-in";
 // new email: whoever wrote to support may not be the account's owner. The
 // app schedules, shows, cancels and completes it
 // (apps/docs/lib/account/two-factor-reset-server.tsx); this file holds what
-// both sides share, and cancels it when the person signs in with their second
-// step, which shows they still have it.
+// both sides share, and cancels it when the person signs in with an
+// authenticator code or a backup code, which shows they still have them.
+//
+// A passkey never cancels it on its own, as the second step or with
+// "Continue with passkey": the reset is for a lost device, and a passkey on
+// that device mustn't be able to block it. Passkeys survive the reset, so
+// the person can still press Cancel in Settings (confirming with one).
 //
 // A pending reset is a `verification` row, `qrdx-2fa-reset-<userId>`,
 // holding a TwoFactorResetRecord as JSON; no schema change. Its expiresAt is
@@ -81,6 +85,18 @@ export function parseTwoFactorReset(
   return null;
 }
 
+/**
+ * The sign-ins that cancel a pending reset: the second step answered with an
+ * authenticator code or a backup code. Never a passkey (see above).
+ */
+export const RESET_CANCELLING_SIGN_IN_PATHS: readonly string[] = [
+  "/two-factor/verify-totp",
+  "/two-factor/verify-backup-code",
+];
+
+export const signInCancelsTwoFactorReset = (path: string): boolean =>
+  RESET_CANCELLING_SIGN_IN_PATHS.includes(path);
+
 /** A sign-in with the second step cancelled a pending reset. */
 export interface TwoFactorResetCancelled {
   user: { id: string; email: string };
@@ -117,10 +133,9 @@ interface NewSession {
 }
 
 /**
- * After an HTTP sign-in that answered the second step (a passkey, an
- * authenticator code or a backup code) or used "Continue with passkey": a
- * pending reset of that account is deleted, and the app is told. Never
- * blocks or fails the sign-in.
+ * After an HTTP sign-in that answered the second step with an authenticator
+ * code or a backup code: a pending reset of that account is deleted, and the
+ * app is told. Never blocks or fails the sign-in.
  */
 async function cancelOnStrongSignIn(ctx: HookContext): Promise<void> {
   if (!(ctx.request instanceof Request)) return;
@@ -164,7 +179,7 @@ export const twoFactorResetCancel = () =>
     hooks: {
       after: [
         {
-          matcher: (ctx) => signInIsStrong(ctx.path ?? ""),
+          matcher: (ctx) => signInCancelsTwoFactorReset(ctx.path ?? ""),
           handler: createAuthMiddleware(async (ctx) => {
             try {
               await cancelOnStrongSignIn(ctx);

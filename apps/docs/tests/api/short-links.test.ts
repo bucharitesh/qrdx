@@ -120,6 +120,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
+  vi.unstubAllEnvs();
 });
 
 interface Visit {
@@ -193,6 +194,8 @@ describe("an active code", () => {
 
 describe("scan recording", () => {
   it("records one scan per visit, after the redirect, without touching updatedAt", async () => {
+    // On Vercel, whose geo headers this visit carries (lib/request-geo.ts).
+    vi.stubEnv("VERCEL", "1");
     seedCode();
     const response = await visit("Menu123", {
       headers: {

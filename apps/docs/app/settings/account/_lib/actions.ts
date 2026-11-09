@@ -38,14 +38,16 @@ import {
 } from "@/lib/storage/r2";
 
 // Settings → Account. auth.api calls bypass Better Auth's HTTP rate limiter,
-// so every action is limited per user here.
+// so actions are limited per user here, each kind on its own limiter.
 //
 // Linking and unlinking Google or GitHub change how the account can be
 // signed in to, so both need a recent "Confirm it's you"
 // (lib/account/confirmation.ts) and answer CONFIRMATION_REQUIRED without one.
 // Over HTTP, Better Auth's /link-social and /unlink-account ask the same
-// (packages/auth/confirm-gate.ts). Signing out sessions never asks: someone
-// whose account is under attack must be able to sign the attacker out at once.
+// (packages/auth/confirm-gate.ts). Signing out sessions never asks and is
+// never rate limited: someone whose account is under attack must be able to
+// sign the attacker out at once, and a limiter the attacker's session shares
+// would let it use up their tries first.
 
 export type AccountActionResult = { ok: true } | { ok: false; error: string };
 
@@ -53,8 +55,8 @@ const profileLimiter = createRateLimiter({
   prefix: "qrdx:account-profile",
   limiter: slidingWindow(20, "10 m"),
 });
-const securityLimiter = createRateLimiter({
-  prefix: "qrdx:account-security",
+const signInMethodsLimiter = createRateLimiter({
+  prefix: "qrdx:account-sign-in-methods",
   limiter: slidingWindow(20, "10 m"),
 });
 
@@ -244,7 +246,7 @@ export async function linkSignInMethod(
     const allowed = await confirmedSession(SIGNED_OUT_METHODS);
     if (!allowed.ok) return allowed;
     const { session } = allowed;
-    if (!(await securityLimiter.limit(session.userId)).success) {
+    if (!(await signInMethodsLimiter.limit(session.userId)).success) {
       return linkFail(RATE_LIMITED);
     }
     const { headers: responseHeaders, response } =
@@ -292,7 +294,7 @@ export async function unlinkSignInMethod(
     const allowed = await confirmedSession(SIGNED_OUT_METHODS);
     if (!allowed.ok) return allowed;
     const { session } = allowed;
-    if (!(await securityLimiter.limit(session.userId)).success) {
+    if (!(await signInMethodsLimiter.limit(session.userId)).success) {
       return fail(RATE_LIMITED);
     }
     const accounts: LinkedAccount[] = await auth.api.listUserAccounts({
@@ -321,8 +323,13 @@ export async function unlinkSignInMethod(
 
 // ─── Sessions ───────────────────────────────────────────────────────────────
 
-// Never "Confirm it's you" here: someone whose account is under attack must
-// be able to sign the attacker's sessions out at once.
+// Never "Confirm it's you" here, and no rate limit: someone whose account is
+// under attack must be able to sign the attacker's sessions out at once. A
+// limiter per user is one a stolen session shares, so it could spend the
+// tries (on ids that don't exist) to keep the owner from signing it out.
+// Nothing here needs one: a revoke reads one row, by id and for this user
+// only, and deletes at most one of the user's own sessions; signing out the
+// others deletes them in one go.
 
 export async function revokeSession(
   input: unknown,
@@ -334,9 +341,6 @@ export async function revokeSession(
     if (!user) return fail("Sign in to manage sessions.");
     if (parsed.data.sessionId === user.sessionId) {
       return fail("That's this device. Use Sign out in the menu instead.");
-    }
-    if (!(await securityLimiter.limit(user.userId)).success) {
-      return fail(RATE_LIMITED);
     }
     // Tokens never reach the browser: look this one up by id, for this user only.
     const [row] = await db
@@ -367,9 +371,6 @@ export async function revokeOtherSessions(): Promise<AccountActionResult> {
   try {
     const user = await signedIn();
     if (!user) return fail("Sign in to manage sessions.");
-    if (!(await securityLimiter.limit(user.userId)).success) {
-      return fail(RATE_LIMITED);
-    }
     await auth.api.revokeOtherSessions({ headers: user.requestHeaders });
     revalidatePath(PATH);
     return { ok: true };

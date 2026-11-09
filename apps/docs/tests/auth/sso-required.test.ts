@@ -1,16 +1,25 @@
 // "Require single sign-on for <domain>" (packages/auth/ee/sso-required.ts):
 // the rules on their own, then inside a real Better Auth (memory adapter)
-// with the plugins in production's order: last-used method, email codes,
-// two-step verification and its challenge, an SSO callback stand-in, then
+// with the plugins in production's order: the 30-day session cap, last-used
+// method, email codes, two-step verification and its challenge, passkeys
+// (a software P-256 authenticator signs), an SSO callback stand-in, then
 // the requirement. The stand-in sits at the plugin's own OIDC callback path
 // (/sso/callback/:providerId) and signs in whoever it's told to, the way the
 // real callback does once the identity provider has answered, so the
 // challenge and the requirement see exactly what they see in production.
 // Workspaces, connections, members and plans live in the fake database
 // (tests/support/fake-db.ts), where the requirement looks them up.
-import { createHmac } from "node:crypto";
+import {
+  createHash,
+  createHmac,
+  generateKeyPairSync,
+  type KeyObject,
+  randomBytes,
+  sign,
+} from "node:crypto";
 import { realpathSync } from "node:fs";
 import path from "node:path";
+import { checkPasskeyWithoutSignIn } from "@repo/auth/passkey-check";
 import {
   coveringDomains,
   holdsOwnerRole,
@@ -300,9 +309,18 @@ const betterAuthDir = realpathSync(
   ),
 );
 
+const passkeyDir = realpathSync(
+  path.resolve(
+    import.meta.dirname,
+    "../../../../packages/auth/node_modules/@better-auth/passkey",
+  ),
+);
+
 const sentCodes = new Map<string, string>();
 let auth: any;
 let memory: Record<string, Record<string, unknown>[]>;
+/** Every update written to the session table, in order. */
+const sessionWrites: Record<string, unknown>[] = [];
 
 beforeAll(async () => {
   const { betterAuth } = await import(`${betterAuthDir}/dist/index.mjs`);
@@ -312,6 +330,8 @@ beforeAll(async () => {
   const { memoryAdapter } = await import(
     `${betterAuthDir}/dist/adapters/memory-adapter/index.mjs`
   );
+  const { passkey } = await import(`${passkeyDir}/dist/index.mjs`);
+  const { sessionLifetime } = await import("@repo/auth/session-lifetime");
   const { createAuthEndpoint, sessionMiddleware } = await import(
     `${betterAuthDir}/dist/api/index.mjs`
   );
@@ -328,6 +348,20 @@ beforeAll(async () => {
     account: [],
     verification: [],
     twoFactor: [],
+    passkey: [],
+  };
+  // Counts what reaches the database, after every hook.
+  const counted = (options: unknown) => {
+    const adapter = memoryAdapter(memory)(options);
+    return {
+      ...adapter,
+      update: async (args: { model: string; update: unknown }) => {
+        if (args.model === "session") {
+          sessionWrites.push(args.update as Record<string, unknown>);
+        }
+        return adapter.update(args);
+      },
+    };
   };
   const twoFactorPlugin = twoFactor({
     issuer: "QRdx",
@@ -401,10 +435,11 @@ beforeAll(async () => {
   auth = betterAuth({
     baseURL: ORIGIN,
     secret: SECRET,
-    database: memoryAdapter(memory),
+    database: counted,
     rateLimit: { enabled: false },
     disabledPaths: [...rules.UNUSED_TWO_FACTOR_PATHS],
     plugins: [
+      sessionLifetime(),
       lastLoginMethod({
         customResolveMethod: (ctx: { path?: string }) =>
           signInMethodForPath(ctx.path),
@@ -423,11 +458,87 @@ beforeAll(async () => {
       }),
       twoFactorPlugin,
       signInChallenge(twoFactorPlugin, { relyingParty: null }),
+      passkey({ rpID: "localhost", rpName: "QRdx", origin: ORIGIN }),
       ssoCallbackStandIn,
       ssoRequirementGate(),
     ],
   });
 });
+
+// ─── A software authenticator ───────────────────────────────────────────────
+
+interface Authenticator {
+  credentialId: string;
+  privateKey: KeyObject;
+  count: number;
+}
+
+/** A P-256 key pair and its passkey row (COSE public key, as stored). */
+function newAuthenticator(userId: string): Authenticator {
+  const pair = generateKeyPairSync("ec", { namedCurve: "P-256" });
+  const jwk = pair.publicKey.export({ format: "jwk" });
+  const x = Buffer.from(String(jwk.x), "base64url");
+  const y = Buffer.from(String(jwk.y), "base64url");
+  // COSE_Key {1: 2 (EC2), 3: -7 (ES256), -1: 1 (P-256), -2: x, -3: y}
+  const cose = Buffer.concat([
+    Buffer.from([0xa5, 0x01, 0x02, 0x03, 0x26, 0x20, 0x01, 0x21, 0x58, 0x20]),
+    x,
+    Buffer.from([0x22, 0x58, 0x20]),
+    y,
+  ]);
+  const credentialId = randomBytes(16).toString("base64url");
+  memory.passkey.push({
+    id: `pk-${credentialId}`,
+    name: "Laptop",
+    publicKey: cose.toString("base64"),
+    userId,
+    credentialID: credentialId,
+    counter: 0,
+    deviceType: "singleDevice",
+    backedUp: false,
+    transports: "internal",
+    createdAt: new Date(),
+  });
+  return { credentialId, privateKey: pair.privateKey, count: 0 };
+}
+
+/** An assertion over `challenge` by `key`, user verified. */
+function assertion(key: Authenticator, challenge: string) {
+  const clientDataJSON = Buffer.from(
+    JSON.stringify({
+      type: "webauthn.get",
+      challenge,
+      origin: ORIGIN,
+      crossOrigin: false,
+    }),
+  );
+  const counter = Buffer.alloc(4);
+  counter.writeUInt32BE(++key.count);
+  const authenticatorData = Buffer.concat([
+    createHash("sha256").update("localhost").digest(),
+    Buffer.from([0x01 | 0x04]),
+    counter,
+  ]);
+  const signature = sign(
+    "sha256",
+    Buffer.concat([
+      authenticatorData,
+      createHash("sha256").update(clientDataJSON).digest(),
+    ]),
+    key.privateKey,
+  );
+  return {
+    id: key.credentialId,
+    rawId: key.credentialId,
+    type: "public-key",
+    clientExtensionResults: {},
+    response: {
+      clientDataJSON: clientDataJSON.toString("base64url"),
+      authenticatorData: authenticatorData.toString("base64url"),
+      signature: signature.toString("base64url"),
+    },
+  };
+}
 
 const ORG = "org_acme";
 const OWNER_EMAIL = "owner@acme.test";
@@ -533,6 +644,7 @@ afterEach(() => {
 
 beforeEach(() => {
   seedWorkspace();
+  sessionWrites.length = 0;
 });
 
 describe("signing in while SSO is required", () => {
@@ -757,6 +869,103 @@ describe("reading the session while SSO is required", () => {
     seedWorkspace();
     await makeOwner();
     expect((await browser.session())?.user.email).toBe(OWNER_EMAIL);
+  });
+});
+
+describe("a 24-hour session's refresh", () => {
+  it("isn't written on every read, only once a day has passed since the last write", async () => {
+    const browser = new Browser(auth.handler);
+    await ssoSignIn(browser, "rae@acme.test");
+    const found = await browser.session();
+    const markerEnd = new Date(
+      markerOf(found?.session.id ?? "")?.expiresAt as Date,
+    ).getTime();
+    const row = memory.session.find(
+      (s) => s.id === found?.session.id,
+    ) as Record<string, unknown>;
+    const end = new Date(row.expiresAt as Date).getTime();
+    expect(end).toBeLessThanOrEqual(markerEnd);
+    // Better Auth wants to refresh a session this near its end on every read.
+    sessionWrites.length = 0;
+    for (let i = 0; i < 3; i++) {
+      expect((await browser.session())?.user.email).toBe("rae@acme.test");
+      expect(
+        await auth.api.getSession({ headers: browser.headers() }),
+      ).not.toBeNull();
+      expect((await browser.get("/test/who-am-i")).status).toBe(200);
+    }
+    expect(sessionWrites).toEqual([]);
+    expect(new Date(row.expiresAt as Date).getTime()).toBe(end);
+
+    // A day after its last write it's written once (never past the SSO
+    // end), then left alone again.
+    row.updatedAt = new Date(Date.now() - 25 * 60 * 60 * 1000);
+    expect((await browser.session())?.user.email).toBe("rae@acme.test");
+    expect((await browser.session())?.user.email).toBe("rae@acme.test");
+    expect(sessionWrites).toHaveLength(1);
+    expect(new Date(row.expiresAt as Date).getTime()).toBeLessThanOrEqual(
+      markerEnd,
+    );
+  });
+});
+
+describe('"Confirm it\'s you" with a passkey, for someone SSO is required for', () => {
+  /** An SSO session with a passkey of its own, and a challenge for it. */
+  async function ssoWithPasskey(email: string) {
+    const browser = new Browser(auth.handler);
+    await ssoSignIn(browser, email);
+    expect((await browser.session())?.user.email).toBe(email);
+    const key = newAuthenticator(userIdOf(email) as string);
+    const options = await browser.get("/passkey/generate-authenticate-options");
+    expect(options.status).toBe(200);
+    return {
+      browser,
+      key,
+      response: () => assertion(key, String(options.json?.challenge)),
+    };
+  }
+
+  it("checks it server-side (the app's verifyOwnPasskey) without the sign-in rule refusing it", async () => {
+    const { browser, response } = await ssoWithPasskey("ida@acme.test");
+    const before = sessionsOf("ida@acme.test").length;
+    const created: {
+      session: { id: string };
+      user: { email: string };
+    } = await checkPasskeyWithoutSignIn(() =>
+      auth.api.verifyPasskeyAuthentication({
+        headers: browser.headers(),
+        body: { response: response() },
+      }),
+    );
+    expect(created.user.email).toBe("ida@acme.test");
+    // The throwaway session: no SSO marker, and the app deletes it at once.
+    expect(sessionsOf("ida@acme.test")).toHaveLength(before + 1);
+    expect(markerOf(created.session.id)).toBeUndefined();
+    // The person's own SSO session is untouched.
+    expect((await browser.session())?.user.email).toBe("ida@acme.test");
+  });
+
+  it("refuses the same check without the mark, and a passkey sign-in over HTTP", async () => {
+    const first = await ssoWithPasskey("jay@acme.test");
+    await expect(
+      auth.api.verifyPasskeyAuthentication({
+        headers: first.browser.headers(),
+        body: { response: first.response() },
+      }),
+    ).rejects.toMatchObject({ body: { code: SSO_REQUIRED_ERROR } });
+
+    // "Continue with passkey" is a sign-in: refused, mark or not (the mark
+    // only counts server-side).
+    const signIn = new Browser(auth.handler);
+    const options = await signIn.get("/passkey/generate-authenticate-options");
+    const reply = await checkPasskeyWithoutSignIn(() =>
+      signIn.post("/passkey/verify-authentication", {
+        response: assertion(first.key, String(options.json?.challenge)),
+      }),
+    );
+    expect(reply.status).toBe(403);
+    expect(reply.json?.code).toBe(SSO_REQUIRED_ERROR);
+    expect(await signIn.session()).toBeNull();
   });
 });
 

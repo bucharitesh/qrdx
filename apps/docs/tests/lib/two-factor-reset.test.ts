@@ -1,9 +1,10 @@
 // Support's turn-off of two-step verification waits 7 days
 // (lib/account/two-factor-reset-server.ts, packages/auth/two-factor-reset.ts):
 // support schedules it (admin user page, strong confirmation, never an
-// admin's account or their own), the address is told the day, the person can
-// cancel it in Settings ("Confirm it's you") or by confirming with their
-// second step, support can cancel it, and the daily cron completes the due
+// admin's account or their own) only once the address was told the day, the
+// person can cancel it in Settings ("Confirm it's you") or by confirming with
+// an authenticator code or a backup code (never a passkey alone), support can
+// cancel it (strong confirmation again), and the daily cron completes the due
 // ones: off, every session signed out, "turned off by support" notice,
 // audited. Against in-memory tables (tests/support/fake-db.ts) with the
 // notices and the audit log recorded; nothing connects to a database.
@@ -22,6 +23,8 @@ const state = vi.hoisted(() => ({
   sessionId: "admin_session",
   admin: null as null | { id: string; email: string; name: string },
   notices: [] as { kind: string; email: string; extra?: unknown }[],
+  /** What sending a notice comes to */
+  noticeOutcome: "emailed" as "emailed" | "logged" | "not-sent",
   audit: [] as {
     action: string;
     actor: { id: string; email: string };
@@ -102,6 +105,7 @@ vi.mock("@/lib/account/two-factor-notice-server", () => ({
     options?: { extra?: unknown },
   ) => {
     state.notices.push({ kind, email, extra: options?.extra });
+    return state.noticeOutcome;
   },
   sendBackupCodeUsedNotice: async () => {},
 }));
@@ -201,7 +205,7 @@ function seed({ on = true, adminTwoFactor = true } = {}) {
 const adminConfirms = () =>
   confirmation.recordConfirmation(
     { userId: ADMIN.id, sessionId: "admin_session" },
-    { strong: true },
+    { strong: "code" },
   );
 
 const pendingRow = () =>
@@ -218,6 +222,7 @@ beforeEach(() => {
   state.sessionId = "admin_session";
   state.admin = ADMIN;
   state.notices = [];
+  state.noticeOutcome = "emailed";
   state.audit = [];
   state.failReset = false;
   state.errors = [];
@@ -233,6 +238,7 @@ beforeEach(() => {
 afterEach(() => {
   vi.useRealTimers();
   vi.restoreAllMocks();
+  vi.unstubAllEnvs();
 });
 
 // ─── The rules ──────────────────────────────────────────────────────────────
@@ -298,8 +304,10 @@ describe("the notices", () => {
     expect(lines.join("\n")).toContain("on November 16, 2026 (UTC)");
     expect(lines.join("\n")).toContain("Until then, nothing changes.");
     expect(lines.join("\n")).toMatch(
-      /sign in to QRdx with your passkey, authenticator app or a backup code: that cancels it/,
+      /sign in to QRdx with your authenticator app or a backup code: that cancels it/,
     );
+    // A passkey doesn't cancel it (it may be on the lost device).
+    expect(lines.join("\n")).not.toMatch(/passkey/);
     expect(lines.join("\n")).toContain("reply to this email");
     expect(template.twoFactorNoticeSubject("support-reset-scheduled")).toBe(
       "QRdx support will turn off two-step verification",
@@ -315,7 +323,7 @@ describe("the notices", () => {
       template.twoFactorNoticeLines("support-reset-cancelled", {
         cancelledBy: "sign-in",
       })[0],
-    ).toMatch(/You signed in with your second step/);
+    ).toMatch(/You signed in with your authenticator app or a backup code/);
     // Support's notices don't say "if this was you, there's nothing to do".
     expect(template.SUPPORT_KINDS.has("support-reset-scheduled")).toBe(true);
     expect(template.SUPPORT_KINDS.has("support-reset-cancelled")).toBe(true);
@@ -437,6 +445,139 @@ describe("support starting a reset", () => {
       error: "Two-step verification is already off.",
     });
   });
+
+  it("never for an admin by ADMIN_EMAILS (verified address) or ADMIN_USER_IDS", async () => {
+    seed();
+    await adminConfirms();
+    fakeDb.seed("user", [
+      {
+        id: "boot_1",
+        email: "Boot@QRdx.test",
+        emailVerified: true,
+        twoFactorEnabled: true,
+        role: "user",
+      },
+      {
+        id: "boot_2",
+        email: "boot-id@qrdx.test",
+        emailVerified: false,
+        twoFactorEnabled: true,
+        role: "user",
+      },
+    ]);
+    vi.stubEnv("ADMIN_EMAILS", "boot@qrdx.test");
+    vi.stubEnv("ADMIN_USER_IDS", "boot_2");
+    for (const userId of ["boot_1", "boot_2"]) {
+      expect(
+        await support.resetTwoFactorAction({ userId, reason: "Ticket 1234" }),
+        userId,
+      ).toEqual({
+        ok: false,
+        error: "An admin's two-step verification can't be turned off here.",
+      });
+    }
+    expect(state.notices).toEqual([]);
+    // An unverified address on the list isn't an admin's.
+    Object.assign(fakeDb.find("user", { id: "boot_1" }) ?? {}, {
+      emailVerified: false,
+    });
+    expect(
+      (
+        await support.resetTwoFactorAction({
+          userId: "boot_1",
+          reason: "Ticket 1234",
+        })
+      ).ok,
+    ).toBe(true);
+  });
+});
+
+describe("support starting a reset, when the notice can't go out", () => {
+  const scheduledRows = () =>
+    fakeDb
+      .rows("verification")
+      .filter((row) => String(row.identifier).startsWith("qrdx-2fa-reset-"));
+
+  it("schedules nothing when the email wasn't sent", async () => {
+    seed();
+    await adminConfirms();
+    state.noticeOutcome = "not-sent";
+    expect(await support.resetTwoFactorAction(startInput)).toEqual({
+      ok: false,
+      error:
+        "The email to the account's address couldn't be sent, so nothing was scheduled. Try again in a few minutes.",
+    });
+    expect(scheduledRows()).toEqual([]);
+    expect(state.audit).toEqual([]);
+  });
+
+  it("schedules nothing from a server that only logs it, against a shared database", async () => {
+    seed();
+    await adminConfirms();
+    state.noticeOutcome = "logged";
+    vi.stubEnv("DATABASE_URL", "postgres://u:p@ep-cool-1.neon.tech/qrdx");
+    expect(await support.resetTwoFactorAction(startInput)).toEqual({
+      ok: false,
+      error:
+        "This server doesn't send email, so the account's address can't be told and nothing was scheduled. Start the reset from production.",
+    });
+    expect(scheduledRows()).toEqual([]);
+  });
+
+  it("never counts a logged notice in production, whatever the database", async () => {
+    seed();
+    await adminConfirms();
+    state.noticeOutcome = "logged";
+    vi.stubEnv("NODE_ENV", "production");
+    vi.stubEnv("DATABASE_URL", "postgres://u:p@localhost:5432/qrdx");
+    expect((await support.resetTwoFactorAction(startInput)).ok).toBe(false);
+    expect(scheduledRows()).toEqual([]);
+  });
+
+  it("counts a logged notice in local development against a local database (the e2e)", async () => {
+    seed();
+    await adminConfirms();
+    state.noticeOutcome = "logged";
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("DATABASE_URL", "postgres://postgres@127.0.0.1:5433/qrdx");
+    expect((await support.resetTwoFactorAction(startInput)).ok).toBe(true);
+    expect(scheduledRows()).toHaveLength(1);
+  });
+
+  it("the rule on its own", async () => {
+    const { resetNoticeDelivered, isLocalDatabaseUrl } = await import(
+      "@/lib/account/two-factor-notice"
+    );
+    const local = "postgres://u@localhost:5432/qrdx";
+    const remote = "postgres://u@db.example.com:5432/qrdx";
+    const rule = (
+      outcome: "emailed" | "logged" | "not-sent",
+      nodeEnv: string | undefined,
+      databaseUrl: string | undefined,
+    ) => resetNoticeDelivered(outcome, { nodeEnv, databaseUrl });
+    expect(rule("emailed", "production", remote)).toBe(true);
+    expect(rule("emailed", "development", undefined)).toBe(true);
+    expect(rule("not-sent", "development", local)).toBe(false);
+    expect(rule("logged", "development", local)).toBe(true);
+    expect(rule("logged", "development", remote)).toBe(false);
+    expect(rule("logged", "development", undefined)).toBe(false);
+    expect(rule("logged", "production", local)).toBe(false);
+    for (const url of [
+      "postgres://u@localhost/qrdx",
+      "postgresql://u:p@127.0.0.1:5432/qrdx",
+      "postgres://u@[::1]:5432/qrdx",
+    ]) {
+      expect(isLocalDatabaseUrl(url), url).toBe(true);
+    }
+    for (const url of [
+      "postgres://u@localhost.example.com/qrdx",
+      "postgres://u@127.0.0.2/qrdx",
+      "not a url",
+      "",
+    ]) {
+      expect(isLocalDatabaseUrl(url), url).toBe(false);
+    }
+  });
 });
 
 // ─── Cancelling ─────────────────────────────────────────────────────────────
@@ -449,8 +590,45 @@ describe("cancelling it", () => {
     state.audit = [];
   }
 
+  it("support can, after the admin's own strong confirmation", async () => {
+    await scheduled();
+    const cancel = () =>
+      support.cancelTwoFactorResetAction({
+        userId: USER,
+        reason: "Owner replied: not them",
+      });
+    expect(await cancel()).toEqual({
+      ok: false,
+      error: CONFIRMATION_REQUIRED,
+    });
+    expect(pendingRow()).toBeDefined();
+    expect(state.notices).toEqual([]);
+
+    // A confirmation by emailed code isn't enough.
+    await confirmation.recordConfirmation({
+      userId: ADMIN.id,
+      sessionId: "admin_session",
+    });
+    expect(await cancel()).toEqual({
+      ok: false,
+      error: CONFIRMATION_REQUIRED,
+    });
+
+    // Nor with two-step verification off on the admin's own account.
+    await adminConfirms();
+    Object.assign(fakeDb.find("user", { id: ADMIN.id }) ?? {}, {
+      twoFactorEnabled: false,
+    });
+    expect(await cancel()).toEqual({
+      ok: false,
+      error: "Turn on two-step verification for your own account first.",
+    });
+    expect(pendingRow()).toBeDefined();
+  });
+
   it("support can, and the address is told", async () => {
     await scheduled();
+    await adminConfirms();
     expect(
       await support.cancelTwoFactorResetAction({
         userId: USER,
@@ -493,10 +671,11 @@ describe("cancelling it", () => {
     expect(pendingRow()).toBeDefined();
     expect(state.notices).toEqual([]);
 
-    // Confirming with their second step (the dialog) already cancels it…
+    // Confirming with an authenticator or backup code (the dialog) already
+    // cancels it…
     await confirmation.recordConfirmation(
       { userId: USER, sessionId: "s_1" },
-      { strong: true },
+      { strong: "code" },
     );
     expect(pendingRow()).toBeUndefined();
     // …and the action, tried again, finds it done.
@@ -524,6 +703,25 @@ describe("cancelling it", () => {
     state.sessionId = "s_2";
     // A confirmation recorded before the reset was scheduled (no cancel then).
     await confirmation.recordConfirmation({ userId: USER, sessionId: "s_2" });
+    expect(await settings.cancelSupportTwoFactorReset()).toEqual({ ok: true });
+    expect(pendingRow()).toBeUndefined();
+    expect(state.notices.map((n) => n.kind)).toEqual([
+      "support-reset-cancelled",
+    ]);
+  });
+
+  it("isn't cancelled by confirming with a passkey alone; Cancel still works", async () => {
+    await scheduled();
+    state.sessionUser = USER;
+    state.sessionId = "s_1";
+    await confirmation.recordConfirmation(
+      { userId: USER, sessionId: "s_1" },
+      { strong: "passkey" },
+    );
+    // Still waiting: the passkey may be on the lost device.
+    expect(pendingRow()).toBeDefined();
+    expect(state.notices).toEqual([]);
+    // That confirmation lets the person press Cancel in Settings.
     expect(await settings.cancelSupportTwoFactorReset()).toEqual({ ok: true });
     expect(pendingRow()).toBeUndefined();
     expect(state.notices.map((n) => n.kind)).toEqual([
