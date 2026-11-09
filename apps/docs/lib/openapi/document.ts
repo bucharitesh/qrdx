@@ -1116,7 +1116,9 @@ From your server, send an API key (or token) and the scan's \`sid\`, or the code
         security: security("codes:write"),
         description: `Subscribes a URL to events, the REST Hooks way Zapier, Make and n8n call it (Business).
 
-QRdx posts each event to the URL, signed with the \`secret\` in the response, which is shown only once ([verifying signatures](${docs("webhooks")})). Send the URL as \`target_url\` (or \`targetUrl\`, \`hookUrl\`, \`hook_url\` or \`url\`) and one \`event\` or several \`events\`.`,
+QRdx posts each event to the URL, signed with the \`secret\` in the response, which is shown only once ([verifying signatures](${docs("webhooks")})). Send the URL as \`target_url\` (or \`targetUrl\`, \`hookUrl\`, \`hook_url\` or \`url\`) and one \`event\` or several \`events\`.
+
+With a signed-in browser session instead of a key or token, it needs a recent "Confirm it's you" (\`CONFIRMATION_REQUIRED\` otherwise).`,
         requestBody: {
           required: true,
           content: {
@@ -1142,7 +1144,13 @@ QRdx posts each event to the URL, signed with the \`secret\` in the response, wh
           ),
           ...errorResponses(
             c,
-            [...AUTH_ERRORS, ...WRITE_ERRORS, "PLAN_REQUIRED", "LIMIT_REACHED"],
+            [
+              ...AUTH_ERRORS,
+              ...WRITE_ERRORS,
+              "PLAN_REQUIRED",
+              "LIMIT_REACHED",
+              "CONFIRMATION_REQUIRED",
+            ],
             { scope: "codes:write" },
           ),
         },

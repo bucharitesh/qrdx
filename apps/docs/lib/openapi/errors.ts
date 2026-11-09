@@ -92,6 +92,13 @@ export const API_ERRORS = [
     fix: "Ask a workspace owner or admin, or call the API with an API key from your server.",
   },
   {
+    code: "CONFIRMATION_REQUIRED",
+    status: 403,
+    meaning:
+      "Creating a hook with a signed-in browser session needs a recent \"Confirm it's you\". API keys and OAuth tokens aren't asked.",
+    fix: "Confirm it's you in QRdx, then try again within 10 minutes, or create the hook with an API key from your server.",
+  },
+  {
     code: "CONVERSIONS_OFF",
     status: 403,
     meaning:
