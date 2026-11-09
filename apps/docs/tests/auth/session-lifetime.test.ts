@@ -356,6 +356,25 @@ describe("a session in Better Auth", () => {
     expect(listed).toHaveLength(1);
   });
 
+  it("wraps the adapter per call, never Better Auth's shared context", async () => {
+    // The cap swaps in its wrapper on each call's context; Better Auth copies
+    // the context per call (dispatchAuthEndpoint), so the shared one keeps
+    // the plain adapter. If an upgrade stopped copying, every later call
+    // would share one wrapper and its sessions: this fails first.
+    const WRAPPED = Symbol.for("@repo/auth/session-lifetime");
+    const plain = (await auth.$context).internalAdapter;
+    expect(plain[WRAPPED]).toBeUndefined();
+    const { browser } = await signIn("shared@qrdx.test");
+    expect(await sessionOf(browser)).not.toBeNull();
+    expect(
+      await auth.api.getSession({ headers: browser.headers() }),
+    ).not.toBeNull();
+    await browser.request("POST", "/update-user", { name: "Shared" });
+    const after = (await auth.$context).internalAdapter;
+    expect(after).toBe(plain);
+    expect(after[WRAPPED]).toBeUndefined();
+  });
+
   it("leaves other session updates alone", async () => {
     const { row } = await signIn("update@qrdx.test");
     age(row, { signedInDaysAgo: 28, refreshedDaysAgo: 0.1, expiresInDays: 2 });
