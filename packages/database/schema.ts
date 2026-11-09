@@ -6,6 +6,7 @@ import {
   index,
   integer,
   json,
+  jsonb,
   numeric,
   pgTable,
   primaryKey,
@@ -851,6 +852,50 @@ export const adminAuditLog = pgTable(
     index("admin_audit_log_created_at_idx").on(table.createdAt),
     index("admin_audit_log_actor_user_id_idx").on(table.actorUserId),
     index("admin_audit_log_target_idx").on(table.targetType, table.targetId),
+  ]
+);
+
+// Workspace audit log (apps/docs/ee/audit-log, Business): who changed what in
+// a workspace, read by its owners and admins. Separate from the staff log
+// above. manual-sql/2026-11-09-workspace-audit-log.sql creates it.
+export const workspaceAuditLog = pgTable(
+  "workspace_audit_log",
+  {
+    id: text("id").primaryKey(),
+    // No FKs: rows outlive the actor and the target. Deleted with the
+    // workspace by the app, and after 365 days by the daily cron.
+    organizationId: text("organization_id").notNull(),
+    actorType: text("actor_type").notNull(), // user | api_key | oauth_app | system
+    actorUserId: text("actor_user_id"),
+    // Snapshot of who did it ("Ana <ana@acme.com>", the key's or app's name).
+    actorLabel: text("actor_label"),
+    apiKeyId: text("api_key_id"),
+    oauthAppId: text("oauth_app_id"),
+    action: text("action").notNull(), // e.g. "code.destination_changed"
+    targetType: text("target_type"),
+    targetId: text("target_id"),
+    targetLabel: text("target_label"),
+    // Small before/after of the fields that changed. Never secrets.
+    metadata: jsonb("metadata").$type<Record<string, unknown>>(),
+    ip: text("ip"),
+    device: text("device"),
+    createdAt: timestamp("created_at").notNull(),
+  },
+  (table) => [
+    index("workspace_audit_log_org_created_at_idx").on(
+      table.organizationId,
+      table.createdAt.desc()
+    ),
+    index("workspace_audit_log_org_action_idx").on(
+      table.organizationId,
+      table.action
+    ),
+    index("workspace_audit_log_org_actor_idx").on(
+      table.organizationId,
+      table.actorUserId
+    ),
+    // The daily purge of rows older than 365 days, across workspaces.
+    index("workspace_audit_log_created_at_idx").on(table.createdAt),
   ]
 );
 
