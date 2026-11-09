@@ -11,6 +11,7 @@ import {
   connectLimiter,
   revokeStoredToken,
 } from "@/lib/connected-accounts/server";
+import { connectConfirmationNeeded } from "@/lib/data-connections/connect-confirmation";
 import { cleanupDataConnection } from "@/lib/data-connections/server";
 import { HttpError } from "@/lib/error-response";
 import {
@@ -58,6 +59,18 @@ export async function GET(request: Request, context: RouteContext) {
         return NextResponse.json(
           { error: `${integrationDef.name} is not configured on this server` },
           { status: 503 },
+        );
+      }
+
+      // A tool QRdx sends data to asks "Confirm it's you" first
+      // (lib/data-connections/connect-confirmation.ts).
+      if (await connectConfirmationNeeded(provider, session.user.id)) {
+        return NextResponse.json(
+          {
+            error: "Confirm it's you first, then try again.",
+            code: "CONFIRMATION_REQUIRED",
+          },
+          { status: 403 },
         );
       }
 

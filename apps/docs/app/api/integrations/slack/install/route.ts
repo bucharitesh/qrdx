@@ -4,6 +4,7 @@ import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { connectLimiter } from "@/lib/connected-accounts/server";
+import { connectConfirmationNeeded } from "@/lib/data-connections/connect-confirmation";
 import { requireUser } from "@/lib/data-connections/http";
 import { rememberSlackWorkspace } from "@/lib/data-connections/server";
 import {
@@ -25,9 +26,11 @@ const back = (request: Request, error: string) =>
 /**
  * GET /api/integrations/slack/install?workspace=<org id|personal> — "Add to
  * Slack" for one QRdx workspace: checks membership (and that the workspace
- * doesn't shut the person out for lacking two-step verification) and plan,
- * remembers the workspace for the callback, then sends the person to Slack.
- * The callback adds the channel through addChatTarget, which checks again.
+ * doesn't shut the person out for lacking two-step verification), plan and
+ * a recent "Confirm it's you" (the channel gets form answers; the page asks
+ * before it comes here), remembers the workspace for the callback, then
+ * sends the person to Slack. The callback adds the channel through
+ * addChatTarget, which checks the workspace and plan again.
  */
 export async function GET(request: Request) {
   const user = await requireUser(connectLimiter, "integrations:slack-install");
@@ -64,6 +67,9 @@ export async function GET(request: Request) {
   }
   const plan = await getPlanForScope({ userId: user.userId, organizationId });
   if (!getPlanLimits(plan).webhooks) return back(request, "plan_required");
+  if (await connectConfirmationNeeded("slack", user.userId)) {
+    return back(request, "confirmation_required");
+  }
 
   await rememberSlackWorkspace(organizationId);
   return NextResponse.redirect(await createIntegrationAuthUrl("slack"));

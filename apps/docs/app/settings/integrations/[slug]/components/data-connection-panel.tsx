@@ -9,6 +9,8 @@ import { ExportSquare } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import { toast } from "sonner";
+import { ensureConfirmed } from "@/components/confirm-identity/actions";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { SheetsExportButton } from "@/components/data-connections/sheets-export-button";
 import { SyncStatus } from "@/components/data-connections/sync-status";
 import {
@@ -136,6 +138,41 @@ function SheetsPanel() {
   );
 }
 
+/**
+ * "Add another channel": asks "Confirm it's you" in the page (the channel
+ * will get form answers), then goes to the install route, which checks it
+ * again before sending the person to Slack.
+ */
+function AddSlackChannelButton() {
+  const { withConfirmation } = useConfirmation();
+  const [busy, setBusy] = useState(false);
+
+  const add = async () => {
+    setBusy(true);
+    try {
+      const result = await withConfirmation(
+        () => ensureConfirmed(),
+        "add-slack-channel",
+      );
+      if (result?.ok) {
+        window.location.assign("/api/integrations/slack/install");
+        return;
+      }
+      if (result) toast.error(result.error);
+    } catch {
+      toast.error("Something went wrong. Check your connection and try again.");
+    }
+    setBusy(false);
+  };
+
+  return (
+    <Button disabled={busy} onClick={add}>
+      {busy && <Spinner className="size-3.5" />}
+      Add another channel
+    </Button>
+  );
+}
+
 function SlackPanel({ metadata }: { metadata?: Record<string, unknown> }) {
   const channels = Array.isArray(metadata?.channels)
     ? (metadata.channels as Array<{
@@ -178,9 +215,7 @@ function SlackPanel({ metadata }: { metadata?: Record<string, unknown> }) {
         removes these channels; webhooks you pasted yourself keep working.
       </p>
       <div className="flex flex-wrap gap-2">
-        <Button asChild>
-          <a href="/api/integrations/slack/install">Add another channel</a>
-        </Button>
+        <AddSlackChannelButton />
         <Button asChild variant="outline">
           <Link href="/settings/notifications">Choose alerts</Link>
         </Button>

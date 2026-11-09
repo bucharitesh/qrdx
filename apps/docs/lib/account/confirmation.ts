@@ -165,6 +165,8 @@ export const CONFIRMATION_ACTIONS = {
   "create-webhook": "add a webhook",
   "change-webhook-url": "send a webhook to a new address",
   "add-notification-webhook": "send notifications to a new address",
+  "add-slack-channel": "add a Slack channel",
+  "connect-data-out": "send your scans or form answers to another tool",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
