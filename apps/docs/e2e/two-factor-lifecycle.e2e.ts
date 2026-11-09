@@ -431,7 +431,7 @@ const DB_SQL = process.env.E2E_DB_SQL ?? "";
 function expireConfirmations() {
   if (!DB_SQL) throw new Error("Set E2E_DB_SQL to run the confirm step");
   execSync(DB_SQL, {
-    input: `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%';`,
+    input: `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%' and value in (select id from "user" where email like '%${RUN}%');`,
     encoding: "utf8",
     stdio: ["pipe", "pipe", "inherit"],
   });

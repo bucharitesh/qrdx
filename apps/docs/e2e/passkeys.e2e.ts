@@ -165,7 +165,7 @@ function sql(statement: string): string {
  */
 function expireConfirmations() {
   sql(
-    `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%';`,
+    `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%' and value in (select id from "user" where email like '%${RUN}%');`,
   );
 }
 
