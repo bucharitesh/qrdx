@@ -19,6 +19,17 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
+import { deleteWorkspaceAuditEvents } from "@/ee/audit-log/retention";
+import {
+  auditInvitationRevoked,
+  auditInvited,
+  auditMemberJoined,
+  auditMemberLeft,
+  auditMemberRemoved,
+  auditRoleChanged,
+  auditWorkspaceUpdated,
+  workspaceBefore,
+} from "@/ee/audit-log/team-events";
 import {
   can,
   canAssignRole,
@@ -367,10 +378,12 @@ export async function updateWorkspace(input: {
     if (Object.keys(data).length === 0) return fail("Nothing to save.");
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
 
+    const before = await workspaceBefore(scope.organizationId);
     await auth.api.updateOrganization({
       headers: await headers(),
       body: { organizationId: scope.organizationId, data },
     });
+    auditWorkspaceUpdated(scope, before, data);
 
     revalidateTeam();
     const slug = await workspaceSlug(scope.organizationId);
@@ -445,6 +458,7 @@ export async function inviteMember(input: {
         resend: true,
       },
     })) as { id: string; email: string; role: string; expiresAt: Date };
+    auditInvited(scope, invitation);
 
     // The copyable invite link keeps working whether or not this is sent.
     const { sendTeamInviteEmail } = await import("@/lib/events/emails");
@@ -488,6 +502,7 @@ export async function cancelInvitation(input: {
       headers: await headers(),
       body: { invitationId: parsed.data.invitationId },
     });
+    auditInvitationRevoked(scope, parsed.data.invitationId);
 
     revalidateTeam();
     return { ok: true, data: null };
@@ -524,6 +539,7 @@ export async function updateMemberRole(input: {
         organizationId,
       },
     });
+    auditRoleChanged(scope, target, parsed.data.role);
 
     revalidateTeam();
     return { ok: true, data: null };
@@ -565,6 +581,7 @@ export async function removeMember(input: {
       headers: await headers(),
       body: { memberIdOrEmail: parsed.data.memberId, organizationId },
     });
+    auditMemberRemoved(scope, target);
 
     revalidateTeam();
     return { ok: true, data: null };
@@ -589,6 +606,7 @@ export async function leaveTeam(input: {
       headers: await headers(),
       body: { organizationId: parsed.data.organizationId },
     });
+    auditMemberLeft(scope.userId, parsed.data.organizationId);
 
     revalidateTeam();
     return { ok: true, data: null };
@@ -634,6 +652,7 @@ export async function deleteTeam(input: {
       headers: await headers(),
       body: { organizationId: parsed.data.organizationId },
     });
+    await deleteWorkspaceAuditEvents(parsed.data.organizationId);
 
     revalidateTeam();
     return { ok: true, data: null };
@@ -657,6 +676,7 @@ export async function acceptInvitation(input: {
       headers: await headers(),
       body: { invitationId: parsed.data.invitationId },
     })) as { member: { organizationId: string } };
+    auditMemberJoined(scope.userId, result.member.organizationId, "invitation");
 
     revalidateTeam();
     return {

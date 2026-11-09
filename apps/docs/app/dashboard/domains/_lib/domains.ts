@@ -4,6 +4,7 @@ import { customDomain, database as db, qrCode } from "@repo/database";
 import cuid from "cuid";
 import { and, asc, count, eq, inArray, isNull, type SQL } from "drizzle-orm";
 import { z } from "zod";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import {
   type CustomDomainMode,
   checkManualDomain,
@@ -468,6 +469,23 @@ export async function addDomain(
     await deleteRow(row.id);
     throw limitReached(limit);
   }
+  // Built after the response: a provider failure below deletes the claim,
+  // and a domain that already points here is verified at once.
+  recordAuditEvent(scope, async () => {
+    const [saved] = await db
+      .select({ verified: customDomain.verified })
+      .from(customDomain)
+      .where(eq(customDomain.id, row.id))
+      .limit(1);
+    if (!saved) return [];
+    const target = { type: "domain" as const, id: row.id, label: hostname };
+    return [
+      { action: "domain.added", target },
+      ...(saved.verified
+        ? [{ action: "domain.verified" as const, target }]
+        : []),
+    ];
+  });
 
   if (mode === "manual") return toView(row, 0);
 
@@ -528,6 +546,12 @@ export async function verifyDomain(
   }
 
   const saved = await saveCheck(row, next, check, mode);
+  if (!row.verified && saved.verified) {
+    recordAuditEvent(scope, {
+      action: "domain.verified",
+      target: { type: "domain", id: row.id, label: row.hostname },
+    });
+  }
   const counts = await codeCounts([saved.id]);
   return toView(saved, counts.get(saved.id) ?? 0);
 }
@@ -555,5 +579,9 @@ export async function removeDomain(
   await db
     .delete(customDomain)
     .where(and(eq(customDomain.id, row.id), scopeWhere(scope)));
+  recordAuditEvent(scope, {
+    action: "domain.removed",
+    target: { type: "domain", id: row.id, label: row.hostname },
+  });
   return { id: row.id, hostname: row.hostname };
 }

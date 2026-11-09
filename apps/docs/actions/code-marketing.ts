@@ -10,6 +10,8 @@ import {
   codeIdSchema,
   destinationUrlSchema,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import { codeEventsByIds } from "@/ee/audit-log/code-events";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
@@ -379,10 +381,17 @@ export async function saveCodeRouting(input: {
     const hold = next
       ? await screenRoutingUrls(scope, row, next, previous)
       : false;
-    return saveColumn(scope, row, {
+    const saved = await saveColumn(scope, row, {
       routing: next ? stampSplits(next, previous, new Date()) : null,
       ...(hold ? { isActive: false } : {}),
     });
+    recordAuditEvent(scope, () =>
+      codeEventsByIds("code.routing_changed", [row.id], {
+        before: { rules: previous?.rules.length ?? 0 },
+        after: { rules: next?.rules.length ?? 0 },
+      }),
+    );
+    return saved;
   });
 }
 

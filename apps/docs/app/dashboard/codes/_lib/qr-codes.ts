@@ -26,6 +26,8 @@ import {
   getDomainRefs,
 } from "@/app/dashboard/domains/_lib/domains";
 import { getDefaultThemeStyle } from "@/app/dashboard/themes/_lib/queries";
+import { codeEvents, codeUpdateEvents } from "@/ee/audit-log/code-events";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import {
   contentTypeForDestination,
@@ -859,6 +861,7 @@ export async function createCodes(
   );
   // code.created webhooks + alerts, after the response (never throws).
   (await import("@/lib/events/emit")).emitCodesCreated(scope, views);
+  recordAuditEvent(scope, codeEvents("code.created", views));
   return views;
 }
 
@@ -1014,6 +1017,7 @@ export async function updateCode(
         !(field === "slug" && values.slug === current.slug),
     ),
   );
+  recordAuditEvent(scope, () => codeUpdateEvents(current, view, values));
   return view;
 }
 
@@ -1055,6 +1059,10 @@ export async function setCodeArchived(
       limit: limits.dynamicCodes,
     });
   }
+  recordAuditEvent(
+    scope,
+    codeEvents(archived ? "code.archived" : "code.unarchived", [row]),
+  );
   return toOneCodeView(row);
 }
 
@@ -1077,5 +1085,6 @@ export async function deleteCode(
     );
   }
   await db.delete(qrCode).where(and(eq(qrCode.id, id), scopeWhere(scope)));
+  recordAuditEvent(scope, codeEvents("code.deleted", [current]));
   return { id };
 }

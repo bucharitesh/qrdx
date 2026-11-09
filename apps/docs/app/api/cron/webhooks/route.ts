@@ -1,3 +1,4 @@
+import { purgeAuditEvents } from "@/ee/audit-log/retention";
 import {
   completeDueTwoFactorResets,
   type DueResetsSummary,
@@ -107,6 +108,8 @@ export async function GET(request: Request) {
       );
     }
   }
+  // Workspace audit log rows past 365 days (ee/audit-log/retention.ts).
+  const auditEventsPurged = trigger === "daily" ? await purgeAuditEvents() : 0;
   // Data-out streams (Google Sheets, HubSpot, Mailchimp) ride the same cron.
   const integrations = await runIntegrationSyncs({ budgetMs: 12_000 });
 
@@ -143,6 +146,7 @@ export async function GET(request: Request) {
       verificationsPruned,
       knownDevicesPruned,
       twoFactorResets,
+      auditEventsPurged,
       integrations,
       nextDueAt: nextDueAt === null ? null : new Date(nextDueAt).toISOString(),
     }),

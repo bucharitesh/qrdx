@@ -28,6 +28,7 @@ import {
 } from "@repo/auth/sso-rules";
 import { database as db } from "@repo/database";
 import { endSessionsWithoutSso, sessionCameFromSso } from "@/ee/sso/required";
+import { auditSso, auditSsoJoinRole } from "@/ee/audit-log/security-events";
 import { HttpError } from "@/lib/error-response";
 import { checkWebhookUrl, isBlockedAddress } from "@/lib/events/url-safety";
 import { can } from "@/lib/permissions";
@@ -669,6 +670,7 @@ export async function createSsoConnection(
   const row = await findConnection(scope.organizationId);
   if (!row)
     throw fail(500, "UNKNOWN_ERROR", "We couldn't save the connection.");
+  auditSso(scope, "sso.created", row);
   return toView(row, await verificationToken(providerId, requestHeaders));
 }
 
@@ -724,6 +726,7 @@ export async function verifySsoDomain(
     await unverifySsoDomain(row.providerId);
     await assertDomainFree(row.domain, scope.organizationId);
   }
+  auditSso(scope, "sso.domain_verified", row);
   return toView({ ...row, domainVerified: true }, null);
 }
 
@@ -772,6 +775,7 @@ export async function updateSsoConnection(
     throw pluginFailure(error, "We couldn't update the connection.");
   }
   const updated = existingOrThrow(await findConnection(scope.organizationId));
+  auditSso(scope, "sso.updated", updated, input.protocol);
   return toView(updated, null);
 }
 
@@ -803,6 +807,7 @@ export async function deleteSsoConnection(
     });
   }
   clearSsoRequirementCache();
+  auditSso(scope, "sso.deleted", row);
   return { domain: row.domain };
 }
 
@@ -874,5 +879,6 @@ export async function setSsoJoinRole(
   } catch (error) {
     throw pluginFailure(error, "We couldn't save the role.");
   }
+  auditSsoJoinRole(scope, ssoJoinRoleFromMetadata(metadata), role);
   return role;
 }

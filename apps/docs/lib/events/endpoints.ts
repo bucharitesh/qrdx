@@ -9,6 +9,8 @@ import {
 import cuid from "cuid";
 import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
+import { changedFields } from "@/ee/audit-log/metadata";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
 import { can } from "@/lib/permissions";
 import { assertCan } from "@/lib/permissions-server";
@@ -252,6 +254,12 @@ export async function createEndpoint(
     })
     .returning();
   invalidateSubscribers(scope);
+  // URL and events only: never the signing secret.
+  recordAuditEvent(scope, {
+    action: "webhook.created",
+    target: { type: "webhook", id: (row as EndpointRow).id, label: input.url },
+    metadata: { events: input.events },
+  });
   return { endpoint: toView(row as EndpointRow), secret };
 }
 
@@ -282,6 +290,14 @@ export async function updateEndpoint(
     .returning();
   if (!row) throw notFound();
   invalidateSubscribers(scope);
+  recordAuditEvent(scope, {
+    action: "webhook.updated",
+    target: { type: "webhook", id, label: row.url },
+    metadata: changedFields(
+      { url: current.url, events: current.events, active: current.active },
+      values,
+    ),
+  });
   return toView(row);
 }
 
@@ -294,9 +310,13 @@ export async function deleteEndpoint(
   const deleted = await db
     .delete(webhookEndpoint)
     .where(and(eq(webhookEndpoint.id, id), endpointScopeWhere(scope)))
-    .returning({ id: webhookEndpoint.id });
+    .returning({ id: webhookEndpoint.id, url: webhookEndpoint.url });
   if (deleted.length === 0) throw notFound();
   invalidateSubscribers(scope);
+  recordAuditEvent(scope, {
+    action: "webhook.deleted",
+    target: { type: "webhook", id, label: deleted[0]?.url ?? null },
+  });
   return { id };
 }
 
@@ -320,8 +340,14 @@ export async function rotateSecret(
     .update(webhookEndpoint)
     .set({ secret })
     .where(and(eq(webhookEndpoint.id, id), endpointScopeWhere(scope)))
-    .returning({ id: webhookEndpoint.id });
+    .returning({ id: webhookEndpoint.id, url: webhookEndpoint.url });
   if (!row) throw notFound();
+  // That it changed, never the secret.
+  recordAuditEvent(scope, {
+    action: "webhook.updated",
+    target: { type: "webhook", id, label: row.url },
+    metadata: { replaced: "Signing secret" },
+  });
   return secret;
 }
 
