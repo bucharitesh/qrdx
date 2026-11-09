@@ -1,8 +1,14 @@
 import type { BetterAuthPlugin } from "better-auth";
-import { APIError, createAuthMiddleware } from "better-auth/api";
 import {
+  APIError,
+  createAuthMiddleware,
+  getSessionFromCtx,
+} from "better-auth/api";
+import {
+  fieldHoldsRole,
   INVALID_ROLE,
   isWorkspaceRoleName,
+  rolesInField,
   type WorkspaceRoleName,
 } from "./workspace-role-rules";
 
@@ -18,6 +24,12 @@ import {
 //
 // The app's own server actions only ever send one of the five names, so
 // neither layer changes anything they do.
+//
+// The gate also keeps the owner and billing roles, which decide who pays, to
+// owners (apps/docs/lib/permissions.ts canAssignRole): the plugin only
+// reserves the owner role, so over HTTP an admin could otherwise give or
+// take away billing. The app's actions check this first, with their own
+// words.
 
 const REFUSALS = {
   write: "That isn't one of the workspace's roles.",
@@ -43,11 +55,41 @@ export function assertWorkspaceRole(
   if (!isWorkspaceRoleName(role)) throw invalidRoleError(kind);
 }
 
+const INVITE_PATH = "/organization/invite-member";
+const UPDATE_ROLE_PATH = "/organization/update-member-role";
+
 /** The endpoints that take a role in their body. */
 export const ROLE_REQUEST_PATHS: readonly string[] = [
-  "/organization/invite-member",
-  "/organization/update-member-role",
+  INVITE_PATH,
+  UPDATE_ROLE_PATH,
 ];
+
+/** The code a role change only an owner may make carries. */
+export const OWNERS_ONLY_ROLE = "OWNERS_ONLY_ROLE";
+
+/** Roles only owners give or take away: they decide who pays. */
+const OWNERS_ONLY: readonly WorkspaceRoleName[] = ["owner", "billing"];
+
+/**
+ * Whether giving `role` (to someone who held `previous`, or to a new
+ * invitee when null) is a change only an owner may make.
+ */
+export function ownersOnlyChange(
+  role: string,
+  previous: string | null
+): boolean {
+  return [role, previous].some((field) =>
+    rolesInField(field).some((name) => OWNERS_ONLY.includes(name))
+  );
+}
+
+function ownersOnlyError(): APIError {
+  return new APIError("FORBIDDEN", {
+    code: OWNERS_ONLY_ROLE,
+    message:
+      "Only owners can give or take away the owner and billing roles, since they decide who pays for the workspace.",
+  });
+}
 
 export function checkRoleRequest(path: string, body: unknown): void {
   if (!ROLE_REQUEST_PATHS.includes(path)) return;
@@ -90,6 +132,45 @@ export const workspaceRoleHooks = {
   },
 };
 
+const text = (value: unknown): string | null =>
+  typeof value === "string" && value.length > 0 ? value : null;
+
+type HookContext = Parameters<Parameters<typeof createAuthMiddleware>[0]>[0];
+
+/**
+ * Refuses a change to or from owner or billing by someone who isn't an
+ * owner of the workspace. Anything it can't resolve (signed out, not a
+ * member, no such member) is left to the endpoint, which refuses it.
+ */
+async function checkOwnersOnly(ctx: HookContext, role: string): Promise<void> {
+  const found = await getSessionFromCtx(ctx);
+  if (!found) return;
+  const body = (ctx.body ?? {}) as Record<string, unknown>;
+  const organizationId =
+    text(body.organizationId) ?? found.session.activeOrganizationId ?? null;
+  if (!organizationId) return;
+  const member = (where: { field: string; value: string }[]) =>
+    ctx.context.adapter.findOne<{ role: string; organizationId: string }>({
+      model: "member",
+      where,
+    });
+  let previous: string | null = null;
+  if (ctx.path === UPDATE_ROLE_PATH) {
+    const memberId = text(body.memberId);
+    if (!memberId) return;
+    const target = await member([{ field: "id", value: memberId }]);
+    if (!target || target.organizationId !== organizationId) return;
+    previous = target.role;
+  }
+  if (!ownersOnlyChange(role, previous)) return;
+  const actor = await member([
+    { field: "organizationId", value: organizationId },
+    { field: "userId", value: found.user.id },
+  ]);
+  if (!actor) return;
+  if (!fieldHoldsRole(actor.role, "owner")) throw ownersOnlyError();
+}
+
 export const workspaceRoleGate = () =>
   ({
     id: "qrdx-workspace-roles",
@@ -97,9 +178,12 @@ export const workspaceRoleGate = () =>
       before: [
         {
           matcher: (ctx) => ROLE_REQUEST_PATHS.includes(ctx.path ?? ""),
-          handler: createAuthMiddleware((ctx) => {
+          handler: createAuthMiddleware(async (ctx) => {
             checkRoleRequest(ctx.path, ctx.body);
-            return Promise.resolve();
+            await checkOwnersOnly(
+              ctx,
+              (ctx.body as { role: WorkspaceRoleName }).role
+            );
           }),
         },
       ],
