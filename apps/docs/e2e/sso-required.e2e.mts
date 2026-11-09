@@ -852,6 +852,122 @@ try {
       hoursLeft(benTwoStep.session.id) <= 24,
   );
 
+  console.log("a passkey confirms for someone single sign-on is required of");
+  // Confirming with a passkey checks it server-side without signing in; the
+  // requirement's session rule must not refuse that (it isn't a sign-in).
+  await cdp.send("WebAuthn.enable", { enableUI: false });
+  const { authenticatorId } = (await cdp.send(
+    "WebAuthn.addVirtualAuthenticator",
+    {
+      options: {
+        protocol: "ctap2",
+        transport: "internal",
+        hasResidentKey: true,
+        hasUserVerification: true,
+        isUserVerified: true,
+        automaticPresenceSimulation: true,
+      },
+    },
+  )) as { authenticatorId: string };
+  const benPasskeys = () =>
+    Number(sql(`select count(*) from passkey where user_id=${q(userId(ben))}`));
+  await goto(`${BASE}/settings/account#passkeys`, { wait: 3000 });
+  await waitText("Passkeys");
+  await evaluate(() => {
+    const button = window.__e2e.byRole("button", "Add passkey", {
+      exact: true,
+    });
+    if (button) window.__e2e.click(button);
+  });
+  // His sign-in answered the second step, which counts as confirming.
+  await waitFor(() => Boolean(window.__e2e.byRole("dialog", "Add a passkey")));
+  await evaluate(() => {
+    const dialog = window.__e2e.byRole("dialog", "Add a passkey");
+    const button = dialog
+      ? window.__e2e.byRole("button", "Continue", { exact: true, root: dialog })
+      : null;
+    if (button) window.__e2e.click(button);
+  });
+  await waitText("Passkey added");
+  check("Ben adds a passkey", benPasskeys() === 1, String(benPasskeys()));
+  // The account's lockout counter for codes and passkeys (two_factor).
+  const benFailures = () =>
+    sql(
+      `select coalesce(sum(failed_verification_count), 0) from two_factor where user_id=${q(userId(ben))}`,
+    );
+  await forgetSignInConfirmation();
+  await evaluate(() => {
+    const button = window.__e2e.byRole("button", "New codes", { exact: true });
+    if (button) window.__e2e.click(button);
+  });
+  await waitText("Make new backup codes?");
+  await evaluate(() => {
+    const dialog = window.__e2e.byRole("dialog", "Make new backup codes?");
+    const button = dialog
+      ? window.__e2e.byRole("button", "Make new codes", {
+          exact: true,
+          root: dialog,
+        })
+      : null;
+    if (button) window.__e2e.click(button);
+  });
+  check('New codes asks "Confirm it\'s you"', await confirmAsked(20_000));
+  // The passkey is the method shown, and its prompt opens on its own.
+  const passkeyConfirmed = await waitFor(
+    // biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
+    () => document.body.innerText.includes("Your new backup codes"),
+    { timeout: 20_000 },
+  ).then(
+    () => true,
+    () => false,
+  );
+  const confirmSaid = passkeyConfirmed
+    ? ""
+    : ((await evaluate(
+        (t: string) =>
+          // biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
+          (window.__e2e.byRole("dialog", t) as HTMLElement | null)?.innerText ??
+          "",
+        CONFIRM,
+      )) as string);
+  check(
+    "Ben confirms with his passkey: the new codes show",
+    passkeyConfirmed,
+    confirmSaid.replace(/\s+/g, " ").slice(0, 200),
+  );
+  await shot("11-passkey-confirms-sso-member");
+  const benAfterPasskey = await browserSession();
+  check(
+    "…still signed in with his SSO session",
+    benAfterPasskey?.session.id === benTwoStep?.session.id &&
+      markerOf(benAfterPasskey?.session.id ?? "").includes(providerId),
+  );
+  check(
+    "…and no failed attempt is left on his lockout count",
+    benFailures() === "0",
+    benFailures(),
+  );
+  if (passkeyConfirmed) {
+    await evaluate(() => {
+      const box = window.__e2e.byLabel("I've saved my backup codes");
+      if (box) window.__e2e.click(box);
+    });
+    await sleep(300);
+    await evaluate(() => {
+      const dialog = document.querySelector('[role="dialog"]');
+      const done = [...(dialog?.querySelectorAll("button") ?? [])].find(
+        (b) => b.textContent?.trim() === "Done",
+      );
+      if (done) window.__e2e.click(done);
+    });
+  } else {
+    await cdp.send("Input.dispatchKeyEvent", {
+      type: "keyDown",
+      key: "Escape",
+    });
+  }
+  await cdp.send("WebAuthn.removeVirtualAuthenticator", { authenticatorId });
+
   console.log("24 hours on");
   sql(
     `update verification set expires_at = ${NOW} - interval '1 minute' where identifier=${q(`qrdx-sso-session-${benTwoStep?.session.id}`)}`,
