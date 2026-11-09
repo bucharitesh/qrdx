@@ -1,13 +1,14 @@
 import { headers as requestHeaders } from "next/headers";
 import { describeUserAgent, formatLocation } from "@/lib/account/sessions";
+import { geoPlatform } from "@/lib/request-geo";
 import { scanGeo } from "@/lib/scans";
 
 /**
  * Where and when a security event happened, for the security emails: the
  * browser, approximate place and network address of the request, and the
  * time in that place's zone. Location and time zone come from the hosting
- * platform's geo headers, so they're missing when self-hosted (time is then
- * in UTC).
+ * platform's own geo headers (lib/request-geo.ts: the time zone only on
+ * Vercel), so they're missing when self-hosted (time is then in UTC).
  */
 export interface RequestDetails {
   /** "Chrome on macOS"; "Unknown device" when the request didn't say */
@@ -34,8 +35,12 @@ function clientIp(headers: HeaderSource): string | null {
   return IP.test(ip) ? ip : null;
 }
 
-/** The platform's zone for the client ("Asia/Kolkata") if the runtime knows it. */
+/**
+ * The platform's zone for the client ("Asia/Kolkata") if the runtime knows
+ * it: Vercel's header, on Vercel only (anywhere else a client could send it).
+ */
 function clientTimeZone(headers: HeaderSource): string {
+  if (geoPlatform() !== "vercel") return "UTC";
   const zone = headers.get("x-vercel-ip-timezone")?.trim() ?? "";
   if (!TIME_ZONE.test(zone)) return "UTC";
   try {
