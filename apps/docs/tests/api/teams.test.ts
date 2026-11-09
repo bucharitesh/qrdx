@@ -606,6 +606,34 @@ describe("who manages a team", () => {
     expect(calls("createInvitation")).toHaveLength(0);
   });
 
+  it("sends only an exact role name to the plugin, from an owner too", async () => {
+    signIn("u_owner", "org_acme");
+    for (const role of [
+      " owner",
+      "owner ",
+      "member, owner",
+      "member,owner",
+      "Owner",
+      " admin",
+    ]) {
+      expect(
+        (
+          await teams.inviteMember({
+            email: "new@example.com",
+            role: role as "admin",
+          })
+        ).ok,
+        role,
+      ).toBe(false);
+      expect(
+        await teams.updateMemberRole({ memberId: "m_3", role: role as "admin" }),
+        role,
+      ).toEqual({ ok: false, error: "Invalid role." });
+    }
+    expect(calls("createInvitation")).toHaveLength(0);
+    expect(calls("updateMemberRole")).toHaveLength(0);
+  });
+
   it("lets only owners make someone an owner", async () => {
     signIn("u_admin", "org_acme");
     expect(
