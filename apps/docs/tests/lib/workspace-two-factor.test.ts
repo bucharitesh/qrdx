@@ -551,6 +551,36 @@ describe("Better Auth's workspace endpoints over HTTP", () => {
     ).resolves.toBeUndefined();
   });
 
+  it("refuses metadata on a new workspace over HTTP, and makes one without it", async () => {
+    for (const metadata of [{ requireTwoFactor: true }, {}, null]) {
+      await expect(
+        server.checkWorkspaceTwoFactorGate(
+          http("/organization/create", {
+            name: "New",
+            slug: "new-team",
+            metadata,
+          }),
+          as(ADA),
+        ),
+      ).rejects.toMatchObject({
+        body: { code: server.WORKSPACE_SETTINGS_IN_APP },
+      });
+    }
+    await expect(
+      server.checkWorkspaceTwoFactorGate(
+        http("/organization/create", { name: "New", slug: "new-team" }),
+        as(ADA),
+      ),
+    ).resolves.toBeUndefined();
+    // The app's own create (actions/organizations.ts) sends none anyway.
+    await expect(
+      server.checkWorkspaceTwoFactorGate(
+        { ...http("/organization/create", { metadata: {} }), http: false },
+        as(ADA),
+      ),
+    ).resolves.toBeUndefined();
+  });
+
   it("doesn't check the app's own calls (they went through lib/scope.ts)", async () => {
     await expect(
       server.checkWorkspaceTwoFactorGate(

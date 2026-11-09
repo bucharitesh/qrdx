@@ -75,7 +75,7 @@ describe("can(role, action)", () => {
 describe("strongestRole", () => {
   it.each([
     ["owner,admin", "owner"],
-    ["member, admin", "admin"],
+    ["member,owner", "owner"],
     ["member,billing", "member"],
     ["viewer,billing", "billing"],
     ["viewer", "viewer"],
@@ -83,7 +83,14 @@ describe("strongestRole", () => {
     [null, "viewer"],
     // Unknown roles grant no more than reading.
     ["superuser", "viewer"],
-  ] as const)("%s → %s", (field, role) => {
+    // Each part matched exactly, as Better Auth reads the field: a role with
+    // a space or another case is no role (packages/auth/workspace-role-rules.ts).
+    [" owner", "viewer"],
+    ["owner ", "viewer"],
+    ["Owner", "viewer"],
+    ["member, owner", "member"],
+    ["member, admin", "member"],
+  ] as const)("%j → %s", (field, role) => {
     expect(strongestRole(field)).toBe(role);
   });
 });
@@ -112,7 +119,11 @@ describe("who can hand out which role", () => {
 describe("plan roles", () => {
   it("counts owners and billing members as the ones who pay", () => {
     expect(holdsPlanRole("owner")).toBe(true);
-    expect(holdsPlanRole("member, billing")).toBe(true);
+    expect(holdsPlanRole("member,billing")).toBe(true);
+    // Exact parts only.
+    expect(holdsPlanRole("member, billing")).toBe(false);
+    expect(holdsPlanRole(" owner")).toBe(false);
+    expect(holdsPlanRole("Owner")).toBe(false);
     expect(holdsPlanRole("admin")).toBe(false);
     expect(holdsPlanRole("viewer")).toBe(false);
     expect(holdsPlanRole(null)).toBe(false);

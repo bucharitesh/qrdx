@@ -11,6 +11,7 @@
 // their other sign-in methods, so a broken identity provider can't lock
 // everyone out of the setting.
 
+import { fieldHoldsRole } from "../workspace-role-rules";
 import { parseWorkspaceMetadata } from "./sso-rules";
 
 /**
@@ -96,9 +97,12 @@ export function parseSsoMarker(value: unknown): SsoMarker | null {
   return null;
 }
 
-/** True when a member's role field holds the owner role. */
+/**
+ * True when a member's role field holds the owner role, matched exactly
+ * (../workspace-role-rules.ts): " owner" is no owner.
+ */
 export function holdsOwnerRole(role: string | null | undefined): boolean {
-  return (role ?? "").split(",").some((part) => part.trim() === "owner");
+  return fieldHoldsRole(role, "owner");
 }
 
 /**

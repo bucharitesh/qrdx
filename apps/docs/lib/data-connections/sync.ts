@@ -36,7 +36,7 @@ import { and, eq, inArray, sql } from "drizzle-orm";
 import { after } from "next/server";
 import { getConnection } from "@/lib/connected-accounts/server";
 import { scheduleWorkerRun } from "@/lib/events/worker-due";
-import { isScopeMember, loadResponses, loadScans } from "./data";
+import { loadResponses, loadScans, syncPauseReason } from "./data";
 import { dataCallsAllowed } from "./server";
 
 // Data-out worker. Each sink integration keeps its stream state in
@@ -243,12 +243,13 @@ async function syncOne(
       return "skipped";
     }
     const scope = { userId: row.userId, organizationId: state.organizationId };
-    if (!(await isScopeMember(scope))) {
+    const paused = await syncPauseReason(scope);
+    if (paused) {
       await release({
         ...state,
         enabled: false,
         status: "paused",
-        lastError: "Paused: you're no longer a member of that team",
+        lastError: paused,
       });
       return "failed";
     }

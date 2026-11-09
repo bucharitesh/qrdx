@@ -159,8 +159,19 @@ describe("the rules", () => {
       expect(parseSsoMarker(bad)).toBeNull();
     }
     expect(holdsOwnerRole("owner")).toBe(true);
-    expect(holdsOwnerRole("admin, owner")).toBe(true);
-    for (const role of ["admin", "member", "co-owner", "", null]) {
+    expect(holdsOwnerRole("admin,owner")).toBe(true);
+    // Matched exactly, like Better Auth: " owner" is no owner.
+    for (const role of [
+      "admin",
+      "member",
+      "co-owner",
+      "",
+      null,
+      " owner",
+      "owner ",
+      "Owner",
+      "admin, owner",
+    ]) {
       expect(holdsOwnerRole(role), String(role)).toBe(false);
     }
     expect(coveringDomains("eu.acme.com")).toEqual(["eu.acme.com", "acme.com"]);
@@ -578,6 +589,19 @@ describe("signing in while SSO is required", () => {
       const browser = new Browser(auth.handler);
       const reply = await emailCodeSignIn(browser, "off@acme.test");
       expect(reply.status, JSON.stringify(setup)).toBe(200);
+      await browser.post("/sign-out");
+    }
+  });
+
+  it("doesn't count a Business plan held under an inexact ' owner' role", async () => {
+    for (const role of [" owner", "owner ", "Owner", "member, owner"]) {
+      seedWorkspace();
+      const payer = fakeDb.find("member", { id: "m_owner" });
+      if (payer) payer.role = role;
+      clearSsoRequirementCache();
+      const browser = new Browser(auth.handler);
+      const reply = await emailCodeSignIn(browser, "payer@acme.test");
+      expect(reply.status, role).toBe(200);
       await browser.post("/sign-out");
     }
   });

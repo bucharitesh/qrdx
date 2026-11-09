@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
+import { TWO_FACTOR_REQUIRED_MESSAGE } from "@repo/auth/workspace-two-factor-rules";
 import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -127,6 +128,7 @@ export function IntegrationDetail({
         token_exchange_failed: "Failed to exchange authorization code",
         unexpected_error: "An unexpected error occurred",
         plan_required: "Slack alerts are part of the Business plan.",
+        two_factor_required: TWO_FACTOR_REQUIRED_MESSAGE,
         limit_reached:
           "That workspace already has 10 Slack or Discord channels.",
         not_configured: `${name} can't be connected right now.`,

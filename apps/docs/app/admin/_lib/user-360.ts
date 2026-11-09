@@ -176,7 +176,8 @@ export async function loadTeams(userId: string, email: string) {
   const teamIds = memberships.map((row) => row.organizationId);
   const managed = memberships
     .filter((row) =>
-      row.role.split(",").some((r) => ["owner", "admin"].includes(r.trim())),
+      // Parts matched exactly, as Better Auth reads them: " owner" is no owner.
+      row.role.split(",").some((r) => r === "owner" || r === "admin"),
     )
     .map((row) => row.organizationId);
 
