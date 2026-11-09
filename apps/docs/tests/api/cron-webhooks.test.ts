@@ -1,7 +1,7 @@
 // GET /api/cron/webhooks: the frequent caller (?source=github, GitHub Actions
 // every 5 minutes) checks the Upstash marker first and skips without touching
 // Postgres while nothing is due; it runs in full when work is due or the
-// marker can't be trusted; the daily Vercel call always runs in full (and
+// marker can't be trusted; the daily cron call always runs in full (and
 // alone completes support's due turn-offs of two-step verification); every
 // full run re-seeds the marker. Redis is in memory (tests/support/fake-redis)
 // and the database work is replaced by fakes that record their calls.
