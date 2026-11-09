@@ -21,6 +21,8 @@ import {
   getPageSettings,
   PAGE_SETTINGS_TYPE,
 } from "@/components/landing/page-settings-block";
+import { changedFields } from "@/ee/audit-log/metadata";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import { buildTemplateContent, getTemplate } from "@/lib/landing/templates";
@@ -436,6 +438,10 @@ export async function createPage(
   }
 
   await insertVersion(pageId, content, scope.userId);
+  recordAuditEvent(scope, {
+    action: "page.created",
+    target: { type: "page", id: pageId, label: input.title ?? template.label },
+  });
   return { pageId, codeId };
 }
 
@@ -448,7 +454,7 @@ export async function publishPage(
   scope: ActiveScope,
   input: PublishPageInput,
 ): Promise<{ version: number; updatedAt: Date }> {
-  await findPageRow(scope, input.id);
+  const page = await findPageRow(scope, input.id);
   const content = validateContent(input.content);
   await assertContentAllowed(scope, content);
 
@@ -479,6 +485,14 @@ export async function publishPage(
     );
   }
   await insertVersion(input.id, content, scope.userId);
+  recordAuditEvent(scope, {
+    action: "page.published",
+    target: { type: "page", id: input.id, label: input.title || page.title },
+    metadata: {
+      version: row.version,
+      ...changedFields({ title: page.title }, { title: input.title }),
+    },
+  });
   return row;
 }
 
@@ -516,6 +530,11 @@ export async function deletePage(
   await db
     .delete(landingPage)
     .where(and(eq(landingPage.id, id), pageScopeWhere(scope)));
+  recordAuditEvent(scope, {
+    action: "page.deleted",
+    target: { type: "page", id, label: row.title },
+    metadata: { codes: codes.length },
+  });
   return { id, deletedCodes: codes.length };
 }
 

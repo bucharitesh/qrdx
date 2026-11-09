@@ -34,6 +34,7 @@ import {
   or,
   sql,
 } from "drizzle-orm";
+import { deleteWorkspaceAuditEvents } from "@/ee/audit-log/retention";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import {
   getCustomDomainMode,
@@ -352,6 +353,7 @@ export async function executeAccountDeletion({
           organizationId: team.organizationId,
         }),
       );
+    await deleteWorkspaceAuditEvents(team.organizationId);
   }
 
   // 5. What lives outside the database, collected before the rows go.
@@ -378,6 +380,7 @@ export async function executeAccountDeletion({
     await db
       .delete(organization)
       .where(eq(organization.id, ownWorkspaceId(userId)));
+    await deleteWorkspaceAuditEvents(ownWorkspaceId(userId));
   }
 
   // 6. Likes the user gave stop counting.
