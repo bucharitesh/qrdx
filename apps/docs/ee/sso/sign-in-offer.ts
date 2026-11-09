@@ -1,6 +1,7 @@
 "use server";
 
 import { ssoSignInOffered } from "@repo/auth/sso";
+import { ssoRequiredForDomain } from "@repo/auth/sso-required";
 import { emailDomain, looksLikeEmail } from "@repo/auth/sso-rules";
 import { createMemoryLimiter } from "@repo/rate-limit";
 import { headers } from "next/headers";
@@ -13,7 +14,9 @@ import { logError } from "@/lib/shared";
 // away (app/(auth)/components/email-code-sign-in.tsx). The answer depends on
 // the domain only (packages/auth/ee/sso.ts ssoSignInOffered), never on
 // whether an account exists, and says no more than starting "Sign in with
-// SSO" already does.
+// SSO" already does. When the workspace requires SSO for the domain, it says
+// that too (`required`), so the panel can say so; the workspace's owners can
+// still ask for a code, so the code stays one click away.
 
 // Per IP and in this instance's memory, like Better Auth's limits on the
 // other sign-in endpoints, and as loose as starting an SSO sign-in (60 a
@@ -26,6 +29,8 @@ const limiter = createMemoryLimiter({ tokens: 60, windowMs: 60_000 });
 /** Whether to offer single sign-on for the address typed in. */
 export interface SsoSignInOffer {
   sso: boolean;
+  /** Present (true) when the domain requires single sign-on. */
+  required?: true;
 }
 
 const NO_OFFER: SsoSignInOffer = { sso: false };
@@ -39,7 +44,10 @@ export async function ssoSignInOffer(email: unknown): Promise<SsoSignInOffer> {
   const domain = emailDomain(email as string);
   if (!domain) return NO_OFFER;
   try {
-    return { sso: await ssoSignInOffered(domain) };
+    if (!(await ssoSignInOffered(domain))) return NO_OFFER;
+    return (await ssoRequiredForDomain(domain))
+      ? { sso: true, required: true }
+      : { sso: true };
   } catch (error) {
     // The panel sends the code instead; no address in the log.
     logError(error as Error, { action: "ssoSignInOffer" });

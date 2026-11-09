@@ -526,6 +526,13 @@ describe("the confirmation rules", () => {
       ),
     ).toBe("tok+x");
     expect(server.sessionTokenFromSetCookie("other=1")).toBeNull();
+    // Refreshing the old session while reading it sets its cookie first;
+    // the swap's new one comes after and is the one the browser keeps.
+    expect(
+      server.sessionTokenFromSetCookie(
+        "better-auth.session_token=old.c2ln; Path=/; HttpOnly, better-auth.session_token=new.c2ln; Path=/; HttpOnly",
+      ),
+    ).toBe("new");
   });
 });
 

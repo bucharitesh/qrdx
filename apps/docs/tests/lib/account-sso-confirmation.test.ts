@@ -1,7 +1,8 @@
 // Workspace SSO changes need "Confirm it's you" (ee/sso/actions.ts): creating,
-// editing, verifying and removing the connection answer CONFIRMATION_REQUIRED
-// without a recent confirmation and never reach ee/sso/connections.ts; the
-// join role doesn't ask. Nothing connects to a database.
+// editing, verifying and removing the connection, and requiring single
+// sign-on, answer CONFIRMATION_REQUIRED without a recent confirmation and
+// never reach ee/sso/connections.ts; the join role doesn't ask. Nothing
+// connects to a database.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const state = vi.hoisted(() => ({
@@ -49,6 +50,15 @@ vi.mock("@/ee/sso/connections", () => {
     ) => {
       state.calls.push("role");
       return role;
+    },
+    setSsoRequired: async (
+      _scope: unknown,
+      _headers: unknown,
+      viewer: { sessionId: string },
+      on: boolean,
+    ) => {
+      state.calls.push(`required:${on}:${viewer.sessionId}`);
+      return { on, signedOut: 0 };
     },
   };
 });
@@ -101,6 +111,24 @@ describe("SSO connection changes", () => {
       error: { code: "UNAUTHORIZED" },
     });
     expect(state.calls).toEqual([]);
+  });
+
+  it("requiring single sign-on asks, both ways, and passes the session on", async () => {
+    expect(await actions.setSsoRequirement(true)).toEqual(required);
+    expect(await actions.setSsoRequirement(false)).toEqual(required);
+    expect(state.calls).toEqual([]);
+    state.confirmed = true;
+    expect(await actions.setSsoRequirement(true)).toMatchObject({
+      success: true,
+      data: { on: true },
+    });
+    expect(await actions.setSsoRequirement(false)).toMatchObject({
+      success: true,
+    });
+    expect(state.calls).toEqual([
+      "required:true:session_1",
+      "required:false:session_1",
+    ]);
   });
 
   it("the join role doesn't ask", async () => {

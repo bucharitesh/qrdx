@@ -311,14 +311,18 @@ export async function carryConfirmation(
 
 /**
  * The session token in Better Auth's Set-Cookie (`<token>.<signature>`,
- * URL-encoded), or null. Only used to find the new session's id.
+ * URL-encoded), or null. Only used to find the new session's id. The last
+ * one wins, as in the browser: a response can set the old session's cookie
+ * first (Better Auth refreshing it while reading it) and the new one after.
  */
 export function sessionTokenFromSetCookie(
   setCookie: string | null | undefined,
 ): string | null {
-  const match = setCookie?.match(
-    /(?:^|[\s,])(?:__Secure-)?[\w.-]*session_token=([^;,\s]+)/,
-  );
+  const match = [
+    ...(setCookie ?? "").matchAll(
+      /(?:^|[\s,])(?:__Secure-)?[\w.-]*session_token=([^;,\s]+)/g,
+    ),
+  ].at(-1);
   if (!match?.[1]) return null;
   let value: string;
   try {

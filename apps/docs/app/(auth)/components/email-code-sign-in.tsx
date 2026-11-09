@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { SSO_REQUIRED_ERROR as SSO_REQUIRED } from "@repo/auth/sso-required-rules";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -14,7 +15,8 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Sms } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { ssoSignInOffer } from "@/ee/sso/sign-in-offer";
+import { ssoSignInErrorMessage } from "@/ee/sso/messages";
+import { type SsoSignInOffer, ssoSignInOffer } from "@/ee/sso/sign-in-offer";
 import { SsoOffer } from "@/ee/sso/sso-offer";
 import type { SecondStep } from "./second-step";
 import { TwoFactorChallenge } from "./two-factor-challenge";
@@ -29,12 +31,15 @@ const DIGITS_ONLY = "^\\d+$";
 // sends the code (a code always works).
 const SSO_CHECK_TIMEOUT_MS = 4000;
 
+const NO_SSO: SsoSignInOffer = { sso: false };
+
 /**
- * Whether the address's domain signs in with SSO (ee/sso/sign-in-offer.ts).
- * False when the check fails or is slow, so it never stands between someone
- * and their code; a server action can fail after a deploy, for one.
+ * Whether the address's domain signs in with SSO, and requires it
+ * (ee/sso/sign-in-offer.ts). No offer when the check fails or is slow, so it
+ * never stands between someone and their code; a server action can fail
+ * after a deploy, for one.
  */
-async function ssoOfferedFor(address: string): Promise<boolean> {
+async function ssoOfferedFor(address: string): Promise<SsoSignInOffer> {
   let timer: number | undefined;
   try {
     const answer = await Promise.race([
@@ -45,12 +50,12 @@ async function ssoOfferedFor(address: string): Promise<boolean> {
     ]);
     if (answer === null) {
       console.warn("The SSO check took too long; sending a code instead.");
-      return false;
+      return NO_SSO;
     }
-    return answer.sso;
+    return answer;
   } catch (err) {
     console.error("The SSO check failed; sending a code instead:", err);
-    return false;
+    return NO_SSO;
   } finally {
     window.clearTimeout(timer);
   }
@@ -86,6 +91,8 @@ function verifyErrorMessage(error: NonNullable<AuthError>): [string, boolean] {
         "This account is suspended. Contact support if you think that's a mistake.",
         true,
       ];
+    case SSO_REQUIRED:
+      return [ssoSignInErrorMessage(SSO_REQUIRED), true];
     default:
       return ["Something went wrong. Try again.", false];
   }
@@ -111,8 +118,11 @@ interface EmailCodeSignInProps {
    * that first. Absent or null: codes only, nothing is asked.
    */
   sso?: { callbackURL: () => string; lastUsed?: boolean } | null;
-  /** The address being offered SSO, or null when that step isn't showing. */
-  onSsoOfferChange?: (email: string | null) => void;
+  /**
+   * The address being offered SSO, or null when that step isn't showing;
+   * `required` when its domain requires SSO.
+   */
+  onSsoOfferChange?: (email: string | null, required: boolean) => void;
 }
 
 /**
@@ -151,6 +161,11 @@ export function EmailCodeSignIn({
   >(null);
   // The address whose company signs in with SSO, while that's offered.
   const [ssoFor, setSsoFor] = useState<string | null>(null);
+  // Its domain requires SSO; `refused`: a code sign-in was just turned away.
+  const [ssoRequired, setSsoRequired] = useState<{
+    required: boolean;
+    refused: boolean;
+  }>({ required: false, refused: false });
 
   const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
 
@@ -176,9 +191,13 @@ export function EmailCodeSignIn({
     }
   }, [onEmailStep]);
 
-  const showSsoOffer = (address: string | null) => {
+  const showSsoOffer = (
+    address: string | null,
+    { required = false, refused = false } = {},
+  ) => {
     setSsoFor(address);
-    onSsoOfferChange?.(address);
+    setSsoRequired({ required, refused });
+    onSsoOfferChange?.(address, address !== null && required);
   };
 
   const requestCode = async (address: string, resend: boolean) => {
@@ -221,9 +240,10 @@ export function EmailCodeSignIn({
       setSending(true);
       setError(null);
       setNotice(null);
-      if (await ssoOfferedFor(address)) {
+      const offer = await ssoOfferedFor(address);
+      if (offer.sso) {
         setSending(false);
-        showSsoOffer(address);
+        showSsoOffer(address, { required: offer.required === true });
         return;
       }
     }
@@ -254,6 +274,15 @@ export function EmailCodeSignIn({
       });
       if (error) {
         setCode("");
+        // The address's domain requires SSO (and this isn't one of the
+        // workspace's owners): back to the SSO offer, without the code.
+        if (error.code === SSO_REQUIRED && sso) {
+          const address = sentTo;
+          onSentToChange(null);
+          showSsoOffer(address, { required: true, refused: true });
+          setError(ssoSignInErrorMessage(SSO_REQUIRED));
+          return;
+        }
         const tries =
           error.code === "INVALID_OTP" ? wrongTries + 1 : wrongTries;
         setWrongTries(tries);
@@ -402,8 +431,13 @@ export function EmailCodeSignIn({
           setError(null);
           showSsoOffer(null);
         }}
-        onEmailCode={() => void requestCode(ssoFor, false)}
+        onEmailCode={
+          ssoRequired.refused
+            ? undefined
+            : () => void requestCode(ssoFor, false)
+        }
         onError={setError}
+        required={ssoRequired.required}
         sendingCode={sending}
       />
     );
