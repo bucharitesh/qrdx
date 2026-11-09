@@ -159,8 +159,19 @@ describe("the rules", () => {
       expect(parseSsoMarker(bad)).toBeNull();
     }
     expect(holdsOwnerRole("owner")).toBe(true);
-    expect(holdsOwnerRole("admin, owner")).toBe(true);
-    for (const role of ["admin", "member", "co-owner", "", null]) {
+    expect(holdsOwnerRole("admin,owner")).toBe(true);
+    // Matched exactly, like Better Auth: " owner" is no owner.
+    for (const role of [
+      "admin",
+      "member",
+      "co-owner",
+      "",
+      null,
+      " owner",
+      "owner ",
+      "Owner",
+      "admin, owner",
+    ]) {
       expect(holdsOwnerRole(role), String(role)).toBe(false);
     }
     expect(coveringDomains("eu.acme.com")).toEqual(["eu.acme.com", "acme.com"]);

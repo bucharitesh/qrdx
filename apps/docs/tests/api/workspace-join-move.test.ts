@@ -244,6 +244,34 @@ describe("join links", () => {
     });
   });
 
+  it("makes no link of a row whose role isn't exactly one a link gives", async () => {
+    signIn("u_owner", "org_t", "owner");
+    const made = await join.issueWorkspaceJoinLink({ role: "viewer" });
+    if (!made.ok) throw new Error(made.error);
+    const token = tokenOf(made.data.path);
+    const [row] = fakeDb.rows("workspaceJoinLink");
+    for (const role of [
+      " admin",
+      "admin ",
+      "Admin",
+      "member, admin",
+      "owner",
+    ]) {
+      if (row) row.role = role;
+      expect(await findJoinTarget(token), role).toBeNull();
+      signIn("u_new", "org_t", "viewer");
+      const joined = await join.joinWorkspaceWithLink({ token });
+      expect(joined.ok ? joined.data : joined.code, role).toBe(
+        "JOIN_LINK_INVALID",
+      );
+      expect(
+        fakeDb.find("member", { userId: "u_new", organizationId: "org_t" }),
+        role,
+      ).toBeUndefined();
+      signIn("u_owner", "org_t", "owner");
+    }
+  });
+
   it("stops the old link on reset and every link when turned off", async () => {
     signIn("u_owner", "org_t", "owner");
     const first = await join.issueWorkspaceJoinLink({ role: "member" });

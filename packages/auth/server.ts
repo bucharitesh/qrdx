@@ -80,6 +80,7 @@ import {
   handRowsBackToCreators,
   initialWorkspaceId,
 } from "./workspace-hooks";
+import { workspaceRoleGate, workspaceRoleHooks } from "./workspace-roles";
 import { workspaceTwoFactorGate } from "./workspace-two-factor";
 
 // Members per team, owner included, by the best plan among its owners and
@@ -338,8 +339,12 @@ export const auth = betterAuth({
       sendInvitationEmail: () => Promise.resolve(),
       // Invite links can be forwarded, so only the verified invitee may accept.
       requireEmailVerificationOnInvitation: true,
-      // Workspace URLs and everyone's own workspace (./workspace-hooks.ts).
+      // Workspace URLs and everyone's own workspace (./workspace-hooks.ts);
+      // only exact role names stored (./workspace-roles.ts).
       organizationHooks: {
+        beforeCreateInvitation: workspaceRoleHooks.beforeCreateInvitation,
+        beforeAcceptInvitation: workspaceRoleHooks.beforeAcceptInvitation,
+        beforeAddMember: workspaceRoleHooks.beforeAddMember,
         beforeCreateOrganization: ({ organization: org }) => {
           assertWorkspaceSlug(org.slug);
           return Promise.resolve();
@@ -360,15 +365,15 @@ export const auth = betterAuth({
           );
           return Promise.resolve();
         },
-        beforeUpdateMemberRole: ({ member, newRole, organization: org }) => {
-          if (!newRole.split(",").some((role) => role.trim() === "owner")) {
+        beforeUpdateMemberRole: async (data) => {
+          await workspaceRoleHooks.beforeUpdateMemberRole(data);
+          if (data.newRole !== "owner") {
             assertNotOwnMember(
-              org.id,
-              member.userId,
+              data.organization.id,
+              data.member.userId,
               "The person whose own workspace this is stays an owner."
             );
           }
-          return Promise.resolve();
         },
       },
     }),
@@ -403,6 +408,9 @@ export const auth = betterAuth({
     confirmGate(),
     // Workspaces that require two-step verification, over HTTP (./workspace-two-factor.ts).
     workspaceTwoFactorGate(),
+    // Inviting someone or changing a role takes exactly one role name
+    // (./workspace-roles.ts), before the plugin trims what was sent.
+    workspaceRoleGate(),
     // Workspace single sign-on, Business plan only, licensed servers only
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
     // joins the workspace); ./ee/sso-required.ts enforces "Require single
