@@ -161,6 +161,22 @@ export const AUDIT_ACTIONS = {
     category: "security",
     sentence: "Removed single sign-on for {target}",
   },
+  "sso_requirement.turned_on": {
+    category: "security",
+    sentence: "Turned on “Require single sign-on” for {target}",
+  },
+  "sso_requirement.turned_off": {
+    category: "security",
+    sentence: "Turned off “Require single sign-on” for {target}",
+  },
+  "two_factor_requirement.turned_on": {
+    category: "security",
+    sentence: "Turned on “Require two-step verification”",
+  },
+  "two_factor_requirement.turned_off": {
+    category: "security",
+    sentence: "Turned off “Require two-step verification”",
+  },
   "sso.join_role_changed": {
     category: "security",
     sentence: "Changed the role people get when they first sign in with SSO",
@@ -340,6 +356,7 @@ export const AUDIT_FIELD_LABELS: Record<string, string> = {
   events: "Events",
   active: "Active",
   replaced: "Replaced",
+  signedOut: "Sessions signed out",
   scopes: "Scopes",
   expiresInDays: "Expires after (days)",
   email: "Email",

@@ -27,8 +27,12 @@ import {
   ssoVerificationRecord,
 } from "@repo/auth/sso-rules";
 import { database as db } from "@repo/database";
+import {
+  auditSso,
+  auditSsoJoinRole,
+  auditSsoRequirement,
+} from "@/ee/audit-log/security-events";
 import { endSessionsWithoutSso, sessionCameFromSso } from "@/ee/sso/required";
-import { auditSso, auditSsoJoinRole } from "@/ee/audit-log/security-events";
 import { HttpError } from "@/lib/error-response";
 import { checkWebhookUrl, isBlockedAddress } from "@/lib/events/url-safety";
 import { can } from "@/lib/permissions";
@@ -805,6 +809,9 @@ export async function deleteSsoConnection(
     await saveMetadata(scope, requestHeaders, rest).catch((error) => {
       throw pluginFailure(error, "We couldn't remove the connection.");
     });
+    auditSsoRequirement(scope, row, true, false, {
+      via: "Connection removed",
+    });
   }
   clearSsoRequirementCache();
   auditSso(scope, "sso.deleted", row);
@@ -843,7 +850,7 @@ export async function setSsoRequired(
     if (blocked) throw fail(409, "REQUIREMENT_BLOCKED", blocked);
   }
   const metadata = await workspaceMetadata(scope.organizationId);
-  const { [SSO_REQUIRED_METADATA_KEY]: _previous, ...rest } = metadata;
+  const { [SSO_REQUIRED_METADATA_KEY]: previous, ...rest } = metadata;
   try {
     await saveMetadata(
       scope,
@@ -854,12 +861,16 @@ export async function setSsoRequired(
     throw pluginFailure(error, "We couldn't save the setting.");
   }
   clearSsoRequirementCache();
-  if (!on) return { on, signedOut: 0 };
+  if (!on) {
+    auditSsoRequirement(scope, row, Boolean(previous), false);
+    return { on, signedOut: 0 };
+  }
   const signedOut = await endSessionsWithoutSso({
     providerId: row.providerId,
     organizationId: scope.organizationId,
     domain: row.domain,
   });
+  auditSsoRequirement(scope, row, Boolean(previous), true, { signedOut });
   return { on, signedOut };
 }
 

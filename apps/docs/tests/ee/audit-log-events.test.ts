@@ -46,9 +46,13 @@ const { plansBeforeBillingChange, recordPlanChanges } = await import(
   "@/ee/audit-log/plan-change"
 );
 const team = await import("@/ee/audit-log/team-events");
-const { auditSso, auditSsoJoinRole, auditOAuthApp } = await import(
-  "@/ee/audit-log/security-events"
-);
+const {
+  auditSso,
+  auditSsoJoinRole,
+  auditOAuthApp,
+  auditSsoRequirement,
+  auditTwoFactorRequirement,
+} = await import("@/ee/audit-log/security-events");
 
 const ORG = "org_acme";
 const NOW = new Date("2026-11-09T12:00:00Z");
@@ -183,10 +187,12 @@ describe("team and workspace changes from the organization plugin", () => {
     } as const;
     record({ ...joined, role: "viewer", via: "added" });
     record({ ...joined, role: "member", via: "invitation" });
+    record({ ...joined, role: "member", via: "sso" });
     await flush();
     expect(rows().map((row) => [row.actorUserId, row.metadata])).toEqual([
       ["u_ben", { via: "Join link", role: "Viewer" }],
       ["u_ben", { via: "Invitation", role: "Member" }],
+      ["u_ben", { via: "Single sign-on", role: "Member" }],
     ]);
   });
 
@@ -328,5 +334,45 @@ describe("single sign-on and OAuth apps", () => {
       ],
       [ownWorkspaceId("u_ana"), "oauth_app.revoked", "Zapier", null],
     ]);
+  });
+});
+
+describe("sign-in requirements", () => {
+  it("records Require two-step verification turned on and off, only when it changed", async () => {
+    auditTwoFactorRequirement(scope, false, true);
+    auditTwoFactorRequirement(scope, true, true); // saved again: no change
+    auditTwoFactorRequirement(scope, true, false);
+    await flush();
+    expect(
+      rows().map((row) => [row.action, row.actorUserId, row.targetType]),
+    ).toEqual([
+      ["two_factor_requirement.turned_on", "u_ana", "workspace"],
+      ["two_factor_requirement.turned_off", "u_ana", "workspace"],
+    ]);
+  });
+
+  it("records Require single sign-on turned on and off, with what it signed out", async () => {
+    const connection = { providerId: "sso-1", domain: "acme.com" };
+    auditSsoRequirement(scope, connection, false, true, { signedOut: 3 });
+    auditSsoRequirement(scope, connection, true, true);
+    auditSsoRequirement(scope, connection, true, false);
+    auditSsoRequirement(scope, connection, true, false, {
+      via: "Connection removed",
+    });
+    await flush();
+    expect(
+      rows().map((row) => [row.action, row.targetLabel, row.metadata]),
+    ).toEqual([
+      ["sso_requirement.turned_on", "acme.com", { signedOut: 3 }],
+      ["sso_requirement.turned_off", "acme.com", null],
+      ["sso_requirement.turned_off", "acme.com", { via: "Connection removed" }],
+    ]);
+    const { auditSentence } = await import("@/ee/audit-log/catalogue");
+    expect(
+      auditSentence("sso_requirement.turned_on", {
+        type: "sso",
+        label: "acme.com",
+      }),
+    ).toBe("Turned on “Require single sign-on” for acme.com");
   });
 });
