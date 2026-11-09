@@ -3,10 +3,13 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
 import { HttpError } from "@/lib/error-response";
 import {
+  canManageWebhooks,
   createEndpoint,
   deleteEndpoint,
+  getEndpoint,
   retryDelivery,
   revealSecret,
   rotateSecret,
@@ -64,9 +67,24 @@ async function run<T>(
   action: string,
   limiter: typeof mutationLimiter,
   body: (scope: ActiveScope) => Promise<T>,
+  {
+    confirm = false,
+  }: {
+    /** Asks "Confirm it's you" first; a function decides per request. */
+    confirm?: boolean | ((scope: ActiveScope) => Promise<boolean>);
+  } = {},
 ): Promise<WebhookActionResult<T>> {
   try {
     const scope = await getActiveScope();
+    // Before the limits, so the round trip that asks doesn't use one up.
+    // Someone who can't manage webhooks gets that refusal instead.
+    if (
+      canManageWebhooks(scope) &&
+      (typeof confirm === "function" ? await confirm(scope) : confirm)
+    ) {
+      const needed = await confirmationNeededFor(scope);
+      if (needed) return needed;
+    }
     await enforceRateLimits([
       { limiter, key: `webhooks:${action}:${scope.userId}` },
     ]);
@@ -86,8 +104,12 @@ export async function createWebhookEndpoint(input: {
 > {
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  return run("create", mutationLimiter, (scope) =>
-    createEndpoint(scope, parsed.data),
+  // A new endpoint receives the workspace's events: "Confirm it's you".
+  return run(
+    "create",
+    mutationLimiter,
+    (scope) => createEndpoint(scope, parsed.data),
+    { confirm: true },
   );
 }
 
@@ -100,8 +122,17 @@ export async function updateWebhookEndpoint(input: {
   const parsed = updateSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
   const { id, ...patch } = parsed.data;
-  return run("update", mutationLimiter, (scope) =>
-    updateEndpoint(scope, id, patch),
+  // Sending the events to a new address asks "Confirm it's you"; changing
+  // which events, or pausing, doesn't.
+  return run(
+    "update",
+    mutationLimiter,
+    (scope) => updateEndpoint(scope, id, patch),
+    {
+      confirm: async (scope) =>
+        patch.url !== undefined &&
+        (await getEndpoint(scope, id)).url !== patch.url,
+    },
   );
 }
 
@@ -115,24 +146,36 @@ export async function deleteWebhookEndpoint(input: {
   );
 }
 
+/**
+ * Shows an endpoint's signing secret. Whoever has it can sign requests your
+ * server trusts as QRdx's, so it asks "Confirm it's you" first
+ * (CONFIRMATION_REQUIRED when this session hasn't in the last 10 minutes).
+ */
 export async function revealWebhookSecret(input: {
   id: string;
 }): Promise<WebhookActionResult<{ secret: string }>> {
   const parsed = idSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  return run("reveal", mutationLimiter, async (scope) => ({
-    secret: await revealSecret(scope, parsed.data.id),
-  }));
+  return run(
+    "reveal",
+    mutationLimiter,
+    async (scope) => ({ secret: await revealSecret(scope, parsed.data.id) }),
+    { confirm: true },
+  );
 }
 
+/** A new signing secret, shown once: asks "Confirm it's you" like reveal. */
 export async function rotateWebhookSecret(input: {
   id: string;
 }): Promise<WebhookActionResult<{ secret: string }>> {
   const parsed = idSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  return run("rotate", mutationLimiter, async (scope) => ({
-    secret: await rotateSecret(scope, parsed.data.id),
-  }));
+  return run(
+    "rotate",
+    mutationLimiter,
+    async (scope) => ({ secret: await rotateSecret(scope, parsed.data.id) }),
+    { confirm: true },
+  );
 }
 
 export async function sendWebhookTest(input: {

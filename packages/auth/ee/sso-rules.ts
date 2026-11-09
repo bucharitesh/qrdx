@@ -8,6 +8,11 @@
 // "eu.acme.com" addresses to an "acme.com" connection), so two workspaces
 // may never hold overlapping verified domains.
 
+import {
+  CONFIRM_RETURN_FAILED,
+  CONFIRM_RETURN_PARAM,
+} from "../confirm-sign-in-rules";
+
 /** Where Better Auth is mounted (apps/docs/app/api/auth/[...all]). */
 export const AUTH_BASE_PATH = "/api/auth";
 
@@ -215,6 +220,18 @@ export function ssoFailureRedirect(
   if (!error) return null;
   const code = ssoErrorCode(error, url.searchParams.get("error_description"));
   const sameSite = url.origin === new URL(appOrigin).origin;
+  // Back to the page that asked "Confirm it's you" (../confirm-sign-in.ts):
+  // it says what went wrong, and the person is still signed in there.
+  if (
+    sameSite &&
+    url.searchParams.has(CONFIRM_RETURN_PARAM) &&
+    !url.pathname.startsWith(AUTH_BASE_PATH)
+  ) {
+    url.searchParams.set(CONFIRM_RETURN_PARAM, CONFIRM_RETURN_FAILED);
+    url.searchParams.set("error", code);
+    url.searchParams.delete("error_description");
+    return `${url.pathname}?${url.searchParams}`;
+  }
   if (sameSite && url.pathname === SIGN_IN_PATH) {
     if (code === error) return null;
     url.searchParams.set("error", code);
@@ -416,4 +433,207 @@ export function samlWeakAlgorithms(xml: string): string[] {
     from = close + 1;
   }
   return [...weak];
+}
+
+// ---- Sign-ins started at the identity provider (IdP-initiated SAML) ----
+//
+// Someone clicks QRdx's tile in their identity provider's app dashboard; the
+// IdP posts a SAML response to the ACS that answers no request of QRdx's (no
+// InResponseTo). The plugin accepts those (ssoOptions.saml.allowIdpInitiated)
+// with its usual checks: signature, issuer, audience, recipient, timestamps,
+// and a single-use record of the assertion's ID. QRdx adds, before the plugin
+// reads it (./sso.ts ssoGate):
+// - exactly one plaintext assertion, with an ID: the plugin only warns and
+//   goes on when it can't find one, which would leave the response replayable;
+// - an expiry (Conditions NotOnOrAfter): the plugin keeps its single-use
+//   record until then, and only 15 minutes without one;
+// - no SubjectConfirmationData InResponseTo: an answer to a request that the
+//   response doesn't name would skip the plugin's request check;
+// - its RelayState is dropped (never the plugin's own state, which an IdP
+//   can't have): it always lands on SSO_IDP_LANDING_PATH.
+
+/**
+ * Where every sign-in started at the identity provider lands
+ * (ssoOptions.saml.idpInitiatedCallbackUrl): the dashboard, which opens the
+ * connection's workspace (./sso.ts ssoWorkspaceFor).
+ */
+export const SSO_IDP_LANDING_PATH = "/dashboard";
+
+/** The ?error= for a response started at the IdP that QRdx won't accept. */
+export const SSO_IDP_INITIATED_REFUSED = "unsolicited_response";
+/** The ?error= for a response QRdx can't read as one SAML response. */
+export const SSO_RESPONSE_UNREADABLE = "invalid_saml_response";
+
+/** What QRdx reads from a SAML response before the plugin does. */
+export interface SamlResponseFacts {
+  /** InResponseTo on the root Response; null when absent or empty */
+  inResponseTo: string | null;
+  /** Non-empty InResponseTo values on SubjectConfirmationData elements */
+  confirmationInResponseTo: string[];
+  /** The ID of each plaintext Assertion element ("" when it has none) */
+  assertionIds: string[];
+  /** EncryptedAssertion elements (QRdx can't decrypt them) */
+  encryptedAssertions: number;
+  /** NotOnOrAfter of each Conditions element ("" when it has none) */
+  conditionsNotOnOrAfter: string[];
+}
+
+/**
+ * A start tag's attributes, in order, or null when they aren't well formed
+ * (a name without a quoted value, an unclosed quote, a repeated name). One
+ * forward pass, so a value can never be read as another attribute.
+ */
+function startTagAttributes(text: string): Map<string, string> | null {
+  const attributes = new Map<string, string>();
+  let at = 0;
+  const skipSpace = () => {
+    while (at < text.length && /\s/.test(text[at] as string)) at++;
+  };
+  skipSpace();
+  while (at < text.length) {
+    // The "/" of a self-closing tag ends it.
+    if (text[at] === "/" && at === text.length - 1) break;
+    const nameStart = at;
+    while (at < text.length && !/[\s=/>"']/.test(text[at] as string)) at++;
+    const name = text.slice(nameStart, at);
+    if (!name) return null;
+    skipSpace();
+    if (text[at] !== "=") return null;
+    at++;
+    skipSpace();
+    const quote = text[at];
+    if (quote !== '"' && quote !== "'") return null;
+    const end = text.indexOf(quote, at + 1);
+    if (end === -1) return null;
+    if (attributes.has(name)) return null;
+    attributes.set(name, text.slice(at + 1, end));
+    at = end + 1;
+    skipSpace();
+  }
+  return attributes;
+}
+
+const SKIPPED_SECTIONS: [open: string, close: string][] = [
+  ["<!--", "-->"],
+  ["<![CDATA[", "]]>"],
+  ["<?", "?>"],
+];
+
+/**
+ * The facts above from a SAML response's XML, or null when it isn't one
+ * readable Response: no root Response element, a DOCTYPE (SAML forbids
+ * them), or a tag, comment or section that never closes.
+ *
+ * A single forward scan, like samlWeakAlgorithms: the XML comes from an
+ * unauthenticated POST. Unlike it, comments, CDATA sections and processing
+ * instructions are skipped: canonicalization leaves comments out of the
+ * signature, so anyone can add one inside a signed assertion, and an element
+ * written there isn't one.
+ */
+export function readSamlResponse(xml: string): SamlResponseFacts | null {
+  const facts: SamlResponseFacts = {
+    inResponseTo: null,
+    confirmationInResponseTo: [],
+    assertionIds: [],
+    encryptedAssertions: 0,
+    conditionsNotOnOrAfter: [],
+  };
+  let sawRoot = false;
+  // Inside the (signed) Assertion: only its own Conditions count, not one
+  // written elsewhere in the response, outside what the signature covers.
+  let inAssertion = false;
+  let from = 0;
+  while (from < xml.length) {
+    const open = xml.indexOf("<", from);
+    if (open === -1) break;
+    const section = SKIPPED_SECTIONS.find(([start]) =>
+      xml.startsWith(start, open)
+    );
+    if (section) {
+      const close = xml.indexOf(section[1], open + section[0].length);
+      if (close === -1) return null;
+      from = close + section[1].length;
+      continue;
+    }
+    // <!DOCTYPE …> and other declarations.
+    if (xml.startsWith("<!", open)) return null;
+    if (xml[open + 1] === "/") {
+      const close = xml.indexOf(">", open);
+      if (close === -1) return null;
+      const closing = xml.slice(open + 2, close).trim();
+      if (closing.slice(closing.lastIndexOf(":") + 1) === "Assertion") {
+        inAssertion = false;
+      }
+      from = close + 1;
+      continue;
+    }
+    let end = open + 1;
+    while (end < xml.length && !/[\s/>]/.test(xml[end] as string)) end++;
+    const name = xml.slice(open + 1, end);
+    if (!name) return null;
+    // The end of the start tag: the first ">" outside a quoted value.
+    let close = end;
+    let quote: string | null = null;
+    for (; close < xml.length; close++) {
+      const char = xml[close];
+      if (quote) {
+        if (char === quote) quote = null;
+      } else if (char === '"' || char === "'") {
+        quote = char;
+      } else if (char === ">") {
+        break;
+      }
+    }
+    if (close >= xml.length) return null;
+    const attributes = startTagAttributes(xml.slice(end, close));
+    if (!attributes) return null;
+    const element = name.slice(name.lastIndexOf(":") + 1);
+    if (!sawRoot) {
+      if (element !== "Response") return null;
+      sawRoot = true;
+      facts.inResponseTo = attributes.get("InResponseTo") || null;
+    } else if (element === "Assertion") {
+      facts.assertionIds.push(attributes.get("ID") ?? "");
+      // "<Assertion …/>" holds nothing.
+      inAssertion = xml[close - 1] !== "/";
+    } else if (element === "EncryptedAssertion") {
+      facts.encryptedAssertions++;
+    } else if (element === "SubjectConfirmationData") {
+      const answered = attributes.get("InResponseTo");
+      if (answered) facts.confirmationInResponseTo.push(answered);
+    } else if (element === "Conditions" && inAssertion) {
+      facts.conditionsNotOnOrAfter.push(attributes.get("NotOnOrAfter") ?? "");
+    }
+    from = close + 1;
+  }
+  return sawRoot ? facts : null;
+}
+
+/** True when the response answers no request of QRdx's: the IdP started it. */
+export function samlIdpInitiated(facts: SamlResponseFacts): boolean {
+  return facts.inResponseTo === null;
+}
+
+/**
+ * Why QRdx won't take a response the identity provider started (a short
+ * reason for the logs), or null when it can go on to the plugin's checks.
+ */
+export function samlIdpInitiatedProblem(
+  facts: SamlResponseFacts
+): string | null {
+  if (facts.confirmationInResponseTo.length > 0) {
+    return "answers a request it doesn't name";
+  }
+  if (facts.encryptedAssertions > 0) return "encrypted assertion";
+  if (facts.assertionIds.length !== 1) return "not exactly one assertion";
+  if (!facts.assertionIds[0]?.trim()) return "assertion without an ID";
+  const [expiry] = facts.conditionsNotOnOrAfter;
+  if (
+    facts.conditionsNotOnOrAfter.length !== 1 ||
+    !expiry ||
+    Number.isNaN(Date.parse(expiry))
+  ) {
+    return "no expiry (Conditions NotOnOrAfter)";
+  }
+  return null;
 }

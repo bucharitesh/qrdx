@@ -1,8 +1,12 @@
-import { auth } from "@repo/auth/server";
 import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { routeCustomDomain } from "@/app/dashboard/domains/_lib/host-routing";
+import { sessionCheckPath } from "@/lib/account/session-origin";
+import {
+  getSessionAllowingHold,
+  isSessionHeld,
+} from "@/lib/account/session-origin-server";
 import { signInPath } from "@/lib/safe-redirect";
 import {
   appCsp,
@@ -20,6 +24,8 @@ const { rewrite: rewriteLLM } = rewritePath("/docs/*path", "/llms.mdx/*path");
 /** Signed-in pages: signed-out visitors are sent to sign in (and back). */
 const APP_PATHS =
   /^\/(?:editor\/theme\/[^/]+|dashboard(?:\/.*)?|settings(?:\/.*)?|success)$/;
+/** Admin pages check who's signed in themselves (app/admin/_lib/guard.ts). */
+const ADMIN_PATHS = /^\/admin(?:\/.*)?$/;
 
 // Enforced in production builds; `next dev` keeps only the frame rules from
 // next.config.ts unless CSP_DEV=1 (lib/security/csp.ts).
@@ -71,7 +77,8 @@ export default async function proxy(request: NextRequest) {
     return customDomainResponse;
   }
   // The catch-all matcher also reaches here on hosts that aren't custom domains.
-  if (!APP_PATHS.test(request.nextUrl.pathname)) {
+  const appPath = APP_PATHS.test(request.nextUrl.pathname);
+  if (!(appPath || ADMIN_PATHS.test(request.nextUrl.pathname))) {
     return next(request);
   }
 
@@ -83,9 +90,10 @@ export default async function proxy(request: NextRequest) {
     }
   }
 
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  // Held or not (lib/account/session-origin.ts): a held session isn't
+  // signed out, it's asked to confirm it's you.
+  const requestHeaders = await headers();
+  const session = await getSessionAllowingHold(requestHeaders);
 
   const pathname = request.nextUrl.pathname;
 
@@ -96,9 +104,23 @@ export default async function proxy(request: NextRequest) {
   }
 
   if (!session) {
+    if (!appPath) return next(request);
     // Sign in, then come back to the page they asked for.
     return NextResponse.redirect(
       new URL(signInPath(pathname + request.nextUrl.search), request.url),
+    );
+  }
+
+  // Used from a different country and browser than where it signed in: the
+  // check page asks "Confirm it's you" before any page here renders. Server
+  // actions posted here go on: their own session reads see no session (and
+  // the gated ones answer CONFIRMATION_REQUIRED).
+  if (
+    !request.headers.has("next-action") &&
+    (await isSessionHeld(session.session, requestHeaders))
+  ) {
+    return NextResponse.redirect(
+      new URL(sessionCheckPath(pathname + request.nextUrl.search), request.url),
     );
   }
 

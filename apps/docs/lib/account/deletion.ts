@@ -26,11 +26,16 @@ const ROLE_RANK: Record<string, number> = {
   viewer: 4,
 };
 
-/** Best rank among comma-separated roles ("owner,admin" ranks as owner). */
+/**
+ * Best rank among comma-separated roles ("owner,admin" ranks as owner), each
+ * matched exactly like Better Auth does: " owner" ranks as nothing.
+ */
 export function roleRank(role: string | null | undefined): number {
   if (!role) return 5;
   return Math.min(
-    ...role.split(",").map((value) => ROLE_RANK[value.trim()] ?? 5),
+    ...role
+      .split(",")
+      .map((value) => (Object.hasOwn(ROLE_RANK, value) ? ROLE_RANK[value] : 5)),
   );
 }
 

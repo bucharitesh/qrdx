@@ -8,7 +8,13 @@ import {
   unverifySsoDomain,
   verifiedDomainTakenElsewhere,
 } from "@repo/auth/sso";
+import { clearSsoRequirementCache } from "@repo/auth/sso-required";
 import {
+  SSO_REQUIRED_METADATA_KEY,
+  ssoRequiredProviderId,
+} from "@repo/auth/sso-required-rules";
+import {
+  emailInSsoDomain,
   isSsoProviderId,
   newSsoProviderId,
   normalizeSsoDomain,
@@ -21,6 +27,7 @@ import {
   ssoVerificationRecord,
 } from "@repo/auth/sso-rules";
 import { database as db } from "@repo/database";
+import { endSessionsWithoutSso, sessionCameFromSso } from "@/ee/sso/required";
 import { HttpError } from "@/lib/error-response";
 import { checkWebhookUrl, isBlockedAddress } from "@/lib/events/url-safety";
 import { can } from "@/lib/permissions";
@@ -38,7 +45,7 @@ import type { ActiveScope } from "@/lib/scope";
 // checks the QRdx role (sso.manage) and the Business plan before calling
 // auth.api with the person's own session (the plugin then checks owner/admin
 // again). ee/sso/actions.ts asks for "Confirm it's you" before changes to the
-// connection itself.
+// connection itself and to "Require single sign-on".
 
 export type SsoProtocol = "oidc" | "saml";
 
@@ -62,6 +69,20 @@ export interface SsoConnectionView {
   urls: SsoServiceProviderUrls;
 }
 
+/** "Require single sign-on for <domain>" (packages/auth/ee/sso-required.ts). */
+export interface SsoRequirementView {
+  /** On for this connection */
+  on: boolean;
+  /** Why the viewer can't turn it on right now, or null */
+  blocked: string | null;
+}
+
+/** Who's looking at the page: their session decides what turning it on does to them. */
+export interface SsoViewer {
+  sessionId: string;
+  email: string;
+}
+
 export interface SsoOverview {
   plan: Plan;
   /** The workspace's plan includes SSO */
@@ -70,6 +91,7 @@ export interface SsoOverview {
   canManage: boolean;
   joinRole: SsoJoinRole;
   connection: SsoConnectionView | null;
+  requirement: SsoRequirementView;
   /** The new connection's id and IdP values, for the set-up form */
   draft: { providerId: string; urls: SsoServiceProviderUrls };
 }
@@ -268,10 +290,34 @@ async function verificationToken(
   }
 }
 
+/**
+ * Why `viewer` can't turn on "Require single sign-on" for `row`, or null. An
+ * owner keeps their other sign-in methods, so nothing happens to them. Anyone
+ * else at the domain is signed out of sessions that didn't come from SSO, so
+ * they have to be signed in with it: that also shows the connection works.
+ */
+async function requirementBlockedFor(
+  scope: ActiveScope,
+  viewer: SsoViewer | null,
+  row: ProviderRow,
+): Promise<string | null> {
+  if (!row.domainVerified) return `Verify ${row.domain} first.`;
+  if (scope.role === "owner") return null;
+  if (!viewer) return "Sign in again to continue.";
+  if (!emailInSsoDomain(viewer.email, row.domain)) return null;
+  if (
+    await sessionCameFromSso(viewer.sessionId, scope.userId, row.providerId)
+  ) {
+    return null;
+  }
+  return "You're signed in another way. Sign out, then sign in with single sign-on and turn this on, so it doesn't sign you out.";
+}
+
 /** Everything the settings page shows, for the workspace in `scope`. */
 export async function getSsoOverview(
   scope: ActiveScope,
   requestHeaders: Headers,
+  viewer: SsoViewer | null,
 ): Promise<SsoOverview> {
   const [plan, row, metadata] = await Promise.all([
     getOwnerPlanForOrganization(scope.organizationId),
@@ -284,12 +330,22 @@ export async function getSsoOverview(
     row && canManage && !row.domainVerified
       ? await verificationToken(row.providerId, requestHeaders)
       : null;
+  const requirementOn = Boolean(
+    row && ssoRequiredProviderId(metadata) === row.providerId,
+  );
   return {
     plan,
     allowed: getPlanLimits(plan).sso,
     canManage,
     joinRole: ssoJoinRoleFromMetadata(metadata),
     connection: row ? toView(row, token) : null,
+    requirement: {
+      on: requirementOn,
+      blocked:
+        row && canManage && !requirementOn
+          ? await requirementBlockedFor(scope, viewer, row)
+          : null,
+    },
     draft: {
       providerId: draftId,
       urls: ssoServiceProviderUrls(appUrl(), draftId),
@@ -737,7 +793,69 @@ export async function deleteSsoConnection(
   } catch (error) {
     throw pluginFailure(error, "We couldn't remove the connection.");
   }
+  // "Require single sign-on" belonged to that connection (it names it, so it
+  // could never apply to another one); tidy it away.
+  const metadata = await workspaceMetadata(scope.organizationId);
+  if (SSO_REQUIRED_METADATA_KEY in metadata) {
+    const { [SSO_REQUIRED_METADATA_KEY]: _removed, ...rest } = metadata;
+    await saveMetadata(scope, requestHeaders, rest).catch((error) => {
+      throw pluginFailure(error, "We couldn't remove the connection.");
+    });
+  }
+  clearSsoRequirementCache();
   return { domain: row.domain };
+}
+
+async function saveMetadata(
+  scope: ActiveScope,
+  requestHeaders: Headers,
+  metadata: Record<string, unknown>,
+) {
+  await auth.api.updateOrganization({
+    body: { organizationId: scope.organizationId, data: { metadata } },
+    headers: requestHeaders,
+  });
+}
+
+/**
+ * Turns "Require single sign-on" on or off for the workspace's verified
+ * connection. Turning it on signs everyone it binds out of the sessions that
+ * didn't come from SSO (ee/sso/required.ts); from then on
+ * packages/auth/ee/sso-required.ts enforces it. Returns how many sessions
+ * were signed out.
+ */
+export async function setSsoRequired(
+  scope: ActiveScope,
+  requestHeaders: Headers,
+  viewer: SsoViewer,
+  on: boolean,
+): Promise<{ on: boolean; signedOut: number }> {
+  // Turning it off works on any plan, like removing the connection.
+  await guard(scope, { needsPlan: on });
+  const row = existingOrThrow(await findConnection(scope.organizationId));
+  if (on) {
+    const blocked = await requirementBlockedFor(scope, viewer, row);
+    if (blocked) throw fail(409, "REQUIREMENT_BLOCKED", blocked);
+  }
+  const metadata = await workspaceMetadata(scope.organizationId);
+  const { [SSO_REQUIRED_METADATA_KEY]: _previous, ...rest } = metadata;
+  try {
+    await saveMetadata(
+      scope,
+      requestHeaders,
+      on ? { ...rest, [SSO_REQUIRED_METADATA_KEY]: row.providerId } : rest,
+    );
+  } catch (error) {
+    throw pluginFailure(error, "We couldn't save the setting.");
+  }
+  clearSsoRequirementCache();
+  if (!on) return { on, signedOut: 0 };
+  const signedOut = await endSessionsWithoutSso({
+    providerId: row.providerId,
+    organizationId: scope.organizationId,
+    domain: row.domain,
+  });
+  return { on, signedOut };
 }
 
 /** The role people get when they first sign in with SSO. */
@@ -749,12 +867,9 @@ export async function setSsoJoinRole(
   await guard(scope, { needsPlan: false });
   const metadata = await workspaceMetadata(scope.organizationId);
   try {
-    await auth.api.updateOrganization({
-      body: {
-        organizationId: scope.organizationId,
-        data: { metadata: { ...metadata, [SSO_ROLE_METADATA_KEY]: role } },
-      },
-      headers: requestHeaders,
+    await saveMetadata(scope, requestHeaders, {
+      ...metadata,
+      [SSO_ROLE_METADATA_KEY]: role,
     });
   } catch (error) {
     throw pluginFailure(error, "We couldn't save the role.");

@@ -177,6 +177,15 @@ export function passkeyStepOutcome(
         over: true,
         counted: false,
       };
+    // The sign-in this finishes started with an email code just as the
+    // workspace began requiring SSO for the address.
+    case "sso_required":
+      return {
+        message:
+          "Your company now requires single sign-on for this address. Start again and sign in with SSO.",
+        over: true,
+        counted: false,
+      };
   }
   if (result.status === 429) {
     return { message: PASSKEY_STEP_MESSAGES.rateLimited, ...quiet };

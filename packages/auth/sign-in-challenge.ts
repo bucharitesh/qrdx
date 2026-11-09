@@ -77,13 +77,99 @@ import {
 // navigation that does carry it; it finishes the challenge on a trusted
 // device and sends everyone else on to the page.
 //
+// A backup code that finishes a challenge is emailed to the account's
+// address (registerBackupCodeNotifier, sent by the app: this package has no
+// email stack). It never holds up or fails the sign-in.
+//
 // apps/docs/tests/auth/sign-in-challenge-guard.test.ts classifies every endpoint
 // path, so a new plugin can't add one without someone deciding.
 
 type Middleware = ReturnType<typeof createAuthMiddleware>;
+type HookContext = Parameters<Parameters<typeof createAuthMiddleware>[0]>[0];
 
 const BACKUP_CODE_PATH = "/two-factor/verify-backup-code";
 const TOTP_CODE_PATH = "/two-factor/verify-totp";
+
+/** A backup code finished someone's sign-in. */
+export interface BackupCodeUse {
+  user: { id: string; email: string };
+  /** The request's headers: the app reads device, place and address from them */
+  headers: Headers;
+}
+
+/** Emails the notice. Throw when it couldn't be sent; it's logged. */
+export type BackupCodeNotifier = (use: BackupCodeUse) => Promise<void> | void;
+
+// On globalThis so every copy of this module (Next.js can bundle one per
+// server layer) sees the notifier the app registered.
+const BACKUP_CODE_NOTIFIER = Symbol.for("@repo/auth/backup-code-notifier");
+type BackupCodeNotifierSlot = Record<symbol, BackupCodeNotifier | undefined>;
+
+export function registerBackupCodeNotifier(notifier: BackupCodeNotifier): void {
+  (globalThis as unknown as BackupCodeNotifierSlot)[BACKUP_CODE_NOTIFIER] =
+    notifier;
+}
+
+// No ids, emails or addresses in these logs.
+function logBackupCodeNotice(
+  level: "info" | "error",
+  fields: Record<string, unknown>
+) {
+  console[level](
+    JSON.stringify({ event: "auth.backup_code_notice", ...fields })
+  );
+}
+
+/**
+ * After a backup code was accepted over HTTP (the second step of a sign-in;
+ * signed-in browsers are refused before the plugin runs, and the app's
+ * "Confirm it's you" checks call auth.api and send their own notice): hands
+ * the account to the app's notifier. Never throws.
+ */
+async function notifyBackupCodeUsed(ctx: HookContext): Promise<void> {
+  try {
+    const returned = ctx.context.returned as
+      | { user?: { id?: unknown } }
+      | null
+      | undefined;
+    if (!returned || isAPIError(returned)) return;
+    const userId = returned.user?.id;
+    if (typeof userId !== "string") {
+      logBackupCodeNotice("error", { outcome: "no-user" });
+      return;
+    }
+    const notifier = (globalThis as unknown as BackupCodeNotifierSlot)[
+      BACKUP_CODE_NOTIFIER
+    ];
+    if (!notifier) {
+      logBackupCodeNotice("error", { outcome: "no-notifier" });
+      return;
+    }
+    const user = await ctx.context.internalAdapter.findUserById(userId);
+    if (!user?.email) {
+      logBackupCodeNotice("error", { outcome: "no-email" });
+      return;
+    }
+    await notifier({
+      user: { id: userId, email: user.email },
+      headers: new Headers(ctx.request?.headers),
+    });
+  } catch (error) {
+    logBackupCodeNotice("error", {
+      outcome: "not-sent",
+      error: error instanceof Error ? error.name : "unknown",
+      // A failed query's message can carry its parameters (ids), and a
+      // sender's can carry the address.
+      message:
+        error instanceof Error
+          ? error.message
+              .split(/\bparams:/)[0]
+              .replace(/[^\s@"'<>]+@[^\s@"'<>]+/g, "<address>")
+              .slice(0, 300)
+          : undefined,
+    });
+  }
+}
 
 interface TwoFactorPluginLike {
   id: string;
@@ -194,6 +280,14 @@ export function signInChallenge(
         },
       ],
       after: [
+        {
+          // A backup code finished a sign-in: the account's address is told.
+          matcher: (ctx) =>
+            ctx.path === BACKUP_CODE_PATH && ctx.request instanceof Request,
+          handler: createAuthMiddleware(async (ctx) => {
+            await notifyBackupCodeUsed(ctx);
+          }),
+        },
         {
           matcher: () => true,
           handler: createAuthMiddleware(async (ctx) => {

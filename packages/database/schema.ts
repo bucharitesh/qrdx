@@ -103,14 +103,20 @@ export const account = pgTable("account", {
   updatedAt: timestamp("updated_at").notNull(),
 });
 
-export const verification = pgTable("verification", {
-  id: text("id").primaryKey(),
-  identifier: text("identifier").notNull(),
-  value: text("value").notNull(),
-  expiresAt: timestamp("expires_at").notNull(),
-  createdAt: timestamp("created_at"),
-  updatedAt: timestamp("updated_at"),
-});
+export const verification = pgTable(
+  "verification",
+  {
+    id: text("id").primaryKey(),
+    identifier: text("identifier").notNull(),
+    value: text("value").notNull(),
+    expiresAt: timestamp("expires_at").notNull(),
+    createdAt: timestamp("created_at"),
+    updatedAt: timestamp("updated_at"),
+  },
+  // Every lookup is by identifier: sign-in codes, "Confirm it's you", and
+  // session markers on signed-in requests. SQL: manual-sql/0024.
+  (table) => [index("verification_identifier_idx").on(table.identifier)]
+);
 
 // Sign-in security: two-step verification, passkeys and workspace SSO. Field
 // names match better-auth 1.7.14's twoFactor, @better-auth/passkey and

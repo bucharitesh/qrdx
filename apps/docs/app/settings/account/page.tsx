@@ -1,22 +1,23 @@
-import { keys as authKeys } from "@repo/auth/keys";
 import { auth } from "@repo/auth/server";
+import { SESSION_MAX_MS } from "@repo/auth/session-lifetime";
 import { database as db, session as sessionTable } from "@repo/database";
 import { and, desc, eq, gt } from "drizzle-orm";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
+import { CONFIRM_RETURN_PARAM } from "@/lib/account/confirmation";
 import {
   describeDeletionPlan,
   planAccountDeletion,
 } from "@/lib/account/deletion";
 import { loadDeletionFacts } from "@/lib/account/deletion-server";
+import { configuredSocialProviders } from "@/lib/account/linked-sign-ins-server";
 import { toSessionViews } from "@/lib/account/sessions";
 import {
   isSocialProvider,
   type LinkedAccount,
   linkableProviders,
-  type SocialProvider,
   toSignInMethods,
 } from "@/lib/account/sign-in-methods";
 import { getMyCommunityProfile } from "@/lib/community/profiles";
@@ -35,6 +36,7 @@ import {
   SignInMethodsSection,
 } from "./_components/sign-in-methods-section";
 import { TwoFactorSection } from "./_components/two-factor-section";
+import { WorkspaceTwoFactorNotice } from "./_components/workspace-two-factor-notice";
 
 export const metadata: Metadata = {
   title: "Profile & security",
@@ -50,21 +52,17 @@ const formatDate = (date: Date) => DATE_FORMAT.format(date);
 // Sessions listed at most (newest first); older ones still end on expiry.
 const SESSION_LIMIT = 50;
 
-/** Social providers with both a client id and secret on this server. */
-function configuredProviders(): SocialProvider[] {
-  const env = authKeys();
-  return [
-    ...(env.GOOGLE_CLIENT_ID && env.GOOGLE_CLIENT_SECRET ? ["google"] : []),
-    ...(env.GITHUB_CLIENT_ID && env.GITHUB_CLIENT_SECRET ? ["github"] : []),
-  ] as SocialProvider[];
-}
-
 function first(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-/** Back from Better Auth's link flow: ?linked=<provider> or ?error=<code>. */
+/**
+ * Back from Better Auth's link flow: ?linked=<provider> or ?error=<code>.
+ * An error after signing in again to confirm it's you (?confirm=…) belongs
+ * to the "Confirm it's you" dialog instead.
+ */
 function linkOutcome(params: Record<string, string | string[] | undefined>) {
+  if (first(params[CONFIRM_RETURN_PARAM])) return null;
   const linked = first(params.linked);
   const error = first(params.error);
   if (error) {
@@ -105,7 +103,16 @@ export default async function AccountPage({
         })
         .from(sessionTable)
         .where(
-          and(eq(sessionTable.userId, userId), gt(sessionTable.expiresAt, now)),
+          and(
+            eq(sessionTable.userId, userId),
+            gt(sessionTable.expiresAt, now),
+            // Past the 30-day cap a session no longer works, whatever its
+            // row says (packages/auth/session-lifetime.ts).
+            gt(
+              sessionTable.createdAt,
+              new Date(now.getTime() - SESSION_MAX_MS),
+            ),
+          ),
         )
         .orderBy(desc(sessionTable.updatedAt))
         .limit(SESSION_LIMIT),
@@ -145,10 +152,14 @@ export default async function AccountPage({
 
         <SignInMethodsSection
           email={session.user.email}
-          linkable={linkableProviders(accounts, configuredProviders())}
+          linkable={linkableProviders(accounts, configuredSocialProviders())}
           methods={toSignInMethods(accounts, formatDate)}
           outcome={linkOutcome(params)}
         />
+
+        {/* Sent here by a workspace that requires two-step verification:
+            just above the section, where its link lands. */}
+        <WorkspaceTwoFactorNotice next={first(params.next)} userId={userId} />
 
         <TwoFactorSection email={session.user.email} userId={userId} />
 

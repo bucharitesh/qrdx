@@ -51,6 +51,7 @@ import {
   type ActiveScope,
   getActiveScope,
   isInScope,
+  TwoFactorRequiredError,
   WorkspaceNotFoundError,
 } from "@/lib/scope";
 import {
@@ -290,7 +291,10 @@ const toOneCodeView = async (row: QrCodeRow) =>
  * For dashboard pages: the workspace in the URL, or sign in and come back to
  * `next` (proxy.ts sends signed-out visitors there first; this covers a
  * session that ended in between). A workspace the viewer can't open is a 404
- * (the [workspace] layout shows it; pages render alongside it).
+ * (the [workspace] layout shows it; pages render alongside it). So is one
+ * that requires two-step verification they haven't turned on: the layout
+ * shows what to do instead, and the page stops here without reading
+ * anything (quietly, rather than as an error in the server's log).
  */
 export async function requireDashboardScope(
   next = "/dashboard",
@@ -299,7 +303,12 @@ export async function requireDashboardScope(
     return await getActiveScope();
   } catch (error) {
     if (error instanceof UnauthorizedError) redirect(signInPath(next));
-    if (error instanceof WorkspaceNotFoundError) pageNotFound();
+    if (
+      error instanceof WorkspaceNotFoundError ||
+      error instanceof TwoFactorRequiredError
+    ) {
+      pageNotFound();
+    }
     throw error;
   }
 }

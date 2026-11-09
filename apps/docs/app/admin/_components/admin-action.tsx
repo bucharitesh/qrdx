@@ -16,6 +16,7 @@ import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useId, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import type { AdminActionResult } from "../_lib/action";
 import {
   banUserAction,
@@ -30,6 +31,8 @@ import {
 } from "../codes/actions";
 import {
   cancelImportAction,
+  cancelTwoFactorResetAction,
+  changeEmailAction,
   deleteUserAccountAction,
   disconnectIntegrationAction,
   markEmailVerifiedAction,
@@ -54,8 +57,10 @@ const ACTIONS = {
   setCodeActive: setDynamicCodeActiveAction,
   setCodePaused: setDynamicCodePausedAction,
   markEmailVerified: markEmailVerifiedAction,
+  changeEmail: changeEmailAction,
   unlinkSignIn: unlinkSignInMethodAction,
   resetTwoFactor: resetTwoFactorAction,
+  cancelTwoFactorReset: cancelTwoFactorResetAction,
   retryDelivery: retryWebhookDeliveryAction,
   requeueImport: requeueImportAction,
   cancelImport: cancelImportAction,
@@ -80,6 +85,9 @@ function describeResult(success: string, data: unknown): string {
   if (value.emailed === false) {
     return `${success}. No email was sent from this environment; share the invite link instead.`;
   }
+  if (typeof value.dueAt === "string") {
+    return `${success} ${value.dueAt.slice(0, 10)} (UTC)`;
+  }
   return success;
 }
 
@@ -101,6 +109,8 @@ export interface AdminActionProps {
   typeToConfirm?: string;
   /** An extra whole-number field, e.g. ban length in days */
   numberField?: { name: string; label: string; min?: number; max?: number };
+  /** An extra required email field, e.g. the address to move an account to */
+  emailField?: { name: string; label: string };
   disabled?: boolean;
   disabledHint?: string;
   /** Where to go after success (e.g. the user list after a delete) */
@@ -122,6 +132,7 @@ export function AdminAction({
   reasonOptional = false,
   typeToConfirm,
   numberField,
+  emailField,
   disabled = false,
   disabledHint,
   redirectTo,
@@ -132,18 +143,24 @@ export function AdminAction({
   const [reason, setReason] = useState("");
   const [typed, setTyped] = useState("");
   const [number, setNumber] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  // Actions that hand over an account ask the admin to confirm it's them
+  // (with a second factor) first; the others never answer that.
+  const { withConfirmation } = useConfirmation();
 
   const reasonOk = reasonOptional || reason.trim().length >= 3;
   const typedOk =
     !typeToConfirm ||
     typed.trim().toLowerCase() === typeToConfirm.trim().toLowerCase();
+  const emailOk = !emailField || email.trim().includes("@");
 
   const reset = () => {
     setReason("");
     setTyped("");
     setNumber("");
+    setEmail("");
     setError(null);
   };
 
@@ -154,14 +171,21 @@ export function AdminAction({
       extra[numberField.name] = Number.parseInt(number, 10);
     }
     if (typeToConfirm) extra.confirmation = typed.trim();
+    if (emailField) extra[emailField.name] = email.trim();
     startTransition(async () => {
       const run = ACTIONS[action] as AnyAction;
       try {
-        const result = await run({
-          ...input,
-          ...extra,
-          reason: reason.trim() || undefined,
-        } as never);
+        const result = await withConfirmation(
+          () =>
+            run({
+              ...input,
+              ...extra,
+              reason: reason.trim() || undefined,
+            } as never),
+          "support-change",
+        );
+        // Cancelled "Confirm it's you": nothing happened.
+        if (result === null) return;
         if (result.ok) {
           toast.success(describeResult(success, result.data));
           setOpen(false);
@@ -204,9 +228,24 @@ export function AdminAction({
           className="space-y-3"
           onSubmit={(event) => {
             event.preventDefault();
-            if (reasonOk && typedOk && !isPending) submit();
+            if (reasonOk && typedOk && emailOk && !isPending) submit();
           }}
         >
+          {emailField && (
+            <div className="space-y-1.5">
+              <Label htmlFor={`${id}-email`}>{emailField.label}</Label>
+              <Input
+                autoComplete="off"
+                id={`${id}-email`}
+                maxLength={254}
+                onChange={(event) => setEmail(event.target.value)}
+                required
+                spellCheck={false}
+                type="email"
+                value={email}
+              />
+            </div>
+          )}
           {numberField && (
             <div className="space-y-1.5">
               <Label htmlFor={`${id}-number`}>{numberField.label}</Label>
@@ -264,7 +303,7 @@ export function AdminAction({
               Cancel
             </Button>
             <Button
-              disabled={!(reasonOk && typedOk) || isPending}
+              disabled={!(reasonOk && typedOk && emailOk) || isPending}
               type="submit"
               variant={destructive ? "destructive" : "default"}
             >

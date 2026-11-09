@@ -1,7 +1,7 @@
 // The device, place, address and time the security emails show
 // (lib/security/request-details.ts), with and without the platform's geo
-// headers.
-import { describe, expect, it } from "vitest";
+// headers. Most cases run as on Vercel (VERCEL set), whose headers they send.
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   currentRequestDetails,
   formatSecurityTime,
@@ -12,7 +12,32 @@ const NOW = new Date("2026-11-07T09:34:00Z");
 const CHROME_MAC =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
 
+beforeEach(() => {
+  vi.stubEnv("VERCEL", "1");
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
+
 describe("requestDetails", () => {
+  it("off Vercel, ignores Vercel's headers (a client could send them) and reads Cloudflare's country", () => {
+    vi.stubEnv("VERCEL", "");
+    const spoofed = new Headers({
+      "user-agent": CHROME_MAC,
+      "x-vercel-ip-city": "S%C3%A3o%20Paulo",
+      "x-vercel-ip-country": "BR",
+      "x-vercel-ip-timezone": "America/Sao_Paulo",
+    });
+    expect(requestDetails(spoofed, NOW)).toMatchObject({
+      location: null,
+      time: "Nov 7, 2026, 9:34 AM UTC",
+      timeZone: "UTC",
+    });
+    spoofed.set("cf-ipcountry", "IN");
+    expect(requestDetails(spoofed, NOW).location).toBe("India");
+  });
+
   it("reads the platform's geo headers, URL-decoded, and the place's time", () => {
     const details = requestDetails(
       new Headers({

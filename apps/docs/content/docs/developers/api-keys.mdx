@@ -15,7 +15,7 @@ Every endpoint that takes an OAuth access token takes a key in the same header, 
 ## Create a key [#create-a-key]
 
 1. Open [Settings → API keys & apps](/dashboard?to=settings/developers&new=1) in the workspace the key is for. The link opens the workspace you last used; pick another one in the workspace switcher.
-2. Choose **Create key**. Name it after where it will run, pick its access and, if you like, when it expires.
+2. Choose **Create key**. Name it after where it will run, pick its access and, if you like, when it expires. A key works without you, so QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, unless you did in that browser in the last 10 minutes.
 3. Copy the key. It's shown once: QRdx stores only a hash of it, so it can't be shown again. The same dialog shows a curl request with the key and this site's API address filled in, ready to paste.
 
 A key is `qrdx_` followed by 40 letters and digits. Lists show only its start, such as `qrdx_7KpQ2m…`, so you can tell keys apart.

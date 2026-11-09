@@ -7,8 +7,8 @@
 //                is recorded (qrdx_device, HttpOnly)
 //   same         signing in again in that browser: no alert
 //   new          another browser signs in: the alert, with its device, place,
-//                address, time in the place's zone and how it signed in (geo
-//                headers set as the hosting platform would)
+//                address, time and how it signed in (a geo header set as the
+//                hosting platform would)
 //   every        a third new browser straight after is alerted too
 //   notices      a second account turns
 //                two-step verification on (Confirm it's you with an emailed
@@ -42,12 +42,12 @@ const EMAIL = `e2e-alerts-${RUN}@qrdx.test`;
 const TWO_STEP_EMAIL = `e2e-alerts-2fa-${RUN}@qrdx.test`;
 
 // What the hosting platform adds to each request (lib/security/
-// request-details.ts reads them).
+// request-details.ts reads them). A local server isn't on Vercel, so it only
+// trusts Cloudflare's country (lib/request-geo.ts); Vercel's city and time
+// zone are covered by tests/lib/security-request-details.test.ts.
 const GEO_HEADERS = {
   "x-forwarded-for": "203.0.113.24",
-  "x-vercel-ip-city": "Mumbai",
-  "x-vercel-ip-country": "IN",
-  "x-vercel-ip-timezone": "Asia/Kolkata",
+  "cf-ipcountry": "IN",
 };
 
 type Page = Awaited<ReturnType<typeof launch>>;
@@ -221,55 +221,9 @@ async function clickInDialog(page: Page, name: string) {
   if (!ok) throw new Error(`No dialog button "${name}"`);
 }
 
-// ─── "Confirm it's you" and the turn-on stepper (Settings) ──────────────────
-// Labels from app/settings/account/_components/two-factor-setup-dialog.tsx
-// and components/confirm-identity/, as e2e/two-factor.e2e.ts drives them.
-
-const CONFIRM_DIALOG = "Confirm it's you";
-
-/** Clicks a button in "Confirm it's you" (it can sit over another dialog). */
-async function clickInConfirm(page: Page, name: string) {
-  await page.waitFor(
-    (t: string, n: string) => {
-      const dialog = window.__e2e.byRole("dialog", t);
-      const el = dialog
-        ? window.__e2e.byRole("button", n, { exact: true, root: dialog })
-        : null;
-      if (!el || (el as HTMLButtonElement).disabled) return false;
-      window.__e2e.click(el);
-      return true;
-    },
-    { args: [CONFIRM_DIALOG, name] as never[] },
-  );
-}
-
-/** "Confirm it's you" with a code emailed to the account (2FA off). */
-async function confirmByEmail(page: Page, email: string) {
-  await page.waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
-    args: [CONFIRM_DIALOG] as never[],
-  });
-  const since = logSize();
-  await clickInConfirm(page, "Send code");
-  const [, code] = await waitForLogLine(
-    new RegExp(`confirmation code for ${escapeRegExp(email)}: (\\d{6})`),
-    since,
-  );
-  await page.waitFor(
-    (t: string, v: string) => {
-      const input = window.__e2e
-        .byRole("dialog", t)
-        ?.querySelector("[data-input-otp]") as HTMLInputElement | null;
-      if (!input) return false;
-      input.focus();
-      window.__e2e.setValue(input, v);
-      return true;
-    },
-    { args: [CONFIRM_DIALOG, code] as never[] },
-  );
-  await page.waitFor((t: string) => !window.__e2e.byRole("dialog", t), {
-    args: [CONFIRM_DIALOG] as never[],
-  });
-}
+// ─── The turn-on stepper (Settings) ──────────────────────────────────────────
+// Labels from app/settings/account/_components/two-factor-setup-dialog.tsx,
+// as e2e/two-factor.e2e.ts drives them.
 
 /** The stepper's first step: pick the authenticator app, then Continue. */
 async function chooseAuthenticatorApp(page: Page) {
@@ -367,9 +321,9 @@ async function main() {
     check(
       "the alert names the device, place, address and way in",
       /Chrome on macOS/.test(summary) &&
-        /Mumbai, India/.test(summary) &&
+        /India/.test(summary) &&
         /203\.0\.113\.24/.test(summary) &&
-        /GMT\+5:30/.test(summary) &&
+        /UTC/.test(summary) &&
         /Email code$/.test(summary),
       summary,
     );
@@ -407,9 +361,9 @@ async function main() {
     await waitForText(twoStepFirst, "Two-step verification");
     since = logSize();
     await clickButton(twoStepFirst, "Turn on");
-    // "Confirm it's you" first (2FA is off: an emailed code), then the
-    // stepper: the authenticator app.
-    await confirmByEmail(twoStepFirst, TWO_STEP_EMAIL);
+    // Just signed in, which counts as "Confirm it's you" for 10 minutes
+    // (packages/auth/new-sign-in.ts): straight to the stepper, the
+    // authenticator app.
     await chooseAuthenticatorApp(twoStepFirst);
     await waitForText(twoStepFirst, "Set up your authenticator app");
     // The secret is made when the step opens.

@@ -1,5 +1,6 @@
 import "server-only";
 import { database } from "@repo/database";
+import { rolesInField } from "./workspace-role-rules";
 
 // Keep in sync with apps/docs/lib/subscription.ts: Polar keeps a subscription
 // "active" until a cancellation takes effect at period end.
@@ -54,9 +55,7 @@ export async function workspacePlanTier(
       ),
   });
   const payerIds = payers
-    .filter((m) =>
-      m.role.split(",").some((role) => PLAN_ROLES.has(role.trim()))
-    )
+    .filter((m) => rolesInField(m.role).some((role) => PLAN_ROLES.has(role)))
     .map((m) => m.userId);
   if (payerIds.length === 0) return "free";
 

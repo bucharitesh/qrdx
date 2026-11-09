@@ -56,6 +56,7 @@ import {
 import { BackupCodesList } from "./backup-codes";
 import { RenamePasskeyDialog } from "./rename-passkey-dialog";
 import { SettingsSection } from "./settings-section";
+import { TwoFactorResetNotice } from "./two-factor-reset-notice";
 import {
   type SetupStart,
   TwoFactorSetupDialog,
@@ -132,12 +133,15 @@ export function TwoFactorSettings({
   passkeys,
   passkeysHere,
   email,
+  resetDueDate = null,
 }: {
   methods: TwoFactorMethods;
   passkeys: PasskeyView[];
   /** The deployment and this page's origin can use passkeys */
   passkeysHere: boolean;
   email: string;
+  /** Support's turn-off is waiting: the day it happens */
+  resetDueDate?: string | null;
 }) {
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
@@ -302,6 +306,8 @@ export function TwoFactorSettings({
       id="two-factor"
       title="Two-step verification"
     >
+      {resetDueDate && <TwoFactorResetNotice dueDate={resetDueDate} />}
+
       <MethodRow
         actions={
           methods.on ? (

@@ -1,7 +1,11 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { Spinner } from "@repo/design-system/components/icons";
+import {
+  GithubLogo,
+  GoogleLogo,
+  Spinner,
+} from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Collapsible,
@@ -23,7 +27,12 @@ import {
   InputOTPSlot,
 } from "@repo/design-system/components/ui/input-otp";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowDown2, ExportSquare, FingerScan } from "iconsax-reactjs";
+import {
+  ArrowDown2,
+  Building,
+  ExportSquare,
+  FingerScan,
+} from "iconsax-reactjs";
 import {
   type FormEvent,
   type ReactNode,
@@ -35,14 +44,20 @@ import {
   useState,
 } from "react";
 import {
+  CONFIRM_RETURN_FAILED,
+  CONFIRM_RETURNED,
   CONFIRMATION_ACTIONS,
   CONFIRMATION_CODE_MINUTES,
   CONFIRMATION_MESSAGES,
   CONFIRMATION_MINUTES,
+  CONFIRMATION_REASONS,
   CONFIRMATION_RESEND_SECONDS,
   type ConfirmationAction,
   type ConfirmationOptions,
   type ConfirmMethod,
+  type ConfirmSignInProvider,
+  confirmReturnPath,
+  isConfirmSignInProvider,
 } from "@/lib/account/confirmation";
 import {
   normalizeBackupCode,
@@ -57,6 +72,7 @@ import {
   getConfirmationOptions,
   sendConfirmationCode,
   startPasskeyConfirmation,
+  startSignInConfirmation,
 } from "./actions";
 import { DialogCloseButton } from "./dialog-close-button";
 import {
@@ -75,7 +91,25 @@ const SWITCH_LABELS: Record<ConfirmMethod, string> = {
   totp: "Use an authenticator code",
   backup: "Use a backup code",
   email: "Email me a code",
+  google: "Sign in with Google",
+  github: "Sign in with GitHub",
+  sso: "Sign in with SSO",
   "sign-in-again": "Sign in again",
+};
+
+const SIGN_IN_NAMES: Record<ConfirmSignInProvider, string> = {
+  google: "Google",
+  github: "GitHub",
+  sso: "your company's SSO",
+};
+
+const SIGN_IN_ICONS: Record<
+  ConfirmSignInProvider,
+  (props: { className?: string }) => ReactNode
+> = {
+  google: ({ className }) => <GoogleLogo className={className} />,
+  github: ({ className }) => <GithubLogo className={className} />,
+  sso: ({ className }) => <Building aria-hidden className={className} />,
 };
 
 const TEXT_ACTION =
@@ -460,6 +494,52 @@ export function ConfirmIdentityDialog({
     }
   };
 
+  // Signing in again with a linked Google, GitHub or SSO account: the
+  // server notes who asked, then the browser goes to the provider and comes
+  // back to this page, where the provider finishes it (./provider.tsx).
+  const signInAgainWith = async (provider: ConfirmSignInProvider) => {
+    if (busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      const started = await startSignInConfirmation({ provider });
+      if (!started.ok) {
+        setError(started.error);
+        setBusy(false);
+        return;
+      }
+      remember(provider);
+      const callbackURL = confirmReturnPath(
+        window.location.href,
+        CONFIRM_RETURNED,
+      );
+      const errorCallbackURL = confirmReturnPath(
+        window.location.href,
+        CONFIRM_RETURN_FAILED,
+      );
+      if (provider === "sso") {
+        const { data, error: failure } = await authClient.signIn.sso({
+          email: started.email,
+          callbackURL,
+          errorCallbackURL,
+        });
+        if (failure || !data?.url) throw failure ?? new Error("No SSO URL");
+        window.location.href = data.url;
+        return;
+      }
+      const { error: failure } = await authClient.signIn.social({
+        provider,
+        callbackURL,
+        errorCallbackURL,
+      });
+      if (failure) throw failure;
+      // The browser is on its way to the provider: stay busy.
+    } catch {
+      setError(CONFIRMATION_MESSAGES.signInFailed);
+      setBusy(false);
+    }
+  };
+
   const signOutToSignIn = async () => {
     await authClient.signOut().catch(() => {});
     window.location.assign(signInPath(window.location.pathname));
@@ -495,6 +575,7 @@ export function ConfirmIdentityDialog({
   );
   const others = methods.filter((entry) => entry !== method);
   const action = request ? CONFIRMATION_ACTIONS[request.action] : "";
+  const reason = request ? CONFIRMATION_REASONS[request.action] : undefined;
 
   let body: ReactNode;
   if (loadError) {
@@ -709,6 +790,31 @@ export function ConfirmIdentityDialog({
         </Button>
       </div>
     );
+  } else if (isConfirmSignInProvider(method)) {
+    const Icon = SIGN_IN_ICONS[method];
+    body = (
+      <div className="space-y-3">
+        <p className="text-muted-foreground text-sm text-pretty">
+          Sign in with {SIGN_IN_NAMES[method]} again. You'll come back to this
+          page, then make your change once more.
+        </p>
+        {errorLine}
+        <Button
+          className="h-10 w-full sm:h-9"
+          disabled={busy}
+          onClick={() => void signInAgainWith(method)}
+          type="button"
+          variant="outline"
+        >
+          {busy ? (
+            <Spinner className="animate-spin" />
+          ) : (
+            <Icon className="size-4" />
+          )}
+          Continue with {method === "sso" ? "SSO" : SIGN_IN_NAMES[method]}
+        </Button>
+      </div>
+    );
   } else {
     body = (
       <div className="space-y-3">
@@ -752,16 +858,20 @@ export function ConfirmIdentityDialog({
 
         <Collapsible className="group/why">
           <CollapsibleTrigger className="text-muted-foreground hover:text-foreground -my-2 flex min-h-10 items-center gap-1 rounded-sm text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-0 sm:my-0">
-            Why am I asked again?
+            {reason ? "Why am I asked?" : "Why am I asked again?"}
             <ArrowDown2
               aria-hidden
               className="size-3 transition-transform group-data-[state=open]/why:rotate-180 motion-reduce:transition-none"
             />
           </CollapsibleTrigger>
           <CollapsibleContent className="text-muted-foreground pt-2 text-xs text-pretty">
-            We check it's you before changes to your account's security. It
-            lasts {CONFIRMATION_MINUTES} minutes, so a few changes in a row only
-            ask once.
+            {reason ?? (
+              <>
+                We check it's you before changes to your account's security. It
+                lasts {CONFIRMATION_MINUTES} minutes, so a few changes in a row
+                only ask once.
+              </>
+            )}
           </CollapsibleContent>
         </Collapsible>
 

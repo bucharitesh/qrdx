@@ -1,14 +1,12 @@
 "use client";
 
-import { authClient } from "@repo/auth/client";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { type FormEvent, useId, useState } from "react";
-import { ssoSignInErrorMessage } from "@/ee/sso/messages";
-import { signInPath } from "@/lib/safe-redirect";
+import { startSsoSignIn } from "@/ee/sso/start-sso-sign-in";
 
 // min-h-10: a 40 px tap target on phones without looking bigger.
 const TEXT_ACTION =
@@ -42,25 +40,10 @@ export function SsoSignIn({
     event.preventDefault();
     setError(null);
     setBusy(true);
-    const next = callbackURL();
-    try {
-      const { data, error: failure } = await authClient.signIn.sso({
-        email: email.trim(),
-        callbackURL: next,
-        errorCallbackURL: signInPath(next),
-      });
-      if (failure) {
-        setError(
-          failure.status === 429
-            ? "Too many tries. Wait a minute, then try again."
-            : ssoSignInErrorMessage(failure.code, failure.message),
-        );
-        setBusy(false);
-        return;
-      }
-      if (data?.url) window.location.href = data.url;
-    } catch {
-      setError(ssoSignInErrorMessage(null));
+    const failure = await startSsoSignIn(email, callbackURL());
+    // Still busy while the browser goes to the identity provider.
+    if (failure) {
+      setError(failure);
       setBusy(false);
     }
   };

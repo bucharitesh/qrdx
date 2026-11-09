@@ -1,0 +1,39 @@
+---
+title: "Workspace security controls, and stronger sign-in for everyone"
+description: "Require two-step verification or single sign-on in a Business workspace, open QRdx from your identity provider, and a long list of protections against stolen sign-ins."
+date: "2026-11-09"
+tags: ["Security", "Teams"]
+version: "0.5.0"
+---
+
+## For workspaces on Business
+
+**Require two-step verification.** Owners and admins can turn it on in **Settings** → **Team**. Members without it see what to do when they open the workspace, and their other workspaces work as before. The members list shows who has it on. [How it works](/docs/help/teams/require-two-step-verification).
+
+**Require single sign-on for your domain.** Once your domain is verified, turn on **Require single sign-on** on the **Single sign-on** page. Email codes, Google, GitHub and passkey sign-ins stop working for addresses at your domain, and their sessions last 24 hours, so someone you remove in your identity provider is out within a day. Owners keep their other ways in, so a problem with the identity provider can't lock everyone out. [Read more](/docs/help/teams/single-sign-on#require-single-sign-on).
+
+**Open QRdx from your identity provider.** SAML connections now accept sign-ins started from your identity provider's app dashboard. They land on the dashboard in your workspace, each response works once, two-step verification still applies, and they don't count as confirming it's you. [Set it up](/docs/help/teams/single-sign-on#open-qrdx-from-your-identity-provider).
+
+Typing a work email on the sign-in page now offers **Continue with SSO** when your company signs in that way, before any code is emailed.
+
+## Harder to use a stolen sign-in
+
+- **A sign-in used somewhere new asks first.** If a sign-in is suddenly used from a different country *and* a different browser than where it started, QRdx asks you to confirm it's you before anything else. [Details](/docs/help/privacy-and-security/account-security#a-sign-in-used-somewhere-new).
+- **Sign-ins last up to 30 days.** After that, QRdx asks you to sign in again, however much you use it. [More](/docs/help/privacy-and-security/account-security#how-long-you-stay-signed-in).
+- **More changes ask you to confirm it's you:**
+  - linking or unlinking Google or GitHub;
+  - creating an API key, an OAuth app or a new client secret;
+  - approving an app that asks to use your account;
+  - adding a webhook or changing its URL, and showing or rotating its signing secret;
+  - adding a Slack or Discord notification webhook, or connecting an integration that sends your scans or form answers to another tool;
+  - in a workspace, deleting it, changing someone's role, removing someone and inviting an admin.
+
+  Signing out your other devices never asks. Signing in also counts as confirming for 10 minutes. With two-step verification on, that's only when you answered the second step.
+- **Turning on two-step verification signs out your other devices.**
+- **Each backup code you use is emailed to you,** with how many are left.
+
+## Safer sign-up and recovery
+
+- Google and GitHub sign-ups need an email address the provider has verified.
+- If someone started an account with your address before you, proving the address with an email code removes what that sign-up could use to get back in or keep getting the account's data: its Google and GitHub links and every session, its passkeys, two-step verification and trusted devices, its API keys and the apps it allowed, the webhooks and the Slack and Discord alerts it set up, and any syncs it set up that send scans or form answers to another tool.
+- When support turns off two-step verification for you, it now waits 7 days and emails you the date. Sign in with your authenticator app or a backup code, or click **Cancel** in Settings, to stop it.

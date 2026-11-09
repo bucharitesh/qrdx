@@ -1,0 +1,48 @@
+---
+title: Require two-step verification
+description: Make everyone in a workspace turn on two-step verification before they can open it. Part of the Business plan.
+---
+
+Owners and admins can require everyone in a workspace to use [two-step verification](/docs/help/privacy-and-security/two-step-verification). A member who hasn't turned it on then can't open the workspace until they do, so getting into someone's email alone isn't enough to get into your workspace.
+
+Requiring two-step verification is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
+
+## Turn it on
+
+1. Turn on two-step verification for your own account first, in **Settings** → **Profile & security**. You can't require it without having it yourself.
+2. In the workspace, go to **Settings** → **Team**.
+3. Under **Two-step verification**, turn on **Require two-step verification**.
+4. If some members don't have it on yet, QRdx tells you how many and asks before it goes ahead.
+5. [Confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+
+Only owners and admins can change it, and turning it on or off asks you to confirm it's you.
+
+Nobody is emailed. Members without two-step verification find out the next time they open the workspace.
+
+## See who has it on
+
+On the **Settings** → **Team** page, owners and admins see whether each member has two-step verification **On** or **Off**. On a phone it's under each person's email address.
+
+## What members without it see
+
+When they open the workspace, they see that it requires two-step verification, with a **Turn on two-step verification** button. It takes them to **Settings** → **Profile & security**, and once it's on, **Back to** the workspace takes them to the page they were on.
+
+Until then they can't see or change anything in that workspace. Their other workspaces work as usual.
+
+That includes what the workspace sends them. Their email alerts, weekly digest and Slack or Discord alerts for it stop, and they can't add new ones. Syncs they set up to send its data to other tools pause. Alerts start again once two-step verification is on; a paused sync needs turning back on.
+
+If someone turns two-step verification off later, the workspace closes for them again until they turn it back on. That includes owners and admins.
+
+## API keys
+
+API keys created in the workspace keep working for the person who created them, with or without two-step verification. Two-step verification protects signing in, and a key is a credential of its own. Nobody can create a new key in the workspace without being able to open it, and owners and admins can see and revoke everyone's keys in the workspace's **Settings** → **Developers**.
+
+Apps connected to someone's account with OAuth only ever work in that person's own workspace, so they never reach a team workspace.
+
+## If the workspace leaves Business
+
+The requirement stops applying, and the setting shows as off. If the workspace moves back to Business, it applies again.
+
+## Turn it off
+
+On the **Settings** → **Team** page, turn off **Require two-step verification** and confirm it's you. Members without two-step verification can open the workspace again straight away.

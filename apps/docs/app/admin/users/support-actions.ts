@@ -1,6 +1,7 @@
 "use server";
 
-import { hasAdminRole } from "@repo/auth/admin";
+import { hasAdminRole, isAdmin } from "@repo/auth/admin";
+import { twoFactorResetDueAt } from "@repo/auth/two-factor-reset";
 import {
   account,
   database as db,
@@ -9,6 +10,7 @@ import {
   member,
   oauthApp,
   organization,
+  session,
   user,
   webhookDelivery,
   webhookEndpoint,
@@ -17,10 +19,28 @@ import { and, count, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
-import { sendTwoFactorNotice } from "@/lib/account/two-factor-notice-server";
-import { resetTwoFactor } from "@/lib/account/two-factor-server";
+import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
+import {
+  currentSession,
+  hasRecentStrongConfirmation,
+} from "@/lib/account/confirmation-server";
+import { isSameEmail, MAX_EMAIL_LENGTH } from "@/lib/account/email-change";
+import { afterEmailChanged } from "@/lib/account/email-change-server";
+import {
+  resetNoticeDelivered,
+  resetNoticeRefusal,
+} from "@/lib/account/two-factor-notice";
+import {
+  cancelTwoFactorReset,
+  loadPendingTwoFactorReset,
+  notifyTwoFactorResetScheduled,
+  scheduleTwoFactorReset,
+} from "@/lib/account/two-factor-reset-server";
+import { twoFactorEnabledFor } from "@/lib/account/two-factor-server";
 import { revokeStoredToken } from "@/lib/connected-accounts/server";
 import { cleanupDataConnection } from "@/lib/data-connections/server";
+import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
+import { isEmailConfigured } from "@/lib/email/send";
 import { claimDueDeliveries, processClaimed } from "@/lib/events/deliveries";
 import { importJobSchema, jobStoreSchema } from "@/lib/migrate/jobs";
 import { JOB_STORE_PROVIDER } from "@/lib/migrate/server/repo";
@@ -90,33 +110,237 @@ export async function markEmailVerifiedAction(
 }
 
 /**
- * For someone who lost their authenticator app and backup codes, once they
- * wrote to support from the account's address: two-step verification goes
- * off (secret, backup codes and trusted devices gone) and the address gets a
- * notice. They can sign in with their usual method and turn it on again.
+ * The admin's own checks for a support action that hands an account over or
+ * removes its protection: two-step verification on their own account and a
+ * confirmation in the last 10 minutes with a passkey, an authenticator code
+ * or a backup code (CONFIRMATION_REQUIRED opens that dialog). A stolen admin
+ * cookie alone isn't enough.
+ */
+async function requireStrongAdmin(admin: { id: string }): Promise<void> {
+  if (!(await twoFactorEnabledFor(admin.id))) {
+    throw adminError(
+      "Turn on two-step verification for your own account first.",
+    );
+  }
+  const adminSession = await currentSession();
+  if (
+    !(
+      adminSession?.userId === admin.id &&
+      (await hasRecentStrongConfirmation(adminSession))
+    )
+  ) {
+    throw adminError(CONFIRMATION_REQUIRED, 403);
+  }
+}
+
+/**
+ * For someone who lost their authenticator app, passkeys and backup codes,
+ * once they wrote to support from the account's address. Nothing changes
+ * yet: the reset waits 7 days (lib/account/two-factor-reset-server.ts) and
+ * the address is told the day, so an owner who didn't ask can cancel it
+ * (in Settings, or by signing in with an authenticator code or a backup
+ * code) or reply. On that day the daily cron turns two-step verification
+ * off (secret, backup codes and trusted devices gone), signs out every
+ * session of the account and emails the address.
+ *
+ * The notice is the point of the wait, so it goes out first, and nothing is
+ * scheduled unless it did (resetNoticeDelivered: never from a server that
+ * can't email, such as a preview or a local server, unless that local
+ * server's database is a throwaway one started with QRDX_DISPOSABLE_DB=1).
+ *
+ * Whoever wrote in may not be the owner, so a stolen admin cookie must not be
+ * enough to start it: requireStrongAdmin, as for changing the email. Never
+ * for an admin's account (a role, or ADMIN_EMAILS / ADMIN_USER_IDS) or the
+ * admin's own.
  */
 export async function resetTwoFactorAction(
   input: z.input<typeof userReason>,
-): Promise<AdminActionResult> {
+): Promise<AdminActionResult<{ dueAt: string }>> {
   return runAdminAction(
     { action: "user.reset_two_factor", schema: userReason, limit: "sensitive" },
     input,
-    async (_admin, { userId }) => {
+    async (admin, { userId }) => {
+      if (userId === admin.id) {
+        throw adminError(
+          "You can't do this for your own account. Use Settings → Profile & security.",
+        );
+      }
       const [target] = await db
-        .select({ email: user.email, on: user.twoFactorEnabled })
+        .select({
+          id: user.id,
+          email: user.email,
+          // isAdmin also counts ADMIN_EMAILS, for verified addresses only.
+          emailVerified: user.emailVerified,
+          on: user.twoFactorEnabled,
+          role: user.role,
+        })
         .from(user)
         .where(eq(user.id, userId))
         .limit(1);
       if (!target) throw adminError("User not found", 404);
+      if (isAdmin(target)) {
+        throw adminError(
+          "An admin's two-step verification can't be turned off here.",
+        );
+      }
       if (!target.on) throw adminError("Two-step verification is already off.");
-      await resetTwoFactor(userId);
-      after(() => sendTwoFactorNotice("support-off", target.email));
+      if (await loadPendingTwoFactorReset(userId)) {
+        throw adminError("A reset is already waiting for this account.");
+      }
+      await requireStrongAdmin(admin);
+      // The notice first, with the day the reset will have; the reset only
+      // if it went out. (Should saving it then fail, the address was told
+      // about a reset that isn't waiting: the admin sees the error, and the
+      // day passes with nothing changed.)
+      const now = new Date();
+      const notice = await notifyTwoFactorResetScheduled(target.email, {
+        dueAt: twoFactorResetDueAt(now),
+      });
+      if (
+        !resetNoticeDelivered(notice, {
+          nodeEnv: process.env.NODE_ENV,
+          disposableDb: process.env.QRDX_DISPOSABLE_DB,
+        })
+      ) {
+        throw adminError(
+          resetNoticeRefusal(notice, {
+            canSendEmail: isOutboundDeliveryAllowed() && isEmailConfigured,
+          }),
+        );
+      }
+      const pending = await scheduleTwoFactorReset({ userId, admin, now });
       return {
         audit: {
           targetType: "user",
           targetId: userId,
           subjectUserId: userId,
-          metadata: { targetEmail: target.email },
+          metadata: {
+            targetEmail: target.email,
+            dueAt: pending.dueAt.toISOString(),
+          },
+        },
+        data: { dueAt: pending.dueAt.toISOString() },
+      };
+    },
+  );
+}
+
+/**
+ * Stops a pending reset (say the owner replied that it wasn't them). Two-step
+ * verification stays as it is, and the address is told. Cancelling one the
+ * owner really asked for leaves them locked out, so it takes the same
+ * requireStrongAdmin as starting one: not a stolen admin cookie alone.
+ */
+export async function cancelTwoFactorResetAction(
+  input: z.input<typeof userReason>,
+): Promise<AdminActionResult> {
+  return runAdminAction(
+    { action: "user.reset_two_factor_cancel", schema: userReason },
+    input,
+    async (admin, { userId }) => {
+      const target = await findUser(userId);
+      if (!(await loadPendingTwoFactorReset(userId))) {
+        throw adminError("No reset is waiting for this account.");
+      }
+      await requireStrongAdmin(admin);
+      const cancelled = await cancelTwoFactorReset(
+        { id: userId, email: target.email },
+        "support",
+      );
+      if (!cancelled) throw adminError("No reset is waiting for this account.");
+      return {
+        audit: {
+          targetType: "user",
+          targetId: userId,
+          subjectUserId: userId,
+          metadata: { targetEmail: target.email, by: "support" },
+        },
+      };
+    },
+  );
+}
+
+const changeEmailSchema = userReason.extend({
+  newEmail: z.string().trim().toLowerCase().email().max(MAX_EMAIL_LENGTH),
+});
+
+/**
+ * For someone who lost their mailbox and has no other way to confirm it's
+ * them, only after the checks in the lost-email policy (the help page
+ * content/docs/help/account-and-billing/sign-in.mdx, "Lost access to your
+ * email"). The account moves to the new address, marked verified (support
+ * had a reply from it); every session is signed out, and the old address
+ * gets the "email changed" notice, by QRdx support.
+ *
+ * This hands an account to whoever controls the new address, so a stolen
+ * admin cookie must not be enough: the admin needs two-step verification
+ * on their own account and a confirmation in the last 10 minutes with a
+ * passkey, an authenticator code or a backup code (CONFIRMATION_REQUIRED
+ * opens that dialog). Never for an admin's account or the admin's own.
+ */
+export async function changeEmailAction(
+  input: z.input<typeof changeEmailSchema>,
+): Promise<AdminActionResult> {
+  return runAdminAction(
+    {
+      action: "user.change_email",
+      schema: changeEmailSchema,
+      limit: "sensitive",
+    },
+    input,
+    async (admin, { userId, newEmail }) => {
+      if (userId === admin.id) {
+        throw adminError(
+          "You can't move your own account here. Use Settings → Profile & security.",
+        );
+      }
+      const [target] = await db
+        .select({
+          id: user.id,
+          email: user.email,
+          emailVerified: user.emailVerified,
+          role: user.role,
+        })
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1);
+      if (!target) throw adminError("User not found", 404);
+      if (isAdmin(target)) {
+        throw adminError("An admin's account can't be moved here.");
+      }
+      await requireStrongAdmin(admin);
+      if (isSameEmail(target.email, newEmail)) {
+        throw adminError("That's already this account's email.");
+      }
+      const [taken] = await db
+        .select({ id: user.id })
+        .from(user)
+        .where(sql`lower(${user.email}) = ${newEmail}`)
+        .limit(1);
+      if (taken) {
+        throw adminError("That email already belongs to another QRdx account.");
+      }
+      await db.batch([
+        db
+          .update(user)
+          .set({ email: newEmail, emailVerified: true, updatedAt: new Date() })
+          .where(eq(user.id, userId)),
+        db.delete(session).where(eq(session.userId, userId)),
+      ]);
+      after(() =>
+        afterEmailChanged({
+          userId,
+          previousEmail: target.email,
+          newEmail,
+          bySupport: true,
+        }),
+      );
+      return {
+        audit: {
+          targetType: "user",
+          targetId: userId,
+          subjectUserId: userId,
+          metadata: { targetEmail: target.email, newEmail },
         },
       };
     },

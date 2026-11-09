@@ -5,8 +5,9 @@ import {
   resolveApiCaller,
   resolveApiScope,
 } from "@/app/api/v1/codes/_lib/api";
+import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
-import { handleError } from "@/lib/error-response";
+import { HttpError, handleError } from "@/lib/error-response";
 import { createEndpoint, listEndpoints } from "@/lib/events/endpoints";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
 import { canSeeHookUrls, serializeHook, subscribeSchema } from "./_lib/hooks";
@@ -36,6 +37,18 @@ export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "write");
     assertJson(req);
+    // From a signed-in browser (no API key or OAuth token), a new endpoint
+    // asks "Confirm it's you" first, as in the dashboard. A key or token
+    // can't confirm; making one already asked.
+    if (!req.headers.get("authorization")?.startsWith("Bearer ")) {
+      if (await confirmationNeededFor(scope)) {
+        throw new HttpError(
+          403,
+          "CONFIRMATION_REQUIRED",
+          "Confirm it's you first, then try again.",
+        );
+      }
+    }
     const body = parseWithSchema(
       subscribeSchema,
       await readJsonBody(req, MAX_BODY_BYTES),

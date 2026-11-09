@@ -51,18 +51,23 @@ async function updatePolarCustomerEmail(
 /**
  * Everything after the address changed. Never throws: the change is done,
  * and each step is reported rather than undone. The notice shows the device,
- * place and time of the request that changed it (read here).
+ * place and time of the request that changed it (read here), or "By QRdx
+ * support" when support moved the account (their device and place aren't
+ * the account's business).
  */
 export async function afterEmailChanged({
   userId,
   previousEmail,
   newEmail,
+  bySupport = false,
 }: {
   userId: string;
   previousEmail: string;
   newEmail: string;
+  bySupport?: boolean;
 }): Promise<void> {
-  const details = await currentRequestDetails();
+  const request = await currentRequestDetails();
+  const details = bySupport ? { ...request, actor: "QRdx support" } : request;
   const [notice, polarCustomer] = await Promise.all([
     deliverEmailChangedNotice(
       { previousEmail, newEmail },

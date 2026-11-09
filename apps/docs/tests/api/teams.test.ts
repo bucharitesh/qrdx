@@ -57,6 +57,12 @@ vi.mock("@/lib/events/emails", () => ({
   sendTeamInviteEmail: async () => false,
 }));
 vi.mock("@/lib/shared", () => ({ logError: () => {} }));
+// "Confirm it's you" before role changes, removals, admin invitations and
+// deleting a team is tested in tests/lib/account-confirm-more-actions.test.ts;
+// here every session has just confirmed.
+vi.mock("@/lib/account/confirmation-scope", () => ({
+  confirmationNeededFor: async () => null,
+}));
 
 // Better Auth's organization endpoints, reduced to what these actions rely on.
 vi.mock("@repo/auth/server", async () => {
@@ -600,6 +606,37 @@ describe("who manages a team", () => {
     expect(calls("createInvitation")).toHaveLength(0);
   });
 
+  it("sends only an exact role name to the plugin, from an owner too", async () => {
+    signIn("u_owner", "org_acme");
+    for (const role of [
+      " owner",
+      "owner ",
+      "member, owner",
+      "member,owner",
+      "Owner",
+      " admin",
+    ]) {
+      expect(
+        (
+          await teams.inviteMember({
+            email: "new@example.com",
+            role: role as "admin",
+          })
+        ).ok,
+        role,
+      ).toBe(false);
+      expect(
+        await teams.updateMemberRole({
+          memberId: "m_3",
+          role: role as "admin",
+        }),
+        role,
+      ).toEqual({ ok: false, error: "Invalid role." });
+    }
+    expect(calls("createInvitation")).toHaveLength(0);
+    expect(calls("updateMemberRole")).toHaveLength(0);
+  });
+
   it("lets only owners make someone an owner", async () => {
     signIn("u_admin", "org_acme");
     expect(
@@ -831,7 +868,10 @@ describe("getActiveScope", () => {
     acme();
     const cases: [string, string][] = [
       ["owner,admin", "owner"],
-      ["admin, owner", "owner"],
+      ["admin,owner", "owner"],
+      // Parts match exactly, like Better Auth: " owner" is no owner.
+      ["admin, owner", "admin"],
+      [" owner", "viewer"],
       ["member,admin", "admin"],
       ["member", "member"],
       ["member,billing", "member"],

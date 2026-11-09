@@ -129,11 +129,12 @@ export const httpClient: MigrateClient = {
     call(`/api/migrate/jobs/${encodeURIComponent(id)}/domain`, post({})),
   async connectOAuth(provider, returnTo) {
     try {
-      const { url } = await connectIntegrationAction(
+      // Import sources never send data out, so this never asks to confirm.
+      const result = await connectIntegrationAction(
         API_PROVIDERS[provider].integration,
         returnTo,
       );
-      if (url) return url;
+      if ("url" in result && result.url) return result.url;
     } catch {
       // Same message below.
     }

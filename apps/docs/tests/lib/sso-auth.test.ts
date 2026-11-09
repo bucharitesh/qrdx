@@ -9,6 +9,7 @@ import {
   SSO_SERVER_ONLY_PATHS,
   SSO_SIGN_IN_PATH,
   SSO_UNUSED_PATHS,
+  ssoConfirmsFor,
   ssoGate,
   ssoRejoinDomains,
   validateSsoUserInfo,
@@ -64,6 +65,52 @@ function stubDb({
 }
 
 afterEach(() => vi.restoreAllMocks());
+
+describe("signing in again through SSO to confirm it's you", () => {
+  /** The person's `account` row for a connection, or none. */
+  function stubAccount(row: Row | undefined) {
+    const q = database.query as unknown as Record<
+      string,
+      Record<string, (...args: unknown[]) => unknown>
+    >;
+    return vi.spyOn(q.account, "findFirst").mockResolvedValue(row as never);
+  }
+
+  const oidc = { oidcConfig: '{"issuer":"https://idp.acme.com"}' };
+
+  it("counts when their address's OIDC connection is usable and they sign in through it", async () => {
+    stubDb({ providers: [provider(oidc)] });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(true);
+  });
+
+  it("never through SAML (its ACS can't carry the Lax cookie)", async () => {
+    stubDb({ providers: [provider({ samlConfig: "<saml/>" })] });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
+  });
+
+  it("not for someone who has never signed in through it", async () => {
+    stubDb({ providers: [provider(oidc)] });
+    stubAccount(undefined);
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
+  });
+
+  it("not when the workspace left Business, or the domain isn't verified or covered", async () => {
+    stubDb({ providers: [provider(oidc)], plan: "pro" });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
+    vi.restoreAllMocks();
+    stubDb({ providers: [provider({ ...oidc, domainVerified: false })] });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@acme.com")).toBe(false);
+    vi.restoreAllMocks();
+    stubDb({ providers: [provider(oidc)] });
+    stubAccount({ id: "acc_1" });
+    expect(await ssoConfirmsFor("u-1", "ada@gmail.com")).toBe(false);
+    expect(await ssoConfirmsFor("u-1", "not an address")).toBe(false);
+  });
+});
 
 async function apiError(call: Promise<unknown>) {
   try {
@@ -283,8 +330,53 @@ describe("what the identity provider says about the address", () => {
       context as never,
     );
 
-  it("runs on every sign-in, link and new account", () => {
-    expect(auth.options.user?.validateUserInfo).toBe(validateSsoUserInfo);
+  it("runs on every sign-in, link and new account, with the Google and GitHub sign-up check", async () => {
+    // The server's check is SSO's plus packages/auth/verified-sign-up.ts.
+    const validate = auth.options.user?.validateUserInfo as (
+      ...args: Parameters<typeof validateSsoUserInfo>
+    ) => ReturnType<typeof validateSsoUserInfo>;
+    const send = (
+      source: Record<string, unknown>,
+      user: Row = { email: "ana@acme.com" },
+    ) => validate({ user, source } as Check, {} as never);
+    for (const action of ["create-user", "link-account", "sign-in"]) {
+      expect(
+        await send({
+          method: "sso-oidc",
+          action,
+          sso: {
+            providerId: "sso-abcdefabcdef",
+            profile: { email_verified: false },
+          },
+        }),
+      ).toMatchObject({ error: "sso_email_unverified" });
+      expect(
+        await send({
+          method: "sso-oidc",
+          action,
+          sso: {
+            providerId: "sso-abcdefabcdef",
+            profile: { email_verified: true },
+          },
+        }),
+      ).toBeUndefined();
+    }
+    expect(
+      await send(
+        {
+          method: "oauth",
+          action: "create-user",
+          oauth: { providerId: "github" },
+        },
+        { email: "ana@acme.com", emailVerified: false },
+      ),
+    ).toMatchObject({ error: "github_email_unverified" });
+    expect(
+      await send(
+        { method: "oauth", action: "sign-in", oauth: { providerId: "github" } },
+        { email: "ana@acme.com", emailVerified: false },
+      ),
+    ).toBeUndefined();
   });
 
   it("refuses an explicit no, for new accounts, links and returning sign-ins", async () => {
@@ -536,6 +628,19 @@ describe("joining the workspace at every SSO sign-in", () => {
       expect.objectContaining({ userId: "u-ben", role: "admin" }),
     ]);
     expect(writes[1].onConflictDoNothing).toBe(true);
+  });
+
+  it("never accepts an invitation saved with a role that isn't exact", async () => {
+    for (const role of [" owner", "owner ", "member, owner", "Owner"]) {
+      vi.restoreAllMocks();
+      const writes = stubJoin({ invitation: { id: "inv-1", role } });
+      await joinWorkspace("u-ben", "sso-abcdefabcdef");
+      // The invitation stays pending; they join like anyone in the domain.
+      expect(
+        writes.map((w) => w.set ?? w.values),
+        role,
+      ).toEqual([expect.objectContaining({ userId: "u-ben", role: "viewer" })]);
+    }
   });
 
   it("adds nobody when another sign-in claimed the invitation first", async () => {
