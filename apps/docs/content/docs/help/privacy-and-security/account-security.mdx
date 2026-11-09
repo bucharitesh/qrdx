@@ -1,6 +1,6 @@
 ---
 title: Keep your account secure
-description: How sign-in works, two-step verification, passkeys, the emails QRdx sends about your account's security, signing out other devices, and how to report a security problem.
+description: How sign-in works, two-step verification, passkeys, the check when a sign-in is used somewhere new, the emails QRdx sends about your account's security, signing out other devices, and how to report a security problem.
 ---
 
 ## No password to leak
@@ -24,6 +24,14 @@ Before a change to your account's security, QRdx asks you to [confirm it's you](
 With two-step verification on, you confirm with <IfAvailable feature="passkeys">your passkey, </IfAvailable>an authenticator code or a backup code, never with an emailed code. Without it, you can use a 6-digit code QRdx emails you<IfAvailable feature="passkeys">, your passkey if you have one,</IfAvailable> or sign in again with a Google or GitHub account you've linked<IfAvailable feature="sso"> (or your workspace's single sign-on, when it uses OIDC)</IfAvailable>. A confirmation lasts 10 minutes in that browser.
 
 Changing your email address also needs a code sent to the new address. Afterwards you're signed out everywhere else, and the old address gets an email saying it changed. Lost access to your email? See [what to do](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+## A sign-in used somewhere new
+
+When you sign in, QRdx notes the country you signed in from and your browser, like "Chrome on macOS". If that sign-in is later used from a different country and a different browser, QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) before you can do anything else in your account. Until you do, that browser is treated as signed out everywhere else on QRdx. So someone who copies your sign-in out of your browser can't use it from far away unless they can also confirm it's you.
+
+It only asks when both have changed. Travelling with the same browser, or updating your browser or your system, doesn't count. Once you confirm, QRdx notes the new country and browser for that sign-in. You can also sign out and sign in again instead.
+
+It's an extra check, not a guarantee: a copied sign-in used from your own country, or from the same kind of browser, isn't asked. QRdx only knows the country when its hosting provides it, and where it doesn't, this check doesn't run. To end a sign-in you don't recognise, [sign out other devices](#sign-out-other-devices).
 
 ## Emails about your account's security
 
