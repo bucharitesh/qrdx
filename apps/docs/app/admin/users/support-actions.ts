@@ -145,7 +145,8 @@ async function requireStrongAdmin(admin: { id: string }): Promise<void> {
  *
  * The notice is the point of the wait, so it goes out first, and nothing is
  * scheduled unless it did (resetNoticeDelivered: never from a server that
- * can't email, such as a preview or local server on the shared database).
+ * can't email, such as a preview or a local server, unless that local
+ * server's database is a throwaway one started with QRDX_DISPOSABLE_DB=1).
  *
  * Whoever wrote in may not be the owner, so a stolen admin cookie must not be
  * enough to start it: requireStrongAdmin, as for changing the email. Never
@@ -198,7 +199,7 @@ export async function resetTwoFactorAction(
       if (
         !resetNoticeDelivered(notice, {
           nodeEnv: process.env.NODE_ENV,
-          databaseUrl: process.env.DATABASE_URL,
+          disposableDb: process.env.QRDX_DISPOSABLE_DB,
         })
       ) {
         throw adminError(

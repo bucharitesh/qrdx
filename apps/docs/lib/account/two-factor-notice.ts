@@ -53,41 +53,31 @@ export function describeTwoFactorNotice(
 /** What became of a notice: emailed, written to the local dev log, or neither. */
 export type TwoFactorNoticeOutcome = "emailed" | "logged" | "not-sent";
 
-/** A database on this machine (localhost, 127.0.0.1 or ::1). */
-export function isLocalDatabaseUrl(url: string | undefined): boolean {
-  if (!url) return false;
-  try {
-    return ["localhost", "127.0.0.1", "[::1]"].includes(new URL(url).hostname);
-  } catch {
-    return false;
-  }
-}
-
 /**
  * Whether support's turn-off of two-step verification may be scheduled after
  * its notice went out this way. The notice is the point of the 7-day wait: it
  * lets an owner who didn't ask stop it. So:
  * - emailed: yes;
- * - written to the dev log: only in local development against a database on
- *   this machine, where the account is a test one and the production cron
- *   never sees the reset (the local end-to-end tests run like that). Never
- *   in production, and never against any other database: local dev and
- *   previews can share the production one, whose daily cron would turn off
- *   a real person's two-step verification after a notice nobody saw;
+ * - written to the dev log: only outside production, on a server started
+ *   with QRDX_DISPOSABLE_DB=1 (`disposableDb`), which says its database is a
+ *   throwaway one: the account is a test one and the production cron never
+ *   sees the reset. Only the local end-to-end tests set it. Never in
+ *   production, and never without it: local dev and previews can share the
+ *   production database (a local proxy or tunnel to it has a localhost URL
+ *   too), whose daily cron would turn off a real person's two-step
+ *   verification after a notice nobody saw;
  * - not sent: no.
  */
 export function resetNoticeDelivered(
   outcome: TwoFactorNoticeOutcome,
   {
     nodeEnv,
-    databaseUrl,
-  }: { nodeEnv: string | undefined; databaseUrl: string | undefined },
+    disposableDb,
+  }: { nodeEnv: string | undefined; disposableDb: string | undefined },
 ): boolean {
   if (outcome === "emailed") return true;
   return (
-    outcome === "logged" &&
-    nodeEnv !== "production" &&
-    isLocalDatabaseUrl(databaseUrl)
+    outcome === "logged" && nodeEnv !== "production" && disposableDb === "1"
   );
 }
 
