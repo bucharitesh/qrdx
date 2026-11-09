@@ -21,6 +21,7 @@ import {
   memberAc,
 } from "better-auth/plugins/organization/access";
 import { getAdminUserIds } from "./admin";
+import { ADMIN_HTTP_PATHS, adminHttpOff } from "./admin-http";
 import { confirmGate } from "./confirm-gate";
 import {
   allowSessionCreation,
@@ -315,6 +316,8 @@ export const auth = betterAuth({
       sendVerificationOTP,
     }),
     admin({ adminUserIds: getAdminUserIds() }),
+    // And any other path under /admin/ (a future endpoint) over HTTP.
+    adminHttpOff(),
     // Workspaces. Everyone has their own (made at sign-up, above); Pro and
     // Business users can create more (any entitled subscription, ./plan.ts).
     organization({
@@ -416,10 +419,10 @@ export const auth = betterAuth({
     // challenge has had its say.
     newSignIn(),
   ],
-  // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
+  // The admin panel calls the admin plugin server-side only (auth.api), never
+  // over HTTP: every admin endpoint is off the HTTP surface (./admin-http.ts).
   disabledPaths: [
-    "/admin/impersonate-user",
-    "/admin/set-user-password",
+    ...ADMIN_HTTP_PATHS,
     ...UNUSED_EMAIL_OTP_PATHS,
     ...SERVER_ONLY_EMAIL_OTP_PATHS,
     // Two-step verification (Lane A)
