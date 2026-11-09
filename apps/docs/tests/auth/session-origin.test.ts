@@ -297,6 +297,8 @@ describe("a session used somewhere else", () => {
     const thief = browser.stolenBy(FIREFOX_WINDOWS, "US");
     expect((await thief.request("POST", "/sign-out", {})).status).toBe(200);
     expect(db.session.find((row) => row.id === sessionId)).toBeUndefined();
+    // Its origin goes with it.
+    expect(originRows(sessionId)).toEqual([]);
   });
 
   it("lets the held browser sign in again, which starts from there", async () => {
