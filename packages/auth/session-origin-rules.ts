@@ -30,7 +30,7 @@ export function sessionOriginIdentifier(sessionId: string): string {
  * on every refresh). A session that somehow outlives it takes its row along
  * (./session-origin.ts).
  */
-export const SESSION_ORIGIN_DAYS = 30;
+export const SESSION_ORIGIN_DAYS = 30; // = SESSION_MAX_DAYS (./session-lifetime.ts; a test checks)
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** When a session's origin row expires: the later of the two. */
