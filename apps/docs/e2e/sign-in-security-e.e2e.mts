@@ -19,7 +19,13 @@
 // the admin's two-step verification), so it refuses to run unless
 // DATABASE_URL in .env.local points at localhost.
 //
-//   pnpm exec next dev -p <port> > <dev.log>
+// Support's turn-off is only scheduled once its notice went out. A dev
+// server only writes the notice to its log, and that counts only when the
+// server was started with QRDX_DISPOSABLE_DB=1, which says its database is a
+// throwaway one (lib/account/two-factor-notice.ts). Set it only for such a
+// database, never for one reached through a proxy or tunnel to a shared one:
+//
+//   QRDX_DISPOSABLE_DB=1 pnpm exec next dev -p <port> > <dev.log>
 //   E_E2E_BASE_URL=http://localhost:<port> E_E2E_DEV_LOG=<dev.log> \
 //   E_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
 //   E_E2E_SHOTS=<dir> pnpm exec tsx e2e/sign-in-security-e.e2e.mts
@@ -817,7 +823,16 @@ async function resetFlow() {
       const open = await asked("make this change for someone", null);
       if (open) await confirmByBackupCode(confirm);
     }
-    await waitText("Reset scheduled");
+    if (
+      !(await waitText("Reset scheduled")) &&
+      (await waitText("doesn't send email", 2_000))
+    ) {
+      check(
+        "support can schedule the reset",
+        false,
+        "the dev server doesn't count the logged notice: start it with QRDX_DISPOSABLE_DB=1 (a throwaway database only)",
+      );
+    }
     return since;
   }
 

@@ -552,11 +552,12 @@ describe("support starting a reset, when the notice can't go out", () => {
     expect(scheduledRows()).toEqual([]);
   });
 
-  it("schedules nothing from a server that only logs it, against a shared database", async () => {
+  it("schedules nothing from a server that only logs it, even with a localhost database (a tunnel to a shared one)", async () => {
     seed();
     await adminConfirms();
     state.noticeOutcome = "logged";
-    vi.stubEnv("DATABASE_URL", "postgres://u:p@ep-cool-1.neon.tech/qrdx");
+    vi.stubEnv("NODE_ENV", "development");
+    vi.stubEnv("DATABASE_URL", "postgres://u:p@localhost:5432/qrdx");
     expect(await support.resetTwoFactorAction(startInput)).toEqual({
       ok: false,
       error: NO_EMAIL,
@@ -564,63 +565,48 @@ describe("support starting a reset, when the notice can't go out", () => {
     expect(scheduledRows()).toEqual([]);
   });
 
-  it("never counts a logged notice in production, whatever the database", async () => {
+  it("never counts a logged notice in production, even with QRDX_DISPOSABLE_DB=1", async () => {
     seed();
     await adminConfirms();
     state.noticeOutcome = "logged";
     vi.stubEnv("NODE_ENV", "production");
-    vi.stubEnv("DATABASE_URL", "postgres://u:p@localhost:5432/qrdx");
-    expect((await support.resetTwoFactorAction(startInput)).ok).toBe(false);
+    vi.stubEnv("QRDX_DISPOSABLE_DB", "1");
+    expect(await support.resetTwoFactorAction(startInput)).toEqual({
+      ok: false,
+      error: NO_EMAIL,
+    });
     expect(scheduledRows()).toEqual([]);
   });
 
-  it("counts a logged notice in local development against a local database (the e2e)", async () => {
+  it("counts a logged notice in local development with QRDX_DISPOSABLE_DB=1 (the e2e)", async () => {
     seed();
     await adminConfirms();
     state.noticeOutcome = "logged";
     vi.stubEnv("NODE_ENV", "development");
-    vi.stubEnv("DATABASE_URL", "postgres://postgres@127.0.0.1:5433/qrdx");
+    vi.stubEnv("QRDX_DISPOSABLE_DB", "1");
     expect((await support.resetTwoFactorAction(startInput)).ok).toBe(true);
     expect(scheduledRows()).toHaveLength(1);
   });
 
-  it("the rule on its own", async () => {
-    const { resetNoticeDelivered, isLocalDatabaseUrl } = await import(
+  it("the rules on their own", async () => {
+    const { resetNoticeDelivered, resetNoticeRefusal } = await import(
       "@/lib/account/two-factor-notice"
     );
-    const local = "postgres://u@localhost:5432/qrdx";
-    const remote = "postgres://u@db.example.com:5432/qrdx";
     const rule = (
       outcome: "emailed" | "logged" | "not-sent",
       nodeEnv: string | undefined,
-      databaseUrl: string | undefined,
-    ) => resetNoticeDelivered(outcome, { nodeEnv, databaseUrl });
-    expect(rule("emailed", "production", remote)).toBe(true);
+      disposableDb: string | undefined,
+    ) => resetNoticeDelivered(outcome, { nodeEnv, disposableDb });
+    expect(rule("emailed", "production", undefined)).toBe(true);
     expect(rule("emailed", "development", undefined)).toBe(true);
-    expect(rule("not-sent", "development", local)).toBe(false);
-    expect(rule("logged", "development", local)).toBe(true);
-    expect(rule("logged", "development", remote)).toBe(false);
-    expect(rule("logged", "development", undefined)).toBe(false);
-    expect(rule("logged", "production", local)).toBe(false);
-    for (const url of [
-      "postgres://u@localhost/qrdx",
-      "postgresql://u:p@127.0.0.1:5432/qrdx",
-      "postgres://u@[::1]:5432/qrdx",
-    ]) {
-      expect(isLocalDatabaseUrl(url), url).toBe(true);
-    }
-    for (const url of [
-      "postgres://u@localhost.example.com/qrdx",
-      "postgres://u@127.0.0.2/qrdx",
-      "not a url",
-      "",
-    ]) {
-      expect(isLocalDatabaseUrl(url), url).toBe(false);
+    expect(rule("not-sent", "development", "1")).toBe(false);
+    expect(rule("logged", "development", "1")).toBe(true);
+    expect(rule("logged", "test", "1")).toBe(true);
+    expect(rule("logged", "production", "1")).toBe(false);
+    for (const value of [undefined, "", "0", "true", "yes", " 1"]) {
+      expect(rule("logged", "development", value), String(value)).toBe(false);
     }
 
-    const { resetNoticeRefusal } = await import(
-      "@/lib/account/two-factor-notice"
-    );
     const refusal = (
       outcome: "emailed" | "logged" | "not-sent",
       canSendEmail: boolean,
