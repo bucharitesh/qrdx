@@ -392,12 +392,34 @@ try {
   await mouseClick(
     `() => document.querySelector('li[data-audit-action="code.destination_changed"] button[aria-label="Show details"]')`,
   );
-  await waitText("https://example.com/summer");
+  await waitFor(
+    () =>
+      document.querySelector(
+        'li[data-audit-action="code.destination_changed"] tbody tr',
+      ) !== null,
+    { timeout: 20_000 },
+  );
   const details = await text();
+  // The change table's rows as [field, before, after], compared cell by cell.
+  const changeRows = (await evaluate(() =>
+    [
+      ...document.querySelectorAll(
+        'li[data-audit-action="code.destination_changed"] tbody tr',
+      ),
+    ].map((row) =>
+      // biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
+      [...row.querySelectorAll("td")].map((cell) => cell.innerText.trim()),
+    ),
+  )) as string[][];
   check(
     "details show the old and new destination",
-    details.includes("https://example.com/spring") &&
-      details.includes("https://example.com/summer"),
+    changeRows.some(
+      ([field, before, after]) =>
+        field === "Destination" &&
+        before === "https://example.com/spring" &&
+        after === "https://example.com/summer",
+    ),
+    JSON.stringify(changeRows),
   );
   check(
     "details show the device",
@@ -414,9 +436,12 @@ try {
   await mouseClick(
     `() => [...document.querySelectorAll("[role=option]")].find((o) => o.textContent?.trim() === "Team")`,
   );
-  await waitFor(() => location.search.includes("category=team"), {
-    timeout: 10_000,
-  });
+  await waitFor(
+    () => new URLSearchParams(location.search).get("category") === "team",
+    {
+      timeout: 10_000,
+    },
+  );
   await sleep(2000);
   const teamOnly = (await evaluate(() =>
     [...document.querySelectorAll("li[data-audit-action]")].map((li) =>
