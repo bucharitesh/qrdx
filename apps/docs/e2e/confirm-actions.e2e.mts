@@ -437,6 +437,52 @@ try {
     JSON.stringify(signOutOthers),
   );
 
+  console.log(
+    "Better Auth's admin endpoints over HTTP: not there, even for an admin",
+  );
+  // packages/auth/admin-http.ts: the admin panel calls them server-side
+  // only, after its own checks and audit log.
+  const adaRole = sql(
+    `select coalesce(role, '') from "user" where id=${q(adaId)}`,
+  );
+  sql(`update "user" set role='admin' where id=${q(adaId)}`);
+  const raw = (method: "GET" | "POST", path: string, body?: unknown) =>
+    evaluate(
+      async (m: string, p: string, b: unknown) => {
+        const response = await fetch(p, {
+          method: m,
+          headers: b == null ? {} : { "content-type": "application/json" },
+          body: b == null ? undefined : JSON.stringify(b),
+        });
+        return response.status;
+      },
+      method,
+      path,
+      body,
+    ) as Promise<number>;
+  for (const [method, path, body] of [
+    ["GET", "/api/auth/admin/list-users", undefined],
+    ["GET", "/api/auth/admin/get-user?id=x", undefined],
+    ["POST", "/api/auth/admin/set-role", { userId: bobId, role: "admin" }],
+    ["POST", "/api/auth/admin/update-user", { userId: bobId, data: {} }],
+    ["POST", "/api/auth/admin/impersonate-user", { userId: bobId }],
+    // One a later version might add, another case, an encoded slash.
+    ["POST", "/api/auth/admin/some-future-endpoint", {}],
+    ["GET", "/api/auth/Admin/list-users", undefined],
+    ["GET", "/api/auth/admin%2Flist-users", undefined],
+  ] as const) {
+    const status = await raw(method, path, body);
+    check(`${method} ${path}: 404`, status === 404, String(status));
+  }
+  check(
+    "…and Bob is still not an admin",
+    sql(`select coalesce(role, '') from "user" where id=${q(bobId)}`) !==
+      "admin",
+  );
+  sql(
+    `update "user" set role=${adaRole ? q(adaRole) : "null"} where id=${q(adaId)}`,
+  );
+
   console.log("team: change a role");
   const team = `${BASE}/dashboard/${SLUG}/settings/team`;
   await goto(team, { wait: 3000 });
@@ -465,6 +511,47 @@ try {
     afterConfirm.status === 200 && bobRole() === "member",
     JSON.stringify(afterConfirm),
   );
+
+  console.log("team: only exact role names, even when confirmed");
+  // A role with spaces, another case or several parts must never be stored:
+  // one that reads as "owner" anywhere would make an owner.
+  const oddRoles = [
+    " owner",
+    "owner ",
+    "Owner",
+    "OWNER",
+    "member,owner",
+    "member, owner",
+    "owner,member",
+  ];
+  for (const role of oddRoles) {
+    const result = await api("/organization/update-member-role", {
+      memberId: `m-bob-${RUN}`,
+      role,
+      organizationId: ORG,
+    });
+    check(
+      `HTTP change a role to ${JSON.stringify(role)}: refused, unchanged`,
+      result.status >= 400 && bobRole() === "member",
+      `${JSON.stringify(result)} role=${bobRole()}`,
+    );
+  }
+  for (const [index, role] of oddRoles.entries()) {
+    const email = `odd${index}-${RUN}@qrdx.test`;
+    const result = await api("/organization/invite-member", {
+      email,
+      role,
+      organizationId: ORG,
+    });
+    check(
+      `HTTP invite as ${JSON.stringify(role)}: refused, nobody invited`,
+      result.status >= 400 &&
+        sql(`select count(*) from invitation where email=${q(email)}`) === "0",
+      JSON.stringify(result),
+    );
+  }
+  // So a failure above can't spill into the checks below.
+  sql(`update member set role='member' where id='m-bob-${RUN}'`);
 
   console.log("team: invite an admin, then a member");
   forgetConfirmation();
