@@ -5,7 +5,13 @@
 // example set an email marked verified or turn two-step verification off.
 // The list is checked against the plugin's own endpoints, so an upgrade that
 // adds one fails here, and any other /admin/ path is refused too.
-import { ADMIN_HTTP_PATHS, isAdminHttpPath } from "@repo/auth/admin-http";
+import { realpathSync } from "node:fs";
+import path from "node:path";
+import {
+  ADMIN_HTTP_PATHS,
+  adminHttpOff,
+  isAdminHttpPath,
+} from "@repo/auth/admin-http";
 import { auth } from "@repo/auth/server";
 import { describe, expect, it } from "vitest";
 
@@ -69,5 +75,106 @@ describe("the admin plugin over HTTP", () => {
     expect(isAdminHttpPath(`${BASE}/get-session`, BASE)).toBe(false);
     expect(isAdminHttpPath(`${BASE}/administrator-notes`, BASE)).toBe(false);
     expect(isAdminHttpPath(`${BASE}/admin/list-users`, BASE)).toBe(true);
+  });
+});
+
+// The admin panel's calls go through auth.api, which doesn't pass the HTTP
+// router, so disabledPaths and adminHttpOff() must leave them working. A
+// real betterAuth (memory adapter) with the admin plugin and QRdx's two
+// switches: the same admin's session works server-side and gets 404 over
+// HTTP.
+describe("the admin panel's server-side calls", () => {
+  const betterAuthDir = realpathSync(
+    path.resolve(
+      import.meta.dirname,
+      "../../../../packages/auth/node_modules/better-auth",
+    ),
+  );
+
+  async function instance() {
+    const { betterAuth } = await import(`${betterAuthDir}/dist/index.mjs`);
+    const { admin } = await import(`${betterAuthDir}/dist/plugins/index.mjs`);
+    const { memoryAdapter } = await import(
+      `${betterAuthDir}/dist/adapters/memory-adapter/index.mjs`
+    );
+    const db: Record<string, Record<string, unknown>[]> = {
+      user: [],
+      session: [],
+      account: [],
+      verification: [],
+    };
+    const local = betterAuth({
+      baseURL: ORIGIN,
+      secret: "test-secret-at-least-32-characters-long",
+      database: memoryAdapter(db),
+      rateLimit: { enabled: false },
+      logger: { disabled: true },
+      emailAndPassword: { enabled: true },
+      disabledPaths: [...ADMIN_HTTP_PATHS],
+      plugins: [admin(), adminHttpOff()],
+    });
+    return { local, db };
+  }
+
+  async function signUp(local: any, email: string) {
+    const { headers } = await local.api.signUpEmail({
+      body: { email, password: "a-long-test-password", name: email },
+      returnHeaders: true,
+    });
+    const cookie = (headers as Headers)
+      .getSetCookie()
+      .map((line: string) => line.split(";")[0])
+      .join("; ");
+    return cookie;
+  }
+
+  it("still work through auth.api while HTTP answers 404", async () => {
+    const { local, db } = await instance();
+    const adminCookie = await signUp(local, "ada@qrdx.test");
+    await signUp(local, "bob@qrdx.test");
+    const ada = db.user.find((u) => u.email === "ada@qrdx.test");
+    const bob = db.user.find((u) => u.email === "bob@qrdx.test");
+    if (!(ada && bob)) throw new Error("sign-up failed");
+    ada.role = "admin";
+    const headers = new Headers({ cookie: adminCookie, origin: ORIGIN });
+
+    const listed = await local.api.listUsers({ headers, query: {} });
+    expect(listed.users.map((u: { email: string }) => u.email).sort()).toEqual([
+      "ada@qrdx.test",
+      "bob@qrdx.test",
+    ]);
+    await local.api.banUser({
+      headers,
+      body: { userId: bob.id, banReason: "test" },
+    });
+    expect(bob.banned).toBe(true);
+    await local.api.unbanUser({ headers, body: { userId: bob.id } });
+    expect(bob.banned).toBe(false);
+    await local.api.revokeUserSessions({ headers, body: { userId: bob.id } });
+    expect(db.session.some((row) => row.userId === bob.id)).toBe(false);
+
+    // The same admin, over HTTP: nothing there.
+    for (const [method, route] of [
+      ["GET", "/admin/list-users"],
+      ["POST", "/admin/ban-user"],
+      ["POST", "/admin/set-role"],
+    ] as const) {
+      const reply = await local.handler(
+        new Request(`${ORIGIN}${BASE}${route}`, {
+          method,
+          headers: {
+            cookie: adminCookie,
+            origin: ORIGIN,
+            "content-type": "application/json",
+          },
+          body:
+            method === "POST"
+              ? JSON.stringify({ userId: bob.id, role: "admin" })
+              : undefined,
+        }),
+      );
+      expect(reply.status, `${method} ${route}`).toBe(404);
+    }
+    expect(bob.role).not.toBe("admin");
   });
 });
