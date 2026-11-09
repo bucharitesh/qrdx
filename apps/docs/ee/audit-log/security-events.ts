@@ -7,9 +7,10 @@ import { changedFields, hasChanges } from "@/ee/audit-log/metadata";
 import { recordAuditEvent } from "@/ee/audit-log/record";
 import { WORKSPACE_ROLE_LABELS, type WorkspaceRole } from "@/lib/permissions";
 
-// Audit log events for single sign-on (ee/sso/connections.ts), one line at
-// each change. Only the domain, the protocol and which credential was
-// replaced are kept: never a client secret or a certificate.
+// Audit log events for single sign-on (ee/sso/connections.ts), the
+// workspace's sign-in requirements and OAuth apps, one line at each change.
+// Only the domain, the protocol and which credential was replaced are kept:
+// never a client secret or a certificate.
 
 type Scope = { userId: string; organizationId: string };
 
@@ -89,4 +90,42 @@ async function oauthAppName(appId: string): Promise<string | null> {
     .where(eq(oauthApp.id, appId))
     .limit(1);
   return row?.name ?? null;
+}
+
+/**
+ * "Require single sign-on" turned on or off (ee/sso/connections.ts), when it
+ * changed. `why` says how, when it wasn't the switch itself.
+ */
+export function auditSsoRequirement(
+  scope: Scope,
+  connection: Connection,
+  was: boolean,
+  now: boolean,
+  details?: { signedOut?: number; via?: string },
+): void {
+  if (was === now) return;
+  recordAuditEvent(scope, {
+    action: now ? "sso_requirement.turned_on" : "sso_requirement.turned_off",
+    target: {
+      type: "sso",
+      id: connection.providerId,
+      label: connection.domain,
+    },
+    ...(details && { metadata: details }),
+  });
+}
+
+/** "Require two-step verification" turned on or off, when it changed. */
+export function auditTwoFactorRequirement(
+  scope: Scope,
+  was: boolean,
+  now: boolean,
+): void {
+  if (was === now) return;
+  recordAuditEvent(scope, {
+    action: now
+      ? "two_factor_requirement.turned_on"
+      : "two_factor_requirement.turned_off",
+    target: { type: "workspace", id: scope.organizationId },
+  });
 }

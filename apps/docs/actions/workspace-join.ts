@@ -4,9 +4,9 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { auditJoinLink, auditJoinLinkRole } from "@/ee/audit-log/team-events";
 import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
 import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
-import { auditJoinLink, auditJoinLinkRole } from "@/ee/audit-log/team-events";
 import { HttpError } from "@/lib/error-response";
 import {
   canAssignRole,

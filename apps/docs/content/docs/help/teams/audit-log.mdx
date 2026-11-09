@@ -29,8 +29,8 @@ These changes are recorded:
 
 - **Codes:** created (including imports and copies), destination changed, renamed, design changed, short link changed, link controls changed (password on or off, start and end dates, scan limit, fallback URL), routing rules changed, paused or resumed, archived or unarchived, moved to the trash, restored, deleted for good, an earlier version restored, moved to another folder, moved to or from another workspace. Folders and tags created, renamed or deleted.
 - **Pages:** created, published, deleted.
-- **Team:** invitations sent and revoked, people joining with an invitation or the join link, role changes, people removed, people leaving, and the join link turned on, changed or turned off. These are recorded however the change was made, in QRdx or through its API.
-- **Security:** single sign-on set up, changed, verified or removed, the role new people get when they first sign in with single sign-on, and exports of the audit log.
+- **Team:** invitations sent and revoked, people joining with an invitation, the join link or single sign-on, role changes, people removed, people leaving, and the join link turned on, changed or turned off. These are recorded however the change was made, in QRdx or through its API.
+- **Security:** "Require two-step verification" and "Require single sign-on" turned on or off (turning on single sign-on also says how many sessions it signed out), single sign-on set up, changed, verified or removed, the role new people get when they first sign in with single sign-on, and exports of the audit log.
 - **Developers:** API keys created and revoked (their name and scopes), apps authorized or revoked, webhook endpoints added, changed or deleted, and a webhook's signing secret replaced. For an endpoint the log keeps only its server, like `https://hooks.zapier.com/…`, since the rest of a webhook URL is often secret.
 - **Domains:** custom domains added, verified or removed.
 - **Workspace:** the name or URL changed, and the workspace moving to Business (recorded as "Billing").
@@ -41,7 +41,6 @@ Apps you authorize act on your own workspace, so authorizing or revoking an app 
 
 These aren't in the audit log:
 
-- people who join a workspace by signing in with single sign-on;
 - scans, form responses and analytics, which aren't changes to the workspace (see them in Analytics and Responses);
 - changes to your own account, like your name, email or two-step verification.
 

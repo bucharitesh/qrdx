@@ -22,6 +22,12 @@ const roleLabel = (role: string | null | undefined) =>
 
 const member = (userId: string) => ({ type: "member" as const, id: userId });
 
+const JOINED_VIA = {
+  invitation: "Invitation",
+  added: "Join link",
+  sso: "Single sign-on",
+} as const;
+
 /** The audit rows for one change the organization plugin made. */
 export function workspaceChangeEvents(
   change: WorkspaceChange,
@@ -60,7 +66,7 @@ export function workspaceChangeEvents(
             metadata: {
               // add-member is server-only; lib/workspace-join.ts (the join
               // link) is its one caller.
-              via: change.via === "invitation" ? "Invitation" : "Join link",
+              via: JOINED_VIA[change.via],
               role: roleLabel(change.role),
             },
           },

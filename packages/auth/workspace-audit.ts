@@ -37,12 +37,15 @@ export type WorkspaceChange =
       invitation: { id: string; email: string; role: Role };
     }
   | {
-      /** accept-invitation, or add-member (server-only: the join link) */
+      /**
+       * accept-invitation, add-member (server-only: the join link), or a
+       * single sign-on that adds the person (./ee/sso.ts)
+       */
       kind: "joined";
       organizationId: string;
       userId: string;
       role: Role;
-      via: "invitation" | "added";
+      via: "invitation" | "added" | "sso";
     }
   | {
       kind: "role_changed";
@@ -83,6 +86,14 @@ export function registerWorkspaceChangeRecorder(
 }
 
 let warnedUnregistered = false;
+
+/**
+ * Hands a change made outside the organization plugin's endpoints (a member
+ * added by single sign-on) to the app's recorder. Never throws.
+ */
+export function emitWorkspaceChange(change: WorkspaceChange): void {
+  emit(change);
+}
 
 // No ids, emails or names in these logs.
 function emit(change: WorkspaceChange): void {
@@ -258,6 +269,15 @@ async function changeOf(ctx: HookContext): Promise<WorkspaceChange | null> {
       if (!organizationId) return null;
       const body = asRow(ctx.body);
       const before = body ? previous.get(body) : undefined;
+      const after = {
+        name: String(returned.name ?? ""),
+        slug: String(returned.slug ?? ""),
+      };
+      // Only a new name or URL is a change here: settings (metadata) and
+      // the logo are recorded, if at all, by the app code that sets them.
+      if (before && before.name === after.name && before.slug === after.slug) {
+        return null;
+      }
       return {
         kind: "updated",
         organizationId,
@@ -266,10 +286,7 @@ async function changeOf(ctx: HookContext): Promise<WorkspaceChange | null> {
           before && str(before.name) !== null
             ? { name: String(before.name), slug: String(before.slug ?? "") }
             : null,
-        after: {
-          name: String(returned.name ?? ""),
-          slug: String(returned.slug ?? ""),
-        },
+        after,
       };
     }
     case PATHS.delete: {
