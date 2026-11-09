@@ -295,6 +295,12 @@ const invite = (by: Browser, role: unknown) =>
     organizationId: ORG,
   });
 
+const remove = (by: Browser, memberIdOrEmail: string) =>
+  by.post("/organization/remove-member", {
+    memberIdOrEmail,
+    organizationId: ORG,
+  });
+
 const setRole = (by: Browser, memberId: string, role: unknown) =>
   by.post("/organization/update-member-role", {
     memberId,
@@ -349,6 +355,8 @@ describe("without QRdx's checks (the plugin alone)", () => {
     expect((await invite(t.admin, "billing")).status).toBe(200);
     expect((await setRole(t.admin, "m_dee", "billing")).status).toBe(200);
     expect(roleOf(t, t.ids.dee)).toBe("billing");
+    expect((await remove(t.admin, "m_dee")).status).toBe(200);
+    expect(roleOf(t, t.ids.dee)).toBeUndefined();
   });
 });
 
@@ -421,6 +429,28 @@ describe("with QRdx's checks, as in production", () => {
     expect((await setRole(t.admin, "m_dee", "viewer")).status).toBe(200);
     expect((await invite(t.admin, "viewer")).status).toBe(200);
     expect(t.memory.invitation.map((i) => i.role)).toEqual(["viewer"]);
+  });
+
+  it("lets only owners remove a billing member, by id or address", async () => {
+    expect((await setRole(t.owner, "m_dee", "billing")).status).toBe(200);
+    for (const ref of ["m_dee", "dee@qrdx.test"]) {
+      const reply = await remove(t.admin, ref);
+      expect(reply.status, ref).toBe(403);
+      expect(reply.json?.code, ref).toBe(OWNERS_ONLY_ROLE);
+    }
+    expect(roleOf(t, t.ids.dee)).toBe("billing");
+    expect((await remove(t.owner, "m_dee")).status).toBe(200);
+    expect(roleOf(t, t.ids.dee)).toBeUndefined();
+    // An admin still removes a member.
+    t.memory.member.push({
+      id: "m_cy",
+      organizationId: ORG,
+      userId: t.ids.cy,
+      role: "member",
+      createdAt: new Date(),
+    });
+    expect((await remove(t.admin, "cy@qrdx.test")).status).toBe(200);
+    expect(roleOf(t, t.ids.cy)).toBeUndefined();
   });
 
   it("accepts an exact one", async () => {

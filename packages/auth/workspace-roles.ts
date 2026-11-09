@@ -28,8 +28,8 @@ import {
 // The gate also keeps the owner and billing roles, which decide who pays, to
 // owners (apps/docs/lib/permissions.ts canAssignRole): the plugin only
 // reserves the owner role, so over HTTP an admin could otherwise give or
-// take away billing. The app's actions check this first, with their own
-// words.
+// take away billing, or remove a billing member. The app's actions check
+// this first, with their own words.
 
 const REFUSALS = {
   write: "That isn't one of the workspace's roles.",
@@ -57,6 +57,7 @@ export function assertWorkspaceRole(
 
 const INVITE_PATH = "/organization/invite-member";
 const UPDATE_ROLE_PATH = "/organization/update-member-role";
+const REMOVE_PATH = "/organization/remove-member";
 
 /** The endpoints that take a role in their body. */
 export const ROLE_REQUEST_PATHS: readonly string[] = [
@@ -72,10 +73,11 @@ const OWNERS_ONLY: readonly WorkspaceRoleName[] = ["owner", "billing"];
 
 /**
  * Whether giving `role` (to someone who held `previous`, or to a new
- * invitee when null) is a change only an owner may make.
+ * invitee when null; removing them when `role` is null) is a change only an
+ * owner may make.
  */
 export function ownersOnlyChange(
-  role: string,
+  role: string | null,
   previous: string | null
 ): boolean {
   return [role, previous].some((field) =>
@@ -138,11 +140,11 @@ const text = (value: unknown): string | null =>
 type HookContext = Parameters<Parameters<typeof createAuthMiddleware>[0]>[0];
 
 /**
- * Refuses a change to or from owner or billing by someone who isn't an
- * owner of the workspace. Anything it can't resolve (signed out, not a
- * member, no such member) is left to the endpoint, which refuses it.
+ * Refuses giving, taking away or removing owner or billing by someone who
+ * isn't an owner of the workspace. Anything it can't resolve (signed out,
+ * not a member, no such member) is left to the endpoint, which refuses it.
  */
-async function checkOwnersOnly(ctx: HookContext, role: string): Promise<void> {
+async function checkOwnersOnly(ctx: HookContext): Promise<void> {
   const found = await getSessionFromCtx(ctx);
   if (!found) return;
   const body = (ctx.body ?? {}) as Record<string, unknown>;
@@ -154,11 +156,25 @@ async function checkOwnersOnly(ctx: HookContext, role: string): Promise<void> {
       model: "member",
       where,
     });
+  const role = ctx.path === REMOVE_PATH ? null : text(body.role);
   let previous: string | null = null;
-  if (ctx.path === UPDATE_ROLE_PATH) {
-    const memberId = text(body.memberId);
-    if (!memberId) return;
-    const target = await member([{ field: "id", value: memberId }]);
+  if (ctx.path !== INVITE_PATH) {
+    // The member changed or removed, by id (or, removing, by email).
+    const ref = text(
+      ctx.path === REMOVE_PATH ? body.memberIdOrEmail : body.memberId
+    );
+    if (!ref) return;
+    let target: { role: string; organizationId: string } | null;
+    if (ref.includes("@")) {
+      const person = await ctx.context.internalAdapter.findUserByEmail(ref);
+      if (!person) return;
+      target = await member([
+        { field: "organizationId", value: organizationId },
+        { field: "userId", value: person.user.id },
+      ]);
+    } else {
+      target = await member([{ field: "id", value: ref }]);
+    }
     if (!target || target.organizationId !== organizationId) return;
     previous = target.role;
   }
@@ -177,13 +193,11 @@ export const workspaceRoleGate = () =>
     hooks: {
       before: [
         {
-          matcher: (ctx) => ROLE_REQUEST_PATHS.includes(ctx.path ?? ""),
+          matcher: (ctx) =>
+            [...ROLE_REQUEST_PATHS, REMOVE_PATH].includes(ctx.path ?? ""),
           handler: createAuthMiddleware(async (ctx) => {
             checkRoleRequest(ctx.path, ctx.body);
-            await checkOwnersOnly(
-              ctx,
-              (ctx.body as { role: WorkspaceRoleName }).role
-            );
+            await checkOwnersOnly(ctx);
           }),
         },
       ],
