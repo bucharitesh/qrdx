@@ -687,6 +687,31 @@ describe("reading the session while SSO is required", () => {
     );
   });
 
+  it("not even while this server's cache hasn't seen the requirement yet", async () => {
+    seedWorkspace({ required: false });
+    const browser = new Browser(auth.handler);
+    await ssoSignIn(browser, "fox@acme.test");
+    const found = await browser.session();
+    // Turned on elsewhere: the cache here still says it isn't required.
+    const workspace = fakeDb.find("organization", { id: ORG });
+    if (workspace) {
+      workspace.metadata = JSON.stringify({
+        [SSO_REQUIRED_METADATA_KEY]: PROVIDER,
+      });
+    }
+    const markerEnd = new Date(
+      markerOf(found?.session.id ?? "")?.expiresAt as Date,
+    ).getTime();
+    const row = memory.session.find(
+      (s) => s.id === found?.session.id,
+    ) as Record<string, unknown>;
+    row.expiresAt = new Date(Date.now() + 60_000);
+    expect((await browser.session())?.user.email).toBe("fox@acme.test");
+    expect(new Date(row.expiresAt as Date).getTime()).toBeLessThanOrEqual(
+      markerEnd,
+    );
+  });
+
   it("an expiry pushed out some other way is brought back on the next read", async () => {
     const browser = new Browser(auth.handler);
     await ssoSignIn(browser, "gus@acme.test");

@@ -511,16 +511,25 @@ export const ssoRequirementGate = () =>
                   const found = (context.context as { session?: unknown })
                     .session;
                   if (!isFoundSession(found)) return;
-                  const requirement = await boundSsoRequirement(
-                    found.user.id,
-                    found.user.email
-                  );
-                  if (!requirement) return;
                   const marker = await readMarker(
                     context.context.internalAdapter,
                     ssoSessionIdentifier(found.session.id)
                   );
                   if (!marker) return;
+                  // The cache may not have seen the requirement yet (just
+                  // turned on, or another server instance did it): an SSO
+                  // session's refresh is rare enough to look again.
+                  const requirement =
+                    (await boundSsoRequirement(
+                      found.user.id,
+                      found.user.email
+                    )) ??
+                    (await boundSsoRequirement(
+                      found.user.id,
+                      found.user.email,
+                      { fresh: true }
+                    ));
+                  if (requirement?.providerId !== marker.providerId) return;
                   if (
                     new Date(data.expiresAt).getTime() >
                     marker.expiresAt.getTime()
