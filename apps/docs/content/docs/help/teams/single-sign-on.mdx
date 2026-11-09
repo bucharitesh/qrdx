@@ -86,6 +86,22 @@ Email addresses have to be verified in your identity provider. If it tells QRdx 
 
 Signing out of QRdx doesn't sign anyone out of your identity provider. While they're still signed in there, their next SSO sign-in goes straight through without asking for their password. On a shared computer, sign out of your identity provider too.
 
+## Open QRdx from your identity provider
+
+With a SAML connection, people can also start from your identity provider: clicking the QRdx app in its app dashboard signs them in to QRdx without going through QRdx's sign-in page. This is often called IdP-initiated sign-in.
+
+1. In your identity provider, open the SAML app you created for QRdx and make sure it's shown to people in the app dashboard and allows sign-in started from the identity provider.
+2. Optionally, set the app's default **RelayState** to the QRdx page people should land on, as a path such as `/dashboard/acme`. Without one, they land on the dashboard in your workspace. QRdx only takes a path on QRdx itself: a full URL, another site or the sign-in page lands on the dashboard instead.
+
+The same rules apply as when the sign-in starts on QRdx: the domain has to be verified, the workspace on Business, and the response signed with SHA-256 or stronger. QRdx also needs:
+
+- exactly one assertion, with an ID, that isn't encrypted;
+- an expiry on the assertion (`NotOnOrAfter` in its `Conditions`), which most identity providers send by default.
+
+Each response signs someone in once. If the same response arrives again, QRdx turns it away and asks the person to sign in again. If someone turned on two-step verification, QRdx asks for their second step first, then takes them to the page.
+
+An OIDC connection always starts at QRdx. To put QRdx in your identity provider's app dashboard, add it as a link to QRdx's sign-in page.
+
 ## Remove someone for good
 
 Because every SSO sign-in adds the person back, removing them on the **Team** page isn't enough on its own:
@@ -110,7 +126,7 @@ If the workspace is no longer on Business, nobody can sign in with SSO, includin
 - Automatic provisioning and removal (SCIM). Removing someone from your identity provider doesn't remove them from the workspace or end their QRdx sessions; remove them on the **Team** page too (see [Remove someone for good](#remove-someone-for-good)).
 - Roles or groups from your identity provider. Everyone joins with the role under **New members**.
 - More than one connection, or more than one domain, per workspace.
-- Sign-in started from your identity provider's app dashboard (IdP-initiated SAML), SAML single logout, and encrypted assertions.
+- Sign-in started from your identity provider with an OIDC connection (it works with SAML: see [Open QRdx from your identity provider](#open-qrdx-from-your-identity-provider)), SAML single logout, and encrypted assertions.
 - Identity providers that aren't reachable from the internet.
 
 ## Related
