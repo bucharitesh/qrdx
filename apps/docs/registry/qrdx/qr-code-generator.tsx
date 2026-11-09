@@ -263,7 +263,7 @@ export function QrCodeGenerator({
         ) : null}
         {error ? (
           <p
-            className="max-w-[200px] text-center text-destructive text-xs"
+            className="max-w-50 text-center text-destructive text-xs"
             role="alert"
           >
             {error}
