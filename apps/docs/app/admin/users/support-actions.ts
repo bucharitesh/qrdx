@@ -26,7 +26,10 @@ import {
 } from "@/lib/account/confirmation-server";
 import { isSameEmail, MAX_EMAIL_LENGTH } from "@/lib/account/email-change";
 import { afterEmailChanged } from "@/lib/account/email-change-server";
-import { resetNoticeDelivered } from "@/lib/account/two-factor-notice";
+import {
+  resetNoticeDelivered,
+  resetNoticeRefusal,
+} from "@/lib/account/two-factor-notice";
 import {
   cancelTwoFactorReset,
   loadPendingTwoFactorReset,
@@ -36,6 +39,8 @@ import {
 import { twoFactorEnabledFor } from "@/lib/account/two-factor-server";
 import { revokeStoredToken } from "@/lib/connected-accounts/server";
 import { cleanupDataConnection } from "@/lib/data-connections/server";
+import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
+import { isEmailConfigured } from "@/lib/email/send";
 import { claimDueDeliveries, processClaimed } from "@/lib/events/deliveries";
 import { importJobSchema, jobStoreSchema } from "@/lib/migrate/jobs";
 import { JOB_STORE_PROVIDER } from "@/lib/migrate/server/repo";
@@ -197,9 +202,9 @@ export async function resetTwoFactorAction(
         })
       ) {
         throw adminError(
-          notice === "logged"
-            ? "This server doesn't send email, so the account's address can't be told and nothing was scheduled. Start the reset from production."
-            : "The email to the account's address couldn't be sent, so nothing was scheduled. Try again in a few minutes.",
+          resetNoticeRefusal(notice, {
+            canSendEmail: isOutboundDeliveryAllowed() && isEmailConfigured,
+          }),
         );
       }
       const pending = await scheduleTwoFactorReset({ userId, admin, now });
