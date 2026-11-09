@@ -27,6 +27,7 @@ import {
   SERVER_ONLY_TWO_FACTOR_PATHS,
   UNUSED_TWO_FACTOR_PATHS,
 } from "@repo/auth/sign-in-challenge-rules";
+import { markUnsolicitedSignIn } from "@repo/auth/unsolicited-sign-in";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 // apps/docs doesn't depend on better-auth itself; load the copy @repo/auth
@@ -158,6 +159,8 @@ const alerts: NewSignIn[] = [];
 let auth: any;
 let db: Record<string, Record<string, unknown>[]>;
 
+const UNSOLICITED_HEADER = "x-test-unsolicited";
+
 beforeAll(async () => {
   const { betterAuth } = await import(`${betterAuthDir}/dist/index.mjs`);
   const { twoFactor, emailOTP, lastLoginMethod } = await import(
@@ -170,6 +173,9 @@ beforeAll(async () => {
   const { signInMethodForPath } = await import("@repo/auth/sign-in-method");
   const { newSignIn } = await import("@repo/auth/new-sign-in");
   const rules = await import("@repo/auth/sign-in-challenge-rules");
+  const { createAuthMiddleware } = await import(
+    `${betterAuthDir}/dist/api/index.mjs`
+  );
 
   db = {
     user: [],
@@ -223,6 +229,24 @@ beforeAll(async () => {
       }),
       twoFactorPlugin,
       signInChallenge(twoFactorPlugin, { relyingParty: null }),
+      // Stands in for ssoGate, which marks a SAML response the identity
+      // provider started (packages/auth/ee/sso.ts): a request carrying
+      // UNSOLICITED_HEADER is marked the same way.
+      {
+        id: "test-mark-unsolicited",
+        hooks: {
+          before: [
+            {
+              matcher: (ctx: { headers?: Headers }) =>
+                ctx.headers?.get(UNSOLICITED_HEADER) === "1",
+              handler: createAuthMiddleware((ctx: { context: object }) => {
+                markUnsolicitedSignIn(ctx.context);
+                return Promise.resolve();
+              }),
+            },
+          ],
+        },
+      },
       newSignIn(),
     ],
   });
@@ -648,6 +672,17 @@ describe('a finished sign-in counts as "Confirm it\'s you"', () => {
     });
     expect(done.status).toBe(200);
     expect(confirmationsOf(email)).toHaveLength(already + 1);
+  });
+
+  it("never for a sign-in that arrived unasked (a SAML response the identity provider started)", async () => {
+    const email = "confirm-unsolicited@qrdx.test";
+    const browser = new Browser(auth.handler, { [UNSOLICITED_HEADER]: "1" });
+    expect((await emailCodeSignIn(browser, email)).status).toBe(200);
+    // Signed in, with no confirmation, strong or not. The same sign-in
+    // without the mark confirms (above).
+    expect(await sessionIdOf(browser)).toBeTruthy();
+    expect(confirmationsOf(email)).toHaveLength(0);
+    expect(strongOf(email)).toHaveLength(0);
   });
 
   it("not when a trusted device skipped the second step", async () => {

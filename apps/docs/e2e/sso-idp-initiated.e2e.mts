@@ -24,14 +24,14 @@
 //
 // Covers: a SAML connection set up and verified as an owner would; the
 // tile (posted from the IdP's own site, so cross-site like a real one) signs
-// a new person in and lands on the dashboard in the SSO workspace; a
-// RelayState path lands on that page; one that isn't a page of the app
-// (another site, //host, the sign-in page) lands on the dashboard; the same
-// response posted twice is refused the second time; a response without an
-// expiry, signed with SHA-1, or unsigned is refused with nobody signed in;
-// two-step verification is asked after the tile, then the RelayState page;
-// off Business it's refused; a sign-in started on QRdx still works; the help
-// section.
+// a new person in and lands on the dashboard in the SSO workspace, without
+// counting as "Confirm it's you"; any RelayState (a page of the app, another
+// site, //host, the sign-in page) is ignored: it lands on the dashboard; the
+// same response posted twice is refused the second time; a response without
+// an expiry, signed with SHA-1, or unsigned is refused with nobody signed in;
+// two-step verification is asked after the tile, then the dashboard; off
+// Business it's refused; a sign-in started on QRdx still works and does
+// confirm; the help section.
 import { execSync } from "node:child_process";
 import { createHmac } from "node:crypto";
 import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
@@ -302,6 +302,14 @@ const liveSessions = (email: string) =>
       `select count(*) from session s join "user" u on u.id=s.user_id where u.email=${q(email)} and s.expires_at > now()`,
     ),
   );
+// "Confirm it's you" rows a sign-in recorded (packages/auth/new-sign-in.ts),
+// strong or not.
+const confirmations = (email: string) =>
+  Number(
+    sql(
+      `select count(*) from verification v join "user" u on u.id=v.value where u.email=${q(email)} and v.identifier like 'qrdx-confirmed-%'`,
+    ),
+  );
 
 // ─── The authenticator app (RFC 6238, like e2e/sso.e2e.mts) ────────────────
 
@@ -537,21 +545,16 @@ try {
       `select role from member where organization_id=${q(orgId)} and user_id=${q(userId(ana))}`,
     ) === "member",
   );
+  check(
+    "…which doesn't count as \"Confirm it's you\"",
+    confirmations(ana) === 0,
+    `${confirmations(ana)} confirmation rows`,
+  );
   await shot("01-tile-dashboard");
 
-  console.log("the tile, RelayState a page of the app");
-  at = await openTile(ana, { relay: "/settings/account" });
-  await waitPath("/settings/account");
-  at = await href();
-  check(
-    "Lands on the RelayState page, signed in",
-    at === `${BASE}/settings/account` && (await sessionEmail()) === ana,
-    at,
-  );
-  await shot("02-tile-relay-state");
-
-  console.log("the tile, RelayState that isn't a page of the app");
+  console.log("the tile, with a RelayState: ignored");
   for (const relay of [
+    "/settings/account",
     "https://evil.example/phish",
     "//evil.example/x",
     "/sign-in?next=/settings/account",
@@ -560,12 +563,18 @@ try {
     await waitPath(`/dashboard/${slug}`);
     at = await href();
     check(
-      `${relay}: lands on the dashboard instead`,
+      `${relay}: lands on the dashboard`,
       at.startsWith(`${BASE}/dashboard/${slug}`) &&
         (await sessionEmail()) === ana,
       at,
     );
   }
+  await shot("02-tile-relay-state-ignored");
+  check(
+    'None of those tile sign-ins counts as "Confirm it\'s you"',
+    confirmations(ana) === 0,
+    `${confirmations(ana)} confirmation rows`,
+  );
 
   console.log("the same response twice");
   const posted = (await (
@@ -577,9 +586,10 @@ try {
     )
   ).json()) as PostedResponse;
   await postFromIdp(posted);
+  await waitPath(`/dashboard/${slug}`);
   check(
-    "First time: signed in, on the RelayState page",
-    (await href()) === `${BASE}/settings/account` &&
+    "First time: signed in, on the dashboard",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
       (await sessionEmail()) === ana,
     await href(),
   );
@@ -588,7 +598,7 @@ try {
   at = await href();
   check(
     "Second time: refused, on the sign-in page with its next",
-    at === `${BASE}/sign-in?next=%2Fsettings%2Faccount&error=replay_detected` &&
+    at === `${BASE}/sign-in?next=%2Fdashboard&error=replay_detected` &&
       (await sessionEmail()) === null &&
       liveSessions(ana) === before,
     `${at} sessions ${before} → ${liveSessions(ana)}`,
@@ -633,7 +643,7 @@ try {
   at = await href();
   check(
     "Unsigned: refused, back to the sign-in page with its next",
-    at.startsWith(`${BASE}/sign-in?next=%2Fsettings%2Faccount&error=`) &&
+    at.startsWith(`${BASE}/sign-in?next=%2Fdashboard&error=`) &&
       (await sessionEmail()) === null &&
       userCount(zed) === 0,
     at,
@@ -646,9 +656,9 @@ try {
   await waitPath("/sign-in/two-factor");
   at = await href();
   check(
-    "Asked for the second step, returning to the RelayState page",
+    "Asked for the second step, returning to the dashboard",
     at ===
-      `${BASE}/sign-in/two-factor?next=${encodeURIComponent("/settings/account")}` &&
+      `${BASE}/sign-in/two-factor?next=${encodeURIComponent("/dashboard")}` &&
       (await sessionEmail()) === null &&
       liveSessions(tara) === taraSessions,
     at,
@@ -663,10 +673,10 @@ try {
       window.__e2e.setValue(field, c);
     }
   }, code);
-  await waitPath("/settings/account");
+  await waitPath(`/dashboard/${slug}`);
   check(
-    "After the code: signed in, on the RelayState page",
-    (await href()) === `${BASE}/settings/account` &&
+    "After the code: signed in, on the dashboard",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
       (await sessionEmail()) === tara,
     await href(),
   );
@@ -692,6 +702,11 @@ try {
     (await sessionEmail()) === ana &&
       (await href()).startsWith(`${BASE}/dashboard/${slug}`),
     await href(),
+  );
+  check(
+    "…and that sign-in, which QRdx asked for, does confirm",
+    confirmations(ana) === 1,
+    `${confirmations(ana)} confirmation rows`,
   );
 
   console.log("off Business");

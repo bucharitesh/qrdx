@@ -90,15 +90,16 @@ Signing out of QRdx doesn't sign anyone out of your identity provider. While the
 
 With a SAML connection, people can also start from your identity provider: clicking the QRdx app in its app dashboard signs them in to QRdx without going through QRdx's sign-in page. This is often called IdP-initiated sign-in.
 
-1. In your identity provider, open the SAML app you created for QRdx and make sure it's shown to people in the app dashboard and allows sign-in started from the identity provider.
-2. Optionally, set the app's default **RelayState** to the QRdx page people should land on, as a path such as `/dashboard/acme`. Without one, they land on the dashboard in your workspace. QRdx only takes a path on QRdx itself: a full URL, another site or the sign-in page lands on the dashboard instead.
+In your identity provider, open the SAML app you created for QRdx and make sure it's shown to people in the app dashboard and allows sign-in started from the identity provider. People land on the dashboard in your workspace. QRdx ignores any **RelayState** the app sends, so a sign-in QRdx didn't ask for never picks the page that opens.
 
 The same rules apply as when the sign-in starts on QRdx: the domain has to be verified, the workspace on Business, and the response signed with SHA-256 or stronger. QRdx also needs:
 
 - exactly one assertion, with an ID, that isn't encrypted;
 - an expiry on the assertion (`NotOnOrAfter` in its `Conditions`), which most identity providers send by default.
 
-Each response signs someone in once. If the same response arrives again, QRdx turns it away and asks the person to sign in again. If someone turned on two-step verification, QRdx asks for their second step first, then takes them to the page.
+Each response signs someone in once. If the same response arrives again, QRdx turns it away and asks the person to sign in again. If someone turned on two-step verification, QRdx asks for their second step first, then takes them to the dashboard.
+
+A sign-in from the app dashboard doesn't count as [confirming it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) unless the person answered their second step, because QRdx didn't ask for it. Before a change that asks, they confirm as usual.
 
 An OIDC connection always starts at QRdx. To put QRdx in your identity provider's app dashboard, add it as a link to QRdx's sign-in page.
 

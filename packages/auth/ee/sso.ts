@@ -7,6 +7,7 @@ import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { eeLicensed } from "../ee-license";
 import { workspacePlanTier } from "../plan";
+import { markUnsolicitedSignIn } from "../unsolicited-sign-in";
 import {
   domainCovers,
   domainsOverlap,
@@ -29,8 +30,6 @@ import {
   samlWeakAlgorithms,
   ssoEmailUnverified,
   ssoFailureRedirect,
-  ssoIdpLandingPath,
-  ssoIdpLandingRedirect,
   ssoJoinRoleFromMetadata,
 } from "./sso-rules";
 
@@ -45,8 +44,8 @@ import {
 // - SAML responses signed with SHA-256 or stronger only;
 // - SAML sign-ins started at the identity provider (its app dashboard's
 //   tile), only with one assertion the plugin can record as used, and an
-//   expiry; they land on the page their RelayState names, if it's one of
-//   the app's (ssoIdpInitiatedLanding, ./sso-rules.ts);
+//   expiry; they always land on the dashboard (the IdP's RelayState is
+//   ignored) and never count as "Confirm it's you" (./sso-rules.ts);
 // - joining the workspace at every SSO sign-in (rejoining after a removal,
 //   accepting a pending invitation), with the role the workspace picked
 //   (member or viewer) or the invitation's.
@@ -103,14 +102,6 @@ function logSamlRefusal(reason: string, providerId: unknown) {
     })
   );
 }
-
-/**
- * The page a SAML sign-in started at the identity provider lands on, per
- * request: set by ssoGate's ACS hook (keyed by the request's auth context,
- * the same object in every hook of one request) and read by
- * ssoIdpInitiatedLanding.
- */
-const idpInitiatedLandings = new WeakMap<object, string>();
 
 type ProviderRow = typeof schema.ssoProvider.$inferSelect;
 
@@ -375,10 +366,10 @@ export const ssoOptions = {
     // Sign-ins started at the identity provider (no InResponseTo). The
     // plugin checks them like any response and records each assertion's ID
     // as used; ssoGate first makes sure there's one ID to record and an
-    // expiry to keep it until, and reads RelayState as the landing page.
+    // expiry to keep it until, and drops the IdP's RelayState.
     allowIdpInitiated: true,
-    // Where they land without a usable RelayState, and where a refused one
-    // is sent (then on to /sign-in by ssoGate's after hook).
+    // Where every one of them lands, and where a refused one is sent (then
+    // on to /sign-in by ssoGate's after hook).
     idpInitiatedCallbackUrl: SSO_IDP_LANDING_PATH,
     // SHA-256 or stronger wherever the plugin checks. It only sees the
     // algorithm of redirect-bound messages, so ssoGate checks POSTed
@@ -629,14 +620,13 @@ export const ssoGate = () =>
               );
               throw ctx.redirect(IDP_INITIATED_REFUSED_REDIRECT);
             }
-            // The IdP's RelayState is free text (a page to open), never the
-            // plugin's signed state, which it would refuse: it's taken out
-            // here and becomes the landing page if it's a page of the app.
-            // ("" rather than leaving it out: a hook's body is merged in.)
-            idpInitiatedLandings.set(
-              ctx.context,
-              ssoIdpLandingPath(body.RelayState)
-            );
+            // The IdP's RelayState is free text, never the plugin's signed
+            // state, which it would refuse. It's dropped: every such sign-in
+            // lands on SSO_IDP_LANDING_PATH, so nobody can send a person
+            // somewhere chosen for them through a response they didn't ask
+            // for. ("" rather than leaving it out: a hook's body is merged in.)
+            // Signs in, but never counts as "Confirm it's you".
+            markUnsolicitedSignIn(ctx.context);
             return { context: { body: { ...body, RelayState: "" } } };
           }),
         },
@@ -662,45 +652,6 @@ export const ssoGate = () =>
               return Promise.resolve();
             }
             const target = ssoFailureRedirect(location, appOrigin);
-            if (target) throw ctx.redirect(target);
-            return Promise.resolve();
-          }),
-        },
-      ],
-    },
-  }) satisfies BetterAuthPlugin;
-
-/**
- * Lands a SAML sign-in started at the identity provider on the page its
- * RelayState named (ssoIdpLandingPath): the plugin sends every such sign-in
- * to SSO_IDP_LANDING_PATH, and this swaps in that page, keeping a refusal's
- * ?error=. Registered in ./server.ts before the two-step challenge, which
- * reads this redirect to send the person on after their second step.
- */
-export const ssoIdpInitiatedLanding = () =>
-  ({
-    id: "qrdx-sso-idp-landing",
-    hooks: {
-      after: [
-        {
-          matcher: (ctx) => ctx.path === SAML_ACS_PATH,
-          handler: createAuthMiddleware((ctx) => {
-            const landing = idpInitiatedLandings.get(ctx.context);
-            if (!landing) return Promise.resolve();
-            const returned = ctx.context.returned;
-            if (!(isAPIError(returned) && returned.statusCode === 302)) {
-              return Promise.resolve();
-            }
-            const location =
-              ctx.context.responseHeaders?.get("location") ??
-              new Headers(returned.headers).get("location");
-            let appOrigin: string;
-            try {
-              appOrigin = new URL(ctx.context.baseURL).origin;
-            } catch {
-              return Promise.resolve();
-            }
-            const target = ssoIdpLandingRedirect(location, landing, appOrigin);
             if (target) throw ctx.redirect(target);
             return Promise.resolve();
           }),

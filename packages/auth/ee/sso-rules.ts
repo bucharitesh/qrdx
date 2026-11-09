@@ -449,13 +449,13 @@ export function samlWeakAlgorithms(xml: string): string[] {
 //   record until then, and only 15 minutes without one;
 // - no SubjectConfirmationData InResponseTo: an answer to a request that the
 //   response doesn't name would skip the plugin's request check;
-// - its RelayState is read as a page of the app to land on (never the
-//   plugin's own state, which an IdP can't have), else SSO_IDP_LANDING_PATH.
+// - its RelayState is dropped (never the plugin's own state, which an IdP
+//   can't have): it always lands on SSO_IDP_LANDING_PATH.
 
 /**
- * Where a sign-in started at the identity provider lands without a usable
- * RelayState (ssoOptions.saml.idpInitiatedCallbackUrl): the dashboard, which
- * opens the connection's workspace (./sso.ts ssoWorkspaceFor).
+ * Where every sign-in started at the identity provider lands
+ * (ssoOptions.saml.idpInitiatedCallbackUrl): the dashboard, which opens the
+ * connection's workspace (./sso.ts ssoWorkspaceFor).
  */
 export const SSO_IDP_LANDING_PATH = "/dashboard";
 
@@ -636,85 +636,4 @@ export function samlIdpInitiatedProblem(
     return "no expiry (Conditions NotOnOrAfter)";
   }
   return null;
-}
-
-const MAX_LANDING_LENGTH = 2048;
-/** Query keys a landing never keeps: the sign-in outcome the app reads. */
-const LANDING_DROPPED_KEYS = ["error", "error_description", "confirm"];
-
-/**
- * The page a sign-in started at the identity provider lands on: its
- * RelayState when that's a path of the app's pages ("/dashboard/acme"), else
- * SSO_IDP_LANDING_PATH. Never another site ("https://…", "//host", "/\host"),
- * backslashes, whitespace or control characters (the rules of
- * apps/docs/lib/safe-redirect.ts), the sign-in page (a loop) or the API.
- * Sign-in outcomes in the query (?error=, ?confirm=) are dropped.
- */
-export function ssoIdpLandingPath(relayState: unknown): string {
-  if (typeof relayState !== "string") return SSO_IDP_LANDING_PATH;
-  if (relayState.length === 0 || relayState.length > MAX_LANDING_LENGTH) {
-    return SSO_IDP_LANDING_PATH;
-  }
-  if (!relayState.startsWith("/") || relayState.startsWith("//")) {
-    return SSO_IDP_LANDING_PATH;
-  }
-  for (let i = 0; i < relayState.length; i++) {
-    const code = relayState.charCodeAt(i);
-    if (code < 0x20 || code === 0x7f) return SSO_IDP_LANDING_PATH;
-  }
-  if (/[\\\s]/.test(relayState)) return SSO_IDP_LANDING_PATH;
-  const base = "https://same-origin.invalid";
-  let url: URL;
-  try {
-    url = new URL(relayState, base);
-  } catch {
-    return SSO_IDP_LANDING_PATH;
-  }
-  if (url.origin !== base) return SSO_IDP_LANDING_PATH;
-  const path = url.pathname;
-  // "/.//evil.com" and "/%2e//evil.com" normalise to "//evil.com", which a
-  // browser reads as another site.
-  if (path.startsWith("//")) return SSO_IDP_LANDING_PATH;
-  if (
-    path === SIGN_IN_PATH ||
-    path.startsWith(`${SIGN_IN_PATH}/`) ||
-    path === "/api" ||
-    path.startsWith("/api/")
-  ) {
-    return SSO_IDP_LANDING_PATH;
-  }
-  for (const key of LANDING_DROPPED_KEYS) url.searchParams.delete(key);
-  return `${path}${url.search}${url.hash}`;
-}
-
-/**
- * Where the plugin's redirect for a sign-in started at the identity provider
- * goes instead: `landing` in place of SSO_IDP_LANDING_PATH, keeping the
- * plugin's ?error= when it refused. Null when `location` isn't that default
- * (or is already `landing`).
- */
-export function ssoIdpLandingRedirect(
-  location: string | null | undefined,
-  landing: string,
-  appOrigin: string
-): string | null {
-  if (!location) return null;
-  let url: URL;
-  let target: URL;
-  try {
-    url = new URL(location, appOrigin);
-    target = new URL(landing, appOrigin);
-  } catch {
-    return null;
-  }
-  const origin = new URL(appOrigin).origin;
-  if (url.origin !== origin || target.origin !== origin) return null;
-  if (url.pathname !== SSO_IDP_LANDING_PATH) return null;
-  for (const key of ["error", "error_description"]) {
-    const value = url.searchParams.get(key);
-    if (value !== null) target.searchParams.set(key, value);
-  }
-  const next = `${target.pathname}${target.search}${target.hash}`;
-  const current = `${url.pathname}${url.search}${url.hash}`;
-  return next === current ? null : next;
 }
