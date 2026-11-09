@@ -1,11 +1,13 @@
 import { and, database as db, eq, verification } from "@repo/database";
 import type { BetterAuthPlugin } from "better-auth";
-import {
-  APIError,
-  createAuthMiddleware,
-  getSessionFromCtx,
-} from "better-auth/api";
+import { createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
+import { confirmationRequiredError } from "./confirm-error";
 import { confirmedIdentifier } from "./confirm-sign-in-rules";
+import {
+  adapterOriginCountry,
+  type HoldableSession,
+  sessionHeld,
+} from "./session-origin";
 
 // "Confirm it's you" for Better Auth's own endpoints, over HTTP. The app's
 // server actions ask first (apps/docs/lib/account/confirmation-server.tsx)
@@ -24,8 +26,16 @@ import { confirmedIdentifier } from "./confirm-sign-in-rules";
 // Signing out other sessions (/revoke-session, /revoke-other-sessions,
 // /revoke-sessions) is never gated: someone whose account is under attack
 // must be able to sign the attacker out at once.
+//
+// A held session (the stolen-session check, ./session-origin.ts) is refused
+// here too, even with a confirmation on record: the guard there lets a
+// request through when its own check fails, and these are the endpoints
+// that matter most. Here a check that fails refuses.
 
-export const CONFIRMATION_REQUIRED = "CONFIRMATION_REQUIRED";
+export {
+  CONFIRMATION_REQUIRED,
+  confirmationRequiredError,
+} from "./confirm-error";
 
 /** Gated whatever the request asks. */
 const ALWAYS_GATED = new Set([
@@ -81,21 +91,20 @@ export async function sessionConfirmed(
   );
 }
 
-export function confirmationRequiredError(): APIError {
-  return new APIError("FORBIDDEN", {
-    code: CONFIRMATION_REQUIRED,
-    message: "Confirm it's you first, then try again.",
-  });
-}
-
 interface SignedIn {
-  session: { id: string };
+  session: HoldableSession;
   user: { id: string };
 }
 
+/** Whether the request's session is held (./session-origin.ts). */
+type HeldCheck = (session: HoldableSession) => Promise<boolean>;
+
+const notHeld: HeldCheck = () => Promise.resolve(false);
+
 /**
  * The hook's decision. Throws CONFIRMATION_REQUIRED for an HTTP request that
- * needs a confirmation this session doesn't have; anything else passes.
+ * needs a confirmation this session doesn't have, or that comes from a held
+ * session (or one the hold check couldn't clear); anything else passes.
  */
 export async function checkConfirmGate(
   request: { http: boolean; path: string; body: unknown },
@@ -103,13 +112,28 @@ export async function checkConfirmGate(
   confirmed: (sessionId: string, userId: string) => Promise<boolean> = (
     sessionId,
     userId
-  ) => sessionConfirmed(sessionId, userId)
+  ) => sessionConfirmed(sessionId, userId),
+  held: HeldCheck = notHeld
 ): Promise<void> {
   if (!request.http) return;
   if (!needsConfirmation(request.path, request.body)) return;
   const found = await signedIn();
   // Signed out: the endpoint refuses it on its own.
   if (!found) return;
+  let isHeld = true;
+  try {
+    isHeld = await held(found.session);
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        event: "auth.confirm_gate",
+        outcome: "hold-check-failed",
+        path: request.path,
+        error: error instanceof Error ? error.name : "unknown",
+      })
+    );
+  }
+  if (isHeld) throw confirmationRequiredError();
   if (await confirmed(found.session.id, found.user.id)) return;
   throw confirmationRequiredError();
 }
@@ -128,7 +152,14 @@ export const confirmGate = () =>
                 path: ctx.path,
                 body: ctx.body,
               },
-              () => getSessionFromCtx(ctx)
+              () => getSessionFromCtx(ctx),
+              undefined,
+              (session) =>
+                sessionHeld(
+                  session,
+                  ctx.headers,
+                  adapterOriginCountry(ctx.context.adapter)
+                )
             )
           ),
         },

@@ -181,6 +181,18 @@ export async function targetWorkspaces(
 }
 
 /**
+ * True for a request that sets a workspace's metadata: updating one, or
+ * making one with it (a new workspace's settings start empty).
+ */
+export function setsWorkspaceMetadata(path: string, body: unknown): boolean {
+  const fields = record(body);
+  if (path === "/organization/update") {
+    return record(fields.data).metadata !== undefined;
+  }
+  return path === "/organization/create" && fields.metadata !== undefined;
+}
+
+/**
  * The hook's decision for an HTTP request to a Better Auth workspace
  * endpoint. Throws for metadata sent over HTTP (the workspace's settings,
  * this requirement among them, change only through the app's checks), and
@@ -195,10 +207,7 @@ export async function checkWorkspaceTwoFactorGate(
   lookups: GateLookups = defaultLookups
 ): Promise<void> {
   if (!request.http) return;
-  if (
-    request.path === "/organization/update" &&
-    record(record(request.body).data).metadata !== undefined
-  ) {
+  if (setsWorkspaceMetadata(request.path, request.body)) {
     throw workspaceSettingsInAppError();
   }
   if (!organizationPathActsOnWorkspace(request.path)) return;

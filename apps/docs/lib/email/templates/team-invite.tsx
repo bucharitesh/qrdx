@@ -45,11 +45,12 @@ export type InviteRole = keyof typeof ROLE_COPY;
 const RANK: InviteRole[] = ["owner", "admin", "member", "billing", "viewer"];
 
 /**
- * The strongest role in Better Auth's comma-separated field; anything
- * unknown reads as viewer, the same rule as the app's permissions.
+ * The strongest role in Better Auth's comma-separated field, each part
+ * matched exactly; anything unknown reads as viewer, the same rule as the
+ * app's permissions.
  */
 export function inviteRole(role: string | null | undefined): InviteRole {
-  const roles = (role ?? "").split(",").map((part) => part.trim());
+  const roles = (role ?? "").split(",");
   return RANK.find((known) => roles.includes(known)) ?? "viewer";
 }
 

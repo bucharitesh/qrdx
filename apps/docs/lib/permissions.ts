@@ -4,7 +4,11 @@
 //
 // Roles are Better Auth organization roles (member.role, comma-separated
 // when someone holds several; QRdx assigns one). packages/auth/server.ts
-// registers the same five with the plugin.
+// registers the same five with the plugin, and stores only exact names
+// (packages/auth/workspace-roles.ts). Fields are read the same exact way
+// (packages/auth/workspace-role-rules.ts): " owner" or "Owner" is no role.
+
+import { rolesInField } from "@repo/auth/workspace-role-rules";
 
 export const WORKSPACE_ROLES = [
   "owner",
@@ -47,15 +51,14 @@ export function isWorkspaceRole(value: unknown): value is WorkspaceRole {
 }
 
 /**
- * The strongest role in Better Auth's comma-separated role field. Anything
- * unknown counts as viewer, so a role this code doesn't know never grants
- * more than reading.
+ * The strongest role in Better Auth's comma-separated role field, each part
+ * matched exactly. Anything unknown counts as viewer, so a role this code
+ * doesn't know never grants more than reading.
  */
 export function strongestRole(field: string | null | undefined): WorkspaceRole {
   let best: WorkspaceRole = "viewer";
-  for (const part of (field ?? "").split(",")) {
-    const role = part.trim();
-    if (isWorkspaceRole(role) && RANK[role] < RANK[best]) best = role;
+  for (const role of rolesInField(field)) {
+    if (RANK[role] < RANK[best]) best = role;
   }
   return best;
 }
@@ -131,9 +134,7 @@ export const PLAN_ROLES: readonly WorkspaceRole[] = ["owner", "billing"];
 
 /** True when the role field holds a role whose plan counts for the workspace. */
 export function holdsPlanRole(field: string | null | undefined): boolean {
-  return (field ?? "")
-    .split(",")
-    .some((part) => PLAN_ROLES.includes(part.trim() as WorkspaceRole));
+  return rolesInField(field).some((role) => PLAN_ROLES.includes(role));
 }
 
 /** Roles a join link or an invitation can give (never owner). */

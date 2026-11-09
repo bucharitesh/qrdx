@@ -14,6 +14,7 @@ import { z } from "zod";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
+import { assertNotShutOut } from "@/lib/workspaces";
 import { postChatMessage } from "./notify";
 import { invalidateSubscribers } from "./subscribers";
 import {
@@ -91,6 +92,11 @@ const scopeOf = (userId: string, organizationId: string | null) => ({
   organizationId,
 });
 
+/**
+ * The person is a member of the workspace, and it doesn't shut them out
+ * ("Require two-step verification"): without it on they can't send the
+ * workspace's events anywhere new, by email or chat (lib/workspaces.ts).
+ */
 async function assertMember(userId: string, organizationId: string | null) {
   if (!organizationId) return;
   const [row] = await db
@@ -107,6 +113,7 @@ async function assertMember(userId: string, organizationId: string | null) {
       "You're not a member of that workspace.",
     );
   }
+  await assertNotShutOut(userId, organizationId);
 }
 
 async function planFor(userId: string, organizationId: string | null) {
@@ -173,13 +180,15 @@ export async function listNotificationWorkspaces(
   );
 }
 
-/** Replaces the person's email events for a workspace ([] turns email off). */
+/**
+ * Replaces the person's email events for a workspace ([] turns email off,
+ * which always works: it only removes the person's own row).
+ */
 export async function setEmailEvents(
   userId: string,
   organizationId: string | null,
   events: NotificationEvent[],
 ): Promise<void> {
-  await assertMember(userId, organizationId);
   const where = and(
     workspaceWhere(userId, organizationId),
     eq(notificationSetting.channel, "email"),
@@ -189,6 +198,7 @@ export async function setEmailEvents(
     invalidateSubscribers(scopeOf(userId, organizationId));
     return;
   }
+  await assertMember(userId, organizationId);
   if (!(await planFor(userId, organizationId)).emailAlerts) {
     throw new HttpError(
       402,
@@ -315,6 +325,8 @@ export async function updateChatTarget(
   events: NotificationEvent[],
 ): Promise<void> {
   const row = await findOwnChatTarget(userId, id);
+  // More events to a webhook is sending more of the workspace somewhere.
+  await assertMember(userId, row.organizationId);
   if (!(await planFor(userId, row.organizationId)).chat) {
     throw new HttpError(
       402,

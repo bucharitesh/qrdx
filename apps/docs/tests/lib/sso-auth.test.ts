@@ -630,6 +630,19 @@ describe("joining the workspace at every SSO sign-in", () => {
     expect(writes[1].onConflictDoNothing).toBe(true);
   });
 
+  it("never accepts an invitation saved with a role that isn't exact", async () => {
+    for (const role of [" owner", "owner ", "member, owner", "Owner"]) {
+      vi.restoreAllMocks();
+      const writes = stubJoin({ invitation: { id: "inv-1", role } });
+      await joinWorkspace("u-ben", "sso-abcdefabcdef");
+      // The invitation stays pending; they join like anyone in the domain.
+      expect(
+        writes.map((w) => w.set ?? w.values),
+        role,
+      ).toEqual([expect.objectContaining({ userId: "u-ben", role: "viewer" })]);
+    }
+  });
+
   it("adds nobody when another sign-in claimed the invitation first", async () => {
     const writes = stubJoin({
       invitation: { id: "inv-1", role: "admin" },

@@ -4,7 +4,7 @@ import {
   getSessionFromCtx,
   isAPIError,
 } from "better-auth/api";
-import { confirmationRequiredError } from "./confirm-gate";
+import { confirmationRequiredError } from "./confirm-error";
 import {
   HELD_SESSION_OPEN_PATHS,
   originChanged,
