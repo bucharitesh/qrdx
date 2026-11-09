@@ -1,13 +1,6 @@
 import "server-only";
 
-import {
-  apiKey,
-  database as db,
-  oauthApp,
-  oauthToken,
-  user,
-  workspaceAuditLog,
-} from "@repo/database";
+import { database as db, user, workspaceAuditLog } from "@repo/database";
 import cuid from "cuid";
 import { eq } from "drizzle-orm";
 import { headers as requestHeaders } from "next/headers";
@@ -20,11 +13,9 @@ import type {
 } from "@/ee/audit-log/catalogue";
 import { sanitizeAuditMetadata } from "@/ee/audit-log/metadata";
 import { isMissingTableError } from "@/ee/audit-log/missing-table";
-import { hashApiKey } from "@/lib/api-keys/crypto";
-import { isApiKeyFormat } from "@/lib/api-keys/shared";
 import { logError } from "@/lib/log-error";
-import { hashToken } from "@/lib/oauth";
 import type { Plan } from "@/lib/plans";
+import type { ApiCredential } from "@/lib/scope";
 import { requestDetails } from "@/lib/security/request-details";
 
 // Records workspace audit log events (Settings → Audit log). Call it after a
@@ -38,17 +29,19 @@ import { requestDetails } from "@/lib/security/request-details";
 //   });
 //
 // Best effort: it returns at once and writes after the response (next/server
-// `after`). Who did it comes from the request: an API key or OAuth token in
-// the Authorization header, else the signed-in person. Nothing is stored
-// unless the workspace is entitled (ee/audit-log/access.ts). A failed write,
-// including the table not existing yet, is logged and never reaches the
-// person's action.
+// `after`). Who did it is the scope's: the API key or OAuth app the API
+// layer authenticated (scope.credential, never read again from a header),
+// else the signed-in person. Nothing is stored unless the workspace is
+// entitled (ee/audit-log/access.ts). A failed write, including the table not
+// existing yet, is logged and never reaches the person's action.
 
 /** The workspace and the person acting in it (an ActiveScope fits). */
 export interface AuditContext {
   organizationId: string;
   /** The signed-in person, or the API key's creator; null for system events */
   userId: string | null;
+  /** The credential the request authenticated with (ActiveScope.credential) */
+  credential?: ApiCredential;
 }
 
 export interface AuditTarget {
@@ -85,6 +78,8 @@ interface Actor {
 type HeaderSource = Pick<Headers, "get">;
 
 const MAX_LABEL = 300;
+/** Rows per INSERT: 15 columns each stays far below Postgres's 65,535 parameters. */
+export const AUDIT_INSERT_CHUNK = 500;
 
 const clip = (value: string | null | undefined): string | null => {
   const text = value?.trim();
@@ -115,76 +110,50 @@ export async function userLabel(userId: string): Promise<string | null> {
   return row ? personLabel(row.name, row.email) : null;
 }
 
-function bearerToken(source: HeaderSource | null): string | null {
-  const value = source?.get("authorization")?.trim() ?? "";
-  if (!/^Bearer\s+/i.test(value)) return null;
-  return value.replace(/^Bearer\s+/i, "").trim() || null;
-}
-
 /**
- * The API key or OAuth app behind the request's Bearer credential. The API
- * route has already checked it; this only names it. Null for a session.
+ * Who did it, and for a key or an app the person it acted for (kept as a
+ * snapshot in the row's metadata, `actingFor`, so the row still reads right
+ * after that person changes their name or leaves).
  */
-async function credentialActor(
-  token: string,
-  fallbackUserId: string | null,
-): Promise<Actor | null> {
-  if (isApiKeyFormat(token)) {
-    const [key] = await db
-      .select({ id: apiKey.id, name: apiKey.name, userId: apiKey.userId })
-      .from(apiKey)
-      .where(eq(apiKey.keyHash, hashApiKey(token)))
-      .limit(1);
-    if (!key) return null;
-    return {
-      actorType: "api_key",
-      actorUserId: key.userId ?? fallbackUserId,
-      actorLabel: clip(key.name),
-      apiKeyId: key.id,
-      oauthAppId: null,
-    };
-  }
-  const [grant] = await db
-    .select({ appId: oauthToken.appId, name: oauthApp.name })
-    .from(oauthToken)
-    .innerJoin(oauthApp, eq(oauthApp.id, oauthToken.appId))
-    .where(eq(oauthToken.accessTokenHash, hashToken(token)))
-    .limit(1);
-  if (!grant) return null;
-  return {
-    actorType: "oauth_app",
-    actorUserId: fallbackUserId,
-    actorLabel: clip(grant.name),
-    apiKeyId: null,
-    oauthAppId: grant.appId,
-  };
-}
-
 async function resolveActor(
   ctx: AuditContext,
-  source: HeaderSource | null,
   options: AuditOptions,
-): Promise<Actor> {
+): Promise<{ actor: Actor; actingFor: string | null }> {
   if (options.system || !ctx.userId) {
     return {
-      actorType: "system",
-      actorUserId: null,
-      actorLabel: clip(options.system?.label ?? "QRdx"),
-      apiKeyId: null,
-      oauthAppId: null,
+      actor: {
+        actorType: "system",
+        actorUserId: null,
+        actorLabel: clip(options.system?.label ?? "QRdx"),
+        apiKeyId: null,
+        oauthAppId: null,
+      },
+      actingFor: null,
     };
   }
-  const token = bearerToken(source);
-  if (token) {
-    const credential = await credentialActor(token, ctx.userId);
-    if (credential) return credential;
+  const person = clip(await userLabel(ctx.userId));
+  const credential = ctx.credential;
+  if (credential) {
+    return {
+      actor: {
+        actorType: credential.type,
+        actorUserId: ctx.userId,
+        actorLabel: clip(credential.name),
+        apiKeyId: credential.type === "api_key" ? credential.id : null,
+        oauthAppId: credential.type === "oauth_app" ? credential.id : null,
+      },
+      actingFor: person,
+    };
   }
   return {
-    actorType: "user",
-    actorUserId: ctx.userId,
-    actorLabel: clip(await userLabel(ctx.userId)),
-    apiKeyId: null,
-    oauthAppId: null,
+    actor: {
+      actorType: "user",
+      actorUserId: ctx.userId,
+      actorLabel: person,
+      apiKeyId: null,
+      oauthAppId: null,
+    },
+    actingFor: null,
   };
 }
 
@@ -229,7 +198,7 @@ export async function writeAuditEvents(
     actions = list.map((event) => event.action);
     if (list.length === 0) return 0;
     const source = options.headers ?? null;
-    const actor = await resolveActor(ctx, source, options);
+    const { actor, actingFor } = await resolveActor(ctx, options);
     const details =
       actor.actorType === "system" || !source ? null : requestDetails(source);
     const memberLabels = new Map<string, string | null>();
@@ -257,7 +226,9 @@ export async function writeAuditEvents(
         targetType: target?.type ?? null,
         targetId: target?.id ?? null,
         targetLabel: clip(label),
-        metadata: sanitizeAuditMetadata(event.metadata),
+        metadata: sanitizeAuditMetadata(
+          actingFor ? { ...event.metadata, actingFor } : event.metadata,
+        ),
         ip: details?.ip ?? null,
         device:
           details && details.device !== "Unknown device"
@@ -266,7 +237,13 @@ export async function writeAuditEvents(
         createdAt: now,
       };
     });
-    await db.insert(workspaceAuditLog).values(rows);
+    // In chunks: one INSERT of thousands of rows (emptying a big trash) would
+    // pass Postgres's parameter limit and record nothing.
+    for (let at = 0; at < rows.length; at += AUDIT_INSERT_CHUNK) {
+      await db
+        .insert(workspaceAuditLog)
+        .values(rows.slice(at, at + AUDIT_INSERT_CHUNK));
+    }
     return rows.length;
   } catch (error) {
     if (isMissingTableError(error)) {
@@ -291,7 +268,7 @@ async function currentHeaders(): Promise<HeaderSource | null> {
   try {
     return await requestHeaders();
   } catch {
-    // Outside a request (a script, a test): no IP, device or credential.
+    // Outside a request (a script, a test): no IP address or device.
     return null;
   }
 }
@@ -307,7 +284,11 @@ export function recordAuditEvent(
 ): void {
   if (Array.isArray(events) && events.length === 0) return;
   // Copied now: the caller may change its objects after this returns.
-  const context = { organizationId: ctx.organizationId, userId: ctx.userId };
+  const context: AuditContext = {
+    organizationId: ctx.organizationId,
+    userId: ctx.userId,
+    ...(ctx.credential && { credential: { ...ctx.credential } }),
+  };
   const task = async () => {
     await writeAuditEvents(context, events, {
       ...options,

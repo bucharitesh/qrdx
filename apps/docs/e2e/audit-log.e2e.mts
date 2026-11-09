@@ -231,6 +231,32 @@ const auditCount = (orgId: string, where = "true") =>
     ),
   );
 
+/** Polls `read` until it returns `want` (or the timeout); returns the last value. */
+async function settle<T>(read: () => T, want: T, timeout = 15_000): Promise<T> {
+  const until = Date.now() + timeout;
+  let value = read();
+  while (value !== want && Date.now() < until) {
+    await sleep(500);
+    value = read();
+  }
+  return value;
+}
+
+/** POST to Better Auth's own endpoints (/api/auth/…, auth.handler) as the page. */
+const authPost = (path: string, body: unknown) =>
+  evaluate(
+    async (p: string, b: string) => {
+      const r = await fetch(`/api/auth${p}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: b,
+      });
+      return { status: r.status, json: await r.json().catch(() => null) };
+    },
+    path,
+    JSON.stringify(body),
+  ) as Promise<{ status: number; json: Record<string, any> | null }>;
+
 const owner = `owner-${RUN}@audit.test`;
 const member = `member-${RUN}@audit.test`;
 const invitee = `invitee-${RUN}@audit.test`;
@@ -303,7 +329,17 @@ try {
       `select count(*) from invitation where email=${q(invitee)} and organization_id=${q(orgId)}`,
     ) === "1",
   );
-  await sleep(1500);
+  check(
+    "the invitation is recorded exactly once (server action, plugin hook)",
+    (await settle(
+      () =>
+        auditCount(
+          orgId,
+          `action='member.invited' and target_label=${q(invitee)}`,
+        ),
+      1,
+    )) === 1,
+  );
 
   console.log("Settings → Audit log");
   await goto(page, { wait: 3000 });
@@ -421,6 +457,27 @@ try {
     ) === 1,
   );
 
+  console.log("rename through Settings → General (server action)");
+  await goto(`${BASE}/dashboard/${slug}/settings`, { wait: 3000 });
+  await evaluate((name: string) => {
+    const input = document.getElementById("workspace-name") as HTMLInputElement;
+    window.__e2e.setValue(input, name);
+  }, `Renamed ${RUN}`);
+  await mouseClick(
+    `() => window.__e2e.byRole("button", "Save", { exact: true })`,
+  );
+  check(
+    "a rename is recorded exactly once, with the old and new name",
+    (await settle(
+      () =>
+        auditCount(
+          orgId,
+          `action='workspace.renamed' and metadata->'after'->>'name'=${q(`Renamed ${RUN}`)}`,
+        ),
+      1,
+    )) === 1 && auditCount(orgId, "action='workspace.renamed'") === 1,
+  );
+
   console.log("load more");
   sql(
     `insert into workspace_audit_log (id, organization_id, actor_type, actor_user_id, actor_label, action, target_type, target_id, target_label, created_at) select 'seed-${RUN}-' || g, ${q(orgId)}, 'user', ${q(ownerId)}, 'Seed', 'tag.created', 'tag', 'tag-' || g, 'Seed tag ' || g, now() - interval '1 day' - (g || ' minutes')::interval from generate_series(1, 60) g`,
@@ -477,6 +534,159 @@ try {
   }, `/dashboard/${slug}/settings/audit-log/export`)) as number;
   check("a member's export is refused", forbidden === 403, `${forbidden}`);
   await shot("05-member");
+
+  console.log("team changes through /api/auth/organization/* (auth.handler)");
+  const alice = `alice-${RUN}@audit.test`;
+  const bob = `bob-${RUN}@audit.test`;
+  const carol = `carol-${RUN}@audit.test`;
+  await emailSignIn(alice);
+  await emailSignIn(bob);
+  await emailSignIn(owner);
+  const createdTeam = await authPost("/organization/create", {
+    name: `Audit team ${RUN}`,
+    slug: `audit-team-${RUN}`,
+  });
+  const teamId = String(createdTeam.json?.id ?? "");
+  check(
+    "creates a team over HTTP",
+    createdTeam.status === 200 && Boolean(teamId),
+    `${createdTeam.status}`,
+  );
+  const invitations: Record<string, string> = {};
+  for (const email of [alice, bob, carol]) {
+    const response = await authPost("/organization/invite-member", {
+      email,
+      role: "member",
+      organizationId: teamId,
+    });
+    invitations[email] = String(response.json?.id ?? "");
+  }
+  const statuses: Record<string, number> = {};
+  statuses.cancel = (
+    await authPost("/organization/cancel-invitation", {
+      invitationId: invitations[carol],
+    })
+  ).status;
+  await emailSignIn(alice);
+  const acceptA = await authPost("/organization/accept-invitation", {
+    invitationId: invitations[alice],
+  });
+  statuses.acceptA = acceptA.status;
+  await emailSignIn(bob);
+  const acceptB = await authPost("/organization/accept-invitation", {
+    invitationId: invitations[bob],
+  });
+  statuses.acceptB = acceptB.status;
+  await emailSignIn(owner);
+  statuses.role = (
+    await authPost("/organization/update-member-role", {
+      memberId: acceptA.json?.member?.id,
+      role: "admin",
+      organizationId: teamId,
+    })
+  ).status;
+  statuses.remove = (
+    await authPost("/organization/remove-member", {
+      memberIdOrEmail: acceptB.json?.member?.id,
+      organizationId: teamId,
+    })
+  ).status;
+  await emailSignIn(alice);
+  statuses.leave = (
+    await authPost("/organization/leave", { organizationId: teamId })
+  ).status;
+  await emailSignIn(owner);
+  statuses.update = (
+    await authPost("/organization/update", {
+      organizationId: teamId,
+      data: { name: `Audit team ${RUN} 2`, slug: `audit-team-${RUN}-2` },
+    })
+  ).status;
+  check(
+    "every endpoint call succeeded",
+    Object.values(statuses).every((status) => status === 200),
+    JSON.stringify(statuses),
+  );
+  const expected = [
+    "invitation.revoked:1",
+    "member.invited:3",
+    "member.joined:2",
+    "member.left:1",
+    "member.removed:1",
+    "member.role_changed:1",
+    "workspace.renamed:1",
+    "workspace.slug_changed:1",
+  ].join("\n");
+  const counts = () =>
+    sql(
+      `select action || ':' || count(*) from workspace_audit_log where organization_id=${q(teamId)} group by action order by action`,
+    );
+  const recorded = await settle(counts, expected);
+  check(
+    "each change is recorded exactly once",
+    recorded === expected,
+    recorded.replace(/\n/g, ", "),
+  );
+  const actorOf = (action: string) =>
+    sql(
+      `select string_agg(u.email, ',' order by u.email) from workspace_audit_log a join "user" u on u.id = a.actor_user_id where a.organization_id=${q(teamId)} and a.action=${q(action)}`,
+    );
+  check(
+    "by the person who made each one",
+    actorOf("member.invited") === [owner, owner, owner].join(",") &&
+      actorOf("invitation.revoked") === owner &&
+      actorOf("member.joined") === [alice, bob].sort().join(",") &&
+      actorOf("member.role_changed") === owner &&
+      actorOf("member.removed") === owner &&
+      actorOf("member.left") === alice &&
+      actorOf("workspace.renamed") === owner,
+  );
+  check(
+    "a role change keeps the old and new role",
+    sql(
+      `select metadata->'before'->>'role' || '>' || (metadata->'after'->>'role') from workspace_audit_log where organization_id=${q(teamId)} and action='member.role_changed'`,
+    ) === "Member>Admin",
+  );
+  const deleted = await authPost("/organization/delete", {
+    organizationId: teamId,
+  });
+  check(
+    "deletes the team over HTTP",
+    deleted.status === 200,
+    `${deleted.status}`,
+  );
+  check(
+    "a deleted team's rows go with it",
+    (await settle(() => auditCount(teamId), 0)) === 0 &&
+      sql(`select count(*) from organization where id=${q(teamId)}`) === "0",
+  );
+
+  console.log("emptying a trash of 4,500 codes");
+  sql(
+    `insert into qr_code (id, user_id, organization_id, slug, destination_url, deleted_at) select 'bulk-${RUN}-' || g, ${q(ownerId)}, ${q(orgId)}, 'b${RUN}' || g, 'https://example.com/' || g, now() from generate_series(1, 4500) g`,
+  );
+  await goto(`${BASE}/dashboard/${slug}/codes?status=trash`, { wait: 4000 });
+  await mouseClick(
+    `() => window.__e2e.byRole("button", "Empty trash", { exact: true })`,
+  );
+  await sleep(800);
+  await mouseClick(
+    `() => document.querySelector('[role=alertdialog] button.bg-destructive, [role=alertdialog] [data-variant=destructive]') ?? [...document.querySelectorAll('[role=alertdialog] button')].find((b) => b.textContent?.trim() === "Empty trash")`,
+  );
+  const bulk = await settle(
+    () =>
+      auditCount(
+        orgId,
+        `action='code.deleted' and target_id like ${q(`bulk-${RUN}-%`)}`,
+      ),
+    4500,
+    60_000,
+  );
+  check(
+    "all 4,500 deletions are recorded (in chunks under Postgres's parameter limit)",
+    bulk === 4500,
+    `${bulk}`,
+  );
 } catch (error) {
   failures++;
   console.error(error);
