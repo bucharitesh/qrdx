@@ -626,7 +626,10 @@ describe("who manages a team", () => {
         role,
       ).toBe(false);
       expect(
-        await teams.updateMemberRole({ memberId: "m_3", role: role as "admin" }),
+        await teams.updateMemberRole({
+          memberId: "m_3",
+          role: role as "admin",
+        }),
         role,
       ).toEqual({ ok: false, error: "Invalid role." });
     }
