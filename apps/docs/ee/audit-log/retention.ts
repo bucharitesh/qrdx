@@ -6,21 +6,22 @@ import {
   workspaceAuditLog,
 } from "@repo/database";
 import { eq, inArray, isNull, lt, type SQL } from "drizzle-orm";
+import { after } from "next/server";
 import { AUDIT_RETENTION_DAYS } from "@/ee/audit-log/limits";
 import { isMissingTableError } from "@/ee/audit-log/missing-table";
 import { logError } from "@/lib/log-error";
 
 // How long the workspace audit log keeps rows, and the deletes that keep it
 // to that: the daily cron (/api/cron/webhooks) purges rows older than 365
-// days, and deleting a workspace deletes its rows. Both work in bounded
-// batches so one call never holds a long lock or runs past the cron's time.
+// days, and a deleted workspace's rows go after the deletion's response.
+// Both work in bounded batches so one call never holds a long lock.
 
 export { AUDIT_RETENTION_DAYS } from "@/ee/audit-log/limits";
 export const AUDIT_PURGE_BATCH = 1_000;
 /** Batches per cron run: 20,000 rows; anything left goes the next day. */
 const MAX_PURGE_BATCHES = 20;
-/** Batches when a workspace is deleted. */
-const MAX_WORKSPACE_BATCHES = 200;
+/** Batches when a workspace is deleted (the cron finishes the rest). */
+const MAX_WORKSPACE_BATCHES = 50;
 
 /** Deletes up to `batch` rows matching `where`; returns how many went. */
 async function deleteBatch(where: SQL, batch: number): Promise<number> {
@@ -102,8 +103,9 @@ export async function purgeAuditEvents({
 }
 
 /**
- * Deletes every row of a workspace that is being deleted. Call it once the
- * workspace is gone. Never throws: the daily purge picks up anything left.
+ * Deletes the rows of a workspace that no longer exists (it does nothing
+ * while the workspace is still there). Bounded; never throws: the daily
+ * purge picks up anything left.
  */
 export async function deleteWorkspaceAuditEvents(
   organizationId: string,
@@ -111,6 +113,12 @@ export async function deleteWorkspaceAuditEvents(
 ): Promise<number> {
   let deleted = 0;
   try {
+    const [still] = await db
+      .select({ id: organization.id })
+      .from(organization)
+      .where(eq(organization.id, organizationId))
+      .limit(1);
+    if (still) return 0;
     for (let round = 0; round < MAX_WORKSPACE_BATCHES; round += 1) {
       const count = await deleteBatch(
         eq(workspaceAuditLog.organizationId, organizationId),
@@ -128,4 +136,21 @@ export async function deleteWorkspaceAuditEvents(
     }
   }
   return deleted;
+}
+
+/**
+ * After a workspace is deleted: its rows go after the response, so the
+ * deletion (a team, an account) never waits on them, and only if the
+ * workspace is really gone. Returns at once and never throws.
+ */
+export function scheduleWorkspaceAuditCleanup(organizationId: string): void {
+  const task = async () => {
+    await deleteWorkspaceAuditEvents(organizationId);
+  };
+  try {
+    after(task);
+  } catch {
+    // Outside a request (a script, a test): run it now, unawaited.
+    void task();
+  }
 }

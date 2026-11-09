@@ -19,7 +19,7 @@ import { and, count, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
-import { deleteWorkspaceAuditEvents } from "@/ee/audit-log/retention";
+import { scheduleWorkspaceAuditCleanup } from "@/ee/audit-log/retention";
 import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
 import {
   currentSession,
@@ -904,7 +904,7 @@ export async function deleteUserAccountAction(
           await db
             .delete(organization)
             .where(eq(organization.id, organizationId));
-          await deleteWorkspaceAuditEvents(organizationId);
+          scheduleWorkspaceAuditCleanup(organizationId);
         }
       }
 

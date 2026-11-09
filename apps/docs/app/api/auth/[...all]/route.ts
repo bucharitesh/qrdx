@@ -2,6 +2,8 @@ import { registerSignInCodeSender } from "@repo/auth/email-otp";
 import { registerNewSignInNotifier } from "@repo/auth/new-sign-in";
 import { registerBackupCodeNotifier } from "@repo/auth/sign-in-challenge";
 import { registerTwoFactorResetCancelledNotifier } from "@repo/auth/two-factor-reset";
+// Hands packages/auth the audit log's recorder for team changes.
+import "@/ee/audit-log/auth-changes";
 import { notifyNewSignIn } from "@/lib/account/new-sign-in-notice-server";
 import { registerAppSessionOriginReader } from "@/lib/account/session-origin";
 import { notifyBackupCodeUsed } from "@/lib/account/two-factor-notice-server";

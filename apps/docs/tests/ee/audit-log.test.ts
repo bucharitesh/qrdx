@@ -686,12 +686,15 @@ describe("retention", () => {
     expect(rows()).toHaveLength(2);
   });
 
-  it("deletes a workspace's rows with the workspace, and no one else's", async () => {
+  it("deletes a deleted workspace's rows, and no one else's", async () => {
     seedRows(5, (index) => ({
       organizationId: index < 3 ? "org_team" : ORG,
     }));
     expect(await deleteWorkspaceAuditEvents("org_team", { batch: 2 })).toBe(3);
     expect(rows().every((row) => row.organizationId === ORG)).toBe(true);
+    // A workspace that still exists keeps its rows.
+    expect(await deleteWorkspaceAuditEvents(ORG)).toBe(0);
+    expect(rows()).toHaveLength(2);
   });
 });
 
