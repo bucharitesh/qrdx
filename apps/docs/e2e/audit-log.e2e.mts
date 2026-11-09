@@ -87,14 +87,16 @@ async function waitText(needle: string, timeout = 20_000) {
   });
 }
 
+/**
+ * Each screen: close the cookie banner (at 390 px it covers the buttons the
+ * later steps click), check the phone layout, then screenshots when asked.
+ */
 async function shot(name: string) {
-  if (!SHOT_DIR) return;
   await evaluate(() => {
     const reject = window.__e2e.byRole("button", "Reject all", { exact: true });
     if (reject) window.__e2e.click(reject);
   });
   await sleep(300);
-  mkdirSync(SHOT_DIR, { recursive: true });
   if (MOBILE) {
     const overflow = (await evaluate(
       () =>
@@ -107,6 +109,8 @@ async function shot(name: string) {
       `${overflow}`,
     );
   }
+  if (!SHOT_DIR) return;
+  mkdirSync(SHOT_DIR, { recursive: true });
   for (const scheme of ["light", "dark"] as const) {
     await cdp.send("Emulation.setEmulatedMedia", {
       features: [
