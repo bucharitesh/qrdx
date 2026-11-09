@@ -13,7 +13,7 @@ The audit log lists the changes people make in a workspace: who did it, what cha
 
 The audit log is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
 
-History starts when the workspace gets Business. Changes made before that, or while the workspace was on another plan, aren't recorded.
+History starts when the workspace gets Business. Changes made before that, or while the workspace was on another plan, aren't recorded. If the workspace leaves Business, recording stops; the entries already kept stay until they're {facts.auditLogRetentionDays} days old, and you can see them again if the workspace comes back to Business.
 
 Only **owners** and **admins** can open the audit log and export it. Members, viewers and billing members can't. See [Roles](/docs/help/teams/roles).
 
@@ -29,13 +29,13 @@ These changes are recorded:
 
 - **Codes:** created (including imports and copies), destination changed, renamed, design changed, short link changed, link controls changed (password on or off, start and end dates, scan limit, fallback URL), routing rules changed, paused or resumed, archived or unarchived, moved to the trash, restored, deleted for good, an earlier version restored, moved to another folder, moved to or from another workspace. Folders and tags created, renamed or deleted.
 - **Pages:** created, published, deleted.
-- **Team:** invitations sent and revoked, people joining with an invitation or the join link, role changes, people removed, people leaving, and the join link turned on, changed or turned off.
+- **Team:** invitations sent and revoked, people joining with an invitation or the join link, role changes, people removed, people leaving, and the join link turned on, changed or turned off. These are recorded however the change was made, in QRdx or through its API.
 - **Security:** single sign-on set up, changed, verified or removed, the role new people get when they first sign in with single sign-on, and exports of the audit log.
-- **Developers:** API keys created and revoked (their name and scopes), apps authorized or revoked, webhook endpoints added, changed or deleted, and a webhook's signing secret replaced.
+- **Developers:** API keys created and revoked (their name and scopes), apps authorized or revoked, webhook endpoints added, changed or deleted, and a webhook's signing secret replaced. For an endpoint the log keeps only its server, like `https://hooks.zapier.com/…`, since the rest of a webhook URL is often secret.
 - **Domains:** custom domains added, verified or removed.
-- **Workspace:** the name or URL changed, and the plan changed.
+- **Workspace:** the name or URL changed, and the workspace moving to Business (recorded as "Billing").
 
-The audit log never keeps an API key, a token, a password, a webhook signing secret or a single sign-on client secret or certificate. It records that one was created, replaced or removed, not its value.
+The audit log never keeps an API key, an OAuth token, a password, a webhook URL's path or query, a webhook signing secret or a single sign-on client secret or certificate. It records that one was created, replaced or removed, not its value.
 
 Apps you authorize act on your own workspace, so authorizing or revoking an app is recorded there.
 

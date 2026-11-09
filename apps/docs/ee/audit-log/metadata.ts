@@ -121,3 +121,29 @@ export function changedFields(
 /** True when `changedFields` found anything. */
 export const hasChanges = (change: { after: Record<string, AuditValue> }) =>
   Object.keys(change.after).length > 0;
+
+/**
+ * A webhook endpoint's address as the log keeps it: the origin, and "/…"
+ * for any path or query, which often hold a secret (catch-hook paths,
+ * ?token=). Same form as the REST API's masked target URLs.
+ */
+export function maskedEndpointUrl(value: string): string {
+  try {
+    const url = new URL(value);
+    const rest = url.pathname !== "/" || url.search || url.hash;
+    return `${url.origin}${rest ? "/…" : ""}`;
+  } catch {
+    return "…";
+  }
+}
+
+/**
+ * Before and after of a webhook endpoint's address, masked. A new path on
+ * the same host still shows as a change.
+ */
+export function endpointUrlChange(previous: string, next: string) {
+  const before = maskedEndpointUrl(previous);
+  let after = maskedEndpointUrl(next);
+  if (before === after) after = `${after} (new path)`;
+  return { before: { url: before }, after: { url: after } };
+}

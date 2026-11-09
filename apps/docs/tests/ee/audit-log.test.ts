@@ -796,9 +796,9 @@ describe("API key and webhook events", () => {
     expect(stored).not.toContain(key.slice(5, 20));
   });
 
-  it("keep the URL and events, never the signing secret", async () => {
+  it("keep the URL's server and the events, never its path or the secret", async () => {
     fakeDb.defaults("webhookEndpoint", () => ({ createdAt: new Date() }));
-    const url = "https://hooks.example.com/qrdx";
+    const url = "https://hooks.example.com/catch/123/s3cretpath?token=abc";
     const { endpoint, secret } = await createEndpoint(scope, {
       url,
       events: ["code.created"],
@@ -818,9 +818,92 @@ describe("API key and webhook events", () => {
       after: { events: ["code.updated"] },
     });
     expect(rows()[2]?.metadata).toEqual({ replaced: "Signing secret" });
+    expect(new Set(rows().map((row) => row.targetLabel))).toEqual(
+      new Set(["https://hooks.example.com/…"]),
+    );
     const stored = JSON.stringify(rows());
+    expect(stored).not.toMatch(/s3cretpath|token=abc|catch\/123/);
     expect(stored).not.toContain(secret);
     expect(stored).not.toContain(rotated);
     expect(stored).not.toMatch(/whsec_/);
+  });
+});
+
+describe("webhook URL changes", () => {
+  it("show the new server, or that the path changed, never either path", async () => {
+    fakeDb.defaults("webhookEndpoint", () => ({ createdAt: new Date() }));
+    state.dns.set("other.example.com", ["93.184.216.35"]);
+    const { endpoint } = await createEndpoint(owner, {
+      url: "https://hooks.example.com/a/secret-one",
+      events: ["code.created"],
+    });
+    await updateEndpoint(owner, endpoint.id, {
+      url: "https://hooks.example.com/b/secret-two",
+    });
+    await updateEndpoint(owner, endpoint.id, {
+      url: "https://other.example.com/x?key=secret-three",
+    });
+    await flush();
+    expect(
+      rows()
+        .slice(1)
+        .map((row) => row.metadata),
+    ).toEqual([
+      {
+        before: { url: "https://hooks.example.com/…" },
+        after: { url: "https://hooks.example.com/… (new path)" },
+      },
+      {
+        before: { url: "https://hooks.example.com/…" },
+        after: { url: "https://other.example.com/…" },
+      },
+    ]);
+    expect(JSON.stringify(rows())).not.toMatch(/secret-/);
+  });
+});
+
+describe("the Who list and the export's actor", () => {
+  it("names people as the log recorded them, not as they are now", async () => {
+    seedRows(2, (index) => ({
+      actorUserId: "u_gone",
+      actorLabel:
+        index === 0 ? "Old Name <old@acme.test>" : "Older <older@acme.test>",
+    }));
+    seedRows(1, () => ({
+      id: "via_key",
+      actorUserId: "u_keyonly",
+      actorType: "api_key",
+      actorLabel: "CI deploy",
+      metadata: { actingFor: "Kim <kim@acme.test>" },
+    }));
+    // Their accounts now read differently (or were reused): not shown.
+    fakeDb.seed("user", [
+      { id: "u_gone", name: "New", email: "new@elsewhere.test" },
+      { id: "u_keyonly", name: "Kim Two", email: "kim2@elsewhere.test" },
+    ]);
+    const { listAuditActors } = await import("@/ee/audit-log/queries");
+    expect(await listAuditActors(ORG)).toEqual([
+      { id: "u_keyonly", label: "Kim <kim@acme.test>" },
+      { id: "u_gone", label: "Old Name <old@acme.test>" },
+    ]);
+  });
+
+  it("refuses an actor from outside this workspace's log", async () => {
+    state.session = { userId: "u_ana" };
+    seedRows(1, () => ({}));
+    const request = (actor: string) =>
+      new Request(
+        `http://localhost:3000/dashboard/acme/settings/audit-log/export?actor=${actor}`,
+        { headers: { "x-qrdx-workspace": "acme" } },
+      );
+    const foreign = await exportCsv(request("u_ben"));
+    expect(foreign.status).toBe(400);
+    const own = await exportCsv(request("u_ana"));
+    expect(own.status).toBe(200);
+    await own.text();
+    await flush();
+    expect(
+      rows().find((row) => row.action === "audit_log.exported")?.metadata,
+    ).toEqual({ who: "Ana Diaz <ana@acme.test>" });
   });
 });
