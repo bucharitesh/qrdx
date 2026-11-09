@@ -663,6 +663,9 @@ export function ssoIdpLandingPath(relayState: unknown): string {
   }
   if (url.origin !== base) return SSO_IDP_LANDING_PATH;
   const path = url.pathname;
+  // "/.//evil.com" and "/%2e//evil.com" normalise to "//evil.com", which a
+  // browser reads as another site.
+  if (path.startsWith("//")) return SSO_IDP_LANDING_PATH;
   if (
     path === SIGN_IN_PATH ||
     path.startsWith(`${SIGN_IN_PATH}/`) ||

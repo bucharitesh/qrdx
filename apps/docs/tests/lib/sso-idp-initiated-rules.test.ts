@@ -201,6 +201,11 @@ describe("where a sign-in started at the IdP lands", () => {
       "https://evil.example/dashboard",
       "http://localhost:3000/dashboard",
       "//evil.example/x",
+      // These normalise to "//evil.example".
+      "/.//evil.example",
+      "/..//evil.example",
+      "/%2e//evil.example",
+      "/./%2e//evil.example",
       "/\\evil.example",
       "\\\\evil.example",
       "javascript:alert(1)",
