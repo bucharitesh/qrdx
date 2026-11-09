@@ -44,6 +44,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useTransition } from "react";
 import { EventCheckboxes } from "@/app/dashboard/webhooks/_components/event-checkboxes";
 import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { NotificationWorkspace } from "@/lib/events/notification-settings";
 import {
@@ -114,6 +115,7 @@ export function WorkspaceNotifications({
   const [busy, setBusy] = useState<string | null>(null);
   const [isSaving, startSaving] = useTransition();
   const [, startAction] = useTransition();
+  const { withConfirmation } = useConfirmation();
 
   const reportError = (result: NotificationActionResult<unknown>) => {
     if (result.ok) return;
@@ -165,18 +167,24 @@ export function WorkspaceNotifications({
     if (!chatDialog) return;
     setChatError(null);
     startSaving(async () => {
+      // A new address asks "Confirm it's you" first.
       const result =
         chatDialog.mode === "add"
-          ? await addNotificationWebhook({
-              organizationId: workspace.organizationId,
-              channel: chatDialog.channel,
-              url: chatUrl.trim(),
-              events: chatEvents,
-            })
+          ? await withConfirmation(
+              () =>
+                addNotificationWebhook({
+                  organizationId: workspace.organizationId,
+                  channel: chatDialog.channel,
+                  url: chatUrl.trim(),
+                  events: chatEvents,
+                }),
+              "add-notification-webhook",
+            )
           : await updateNotificationWebhook({
               id: chatDialog.chat.id,
               events: chatEvents,
             });
+      if (result === null) return;
       if (!result.ok) {
         setChatError(result.error);
         return;

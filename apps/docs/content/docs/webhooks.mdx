@@ -11,7 +11,7 @@ Webhooks, Zapier/Make hooks and Slack/Discord alerts are part of the **Business*
 ## Add an endpoint
 
 1. Open [Settings → Webhooks](/dashboard?to=settings/webhooks) in the workspace whose events you want. The link opens the workspace you last used; pick another one in the workspace switcher and you stay on the same page.
-2. Click **Add endpoint**, enter an `https://` URL and pick the events.
+2. Click **Add endpoint**, enter an `https://` URL and pick the events. QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, and again when you change an endpoint's URL; changing its events or pausing it doesn't ask.
 3. Copy the **signing secret** shown after saving. Owners and admins can show it again, or rotate it, later, after they [confirm it's them](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
 4. Click **Send test**. QRdx sends a signed `ping` event and shows the response status.
 
@@ -145,7 +145,7 @@ Disabling an endpoint stops new deliveries; deleting it also deletes its log. If
 
 ## Zapier, Make and n8n (REST Hooks)
 
-Automation tools can subscribe and unsubscribe on their own through the REST Hooks API. Authenticate with an [API key](/docs/developers/api-keys) or an OAuth access token, like the [codes API](/docs/dynamic-qr-codes#rest-api): `codes:write` to subscribe or unsubscribe, `codes:read` to list. Hook URLs are often secret, so with `codes:read` alone `target_url` shows only the host (`https://hooks.zapier.com/…`). Token requests act on your own workspace; a key acts on the workspace it was created in. Subscriptions are ordinary endpoints: they appear in Settings → Webhooks, where you can also remove them.
+Automation tools can subscribe and unsubscribe on their own through the REST Hooks API. Authenticate with an [API key](/docs/developers/api-keys) or an OAuth access token, like the [codes API](/docs/dynamic-qr-codes#rest-api): `codes:write` to subscribe or unsubscribe, `codes:read` to list. Hook URLs are often secret, so with `codes:read` alone `target_url` shows only the host (`https://hooks.zapier.com/…`). Token requests act on your own workspace; a key acts on the workspace it was created in. Subscribing with your signed-in browser session instead of a key or token asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, and answers `403` with `CONFIRMATION_REQUIRED` until you have in the last 10 minutes. Subscriptions are ordinary endpoints: they appear in Settings → Webhooks, where you can also remove them.
 
 | Method | Path | Description |
 | --- | --- | --- |

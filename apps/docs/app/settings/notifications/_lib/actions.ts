@@ -3,6 +3,10 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import {
+  currentSession,
+  requireRecentConfirmation,
+} from "@/lib/account/confirmation-server";
 import { HttpError } from "@/lib/error-response";
 import {
   addChatTarget,
@@ -67,9 +71,17 @@ async function run<T>(
   action: string,
   limiter: typeof mutationLimiter,
   body: (userId: string) => Promise<T>,
+  { confirm = false }: { confirm?: boolean } = {},
 ): Promise<NotificationActionResult<T>> {
   try {
     const userId = await getCurrentUserId();
+    // Before the limits, so the round trip that asks doesn't use one up.
+    if (confirm) {
+      const session = await currentSession();
+      if (!session || session.userId !== userId) throw new UnauthorizedError();
+      const needed = await requireRecentConfirmation(session);
+      if (needed) return needed;
+    }
     await enforceRateLimits([
       { limiter, key: `notifications:${action}:${userId}` },
     ]);
@@ -111,8 +123,13 @@ export async function addNotificationWebhook(input: {
   const parsed = addSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
   const { organizationId, ...target } = parsed.data;
-  return run("add", mutationLimiter, (userId) =>
-    addChatTarget(userId, organizationId, target),
+  // Notifications going to a new address: "Confirm it's you" first. Editing
+  // which events go to an existing one doesn't ask.
+  return run(
+    "add",
+    mutationLimiter,
+    (userId) => addChatTarget(userId, organizationId, target),
+    { confirm: true },
   );
 }
 
