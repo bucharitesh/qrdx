@@ -243,15 +243,36 @@ describe("buildComparison", () => {
   });
 
   it("only sells features that are built", () => {
-    // Business has folderPermissions and auditLog set, but neither is built.
+    // Business has folderPermissions set, but it isn't built.
     const rows = buildComparison(LIMITS, "USD").flatMap((group) => group.rows);
     const features = rows.map((r) => r.feature);
     assert.ok(!features.includes("Folder permissions"));
-    assert.ok(!features.includes("Audit log"));
     const cells = rows.flatMap((r) => Object.values(r.values));
     assert.ok(cells.every((cell) => !/soon/i.test(String(cell))));
     const lines = Object.values(buildHighlights(LIMITS)).flat();
-    assert.ok(lines.every((line) => !/coming soon|audit log/i.test(line)));
+    assert.ok(
+      lines.every((line) => !/coming soon|folder permission/i.test(line)),
+    );
+  });
+
+  it("lists the audit log on Business only where it's available", () => {
+    assert.deepEqual(findRow("Audit log"), {
+      free: false,
+      pro: false,
+      business: true,
+    });
+    assert.ok(
+      buildHighlights(LIMITS).business.includes("Audit log with CSV export"),
+    );
+    const features = buildComparison(LIMITS, "USD", { auditLog: false })
+      .flatMap((group) => group.rows)
+      .map((row) => row.feature);
+    assert.ok(!features.includes("Audit log"));
+    assert.ok(
+      !buildHighlights(LIMITS, { auditLog: false }).business.some((line) =>
+        /audit log/i.test(line),
+      ),
+    );
   });
 
   it("drops the AI art row only where AI art isn't available", () => {

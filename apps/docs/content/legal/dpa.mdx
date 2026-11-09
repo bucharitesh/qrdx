@@ -1,7 +1,7 @@
 ---
 title: Data Processing Addendum
 description: The terms under which QRdx processes personal data for customers whose codes, hosted pages, forms and analytics collect data from their own visitors. Covers GDPR Article 28, the Standard Contractual Clauses, India's DPDP Act and the CCPA.
-lastUpdated: 2026-11-03
+lastUpdated: 2026-11-09
 ---
 
 <Callout title="Summary">
@@ -120,7 +120,7 @@ QRdx applies these measures to Customer Personal Data:
 
 - **Encryption in transit.** Every connection to the Service, and between QRdx and its subprocessors, uses TLS.
 - **Data minimisation.** Scanner IP addresses are never stored. Unique visitors are counted with a salted hash of IP address, user agent and date that changes every day. Only the host of a referring site is kept, not the full address. Rate-limit counters that may contain an IP address expire within 2 days.
-- **Access control.** Customers sign in through Google or GitHub, and QRdx stores no passwords. Team access follows owner, admin and member roles. Only staff accounts can open the admin tools, and every staff action there is recorded in an audit log.
+- **Access control.** Customers sign in through Google or GitHub, and QRdx stores no passwords. Team access follows owner, admin and member roles. On the Business plan, a workspace's owners and admins can review an audit log of the changes made in it. Only staff accounts can open the admin tools, and every staff action there is recorded in an audit log.
 - **Credentials.** OAuth and API access tokens are stored only as SHA-256 hashes. Integration tokens are encrypted with AES-256-GCM. Passwords on protected codes are stored as hashes. Webhook payloads are signed with a per-endpoint secret.
 - **Abuse and bot protection.** Rate limits, bot filtering, honeypot fields and Cloudflare Turnstile protect forms and public endpoints.
 - **Infrastructure.** The Service runs on managed providers (Vercel and Neon) that maintain their own security certifications, with backups and point-in-time recovery for the database.

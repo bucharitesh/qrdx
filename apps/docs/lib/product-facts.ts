@@ -22,6 +22,10 @@ import { CORNER_EYE_DOT_PATTERNS } from "../../../packages/qrdx/types/corner-dot
 import { CORNER_EYE_PATTERNS } from "../../../packages/qrdx/types/corner-eye";
 import { FRAME_STYLES } from "../../../packages/qrdx/types/frame";
 import { BODY_PATTERN } from "../../../packages/qrdx/types/image-pattern";
+import {
+  AUDIT_EXPORT_MAX_ROWS,
+  AUDIT_RETENTION_DAYS,
+} from "../ee/audit-log/limits";
 import { ART_MODEL_LABEL } from "./ai/art-models";
 
 export const PRODUCT_FACTS = {
@@ -35,6 +39,10 @@ export const PRODUCT_FACTS = {
   frames: FRAME_STYLES.filter((style) => style !== "none").length,
   /** The AI art model as copy names it ("OpenAI's GPT Image 2"), from lib/ai/models.ts. */
   artModel: ART_MODEL_LABEL,
+  /** Days the workspace audit log keeps a row (ee/audit-log/limits.ts). */
+  auditLogRetentionDays: AUDIT_RETENTION_DAYS,
+  /** Rows in one audit log CSV export, as copy writes it ("50,000"). */
+  auditLogExportRows: AUDIT_EXPORT_MAX_ROWS.toLocaleString("en-US"),
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;
