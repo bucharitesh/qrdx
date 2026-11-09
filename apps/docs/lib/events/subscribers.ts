@@ -1,5 +1,6 @@
 import "server-only";
 
+import { workspaceRequiresTwoFactor } from "@repo/auth/workspace-two-factor";
 import {
   database as db,
   member,
@@ -65,6 +66,32 @@ const asEvents = (value: unknown): string[] =>
     ? value.filter((item): item is string => typeof item === "string")
     : [];
 
+/**
+ * Drops the rows of people a workspace shuts out for lacking two-step
+ * verification (lib/workspaces.ts): they can't see anything in it until they
+ * turn it on, its form responses in an email, a chat channel or a digest
+ * included. One read of each workspace's setting, and only for rows whose
+ * person has it off.
+ */
+export async function withoutShutOutMembers<
+  T extends { organizationId: string | null; twoFactorOn: boolean | null },
+>(rows: T[]): Promise<T[]> {
+  const requires = new Map<string, Promise<boolean>>();
+  const kept: T[] = [];
+  for (const row of rows) {
+    if (row.organizationId && row.twoFactorOn !== true) {
+      let required = requires.get(row.organizationId);
+      if (!required) {
+        required = workspaceRequiresTwoFactor(row.organizationId);
+        requires.set(row.organizationId, required);
+      }
+      if (await required) continue;
+    }
+    kept.push(row);
+  }
+  return kept;
+}
+
 async function querySubscribers(
   scope: EventScope,
 ): Promise<Subscribers | null> {
@@ -80,8 +107,10 @@ async function querySubscribers(
         channel: notificationSetting.channel,
         target: notificationSetting.target,
         events: notificationSetting.events,
+        organizationId: notificationSetting.organizationId,
         email: user.email,
         userName: user.name,
+        twoFactorOn: user.twoFactorEnabled,
         memberId: member.id,
       })
       .from(notificationSetting)
@@ -96,9 +125,13 @@ async function querySubscribers(
       .where(settingScopeWhere(scope)),
   ]);
 
-  const targets: NotificationTarget[] = settings
-    // People who left a team stop getting its notifications.
-    .filter((row) => !scope.organizationId || row.memberId)
+  // People who left a team stop getting its notifications, and so do
+  // members it shuts out until they turn on two-step verification.
+  const members = await withoutShutOutMembers(
+    settings.filter((row) => !scope.organizationId || row.memberId),
+  );
+
+  const targets: NotificationTarget[] = members
     .map((row) => ({
       id: row.id,
       userId: row.userId,

@@ -1,3 +1,4 @@
+import { lacksRequiredTwoFactor } from "@repo/auth/workspace-two-factor";
 import { database as db, member } from "@repo/database";
 import { and, eq } from "drizzle-orm";
 import { NextResponse } from "next/server";
@@ -23,8 +24,10 @@ const back = (request: Request, error: string) =>
 
 /**
  * GET /api/integrations/slack/install?workspace=<org id|personal> — "Add to
- * Slack" for one QRdx workspace: checks membership and plan, remembers the
- * workspace for the callback, then sends the person to Slack.
+ * Slack" for one QRdx workspace: checks membership (and that the workspace
+ * doesn't shut the person out for lacking two-step verification) and plan,
+ * remembers the workspace for the callback, then sends the person to Slack.
+ * The callback adds the channel through addChatTarget, which checks again.
  */
 export async function GET(request: Request) {
   const user = await requireUser(connectLimiter, "integrations:slack-install");
@@ -55,6 +58,9 @@ export async function GET(request: Request) {
       )
       .limit(1);
     if (!row) return back(request, "unexpected_error");
+    if (await lacksRequiredTwoFactor(user.userId, organizationId)) {
+      return back(request, "two_factor_required");
+    }
   }
   const plan = await getPlanForScope({ userId: user.userId, organizationId });
   if (!getPlanLimits(plan).webhooks) return back(request, "plan_required");
