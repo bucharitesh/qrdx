@@ -67,6 +67,11 @@ vi.mock("@/lib/integration-oauth", () => ({
   isOAuthConfigured: () => true,
   createIntegrationAuthUrl: async () => "https://slack.com/oauth/v2/authorize",
 }));
+// Cy confirmed it's them just now ("Add to Slack" asks; that check is
+// tests/lib/confirm-data-out-connect.test.ts).
+vi.mock("@/lib/data-connections/connect-confirmation", () => ({
+  connectConfirmationNeeded: async () => null,
+}));
 vi.mock("@/lib/data-connections/server", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/data-connections/server")>()),
   rememberSlackWorkspace: async (organizationId: string | null) => {

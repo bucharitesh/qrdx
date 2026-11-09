@@ -22,6 +22,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
   NeedsSetupBadge,
   NeedsSetupNote,
@@ -31,6 +32,7 @@ import {
   IntegrationLogo,
   logoForIntegration,
 } from "@/components/sections/integrations/integration-logo";
+import { CONFIRM_RETURN_PARAM } from "@/lib/account/confirmation";
 import { isIntegrationsMock } from "@/lib/connected-accounts/mock";
 import {
   connectIntegrationAction,
@@ -104,6 +106,7 @@ export function IntegrationDetail({
 }: IntegrationDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { withConfirmation } = useConfirmation();
   const [isLoading, setIsLoading] = useState(false);
   const hasShortLinks = hasCapability(capabilities, "short-link-provider");
   const canOAuth = oauthConfigured ?? isConfigured;
@@ -114,6 +117,9 @@ export function IntegrationDetail({
       : null;
 
   useEffect(() => {
+    // Back from signing in again to confirm it's you: its `error` is the
+    // sign-in's, and ConfirmIdentityProvider reports it.
+    if (searchParams.get(CONFIRM_RETURN_PARAM)) return;
     const success = searchParams.get("success");
     const error = searchParams.get("error");
 
@@ -129,6 +135,9 @@ export function IntegrationDetail({
         unexpected_error: "An unexpected error occurred",
         plan_required: "Slack alerts are part of the Business plan.",
         two_factor_required: TWO_FACTOR_REQUIRED_MESSAGE,
+        // "Add to Slack" without a recent "Confirm it's you" (it ran out, or
+        // the address was opened directly): the button asks first.
+        confirmation_required: `Confirm it's you first: try again here, and QRdx will ask before sending you to ${name}.`,
         limit_reached:
           "That workspace already has 10 Slack or Discord channels.",
         not_configured: `${name} can't be connected right now.`,
@@ -149,8 +158,15 @@ export function IntegrationDetail({
 
     setIsLoading(true);
     try {
-      const result = await connectIntegrationAction(slug);
-      if (result.url) {
+      // Slack and the data-out tools ask "Confirm it's you" before leaving.
+      const result = await withConfirmation(
+        () => connectIntegrationAction(slug),
+        slug === "slack" ? "add-slack-channel" : "connect-data-out",
+      );
+      if (!result) {
+        // Cancelled, or still not confirmed (the dialog said so).
+        setIsLoading(false);
+      } else if ("url" in result && result.url) {
         window.location.href = result.url;
       } else {
         toast.error("Failed to initiate connection");

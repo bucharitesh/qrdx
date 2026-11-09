@@ -7,10 +7,12 @@ import {
   initializeIntegrations,
 } from "@repo/integrations";
 import { headers } from "next/headers";
+import type { ConfirmationRequired } from "@/lib/account/confirmation";
 import {
   connectLimiter,
   revokeStoredToken,
 } from "@/lib/connected-accounts/server";
+import { connectConfirmationNeeded } from "@/lib/data-connections/connect-confirmation";
 import { cleanupDataConnection } from "@/lib/data-connections/server";
 import {
   createIntegrationAuthUrl,
@@ -24,12 +26,15 @@ initializeIntegrations();
 /**
  * Starts an integration's OAuth sign-in. `returnTo` is a same-site path to
  * come back to afterwards (the Import dialog passes its own); anything else is
- * ignored and the callback lands on Settings → Integrations.
+ * ignored and the callback lands on Settings → Integrations. A tool QRdx
+ * sends data to (Slack, the data-out syncs) needs a recent "Confirm it's
+ * you" and answers CONFIRMATION_REQUIRED without one
+ * (lib/data-connections/connect-confirmation.ts).
  */
 export async function connectIntegrationAction(
   provider: string,
   returnTo?: string,
-) {
+): Promise<{ url: string } | ConfirmationRequired> {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -47,6 +52,10 @@ export async function connectIntegrationAction(
   if (!isOAuthConfigured(provider)) {
     throw new Error(`${definition.name} is not configured on this server`);
   }
+
+  // Before the limit, so the round trip that asks doesn't use one up.
+  const needed = await connectConfirmationNeeded(provider, session.user.id);
+  if (needed) return needed;
 
   await enforceRateLimits([
     {
