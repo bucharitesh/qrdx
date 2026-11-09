@@ -11,6 +11,7 @@ import {
   PASSKEY_SIGN_IN_PATH,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
+import { isUnsolicitedSignIn } from "./unsolicited-sign-in";
 
 // New sign-in alerts. After a sign-in has really finished (any way in, and
 // after the second step when there is one), the browser is looked up among
@@ -282,6 +283,9 @@ async function recordConfirmation(ctx: HookContext, data: NewSession) {
   )) as { twoFactorEnabled?: boolean | null } | null;
   if (!user) return;
   const path = ctx.path ?? "";
+  // Arrived without being asked for (a SAML response the identity provider
+  // started): it signs in, never confirms (./unsolicited-sign-in.ts).
+  if (isUnsolicitedSignIn(ctx.context)) return;
   if (!signInConfirms(path, user.twoFactorEnabled === true)) return;
   const expiresAt = new Date(Date.now() + CONFIRMATION_MINUTES * 60_000);
   await ctx.context.internalAdapter.createVerificationValue({

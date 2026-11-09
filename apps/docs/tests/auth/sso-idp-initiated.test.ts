@@ -1,8 +1,8 @@
 // SAML sign-in started at the identity provider (its app dashboard's tile),
 // end to end inside Better Auth: a real betterAuth instance (memory adapter,
-// no database or network) with the SSO plugin and QRdx's ssoOptions,
-// ssoGate and ssoIdpInitiatedLanding, plus the two-step challenge, in the
-// order packages/auth/server.ts registers them. A test IdP
+// no database or network) with the SSO plugin and QRdx's ssoOptions and
+// ssoGate, plus the two-step challenge, in the order packages/auth/server.ts
+// registers them. A test IdP
 // (tests/support/saml-idp.ts) signs each response; it's posted to the ACS
 // through auth.handler like a browser would. ssoGate's own reads (the
 // connection, the workspace's plan) go through @repo/database and are
@@ -10,8 +10,9 @@
 import { realpathSync } from "node:fs";
 import path from "node:path";
 import { inflateRawSync } from "node:zlib";
-import { ssoGate, ssoIdpInitiatedLanding, ssoOptions } from "@repo/auth/sso";
+import { ssoGate, ssoOptions } from "@repo/auth/sso";
 import { ssoServiceProviderUrls } from "@repo/auth/sso-rules";
+import { isUnsolicitedSignIn } from "@repo/auth/unsolicited-sign-in";
 import { database } from "@repo/database";
 import {
   afterEach,
@@ -55,6 +56,9 @@ let auth: any;
 let db: Record<string, Row[]>;
 let plan: "business" | "pro" = "business";
 let domainVerified = true;
+// Whether each request to the ACS was marked as arriving unasked
+// (isUnsolicitedSignIn), read by a probe after QRdx's hooks have run.
+let unsolicited: boolean[] = [];
 
 function providerRow(): Row {
   return {
@@ -110,6 +114,9 @@ beforeAll(async () => {
     `${betterAuthDir}/dist/adapters/memory-adapter/index.mjs`
   );
   const { sso } = await import(`${ssoDir}/dist/index.mjs`);
+  const { createAuthMiddleware } = await import(
+    `${betterAuthDir}/dist/api/index.mjs`
+  );
   const { signInChallenge } = await import("@repo/auth/sign-in-challenge");
 
   db = {
@@ -146,11 +153,27 @@ beforeAll(async () => {
     logger: { disabled: true },
     // The order of packages/auth/server.ts.
     plugins: [
-      ssoIdpInitiatedLanding(),
       twoFactorPlugin,
       signInChallenge(twoFactorPlugin, { relyingParty: null }),
       sso(ssoOptions),
       ssoGate(),
+      // Reads the mark the way packages/auth/new-sign-in.ts does: from the
+      // request's auth context, in an after hook.
+      {
+        id: "test-unsolicited-probe",
+        hooks: {
+          after: [
+            {
+              matcher: (ctx: { path?: string }) =>
+                (ctx.path ?? "").startsWith("/sso/saml2/sp/acs/"),
+              handler: createAuthMiddleware((ctx: { context: object }) => {
+                unsolicited.push(isUnsolicitedSignIn(ctx.context));
+                return Promise.resolve();
+              }),
+            },
+          ],
+        },
+      },
     ],
   });
 });
@@ -159,6 +182,7 @@ beforeEach(() => {
   plan = "business";
   domainVerified = true;
   for (const rows of Object.values(db)) rows.splice(0, rows.length);
+  unsolicited = [];
   db.ssoProvider.push(providerRow());
   stubGateReads();
 });
@@ -236,19 +260,15 @@ describe("a sign-in started at the identity provider", () => {
     ).toBe(true);
   });
 
-  it("lands on the page its RelayState names", async () => {
-    const reply = await post(
-      tile(`ana@${DOMAIN}`),
-      "/dashboard/acme/codes?folder=launch",
-    );
-    expect(reply.location).toBe("/dashboard/acme/codes?folder=launch");
-    expect(await signedInAs(reply.sessionCookie)).toBe(`ana@${DOMAIN}`);
-  });
-
-  it("lands on the dashboard when RelayState isn't a page of the app", async () => {
+  it("lands on the dashboard whatever its RelayState says", async () => {
+    // The identity provider's RelayState is never a page to open: nobody can
+    // pick where a sign-in they didn't ask for lands.
     for (const relayState of [
+      "/dashboard/acme/codes?folder=launch",
+      "/settings/account",
       "https://evil.example/",
       "//evil.example",
+      "/.//evil.example",
       "/\\evil.example",
       "/sign-in?next=/x",
       "/api/auth/sign-out",
@@ -261,6 +281,14 @@ describe("a sign-in started at the identity provider", () => {
         `ana@${DOMAIN}`,
       );
     }
+  });
+
+  it('signs in, but never counts as "Confirm it\'s you"', async () => {
+    const reply = await post(tile(`ana@${DOMAIN}`));
+    expect(await signedInAs(reply.sessionCookie)).toBe(`ana@${DOMAIN}`);
+    // Marked for packages/auth/new-sign-in.ts, which then records no
+    // confirmation for the new session (tests/auth/new-sign-in.test.ts).
+    expect(unsolicited).toEqual([true]);
   });
 
   it("works with the whole response signed instead of the assertion", async () => {
@@ -279,7 +307,7 @@ describe("a sign-in started at the identity provider", () => {
     expect(again.sessionCookie).toBeNull();
     expect(sessions()).toBe(before);
     expect(again.location).toBe(
-      "/sign-in?next=%2Fdashboard%2Facme&error=replay_detected",
+      "/sign-in?next=%2Fdashboard&error=replay_detected",
     );
   });
 
@@ -302,7 +330,7 @@ describe("a sign-in started at the identity provider", () => {
     // device cookie (packages/auth/sign-in-challenge.ts), then the page.
     const location = new URL(reply.location ?? "", ORIGIN);
     expect(location.pathname).toBe("/api/auth/two-factor/continue");
-    expect(location.searchParams.get("next")).toBe("/dashboard/acme/codes");
+    expect(location.searchParams.get("next")).toBe("/dashboard");
   });
 });
 
@@ -363,7 +391,7 @@ describe("the plugin's own checks still apply", () => {
     const reply = await post(response, "/dashboard/acme");
     expect(reply.sessionCookie, label).toBeNull();
     expect(reply.location ?? "", label).toMatch(
-      /^\/sign-in\?next=%2Fdashboard%2Facme&error=/,
+      /^\/sign-in\?next=%2Fdashboard&error=/,
     );
     expect(db.user, label).toEqual([]);
   }
@@ -434,7 +462,7 @@ describe("the plugin's own checks still apply", () => {
     const reply = await post(tile("ana@other.test"), "/dashboard/acme");
     expect(reply.sessionCookie).toBeNull();
     expect(reply.location).toBe(
-      "/sign-in?next=%2Fdashboard%2Facme&error=sso_email_outside_domain",
+      "/sign-in?next=%2Fdashboard&error=sso_email_outside_domain",
     );
   });
 });
@@ -469,6 +497,8 @@ describe("a sign-in QRdx started (SP-initiated) is unchanged", () => {
     const reply = await post(answer, relayState);
     expect(reply.location).toBe("/dashboard/acme/settings");
     expect(await signedInAs(reply.sessionCookie)).toBe(`ana@${DOMAIN}`);
+    // An answer to QRdx's own request isn't marked: it can confirm.
+    expect(unsolicited).toEqual([false]);
     // The request was used up.
     const again = await post(
       tile(`ana@${DOMAIN}`, {
@@ -493,14 +523,11 @@ describe("a sign-in QRdx started (SP-initiated) is unchanged", () => {
 });
 
 describe("the server's own wiring", () => {
-  it("allows them, and lands them before the challenge reads the redirect", async () => {
+  it("allows them on every connection, landing on the dashboard", async () => {
     const { auth: server } = await import("@repo/auth/server");
     expect(ssoOptions.saml.allowIdpInitiated).toBe(true);
     expect(ssoOptions.saml.idpInitiatedCallbackUrl).toBe("/dashboard");
     const ids = (server.options.plugins as { id: string }[]).map((p) => p.id);
-    const landing = ids.indexOf("qrdx-sso-idp-landing");
-    expect(landing).toBeGreaterThanOrEqual(0);
-    expect(landing).toBeLessThan(ids.indexOf("qrdx-sign-in-challenge"));
     expect(ids.indexOf("qrdx-sso-gate")).toBeGreaterThan(ids.indexOf("sso"));
   });
 });

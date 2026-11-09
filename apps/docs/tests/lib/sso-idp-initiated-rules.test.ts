@@ -1,15 +1,13 @@
 // SAML sign-ins started at the identity provider: the pure rules in
 // packages/auth/ee/sso-rules.ts (reading a response before the plugin does,
-// what QRdx refuses, where it lands) and the sign-in page's messages. The
-// whole flow, with signed responses, is in tests/auth/sso-idp-initiated.test.ts;
-// the browser runs are in e2e/sso-idp-initiated.e2e.mts.
+// what QRdx refuses) and the sign-in page's messages. The whole flow, with
+// signed responses and where they land, is in
+// tests/auth/sso-idp-initiated.test.ts; the browser runs are in
+// e2e/sso-idp-initiated.e2e.mts.
 import {
   readSamlResponse,
-  SSO_IDP_LANDING_PATH,
   samlIdpInitiated,
   samlIdpInitiatedProblem,
-  ssoIdpLandingPath,
-  ssoIdpLandingRedirect,
 } from "@repo/auth/sso-rules";
 import { describe, expect, it } from "vitest";
 import { signInErrorMessage } from "@/app/(auth)/sign-in/_lib/error-message";
@@ -189,95 +187,6 @@ describe("what QRdx refuses from a sign-in started at the IdP", () => {
     expect(problem({ ...base, confirmationInResponseTo: "_req1" })).toMatch(
       /doesn't name/,
     );
-  });
-});
-
-describe("where a sign-in started at the IdP lands", () => {
-  it("on the page its RelayState names", () => {
-    expect(ssoIdpLandingPath("/dashboard/acme")).toBe("/dashboard/acme");
-    expect(ssoIdpLandingPath("/dashboard/acme/codes?folder=x#top")).toBe(
-      "/dashboard/acme/codes?folder=x#top",
-    );
-    expect(ssoIdpLandingPath("/settings/account")).toBe("/settings/account");
-  });
-
-  it("drops a sign-in outcome from the query", () => {
-    expect(
-      ssoIdpLandingPath(
-        "/settings/account?confirm=signed-in&error=x&error_description=y&tab=1",
-      ),
-    ).toBe("/settings/account?tab=1");
-  });
-
-  it("on the dashboard otherwise", () => {
-    expect(SSO_IDP_LANDING_PATH).toBe("/dashboard");
-    for (const relayState of [
-      undefined,
-      null,
-      "",
-      42,
-      "https://evil.example/dashboard",
-      "http://localhost:3000/dashboard",
-      "//evil.example/x",
-      // These normalise to "//evil.example".
-      "/.//evil.example",
-      "/..//evil.example",
-      "/%2e//evil.example",
-      "/./%2e//evil.example",
-      "/\\evil.example",
-      "\\\\evil.example",
-      "javascript:alert(1)",
-      "dashboard",
-      " /dashboard",
-      "/dash board",
-      "/dashboard\n",
-      "/dash\tboard",
-      "/dashboard\u0000",
-      "/sign-in",
-      "/sign-in/two-factor?next=/x",
-      "/api/auth/sign-out",
-      "/api",
-      `/${"a".repeat(2048)}`,
-      // An opaque plugin state, or the IdP's own token.
-      "eyJhbGciOiJIUzI1NiJ9.e30.x",
-    ]) {
-      expect(ssoIdpLandingPath(relayState), JSON.stringify(relayState)).toBe(
-        SSO_IDP_LANDING_PATH,
-      );
-    }
-    // An encoded backslash stays encoded: a path segment, never a host.
-    expect(ssoIdpLandingPath("/%5Cevil.example")).toBe("/%5Cevil.example");
-  });
-
-  it("swaps the plugin's default redirect for the landing, keeping a refusal", () => {
-    const origin = "http://localhost:3000";
-    expect(ssoIdpLandingRedirect("/dashboard", "/dashboard/acme", origin)).toBe(
-      "/dashboard/acme",
-    );
-    expect(
-      ssoIdpLandingRedirect(
-        `${origin}/dashboard?error=replay_detected&error_description=used`,
-        "/dashboard/acme?tab=1",
-        origin,
-      ),
-    ).toBe(
-      "/dashboard/acme?tab=1&error=replay_detected&error_description=used",
-    );
-    // Nothing to change, or not the plugin's default.
-    expect(ssoIdpLandingRedirect("/dashboard", "/dashboard", origin)).toBe(
-      null,
-    );
-    expect(
-      ssoIdpLandingRedirect("/sign-in?error=x", "/dashboard/acme", origin),
-    ).toBe(null);
-    expect(
-      ssoIdpLandingRedirect(
-        "https://evil.example/dashboard",
-        "/dashboard/acme",
-        origin,
-      ),
-    ).toBe(null);
-    expect(ssoIdpLandingRedirect(null, "/dashboard/acme", origin)).toBe(null);
   });
 });
 

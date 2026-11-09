@@ -34,7 +34,6 @@ import {
   SSO_SIGN_IN_PATH,
   SSO_UNUSED_PATHS,
   ssoGate,
-  ssoIdpInitiatedLanding,
   ssoOptions,
   validateSsoUserInfo,
 } from "./ee/sso";
@@ -372,10 +371,6 @@ export const auth = betterAuth({
         },
       },
     }),
-    // A SAML sign-in started at the identity provider lands on the page its
-    // RelayState names (./ee/sso.ts). Before the challenge below, which
-    // sends the person there after their second step.
-    ...(ssoLicensed ? [ssoIdpInitiatedLanding()] : []),
     // Sign-in security (packages/database/manual-sql/0019_sign_in_security.sql).
     // Two-step verification (Lane A): the plugin, then the challenge after
     // every session-creating endpoint (./sign-in-challenge.ts), answered with
