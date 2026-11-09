@@ -25,6 +25,10 @@ const state = vi.hoisted(() => ({
   notices: [] as { kind: string; email: string; extra?: unknown }[],
   /** What sending a notice comes to */
   noticeOutcome: "emailed" as "emailed" | "logged" | "not-sent",
+  /** Outbound delivery is on here (lib/delivery-guard.ts) */
+  deliveryAllowed: false,
+  /** Email is set up here (lib/email/send.ts) */
+  emailConfigured: true,
   audit: [] as {
     action: string;
     actor: { id: string; email: string };
@@ -90,10 +94,13 @@ vi.mock("@/lib/account/linked-sign-ins-server", () => ({
   configuredSocialProviders: () => [],
 }));
 vi.mock("@/lib/delivery-guard", () => ({
-  isOutboundDeliveryAllowed: () => false,
+  isOutboundDeliveryAllowed: () => state.deliveryAllowed,
 }));
 vi.mock("@/lib/email/send", () => ({
   sendEmail: async () => ({ sent: true }),
+  get isEmailConfigured() {
+    return state.emailConfigured;
+  },
 }));
 vi.mock("@/lib/shared", () => ({
   logError: (error: Error) => state.errors.push(error.message),
@@ -223,6 +230,8 @@ beforeEach(() => {
   state.admin = ADMIN;
   state.notices = [];
   state.noticeOutcome = "emailed";
+  state.deliveryAllowed = false;
+  state.emailConfigured = true;
   state.audit = [];
   state.failReset = false;
   state.errors = [];
@@ -498,17 +507,49 @@ describe("support starting a reset, when the notice can't go out", () => {
       .rows("verification")
       .filter((row) => String(row.identifier).startsWith("qrdx-2fa-reset-"));
 
-  it("schedules nothing when the email wasn't sent", async () => {
+  const NO_EMAIL =
+    "This server doesn't send email, so the account's address can't be told and a reset can't be scheduled here.";
+  const NOT_SENT =
+    "The email to the account's address couldn't be sent, so nothing was scheduled. Try again in a few minutes.";
+
+  it("schedules nothing when the email wasn't sent, and says to try again", async () => {
     seed();
     await adminConfirms();
+    state.deliveryAllowed = true;
     state.noticeOutcome = "not-sent";
     expect(await support.resetTwoFactorAction(startInput)).toEqual({
       ok: false,
-      error:
-        "The email to the account's address couldn't be sent, so nothing was scheduled. Try again in a few minutes.",
+      error: NOT_SENT,
     });
     expect(scheduledRows()).toEqual([]);
     expect(state.audit).toEqual([]);
+  });
+
+  it("says this server doesn't send email on a preview (production mode, delivery off)", async () => {
+    seed();
+    await adminConfirms();
+    vi.stubEnv("NODE_ENV", "production");
+    state.deliveryAllowed = false;
+    state.noticeOutcome = "not-sent";
+    expect(await support.resetTwoFactorAction(startInput)).toEqual({
+      ok: false,
+      error: NO_EMAIL,
+    });
+    expect(scheduledRows()).toEqual([]);
+    expect(state.audit).toEqual([]);
+  });
+
+  it("says so too where delivery is on but email isn't set up", async () => {
+    seed();
+    await adminConfirms();
+    state.deliveryAllowed = true;
+    state.emailConfigured = false;
+    state.noticeOutcome = "not-sent";
+    expect(await support.resetTwoFactorAction(startInput)).toEqual({
+      ok: false,
+      error: NO_EMAIL,
+    });
+    expect(scheduledRows()).toEqual([]);
   });
 
   it("schedules nothing from a server that only logs it, against a shared database", async () => {
@@ -518,8 +559,7 @@ describe("support starting a reset, when the notice can't go out", () => {
     vi.stubEnv("DATABASE_URL", "postgres://u:p@ep-cool-1.neon.tech/qrdx");
     expect(await support.resetTwoFactorAction(startInput)).toEqual({
       ok: false,
-      error:
-        "This server doesn't send email, so the account's address can't be told and nothing was scheduled. Start the reset from production.",
+      error: NO_EMAIL,
     });
     expect(scheduledRows()).toEqual([]);
   });
@@ -577,6 +617,18 @@ describe("support starting a reset, when the notice can't go out", () => {
     ]) {
       expect(isLocalDatabaseUrl(url), url).toBe(false);
     }
+
+    const { resetNoticeRefusal } = await import(
+      "@/lib/account/two-factor-notice"
+    );
+    const refusal = (
+      outcome: "emailed" | "logged" | "not-sent",
+      canSendEmail: boolean,
+    ) => resetNoticeRefusal(outcome, { canSendEmail });
+    expect(refusal("not-sent", true)).toBe(NOT_SENT);
+    expect(refusal("not-sent", false)).toBe(NO_EMAIL);
+    expect(refusal("logged", false)).toBe(NO_EMAIL);
+    expect(refusal("logged", true)).toBe(NO_EMAIL);
   });
 });
 

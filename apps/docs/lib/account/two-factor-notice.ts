@@ -91,6 +91,30 @@ export function resetNoticeDelivered(
   );
 }
 
+export const RESET_NOTICE_REFUSALS = {
+  /** Delivery is off here (local dev, a preview), or email isn't set up. */
+  noEmail:
+    "This server doesn't send email, so the account's address can't be told and a reset can't be scheduled here.",
+  /** It could have gone out, but didn't. */
+  notSent:
+    "The email to the account's address couldn't be sent, so nothing was scheduled. Try again in a few minutes.",
+} as const;
+
+/**
+ * Why support's turn-off wasn't scheduled (resetNoticeDelivered said no).
+ * `canSendEmail`: outbound delivery is on and email is set up. Without it the
+ * notice never had a chance (a preview runs in production mode with delivery
+ * off, so its notice is "not-sent", not "logged"), and trying again won't help.
+ */
+export function resetNoticeRefusal(
+  outcome: TwoFactorNoticeOutcome,
+  { canSendEmail }: { canSendEmail: boolean },
+): string {
+  return outcome === "not-sent" && canSendEmail
+    ? RESET_NOTICE_REFUSALS.notSent
+    : RESET_NOTICE_REFUSALS.noEmail;
+}
+
 /**
  * Emails the notice where outbound delivery is on, writes it to the console
  * in local dev. Never throws: the change has happened, so a failed notice is
