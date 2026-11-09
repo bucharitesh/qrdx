@@ -1,6 +1,7 @@
 // Pricing-page copy derived from the plan limits (lib/plans.ts is the single
 // source of truth). Pure and client-safe: the server page passes the limits in.
 
+import { AUDIT_RETENTION_DAYS } from "@/ee/audit-log/limits";
 import { listNames } from "@/lib/availability-copy";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import type { PlanLimits } from "@/lib/plans";
@@ -28,7 +29,8 @@ export interface ComparisonGroup {
 }
 
 // Only built features are sold: planned limits in lib/plans.ts (folder
-// permissions, audit log) stay off the pricing page until they ship.
+// permissions) stay off the pricing page until they ship. The audit log
+// shipped (ee/audit-log), so it's listed on Business where it's available.
 
 const MB = 1024 * 1024;
 const GB = 1024 * MB;
@@ -119,6 +121,7 @@ const AI_THEMES_ROW = "AI theme generations";
 const CUSTOM_DOMAINS_ROW = "Custom domains";
 const FILE_STORAGE_ROW = "File storage";
 const SSO_ROW = "Single sign-on";
+const AUDIT_LOG_ROW = "Audit log";
 const EMAIL_ALERTS_ROW = "Email digests and alerts";
 const PIXELS_HINT = "GA4, Meta, GTM, TikTok";
 // Tag Manager only loads on custom domains (components/landing/pixels.tsx).
@@ -183,6 +186,11 @@ const GROUPS: {
         flag("sso"),
         "SAML or OIDC, with your company's identity provider",
       ),
+      row(
+        AUDIT_LOG_ROW,
+        flag("auditLog"),
+        `Who changed what in the workspace, kept ${AUDIT_RETENTION_DAYS} days, with CSV export`,
+      ),
     ],
   },
   {
@@ -244,6 +252,8 @@ export interface PricingOptions {
   emailAlerts?: boolean;
   /** Workspace single sign-on (QRDX_EE_LICENSE). */
   sso?: boolean;
+  /** The workspace audit log (QRDX_EE_LICENSE). */
+  auditLog?: boolean;
 }
 
 const ROW_FEATURE: Record<string, keyof PricingOptions> = {
@@ -253,6 +263,7 @@ const ROW_FEATURE: Record<string, keyof PricingOptions> = {
   [FILE_STORAGE_ROW]: "fileStorage",
   [EMAIL_ALERTS_ROW]: "emailAlerts",
   [SSO_ROW]: "sso",
+  [AUDIT_LOG_ROW]: "auditLog",
 };
 
 const offered = (options: PricingOptions, feature?: keyof PricingOptions) =>
@@ -379,6 +390,9 @@ export function buildHighlights(
       "Unlimited team members",
       ...(business.sso && offered(options, "sso")
         ? ["Single sign-on (SAML and OIDC)"]
+        : []),
+      ...(business.auditLog && offered(options, "auditLog")
+        ? ["Audit log with CSV export"]
         : []),
       "Conversion tracking",
       "Webhooks, Zapier and Slack",

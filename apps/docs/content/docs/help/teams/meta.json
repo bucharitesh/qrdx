@@ -7,6 +7,7 @@
     "roles",
     "seats",
     "require-two-step-verification",
-    "single-sign-on"
+    "single-sign-on",
+    "audit-log"
   ]
 }

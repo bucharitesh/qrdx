@@ -1,0 +1,70 @@
+---
+title: Audit log
+description: See who changed what in your workspace and when, filter it, and export it as CSV. Part of the Business plan.
+---
+
+The audit log is a Business feature under the QRdx commercial license. A self-hosted QRdx server needs a license key (`QRDX_EE_LICENSE`) to turn it on; see [Self-hosting](/docs/self-hosting#optional-services).
+
+<IfAvailable feature="auditLog">
+
+The audit log lists the changes people make in a workspace: who did it, what changed and when. Owners and admins read it in **Settings** → **Audit log**, where they can filter it and export it as a CSV file.
+
+## Who has it
+
+The audit log is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
+
+History starts when the workspace gets Business. Changes made before that, or while the workspace was on another plan, aren't recorded.
+
+Only **owners** and **admins** can open the audit log and export it. Members, viewers and billing members can't. See [Roles](/docs/help/teams/roles).
+
+## What's recorded
+
+Each entry has the time, who made the change, what they changed and the target (a code, a page, a person, a domain). Where it applies, the entry keeps the old and the new value, like a code's old and new destination. Click the arrow on an entry to see them.
+
+Who made the change is a person, or an API key or app acting for a person. Changes made through the [REST API](/docs/developers/rest-api) with an API key show the key's name; changes made through an app you authorized show the app's name.
+
+Each entry also keeps the IP address and the device of the request, the browser and system like "Chrome on macOS". Changes the system makes, like a plan change from billing, have neither.
+
+These changes are recorded:
+
+- **Codes:** created (including imports and copies), destination changed, renamed, design changed, short link changed, link controls changed (password on or off, start and end dates, scan limit, fallback URL), routing rules changed, paused or resumed, archived or unarchived, moved to the trash, restored, deleted for good, an earlier version restored, moved to another folder, moved to or from another workspace. Folders and tags created, renamed or deleted.
+- **Pages:** created, published, deleted.
+- **Team:** invitations sent and revoked, people joining with an invitation or the join link, role changes, people removed, people leaving, and the join link turned on, changed or turned off.
+- **Security:** single sign-on set up, changed, verified or removed, the role new people get when they first sign in with single sign-on, and exports of the audit log.
+- **Developers:** API keys created and revoked (their name and scopes), apps authorized or revoked, webhook endpoints added, changed or deleted, and a webhook's signing secret replaced.
+- **Domains:** custom domains added, verified or removed.
+- **Workspace:** the name or URL changed, and the plan changed.
+
+The audit log never keeps an API key, a token, a password, a webhook signing secret or a single sign-on client secret or certificate. It records that one was created, replaced or removed, not its value.
+
+Apps you authorize act on your own workspace, so authorizing or revoking an app is recorded there.
+
+These aren't in the audit log:
+
+- people who join a workspace by signing in with single sign-on;
+- scans, form responses and analytics, which aren't changes to the workspace (see them in Analytics and Responses);
+- changes to your own account, like your name, email or two-step verification.
+
+## Filter the log
+
+The newest changes come first, 50 at a time. Click **Load more** at the bottom for older ones.
+
+- **Who**: one person, with the API keys and apps that act for them.
+- **Category**: Codes (with folders and tags), Pages, Team, Security, Developers, Domains or Workspace.
+- **From** and **To**: the first and last day to show. Days are in UTC; the times on each entry are in your time zone.
+
+## Export as CSV
+
+Click **Export CSV** to download what the filters show, newest first. One export holds up to {facts.auditLogExportRows} entries. For more, export a shorter date range at a time.
+
+The file has one row per change: the time in UTC, the category, the action, a sentence describing it, who made it (and the API key or app, if any), the target, the IP address, the device, and the old and new values as JSON.
+
+Exporting is recorded too, with the filters that were used.
+
+## How long entries are kept
+
+Entries are kept for {facts.auditLogRetentionDays} days, then deleted. Deleting a workspace deletes its audit log with it.
+
+The IP addresses and devices in the audit log are personal data of the people who work in the workspace. The [privacy policy](/legal/privacy-policy) says how QRdx handles them.
+
+</IfAvailable>

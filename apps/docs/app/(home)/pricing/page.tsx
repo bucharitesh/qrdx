@@ -36,6 +36,7 @@ const OPTIONS: PricingOptions = {
   fileStorage: isFeatureAvailable("fileStorage"),
   emailAlerts: isFeatureAvailable("email"),
   sso: isFeatureAvailable("sso"),
+  auditLog: isFeatureAvailable("auditLog"),
 };
 
 const DESCRIPTION = buildPricingDescription(OPTIONS);
