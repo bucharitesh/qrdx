@@ -36,6 +36,9 @@ const state = vi.hoisted(() => ({
   calls: [] as string[],
   cookies: new Map<string, { value: string; options: unknown }>(),
   errors: [] as string[],
+  /** Rate limiters count per prefix and key (off: everything passes) */
+  countLimits: false,
+  limitCounts: new Map<string, number>(),
 }));
 
 const authError = (code: string) =>
@@ -61,8 +64,22 @@ vi.mock("next/headers", () => ({
 }));
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 vi.mock("@repo/rate-limit", () => ({
-  createRateLimiter: () => ({ limit: async () => ({ success: true }) }),
-  slidingWindow: () => ({}),
+  createRateLimiter: ({
+    prefix,
+    limiter,
+  }: {
+    prefix: string;
+    limiter: { max?: number };
+  }) => ({
+    limit: async (key: string) => {
+      if (!state.countLimits) return { success: true };
+      const counted = `${prefix}:${key}`;
+      const n = (state.limitCounts.get(counted) ?? 0) + 1;
+      state.limitCounts.set(counted, n);
+      return { success: n <= (limiter.max ?? Number.POSITIVE_INFINITY) };
+    },
+  }),
+  slidingWindow: (max: number) => ({ max }),
 }));
 // The real helper parses Better Auth's Set-Cookie; this keeps name and value.
 vi.mock("@repo/auth/passkey", () => ({
@@ -284,6 +301,8 @@ beforeEach(() => {
   state.calls = [];
   state.cookies = new Map();
   state.errors = [];
+  state.countLimits = false;
+  state.limitCounts = new Map();
 });
 
 afterEach(() => {
@@ -567,6 +586,39 @@ describe("signing out sessions", () => {
     expect(state.calls).toEqual([
       "revokeOtherSessions",
       `revokeSession ${JSON.stringify({ token: "token_other" })}`,
+    ]);
+  });
+
+  it("is never rate limited, so a stolen session can't use up the owner's tries", async () => {
+    state.countLimits = true;
+    // The attacker's session spends tries on ids that don't exist…
+    for (let i = 0; i < 50; i++) {
+      expect(
+        await account.revokeSession({ sessionId: `session_junk_${i}` }),
+      ).toEqual({ ok: true });
+      expect(await account.revokeOtherSessions()).toEqual({ ok: true });
+    }
+    // …and linking and unlinking use up their own limiter…
+    await confirm();
+    for (let i = 0; i < 25; i++) {
+      await account.unlinkSignInMethod({ accountId: "acc_missing" });
+    }
+    expect(
+      await account.unlinkSignInMethod({ accountId: "acc_google" }),
+    ).toEqual({
+      ok: false,
+      error: "Too many changes. Wait a few minutes and try again.",
+    });
+    // …yet signing out the attacker still works at once.
+    state.calls = [];
+    expect(await account.revokeSession({ sessionId: "session_other" })).toEqual(
+      { ok: true },
+    );
+    expect(state.calls).toEqual([
+      `revokeSession ${JSON.stringify({ token: "token_other" })}`,
+    ]);
+    expect([...state.limitCounts.keys()]).toEqual([
+      "qrdx:account-sign-in-methods:user_1",
     ]);
   });
 });
