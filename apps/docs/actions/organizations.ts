@@ -19,6 +19,8 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
+// Team changes are recorded by packages/auth/workspace-audit.ts.
+import "@/ee/audit-log/auth-changes";
 import {
   can,
   canAssignRole,
@@ -199,6 +201,16 @@ function managedTeamId(scope: ActiveScope): string | null {
 }
 
 /** A member of the open workspace, with their strongest role. */
+/** True when the invitation belongs to `organizationId`. */
+async function isInvitationOf(invitationId: string, organizationId: string) {
+  const [row] = await db
+    .select({ organizationId: invitation.organizationId })
+    .from(invitation)
+    .where(eq(invitation.id, invitationId))
+    .limit(1);
+  return row?.organizationId === organizationId;
+}
+
 async function findTeamMember(organizationId: string, memberId: string) {
   const [row] = await db
     .select({ id: member.id, role: member.role, userId: member.userId })
@@ -483,6 +495,10 @@ export async function cancelInvitation(input: {
     const parsed = invitationSchema.safeParse(input);
     if (!parsed.success) return fail("Invalid invitation.");
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
+    // Only the open workspace's invitations (the plugin checks the role in
+    // the invitation's own workspace, which may be another one).
+    if (!(await isInvitationOf(parsed.data.invitationId, scope.organizationId)))
+      return fail("Invalid invitation.");
 
     await auth.api.cancelInvitation({
       headers: await headers(),

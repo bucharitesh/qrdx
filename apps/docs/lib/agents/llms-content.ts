@@ -26,6 +26,7 @@ export function pricingOptions(): PricingOptions {
     fileStorage: isFeatureAvailable("fileStorage"),
     emailAlerts: isFeatureAvailable("email"),
     sso: isFeatureAvailable("sso"),
+    auditLog: isFeatureAvailable("auditLog"),
   };
 }
 

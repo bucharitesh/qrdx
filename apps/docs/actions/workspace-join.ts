@@ -4,6 +4,7 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { auditJoinLink, auditJoinLinkRole } from "@/ee/audit-log/team-events";
 import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
 import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
 import { HttpError } from "@/lib/error-response";
@@ -141,6 +142,7 @@ export async function issueWorkspaceJoinLink(input: {
       role,
       createdBy: scope.userId,
     });
+    auditJoinLink(scope, "join_link.created", role);
     revalidateTeam();
     return { ok: true, data: { path: joinLinkPath(token), role } };
   } catch (error) {
@@ -168,6 +170,7 @@ export async function setWorkspaceJoinLinkRole(input: {
     const needed = await confirmationForRole(scope, parsed.data);
     if (needed) return needed;
     await setJoinLinkRole(scope.organizationId, parsed.data);
+    auditJoinLinkRole(scope, current.role, parsed.data);
     revalidateTeam();
     return { ok: true, data: null };
   } catch (error) {
@@ -180,6 +183,7 @@ export async function disableWorkspaceJoinLink(): Promise<JoinActionResult> {
   try {
     const scope = await managedScope(null);
     await deleteJoinLink(scope.organizationId);
+    auditJoinLink(scope, "join_link.disabled");
     revalidateTeam();
     return { ok: true, data: null };
   } catch (error) {

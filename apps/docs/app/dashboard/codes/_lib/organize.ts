@@ -15,6 +15,9 @@ import {
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { assertBindableDomains } from "@/app/dashboard/domains/_lib/domains";
+import { codeEvents, codeEventsByIds } from "@/ee/audit-log/code-events";
+import { changedFields } from "@/ee/audit-log/metadata";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { can } from "@/lib/permissions";
@@ -367,6 +370,10 @@ export async function createFolder(
     createdAt: new Date(),
   };
   await db.insert(folder).values(row);
+  recordAuditEvent(scope, {
+    action: "folder.created",
+    target: { type: "folder", id: row.id, label: name },
+  });
   return { id: row.id, name, parentId, position: row.position, codeCount: 0 };
 }
 
@@ -382,6 +389,13 @@ export async function renameFolder(
     .update(folder)
     .set({ name })
     .where(and(eq(folder.id, id), folderScope(scope)));
+  if (current.name !== name) {
+    recordAuditEvent(scope, {
+      action: "folder.renamed",
+      target: { type: "folder", id, label: name },
+      metadata: changedFields({ name: current.name }, { name }),
+    });
+  }
 }
 
 export async function moveFolder(
@@ -426,6 +440,10 @@ export async function deleteFolder(
       .where(and(eq(folder.parentId, id), folderScope(scope))),
     db.delete(folder).where(and(eq(folder.id, id), folderScope(scope))),
   ]);
+  recordAuditEvent(scope, {
+    action: "folder.deleted",
+    target: { type: "folder", id, label: current.name },
+  });
   return { parentId };
 }
 
@@ -487,7 +505,16 @@ export async function resolveFolderPaths(
       );
     }
   }
-  if (created.length > 0) await db.insert(folder).values(created);
+  if (created.length > 0) {
+    await db.insert(folder).values(created);
+    recordAuditEvent(
+      scope,
+      created.map((row) => ({
+        action: "folder.created" as const,
+        target: { type: "folder" as const, id: row.id, label: row.name },
+      })),
+    );
+  }
   return result;
 }
 
@@ -583,6 +610,10 @@ export async function createTag(
     createdAt: new Date(),
   };
   await db.insert(tag).values(row);
+  recordAuditEvent(scope, {
+    action: "tag.created",
+    target: { type: "tag", id: row.id, label: name },
+  });
   return { id: row.id, name, color, codeCount: 0 };
 }
 
@@ -602,6 +633,13 @@ export async function updateTag(
       ...(color !== undefined && { color }),
     })
     .where(and(eq(tag.id, id), tagScope(scope)));
+  if (name !== undefined && name !== current.name) {
+    recordAuditEvent(scope, {
+      action: "tag.renamed",
+      target: { type: "tag", id, label: name },
+      metadata: changedFields({ name: current.name }, { name }),
+    });
+  }
 }
 
 export async function deleteTag(scope: ActiveScope, id: string): Promise<void> {
@@ -611,6 +649,10 @@ export async function deleteTag(scope: ActiveScope, id: string): Promise<void> {
   assertCreator(scope, current, "tags");
   // qr_code_tag rows go with it (on delete cascade).
   await db.delete(tag).where(and(eq(tag.id, id), tagScope(scope)));
+  recordAuditEvent(scope, {
+    action: "tag.deleted",
+    target: { type: "tag", id, label: current.name },
+  });
 }
 
 /** Tag ids by lower-case name, creating missing tags (round-robin colors). */
@@ -647,7 +689,16 @@ export async function resolveTagNames(
     created.push(row);
     result.set(key, row.id);
   }
-  if (created.length > 0) await db.insert(tag).values(created);
+  if (created.length > 0) {
+    await db.insert(tag).values(created);
+    recordAuditEvent(
+      scope,
+      created.map((row) => ({
+        action: "tag.created" as const,
+        target: { type: "tag" as const, id: row.id, label: row.name },
+      })),
+    );
+  }
   return result;
 }
 
@@ -686,6 +737,9 @@ function codesWhere(
 
 const updatedCount = (rows: unknown[]) => ({ updated: rows.length });
 
+/** What a change returns for the audit log's row names. */
+const CODE_NAME = { id: qrCode.id, title: qrCode.title, slug: qrCode.slug };
+
 export async function setFavorite(
   scope: ActiveScope,
   ids: string[],
@@ -720,14 +774,21 @@ export async function moveCodes(
   ids: string[],
   folderId: string | null,
 ) {
-  if (folderId) requireFolder(await scopeFolders(scope), folderId);
-  return updatedCount(
-    await db
-      .update(qrCode)
-      .set({ folderId })
-      .where(codesWhere(scope, ids))
-      .returning({ id: qrCode.id }),
+  const into = folderId
+    ? requireFolder(await scopeFolders(scope), folderId)
+    : null;
+  const moved = await db
+    .update(qrCode)
+    .set({ folderId })
+    .where(codesWhere(scope, ids))
+    .returning(CODE_NAME);
+  recordAuditEvent(
+    scope,
+    codeEvents("code.moved_to_folder", moved, {
+      after: { folder: into?.name ?? "No folder" },
+    }),
   );
+  return updatedCount(moved);
 }
 
 async function assertTagRoom(ids: string[], adding: string[]) {
@@ -835,18 +896,21 @@ export async function setPaused(
   ids: string[],
   paused: boolean,
 ) {
-  return updatedCount(
-    await db
-      .update(qrCode)
-      .set({ pausedAt: paused ? new Date() : null })
-      .where(
-        and(
-          codesWhere(scope, ids),
-          paused ? isNull(qrCode.pausedAt) : isNotNull(qrCode.pausedAt),
-        ),
-      )
-      .returning({ id: qrCode.id }),
+  const changed = await db
+    .update(qrCode)
+    .set({ pausedAt: paused ? new Date() : null })
+    .where(
+      and(
+        codesWhere(scope, ids),
+        paused ? isNull(qrCode.pausedAt) : isNotNull(qrCode.pausedAt),
+      ),
+    )
+    .returning(CODE_NAME);
+  recordAuditEvent(
+    scope,
+    codeEvents(paused ? "code.paused" : "code.resumed", changed),
   );
+  return updatedCount(changed);
 }
 
 /** Re-activating codes (unarchive, restore) needs free plan slots. */
@@ -882,13 +946,13 @@ export async function setArchived(
   archived: boolean,
 ) {
   if (archived) {
-    return updatedCount(
-      await db
-        .update(qrCode)
-        .set({ archivedAt: new Date() })
-        .where(and(codesWhere(scope, ids), isNull(qrCode.archivedAt)))
-        .returning({ id: qrCode.id }),
-    );
+    const changed = await db
+      .update(qrCode)
+      .set({ archivedAt: new Date() })
+      .where(and(codesWhere(scope, ids), isNull(qrCode.archivedAt)))
+      .returning(CODE_NAME);
+    recordAuditEvent(scope, codeEvents("code.archived", changed));
+    return updatedCount(changed);
   }
   const where = and(codesWhere(scope, ids), isNotNull(qrCode.archivedAt));
   const [{ total = 0 } = {}] = await db
@@ -912,6 +976,7 @@ export async function setArchived(
         .set({ archivedAt: new Date() })
         .where(inArray(qrCode.id, changedIds)),
   );
+  recordAuditEvent(scope, () => codeEventsByIds("code.unarchived", changed));
   return { updated: changed.length };
 }
 
@@ -921,7 +986,8 @@ export async function trashCodes(scope: ActiveScope, ids: string[]) {
     .update(qrCode)
     .set({ deletedAt: new Date() })
     .where(and(codesWhere(scope, ids), deletableWhere(scope)))
-    .returning({ id: qrCode.id });
+    .returning(CODE_NAME);
+  recordAuditEvent(scope, codeEvents("code.trashed", rows));
   return { updated: rows.length, skipped: ids.length - rows.length };
 }
 
@@ -948,6 +1014,7 @@ export async function restoreCodes(scope: ActiveScope, ids: string[]) {
         .set({ deletedAt: new Date() })
         .where(inArray(qrCode.id, changedIds)),
   );
+  recordAuditEvent(scope, () => codeEventsByIds("code.restored", changed));
   return { updated: changed.length };
 }
 
@@ -958,7 +1025,8 @@ export async function purgeCodes(scope: ActiveScope, ids: string[]) {
     .where(
       and(codesWhere(scope, ids, { trashed: true }), deletableWhere(scope)),
     )
-    .returning({ id: qrCode.id });
+    .returning(CODE_NAME);
+  recordAuditEvent(scope, codeEvents("code.deleted", rows));
   return { updated: rows.length, skipped: ids.length - rows.length };
 }
 
@@ -972,7 +1040,8 @@ export async function emptyTrash(scope: ActiveScope) {
         deletableWhere(scope),
       ),
     )
-    .returning({ id: qrCode.id });
+    .returning(CODE_NAME);
+  recordAuditEvent(scope, codeEvents("code.deleted", rows));
   return { updated: rows.length };
 }
 

@@ -48,6 +48,8 @@ describe("PRODUCT_FACTS", () => {
       eyeCentres: CORNER_EYE_DOT_PATTERNS.length,
       frames: FRAME_STYLES.length - 1,
       artModel: "OpenAI's GPT Image 2",
+      auditLogRetentionDays: 365,
+      auditLogExportRows: "50,000",
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(

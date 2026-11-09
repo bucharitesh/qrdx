@@ -4,7 +4,7 @@ description: Run your own QRdx web app, dynamic QR codes and hosted pages includ
 icon: Server
 ---
 
-QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on is the exception: it lives in the commercially licensed `ee/` folders and stays off unless you set a license key (`QRDX_EE_LICENSE`). Using it in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend.
+QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on and the workspace audit log are the exception: they live in the commercially licensed `ee/` folders and stay off unless you set a license key (`QRDX_EE_LICENSE`). Using them in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend.
 
 <Callout type="warn">
   The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/bucharitesh/qrdx/issues).
@@ -151,6 +151,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
 | Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
 | Workspace single sign-on | `QRDX_EE_LICENSE` | Single sign-on stays off: no **Sign in with SSO**, no SSO settings, and its sign-in routes don't exist. SSO is in the `ee/` folders under the QRdx commercial license, so production use needs a written agreement with QRdx. See [Single sign-on](/docs/help/teams/single-sign-on) |
+| Workspace audit log | `QRDX_EE_LICENSE` | The audit log stays off: nothing is recorded and there's no **Settings** → **Audit log**. Like single sign-on, it's in the `ee/` folders under the QRdx commercial license. Its rows are kept {facts.auditLogRetentionDays} days; the daily run of `/api/cron/webhooks` deletes older ones. See [Audit log](/docs/help/teams/audit-log) |
 | AI themes, prompt enhancement and AI QR art (Vercel AI Gateway) | `AI_GATEWAY_API_KEY` | AI requests fail and the AI pages leave the navigation and sitemap. The editor works normally. Create the key in your own Vercel account (AI Gateway, API keys); usage is billed to that account's AI Gateway credits, and your app doesn't have to run on Vercel. The model for each task is set in `apps/docs/lib/ai/models.ts` |
 | Short-link origin | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamic codes](/docs/dynamic-qr-codes#self-hosting) use `NEXT_PUBLIC_APP_URL` |
 | Scan privacy salt | `SCAN_HASH_SALT` | Derived from `BETTER_AUTH_SECRET` |
@@ -158,7 +159,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Email (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | Emails are skipped and logged, so email sign-in codes can't be sent; team invites use copyable links. See [Notifications](/docs/notifications#self-hosting) |
 | Custom domains on Vercel | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Leave unset off Vercel: domains are then verified with a DNS `TXT` record. See [Custom domains](/docs/custom-domains#self-hosting) |
 | One-click DNS setup (Domain Connect) | `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID`, `DOMAIN_CONNECT_PRIVATE_KEY` | No **Set up with …** button: people add DNS records themselves. Needs your own Domain Connect template accepted by each DNS provider, and its public key in DNS. See [Custom domains](/docs/custom-domains#self-hosting) |
-| Scheduled jobs | `CRON_SECRET` | In production the weekly digest and webhook retry jobs refuse to run |
+| Scheduled jobs | `CRON_SECRET` | In production the weekly digest and webhook retry jobs refuse to run, and audit log rows older than {facts.auditLogRetentionDays} days aren't deleted |
 | Link safety (Google Web Risk) | `WEB_RISK_API_KEY` | Destinations are checked by the offline rules only. See [Code controls](/docs/code-controls) |
 | Form spam check (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Forms rely on the built-in honeypot and rate limits |
 | Payments (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Upgrading doesn't work (plans without a product id show "Coming soon"), and every account uses the Free limits |
@@ -179,7 +180,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 
 ## Reverse proxy and HTTPS
 
-Put the app behind a reverse proxy such as Caddy, nginx or Traefik that terminates TLS, and don't expose port 3000 to the internet directly. Rate limiting reads the client IP from `X-Real-IP` and then `X-Forwarded-For`, so the proxy must set these headers and the app must only be reachable through it.
+Put the app behind a reverse proxy such as Caddy, nginx or Traefik that terminates TLS, and don't expose port 3000 to the internet directly. Rate limiting, the security emails and the [audit log](/docs/help/teams/audit-log) read the client IP from `X-Real-IP` and then the first `X-Forwarded-For` address, so the proxy must set these headers and the app must only be reachable through it. Have the proxy set `X-Real-IP` to the address it received the connection from (in nginx, `proxy_set_header X-Real-IP $remote_addr;`). A proxy that only appends to `X-Forwarded-For` lets a client put any address first.
 
 Once HTTPS is set up, change `NEXT_PUBLIC_APP_URL` and `BETTER_AUTH_URL` to the `https://` URL, update the OAuth callback URLs, and rebuild.
 

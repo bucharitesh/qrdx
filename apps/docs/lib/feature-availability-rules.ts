@@ -33,6 +33,7 @@ export const FEATURE_IDS = [
   "spotifyPlaylistPicker",
   "passkeys",
   "sso",
+  "auditLog",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -175,6 +176,16 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     paths: [
       `${WORKSPACE_PATTERN_PREFIX}/settings/sso`,
       "/docs/help/teams/single-sign-on",
+    ],
+  },
+  auditLog: {
+    // The workspace audit log is in ee/ under the same licence: without a
+    // key nothing is recorded and Settings → Audit log doesn't exist.
+    name: "Workspace audit log (QRdx license key)",
+    requires: () => [EE_LICENSE_ENV],
+    paths: [
+      `${WORKSPACE_PATTERN_PREFIX}/settings/audit-log`,
+      "/docs/help/teams/audit-log",
     ],
   },
 };

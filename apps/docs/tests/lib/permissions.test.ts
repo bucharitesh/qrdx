@@ -30,6 +30,7 @@ const MATRIX: Record<
   "domains.manage": [true, true, false, false, false],
   "sso.manage": [true, true, false, false, false],
   "webhooks.manage": [true, true, false, false, false],
+  "auditLog.view": [true, true, false, false, false],
   "themes.manage": [true, true, false, false, false],
   "apiKeys.create": [true, true, true, false, false],
   "apiKeys.manageAll": [true, true, false, false, false],

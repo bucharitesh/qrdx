@@ -34,6 +34,9 @@ import {
   or,
   sql,
 } from "drizzle-orm";
+// Role changes and deleted teams are recorded by packages/auth/workspace-audit.ts.
+import "@/ee/audit-log/auth-changes";
+import { scheduleWorkspaceAuditCleanup } from "@/ee/audit-log/retention";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import {
   getCustomDomainMode,
@@ -378,6 +381,7 @@ export async function executeAccountDeletion({
     await db
       .delete(organization)
       .where(eq(organization.id, ownWorkspaceId(userId)));
+    scheduleWorkspaceAuditCleanup(ownWorkspaceId(userId));
   }
 
   // 6. Likes the user gave stop counting.

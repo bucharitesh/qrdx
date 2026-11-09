@@ -8,6 +8,7 @@ import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { eeLicensed } from "../ee-license";
 import { workspacePlanTier } from "../plan";
 import { markUnsolicitedSignIn } from "../unsolicited-sign-in";
+import { emitWorkspaceChange } from "../workspace-audit";
 import {
   isWorkspaceRoleName,
   type WorkspaceRoleName,
@@ -302,7 +303,7 @@ async function addMember(
   role: WorkspaceRoleName
 ) {
   // Two SSO sign-ins at once: the unique (workspace, user) index keeps one.
-  await db
+  const [added] = await db
     .insert(schema.member)
     .values({
       id: randomUUID(),
@@ -311,7 +312,18 @@ async function addMember(
       role,
       createdAt: new Date(),
     })
-    .onConflictDoNothing();
+    .onConflictDoNothing()
+    .returning({ id: schema.member.id });
+  // The workspace audit log (../workspace-audit.ts), for the one that did.
+  if (added) {
+    emitWorkspaceChange({
+      kind: "joined",
+      organizationId,
+      userId,
+      role,
+      via: "sso",
+    });
+  }
 }
 
 /**

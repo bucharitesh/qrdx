@@ -1,4 +1,5 @@
 import {
+  ClipboardText as AuditLog,
   Notification as Bell,
   Chart as ChartNoAxesColumn,
   ProfileCircle as CircleUser,
@@ -148,6 +149,12 @@ export function settingsNav(slug: string): AppNavGroup[] {
           label: "Single sign-on",
           icon: KeySquare,
           keywords: ["sso", "saml", "oidc", "okta", "identity provider"],
+        },
+        {
+          href: workspaceHref(slug, "/settings/audit-log"),
+          label: "Audit log",
+          icon: AuditLog,
+          keywords: ["activity", "history", "security", "changes", "export"],
         },
         {
           href: workspaceHref(slug, "/settings/webhooks"),

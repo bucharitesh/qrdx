@@ -16,6 +16,9 @@ import {
   assertBindableDomains,
   getDomainRefs,
 } from "@/app/dashboard/domains/_lib/domains";
+import { codeEvents } from "@/ee/audit-log/code-events";
+import { changedFields } from "@/ee/audit-log/metadata";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { screenUrlChange } from "@/lib/safety/destinations";
@@ -287,5 +290,16 @@ export async function restoreCodeVersion(
     .where(and(eq(qrCode.id, codeId), isNull(qrCode.deletedAt)))
     .returning({ id: qrCode.id });
   if (!row) throw notFound();
+  recordAuditEvent(
+    scope,
+    codeEvents("code.version_restored", [current], {
+      fields: restored.map((change) => change.label),
+      ...(values.destinationUrl !== undefined &&
+        changedFields(
+          { destinationUrl: current.destinationUrl },
+          { destinationUrl: values.destinationUrl },
+        )),
+    }),
+  );
   return { restored, skipped };
 }

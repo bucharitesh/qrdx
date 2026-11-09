@@ -28,11 +28,23 @@ type HeaderSource = Pick<Headers, "get">;
 const IP = /^[0-9a-f.:]{2,45}$/i;
 const TIME_ZONE = /^[A-Za-z0-9_+\-/]{1,64}$/;
 
-/** First hop of x-forwarded-for, else x-real-ip; null when neither is an address. */
+/**
+ * The client's address, platform header first: on Vercel `x-real-ip` (and
+ * `x-vercel-forwarded-for`) are set by the platform, not the client. Self-
+ * hosted, the reverse proxy should set X-Real-IP (docs/self-hosting); the
+ * first X-Forwarded-For hop comes last, since a client can forge it behind
+ * a proxy that appends to that header. Null when none is an address.
+ */
 function clientIp(headers: HeaderSource): string | null {
-  const forwarded = headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  const ip = forwarded || headers.get("x-real-ip")?.trim() || "";
-  return IP.test(ip) ? ip : null;
+  for (const value of [
+    headers.get("x-real-ip"),
+    headers.get("x-vercel-forwarded-for")?.split(",")[0],
+    headers.get("x-forwarded-for")?.split(",")[0],
+  ]) {
+    const ip = value?.trim() ?? "";
+    if (IP.test(ip)) return ip;
+  }
+  return null;
 }
 
 /**

@@ -2,11 +2,15 @@
 
 import { auth } from "@repo/auth/server";
 import { twoFactorOnFor } from "@repo/auth/workspace-two-factor";
-import { withTwoFactorRequired } from "@repo/auth/workspace-two-factor-rules";
+import {
+  twoFactorRequiredIn,
+  withTwoFactorRequired,
+} from "@repo/auth/workspace-two-factor-rules";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { auditTwoFactorRequirement } from "@/ee/audit-log/security-events";
 import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
 import { HttpError } from "@/lib/error-response";
 import { can, forbiddenMessage } from "@/lib/permissions";
@@ -84,6 +88,7 @@ export async function setTwoFactorRequirement(
         data: { metadata: withTwoFactorRequired(metadata, required) },
       },
     });
+    auditTwoFactorRequirement(scope, twoFactorRequiredIn(metadata), required);
     revalidatePath("/dashboard", "layout");
     return { ok: true, data: { required } };
   } catch (error) {

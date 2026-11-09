@@ -99,6 +99,12 @@ async function authenticateBearer(token: string): Promise<BearerCaller> {
   if (isApiKeyFormat(token)) {
     const key = await authenticateApiKey(token);
     if (!key) throw invalidApiKeyError();
+    // The audit log names the key that authenticated this request.
+    const credential = {
+      type: "api_key",
+      id: key.keyId,
+      name: key.name,
+    } as const;
     return {
       kind: "apiKey",
       scope: key.organizationId
@@ -106,8 +112,9 @@ async function authenticateBearer(token: string): Promise<BearerCaller> {
             userId: key.userId,
             organizationId: key.organizationId,
             role: key.role,
+            credential,
           }
-        : await ownScope(key.userId),
+        : { ...(await ownScope(key.userId)), credential },
       scopes: key.scopes,
       personal: key.organizationId === null,
     };
@@ -116,7 +123,10 @@ async function authenticateBearer(token: string): Promise<BearerCaller> {
   if (oauth) {
     return {
       kind: "oauth",
-      scope: await ownScope(oauth.userId),
+      scope: {
+        ...(await ownScope(oauth.userId)),
+        credential: { type: "oauth_app", id: oauth.appId, name: oauth.appName },
+      },
       scopes: oauth.scopes,
       personal: true,
     };
