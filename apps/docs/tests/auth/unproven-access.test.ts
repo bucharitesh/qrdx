@@ -1,7 +1,8 @@
 // Proving an unproven account's address (packages/auth/unproven-access.ts):
 // when an email-code sign-in is about to mark an account made from an
 // unverified Google or GitHub address as verified, everything an earlier
-// holder could use to get back in is removed first. Against in-memory tables
+// holder could use to get back in, or to keep receiving the account's data
+// (webhooks, Slack and Discord alerts, data-out syncs), is removed first. Against in-memory tables
 // (tests/support/fake-db.ts) that evaluate the real queries; the hook is
 // driven the way Better Auth calls it, and also through a real Better Auth
 // email-code sign-in (memory adapter) to check the context it gets.
@@ -19,8 +20,12 @@ vi.mock(
   async () => (await import("../support/fake-db")).repoDatabase,
 );
 
-const { beforeAddressProven, removeUnprovenAccess, unprovenAccessCleanup } =
-  await import("@repo/auth/unproven-access");
+const {
+  beforeAddressProven,
+  DATA_OUT_PROVIDERS,
+  removeUnprovenAccess,
+  unprovenAccessCleanup,
+} = await import("@repo/auth/unproven-access");
 
 const USER = "user_holder";
 const EMAIL = "ada@qrdx.test";
@@ -96,7 +101,39 @@ function seed({ verified = false }: { verified?: boolean } = {}) {
       { id: `code_${userId}`, userId, usedAt: null },
       { id: `used_code_${userId}`, userId, usedAt: EARLIER },
     ]);
+    fakeDb.seed("webhookEndpoint", [
+      { id: `hook_${userId}`, userId, organizationId: null, url: "https://a" },
+      {
+        id: `team_hook_${userId}`,
+        userId,
+        organizationId: "org_team",
+        url: "https://b",
+      },
+    ]);
+    fakeDb.seed("notificationSetting", [
+      { id: `slack_${userId}`, userId, channel: "slack", target: "https://s" },
+      {
+        id: `discord_${userId}`,
+        userId,
+        channel: "discord",
+        target: "https://d",
+      },
+      { id: `email_${userId}`, userId, channel: "email", target: "a@b.test" },
+    ]);
+    fakeDb.seed("integration", [
+      ...DATA_OUT_PROVIDERS.map((provider) => ({
+        id: `${provider}_${userId}`,
+        userId,
+        provider,
+      })),
+      // A content source brings data in: it stays.
+      { id: `stripe_${userId}`, userId, provider: "stripe" },
+    ]);
   }
+  // Workspace content stays: a code in the team workspace.
+  fakeDb.seed("qrCode", [
+    { id: "code_in_team", userId: USER, organizationId: "org_team" },
+  ]);
   // Rows that only look alike stay: someone else's trust record holding
   // another value, and the sign-in code itself.
   fakeDb.seed("verification", [
@@ -179,6 +216,26 @@ describe("proving the address of an account made unproven", () => {
     ).toEqual(EARLIER);
   });
 
+  it("removes its webhooks, Slack and Discord alerts and data-out syncs; email alerts and workspace content stay", async () => {
+    seed();
+    await beforeAddressProven({ emailVerified: true }, SIGN_IN);
+    expect(ofUser("webhookEndpoint", USER)).toEqual([]);
+    expect(ofUser("notificationSetting", USER).map((row) => row.id)).toEqual([
+      `email_${USER}`,
+    ]);
+    expect(ofUser("integration", USER).map((row) => row.id)).toEqual([
+      `stripe_${USER}`,
+    ]);
+    expect(fakeDb.find("qrCode", { id: "code_in_team" })).toBeDefined();
+  });
+
+  it("covers every data-out sync there is, and Slack", async () => {
+    const { SINK_PROVIDERS } = await import("@repo/integrations");
+    expect([...DATA_OUT_PROVIDERS].sort()).toEqual(
+      [...SINK_PROVIDERS, "slack"].sort(),
+    );
+  });
+
   it("forgets known browsers, confirmations and any session left", async () => {
     seed();
     await beforeAddressProven({ emailVerified: true }, SIGN_IN);
@@ -201,6 +258,9 @@ describe("proving the address of an account made unproven", () => {
       "apiKey",
       "oauthToken",
       "oauthAuthorizationCode",
+      "webhookEndpoint",
+      "notificationSetting",
+      "integration",
     ]) {
       expect(ofUser(table, OTHER).length, table).toBeGreaterThan(0);
     }
@@ -227,6 +287,9 @@ describe("proving the address of an account made unproven", () => {
       apiKeys: 1,
       oauthTokens: 1,
       oauthCodes: 1,
+      webhooks: 2,
+      chatAlerts: 2,
+      dataOut: DATA_OUT_PROVIDERS.length,
       knownDevices: 1,
       confirmations: 1,
       sessions: 1,
@@ -242,6 +305,44 @@ describe("proving the address of an account made unproven", () => {
       { ...SIGN_IN, body: { email: "Ada@QRdx.test" } },
     );
     expect(ofUser("passkey", USER)).toEqual([]);
+  });
+});
+
+describe("however much there is", () => {
+  it("is one statement per table in one batch, not one per row", async () => {
+    seed();
+    fakeDb.seed(
+      "apiKey",
+      Array.from({ length: 500 }, (_, i) => ({
+        id: `many_${i}`,
+        userId: USER,
+        revokedAt: null,
+        updatedAt: EARLIER,
+      })),
+    );
+    fakeDb.seed(
+      "verification",
+      Array.from({ length: 300 }, (_, i) => ({
+        id: `many_trust_${i}`,
+        identifier: `trust-device-many-${i}`,
+        value: USER,
+        expiresAt: later,
+      })),
+    );
+    const database = (await import("@repo/database")).database as unknown as {
+      batch: (statements: unknown[]) => Promise<unknown>;
+    };
+    const batch = vi.spyOn(database, "batch");
+    const removed = await removeUnprovenAccess(USER);
+    expect(batch).toHaveBeenCalledOnce();
+    expect(batch.mock.calls[0]?.[0]).toHaveLength(13);
+    expect(removed.apiKeys).toBe(501);
+    expect(removed.trustedDevices).toBe(301);
+    expect(
+      fakeDb
+        .rows("apiKey")
+        .filter((row) => row.userId === USER && row.revokedAt === null),
+    ).toEqual([]);
   });
 });
 
@@ -324,6 +425,9 @@ describe("removeUnprovenAccess on an account with nothing to remove", () => {
       apiKeys: 0,
       oauthTokens: 0,
       oauthCodes: 0,
+      webhooks: 0,
+      chatAlerts: 0,
+      dataOut: 0,
       knownDevices: 0,
       confirmations: 0,
       sessions: 0,
