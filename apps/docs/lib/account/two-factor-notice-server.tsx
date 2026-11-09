@@ -4,8 +4,10 @@ import type { BackupCodeNotifier } from "@repo/auth/sign-in-challenge";
 import { after } from "next/server";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { sendEmail } from "@/lib/email/send";
+import { SUPPORT_EMAIL } from "@/lib/email/templates/security-parts";
 import {
   type BackupCodeUsedFor,
+  SUPPORT_KINDS,
   TwoFactorNoticeEmail,
   twoFactorNoticeSubject,
 } from "@/lib/email/templates/two-factor-notice";
@@ -45,8 +47,11 @@ export async function sendTwoFactorNotice(
       ? requestDetails(headers)
       : await currentRequestDetails();
     // Support's change: their device and address aren't the account's business.
-    const details =
-      kind === "support-off" ? { ...request, actor: "QRdx support" } : request;
+    const bySupport =
+      kind === "support-off" ||
+      kind === "support-reset-scheduled" ||
+      (kind === "support-reset-cancelled" && extra?.cancelledBy === "support");
+    const details = bySupport ? { ...request, actor: "QRdx support" } : request;
     const outcome = await deliverTwoFactorNotice(
       { kind, email, extra },
       {
@@ -56,6 +61,8 @@ export async function sendTwoFactorNotice(
         send: () =>
           sendEmail({
             to: email,
+            // Support's notices ask for a reply if it wasn't them.
+            ...(SUPPORT_KINDS.has(kind) ? { replyTo: SUPPORT_EMAIL } : {}),
             subject: twoFactorNoticeSubject(kind),
             react: (
               <TwoFactorNoticeEmail

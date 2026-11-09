@@ -1,6 +1,6 @@
 ---
 title: Keep your account secure
-description: How sign-in works, two-step verification, passkeys, the check when a sign-in is used somewhere new, the emails QRdx sends about your account's security, signing out other devices, and how to report a security problem.
+description: How sign-in works, two-step verification, passkeys, the check when a sign-in is used somewhere new, the emails QRdx sends about your account's security, how long a sign-in lasts, signing out other devices, and how to report a security problem.
 ---
 
 ## No password to leak
@@ -19,7 +19,7 @@ A [passkey](/docs/help/privacy-and-security/passkeys) checks it's you with your 
 
 ## Changes ask you to confirm it's you
 
-Before a change to your account's security, QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), even though you're signed in: changing your email address, deleting your account, turning two-step verification on or off, new backup codes, changing your second-step methods, or linking or unlinking Google or GitHub. So do creating an API key or an OAuth app's client secret, and, in a workspace, deleting it, changing someone's role, removing someone or inviting an admin.<IfAvailable feature="sso"> So do changes to a workspace's single sign-on connection.</IfAvailable>
+Before a change to your account's security, QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), even though you're signed in: changing your email address, deleting your account, turning two-step verification on or off, new backup codes, changing your second-step methods, or linking or unlinking Google or GitHub. So do creating an API key or an OAuth app's client secret, approving an app that asks to use your account, showing or rotating a webhook's signing secret, and, in a workspace, deleting it, changing someone's role, removing someone or inviting an admin.<IfAvailable feature="sso"> So do changes to a workspace's single sign-on connection.</IfAvailable>
 
 With two-step verification on, you confirm with <IfAvailable feature="passkeys">your passkey, </IfAvailable>an authenticator code or a backup code, never with an emailed code. Without it, you can use a 6-digit code QRdx emails you<IfAvailable feature="passkeys">, your passkey if you have one,</IfAvailable> or sign in again with a Google or GitHub account you've linked<IfAvailable feature="sso"> (or your workspace's single sign-on, when it uses OIDC)</IfAvailable>. A confirmation lasts 10 minutes in that browser.
 
@@ -40,6 +40,7 @@ We email your account's address when:
 - a browser or device signs in to your account for the first time;
 - two-step verification is turned on or off, an authenticator app<IfAvailable feature="passkeys"> or a passkey</IfAvailable> is added or removed, or new backup codes are made;
 - a backup code is used, to sign in or to confirm it's you, with how many codes you have left;
+- support is asked to turn off your two-step verification, with the day it happens and how to stop it, and when that's cancelled;
 - your email address is changed (to the old address).
 
 Each one says what happened, on which device and browser (like "Chrome on macOS"), roughly where, from which IP address and when. **Review security** opens your security settings. If it wasn't you, follow the steps in the email and contact support.
@@ -58,15 +59,19 @@ Every new browser gets its own email, up to 10 a day, so a burst of sign-ins can
 One exception: when you sign in through your workspace's SAML identity provider and two-step verification is off, QRdx can't recognise the browser on the way back, so it doesn't send this email.
 </IfAvailable>
 
+## How long you stay signed in
+
+A sign-in lasts up to 30 days. After that, QRdx asks you to sign in again in that browser, however often you've used it. If you don't use QRdx in a browser for about a week, you're signed out there sooner.
+
 ## Sign out other devices
 
 Go to **Settings** → **Profile & security**. Under **Sessions**, sign out of one device, or click **Sign out everywhere else**. This never asks you to confirm it's you, so you can do it straight away.
 
-Turning on two-step verification signs out every other device too. If support turns it off for you, every device is signed out, including the one you're using.
+Turning on two-step verification signs out every other device too. If support turns it off for you, which [waits 7 days](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes), every device is signed out on that day, including the one you're using.
 
 ## Remove apps you connected
 
-If you let another app use your QRdx account, it's listed under **Settings** → **Authorized apps**. Remove any you don't use.
+If you let another app use your QRdx account, it's listed under **Settings** → **Authorized apps**. Remove any you don't use. An app keeps working after you sign out, so approving one asks you to confirm it's you.
 
 ## Report a security problem
 

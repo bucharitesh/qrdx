@@ -1,7 +1,7 @@
 /**
  * The notice emailed after a two-step verification change (turned on or off,
- * new backup codes, an authenticator app added or removed, turned off by
- * support, a backup code used). Pure; the sender is
+ * new backup codes, an authenticator app added or removed, a backup code
+ * used) and about support's turn-off (scheduled, cancelled, done). Pure; the sender is
  * ./two-factor-notice-server.tsx.
  */
 import type {
@@ -20,6 +20,9 @@ const DESCRIPTIONS: Record<TwoFactorNoticeKind, string> = {
   "app-removed": "authenticator app removed",
   "support-off":
     "two-step verification turned off by support, every session signed out",
+  "support-reset-scheduled": "support will turn off two-step verification",
+  "support-reset-cancelled":
+    "support's turn-off of two-step verification cancelled",
   "backup-code-used": "a backup code was used",
 };
 
@@ -31,6 +34,12 @@ export function describeTwoFactorNotice(
   const parts = [DESCRIPTIONS[kind]];
   if (kind === "on" && extra.signedOutElsewhere) {
     parts.push("other sessions signed out");
+  }
+  if (kind === "support-reset-scheduled" && extra.dueDate) {
+    parts.push(`on ${extra.dueDate}`);
+  }
+  if (kind === "support-reset-cancelled" && extra.cancelledBy) {
+    parts.push(`by ${extra.cancelledBy}`);
   }
   if (kind === "backup-code-used") {
     parts[0] = `${DESCRIPTIONS[kind]} to ${extra.usedFor === "confirm" ? "confirm it's you" : "sign in"}`;

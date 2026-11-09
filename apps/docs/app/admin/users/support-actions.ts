@@ -25,11 +25,13 @@ import {
 } from "@/lib/account/confirmation-server";
 import { isSameEmail, MAX_EMAIL_LENGTH } from "@/lib/account/email-change";
 import { afterEmailChanged } from "@/lib/account/email-change-server";
-import { sendTwoFactorNotice } from "@/lib/account/two-factor-notice-server";
 import {
-  resetTwoFactor,
-  twoFactorEnabledFor,
-} from "@/lib/account/two-factor-server";
+  cancelTwoFactorReset,
+  loadPendingTwoFactorReset,
+  notifyTwoFactorResetScheduled,
+  scheduleTwoFactorReset,
+} from "@/lib/account/two-factor-reset-server";
+import { twoFactorEnabledFor } from "@/lib/account/two-factor-server";
 import { revokeStoredToken } from "@/lib/connected-accounts/server";
 import { cleanupDataConnection } from "@/lib/data-connections/server";
 import { claimDueDeliveries, processClaimed } from "@/lib/events/deliveries";
@@ -101,36 +103,117 @@ export async function markEmailVerifiedAction(
 }
 
 /**
- * For someone who lost their authenticator app and backup codes, once they
- * wrote to support from the account's address: two-step verification goes
- * off (secret, backup codes and trusted devices gone), every session of the
- * account is signed out (whoever might hold one has to sign in again, now
- * without the second step, so only the address's owner should), and the
- * address gets a notice. They can sign in with their usual method and turn
- * it on again.
+ * The admin's own checks for a support action that hands an account over or
+ * removes its protection: two-step verification on their own account and a
+ * confirmation in the last 10 minutes with a passkey, an authenticator code
+ * or a backup code (CONFIRMATION_REQUIRED opens that dialog). A stolen admin
+ * cookie alone isn't enough.
+ */
+async function requireStrongAdmin(admin: { id: string }): Promise<void> {
+  if (!(await twoFactorEnabledFor(admin.id))) {
+    throw adminError(
+      "Turn on two-step verification for your own account first.",
+    );
+  }
+  const adminSession = await currentSession();
+  if (
+    !(
+      adminSession?.userId === admin.id &&
+      (await hasRecentStrongConfirmation(adminSession))
+    )
+  ) {
+    throw adminError(CONFIRMATION_REQUIRED, 403);
+  }
+}
+
+/**
+ * For someone who lost their authenticator app, passkeys and backup codes,
+ * once they wrote to support from the account's address. Nothing changes
+ * yet: the reset waits 7 days (lib/account/two-factor-reset-server.ts) and
+ * the address is told the day, so an owner who didn't ask can cancel it
+ * (in Settings, or by signing in with their second step) or reply. On that
+ * day the daily cron turns two-step verification off (secret, backup codes
+ * and trusted devices gone), signs out every session of the account and
+ * emails the address.
+ *
+ * Whoever wrote in may not be the owner, so a stolen admin cookie must not be
+ * enough to start it: requireStrongAdmin, as for changing the email. Never
+ * for an admin's account or the admin's own.
  */
 export async function resetTwoFactorAction(
   input: z.input<typeof userReason>,
-): Promise<AdminActionResult> {
+): Promise<AdminActionResult<{ dueAt: string }>> {
   return runAdminAction(
     { action: "user.reset_two_factor", schema: userReason, limit: "sensitive" },
     input,
-    async (_admin, { userId }) => {
+    async (admin, { userId }) => {
+      if (userId === admin.id) {
+        throw adminError(
+          "You can't do this for your own account. Use Settings → Profile & security.",
+        );
+      }
       const [target] = await db
-        .select({ email: user.email, on: user.twoFactorEnabled })
+        .select({
+          id: user.id,
+          email: user.email,
+          on: user.twoFactorEnabled,
+          role: user.role,
+        })
         .from(user)
         .where(eq(user.id, userId))
         .limit(1);
       if (!target) throw adminError("User not found", 404);
+      if (isAdmin(target)) {
+        throw adminError(
+          "An admin's two-step verification can't be turned off here.",
+        );
+      }
       if (!target.on) throw adminError("Two-step verification is already off.");
-      await resetTwoFactor(userId, { signOutEverywhere: true });
-      after(() => sendTwoFactorNotice("support-off", target.email));
+      if (await loadPendingTwoFactorReset(userId)) {
+        throw adminError("A reset is already waiting for this account.");
+      }
+      await requireStrongAdmin(admin);
+      const pending = await scheduleTwoFactorReset({ userId, admin });
+      after(() => notifyTwoFactorResetScheduled(target.email, pending));
       return {
         audit: {
           targetType: "user",
           targetId: userId,
           subjectUserId: userId,
-          metadata: { targetEmail: target.email },
+          metadata: {
+            targetEmail: target.email,
+            dueAt: pending.dueAt.toISOString(),
+          },
+        },
+        data: { dueAt: pending.dueAt.toISOString() },
+      };
+    },
+  );
+}
+
+/**
+ * Stops a pending reset (say the owner replied that it wasn't them). Two-step
+ * verification stays as it is, and the address is told.
+ */
+export async function cancelTwoFactorResetAction(
+  input: z.input<typeof userReason>,
+): Promise<AdminActionResult> {
+  return runAdminAction(
+    { action: "user.reset_two_factor_cancel", schema: userReason },
+    input,
+    async (_admin, { userId }) => {
+      const target = await findUser(userId);
+      const cancelled = await cancelTwoFactorReset(
+        { id: userId, email: target.email },
+        "support",
+      );
+      if (!cancelled) throw adminError("No reset is waiting for this account.");
+      return {
+        audit: {
+          targetType: "user",
+          targetId: userId,
+          subjectUserId: userId,
+          metadata: { targetEmail: target.email, by: "support" },
         },
       };
     },
@@ -185,20 +268,7 @@ export async function changeEmailAction(
       if (isAdmin(target)) {
         throw adminError("An admin's account can't be moved here.");
       }
-      if (!(await twoFactorEnabledFor(admin.id))) {
-        throw adminError(
-          "Turn on two-step verification for your own account first.",
-        );
-      }
-      const adminSession = await currentSession();
-      if (
-        !(
-          adminSession?.userId === admin.id &&
-          (await hasRecentStrongConfirmation(adminSession))
-        )
-      ) {
-        throw adminError(CONFIRMATION_REQUIRED, 403);
-      }
+      await requireStrongAdmin(admin);
       if (isSameEmail(target.email, newEmail)) {
         throw adminError("That's already this account's email.");
       }

@@ -1,7 +1,8 @@
 // GET /api/cron/webhooks: the frequent caller (?source=github, GitHub Actions
 // every 5 minutes) checks the Upstash marker first and skips without touching
 // Postgres while nothing is due; it runs in full when work is due or the
-// marker can't be trusted; the daily Vercel call always runs in full; every
+// marker can't be trusted; the daily Vercel call always runs in full (and
+// alone completes support's due turn-offs of two-step verification); every
 // full run re-seeds the marker. Redis is in memory (tests/support/fake-redis)
 // and the database work is replaced by fakes that record their calls.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -47,6 +48,12 @@ vi.mock("@/lib/auth/verification-prune", () => ({
   pruneStaleKnownDevices: async () => {
     state.dbCalls.push("pruneStaleKnownDevices");
     return 0;
+  },
+}));
+vi.mock("@/lib/account/two-factor-reset-server", () => ({
+  completeDueTwoFactorResets: async () => {
+    state.dbCalls.push("completeDueTwoFactorResets");
+    return { completed: 0, dropped: 0, failed: 0 };
   },
 }));
 vi.mock("@/lib/data-connections/sync", () => ({
@@ -225,13 +232,14 @@ describe("the daily call", () => {
     expect(redis().ttl.get(WORKER_DUE_KEY)).toBeGreaterThan(DAY / 1000);
   });
 
-  it("also forgets browsers not seen for 400 days, which frequent runs don't", async () => {
+  it("also forgets browsers not seen for 400 days and completes due 2FA resets, which frequent runs don't", async () => {
     await json(await call());
     expect(state.dbCalls).toEqual([
       "runDeliveryWorker",
       "pruneDeliveries",
       "pruneExpiredVerifications",
       "pruneStaleKnownDevices",
+      "completeDueTwoFactorResets",
       "runIntegrationSyncs",
       "nextDeliveryDueAt",
       "nextIntegrationSyncDueAt",

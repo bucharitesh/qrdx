@@ -3,8 +3,10 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { confirmationNeededFor } from "@/lib/account/confirmation-scope";
 import { HttpError } from "@/lib/error-response";
 import {
+  canManageWebhooks,
   createEndpoint,
   deleteEndpoint,
   retryDelivery,
@@ -64,9 +66,16 @@ async function run<T>(
   action: string,
   limiter: typeof mutationLimiter,
   body: (scope: ActiveScope) => Promise<T>,
+  { confirm = false }: { confirm?: boolean } = {},
 ): Promise<WebhookActionResult<T>> {
   try {
     const scope = await getActiveScope();
+    // Before the limits, so the round trip that asks doesn't use one up.
+    // Someone who can't manage webhooks gets that refusal instead.
+    if (confirm && canManageWebhooks(scope)) {
+      const needed = await confirmationNeededFor(scope);
+      if (needed) return needed;
+    }
     await enforceRateLimits([
       { limiter, key: `webhooks:${action}:${scope.userId}` },
     ]);
@@ -115,24 +124,36 @@ export async function deleteWebhookEndpoint(input: {
   );
 }
 
+/**
+ * Shows an endpoint's signing secret. Whoever has it can sign requests your
+ * server trusts as QRdx's, so it asks "Confirm it's you" first
+ * (CONFIRMATION_REQUIRED when this session hasn't in the last 10 minutes).
+ */
 export async function revealWebhookSecret(input: {
   id: string;
 }): Promise<WebhookActionResult<{ secret: string }>> {
   const parsed = idSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  return run("reveal", mutationLimiter, async (scope) => ({
-    secret: await revealSecret(scope, parsed.data.id),
-  }));
+  return run(
+    "reveal",
+    mutationLimiter,
+    async (scope) => ({ secret: await revealSecret(scope, parsed.data.id) }),
+    { confirm: true },
+  );
 }
 
+/** A new signing secret, shown once: asks "Confirm it's you" like reveal. */
 export async function rotateWebhookSecret(input: {
   id: string;
 }): Promise<WebhookActionResult<{ secret: string }>> {
   const parsed = idSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  return run("rotate", mutationLimiter, async (scope) => ({
-    secret: await rotateSecret(scope, parsed.data.id),
-  }));
+  return run(
+    "rotate",
+    mutationLimiter,
+    async (scope) => ({ secret: await rotateSecret(scope, parsed.data.id) }),
+    { confirm: true },
+  );
 }
 
 export async function sendWebhookTest(input: {

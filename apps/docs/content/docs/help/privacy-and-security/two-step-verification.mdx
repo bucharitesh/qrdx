@@ -32,7 +32,7 @@ Two-step verification is now on, and every other browser or device signed in to 
 If you added a passkey before two-step verification could use one, Settings says **Your passkey is ready to be your second step**. Click **Turn on**, confirm it's you, check it's you with that passkey, and save your backup codes. This signs out your other devices too.
 </IfAvailable>
 
-We email your account's address whenever two-step verification is turned on or off, a method is added or removed, new backup codes are made, or a backup code is used.
+We email your account's address whenever two-step verification is turned on or off, a method is added or removed, new backup codes are made, or a backup code is used. We also email it when support is asked to turn two-step verification off for you.
 
 ## Sign in with it
 
@@ -86,6 +86,8 @@ Before a change to your account's security, QRdx asks you to confirm it's you, e
 - adding or removing the authenticator app<IfAvailable feature="passkeys">, and adding, renaming or removing a passkey</IfAvailable>;
 - linking or unlinking a Google or GitHub account;
 - creating an API key, creating an OAuth app or making a new client secret for one;
+- approving an app that asks to use your QRdx account, on the **Authorize** screen;
+- showing or rotating a webhook's signing secret;
 - in a workspace: deleting it, changing someone's role, removing someone, inviting an admin by email or with a join link, and [requiring two-step verification](/docs/help/teams/require-two-step-verification) or no longer requiring it.
 
 <IfAvailable feature="sso">
@@ -121,4 +123,10 @@ If a workspace you're in [requires two-step verification](/docs/help/teams/requi
 
 ## Lost your phone and your backup codes
 
-Email [support@qrdx.dev](mailto:support@qrdx.dev) from your account's email address and tell us what happened. Once we've confirmed the request came from that address, we turn off two-step verification for your account, sign it out on every device, and email you to say so. You can then sign in as usual and turn it on again.
+If you still have <IfAvailable feature="passkeys">a passkey, </IfAvailable>your authenticator app or a backup code, sign in with that and change your methods in Settings.
+
+If you've lost every way to do the second step, email [support@qrdx.dev](mailto:support@qrdx.dev) from your account's email address and tell us what happened. Whoever writes to us might not be you, so once we've confirmed the request came from that address, support's turn-off waits 7 days:
+
+- **We email that address the day it happens.** Until then nothing changes, and you stay signed in where you are.
+- **If you didn't ask for it, stop it.** Sign in with <IfAvailable feature="passkeys">your passkey, </IfAvailable>your authenticator app or a backup code: that cancels it. You can also click **Cancel** under **Two-step verification** in **Settings** → **Profile & security** and [confirm it's you](#confirm-its-you), or reply to the email. We email you when it's cancelled.
+- **On that day, two-step verification turns off.** Your authenticator app setup, backup codes and trusted devices are deleted,<IfAvailable feature="passkeys"> your passkeys stay,</IfAvailable> your account is signed out on every device, and we email you to say so. Then sign in as usual and turn it on again.

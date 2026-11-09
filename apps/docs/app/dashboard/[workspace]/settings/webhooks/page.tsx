@@ -13,6 +13,7 @@ import { PageHeader } from "@/app/dashboard/_components/page-header";
 import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
 import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
 import { WebhooksManager } from "@/app/dashboard/webhooks/_components/webhooks-manager";
+import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import {
@@ -125,13 +126,16 @@ export default async function WebhooksPage() {
         </p>
       )}
 
-      <WebhooksManager
-        allowed={allowed}
-        canAdd={allowed && endpoints.length < MAX_WEBHOOK_ENDPOINTS}
-        canManage={canManage}
-        canUpgrade={!isTeam}
-        endpoints={endpoints}
-      />
+      {/* Showing a signing secret asks "Confirm it's you". */}
+      <ConfirmIdentityProvider>
+        <WebhooksManager
+          allowed={allowed}
+          canAdd={allowed && endpoints.length < MAX_WEBHOOK_ENDPOINTS}
+          canManage={canManage}
+          canUpgrade={!isTeam}
+          endpoints={endpoints}
+        />
+      </ConfirmIdentityProvider>
     </div>
   );
 }

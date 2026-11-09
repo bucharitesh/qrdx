@@ -158,6 +158,10 @@ export const CONFIRMATION_ACTIONS = {
   "require-two-factor": "require two-step verification",
   "stop-requiring-two-factor": "stop requiring two-step verification",
   "continue-session": "continue",
+  "cancel-two-factor-reset": "cancel support's turn-off",
+  "authorize-app": "let this app use your account",
+  "reveal-webhook-secret": "show a signing secret",
+  "rotate-webhook-secret": "make a new signing secret",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
