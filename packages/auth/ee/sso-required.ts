@@ -58,7 +58,10 @@ interface VerifiedConnection {
 // and turning it on ends the sessions it affects there and then
 // (apps/docs/ee/sso/required.ts), so the cache only delays the rarer cases
 // (an owner who stops being one, a workspace back on Business) by up to a
-// minute.
+// minute. clearSsoRequirementCache only clears this server's copy, so after
+// the requirement stops (turned off, connection removed, workspace off
+// Business) another server can still end a fresh non-SSO session for up to
+// a minute; the help page says so (single-sign-on.mdx, "Turning it off").
 
 const CACHE_MS = 60_000;
 
