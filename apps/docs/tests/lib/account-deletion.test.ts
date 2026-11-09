@@ -51,7 +51,10 @@ function facts(overrides: Partial<DeletionFacts> = {}): DeletionFacts {
 describe("roleRank and pickSuccessor", () => {
   it("ranks the best of several roles", () => {
     expect(roleRank("owner")).toBe(0);
-    expect(roleRank("member, admin")).toBe(1);
+    expect(roleRank("member,admin")).toBe(1);
+    // Parts match exactly, like Better Auth: " admin" is no admin.
+    expect(roleRank("member, admin")).toBe(2);
+    expect(roleRank(" owner")).toBe(5);
     expect(roleRank("member")).toBe(2);
     // Billing and viewer come after member: a successor who can edit first.
     expect(roleRank("billing")).toBe(3);

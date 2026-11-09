@@ -837,7 +837,10 @@ describe("getActiveScope", () => {
     acme();
     const cases: [string, string][] = [
       ["owner,admin", "owner"],
-      ["admin, owner", "owner"],
+      ["admin,owner", "owner"],
+      // Parts match exactly, like Better Auth: " owner" is no owner.
+      ["admin, owner", "admin"],
+      [" owner", "viewer"],
       ["member,admin", "admin"],
       ["member", "member"],
       ["member,billing", "member"],

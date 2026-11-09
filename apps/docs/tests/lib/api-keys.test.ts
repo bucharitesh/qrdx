@@ -231,7 +231,10 @@ describe("who sees and revokes keys", () => {
 
   it("acts with the strongest of the creator's roles", () => {
     expect(roleFromMembership("member")).toBe("member");
-    expect(roleFromMembership("member, admin")).toBe("admin");
+    expect(roleFromMembership("member,admin")).toBe("admin");
+    // Parts match exactly, like Better Auth: " admin" is no admin.
+    expect(roleFromMembership("member, admin")).toBe("member");
+    expect(roleFromMembership(" owner")).toBe("viewer");
     expect(roleFromMembership("admin,owner")).toBe("owner");
     expect(roleFromMembership("viewer")).toBe("viewer");
     expect(roleFromMembership("billing")).toBe("billing");
