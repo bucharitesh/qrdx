@@ -36,6 +36,28 @@ export const ADMIN_HTTP_PATHS = [
 
 const ADMIN_PREFIX = "/admin/";
 
+// This runs on every request to the auth API, so no regular expressions on
+// the path: two single linear passes instead, whatever the input looks like.
+
+/** Runs of "/" collapsed into one. */
+function collapseSlashes(value: string): string {
+  let out = "";
+  let previousSlash = false;
+  for (const char of value) {
+    const slash = char === "/";
+    if (!(slash && previousSlash)) out += char;
+    previousSlash = slash;
+  }
+  return out;
+}
+
+/** Without trailing "/". */
+function trimTrailingSlashes(value: string): string {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") end -= 1;
+  return value.slice(0, end);
+}
+
 /**
  * Whether a request path, relative to the auth base path, is under /admin/.
  * Decoded and lower-cased, so an encoded slash or different case can't slip
@@ -48,8 +70,8 @@ export function isAdminHttpPath(pathname: string, basePath: string): boolean {
   } catch {
     // Keep it as sent: it can't route anywhere then.
   }
-  path = path.toLowerCase().replace(/\/{2,}/g, "/");
-  const base = basePath.toLowerCase().replace(/\/+$/, "");
+  path = collapseSlashes(path.toLowerCase());
+  const base = trimTrailingSlashes(basePath.toLowerCase());
   if (base && path.startsWith(base)) path = path.slice(base.length);
   return path.startsWith(ADMIN_PREFIX) || path === "/admin";
 }

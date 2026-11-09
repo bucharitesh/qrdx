@@ -9,6 +9,7 @@ import {
   user,
 } from "@repo/database";
 import { and, eq, isNull } from "drizzle-orm";
+import { auditOAuthApp } from "@/ee/audit-log/security-events";
 import { isFirstPartyApp } from "./access";
 import {
   type AuthorizedAppView,
@@ -93,5 +94,8 @@ export async function revokeAuthorizedApp(
       ),
     );
 
+  if (revoked.length > 0) {
+    auditOAuthApp(userId, "oauth_app.revoked", { id: appId });
+  }
   return revoked.length;
 }

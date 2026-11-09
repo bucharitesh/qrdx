@@ -186,6 +186,8 @@ export async function validateAccessToken(token: string) {
   const [record] = await db
     .select({
       userId: oauthToken.userId,
+      appId: oauthToken.appId,
+      appName: oauthApp.name,
       scopes: oauthToken.scopes,
       accessTokenExpiresAt: oauthToken.accessTokenExpiresAt,
       banned: user.banned,
@@ -209,6 +211,9 @@ export async function validateAccessToken(token: string) {
 
   return {
     userId: record.userId,
+    /** The app the token was issued to (for the audit log) */
+    appId: record.appId,
+    appName: record.appName,
     scopes: record.scopes,
     accessTokenExpiresAt: record.accessTokenExpiresAt,
   };

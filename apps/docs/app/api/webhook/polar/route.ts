@@ -2,6 +2,10 @@ import { Webhooks } from "@polar-sh/nextjs";
 import { database as db, subscription } from "@repo/database";
 import { sql } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
+import {
+  plansBeforeBillingChange,
+  recordPlanChanges,
+} from "@/ee/audit-log/plan-change";
 import { trackServer } from "@/lib/analytics/server";
 import { env } from "@/lib/env";
 import { planForProductId } from "@/lib/pricing";
@@ -56,6 +60,7 @@ const onPayload: WebhooksConfig["onPayload"] = async ({ data, type }) => {
         userId: userId as string | null,
       };
 
+      const plansBefore = await plansBeforeBillingChange(userId);
       await db
         .insert(subscription)
         .values(subscriptionData)
@@ -90,6 +95,7 @@ const onPayload: WebhooksConfig["onPayload"] = async ({ data, type }) => {
             userId: sql`coalesce(excluded.user_id, ${subscription.userId})`,
           },
         });
+      await recordPlanChanges(userId, plansBefore);
 
       if (type === "subscription.active") {
         trackServer(
