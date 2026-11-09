@@ -20,10 +20,18 @@ import { createAuthMiddleware } from "better-auth/api";
 //   the row and the cookie and answers signed out. That covers the app's
 //   auth.api.getSession, /get-session, and every endpoint that reads the
 //   session itself.
-// - Once a session's expiry sits at the cap, Better Auth would "refresh" it
-//   on every request of its last days (its refresh check only looks at the
-//   expiry), each a write that changes nothing. The wrapper skips those,
-//   still writing once a day so the session's last-active time stays right.
+// - Better Auth refreshes a session whenever its expiry is less than
+//   `expiresIn - updateAge` (6 days) away: its check only looks at the
+//   expiry. A session held to a nearer end (at the cap, or a single sign-on
+//   session's 24 hours, ./ee/sso-required.ts) would be "refreshed" on every
+//   read, each a write that changes nothing once the end is applied. The
+//   wrapper skips a refresh, whatever the expiry, while the session was
+//   written in the last `updateAge` (a day), so it still writes once a day
+//   and its last-active time stays right. A write that would bring the
+//   expiry nearer always goes through. (Better Auth's own refresh of an
+//   ordinary session only comes a day after its last write anyway; one
+//   written meanwhile for another reason, such as "Confirm it's you" moving
+//   its origin, waits a day from then.)
 
 export const SESSION_MAX_DAYS = 30;
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -89,10 +97,11 @@ function isRefresh(data: Record<string, unknown>): data is {
 
 /**
  * The internal adapter for one request, with sessions past the cap reported
- * as expired, refreshes clamped to the cap, and refreshes that would change
- * nothing (expiry already at the cap, updated in the last `updateAgeSeconds`)
- * skipped. The sessions it has read are kept for this request only, by
- * token, and an update only ever uses the one read for its own token.
+ * as expired, refreshes clamped to the cap, and refreshes of a session
+ * written in the last `updateAgeSeconds` skipped unless they'd bring its
+ * expiry nearer (see above). The sessions it has read are kept for this
+ * request only, by token, and an update only ever uses the one read for its
+ * own token.
  */
 export function capSessions(
   adapter: InternalAdapter,
@@ -121,11 +130,12 @@ export function capSessions(
       return adapter.updateSession(token, data);
     }
     const expiresAt = clampSessionExpiry(stored.createdAt, data.expiresAt);
-    const unchanged = expiresAt.getTime() === time(stored.expiresAt);
+    const current = clampSessionExpiry(stored.createdAt, stored.expiresAt);
+    const nearer = expiresAt.getTime() < current.getTime();
     const recent =
       now().getTime() - time(stored.updatedAt) < updateAgeSeconds * 1000;
-    if (unchanged && recent) {
-      return Promise.resolve({ ...stored, expiresAt });
+    if (recent && !nearer) {
+      return Promise.resolve({ ...stored, expiresAt: current });
     }
     return adapter.updateSession(token, { ...data, expiresAt });
   }) as InternalAdapter["updateSession"];
