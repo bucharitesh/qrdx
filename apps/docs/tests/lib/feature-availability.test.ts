@@ -87,6 +87,7 @@ const NEEDS: Record<FeatureId, string[]> = {
   spotifyPlaylistPicker: ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
   passkeys: ["NEXT_PUBLIC_APP_URL"],
   sso: ["QRDX_EE_LICENSE"],
+  auditLog: ["QRDX_EE_LICENSE"],
 };
 
 const vercelProd = { onVercel: true, production: true };
