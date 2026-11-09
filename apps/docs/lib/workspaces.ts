@@ -133,6 +133,22 @@ export async function shutsOut(
   return lacksRequiredTwoFactor(userId, workspace.id, true);
 }
 
+/**
+ * The same check for code that acts on a workspace from its id and the
+ * person's membership, without going through lib/scope.ts (notification
+ * targets, the Slack install, unpublishing): throws TwoFactorRequiredError
+ * when the workspace shuts `userId` out. Reads the setting first, so it
+ * costs one query for most workspaces.
+ */
+export async function assertNotShutOut(
+  userId: string,
+  organizationId: string,
+): Promise<void> {
+  if (await lacksRequiredTwoFactor(userId, organizationId)) {
+    throw new TwoFactorRequiredError();
+  }
+}
+
 /** The user's workspaces: their own first, then by name. */
 export async function listWorkspaces(userId: string): Promise<Workspace[]> {
   const rows = await db
