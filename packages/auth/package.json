@@ -16,6 +16,7 @@
     "./proxy": "./proxy.ts",
     "./password": "./password.ts",
     "./passkey": "./passkey.ts",
+    "./passkey-check": "./passkey-check.ts",
     "./passkey-client": "./passkey-client.ts",
     "./passkey-rp": "./passkey-rp.ts",
     "./session-lifetime": "./session-lifetime.ts",

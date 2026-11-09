@@ -201,7 +201,7 @@ function seed({ on = true, adminTwoFactor = true } = {}) {
 const adminConfirms = () =>
   confirmation.recordConfirmation(
     { userId: ADMIN.id, sessionId: "admin_session" },
-    { strong: true },
+    { strong: "code" },
   );
 
 const pendingRow = () =>
@@ -298,8 +298,10 @@ describe("the notices", () => {
     expect(lines.join("\n")).toContain("on November 16, 2026 (UTC)");
     expect(lines.join("\n")).toContain("Until then, nothing changes.");
     expect(lines.join("\n")).toMatch(
-      /sign in to QRdx with your passkey, authenticator app or a backup code: that cancels it/,
+      /sign in to QRdx with your authenticator app or a backup code: that cancels it/,
     );
+    // A passkey doesn't cancel it (it may be on the lost device).
+    expect(lines.join("\n")).not.toMatch(/passkey/);
     expect(lines.join("\n")).toContain("reply to this email");
     expect(template.twoFactorNoticeSubject("support-reset-scheduled")).toBe(
       "QRdx support will turn off two-step verification",
@@ -315,7 +317,7 @@ describe("the notices", () => {
       template.twoFactorNoticeLines("support-reset-cancelled", {
         cancelledBy: "sign-in",
       })[0],
-    ).toMatch(/You signed in with your second step/);
+    ).toMatch(/You signed in with your authenticator app or a backup code/);
     // Support's notices don't say "if this was you, there's nothing to do".
     expect(template.SUPPORT_KINDS.has("support-reset-scheduled")).toBe(true);
     expect(template.SUPPORT_KINDS.has("support-reset-cancelled")).toBe(true);
@@ -493,10 +495,11 @@ describe("cancelling it", () => {
     expect(pendingRow()).toBeDefined();
     expect(state.notices).toEqual([]);
 
-    // Confirming with their second step (the dialog) already cancels it…
+    // Confirming with an authenticator or backup code (the dialog) already
+    // cancels it…
     await confirmation.recordConfirmation(
       { userId: USER, sessionId: "s_1" },
-      { strong: true },
+      { strong: "code" },
     );
     expect(pendingRow()).toBeUndefined();
     // …and the action, tried again, finds it done.
@@ -524,6 +527,25 @@ describe("cancelling it", () => {
     state.sessionId = "s_2";
     // A confirmation recorded before the reset was scheduled (no cancel then).
     await confirmation.recordConfirmation({ userId: USER, sessionId: "s_2" });
+    expect(await settings.cancelSupportTwoFactorReset()).toEqual({ ok: true });
+    expect(pendingRow()).toBeUndefined();
+    expect(state.notices.map((n) => n.kind)).toEqual([
+      "support-reset-cancelled",
+    ]);
+  });
+
+  it("isn't cancelled by confirming with a passkey alone; Cancel still works", async () => {
+    await scheduled();
+    state.sessionUser = USER;
+    state.sessionId = "s_1";
+    await confirmation.recordConfirmation(
+      { userId: USER, sessionId: "s_1" },
+      { strong: "passkey" },
+    );
+    // Still waiting: the passkey may be on the lost device.
+    expect(pendingRow()).toBeDefined();
+    expect(state.notices).toEqual([]);
+    // That confirmation lets the person press Cancel in Settings.
     expect(await settings.cancelSupportTwoFactorReset()).toEqual({ ok: true });
     expect(pendingRow()).toBeUndefined();
     expect(state.notices.map((n) => n.kind)).toEqual([

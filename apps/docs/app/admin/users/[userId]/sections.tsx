@@ -116,7 +116,7 @@ export function SignInSection({ profile }: { profile: UserProfile }) {
             <AdminAction
               action="resetTwoFactor"
               confirmLabel="Turn off in 7 days"
-              description={`Only after ${user.email} wrote to support from that address and lost their authenticator app, passkeys and backup codes. Nothing changes for 7 days: the address gets the date now, and they can cancel it (or it cancels itself if they sign in with their second step). Then their secret, backup codes and trusted devices are deleted, every session is signed out, and the address gets a notice. You'll confirm it's you with your passkey, authenticator app or a backup code.`}
+              description={`Only after ${user.email} wrote to support from that address and lost their authenticator app, passkeys and backup codes. Nothing changes for 7 days: the address gets the date now, and they can cancel it (or it cancels itself if they sign in with their authenticator app or a backup code). Then their secret, backup codes and trusted devices are deleted, every session is signed out, and the address gets a notice. You'll confirm it's you with your passkey, authenticator app or a backup code.`}
               destructive
               input={{ userId: user.id }}
               label="Turn off"
