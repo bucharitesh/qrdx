@@ -1,4 +1,8 @@
 import {
+  completeDueTwoFactorResets,
+  type DueResetsSummary,
+} from "@/lib/account/two-factor-reset-server";
+import {
   pruneExpiredVerifications,
   pruneStaleKnownDevices,
 } from "@/lib/auth/verification-prune";
@@ -26,7 +30,8 @@ const noStore = { "Cache-Control": "no-store" };
  * Webhook worker: retries due deliveries with exponential backoff, sends scan
  * batches whose window closed, runs data-out syncs, prunes deliveries older
  * than 30 days and deletes expired Better Auth verification values. The daily
- * call also forgets browsers no account has seen for 400 days.
+ * call also forgets browsers no account has seen for 400 days and completes
+ * support's turn-offs of two-step verification that are due.
  *
  * Callers: .github/workflows/webhook-worker.yml every 5 minutes with
  * ?source=github, and vercel.json once a day. The frequent call first checks
@@ -81,11 +86,25 @@ export async function GET(request: Request) {
   // Browsers kept for new sign-in alerts: once a day is plenty for a
   // 400-day limit.
   let knownDevicesPruned = 0;
+  // Support's turn-offs of two-step verification that have waited their 7
+  // days (lib/account/two-factor-reset-server.ts): due from the start of a
+  // UTC day, so the daily run is the one that completes them.
+  let twoFactorResets: DueResetsSummary | null = null;
   if (trigger === "daily") {
     try {
       knownDevicesPruned = await pruneStaleKnownDevices();
     } catch (error) {
       console.error("Pruning stale known devices failed:", error);
+    }
+    try {
+      twoFactorResets = await completeDueTwoFactorResets();
+    } catch (error) {
+      console.error(
+        JSON.stringify({
+          event: "cron.webhooks.two_factor_resets_failed",
+          error: error instanceof Error ? error.message : String(error),
+        }),
+      );
     }
   }
   // Data-out streams (Google Sheets, HubSpot, Mailchimp) ride the same cron.
@@ -123,6 +142,7 @@ export async function GET(request: Request) {
       pruned,
       verificationsPruned,
       knownDevicesPruned,
+      twoFactorResets,
       integrations,
       nextDueAt: nextDueAt === null ? null : new Date(nextDueAt).toISOString(),
     }),

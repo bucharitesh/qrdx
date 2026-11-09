@@ -64,6 +64,7 @@ import {
 } from "./session-origin-server";
 import { hasAuthenticatorApp } from "./two-factor-methods";
 import { sendBackupCodeUsedNotice } from "./two-factor-notice-server";
+import { cancelTwoFactorResetQuietly } from "./two-factor-reset-server";
 import {
   clearCodeFailures,
   loadTwoFactorFacts,
@@ -248,6 +249,9 @@ export async function recordConfirmation(
       strongIdentifier(session.sessionId),
       session.userId,
     );
+    // They still have their second step, so support's pending turn-off of
+    // it (if any) is cancelled (./two-factor-reset-server.ts).
+    await cancelTwoFactorResetQuietly({ id: session.userId });
   }
   if (session.requestHeaders) {
     await moveSessionOrigin(session, session.requestHeaders);

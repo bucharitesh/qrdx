@@ -41,6 +41,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import type { WebhookEndpointView } from "@/lib/events/endpoints";
@@ -224,6 +225,7 @@ export function WebhooksManager({
   canUpgrade: boolean;
 }) {
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
   const [dialog, setDialog] = useState<
     { mode: "create" } | { mode: "edit"; endpoint: WebhookEndpointView } | null
@@ -315,12 +317,18 @@ export function WebhooksManager({
       ),
     );
 
+  // Asks "Confirm it's you" first when this session hasn't recently.
   const reveal = (endpoint: WebhookEndpointView) =>
-    withBusy(endpoint.id, async () =>
-      handle(await revealWebhookSecret({ id: endpoint.id }), (data) =>
+    withBusy(endpoint.id, async () => {
+      const result = await withConfirmation(
+        () => revealWebhookSecret({ id: endpoint.id }),
+        "reveal-webhook-secret",
+      );
+      if (result === null) return;
+      handle(result, (data) =>
         setSecret({ value: data.secret, created: false }),
-      ),
-    );
+      );
+    });
 
   const confirmDelete = () => {
     const endpoint = deleting;

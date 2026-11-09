@@ -87,7 +87,7 @@ export function authorizeUrl({
 }
 ```
 
-People who aren't signed in to QRdx sign in first. Then they see the consent screen: your app's logo, name, website and who built it, the permissions you asked for, and the account they're signed in with. Apps that QRdx hasn't verified carry an **Unverified app** note. Someone who already approved the same scopes for your app goes straight back to you.
+People who aren't signed in to QRdx sign in first. Then they see the consent screen: your app's logo, name, website and who built it, the permissions you asked for, and the account they're signed in with. Apps that QRdx hasn't verified carry an **Unverified app** note. **Authorize** asks them to [confirm it's them](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) unless they did in the last 10 minutes (signing in just now usually counts). Someone who already approved the same scopes for your app goes straight back to you.
 
 QRdx then redirects to your `redirect_uri`:
 

@@ -53,6 +53,9 @@ function Mono({ children }: { children: React.ReactNode }) {
 
 export function SignInSection({ profile }: { profile: UserProfile }) {
   const { user, accounts } = profile;
+  // A reset still waiting while two-step verification is on (one left over
+  // after the person turned it off goes at the next daily run).
+  const twoFactorReset = user.twoFactorEnabled ? profile.twoFactorReset : null;
   return (
     <Rows>
       <Row
@@ -97,24 +100,38 @@ export function SignInSection({ profile }: { profile: UserProfile }) {
       />
       <Row
         actions={
-          user.twoFactorEnabled && (
+          user.twoFactorEnabled &&
+          (twoFactorReset ? (
+            <AdminAction
+              action="cancelTwoFactorReset"
+              confirmLabel="Cancel reset"
+              description={`Two-step verification stays on and nothing else changes. ${user.email} gets an email saying support cancelled it.`}
+              input={{ userId: user.id }}
+              label="Cancel reset"
+              success="Reset cancelled. Two-step verification stays on"
+              title="Cancel the reset"
+              variant="ghost"
+            />
+          ) : (
             <AdminAction
               action="resetTwoFactor"
-              confirmLabel="Turn off"
-              description={`Only after ${user.email} wrote to support from that address and lost their authenticator app and backup codes. Their secret, backup codes and trusted devices are deleted, every session is signed out, and the address gets a notice.`}
+              confirmLabel="Turn off in 7 days"
+              description={`Only after ${user.email} wrote to support from that address and lost their authenticator app, passkeys and backup codes. Nothing changes for 7 days: the address gets the date now, and they can cancel it (or it cancels itself if they sign in with their second step). Then their secret, backup codes and trusted devices are deleted, every session is signed out, and the address gets a notice. You'll confirm it's you with your passkey, authenticator app or a backup code.`}
               destructive
               input={{ userId: user.id }}
               label="Turn off"
-              success="Two-step verification turned off and every session signed out"
+              success="Reset scheduled. Two-step verification turns off on"
               title="Turn off two-step verification"
               variant="ghost"
             />
-          )
+          ))
         }
         meta={
-          user.twoFactorEnabled
-            ? "Sign-in asks for an authenticator or backup code."
-            : "Not set up."
+          twoFactorReset
+            ? `Support turns it off on ${formatDate(twoFactorReset.dueAt)} (UTC) unless it's cancelled. Started by ${twoFactorReset.requestedBy.email} on ${formatDateTime(twoFactorReset.requestedAt)}.`
+            : user.twoFactorEnabled
+              ? "Sign-in asks for an authenticator or backup code."
+              : "Not set up."
         }
         title={
           <>
@@ -122,6 +139,11 @@ export function SignInSection({ profile }: { profile: UserProfile }) {
             <Badge variant="outline">
               {user.twoFactorEnabled ? "on" : "off"}
             </Badge>
+            {twoFactorReset && (
+              <Badge variant="secondary">
+                turns off {formatDate(twoFactorReset.dueAt)}
+              </Badge>
+            )}
           </>
         }
       />

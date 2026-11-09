@@ -50,6 +50,7 @@ import {
 } from "./passkey";
 import { passkeyRelyingParty } from "./passkey-rp";
 import { hasEntitledSubscription, workspacePlanTier } from "./plan";
+import { sessionLifetime } from "./session-lifetime";
 import { sessionOriginGuard } from "./session-origin";
 import { signInChallenge } from "./sign-in-challenge";
 import {
@@ -66,6 +67,7 @@ import {
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
+import { twoFactorResetCancel } from "./two-factor-reset";
 import { unprovenAccessCleanup } from "./unproven-access";
 import { allUserInfoChecks, validateSocialSignUp } from "./verified-sign-up";
 import {
@@ -286,6 +288,11 @@ export const auth = betterAuth({
     // A session used from a new country and browser confirms it's you first
     // (./session-origin.ts). First, so it refuses before anything else runs.
     sessionOriginGuard(),
+    // A sign-in lasts at most 30 days, however much it's used
+    // (./session-lifetime.ts). Before every other plugin's hooks, so their
+    // session reads go through the cap; a session the guard above already
+    // read is read again through it.
+    sessionLifetime(),
     // Signing in again to confirm it's you: the provider's chooser, and the
     // cookie cleared on sign-out (./confirm-sign-in.ts).
     confirmSignIn(),
@@ -399,6 +406,9 @@ export const auth = betterAuth({
     // Proving an unproven account's address clears what an earlier holder
     // left behind (./unproven-access.ts).
     unprovenAccessCleanup(),
+    // Signing in with the second step cancels support's pending turn-off of
+    // two-step verification (./two-factor-reset.ts).
+    twoFactorResetCancel(),
     // New sign-in alerts, and a finished sign-in counting as "Confirm it's
     // you" (./new-sign-in.ts). Last, so it sees each sign-in after the
     // challenge has had its say.

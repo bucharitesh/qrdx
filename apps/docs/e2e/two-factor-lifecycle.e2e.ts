@@ -13,7 +13,7 @@
 //   confirm   a backup code used in "Confirm it's you" is emailed with the
 //             count from before the new codes it allowed; using codes down
 //             to 2 says so
-//   admin     support's reset signs out every session of the account
+//   (support's reset: e2e/sign-in-security-e.e2e.mts)
 //   passkey   a first passkey turns it on and signs out the other devices;
 //             the app step and the passkey step say so beforehand
 //   existing  turning it off keeps the passkey ("ready"); turning it on
@@ -26,8 +26,8 @@
 //   E2E_SHOTS=/path/to/shots pnpm exec tsx e2e/two-factor-lifecycle.e2e.ts
 //
 // E2E_DB_SQL='<command that runs SQL on the LOCAL database, reading stdin>'
-// is needed for the "Confirm it's you" step. E2E_VIEWPORT=mobile runs it at 390 x 844. E2E_ADMIN_EMAIL (default
-// admin@qrdx.test) must be listed in ADMIN_EMAILS. Accounts are new
+// is needed for the "Confirm it's you" step. E2E_VIEWPORT=mobile runs it at
+// 390 x 844. Accounts are new
 // @qrdx.test addresses per run. Skips (exit 0) without a server, a log or
 // Chrome.
 /** biome-ignore-all lint/performance/useDomNodeTextContent: checks must only match text a person can see */
@@ -51,7 +51,6 @@ const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
 const DEV_LOG = process.env.E2E_DEV_LOG ?? "";
 const SHOTS = process.env.E2E_SHOTS ?? "";
 const MOBILE = process.env.E2E_VIEWPORT === "mobile";
-const ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL ?? "admin@qrdx.test";
 const RUN = Date.now().toString(36);
 const APP_EMAIL = `e2e-life-app-${RUN}@qrdx.test`;
 const PASSKEY_EMAIL = `e2e-life-passkey-${RUN}@qrdx.test`;
@@ -815,81 +814,11 @@ async function appFlow(page: Page) {
   await waitForText(page, "2 of 10 left");
   check("Settings agrees: 2 of 10 left", true);
 
-  // ── admin: support's reset signs out every session ──
-  const { cookies } = (await page.cdp.send("Network.getCookies")) as {
-    cookies: { name: string; value: string }[];
-  };
-  const ownToken = cookies.find((c) => c.name.endsWith("session_token"));
+  // ── admin: support's reset ──
+  // It now waits 7 days, needs the admin's own two-step verification and is
+  // completed by the daily cron, signing out every session: covered by
+  // e2e/sign-in-security-e.e2e.mts and tests/lib/two-factor-sign-out.test.ts.
   await removeAuthenticator(page, authenticatorId);
-  await leaveSignedIn(page);
-  await emailCodeStep(page, ADMIN_EMAIL, `/admin/users/${userId}`);
-  await landedOn(page, "/admin/users");
-  await waitForText(page, "Two-step verification");
-  const opened = await page.evaluate(() => {
-    const row = [...document.querySelectorAll("#sign-in *")].find(
-      (el) =>
-        el.textContent?.startsWith("Two-step verification") &&
-        el.querySelector("button"),
-    );
-    const button = row?.querySelector("button");
-    if (!button) return false;
-    window.__e2e.click(button);
-    return true;
-  });
-  if (!opened) throw new Error("No admin Turn off button");
-  await waitForText(page, "every session is signed out");
-  check("the admin dialog says every session is signed out", true);
-  await page.evaluate(() => {
-    const box = document.querySelector(
-      '[role="dialog"] textarea',
-    ) as HTMLTextAreaElement | null;
-    if (box) {
-      window.__e2e.setValue(box, "E2E: lost phone and codes, from the address");
-    }
-  });
-  await shot(page, "07-admin-reset-dialog");
-  since = logSize();
-  await page.evaluate(() => {
-    const dialog = document.querySelector('[role="dialog"]');
-    const confirm = [...(dialog?.querySelectorAll("button") ?? [])]
-      .reverse()
-      .find((b) => b.textContent?.trim() === "Turn off");
-    if (confirm) window.__e2e.click(confirm);
-  });
-  await waitForText(
-    page,
-    "Two-step verification turned off and every session signed out",
-  );
-  await shot(page, "08-admin-reset-done");
-  await waitForLogLine(
-    noticeLine(
-      APP_EMAIL,
-      "two-step verification turned off by support, every session signed out",
-    ),
-    since,
-  );
-  check("support's notice is sent and says every session was signed out", true);
-  const stillIn = [];
-  for (const device of [laptop, ...tablets]) {
-    if (await device.signedInAs()) stillIn.push(device.label);
-  }
-  check(
-    "after support's reset, every other device is signed out",
-    stillIn.length === 0,
-    stillIn.join(", "),
-  );
-  const ownSession = ownToken
-    ? await (
-        await fetch(`${BASE_URL}/api/auth/get-session`, {
-          headers: { cookie: `${ownToken.name}=${ownToken.value}` },
-        })
-      ).json()
-    : "no cookie";
-  check(
-    "and so is the browser the person last used",
-    ownSession === null,
-    JSON.stringify(ownSession).slice(0, 80),
-  );
 }
 
 async function passkeyFlow(page: Page) {

@@ -1,10 +1,13 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ExportSquare, InfoCircle } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useRef, useState } from "react";
+import { ensureConfirmed } from "@/components/confirm-identity/actions";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { OAUTH_SCOPE_INFO, type OAuthScope } from "@/lib/oauth-scopes";
@@ -79,7 +82,9 @@ function websiteLabel(url: string): string {
 
 /**
  * The consent screen. Allow and Deny post the original request back to
- * /api/oauth/authorize, which checks it again before issuing a code.
+ * /api/oauth/authorize, which checks it again before issuing a code. Allow
+ * asks "Confirm it's you" first (the server refuses it otherwise); a sign-in
+ * that just happened may already count.
  */
 export function OAuthConsent({
   app,
@@ -96,9 +101,37 @@ export function OAuthConsent({
   redirectHost: string;
 }) {
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const submitted = useRef(false);
+  // "Confirm it's you" done: the next Authorize submit goes through.
+  const confirmed = useRef(false);
   const [decision, setDecision] = useState<"allow" | "deny" | null>(null);
   const [switching, setSwitching] = useState(false);
+
+  /** Asks "Confirm it's you", then posts Authorize; resets if cancelled. */
+  const confirmThenAllow = async (form: HTMLFormElement) => {
+    setDecision("allow");
+    try {
+      const result = await withConfirmation(
+        () => ensureConfirmed(),
+        "authorize-app",
+      );
+      if (result?.ok) {
+        confirmed.current = true;
+        // Posted by the Authorize button, so the form carries its decision.
+        form.requestSubmit(
+          form.querySelector<HTMLButtonElement>(
+            'button[name="decision"][value="allow"]',
+          ),
+        );
+        return;
+      }
+      if (result) toast.error(result.error);
+    } catch {
+      toast.error("Something went wrong. Check your connection and try again.");
+    }
+    setDecision(null);
+  };
 
   const switchAccount = async () => {
     setSwitching(true);
@@ -207,11 +240,15 @@ export function OAuthConsent({
             event.preventDefault();
             return;
           }
-          submitted.current = true;
           const submitter = (event.nativeEvent as SubmitEvent).submitter;
-          setDecision(
-            submitter?.getAttribute("value") === "allow" ? "allow" : "deny",
-          );
+          const allow = submitter?.getAttribute("value") === "allow";
+          if (allow && !confirmed.current) {
+            event.preventDefault();
+            if (decision === null) void confirmThenAllow(event.currentTarget);
+            return;
+          }
+          submitted.current = true;
+          setDecision(allow ? "allow" : "deny");
         }}
       >
         {fields.map(([name, value]) => (

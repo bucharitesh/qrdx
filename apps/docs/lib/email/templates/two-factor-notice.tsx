@@ -15,10 +15,15 @@ export type TwoFactorNoticeKind =
   | "app-added"
   | "app-removed"
   | "support-off"
+  | "support-reset-scheduled"
+  | "support-reset-cancelled"
   | "backup-code-used";
 
 /** What a backup code was used for. */
 export type BackupCodeUsedFor = "sign-in" | "confirm";
+
+/** Who cancelled support's pending turn-off. */
+export type TwoFactorResetCancelledBy = "person" | "sign-in" | "support";
 
 /**
  * At or below this many backup codes left, the "backup code used" notice
@@ -34,6 +39,10 @@ export interface TwoFactorNoticeExtra {
   usedFor?: BackupCodeUsedFor;
   /** "backup-code-used": codes left after it; null when unknown */
   codesLeft?: number | null;
+  /** "support-reset-scheduled": the day it turns off, e.g. "November 16, 2026" */
+  dueDate?: string;
+  /** "support-reset-cancelled": who cancelled it */
+  cancelledBy?: TwoFactorResetCancelledBy;
 }
 
 const NOTICES: Record<
@@ -70,6 +79,16 @@ const NOTICES: Record<
     heading: "Two-step verification is off",
     body: "QRdx support turned off two-step verification for your account and signed it out on every device. Signing in no longer asks for a second step. You can turn it on again in Settings → Profile & security.",
   },
+  "support-reset-scheduled": {
+    subject: "QRdx support will turn off two-step verification",
+    heading: "Support will turn off two-step verification",
+    body: "Someone asked QRdx support to turn off two-step verification for your account, saying they lost every way to do the second step.",
+  },
+  "support-reset-cancelled": {
+    subject: "Two-step verification stays on for your QRdx account",
+    heading: "Two-step verification stays on",
+    body: "Support's request to turn off two-step verification for your account was cancelled. Nothing changed.",
+  },
   "backup-code-used": {
     subject: "A backup code was used on your QRdx account",
     heading: "A backup code was used",
@@ -96,6 +115,28 @@ export function twoFactorNoticeLines(
   kind: TwoFactorNoticeKind,
   extra: TwoFactorNoticeExtra = {},
 ): string[] {
+  if (kind === "support-reset-scheduled") {
+    const when = extra.dueDate ? `on ${extra.dueDate} (UTC)` : "in 7 days";
+    return [
+      NOTICES[kind].body,
+      `Support will turn it off ${when} and sign your account out on every device. Until then, nothing changes.`,
+      "If you asked for this, there's nothing to do. If you didn't, sign in to QRdx with your passkey, authenticator app or a backup code: that cancels it. Or cancel it in Settings → Profile & security, or reply to this email.",
+    ];
+  }
+  if (kind === "support-reset-cancelled") {
+    const why: Record<TwoFactorResetCancelledBy, string> = {
+      person:
+        "You cancelled support's request to turn off two-step verification for your QRdx account.",
+      "sign-in":
+        "You signed in with your second step, so support's request to turn off two-step verification for your QRdx account was cancelled.",
+      support:
+        "QRdx support cancelled the request to turn off two-step verification for your account.",
+    };
+    return [
+      extra.cancelledBy ? why[extra.cancelledBy] : NOTICES[kind].body,
+      "Two-step verification stays on, with your backup codes and methods as they were.",
+    ];
+  }
   if (kind === "backup-code-used") {
     const used =
       extra.usedFor === "confirm"
@@ -113,6 +154,13 @@ export function twoFactorNoticeLines(
   }
   return [NOTICES[kind].body];
 }
+
+/** Support's changes: these say themselves what to do. */
+export const SUPPORT_KINDS: ReadonlySet<TwoFactorNoticeKind> = new Set([
+  "support-off",
+  "support-reset-scheduled",
+  "support-reset-cancelled",
+]);
 
 /** Whether a "backup code used" notice asks the person to act. */
 const asksForNewCodes = (
@@ -150,7 +198,7 @@ export function TwoFactorNoticeEmail({
         <EmailText key={line}>{line}</EmailText>
       ))}
       <SecurityDetails details={details} />
-      {kind !== "support-off" && !asksForNewCodes(kind, extra) && (
+      {!SUPPORT_KINDS.has(kind) && !asksForNewCodes(kind, extra) && (
         <EmailText>If this was you, there's nothing else to do.</EmailText>
       )}
       <ReviewSecurityButton />
