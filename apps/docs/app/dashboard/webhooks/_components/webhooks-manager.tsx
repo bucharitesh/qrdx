@@ -265,17 +265,27 @@ export function WebhooksManager({
     setFormError(null);
     startSaving(async () => {
       if (dialog?.mode === "edit") {
-        const result = await updateWebhookEndpoint({
-          id: dialog.endpoint.id,
-          ...values,
-        });
+        // A new URL asks "Confirm it's you" first.
+        const result = await withConfirmation(
+          () =>
+            updateWebhookEndpoint({
+              id: dialog.endpoint.id,
+              ...values,
+            }),
+          "change-webhook-url",
+        );
+        if (result === null) return;
         if (!result.ok) return setFormError(result.error);
         toast.success("Endpoint saved");
         setDialog(null);
         router.refresh();
         return;
       }
-      const result = await createWebhookEndpoint(values);
+      const result = await withConfirmation(
+        () => createWebhookEndpoint(values),
+        "create-webhook",
+      );
+      if (result === null) return;
       if (!result.ok) {
         setFormError(result.error);
         if (result.upgrade && canUpgrade) openUpgradeDialog("business");

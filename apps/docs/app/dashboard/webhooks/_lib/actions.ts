@@ -9,6 +9,7 @@ import {
   canManageWebhooks,
   createEndpoint,
   deleteEndpoint,
+  getEndpoint,
   retryDelivery,
   revealSecret,
   rotateSecret,
@@ -66,13 +67,21 @@ async function run<T>(
   action: string,
   limiter: typeof mutationLimiter,
   body: (scope: ActiveScope) => Promise<T>,
-  { confirm = false }: { confirm?: boolean } = {},
+  {
+    confirm = false,
+  }: {
+    /** Asks "Confirm it's you" first; a function decides per request. */
+    confirm?: boolean | ((scope: ActiveScope) => Promise<boolean>);
+  } = {},
 ): Promise<WebhookActionResult<T>> {
   try {
     const scope = await getActiveScope();
     // Before the limits, so the round trip that asks doesn't use one up.
     // Someone who can't manage webhooks gets that refusal instead.
-    if (confirm && canManageWebhooks(scope)) {
+    if (
+      canManageWebhooks(scope) &&
+      (typeof confirm === "function" ? await confirm(scope) : confirm)
+    ) {
       const needed = await confirmationNeededFor(scope);
       if (needed) return needed;
     }
@@ -95,8 +104,12 @@ export async function createWebhookEndpoint(input: {
 > {
   const parsed = createSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  return run("create", mutationLimiter, (scope) =>
-    createEndpoint(scope, parsed.data),
+  // A new endpoint receives the workspace's events: "Confirm it's you".
+  return run(
+    "create",
+    mutationLimiter,
+    (scope) => createEndpoint(scope, parsed.data),
+    { confirm: true },
   );
 }
 
@@ -109,8 +122,17 @@ export async function updateWebhookEndpoint(input: {
   const parsed = updateSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
   const { id, ...patch } = parsed.data;
-  return run("update", mutationLimiter, (scope) =>
-    updateEndpoint(scope, id, patch),
+  // Sending the events to a new address asks "Confirm it's you"; changing
+  // which events, or pausing, doesn't.
+  return run(
+    "update",
+    mutationLimiter,
+    (scope) => updateEndpoint(scope, id, patch),
+    {
+      confirm: async (scope) =>
+        patch.url !== undefined &&
+        (await getEndpoint(scope, id)).url !== patch.url,
+    },
   );
 }
 

@@ -162,6 +162,9 @@ export const CONFIRMATION_ACTIONS = {
   "authorize-app": "let this app use your account",
   "reveal-webhook-secret": "show a signing secret",
   "rotate-webhook-secret": "make a new signing secret",
+  "create-webhook": "add a webhook",
+  "change-webhook-url": "send a webhook to a new address",
+  "add-notification-webhook": "send notifications to a new address",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
