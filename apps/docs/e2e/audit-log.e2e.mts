@@ -257,6 +257,18 @@ const authPost = (path: string, body: unknown) =>
     JSON.stringify(body),
   ) as Promise<{ status: number; json: Record<string, any> | null }>;
 
+/**
+ * "Confirm it's you" for `email`'s newest session, as the confirmation flow
+ * records it (packages/auth/confirm-gate.ts reads this row): #251's gate on
+ * the organization endpoints over HTTP. The flow itself is tested in
+ * e2e/confirm-actions.e2e.mts; here it's a fixture.
+ */
+function confirmSession(email: string) {
+  sql(
+    `insert into verification (id, identifier, value, expires_at, created_at, updated_at) select 'confirm-' || s.id, 'qrdx-confirmed-' || s.id, s.user_id, now() + interval '10 minutes', now(), now() from session s join "user" u on u.id = s.user_id where u.email=${q(email)} order by s.created_at desc limit 1 on conflict (id) do nothing`,
+  );
+}
+
 const owner = `owner-${RUN}@audit.test`;
 const member = `member-${RUN}@audit.test`;
 const invitee = `invitee-${RUN}@audit.test`;
@@ -578,6 +590,35 @@ try {
   });
   statuses.acceptB = acceptB.status;
   await emailSignIn(owner);
+  // #251's gates run before the change: refused calls record nothing. A
+  // finished sign-in counts as "Confirm it's you" for 10 minutes, so this
+  // run's confirmations go first.
+  sql(
+    `delete from verification where identifier like 'qrdx-confirmed-%' and value=${q(ownerId)}`,
+  );
+  const unconfirmed = await authPost("/organization/update-member-role", {
+    memberId: acceptA.json?.member?.id,
+    role: "admin",
+    organizationId: teamId,
+  });
+  confirmSession(owner);
+  const inexact = await authPost("/organization/update-member-role", {
+    memberId: acceptA.json?.member?.id,
+    role: "Admin, member",
+    organizationId: teamId,
+  });
+  check(
+    "a gated change without a confirmation, or with an inexact role, is refused",
+    unconfirmed.status === 403 &&
+      unconfirmed.json?.code === "CONFIRMATION_REQUIRED" &&
+      inexact.status === 400 &&
+      inexact.json?.code === "INVALID_ROLE",
+    `${unconfirmed.status} ${unconfirmed.json?.code} / ${inexact.status} ${inexact.json?.code}`,
+  );
+  check(
+    "and leaves no row",
+    auditCount(teamId, "action='member.role_changed'") === 0,
+  );
   statuses.role = (
     await authPost("/organization/update-member-role", {
       memberId: acceptA.json?.member?.id,
@@ -596,6 +637,7 @@ try {
     await authPost("/organization/leave", { organizationId: teamId })
   ).status;
   await emailSignIn(owner);
+  confirmSession(owner);
   statuses.update = (
     await authPost("/organization/update", {
       organizationId: teamId,
