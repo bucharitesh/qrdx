@@ -18,7 +18,7 @@ import {
   getPlanLimits,
   type Plan,
 } from "@/lib/plans";
-import { getActiveWorkspace } from "@/lib/scope";
+import { getActiveWorkspace, TwoFactorRequiredError } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 import { workspaceHref } from "@/lib/workspace-paths";
 import { loadWorkspaces, type Workspace } from "@/lib/workspaces";
@@ -124,6 +124,9 @@ export async function getShellData(): Promise<ShellData | null> {
     // redirect) aren't failures: let them through.
     unstable_rethrow(error);
     if (error instanceof UnauthorizedError) return null;
+    // Every workspace of theirs requires two-step verification they haven't
+    // turned on (account pages still work, without the workspace parts).
+    if (error instanceof TwoFactorRequiredError) return null;
     logError(error as Error, { action: "app-shell.getShellData" });
     return null;
   }
@@ -147,7 +150,12 @@ export async function getShellLimitWarnings(): Promise<Meter[]> {
     });
     return attentionMeters(usage.meters);
   } catch (error) {
-    if (!(error instanceof UnauthorizedError)) {
+    if (
+      !(
+        error instanceof UnauthorizedError ||
+        error instanceof TwoFactorRequiredError
+      )
+    ) {
       logError(error as Error, { action: "app-shell.limitWarnings" });
     }
     return [];

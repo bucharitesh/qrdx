@@ -20,6 +20,7 @@ import {
 import { MembersTable } from "@/app/dashboard/team/_components/members-table";
 import { PendingInvitations } from "@/app/dashboard/team/_components/pending-invitations";
 import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
+import { TwoFactorRequirementCard } from "@/app/dashboard/team/_components/two-factor-requirement-card";
 import {
   getTeam,
   listPendingInvitations,
@@ -31,10 +32,15 @@ import {
   invitePath,
   TEAM_ROLE_LABELS,
 } from "@/app/dashboard/team/_lib/team";
+import { loadTwoFactorRequirement } from "@/app/dashboard/team/_lib/two-factor-requirement";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import { can, WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";
+import {
+  can,
+  forbiddenMessage,
+  WORKSPACE_ROLE_DESCRIPTIONS,
+} from "@/lib/permissions";
 import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { getCurrentUser, logError } from "@/lib/shared";
@@ -102,7 +108,10 @@ export default async function TeamPage() {
         : Promise.resolve([]),
     ]);
   if (!team) notFound();
-  const received = await listReceivedInvitations(user.email);
+  const [received, twoFactor] = await Promise.all([
+    listReceivedInvitations(user.email),
+    loadTwoFactorRequirement(scope.organizationId, teamPlan, scope.userId),
+  ]);
   const seats = getPlanLimits(teamPlan).teamMembers;
   const ownWorkspace = isOwnWorkspaceOf(team.id, scope.userId);
 
@@ -180,11 +189,32 @@ export default async function TeamPage() {
                 email: m.email,
                 role: m.role,
                 joinedAt: m.joinedAt.toISOString(),
+                // Who has two-step verification on: owners and admins only.
+                ...(canManage ? { twoFactor: m.twoFactorEnabled } : {}),
               }))}
               ssoDomains={ssoDomains}
             />
           </CardContent>
         </Card>
+
+        {/* Everyone sees it while it's on; owners and admins always. */}
+        {(canManage || twoFactor.required) && (
+          <TwoFactorRequirementCard
+            canChange={can(scope.role, "workspace.update")}
+            forbidden={forbiddenMessage(scope.role, "workspace.update")}
+            membersWithout={
+              canManage
+                ? members.filter((m) => !m.twoFactorEnabled).length
+                : null
+            }
+            planAllows={twoFactor.planAllows}
+            planName={twoFactor.planName}
+            required={twoFactor.required}
+            stored={twoFactor.stored}
+            viewerHasTwoFactor={twoFactor.viewerHasTwoFactor}
+            workspaceName={team.name}
+          />
+        )}
 
         {canManage &&
           (seats > 1 ? (

@@ -37,6 +37,15 @@ export interface MemberRow {
   email: string;
   role: TeamRole;
   joinedAt: string;
+  /** Two-step verification is on; only sent to owners and admins */
+  twoFactor?: boolean;
+}
+
+/** "On" / "Off" for the members list (owners and admins see it). */
+function TwoFactorBadge({ on }: { on: boolean }) {
+  return (
+    <Badge variant={on ? "secondary" : "outline"}>{on ? "On" : "Off"}</Badge>
+  );
 }
 
 export function MembersTable({
@@ -58,6 +67,8 @@ export function MembersTable({
   const [isPending, startTransition] = useTransition();
   const [removing, setRemoving] = useState<MemberRow | null>(null);
   const canManage = can(currentRole, "members.manage");
+  // Who has two-step verification on: the page sends it to owners and admins.
+  const showTwoFactor = members.some((m) => m.twoFactor !== undefined);
   const ownerCount = members.filter((m) => m.role === "owner").length;
 
   // Mirrors the server's rules (lib/permissions.ts canAssignRole and the
@@ -127,6 +138,11 @@ export function MembersTable({
             <TableHead>Member</TableHead>
             <TableHead>Role</TableHead>
             {/* Phones: name, email and role fit without scrolling sideways. */}
+            {showTwoFactor && (
+              <TableHead className="hidden sm:table-cell">
+                Two-step verification
+              </TableHead>
+            )}
             <TableHead className="hidden sm:table-cell">Joined</TableHead>
             {canManage && (
               <TableHead className="text-right">
@@ -151,6 +167,11 @@ export function MembersTable({
                 <div className="text-muted-foreground truncate text-xs">
                   {member.email}
                 </div>
+                {member.twoFactor !== undefined && (
+                  <div className="text-muted-foreground text-xs sm:hidden">
+                    Two-step verification {member.twoFactor ? "on" : "off"}
+                  </div>
+                )}
               </TableCell>
               <TableCell>
                 {canChangeRole(member) ? (
@@ -170,6 +191,13 @@ export function MembersTable({
                   </Badge>
                 )}
               </TableCell>
+              {showTwoFactor && (
+                <TableCell className="hidden sm:table-cell">
+                  {member.twoFactor !== undefined && (
+                    <TwoFactorBadge on={member.twoFactor} />
+                  )}
+                </TableCell>
+              )}
               <TableCell className="text-muted-foreground hidden text-sm sm:table-cell">
                 {formatUtcDate(member.joinedAt)}
               </TableCell>
