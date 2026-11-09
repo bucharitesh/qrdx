@@ -75,6 +75,7 @@ import {
   handRowsBackToCreators,
   initialWorkspaceId,
 } from "./workspace-hooks";
+import { workspaceTwoFactorGate } from "./workspace-two-factor";
 
 // Members per team, owner included, by the best plan among its owners and
 // billing members (workspacePlanTier in ./plan.ts). Keep in sync with
@@ -385,6 +386,8 @@ export const auth = betterAuth({
     passkeyPolicy(),
     // Linking, unlinking and workspace changes over HTTP need "Confirm it's you" (./confirm-gate.ts).
     confirmGate(),
+    // Workspaces that require two-step verification, over HTTP (./workspace-two-factor.ts).
+    workspaceTwoFactorGate(),
     // Workspace single sign-on, Business plan only, licensed servers only
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
     // joins the workspace).

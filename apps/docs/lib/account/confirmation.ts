@@ -155,6 +155,8 @@ export const CONFIRMATION_ACTIONS = {
   "remove-member": "remove someone from this workspace",
   "invite-admin": "invite an admin",
   "admin-join-link": "let a join link add admins",
+  "require-two-factor": "require two-step verification",
+  "stop-requiring-two-factor": "stop requiring two-step verification",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
