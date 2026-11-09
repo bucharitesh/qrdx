@@ -84,6 +84,8 @@ export type WorkspaceAction =
   /** Set up and change the workspace's single sign-on */
   | "sso.manage"
   | "webhooks.manage"
+  /** Read and export the workspace audit log (ee/audit-log) */
+  | "auditLog.view"
   /** The workspace's shared themes and its default theme */
   | "themes.manage"
   /** Create API keys (a key acts with its creator's role) */
@@ -105,6 +107,7 @@ const ALLOWED: Record<WorkspaceAction, readonly WorkspaceRole[]> = {
   // The SSO plugin checks the same two roles (its ADMIN_ROLES).
   "sso.manage": ["owner", "admin"],
   "webhooks.manage": ["owner", "admin"],
+  "auditLog.view": ["owner", "admin"],
   "themes.manage": ["owner", "admin"],
   "apiKeys.create": ["owner", "admin", "member"],
   "apiKeys.manageAll": ["owner", "admin"],
@@ -180,6 +183,7 @@ const WHO: Record<WorkspaceAction, string> = {
   "domains.manage": "owners and admins",
   "sso.manage": "owners and admins",
   "webhooks.manage": "owners and admins",
+  "auditLog.view": "owners and admins",
   "themes.manage": "owners and admins",
   "apiKeys.create": "owners, admins and members",
   "apiKeys.manageAll": "owners and admins",
@@ -197,6 +201,7 @@ const WHAT: Record<WorkspaceAction, string> = {
   "domains.manage": "manage this workspace's domains",
   "sso.manage": "set up single sign-on for this workspace",
   "webhooks.manage": "manage this workspace's webhooks",
+  "auditLog.view": "see this workspace's audit log",
   "themes.manage": "manage this workspace's shared themes",
   "apiKeys.create": "create API keys in this workspace",
   "apiKeys.manageAll": "manage other members' API keys",

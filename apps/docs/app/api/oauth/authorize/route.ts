@@ -1,6 +1,7 @@
 import { auth } from "@repo/auth/server";
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
+import { auditOAuthApp } from "@/ee/audit-log/security-events";
 import {
   currentSession,
   requireRecentConfirmation,
@@ -136,5 +137,6 @@ export async function POST(req: NextRequest) {
     params,
     check.scopes,
   );
+  auditOAuthApp(userId, "oauth_app.authorized", check.app, check.scopes);
   return Response.redirect(location, 303);
 }

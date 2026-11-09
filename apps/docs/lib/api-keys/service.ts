@@ -13,6 +13,7 @@ import {
   or,
   type SQL,
 } from "drizzle-orm";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
 import { isBanActive } from "@/lib/oauth";
 import { isOAuthScope, type OAuthScope } from "@/lib/oauth-scopes";
@@ -240,6 +241,12 @@ export async function createApiKey(
     updatedAt: now,
   };
   await guarded(() => db.insert(apiKey).values(row));
+  // Name, scopes and expiry only: the key itself is never recorded.
+  recordAuditEvent(scope, {
+    action: "api_key.created",
+    target: { type: "api_key", id: row.id, label: row.name },
+    metadata: { scopes: row.scopes, expiresInDays: input.expiresInDays },
+  });
 
   const [creator] = await db
     .select({ name: user.name })
@@ -264,7 +271,12 @@ export async function revokeApiKey(
 ): Promise<{ id: string }> {
   const [row] = await guarded(() =>
     db
-      .select({ id: apiKey.id, userId: apiKey.userId })
+      .select({
+        id: apiKey.id,
+        userId: apiKey.userId,
+        name: apiKey.name,
+        scopes: apiKey.scopes,
+      })
       .from(apiKey)
       .where(
         and(eq(apiKey.id, id), workspaceWhere(scope), isNull(apiKey.revokedAt)),
@@ -276,6 +288,11 @@ export async function revokeApiKey(
     .update(apiKey)
     .set({ revokedAt: now, updatedAt: now })
     .where(and(eq(apiKey.id, row.id), isNull(apiKey.revokedAt)));
+  recordAuditEvent(scope, {
+    action: "api_key.revoked",
+    target: { type: "api_key", id: row.id, label: row.name },
+    metadata: { scopes: Array.isArray(row.scopes) ? row.scopes : [] },
+  });
   return { id: row.id };
 }
 
@@ -284,6 +301,8 @@ export async function revokeApiKey(
 /** Who a valid key acts as, and what it may do. */
 export interface ApiKeyCaller {
   keyId: string;
+  /** The key's name, for the audit log */
+  name: string;
   userId: string;
   /** null = a key from before workspaces: it acts on the creator's own workspace */
   organizationId: string | null;
@@ -340,6 +359,7 @@ export async function authenticateApiKey(
   let record:
     | {
         id: string;
+        name: string;
         keyHash: string;
         userId: string;
         organizationId: string | null;
@@ -356,6 +376,7 @@ export async function authenticateApiKey(
       db
         .select({
           id: apiKey.id,
+          name: apiKey.name,
           keyHash: apiKey.keyHash,
           userId: apiKey.userId,
           organizationId: apiKey.organizationId,
@@ -399,6 +420,7 @@ export async function authenticateApiKey(
   await touchLastUsed(record.id, record.lastUsedAt, now);
   return {
     keyId: record.id,
+    name: record.name,
     userId: record.userId,
     organizationId: record.organizationId,
     role,

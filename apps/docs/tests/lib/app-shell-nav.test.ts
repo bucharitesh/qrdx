@@ -47,6 +47,7 @@ describe("app nav", () => {
       ["Team", "/dashboard/acme/settings/team"],
       ["Domains", "/dashboard/acme/settings/domains"],
       ["Single sign-on", "/dashboard/acme/settings/sso"],
+      ["Audit log", "/dashboard/acme/settings/audit-log"],
       ["Webhooks", "/dashboard/acme/settings/webhooks"],
       ["API keys & apps", "/dashboard/acme/settings/developers"],
     ]);

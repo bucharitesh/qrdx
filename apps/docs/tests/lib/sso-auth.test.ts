@@ -14,6 +14,7 @@ import {
   ssoRejoinDomains,
   validateSsoUserInfo,
 } from "@repo/auth/sso";
+import { registerWorkspaceChangeRecorder } from "@repo/auth/workspace-audit";
 import { database } from "@repo/database";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
@@ -555,6 +556,8 @@ describe("joining the workspace at every SSO sign-in", () => {
     invitation = null as Row | null,
     claimed = true,
     email = "ben@acme.com",
+    /** A sign-in running at the same moment added them first. */
+    conflict = false,
   } = {}) {
     stubDb({ providers: [provider()], plan });
     const q = database.query as unknown as Record<
@@ -580,8 +583,11 @@ describe("joining the workspace at every SSO sign-in", () => {
           writes.push({ table, values });
           return Promise.resolve().then(resolve, reject);
         },
-        onConflictDoNothing: async () => {
+        // .returning() says whether this insert added the row.
+        onConflictDoNothing: () => {
           writes.push({ table, values, onConflictDoNothing: true });
+          const added = Promise.resolve(conflict ? [] : [{ id: "m-new" }]);
+          return Object.assign(added, { returning: () => added });
         },
       }),
     })) as never);
@@ -612,6 +618,27 @@ describe("joining the workspace at every SSO sign-in", () => {
     });
     // Two sign-ins at once leave one membership (unique index, manual-sql/0020).
     expect(writes[0].onConflictDoNothing).toBe(true);
+  });
+
+  it("hands the join to the workspace audit log, once it really added them", async () => {
+    const changes: unknown[] = [];
+    registerWorkspaceChangeRecorder((change) => changes.push(change));
+    stubJoin();
+    await joinWorkspace("u-ben", "sso-abcdefabcdef");
+    expect(changes).toEqual([
+      {
+        kind: "joined",
+        organizationId: "org-1",
+        userId: "u-ben",
+        role: "viewer",
+        via: "sso",
+      },
+    ]);
+    vi.restoreAllMocks();
+    changes.length = 0;
+    stubJoin({ conflict: true });
+    await joinWorkspace("u-ben", "sso-abcdefabcdef");
+    expect(changes).toEqual([]);
   });
 
   it("never touches an existing member's role", async () => {

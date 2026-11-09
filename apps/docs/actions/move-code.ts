@@ -9,6 +9,7 @@ import {
   type MoveTarget,
   moveCodeToWorkspace,
 } from "@/app/dashboard/codes/_lib/move-workspace";
+import { recordCodeMove } from "@/ee/audit-log/code-events";
 import { HttpError } from "@/lib/error-response";
 import { getActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
@@ -90,6 +91,7 @@ export async function moveQrCodeToWorkspace(input: {
       parsed.data.id,
       parsed.data.organizationId,
     );
+    recordCodeMove(scope, result.code, result.target);
     revalidatePath("/dashboard", "layout");
     return { success: true, data: result };
   } catch (error) {

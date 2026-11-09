@@ -10,6 +10,8 @@ import {
   codeIdSchema,
   destinationUrlSchema,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import { codeEvents, linkControlChanges } from "@/ee/audit-log/code-events";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
 import { assertCan } from "@/lib/permissions-server";
@@ -326,6 +328,12 @@ export async function updateCodeLifecycle(
         .where(eq(qrCode.id, id))
         .returning();
       if (!updated) throw new HttpError(404, "NOT_FOUND", "QR code not found");
+      recordAuditEvent(
+        scope,
+        codeEvents("code.link_controls_changed", [updated], {
+          ...linkControlChanges(row, values),
+        }),
+      );
       return toView(scope, updated);
     },
     { revalidate: true },
@@ -353,6 +361,10 @@ export async function setCodePaused(
         .where(eq(qrCode.id, id))
         .returning();
       if (!updated) throw new HttpError(404, "NOT_FOUND", "QR code not found");
+      recordAuditEvent(
+        scope,
+        codeEvents(paused ? "code.paused" : "code.resumed", [updated]),
+      );
       return toView(scope, updated);
     },
     { revalidate: true },

@@ -9,6 +9,12 @@ import {
 import cuid from "cuid";
 import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
+import {
+  changedFields,
+  endpointUrlChange,
+  maskedEndpointUrl,
+} from "@/ee/audit-log/metadata";
+import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
 import { can } from "@/lib/permissions";
 import { assertCan } from "@/lib/permissions-server";
@@ -252,6 +258,16 @@ export async function createEndpoint(
     })
     .returning();
   invalidateSubscribers(scope);
+  // The URL's origin and the events only: never its path, query or secret.
+  recordAuditEvent(scope, {
+    action: "webhook.created",
+    target: {
+      type: "webhook",
+      id: (row as EndpointRow).id,
+      label: maskedEndpointUrl(input.url),
+    },
+    metadata: { events: input.events },
+  });
   return { endpoint: toView(row as EndpointRow), secret };
 }
 
@@ -282,7 +298,31 @@ export async function updateEndpoint(
     .returning();
   if (!row) throw notFound();
   invalidateSubscribers(scope);
+  recordAuditEvent(scope, {
+    action: "webhook.updated",
+    target: { type: "webhook", id, label: maskedEndpointUrl(row.url) },
+    metadata: auditEndpointChange(current, values),
+  });
   return toView(row);
+}
+
+/** An edit's before and after for the audit log, with the URL masked. */
+function auditEndpointChange(
+  current: { url: string; events: unknown; active: boolean },
+  values: { url?: string; events?: unknown; active?: boolean },
+) {
+  const { before, after } = changedFields(
+    { events: current.events, active: current.active },
+    { events: values.events, active: values.active },
+  );
+  if (values.url === undefined || values.url === current.url) {
+    return { before, after };
+  }
+  const url = endpointUrlChange(current.url, values.url);
+  return {
+    before: { ...url.before, ...before },
+    after: { ...url.after, ...after },
+  };
 }
 
 /** Deleting is allowed on every plan; its deliveries go with it. */
@@ -294,9 +334,17 @@ export async function deleteEndpoint(
   const deleted = await db
     .delete(webhookEndpoint)
     .where(and(eq(webhookEndpoint.id, id), endpointScopeWhere(scope)))
-    .returning({ id: webhookEndpoint.id });
+    .returning({ id: webhookEndpoint.id, url: webhookEndpoint.url });
   if (deleted.length === 0) throw notFound();
   invalidateSubscribers(scope);
+  recordAuditEvent(scope, {
+    action: "webhook.deleted",
+    target: {
+      type: "webhook",
+      id,
+      label: deleted[0] ? maskedEndpointUrl(deleted[0].url) : null,
+    },
+  });
   return { id };
 }
 
@@ -320,8 +368,14 @@ export async function rotateSecret(
     .update(webhookEndpoint)
     .set({ secret })
     .where(and(eq(webhookEndpoint.id, id), endpointScopeWhere(scope)))
-    .returning({ id: webhookEndpoint.id });
+    .returning({ id: webhookEndpoint.id, url: webhookEndpoint.url });
   if (!row) throw notFound();
+  // That it changed, never the secret.
+  recordAuditEvent(scope, {
+    action: "webhook.updated",
+    target: { type: "webhook", id, label: maskedEndpointUrl(row.url) },
+    metadata: { replaced: "Signing secret" },
+  });
   return secret;
 }
 

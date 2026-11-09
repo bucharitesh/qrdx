@@ -71,6 +71,7 @@ import { signInMethodForPath } from "./sign-in-method";
 import { twoFactorResetCancel } from "./two-factor-reset";
 import { unprovenAccessCleanup } from "./unproven-access";
 import { allUserInfoChecks, validateSocialSignUp } from "./verified-sign-up";
+import { workspaceAudit } from "./workspace-audit";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -419,6 +420,7 @@ export const auth = betterAuth({
     // support's pending turn-off of two-step verification (never a passkey:
     // ./two-factor-reset.ts).
     twoFactorResetCancel(),
+    workspaceAudit(), // team changes for the app's audit log (./workspace-audit.ts)
     // New sign-in alerts, and a finished sign-in counting as "Confirm it's
     // you" (./new-sign-in.ts). Last, so it sees each sign-in after the
     // challenge has had its say.
