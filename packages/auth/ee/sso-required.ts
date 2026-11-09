@@ -288,16 +288,21 @@ function describeCreation(
         ? providerParam
         : ""
       : null;
-    const completesChallenge = CHALLENGE_COMPLETION_PATHS.includes(path);
-    const id = completesChallenge ? challengeId(context) : null;
-    const challengeMarker = id
-      ? await readMarker(adapter, ssoChallengeIdentifier(id))
-      : null;
     const serverSide = !(context.request instanceof Request);
     // Better Auth's session middleware puts the request's session here.
     const current = (
       context.context as { session?: { session?: { id?: unknown } } | null }
     ).session?.session;
+    // The same endpoints also confirm a new authenticator app for someone
+    // signed in (Settings, server-side), which swaps their session: that's
+    // not finishing a challenge.
+    const completesChallenge =
+      CHALLENGE_COMPLETION_PATHS.includes(path) &&
+      typeof current?.id !== "string";
+    const id = completesChallenge ? challengeId(context) : null;
+    const challengeMarker = id
+      ? await readMarker(adapter, ssoChallengeIdentifier(id))
+      : null;
     const currentSessionMarker =
       serverSide && typeof current?.id === "string"
         ? await readMarker(adapter, ssoSessionIdentifier(current.id))

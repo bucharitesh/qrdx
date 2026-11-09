@@ -817,6 +817,32 @@ describe("the app swapping an SSO session server-side", () => {
     );
   });
 
+  it("turning on an authenticator app swaps it the same way (Better Auth's verify-totp)", async () => {
+    const browser = new Browser(auth.handler);
+    await ssoSignIn(browser, "liv@acme.test");
+    const first = await browser.session();
+    const firstEnd = new Date(
+      markerOf(first?.session.id ?? "")?.expiresAt as Date,
+    );
+    const enabled = await auth.api.enableTwoFactor({
+      headers: browser.headers(),
+      body: {},
+    });
+    const secret = new URL(enabled.totpURI).searchParams.get("secret") ?? "";
+    await auth.api.verifyTOTP({
+      headers: browser.headers(),
+      body: { code: totp(secret) },
+    });
+    const sessions = sessionsOf("liv@acme.test");
+    expect(sessions).toHaveLength(1);
+    expect(sessions[0]?.id).not.toBe(first?.session.id);
+    const marker = markerOf(sessions[0]?.id as string);
+    expect(parseSsoMarker(marker?.value)?.providerId).toBe(PROVIDER);
+    expect(new Date(marker?.expiresAt as Date).getTime()).toBe(
+      firstEnd.getTime(),
+    );
+  });
+
   it("refuses the same swap over HTTP, and for a session that didn't come from SSO", async () => {
     const browser = new Browser(auth.handler);
     await ssoSignIn(browser, "kit@acme.test");
