@@ -25,6 +25,7 @@ import {
   Refresh2 as RefreshCw,
 } from "iconsax-reactjs";
 import { useState, useTransition } from "react";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { CopyButton } from "../../_components/event-checkboxes";
 import { revealWebhookSecret, rotateWebhookSecret } from "../../_lib/actions";
 
@@ -35,14 +36,20 @@ export function EndpointSecret({
   endpointId: string;
   secretPreview: string;
 }) {
+  const { withConfirmation } = useConfirmation();
   const [secret, setSecret] = useState<string | null>(null);
   const [confirmRotate, setConfirmRotate] = useState(false);
   const [isPending, startTransition] = useTransition();
 
+  // Both ask "Confirm it's you" first when this session hasn't recently.
   const reveal = () => {
     if (secret) return setSecret(null);
     startTransition(async () => {
-      const result = await revealWebhookSecret({ id: endpointId });
+      const result = await withConfirmation(
+        () => revealWebhookSecret({ id: endpointId }),
+        "reveal-webhook-secret",
+      );
+      if (result === null) return;
       if (result.ok) setSecret(result.data.secret);
       else toast.error(result.error);
     });
@@ -50,7 +57,11 @@ export function EndpointSecret({
 
   const rotate = () =>
     startTransition(async () => {
-      const result = await rotateWebhookSecret({ id: endpointId });
+      const result = await withConfirmation(
+        () => rotateWebhookSecret({ id: endpointId }),
+        "rotate-webhook-secret",
+      );
+      if (result === null) return;
       setConfirmRotate(false);
       if (!result.ok) {
         toast.error(result.error);

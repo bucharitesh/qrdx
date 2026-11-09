@@ -97,9 +97,12 @@ function toPluginResult<T>(
  * Confirming the authenticator app can swap the session, so it goes through
  * a route handler rather than a server action (lib/account/two-factor-manage.ts).
  */
-async function confirmApp(
-  code: string,
-): Promise<TwoFactorResult<{ backupCodes: string[] | null }>> {
+async function confirmApp(code: string): Promise<
+  TwoFactorResult<{
+    backupCodes: string[] | null;
+    signedOutElsewhere?: boolean;
+  }>
+> {
   try {
     const response = await fetch("/api/account/two-factor", {
       method: "POST",
@@ -109,17 +112,25 @@ async function confirmApp(
     if (!response.ok) return { ok: false, error: TWO_FACTOR_MESSAGES.failed };
     return (await response.json()) as TwoFactorResult<{
       backupCodes: string[] | null;
+      signedOutElsewhere?: boolean;
     }>;
   } catch {
     return { ok: false, error: TWO_FACTOR_MESSAGES.failed };
   }
 }
 
+/** What turning it on says about the account's other devices. */
+const SIGNED_OUT_ELSEWHERE = "Your other devices were signed out.";
+const NOT_SIGNED_OUT_ELSEWHERE =
+  "We couldn't sign out your other devices. Use Sign out everywhere else under Sessions.";
+
 /**
  * Turning two-step verification on (a stepper: choose a method, set it up,
  * save the backup codes) and adding a second method (the setup step alone).
- * Every server step needs a recent "Confirm it's you"; the settings asked
- * before opening this, and an expired confirmation asks again here.
+ * Turning it on signs out the account's other devices (the server does it;
+ * this says so). Every server step needs a recent "Confirm it's you"; the
+ * settings asked before opening this, and an expired confirmation asks
+ * again here.
  */
 export function TwoFactorSetupDialog({
   start,
@@ -152,6 +163,8 @@ export function TwoFactorSetupDialog({
   const [code, setCode] = useState("");
   const [codes, setCodes] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
+  /** Turned on: whether the other devices were signed out. */
+  const [signedOutElsewhere, setSignedOutElsewhere] = useState(true);
 
   const open = start !== null;
 
@@ -167,9 +180,10 @@ export function TwoFactorSetupDialog({
     router.refresh();
   };
 
-  const showCodes = (backupCodes: string[]) => {
+  const showCodes = (backupCodes: string[], signedOut = true) => {
     setCodes(backupCodes);
     setSaved(false);
+    setSignedOutElsewhere(signedOut);
     setError(null);
     setStep("codes");
   };
@@ -214,8 +228,9 @@ export function TwoFactorSetupDialog({
         return;
       }
       setCode("");
-      if (result.backupCodes) showCodes(result.backupCodes);
-      else finish("Authenticator app added");
+      if (result.backupCodes) {
+        showCodes(result.backupCodes, result.signedOutElsewhere !== false);
+      } else finish("Authenticator app added");
     } finally {
       setBusy(false);
     }
@@ -262,7 +277,7 @@ export function TwoFactorSetupDialog({
       }
       const added = data as unknown as AddedPasskey;
       if (added.backupCodes) {
-        showCodes(added.backupCodes);
+        showCodes(added.backupCodes, added.signedOutElsewhere !== false);
       } else if (added.turnOnFailed) {
         toast.error(
           "Passkey added, but two-step verification didn't turn on. Try Turn on again.",
@@ -325,7 +340,7 @@ export function TwoFactorSetupDialog({
         );
         return;
       }
-      showCodes(result.backupCodes);
+      showCodes(result.backupCodes, result.signedOutElsewhere);
     } finally {
       setBusy(false);
     }
@@ -347,6 +362,7 @@ export function TwoFactorSetupDialog({
     setCode("");
     setCodes([]);
     setSaved(false);
+    setSignedOutElsewhere(true);
     if (start === "app") void latest.current.beginApp();
     if (start === "existing-passkey") {
       void latest.current.promptExistingPasskey(true);
@@ -418,15 +434,17 @@ export function TwoFactorSetupDialog({
           </DialogTitle>
           <DialogDescription className="text-pretty">
             {step === "choose"
-              ? "After you sign in, QRdx will also ask for this. Pick one now; you can add the other later."
+              ? "After you sign in, QRdx will also ask for this. Pick one now; you can add the other later. Turning it on signs out your other devices."
               : step === "passkey"
                 ? turningOn
-                  ? "Name it so you can tell your passkeys apart. Your browser then asks where to save it. Adding it turns on two-step verification."
+                  ? "Name it so you can tell your passkeys apart. Your browser then asks where to save it. Adding it turns on two-step verification and signs out your other devices."
                   : "Name it so you can tell your passkeys apart. Your browser then asks where to save it."
                 : step === "app"
-                  ? "Scan this QR code with your authenticator app, then enter the 6-digit code it shows."
+                  ? turningOn && start === "app"
+                    ? "Scan this QR code with your authenticator app, then enter the 6-digit code it shows. This turns on two-step verification and signs out your other devices."
+                    : "Scan this QR code with your authenticator app, then enter the 6-digit code it shows."
                   : step === "existing-passkey"
-                    ? "Use one of your passkeys to turn on two-step verification. After you sign in, QRdx will ask for it."
+                    ? "Use one of your passkeys to turn on two-step verification. After you sign in, QRdx will ask for it. Your other devices will be signed out."
                     : "Each code works once, if you can't use your passkey or authenticator app. Keep them somewhere safe, like a password manager. They won't be shown again."}
           </DialogDescription>
         </DialogHeader>
@@ -706,6 +724,20 @@ export function TwoFactorSetupDialog({
 
         {step === "codes" && (
           <>
+            <p
+              className={cn(
+                "text-sm text-pretty",
+                signedOutElsewhere
+                  ? "text-muted-foreground"
+                  : "text-destructive",
+              )}
+              role={signedOutElsewhere ? undefined : "alert"}
+            >
+              Two-step verification is on.{" "}
+              {signedOutElsewhere
+                ? SIGNED_OUT_ELSEWHERE
+                : NOT_SIGNED_OUT_ELSEWHERE}
+            </p>
             <BackupCodesList
               codes={codes}
               email={email}
@@ -715,7 +747,13 @@ export function TwoFactorSetupDialog({
             <DialogFooter>
               <Button
                 disabled={codes.length > 0 && !saved}
-                onClick={() => finish("Two-step verification is on")}
+                onClick={() =>
+                  finish(
+                    signedOutElsewhere
+                      ? `Two-step verification is on. ${SIGNED_OUT_ELSEWHERE}`
+                      : "Two-step verification is on",
+                  )
+                }
                 type="button"
               >
                 Done

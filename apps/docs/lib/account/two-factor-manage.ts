@@ -2,7 +2,12 @@ import "server-only";
 
 import { forwardAuthCookies } from "@repo/auth/forward-cookies";
 import { auth } from "@repo/auth/server";
-import { database as db, twoFactor, user as userTable } from "@repo/database";
+import {
+  database as db,
+  session as sessionTable,
+  twoFactor,
+  user as userTable,
+} from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -19,6 +24,7 @@ import {
   carryConfirmation,
   confirmedSession,
   passkeyAssertionOptions,
+  sessionTokenFromSetCookie,
   verifyOwnPasskey,
 } from "./confirmation-server";
 import {
@@ -26,10 +32,12 @@ import {
   hasAuthenticatorApp,
   NO_AUTHENTICATOR_SECRET,
 } from "./two-factor-methods";
+import type { TwoFactorNoticeExtra } from "./two-factor-notice";
 import { sendTwoFactorNotice } from "./two-factor-notice-server";
 import {
   loadTwoFactorFacts,
   resetTwoFactor,
+  signOutOtherSessions,
   twoFactorEnabledFor,
 } from "./two-factor-server";
 
@@ -42,6 +50,12 @@ export { twoFactorEnabledFor };
 // to the account's address. The methods model is ./two-factor-methods.ts:
 // a passkey or an authenticator app turns it on, both can be set up, and
 // removing the last one turns it off.
+//
+// Every way of turning it on signs out the account's other sessions; the one
+// that turned it on stays, with its "Confirm it's you". A browser that got in
+// without the second step (a stolen cookie, someone else reading the
+// mailbox) has to sign in again and answer it. Adding a second method while
+// it's on signs nobody out.
 //
 // Confirming an authenticator app as the FIRST method swaps the session for a
 // new one (Better Auth deletes the old one), so it runs in a route handler
@@ -95,8 +109,37 @@ const authErrorCode = (error: unknown): string | undefined =>
 
 type NoticeKind = Parameters<typeof sendTwoFactorNotice>[0];
 
-const notify = (kind: NoticeKind, email: string) =>
-  after(() => sendTwoFactorNotice(kind, email));
+const notify = (
+  kind: NoticeKind,
+  email: string,
+  extra?: TwoFactorNoticeExtra,
+) => after(() => sendTwoFactorNotice(kind, email, { extra }));
+
+/** Two-step verification just turned on. */
+export interface TurnedOn {
+  /** The new backup codes, shown once */
+  backupCodes: string[];
+  /**
+   * Every other session of the account was signed out. False when that
+   * failed (logged): it's on either way, and Sessions in Settings still
+   * signs the others out.
+   */
+  signedOutElsewhere: boolean;
+}
+
+/** Signs out the account's other sessions; false (logged) when it failed. */
+async function signOutElsewhere(
+  userId: string,
+  keep: { sessionId: string } | { token: string },
+): Promise<boolean> {
+  try {
+    await signOutOtherSessions(userId, keep);
+    return true;
+  } catch (error) {
+    logError(error as Error, { action: "account.twoFactor.signOutElsewhere" });
+    return false;
+  }
+}
 
 /** Signed in and confirmed in the last 10 minutes, else the failure. */
 const confirmed = () => confirmedSession(MESSAGES.signedOut);
@@ -110,12 +153,16 @@ const refresh = () => revalidatePath("/settings/account");
  * for the backup codes and the attempts counter, with no authenticator
  * secret (two-factor-methods.ts), then the switch. Returns the backup codes,
  * shown once, or null when it was already on by now (an authenticator app
- * confirmed in another tab meanwhile: its row is left alone). The session
- * stays as it is. Call only when the account has a passkey.
+ * confirmed in another tab meanwhile: its row is left alone). This session
+ * stays, with its confirmation; every other one is signed out. Call only
+ * when the account has a passkey.
  */
 export async function turnOnWithPasskeys(
-  session: Pick<ConfirmableSession, "userId" | "email" | "requestHeaders">,
-): Promise<string[] | null> {
+  session: Pick<
+    ConfirmableSession,
+    "userId" | "email" | "sessionId" | "requestHeaders"
+  >,
+): Promise<TurnedOn | null> {
   // Read again right before replacing the row: the caller's check may be
   // stale, and a confirmed authenticator app must never be wiped.
   const [current] = await db
@@ -141,8 +188,11 @@ export async function turnOnWithPasskeys(
       .set({ twoFactorEnabled: true, updatedAt: new Date() })
       .where(eq(userTable.id, session.userId)),
   ]);
-  notify("on", session.email);
-  return backupCodes;
+  const signedOutElsewhere = await signOutElsewhere(session.userId, {
+    sessionId: session.sessionId,
+  });
+  notify("on", session.email, { signedOutElsewhere });
+  return { backupCodes, signedOutElsewhere };
 }
 
 /**
@@ -168,10 +218,13 @@ export async function existingPasskeyOptions(): Promise<
   }
 }
 
-/** Then: the passkey answered, so it's on. Returns the backup codes. */
+/**
+ * Then: the passkey answered, so it's on (other sessions signed out).
+ * Returns the backup codes.
+ */
 export async function turnOnWithExistingPasskey(
   input: unknown,
-): Promise<TwoFactorResult<{ backupCodes: string[] }>> {
+): Promise<TwoFactorResult<TurnedOn>> {
   const parsed = z
     .object({ response: z.record(z.string(), z.unknown()) })
     .safeParse(input);
@@ -188,11 +241,11 @@ export async function turnOnWithExistingPasskey(
     }
     const check = await verifyOwnPasskey(session, parsed.data.response);
     if (!check.ok) return check;
-    const backupCodes = await turnOnWithPasskeys(session);
+    const turnedOn = await turnOnWithPasskeys(session);
     // Turned on in another tab meanwhile: nothing more to do here.
-    if (backupCodes === null) return fail(MESSAGES.alreadyOn);
+    if (turnedOn === null) return fail(MESSAGES.alreadyOn);
     refresh();
-    return { ok: true, backupCodes };
+    return { ok: true, ...turnedOn };
   } catch (error) {
     logError(error as Error, { action: "account.turnOnWithExistingPasskey" });
     return fail(MESSAGES.failed);
@@ -269,21 +322,47 @@ export async function startAuthenticatorSetup(): Promise<
 }
 
 /**
+ * The session to keep after confirming the app as the first method: the new
+ * one Better Auth swapped in (by its token in the Set-Cookie), else the one
+ * the request came with when there was no swap. Null when neither can be
+ * found: then nobody is signed out, rather than this person.
+ */
+async function sessionToKeep(
+  session: Pick<ConfirmableSession, "sessionId">,
+  setCookie: string | null,
+): Promise<{ token: string } | { sessionId: string } | null> {
+  const token = sessionTokenFromSetCookie(setCookie);
+  if (token) return { token };
+  const [current] = await db
+    .select({ id: sessionTable.id })
+    .from(sessionTable)
+    .where(eq(sessionTable.id, session.sessionId))
+    .limit(1);
+  return current ? { sessionId: session.sessionId } : null;
+}
+
+/**
  * Step 2: the first code from the app confirms it. As the first method it
  * turns two-step verification on and returns the backup codes (shown once);
  * Better Auth swaps the session for a new one, whose cookie is passed on,
- * and the confirmation moves to it. As a second method nothing else changes
- * and no codes are returned.
+ * the confirmation moves to it, and every other session is signed out. As
+ * a second method nothing else changes and no codes are returned.
  */
-export async function confirmAuthenticatorSetup(
-  input: unknown,
-): Promise<TwoFactorResult<{ backupCodes: string[] | null }>> {
+export async function confirmAuthenticatorSetup(input: unknown): Promise<
+  TwoFactorResult<{
+    /** Null when it was a second method (nothing else changed) */
+    backupCodes: string[] | null;
+    /** Turned on: whether every other session was signed out */
+    signedOutElsewhere?: boolean;
+  }>
+> {
   const parsed = z.object({ code: z.string().trim() }).safeParse(input);
   if (!(parsed.success && isTotpCode(parsed.data.code))) {
     return fail(MESSAGES.invalidCode);
   }
   let session: ConfirmableSession;
   let wasOn: boolean;
+  let setCookie: string | null = null;
   try {
     const allowed = await confirmed();
     if (!allowed.ok) return allowed;
@@ -305,7 +384,7 @@ export async function confirmAuthenticatorSetup(
       body: { code: parsed.data.code },
       returnHeaders: true,
     });
-    const setCookie = confirmedApp.headers?.get("set-cookie") ?? null;
+    setCookie = confirmedApp.headers?.get("set-cookie") ?? null;
     await forwardAuthCookies(confirmedApp.headers);
     if (!wasOn) await carryConfirmation(session, setCookie);
   } catch (error) {
@@ -323,19 +402,35 @@ export async function confirmAuthenticatorSetup(
     notify("app-added", session.email);
     return { ok: true, backupCodes: null };
   }
-  notify("on", session.email);
+
+  let signedOutElsewhere = false;
+  try {
+    const keep = await sessionToKeep(session, setCookie);
+    if (keep) {
+      signedOutElsewhere = await signOutElsewhere(session.userId, keep);
+    } else {
+      logError(new Error("No session to keep after turning on two-step"), {
+        action: "account.confirmAuthenticatorSetup.signOutElsewhere",
+      });
+    }
+  } catch (error) {
+    logError(error as Error, {
+      action: "account.confirmAuthenticatorSetup.signOutElsewhere",
+    });
+  }
+  notify("on", session.email, { signedOutElsewhere });
   try {
     const { backupCodes } = await auth.api.viewBackupCodes({
       body: { userId: session.userId },
     });
-    return { ok: true, backupCodes };
+    return { ok: true, backupCodes, signedOutElsewhere };
   } catch (error) {
     // On, but the codes couldn't be read back: new ones can be made from
     // the on state.
     logError(error as Error, {
       action: "account.confirmAuthenticatorSetup.codes",
     });
-    return { ok: true, backupCodes: [] };
+    return { ok: true, backupCodes: [], signedOutElsewhere };
   }
 }
 

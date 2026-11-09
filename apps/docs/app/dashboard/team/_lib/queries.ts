@@ -27,6 +27,8 @@ export interface TeamMember {
   image: string | null;
   role: TeamRole;
   joinedAt: Date;
+  /** Two-step verification is on (shown to owners and admins only) */
+  twoFactorEnabled: boolean;
 }
 
 export interface PendingInvitation {
@@ -86,12 +88,17 @@ export async function listTeamMembers(
       name: user.name,
       email: user.email,
       image: user.image,
+      twoFactorEnabled: user.twoFactorEnabled,
     })
     .from(member)
     .innerJoin(user, eq(user.id, member.userId))
     .where(eq(member.organizationId, organizationId))
     .orderBy(asc(member.createdAt));
-  return rows.map((row) => ({ ...row, role: primaryRole(row.role) }));
+  return rows.map((row) => ({
+    ...row,
+    role: primaryRole(row.role),
+    twoFactorEnabled: row.twoFactorEnabled === true,
+  }));
 }
 
 export async function listPendingInvitations(

@@ -21,6 +21,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Sms } from "iconsax-reactjs";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
   EMAIL_CODES_REMAIN,
   linkErrorMessage,
@@ -28,7 +29,7 @@ import {
   type SignInMethodView,
   type SocialProvider,
 } from "@/lib/account/sign-in-methods";
-import { unlinkSignInMethod } from "../_lib/actions";
+import { linkSignInMethod, unlinkSignInMethod } from "../_lib/actions";
 import { SettingsSection } from "./settings-section";
 
 const PROVIDER_ICONS: Record<
@@ -100,6 +101,7 @@ export function SignInMethodsSection({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { withConfirmation } = useConfirmation();
   const [lastUsed, setLastUsed] = useState<string | null>(null);
   const [linking, setLinking] = useState<SocialProvider | null>(null);
   const [unlinking, setUnlinking] = useState<SignInMethodView | null>(null);
@@ -120,15 +122,25 @@ export function SignInMethodsSection({
     router.replace(pathname, { scroll: false });
   }, [outcome, pathname, router]);
 
+  // Asks "Confirm it's you" first when this session hasn't recently; the
+  // server then answers the provider's address to go to.
   const link = async (provider: SocialProvider) => {
     setLinking(provider);
     try {
-      const { error } = await authClient.linkSocial({
-        provider,
-        callbackURL: `/settings/account?linked=${provider}#sign-in`,
-        errorCallbackURL: "/settings/account",
-      });
-      if (error) throw error;
+      const result = await withConfirmation(
+        () => linkSignInMethod({ provider }),
+        "link-sign-in",
+      );
+      if (result === null) {
+        setLinking(null);
+        return;
+      }
+      if (!result.ok) {
+        toast.error(result.error);
+        setLinking(null);
+        return;
+      }
+      window.location.assign(result.url);
     } catch (error) {
       console.error("Linking failed:", error);
       toast.error(`${PROVIDER_LABELS[provider]} can't be linked right now.`);
@@ -140,7 +152,11 @@ export function SignInMethodsSection({
     if (!unlinking) return;
     setRemoving(true);
     try {
-      const result = await unlinkSignInMethod({ accountId: unlinking.id });
+      const result = await withConfirmation(
+        () => unlinkSignInMethod({ accountId: unlinking.id }),
+        "unlink-sign-in",
+      );
+      if (result === null) return;
       if (!result.ok) {
         toast.error(result.error);
         return;

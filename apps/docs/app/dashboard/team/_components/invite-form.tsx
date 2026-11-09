@@ -7,6 +7,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { inviteMember } from "@/actions/organizations";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import {
   assignableRoles,
@@ -31,11 +32,17 @@ export function InviteForm({ currentRole }: { currentRole: WorkspaceRole }) {
   } | null>(null);
   const [isPending, startTransition] = useTransition();
   const showLimit = useShowLimit();
+  // Inviting an admin asks "Confirm it's you" first (the server decides).
+  const { withConfirmation } = useConfirmation();
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     startTransition(async () => {
-      const result = await inviteMember({ email, role });
+      const result = await withConfirmation(
+        () => inviteMember({ email, role }),
+        "invite-admin",
+      );
+      if (result === null) return;
       if (!result.ok) {
         // No free seat (INVITATION_LIMIT_REACHED): the seats limit card.
         if (result.upgrade) {

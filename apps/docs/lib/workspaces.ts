@@ -9,6 +9,12 @@ import {
   ownWorkspaceName,
   ownWorkspaceSlugBase,
 } from "@repo/auth/workspace-rules";
+import { lacksRequiredTwoFactor } from "@repo/auth/workspace-two-factor";
+import {
+  TWO_FACTOR_REQUIRED,
+  TWO_FACTOR_REQUIRED_MESSAGE,
+  twoFactorRequiredIn,
+} from "@repo/auth/workspace-two-factor-rules";
 import {
   apiKey,
   brandKit,
@@ -52,6 +58,11 @@ export interface Workspace {
   role: WorkspaceRole;
   /** The viewer's own workspace (can't be left or deleted) */
   own: boolean;
+  /**
+   * Its "Require two-step verification" setting is on. It applies only on
+   * Business: shutsOut() checks the person and the plan.
+   */
+  twoFactorRequired: boolean;
 }
 
 export interface WorkspaceUser {
@@ -68,6 +79,18 @@ export class WorkspaceNotFoundError extends HttpError {
   }
 }
 
+/**
+ * A workspace that requires two-step verification, opened by a member who
+ * hasn't turned it on (packages/auth/workspace-two-factor.ts). The
+ * [workspace] layout shows them what to do; actions and routes answer 403.
+ */
+export class TwoFactorRequiredError extends HttpError {
+  constructor() {
+    super(403, TWO_FACTOR_REQUIRED, TWO_FACTOR_REQUIRED_MESSAGE);
+    this.name = "TwoFactorRequiredError";
+  }
+}
+
 const workspaceColumns = {
   id: organization.id,
   name: organization.name,
@@ -75,6 +98,7 @@ const workspaceColumns = {
   logo: organization.logo,
   role: member.role,
   joinedAt: member.createdAt,
+  metadata: organization.metadata,
 };
 
 type WorkspaceRow = {
@@ -83,6 +107,7 @@ type WorkspaceRow = {
   slug: string;
   logo: string | null;
   role: string;
+  metadata: string | null;
 };
 
 const toWorkspace = (userId: string, row: WorkspaceRow): Workspace => ({
@@ -92,7 +117,37 @@ const toWorkspace = (userId: string, row: WorkspaceRow): Workspace => ({
   logo: row.logo,
   role: strongestRole(row.role),
   own: row.id === ownWorkspaceId(userId),
+  twoFactorRequired: twoFactorRequiredIn(row.metadata),
 });
+
+/**
+ * True when the workspace requires two-step verification and the person
+ * hasn't turned it on: they can't open it or act in it with a session until
+ * they do. No query unless the workspace's setting is on.
+ */
+export async function shutsOut(
+  userId: string,
+  workspace: Pick<Workspace, "id" | "twoFactorRequired">,
+): Promise<boolean> {
+  if (!workspace.twoFactorRequired) return false;
+  return lacksRequiredTwoFactor(userId, workspace.id, true);
+}
+
+/**
+ * The same check for code that acts on a workspace from its id and the
+ * person's membership, without going through lib/scope.ts (notification
+ * targets, the Slack install, unpublishing): throws TwoFactorRequiredError
+ * when the workspace shuts `userId` out. Reads the setting first, so it
+ * costs one query for most workspaces.
+ */
+export async function assertNotShutOut(
+  userId: string,
+  organizationId: string,
+): Promise<void> {
+  if (await lacksRequiredTwoFactor(userId, organizationId)) {
+    throw new TwoFactorRequiredError();
+  }
+}
 
 /** The user's workspaces: their own first, then by name. */
 export async function listWorkspaces(userId: string): Promise<Workspace[]> {
@@ -297,16 +352,32 @@ export function pickDefaultWorkspace(
   );
 }
 
+/**
+ * The default workspace that this person can open: the usual order
+ * (pickDefaultWorkspace), passing over any that requires two-step
+ * verification they haven't turned on, so pages outside a workspace (Settings,
+ * the playground, invitations) keep working. When every one of them shuts
+ * them out, the first, with `shutOut` set: lib/scope.ts then refuses it.
+ */
 export async function defaultWorkspace(
   person: WorkspaceUser,
   activeOrganizationId: string | null | undefined,
-): Promise<Workspace> {
-  const workspace = pickDefaultWorkspace(
-    await loadWorkspaces(person),
-    activeOrganizationId,
-  );
-  if (!workspace) throw new Error("The user has no workspace");
-  return workspace;
+): Promise<{ workspace: Workspace; shutOut: boolean }> {
+  const workspaces = await loadWorkspaces(person);
+  const first = pickDefaultWorkspace(workspaces, activeOrganizationId);
+  if (!first) throw new Error("The user has no workspace");
+  const rest = workspaces.filter((w) => w.id !== first.id);
+  const order = [
+    first,
+    ...rest.filter((w) => w.own),
+    ...rest.filter((w) => !w.own),
+  ];
+  for (const workspace of order) {
+    if (!(await shutsOut(person.id, workspace))) {
+      return { workspace, shutOut: false };
+    }
+  }
+  return { workspace: first, shutOut: true };
 }
 
 /**

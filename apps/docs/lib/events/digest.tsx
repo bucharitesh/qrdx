@@ -34,7 +34,7 @@ import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { workspaceLink } from "@/lib/workspace-paths";
 import { eventWorkspaceSlug, workspaceTitle } from "./notify";
-import type { EventScope } from "./subscribers";
+import { type EventScope, withoutShutOutMembers } from "./subscribers";
 import { unsubscribeUrl } from "./unsubscribe";
 
 // Weekly digest: the cron runs hourly on Mondays and each run handles the
@@ -220,6 +220,7 @@ export async function runWeeklyDigest({
       organizationId: notificationSetting.organizationId,
       events: notificationSetting.events,
       email: user.email,
+      twoFactorOn: user.twoFactorEnabled,
       memberId: member.id,
     })
     .from(notificationSetting)
@@ -238,10 +239,14 @@ export async function runWeeklyDigest({
       ),
     );
 
-  const candidates = rows.filter(
-    (row) =>
-      (shard === "all" || digestShard(row.id) === shard) &&
-      (!row.organizationId || row.memberId),
+  // Members only, and none a workspace shuts out for lacking two-step
+  // verification (lib/events/subscribers.ts).
+  const candidates = await withoutShutOutMembers(
+    rows.filter(
+      (row) =>
+        (shard === "all" || digestShard(row.id) === shard) &&
+        (!row.organizationId || row.memberId),
+    ),
   );
   const summary: DigestRunSummary = {
     shard,

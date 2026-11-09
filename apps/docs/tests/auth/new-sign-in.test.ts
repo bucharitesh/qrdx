@@ -8,16 +8,26 @@ import { createHash, createHmac } from "node:crypto";
 import { realpathSync } from "node:fs";
 import path from "node:path";
 import {
+  CONFIRMATION_MINUTES,
+  CONFIRMED_IDENTIFIER_PREFIX,
+  confirmedIdentifier,
+} from "@repo/auth/confirm-sign-in-rules";
+import {
   ALERTS_PER_DAY,
   DEVICE_COOKIE,
   MAX_KNOWN_DEVICES,
   type NewSignIn,
   registerNewSignInNotifier,
+  signInConfirms,
 } from "@repo/auth/new-sign-in";
 import {
+  CHALLENGE_CONTINUE_PATH,
+  PASSKEY_SIGN_IN_PATH,
+  PASSKEY_STEP_VERIFY_PATH,
   SERVER_ONLY_TWO_FACTOR_PATHS,
   UNUSED_TWO_FACTOR_PATHS,
 } from "@repo/auth/sign-in-challenge-rules";
+import { markUnsolicitedSignIn } from "@repo/auth/unsolicited-sign-in";
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 // apps/docs doesn't depend on better-auth itself; load the copy @repo/auth
@@ -149,6 +159,8 @@ const alerts: NewSignIn[] = [];
 let auth: any;
 let db: Record<string, Record<string, unknown>[]>;
 
+const UNSOLICITED_HEADER = "x-test-unsolicited";
+
 beforeAll(async () => {
   const { betterAuth } = await import(`${betterAuthDir}/dist/index.mjs`);
   const { twoFactor, emailOTP, lastLoginMethod } = await import(
@@ -161,6 +173,9 @@ beforeAll(async () => {
   const { signInMethodForPath } = await import("@repo/auth/sign-in-method");
   const { newSignIn } = await import("@repo/auth/new-sign-in");
   const rules = await import("@repo/auth/sign-in-challenge-rules");
+  const { createAuthMiddleware } = await import(
+    `${betterAuthDir}/dist/api/index.mjs`
+  );
 
   db = {
     user: [],
@@ -177,6 +192,11 @@ beforeAll(async () => {
       issuer: "QRdx",
       digits: rules.TOTP_DIGITS,
       period: rules.TOTP_PERIOD_SECONDS,
+    },
+    // Production's codes (the challenge normalises entered codes to them).
+    backupCodeOptions: {
+      customBackupCodesGenerate: () =>
+        rules.generateBackupCodes(rules.BACKUP_CODE_COUNT),
     },
     trustDeviceMaxAge: rules.TRUST_DEVICE_DAYS * 24 * 60 * 60,
   });
@@ -209,6 +229,24 @@ beforeAll(async () => {
       }),
       twoFactorPlugin,
       signInChallenge(twoFactorPlugin, { relyingParty: null }),
+      // Stands in for ssoGate, which marks a SAML response the identity
+      // provider started (packages/auth/ee/sso.ts): a request carrying
+      // UNSOLICITED_HEADER is marked the same way.
+      {
+        id: "test-mark-unsolicited",
+        hooks: {
+          before: [
+            {
+              matcher: (ctx: { headers?: Headers }) =>
+                ctx.headers?.get(UNSOLICITED_HEADER) === "1",
+              handler: createAuthMiddleware((ctx: { context: object }) => {
+                markUnsolicitedSignIn(ctx.context);
+                return Promise.resolve();
+              }),
+            },
+          ],
+        },
+      },
       newSignIn(),
     ],
   });
@@ -533,5 +571,210 @@ describe("new sign-in alerts", () => {
     } finally {
       errors.mockRestore();
     }
+  });
+});
+
+// ─── "Confirm it's you" from the sign-in itself ─────────────────────────────
+
+describe('a finished sign-in counts as "Confirm it\'s you"', () => {
+  const userOf = (email: string) => db.user.find((u) => u.email === email);
+  /** The account's confirmation rows (the app's `qrdx-confirmed-<session>`). */
+  const confirmationsOf = (email: string) =>
+    db.verification.filter(
+      (row) =>
+        row.value === userOf(email)?.id &&
+        String(row.identifier).startsWith(CONFIRMED_IDENTIFIER_PREFIX) &&
+        !String(row.identifier).startsWith("qrdx-confirmed-strong-"),
+    );
+  /** The strong ones: a second step or a passkey in the sign-in itself. */
+  const strongOf = (email: string) =>
+    db.verification.filter(
+      (row) =>
+        row.value === userOf(email)?.id &&
+        String(row.identifier).startsWith("qrdx-confirmed-strong-"),
+    );
+  const sessionIdOf = async (browser: Browser) =>
+    ((await browser.get("/get-session")).json as { session: { id: string } })
+      .session.id;
+
+  /** Turns two-step verification on (server-side, like Settings does). */
+  async function withTwoFactor(email: string) {
+    const first = await firstDevice(email);
+    const headers = () =>
+      new Headers({ cookie: first.cookieHeader(), origin: ORIGIN });
+    const enabled = await auth.api.enableTwoFactor({
+      headers: headers(),
+      body: {},
+    });
+    const secret = new URL(enabled.totpURI).searchParams.get("secret") ?? "";
+    await auth.api.verifyTOTP({
+      headers: headers(),
+      body: { code: totp(secret) },
+    });
+    return { secret, backupCodes: enabled.backupCodes as string[] };
+  }
+
+  it("without two-step verification: any finished sign-in, for that session, for 10 minutes", async () => {
+    const email = "confirm-off@qrdx.test";
+    const browser = new Browser(auth.handler);
+    const before = Date.now();
+    expect((await emailCodeSignIn(browser, email)).status).toBe(200);
+    const rows = confirmationsOf(email);
+    expect(rows).toHaveLength(1);
+    expect(rows[0].identifier).toBe(
+      confirmedIdentifier(await sessionIdOf(browser)),
+    );
+    // An email code alone is never strong.
+    expect(strongOf(email)).toHaveLength(0);
+    const expires = new Date(rows[0].expiresAt as Date).getTime();
+    expect(expires).toBeGreaterThanOrEqual(
+      before + CONFIRMATION_MINUTES * 60_000,
+    );
+    expect(expires).toBeLessThanOrEqual(
+      Date.now() + CONFIRMATION_MINUTES * 60_000,
+    );
+  });
+
+  it("with it on: once the second step is answered, never after the first step alone", async () => {
+    const email = "confirm-totp@qrdx.test";
+    const { secret } = await withTwoFactor(email);
+    // Turning it on swapped the session server-side: not a sign-in.
+    const already = confirmationsOf(email).length;
+
+    const other = new Browser(auth.handler);
+    const challenged = await emailCodeSignIn(other, email);
+    expect(challenged.json?.twoFactorRedirect).toBe(true);
+    expect(confirmationsOf(email)).toHaveLength(already);
+
+    const done = await other.post("/two-factor/verify-totp", {
+      code: totp(secret),
+    });
+    expect(done.status).toBe(200);
+    const rows = confirmationsOf(email);
+    expect(rows).toHaveLength(already + 1);
+    expect(rows.at(-1)?.identifier).toBe(
+      confirmedIdentifier(await sessionIdOf(other)),
+    );
+    // The second step makes it strong.
+    expect(strongOf(email).map((row) => row.identifier)).toContain(
+      `qrdx-confirmed-strong-${await sessionIdOf(other)}`,
+    );
+  });
+
+  it("a backup code as the second step counts too", async () => {
+    const email = "confirm-backup@qrdx.test";
+    const { backupCodes } = await withTwoFactor(email);
+    const already = confirmationsOf(email).length;
+    const other = new Browser(auth.handler);
+    await emailCodeSignIn(other, email);
+    const done = await other.post("/two-factor/verify-backup-code", {
+      code: backupCodes[0],
+    });
+    expect(done.status).toBe(200);
+    expect(confirmationsOf(email)).toHaveLength(already + 1);
+  });
+
+  it("never for a sign-in that arrived unasked (a SAML response the identity provider started)", async () => {
+    const email = "confirm-unsolicited@qrdx.test";
+    const browser = new Browser(auth.handler, { [UNSOLICITED_HEADER]: "1" });
+    expect((await emailCodeSignIn(browser, email)).status).toBe(200);
+    // Signed in, with no confirmation, strong or not. The same sign-in
+    // without the mark confirms (above).
+    expect(await sessionIdOf(browser)).toBeTruthy();
+    expect(confirmationsOf(email)).toHaveLength(0);
+    expect(strongOf(email)).toHaveLength(0);
+  });
+
+  it("not when a trusted device skipped the second step", async () => {
+    const email = "confirm-trusted@qrdx.test";
+    const { secret } = await withTwoFactor(email);
+    const other = new Browser(auth.handler);
+    await emailCodeSignIn(other, email);
+    await other.post("/two-factor/verify-totp", {
+      code: totp(secret),
+      trustDevice: true,
+    });
+    const afterStep = confirmationsOf(email).length;
+    await other.post("/sign-out");
+
+    // Signed in again on the trusted browser: no second step asked...
+    const again = await emailCodeSignIn(other, email);
+    expect(again.status).toBe(200);
+    expect(again.json?.twoFactorRedirect).toBeUndefined();
+    const sessionId = await sessionIdOf(other);
+    expect(sessionId).toEqual(expect.any(String));
+    // ...and so nothing confirmed for the new session.
+    expect(confirmationsOf(email)).toHaveLength(afterStep);
+    expect(
+      db.verification.some(
+        (row) => row.identifier === confirmedIdentifier(sessionId),
+      ),
+    ).toBe(false);
+  });
+
+  it("never for sign-ins made server-side through auth.api", async () => {
+    const email = "confirm-server@qrdx.test";
+    await firstDevice(email);
+    const already = confirmationsOf(email).length;
+    await auth.api.sendVerificationOTP({ body: { email, type: "sign-in" } });
+    const result = await auth.api.signInEmailOTP({
+      body: { email, otp: sentCodes.get(email) },
+    });
+    expect(result.token).toEqual(expect.any(String));
+    expect(confirmationsOf(email)).toHaveLength(already);
+  });
+
+  it("not for a session refresh", async () => {
+    const email = "confirm-refresh@qrdx.test";
+    const browser = await firstDevice(email);
+    const already = confirmationsOf(email).length;
+    const session = db.session.find((s) => s.userId === userOf(email)?.id);
+    if (!session) throw new Error("no session");
+    session.expiresAt = new Date(Date.now() + 2 * 24 * 60 * 60 * 1000);
+    const reply = await browser.get("/get-session");
+    expect(reply.setCookies.some((c) => c.includes("session_token="))).toBe(
+      true,
+    );
+    expect(confirmationsOf(email)).toHaveLength(already);
+  });
+
+  it("still counts when the browser can't be recorded", async () => {
+    const errors = vi.spyOn(console, "error").mockImplementation(() => {});
+    const saved = db.knownDevice;
+    try {
+      delete (db as Partial<typeof db>).knownDevice;
+      const email = "confirm-no-devices@qrdx.test";
+      const browser = new Browser(auth.handler);
+      expect((await emailCodeSignIn(browser, email)).status).toBe(200);
+      expect(confirmationsOf(email)).toHaveLength(1);
+    } finally {
+      db.knownDevice = saved;
+      errors.mockRestore();
+    }
+  });
+
+  it("which sign-ins count", () => {
+    const paths = [
+      "/sign-in/email-otp",
+      "/callback/:id",
+      "/sso/callback/:providerId",
+      "/sso/saml2/sp/acs/:providerId",
+      PASSKEY_SIGN_IN_PATH,
+      "/two-factor/verify-totp",
+      "/two-factor/verify-backup-code",
+      PASSKEY_STEP_VERIFY_PATH,
+      CHALLENGE_CONTINUE_PATH,
+    ];
+    // Off: every way in.
+    for (const path of paths)
+      expect(signInConfirms(path, false), path).toBe(true);
+    // On: the second step answered, or a passkey sign-in.
+    expect(paths.filter((path) => signInConfirms(path, true))).toEqual([
+      PASSKEY_SIGN_IN_PATH,
+      "/two-factor/verify-totp",
+      "/two-factor/verify-backup-code",
+      PASSKEY_STEP_VERIFY_PATH,
+    ]);
+    expect(signInConfirms("constructor", true)).toBe(false);
   });
 });

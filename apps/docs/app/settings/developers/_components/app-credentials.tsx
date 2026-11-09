@@ -22,6 +22,7 @@ import { Refresh2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { CopyButton } from "@/app/dashboard/webhooks/_components/event-checkboxes";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import { regenerateOAuthAppSecretAction } from "../_lib/actions";
 import { formatDate } from "./format";
 import { ClientSecretDialog } from "./secret-dialog";
@@ -40,13 +41,19 @@ export function AppCredentials({
   canManage: boolean;
 }) {
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const [confirming, setConfirming] = useState(false);
   const [secret, setSecret] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   const regenerate = () =>
     startTransition(async () => {
-      const result = await regenerateOAuthAppSecretAction({ id: appId });
+      // Asks "Confirm it's you" first when this session hasn't recently.
+      const result = await withConfirmation(
+        () => regenerateOAuthAppSecretAction({ id: appId }),
+        "new-client-secret",
+      );
+      if (result === null) return;
       setConfirming(false);
       if (!result.ok) {
         toast.error(result.error);

@@ -6,7 +6,12 @@ import {
   randomUUID,
   timingSafeEqual,
 } from "node:crypto";
+import {
+  confirmedIdentifier,
+  strongConfirmedIdentifier as strongIdentifier,
+} from "@repo/auth/confirm-sign-in-rules";
 import { cookiesToSet } from "@repo/auth/passkey";
+import { checkPasskeyWithoutSignIn } from "@repo/auth/passkey-check";
 import { auth } from "@repo/auth/server";
 import { LOCKOUT_FAILURES } from "@repo/auth/sign-in-challenge-rules";
 import {
@@ -17,6 +22,7 @@ import {
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, eq, gt } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
+import { after } from "next/server";
 import { z } from "zod";
 import {
   addressKey,
@@ -52,11 +58,19 @@ import { isRecentSignIn } from "./deletion";
 import { linkedSignInsFor } from "./linked-sign-ins-server";
 import { PASSKEY_MESSAGES } from "./passkeys";
 import { signInCodesAvailable } from "./reauth";
+import {
+  getSessionAllowingHold,
+  isSessionHeld,
+  moveSessionOrigin,
+} from "./session-origin-server";
 import { hasAuthenticatorApp } from "./two-factor-methods";
+import { sendBackupCodeUsedNotice } from "./two-factor-notice-server";
+import { cancelTwoFactorResetQuietly } from "./two-factor-reset-server";
 import {
   clearCodeFailures,
   loadTwoFactorFacts,
   passkeysWorkHere,
+  releaseCodeAttempt,
   reserveCodeAttempt,
 } from "./two-factor-server";
 
@@ -68,6 +82,12 @@ import {
 // checks for 15 minutes. Emailed codes, for accounts without it, are HMAC'd
 // with the auth secret and allow 3 tries each. Signing in again with Google,
 // GitHub or SSO is ./confirmation-sign-in-server.ts.
+//
+// A held session (used from a new country and browser: ./session-origin.ts)
+// is seen here, unlike everywhere else, so it can confirm: until it does,
+// every gated action answers CONFIRMATION_REQUIRED, even with a confirmation
+// recorded before it was held. Every confirmation moves the session's
+// origin to where it is now.
 
 export type ConfirmResult = { ok: true } | { ok: false; error: string };
 
@@ -78,17 +98,14 @@ export interface ConfirmableSession {
   sessionId: string;
   sessionCreatedAt: Date;
   requestHeaders: Headers;
+  /**
+   * Used from a different country and browser than where it started: it
+   * must confirm before anything else.
+   */
+  held?: boolean;
 }
 
-const CONFIRMED_PREFIX = "qrdx-confirmed-";
-// Next to it, when the confirmation used a passkey, an authenticator code or
-// a backup code: what support actions ask of an admin (requireStrong…).
-const STRONG_PREFIX = "qrdx-confirmed-strong-";
 const CODE_PREFIX = "qrdx-confirm-code-";
-
-const confirmedIdentifier = (sessionId: string) =>
-  `${CONFIRMED_PREFIX}${sessionId}`;
-const strongIdentifier = (sessionId: string) => `${STRONG_PREFIX}${sessionId}`;
 const codeIdentifier = (sessionId: string) => `${CODE_PREFIX}${sessionId}`;
 
 // Per user, on top of the account lockout (auth.api calls skip Better Auth's
@@ -122,17 +139,18 @@ const fail = (error: string): ConfirmResult => ({ ok: false, error });
 const authErrorCode = (error: unknown): string | undefined =>
   (error as { body?: { code?: string } } | null)?.body?.code;
 
-/** The signed-in session, read from the request. */
+/** The signed-in session, read from the request, held or not. */
 export async function currentSession(): Promise<ConfirmableSession | null> {
   const requestHeaders = await headers();
-  const found = await auth.api.getSession({ headers: requestHeaders });
-  if (!(found?.user?.id && found.session?.id)) return null;
+  const found = await getSessionAllowingHold(requestHeaders);
+  if (!found?.session?.id) return null;
   return {
     userId: found.user.id,
     email: found.user.email,
     sessionId: found.session.id,
     sessionCreatedAt: new Date(found.session.createdAt),
     requestHeaders,
+    held: await isSessionHeld(found.session, requestHeaders),
   };
 }
 
@@ -153,10 +171,11 @@ async function hasRow(identifier: string, userId: string): Promise<boolean> {
   return Boolean(row);
 }
 
-/** This session confirmed within the last 10 minutes. */
-export function hasRecentConfirmation(
-  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+/** This session confirmed within the last 10 minutes (and isn't held). */
+export async function hasRecentConfirmation(
+  session: Pick<ConfirmableSession, "userId" | "sessionId" | "held">,
 ): Promise<boolean> {
+  if (session.held) return false;
   return hasRow(confirmedIdentifier(session.sessionId), session.userId);
 }
 
@@ -164,10 +183,12 @@ export function hasRecentConfirmation(
  * This session confirmed within the last 10 minutes with a passkey, an
  * authenticator code or a backup code: never an emailed code or signing in
  * again, which getting into a mailbox or a Google account is enough for.
+ * Never while the session is held.
  */
-export function hasRecentStrongConfirmation(
-  session: Pick<ConfirmableSession, "userId" | "sessionId">,
+export async function hasRecentStrongConfirmation(
+  session: Pick<ConfirmableSession, "userId" | "sessionId" | "held">,
 ): Promise<boolean> {
+  if (session.held) return false;
   return hasRow(strongIdentifier(session.sessionId), session.userId);
 }
 
@@ -175,14 +196,15 @@ export function hasRecentStrongConfirmation(
  * For gated actions: null when this session confirmed in the last 10 minutes
  * (or, without two-step verification on a deployment that can't send codes,
  * signed in within them), else the result the action returns so the client
- * asks.
+ * asks. A held session always asks.
  */
 export async function requireRecentConfirmation(
   session: Pick<
     ConfirmableSession,
-    "userId" | "sessionId" | "sessionCreatedAt"
+    "userId" | "sessionId" | "sessionCreatedAt" | "held"
   >,
 ): Promise<ConfirmationRequired | null> {
+  if (session.held) return confirmationRequired();
   if (await hasRecentConfirmation(session)) return null;
   if (!signInCodesAvailable()) {
     const { on } = await loadTwoFactorFacts(session.userId);
@@ -211,11 +233,14 @@ export async function confirmedSession(
 
 /**
  * Starts (or restarts) this session's 10 minutes; `strong` when it used a
- * passkey, an authenticator code or a backup code.
+ * passkey, or a "code" (an authenticator code or a backup code). With the
+ * request's headers, where the session is now also becomes its origin (a
+ * held session is let go).
  */
 export async function recordConfirmation(
-  session: Pick<ConfirmableSession, "userId" | "sessionId">,
-  { strong = false }: { strong?: boolean } = {},
+  session: Pick<ConfirmableSession, "userId" | "sessionId"> &
+    Partial<Pick<ConfirmableSession, "requestHeaders">>,
+  { strong }: { strong?: "code" | "passkey" } = {},
 ): Promise<void> {
   await writeConfirmationRow(
     confirmedIdentifier(session.sessionId),
@@ -226,6 +251,16 @@ export async function recordConfirmation(
       strongIdentifier(session.sessionId),
       session.userId,
     );
+  }
+  if (strong === "code") {
+    // They still have their authenticator app or backup codes, so support's
+    // pending turn-off (if any) is cancelled (./two-factor-reset-server.ts).
+    // Never on a passkey alone: the reset is for a lost device, and a
+    // passkey on it mustn't block recovery. Cancel in Settings still works.
+    await cancelTwoFactorResetQuietly({ id: session.userId });
+  }
+  if (session.requestHeaders) {
+    await moveSessionOrigin(session, session.requestHeaders);
   }
 }
 
@@ -282,14 +317,18 @@ export async function carryConfirmation(
 
 /**
  * The session token in Better Auth's Set-Cookie (`<token>.<signature>`,
- * URL-encoded), or null. Only used to find the new session's id.
+ * URL-encoded), or null. Only used to find the new session's id. The last
+ * one wins, as in the browser: a response can set the old session's cookie
+ * first (Better Auth refreshing it while reading it) and the new one after.
  */
 export function sessionTokenFromSetCookie(
   setCookie: string | null | undefined,
 ): string | null {
-  const match = setCookie?.match(
-    /(?:^|[\s,])(?:__Secure-)?[\w.-]*session_token=([^;,\s]+)/,
-  );
+  const match = [
+    ...(setCookie ?? "").matchAll(
+      /(?:^|[\s,])(?:__Secure-)?[\w.-]*session_token=([^;,\s]+)/g,
+    ),
+  ].at(-1);
   if (!match?.[1]) return null;
   let value: string;
   try {
@@ -326,10 +365,12 @@ export async function loadConfirmationOptions(
  * Checks an authenticator or backup code (a backup code is used up) against
  * the shared lockout. An account without an authenticator app (passkeys
  * only, or a setup that was never confirmed) never gets as far as the
- * plugin's TOTP check.
+ * plugin's TOTP check. A backup code that worked is emailed to the
+ * account's address, without waiting for it: that never holds up or fails
+ * the check.
  */
 export async function checkSecondFactorCode(
-  session: Pick<ConfirmableSession, "userId" | "requestHeaders">,
+  session: Pick<ConfirmableSession, "userId" | "email" | "requestHeaders">,
   rawCode: string,
 ): Promise<ConfirmResult> {
   const totpCode = isTotpCode(rawCode.trim()) ? rawCode.trim() : null;
@@ -385,6 +426,21 @@ export async function checkSecondFactorCode(
     );
   }
   await clearCodeFailures(attempt.id);
+  if (backupCode) {
+    try {
+      // Started now (the count of codes left is read before the action
+      // this confirms can make new ones), never awaited.
+      const sending = sendBackupCodeUsedNotice({
+        userId: session.userId,
+        email: session.email,
+        usedFor: "confirm",
+        headers: session.requestHeaders,
+      });
+      after(() => sending);
+    } catch (error) {
+      logError(error as Error, { action: "account.backupCodeNotice" });
+    }
+  }
   return { ok: true };
 }
 
@@ -396,7 +452,7 @@ export async function confirmWithCode(input: unknown): Promise<ConfirmResult> {
     if (!session) return fail(CONFIRMATION_MESSAGES.signedOut);
     const check = await checkSecondFactorCode(session, parsed.data.code);
     if (!check.ok) return check;
-    await recordConfirmation(session, { strong: true });
+    await recordConfirmation(session, { strong: "code" });
     return { ok: true };
   } catch (error) {
     logError(error as Error, { action: "account.confirmWithCode" });
@@ -451,7 +507,11 @@ const PASSKEY_REFUSALS = new Set([
  * passkey plugin: the signature, the challenge (once), the origin, user
  * verification (packages/auth/passkey.ts refuses without it) and the
  * counter. The plugin then signs in as the passkey's owner; that session
- * is deleted straight away and its token never leaves the server.
+ * is deleted straight away and its token never leaves the server. The call
+ * is marked as no sign-in (packages/auth/passkey-check.ts), so a rule about
+ * how someone may sign in (their domain requires single sign-on) doesn't
+ * refuse it. An unexpected refusal is thrown: not an answer that didn't
+ * check out.
  */
 export async function verifyOwnPasskey(
   session: Pick<ConfirmableSession, "userId" | "requestHeaders">,
@@ -460,10 +520,12 @@ export async function verifyOwnPasskey(
   let created: { session?: { token?: string }; user?: { id?: string } } | null =
     null;
   try {
-    created = await auth.api.verifyPasskeyAuthentication({
-      headers: session.requestHeaders,
-      body: { response },
-    });
+    created = await checkPasskeyWithoutSignIn(() =>
+      auth.api.verifyPasskeyAuthentication({
+        headers: session.requestHeaders,
+        body: { response },
+      }),
+    );
   } catch (error) {
     const code = authErrorCode(error);
     if (code === "PASSKEY_USER_VERIFICATION_REQUIRED") {
@@ -539,14 +601,23 @@ export async function confirmWithPasskey(
           : CONFIRMATION_MESSAGES.failed,
       );
     }
-    const check = await verifyOwnPasskey(session, parsed.data.response);
+    let check: ConfirmResult;
+    try {
+      check = await verifyOwnPasskey(session, parsed.data.response);
+    } catch (error) {
+      // Something other than the answer failed (the database, or a rule
+      // refusing the plugin's throwaway session): not the person's wrong
+      // answer, so it doesn't count toward the lockout. A plain failure.
+      if (attempt?.ok) await releaseCodeAttempt(attempt.id);
+      throw error;
+    }
     if (!check.ok) {
       return attempt?.ok && attempt.attempts >= LOCKOUT_FAILURES
         ? fail(TWO_FACTOR_MESSAGES.locked)
         : check;
     }
     if (attempt?.ok) await clearCodeFailures(attempt.id);
-    await recordConfirmation(session, { strong: true });
+    await recordConfirmation(session, { strong: "passkey" });
     return { ok: true };
   } catch (error) {
     logError(error as Error, { action: "account.confirmWithPasskey" });

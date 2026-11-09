@@ -1,6 +1,7 @@
 import { auth } from "@repo/auth/server";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
+import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import {
   authorizeParamEntries,
   checkAuthorizeRequest,
@@ -47,24 +48,27 @@ export default async function OAuthAuthorizePage({
     );
   }
 
+  // Authorize asks "Confirm it's you" (app/api/oauth/authorize/route.ts).
   return (
-    <OAuthConsent
-      account={{
-        name: session.user.name,
-        email: session.user.email,
-        image: session.user.image ?? null,
-      }}
-      app={{
-        name: check.app.name,
-        description: check.app.description,
-        logoUrl: check.app.logoUrl,
-        websiteUrl: check.app.websiteUrl,
-        trusted: check.app.trusted,
-        builtBy: check.app.builtBy,
-      }}
-      fields={entries}
-      redirectHost={new URL(params.redirectUri as string).host}
-      scopes={check.scopes}
-    />
+    <ConfirmIdentityProvider>
+      <OAuthConsent
+        account={{
+          name: session.user.name,
+          email: session.user.email,
+          image: session.user.image ?? null,
+        }}
+        app={{
+          name: check.app.name,
+          description: check.app.description,
+          logoUrl: check.app.logoUrl,
+          websiteUrl: check.app.websiteUrl,
+          trusted: check.app.trusted,
+          builtBy: check.app.builtBy,
+        }}
+        fields={entries}
+        redirectHost={new URL(params.redirectUri as string).host}
+        scopes={check.scopes}
+      />
+    </ConfirmIdentityProvider>
   );
 }

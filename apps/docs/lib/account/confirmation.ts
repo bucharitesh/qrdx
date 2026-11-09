@@ -13,6 +13,11 @@
  *   ./confirmation-sign-in-server.ts). Where this deployment can't send
  *   codes, a sign-in within the last 10 minutes also counts.
  *
+ * A finished sign-in counts too, for its new session: any sign-in with
+ * two-step verification off, and with it on only one whose second step was
+ * answered or a passkey sign-in, never one a trusted device let skip it
+ * (packages/auth/new-sign-in.ts).
+ *
  * Each of these is something a stolen session cookie alone doesn't give.
  *
  * A confirmation lasts 10 minutes for the session that made it, so several
@@ -27,9 +32,10 @@ import {
   CONFIRM_RETURNED,
   CONFIRM_SIGN_IN_WRONG_ACCOUNT,
 } from "@repo/auth/confirm-sign-in-rules";
+import { UNVERIFIED_SIGN_UP_ERROR } from "@repo/auth/verified-sign-up";
 
-/** How long a confirmation lasts for its session. */
-export const CONFIRMATION_MINUTES = 10;
+/** How long a confirmation lasts for its session (a finished sign-in too). */
+export { CONFIRMATION_MINUTES } from "@repo/auth/confirm-sign-in-rules";
 /** An emailed confirmation code lasts this long and allows this many tries. */
 export const CONFIRMATION_CODE_MINUTES = 10;
 export const CONFIRMATION_CODE_ATTEMPTS = 3;
@@ -139,9 +145,42 @@ export const CONFIRMATION_ACTIONS = {
   "remove-authenticator": "remove your authenticator app",
   sso: "change single sign-on",
   "support-change": "make this change for someone",
+  "link-sign-in": "link a sign-in method",
+  "unlink-sign-in": "unlink a sign-in method",
+  "create-api-key": "create an API key",
+  "create-oauth-app": "create an OAuth app",
+  "new-client-secret": "make a new client secret",
+  "delete-workspace": "delete this workspace",
+  "change-member-role": "change someone's role",
+  "remove-member": "remove someone from this workspace",
+  "invite-admin": "invite an admin",
+  "admin-join-link": "let a join link add admins",
+  "require-two-factor": "require two-step verification",
+  "stop-requiring-two-factor": "stop requiring two-step verification",
+  "continue-session": "continue",
+  "cancel-two-factor-reset": "cancel support's turn-off",
+  "authorize-app": "let this app use your account",
+  "reveal-webhook-secret": "show a signing secret",
+  "rotate-webhook-secret": "make a new signing secret",
+  "create-webhook": "add a webhook",
+  "change-webhook-url": "send a webhook to a new address",
+  "add-notification-webhook": "send notifications to a new address",
+  "add-slack-channel": "add a Slack channel",
+  "connect-data-out": "send your scans or form answers to another tool",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;
+
+/**
+ * The dialog's "Why am I asked?" for an action with a reason of its own;
+ * the others share the one about security changes.
+ */
+export const CONFIRMATION_REASONS: Partial<Record<ConfirmationAction, string>> =
+  {
+    // A session used from a new country and browser (./session-origin.ts).
+    "continue-session":
+      "This sign-in is being used from a different country and a different browser than where it started, so we check it's you before anything else.",
+  };
 
 /** "r…@gmail.com": enough to recognise the address, not to read it out. */
 export function maskEmail(email: string): string {
@@ -268,6 +307,11 @@ export function confirmSignInErrorMessage(code: string | null): string {
     case "unable_to_create_session":
     case "account_not_linked":
     case "signup_disabled":
+    // A provider that hasn't verified the address never makes an account
+    // (packages/auth/verified-sign-up.ts), so it can't be the linked one.
+    case UNVERIFIED_SIGN_UP_ERROR.github:
+    case UNVERIFIED_SIGN_UP_ERROR.google:
+    case UNVERIFIED_SIGN_UP_ERROR.other:
       return CONFIRMATION_MESSAGES.signInNotLinked;
     default:
       return CONFIRMATION_MESSAGES.signInFailed;

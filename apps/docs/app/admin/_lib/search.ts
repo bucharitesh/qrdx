@@ -19,6 +19,7 @@ import {
   or,
   type SQL,
 } from "drizzle-orm";
+import { strongestRole } from "@/lib/permissions";
 import type { ParsedSearch, SearchKind } from "./rules";
 
 // Global admin search (/admin/search). Each group runs its own small,
@@ -168,7 +169,11 @@ async function searchTeams(search: ParsedSearch) {
     ...team,
     members: totals.get(team.id) ?? 0,
     owners: owners
-      .filter((row) => row.organizationId === team.id)
+      // The LIKE above is a prefilter; " owner" or "co-owner" is no owner.
+      .filter(
+        (row) =>
+          row.organizationId === team.id && strongestRole(row.role) === "owner",
+      )
       .map((row) => ({ id: row.userId, email: row.email })),
   }));
 }

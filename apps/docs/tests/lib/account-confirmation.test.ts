@@ -11,6 +11,7 @@
 // Nothing connects to a database.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+  CONFIRMATION_MESSAGES,
   CONFIRMATION_REQUIRED,
   confirmationMethodsFor,
   mailProviderFor,
@@ -41,6 +42,10 @@ const state = vi.hoisted(() => ({
   passkeyOwner: "user_1" as string | null,
   /** The fake assertion's user verification */
   passkeyUserVerified: true,
+  /** A refusal after the assertion checked out (a sign-in rule), if any */
+  passkeyRefusal: null as string | null,
+  /** Whether each passkey check ran marked as no sign-in */
+  passkeyCheckMarked: [] as boolean[],
   attempts: { count: 0, lockedUntil: 0 },
   calls: [] as string[],
   notices: [] as string[],
@@ -119,6 +124,9 @@ vi.mock("@/lib/account/two-factor-notice-server", () => ({
   sendTwoFactorNotice: async (kind: string) => {
     state.notices.push(`two-factor:${kind}`);
   },
+  sendBackupCodeUsedNotice: async ({ usedFor }: { usedFor: string }) => {
+    state.notices.push(`backup-code-used:${usedFor}`);
+  },
 }));
 vi.mock("@/lib/account/passkeys-server", () => ({
   sendPasskeyNotice: async ({ change }: { change: string }) => {
@@ -163,6 +171,13 @@ vi.mock("@/lib/account/two-factor-server", async (importOriginal) => ({
   },
   clearCodeFailures: async () => {
     state.attempts = { count: 0, lockedUntil: 0 };
+  },
+  releaseCodeAttempt: async () => {
+    const count = Math.max(state.attempts.count - 1, 0);
+    state.attempts = {
+      count,
+      lockedUntil: count >= 10 ? state.attempts.lockedUntil : 0,
+    };
   },
 }));
 
@@ -267,10 +282,21 @@ vi.mock("@repo/auth/server", async () => {
         // Signs in as the passkey's owner, like the plugin.
         verifyPasskeyAuthentication: async () => {
           state.calls.push("passkey-verify");
+          const { isPasskeyCheckWithoutSignIn } = await import(
+            "@repo/auth/passkey-check"
+          );
+          state.passkeyCheckMarked.push(
+            isPasskeyCheckWithoutSignIn({
+              path: "/passkey/verify-authentication",
+            }),
+          );
           if (!state.passkeyOwner) throw authError("AUTHENTICATION_FAILED");
           if (!state.passkeyUserVerified) {
             throw authError("PASSKEY_USER_VERIFICATION_REQUIRED");
           }
+          // A rule refusing the session the plugin makes, after the
+          // assertion checked out.
+          if (state.passkeyRefusal) throw authError(state.passkeyRefusal);
           db.seed("session", [
             {
               id: "passkey_session",
@@ -400,6 +426,8 @@ beforeEach(() => {
   state.backupCodes = [];
   state.passkeyOwner = USER;
   state.passkeyUserVerified = true;
+  state.passkeyRefusal = null;
+  state.passkeyCheckMarked = [];
   state.attempts = { count: 0, lockedUntil: 0 };
   state.calls = [];
   state.notices = [];
@@ -523,6 +551,13 @@ describe("the confirmation rules", () => {
       ),
     ).toBe("tok+x");
     expect(server.sessionTokenFromSetCookie("other=1")).toBeNull();
+    // Refreshing the old session while reading it sets its cookie first;
+    // the swap's new one comes after and is the one the browser keeps.
+    expect(
+      server.sessionTokenFromSetCookie(
+        "better-auth.session_token=old.c2ln; Path=/; HttpOnly, better-auth.session_token=new.c2ln; Path=/; HttpOnly",
+      ),
+    ).toBe("new");
   });
 });
 
@@ -733,7 +768,7 @@ describe("a confirmation", () => {
     ]);
     await server.recordConfirmation(
       { userId: USER, sessionId: SESSION },
-      { strong: true },
+      { strong: "passkey" },
     );
     await server.carryConfirmation(
       { userId: USER, sessionId: SESSION },
@@ -919,6 +954,43 @@ describe("confirming with a passkey", () => {
       await server.confirmWithPasskey({ response: { id: "c1" } }),
     ).toMatchObject({ ok: false, error: expect.stringMatching(/Too many/) });
     expect(state.calls).not.toContain("passkey-verify");
+  });
+
+  it("checks the passkey as no sign-in (so single sign-on rules don't refuse it)", async () => {
+    account({ on: true, passkeys: 1 });
+    expect(await server.confirmWithPasskey({ response: { id: "c1" } })).toEqual(
+      { ok: true },
+    );
+    expect(state.passkeyCheckMarked).toEqual([true]);
+    // Outside that check, nothing is marked.
+    const { isPasskeyCheckWithoutSignIn } = await import(
+      "@repo/auth/passkey-check"
+    );
+    expect(
+      isPasskeyCheckWithoutSignIn({ path: "/passkey/verify-authentication" }),
+    ).toBe(false);
+  });
+
+  it("an unexpected refusal is a plain failure, never counted toward the lockout", async () => {
+    account({ on: true, passkeys: 1 });
+    state.attempts = { count: 3, lockedUntil: 0 };
+    state.passkeyRefusal = "sso_required";
+    expect(await server.confirmWithPasskey({ response: { id: "c1" } })).toEqual(
+      { ok: false, error: CONFIRMATION_MESSAGES.passkeyFailed },
+    );
+    expect(state.attempts).toEqual({ count: 3, lockedUntil: 0 });
+    expect(confirmedRows()).toHaveLength(0);
+    // Even the attempt that would have locked the account.
+    state.attempts = { count: 9, lockedUntil: 0 };
+    expect(
+      await server.confirmWithPasskey({ response: { id: "c1" } }),
+    ).toMatchObject({ ok: false });
+    expect(state.attempts).toEqual({ count: 9, lockedUntil: 0 });
+    // A passkey that doesn't check out still counts.
+    state.passkeyRefusal = null;
+    state.passkeyOwner = null;
+    await server.confirmWithPasskey({ response: { id: "c1" } });
+    expect(state.attempts.count).toBe(10);
   });
 });
 
@@ -1325,6 +1397,7 @@ describe("removing the last passkey", () => {
       await manage.turnOnWithPasskeys({
         userId: USER,
         email: EMAIL,
+        sessionId: SESSION,
         requestHeaders: new Headers(),
       }),
     ).toBeNull();

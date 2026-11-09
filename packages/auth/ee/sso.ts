@@ -5,18 +5,31 @@ import * as schema from "@repo/database";
 import { and, database as db, eq } from "@repo/database";
 import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
+import { eeLicensed } from "../ee-license";
 import { workspacePlanTier } from "../plan";
+import { markUnsolicitedSignIn } from "../unsolicited-sign-in";
+import {
+  isWorkspaceRoleName,
+  type WorkspaceRoleName,
+} from "../workspace-role-rules";
 import {
   domainCovers,
   domainsOverlap,
   emailDomain,
   emailInSsoDomain,
   looksLikeEmail,
+  normalizeSsoDomain,
+  readSamlResponse,
   SAML_DIGEST_ALGORITHMS,
   SAML_RESPONSE_MAX_CHARS,
   SAML_SIGNATURE_ALGORITHMS,
+  SSO_IDP_INITIATED_REFUSED,
+  SSO_IDP_LANDING_PATH,
+  SSO_RESPONSE_UNREADABLE,
   SSO_SIGN_IN_ERROR,
   SSO_TOKEN_PREFIX,
+  samlIdpInitiated,
+  samlIdpInitiatedProblem,
   samlPersonName,
   samlWeakAlgorithms,
   ssoEmailUnverified,
@@ -33,6 +46,10 @@ import {
 // - no sign-in when the identity provider says the address isn't verified,
 //   or sends no address at all (validateSsoUserInfo);
 // - SAML responses signed with SHA-256 or stronger only;
+// - SAML sign-ins started at the identity provider (its app dashboard's
+//   tile), only with one assertion the plugin can record as used, and an
+//   expiry; they always land on the dashboard (the IdP's RelayState is
+//   ignored) and never count as "Confirm it's you" (./sso-rules.ts);
 // - joining the workspace at every SSO sign-in (rejoining after a removal,
 //   accepting a pending invitation), with the role the workspace picked
 //   (member or viewer) or the invitation's.
@@ -72,6 +89,23 @@ export const SSO_ERROR = {
 /** Where a refused callback lands (the sign-in page shows the message). */
 const UNAVAILABLE_REDIRECT = "/sign-in?error=sso_unavailable";
 const WEAK_SIGNATURE_REDIRECT = `/sign-in?error=${SSO_ERROR.weakSignature}`;
+const UNREADABLE_REDIRECT = `/sign-in?error=${SSO_RESPONSE_UNREADABLE}`;
+const IDP_INITIATED_REFUSED_REDIRECT = `/sign-in?error=${SSO_IDP_INITIATED_REFUSED}`;
+
+/**
+ * A SAML response QRdx refused before the plugin read it. Logged loudly:
+ * it's a misconfigured identity provider or a forged or replayed response.
+ * The connection's id and the reason only, never the response or address.
+ */
+function logSamlRefusal(reason: string, providerId: unknown) {
+  console.warn(
+    JSON.stringify({
+      event: "auth.saml_response_refused",
+      reason,
+      providerId: typeof providerId === "string" ? providerId : null,
+    })
+  );
+}
 
 type ProviderRow = typeof schema.ssoProvider.$inferSelect;
 
@@ -81,6 +115,33 @@ async function verifiedProvidersFor(domain: string): Promise<ProviderRow[]> {
     where: (table, { eq: equals }) => equals(table.domainVerified, true),
   });
   return rows.filter((row) => domainCovers(row.domain, domain));
+}
+
+/**
+ * The connection a sign-in with an address in `domain` goes through: the one
+ * verified connection covering it, or null when none does, or more than one
+ * (there's no telling which; verifySsoDomain keeps that from happening).
+ */
+async function signInProviderFor(domain: string): Promise<ProviderRow | null> {
+  const providers = await verifiedProvidersFor(domain);
+  return providers.length === 1 ? (providers[0] ?? null) : null;
+}
+
+/**
+ * Read-only, for the sign-in panel's email step (apps/docs/ee/sso/
+ * sign-in-offer.ts): true when "Sign in with SSO" with an address in `domain`
+ * would go to an identity provider, by the same checks as the /sign-in/sso
+ * hook below (one verified connection covers the domain, and its workspace
+ * is on Business). It takes a domain, never an address, so its answer is the
+ * same for everyone there, with an account or without. False on servers
+ * without a licence key.
+ */
+export async function ssoSignInOffered(domain: string): Promise<boolean> {
+  if (!eeLicensed(process.env)) return false;
+  const normalized = normalizeSsoDomain(domain);
+  if (!normalized) return false;
+  const provider = await signInProviderFor(normalized);
+  return provider !== null && (await ssoProviderUsable(provider));
 }
 
 /** True when the connection may sign people in today. */
@@ -139,10 +200,11 @@ async function providerById(providerId: unknown): Promise<ProviderRow | null> {
  * signs them in. Removing someone for good means unassigning them in the IdP
  * first. Members keep the role
  * they have. A pending invitation is accepted with the role it was sent
- * with (an admin chose it); anyone else joins with the workspace's SSO join
- * role (member or viewer, never owner, admin or billing). Only for an
- * address in the connection's verified domain, while the workspace is on
- * Business.
+ * with (an admin chose it), when that's exactly one of the workspace's roles
+ * (../workspace-role-rules.ts); anyone else, and anyone whose invitation
+ * holds anything else, joins with the workspace's SSO join role (member or
+ * viewer, never owner, admin or billing). Only for an address in the
+ * connection's verified domain, while the workspace is on Business.
  */
 export async function joinWorkspace(userId: string, providerId: unknown) {
   const provider = await providerById(providerId);
@@ -183,7 +245,19 @@ export async function joinWorkspace(userId: string, providerId: unknown) {
   ]);
   if (existing || !workspace) return;
 
-  if (invitation) {
+  // An invitation stored with a role that isn't exact (from before roles
+  // were checked) is never accepted, here or by the plugin: it stays pending
+  // for an admin to revoke.
+  if (invitation && !isWorkspaceRoleName(invitation.role)) {
+    console.warn(
+      JSON.stringify({
+        event: "sso.join_invitation_skipped",
+        reason: "role-not-exact",
+        organizationId,
+      })
+    );
+  }
+  if (invitation && isWorkspaceRoleName(invitation.role)) {
     // Like the organization plugin's accept-invitation: claim the
     // invitation (pending → accepted, so it's accepted once), then add the
     // member with its role; put it back if that fails.
@@ -196,11 +270,11 @@ export async function joinWorkspace(userId: string, providerId: unknown) {
           eq(schema.invitation.status, "pending")
         )
       )
-      .returning({ role: schema.invitation.role });
+      .returning({ id: schema.invitation.id });
     // Claimed by a sign-in running at the same moment: it adds them.
     if (!claimed) return;
     try {
-      await addMember(organizationId, userId, claimed.role || "member");
+      await addMember(organizationId, userId, invitation.role);
     } catch (error) {
       await db
         .update(schema.invitation)
@@ -222,7 +296,11 @@ export async function joinWorkspace(userId: string, providerId: unknown) {
   );
 }
 
-async function addMember(organizationId: string, userId: string, role: string) {
+async function addMember(
+  organizationId: string,
+  userId: string,
+  role: WorkspaceRoleName
+) {
   // Two SSO sign-ins at once: the unique (workspace, user) index keeps one.
   await db
     .insert(schema.member)
@@ -306,6 +384,14 @@ export const ssoOptions = {
   saml: {
     // Reject assertions without NotBefore/NotOnOrAfter (SAML2Int).
     requireTimestamps: true,
+    // Sign-ins started at the identity provider (no InResponseTo). The
+    // plugin checks them like any response and records each assertion's ID
+    // as used; ssoGate first makes sure there's one ID to record and an
+    // expiry to keep it until, and drops the IdP's RelayState.
+    allowIdpInitiated: true,
+    // Where every one of them lands, and where a refused one is sent (then
+    // on to /sign-in by ssoGate's after hook).
+    idpInitiatedCallbackUrl: SSO_IDP_LANDING_PATH,
     // SHA-256 or stronger wherever the plugin checks. It only sees the
     // algorithm of redirect-bound messages, so ssoGate checks POSTed
     // responses itself (samlWeakAlgorithms).
@@ -492,9 +578,8 @@ export const ssoGate = () =>
                 message: "Enter your work email.",
               });
             }
-            const providers = await verifiedProvidersFor(domain);
-            const [provider] = providers;
-            if (!provider || providers.length > 1) {
+            const provider = await signInProviderFor(domain);
+            if (!provider) {
               throw new APIError("NOT_FOUND", {
                 code: SSO_ERROR.notFound,
                 message: `No SSO is set up for ${domain}.`,
@@ -522,29 +607,48 @@ export const ssoGate = () =>
             if (!(provider && (await ssoProviderUsable(provider)))) {
               throw ctx.redirect(UNAVAILABLE_REDIRECT);
             }
+            if (ctx.path !== SAML_ACS_PATH) return;
+            const body = (ctx.body ?? {}) as Record<string, unknown>;
+            const response = body.SAMLResponse;
+            // None: the plugin refuses it.
+            if (typeof response !== "string") return;
+            // Far larger than any real response: refused unread.
+            if (response.length > SAML_RESPONSE_MAX_CHARS) {
+              throw ctx.redirect(UNAVAILABLE_REDIRECT);
+            }
+            const xml = Buffer.from(
+              response.replace(/\s+/g, ""),
+              "base64"
+            ).toString("utf8");
             // SAML responses signed or digested with SHA-1 (or anything
             // weaker than SHA-256) are refused before the plugin reads them.
-            if (ctx.path === SAML_ACS_PATH) {
-              const response = (ctx.body as Record<string, unknown> | undefined)
-                ?.SAMLResponse;
-              // Far larger than any real response: refused unread.
-              if (
-                typeof response === "string" &&
-                response.length > SAML_RESPONSE_MAX_CHARS
-              ) {
-                throw ctx.redirect(UNAVAILABLE_REDIRECT);
-              }
-              if (
-                typeof response === "string" &&
-                samlWeakAlgorithms(
-                  Buffer.from(response.replace(/\s+/g, ""), "base64").toString(
-                    "utf8"
-                  )
-                ).length > 0
-              ) {
-                throw ctx.redirect(WEAK_SIGNATURE_REDIRECT);
-              }
+            if (samlWeakAlgorithms(xml).length > 0) {
+              throw ctx.redirect(WEAK_SIGNATURE_REDIRECT);
             }
+            const facts = readSamlResponse(xml);
+            if (!facts) {
+              logSamlRefusal("unreadable", ctx.params?.providerId);
+              throw ctx.redirect(UNREADABLE_REDIRECT);
+            }
+            // Answers a sign-in QRdx started: the plugin checks it against
+            // the stored request (once), with the RelayState it sent.
+            if (!samlIdpInitiated(facts)) return;
+            const problem = samlIdpInitiatedProblem(facts);
+            if (problem) {
+              logSamlRefusal(
+                `started at the identity provider: ${problem}`,
+                ctx.params?.providerId
+              );
+              throw ctx.redirect(IDP_INITIATED_REFUSED_REDIRECT);
+            }
+            // The IdP's RelayState is free text, never the plugin's signed
+            // state, which it would refuse. It's dropped: every such sign-in
+            // lands on SSO_IDP_LANDING_PATH, so nobody can send a person
+            // somewhere chosen for them through a response they didn't ask
+            // for. ("" rather than leaving it out: a hook's body is merged in.)
+            // Signs in, but never counts as "Confirm it's you".
+            markUnsolicitedSignIn(ctx.context);
+            return { context: { body: { ...body, RelayState: "" } } };
           }),
         },
       ],

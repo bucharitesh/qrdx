@@ -24,6 +24,7 @@ import { Add } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useState, useTransition } from "react";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import type { ApiKeyView } from "@/lib/api-keys/service";
 import { accessLabel, firstRequest, maskedKey } from "@/lib/api-keys/shared";
 import {
@@ -147,6 +148,7 @@ export function ApiKeysSection({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const { withConfirmation } = useConfirmation();
   const keys = state.available ? state.keys : [];
   const [creating, setCreating] = useState(openCreate && state.available);
   const [created, setCreated] = useState<{
@@ -238,7 +240,12 @@ export function ApiKeysSection({
             defaultName={keys.length === 0 ? "My first key" : ""}
             onCancel={() => setCreating(false)}
             onSubmit={async (input) => {
-              const result = await createApiKeyAction(input);
+              // Asks "Confirm it's you" first when this session hasn't recently.
+              const result = await withConfirmation(
+                () => createApiKeyAction(input),
+                "create-api-key",
+              );
+              if (result === null) return null;
               if (!result.ok) return result.error;
               setCreating(false);
               setCreated(result.data);

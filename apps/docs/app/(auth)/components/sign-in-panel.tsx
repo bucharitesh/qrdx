@@ -16,6 +16,7 @@ import { useAvailability } from "@/components/availability-provider";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { SsoSignIn } from "@/ee/sso/sso-sign-in";
+import { socialSignInErrorPath } from "../sign-in/_lib/error-message";
 import { EmailCodeSignIn } from "./email-code-sign-in";
 import { PasskeySignIn } from "./passkey-sign-in";
 import { SECOND_STEP_TITLES, type SecondStep } from "./second-step";
@@ -52,9 +53,10 @@ export interface SignInPanelProps {
 
 /**
  * The sign-in UI itself: Google, GitHub, an email code, workspace SSO and a
- * passkey, with "Last used" and the legal footer. The dialog
- * (auth-dialog.tsx) and the /sign-in page both render it, so the two can't
- * drift apart.
+ * passkey, with "Last used" and the legal footer. Where SSO runs, an email
+ * whose company signs in with it is offered SSO before a code is sent
+ * (email-code-sign-in.tsx). The dialog (auth-dialog.tsx) and the /sign-in
+ * page both render it, so the two can't drift apart.
  */
 export function SignInPanel({
   mode = "signin",
@@ -73,6 +75,12 @@ export function SignInPanel({
   // Address the email code went to (the code step), and a key to start over.
   const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
   const [emailFormKey, setEmailFormKey] = useState(0);
+  // An address whose company signs in with SSO, while that's offered, and
+  // whether its domain requires it.
+  const [ssoOfferFor, setSsoOfferFor] = useState<string | null>(null);
+  const [ssoOfferRequired, setSsoOfferRequired] = useState(false);
+  // A step after the email (the code, or the SSO offer) has the panel.
+  const emailStepPassed = Boolean(codeSentTo || ssoOfferFor);
   // The email code was right and two-step verification asks for a second
   // step; which method is on screen (null while it's worked out).
   const [twoFactor, setTwoFactor] = useState(false);
@@ -91,9 +99,13 @@ export function SignInPanel({
   ) => {
     setLoading(true);
     try {
+      const next = callbackURL();
       const { error } = await authClient.signIn.social({
         provider,
-        callbackURL: callbackURL(),
+        callbackURL: next,
+        // A refusal (an unverified address, say) comes back to /sign-in,
+        // which says why (sign-in/_lib/error-message.ts).
+        errorCallbackURL: socialSignInErrorPath(next, provider),
       });
       // e.g. the provider is not configured on this server
       if (error) throw error;
@@ -109,6 +121,7 @@ export function SignInPanel({
     // After the dialog's close animation, so it doesn't flash the email step.
     window.setTimeout(() => {
       setCodeSentTo(null);
+      setSsoOfferFor(null);
       setTwoFactor(false);
       setSecondStep(null);
       setEmailFormKey((key) => key + 1);
@@ -144,9 +157,11 @@ export function SignInPanel({
               : "Two-step verification"
             : codeSentTo
               ? "Check your email"
-              : isSignIn
-                ? "Sign in to QRdx"
-                : "Create your QRdx account"}
+              : ssoOfferFor
+                ? "Sign in with SSO"
+                : isSignIn
+                  ? "Sign in to QRdx"
+                  : "Create your QRdx account"}
         </Title>
         <Description className="text-muted-foreground text-sm text-pretty">
           {twoFactor ? (
@@ -158,6 +173,12 @@ export function SignInPanel({
                 {codeSentTo}
               </span>
             </>
+          ) : ssoOfferFor ? (
+            ssoOfferRequired ? (
+              "Your company requires single sign-on."
+            ) : (
+              "Your company signs in with single sign-on."
+            )
           ) : isSignIn ? (
             "Pick up where you left off."
           ) : (
@@ -166,7 +187,7 @@ export function SignInPanel({
         </Description>
       </div>
 
-      {notice && !codeSentTo && (
+      {notice && !emailStepPassed && (
         <p
           className="bg-muted/60 mx-6 mb-4 rounded-md px-3 py-2 text-center text-sm"
           role="status"
@@ -175,7 +196,7 @@ export function SignInPanel({
         </p>
       )}
 
-      {!codeSentTo && (
+      {!emailStepPassed && (
         <div className="grid grid-cols-2 gap-2 px-6">
           {providers.map((provider) => (
             <div className="relative" key={provider.id}>
@@ -204,7 +225,7 @@ export function SignInPanel({
         </div>
       )}
 
-      {!codeSentTo && (
+      {!emailStepPassed && (
         <div className="flex items-center gap-3 px-6 py-4">
           <Separator className="flex-1" />
           <span className="text-xs text-muted-foreground">or</span>
@@ -219,15 +240,24 @@ export function SignInPanel({
         onSecondStepChange={setSecondStep}
         onSentToChange={setCodeSentTo}
         onSignedIn={handleEmailSignedIn}
+        onSsoOfferChange={(email, required) => {
+          setSsoOfferFor(email);
+          setSsoOfferRequired(required);
+        }}
         onTwoFactorChange={(active) => {
           setTwoFactor(active);
           if (!active) setSecondStep(null);
         }}
         redirectTo={redirectTo}
         sentTo={codeSentTo}
+        sso={
+          ssoOffered
+            ? { callbackURL, lastUsed: lastLoginMethod === "sso" }
+            : null
+        }
       />
 
-      {!codeSentTo && ssoOffered && (
+      {!emailStepPassed && ssoOffered && (
         <SsoSignIn
           callbackURL={callbackURL}
           disabled={busy}
@@ -236,7 +266,7 @@ export function SignInPanel({
       )}
 
       {/* Last in the list: a passkey signs in on its own (it counts as both steps), but only for someone who already added one. */}
-      {!codeSentTo && isSignIn && (
+      {!emailStepPassed && isSignIn && (
         <PasskeySignIn
           disabled={busy}
           lastUsed={lastLoginMethod === "passkey"}
@@ -246,7 +276,7 @@ export function SignInPanel({
       )}
 
       {/* Google, GitHub, email codes and workspace SSO create the account on first use, so there's no separate sign-up step (a passkey needs an account first). */}
-      {!codeSentTo && (
+      {!emailStepPassed && (
         <p className="px-6 pt-4 pb-6 text-center text-xs text-pretty text-muted-foreground">
           New to QRdx? Google, GitHub or an email code creates your free
           account.

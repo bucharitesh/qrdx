@@ -28,13 +28,20 @@ vi.mock("@repo/auth/server", () => ({
       getSession: async () =>
         auth.userId
           ? {
-              user: { id: auth.userId },
-              session: { activeOrganizationId: null },
+              user: { id: auth.userId, email: `${auth.userId}@qrdx.test` },
+              session: {
+                id: `session_${auth.userId}`,
+                createdAt: new Date(Date.now() - DAY),
+                activeOrganizationId: null,
+              },
             }
           : null,
     },
   },
 }));
+// Approving asks "Confirm it's you" (lib/account/confirmation-server.tsx,
+// the real one, on the in-memory tables); deployments here send codes.
+vi.mock("@/lib/account/reauth", () => ({ signInCodesAvailable: () => true }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
@@ -137,12 +144,27 @@ function seed() {
   ]);
 }
 
+/** Alice's browser confirmed it's her in the last 10 minutes. */
+function aliceConfirmed() {
+  fakeDb.seed("verification", [
+    {
+      id: "confirmed_alice",
+      identifier: "qrdx-confirmed-session_u_alice",
+      value: "u_alice",
+      expiresAt: new Date(Date.now() + 10 * MINUTE),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ]);
+}
+
 beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(new Date("2026-11-01T12:00:00Z"));
   auth.userId = null;
   auth.rateLimited = false;
   seed();
+  aliceConfirmed();
 });
 
 afterEach(() => {
@@ -495,6 +517,51 @@ describe("POST /api/oauth/authorize (the consent screen)", () => {
     expect(location.searchParams.get("error")).toBe("access_denied");
     expect(location.searchParams.get("state")).toBe("xyz-state");
     expect(location.searchParams.get("code")).toBeNull();
+  });
+
+  it("approves only after this browser confirmed it's them (not to cancel)", async () => {
+    fakeDb.reset();
+    seed();
+    auth.userId = "u_alice";
+    const fields = baseQuery() as Record<string, string>;
+    const allow = await postAuthorize({ ...fields, decision: "allow" });
+    expect(allow.status).toBe(303);
+    expect(allow.headers.get("location")).toContain("/oauth/authorize?");
+    expect(new URL(allow.headers.get("location") as string).origin).toBe(
+      ORIGIN,
+    );
+    expect(fakeDb.rows("oauthAuthorizationCode")).toHaveLength(0);
+
+    // Cancelling never asks.
+    const deny = await postAuthorize({ ...fields, decision: "deny" });
+    expect(
+      new URL(deny.headers.get("location") as string).searchParams.get("error"),
+    ).toBe("access_denied");
+
+    // Another person's confirmation doesn't count, an expired one neither.
+    fakeDb.seed("verification", [
+      {
+        id: "confirmed_dev",
+        identifier: "qrdx-confirmed-session_u_dev",
+        value: "u_dev",
+        expiresAt: new Date(Date.now() + 10 * MINUTE),
+      },
+      {
+        id: "confirmed_alice_old",
+        identifier: "qrdx-confirmed-session_u_alice",
+        value: "u_alice",
+        expiresAt: new Date(Date.now() - MINUTE),
+      },
+    ]);
+    const stale = await postAuthorize({ ...fields, decision: "allow" });
+    expect(stale.headers.get("location")).toContain("/oauth/authorize?");
+    expect(fakeDb.rows("oauthAuthorizationCode")).toHaveLength(0);
+
+    aliceConfirmed();
+    const confirmed = await postAuthorize({ ...fields, decision: "allow" });
+    const location = new URL(confirmed.headers.get("location") as string);
+    expect(location.origin + location.pathname).toBe(REDIRECT);
+    expect(location.searchParams.get("code")).toBeTruthy();
   });
 
   it("sends a user who signed out in another tab back to sign in", async () => {

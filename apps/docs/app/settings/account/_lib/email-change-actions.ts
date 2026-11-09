@@ -2,13 +2,18 @@
 
 import { registerEmailChangeCodeSender } from "@repo/auth/email-otp";
 import { auth } from "@repo/auth/server";
+import { emailChangeSsoProblem } from "@repo/auth/sso-required";
 import { database as db, session as sessionTable } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, eq, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
 import { z } from "zod";
-import { confirmedSession } from "@/lib/account/confirmation-server";
+import { ssoEmailChangeMessage } from "@/ee/sso/messages";
+import {
+  currentSession,
+  requireRecentConfirmation,
+} from "@/lib/account/confirmation-server";
 import {
   confirmFailure,
   EMAIL_CHANGE_MESSAGES,
@@ -19,6 +24,7 @@ import {
 } from "@/lib/account/email-change";
 import { afterEmailChanged } from "@/lib/account/email-change-server";
 import { sendEmailChangeCode } from "@/lib/auth/email-change-code";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { logError } from "@/lib/shared";
 
 // Settings → Account → Email. Better Auth's email-change endpoints are off
@@ -77,12 +83,28 @@ async function mayChange(
 ): Promise<
   { ok: true; user: Allowed } | { ok: false; result: EmailChangeResult }
 > {
-  const allowed = await confirmedSession(EMAIL_CHANGE_MESSAGES.signedOut);
-  if (!allowed.ok) return { ok: false, result: allowed };
-  const { session } = allowed;
+  const session = await currentSession();
+  if (!session) {
+    return { ok: false, result: fail(EMAIL_CHANGE_MESSAGES.signedOut) };
+  }
   if (isSameEmail(newEmail, session.email)) {
     return { ok: false, result: fail(EMAIL_CHANGE_MESSAGES.sameEmail) };
   }
+  // Never onto or off a domain whose company requires single sign-on
+  // (packages/auth/ee/sso-required.ts); said before "Confirm it's you", which
+  // wouldn't change the answer.
+  if (isFeatureAvailable("sso")) {
+    const problem = await emailChangeSsoProblem(
+      session.userId,
+      session.email,
+      newEmail,
+    );
+    if (problem) {
+      return { ok: false, result: fail(ssoEmailChangeMessage(problem)) };
+    }
+  }
+  const needed = await requireRecentConfirmation(session);
+  if (needed) return { ok: false, result: needed };
   return {
     ok: true,
     user: {

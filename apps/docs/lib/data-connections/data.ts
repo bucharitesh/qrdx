@@ -1,5 +1,6 @@
 import "server-only";
 
+import { lacksRequiredTwoFactor } from "@repo/auth/workspace-two-factor";
 import {
   database as db,
   formResponse,
@@ -41,7 +42,7 @@ export interface SyncScope {
 }
 
 /** Still a member of the team the stream was set up for? */
-export async function isScopeMember(scope: SyncScope): Promise<boolean> {
+async function isScopeMember(scope: SyncScope): Promise<boolean> {
   if (!scope.organizationId) return true;
   const [row] = await db
     .select({ id: member.id })
@@ -54,6 +55,27 @@ export async function isScopeMember(scope: SyncScope): Promise<boolean> {
     )
     .limit(1);
   return Boolean(row);
+}
+
+/**
+ * Why a stream may not send its workspace's data now, shown on the paused
+ * sync; null when it may. Someone who left the team, or whom the workspace
+ * shuts out for lacking two-step verification (lib/workspaces.ts), sends
+ * nothing of it. Turning the sync back on goes through the workspace again.
+ */
+export async function syncPauseReason(
+  scope: SyncScope,
+): Promise<string | null> {
+  if (!(await isScopeMember(scope))) {
+    return "Paused: you're no longer a member of that team";
+  }
+  if (
+    scope.organizationId &&
+    (await lacksRequiredTwoFactor(scope.userId, scope.organizationId))
+  ) {
+    return "Paused: that workspace requires two-step verification. Turn it on, then turn this sync back on.";
+  }
+  return null;
 }
 
 function codeScopeWhere(scope: SyncScope): SQL {

@@ -2,7 +2,8 @@
 // describe them: Business only, codes:write to subscribe and unsubscribe,
 // Zapier/Make body shapes, https URLs on public hosts only, the signing
 // secret shown once, secret-bearing target URLs masked for read-only callers,
-// and deletion on every plan. Route handlers run the real endpoint service
+// and deletion on every plan. A signed-in browser (no key or token) asks
+// "Confirm it's you" before subscribing. Route handlers run the real endpoint service
 // against in-memory tables; DNS is stubbed and nothing is ever delivered.
 import { createHash } from "node:crypto";
 import { NextRequest } from "next/server";
@@ -14,6 +15,9 @@ const state = vi.hoisted(() => ({
   plan: "business" as "free" | "pro" | "business",
   dns: new Map<string, string[]>(),
   fetches: 0,
+  /** The browser session confirmed it's them in the last 10 minutes */
+  confirmed: true,
+  confirmChecks: 0,
 }));
 
 vi.mock(
@@ -71,6 +75,15 @@ vi.mock("node:dns/promises", () => {
   return { lookup, default: { lookup } };
 });
 vi.mock("@/lib/shared", () => ({ logError: () => {} }));
+// The confirmation itself is tested in tests/lib/account-confirmation.test.ts.
+vi.mock("@/lib/account/confirmation-scope", () => ({
+  confirmationNeededFor: async () => {
+    state.confirmChecks += 1;
+    return state.confirmed
+      ? null
+      : { ok: false, error: "CONFIRMATION_REQUIRED" };
+  },
+}));
 
 const hooks = await import("@/app/api/v1/hooks/route");
 const hook = await import("@/app/api/v1/hooks/[id]/route");
@@ -120,6 +133,8 @@ beforeEach(() => {
   state.session = null;
   state.plan = "business";
   state.fetches = 0;
+  state.confirmed = true;
+  state.confirmChecks = 0;
   state.dns = new Map([
     ["hooks.zapier.com", ["54.86.10.20"]],
     ["hook.eu1.make.com", ["3.120.1.2"]],
@@ -363,6 +378,26 @@ describe("POST /v1/hooks", () => {
     expect(fakeDb.rows("webhookEndpoint")[0]).toMatchObject({
       organizationId: "org_acme",
     });
+  });
+
+  it("asks a signed-in browser to confirm it's them first, never a key or token", async () => {
+    state.session = { userId: "u_alice", organizationId: "org_acme" };
+    state.confirmed = false;
+    const asked = await subscribe(
+      { hookUrl: ZAP, event: "scan.created" },
+      { headers: { origin: ORIGIN } },
+    );
+    expect(asked.status).toBe(403);
+    expect((await errorOf(asked)).code).toBe("CONFIRMATION_REQUIRED");
+    expect(fakeDb.rows("webhookEndpoint")).toHaveLength(0);
+
+    state.confirmChecks = 0;
+    const withToken = await subscribe(
+      { url: "https://example.com/alice", event: "scan.created" },
+      { token: "write-token" },
+    );
+    expect(withToken.status).toBe(201);
+    expect(state.confirmChecks).toBe(0);
   });
 
   it("rejects cross-site session subscriptions", async () => {
