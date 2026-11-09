@@ -539,6 +539,9 @@ export function readSamlResponse(xml: string): SamlResponseFacts | null {
     conditionsNotOnOrAfter: [],
   };
   let sawRoot = false;
+  // Inside the (signed) Assertion: only its own Conditions count, not one
+  // written elsewhere in the response, outside what the signature covers.
+  let inAssertion = false;
   let from = 0;
   while (from < xml.length) {
     const open = xml.indexOf("<", from);
@@ -557,6 +560,10 @@ export function readSamlResponse(xml: string): SamlResponseFacts | null {
     if (xml[open + 1] === "/") {
       const close = xml.indexOf(">", open);
       if (close === -1) return null;
+      const closing = xml.slice(open + 2, close).trim();
+      if (closing.slice(closing.lastIndexOf(":") + 1) === "Assertion") {
+        inAssertion = false;
+      }
       from = close + 1;
       continue;
     }
@@ -587,12 +594,14 @@ export function readSamlResponse(xml: string): SamlResponseFacts | null {
       facts.inResponseTo = attributes.get("InResponseTo") || null;
     } else if (element === "Assertion") {
       facts.assertionIds.push(attributes.get("ID") ?? "");
+      // "<Assertion …/>" holds nothing.
+      inAssertion = xml[close - 1] !== "/";
     } else if (element === "EncryptedAssertion") {
       facts.encryptedAssertions++;
     } else if (element === "SubjectConfirmationData") {
       const answered = attributes.get("InResponseTo");
       if (answered) facts.confirmationInResponseTo.push(answered);
-    } else if (element === "Conditions") {
+    } else if (element === "Conditions" && inAssertion) {
       facts.conditionsNotOnOrAfter.push(attributes.get("NotOnOrAfter") ?? "");
     }
     from = close + 1;
