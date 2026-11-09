@@ -37,6 +37,7 @@ import {
   ssoOptions,
   validateSsoUserInfo,
 } from "./ee/sso";
+import { ssoRequirementGate } from "./ee/sso-required";
 import { eeLicensed } from "./ee-license";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
@@ -401,8 +402,9 @@ export const auth = betterAuth({
     workspaceTwoFactorGate(),
     // Workspace single sign-on, Business plan only, licensed servers only
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
-    // joins the workspace).
-    ...(ssoLicensed ? [sso(ssoOptions), ssoGate()] : []),
+    // joins the workspace); ./ee/sso-required.ts enforces "Require single
+    // sign-on" for a domain.
+    ...(ssoLicensed ? [sso(ssoOptions), ssoGate(), ssoRequirementGate()] : []),
     // Proving an unproven account's address clears what an earlier holder
     // left behind (./unproven-access.ts).
     unprovenAccessCleanup(),

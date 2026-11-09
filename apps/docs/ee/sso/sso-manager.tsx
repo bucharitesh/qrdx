@@ -35,6 +35,7 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { Switch } from "@repo/design-system/components/ui/switch";
 import {
   Tabs,
   TabsList,
@@ -60,11 +61,16 @@ import {
   createSso,
   removeSso,
   type SsoActionResult,
+  setSsoRequirement,
   setSsoRole,
   updateSso,
   verifySso,
 } from "@/ee/sso/actions";
-import type { SsoConnectionView, SsoOverview } from "@/ee/sso/connections";
+import type {
+  SsoConnectionView,
+  SsoOverview,
+  SsoRequirementView,
+} from "@/ee/sso/connections";
 
 const PROTOCOL_NAMES = { oidc: "OIDC", saml: "SAML" } as const;
 
@@ -537,11 +543,14 @@ function ConnectionCard({
   connection,
   canManage,
   allowed,
+  required,
   report,
 }: {
   connection: SsoConnectionView;
   canManage: boolean;
   allowed: boolean;
+  /** "Require single sign-on" is on */
+  required: boolean;
   report: Reporter;
 }) {
   const router = useRouter();
@@ -583,7 +592,9 @@ function ConnectionCard({
             <CardDescription>
               {connection.verified
                 ? allowed
-                  ? `People at ${connection.domain} can sign in with ${PROTOCOL_NAMES[connection.protocol]}.`
+                  ? required
+                    ? `People at ${connection.domain} sign in with ${PROTOCOL_NAMES[connection.protocol]} only.`
+                    : `People at ${connection.domain} can sign in with ${PROTOCOL_NAMES[connection.protocol]}.`
                   : "Paused: the workspace's plan doesn't include single sign-on."
                 : "Nobody can sign in with it until the domain is verified."}
             </CardDescription>
@@ -757,6 +768,120 @@ function VerifyCard({
   );
 }
 
+const sessionsSignedOut = (count: number) =>
+  count === 0
+    ? "Nobody had to be signed out."
+    : count === 1
+      ? "1 session that didn't use single sign-on was signed out."
+      : `${count.toLocaleString("en")} sessions that didn't use single sign-on were signed out.`;
+
+/** "Require single sign-on for <domain>": a verified connection, on Business. */
+function RequireSsoCard({
+  connection,
+  requirement,
+  report,
+}: {
+  connection: SsoConnectionView;
+  requirement: SsoRequirementView;
+  report: Reporter;
+}) {
+  const id = useId();
+  const router = useRouter();
+  const { withConfirmation } = useConfirmation();
+  const [asking, setAsking] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const { domain } = connection;
+  const blocked = requirement.on ? null : requirement.blocked;
+
+  const change = async (on: boolean) => {
+    setBusy(true);
+    try {
+      const result = await withConfirmation(() => setSsoRequirement(on), "sso");
+      setAsking(false);
+      if (result === null) return;
+      if (!result.success) {
+        toast.error(result.error.message);
+        report(result);
+        return;
+      }
+      if (on) {
+        toast.success(`Single sign-on is required for ${domain}`, {
+          description: sessionsSignedOut(result.data.signedOut),
+        });
+      } else {
+        toast.success(`Single sign-on is no longer required for ${domain}`);
+      }
+      router.refresh();
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Require single sign-on</CardTitle>
+        <CardDescription>
+          Make your identity provider the only way in for people at {domain}.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0 space-y-0.5">
+            <Label htmlFor={`${id}-required`}>
+              Require single sign-on for {domain}
+            </Label>
+            <p className="text-muted-foreground text-xs text-pretty">
+              Email codes, Google, GitHub and passkeys stop signing them in, and
+              they sign in again every 24 hours, so removing someone in your
+              identity provider cuts them off within a day. Owners of this
+              workspace can still sign in another way, in case your identity
+              provider is down.
+            </p>
+          </div>
+          <Switch
+            checked={requirement.on}
+            disabled={busy || Boolean(blocked)}
+            id={`${id}-required`}
+            onCheckedChange={(on) => {
+              if (on) setAsking(true);
+              else void change(false);
+            }}
+          />
+        </div>
+        {blocked && (
+          <p className="text-muted-foreground rounded-md border p-3 text-sm text-pretty">
+            {blocked}
+          </p>
+        )}
+      </CardContent>
+
+      <AlertDialog onOpenChange={setAsking} open={asking}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              Require single sign-on for {domain}?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-pretty">
+              Everyone at {domain}, apart from this workspace's owners, is
+              signed out of sessions that didn't start with single sign-on. From
+              then on they sign in with your identity provider only, and again
+              every 24 hours.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
+            <Button disabled={busy} onClick={() => void change(true)}>
+              {busy && <Spinner />}
+              Require single sign-on
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </Card>
+  );
+}
+
 function JoinRoleCard({
   role,
   report,
@@ -813,7 +938,8 @@ function JoinRoleCard({
 
 /** Settings → Single sign-on, below the header. */
 export function SsoManager({ overview }: { overview: SsoOverview }) {
-  const { connection, canManage, allowed, joinRole, draft } = overview;
+  const { connection, canManage, allowed, joinRole, draft, requirement } =
+    overview;
   const report: Reporter = (result) => {
     if (result.success) return result.data;
     return null;
@@ -844,9 +970,17 @@ export function SsoManager({ overview }: { overview: SsoOverview }) {
           canManage={canManage}
           connection={connection}
           report={report}
+          required={requirement.on}
         />
         {canManage && allowed && !connection.verified && (
           <VerifyCard connection={connection} report={report} />
+        )}
+        {canManage && allowed && connection.verified && (
+          <RequireSsoCard
+            connection={connection}
+            report={report}
+            requirement={requirement}
+          />
         )}
         {canManage && (
           <Card>

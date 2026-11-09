@@ -75,8 +75,10 @@ export function SignInPanel({
   // Address the email code went to (the code step), and a key to start over.
   const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
   const [emailFormKey, setEmailFormKey] = useState(0);
-  // An address whose company signs in with SSO, while that's offered.
+  // An address whose company signs in with SSO, while that's offered, and
+  // whether its domain requires it.
   const [ssoOfferFor, setSsoOfferFor] = useState<string | null>(null);
+  const [ssoOfferRequired, setSsoOfferRequired] = useState(false);
   // A step after the email (the code, or the SSO offer) has the panel.
   const emailStepPassed = Boolean(codeSentTo || ssoOfferFor);
   // The email code was right and two-step verification asks for a second
@@ -172,7 +174,11 @@ export function SignInPanel({
               </span>
             </>
           ) : ssoOfferFor ? (
-            "Your company signs in with single sign-on."
+            ssoOfferRequired ? (
+              "Your company requires single sign-on."
+            ) : (
+              "Your company signs in with single sign-on."
+            )
           ) : isSignIn ? (
             "Pick up where you left off."
           ) : (
@@ -234,7 +240,10 @@ export function SignInPanel({
         onSecondStepChange={setSecondStep}
         onSentToChange={setCodeSentTo}
         onSignedIn={handleEmailSignedIn}
-        onSsoOfferChange={setSsoOfferFor}
+        onSsoOfferChange={(email, required) => {
+          setSsoOfferFor(email);
+          setSsoOfferRequired(required);
+        }}
         onTwoFactorChange={(active) => {
           setTwoFactor(active);
           if (!active) setSecondStep(null);

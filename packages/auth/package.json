@@ -31,6 +31,8 @@
     "./sso": "./ee/sso.ts",
     "./sso-rules": "./ee/sso-rules.ts",
     "./two-factor-reset": "./two-factor-reset.ts",
+    "./sso-required": "./ee/sso-required.ts",
+    "./sso-required-rules": "./ee/sso-required-rules.ts",
     "./unproven-access": "./unproven-access.ts",
     "./verified-sign-up": "./verified-sign-up.ts",
     "./workspace-hooks": "./workspace-hooks.ts",
