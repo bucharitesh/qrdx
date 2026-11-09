@@ -21,8 +21,9 @@ import {
 // - When a session is created, its origin country is stored in a
 //   `verification` row keyed by the session's id (no schema change), from
 //   the request that made it, sign-ins and the app's own session swaps
-//   alike. It lasts as long as a session can (originExpiresAt). The
-//   origin's browser family is the session row's user agent.
+//   alike. It lasts as long as a session can (originExpiresAt), and goes
+//   when Better Auth deletes the session. The origin's browser family is the
+//   session row's user agent.
 // - Every session read through auth.api.getSession or GET /get-session
 //   (all of the app's, and the browser's) answers null for a held session,
 //   except the app's hold-aware reads (SESSION_HOLD_AWARE): pages, server
@@ -179,6 +180,24 @@ async function outliveWithSession(
   });
 }
 
+/**
+ * A session Better Auth deletes (signing out, revoking, an expired one, the
+ * one a two-step sign-in swaps) takes its origin row along. Sessions the
+ * app deletes itself leave theirs to expire.
+ */
+async function forgetOrigin(
+  auth: AuthContext,
+  session: { id?: string } | null
+): Promise<void> {
+  if (!session?.id) return;
+  await auth.adapter.deleteMany({
+    model: "verification",
+    where: [
+      { field: "identifier", value: sessionOriginIdentifier(session.id) },
+    ],
+  });
+}
+
 export const sessionOriginGuard = () => {
   let auth: AuthContext | null = null;
   return {
@@ -216,6 +235,19 @@ export const sessionOriginGuard = () => {
                   } catch (error) {
                     log("error", {
                       outcome: "expiry-failed",
+                      ...describeError(error),
+                    });
+                  }
+                },
+              },
+              delete: {
+                after: async (session) => {
+                  if (!auth) return;
+                  try {
+                    await forgetOrigin(auth, session as { id?: string } | null);
+                  } catch (error) {
+                    log("error", {
+                      outcome: "forget-failed",
                       ...describeError(error),
                     });
                   }
