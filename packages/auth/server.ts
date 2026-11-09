@@ -408,8 +408,9 @@ export const auth = betterAuth({
     confirmGate(),
     // Workspaces that require two-step verification, over HTTP (./workspace-two-factor.ts).
     workspaceTwoFactorGate(),
-    // Inviting someone or changing a role takes exactly one role name
-    // (./workspace-roles.ts), before the plugin trims what was sent.
+    // Inviting someone or changing a role takes exactly one role name,
+    // before the plugin trims what was sent, and only owners give or take
+    // away owner and billing (./workspace-roles.ts).
     workspaceRoleGate(),
     // Workspace single sign-on, Business plan only, licensed servers only
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who

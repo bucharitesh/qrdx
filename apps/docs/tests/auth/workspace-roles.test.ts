@@ -21,6 +21,7 @@ import {
   WORKSPACE_ROLE_NAMES,
 } from "@repo/auth/workspace-role-rules";
 import {
+  OWNERS_ONLY_ROLE,
   workspaceRoleGate,
   workspaceRoleHooks,
 } from "@repo/auth/workspace-roles";
@@ -231,10 +232,13 @@ interface Team {
   memory: Memory;
   owner: Browser;
   admin: Browser;
-  ids: Record<"owner" | "admin" | "cy", string>;
+  ids: Record<"owner" | "admin" | "cy" | "dee", string>;
 }
 
-/** A workspace with an owner (Ada) and an admin (Bob); Cy isn't in it yet. */
+/**
+ * A workspace with an owner (Ada), an admin (Bob) and a member (Dee); Cy
+ * isn't in it yet.
+ */
 async function team(mode: Mode): Promise<Team> {
   const { auth, memory } = instances[mode];
   for (const table of Object.values(memory)) table.length = 0;
@@ -248,6 +252,9 @@ async function team(mode: Mode): Promise<Team> {
       ?.userId as string,
     cy: (await cy.post("/test/sign-in", { email: "cy@qrdx.test" })).json
       ?.userId as string,
+    dee: (
+      await new Browser(auth).post("/test/sign-in", { email: "dee@qrdx.test" })
+    ).json?.userId as string,
   };
   memory.organization.push({
     id: ORG,
@@ -268,6 +275,13 @@ async function team(mode: Mode): Promise<Team> {
       organizationId: ORG,
       userId: ids.admin,
       role: "admin",
+      createdAt: new Date(),
+    },
+    {
+      id: "m_dee",
+      organizationId: ORG,
+      userId: ids.dee,
+      role: "member",
       createdAt: new Date(),
     },
   );
@@ -329,6 +343,13 @@ describe("without QRdx's checks (the plugin alone)", () => {
     const t = await team("unchecked");
     expect((await invite(t.admin, "owner")).status).toBe(403);
   });
+
+  it("lets an admin give and take away billing, which only owners may", async () => {
+    const t = await team("unchecked");
+    expect((await invite(t.admin, "billing")).status).toBe(200);
+    expect((await setRole(t.admin, "m_dee", "billing")).status).toBe(200);
+    expect(roleOf(t, t.ids.dee)).toBe("billing");
+  });
 });
 
 describe("with QRdx's checks, as in production", () => {
@@ -378,6 +399,28 @@ describe("with QRdx's checks, as in production", () => {
       expect(roleOf(t, t.ids.cy), role).toBeUndefined();
       expect(t.memory.invitation[0]?.status, role).toBe("pending");
     }
+  });
+
+  it("keeps owner and billing to owners: an admin can't give or take them away", async () => {
+    let reply = await invite(t.admin, "billing");
+    expect(reply.status).toBe(403);
+    expect(reply.json?.code).toBe(OWNERS_ONLY_ROLE);
+    reply = await setRole(t.admin, "m_dee", "billing");
+    expect(reply.json?.code).toBe(OWNERS_ONLY_ROLE);
+    expect(roleOf(t, t.ids.dee)).toBe("member");
+    // An owner can; then an admin can't take it away either.
+    expect((await setRole(t.owner, "m_dee", "billing")).status).toBe(200);
+    reply = await setRole(t.admin, "m_dee", "member");
+    expect(reply.json?.code).toBe(OWNERS_ONLY_ROLE);
+    expect(roleOf(t, t.ids.dee)).toBe("billing");
+    reply = await setRole(t.admin, "m_owner", "admin");
+    expect(reply.status).toBe(403);
+    expect(roleOf(t, t.ids.owner)).toBe("owner");
+    // Admins still handle admin, member and viewer.
+    expect((await setRole(t.owner, "m_dee", "member")).status).toBe(200);
+    expect((await setRole(t.admin, "m_dee", "viewer")).status).toBe(200);
+    expect((await invite(t.admin, "viewer")).status).toBe(200);
+    expect(t.memory.invitation.map((i) => i.role)).toEqual(["viewer"]);
   });
 
   it("accepts an exact one", async () => {
