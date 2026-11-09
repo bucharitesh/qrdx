@@ -1923,7 +1923,7 @@
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Subscribes a URL to events, the REST Hooks way Zapier, Make and n8n call it (Business).\n\nQRdx posts each event to the URL, signed with the `secret` in the response, which is shown only once ([verifying signatures](https://qrdx.dev/docs/webhooks)). Send the URL as `target_url` (or `targetUrl`, `hookUrl`, `hook_url` or `url`) and one `event` or several `events`.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Subscribes a URL to events, the REST Hooks way Zapier, Make and n8n call it (Business).\n\nQRdx posts each event to the URL, signed with the `secret` in the response, which is shown only once ([verifying signatures](https://qrdx.dev/docs/webhooks)). Send the URL as `target_url` (or `targetUrl`, `hookUrl`, `hook_url` or `url`) and one `event` or several `events`.\n\nWith a signed-in browser session instead of a key or token, it needs a recent \"Confirm it's you\" (`CONFIRMATION_REQUIRED` otherwise).\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "requestBody": {
           "required": true,
           "content": {
@@ -2086,7 +2086,7 @@
             "$ref": "#/components/responses/Error402_PlanRequired_LimitReached"
           },
           "403": {
-            "$ref": "#/components/responses/Error403_InsufficientScope_Forbidden_LimitReached_CodesWrite"
+            "$ref": "#/components/responses/Error403_InsufficientScope_Forbidden_LimitReached_ConfirmationRequired_CodesWrite"
           },
           "413": {
             "$ref": "#/components/responses/Error413_PayloadTooLarge"
@@ -3129,6 +3129,51 @@
                 "value": {
                   "code": "LIMIT_REACHED",
                   "message": "The workspace already has 20 webhook endpoints and hooks.",
+                  "status": 403
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error403_InsufficientScope_Forbidden_LimitReached_ConfirmationRequired_CodesWrite": {
+        "description": "`INSUFFICIENT_SCOPE`: The API key or token is valid but lacks the scope this endpoint needs.\n\n`FORBIDDEN`: The caller may not do this: a workspace member deleting a code someone else created, a member managing hooks, or a browser-session write from another site. An API key can do only what its creator's role in its workspace allows.\n\n`LIMIT_REACHED`: The workspace already has 20 webhook endpoints and hooks.\n\n`CONFIRMATION_REQUIRED`: Creating a hook with a signed-in browser session needs a recent \"Confirm it's you\". API keys and OAuth tokens aren't asked.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "INSUFFICIENT_SCOPE": {
+                "summary": "INSUFFICIENT_SCOPE",
+                "value": {
+                  "code": "INSUFFICIENT_SCOPE",
+                  "message": "This API key needs the 'codes:write' scope. Create a key that includes it at https://qrdx.dev/dashboard?to=settings/developers; a key's scopes can't be changed.",
+                  "status": 403,
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
+                }
+              },
+              "FORBIDDEN": {
+                "summary": "FORBIDDEN",
+                "value": {
+                  "code": "FORBIDDEN",
+                  "message": "The caller may not do this: a workspace member deleting a code someone else created, a member managing hooks, or a browser-session write from another site. An API key can do only what its creator's role in its workspace allows.",
+                  "status": 403
+                }
+              },
+              "LIMIT_REACHED": {
+                "summary": "LIMIT_REACHED",
+                "value": {
+                  "code": "LIMIT_REACHED",
+                  "message": "The workspace already has 20 webhook endpoints and hooks.",
+                  "status": 403
+                }
+              },
+              "CONFIRMATION_REQUIRED": {
+                "summary": "CONFIRMATION_REQUIRED",
+                "value": {
+                  "code": "CONFIRMATION_REQUIRED",
+                  "message": "Creating a hook with a signed-in browser session needs a recent \"Confirm it's you\". API keys and OAuth tokens aren't asked.",
                   "status": 403
                 }
               }
