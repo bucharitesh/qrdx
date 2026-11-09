@@ -593,6 +593,19 @@ describe("signing in while SSO is required", () => {
     }
   });
 
+  it("doesn't count a Business plan held under an inexact ' owner' role", async () => {
+    for (const role of [" owner", "owner ", "Owner", "member, owner"]) {
+      seedWorkspace();
+      const payer = fakeDb.find("member", { id: "m_owner" });
+      if (payer) payer.role = role;
+      clearSsoRequirementCache();
+      const browser = new Browser(auth.handler);
+      const reply = await emailCodeSignIn(browser, "payer@acme.test");
+      expect(reply.status, role).toBe(200);
+      await browser.post("/sign-out");
+    }
+  });
+
   it("signs in through the connection, for 24 hours at most, and marks the session", async () => {
     const browser = new Browser(auth.handler);
     const before = Date.now();
