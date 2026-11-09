@@ -4,6 +4,7 @@ import type { BetterAuthPlugin, GenericEndpointContext } from "better-auth";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { deleteSessionCookie } from "better-auth/cookies";
 import { cookieFrom } from "../confirm-sign-in";
+import { isPasskeyCheckWithoutSignIn } from "../passkey-check";
 import { workspacePlanTier } from "../plan";
 import { CHALLENGE_COMPLETION_PATHS } from "../sign-in-challenge-rules";
 import { TWO_FACTOR_COOKIE } from "../sign-in-challenge-session";
@@ -31,7 +32,9 @@ import { emailDomain, emailInSsoDomain } from "./sso-rules";
 // - findSsoRequirement / boundSsoRequirement: whether SSO is required for an
 //   address, and for a person (the workspace's owners are exempt);
 // - ssoRequirementGate: the Better Auth plugin that enforces it at sign-in,
-//   marks SSO sessions, caps them at 24 hours and ends the rest;
+//   marks SSO sessions, caps them at 24 hours and ends the rest (a passkey
+//   checked server-side for "Confirm it's you" isn't a sign-in:
+//   ../passkey-check.ts);
 // - turning it on ends existing sessions that didn't come from SSO
 //   (apps/docs/ee/sso/required.ts, endSessionsWithoutSso);
 // - emailChangeSsoProblem: no email change onto or off a required domain.
@@ -449,6 +452,11 @@ export const ssoRequirementGate = () =>
               create: {
                 before: async (session, context) => {
                   if (!context) return;
+                  // "Confirm it's you" with a passkey checks it through the
+                  // sign-in endpoint; the session it makes is deleted at
+                  // once and never reaches a browser. Not a sign-in
+                  // (../passkey-check.ts).
+                  if (isPasskeyCheckWithoutSignIn(context)) return;
                   const user =
                     await context.context.internalAdapter.findUserById(
                       session.userId

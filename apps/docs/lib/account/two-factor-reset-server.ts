@@ -187,9 +187,9 @@ export async function cancelTwoFactorReset(
 }
 
 /**
- * Best effort, for when the person showed they still have their second step
- * (confirming it's them with it): never throws, never holds up what it was
- * for.
+ * Best effort, for when the person showed they still have their
+ * authenticator app or backup codes (confirming it's them with one): never
+ * throws, never holds up what it was for.
  */
 export async function cancelTwoFactorResetQuietly(
   person: { id: string; email?: string },
@@ -207,8 +207,9 @@ export async function cancelTwoFactorResetQuietly(
 
 /**
  * Registered with @repo/auth in app/api/auth/[...all]/route.ts: a sign-in
- * that answered the second step cancelled a pending reset (Better Auth
- * already deleted the row). Emails the account and audits it.
+ * that answered the second step with an authenticator code or a backup code
+ * cancelled a pending reset (Better Auth already deleted the row). Emails
+ * the account and audits it.
  */
 export const notifyTwoFactorResetCancelled: TwoFactorResetCancelledNotifier =
   async ({ user, record, headers }) => {

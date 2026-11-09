@@ -246,6 +246,25 @@ export async function reserveCodeAttempt(userId: string): Promise<CodeAttempt> {
   return { ok: false, reason: exists ? "locked" : "off" };
 }
 
+/**
+ * Takes back one attempt reserveCodeAttempt counted, for a check that never
+ * got to judge the answer (it failed for another reason, such as the
+ * database, or a rule refusing the passkey plugin's throwaway session): as
+ * if it hadn't been made, so it doesn't count toward the lockout. A lock that
+ * attempt set goes with it. Unlike clearCodeFailures, earlier wrong answers
+ * still count.
+ */
+export async function releaseCodeAttempt(rowId: string): Promise<void> {
+  const before = sql`coalesce(${twoFactor.failedVerificationCount}, 0)`;
+  await db
+    .update(twoFactor)
+    .set({
+      failedVerificationCount: sql`greatest(${before} - 1, 0)`,
+      lockedUntil: sql`(case when ${before} - 1 >= ${LOCKOUT_FAILURES}::int then ${twoFactor.lockedUntil} else null end)`,
+    })
+    .where(eq(twoFactor.id, rowId));
+}
+
 /** A right answer: the count of wrong ones in a row starts again. */
 export async function clearCodeFailures(rowId: string): Promise<void> {
   await db

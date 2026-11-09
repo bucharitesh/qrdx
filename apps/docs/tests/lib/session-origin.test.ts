@@ -322,7 +322,7 @@ describe("Confirm it's you for a held session", () => {
     // Ada confirmed from her own browser a minute ago...
     await server.recordConfirmation(
       { userId: USER, sessionId: SESSION },
-      { strong: true },
+      { strong: "passkey" },
     );
     // ...and her cookie turns up elsewhere.
     at(FIREFOX_WINDOWS, "US");
