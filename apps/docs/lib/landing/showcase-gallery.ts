@@ -6,7 +6,9 @@ import type {
   QRArtVariant,
   QRProps,
 } from "qrdx/types";
+import { itemPath } from "@/lib/community/types";
 import { demoPath } from "@/lib/landing/demo-paths";
+import { generatorPath } from "@/lib/landing/generator-paths";
 import {
   BODY_CATALOG,
   EYE_CATALOG,
@@ -84,6 +86,12 @@ export interface WallTile {
    * content type, with QRdx's sample), or a hosted page's live demo.
    */
   href: string;
+  /**
+   * The page about what the tile shows (its type's generator page, its
+   * frame's page, a guide): a second, crawlable link on the tile's name,
+   * beside the code's own link.
+   */
+  about?: { href: string; label: string };
   /** Theme tiles: the link opens this theme in the playground. */
   appliesPreset?: boolean;
   /** The shape the tile takes when a layout doesn't choose one. */
@@ -314,6 +322,7 @@ const frameTiles: WallTile[] = OFFICIAL_FRAMES.map((frame) => {
     style,
     // The frame on the classic code, for the content type its prompt fits.
     href: tileHref({ preset: "classic", style }, { type, sample: true }),
+    about: { href: itemPath("frame", frame.id), label: "frame" },
     officialFrame: frame.id,
     shape: naturalShape({ ...defaultPresets.classic?.styles, ...style }),
   };
@@ -442,6 +451,7 @@ const artTiles: WallTile[] = [
     transparent: true,
     // Transparency is a download option: the theme, with the download dialog.
     href: tileHref({ preset: "gilt" }, { open: "download" }),
+    about: { href: "/docs/features/downloads", label: "downloads guide" },
     shape: "square",
   },
   {
@@ -454,6 +464,10 @@ const artTiles: WallTile[] = [
     preset: "folio",
     print: true,
     href: tileHref({ preset: "folio" }, { open: "print" }),
+    about: {
+      href: "/docs/help/getting-started/download-and-print",
+      label: "download and print guide",
+    },
     shape: "square",
   },
   border("StandardBox", "Standard box", SMALL_IN_BORDER),
@@ -803,6 +817,7 @@ const contentTiles: WallTile[] = [
         ...(style && { style }),
         // The type in the tile's look, with QRdx's sample for the type.
         href: tileHref({ preset: spec.preset, style }, { type, sample: true }),
+        about: { href: generatorPath(type), label: "QR code generator" },
         shape: spec.shape ?? naturalShape(styles),
         contentType: type,
         ...(officialFrame && { officialFrame }),

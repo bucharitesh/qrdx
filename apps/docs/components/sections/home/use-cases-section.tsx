@@ -7,6 +7,7 @@ import { PRESSABLE } from "@/components/mockups/motion";
 import { Reveal } from "@/components/mockups/reveal";
 import { useCaseImages, type Visual } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
+import { generatorPath } from "@/lib/landing/generator-paths";
 import {
   type ShowcaseStyleName,
   showcaseThemeStyles,
@@ -17,49 +18,56 @@ import type { ContentType } from "@/types/qr-content";
 export interface UseCase {
   title: string;
   description: string;
+  /** Where the card goes. */
   href: string;
   linkText: string;
+  /** The type's generator page, linked from `linkText` beside the card's own link. */
+  about?: string;
   image: Visual;
 }
 
 /**
  * The playground on the job's content type, in the look of the code in the
  * card's illustration (scripts/use-case-art/codes.ts names it), with QRdx's
- * generic sample for the type where it has one.
+ * generic sample for the type where it has one. The type's generator page
+ * stays linked from the card too: the home page's links are how search
+ * engines find those pages.
  */
-const startWith = (type: ContentType, look: ShowcaseStyleName) =>
-  playgroundDesignHref({
+const startWith = (type: ContentType, look: ShowcaseStyleName) => ({
+  href: playgroundDesignHref({
     type,
     sample: true,
     design: showcaseThemeStyles(look),
-  });
+  }),
+  about: generatorPath(type),
+});
 
 export const useCases: UseCase[] = [
   {
     title: "Menus and tables",
     description: "Link a table tent or counter card to your online menu.",
-    href: startWith("url", "menu"),
+    ...startWith("url", "menu"),
     linkText: "URL QR code",
     image: useCaseImages.cafeTableTent,
   },
   {
     title: "Business cards",
     description: "Save your name, number and email to a phone in one scan.",
-    href: startWith("vcard", "signature"),
+    ...startWith("vcard", "signature"),
     linkText: "vCard QR code",
     image: useCaseImages.businessCard,
   },
   {
     title: "Guest Wi-Fi",
     description: "Let guests join the network without typing the password.",
-    href: startWith("wifi", "dots"),
+    ...startWith("wifi", "dots"),
     linkText: "Wi-Fi QR code",
     image: useCaseImages.hotelWifi,
   },
   {
     title: "Payments",
     description: "Take UPI payments at a stall, shop counter or delivery.",
-    href: startWith("upi", "classy"),
+    ...startWith("upi", "classy"),
     linkText: "UPI QR code",
     image: useCaseImages.marketStallUpi,
   },
@@ -73,14 +81,14 @@ export const useCases: UseCase[] = [
   {
     title: "Events and check-ins",
     description: "Check people in at the door with a Google Form.",
-    href: startWith("attendance", "ticket"),
+    ...startWith("attendance", "ticket"),
     linkText: "Attendance QR code",
     image: useCaseImages.eventCheckIn,
   },
   {
     title: "Shelves and displays",
     description: "Send shoppers from a shelf tag to your product listing.",
-    href: startWith("amazon", "facet"),
+    ...startWith("amazon", "facet"),
     linkText: "Amazon QR code",
     image: useCaseImages.retailShelf,
   },
@@ -116,12 +124,20 @@ export function UseCasesSection() {
         {useCases.map((useCase, index) => (
           <li key={useCase.href}>
             <Reveal delay={(index % 4) * 60} className="h-full">
-              <Link
-                href={useCase.href}
-                className={`group block h-full rounded-xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring ${PRESSABLE}`}
+              {/* Two separate links, never one inside the other: the card
+                  (stretched over it) opens the playground, and the type
+                  name at the bottom opens its generator page. */}
+              <div
+                className={`group h-full rounded-xl has-[[data-card-link]:focus-visible]:outline-2 has-[[data-card-link]:focus-visible]:outline-offset-4 has-[[data-card-link]:focus-visible]:outline-ring ${PRESSABLE}`}
               >
                 <SpotlightCard asChild>
                   <Card className="h-full gap-0 py-0 transition-[border-color,box-shadow] duration-200 group-hover:border-foreground/15 group-hover:shadow-md">
+                    <Link
+                      aria-label={`${useCase.title}: ${useCase.about ? "start in the playground" : `open the ${useCase.linkText.toLowerCase()}`}`}
+                      className="absolute inset-0 z-0 rounded-[inherit] outline-none"
+                      data-card-link=""
+                      href={useCase.href}
+                    />
                     <div className="p-1.5 pb-0">
                       <div className="aspect-[4/3] overflow-hidden rounded-[20px] bg-muted">
                         {/* Decorative: the card's title names the scene. */}
@@ -141,15 +157,27 @@ export function UseCasesSection() {
                         {useCase.description}
                       </p>
                       <span className="mt-auto flex items-center justify-between gap-2 pt-3 text-sm font-medium text-foreground">
-                        {useCase.linkText}
-                        <span className="grid size-7 place-items-center rounded-full border bg-background text-muted-foreground transition-[color,transform,border-color] duration-200 ease-[cubic-bezier(.32,.72,0,1)] group-hover:translate-x-0.5 group-hover:border-foreground/20 group-hover:text-foreground">
+                        {useCase.about ? (
+                          <Link
+                            className="relative z-10 rounded-sm underline decoration-foreground/25 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                            href={useCase.about}
+                          >
+                            {useCase.linkText}
+                          </Link>
+                        ) : (
+                          useCase.linkText
+                        )}
+                        <span
+                          aria-hidden="true"
+                          className="grid size-7 place-items-center rounded-full border bg-background text-muted-foreground transition-[color,transform,border-color] duration-200 ease-[cubic-bezier(.32,.72,0,1)] group-hover:translate-x-0.5 group-hover:border-foreground/20 group-hover:text-foreground"
+                        >
                           <ArrowRight className="size-3.5" />
                         </span>
                       </span>
                     </div>
                   </Card>
                 </SpotlightCard>
-              </Link>
+              </div>
             </Reveal>
           </li>
         ))}
