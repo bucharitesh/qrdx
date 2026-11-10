@@ -5,8 +5,14 @@ import {
   readSlashCommand,
   runTrack,
 } from "@/lib/slack-bot/bot";
-import { readSlackRequest, withinSlackLimits } from "@/lib/slack-bot/config";
-import { noteMessage } from "@/lib/slack-bot/messages";
+import {
+  BUSY_TEXT,
+  readSlackRequest,
+  SLOW_DOWN_TEXT,
+  slackLimitFor,
+  withinTrackCap,
+} from "@/lib/slack-bot/config";
+import { noteMessage, type SlackMessage } from "@/lib/slack-bot/messages";
 import { postToResponseUrl } from "@/lib/slack-bot/slack-api";
 import { readSlackText } from "@/lib/slack-bot/text";
 
@@ -18,7 +24,8 @@ export const maxDuration = 30;
  * 3 seconds, so it goes in this response: a QR code for the channel
  * (in_channel), or help, errors and the link button for the person who
  * typed it (ephemeral). /qr track is acknowledged here and finished through
- * response_url after the response.
+ * response_url after the response: the code for the channel, then its
+ * dashboard link for the person alone.
  */
 export async function POST(request: Request) {
   const read = await readSlackRequest(request);
@@ -26,9 +33,10 @@ export async function POST(request: Request) {
   const command = readSlashCommand(read.body);
   if (!command) return new Response("Bad request", { status: 400 });
 
-  if (!(await withinSlackLimits(command.team.teamId, command.userId))) {
+  const limit = await slackLimitFor(command.team.teamId, command.userId);
+  if (limit !== "ok") {
     return Response.json(
-      noteMessage("You're going a little fast. Wait a minute and try again."),
+      noteMessage(limit === "busy" ? BUSY_TEXT : SLOW_DOWN_TEXT),
     );
   }
 
@@ -41,10 +49,10 @@ export async function POST(request: Request) {
   };
   const result = await answer(ask);
   if (result.kind === "message") return Response.json(result.message);
+  if (!(await withinTrackCap())) return Response.json(noteMessage(BUSY_TEXT));
 
-  after(async () => {
-    const done = await runTrack(ask, result.url);
-    const posted = await postToResponseUrl(command.responseUrl, done.message);
+  const post = async (message: SlackMessage) => {
+    const posted = await postToResponseUrl(command.responseUrl, message);
     if (!posted.ok) {
       console.error(
         JSON.stringify({
@@ -53,6 +61,13 @@ export async function POST(request: Request) {
           error: posted.error,
         }),
       );
+    }
+    return posted.ok;
+  };
+  after(async () => {
+    const done = await runTrack(ask, result.url);
+    if ((await post(done.message)) && done.followUp) {
+      await post({ ...done.followUp, response_type: "ephemeral" });
     }
   });
   return Response.json(noteMessage("Making your tracked code…"));

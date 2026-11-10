@@ -55,6 +55,7 @@ const ACTOR_TYPES: Record<string, string> = {
   user: "Person",
   api_key: "API key",
   oauth_app: "OAuth app",
+  slack: "Slack",
   system: "System",
 };
 
