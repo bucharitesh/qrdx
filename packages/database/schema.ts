@@ -1393,6 +1393,11 @@ export const landingPage = pgTable(
     content: json("content").$type<Record<string, unknown>>().notNull(),
     // Content revision, incremented on save
     version: integer("version").notNull().default(1),
+    // ── Page types (manual-sql/2026-11-11-page-types.sql) ──
+    // Product pages: the GTIN (14 digits) from the page's product block, set
+    // on publish. https://<custom domain>/01/<GTIN> (GS1 Digital Link) opens
+    // the page through its code on that domain. Null for other pages.
+    gtin: text("gtin"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -1402,6 +1407,9 @@ export const landingPage = pgTable(
   (table) => [
     index("landing_page_user_id_idx").on(table.userId),
     index("landing_page_organization_id_idx").on(table.organizationId),
+    index("landing_page_gtin_idx")
+      .on(table.gtin)
+      .where(sql`"gtin" IS NOT NULL`),
   ]
 );
 
