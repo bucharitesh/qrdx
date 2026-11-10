@@ -72,13 +72,23 @@ function eventTeam(payload: SlackEventPayload): SlackTeamRef | null {
 }
 
 /**
+ * "/qr https://…" as a message: when /qr answers in the channel, Slack also
+ * posts the command itself there, and that copy arrives as a message event.
+ * The command route has already answered it.
+ */
+const SLASH_COMMAND_ECHO = /^\/qr(?:\s|$)/i;
+
+/**
  * Messages the bot never answers: from bots (itself included), edits,
- * joins and every other subtype, and anything without a person or channel.
+ * joins and every other subtype, the echo of a /qr command, and anything
+ * without a person or channel.
  */
 function isIgnoredMessage(event: SlackEvent, botUserId: string): boolean {
   return Boolean(
     event.bot_id ||
       event.subtype ||
+      (typeof event.text === "string" &&
+        SLASH_COMMAND_ECHO.test(event.text.trim())) ||
       event.edited ||
       !isId(event.user) ||
       event.user === botUserId ||
