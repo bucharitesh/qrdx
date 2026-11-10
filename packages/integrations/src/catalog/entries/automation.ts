@@ -5,6 +5,8 @@ import type {
   IntegrationCatalogEntry,
 } from "../types";
 
+const REPO = "https://github.com/bucharitesh/qrdx";
+
 const ADD_ENDPOINT: CatalogAction = {
   type: "link",
   label: "Add a webhook endpoint",
@@ -193,43 +195,87 @@ export function isFromQRdx(rawBody: string, header: string, secret: string) {
     slug: "n8n",
     name: "n8n",
     tagline:
-      "Trigger n8n workflows from QRdx events with the Webhook node, on n8n Cloud or self-hosted.",
+      "Make QR codes, manage dynamic codes and start n8n workflows from QRdx events with the QRdx nodes, or with a Webhook node.",
     description: [
-      "Add a Webhook node set to POST and use its production URL as a QRdx endpoint. Each event starts the workflow with the full JSON payload, and a Code node can verify the signature.",
-      "QRdx only delivers to public https:// addresses, so a self-hosted n8n needs a public domain with HTTPS.",
+      "The QRdx nodes for n8n make QR code images with no API key, create, update, archive and delete dynamic codes, and read their scans and your saved themes. An n8n AI Agent can use the QRdx node as a tool. The QRdx Trigger node subscribes to the events you pick when you activate the workflow, and checks the signature of every delivery.",
+      "Without installing anything, a Webhook node set to POST can be a QRdx webhook endpoint instead, on n8n Cloud or self-hosted. QRdx only delivers to public https:// addresses, so a self-hosted n8n needs a public domain with HTTPS either way.",
     ],
     kind: "guide",
     surface: "integrations",
     categories: ["automation"],
     logo: { type: "image", src: "/integrations/n8n.svg" },
-    plan: "business",
+    plan: "free",
     builtBy: "QRdx",
     website: "https://n8n.io",
-    docs: "/docs/webhooks#zapier-make-and-n8n-rest-hooks",
-    primaryAction: ADD_ENDPOINT,
-    secondaryAction: WEBHOOK_DOCS,
+    docs: "/docs/developers/n8n",
+    note: "Not on npm yet. Install the nodes from source into a self-hosted n8n.",
+    primaryAction: {
+      type: "link",
+      label: "View source",
+      href: `${REPO}/tree/main/plugins/n8n`,
+    },
+    secondaryAction: {
+      type: "link",
+      label: "Setup guide",
+      href: "/docs/developers/n8n",
+    },
     steps: [
       {
-        title: "Add a Webhook node",
-        body: "Set the HTTP method to POST and copy the Production URL.",
+        title: "Build the package",
         snippet: {
-          label: "It looks like this",
-          language: "text",
-          code: "https://your-n8n.example.com/webhook/qrdx-events",
+          label: "Terminal",
+          language: "bash",
+          code: `git clone ${REPO}.git\ncd qrdx && pnpm install\npnpm --filter n8n-nodes-qrdx build\ncd plugins/n8n && npm pack`,
         },
       },
       {
-        title: "Activate the workflow",
-        body: "The production URL only answers while the workflow is active.",
+        title: "Install it in n8n",
+        body: "Install the .tgz file in the nodes folder of your n8n user folder, then restart n8n.",
+        snippet: {
+          label: "Terminal",
+          language: "bash",
+          code: "mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes\nnpm install /path/to/n8n-nodes-qrdx-0.1.0.tgz",
+        },
       },
-      EVENTS_STEP("n8n"),
       {
-        title: "Optional: verify the signature",
-        body: "Read the X-QRdx-Signature header in a Code node and check it with your signing secret, as shown in the webhook docs.",
+        title: "Add your API key",
+        body: "Create an API key in Settings → API keys & apps and save it in a new QRdx API credential in n8n.",
+      },
+      {
+        title: "Or use a Webhook node",
+        body: "No install needed: add a Webhook node set to POST, activate the workflow, and add its production URL in Settings → Webhooks.",
       },
     ],
-    capabilities: AUTOMATION_CAPABILITIES,
-    keywords: ["workflow", "self-hosted", "open source", "automation"],
+    capabilities: [
+      {
+        title: "QR images",
+        description:
+          "PNG, SVG or EPS with your colors, shapes, frame and logo icon, without an API key.",
+      },
+      {
+        title: "Dynamic codes",
+        description:
+          "Create, get, list, update, archive and delete codes from a workflow.",
+      },
+      {
+        title: "Scans",
+        description:
+          "Individual scans, or totals with top countries, devices and referrers.",
+      },
+      {
+        title: "Trigger on events",
+        description:
+          "Scans, milestones, new and changed codes, and form submissions, with signed deliveries. Needs Business.",
+      },
+    ],
+    keywords: [
+      "workflow",
+      "self-hosted",
+      "open source",
+      "automation",
+      "community node",
+      "ai agent",
+    ],
     related: ["webhooks", "zapier", "make"],
   },
   {
