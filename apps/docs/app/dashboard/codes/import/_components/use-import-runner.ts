@@ -29,7 +29,9 @@ type Outcome =
   | { type: "done"; rows: JobRowResult[]; style: ThemeStyles | null }
   /** `offline`: the request didn't come back, so the next ones won't either */
   | { type: "failed"; message: string; offline?: boolean }
-  | { type: "stop"; error: ActionError };
+  | { type: "stop"; error: ActionError }
+  /** Paused while waiting to try again: the chunk stays in the queue */
+  | { type: "paused" };
 
 /** Errors no retry fixes: the plan, the session, the role. */
 const STOPS = new Set([
@@ -130,6 +132,7 @@ export function useImportRunner(
           // sending it again is safe under the chunk's idempotency key.
           if (++tries < TRIES && !control.current.pause) {
             await wait(2 ** tries, "retry");
+            if (control.current.pause) return { type: "paused" };
             continue;
           }
           return {
@@ -153,6 +156,7 @@ export function useImportRunner(
           !control.current.pause
         ) {
           await wait(error.retryAfterSeconds ?? 20, "rate-limit");
+          if (control.current.pause) return { type: "paused" };
           continue;
         }
         if (
@@ -161,6 +165,7 @@ export function useImportRunner(
           !control.current.pause
         ) {
           await wait(2 ** tries, "retry");
+          if (control.current.pause) return { type: "paused" };
           continue;
         }
         return { type: "failed", message: error.message };
@@ -186,6 +191,10 @@ export function useImportRunner(
           const index = nextChunk(current);
           if (index < 0) break;
           const outcome = await send(current, index);
+          if (outcome.type === "paused") {
+            commit({ ...current, status: "paused" });
+            return;
+          }
           if (outcome.type === "stop") {
             commit({
               ...current,
