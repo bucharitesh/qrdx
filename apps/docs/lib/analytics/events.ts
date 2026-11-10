@@ -39,8 +39,17 @@ export interface AnalyticsEvents {
   qr_generated: { content_type: string; source: QrSource; count?: number };
   qr_downloaded: { format: string; source: QrSource; content_type?: string };
   qr_copied: { format: "svg"; source: QrSource };
-  /** /barcode-generator: the file type and symbology id ("ean13"), never the data. */
-  barcode_downloaded: { format: "png" | "svg" | "eps"; symbology: string };
+  /**
+   * A barcode download from /barcode-generator or a saved barcode in the
+   * dashboard: the file type and symbology id ("ean13"), never the data.
+   */
+  barcode_downloaded: {
+    format: "png" | "jpg" | "webp" | "avif" | "svg" | "pdf" | "eps";
+    symbology: string;
+    source?: "generator" | "dashboard";
+  };
+  /** A barcode saved to a workspace: the symbology id, never the data. */
+  barcode_saved: { symbology: string; source: "generator" | "dashboard" };
 
   /**
    * A playground link applied its parameters. `source`: where it came from

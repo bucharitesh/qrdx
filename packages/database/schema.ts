@@ -1799,6 +1799,47 @@ export const codePublicStats = pgTable(
   ]
 );
 
+// ─── Saved barcodes (apps/docs/lib/barcodes) ─────────────────────────────────
+// Static barcodes (EAN-13, Code 128, Data Matrix, ...) kept in a workspace to
+// edit and download again: the symbology, the value it encodes and how it's
+// drawn. Nothing is hosted: the bars hold the data. Folders are the codes'
+// folders. manual-sql/2026-11-11-barcodes.sql creates the table.
+export const barcode = pgTable(
+  "barcode",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    folderId: text("folder_id").references(() => folder.id, {
+      onDelete: "set null",
+    }),
+    title: text("title"),
+    // lib/barcode/formats.ts BarcodeFormatId: "ean13", "code128", ...
+    format: text("format").notNull(),
+    // The value drawn, check digit included (validateBarcodeInput's output)
+    value: text("value").notNull(),
+    // Colors, bar height, quiet zone, scale, text, rotation; validated by the
+    // app (lib/barcodes/schema.ts) on read and write
+    options: jsonb("options").$type<Record<string, unknown>>(),
+    // Moved to the trash (restorable)
+    deletedAt: timestamp("deleted_at"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index("barcode_user_id_idx").on(table.userId),
+    index("barcode_organization_id_idx").on(table.organizationId),
+    index("barcode_folder_id_idx").on(table.folderId),
+  ]
+);
+
 // Relations (for `database.query.*` with `with`); no effect on SQL.
 
 export const organizationRelations = relations(organization, ({ many }) => ({

@@ -1,6 +1,8 @@
 // The /mcp page's copy that the Markdown version (/mcp.md,
 // lib/agents/markdown-pages.ts) repeats, kept in one place.
 import {
+  ArchiveAdd,
+  Barcode,
   Brush2,
   Category,
   ColorSwatch,
@@ -83,6 +85,20 @@ export const MCP_TOOLS: {
     icon: Save2,
   },
   {
+    name: "generate_barcode",
+    title: "Generate a barcode",
+    description:
+      "EAN-13, UPC-A, UPC-E, EAN-8, ITF-14, GS1-128, Code 128, Code 39, Data Matrix, PDF417 or Aztec. Checks the value (check digits, lengths, characters) and returns a PNG plus public SVG, PNG, PDF and other image URLs.",
+    icon: Barcode,
+  },
+  {
+    name: "save_barcode",
+    title: "Save a barcode",
+    description:
+      "Keeps a barcode in your workspace's Barcodes to edit and download later. Needs a QRdx API key on the connection.",
+    icon: ArchiveAdd,
+  },
+  {
     name: "list_qr_styles",
     title: "List styles",
     description:
@@ -128,7 +144,7 @@ export const MCP_FAQS: { question: string; answer: string }[] = [
   {
     question: "Do I need an account or an API key?",
     answer:
-      "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
+      "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
   },
   {
     question: "Which AI tools does it work with?",
@@ -153,7 +169,7 @@ export const MCP_FAQS: { question: string; answer: string }[] = [
   {
     question: "Does QRdx store the codes I generate?",
     answer:
-      "No. The tools render images, format text and read the public community. Only save_template writes anything: the theme you ask it to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
+      "No. The tools render images, format text and read the public community. Only save_template and save_barcode write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
   },
   {
     question: "Are there limits?",

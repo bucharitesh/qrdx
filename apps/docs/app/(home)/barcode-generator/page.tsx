@@ -1,7 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import type { Metadata } from "next";
 import NextLink from "next/link";
-import { BarcodeGenerator } from "@/components/sections/tools/barcode-generator";
 import {
   CardGrid,
   cardClass,
@@ -10,6 +9,7 @@ import {
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { JsonLd } from "@/components/sections/tools/json-ld";
+import { PublicBarcodeGenerator } from "@/components/sections/tools/save-barcode";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { BARCODE_FORMATS, type BarcodeFormatId } from "@/lib/barcode/formats";
 import { baseUrl, createMetadata } from "@/lib/metadata";
@@ -19,7 +19,7 @@ const FORMAT_COUNT = PRODUCT_FACTS.barcodeFormats;
 
 export const metadata: Metadata = createMetadata({
   title: "Free Barcode Generator: EAN-13, UPC, Code 128",
-  description: `Make EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix and more: ${FORMAT_COUNT} barcode types with check digits worked out for you. PNG, SVG and EPS. Free, no signup.`,
+  description: `Make EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix and more: ${FORMAT_COUNT} barcode types with check digits worked out for you. PNG, JPG, SVG, PDF and EPS. Free, no signup.`,
   path: "/barcode-generator",
   ownOgImage: true,
 });
@@ -51,7 +51,7 @@ const faqs = [
   {
     question: "Is this barcode generator free?",
     answer:
-      "Yes. There's no account, no watermark and no limit on downloads. Barcodes are drawn and checked in your browser, so nothing you type is sent to QRdx.",
+      "Yes. There's no account, no watermark and no limit on downloads. Barcodes are drawn and checked in your browser, so nothing you type is sent to QRdx, except when you pick WebP or AVIF (QRdx's server encodes those and keeps nothing) or save a barcode to your dashboard.",
   },
   {
     question: "Do I need to register my barcode number?",
@@ -71,7 +71,17 @@ const faqs = [
   {
     question: "Which file format should I download?",
     answer:
-      "SVG or EPS for print: they're vectors, so the bars stay sharp at any size, and they open in design tools such as Illustrator, InDesign and Affinity. PNG is for screens, documents and online shops; raise the PNG size for bigger images.",
+      "SVG, PDF or EPS for print: they're vectors, so the bars stay sharp at any size. SVG and EPS open in design tools such as Illustrator, InDesign and Affinity, and PDF opens anywhere. PNG is for screens, documents and online shops, and JPG for places that don't take PNG; WebP and AVIF make smaller files for websites. Raise the image size for bigger pictures.",
+  },
+  {
+    question: "Can I save my barcodes?",
+    answer:
+      "Yes, with a free QRdx account. Signed in, press Save to dashboard and the barcode goes to Barcodes in your workspace, where you can find it again, edit it, put it in a folder and download it in any format. Every plan saves barcodes: 1,000 on Free.",
+  },
+  {
+    question: "Is there a barcode API?",
+    answer:
+      "Yes. https://api.qrdx.dev/v1/barcode?format=ean13&data=590123412345 returns that EAN-13 as an SVG, with no key; add type=png, type=pdf or another file type. It checks values the same way this page does. With an API key you can also save barcodes to your workspace. Every option is in the docs at qrdx.dev/docs/developers/barcode-api.",
   },
   {
     question: "Can I track scans of a barcode?",
@@ -110,7 +120,9 @@ export default function BarcodeGeneratorPage() {
             `${FORMAT_COUNT} barcode types: ${BARCODE_FORMATS.map((format) => format.label).join(", ")}`,
             "Check digits calculated and verified",
             "Scan check with an open-source decoder",
-            "PNG, SVG and EPS downloads",
+            "PNG, JPG, WebP, AVIF, SVG, PDF and EPS downloads",
+            "Save barcodes to a free QRdx account to edit later",
+            "Barcode image API with no key",
           ],
         }}
       />
@@ -124,12 +136,12 @@ export default function BarcodeGeneratorPage() {
         title="Free barcode generator"
         intro={[
           `Make retail, shipping and inventory barcodes in ${FORMAT_COUNT} formats, from EAN-13 and UPC-A to Code 128, GS1-128, ITF-14 and Data Matrix. Type the number and the check digit is worked out for you; a wrong one is caught before you print.`,
-          "Each barcode is drawn and scan-checked in your browser, then saved as PNG for screens or as SVG and EPS for print. It's free, with no account and no watermark.",
+          "Each barcode is drawn and scan-checked in your browser, then saved as PNG or JPG for screens, or as SVG, PDF and EPS for print. It's free, with no account and no watermark. Sign in to keep barcodes in your dashboard and edit them later.",
         ]}
       />
 
       <section aria-label="Barcode generator" className="w-full px-10 py-10">
-        <BarcodeGenerator />
+        <PublicBarcodeGenerator />
       </section>
 
       <section
@@ -191,7 +203,7 @@ export default function BarcodeGeneratorPage() {
           {[
             "Dark bars on a light background. Black on white is safest; dark blue and dark green work. Many scanners read with red light, which makes red, orange and yellow bars disappear.",
             "Keep the quiet zone clear: no text, borders or artwork in the blank margin either side.",
-            "Retail EAN and UPC barcodes may be printed from 80% to 200% of their nominal size (an EAN-13 at 100% is 37.29 mm wide). The SVG and EPS downloads use a 0.35 mm module, about 107%. Scale them within that range, and don't cut the bar height.",
+            "Retail EAN and UPC barcodes may be printed from 80% to 200% of their nominal size (an EAN-13 at 100% is 37.29 mm wide). The SVG, PDF and EPS downloads use a 0.35 mm module, about 107%. Scale them within that range, and don't cut the bar height.",
             "Print the barcode, then scan it with the scanners that will read it before a large run.",
           ].map((tip) => (
             <li key={tip} className={cn(cardClass, "p-4 text-sm")}>

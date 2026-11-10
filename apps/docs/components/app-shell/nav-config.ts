@@ -1,5 +1,6 @@
 import {
   ClipboardText as AuditLog,
+  Barcode,
   Notification as Bell,
   Chart as ChartNoAxesColumn,
   ProfileCircle as CircleUser,
@@ -77,6 +78,12 @@ export function mainNav(slug: string): AppNavGroup[] {
           label: "Analytics",
           icon: ChartNoAxesColumn,
           keywords: ["scans", "stats"],
+        },
+        {
+          href: workspaceHref(slug, "/barcodes"),
+          label: "Barcodes",
+          icon: Barcode,
+          keywords: ["ean", "upc", "code 128", "data matrix", "gs1", "saved"],
         },
       ],
     },
