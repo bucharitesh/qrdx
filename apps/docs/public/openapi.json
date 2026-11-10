@@ -916,7 +916,8 @@
                           "archivedAt": null,
                           "createdAt": "2026-01-05T09:30:00.000Z",
                           "updatedAt": "2026-01-05T09:30:00.000Z",
-                          "organizationId": null
+                          "organizationId": null,
+                          "preciseLocation": false
                         }
                       ],
                       "pagination": {
@@ -1075,7 +1076,8 @@
                         "archivedAt": null,
                         "createdAt": "2026-01-05T09:30:00.000Z",
                         "updatedAt": "2026-01-05T09:30:00.000Z",
-                        "organizationId": null
+                        "organizationId": null,
+                        "preciseLocation": false
                       }
                     }
                   },
@@ -1107,7 +1109,8 @@
                           "archivedAt": null,
                           "createdAt": "2026-01-05T09:30:00.000Z",
                           "updatedAt": "2026-01-05T09:30:00.000Z",
-                          "organizationId": null
+                          "organizationId": null,
+                          "preciseLocation": false
                         }
                       ]
                     }
@@ -1236,7 +1239,8 @@
                         "archivedAt": null,
                         "createdAt": "2026-01-05T09:30:00.000Z",
                         "updatedAt": "2026-01-05T09:30:00.000Z",
-                        "organizationId": null
+                        "organizationId": null,
+                        "preciseLocation": false
                       }
                     }
                   }
@@ -1276,7 +1280,7 @@
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Changes a code's destination, title, design, domain or back-half, switches what it opens, or archives it.\n\nSend only the fields to change. `archived: true` stops redirects and frees a plan slot; `false` restores the code. The destination, title and design stay editable on every plan.\n\nTo change what a printed code opens, send `kind`. `\"kind\": \"page\"` with `page` makes a hosted page from a template (or from the `content` you send) and points the code at it; with `pageId` it opens a page the workspace already has, such as one it opened before. `\"kind\": \"redirect\"` with `destinationUrl` makes it a website link again. The short link, scans, design and link controls stay. A page the code stops opening stays in the workspace, and counts toward the plan's hosted pages until it's deleted. Routing, A/B tests, UTM parameters and conversion tracking only apply to website links, and tracking pixels only to hosted pages: they're kept and apply again after switching back.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Changes a code's destination, title, design, domain or back-half, switches what it opens, or archives it.\n\nSend only the fields to change. `archived: true` stops redirects and frees a plan slot; `false` restores the code. The destination, title and design stay editable on every plan.\n\nTo change what a printed code opens, send `kind`. `\"kind\": \"page\"` with `page` makes a hosted page from a template (or from the `content` you send) and points the code at it; with `pageId` it opens a page the workspace already has, such as one it opened before. `\"kind\": \"redirect\"` with `destinationUrl` makes it a website link again. The short link, scans, design and link controls stay. A page the code stops opening stays in the workspace, and counts toward the plan's hosted pages until it's deleted. Routing, A/B tests, UTM parameters and conversion tracking only apply to website links, and tracking pixels only to hosted pages: they're kept and apply again after switching back.\n\n`preciseLocation: true` asks scanners for their precise location (Pro and Business), see [Precise location and geofencing](https://qrdx.dev/docs/precise-location).\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1312,6 +1316,12 @@
                   "value": {
                     "kind": "redirect",
                     "destinationUrl": "https://example.com/menu"
+                  }
+                },
+                "preciseLocation": {
+                  "summary": "Ask scanners for their precise location",
+                  "value": {
+                    "preciseLocation": true
                   }
                 }
               }
@@ -1371,7 +1381,8 @@
                         "archivedAt": null,
                         "createdAt": "2026-01-05T09:30:00.000Z",
                         "updatedAt": "2026-01-05T09:30:00.000Z",
-                        "organizationId": null
+                        "organizationId": null,
+                        "preciseLocation": false
                       }
                     }
                   }
@@ -1526,7 +1537,7 @@
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. `sources` splits the scans into QR scans and NFC taps (visits through the code's `nfcLink`), and each listed scan has its `source`. The range is clamped to how long the plan keeps analytics. With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. `sources` splits the scans into QR scans and NFC taps (visits through the code's `nfcLink`), and each listed scan has its `source`. The range is clamped to how long the plan keeps analytics. With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\nOn Pro and Business, `preciseLocations` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has `latitude`, `longitude`, `locationAccuracyM` and `locationSource`. On Free, `preciseLocations` is null and those fields are null. More in [Precise location and geofencing](https://qrdx.dev/docs/precise-location).\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "parameters": [
           {
             "name": "range",
@@ -1647,6 +1658,19 @@
                         "sources": {
                           "qr": 38,
                           "nfc": 4
+                        },
+                        "preciseLocations": {
+                          "asked": 18,
+                          "shared": 11,
+                          "points": [
+                            {
+                              "latitude": 52.52,
+                              "longitude": 13.405,
+                              "count": 7,
+                              "accuracyM": 24,
+                              "lastScannedAt": "2026-01-12T18:04:11.000Z"
+                            }
+                          ]
                         }
                       }
                     }
@@ -3737,6 +3761,10 @@
           "organizationId": {
             "description": "The workspace that owns the code (a key's workspace, or a token user's own workspace)",
             "type": ["string", "null"]
+          },
+          "preciseLocation": {
+            "type": "boolean",
+            "description": "Whether the code asks scanners for their precise location (Pro and Business; off by default)"
           }
         },
         "required": [
@@ -3758,7 +3786,8 @@
           "archivedAt",
           "createdAt",
           "updatedAt",
-          "organizationId"
+          "organizationId",
+          "preciseLocation"
         ],
         "description": "A dynamic QR code"
       },
@@ -3974,6 +4003,10 @@
               }
             },
             "required": ["type"]
+          },
+          "preciseLocation": {
+            "description": "Ask scanners for their precise location (Pro and Business). Redirect codes show a short step with Allow and Skip; hosted pages ask on the page. Off by default; turning it off never needs a plan.",
+            "type": "boolean"
           }
         },
         "description": "The fields to change; at least one"
@@ -7227,6 +7260,78 @@
             "required": ["qr", "nfc"],
             "description": "Scans in the range by source; `qr` + `nfc` = `total`"
           },
+          "preciseLocations": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "asked": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Scans in the range whose scanner was asked for their location"
+                  },
+                  "shared": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "Of those, scans that shared it"
+                  },
+                  "points": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "latitude": {
+                          "type": "number",
+                          "description": "Rounded to 3 decimals (about 100 m)"
+                        },
+                        "longitude": {
+                          "type": "number"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "accuracyM": {
+                          "anyOf": [
+                            {
+                              "type": "integer",
+                              "minimum": -9007199254740991,
+                              "maximum": 9007199254740991
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ],
+                          "description": "Average accuracy the browsers reported, meters"
+                        },
+                        "lastScannedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Latest scan at this point (ISO 8601, UTC)"
+                        }
+                      },
+                      "required": [
+                        "latitude",
+                        "longitude",
+                        "count",
+                        "accuracyM",
+                        "lastScannedAt"
+                      ]
+                    },
+                    "description": "Shared points, most scans first (up to 500)"
+                  }
+                },
+                "required": ["asked", "shared", "points"]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Precise scan locations (Pro and Business): null on plans without them. Kept apart from the IP-based countries and cities"
+          },
           "events": {
             "description": "Individual scans, newest first (only with `limit` > 0)",
             "type": "array",
@@ -7272,6 +7377,38 @@
                   "type": "string",
                   "enum": ["qr", "nfc"],
                   "description": "`nfc` for a tap on an NFC tag (the code's `nfcLink`), `qr` for a QR scan or any other visit to the short link"
+                },
+                "latitude": {
+                  "description": "Where the scanner was, rounded to 3 decimals (about 100 m): only when the code asked and they shared it (Pro and Business), else null",
+                  "type": ["number", "null"]
+                },
+                "longitude": {
+                  "type": ["number", "null"]
+                },
+                "locationAccuracyM": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "Accuracy the scanner's browser reported, in meters"
+                },
+                "locationSource": {
+                  "anyOf": [
+                    {
+                      "type": "string",
+                      "enum": ["gps", "ip"]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "description": "`gps`: the scanner shared their location. `ip`: the code asked but they didn't share it (the location is the network one: country, region, city). null: the code didn't ask"
                 }
               },
               "required": [
@@ -7283,7 +7420,11 @@
                 "os",
                 "browser",
                 "referer",
-                "source"
+                "source",
+                "latitude",
+                "longitude",
+                "locationAccuracyM",
+                "locationSource"
               ]
             }
           },
@@ -7307,7 +7448,8 @@
           "os",
           "browsers",
           "referrers",
-          "sources"
+          "sources",
+          "preciseLocations"
         ]
       },
       "Style": {
