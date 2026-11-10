@@ -9,7 +9,8 @@ import {
   renderDesignPng,
   renderDesignSvg,
 } from "@/lib/qr-design/score";
-import { pngToWebp, QR_DEFAULTS, QrDataTooLongError } from "@/lib/qr-render";
+import { type ConvertedFormat, convertPng } from "@/lib/qr-image-formats";
+import { QR_DEFAULTS, QrDataTooLongError } from "@/lib/qr-render";
 import type { ActiveScope } from "@/lib/scope";
 import type { ThemeStyles } from "@/types/theme";
 import { resolveLogo } from "./logo";
@@ -185,11 +186,12 @@ export async function renderStyledPng(
   }
 }
 
-/** Lossless WebP of the PNG render: the same pixels in a smaller file. */
-export async function renderStyledWebp(
+/** The PNG render converted, such as to lossless WebP. */
+export async function renderStyledImage(
   render: ResolvedRender,
-): Promise<Buffer> {
-  return await pngToWebp(await renderStyledPng(render));
+  format: ConvertedFormat,
+): Promise<Uint8Array> {
+  return await convertPng(await renderStyledPng(render), format);
 }
 
 /** Vector EPS, the code `size` points wide (frames add to it). */
