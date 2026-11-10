@@ -17,6 +17,7 @@ import {
   encodeVCard,
   encodeWhatsApp,
   encodeWifi,
+  escapeRegExp,
   MAX_QR_PAYLOAD_BYTES,
   normalizePhone,
   normalizeWebUrl,
@@ -711,5 +712,62 @@ describe("links", () => {
     ],
   ])("%j → %s", (config, expected) => {
     expect(enc(config)).toBe(expected);
+  });
+});
+
+describe("escaping every occurrence", () => {
+  it('escapes each \\ ; , : and " in a Wi-Fi SSID and password, not just the first', () => {
+    const payload = encodeWifi({
+      type: "wifi",
+      ssid: 'a;;b,,c::d""e\\\\f',
+      password: "\\\\;;",
+      encryption: "WPA",
+    });
+    expect(payload).toBe(
+      'WIFI:T:WPA;S:a\\;\\;b\\,\\,c\\:\\:d\\"\\"e\\\\\\\\f;P:\\\\\\\\\\;\\;;H:false;;',
+    );
+  });
+
+  it("escapes each \\ , ; and newline in a vCard TEXT value", () => {
+    const payload = encodeVCard({
+      type: "vcard",
+      firstName: "Ada",
+      note: "a,,b;;c\\\\d\n\ne",
+    });
+    expect(payload).toContain("NOTE:a\\,\\,b\\;\\;c\\\\\\\\d\\n\\ne\r\n");
+  });
+});
+
+// The profile-handle reader builds a RegExp from a host name; every special
+// character in it, the backslash included, has to be escaped.
+describe("escapeRegExp", () => {
+  it.each(["instagram.com", "a\\b", "a\\.b", "\\", "(x)|[y]{2}*+?^$"])(
+    "matches %s literally",
+    (value) => {
+      expect(new RegExp(`^${escapeRegExp(value)}$`).test(value)).toBe(true);
+    },
+  );
+
+  it("does not let a backslash in the input escape the next character", () => {
+    // Escaping only the dots turns "a\.b" into /a\\.b/: a backslash, then
+    // any character.
+    expect(new RegExp(`^${escapeRegExp("a\\.b")}$`).test("a\\xb")).toBe(false);
+  });
+
+  it("escapes the hosts handles are read from the same as before", () => {
+    for (const host of [
+      "instagram.com",
+      "reddit.com",
+      "tiktok.com",
+      "twitter.com",
+      "x.com",
+      "pinterest.com",
+      "snapchat.com",
+      "threads.net",
+      "threads.com",
+      "venmo.com",
+    ]) {
+      expect(escapeRegExp(host)).toBe(host.replace(/\./g, "\\."));
+    }
   });
 });

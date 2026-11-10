@@ -78,6 +78,11 @@ function profileUrl(raw: string, base: string): string {
   return `${base}${encodeURIComponent(value.replace(/^@/, ""))}`;
 }
 
+/** `value` as a literal inside a RegExp: every special character escaped. */
+export function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 /**
  * The bare handle from "@name", "name", or a pasted profile URL on `host`
  * (e.g. "https://www.instagram.com/name/?igsh=…" → "name").
@@ -85,7 +90,7 @@ function profileUrl(raw: string, base: string): string {
 function handleFrom(raw: string, host: string, prefix = ""): string {
   let value = raw.trim();
   const url = new RegExp(
-    `^(?:https?://)?(?:[\\w-]+\\.)*${host.replace(/\./g, "\\.")}/+${prefix}([^/?#]+)`,
+    `^(?:https?://)?(?:[\\w-]+\\.)*${escapeRegExp(host)}/+${prefix}([^/?#]+)`,
     "i",
   ).exec(value);
   if (url) value = url[1] as string;
