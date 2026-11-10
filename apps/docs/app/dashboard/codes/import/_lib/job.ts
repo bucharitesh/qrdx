@@ -49,8 +49,13 @@ export interface ImportJob {
    * with failed chunks to retry; done: finished or ended early.
    */
   status: "running" | "paused" | "done";
-  /** Why the import stopped (the plan), if it did */
+  /** Why the import stopped (the plan, an hourly limit), if it did */
   stopped: string | null;
+  /**
+   * Stopped by a limit that lifts by itself (a new account's hourly cap):
+   * when the rest can be sent (epoch ms). Absent in jobs saved before.
+   */
+  resumeAfter?: number | null;
 }
 
 /** Splits rows into chunks of at most `maxRows` rows and about `maxBytes`. */
@@ -167,6 +172,7 @@ export function withFailedRetried(job: ImportJob): ImportJob {
     chunks: job.chunks.map((state) => (state === "failed" ? "pending" : state)),
     status: "running",
     stopped: null,
+    resumeAfter: null,
   };
 }
 

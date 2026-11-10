@@ -69,6 +69,7 @@ describe("PRODUCT_FACTS", () => {
       apiBatchCodes: MAX_CODES_PER_REQUEST.toLocaleString("en-US"),
       importRows: MAX_IMPORT_ROWS.toLocaleString("en-US"),
       bulkToolRows: MAX_BULK_TOOL_ROWS.toLocaleString("en-US"),
+      newPaidAccountHourlyCodes: "2,000",
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(

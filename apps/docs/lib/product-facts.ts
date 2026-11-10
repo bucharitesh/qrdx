@@ -40,6 +40,7 @@ import {
   MAX_BULK_TOOL_ROWS,
   MAX_CODES_PER_REQUEST,
   MAX_IMPORT_ROWS,
+  NEW_PAID_ACCOUNT_CODES_PER_HOUR,
 } from "./bulk-limits";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
 
@@ -81,6 +82,8 @@ export const PRODUCT_FACTS = {
   importRows: formatCount(MAX_IMPORT_ROWS),
   /** Rows in one file of the free bulk tool. */
   bulkToolRows: formatCount(MAX_BULK_TOOL_ROWS),
+  /** Codes an hour a new account may create in a paid workspace. */
+  newPaidAccountHourlyCodes: formatCount(NEW_PAID_ACCOUNT_CODES_PER_HOUR),
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;

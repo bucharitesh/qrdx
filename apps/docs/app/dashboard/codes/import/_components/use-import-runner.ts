@@ -30,6 +30,8 @@ type Outcome =
   /** `offline`: the request didn't come back, so the next ones won't either */
   | { type: "failed"; message: string; offline?: boolean }
   | { type: "stop"; error: ActionError }
+  /** A limit that lifts at `until` (epoch ms): pause until then */
+  | { type: "wait"; error: ActionError; until: number }
   /** Paused while waiting to try again: the chunk stays in the queue */
   | { type: "paused" };
 
@@ -44,6 +46,11 @@ const STOPS = new Set([
 const TRIES = 3;
 /** Waits for the create rate limit before a chunk is marked failed. */
 const RATE_LIMIT_WAITS = 10;
+/**
+ * Longer waits (a new account's hourly cap) pause the import instead, saying
+ * when it can go on; it resumes by itself then if the page is still open.
+ */
+const LONGEST_WAIT_SECONDS = 120;
 
 /**
  * Runs a CSV import as a resumable job (../_lib/job.ts): sends chunk after
@@ -152,6 +159,16 @@ export function useImportRunner(
         if (STOPS.has(error.code)) return { type: "stop", error };
         if (
           error.code === "RATE_LIMITED" &&
+          (error.retryAfterSeconds ?? 0) > LONGEST_WAIT_SECONDS
+        ) {
+          return {
+            type: "wait",
+            error,
+            until: Date.now() + (error.retryAfterSeconds ?? 0) * 1000,
+          };
+        }
+        if (
+          error.code === "RATE_LIMITED" &&
           ++waits <= RATE_LIMIT_WAITS &&
           !control.current.pause
         ) {
@@ -180,7 +197,12 @@ export function useImportRunner(
       if (!first || control.current.running) return;
       control.current = { running: true, pause: false };
       setInterrupted(false);
-      let current: ImportJob = { ...first, status: "running", stopped: null };
+      let current: ImportJob = {
+        ...first,
+        status: "running",
+        stopped: null,
+        resumeAfter: null,
+      };
       commit(current);
       try {
         for (;;) {
@@ -193,6 +215,16 @@ export function useImportRunner(
           const outcome = await send(current, index);
           if (outcome.type === "paused") {
             commit({ ...current, status: "paused" });
+            return;
+          }
+          if (outcome.type === "wait") {
+            commit({
+              ...current,
+              status: "paused",
+              stopped: outcome.error.message,
+              resumeAfter: outcome.until,
+            });
+            soundEvent("error");
             return;
           }
           if (outcome.type === "stop") {
@@ -235,6 +267,17 @@ export function useImportRunner(
     },
     [commit, send],
   );
+
+  // A limit that lifts by itself: go on then, if the page is still open.
+  const resumeAfter = job?.status === "paused" ? job.resumeAfter : null;
+  useEffect(() => {
+    if (!resumeAfter) return;
+    const timer = setTimeout(
+      () => void run(),
+      Math.max(0, resumeAfter - Date.now()) + 2000,
+    );
+    return () => clearTimeout(timer);
+  }, [resumeAfter, run]);
 
   /** Stops after the chunk in flight. */
   const pause = useCallback(() => {

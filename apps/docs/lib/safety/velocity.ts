@@ -3,10 +3,13 @@ import "server-only";
 import { hasAdminRole } from "@repo/auth/admin";
 import { abuseReport, database as db, qrCode, user } from "@repo/database";
 import cuid from "cuid";
-import { and, count, eq, gte, min } from "drizzle-orm";
+import { and, asc, count, eq, gte } from "drizzle-orm";
 import { after } from "next/server";
 import { cache } from "react";
-import { MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
+import {
+  formatCount,
+  NEW_PAID_ACCOUNT_CODES_PER_HOUR,
+} from "@/lib/bulk-limits";
 import { HttpError } from "@/lib/error-response";
 
 /**
@@ -18,11 +21,8 @@ import { HttpError } from "@/lib/error-response";
 
 export const NEW_ACCOUNT_DAYS = 7;
 export const NEW_ACCOUNT_CODES_PER_HOUR = 30;
-/**
- * New accounts on a paid plan (a checkout, so not a throwaway sign-up): one
- * full CSV import an hour, so a new customer can make their first batch.
- */
-export const NEW_PAID_ACCOUNT_CODES_PER_HOUR = MAX_IMPORT_ROWS;
+/** In a paid workspace (lib/bulk-limits.ts). */
+export { NEW_PAID_ACCOUNT_CODES_PER_HOUR };
 
 const HOUR_MS = 60 * 60_000;
 const DAY_MS = 24 * HOUR_MS;
@@ -61,26 +61,34 @@ export async function enforceNewAccountVelocity(
     : NEW_ACCOUNT_CODES_PER_HOUR;
 
   const now = Date.now();
-  const [row] = await db
-    .select({ total: count(), oldest: min(qrCode.createdAt) })
-    .from(qrCode)
-    .where(
-      and(
-        eq(qrCode.userId, userId),
-        gte(qrCode.createdAt, new Date(now - HOUR_MS)),
-      ),
-    );
-  if ((row?.total ?? 0) + adding <= cap) return;
+  const since = new Date(now - HOUR_MS);
+  const recent = and(eq(qrCode.userId, userId), gte(qrCode.createdAt, since));
+  const [row] = await db.select({ total: count() }).from(qrCode).where(recent);
+  const total = row?.total ?? 0;
+  if (total + adding <= cap) return;
 
-  const oldest = row?.oldest ? new Date(row.oldest).getTime() : now;
-  const retryAfterSeconds = Math.max(
-    60,
-    Math.ceil((oldest + HOUR_MS - now) / 1000),
-  );
+  // Room comes back as codes leave the rolling hour: wait until enough of
+  // the oldest have left for this request to fit (an hour when it never can).
+  const mustLeave = total + adding - cap;
+  let freedAt = now + HOUR_MS;
+  if (adding <= cap) {
+    const [nth] = await db
+      .select({ createdAt: qrCode.createdAt })
+      .from(qrCode)
+      .where(recent)
+      .orderBy(asc(qrCode.createdAt))
+      .limit(1)
+      .offset(mustLeave - 1);
+    if (nth) freedAt = new Date(nth.createdAt).getTime() + HOUR_MS;
+  }
+  const retryAfterSeconds = Math.max(60, Math.ceil((freedAt - now) / 1000));
+  const minutes = Math.ceil(retryAfterSeconds / 60);
   throw new HttpError(
     429,
     "RATE_LIMITED",
-    `During their first ${NEW_ACCOUNT_DAYS} days, accounts can create up to ${cap.toLocaleString("en-US")} dynamic codes per hour. Please try again later.`,
+    adding > cap
+      ? `During their first ${NEW_ACCOUNT_DAYS} days, accounts can create up to ${formatCount(cap)} dynamic codes per hour, so send at most ${formatCount(cap)} at a time.`
+      : `During their first ${NEW_ACCOUNT_DAYS} days, accounts can create up to ${formatCount(cap)} dynamic codes per hour. You can create ${adding === 1 ? "the next one" : `these ${formatCount(adding)}`} in ${minutes === 1 ? "a minute" : `${minutes} minutes`}.`,
     { "Retry-After": String(retryAfterSeconds) },
   );
 }
