@@ -10,7 +10,7 @@ import {
   QR_IMAGE_KINDS,
 } from "@/components/editor/gradient-picker";
 import { defaultThemeState } from "@/config/qr";
-import { useFrameLibrary } from "@/lib/frames/library";
+import { useFrameLibrary } from "@/lib/frames/use-frame-library";
 import type { DesignSection } from "@/lib/playground-links";
 import type { QRStyle } from "@/types/theme";
 import { ColorPresets } from "./color-presets";

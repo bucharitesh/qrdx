@@ -12,6 +12,7 @@ import events from "../src/frames/catalogue/events";
 import foodDrink from "../src/frames/catalogue/food-drink";
 import healthLearning from "../src/frames/catalogue/health-learning";
 import holidays from "../src/frames/catalogue/holidays";
+import { OFFICIAL_FRAME_INDEX } from "../src/frames/catalogue/index";
 import places from "../src/frames/catalogue/places";
 import seasons from "../src/frames/catalogue/seasons";
 import shopping from "../src/frames/catalogue/shopping";
@@ -22,7 +23,6 @@ import {
   OFFICIAL_FRAME_COLLECTIONS,
   OFFICIAL_FRAME_COUNT,
   OFFICIAL_FRAME_COUNTS,
-  OFFICIAL_FRAME_INDEX,
   OFFICIAL_FRAMES,
   type OfficialFrame,
 } from "../src/frames/official";

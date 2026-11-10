@@ -3,7 +3,8 @@
 // per frame, no specs) and each collection's specs are separate chunks,
 // loaded when the frame picker or a link needs them. What has loaded stays
 // in a registry, read synchronously by the editor (names, the picker's
-// value, playground links) and watched by React through useFrameLibrary().
+// value, playground links) and watched by React through useFrameLibrary()
+// (./use-frame-library.ts; this module stays free of React for the server).
 //
 // Server code reads the full catalogue instead (lib/community/catalog.ts).
 
@@ -14,7 +15,6 @@ import {
   type OfficialFrameCollection,
   type OfficialFrameIndexEntry,
 } from "qrdx";
-import { useEffect, useSyncExternalStore } from "react";
 
 type CollectionModule = { default: readonly OfficialFrame[] };
 
@@ -154,35 +154,18 @@ export const LOADED_OFFICIAL_FRAMES = {
   specOf: (id: string) => peekOfficialFrame(id)?.spec,
 };
 
-// ── React ───────────────────────────────────────────────────────────────────
+// ── Watching ────────────────────────────────────────────────────────────────
 
-const subscribe = (listener: () => void) => {
+/** Calls `listener` whenever more of the library loads. */
+export function subscribeFrameLibrary(listener: () => void) {
   listeners.add(listener);
   return () => {
     listeners.delete(listener);
   };
-};
-
-/**
- * Re-renders when more of the library loads, and loads the index when
- * `withIndex` (a custom frame to name, a picker to fill). Returns a number
- * that changes with each load, for memo dependencies.
- */
-export function useFrameLibrary({
-  withIndex = false,
-}: {
-  withIndex?: boolean;
-} = {}): number {
-  const current = useSyncExternalStore(
-    subscribe,
-    () => version,
-    () => 0,
-  );
-  useEffect(() => {
-    if (withIndex) loadFrameIndex().catch(() => {});
-  }, [withIndex]);
-  return current;
 }
+
+/** A number that changes each time more of the library loads. */
+export const frameLibraryVersion = () => version;
 
 /** Test helper: forget everything loaded. */
 export function resetFrameLibraryForTests() {

@@ -26,7 +26,7 @@ import {
 } from "@/components/editor/gradient-picker";
 import { QRStyleScopeProvider } from "@/components/editor/style-scope";
 import { defaultThemeState } from "@/config/qr";
-import { useFrameLibrary } from "@/lib/frames/library";
+import { useFrameLibrary } from "@/lib/frames/use-frame-library";
 import { designColors } from "@/lib/paint/swatches";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";

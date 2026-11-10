@@ -32,6 +32,27 @@ const shared: Options = {
   },
 };
 
+// The official frame library (hundreds of specs) and its index are built as
+// modules of their own; the main entry re-exports them, so a bundler that
+// skips unused side-effect-free modules never ships the data to an app that
+// doesn't use it (the playground loads it on demand instead).
+const FRAME_DATA: Record<string, string> = {
+  "./frames/official": "frames-official",
+  "./frames/catalogue/index": "frames-index",
+};
+const frameDataExternal = (extension: ".js" | ".mjs"): Plugin => ({
+  name: "qrdx-frame-data-external",
+  setup(build) {
+    build.onResolve(
+      { filter: /^\.\/frames\/(official|catalogue\/index)$/ },
+      (args) => ({
+        path: `./${FRAME_DATA[args.path]}${extension}`,
+        external: true,
+      })
+    );
+  },
+});
+
 // The configs below build in parallel, so dist/ is cleaned by the "build"
 // script rather than with tsup's `clean` (which would race the other entries).
 export default defineConfig([
@@ -41,14 +62,24 @@ export default defineConfig([
     entry: ["src/index.tsx"],
     format: ["esm"],
     treeshake: true,
-    esbuildPlugins: [clientEntryExternal(".mjs")],
+    esbuildPlugins: [clientEntryExternal(".mjs"), frameDataExternal(".mjs")],
   },
   {
     ...shared,
     entry: ["src/index.tsx"],
     format: ["cjs"],
     treeshake: true,
-    esbuildPlugins: [clientEntryExternal(".js")],
+    esbuildPlugins: [clientEntryExternal(".js"), frameDataExternal(".js")],
+  },
+  // ── Official frame data (re-exported by the main entry) ────────────────
+  {
+    ...shared,
+    entry: {
+      "frames-official": "src/frames/official.ts",
+      "frames-index": "src/frames/catalogue/index.ts",
+    },
+    format: ["cjs", "esm"],
+    treeshake: true,
   },
   // ── Client component entry ──────────────────────────────────────────────
   {
