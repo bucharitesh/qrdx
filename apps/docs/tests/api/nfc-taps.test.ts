@@ -60,7 +60,7 @@ vi.mock("@/lib/events/emit", () => ({
 
 const route = await import("@/app/q/[slug]/route");
 const { routeCustomDomain } = await import(
-  "@/app/dashboard/domains/_lib/host-routing"
+  "@/app/(app)/dashboard/domains/_lib/host-routing"
 );
 
 const ORIGIN = "http://localhost:3000";

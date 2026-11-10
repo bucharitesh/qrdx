@@ -2,16 +2,16 @@ import "server-only";
 
 import { database as db, qrCode } from "@repo/database";
 import { and, eq, isNull, type SQL, sql } from "drizzle-orm";
-import type { QrCodeStatus } from "@/app/dashboard/codes/_lib/qr-codes";
-import { getCodeUsage, listCodes } from "@/app/dashboard/codes/_lib/qr-codes";
-import { getDomainsOverview } from "@/app/dashboard/domains/_lib/domains";
-import { getPageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
+import type { QrCodeStatus } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getCodeUsage, listCodes } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getDomainsOverview } from "@/app/(app)/dashboard/domains/_lib/domains";
+import { getPageUsage } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import {
   getTeam,
   listPendingInvitations,
   listTeamMembers,
-} from "@/app/dashboard/team/_lib/queries";
-import { countThemesInScope } from "@/app/dashboard/themes/_lib/queries";
+} from "@/app/(app)/dashboard/team/_lib/queries";
+import { countThemesInScope } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { getCustomDomainMode } from "@/lib/feature-availability";
 import { getPlanLimits, type Plan } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";

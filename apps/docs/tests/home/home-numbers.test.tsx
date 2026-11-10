@@ -107,7 +107,7 @@ describe("the switch", () => {
     const docs = path.resolve(__dirname, "../..");
     const read = (file: string) => readFileSync(path.join(docs, file), "utf8");
     const gate = read("components/sections/home/numbers/home-numbers.tsx");
-    const home = read("app/(home)/page.tsx");
+    const home = read("app/[lang]/(home)/page.tsx");
     const config = read("next.config.ts");
 
     const branch = gate.match(

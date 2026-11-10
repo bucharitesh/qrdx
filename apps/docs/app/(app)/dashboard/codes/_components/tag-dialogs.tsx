@@ -32,7 +32,7 @@ import {
   tagQrCodes,
   updateCodeTag,
 } from "@/actions/tags";
-import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
+import type { TagRow } from "@/app/(app)/dashboard/codes/_lib/organize";
 import {
   MAX_TAG_NAME,
   MAX_TAGS_PER_CODE,
@@ -40,8 +40,8 @@ import {
   TAG_DOT_CLASS,
   type TagColor,
   tagColor,
-} from "@/app/dashboard/codes/_lib/organize-shared";
-import type { TagRef } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
+import type { TagRef } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { TagDot } from "./tag-chip";
 import { plural, useOrganizeAction } from "./use-organize-action";
 

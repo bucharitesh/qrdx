@@ -1,5 +1,5 @@
-import { getCodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
-import { getDomainOptions } from "@/app/dashboard/domains/_lib/domains";
+import { getCodeUsage } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getDomainOptions } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { migrateScope, respond } from "@/lib/migrate/server/http";
 import { providerStatuses } from "@/lib/migrate/server/sources";
 

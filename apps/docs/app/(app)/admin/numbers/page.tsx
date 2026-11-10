@@ -1,5 +1,5 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { NumbersSection } from "@/components/sections/home/numbers/numbers-section";
 import {
   HOME_NUMBERS_FLAG,
@@ -22,7 +22,7 @@ import { requireAdmin } from "../_lib/guard";
 import { adminMetadata } from "../_lib/metadata";
 
 // The title resolves only after the admin check (see _lib/metadata.ts);
-// noindex comes from app/admin/layout.tsx.
+// noindex comes from app/(app)/admin/layout.tsx.
 export const generateMetadata = adminMetadata("Admin · Home page numbers");
 
 type Read =

@@ -2,7 +2,7 @@
 // content/docs/plans-and-limits.mdx describe them: who may call (OAuth
 // scopes, browser sessions, CSRF), what each plan allows (10 active codes on
 // Free, bulk creation on Pro, archived codes free a slot) and the JSON shapes.
-// The route handlers run the real codes service (app/dashboard/codes/_lib)
+// The route handlers run the real codes service (app/(app)/dashboard/codes/_lib)
 // against in-memory tables; only side systems (URL safety lookups, custom
 // domains, version history, webhooks) are stubbed.
 import { createHash } from "node:crypto";
@@ -63,11 +63,11 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
   getPlanForScope: async () => state.plan,
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => null,
 }));
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));

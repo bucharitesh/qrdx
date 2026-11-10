@@ -2,8 +2,8 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import type { ReactNode } from "react";
-import { limitCopy } from "@/app/settings/usage/_lib/limit-copy";
-import type { MeterId } from "@/app/settings/usage/_lib/meters";
+import { limitCopy } from "@/app/(app)/settings/usage/_lib/limit-copy";
+import type { MeterId } from "@/app/(app)/settings/usage/_lib/meters";
 import { LimitCard } from "./limit-card";
 import { limitRequestMeter } from "./limit-request";
 import { usePlanLimits } from "./plan-limits-provider";

@@ -33,7 +33,7 @@ const perAddressDailyLimiter = createRateLimiter({
 /**
  * Emails the code that confirms a new address, to that address. In local dev
  * it is printed to the server log instead (like sign-in codes). Registered
- * with @repo/auth by app/settings/account/_lib/email-change-actions.ts.
+ * with @repo/auth by app/(app)/settings/account/_lib/email-change-actions.ts.
  */
 export const sendEmailChangeCode: EmailChangeCodeSender = async ({
   email,

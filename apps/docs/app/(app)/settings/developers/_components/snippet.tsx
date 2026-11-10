@@ -3,7 +3,7 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useId } from "react";
-import { CopyButton } from "@/app/dashboard/webhooks/_components/event-checkboxes";
+import { CopyButton } from "@/app/(app)/dashboard/webhooks/_components/event-checkboxes";
 
 /** A labelled block of code with a copy button (`copy` when it differs). */
 export function Snippet({

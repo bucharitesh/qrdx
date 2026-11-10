@@ -2,7 +2,7 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Add } from "iconsax-reactjs";
 import Link from "next/link";
-import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
+import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/upgrade-plan-button";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import type { OAuthAppsOverview } from "@/lib/oauth-apps/service";

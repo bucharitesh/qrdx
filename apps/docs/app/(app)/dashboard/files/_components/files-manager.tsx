@@ -55,7 +55,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type DragEvent, useRef, useState, useTransition } from "react";
 import { deleteFileAction } from "@/actions/files";
-import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
+import { UpgradeButton } from "@/app/(app)/dashboard/team/_components/small-actions";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { FileKindIcon } from "@/lib/files/components/file-kind-icon";
 import {

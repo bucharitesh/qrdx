@@ -19,14 +19,14 @@ import {
 } from "@repo/design-system/components/ui/select";
 import { ArrowDown2 as ChevronDown } from "iconsax-reactjs";
 import { useMemo } from "react";
-import { useFolders } from "@/app/dashboard/codes/_components/folder-dialogs";
-import { TagDot } from "@/app/dashboard/codes/_components/tag-chip";
-import { useTags } from "@/app/dashboard/codes/_components/tag-dialogs";
+import { useFolders } from "@/app/(app)/dashboard/codes/_components/folder-dialogs";
+import { TagDot } from "@/app/(app)/dashboard/codes/_components/tag-chip";
+import { useTags } from "@/app/(app)/dashboard/codes/_components/tag-dialogs";
 import {
   buildFolderTree,
   flattenFolderTree,
   MAX_TAGS_PER_CODE,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 
 const FROM_FILE = "file";
 

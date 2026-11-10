@@ -13,7 +13,7 @@ import {
   siteName,
   siteTitle,
 } from "@/lib/metadata";
-import { Provider } from "./providers";
+import { Provider } from "../providers";
 
 // No canonical/og:url here (every child would inherit them); pages set their own via createMetadata().
 export const metadata: Metadata = {

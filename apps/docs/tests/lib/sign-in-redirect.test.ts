@@ -1,5 +1,5 @@
 // Signed-out visitors to signed-in pages go to /sign-in?next=<path> and come
-// back after signing in (proxy.ts, the page guards, app/(auth)/sign-in).
+// back after signing in (proxy.ts, the page guards, app/(app)/(auth)/sign-in).
 // `next` is untrusted, so lib/safe-redirect only accepts same-origin paths.
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -26,7 +26,7 @@ vi.mock("next/navigation", () => ({
     throw new Error(`redirect ${to}`);
   },
 }));
-vi.mock("@/app/dashboard/domains/_lib/host-routing", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/host-routing", () => ({
   routeCustomDomain: async () => null,
 }));
 
@@ -181,7 +181,7 @@ describe("proxy.ts", () => {
 
 describe("/sign-in", () => {
   const render = async (next?: string | string[]) => {
-    const { default: SignInPage } = await import("@/app/(auth)/sign-in/page");
+    const { default: SignInPage } = await import("@/app/(app)/(auth)/sign-in/page");
     return SignInPage({ searchParams: Promise.resolve({ next }) });
   };
 

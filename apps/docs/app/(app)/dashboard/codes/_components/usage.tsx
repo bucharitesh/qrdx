@@ -3,7 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Add as Plus } from "iconsax-reactjs";
 import type { ComponentProps } from "react";
-import type { CodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { CodeUsage } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { CapMeter } from "@/components/limits/cap-meter";
 import { useShowLimit } from "@/components/limits/limit-dialog";

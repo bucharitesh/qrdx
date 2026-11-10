@@ -9,7 +9,7 @@ import {
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { fetchUsdRates } from "@/lib/affiliates/exchange-rates";
 import { referralLinkLabel } from "@/lib/affiliates/links";
 import {

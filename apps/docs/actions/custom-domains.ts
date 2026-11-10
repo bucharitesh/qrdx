@@ -11,7 +11,7 @@ import {
   MAX_HOSTNAME_INPUT,
   removeDomain,
   verifyDomain,
-} from "@/app/dashboard/domains/_lib/domains";
+} from "@/app/(app)/dashboard/domains/_lib/domains";
 import { HttpError } from "@/lib/error-response";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";

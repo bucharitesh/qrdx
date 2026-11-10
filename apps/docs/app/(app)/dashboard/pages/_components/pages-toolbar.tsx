@@ -18,7 +18,7 @@ import { useTransition } from "react";
 import {
   DisplayMenu,
   ListSearch,
-} from "@/app/dashboard/codes/_components/display-menu";
+} from "@/app/(app)/dashboard/codes/_components/display-menu";
 
 export interface PagesFilters {
   q: string;

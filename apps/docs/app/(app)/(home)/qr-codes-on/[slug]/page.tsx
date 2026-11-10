@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { TopicPage } from "@/app/(home)/qr-codes-for/_components/topic-page";
+import { TopicPage } from "@/app/(app)/(home)/qr-codes-for/_components/topic-page";
 import { createMetadata } from "@/lib/metadata";
 import { industries, placements } from "@/lib/seo-content";
 import { buildTimeParams } from "@/lib/static-params";

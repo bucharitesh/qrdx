@@ -5,7 +5,7 @@ import {
   type Meter,
   type MeterId,
   meterLabel,
-} from "@/app/settings/usage/_lib/meters";
+} from "@/app/(app)/settings/usage/_lib/meters";
 import type { ShellLimits } from "./plan-limits-provider";
 
 export interface LimitRequest {

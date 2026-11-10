@@ -13,11 +13,11 @@ import { setQrCodesFavorite } from "@/actions/bulk-codes";
 import {
   LIST_ROW_FOCUS,
   type ListSelectionApi,
-} from "@/app/dashboard/_components/list-selection";
-import type { CodeProperty } from "@/app/dashboard/codes/_lib/display";
-import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
-import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
-import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/_components/list-selection";
+import type { CodeProperty } from "@/app/(app)/dashboard/codes/_lib/display";
+import type { TagRow } from "@/app/(app)/dashboard/codes/_lib/organize";
+import type { FolderRow } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
+import type { QrCodeListItem } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { CodeActionsMenu } from "./code-actions-menu";

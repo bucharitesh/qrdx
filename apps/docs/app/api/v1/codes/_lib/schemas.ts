@@ -1,16 +1,16 @@
 import type { QrCodeKind } from "@repo/database";
 import { z } from "zod";
-import { idempotencyKeySchema } from "@/app/dashboard/codes/_lib/bulk";
+import { idempotencyKeySchema } from "@/app/(app)/dashboard/codes/_lib/bulk";
 import {
   createCodeSchema,
   hasAnyField,
   MAX_BULK_CREATE,
   updateCodeFields,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   pageForCodeSchema,
   pageIdSchema,
-} from "@/app/dashboard/pages/_lib/landing-pages";
+} from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { FILE_ID } from "@/lib/qr-api/style";
 import { LOGO_ICON_HELP, logoIconSchema } from "@/lib/qr-design/logo-icon";
 import { SCAN_RANGE_KEYS } from "@/lib/scans";
@@ -55,7 +55,7 @@ export const createCodesHeadersSchema = z.object({
     ),
 });
 
-// ─── Changing a code's type (app/dashboard/codes/_lib/code-kind.ts) ─────────
+// ─── Changing a code's type (app/(app)/dashboard/codes/_lib/code-kind.ts) ─────────
 
 /** PATCH fields that switch a code between a website link and a hosted page. */
 export const codeKindFields = {

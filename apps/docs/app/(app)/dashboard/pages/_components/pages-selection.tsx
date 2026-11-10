@@ -45,13 +45,13 @@ import {
   SelectionStatus,
   useListSelection,
   useModKey,
-} from "@/app/dashboard/_components/list-selection";
+} from "@/app/(app)/dashboard/_components/list-selection";
 import {
   BULK_KEYS,
   type BulkAction,
   keyLabel,
   offeredBulkActions,
-} from "@/app/dashboard/_lib/list-keys";
+} from "@/app/(app)/dashboard/_lib/list-keys";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useCan } from "@/components/workspace-provider";
 

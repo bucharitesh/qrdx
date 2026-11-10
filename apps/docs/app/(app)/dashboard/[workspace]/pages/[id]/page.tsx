@@ -3,10 +3,10 @@ import { notFound } from "next/navigation";
 import {
   BUSINESS_CARD_PAGE_TYPE,
   nfcPageHref,
-} from "@/app/dashboard/codes/_lib/nfc";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import { getPageForEdit } from "@/app/dashboard/pages/_lib/landing-pages";
-import { getSavedThemePalettes } from "@/app/dashboard/pages/_lib/saved-themes";
+} from "@/app/(app)/dashboard/codes/_lib/nfc";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getPageForEdit } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
+import { getSavedThemePalettes } from "@/app/(app)/dashboard/pages/_lib/saved-themes";
 import { PageEditor } from "@/components/landing/editor/page-editor";
 import { HttpError } from "@/lib/error-response";
 import { getTemplate } from "@/lib/landing/templates";

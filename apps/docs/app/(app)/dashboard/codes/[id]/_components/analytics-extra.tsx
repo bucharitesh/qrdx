@@ -8,19 +8,19 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { eq } from "drizzle-orm";
-import { CountBarChart } from "@/app/dashboard/analytics/_components/charts";
-import { TimeZoneSwitch } from "@/app/dashboard/analytics/_components/time-zone-switch";
+import { CountBarChart } from "@/app/(app)/dashboard/analytics/_components/charts";
+import { TimeZoneSwitch } from "@/app/(app)/dashboard/analytics/_components/time-zone-switch";
 import {
   type ConversionSummary,
   getConversionSummary,
   getPageEventSummary,
   type PageEventSummary,
-} from "@/app/dashboard/analytics/_lib/queries";
-import { BreakdownCard } from "@/app/dashboard/codes/_components/breakdown-card";
+} from "@/app/(app)/dashboard/analytics/_lib/queries";
+import { BreakdownCard } from "@/app/(app)/dashboard/codes/_components/breakdown-card";
 import {
   displayUrl,
   formatNumber,
-} from "@/app/dashboard/codes/_components/format";
+} from "@/app/(app)/dashboard/codes/_components/format";
 import {
   parseRoutingConfig,
   type SplitBreakdownPlan,

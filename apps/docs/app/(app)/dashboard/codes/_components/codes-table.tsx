@@ -15,12 +15,12 @@ import {
   LIST_TABLE_ROW_FOCUS,
   type ListSelectionApi,
   useModKey,
-} from "@/app/dashboard/_components/list-selection";
-import type { CodeProperty } from "@/app/dashboard/codes/_lib/display";
-import { CODE_PROPERTIES } from "@/app/dashboard/codes/_lib/display";
-import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
-import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
-import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/_components/list-selection";
+import type { CodeProperty } from "@/app/(app)/dashboard/codes/_lib/display";
+import { CODE_PROPERTIES } from "@/app/(app)/dashboard/codes/_lib/display";
+import type { TagRow } from "@/app/(app)/dashboard/codes/_lib/organize";
+import type { FolderRow } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
+import type { QrCodeListItem } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useWorkspaceHref } from "@/components/workspace-provider";

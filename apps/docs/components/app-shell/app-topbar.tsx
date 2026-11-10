@@ -3,7 +3,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { Meter } from "@/app/settings/usage/_lib/meters";
+import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
 import bar from "@/components/header-bar.module.css";
 import { QrdxLogo } from "@/components/qrdx-logo";

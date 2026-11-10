@@ -2,8 +2,8 @@ import "server-only";
 
 import { generateText } from "ai";
 import { z } from "zod";
-import { destinationUrlSchema } from "@/app/dashboard/codes/_lib/qr-codes";
-import { assertBindableDomains } from "@/app/dashboard/domains/_lib/domains";
+import { destinationUrlSchema } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { assertBindableDomains } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { textProviderOptions } from "@/lib/ai/models";
 import { assertAIConfigured, languageModel } from "@/lib/ai/providers";
 import { HttpError } from "@/lib/error-response";

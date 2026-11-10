@@ -2,7 +2,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import {
   TAG_DOT_CLASS,
   tagColor,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 
 export function TagDot({
   color,

@@ -24,8 +24,8 @@ import {
   assertBindableDomains,
   type DomainRef,
   getDomainRefs,
-} from "@/app/dashboard/domains/_lib/domains";
-import { getDefaultThemeStyle } from "@/app/dashboard/themes/_lib/queries";
+} from "@/app/(app)/dashboard/domains/_lib/domains";
+import { getDefaultThemeStyle } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { codeEvents, codeUpdateEvents } from "@/ee/audit-log/code-events";
 import { recordAuditEvent } from "@/ee/audit-log/record";
 import { formatCount, MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";

@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { CheckoutOpen } from "@/app/settings/usage/_lib/meters";
+import type { CheckoutOpen } from "@/app/(app)/settings/usage/_lib/meters";
 import { isBillingConfigured } from "@/lib/polar";
 import { BILLING_INTERVALS, type PaidPlan, PRICING } from "@/lib/pricing";
 

@@ -9,9 +9,9 @@ import {
 } from "@repo/design-system/components/ui/empty";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/upgrade-plan-button";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { getAuditLogAccess } from "@/ee/audit-log/access";
 import { AuditLogView } from "@/ee/audit-log/audit-log-view";

@@ -4,7 +4,7 @@ import {
   buildFolderTree,
   type FolderRow,
   flattenFolderTree,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import { getBarcodeFormat } from "@/lib/barcode/formats";
 import { renderBarcodeServer } from "@/lib/barcode/server";
 import { barcodeImageUrl } from "@/lib/barcode/url";

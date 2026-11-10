@@ -1,5 +1,5 @@
 // Adding a Slack or Discord notification webhook asks "Confirm it's you"
-// (app/settings/notifications/_lib/actions.ts): notifications would go to a
+// (app/(app)/settings/notifications/_lib/actions.ts): notifications would go to a
 // new address. Changing which events an existing one gets, or removing it,
 // doesn't ask. The confirmation is the real one
 // (lib/account/confirmation-server.tsx) on in-memory tables
@@ -66,7 +66,7 @@ vi.mock("@/lib/events/notification-settings", async (importOriginal) => ({
 const { recordConfirmation } = await import(
   "@/lib/account/confirmation-server"
 );
-const notifications = await import("@/app/settings/notifications/_lib/actions");
+const notifications = await import("@/app/(app)/settings/notifications/_lib/actions");
 
 const REQUIRED = { ok: false, error: "CONFIRMATION_REQUIRED" };
 const SLACK = "https://hooks.slack.com/services/T000/B000/XXXX";

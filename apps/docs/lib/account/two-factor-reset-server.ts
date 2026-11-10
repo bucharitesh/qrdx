@@ -16,7 +16,7 @@ import {
   verification,
 } from "@repo/database";
 import { eq, like } from "drizzle-orm";
-import { writeAuditLog } from "@/app/admin/_lib/audit";
+import { writeAuditLog } from "@/app/(app)/admin/_lib/audit";
 import type { TwoFactorResetCancelledBy } from "@/lib/email/templates/two-factor-notice";
 import type { TwoFactorNoticeOutcome } from "./two-factor-notice";
 import { sendTwoFactorNotice } from "./two-factor-notice-server";
@@ -25,7 +25,7 @@ import { resetTwoFactor } from "./two-factor-server";
 // Support turning off someone's two-step verification waits 7 days with a
 // notice to the account's address (packages/auth/two-factor-reset.ts has the
 // rules and the record). Support schedules it on the admin user page
-// (app/admin/users/support-actions.ts), only once the notice went out; the
+// (app/(app)/admin/users/support-actions.ts), only once the notice went out; the
 // person can cancel it in Settings, or by signing in or confirming it's them
 // with an authenticator code or a backup code (never a passkey: the reset is
 // for a lost device, and a passkey on it mustn't block recovery); support can

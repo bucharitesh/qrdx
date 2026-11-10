@@ -4,18 +4,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCodeMarketing } from "@/actions/code-marketing";
-import { CodeOptionPlansProvider } from "@/app/dashboard/codes/_components/code-options";
-import { CodeHeader } from "@/app/dashboard/codes/_components/code-overview";
-import { codeOptionPlansFor } from "@/app/dashboard/codes/_lib/code-option-plans";
-import { resolveCodeTab } from "@/app/dashboard/codes/_lib/code-tabs";
+import { CodeOptionPlansProvider } from "@/app/(app)/dashboard/codes/_components/code-options";
+import { CodeHeader } from "@/app/(app)/dashboard/codes/_components/code-overview";
+import { codeOptionPlansFor } from "@/app/(app)/dashboard/codes/_lib/code-option-plans";
+import { resolveCodeTab } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
 import {
   getCode,
   requireDashboardScope,
-} from "@/app/dashboard/codes/_lib/qr-codes";
-import { AnalyticsTab } from "@/app/dashboard/codes/[id]/_components/analytics-tab";
-import { CodeTabsNav } from "@/app/dashboard/codes/[id]/_components/code-tabs-nav";
-import { OverviewTab } from "@/app/dashboard/codes/[id]/_components/overview-tab";
-import { SettingsTab } from "@/app/dashboard/codes/[id]/_components/settings-tab";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { AnalyticsTab } from "@/app/(app)/dashboard/codes/[id]/_components/analytics-tab";
+import { CodeTabsNav } from "@/app/(app)/dashboard/codes/[id]/_components/code-tabs-nav";
+import { OverviewTab } from "@/app/(app)/dashboard/codes/[id]/_components/overview-tab";
+import { SettingsTab } from "@/app/(app)/dashboard/codes/[id]/_components/settings-tab";
 import { ViewOnly } from "@/components/workspaces/view-only";
 import { HttpError } from "@/lib/error-response";
 import { can } from "@/lib/permissions";

@@ -205,7 +205,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "SLACK_SIGNING_SECRET",
       ...(ctx.production ? ["INTEGRATION_ENCRYPTION_KEY"] : []),
     ],
-    // The docs page and the /slack landing page (app/(home)/slack).
+    // The docs page and the /slack landing page (app/(app)/(home)/slack).
     paths: ["/docs/slack-bot", "/slack"],
     extrasOf: "slack",
   },

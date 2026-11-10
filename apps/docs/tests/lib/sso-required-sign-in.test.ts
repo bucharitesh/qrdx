@@ -6,7 +6,7 @@
 // tests/auth/sso-required.test.ts. Nothing connects anywhere.
 import { SSO_REQUIRED_ERROR } from "@repo/auth/sso-required-rules";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { signInErrorMessage } from "@/app/(auth)/sign-in/_lib/error-message";
+import { signInErrorMessage } from "@/app/(app)/(auth)/sign-in/_lib/error-message";
 
 const state = vi.hoisted(() => ({
   problem: null as null | { kind: "off" | "onto"; domain: string },
@@ -108,10 +108,10 @@ const { ssoEmailChangeMessage, ssoSignInErrorMessage } = await import(
 const { signInFailureMessage } = await import("@/lib/account/passkeys");
 const { challengeFailure } = await import("@/lib/auth/two-factor");
 const { passkeyStepOutcome } = await import(
-  "@/app/(auth)/components/second-step"
+  "@/app/(app)/(auth)/components/second-step"
 );
 const { requestEmailChange } = await import(
-  "@/app/settings/account/_lib/email-change-actions"
+  "@/app/(app)/settings/account/_lib/email-change-actions"
 );
 const { linkedSignInsFor } = await import(
   "@/lib/account/linked-sign-ins-server"

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
-import type { CodeOptionPlans } from "@/app/dashboard/codes/_lib/code-options";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { CodeOptionPlans } from "@/app/(app)/dashboard/codes/_lib/code-options";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { cheapestPlanWith } from "@/lib/plans";
 import type { PaidPlan } from "@/lib/pricing";
 import { HistoryPanel } from "./history-panel";

@@ -9,31 +9,34 @@ import type { SeoCollection } from "@/lib/seo-content";
 
 export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
   "/pricing": [
-    "app/(home)/pricing/page.tsx",
+    "app/[lang]/(home)/pricing/page.tsx",
     "components/sections/pricing/plan-content.ts",
     "lib/plans.ts",
     "lib/pricing.ts",
   ],
-  "/guarantee": ["app/(home)/guarantee/page.tsx"],
-  "/affiliates": ["app/(home)/affiliates/page.tsx", "lib/affiliates/terms.ts"],
-  "/mcp": ["app/(home)/mcp/page.tsx"],
+  "/guarantee": ["app/(app)/(home)/guarantee/page.tsx"],
+  "/affiliates": [
+    "app/(app)/(home)/affiliates/page.tsx",
+    "lib/affiliates/terms.ts",
+  ],
+  "/mcp": ["app/(app)/(home)/mcp/page.tsx"],
   "/plugins": [
-    "app/(home)/plugins/page.tsx",
-    "app/(home)/plugins/plugin-data.ts",
+    "app/(app)/(home)/plugins/page.tsx",
+    "app/(app)/(home)/plugins/plugin-data.ts",
   ],
   // The chat bots' landing pages; the layout and mockups are in
   // components/sections/chat-bots.
-  "/slack": ["app/(home)/slack/page.tsx"],
-  "/telegram": ["app/(home)/telegram/page.tsx"],
-  "/discord": ["app/(home)/discord/page.tsx"],
-  "/templates": ["app/(home)/templates/page.tsx"],
-  "/tools": ["app/(home)/tools/page.tsx"],
-  "/tools/bulk": ["app/(home)/tools/bulk/page.tsx"],
-  "/tools/print-size": ["app/(home)/tools/print-size/page.tsx"],
-  "/tools/scan-checker": ["app/(home)/tools/scan-checker/page.tsx"],
-  "/scan": ["app/(home)/scan/page.tsx"],
+  "/slack": ["app/(app)/(home)/slack/page.tsx"],
+  "/telegram": ["app/(app)/(home)/telegram/page.tsx"],
+  "/discord": ["app/(app)/(home)/discord/page.tsx"],
+  "/templates": ["app/(app)/(home)/templates/page.tsx"],
+  "/tools": ["app/(app)/(home)/tools/page.tsx"],
+  "/tools/bulk": ["app/(app)/(home)/tools/bulk/page.tsx"],
+  "/tools/print-size": ["app/(app)/(home)/tools/print-size/page.tsx"],
+  "/tools/scan-checker": ["app/(app)/(home)/tools/scan-checker/page.tsx"],
+  "/scan": ["app/(app)/(home)/scan/page.tsx"],
   "/barcode-generator": [
-    "app/(home)/barcode-generator/page.tsx",
+    "app/(app)/(home)/barcode-generator/page.tsx",
     "lib/barcode/formats.ts",
   ],
 };

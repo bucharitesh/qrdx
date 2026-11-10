@@ -7,7 +7,7 @@ import { useState } from "react";
 import {
   formatDate,
   formatNumber,
-} from "@/app/dashboard/codes/_components/format";
+} from "@/app/(app)/dashboard/codes/_components/format";
 import { formatDistance, formatLatLng, osmUrl } from "@/lib/scan-location/geo";
 
 export interface PreciseLocationRow {

@@ -23,30 +23,30 @@ import { getUserSettings } from "@/actions/user-settings";
 import {
   formatDate,
   formatNumber,
-} from "@/app/dashboard/codes/_components/format";
-import { ListDisplayProvider } from "@/app/dashboard/codes/_components/list-display";
+} from "@/app/(app)/dashboard/codes/_components/format";
+import { ListDisplayProvider } from "@/app/(app)/dashboard/codes/_components/list-display";
 import {
   DISPLAY_COOKIES,
   parseDisplay,
-} from "@/app/dashboard/codes/_lib/display";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/display";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   NewPageButton,
   PageActions,
   PageUsageMeter,
-} from "@/app/dashboard/pages/_components/page-list-controls";
+} from "@/app/(app)/dashboard/pages/_components/page-list-controls";
 import {
   PageCheckbox,
   PageCheckboxCell,
   PageRow,
   PagesSelectAll,
   PagesSelection,
-} from "@/app/dashboard/pages/_components/pages-selection";
-import { PagesToolbar } from "@/app/dashboard/pages/_components/pages-toolbar";
+} from "@/app/(app)/dashboard/pages/_components/pages-selection";
+import { PagesToolbar } from "@/app/(app)/dashboard/pages/_components/pages-toolbar";
 import {
   getPageUsage,
   listPages,
-} from "@/app/dashboard/pages/_lib/landing-pages";
+} from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { CopyButton } from "@/components/copy-button";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { getTemplate } from "@/lib/landing/templates";

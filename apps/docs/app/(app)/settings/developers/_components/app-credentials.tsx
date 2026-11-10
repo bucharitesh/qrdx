@@ -21,7 +21,7 @@ import {
 import { Refresh2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { CopyButton } from "@/app/dashboard/webhooks/_components/event-checkboxes";
+import { CopyButton } from "@/app/(app)/dashboard/webhooks/_components/event-checkboxes";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import { regenerateOAuthAppSecretAction } from "../_lib/actions";
 import { formatDate } from "./format";

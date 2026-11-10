@@ -1,8 +1,8 @@
 import {
   inactiveOptions,
   listLabels,
-} from "@/app/dashboard/codes/_lib/code-kind-shared";
-import { CODE_OPTION_COPY } from "@/app/dashboard/codes/_lib/code-options";
+} from "@/app/(app)/dashboard/codes/_lib/code-kind-shared";
+import { CODE_OPTION_COPY } from "@/app/(app)/dashboard/codes/_lib/code-options";
 import type { MarketingSettingsPromise } from "./routing-panel";
 
 /**

@@ -1,4 +1,4 @@
-// The second step's page logic (app/(auth)/components/second-step.ts):
+// The second step's page logic (app/(app)/(auth)/components/second-step.ts):
 // which method shows first, what a failed passkey says, and why a typed
 // backup code can't be one.
 import { normalizeBackupCode } from "@repo/auth/sign-in-challenge-rules";
@@ -12,7 +12,7 @@ import {
   passkeyStepOutcome,
   readRememberedStep,
   rememberStep,
-} from "@/app/(auth)/components/second-step";
+} from "@/app/(app)/(auth)/components/second-step";
 
 const ALL = { passkey: true, totp: true, backupCodes: true };
 

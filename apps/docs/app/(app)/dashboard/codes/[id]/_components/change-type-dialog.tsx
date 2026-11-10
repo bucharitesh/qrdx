@@ -30,20 +30,20 @@ import {
   getCodeTypeOptions,
   switchQrCodeKind,
 } from "@/actions/code-kind";
-import { displayUrl } from "@/app/dashboard/codes/_components/format";
+import { displayUrl } from "@/app/(app)/dashboard/codes/_components/format";
 import {
   TemplateGallery,
   TypeCard,
   useDemoContent,
   useTemplatePreviews,
   useTemplates,
-} from "@/app/dashboard/codes/_components/new-code-dialog";
+} from "@/app/(app)/dashboard/codes/_components/new-code-dialog";
 import {
   listLabels,
   summarizeCarryOver,
-} from "@/app/dashboard/codes/_lib/code-kind-shared";
-import { CODE_OPTION_COPY } from "@/app/dashboard/codes/_lib/code-options";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/code-kind-shared";
+import { CODE_OPTION_COPY } from "@/app/(app)/dashboard/codes/_lib/code-options";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { useAvailability } from "@/components/availability-provider";
 import { InlineLimit } from "@/components/limits/inline-limit";
 import { useShowLimit } from "@/components/limits/limit-dialog";

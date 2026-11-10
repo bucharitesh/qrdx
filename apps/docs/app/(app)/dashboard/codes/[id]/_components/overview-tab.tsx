@@ -8,24 +8,24 @@ import {
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
 import { getCodeLifecycle } from "@/actions/code-lifecycle";
-import { CodeOptionGrid } from "@/app/dashboard/codes/_components/code-options";
-import { CodeOverview } from "@/app/dashboard/codes/_components/code-overview";
+import { CodeOptionGrid } from "@/app/(app)/dashboard/codes/_components/code-options";
+import { CodeOverview } from "@/app/(app)/dashboard/codes/_components/code-overview";
 import {
   formatDate,
   formatNumber,
-} from "@/app/dashboard/codes/_components/format";
+} from "@/app/(app)/dashboard/codes/_components/format";
 // NFC (feat/nfc): "Use with NFC" / "Put this card on NFC".
-import { NfcCard } from "@/app/dashboard/codes/_components/nfc-card";
-import { Sparkline } from "@/app/dashboard/codes/_components/sparkline";
+import { NfcCard } from "@/app/(app)/dashboard/codes/_components/nfc-card";
+import { Sparkline } from "@/app/(app)/dashboard/codes/_components/sparkline";
 import {
   CODE_OPTION_ANCHORS,
   type CodeOptionId,
   type CodeOptionPlans,
   codeOptionStatus,
   codeOptionsFor,
-} from "@/app/dashboard/codes/_lib/code-options";
-import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/code-options";
+import { codeTabHref } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { getScanSparklines } from "@/lib/scans";
 import { requestWorkspaceSlug } from "@/lib/scope";
 import { LandingPagePanel } from "./landing-page-panel";

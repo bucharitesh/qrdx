@@ -2,7 +2,7 @@ import "server-only";
 
 import { database as db, landingPage } from "@repo/database";
 import { eq } from "drizzle-orm";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { workspaceLink } from "@/lib/workspace-paths";
 
 // The NFC page of a code (/dashboard/<workspace>/codes/<id>/nfc): write its

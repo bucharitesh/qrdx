@@ -3,7 +3,7 @@
 import { toast } from "@repo/design-system";
 import { useRouter } from "next/navigation";
 import { useCallback, useTransition } from "react";
-import type { OrganizeResult } from "@/app/dashboard/codes/_lib/organize";
+import type { OrganizeResult } from "@/app/(app)/dashboard/codes/_lib/organize";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 

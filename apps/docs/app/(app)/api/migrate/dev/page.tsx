@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { ImportDialog } from "@/app/dashboard/codes/_components/import-dialog";
+import { ImportDialog } from "@/app/(app)/dashboard/codes/_components/import-dialog";
 
 export const metadata: Metadata = {
   title: "Import preview",

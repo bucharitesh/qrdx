@@ -22,7 +22,7 @@ import { qrImageQuerySchema } from "@/app/api/v1/qr/_lib/query";
 import {
   codeIdSchema,
   MAX_BULK_CREATE,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   insufficientKeyScopeError,
   invalidApiKeyError,

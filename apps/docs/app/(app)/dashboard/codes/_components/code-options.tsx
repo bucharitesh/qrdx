@@ -29,7 +29,7 @@ import {
 import {
   type CodeOptionsData,
   getCodeOptions,
-} from "@/app/dashboard/codes/_lib/code-option-actions";
+} from "@/app/(app)/dashboard/codes/_lib/code-option-actions";
 import {
   CODE_OPTION_COPY,
   type CodeKind,
@@ -38,17 +38,17 @@ import {
   codeOptionStatus,
   codeOptionsFor,
   formatPlanList,
-} from "@/app/dashboard/codes/_lib/code-options";
-import { LifecyclePanelForm } from "@/app/dashboard/codes/[id]/_components/lifecycle-panel-form";
-import { PixelsPanel } from "@/app/dashboard/codes/[id]/_components/pixels-panel";
-import type { MarketingSettingsPromise } from "@/app/dashboard/codes/[id]/_components/routing-panel";
+} from "@/app/(app)/dashboard/codes/_lib/code-options";
+import { LifecyclePanelForm } from "@/app/(app)/dashboard/codes/[id]/_components/lifecycle-panel-form";
+import { PixelsPanel } from "@/app/(app)/dashboard/codes/[id]/_components/pixels-panel";
+import type { MarketingSettingsPromise } from "@/app/(app)/dashboard/codes/[id]/_components/routing-panel";
 import {
   PanelCard,
   PanelFallback,
   PlanLock,
   RoutingPanel,
-} from "@/app/dashboard/codes/[id]/_components/routing-panel";
-import { UtmPanel } from "@/app/dashboard/codes/[id]/_components/utm-panel";
+} from "@/app/(app)/dashboard/codes/[id]/_components/routing-panel";
+import { UtmPanel } from "@/app/(app)/dashboard/codes/[id]/_components/utm-panel";
 import { PLAN_NAMES } from "@/lib/pricing";
 
 /** One icon per option; none repeats in the grid. */

@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import type { ApiKeysState } from "@/app/settings/developers/_components/api-keys-section";
-import { DevelopersView } from "@/app/settings/developers/_components/developers-view";
-import { requestOrigin } from "@/app/settings/developers/_lib/origin";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import type { ApiKeysState } from "@/app/(app)/settings/developers/_components/api-keys-section";
+import { DevelopersView } from "@/app/(app)/settings/developers/_components/developers-view";
+import { requestOrigin } from "@/app/(app)/settings/developers/_lib/origin";
 import { ApiKeysUnavailableError, listApiKeys } from "@/lib/api-keys/service";
 import { apiBaseFor } from "@/lib/api-keys/shared";
 import { baseUrl } from "@/lib/metadata";

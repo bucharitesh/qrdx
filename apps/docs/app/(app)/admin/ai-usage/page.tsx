@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { DailyChart } from "../_components/daily-chart";
 import { EmptyRow, Section } from "../_components/stat-card";
 import { formatNumber } from "../_lib/format";

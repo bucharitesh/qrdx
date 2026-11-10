@@ -202,7 +202,7 @@ export async function describeUserLink(
 
 /**
  * Links a Slack person to a QRdx user and workspace. Replaces their link:
- * the confirm page asks first (app/integrations/slack/link/actions.ts).
+ * the confirm page asks first (app/(app)/integrations/slack/link/actions.ts).
  */
 export async function saveUserLink(input: {
   teamId: string;

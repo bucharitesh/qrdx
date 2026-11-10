@@ -1,4 +1,4 @@
-// Run: cd apps/docs && npx tsx --test app/dashboard/domains/_lib/hostname.test.ts
+// Run: cd apps/docs && npx tsx --test app/(app)/dashboard/domains/_lib/hostname.test.ts
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {

@@ -9,13 +9,13 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   DeleteTeamButton,
   LeaveTeamButton,
-} from "@/app/dashboard/team/_components/danger-zone";
-import { getTeam, listTeamMembers } from "@/app/dashboard/team/_lib/queries";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+} from "@/app/(app)/dashboard/team/_components/danger-zone";
+import { getTeam, listTeamMembers } from "@/app/(app)/dashboard/team/_lib/queries";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
 import { WorkspaceGeneralForm } from "@/components/workspaces/workspace-general-form";
 import { WorkspaceLogoField } from "@/components/workspaces/workspace-logo-field";

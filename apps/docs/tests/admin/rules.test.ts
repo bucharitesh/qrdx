@@ -1,4 +1,4 @@
-// Pure rules behind the admin support tools (app/admin/_lib/rules.ts).
+// Pure rules behind the admin support tools (app/(app)/admin/_lib/rules.ts).
 import { describe, expect, it } from "vitest";
 import {
   CANCELED_IMPORT_REASON,
@@ -14,7 +14,7 @@ import {
   resentInvitationExpiry,
   SEARCH_KINDS,
   STUCK_IMPORT_MS,
-} from "@/app/admin/_lib/rules";
+} from "@/app/(app)/admin/_lib/rules";
 import type { ImportJob, JobItem } from "@/lib/migrate/types";
 
 describe("parseAdminSearch", () => {

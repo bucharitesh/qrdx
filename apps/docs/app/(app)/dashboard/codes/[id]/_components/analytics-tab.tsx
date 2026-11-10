@@ -11,19 +11,19 @@ import Link from "next/link";
 import {
   BreakdownCard,
   type BreakdownItem,
-} from "@/app/dashboard/codes/_components/breakdown-card";
+} from "@/app/(app)/dashboard/codes/_components/breakdown-card";
 import {
   formatDate,
   formatNumber,
-} from "@/app/dashboard/codes/_components/format";
+} from "@/app/(app)/dashboard/codes/_components/format";
 // NFC (feat/nfc): QR scans and NFC taps.
-import { ScanSourceCard } from "@/app/dashboard/codes/_components/scan-source-card";
-import { ScansChart } from "@/app/dashboard/codes/_components/scans-chart";
-import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
-import { nfcPageHref } from "@/app/dashboard/codes/_lib/nfc";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
-import { AnalyticsExtra } from "@/app/dashboard/codes/[id]/_components/analytics-extra";
-import { PreciseLocationsCard } from "@/app/dashboard/codes/[id]/_components/precise-locations-card";
+import { ScanSourceCard } from "@/app/(app)/dashboard/codes/_components/scan-source-card";
+import { ScansChart } from "@/app/(app)/dashboard/codes/_components/scans-chart";
+import { codeTabHref } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
+import { nfcPageHref } from "@/app/(app)/dashboard/codes/_lib/nfc";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { AnalyticsExtra } from "@/app/(app)/dashboard/codes/[id]/_components/analytics-extra";
+import { PreciseLocationsCard } from "@/app/(app)/dashboard/codes/[id]/_components/precise-locations-card";
 import { SheetsExport } from "@/components/data-connections/sheets-export";
 import { PLAN_LIMITS, PLANS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";

@@ -21,12 +21,12 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
   getPlanForScope: async () => "pro",
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
 const DEFAULT_THEME = { fgColor: "#222222", bgColor: "#ffffff" };
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => DEFAULT_THEME,
 }));
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));
@@ -41,7 +41,7 @@ vi.mock("@/lib/events/emit", () => ({
 vi.mock("@/lib/shared", () => ({ logError: () => {} }));
 
 const { createPage, createPageSchema } = await import(
-  "@/app/dashboard/pages/_lib/landing-pages"
+  "@/app/(app)/dashboard/pages/_lib/landing-pages"
 );
 const { defaultThemeState } = await import("@/config/qr");
 

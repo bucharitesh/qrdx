@@ -15,7 +15,7 @@ import {
   verification,
 } from "@repo/database";
 import { and, count, eq, isNull, like, lte, ne, or, sql } from "drizzle-orm";
-import { requestOrigin } from "@/app/settings/developers/_lib/origin";
+import { requestOrigin } from "@/app/(app)/settings/developers/_lib/origin";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import {
   hasAuthenticatorApp,

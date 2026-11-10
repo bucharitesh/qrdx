@@ -8,7 +8,7 @@ import {
   Suspense,
   useState,
 } from "react";
-import { AuthDialog } from "@/app/(auth)/components/auth-dialog";
+import { AuthDialog } from "@/app/(app)/(auth)/components/auth-dialog";
 import { templateStartPath } from "@/lib/landing/demo-paths";
 
 /**

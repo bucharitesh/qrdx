@@ -1,7 +1,7 @@
 import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { routeCustomDomain } from "@/app/dashboard/domains/_lib/host-routing";
+import { routeCustomDomain } from "@/app/(app)/dashboard/domains/_lib/host-routing";
 import { sessionCheckPath } from "@/lib/account/session-origin";
 import {
   getSessionAllowingHold,
@@ -24,7 +24,7 @@ const { rewrite: rewriteLLM } = rewritePath("/docs/*path", "/llms.mdx/*path");
 /** Signed-in pages: signed-out visitors are sent to sign in (and back). */
 const APP_PATHS =
   /^\/(?:editor\/theme\/[^/]+|dashboard(?:\/.*)?|settings(?:\/.*)?|success)$/;
-/** Admin pages check who's signed in themselves (app/admin/_lib/guard.ts). */
+/** Admin pages check who's signed in themselves (app/(app)/admin/_lib/guard.ts). */
 const ADMIN_PATHS = /^\/admin(?:\/.*)?$/;
 
 // Enforced in production builds; `next dev` keeps only the frame rules from

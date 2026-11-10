@@ -25,7 +25,7 @@ vi.mock("@/lib/community/store", () => ({
 }));
 
 const { listVisibleThemes } = await import(
-  "@/app/dashboard/themes/_lib/queries"
+  "@/app/(app)/dashboard/themes/_lib/queries"
 );
 
 const ME = "u_me";

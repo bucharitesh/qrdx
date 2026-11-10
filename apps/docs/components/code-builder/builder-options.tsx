@@ -15,13 +15,13 @@ import { Lock } from "iconsax-reactjs";
 import {
   type CodeOptionsState,
   OPTION_ICONS,
-} from "@/app/dashboard/codes/_components/code-options";
+} from "@/app/(app)/dashboard/codes/_components/code-options";
 import {
   CODE_OPTION_COPY,
   type CodeKind,
   type CodeOptionId,
   codeOptionsFor,
-} from "@/app/dashboard/codes/_lib/code-options";
+} from "@/app/(app)/dashboard/codes/_lib/code-options";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { OPTION_KEYS } from "./shortcuts";
 

@@ -11,7 +11,7 @@ import { setQrCodeTags } from "@/actions/tags";
 import type {
   QrCodeListItem,
   QrCodeView,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import type { BuilderServices } from "./submit";
 
 /** The builder's writes: the dashboard's existing server actions. */

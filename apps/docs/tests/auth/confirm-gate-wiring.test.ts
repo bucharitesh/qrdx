@@ -37,7 +37,7 @@ describe("the confirm gate on the real auth server", () => {
     const auth = await loadAuth();
     // auth.api name (as the app calls it) → the HTTP path the gate lists.
     const called: Record<string, string> = {
-      linkSocialAccount: "/link-social", // app/settings/account/_lib/actions.ts
+      linkSocialAccount: "/link-social", // app/(app)/settings/account/_lib/actions.ts
       unlinkAccount: "/unlink-account",
       deleteOrganization: "/organization/delete", // actions/organizations.ts
       updateMemberRole: "/organization/update-member-role",

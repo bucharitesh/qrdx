@@ -13,8 +13,8 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRotateLeft as History } from "iconsax-reactjs";
 import { useState } from "react";
 import { restoreQrCodeVersion } from "@/actions/bulk-codes";
-import { useOrganizeAction } from "@/app/dashboard/codes/_components/use-organize-action";
-import { VERSION_FIELDS } from "@/app/dashboard/codes/_lib/version-diff";
+import { useOrganizeAction } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
+import { VERSION_FIELDS } from "@/app/(app)/dashboard/codes/_lib/version-diff";
 
 export function HistoryRestoreButton({
   codeId,

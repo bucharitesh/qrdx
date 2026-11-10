@@ -3,7 +3,7 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { assertAdmin } from "@/app/admin/_lib/guard";
+import { assertAdmin } from "@/app/(app)/admin/_lib/guard";
 import { HttpError } from "@/lib/error-response";
 import { type AdminFileView, setFileBlocked } from "@/lib/files/admin";
 import { deleteFile, fileIdSchema } from "@/lib/files/service";

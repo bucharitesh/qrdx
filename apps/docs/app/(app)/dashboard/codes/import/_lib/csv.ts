@@ -8,7 +8,7 @@ import {
   MAX_TAGS_PER_CODE,
   splitFolderPath,
   splitTagNames,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import { IMPORT_CHUNK_ROWS } from "@/lib/bulk-limits";
 import { SLUG_PROBLEM_MESSAGES, slugProblem } from "@/lib/short-links";
 

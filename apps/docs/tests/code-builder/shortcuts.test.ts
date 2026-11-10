@@ -5,7 +5,7 @@ import { describe, expect, it, test } from "vitest";
 import {
   CODE_OPTION_IDS,
   codeOptionsFor,
-} from "@/app/dashboard/codes/_lib/code-options";
+} from "@/app/(app)/dashboard/codes/_lib/code-options";
 import {
   escapeAction,
   OPTION_KEYS,

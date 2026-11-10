@@ -16,7 +16,7 @@ import {
   Play,
   RefreshCircle as Retry,
 } from "iconsax-reactjs";
-import { plural } from "@/app/dashboard/codes/_components/use-organize-action";
+import { plural } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
 import { formatCount } from "@/lib/bulk-limits";
 import { type ImportJob, jobProgress } from "../_lib/job";
 

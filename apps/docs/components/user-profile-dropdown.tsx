@@ -25,7 +25,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { markSignOutIntent } from "@/app/(auth)/sign-out/_lib/intent";
+import { markSignOutIntent } from "@/app/(app)/(auth)/sign-out/_lib/intent";
 import { hasAdminRole } from "@/components/app-shell/nav-config";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 import { playgroundHref } from "@/lib/playground-links";

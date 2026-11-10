@@ -10,21 +10,21 @@ import { Add, Barcode } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getUserSettings } from "@/actions/user-settings";
-import { BarcodesHeader } from "@/app/dashboard/barcodes/_components/barcodes-header";
-import { BarcodesList } from "@/app/dashboard/barcodes/_components/barcodes-list";
-import { BarcodesToolbar } from "@/app/dashboard/barcodes/_components/barcodes-toolbar";
+import { BarcodesHeader } from "@/app/(app)/dashboard/barcodes/_components/barcodes-header";
+import { BarcodesList } from "@/app/(app)/dashboard/barcodes/_components/barcodes-list";
+import { BarcodesToolbar } from "@/app/(app)/dashboard/barcodes/_components/barcodes-toolbar";
 import {
   folderOptions,
   toBarcodeCard,
-} from "@/app/dashboard/barcodes/_lib/cards";
+} from "@/app/(app)/dashboard/barcodes/_lib/cards";
 import {
   barcodesHref,
   isUnfiltered,
   parseBarcodesFilters,
-} from "@/app/dashboard/barcodes/_lib/filters";
-import { formatNumber } from "@/app/dashboard/codes/_components/format";
-import { listFolders } from "@/app/dashboard/codes/_lib/organize";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/barcodes/_lib/filters";
+import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
+import { listFolders } from "@/app/(app)/dashboard/codes/_lib/organize";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import {
   countBarcodeTrash,

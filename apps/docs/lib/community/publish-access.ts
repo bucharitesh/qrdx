@@ -13,7 +13,7 @@ import { and, eq } from "drizzle-orm";
 import {
   canEditTheme,
   isPersonalTheme,
-} from "@/app/dashboard/themes/_lib/queries";
+} from "@/app/(app)/dashboard/themes/_lib/queries";
 import { can, strongestRole } from "@/lib/permissions";
 import {
   type ActiveScope,

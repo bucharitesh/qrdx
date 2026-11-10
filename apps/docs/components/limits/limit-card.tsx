@@ -4,8 +4,8 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
-import type { LimitCopy } from "@/app/settings/usage/_lib/limit-copy";
-import { type Meter, meterPercent } from "@/app/settings/usage/_lib/meters";
+import type { LimitCopy } from "@/app/(app)/settings/usage/_lib/limit-copy";
+import { type Meter, meterPercent } from "@/app/(app)/settings/usage/_lib/meters";
 import { UpgradeButton } from "./upgrade-button";
 
 /**

@@ -6,15 +6,15 @@ import { subscription as subscriptionTable } from "@repo/database/schema";
 import { eq } from "drizzle-orm";
 
 import { getFormResponseUsage } from "@/app/api/forms/_lib/responses";
-import { getCodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
-import { getDomainsOverview } from "@/app/dashboard/domains/_lib/domains";
-import { getPageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
+import { getCodeUsage } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getDomainsOverview } from "@/app/(app)/dashboard/domains/_lib/domains";
+import { getPageUsage } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import {
   getTeam,
   listPendingInvitations,
   listTeamMembers,
-} from "@/app/dashboard/team/_lib/queries";
-import { countThemesInScope } from "@/app/dashboard/themes/_lib/queries";
+} from "@/app/(app)/dashboard/team/_lib/queries";
+import { countThemesInScope } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { getArtCredits } from "@/lib/ai/art";
 import { getCheckoutOpen } from "@/lib/checkout-availability";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";

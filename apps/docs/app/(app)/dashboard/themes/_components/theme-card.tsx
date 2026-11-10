@@ -53,7 +53,7 @@ import {
   setDefaultTheme,
   updateTheme,
 } from "@/actions/qr-themes";
-import { CodeQr } from "@/app/dashboard/codes/_components/code-qr";
+import { CodeQr } from "@/app/(app)/dashboard/codes/_components/code-qr";
 import { PublishFrameDialog } from "@/components/community/publish-frame-dialog";
 import { PublishThemeDialog } from "@/components/community/publish-theme-dialog";
 import { TagSelector } from "@/components/tag-selector";

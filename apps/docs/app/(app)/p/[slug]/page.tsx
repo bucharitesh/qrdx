@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import {
   CUSTOM_DOMAIN_HEADER,
   isCustomDomainRequest,
-} from "@/app/dashboard/domains/_lib/hostname";
+} from "@/app/(app)/dashboard/domains/_lib/hostname";
 import { scopeCustomCss } from "@/components/landing/custom-css";
 import { LandingPageFooter } from "@/components/landing/page-footer";
 import { Pixels } from "@/components/landing/pixels";

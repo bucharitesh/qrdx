@@ -9,10 +9,10 @@ import {
 } from "@repo/design-system/components/ui/empty";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
-import { WebhooksManager } from "@/app/dashboard/webhooks/_components/webhooks-manager";
+import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/upgrade-plan-button";
+import { WebhooksManager } from "@/app/(app)/dashboard/webhooks/_components/webhooks-manager";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";

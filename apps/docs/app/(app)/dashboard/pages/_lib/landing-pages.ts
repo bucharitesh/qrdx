@@ -26,8 +26,8 @@ import {
   createCodes,
   type QrCodeStatus,
   scopeWhere,
-} from "@/app/dashboard/codes/_lib/qr-codes";
-import { getDomainRefs } from "@/app/dashboard/domains/_lib/domains";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getDomainRefs } from "@/app/(app)/dashboard/domains/_lib/domains";
 import {
   getPageSettings,
   PAGE_SETTINGS_TYPE,

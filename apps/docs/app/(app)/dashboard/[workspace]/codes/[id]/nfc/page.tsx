@@ -10,14 +10,17 @@ import { ArrowLeft } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
-import { NfcGuide } from "@/app/dashboard/codes/_components/nfc-guide";
-import { NfcWritePanel } from "@/app/dashboard/codes/_components/nfc-write-panel";
-import { nfcPageHref, opensBusinessCard } from "@/app/dashboard/codes/_lib/nfc";
+import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { NfcGuide } from "@/app/(app)/dashboard/codes/_components/nfc-guide";
+import { NfcWritePanel } from "@/app/(app)/dashboard/codes/_components/nfc-write-panel";
+import {
+  nfcPageHref,
+  opensBusinessCard,
+} from "@/app/(app)/dashboard/codes/_lib/nfc";
 import {
   getCode,
   requireDashboardScope,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";

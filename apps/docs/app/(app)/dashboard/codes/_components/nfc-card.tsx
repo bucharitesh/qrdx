@@ -7,8 +7,11 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Airdrop } from "iconsax-reactjs";
 import Link from "next/link";
-import { nfcPageHref, opensBusinessCard } from "@/app/dashboard/codes/_lib/nfc";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import {
+  nfcPageHref,
+  opensBusinessCard,
+} from "@/app/(app)/dashboard/codes/_lib/nfc";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { requestWorkspaceSlug } from "@/lib/scope";
 
 /**

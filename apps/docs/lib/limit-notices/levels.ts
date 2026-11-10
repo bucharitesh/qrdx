@@ -1,7 +1,7 @@
 // Plan-limit emails: which limits send one, when,
 // and the words they use. Pure, so the tests cover every case.
 
-import { type MeterId, meterLevel } from "@/app/settings/usage/_lib/meters";
+import { type MeterId, meterLevel } from "@/app/(app)/settings/usage/_lib/meters";
 
 /** The capped limits in lib/plans.ts that send a notice near and at the cap. */
 export const NOTICE_LIMITS = [

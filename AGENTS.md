@@ -8,7 +8,7 @@ QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR gen
 
 | Path | What it is |
 | --- | --- |
-| `apps/docs` | The Next.js app behind qrdx.dev: marketing pages, the editor (`app/playground`), docs (`content/docs`, fumadocs), the signed-in app (`app/dashboard`, `app/settings`), API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`) |
+| `apps/docs` | The Next.js app behind qrdx.dev: marketing pages, the editor (`app/(app)/playground`), docs (`content/docs`, fumadocs), the signed-in app (`app/(app)/dashboard`, `app/(app)/settings`), API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`) |
 | `packages/qrdx` | The QR engine and React library, published to npm as `qrdx` |
 | `packages/cli` | `@qrdx/cli`, the command-line generator |
 | `packages/database` | Drizzle schema (`schema.ts`), migrations and `manual-sql/` |

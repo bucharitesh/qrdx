@@ -5,11 +5,11 @@ import { ArrowLeft } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import { DELIVERY_STATUS_LABELS } from "@/app/dashboard/webhooks/_lib/format";
-import { DeliveriesTable } from "@/app/dashboard/webhooks/[id]/_components/deliveries-table";
-import { EndpointSecret } from "@/app/dashboard/webhooks/[id]/_components/endpoint-secret";
+import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { DELIVERY_STATUS_LABELS } from "@/app/(app)/dashboard/webhooks/_lib/format";
+import { DeliveriesTable } from "@/app/(app)/dashboard/webhooks/[id]/_components/deliveries-table";
+import { EndpointSecret } from "@/app/(app)/dashboard/webhooks/[id]/_components/endpoint-secret";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { HttpError } from "@/lib/error-response";
 import {

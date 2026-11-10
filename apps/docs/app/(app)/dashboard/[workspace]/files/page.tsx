@@ -11,12 +11,12 @@ import {
 import { CpuSetting as ServerCog } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   type FileRow,
   FilesManager,
-} from "@/app/dashboard/files/_components/files-manager";
+} from "@/app/(app)/dashboard/files/_components/files-manager";
 import {
   getFileUsage,
   getStorageOverview,

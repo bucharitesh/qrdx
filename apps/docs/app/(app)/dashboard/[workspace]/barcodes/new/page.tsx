@@ -3,10 +3,10 @@ import { ArrowLeft } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BarcodeEditor } from "@/app/dashboard/barcodes/_components/barcode-editor";
-import { folderOptions } from "@/app/dashboard/barcodes/_lib/cards";
-import { listFolders } from "@/app/dashboard/codes/_lib/organize";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { BarcodeEditor } from "@/app/(app)/dashboard/barcodes/_components/barcode-editor";
+import { folderOptions } from "@/app/(app)/dashboard/barcodes/_lib/cards";
+import { listFolders } from "@/app/(app)/dashboard/codes/_lib/organize";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { can } from "@/lib/permissions";
 import { workspaceHref } from "@/lib/workspace-paths";
 

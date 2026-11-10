@@ -20,7 +20,7 @@ import {
   FolderMinus,
 } from "iconsax-reactjs";
 import Link from "next/link";
-import { formatNumber } from "@/app/dashboard/codes/_components/format";
+import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
 import { useCan } from "@/components/workspace-provider";
 import {
   type BarcodesFilters,

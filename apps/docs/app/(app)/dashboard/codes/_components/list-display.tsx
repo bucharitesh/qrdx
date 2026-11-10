@@ -13,7 +13,7 @@ import {
   type DisplayList,
   displayCookie,
   type ListDisplay,
-} from "@/app/dashboard/codes/_lib/display";
+} from "@/app/(app)/dashboard/codes/_lib/display";
 
 const DisplayContext = createContext<{
   display: ListDisplay;

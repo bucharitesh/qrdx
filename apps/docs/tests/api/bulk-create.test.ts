@@ -9,7 +9,7 @@ import {
   chunkRows,
   idempotentCodeId,
   uniqueSlugs,
-} from "@/app/dashboard/codes/_lib/bulk";
+} from "@/app/(app)/dashboard/codes/_lib/bulk";
 import { MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";
 import { fakeDb } from "../support/fake-db";
 
@@ -84,11 +84,11 @@ vi.mock("@/lib/short-links", async (importOriginal) => {
     generateSlug: () => state.slugQueue.shift() ?? actual.generateSlug(),
   };
 });
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => state.defaultStyle,
 }));
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));
