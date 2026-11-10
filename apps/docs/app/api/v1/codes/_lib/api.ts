@@ -366,3 +366,17 @@ export function serializeCode(code: QrCodeView) {
 }
 
 export const NO_STORE = { "Cache-Control": "no-store" };
+
+/** A created code without its design (`Prefer: return=minimal`). */
+export function serializeMinimalCode(code: QrCodeView) {
+  return {
+    id: code.id,
+    slug: code.slug,
+    shortLink: code.shortLink,
+    defaultShortLink: code.defaultShortLink,
+    destinationUrl: code.destinationUrl,
+    title: code.title,
+    status: code.status,
+    createdAt: code.createdAt.toISOString(),
+  };
+}

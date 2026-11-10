@@ -51,8 +51,14 @@ function isOwnHostedPage(value: string): boolean {
   }
 }
 
-/** Heuristics plus a Google Web Risk lookup (fail-open, cached). */
-export async function checkUrlSafety(url: string): Promise<UrlSafety> {
+/**
+ * Heuristics plus a Google Web Risk lookup (fail-open, cached). `webRisk:
+ * false` skips the lookup (a batch out of time), as an outage would.
+ */
+export async function checkUrlSafety(
+  url: string,
+  { webRisk: lookup = true }: { webRisk?: boolean } = {},
+): Promise<UrlSafety> {
   if (isOwnHostedPage(url)) {
     return {
       verdict: "ok",
@@ -71,7 +77,9 @@ export async function checkUrlSafety(url: string): Promise<UrlSafety> {
     return { ...base, verdict: "block", threats: [], webRisk: "unknown" };
   }
 
-  const webRisk = await lookupWebRisk(analysis.url.href);
+  const webRisk: WebRiskResult = lookup
+    ? await lookupWebRisk(analysis.url.href)
+    : { status: "unknown", reason: "error" };
   if (webRisk.status === "threat") {
     return {
       ...base,
