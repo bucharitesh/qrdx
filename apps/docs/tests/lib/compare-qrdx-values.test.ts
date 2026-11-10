@@ -55,6 +55,90 @@ describe("compare pages", () => {
   });
 });
 
+describe.each(["qr-io.mdx", "qr-code-creator.mdx"])(
+  "%s (trial-then-paid compare page)",
+  (file) => {
+    const text = readFileSync(join(COMPARE, file), "utf8");
+    const rows = qrdxValues(text);
+    const { free, pro, business } = PLAN_LIMITS;
+    const years = (days: number) => days / 365;
+    const count = (n: number) => n.toLocaleString("en-US");
+
+    it("states plan limits and prices that match the code", () => {
+      expect(pro.dynamicCodes).toBe(UNLIMITED);
+      expect(pro.landingPages).toBe(UNLIMITED);
+      expect(business.analyticsRetentionDays).toBe(UNLIMITED);
+      expect(business.teamMembers).toBe(UNLIMITED);
+      expect(business.whiteLabel).toBe(true);
+
+      expect(rows.get("qrdxPlan")).toBe(
+        `Free · Pro from ${usd("pro", "month")}/mo`,
+      );
+      expect(rows.get("Price")).toBe(
+        `Free; Pro ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr; Business ${usd("business", "month")}/mo or ${usd("business", "year")}/yr`,
+      );
+      expect(rows.get("QR types")).toBe(`${QR_TYPES.length} static types`);
+      expect(rows.get("Dynamic (editable) codes")).toBe(
+        `${free.dynamicCodes} free; unlimited on Pro`,
+      );
+      expect(rows.get("Scan analytics")).toBe(
+        `${free.analyticsRetentionDays} days free; ${years(pro.analyticsRetentionDays)} years on Pro; unlimited on Business`,
+      );
+      expect(rows.get("Team members")).toBe(
+        `${pro.teamMembers} on Pro, unlimited on Business`,
+      );
+      expect(rows.get("API")).toBe(
+        `${count(free.apiRequestsPerDay)} requests a day free; ${count(pro.apiRequestsPerDay)} on Pro`,
+      );
+    });
+
+    it("uses the same numbers in the highlights and the body", () => {
+      for (const phrase of [
+        `QRdx Free has no time limit and includes ${free.dynamicCodes} dynamic codes and ${free.landingPages} hosted pages.`,
+        `The Free plan adds ${free.dynamicCodes} dynamic codes and ${free.landingPages} hosted pages.`,
+        `Pro (${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr) makes both unlimited`,
+        `Business (${usd("business", "month")}/mo or ${usd("business", "year")}/yr) adds unlimited team members and white-label pages`,
+        `QRdx Pro is ${usd("pro", "month")} a month or ${usd("pro", "year")} a year for unlimited dynamic codes`,
+        `The QRdx REST API allows ${count(free.apiRequestsPerDay)} requests a day on Free and ${count(pro.apiRequestsPerDay)} on Pro`,
+      ]) {
+        expect(text).toContain(phrase);
+      }
+    });
+  },
+);
+
+describe("QR.io compare page", () => {
+  const text = readFileSync(join(COMPARE, "qr-io.mdx"), "utf8");
+  const { free } = PLAN_LIMITS;
+
+  it("states hosted-page limits and Business pricing that match the code", () => {
+    expect(qrdxValues(text).get("Hosted pages")).toBe(
+      `${free.landingPages} free; unlimited on Pro`,
+    );
+    expect(text).toContain(
+      `Business is ${usd("business", "month")} a month or ${usd("business", "year")} a year with unlimited team members.`,
+    );
+  });
+});
+
+describe("QR Code Creator compare page", () => {
+  const text = readFileSync(join(COMPARE, "qr-code-creator.mdx"), "utf8");
+  const { free } = PLAN_LIMITS;
+
+  it("only says scans are unlimited while no plan limit caps them", () => {
+    // Retention is the only scan-related limit; a scan cap would show up here.
+    const scanLimits = Object.keys(free).filter((key) => /scan/i.test(key));
+    expect(scanLimits).toEqual(["rawScanRetentionDays"]);
+    expect(qrdxValues(text).get("Scans")).toBe("Unlimited on every plan");
+  });
+
+  it("uses the Free dynamic-code limit in the body", () => {
+    expect(text).toContain(
+      `QRdx Free has ${free.dynamicCodes}, although they don't expire.`,
+    );
+  });
+});
+
 describe("LatestQR compare page", () => {
   const text = readFileSync(join(COMPARE, "latestqr.mdx"), "utf8");
   const rows = qrdxValues(text);
