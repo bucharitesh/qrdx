@@ -20,11 +20,12 @@ export const IMPORT_CHUNK_ROWS = 500;
 /**
  * Rows in one file of the free bulk tool (/tools/bulk), which renders every
  * code in the browser and streams them into ZIP files (lib/zip-stream.ts),
- * so the page's memory stays flat: measured in headless Chrome, 25,000 PNGs
- * at 512 px took about 8.5 minutes with the JS heap under 160 MB. Bound by
- * that time, not by memory.
+ * so the page's own memory stays flat (25,000 PNGs at 512 px: about 8.5
+ * minutes, JS heap under 160 MB). The browser still holds each ZIP part
+ * until it's downloaded, so the cap stays where a normal laptop is
+ * comfortable.
  */
-export const MAX_BULK_TOOL_ROWS = 25_000;
+export const MAX_BULK_TOOL_ROWS = 10_000;
 
 /**
  * Dynamic codes a new account (its first days, lib/safety/velocity.ts) may

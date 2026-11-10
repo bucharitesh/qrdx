@@ -42,7 +42,7 @@ const faqs = [
   },
   {
     question: "How many QR codes can I generate at once?",
-    answer: `Up to ${formatCount(MAX_BULK_TOOL_ROWS)} rows per file; for more, split the CSV, or use the qrdx batch command of the CLI, which has no limit. A 512 px PNG takes about 20 ms on a laptop, so the full ${formatCount(MAX_BULK_TOOL_ROWS)} take several minutes. Bigger PNGs take longer and make bigger files, so choose 512 px unless you need more.`,
+    answer: `Up to ${formatCount(MAX_BULK_TOOL_ROWS)} rows per file; for more, split the CSV, or use the qrdx batch command of the CLI, which has no limit. A 512 px PNG takes about 20 ms on a laptop, so the full ${formatCount(MAX_BULK_TOOL_ROWS)} take a few minutes. Bigger PNGs take longer and make bigger files, so choose 512 px unless you need more.`,
   },
   {
     question: "What can each row contain?",
