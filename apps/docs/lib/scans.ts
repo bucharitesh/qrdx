@@ -6,6 +6,7 @@ import {
   qrCode,
   qrScan,
   type ScanDeviceType,
+  type ScanSource,
 } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
@@ -143,11 +144,14 @@ export async function recordScan(
     scanId = createScanId(),
     now = new Date(),
     variant = null,
+    source = "qr",
   }: {
     scanId?: string;
     now?: Date;
     /** A/B variant served (lib/redirect/routing.ts scanVariantKey) */
     variant?: string | null;
+    /** "nfc" when the visit came through the code's NFC link (lib/nfc/links.ts) */
+    source?: ScanSource;
   } = {},
 ): Promise<string | null> {
   const { headers } = request;
@@ -173,6 +177,7 @@ export async function recordScan(
     visitorHash: visitorHash(ip, ua, now),
     language: preferredLanguage(headers.get("accept-language")),
     variant: variant?.slice(0, 64) ?? null,
+    source,
   };
 
   const [, [counted]] = await db.batch([
@@ -280,6 +285,8 @@ export interface ScanAnalytics {
   os: BreakdownRow[];
   browsers: BreakdownRow[];
   referrers: BreakdownRow[];
+  /** QR scans and NFC taps in the range (they add up to `total`) */
+  sources: ScanSourceCounts;
 }
 
 const BREAKDOWN_LIMIT = 10;
@@ -331,7 +338,11 @@ export async function getScanAnalytics(
     referrers,
   ] = await db.batch([
     db
-      .select({ total: count(), unique: countDistinct(qrScan.visitorHash) })
+      .select({
+        total: count(),
+        unique: countDistinct(qrScan.visitorHash),
+        nfc: nfcTapCount(),
+      })
       .from(qrScan)
       .where(where),
     db
@@ -365,6 +376,7 @@ export async function getScanAnalytics(
     os: os as BreakdownRow[],
     browsers: browsers as BreakdownRow[],
     referrers: referrers as BreakdownRow[],
+    sources: scanSourceCounts(totals?.total ?? 0, totals?.nfc ?? 0),
   };
 }
 
@@ -618,6 +630,8 @@ export interface ScanEvent {
   os: string | null;
   browser: string | null;
   referer: string | null;
+  /** "nfc" for a tap on an NFC tag, "qr" for a QR scan */
+  source: ScanSource;
 }
 
 /** Individual scans in a range, newest first (visitor hashes are not exposed). */
@@ -635,6 +649,7 @@ export function listScans(
       os: qrScan.os,
       browser: qrScan.browser,
       referer: qrScan.referer,
+      source: scanSourceColumn(),
     })
     .from(qrScan)
     .where(
@@ -657,6 +672,7 @@ const CSV_COLUMNS: (keyof ScanEvent)[] = [
   "os",
   "browser",
   "referer",
+  "source",
 ];
 
 function csvCell(value: unknown): string {
@@ -676,9 +692,32 @@ export function scansToCsv(events: ScanEvent[]): string {
     "os",
     "browser",
     "referrer",
+    "source",
   ].join(",");
   const lines = events.map((event) =>
     CSV_COLUMNS.map((column) => csvCell(event[column])).join(","),
   );
   return `${[header, ...lines].join("\r\n")}\r\n`;
+}
+
+// ─── NFC taps (feat/nfc, manual-sql/2026-11-11-nfc.sql) ──────────────────────
+// qr_scan.source is "nfc" for visits through a code's NFC link and "qr" for
+// the rest; rows from before the column existed are null and count as QR.
+
+export interface ScanSourceCounts {
+  qr: number;
+  nfc: number;
+}
+
+/** The stored source with null read as "qr". */
+export const scanSourceColumn = () =>
+  sql<ScanSource>`coalesce(${qrScan.source}, 'qr')`;
+
+/** count(*) of NFC taps, for a select next to count(). */
+export const nfcTapCount = () =>
+  sql<number>`count(*) filter (where ${qrScan.source} = 'nfc')`.mapWith(Number);
+
+export function scanSourceCounts(total: number, nfc: number): ScanSourceCounts {
+  const taps = Math.min(Math.max(0, nfc), total);
+  return { qr: total - taps, nfc: taps };
 }
