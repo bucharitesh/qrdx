@@ -4,6 +4,7 @@
 import type { QRProps } from "../types";
 import { DEFAULT_SIZE } from "./constants";
 import { getFrameDimensions } from "./frame";
+import { blobToDataUrl, canvasToWebP } from "./webp";
 
 export * from "../types";
 export * from "./api";
@@ -126,6 +127,7 @@ export * from "./templates";
 export * from "./utils";
 /** Reads an 8-bit PNG into RGBA pixels (no DOM or sharp), or null. */
 export { type DecodedImage, decodePng as decodePNGPixels } from "./utils/png";
+export * from "./webp";
 
 export async function getQRAsSVGDataUri(props: QRProps) {
   // Import QRCodeSVG and render it to string
@@ -304,6 +306,13 @@ export async function getQRAsCanvas(
 
         if (getCanvas) {
           resolve(canvas);
+        } else if (type === "image/webp") {
+          // toDataURL would hand back a PNG where the browser can't encode
+          // WebP (Safari); canvasToWebP encodes it itself there.
+          canvasToWebP(canvas)
+            .then(blobToDataUrl)
+            .then(resolve, reject)
+            .finally(() => canvas.remove());
         } else {
           const dataUrl = canvas.toDataURL(type, 1.0);
           canvas.remove();

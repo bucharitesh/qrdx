@@ -32,7 +32,7 @@ export const MCP_STEPS: { title: string; body: string }[] = [
   },
   {
     title: "Get a QR code back",
-    body: "A PNG image in the chat, plus SVG, PNG and EPS links ready for Markdown, HTML or print. Apps that support MCP Apps also show the code as a card you can save or open in the editor.",
+    body: "A PNG image in the chat, plus SVG, PNG, WebP and EPS links ready for Markdown, HTML or print. Apps that support MCP Apps also show the code as a card you can save or open in the editor.",
   },
 ];
 
@@ -60,7 +60,7 @@ export const MCP_TOOLS: {
     name: "generate_qr_code",
     title: "Generate a QR code",
     description:
-      "Renders the code and returns a PNG image plus public SVG, PNG and EPS image URLs ready for Markdown or HTML. Takes the image API options: colors or gradients, body, eye and dot shapes, error correction, margin, a border, a frame and a logo icon, or a whole style from design_qr. Set include_svg for the SVG markup.",
+      "Renders the code and returns a PNG image plus public SVG, PNG, WebP and EPS image URLs ready for Markdown or HTML. Takes the image API options: colors or gradients, body, eye and dot shapes, error correction, margin, a border, a frame and a logo icon, or a whole style from design_qr. Set include_svg for the SVG markup.",
     icon: ScanBarcode,
   },
   {

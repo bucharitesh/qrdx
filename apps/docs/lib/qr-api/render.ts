@@ -9,6 +9,7 @@ import {
   renderDesignPng,
   renderDesignSvg,
 } from "@/lib/qr-design/score";
+import { type ConvertedFormat, convertPng } from "@/lib/qr-image-formats";
 import { QR_DEFAULTS, QrDataTooLongError } from "@/lib/qr-render";
 import type { ActiveScope } from "@/lib/scope";
 import type { ThemeStyles } from "@/types/theme";
@@ -183,6 +184,14 @@ export async function renderStyledPng(
     if (error instanceof DesignTooLongError) throw tooLong(render.style);
     throw error;
   }
+}
+
+/** The PNG render converted, such as to lossless WebP. */
+export async function renderStyledImage(
+  render: ResolvedRender,
+  format: ConvertedFormat,
+): Promise<Uint8Array> {
+  return await convertPng(await renderStyledPng(render), format);
 }
 
 /** Vector EPS, the code `size` points wide (frames add to it). */

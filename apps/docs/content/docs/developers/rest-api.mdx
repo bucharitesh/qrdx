@@ -25,7 +25,7 @@ New here? The [quickstart](/docs/developers/quickstart) takes you from nothing t
 
 | Endpoint | Scope | What it does |
 | --- | --- | --- |
-| `GET /v1/qr` | None | QR code image as SVG, PNG or EPS, with the editor's styles. See [Image API](/docs/developers/image-api) |
+| `GET /v1/qr` | None | QR code image as SVG, PNG, WebP or EPS, with the editor's styles. See [Image API](/docs/developers/image-api) |
 | `GET /v1/community/items`, `GET /v1/community/items/{id}` | None | Published community frames, themes and collections, with the style each applies. Read-only and cached. See [Community items](#community-items) |
 | `/v1/codes` | `codes:read`, `codes:write` | List, create (one or up to {facts.apiBatchCodes} at a time, with an optional custom back-half in `slug`), update (including switching `kind` between a website link and a hosted page) and delete dynamic codes. See [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api) |
 | `GET /v1/codes/{id}/scans` | `codes:read` | Scan analytics for a code, or individual scans page by page |

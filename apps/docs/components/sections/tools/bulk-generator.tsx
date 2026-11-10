@@ -61,7 +61,8 @@ import {
 } from "./bulk-utils";
 import { buildQrProps, QUIET_ZONE_MODULES } from "./qr-props";
 
-type Format = "png" | "svg";
+/** WebP is lossless, the same pixels as PNG in a smaller file. */
+type Format = "png" | "webp" | "svg";
 type LevelChoice = "style" | "L" | "M" | "Q" | "H";
 
 interface Failure {
@@ -351,7 +352,7 @@ export function BulkGenerator() {
 
     const allocate = createFilenameAllocator();
     const failures: Failure[] = [];
-    const size = format === "png" ? pngSize : 1024;
+    const size = format === "svg" ? 1024 : pngSize;
     let generated = 0;
 
     for (let start = 0; start < total; start += BATCH_SIZE) {
@@ -672,14 +673,15 @@ export function BulkGenerator() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="png">PNG (image)</SelectItem>
+                  <SelectItem value="webp">WebP (image, smaller)</SelectItem>
                   <SelectItem value="svg">SVG (vector, for print)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {format === "png" && (
+            {format !== "svg" && (
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs" htmlFor="bulk-png-size">
-                  PNG size
+                  {format === "webp" ? "WebP" : "PNG"} size
                 </Label>
                 <Select
                   value={String(pngSize)}
