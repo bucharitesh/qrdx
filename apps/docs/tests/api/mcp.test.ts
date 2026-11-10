@@ -81,7 +81,7 @@ describe("MCP over Streamable HTTP", () => {
     expect(response.headers.get("access-control-allow-origin")).toBe("*");
   });
 
-  it("lists the QR tools, all read-only but save_template", async () => {
+  it("lists the QR and barcode tools, all read-only but the save ones", async () => {
     const { message } = await rpc("tools/list");
     const tools = message?.result.tools as {
       name: string;
@@ -102,12 +102,14 @@ describe("MCP over Streamable HTTP", () => {
         "qr_payload_wifi",
         "save_template",
         "search_community",
+        "generate_barcode",
+        "save_barcode",
       ].sort(),
     );
     for (const tool of tools) {
-      // save_template writes a theme to the API key's workspace.
+      // save_template and save_barcode write to the API key's workspace.
       expect(tool.annotations?.readOnlyHint, tool.name).toBe(
-        tool.name !== "save_template",
+        tool.name !== "save_template" && tool.name !== "save_barcode",
       );
       expect(tool.annotations?.destructiveHint, tool.name).toBe(false);
     }
