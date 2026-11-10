@@ -1,6 +1,6 @@
 // The message catalogs: the checker itself (on small fixtures), then the real
 // catalogs against English, the glossary and the honest-copy rules.
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { createTranslator } from "next-intl";
 import { describe, expect, it } from "vitest";
@@ -12,7 +12,7 @@ import {
   sourceHash,
   unflatten,
 } from "@/lib/i18n/catalog";
-import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
+import { LOCALE_INFO, TRANSLATED_LOCALES } from "@/lib/i18n/config";
 import { icuShape, shapeMismatch } from "@/lib/i18n/icu";
 import { mergeMessages, pickMessages } from "@/lib/i18n/messages";
 import { REVIEW } from "@/lib/i18n/review";
@@ -80,15 +80,30 @@ describe("checkLocale", () => {
     expect(report.counts).toMatchObject({ keys: 2, machine: 2 });
   });
 
-  it("fails missing and extra keys and broken arguments", () => {
+  it("fails extra keys and broken arguments, and allows a partial catalog", () => {
     const report = check(
       { a: { b: "Hola {nombre}", d: "x" } },
       fresh("machine"),
     );
     expect(report.errors).toEqual([
       "es: a.b: arguments {name} became {nombre}",
-      "es: a.c is missing",
       "es: a.d isn't in English",
+    ]);
+    // a.c shows in English until it's translated.
+    expect(report.warnings).toEqual(["es: a.c is missing (shows in English)"]);
+    expect(report.counts.missing).toBe(1);
+  });
+
+  it("accepts a hand translation with no review file yet", () => {
+    const report = check({ a: { b: "Hola {name}", c: "Cerrar" } }, {});
+    expect(report.errors).toEqual([]);
+    expect(report.warnings).toHaveLength(2);
+  });
+
+  it("requires a reviewed locale to be complete and recorded", () => {
+    expect(check({ a: { b: "Hola {name}" } }, {}, "reviewed").errors).toEqual([
+      "es: a.b has no review entry (run i18n:translate --record)",
+      "es: a.c is missing (shows in English)",
     ]);
   });
 
@@ -153,13 +168,15 @@ describe("the English catalog", () => {
 
 describe.each(TRANSLATED_LOCALES)("the %s catalog", (locale) => {
   const catalog = read<Catalog>(`${locale}.json`);
-  const review = read<ReviewFile>(`review/${locale}.json`);
+  const review = existsSync(path.join(MESSAGES, `review/${locale}.json`))
+    ? read<ReviewFile>(`review/${locale}.json`)
+    : {};
   const messages = flatten(catalog);
   const glossary = read<{
     fixed: Record<string, Record<string, string>>;
   }>("glossary.json");
 
-  it("has every string, with the same arguments, tags and numbers", () => {
+  it("has the same arguments, tags and numbers as English", () => {
     const report = checkLocale({
       locale,
       english: en,
@@ -168,14 +185,18 @@ describe.each(TRANSLATED_LOCALES)("the %s catalog", (locale) => {
       state: REVIEW[locale],
     });
     expect(report.errors).toEqual([]);
+    expect(LOCALE_INFO[locale].review).toBe(REVIEW[locale]);
   });
 
   it("translates the Free plan's name and keeps Pro and Business", () => {
-    expect(messages.get("pricing.plans.free")).toBe(
-      glossary.fixed["Free (the plan name)"]?.[locale],
+    const free = glossary.fixed["Free (the plan name)"]?.[locale];
+    if (free && messages.has("pricing.plans.free")) {
+      expect(messages.get("pricing.plans.free")).toBe(free);
+    }
+    expect(messages.get("pricing.tiers.pro.cta") ?? "Pro").toContain("Pro");
+    expect(messages.get("pricing.tiers.business.cta") ?? "Business").toContain(
+      "Business",
     );
-    expect(messages.get("pricing.tiers.pro.cta")).toContain("Pro");
-    expect(messages.get("pricing.tiers.business.cta")).toContain("Business");
   });
 
   it("keeps product and brand names", () => {

@@ -1,7 +1,9 @@
 // Translated pages: URLs, the review gate (noindex, sitemap, hreflang) in
 // both states, the English rewrites and redirects in next.config.ts.
-// @ts-expect-error -- Next's own copy, the matcher it uses for next.config.ts; shipped without types.
-import { pathToRegexp } from "next/dist/compiled/path-to-regexp";
+
+import { readdirSync } from "node:fs";
+import { createRequire } from "node:module";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import {
   LOCALE_INFO,
@@ -27,7 +29,19 @@ import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
 import { localizedEntries } from "@/lib/i18n/sitemap";
 import { baseUrl } from "@/lib/metadata";
 
+// Next's own copy of the matcher it applies to next.config.ts (no types).
+const { pathToRegexp } = createRequire(import.meta.url)(
+  "next/dist/compiled/path-to-regexp",
+) as {
+  pathToRegexp: (
+    source: string,
+    keys: unknown[],
+    options: { strict: boolean },
+  ) => RegExp;
+};
+
 const abs = (path: string) => new URL(path, baseUrl).toString();
+const APP = join(import.meta.dirname, "../../app");
 
 /** Every translation still machine-made (the state this PR ships in). */
 const MACHINE = Object.fromEntries(
@@ -41,25 +55,35 @@ const SIGNED_OFF: ReviewTable = {
 };
 
 describe("locales", () => {
-  it("are wave 1, with lowercase URL segments", () => {
-    expect(LOCALES).toEqual([
-      "en",
-      "es",
-      "pt-BR",
-      "fr",
-      "de",
-      "it",
-      "ja",
-      "ko",
-      "zh-Hans",
-      "id",
-      "hi",
-    ]);
-    for (const locale of LOCALES) {
-      const { segment } = LOCALE_INFO[locale];
-      expect(segment).toBe(segment.toLowerCase());
-      expect(localeFromSegment(segment)).toBe(locale);
-    }
+  // A new language is one entry in LOCALE_CONFIG: these hold for any entry.
+  const appDirs = [
+    ...readdirSync(join(APP, "(app)")),
+    ...readdirSync(join(APP, "(app)", "(home)")),
+    ...readdirSync(APP),
+  ];
+
+  it("start with English, the source", () => {
+    expect(LOCALES[0]).toBe("en");
+    expect(LOCALE_INFO.en.review).toBe("reviewed");
+  });
+
+  it.each(LOCALES)("%s has a usable definition", (locale) => {
+    const info = LOCALE_INFO[locale];
+    expect(info.segment).toMatch(/^[a-z]{2,3}(-[a-z0-9]{2,8})*$/);
+    expect(localeFromSegment(info.segment)).toBe(locale);
+    expect(info.hreflang.length).toBeGreaterThan(0);
+    expect(info.ogLocale).toMatch(/^[a-z]{2,3}_[A-Z]{2}$/);
+    expect(["ltr", "rtl"]).toContain(info.dir);
+    expect(info.name.trim()).not.toBe("");
+    // Its first URL segment can't shadow a page or route: /p, /q, /docs.
+    expect(appDirs).not.toContain(info.segment);
+    // The language code is a valid BCP 47 tag the browser knows.
+    expect(() => new Intl.Locale(locale)).not.toThrow();
+  });
+
+  it("use each URL segment once", () => {
+    const segments = LOCALES.map((locale) => LOCALE_INFO[locale].segment);
+    expect(new Set(segments).size).toBe(segments.length);
     expect(localeFromSegment("pt-BR")).toBeUndefined();
     expect(localeFromSegment("xx")).toBeUndefined();
   });

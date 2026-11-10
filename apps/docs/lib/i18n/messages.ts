@@ -1,25 +1,11 @@
 // Message catalogs (apps/docs/messages). English is the source; a key a
 // translation lacks falls back to English, so a slip never shows a raw key.
 import en from "@/messages/en.json";
-import { DEFAULT_LOCALE, type Locale, type TranslatedLocale } from "./config";
+import { DEFAULT_LOCALE, type Locale } from "./config";
 
 export type Messages = typeof en;
 
 type Catalog = Record<string, unknown>;
-
-const CATALOGS: Record<TranslatedLocale, () => Promise<{ default: Catalog }>> =
-  {
-    es: () => import("@/messages/es.json"),
-    "pt-BR": () => import("@/messages/pt-BR.json"),
-    fr: () => import("@/messages/fr.json"),
-    de: () => import("@/messages/de.json"),
-    it: () => import("@/messages/it.json"),
-    ja: () => import("@/messages/ja.json"),
-    ko: () => import("@/messages/ko.json"),
-    "zh-Hans": () => import("@/messages/zh-Hans.json"),
-    id: () => import("@/messages/id.json"),
-    hi: () => import("@/messages/hi.json"),
-  };
 
 const isObject = (value: unknown): value is Catalog =>
   typeof value === "object" && value !== null && !Array.isArray(value);
@@ -39,10 +25,19 @@ export function mergeMessages<T extends Catalog>(
   return out as T;
 }
 
+/**
+ * A locale's catalog over English. Found by path, so a new language needs
+ * no code here; a missing file renders English (i18n:check reports it).
+ */
 export async function loadMessages(locale: Locale): Promise<Messages> {
   if (locale === DEFAULT_LOCALE) return en;
-  const { default: catalog } = await CATALOGS[locale]();
-  return mergeMessages(en, catalog);
+  try {
+    const catalog: unknown = (await import(`../../messages/${locale}.json`))
+      .default;
+    return mergeMessages(en, catalog);
+  } catch {
+    return en;
+  }
 }
 
 /**

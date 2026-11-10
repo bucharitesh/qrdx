@@ -8,12 +8,14 @@ import { ConsentEarlyScript } from "@/components/consent/consent-early-script";
 import { SearchHighlightStyle } from "@/components/search-highlight-style";
 import { ThemeScript } from "@/components/theme-script";
 import { fonts } from "@/lib/fonts";
+import { LOCALE_INFO } from "@/lib/i18n/config";
 import { CHROME_NAMESPACES, pickMessages } from "@/lib/i18n/messages";
 import { getPublicAvailability } from "@/lib/integration-availability";
 
 /**
  * The <html> document both root layouts render: app/[lang] (translated
- * pages, <html lang> per locale) and app/(app) (everything else, English).
+ * pages, <html lang> and <html dir> per locale) and app/(app) (everything
+ * else, English).
  * Client components get the shared chrome's messages only (navbar, footer,
  * cookie banner); a page adds its own with a nested NextIntlClientProvider.
  */
@@ -27,7 +29,12 @@ export async function RootDocument({
 }) {
   const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
   return (
-    <html className={cn(fonts)} lang={locale} suppressHydrationWarning>
+    <html
+      className={cn(fonts)}
+      dir={LOCALE_INFO[locale].dir}
+      lang={locale}
+      suppressHydrationWarning
+    >
       <head>
         <ThemeScript />
         <ConsentEarlyScript />
