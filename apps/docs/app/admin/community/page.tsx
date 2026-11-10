@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { RemoveItemButton } from "@/components/community/remove-item-button";
@@ -24,9 +23,10 @@ import { Pager } from "../_components/pager";
 import { EmptyRow } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import { PAGE_SIZE, parsePage } from "../_lib/queries";
 
-export const metadata: Metadata = { title: "Admin · Community" };
+export const generateMetadata = adminMetadata("Admin · Community");
 
 // Post-moderation (owner decision): members' items go live once the
 // automatic checks pass, and are reviewed here, newest first. Page

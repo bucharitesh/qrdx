@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
@@ -17,6 +16,7 @@ import { Pager } from "../_components/pager";
 import { EmptyRow } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import {
   type AdminCodeStatus,
   listDynamicCodes,
@@ -24,7 +24,7 @@ import {
 } from "../_lib/queries";
 import { CodeStatusButton } from "./code-status-button";
 
-export const metadata: Metadata = { title: "Admin · QR Codes" };
+export const generateMetadata = adminMetadata("Admin · QR Codes");
 
 const STATUSES: { value: AdminCodeStatus; label: string }[] = [
   { value: "all", label: "All" },

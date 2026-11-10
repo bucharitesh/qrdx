@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { Pager } from "../_components/pager";
@@ -15,9 +14,10 @@ import { RemoveThemeButton } from "../_components/remove-theme-button";
 import { EmptyRow } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import { listThemes, parsePage, type ThemeView } from "../_lib/queries";
 
-export const metadata: Metadata = { title: "Admin · Themes" };
+export const generateMetadata = adminMetadata("Admin · Themes");
 
 const VIEWS: { value: ThemeView; label: string }[] = [
   { value: "community", label: "Community" },

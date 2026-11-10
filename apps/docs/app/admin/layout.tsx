@@ -6,8 +6,9 @@ import { AdminNav } from "./_components/admin-nav";
 import { AdminSearch } from "./_components/admin-search";
 import { requireAdmin } from "./_lib/guard";
 
+// No title here: a visitor's 404 carries this segment's metadata. Each page
+// sets its title once the admin check passes (_lib/metadata.ts).
 export const metadata: Metadata = {
-  title: "Admin",
   robots: { index: false, follow: false },
 };
 
