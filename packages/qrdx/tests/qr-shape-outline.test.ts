@@ -508,7 +508,12 @@ const LIGHT_PICTURE = (() => {
 })();
 
 describe("image fills and angular gradients follow the outline", () => {
-  it("an angular gradient on the dots decodes in SVG, PDF and EPS", async () => {
+  // Renders and decodes three formats: about 30 s on a CI runner shared with
+  // the other packages' tests, so it gets the headroom the other heavy
+  // decode tests have. Nothing it checks changes.
+  it("an angular gradient on the dots decodes in SVG, PDF and EPS", {
+    timeout: 120_000,
+  }, async () => {
     const props = shapedCode("heart", { fgColor: SWEEP, eyeColor: SWEEP });
     for (const modulePx of [4, 6, 9]) {
       expect(capture(props, { modulePx })).toBe(VALUE);
