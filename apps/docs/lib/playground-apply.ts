@@ -1,6 +1,7 @@
 // Applies a playground link's parameters to the editor, in the hub plan's
 // order: the /playground/<id> theme (already applied by the editor) → preset
-// or style → type and url → tab, section and open → the Art tab's mode. Kept apart from the hook
+// or style → type (with its sample) and url → tab, section and open → the
+// Art tab's mode. Kept apart from the hook
 // (lib/hooks/use-playground-params.ts) so it can be tested on the stores.
 //
 // The look changes as one undo step (the editor's Undo brings back the
@@ -28,6 +29,7 @@ import {
   DYNAMIC_OPEN_TARGET,
   type PlaygroundParams,
 } from "@/lib/playground-links";
+import { playgroundSample } from "@/lib/playground-samples";
 import { decodeStyleParam } from "@/lib/playground-style";
 import { isDeepEqual } from "@/lib/utils";
 import { useArtSessionStore } from "@/store/art-session-store";
@@ -180,13 +182,23 @@ export function applyPlaygroundParams(
       SIGNED_IN_TYPES.has(params.type) && !context.signedIn
         ? "url"
         : params.type;
-    if (type !== editor.contentType) {
+    // `sample`: QRdx's own sample, only into an empty form, so nothing the
+    // visitor typed for this type is ever replaced.
+    const sample = params.sample ? playgroundSample(type) : undefined;
+    const sampled =
+      sample !== undefined &&
+      !contentValue(type, useQREditorStore.getState().contentConfigs, null);
+    if (sample && sampled) editor.setContentConfig(type, sample);
+    if (sampled || type !== editor.contentType) {
       const { contentConfigs } = useQREditorStore.getState();
       editor.setContentType(type);
       editor.setValue(contentValue(type, contentConfigs, linkedBefore));
     }
     applied.push("type");
-    content = `the ${typeLabel(type)} type`;
+    if (sampled) applied.push("sample");
+    content = sampled
+      ? `a sample ${typeLabel(type)} code`
+      : `the ${typeLabel(type)} type`;
   }
 
   // 3. View: tab, section, open.

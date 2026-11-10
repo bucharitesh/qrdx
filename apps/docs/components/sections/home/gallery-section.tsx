@@ -10,8 +10,9 @@ import { HOME_WALL } from "@/lib/landing/showcase-wall";
 
 // Home page "Made with QRdx" wall: a curated selection of real codes, every
 // content type in a look from every theme family, fading out into the page
-// with "Show more" leading to the full wall on /community. The tiles link to
-// their generator pages, the playground and the hosted page demos.
+// with "Show more" leading to the full wall on /community. Each tile opens
+// the playground with its own look and content type (hosted page tiles open
+// their live demo).
 
 export function GallerySection() {
   return (
@@ -23,7 +24,7 @@ export function GallerySection() {
       <WallHeading
         id="gallery-heading"
         title="Made with QRdx"
-        description="Real QRdx codes with sample content. Scan any of them."
+        description="Real QRdx codes with sample content. Scan any of them, or open one to make it yours."
         action={<WallLink href={WALL_PATH}>See all</WallLink>}
       />
       <div className="relative">

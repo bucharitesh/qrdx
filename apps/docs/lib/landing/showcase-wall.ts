@@ -230,7 +230,7 @@ const BANDS: { band: WallBand; title: string; description: string }[] = [
   {
     band: "frames",
     title: "Frames",
-    description: "QRdx's official frames, free under CC0.",
+    description: "QRdx's official frames, free under CC0. Open one to use it.",
   },
   {
     band: "art",
@@ -242,7 +242,7 @@ const BANDS: { band: WallBand; title: string; description: string }[] = [
     band: "content",
     title: "Content types and pages",
     description:
-      "Every kind of content a code can hold, and the pages QRdx hosts.",
+      "Every kind of content a code can hold, and the pages QRdx hosts. Open one to start from it.",
   },
 ];
 

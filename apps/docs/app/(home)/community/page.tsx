@@ -14,6 +14,7 @@ import {
 } from "@/lib/community/licence";
 import { MIN_GATE_SCORE } from "@/lib/community/scan-samples";
 import { createMetadata } from "@/lib/metadata";
+import { playgroundHref } from "@/lib/playground-links";
 
 export const metadata: Metadata = createMetadata({
   title: "Community QR Code Frames & Themes",
@@ -58,7 +59,7 @@ export default async function CommunityPage() {
           </p>
           <div className="mt-2 flex flex-wrap justify-center gap-2">
             <Button asChild>
-              <Link href="/playground?tab=customisations">
+              <Link href={playgroundHref({ tab: "design" })}>
                 <Brush2 aria-hidden />
                 Make your own
               </Link>

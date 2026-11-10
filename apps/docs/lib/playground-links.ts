@@ -7,7 +7,9 @@
 // password), and playgroundHref puts it after the `#`, which browsers never
 // send to a server. Wi-Fi passwords, contact details, payment details and
 // any other form content never go in a link. A design travels as `style`
-// (lib/playground-style.ts), which never carries a logo or art.
+// (lib/playground-style.ts), which never carries a logo or art. `sample`
+// asks for QRdx's own generic sample for the type (lib/playground-samples.ts):
+// a flag, never a value, so a link can't put content of its own in a form.
 //
 // /playground stays static: page.tsx never reads searchParams. The editor
 // reads these after mount (lib/hooks/use-playground-params.ts), applies them
@@ -20,7 +22,8 @@ import {
   SCAN_DISTANCE_PER_MODULE,
   toMillimeters,
 } from "@/lib/print-size";
-import { CONTENT_TYPES_METADATA, type ContentType } from "@/types/qr-content";
+import { CONTENT_TYPE_IDS as CONTENT_TYPE_ID_LIST } from "@/types/content-type-ids";
+import type { ContentType } from "@/types/qr-content";
 
 export const PLAYGROUND_PATH = "/playground";
 
@@ -131,6 +134,7 @@ export const MAX_STYLE_PARAM_LENGTH = 4096;
 export const ONE_SHOT_PARAMS = [
   "section",
   "type",
+  "sample",
   "url",
   "preset",
   "style",
@@ -147,6 +151,8 @@ export interface PlaygroundParams {
   tab?: ControlTab;
   section?: DesignSection;
   type?: ContentType;
+  /** With `type`: fill its empty form with QRdx's generic sample (lib/playground-samples.ts). */
+  sample?: true;
   url?: string;
   preset?: string;
   /** The raw `style` value, checked for shape and size only; decode it with decodeStyleParam. */
@@ -168,6 +174,11 @@ export interface PlaygroundLinkOptions {
   tab?: ControlTab | TabAlias;
   section?: DesignSection;
   type?: ContentType;
+  /**
+   * With `type` (and no `url`): open its form with QRdx's generic sample
+   * when the visitor's own form for it is empty. Only a flag travels.
+   */
+  sample?: boolean;
   /** http(s) only; anything else is left out of the link. */
   url?: string;
   /** A built-in preset id */
@@ -185,13 +196,17 @@ export interface PlaygroundLinkOptions {
   artStyle?: string;
 }
 
-const CONTENT_TYPE_IDS = new Set<string>(
-  CONTENT_TYPES_METADATA.map((meta) => meta.type),
-);
+// The ids alone: this module ships on every page, the type picker's copy doesn't.
+const CONTENT_TYPE_IDS = new Set<string>(CONTENT_TYPE_ID_LIST);
 const PRESET_ID = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
 const STYLE_VALUE = new RegExp(`^${STYLE_PARAM_VERSION}\\.[A-Za-z0-9_-]+$`);
 const PRINT_VALUE = /^(\d{1,4}(?:\.\d{1,2})?)(mm|in)$/;
 const PRINT_DISTANCE_VALUE = /^(\d{1,5}(?:\.\d{1,3})?)(cm|m|in|ft)$/;
+
+/** The one value `sample` takes. */
+const SAMPLE_FLAG = "1";
+const isSampleFlag = (raw: string | null | undefined) =>
+  raw?.trim() === SAMPLE_FLAG;
 
 const isOneOf = <T extends string>(
   list: readonly T[],
@@ -319,6 +334,10 @@ export function parsePlaygroundParams(
     params.url = url;
     params.type = "url";
   }
+  // A sample only for a type, and never over a web address from the link.
+  if (params.type && !params.url && isSampleFlag(get("sample"))) {
+    params.sample = true;
+  }
 
   const preset = parsePresetId(get("preset"));
   if (preset) params.preset = preset;
@@ -398,7 +417,11 @@ export function playgroundHref(options: PlaygroundLinkOptions = {}): string {
 
   const url = parseLinkUrl(options.url);
   if (options.type && CONTENT_TYPE_IDS.has(options.type)) {
-    if (!(url && options.type === "url")) query.set("type", options.type);
+    if (!(url && options.type === "url")) {
+      query.set("type", options.type);
+      // A web address with another type is left out, so the sample stays.
+      if (options.sample) query.set("sample", SAMPLE_FLAG);
+    }
   }
   // A preset or style only applies without a theme path.
   if (!options.themeId) {

@@ -15,50 +15,14 @@ import { EASE_CLASS } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
 import type { QRStyle } from "@/types/theme";
-import { FAMILY, FAMILY_GRADIENT, INK } from "./demos/qr-family";
-
-// The same style family as the hero code above: ink on white, brand blue
-// only as an accent.
-const STYLES = {
-  classic: {
-    label: "Classic",
-    style: {
-      ...FAMILY,
-      dotColor: INK,
-      bodyPattern: "square",
-      cornerEyePattern: "square",
-      cornerEyeDotPattern: "square",
-    },
-  },
-  rounded: { label: "Rounded", style: FAMILY },
-  dots: {
-    label: "Dots",
-    style: {
-      ...FAMILY,
-      bodyPattern: "circle",
-      // Circle eyes are on the engine's fragile list (WEAK_EYES); extra-rounded
-      // keeps the soft look and reads in every decoder.
-      cornerEyePattern: "extra-rounded",
-      cornerEyeDotPattern: "circle",
-    },
-  },
-  gradient: { label: "Gradient", style: FAMILY_GRADIENT },
-} satisfies Record<string, { label: string; style: QRStyle }>;
-
-const FRAMES = {
-  none: { label: "No frame", frame: undefined },
-  banner: {
-    label: "Scan me",
-    frame: { style: "banner-bottom", text: "Scan me", color: INK },
-  },
-  border: {
-    label: "Border",
-    frame: { style: "rounded-border", text: "", color: INK },
-  },
-} satisfies Record<string, { label: string; frame: QRStyle["frame"] }>;
-
-type StyleKey = keyof typeof STYLES;
-type FrameKey = keyof typeof FRAMES;
+import {
+  HERO_FRAMES as FRAMES,
+  type HeroFrameKey as FrameKey,
+  heroLook,
+  heroPlaygroundHref,
+  HERO_STYLES as STYLES,
+  type HeroStyleKey as StyleKey,
+} from "./hero-looks";
 
 const styleOptions = (Object.keys(STYLES) as StyleKey[]).map((value) => ({
   value,
@@ -75,11 +39,7 @@ export function HeroEditor() {
   const [styleKey, setStyleKey] = useState<StyleKey>("rounded");
   const [frameKey, setFrameKey] = useState<FrameKey>("banner");
 
-  const style: QRStyle = {
-    ...STYLES[styleKey].style,
-    level: "Q",
-    frame: FRAMES[frameKey].frame,
-  };
+  const style: QRStyle = heroLook(styleKey, frameKey);
   const trimmed = value.trim();
 
   return (
@@ -132,7 +92,8 @@ export function HeroEditor() {
           or EPS downloads.
         </p>
         <Button asChild className="w-fit">
-          <Link href="/playground">
+          {/* The look and the link carry over; other text is typed again. */}
+          <Link href={heroPlaygroundHref(styleKey, frameKey, trimmed)}>
             Customize in the playground
             <ArrowRight className="size-4" />
           </Link>
