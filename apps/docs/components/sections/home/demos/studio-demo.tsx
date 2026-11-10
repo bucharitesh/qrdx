@@ -25,7 +25,12 @@ import {
   SHOWCASE_INK as INK,
   SHOWCASE_PLACEMENTS,
   SHOWCASE_STYLES,
+  showcaseThemeStyles,
 } from "@/lib/landing/showcase-styles";
+import { playgroundHref } from "@/lib/playground-links";
+import { packStyleParam } from "@/lib/playground-style-pack";
+import { PRODUCT_FACTS } from "@/lib/product-facts";
+import type { QRStyle } from "@/types/theme";
 import { HOME_CODES } from "./codes";
 import { Chip, DemoStage, humanize, QrTile, Readout } from "./demo-ui";
 
@@ -37,7 +42,7 @@ const TABS = [
   { value: "frames", label: "Frames" },
 ] as const;
 
-interface Swatch {
+export interface Swatch {
   id: string;
   label: string;
   fg: (angle: number) => ColorConfig;
@@ -47,7 +52,7 @@ interface Swatch {
   gradient?: "linear" | "radial";
 }
 
-const SWATCHES: Swatch[] = [
+export const SWATCHES: Swatch[] = [
   {
     id: "ink",
     label: "Ink",
@@ -113,7 +118,7 @@ const SWATCHES: Swatch[] = [
   },
 ];
 
-const ANGLES = [
+export const ANGLES = [
   { value: "0", label: "0°" },
   { value: "45", label: "45°" },
   { value: "90", label: "90°" },
@@ -121,7 +126,7 @@ const ANGLES = [
 ] as const;
 
 // A curated few per tab, so the card stays calm; the playground has them all.
-const SHOWN_BODIES: BodyPattern[] = (
+export const SHOWN_BODIES: BodyPattern[] = (
   [
     "rounded",
     "square",
@@ -134,11 +139,11 @@ const SHOWN_BODIES: BodyPattern[] = (
   ] as const
 ).filter((item) => BODY_PATTERN.includes(item));
 
-const SHOWN_EYES: CornerEyePattern[] = (
+export const SHOWN_EYES: CornerEyePattern[] = (
   ["squircle", "extra-rounded", "rounded", "square", "leaf", "gear"] as const
 ).filter((item) => CORNER_EYE_PATTERNS.includes(item));
 
-const SHOWN_FRAMES: FrameStyle[] = (
+export const SHOWN_FRAMES: FrameStyle[] = (
   [
     "none",
     "banner-bottom",
@@ -152,7 +157,50 @@ const SHOWN_FRAMES: FrameStyle[] = (
 /** The look the studio opens on (lib/landing/showcase-styles.ts). */
 const START = SHOWCASE_STYLES[SHOWCASE_PLACEMENTS["home.studio"]];
 
-const MORE_LABEL = `All ${BODY_PATTERN.length} patterns, ${CORNER_EYE_PATTERNS.length} eyes and ${FRAME_STYLES.length - 1} frames in the playground`;
+const MORE_LABEL = `All ${PRODUCT_FACTS.bodyPatterns} patterns, ${PRODUCT_FACTS.eyeShapes} eyes and ${PRODUCT_FACTS.frames} frames in the playground`;
+
+export interface StudioPicks {
+  body: BodyPattern;
+  eye: CornerEyePattern;
+  swatch: Swatch;
+  angle: string;
+  frameStyle: FrameStyle;
+  frameText: string;
+}
+
+/**
+ * What the studio draws, as an editor design: its showcase style with the
+ * picks on top. The preview draws it, and its link opens it in the playground.
+ */
+export function studioLook({
+  body,
+  eye,
+  swatch,
+  angle,
+  frameStyle,
+  frameText,
+}: StudioPicks) {
+  return {
+    ...showcaseThemeStyles(SHOWCASE_PLACEMENTS["home.studio"]),
+    fgColor: swatch.fg(Number(angle)),
+    eyeColor: swatch.eye,
+    dotColor: swatch.dot,
+    bodyPattern: body,
+    cornerEyePattern: eye,
+    frame:
+      frameStyle === "none"
+        ? undefined
+        : ({ style: frameStyle, text: frameText, color: INK } as const),
+  } satisfies QRStyle;
+}
+
+/**
+ * The playground with the studio's look. Packed without the validator, which
+ * would grow this demo's script; the playground validates every link, and
+ * tests/home/marketing-playground-links.test.ts decodes every pick.
+ */
+export const studioPlaygroundHref = (look: QRStyle): string =>
+  playgroundHref({ style: packStyleParam(look) });
 
 /** Patterns / colors / frames playground in miniature, using the real renderer. */
 export function StudioDemo() {
@@ -168,6 +216,7 @@ export function StudioDemo() {
 
   const swatch = SWATCHES.find((item) => item.id === swatchId) ?? SWATCHES[0];
   const styleKey = `${body}-${eye}-${swatch.id}-${angle}-${frameStyle}`;
+  const look = studioLook({ body, eye, swatch, angle, frameStyle, frameText });
 
   return (
     // Beside the row's text (lg) the card is narrower, so the preview gives up width.
@@ -312,7 +361,7 @@ export function StudioDemo() {
         </AnimatePresence>
         <Link
           className="mt-auto inline-flex w-fit items-center gap-1 text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
-          href="/playground"
+          href={studioPlaygroundHref(look)}
         >
           {MORE_LABEL}
           <ArrowRight aria-hidden className="size-3.5" />
@@ -336,16 +385,12 @@ export function StudioDemo() {
           >
             <QRCodeSVG
               {...HOME_CODES.studio}
-              fgColor={swatch.fg(Number(angle))}
-              eyeColor={swatch.eye}
-              dotColor={swatch.dot}
-              bodyPattern={body}
-              cornerEyePattern={eye}
-              frame={
-                frameStyle === "none"
-                  ? undefined
-                  : { style: frameStyle, text: frameText, color: INK }
-              }
+              fgColor={look.fgColor}
+              eyeColor={look.eyeColor}
+              dotColor={look.dotColor}
+              bodyPattern={look.bodyPattern}
+              cornerEyePattern={look.cornerEyePattern}
+              frame={look.frame}
             />
           </QrTile>
         </motion.div>

@@ -3,8 +3,6 @@
 // go and what their codes hold. That every tile scans is
 // gallery-scan-*.test.ts; that the images are self-contained is
 // gallery-route.test.ts.
-import { existsSync } from "node:fs";
-import { join } from "node:path";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -35,11 +33,10 @@ import {
 } from "@/lib/landing/showcase-wall";
 import { getTemplate, listTemplates } from "@/lib/landing/templates";
 import { parsePlaygroundParams } from "@/lib/playground-links";
+import { decodeStyleParam } from "@/lib/playground-style";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import type { ThemeCategory } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
-
-const APP = join(import.meta.dirname, "../..");
 
 const colorKind = (color: ColorConfig | undefined) =>
   !color || typeof color === "string" ? "solid" : color.type;
@@ -120,43 +117,103 @@ describe("wall tiles", () => {
     }
   });
 
-  it("link to pages that exist", () => {
-    const frames = new Set(OFFICIAL_FRAMES.map((frame) => frame.id));
+  it("open the playground with their own look, or a hosted page's demo", () => {
     for (const tile of WALL_TILES) {
       const url = new URL(tile.href, APP_ORIGIN);
-      const path = url.pathname;
-      const generator = /^\/qr-code-generator\/([\w-]+)$/.exec(path);
-      const demo = /^\/templates\/([\w-]+)\/([\w-]+)$/.exec(path);
-      const frame = /^\/community\/frames\/([\w-]+)$/.exec(path);
-      if (generator) {
-        expect(QR_TYPE_SLUGS, tile.id).toContain(generator[1]);
-      } else if (demo) {
+      const demo = /^\/templates\/([\w-]+)\/([\w-]+)$/.exec(url.pathname);
+      if (demo) {
+        // Hosted pages are made in the page builder: the tile opens its demo.
+        expect(tile.pageType, tile.id).toBe(demo[1]);
         const variants = getTemplate(demo[1] as string)?.variants ?? [];
         expect(
           variants.map((variant) => variant.id),
           tile.id,
         ).toContain(demo[2]);
-      } else if (frame) {
-        expect(frames.has(frame[1] as string), tile.id).toBe(true);
-      } else if (path === "/playground") {
-        const params = parsePlaygroundParams(url.search);
-        expect(Object.keys(params).length, tile.id).toBeGreaterThan(0);
-        if (params.preset) expect(defaultPresets).toHaveProperty(params.preset);
-        // Logo QR and Image QR open the Art tab in their own mode.
-        if (tile.art) {
-          expect(params, tile.id).toEqual({
-            tab: "art",
-            art: tile.art.mode === "logo" ? "logo" : "image",
-          });
+        continue;
+      }
+      expect(url.pathname, tile.id).toBe("/playground");
+      expect(url.hash, tile.id).toBe("");
+      const params = parsePlaygroundParams(url.search);
+      const decoded = decodeStyleParam(params.style);
+      if (tile.style) {
+        // Changes on top of the theme travel as a style, theme as its label.
+        expect(params.preset, tile.id).toBeUndefined();
+        expect(decoded?.preset, tile.id).toBe(tile.preset);
+        const styles = tileStyles(tile);
+        for (const [key, value] of Object.entries(tile.style)) {
+          expect(decoded?.styles, `${tile.id}: ${key}`).toHaveProperty(
+            key,
+            value,
+          );
+        }
+        for (const key of ["bgColor", "fgColor", "bodyPattern"] as const) {
+          expect(decoded?.styles[key], `${tile.id}: ${key}`).toEqual(
+            styles[key],
+          );
         }
       } else {
-        expect(path, tile.id).toMatch(/^\/docs\//);
-        expect(
-          existsSync(join(APP, "content", `${path}.mdx`)),
-          `${tile.id}: ${path}`,
-        ).toBe(true);
+        expect(params.style, tile.id).toBeUndefined();
+        expect(params.preset, tile.id).toBe(tile.preset);
       }
     }
+  });
+
+  it("open content and frame tiles on their content type, with QRdx's sample", () => {
+    const frames = new Set(OFFICIAL_FRAMES.map((frame) => frame.id));
+    for (const tile of WALL_TILES) {
+      if (tile.band !== "frames" && !tile.contentType) continue;
+      const params = parsePlaygroundParams(
+        new URL(tile.href, APP_ORIGIN).search,
+      );
+      if (tile.contentType) {
+        expect(QR_TYPE_SLUGS, tile.id).toContain(tile.contentType);
+        expect(params.type, tile.id).toBe(tile.contentType);
+      } else {
+        expect(frames.has(tile.officialFrame ?? ""), tile.id).toBe(true);
+        expect(params.type, tile.id).toBeDefined();
+        // The frame's own value decides the type: a hosted page is a URL code.
+        if (/^https:\/\/qrdx\.dev\/templates\//.test(tile.value)) {
+          expect(params.type, tile.id).toBe("url");
+        }
+      }
+      expect(params.sample, tile.id).toBe(true);
+      // The link carries the flag, never the tile's own sample values.
+      expect(tile.href, tile.id).not.toContain(encodeURIComponent(tile.value));
+    }
+  });
+
+  it("open art, logo and output tiles where what can't travel is added", () => {
+    const byId = (id: string) => WALL_TILES.find((tile) => tile.id === id);
+    for (const tile of WALL_TILES.filter((item) => item.art)) {
+      const params = parsePlaygroundParams(
+        new URL(tile.href, APP_ORIGIN).search,
+      );
+      // Logo QR and Image QR open the Art tab in their own mode, in their theme.
+      expect(params, tile.id).toEqual({
+        tab: "art",
+        art: tile.art?.mode === "logo" ? "logo" : "image",
+        preset: tile.preset,
+      });
+    }
+    const params = (id: string) =>
+      parsePlaygroundParams(new URL(byId(id)?.href ?? "/", APP_ORIGIN).search);
+    expect(params("logo-cafe")).toEqual({
+      tab: "customisations",
+      section: "logo",
+      preset: "caffeine",
+    });
+    expect(params("logo-qrdx")).toMatchObject({
+      tab: "customisations",
+      section: "logo",
+    });
+    expect(decodeStyleParam(params("logo-qrdx").style)?.styles.showLogo).toBe(
+      true,
+    );
+    expect(params("transparent")).toEqual({
+      open: "download",
+      preset: "gilt",
+    });
+    expect(params("print")).toEqual({ open: "print", preset: "folio" });
   });
 
   it("hold obvious samples, not real people's details", () => {
