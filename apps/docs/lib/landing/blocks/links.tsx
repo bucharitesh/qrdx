@@ -81,7 +81,7 @@ function Thumbnail({
 function ItemText({ item }: { item: LinkItem }) {
   return (
     <span className="min-w-0">
-      <span className="block break-words">{item.label}</span>
+      <span className="block wrap-break-word">{item.label}</span>
       {item.description && (
         <span className="block text-[13px] font-normal opacity-75">
           {item.description}
