@@ -10,20 +10,11 @@ import {
   useSyncExternalStore,
 } from "react";
 import { useCspNonce } from "@/components/csp-nonce";
-import {
-  getClientSeason,
-  ringInYear,
-  SEASON_OVERRIDE_STORAGE_KEY,
-  SEASON_PARAM,
-  type Season,
-} from "@/lib/seasonal";
+import { getClientSeason, ringInYear, type Season } from "@/lib/seasonal";
 import { MIDNIGHT_EVENT } from "./events";
 import { HalloweenPresetLink as PresetLink } from "./halloween-preset-link";
 import { HALLOWEEN_PUMPKIN } from "./halloween-presets";
-
-// Runs while the HTML streams in, before the bar paints, so a `?season=off`
-// preview never flashes the bar in on a full page load.
-const PRE_PAINT_SCRIPT = `(function(){try{var o=new URLSearchParams(location.search).get(${JSON.stringify(SEASON_PARAM)})||sessionStorage.getItem(${JSON.stringify(SEASON_OVERRIDE_STORAGE_KEY)});if(o==="off")document.documentElement.setAttribute("data-season-bar","off")}catch(e){}})()`;
+import { SEASON_BAR_PRE_PAINT_SCRIPT } from "./pre-paint-script";
 
 const noopSubscribe = () => () => {};
 
@@ -230,7 +221,7 @@ export function SeasonBar({
     <>
       {hydrating && serverSeason && (
         <script
-          dangerouslySetInnerHTML={{ __html: PRE_PAINT_SCRIPT }}
+          dangerouslySetInnerHTML={{ __html: SEASON_BAR_PRE_PAINT_SCRIPT }}
           nonce={nonce}
           suppressHydrationWarning
         />

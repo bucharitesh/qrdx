@@ -149,7 +149,7 @@ describe("email templates", () => {
     for (const email of emails) {
       const { html, text } = await both(email);
       assert.ok(
-        html.includes(UNSUBSCRIBE.replace("&", "&amp;")),
+        html.includes(UNSUBSCRIBE.replaceAll("&", "&amp;")),
         email.key ?? "",
       );
       assert.match(text, /Unsubscribe/);
@@ -212,7 +212,22 @@ describe("email templates", () => {
       invite.text,
       /Ada invited you to the Acme workspace as an admin/i,
     );
-    assert.ok(invite.html.includes("https://qrdx.dev/invite/inv_1"));
+    // The button links to exactly the invite (parsed, not a substring match).
+    const inviteLinks = [...invite.html.matchAll(/href="([^"]*)"/g)].map(
+      (match) => URL.parse(match[1] ?? ""),
+    );
+    assert.ok(
+      inviteLinks.some(
+        (url) =>
+          url?.protocol === "https:" &&
+          url.hostname === "qrdx.dev" &&
+          url.port === "" &&
+          url.pathname === "/invite/inv_1" &&
+          url.search === "" &&
+          url.hash === "",
+      ),
+      "invite button link",
+    );
     assert.doesNotMatch(invite.text, /Unsubscribe/);
 
     const ack = await both(

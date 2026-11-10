@@ -67,12 +67,13 @@ for (const file of files) {
 let failed = false;
 for (const [name, list] of Object.entries(groups)) {
   if (list.length === 0) continue;
-  // Brackets in paths like app/api/vcard/[slug] are glob syntax to node --test.
+  // Brackets in paths like app/api/vcard/[slug] are glob syntax to node --test;
+  // backslashes are its escape character, so they're escaped too.
   const args = [
     ...(name === "reactServer" ? ["--conditions=react-server"] : []),
     "--test",
     "--test-reporter=dot",
-    ...list.map((file) => file.replace(/[[\]]/g, "\\$&")),
+    ...list.map((file) => file.replace(/[\\[\]]/g, "\\$&")),
   ];
   console.log(`\nnode:test (${name}): ${list.length} files`);
   const result = spawnSync("tsx", args, { cwd: root, env, stdio: "inherit" });

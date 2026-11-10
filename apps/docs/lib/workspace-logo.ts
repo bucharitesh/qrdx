@@ -66,6 +66,47 @@ export function workspaceLogoKeyFromUrl(
   return owner === organizationId && isWorkspaceLogoKey(key) ? key : null;
 }
 
+/** Stands in for this site's origin when resolving a path. */
+const SAME_ORIGIN = "https://same-origin.invalid";
+const DATA_IMAGE = /^data:image\/[a-z0-9.+-]+[;,]/i;
+const UPLOAD_ROUTE = "/api/";
+
+/**
+ * What a logo's <img> may load, or null to show the initial instead: an
+ * https URL, a path on this site, or a data:image/ URL. An upload saved by a
+ * server without https (local development) is an absolute http URL to its
+ * own /api/workspace-logos route, so it becomes that path. Anything else
+ * (other schemes, protocol-relative or plain-http URLs) is never rendered,
+ * whatever got stored.
+ */
+export function logoImageSrc(logo: string | null | undefined): string | null {
+  if (!logo) return null;
+  if (DATA_IMAGE.test(logo)) return logo;
+  let url: URL;
+  try {
+    url = new URL(logo, SAME_ORIGIN);
+  } catch {
+    return null;
+  }
+  // "//host/…" and "/\host/…" leave the site: only real paths stay on it.
+  if (logo.startsWith("/")) {
+    return url.origin === SAME_ORIGIN
+      ? `${url.pathname}${url.search}${url.hash}`
+      : null;
+  }
+  // Absolute URLs only from here ("logo.png" isn't one).
+  if (!URL.canParse(logo)) return null;
+  if (url.protocol === "https:") return url.href;
+  if (
+    url.protocol === "http:" &&
+    url.pathname.startsWith(UPLOAD_ROUTE) &&
+    isWorkspaceLogoKey(url.pathname.slice(UPLOAD_ROUTE.length))
+  ) {
+    return url.pathname;
+  }
+  return null;
+}
+
 const IPV4 = /^\d{1,3}(?:\.\d{1,3}){3}$/;
 const LOCAL_SUFFIXES = [".local", ".localhost", ".internal", ".home.arpa"];
 
