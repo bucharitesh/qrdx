@@ -38,6 +38,7 @@ npm's latest is 0.0.46, so these changes ship with the rest of 0.0.47.
 ### Fixes
 
 - The SVG reader behind PDF and EPS export no longer throws on character references outside Unicode (such as `&#x110000;`).
+- The same reader now runs in linear time. Its regular expressions backtracked on hostile markup: 8 KB of unclosed `<!--` took over 30 seconds. It reads every input exactly as before.
 
 ### Unchanged
 
