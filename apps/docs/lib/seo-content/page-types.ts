@@ -64,6 +64,46 @@ export const PAGE_TYPES = {
     name: "Audio page",
     description: "An audio player with cover art and a playlist.",
   },
+  social: {
+    name: "Social media page",
+    description:
+      "Every social profile on one page, each with its handle and a tap to follow.",
+  },
+  product: {
+    name: "Product page",
+    description:
+      "Ingredients, allergens, nutrition, certifications and care, with GS1 Digital Link on your own domain.",
+  },
+  booking: {
+    name: "Appointments page",
+    description:
+      "Services and prices with a booking request form or a link to your booking tool.",
+  },
+  payment: {
+    name: "Payments and tips page",
+    description:
+      "PayPal, Venmo, bank details and more, each opening the payment app or copying the details.",
+  },
+  "real-estate": {
+    name: "Property listing",
+    description:
+      "Price, key facts, photos, the agent's contact and a viewing request form.",
+  },
+  pet: {
+    name: "Pet ID tag page",
+    description:
+      "A call button, the pet's details and medical needs, and a form for whoever finds them.",
+  },
+  medical: {
+    name: "Medical ID page",
+    description:
+      "Emergency contacts, conditions, allergies and medication for a tag or wristband.",
+  },
+  playlist: {
+    name: "Playlist page",
+    description:
+      "Several tracks in a row: a mix, the stops of an audio tour or a book's chapters.",
+  },
 } as const satisfies Record<string, SeoPageType>;
 
 export type PageTypeId = keyof typeof PAGE_TYPES;
