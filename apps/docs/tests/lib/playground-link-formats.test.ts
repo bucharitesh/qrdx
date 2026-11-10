@@ -7,6 +7,7 @@
 import { OFFICIAL_FRAMES } from "qrdx";
 import { describe, expect, it } from "vitest";
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import {
   hasOneShotParams,
   type PlaygroundLinkOptions,
@@ -17,8 +18,8 @@ import {
   withHandoffRef,
 } from "@/lib/playground-links";
 import {
-  decodeStyleParam,
-  encodeStyleParam,
+  decodeStyleParam as decodeWith,
+  encodeStyleParam as encodeWith,
   playgroundDesignHref,
 } from "@/lib/playground-style";
 import { packStyleParam } from "@/lib/playground-style-pack";
@@ -26,6 +27,16 @@ import { CONTENT_TYPE_IDS } from "@/types/content-type-ids";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
+
+// Links made and read where the whole catalogue is at hand (the server). The
+// browser's lazily loaded library is tested in tests/frames/library.test.ts.
+const decodeStyleParam = (raw: string | null | undefined) =>
+  decodeWith(raw, OFFICIAL_FRAME_RESOLVER);
+const encodeStyleParam = (
+  styles: Parameters<typeof encodeWith>[0],
+  options: Parameters<typeof encodeWith>[1] = {},
+) =>
+  encodeWith(styles, { ...options, officialFrames: OFFICIAL_FRAME_RESOLVER });
 
 const ORIGIN = "https://qrdx.dev";
 

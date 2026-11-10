@@ -18,7 +18,7 @@ export function CommunityWall() {
       <WallHeading
         id="made-with-qrdx-heading"
         title="Made with QRdx"
-        description={`${WALL_TILES.length} real codes made by QRdx with sample content: every theme, official frame, art style and content type. Scan any of them.`}
+        description={`${WALL_TILES.length} real codes made by QRdx with sample content: every theme, art style and content type, and the first official frames. Scan any of them.`}
         action={
           <nav aria-label="Wall sections" className="hidden md:block">
             <ul className="flex gap-4 text-sm">

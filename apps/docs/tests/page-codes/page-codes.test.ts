@@ -7,6 +7,7 @@ import { OFFICIAL_FRAMES } from "qrdx";
 import { FRAME_TEXT_MAX_LENGTH } from "qrdx/types";
 import { describe, expect, it } from "vitest";
 import { codePlaygroundHref } from "@/components/sections/page-codes/code-tiles";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import {
   ALL_PAGE_CODES,
   codeStyles,
@@ -172,10 +173,12 @@ describe("page codes", () => {
   });
 
   it("only name official frames for use cases", () => {
-    const useCases = OFFICIAL_FRAMES.filter(
-      (frame) => frame.category === "use-case",
-    ).map((frame) => frame.id);
-    expect([...OFFICIAL_FRAME_IDS].sort()).toEqual([...useCases].sort());
+    const useCases = new Set(
+      OFFICIAL_FRAMES.filter((frame) => frame.category === "use-case").map(
+        (frame) => frame.id,
+      ),
+    );
+    for (const id of OFFICIAL_FRAME_IDS) expect(useCases, id).toContain(id);
   });
 
   it("have labels that fit their frames", () => {
@@ -247,7 +250,10 @@ describe("page codes", () => {
         expect(params.preset, code.id).toBe(code.preset);
         continue;
       }
-      const decoded = decodeStyleParam(url.searchParams.get("style"));
+      const decoded = decodeStyleParam(
+        url.searchParams.get("style"),
+        OFFICIAL_FRAME_RESOLVER,
+      );
       expect(decoded?.preset, code.id).toBe(code.preset);
       expect(decoded?.styles.frame, code.id).toEqual(codeStyles(code).frame);
       expect(decoded?.styles.bodyPattern, code.id).toBe(
