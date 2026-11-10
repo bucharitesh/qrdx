@@ -109,6 +109,7 @@
     "server-only": "^0.0.1",
     "sharp": "0.35.5",
     "shiki": "^4.5.0",
+    "simple-icons": "16.36.0",
     "sonner": "^2.0.8",
     "streamdown": "^2.7.1",
     "tippy.js": "^6.3.7",
