@@ -57,7 +57,7 @@ const tools: Tool[] = [
   {
     href: "/tools/bulk",
     title: "Bulk QR code generator",
-    description: `Upload a CSV and download up to ${formatCount(MAX_BULK_TOOL_ROWS)} styled codes as PNG or SVG in a ZIP, generated in your browser.`,
+    description: `Upload a CSV and download up to ${formatCount(MAX_BULK_TOOL_ROWS)} styled codes as PNG or SVG, zipped, generated in your browser.`,
     icon: TableDocument,
     image: productShots.bulkGenerator,
     imagePosition: "object-right-top",
