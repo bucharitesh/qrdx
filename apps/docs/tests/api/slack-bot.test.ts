@@ -2025,6 +2025,30 @@ describe("styles", () => {
     ).toMatchObject({ style: "polaroid" });
   });
 
+  it("ignores Slack's echo of a styled /qr, which the command already answered", async () => {
+    seedInstall();
+    for (const text of [
+      "/qr qrdx.dev --look royal",
+      '/QR https://qrdx.dev —frame banner-bottom --frame-text "Hi"',
+    ]) {
+      await events.POST(
+        eventRequest(
+          callbackEvent({
+            type: "message",
+            channel_type: "im",
+            user: ANA,
+            text,
+            channel: "D0ANA",
+            ts: "1700000000.000300",
+          }),
+        ),
+      );
+    }
+    await flush();
+    expect(sentTo("chat.postMessage")).toEqual([]);
+    expect(sentTo("chat.postEphemeral")).toEqual([]);
+  });
+
   it("a pick restyles the code in place, for the person who made it", async () => {
     const reply = await plainCode("Fish &amp; chips");
     const response = await interactions.POST(
