@@ -69,6 +69,12 @@ export const env = createEnv({
     SPOTIFY_CLIENT_ID: z.string().min(1).optional(),
     SPOTIFY_CLIENT_SECRET: z.string().min(1).optional(),
 
+    // Telegram bot (QR codes in Telegram chats; off without all three):
+    // the BotFather token, the webhook's secret_token and the bot's username
+    TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),
+    TELEGRAM_WEBHOOK_SECRET: z.string().min(1).optional(),
+    TELEGRAM_BOT_USERNAME: z.string().min(1).optional(),
+
     // Integration encryption
     INTEGRATION_ENCRYPTION_KEY: z.string().min(32).optional(),
 
@@ -165,6 +171,9 @@ export const env = createEnv({
     YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
     SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
     SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+    TELEGRAM_WEBHOOK_SECRET: process.env.TELEGRAM_WEBHOOK_SECRET,
+    TELEGRAM_BOT_USERNAME: process.env.TELEGRAM_BOT_USERNAME,
     INTEGRATION_ENCRYPTION_KEY: process.env.INTEGRATION_ENCRYPTION_KEY,
     SCAN_HASH_SALT: process.env.SCAN_HASH_SALT,
     VERCEL_API_TOKEN: process.env.VERCEL_API_TOKEN,

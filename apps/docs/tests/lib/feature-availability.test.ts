@@ -66,6 +66,9 @@ const EVERYTHING: Record<string, string> = {
   INTEGRATION_ENCRYPTION_KEY: FAKE,
   DISCORD_APPLICATION_ID: FAKE,
   DISCORD_PUBLIC_KEY: FAKE,
+  TELEGRAM_BOT_TOKEN: FAKE,
+  TELEGRAM_WEBHOOK_SECRET: FAKE,
+  TELEGRAM_BOT_USERNAME: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -102,6 +105,11 @@ const NEEDS: Record<FeatureId, string[]> = {
     "INTEGRATION_ENCRYPTION_KEY",
   ],
   discordBot: ["DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY"],
+  telegramBot: [
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_WEBHOOK_SECRET",
+    "TELEGRAM_BOT_USERNAME",
+  ],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -479,6 +487,7 @@ describe("a production-like deployment", () => {
       "spotifyPlaylistPicker",
       "slackBot",
       "discordBot",
+      "telegramBot",
     ]);
   });
 
@@ -515,6 +524,7 @@ describe("a production-like deployment", () => {
         "notion",
         "onedrive",
         "slack",
+        "telegram",
       ].sort(),
     );
     for (const slug of [
