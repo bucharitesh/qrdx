@@ -36,6 +36,7 @@ export const notifications: IntegrationCatalogEntry[] = [
     // The QRdx bot (apps/docs lib/slack-bot): shown only where it's set up.
     configuredExtras: [
       "Add the QRdx bot to your Slack workspace and anyone there can make a QR code without leaving Slack: type /qr with a link or any text, mention @QRdx, send the bot a direct message, or pick Make a QR code from a message's menu. The code comes back as an image, with buttons to download it as PNG or SVG or open it in the editor.",
+      "Menus under the code change its look, color, frame and logo, and options after the link do the same (/qr qrdx.dev --look modern). Every styled code is checked so phones can scan it, and Open in editor opens the same design.",
       "Link your QRdx account with /qr link, and /qr track with a link makes a dynamic code in the QRdx workspace you picked, with scan analytics and a destination you can change later. It follows your role and plan, the same as making a code in the dashboard.",
     ],
     configured: {
@@ -71,6 +72,11 @@ export const notifications: IntegrationCatalogEntry[] = [
           title: "QR codes in Slack",
           description:
             "/qr, mentions, direct messages and a message shortcut reply with a QR code image and links to the PNG, the SVG and the editor.",
+        },
+        {
+          title: "Styles in Slack",
+          description:
+            "Looks, colors, frames and logo icons from the menus under a code or typed options, checked so every code still scans.",
         },
         {
           title: "Tracked codes from Slack",

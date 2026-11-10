@@ -386,7 +386,8 @@ describe("the Slack bot", () => {
     expect(off).toBe(slack);
     expect(on.tagline).toBe(slack.configured.tagline);
     expect(on.steps).toEqual(slack.configured.steps);
-    expect(on.capabilities.slice(0, 2)).toEqual(slack.configured.capabilities);
+    const extra = slack.configured.capabilities ?? [];
+    expect(on.capabilities.slice(0, extra.length)).toEqual(extra);
     expect(on.keywords).toEqual(
       expect.arrayContaining(slack.configured.keywords ?? []),
     );
