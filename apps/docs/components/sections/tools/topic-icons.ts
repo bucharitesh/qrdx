@@ -1,4 +1,3 @@
-import { LinkedinLogo } from "@repo/design-system/components/icons";
 import {
   Airplane,
   ArchiveBook,
@@ -78,6 +77,7 @@ import {
   Weight,
   Wifi,
 } from "iconsax-reactjs";
+import { LinkedinIcon } from "@/components/landing/social-networks";
 import { brandIcon } from "@/lib/brand-logos/brand-logo";
 import { CONTENT_TYPE_BRANDS } from "@/lib/brand-logos/content-types";
 import type { QrTypeGroup } from "@/lib/qr-types-content";
@@ -104,7 +104,7 @@ export const QR_TYPE_ICONS: Record<ContentType, CardIcon> = {
   wifi: Wifi,
   vcard: Personalcard,
   maps: Location,
-  linkedin: LinkedinLogo,
+  linkedin: LinkedinIcon,
   upi: Card,
   dubsh: Link2,
   attendance: ClipboardTick,

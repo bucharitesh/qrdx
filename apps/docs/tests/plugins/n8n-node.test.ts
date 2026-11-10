@@ -19,6 +19,7 @@ interface Parameter {
     minimum?: number;
     maximum?: number;
     maxLength?: number;
+    pattern?: string;
     default?: unknown;
   };
 }
@@ -58,7 +59,7 @@ describe("n8n node: GET /qr options", () => {
   // API accepts.
   it("offers the API's quick logo icons", () => {
     expect(sorted(n8n.LOGO_ICONS)).toEqual(sorted(LOGO_ICON_IDS));
-    const pattern = new RegExp(parameter("/qr", "logoIcon").pattern);
+    const pattern = new RegExp(parameter("/qr", "logoIcon").pattern ?? "^$");
     for (const icon of n8n.LOGO_ICONS) expect(icon).toMatch(pattern);
   });
 

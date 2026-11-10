@@ -1,6 +1,6 @@
 "use client";
 
-import { LinkedinLogo, Star } from "@repo/design-system/components/icons";
+import { Star } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Bag2,
@@ -22,6 +22,7 @@ import {
   Wifi,
 } from "iconsax-reactjs";
 import type { ComponentType } from "react";
+import { LinkedinIcon } from "@/components/landing/social-networks";
 import {
   IntegrationLogo,
   logoForIntegration,
@@ -43,7 +44,7 @@ const ICONS: Record<string, AnyIcon> = {
   Hashtag,
   Link,
   Link2,
-  LinkedinLogo,
+  LinkedinLogo: LinkedinIcon,
   Location,
   MessageText,
   MoneySend,
