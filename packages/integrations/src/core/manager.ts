@@ -60,7 +60,8 @@ export async function getIntegration(
         accessToken: freshAccessToken,
       };
     } catch (error) {
-      console.error(`Failed to auto-refresh token for ${provider}:`, error);
+      // The provider goes in as an argument, not into the format string.
+      console.error("Failed to auto-refresh token for %s:", provider, error);
       // Mirror the "error" status persisted by the refresh so callers treat the
       // integration as disconnected instead of using an expired token.
       return { ...decryptedIntegration, status: "error" };

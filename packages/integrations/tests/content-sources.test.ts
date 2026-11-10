@@ -289,6 +289,68 @@ describe("Shopify", () => {
     expect(normalizeShopDomain("a.myshopify.com.evil.com")).toBeNull();
   });
 
+  it("answers fast on many slashes before a line break", () => {
+    for (const input of [
+      `${"/".repeat(200_000)}\nx`,
+      `my-store${"/".repeat(200_000)} x`,
+      `https://${"/".repeat(200_000)}\rmy-store`,
+    ]) {
+      const start = performance.now();
+      expect(normalizeShopDomain(input)).toBeNull();
+      expect(performance.now() - start).toBeLessThan(200);
+    }
+  });
+
+  it("cuts the path exactly where the old /\\/.*$/ replace did", () => {
+    // The code before the linear rewrite, kept as the reference.
+    const legacy = (input: string) => {
+      let value = input.trim().toLowerCase();
+      if (!value) return null;
+      const admin = value.match(
+        /admin\.shopify\.com\/store\/([a-z0-9][a-z0-9-]*)/
+      );
+      if (admin?.[1]) value = admin[1];
+      value = value.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+      if (!value.includes(".")) value = `${value}.myshopify.com`;
+      return /^[a-z0-9][a-z0-9-]{0,60}\.myshopify\.com$/.test(value)
+        ? value
+        : null;
+    };
+    const pieces = [
+      "/",
+      "\n",
+      "\r",
+      " ",
+      " ",
+      " ",
+      "my-store",
+      "x",
+      ".",
+      ".myshopify.com",
+      "https://",
+      "admin.shopify.com/store/",
+    ];
+    let seed = 3;
+    const random = () => {
+      seed = (seed * 1_103_515_245 + 12_345) % 2_147_483_648;
+      return seed / 2_147_483_648;
+    };
+    const inputs = ["my-store/\nx", "my-store\n/x", "a/b\r/c", "my-store/"];
+    for (let round = 0; round < 5000; round++) {
+      let input = "";
+      const length = Math.floor(random() * 8);
+      for (let i = 0; i < length; i++) {
+        input += pieces[Math.floor(random() * pieces.length)];
+      }
+      inputs.push(input);
+    }
+    for (const input of inputs) {
+      expect(normalizeShopDomain(input), JSON.stringify(input)).toBe(
+        legacy(input)
+      );
+    }
+  });
+
   it("uses the online-store URL, else /products/<handle> on the primary domain", () => {
     expect(
       productUrl(

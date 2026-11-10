@@ -23,6 +23,23 @@ const CURSOR = /^[A-Za-z0-9+/=_-]{1,512}$/;
 const SHOP_DOMAIN = /^[a-z0-9][a-z0-9-]{0,60}\.myshopify\.com$/;
 
 /**
+ * Cuts `value` at the first "/" on its last line, as `.replace(/\/.*$/, "")`
+ * did ("." stops at line breaks), without that pattern's quadratic
+ * backtracking on many slashes before a line break.
+ */
+function dropPath(value: string): string {
+  const lastLine =
+    Math.max(
+      value.lastIndexOf("\n"),
+      value.lastIndexOf("\r"),
+      value.lastIndexOf(" "),
+      value.lastIndexOf(" ")
+    ) + 1;
+  const slash = value.indexOf("/", lastLine);
+  return slash < 0 ? value : value.slice(0, slash);
+}
+
+/**
  * Normalizes what a merchant pastes ("mystore", "mystore.myshopify.com",
  * "https://admin.shopify.com/store/mystore") to "mystore.myshopify.com".
  */
@@ -31,7 +48,7 @@ export function normalizeShopDomain(input: string): string | null {
   if (!value) return null;
   const admin = value.match(/admin\.shopify\.com\/store\/([a-z0-9][a-z0-9-]*)/);
   if (admin?.[1]) value = admin[1];
-  value = value.replace(/^https?:\/\//, "").replace(/\/.*$/, "");
+  value = dropPath(value.replace(/^https?:\/\//, ""));
   if (!value.includes(".")) value = `${value}.myshopify.com`;
   return SHOP_DOMAIN.test(value) ? value : null;
 }
