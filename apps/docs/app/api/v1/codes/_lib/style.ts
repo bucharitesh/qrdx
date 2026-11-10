@@ -34,7 +34,7 @@ function fileIdOfLink(value: string): string | null {
 }
 
 async function resolveOne(
-  scope: ActiveScope,
+  fileLink: (fileId: string) => Promise<string>,
   style: Record<string, unknown>,
   path: string,
   currentLogo: () => Promise<string | null>,
@@ -52,7 +52,7 @@ async function resolveOne(
     return {
       ...rest,
       showLogo: rest.showLogo ?? true,
-      customLogo: await logoFileLink(scope, logoFileId),
+      customLogo: await fileLink(logoFileId),
     };
   }
   if (logoIcon !== undefined) {
@@ -75,7 +75,7 @@ async function resolveOne(
   const fileId = fileIdOfLink(logo);
   if (fileId) {
     // A link to this workspace's own file, kept from an earlier save.
-    await logoFileLink(scope, fileId);
+    await fileLink(fileId);
     return rest;
   }
   throw invalid(
@@ -93,6 +93,16 @@ export async function resolveCodeStyles(
   body: unknown,
   currentLogo: () => Promise<string | null> = async () => null,
 ): Promise<unknown> {
+  // A batch often repeats one logo: each file is looked up once.
+  const links = new Map<string, Promise<string>>();
+  const fileLink = (fileId: string) => {
+    let link = links.get(fileId);
+    if (!link) {
+      link = logoFileLink(scope, fileId);
+      links.set(fileId, link);
+    }
+    return link;
+  };
   const fix = async (code: unknown, path: string) => {
     if (!code || typeof code !== "object" || Array.isArray(code)) return code;
     const { style } = code as { style?: unknown };
@@ -102,7 +112,7 @@ export async function resolveCodeStyles(
     return {
       ...code,
       style: await resolveOne(
-        scope,
+        fileLink,
         style as Record<string, unknown>,
         `${path}style`,
         currentLogo,

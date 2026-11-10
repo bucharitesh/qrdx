@@ -9,6 +9,7 @@ import { createHash } from "node:crypto";
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";
 import { fakeDb } from "../support/fake-db";
 
 const state = vi.hoisted(() => ({
@@ -668,10 +669,10 @@ describe("POST /v1/codes", () => {
     ).toBe(201);
   });
 
-  it("takes at most 100 codes per request", async () => {
+  it(`takes at most ${MAX_CODES_PER_REQUEST} codes per request`, async () => {
     state.plan = "business";
     const response = await create(
-      Array.from({ length: 101 }, () => ({
+      Array.from({ length: MAX_CODES_PER_REQUEST + 1 }, () => ({
         destinationUrl: "https://example.com",
       })),
       write,

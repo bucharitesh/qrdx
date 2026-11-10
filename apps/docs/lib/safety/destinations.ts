@@ -1,5 +1,6 @@
 import "server-only";
 
+import { batchMessage } from "@/app/dashboard/codes/_lib/bulk";
 import { HttpError } from "@/lib/error-response";
 import {
   checkUrlSafety,
@@ -21,7 +22,8 @@ import {
  * - suspicious URLs (shorteners, IP hosts, lookalike domains) from accounts
  *   in their first days are saved with the code switched off and an open
  *   "auto-hold" report for /admin/abuse;
- * - new accounts are capped at NEW_ACCOUNT_CODES_PER_HOUR new codes.
+ * - new accounts are capped at NEW_ACCOUNT_CODES_PER_HOUR new codes an hour
+ *   (NEW_PAID_ACCOUNT_CODES_PER_HOUR in a paid workspace).
  */
 
 const LOOKUP_CONCURRENCY = 8;
@@ -38,26 +40,87 @@ function unsafeUrl(url: string, safety: UrlSafety): HttpError {
   );
 }
 
+/** Lookups at a time for a batch of this many rows (Web Risk is per URL). */
+export function lookupConcurrency(rows: number): number {
+  return rows > 50 ? 16 : LOOKUP_CONCURRENCY;
+}
+
 /**
  * For createCodes: checks every row's destination and returns the rows, with
  * held ones (new account + suspicious URL) set to `isActive: false`.
+ *
+ * A batch stops waiting for Web Risk after `budgetMs`: rows not looked up by
+ * then get the offline checks only, as during a Web Risk outage, so a large
+ * batch stays inside the request's time limit. Blocked rows are listed in the
+ * error's `data.details`, by `indexOf(position)` (the row's place in the
+ * caller's request).
  */
 export async function screenNewCodes<
   T extends { id: string; destinationUrl: string },
 >(
   scope: { userId: string },
   rows: T[],
+  {
+    budgetMs = Number.POSITIVE_INFINITY,
+    indexOf = (position: number) => position,
+    paid = false,
+  }: {
+    budgetMs?: number;
+    indexOf?: (position: number) => number;
+    /** The codes go to a paid workspace (a higher new-account cap) */
+    paid?: boolean;
+  } = {},
 ): Promise<(T & { isActive?: boolean })[]> {
   if (rows.length === 0) return rows;
-  await enforceNewAccountVelocity(scope.userId, rows.length);
+  await enforceNewAccountVelocity(scope.userId, rows.length, { paid });
 
-  const checks = await mapWithConcurrency(rows, LOOKUP_CONCURRENCY, (row) =>
-    checkUrlSafety(row.destinationUrl),
+  const deadline = Date.now() + budgetMs;
+  let skipped = 0;
+  const checks = await mapWithConcurrency(
+    rows,
+    lookupConcurrency(rows.length),
+    (row) => {
+      const webRisk = Date.now() < deadline;
+      if (!webRisk) skipped++;
+      return checkUrlSafety(row.destinationUrl, { webRisk });
+    },
   );
-  for (const [index, safety] of checks.entries()) {
-    if (safety.verdict === "block") {
-      throw unsafeUrl((rows[index] as T).destinationUrl, safety);
-    }
+  if (skipped > 0) {
+    console.warn(
+      JSON.stringify({
+        event: "safety.web_risk_budget_spent",
+        rows: rows.length,
+        skipped,
+      }),
+    );
+  }
+  const blocked = checks.flatMap((safety, position) =>
+    safety.verdict === "block" ? [{ safety, position }] : [],
+  );
+  const [first] = blocked;
+  if (first) {
+    const error = unsafeUrl(
+      (rows[first.position] as T).destinationUrl,
+      first.safety,
+    );
+    if (rows.length === 1) throw error;
+    const details = blocked.map(({ safety, position }) => {
+      const index = indexOf(position);
+      return {
+        index,
+        path: `${index}.destinationUrl`,
+        message: unsafeUrl((rows[position] as T).destinationUrl, safety)
+          .message,
+      };
+    });
+    throw new HttpError(
+      422,
+      error.code,
+      batchMessage(details, rows.length),
+      undefined,
+      undefined,
+      { details },
+    );
   }
   if (!checks.some((safety) => safety.verdict === "review")) return rows;
   if (!(await getAccountStanding(scope.userId)).isNew) return rows;

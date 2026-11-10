@@ -6,6 +6,7 @@ import cuid from "cuid";
 import { and, count, eq, gte, min } from "drizzle-orm";
 import { after } from "next/server";
 import { cache } from "react";
+import { MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
 import { HttpError } from "@/lib/error-response";
 
 /**
@@ -17,6 +18,11 @@ import { HttpError } from "@/lib/error-response";
 
 export const NEW_ACCOUNT_DAYS = 7;
 export const NEW_ACCOUNT_CODES_PER_HOUR = 30;
+/**
+ * New accounts on a paid plan (a checkout, so not a throwaway sign-up): one
+ * full CSV import an hour, so a new customer can make their first batch.
+ */
+export const NEW_PAID_ACCOUNT_CODES_PER_HOUR = MAX_IMPORT_ROWS;
 
 const HOUR_MS = 60 * 60_000;
 const DAY_MS = 24 * HOUR_MS;
@@ -41,13 +47,18 @@ export const getAccountStanding = cache(
 
 /**
  * Throws 429 when a new account would create more than
- * NEW_ACCOUNT_CODES_PER_HOUR codes within a rolling hour (all workspaces).
+ * NEW_ACCOUNT_CODES_PER_HOUR codes within a rolling hour (all workspaces);
+ * NEW_PAID_ACCOUNT_CODES_PER_HOUR when the codes go to a paid workspace.
  */
 export async function enforceNewAccountVelocity(
   userId: string,
   adding: number,
+  { paid = false }: { paid?: boolean } = {},
 ): Promise<void> {
   if (!(await getAccountStanding(userId)).isNew) return;
+  const cap = paid
+    ? NEW_PAID_ACCOUNT_CODES_PER_HOUR
+    : NEW_ACCOUNT_CODES_PER_HOUR;
 
   const now = Date.now();
   const [row] = await db
@@ -59,7 +70,7 @@ export async function enforceNewAccountVelocity(
         gte(qrCode.createdAt, new Date(now - HOUR_MS)),
       ),
     );
-  if ((row?.total ?? 0) + adding <= NEW_ACCOUNT_CODES_PER_HOUR) return;
+  if ((row?.total ?? 0) + adding <= cap) return;
 
   const oldest = row?.oldest ? new Date(row.oldest).getTime() : now;
   const retryAfterSeconds = Math.max(
@@ -69,7 +80,7 @@ export async function enforceNewAccountVelocity(
   throw new HttpError(
     429,
     "RATE_LIMITED",
-    `During their first ${NEW_ACCOUNT_DAYS} days, accounts can create up to ${NEW_ACCOUNT_CODES_PER_HOUR} dynamic codes per hour. Please try again later.`,
+    `During their first ${NEW_ACCOUNT_DAYS} days, accounts can create up to ${cap.toLocaleString("en-US")} dynamic codes per hour. Please try again later.`,
     { "Retry-After": String(retryAfterSeconds) },
   );
 }
