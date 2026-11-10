@@ -15,25 +15,19 @@ The bot asks Slack for `commands`, `app_mentions:read`, `chat:write` and `im:his
 
 QR code images come from the QRdx image API (`/v1/qr`), which Slack fetches from the link in the message; nothing is uploaded.
 
-## Set it up (qrdx.dev)
+## Set it up
 
-1. Open the existing Slack app at [api.slack.com/apps](https://api.slack.com/apps) (the one whose client id and secret are in `SLACK_CLIENT_ID` and `SLACK_CLIENT_SECRET`), go to **App Manifest**, paste [`manifest.json`](manifest.json) and save. Slack checks the event and interactivity URLs when you save, which works once the code is deployed with the variables below.
-2. Copy **Basic Information → App Credentials → Signing Secret**.
-3. On Vercel, set `SLACK_SIGNING_SECRET` for Production and Preview. `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` and `INTEGRATION_ENCRYPTION_KEY` are already set for "Add to Slack"; the bot needs all four, and stays off (its routes answer 404) until they are set.
-4. Apply `packages/database/manual-sql/2026-11-10-slack-bot.sql` to the database.
-5. Redeploy, then in Settings → Integrations → Slack click **Add the bot to Slack** and pick a test workspace.
-6. In that workspace try `/qr https://qrdx.dev`, a mention of the bot, a direct message, **Make a QR code** on a message, `/qr link`, and `/qr track` with a link.
+The order matters: Slack checks the Events URL when the manifest is saved, and that URL only answers once the app's signing secret is set. So the app is created first, the variables go in, and the manifest comes last.
 
-Slack workspaces that added the app before the bot existed keep their alerts. The bot's commands appear there once someone adds the bot (step 5).
+1. At [api.slack.com/apps](https://api.slack.com/apps), choose **Create New App → From scratch**, name it QRdx and pick a workspace. (If you already have a QRdx app for "Add to Slack" alerts, use that one instead.)
+2. From **Basic Information → App Credentials**, set `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` and `SLACK_SIGNING_SECRET` in your environment (on Vercel: Production and Preview). In production also set `INTEGRATION_ENCRYPTION_KEY` (32 characters or more), which encrypts the bot tokens. The bot stays off, and its routes answer 404, until all of them are set.
+3. Apply `packages/database/manual-sql/2026-11-10-slack-bot.sql` to the database, or run `pnpm db:push` against your own database.
+4. Deploy (or restart) so the new variables are live.
+5. Open **App Manifest**, paste [`manifest.json`](manifest.json) and save. When self-hosting, first replace every `https://qrdx.dev` in it with your app's URL (`NEXT_PUBLIC_APP_URL`); the request URLs must be reachable over HTTPS. If Slack says the Events URL isn't verified, open **Event Subscriptions** and click **Retry**.
+6. To let other Slack workspaces add the app, open **Manage Distribution** and click **Activate Public Distribution**.
+7. Sign in to QRdx and click **Add the bot to Slack** in Settings → Integrations → Slack, then try `/qr https://qrdx.dev`, a mention of the bot, a direct message, **Make a QR code** on a message, `/qr link`, and `/qr track` with a link.
 
-## Self-hosting
-
-1. At [api.slack.com/apps](https://api.slack.com/apps), choose **Create New App → From an app manifest**, pick a workspace and paste [`manifest.json`](manifest.json) with every `https://qrdx.dev` replaced by your app's URL (`NEXT_PUBLIC_APP_URL`). The four request URLs must be reachable from the internet over HTTPS.
-2. From **Basic Information → App Credentials**, set `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` and `SLACK_SIGNING_SECRET` in your environment. In production also set `INTEGRATION_ENCRYPTION_KEY` (32 characters or more), which encrypts the bot tokens.
-3. Apply `packages/database/manual-sql/2026-11-10-slack-bot.sql`, or run `pnpm db:push` against your own database.
-4. Restart the app, sign in, and add the bot from Settings → Integrations → Slack.
-
-If you change the app's scopes, events or URLs later, add the bot to Slack again from the same page so Slack applies them.
+Slack workspaces that added the app for alerts before the bot existed keep their alerts; the bot's commands appear there once someone adds the bot. If you change the app's scopes, events or URLs later, add the bot to Slack again from the same page so Slack applies them.
 
 ## License
 
