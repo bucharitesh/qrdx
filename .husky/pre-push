@@ -1,3 +1,12 @@
-# Typecheck, lint and tests before every push, the same checks CI runs.
-# Skip once with: git push --no-verify
-pnpm prepush
+# Before every push: lint, both typechecks, and the tests of the packages
+# this branch changes compared with origin/staging, plus the packages that
+# depend on them (turbo --affected; unchanged results come from the turbo
+# cache). CI runs every test on the release PR and on main.
+#
+# Every test, as before:  QRDX_PREPUSH=full git push   (or: pnpm prepush)
+# Skip once with:         git push --no-verify
+if [ "$QRDX_PREPUSH" = "full" ]; then
+  pnpm prepush
+else
+  pnpm prepush:quick
+fi
