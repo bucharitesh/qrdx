@@ -108,7 +108,7 @@ const MCP_CAPABILITIES: CatalogCapability[] = [
   {
     title: "Styled QR codes",
     description:
-      "generate_qr_code returns a PNG plus SVG and PNG image links, with colors, module shapes, corner styles and frames.",
+      "generate_qr_code returns a PNG plus SVG and PNG image links, with colors and gradients, module shapes, corner styles, frames and logo icons.",
   },
   {
     title: "Ready-made payloads",
@@ -118,12 +118,12 @@ const MCP_CAPABILITIES: CatalogCapability[] = [
   {
     title: "No account or key",
     description:
-      "The server is public and stateless. It never reads or changes QRdx account data.",
+      "The server is public and stateless, up to 120 requests a minute. Without an API key it never reads or changes QRdx account data.",
   },
   {
-    title: "Solid colors only",
+    title: "QR card in the chat",
     description:
-      "Logos and gradients need the playground or the qrdx library. Up to 120 requests a minute.",
+      "In apps that support MCP Apps, the code also shows as a card with what it encodes and buttons for the image and the editor.",
   },
 ];
 
@@ -152,6 +152,7 @@ export const ai: IntegrationCatalogEntry[] = [
       "Add QRdx as a custom connector and ask Claude for styled QR codes and Wi-Fi or contact payloads.",
     description: [
       "QRdx runs a public MCP server. Add it to Claude as a custom connector and Claude can render QR codes in your brand colors, build Wi-Fi and contact payloads, and hand you SVG and PNG links for docs and emails.",
+      "Where Claude shows MCP Apps, each code also comes back as a card in the chat with buttons for the image and the editor.",
       "Connectors you add on claude.ai also work in the Claude desktop app.",
     ],
     logo: { type: "image", src: "/integrations/claude.svg" },
@@ -196,6 +197,7 @@ export const ai: IntegrationCatalogEntry[] = [
       "Add the QRdx MCP server as an app in ChatGPT developer mode and generate QR codes in chat.",
     description: [
       "ChatGPT's developer mode can use remote MCP servers. Add QRdx with no authentication and ChatGPT can render styled QR codes and build Wi-Fi, contact, email, SMS and location payloads.",
+      "Where ChatGPT shows MCP Apps, each code also comes back as a card in the chat with buttons for the image and the editor.",
       "Developer mode is available on the web for Plus, Pro, Business, Enterprise and Education accounts.",
     ],
     logo: { type: "image", src: "/integrations/chatgpt.svg" },
