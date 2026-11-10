@@ -81,6 +81,8 @@ export interface PageEditorProps {
     shortLink: string;
     /** NFC (feat/nfc): the code's NFC page, for vCard Plus pages */
     nfcHref?: string | null;
+    /** Verified custom domain it's served on (GS1 Digital Link for products) */
+    customDomain?: string | null;
   } | null;
   savedThemes: SavedThemePalette[];
   canUseCustomCss: boolean;
@@ -439,6 +441,7 @@ export function PageEditor({
     theme: content.theme,
     pageId: page.id,
     storageEnabled,
+    customDomain: code?.customDomain ?? null,
   };
 
   const css = useMemo(() => {
@@ -742,6 +745,18 @@ export function PageEditor({
             </TabsList>
 
             <TabsContent className="mt-4 space-y-3" value="blocks">
+              {version === 1 && (
+                // Never published: the template's names, prices, numbers
+                // and photos are samples, not anyone's real details.
+                <p className="bg-muted text-muted-foreground flex items-start gap-2 rounded-md p-3 text-xs">
+                  <AlertCircle className="mt-px size-3.5 shrink-0" />
+                  <span>
+                    This page starts with sample text, numbers and photos from
+                    its template. Replace them with your own before you share
+                    the code.
+                  </span>
+                </p>
+              )}
               <div className="space-y-2" ref={listRef}>
                 {editableBlocks.length === 0 && (
                   <p className="text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm">

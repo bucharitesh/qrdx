@@ -10,5 +10,8 @@ import "./event";
 import "./apps";
 import "./form";
 import "./rating";
+import "./details";
+import "./product";
+import "./payment";
 
 export * from "../registry";

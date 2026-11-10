@@ -58,6 +58,7 @@ export default async function EditLandingPage({
                 page.type === BUSINESS_CARD_PAGE_TYPE
                   ? nfcPageHref(workspace, code.id)
                   : null,
+              customDomain: code.customDomain,
             }
           : null
       }
