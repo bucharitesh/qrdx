@@ -23,7 +23,13 @@ import {
   sql,
   sum,
 } from "drizzle-orm";
-import type { BreakdownRow, DailyCount } from "@/lib/scans";
+import {
+  type BreakdownRow,
+  type DailyCount,
+  nfcTapCount,
+  type ScanSourceCounts,
+  scanSourceCounts,
+} from "@/lib/scans";
 import type { ActiveScope } from "@/lib/scope";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -81,6 +87,8 @@ export interface WorkspaceAnalytics {
   topCodes: TopCode[];
   countries: BreakdownRow[];
   devices: BreakdownRow[];
+  /** QR scans and NFC taps in the range (they add up to `total`) */
+  sources: ScanSourceCounts;
 }
 
 export async function getWorkspaceAnalytics(
@@ -101,7 +109,11 @@ export async function getWorkspaceAnalytics(
         .from(qrCode)
         .where(codesWhere),
       db
-        .select({ total: count(), unique: countDistinct(qrScan.visitorHash) })
+        .select({
+          total: count(),
+          unique: countDistinct(qrScan.visitorHash),
+          nfc: nfcTapCount(),
+        })
         .from(qrScan)
         .where(scansWhere),
       db
@@ -148,6 +160,7 @@ export async function getWorkspaceAnalytics(
     topCodes,
     countries: countries as BreakdownRow[],
     devices: devices as BreakdownRow[],
+    sources: scanSourceCounts(scanTotals?.total ?? 0, scanTotals?.nfc ?? 0),
   };
 }
 

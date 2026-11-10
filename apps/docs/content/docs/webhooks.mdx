@@ -91,14 +91,15 @@ A `scan.created` batch:
         "device_type": "mobile",
         "os": "iOS",
         "browser": "Safari",
-        "referer": null
+        "referer": null,
+        "source": "qr"
       }
     ]
   }
 }
 ```
 
-When more than 100 scans arrive in one minute, `scans` holds the first 100 and `count` the exact total. Scan payloads never include IP addresses or visitor hashes.
+When more than 100 scans arrive in one minute, `scans` holds the first 100 and `count` the exact total. `source` is `nfc` for a tap on an [NFC tag](/docs/nfc) and `qr` for a QR scan. Scan payloads never include IP addresses or visitor hashes.
 
 Other events carry:
 

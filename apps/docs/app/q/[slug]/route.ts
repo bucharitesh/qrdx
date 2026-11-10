@@ -2,6 +2,8 @@ import { database as db, qrCode } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { after, type NextRequest } from "next/server";
 import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
+// NFC taps: `?nfc` on the short link marks the scan as a tap (lib/nfc/links.ts).
+import { scanSourceOf } from "@/lib/nfc/links";
 import { type RedirectCode, redirectCodeColumns } from "@/lib/redirect/code";
 import {
   evaluateLifecycle,
@@ -115,6 +117,7 @@ async function resolveShortLink(
         scanId,
         now,
         variant: routingContext.variant,
+        source: scanSourceOf(request.nextUrl),
       }).catch((error) => {
         console.error("Failed to record scan:", error);
       }),

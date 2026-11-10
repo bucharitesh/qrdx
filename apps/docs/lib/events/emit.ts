@@ -4,6 +4,7 @@ import { database as db, webhookDelivery } from "@repo/database";
 import cuid from "cuid";
 import { and, asc, eq, gt, inArray, sql } from "drizzle-orm";
 import { after } from "next/server";
+import { normalizeScanSource } from "@/lib/nfc/links";
 import { getPlanLimits } from "@/lib/plans";
 import { shortLinkUrl } from "@/lib/short-links";
 import { claimDueDeliveries, deliverNow, processClaimed } from "./deliveries";
@@ -361,6 +362,8 @@ export interface RecordedScan {
   os: string | null;
   browser: string | null;
   referer: string | null;
+  /** qr_scan.source; null for scans from before sources were stored */
+  source?: string | null;
 }
 
 export interface ScannedCode {
@@ -388,6 +391,7 @@ export function scanSummary(
     os: scan.os,
     browser: scan.browser,
     referer: scan.referer,
+    source: normalizeScanSource(scan.source),
   };
 }
 

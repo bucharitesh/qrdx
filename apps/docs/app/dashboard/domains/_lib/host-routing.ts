@@ -2,6 +2,7 @@ import { customDomain, database as db } from "@repo/database";
 import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/lib/metadata";
+import { NFC_PARAM } from "@/lib/nfc/links";
 import { isValidSlug } from "@/lib/short-links";
 import {
   CUSTOM_DOMAIN_HEADER,
@@ -170,7 +171,12 @@ export async function routeCustomDomain(
   if (isValidSlug(slug)) {
     const headers = new Headers(request.headers);
     headers.set(CUSTOM_DOMAIN_HEADER, host.id);
-    const target = isPagePath ? `/p/${slug}` : `/q/${slug}`;
+    let target = isPagePath ? `/p/${slug}` : `/q/${slug}`;
+    // NFC links (`/<slug>?nfc`, lib/nfc/links.ts) carry their marker in the
+    // rewrite itself, so the tap counts as one wherever the app runs.
+    if (!isPagePath && request.nextUrl.searchParams.has(NFC_PARAM)) {
+      target += `?${NFC_PARAM}`;
+    }
     return NextResponse.rewrite(new URL(target, request.url), {
       request: { headers },
     });
