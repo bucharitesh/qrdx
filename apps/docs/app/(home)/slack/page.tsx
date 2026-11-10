@@ -78,7 +78,7 @@ const commands: BotCommand[] = [
     title: "Link your QRdx account",
     usage: "/qr link",
     description:
-      "Sends you a button only you can see. It opens QRdx, where you pick the QRdx workspace for your tracked codes and confirm. /qr unlink removes the link.",
+      "Sends you a button only you can see. It opens QRdx, where you sign in with Slack to show it's you, pick the QRdx workspace for your tracked codes and confirm. /qr unlink removes the link.",
   },
   {
     icon: Chart,
