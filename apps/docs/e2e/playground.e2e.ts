@@ -1196,7 +1196,9 @@ async function testCopy(page: Page) {
   record(
     "copy",
     "Copy code puts a qrdx React snippet on the clipboard",
-    /from ["']qrdx["']/.test(code) && code.includes(URL_VALUE),
+    // The content as the component's value prop, not just anywhere.
+    /from ["']qrdx["']/.test(code) &&
+      code.includes(`value=${JSON.stringify(URL_VALUE)}`),
     code.slice(0, 120),
   );
   await pressEscape(page);
@@ -1428,10 +1430,11 @@ const savedFgColor = (page: Page) =>
  * "Open in Playground" puts the theme in, and Undo brings their design back.
  */
 async function testCommunityPreview(page: Page) {
-  const mine = JSON.stringify("#0b6e4f");
+  // The visitor's own color, as savedFgColor reports it (JSON).
+  const mine = '"#0b6e4f"';
   // A design of the visitor's own, saved in this browser.
   await page.evaluate(
-    `() => { const raw = JSON.parse(localStorage.getItem("editor-storage") ?? "null"); if (!raw) return false; raw.state.themeState.styles.fgColor = ${mine}; raw.state.themeCheckpoint = raw.state.themeState; localStorage.setItem("editor-storage", JSON.stringify(raw)); return true; }`,
+    `() => { const raw = JSON.parse(localStorage.getItem("editor-storage") ?? "null"); if (!raw) return false; raw.state.themeState.styles.fgColor = "#0b6e4f"; raw.state.themeCheckpoint = raw.state.themeState; localStorage.setItem("editor-storage", JSON.stringify(raw)); return true; }`,
   );
   await page.goto(`${BASE_URL}/community/themes`, { wait: 3000 });
   await install(page);
