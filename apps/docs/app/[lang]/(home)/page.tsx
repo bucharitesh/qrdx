@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { AsciiDivider } from "@/components/fx/ascii-divider";
 import { FAQSection } from "@/components/sections/faq-section";
 import { HeroSection } from "@/components/sections/hero-section";
@@ -11,6 +11,7 @@ import { UseCasesSection } from "@/components/sections/home/use-cases-section";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { localizedMetadata } from "@/lib/i18n/metadata";
+import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl, defaultOgImage, siteName } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 import {
@@ -24,7 +25,7 @@ import {
 import { founderSchema, organizationId } from "@/lib/seo-schema";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const locale = await getLocale();
+  const locale = await requireLocale();
   const t = await getTranslations({ locale, namespace: "meta" });
   return localizedMetadata({
     locale,
@@ -141,7 +142,8 @@ const webSiteSchema = {
     "Free QR code generator with dynamic QR codes, hosted pages, scan analytics and developer tools. Open source.",
 };
 
-export default function Home() {
+export default async function Home() {
+  await requireLocale();
   return (
     <>
       <script
