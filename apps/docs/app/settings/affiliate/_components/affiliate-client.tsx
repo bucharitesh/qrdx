@@ -8,7 +8,10 @@ import { Copy } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
-import { savePaypalEmailAction } from "../_lib/actions";
+import {
+  chooseReferralCodeAction,
+  savePaypalEmailAction,
+} from "../_lib/actions";
 
 /** The referral link, read-only, with a copy button. */
 export function ReferralLinkField({ link }: { link: string }) {
@@ -100,6 +103,77 @@ export function PaypalEmailForm({ current }: { current: string | null }) {
           Save
         </Button>
       </div>
+      {error && (
+        <p className="text-destructive text-sm" role="alert">
+          {error}
+        </p>
+      )}
+    </form>
+  );
+}
+
+/**
+ * Swaps the random referral code for one the affiliate chooses, once. The
+ * random one keeps working. No "Confirm it's you": it doesn't change where
+ * money goes.
+ */
+export function ChooseCodeForm({ current }: { current: string }) {
+  const id = useId();
+  const router = useRouter();
+  const [code, setCode] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const wanted = code.trim().toLowerCase();
+
+  const save = () => {
+    setError(null);
+    startTransition(async () => {
+      const result = await chooseReferralCodeAction({ code: wanted });
+      if (result.ok) {
+        toast.success("Code saved");
+        router.refresh();
+      } else {
+        setError(result.error);
+      }
+    });
+  };
+
+  return (
+    <form
+      className="space-y-2"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (!isPending && wanted && wanted !== current) save();
+      }}
+    >
+      <label className="sr-only" htmlFor={id}>
+        New code
+      </label>
+      <div className="flex min-w-0 gap-2">
+        <Input
+          autoCapitalize="none"
+          autoComplete="off"
+          className="min-w-0 font-mono"
+          id={id}
+          maxLength={32}
+          onChange={(event) => setCode(event.target.value)}
+          placeholder={current}
+          spellCheck={false}
+          value={code}
+        />
+        <Button
+          disabled={isPending || !wanted || wanted === current}
+          type="submit"
+          variant="outline"
+        >
+          {isPending && <Spinner className="animate-spin" />}
+          Change once
+        </Button>
+      </div>
+      <p className="text-muted-foreground text-xs">
+        3 to 32 lower-case letters, digits and hyphens. It can't be changed
+        again.
+      </p>
       {error && (
         <p className="text-destructive text-sm" role="alert">
           {error}
