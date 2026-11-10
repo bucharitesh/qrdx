@@ -59,6 +59,11 @@ export const env = createEnv({
     HUBSPOT_CLIENT_SECRET: z.string().min(1).optional(),
     MAILCHIMP_CLIENT_ID: z.string().min(1).optional(),
     MAILCHIMP_CLIENT_SECRET: z.string().min(1).optional(),
+    // Discord bot (/qr and "Make QR code"): the app's id and public key from
+    // the Discord developer portal. The bot token only registers commands
+    // (plugins/discord), so the app never reads it.
+    DISCORD_APPLICATION_ID: z.string().min(1).optional(),
+    DISCORD_PUBLIC_KEY: z.string().min(1).optional(),
     // Optional "your channel's videos" / "your playlists" pickers
     YOUTUBE_API_KEY: z.string().min(1).optional(),
     SPOTIFY_CLIENT_ID: z.string().min(1).optional(),
@@ -155,6 +160,8 @@ export const env = createEnv({
     HUBSPOT_CLIENT_SECRET: process.env.HUBSPOT_CLIENT_SECRET,
     MAILCHIMP_CLIENT_ID: process.env.MAILCHIMP_CLIENT_ID,
     MAILCHIMP_CLIENT_SECRET: process.env.MAILCHIMP_CLIENT_SECRET,
+    DISCORD_APPLICATION_ID: process.env.DISCORD_APPLICATION_ID,
+    DISCORD_PUBLIC_KEY: process.env.DISCORD_PUBLIC_KEY,
     YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
     SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
     SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
