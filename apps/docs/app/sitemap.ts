@@ -1,5 +1,6 @@
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
+import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { isPathAvailable } from "@/lib/feature-availability";
@@ -189,6 +190,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    // The chat bots' pages, where each bot is set up
+    // (lib/feature-availability-rules.ts).
+    ...CHAT_BOTS.filter((bot) => isPathAvailable(bot.path)).map(
+      (bot) =>
+        ({
+          url: url(bot.path),
+          lastModified: pageDate(bot.path),
+          changeFrequency: "monthly",
+          priority: 0.7,
+        }) satisfies Entry,
+    ),
     {
       url: url("/changelogs"),
       lastModified: latest(changelogSource.getPages().map((p) => p.data.date)),
