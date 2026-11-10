@@ -338,6 +338,7 @@ describe("exportQueries", () => {
         "scansDaily",
         "sessions",
         "signInMethods",
+        "slackLinks",
         "subscriptions",
         "tags",
         "teams",

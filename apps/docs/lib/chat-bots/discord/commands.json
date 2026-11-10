@@ -1,0 +1,31 @@
+[
+  {
+    "type": 1,
+    "name": "qr",
+    "description": "Make a QR code from a link or text",
+    "options": [
+      {
+        "type": 3,
+        "name": "content",
+        "description": "The link or text the QR code opens or shows",
+        "required": true,
+        "min_length": 1,
+        "max_length": 2048
+      },
+      {
+        "type": 5,
+        "name": "private",
+        "description": "Only you see the QR code",
+        "required": false
+      }
+    ],
+    "integration_types": [0, 1],
+    "contexts": [0, 1, 2]
+  },
+  {
+    "type": 3,
+    "name": "Make QR code",
+    "integration_types": [0, 1],
+    "contexts": [0, 1, 2]
+  }
+]
