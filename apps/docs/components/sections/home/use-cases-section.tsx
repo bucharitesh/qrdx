@@ -7,8 +7,14 @@ import { PRESSABLE } from "@/components/mockups/motion";
 import { Reveal } from "@/components/mockups/reveal";
 import { useCaseImages, type Visual } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
+import {
+  type ShowcaseStyleName,
+  showcaseThemeStyles,
+} from "@/lib/landing/showcase-styles";
+import { playgroundDesignHref } from "@/lib/playground-style";
+import type { ContentType } from "@/types/qr-content";
 
-interface UseCase {
+export interface UseCase {
   title: string;
   description: string;
   href: string;
@@ -16,32 +22,44 @@ interface UseCase {
   image: Visual;
 }
 
-const useCases: UseCase[] = [
+/**
+ * The playground on the job's content type, in the look of the code in the
+ * card's illustration (scripts/use-case-art/codes.ts names it), with QRdx's
+ * generic sample for the type where it has one.
+ */
+const startWith = (type: ContentType, look: ShowcaseStyleName) =>
+  playgroundDesignHref({
+    type,
+    sample: true,
+    design: showcaseThemeStyles(look),
+  });
+
+export const useCases: UseCase[] = [
   {
     title: "Menus and tables",
     description: "Link a table tent or counter card to your online menu.",
-    href: "/qr-code-generator/url",
+    href: startWith("url", "menu"),
     linkText: "URL QR code",
     image: useCaseImages.cafeTableTent,
   },
   {
     title: "Business cards",
     description: "Save your name, number and email to a phone in one scan.",
-    href: "/qr-code-generator/vcard",
+    href: startWith("vcard", "signature"),
     linkText: "vCard QR code",
     image: useCaseImages.businessCard,
   },
   {
     title: "Guest Wi-Fi",
     description: "Let guests join the network without typing the password.",
-    href: "/qr-code-generator/wifi",
+    href: startWith("wifi", "dots"),
     linkText: "Wi-Fi QR code",
     image: useCaseImages.hotelWifi,
   },
   {
     title: "Payments",
     description: "Take UPI payments at a stall, shop counter or delivery.",
-    href: "/qr-code-generator/upi",
+    href: startWith("upi", "classy"),
     linkText: "UPI QR code",
     image: useCaseImages.marketStallUpi,
   },
@@ -55,14 +73,14 @@ const useCases: UseCase[] = [
   {
     title: "Events and check-ins",
     description: "Check people in at the door with a Google Form.",
-    href: "/qr-code-generator/attendance",
+    href: startWith("attendance", "ticket"),
     linkText: "Attendance QR code",
     image: useCaseImages.eventCheckIn,
   },
   {
     title: "Shelves and displays",
     description: "Send shoppers from a shelf tag to your product listing.",
-    href: "/qr-code-generator/amazon",
+    href: startWith("amazon", "facet"),
     linkText: "Amazon QR code",
     image: useCaseImages.retailShelf,
   },
@@ -90,8 +108,8 @@ export function UseCasesSection() {
           A QR code for every job
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          From café tables to bus stops, pick the generator that writes the
-          right content for the job.
+          From café tables to bus stops, start from the right kind of code for
+          the job.
         </p>
       </SectionHeader>
       <ul className="grid w-full gap-4 px-10 py-12 sm:grid-cols-2 md:py-16 lg:grid-cols-4">

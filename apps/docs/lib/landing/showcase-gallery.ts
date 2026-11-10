@@ -6,14 +6,18 @@ import type {
   QRArtVariant,
   QRProps,
 } from "qrdx/types";
-import { itemPath } from "@/lib/community/types";
 import { demoPath } from "@/lib/landing/demo-paths";
 import {
   BODY_CATALOG,
   EYE_CATALOG,
   FRAME_CATALOG,
 } from "@/lib/pattern-catalog";
-import { playgroundHref } from "@/lib/playground-links";
+import {
+  type ArtLinkMode,
+  type PlaygroundLinkOptions,
+  playgroundHref,
+} from "@/lib/playground-links";
+import { playgroundDesignHref } from "@/lib/playground-style";
 import { getQrType } from "@/lib/qr-types-content";
 import { CATEGORY_LABELS } from "@/lib/themes/categories";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
@@ -75,7 +79,10 @@ export interface WallTile {
   preset: string;
   /** Changes on top of the theme (an official frame, a template, an eye). */
   style?: Partial<ThemeStyles>;
-  /** Where the tile goes. */
+  /**
+   * Where the tile goes: the playground with the tile's look (and its
+   * content type, with QRdx's sample), or a hosted page's live demo.
+   */
   href: string;
   /** Theme tiles: the link opens this theme in the playground. */
   appliesPreset?: boolean;
@@ -145,20 +152,35 @@ export const SAMPLE_HOSTS = [
 
 const encode = (content: QRContentConfig) => encodeQRContent(content);
 const page = (type: string, id: string) => `${SITE}${demoPath(type, id)}`;
-const generator = (type: ContentType) => `/qr-code-generator/${type}`;
 const themeName = (id: string) => defaultPresets[id]?.label ?? id;
 const kebab = (id: string) =>
   id.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
-/** The playground's Design tab (border templates, eye shapes). */
-const DESIGN_TAB = playgroundHref({ tab: "customisations" });
-/** Its Logo section, where center logos live. */
-const LOGO_SECTION = playgroundHref({ tab: "customisations", section: "logo" });
-/** The Art tab, in Logo QR or Image QR mode. */
-const ART_TAB = {
-  logo: playgroundHref({ tab: "art", art: "logo" }),
-  halftone: playgroundHref({ tab: "art", art: "image" }),
-} as const satisfies Record<QRArtMode, string>;
+/** The Art tab's link mode for each art mode. */
+const ART_LINK_MODE = {
+  logo: "logo",
+  halftone: "image",
+} as const satisfies Record<QRArtMode, ArtLinkMode>;
+
+/**
+ * Where a tile goes: the playground with the tile's own look (its theme, or
+ * the theme with the tile's changes as a `style`) and whatever else the
+ * tile asks for (its content type with QRdx's sample, a tab, a dialog).
+ * Logos and art images can't travel in a link; the tile opens where they
+ * are added.
+ */
+function tileHref(
+  look: { preset: string; style?: Partial<ThemeStyles> },
+  options: Omit<PlaygroundLinkOptions, "preset" | "style" | "themeId"> = {},
+): string {
+  const preset = defaultPresets[look.preset];
+  if (!preset) throw new Error(`Unknown wall theme "${look.preset}"`);
+  return playgroundDesignHref({
+    ...options,
+    preset: look.preset,
+    design: look.style ? { ...preset.styles, ...look.style } : undefined,
+  });
+}
 
 const BODY_LABELS = new Map(BODY_CATALOG.map((b) => [b.value, b.label]));
 const EYE_LABELS = new Map(EYE_CATALOG.map((e) => [e.value, e.label]));
@@ -227,20 +249,24 @@ const themeTiles: WallTile[] = Object.entries(defaultPresets).map(
 
 // ── Frames: QRdx's official frame specs, on the classic code ─────────────
 
-/** What each official frame's code holds: something its prompt fits. */
-const FRAME_VALUES: Record<string, string> = {
-  "wifi-card": encode({
+/**
+ * What each official frame's code holds: something its prompt fits. A
+ * string is a hosted page's address (a URL code); a config is a static
+ * content type, which the tile's playground link opens.
+ */
+const FRAME_CONTENT: Record<string, QRContentConfig | string> = {
+  "wifi-card": {
     type: "wifi",
     ssid: "QRdx Sample",
     password: "sample-only",
     encryption: "WPA",
-  }),
-  "save-contact": encode({
+  },
+  "save-contact": {
     type: "vcard",
     firstName: "Sam",
     lastName: "Sample",
     email: "sam@example.com",
-  }),
+  },
   "order-at-table": page("menu", "restaurant"),
   "table-tent": page("menu", "cafe"),
   "event-ticket": page("event", "conference"),
@@ -253,38 +279,41 @@ const FRAME_VALUES: Record<string, string> = {
   "shop-window": page("business", "local-shop"),
   "sign-rider": page("vcard", "realtor"),
   "product-info": page("pdf", "brochure"),
-  "review-us": encode({
+  "review-us": {
     type: "google-review",
     // Google's documented sample place ID.
     placeId: "ChIJN1t_tDeuEmsRUsoyG83frY4",
-  }),
-  "scan-to-pay": encode({
+  },
+  "scan-to-pay": {
     type: "upi",
     upiId: "sample@example",
     name: "QRdx Sample",
-  }),
-  "follow-us": encode({ type: "instagram", username: "instagram" }),
-  donate: encode({ type: "paypal", paypalUrl: "https://paypal.me/yourname" }),
-  "book-now": encode({
+  },
+  "follow-us": { type: "instagram", username: "instagram" },
+  donate: { type: "paypal", paypalUrl: "https://paypal.me/yourname" },
+  "book-now": {
     type: "calcom",
     bookingUrl: "https://cal.com/yourname/30min",
-  }),
+  },
 };
 
 const frameTiles: WallTile[] = OFFICIAL_FRAMES.map((frame) => {
   const style: Partial<ThemeStyles> = {
     frame: { style: "custom", spec: frame.spec },
   };
+  const content = FRAME_CONTENT[frame.id] ?? SITE;
+  const type: ContentType = typeof content === "string" ? "url" : content.type;
   return {
     id: `frame-${frame.id}`,
     band: "frames",
     label: frame.name,
     detail: "Official frame",
     alt: `QR code in the ${frame.name} frame: ${frame.description}`,
-    value: FRAME_VALUES[frame.id] ?? SITE,
+    value: typeof content === "string" ? content : encode(content),
     preset: "classic",
     style,
-    href: itemPath("frame", frame.id),
+    // The frame on the classic code, for the content type its prompt fits.
+    href: tileHref({ preset: "classic", style }, { type, sample: true }),
     officialFrame: frame.id,
     shape: naturalShape({ ...defaultPresets.classic?.styles, ...style }),
   };
@@ -321,7 +350,8 @@ const art = (
     alt: `${name} code showing ${ART_SAMPLES[sample]} ${look}`,
     value: SITE,
     preset,
-    href: ART_TAB[mode],
+    // The tile's theme, on the Art tab in its mode (the image is added there).
+    href: tileHref({ preset }, { art: ART_LINK_MODE[mode] }),
     art: { mode, variant, intensity: 0.7, sample },
     shape: "square",
   };
@@ -332,24 +362,35 @@ const border = (
   templateId: string,
   label: string,
   caution?: string,
-): WallTile => ({
-  id: `border-${kebab(templateId)}`,
-  band: "art",
-  label: `${label} border`,
-  detail: "Border template",
-  alt: `QR code inside the ${label} border template`,
-  value: SITE,
-  preset: "minimal",
-  style: {
+): WallTile => {
+  const style: Partial<ThemeStyles> = {
     templateId,
     bodyPattern: "square",
     cornerEyePattern: "square",
     cornerEyeDotPattern: "square",
-  },
-  href: DESIGN_TAB,
-  shape: "square",
-  ...(caution && { caution }),
-});
+  };
+  return {
+    id: `border-${kebab(templateId)}`,
+    band: "art",
+    label: `${label} border`,
+    detail: "Border template",
+    alt: `QR code inside the ${label} border template`,
+    value: SITE,
+    preset: "minimal",
+    style,
+    href: tileHref({ preset: "minimal", style }),
+    shape: "square",
+    ...(caution && { caution }),
+  };
+};
+
+/** The Design tab's Logo section, where center logos are added. */
+const LOGO_SECTION = { tab: "customisations", section: "logo" } as const;
+const QRDX_LOGO: Partial<ThemeStyles> = { showLogo: true };
+const CIRCLE_EYES: Partial<ThemeStyles> = {
+  cornerEyePattern: "circle",
+  cornerEyeDotPattern: "circle",
+};
 
 const SMALL_IN_BORDER =
   "The border draws the code at under half the artwork's width, so the scan score marks it down; print it at 5 cm or more.";
@@ -372,7 +413,8 @@ const artTiles: WallTile[] = [
     value: page("menu", "cafe"),
     preset: "caffeine",
     logo: "cafe",
-    href: LOGO_SECTION,
+    // An uploaded logo can't travel: the theme, at the Logo section.
+    href: tileHref({ preset: "caffeine" }, LOGO_SECTION),
     shape: "square",
   },
   {
@@ -383,8 +425,10 @@ const artTiles: WallTile[] = [
     alt: "QR code with the QRdx logo in the center",
     value: `${SITE}/docs/help/designing/logos`,
     preset: "modern",
+    style: QRDX_LOGO,
     logo: "qrdx",
-    href: LOGO_SECTION,
+    // The QRdx mark travels in a link (showLogo); uploaded logos don't.
+    href: tileHref({ preset: "modern", style: QRDX_LOGO }, LOGO_SECTION),
     shape: "square",
   },
   {
@@ -396,7 +440,8 @@ const artTiles: WallTile[] = [
     value: SITE,
     preset: "gilt",
     transparent: true,
-    href: "/docs/features/downloads",
+    // Transparency is a download option: the theme, with the download dialog.
+    href: tileHref({ preset: "gilt" }, { open: "download" }),
     shape: "square",
   },
   {
@@ -408,7 +453,7 @@ const artTiles: WallTile[] = [
     value: SITE,
     preset: "folio",
     print: true,
-    href: "/docs/help/getting-started/download-and-print",
+    href: tileHref({ preset: "folio" }, { open: "print" }),
     shape: "square",
   },
   border("StandardBox", "Standard box", SMALL_IN_BORDER),
@@ -423,8 +468,8 @@ const artTiles: WallTile[] = [
     alt: "QR code with round corner eyes",
     value: SITE,
     preset: "bubbles",
-    style: { cornerEyePattern: "circle", cornerEyeDotPattern: "circle" },
-    href: DESIGN_TAB,
+    style: CIRCLE_EYES,
+    href: tileHref({ preset: "bubbles", style: CIRCLE_EYES }),
     shape: "square",
     caution:
       "Round eyes read in most camera apps but not in strict scanners, so the scan score marks them down.",
@@ -756,7 +801,8 @@ const contentTiles: WallTile[] = [
         value: encode(spec.config),
         preset: spec.preset,
         ...(style && { style }),
-        href: generator(type),
+        // The type in the tile's look, with QRdx's sample for the type.
+        href: tileHref({ preset: spec.preset, style }, { type, sample: true }),
         shape: spec.shape ?? naturalShape(styles),
         contentType: type,
         ...(officialFrame && { officialFrame }),
