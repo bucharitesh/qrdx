@@ -158,6 +158,53 @@ describe("workspace slugs", () => {
     );
   });
 
+  it("trims dashes from slugs exactly as the old regexes did, fast on long names", () => {
+    // slugifyWorkspaceName before its dash trimming became a loop.
+    const legacy = (text: string) =>
+      text
+        .toLowerCase()
+        .normalize("NFKD")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 48)
+        .replace(/-+$/g, "");
+    const inputs = [
+      "",
+      "-",
+      "---",
+      "-a-",
+      "--a--b--",
+      " ¡Hola, Señor! ",
+      `${"a".repeat(47)}-b`,
+      `${"a".repeat(48)}-`,
+      "x-".repeat(30),
+    ];
+    let seed = 5;
+    const random = () => {
+      seed = (seed * 1_103_515_245 + 12_345) % 2_147_483_648;
+      return seed / 2_147_483_648;
+    };
+    const pieces = ["-", "a", "1", " ", "!", "é", "Z", "aaaaaaaaaa"];
+    for (let round = 0; round < 3000; round++) {
+      let text = "";
+      const length = Math.floor(random() * 30);
+      for (let i = 0; i < length; i++) {
+        text += pieces[Math.floor(random() * pieces.length)];
+      }
+      inputs.push(text);
+    }
+    for (const text of inputs) {
+      expect(slugifyWorkspaceName(text), JSON.stringify(text)).toBe(
+        legacy(text),
+      );
+    }
+    const start = performance.now();
+    expect(
+      slugifyWorkspaceName(`${"-".repeat(200_000)}a${" -".repeat(100_000)}`),
+    ).toBe("a");
+    expect(performance.now() - start).toBeLessThan(200);
+  });
+
   it("makes a valid, free slug and a name for someone's own workspace", () => {
     expect(slugifyWorkspaceName("Acme Marketing!")).toBe("acme-marketing");
     expect(

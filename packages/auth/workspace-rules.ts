@@ -90,15 +90,29 @@ export function workspaceSlugProblem(slug: string): string | null {
   return null;
 }
 
+/** Drops leading and trailing dashes, like .replace(/^-+|-+$/g, "") without its regex. */
+function trimDashes(value: string): string {
+  let start = 0;
+  let end = value.length;
+  while (start < end && value[start] === "-") {
+    start++;
+  }
+  while (end > start && value[end - 1] === "-") {
+    end--;
+  }
+  return value.slice(start, end);
+}
+
 /** "Acme Marketing!" -> "acme-marketing" (may be too short or reserved). */
 export function slugifyWorkspaceName(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, WORKSPACE_SLUG_MAX)
-    .replace(/-+$/g, "");
+  const slug = trimDashes(
+    text
+      .toLowerCase()
+      .normalize("NFKD")
+      .replace(/[^a-z0-9]+/g, "-")
+  );
+  // Cutting it to length can leave a dash at the end again.
+  return trimDashes(slug.slice(0, WORKSPACE_SLUG_MAX));
 }
 
 interface Person {
