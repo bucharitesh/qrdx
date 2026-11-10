@@ -5,6 +5,7 @@ import {
   registerNewUserReferralRecorder,
 } from "@repo/auth/referral";
 import { after } from "next/server";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { attributeNewUser, referralCandidatesFrom } from "./attribution";
 
 // Importing this module hands packages/auth the app's recorder for
@@ -15,9 +16,11 @@ import { attributeNewUser, referralCandidatesFrom } from "./attribution";
 
 /**
  * Reads the codes now (the request's headers don't outlive it) and records
- * the referral after the response, so the sign-up never waits on it.
+ * the referral after the response, so the sign-up never waits on it. Does
+ * nothing at all while the program is off (QRDX_AFFILIATES unset).
  */
 export function recordSignUpReferral(signUp: NewUserSignUp): void {
+  if (!isFeatureAvailable("affiliates")) return;
   const candidates = referralCandidatesFrom(signUp);
   if (candidates.length === 0) return;
   const task = async () => {

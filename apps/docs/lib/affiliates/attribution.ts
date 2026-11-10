@@ -3,24 +3,25 @@ import "server-only";
 import { REFERRAL_HEADER } from "@repo/auth/referral-keys";
 import { affiliate, affiliateReferral, database as db } from "@repo/database";
 import cuid from "cuid";
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { logError } from "@/lib/log-error";
 import { noteMissingTables } from "./missing-table";
 import { type AttributionVia, parseReferralCode } from "./rules";
 import { isSelfReferral } from "./self-referral";
-import { AFFILIATE_REFERRAL_COOKIE } from "./terms";
 
 // Attributes a NEW account to an affiliate, once, at sign-up. packages/auth
 // (referral.ts) hands over the new account and what its sign-up request
 // carried; nothing here trusts the code:
 //
 // - only an approved affiliate's code counts (pending, rejected and
-//   suspended ones are ignored);
-// - the first valid referral wins: the qrdx_ref cookie (from an earlier
-//   visit, set only with Analytics consent) is tried before the code the
-//   sign-up carried, and an account that already has a referral keeps it
-//   (affiliate_referral.referred_user_id is unique);
+//   suspended ones are ignored); an affiliate's code from before they chose
+//   their own still counts (affiliate.previous_code);
+// - same visit only: the code comes with the sign-up request itself (the
+//   header an email-code sign-up sends, or the OAuth state of a Google or
+//   GitHub one). No cookie or other stored value is ever read;
+// - the first valid referral wins: an account that already has a referral
+//   keeps it (affiliate_referral.referred_user_id is unique);
 // - it's never self-referral (./self-referral.ts);
 // - an existing account is never attributed: this only runs from the user
 //   create hook, never for a sign-in.
@@ -47,31 +48,10 @@ export type AttributionResult =
         | "error";
     };
 
-/** The value of one cookie in a Cookie header. */
-export function readCookie(
-  header: string | null | undefined,
-  name: string,
-): string | null {
-  if (!header) return null;
-  for (const part of header.split(";")) {
-    const at = part.indexOf("=");
-    if (at < 0) continue;
-    if (part.slice(0, at).trim() === name) {
-      try {
-        return decodeURIComponent(part.slice(at + 1).trim());
-      } catch {
-        return null;
-      }
-    }
-  }
-  return null;
-}
-
 /**
- * The codes a sign-up carried, in the order they're tried: the cookie (the
- * earliest visit), then the code from this sign-up (the header an email-code
- * sign-up sends, or the OAuth state of a Google or GitHub one). Malformed
- * codes are dropped; repeats are tried once.
+ * The codes a sign-up carried, in the order they're tried: the header an
+ * email-code sign-up sends, then the OAuth state of a Google or GitHub one.
+ * Malformed codes are dropped; repeats are tried once.
  */
 export function referralCandidatesFrom(source: {
   headers?: Pick<Headers, "get"> | null;
@@ -85,7 +65,6 @@ export function referralCandidatesFrom(source: {
       found.push({ code, via });
     }
   };
-  add(readCookie(headers?.get("cookie"), AFFILIATE_REFERRAL_COOKIE), "cookie");
   add(headers?.get(REFERRAL_HEADER), "link");
   add(source.oauthReferralCode, "link");
   return found;
@@ -117,7 +96,12 @@ export async function attributeNewUser(input: {
           status: affiliate.status,
         })
         .from(affiliate)
-        .where(eq(affiliate.code, candidate.code))
+        .where(
+          or(
+            eq(affiliate.code, candidate.code),
+            eq(affiliate.previousCode, candidate.code),
+          ),
+        )
         .limit(1);
       if (found?.status !== "approved") continue;
       if (
