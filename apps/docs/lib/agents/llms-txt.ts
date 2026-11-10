@@ -122,7 +122,13 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       title: "Hosted pages",
       url: "/docs/landing-pages",
       description:
-        "Mobile pages at /p/<slug>: link lists, business pages, contact cards, menus, coupons, events, app links, PDFs, images, audio and video",
+        "Mobile pages at /p/<slug>: link lists, social profiles, business pages, contact cards, menus, coupons, events, app links, forms, product pages, appointments, payments and tips, property listings, pet ID tags, medical IDs, PDFs, images, audio, playlists and video",
+    },
+    {
+      title: "Product pages and GS1 Digital Link",
+      url: "/docs/product-pages",
+      description:
+        "Ingredients, nutrition, certifications and care for a product; on a custom domain, https://<domain>/01/<GTIN> opens the page",
     },
     {
       title: "Forms",

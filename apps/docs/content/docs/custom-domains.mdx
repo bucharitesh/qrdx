@@ -52,6 +52,7 @@ On your domain:
 
 - `https://go.yourbrand.com/<slug>` redirects for codes that use that domain. Codes on other domains, or on the default link only, show a "not found" page there.
 - `https://go.yourbrand.com/` shows a small page saying the domain hosts QR code links.
+- `https://go.yourbrand.com/01/<GTIN>` ([GS1 Digital Link](/docs/product-pages#gs1-digital-link)) opens the product page with that GTIN whose code uses the domain.
 - Every other path returns "not found". The domain never serves the rest of QRdx.
 
 Changes (a newly verified or removed domain) take up to a minute to reach every server.
