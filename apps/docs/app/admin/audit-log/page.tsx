@@ -8,16 +8,16 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { Pager } from "../_components/pager";
 import { EmptyRow } from "../_components/stat-card";
 import { formatDateTime } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import { listAuditLog, parsePage } from "../_lib/queries";
 
-export const metadata: Metadata = { title: "Admin · Audit Log" };
+export const generateMetadata = adminMetadata("Admin · Audit Log");
 
 const userHref = (id: string) => `/admin/users/${encodeURIComponent(id)}`;
 

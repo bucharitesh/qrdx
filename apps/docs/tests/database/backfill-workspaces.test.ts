@@ -500,7 +500,8 @@ describe("backfill-workspaces: the same rules as the app", () => {
     );
     const nullable = [
       ...schema.matchAll(
-        /export const \w+ = pgTable\(\s*"(\w+)"[\s\S]*?\n\);/g,
+        // A table ends at "\n);", or "\n});" without a config callback.
+        /export const \w+ = pgTable\(\s*"(\w+)"[\s\S]*?\n\}?\);/g,
       ),
     ]
       .filter(([block]) =>

@@ -1,6 +1,5 @@
 import { hasAdminRole } from "@repo/auth/admin";
 import { Badge } from "@repo/design-system/components/ui/badge";
-import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
@@ -8,11 +7,12 @@ import { Empty, Row, Rows } from "../_components/panel";
 import { Section } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import { parseAdminSearch } from "../_lib/rules";
 import { safeLoad } from "../_lib/safe";
 import { runAdminSearch } from "../_lib/search";
 
-export const metadata: Metadata = { title: "Admin · Search" };
+export const generateMetadata = adminMetadata("Admin · Search");
 
 const userHref = (id: string) => `/admin/users/${encodeURIComponent(id)}`;
 

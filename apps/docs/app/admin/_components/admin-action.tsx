@@ -26,6 +26,14 @@ import {
   unbanUserAction,
 } from "../actions";
 import {
+  approveAffiliateAction,
+  markAffiliatePaidAction,
+  reinstateAffiliateAction,
+  rejectAffiliateAction,
+  suspendAffiliateAction,
+  voidCommissionAction,
+} from "../affiliates/actions";
+import {
   setDynamicCodeActiveAction,
   setDynamicCodePausedAction,
 } from "../codes/actions";
@@ -69,6 +77,12 @@ const ACTIONS = {
   setAppSuspended: setOAuthAppSuspendedAction,
   resendInvitation: resendInvitationAction,
   deleteAccount: deleteUserAccountAction,
+  approveAffiliate: approveAffiliateAction,
+  rejectAffiliate: rejectAffiliateAction,
+  suspendAffiliate: suspendAffiliateAction,
+  reinstateAffiliate: reinstateAffiliateAction,
+  markAffiliatePaid: markAffiliatePaidAction,
+  voidCommission: voidCommissionAction,
 } as const;
 
 export type AdminActionName = keyof typeof ACTIONS;
@@ -111,6 +125,8 @@ export interface AdminActionProps {
   numberField?: { name: string; label: string; min?: number; max?: number };
   /** An extra required email field, e.g. the address to move an account to */
   emailField?: { name: string; label: string };
+  /** An extra required text field, e.g. a PayPal transaction ID */
+  textField?: { name: string; label: string; maxLength?: number };
   disabled?: boolean;
   disabledHint?: string;
   /** Where to go after success (e.g. the user list after a delete) */
@@ -133,6 +149,7 @@ export function AdminAction({
   typeToConfirm,
   numberField,
   emailField,
+  textField,
   disabled = false,
   disabledHint,
   redirectTo,
@@ -144,6 +161,7 @@ export function AdminAction({
   const [typed, setTyped] = useState("");
   const [number, setNumber] = useState("");
   const [email, setEmail] = useState("");
+  const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   // Actions that hand over an account ask the admin to confirm it's them
@@ -155,12 +173,14 @@ export function AdminAction({
     !typeToConfirm ||
     typed.trim().toLowerCase() === typeToConfirm.trim().toLowerCase();
   const emailOk = !emailField || email.trim().includes("@");
+  const textOk = !textField || text.trim().length > 0;
 
   const reset = () => {
     setReason("");
     setTyped("");
     setNumber("");
     setEmail("");
+    setText("");
     setError(null);
   };
 
@@ -172,6 +192,7 @@ export function AdminAction({
     }
     if (typeToConfirm) extra.confirmation = typed.trim();
     if (emailField) extra[emailField.name] = email.trim();
+    if (textField) extra[textField.name] = text.trim();
     startTransition(async () => {
       const run = ACTIONS[action] as AnyAction;
       try {
@@ -228,7 +249,9 @@ export function AdminAction({
           className="space-y-3"
           onSubmit={(event) => {
             event.preventDefault();
-            if (reasonOk && typedOk && emailOk && !isPending) submit();
+            if (reasonOk && typedOk && emailOk && textOk && !isPending) {
+              submit();
+            }
           }}
         >
           {emailField && (
@@ -243,6 +266,20 @@ export function AdminAction({
                 spellCheck={false}
                 type="email"
                 value={email}
+              />
+            </div>
+          )}
+          {textField && (
+            <div className="space-y-1.5">
+              <Label htmlFor={`${id}-text`}>{textField.label}</Label>
+              <Input
+                autoComplete="off"
+                id={`${id}-text`}
+                maxLength={textField.maxLength ?? 200}
+                onChange={(event) => setText(event.target.value)}
+                required
+                spellCheck={false}
+                value={text}
               />
             </div>
           )}
@@ -303,7 +340,9 @@ export function AdminAction({
               Cancel
             </Button>
             <Button
-              disabled={!(reasonOk && typedOk && emailOk) || isPending}
+              disabled={
+                !(reasonOk && typedOk && emailOk && textOk) || isPending
+              }
               type="submit"
               variant={destructive ? "destructive" : "default"}
             >
