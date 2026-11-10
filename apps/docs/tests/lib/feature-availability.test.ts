@@ -13,6 +13,7 @@ import { filterPageTree } from "@/lib/docs-tree";
 import {
   catalogParagraphs,
   computeFeatures,
+  configuredEntry,
   customDomainMode,
   FEATURE_IDS,
   type FeatureContext,
@@ -59,6 +60,15 @@ const EVERYTHING: Record<string, string> = {
   SPOTIFY_CLIENT_SECRET: FAKE,
   NEXT_PUBLIC_APP_URL: "https://qrdx.example",
   QRDX_EE_LICENSE: FAKE,
+  SLACK_CLIENT_ID: FAKE,
+  SLACK_CLIENT_SECRET: FAKE,
+  SLACK_SIGNING_SECRET: FAKE,
+  INTEGRATION_ENCRYPTION_KEY: FAKE,
+  DISCORD_APPLICATION_ID: FAKE,
+  DISCORD_PUBLIC_KEY: FAKE,
+  TELEGRAM_BOT_TOKEN: FAKE,
+  TELEGRAM_WEBHOOK_SECRET: FAKE,
+  TELEGRAM_BOT_USERNAME: FAKE,
   QRDX_AFFILIATES: FAKE,
   POLAR_WEBHOOK_SECRET: FAKE,
 };
@@ -90,6 +100,18 @@ const NEEDS: Record<FeatureId, string[]> = {
   passkeys: ["NEXT_PUBLIC_APP_URL"],
   sso: ["QRDX_EE_LICENSE"],
   auditLog: ["QRDX_EE_LICENSE"],
+  slackBot: [
+    "SLACK_CLIENT_ID",
+    "SLACK_CLIENT_SECRET",
+    "SLACK_SIGNING_SECRET",
+    "INTEGRATION_ENCRYPTION_KEY",
+  ],
+  discordBot: ["DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY"],
+  telegramBot: [
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_WEBHOOK_SECRET",
+    "TELEGRAM_BOT_USERNAME",
+  ],
   affiliates: ["QRDX_AFFILIATES", "POLAR_WEBHOOK_SECRET"],
 };
 
@@ -258,6 +280,9 @@ describe("custom domains", () => {
     expect(featureForCatalogSlug("custom-domains")).toBe("customDomains");
     expect(featureForCatalogSlug("google-tag-manager")).toBe("customDomains");
     expect(featureForCatalogSlug("email-alerts")).toBe("email");
+    expect(featureForCatalogSlug("discord-bot")).toBe("discordBot");
+    // The webhook alerts need nothing; only the bot is set up.
+    expect(featureForCatalogSlug("discord")).toBeUndefined();
     expect(featureForCatalogSlug("google-analytics")).toBeUndefined();
   });
 });
@@ -318,6 +343,68 @@ describe("catalog paragraphs", () => {
     expect(
       catalogParagraphs({ slug: "stripe", description: ["A"] }, off),
     ).toEqual(["A"]);
+  });
+});
+
+describe("the Slack bot", () => {
+  it("needs the Slack app, its signing secret and, in production, the encryption key", () => {
+    const slackApp = {
+      SLACK_CLIENT_ID: FAKE,
+      SLACK_CLIENT_SECRET: FAKE,
+      SLACK_SIGNING_SECRET: FAKE,
+    };
+    expect(computeFeatures(ctx(slackApp)).slackBot).toBe(true);
+    expect(computeFeatures(ctx(slackApp, vercelProd)).slackBot).toBe(false);
+    expect(
+      computeFeatures(
+        ctx({ ...slackApp, INTEGRATION_ENCRYPTION_KEY: FAKE }, vercelProd),
+      ).slackBot,
+    ).toBe(true);
+    // "Add to Slack" alerts alone (no signing secret) leave the bot off.
+    expect(
+      missingFeatureSetup(
+        "slackBot",
+        ctx({ SLACK_CLIENT_ID: FAKE, SLACK_CLIENT_SECRET: FAKE }),
+      ),
+    ).toEqual(["SLACK_SIGNING_SECRET"]);
+  });
+
+  it("hides its docs page while it's off", () => {
+    const off = toPublicAvailability(computeFeatures(ctx({}, vercelProd)));
+    expect(off.hiddenPaths).toContain("/docs/slack-bot");
+    expect(isPathShown(off.hiddenPaths, "/docs/slack-bot")).toBe(false);
+  });
+
+  it("shows the Slack entry's bot parts only where the bot works", () => {
+    initializeIntegrations();
+    const slack = getCatalogBySurface("integrations").find(
+      (entry) => entry.slug === "slack",
+    );
+    if (!slack?.configured) throw new Error("no Slack bot copy");
+    const on = configuredEntry(slack, () => true);
+    const off = configuredEntry(slack, () => false);
+    expect(off).toBe(slack);
+    expect(on.tagline).toBe(slack.configured.tagline);
+    expect(on.steps).toEqual(slack.configured.steps);
+    expect(on.capabilities.slice(0, 2)).toEqual(slack.configured.capabilities);
+    expect(on.keywords).toEqual(
+      expect.arrayContaining(slack.configured.keywords ?? []),
+    );
+    // Listed under Chat apps too, but only where the bot works.
+    expect(on.categories).toEqual(["notifications", "chat"]);
+    expect(off.categories).toEqual(["notifications"]);
+    // Without the bot nothing on the entry mentions it.
+    const offText = JSON.stringify([
+      off.tagline,
+      off.steps,
+      off.capabilities,
+      off.keywords,
+      off.description,
+    ]);
+    expect(offText).not.toMatch(/\/qr|\bbot\b|@QRdx/i);
+    expect(
+      catalogParagraphs(slack, computeFeatures(ctx({}, vercelProd))),
+    ).toEqual(slack.description);
   });
 });
 
@@ -397,13 +484,16 @@ describe("a production-like deployment", () => {
     }
   });
 
-  it("leaves out adding custom domains, the spam check and the media pickers", () => {
+  it("leaves out adding custom domains, the spam check, the media pickers, the chat bots and the affiliate program", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
       "customDomains",
       "domainConnect",
       "spamCheck",
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",
+      "slackBot",
+      "discordBot",
+      "telegramBot",
       // Polar is set, but not the program's own switch (QRDX_AFFILIATES).
       "affiliates",
     ]);
@@ -435,12 +525,14 @@ describe("a production-like deployment", () => {
         "box",
         "calendly",
         "custom-domains",
+        "discord-bot",
         "google-tag-manager",
         "hubspot",
         "mailchimp",
         "notion",
         "onedrive",
         "slack",
+        "telegram",
       ].sort(),
     );
     for (const slug of [

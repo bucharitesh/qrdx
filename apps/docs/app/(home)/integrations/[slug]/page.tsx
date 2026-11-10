@@ -29,7 +29,10 @@ import { IntegrationLogo } from "@/components/sections/integrations/integration-
 import { resolveAction } from "@/components/sections/integrations/resolve-action";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
 import { getFeatures } from "@/lib/feature-availability";
-import { catalogParagraphs } from "@/lib/feature-availability-rules";
+import {
+  catalogParagraphs,
+  configuredEntry,
+} from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import { baseUrl, createMetadata } from "@/lib/metadata";
@@ -52,14 +55,15 @@ export async function generateMetadata({
   params,
 }: IntegrationPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const entry = getCatalogEntry(slug);
+  const found = getCatalogEntry(slug);
   if (
-    !entry ||
-    getCatalogRedirect(entry) ||
-    !isVisible(getIntegrationAvailability(), entry.slug)
+    !found ||
+    getCatalogRedirect(found) ||
+    !isVisible(getIntegrationAvailability(), found.slug)
   ) {
     return {};
   }
+  const entry = shownEntry(found);
   return createMetadata({
     title: `${entry.name} integration`,
     description: entry.tagline,
@@ -69,6 +73,14 @@ export async function generateMetadata({
 }
 
 const ORIGIN = baseUrl.origin;
+
+/** With the parts only this deployment's extras make true (the Slack bot). */
+const shownEntry = <T extends Parameters<typeof configuredEntry>[0]>(
+  entry: T,
+): T => {
+  const features = getFeatures();
+  return configuredEntry(entry, (id) => features[id]);
+};
 
 const linkClass =
   "font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground";
@@ -127,8 +139,9 @@ export default async function IntegrationDetailPage({
   params,
 }: IntegrationPageProps) {
   const { slug } = await params;
-  const entry = getCatalogEntry(slug);
-  if (!entry) notFound();
+  const found = getCatalogEntry(slug);
+  if (!found) notFound();
+  const entry = shownEntry(found);
   // AI assistants, developer tools, plugins and QRdx features have their own
   // pages now; /integrations only covers third-party connections.
   const moved = getCatalogRedirect(entry);
