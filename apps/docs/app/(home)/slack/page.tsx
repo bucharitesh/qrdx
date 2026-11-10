@@ -1,4 +1,5 @@
 import {
+  Brush2,
   Chart,
   CommandSquare,
   Link21,
@@ -74,6 +75,13 @@ const commands: BotCommand[] = [
       "Makes a code of the message's first web address, or of its whole text when it has none. The code goes in the message's thread.",
   },
   {
+    icon: Brush2,
+    title: "Style a code",
+    usage: "/qr <link> --look modern --frame banner-bottom",
+    description:
+      "Menus under every code change its look, color, frame and logo in place, for the person who made it. Options after the content do the same as you make it. Each styled code passes the editor's scan check first.",
+  },
+  {
     icon: Link21,
     title: "Link your QRdx account",
     usage: "/qr link",
@@ -107,9 +115,14 @@ const faqs = [
       "/qr puts your link or text straight into the code, so it never expires but can't be changed or counted. /qr track makes a code that holds a short QRdx link which redirects to yours, so QRdx counts its scans and you can change where it goes. It needs a link that starts with https:// or http://, and a linked QRdx account: run /qr link first.",
   },
   {
+    question: "Can I change how the code looks?",
+    answer:
+      "Yes. Pick a look, color, frame or logo from the menus under the code, or add options after your link: /qr qrdx.dev --look modern --fg 0051ff. /qr help lists them. QRdx checks every styled code with the editor's scan score, adjusts it when phones would struggle to read it, and says so under the code.",
+  },
+  {
     question: "What does Open in editor do?",
     answer:
-      "It opens the QRdx editor in your browser, where you can change the design and download the code again. A link opens with that link filled in. Text opens an empty editor, because text never goes into a link, so paste it there yourself.",
+      "It opens the QRdx editor in your browser with the code's design, where you can change it further and download the code again. A link opens with that link filled in. Text never goes into a link, so paste it there yourself. A logo icon doesn't travel either; pick it again in the editor.",
   },
   {
     question: "Why did only I see the code from the shortcut?",
@@ -141,7 +154,7 @@ export default function SlackBotPage() {
       bot="slack"
       title="Make QR codes in Slack"
       intro={[
-        "Type /qr and a link or any text, and the QRdx bot posts the QR code in the channel with buttons to download it as a PNG or SVG. You can also mention the bot, message it directly or turn any message into a code.",
+        "Type /qr and a link or any text, and the QRdx bot posts the QR code in the channel with buttons to download it as a PNG or SVG, and menus to change its look, color, frame and logo. You can also mention the bot, message it directly or turn any message into a code.",
         "Link your QRdx account and /qr track makes a tracked code, with scan analytics and a destination you can change after it's printed.",
       ]}
       action={{

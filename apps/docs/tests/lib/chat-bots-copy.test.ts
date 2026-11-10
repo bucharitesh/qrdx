@@ -13,6 +13,7 @@ import {
   CHAT_FRAMES,
   CHAT_LOGOS,
   CHAT_LOOKS,
+  PICKER_LABELS,
 } from "@/lib/chat-bots/styles";
 
 const read = (path: string) =>
@@ -63,6 +64,17 @@ describe("Style your code, in the docs", () => {
     // The menus' extra picker.
     expect(CHAT_LOGOS.length).toBeGreaterThan(1);
     expect(docs.discord).toContain("**Logo**");
+  });
+
+  it("the landing pages' mockups name the menus as the bots do", () => {
+    const mockups = read(
+      "../../components/sections/chat-bots/chat-mockups.tsx",
+    );
+    expect(mockups).toContain(
+      `const MENUS = [${Object.values(PICKER_LABELS)
+        .map((label) => `"${label}"`)
+        .join(", ")}] as const;`,
+    );
   });
 
   it("every page says styled codes are checked so they scan", () => {
