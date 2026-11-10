@@ -206,11 +206,11 @@ export function isFromQRdx(rawBody: string, header: string, secret: string) {
     builtBy: "QRdx",
     website: "https://n8n.io",
     docs: "/docs/developers/n8n",
-    note: "On npm as n8n-nodes-qrdx, for self-hosted n8n. n8n Cloud runs only nodes n8n has verified, and this one isn't yet.",
+    note: "On npm as @qrdx/n8n-nodes-qrdx, for self-hosted n8n. n8n Cloud runs only nodes n8n has verified, and this one isn't yet.",
     primaryAction: {
       type: "link",
       label: "View on npm",
-      href: "https://www.npmjs.com/package/n8n-nodes-qrdx",
+      href: "https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx",
     },
     secondaryAction: {
       type: "link",
@@ -220,11 +220,11 @@ export function isFromQRdx(rawBody: string, header: string, secret: string) {
     steps: [
       {
         title: "Install the nodes",
-        body: "In n8n, open Settings → Community Nodes, click Install and enter n8n-nodes-qrdx. Or install it from a terminal in the nodes folder of your n8n user folder, then restart n8n.",
+        body: "In n8n, open Settings → Community Nodes, click Install and enter @qrdx/n8n-nodes-qrdx. Or install it from a terminal in the nodes folder of your n8n user folder, then restart n8n.",
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: "mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes\nnpm install n8n-nodes-qrdx",
+          code: "mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes\nnpm install @qrdx/n8n-nodes-qrdx",
         },
       },
       {

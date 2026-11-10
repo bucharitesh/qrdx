@@ -1,5 +1,5 @@
 {
-  "node": "n8n-nodes-qrdx.qrdx",
+  "node": "@qrdx/n8n-nodes-qrdx.qrdx",
   "nodeVersion": "1.0",
   "codexVersion": "1.0",
   "categories": ["Marketing & Content", "Utility"],

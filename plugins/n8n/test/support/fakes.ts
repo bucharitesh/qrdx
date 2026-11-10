@@ -24,7 +24,7 @@ export interface RecordedRequest {
 const NODE: INode = {
   id: "node-1",
   name: "QRdx",
-  type: "n8n-nodes-qrdx.qrdx",
+  type: "@qrdx/n8n-nodes-qrdx.qrdx",
   typeVersion: 1,
   position: [0, 0],
   parameters: {},
