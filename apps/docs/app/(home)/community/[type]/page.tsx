@@ -244,7 +244,7 @@ async function TypeGrid({
       {type === "frame" && filter !== "community" && (
         <nav
           aria-label="Official frame groups"
-          className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0"
+          className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-24px),transparent)] sm:-mx-6 sm:px-6"
         >
           {[
             { id: null, label: "All groups" },
