@@ -11,6 +11,30 @@ import { blobToDataUrl, canvasToWebP, type WebPOptions } from "./webp";
  */
 export type DownloadFormat = "png" | "jpg" | "webp" | "svg" | "pdf" | "eps";
 
+export interface DownloadFormatInfo {
+  mimeType: string;
+  extension: string;
+  /** No pixel size: the file name states none. */
+  vector: boolean;
+}
+
+/**
+ * Every download format with its MIME type and file extension. Each is made
+ * by one branch of downloadQRCode and getQRCodeDataUrl: PNG and JPG by the
+ * canvas, WebP by canvasToWebP (the canvas, or the built-in lossless
+ * encoder), SVG from the markup, PDF with jspdf, EPS by getQRAsEPS. A new
+ * format needs an entry here and a branch there.
+ */
+export const DOWNLOAD_FORMATS: Record<DownloadFormat, DownloadFormatInfo> = {
+  png: { mimeType: "image/png", extension: "png", vector: false },
+  jpg: { mimeType: "image/jpeg", extension: "jpg", vector: false },
+  webp: { mimeType: "image/webp", extension: "webp", vector: false },
+  svg: { mimeType: "image/svg+xml", extension: "svg", vector: true },
+  // A PDF download holds the PNG, so it's named after its pixel size.
+  pdf: { mimeType: "application/pdf", extension: "pdf", vector: false },
+  eps: { mimeType: "application/postscript", extension: "eps", vector: true },
+};
+
 export interface DownloadSize {
   width: number;
   height: number;
@@ -108,37 +132,8 @@ export function downloadFile(dataUrl: string, filename: string) {
   document.body.removeChild(link);
 }
 
-/**
- * Get the MIME type for a given format
- */
-function getMimeType(format: DownloadFormat): string {
-  switch (format) {
-    case "png":
-      return "image/png";
-    case "jpg":
-      return "image/jpeg";
-    case "webp":
-      return "image/webp";
-    case "svg":
-      return "image/svg+xml";
-    case "pdf":
-      return "application/pdf";
-    case "eps":
-      return "application/postscript";
-    default:
-      return "image/png";
-  }
-}
-
-/**
- * Get the file extension for a given format
- */
-function getFileExtension(format: DownloadFormat): string {
-  return format;
-}
-
-/** Vector files: they have no pixel size, so their names state none. */
-const VECTOR_FORMATS: ReadonlySet<DownloadFormat> = new Set(["svg", "eps"]);
+const getMimeType = (format: DownloadFormat): string =>
+  (DOWNLOAD_FORMATS[format] ?? DOWNLOAD_FORMATS.png).mimeType;
 
 /**
  * The default file name of a download: for PNG, JPG and WebP (and the image
@@ -151,8 +146,8 @@ export function getDownloadFilename(
   size: DownloadSize,
   frame?: QRProps["frame"]
 ): string {
-  const extension = getFileExtension(format);
-  if (VECTOR_FORMATS.has(format)) {
+  const { extension, vector } = DOWNLOAD_FORMATS[format];
+  if (vector) {
     return `qr-code.${extension}`;
   }
   // The canvas size getQRAsCanvas and getQRAsPDF draw on

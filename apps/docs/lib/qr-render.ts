@@ -22,6 +22,7 @@ import {
 } from "react";
 import { z } from "zod";
 import { baseUrl } from "@/lib/metadata";
+import { type ConvertedFormat, convertPng } from "@/lib/qr-image-formats";
 import { outlineSvgText } from "@/lib/qr-text-outline";
 
 // Server-side QR rendering shared by the public image API (/api/v1/qr) and the
@@ -294,21 +295,14 @@ export async function renderQrPng(options: QrOptions): Promise<ArrayBuffer> {
 }
 
 /**
- * PNG bytes as lossless WebP: the same pixels, transparency included, in a
- * smaller file. sharp is loaded only when a WebP is asked for.
+ * Renders the QR code in a format converted from the same PNG, such as
+ * lossless WebP (lib/qr-image-formats.ts).
  */
-export async function pngToWebp(
-  png: ArrayBuffer | Uint8Array,
-): Promise<Buffer> {
-  const { default: sharp } = await import("sharp");
-  return await sharp(new Uint8Array(png))
-    .webp({ lossless: true, effort: 4 })
-    .toBuffer();
-}
-
-/** Renders the QR code to lossless WebP bytes (from the same PNG). */
-export async function renderQrWebp(options: QrOptions): Promise<Buffer> {
-  return await pngToWebp(await renderQrPng(options));
+export async function renderQrImage(
+  options: QrOptions,
+  format: ConvertedFormat,
+): Promise<Uint8Array> {
+  return await convertPng(await renderQrPng(options), format);
 }
 
 /**

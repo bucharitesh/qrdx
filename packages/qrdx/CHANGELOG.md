@@ -8,6 +8,7 @@ Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/
 
 - **`format: "webp"`** in `downloadQRCode` and `getQRCodeDataUrl`, and `getQRAsWebP(props, options)` for a `Blob`. It is lossless by default, so module edges stay exact, and a transparent background stays transparent. `quality` (0 to 1) asks for a smaller lossy file instead.
 - **Every browser gets real WebP.** The canvas encodes it where it can. Safari can't, and hands back a PNG for `image/webp`, so the file's bytes are checked and QRdx's own lossless encoder takes over; a browser that would only write lossy WebP when lossless was asked for is handled the same way. `getQRAsCanvas(props, "image/webp")` goes through the same path.
+- `DOWNLOAD_FORMATS` lists every download format with its MIME type and file extension.
 - `canvasToWebP(canvas, options)` does this for any canvas. `encodeWebPLossless(rgba, width, height)` encodes RGBA pixels with no DOM (it also runs in Node); `isWebPFile` and `getWebPCompression` read a file's header.
 
 ## 0.0.47
