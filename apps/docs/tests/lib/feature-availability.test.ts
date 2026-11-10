@@ -69,6 +69,8 @@ const EVERYTHING: Record<string, string> = {
   TELEGRAM_BOT_TOKEN: FAKE,
   TELEGRAM_WEBHOOK_SECRET: FAKE,
   TELEGRAM_BOT_USERNAME: FAKE,
+  QRDX_AFFILIATES: FAKE,
+  POLAR_WEBHOOK_SECRET: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -110,6 +112,7 @@ const NEEDS: Record<FeatureId, string[]> = {
     "TELEGRAM_WEBHOOK_SECRET",
     "TELEGRAM_BOT_USERNAME",
   ],
+  affiliates: ["QRDX_AFFILIATES", "POLAR_WEBHOOK_SECRET"],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -481,7 +484,7 @@ describe("a production-like deployment", () => {
     }
   });
 
-  it("leaves out adding custom domains, the spam check, the media pickers and the chat bots", () => {
+  it("leaves out adding custom domains, the spam check, the media pickers, the chat bots and the affiliate program", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
       "customDomains",
       "domainConnect",
@@ -491,6 +494,8 @@ describe("a production-like deployment", () => {
       "slackBot",
       "discordBot",
       "telegramBot",
+      // Polar is set, but not the program's own switch (QRDX_AFFILIATES).
+      "affiliates",
     ]);
   });
 

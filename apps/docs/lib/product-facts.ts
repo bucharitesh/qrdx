@@ -26,6 +26,13 @@ import {
   AUDIT_EXPORT_MAX_ROWS,
   AUDIT_RETENTION_DAYS,
 } from "../ee/audit-log/limits";
+import {
+  AFFILIATE_COMMISSION_MONTHS,
+  AFFILIATE_COMMISSION_PERCENT,
+  AFFILIATE_HOLD_DAYS,
+  AFFILIATE_MIN_PAYOUT_LABEL,
+  AFFILIATE_TERMS_NOTICE_DAYS,
+} from "./affiliates/terms";
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
 
@@ -46,6 +53,18 @@ export const PRODUCT_FACTS = {
   auditLogExportRows: AUDIT_EXPORT_MAX_ROWS.toLocaleString("en-US"),
   /** Symbologies /barcode-generator draws (lib/barcode/formats.ts). */
   barcodeFormats: BARCODE_FORMATS.length,
+  // The affiliate program's terms (lib/affiliates/terms.ts), for the legal
+  // and help pages; the code reads the same constants.
+  /** The commission, as copy writes it: "30" (followed by "%"). */
+  affiliateCommissionPercent: AFFILIATE_COMMISSION_PERCENT,
+  /** Months of a customer's payments that earn: "12". */
+  affiliateCommissionMonths: AFFILIATE_COMMISSION_MONTHS,
+  /** Days each commission waits: "30". */
+  affiliateHoldDays: AFFILIATE_HOLD_DAYS,
+  /** One minimum across currencies: "US$25" */
+  affiliateMinPayoutUsd: AFFILIATE_MIN_PAYOUT_LABEL,
+  /** Days of notice before the affiliate terms change: "30". */
+  affiliateTermsNoticeDays: AFFILIATE_TERMS_NOTICE_DAYS,
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;

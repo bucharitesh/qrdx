@@ -1,7 +1,7 @@
 ---
 title: Privacy Policy
 description: What QRdx collects, why, who it is shared with, how long it is kept and the choices you have, for the website, accounts, dynamic codes, hosted pages, the API and the AI features.
-lastUpdated: 2026-11-09
+lastUpdated: 2026-11-10
 ---
 
 <Callout title="Summary">
@@ -112,6 +112,17 @@ For OAuth apps and access tokens we store a hash of each token, its scopes and i
 
 [Polar](https://polar.sh) is the merchant of record for paid plans. Polar, and Stripe for card payments, collect your payment details, billing address and tax ID. We receive your plan, its price and currency, billing period dates, subscription status, your Polar customer ID and, if you give one, your reason for cancelling. We never see your full card number.
 
+<IfAvailable feature="affiliates">
+
+### Affiliate program
+
+- **If you apply.** What you write in the application (a website or profile and how you'd share QRdx), the date and version of the [Affiliate Terms](/legal/affiliate-terms) you accepted, your referral code (and your first one, if you chose your own), and our decision with a staff note.
+- **If you're approved.** The PayPal email address you add for payouts and when it last changed (we only keep one for approved affiliates), how many times your link was opened (a count, nothing about the visitors), the commissions you earn (the amount and currency of each payment they're based on, its Polar order ID and the dates), and the payouts we send (amount, the commissions' currencies, the exchange rates used, the PayPal address and PayPal's transaction ID).
+- **If you signed up through an affiliate's link.** We record which affiliate referred your account and the date of your first payment. The affiliate sees how many people they referred and the date and amount of each payment that earns them a commission, never your name, email address or anything else about your account.
+- **Nothing stored on your device.** The code from an affiliate's link only goes along with a sign-up made during the same visit, without reloading the page. It's kept in the page's memory and the address bar, never in a cookie or browser storage.
+
+</IfAvailable>
+
 ### Emails
 
 We send transactional email only, through Resend: sign-in codes, team invitations, form response notifications, first-scan and milestone alerts, and weekly digests if you turn them on. Alerts and digests include a one-click unsubscribe link. We don't send marketing email.
@@ -142,6 +153,17 @@ For people in the EEA, the UK and Switzerland, these are our legal bases under t
 | Feedback widget | What you send through Featurebase | Consent |
 | Answering lawful requests and defending claims | What the request concerns | Legal obligation and legitimate interests |
 
+<IfAvailable feature="affiliates">
+
+For the affiliate program:
+
+| Purpose | Data | Legal basis |
+| --- | --- | --- |
+| Affiliate program: reviewing applications, working out commissions and paying them | An affiliate's application, referral code, link visit count, PayPal email, commissions and payouts | Contract |
+| Affiliate program: crediting the affiliate who referred an account | Which affiliate referred the account and how, and the date and amount of its payments that earn a commission | Legitimate interests: paying affiliates for the customers they bring |
+
+</IfAvailable>
+
 We don't make decisions with legal or similarly significant effects by automated means alone. Automated safety checks can hold a new account's code for review or switch off a code whose link is listed as malware or phishing; a person reviews those cases.
 
 ## Who we share it with
@@ -152,6 +174,13 @@ We don't make decisions with legal or similarly significant effects by automated
 - **The public.** Your codes' destinations, your hosted pages and the community items you publish are public by design.
 - **Authorities and others, when we must.** We share data if the law requires it, or where it is needed to protect people, QRdx or our users from harm or fraud.
 - **A buyer or successor.** If QRdx is merged, acquired or its assets are sold, data may move to the new owner, who must keep honouring this policy. We'll tell you if that happens.
+
+<IfAvailable feature="affiliates">
+
+- **PayPal, for affiliate payouts.** When we pay an affiliate, we send the payout by hand from our PayPal account to the address the affiliate gave us, so PayPal receives that address and the amount.
+- **The affiliate who referred you.** Counts and payment amounts only, as described under [Affiliate program](#affiliate-program).
+
+</IfAvailable>
 
 We don't sell personal data, and we don't share it for cross-context behavioural advertising.
 
@@ -175,6 +204,18 @@ We don't sell personal data, and we don't share it for cross-context behavioural
 | Rate-limit counters, which can include an IP address | They expire on their own within 2 days |
 | Support emails | As long as needed to resolve your request and keep a record of it |
 | Browser storage | In your browser until you clear it, or for the lifetime listed in the [Cookie Policy](/legal/cookie-policy) |
+
+<IfAvailable feature="affiliates">
+
+For the affiliate program:
+
+| Data | How long |
+| --- | --- |
+| Affiliate records: application, referral code, PayPal email and commissions | Until the affiliate's account is deleted, which deletes them with it, including commissions not yet paid |
+| Affiliate payouts already sent | Kept for our accounts after the affiliate's account is deleted, without the account or the PayPal address: the amount, currencies, exchange rates, date and PayPal transaction ID |
+| Which affiliate referred an account | Until that account, or the affiliate's, is deleted. When the referred account is deleted, the commissions it earned stay on the affiliate's record with the Polar order each came from, because they're what the affiliate was or will be paid, but no longer say which account paid. |
+
+</IfAvailable>
 
 **Deleting your account** (Settings → Account) deletes your own workspace: your codes and their scans, pages, responses, files, themes, domains, integrations and sessions. Codes and other content you created in a workspace shared with other members, including your own workspace if you invited people into it, are handed to another member, so its printed codes keep working; other workspaces where you are the only member are deleted. We also ask Polar to delete your customer record, which cancels any active subscription. Deleted data can stay in our database provider's short point-in-time recovery history until it rolls over.
 
@@ -237,5 +278,5 @@ Questions or requests about privacy: [support@qrdx.dev](mailto:support@qrdx.dev)
 
 ---
 
-**Changes:** 3 November 2026. AI QR art now uses OpenAI's GPT Image 2, through Vercel AI Gateway, instead of Google's Gemini. Earlier the same day: AI features now run through Vercel AI Gateway, with Anthropic's Claude for the AI theme chat and prompt enhancement and Google's Gemini for theme design and AI art. 2 November 2026: AI QR art now uses Google's Gemini API; fal.ai no longer receives any data. 1 November 2026: rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
+**Changes:** <IfAvailable feature="affiliates">10 November 2026. Added the affiliate program: what it records about affiliates and the accounts they refer (no cookie: a referral counts only for a sign-up in the same visit), and PayPal for payouts. </IfAvailable>3 November 2026. AI QR art now uses OpenAI's GPT Image 2, through Vercel AI Gateway, instead of Google's Gemini. Earlier the same day: AI features now run through Vercel AI Gateway, with Anthropic's Claude for the AI theme chat and prompt enhancement and Google's Gemini for theme design and AI art. 2 November 2026: AI QR art now uses Google's Gemini API; fal.ai no longer receives any data. 1 November 2026: rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
 

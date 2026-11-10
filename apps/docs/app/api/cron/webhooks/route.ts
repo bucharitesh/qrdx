@@ -3,6 +3,7 @@ import {
   completeDueTwoFactorResets,
   type DueResetsSummary,
 } from "@/lib/account/two-factor-reset-server";
+import { releaseHeldCommissions } from "@/lib/affiliates/commissions";
 import {
   pruneExpiredVerifications,
   pruneStaleKnownDevices,
@@ -117,6 +118,16 @@ export async function GET(request: Request) {
           deadline: Math.min(Date.now() + 5_000, startedAt + 45_000),
         })
       : 0;
+  // Affiliate commissions whose 30-day hold is over become "approved"
+  // (lib/affiliates/commissions.ts): at most 3 s, also ending by 45 s so
+  // the syncs still fit. Pages already treat them as payable, so whatever
+  // is left can wait a day.
+  const commissionsReleased =
+    trigger === "daily"
+      ? await releaseHeldCommissions({
+          deadline: Math.min(Date.now() + 3_000, startedAt + 45_000),
+        })
+      : 0;
   // Data-out streams (Google Sheets, HubSpot, Mailchimp) ride the same cron.
   const integrations = await runIntegrationSyncs({ budgetMs: 12_000 });
 
@@ -154,6 +165,7 @@ export async function GET(request: Request) {
       knownDevicesPruned,
       twoFactorResets,
       auditEventsPurged,
+      commissionsReleased,
       integrations,
       nextDueAt: nextDueAt === null ? null : new Date(nextDueAt).toISOString(),
     }),

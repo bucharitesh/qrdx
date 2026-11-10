@@ -54,4 +54,6 @@ export const DISALLOW = [
   "/invite",
   "/q/",
   "/m/",
+  // Affiliate referral links: redirects to the home page that count visits.
+  "/r/",
 ];

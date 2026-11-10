@@ -1,5 +1,6 @@
 import "server-only";
 
+import { exportAffiliateData } from "@/lib/affiliates/program";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { listAuthorizedApps } from "@/lib/oauth-apps/authorized";
@@ -379,6 +380,14 @@ export function exportEntries(userId: string): ExportEntry[] {
       description:
         "Your QRdx subscriptions and their status. Invoices and payment details are kept by Polar, our payment provider.",
       load: () => q.subscriptions,
+    },
+    {
+      kind: "json",
+      path: "affiliate.json",
+      title: "Affiliate program",
+      description:
+        "If you applied to the affiliate program: your application, referral code, PayPal email, commissions and payouts. If an affiliate referred your account, how and when (not who).",
+      load: () => exportAffiliateData(userId),
     },
     {
       kind: "json",
