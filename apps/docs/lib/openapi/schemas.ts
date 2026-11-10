@@ -1,4 +1,8 @@
-import { SCAN_DEVICE_TYPES, SCAN_SOURCES } from "@repo/database";
+import {
+  SCAN_DEVICE_TYPES,
+  SCAN_LOCATION_SOURCES,
+  SCAN_SOURCES,
+} from "@repo/database";
 import {
   frameSpecColorSchema,
   frameSpecPaintSchema,
@@ -10,6 +14,7 @@ import type { serializeHook } from "@/app/api/v1/hooks/_lib/hooks";
 import type { CommunityApiItem } from "@/lib/community/api";
 import { WEBHOOK_EVENTS } from "@/lib/events/types";
 import {
+  type PreciseLocationSummary,
   SCAN_RANGE_KEYS,
   type ScanAnalytics,
   type ScanEvent,
@@ -133,6 +138,11 @@ export const codeSchema = named(
       .describe(
         "The workspace that owns the code (a key's workspace, or a token user's own workspace)",
       ),
+    preciseLocation: z
+      .boolean()
+      .describe(
+        "Whether the code asks scanners for their precise location (Pro and Business; off by default)",
+      ),
   }),
   "A dynamic QR code",
 );
@@ -180,7 +190,55 @@ const scanEventSchema = z.object({
     .describe(
       "`nfc` for a tap on an NFC tag (the code's `nfcLink`), `qr` for a QR scan or any other visit to the short link",
     ),
+  latitude: z
+    .number()
+    .nullable()
+    .describe(
+      "Where the scanner was, rounded to 3 decimals (about 100 m): only when the code asked and they shared it (Pro and Business), else null",
+    ),
+  longitude: z.number().nullable(),
+  locationAccuracyM: z
+    .number()
+    .int()
+    .nullable()
+    .describe("Accuracy the scanner's browser reported, in meters"),
+  locationSource: z
+    .enum(SCAN_LOCATION_SOURCES)
+    .nullable()
+    .describe(
+      "`gps`: the scanner shared their location. `ip`: the code asked but they didn't share it (the location is the network one: country, region, city). null: the code didn't ask",
+    ),
 });
+
+const preciseLocationsSchema = z
+  .object({
+    asked: z
+      .number()
+      .int()
+      .describe(
+        "Scans in the range whose scanner was asked for their location",
+      ),
+    shared: z.number().int().describe("Of those, scans that shared it"),
+    points: z
+      .array(
+        z.object({
+          latitude: z.number().describe("Rounded to 3 decimals (about 100 m)"),
+          longitude: z.number(),
+          count: z.number().int(),
+          accuracyM: z
+            .number()
+            .int()
+            .nullable()
+            .describe("Average accuracy the browsers reported, meters"),
+          lastScannedAt: dateTime("Latest scan at this point"),
+        }),
+      )
+      .describe("Shared points, most scans first (up to 500)"),
+  })
+  .nullable()
+  .describe(
+    "Precise scan locations (Pro and Business): null on plans without them. Kept apart from the IP-based countries and cities",
+  );
 
 export const scanAnalyticsSchema = named(
   "ScanAnalytics",
@@ -222,6 +280,7 @@ export const scanAnalyticsSchema = named(
         nfc: z.number().int().describe("NFC taps in the range"),
       })
       .describe("Scans in the range by source; `qr` + `nfc` = `total`"),
+    preciseLocations: preciseLocationsSchema,
     events: z
       .array(scanEventSchema)
       .optional()
@@ -478,9 +537,18 @@ const _hookMatches: Equals<
 const _scanAnalyticsMatches: Equals<
   Omit<
     z.output<typeof scanAnalyticsSchema>,
-    "codeId" | "range" | "retentionDays" | "events" | "nextBefore"
+    | "codeId"
+    | "range"
+    | "retentionDays"
+    | "events"
+    | "nextBefore"
+    | "preciseLocations"
   >,
   Serialized<ScanAnalytics>
+> = true;
+const _preciseLocationsMatches: Equals<
+  NonNullable<z.output<typeof preciseLocationsSchema>>,
+  Serialized<PreciseLocationSummary>
 > = true;
 const _scanEventMatches: Equals<
   z.output<typeof scanEventSchema>,
@@ -491,6 +559,7 @@ const _communityItemMatches: Equals<
   CommunityApiItem
 > = true;
 void [
+  _preciseLocationsMatches,
   _codeMatches,
   _hookMatches,
   _scanAnalyticsMatches,

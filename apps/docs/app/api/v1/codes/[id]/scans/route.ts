@@ -4,7 +4,13 @@ import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { parseWithSchema } from "@/lib/request-guards";
-import { getScanAnalytics, listScans, resolveScanRange } from "@/lib/scans";
+import {
+  getPreciseLocations,
+  getScanAnalytics,
+  listScans,
+  resolveScanRange,
+  withoutPreciseLocation,
+} from "@/lib/scans";
 import { NO_STORE, resolveApiScope } from "../../_lib/api";
 import { scansQuerySchema } from "../../_lib/schemas";
 
@@ -26,17 +32,26 @@ export const GET = withApiQuotaHeaders(
         getCode(scope, id),
         getPlanForScope(scope),
       ]);
-      const retentionDays = getPlanLimits(plan).analyticsRetentionDays;
+      const limits = getPlanLimits(plan);
+      const retentionDays = limits.analyticsRetentionDays;
       const { range, days } = resolveScanRange(query.range, retentionDays);
       const analytics = await getScanAnalytics(code.id, days);
+      // Precise scan locations (lib/scan-location): Pro and Business only.
+      const precise = limits.preciseLocation
+        ? await getPreciseLocations(code.id, analytics.from)
+        : null;
 
       const events =
         query.limit > 0
-          ? await listScans(code.id, {
-              from: analytics.from,
-              before: query.before ? new Date(query.before) : null,
-              limit: query.limit,
-            })
+          ? (
+              await listScans(code.id, {
+                from: analytics.from,
+                before: query.before ? new Date(query.before) : null,
+                limit: query.limit,
+              })
+            ).map((event) =>
+              limits.preciseLocation ? event : withoutPreciseLocation(event),
+            )
           : null;
 
       return Response.json(
@@ -47,6 +62,13 @@ export const GET = withApiQuotaHeaders(
             retentionDays,
             ...analytics,
             from: analytics.from.toISOString(),
+            preciseLocations: precise && {
+              ...precise,
+              points: precise.points.map((point) => ({
+                ...point,
+                lastScannedAt: point.lastScannedAt.toISOString(),
+              })),
+            },
             ...(events && {
               events: events.map((event) => ({
                 ...event,
