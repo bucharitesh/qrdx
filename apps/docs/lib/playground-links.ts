@@ -93,10 +93,17 @@ export type DynamicOpenTarget = typeof DYNAMIC_OPEN_TARGET;
 
 /**
  * Get code dialog tabs a link can open (open=code&lang=…): only tabs that
- * ship. The CLI tab waits for a working @qrdx/cli on npm (CLI_TAB_ENABLED in
- * components/editor/action-bar/code-snippets.ts); add "cli" here with it.
+ * ship. "cli" goes with CLI_TAB_ENABLED in
+ * components/editor/action-bar/code-snippets.ts; keep the two in step.
  */
-export const CODE_LANGS = ["react", "shadcn", "image", "api", "mcp"] as const;
+export const CODE_LANGS = [
+  "react",
+  "shadcn",
+  "image",
+  "api",
+  "mcp",
+  "cli",
+] as const;
 export type CodeLang = (typeof CODE_LANGS)[number];
 
 export type PrintUnit = keyof typeof PRINT_SIZE_LIMITS;

@@ -13,8 +13,8 @@
 //   app/api/v1/codes/_lib/style.ts).
 // - MCP: the design_qr tool at https://mcp.qrdx.dev/mcp
 //   (app/api/mcp/design.ts, lib/qr-design/style.ts).
-// - CLI: @qrdx/cli flags (packages/cli/src/commands/generate.ts), hidden
-//   behind CLI_TAB_ENABLED.
+// - CLI: @qrdx/cli flags (packages/cli/src/commands/generate.ts), shown
+//   while CLI_TAB_ENABLED is on.
 //
 // Never in a snippet: an uploaded logo (a data URL) or art pixels. Each
 // serializer lists what its tab can't express in `omitted`, in plain English.
@@ -46,16 +46,15 @@ import type { LogoIconId } from "@/lib/qr-design/style";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
 
-/** A tab of the dialog: the link ids, plus the hidden CLI tab. */
+/** A tab of the dialog: the link ids (the CLI tab included). */
 export type CodeTab = CodeLang | "cli";
 
 /**
- * The CLI tab is built and tested but hidden: npm @qrdx/cli 0.0.4 is
- * broken. Flip this to true, and add "cli" to CODE_LANGS in
- * lib/playground-links.ts, once @qrdx/cli 0.0.5 or later is on npm (it
- * depends on qrdx 0.0.47, so that has to be published too).
+ * The CLI tab ships now that @qrdx/cli 0.0.5 (with qrdx 0.0.47) is on npm;
+ * npm @qrdx/cli 0.0.4 was broken. To hide it again, set this to false and
+ * take "cli" out of CODE_LANGS in lib/playground-links.ts.
  */
-export const CLI_TAB_ENABLED = false;
+export const CLI_TAB_ENABLED = true;
 
 const SHIPPED_TABS = ["react", "shadcn", "image", "api", "mcp"] as const;
 
@@ -1037,7 +1036,7 @@ export function mcpSnippet(input: SnippetInput): Snippet {
   };
 }
 
-// ─── CLI (hidden until CLI_TAB_ENABLED) ──────────────────────────────────────
+// ─── CLI (shown while CLI_TAB_ENABLED) ───────────────────────────────────────
 
 /** Arguments the shell passes through unquoted. */
 const SHELL_SAFE = /^[A-Za-z0-9_@%+=:,./-]+$/;

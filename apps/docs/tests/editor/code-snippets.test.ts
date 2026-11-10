@@ -232,13 +232,20 @@ const ALL_SERIALIZERS = {
 
 describe("tabs", () => {
   it("ship exactly the link ids, in tab order", () => {
-    expect(CODE_TABS).toEqual(["react", "shadcn", "image", "api", "mcp"]);
+    expect(CODE_TABS).toEqual([
+      "react",
+      "shadcn",
+      "image",
+      "api",
+      "mcp",
+      "cli",
+    ]);
     expect([...CODE_TABS]).toEqual([...CODE_LANGS]);
   });
 
-  it("keep the CLI hidden until a working @qrdx/cli is on npm", () => {
-    expect(CLI_TAB_ENABLED).toBe(false);
-    expect(CODE_TABS).not.toContain("cli");
+  it("show the CLI tab now that @qrdx/cli 0.0.5 is on npm", () => {
+    expect(CLI_TAB_ENABLED).toBe(true);
+    expect(CODE_TABS).toContain("cli");
   });
 
   it("use fixtures the editor itself would accept", () => {
