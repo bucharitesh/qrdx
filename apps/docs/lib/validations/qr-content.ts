@@ -3,6 +3,18 @@
  */
 
 import { z } from "zod";
+import {
+  isAmazonUrl,
+  isGoogleDriveFileUrl,
+  isOnDomain,
+  parseWebUrl,
+} from "@/utils/url-host";
+
+/** True when `value` is an http(s) address on one of `domains` (or below). */
+const onDomain =
+  (...domains: string[]) =>
+  (value: string) =>
+    isOnDomain(parseWebUrl(value), ...domains);
 
 // URL/Plain Text
 export const urlSchema = z.object({
@@ -218,7 +230,7 @@ export const spotifySchema = z.object({
     .refine(
       (val) =>
         val.startsWith("spotify:") ||
-        val.includes("spotify.com") ||
+        onDomain("spotify.com")(val) ||
         val.startsWith("https://"),
       "Invalid Spotify URI or URL",
     ),
@@ -274,21 +286,15 @@ export const dubshSchema = z.object({
 });
 
 // Google Drive
-function isGoogleDriveContentUrl(value: string): boolean {
-  return (
-    value.includes("drive.google.com") ||
-    /docs\.google\.com\/(document|spreadsheets|presentation|drawings)\/d\//.test(
-      value,
-    )
-  );
-}
-
 export const googleDriveSchema = z.object({
   url: z
     .string()
     .min(1, "Google Drive URL is required")
     .url("Invalid URL")
-    .refine(isGoogleDriveContentUrl, "Must be a Google Drive URL"),
+    .refine(
+      (val) => isGoogleDriveFileUrl(parseWebUrl(val)),
+      "Must be a Google Drive URL",
+    ),
   name: z.string().optional(),
   fileId: z.string().optional(),
   mimeType: z.string().optional(),
@@ -301,10 +307,14 @@ export const attendanceSchema = z.object({
     .string()
     .min(1, "Google Form URL is required")
     .url("Invalid URL")
-    .refine(
-      (val) => val.includes("google.com/forms") || val.includes("forms.gle"),
-      "Must be a Google Forms URL",
-    ),
+    .refine((val) => {
+      const url = parseWebUrl(val);
+      return (
+        (isOnDomain(url, "google.com") &&
+          url?.pathname.startsWith("/forms") === true) ||
+        isOnDomain(url, "forms.gle")
+      );
+    }, "Must be a Google Forms URL"),
 });
 
 // Amazon
@@ -313,7 +323,7 @@ export const amazonSchema = z.object({
     .string()
     .min(1, "Amazon product URL is required")
     .url("Invalid URL")
-    .refine((val) => val.includes("amazon."), "Must be an Amazon URL"),
+    .refine((val) => isAmazonUrl(parseWebUrl(val)), "Must be an Amazon URL"),
 });
 
 // Flipkart
@@ -322,7 +332,7 @@ export const flipkartSchema = z.object({
     .string()
     .min(1, "Flipkart product URL is required")
     .url("Invalid URL")
-    .refine((val) => val.includes("flipkart.com"), "Must be a Flipkart URL"),
+    .refine(onDomain("flipkart.com"), "Must be a Flipkart URL"),
 });
 
 // Cal.com
@@ -331,7 +341,7 @@ export const calcomSchema = z.object({
     .string()
     .min(1, "Cal.com booking URL is required")
     .url("Invalid URL")
-    .refine((val) => val.includes("cal.com"), "Must be a Cal.com URL"),
+    .refine(onDomain("cal.com"), "Must be a Cal.com URL"),
 });
 
 // Export type inference helpers
