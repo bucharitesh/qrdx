@@ -196,6 +196,25 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       url: "/plugins",
       description: "QRdx for Chrome, Figma, Raycast and Canva",
     },
+    // Each bot's page is left out where that bot isn't set up (showsPath).
+    {
+      title: "Slack bot",
+      url: "/slack",
+      description:
+        "QR codes in Slack with /qr, mentions, direct messages and a message shortcut; tracked codes with a linked account",
+    },
+    {
+      title: "Telegram bot",
+      url: "/telegram",
+      description:
+        "QR codes in Telegram: message the bot, call it inline in any chat, or use /qr in a group; no account",
+    },
+    {
+      title: "Discord bot",
+      url: "/discord",
+      description:
+        "QR codes in Discord with /qr or a message's Apps menu, in servers and DMs; no account",
+    },
     { title: "Changelog", url: "/changelogs" },
     {
       title: "Source code",
