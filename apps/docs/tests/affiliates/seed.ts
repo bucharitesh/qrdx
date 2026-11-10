@@ -22,7 +22,11 @@ export function resetAffiliateDb() {
   fakeDb.unique("affiliateReferral", "referredUserId");
   fakeDb.unique("affiliateCommission", "id");
   fakeDb.unique("affiliateCommission", "polarOrderId");
+  fakeDb.unique("affiliate", "previousCode");
   fakeDb.unique("affiliatePayout", "id");
+  // One payout per PayPal transaction (affiliate_payout_paypal_reference_unique).
+  fakeDb.unique("affiliatePayout", "paypalReference");
+  fakeDb.unique("affiliateRefundedOrder", "polarOrderId");
   fakeDb.unique("subscription", "id");
   fakeDb.unique("member", "organizationId", "userId");
   const at = new Date("2026-01-01T00:00:00Z");
@@ -38,7 +42,10 @@ export function seedAffiliate(
     userId: string;
     status: string;
     code: string;
+    previousCode: string | null;
+    codeChangedAt: Date | null;
     paypalEmail: string | null;
+    paypalEmailChangedAt: Date | null;
   }> = {},
 ) {
   const at = new Date("2026-01-01T00:00:00Z");
@@ -47,7 +54,10 @@ export function seedAffiliate(
     userId: AFFILIATE_USER.id,
     status: "approved",
     code: "ana-diaz-4k2p",
+    previousCode: null,
+    codeChangedAt: null,
     paypalEmail: "ana@paypal.example",
+    paypalEmailChangedAt: null,
     application: { website: "", promotion: "A newsletter for restaurants" },
     clickCount: 0,
     approvedAt: at,

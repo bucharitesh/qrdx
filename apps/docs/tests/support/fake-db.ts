@@ -17,7 +17,7 @@
 // onConflictDoNothing/onConflictDoUpdate; update set/where/returning (unique
 // keys checked like inserts, `sql` increments like sql`${col} + 1`, and
 // json ->> 'key' reads); delete;
-// transaction (rolled back when the callback throws); db.query.<table>
+// transaction and batch (rolled back when one throws); db.query.<table>
 // findMany/findFirst without relations. Anything else throws, so a test can never pass
 // on a query the fake silently misread.
 import { readFileSync } from "node:fs";
@@ -815,9 +815,19 @@ const database = {
       throw error;
     }
   },
+  /** One transaction, like Neon's: a failing query rolls back the others. */
   async batch(queries: PromiseLike<unknown>[]) {
+    const snapshot = new Map(
+      [...tables].map(([name, rows]) => [name, clone(rows)]),
+    );
     const results: unknown[] = [];
-    for (const query of queries) results.push(await query);
+    try {
+      for (const query of queries) results.push(await query);
+    } catch (error) {
+      tables.clear();
+      for (const [name, rows] of snapshot) tables.set(name, rows);
+      throw error;
+    }
     return results;
   },
   execute() {

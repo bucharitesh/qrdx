@@ -4,15 +4,18 @@ import {
   affiliate,
   affiliateCommission,
   affiliateReferral,
+  affiliateRefundedOrder,
   database as db,
   subscription,
 } from "@repo/database";
 import cuid from "cuid";
-import { and, eq, inArray, isNull, lte } from "drizzle-orm";
+import { and, eq, gt, inArray, isNull, lte, or } from "drizzle-orm";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { logError } from "@/lib/log-error";
 import { noteMissingTables } from "./missing-table";
 import {
   availableAtFor,
+  chargedNetAmount,
   commissionBase,
   commissionFor,
   isWithinCommissionWindow,
@@ -24,19 +27,26 @@ import { AFFILIATE_COMMISSION_BPS } from "./terms";
 
 // Commissions from Polar's webhooks (app/api/webhook/polar). The route calls
 // handleAffiliateWebhook after it has saved the billing state, for every
-// event; only these matter here:
+// event. Nothing runs unless the program is on (QRDX_AFFILIATES); then only
+// these matter:
 //
-// - order.paid: a referred customer paid. Within 12 months of their first
-//   payment, that's a pending commission of 30% of Polar's `net_amount`
-//   (after discounts, before tax) less `refunded_amount`, payable 30 days
-//   after the payment. One per order: polar_order_id is unique, so a
-//   repeated webhook finds the existing row and changes nothing.
+// - order.paid: a referred customer paid. Their first payment starts their
+//   12 months (recorded before anything else is checked, so a payment while
+//   their affiliate is suspended still counts as the first). Within those 12
+//   months, that's a pending commission of 30% of what the customer was
+//   charged before tax (rules.ts chargedNetAmount: Polar's `net_amount`,
+//   capped at `due_amount − tax_amount` for account credit) less
+//   `refunded_amount`, payable 30 days after the payment. One per order:
+//   polar_order_id is unique, so a repeated webhook finds the existing row
+//   and changes nothing.
 // - refund.created / refund.updated (status "succeeded", net amount above
 //   0) and order.refunded: a refund before the 30 days are over voids the
 //   commission. A refund Polar made to prevent a chargeback (the refund has
 //   a `dispute`, or the reason "dispute_prevention") is recorded as a
 //   chargeback. Repeats are harmless: only a pending or approved commission
-//   is voided, and the refund's id is kept.
+//   is voided, and the refund's id is kept. A refund that arrives before
+//   the order's commission exists is kept in affiliate_refunded_order, and
+//   order.paid then records the commission void.
 //
 // Polar sends no webhook for a dispute itself; a chargeback that ends
 // without a refund event is voided by hand in the admin area.
@@ -46,7 +56,9 @@ import { AFFILIATE_COMMISSION_BPS } from "./terms";
 // "self_referral", so the admin can see it.
 //
 // Nothing here throws: a failure, including the tables not existing yet, is
-// logged with the order id and the webhook still succeeds.
+// logged and the webhook still succeeds. A database error is logged at
+// error level as affiliates.commission_failed with the order id, so a
+// missed commission can be found and added by hand.
 
 export interface PolarOrderLike {
   id: string;
@@ -55,6 +67,8 @@ export interface PolarOrderLike {
   status?: string;
   paid?: boolean;
   net_amount: number;
+  tax_amount?: number | null;
+  due_amount?: number | null;
   refunded_amount?: number | null;
   currency: string;
   customer_id?: string | null;
@@ -70,6 +84,7 @@ export interface PolarRefundLike {
   status?: string;
   amount?: number;
   order_id?: string | null;
+  customer_id?: string | null;
   reason?: string | null;
   dispute?: unknown;
 }
@@ -84,9 +99,11 @@ export type CommissionResult =
   | { status: "created"; commissionId: string; voidReason: VoidReason | null }
   | { status: "duplicate" }
   | { status: "voided"; reason: VoidReason }
+  | { status: "refund_recorded" }
   | {
       status: "skipped";
       reason:
+        | "unavailable"
         | "ignored_event"
         | "invalid"
         | "unpaid"
@@ -109,17 +126,50 @@ function toDate(value: string | Date | null | undefined): Date | null {
   return Number.isNaN(date.getTime()) ? null : date;
 }
 
-/** The QRdx account behind a Polar order: the customer's external id, else a subscription's. */
-async function userIdForOrder(order: PolarOrderLike): Promise<string | null> {
-  const external = order.customer?.external_id;
-  if (external) return external;
-  if (!order.customer_id) return null;
+/** The QRdx account of a Polar customer: its external id, else a subscription's. */
+async function userIdForCustomer(customer: {
+  externalId?: string | null;
+  polarCustomerId?: string | null;
+}): Promise<string | null> {
+  if (customer.externalId) return customer.externalId;
+  if (!customer.polarCustomerId) return null;
   const [row] = await db
     .select({ userId: subscription.userId })
     .from(subscription)
-    .where(eq(subscription.customerId, order.customer_id))
+    .where(eq(subscription.customerId, customer.polarCustomerId))
     .limit(1);
   return row?.userId ?? null;
+}
+
+/**
+ * Starts the customer's 12 months at their earliest payment: sets
+ * first_paid_at to `paidAt` unless an earlier one is already there, in one
+ * conditional UPDATE (the same rule as `LEAST(coalesce(first_paid_at, $1),
+ * $1)`, so two orders handled at once both end at the earlier). Returns the
+ * stored value.
+ */
+async function recordFirstPayment(
+  referralId: string,
+  paidAt: Date,
+): Promise<Date> {
+  await db
+    .update(affiliateReferral)
+    .set({ firstPaidAt: paidAt })
+    .where(
+      and(
+        eq(affiliateReferral.id, referralId),
+        or(
+          isNull(affiliateReferral.firstPaidAt),
+          gt(affiliateReferral.firstPaidAt, paidAt),
+        ),
+      ),
+    );
+  const [row] = await db
+    .select({ firstPaidAt: affiliateReferral.firstPaidAt })
+    .from(affiliateReferral)
+    .where(eq(affiliateReferral.id, referralId))
+    .limit(1);
+  return row?.firstPaidAt ?? paidAt;
 }
 
 /** order.paid: creates the order's commission when it earns one. */
@@ -139,19 +189,30 @@ export async function recordPaidOrder(
     toDate(order.created_at) ??
     now;
 
-  const userId = await userIdForOrder(order);
+  const userId = await userIdForCustomer({
+    externalId: order.customer?.external_id,
+    polarCustomerId: order.customer_id,
+  });
   if (!userId) return { status: "skipped", reason: "no_user" };
 
   const [referral] = await db
     .select({
       id: affiliateReferral.id,
       affiliateId: affiliateReferral.affiliateId,
-      firstPaidAt: affiliateReferral.firstPaidAt,
     })
     .from(affiliateReferral)
     .where(eq(affiliateReferral.referredUserId, userId))
     .limit(1);
   if (!referral) return { status: "skipped", reason: "not_referred" };
+
+  // What the customer was charged before tax. A free order (a 100%
+  // discount) or one paid entirely with account credit isn't a payment: it
+  // neither earns nor starts the customer's 12 months.
+  const charged = chargedNetAmount(order);
+  if (charged <= 0) return { status: "skipped", reason: "zero_amount" };
+
+  // Their 12 months start at their first payment, whatever happens next.
+  const firstPaidAt = await recordFirstPayment(referral.id, paidAt);
 
   const [owner] = await db
     .select({ userId: affiliate.userId, status: affiliate.status })
@@ -168,28 +229,25 @@ export async function recordPaidOrder(
     );
     return { status: "skipped", reason: "affiliate_not_approved" };
   }
-
-  const net = Math.max(0, Number(order.net_amount) || 0);
-  const refunded = Math.max(0, Number(order.refunded_amount ?? 0) || 0);
-  const base = commissionBase(order);
-  // A free order (a 100% discount) isn't a payment: it neither earns nor
-  // starts the customer's 12 months.
-  if (net <= 0) return { status: "skipped", reason: "zero_amount" };
-
-  // Their 12 months start at their first payment.
-  let firstPaidAt = referral.firstPaidAt;
-  if (!firstPaidAt || paidAt.getTime() < firstPaidAt.getTime()) {
-    await db
-      .update(affiliateReferral)
-      .set({ firstPaidAt: paidAt })
-      .where(eq(affiliateReferral.id, referral.id));
-    firstPaidAt = paidAt;
-  }
   if (!isWithinCommissionWindow(firstPaidAt, paidAt)) {
     return { status: "skipped", reason: "outside_window" };
   }
 
+  const availableAt = availableAtFor(paidAt);
+  const refunded = Math.max(0, Number(order.refunded_amount ?? 0) || 0);
+  // A refund or chargeback reported before this order had a commission.
+  const [earlierRefund] = await db
+    .select({
+      polarRefundId: affiliateRefundedOrder.polarRefundId,
+      reason: affiliateRefundedOrder.reason,
+      refundedAt: affiliateRefundedOrder.refundedAt,
+    })
+    .from(affiliateRefundedOrder)
+    .where(eq(affiliateRefundedOrder.polarOrderId, order.id))
+    .limit(1);
+
   let voidReason: VoidReason | null = null;
+  let voidRefundId: string | null = null;
   if (
     await isSelfReferral({
       affiliateUserId: owner.userId,
@@ -198,11 +256,22 @@ export async function recordPaidOrder(
     })
   ) {
     voidReason = "self_referral";
+  } else if (
+    earlierRefund &&
+    refundVoids({ status: "pending", availableAt }, earlierRefund.refundedAt)
+  ) {
+    voidReason =
+      earlierRefund.reason === "chargeback" ? "chargeback" : "refund";
+    voidRefundId = earlierRefund.polarRefundId;
   } else if (refunded > 0) {
     // Refunded before this webhook was handled: still within the 30 days.
     voidReason = "refund";
   }
 
+  const base =
+    voidReason === "refund" || voidReason === "chargeback"
+      ? charged
+      : commissionBase(order);
   const id = cuid();
   const inserted = await db
     .insert(affiliateCommission)
@@ -212,16 +281,16 @@ export async function recordPaidOrder(
       referralId: referral.id,
       referredUserId: userId,
       polarOrderId: order.id,
-      polarCustomerId: order.customer_id ?? null,
       currency: order.currency,
-      orderAmount: voidReason === "refund" ? net : base,
+      orderAmount: base,
       rateBps: AFFILIATE_COMMISSION_BPS,
-      amount: commissionFor(voidReason === "refund" ? net : base),
+      amount: commissionFor(base),
       status: voidReason ? "void" : "pending",
       orderPaidAt: paidAt,
-      availableAt: availableAtFor(paidAt),
+      availableAt,
       voidedAt: voidReason ? now : null,
       voidReason,
+      voidRefundId,
       createdAt: now,
       updatedAt: now,
     })
@@ -239,12 +308,55 @@ export async function recordPaidOrder(
   return { status: "created", commissionId: id, voidReason };
 }
 
+/**
+ * A refund that came before its order's commission: kept for order.paid, but
+ * only for a referred customer (or one this server can't place), so these
+ * rows never hold other customers' refunds.
+ */
+async function rememberRefundedOrder(input: {
+  orderId: string;
+  refundedAt: Date;
+  refundId?: string | null;
+  reason: "refund" | "chargeback";
+  customer: { externalId?: string | null; polarCustomerId?: string | null };
+  now: Date;
+}): Promise<CommissionResult> {
+  const userId = await userIdForCustomer(input.customer);
+  if (userId) {
+    const [referral] = await db
+      .select({ id: affiliateReferral.id })
+      .from(affiliateReferral)
+      .where(eq(affiliateReferral.referredUserId, userId))
+      .limit(1);
+    if (!referral) return { status: "skipped", reason: "no_commission" };
+  }
+  await db
+    .insert(affiliateRefundedOrder)
+    .values({
+      polarOrderId: input.orderId,
+      polarRefundId: input.refundId ?? null,
+      reason: input.reason,
+      refundedAt: input.refundedAt,
+      createdAt: input.now,
+    })
+    .onConflictDoNothing({ target: affiliateRefundedOrder.polarOrderId });
+  console.info(
+    JSON.stringify({
+      event: "affiliates.refund_before_order",
+      orderId: input.orderId,
+      reason: input.reason,
+    }),
+  );
+  return { status: "refund_recorded" };
+}
+
 /** A refund or chargeback: voids the order's commission if it's still in its hold. */
 export async function voidForRefund(input: {
   orderId: string;
   refundedAt: Date;
   refundId?: string | null;
   reason: Extract<VoidReason, "refund" | "chargeback">;
+  customer?: { externalId?: string | null; polarCustomerId?: string | null };
   now?: Date;
 }): Promise<CommissionResult> {
   const now = input.now ?? new Date();
@@ -259,7 +371,16 @@ export async function voidForRefund(input: {
     .from(affiliateCommission)
     .where(eq(affiliateCommission.polarOrderId, input.orderId))
     .limit(1);
-  if (!row) return { status: "skipped", reason: "no_commission" };
+  if (!row) {
+    return rememberRefundedOrder({
+      orderId: input.orderId,
+      refundedAt: input.refundedAt,
+      refundId: input.refundId,
+      reason: input.reason,
+      customer: input.customer ?? {},
+      now,
+    });
+  }
 
   if (row.status === "void") {
     // order.refunded may have voided it first, without the refund's id or
@@ -348,6 +469,10 @@ async function handle(
         orderId: order.id,
         refundedAt: toDate(order.modified_at) ?? toDate(event.timestamp) ?? now,
         reason: "refund",
+        customer: {
+          externalId: order.customer?.external_id,
+          polarCustomerId: order.customer_id,
+        },
         now,
       });
     }
@@ -366,6 +491,7 @@ async function handle(
         refundedAt: toDate(refund.created_at) ?? toDate(event.timestamp) ?? now,
         refundId: refund.id,
         reason: isChargebackRefund(refund) ? "chargeback" : "refund",
+        customer: { polarCustomerId: refund.customer_id },
         now,
       });
     }
@@ -382,9 +508,10 @@ const HANDLED = new Set([
 ]);
 
 /**
- * The Polar webhook's affiliate step. Never throws: failures are logged
- * with the event type and the order's id, so a missed commission can be
- * found and added by hand.
+ * The Polar webhook's affiliate step. Does nothing while the program is off.
+ * Never throws: a failure is logged at error level with the event type, the
+ * order's id and the refund's id, so a missed commission can be found and
+ * added by hand.
  */
 export async function handleAffiliateWebhook(
   event: AffiliateWebhookEvent,
@@ -393,23 +520,42 @@ export async function handleAffiliateWebhook(
   if (!HANDLED.has(event?.type)) {
     return { status: "skipped", reason: "ignored_event" };
   }
+  if (!isFeatureAvailable("affiliates")) {
+    return { status: "skipped", reason: "unavailable" };
+  }
   try {
     return await handle(event, options.now ?? new Date());
   } catch (error) {
     if (noteMissingTables(error)) {
       return { status: "skipped", reason: "missing_tables" };
     }
-    const data = event.data as { id?: unknown; order_id?: unknown } | null;
-    logError(error as Error, {
-      action: "affiliates.webhook",
-      type: event.type,
-      orderId:
-        typeof data?.order_id === "string"
-          ? data.order_id
-          : typeof data?.id === "string"
+    const data = event.data as {
+      id?: unknown;
+      order_id?: unknown;
+    } | null;
+    const orderId =
+      typeof data?.order_id === "string"
+        ? data.order_id
+        : typeof data?.id === "string"
+          ? data.id
+          : null;
+    // For reconciling by hand: which event, which order, what failed.
+    console.error(
+      JSON.stringify({
+        event: "affiliates.commission_failed",
+        type: event.type,
+        orderId,
+        refundId:
+          event.type.startsWith("refund.") && typeof data?.id === "string"
             ? data.id
             : null,
-    });
+        error:
+          error instanceof Error
+            ? `${error.name}: ${error.message}`.slice(0, 300)
+            : "unknown",
+      }),
+    );
+    logError(error as Error, { action: "affiliates.webhook", orderId });
     return { status: "skipped", reason: "error" };
   }
 }
@@ -418,11 +564,13 @@ export async function handleAffiliateWebhook(
  * The daily cron (/api/cron/webhooks): marks pending commissions whose 30
  * days are over as approved, in batches, until the deadline. Pages don't
  * wait for this (they treat a pending commission past its hold as payable),
- * it keeps the stored status honest. Never throws; returns how many it moved.
+ * it keeps the stored status honest. Does nothing while the program is off.
+ * Never throws; returns how many it moved.
  */
 export async function releaseHeldCommissions(
   options: { now?: Date; deadline?: number; batchSize?: number } = {},
 ): Promise<number> {
+  if (!isFeatureAvailable("affiliates")) return 0;
   const now = options.now ?? new Date();
   const deadline = options.deadline ?? Date.now() + 5_000;
   const batchSize = options.batchSize ?? 500;

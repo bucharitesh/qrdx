@@ -9,15 +9,31 @@ import {
   user,
 } from "@repo/database";
 import cuid from "cuid";
-import { and, count, desc, eq, inArray, isNotNull, sql } from "drizzle-orm";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  inArray,
+  isNotNull,
+  isNull,
+  lte,
+  or,
+  sql,
+} from "drizzle-orm";
 import { isMissingTableError, noteMissingTables } from "./missing-table";
 import {
   type AffiliateStatus,
+  type ChosenCodeProblem,
+  checkChosenCode,
   type EffectiveCommissionStatus,
   effectiveCommissionStatus,
+  isPayable,
   parseReferralCode,
-  referralCodeStem,
+  randomReferralCode,
+  sumByCurrency,
 } from "./rules";
+import { AFFILIATE_TERMS_VERSION } from "./terms";
 
 // Reads and writes for the affiliate pages (/affiliates, Settings →
 // Affiliate program, /admin/affiliates). The webhook's side is
@@ -59,29 +75,34 @@ export interface Application {
   promotion: string;
 }
 
-const randomSuffix = () =>
-  Array.from(
-    crypto.getRandomValues(new Uint8Array(4)),
-    (byte) => "abcdefghjkmnpqrstuvwxyz23456789"[byte % 31],
-  ).join("");
+/** Whether a code is anyone's, current or from before they chose one. */
+async function codeInUse(code: string): Promise<boolean> {
+  const [row] = await db
+    .select({ id: affiliate.id })
+    .from(affiliate)
+    .where(or(eq(affiliate.code, code), eq(affiliate.previousCode, code)))
+    .limit(1);
+  return Boolean(row);
+}
 
 /**
- * Saves an application (status pending) with a referral code made from the
- * person's name. Applying again returns the existing row unchanged.
+ * Saves an application (status pending) with a random referral code, never
+ * one made from the person's name or email address, and the version of the
+ * terms they accepted. Applying again returns the existing row unchanged.
  */
 export async function applyForAffiliate(input: {
   userId: string;
-  name: string | null;
   application: Application;
   now?: Date;
+  randomCode?: () => string;
 }): Promise<AffiliateRow> {
   const existing = await getAffiliateForUser(input.userId);
   if (existing) return existing;
   const now = input.now ?? new Date();
-  const stem = referralCodeStem(input.name);
+  const nextCode = input.randomCode ?? (() => randomReferralCode());
   for (let attempt = 0; attempt < 6; attempt += 1) {
-    const code = parseReferralCode(`${stem}-${randomSuffix()}`);
-    if (!code) continue;
+    const code = parseReferralCode(nextCode());
+    if (!code || (await codeInUse(code))) continue;
     const inserted = await db
       .insert(affiliate)
       .values({
@@ -93,6 +114,7 @@ export async function applyForAffiliate(input: {
           website: input.application.website,
           promotion: input.application.promotion,
           agreedToTermsAt: now.toISOString(),
+          termsVersion: AFFILIATE_TERMS_VERSION,
         },
         clickCount: 0,
         createdAt: now,
@@ -108,6 +130,67 @@ export async function applyForAffiliate(input: {
   throw new Error("Couldn't pick a free referral code");
 }
 
+export type ChooseCodeResult =
+  | { status: "saved"; code: string; previousCode: string }
+  | {
+      status:
+        | ChosenCodeProblem
+        | "taken"
+        | "already_changed"
+        | "not_approved"
+        | "unchanged";
+    };
+
+/**
+ * An approved affiliate picks their own code, once: it must pass
+ * checkChosenCode (format, reserved words, not their email's local part)
+ * and be nobody's code, current or previous. Their random code moves to
+ * previous_code and keeps working, so links already shared still count.
+ */
+export async function chooseReferralCode(input: {
+  userId: string;
+  code: unknown;
+  ownEmails: readonly string[];
+  now?: Date;
+}): Promise<ChooseCodeResult> {
+  const checked = checkChosenCode(input.code, input.ownEmails);
+  if (!checked.ok) return { status: checked.problem };
+  const row = await getAffiliateForUser(input.userId);
+  if (row?.status !== "approved") return { status: "not_approved" };
+  if (row.codeChangedAt || row.previousCode) {
+    return { status: "already_changed" };
+  }
+  if (checked.code === row.code) return { status: "unchanged" };
+  if (await codeInUse(checked.code)) return { status: "taken" };
+  const now = input.now ?? new Date();
+  try {
+    const updated = await db
+      .update(affiliate)
+      .set({
+        code: checked.code,
+        previousCode: row.code,
+        codeChangedAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(affiliate.id, row.id),
+          eq(affiliate.code, row.code),
+          isNull(affiliate.codeChangedAt),
+        ),
+      )
+      .returning({ id: affiliate.id });
+    if (updated.length === 0) return { status: "already_changed" };
+  } catch (error) {
+    // Someone took it in the same moment (the unique constraint).
+    if ((error as { code?: string })?.code === "23505") {
+      return { status: "taken" };
+    }
+    throw error;
+  }
+  return { status: "saved", code: checked.code, previousCode: row.code };
+}
+
 /**
  * The PayPal address payouts go to. Only an approved affiliate can set it,
  * so the address of someone who wasn't accepted is never stored.
@@ -116,45 +199,63 @@ export async function setPaypalEmail(input: {
   userId: string;
   email: string;
   now?: Date;
-}): Promise<"saved" | "not_approved"> {
+}): Promise<
+  | { status: "saved"; previous: string | null }
+  | { status: "unchanged" | "not_approved" }
+> {
+  const row = await getAffiliateForUser(input.userId);
+  if (row?.status !== "approved") return { status: "not_approved" };
+  if (row.paypalEmail === input.email) return { status: "unchanged" };
+  const now = input.now ?? new Date();
   const updated = await db
     .update(affiliate)
-    .set({ paypalEmail: input.email, updatedAt: input.now ?? new Date() })
+    .set({
+      paypalEmail: input.email,
+      paypalEmailChangedAt: now,
+      updatedAt: now,
+    })
     .where(
       and(eq(affiliate.userId, input.userId), eq(affiliate.status, "approved")),
     )
     .returning({ id: affiliate.id });
-  return updated.length > 0 ? "saved" : "not_approved";
+  return updated.length > 0
+    ? { status: "saved", previous: row.paypalEmail }
+    : { status: "not_approved" };
 }
 
 // ─── The referral link ──────────────────────────────────────────────────────
 
 /**
- * A visit to /r/<code>: true for an approved affiliate's code, whose click
- * count goes up by one (no cookie, no IP address, nothing about the visitor
- * is stored). Never throws.
+ * A visit to /r/<code>: the code to carry to sign-up (the affiliate's
+ * current one, also for a link with their earlier random code) when it's an
+ * approved affiliate's, whose click count goes up by one; else null. No
+ * cookie, no IP address, nothing about the visitor is stored. Never throws.
  */
 export async function recordReferralClick(
   rawCode: string,
   options: { count?: boolean } = {},
-): Promise<boolean> {
+): Promise<string | null> {
   const code = parseReferralCode(rawCode);
-  if (!code) return false;
+  if (!code) return null;
+  const approvedWithCode = and(
+    or(eq(affiliate.code, code), eq(affiliate.previousCode, code)),
+    eq(affiliate.status, "approved"),
+  );
   try {
     if (options.count === false) {
       const [row] = await db
-        .select({ id: affiliate.id })
+        .select({ code: affiliate.code })
         .from(affiliate)
-        .where(and(eq(affiliate.code, code), eq(affiliate.status, "approved")))
+        .where(approvedWithCode)
         .limit(1);
-      return Boolean(row);
+      return row?.code ?? null;
     }
-    const updated = await db
+    const [updated] = await db
       .update(affiliate)
       .set({ clickCount: sql`${affiliate.clickCount} + 1` })
-      .where(and(eq(affiliate.code, code), eq(affiliate.status, "approved")))
-      .returning({ id: affiliate.id });
-    return updated.length > 0;
+      .where(approvedWithCode)
+      .returning({ code: affiliate.code });
+    return updated?.code ?? null;
   } catch (error) {
     if (!isMissingTableError(error)) {
       console.error(
@@ -166,7 +267,7 @@ export async function recordReferralClick(
     } else {
       noteMissingTables(error);
     }
-    return false;
+    return null;
   }
 }
 
@@ -326,7 +427,9 @@ export interface AdminAffiliateRow {
   name: string;
   status: AffiliateStatus;
   code: string;
+  previousCode: string | null;
   paypalEmail: string | null;
+  paypalEmailChangedAt: Date | null;
   application: Record<string, string> | null;
   clickCount: number;
   createdAt: Date;
@@ -350,7 +453,9 @@ export async function listAffiliatesForAdmin(
         name: user.name,
         status: affiliate.status,
         code: affiliate.code,
+        previousCode: affiliate.previousCode,
         paypalEmail: affiliate.paypalEmail,
+        paypalEmailChangedAt: affiliate.paypalEmailChangedAt,
         application: affiliate.application,
         clickCount: affiliate.clickCount,
         createdAt: affiliate.createdAt,
@@ -413,7 +518,9 @@ export async function loadAffiliateForAdmin(
         name: user.name,
         status: affiliate.status,
         code: affiliate.code,
+        previousCode: affiliate.previousCode,
         paypalEmail: affiliate.paypalEmail,
+        paypalEmailChangedAt: affiliate.paypalEmailChangedAt,
         application: affiliate.application,
         clickCount: affiliate.clickCount,
         createdAt: affiliate.createdAt,
@@ -475,11 +582,19 @@ export async function exportAffiliateData(userId: string) {
         ? {
             status: row.status,
             code: row.code,
+            previousCode: row.previousCode,
+            codeChosenAt: row.codeChangedAt,
             paypalEmail: row.paypalEmail,
+            paypalEmailChangedAt: row.paypalEmailChangedAt,
+            // { website, promotion, agreedToTermsAt, termsVersion }
             application: row.application,
             linkVisits: row.clickCount,
             appliedAt: row.createdAt,
             approvedAt: row.approvedAt,
+            // Our decision on the application or account, and the note
+            // staff wrote with it.
+            reviewedAt: row.reviewedAt,
+            statusNote: row.statusNote,
             commissions: commissions.map((commission) => ({
               orderPaidAt: commission.orderPaidAt,
               currency: commission.currency,
@@ -494,6 +609,10 @@ export async function exportAffiliateData(userId: string) {
               paidAt: payout.paidAt,
               currency: payout.currency,
               amount: payout.amount,
+              commissionsByCurrency: payout.sourceAmounts,
+              exchangeRates: payout.fxRates,
+              exchangeRateDate: payout.fxDate,
+              exchangeRateSource: payout.fxSource,
               paypalEmail: payout.paypalEmail,
               paypalReference: payout.paypalReference,
             })),
@@ -508,20 +627,54 @@ export async function exportAffiliateData(userId: string) {
   }
 }
 
-/** The commissions a payout in `currency` would cover now, and their total. */
+/**
+ * What a payout made now would cover: every commission payable at `cutoff`
+ * (past its hold by then, not voided, not paid), in every currency. The
+ * admin page passes the moment it was shown, so marking it paid covers
+ * exactly what the page listed, not commissions that became payable since.
+ */
 export async function payableCommissions(
   affiliateId: string,
-  currency: string,
-  now = new Date(),
-): Promise<{ ids: string[]; total: number }> {
-  const rows = await commissionsOf(affiliateId);
-  const due = rows.filter(
-    (row) =>
-      row.currency.toLowerCase() === currency.toLowerCase() &&
-      effectiveCommissionStatus(row, now) === "payable",
-  );
+  cutoff: Date,
+): Promise<{
+  ids: string[];
+  byCurrency: Record<string, number>;
+  /** Each one's stored status, to put back if the payout is undone. */
+  statuses: Record<string, "pending" | "approved">;
+}> {
+  const rows = await db
+    .select(commissionColumns)
+    .from(affiliateCommission)
+    .where(
+      and(
+        eq(affiliateCommission.affiliateId, affiliateId),
+        inArray(affiliateCommission.status, ["pending", "approved"]),
+        isNull(affiliateCommission.payoutId),
+        lte(affiliateCommission.availableAt, cutoff),
+      ),
+    );
+  const due = rows.filter((row) => isPayable(row, cutoff));
   return {
     ids: due.map((row) => row.id),
-    total: due.reduce((sum, row) => sum + row.amount, 0),
+    byCurrency: sumByCurrency(due),
+    statuses: Object.fromEntries(
+      due.map((row) => [row.id, row.status as "pending" | "approved"]),
+    ),
   };
+}
+
+/**
+ * Before an affiliate's account is deleted: their payouts stay for the
+ * books (the database sets affiliate_id and user_id to null), without the
+ * PayPal address they were sent to. Nothing to do before the tables exist.
+ */
+export async function anonymiseAffiliatePayouts(userId: string): Promise<void> {
+  try {
+    await db
+      .update(affiliatePayout)
+      .set({ paypalEmail: null })
+      .where(eq(affiliatePayout.userId, userId));
+  } catch (error) {
+    if (!noteMissingTables(error)) throw error;
+  }
 }
