@@ -102,6 +102,17 @@ let nextConfig: NextConfig = {
       "iconsax-reactjs",
     ],
   },
+  // Server code reads QRDX_HOME_NUMBERS as its build-time value
+  // (lib/home-numbers/flag.ts). While it's off, the bundler drops the home
+  // page's "QRdx in numbers" branch, client code included. Server only: it
+  // never reaches client bundles.
+  compiler: {
+    ...config.compiler,
+    defineServer: {
+      ...config.compiler?.defineServer,
+      "process.env.QRDX_HOME_NUMBERS": process.env.QRDX_HOME_NUMBERS ?? "",
+    },
+  },
   // Geist for server PNGs: frame labels are drawn from its glyph outlines
   // (lib/qr-text-outline.ts), read at runtime wherever a PNG is rasterized.
   outputFileTracingIncludes: {

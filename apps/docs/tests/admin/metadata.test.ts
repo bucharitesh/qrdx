@@ -43,6 +43,7 @@ const TITLES: Record<string, string> = {
   "community/page.tsx": "Admin · Community",
   "health/page.tsx": "Admin · Health",
   "integrations/page.tsx": "Admin · Integrations",
+  "numbers/page.tsx": "Admin · Home page numbers",
   "search/page.tsx": "Admin · Search",
   "subscriptions/page.tsx": "Admin · Subscriptions",
   "themes/page.tsx": "Admin · Themes",
