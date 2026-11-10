@@ -34,12 +34,26 @@ export function svgToCanvas(
   });
 }
 
-export function canvasToPng(canvas: HTMLCanvasElement): Promise<Blob> {
+/** The canvas as PNG or JPEG (92% quality: clean bar edges, small files). */
+export function canvasToBlob(
+  canvas: HTMLCanvasElement,
+  type: "image/png" | "image/jpeg" | string = "image/png",
+): Promise<Blob> {
   return new Promise((resolve, reject) => {
-    canvas.toBlob((blob) => {
-      if (blob) resolve(blob);
-      else reject(new Error("Couldn't create the PNG."));
-    }, "image/png");
+    canvas.toBlob(
+      (blob) => {
+        // A browser that can't encode the type falls back to PNG.
+        if (blob && blob.type === type) resolve(blob);
+        else
+          reject(
+            new Error(
+              `This browser can't make ${type === "image/jpeg" ? "a JPG" : "this image"}.`,
+            ),
+          );
+      },
+      type,
+      type === "image/jpeg" ? 0.92 : undefined,
+    );
   });
 }
 
