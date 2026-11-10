@@ -1,0 +1,70 @@
+{
+  "name": "n8n-nodes-qrdx",
+  "version": "0.1.0",
+  "description": "n8n nodes for QRdx: make QR code images, manage dynamic QR codes, read scans and start workflows from QRdx events",
+  "keywords": [
+    "n8n-community-node-package",
+    "n8n",
+    "qrdx",
+    "qr-code",
+    "qrcode",
+    "dynamic-qr-code"
+  ],
+  "homepage": "https://github.com/bucharitesh/qrdx/tree/main/plugins/n8n#readme",
+  "bugs": {
+    "url": "https://github.com/bucharitesh/qrdx/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bucharitesh/qrdx.git",
+    "directory": "plugins/n8n"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Ritesh Bucha",
+    "email": "bucharitesh@gmail.com"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "eslint . && vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json",
+    "clean": "git clean -xdf .turbo dist node_modules",
+    "prepublishOnly": "node scripts/build.mjs && eslint . && vitest run"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "strict": true,
+    "credentials": [
+      "dist/credentials/QrdxApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Qrdx/Qrdx.node.js",
+      "dist/nodes/Qrdx/QrdxTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@eslint/js": "9.29.0",
+    "@n8n/eslint-plugin-community-nodes": "0.40.0",
+    "@types/node": "^26.6.6",
+    "eslint": "9.29.0",
+    "eslint-import-resolver-typescript": "^4.4.5",
+    "eslint-plugin-import-x": "^4.18.1",
+    "eslint-plugin-n8n-nodes-base": "^2.0.0",
+    "n8n-workflow": "2.46.5",
+    "typescript": "5.9.3",
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.5"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
