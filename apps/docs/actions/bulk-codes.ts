@@ -21,8 +21,8 @@ import {
 } from "@/app/dashboard/codes/_lib/organize";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import {
+  type ImportChunkResult,
   type ImportPreview,
-  type ImportRowResult,
   importChunk,
   importChunkSchema,
   importPreviewSchema,
@@ -150,12 +150,23 @@ export async function previewQrCodeImport(
   );
 }
 
-/** One chunk (≤ 100 rows) of a CSV import; the client sends chunks in order. */
+/**
+ * One chunk (IMPORT_CHUNK_SIZE rows) of a CSV import; the client sends chunks
+ * in order, each under its own idempotency key, so a chunk sent again (a
+ * retry, a resume after a reload) never makes its codes twice.
+ */
 export async function importQrCodesChunk(
   input: z.input<typeof importChunkSchema>,
-): Promise<OrganizeResult<ImportRowResult[]>> {
+): Promise<OrganizeResult<ImportChunkResult>> {
   return runOrganize("importQrCodesChunk", (scope) => {
-    const { rows, domainId } = parseInput(importChunkSchema, input);
-    return importChunk(scope, rows, domainId);
+    const { rows, domainId, folderId, tagIds, idempotencyKey } = parseInput(
+      importChunkSchema,
+      input,
+    );
+    return importChunk(scope, rows, domainId, {
+      folderId,
+      tagIds,
+      idempotencyKey,
+    });
   });
 }

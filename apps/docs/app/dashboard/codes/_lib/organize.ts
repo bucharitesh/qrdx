@@ -87,6 +87,8 @@ export type OrganizeResult<T> =
          * an upgrade lifts; folder and tag caps (400) are the same for all.
          */
         meter?: "dynamicCodes";
+        /** RATE_LIMITED: when to try again */
+        retryAfterSeconds?: number;
       };
     };
 
@@ -128,6 +130,9 @@ export function organizeFailure(
         message: error.message,
         ...(error.code === "LIMIT_REACHED" && error.status === 402
           ? { meter: "dynamicCodes" as const }
+          : {}),
+        ...(error.headers?.["Retry-After"]
+          ? { retryAfterSeconds: Number(error.headers["Retry-After"]) }
           : {}),
       },
     };
@@ -718,6 +723,19 @@ async function assertScopeTags(scope: ActiveScope, tagIds: string[]) {
   if (rows.length !== new Set(tagIds).size) {
     throw new HttpError(404, "NOT_FOUND", "Tag not found");
   }
+}
+
+/**
+ * A CSV import's batch-wide folder and tags: NOT_FOUND unless they belong to
+ * the scope.
+ */
+export async function assertImportTargets(
+  scope: ActiveScope,
+  folderId: string | null,
+  tagIds: string[],
+): Promise<void> {
+  if (folderId) requireFolder(await scopeFolders(scope), folderId);
+  await assertScopeTags(scope, tagIds);
 }
 
 // ─── Codes: organize ─────────────────────────────────────────────────────────
