@@ -16,7 +16,12 @@
       ]
     },
     "test": {
-      "dependsOn": ["^test"]
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
+    "@qrdx/cli#test": {
+      "dependsOn": ["build"],
+      "outputs": []
     },
     "typecheck": {
       "dependsOn": ["^build"],
