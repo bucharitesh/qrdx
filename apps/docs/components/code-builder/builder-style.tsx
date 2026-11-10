@@ -275,6 +275,7 @@ export function BuilderStyle({
                   ...current,
                   customLogo: next.customLogo,
                   showLogo: next.showLogo,
+                  logoOptions: next.logoOptions,
                 })
               }
               style={current}

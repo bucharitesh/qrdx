@@ -4,14 +4,26 @@ import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
-import { GalleryAdd, Trash } from "iconsax-reactjs";
+import { ArrowRight2, Category, GalleryAdd, Trash } from "iconsax-reactjs";
+import dynamic from "next/dynamic";
 import * as React from "react";
+import type { BrandLogoPick } from "@/components/editor/brand-logos/brand-logo-gallery";
 import ControlSection from "@/components/editor/control-section";
+import { BRAND_LOGO_COUNT } from "@/lib/brand-logos/catalog.generated";
 import { DEFAULT_QR_LOGO, MAX_LOGO_FILE_SIZE } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
-import { LogoPresets, logoIconName } from "./logo-presets";
+import { brandLogoName, LogoPresets, logoIconName } from "./logo-presets";
 import { OptionGroupLabel } from "./option-tiles";
+
+// The gallery (and the brand index it fetches) loads only when opened.
+const BrandLogoGallery = dynamic(
+  () =>
+    import("@/components/editor/brand-logos/brand-logo-gallery").then(
+      (mod) => mod.BrandLogoGallery,
+    ),
+  { ssr: false },
+);
 
 const ALLOWED_LOGO_TYPES = [
   "image/png",
@@ -35,11 +47,39 @@ export function LogoControls({
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const showLogo = style.showLogo ?? false;
   const iconName = logoIconName(style.customLogo);
+  const brandName = brandLogoName(style.customLogo);
   const logoName = iconName
     ? `${iconName} icon`
-    : style.customLogo
-      ? "Your logo"
-      : "QRdx logo";
+    : brandName
+      ? `${brandName} logo`
+      : style.customLogo
+        ? "Your logo"
+        : "QRdx logo";
+  const brandButtonLabel =
+    brandName && showLogo
+      ? brandName
+      : `${BRAND_LOGO_COUNT.toLocaleString("en-US")} brands`;
+  // Mounted on first open, then kept (so it can animate closed).
+  const [galleryOpen, setGalleryOpen] = React.useState(false);
+  const [galleryMounted, setGalleryMounted] = React.useState(false);
+  const openGallery = () => {
+    setGalleryMounted(true);
+    setGalleryOpen(true);
+  };
+
+  const handleBrandPick = ({ logo, plate }: BrandLogoPick) => {
+    const { plate: _plate, ...options } = style.logoOptions ?? {};
+    const logoOptions = plate
+      ? { ...options, plate, shape: options.shape ?? "rounded" }
+      : options;
+    onStyleChange({
+      ...style,
+      customLogo: logo,
+      showLogo: true,
+      logoOptions:
+        Object.keys(logoOptions).length > 0 ? logoOptions : undefined,
+    });
+  };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -129,9 +169,44 @@ export function LogoControls({
         />
       </div>
 
+      <div>
+        <OptionGroupLabel>Brand logos</OptionGroupLabel>
+        <Button
+          aria-haspopup="dialog"
+          aria-label={`Brand logos: ${brandButtonLabel}`}
+          className="w-full max-w-[17.5rem] justify-start"
+          onClick={openGallery}
+          type="button"
+          variant="outline"
+        >
+          <Category />
+          <span className="min-w-0 flex-1 truncate text-left">
+            {brandButtonLabel}
+          </span>
+          <ArrowRight2 className="text-muted-foreground" />
+        </Button>
+        {galleryMounted && (
+          <BrandLogoGallery
+            current={style.customLogo}
+            hasPlate={Boolean(style.logoOptions?.plate)}
+            onOpenChange={setGalleryOpen}
+            onPick={handleBrandPick}
+            open={galleryOpen}
+          />
+        )}
+      </div>
+
       {showLogo && (
         <div className="flex items-center gap-3 rounded-lg border p-3">
-          <span className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-[10px] bg-white p-1.5 ring-1 ring-black/5">
+          <span
+            className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-[10px] bg-white p-1.5 ring-1 ring-black/5"
+            // On its plate, so a white brand logo shows
+            style={
+              style.logoOptions?.plate
+                ? { background: style.logoOptions.plate }
+                : undefined
+            }
+          >
             <img
               alt={logoName}
               className="max-h-full max-w-full object-contain"
@@ -151,7 +226,9 @@ export function LogoControls({
                 variant="outline"
               >
                 <GalleryAdd />
-                {style.customLogo && !iconName ? "Replace" : "Upload your logo"}
+                {style.customLogo && !iconName && !brandName
+                  ? "Replace"
+                  : "Upload your logo"}
               </Button>
               {style.customLogo && (
                 <Button
