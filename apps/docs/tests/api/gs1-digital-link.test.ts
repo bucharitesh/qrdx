@@ -20,6 +20,10 @@ vi.mock(
   "@repo/database",
   async () => (await import("../support/fake-db")).repoDatabase,
 );
+vi.mock(
+  "@repo/database/schema",
+  async () => (await import("../support/fake-db")).repoDatabase,
+);
 vi.mock("next/server", async (importOriginal) => ({
   ...(await importOriginal<typeof import("next/server")>()),
   after: (task: () => unknown) => {
@@ -44,6 +48,7 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("@/lib/events/emit", () => ({ emitScanRecorded: async () => {} }));
 
 const route = await import("@/app/gs1/[...path]/route");
+const { LOCATION_COOKIE } = await import("@/lib/scan-location/server");
 
 const GTIN = "09506000134352";
 const PHONE =
@@ -167,6 +172,41 @@ describe("a GS1 Digital Link on a custom domain", () => {
       (await scan(`/01/${GTIN}`, { host: "qrdx.dev", domainId: "dom_brand" }))
         .status,
     ).toBe(404);
+  });
+
+  it("asks for precise location like the short link when the owner turned it on", async () => {
+    fakeDb.resetAll();
+    fakeDb.seed("landingPage", [
+      { id: "page_honey", type: "product", gtin: GTIN, title: "Honey" },
+    ]);
+    fakeDb.seed("qrCode", [
+      code("code_honey", {
+        pixels: { consent: "auto", conversions: false, preciseLocation: true },
+      }),
+    ]);
+    // The owner's plan includes precise location (any unknown product is Pro).
+    fakeDb.seed("subscription", [
+      {
+        id: "sub_brand",
+        userId: "u_brand",
+        status: "active",
+        productId: "pro-monthly",
+        createdAt: new Date(),
+      },
+    ]);
+    fakeDb.seed("member", [
+      {
+        id: "m1",
+        organizationId: "org_brand",
+        userId: "u_brand",
+        role: "owner",
+      },
+    ]);
+    const response = await scan(`/01/${GTIN}`);
+    expect(response.headers.get("location")).toBe("/p/slug-code_honey");
+    const cookie = response.headers.get("set-cookie") ?? "";
+    expect(cookie).toMatch(new RegExp(`^${LOCATION_COOKIE}=`));
+    expect(cookie).toContain("Path=/p/slug-code_honey");
   });
 
   it("prefers an active code and says when the only one is off", async () => {
