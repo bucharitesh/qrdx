@@ -59,7 +59,7 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
       <CardHeader className="flex flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 space-y-1">
           <CardTitle className="text-base">Hosted page</CardTitle>
-          <CardDescription className="truncate">
+          <CardDescription className="sm:truncate">
             Scans open {row.title ? `"${row.title}"` : "your page"} ({label}).{" "}
             {can(scope.role, "content.write")
               ? "Edit it anytime; the printed code stays the same."
