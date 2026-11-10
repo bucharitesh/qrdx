@@ -148,7 +148,9 @@ export async function run({ env, argv, fetch: fetchImpl, log }) {
   const me = await call("getMe");
   if (String(me.username).toLowerCase() !== settings.username.toLowerCase()) {
     throw new Error(
-      `The token belongs to @${me.username}, but TELEGRAM_BOT_USERNAME is ${settings.username}. Set it to ${me.username}.`
+      // Only Telegram's answer goes in the message, never a value read from
+      // the environment (CodeQL js/clear-text-logging).
+      `The token belongs to @${me.username}, not the bot named in TELEGRAM_BOT_USERNAME. Set TELEGRAM_BOT_USERNAME to ${me.username}.`
     );
   }
 
