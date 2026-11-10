@@ -1169,6 +1169,11 @@ export const SCAN_DEVICE_TYPES = [
 ] as const;
 export type ScanDeviceType = (typeof SCAN_DEVICE_TYPES)[number];
 
+// ─── NFC taps (manual-sql/2026-11-11-nfc.sql) ────────────────────────────────
+/** How a scan reached the short link: a QR code, or a tap on an NFC tag (`?nfc`). */
+export const SCAN_SOURCES = ["qr", "nfc"] as const;
+export type ScanSource = (typeof SCAN_SOURCES)[number];
+
 /** "redirect": /q/<slug> 302s to destination_url. "page": it opens the hosted page at /p/<slug>. */
 export const QR_CODE_KINDS = ["redirect", "page"] as const;
 export type QrCodeKind = (typeof QR_CODE_KINDS)[number];
@@ -1311,6 +1316,9 @@ export const qrScan = pgTable(
     language: text("language"),
     /** A/B variant served, as "<ruleId>:<variantId>", when a split rule matched */
     variant: text("variant"),
+    // NFC taps (manual-sql/2026-11-11-nfc.sql): "qr" or "nfc"; null = before
+    // sources were stored, counted as a QR scan.
+    source: text("source", { enum: SCAN_SOURCES }),
   },
   (table) => [
     index("qr_scan_qr_code_id_scanned_at_idx").on(
