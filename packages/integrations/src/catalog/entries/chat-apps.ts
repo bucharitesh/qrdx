@@ -92,7 +92,8 @@ export const chatApps: IntegrationCatalogEntry[] = [
       "Make QR codes in any Telegram chat: message the QRdx bot, call it inline, or use /qr in a group.",
     description: [
       "Send the QRdx bot a link or some text and it replies with the QR code, with buttons to download it as PNG or SVG or open it in the editor.",
-      "In any other chat, type the bot's username followed by a link, then tap the code to send it there. In a group, add the bot and send /qr with a link or text. No QRdx account needed, and QRdx doesn't keep what you send.",
+      "In any other chat, type the bot's username followed by a link, then tap the code to send it there. In a group, add the bot and send /qr with a link or text. No QRdx account needed.",
+      "QRdx doesn't save the codes you make. The content goes into the image link, and like any link it can end up in logs and caches, so don't make codes of passwords or other secrets.",
     ],
     kind: "guide",
     surface: "integrations",
@@ -143,9 +144,9 @@ export const chatApps: IntegrationCatalogEntry[] = [
           "/qr with a link or text. With privacy mode on, the bot only sees commands meant for it.",
       },
       {
-        title: "Nothing kept",
+        title: "No account",
         description:
-          "No account and no stored messages: each image is drawn from a link that carries its content.",
+          "Nothing to sign up for. QRdx doesn't save your codes, and each image comes from a link that carries its content.",
       },
     ],
     keywords: ["telegram", "bot", "chat", "inline", "messenger", "group"],
