@@ -10,6 +10,7 @@ import {
   QR_COMMAND,
 } from "@/lib/chat-bots/discord/commands";
 import { discordPublicKey } from "@/lib/chat-bots/discord/verify";
+import { CHAT_COLORS, CHAT_FRAMES, CHAT_LOOKS } from "@/lib/chat-bots/styles";
 import { QR_DATA_MAX_LENGTH } from "@/lib/qr-render";
 
 /** Discord's rule for slash command and option names. */
@@ -32,6 +33,36 @@ describe("the Discord commands", () => {
             max_length: 2048,
           },
           {
+            type: 3,
+            name: "look",
+            description: "A ready-made look",
+            required: false,
+            choices: CHAT_LOOKS.map(({ id, label }) => ({
+              name: label,
+              value: id,
+            })),
+          },
+          {
+            type: 3,
+            name: "color",
+            description: "The code's color, on white",
+            required: false,
+            choices: CHAT_COLORS.map(({ id, label }) => ({
+              name: label,
+              value: id,
+            })),
+          },
+          {
+            type: 3,
+            name: "frame",
+            description: "A frame that says Scan me",
+            required: false,
+            choices: CHAT_FRAMES.map(({ id, label }) => ({
+              name: label,
+              value: id,
+            })),
+          },
+          {
             type: 5,
             name: "private",
             description: "Only you see the QR code",
@@ -51,6 +82,9 @@ describe("the Discord commands", () => {
     expect(QR_COMMAND).toEqual({
       name: "qr",
       content: "content",
+      look: "look",
+      color: "color",
+      frame: "frame",
       private: "private",
     });
     expect(MESSAGE_COMMAND).toEqual({ name: "Make QR code" });
@@ -81,7 +115,17 @@ describe("the Discord commands", () => {
       for (const option of command.options ?? []) {
         expect(option.name).toMatch(CHAT_INPUT_NAME);
         expect(option.description.length).toBeLessThanOrEqual(100);
+        // At most 25 choices, each name and value 1 to 100 characters.
+        expect(option.choices?.length ?? 0).toBeLessThanOrEqual(25);
+        for (const choice of option.choices ?? []) {
+          expect(choice.name.length).toBeGreaterThan(0);
+          expect(choice.name.length).toBeLessThanOrEqual(100);
+          expect(choice.value.length).toBeLessThanOrEqual(100);
+        }
       }
+      // Required options come first.
+      const required = (command.options ?? []).map((o) => o.required === true);
+      expect(required).toEqual([...required].sort((a, b) => +b - +a));
     }
   });
 

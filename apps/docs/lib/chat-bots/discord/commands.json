@@ -13,6 +13,110 @@
         "max_length": 2048
       },
       {
+        "type": 3,
+        "name": "look",
+        "description": "A ready-made look",
+        "required": false,
+        "choices": [
+          {
+            "name": "Plain",
+            "value": "plain"
+          },
+          {
+            "name": "Classic",
+            "value": "classic"
+          },
+          {
+            "name": "Modern",
+            "value": "modern"
+          },
+          {
+            "name": "Royal",
+            "value": "royal"
+          },
+          {
+            "name": "Folio",
+            "value": "folio"
+          },
+          {
+            "name": "Caffeine",
+            "value": "caffeine"
+          },
+          {
+            "name": "Retro",
+            "value": "retro"
+          },
+          {
+            "name": "Bordeaux",
+            "value": "bordeaux"
+          },
+          {
+            "name": "Blossom",
+            "value": "blossom"
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "color",
+        "description": "The code's color, on white",
+        "required": false,
+        "choices": [
+          {
+            "name": "Black",
+            "value": "black"
+          },
+          {
+            "name": "Blue",
+            "value": "blue"
+          },
+          {
+            "name": "Green",
+            "value": "green"
+          },
+          {
+            "name": "Red",
+            "value": "red"
+          },
+          {
+            "name": "Purple",
+            "value": "purple"
+          },
+          {
+            "name": "Orange",
+            "value": "orange"
+          }
+        ]
+      },
+      {
+        "type": 3,
+        "name": "frame",
+        "description": "A frame that says Scan me",
+        "required": false,
+        "choices": [
+          {
+            "name": "No frame",
+            "value": "none"
+          },
+          {
+            "name": "Banner",
+            "value": "banner-bottom"
+          },
+          {
+            "name": "Top banner",
+            "value": "banner-top"
+          },
+          {
+            "name": "Bubble",
+            "value": "speech-bubble"
+          },
+          {
+            "name": "Polaroid",
+            "value": "polaroid"
+          }
+        ]
+      },
+      {
         "type": 5,
         "name": "private",
         "description": "Only you see the QR code",
