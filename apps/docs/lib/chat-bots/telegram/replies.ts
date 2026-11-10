@@ -11,6 +11,7 @@ import {
   chatQrLinks,
   readChatQrInput,
 } from "@/lib/chat-bots/qr-reply";
+import { signPhotoLink } from "@/lib/chat-bots/telegram/photo-link";
 import { baseUrl } from "@/lib/metadata";
 import { playgroundHref } from "@/lib/playground-links";
 
@@ -23,7 +24,8 @@ import { playgroundHref } from "@/lib/playground-links";
 // In chats the image is the image API's PNG (chatQrLinks). Inline results
 // are InlineQueryResultPhoto, whose photo_url the Bot API documents as JPEG
 // only, so they point at the bot's own JPEG of the same code
-// (app/api/integrations/telegram/photo).
+// (app/api/integrations/telegram/photo), through links signed with the
+// webhook secret (lib/chat-bots/telegram/photo-link.ts).
 
 /** Where the bot's JPEGs are served (app/api/integrations/telegram/photo). */
 const TELEGRAM_PHOTO_PATH = "/api/integrations/telegram/photo";
@@ -196,7 +198,9 @@ export function helpText(
     `In any chat, type @${botUsername} and a link or text, then tap the code to send it.`,
     `In a group, add me and send /qr@${botUsername} followed by a link or text.`,
     "",
-    "QRdx doesn't keep what you send. For colors, logos and frames, open the editor:",
+    "QRdx doesn't save the codes you make. What you send goes into the image link, and like any link it can end up in logs and caches, so don't make codes of passwords or other secrets.",
+    "",
+    "For colors, logos and frames, open the editor:",
     new URL(playgroundHref({}), origin).toString(),
   ].join("\n");
 }
@@ -206,6 +210,9 @@ export const TOO_LONG_TEXT =
 
 export const RATE_LIMITED_TEXT =
   "That's a lot of codes in a short time. Try again in a minute.";
+
+/** When everyone together has used up the bot's minute (lib/chat-bots/telegram/bot.ts). */
+export const BUSY_TEXT = "QRdx is busy right now. Try again in a minute.";
 
 const IMAGE_FAILED_TEXT =
   "Telegram couldn't load the image just now. The buttons below still work.";
@@ -267,18 +274,33 @@ export function qrLinksReply(
 
 // ── Inline mode ─────────────────────────────────────────────────────────────
 
-/** The bot's JPEG of `data`, `size` px wide (TELEGRAM_PHOTO_SIZES). */
+/** How to build the bot's photo links. */
+export interface PhotoLinkOptions {
+  /** TELEGRAM_WEBHOOK_SECRET, which the signing key is derived from. */
+  secret: string;
+  origin?: string | URL;
+  /** When the link is made (ms since the epoch), for its expiry. */
+  now?: number;
+}
+
+/**
+ * The bot's JPEG of `data`, `size` px wide (TELEGRAM_PHOTO_SIZES), as a
+ * signed link that works for one to two hours (photo-link.ts).
+ */
 export function telegramPhotoUrl(
   data: string,
   size: number,
-  origin: string | URL = baseUrl,
+  { secret, origin = baseUrl, now = Date.now() }: PhotoLinkOptions,
 ): string {
   const site = isOfficialOrigin(origin)
     ? OFFICIAL_SITE
     : new URL(origin).origin;
   const url = new URL(TELEGRAM_PHOTO_PATH, site);
+  const { exp, sig } = signPhotoLink(data, size, secret, now);
   url.searchParams.set("data", data);
   url.searchParams.set("size", String(size));
+  url.searchParams.set("exp", exp);
+  url.searchParams.set("sig", sig);
   return url.toString();
 }
 
@@ -290,14 +312,21 @@ const NO_RESULT_BUTTONS = {
   empty: "Type a link or text to make a QR code",
   too_long: "Too long for one QR code",
   rate_limited: "Too many codes. Try again in a minute",
+  busy: BUSY_TEXT,
 } as const;
+
+/** How long Telegram may reuse a "slow down" or "busy" answer, in seconds. */
+const NOTICE_CACHE_SECONDS = 10;
 
 /** answerInlineQuery with the code as one photo result. */
 export function inlineQrAnswer(
   queryId: string,
   data: string,
-  origin: string | URL = baseUrl,
+  options: PhotoLinkOptions,
 ): TelegramCall {
+  const { origin = baseUrl } = options;
+  // One clock reading, so the photo and its thumbnail expire together.
+  const photo = { ...options, now: options.now ?? Date.now() };
   const caption = chatQrCaption(data);
   return {
     method: "answerInlineQuery",
@@ -310,8 +339,8 @@ export function inlineQrAnswer(
           type: "photo",
           // 1-64 bytes; the same text always gets the same id.
           id: createHash("sha256").update(data).digest("hex").slice(0, 32),
-          photo_url: telegramPhotoUrl(data, CHAT_QR_PNG_SIZE, origin),
-          thumbnail_url: telegramPhotoUrl(data, TELEGRAM_THUMB_SIZE, origin),
+          photo_url: telegramPhotoUrl(data, CHAT_QR_PNG_SIZE, photo),
+          thumbnail_url: telegramPhotoUrl(data, TELEGRAM_THUMB_SIZE, photo),
           photo_width: CHAT_QR_PNG_SIZE,
           photo_height: CHAT_QR_PNG_SIZE,
           title: "QR code",
@@ -326,20 +355,21 @@ export function inlineQrAnswer(
 
 /**
  * answerInlineQuery with no results and a button that opens the bot's chat
- * (/start help). Rate-limited answers are cached for this person only.
+ * (/start help). "Slow down" and "busy" answers are cached only briefly, a
+ * rate-limited one for this person only.
  */
 export function inlineNoResultAnswer(
   queryId: string,
   reason: keyof typeof NO_RESULT_BUTTONS,
 ): TelegramCall {
-  const personal = reason === "rate_limited";
+  const notice = reason === "rate_limited" || reason === "busy";
   return {
     method: "answerInlineQuery",
     payload: {
       inline_query_id: queryId,
       results: [],
-      cache_time: personal ? 10 : RESULT_CACHE_SECONDS,
-      is_personal: personal,
+      cache_time: notice ? NOTICE_CACHE_SECONDS : RESULT_CACHE_SECONDS,
+      is_personal: reason === "rate_limited",
       button: { text: NO_RESULT_BUTTONS[reason], start_parameter: "help" },
     },
   };

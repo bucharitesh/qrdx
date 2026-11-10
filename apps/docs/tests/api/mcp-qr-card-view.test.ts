@@ -426,6 +426,59 @@ describe("the QR card view", () => {
     expect(card.el("actions").hidden).toBe(true);
   });
 
+  it("takes https links, and http only on this computer (local development)", async () => {
+    const shown = [
+      "https://api.qrdx.dev/v1/qr?data=x",
+      "HTTPS://qrdx.example/qr.svg",
+      "http://localhost:3000/api/v1/qr?data=x",
+      "http://localhost/qr",
+      "http://127.0.0.1:3115/api/v1/qr?data=x",
+      "http://127.0.0.1",
+      "http://localhost?data=x",
+      "http://localhost#top",
+    ];
+    const refused = [
+      "http://api.qrdx.dev/v1/qr?data=x",
+      "http://example.com/menu",
+      "http://localhost.evil.example/qr",
+      "http://localhost@evil.example/qr",
+      "http://localhost:3000@evil.example/qr",
+      "http://127.0.0.1.evil.example/qr",
+      "http://127.0.0.10/qr",
+      "http://[::1]:3000/qr",
+      "http://192.168.1.20:3000/qr",
+      "ftp://qrdx.dev/qr.svg",
+      "//qrdx.dev/qr.svg",
+      "https:/qrdx.dev/qr.svg",
+      " https://qrdx.dev/qr.svg",
+      "/api/v1/qr?data=x",
+    ];
+    for (const [url, allowed] of [
+      ...shown.map((url) => [url, true] as const),
+      ...refused.map((url) => [url, false] as const),
+    ]) {
+      const card = await connected();
+      card.fromHost({
+        jsonrpc: "2.0",
+        method: "ui/notifications/tool-result",
+        params: generateResult({ svg: url, png: url, editor: url }),
+      });
+      expect(card.el("image").getAttribute("src"), url).toBe(
+        allowed ? url : `data:image/png;base64,${PNG}`,
+      );
+      for (const id of ["png", "svg", "editor"]) {
+        expect(card.el(id).hidden, `${id} ${url}`).toBe(!allowed);
+      }
+      if (allowed) {
+        card.el("editor").fire("click");
+        expect(card.sent.at(-1)).toMatchObject({
+          method: "ui/open-link",
+          params: { url },
+        });
+      }
+    }
+  });
+
   it("shows a tool error as text, with no code or buttons", async () => {
     const card = await connected();
     card.fromHost({

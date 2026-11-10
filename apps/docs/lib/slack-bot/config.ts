@@ -1,6 +1,10 @@
 import "server-only";
 
-import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
+import {
+  createRateLimiter,
+  type RateLimiter,
+  slidingWindow,
+} from "@repo/rate-limit";
 import { env } from "@/lib/env";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { baseUrl } from "@/lib/metadata";
@@ -116,7 +120,10 @@ export async function readSlackRequest(
 }
 
 // Per Slack person and per Slack workspace: generous for people, a ceiling
-// for a script hammering one workspace's bot.
+// for a script hammering one workspace's bot. Anyone can add the bot to any
+// number of Slack workspaces, so one more window spans them all: past it,
+// the bot answers that it's busy instead of working. Tracked codes write
+// to the database and have a lower one of their own.
 const personLimiter = createRateLimiter({
   prefix: "qrdx:slack-bot:user",
   limiter: slidingWindow(30, "60 s"),
@@ -125,19 +132,51 @@ const teamLimiter = createRateLimiter({
   prefix: "qrdx:slack-bot:team",
   limiter: slidingWindow(300, "60 s"),
 });
+const allTeamsLimiter = createRateLimiter({
+  prefix: "qrdx:slack-bot:all",
+  limiter: slidingWindow(600, "60 s"),
+});
+const allTracksLimiter = createRateLimiter({
+  prefix: "qrdx:slack-bot:all-track",
+  limiter: slidingWindow(120, "60 s"),
+});
 
-/** False when this Slack person or workspace is over its limit. */
-export async function withinSlackLimits(
+/** Over a person's or workspace's limit. */
+export const SLOW_DOWN_TEXT =
+  "You're going a little fast. Wait a minute and try again.";
+/** Over the limit across every Slack workspace. */
+export const BUSY_TEXT = "QRdx is busy right now. Try again in a minute.";
+
+async function within(limiter: RateLimiter, key: string): Promise<boolean> {
+  try {
+    await enforceRateLimits([{ limiter, key }]);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Whether the bot answers this request: "slow" when this Slack person or
+ * workspace is over its limit, "busy" when the bot is over its limit across
+ * all Slack workspaces, else "ok".
+ */
+export async function slackLimitFor(
   teamId: string,
   slackUserId: string,
-): Promise<boolean> {
+): Promise<"ok" | "slow" | "busy"> {
   try {
     await enforceRateLimits([
       { limiter: personLimiter, key: `${teamId}:${slackUserId}` },
       { limiter: teamLimiter, key: teamId },
     ]);
-    return true;
   } catch {
-    return false;
+    return "slow";
   }
+  return (await within(allTeamsLimiter, "all")) ? "ok" : "busy";
+}
+
+/** False when tracked codes are over their limit across all workspaces. */
+export function withinTrackCap(): Promise<boolean> {
+  return within(allTracksLimiter, "all");
 }

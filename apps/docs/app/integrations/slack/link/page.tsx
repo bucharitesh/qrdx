@@ -1,4 +1,3 @@
-import { auth } from "@repo/auth/server";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Card,
@@ -14,6 +13,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
+import { currentSession } from "@/lib/account/confirmation-server";
 import { can } from "@/lib/permissions";
 import { getClientIp } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
@@ -23,20 +23,28 @@ import {
   linkTokenSecret,
   SETTINGS_PATH,
 } from "@/lib/slack-bot/config";
+import {
+  isSlackSignInError,
+  SLACK_SIGN_IN_ERRORS,
+} from "@/lib/slack-bot/link-proof";
+import { hasLinkProof, signInHref } from "@/lib/slack-bot/link-sign-in";
 import { verifyLinkToken } from "@/lib/slack-bot/link-token";
 import {
+  describeUserLink,
   findInstallation,
-  findUserLink,
   SlackBotStoreUnavailableError,
 } from "@/lib/slack-bot/store";
 import { listWorkspaces, shutsOut } from "@/lib/workspaces";
 import { SlackLinkForm } from "./link-form";
 
 // /integrations/slack/link?t=<token>: where /qr link's button leads. Signed
-// out, sign in first and come back. Shows who in Slack is asking and lets
-// the person pick one of their workspaces where they may create codes; the
-// link is made only by Confirm (a server action that checks everything
-// again), never on page load.
+// out, sign in first and come back. Shows who in Slack is asking, asks the
+// person to sign in with Slack as that Slack account (lib/slack-bot/
+// link-sign-in.ts; ?slack= says why a sign-in didn't count), says what an
+// existing link would be replaced, and lets them pick one of their
+// workspaces where they may create codes. The link is made only by Confirm
+// (a server action that checks everything again, the Slack sign-in
+// included), never on page load.
 
 const lookupLimiter = createRateLimiter({
   prefix: "qrdx:slack-bot:link-page",
@@ -87,19 +95,27 @@ const EXPIRED = (
   />
 );
 
+const STARTED_ELSEWHERE = (
+  <LinkCard
+    description="That Slack sign-in didn't start on this page, or it took too long. Run /qr link in Slack again for a new link."
+    title="Nothing was linked"
+  />
+);
+
 export default async function SlackLinkPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   if (!isSlackBotEnabled()) notFound();
-  const { t } = await searchParams;
+  const { t, slack } = await searchParams;
   const token = typeof t === "string" ? t.slice(0, 2048) : "";
-  if (!token) return EXPIRED;
+  const signInError = isSlackSignInError(slack) ? slack : null;
+  if (!token) return signInError ? STARTED_ELSEWHERE : EXPIRED;
 
   const requestHeaders = await headers();
-  const session = await auth.api.getSession({ headers: requestHeaders });
-  if (!session?.user) {
+  const session = await currentSession();
+  if (!session) {
     redirect(signInPath(`${LINK_PAGE_PATH}?t=${encodeURIComponent(token)}`));
   }
 
@@ -117,11 +133,11 @@ export default async function SlackLinkPage({
 
   const secret = linkTokenSecret();
   const claims = secret ? verifyLinkToken(token, secret) : null;
-  if (!claims) return EXPIRED;
+  if (!(secret && claims)) return EXPIRED;
 
-  const userId = session.user.id;
+  const userId = session.userId;
   let teamName: string;
-  let linkedHere: { organizationId: string } | null;
+  let existing: Awaited<ReturnType<typeof describeUserLink>>;
   try {
     const installation = await findInstallation({ teamId: claims.teamId });
     if (!installation) {
@@ -135,8 +151,7 @@ export default async function SlackLinkPage({
       );
     }
     teamName = installation.teamName ?? claims.teamName;
-    const existing = await findUserLink(claims.teamId, claims.slackUserId);
-    linkedHere = existing?.userId === userId ? existing : null;
+    existing = await describeUserLink(claims.teamId, claims.slackUserId);
   } catch (error) {
     if (!(error instanceof SlackBotStoreUnavailableError)) throw error;
     return (
@@ -164,10 +179,15 @@ export default async function SlackLinkPage({
       </LinkCard>
     );
   }
+  const mine = existing?.userId === userId ? existing : null;
   const defaultWorkspaceId =
-    workspaces.find((w) => w.id === linkedHere?.organizationId)?.id ??
+    workspaces.find((w) => w.id === mine?.organizationId)?.id ??
     workspaces[0]?.id ??
     "";
+  const verified = await hasLinkProof(
+    { userId, sessionId: session.sessionId, token, claims },
+    secret,
+  );
 
   const slackName = claims.userName || claims.slackUserId;
   return (
@@ -179,9 +199,7 @@ export default async function SlackLinkPage({
             <span className="font-medium text-foreground">{slackName}</span> in{" "}
             <span className="font-medium text-foreground">{teamName}</span>{" "}
             create tracked codes as you, signed in as{" "}
-            <span className="font-medium text-foreground">
-              {session.user.email}
-            </span>
+            <span className="font-medium text-foreground">{session.email}</span>
             ? Their <code>/qr track</code> codes go to the workspace you pick,
             under your role and plan.
           </>
@@ -191,15 +209,26 @@ export default async function SlackLinkPage({
         <SlackLinkForm
           cancelHref={SETTINGS_PATH}
           defaultWorkspaceId={defaultWorkspaceId}
+          replacing={
+            existing
+              ? {
+                  workspaceName: existing.workspaceName ?? "a QRdx workspace",
+                  otherAccount: existing.userId !== userId,
+                }
+              : null
+          }
+          signIn={{
+            href: signInHref(token),
+            slackName,
+            verified,
+            error:
+              verified || !signInError
+                ? null
+                : SLACK_SIGN_IN_ERRORS[signInError],
+          }}
           token={token}
           workspaces={workspaces}
         />
-        {linkedHere && (
-          <p className="text-xs text-muted-foreground text-pretty">
-            This Slack account is linked to you already; confirming replaces the
-            workspace.
-          </p>
-        )}
       </LinkCard>
     </ConfirmIdentityProvider>
   );

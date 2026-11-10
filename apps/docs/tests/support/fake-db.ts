@@ -14,7 +14,8 @@
 // Supported: select/selectDistinct/selectDistinctOn with from, inner/left joins, where,
 // orderBy (asc/desc/column), limit, offset, groupBy with count/sum/max/min,
 // correlated exists/inArray subqueries; insert with values, returning,
-// onConflictDoNothing/onConflictDoUpdate; update set/where/returning (unique
+// onConflictDoNothing/onConflictDoUpdate; raw upserts through db.execute
+// (insert … on conflict (…) do update set …); update set/where/returning (unique
 // keys checked like inserts, `sql` increments like sql`${col} + 1`, and
 // json ->> 'key' reads); delete;
 // transaction and batch (rolled back when one throws); db.query.<table>
@@ -245,6 +246,88 @@ function likeRegex(pattern: string, flags: string): RegExp {
     else source += char.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   }
   return new RegExp(`^${source}$`, flags);
+}
+
+// ─── Raw upserts (db.execute) ────────────────────────────────────────────────
+
+const camel = (name: string) =>
+  name.replace(/_([a-z0-9])/g, (_, letter: string) => letter.toUpperCase());
+
+/** "a, (coalesce(b, ''))" → ["a", "(coalesce(b, ''))"]: commas outside parentheses. */
+function splitTopLevel(list: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let current = "";
+  for (const char of list) {
+    if (char === "(") depth++;
+    if (char === ")") depth--;
+    if (char === "," && depth === 0) {
+      parts.push(current.trim());
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  if (current.trim()) parts.push(current.trim());
+  return parts;
+}
+
+function executeUpsert(expr: SqlExpr): { rows: Row[] } {
+  const text = expr.strings
+    .map((part, i) => (i < expr.values.length ? `${part}$${i}` : part))
+    .join("")
+    .trim()
+    .replace(/\s+/g, " ");
+  const match = text.match(
+    /^insert into "?(\w+)"? \(([^)]*)\) values \(([^)]*)\) on conflict \((.+)\) do update set (.+)$/i,
+  );
+  if (!match) {
+    throw new Error(`fake-db: db.execute doesn't support: ${text}`);
+  }
+  const [, tableSql, columnList, valueList, targetList, setList] =
+    match as unknown as [string, string, string, string, string, string];
+  const table = camel(tableSql);
+  const columns = splitTopLevel(columnList).map(camel);
+  const params = splitTopLevel(valueList);
+  if (params.length !== columns.length) {
+    throw new Error("fake-db: insert columns and values don't line up");
+  }
+  const row: Row = {};
+  columns.forEach((column, index) => {
+    const param = /^\$(\d+)$/.exec(params[index] as string);
+    if (!param) throw new Error(`fake-db: unsupported value ${params[index]}`);
+    const value = expr.values[Number(param[1])];
+    // Timestamps arrive as ISO text, as Drizzle sends them.
+    row[column] =
+      column.endsWith("At") && typeof value === "string"
+        ? new Date(value)
+        : clone(value);
+  });
+  const keyOf = splitTopLevel(targetList).map((term) => {
+    const plain = /^"?(\w+)"?$/.exec(term);
+    if (plain) return (r: Row) => r[camel(plain[1] as string)] ?? null;
+    const coalesce = /^\(coalesce\("?(\w+)"?, ''\)\)$/i.exec(term);
+    if (coalesce) return (r: Row) => r[camel(coalesce[1] as string)] ?? "";
+    throw new Error(`fake-db: unsupported conflict target ${term}`);
+  });
+  const updates = splitTopLevel(setList).map((assignment) => {
+    const set = /^"?(\w+)"? = excluded\."?(\w+)"?$/i.exec(assignment);
+    if (!(set && set[1] === set[2])) {
+      throw new Error(`fake-db: unsupported update ${assignment}`);
+    }
+    return camel(set[1] as string);
+  });
+  const rows = rowsOf(table);
+  const existing = rows.find((other) =>
+    keyOf.every((key) => same(key(other), key(row))),
+  );
+  if (existing) {
+    for (const column of updates) existing[column] = clone(row[column]);
+    return { rows: [] };
+  }
+  const defaults = tableDefaults.get(table)?.() ?? {};
+  rows.push({ ...defaults, ...row });
+  return { rows: [] };
 }
 
 // ─── drizzle-orm operators ──────────────────────────────────────────────────
@@ -830,8 +913,16 @@ const database = {
     }
     return results;
   },
-  execute() {
-    throw new Error("fake-db: db.execute is not supported");
+  /**
+   * Raw SQL: only an upsert, `insert into <table> (<columns>) values
+   * (<params>) on conflict (<target>) do update set <column> =
+   * excluded.<column>, ...`, with snake_case names for the schema's
+   * camelCase ones. The target is plain columns or `(coalesce(<column>,
+   * ''))`. Anything else throws.
+   */
+  async execute(query: unknown) {
+    if (!isSql(query)) throw new Error("fake-db: db.execute needs sql``");
+    return executeUpsert(query);
   },
   /**
    * The relational API's findMany/findFirst with `columns`, `where` (a

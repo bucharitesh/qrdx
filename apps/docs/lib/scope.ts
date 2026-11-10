@@ -31,10 +31,11 @@ export interface ActiveScope {
   role: ScopeRole;
   /**
    * The API key or OAuth app the request authenticated with, set by the API
-   * layer (app/api/v1/codes/_lib/api.ts); absent for a browser session. The
+   * layer (app/api/v1/codes/_lib/api.ts), or the Slack link a /qr track came
+   * through (lib/slack-bot/track.ts); absent for a browser session. The
    * audit log names it as the actor.
    */
-  credential?: ApiCredential;
+  credential?: ScopeCredential;
 }
 
 export interface ApiCredential {
@@ -44,6 +45,17 @@ export interface ApiCredential {
   /** The key's or the app's name */
   name: string | null;
 }
+
+/** A Slack account linked to the user (/qr link), acting through the bot. */
+export interface SlackCredential {
+  type: "slack";
+  /** The Slack workspace (T…) */
+  teamId: string;
+  /** The Slack user (U… or W…) */
+  slackUserId: string;
+}
+
+export type ScopeCredential = ApiCredential | SlackCredential;
 
 export interface ActiveWorkspace {
   scope: ActiveScope;

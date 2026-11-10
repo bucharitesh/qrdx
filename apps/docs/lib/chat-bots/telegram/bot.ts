@@ -4,6 +4,7 @@ import { createHash, timingSafeEqual } from "node:crypto";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { readChatQrInput } from "@/lib/chat-bots/qr-reply";
 import {
+  BUSY_TEXT,
   helpText,
   inlineNoResultAnswer,
   inlineQrAnswer,
@@ -21,8 +22,9 @@ import { isFeatureAvailable } from "@/lib/feature-availability";
 import { logError } from "@/lib/log-error";
 
 // The QRdx Telegram bot's server side: its settings, the webhook secret
-// check and the Bot API calls. Nothing is stored, and neither the token nor
-// anything people send is ever logged.
+// check and the Bot API calls. Nothing is saved, and this code never logs
+// the token or anything people send. (The inline photo links carry the
+// content, so request logs and caches in front of the app can hold it.)
 
 export interface TelegramBotConfig {
   token: string;
@@ -112,8 +114,21 @@ const messageLimiter = createRateLimiter({
 const inlineLimiter = createRateLimiter({
   limiter: slidingWindow(60, "60 s"),
 });
-// At most one "slow down" reply a minute, however fast someone sends.
+// At most one "slow down" or "busy" reply a minute, however fast someone sends.
 const noticeLimiter = createRateLimiter({ limiter: slidingWindow(1, "60 s") });
+
+/**
+ * Messages and inline queries the bot answers in a minute, from everyone
+ * together. A ceiling for the bot as a whole: past it, people are told it's
+ * busy instead of getting codes (and the inline photos the JPEG route would
+ * draw). Each person's own limit is checked first, so one sender can't use
+ * more of this than their own allowance.
+ */
+export const TELEGRAM_GLOBAL_PER_MINUTE = 300;
+const globalLimiter = createRateLimiter({
+  limiter: slidingWindow(TELEGRAM_GLOBAL_PER_MINUTE, "60 s"),
+});
+const GLOBAL_KEY = "telegram-bot:global";
 
 async function allowed(
   limiter: typeof messageLimiter,
@@ -140,8 +155,12 @@ export async function handleTelegramUpdate(
         !(await allowed(inlineLimiter, `telegram-bot:inline:${query.from.id}`))
       ) {
         await send(inlineNoResultAnswer(query.id, "rate_limited"));
+      } else if (!(await allowed(globalLimiter, GLOBAL_KEY))) {
+        await send(inlineNoResultAnswer(query.id, "busy"));
       } else if (input.ok) {
-        await send(inlineQrAnswer(query.id, input.data));
+        await send(
+          inlineQrAnswer(query.id, input.data, { secret: config.secret }),
+        );
       } else {
         await send(inlineNoResultAnswer(query.id, input.reason));
       }
@@ -152,10 +171,17 @@ export async function handleTelegramUpdate(
     const plan = planMessage(update.message, config.username);
     if (plan.kind === "ignore") return;
     const { chatId, messageId, userId, input } = plan;
-    if (!(await allowed(messageLimiter, `telegram-bot:message:${userId}`))) {
+    const notify = async (text: string) => {
       if (await allowed(noticeLimiter, `telegram-bot:notice:${userId}`)) {
-        await send(textReply(chatId, messageId, RATE_LIMITED_TEXT));
+        await send(textReply(chatId, messageId, text));
       }
+    };
+    if (!(await allowed(messageLimiter, `telegram-bot:message:${userId}`))) {
+      await notify(RATE_LIMITED_TEXT);
+      return;
+    }
+    if (!(await allowed(globalLimiter, GLOBAL_KEY))) {
+      await notify(BUSY_TEXT);
       return;
     }
     if (!input.ok) {

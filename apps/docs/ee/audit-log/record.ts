@@ -15,7 +15,7 @@ import { sanitizeAuditMetadata } from "@/ee/audit-log/metadata";
 import { isMissingTableError } from "@/ee/audit-log/missing-table";
 import { logError } from "@/lib/log-error";
 import type { Plan } from "@/lib/plans";
-import type { ApiCredential } from "@/lib/scope";
+import type { ScopeCredential } from "@/lib/scope";
 import { requestDetails } from "@/lib/security/request-details";
 
 // Records workspace audit log events (Settings → Audit log). Call it after a
@@ -30,10 +30,11 @@ import { requestDetails } from "@/lib/security/request-details";
 //
 // Best effort: it returns at once and writes after the response (next/server
 // `after`). Who did it is the scope's: the API key or OAuth app the API
-// layer authenticated (scope.credential, never read again from a header),
-// else the signed-in person. Nothing is stored unless the workspace is
-// entitled (ee/audit-log/access.ts). A failed write, including the table not
-// existing yet, is logged and never reaches the person's action.
+// layer authenticated, or the Slack account a /qr track came from
+// (scope.credential, never read again from a header), else the signed-in
+// person. Nothing is stored unless the workspace is entitled
+// (ee/audit-log/access.ts). A failed write, including the table not existing
+// yet, is logged and never reaches the person's action.
 
 /** The workspace and the person acting in it (an ActiveScope fits). */
 export interface AuditContext {
@@ -41,7 +42,7 @@ export interface AuditContext {
   /** The signed-in person, or the API key's creator; null for system events */
   userId: string | null;
   /** The credential the request authenticated with (ActiveScope.credential) */
-  credential?: ApiCredential;
+  credential?: ScopeCredential;
 }
 
 export interface AuditTarget {
@@ -133,6 +134,19 @@ async function resolveActor(
   }
   const person = clip(await userLabel(ctx.userId));
   const credential = ctx.credential;
+  if (credential?.type === "slack") {
+    // A /qr track in Slack: the Slack account and workspace, by id.
+    return {
+      actor: {
+        actorType: "slack",
+        actorUserId: ctx.userId,
+        actorLabel: clip(`${credential.slackUserId} in ${credential.teamId}`),
+        apiKeyId: null,
+        oauthAppId: null,
+      },
+      actingFor: person,
+    };
+  }
   if (credential) {
     return {
       actor: {

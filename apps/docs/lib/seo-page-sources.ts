@@ -21,6 +21,11 @@ export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
     "app/(home)/plugins/page.tsx",
     "app/(home)/plugins/plugin-data.ts",
   ],
+  // The chat bots' landing pages; the layout and mockups are in
+  // components/sections/chat-bots.
+  "/slack": ["app/(home)/slack/page.tsx"],
+  "/telegram": ["app/(home)/telegram/page.tsx"],
+  "/discord": ["app/(home)/discord/page.tsx"],
   "/templates": ["app/(home)/templates/page.tsx"],
   "/tools": ["app/(home)/tools/page.tsx"],
   "/tools/bulk": ["app/(home)/tools/bulk/page.tsx"],

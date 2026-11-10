@@ -29,7 +29,7 @@ export const COMMANDS = [
 export const DESCRIPTION = [
   "Send me a link or some text and I'll reply with its QR code, ready to download as PNG or SVG.",
   "In any chat, type my username followed by a link to send a code there. In groups, use /qr followed by a link or text.",
-  "Made by QRdx. Nothing you send is kept.",
+  "Made by QRdx, which doesn't save the codes you make. What you send goes into the image link, and like any link it can end up in logs and caches, so don't make codes of passwords or other secrets.",
 ].join("\n\n");
 
 /** Shown on the profile and when the bot is shared: 0-120 characters. */

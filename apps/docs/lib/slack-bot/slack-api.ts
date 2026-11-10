@@ -3,8 +3,10 @@ import "server-only";
 import type { SlackMessage } from "./messages";
 
 // The few Slack Web API calls the bot makes: finishing the install
-// (oauth.v2.access), replying (chat.postMessage, chat.postEphemeral) and
-// answering through a slash command's or shortcut's response_url. Slack
+// (oauth.v2.access), Sign in with Slack when linking an account
+// (openid.connect.token, openid.connect.userInfo), replying
+// (chat.postMessage, chat.postEphemeral) and answering through a slash
+// command's or shortcut's response_url. Slack
 // answers HTTP 200 with `ok: false` for most errors; those come back as
 // { ok: false, error } and are never thrown. Tokens and message text are
 // never logged.
@@ -20,7 +22,8 @@ export const SLACK_BOT_SCOPES = [
   "im:history",
 ] as const;
 
-export type SlackResult = { ok: true } | { ok: false; error: string };
+export type SlackFailure = { ok: false; error: string };
+export type SlackResult = { ok: true } | SlackFailure;
 
 async function slackCall(
   method: string,
@@ -106,6 +109,49 @@ function readBotInstall(
       scopes: typeof data.scope === "string" ? data.scope.slice(0, 500) : null,
     },
   };
+}
+
+/**
+ * Sign in with Slack (the link page's identity check): exchanges the code
+ * for an access token and the id_token. The access token is only used for
+ * openid.connect.userInfo right after; it's never stored or logged.
+ */
+export async function exchangeOpenIdCode(input: {
+  code: string;
+  redirectUri: string;
+  clientId: string;
+  clientSecret: string;
+}): Promise<{ ok: true; accessToken: string; idToken: string } | SlackFailure> {
+  const data = await slackCall("openid.connect.token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      code: input.code,
+      redirect_uri: input.redirectUri,
+      client_id: input.clientId,
+      client_secret: input.clientSecret,
+      grant_type: "authorization_code",
+    }).toString(),
+  });
+  if (data.ok !== true) return { ok: false, error: slackError(data) };
+  const { access_token: accessToken, id_token: idToken } = data;
+  if (typeof accessToken !== "string" || typeof idToken !== "string") {
+    return { ok: false, error: "invalid_token_response" };
+  }
+  return { ok: true, accessToken, idToken };
+}
+
+/** The signed-in person's claims (openid.connect.userInfo). */
+export async function fetchOpenIdUserInfo(
+  accessToken: string,
+): Promise<{ ok: true; claims: Record<string, unknown> } | SlackFailure> {
+  const data = await slackCall("openid.connect.userInfo", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  return data.ok === true
+    ? { ok: true, claims: data }
+    : { ok: false, error: slackError(data) };
 }
 
 async function postJson(

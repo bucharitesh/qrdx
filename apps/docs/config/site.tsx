@@ -936,6 +936,10 @@ export const siteConfig = {
         { id: 7, title: "Page templates", url: "/templates" },
         { id: 5, title: "Pricing", url: "/pricing" },
         { id: 6, title: "Never-Hostage Guarantee", url: "/guarantee" },
+        // Shown only where each bot is set up (feature-availability-rules).
+        { id: 8, title: "Slack bot", url: "/slack" },
+        { id: 9, title: "Telegram bot", url: "/telegram" },
+        { id: 10, title: "Discord bot", url: "/discord" },
       ],
     },
     {

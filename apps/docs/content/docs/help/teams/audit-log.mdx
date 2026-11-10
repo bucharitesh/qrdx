@@ -21,7 +21,7 @@ Only **owners** and **admins** can open the audit log and export it. Members, vi
 
 Each entry has the time, who made the change, what they changed and the target (a code, a page, a person, a domain). Where it applies, the entry keeps the old and the new value, like a code's old and new destination. Click the arrow on an entry to see them.
 
-Who made the change is a person, or an API key or app acting for a person. Changes made through the [REST API](/docs/developers/rest-api) with an API key show the key's name; changes made through an app you authorized show the app's name.
+Who made the change is a person, or an API key or app acting for a person. Changes made through the [REST API](/docs/developers/rest-api) with an API key show the key's name; changes made through an app you authorized show the app's name.<IfAvailable feature="slackBot"> Codes made in Slack with `/qr track` show the linked person "via Slack", with the Slack user and workspace ids. When an owner or admin revokes a Slack account's link in [Settings → API keys & apps](/dashboard?to=settings/developers), that's recorded under Developers.</IfAvailable>
 
 Each entry also keeps the IP address and the device of the request, the browser and system like "Chrome on macOS". Changes the system makes, like a plan change from billing, have neither.
 

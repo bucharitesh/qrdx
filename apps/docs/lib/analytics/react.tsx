@@ -69,3 +69,30 @@ export function TrackedLink<E extends AnalyticsEventName>({
     />
   );
 }
+
+/**
+ * A plain <a> that records an event when clicked, for links next/link
+ * shouldn't handle: API routes that redirect to another site.
+ */
+export function TrackedAnchor<E extends AnalyticsEventName>({
+  event,
+  props,
+  href,
+  onClick,
+  ...rest
+}: ComponentProps<"a"> & {
+  href: string;
+  event: E;
+  props?: AnalyticsPropsArg<E>[0];
+}) {
+  return (
+    <a
+      {...rest}
+      href={href}
+      onClick={(clickEvent) => {
+        (track as (event: E, props?: unknown) => void)(event, props);
+        onClick?.(clickEvent);
+      }}
+    />
+  );
+}

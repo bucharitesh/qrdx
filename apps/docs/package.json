@@ -109,6 +109,7 @@
     "sonner": "^2.0.8",
     "streamdown": "^2.7.1",
     "tippy.js": "^6.3.7",
+    "tldts": "7.4.19",
     "twoslash": "^0.3.9",
     "unist-util-visit": "^5.2.0",
     "use-stick-to-bottom": "^1.1.6",

@@ -7,9 +7,11 @@ import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider"
 import { HairlineFigure } from "@/components/mockups/hairline";
 import type { OAuthAppsOverview } from "@/lib/oauth-apps/service";
 import { PLAN_NAMES } from "@/lib/pricing";
+import type { WorkspaceSlackLinksState } from "@/lib/slack-bot/admin";
 import { SettingsHeader } from "../../components/settings-header";
 import { ApiKeysSection, type ApiKeysState } from "./api-keys-section";
 import { OAuthAppList } from "./oauth-app-list";
+import { SlackLinksSection } from "./slack-links-section";
 
 const QUICKSTART_HREF = "/docs/developers/quickstart";
 const INTEGRATION_DOCS_HREF = "/docs/developers/build-an-integration";
@@ -99,18 +101,22 @@ function OAuthAppsSection({
 
 /**
  * Settings → API keys & apps: API keys, then OAuth apps, of the open
- * workspace. Creating a key asks "Confirm it's you" first (one dialog for the
- * page).
+ * workspace, and for owners and admins the Slack accounts linked to it
+ * (where the Slack bot is set up). Creating a key asks "Confirm it's you"
+ * first (one dialog for the page).
  */
 export function DevelopersView({
   overview,
   keys,
+  slackLinks,
   apiBase,
   base,
   openCreate,
 }: {
   overview: OAuthAppsOverview;
   keys: ApiKeysState;
+  /** Null: not shown (no Slack bot here, or not an owner or admin) */
+  slackLinks: WorkspaceSlackLinksState | null;
   apiBase: string;
   /** This page: /dashboard/<workspace>/settings/developers */
   base: string;
@@ -140,6 +146,13 @@ export function DevelopersView({
         />
 
         <OAuthAppsSection base={base} overview={overview} />
+
+        {slackLinks && (
+          <SlackLinksSection
+            state={slackLinks}
+            workspaceName={overview.workspaceName}
+          />
+        )}
       </div>
     </ConfirmIdentityProvider>
   );
