@@ -57,9 +57,11 @@ for (const locale of TRANSLATED_LOCALES) {
   errors.push(...report.errors);
   warnings.push(...report.warnings);
   const { keys, machine, reviewed, stale, missing } = report.counts;
-  const state = Array.isArray(REVIEW[locale])
-    ? `reviewed pages: ${(REVIEW[locale] as string[]).join(", ")}`
-    : REVIEW[locale];
+  const review = REVIEW[locale];
+  const state =
+    typeof review === "string"
+      ? review
+      : `reviewed pages: ${review.join(", ")}`;
   console.log(
     `${locale.padEnd(8)} ${state.padEnd(9)} ${keys} strings: ${reviewed} reviewed, ${machine} machine, ${stale} stale, ${missing} missing`,
   );

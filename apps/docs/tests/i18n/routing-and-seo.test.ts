@@ -1,5 +1,6 @@
 // Translated pages: URLs, the review gate (noindex, sitemap, hreflang) in
 // both states, the English rewrites and redirects in next.config.ts.
+// @ts-expect-error -- Next's own copy, the matcher it uses for next.config.ts; shipped without types.
 import { pathToRegexp } from "next/dist/compiled/path-to-regexp";
 import { describe, expect, it } from "vitest";
 import {
