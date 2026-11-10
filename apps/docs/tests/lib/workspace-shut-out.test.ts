@@ -22,7 +22,7 @@ const state = vi.hoisted(() => {
     "prod_business_monthly";
   return {
     cookie: null as string | null,
-    remembered: [] as (string | null)[],
+    remembered: [] as string[],
   };
 });
 
@@ -74,7 +74,7 @@ vi.mock("@/lib/data-connections/connect-confirmation", () => ({
 }));
 vi.mock("@/lib/data-connections/server", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/data-connections/server")>()),
-  rememberSlackWorkspace: async (organizationId: string | null) => {
+  rememberSlackWorkspace: async (organizationId: string) => {
     state.remembered.push(organizationId);
   },
 }));
