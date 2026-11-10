@@ -137,18 +137,18 @@ export function qrMessage(
 }
 
 /**
- * A tracked (dynamic) code: the image encodes its short link, the context
- * line shows the short link and where it goes, and "Open in QRdx" leads to
- * the code in the dashboard (which needs a sign-in to that workspace).
+ * A tracked (dynamic) code, for the channel: the image encodes its short
+ * link, and the context line shows the short link, the QRdx workspace it
+ * was made in and where it goes. The link to the code in the dashboard
+ * isn't here (it names the workspace's address and the code's id); only the
+ * person who made it gets that, in trackedFollowUp().
  */
 export function trackedMessage(
-  code: { shortLink: string; destinationUrl: string; dashboardUrl: string },
+  code: { shortLink: string; destinationUrl: string; workspaceName: string },
   origin: string | URL = baseUrl,
 ): SlackMessage | null {
   const links = chatQrLinks(code.shortLink, origin);
-  if (!(fitsSlack(links) && code.dashboardUrl.length <= SLACK_URL_MAX)) {
-    return null;
-  }
+  if (!fitsSlack(links)) return null;
   const destination = chatQrCaption(code.destinationUrl);
   return {
     response_type: "in_channel",
@@ -165,7 +165,7 @@ export function trackedMessage(
           {
             ...mrkdwn(
               escapeSlack(
-                `Tracked code ${code.shortLink}, which opens ${destination}`,
+                `Tracked code ${code.shortLink} in the QRdx workspace ${code.workspaceName}, which opens ${destination}`,
               ),
             ),
             verbatim: true,
@@ -175,7 +175,6 @@ export function trackedMessage(
       {
         type: "actions",
         elements: [
-          linkButton("Open in QRdx", code.dashboardUrl, "qrdx_open"),
           linkButton("Download PNG", links.png, "qrdx_png"),
           linkButton("Download SVG", links.svg, "qrdx_svg"),
           linkButton("Open in editor", links.editor, "qrdx_editor"),
@@ -183,6 +182,36 @@ export function trackedMessage(
       },
     ],
   };
+}
+
+/** After a tracked code: only for the person who made it, its dashboard link. */
+export function trackedFollowUp(code: {
+  dashboardUrl: string;
+  workspaceName: string;
+}): SlackMessage {
+  const text = escapeSlack(
+    `Your tracked code is in ${code.workspaceName}. Only you can see this.`,
+  );
+  if (code.dashboardUrl.length > SLACK_URL_MAX) return noteMessage(text);
+  return noteWithButton(text, {
+    label: "Open in QRdx",
+    url: code.dashboardUrl,
+    actionId: "qrdx_open",
+  });
+}
+
+/**
+ * The direct message after /qr link, so a link the Slack person didn't
+ * make can't go unnoticed.
+ */
+export function linkedNotice(link: {
+  email: string;
+  workspaceName: string;
+}): SlackMessage {
+  const text = escapeSlack(
+    `Linked to ${link.email} in ${link.workspaceName}. Not you? /qr unlink`,
+  );
+  return { text, blocks: [section(text)] };
 }
 
 export const TOO_LONG_TEXT =

@@ -70,11 +70,14 @@ export async function GET(request: Request) {
     if (caught instanceof SlackBotStoreUnavailableError) {
       return back(request, "error=slack_bot_unavailable");
     }
+    // The error's name and code only: a database error's message can carry
+    // the statement's values (the encrypted token, the workspace's name).
+    const code = (caught as { code?: unknown } | null)?.code;
     console.error(
       JSON.stringify({
         event: "slack-bot.install_failed",
-        error:
-          caught instanceof Error ? caught.message.slice(0, 200) : "unknown",
+        error: caught instanceof Error ? caught.name.slice(0, 60) : "unknown",
+        ...(typeof code === "string" && { code: code.slice(0, 20) }),
       }),
     );
     return back(request, "error=slack_bot_failed");

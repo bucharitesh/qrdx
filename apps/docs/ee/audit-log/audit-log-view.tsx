@@ -83,6 +83,17 @@ function Actor({ actor }: { actor: AuditEventView["actor"] }) {
   if (actor.type === "system") {
     return <span className="font-medium">{actor.label ?? "QRdx"}</span>;
   }
+  if (actor.type === "slack") {
+    // A /qr track: the linked person, via the Slack account (by id).
+    return (
+      <span className="min-w-0">
+        <span className="font-medium">{splitPerson(actor.person).name}</span>
+        <span className="text-muted-foreground block truncate text-xs">
+          via Slack{actor.label ? ` (${actor.label})` : ""}
+        </span>
+      </span>
+    );
+  }
   const kind = actor.type === "api_key" ? "API key" : "App";
   return (
     <span className="min-w-0">

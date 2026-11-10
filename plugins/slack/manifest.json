@@ -40,7 +40,8 @@
   "oauth_config": {
     "redirect_urls": [
       "https://qrdx.dev/api/integrations/slack/callback",
-      "https://qrdx.dev/api/integrations/slack/bot/callback"
+      "https://qrdx.dev/api/integrations/slack/bot/callback",
+      "https://qrdx.dev/api/integrations/slack/link/callback"
     ],
     "scopes": {
       "bot": [
@@ -49,7 +50,8 @@
         "app_mentions:read",
         "chat:write",
         "im:history"
-      ]
+      ],
+      "user": ["openid"]
     }
   },
   "settings": {
