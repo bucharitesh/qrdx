@@ -364,7 +364,7 @@
       "bulk": {
         "eyebrow": "En masse",
         "title": "Des centaines de codes depuis un CSV",
-        "description": "Associez les colonnes, choisissez un style et téléchargez jusqu'à {max, number} codes en PNG ou SVG dans un seul ZIP. Le fichier ne quitte jamais votre navigateur.",
+        "description": "Associez les colonnes, choisissez un style et téléchargez jusqu'à {max, number} codes en PNG ou SVG, au format ZIP. Le fichier ne quitte jamais votre navigateur.",
         "link": "Ouvrir le générateur en masse"
       },
       "developers": {
@@ -576,6 +576,8 @@
         "analyticsHistory": "Historique des statistiques",
         "routing": "Routage intelligent, tests A/B et balises UTM",
         "routingHint": "Orientez les scans selon l'appareil, le pays, l'heure ou la langue",
+        "preciseLocation": "Localisation précise des scans et géorepérage",
+        "preciseLocationHint": "Activation au choix pour chaque code ; les personnes qui scannent décident de partager ou non leur position",
         "linkControls": "Mot de passe, planification, expiration et limites de scans",
         "pixels": "Pixels de reciblage",
         "conversions": "Suivi des conversions",

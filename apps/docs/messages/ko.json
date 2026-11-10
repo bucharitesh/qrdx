@@ -364,7 +364,7 @@
       "bulk": {
         "eyebrow": "대량 생성",
         "title": "CSV 하나로 수백 개의 코드를",
-        "description": "열을 매핑하고 스타일을 고르면 최대 {max, number}개의 코드를 PNG 또는 SVG로 ZIP 하나에 담아 다운로드할 수 있어요. 파일은 브라우저 밖으로 나가지 않아요.",
+        "description": "열을 매핑하고 스타일을 고른 다음 최대 {max, number}개의 코드를 PNG 또는 SVG로 압축해 다운로드하세요. 파일은 브라우저 밖으로 나가지 않아요.",
         "link": "대량 생성기 열기"
       },
       "developers": {
@@ -576,6 +576,8 @@
         "analyticsHistory": "분석 기록",
         "routing": "스마트 라우팅, A/B 테스트, UTM 태그",
         "routingHint": "기기, 국가, 시간, 언어에 따라 스캔을 다른 곳으로 보내요",
+        "preciseLocation": "정확한 스캔 위치 및 지오펜싱",
+        "preciseLocationHint": "코드별로 직접 켜야 하며, 스캔하는 사람이 위치 공유 여부를 선택해요",
         "linkControls": "비밀번호, 일정, 만료, 스캔 횟수 제한",
         "pixels": "리타기팅 픽셀",
         "conversions": "전환 추적",

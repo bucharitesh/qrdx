@@ -364,7 +364,7 @@
       "bulk": {
         "eyebrow": "批量",
         "title": "一个 CSV 生成数百个二维码",
-        "description": "映射各列、选择样式，即可将最多 {max, number} 个二维码以 PNG 或 SVG 格式打包成一个 ZIP 下载。文件不会离开你的浏览器。",
+        "description": "映射各列数据，选择样式，即可下载最多 {max, number} 个二维码，以 PNG 或 SVG 格式打包为 ZIP。文件不会离开你的浏览器。",
         "link": "打开批量生成器"
       },
       "developers": {
@@ -576,6 +576,8 @@
         "analyticsHistory": "数据分析历史",
         "routing": "智能路由、A/B 测试和 UTM 标签",
         "routingHint": "按设备、国家或地区、时间或语言分流扫描",
+        "preciseLocation": "精确扫描位置与地理围栏",
+        "preciseLocationHint": "按二维码单独选择开启；是否共享位置由扫描者决定",
         "linkControls": "密码、定时、有效期和扫描次数限制",
         "pixels": "再营销像素",
         "conversions": "转化追踪",

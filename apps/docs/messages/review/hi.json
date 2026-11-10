@@ -936,7 +936,7 @@
     "status": "machine"
   },
   "home.features.bulk.description": {
-    "source": "9121f7e5fe14",
+    "source": "86f557eea0f4",
     "status": "machine"
   },
   "home.features.bulk.link": {
@@ -1493,6 +1493,14 @@
   },
   "pricing.comparison.rows.routingHint": {
     "source": "503c5d4b2796",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.preciseLocation": {
+    "source": "667eccf73572",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.preciseLocationHint": {
+    "source": "c267f6aae5e5",
     "status": "machine"
   },
   "pricing.comparison.rows.linkControls": {

@@ -364,7 +364,7 @@
       "bulk": {
         "eyebrow": "Massenerstellung",
         "title": "Hunderte Codes aus einer CSV",
-        "description": "Ordne die Spalten zu, wähle einen Stil und lade bis zu {max, number} Codes als PNG oder SVG in einer ZIP-Datei herunter. Die Datei verlässt nie deinen Browser.",
+        "description": "Ordne die Spalten zu, wähle einen Stil und lade bis zu {max, number} Codes als PNG oder SVG herunter, gezippt. Die Datei verlässt nie deinen Browser.",
         "link": "Massengenerator öffnen"
       },
       "developers": {
@@ -576,6 +576,8 @@
         "analyticsHistory": "Analyse-Verlauf",
         "routing": "Smart Routing, A/B-Tests und UTM-Tags",
         "routingHint": "Leite Scans nach Gerät, Land, Uhrzeit oder Sprache weiter",
+        "preciseLocation": "Genauer Scan-Standort und Geofencing",
+        "preciseLocationHint": "Pro Code optional; Scannende entscheiden selbst, ob sie ihren Standort teilen",
         "linkControls": "Passwort, Zeitplan, Ablauf und Scan-Limits",
         "pixels": "Retargeting-Pixel",
         "conversions": "Conversion-Tracking",
