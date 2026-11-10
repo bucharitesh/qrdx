@@ -50,6 +50,7 @@ import {
   QR_MARGIN_MAX,
   QR_TEMPLATE_IDS,
   QrDataTooLongError,
+  type QrImageFormat,
   qrOptionsSchema,
   renderQrPng,
   renderQrSvg,
@@ -246,7 +247,7 @@ const withCard = (card: QrCard) => ({ [QR_CARD_META_KEY]: card });
 function styledImageUrl(
   input: GenerateInput,
   style: ApiStyle | undefined,
-  format: "svg" | "png" | "eps",
+  format: QrImageFormat,
 ): string | null {
   if (input.logoFileId || style?.logoFileId) return null;
   const url = new URL("/api/v1/qr", baseUrl);
@@ -312,6 +313,7 @@ async function generateQrCode(input: GenerateInput, ctx: ToolContext) {
         `QR code, ${options.size}x${options.size}px, error correction ${options.level}.`,
         `SVG URL: ${url}`,
         `PNG URL: ${pngUrl}`,
+        `WebP URL (lossless, smaller than PNG): ${buildQrImageUrl(options, "webp")}`,
         `EPS URL (vector, for print; ${options.size} pt wide): ${buildQrImageUrl(options, "eps")}`,
         `Markdown: ![QR code](${url})`,
       ].join("\n"),
@@ -417,6 +419,7 @@ async function generateQrCode(input: GenerateInput, ctx: ToolContext) {
     lines.push(
       `SVG URL: ${svgUrl}`,
       `PNG URL: ${pngUrl}`,
+      `WebP URL (lossless, smaller than PNG): ${styledImageUrl(input, given, "webp")}`,
       `EPS URL (vector, for print): ${styledImageUrl(input, given, "eps")}`,
       `Markdown: ![QR code](${svgUrl})`,
     );
@@ -574,7 +577,7 @@ export function registerQrTools(server: McpServer) {
     {
       title: "Generate QR code",
       description:
-        "Render a QR code with the editor's style options: colors or gradients (linear, radial), dot and eye shapes, eye and dot colors, a built-in frame with its text or a custom frame spec, a border template, a logo icon or your own uploaded logo (logoFileId, needs an API key), or a community item. Pass design_qr's qrdxStyle as style to render the same design again at another size. Returns a PNG image and public image URLs (SVG and PNG for embedding in Markdown or HTML, plus a vector EPS for print); set include_svg to also get the SVG markup. No scan check: use design_qr for that.",
+        "Render a QR code with the editor's style options: colors or gradients (linear, radial), dot and eye shapes, eye and dot colors, a built-in frame with its text or a custom frame spec, a border template, a logo icon or your own uploaded logo (logoFileId, needs an API key), or a community item. Pass design_qr's qrdxStyle as style to render the same design again at another size. Returns a PNG image and public image URLs (SVG, PNG and lossless WebP for embedding in Markdown or HTML, plus a vector EPS for print); set include_svg to also get the SVG markup. No scan check: use design_qr for that.",
       inputSchema: generateInput,
       annotations: { ...readOnly, title: "Generate QR code" },
       _meta: QR_CARD_TOOL_META,

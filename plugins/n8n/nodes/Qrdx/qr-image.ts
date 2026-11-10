@@ -110,6 +110,7 @@ export function qrImageUrl(
 
 const MIME_TYPES: Record<QrImageFormat, string> = {
   png: "image/png",
+  webp: "image/webp",
   svg: "image/svg+xml",
   eps: "application/postscript",
 };

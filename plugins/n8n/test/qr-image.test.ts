@@ -94,10 +94,16 @@ describe("qrImageFile", () => {
     expect(qrImageFile("svg", "menu").fileName).toBe("menu.svg");
     expect(qrImageFile("svg", "menu.SVG").fileName).toBe("menu.SVG");
     expect(qrImageFile("eps", " ").mimeType).toBe("application/postscript");
+    expect(qrImageFile("webp", "menu")).toEqual({
+      fileName: "menu.webp",
+      mimeType: "image/webp",
+      fileExtension: "webp",
+    });
   });
 
   it("knows the formats", () => {
-    expect(["png", "svg", "eps", "jpg"].map(isQrImageFormat)).toEqual([
+    expect(["png", "webp", "svg", "eps", "jpg"].map(isQrImageFormat)).toEqual([
+      true,
       true,
       true,
       true,

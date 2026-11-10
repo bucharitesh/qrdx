@@ -130,7 +130,7 @@ export type QrOptions = Omit<
   dot: CornerEyeDotPattern;
 };
 
-export const qrImageFormats = ["svg", "png", "eps"] as const;
+export const qrImageFormats = ["svg", "png", "webp", "eps"] as const;
 export type QrImageFormat = (typeof qrImageFormats)[number];
 
 /** Thrown when the data does not fit in a QR code at the chosen level. */
@@ -291,6 +291,24 @@ export async function renderQrPng(options: QrOptions): Promise<ArrayBuffer> {
     `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`,
     options.size,
   );
+}
+
+/**
+ * PNG bytes as lossless WebP: the same pixels, transparency included, in a
+ * smaller file. sharp is loaded only when a WebP is asked for.
+ */
+export async function pngToWebp(
+  png: ArrayBuffer | Uint8Array,
+): Promise<Buffer> {
+  const { default: sharp } = await import("sharp");
+  return await sharp(new Uint8Array(png))
+    .webp({ lossless: true, effort: 4 })
+    .toBuffer();
+}
+
+/** Renders the QR code to lossless WebP bytes (from the same PNG). */
+export async function renderQrWebp(options: QrOptions): Promise<Buffer> {
+  return await pngToWebp(await renderQrPng(options));
 }
 
 /**

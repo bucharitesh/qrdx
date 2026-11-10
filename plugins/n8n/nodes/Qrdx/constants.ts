@@ -5,7 +5,7 @@
 /** The hosted API; self-hosted copies set their own in the credential. */
 export const DEFAULT_BASE_URL = "https://api.qrdx.dev/v1";
 
-export const QR_IMAGE_FORMATS = ["png", "svg", "eps"] as const;
+export const QR_IMAGE_FORMATS = ["png", "webp", "svg", "eps"] as const;
 export type QrImageFormat = (typeof QR_IMAGE_FORMATS)[number];
 
 /** `body`: shape of the data modules */

@@ -8,6 +8,7 @@ import {
   renderStyledEps,
   renderStyledPng,
   renderStyledSvg,
+  renderStyledWebp,
   resolveRender,
 } from "@/lib/qr-api/render";
 import { type ApiStyle, parseStyleQuery } from "@/lib/qr-api/style";
@@ -17,6 +18,7 @@ import {
   renderQrEps,
   renderQrPng,
   renderQrSvg,
+  renderQrWebp,
 } from "@/lib/qr-render";
 import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { ValidationError } from "@/types/errors";
@@ -150,6 +152,11 @@ async function original(query: Query, headers: Record<string, string>) {
       headers: { ...headers, "Content-Type": "image/png" },
     });
   }
+  if (format === "webp") {
+    return new Response(new Uint8Array(await renderQrWebp(options)), {
+      headers: { ...headers, "Content-Type": "image/webp" },
+    });
+  }
   if (format === "eps") {
     return new Response(await renderQrEps(options), {
       headers: {
@@ -220,6 +227,11 @@ async function styled(req: NextRequest, query: Query) {
     const png = await renderStyledPng(render);
     return new Response(png as BodyInit, {
       headers: { ...headers, "Content-Type": "image/png" },
+    });
+  }
+  if (query.format === "webp") {
+    return new Response(new Uint8Array(await renderStyledWebp(render)), {
+      headers: { ...headers, "Content-Type": "image/webp" },
     });
   }
   if (query.format === "eps") {
