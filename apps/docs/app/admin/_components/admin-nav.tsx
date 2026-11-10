@@ -8,10 +8,12 @@ import {
   Health as HeartPulse,
   Element3 as LayoutDashboard,
   ColorSwatch as Palette,
+  MoneySend as Payouts,
   Electricity as Plug,
   ScanBarcode as QrCode,
   DocumentText as ScrollText,
   ShieldCross as ShieldAlert,
+  StatusUp as TrendingUp,
   Profile2User as Users,
 } from "iconsax-reactjs";
 import Link from "next/link";
@@ -26,6 +28,8 @@ const NAV_ITEMS = [
   { href: "/admin/abuse", label: "Abuse", icon: ShieldAlert },
   { href: "/admin/ai-usage", label: "AI Usage", icon: Bot },
   { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
+  { href: "/admin/numbers", label: "Home numbers", icon: TrendingUp },
+  { href: "/admin/affiliates", label: "Affiliates", icon: Payouts },
   { href: "/admin/integrations", label: "Integrations", icon: Plug },
   { href: "/admin/audit-log", label: "Audit Log", icon: ScrollText },
   { href: "/admin/health", label: "Health", icon: HeartPulse },

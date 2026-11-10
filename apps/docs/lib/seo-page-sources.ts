@@ -15,6 +15,7 @@ export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
     "lib/pricing.ts",
   ],
   "/guarantee": ["app/(home)/guarantee/page.tsx"],
+  "/affiliates": ["app/(home)/affiliates/page.tsx", "lib/affiliates/terms.ts"],
   "/mcp": ["app/(home)/mcp/page.tsx"],
   "/plugins": [
     "app/(home)/plugins/page.tsx",

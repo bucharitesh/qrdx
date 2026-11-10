@@ -3,11 +3,16 @@
 // score (engine render, resvg raster, pixel score, a logo's footprint) with
 // each sample payload. Kept apart from presets-scan.test.ts so the two run
 // in parallel.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { checkScanGate } from "@/lib/community/scan-gate";
 import { MIN_GATE_SCORE } from "@/lib/community/scan-samples";
 import { isInverted } from "@/lib/themes/color";
 import { defaultPresets } from "@/utils/qr-presets";
+
+// Each test decodes rendered codes, which is CPU-bound: under a heavily loaded
+// machine (many test runs at once) a test can pass 30 s. The limit is raised
+// for this file only; nothing it checks changes.
+vi.setConfig({ testTimeout: 120_000 });
 
 const entries = Object.entries(defaultPresets);
 

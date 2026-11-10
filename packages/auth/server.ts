@@ -51,6 +51,7 @@ import {
 } from "./passkey";
 import { passkeyRelyingParty } from "./passkey-rp";
 import { hasEntitledSubscription, workspacePlanTier } from "./plan";
+import { noteSignUpReferral, recordNewUserReferral } from "./referral";
 import { sessionLifetime } from "./session-lifetime";
 import { sessionOriginGuard } from "./session-origin";
 import { signInChallenge } from "./sign-in-challenge";
@@ -227,18 +228,23 @@ export const auth = betterAuth({
           // Signing in again to confirm it's you never makes an account
           // (./confirm-sign-in.ts).
           if (!(await allowUserCreation(ctx))) throw confirmSignInRefused();
+          // A referral code a Google or GitHub sign-up carried (./referral.ts).
+          await noteSignUpReferral(ctx);
           if (user.name?.trim()) return;
           const name = user.email.split("@")[0] || user.email;
           return { data: { ...user, name } };
         },
         // Every account gets a workspace of its own straight away. If this
         // fails, the first dashboard visit makes it (apps/docs/lib/workspaces.ts).
-        after: async (user) => {
+        after: async (user, ctx) => {
           try {
             await createOwnWorkspace(user);
           } catch (error) {
             console.error("Could not create the new user's workspace", error);
           }
+          // An affiliate referral the sign-up carried, for the app to check
+          // and record (./referral.ts). Never throws, never waits.
+          recordNewUserReferral(user, ctx);
         },
       },
     },

@@ -1,13 +1,13 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
-import type { Metadata } from "next";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { DailyChart } from "./_components/daily-chart";
 import { EmptyRow, Section, StatCard } from "./_components/stat-card";
 import { formatNumber } from "./_lib/format";
 import { requireAdmin } from "./_lib/guard";
+import { adminMetadata } from "./_lib/metadata";
 import { getDashboardStats, getOverviewStats } from "./_lib/queries";
 
-export const metadata: Metadata = { title: "Admin · Overview" };
+export const generateMetadata = adminMetadata("Admin · Overview");
 
 export default async function AdminOverviewPage() {
   await requireAdmin();

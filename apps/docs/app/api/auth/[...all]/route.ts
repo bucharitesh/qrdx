@@ -4,6 +4,8 @@ import { registerBackupCodeNotifier } from "@repo/auth/sign-in-challenge";
 import { registerTwoFactorResetCancelledNotifier } from "@repo/auth/two-factor-reset";
 // Hands packages/auth the audit log's recorder for team changes.
 import "@/ee/audit-log/auth-changes";
+// And the affiliate program's recorder for referrals at sign-up.
+import "@/lib/affiliates/attribution-hook";
 import { notifyNewSignIn } from "@/lib/account/new-sign-in-notice-server";
 import { registerAppSessionOriginReader } from "@/lib/account/session-origin";
 import { notifyBackupCodeUsed } from "@/lib/account/two-factor-notice-server";
