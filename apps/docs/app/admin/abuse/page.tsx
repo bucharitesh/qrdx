@@ -5,7 +5,6 @@ import {
   CardContent,
   CardHeader,
 } from "@repo/design-system/components/ui/card";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { abuseReasonLabel } from "@/lib/safety/abuse-reasons";
@@ -14,6 +13,7 @@ import { Pager } from "../_components/pager";
 import { EmptyRow } from "../_components/stat-card";
 import { formatDate, formatDateTime } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import { parsePage } from "../_lib/queries";
 import {
   type AbuseReportRow,
@@ -23,7 +23,7 @@ import {
 } from "./queries";
 import { ReportActions } from "./report-actions";
 
-export const metadata: Metadata = { title: "Admin · Abuse reports" };
+export const generateMetadata = adminMetadata("Admin · Abuse reports");
 
 const STATUSES: { value: AbuseStatusFilter; label: string }[] = [
   { value: "open", label: "Open" },

@@ -8,20 +8,20 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { Pager } from "../_components/pager";
 import { EmptyRow, Section } from "../_components/stat-card";
 import { formatDate, formatDateTime, formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import {
   getIntegrationCounts,
   listIntegrations,
   parsePage,
 } from "../_lib/queries";
 
-export const metadata: Metadata = { title: "Admin · Integrations" };
+export const generateMetadata = adminMetadata("Admin · Integrations");
 
 const hrefWith = (params: Record<string, string | undefined>) => {
   const search = new URLSearchParams();
