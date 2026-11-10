@@ -7,7 +7,8 @@ import vm from "node:vm";
 import { describe, expect, it, vi } from "vitest";
 import { QR_CARD_HTML } from "@/app/api/mcp/qr-card-html";
 
-const SCRIPT = QR_CARD_HTML.match(/<script>([\s\S]*)<\/script>/)?.[1] ?? "";
+const SCRIPT =
+  QR_CARD_HTML.match(/<script\b[^>]*>([\s\S]*)<\/script\s*>/i)?.[1] ?? "";
 const PNG = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk";
 const SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"></svg>';
 const CARD_KEY = "dev.qrdx/qr-card";

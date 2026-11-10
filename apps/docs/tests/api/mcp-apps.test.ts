@@ -265,7 +265,7 @@ describe("the card's HTML", () => {
     // No address of any kind: the image URL comes from the tool result.
     expect(QR_CARD_HTML).not.toMatch(/https?:\/\//i);
     expect(QR_CARD_HTML).toContain('<meta name="color-scheme"');
-    expect(QR_CARD_HTML.match(/<script>/g)).toHaveLength(1);
+    expect(QR_CARD_HTML.match(/<script\b/gi)).toHaveLength(1);
     // Small enough to inline in every resources/read.
     expect(new TextEncoder().encode(QR_CARD_HTML).length).toBeLessThan(20_000);
   });
