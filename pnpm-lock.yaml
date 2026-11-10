@@ -321,6 +321,9 @@ importers:
       tippy.js:
         specifier: ^6.3.7
         version: 6.3.7
+      tldts:
+        specifier: 7.4.19
+        version: 7.4.19
       twoslash:
         specifier: ^0.3.9
         version: 0.3.9(typescript@6.0.3)
