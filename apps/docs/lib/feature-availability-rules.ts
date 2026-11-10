@@ -34,6 +34,7 @@ export const FEATURE_IDS = [
   "passkeys",
   "sso",
   "auditLog",
+  "slackBot",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -188,6 +189,21 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "/docs/help/teams/audit-log",
     ],
   },
+  slackBot: {
+    // The QRdx bot for Slack (lib/slack-bot): the same Slack app as "Add to
+    // Slack" alerts, plus its signing secret, which verifies every request
+    // Slack sends. Bot tokens are stored encrypted, so production also needs
+    // the integrations' encryption key.
+    name: "QRdx bot for Slack",
+    requires: (ctx) => [
+      "SLACK_CLIENT_ID",
+      "SLACK_CLIENT_SECRET",
+      "SLACK_SIGNING_SECRET",
+      ...(ctx.production ? ["INTEGRATION_ENCRYPTION_KEY"] : []),
+    ],
+    paths: ["/docs/slack-bot"],
+    extrasOf: "slack",
+  },
 };
 
 /**
@@ -230,11 +246,54 @@ export function catalogParagraphs(
   entry: { slug: string; description: string[]; configuredExtras?: string[] },
   features: Readonly<Record<FeatureId, boolean>>,
 ): string[] {
-  const id = FEATURE_IDS.find(
-    (key) => FEATURE_RULES[key].extrasOf === entry.slug,
-  );
+  const id = extraFeatureOf(entry.slug);
   const extras = id && features[id] ? (entry.configuredExtras ?? []) : [];
   return [...entry.description, ...extras];
+}
+
+/** The optional extra a catalog entry describes when it's configured. */
+function extraFeatureOf(slug: string): FeatureId | undefined {
+  return FEATURE_IDS.find((key) => FEATURE_RULES[key].extrasOf === slug);
+}
+
+/** The catalog fields configuredEntry reads (IntegrationCatalogEntry's). */
+interface ConfigurableEntry {
+  slug: string;
+  tagline: string;
+  plan: string;
+  steps: readonly unknown[];
+  capabilities: readonly unknown[];
+  keywords?: readonly string[];
+  configured?: {
+    tagline?: string;
+    plan?: string;
+    steps?: readonly unknown[];
+    capabilities?: readonly unknown[];
+    keywords?: readonly string[];
+  };
+}
+
+/**
+ * A catalog entry as this deployment shows it: with its `configured` parts
+ * (the QRdx bot for the Slack entry) only where the feature they describe
+ * works. `has` is getFeatures() on the server, useAvailability().has in the
+ * browser.
+ */
+export function configuredEntry<T extends ConfigurableEntry>(
+  entry: T,
+  has: (feature: FeatureId) => boolean,
+): T {
+  const id = extraFeatureOf(entry.slug);
+  const extra = entry.configured;
+  if (!(id && extra && has(id))) return entry;
+  return {
+    ...entry,
+    tagline: extra.tagline ?? entry.tagline,
+    plan: extra.plan ?? entry.plan,
+    steps: extra.steps ?? entry.steps,
+    capabilities: [...(extra.capabilities ?? []), ...entry.capabilities],
+    keywords: [...(entry.keywords ?? []), ...(extra.keywords ?? [])],
+  };
 }
 
 /**
