@@ -226,9 +226,12 @@ const cachedAnalytics = unstable_cache(
       countries: analytics.countries,
       devices: analytics.devices,
       referrers: analytics.referrers,
+      // NFC taps (feat/nfc): QR scans and NFC taps
+      sources: analytics.sources,
     };
   },
-  ["public-stats-analytics"],
+  // v2: entries cached before `sources` existed are never read.
+  ["public-stats-analytics-v2"],
   { revalidate: 300 },
 );
 

@@ -40,6 +40,7 @@ vi.mock("@/lib/scans", () => ({
       os: [{ value: "iOS", count: 7 }],
       browsers: [{ value: "Safari", count: 7 }],
       referrers: [{ value: "instagram.com", count: 2 }],
+      sources: { qr: 11, nfc: 1 },
     };
   },
 }));
@@ -131,6 +132,8 @@ describe("sharing a code's analytics", () => {
       "devices",
       "referrers",
       "series",
+      // NFC (feat/nfc): QR scans and NFC taps, counts only
+      "sources",
       "total",
       "unique",
     ]);

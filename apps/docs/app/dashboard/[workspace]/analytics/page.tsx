@@ -34,6 +34,8 @@ import {
   type BreakdownItem,
 } from "@/app/dashboard/codes/_components/breakdown-card";
 import { formatNumber } from "@/app/dashboard/codes/_components/format";
+// NFC (feat/nfc): QR scans and NFC taps.
+import { ScanSourceCard } from "@/app/dashboard/codes/_components/scan-source-card";
 import { ScansChart } from "@/app/dashboard/codes/_components/scans-chart";
 import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
 import {
@@ -334,6 +336,12 @@ export default async function AnalyticsPage({
           value={formatNumber(overview.unique)}
         />
       </div>
+
+      {/* NFC (feat/nfc) */}
+      <ScanSourceCard
+        description={`All codes, last ${scanRangeLabel(range).replace(/^1 /, "")}`}
+        sources={overview.sources}
+      />
 
       <Card className="gap-4 py-4">
         <CardHeader className="px-4">
