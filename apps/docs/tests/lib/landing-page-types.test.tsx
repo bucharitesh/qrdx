@@ -214,7 +214,24 @@ describe("the details block", () => {
     const tiles = render([
       { id: "x2", type: "details", props: { items, layout: "tiles" } },
     ]);
-    // Two tiles: a full row of two.
+    // Tiles fill whole rows: threes for three, pairs for six.
+    const tileGrid = (count: number) =>
+      render([
+        {
+          id: `t${count}`,
+          type: "details",
+          props: {
+            layout: "tiles",
+            items: Array.from({ length: count }, (_, i) => ({
+              id: `i${i}`,
+              label: `L${i}`,
+              value: "1",
+            })),
+          },
+        },
+      ]);
+    expect(tileGrid(3)).toContain("grid-cols-3");
+    expect(tileGrid(6)).toContain("grid-cols-2");
     expect(tiles).toContain("grid-cols-2");
     expect(
       parseProps("details", { items: [{ label: "", value: "x" }] })?.success,
