@@ -76,7 +76,7 @@
         "summary": "Render a QR code image",
         "tags": ["QR images"],
         "security": [],
-        "description": "A QR code image as SVG (default), PNG, WebP or EPS, with no key.\n\n**No key or token needed**, and it doesn't use your daily quota: put the URL straight into an `<img>` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without `#` (or with `#` encoded as `%23`). Limit: 300 requests a minute per IP address. More in the [Image API guide](https://qrdx.dev/docs/developers/image-api).\n\n**The editor's styles.** `style` takes the whole design as URL-encoded JSON, with the same fields as a saved theme: gradients (linear, radial), frames including custom frame specs, border templates, eye and dot colors, and a logo icon. It also takes the `style` value of a playground link. `item` renders a community frame or theme (`/community/items`); `frame` and `frameText` add a built-in frame. Flat parameters you set win over `style`, and `style` wins over `item`. With a frame, `size` is the code's width and the frame adds to it.\n\n**Logos.** `logoIcon` draws one of the editor's quick icons. `logoFileId` draws an image you uploaded, and needs `Authorization: Bearer qrdx_…` from the workspace that owns it; that response is private and counts toward the daily quota. QRdx never fetches a logo from an address you send. Logo QR and Image QR art aren't available here.\n\n**Caching.** Renders with `item` are cached for 5 minutes (10 at the CDN), since an item can change; renders with `logoFileId` aren't cached.\n\n**WebP** is lossless: the same pixels as the PNG in a smaller file, transparency included.",
+        "description": "A QR code image as SVG (default), PNG, WebP or EPS, with no key.\n\n**No key or token needed**, and it doesn't use your daily quota: put the URL straight into an `<img>` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without `#` (or with `#` encoded as `%23`). Limit: 300 requests a minute per IP address. More in the [Image API guide](https://qrdx.dev/docs/developers/image-api).\n\n**The editor's styles.** `style` takes the whole design as URL-encoded JSON, with the same fields as a saved theme: gradients (linear, radial), frames including custom frame specs, border templates, eye and dot colors, and a logo icon. It also takes the `style` value of a playground link. `item` renders a community frame or theme (`/community/items`); `frame` and `frameText` add a built-in frame. Flat parameters you set win over `style`, and `style` wins over `item`. With a frame, `size` is the code's width and the frame adds to it.\n\n**Logos.** `logoIcon` draws one of the editor's quick icons, or a brand logo by its Simple Icons slug (`spotify`, `paypal:white`). `logoFileId` draws an image you uploaded, and needs `Authorization: Bearer qrdx_…` from the workspace that owns it; that response is private and counts toward the daily quota. QRdx never fetches a logo from an address you send. Logo QR and Image QR art aren't available here.\n\n**Caching.** Renders with `item` are cached for 5 minutes (10 at the CDN), since an item can change; renders with `logoFileId` aren't cached.\n\n**WebP** is lossless: the same pixels as the PNG in a smaller file, transparency included.",
         "parameters": [
           {
             "name": "data",
@@ -357,20 +357,10 @@
             "name": "logoIcon",
             "in": "query",
             "required": false,
-            "description": "A quick logo icon in the center, drawn by QRdx",
+            "description": "A logo QRdx draws: a quick icon on a white tile (wifi, location, phone, email, link, file, calendar, whatsapp, instagram), or any brand from Simple Icons by its slug (spotify, paypal, googlemaps), drawn in its brand color. Add :black or :white for those colors (whatsapp:white). Brand logos have no tile; set logoOptions.plate for a plate behind one.",
             "schema": {
               "type": "string",
-              "enum": [
-                "wifi",
-                "location",
-                "phone",
-                "email",
-                "link",
-                "file",
-                "calendar",
-                "whatsapp",
-                "instagram"
-              ]
+              "pattern": "^[a-z0-9]{1,64}(?::(?:brand|black|white))?$"
             }
           },
           {
@@ -5461,19 +5451,9 @@
                         "pattern": "^[a-z0-9]{20,40}$"
                       },
                       "logoIcon": {
-                        "description": "One of the editor's quick logo icons, saved in `customLogo` as the editor saves it",
+                        "description": "A logo QRdx draws: a quick icon on a white tile (wifi, location, phone, email, link, file, calendar, whatsapp, instagram), or any brand from Simple Icons by its slug (spotify, paypal, googlemaps), drawn in its brand color. Add :black or :white for those colors (whatsapp:white). Brand logos have no tile; set logoOptions.plate for a plate behind one. Saved in `customLogo` as the editor saves it.",
                         "type": "string",
-                        "enum": [
-                          "wifi",
-                          "location",
-                          "phone",
-                          "email",
-                          "link",
-                          "file",
-                          "calendar",
-                          "whatsapp",
-                          "instagram"
-                        ]
+                        "pattern": "^[a-z0-9]{1,64}(?::(?:brand|black|white))?$"
                       }
                     },
                     "description": "API-only logo fields. `customLogo` must be an image data URL (as the editor saves logos) or a link to one of the workspace's files: logos from other sites are refused."
@@ -5548,19 +5528,9 @@
                     "pattern": "^[a-z0-9]{20,40}$"
                   },
                   "logoIcon": {
-                    "description": "One of the editor's quick logo icons, saved in `customLogo` as the editor saves it",
+                    "description": "A logo QRdx draws: a quick icon on a white tile (wifi, location, phone, email, link, file, calendar, whatsapp, instagram), or any brand from Simple Icons by its slug (spotify, paypal, googlemaps), drawn in its brand color. Add :black or :white for those colors (whatsapp:white). Brand logos have no tile; set logoOptions.plate for a plate behind one. Saved in `customLogo` as the editor saves it.",
                     "type": "string",
-                    "enum": [
-                      "wifi",
-                      "location",
-                      "phone",
-                      "email",
-                      "link",
-                      "file",
-                      "calendar",
-                      "whatsapp",
-                      "instagram"
-                    ]
+                    "pattern": "^[a-z0-9]{1,64}(?::(?:brand|black|white))?$"
                   }
                 },
                 "description": "API-only logo fields. `customLogo` must be an image data URL (as the editor saves logos) or a link to one of the workspace's files: logos from other sites are refused."
@@ -7820,7 +7790,7 @@
                     }
                   },
                   "logoIcon": {
-                    "description": "A quick logo icon, by id (instead of customLogo)",
+                    "description": "A quick logo icon or a brand logo, by id (instead of customLogo): `wifi`, `spotify`, `paypal:white`",
                     "type": "string"
                   }
                 }
