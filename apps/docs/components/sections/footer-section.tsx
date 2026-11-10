@@ -130,7 +130,10 @@ export function FooterSection() {
                         <FooterDisclosure
                           key={link.id}
                           title={t(`links.${link.key}`)}
-                          links={link.children}
+                          // The affiliate terms only where the program runs.
+                          links={link.children.filter((child) =>
+                            showsPath(child.url),
+                          )}
                         />
                       ) : (
                         <li key={link.id}>
