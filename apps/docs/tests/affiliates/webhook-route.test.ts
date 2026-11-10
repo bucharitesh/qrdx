@@ -10,8 +10,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const state = vi.hoisted(() => {
   // lib/env reads this when the route loads.
   process.env.POLAR_WEBHOOK_SECRET = "test-polar-webhook-secret";
-  // The program's switch (lib/feature-availability reads it on load).
-  process.env.QRDX_AFFILIATES = "1";
+  // The program runs where QRdx itself does: local dev counts.
+  process.env.NEXT_PUBLIC_APP_URL = "http://localhost:3000";
   return { throwInAffiliateStep: false, affiliateCalls: [] as string[] };
 });
 

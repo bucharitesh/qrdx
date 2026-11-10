@@ -17,7 +17,7 @@ import { attributeNewUser, referralCandidatesFrom } from "./attribution";
 /**
  * Reads the codes now (the request's headers don't outlive it) and records
  * the referral after the response, so the sign-up never waits on it. Does
- * nothing at all while the program is off (QRDX_AFFILIATES unset).
+ * nothing at all while the program is off (a self-hosted copy).
  */
 export function recordSignUpReferral(signUp: NewUserSignUp): void {
   if (!isFeatureAvailable("affiliates")) return;
