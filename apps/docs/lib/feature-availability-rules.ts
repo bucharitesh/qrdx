@@ -34,6 +34,7 @@ export const FEATURE_IDS = [
   "passkeys",
   "sso",
   "auditLog",
+  "discordBot",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -187,6 +188,17 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       `${WORKSPACE_PATTERN_PREFIX}/settings/audit-log`,
       "/docs/help/teams/audit-log",
     ],
+  },
+  discordBot: {
+    // The Discord app's /qr and "Make QR code" commands, answered over HTTP
+    // (app/api/integrations/discord). Discord signs each request with the
+    // app's key; the id builds the "Add to Discord" link.
+    name: "Discord bot",
+    requires: () => ["DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY"],
+    paths: ["/docs/help/getting-started/discord"],
+    catalogSlugs: ["discord-bot"],
+    // The webhook alerts entry mentions the bot only where it can be added.
+    extrasOf: "discord",
   },
 };
 
