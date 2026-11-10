@@ -55,6 +55,7 @@ const base: PlanLimits = {
   savedThemes: 10,
   teamThemes: false,
   brandKits: 1,
+  savedBarcodes: 1000,
 };
 
 const LIMITS: PlanLimitsByPlan = {

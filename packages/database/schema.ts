@@ -1277,6 +1277,12 @@ export const qrCode = pgTable(
     pixels: json("pixels").$type<unknown>(),
     // Moved to the trash (restorable)
     deletedAt: timestamp("deleted_at"),
+    // Large batches (manual-sql/2026-11-11-large-batches.sql): set when the
+    // destination's Google Web Risk lookup was skipped at creation (a batch
+    // past its time budget, or Web Risk unreachable); lib/safety/recheck.ts
+    // looks it up after the response and from the webhook worker, then
+    // clears it. NULL = nothing pending (every older code).
+    webRiskRecheckAt: timestamp("web_risk_recheck_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -1296,6 +1302,10 @@ export const qrCode = pgTable(
     ),
     // A custom domain serves each slug once (https://<domain>/<slug>).
     uniqueIndex("qr_code_domain_id_slug_unique").on(table.domainId, table.slug),
+    // The Web Risk re-check backlog (large batches).
+    index("qr_code_web_risk_recheck_at_idx")
+      .on(table.webRiskRecheckAt)
+      .where(sql`"web_risk_recheck_at" IS NOT NULL`),
   ]
 );
 
@@ -1786,6 +1796,47 @@ export const codePublicStats = pgTable(
   (table) => [
     uniqueIndex("code_public_stats_qr_code_id_unique").on(table.qrCodeId),
     uniqueIndex("code_public_stats_token_unique").on(table.token),
+  ]
+);
+
+// ─── Saved barcodes (apps/docs/lib/barcodes) ─────────────────────────────────
+// Static barcodes (EAN-13, Code 128, Data Matrix, ...) kept in a workspace to
+// edit and download again: the symbology, the value it encodes and how it's
+// drawn. Nothing is hosted: the bars hold the data. Folders are the codes'
+// folders. manual-sql/2026-11-11-barcodes.sql creates the table.
+export const barcode = pgTable(
+  "barcode",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    folderId: text("folder_id").references(() => folder.id, {
+      onDelete: "set null",
+    }),
+    title: text("title"),
+    // lib/barcode/formats.ts BarcodeFormatId: "ean13", "code128", ...
+    format: text("format").notNull(),
+    // The value drawn, check digit included (validateBarcodeInput's output)
+    value: text("value").notNull(),
+    // Colors, bar height, quiet zone, scale, text, rotation; validated by the
+    // app (lib/barcodes/schema.ts) on read and write
+    options: jsonb("options").$type<Record<string, unknown>>(),
+    // Moved to the trash (restorable)
+    deletedAt: timestamp("deleted_at"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index("barcode_user_id_idx").on(table.userId),
+    index("barcode_organization_id_idx").on(table.organizationId),
+    index("barcode_folder_id_idx").on(table.folderId),
   ]
 );
 

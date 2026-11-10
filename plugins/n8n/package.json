@@ -1,6 +1,6 @@
 {
   "name": "@qrdx/n8n-nodes-qrdx",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "n8n nodes for QRdx: make QR code images, manage dynamic QR codes, read scans and start workflows from QRdx events",
   "keywords": [
     "n8n-community-node-package",

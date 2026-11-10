@@ -1,10 +1,10 @@
 ---
 title: Downloads
-description: Export QR codes as PNG, JPG, SVG, PDF or vector EPS, copy them to the clipboard or get a data URL.
+description: Export QR codes as PNG, JPG, WebP, SVG, PDF or vector EPS, copy them to the clipboard or get a data URL.
 icon: Download
 ---
 
-Export QR codes as PNG, JPG, SVG, or PDF.
+Export QR codes as PNG, JPG, WebP, SVG, PDF or EPS.
 
 ## Quick Download
 
@@ -50,6 +50,27 @@ await downloadQRCode(
   { value: "https://example.com", size: 512 },
   { format: "jpg", size: { width: 512, height: 512 }, filename: "qrcode.jpg" }
 );
+```
+
+### WebP
+The same pixels as PNG in a smaller file, for websites. WebP is lossless by default, so module edges stay exact, and a transparent background stays transparent.
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "webp", size: { width: 512, height: 512 }, filename: "qrcode.webp" }
+);
+```
+
+Where the browser's canvas writes lossless WebP (Chrome and Edge do), the browser makes the file. Where it can't, qrdx checks the bytes and encodes the pixels itself with a small built-in lossless encoder. Safari is one of those: asked for WebP, it returns a PNG. Either way a `.webp` file is always WebP.
+
+`quality` (0 to 1) asks for a smaller lossy file instead, where the browser supports it. Lossy WebP softens module edges and colors, so keep the default for codes that need to scan from far away. `getQRAsWebP` returns the file as a `Blob`:
+
+```tsx
+import { getQRAsWebP } from "qrdx";
+
+const lossless = await getQRAsWebP({ value: "https://example.com", size: 1024 });
+const lossy = await getQRAsWebP({ value: "https://example.com", size: 1024 }, { quality: 0.9 });
 ```
 
 ### SVG
@@ -194,13 +215,14 @@ try {
 
 - **PNG** — Best quality, larger files, transparency
 - **JPG** — Smaller files, no transparency
+- **WebP** — PNG's quality and transparency in a smaller file, for websites
 - **SVG** — Scalable, small files, web/print
 - **PDF** — Professional documents, larger files
 - **EPS** — Vector print files for print shops and design tools
 
 ## Size Optimization
 
-- **Web use** — 256-512px, PNG
+- **Web use** — 256-512px, PNG or WebP
 - **Print** — 1024px+, PDF or PNG
 - **Mobile** — 256px, optimized
 - **Email** — 200-300px, balance

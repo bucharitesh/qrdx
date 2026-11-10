@@ -90,12 +90,16 @@ jobs:
           for dir in qrdx cli; do
             name="$(node -p "require('./packages/$dir/package.json').name")"
             version="$(node -p "require('./packages/$dir/package.json').version")"
-            if output="$(npm view "$name@$version" version 2>&1)"; then
-              published="$output"
-            elif printf '%s' "$output" | grep -q E404; then
+            # stdout holds only the version. npm and Node write notices and
+            # warnings (a url.parse() DeprecationWarning, say) to stderr, and
+            # mixing them in made every version look unpublished.
+            errors="$RUNNER_TEMP/npm-view-errors.txt"
+            if published="$(npm view "$name@$version" version 2>"$errors")"; then
+              published="$(printf '%s' "$published" | tr -d '[:space:]')"
+            elif grep -q E404 "$errors"; then
               published=""
             else
-              echo "::error::Could not check $name@$version on npm: $output"
+              echo "::error::Could not check $name@$version on npm: $(cat "$errors")"
               exit 1
             fi
             if [ "$published" = "$version" ]; then
@@ -188,12 +192,16 @@ jobs:
         run: |
           name="$(node -p "require('./plugins/n8n/package.json').name")"
           version="$(node -p "require('./plugins/n8n/package.json').version")"
-          if output="$(npm view "$name@$version" version 2>&1)"; then
-            published="$output"
-          elif printf '%s' "$output" | grep -q E404; then
+          # stdout holds only the version. npm and Node write notices and
+          # warnings (a url.parse() DeprecationWarning, say) to stderr, and
+          # mixing them in made every version look unpublished.
+          errors="$RUNNER_TEMP/npm-view-errors.txt"
+          if published="$(npm view "$name@$version" version 2>"$errors")"; then
+            published="$(printf '%s' "$published" | tr -d '[:space:]')"
+          elif grep -q E404 "$errors"; then
             published=""
           else
-            echo "::error::Could not check $name@$version on npm: $output"
+            echo "::error::Could not check $name@$version on npm: $(cat "$errors")"
             exit 1
           fi
           if [ "$published" = "$version" ]; then

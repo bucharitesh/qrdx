@@ -57,6 +57,21 @@ Dynamic QR codes: a short link you can point anywhere after printing.
 | [Update a code](/docs/developers/api/update-code) | `PATCH /codes/{id}` | `codes:write` |
 | [Delete a code](/docs/developers/api/delete-code) | `DELETE /codes/{id}` | `codes:write` |
 
+### Barcodes
+
+Static barcodes (EAN, UPC, Code 128, Data Matrix and more): keyless images, and barcodes saved to a workspace.
+
+| Endpoint | Request | Scope |
+| --- | --- | --- |
+| [Render a barcode image](/docs/developers/api/get-barcode-image) | `GET /barcode` | None |
+| [Render a barcode image from a JSON body](/docs/developers/api/create-barcode-image) | `POST /barcode` | None |
+| [List saved barcodes](/docs/developers/api/list-barcodes) | `GET /barcodes` | `codes:read` |
+| [Save a barcode](/docs/developers/api/create-barcode) | `POST /barcodes` | `codes:write` |
+| [Get a saved barcode](/docs/developers/api/get-barcode) | `GET /barcodes/{id}` | `codes:read` |
+| [Update a saved barcode](/docs/developers/api/update-barcode) | `PATCH /barcodes/{id}` | `codes:write` |
+| [Delete a saved barcode](/docs/developers/api/delete-barcode) | `DELETE /barcodes/{id}` | `codes:write` |
+| [Download a saved barcode](/docs/developers/api/get-saved-barcode-image) | `GET /barcodes/{id}/image` | `codes:read` |
+
 ### Scans
 
 Scan analytics of a code.

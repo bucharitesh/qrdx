@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { runBatch } from "./commands/batch";
 import { runGenerate } from "./commands/generate";
 
 // ─── ANSI ────────────────────────────────────────────────────────────────────
@@ -61,6 +62,9 @@ function showBanner(): void {
   console.log(
     `  ${DIM}$${RESET} ${TEXT}qrdx generate${RESET} ${DIM}<url>${RESET}            ${DIM}Generate from URL${RESET}`
   );
+  console.log(
+    `  ${DIM}$${RESET} ${TEXT}qrdx batch${RESET} ${DIM}<file.csv>${RESET}         ${DIM}A code for every row of a CSV${RESET}`
+  );
   console.log();
   console.log(
     `  ${DIM}$${RESET} ${TEXT}qrdx --help${RESET}                     ${DIM}Show all commands and options${RESET}`
@@ -80,12 +84,14 @@ ${BOLD}Usage:${RESET} qrdx <command> [options]
 
 ${BOLD}Commands:${RESET}
   generate, gen, g    Generate a QR code (fully interactive or via flags)
+  batch, b            A static QR code for every row of a CSV file
 
 ${BOLD}Generate Options:${RESET}
   <data>              URL or text to encode (positional)
-  -o, --output        Output file path (.svg, .png or .eps)
+  -o, --output        Output file path (.svg, .png, .webp or .eps)
   --format            Output format when the file name has no extension:
-                        ${DIM}svg, png, eps${RESET}  ${DIM}(EPS is vector; --size = width in points)${RESET}
+                        ${DIM}svg, png, webp, eps${RESET}  ${DIM}(WebP is lossless; EPS is vector,${RESET}
+                        ${DIM}--size = width in points)${RESET}
   -l, --level         Error correction: L, M, Q, H  ${DIM}(default: Q)${RESET}
   --body              Body dot pattern, e.g.:
                         ${DIM}square, rounded, circle, circle-large, liquid,${RESET}
@@ -104,7 +110,7 @@ ${BOLD}Generate Options:${RESET}
   --logo              Logo URL for center image (use with --level H)
   --no-logo           Skip the logo prompt in interactive mode
   --margin            Quiet zone margin in modules  ${DIM}(default: 0)${RESET}
-  --size              Output pixel size for SVG/PNG  ${DIM}(default: 512)${RESET}
+  --size              Output pixel size for SVG/PNG/WebP  ${DIM}(default: 512)${RESET}
   --template          Decorative template wrapper:
                         ${DIM}Arrow, StandardBox, SquareBorder, StrikedBox, Halloween${RESET}
   --frame             Call-to-action frame (adds space around the code), e.g.:
@@ -115,6 +121,18 @@ ${BOLD}Generate Options:${RESET}
   --frame-color       Frame color — hex  ${DIM}(default: #000000)${RESET}
   --frame-text-color  Frame label color — hex  ${DIM}(default: white on banners)${RESET}
                         ${DIM}Frame text/colors without --frame use banner-bottom${RESET}
+
+${BOLD}Batch Options:${RESET}  ${DIM}qrdx batch <file.csv> [options]${RESET}
+  -o, --out           Folder for the codes  ${DIM}(default: qr-codes)${RESET}
+  --format            svg, png or eps  ${DIM}(default: svg; PNG needs sharp)${RESET}
+  --value-column      Column with each code's content, by name or number
+                        ${DIM}(default: value, url, link, data, content, text or qr; else the first)${RESET}
+  --name-column       Column with file names, by name or number
+                        ${DIM}(default: file name, name, label, id, title or sku; else qr-00001, ...)${RESET}
+  --no-header         The first row is a code, not column names
+  --jobs              Codes rendered at a time  ${DIM}(default: 4 for SVG, 8 otherwise)${RESET}
+  Every style option above applies to all codes. Rows that fail are listed
+  in errors.csv in the output folder. No row limit; nothing is uploaded.
 
 ${BOLD}Gradient Colors:${RESET}
   Pass a JSON object to --fg / --bg / --eye-color / --dot-color for gradients:
@@ -137,6 +155,7 @@ ${BOLD}Examples:${RESET}
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Arrow -o arrow.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Halloween --body circle --eye gear -o halloween.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
+  ${DIM}$${RESET} qrdx batch products.csv -o codes --format png --size 1024 --body circle
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}' -o gradient.svg
 
   Visit ${TEXT}https://qrdx.dev${RESET} for more.
@@ -168,6 +187,11 @@ async function main(): Promise<void> {
     case "gen":
     case "g":
       await runGenerate(restArgs, generateMeta);
+      break;
+
+    case "batch":
+    case "b":
+      await runBatch(restArgs, generateMeta);
       break;
 
     case "--help":

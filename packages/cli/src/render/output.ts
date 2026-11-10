@@ -5,9 +5,15 @@ import { getFrameDimensions, QRCodeSVG, svgToEPS } from "qrdx";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
-export type OutputFormat = "svg" | "png" | "eps";
+/** "webp" is lossless: the PNG's pixels in a smaller file. */
+export type OutputFormat = "svg" | "png" | "webp" | "eps";
 
-export const OUTPUT_FORMATS: readonly OutputFormat[] = ["svg", "png", "eps"];
+export const OUTPUT_FORMATS: readonly OutputFormat[] = [
+  "svg",
+  "png",
+  "webp",
+  "eps",
+];
 
 export interface OutputOptions extends QRProps {
   size?: number;
@@ -16,6 +22,11 @@ export interface OutputOptions extends QRProps {
 }
 
 type SharpFactory = typeof import("sharp").default;
+type SharpImage = ReturnType<SharpFactory>;
+
+/** PNG, or lossless WebP (same pixels, transparency kept). */
+const encodeRaster = (image: SharpImage, format: "png" | "webp") =>
+  format === "webp" ? image.webp({ lossless: true }) : image.png();
 
 export function buildSVGString(props: QRProps & { size?: number }): string {
   const element = createElement(QRCodeSVG as React.ComponentType<QRProps>, {
@@ -141,23 +152,24 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
     sharp = (mod as { default: SharpFactory }).default;
   } catch {
     throw new Error(
-      "PNG output needs the sharp package (native binaries). It is optional and may not have installed; use SVG or reinstall: https://sharp.pixelplumbing.com/install"
+      `${format === "webp" ? "WebP" : "PNG"} output needs the sharp package (native binaries). It is optional and may not have installed; use SVG or reinstall: https://sharp.pixelplumbing.com/install`
     );
   }
   const svgBuffer = Buffer.from(svgString, "utf-8");
   const size = qrProps.size ?? 512;
   // A frame makes the output larger than (and not as square as) the code.
   const { width, height } = getFrameDimensions(size, qrProps.frame);
-  const qrImage = sharp(svgBuffer)
-    .resize(Math.round(width), Math.round(height))
-    .png();
+  const qrImage = sharp(svgBuffer).resize(
+    Math.round(width),
+    Math.round(height)
+  );
 
   // sharp's bundled SVG renderer skips embedded <image> elements, so the logo
   // is composited onto the rendered QR code instead.
   const logoSrc = qrProps.imageSettings?.src;
   const box = logoSrc ? await findLogoBox(sharp, svgString) : null;
   if (!(logoSrc && box)) {
-    await qrImage.toFile(outputPath);
+    await encodeRaster(qrImage, format).toFile(outputPath);
     return;
   }
 
@@ -165,8 +177,8 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
     .resize(box.width, box.height, { fit: "fill" })
     .png()
     .toBuffer();
-  await sharp(await qrImage.toBuffer())
-    .composite([{ input: logo, left: box.left, top: box.top }])
-    .png()
-    .toFile(outputPath);
+  const composited = sharp(await qrImage.png().toBuffer()).composite([
+    { input: logo, left: box.left, top: box.top },
+  ]);
+  await encodeRaster(composited, format).toFile(outputPath);
 }

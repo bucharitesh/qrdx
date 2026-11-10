@@ -54,6 +54,7 @@
         "ai": "^7.0.159",
         "barcode-detector": "^3.2.3",
         "bcryptjs": "^3.0.2",
+        "bwip-js": "4.11.4",
         "class-variance-authority": "^0.7.1",
         "cuid": "^3.0.0",
         "drizzle-orm": "^0.45.4",
@@ -105,6 +106,7 @@
         "screenfull": "^6.0.2",
         "scroll-into-view-if-needed": "^3.1.0",
         "server-only": "^0.0.1",
+        "sharp": "0.35.5",
         "shiki": "^4.5.0",
         "sonner": "^2.0.8",
         "streamdown": "^2.7.1",
@@ -131,7 +133,6 @@
         "@types/react-syntax-highlighter": "^15.5.13",
         "browserslist-config-baseline": "^0.5.0",
         "dotenv": "^18.0.9",
-        "sharp": "0.35.5",
         "ts-morph": "^28.0.0",
         "tsx": "^4.23.15",
         "typescript": "^6.0.3",
@@ -167,7 +168,7 @@
     },
     "packages/cli": {
       "name": "@qrdx/cli",
-      "version": "0.0.5",
+      "version": "0.0.6",
       "bin": {
         "qrdx": "./dist/index.js",
       },
@@ -324,7 +325,7 @@
     },
     "packages/qrdx": {
       "name": "qrdx",
-      "version": "0.0.47",
+      "version": "0.0.48",
       "dependencies": {
         "jsqr": "^1.4.0",
         "zod": "^4.6.7",
@@ -337,6 +338,7 @@
         "jspdf": "^4.2.1",
         "next": "16.4.3",
         "react": "^19.3.1",
+        "sharp": "0.35.5",
         "tsup": "^9.0.0",
         "typescript": "6.0.3",
         "vitest": "^5.0.5",
@@ -439,7 +441,7 @@
     },
     "plugins/n8n": {
       "name": "@qrdx/n8n-nodes-qrdx",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "devDependencies": {
         "@eslint/js": "9.29.0",
         "@n8n/eslint-plugin-community-nodes": "0.40.0",
@@ -2396,6 +2398,8 @@
     "bundle-name": ["bundle-name@4.1.0", "", { "dependencies": { "run-applescript": "7.1.0" } }, "sha512-tjwM5exMg6BGRI+kNmTntNsvdZS1X8BFYS6tnJ2hdH0kVxM6/eVZ2xy+FqStSWvYmtfFMDLIxurorHwDKfDz5Q=="],
 
     "bundle-require": ["bundle-require@5.1.0", "", { "dependencies": { "load-tsconfig": "0.2.5" }, "peerDependencies": { "esbuild": ">=0.18" } }, "sha512-3WrrOuZiyaaZPWiEt4G3+IffISVC9HYlWueJEBWED4ZH4aIAC2PnkdnuRrR94M+w6yGWn4AglWtJtBI8YqvgoA=="],
+
+    "bwip-js": ["bwip-js@4.11.4", "", { "bin": { "bwip-js": "bin/bwip-js.js" } }, "sha512-FOXnOQkinxog8FwxdnPB+8k2wRqwPnqXwxX37KcXOtMNW+9CinOkGv9MtIoRC4HX/UyogT0/9lIp6FDm2DcquQ=="],
 
     "bytes": ["bytes@3.1.2", "", {}, "sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg=="],
 

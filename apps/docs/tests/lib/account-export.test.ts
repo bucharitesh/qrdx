@@ -312,6 +312,7 @@ describe("exportQueries", () => {
     expect(built.map((query) => query.name).sort()).toEqual(
       [
         "aiUsage",
+        "barcodes",
         "brandKits",
         "codeTags",
         "codeVersions",

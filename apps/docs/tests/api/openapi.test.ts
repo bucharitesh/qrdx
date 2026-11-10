@@ -133,6 +133,8 @@ describe("OpenAPI document", () => {
   // Public endpoints: no key, no daily quota.
   const KEYLESS = new Set([
     "GET /qr",
+    "GET /barcode",
+    "POST /barcode",
     "GET /community/items",
     "GET /community/items/{id}",
   ]);

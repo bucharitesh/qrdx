@@ -1,6 +1,6 @@
 # qrdx
 
-Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
+Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/WebP/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
 
 It powers the [QRdx](https://qrdx.dev) QR code generator. Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) · No-code: [image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp)
 
@@ -341,6 +341,7 @@ Art only renders dark dots on a light background: the background must be at leas
 import {
   copyQRCodeToClipboard,
   downloadQRCode,
+  getQRAsWebP,
   getQRCodeDataUrl,
   getSVGString,
   PRESET_SIZES,
@@ -348,14 +349,18 @@ import {
 
 const props = { value: "https://example.com", bodyPattern: "rounded" as const };
 
-await downloadQRCode(props, { format: "png", size: PRESET_SIZES.large }); // png | jpg | svg | pdf | eps
+await downloadQRCode(props, { format: "png", size: PRESET_SIZES.large }); // png | jpg | webp | svg | pdf | eps
+await downloadQRCode(props, { format: "webp", size: PRESET_SIZES.large }); // lossless WebP
+const webp = await getQRAsWebP({ ...props, size: 1024 }); // a Blob; { quality: 0.9 } makes it lossy
 await downloadQRCode(props, { format: "pdf", size: { width: 1200, height: 1200 }, filename: "qr.pdf" });
 const dataUrl = await getQRCodeDataUrl(props, "svg", { width: 512, height: 512 });
 await copyQRCodeToClipboard(props, { width: 512, height: 512 }); // PNG to the clipboard
 const svgMarkup = await getSVGString(props);
 ```
 
-Sizes must be square and between 50 and 5000 pixels (`validateSize`); with a frame the file is larger by the frame. For `eps`, `size.width` is in PostScript points (72 per inch). When `props.size` is set, a logo laid out for that size is scaled with the export (`withQRSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed; EPS needs no extra package. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
+Sizes must be square and between 50 and 5000 pixels (`validateSize`); with a frame the file is larger by the frame. For `eps`, `size.width` is in PostScript points (72 per inch). When `props.size` is set, a logo laid out for that size is scaled with the export (`withQRSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed; EPS needs no extra package.
+
+WebP is lossless by default, so module edges stay exact, and a transparent background stays transparent. `quality` (0 to 1, in `downloadQRCode` options or `getQRAsWebP`) asks for a smaller lossy file instead. The browser's canvas encodes it where it can; where it can't (Safari hands back a PNG for `image/webp`), QRdx encodes the pixels itself with a small built-in lossless encoder, so a `.webp` file is always WebP. `canvasToWebP(canvas)` does the same for any canvas, and `encodeWebPLossless(rgba, width, height)` encodes raw RGBA pixels without a DOM. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
 
 Vector output writes coordinates with at most 3 decimals (0.001 px in SVG, 0.001 pt in PDF and EPS; scale factors keep 6), so edges move by at most 0.0005 px and SVG markup is roughly 30% smaller than with full-precision numbers.
 

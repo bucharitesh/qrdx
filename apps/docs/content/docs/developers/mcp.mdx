@@ -81,11 +81,13 @@ Then ask for what you need, for example:
 |------|--------------|
 | `design_qr` | Designs a code for any content type with the style your assistant chooses, or starting from a built-in theme or a community item, checks its scan score and repairs the style until it is Great. Returns the score, what it changed, the style JSON, a playground link, a PNG and the SVG. |
 | `list_options` | Lists every value `design_qr` accepts: content types and their fields, colours and gradients, shapes, frames, borders, logo icons, built-in themes, error correction levels and limits. |
-| `generate_qr_code` | Renders a QR code with the editor's styles. Returns a PNG image and public [image API](/docs/developers/image-api) URLs (SVG and PNG) ready for Markdown or HTML, plus the SVG markup on request. |
+| `generate_qr_code` | Renders a QR code with the editor's styles. Returns a PNG image and public [image API](/docs/developers/image-api) URLs (SVG, PNG, lossless WebP and vector EPS) ready for Markdown, HTML or print, plus the SVG markup on request. |
 | `list_qr_styles` | Lists body patterns, corner eye and eye dot shapes, border templates, frames, logo icons, error correction levels, defaults and limits. |
 | `search_community` | Finds published [community](/community) frames, themes and collections by words, type or tag. |
 | `get_community_item` | One community item with the style it applies, ready for `design_qr` or `generate_qr_code`. |
 | `save_template` | Saves a design as a theme in your workspace. Needs an [API key](#use-an-api-key). |
+| `generate_barcode` | Draws an EAN-13, UPC-A, UPC-E, EAN-8, ITF-14, GS1-128, Code 128, Code 39, Data Matrix, PDF417 or Aztec barcode after checking the value (check digits, lengths, characters). Returns a PNG and public [barcode API](/docs/developers/barcode-api) URLs. |
+| `save_barcode` | Saves a barcode to your workspace's Barcodes. Needs an [API key](#use-an-api-key). |
 | `qr_payload_wifi` | Builds a `WIFI:` network payload (WPA, WEP or open, optionally hidden) with special characters escaped. |
 | `qr_payload_vcard` | Builds a vCard 3.0 contact (RFC 2426): name, organization, title, phones, email, website, address and note. |
 | `qr_payload_email` | Builds a `mailto:` link (RFC 6068) with optional cc, bcc, subject and body. |
@@ -162,6 +164,7 @@ Item text is written by community members. Names, descriptions, handles, tags an
 Some tools need a QRdx [API key](/docs/developers/api-keys) on the connection, sent as `Authorization: Bearer qrdx_…`:
 
 - **`save_template`** saves a design as a theme, listed under Themes in the dashboard and offered in the editor. It needs a key with `codes:write`, which **Full access** keys have. A key of your own workspace saves to your themes; a team key saves to the team's shared themes when its creator is an owner or admin and the plan has team themes. Saves count toward the plan's saved-theme limit (see [Plans and limits](/docs/plans-and-limits)); over it, the tool returns the API's `LIMIT_REACHED` error (`402`). Without a key it returns a `401` error that says how to add one.
+- **`save_barcode`** saves a barcode (format, value, an optional title and drawing options) to the key's workspace, listed under Barcodes in the dashboard. It needs a key with `codes:write`. Every plan saves barcodes, up to 1,000 on Free; over the limit it returns `LIMIT_REACHED` (`402`).
 <IfAvailable feature="fileStorage">
 - **Logos you uploaded** in [Dashboard → Files](/docs/files), by file id (`logo_file_id` in `design_qr`, `logoFileId` in `generate_qr_code`): a PNG or JPEG of up to 1 MB. The key must belong to the workspace that owns the file.
 </IfAvailable>
@@ -204,8 +207,8 @@ Keep the key out of shared or committed config files. Calls made with a key coun
 
 ## Privacy and limits
 
-- The tools render images, check designs, format text and read the public community. Only `save_template` writes anything: the theme you ask it to save, in the API key's workspace. The server doesn't save the codes you generate.
-- The image URLs that `generate_qr_code` returns contain the encoded data. Don't share them if the data is private, such as a Wi-Fi password.
+- The tools render images, check designs, format text and read the public community. Only `save_template` and `save_barcode` write anything: the theme or barcode you ask them to save, in the API key's workspace. The server doesn't save the codes you generate.
+- The image URLs that `generate_qr_code` and `generate_barcode` return contain the encoded data. Don't share them if the data is private, such as a Wi-Fi password.
 - Requests are limited to 120 per minute per IP address, and `design_qr` to 20. With a key, `save_template` is also limited to 30 a minute per user.
 
 ## Self-hosting and local development

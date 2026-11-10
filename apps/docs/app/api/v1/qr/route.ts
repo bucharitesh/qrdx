@@ -6,15 +6,22 @@ import {
   type FlatStyle,
   type RenderRequest,
   renderStyledEps,
+  renderStyledImage,
   renderStyledPng,
   renderStyledSvg,
   resolveRender,
 } from "@/lib/qr-api/render";
 import { type ApiStyle, parseStyleQuery } from "@/lib/qr-api/style";
 import {
+  type ConvertedFormat,
+  IMAGE_CONTENT_TYPES,
+  isConvertedFormat,
+} from "@/lib/qr-image-formats";
+import {
   QR_TEMPLATE_IDS,
   QrDataTooLongError,
   renderQrEps,
+  renderQrImage,
   renderQrPng,
   renderQrSvg,
 } from "@/lib/qr-render";
@@ -89,6 +96,17 @@ function parseQuery(searchParams: URLSearchParams) {
 
 type Query = ReturnType<typeof parseQuery>;
 
+/** A converted image (WebP) with its content type and the request's headers. */
+function imageResponse(
+  bytes: Uint8Array,
+  format: ConvertedFormat,
+  headers: Record<string, string>,
+) {
+  return new Response(bytes as BodyInit, {
+    headers: { ...headers, "Content-Type": IMAGE_CONTENT_TYPES[format] },
+  });
+}
+
 /** The `style` value plus the frame and logo parameters, as one style. */
 function styleLayer(query: Query): ApiStyle | undefined {
   let style: ApiStyle | undefined;
@@ -149,6 +167,9 @@ async function original(query: Query, headers: Record<string, string>) {
     return new Response(png, {
       headers: { ...headers, "Content-Type": "image/png" },
     });
+  }
+  if (isConvertedFormat(format)) {
+    return imageResponse(await renderQrImage(options, format), format, headers);
   }
   if (format === "eps") {
     return new Response(await renderQrEps(options), {
@@ -221,6 +242,10 @@ async function styled(req: NextRequest, query: Query) {
     return new Response(png as BodyInit, {
       headers: { ...headers, "Content-Type": "image/png" },
     });
+  }
+  if (isConvertedFormat(query.format)) {
+    const bytes = await renderStyledImage(render, query.format);
+    return imageResponse(bytes, query.format, headers);
   }
   if (query.format === "eps") {
     return new Response(await renderStyledEps(render), {

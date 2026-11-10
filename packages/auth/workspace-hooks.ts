@@ -162,6 +162,8 @@ const CREATED_ROWS = [
   schema.tag,
   schema.webhookEndpoint,
   schema.notificationSetting,
+  // Saved barcodes (manual-sql/2026-11-11-barcodes.sql)
+  schema.barcode,
 ] as const;
 
 /**

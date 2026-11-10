@@ -22,6 +22,7 @@ import {
 } from "react";
 import { z } from "zod";
 import { baseUrl } from "@/lib/metadata";
+import { type ConvertedFormat, convertPng } from "@/lib/qr-image-formats";
 import { outlineSvgText } from "@/lib/qr-text-outline";
 
 // Server-side QR rendering shared by the public image API (/api/v1/qr) and the
@@ -130,7 +131,7 @@ export type QrOptions = Omit<
   dot: CornerEyeDotPattern;
 };
 
-export const qrImageFormats = ["svg", "png", "eps"] as const;
+export const qrImageFormats = ["svg", "png", "webp", "eps"] as const;
 export type QrImageFormat = (typeof qrImageFormats)[number];
 
 /** Thrown when the data does not fit in a QR code at the chosen level. */
@@ -291,6 +292,17 @@ export async function renderQrPng(options: QrOptions): Promise<ArrayBuffer> {
     `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`,
     options.size,
   );
+}
+
+/**
+ * Renders the QR code in a format converted from the same PNG, such as
+ * lossless WebP (lib/qr-image-formats.ts).
+ */
+export async function renderQrImage(
+  options: QrOptions,
+  format: ConvertedFormat,
+): Promise<Uint8Array> {
+  return await convertPng(await renderQrPng(options), format);
 }
 
 /**

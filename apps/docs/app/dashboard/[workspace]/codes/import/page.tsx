@@ -9,6 +9,7 @@ import {
   requireDashboardScope,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { ImportWizard } from "@/app/dashboard/codes/import/_components/import-wizard";
+import { formatCount, MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
 import { plansWith } from "@/lib/plans";
 import { workspaceHref } from "@/lib/workspace-paths";
 
@@ -38,7 +39,7 @@ export default async function ImportCodesPage({
         </Link>
       </Button>
       <PageHeader
-        description="Create many dynamic codes at once, filed into folders and tagged. Check every row before anything is created."
+        description={`Create up to ${formatCount(MAX_IMPORT_ROWS)} dynamic codes from one CSV, filed into folders and tagged. Every row is checked before anything is created, and a long import can be paused and resumed.`}
         title="Import codes from CSV"
       />
       <UsageMeter usage={usage} />
@@ -47,6 +48,7 @@ export default async function ImportCodesPage({
         bulkPlans={plansWith((limits) => limits.bulkApi)}
         canBulk={usage.bulkApi}
         plan={usage.plan}
+        storeKey={`${scope.userId}:${scope.organizationId ?? workspace}`}
       />
     </div>
   );

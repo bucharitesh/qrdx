@@ -271,6 +271,67 @@ export function codeSummary(code: CodeLike): CodeSummary {
 const toSnake = (field: string) =>
   field.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 
+/** Codes of a batch whose webhooks go out right away; the worker sends the rest. */
+const BATCH_DELIVER_NOW = 50;
+/** Alert targets get at most 30 alerts of a kind an hour (notify.tsx). */
+const BATCH_ALERTS = 30;
+
+/**
+ * code.created for a large batch (API batches, CSV import): every webhook
+ * delivery is stored first, in a few inserts, so none is lost if the
+ * function stops; the first BATCH_DELIVER_NOW are sent now and the worker
+ * (marked due) sends the rest within minutes. Alerts stop where the targets'
+ * hourly limit would anyway.
+ */
+async function emitBatchCreated(
+  scope: EventScope & { actorId?: string },
+  codes: CodeLike[],
+  subs: Subscribers,
+): Promise<void> {
+  const now = new Date();
+  const limits = getPlanLimits(subs.plan);
+  const envelopes = codes.map((code) =>
+    envelopeFor(
+      "code.created",
+      { code: codeSummary(code), actor_id: scope.actorId ?? scope.userId },
+      now,
+    ),
+  );
+  const endpointIds = limits.webhooks
+    ? subs.endpoints
+        .filter((endpoint) => endpoint.events.includes("code.created"))
+        .map((endpoint) => endpoint.id)
+    : [];
+  if (endpointIds.length > 0) {
+    const rows = envelopes.flatMap((envelope) =>
+      endpointIds.map((endpointId) => ({
+        id: cuid(),
+        endpointId,
+        event: envelope.type,
+        payload: envelope as unknown as Record<string, unknown>,
+        status: "pending",
+        attempts: 0,
+        nextAttemptAt: sql`now()`,
+      })),
+    );
+    for (let start = 0; start < rows.length; start += 200) {
+      await db.insert(webhookDelivery).values(rows.slice(start, start + 200));
+    }
+    await scheduleWorkerRun(Date.now());
+    await deliverNow(rows.slice(0, BATCH_DELIVER_NOW).map((row) => row.id));
+  }
+  const targets = subs.targets.filter(
+    (target) =>
+      target.events.includes("code.created") &&
+      (target.channel === "email" ? limits.emailAlerts : limits.webhooks),
+  );
+  if (targets.length > 0) {
+    for (const envelope of envelopes.slice(0, BATCH_ALERTS)) {
+      await notifyTargets(envelope as never, targets, scope);
+    }
+  }
+}
+
 /** code.created for each new code (in the background). */
 export function emitCodesCreated(
   scope: EventScope & { actorId?: string },
@@ -280,6 +341,19 @@ export function emitCodesCreated(
   runInBackground(async () => {
     // Bulk creation (API batches, CSV import): look subscribers up once.
     const subscribers = await loadSubscribers(scope).catch(() => undefined);
+    if (subscribers === null) return;
+    if (subscribers && codes.length > BATCH_DELIVER_NOW) {
+      try {
+        await emitBatchCreated(scope, codes, subscribers);
+      } catch (error) {
+        log("event.emit_failed", {
+          type: "code.created",
+          codes: codes.length,
+          error: errorMessage(error),
+        });
+      }
+      return;
+    }
     for (const code of codes) {
       const data: CodeEventData = {
         code: codeSummary(code),
