@@ -9,6 +9,7 @@ import {
   type PricingOptions,
 } from "@/components/sections/pricing/plan-content";
 import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
+import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import { claudeCodeCommand, mcpServerUrl } from "@/lib/mcp-clients";
 import type { PlanLimits } from "@/lib/plans";
 import {
@@ -230,6 +231,11 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       title: "Print size calculator",
       url: "/tools/print-size",
       description: "Minimum print size for a scan distance",
+    },
+    {
+      title: "Barcode generator",
+      url: "/barcode-generator",
+      description: `${PRODUCT_FACTS.barcodeFormats} static barcode formats (${BARCODE_FORMATS.map((format) => format.label).join(", ")}) with check digits and a scan check, as PNG, SVG or EPS; runs in the browser`,
     },
     {
       title: "QR code generators by type",

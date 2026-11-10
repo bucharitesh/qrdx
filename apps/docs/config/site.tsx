@@ -3,6 +3,7 @@ import { Bot, GithubLogo } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   ArrangeHorizontal,
+  Barcode,
   Book1,
   Box,
   Category,
@@ -160,6 +161,12 @@ export const siteConfig = {
             href: "/tools/print-size",
             description: "Find the minimum size for your scan distance",
             icon: Ruler,
+          },
+          {
+            name: "Barcode generator",
+            href: "/barcode-generator",
+            description: "EAN, UPC, Code 128 and more, with check digits",
+            icon: Barcode,
           },
           {
             name: "All tools",
@@ -938,6 +945,7 @@ export const siteConfig = {
         { id: 2, title: "Bulk generator", url: "/tools/bulk" },
         { id: 3, title: "Scan checker", url: "/tools/scan-checker" },
         { id: 4, title: "Print size calculator", url: "/tools/print-size" },
+        { id: 7, title: "Barcode generator", url: "/barcode-generator" },
         { id: 6, title: "QR code scanner", url: "/scan" },
         { id: 5, title: "All tools", url: "/tools" },
       ],

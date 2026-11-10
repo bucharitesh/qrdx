@@ -39,6 +39,8 @@ export interface AnalyticsEvents {
   qr_generated: { content_type: string; source: QrSource; count?: number };
   qr_downloaded: { format: string; source: QrSource; content_type?: string };
   qr_copied: { format: "svg"; source: QrSource };
+  /** /barcode-generator: the file type and symbology id ("ean13"), never the data. */
+  barcode_downloaded: { format: "png" | "svg" | "eps"; symbology: string };
 
   /**
    * A playground link applied its parameters. `source`: where it came from
