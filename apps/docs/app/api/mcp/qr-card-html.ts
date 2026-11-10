@@ -159,8 +159,10 @@ const SCRIPT = `
     var value = String(text);
     return value.length > max ? value.slice(0, max - 1) + "\\u2026" : value;
   }
+  // https only, plus http on this computer (local development).
+  var WEB_URL = /^(?:https:\\/\\/|http:\\/\\/(?:localhost|127\\.0\\.0\\.1)(?::\\d{1,5})?(?:[\\/?#]|$))/i;
   function webUrl(value) {
-    return typeof value === "string" && /^https?:\\/\\//i.test(value) ? value : null;
+    return typeof value === "string" && WEB_URL.test(value) ? value : null;
   }
 
   function applyContext(context) {
