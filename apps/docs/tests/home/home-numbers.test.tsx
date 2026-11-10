@@ -136,7 +136,7 @@ describe("the switch", () => {
     const html = renderToStaticMarkup(element);
     expect(html).toContain("QRdx in numbers");
     expect(html).toContain("Dynamic QR codes created");
-    expect(html).toContain("4.3M+");
+    expect(html).toContain("4.32M+");
   });
 });
 
@@ -212,8 +212,8 @@ describe("the section", () => {
         since,
       ]),
     ).toEqual([
-      ["Dynamic QR codes created", "4.3M+", "Since Oct 2026"],
-      ["Scans of dynamic QR codes", "510K+", "Since Oct 2026"],
+      ["Dynamic QR codes created", "4.32M+", "Since Oct 2026"],
+      ["Scans of dynamic QR codes", "512K+", "Since Oct 2026"],
       ["Countries with scans", "87", "Since Oct 2026"],
       ["Accounts created", "230+", "Since Sep 2026"],
     ]);
@@ -241,10 +241,10 @@ describe("the section", () => {
       );
     }
     // Server HTML (and no-JS visitors) show the final text, not a count-up.
-    expect(html).not.toMatch(/>0(\.0)?[KM]?\+?</);
+    expect(html).not.toMatch(/>0(\.0{1,2})?[KM]?\+?</);
     // Digits that animate are hidden from assistive tech.
     expect(html).toMatch(
-      /aria-hidden="true" class="col-start-1 row-start-1">4\.3M\+</,
+      /aria-hidden="true" class="col-start-1 row-start-1">4\.32M\+</,
     );
   });
 
