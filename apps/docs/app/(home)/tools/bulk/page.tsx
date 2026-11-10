@@ -10,7 +10,7 @@ import { createMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createMetadata({
   title: "Free Bulk QR Code Generator from CSV",
-  description: `Generate up to ${formatCount(MAX_BULK_TOOL_ROWS)} QR codes from a CSV file and download them as PNG or SVG in a ZIP. Custom styles and file names. Runs entirely in your browser.`,
+  description: `Generate up to ${formatCount(MAX_BULK_TOOL_ROWS)} QR codes from a CSV file and download them as PNG or SVG, zipped. Custom styles and file names. Runs entirely in your browser.`,
   path: "/tools/bulk",
   ownOgImage: true,
 });
@@ -73,7 +73,7 @@ export default function BulkPage() {
         ]}
         title="Bulk QR code generator"
         intro={[
-          "Turn a spreadsheet into hundreds or thousands of QR codes in one go: product labels, event tickets, asset tags, table numbers or personalised mailers. Upload a CSV, map the columns, choose a style and download every code as PNG or SVG in a single ZIP file.",
+          "Turn a spreadsheet into hundreds or thousands of QR codes in one go: product labels, event tickets, asset tags, table numbers or personalised mailers. Upload a CSV, map the columns, choose a style and download every code as PNG or SVG, zipped.",
           "Everything happens in your browser. The CSV is never uploaded and there is no sign-up, watermark or per-code charge.",
         ]}
       />

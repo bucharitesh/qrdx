@@ -221,7 +221,7 @@ export const HINTS = {
   // ─── Tools ────────────────────────────────────────────────────────────────
   "bulk-csv": {
     title: "Bulk from a CSV",
-    body: `Save a spreadsheet as CSV with one row per code and pick the column with each link or text. You get a ZIP of up to ${formatCount(MAX_BULK_TOOL_ROWS)} PNG or SVG files, made on your device.`,
+    body: `Save a spreadsheet as CSV with one row per code and pick the column with each link or text. You get up to ${formatCount(MAX_BULK_TOOL_ROWS)} PNG or SVG files, zipped, made on your device.`,
     visual: {
       type: "video",
       name: "bulk-csv",
