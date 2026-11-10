@@ -1,4 +1,7 @@
-export const MAX_BULK_ROWS = 5000;
+import { MAX_BULK_TOOL_ROWS } from "@/lib/bulk-limits";
+
+/** Rows in one file (lib/bulk-limits.ts, where the reasoning is). */
+export const MAX_BULK_ROWS = MAX_BULK_TOOL_ROWS;
 export const MAX_CSV_BYTES = 10 * 1024 * 1024;
 
 export interface CsvTable {
