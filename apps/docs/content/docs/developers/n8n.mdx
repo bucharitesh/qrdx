@@ -4,35 +4,28 @@ description: Make QR codes, manage dynamic codes, read scans and start n8n workf
 icon: Blocks
 ---
 
-The `n8n-nodes-qrdx` package adds two nodes to [n8n](https://n8n.io):
+The `@qrdx/n8n-nodes-qrdx` package adds two nodes to [n8n](https://n8n.io):
 
 - **QRdx** makes QR code images, creates and edits [dynamic codes](/docs/dynamic-qr-codes), and reads their scans and your saved themes. An n8n AI Agent can use it as a tool.
 - **QRdx Trigger** starts a workflow when your codes are scanned, created or changed, or when someone submits a form on a [hosted page](/docs/forms-and-pages).
 
-The package isn't on npm yet, so it isn't in n8n's community node search. Install it from the [source on GitHub](https://github.com/bucharitesh/qrdx/tree/main/plugins/n8n) into a self-hosted n8n, as below. n8n Cloud only runs community nodes that n8n has verified.
+The package is on npm as [`@qrdx/n8n-nodes-qrdx`](https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx) and installs into a self-hosted n8n. n8n Cloud only runs community nodes that n8n has verified, and this one isn't verified yet.
 
 To receive events without installing anything, use a [Webhook node](#without-the-package) instead.
 
-## Install from source
+## Install
 
-Build the package and pack it into a `.tgz` file. You need Node.js 22 and [Bun](https://bun.com/docs/installation):
+In n8n, open **Settings → Community Nodes**, click **Install**, enter `@qrdx/n8n-nodes-qrdx`, accept the note about community nodes and click **Install**. Then search for **QRdx** in the nodes panel.
 
-```bash
-git clone https://github.com/bucharitesh/qrdx.git
-cd qrdx && bun install
-bun run --filter n8n-nodes-qrdx build
-cd plugins/n8n && bun pm pack
-```
-
-Install the file in the `nodes` folder of your n8n user folder, then restart n8n:
+If your n8n hides that page, or you manage it from the command line, install the package in the `nodes` folder of your n8n user folder and restart n8n:
 
 ```bash
 mkdir -p ~/.n8n/nodes
 cd ~/.n8n/nodes
-npm install /path/to/n8n-nodes-qrdx-0.1.0.tgz
+npm install @qrdx/n8n-nodes-qrdx
 ```
 
-If n8n runs in Docker, copy the file into the container and run the same commands there (`docker exec -it n8n sh`). Search for **QRdx** in the nodes panel.
+If n8n runs in Docker, run the same commands inside the container (`docker exec -it n8n sh`) or set them up in your image.
 
 ## Connect your workspace
 

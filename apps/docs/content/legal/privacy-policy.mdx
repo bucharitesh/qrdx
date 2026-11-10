@@ -1,13 +1,13 @@
 ---
 title: Privacy Policy
 description: What QRdx collects, why, who it is shared with, how long it is kept and the choices you have, for the website, accounts, dynamic codes, hosted pages, the API and the AI features.
-lastUpdated: 2026-11-10
+lastUpdated: 2026-11-11
 ---
 
 <Callout title="Summary">
 
 - We collect what we need to run your account and your codes: your email address (with your name and profile picture if you sign in with Google or GitHub), the codes, pages and files you create, and your plan status from Polar.
-- When someone scans a dynamic code, we record coarse facts about the scan: country and city, device, browser, language and time. We never store the scanner's IP address. We keep a salted hash that changes every day, so unique visitors can be counted.
+- When someone scans a dynamic code, we record coarse facts about the scan: country and city, device, browser, language and time. We never store the scanner's IP address. We keep a salted hash that changes every day, so unique visitors can be counted. Only if the code's owner turns it on and the scanner allows it in their browser, we also record the scanner's location rounded to about 100 m.
 - Your hosted pages and forms collect data from your own visitors. For that data you are in charge (the controller) and we process it for you under the [Data Processing Addendum](/legal/dpa).
 - We count visits with Umami, which sets no cookies and keeps no profile of you. Product analytics (PostHog) and the feedback widget (Featurebase) load only if you allow them in **Cookie settings**. We use no advertising cookies and we don't sell personal data.
 - You can delete codes, pages, responses, files and your whole account yourself. For anything else, email [support@qrdx.dev](mailto:support@qrdx.dev).
@@ -74,7 +74,7 @@ On the Business plan, a workspace's **audit log** records the changes made in it
 | --- | --- |
 | Time of the scan | IP address |
 | Country, region and city, looked up from the IP address by Vercel | Full user agent string |
-| Device type, operating system and browser, read from the user agent | Precise location |
+| Device type, operating system and browser, read from the user agent | Precise location, unless the owner asks for it and the scanner allows it ([below](#precise-location)) |
 | Referring website (host name only, never the full address) | Cookies or device identifiers |
 | Preferred language, from the browser's language setting | |
 | Which A/B variant was served, if the owner set up a split | |
@@ -85,6 +85,18 @@ The **visitor hash** is a salted SHA-256 hash of the IP address, the user agent 
 **Bots aren't counted.** Known bots, link previews and browser prefetches are skipped. Repeated scans of one code from one IP address stop counting after 20 a minute; the code still redirects.
 
 **Password-protected codes** set a cookie on the scanner's device for 6 hours after the right password is entered. **Conversion tracking**, if the owner turns it on, adds a signed `qrdx_sid` parameter to the destination link, and we store the conversions the owner reports back (name, value, currency and any details they send).
+
+### Precise location
+
+The owner of a dynamic code on the Pro or Business plan can turn on **Ask scanners for precise location** for that code. It is off unless the owner turns it on, and each scanner decides in their browser.
+
+- **When we ask.** A code that opens a website shows a short "Share your location?" step, with Allow and Skip, before the website opens. A code that opens a hosted page asks on the page. Either way the browser asks the scanner for permission first. Skipping, declining or not answering continues to the website or page as usual.
+- **What we collect.** If the scanner allows it, their browser rounds the location to three decimal places (about 100 m) before sending it, and we store that rounded location and the accuracy the browser reports with the scan. We never receive or store the exact position. If the scanner declines, we store nothing beyond the usual scan record and a note that the code asked.
+- **How it is used.** The code's owner sees the rounded locations in the code's analytics and exports, and their routing rules can use them to choose where the scan goes. If a scanner doesn't share a location, routing rules may use the approximate location of their IP address for that scan, which is not stored. Shared analytics links never show precise locations.
+- **Cookie.** For hosted pages, a cookie holds a signed reference to the scan for up to 15 minutes so that a shared location can be added to it. It is removed once the location is shared, or when it expires.
+- **How long.** Like the rest of the scan: as long as the code exists, and it is deleted with the code.
+
+This is End User data that we process for the code's owner under the [DPA](/legal/dpa).
 
 ### Hosted pages and forms (End User data)
 
@@ -193,7 +205,7 @@ We don't sell personal data, and we don't share it for cross-context behavioural
 | Sessions, with IP address and user agent | A session expires 7 days after you last use QRdx. Session records are deleted with your account at the latest. |
 | Customer Content | Until you delete it or your account. Trashed codes stay in the trash, switched off, until you empty it. |
 | Edit history of codes and pages | As long as the code or page exists |
-| Scans, page events and conversions | As long as the code or page exists. Your plan decides how far back you can view them: 90 days on Free, 3 years on Pro, everything on Business. Older scans may be combined into daily totals. |
+| Scans (including any precise locations), page events and conversions | As long as the code or page exists. Your plan decides how far back you can view them: 90 days on Free, 3 years on Pro, everything on Business. Older scans may be combined into daily totals. |
 | Form responses | Until the page owner deletes them, the page, or their account |
 | Webhook delivery logs | 30 days |
 | Files | Until you delete them, which removes them from storage straight away. Deleting your account deletes your files from storage too. |
@@ -278,5 +290,5 @@ Questions or requests about privacy: [support@qrdx.dev](mailto:support@qrdx.dev)
 
 ---
 
-**Changes:** <IfAvailable feature="affiliates">10 November 2026. Added the affiliate program: what it records about affiliates and the accounts they refer (no cookie: a referral counts only for a sign-up in the same visit), and PayPal for payouts. </IfAvailable>3 November 2026. AI QR art now uses OpenAI's GPT Image 2, through Vercel AI Gateway, instead of Google's Gemini. Earlier the same day: AI features now run through Vercel AI Gateway, with Anthropic's Claude for the AI theme chat and prompt enhancement and Google's Gemini for theme design and AI art. 2 November 2026: AI QR art now uses Google's Gemini API; fal.ai no longer receives any data. 1 November 2026: rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
+**Changes:** 11 November 2026. Added precise location: what is collected, only when a code's owner turns it on and the scanner allows it in their browser, the rounding to about 100 m, the hosted-page cookie and how long it is kept. <IfAvailable feature="affiliates">10 November 2026. Added the affiliate program: what it records about affiliates and the accounts they refer (no cookie: a referral counts only for a sign-up in the same visit), and PayPal for payouts. </IfAvailable>3 November 2026. AI QR art now uses OpenAI's GPT Image 2, through Vercel AI Gateway, instead of Google's Gemini. Earlier the same day: AI features now run through Vercel AI Gateway, with Anthropic's Claude for the AI theme chat and prompt enhancement and Google's Gemini for theme design and AI art. 2 November 2026: AI QR art now uses Google's Gemini API; fal.ai no longer receives any data. 1 November 2026: rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
 

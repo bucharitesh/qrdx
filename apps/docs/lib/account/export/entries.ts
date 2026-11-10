@@ -56,6 +56,10 @@ export const SCAN_COLUMNS = [
   "language",
   "variant",
   "visitor_hash",
+  "latitude",
+  "longitude",
+  "location_accuracy_m",
+  "location_source",
 ] as const;
 
 const FORM_RESPONSE_COLUMNS = [
@@ -92,6 +96,10 @@ export function exportEntries(userId: string): ExportEntry[] {
           language: row.language,
           variant: row.variant,
           visitor_hash: row.visitorHash,
+          latitude: row.latitude,
+          longitude: row.longitude,
+          location_accuracy_m: row.locationAccuracyM,
+          location_source: row.locationSource,
         }));
         if (rows.length < SCAN_PAGE_SIZE) break;
         const last = rows[rows.length - 1];
@@ -188,7 +196,7 @@ export function exportEntries(userId: string): ExportEntry[] {
       path: "scans.csv",
       title: "Scans",
       description:
-        "One row per scan of your codes: time, approximate location (country, region, city), device, OS, browser, referring site, language and A/B variant. visitor_hash is a salted one-way hash that counts unique visitors per day; scanner IP addresses are never stored.",
+        "One row per scan of your codes: time, approximate location (country, region, city), device, OS, browser, referring site, language and A/B variant. visitor_hash is a salted one-way hash that counts unique visitors per day; scanner IP addresses are never stored. latitude and longitude are set only when a code asked for precise location and the scanner shared it (rounded to about 100 m); location_source is gps for those, ip when the code asked and the scanner didn't share.",
       columns: SCAN_COLUMNS,
       pages: scanPages,
       maxRows: MAX_SCAN_ROWS,

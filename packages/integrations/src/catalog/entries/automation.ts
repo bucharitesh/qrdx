@@ -5,8 +5,6 @@ import type {
   IntegrationCatalogEntry,
 } from "../types";
 
-const REPO = "https://github.com/bucharitesh/qrdx";
-
 const ADD_ENDPOINT: CatalogAction = {
   type: "link",
   label: "Add a webhook endpoint",
@@ -208,11 +206,11 @@ export function isFromQRdx(rawBody: string, header: string, secret: string) {
     builtBy: "QRdx",
     website: "https://n8n.io",
     docs: "/docs/developers/n8n",
-    note: "Not on npm yet. Install the nodes from source into a self-hosted n8n.",
+    note: "On npm as @qrdx/n8n-nodes-qrdx, for self-hosted n8n. n8n Cloud runs only nodes n8n has verified, and this one isn't yet.",
     primaryAction: {
       type: "link",
-      label: "View source",
-      href: `${REPO}/tree/main/plugins/n8n`,
+      label: "View on npm",
+      href: "https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx",
     },
     secondaryAction: {
       type: "link",
@@ -221,20 +219,12 @@ export function isFromQRdx(rawBody: string, header: string, secret: string) {
     },
     steps: [
       {
-        title: "Build the package",
+        title: "Install the nodes",
+        body: "In n8n, open Settings → Community Nodes, click Install and enter @qrdx/n8n-nodes-qrdx. Or install it from a terminal in the nodes folder of your n8n user folder, then restart n8n.",
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: `git clone ${REPO}.git\ncd qrdx && bun install\nbun run --filter n8n-nodes-qrdx build\ncd plugins/n8n && bun pm pack`,
-        },
-      },
-      {
-        title: "Install it in n8n",
-        body: "Install the .tgz file in the nodes folder of your n8n user folder, then restart n8n.",
-        snippet: {
-          label: "Terminal",
-          language: "bash",
-          code: "mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes\nnpm install /path/to/n8n-nodes-qrdx-0.1.0.tgz",
+          code: "mkdir -p ~/.n8n/nodes && cd ~/.n8n/nodes\nnpm install @qrdx/n8n-nodes-qrdx",
         },
       },
       {

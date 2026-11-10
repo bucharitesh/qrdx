@@ -1,6 +1,6 @@
 ---
 title: Landing pages
-description: Build a mobile page for a QR code from blocks, with no website needed. Link lists, business pages, vCard Plus and custom pages.
+description: Build a mobile page for a QR code from blocks, with no website needed. Link lists, business pages, vCard Plus, product pages and {facts.hostedPageTypes} page types in all.
 icon: PanelsTopLeft
 ---
 
@@ -9,16 +9,48 @@ A hosted landing page is a mobile page that QRdx serves for you at `https://qrdx
 ## Create a page
 
 1. Open [Dashboard → Pages & forms](/dashboard?to=pages) and click **New page**, or click **New code** on the codes list and pick a page type instead of **Website link**.
-2. Pick a page type and a template from its gallery:
-   - **Link list**: your links, socials and latest work on one page (Creator, Musician, Minimal, Podcast).
-   - **Business**: opening hours, location, contact details and a call to action (Local shop, Salon & studio, Professional services).
-   - **vCard Plus**: a digital business card with a **Save contact** button (Classic, Midnight, Minimal).
-   - **Custom page**: start blank or from an announcement layout.
-
-   Other page types (menus, coupons, events, app links, forms, PDFs, images, audio and video) appear in the same picker.
+2. Pick one of the {facts.hostedPageTypes} [page types](#page-types) and a template from its gallery.
 3. Click **Create page**. The editor opens with the template's blocks and the QR code is ready to download from **QR code**.
 
 Already printed a code that opens a website? Open it and click **Change type** to turn it into a page with the same short link. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
+
+Templates start with sample names, prices, numbers and photos so you can see how the page fits together. Until you first publish, the editor reminds you to replace them with your own.
+
+## Page types
+
+Every page type is a starting point: any block can be added to any page, and a page made from one type can look like another.
+
+| Page type | Made for | Starts with |
+| --- | --- | --- |
+| **Link list** | Link in bio, creators, podcasts | Profile header, links, social icons |
+| **Social media** | Every profile behind one code | Profile header, one row per network with your handle |
+| **Business** | Shops, salons, offices | Hours, address and map, contact, a call to action |
+| **vCard Plus** | Digital business cards | Contact card with **Save contact** |
+| **Menu** | Cafés, restaurants, bars | Menu, Wi-Fi, opening hours ([more](/docs/forms-and-pages#menu)) |
+| **Coupon** | Discounts and freebies | Coupon with barcode and **Redeem** ([more](/docs/forms-and-pages#coupon)) |
+| **Event** | Parties, conferences, webinars, weddings | Event with add-to-calendar ([more](/docs/forms-and-pages#event)) |
+| **App download** | One code for every app store | App download ([more](/docs/forms-and-pages#app-download)) |
+| **Feedback & forms** | Reviews, NPS surveys, sign-ups | Form and review links ([more](/docs/forms-and-pages#forms)) |
+| **Product** | Packaging, labels, hang tags | Ingredients, allergens, nutrition, certifications, care, GS1 Digital Link ([more](/docs/product-pages)) |
+| **Appointments** | Salons, clinics, tutors | Services and prices, a booking request form, hours |
+| **Payments & tips** | Tip jars, donations, invoices | Payment links and bank details to copy |
+| **Property listing** | Homes for sale or rent, open houses | Price and facts, photos, agent, a viewing request or sign-in form |
+| **Pet ID tag** | Collar tags, lost-pet posters | Call button, the pet's details, a "found it" form |
+| **Medical ID** | Tags, wristbands, allergy cards | Emergency contact, conditions, allergies, medication |
+| **PDF** | Brochures, manuals, document libraries | A PDF to read or download, or several files |
+| **Images** | Galleries and portfolios | Photo gallery |
+| **MP3 / Audio** | Music, podcasts, voice messages | Audio player |
+| **Video** | Product videos, clips | Video |
+| **Playlist** | Mixes, audio tours, audiobooks | Several tracks that play in a row |
+| **Custom page** | Anything else | A blank page or an announcement |
+
+Where file uploads aren't set up, the types built around an upload (PDF, Images, MP3 / Audio, Video and Playlist) are hidden from the picker.
+
+**Appointments** sends booking requests to the page's [responses](/docs/forms-and-pages#responses) and notifications, and can link to your booking tool. It doesn't show a live calendar of free times: you confirm each request yourself.
+
+**Payments & tips** never takes a payment. Each button opens the payment app's own page (PayPal, Venmo, Cash App, Revolut, Wise), and bank details, UPI IDs and wallet addresses have copy buttons.
+
+**Pet ID tag** and **Medical ID** pages can be read by anyone who scans the code. Add only what helps someone who finds your pet or helps you in an emergency.
 
 ## Edit and publish
 
@@ -38,12 +70,15 @@ Click **Publish** (or press <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>S</kbd>) to pu
 | Text | A heading and a paragraph (line breaks are kept) |
 | Button | One call to action: a web link, email address or phone number |
 | Link list | A stack of link buttons, with site icons for Instagram, YouTube, WhatsApp and more |
-| Social icons | Profiles as round icons or buttons |
+| Social icons | Profiles as round icons, buttons, or a list with each handle |
 | Image | A photo or banner, optionally linked |
 | Video | A YouTube, Vimeo or Loom video. It loads from the video site only after the visitor taps play |
 | Contact card | Name, job title, phones, emails, website, address, quick actions (call, WhatsApp, email, directions), **Save contact** and **Share** |
 | Address & map | Your address with Google Maps and Apple Maps directions, and an optional embedded map |
 | Opening hours | Hours per day (split shifts and past-midnight hours included) with an **Open now** badge in your time zone |
+| Details | Labels and values as a list or a grid of tiles (bedrooms, breed, blood type, net weight) |
+| Product details | Certifications, ingredients, allergens, a nutrition table, sections that open on tap, and the GTIN ([more](/docs/product-pages)) |
+| Payment links | PayPal, Venmo, Cash App, Revolut, Wise, UPI, bank transfer and crypto wallets. Buttons open each app; details have copy buttons. The page never takes the payment. |
 | Divider, Spacer | Layout helpers |
 
 ### vCard Plus and Save contact

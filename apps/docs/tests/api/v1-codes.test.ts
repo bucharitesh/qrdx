@@ -417,6 +417,7 @@ describe("GET /v1/codes", () => {
         "nfcLink",
         "organizationId",
         "pageId",
+        "preciseLocation",
         "scanCount",
         "shortLink",
         "slug",

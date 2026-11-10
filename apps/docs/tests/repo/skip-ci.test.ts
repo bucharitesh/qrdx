@@ -1,5 +1,8 @@
-// Vercel's ignored build step (scripts/skip-ci.js): only production and
-// staging build; previews need [preview]; [skip ci] skips everything.
+// Vercel's ignored build step (scripts/skip-ci.js): only production,
+// staging and preview/ branches build; [skip ci] skips everything. Vercel
+// doesn't create deployments for other branches at all (vercel.json
+// git.deploymentEnabled), which the last test checks.
+import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { describe, expect, it } from "vitest";
 
@@ -26,16 +29,13 @@ describe("skip-ci", () => {
     ).toBe(false);
   });
 
-  it("skips pull request previews unless asked", () => {
+  it("skips pull request previews except on preview/ branches", () => {
     expect(
       shouldSkip({ message: "feat: x", env: "preview", branch: "feat/x" }).skip,
     ).toBe(true);
     expect(
-      shouldSkip({
-        message: "feat: x [preview]",
-        env: "preview",
-        branch: "feat/x",
-      }).skip,
+      shouldSkip({ message: "feat: x", env: "preview", branch: "preview/x" })
+        .skip,
     ).toBe(false);
   });
 
@@ -47,5 +47,60 @@ describe("skip-ci", () => {
         branch: "main",
       }).skip,
     ).toBe(true);
+  });
+});
+
+// Vercel's rule for git.deploymentEnabled: branch keys are minimatch
+// patterns, unlisted branches deploy, and a branch deploys when at least one
+// matching rule is true. This config only uses three pattern shapes ("**",
+// "<prefix>/**" and exact names); the first test fails if another shape is
+// added, so this small matcher stays faithful to minimatch for our keys.
+const vercelJson = JSON.parse(
+  readFileSync(new URL("../../vercel.json", import.meta.url), "utf8"),
+) as { git?: { deploymentEnabled?: Record<string, boolean> } };
+const rules = vercelJson.git?.deploymentEnabled ?? {};
+
+function matches(pattern: string, branch: string): boolean {
+  if (pattern === "**") return true;
+  if (pattern.endsWith("/**")) return branch.startsWith(pattern.slice(0, -2));
+  return pattern === branch;
+}
+
+function deploys(branch: string): boolean {
+  const hits = Object.entries(rules).filter(([pattern]) =>
+    matches(pattern, branch),
+  );
+  return hits.length === 0 || hits.some(([, enabled]) => enabled);
+}
+
+describe("vercel.json git.deploymentEnabled", () => {
+  it("only uses pattern shapes this test understands", () => {
+    for (const pattern of Object.keys(rules)) {
+      expect(
+        pattern === "**" ||
+          /^[\w.-]+\/\*\*$/.test(pattern) ||
+          /^[\w./-]+$/.test(pattern),
+      ).toBe(true);
+    }
+  });
+
+  it("deploys main, staging and preview/ branches", () => {
+    for (const branch of ["main", "staging", "preview/x", "preview/a/b"]) {
+      expect(deploys(branch), branch).toBe(true);
+    }
+  });
+
+  it("creates no deployment for any other branch", () => {
+    for (const branch of [
+      "feat/x",
+      "fix/y",
+      "docs/z",
+      "dependabot/npm_and_yarn/next-16",
+      "release",
+      "mainline",
+      "staging-old",
+    ]) {
+      expect(deploys(branch), branch).toBe(false);
+    }
   });
 });

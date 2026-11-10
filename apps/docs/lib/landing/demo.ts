@@ -91,6 +91,34 @@ const AUDIO: Record<string, SampleAudio> = {
     cover: "cover-water-lily",
     tracks: ["From all of us at home"],
   },
+  "playlist/mixtape": {
+    cover: "cover-turntable",
+    tracks: ["Golden hour", "Coastline", "Slow lane", "Home by ten"],
+  },
+  "playlist/audio-tour": {
+    tracks: [
+      "1. The lighthouse",
+      "2. The fish market",
+      "3. The old customs house",
+      "4. The boatyard",
+    ],
+  },
+  "playlist/audiobook": {
+    tracks: [
+      "Chapter 1: The last ferry",
+      "Chapter 2: Storm season",
+      "Chapter 3: A light on the water",
+    ],
+  },
+};
+
+/** Downloads by "<type>/<template id>": sample PDFs with their labels. */
+const DOWNLOADS: Record<string, Array<{ file: string; label: string }>> = {
+  "pdf/documents": [
+    { file: "product-guide.pdf", label: "User manual" },
+    { file: "apartment-brochure.pdf", label: "Installation guide" },
+    { file: "restaurant-menu.pdf", label: "Spare parts list" },
+  ],
 };
 
 /** Sample PDF by "<type>/<template id>". */
@@ -135,6 +163,16 @@ const SAMPLES: Record<
   "video-file": (props) => (props.source ? null : { source: SAMPLE_VIDEO }),
   "file-download": (props, key) => {
     if (!isEmpty(props.files)) return null;
+    const downloads = DOWNLOADS[key];
+    if (downloads) {
+      return {
+        files: downloads.map(({ file, label }) => ({
+          source: sampleFile(file),
+          label,
+          kind: "pdf",
+        })),
+      };
+    }
     const gallery = GALLERIES[key];
     if (gallery) {
       return {

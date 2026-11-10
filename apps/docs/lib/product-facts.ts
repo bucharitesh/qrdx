@@ -35,6 +35,7 @@ import {
 } from "./affiliates/terms";
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
+import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
 
 export const PRODUCT_FACTS = {
   /** Shapes for the data modules (`bodyPattern`). */
@@ -53,6 +54,8 @@ export const PRODUCT_FACTS = {
   auditLogExportRows: AUDIT_EXPORT_MAX_ROWS.toLocaleString("en-US"),
   /** Symbologies /barcode-generator draws (lib/barcode/formats.ts). */
   barcodeFormats: BARCODE_FORMATS.length,
+  /** Hosted page types in the New code picker (lib/landing/page-type-ids.ts). */
+  hostedPageTypes: PAGE_TYPE_IDS.length,
   // The affiliate program's terms (lib/affiliates/terms.ts), for the legal
   // and help pages; the code reads the same constants.
   /** The commission, as copy writes it: "30" (followed by "%"). */

@@ -4,7 +4,8 @@ export type StatusPageKind =
   | "inactive"
   | "not-found"
   | "rate-limited"
-  | "unavailable";
+  | "unavailable"
+  | "invalid-gs1";
 
 const PAGES: Record<
   StatusPageKind,
@@ -27,6 +28,12 @@ const PAGES: Record<
     message:
       "This network opened a lot of QR codes in a short time. Please try again in a few seconds.",
   },
+  "invalid-gs1": {
+    status: 400,
+    title: "This product link isn't valid",
+    message:
+      "Its product number (GTIN) or batch details can't be read. Check the link, or scan the code on the pack again.",
+  },
   unavailable: {
     status: 503,
     title: "Something went wrong",
@@ -36,8 +43,12 @@ const PAGES: Record<
 };
 
 /** Tiny self-contained HTML page (no scripts) for codes that cannot redirect. */
-export function statusPage(kind: StatusPageKind): Response {
-  const { status, title, message } = PAGES[kind];
+export function statusPage(
+  kind: StatusPageKind,
+  { message: detail }: { message?: string } = {},
+): Response {
+  const { status, title } = PAGES[kind];
+  const message = detail ?? PAGES[kind].message;
   const origin = baseUrl.origin;
   const html = `<!doctype html>
 <html lang="en">

@@ -5,6 +5,7 @@ import {
   ChoiceField,
   ListEditor,
   SelectField,
+  TextField,
   UrlField,
 } from "@/components/landing/editor/fields";
 import {
@@ -30,7 +31,12 @@ export function SocialsEditor({
     <div className="space-y-4">
       <ListEditor<SocialItem>
         addLabel="Add profile"
-        create={() => ({ id: newItemId(), network: "instagram", url: "" })}
+        create={() => ({
+          id: newItemId(),
+          network: "instagram",
+          url: "",
+          handle: "",
+        })}
         itemLabel={(item) => getSocialNetwork(item.network).label}
         items={value.items}
         max={30}
@@ -58,6 +64,15 @@ export function SocialsEditor({
               placeholder={getSocialNetwork(item.network).placeholder}
               value={item.url}
             />
+            {value.style === "list" && (
+              <TextField
+                label="Handle"
+                maxLength={80}
+                onChange={(handle) => update({ handle })}
+                placeholder="@yourname"
+                value={item.handle}
+              />
+            )}
           </>
         )}
       />
@@ -67,6 +82,7 @@ export function SocialsEditor({
         options={[
           { value: "icons", label: "Icons" },
           { value: "buttons", label: "Buttons" },
+          { value: "list", label: "List" },
         ]}
         value={value.style}
       />
