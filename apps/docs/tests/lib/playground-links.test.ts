@@ -158,11 +158,9 @@ describe("other parameters", () => {
   });
 
   it("takes the Get code tabs that ship, with the code dialog", () => {
-    for (const lang of ["react", "shadcn", "image", "api", "mcp"]) {
+    for (const lang of ["react", "shadcn", "image", "api", "mcp", "cli"]) {
       expect(parseHref(`/playground?open=code&lang=${lang}`).lang).toBe(lang);
     }
-    // The CLI tab is hidden until a working @qrdx/cli is on npm.
-    expect(parseHref("/playground?open=code&lang=cli").lang).toBeUndefined();
     expect(parseHref("/playground?open=code&lang=vue").lang).toBeUndefined();
     expect(parseHref("/playground?lang=react").lang).toBeUndefined();
   });
