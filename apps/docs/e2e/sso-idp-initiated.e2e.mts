@@ -11,13 +11,13 @@
 //   NODE_OPTIONS="--require $PWD/e2e/sso/dns-preload.cjs" \
 //   QRDX_TEST_DNS_SERVER=127.0.0.1:<dns port> \
 //   BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:<idp port> \
-//     pnpm exec next dev -p <port> > <dev.log>
+//     bun x next dev -p <port> > <dev.log>
 //
 //   SSO_IDP_E2E_BASE_URL=http://localhost:<port> \
 //   SSO_IDP_E2E_IDP=http://localhost:<idp port> \
 //   SSO_IDP_E2E_DEV_LOG=<dev.log> SSO_IDP_E2E_DNS_FILE=<records.json> \
 //   SSO_IDP_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   SSO_IDP_E2E_SHOTS=<dir> pnpm exec tsx e2e/sso-idp-initiated.e2e.mts
+//   SSO_IDP_E2E_SHOTS=<dir> bun x tsx e2e/sso-idp-initiated.e2e.mts
 //
 // SSO_IDP_E2E_MOBILE=1: a 390 x 844 phone, screenshots in <shots>/mobile,
 // with a horizontal-scroll check on each.

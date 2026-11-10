@@ -4,7 +4,7 @@
 // schema can't load. These checks keep that text in step with the code.
 import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { PLAN_LIMITS, UNLIMITED } from "@/lib/plans";
 import { type BillingInterval, PAID_PLANS, PRICING } from "@/lib/pricing";
@@ -64,7 +64,7 @@ describe.each(["qr-io.mdx", "qr-code-creator.mdx"])(
     const years = (days: number) => days / 365;
     const count = (n: number) => n.toLocaleString("en-US");
 
-    it("states plan limits and prices that match the code", () => {
+    test("states plan limits and prices that match the code", () => {
       expect(pro.dynamicCodes).toBe(UNLIMITED);
       expect(pro.landingPages).toBe(UNLIMITED);
       expect(business.analyticsRetentionDays).toBe(UNLIMITED);
@@ -92,7 +92,7 @@ describe.each(["qr-io.mdx", "qr-code-creator.mdx"])(
       );
     });
 
-    it("uses the same numbers in the highlights and the body", () => {
+    test("uses the same numbers in the highlights and the body", () => {
       for (const phrase of [
         `QRdx Free has no time limit and includes ${free.dynamicCodes} dynamic codes and ${free.landingPages} hosted pages.`,
         `The Free plan adds ${free.dynamicCodes} dynamic codes and ${free.landingPages} hosted pages.`,

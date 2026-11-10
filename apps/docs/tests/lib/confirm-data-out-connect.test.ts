@@ -10,7 +10,7 @@
 // (tests/support/fake-db.ts); starting a provider's sign-in is recorded
 // instead of made.
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, test, vi } from "vitest";
 import { fakeDb } from "../support/fake-db";
 
 const state = vi.hoisted(() => ({
@@ -114,7 +114,7 @@ beforeEach(() => {
   state.remembered = [];
 });
 
-it("covers Slack and the data-out syncs, and nothing else", () => {
+test("covers Slack and the data-out syncs, and nothing else", () => {
   for (const provider of DATA_OUT) {
     expect(connectSendsDataOut(provider), provider).toBe(true);
   }

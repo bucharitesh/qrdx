@@ -7,7 +7,7 @@ Not sure where to start? See [Good first issues](#good-first-issues) below. For 
 ## Prerequisites
 
 - Node.js 22, version 22.22.3 or later (CI, Docker and production run Node 22)
-- pnpm 10 (the exact version is pinned in `package.json` under `packageManager`; `corepack enable` picks it up)
+- [Bun](https://bun.com/docs/installation) 1.4 to install dependencies and run scripts (the exact version is pinned in `package.json` under `packageManager`); the app, its tests and its builds run on Node.js
 - A Postgres database for the web app: a free [Neon](https://neon.tech) database, or the Docker Compose Postgres described below
 
 You don't need a database or any environment variables to work on the React library (`packages/qrdx`) or the CLI (`packages/cli`).
@@ -29,11 +29,13 @@ You don't need a database or any environment variables to work on the React libr
 2. **Install dependencies and build the engine**
 
    ```bash
-   pnpm install
-   pnpm --filter qrdx build:inplace
+   bun install
+   bun run --filter qrdx build:inplace
    ```
 
-   The app imports the QR engine from `packages/qrdx/dist`, so build it once after installing, and again with `build:inplace` after you change `packages/qrdx/src`. Git hooks rebuild it for you when a pull, rebase or branch switch changes the engine (set `QRDX_SKIP_ENGINE_REBUILD=1` to skip that). Don't run `pnpm build` inside `packages/qrdx` while the dev server is running: it deletes `dist/` first, and the app breaks until the build finishes.
+   The app imports the QR engine from `packages/qrdx/dist`, so build it once after installing, and again with `build:inplace` after you change `packages/qrdx/src`. Git hooks rebuild it for you when a pull, rebase or branch switch changes the engine (set `QRDX_SKIP_ENGINE_REBUILD=1` to skip that). Don't run `bun run build` inside `packages/qrdx` while the dev server is running: it deletes `dist/` first, and the app breaks until the build finishes.
+
+   To add a dependency, run `bun add <package>` (`bun add -d` for a dev dependency) in the folder of the package that imports it, and commit the updated `bun.lock`. Each package only sees the dependencies its own `package.json` lists.
 
 3. **Configure the environment**
 
@@ -51,10 +53,10 @@ You don't need a database or any environment variables to work on the React libr
    With Neon:
 
    ```bash
-   pnpm db:push
+   bun run db:push
    ```
 
-   `pnpm db:push` changes whatever database `DATABASE_URL` points at. Only run it against a development database of your own that you can throw away, never a shared or production one.
+   `bun run db:push` changes whatever database `DATABASE_URL` points at. Only run it against a development database of your own that you can throw away, never a shared or production one.
 
    Or with Postgres in Docker:
 
@@ -73,10 +75,10 @@ You don't need a database or any environment variables to work on the React libr
 5. **Run the app**
 
    ```bash
-   pnpm --filter docs dev
+   bun run --filter docs dev
    ```
 
-   Open http://localhost:3000. On a fresh clone, run `pnpm typegen:docs` once before your first typecheck (the pre-push hook also runs it). Without `apps/docs/.env.local` it uses the same placeholder settings as CI.
+   Open http://localhost:3000. On a fresh clone, run `bun run typegen:docs` once before your first typecheck (the pre-push hook also runs it). Without `apps/docs/.env.local` it uses the same placeholder settings as CI.
 
 ## Project structure
 
@@ -99,42 +101,44 @@ You don't need a database or any environment variables to work on the React libr
 CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `main`. Pushes to `staging` don't run it again: every change reaches `staging` through a pull request that already did. Both branches require the job to pass before anything merges.
 
 ```bash
-pnpm turbo build --filter=qrdx --filter=@qrdx/cli   # the docs app and CLI use qrdx's build output; the CLI tests run its dist/index.js
-pnpm typecheck                      # all packages with a typecheck script
-pnpm typegen:docs && pnpm typecheck:docs   # route types (PageProps, LayoutProps), then the app typecheck
-pnpm turbo test                     # every package's tests
-./apps/docs/node_modules/.bin/biome ci .
+bun x turbo build --filter=qrdx --filter=@qrdx/cli   # the docs app and CLI use qrdx's build output; the CLI tests run its dist/index.js
+bun run typecheck                   # all packages with a typecheck script
+bun run typegen:docs && bun run typecheck:docs   # route types (PageProps, LayoutProps), then the app typecheck
+bun run test                        # every package's tests, through turbo
+bun run lint:ci                     # ultracite check: Biome's lint and format rules over the whole repository
 ```
 
 A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Release pull requests into `main`, pushes to `main` and manual runs test everything. Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
 
-The Husky `pre-push` hook runs `pnpm prepush:quick`: the engine build, both typechecks, Biome and the affected tests, compared with `origin/staging`. Run every test with `QRDX_PREPUSH=full git push` or `pnpm prepush`, or skip the hook once with `git push --no-verify`.
+The Husky `pre-push` hook runs `bun run prepush:quick`: the engine build, both typechecks, the lint check and the affected tests, compared with `origin/staging`. Run every test with `QRDX_PREPUSH=full git push` or `bun run prepush`, or skip the hook once with `git push --no-verify`.
 
-To auto-fix formatting and import order in the files you changed:
+To auto-fix formatting, import order and the lint rules that have a safe fix in the files you changed, run this from the repository root:
 
 ```bash
-./apps/docs/node_modules/.bin/biome check --write <files>
+bun x ultracite fix <files>
 ```
 
 ### Tests
 
 | Suite | Where | Run |
 | --- | --- | --- |
-| Unit and integration (Vitest) | `apps/docs/tests/**`, `packages/*/tests` | `pnpm --filter docs test:unit`, or `pnpm test` for the monorepo |
-| node:test suites next to the code | `apps/docs/**/*.test.ts` outside `tests/` and `e2e/` | `pnpm --filter docs test:node` |
-| Playground e2e | `apps/docs/e2e/playground.e2e.ts` | `pnpm --filter docs test:e2e` |
-| Signed-in app e2e | `apps/docs/e2e/app.e2e.ts` | `pnpm --filter docs test:e2e:app` (needs a session cookie, below) |
-| Public site e2e | `apps/docs/e2e/site.e2e.ts` | `pnpm --filter docs test:e2e:site` |
+| Unit and integration (Vitest) | `apps/docs/tests/**`, `packages/*/tests` | `bun run --filter docs test:unit`, or `bun run test` for the monorepo |
+| node:test suites next to the code | `apps/docs/**/*.test.ts` outside `tests/` and `e2e/` | `bun run --filter docs test:node` |
+| Playground e2e | `apps/docs/e2e/playground.e2e.ts` | `bun run --filter docs test:e2e` |
+| Signed-in app e2e | `apps/docs/e2e/app.e2e.ts` | `bun run --filter docs test:e2e:app` (needs a session cookie, below) |
+| Public site e2e | `apps/docs/e2e/site.e2e.ts` | `bun run --filter docs test:e2e:site` |
 
-`pnpm prepush` runs the first two. They need no database, network or email: route handlers run against an in-memory database (`apps/docs/tests/support/fake-db.ts`) that evaluates the app's real Drizzle queries. A known bug can be recorded as `it.fails` with a `// BUG (file): …` comment until it's fixed.
+`bun run prepush` runs the first two. They need no database, network or email: route handlers run against an in-memory database (`apps/docs/tests/support/fake-db.ts`) that evaluates the app's real Drizzle queries. A known bug can be recorded as `it.fails` with a `// BUG (file): …` comment until it's fixed.
 
-The e2e suites drive headless Chrome over the DevTools Protocol, so they need Chrome (or `CHROME_PATH`) and a running dev server (`pnpm --filter docs dev`). They aren't part of `pnpm prepush`. Each one exits 0 with a notice when the server or Chrome is missing. `E2E_BASE_URL` points them at another server, and `E2E_SUITES` runs some of their areas, for example `E2E_SUITES=oauth,webhooks` or `E2E_SUITES=image,mcp`.
+Run these through `bun run`. `bun test` is Bun's own test runner, and these Vitest and `node:test` suites aren't written for it.
+
+The e2e suites drive headless Chrome over the DevTools Protocol, so they need Chrome (or `CHROME_PATH`) and a running dev server (`bun run --filter docs dev`). They aren't part of `bun run prepush`. Each one exits 0 with a notice when the server or Chrome is missing. `E2E_BASE_URL` points them at another server, and `E2E_SUITES` runs some of their areas, for example `E2E_SUITES=oauth,webhooks` or `E2E_SUITES=image,mcp`.
 
 The app suite signs in with a test account's Better Auth session cookie. Sign in to your local app with a throwaway account, copy the `better-auth.session_token` cookie, and pass it as `E2E_SESSION_COOKIE='better-auth.session_token=<value>'` or put that pair in a file named by `E2E_COOKIE_FILE`. Never commit it. The suite creates codes, a folder, a tag, a hosted page, an OAuth app and (on Business) a webhook, all named `E2E …`, under that account and deletes them again. Webhook URLs only ever point at `https://example.com`.
 
 ### Database changes
 
-Edit `packages/database/schema.ts` and apply it to your own development database with `pnpm db:push`.
+Edit `packages/database/schema.ts` and apply it to your own development database with `bun run db:push`.
 
 A maintainer applies schema changes to the production database before the code that needs them ships, so the code already running has to keep working against the new schema. That means schema changes are additive and safe to run twice: new columns are nullable or have a default, and a pull request never drops or renames a column or table. Put the SQL for your change in `packages/database/manual-sql/`, numbered after the last file there and guarded so it can run more than once (`IF NOT EXISTS`), and describe it in your pull request.
 

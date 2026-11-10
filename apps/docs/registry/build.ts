@@ -3,7 +3,7 @@
  * registry.json: one item per component with its source inlined (imports
  * rewritten for shadcn/ui projects), plus the registry index.
  *
- * Run from apps/docs:  pnpm exec tsx registry/build.ts [--check]
+ * Run from apps/docs:  bun x tsx registry/build.ts [--check]
  * --check exits non-zero when public/r is out of date instead of writing it.
  */
 import { spawnSync } from "node:child_process";
@@ -71,15 +71,16 @@ for (const [file, data] of outputs) {
 if (check) {
   if (stale.length > 0) {
     console.error(
-      `Registry is out of date: ${stale.join(", ")}\nRun: pnpm exec tsx registry/build.ts`,
+      `Registry is out of date: ${stale.join(", ")}\nRun: bun x tsx registry/build.ts`,
     );
     process.exit(1);
   }
   console.log(`Registry is up to date (${registry.items.length} items).`);
 } else {
+  // Ultracite is installed at the repository root.
   spawnSync(
-    path.join(root, "node_modules/.bin/biome"),
-    ["format", "--write", outDir],
+    path.join(root, "..", "..", "node_modules/.bin/ultracite"),
+    ["fix", outDir],
     { stdio: "inherit" },
   );
 }

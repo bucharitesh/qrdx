@@ -9,7 +9,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, test } from "vitest";
 import { getFrameDimensions } from "../src/frame";
 import { OFFICIAL_FRAMES } from "../src/frames/official";
 import {
@@ -59,7 +59,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
   (_id, official) => {
     const frame: AnyQRFrame = { style: "custom", spec: official.spec };
 
-    it("decodes a link, Wi-Fi and a contact at phone distances", () => {
+    test("decodes a link, Wi-Fi and a contact at phone distances", () => {
       const failed: string[] = [];
       for (const [name, value] of PAYLOADS) {
         for (const px of PHONE_MODULE_SIZES) {
@@ -85,7 +85,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
     // below the phone-distance floor (4 px, tested above), where every
     // framed code, the built-in frames included, decodes at some widths
     // and not others depending on pixel phase. It must read at 320 px.
-    it("decodes at 160 and 320 px wide (the contact card at 320)", () => {
+    test("decodes at 160 and 320 px wide (the contact card at 320)", () => {
       const failed: string[] = [];
       for (const [name, value] of PAYLOADS) {
         for (const width of name === "vcard" ? [320] : [160, 320]) {
@@ -97,7 +97,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
       expect(failed).toEqual([]);
     });
 
-    it("scores Great", async () => {
+    test("scores Great", async () => {
       for (const value of [SAMPLE_PAYLOADS.link, SAMPLE_PAYLOADS.wifi]) {
         const props = propsFor(frame, value, 1024);
         const artwork = getFrameDimensions(1024, frame);
@@ -115,7 +115,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
       }
     });
 
-    it.skipIf(!ZBAR)("reads with zbar", async () => {
+    test.skipIf(!ZBAR)("reads with zbar", async () => {
       const failed: string[] = [];
       for (const [name, value] of PAYLOADS) {
         const props = propsFor(frame, value);

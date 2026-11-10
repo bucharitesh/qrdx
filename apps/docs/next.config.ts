@@ -76,14 +76,21 @@ const cspHeaders = cspEnabled
 
 let nextConfig: NextConfig = {
   ...config,
-  // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone pnpm build
+  // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone bun run build
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
   // `next build` type-checks the app without its tests. Some tests import
   // files from outside the app (plugins/*, .github/scripts) that a Docker
   // build doesn't copy in. `tsc --noEmit` and CI still check every test.
+  //
+  // On Vercel the check is skipped: the Hobby build machine has 8 GB, and
+  // after the switch to Bun the in-build type check ran out of memory right
+  // after compiling (2026-11-11). The required "Typecheck, test, lint" CI job
+  // type-checks every pull request and release before anything reaches main,
+  // so Vercel would only repeat it. Docker and local builds still check.
   typescript: {
     tsconfigPath: "tsconfig.build.json",
+    ignoreBuildErrors: process.env.VERCEL === "1",
   },
   // `next dev` prints every server action call with its arguments. Those
   // include secrets typed into settings (an SSO client secret, 2FA and email
@@ -180,7 +187,7 @@ let nextConfig: NextConfig = {
         has: [{ type: "host" as const, value: host }],
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       })),
-      // The OpenAPI document (pnpm openapi:generate): readable by API tools
+      // The OpenAPI document (bun run openapi:generate): readable by API tools
       // on any origin (Swagger Editor, Postman on the web, AI agents).
       {
         source: "/openapi.json",

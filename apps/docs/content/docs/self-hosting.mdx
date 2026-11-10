@@ -12,9 +12,9 @@ QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two
 
 ## Requirements
 
-- Docker with Compose v2 and BuildKit (Docker Desktop and current Docker Engine include both), or Node.js 22 (22.22.3 or later) and pnpm 10 for the manual setup
+- Docker with Compose v2 and BuildKit (Docker Desktop and current Docker Engine include both), or Node.js 22 (22.22.3 or later) and [Bun](https://bun.com/docs/installation) 1.4 for the manual setup
 - At least 8 GB of memory for Docker while the image builds
-- A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`. `pnpm dev` prints them in the terminal instead, but the Docker image doesn't, so a local Docker test needs GitHub or Google sign-in.
+- A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`. `bun run dev` prints them in the terminal instead, but the Docker image doesn't, so a local Docker test needs GitHub or Google sign-in.
 - Postgres: the container bundled in `docker-compose.yml`, or a [Neon](https://neon.tech) database
 
 ### How the database connection works
@@ -105,23 +105,23 @@ docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
 ```bash
 git clone https://github.com/bucharitesh/qrdx.git
 cd qrdx
-pnpm install
+bun install
 
 cp .env.example apps/docs/.env.local                    # then edit it
 echo 'DATABASE_URL=<your connection string>' > packages/database/.env
 
-pnpm db:push                                             # apply the schema
-pnpm --filter docs dev                                   # http://localhost:3000
+bun run db:push                                          # apply the schema
+bun run --filter docs dev                                # http://localhost:3000
 ```
 
 For production, build and start the app:
 
 ```bash
-pnpm turbo build --filter=docs
-pnpm --filter docs start
+bun x turbo build --filter=docs
+bun run --filter docs start
 ```
 
-`pnpm db:push` connects with Neon's driver, so it needs a Neon database. To use the Docker Postgres for local development instead, start it with `docker compose up -d db db-proxy`, apply the schema with `docker compose run --rm migrate`, and set these in `apps/docs/.env.local`:
+`bun run db:push` connects with Neon's driver, so it needs a Neon database. To use the Docker Postgres for local development instead, start it with `docker compose up -d db db-proxy`, apply the schema with `docker compose run --rm migrate`, and set these in `apps/docs/.env.local`:
 
 ```bash
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/qrdx
@@ -207,7 +207,7 @@ git pull
 docker compose up -d --build
 ```
 
-For the manual setup, run `git pull`, `pnpm install` and `pnpm db:push`, then rebuild.
+For the manual setup, run `git pull`, `bun install` and `bun run db:push`, then rebuild.
 
 If a schema change would drop data, `drizzle-kit push` asks for confirmation. In that case, run `docker compose run --rm migrate` in a terminal to review and confirm the changes.
 

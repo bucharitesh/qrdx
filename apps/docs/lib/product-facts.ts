@@ -15,7 +15,7 @@
 // client-side config import it.
 //
 // The catalogues come from the engine's source, not "qrdx/types": that export
-// points at dist/, which doesn't exist yet when `pnpm install` runs the docs
+// points at dist/, which doesn't exist yet when `bun install` runs the docs
 // postinstall (fumadocs-mdx loads source.config.ts, which imports this file),
 // so CI and Vercel failed at install. These files only depend on zod.
 import { CORNER_EYE_DOT_PATTERNS } from "../../../packages/qrdx/types/corner-dot";

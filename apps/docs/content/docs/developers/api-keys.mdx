@@ -58,4 +58,4 @@ Each person can have up to 25 active keys in each workspace. Revoked and expired
 
 ## Self-hosting
 
-A [self-hosted](/docs/self-hosting) instance needs the `api_key` table in its database, which the usual schema sync after an update creates (the `migrate` service with Docker, `pnpm db:push` otherwise; see [updating](/docs/self-hosting)). Until it has one, Settings → API keys & apps says API keys aren't available and the API refuses keys with `401`. Its API lives at `/api/v1` on its own domain, which is the address the new-key dialog fills in.
+A [self-hosted](/docs/self-hosting) instance needs the `api_key` table in its database, which the usual schema sync after an update creates (the `migrate` service with Docker, `bun run db:push` otherwise; see [updating](/docs/self-hosting)). Until it has one, Settings → API keys & apps says API keys aren't available and the API refuses keys with `401`. Its API lives at `/api/v1` on its own domain, which is the address the new-key dialog fills in.

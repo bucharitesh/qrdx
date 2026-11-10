@@ -1,8 +1,8 @@
-// The Dependabot alerts on pnpm-lock.yaml (2026-11-06, 2026-11-10): no
-// package in the lockfile resolves inside a vulnerable range that has a fix.
+// The Dependabot alerts on the lockfile (2026-11-06, 2026-11-10): no
+// package in bun.lock resolves inside a vulnerable range that has a fix.
 // Fixed by updating the dependency that pulls the package in where a newer
 // release takes the fix, otherwise through the root package.json's
-// pnpm.overrides, scoped to the vulnerable range or to the parent. The ones
+// overrides, scoped to the vulnerable range or to the parent. The ones
 // left open say why.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -92,8 +92,9 @@ const OPEN: (Advisory & { why: string })[] = [
 /** Every version of `pkg` the lockfile resolves. */
 function lockedVersions(lock: string, pkg: string): string[] {
   const escaped = pkg.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+  // bun.lock "packages" entries: `"<path>": ["<name>@<version>", ...]`
   const pattern = new RegExp(
-    `^ {2}'?${escaped}@(\\d+\\.\\d+\\.\\d+[^:(']*)'?:`,
+    `^ {4}"[^"]+": \\["${escaped}@(\\d+\\.\\d+\\.\\d+[^"]*)"`,
     "gm",
   );
   return [...new Set([...lock.matchAll(pattern)].map((m) => m[1] as string))];
@@ -107,9 +108,9 @@ const inRange = (version: string, advisory: Advisory) => {
   );
 };
 
-const lock = readFileSync(join(process.cwd(), "../../pnpm-lock.yaml"), "utf8");
+const lock = readFileSync(join(process.cwd(), "../../bun.lock"), "utf8");
 
-describe("pnpm-lock.yaml against the Dependabot alerts", () => {
+describe("bun.lock against the Dependabot alerts", () => {
   it("resolves nothing inside a range with a fix the dependents can take", () => {
     const vulnerable = FIXED.flatMap((advisory) =>
       lockedVersions(lock, advisory.pkg)

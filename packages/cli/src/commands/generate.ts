@@ -446,7 +446,7 @@ function isCancel(value: unknown): boolean {
 function handleCancel(): never {
   p.cancel("Cancelled.");
   console.error(
-    `${DIM}Tip:${RESET} ${TEXT}qrdx generate "https://…" -o qr.svg${RESET} — local dev: ${TEXT}pnpm qrdx -- generate …${RESET}`
+    `${DIM}Tip:${RESET} ${TEXT}qrdx generate "https://…" -o qr.svg${RESET} — local dev: ${TEXT}bun run qrdx generate …${RESET}`
   );
   process.exit(0);
 }

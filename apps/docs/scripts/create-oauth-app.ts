@@ -2,7 +2,7 @@
  * Create an OAuth app for external integrations.
  *
  * Usage (from apps/docs):
- *   pnpm exec tsx scripts/create-oauth-app.ts \
+ *   bun x tsx scripts/create-oauth-app.ts \
  *     --name "My App" \
  *     --redirect-uris "http://localhost:3000/callback,https://myapp.com/callback" \
  *     [--scopes "themes:read,profile:read"] \
@@ -36,7 +36,7 @@ async function main() {
 
   if (!args.name || !args["redirect-uris"]) {
     console.error(
-      "Usage: pnpm exec tsx scripts/create-oauth-app.ts --name <name> --redirect-uris <uri1,uri2> [--scopes <scope1,scope2>] [--description <desc>]",
+      "Usage: bun x tsx scripts/create-oauth-app.ts --name <name> --redirect-uris <uri1,uri2> [--scopes <scope1,scope2>] [--description <desc>]",
     );
     process.exit(1);
   }

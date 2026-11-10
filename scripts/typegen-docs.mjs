@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Generates the docs app's route types (PageProps, LayoutProps,
-// RouteContext) with `next typegen`, so `pnpm typecheck:docs` works in a
+// RouteContext) with `next typegen`, so `bun run typecheck:docs` works in a
 // fresh checkout or worktree. The pre-push hook runs it before the docs
 // typecheck.
 //
@@ -40,9 +40,9 @@ if (filled.length > 0) {
   );
 }
 
-const result = spawnSync(
-  "pnpm",
-  ["--filter", "docs", "exec", "next", "typegen"],
-  { cwd: root, env, stdio: "inherit" }
-);
+const result = spawnSync("bun", ["x", "next", "typegen"], {
+  cwd: docs,
+  env,
+  stdio: "inherit",
+});
 process.exit(result.status ?? 1);

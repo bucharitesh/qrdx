@@ -6,7 +6,7 @@
 // compiler (fonts), so the file is written by the seed test rather than a
 // tsx script:
 //
-//   cd apps/docs && UPDATE_COMMUNITY_SEED_PAGES=1 pnpm exec vitest run tests/database/seed-community.test.ts
+//   cd apps/docs && UPDATE_COMMUNITY_SEED_PAGES=1 bun x vitest run tests/database/seed-community.test.ts
 //
 // and the test fails while the file is stale. Items already seeded never
 // change (published versions are immutable).

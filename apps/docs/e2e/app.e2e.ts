@@ -15,7 +15,7 @@
 //   webhooks   add and delete an endpoint (or the Business plan gate)
 //   settings   every settings page renders with a heading and no page errors
 //
-//   E2E_COOKIE_FILE=<path to cookie.txt> pnpm --filter docs test:e2e:app
+//   E2E_COOKIE_FILE=<path to cookie.txt> bun run --filter docs test:e2e:app
 //
 // E2E_SESSION_COOKIE (the `better-auth.session_token=…` pair) works instead of
 // E2E_COOKIE_FILE. E2E_BASE_URL defaults to http://localhost:3000;

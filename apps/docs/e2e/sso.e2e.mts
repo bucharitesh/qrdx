@@ -8,11 +8,11 @@
 //   node e2e/sso/mock-idp.mjs 4455   (or another port: SSO_E2E_IDP)
 //   NODE_OPTIONS="--require $PWD/e2e/sso/dns-preload.cjs" \
 //   BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:4455 \
-//     pnpm exec next dev -p <port> > <dev.log>
+//     bun x next dev -p <port> > <dev.log>
 //
 //   SSO_E2E_BASE_URL=http://localhost:<port> SSO_E2E_DEV_LOG=<dev.log> \
 //   SSO_E2E_DNS_FILE=<records.json> SSO_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   SSO_E2E_SHOTS=<dir> pnpm exec tsx e2e/sso.e2e.mts
+//   SSO_E2E_SHOTS=<dir> bun x tsx e2e/sso.e2e.mts
 //
 // Covers (also: SSO sign-ins open the SSO workspace; two-step verification
 // over OIDC and SAML; SAML refusals land on /sign-in): plan gate (non-Business page, sign-in refused after a downgrade,

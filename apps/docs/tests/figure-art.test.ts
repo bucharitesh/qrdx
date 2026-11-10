@@ -77,7 +77,7 @@ describe("QRdx figures", () => {
     );
     const markup = file.match(/const MARKUP =\s+'(.*)';/)?.[1];
     // Stale output means figures.ts or codes.ts changed without regenerating:
-    // pnpm exec tsx scripts/figure-art/generate.ts
+    // bun x tsx scripts/figure-art/generate.ts
     expect(markup).toBe(renderFigure(name));
     const index = readFileSync(join(FIGURES_DIR, "index.ts"), "utf8");
     expect(index).toContain(
