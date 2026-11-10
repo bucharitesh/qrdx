@@ -18,6 +18,7 @@ import {
   type SlackMessage,
   TOO_LONG_TEXT,
   tooLongForSlack,
+  trackedFollowUp,
   trackedMessage,
 } from "./messages";
 import { isSlackResponseUrl } from "./slack-api";
@@ -113,7 +114,7 @@ async function linkPrompt(ask: BotAsk, lead: string): Promise<SlackMessage> {
     secret,
   );
   return noteWithButton(
-    `${lead} The button works for 10 minutes and only links your Slack account.`,
+    `${lead} The button works for 10 minutes, and QRdx asks you to sign in with Slack to show this Slack account is yours.`,
     {
       label: "Link QRdx account",
       url: absoluteUrl(`${LINK_PAGE_PATH}?t=${encodeURIComponent(token)}`),
@@ -189,14 +190,19 @@ export async function answer(ask: BotAsk): Promise<BotAnswer> {
   }
 }
 
+export interface TrackReply {
+  message: SlackMessage;
+  private: boolean;
+  /** After a public reply: what only the person who asked should see */
+  followUp?: SlackMessage;
+}
+
 /**
  * Makes the tracked code and returns the message to post: the code for the
- * channel, or a private note saying what stopped it.
+ * channel, with its dashboard link as a private follow-up, or a private note
+ * saying what stopped it.
  */
-export async function runTrack(
-  ask: BotAsk,
-  url: string,
-): Promise<{ message: SlackMessage; private: boolean }> {
+export async function runTrack(ask: BotAsk, url: string): Promise<TrackReply> {
   const result = await createTrackedCode({
     teamId: ask.team.teamId,
     slackUserId: ask.slackUserId,
@@ -205,7 +211,7 @@ export async function runTrack(
   if (result.ok) {
     const message = trackedMessage(result);
     return message
-      ? { message, private: false }
+      ? { message, private: false, followUp: trackedFollowUp(result) }
       : { message: tooLongForSlack(), private: true };
   }
   if (result.reason === "not_linked") {

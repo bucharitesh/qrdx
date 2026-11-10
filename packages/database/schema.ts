@@ -931,7 +931,7 @@ export const workspaceAuditLog = pgTable(
     // No FKs: rows outlive the actor and the target. Deleted with the
     // workspace by the app, and after 365 days by the daily cron.
     organizationId: text("organization_id").notNull(),
-    actorType: text("actor_type").notNull(), // user | api_key | oauth_app | system
+    actorType: text("actor_type").notNull(), // user | api_key | oauth_app | slack | system
     actorUserId: text("actor_user_id"),
     // Snapshot of who did it ("Ana <ana@acme.com>", the key's or app's name).
     actorLabel: text("actor_label"),
