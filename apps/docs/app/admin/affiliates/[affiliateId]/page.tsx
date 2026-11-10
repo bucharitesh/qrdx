@@ -11,10 +11,21 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { fetchUsdRates } from "@/lib/affiliates/exchange-rates";
 import { referralLinkLabel } from "@/lib/affiliates/links";
+import {
+  type QuoteResult,
+  quotePayout,
+  signPayoutQuote,
+} from "@/lib/affiliates/payout-quote";
 import { loadAffiliateForAdmin } from "@/lib/affiliates/program";
-import { currencyEntries, minimumPayout } from "@/lib/affiliates/rules";
-import { formatMinorAmount } from "@/lib/affiliates/terms";
+import { meetsMinimumPayout } from "@/lib/affiliates/rules";
+import {
+  AFFILIATE_FX_SOURCE_URL,
+  AFFILIATE_MIN_PAYOUT_LABEL,
+  AFFILIATE_PAYOUT_CURRENCY,
+  formatMinorAmount,
+} from "@/lib/affiliates/terms";
 import { AdminAction } from "../../_components/admin-action";
 import { Empty, Facts, Row, Rows } from "../../_components/panel";
 import { Section } from "../../_components/stat-card";
@@ -38,6 +49,15 @@ const VOID_LABELS: Record<string, string> = {
   admin: "voided by an admin",
 };
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** "today", "1 day ago", "12 days ago" */
+function daysAgo(date: Date, now: Date): string {
+  const days = Math.floor((now.getTime() - date.getTime()) / DAY_MS);
+  if (days <= 0) return "today";
+  return days === 1 ? "1 day ago" : `${formatNumber(days)} days ago`;
+}
+
 export default async function AdminAffiliatePage({
   params,
 }: {
@@ -45,7 +65,9 @@ export default async function AdminAffiliatePage({
 }) {
   await requireAdmin();
   const { affiliateId } = await params;
-  const loaded = await loadAffiliateForAdmin(affiliateId);
+  // One moment for the whole page: "Mark paid" covers what was payable then.
+  const shownAt = new Date();
+  const loaded = await loadAffiliateForAdmin(affiliateId, shownAt);
   if (!loaded.ready) {
     return (
       <p className="bg-muted/40 rounded-lg border p-4 text-sm">
@@ -58,6 +80,20 @@ export default async function AdminAffiliatePage({
   const detail = loaded.value;
   if (!detail) notFound();
   const { affiliate: row, commissions, payouts } = detail;
+  const payable = row.totals.payable;
+  const needsRates = Object.entries(payable).some(
+    ([currency, amount]) =>
+      amount !== 0 && currency !== AFFILIATE_PAYOUT_CURRENCY,
+  );
+  const quoted: QuoteResult | null =
+    Object.keys(payable).length === 0
+      ? null
+      : quotePayout({
+          affiliateId: row.id,
+          cutoff: shownAt,
+          byCurrency: payable,
+          rates: needsRates ? await fetchUsdRates() : null,
+        });
 
   return (
     <div className="space-y-4">
@@ -88,7 +124,18 @@ export default async function AdminAffiliatePage({
             },
             { label: "Applied", value: formatDate(row.createdAt) },
             { label: "Approved", value: formatDate(row.approvedAt) },
-            { label: "PayPal email", value: row.paypalEmail ?? "Not set" },
+            {
+              label: "Referral code",
+              value: row.previousCode
+                ? `${row.code} (chosen; ${row.previousCode} still works)`
+                : row.code,
+            },
+            {
+              label: "PayPal email",
+              value: row.paypalEmail
+                ? `${row.paypalEmail}${row.paypalEmailChangedAt ? `, changed ${daysAgo(row.paypalEmailChangedAt, shownAt)}` : ""}`
+                : "Not set",
+            },
             { label: "Link clicks", value: formatNumber(row.clickCount) },
             { label: "Sign-ups", value: formatNumber(row.signUps) },
             {
@@ -133,61 +180,13 @@ export default async function AdminAffiliatePage({
       </Section>
 
       <Section
-        description="Send the money through PayPal first, then record it here with PayPal's transaction ID. Each currency is paid on its own."
+        description={`Everything payable is paid together in US dollars, from ${AFFILIATE_MIN_PAYOUT_LABEL}. Other currencies are converted at the rates shown. Send the money through PayPal first, then record it here with PayPal's transaction ID.`}
         title="Payable now"
       >
-        {Object.keys(row.totals.payable).length === 0 ? (
+        {!quoted ? (
           <Empty>Nothing is past its hold and unpaid.</Empty>
         ) : (
-          <Rows>
-            {currencyEntries(row.totals.payable).map(([currency, amount]) => {
-              const minimum = minimumPayout(currency);
-              const belowMinimum = minimum === null || amount < minimum;
-              const blocked =
-                row.status !== "approved" || !row.paypalEmail || belowMinimum;
-              const hint =
-                row.status !== "approved"
-                  ? "Only approved affiliates can be paid."
-                  : !row.paypalEmail
-                    ? "They haven't added a PayPal email yet."
-                    : minimum === null
-                      ? `No minimum is set for ${currency.toUpperCase()}.`
-                      : belowMinimum
-                        ? `Below the minimum of ${formatMinorAmount(minimum, currency)}.`
-                        : undefined;
-              return (
-                <Row
-                  actions={
-                    <AdminAction
-                      action="markAffiliatePaid"
-                      confirmLabel="Mark paid"
-                      description={`Records ${formatMinorAmount(amount, currency)} sent to ${row.paypalEmail ?? "their PayPal"} and marks every payable ${currency.toUpperCase()} commission paid. Do this after the PayPal payment went through.`}
-                      disabled={blocked}
-                      disabledHint={hint}
-                      input={{ affiliateId: row.id, currency, amount }}
-                      label="Mark paid"
-                      reasonOptional
-                      success="Payout recorded"
-                      textField={{
-                        name: "paypalReference",
-                        label: "PayPal transaction ID",
-                        maxLength: 64,
-                      }}
-                      title={`Mark ${formatMinorAmount(amount, currency)} paid?`}
-                      variant="default"
-                    />
-                  }
-                  key={currency}
-                  meta={hint}
-                  title={
-                    <span className="tabular-nums">
-                      {formatMinorAmount(amount, currency)}
-                    </span>
-                  }
-                />
-              );
-            })}
-          </Rows>
+          <PayableNow quoted={quoted} row={row} shownAt={shownAt} />
         )}
       </Section>
 
@@ -211,12 +210,23 @@ export default async function AdminAffiliatePage({
                   <TableCell>{formatDate(payout.paidAt)}</TableCell>
                   <TableCell className="tabular-nums">
                     {formatMinorAmount(payout.amount, payout.currency)}
+                    {payout.fxRates && payout.fxDate && (
+                      <span className="text-muted-foreground block text-xs">
+                        {Object.entries(payout.fxRates)
+                          .map(
+                            ([currency, rate]) =>
+                              `${currency.toUpperCase()} at ${rate}`,
+                          )
+                          .join(", ")}{" "}
+                        ({payout.fxSource}, {payout.fxDate})
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {formatNumber(payout.commissionCount)}
                   </TableCell>
                   <TableCell className="max-w-48 truncate">
-                    {payout.paypalEmail}
+                    {payout.paypalEmail ?? "—"}
                   </TableCell>
                   <TableCell className="font-mono text-xs">
                     {payout.paypalReference}
@@ -296,5 +306,111 @@ export default async function AdminAffiliatePage({
         )}
       </Section>
     </div>
+  );
+}
+
+function PayableNow({
+  quoted,
+  row,
+  shownAt,
+}: {
+  quoted: QuoteResult;
+  row: {
+    id: string;
+    status: string;
+    paypalEmail: string | null;
+    paypalEmailChangedAt: Date | null;
+  };
+  shownAt: Date;
+}) {
+  if (!quoted.ok) {
+    return (
+      <p className="bg-muted/40 rounded-lg border p-4 text-sm" role="alert">
+        No exchange rate for{" "}
+        {quoted.currencies.map((c) => c.toUpperCase()).join(", ")}:{" "}
+        {quoted.detail} Nothing is converted without a rate, so this can't be
+        marked paid until one is available. Reload later.
+      </p>
+    );
+  }
+  const { quote, lines } = quoted;
+  const total = formatMinorAmount(quote.usdTotal, AFFILIATE_PAYOUT_CURRENCY);
+  const belowMinimum = !meetsMinimumPayout(quote.usdTotal);
+  const hint =
+    row.status !== "approved"
+      ? "Only approved affiliates can be paid."
+      : !row.paypalEmail
+        ? "They haven't added a PayPal email yet."
+        : belowMinimum
+          ? `Below the minimum of ${AFFILIATE_MIN_PAYOUT_LABEL}; it carries over.`
+          : undefined;
+  const changed = row.paypalEmailChangedAt
+    ? ` Their PayPal email changed ${daysAgo(row.paypalEmailChangedAt, shownAt)}.`
+    : "";
+  return (
+    <Rows>
+      {lines.map((line) => (
+        <Row
+          key={line.currency}
+          meta={
+            line.rate
+              ? `× ${line.rate} US$ per ${line.currency.toUpperCase()} = ${formatMinorAmount(line.usdCents, AFFILIATE_PAYOUT_CURRENCY)}`
+              : undefined
+          }
+          title={
+            <span className="tabular-nums">
+              {formatMinorAmount(line.amount, line.currency)}
+            </span>
+          }
+        />
+      ))}
+      <Row
+        actions={
+          <AdminAction
+            action="markAffiliatePaid"
+            confirmLabel="Mark paid"
+            description={`Records ${total} sent to ${row.paypalEmail ?? "their PayPal"} and marks the ${lines.length === 1 ? "commissions" : "commissions in every currency"} above paid. Do this after the PayPal payment went through.${changed}`}
+            disabled={Boolean(hint)}
+            disabledHint={hint}
+            input={{ affiliateId: row.id, quote: signPayoutQuote(quote) }}
+            label="Mark paid"
+            reasonOptional
+            success="Payout recorded"
+            textField={{
+              name: "paypalReference",
+              label: "PayPal transaction ID",
+              maxLength: 64,
+            }}
+            title={`Mark ${total} paid?`}
+            variant="default"
+          />
+        }
+        meta={
+          <>
+            {quote.fxDate ? (
+              <>
+                Rates:{" "}
+                <a
+                  className="underline underline-offset-4"
+                  href={AFFILIATE_FX_SOURCE_URL}
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  {quote.fxSource}
+                </a>
+                , {quote.fxDate}.{" "}
+              </>
+            ) : null}
+            {hint}
+            {changed}
+          </>
+        }
+        title={
+          <span className="font-medium tabular-nums">
+            Total to send: {total}
+          </span>
+        }
+      />
+    </Rows>
   );
 }

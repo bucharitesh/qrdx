@@ -1,11 +1,13 @@
 // The affiliate program's rules as pure functions: no database, no request.
 // The server code (./server.ts) and the tests use these, so the maths is
 // tested once and can't drift between the webhook, the cron and the pages.
+import { RESERVED_SLUGS } from "@/lib/short-links";
 import {
   AFFILIATE_COMMISSION_BPS,
   AFFILIATE_COMMISSION_MONTHS,
   AFFILIATE_HOLD_DAYS,
-  AFFILIATE_MIN_PAYOUT,
+  AFFILIATE_MIN_PAYOUT_USD,
+  AFFILIATE_RANDOM_CODE_LENGTH,
 } from "./terms";
 
 export const AFFILIATE_STATUSES = [
@@ -40,8 +42,11 @@ export const VOID_REASONS = [
 ] as const;
 export type VoidReason = (typeof VOID_REASONS)[number];
 
-/** How a referral reached the account: carried through sign-up, or the cookie. */
-export type AttributionVia = "link" | "cookie";
+/**
+ * How a referral reached the account. Only "link": the code came with the
+ * sign-up itself, in the same visit (there's no cookie).
+ */
+export type AttributionVia = "link";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -55,17 +60,41 @@ export function commissionFor(baseMinor: number): number {
 }
 
 /**
- * The amount a commission is based on: Polar's `net_amount` (after
- * discounts, before tax) less `refunded_amount` (what has been refunded of
+ * What the customer was actually charged for QRdx, before tax, in minor
+ * units. Polar's `net_amount` is the order's price after discounts and
+ * before tax, but account credit (a positive customer balance, say from a
+ * downgrade) lowers what's charged. Polar's order schema says so:
+ * `applied_balance_amount` is the customer's balance applied to the order,
+ * which "can decrease" the amount paid, and `due_amount` is the amount due
+ * for it, tax included. So the base is `net_amount`, capped at
+ * `due_amount − tax_amount`. A payload without `due_amount` isn't capped.
+ * Never below zero.
+ */
+export function chargedNetAmount(order: {
+  net_amount: number;
+  tax_amount?: number | null;
+  due_amount?: number | null;
+}): number {
+  const net = Math.max(0, Number(order.net_amount) || 0);
+  const due = Number(order.due_amount);
+  if (!Number.isFinite(due)) return net;
+  const tax = Math.max(0, Number(order.tax_amount ?? 0) || 0);
+  return Math.max(0, Math.min(net, due - tax));
+}
+
+/**
+ * The amount a commission is based on: what the customer was charged before
+ * tax (chargedNetAmount) less `refunded_amount` (what has been refunded of
  * it, also before tax). Never below zero.
  */
 export function commissionBase(order: {
   net_amount: number;
+  tax_amount?: number | null;
+  due_amount?: number | null;
   refunded_amount?: number | null;
 }): number {
-  const net = Number(order.net_amount) || 0;
-  const refunded = Number(order.refunded_amount ?? 0) || 0;
-  return Math.max(0, net - refunded);
+  const refunded = Math.max(0, Number(order.refunded_amount ?? 0) || 0);
+  return Math.max(0, chargedNetAmount(order) - refunded);
 }
 
 /** The date a commission can be paid: the payment plus the 30-day hold. */
@@ -86,14 +115,21 @@ export function addMonthsUtc(date: Date, months: number): Date {
   return result;
 }
 
-/** The end of a customer's 12 months, from their first payment. */
+/**
+ * The end of a customer's 12 months: one day before the anniversary of
+ * their first payment. A yearly renewal, or the 13th monthly payment, is
+ * charged on the anniversary, and the webhook can arrive a little before or
+ * after it; ending a day early keeps that renewal out whatever the timing.
+ */
 export function commissionWindowEnd(firstPaidAt: Date): Date {
-  return addMonthsUtc(firstPaidAt, AFFILIATE_COMMISSION_MONTHS);
+  return new Date(
+    addMonthsUtc(firstPaidAt, AFFILIATE_COMMISSION_MONTHS).getTime() - DAY_MS,
+  );
 }
 
 /**
- * A payment earns when it's within 12 months of the customer's first
- * payment (the first one itself included; exactly 12 months later doesn't).
+ * A payment earns when it's within the customer's first 12 months: from
+ * their first payment (included) to a day before its anniversary.
  */
 export function isWithinCommissionWindow(
   firstPaidAt: Date,
@@ -141,14 +177,49 @@ export function refundVoids(
   );
 }
 
-/** The smallest payout in `currency` (minor units), or null when none is set. */
-export function minimumPayout(currency: string): number | null {
-  return AFFILIATE_MIN_PAYOUT[currency.trim().toLowerCase()] ?? null;
+/**
+ * One minimum for everything payable together, in US cents: US-dollar
+ * commissions plus the others converted at the payout date.
+ */
+export function meetsMinimumPayout(usdCents: number): boolean {
+  return Number.isFinite(usdCents) && usdCents >= AFFILIATE_MIN_PAYOUT_USD;
 }
 
-export function meetsMinimumPayout(amount: number, currency: string): boolean {
-  const minimum = minimumPayout(currency);
-  return minimum !== null && amount >= minimum;
+/**
+ * An amount in `currency` minor units, in US cents at `usdPerUnit` (US
+ * dollars per one unit of the currency, a decimal string such as
+ * "0.0113636"), rounded down. Two-decimal currencies only: US$ and ₹ both
+ * have 100 minor units.
+ */
+export function toUsdCents(minor: number, usdPerUnit: string): number {
+  const rate = Number(usdPerUnit);
+  if (!(Number.isFinite(rate) && rate > 0)) {
+    throw new Error("Not an exchange rate");
+  }
+  return Math.floor(minor * rate + 1e-9);
+}
+
+/**
+ * What everything payable comes to in US cents: US dollars as they are, the
+ * other currencies at `usdPer` (US dollars per unit, by currency). Null when
+ * a currency has no rate, so nothing is ever guessed.
+ */
+export function payableUsdTotal(
+  byCurrency: Readonly<Record<string, number>>,
+  usdPer: Readonly<Record<string, string>>,
+): number | null {
+  let total = 0;
+  for (const [currency, amount] of Object.entries(byCurrency)) {
+    if (amount === 0) continue;
+    if (currency === "usd") {
+      total += amount;
+      continue;
+    }
+    const rate = usdPer[currency];
+    if (!rate) return null;
+    total += toUsdCents(amount, rate);
+  }
+  return total;
 }
 
 /**
@@ -177,6 +248,23 @@ export function isSameCanonicalEmail(
   return left.includes("@") && left === canonicalEmail(b);
 }
 
+/**
+ * The letters and digits of a random code ("k7q2mx9p"): none that can be
+ * mistaken for each other (no i, l, o, 0 or 1).
+ */
+export const REFERRAL_CODE_ALPHABET = "abcdefghjkmnpqrstuvwxyz23456789";
+
+/** A new random code: never made from a name or an email address. */
+export function randomReferralCode(
+  random: (length: number) => Uint8Array = (length) =>
+    crypto.getRandomValues(new Uint8Array(length)),
+): string {
+  return Array.from(
+    random(AFFILIATE_RANDOM_CODE_LENGTH),
+    (byte) => REFERRAL_CODE_ALPHABET[byte % REFERRAL_CODE_ALPHABET.length],
+  ).join("");
+}
+
 /** Referral codes: 3 to 32 lower-case letters, digits and single hyphens. */
 export const REFERRAL_CODE_PATTERN =
   /^[a-z0-9](?:[a-z0-9]|-(?=[a-z0-9])){2,31}$/;
@@ -189,20 +277,90 @@ export function parseReferralCode(value: unknown): string | null {
 }
 
 /**
- * A readable code from a name: "Ana Díaz" → "ana-diaz", cut to fit a random
- * suffix ("ana-diaz-4k2p"), or "partner" when the name has no letters.
+ * Words a chosen code can't be: QRdx's own paths and names (the short-link
+ * reserved list, lib/short-links.ts) and words that would pass for QRdx or
+ * its staff.
  */
-export function referralCodeStem(name: string | null | undefined): string {
-  const stem = (name ?? "")
-    .normalize("NFKD")
-    .replace(/[̀-ͯ]/g, "")
+export const RESERVED_REFERRAL_CODES: ReadonlySet<string> = new Set([
+  ...RESERVED_SLUGS,
+  "affiliate",
+  "affiliates",
+  "partner",
+  "partners",
+  "referral",
+  "referrals",
+  "ref",
+  "official",
+  "staff",
+  "team-qrdx",
+  "qrdx-team",
+  "qrdx-official",
+  "qrdxdev",
+  "qrdx-dev",
+  "paypal",
+  "polar",
+  "payout",
+  "payouts",
+]);
+
+export type ChosenCodeProblem = "format" | "reserved" | "email";
+
+/**
+ * An email address's local part as a code would spell it ("ana.diaz+x" →
+ * "ana-diaz-x"), to keep people from publishing their address in a link.
+ */
+export function emailLocalPartAsCode(email: string): string {
+  return asCodeSpelling(email.split("@")[0] ?? "");
+}
+
+const asCodeSpelling = (text: string) =>
+  text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 20)
-    .replace(/-+$/g, "");
-  return stem.length >= 2 ? stem : "partner";
+    .replace(/^-+|-+$/g, "");
+
+/**
+ * Checks a code an affiliate wants: the format, reserved words, and not the
+ * local part of their own email address (in any spelling: "ana.diaz",
+ * "anadiaz" or "ana-diaz" for ana.diaz@…, with or without a +tag). Whether
+ * it's free is the database's question. Returns the code as stored.
+ */
+export function checkChosenCode(
+  value: unknown,
+  ownEmails: readonly string[] = [],
+): { ok: true; code: string } | { ok: false; problem: ChosenCodeProblem } {
+  const code = parseReferralCode(value);
+  if (!code) return { ok: false, problem: "format" };
+  if (RESERVED_REFERRAL_CODES.has(code) || /^qrdx-?/.test(code)) {
+    return { ok: false, problem: "reserved" };
+  }
+  const bare = code.replace(/-/g, "");
+  for (const email of ownEmails) {
+    const local = email.split("@")[0] ?? "";
+    // The whole local part, and the part before a +tag.
+    for (const part of [local, local.split("+")[0] ?? ""]) {
+      const spelling = asCodeSpelling(part).replace(/-/g, "");
+      if (spelling && bare === spelling) {
+        return { ok: false, problem: "email" };
+      }
+    }
+  }
+  return { ok: true, code };
 }
+
+/** What each problem with a chosen code means, for the form. */
+export const CHOSEN_CODE_MESSAGES: Record<
+  ChosenCodeProblem | "taken" | "already_changed",
+  string
+> = {
+  format:
+    "Use 3 to 32 lower-case letters, digits and single hyphens, starting and ending with a letter or digit.",
+  reserved: "That code is reserved. Pick another.",
+  email:
+    "That's the start of your email address. Pick a code that doesn't publish it.",
+  taken: "That code is taken. Pick another.",
+  already_changed: "You've already chosen your code. It can only change once.",
+};
 
 /**
  * Per-currency amounts in a steady order for display: US dollars first,

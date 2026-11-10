@@ -1,20 +1,38 @@
--- Affiliate program (apps/docs/lib/affiliates): four new tables.
+-- Affiliate program (apps/docs/lib/affiliates): five new tables.
 --
---   affiliate             one row per person who applied: status (pending,
---                         approved, rejected, suspended), referral code,
---                         PayPal email (set only once approved), the
---                         application answers, link clicks, who approved.
---   affiliate_referral    the account a referral brought in, which affiliate,
---                         how it was attributed, and the customer's first
---                         paid order (their 12 months start there).
---   affiliate_payout      a payout the owner sent by hand through PayPal:
---                         total, currency, PayPal reference, when, who.
---   affiliate_commission  one per paid Polar order from a referred customer
---                         (polar_order_id is unique: a repeated webhook finds
---                         the same row), with the amount it's based on, the
---                         rate, the commission, its status (pending,
---                         approved, void, paid), when it becomes payable, why
---                         it was voided, and the payout that covered it.
+--   affiliate                 one row per person who applied: status
+--                             (pending, approved, rejected, suspended),
+--                             referral code (random at first; the affiliate
+--                             can choose their own once, and the random one,
+--                             previous_code, keeps working), PayPal email
+--                             (set only once approved) and when it last
+--                             changed, the application answers with the
+--                             terms version accepted, link clicks, who
+--                             approved.
+--   affiliate_referral        the account a referral brought in, which
+--                             affiliate, how it was attributed (only "link":
+--                             a sign-up in the same visit), and the
+--                             customer's first paid order (their 12 months
+--                             start there).
+--   affiliate_payout          a payout the owner sent by hand through PayPal,
+--                             in US dollars: total, the commissions it
+--                             covers per currency, the exchange rates used
+--                             with their date and source, PayPal reference
+--                             (unique: one payout per PayPal transaction),
+--                             when, who. Kept when the affiliate deletes
+--                             their account: affiliate_id and user_id are set
+--                             to null, and the app clears paypal_email.
+--   affiliate_commission      one per paid Polar order from a referred
+--                             customer (polar_order_id is unique: a repeated
+--                             webhook finds the same row), with the amount
+--                             it's based on, the rate, the commission, its
+--                             status (pending, approved, void, paid), when it
+--                             becomes payable, why it was voided, and the
+--                             payout that covered it. The customer's id is
+--                             set to null when they delete their account.
+--   affiliate_refunded_order  a refund or chargeback reported for a referred
+--                             customer's order before it had a commission,
+--                             so a later order.paid records it void.
 --
 -- Money is in integer minor units, in the currency Polar reports.
 --
@@ -27,7 +45,8 @@
 -- yes. If the code runs first, nothing breaks: sign-up, checkout and the
 -- Polar webhook catch the missing table, log it once per process and carry
 -- on; the affiliate pages say the program isn't available yet; no referral
--- or commission is recorded until the tables exist.
+-- or commission is recorded until the tables exist. The program also stays
+-- off until QRDX_AFFILIATES is set.
 --
 -- Rollback: the code before this feature never reads or writes these
 -- tables, so it keeps working with them present. Leave them in place when
@@ -40,8 +59,8 @@
 --   \d affiliate_commission
 --
 -- Names match what drizzle-kit generates from packages/database/schema.ts
--- (affiliate, affiliateReferral, affiliatePayout, affiliateCommission), so a
--- later `drizzle-kit push` sees no drift.
+-- (affiliate, affiliateReferral, affiliatePayout, affiliateCommission,
+-- affiliateRefundedOrder), so a later `drizzle-kit push` sees no drift.
 
 BEGIN;
 
@@ -50,7 +69,10 @@ CREATE TABLE IF NOT EXISTS "affiliate" (
   "user_id" text NOT NULL,
   "status" text DEFAULT 'pending' NOT NULL,
   "code" text NOT NULL,
+  "previous_code" text,
+  "code_changed_at" timestamp,
   "paypal_email" text,
+  "paypal_email_changed_at" timestamp,
   "application" jsonb,
   "click_count" integer DEFAULT 0 NOT NULL,
   "approved_at" timestamp,
@@ -62,6 +84,7 @@ CREATE TABLE IF NOT EXISTS "affiliate" (
   "updated_at" timestamp NOT NULL,
   CONSTRAINT "affiliate_user_id_unique" UNIQUE ("user_id"),
   CONSTRAINT "affiliate_code_unique" UNIQUE ("code"),
+  CONSTRAINT "affiliate_previous_code_unique" UNIQUE ("previous_code"),
   CONSTRAINT "affiliate_user_id_user_id_fk" FOREIGN KEY ("user_id")
     REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action
 );
@@ -82,17 +105,24 @@ CREATE TABLE IF NOT EXISTS "affiliate_referral" (
 
 CREATE TABLE IF NOT EXISTS "affiliate_payout" (
   "id" text PRIMARY KEY NOT NULL,
-  "affiliate_id" text NOT NULL,
+  "affiliate_id" text,
+  "user_id" text,
   "currency" text NOT NULL,
   "amount" integer NOT NULL,
   "commission_count" integer NOT NULL,
-  "paypal_email" text NOT NULL,
+  "source_amounts" jsonb,
+  "fx_rates" jsonb,
+  "fx_date" text,
+  "fx_source" text,
+  "paypal_email" text,
   "paypal_reference" text NOT NULL,
   "paid_at" timestamp NOT NULL,
   "created_by" text NOT NULL,
   "created_at" timestamp NOT NULL,
   CONSTRAINT "affiliate_payout_affiliate_id_affiliate_id_fk" FOREIGN KEY ("affiliate_id")
-    REFERENCES "public"."affiliate"("id") ON DELETE cascade ON UPDATE no action
+    REFERENCES "public"."affiliate"("id") ON DELETE set null ON UPDATE no action,
+  CONSTRAINT "affiliate_payout_user_id_user_id_fk" FOREIGN KEY ("user_id")
+    REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action
 );
 
 CREATE TABLE IF NOT EXISTS "affiliate_commission" (
@@ -101,7 +131,6 @@ CREATE TABLE IF NOT EXISTS "affiliate_commission" (
   "referral_id" text,
   "referred_user_id" text,
   "polar_order_id" text NOT NULL,
-  "polar_customer_id" text,
   "currency" text NOT NULL,
   "order_amount" integer NOT NULL,
   "rate_bps" integer NOT NULL,
@@ -120,8 +149,18 @@ CREATE TABLE IF NOT EXISTS "affiliate_commission" (
     REFERENCES "public"."affiliate"("id") ON DELETE cascade ON UPDATE no action,
   CONSTRAINT "affiliate_commission_referral_id_affiliate_referral_id_fk" FOREIGN KEY ("referral_id")
     REFERENCES "public"."affiliate_referral"("id") ON DELETE set null ON UPDATE no action,
+  CONSTRAINT "affiliate_commission_referred_user_id_user_id_fk" FOREIGN KEY ("referred_user_id")
+    REFERENCES "public"."user"("id") ON DELETE set null ON UPDATE no action,
   CONSTRAINT "affiliate_commission_payout_id_affiliate_payout_id_fk" FOREIGN KEY ("payout_id")
     REFERENCES "public"."affiliate_payout"("id") ON DELETE set null ON UPDATE no action
+);
+
+CREATE TABLE IF NOT EXISTS "affiliate_refunded_order" (
+  "polar_order_id" text PRIMARY KEY NOT NULL,
+  "polar_refund_id" text,
+  "reason" text NOT NULL,
+  "refunded_at" timestamp NOT NULL,
+  "created_at" timestamp NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS "affiliate_status_idx"
@@ -132,6 +171,11 @@ CREATE INDEX IF NOT EXISTS "affiliate_referral_affiliate_id_idx"
 
 CREATE INDEX IF NOT EXISTS "affiliate_payout_affiliate_id_idx"
   ON "affiliate_payout" USING btree ("affiliate_id", "paid_at" DESC NULLS LAST);
+
+-- One payout per PayPal transaction: a second "Mark paid" with the same
+-- reference fails instead of recording the money twice.
+CREATE UNIQUE INDEX IF NOT EXISTS "affiliate_payout_paypal_reference_unique"
+  ON "affiliate_payout" USING btree ("paypal_reference");
 
 CREATE INDEX IF NOT EXISTS "affiliate_commission_affiliate_status_idx"
   ON "affiliate_commission" USING btree ("affiliate_id", "status");

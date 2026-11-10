@@ -8,8 +8,10 @@
 // The owner's decisions (10 Nov 2026): 30% of what a referred customer pays,
 // for their first 12 months as a paying customer; each commission waits 30
 // days, and a refund or chargeback in that time cancels it; paid monthly by
-// PayPal, by hand, from US$25. The rupee minimum is the one figure that
-// wasn't in those decisions: see AFFILIATE_MIN_PAYOUT.
+// PayPal, by hand, from US$25, with commissions in other currencies
+// converted to US dollars at the payout date; referrals count only for a
+// sign-up in the same visit (no cookie); random referral codes that can be
+// changed once; 30 days' notice before the terms change.
 
 /** The commission, in basis points of the amount the customer paid (30%). */
 export const AFFILIATE_COMMISSION_BPS = 3000;
@@ -23,32 +25,51 @@ export const AFFILIATE_COMMISSION_MONTHS = 12;
 /** Days each commission waits before it can be paid. */
 export const AFFILIATE_HOLD_DAYS = 30;
 
+/** Payouts are sent in this currency, lower case as Polar writes currencies. */
+export const AFFILIATE_PAYOUT_CURRENCY = "usd";
+
 /**
- * The smallest payout, in minor units, by the currency Polar reports the
- * order in (lower case, as Polar sends it). Balances are kept per currency
- * and never converted: Polar's webhooks don't say what an order was worth
- * in US dollars, so there's no exchange rate the app could use honestly.
- * US$25 is the owner's figure. ₹2,200 is about the same at late-2026 rates
- * and needs the owner's sign-off (see the PR). A currency without an entry
- * here can't be marked paid until one is added.
+ * The smallest payout, in US cents, for everything payable together:
+ * commissions in other currencies count at their US-dollar value on the
+ * payout date (lib/affiliates/exchange-rates.ts).
  */
-export const AFFILIATE_MIN_PAYOUT: Readonly<Record<string, number>> = {
-  usd: 2500,
-  inr: 220000,
-};
+export const AFFILIATE_MIN_PAYOUT_USD = 2500;
+
+/**
+ * Where those exchange rates come from: the European Central Bank's euro
+ * foreign exchange reference rates, published once each working day,
+ * free and without a key. A currency's US-dollar rate is the ECB's USD rate
+ * divided by its rate for that currency (both are per euro).
+ */
+export const AFFILIATE_FX_SOURCE = "European Central Bank reference rates";
+export const AFFILIATE_FX_SOURCE_URL =
+  "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html";
+/** The data itself: today's rates as XML. */
+export const AFFILIATE_FX_DATA_URL =
+  "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml";
+
+/** Days of notice before changed terms apply. */
+export const AFFILIATE_TERMS_NOTICE_DAYS = 30;
+
+/**
+ * The version of the affiliate terms an application accepts: the date in
+ * content/legal/affiliate-terms.mdx's `lastUpdated` (a test keeps the two
+ * the same). Stored with each acceptance, so it's clear which text someone
+ * agreed to. Change both when the terms change.
+ */
+export const AFFILIATE_TERMS_VERSION = "2026-11-10";
+
+/** New referral codes are this many random letters and digits. */
+export const AFFILIATE_RANDOM_CODE_LENGTH = 8;
+
+/**
+ * A referral code as the program makes them (random, AFFILIATE_RANDOM_CODE_
+ * LENGTH characters from the referral alphabet). For example copy only.
+ */
+export const EXAMPLE_REFERRAL_CODE = "k7q2mx9p";
 
 /** How payouts are sent. Always by hand: the app only records them. */
 export const AFFILIATE_PAYOUT_METHOD = "PayPal";
-
-/**
- * The browser cookie that remembers a referral link for a visitor who signs
- * up later. Set only after the visitor allows Analytics in Cookie settings
- * (components/consent/referral-capture.tsx); listed in the Cookie Policy.
- */
-export const AFFILIATE_REFERRAL_COOKIE = "qrdx_ref";
-
-/** How long that cookie lasts. */
-export const AFFILIATE_REFERRAL_COOKIE_DAYS = 30;
 
 /** The query parameter that carries a referral code: /?ref=<code>. */
 export const AFFILIATE_REF_PARAM = "ref";
@@ -56,7 +77,7 @@ export const AFFILIATE_REF_PARAM = "ref";
 /** Referral links are <app url>/r/<code>. */
 export const AFFILIATE_LINK_PREFIX = "/r/";
 
-/** "US$25", "₹2,200": a minimum as copy writes it. */
+/** "US$25", "₹2,200": an amount in minor units as copy writes it. */
 export function formatMinorAmount(minor: number, currency: string): string {
   const code = currency.toUpperCase();
   const whole = minor / 100;
@@ -76,14 +97,8 @@ export function formatMinorAmount(minor: number, currency: string): string {
   }
 }
 
-/** The minimum in US dollars, as copy writes it: "US$25". */
-export const AFFILIATE_MIN_PAYOUT_USD_LABEL = formatMinorAmount(
-  AFFILIATE_MIN_PAYOUT.usd ?? 0,
-  "usd",
-);
-
-/** The minimum in rupees, as copy writes it: "₹2,200". */
-export const AFFILIATE_MIN_PAYOUT_INR_LABEL = formatMinorAmount(
-  AFFILIATE_MIN_PAYOUT.inr ?? 0,
-  "inr",
+/** The minimum as copy writes it: "US$25". */
+export const AFFILIATE_MIN_PAYOUT_LABEL = formatMinorAmount(
+  AFFILIATE_MIN_PAYOUT_USD,
+  AFFILIATE_PAYOUT_CURRENCY,
 );

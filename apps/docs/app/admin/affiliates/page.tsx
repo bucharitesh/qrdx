@@ -17,8 +17,7 @@ import {
 } from "@/lib/affiliates/program";
 import {
   AFFILIATE_HOLD_DAYS,
-  AFFILIATE_MIN_PAYOUT_INR_LABEL,
-  AFFILIATE_MIN_PAYOUT_USD_LABEL,
+  AFFILIATE_MIN_PAYOUT_LABEL,
 } from "@/lib/affiliates/terms";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { AdminAction } from "../_components/admin-action";
@@ -64,7 +63,7 @@ export default async function AdminAffiliatesPage() {
     <div className="space-y-4">
       <SettingsHeader
         title="Affiliates"
-        description={`Applications, what each affiliate is owed, and payouts. Commissions wait ${AFFILIATE_HOLD_DAYS} days; payouts are sent by hand through PayPal from ${AFFILIATE_MIN_PAYOUT_USD_LABEL} (or ${AFFILIATE_MIN_PAYOUT_INR_LABEL}), then marked paid here.`}
+        description={`Applications, what each affiliate is owed, and payouts. Commissions wait ${AFFILIATE_HOLD_DAYS} days; payouts are sent by hand through PayPal in US dollars from ${AFFILIATE_MIN_PAYOUT_LABEL} (other currencies converted at the payout date's ECB rate), then marked paid here.`}
       />
 
       {!programOn && (

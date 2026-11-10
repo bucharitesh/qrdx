@@ -910,18 +910,25 @@ export const affiliate = pgTable(
   "affiliate",
   {
     id: text("id").primaryKey(),
-    // One per account; deleted with it (and so are its referrals,
-    // commissions and payouts).
+    // One per account; deleted with it (and so are its referrals and
+    // commissions). Its payouts stay, without who was paid.
     userId: text("user_id")
       .notNull()
       .unique()
       .references(() => user.id, { onDelete: "cascade" }),
     // pending | approved | rejected | suspended
     status: text("status").notNull().default("pending"),
-    // The link is <app url>/r/<code>. Lower case, unique.
+    // The link is <app url>/r/<code>. Lower case, unique. Starts random;
+    // the affiliate can choose their own once.
     code: text("code").notNull().unique(),
+    // The random code from before they chose one: it keeps working.
+    previousCode: text("previous_code").unique(),
+    // When they chose their code (it can't change again).
+    codeChangedAt: timestamp("code_changed_at"),
     // Where payouts go. Only ever set while approved.
     paypalEmail: text("paypal_email"),
+    // When the affiliate last changed it (admins see it next to Mark paid).
+    paypalEmailChangedAt: timestamp("paypal_email_changed_at"),
     // The application: { website, promotion } as the person typed them.
     application: jsonb("application").$type<Record<string, string>>(),
     // Visits to the referral link, counted without cookies.
@@ -951,8 +958,8 @@ export const affiliateReferral = pgTable(
       .notNull()
       .unique()
       .references(() => user.id, { onDelete: "cascade" }),
-    // link: the code came through the sign-up itself; cookie: from the
-    // qrdx_ref cookie a visitor allowed earlier.
+    // link: the code came with the sign-up itself, in the same visit (the
+    // only way; there's no cookie).
     attributedVia: text("attributed_via").notNull(),
     // The customer's first paid order: their 12 months start here.
     firstPaidAt: timestamp("first_paid_at"),
@@ -963,19 +970,38 @@ export const affiliateReferral = pgTable(
   ]
 );
 
+// Kept for bookkeeping when the affiliate deletes their account: the
+// affiliate and user are set to null and the PayPal address is cleared
+// (apps/docs/lib/account/deletion-server.ts); the amount, currency, rates,
+// date and PayPal reference stay.
 export const affiliatePayout = pgTable(
   "affiliate_payout",
   {
     id: text("id").primaryKey(),
-    affiliateId: text("affiliate_id")
-      .notNull()
-      .references(() => affiliate.id, { onDelete: "cascade" }),
+    affiliateId: text("affiliate_id").references(() => affiliate.id, {
+      onDelete: "set null",
+    }),
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    // What was sent: usd. Commissions in other currencies are converted at
+    // the payout date (fx_*).
     currency: text("currency").notNull(),
-    // The total sent, in minor units: the sum of its commissions.
+    // The total sent, in minor units of `currency`.
     amount: integer("amount").notNull(),
     commissionCount: integer("commission_count").notNull(),
-    // Snapshot of the PayPal address it was sent to.
-    paypalEmail: text("paypal_email").notNull(),
+    // The commissions it covers, per currency before conversion, in minor
+    // units: { usd: 1500, inr: 90000 }.
+    sourceAmounts: jsonb("source_amounts").$type<Record<string, number>>(),
+    // The rates used, US dollars per unit by currency, as decimal strings
+    // ({ inr: "0.0113636" }), their date (YYYY-MM-DD) and source. Null when
+    // everything was in US dollars.
+    fxRates: jsonb("fx_rates").$type<Record<string, string>>(),
+    fxDate: text("fx_date"),
+    fxSource: text("fx_source"),
+    // Snapshot of the PayPal address it was sent to; cleared when the
+    // affiliate deletes their account.
+    paypalEmail: text("paypal_email"),
     // The PayPal transaction id the admin typed in.
     paypalReference: text("paypal_reference").notNull(),
     paidAt: timestamp("paid_at").notNull(),
@@ -987,6 +1013,11 @@ export const affiliatePayout = pgTable(
     index("affiliate_payout_affiliate_id_idx").on(
       table.affiliateId,
       table.paidAt.desc()
+    ),
+    // One payout per PayPal transaction: a second "Mark paid" with the same
+    // reference fails instead of recording the money twice.
+    uniqueIndex("affiliate_payout_paypal_reference_unique").on(
+      table.paypalReference
     ),
   ]
 );
@@ -1001,14 +1032,17 @@ export const affiliateCommission = pgTable(
     referralId: text("referral_id").references(() => affiliateReferral.id, {
       onDelete: "set null",
     }),
-    // No FK: the record stays readable after the customer deletes their account.
-    referredUserId: text("referred_user_id"),
+    // Set to null when the customer deletes their account: the commission
+    // stays (it's what the affiliate is or was paid), without who paid.
+    referredUserId: text("referred_user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
     // One commission per paid order: repeated webhooks find this row.
     polarOrderId: text("polar_order_id").notNull().unique(),
-    polarCustomerId: text("polar_customer_id"),
     currency: text("currency").notNull(),
-    // What the commission is based on: Polar's net_amount (after discounts,
-    // before tax) less refunded_amount, in minor units.
+    // What the commission is based on: what the customer was charged before
+    // tax (Polar's net_amount, capped at due_amount − tax_amount when
+    // account credit paid part of it) less refunded_amount, in minor units.
     orderAmount: integer("order_amount").notNull(),
     // The rate applied, in basis points (3000 = 30%).
     rateBps: integer("rate_bps").notNull(),
@@ -1042,6 +1076,20 @@ export const affiliateCommission = pgTable(
     index("affiliate_commission_payout_id_idx").on(table.payoutId),
   ]
 );
+
+// A refund or chargeback Polar reported for an order of a referred customer
+// before that order had a commission (webhooks can arrive in any order, or
+// order.paid can be redelivered later). order.paid checks it, so the order's
+// commission is recorded void, never payable. Keyed by the order.
+export const affiliateRefundedOrder = pgTable("affiliate_refunded_order", {
+  polarOrderId: text("polar_order_id").primaryKey(),
+  // The Polar refund, when a refund event reported it.
+  polarRefundId: text("polar_refund_id"),
+  // refund | chargeback
+  reason: text("reason").notNull(),
+  refundedAt: timestamp("refunded_at").notNull(),
+  createdAt: timestamp("created_at").notNull(),
+});
 
 // ─── Platform: dynamic QR codes, scans, custom domains, brand kits ───────────
 // Rows are owned by user_id (the creator). When organization_id is set the row

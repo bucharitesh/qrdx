@@ -6,6 +6,8 @@ import {
   addMonthsUtc,
   availableAtFor,
   canonicalEmail,
+  chargedNetAmount,
+  checkChosenCode,
   commissionBase,
   commissionFor,
   commissionWindowEnd,
@@ -15,19 +17,23 @@ import {
   isSameCanonicalEmail,
   isWithinCommissionWindow,
   meetsMinimumPayout,
-  minimumPayout,
   parseReferralCode,
-  referralCodeStem,
+  payableUsdTotal,
+  REFERRAL_CODE_ALPHABET,
+  RESERVED_REFERRAL_CODES,
+  randomReferralCode,
   refundVoids,
+  toUsdCents,
 } from "@/lib/affiliates/rules";
 import {
   AFFILIATE_COMMISSION_BPS,
   AFFILIATE_COMMISSION_MONTHS,
   AFFILIATE_COMMISSION_PERCENT,
   AFFILIATE_HOLD_DAYS,
-  AFFILIATE_MIN_PAYOUT,
-  AFFILIATE_MIN_PAYOUT_INR_LABEL,
-  AFFILIATE_MIN_PAYOUT_USD_LABEL,
+  AFFILIATE_MIN_PAYOUT_LABEL,
+  AFFILIATE_MIN_PAYOUT_USD,
+  AFFILIATE_RANDOM_CODE_LENGTH,
+  EXAMPLE_REFERRAL_CODE,
   formatMinorAmount,
 } from "@/lib/affiliates/terms";
 
@@ -39,9 +45,8 @@ describe("the owner's numbers", () => {
     expect(AFFILIATE_COMMISSION_PERCENT).toBe(30);
     expect(AFFILIATE_COMMISSION_MONTHS).toBe(12);
     expect(AFFILIATE_HOLD_DAYS).toBe(30);
-    expect(AFFILIATE_MIN_PAYOUT.usd).toBe(2500);
-    expect(AFFILIATE_MIN_PAYOUT_USD_LABEL).toBe("US$25");
-    expect(AFFILIATE_MIN_PAYOUT_INR_LABEL).toBe("₹2,200");
+    expect(AFFILIATE_MIN_PAYOUT_USD).toBe(2500);
+    expect(AFFILIATE_MIN_PAYOUT_LABEL).toBe("US$25");
   });
 });
 
@@ -71,6 +76,34 @@ describe("commission maths", () => {
     expect(commissionBase({ net_amount: 1500, refunded_amount: 2000 })).toBe(0);
     expect(commissionBase({ net_amount: 1500 })).toBe(1500);
   });
+
+  // B4: account credit (a positive customer balance) lowers what's charged.
+  it("is capped at what the customer was charged before tax (account credit)", () => {
+    // US$15 order, no tax, US$10 of credit applied: US$5 was charged.
+    const credited = { net_amount: 1500, tax_amount: 0, due_amount: 500 };
+    expect(chargedNetAmount(credited)).toBe(500);
+    expect(commissionBase({ ...credited, refunded_amount: 0 })).toBe(500);
+    expect(commissionFor(commissionBase(credited))).toBe(150);
+    // With tax: ₹199 + 18% GST = ₹234.82, ₹100 of credit → ₹134.82 due,
+    // of which ₹35.82 is tax: ₹99 charged before tax.
+    expect(
+      chargedNetAmount({
+        net_amount: 19_900,
+        tax_amount: 3_582,
+        due_amount: 13_482,
+      }),
+    ).toBe(9_900);
+    // Paid entirely with credit: nothing charged.
+    expect(
+      chargedNetAmount({ net_amount: 1500, tax_amount: 0, due_amount: 0 }),
+    ).toBe(0);
+    // A negative balance (owed from before) raises what's due, never the base.
+    expect(
+      chargedNetAmount({ net_amount: 1500, tax_amount: 0, due_amount: 2500 }),
+    ).toBe(1500);
+    // No due_amount in the payload: not capped.
+    expect(chargedNetAmount({ net_amount: 1500 })).toBe(1500);
+  });
 });
 
 describe("the 12-month window", () => {
@@ -80,16 +113,32 @@ describe("the 12-month window", () => {
     expect(addMonthsUtc(first, 1).toISOString()).toBe(
       "2026-02-28T10:00:00.000Z",
     );
+    // A day before the anniversary.
     expect(commissionWindowEnd(first).toISOString()).toBe(
-      "2027-01-31T10:00:00.000Z",
+      "2027-01-30T10:00:00.000Z",
     );
   });
 
-  it("includes the first payment and everything before 12 months", () => {
+  it("includes the first payment and everything up to a day before the anniversary", () => {
     expect(isWithinCommissionWindow(first, first)).toBe(true);
     expect(
-      isWithinCommissionWindow(first, new Date("2027-01-31T09:59:59Z")),
+      isWithinCommissionWindow(first, new Date("2027-01-30T09:59:59Z")),
     ).toBe(true);
+  });
+
+  // B1: a yearly renewal (or the 13th monthly payment) is charged on the
+  // anniversary; its webhook can arrive a little before or after it.
+  it("excludes a renewal seconds before or after the anniversary", () => {
+    const anniversary = new Date("2027-01-31T10:00:00Z").getTime();
+    for (const offset of [-60_000, -5_000, -1, 0, 1, 5_000, 60_000]) {
+      expect(
+        isWithinCommissionWindow(first, new Date(anniversary + offset)),
+      ).toBe(false);
+    }
+    // Even an early charge up to a day before.
+    expect(
+      isWithinCommissionWindow(first, new Date(anniversary - DAY + 1)),
+    ).toBe(false);
   });
 
   it("excludes the payment exactly 12 months later and after", () => {
@@ -148,26 +197,46 @@ describe("the 30-day hold", () => {
   });
 });
 
-describe("payout minimums", () => {
-  it("is US$25 for dollars and ₹2,200 for rupees, by Polar's currency code", () => {
-    expect(minimumPayout("usd")).toBe(2500);
-    expect(minimumPayout("USD")).toBe(2500);
-    expect(minimumPayout("inr")).toBe(220_000);
-    expect(meetsMinimumPayout(2499, "usd")).toBe(false);
-    expect(meetsMinimumPayout(2500, "usd")).toBe(true);
-    expect(meetsMinimumPayout(219_999, "inr")).toBe(false);
-    expect(meetsMinimumPayout(220_000, "inr")).toBe(true);
-  });
-
-  it("has no minimum, so no payout, for a currency without one", () => {
-    expect(minimumPayout("eur")).toBeNull();
-    expect(meetsMinimumPayout(1_000_000, "eur")).toBe(false);
+describe("the payout minimum (one, in US dollars)", () => {
+  it("is US$25 for everything payable together", () => {
+    expect(meetsMinimumPayout(2499)).toBe(false);
+    expect(meetsMinimumPayout(2500)).toBe(true);
+    expect(meetsMinimumPayout(Number.NaN)).toBe(false);
   });
 
   it("formats amounts as copy writes them", () => {
     expect(formatMinorAmount(2500, "usd")).toBe("US$25");
     expect(formatMinorAmount(150, "usd")).toBe("US$1.50");
     expect(formatMinorAmount(5970, "inr")).toBe("₹59.70");
+  });
+});
+
+describe("US-dollar conversion", () => {
+  it("converts minor units at US dollars per unit, rounding down", () => {
+    // ₹1,499.70 at 0.0113636 US$ per rupee = US$17.0420... → 1704 cents.
+    expect(toUsdCents(149_970, "0.0113636")).toBe(1704);
+    expect(toUsdCents(100, "1")).toBe(100);
+  });
+
+  it("refuses something that isn't a rate", () => {
+    for (const bad of ["", "0", "-1", "abc", "NaN", "Infinity"]) {
+      expect(() => toUsdCents(100, bad)).toThrow("Not an exchange rate");
+    }
+  });
+
+  // D-C2: US$20 + ₹2,000 pays out together once converted.
+  it("adds US dollars and converted currencies into one total", () => {
+    expect(
+      payableUsdTotal({ usd: 2000, inr: 200_000 }, { inr: "0.0113636" }),
+    ).toBe(2000 + 2272);
+    expect(meetsMinimumPayout(2000 + 2272)).toBe(true);
+    expect(payableUsdTotal({ usd: 2000 }, {})).toBe(2000);
+    expect(payableUsdTotal({ usd: 2000, inr: 0 }, {})).toBe(2000);
+  });
+
+  it("never guesses: no rate for a currency means no total", () => {
+    expect(payableUsdTotal({ usd: 2000, inr: 200_000 }, {})).toBeNull();
+    expect(payableUsdTotal({ eur: 3000 }, { inr: "0.0113636" })).toBeNull();
   });
 });
 
@@ -205,13 +274,73 @@ describe("referral codes", () => {
     expect(parseReferralCode(42)).toBeNull();
   });
 
-  it("makes a readable stem from a name", () => {
-    expect(referralCodeStem("Ana Díaz")).toBe("ana-diaz");
-    expect(referralCodeStem("  ")).toBe("partner");
-    expect(referralCodeStem("李")).toBe("partner");
-    expect(referralCodeStem("A very long name indeed for a code")).toBe(
-      "a-very-long-name-ind",
+  // D-C3: codes start random, never from a name or an email address.
+  it("starts random, from letters and digits that can't be confused", () => {
+    expect(REFERRAL_CODE_ALPHABET).not.toMatch(/[ilo01]/);
+    const codes = new Set(
+      Array.from({ length: 200 }, () => randomReferralCode()),
     );
+    expect(codes.size).toBe(200);
+    for (const code of codes) {
+      expect(code).toHaveLength(AFFILIATE_RANDOM_CODE_LENGTH);
+      expect(parseReferralCode(code)).toBe(code);
+      expect(code).toMatch(new RegExp(`^[${REFERRAL_CODE_ALPHABET}]+$`));
+    }
+    // From the random bytes alone.
+    expect(randomReferralCode(() => new Uint8Array(8))).toBe("aaaaaaaa");
+    expect(parseReferralCode(EXAMPLE_REFERRAL_CODE)).toBe(
+      EXAMPLE_REFERRAL_CODE,
+    );
+    expect(EXAMPLE_REFERRAL_CODE).toHaveLength(AFFILIATE_RANDOM_CODE_LENGTH);
+  });
+
+  it("lets an affiliate choose a code with the slug rules", () => {
+    expect(checkChosenCode("Ana-Picks")).toEqual({
+      ok: true,
+      code: "ana-picks",
+    });
+    expect(checkChosenCode("a")).toEqual({ ok: false, problem: "format" });
+    expect(checkChosenCode("ana--picks")).toEqual({
+      ok: false,
+      problem: "format",
+    });
+    expect(checkChosenCode("ana@x")).toEqual({ ok: false, problem: "format" });
+  });
+
+  it("blocks reserved words and anything passing for QRdx", () => {
+    for (const word of [
+      "admin",
+      "api",
+      "affiliates",
+      "partner",
+      "qrdx",
+      "qrdx-team",
+      "qrdxdeals",
+      "paypal",
+    ]) {
+      expect(checkChosenCode(word)).toEqual({ ok: false, problem: "reserved" });
+    }
+    expect(RESERVED_REFERRAL_CODES.has("dashboard")).toBe(true);
+  });
+
+  it("refuses the local part of the affiliate's own email address, in any spelling", () => {
+    const emails = ["Ana.Diaz+promo@gmail.com"];
+    for (const code of [
+      "ana-diaz",
+      "anadiaz",
+      "ana-diaz-promo",
+      "anadiazpromo",
+    ]) {
+      expect(checkChosenCode(code, emails)).toEqual({
+        ok: false,
+        problem: "email",
+      });
+    }
+    expect(checkChosenCode("ana-diaz-qr", emails)).toEqual({
+      ok: true,
+      code: "ana-diaz-qr",
+    });
+    expect(checkChosenCode("ana-diaz")).toEqual({ ok: true, code: "ana-diaz" });
   });
 });
 
