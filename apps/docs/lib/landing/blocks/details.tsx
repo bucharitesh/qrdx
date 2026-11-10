@@ -30,8 +30,11 @@ function DetailsBlock({ id, props, context }: BlockRenderProps<DetailsProps>) {
         <dl
           className={cn(
             "grid gap-2",
-            // Full rows: threes across when the count allows, else pairs.
-            items.length % 3 === 0 ? "grid-cols-3" : "grid-cols-2",
+            // Whole rows: threes only for 3, 9, 15... (short values, a narrow
+            // phone), pairs otherwise.
+            items.length % 3 === 0 && items.length % 2 !== 0
+              ? "grid-cols-3"
+              : "grid-cols-2",
           )}
         >
           {items.map((item) => (
