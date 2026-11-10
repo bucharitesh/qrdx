@@ -79,17 +79,20 @@ export {
 export { GRADIENT_FRAME_DEFAULTS, mixFrameColors } from "./frame-styles";
 export { BUILT_IN_FRAME_SPECS } from "./frames/builtin";
 export {
-  frameSpecHash,
-  getOfficialFrame,
-  OFFICIAL_FRAME_COLLECTIONS,
   OFFICIAL_FRAME_COUNT,
   OFFICIAL_FRAME_COUNTS,
-  OFFICIAL_FRAME_INDEX,
-  OFFICIAL_FRAMES,
-  type OfficialFrame,
-  type OfficialFrameCollection,
-  type OfficialFrameIndexEntry,
-} from "./frames/official";
+} from "./frames/catalogue/counts";
+// The frame library's data is built as modules of its own and only
+// re-exported here (tsup.config.ts), so bundlers skip what an app never uses.
+export { OFFICIAL_FRAME_INDEX } from "./frames/catalogue/index";
+export { OFFICIAL_FRAME_COLLECTIONS } from "./frames/collections";
+export { getOfficialFrame, OFFICIAL_FRAMES } from "./frames/official";
+export type {
+  OfficialFrame,
+  OfficialFrameCollection,
+  OfficialFrameIndexEntry,
+} from "./frames/official-types";
+export { frameSpecHash } from "./frames/spec-hash";
 export {
   LOGO_PLATE_INSET,
   LOGO_ROUNDED_RADIUS,

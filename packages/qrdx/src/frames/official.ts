@@ -8,13 +8,14 @@
 // The frames live in ./official/<id>.json; ./catalogue/ is generated from
 // them (scripts/official-frames/write.mjs): the full list, one module per
 // collection (load a group at a time) and a light index without specs.
+// The package builds this module on its own (dist/frames-official), so an
+// app that never uses the frames doesn't ship them (tsup.config.ts).
 import { OFFICIAL_FRAME_LIST } from "./catalogue/all";
 
 export {
   OFFICIAL_FRAME_COUNT,
   OFFICIAL_FRAME_COUNTS,
 } from "./catalogue/counts";
-export { OFFICIAL_FRAME_INDEX } from "./catalogue/index";
 export { OFFICIAL_FRAME_COLLECTIONS } from "./collections";
 export type {
   OfficialFrame,

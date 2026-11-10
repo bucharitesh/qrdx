@@ -19,13 +19,13 @@ import {
   peekFrameIndex,
   peekIndexEntry,
   peekOfficialFrame,
-  useFrameLibrary,
 } from "@/lib/frames/library";
 import {
   OCCASIONS,
   upcomingOccasions,
   viewerHemisphere,
 } from "@/lib/frames/occasions";
+import { useFrameLibrary } from "@/lib/frames/use-frame-library";
 import { CompactTile, OptionGrid, OptionTile } from "./option-tiles";
 import {
   offsetBeyond,
