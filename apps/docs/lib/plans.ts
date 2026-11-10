@@ -99,6 +99,11 @@ export interface PlanLimits {
   teamThemes: boolean;
   /** @deprecated Brand kits are merged into saved themes; use `savedThemes`. */
   brandKits: number;
+  /**
+   * Saved barcodes per scope, not counting the trash (lib/barcodes). Static,
+   * so nothing is hosted: every plan saves them, the cap only stops abuse.
+   */
+  savedBarcodes: number;
 }
 
 export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
@@ -136,6 +141,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     savedThemes: MAX_FREE_THEMES,
     teamThemes: false,
     brandKits: 1,
+    savedBarcodes: 1000,
   },
   pro: {
     dynamicCodes: UNLIMITED,
@@ -172,6 +178,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     // Pro includes 3-member teams; shared themes are what make them useful.
     teamThemes: true,
     brandKits: UNLIMITED,
+    savedBarcodes: 10_000,
   },
   business: {
     dynamicCodes: UNLIMITED,
@@ -208,6 +215,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     savedThemes: UNLIMITED,
     teamThemes: true,
     brandKits: UNLIMITED,
+    savedBarcodes: 100_000,
   },
 };
 
