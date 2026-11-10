@@ -2,7 +2,7 @@
 // registration accepts https:// (http:// only on localhost) without
 // wildcards, fragments, credentials or script schemes, and authorization
 // requires an exact, character-for-character match.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import {
   checkOptionalUrl,
   checkRedirectUri,
@@ -60,7 +60,7 @@ describe("checkRedirectUri", () => {
   });
 });
 
-it("trims surrounding whitespace instead of rejecting it", () => {
+test("trims surrounding whitespace instead of rejecting it", () => {
   expect(checkRedirectUri("\thttps://acme.com/cb\n")).toEqual({
     ok: true,
     url: "https://acme.com/cb",

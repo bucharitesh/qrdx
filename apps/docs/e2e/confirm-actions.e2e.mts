@@ -15,11 +15,11 @@
 // browser's trip to github.com is intercepted here and never leaves the
 // machine.
 //
-//   pnpm exec next dev -p <port> > <dev.log>
+//   bun x next dev -p <port> > <dev.log>
 //   CONFIRM_ACTIONS_E2E_BASE_URL=http://localhost:<port> \
 //   CONFIRM_ACTIONS_E2E_DEV_LOG=<dev.log> \
 //   CONFIRM_ACTIONS_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   CONFIRM_ACTIONS_E2E_SHOTS=<dir> pnpm exec tsx e2e/confirm-actions.e2e.mts
+//   CONFIRM_ACTIONS_E2E_SHOTS=<dir> bun x tsx e2e/confirm-actions.e2e.mts
 //
 // Each dialog is captured in light and dark, at desktop and phone widths.
 import { execSync } from "node:child_process";

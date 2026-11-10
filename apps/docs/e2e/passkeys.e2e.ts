@@ -20,7 +20,7 @@
 //   E2E_CODE_LOG=<the dev server's log file> \
 //   E2E_SHOTS=<directory> \
 //   E2E_DB_SQL='<command that runs SQL on the LOCAL database, reading stdin>' \
-//   [E2E_MOBILE=1] pnpm --filter docs test:e2e:passkeys
+//   [E2E_MOBILE=1] bun run --filter docs test:e2e:passkeys
 //
 // Codes are only printed by `next dev` (never emailed there), so this runs
 // against a local dev server only; it skips (exit 0) without a server,

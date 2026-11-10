@@ -130,14 +130,14 @@ export function ownWorkspaceSlugBase(person) {
     slugifyWorkspaceName(person.name ?? ""),
     slugifyWorkspaceName(emailLocalPart(person.email)),
   ];
-  const fit = (slug) =>
+  const trimToFit = (slug) =>
     slug.slice(0, WORKSPACE_SLUG_MAX - 5).replace(/-+$/g, "");
   for (const candidate of candidates) {
-    const base = fit(candidate);
+    const base = trimToFit(candidate);
     if (!base) continue;
     const long = base.length < 3 ? `${base}-workspace` : base;
     if (!RESERVED.has(long)) return long;
-    return fit(`${long}-workspace`);
+    return trimToFit(`${long}-workspace`);
   }
   return "workspace-1";
 }

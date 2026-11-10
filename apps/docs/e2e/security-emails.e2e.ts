@@ -22,7 +22,7 @@
 // runs against a local dev server whose output goes to E2E_DEV_LOG:
 //
 //   E2E_BASE_URL=http://localhost:3240 E2E_DEV_LOG=/path/to/dev.log \
-//   pnpm exec tsx e2e/security-emails.e2e.ts
+//   bun x tsx e2e/security-emails.e2e.ts
 //
 // Accounts are new @qrdx.test addresses per run. Skips (exit 0) without a
 // server, a log or Chrome.

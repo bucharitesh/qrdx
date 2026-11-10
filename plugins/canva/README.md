@@ -6,25 +6,25 @@ Enter a URL or text, pick a template, dot, eye and eye-dot patterns, colors, an 
 
 ## Run from source
 
-You need Node.js 22 (22.22.3 or later), pnpm 10 and a Canva account.
+You need Node.js 22 (22.22.3 or later), [Bun](https://bun.com/docs/installation) 1.4 and a Canva account.
 
 1. From the root of this repository, install and build the engine, which the app imports from `packages/qrdx/dist`:
 
    ```bash
-   pnpm install
-   pnpm --filter qrdx build:inplace
+   bun install
+   bun run --filter qrdx build:inplace
    ```
 
 2. Create an app in Canva's Developer Portal and set its development URL to `http://localhost:8080`. Canva's [quickstart](https://www.canva.dev/docs/apps/quickstart/) shows where.
 3. Start the development server, which serves the app bundle on port 8080:
 
    ```bash
-   pnpm --filter @qrdx/canva-plugin start
+   bun run --filter @qrdx/canva-plugin start
    ```
 
 4. Preview the app from the Developer Portal.
 
-`pnpm --filter @qrdx/canva-plugin build` writes the production bundle to `plugins/canva/dist/app.js`, a single file as Canva requires.
+`bun run --filter @qrdx/canva-plugin build` writes the production bundle to `plugins/canva/dist/app.js`, a single file as Canva requires.
 
 ## License
 

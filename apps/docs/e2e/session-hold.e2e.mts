@@ -6,11 +6,11 @@
 // database (test users), so it refuses to run unless DATABASE_URL in
 // .env.local points at localhost.
 //
-//   pnpm exec next dev -p <port> > <dev.log>   (CSP_DEV=1 to check the CSP)
+//   bun x next dev -p <port> > <dev.log>   (CSP_DEV=1 to check the CSP)
 //
 //   SESSION_E2E_BASE_URL=http://localhost:<port> SESSION_E2E_DEV_LOG=<dev.log> \
 //   SESSION_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   SESSION_E2E_SHOTS=<dir> pnpm exec tsx e2e/session-hold.e2e.mts
+//   SESSION_E2E_SHOTS=<dir> bun x tsx e2e/session-hold.e2e.mts
 //
 // Covers: a sign-in records its country and browser; travel alone or a new
 // browser alone changes nothing; both at once send every app page to the

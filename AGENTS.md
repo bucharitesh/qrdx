@@ -4,7 +4,7 @@ Guidance for coding agents (Claude Code, Codex, Cursor, Copilot and others) and 
 
 ## What this is
 
-QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR generator, dynamic codes with hosted pages and analytics, a REST API, an MCP server, a CLI and a React library. It's a pnpm 10 workspace run with Turborepo, on Node.js 22.
+QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR generator, dynamic codes with hosted pages and analytics, a REST API, an MCP server, a CLI and a React library. It's a Turborepo monorepo that uses Bun 1.4 to install packages and run scripts, and Node.js 22 to run the app, the tests and the builds.
 
 | Path | What it is |
 | --- | --- |
@@ -22,23 +22,24 @@ QRdx is an open-source QR code platform (https://qrdx.dev): a free static QR gen
 ## Run, test, check
 
 ```bash
-pnpm install
-pnpm --filter qrdx build:inplace     # the app imports the engine's dist/, so build it first
-pnpm --filter docs dev               # http://localhost:3000 (needs apps/docs/.env.local, see CONTRIBUTING)
+bun install
+bun run --filter qrdx build:inplace     # the app imports the engine's dist/, so build it first
+bun run --filter docs dev               # http://localhost:3000 (needs apps/docs/.env.local, see CONTRIBUTING)
+bun x ultracite fix <files you changed> # format and lint (Ultracite runs Biome)
 
 cd apps/docs
-pnpm exec tsc --noEmit               # typecheck the app (on a fresh clone, run `pnpm typegen:docs` from the root first)
-pnpm exec vitest run                 # unit and integration tests (tests/**); no database or network
-pnpm test:node                       # node:test suites next to the code
-../../node_modules/.bin/biome check --write <files you changed>
+bun x tsc --noEmit                      # typecheck the app (on a fresh clone, run `bun run typegen:docs` from the root first)
+bun x vitest run                        # unit and integration tests (tests/**); no database or network
+bun run test:node                       # node:test suites next to the code
 ```
 
-The pre-push hook runs the engine build, both typechecks, `biome ci` and the tests of the packages your branch changes compared with `origin/staging`, plus the packages that depend on them (`turbo --affected`; unchanged results come from the turbo cache). `pnpm prepush`, or `QRDX_PREPUSH=full git push`, runs every test. CI runs on every pull request (affected packages for pull requests into `staging`, everything for release pull requests into `main`) and on every push to `main`. The e2e suites (`pnpm --filter docs test:e2e`, `test:e2e:app`, `test:e2e:site`) need a running dev server and Chrome.
+The pre-push hook runs the engine build, both typechecks, the lint check (`bun run lint:ci`, which is `ultracite check`) and the tests of the packages your branch changes compared with `origin/staging`, plus the packages that depend on them (`turbo --affected`; unchanged results come from the turbo cache). `bun run prepush`, or `QRDX_PREPUSH=full git push`, runs every test. CI runs on every pull request (affected packages for pull requests into `staging`, everything for release pull requests into `main`) and on every push to `main`. The e2e suites (`bun run --filter docs test:e2e`, `test:e2e:app`, `test:e2e:site`) need a running dev server and Chrome.
 
 ## Rules
 
-- **The engine is consumed through `dist/`.** After changing `packages/qrdx/src`, rebuild with `pnpm --filter qrdx build:inplace`. Never run `pnpm build` in `packages/qrdx` while a dev server is running: it deletes `dist/` first and breaks the running app. Pulls, rebases and branch switches that change the engine rebuild it for you (`.husky/post-merge`, `post-checkout`, `post-rewrite` run `scripts/rebuild-engine-if-changed.sh`; skip with `QRDX_SKIP_ENGINE_REBUILD=1`).
-- **Treat the database as shared and live.** `DATABASE_URL` may point at a database with real users (a self-hoster's production, or one database shared by dev and prod). Never run `pnpm db:push`, migrations, destructive SQL or scripts that write data against a database you weren't told is disposable. Schema changes are additive and idempotent: new columns nullable or defaulted, no drops or renames in the same change. When you can't apply a change yourself, write it to `packages/database/manual-sql/` and say so.
+- **The engine is consumed through `dist/`.** After changing `packages/qrdx/src`, rebuild with `bun run --filter qrdx build:inplace`. Never run `bun run build` in `packages/qrdx` while a dev server is running: it deletes `dist/` first and breaks the running app. Pulls, rebases and branch switches that change the engine rebuild it for you (`.husky/post-merge`, `post-checkout`, `post-rewrite` run `scripts/rebuild-engine-if-changed.sh`; skip with `QRDX_SKIP_ENGINE_REBUILD=1`).
+- **Bun installs, Node runs.** Bun is only the package manager and script runner. Next.js, Vitest, the `node --test` suites, Vercel and Docker all run on Node.js 22, so don't add `--bun` to scripts. Run tests with `bun run test` (or `bun run test:node`, `bun x vitest run`), never `bun test`: that's Bun's own test runner, and these suites aren't written for it. Add a dependency with `bun add <dep>` (`-d` for dev) inside the package that imports it, and commit `bun.lock`. Packages are installed isolated, so code can only import what its own `package.json` lists.
+- **Treat the database as shared and live.** `DATABASE_URL` may point at a database with real users (a self-hoster's production, or one database shared by dev and prod). Never run `bun run db:push`, migrations, destructive SQL or scripts that write data against a database you weren't told is disposable. Schema changes are additive and idempotent: new columns nullable or defaulted, no drops or renames in the same change. When you can't apply a change yourself, write it to `packages/database/manual-sql/` and say so.
 - **No placeholders in shipped content.** Docs, legal pages and UI copy go live as written: no `[[PLACEHOLDER]]` (a test fails on them), no "TBD", no invented examples presented as real.
 - **Honest copy.** Never describe a feature that isn't built or isn't available on the deployment. Product counts come from code, not from memory: write `{facts.bodyPatterns}` and the other tokens from `apps/docs/lib/product-facts.ts` in MDX, and import the catalogues in TSX. Features that need setup are gated by `lib/feature-availability*`; docs use `<IfAvailable>`.
 - **Write like a person.** Use the humanizer skill (`.claude/skills/humanizer`) when writing or editing blog posts and other long-form copy.

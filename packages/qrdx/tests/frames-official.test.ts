@@ -5,7 +5,7 @@
 // decode-official-frames.test.ts.
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import { getQRAsEPS } from "../src/eps";
 import { drawFrameOnCanvas, frameLabels, getFrameLayout } from "../src/frame";
 import { getOfficialFrame, OFFICIAL_FRAMES } from "../src/frames/official";
@@ -130,7 +130,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
       frame,
     };
 
-    it("validates, with Latin-1 labels and no brand names", () => {
+    test("validates, with Latin-1 labels and no brand names", () => {
       const result = frameSpecSchema.safeParse(official.spec);
       expect(result.error?.issues ?? []).toEqual([]);
       const texts = official.spec.labels.map((label) => label.text);
@@ -143,7 +143,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
       ).toBe(true);
     });
 
-    it("is monochrome by default and follows the theme", () => {
+    test("is monochrome by default and follows the theme", () => {
       const plain = getFrameLayout(256, frame);
       const colors = [
         ...plain.shapes.map((shape) => shape.fill),
@@ -160,7 +160,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
       expect([...themedColors].some((color) => !isGrey(color))).toBe(true);
     });
 
-    it("keeps the code whole and the labels off it", () => {
+    test("keeps the code whole and the labels off it", () => {
       const layout = getFrameLayout(256, frame);
       expect(layout.qrSize).toBe(256);
       expect(layout.qrX + layout.qrSize).toBeLessThanOrEqual(
@@ -186,7 +186,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
       );
     });
 
-    it("draws the same shapes and labels on a canvas", () => {
+    test("draws the same shapes and labels on a canvas", () => {
       const layout = getFrameLayout(256, frame);
       const { ctx, calls } = recordCanvas();
       const previous = (globalThis as Record<string, unknown>).Path2D;
@@ -211,7 +211,7 @@ describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
       ).toEqual(frameLabels(layout).map((label) => label.text));
     });
 
-    it("prints the same artwork in PDF and EPS as in SVG", async () => {
+    test("prints the same artwork in PDF and EPS as in SVG", async () => {
       const layout = getFrameLayout(256, frame);
       const labels = frameLabels(layout);
       const eps = await getQRAsEPS(props, { sizeMm: 40 });

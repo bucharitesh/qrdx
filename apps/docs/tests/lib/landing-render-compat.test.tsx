@@ -14,7 +14,7 @@ import type { LandingTheme } from "@/types/landing";
 // a page that doesn't use them must produce the very same markup.
 //
 // Regenerate only for an intended change to existing pages:
-//   UPDATE_LANDING_FIXTURES=1 pnpm exec vitest run tests/lib/landing-render-compat.test.tsx
+//   UPDATE_LANDING_FIXTURES=1 bun x vitest run tests/lib/landing-render-compat.test.tsx
 
 // next/font only works inside Next's compiler; the pages here don't use web fonts.
 vi.mock("next/font/google", () => {

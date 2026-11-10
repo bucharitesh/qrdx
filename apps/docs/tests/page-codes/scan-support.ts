@@ -10,7 +10,7 @@
 // and the decoded text must be exactly the code's value.
 import { getQRAsSVGDataUri, getScanScore, getStylePairRisk } from "qrdx";
 import type { QRProps } from "qrdx/types";
-import { afterAll, beforeAll, expect, it } from "vitest";
+import { afterAll, beforeAll, expect, test } from "vitest";
 import { type PageCode, pageCodeProps } from "@/lib/landing/page-codes";
 import qrcodegen from "../../../../packages/qrdx/src/codegen";
 import { ERROR_LEVEL_MAP } from "../../../../packages/qrdx/src/constants";
@@ -83,7 +83,7 @@ export function describeScans(codes: readonly PageCode[]) {
   });
   afterAll(() => uninstall());
 
-  it.each(codes.map((code) => [code.id, code] as const))(
+  test.each(codes.map((code) => [code.id, code] as const))(
     "%s",
     async (_id, code) => {
       await expectScans(code);

@@ -21,11 +21,11 @@
 //
 //   NODE_OPTIONS="--require $PWD/e2e/social/github-stub.cjs" \
 //   GITHUB_CLIENT_ID=e2e-github-client GITHUB_CLIENT_SECRET=e2e-github-secret \
-//     pnpm exec next dev -p <port> > <dev.log>
+//     bun x next dev -p <port> > <dev.log>
 //
 //   HOOKS_E2E_BASE_URL=http://localhost:<port> HOOKS_E2E_DEV_LOG=<dev.log> \
 //   HOOKS_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   HOOKS_E2E_SHOTS=<dir> pnpm exec tsx e2e/sign-in-hooks.e2e.mts
+//   HOOKS_E2E_SHOTS=<dir> bun x tsx e2e/sign-in-hooks.e2e.mts
 //
 // It writes to the database (test users and their rows), so it refuses to
 // run unless DATABASE_URL in .env.local and the psql command are local.

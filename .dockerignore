@@ -22,7 +22,6 @@
 .idea
 **/.DS_Store
 **/npm-debug.log*
-**/pnpm-debug.log*
 
 # Docker files themselves
 Dockerfile

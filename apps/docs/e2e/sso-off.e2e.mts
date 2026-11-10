@@ -19,7 +19,7 @@
 //
 //   SSO_OFF_E2E_BASE_URL=http://localhost:<port> SSO_OFF_E2E_DEV_LOG=<dev.log> \
 //   SSO_OFF_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   SSO_OFF_E2E_SHOTS=<dir> pnpm exec tsx e2e/sso-off.e2e.mts
+//   SSO_OFF_E2E_SHOTS=<dir> bun x tsx e2e/sso-off.e2e.mts
 import { execSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";

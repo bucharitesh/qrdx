@@ -17,7 +17,7 @@ Get it from the [Chrome Web Store](https://chromewebstore.google.com/detail/bpep
 To run your own build, for development or to try changes before they reach the store:
 
 ```bash
-pnpm --filter @qrdx/chrome-extension build   # writes plugins/chrome/dist
+bun run --filter @qrdx/chrome-extension build   # writes plugins/chrome/dist
 ```
 
 1. Open `chrome://extensions` and turn on **Developer mode**.
@@ -26,7 +26,7 @@ pnpm --filter @qrdx/chrome-extension build   # writes plugins/chrome/dist
 
 `dist/` contains `manifest.json`, `popup.html`, `popup.css`, `popup.js`, `background.js` (service worker) and `icons/`.
 
-For development, run `pnpm --filter @qrdx/chrome-extension dev` (tsup watch) and press the reload button on the extension card after each change. Type-check with `pnpm --filter @qrdx/chrome-extension typecheck`.
+For development, run `bun run --filter @qrdx/chrome-extension dev` (tsup watch) and press the reload button on the extension card after each change. Type-check with `bun run --filter @qrdx/chrome-extension typecheck`.
 
 To produce the upload zip for the Chrome Web Store (not done automatically): `cd plugins/chrome/dist && zip -r ../qrdx-chrome.zip .`
 

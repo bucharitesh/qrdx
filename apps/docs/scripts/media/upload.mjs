@@ -6,7 +6,7 @@
 // Files already in the bucket are skipped. Code reads the manifest through
 // `mediaUrl()` in lib/media.ts.
 //
-//   cd apps/docs && R2_BUCKET=<bucket> pnpm media:upload
+//   cd apps/docs && R2_BUCKET=<bucket> bun run media:upload
 //
 // Env: R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY, R2_BUCKET and
 // R2_PUBLIC_BASE_URL (the bucket's public origin), from the shell or the

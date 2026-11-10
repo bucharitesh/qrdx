@@ -31,7 +31,7 @@ services:
       retries: 20
 
   # Speaks Neon's HTTP query protocol in front of plain Postgres.
-  # Bound to localhost so `pnpm dev` on the host can use it as well.
+  # Bound to localhost so `bun run dev` on the host can use it as well.
   db-proxy:
     image: ghcr.io/timowilhelm/local-neon-http-proxy:main
     restart: unless-stopped

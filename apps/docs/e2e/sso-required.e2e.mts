@@ -10,12 +10,12 @@
 //   QRDX_TEST_DNS_SERVER=127.0.0.1:5399 \
 //   NODE_OPTIONS="--require $PWD/e2e/sso/dns-preload.cjs" \
 //   BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:4455 \
-//     pnpm exec next dev -p <port> > <dev.log>
+//     bun x next dev -p <port> > <dev.log>
 //
 //   SSO_E2E_BASE_URL=http://localhost:<port> SSO_E2E_DEV_LOG=<dev.log> \
 //   SSO_E2E_DNS_FILE=<records.json> SSO_E2E_IDP=http://localhost:4455 \
 //   SSO_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   SSO_E2E_SHOTS=<dir> [SSO_E2E_MOBILE=1] pnpm exec tsx e2e/sso-required.e2e.mts
+//   SSO_E2E_SHOTS=<dir> [SSO_E2E_MOBILE=1] bun x tsx e2e/sso-required.e2e.mts
 //
 // Covers: an OIDC connection set up and verified (DNS), then the setting:
 // an admin at the domain who signed in another way can't turn it on (and
