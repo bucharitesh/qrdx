@@ -15,13 +15,14 @@ import { paletteFilter } from "@/components/app-shell/palette-filter";
 const SLUG = "acme";
 
 describe("app nav", () => {
-  it("has Home, Codes, Pages & forms, Analytics and a Library", () => {
+  it("has Home, Codes, Pages & forms, Analytics, Barcodes and a Library", () => {
     const nav = mainNav(SLUG);
     expect(nav.flatMap((g) => g.items.map((i) => i.label))).toEqual([
       "Home",
       "Codes",
       "Pages & forms",
       "Analytics",
+      "Barcodes",
       "Files",
       "Themes",
     ]);
@@ -31,6 +32,7 @@ describe("app nav", () => {
       "/dashboard/acme/codes",
       "/dashboard/acme/pages",
       "/dashboard/acme/analytics",
+      "/dashboard/acme/barcodes",
       "/dashboard/acme/files",
       "/dashboard/acme/themes",
     ]);

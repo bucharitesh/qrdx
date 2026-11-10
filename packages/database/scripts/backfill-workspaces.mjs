@@ -173,6 +173,8 @@ export const ADOPTED_TABLES = [
   { table: "webhook_endpoint", owner: "user_id" },
   { table: "notification_setting", owner: "user_id" },
   { table: "api_key", owner: "user_id" },
+  // Saved barcodes (manual-sql/2026-11-11-barcodes.sql)
+  { table: "barcode", owner: "user_id" },
   // First-party apps have no owner and never get a workspace.
   { table: "oauth_app", owner: "owner_user_id" },
 ];

@@ -272,7 +272,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "Barcode generator",
       url: "/barcode-generator",
-      description: `${PRODUCT_FACTS.barcodeFormats} static barcode formats (${BARCODE_FORMATS.map((format) => format.label).join(", ")}) with check digits and a scan check, as PNG, SVG or EPS; runs in the browser`,
+      description: `${PRODUCT_FACTS.barcodeFormats} static barcode formats (${BARCODE_FORMATS.map((format) => format.label).join(", ")}) with check digits and a scan check, as PNG, JPG, WebP, AVIF, SVG, PDF or EPS; no account needed, and signed in you can save barcodes to the dashboard`,
     },
     {
       title: "QR code generators by type",
@@ -324,7 +324,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "MCP server",
       url: "/docs/developers/mcp",
-      description: `Remote MCP endpoint \`${mcpUrl}\` (Streamable HTTP, no account or key, read-only tools that render QR codes and build Wi-Fi, contact, email, SMS and map payloads). Claude Code: \`${claudeCodeCommand(mcpUrl)}\``,
+      description: `Remote MCP endpoint \`${mcpUrl}\` (Streamable HTTP, no account or key, read-only tools that render QR codes and barcodes and build Wi-Fi, contact, email, SMS and map payloads). Claude Code: \`${claudeCodeCommand(mcpUrl)}\``,
     },
     {
       title: "Connect an AI app to the MCP server",
@@ -341,6 +341,12 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       title: "QR code image API",
       url: "/docs/developers/image-api",
       description: `\`GET ${api}/qr?data=…\` returns an SVG, PNG or EPS QR code; no key; gradients, frames, borders and logo icons through \`style\` (the editor's style JSON)`,
+    },
+    // Barcodes (lib/barcode, lib/barcodes)
+    {
+      title: "Barcode API",
+      url: "/docs/developers/barcode-api",
+      description: `\`GET ${api}/barcode?format=ean13&data=…\` returns an SVG, PNG, JPG, WebP, AVIF, PDF or EPS barcode in ${PRODUCT_FACTS.barcodeFormats} formats, with check digits worked out or verified; no key. Saved barcodes under \`${api}/barcodes\` with an API key`,
     },
     {
       title: "Example image API URL",

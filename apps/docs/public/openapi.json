@@ -3,7 +3,7 @@
   "info": {
     "title": "QRdx API",
     "version": "1.0.0",
-    "description": "Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.\n\n- **Base URL:** `https://api.qrdx.dev/v1`. The same routes answer at `https://qrdx.dev/api/v1`.\n- **Auth:** an API key, `Authorization: Bearer qrdx_…` ([create one](https://qrdx.dev/docs/developers/api-keys)), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](https://qrdx.dev/docs/developers/rest-api#get-an-access-token)). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's own workspace. The image API (`GET /qr`) needs neither.\n- **Errors:** `{ \"code\", \"message\", \"status\" }`, plus `docs` when a page explains the fix ([every code](https://qrdx.dev/docs/developers/errors)).\n- **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in `X-RateLimit-*` headers, plus per-minute limits. Over a limit you get `429` with `Retry-After`.",
+    "description": "Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.\n\n- **Base URL:** `https://api.qrdx.dev/v1`. The same routes answer at `https://qrdx.dev/api/v1`.\n- **Auth:** an API key, `Authorization: Bearer qrdx_…` ([create one](https://qrdx.dev/docs/developers/api-keys)), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](https://qrdx.dev/docs/developers/rest-api#get-an-access-token)). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's own workspace. The image APIs (`GET /qr`, `GET /barcode`) need neither.\n- **Errors:** `{ \"code\", \"message\", \"status\" }`, plus `docs` when a page explains the fix ([every code](https://qrdx.dev/docs/developers/errors)).\n- **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in `X-RateLimit-*` headers, plus per-minute limits. Over a limit you get `429` with `Retry-After`.",
     "contact": {
       "name": "QRdx",
       "url": "https://qrdx.dev/docs/developers/quickstart"
@@ -31,6 +31,10 @@
     {
       "name": "Codes",
       "description": "Dynamic QR codes: a short link you can point anywhere after printing."
+    },
+    {
+      "name": "Barcodes",
+      "description": "Static barcodes (EAN, UPC, Code 128, Data Matrix and more): keyless images, and barcodes saved to a workspace."
     },
     {
       "name": "Scans",
@@ -2790,6 +2794,1429 @@
           }
         }
       }
+    },
+    "/barcode": {
+      "get": {
+        "operationId": "getBarcodeImage",
+        "summary": "Render a barcode image",
+        "tags": ["Barcodes"],
+        "security": [],
+        "description": "A static barcode as SVG (default), PNG, JPG, WebP, AVIF, PDF or EPS, with no key.\n\n**No key or token needed**, and it doesn't use your daily quota: put the URL straight into an `<img>` tag. The same query always returns the same bytes, so responses are cached for a year. Limit: 300 requests a minute per IP address, like `GET /qr`.\n\n**Formats.** EAN-13, EAN-8, UPC-A, UPC-E, ITF-14 and GS1-128 (GTIN and SSCC fields) take the number with or without its check digit: one digit short and it's added, the full length and it's checked. A wrong check digit, a wrong length or a character the format can't hold is a `400` that says what's wrong. Code 128 takes printable ASCII, Code 39 capitals, digits and `- . $ / + %`, and Data Matrix, PDF417 and Aztec any text up to 1,000 characters.\n\n**Sizes.** Raster images are `scale` pixels per module (a linear bar or a 2D cell's half). SVG, PDF and EPS are vectors at one point per module (0.353 mm, about 107% of an EAN-13's nominal size), with bars `height` millimetres tall.\n\nValues that shouldn't sit in a URL can go in a `POST` body instead.",
+        "parameters": [
+          {
+            "name": "format",
+            "in": "query",
+            "required": true,
+            "description": "The symbology: `ean13` (EAN-13), `ean8` (EAN-8), `upca` (UPC-A), `upce` (UPC-E), `code128` (Code 128), `code39` (Code 39), `itf14` (ITF-14), `gs1-128` (GS1-128), `datamatrix` (Data Matrix), `pdf417` (PDF417), `aztec` (Aztec)",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ean13",
+                "ean8",
+                "upca",
+                "upce",
+                "code128",
+                "code39",
+                "itf14",
+                "gs1-128",
+                "datamatrix",
+                "pdf417",
+                "aztec"
+              ]
+            },
+            "example": "ean13"
+          },
+          {
+            "name": "data",
+            "in": "query",
+            "required": true,
+            "description": "The number or text to encode. Retail numbers (EAN, UPC, ITF-14, GS1 GTINs and SSCCs) can leave the check digit off and it's added; a wrong one is an error.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 1000
+            },
+            "example": "590123412345"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "File type: svg (default), png, jpg, webp, avif, pdf or eps. Raster images are `scale` pixels per module; SVG, PDF and EPS are vectors at one point per module (0.353 mm).",
+            "schema": {
+              "default": "svg",
+              "type": "string",
+              "enum": ["png", "jpg", "webp", "avif", "svg", "pdf", "eps"]
+            },
+            "example": "svg"
+          },
+          {
+            "name": "fg",
+            "in": "query",
+            "required": false,
+            "description": "Bar and text color (default 000000) as hex, such as 000000 (in URLs leave out the # or encode it as %23)",
+            "schema": {
+              "type": "string",
+              "maxLength": 7
+            }
+          },
+          {
+            "name": "bg",
+            "in": "query",
+            "required": false,
+            "description": "Background color (default ffffff) as hex, such as 000000 (in URLs leave out the # or encode it as %23)",
+            "schema": {
+              "type": "string",
+              "maxLength": 7
+            }
+          },
+          {
+            "name": "scale",
+            "in": "query",
+            "required": false,
+            "description": "Pixels per module in raster images (1-10, default 4)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            }
+          },
+          {
+            "name": "height",
+            "in": "query",
+            "required": false,
+            "description": "Bar height of linear barcodes in millimetres at the vector size (5-60; default depends on the format, 23 for EAN-13)",
+            "schema": {
+              "type": "number",
+              "minimum": 5,
+              "maximum": 60
+            }
+          },
+          {
+            "name": "quietZone",
+            "in": "query",
+            "required": false,
+            "description": "Blank margin in modules: left and right of linear barcodes (0-20), all round 2D codes (0-10). Defaults to the format's minimum (11 for EAN-13, 10 for Code 128).",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 20
+            }
+          },
+          {
+            "name": "text",
+            "in": "query",
+            "required": false,
+            "description": "Print the digits or text under linear barcodes (default true)",
+            "schema": {
+              "type": "string",
+              "enum": ["0", "1", "true", "false"]
+            }
+          },
+          {
+            "name": "rotate",
+            "in": "query",
+            "required": false,
+            "description": "Clockwise rotation in degrees: 0 (default), 90, 180 or 270",
+            "schema": {
+              "type": "string",
+              "enum": ["0", "90", "180", "270"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The image or file. `Cache-Control: public, max-age=31536000, immutable`; CORS is open to every origin. EPS comes as an attachment.",
+            "content": {
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "<svg width=\"129.333mm\" height=\"55.333mm\" shape-rendering=\"crispEdges\" viewBox=\"0 0 388 166\" xmlns=\"http://www.w3.org/2000/svg\">…</svg>"
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/png"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/jpeg"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/webp"
+                }
+              },
+              "image/avif": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/avif"
+                }
+              },
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "application/pdf"
+                }
+              },
+              "application/postscript": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "application/postscript"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`VALIDATION_ERROR`: a parameter is missing or invalid, or the value breaks the format's rules (characters, length, check digit); `data.details` lists `{ param, message }`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "VALIDATION_ERROR",
+                  "message": "Invalid query parameters",
+                  "status": 400,
+                  "data": {
+                    "details": [
+                      {
+                        "param": "data",
+                        "message": "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "`RATE_LIMITED`: over 300 requests a minute from one IP address.",
+            "headers": {
+              "Retry-After": {
+                "$ref": "#/components/headers/Retry-After"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "RATE_LIMITED",
+                  "message": "Rate limit exceeded. Please try again later.",
+                  "status": 429
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "createBarcodeImage",
+        "summary": "Render a barcode image from a JSON body",
+        "tags": ["Barcodes"],
+        "security": [],
+        "description": "The same image as `GET /barcode`, with the same fields as JSON, so the value never appears in a URL or a log of one. Not cached (`Cache-Control: no-store`). No key needed; it shares the 300 requests a minute per IP address with `GET`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "format": {
+                    "type": "string",
+                    "enum": [
+                      "ean13",
+                      "ean8",
+                      "upca",
+                      "upce",
+                      "code128",
+                      "code39",
+                      "itf14",
+                      "gs1-128",
+                      "datamatrix",
+                      "pdf417",
+                      "aztec"
+                    ],
+                    "description": "The symbology: `ean13` (EAN-13), `ean8` (EAN-8), `upca` (UPC-A), `upce` (UPC-E), `code128` (Code 128), `code39` (Code 39), `itf14` (ITF-14), `gs1-128` (GS1-128), `datamatrix` (Data Matrix), `pdf417` (PDF417), `aztec` (Aztec)"
+                  },
+                  "data": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000,
+                    "description": "The number or text to encode. Retail numbers (EAN, UPC, ITF-14, GS1 GTINs and SSCCs) can leave the check digit off and it's added; a wrong one is an error."
+                  },
+                  "type": {
+                    "default": "svg",
+                    "description": "File type: svg (default), png, jpg, webp, avif, pdf or eps. Raster images are `scale` pixels per module; SVG, PDF and EPS are vectors at one point per module (0.353 mm).",
+                    "type": "string",
+                    "enum": ["png", "jpg", "webp", "avif", "svg", "pdf", "eps"]
+                  },
+                  "fg": {
+                    "description": "Bar and text color (default 000000) as hex, such as 000000 (in URLs leave out the # or encode it as %23)",
+                    "type": "string",
+                    "maxLength": 7
+                  },
+                  "bg": {
+                    "description": "Background color (default ffffff) as hex, such as 000000 (in URLs leave out the # or encode it as %23)",
+                    "type": "string",
+                    "maxLength": 7
+                  },
+                  "scale": {
+                    "description": "Pixels per module in raster images (1-10, default 4)",
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10
+                  },
+                  "height": {
+                    "description": "Bar height of linear barcodes in millimetres at the vector size (5-60; default depends on the format)",
+                    "type": "number",
+                    "minimum": 5,
+                    "maximum": 60
+                  },
+                  "quietZone": {
+                    "description": "Blank margin in modules: left and right of linear barcodes (up to 20), all round 2D codes (up to 10). Defaults to the format's minimum.",
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 20
+                  },
+                  "text": {
+                    "description": "Print the digits or text under linear barcodes (default true)",
+                    "type": "boolean"
+                  },
+                  "rotate": {
+                    "description": "Clockwise rotation in degrees: 0, 90, 180 or 270 (default 0)",
+                    "anyOf": [
+                      {
+                        "type": "number",
+                        "const": 0
+                      },
+                      {
+                        "type": "number",
+                        "const": 90
+                      },
+                      {
+                        "type": "number",
+                        "const": 180
+                      },
+                      {
+                        "type": "number",
+                        "const": 270
+                      }
+                    ]
+                  }
+                },
+                "required": ["format", "data"]
+              },
+              "examples": {
+                "gs1": {
+                  "summary": "A GS1-128 logistics label as PNG",
+                  "value": {
+                    "format": "gs1-128",
+                    "data": "(01)09501101530003(17)261231(10)AB-123",
+                    "type": "png",
+                    "scale": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The image or file. `Cache-Control: no-store`.",
+            "content": {
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "<svg width=\"129.333mm\" height=\"55.333mm\" shape-rendering=\"crispEdges\" viewBox=\"0 0 388 166\" xmlns=\"http://www.w3.org/2000/svg\">…</svg>"
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/png"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/jpeg"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/webp"
+                }
+              },
+              "image/avif": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/avif"
+                }
+              },
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "application/pdf"
+                }
+              },
+              "application/postscript": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "application/postscript"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`VALIDATION_ERROR`: a parameter is missing or invalid, or the value breaks the format's rules (characters, length, check digit); `data.details` lists `{ param, message }`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "VALIDATION_ERROR",
+                  "message": "Invalid query parameters",
+                  "status": 400,
+                  "data": {
+                    "details": [
+                      {
+                        "param": "data",
+                        "message": "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you."
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "`UNSUPPORTED_MEDIA_TYPE`: the body isn't sent as `application/json`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "`RATE_LIMITED`: over 300 requests a minute from one IP address.",
+            "headers": {
+              "Retry-After": {
+                "$ref": "#/components/headers/Retry-After"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "example": {
+                  "code": "RATE_LIMITED",
+                  "message": "Rate limit exceeded. Please try again later.",
+                  "status": 429
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/barcodes": {
+      "get": {
+        "operationId": "listBarcodes",
+        "summary": "List saved barcodes",
+        "tags": ["Barcodes"],
+        "security": [
+          {
+            "apiKey": []
+          },
+          {
+            "oauth2": ["codes:read"]
+          }
+        ],
+        "description": "The saved barcodes of the workspace the key or token acts on, most recently changed first.\n\nPage through them with `limit` and `offset`; `pagination.total` counts every match. `status=trash` lists the trash.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "description": "Which barcodes: `active` (default) or `trash`",
+            "schema": {
+              "default": "active",
+              "type": "string",
+              "enum": ["active", "trash"]
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Search: titles and values contain it",
+            "schema": {
+              "type": "string",
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "Only this symbology",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ean13",
+                "ean8",
+                "upca",
+                "upce",
+                "code128",
+                "code39",
+                "itf14",
+                "gs1-128",
+                "datamatrix",
+                "pdf417",
+                "aztec"
+              ]
+            }
+          },
+          {
+            "name": "folderId",
+            "in": "query",
+            "required": false,
+            "description": "Only this folder's barcodes; `none` for those in no folder",
+            "schema": {
+              "type": "string",
+              "maxLength": 64
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Barcodes per page (1-100)",
+            "schema": {
+              "default": 50,
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "description": "Barcodes to skip, for the next page",
+            "schema": {
+              "default": 0,
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of barcodes",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Barcode"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991,
+                          "description": "Barcodes matching the filters"
+                        },
+                        "limit": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "offset": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": ["total", "limit", "offset"]
+                    }
+                  },
+                  "required": ["data", "pagination"]
+                },
+                "examples": {
+                  "page": {
+                    "value": {
+                      "data": [
+                        {
+                          "id": "cm5barcode0spring0box0001",
+                          "title": "Spring box",
+                          "format": "ean13",
+                          "formatLabel": "EAN-13",
+                          "value": "5901234123457",
+                          "options": {
+                            "foreground": "#000000",
+                            "background": "#ffffff",
+                            "showText": true,
+                            "barHeightMm": 23,
+                            "quietZone": 11,
+                            "scale": 4,
+                            "rotation": 0
+                          },
+                          "folderId": null,
+                          "imageUrl": "https://qrdx.dev/api/v1/barcode?format=ean13&data=5901234123457",
+                          "createdAt": "2026-01-05T09:30:00.000Z",
+                          "updatedAt": "2026-01-05T09:30:00.000Z",
+                          "deletedAt": null,
+                          "organizationId": null
+                        }
+                      ],
+                      "pagination": {
+                        "total": 1,
+                        "limit": 50,
+                        "offset": 0
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400_ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401_Unauthorized_InvalidToken"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403_InsufficientScope_CodesRead"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429_RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500_InternalError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createBarcode",
+        "summary": "Save a barcode",
+        "tags": ["Barcodes"],
+        "security": [
+          {
+            "apiKey": []
+          },
+          {
+            "oauth2": ["codes:write"]
+          }
+        ],
+        "description": "Saves a static barcode to the workspace, listed under Barcodes in the dashboard.\n\nThe value is checked against the format's rules first: a retail number one digit short gets its check digit, a wrong one is a `400`. Options left out use the format's defaults. Every plan saves barcodes; past the plan's limit (1,000 on Free, not counting the trash) it's `402 LIMIT_REACHED`.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "description": "A name to find it by, up to 100 characters (default: none; lists show the value)",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "enum": [
+                      "ean13",
+                      "ean8",
+                      "upca",
+                      "upce",
+                      "code128",
+                      "code39",
+                      "itf14",
+                      "gs1-128",
+                      "datamatrix",
+                      "pdf417",
+                      "aztec"
+                    ],
+                    "description": "The symbology, as GET /barcode takes it: ean13, ean8, upca, upce, code128, code39, itf14, gs1-128, datamatrix, pdf417 or aztec"
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000,
+                    "description": "The number or text to encode, checked against the format's rules. Retail numbers can leave the check digit off and it's added."
+                  },
+                  "options": {
+                    "description": "How it's drawn; anything left out uses the format's defaults (black on white, the minimum quiet zone, scale 4)",
+                    "type": "object",
+                    "properties": {
+                      "foreground": {
+                        "description": "Bars and text, as hex (default 000000)",
+                        "type": "string"
+                      },
+                      "background": {
+                        "description": "Background, as hex (default ffffff)",
+                        "type": "string"
+                      },
+                      "showText": {
+                        "description": "Print the digits or text under linear barcodes (default true; 2D codes have none)",
+                        "type": "boolean"
+                      },
+                      "barHeightMm": {
+                        "description": "Bar height of linear barcodes in millimetres at the vector size (default depends on the format)",
+                        "type": "number",
+                        "minimum": 5,
+                        "maximum": 60
+                      },
+                      "quietZone": {
+                        "description": "Blank margin in modules: left and right of linear barcodes (up to 20), all round 2D codes (up to 10). Defaults to the format's minimum.",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 20
+                      },
+                      "scale": {
+                        "description": "Pixels per module in raster images (1-10, default 4)",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10
+                      },
+                      "rotation": {
+                        "description": "Clockwise rotation in degrees: 0, 90, 180 or 270 (default 0)",
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "const": 0
+                          },
+                          {
+                            "type": "number",
+                            "const": 90
+                          },
+                          {
+                            "type": "number",
+                            "const": 180
+                          },
+                          {
+                            "type": "number",
+                            "const": 270
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "folderId": {
+                    "description": "A folder of the workspace by id (the codes' folders); null for none",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": ["format", "value"]
+              },
+              "examples": {
+                "ean": {
+                  "summary": "An EAN-13, check digit added",
+                  "value": {
+                    "format": "ean13",
+                    "value": "590123412345",
+                    "title": "Spring box"
+                  }
+                },
+                "styled": {
+                  "summary": "A Code 128 label, dark blue, no text",
+                  "value": {
+                    "format": "code128",
+                    "value": "SHELF-A12",
+                    "options": {
+                      "foreground": "1e3a8a",
+                      "showText": false
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Saved",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Barcode"
+                    }
+                  },
+                  "required": ["data"]
+                },
+                "examples": {
+                  "barcode": {
+                    "value": {
+                      "data": {
+                        "id": "cm5barcode0spring0box0001",
+                        "title": "Spring box",
+                        "format": "ean13",
+                        "formatLabel": "EAN-13",
+                        "value": "5901234123457",
+                        "options": {
+                          "foreground": "#000000",
+                          "background": "#ffffff",
+                          "showText": true,
+                          "barHeightMm": 23,
+                          "quietZone": 11,
+                          "scale": 4,
+                          "rotation": 0
+                        },
+                        "folderId": null,
+                        "imageUrl": "https://qrdx.dev/api/v1/barcode?format=ean13&data=5901234123457",
+                        "createdAt": "2026-01-05T09:30:00.000Z",
+                        "updatedAt": "2026-01-05T09:30:00.000Z",
+                        "deletedAt": null,
+                        "organizationId": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400_ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401_Unauthorized_InvalidToken"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402_LimitReached"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403_InsufficientScope_Forbidden_LimitReached_CodesWrite"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413_PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415_UnsupportedMediaType"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429_RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500_InternalError"
+          }
+        }
+      }
+    },
+    "/barcodes/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The barcode's `id`",
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "example": "cm5barcode0spring0box0001"
+        }
+      ],
+      "get": {
+        "operationId": "getBarcode",
+        "summary": "Get a saved barcode",
+        "tags": ["Barcodes"],
+        "security": [
+          {
+            "apiKey": []
+          },
+          {
+            "oauth2": ["codes:read"]
+          }
+        ],
+        "description": "One saved barcode of the workspace the key or token acts on, in the trash or not.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
+        "responses": {
+          "200": {
+            "description": "The barcode",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Barcode"
+                    }
+                  },
+                  "required": ["data"]
+                },
+                "examples": {
+                  "barcode": {
+                    "value": {
+                      "data": {
+                        "id": "cm5barcode0spring0box0001",
+                        "title": "Spring box",
+                        "format": "ean13",
+                        "formatLabel": "EAN-13",
+                        "value": "5901234123457",
+                        "options": {
+                          "foreground": "#000000",
+                          "background": "#ffffff",
+                          "showText": true,
+                          "barHeightMm": 23,
+                          "quietZone": 11,
+                          "scale": 4,
+                          "rotation": 0
+                        },
+                        "folderId": null,
+                        "imageUrl": "https://qrdx.dev/api/v1/barcode?format=ean13&data=5901234123457",
+                        "createdAt": "2026-01-05T09:30:00.000Z",
+                        "updatedAt": "2026-01-05T09:30:00.000Z",
+                        "deletedAt": null,
+                        "organizationId": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400_ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401_Unauthorized_InvalidToken"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403_InsufficientScope_CodesRead"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404_NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429_RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500_InternalError"
+          }
+        }
+      },
+      "patch": {
+        "operationId": "updateBarcode",
+        "summary": "Update a saved barcode",
+        "tags": ["Barcodes"],
+        "security": [
+          {
+            "apiKey": []
+          },
+          {
+            "oauth2": ["codes:write"]
+          }
+        ],
+        "description": "Changes a saved barcode's title, format, value, options or folder. Send only the fields to change.\n\n`options` replaces the saved options: fields you leave out go back to the format's defaults. A new `format` without `options` starts from the new format's defaults. The value is checked like a new one.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "description": "A name to find it by, up to 100 characters (default: none; lists show the value)",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "format": {
+                    "type": "string",
+                    "enum": [
+                      "ean13",
+                      "ean8",
+                      "upca",
+                      "upce",
+                      "code128",
+                      "code39",
+                      "itf14",
+                      "gs1-128",
+                      "datamatrix",
+                      "pdf417",
+                      "aztec"
+                    ],
+                    "description": "The symbology, as GET /barcode takes it: ean13, ean8, upca, upce, code128, code39, itf14, gs1-128, datamatrix, pdf417 or aztec"
+                  },
+                  "value": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 1000,
+                    "description": "The number or text to encode, checked against the format's rules. Retail numbers can leave the check digit off and it's added."
+                  },
+                  "options": {
+                    "description": "How it's drawn: replaces the saved options (fields left out go back to the format's defaults)",
+                    "type": "object",
+                    "properties": {
+                      "foreground": {
+                        "description": "Bars and text, as hex (default 000000)",
+                        "type": "string"
+                      },
+                      "background": {
+                        "description": "Background, as hex (default ffffff)",
+                        "type": "string"
+                      },
+                      "showText": {
+                        "description": "Print the digits or text under linear barcodes (default true; 2D codes have none)",
+                        "type": "boolean"
+                      },
+                      "barHeightMm": {
+                        "description": "Bar height of linear barcodes in millimetres at the vector size (default depends on the format)",
+                        "type": "number",
+                        "minimum": 5,
+                        "maximum": 60
+                      },
+                      "quietZone": {
+                        "description": "Blank margin in modules: left and right of linear barcodes (up to 20), all round 2D codes (up to 10). Defaults to the format's minimum.",
+                        "type": "integer",
+                        "minimum": 0,
+                        "maximum": 20
+                      },
+                      "scale": {
+                        "description": "Pixels per module in raster images (1-10, default 4)",
+                        "type": "integer",
+                        "minimum": 1,
+                        "maximum": 10
+                      },
+                      "rotation": {
+                        "description": "Clockwise rotation in degrees: 0, 90, 180 or 270 (default 0)",
+                        "anyOf": [
+                          {
+                            "type": "number",
+                            "const": 0
+                          },
+                          {
+                            "type": "number",
+                            "const": 90
+                          },
+                          {
+                            "type": "number",
+                            "const": 180
+                          },
+                          {
+                            "type": "number",
+                            "const": 270
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "folderId": {
+                    "description": "A folder of the workspace by id (the codes' folders); null for none",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                }
+              },
+              "examples": {
+                "value": {
+                  "summary": "A new number",
+                  "value": {
+                    "value": "400638133393"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated barcode",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "$ref": "#/components/schemas/Barcode"
+                    }
+                  },
+                  "required": ["data"]
+                },
+                "examples": {
+                  "barcode": {
+                    "value": {
+                      "data": {
+                        "id": "cm5barcode0spring0box0001",
+                        "title": "Spring box",
+                        "format": "ean13",
+                        "formatLabel": "EAN-13",
+                        "value": "4006381333931",
+                        "options": {
+                          "foreground": "#000000",
+                          "background": "#ffffff",
+                          "showText": true,
+                          "barHeightMm": 23,
+                          "quietZone": 11,
+                          "scale": 4,
+                          "rotation": 0
+                        },
+                        "folderId": null,
+                        "imageUrl": "https://qrdx.dev/api/v1/barcode?format=ean13&data=5901234123457",
+                        "createdAt": "2026-01-05T09:30:00.000Z",
+                        "updatedAt": "2026-01-05T09:30:00.000Z",
+                        "deletedAt": null,
+                        "organizationId": null
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400_ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401_Unauthorized_InvalidToken"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403_InsufficientScope_Forbidden_CodesWrite"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404_NotFound"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413_PayloadTooLarge"
+          },
+          "415": {
+            "$ref": "#/components/responses/Error415_UnsupportedMediaType"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429_RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500_InternalError"
+          }
+        }
+      },
+      "delete": {
+        "operationId": "deleteBarcode",
+        "summary": "Delete a saved barcode",
+        "tags": ["Barcodes"],
+        "security": [
+          {
+            "apiKey": []
+          },
+          {
+            "oauth2": ["codes:write"]
+          }
+        ],
+        "description": "Moves a saved barcode to the trash, where the dashboard can restore it. `?permanent=true` deletes it for good instead.\n\nPrinted barcodes keep working either way: they're static.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "responses": {
+          "200": {
+            "description": "Deleted",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "deleted": {
+                          "type": "boolean",
+                          "description": "`true` when deleted for good (`permanent=true`)"
+                        },
+                        "trashed": {
+                          "description": "Present when it was moved to the trash instead",
+                          "type": "boolean",
+                          "const": true
+                        }
+                      },
+                      "required": ["id", "deleted"]
+                    }
+                  },
+                  "required": ["data"]
+                },
+                "examples": {
+                  "trashed": {
+                    "value": {
+                      "data": {
+                        "id": "cm5barcode0spring0box0001",
+                        "deleted": false,
+                        "trashed": true
+                      }
+                    }
+                  },
+                  "permanent": {
+                    "value": {
+                      "data": {
+                        "id": "cm5barcode0spring0box0001",
+                        "deleted": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400_ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401_Unauthorized_InvalidToken"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403_InsufficientScope_Forbidden_CodesWrite"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404_NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429_RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500_InternalError"
+          }
+        }
+      }
+    },
+    "/barcodes/{id}/image": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "description": "The barcode's `id`",
+          "schema": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "example": "cm5barcode0spring0box0001"
+        }
+      ],
+      "get": {
+        "operationId": "getSavedBarcodeImage",
+        "summary": "Download a saved barcode",
+        "tags": ["Barcodes"],
+        "security": [
+          {
+            "apiKey": []
+          },
+          {
+            "oauth2": ["codes:read"]
+          }
+        ],
+        "description": "A saved barcode as SVG (default), PNG, JPG, WebP, AVIF, PDF or EPS, drawn as saved: `type` picks the file and `scale` (1-10) overrides its raster scale. Private and not cached; it counts toward the daily quota. For an image anyone can load, use the barcode's `imageUrl`.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "description": "File type: svg (default), png, jpg, webp, avif, pdf or eps. Raster images are `scale` pixels per module; SVG, PDF and EPS are vectors at one point per module (0.353 mm).",
+            "schema": {
+              "default": "svg",
+              "type": "string",
+              "enum": ["png", "jpg", "webp", "avif", "svg", "pdf", "eps"]
+            }
+          },
+          {
+            "name": "scale",
+            "in": "query",
+            "required": false,
+            "description": "Pixels per module in raster images (1-10, default 4)",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The image or file. `Cache-Control: private, no-store`.",
+            "headers": {
+              "X-RateLimit-Limit": {
+                "$ref": "#/components/headers/X-RateLimit-Limit"
+              },
+              "X-RateLimit-Remaining": {
+                "$ref": "#/components/headers/X-RateLimit-Remaining"
+              },
+              "X-RateLimit-Reset": {
+                "$ref": "#/components/headers/X-RateLimit-Reset"
+              }
+            },
+            "content": {
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string"
+                },
+                "example": "<svg width=\"129.333mm\" height=\"55.333mm\" shape-rendering=\"crispEdges\" viewBox=\"0 0 388 166\" xmlns=\"http://www.w3.org/2000/svg\">…</svg>"
+              },
+              "image/png": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/png"
+                }
+              },
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/jpeg"
+                }
+              },
+              "image/webp": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/webp"
+                }
+              },
+              "image/avif": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/avif"
+                }
+              },
+              "application/pdf": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "application/pdf"
+                }
+              },
+              "application/postscript": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "application/postscript"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400_ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401_Unauthorized_InvalidToken"
+          },
+          "403": {
+            "$ref": "#/components/responses/Error403_InsufficientScope_CodesRead"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404_NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429_RateLimited"
+          },
+          "500": {
+            "$ref": "#/components/responses/Error500_InternalError"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3053,6 +4480,26 @@
                   "message": "Invalid API key: it doesn't exist, was revoked or has expired, or its creator left the workspace. Check that you copied the whole key, or create a new one at https://qrdx.dev/dashboard?to=settings/developers.",
                   "status": 401,
                   "docs": "https://qrdx.dev/docs/developers/api-keys"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Error402_LimitReached": {
+        "description": "`LIMIT_REACHED`: The workspace has as many active dynamic codes as its plan includes (10 on Free).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "LIMIT_REACHED": {
+                "summary": "LIMIT_REACHED",
+                "value": {
+                  "code": "LIMIT_REACHED",
+                  "message": "The workspace has as many active dynamic codes as its plan includes (10 on Free).",
+                  "status": 402
                 }
               }
             }
@@ -3650,6 +5097,161 @@
       }
     },
     "schemas": {
+      "Barcode": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Barcode id"
+          },
+          "title": {
+            "description": "Name shown in the dashboard",
+            "type": ["string", "null"]
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "ean13",
+              "ean8",
+              "upca",
+              "upce",
+              "code128",
+              "code39",
+              "itf14",
+              "gs1-128",
+              "datamatrix",
+              "pdf417",
+              "aztec"
+            ],
+            "description": "The symbology"
+          },
+          "formatLabel": {
+            "type": "string",
+            "description": "The symbology's name, e.g. `EAN-13`"
+          },
+          "value": {
+            "type": "string",
+            "description": "The value drawn, check digit included"
+          },
+          "options": {
+            "$ref": "#/components/schemas/BarcodeOptions"
+          },
+          "folderId": {
+            "description": "The folder it's in (the codes' folders), or null",
+            "type": ["string", "null"]
+          },
+          "imageUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "The same barcode from the public image API (no key), for `<img>` tags; add `type=png` and so on for other files"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Created (ISO 8601, UTC)"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last changed (ISO 8601, UTC)"
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Moved to the trash (ISO 8601, UTC)"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "organizationId": {
+            "description": "The workspace that owns it",
+            "type": ["string", "null"]
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "format",
+          "formatLabel",
+          "value",
+          "options",
+          "folderId",
+          "imageUrl",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "organizationId"
+        ],
+        "description": "A saved barcode"
+      },
+      "BarcodeOptions": {
+        "type": "object",
+        "properties": {
+          "foreground": {
+            "type": "string",
+            "description": "Bars and text, as #rrggbb"
+          },
+          "background": {
+            "type": "string",
+            "description": "Background, as #rrggbb"
+          },
+          "showText": {
+            "type": "boolean",
+            "description": "The digits or text under linear barcodes"
+          },
+          "barHeightMm": {
+            "type": "number",
+            "description": "Bar height of linear barcodes, in millimetres at the vector size"
+          },
+          "quietZone": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Blank margin in modules (each side of linear barcodes, all round 2D codes)"
+          },
+          "scale": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991,
+            "description": "Pixels per module in raster images"
+          },
+          "rotation": {
+            "anyOf": [
+              {
+                "type": "number",
+                "const": 0
+              },
+              {
+                "type": "number",
+                "const": 90
+              },
+              {
+                "type": "number",
+                "const": 180
+              },
+              {
+                "type": "number",
+                "const": 270
+              }
+            ],
+            "description": "Clockwise rotation in degrees"
+          }
+        },
+        "required": [
+          "foreground",
+          "background",
+          "showText",
+          "barHeightMm",
+          "quietZone",
+          "scale",
+          "rotation"
+        ],
+        "description": "How a barcode is drawn, every field filled in"
+      },
       "Code": {
         "type": "object",
         "properties": {

@@ -3,6 +3,7 @@ import "server-only";
 import {
   account,
   aiUsage,
+  barcode,
   brandKit,
   communityItem,
   communityLike,
@@ -332,6 +333,24 @@ export function exportQueries(userId: string) {
       .from(qrPreset)
       .where(eq(qrPreset.userId, userId))
       .orderBy(asc(qrPreset.createdAt)),
+
+    // Saved barcodes (lib/barcodes), the trash included.
+    barcodes: db
+      .select({
+        id: barcode.id,
+        teamId: barcode.organizationId,
+        folderId: barcode.folderId,
+        title: barcode.title,
+        format: barcode.format,
+        value: barcode.value,
+        options: barcode.options,
+        deletedAt: barcode.deletedAt,
+        createdAt: barcode.createdAt,
+        updatedAt: barcode.updatedAt,
+      })
+      .from(barcode)
+      .where(eq(barcode.userId, userId))
+      .orderBy(asc(barcode.createdAt)),
 
     brandKits: db
       .select({

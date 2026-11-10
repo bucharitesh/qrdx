@@ -3,6 +3,14 @@
 import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@repo/design-system/components/ui/dropdown-menu";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -17,20 +25,37 @@ import {
 import { Slider } from "@repo/design-system/components/ui/slider";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@repo/design-system/components/ui/toggle-group";
 import { cn } from "@repo/design-system/lib/utils";
 import {
+  ArrowDown2,
   TickCircle as CircleCheck,
   CloseCircle as CircleX,
   Import as Download,
   Warning2,
 } from "iconsax-reactjs";
-import { type ReactNode, useEffect, useId, useMemo, useState } from "react";
+import {
+  type ReactNode,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { track } from "@/lib/analytics";
 import {
   barcodeColorWarnings,
   type ColorWarning,
   HEX_COLOR,
 } from "@/lib/barcode/colors";
+import {
+  BARCODE_FILES,
+  type BarcodeFileType,
+  barcodeFileStem,
+} from "@/lib/barcode/files";
 import {
   BARCODE_FORMATS,
   type BarcodeFormatId,
@@ -39,27 +64,55 @@ import {
   isBarcodeFormatId,
   validateBarcodeInput,
 } from "@/lib/barcode/formats";
-import { canvasToPng, saveFile, svgToCanvas } from "@/lib/barcode/raster";
+import { canvasToBlob, saveFile, svgToCanvas } from "@/lib/barcode/raster";
 import type { RenderedBarcode } from "@/lib/barcode/render";
 import type { ScanCheckResult } from "@/lib/barcode/scan-check";
+import {
+  BARCODE_LIMITS,
+  BARCODE_ROTATIONS,
+  type BarcodeRotation,
+  type BarcodeStyle,
+  defaultBarcodeStyle,
+  maxQuietZone,
+} from "@/lib/barcode/style";
 import { soundEvent } from "@/lib/sound/emit";
 
 type RenderModule = typeof import("@/lib/barcode/render");
-type DownloadFormat = "png" | "svg" | "eps";
+
+/** The buttons; the rest are in the More menu. */
+const MAIN_FILES: BarcodeFileType[] = ["png", "svg", "pdf"];
+const MORE_FILES: BarcodeFileType[] = ["jpg", "webp", "avif", "eps"];
+
+/** A valid barcode as the form has it: what a Save button stores. */
+export interface CurrentBarcode {
+  format: BarcodeFormatId;
+  /** The value drawn, check digit included */
+  value: string;
+  style: BarcodeStyle;
+}
+
+export interface BarcodeGeneratorProps {
+  /** Start from a saved barcode instead of the EAN-13 example */
+  initial?: {
+    format: BarcodeFormatId;
+    value: string;
+    style?: Partial<BarcodeStyle>;
+  };
+  /** Fields above the barcode type (the dashboard's title) */
+  formTop?: ReactNode;
+  /** Under the downloads: Save to dashboard, or the editor's Save */
+  renderActions?: (current: CurrentBarcode | null) => ReactNode;
+  /** The line under the downloads; null for none */
+  footnote?: ReactNode;
+  /** Where downloads are counted from (analytics) */
+  source?: "generator" | "dashboard";
+}
 
 const SCAN_CHECK_DELAY_MS = 400;
 const LINEAR = BARCODE_FORMATS.filter((format) => format.kind === "linear");
 const MATRIX = BARCODE_FORMATS.filter((format) => format.kind === "2d");
 /** Linear formats that print text rather than a number under the bars */
 const TEXT_FORMATS = new Set<BarcodeFormatId>(["code128", "code39", "gs1-128"]);
-
-function fileStem(id: BarcodeFormatId, value: string): string {
-  const slug = value
-    .replace(/[^\w-]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 40);
-  return slug ? `${id}-${slug}` : id;
-}
 
 function ColorField({
   label,
@@ -235,26 +288,42 @@ function ScanStatus({
  * (lib/barcode/render.ts) loads on this page only, through the dynamic
  * import below, and the scan check's decoder loads on first use.
  */
-export function BarcodeGenerator() {
+export function BarcodeGenerator({
+  initial,
+  formTop,
+  renderActions,
+  footnote = (
+    <>
+      Made in your browser; nothing you type is sent to QRdx. WebP and AVIF are
+      encoded by QRdx's server when you pick them, and nothing is kept.
+    </>
+  ),
+  source = "generator",
+}: BarcodeGeneratorProps = {}) {
+  const start = useRef({
+    format: initial?.format ?? DEFAULT_BARCODE_FORMAT,
+    value:
+      initial?.value ??
+      getBarcodeFormat(initial?.format ?? DEFAULT_BARCODE_FORMAT).example,
+    style: {
+      ...defaultBarcodeStyle(initial?.format ?? DEFAULT_BARCODE_FORMAT),
+      ...initial?.style,
+    },
+  }).current;
   const [renderer, setRenderer] = useState<RenderModule | null>(null);
   const [loadError, setLoadError] = useState(false);
-  const [formatId, setFormatId] = useState<BarcodeFormatId>(
-    DEFAULT_BARCODE_FORMAT,
+  const [formatId, setFormatId] = useState<BarcodeFormatId>(start.format);
+  const [input, setInput] = useState<string>(start.value);
+  const [foreground, setForeground] = useState(start.style.foreground);
+  const [background, setBackground] = useState(start.style.background);
+  const [showText, setShowText] = useState(start.style.showText);
+  const [barHeightMm, setBarHeightMm] = useState(start.style.barHeightMm);
+  const [quietZone, setQuietZone] = useState(start.style.quietZone);
+  const [scale, setScale] = useState(start.style.scale);
+  const [rotation, setRotation] = useState<BarcodeRotation>(
+    start.style.rotation ?? 0,
   );
-  const [input, setInput] = useState<string>(
-    getBarcodeFormat(DEFAULT_BARCODE_FORMAT).example,
-  );
-  const [foreground, setForeground] = useState("#000000");
-  const [background, setBackground] = useState("#ffffff");
-  const [showText, setShowText] = useState(true);
-  const [barHeightMm, setBarHeightMm] = useState(
-    getBarcodeFormat(DEFAULT_BARCODE_FORMAT).barHeightMm ?? 15,
-  );
-  const [quietZone, setQuietZone] = useState(
-    getBarcodeFormat(DEFAULT_BARCODE_FORMAT).quietZone.default,
-  );
-  const [scale, setScale] = useState(4);
-  const [downloading, setDownloading] = useState<DownloadFormat | null>(null);
+  const [downloading, setDownloading] = useState<BarcodeFileType | null>(null);
   const [scan, setScan] = useState<ScanCheckResult | "unavailable" | null>(
     null,
   );
@@ -287,20 +356,26 @@ export function BarcodeGenerator() {
     [foreground, background],
   );
 
+  const style = useMemo<BarcodeStyle>(
+    () => ({
+      foreground,
+      background,
+      showText,
+      barHeightMm,
+      quietZone,
+      scale,
+      rotation,
+    }),
+    [foreground, background, showText, barHeightMm, quietZone, scale, rotation],
+  );
+
   const drawn = useMemo<
     { rendered: RenderedBarcode } | { error: string } | null
   >(() => {
     if (!(renderer && checked.ok)) return null;
     try {
       return {
-        rendered: renderer.renderBarcodeSVG(formatId, checked.value, {
-          foreground,
-          background,
-          showText,
-          barHeightMm,
-          quietZone,
-          scale,
-        }),
+        rendered: renderer.renderBarcodeSVG(formatId, checked.value, style),
       };
     } catch (error) {
       return {
@@ -310,19 +385,13 @@ export function BarcodeGenerator() {
             : "Couldn't draw this barcode.",
       };
     }
-  }, [
-    renderer,
-    checked,
-    formatId,
-    foreground,
-    background,
-    showText,
-    barHeightMm,
-    quietZone,
-    scale,
-  ]);
+  }, [renderer, checked, formatId, style]);
   const rendered = drawn && "rendered" in drawn ? drawn.rendered : null;
   const value = checked.ok ? checked.value : null;
+  const current = useMemo<CurrentBarcode | null>(
+    () => (rendered && value ? { format: formatId, value, style } : null),
+    [rendered, value, formatId, style],
+  );
 
   // Scan check: decode the exact pixels the PNG download would have.
   useEffect(() => {
@@ -368,40 +437,82 @@ export function BarcodeGenerator() {
     if (nextFormat.barHeightMm) setBarHeightMm(nextFormat.barHeightMm);
   };
 
-  const download = async (type: DownloadFormat) => {
+  /** WebP and AVIF: browsers can't encode them, so the image API does. */
+  const serverFile = async (type: BarcodeFileType): Promise<Blob> => {
+    if (!value) throw new Error("Fix the input first.");
+    const response = await fetch("/api/v1/barcode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        format: formatId,
+        data: value,
+        type,
+        fg: foreground,
+        bg: background,
+        scale,
+        height: barHeightMm,
+        quietZone,
+        text: showText,
+        rotate: rotation,
+      }),
+    });
+    if (!response.ok) {
+      const body = (await response.json().catch(() => null)) as {
+        message?: string;
+        data?: { details?: { message?: string }[] };
+      } | null;
+      throw new Error(
+        body?.data?.details?.[0]?.message ??
+          body?.message ??
+          "The server couldn't make this file.",
+      );
+    }
+    return response.blob();
+  };
+
+  const download = async (type: BarcodeFileType) => {
     if (!(rendered && value)) return;
     setDownloading(type);
-    const stem = fileStem(formatId, value);
+    const stem = barcodeFileStem(formatId, value);
+    const title = `${format.label} barcode`;
     try {
-      if (type === "png") {
+      let blob: Blob;
+      if (type === "png" || type === "jpg") {
         const canvas = await svgToCanvas(
           rendered.svg,
           rendered.width,
           rendered.height,
         );
-        saveFile(await canvasToPng(canvas), `${stem}.png`);
+        blob = await canvasToBlob(canvas, BARCODE_FILES[type].mime);
       } else if (type === "svg") {
         const svg = renderer?.printableSVG(rendered) ?? rendered.svg;
-        saveFile(
-          new Blob([svg], { type: "image/svg+xml;charset=utf-8" }),
-          `${stem}.svg`,
-        );
-      } else {
+        blob = new Blob([svg], { type: "image/svg+xml;charset=utf-8" });
+      } else if (type === "pdf") {
+        const { barcodePDF } = await import("@/lib/barcode/pdf");
+        blob = new Blob([barcodePDF(rendered, { title }) as BlobPart], {
+          type: "application/pdf",
+        });
+      } else if (type === "eps") {
         // The engine's SVG-to-EPS converter; loaded only when asked for.
         const { svgToEPS } = await import("qrdx");
         const eps = await svgToEPS(rendered.svg, {
           width: rendered.widthUnits,
           background,
-          title: `${format.label} barcode`,
+          title,
         });
-        saveFile(
-          new Blob([eps], { type: "application/postscript" }),
-          `${stem}.eps`,
-        );
+        blob = new Blob([eps], { type: "application/postscript" });
+      } else {
+        blob = await serverFile(type);
       }
+      saveFile(blob, `${stem}.${type}`);
       soundEvent("download");
-      track("barcode_downloaded", { format: type, symbology: formatId });
+      track("barcode_downloaded", {
+        format: type,
+        symbology: formatId,
+        source,
+      });
     } catch (error) {
+      soundEvent("error");
       toast.error("Download failed", {
         description: error instanceof Error ? error.message : undefined,
       });
@@ -425,6 +536,7 @@ export function BarcodeGenerator() {
   return (
     <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
       <div className="flex flex-col gap-5 rounded-xl border border-border bg-card p-5">
+        {formTop}
         <div className="flex flex-col gap-1.5">
           <Label htmlFor={`${inputId}-format`}>Barcode type</Label>
           <Select value={formatId} onValueChange={changeFormat}>
@@ -528,7 +640,7 @@ export function BarcodeGenerator() {
 
         <RangeField
           label="Quiet zone"
-          max={linear ? 20 : 10}
+          max={maxQuietZone(formatId)}
           min={0}
           readout={`${quietZone} ${quietZone === 1 ? "module" : "modules"}`}
           value={quietZone}
@@ -547,9 +659,9 @@ export function BarcodeGenerator() {
         </RangeField>
 
         <RangeField
-          label="PNG size"
-          max={10}
-          min={1}
+          label="Image size"
+          max={BARCODE_LIMITS.scale.max}
+          min={BARCODE_LIMITS.scale.min}
           readout={
             rendered
               ? `${Math.round(rendered.width)} × ${Math.round(rendered.height)} px`
@@ -572,6 +684,31 @@ export function BarcodeGenerator() {
             />
           </div>
         )}
+
+        <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
+          <Label id={`${inputId}-rotation`}>Rotation</Label>
+          <ToggleGroup
+            aria-labelledby={`${inputId}-rotation`}
+            onValueChange={(next) => {
+              if (next) setRotation(Number(next) as BarcodeRotation);
+            }}
+            size="sm"
+            type="single"
+            value={String(rotation)}
+            variant="outline"
+          >
+            {BARCODE_ROTATIONS.map((angle) => (
+              <ToggleGroupItem
+                aria-label={`${angle} degrees`}
+                className="px-2.5 font-mono text-xs tabular-nums"
+                key={angle}
+                value={String(angle)}
+              >
+                {angle}°
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+        </div>
       </div>
 
       <div className="flex min-w-0 flex-col gap-4 rounded-xl border border-border bg-card p-5">
@@ -604,9 +741,9 @@ export function BarcodeGenerator() {
 
         {rendered && renderer && (
           <p className="text-xs text-muted-foreground">
-            PNG {Math.round(rendered.width)} × {Math.round(rendered.height)} px.
-            SVG and EPS are vectors sized {mm(rendered.widthUnits)} ×{" "}
-            {mm(rendered.heightUnits)} mm, with a{" "}
+            PNG, JPG, WebP and AVIF {Math.round(rendered.width)} ×{" "}
+            {Math.round(rendered.height)} px. SVG, PDF and EPS are vectors sized{" "}
+            {mm(rendered.widthUnits)} × {mm(rendered.heightUnits)} mm, with a{" "}
             {mm(renderer.MODULE_UNITS[formatId], 2)} mm module; scale them in
             your layout as needed.
           </p>
@@ -628,8 +765,8 @@ export function BarcodeGenerator() {
           </div>
         )}
 
-        <div className="mt-auto grid grid-cols-3 gap-2">
-          {(["png", "svg", "eps"] as const).map((type) => (
+        <div className="mt-auto grid grid-cols-4 gap-2">
+          {MAIN_FILES.map((type) => (
             <Button
               key={type}
               disabled={!canDownload}
@@ -641,13 +778,41 @@ export function BarcodeGenerator() {
               ) : (
                 <Download aria-hidden className="size-4" />
               )}
-              {type.toUpperCase()}
+              {BARCODE_FILES[type].label}
             </Button>
           ))}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button disabled={!canDownload} variant="outline">
+                {downloading && MORE_FILES.includes(downloading) ? (
+                  <Spinner className="size-4 animate-spin" />
+                ) : null}
+                More
+                <ArrowDown2 aria-hidden className="size-3.5 opacity-70" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64">
+              <DropdownMenuLabel>More formats</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {MORE_FILES.map((type) => (
+                <DropdownMenuItem key={type} onSelect={() => download(type)}>
+                  <span className="w-10 font-medium">
+                    {BARCODE_FILES[type].label}
+                  </span>
+                  <span className="text-muted-foreground text-xs">
+                    {BARCODE_FILES[type].hint}
+                  </span>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-        <p className="text-center text-[11px] text-muted-foreground">
-          Made in your browser; nothing you type is sent to QRdx.
-        </p>
+        {renderActions?.(current)}
+        {footnote ? (
+          <p className="text-center text-[11px] text-muted-foreground text-pretty">
+            {footnote}
+          </p>
+        ) : null}
       </div>
     </div>
   );
