@@ -59,15 +59,30 @@ export function mcpServerUrl(
   deployment: McpDeployment = currentDeployment(),
 ): string {
   const url = new URL(MCP_PATH, origin);
-  const appHost = hostOf(deployment.appUrl);
-  const productionHost = hostOf(deployment.productionUrl);
   const official =
     isQrdxHost(url.hostname) ||
     isLocalHost(url.hostname) ||
+    isQrdxDeployment(deployment);
+  return official ? MCP_PUBLIC_URL : url.toString();
+}
+
+/**
+ * Whether this deployment is QRdx itself: its app URL is on qrdx.dev (or a
+ * subdomain) or local, or it's a Vercel preview of the qrdx.dev project. A
+ * self-hosted copy on its own domain is not. Features that only make sense
+ * for qrdx.dev (its affiliate program) are on here and off elsewhere, with
+ * no setting of their own.
+ */
+export function isQrdxDeployment(
+  deployment: McpDeployment = currentDeployment(),
+): boolean {
+  const appHost = hostOf(deployment.appUrl);
+  const productionHost = hostOf(deployment.productionUrl);
+  return (
     (appHost !== null && (isQrdxHost(appHost) || isLocalHost(appHost))) ||
     // A preview has its own *.vercel.app host; its project is still qrdx.dev.
-    (productionHost !== null && isQrdxHost(productionHost));
-  return official ? MCP_PUBLIC_URL : url.toString();
+    (productionHost !== null && isQrdxHost(productionHost))
+  );
 }
 
 /**
