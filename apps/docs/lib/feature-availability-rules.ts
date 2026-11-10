@@ -212,7 +212,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     // app's key; the id builds the "Add to Discord" link.
     name: "Discord bot",
     requires: () => ["DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY"],
-    paths: ["/docs/help/getting-started/discord"],
+    paths: ["/docs/discord-bot"],
     catalogSlugs: ["discord-bot"],
     // The webhook alerts entry mentions the bot only where it can be added.
     extrasOf: "discord",
@@ -289,12 +289,14 @@ interface ConfigurableEntry {
   plan: string;
   steps: readonly unknown[];
   capabilities: readonly unknown[];
+  categories: readonly string[];
   keywords?: readonly string[];
   configured?: {
     tagline?: string;
     plan?: string;
     steps?: readonly unknown[];
     capabilities?: readonly unknown[];
+    categories?: readonly string[];
     keywords?: readonly string[];
   };
 }
@@ -318,6 +320,9 @@ export function configuredEntry<T extends ConfigurableEntry>(
     plan: extra.plan ?? entry.plan,
     steps: extra.steps ?? entry.steps,
     capabilities: [...(extra.capabilities ?? []), ...entry.capabilities],
+    categories: [
+      ...new Set([...entry.categories, ...(extra.categories ?? [])]),
+    ],
     keywords: [...(entry.keywords ?? []), ...(extra.keywords ?? [])],
   };
 }

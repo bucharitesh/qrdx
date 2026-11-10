@@ -387,6 +387,9 @@ describe("the Slack bot", () => {
     expect(on.keywords).toEqual(
       expect.arrayContaining(slack.configured.keywords ?? []),
     );
+    // Listed under Chat apps too, but only where the bot works.
+    expect(on.categories).toEqual(["notifications", "chat"]);
+    expect(off.categories).toEqual(["notifications"]);
     // Without the bot nothing on the entry mentions it.
     const offText = JSON.stringify([
       off.tagline,

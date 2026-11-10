@@ -102,6 +102,12 @@ describe("chatQrCaption", () => {
     expect(caption).toHaveLength(20);
     expect(caption.endsWith("…")).toBe(true);
   });
+
+  it("never cuts an emoji in half", () => {
+    const caption = chatQrCaption("🎉".repeat(30), 10);
+    expect(caption).toBe(`${"🎉".repeat(9)}…`);
+    expect(caption).not.toContain("\uFFFD");
+  });
 });
 
 describe("firstWebAddress", () => {
