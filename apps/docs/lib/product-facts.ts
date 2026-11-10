@@ -35,6 +35,12 @@ import {
 } from "./affiliates/terms";
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
+import {
+  formatCount,
+  MAX_BULK_TOOL_ROWS,
+  MAX_CODES_PER_REQUEST,
+  MAX_IMPORT_ROWS,
+} from "./bulk-limits";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
 
 export const PRODUCT_FACTS = {
@@ -68,6 +74,13 @@ export const PRODUCT_FACTS = {
   affiliateMinPayoutUsd: AFFILIATE_MIN_PAYOUT_LABEL,
   /** Days of notice before the affiliate terms change: "30". */
   affiliateTermsNoticeDays: AFFILIATE_TERMS_NOTICE_DAYS,
+  // Large batches (lib/bulk-limits.ts), as copy writes them ("1,000").
+  /** Dynamic codes in one POST /v1/codes request. */
+  apiBatchCodes: formatCount(MAX_CODES_PER_REQUEST),
+  /** Rows in one dashboard CSV import. */
+  importRows: formatCount(MAX_IMPORT_ROWS),
+  /** Rows in one file of the free bulk tool. */
+  bulkToolRows: formatCount(MAX_BULK_TOOL_ROWS),
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;

@@ -57,6 +57,7 @@ const codes = (count: number) =>
     slug: `Slug${String(i).padStart(3, "0")}`,
     title: null,
     destinationUrl: `https://example.com/${i}`,
+    scanCount: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
   }));

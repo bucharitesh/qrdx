@@ -22,6 +22,7 @@ import {
 } from "@/components/sections/tools/cards";
 import { SpotlightLink } from "@/components/sections/tools/spotlight-link";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { formatCount, MAX_BULK_TOOL_ROWS } from "@/lib/bulk-limits";
 import { createMetadata } from "@/lib/metadata";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
 import { QR_TYPES } from "@/lib/qr-types-content";
@@ -56,8 +57,7 @@ const tools: Tool[] = [
   {
     href: "/tools/bulk",
     title: "Bulk QR code generator",
-    description:
-      "Upload a CSV and download up to 5,000 styled codes as PNG or SVG in one ZIP, generated in your browser.",
+    description: `Upload a CSV and download up to ${formatCount(MAX_BULK_TOOL_ROWS)} styled codes as PNG or SVG in a ZIP, generated in your browser.`,
     icon: TableDocument,
     image: productShots.bulkGenerator,
     imagePosition: "object-right-top",

@@ -44,7 +44,7 @@ From the dashboard you can:
 - **Favourites and notes:** star codes and keep private notes; notes are searchable.
 - **Search** covers titles, destinations, notes, tags and back-halves (paste a short link to find its code).
 - **Bulk actions:** select codes to move, tag, pause, archive, favourite, trash or download them as a ZIP of PNG or SVG files.
-- **CSV import:** **Codes → Import** creates up to 1,000 dynamic codes from a CSV (destination, title, folder, tags, optional custom back-half in the `slug` column). Importing more than one row, and custom back-halves, need Pro.
+- **CSV import:** **Codes → Import** creates up to {facts.importRows} dynamic codes from one CSV (destination, title, folder, tags, optional custom back-half in the `slug` column), and can file every code into one folder and add tags to all of them. A long import can be paused, and it picks up after a reload or a dropped connection without making any code twice. It ends with a results CSV (each row's short link) and a ZIP of the codes as PNG or SVG. Importing more than one row, and custom back-halves, need Pro.
 
 Codes belong to the workspace they're created in. Every member of the workspace can create and edit them; members can delete their own codes, owners and admins can delete any code in the workspace.
 
@@ -59,7 +59,7 @@ Codes belong to the workspace they're created in. Every member of the workspace 
 | Active dynamic codes | 10 | Unlimited | Unlimited |
 | Scans | Unlimited | Unlimited | Unlimited |
 | Scan history | 90 days | 3 years | Unlimited |
-| Bulk creation via the API | No | Up to 100 per request | Up to 100 per request |
+| Bulk creation via the API | No | Up to {facts.apiBatchCodes} per request | Up to {facts.apiBatchCodes} per request |
 
 A workspace's codes use the best plan among its owners. See [Plans and limits](/docs/plans-and-limits) for everything else each plan includes.
 
@@ -135,6 +135,24 @@ curl https://api.qrdx.dev/v1/codes \
 
 The response then has `"slug": "spring-menu"` and `"shortLink": "https://qrdx.dev/q/spring-menu"`. A back-half chosen on a custom domain has `"defaultShortLink": null`, because it only exists on that domain. In an array, every `slug` must be different.
 
+### Many codes in one request
+
+On Pro and Business, send an array of up to {facts.apiBatchCodes} codes. Generated back-halves never repeat within the batch or clash with existing codes. A batch is all or nothing: if any row has a problem (an invalid destination, a taken or reserved `slug`, an unsafe link), nothing is created and the error's `data.details` lists every problem by `index`, the row's place in the array (from 0).
+
+Send an `Idempotency-Key` header with a value unique to the batch, such as a UUID. If the request times out or the connection drops, send the same request with the same key again: you get back the codes the first try made, with an `Idempotent-Replayed: true` header, and a try that was cut off part way is finished without making any code twice.
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: 6f1c2a9e-spring-tables" \
+  -H "Prefer: return=minimal" \
+  -d '[{"destinationUrl": "https://example.com/table/1", "title": "Table 1"},
+       {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
+```
+
+Each code comes back with its design. When your workspace's default theme embeds a logo, that adds up over a large batch: send `Prefer: return=minimal` to get each code without `style` (its id, slug, links, destination, title, status and creation time). A batch whose response wouldn't fit in 4 MB is refused with `PAYLOAD_TOO_LARGE` before anything is created.
+
 Change the destination:
 
 ```bash
@@ -150,7 +168,7 @@ Errors use one JSON shape, `{ "code": "...", "message": "...", "status": 400 }`,
 
 | Status | Code | When |
 | --- | --- | --- |
-| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Invalid body or query (details in `data`), or a `slug` that breaks the rules or is reserved |
+| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Invalid body or query (details in `data`, by `index` in a batch), or a `slug` that breaks the rules or is reserved |
 | 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | No `Authorization: Bearer` token, or an invalid, expired or revoked one ([get a token](/docs/developers/rest-api#get-an-access-token)) |
 | 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Over your plan's active code limit, or bulk creation or a custom `slug` without Pro |
 | 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token without the needed scope, or a workspace role that can't do this |

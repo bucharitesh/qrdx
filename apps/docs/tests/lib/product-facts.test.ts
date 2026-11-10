@@ -15,6 +15,11 @@ import { describe, expect, it } from "vitest";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
+  MAX_BULK_TOOL_ROWS,
+  MAX_CODES_PER_REQUEST,
+  MAX_IMPORT_ROWS,
+} from "@/lib/bulk-limits";
+import {
   fillFacts,
   fillFactsDeep,
   PRODUCT_FACTS,
@@ -60,6 +65,10 @@ describe("PRODUCT_FACTS", () => {
       affiliateHoldDays: 30,
       affiliateMinPayoutUsd: "US$25",
       affiliateTermsNoticeDays: 30,
+      // lib/bulk-limits.ts
+      apiBatchCodes: MAX_CODES_PER_REQUEST.toLocaleString("en-US"),
+      importRows: MAX_IMPORT_ROWS.toLocaleString("en-US"),
+      bulkToolRows: MAX_BULK_TOOL_ROWS.toLocaleString("en-US"),
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(

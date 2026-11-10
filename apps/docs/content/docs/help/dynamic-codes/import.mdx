@@ -8,7 +8,11 @@ description: Import links from a CSV file, or move your codes from Bitly and oth
 1. Go to **Codes** and click **Import CSV**.
 2. Upload a CSV file with one code per row.
 
-The only required column is the destination. You can also include a title, folder, tags and a custom back-half. A file can have up to 1,000 rows and be up to 1 MB.
+The only required column is the destination. You can also include a title, folder, tags and a custom back-half. A file can have up to {facts.importRows} rows and be up to 10 MB. Every row is checked before anything is created; rows with problems are skipped and listed.
+
+You can also pick a folder and tags for every code in the file. A row with its own folder keeps it, and the file's tags are added to the ones you pick.
+
+Large files are sent in parts while a progress bar fills. You can pause and resume. If the page reloads or the connection drops, the import stops and offers to resume or retry, and no code is made twice. When it's done, download a results CSV with each row's short link, or a ZIP of the new codes as PNG or SVG files.
 
 On Free you can import one code at a time. Pro and Business can import many at once.
 
