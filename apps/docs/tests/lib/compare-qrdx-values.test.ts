@@ -165,3 +165,117 @@ describe("QR Code AI compare page", () => {
     ).toContain("QRdx doesn't offer an uptime SLA yet");
   });
 });
+
+describe("MyQRCode compare page", () => {
+  const text = readFileSync(join(COMPARE, "myqrcode.mdx"), "utf8");
+  const rows = qrdxValues(text);
+  const { free, pro, business } = PLAN_LIMITS;
+  const years = (days: number) => days / 365;
+
+  it("states plan limits and prices that match the code", () => {
+    expect(pro.dynamicCodes).toBe(UNLIMITED);
+    expect(pro.landingPages).toBe(UNLIMITED);
+    expect(business.analyticsRetentionDays).toBe(UNLIMITED);
+    expect(business.teamMembers).toBe(UNLIMITED);
+    expect(business.whiteLabel).toBe(true);
+    // "custom domains and white-label pages need Pro or Business"
+    expect(free.customDomains).toBe(0);
+    expect(pro.customDomains).toBeGreaterThan(0);
+    expect(free.whiteLabel).toBe(false);
+    expect(pro.whiteLabel).toBe(false);
+    // "QRdx bills monthly or yearly, and yearly works out cheaper"
+    for (const plan of PAID_PLANS) {
+      expect(PRICING[plan].year.amounts.USD).toBeLessThan(
+        12 * PRICING[plan].month.amounts.USD,
+      );
+    }
+    // The REST API row says every plan, Free included
+    expect(free.apiRequestsPerDay).toBeGreaterThan(0);
+
+    expect(rows.get("qrdxPlan")).toBe(
+      `Free · Pro from ${usd("pro", "month")}/mo`,
+    );
+    expect(rows.get("Price")).toBe(
+      `Free; Pro ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr; Business ${usd("business", "month")}/mo or ${usd("business", "year")}/yr`,
+    );
+    expect(rows.get("QR types")).toBe(`${QR_TYPES.length} static types`);
+    expect(rows.get("Dynamic (editable) codes")).toBe(
+      `${free.dynamicCodes} free; unlimited on Pro`,
+    );
+    expect(rows.get("Scan analytics")).toBe(
+      `${free.analyticsRetentionDays} days free; ${years(pro.analyticsRetentionDays)} years on Pro; unlimited on Business`,
+    );
+  });
+
+  it("uses the same numbers in the metadata, highlights and body", () => {
+    for (const phrase of [
+      `QRdx has a free plan, Pro at ${usd("pro", "month")}/mo`,
+      `QRdx Free has no time limit and includes ${free.dynamicCodes} dynamic codes and ${free.landingPages} hosted pages`,
+      `QRdx Pro is ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr with unlimited dynamic codes and hosted pages.`,
+      `title: Monthly billing from ${usd("pro", "month")}`,
+      `The Free plan adds ${free.dynamicCodes} dynamic codes and ${free.landingPages} hosted pages.`,
+      `Pro (${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr) makes both unlimited`,
+      `Business (${usd("business", "month")}/mo or ${usd("business", "year")}/yr) adds unlimited team members and white-label pages`,
+      `the Free plan includes ${free.dynamicCodes} dynamic codes.`,
+    ]) {
+      expect(text).toContain(phrase);
+    }
+  });
+});
+
+describe("Pageloot compare page", () => {
+  const text = readFileSync(join(COMPARE, "pageloot.mdx"), "utf8");
+  const rows = qrdxValues(text);
+  const { free, pro, business } = PLAN_LIMITS;
+  const years = (days: number) => days / 365;
+
+  it("states plan limits and prices that match the code", () => {
+    expect(pro.dynamicCodes).toBe(UNLIMITED);
+    expect(pro.landingPages).toBe(UNLIMITED);
+    expect(business.dynamicCodes).toBe(UNLIMITED);
+    expect(business.landingPages).toBe(UNLIMITED);
+    expect(business.analyticsRetentionDays).toBe(UNLIMITED);
+    expect(business.teamMembers).toBe(UNLIMITED);
+    expect(business.whiteLabel).toBe(true);
+    // Smart routing is a Pro feature; the REST API is on every plan
+    expect(free.routing).toBe(false);
+    expect(pro.routing).toBe(true);
+    expect(free.apiRequestsPerDay).toBeGreaterThan(0);
+
+    expect(rows.get("qrdxPlan")).toBe(
+      `Free · Pro from ${usd("pro", "month")}/mo`,
+    );
+    expect(rows.get("Price")).toBe(
+      `Free; Pro ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr; Business ${usd("business", "month")}/mo or ${usd("business", "year")}/yr`,
+    );
+    expect(rows.get("Dynamic (editable) codes")).toBe(
+      `${free.dynamicCodes} free; unlimited on Pro`,
+    );
+    expect(rows.get("Scan history")).toBe(
+      `${free.analyticsRetentionDays} days free; ${years(pro.analyticsRetentionDays)} years on Pro; unlimited on Business`,
+    );
+    expect(rows.get("Team members")).toBe(
+      `${free.teamMembers} free; ${pro.teamMembers} on Pro; unlimited on Business`,
+    );
+    expect(rows.get("Hosted pages")).toBe(
+      `${free.landingPages} free; unlimited on Pro`,
+    );
+  });
+
+  it("uses the same numbers in the metadata, highlights and body", () => {
+    for (const phrase of [
+      `QRdx has a free plan with ${free.dynamicCodes} dynamic codes and unlimited codes on ${usd("pro", "month")}/mo Pro.`,
+      `unlimited dynamic codes from ${usd("pro", "month")}/mo.`,
+      `title: Unlimited dynamic codes from ${usd("pro", "month")}`,
+      `QRdx Pro is ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr with unlimited dynamic codes and hosted pages.`,
+      `QRdx Free has no time limit and includes ${free.dynamicCodes} dynamic codes and ${free.landingPages} hosted pages.`,
+      `The Free plan adds ${free.dynamicCodes} dynamic codes and ${free.landingPages} hosted pages.`,
+      `Pro (${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr) makes both unlimited`,
+      `Business (${usd("business", "month")}/mo or ${usd("business", "year")}/yr) adds unlimited team members and white-label pages`,
+      `QRdx keeps ${free.analyticsRetentionDays} days on Free, ${years(pro.analyticsRetentionDays)} years on Pro and everything on Business.`,
+      `QRdx Free includes ${free.dynamicCodes} dynamic codes with no time limit.`,
+    ]) {
+      expect(text).toContain(phrase);
+    }
+  });
+});

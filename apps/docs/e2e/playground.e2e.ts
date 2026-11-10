@@ -3,7 +3,10 @@
 // picks the type in the UI, fills the form, decodes the live preview with jsQR
 // and compares it with what the encoder produces for the same input. It also
 // walks every Design picker option and every preset, downloads PNG/SVG/PDF/EPS,
-// and checks copy, undo/redo and the type picker's search.
+// and checks copy, undo/redo and the type picker's search. "landing hand-offs"
+// reads the home page's server HTML for its generator links, then clicks
+// examples on the home and generator pages and checks the playground
+// opens with their type, design and sample content.
 //
 //   pnpm --filter docs test:e2e            (E2E_BASE_URL defaults to :3000)
 //   E2E_SUITES="side panels" runs one suite
@@ -1541,6 +1544,304 @@ async function testCookieBannerOverlays(page: Page) {
   await openPlayground(page);
 }
 
+// ── Landing pages → playground ──────────────────────────────────────────────
+
+interface SavedEditor {
+  contentType: string | null;
+  value: string;
+  config: Record<string, unknown> | null;
+  preset: string | null;
+  styles: Record<string, unknown>;
+}
+
+/** What the editor saved in this browser: content and look. */
+async function savedEditor(page: Page): Promise<SavedEditor> {
+  return (await page.evaluate(
+    `() => { const s = JSON.parse(localStorage.getItem("editor-storage") ?? "null")?.state ?? {}; return { contentType: s.contentType ?? null, value: s.value ?? "", config: (s.contentConfigs ?? {})[s.contentType] ?? null, preset: s.themeState?.preset ?? null, styles: s.themeState?.styles ?? {} }; }`,
+  )) as SavedEditor;
+}
+
+/** The design a `style` link value holds, read without the app's code. */
+function styleOf(href: string): Record<string, unknown> | null {
+  const value = new URL(href, BASE_URL).searchParams.get("style");
+  if (!value?.startsWith("1.")) return null;
+  return JSON.parse(Buffer.from(value.slice(2), "base64url").toString("utf8"));
+}
+
+/**
+ * Clicks the link `pick` finds on `path` (a function source returning an
+ * anchor), then waits for the playground to apply it. Returns its href.
+ */
+async function followToPlayground(
+  page: Page,
+  path: string,
+  pick: string,
+): Promise<string> {
+  await page.goto(`${BASE_URL}${path}`, { wait: 3000 });
+  await install(page);
+  const href = (await page.waitFor(
+    `() => { const a = (${pick})(); if (!a) return null; a.scrollIntoView({ block: "center" }); return a.getAttribute("href"); }`,
+    { timeout: 30_000 },
+  )) as string;
+  await page.evaluate(
+    `() => { const a = (${pick})(); __e2e.click(a); return true; }`,
+  );
+  await page.waitFor(
+    `() => location.pathname === "/playground" && !!(window.__e2e && __e2e.byRole("tab", "content"))`,
+    { timeout: 60_000 },
+  );
+  // Applied once, then the one-shot parameters leave the address.
+  await page.waitFor(
+    `() => !/[?&#](type|preset|style|sample|url)=/.test(location.href)`,
+    {
+      timeout: 20_000,
+    },
+  );
+  await sleep(800);
+  return href;
+}
+
+/** The value of the field labelled `label` in the content form. */
+const fieldValue = (page: Page, label: string) =>
+  page.evaluate(
+    `(label) => { const el = __e2e.byLabel(label); return el ? el.value : null; }`,
+    label,
+  ) as Promise<string | null>;
+
+async function testLandingHandoffs(page: Page) {
+  const fresh = () =>
+    page.evaluate(
+      `() => { localStorage.removeItem("editor-storage"); return true; }`,
+    );
+
+  // 0. The home page as a crawler gets it (no JavaScript): every content type
+  //    it opens in the playground also has a plain link to its generator
+  //    page, and no link sits inside another.
+  const html = await (await fetch(`${BASE_URL}/`)).text();
+  const anchors = [...html.matchAll(/<a\b[^>]*\bhref="([^"]*)"/g)].map(
+    (match) => (match[1] ?? "").replaceAll("&amp;", "&"),
+  );
+  const generatorPages = new Set(
+    anchors.filter((href) => /^\/qr-code-generator\/[a-z-]+$/.test(href)),
+  );
+  const openedTypes = new Set(
+    anchors
+      .filter((href) => href.startsWith("/playground?"))
+      .map((href) => new URL(href, BASE_URL).searchParams.get("type"))
+      .filter((type): type is string => Boolean(type)),
+  );
+  const unlinked = [...openedTypes].filter(
+    (type) => !generatorPages.has(`/qr-code-generator/${type}`),
+  );
+  let depth = 0;
+  let deepest = 0;
+  for (const [tag] of html.matchAll(/<\/?a\b[^>]*>/g)) {
+    depth += tag.startsWith("</") ? -1 : 1;
+    deepest = Math.max(deepest, depth);
+  }
+  record(
+    "landing hand-offs",
+    "the server-rendered home page links the generator page of every type it opens in the playground",
+    openedTypes.size > 20 && unlinked.length === 0,
+    `${openedTypes.size} types opened, ${generatorPages.size} generator pages linked${unlinked.length ? `, missing ${unlinked.join(", ")}` : ""}`,
+  );
+  record(
+    "landing hand-offs",
+    "no link on the home page sits inside another",
+    deepest === 1,
+    `deepest <a> nesting ${deepest}`,
+  );
+
+  // 1. A content tile on the home wall: its type, its theme, and a sample
+  //    the visitor edits, ready to download.
+  await fresh();
+  const wifiHref = await followToPlayground(
+    page,
+    "/",
+    `() => [...document.querySelectorAll('#gallery a[href^="/playground?"]')].find((a) => /[?&]type=wifi(&|$)/.test(a.getAttribute("href")))`,
+  );
+  const wifiPreset = new URL(wifiHref, BASE_URL).searchParams.get("preset");
+  const wifi = await savedEditor(page);
+  record(
+    "landing hand-offs",
+    "home wall Wi-Fi tile links the type, its theme and a sample",
+    /[?&]sample=1/.test(wifiHref) && Boolean(wifiPreset),
+    wifiHref,
+  );
+  record(
+    "landing hand-offs",
+    "the playground opens on Wi-Fi in that theme",
+    wifi.contentType === "wifi" && wifi.preset === wifiPreset,
+    `type ${wifi.contentType}, preset ${wifi.preset}`,
+  );
+  const ssid = await fieldValue(page, "Network Name");
+  record(
+    "landing hand-offs",
+    "its form holds QRdx's sample, ready to edit",
+    ssid === "QRdx Sample" && (wifi.config?.ssid as string) === "QRdx Sample",
+    `field ${ssid}`,
+  );
+  const wifiPayload = expectedPayload({
+    type: "wifi",
+    ssid: "QRdx Sample",
+    password: "sample-only",
+    encryption: "WPA",
+  });
+  const wifiRead = await waitForDecode(page, wifiPayload);
+  record(
+    "landing hand-offs",
+    "the preview scans as the sample, so it can be downloaded",
+    wifi.value === wifiPayload && wifiRead === wifiPayload,
+    `decoded ${wifiRead}`,
+  );
+
+  // 2. A framed tile: the frame travels in a style; a payment type opens
+  //    with its empty form (no sample payment details).
+  await fresh();
+  const upiHref = await followToPlayground(
+    page,
+    "/",
+    `() => [...document.querySelectorAll('#gallery a[href^="/playground?"]')].find((a) => /[?&]type=upi(&|$)/.test(a.getAttribute("href")))`,
+  );
+  const upiStyle = styleOf(upiHref);
+  const upi = await savedEditor(page);
+  const frame = upi.styles.frame as { style?: string } | undefined;
+  record(
+    "landing hand-offs",
+    "home wall UPI tile opens its framed design on UPI, with an empty form",
+    upi.contentType === "upi" &&
+      upiStyle !== null &&
+      frame?.style === (upiStyle.r as { style?: string } | undefined)?.style &&
+      upi.styles.bodyPattern === upiStyle.p &&
+      upi.value === "",
+    `type ${upi.contentType}, frame ${frame?.style}, value "${upi.value}"`,
+  );
+
+  // 3. A design on a generator page.
+  await fresh();
+  const designHref = await followToPlayground(
+    page,
+    "/qr-code-generator/wifi",
+    `() => { const list = [...document.querySelectorAll("ul[aria-label]")].find((ul) => /designs$/i.test(ul.getAttribute("aria-label"))); return list && list.querySelector('a[href^="/playground?"]'); }`,
+  );
+  const designStyle = styleOf(designHref);
+  const designPreset = new URL(designHref, BASE_URL).searchParams.get("preset");
+  const design = await savedEditor(page);
+  record(
+    "landing hand-offs",
+    "a Wi-Fi design on its generator page opens on Wi-Fi in that design",
+    design.contentType === "wifi" &&
+      (designStyle
+        ? design.styles.bodyPattern === designStyle.p &&
+          design.preset === (designStyle.k ?? null)
+        : design.preset === designPreset) &&
+      (design.config?.ssid as string) === "QRdx Sample",
+    `${designHref} → type ${design.contentType}, preset ${design.preset}`,
+  );
+
+  // 4. A use case on the home page: its type, in its illustration's look.
+  await fresh();
+  const useCaseHref = await followToPlayground(
+    page,
+    "/",
+    `() => [...document.querySelectorAll('#use-cases a[href^="/playground?"]')].find((a) => /^guest wi-fi:/i.test(a.getAttribute("aria-label") ?? ""))`,
+  );
+  const useCaseStyle = styleOf(useCaseHref);
+  const useCase = await savedEditor(page);
+  record(
+    "landing hand-offs",
+    "the Guest Wi-Fi use case opens on Wi-Fi in its look",
+    useCase.contentType === "wifi" &&
+      useCaseStyle !== null &&
+      useCase.styles.bodyPattern === useCaseStyle.p &&
+      useCase.styles.cornerEyePattern === useCaseStyle.c,
+    `${useCaseHref} → ${useCase.contentType}, ${useCase.styles.bodyPattern}`,
+  );
+
+  // 5. The hero's mini editor: the picked look and the typed address.
+  await fresh();
+  const heroHref = await followToPlayground(
+    page,
+    "/",
+    `() => __e2e.byRole("link", "customize in the playground")`,
+  );
+  const hero = await savedEditor(page);
+  const heroStyle = styleOf(heroHref);
+  record(
+    "landing hand-offs",
+    "the hero carries its look and the typed address after the #",
+    heroHref.includes("#url=") &&
+      hero.contentType === "url" &&
+      /^https:\/\/qrdx\.dev\/?$/.test(hero.value) &&
+      heroStyle !== null &&
+      hero.styles.bodyPattern === heroStyle.p &&
+      (hero.styles.frame as { style?: string } | undefined)?.style ===
+        (heroStyle.r as { style?: string } | undefined)?.style,
+    `${heroHref} → ${hero.value}, ${hero.styles.bodyPattern}`,
+  );
+
+  // 6. Two separate targets where people point: the link on top at each spot.
+  await page.goto(`${BASE_URL}/`, { wait: 3000 });
+  await install(page);
+  const linkAt = (x: number, y: number) =>
+    page.evaluate(
+      `(x, y) => { const a = document.elementFromPoint(x, y)?.closest("a"); return a ? a.getAttribute("href") : null; }`,
+      x,
+      y,
+    ) as Promise<string | null>;
+  const centerOf = (selector: string) =>
+    page.waitFor(
+      `() => { const el = document.querySelector(${JSON.stringify(selector)}); if (!el) return null; el.scrollIntoView({ block: "center" }); const r = el.getBoundingClientRect(); return r.width ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null; }`,
+      { timeout: 20_000 },
+    ) as Promise<{ x: number; y: number }>;
+
+  const typeName = await centerOf(
+    '#use-cases a[href="/qr-code-generator/wifi"]',
+  );
+  await sleep(300);
+  const onName = await linkAt(typeName.x, typeName.y);
+  const card = await centerOf("#use-cases li:nth-child(3) h3");
+  const onCard = await linkAt(card.x, card.y);
+  record(
+    "landing hand-offs",
+    "a use case's type name opens its generator page; the rest of the card opens the playground",
+    onName === "/qr-code-generator/wifi" &&
+      (onCard ?? "").startsWith("/playground?type=wifi"),
+    `name → ${onName}, card → ${onCard}`,
+  );
+
+  const tile = await centerOf('[data-wall-tile="type-wifi"]');
+  await page.cdp.send("Input.dispatchMouseEvent", {
+    type: "mouseMoved",
+    x: tile.x,
+    y: tile.y,
+  });
+  await sleep(400);
+  const onCode = await linkAt(tile.x, tile.y);
+  const chipName = await centerOf(
+    '[data-wall-tile="type-wifi"] a[href="/qr-code-generator/wifi"]',
+  );
+  // Moving to the name keeps the pointer on the tile, so its chip stays.
+  await page.cdp.send("Input.dispatchMouseEvent", {
+    type: "mouseMoved",
+    x: chipName.x,
+    y: chipName.y,
+  });
+  await sleep(400);
+  const onChip = await linkAt(chipName.x, chipName.y);
+  record(
+    "landing hand-offs",
+    "a wall tile's code opens the playground; its name opens the generator page",
+    (onCode ?? "").startsWith("/playground?type=wifi") &&
+      onChip === "/qr-code-generator/wifi",
+    `code → ${onCode}, name → ${onChip}`,
+  );
+
+  // Leave a plain design for the suites after this one.
+  await fresh();
+  await openPlayground(page);
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -1568,6 +1869,7 @@ async function main() {
     ["art tab links", testArtTabLinks],
     ["community preview", testCommunityPreview],
     ["cookie banner", testCookieBannerOverlays],
+    ["landing hand-offs", testLandingHandoffs],
   ];
   const selected = process.env.E2E_SUITES?.split(",").map((s) => s.trim());
   try {

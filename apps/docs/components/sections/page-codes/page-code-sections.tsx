@@ -20,6 +20,8 @@ import { CodeTiles } from "./code-tiles";
 /** One line under every row of samples, so no one mistakes them for real. */
 const SAMPLE_NOTE =
   "Samples in built-in themes. Each one scans, and none leads to a real account.";
+/** Under every row whose codes open the playground. */
+const START_NOTE = "Pick one to start from it in the playground.";
 
 const first = (codes: PageCode[] | undefined): PageCode | undefined =>
   codes?.[0];
@@ -43,7 +45,7 @@ export function TypeCodesSection({
           {name} QR code designs
         </h2>
         <p className="text-sm text-muted-foreground text-pretty">
-          {SAMPLE_NOTE} Pick one to start from it in the playground.
+          {SAMPLE_NOTE} {START_NOTE}
         </p>
       </div>
       <CodeTiles
@@ -56,6 +58,16 @@ export function TypeCodesSection({
   );
 }
 
+/** The sample codes of a /qr-codes-for or /qr-codes-on page. */
+export function topicCodes(
+  topic: Pick<SeoTopic, "slug">,
+  collection: Pick<SeoCollection, "id">,
+): PageCode[] | undefined {
+  return collection.id === "placements"
+    ? PLACEMENT_CODES[topic.slug]
+    : INDUSTRY_CODES[topic.slug];
+}
+
 /** /qr-codes-for and /qr-codes-on pages: four codes for the topic, in the hero. */
 export function TopicCodeStrip({
   topic,
@@ -64,10 +76,7 @@ export function TopicCodeStrip({
   topic: Pick<SeoTopic, "slug" | "noun">;
   collection: Pick<SeoCollection, "id">;
 }) {
-  const codes =
-    collection.id === "placements"
-      ? PLACEMENT_CODES[topic.slug]
-      : INDUSTRY_CODES[topic.slug];
+  const codes = topicCodes(topic, collection);
   if (!codes) return null;
   return (
     <div className="flex w-full max-w-3xl flex-col items-center gap-3 pt-4">
@@ -77,7 +86,7 @@ export function TopicCodeStrip({
         className="grid-cols-2 sm:grid-cols-4"
       />
       <p className="text-xs text-muted-foreground text-center text-balance">
-        {SAMPLE_NOTE}
+        {SAMPLE_NOTE} {START_NOTE}
       </p>
     </div>
   );
@@ -87,7 +96,7 @@ function HubStrip({
   items,
   label,
 }: {
-  items: { code: PageCode; label: string; href: string }[];
+  items: { code: PageCode; label: string }[];
   label: string;
 }) {
   return (
@@ -99,25 +108,29 @@ function HubStrip({
         className="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
       />
       <p className="text-xs text-muted-foreground text-center text-balance">
-        {SAMPLE_NOTE}
+        {SAMPLE_NOTE} {START_NOTE}
       </p>
     </div>
   );
 }
 
-/** /qr-code-generator: one code per group, each opening its type's page. */
+/**
+ * /qr-code-generator: one code per group, each opening the playground with
+ * its design and type (the cards below link every type's page).
+ */
 export function GeneratorHubStrip() {
   const items = GENERATOR_HUB_TYPES.flatMap((type) => {
     const code = first(TYPE_CODES[type]);
     const content = getQrType(type);
-    return code && content
-      ? [{ code, label: content.name, href: `/qr-code-generator/${type}` }]
-      : [];
+    return code && content ? [{ code, label: content.name }] : [];
   });
   return <HubStrip items={items} label="Sample codes from the generators" />;
 }
 
-/** /qr-codes-for and /qr-codes-on: one code per group, each opening its page. */
+/**
+ * /qr-codes-for and /qr-codes-on: one code per group, each opening the
+ * playground with its design and type (the cards below link every page).
+ */
 export function TopicHubStrip({ collection }: { collection: SeoCollection }) {
   const placements = collection.id === "placements";
   const slugs = placements ? PLACEMENT_HUB_SLUGS : INDUSTRY_HUB_SLUGS;
@@ -125,9 +138,7 @@ export function TopicHubStrip({ collection }: { collection: SeoCollection }) {
   const items = slugs.flatMap((slug) => {
     const code = first(codes[slug]);
     const topic = collection.get(slug);
-    return code && topic
-      ? [{ code, label: topic.name, href: collection.path(slug) }]
-      : [];
+    return code && topic ? [{ code, label: code.label }] : [];
   });
   return (
     <HubStrip

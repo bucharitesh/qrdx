@@ -9,8 +9,7 @@ import {
   pageCodeImage,
   themeName,
 } from "@/lib/landing/page-codes";
-import { playgroundHref } from "@/lib/playground-links";
-import { encodeStyleParam } from "@/lib/playground-style";
+import { playgroundDesignHref } from "@/lib/playground-style";
 import { getQrType } from "@/lib/qr-types-content";
 
 // Sample codes on the generator, industry and placement pages
@@ -28,18 +27,18 @@ export interface CodeTileItem {
 }
 
 /**
- * The playground with this code's design and content type (never its
- * content). A theme as it ships travels as `preset`; a theme with a frame
- * added travels as `style`, which carries the frame too.
+ * The playground with this code's design and content type, its form filled
+ * with QRdx's generic sample for the type (lib/playground-samples.ts), never
+ * the code's own content. A theme as it ships travels as `preset`; a theme
+ * with a frame added travels as `style`, which carries the frame too.
  */
 export function codePlaygroundHref(code: PageCode): string {
-  if (code.frame === undefined) {
-    return playgroundHref({ type: code.type, preset: code.preset });
-  }
-  const style = encodeStyleParam(codeStyles(code), { preset: code.preset });
-  return style
-    ? playgroundHref({ type: code.type, style: style.value })
-    : playgroundHref({ type: code.type, preset: code.preset });
+  return playgroundDesignHref({
+    type: code.type,
+    sample: true,
+    preset: code.preset,
+    design: code.frame === undefined ? undefined : codeStyles(code),
+  });
 }
 
 /** "Wi-Fi QR code, Harbor theme with a Rounded frame". */

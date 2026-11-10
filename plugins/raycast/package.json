@@ -75,7 +75,7 @@
   "dependencies": {
     "@raycast/api": "^2.10.1",
     "@raycast/utils": "^2.3.3",
-    "qrdx": "^0.0.46",
+    "qrdx": "^0.0.47",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },

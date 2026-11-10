@@ -76,6 +76,7 @@ const FIELD: Record<string, keyof PlaygroundParams> = {
   tab: "tab",
   section: "section",
   type: "type",
+  sample: "sample",
   url: "url",
   preset: "preset",
   style: "style",
@@ -129,14 +130,8 @@ describe("links in code", () => {
     /href="\/playground|href=\{`\/playground|(?:push|replace)\(["'`]\/playground|["'`]\/playground\?|`\/playground\/\$\{/;
 
   // Files that still build their own, each in another lane of the hub plan.
-  const ELSEWHERE: Record<string, string> = {
-    "app/(home)/community/page.tsx": "community wall (tile wall lane)",
-    "components/sections/navbar.tsx": "site navigation",
-    "components/sections/ai-art/config.ts": "Art tab (hub phase 3)",
-    "lib/landing/showcase-gallery.ts": "home gallery (tile wall lane)",
-  };
+  const ELSEWHERE: Record<string, string> = {};
   const ELSEWHERE_DIRS = [
-    "components/sections/home/", // tile wall lane
     "components/editor/", // hub phases 3 and 4
     "components/code-builder/", // hub phase 4
     "components/app-shell/", // dashboard shell

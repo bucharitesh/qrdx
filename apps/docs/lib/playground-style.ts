@@ -8,7 +8,7 @@
 // remote resource. Decoding validates every field and rejects the whole
 // value when anything is off.
 
-import { getTemplateIds } from "qrdx";
+import { getOfficialFrame, getTemplateIds, OFFICIAL_FRAMES } from "qrdx";
 import {
   anyFrameSchema,
   bodyPatternSchema,
@@ -35,37 +35,22 @@ import {
 } from "@/lib/paint/image-fills";
 import {
   MAX_STYLE_PARAM_LENGTH,
+  type PlaygroundLinkOptions,
   parsePresetId,
   parseStyleValue,
+  playgroundHref,
   STYLE_PARAM_VERSION,
 } from "@/lib/playground-links";
+import {
+  type LinkedField,
+  OFFICIAL_FRAME_KEY,
+  PRESET_KEY,
+  packStyleParam,
+  STYLE_KEYS,
+} from "@/lib/playground-style-pack";
 import type { ThemeStyles } from "@/types/theme";
 
-/** Short key for each style field a link may carry. */
-const KEYS = {
-  bgColor: "b",
-  fgColor: "f",
-  eyeColor: "e",
-  dotColor: "d",
-  bodyPattern: "p",
-  cornerEyePattern: "c",
-  cornerEyeDotPattern: "o",
-  level: "l",
-  margin: "m",
-  templateId: "t",
-  frame: "r",
-  showLogo: "g",
-  // Engine options the editor exposes (see ENGINE_OPTION_FIELDS below)
-  eyeColors: "ec",
-  moduleScale: "ms",
-  autoLevel: "al",
-  logoOptions: "lo",
-  shape: "sh",
-} as const satisfies Partial<Record<keyof ThemeStyles, string>>;
-type LinkedField = keyof typeof KEYS;
-
-/** Key of the preset the design started from (a label and Reset base only). */
-const PRESET_KEY = "k";
+const KEYS = STYLE_KEYS;
 
 /** Largest quiet zone the editor offers, in modules. */
 const MARGIN_MAX = 16;
@@ -170,17 +155,6 @@ const linkedStyleSchema = z
 
 type LinkedStyle = z.infer<typeof linkedStyleSchema>;
 
-function toBase64Url(text: string): string {
-  let binary = "";
-  for (const byte of new TextEncoder().encode(text)) {
-    binary += String.fromCharCode(byte);
-  }
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
 function fromBase64Url(value: string): string | null {
   try {
     const base64 =
@@ -194,13 +168,27 @@ function fromBase64Url(value: string): string | null {
   }
 }
 
-function pack(style: LinkedStyle, preset?: string): string {
-  const compact: Record<string, unknown> = {};
-  for (const field of Object.keys(KEYS) as LinkedField[]) {
-    if (style[field] !== undefined) compact[KEYS[field]] = style[field];
-  }
-  if (preset) compact[PRESET_KEY] = preset;
-  return `${STYLE_PARAM_VERSION}.${toBase64Url(JSON.stringify(compact))}`;
+const pack = (
+  style: LinkedStyle,
+  preset?: string,
+  officialFrame?: string,
+): string =>
+  packStyleParam(style as Partial<ThemeStyles>, preset, officialFrame);
+
+/**
+ * The official frame (qrdx OFFICIAL_FRAMES) whose exact spec `frame`
+ * draws, by id; undefined for any other frame. Its spec then travels as the
+ * id, and decodeStyleParam puts the spec back.
+ */
+function officialFrameId(frame: unknown): string | undefined {
+  if (!frame || typeof frame !== "object") return undefined;
+  const { style, spec } = frame as { style?: unknown; spec?: unknown };
+  if (style !== "custom" || !spec) return undefined;
+  const json = JSON.stringify(spec);
+  return OFFICIAL_FRAMES.find(
+    (official) =>
+      official.spec === spec || JSON.stringify(official.spec) === json,
+  )?.id;
 }
 
 export interface EncodedStyle {
@@ -249,7 +237,9 @@ export function encodeStyleParam(
   if (styles.art) omitted.push("art");
 
   const preset = parsePresetId(options.preset) ?? undefined;
-  let value = pack(style, preset);
+  // An official frame travels by id (the spec is checked as it was given).
+  const official = style.frame ? officialFrameId(linked.frame) : undefined;
+  let value = pack(style, preset, official);
   if (value.length > MAX_STYLE_PARAM_LENGTH && style.frame) {
     delete style.frame;
     if (!omitted.includes("frame")) omitted.push("frame");
@@ -291,6 +281,27 @@ export function decodeStyleParam(
     if (source[KEYS[field]] !== undefined)
       expanded[field] = source[KEYS[field]];
   }
+  // An official frame by id: its spec goes back into the custom frame, which
+  // must name no spec of its own. Then it's checked like any other frame.
+  const officialRaw = source[OFFICIAL_FRAME_KEY];
+  if (officialRaw !== undefined) {
+    const official =
+      typeof officialRaw === "string"
+        ? getOfficialFrame(officialRaw)
+        : undefined;
+    const frame = expanded.frame;
+    if (
+      !official ||
+      !frame ||
+      typeof frame !== "object" ||
+      Array.isArray(frame) ||
+      (frame as { style?: unknown }).style !== "custom" ||
+      "spec" in frame
+    ) {
+      return null;
+    }
+    expanded.frame = { ...frame, spec: official.spec };
+  }
   const parsed = linkedStyleSchema.safeParse(expanded);
   if (!parsed.success || Object.keys(parsed.data).length === 0) return null;
 
@@ -306,4 +317,26 @@ export function decodeStyleParam(
     styles: parsed.data as ThemeStyles,
     ...(preset ? { preset } : {}),
   };
+}
+
+/**
+ * A link into the playground that opens with `design` applied: how pages
+ * link an example's look. Without a design, a built-in preset as it ships
+ * travels as `preset`. With one (a preset with a frame or border added, a
+ * showcase look) it travels as `style`, carrying `preset` as its label and
+ * Reset base. The rest (type, sample, tab, art, open) goes to playgroundHref
+ * as given. A design with nothing a link can carry falls back to the preset.
+ */
+export function playgroundDesignHref({
+  design,
+  ...options
+}: Omit<PlaygroundLinkOptions, "style" | "themeId"> & {
+  design?: ThemeStyles;
+}): string {
+  const encoded = design
+    ? encodeStyleParam(design, { preset: options.preset })
+    : null;
+  return encoded
+    ? playgroundHref({ ...options, preset: undefined, style: encoded.value })
+    : playgroundHref(options);
 }

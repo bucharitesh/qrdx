@@ -42,6 +42,8 @@ const { usePlaygroundFocusStore } = await import(
   "@/store/playground-focus-store"
 );
 const { getPresetThemeStyles } = await import("@/utils/qr-presets-helper");
+const { PLAYGROUND_SAMPLES } = await import("@/lib/playground-samples");
+const { encodeQRContent } = await import("@/utils/qr-content-encoder");
 
 import type { LinkedDynamicCode } from "@/components/editor/dynamic-link-toggle";
 import type { ApplyContext } from "@/lib/playground-apply";
@@ -235,6 +237,70 @@ describe("content", () => {
   it("never turns dynamic on by itself", () => {
     apply("/playground?url=https://example.com/");
     expect(linked).toBeNull();
+  });
+});
+
+describe("sample content (sample=1)", () => {
+  it("fills an empty form with QRdx's sample, ready to download", () => {
+    const outcome = apply("/playground?type=wifi&sample=1&preset=classic");
+    expect(editor().contentType).toBe("wifi");
+    expect(editor().contentConfigs.wifi).toEqual(PLAYGROUND_SAMPLES.wifi);
+    expect(editor().value).toBe(encodeQRContent(PLAYGROUND_SAMPLES.wifi));
+    expect(outcome.applied).toEqual(["preset", "type", "sample"]);
+    expect(outcome.message).toBe(
+      "Opened the Classic theme with a sample WiFi code",
+    );
+  });
+
+  it("never replaces what the visitor typed for that type", () => {
+    const mine = {
+      type: "wifi" as const,
+      ssid: "Home",
+      password: "mine",
+      encryption: "WPA" as const,
+    };
+    useQREditorStore.setState({ contentConfigs: { wifi: mine } });
+    const outcome = apply("/playground?type=wifi&sample=1");
+    expect(editor().contentConfigs.wifi).toEqual(mine);
+    expect(editor().value).toContain("S:Home");
+    expect(outcome.applied).toEqual(["type"]);
+  });
+
+  it("fills the URL type with example.com", () => {
+    apply("/playground?type=url&sample=1");
+    expect(editor().contentType).toBe("url");
+    expect(editor().value).toBe("https://example.com/");
+  });
+
+  it("opens a personal type with its empty form", () => {
+    const outcome = apply("/playground?type=vcard&sample=1");
+    expect(editor().contentType).toBe("vcard");
+    expect(editor().contentConfigs.vcard).toBeUndefined();
+    expect(editor().value).toBe("");
+    expect(outcome.applied).toEqual(["type"]);
+  });
+
+  it("is undone with the rest of the link, bringing the old content back", () => {
+    useQREditorStore.setState({
+      contentType: "url",
+      value: "https://mine.example/",
+      contentConfigs: { url: { type: "url", url: "https://mine.example/" } },
+    });
+    const outcome = apply("/playground?type=instagram&sample=1");
+    expect(outcome.replaced).toBe(true);
+    expect(editor().contentConfigs.instagram).toEqual(
+      PLAYGROUND_SAMPLES.instagram,
+    );
+    outcome.undo();
+    expect(editor().contentType).toBe("url");
+    expect(editor().value).toBe("https://mine.example/");
+    expect(editor().contentConfigs.instagram).toBeUndefined();
+  });
+
+  it("an old link without the flag still leaves the form empty", () => {
+    apply("/playground?type=wifi");
+    expect(editor().contentConfigs.wifi).toBeUndefined();
+    expect(editor().value).toBe("");
   });
 });
 

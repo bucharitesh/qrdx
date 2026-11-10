@@ -240,6 +240,8 @@ describe("page codes", () => {
       expect(url.hash, code.id).toBe("");
       const params = parsePlaygroundParams(url.search);
       expect(params.type, code.id).toBe(code.type);
+      // QRdx's generic sample for the type (a flag), not the code's value.
+      expect(params.sample, code.id).toBe(true);
       expect(href, code.id).not.toContain(encodeURIComponent(code.value));
       if (code.frame === undefined) {
         expect(params.preset, code.id).toBe(code.preset);

@@ -1,11 +1,15 @@
 name: CI
 
+# One run per pull request (its required check) and one per push to main,
+# so the exact code that ships is tested even when a release PR is merged
+# before its checks finish. Pushes to staging don't run CI: every change
+# reaches staging through a pull request that already ran it.
 on:
   pull_request:
   push:
     branches:
       - main
-      - staging
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -24,13 +28,22 @@ env:
   TURBO_TELEMETRY_DISABLED: 1
 
 jobs:
+  # Branch protection requires this exact check name on every pull request.
   check:
     name: Typecheck, test, lint
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    # An explicit bash shell runs with -eo pipefail, so a failing command
+    # piped into tee still fails its step.
+    defaults:
+      run:
+        shell: bash
     steps:
+      # Full history, so turbo --affected can compare with the PR's base.
       - name: Checkout
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       # Uses the version pinned in package.json "packageManager".
       - name: Setup pnpm
@@ -42,31 +55,70 @@ jobs:
           node-version: 22
           cache: pnpm
 
+      # Turbo's local cache (builds, typechecks, test logs). A task whose
+      # inputs haven't changed since a cached run replays its result instead
+      # of running again. Runs on main save caches every pull request can
+      # read; each run saves its own entry under its commit.
+      - name: Restore turbo cache
+        uses: actions/cache@v4
+        with:
+          path: .turbo/cache
+          key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            turbo-${{ runner.os }}-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      # The docs app, CLI and CLI tests consume qrdx from its dist/ output.
-      - name: Build qrdx
-        run: pnpm turbo build --filter=qrdx
-
-      # The CLI tests run its built dist/index.js.
-      - name: Build CLI
-        run: pnpm --filter @qrdx/cli build
+      # The docs app, CLI and CLI tests consume qrdx from its dist/ output,
+      # and the CLI tests run the CLI's own dist/index.js.
+      - name: Build qrdx and the CLI
+        run: pnpm turbo build --filter=qrdx --filter=@qrdx/cli 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
 
       - name: Typecheck packages
-        run: pnpm typecheck
+        run: pnpm typecheck 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
 
       - name: Typecheck docs app
         run: |
           pnpm --filter docs exec next typegen
           pnpm typecheck:docs
 
-      # All package tests. They used to run inside `turbo build` (on Vercel and
-      # here, through "Build qrdx"); build no longer depends on test, so this
-      # job is where they run, and branch protection requires it. They also
-      # run locally before every push (.husky/pre-push → pnpm prepush).
+      # Pull requests into staging test the packages they change and the
+      # packages that depend on them. Release pull requests into main, pushes
+      # to main and manual runs test everything. Branch protection requires
+      # this job on every pull request; it passes when nothing is affected.
       - name: Test
-        run: pnpm test
+        env:
+          TURBO_SCM_BASE: ${{ github.event_name == 'pull_request' && format('origin/{0}', github.base_ref) || '' }}
+          AFFECTED: ${{ github.event_name == 'pull_request' && github.base_ref != 'main' }}
+        run: |
+          set -o pipefail
+          if [ "$AFFECTED" = "true" ]; then
+            echo "Testing the packages this PR changes against $TURBO_SCM_BASE, and their dependents." | tee -a "$GITHUB_STEP_SUMMARY"
+            pnpm turbo test --affected 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+          else
+            echo "Testing every package." | tee -a "$GITHUB_STEP_SUMMARY"
+            pnpm turbo test 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+          fi
+
+      # Shows what came from the cache, so a pass that only replayed cached
+      # results is visible.
+      - name: Turbo cache report
+        if: always()
+        run: |
+          log="$RUNNER_TEMP/turbo.log"
+          [ -f "$log" ] || exit 0
+          hits="$(grep -c 'cache hit' "$log" || true)"
+          misses="$(grep -c 'cache miss' "$log" || true)"
+          {
+            echo "### Turbo cache"
+            echo "Replayed from cache: $hits task(s). Ran: $misses task(s)."
+            echo
+            echo '```'
+            grep -E 'cache (hit|miss)' "$log" | sed -E 's/\x1b\[[0-9;]*m//g' | sed -E 's/^[[:space:]]*//' || true
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       # Biome is a devDependency of apps/docs; run it over the whole repo.
       - name: Lint (Biome)

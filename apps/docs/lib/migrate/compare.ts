@@ -120,6 +120,27 @@ export const COMPARE_MIGRATIONS: Record<string, CompareMigration> = {
     printed:
       "Wi-Fi, vCard and other static codes keep working without QR Code AI. Link, PDF and other dynamic codes go through its short links, which its FAQ says need Premium to stay active after the free trial: re-point each one to its new QRdx link (the mapping CSV lists them) and keep that account active until you reprint.",
   },
+  // Neither advertises a code-list export (Pageloot's CSV export is scan
+  // data), and both say codes stop on some plans, so the printed note says
+  // when to keep the account.
+  myqrcode: {
+    ...file(
+      "csv",
+      "MyQRCode",
+      "MyQRCode doesn't advertise a code-list export: list Name, QR link and Destination URL for each code in a spreadsheet.",
+    ),
+    printed:
+      "MyQRCode's dynamic codes redirect through MyQRCode, so QRdx can't change them. Its terms say that when the trial ends without an upgrade, dynamic codes \"will no longer be scannable\", so keep a paid MyQRCode plan until you reprint.",
+  },
+  pageloot: {
+    ...file(
+      "csv",
+      "Pageloot",
+      "Pageloot doesn't advertise a code-list export (its CSV export is scan data): list Name, short link and Destination URL for each code in a spreadsheet.",
+    ),
+    printed:
+      "Pageloot's dynamic codes redirect through Pageloot, so QRdx can't change them. For subscriptions, its pricing FAQ says codes \"will become inactive after your plan has expired\", so keep the plan until you reprint.",
+  },
   hovercode: exportAsCsv("hovercode", "Hovercode"),
   scanova: exportAsCsv("scanova", "Scanova"),
   qrfy: exportAsCsv("csv", "QRFY"),

@@ -61,6 +61,9 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.1161.0
         version: 3.1161.0
+      '@bwip-js/browser':
+        specifier: 4.11.4
+        version: 4.11.4
       '@c15t/nextjs':
         specifier: 3.2.1
         version: 3.2.1(next@16.4.3(@babel/core@7.29.13)(@opentelemetry/api@1.9.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@6.0.3)
@@ -368,6 +371,9 @@ importers:
       dotenv:
         specifier: ^18.0.9
         version: 18.0.9
+      sharp:
+        specifier: 0.35.5
+        version: 0.35.5(@types/node@26.6.6)
       ts-morph:
         specifier: ^28.0.0
         version: 28.0.0
@@ -1007,8 +1013,8 @@ importers:
         specifier: ^2.3.3
         version: 2.3.3(@raycast/api@2.10.1(@types/node@26.6.5)(@types/react@19.3.0))(react@19.3.1)
       qrdx:
-        specifier: ^0.0.46
-        version: 0.0.46(@types/node@26.6.5)(react-dom@19.3.1(react@19.3.1))
+        specifier: ^0.0.47
+        version: 0.0.47(jspdf@4.2.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       react:
         specifier: 19.3.1
         version: 19.3.1
@@ -2032,6 +2038,9 @@ packages:
   '@bramus/specificity@2.4.3':
     resolution: {integrity: sha512-0GEz8qJWokkUVYQYRukmkSHIFNoBH8QTreeHrAFbvz1XFYc3Y+puhMs8PQ5x8GNugiC2l5jvDBXKLbBIByeSBw==}
     hasBin: true
+
+  '@bwip-js/browser@4.11.4':
+    resolution: {integrity: sha512-WZtwXE7YrBw+do7rKqqr2c7pprLa2qTKCA63to1pkwKEBQZ22eBX+L/X6MhNhXY/qP6nIbeHo73R7emRDJpzZA==}
 
   '@c15t/core@3.2.1':
     resolution: {integrity: sha512-DB4NsPBo9ZUZjdFMuiZzpJqWSHaMKtF8hFYm0YieLf8l+opzv8vfj8i59WgR+czarbkbx3gmT1i9Q2Zp48Hwcg==}
@@ -9682,11 +9691,16 @@ packages:
     resolution: {integrity: sha512-BbubeCEyTuQjVMakvJQ/Sxbc93F2pwmbsxONT/ZRrwU7Ua38d8unYTwXpTVLAKJ4BDuH9IGztCjQcd/N/39Dvg==}
     engines: {node: '>=16.0.0'}
 
-  qrdx@0.0.46:
-    resolution: {integrity: sha512-ce2CRsNTdIWGmaocX2h0Qhe92M7fAxPhq1Ecz3cWsPJfKCfA3NJFTgF36woyoVaK8ifIYL+WLUJC5fI801TXAQ==}
-    hasBin: true
+  qrdx@0.0.47:
+    resolution: {integrity: sha512-U0v11Hi7QR+LHhogKIEUAdBYtktGAVTrZIJP4WCh1OAxE1Rjq4iFUiTIy8EVfBwffSo8nqP3OkZYTz37czPVxQ==}
+    engines: {node: '>=18'}
     peerDependencies:
+      jspdf: ^4.2.1
+      react: 19.3.1
       react-dom: 19.3.1
+    peerDependenciesMeta:
+      jspdf:
+        optional: true
 
   qs@6.16.2:
     resolution: {integrity: sha512-VYdnB5S7/0IeXzBacUtwNAaM6d7Y/PgYnNC7bJCI6meqA/OgnsQbZMtVW8Dt2D1PHgbHGtYmhSoEIgvt7xZ2ZA==}
@@ -12669,6 +12683,8 @@ snapshots:
       css-tree: 3.2.1
     optional: true
 
+  '@bwip-js/browser@4.11.4': {}
+
   '@c15t/core@3.2.1(typescript@6.0.3)':
     dependencies:
       '@c15t/schema': 3.1.2(typescript@6.0.3)
@@ -13323,7 +13339,8 @@ snapshots:
       '@iconify/types': 2.0.0
       mlly: 1.8.0
 
-  '@img/colour@1.1.0': {}
+  '@img/colour@1.1.0':
+    optional: true
 
   '@img/sharp-darwin-arm64@0.35.5':
     optionalDependencies:
@@ -20399,16 +20416,14 @@ snapshots:
 
   pvutils@1.2.0: {}
 
-  qrdx@0.0.46(@types/node@26.6.5)(react-dom@19.3.1(react@19.3.1)):
+  qrdx@0.0.47(jspdf@4.2.1)(react-dom@19.3.1(react@19.3.1))(react@19.3.1):
     dependencies:
-      jspdf: 4.2.1
       jsqr: 1.4.0
       react: 19.3.1
       react-dom: 19.3.1(react@19.3.1)
-      sharp: 0.35.5(@types/node@26.6.5)
       zod: 4.6.7
-    transitivePeerDependencies:
-      - '@types/node'
+    optionalDependencies:
+      jspdf: 4.2.1
 
   qs@6.16.2:
     dependencies:
@@ -21110,39 +21125,6 @@ snapshots:
 
   shallowequal@1.1.0: {}
 
-  sharp@0.35.5(@types/node@26.6.5):
-    dependencies:
-      '@img/colour': 1.1.0
-      detect-libc: 2.1.2
-      semver: 7.8.5
-    optionalDependencies:
-      '@img/sharp-darwin-arm64': 0.35.5
-      '@img/sharp-darwin-x64': 0.35.5
-      '@img/sharp-freebsd-wasm32': 0.35.5
-      '@img/sharp-libvips-darwin-arm64': 1.3.4
-      '@img/sharp-libvips-darwin-x64': 1.3.4
-      '@img/sharp-libvips-linux-arm': 1.3.4
-      '@img/sharp-libvips-linux-arm64': 1.3.4
-      '@img/sharp-libvips-linux-ppc64': 1.3.4
-      '@img/sharp-libvips-linux-riscv64': 1.3.4
-      '@img/sharp-libvips-linux-s390x': 1.3.4
-      '@img/sharp-libvips-linux-x64': 1.3.4
-      '@img/sharp-libvips-linuxmusl-arm64': 1.3.4
-      '@img/sharp-libvips-linuxmusl-x64': 1.3.4
-      '@img/sharp-linux-arm': 0.35.5
-      '@img/sharp-linux-arm64': 0.35.5
-      '@img/sharp-linux-ppc64': 0.35.5
-      '@img/sharp-linux-riscv64': 0.35.5
-      '@img/sharp-linux-s390x': 0.35.5
-      '@img/sharp-linux-x64': 0.35.5
-      '@img/sharp-linuxmusl-arm64': 0.35.5
-      '@img/sharp-linuxmusl-x64': 0.35.5
-      '@img/sharp-webcontainers-wasm32': 0.35.5
-      '@img/sharp-win32-arm64': 0.35.5
-      '@img/sharp-win32-ia32': 0.35.5
-      '@img/sharp-win32-x64': 0.35.5
-      '@types/node': 26.6.5
-
   sharp@0.35.5(@types/node@26.6.6):
     dependencies:
       '@img/colour': 1.1.0
@@ -21175,7 +21157,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
       '@types/node': 26.6.6
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:
