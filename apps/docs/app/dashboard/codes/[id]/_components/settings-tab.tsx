@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import type { CodeOptionPlans } from "@/app/dashboard/codes/_lib/code-options";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { HistoryPanel } from "./history-panel";
+import { InactiveSettingsNotice } from "./inactive-settings-notice";
 import { LifecyclePanel } from "./lifecycle-panel";
 import { PixelsPanel } from "./pixels-panel";
 import { type MarketingSettingsPromise, RoutingPanel } from "./routing-panel";
@@ -22,6 +24,10 @@ export function SettingsTab({
   const required = plans.options;
   return (
     <div className="flex flex-col gap-4">
+      {/* Settings of the other type, kept after a type change */}
+      <Suspense fallback={null}>
+        <InactiveSettingsNotice settings={marketing} />
+      </Suspense>
       <section className="scroll-mt-20" id="access">
         <LifecyclePanel
           codeId={code.id}

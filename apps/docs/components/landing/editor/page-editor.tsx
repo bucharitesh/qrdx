@@ -37,7 +37,9 @@ import {
   useState,
   useTransition,
 } from "react";
+import { publishCodeSwitchPage } from "@/actions/code-kind";
 import { publishLandingPage } from "@/actions/landing-pages";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import { PhoneFrame } from "@/components/mockups/phone-frame";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { ViewOnlyNotice } from "@/components/workspaces/view-only";
@@ -84,6 +86,22 @@ export interface PageEditorProps {
    * publish too).
    */
   readOnly?: boolean;
+  /**
+   * Changing a printed code's type (codes/[id]/change-type): the page isn't
+   * saved yet. Publish makes it and points the code at it in one step;
+   * scans keep their current destination until then.
+   */
+  switchCode?: PageEditorSwitch;
+}
+
+export interface PageEditorSwitch {
+  codeId: string;
+  /** The code's name or short link, for the notice */
+  codeLabel: string;
+  /** What scans open until the page is published */
+  opensNow: string;
+  type: string;
+  variantId: string | null;
 }
 
 type Issues = Map<string, string[]>;
@@ -164,12 +182,14 @@ export function PageEditor({
   branding,
   storageEnabled,
   readOnly = false,
+  switchCode,
 }: PageEditorProps) {
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const openUpgradeDialog = useGetProDialogStore(
     (state) => state.openUpgradeDialog,
   );
+  const showLimit = useShowLimit();
   const [content, setContent] = useState(initialContent);
   const [title, setTitle] = useState(page.title ?? "");
   const [version, setVersion] = useState(page.version);
@@ -324,6 +344,38 @@ export function PageEditor({
       return;
     }
     startPublishing(async () => {
+      if (switchCode) {
+        const switched = await publishCodeSwitchPage({
+          codeId: switchCode.codeId,
+          type: switchCode.type,
+          variantId: switchCode.variantId,
+          title: title.trim() || null,
+          content,
+        });
+        if (!switched.success) {
+          // The hosted-pages cap: the plan limit card, as when creating one.
+          if (switched.error.code === "LIMIT_REACHED") {
+            showLimit("landingPages", { message: switched.error.message });
+            return;
+          }
+          if (switched.error.code === "PLAN_REQUIRED") {
+            openUpgradeDialog("business");
+          }
+          toast.error(switched.error.message);
+          return;
+        }
+        setPublished(snapshot(title, content));
+        writeDraft(page.id, null);
+        setDraft(null);
+        track("page_published", { page_type: page.typeLabel });
+        toast.success("Published", {
+          description: "Scans of this code now open the page.",
+        });
+        router.push(
+          inWorkspace(`/codes/${encodeURIComponent(switchCode.codeId)}`),
+        );
+        return;
+      }
       const result = await publishLandingPage({
         id: page.id,
         title,
@@ -360,18 +412,21 @@ export function PageEditor({
     code,
     router,
     openUpgradeDialog,
+    switchCode,
+    inWorkspace,
+    showLimit,
   ]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
-        if (!readOnly && dirty && !isPublishing) publish();
+        if (!readOnly && (dirty || switchCode) && !isPublishing) publish();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [dirty, isPublishing, publish, readOnly]);
+  }, [dirty, isPublishing, publish, readOnly, switchCode]);
 
   const editorContext: BlockEditorContext = {
     theme: content.theme,
@@ -434,7 +489,15 @@ export function PageEditor({
     </div>
   );
 
-  const codeLinks = code ? (
+  const codeLinks = switchCode ? (
+    <Button asChild size="sm" variant="outline">
+      <Link
+        href={inWorkspace(`/codes/${encodeURIComponent(switchCode.codeId)}`)}
+      >
+        Cancel
+      </Link>
+    </Button>
+  ) : code ? (
     <>
       <Button asChild size="sm" variant="outline">
         <Link href={inWorkspace(`/codes/${encodeURIComponent(code.id)}`)}>
@@ -508,11 +571,29 @@ export function PageEditor({
     <div className="space-y-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <Button asChild size="icon" title="All pages" variant="ghost">
-            <Link aria-label="All pages" href={inWorkspace("/pages")}>
-              <ArrowLeft />
-            </Link>
-          </Button>
+          {switchCode ? (
+            <Button
+              asChild
+              size="icon"
+              title="Back to the code"
+              variant="ghost"
+            >
+              <Link
+                aria-label="Back to the code"
+                href={inWorkspace(
+                  `/codes/${encodeURIComponent(switchCode.codeId)}`,
+                )}
+              >
+                <ArrowLeft />
+              </Link>
+            </Button>
+          ) : (
+            <Button asChild size="icon" title="All pages" variant="ghost">
+              <Link aria-label="All pages" href={inWorkspace("/pages")}>
+                <ArrowLeft />
+              </Link>
+            </Button>
+          )}
           <Input
             aria-label="Page title"
             className="h-9 max-w-sm text-base font-semibold"
@@ -528,13 +609,17 @@ export function PageEditor({
             aria-live="polite"
             className="text-muted-foreground hidden text-xs whitespace-nowrap sm:inline"
           >
-            {dirty ? "Unpublished changes" : `Published · v${version}`}
+            {switchCode
+              ? "Not published yet"
+              : dirty
+                ? "Unpublished changes"
+                : `Published · v${version}`}
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {codeLinks}
           <Button
-            disabled={!dirty || isPublishing}
+            disabled={(!dirty && !switchCode) || isPublishing}
             onClick={publish}
             size="sm"
             title="Publish (⌘S)"
@@ -545,6 +630,14 @@ export function PageEditor({
         </div>
       </div>
 
+      {switchCode && (
+        <p className="bg-muted rounded-md p-3 text-sm">
+          When you publish, scans of{" "}
+          <span className="font-medium">{switchCode.codeLabel}</span> open this
+          page. The printed code stays the same. Until then, scans still open{" "}
+          {switchCode.opensNow}.
+        </p>
+      )}
       {draft && (
         <div className="bg-muted flex flex-col gap-2 rounded-md p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
           <span>

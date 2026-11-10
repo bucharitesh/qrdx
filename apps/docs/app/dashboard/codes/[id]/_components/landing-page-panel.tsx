@@ -46,6 +46,7 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
           <CardTitle className="text-base">Hosted page</CardTitle>
           <CardDescription>
             The page this code opened was deleted, so scans show "not found".
+            Use Change type to point it at a website link or a new page.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -59,7 +60,7 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
         <div className="min-w-0 space-y-1">
           <CardTitle className="text-base">Hosted page</CardTitle>
           <CardDescription className="truncate">
-            Scans open {row.title ? `"${row.title}"` : "your page"} ({label}).
+            Scans open {row.title ? `"${row.title}"` : "your page"} ({label}).{" "}
             {can(scope.role, "content.write")
               ? "Edit it anytime; the printed code stays the same."
               : "The printed code always opens its latest version."}
