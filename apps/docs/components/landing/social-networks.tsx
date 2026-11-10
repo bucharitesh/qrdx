@@ -1,34 +1,24 @@
+import { LinkedinLogo } from "@repo/design-system/components/icons";
 import {
-  GithubLogo as Github,
-  LinkedinLogo as Linkedin,
-  XLogo,
-} from "@repo/design-system/components/icons";
-import {
-  Be,
-  Cloud,
-  Dribbble,
-  Facebook,
   Global as Globe,
-  Hashtag,
-  Instagram,
   Sms as Mail,
-  Messages2 as MessagesSquare,
-  Music,
-  Musicnote as Music2,
   Call as Phone,
-  Bookmark as Pin,
   Microphone2 as Podcast,
   Brodcast as Rss,
-  Send2 as Send,
-  Snapchat,
-  Spotify,
-  Twitch,
-  Whatsapp,
-  Youtube,
 } from "iconsax-reactjs";
 import type { ComponentType } from "react";
+import { brandIcon } from "@/lib/brand-logos/brand-logo";
 
 type Icon = ComponentType<{ className?: string }>;
+
+// Brands get their real marks (Simple Icons) in the text color, inset like
+// the iconsax glyphs the generic entries use. LinkedIn asked Simple Icons
+// to remove its mark, so it keeps the design system's, inset the same way.
+function Linkedin({ className }: { className?: string }) {
+  return (
+    <LinkedinLogo aria-hidden className={className} viewBox="-2 -2 28 28" />
+  );
+}
 
 export interface SocialNetwork {
   id: string;
@@ -43,35 +33,35 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "instagram",
     label: "Instagram",
-    icon: Instagram,
+    icon: brandIcon("instagram"),
     hosts: ["instagram.com"],
     placeholder: "https://instagram.com/yourname",
   },
   {
     id: "tiktok",
     label: "TikTok",
-    icon: Music2,
+    icon: brandIcon("tiktok"),
     hosts: ["tiktok.com"],
     placeholder: "https://tiktok.com/@yourname",
   },
   {
     id: "x",
     label: "X",
-    icon: XLogo,
+    icon: brandIcon("x"),
     hosts: ["x.com", "twitter.com"],
     placeholder: "https://x.com/yourname",
   },
   {
     id: "facebook",
     label: "Facebook",
-    icon: Facebook,
+    icon: brandIcon("facebook"),
     hosts: ["facebook.com", "fb.com"],
     placeholder: "https://facebook.com/yourpage",
   },
   {
     id: "youtube",
     label: "YouTube",
-    icon: Youtube,
+    icon: brandIcon("youtube"),
     hosts: ["youtube.com", "youtu.be"],
     placeholder: "https://youtube.com/@yourchannel",
   },
@@ -85,70 +75,70 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "whatsapp",
     label: "WhatsApp",
-    icon: Whatsapp,
+    icon: brandIcon("whatsapp"),
     hosts: ["wa.me", "whatsapp.com"],
     placeholder: "https://wa.me/15550100",
   },
   {
     id: "telegram",
     label: "Telegram",
-    icon: Send,
+    icon: brandIcon("telegram"),
     hosts: ["t.me", "telegram.me"],
     placeholder: "https://t.me/yourname",
   },
   {
     id: "threads",
     label: "Threads",
-    icon: Hashtag,
+    icon: brandIcon("threads"),
     hosts: ["threads.net", "threads.com"],
     placeholder: "https://threads.net/@yourname",
   },
   {
     id: "bluesky",
     label: "Bluesky",
-    icon: Cloud,
+    icon: brandIcon("bluesky"),
     hosts: ["bsky.app"],
     placeholder: "https://bsky.app/profile/you.bsky.social",
   },
   {
     id: "pinterest",
     label: "Pinterest",
-    icon: Pin,
+    icon: brandIcon("pinterest"),
     hosts: ["pinterest.com", "pin.it"],
     placeholder: "https://pinterest.com/yourname",
   },
   {
     id: "snapchat",
     label: "Snapchat",
-    icon: Snapchat,
+    icon: brandIcon("snapchat"),
     hosts: ["snapchat.com"],
     placeholder: "https://snapchat.com/add/yourname",
   },
   {
     id: "discord",
     label: "Discord",
-    icon: MessagesSquare,
+    icon: brandIcon("discord"),
     hosts: ["discord.gg", "discord.com"],
     placeholder: "https://discord.gg/invite",
   },
   {
     id: "twitch",
     label: "Twitch",
-    icon: Twitch,
+    icon: brandIcon("twitch"),
     hosts: ["twitch.tv"],
     placeholder: "https://twitch.tv/yourname",
   },
   {
     id: "spotify",
     label: "Spotify",
-    icon: Spotify,
+    icon: brandIcon("spotify"),
     hosts: ["spotify.com"],
     placeholder: "https://open.spotify.com/artist/...",
   },
   {
     id: "soundcloud",
     label: "SoundCloud",
-    icon: Music,
+    icon: brandIcon("soundcloud"),
     hosts: ["soundcloud.com"],
     placeholder: "https://soundcloud.com/yourname",
   },
@@ -162,21 +152,21 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "github",
     label: "GitHub",
-    icon: Github,
+    icon: brandIcon("github"),
     hosts: ["github.com"],
     placeholder: "https://github.com/yourname",
   },
   {
     id: "dribbble",
     label: "Dribbble",
-    icon: Dribbble,
+    icon: brandIcon("dribbble"),
     hosts: ["dribbble.com"],
     placeholder: "https://dribbble.com/yourname",
   },
   {
     id: "behance",
     label: "Behance",
-    icon: Be,
+    icon: brandIcon("behance"),
     hosts: ["behance.net"],
     placeholder: "https://behance.net/yourname",
   },

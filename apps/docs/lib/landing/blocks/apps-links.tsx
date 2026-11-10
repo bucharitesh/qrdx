@@ -1,8 +1,9 @@
 "use client";
 
-import { Apple, Global as Globe, GooglePlay } from "iconsax-reactjs";
+import { Global as Globe } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
 import { buttonClass, linkProps } from "@/components/landing/block-kit";
+import { brandIcon } from "@/lib/brand-logos/brand-logo";
 import {
   type AppLink,
   type AppPlatform,
@@ -10,7 +11,12 @@ import {
   orderAppLinks,
 } from "./apps-platform";
 
-const ICONS = { ios: Apple, android: GooglePlay, web: Globe } as const;
+// The stores' real marks (Simple Icons), in the button's text color.
+const ICONS = {
+  ios: brandIcon("apple"),
+  android: brandIcon("googleplay"),
+  web: Globe,
+} as const;
 
 /**
  * Store buttons with the visitor's store first. `platform` comes from the
