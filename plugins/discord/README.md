@@ -5,7 +5,7 @@ A Discord app that makes QR codes:
 - `/qr content:<link or text>` replies with the QR code as an image, with **Download PNG**, **Download SVG** and **Open in editor** buttons. Add `private:True` and only you see it.
 - **Apps → Make QR code** on any message makes a code of the first web address in it, or of its text when there's no link.
 
-It works when it's added to a server and when someone adds it to their own account, so it also works in DMs and group DMs. It needs no QRdx account and stores nothing. The user guide is [Make QR codes in Discord](https://qrdx.dev/docs/help/getting-started/discord).
+It works when it's added to a server and when someone adds it to their own account, so it also works in DMs and group DMs. It needs no QRdx account and stores nothing. The user guide is [Make QR codes in Discord](https://qrdx.dev/docs/discord-bot).
 
 ## How it works
 

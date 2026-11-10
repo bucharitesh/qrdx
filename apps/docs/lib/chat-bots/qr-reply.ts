@@ -82,7 +82,9 @@ export function chatQrLinks(
 /** Content shortened for a caption, alt text or notification preview. */
 export function chatQrCaption(data: string, max = CAPTION_MAX): string {
   const oneLine = data.replace(/\s+/g, " ").trim();
-  return oneLine.length > max ? `${oneLine.slice(0, max - 1)}…` : oneLine;
+  // By code point, so an emoji or other astral character is never cut in half.
+  const chars = Array.from(oneLine);
+  return chars.length > max ? `${chars.slice(0, max - 1).join("")}…` : oneLine;
 }
 
 /** The first http(s) address in a message, for "make a code from this message". */

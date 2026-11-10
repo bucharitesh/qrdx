@@ -24,6 +24,7 @@
     "../short-links-and-file-pickers",
     "---Chat apps---",
     "../slack-bot",
+    "../discord-bot",
     "../telegram-bot",
     "[Integrations directory](/integrations)"
   ]
