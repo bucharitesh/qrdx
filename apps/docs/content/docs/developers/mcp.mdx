@@ -137,6 +137,20 @@ The inputs match the [image API parameters](/docs/developers/image-api#parameter
 
 `generate_qr_code` doesn't check the scan score; use `design_qr` for that. A code with your uploaded logo has no public image URL, since the image API only draws that logo for requests with your key.
 
+### The QR card [#qr-card]
+
+In apps that support [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview), `design_qr` and `generate_qr_code` also show a QR card in the chat. It has the code, what it encodes (a Wi-Fi code shows its network name, never the password), the size and error correction or the scan score, and an **Open in editor** button. The editor link carries the style only, like `playground_url`.
+
+The PNG and SVG buttons depend on what the app allows. Where it can save files from a card, they save them. Otherwise they open the image API URL in your browser, so `design_qr`'s card shows them only in apps that save files: its content never goes in an image URL. Apps may ask you to confirm before a link opens.
+
+Apps without MCP Apps get the same text and image as before. For client developers:
+
+- The card is the resource `ui://qrdx/qr-card` (`text/html;profile=mcp-app`), listed by `resources/list`. Both tools point to it with `_meta.ui.resourceUri`.
+- Its data comes in the tool result's `_meta`, under `dev.qrdx/qr-card`, which is meant for the card and not the model. The tools return no `structuredContent`.
+- The card is a single HTML file with its styles and script inline. The only thing it loads is the code's image from the image API (`https://api.qrdx.dev`, or your own domain when self-hosted), and its content security policy (`_meta.ui.csp.resourceDomains`) allows that host and nothing else.
+
+If you connected QRdx before the card existed, remove the connector and add it again, or refresh its tools, so the app picks up the new tool metadata.
+
 ### Community
 
 `search_community` finds published [community](/community) frames, themes and collections, free under CC0, by words (`q`), `type` and `tag`. `get_community_item` returns one item with the style it applies; pass its id to `design_qr` as `community_item` or to `generate_qr_code` as `item`. The same data is on the REST API at [`/v1/community/items`](/docs/developers/api/list-community-items).
