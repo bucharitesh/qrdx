@@ -64,6 +64,8 @@ const EVERYTHING: Record<string, string> = {
   SLACK_CLIENT_SECRET: FAKE,
   SLACK_SIGNING_SECRET: FAKE,
   INTEGRATION_ENCRYPTION_KEY: FAKE,
+  DISCORD_APPLICATION_ID: FAKE,
+  DISCORD_PUBLIC_KEY: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -99,6 +101,7 @@ const NEEDS: Record<FeatureId, string[]> = {
     "SLACK_SIGNING_SECRET",
     "INTEGRATION_ENCRYPTION_KEY",
   ],
+  discordBot: ["DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY"],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -266,6 +269,9 @@ describe("custom domains", () => {
     expect(featureForCatalogSlug("custom-domains")).toBe("customDomains");
     expect(featureForCatalogSlug("google-tag-manager")).toBe("customDomains");
     expect(featureForCatalogSlug("email-alerts")).toBe("email");
+    expect(featureForCatalogSlug("discord-bot")).toBe("discordBot");
+    // The webhook alerts need nothing; only the bot is set up.
+    expect(featureForCatalogSlug("discord")).toBeUndefined();
     expect(featureForCatalogSlug("google-analytics")).toBeUndefined();
   });
 });
@@ -464,7 +470,7 @@ describe("a production-like deployment", () => {
     }
   });
 
-  it("leaves out adding custom domains, the spam check, the media pickers and the Slack bot", () => {
+  it("leaves out adding custom domains, the spam check, the media pickers and the chat bots", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
       "customDomains",
       "domainConnect",
@@ -472,6 +478,7 @@ describe("a production-like deployment", () => {
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",
       "slackBot",
+      "discordBot",
     ]);
   });
 
@@ -501,6 +508,7 @@ describe("a production-like deployment", () => {
         "box",
         "calendly",
         "custom-domains",
+        "discord-bot",
         "google-tag-manager",
         "hubspot",
         "mailchimp",
