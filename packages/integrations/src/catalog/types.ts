@@ -106,6 +106,21 @@ export type CatalogAction =
     }
   | { type: "mcp-install"; label: string; client: McpInstallClient };
 
+/**
+ * How an entry reads where its optional extra is configured on the server
+ * (apps/docs lib/feature-availability-rules `extrasOf`, like the QRdx bot
+ * for Slack). The tagline, plan and steps replace the entry's own,
+ * capabilities come before its own and keywords are added. Elsewhere none
+ * of it is shown, so it may describe what only works with the extra.
+ */
+export interface CatalogConfigured {
+  tagline?: string;
+  plan?: CatalogPlan;
+  steps?: CatalogStep[];
+  capabilities?: CatalogCapability[];
+  keywords?: string[];
+}
+
 export interface IntegrationCatalogEntry {
   slug: string;
   name: string;
@@ -119,6 +134,8 @@ export interface IntegrationCatalogEntry {
    * shows them only where that extra is configured.
    */
   configuredExtras?: string[];
+  /** The rest of the entry where that extra is configured. */
+  configured?: CatalogConfigured;
   kind: CatalogKind;
   /** Where it is presented; only "integrations" entries are on /integrations. */
   surface: CatalogSurface;

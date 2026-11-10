@@ -24,7 +24,14 @@ import {
   isIntegrationConfigured,
   isOAuthConfigured,
 } from "@/lib/integration-oauth";
+import { isSlackBotEnabled } from "@/lib/slack-bot/config";
+import {
+  listInstallationsBy,
+  listUserLinks,
+  SlackBotStoreUnavailableError,
+} from "@/lib/slack-bot/store";
 import { IntegrationDetail } from "./components/integration-detail";
+import type { SlackBotSettings } from "./components/slack-bot-panel";
 
 initializeIntegrations();
 
@@ -107,6 +114,11 @@ export default async function IntegrationPage({
     }
   }
 
+  const slackBot =
+    slug === "slack" && isSlackBotEnabled()
+      ? await loadSlackBot(session.user.id)
+      : undefined;
+
   // Connecting Slack or a data-out tool asks "Confirm it's you" first
   // (lib/data-connections/connect-confirmation.ts); one dialog for the page.
   return (
@@ -129,7 +141,24 @@ export default async function IntegrationPage({
         status={status}
         connectedAt={connectedAt}
         metadata={metadata}
+        slackBot={slackBot}
       />
     </ConfirmIdentityProvider>
   );
+}
+
+/** The QRdx bot's installs and links for this user (only while it's set up). */
+async function loadSlackBot(userId: string): Promise<SlackBotSettings> {
+  try {
+    const [installs, links] = await Promise.all([
+      listInstallationsBy(userId),
+      listUserLinks(userId),
+    ]);
+    return { installs, links };
+  } catch (error) {
+    if (error instanceof SlackBotStoreUnavailableError) {
+      return { installs: [], links: [], unavailable: true };
+    }
+    throw error;
+  }
 }

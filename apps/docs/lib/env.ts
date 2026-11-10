@@ -52,6 +52,9 @@ export const env = createEnv({
     CALENDLY_CLIENT_SECRET: z.string().min(1).optional(),
     SLACK_CLIENT_ID: z.string().min(1).optional(),
     SLACK_CLIENT_SECRET: z.string().min(1).optional(),
+    // The QRdx bot for Slack (/qr, mentions, DMs): verifies requests Slack
+    // sends (lib/slack-bot). Off without it.
+    SLACK_SIGNING_SECRET: z.string().min(1).optional(),
     HUBSPOT_CLIENT_ID: z.string().min(1).optional(),
     HUBSPOT_CLIENT_SECRET: z.string().min(1).optional(),
     MAILCHIMP_CLIENT_ID: z.string().min(1).optional(),
@@ -147,6 +150,7 @@ export const env = createEnv({
     CALENDLY_CLIENT_SECRET: process.env.CALENDLY_CLIENT_SECRET,
     SLACK_CLIENT_ID: process.env.SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET,
+    SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
     HUBSPOT_CLIENT_ID: process.env.HUBSPOT_CLIENT_ID,
     HUBSPOT_CLIENT_SECRET: process.env.HUBSPOT_CLIENT_SECRET,
     MAILCHIMP_CLIENT_ID: process.env.MAILCHIMP_CLIENT_ID,
