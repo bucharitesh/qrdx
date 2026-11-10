@@ -38,7 +38,7 @@ QR Image → Generate needs no credential at all.
 | Theme | Get | `GET /themes/{id}` |
 | Theme | Get Many | `GET /themes` |
 
-**QR Image → Generate** returns the image as binary data (PNG, SVG or EPS) in the field you name, `data` by default, so you can attach it to an email or upload it somewhere. Its options cover size, foreground, background, eye and eye dot colors, body, eye and eye dot shapes, error correction, margin, a call-to-action frame with its label, and a center logo icon. The item's JSON also has `url`: the same image as a keyless link you can put in an `<img>` tag.
+**QR Image → Generate** returns the image as binary data (PNG, WebP, SVG or EPS) in the field you name, `data` by default, so you can attach it to an email or upload it somewhere. Its options cover size, foreground, background, eye and eye dot colors, body, eye and eye dot shapes, error correction, margin, a call-to-action frame with its label, and a center logo icon. The item's JSON also has `url`: the same image as a keyless link you can put in an `<img>` tag.
 
 **Code → Create** makes a dynamic code: a short link that redirects to the destination URL. Point it somewhere else later with **Update** and printed codes keep working. Update also archives and restores codes. Some fields depend on the plan: a custom back-half needs Pro or Business, and a custom domain needs Pro. When the plan doesn't include a field, QRdx refuses the request and the node shows QRdx's message.
 
