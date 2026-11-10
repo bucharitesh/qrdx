@@ -52,14 +52,28 @@ export const env = createEnv({
     CALENDLY_CLIENT_SECRET: z.string().min(1).optional(),
     SLACK_CLIENT_ID: z.string().min(1).optional(),
     SLACK_CLIENT_SECRET: z.string().min(1).optional(),
+    // The QRdx bot for Slack (/qr, mentions, DMs): verifies requests Slack
+    // sends (lib/slack-bot). Off without it.
+    SLACK_SIGNING_SECRET: z.string().min(1).optional(),
     HUBSPOT_CLIENT_ID: z.string().min(1).optional(),
     HUBSPOT_CLIENT_SECRET: z.string().min(1).optional(),
     MAILCHIMP_CLIENT_ID: z.string().min(1).optional(),
     MAILCHIMP_CLIENT_SECRET: z.string().min(1).optional(),
+    // Discord bot (/qr and "Make QR code"): the app's id and public key from
+    // the Discord developer portal. The bot token only registers commands
+    // (plugins/discord), so the app never reads it.
+    DISCORD_APPLICATION_ID: z.string().min(1).optional(),
+    DISCORD_PUBLIC_KEY: z.string().min(1).optional(),
     // Optional "your channel's videos" / "your playlists" pickers
     YOUTUBE_API_KEY: z.string().min(1).optional(),
     SPOTIFY_CLIENT_ID: z.string().min(1).optional(),
     SPOTIFY_CLIENT_SECRET: z.string().min(1).optional(),
+
+    // Telegram bot (QR codes in Telegram chats; off without all three):
+    // the BotFather token, the webhook's secret_token and the bot's username
+    TELEGRAM_BOT_TOKEN: z.string().min(1).optional(),
+    TELEGRAM_WEBHOOK_SECRET: z.string().min(1).optional(),
+    TELEGRAM_BOT_USERNAME: z.string().min(1).optional(),
 
     // Integration encryption
     INTEGRATION_ENCRYPTION_KEY: z.string().min(32).optional(),
@@ -147,13 +161,19 @@ export const env = createEnv({
     CALENDLY_CLIENT_SECRET: process.env.CALENDLY_CLIENT_SECRET,
     SLACK_CLIENT_ID: process.env.SLACK_CLIENT_ID,
     SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET,
+    SLACK_SIGNING_SECRET: process.env.SLACK_SIGNING_SECRET,
     HUBSPOT_CLIENT_ID: process.env.HUBSPOT_CLIENT_ID,
     HUBSPOT_CLIENT_SECRET: process.env.HUBSPOT_CLIENT_SECRET,
     MAILCHIMP_CLIENT_ID: process.env.MAILCHIMP_CLIENT_ID,
     MAILCHIMP_CLIENT_SECRET: process.env.MAILCHIMP_CLIENT_SECRET,
+    DISCORD_APPLICATION_ID: process.env.DISCORD_APPLICATION_ID,
+    DISCORD_PUBLIC_KEY: process.env.DISCORD_PUBLIC_KEY,
     YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
     SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
     SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
+    TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
+    TELEGRAM_WEBHOOK_SECRET: process.env.TELEGRAM_WEBHOOK_SECRET,
+    TELEGRAM_BOT_USERNAME: process.env.TELEGRAM_BOT_USERNAME,
     INTEGRATION_ENCRYPTION_KEY: process.env.INTEGRATION_ENCRYPTION_KEY,
     SCAN_HASH_SALT: process.env.SCAN_HASH_SALT,
     VERCEL_API_TOKEN: process.env.VERCEL_API_TOKEN,

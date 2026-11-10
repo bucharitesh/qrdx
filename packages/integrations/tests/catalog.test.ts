@@ -28,6 +28,8 @@ describe("catalog surfaces", () => {
       [
         "slack",
         "discord",
+        "discord-bot",
+        "telegram",
         "google-sheets",
         "hubspot",
         "mailchimp",
