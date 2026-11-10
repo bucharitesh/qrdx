@@ -37,38 +37,270 @@ function decodeEntities(value: string): string {
   });
 }
 
-const TOKEN_RE =
-  /<!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[([\s\S]*?)\]\]>|<![^>]*>|<\/([^\s>]+)\s*>|<([^\s/>]+)((?:[^>"']|"[^"]*"|'[^']*')*?)(\/?)>|([^<]+)/g;
-const ATTR_RE = /([^\s=]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g;
+// The reader below tokenizes markup exactly as matchAll did with this regex,
+// but in linear time; the regex backtracked polynomially on hostile input
+// (8 KB of "<!--" took over 30 seconds):
+//
+//   <!--[\s\S]*?-->|<\?[\s\S]*?\?>|<!\[CDATA\[([\s\S]*?)\]\]>|<![^>]*>|
+//   <\/([^\s>]+)\s*>|<([^\s/>]+)((?:[^>"']|"[^"]*"|'[^']*')*?)(\/?)>|([^<]+)
+//
+// tests/svg-geometry.test.ts keeps the regex reader and compares the two.
+
+const LT = 60;
+const GT = 62;
+const SLASH = 47;
+const EQUALS = 61;
+const DOUBLE_QUOTE = 34;
+const SINGLE_QUOTE = 39;
+
+// Runs of one character class: one greedy pass each, nothing to backtrack.
+const SPACE_RUN = /\s*/y;
+const OPEN_NAME_RUN = /[^\s/>]*/y;
+const CLOSE_NAME_RUN = /[^\s>]*/y;
+const ATTR_NAME_RUN = /[^\s=]*/y;
+
+/** Where the run of `run`'s characters starting at `from` ends. */
+function runEnd(run: RegExp, text: string, from: number): number {
+  run.lastIndex = from;
+  return run.test(text) ? run.lastIndex : from;
+}
+
+interface MarkupHandler {
+  open(name: string, rawAttrs: string, selfClosing: boolean): void;
+  close(): void;
+  text(text: string): void;
+  cdata(text: string): void;
+}
+
+/**
+ * Splits markup into the regex's tokens, in order. Comments, processing
+ * instructions and declarations produce no call. A "<" that starts no token
+ * is skipped, and the text after it becomes a text token.
+ */
+function tokenizeMarkup(markup: string, on: MarkupHandler): void {
+  const n = markup.length;
+
+  // indexOf for searches whose start only moves forward: a hit at or after
+  // the new start, or no hit at all, still answers the next search.
+  const finder = (needle: string) => {
+    let from = Number.POSITIVE_INFINITY;
+    let found = -1;
+    return (start: number): number => {
+      if (start < from || (found >= 0 && found < start)) {
+        from = start;
+        found = markup.indexOf(needle, start);
+      }
+      return found;
+    };
+  };
+  const commentEnd = finder("-->");
+  const instructionEnd = finder("?>");
+  const cdataEnd = finder("]]>");
+  const declarationEnd = finder(">");
+
+  // An open tag's attributes are a walk over boundaries: a quote jumps past
+  // its closing quote, any other character steps one on, and the walk stops
+  // at "/>" or ">" (returning its index) or fails at the end of the markup
+  // or at a quote that never closes. Where a walk goes depends only on where
+  // it is, so every boundary a failed walk crossed fails for later walks
+  // too. Marking them keeps all walks together linear.
+  let failed: Uint8Array | undefined;
+  const nextBoundary = (at: number): number => {
+    const code = markup.charCodeAt(at);
+    if (code !== DOUBLE_QUOTE && code !== SINGLE_QUOTE) {
+      return at + 1;
+    }
+    const close = markup.indexOf(markup[at] as string, at + 1);
+    return close < 0 ? n : close + 1;
+  };
+  const walk = (start: number): number => {
+    for (let at = start; at < n && !failed?.[at]; at = nextBoundary(at)) {
+      const code = markup.charCodeAt(at);
+      if (code === GT || (code === SLASH && markup.charCodeAt(at + 1) === GT)) {
+        return at;
+      }
+    }
+    failed ??= new Uint8Array(n);
+    for (let at = start; at < n && !failed[at]; at = nextBoundary(at)) {
+      failed[at] = 1;
+    }
+    return -1;
+  };
+
+  // The name is the run of [^\s/>] after "<", but the regex gave characters
+  // back from its end when the attributes could not be read from there. So
+  // it ends at the last place a walk succeeds from: the run's end, or a
+  // quote inside the run (from anywhere else the walk steps forward to the
+  // next quote or the run's end anyway). That depends only on the run, so a
+  // "<" later in the same run reuses the answer.
+  let nameFrom = -1;
+  let nameRunEnd = -1;
+  let nameEnd = -1;
+  let openEnd = -1;
+  const openTag = (lt: number): number => {
+    const from = lt + 1;
+    if (from < nameFrom || from >= nameRunEnd) {
+      nameFrom = from;
+      nameRunEnd = runEnd(OPEN_NAME_RUN, markup, from);
+      nameEnd = -1;
+      for (let at = nameRunEnd; at > from; at--) {
+        const code = markup.charCodeAt(at);
+        if (
+          at === nameRunEnd ||
+          code === DOUBLE_QUOTE ||
+          code === SINGLE_QUOTE
+        ) {
+          openEnd = walk(at);
+          if (openEnd >= 0) {
+            nameEnd = at;
+            break;
+          }
+        }
+      }
+    }
+    // The name needs at least one character.
+    if (nameEnd <= from) {
+      return -1;
+    }
+    const selfClosing = markup.charCodeAt(openEnd) === SLASH;
+    on.open(
+      markup.slice(from, nameEnd),
+      markup.slice(nameEnd, openEnd),
+      selfClosing
+    );
+    return openEnd + (selfClosing ? 2 : 1);
+  };
+
+  // "</name>": the run of [^\s>] after "</", optional space, then ">". A "<"
+  // later in the same run reuses the answer.
+  let closeFrom = -1;
+  let closeRunEnd = -1;
+  let closeEnd = -1;
+  const closeTag = (lt: number): number => {
+    const from = lt + 2;
+    if (from < closeFrom || from >= closeRunEnd) {
+      closeFrom = from;
+      closeRunEnd = runEnd(CLOSE_NAME_RUN, markup, from);
+      const gt = runEnd(SPACE_RUN, markup, closeRunEnd);
+      closeEnd = closeRunEnd > from && markup.charCodeAt(gt) === GT ? gt : -1;
+    }
+    return closeEnd;
+  };
+
+  /** The end of the token starting at the "<" at `lt`, or -1 for none. */
+  const tagAt = (lt: number): number => {
+    if (markup.startsWith("<!--", lt)) {
+      const end = commentEnd(lt + 4);
+      if (end >= 0) {
+        return end + 3;
+      }
+    }
+    if (markup.startsWith("<?", lt)) {
+      const end = instructionEnd(lt + 2);
+      if (end >= 0) {
+        return end + 2;
+      }
+    }
+    if (markup.startsWith("<![CDATA[", lt)) {
+      const end = cdataEnd(lt + 9);
+      if (end >= 0) {
+        on.cdata(markup.slice(lt + 9, end));
+        return end + 3;
+      }
+    }
+    if (markup.startsWith("<!", lt)) {
+      const end = declarationEnd(lt + 2);
+      if (end >= 0) {
+        return end + 1;
+      }
+    }
+    if (markup.charCodeAt(lt + 1) === SLASH) {
+      // "/" can't start an open tag's name either.
+      const end = closeTag(lt);
+      if (end < 0) {
+        return -1;
+      }
+      on.close();
+      return end + 1;
+    }
+    return openTag(lt);
+  };
+
+  let at = 0;
+  while (at < n) {
+    if (markup.charCodeAt(at) === LT) {
+      const end = tagAt(at);
+      at = end < 0 ? at + 1 : end;
+    } else {
+      const lt = markup.indexOf("<", at);
+      const end = lt < 0 ? n : lt;
+      on.text(markup.slice(at, end));
+      at = end;
+    }
+  }
+}
+
+/**
+ * Reads `name="value"` pairs as /([^\s=]+)\s*=\s*(?:"([^"]*)"|'([^']*)')/g
+ * did with matchAll, in linear time (the regex retried from every character
+ * of a long name that no "=" followed).
+ */
+function parseAttributes(raw: string): Record<string, string> {
+  const attrs: Record<string, string> = {};
+  let at = 0;
+  while (at < raw.length) {
+    const nameEnd = runEnd(ATTR_NAME_RUN, raw, at);
+    if (nameEnd === at) {
+      at++;
+      continue;
+    }
+    const equals = runEnd(SPACE_RUN, raw, nameEnd);
+    if (raw.charCodeAt(equals) === EQUALS) {
+      const open = runEnd(SPACE_RUN, raw, equals + 1);
+      const quote = raw[open];
+      const close =
+        quote === '"' || quote === "'" ? raw.indexOf(quote, open + 1) : -1;
+      if (close >= 0) {
+        attrs[raw.slice(at, nameEnd)] = decodeEntities(
+          raw.slice(open + 1, close)
+        );
+        at = close + 1;
+        continue;
+      }
+    }
+    // A pair starting later in this name would fail the same way.
+    at = nameEnd;
+  }
+  return attrs;
+}
 
 /** Parses SVG/XML markup into a tree and returns the first `<svg>` element. */
 export function parseSvgMarkup(markup: string): SvgNode | null {
   const root: SvgNode = { name: "#root", attrs: {}, children: [], text: "" };
   const stack: SvgNode[] = [root];
+  const current = () => stack.at(-1) as SvgNode;
 
-  for (const match of markup.matchAll(TOKEN_RE)) {
-    const [, cdata, closeName, openName, rawAttrs, selfClosing, text] = match;
-    const current = stack.at(-1) as SvgNode;
-    if (openName) {
-      const attrs: Record<string, string> = {};
-      for (const attr of (rawAttrs ?? "").matchAll(ATTR_RE)) {
-        attrs[attr[1]] = decodeEntities(attr[2] ?? attr[3] ?? "");
-      }
-      const node: SvgNode = { name: openName, attrs, children: [], text: "" };
-      current.children.push(node);
+  tokenizeMarkup(markup, {
+    open(name, rawAttrs, selfClosing) {
+      const attrs = parseAttributes(rawAttrs);
+      const node: SvgNode = { name, attrs, children: [], text: "" };
+      current().children.push(node);
       if (!selfClosing) {
         stack.push(node);
       }
-    } else if (closeName) {
+    },
+    close() {
       if (stack.length > 1) {
         stack.pop();
       }
-    } else if (text !== undefined) {
-      current.text += decodeEntities(text);
-    } else if (cdata !== undefined) {
-      current.text += cdata;
-    }
-  }
+    },
+    text(text) {
+      current().text += decodeEntities(text);
+    },
+    cdata(text) {
+      current().text += text;
+    },
+  });
 
   const findSvg = (node: SvgNode): SvgNode | null => {
     for (const child of node.children) {

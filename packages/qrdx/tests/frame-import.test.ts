@@ -269,6 +269,34 @@ describe("hostile SVG", () => {
     expect(outputs(expectOk(tail))).not.toMatch(FORBIDDEN);
   });
 
+  it("reads attributes and tag ends with any whitespace, and nothing looser", () => {
+    const shape = `<rect width="10" height="10" fill="#000"/>`;
+    for (const open of [
+      `<svg viewBox="0 0 10 10">`,
+      `<svg viewBox = '0 0 10 10' >`,
+      `<svg\n\tviewBox\n=\n"0 0 10 10"\u00a0data-x="y"\n>`,
+    ]) {
+      expectOk(importFrameSvg(`${open}${shape}</svg>`));
+    }
+    expectOk(
+      importFrameSvg(
+        `<svg viewBox="0 0 10 10"><rect width="10" height="10" fill="#000" \n/></svg>`
+      )
+    );
+    for (const open of [
+      `<svg viewBox="0 0 10 10"/ >`,
+      `<svg viewBox="0 0 10 10" ="x">`,
+      `<svg viewBox="0 0 10 10"data-x="y">`,
+      `<svg viewBox="0 0 10 10" 1x="y">`,
+      `<svg viewBox="0 0 10 10" data-x=y>`,
+      `<svg viewBox="0 0 10 10" data-x="y>`,
+    ]) {
+      const result = importFrameSvg(`${open}${shape}</svg>`);
+      expect(result.ok, open).toBe(false);
+      if (!result.ok) expect(result.error).toMatch(/malformed <svg> tag/);
+    }
+  });
+
   it("caps size, element count, depth and path segments", () => {
     const big = `<svg viewBox="0 0 10 10"><!--${"x".repeat(FRAME_IMPORT_LIMITS.maxBytes)}--></svg>`;
     const many = `<svg viewBox="0 0 10 10">${'<rect width="1" height="1"/>'.repeat(600)}</svg>`;
@@ -297,6 +325,11 @@ describe("hostile SVG", () => {
       `<svg>${"<".repeat(150_000)}`,
       `<svg><![CDATA[${"]".repeat(150_000)}`,
       `<svg>${"<g ".repeat(50_000)}`,
+      `<svg${" ".repeat(150_000)}`,
+      `<svg a${" ".repeat(150_000)}=`,
+      `<svg a=${" ".repeat(150_000)}`,
+      `<svg${' a="b"'.repeat(25_000)}${" ".repeat(40_000)}`,
+      `<svg${"\t".repeat(150_000)}/`,
     ];
     for (const svg of inputs) {
       const start = performance.now();
