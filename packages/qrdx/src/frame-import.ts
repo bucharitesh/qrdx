@@ -162,9 +162,56 @@ class Warnings {
 
 const XML_DECLARATION = /^\s*<\?xml\s[^?>]*\?>/;
 const TAG_NAME = /[A-Za-z_][\w:.-]*/y;
-const ATTRIBUTE = /\s+[A-Za-z_:][\w:.-]*\s*=\s*(?:"[^"<]*"|'[^'<]*')/y;
-const TAG_END = /\s*(\/?)>/y;
 const CLOSE_TAG = /<\/([A-Za-z_][\w:.-]*)\s*>/y;
+
+// Attributes and tag ends are read one character class at a time, so no
+// pattern can backtrack. The steps accept exactly what
+// /\s+[A-Za-z_:][\w:.-]*\s*=\s*(?:"[^"<]*"|'[^'<]*')/y and /\s*(\/?)>/y did.
+const SPACES = /\s*/y;
+const ATTRIBUTE_NAME = /[A-Za-z_:][\w:.-]*/y;
+const DOUBLE_QUOTED = /[^"<]*/y;
+const SINGLE_QUOTED = /[^'<]*/y;
+
+/** Where sticky `pattern` stops matching at `from` (`from` when it doesn't). */
+function skip(pattern: RegExp, markup: string, from: number): number {
+  pattern.lastIndex = from;
+  return pattern.test(markup) ? pattern.lastIndex : from;
+}
+
+/** The end of the ` name="value"` attribute at `from`, or -1. */
+function attributeEnd(markup: string, from: number): number {
+  const nameStart = skip(SPACES, markup, from);
+  const nameEnd = skip(ATTRIBUTE_NAME, markup, nameStart);
+  if (nameStart === from || nameEnd === nameStart) {
+    return -1;
+  }
+  const equals = skip(SPACES, markup, nameEnd);
+  if (markup[equals] !== "=") {
+    return -1;
+  }
+  const open = skip(SPACES, markup, equals + 1);
+  const quote = markup[open];
+  if (quote !== '"' && quote !== "'") {
+    return -1;
+  }
+  const value = quote === '"' ? DOUBLE_QUOTED : SINGLE_QUOTED;
+  const close = skip(value, markup, open + 1);
+  return markup[close] === quote ? close + 1 : -1;
+}
+
+/** The end of the ">" or "/>" after optional whitespace at `from`. */
+function tagEnd(
+  markup: string,
+  from: number
+): { end: number; selfClosing: boolean } | null {
+  const at = skip(SPACES, markup, from);
+  if (markup[at] === ">") {
+    return { end: at + 1, selfClosing: false };
+  }
+  return markup.startsWith("/>", at)
+    ? { end: at + 2, selfClosing: true }
+    : null;
+}
 
 /**
  * Linear well-formedness scan: tags, attributes (quoted values without
@@ -228,15 +275,14 @@ function scanMarkup(markup: string): string {
       throw new ImportError("The SVG has a malformed tag");
     }
     let position = TAG_NAME.lastIndex;
-    while (true) {
-      ATTRIBUTE.lastIndex = position;
-      if (!ATTRIBUTE.exec(markup)) {
-        break;
-      }
-      position = ATTRIBUTE.lastIndex;
+    for (
+      let next = attributeEnd(markup, position);
+      next >= 0;
+      next = attributeEnd(markup, position)
+    ) {
+      position = next;
     }
-    TAG_END.lastIndex = position;
-    const end = TAG_END.exec(markup);
+    const end = tagEnd(markup, position);
     if (!end) {
       throw new ImportError(
         `The SVG has a malformed <${name[0]}> tag (attributes must be quoted and may not contain "<")`
@@ -251,7 +297,7 @@ function scanMarkup(markup: string): string {
     if (!first) {
       first = name[0];
     }
-    if (!end[1]) {
+    if (!end.selfClosing) {
       stack.push(name[0]);
       if (stack.length > FRAME_IMPORT_LIMITS.maxDepth) {
         throw new ImportError(
@@ -259,7 +305,7 @@ function scanMarkup(markup: string): string {
         );
       }
     }
-    index = TAG_END.lastIndex;
+    index = end.end;
   }
   if (stack.length > 0) {
     throw new ImportError(`The SVG doesn't close <${stack.at(-1)}>`);
