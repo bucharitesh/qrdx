@@ -83,6 +83,10 @@ export interface AnalyticsEvents {
   form_submitted: NoProps;
   template_used: { template_type: string };
 
+  // NFC tags (feat/nfc): a code's NFC link written to a tag, or a tag locked.
+  // `error` is a lib/nfc/web-nfc.ts failure kind, never the link.
+  nfc_tag_written: { result: "written" | "locked" | "failed"; error?: string };
+
   // Imports and integrations
   import_started: { provider: string; count: number };
   import_completed: { provider: string; count: number; failed?: number };
