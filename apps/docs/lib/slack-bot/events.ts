@@ -66,10 +66,7 @@ function eventTeam(payload: SlackEventPayload): SlackTeamRef | null {
  * Messages the bot never answers: from bots (itself included), edits,
  * joins and every other subtype, and anything without a person or channel.
  */
-function isIgnoredMessage(
-  event: SlackEvent,
-  botUserId: string,
-): boolean {
+function isIgnoredMessage(event: SlackEvent, botUserId: string): boolean {
   return Boolean(
     event.bot_id ||
       event.subtype ||
