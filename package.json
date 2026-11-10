@@ -12,6 +12,7 @@
     "typecheck:docs": "pnpm --filter docs exec tsc --noEmit",
     "lint:ci": "./apps/docs/node_modules/.bin/biome ci .",
     "prepush": "pnpm --filter qrdx build:inplace && pnpm typecheck && pnpm typecheck:docs && pnpm lint:ci && pnpm --filter @qrdx/cli build && pnpm test",
+    "prepush:quick": "pnpm --filter qrdx build:inplace && pnpm typecheck && pnpm typecheck:docs && pnpm lint:ci && pnpm --filter @qrdx/cli build && TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/staging} turbo test --affected --only --concurrency=2",
     "analyze": "turbo analyze",
     "translate": "turbo translate",
     "boundaries": "turbo boundaries",
