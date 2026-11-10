@@ -49,8 +49,12 @@ function Count({
   className?: string;
   digitsClassName?: string;
 }) {
+  // --chars lets the big number size itself to fit ("46" vs "4.32M+").
   return (
-    <span className={cn("grid tabular-nums", className)}>
+    <span
+      className={cn("grid tabular-nums", className)}
+      style={{ "--chars": item.count.text.length } as CSSProperties}
+    >
       <span className="sr-only">{item.count.spoken}</span>
       <span aria-hidden="true" className="invisible col-start-1 row-start-1">
         {item.count.text}
@@ -283,7 +287,9 @@ export function NumbersTabs({ items, intro, labelledBy }: NumbersTabsProps) {
             <Count
               item={item}
               progress={progress}
-              className="text-[clamp(3.5rem,30cqw,10rem)] leading-[0.9] font-medium tracking-tighter"
+              // At most 10rem, and narrow enough for its own characters
+              // (about 0.6em each) to fit the panel's width.
+              className="text-[length:clamp(2.5rem,calc(100cqw/(var(--chars)*0.62)),10rem)] leading-[0.9] font-medium tracking-tighter"
               digitsClassName="bg-linear-to-b from-foreground/30 via-foreground/12 to-foreground/0 bg-clip-text text-transparent"
             />
             <p className="relative -mt-[min(9cqw,3rem)] text-2xl font-normal tracking-tight text-balance text-foreground @3xl/numbers:text-3xl">
