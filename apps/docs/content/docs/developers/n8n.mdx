@@ -4,25 +4,25 @@ description: Make QR codes, manage dynamic codes, read scans and start n8n workf
 icon: Blocks
 ---
 
-The `n8n-nodes-qrdx` package adds two nodes to [n8n](https://n8n.io):
+The `@qrdx/n8n-nodes-qrdx` package adds two nodes to [n8n](https://n8n.io):
 
 - **QRdx** makes QR code images, creates and edits [dynamic codes](/docs/dynamic-qr-codes), and reads their scans and your saved themes. An n8n AI Agent can use it as a tool.
 - **QRdx Trigger** starts a workflow when your codes are scanned, created or changed, or when someone submits a form on a [hosted page](/docs/forms-and-pages).
 
-The package is on npm as [`n8n-nodes-qrdx`](https://www.npmjs.com/package/n8n-nodes-qrdx) and installs into a self-hosted n8n. n8n Cloud only runs community nodes that n8n has verified, and this one isn't verified yet.
+The package is on npm as [`@qrdx/n8n-nodes-qrdx`](https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx) and installs into a self-hosted n8n. n8n Cloud only runs community nodes that n8n has verified, and this one isn't verified yet.
 
 To receive events without installing anything, use a [Webhook node](#without-the-package) instead.
 
 ## Install
 
-In n8n, open **Settings → Community Nodes**, click **Install**, enter `n8n-nodes-qrdx`, accept the note about community nodes and click **Install**. Then search for **QRdx** in the nodes panel.
+In n8n, open **Settings → Community Nodes**, click **Install**, enter `@qrdx/n8n-nodes-qrdx`, accept the note about community nodes and click **Install**. Then search for **QRdx** in the nodes panel.
 
 If your n8n hides that page, or you manage it from the command line, install the package in the `nodes` folder of your n8n user folder and restart n8n:
 
 ```bash
 mkdir -p ~/.n8n/nodes
 cd ~/.n8n/nodes
-npm install n8n-nodes-qrdx
+npm install @qrdx/n8n-nodes-qrdx
 ```
 
 If n8n runs in Docker, run the same commands inside the container (`docker exec -it n8n sh`) or set them up in your image.
