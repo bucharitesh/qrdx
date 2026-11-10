@@ -2,6 +2,7 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { useState } from "react";
+import { logoImageSrc } from "@/lib/workspace-logo";
 
 const SIZES = {
   xs: "size-5 rounded text-[11px]",
@@ -14,6 +15,8 @@ const SIZES = {
  * A workspace's logo, or its initial letter when it has none (or the image
  * doesn't load). Logos are uploads served by QRdx or https URLs the owner
  * typed; the browser loads them without a referrer, the server never does.
+ * Only https URLs, paths on this site and data:image/ URLs are rendered
+ * (logoImageSrc), whatever got stored.
  */
 export function WorkspaceAvatar({
   name,
@@ -30,7 +33,8 @@ export function WorkspaceAvatar({
   className?: string;
 }) {
   const [failed, setFailed] = useState<string | null>(null);
-  const showLogo = Boolean(logo) && failed !== logo;
+  const src = logoImageSrc(logo);
+  const showLogo = src !== null && failed !== src;
   return (
     <span
       aria-hidden
@@ -50,9 +54,9 @@ export function WorkspaceAvatar({
           alt=""
           className="size-full object-cover"
           decoding="async"
-          onError={() => setFailed(logo ?? null)}
+          onError={() => setFailed(src)}
           referrerPolicy="no-referrer"
-          src={logo ?? undefined}
+          src={src ?? undefined}
         />
       ) : (
         name.trim().charAt(0) || "W"
