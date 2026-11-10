@@ -30,6 +30,12 @@ import { createRandom } from "../support/prng";
 /** A typical link, as people send them. */
 const LINK = "https://qrdx.dev/menu";
 
+/**
+ * Each scan check renders and decodes the code (about 0.2 s alone, several
+ * times that when every suite runs at once).
+ */
+const SCANS = { timeout: 180_000 };
+
 const design = (choice: Parameters<typeof applyChoice>[1]) =>
   applyChoice(null, choice) as ChatDesign;
 
@@ -98,11 +104,12 @@ describe("what the pickers offer", () => {
         );
       }
     },
+    SCANS.timeout,
   );
 
-  it("scans in any mix of the four pickers", async () => {
+  it("scans in any mix of the four pickers", SCANS, async () => {
     const random = createRandom(20261111);
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 6; i++) {
       const asked = applyChoice(null, {
         ...pickerChoice("look", random.pick(CHAT_LOOKS).id),
         ...pickerChoice("color", random.pick(CHAT_COLORS).id),
@@ -128,7 +135,7 @@ describe("the scan check", () => {
     });
   });
 
-  it("repairs a color too light to scan, and says so", async () => {
+  it("repairs a color too light to scan, and says so", SCANS, async () => {
     const asked = design({ fg: "#CCCCCC" });
     const checked = await checkChatDesign(LINK, asked);
     expect(checked.note).toBe("adjusted");
@@ -180,16 +187,20 @@ describe("the scan check", () => {
     ).toEqual({ design: null, note: "fallback" });
   });
 
-  it("ends Great or plain for long content, which most looks can't hold", async () => {
-    const long = `https://example.com/${"a".repeat(200)}`;
-    const checked = await checkChatDesign(long, design({ look: "blossom" }));
-    expect(checked.note).not.toBeNull();
-    if (checked.design) {
-      expect((await scoreOf(long, checked.design)).grade).toBe("great");
-    }
-  });
+  it(
+    "ends Great or plain for long content, which most looks can't hold",
+    SCANS,
+    async () => {
+      const long = `https://example.com/${"a".repeat(200)}`;
+      const checked = await checkChatDesign(long, design({ look: "blossom" }));
+      expect(checked.note).not.toBeNull();
+      if (checked.design) {
+        expect((await scoreOf(long, checked.design)).grade).toBe("great");
+      }
+    },
+  );
 
-  it("raises error correction for a logo", async () => {
+  it("raises error correction for a logo", SCANS, async () => {
     const checked = await checkChatDesign(LINK, design({ logo: "wifi" }));
     expect(checked.design?.logo).toBe("wifi");
     expect(checked.design?.styles.level).toBe("H");

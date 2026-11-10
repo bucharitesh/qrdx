@@ -4,6 +4,9 @@
 // "Make QR code" reply in Discord's shape. Nothing touches the network or a
 // database. The rate limiters run in memory with their real windows (fresh
 // for each test) and record their keys; `state.allow = false` refuses all.
+// Their clock stands still in the middle of a minute: the windows are
+// minutes of the real clock, and a test that ran across one's end would see
+// part of its count weighted away.
 import type { KeyObject } from "node:crypto";
 import { generateKeyPairSync, sign } from "node:crypto";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -25,6 +28,8 @@ vi.mock("@repo/rate-limit", async () => {
   const { createMemoryLimiter, parseDuration } = await import(
     "@repo/rate-limit/fallback"
   );
+  /** 30 seconds into a minute. */
+  const MID_MINUTE = Math.floor(Date.now() / 60_000) * 60_000 + 30_000;
   const window = (tokens: number, duration: string) => ({
     tokens,
     windowMs: parseDuration(duration),
@@ -37,13 +42,14 @@ vi.mock("@repo/rate-limit", async () => {
     }: {
       limiter?: { tokens: number; windowMs: number };
     }) => {
+      const clock = () => MID_MINUTE;
       let generation = -1;
-      let memory = createMemoryLimiter(limiter);
+      let memory = createMemoryLimiter(limiter, clock);
       return {
         limit: async (key: string) => {
           if (generation !== state.generation) {
             generation = state.generation;
-            memory = createMemoryLimiter(limiter);
+            memory = createMemoryLimiter(limiter, clock);
           }
           state.keys.push(key);
           if (!state.allow) {
