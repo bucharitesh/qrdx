@@ -16,7 +16,8 @@ export type CatalogCategory =
   | "plugins"
   | "developers"
   | "sources"
-  | "crm";
+  | "crm"
+  | "chat";
 
 /** Lowest plan the integration needs. */
 export type CatalogPlan = "no-account" | "free" | "pro" | "business";
