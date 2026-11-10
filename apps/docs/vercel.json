@@ -1,5 +1,13 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "git": {
+    "deploymentEnabled": {
+      "**": false,
+      "main": true,
+      "staging": true,
+      "preview/**": true
+    }
+  },
   "ignoreCommand": "node scripts/skip-ci.js",
   "crons": [
     {
