@@ -76,20 +76,44 @@ export interface ChatQrLinks {
   editor: string;
 }
 
-/** The image and editor links for one piece of content. */
+/**
+ * A design for the links (lib/chat-bots/styles.ts): the editor's playground
+ * `style` value and a quick logo icon, both as the image API takes them.
+ */
+export interface ChatQrStyleParams {
+  style?: string;
+  logoIcon?: string;
+}
+
+/**
+ * The image and editor links for one piece of content, in `design` when
+ * given. The editor link carries the design's `style` too (never its logo,
+ * which no editor link carries).
+ */
 export function chatQrLinks(
   data: string,
   origin: string | URL = baseUrl,
+  design?: ChatQrStyleParams,
 ): ChatQrLinks {
   const url = webAddress(data);
+  const style: Record<string, string> = design?.style
+    ? { style: design.style }
+    : {};
+  const styled: Record<string, string> = design?.logoIcon
+    ? { ...style, logoIcon: design.logoIcon }
+    : style;
   return {
     png: imageApiUrl(origin, {
       data,
       format: "png",
       size: String(CHAT_QR_PNG_SIZE),
+      ...styled,
     }),
-    svg: imageApiUrl(origin, { data }),
-    editor: new URL(playgroundHref(url ? { url } : {}), origin).toString(),
+    svg: imageApiUrl(origin, { data, ...styled }),
+    editor: new URL(
+      playgroundHref({ ...(url ? { url } : {}), ...style }),
+      origin,
+    ).toString(),
   };
 }
 
