@@ -374,6 +374,7 @@ export function serializeMinimalCode(code: QrCodeView) {
     slug: code.slug,
     shortLink: code.shortLink,
     defaultShortLink: code.defaultShortLink,
+    nfcLink: nfcLink(code.shortLink),
     destinationUrl: code.destinationUrl,
     title: code.title,
     status: code.status,
