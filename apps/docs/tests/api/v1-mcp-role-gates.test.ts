@@ -54,13 +54,16 @@ vi.mock("@repo/rate-limit", () => ({
     }),
   }),
 }));
-vi.mock("@/app/(app)/dashboard/domains/_lib/domains", async (importOriginal) => ({
-  ...(await importOriginal<
-    typeof import("@/app/(app)/dashboard/domains/_lib/domains")
-  >()),
-  getDomainRefs: async () => new Map(),
-  assertBindableDomains: async () => {},
-}));
+vi.mock(
+  "@/app/(app)/dashboard/domains/_lib/domains",
+  async (importOriginal) => ({
+    ...(await importOriginal<
+      typeof import("@/app/(app)/dashboard/domains/_lib/domains")
+    >()),
+    getDomainRefs: async () => new Map(),
+    assertBindableDomains: async () => {},
+  }),
+);
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));
 vi.mock("@/lib/safety/destinations", () => ({
   screenNewCodes: async (_scope: unknown, rows: unknown[]) => rows,

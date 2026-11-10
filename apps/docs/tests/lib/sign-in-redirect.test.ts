@@ -181,7 +181,9 @@ describe("proxy.ts", () => {
 
 describe("/sign-in", () => {
   const render = async (next?: string | string[]) => {
-    const { default: SignInPage } = await import("@/app/(app)/(auth)/sign-in/page");
+    const { default: SignInPage } = await import(
+      "@/app/(app)/(auth)/sign-in/page"
+    );
     return SignInPage({ searchParams: Promise.resolve({ next }) });
   };
 

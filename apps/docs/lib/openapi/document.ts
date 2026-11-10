@@ -1,6 +1,10 @@
 import type { OpenAPIV3_1 } from "fumadocs-openapi";
 import { z } from "zod";
 import {
+  codeIdSchema,
+  MAX_BULK_CREATE,
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import {
   createCodeInputSchema,
   createCodesHeadersSchema,
   listCodesQuerySchema,
@@ -19,10 +23,6 @@ import {
   subscribeSchema,
 } from "@/app/api/v1/hooks/_lib/hooks";
 import { qrImageQuerySchema } from "@/app/api/v1/qr/_lib/query";
-import {
-  codeIdSchema,
-  MAX_BULK_CREATE,
-} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   insufficientKeyScopeError,
   invalidApiKeyError,

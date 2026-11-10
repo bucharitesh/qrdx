@@ -9,7 +9,10 @@ import { useAuthStore } from "@/store/auth-store";
 // The dialog (sign-in UI, icon set, logo animation) loads the first time it
 // opens, so it stays out of every page's first load.
 const AuthDialog = dynamic(
-  () => import("@/app/(app)/(auth)/components/auth-dialog").then((m) => m.AuthDialog),
+  () =>
+    import("@/app/(app)/(auth)/components/auth-dialog").then(
+      (m) => m.AuthDialog,
+    ),
   { ssr: false },
 );
 

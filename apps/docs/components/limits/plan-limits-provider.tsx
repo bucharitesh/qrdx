@@ -1,7 +1,10 @@
 "use client";
 
 import { createContext, type ReactNode, useContext } from "react";
-import type { CheckoutOpen, MeterCaps } from "@/app/(app)/settings/usage/_lib/meters";
+import type {
+  CheckoutOpen,
+  MeterCaps,
+} from "@/app/(app)/settings/usage/_lib/meters";
 import type { Plan } from "@/lib/pricing";
 
 /** What limit cards need to know about the open workspace's plan. */

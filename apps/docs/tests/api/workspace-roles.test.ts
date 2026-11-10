@@ -147,7 +147,9 @@ const logo = await import("@/actions/workspace-logo");
 const themes = await import("@/actions/qr-themes");
 const publicStats = await import("@/actions/public-stats");
 const utmTemplates = await import("@/actions/utm-templates");
-const apiKeys = await import("@/app/(app)/settings/developers/_lib/api-key-actions");
+const apiKeys = await import(
+  "@/app/(app)/settings/developers/_lib/api-key-actions"
+);
 const webhooks = await import("@/app/(app)/dashboard/webhooks/_lib/actions");
 const { resolveApiCaller } = await import("@/app/api/v1/codes/_lib/api");
 const { migrateScope } = await import("@/lib/migrate/server/http");

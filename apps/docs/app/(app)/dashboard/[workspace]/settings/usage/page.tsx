@@ -17,7 +17,10 @@ import Link from "next/link";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { UsageMeters } from "@/app/(app)/settings/usage/_components/usage-meters";
-import { renewalLine, upgradeAction } from "@/app/(app)/settings/usage/_lib/meters";
+import {
+  renewalLine,
+  upgradeAction,
+} from "@/app/(app)/settings/usage/_lib/meters";
 import { getPlanUsage } from "@/app/(app)/settings/usage/_lib/plan-usage";
 import { PLAN_NAMES } from "@/lib/pricing";
 

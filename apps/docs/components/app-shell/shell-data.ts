@@ -2,7 +2,10 @@ import "server-only";
 
 import { unstable_rethrow } from "next/navigation";
 import { countUnarchived } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
-import { attentionMeters, type Meter } from "@/app/(app)/settings/usage/_lib/meters";
+import {
+  attentionMeters,
+  type Meter,
+} from "@/app/(app)/settings/usage/_lib/meters";
 import {
   getUsageMeters,
   meterCapsFor,

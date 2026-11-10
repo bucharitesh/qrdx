@@ -145,7 +145,9 @@ const origin = await import("@/lib/account/session-origin-server");
 const { checkSession } = await import(
   "@/app/(app)/(auth)/session-check/_lib/actions"
 );
-const { default: checkPage } = await import("@/app/(app)/(auth)/session-check/page");
+const { default: checkPage } = await import(
+  "@/app/(app)/(auth)/session-check/page"
+);
 const { default: proxy } = await import("@/proxy");
 
 const DAY = 24 * 60 * 60 * 1000;

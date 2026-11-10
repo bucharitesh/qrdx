@@ -3,7 +3,10 @@ import "server-only";
 import { database as db, qrCode } from "@repo/database";
 import { and, eq, isNull, type SQL, sql } from "drizzle-orm";
 import type { QrCodeStatus } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
-import { getCodeUsage, listCodes } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import {
+  getCodeUsage,
+  listCodes,
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { getDomainsOverview } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { getPageUsage } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import {

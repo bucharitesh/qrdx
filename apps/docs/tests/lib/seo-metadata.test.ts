@@ -213,7 +213,10 @@ describe("per-page Open Graph images", () => {
       /playgroundMetadata[\s\S]*?ownOgImage: true[\s\S]*?sharedThemeMetadata/,
     );
     expect(
-      readFileSync(join(APP, "app/(app)/playground/[...qrId]/page.tsx"), "utf8"),
+      readFileSync(
+        join(APP, "app/(app)/playground/[...qrId]/page.tsx"),
+        "utf8",
+      ),
     ).toContain("sharedThemeMetadata");
   });
 });
