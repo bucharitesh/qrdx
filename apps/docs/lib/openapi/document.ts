@@ -28,6 +28,17 @@ import {
   invalidApiKeyError,
   missingTokenError,
 } from "@/lib/api-errors";
+// Barcodes (barcodeOperations below)
+import {
+  barcodeImageBodySchema,
+  barcodeImageQuerySchema,
+} from "@/lib/barcode/request";
+import {
+  barcodeIdSchema,
+  createBarcodeSchema,
+  listBarcodesQuerySchema,
+  updateBarcodeSchema,
+} from "@/lib/barcodes/schema";
 import { WEBHOOK_EVENTS, type WebhookEvent } from "@/lib/events/types";
 import { baseUrl } from "@/lib/metadata";
 import { OAUTH_SCOPE_INFO, OAUTH_SCOPES } from "@/lib/oauth-scopes";
@@ -35,6 +46,9 @@ import { qrOptionsSchema } from "@/lib/qr-render";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { API_ERRORS, type ApiErrorCode, type ApiErrorInfo } from "./errors";
 import {
+  barcodeDeletedResponseSchema,
+  barcodeListResponseSchema,
+  barcodeResponseSchema,
   codeCreateResponseSchema,
   codeDeletedResponseSchema,
   codeListResponseSchema,
@@ -1365,12 +1379,356 @@ Keys and tokens only: a browser session gets \`401\`.`,
   };
 }
 
+// ─── Barcodes ────────────────────────────────────────────────────────────────
+// GET/POST /barcode (keyless images) and /barcodes (saved barcodes, with a
+// key), kept apart from the operations above.
+
+const exampleBarcode = {
+  id: "cm5barcode0spring0box0001",
+  title: "Spring box",
+  format: "ean13",
+  formatLabel: "EAN-13",
+  value: "5901234123457",
+  options: {
+    foreground: "#000000",
+    background: "#ffffff",
+    showText: true,
+    barHeightMm: 23,
+    quietZone: 11,
+    scale: 4,
+    rotation: 0,
+  },
+  folderId: null,
+  imageUrl: `${SITE}/api/v1/barcode?format=ean13&data=5901234123457`,
+  createdAt: EXAMPLE_TIME,
+  updatedAt: EXAMPLE_TIME,
+  deletedAt: null,
+  organizationId: null,
+};
+
+const BARCODE_IMAGE_CONTENT = {
+  "image/svg+xml": {
+    schema: { type: "string" },
+    example:
+      '<svg width="129.333mm" height="55.333mm" shape-rendering="crispEdges" viewBox="0 0 388 166" xmlns="http://www.w3.org/2000/svg">…</svg>',
+  },
+  "image/png": { schema: { type: "string", contentMediaType: "image/png" } },
+  "image/jpeg": { schema: { type: "string", contentMediaType: "image/jpeg" } },
+  "image/webp": { schema: { type: "string", contentMediaType: "image/webp" } },
+  "image/avif": { schema: { type: "string", contentMediaType: "image/avif" } },
+  "application/pdf": {
+    schema: { type: "string", contentMediaType: "application/pdf" },
+  },
+  "application/postscript": {
+    schema: { type: "string", contentMediaType: "application/postscript" },
+  },
+};
+
+const BARCODE_VALUE_ERROR = {
+  code: "VALIDATION_ERROR",
+  message: "Invalid query parameters",
+  status: 400,
+  data: {
+    details: [
+      {
+        param: "data",
+        message:
+          "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you.",
+      },
+    ],
+  },
+};
+
+function barcodeOperations(c: SchemaCollector): Record<string, JsonSchema> {
+  const barcodeId = c.parameters(
+    z.object({ id: barcodeIdSchema }),
+    "path",
+    { id: "The barcode's `id`" },
+    { id: exampleBarcode.id },
+  );
+  const imageErrors = (limitNote: string) => ({
+    "400": {
+      description:
+        "`VALIDATION_ERROR`: a parameter is missing or invalid, or the value breaks the format's rules (characters, length, check digit); `data.details` lists `{ param, message }`.",
+      content: {
+        "application/json": {
+          schema: { $ref: `${COMPONENT_REF}Error` },
+          example: BARCODE_VALUE_ERROR,
+        },
+      },
+    },
+    "429": {
+      description: `\`RATE_LIMITED\`: ${limitNote}`,
+      headers: { "Retry-After": RETRY_AFTER },
+      content: {
+        "application/json": {
+          schema: { $ref: `${COMPONENT_REF}Error` },
+          example: PER_MINUTE_EXAMPLE,
+        },
+      },
+    },
+  });
+
+  return {
+    "/barcode": {
+      get: {
+        operationId: "getBarcodeImage",
+        summary: "Render a barcode image",
+        tags: ["Barcodes"],
+        security: [],
+        description: `A static barcode as SVG (default), PNG, JPG, WebP, AVIF, PDF or EPS, with no key.
+
+**No key or token needed**, and it doesn't use your daily quota: put the URL straight into an \`<img>\` tag. The same query always returns the same bytes, so responses are cached for a year. Limit: 300 requests a minute per IP address, like \`GET /qr\`.
+
+**Formats.** EAN-13, EAN-8, UPC-A, UPC-E, ITF-14 and GS1-128 (GTIN and SSCC fields) take the number with or without its check digit: one digit short and it's added, the full length and it's checked. A wrong check digit, a wrong length or a character the format can't hold is a \`400\` that says what's wrong. Code 128 takes printable ASCII, Code 39 capitals, digits and \`- . $ / + %\`, and Data Matrix, PDF417 and Aztec any text up to 1,000 characters.
+
+**Sizes.** Raster images are \`scale\` pixels per module (a linear bar or a 2D cell's half). SVG, PDF and EPS are vectors at one point per module (0.353 mm, about 107% of an EAN-13's nominal size), with bars \`height\` millimetres tall.
+
+Values that shouldn't sit in a URL can go in a \`POST\` body instead.`,
+        parameters: c.parameters(
+          barcodeImageQuerySchema,
+          "query",
+          {},
+          { format: "ean13", data: "590123412345", type: "svg" },
+        ),
+        responses: {
+          "200": {
+            description:
+              "The image or file. `Cache-Control: public, max-age=31536000, immutable`; CORS is open to every origin. EPS comes as an attachment.",
+            content: BARCODE_IMAGE_CONTENT,
+          },
+          ...imageErrors("over 300 requests a minute from one IP address."),
+        },
+      },
+      post: {
+        operationId: "createBarcodeImage",
+        summary: "Render a barcode image from a JSON body",
+        tags: ["Barcodes"],
+        security: [],
+        description:
+          "The same image as `GET /barcode`, with the same fields as JSON, so the value never appears in a URL or a log of one. Not cached (`Cache-Control: no-store`). No key needed; it shares the 300 requests a minute per IP address with `GET`.",
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: c.schema(barcodeImageBodySchema),
+              examples: {
+                gs1: {
+                  summary: "A GS1-128 logistics label as PNG",
+                  value: {
+                    format: "gs1-128",
+                    data: "(01)09501101530003(17)261231(10)AB-123",
+                    type: "png",
+                    scale: 3,
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": {
+            description: "The image or file. `Cache-Control: no-store`.",
+            content: BARCODE_IMAGE_CONTENT,
+          },
+          "415": {
+            description:
+              "`UNSUPPORTED_MEDIA_TYPE`: the body isn't sent as `application/json`.",
+            content: {
+              "application/json": { schema: { $ref: `${COMPONENT_REF}Error` } },
+            },
+          },
+          ...imageErrors("over 300 requests a minute from one IP address."),
+        },
+      },
+    },
+
+    "/barcodes": {
+      get: {
+        operationId: "listBarcodes",
+        summary: "List saved barcodes",
+        tags: ["Barcodes"],
+        security: security("codes:read"),
+        description: `The saved barcodes of the workspace the key or token acts on, most recently changed first.
+
+Page through them with \`limit\` and \`offset\`; \`pagination.total\` counts every match. \`status=trash\` lists the trash.`,
+        parameters: c.parameters(listBarcodesQuerySchema, "query"),
+        responses: {
+          "200": json(
+            "A page of barcodes",
+            c.schema(barcodeListResponseSchema),
+            {
+              page: {
+                data: [exampleBarcode],
+                pagination: { total: 1, limit: 50, offset: 0 },
+              },
+            },
+          ),
+          ...errorResponses(c, [...AUTH_ERRORS, "VALIDATION_ERROR"]),
+        },
+      },
+      post: {
+        operationId: "createBarcode",
+        summary: "Save a barcode",
+        tags: ["Barcodes"],
+        security: security("codes:write"),
+        description: `Saves a static barcode to the workspace, listed under Barcodes in the dashboard.
+
+The value is checked against the format's rules first: a retail number one digit short gets its check digit, a wrong one is a \`400\`. Options left out use the format's defaults. Every plan saves barcodes; past the plan's limit (1,000 on Free, not counting the trash) it's \`402 LIMIT_REACHED\`.`,
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: c.schema(createBarcodeSchema),
+              examples: {
+                ean: {
+                  summary: "An EAN-13, check digit added",
+                  value: {
+                    format: "ean13",
+                    value: "590123412345",
+                    title: "Spring box",
+                  },
+                },
+                styled: {
+                  summary: "A Code 128 label, dark blue, no text",
+                  value: {
+                    format: "code128",
+                    value: "SHELF-A12",
+                    options: { foreground: "1e3a8a", showText: false },
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": json("Saved", c.schema(barcodeResponseSchema), {
+            barcode: { data: exampleBarcode },
+          }),
+          ...errorResponses(
+            c,
+            [...AUTH_ERRORS, ...WRITE_ERRORS, "LIMIT_REACHED"],
+            { scope: "codes:write" },
+          ),
+        },
+      },
+    },
+
+    "/barcodes/{id}": {
+      parameters: barcodeId,
+      get: {
+        operationId: "getBarcode",
+        summary: "Get a saved barcode",
+        tags: ["Barcodes"],
+        security: security("codes:read"),
+        description:
+          "One saved barcode of the workspace the key or token acts on, in the trash or not.",
+        responses: {
+          "200": json("The barcode", c.schema(barcodeResponseSchema), {
+            barcode: { data: exampleBarcode },
+          }),
+          ...errorResponses(c, [
+            ...AUTH_ERRORS,
+            "VALIDATION_ERROR",
+            "NOT_FOUND",
+          ]),
+        },
+      },
+      patch: {
+        operationId: "updateBarcode",
+        summary: "Update a saved barcode",
+        tags: ["Barcodes"],
+        security: security("codes:write"),
+        description: `Changes a saved barcode's title, format, value, options or folder. Send only the fields to change.
+
+\`options\` replaces the saved options: fields you leave out go back to the format's defaults. A new \`format\` without \`options\` starts from the new format's defaults. The value is checked like a new one.`,
+        requestBody: {
+          required: true,
+          content: {
+            "application/json": {
+              schema: c.schema(updateBarcodeSchema),
+              examples: {
+                value: {
+                  summary: "A new number",
+                  value: { value: "400638133393" },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "200": json("The updated barcode", c.schema(barcodeResponseSchema), {
+            barcode: { data: { ...exampleBarcode, value: "4006381333931" } },
+          }),
+          ...errorResponses(c, [...AUTH_ERRORS, ...WRITE_ERRORS, "NOT_FOUND"], {
+            scope: "codes:write",
+          }),
+        },
+      },
+      delete: {
+        operationId: "deleteBarcode",
+        summary: "Delete a saved barcode",
+        tags: ["Barcodes"],
+        security: security("codes:write"),
+        description: `Moves a saved barcode to the trash, where the dashboard can restore it. \`?permanent=true\` deletes it for good instead.
+
+Printed barcodes keep working either way: they're static.`,
+        responses: {
+          "200": json("Deleted", c.schema(barcodeDeletedResponseSchema), {
+            trashed: {
+              data: { id: exampleBarcode.id, deleted: false, trashed: true },
+            },
+            permanent: { data: { id: exampleBarcode.id, deleted: true } },
+          }),
+          ...errorResponses(
+            c,
+            [...AUTH_ERRORS, "VALIDATION_ERROR", "FORBIDDEN", "NOT_FOUND"],
+            { scope: "codes:write" },
+          ),
+        },
+      },
+    },
+
+    "/barcodes/{id}/image": {
+      parameters: barcodeId,
+      get: {
+        operationId: "getSavedBarcodeImage",
+        summary: "Download a saved barcode",
+        tags: ["Barcodes"],
+        security: security("codes:read"),
+        description:
+          "A saved barcode as SVG (default), PNG, JPG, WebP, AVIF, PDF or EPS, drawn as saved: `type` picks the file and `scale` (1-10) overrides its raster scale. Private and not cached; it counts toward the daily quota. For an image anyone can load, use the barcode's `imageUrl`.",
+        parameters: c.parameters(
+          z.object({
+            type: barcodeImageQuerySchema.shape.type,
+            scale: barcodeImageQuerySchema.shape.scale,
+          }),
+          "query",
+        ),
+        responses: {
+          "200": {
+            description:
+              "The image or file. `Cache-Control: private, no-store`.",
+            headers: RATE_LIMIT_HEADERS,
+            content: BARCODE_IMAGE_CONTENT,
+          },
+          ...errorResponses(c, [
+            ...AUTH_ERRORS,
+            "VALIDATION_ERROR",
+            "NOT_FOUND",
+          ]),
+        },
+      },
+    },
+  };
+}
+
 // ─── Document ────────────────────────────────────────────────────────────────
 
 const DESCRIPTION = `Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.
 
 - **Base URL:** \`${API_SERVER_URL}\`. The same routes answer at \`${SITE}/api/v1\`.
-- **Auth:** an API key, \`Authorization: Bearer qrdx_…\` ([create one](${docs("developers/api-keys")})), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](${docs("developers/rest-api#get-an-access-token")})). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's own workspace. The image API (\`GET /qr\`) needs neither.
+- **Auth:** an API key, \`Authorization: Bearer qrdx_…\` ([create one](${docs("developers/api-keys")})), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](${docs("developers/rest-api#get-an-access-token")})). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's own workspace. The image APIs (\`GET /qr\`, \`GET /barcode\`) need neither.
 - **Errors:** \`{ "code", "message", "status" }\`, plus \`docs\` when a page explains the fix ([every code](${docs("developers/errors")})).
 - **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in \`X-RateLimit-*\` headers, plus per-minute limits. Over a limit you get \`429\` with \`Retry-After\`.`;
 
@@ -1407,7 +1765,10 @@ export function buildOpenApiDocument(): Document {
   // Shared schemas first, so components keep a stable order.
   c.schema(errorSchema);
   c.schema(oauthCompatibleErrorSchema);
-  const paths = withScopeNotes(operations(c));
+  const paths = withScopeNotes({
+    ...operations(c),
+    ...barcodeOperations(c),
+  });
   const missing = [
     ...JSON.stringify(paths).matchAll(/"#\/components\/schemas\/([^"]+)"/g),
   ]
@@ -1446,6 +1807,11 @@ export function buildOpenApiDocument(): Document {
         name: "Codes",
         description:
           "Dynamic QR codes: a short link you can point anywhere after printing.",
+      },
+      {
+        name: "Barcodes",
+        description:
+          "Static barcodes (EAN, UPC, Code 128, Data Matrix and more): keyless images, and barcodes saved to a workspace.",
       },
       { name: "Scans", description: "Scan analytics of a code." },
       {
