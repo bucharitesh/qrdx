@@ -7,9 +7,9 @@ The bot runs inside the QRdx app (`apps/docs`), so there's nothing to deploy fro
 ## How it works
 
 - Telegram sends each update to `POST /api/integrations/telegram/webhook` with the webhook's secret in the `X-Telegram-Bot-Api-Secret-Token` header. The app compares it in constant time before it reads the body, answers `200` straight away, and sends its reply through the Bot API after that.
-- A reply in a chat is a photo from the image API (`/v1/qr`, PNG) with buttons to download the PNG or SVG and to open the editor.
-- An inline result is a photo too, but the Bot API only accepts JPEG there, so it comes from `GET /api/integrations/telegram/photo`, which serves the same code as a JPEG. The bot signs each of these links (HMAC-SHA256, with a key derived from `TELEGRAM_WEBHOOK_SECRET`) and each one works for one to two hours. The route answers `403` to any other link before it draws anything.
-- Each person can send the bot 20 messages a minute and 60 inline queries a minute. Past that, the bot asks them to wait (once a minute in chats). Across everyone, it answers 300 messages and inline queries a minute, and past that it says it's busy. These limits use the app's Upstash rate limiting, so they only apply where Upstash is configured.
+- A reply in a chat is a photo from the image API (`/v1/qr`, PNG) with buttons to download the PNG or SVG, to open the editor, and **Style**, which opens Look, Color, Frame and Logo buttons for the person who asked. A pick redraws the photo (`editMessageMedia`) after the editor's scan check. The content and design come back from the message's Download PNG button, and who asked from the buttons' data, so QRdx doesn't save the code to restyle it. Options typed after the content (`qrdx.dev --look modern`) style a code too, in chats and inline.
+- An inline result is a photo too, but the Bot API only accepts JPEG there, so it comes from `GET /api/integrations/telegram/photo`, which serves the same code as a JPEG, in the design the bot checked. The bot signs each of these links, design included (HMAC-SHA256, with a key derived from `TELEGRAM_WEBHOOK_SECRET`), and each one works for one to two hours. The route answers `403` to any other link before it draws anything.
+- Each person can send the bot 20 messages a minute (a pick under **Style** counts as one) and 60 inline queries a minute. Past that, the bot asks them to wait (once a minute in chats). Across everyone, it answers 300 messages and inline queries a minute, and past that it says it's busy. These limits use the app's Upstash rate limiting, so they only apply where Upstash is configured.
 - The code lives in `apps/docs/lib/chat-bots/telegram/` and `apps/docs/app/api/integrations/telegram/`.
 
 ## Set up a bot
@@ -32,7 +32,7 @@ You need Node.js 22 and a QRdx server that Telegram can reach over HTTPS. The sa
    node --env-file=/path/to/telegram.env plugins/telegram/scripts/setup.mjs --app-url https://qrdx.dev
    ```
 
-   The script checks that the token belongs to `TELEGRAM_BOT_USERNAME`. Then it points the webhook at `<app url>/api/integrations/telegram/webhook` with the secret, asks only for `message` and `inline_query` updates and drops any that were waiting. It also sets the command menu (`/qr`, `/help`, `/start`) and the bot's descriptions. It never prints the token or the secret.
+   The script checks that the token belongs to `TELEGRAM_BOT_USERNAME`. Then it points the webhook at `<app url>/api/integrations/telegram/webhook` with the secret, asks only for `message`, `inline_query` and `callback_query` updates (the last for the **Style** buttons) and drops any that were waiting. It also sets the command menu (`/qr`, `/help`, `/start`) and the bot's descriptions. It never prints the token or the secret.
 4. **Finish in BotFather.** The script lists what the Bot API can't change:
    - `/setinline`, pick the bot, and send the placeholder `link or text`. This turns on inline mode.
    - `/setinlinefeedback`, pick the bot, and choose Disabled.
@@ -43,6 +43,7 @@ You need Node.js 22 and a QRdx server that Telegram can reach over HTTPS. The sa
 ## Change or remove it
 
 - **New webhook secret:** change `TELEGRAM_WEBHOOK_SECRET`, redeploy, and run the setup script again right away. Until it runs, Telegram's calls carry the old secret and get `401`, and Telegram sends them again later. Inline photo links signed with the old secret stop working too. New inline queries get new links, and codes already sent keep showing, since Telegram keeps its own copy.
+- **After updating QRdx:** when a release adds an update type the bot reads, run the setup script again so Telegram sends it. The **Style** buttons need `callback_query`; until the script runs again, pressing them does nothing.
 - **New token:** send `/revoke` to BotFather, put the new token in `TELEGRAM_BOT_TOKEN`, redeploy, and run the setup script.
 - **Turn the bot off:** run the script with `--remove` to delete the webhook, then remove the three variables and redeploy. `/deletebot` in BotFather deletes the bot itself.
 
