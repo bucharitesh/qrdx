@@ -217,8 +217,12 @@ export async function revokeStoredToken(
       client,
     );
   } catch (error) {
+    // The provider goes in as its own argument: inside the first one, a "%s"
+    // in it would be read as a format directive.
     console.error(
-      `[integrations] ${provider} token revoke failed:`,
+      "[integrations]",
+      provider,
+      "token revoke failed:",
       error instanceof Error ? error.message : "unknown error",
     );
     return false;
