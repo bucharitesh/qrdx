@@ -30,7 +30,7 @@ export const MCP_STEPS: { title: string; body: string }[] = [
   },
   {
     title: "Get a QR code back",
-    body: "A PNG image in the chat, plus SVG, PNG and EPS links ready for Markdown, HTML or print.",
+    body: "A PNG image in the chat, plus SVG, PNG and EPS links ready for Markdown, HTML or print. Apps that support MCP Apps also show the code as a card you can save or open in the editor.",
   },
 ];
 
@@ -144,6 +144,11 @@ export const MCP_FAQS: { question: string; answer: string }[] = [
     question: "Can it create dynamic QR codes?",
     answer:
       "No. The MCP tools render static QR codes and format payloads. Dynamic codes, whose destination you can change later, are created in the QRdx dashboard or with the REST API.",
+  },
+  {
+    question: "Does the code show up in the chat?",
+    answer:
+      "design_qr and generate_qr_code return the code as a PNG image, so apps that display images show it in the chat. Apps that support MCP Apps also show a QR card: the code, what it encodes (for Wi-Fi, the network name, never the password), its size or scan score, an Open in editor button, and PNG and SVG buttons where the app can save or open them. Apps without MCP Apps get the same text and image as before.",
   },
   {
     question: "Does QRdx store the codes I generate?",
