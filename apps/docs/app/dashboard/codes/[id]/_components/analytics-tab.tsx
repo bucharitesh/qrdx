@@ -23,6 +23,7 @@ import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
 import { nfcPageHref } from "@/app/dashboard/codes/_lib/nfc";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { AnalyticsExtra } from "@/app/dashboard/codes/[id]/_components/analytics-extra";
+import { PreciseLocationsCard } from "@/app/dashboard/codes/[id]/_components/precise-locations-card";
 import { SheetsExport } from "@/components/data-connections/sheets-export";
 import { PLAN_LIMITS, PLANS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -306,10 +307,18 @@ export async function AnalyticsTab({
           total={analytics.total}
         />
       </div>
+      {/* Precise scan locations (lib/scan-location), apart from IP-based ones. */}
+      <PreciseLocationsCard
+        code={code}
+        days={days}
+        from={analytics.from}
+        slug={slug}
+      />
       <AnalyticsExtra codeId={code.id} days={days} query={query} />
       <p className="text-muted-foreground text-xs">
-        Bots and link previews are not counted. Locations come from the
-        visitor's IP address, which is never stored.
+        Bots and link previews are not counted. Countries and cities come from
+        the visitor's IP address, which is never stored; precise locations only
+        from scanners who chose to share them.
       </p>
     </div>
   );
