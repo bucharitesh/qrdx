@@ -177,13 +177,22 @@ function GeneratorSkeleton() {
 // forms call account APIs, and a 401 there signs out and reloads the page.
 const LINK_ONLY = new Set<ContentType>(["dubsh", "google-drive"]);
 
+/** WebP is lossless: the PNG's pixels in a smaller file. */
+type ImageFormat = "png" | "webp" | "svg";
+const IMAGE_FORMATS: ImageFormat[] = ["png", "webp", "svg"];
+const IMAGE_FORMAT_LABELS: Record<ImageFormat, string> = {
+  png: "PNG",
+  webp: "WebP",
+  svg: "SVG",
+};
+
 const labelFor = (type: ContentType) =>
   CONTENT_TYPES_METADATA.find((meta) => meta.type === type)?.label ?? type;
 
 export function TypeGenerator({ type }: { type: ContentType }) {
   const [ready, setReady] = useState(false);
   const [quietZone, setQuietZone] = useState(true);
-  const [downloading, setDownloading] = useState<"png" | "svg" | null>(null);
+  const [downloading, setDownloading] = useState<ImageFormat | null>(null);
 
   const [activeType, setActiveType] = useState<ContentType>(type);
 
@@ -227,7 +236,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
   const Form = FORMS[activeType];
   const switched = activeType !== type;
 
-  const handleDownload = async (format: "png" | "svg") => {
+  const handleDownload = async (format: ImageFormat) => {
     if (!payload) return;
     setDownloading(format);
     try {
@@ -333,8 +342,8 @@ export function TypeGenerator({ type }: { type: ContentType }) {
           />
         </div>
 
-        <div className="grid w-full grid-cols-2 gap-2">
-          {(["png", "svg"] as const).map((format) => (
+        <div className="grid w-full grid-cols-3 gap-2">
+          {IMAGE_FORMATS.map((format) => (
             <Button
               key={format}
               disabled={!payload || downloading !== null}
@@ -346,7 +355,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
               ) : (
                 <Download className="size-4" />
               )}
-              {format.toUpperCase()}
+              {IMAGE_FORMAT_LABELS[format]}
             </Button>
           ))}
         </div>
