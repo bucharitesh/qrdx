@@ -9,6 +9,7 @@ import { apiBaseFor } from "@/lib/api-keys/shared";
 import { baseUrl } from "@/lib/metadata";
 import { getOAuthAppsOverview } from "@/lib/oauth-apps/service";
 import type { ActiveScope } from "@/lib/scope";
+import { loadWorkspaceSlackLinks } from "@/lib/slack-bot/admin";
 import { workspaceHref } from "@/lib/workspace-paths";
 
 export const metadata: Metadata = {
@@ -38,9 +39,11 @@ export default async function DevelopersPage({
   const [{ workspace }, query] = await Promise.all([params, searchParams]);
   const openCreate = query.new === "1";
   const scope = await requireDashboardScope();
-  const [overview, keys, requestHeaders] = await Promise.all([
+  const [overview, keys, slackLinks, requestHeaders] = await Promise.all([
     getOAuthAppsOverview(scope),
     loadKeys(scope),
+    // Owners and admins, where the Slack bot is set up; else no query.
+    loadWorkspaceSlackLinks(scope),
     headers(),
   ]);
 
@@ -51,6 +54,7 @@ export default async function DevelopersPage({
       keys={keys}
       openCreate={openCreate}
       overview={overview}
+      slackLinks={slackLinks}
     />
   );
 }

@@ -22,7 +22,8 @@ import { findUserLink, SlackBotStoreUnavailableError } from "./store";
 // codes and isn't shut out by the workspace's two-step requirement. The
 // code is made by createCodes, the service behind POST /v1/codes and the
 // dashboard, so plan limits, the per-user create limit, link screening,
-// webhooks and the audit log behave exactly as they do there.
+// webhooks and the audit log behave exactly as they do there; the audit log
+// names the Slack account the code came from.
 
 export type TrackFailure =
   | "invalid_url"
@@ -40,6 +41,9 @@ export type TrackResult =
       ok: true;
       shortLink: string;
       destinationUrl: string;
+      /** The QRdx workspace it was made in */
+      workspaceName: string;
+      /** The code in the dashboard: only for the person who made it */
       dashboardUrl: string;
     }
   | {
@@ -110,10 +114,17 @@ export async function createTrackedCode(input: {
       );
     }
 
+    // The Slack link it came through, so the audit log shows the code as
+    // made via Slack, by that Slack account, for the linked QRdx user.
     const scope: ActiveScope = {
       userId: link.userId,
       organizationId: workspace.id,
       role: workspace.role,
+      credential: {
+        type: "slack",
+        teamId: input.teamId,
+        slackUserId: input.slackUserId,
+      },
     };
     await enforceCreateRateLimit(scope.userId);
     const [code] = await createCodes(scope, [
@@ -125,6 +136,7 @@ export async function createTrackedCode(input: {
       ok: true,
       shortLink: code.shortLink,
       destinationUrl: code.destinationUrl,
+      workspaceName: workspace.name,
       dashboardUrl: absoluteUrl(
         workspaceLink(workspace.slug, `/codes/${encodeURIComponent(code.id)}`),
       ),

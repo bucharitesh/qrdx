@@ -4,9 +4,11 @@ import { describe, expect, it } from "vitest";
 import { CHAT_QR_PNG_SIZE } from "@/lib/chat-bots/qr-reply";
 import {
   helpMessage,
+  linkedNotice,
   qrMessage,
   SLACK_URL_MAX,
   type SlackMessage,
+  trackedFollowUp,
   trackedMessage,
 } from "@/lib/slack-bot/messages";
 
@@ -87,12 +89,12 @@ describe("qrMessage", () => {
 });
 
 describe("trackedMessage", () => {
-  it("encodes the short link, shows it, and links to the code in QRdx", () => {
+  it("encodes the short link and shows it with the QRdx workspace, without the dashboard link", () => {
     const message = trackedMessage(
       {
         shortLink: "https://qrdx.dev/q/abc1234",
         destinationUrl: "https://shop.example/menu",
-        dashboardUrl: "https://qrdx.dev/dashboard/acme/codes/c_1",
+        workspaceName: "Acme <team>",
       },
       ORIGIN,
     );
@@ -100,17 +102,47 @@ describe("trackedMessage", () => {
     expect(new URL(image?.image_url).searchParams.get("data")).toBe(
       "https://qrdx.dev/q/abc1234",
     );
-    expect(context?.elements[0].text).toContain("https://qrdx.dev/q/abc1234");
+    const line = context?.elements[0].text as string;
+    expect(line).toContain("https://qrdx.dev/q/abc1234");
+    // The workspace name, escaped: it's typed by people.
+    expect(line).toContain("in the QRdx workspace Acme &lt;team&gt;");
     expect(buttons(message)?.map((button) => button.text.text)).toEqual([
-      "Open in QRdx",
       "Download PNG",
       "Download SVG",
       "Open in editor",
     ]);
-    expect(buttons(message)?.[0]?.url).toBe(
-      "https://qrdx.dev/dashboard/acme/codes/c_1",
-    );
+    expect(JSON.stringify(message)).not.toContain("/dashboard/");
     expect(message?.response_type).toBe("in_channel");
+  });
+});
+
+describe("trackedFollowUp", () => {
+  it("is only for the person and links to the code in QRdx", () => {
+    const message = trackedFollowUp({
+      dashboardUrl: "https://qrdx.dev/dashboard/acme/codes/c_1",
+      workspaceName: "Acme",
+    });
+    expect(message.response_type).toBe("ephemeral");
+    expect(message.text).toBe(
+      "Your tracked code is in Acme. Only you can see this.",
+    );
+    expect(buttons(message)?.[0]).toMatchObject({
+      text: { text: "Open in QRdx" },
+      url: "https://qrdx.dev/dashboard/acme/codes/c_1",
+    });
+  });
+});
+
+describe("linkedNotice", () => {
+  it("names the QRdx account and workspace and how to undo it, escaped", () => {
+    const message = linkedNotice({
+      email: "ana@acme.test",
+      workspaceName: "<!channel> Acme",
+    });
+    expect(message.text).toBe(
+      "Linked to ana@acme.test in &lt;!channel&gt; Acme. Not you? /qr unlink",
+    );
+    expect(message.response_type).toBeUndefined();
   });
 });
 

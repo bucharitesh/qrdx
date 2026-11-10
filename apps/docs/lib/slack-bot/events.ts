@@ -3,7 +3,12 @@ import "server-only";
 import { firstWebAddress } from "@/lib/chat-bots/qr-reply";
 import { logError } from "@/lib/shared";
 import { answer, type BotAsk, contentAnswer, runTrack } from "./bot";
-import { withinSlackLimits } from "./config";
+import {
+  BUSY_TEXT,
+  SLOW_DOWN_TEXT,
+  slackLimitFor,
+  withinTrackCap,
+} from "./config";
 import { noteMessage, type SlackMessage } from "./messages";
 import {
   isSlackResponseUrl,
@@ -24,8 +29,6 @@ import { readSlackText } from "./text";
 // shortcut (POST /api/integrations/slack/interactions), after the route has
 // checked the signature and answered Slack. Runs in after(), so a slow reply
 // never makes Slack retry; retries are ignored by the route.
-
-const SLOW_DOWN = "You're going a little fast. Wait a minute and try again.";
 
 /** The payload fields the bot reads; everything else is ignored. */
 export interface SlackEventPayload {
@@ -63,13 +66,23 @@ function eventTeam(payload: SlackEventPayload): SlackTeamRef | null {
 }
 
 /**
+ * "/qr https://…" as a message: when /qr answers in the channel, Slack also
+ * posts the command itself there, and that copy arrives as a message event.
+ * The command route has already answered it.
+ */
+const SLASH_COMMAND_ECHO = /^\/qr(?:\s|$)/i;
+
+/**
  * Messages the bot never answers: from bots (itself included), edits,
- * joins and every other subtype, and anything without a person or channel.
+ * joins and every other subtype, the echo of a /qr command, and anything
+ * without a person or channel.
  */
 function isIgnoredMessage(event: SlackEvent, botUserId: string): boolean {
   return Boolean(
     event.bot_id ||
       event.subtype ||
+      (typeof event.text === "string" &&
+        SLASH_COMMAND_ECHO.test(event.text.trim())) ||
       event.edited ||
       !isId(event.user) ||
       event.user === botUserId ||
@@ -113,8 +126,12 @@ async function replyTo(
     logPostFailure(result, where);
   };
 
-  if (!(await withinSlackLimits(team.teamId, user))) {
-    await send(noteMessage(SLOW_DOWN), true);
+  const limit = await slackLimitFor(team.teamId, user);
+  if (limit !== "ok") {
+    await send(
+      noteMessage(limit === "busy" ? BUSY_TEXT : SLOW_DOWN_TEXT),
+      true,
+    );
     return;
   }
   const ask: BotAsk = {
@@ -130,8 +147,14 @@ async function replyTo(
     await send(result.message, result.private);
     return;
   }
+  if (!(await withinTrackCap())) {
+    await send(noteMessage(BUSY_TEXT), true);
+    return;
+  }
   const done = await runTrack(ask, result.url);
   await send(done.message, done.private);
+  // The dashboard link: in a channel, only the person who asked sees it.
+  if (done.followUp) await send(done.followUp, true);
 }
 
 export async function handleEvent(payload: SlackEventPayload): Promise<void> {
@@ -209,8 +232,11 @@ export async function handleShortcut(
     );
 
   try {
-    if (!(await withinSlackLimits(team.teamId, user))) {
-      await privately(noteMessage(SLOW_DOWN));
+    const limit = await slackLimitFor(team.teamId, user);
+    if (limit !== "ok") {
+      await privately(
+        noteMessage(limit === "busy" ? BUSY_TEXT : SLOW_DOWN_TEXT),
+      );
       return;
     }
     const bot = await findBotToken(team).catch((error) => {

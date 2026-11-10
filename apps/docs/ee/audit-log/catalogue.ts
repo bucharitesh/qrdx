@@ -203,6 +203,10 @@ export const AUDIT_ACTIONS = {
     category: "developers",
     sentence: "Revoked the app {target}",
   },
+  "slack_link.revoked": {
+    category: "developers",
+    sentence: "Revoked the Slack link for {target}",
+  },
   "webhook.created": {
     category: "developers",
     sentence: "Added the webhook endpoint {target}",
@@ -277,11 +281,17 @@ export type AuditTargetType =
   | "sso"
   | "api_key"
   | "oauth_app"
+  | "slack_link"
   | "webhook"
   | "domain"
   | "workspace";
 
-export type AuditActorType = "user" | "api_key" | "oauth_app" | "system";
+export type AuditActorType =
+  | "user"
+  | "api_key"
+  | "oauth_app"
+  | "slack"
+  | "system";
 
 /**
  * A row's sentence as parts, so the UI can link the target: text, then the
@@ -301,6 +311,7 @@ const UNNAMED: Partial<Record<AuditTargetType, string>> = {
   domain: "a domain",
   api_key: "a key",
   oauth_app: "an app",
+  slack_link: "a Slack account",
   sso: "a domain",
 };
 

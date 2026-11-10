@@ -349,7 +349,11 @@ export async function listAuditActors(
           isNotNull(workspaceAuditLog.actorUserId),
           people
             ? eq(workspaceAuditLog.actorType, "user")
-            : inArray(workspaceAuditLog.actorType, ["api_key", "oauth_app"]),
+            : inArray(workspaceAuditLog.actorType, [
+                "api_key",
+                "oauth_app",
+                "slack",
+              ]),
         ),
       )
       .orderBy(workspaceAuditLog.actorUserId, desc(workspaceAuditLog.createdAt))

@@ -38,14 +38,18 @@ The shortcut makes a code of the message's first web address, or of its whole te
 A plain code holds the link itself. A tracked code holds a short link (`https://qrdx.dev/q/<slug>`) that redirects to your link, so QRdx counts its scans and you can change where it goes. To make them from Slack, link your QRdx account once:
 
 1. Run `/qr link`. A button only you can see opens QRdx. It works for 10 minutes.
-2. Sign in if asked, pick the QRdx workspace your tracked codes should go to and click **Confirm**. QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, because the link lets that Slack account make codes in your workspace.
-3. Back in Slack, run `/qr track` followed by a link that starts with `https://` or `http://`. You can also mention the bot with `track` and a link.
+2. Sign in to QRdx if asked. Then click **Sign in with Slack** and sign in as the same Slack account that ran `/qr link`. Slack tells QRdx only your Slack user and workspace, and QRdx checks that they match. If you sign in to Slack as someone else, nothing is linked.
+3. Pick the QRdx workspace your tracked codes should go to and click **Confirm**. QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) first, because the link lets that Slack account make codes in your workspace.
+4. Back in Slack, the bot sends you a direct message naming the QRdx account and workspace you linked to. If you didn't link it, run `/qr unlink`.
+5. Run `/qr track` followed by a link that starts with `https://` or `http://`. You can also mention the bot with `track` and a link.
 
-The code appears in the channel with its short link and an **Open in QRdx** button. It's named after the link's site plus "from Slack", and you'll find it in the workspace's codes like any other.
+The code appears in the channel with its short link and the name of the QRdx workspace it's in. The **Open in QRdx** button, which leads to the code in your dashboard, comes in a separate message that only you can see. The code is named after the link's site plus "from Slack", and you'll find it in the workspace's codes like any other.
 
 Tracked codes follow the same rules as codes made in the dashboard: your role must allow creating codes, a workspace that requires two-step verification needs it on for your account, and your plan's limit on active dynamic codes applies. When you're at the limit, the bot says so and links to the plans. These are checked every time, so leaving a workspace or losing access stops the link from working there.
 
-Each Slack account has one link per Slack workspace. Running `/qr link` again and confirming replaces it. `/qr unlink` removes it, and so does **Unlink** under **Linked Slack accounts** in [Settings → Integrations → Slack](/settings/integrations/slack).
+Each Slack account has one link per Slack workspace. When you run `/qr link` for a Slack account that's already linked, the page says which QRdx workspace it's linked to, and whether that's in another QRdx account. The button then reads **Replace the link**, and nothing changes until you click it. `/qr unlink` removes a link, and so does **Unlink** under **Linked Slack accounts** in [Settings → Integrations → Slack](/settings/integrations/slack).
+
+Owners and admins of a QRdx workspace see every Slack account linked to it in [Settings → API keys & apps](/dashboard?to=settings/developers): the Slack workspace, the Slack user id, the member it acts as and when it was linked. **Revoke** removes a link there. If the workspace has the [audit log](/docs/help/teams/audit-log), codes made with `/qr track` show the member's name "via Slack", with the Slack user and workspace ids, and revoking a link is recorded too.
 
 </IfAvailable>
 
@@ -53,7 +57,7 @@ Each Slack account has one link per Slack workspace. Running `/qr link` again an
 
 The bot reads a message only when someone runs `/qr`, mentions the bot, messages it directly or uses the shortcut on that message. It never stores message text. QR code images come from the QRdx [image API](/docs/developers/image-api), which Slack loads from the link in the message, so nothing is uploaded.
 
-For each Slack workspace QRdx keeps its id and name, the bot's Slack user id, the bot's token (encrypted) and which QRdx account added it. For each linked Slack account it keeps the Slack user id, your QRdx account and the workspace you picked.<IfAvailable feature="slackBot"> Your linked Slack accounts are in your [data export](/docs/help/account-and-billing/export-your-data).</IfAvailable>
+For each Slack workspace QRdx keeps its id and name, the bot's Slack user id, the bot's token (encrypted) and which QRdx account added it. For each linked Slack account it keeps the Slack user id, your QRdx account and the workspace you picked. Signing in with Slack to link adds nothing to that: QRdx compares the Slack user and workspace, then forgets the sign-in.<IfAvailable feature="slackBot"> Your linked Slack accounts are in your [data export](/docs/help/account-and-billing/export-your-data).</IfAvailable>
 
 <IfAvailable feature="slackBot" title="Remove the bot">
 
@@ -63,4 +67,4 @@ In Slack, open the app's page and choose **Remove App** (or ask a Slack admin to
 
 ## Self-hosting
 
-The bot uses the same Slack app as "Add to Slack" alerts, with its signing secret added. Set `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` and `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` in production, which encrypts the bot tokens. Without them the bot's pages and endpoints don't exist. `plugins/slack/manifest.json` in the repository is the app's manifest, and `plugins/slack/README.md` walks through creating the app from it.
+The bot uses the same Slack app as "Add to Slack" alerts, with its signing secret added. Set `SLACK_CLIENT_ID`, `SLACK_CLIENT_SECRET` and `SLACK_SIGNING_SECRET`, plus `INTEGRATION_ENCRYPTION_KEY` in production, which encrypts the bot tokens. Without them the bot's pages and endpoints don't exist. `plugins/slack/manifest.json` in the repository is the app's manifest, and `plugins/slack/README.md` walks through creating the app from it. The manifest includes the `openid` user scope and the redirect URL `/api/integrations/slack/link/callback`, which Sign in with Slack needs when someone links their account.
