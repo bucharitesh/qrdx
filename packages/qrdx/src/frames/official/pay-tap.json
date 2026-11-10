@@ -1,0 +1,78 @@
+{
+  "id": "pay-tap",
+  "name": "Tap to pay",
+  "description": "A folder tab on top carrying the label and a contactless symbol.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["payments", "contactless"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1410
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1240,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M851.38 117.2A26.4 26.4 0 0 1 872.8 138.62L863.34 140.28A16.8 16.8 0 0 0 849.72 126.66ZM854.72 98.29A45.6 45.6 0 0 1 891.71 135.28L882.25 136.95A36 36 0 0 0 853.05 107.75ZM858.05 79.38A64.8 64.8 0 0 1 910.62 131.95L901.16 133.61A55.2 55.2 0 0 0 856.39 88.84ZM837.2 143.2A9.6 9.6 0 1 1 856.4 143.2A9.6 9.6 0 1 1 837.2 143.2Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Tap or scan to pay",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      }
+    ]
+  }
+}

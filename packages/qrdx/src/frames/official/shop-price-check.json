@@ -1,0 +1,106 @@
+{
+  "id": "shop-price-check",
+  "name": "Price check",
+  "description": "Viewfinder corners around the code, the label underneath.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "price"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1400,
+      "height": 1580
+    },
+    "qr": {
+      "x": 200,
+      "y": 200,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1400,
+        "height": 1580,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [60, 60],
+          [280, 60],
+          [280, 94],
+          [94, 94],
+          [94, 280],
+          [60, 280]
+        ],
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1340, 60],
+          [1120, 60],
+          [1120, 94],
+          [1306, 94],
+          [1306, 280],
+          [1340, 280]
+        ],
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [60, 1340],
+          [280, 1340],
+          [280, 1306],
+          [94, 1306],
+          [94, 1120],
+          [60, 1120]
+        ],
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1340, 1340],
+          [1120, 1340],
+          [1120, 1306],
+          [1306, 1306],
+          [1306, 1120],
+          [1340, 1120]
+        ],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to check the price",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1380,
+          "width": 1200,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

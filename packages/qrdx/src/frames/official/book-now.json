@@ -3,6 +3,7 @@
   "name": "Book now",
   "description": "A calendar page with binding tabs, for salons, clinics and classes.",
   "category": "use-case",
+  "collection": "business",
   "contentTypes": ["calcom", "url"],
   "tags": ["booking", "appointments", "salon", "clinic"],
   "license": "CC0-1.0",

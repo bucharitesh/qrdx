@@ -1,0 +1,71 @@
+{
+  "id": "halloween-candle",
+  "name": "Candlelit",
+  "description": "An arched card, like a window, with a candle, in plum and orange.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "halloween",
+  "contentTypes": [],
+  "tags": ["halloween", "october", "spooky", "candle"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#3b1f4a",
+      "text": "#ffffff",
+      "accent": "#f08a24"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M646.5 225L673.5 225A4.5 4.5 0 0 1 678 229.5L678 301.5A4.5 4.5 0 0 1 673.5 306L646.5 306A4.5 4.5 0 0 1 642 301.5L642 229.5A4.5 4.5 0 0 1 646.5 225Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M660 178.5C663.68 190.2 670.5 200.7 670.5 207A10.5 10.5 0 0 1 649.5 207C649.5 200.7 656.33 190.2 660 178.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Halloween",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

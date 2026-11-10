@@ -3,6 +3,7 @@
   "name": "Table tent topper",
   "description": "An arched topper for table tents and menu holders.",
   "category": "use-case",
+  "collection": "food-drink",
   "contentTypes": ["url"],
   "tags": ["menu", "restaurant", "cafe", "table"],
   "license": "CC0-1.0",

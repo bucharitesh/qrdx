@@ -2,6 +2,14 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## Unreleased
+
+### Frame library
+
+- **Hundreds of official frames.** `OFFICIAL_FRAMES` grows from 24 to a library of call-to-action styles, holidays and seasons from around the world (Christmas, New Year, Lunar New Year, Diwali, Holi, Ramadan, the two Eids, Hanukkah, Passover, Easter, Halloween, Thanksgiving, Valentine's Day, independence days, Black Friday and more) and frames for restaurants, shops, packaging, events, weddings, hotels, travel, real estate, health, fitness, education, reviews, payments, social follows, app downloads and business cards. Every frame decodes at phone distances, scores Great and reads with zbar, as before. The 24 existing frames and their ids are unchanged.
+- Each frame has a `collection` (`OFFICIAL_FRAME_COLLECTIONS`) and seasonal ones an `occasion`. `OFFICIAL_FRAME_COUNT` and `OFFICIAL_FRAME_COUNTS` count them.
+- `OFFICIAL_FRAME_INDEX` lists every frame without its spec, and `frameSpecHash(spec)` fingerprints a spec (key order doesn't matter), so pickers can search the library and recognise an official frame before loading specs.
+
 ## 0.0.48
 
 ### WebP export

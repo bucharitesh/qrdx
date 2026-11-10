@@ -1,0 +1,64 @@
+{
+  "id": "menu-arch",
+  "name": "Bistro arch",
+  "description": "An arched card, like a window, with a fork and knife.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "menu", "bistro"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M621 177L621 177A3 3 0 0 1 624 180L624 216A3 3 0 0 1 621 219L621 219A3 3 0 0 1 618 216L618 180A3 3 0 0 1 621 177ZM633 177L633 177A3 3 0 0 1 636 180L636 216A3 3 0 0 1 633 219L633 219A3 3 0 0 1 630 216L630 180A3 3 0 0 1 633 177ZM645 177L645 177A3 3 0 0 1 648 180L648 216A3 3 0 0 1 645 219L645 219A3 3 0 0 1 642 216L642 180A3 3 0 0 1 645 177ZM615 216L651 216C651 231 642 237 639 240L639 303Q639 309 633 309Q627 309 627 303L627 240C624 237 615 231 615 216ZM681 177C705 189 705 225 699 249L690 249L690 303Q690 309 684 309Q678 309 678 303L678 180Q678 175.5 681 177Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the menu",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

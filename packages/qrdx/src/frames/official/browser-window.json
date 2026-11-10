@@ -1,0 +1,120 @@
+{
+  "id": "browser-window",
+  "name": "Browser window",
+  "description": "A browser window with an address bar over the code.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "website", "link"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1680
+    },
+    "qr": {
+      "x": 120,
+      "y": 320,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1680,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 200,
+        "width": 1192,
+        "height": 1456,
+        "radius": 30,
+        "fill": "background"
+      },
+      {
+        "type": "circle",
+        "cx": 90,
+        "cy": 100,
+        "r": 22,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 160,
+        "cy": 100,
+        "r": 22,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "circle",
+        "cx": 230,
+        "cy": 100,
+        "r": 22,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.2
+        }
+      },
+      {
+        "type": "rect",
+        "x": 310,
+        "y": 52,
+        "width": 860,
+        "height": 96,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.18
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Visit our website",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1440,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to open",
+        "color": "text",
+        "box": {
+          "x": 350,
+          "y": 52,
+          "width": 780,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

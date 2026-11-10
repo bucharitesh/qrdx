@@ -1,0 +1,99 @@
+{
+  "id": "eid-adha-seal",
+  "name": "Eid al-Adha seal",
+  "description": "A round badge with a crescent moon inside the ring, the label set along its top and the note along its bottom, in night blue and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "eid-al-adha",
+  "contentTypes": [],
+  "tags": ["eid al-adha", "eid", "eid mubarak", "badge"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 2000
+    },
+    "qr": {
+      "x": 500,
+      "y": 500,
+      "size": 1000,
+      "padding": 64,
+      "radius": 40
+    },
+    "colors": {
+      "frame": "#1e2a5a",
+      "text": "#ffffff",
+      "accent": "#d4af37"
+    },
+    "shapes": [
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 1000,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 820,
+        "hole": 808,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1029.05 257.22A68 68 0 1 0 1029.05 372.78A57.8 57.8 0 0 1 1029.05 257.22Z",
+        "fill": "text"
+      },
+      {
+        "type": "polygon",
+        "points": [[95, 974], [121, 1000], [95, 1026], [69, 1000]],
+        "fill": "text"
+      },
+      {
+        "type": "polygon",
+        "points": [[1905, 974], [1931, 1000], [1905, 1026], [1879, 1000]],
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "curved",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Eid al-Adha Mubarak",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "top",
+          "spread": 120
+        },
+        "fontSize": 92
+      },
+      {
+        "type": "curved",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "bottom",
+          "spread": 110
+        },
+        "fontSize": 76,
+        "weight": "regular"
+      }
+    ]
+  }
+}

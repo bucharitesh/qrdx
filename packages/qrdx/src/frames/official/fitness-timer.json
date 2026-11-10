@@ -1,0 +1,88 @@
+{
+  "id": "fitness-timer",
+  "name": "Workout timer",
+  "description": "A solid card with a round badge holding a stopwatch on its top edge.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["fitness", "gym", "tracking"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M566.8 158.4A53.2 53.2 0 1 1 673.2 158.4A53.2 53.2 0 1 1 566.8 158.4ZM578 158.4A42 42 0 1 0 662 158.4A42 42 0 1 0 578 158.4ZM611.6 88.4L628.4 88.4A2.8 2.8 0 0 1 631.2 91.2L631.2 96.8A2.8 2.8 0 0 1 628.4 99.6L611.6 99.6A2.8 2.8 0 0 1 608.8 96.8L608.8 91.2A2.8 2.8 0 0 1 611.6 88.4ZM615.8 96.8L624.2 96.8L624.2 108L615.8 108ZM624.2 158.4L624.2 130.4A4.2 4.2 0 0 1 615.8 130.4L615.8 158.4A4.2 4.2 0 0 1 624.2 158.4ZM617.56 161.82L637.16 175.82A4.2 4.2 0 0 1 642.04 168.98L622.44 154.98A4.2 4.2 0 0 1 617.56 161.82Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Track your workout",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Gym",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

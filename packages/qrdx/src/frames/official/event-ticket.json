@@ -3,6 +3,7 @@
   "name": "Event ticket",
   "description": "A ticket with notches, a perforated stub and an admission line.",
   "category": "use-case",
+  "collection": "events",
   "contentTypes": ["url"],
   "tags": ["events", "tickets", "concert"],
   "license": "CC0-1.0",

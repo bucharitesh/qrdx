@@ -1,0 +1,114 @@
+{
+  "id": "easter-tulip",
+  "name": "Easter tulip",
+  "description": "A light card with a tulip and a solid label band, in lilac and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "easter",
+  "contentTypes": [],
+  "tags": ["easter", "spring", "egg hunt", "flowers"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5f4785",
+      "text": "#ffffff",
+      "accent": "#f2c14e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M586.4 57.2L603.2 74L620 48.8L636.8 74L653.6 57.2C659.2 88 648 107.6 620 110.4C592 107.6 580.8 88 586.4 57.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M620 107.6L620 107.6A2.8 2.8 0 0 1 622.8 110.4L622.8 163.6A2.8 2.8 0 0 1 620 166.4L620 166.4A2.8 2.8 0 0 1 617.2 163.6L617.2 110.4A2.8 2.8 0 0 1 620 107.6ZM620 160.8C622.02 144.28 605.64 124.12 583.6 116C582.69 142.77 599.07 162.93 620 160.8ZM620 163.6C638.55 167.85 656.19 151.47 659.2 127.2C638.58 132.51 620.94 148.89 620 163.6Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the egg hunt",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Easter",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "id": "bar-cocktail",
+  "name": "Cocktail neon",
+  "description": "A dark card with a bright hairline tube around the code and a cocktail glass.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "bar", "cocktails"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#ececec"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 260,
+        "width": 1120,
+        "height": 1240,
+        "radius": 60,
+        "fill": "accent",
+        "hole": {
+          "x": 72,
+          "y": 272,
+          "width": 1096,
+          "height": 1216,
+          "radius": 50
+        }
+      },
+      {
+        "type": "path",
+        "d": "M557 93L683 93L624.5 156L624.5 204L653 213L587 213L615.5 204L615.5 156Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M629 120A12 12 0 1 1 653 120A12 12 0 1 1 629 120ZM642.44 121.32L675.44 85.32A1.95 1.95 0 0 1 672.56 82.68L639.56 118.68A1.95 1.95 0 0 1 642.44 121.32Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for cocktails",
+        "color": "accent",
+        "box": {
+          "x": 100,
+          "y": 1520,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

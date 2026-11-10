@@ -1,0 +1,79 @@
+{
+  "id": "pack-eco",
+  "name": "Eco info",
+  "description": "A solid card with a leaf over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "packaging", "sustainability"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M566 167C630.11 185.01 680.06 133.71 677 53C609.13 64.65 559.18 115.95 566 167Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M568.32 168.9L572.23 164.14L576.18 159.43L580.17 154.77L584.21 150.15L588.29 145.57L592.42 141.04L596.59 136.56L600.8 132.12L605.07 127.72L609.37 123.37L613.72 119.07L618.12 114.8L622.56 110.59L627.04 106.42L631.57 102.29L636.15 98.21L640.77 94.17L645.43 90.18L650.14 86.23L654.9 82.32A3 3 0 0 1 651.1 77.68L646.31 81.61L641.55 85.6L636.84 89.63L632.17 93.71L627.55 97.83L622.98 102L618.45 106.22L613.96 110.48L609.52 114.78L605.13 119.13L600.78 123.52L596.48 127.96L592.22 132.45L588 136.98L583.83 141.55L579.71 146.17L575.63 150.84L571.6 155.55L567.61 160.31L563.68 165.1A3 3 0 0 1 568.32 168.9Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for our footprint",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Sustainability",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

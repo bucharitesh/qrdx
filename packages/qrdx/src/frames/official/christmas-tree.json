@@ -1,0 +1,81 @@
+{
+  "id": "christmas-tree",
+  "name": "Christmas tree",
+  "description": "A solid card with a tiered tree over the code and the label underneath, in pine green and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "christmas",
+  "contentTypes": [],
+  "tags": ["christmas", "holidays", "december", "tree"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f4d3a",
+      "text": "#ffffff",
+      "accent": "#b8862b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 44L653 86L638 86L665 122L644 122L677 161L563 161L596 122L575 122L602 86L587 86Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M612.5 161L627.5 161A1.5 1.5 0 0 1 629 162.5L629 177.5A1.5 1.5 0 0 1 627.5 179L612.5 179A1.5 1.5 0 0 1 611 177.5L611 162.5A1.5 1.5 0 0 1 612.5 161Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for our hours",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Merry Christmas",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

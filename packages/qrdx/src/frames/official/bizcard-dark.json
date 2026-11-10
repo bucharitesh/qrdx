@@ -1,0 +1,81 @@
+{
+  "id": "bizcard-dark",
+  "name": "Dark business card",
+  "description": "A business card: a greeting and a call to save the contact beside the code.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["vcard"],
+  "tags": ["business card", "contact", "networking", "vcard", "dark"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1060
+    },
+    "qr": {
+      "x": 1070,
+      "y": 130,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#ececec"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1060,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 130,
+        "y": 610,
+        "width": 160,
+        "height": 16,
+        "radius": 8,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Let's keep in touch",
+        "color": "text",
+        "box": {
+          "x": 130,
+          "y": 390,
+          "width": 816,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to save my contact",
+        "color": "text",
+        "box": {
+          "x": 130,
+          "y": 680,
+          "width": 816,
+          "height": 130
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

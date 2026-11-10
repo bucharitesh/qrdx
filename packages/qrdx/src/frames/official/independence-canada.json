@@ -1,0 +1,112 @@
+{
+  "id": "independence-canada",
+  "name": "Canada Day",
+  "description": "Flag colors in a band over the code and a maple leaf, in red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "independence-day",
+  "contentTypes": [],
+  "tags": ["independence day", "national day", "canada", "july 1"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b5102a",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 299,
+        "height": 276,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 322,
+        "y": 24,
+        "width": 299,
+        "height": 276,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 620,
+        "y": 24,
+        "width": 299,
+        "height": 276,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 918,
+        "y": 24,
+        "width": 298,
+        "height": 276,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 83.8L633.6 114.4L650.6 104.2L643.8 141.6L671 121.2L677.8 134.8L698.2 131.4L684.6 158.6L694.8 165.4L657.4 189.2L664.2 202.8L626.8 196L626.8 240.2L613.2 240.2L613.2 196L575.8 202.8L582.6 189.2L545.2 165.4L555.4 158.6L541.8 131.4L562.2 134.8L569 121.2L596.2 141.6L589.4 104.2L606.4 114.4Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Canada Day",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

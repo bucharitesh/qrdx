@@ -1,0 +1,76 @@
+{
+  "id": "valentine-letter",
+  "name": "Love letter",
+  "description": "An envelope with a pointed flap over the code and a love letter, in rose and blush.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "valentines-day",
+  "contentTypes": [],
+  "tags": ["valentine's day", "love", "february", "letter"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 500,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#9d174d",
+      "text": "#ffffff",
+      "accent": "#f9c6d8"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1880,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M40 0L1280 0Q1320 0 1300 40L700 490Q660 520 620 490L20 40Q0 0 40 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.2
+        }
+      },
+      {
+        "type": "path",
+        "d": "M609.6 150.8L710.4 150.8A8.4 8.4 0 0 1 718.8 159.2L718.8 223.6A8.4 8.4 0 0 1 710.4 232L609.6 232A8.4 8.4 0 0 1 601.2 223.6L601.2 159.2A8.4 8.4 0 0 1 609.6 150.8ZM606.8 164.8L660 204L713.2 164.8L713.2 156.4L660 195.6L606.8 156.4Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M660 211.34C656.92 207.64 644.29 199.02 644.6 191.62C644.91 183.62 656.92 182.38 660 190.39C663.08 182.38 675.09 183.62 675.4 191.62C675.71 199.02 663.08 207.64 660 211.34Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to open",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1630,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

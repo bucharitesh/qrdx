@@ -1,0 +1,97 @@
+{
+  "id": "ticket-wide",
+  "name": "Wide ticket",
+  "description": "A wide ticket: the code on the left, a perforated stub with a ticket on the right.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "ticket"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M56 0L1044 0A56 56 0 0 0 1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 0 1044 1040L56 1040A56 56 0 0 1 0 984L0 56A56 56 0 0 1 56 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1156 0L1944 0A56 56 0 0 1 2000 56L2000 984A56 56 0 0 1 1944 1040L1156 1040A56 56 0 0 1 1100 984L1100 56A56 56 0 0 1 1156 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "line",
+        "x1": 1100,
+        "y1": 110,
+        "x2": 1100,
+        "y2": 930,
+        "width": 10,
+        "dash": [34, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1466 248L1634 248L1634 280A20 20 0 0 0 1634 320L1634 352L1466 352L1466 320A20 20 0 0 0 1466 280Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1584 260L1586 260A2 2 0 0 1 1588 262L1588 268A2 2 0 0 1 1586 270L1584 270A2 2 0 0 1 1582 268L1582 262A2 2 0 0 1 1584 260ZM1584 280L1586 280A2 2 0 0 1 1588 282L1588 288A2 2 0 0 1 1586 290L1584 290A2 2 0 0 1 1582 288L1582 282A2 2 0 0 1 1584 280ZM1584 300L1586 300A2 2 0 0 1 1588 302L1588 308A2 2 0 0 1 1586 310L1584 310A2 2 0 0 1 1582 308L1582 302A2 2 0 0 1 1584 300ZM1584 320L1586 320A2 2 0 0 1 1588 322L1588 328A2 2 0 0 1 1586 330L1584 330A2 2 0 0 1 1582 328L1582 322A2 2 0 0 1 1584 320ZM1584 332L1586 332A2 2 0 0 1 1588 334L1588 340A2 2 0 0 1 1586 342L1584 342A2 2 0 0 1 1582 340L1582 334A2 2 0 0 1 1584 332Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 1150,
+          "y": 500,
+          "width": 800,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Admit one",
+        "color": "frame",
+        "box": {
+          "x": 1150,
+          "y": 690,
+          "width": 800,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

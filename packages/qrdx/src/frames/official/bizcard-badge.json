@@ -1,0 +1,89 @@
+{
+  "id": "bizcard-badge",
+  "name": "Contact badge",
+  "description": "An event badge with a clip slot and a header band.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["vcard"],
+  "tags": ["business card", "contact", "networking", "conference"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1900
+    },
+    "qr": {
+      "x": 160,
+      "y": 520,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M60 0L1260 0A60 60 0 0 1 1320 60L1320 1840A60 60 0 0 1 1260 1900L60 1900A60 60 0 0 1 0 1840L0 60A60 60 0 0 1 60 0ZM528 60A28 28 0 0 0 500 88L500 88A28 28 0 0 0 528 116L792 116A28 28 0 0 0 820 88L820 88A28 28 0 0 0 792 60Z",
+        "fill": "background",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M60 0L1260 0A60 60 0 0 1 1320 60L1320 1840A60 60 0 0 1 1260 1900L60 1900A60 60 0 0 1 0 1840L0 60A60 60 0 0 1 60 0ZM62 16A46 46 0 0 0 16 62L16 1838A46 46 0 0 0 62 1884L1258 1884A46 46 0 0 0 1304 1838L1304 62A46 46 0 0 0 1258 16Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.7
+        },
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M0 170L1320 170L1320 380L0 380Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M528 60L792 60A28 28 0 0 1 820 88L820 88A28 28 0 0 1 792 116L528 116A28 28 0 0 1 500 88L500 88A28 28 0 0 1 528 60ZM536 72A16 16 0 0 0 520 88L520 88A16 16 0 0 0 536 104L784 104A16 16 0 0 0 800 88L800 88A16 16 0 0 0 784 72Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        },
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to save my contact",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1650,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Let's connect",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 200,
+          "width": 1120,
+          "height": 140
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

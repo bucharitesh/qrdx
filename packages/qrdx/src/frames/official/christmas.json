@@ -3,6 +3,8 @@
   "name": "Christmas",
   "description": "A light card with a tree, small sparkles and a label band.",
   "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "christmas",
   "contentTypes": [],
   "tags": ["seasonal", "christmas", "holidays"],
   "license": "CC0-1.0",

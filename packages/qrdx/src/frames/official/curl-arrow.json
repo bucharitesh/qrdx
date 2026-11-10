@@ -1,0 +1,101 @@
+{
+  "id": "curl-arrow",
+  "name": "Curled arrow",
+  "description": "A light card with a curled arrow pointing from the label to the code.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "arrow"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1580
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1580,
+        "radius": 48,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1580,
+        "radius": 48,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.8
+        },
+        "hole": {
+          "x": 10,
+          "y": 10,
+          "width": 1220,
+          "height": 1560,
+          "radius": 40
+        }
+      },
+      {
+        "type": "path",
+        "d": "M301.45 1441.12L283.53 1438.2L267.03 1434.48L251.68 1429.95L237.45 1424.68L224.32 1418.72L212.28 1412.12L201.31 1404.93L191.37 1397.2L182.45 1388.98L174.52 1380.3L167.56 1371.21L161.55 1361.76L156.46 1351.96L152.29 1341.88L149.02 1331.53L146.63 1320.97L145.12 1310.23L144.47 1299.35L144.67 1288.37L145.73 1277.35L147.62 1266.32L150.34 1255.33L153.88 1244.42L158.35 1233.37A9 9 0 0 1 141.65 1226.63L136.96 1238.27L133.03 1250.38L130 1262.63L127.88 1274.97L126.7 1287.35L126.47 1299.71L127.21 1312.02L128.93 1324.21L131.65 1336.24L135.38 1348.04L140.15 1359.56L145.95 1370.74L152.81 1381.53L160.72 1391.86L169.7 1401.69L179.74 1410.94L190.85 1419.59L203.03 1427.56L216.28 1434.83L230.61 1441.33L246.02 1447.04L262.52 1451.9L280.11 1455.88L298.55 1458.88A9 9 0 0 1 301.45 1441.12Z",
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [[150, 1170], [205, 1255], [100, 1255]],
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me!",
+        "color": "frame",
+        "box": {
+          "x": 340,
+          "y": 1320,
+          "width": 840,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Point your camera here",
+        "color": "frame",
+        "box": {
+          "x": 340,
+          "y": 1470,
+          "width": 840,
+          "height": 96
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -79,9 +79,16 @@ export {
 export { GRADIENT_FRAME_DEFAULTS, mixFrameColors } from "./frame-styles";
 export { BUILT_IN_FRAME_SPECS } from "./frames/builtin";
 export {
+  frameSpecHash,
   getOfficialFrame,
+  OFFICIAL_FRAME_COLLECTIONS,
+  OFFICIAL_FRAME_COUNT,
+  OFFICIAL_FRAME_COUNTS,
+  OFFICIAL_FRAME_INDEX,
   OFFICIAL_FRAMES,
   type OfficialFrame,
+  type OfficialFrameCollection,
+  type OfficialFrameIndexEntry,
 } from "./frames/official";
 export {
   LOGO_PLATE_INSET,

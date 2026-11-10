@@ -1,0 +1,125 @@
+{
+  "id": "stitched-card",
+  "name": "Stitched card",
+  "description": "A card with a stitched dashed edge.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "stitched"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1650
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1650,
+        "radius": 80,
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 86,
+        "y1": 36,
+        "x2": 1154,
+        "y2": 36,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "line",
+        "x1": 1204,
+        "y1": 86,
+        "x2": 1204,
+        "y2": 1564,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "line",
+        "x1": 1154,
+        "y1": 1614,
+        "x2": 86,
+        "y2": 1614,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "line",
+        "x1": 36,
+        "y1": 1564,
+        "x2": 36,
+        "y2": 86,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1410,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Point your camera here",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 70,
+          "width": 960,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

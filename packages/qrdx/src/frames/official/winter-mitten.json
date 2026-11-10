@@ -1,0 +1,114 @@
+{
+  "id": "winter-mitten",
+  "name": "Mitten",
+  "description": "A light card with a mitten and a solid label band, in slate and frost.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "winter",
+  "contentTypes": [],
+  "tags": ["winter", "snow", "cold", "mitten"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#334155",
+      "text": "#ffffff",
+      "accent": "#cbd5e1"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M597.6 146.8L597.6 88C597.6 60 648 57.2 648 90.8L648 107.6C656.4 96.4 670.4 102 664.8 113.2L648 138.4L648 146.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M597.6 141.2L648 141.2A5.6 5.6 0 0 1 653.6 146.8L653.6 158A5.6 5.6 0 0 1 648 163.6L597.6 163.6A5.6 5.6 0 0 1 592 158L592 146.8A5.6 5.6 0 0 1 597.6 141.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Stay warm",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

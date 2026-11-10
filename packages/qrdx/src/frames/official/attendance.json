@@ -3,6 +3,7 @@
   "name": "Attendance",
   "description": "A poster with a check glyph, for classes, shifts and events.",
   "category": "use-case",
+  "collection": "events",
   "contentTypes": ["attendance"],
   "tags": ["attendance", "school", "workplace", "events"],
   "license": "CC0-1.0",

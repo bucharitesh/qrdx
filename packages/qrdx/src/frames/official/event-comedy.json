@@ -1,0 +1,89 @@
+{
+  "id": "event-comedy",
+  "name": "Comedy night",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a microphone.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["events", "comedy", "tickets"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M620 54L620 54A24 24 0 0 1 644 78L644 111A24 24 0 0 1 620 135L620 135A24 24 0 0 1 596 111L596 78A24 24 0 0 1 620 54Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M662 108A42 42 0 0 1 578 108L587 108A33 33 0 0 0 653 108ZM615.5 150L624.5 150L624.5 177L615.5 177ZM594.5 177L645.5 177A4.5 4.5 0 0 1 650 181.5L650 181.5A4.5 4.5 0 0 1 645.5 186L594.5 186A4.5 4.5 0 0 1 590 181.5L590 181.5A4.5 4.5 0 0 1 594.5 177Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Comedy night",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for tickets",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

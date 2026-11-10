@@ -1,0 +1,70 @@
+{
+  "id": "shop-bag",
+  "name": "Shopping bag",
+  "description": "A shopping bag with handles, the code on its front.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "shopping"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1850
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M380 310A280 280 0 0 1 940 310L890 310A230 230 0 0 0 430 310Z",
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[40, 300], [1280, 300], [1320, 1850], [0, 1850]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 300,
+        "width": 1240,
+        "height": 40,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.2
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to shop",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

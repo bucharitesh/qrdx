@@ -1,0 +1,98 @@
+{
+  "id": "order-here-tab",
+  "name": "Order here",
+  "description": "A folder tab on top carrying the label and a chef's hat.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "ordering"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M844.4 88A21.6 21.6 0 1 1 887.6 88A21.6 21.6 0 1 1 844.4 88ZM863.6 76A26.4 26.4 0 1 1 916.4 76A26.4 26.4 0 1 1 863.6 76ZM892.4 88A21.6 21.6 0 1 1 935.6 88A21.6 21.6 0 1 1 892.4 88ZM861.2 88L918.8 88L918.8 119.2L861.2 119.2Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M864.8 124L915.2 124A3.6 3.6 0 0 1 918.8 127.6L918.8 142A3.6 3.6 0 0 1 915.2 145.6L864.8 145.6A3.6 3.6 0 0 1 861.2 142L861.2 127.6A3.6 3.6 0 0 1 864.8 124Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Order here",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan, order, relax",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

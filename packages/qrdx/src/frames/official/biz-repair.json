@@ -1,0 +1,74 @@
+{
+  "id": "biz-repair",
+  "name": "Repair shop",
+  "description": "A solid card with a gear over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["business", "repair", "service"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M689 110L688.15 120.79L671.36 126.69L668.11 134.52L663.69 141.74L668.79 158.79L660.56 165.82L644.52 158.11L636.69 161.36L628.45 163.34L620 179L609.21 178.15L603.31 161.36L595.48 158.11L588.26 153.69L571.21 158.79L564.18 150.56L571.89 134.52L568.64 126.69L566.66 118.45L551 110L551.85 99.21L568.64 93.31L571.89 85.48L576.31 78.26L571.21 61.21L579.44 54.18L595.48 61.89L603.31 58.64L611.55 56.66L620 41L630.79 41.85L636.69 58.64L644.52 61.89L651.74 66.31L668.79 61.21L675.82 69.44L668.11 85.48L671.36 93.31L673.34 101.55ZM599 110A21 21 0 1 0 641 110A21 21 0 1 0 599 110Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to book a repair",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Service",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

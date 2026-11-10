@@ -1,0 +1,77 @@
+{
+  "id": "hotel-key",
+  "name": "Room key",
+  "description": "A wide card: the code on one side, a key and the label on the other.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["hotel", "hospitality", "key card", "guest info"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1040.8 250A39.6 39.6 0 1 1 1120 250A39.6 39.6 0 1 1 1040.8 250ZM1064.2 250A16.2 16.2 0 1 0 1096.6 250A16.2 16.2 0 1 0 1064.2 250ZM1116.4 242.8L1195.6 242.8A3.6 3.6 0 0 1 1199.2 246.4L1199.2 253.6A3.6 3.6 0 0 1 1195.6 257.2L1116.4 257.2A3.6 3.6 0 0 1 1112.8 253.6L1112.8 246.4A3.6 3.6 0 0 1 1116.4 242.8ZM1172.2 257.2L1183 257.2A1.8 1.8 0 0 1 1184.8 259L1184.8 280.6A1.8 1.8 0 0 1 1183 282.4L1172.2 282.4A1.8 1.8 0 0 1 1170.4 280.6L1170.4 259A1.8 1.8 0 0 1 1172.2 257.2ZM1147 257.2L1157.8 257.2A1.8 1.8 0 0 1 1159.6 259L1159.6 273.4A1.8 1.8 0 0 1 1157.8 275.2L1147 275.2A1.8 1.8 0 0 1 1145.2 273.4L1145.2 259A1.8 1.8 0 0 1 1147 257.2Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Your stay",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for guest info",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

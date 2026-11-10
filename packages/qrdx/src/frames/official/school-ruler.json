@@ -1,0 +1,114 @@
+{
+  "id": "school-ruler",
+  "name": "Ruler band",
+  "description": "A light card with a ruler and a solid label band, in slate and school-bus yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "back-to-school",
+  "contentTypes": [],
+  "tags": ["back to school", "school", "september", "timetable"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f2937",
+      "text": "#ffffff",
+      "accent": "#f2b705"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M558.07 115.13L662.33 54.93A4.2 4.2 -30 0 1 668.07 56.46L683.47 83.14A4.2 4.2 -30 0 1 681.93 88.87L577.67 149.07A4.2 4.2 -30 0 1 571.93 147.54L556.53 120.86A4.2 4.2 -30 0 1 558.07 115.13Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M564.13 111.63L567.04 109.95L575.44 124.5L572.53 126.18ZM575.77 104.91L578.68 103.23L583.58 111.71L580.67 113.39ZM587.41 98.19L590.32 96.51L598.72 111.06L595.81 112.74ZM599.05 91.47L601.96 89.79L606.86 98.27L603.95 99.95ZM610.68 84.75L613.59 83.07L621.99 97.62L619.08 99.3ZM622.32 78.03L625.23 76.35L630.13 84.83L627.22 86.51ZM633.96 71.31L636.87 69.63L645.27 84.18L642.36 85.86ZM645.6 64.59L648.51 62.91L653.41 71.39L650.5 73.07ZM657.24 57.87L660.15 56.19L668.55 70.74L665.64 72.42Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the timetable",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Back to school",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
