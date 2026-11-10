@@ -3,7 +3,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { createTranslator } from "next-intl";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, it as test } from "vitest";
 import {
   type Catalog,
   checkLocale,
@@ -176,7 +176,7 @@ describe.each(TRANSLATED_LOCALES)("the %s catalog", (locale) => {
     fixed: Record<string, Record<string, string>>;
   }>("glossary.json");
 
-  it("has the same arguments, tags and numbers as English", () => {
+  test("has the same arguments, tags and numbers as English", () => {
     const report = checkLocale({
       locale,
       english: en,
@@ -188,7 +188,7 @@ describe.each(TRANSLATED_LOCALES)("the %s catalog", (locale) => {
     expect(LOCALE_INFO[locale].review).toBe(REVIEW[locale]);
   });
 
-  it("translates the Free plan's name and keeps Pro and Business", () => {
+  test("translates the Free plan's name and keeps Pro and Business", () => {
     const free = glossary.fixed["Free (the plan name)"]?.[locale];
     if (free && messages.has("pricing.plans.free")) {
       expect(messages.get("pricing.plans.free")).toBe(free);
@@ -199,7 +199,7 @@ describe.each(TRANSLATED_LOCALES)("the %s catalog", (locale) => {
     );
   });
 
-  it("keeps product and brand names", () => {
+  test("keeps product and brand names", () => {
     for (const [key, english] of flatten(en)) {
       const translation = messages.get(key) ?? "";
       for (const name of ["QRdx", "Never-Hostage", "AGPL-3.0", "GitHub"]) {
@@ -208,7 +208,7 @@ describe.each(TRANSLATED_LOCALES)("the %s catalog", (locale) => {
     }
   });
 
-  it("formats with the page's language, keeping the currency", () => {
+  test("formats with the page's language, keeping the currency", () => {
     const t = createTranslator({
       locale,
       messages: mergeMessages(en, catalog),

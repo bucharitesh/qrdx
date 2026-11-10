@@ -181,14 +181,14 @@ Routes, the language menu, `<html lang>` and `<html dir>`, page metadata and the
 By hand: copy the keys you're translating from `en.json` into `<code>.json`, keeping the same nesting. Then record them, so a later change to the English shows up as stale:
 
 ```bash
-pnpm --filter docs i18n:translate --locale <code> --record
+bun run --filter docs i18n:translate --locale <code> --record
 ```
 
 With a model: the script translates missing and stale strings through Vercel AI Gateway. Each request carries the glossary, the key, the page the string appears on and a length budget for short labels. The script checks every answer and keeps the English for any that fail. QRdx's gateway key isn't shared, so use your own:
 
 ```bash
-AI_GATEWAY_API_KEY=<your key> pnpm --filter docs i18n:translate --locale <code>
-I18N_MODEL=<gateway model id> AI_GATEWAY_API_KEY=<your key> pnpm --filter docs i18n:translate --locale <code>
+AI_GATEWAY_API_KEY=<your key> bun run --filter docs i18n:translate --locale <code>
+I18N_MODEL=<gateway model id> AI_GATEWAY_API_KEY=<your key> bun run --filter docs i18n:translate --locale <code>
 ```
 
 Read the result before you open the pull request. Machine output gets the same review as a hand translation.
@@ -204,8 +204,8 @@ The rules for every string:
 ### Check
 
 ```bash
-pnpm --filter docs i18n:check            # CI runs this
-pnpm --filter docs i18n:check --verbose  # also lists missing, unrecorded and stale strings
+bun run --filter docs i18n:check            # CI runs this
+bun run --filter docs i18n:check --verbose  # also lists missing, unrecorded and stale strings
 ```
 
 It fails on keys that English doesn't have, on placeholders or tags that changed, and on numbers that went missing. In a language that isn't reviewed yet, missing and stale strings only produce warnings. Also open `/<segment>` and `/<segment>/pricing` and attach screenshots at 1440 px and 390 px to the pull request; long German or Finnish words are the usual overflow.

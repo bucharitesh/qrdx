@@ -1,4 +1,4 @@
-// pnpm --filter docs i18n:check [--verbose]   (CI, next to tsc and biome)
+// bun run --filter docs i18n:check [--verbose]   (CI, next to tsc and biome)
 //
 // Every catalog in lib/i18n/config.ts (messages/<locale>.json) against
 // English. Errors (exit 1): a missing catalog file, keys English doesn't
@@ -7,7 +7,7 @@
 // Warnings (listed with --verbose): the same gaps in a locale that isn't
 // reviewed yet, where they show in English and the pages stay noindex.
 //
-// Fill gaps with `pnpm --filter docs i18n:translate --locale <locale>`, or
+// Fill gaps with `bun run --filter docs i18n:translate --locale <locale>`, or
 // translate by hand and record it with `i18n:translate --record`.
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
@@ -85,7 +85,7 @@ if (errors.length > 0) {
   for (const error of errors.slice(0, 50)) console.error(`error: ${error}`);
   if (errors.length > 50) console.error(`…and ${errors.length - 50} more`);
   console.error(
-    "\nFix the strings above. For missing or stale ones: `pnpm --filter docs i18n:translate --locale <locale>` (CONTRIBUTING.md, Translating QRdx).",
+    "\nFix the strings above. For missing or stale ones: `bun run --filter docs i18n:translate --locale <locale>` (CONTRIBUTING.md, Translating QRdx).",
   );
   process.exit(1);
 }

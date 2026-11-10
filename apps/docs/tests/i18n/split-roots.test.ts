@@ -1,6 +1,6 @@
 // app/ has two root layouts (app/[lang] for translated pages, app/(app) for
 // the rest). A page added at app/<dir>, or an import of an old path, after a
-// rebase shows up here: run `pnpm --filter docs i18n:split` to move it.
+// rebase shows up here: run `bun run --filter docs i18n:split` to move it.
 import { execFileSync } from "node:child_process";
 import { readdirSync } from "node:fs";
 import path from "node:path";
