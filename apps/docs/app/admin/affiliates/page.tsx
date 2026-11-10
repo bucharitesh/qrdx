@@ -68,10 +68,9 @@ export default async function AdminAffiliatesPage() {
 
       {!programOn && (
         <p className="bg-muted/40 rounded-lg border p-4 text-sm">
-          The program is off on this server: set <code>QRDX_AFFILIATES=1</code>{" "}
-          (with Polar's <code>POLAR_WEBHOOK_SECRET</code>) to show the public
-          page and take applications. Commissions for existing referrals are
-          still recorded.
+          The program is off on this server. It runs only where QRdx itself runs
+          (qrdx.dev, its previews and local dev) and needs Polar's{" "}
+          <code>POLAR_WEBHOOK_SECRET</code>.
         </p>
       )}
 

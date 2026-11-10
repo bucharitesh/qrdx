@@ -1,16 +1,33 @@
-// The affiliate program merges switched off. With QRDX_AFFILIATES unset (the
-// vitest config drops every QRDX_ variable, and the real
-// lib/feature-availability reads the environment here), nothing of it runs:
+// The affiliate program runs only where QRdx itself does (qrdx.dev, its
+// previews, local dev). On a self-hosted copy on its own domain, even with
+// Polar set up (the real lib/feature-availability reads the environment
+// here), nothing of it runs:
 // no attribution in the user-create hook, no webhook step, no daily release,
 // the referral link goes home without a code and without touching the
 // database, /affiliates and Settings → Affiliate program are 404s, and the
 // settings tab is hidden. No affiliate table is ever read: every one of them
 // "doesn't exist" here, so any query would show up as missing_tables.
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 
-vi.hoisted(() => {
-  // Whatever another suite in this worker set: the switch is off here.
-  delete process.env.QRDX_AFFILIATES;
+const saved = vi.hoisted(() => {
+  // A self-hosted copy with Polar: the program must stay off. The previous
+  // values go back after this file, for the next suite in this worker.
+  const before = {
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
+  };
+  process.env.NEXT_PUBLIC_APP_URL = "https://qr.example.org";
+  delete process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  process.env.POLAR_WEBHOOK_SECRET = "test-polar-webhook-secret";
+  return before;
+});
+
+afterAll(() => {
+  for (const [name, value] of Object.entries(saved)) {
+    if (value === undefined) delete process.env[name];
+    else process.env[name] = value;
+  }
 });
 
 vi.mock(
@@ -82,9 +99,9 @@ function expectNoQueries() {
   }
 }
 
-describe("QRDX_AFFILIATES unset", () => {
+describe("on a self-hosted copy (its own domain, Polar set)", () => {
   it("leaves the program off", () => {
-    expect(process.env.QRDX_AFFILIATES).toBeUndefined();
+    expect(process.env.POLAR_WEBHOOK_SECRET).toBeTruthy();
     expect(isFeatureAvailable("affiliates")).toBe(false);
   });
 

@@ -584,7 +584,7 @@ describe("other events", () => {
   });
 });
 
-// A0: QRDX_AFFILIATES unset means the webhook step and the cron do nothing,
+// A0: with the program off (a self-hosted copy), the webhook step and the cron do nothing,
 // without touching the database.
 describe("with the program off", () => {
   it("the webhook step and the daily release do nothing at all", async () => {
