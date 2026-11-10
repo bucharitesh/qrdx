@@ -34,6 +34,7 @@ export const FEATURE_IDS = [
   "passkeys",
   "sso",
   "auditLog",
+  "affiliates",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -186,6 +187,20 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     paths: [
       `${WORKSPACE_PATTERN_PREFIX}/settings/audit-log`,
       "/docs/help/teams/audit-log",
+    ],
+  },
+  affiliates: {
+    // The affiliate program (lib/affiliates) is QRdx's own: commissions
+    // come from qrdx.dev's Polar orders and the terms are QRdx's. A
+    // self-hosted server leaves it off unless it sets QRDX_AFFILIATES=1 (and
+    // takes payments through Polar, where commissions come from).
+    name: "Affiliate program (QRDX_AFFILIATES)",
+    requires: () => ["QRDX_AFFILIATES", "POLAR_WEBHOOK_SECRET"],
+    paths: [
+      "/affiliates",
+      "/legal/affiliate-terms",
+      "/settings/affiliate",
+      "/docs/help/account-and-billing/affiliate-program",
     ],
   },
 };

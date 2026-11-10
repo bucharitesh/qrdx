@@ -4,6 +4,7 @@ import { useConsent, useHasConsentPolicy } from "@c15t/nextjs";
 import FeaturebaseScript from "@/components/featurebase-script";
 import { Analytics } from "@/lib/analytics/analytics";
 import { env } from "@/lib/env";
+import { ReferralCapture } from "./referral-capture";
 
 /**
  * QRdx's own third-party tools. Analytics: Umami (cookieless) always runs,
@@ -21,6 +22,8 @@ export function ConsentScripts() {
     <>
       {/* null until the stored choice is known, so PostHog waits for it. */}
       <Analytics measurement={ready ? measurement : null} />
+      {/* An affiliate link's code: memory always, the cookie with Analytics. */}
+      <ReferralCapture />
       {process.env.NODE_ENV === "production" &&
         functionality &&
         Boolean(env.NEXT_PUBLIC_FEATUREBASE_APP_ID) && <FeaturebaseScript />}

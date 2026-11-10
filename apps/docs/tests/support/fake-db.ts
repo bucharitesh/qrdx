@@ -69,8 +69,15 @@ const isQuery = (value: unknown): value is SelectQuery =>
 const tables = new Map<string, Row[]>();
 const tableDefaults = new Map<string, () => Row>();
 const uniqueKeys = new Map<string, string[][]>();
+/** Tables that "don't exist yet": every query on them fails like Postgres. */
+const missingTables = new Set<string>();
 
 function rowsOf(table: string): Row[] {
+  if (missingTables.has(table)) {
+    throw Object.assign(new Error(`relation "${table}" does not exist`), {
+      code: "42P01",
+    });
+  }
   let rows = tables.get(table);
   if (!rows) {
     rows = [];
@@ -87,12 +94,22 @@ export const fakeDb = {
   /** Empties every table (defaults and unique keys are kept). */
   reset() {
     tables.clear();
+    missingTables.clear();
   },
   /** Forgets defaults and unique keys too. */
   resetAll() {
     tables.clear();
     tableDefaults.clear();
     uniqueKeys.clear();
+    missingTables.clear();
+  },
+  /**
+   * Makes tables behave as if their SQL hadn't been applied yet: every
+   * query that reads or writes them rejects with Postgres's 42P01. Cleared
+   * by reset().
+   */
+  missing(...names: string[]) {
+    for (const name of names) missingTables.add(name);
   },
   /** Values a real column default would fill in on insert. */
   defaults(table: string, values: Row | (() => Row)) {

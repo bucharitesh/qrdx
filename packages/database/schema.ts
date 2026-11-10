@@ -899,6 +899,150 @@ export const workspaceAuditLog = pgTable(
   ]
 );
 
+// ─── Affiliate program (apps/docs/lib/affiliates) ────────────────────────────
+// People apply, an admin approves them, and their referral link brings in new
+// accounts. Paid Polar orders from those accounts earn a commission, which
+// waits 30 days and is then paid by hand through PayPal; the app only records
+// what's owed and what's been paid. Money is in minor units, in the currency
+// Polar reports. manual-sql/2026-11-10-affiliates.sql creates these tables.
+
+export const affiliate = pgTable(
+  "affiliate",
+  {
+    id: text("id").primaryKey(),
+    // One per account; deleted with it (and so are its referrals,
+    // commissions and payouts).
+    userId: text("user_id")
+      .notNull()
+      .unique()
+      .references(() => user.id, { onDelete: "cascade" }),
+    // pending | approved | rejected | suspended
+    status: text("status").notNull().default("pending"),
+    // The link is <app url>/r/<code>. Lower case, unique.
+    code: text("code").notNull().unique(),
+    // Where payouts go. Only ever set while approved.
+    paypalEmail: text("paypal_email"),
+    // The application: { website, promotion } as the person typed them.
+    application: jsonb("application").$type<Record<string, string>>(),
+    // Visits to the referral link, counted without cookies.
+    clickCount: integer("click_count").notNull().default(0),
+    approvedAt: timestamp("approved_at"),
+    approvedBy: text("approved_by"),
+    // When an admin last changed the status, who, and why (staff only).
+    reviewedAt: timestamp("reviewed_at"),
+    reviewedBy: text("reviewed_by"),
+    statusNote: text("status_note"),
+    createdAt: timestamp("created_at").notNull(),
+    updatedAt: timestamp("updated_at").notNull(),
+  },
+  (table) => [index("affiliate_status_idx").on(table.status)]
+);
+
+export const affiliateReferral = pgTable(
+  "affiliate_referral",
+  {
+    id: text("id").primaryKey(),
+    affiliateId: text("affiliate_id")
+      .notNull()
+      .references(() => affiliate.id, { onDelete: "cascade" }),
+    // An account is referred once, at sign-up: the first valid referral wins
+    // and is never replaced.
+    referredUserId: text("referred_user_id")
+      .notNull()
+      .unique()
+      .references(() => user.id, { onDelete: "cascade" }),
+    // link: the code came through the sign-up itself; cookie: from the
+    // qrdx_ref cookie a visitor allowed earlier.
+    attributedVia: text("attributed_via").notNull(),
+    // The customer's first paid order: their 12 months start here.
+    firstPaidAt: timestamp("first_paid_at"),
+    createdAt: timestamp("created_at").notNull(),
+  },
+  (table) => [
+    index("affiliate_referral_affiliate_id_idx").on(table.affiliateId),
+  ]
+);
+
+export const affiliatePayout = pgTable(
+  "affiliate_payout",
+  {
+    id: text("id").primaryKey(),
+    affiliateId: text("affiliate_id")
+      .notNull()
+      .references(() => affiliate.id, { onDelete: "cascade" }),
+    currency: text("currency").notNull(),
+    // The total sent, in minor units: the sum of its commissions.
+    amount: integer("amount").notNull(),
+    commissionCount: integer("commission_count").notNull(),
+    // Snapshot of the PayPal address it was sent to.
+    paypalEmail: text("paypal_email").notNull(),
+    // The PayPal transaction id the admin typed in.
+    paypalReference: text("paypal_reference").notNull(),
+    paidAt: timestamp("paid_at").notNull(),
+    // The admin who marked it paid.
+    createdBy: text("created_by").notNull(),
+    createdAt: timestamp("created_at").notNull(),
+  },
+  (table) => [
+    index("affiliate_payout_affiliate_id_idx").on(
+      table.affiliateId,
+      table.paidAt.desc()
+    ),
+  ]
+);
+
+export const affiliateCommission = pgTable(
+  "affiliate_commission",
+  {
+    id: text("id").primaryKey(),
+    affiliateId: text("affiliate_id")
+      .notNull()
+      .references(() => affiliate.id, { onDelete: "cascade" }),
+    referralId: text("referral_id").references(() => affiliateReferral.id, {
+      onDelete: "set null",
+    }),
+    // No FK: the record stays readable after the customer deletes their account.
+    referredUserId: text("referred_user_id"),
+    // One commission per paid order: repeated webhooks find this row.
+    polarOrderId: text("polar_order_id").notNull().unique(),
+    polarCustomerId: text("polar_customer_id"),
+    currency: text("currency").notNull(),
+    // What the commission is based on: Polar's net_amount (after discounts,
+    // before tax) less refunded_amount, in minor units.
+    orderAmount: integer("order_amount").notNull(),
+    // The rate applied, in basis points (3000 = 30%).
+    rateBps: integer("rate_bps").notNull(),
+    amount: integer("amount").notNull(),
+    // pending | approved | void | paid
+    status: text("status").notNull().default("pending"),
+    orderPaidAt: timestamp("order_paid_at").notNull(),
+    // The payment plus 30 days: payable from then.
+    availableAt: timestamp("available_at").notNull(),
+    voidedAt: timestamp("voided_at"),
+    // refund | chargeback | self_referral | admin
+    voidReason: text("void_reason"),
+    // The Polar refund that cancelled it, when a refund event did.
+    voidRefundId: text("void_refund_id"),
+    payoutId: text("payout_id").references(() => affiliatePayout.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at").notNull(),
+    updatedAt: timestamp("updated_at").notNull(),
+  },
+  (table) => [
+    index("affiliate_commission_affiliate_status_idx").on(
+      table.affiliateId,
+      table.status
+    ),
+    // The daily cron: pending commissions whose hold is over.
+    index("affiliate_commission_status_available_idx").on(
+      table.status,
+      table.availableAt
+    ),
+    index("affiliate_commission_payout_id_idx").on(table.payoutId),
+  ]
+);
+
 // ─── Platform: dynamic QR codes, scans, custom domains, brand kits ───────────
 // Rows are owned by user_id (the creator). When organization_id is set the row
 // belongs to that team; deleting the team hands it back to the creator.

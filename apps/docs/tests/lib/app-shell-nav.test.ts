@@ -58,6 +58,8 @@ describe("app nav", () => {
       ["Notifications", "/settings/notifications"],
       ["Integrations", "/settings/integrations"],
       ["Authorized apps", "/settings/authorized-apps"],
+      // Hidden where the program is off (feature-availability-rules.ts).
+      ["Affiliate program", "/settings/affiliate"],
     ]);
     expect(settingsNav("other").find((g) => g.id === "account")).toEqual(
       expect.objectContaining({ label: "Account" }),
