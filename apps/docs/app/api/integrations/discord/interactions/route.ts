@@ -14,10 +14,22 @@ import {
   discordPublicKey,
   isSignedByDiscord,
 } from "@/lib/chat-bots/discord/verify";
+import { readBodyBytes } from "@/lib/request-guards";
 import { logError } from "@/lib/shared";
 
 /** Codes one Discord user can make per minute. */
 const userLimiter = createRateLimiter({ limiter: slidingWindow(20, "60 s") });
+
+/**
+ * Codes the bot makes in a minute, for everyone together: a ceiling for the
+ * bot as a whole, past which people are told it's busy. Each user's own limit
+ * is checked first, so one person can't use more of this than their own
+ * allowance.
+ */
+const GLOBAL_PER_MINUTE = 300;
+const globalLimiter = createRateLimiter({
+  limiter: slidingWindow(GLOBAL_PER_MINUTE, "60 s"),
+});
 
 /** Interactions are small; anything bigger isn't from Discord. */
 const MAX_BODY_BYTES = 256 * 1024;
@@ -48,13 +60,10 @@ export async function POST(request: Request) {
   const settings = discordBotSettings();
   if (!settings) return json({ error: "Not found" }, 404);
 
-  if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
-    return json({ error: "Request too large" }, 413);
-  }
-  const body = new Uint8Array(await request.arrayBuffer());
-  if (body.byteLength > MAX_BODY_BYTES) {
-    return json({ error: "Request too large" }, 413);
-  }
+  // Read in chunks, stopping as soon as the body passes the cap, with or
+  // without a content-length.
+  const body = await readBodyBytes(request, MAX_BODY_BYTES);
+  if (!body) return json({ error: "Request too large" }, 413);
 
   const key = publicKeyFor(settings.publicKey);
   const signed =
@@ -80,8 +89,12 @@ export async function POST(request: Request) {
   }
 
   const userId = interactionUserId(interaction) ?? "unknown";
-  const { success } = await userLimiter.limit(`discord-bot:user:${userId}`);
-  if (!success) return json(notice(NOTICES.rateLimited));
+  if (!(await userLimiter.limit(`discord-bot:user:${userId}`)).success) {
+    return json(notice(NOTICES.rateLimited));
+  }
+  if (!(await globalLimiter.limit("discord-bot:global")).success) {
+    return json(notice(NOTICES.busy));
+  }
 
   try {
     return json(commandReply(interaction));

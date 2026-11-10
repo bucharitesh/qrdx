@@ -113,6 +113,7 @@ export const NOTICES = {
   tooLongToShow:
     "That's too long to show as an image in Discord. Make the QR code in the QRdx editor instead.",
   rateLimited: "You're making QR codes quickly. Try again in a minute.",
+  busy: "QRdx is busy right now. Try again in a minute.",
   failed: "Something went wrong making that QR code. Try again in a moment.",
 } as const;
 
