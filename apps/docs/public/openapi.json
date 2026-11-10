@@ -896,6 +896,7 @@
                           "slug": "aB3dE5f",
                           "shortLink": "https://qrdx.dev/q/aB3dE5f",
                           "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+                          "nfcLink": "https://qrdx.dev/q/aB3dE5f?nfc",
                           "domain": null,
                           "destinationUrl": "https://example.com/menu",
                           "title": "Spring menu",
@@ -1052,6 +1053,7 @@
                         "slug": "aB3dE5f",
                         "shortLink": "https://qrdx.dev/q/aB3dE5f",
                         "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+                        "nfcLink": "https://qrdx.dev/q/aB3dE5f?nfc",
                         "domain": null,
                         "destinationUrl": "https://example.com/menu",
                         "title": "Spring menu",
@@ -1081,6 +1083,7 @@
                           "slug": "aB3dE5f",
                           "shortLink": "https://qrdx.dev/q/aB3dE5f",
                           "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+                          "nfcLink": "https://qrdx.dev/q/aB3dE5f?nfc",
                           "domain": null,
                           "destinationUrl": "https://example.com/menu",
                           "title": "Spring menu",
@@ -1207,6 +1210,7 @@
                         "slug": "aB3dE5f",
                         "shortLink": "https://qrdx.dev/q/aB3dE5f",
                         "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+                        "nfcLink": "https://qrdx.dev/q/aB3dE5f?nfc",
                         "domain": null,
                         "destinationUrl": "https://example.com/menu",
                         "title": "Spring menu",
@@ -1322,6 +1326,7 @@
                         "slug": "aB3dE5f",
                         "shortLink": "https://qrdx.dev/q/aB3dE5f",
                         "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+                        "nfcLink": "https://qrdx.dev/q/aB3dE5f?nfc",
                         "domain": null,
                         "destinationUrl": "https://example.com/summer-menu",
                         "title": "Spring menu",
@@ -1494,7 +1499,7 @@
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. The range is clamped to how long the plan keeps analytics. With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. `sources` splits the scans into QR scans and NFC taps (visits through the code's `nfcLink`), and each listed scan has its `source`. The range is clamped to how long the plan keeps analytics. With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "parameters": [
           {
             "name": "range",
@@ -1611,7 +1616,11 @@
                             "value": null,
                             "count": 42
                           }
-                        ]
+                        ],
+                        "sources": {
+                          "qr": 38,
+                          "nfc": 4
+                        }
                       }
                     }
                   }
@@ -2324,7 +2333,8 @@
                               "device_type": "mobile",
                               "os": "iOS",
                               "browser": "Safari",
-                              "referer": null
+                              "referer": null,
+                              "source": "qr"
                             }
                           ]
                         }
@@ -2359,7 +2369,8 @@
                             "device_type": "mobile",
                             "os": "iOS",
                             "browser": "Safari",
-                            "referer": null
+                            "referer": null,
+                            "source": "qr"
                           }
                         }
                       }
@@ -3591,6 +3602,11 @@
             ],
             "description": "`https://qrdx.dev/q/<slug>`, which always works; null for a back-half chosen on a custom domain"
           },
+          "nfcLink": {
+            "type": "string",
+            "format": "uri",
+            "description": "`shortLink` with `?nfc` on the end, to write to NFC tags. It opens the same place; visits through it count as NFC taps (`source: nfc`) instead of QR scans"
+          },
           "domain": {
             "anyOf": [
               {
@@ -3692,6 +3708,7 @@
           "slug",
           "shortLink",
           "defaultShortLink",
+          "nfcLink",
           "domain",
           "destinationUrl",
           "title",
@@ -7103,6 +7120,25 @@
               "required": ["value", "count"]
             }
           },
+          "sources": {
+            "type": "object",
+            "properties": {
+              "qr": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "QR scans in the range"
+              },
+              "nfc": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991,
+                "description": "NFC taps in the range"
+              }
+            },
+            "required": ["qr", "nfc"],
+            "description": "Scans in the range by source; `qr` + `nfc` = `total`"
+          },
           "events": {
             "description": "Individual scans, newest first (only with `limit` > 0)",
             "type": "array",
@@ -7143,6 +7179,11 @@
                 },
                 "referer": {
                   "type": ["string", "null"]
+                },
+                "source": {
+                  "type": "string",
+                  "enum": ["qr", "nfc"],
+                  "description": "`nfc` for a tap on an NFC tag (the code's `nfcLink`), `qr` for a QR scan or any other visit to the short link"
                 }
               },
               "required": [
@@ -7153,7 +7194,8 @@
                 "deviceType",
                 "os",
                 "browser",
-                "referer"
+                "referer",
+                "source"
               ]
             }
           },
@@ -7176,7 +7218,8 @@
           "devices",
           "os",
           "browsers",
-          "referrers"
+          "referrers",
+          "sources"
         ]
       },
       "Style": {
