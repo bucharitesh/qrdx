@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { OAUTH_REFERRAL_KEY } from "@repo/auth/referral-keys";
 import { toast } from "@repo/design-system";
 import {
   GithubLogo,
@@ -16,6 +17,7 @@ import { useAvailability } from "@/components/availability-provider";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { SsoSignIn } from "@/ee/sso/sso-sign-in";
+import { pendingReferralCode } from "@/lib/affiliates/referral-client";
 import { socialSignInErrorPath } from "../sign-in/_lib/error-message";
 import { EmailCodeSignIn } from "./email-code-sign-in";
 import { PasskeySignIn } from "./passkey-sign-in";
@@ -87,6 +89,7 @@ export function SignInPanel({
   const [secondStep, setSecondStep] = useState<SecondStep | null>(null);
   // Workspace SSO runs only on servers with a QRdx licence key.
   const ssoOffered = useAvailability().has("sso");
+  const affiliates = useAvailability().has("affiliates");
 
   useEffect(() => {
     if (shown) setLastLoginMethod(authClient.getLastUsedLoginMethod());
@@ -100,12 +103,18 @@ export function SignInPanel({
     setLoading(true);
     try {
       const next = callbackURL();
+      // An affiliate link's code rides the OAuth state to the new account
+      // (packages/auth/referral.ts); it only counts if this makes one.
+      const referral = affiliates ? pendingReferralCode() : null;
       const { error } = await authClient.signIn.social({
         provider,
         callbackURL: next,
         // A refusal (an unverified address, say) comes back to /sign-in,
         // which says why (sign-in/_lib/error-message.ts).
         errorCallbackURL: socialSignInErrorPath(next, provider),
+        ...(referral
+          ? { additionalData: { [OAUTH_REFERRAL_KEY]: referral } }
+          : {}),
       });
       // e.g. the provider is not configured on this server
       if (error) throw error;

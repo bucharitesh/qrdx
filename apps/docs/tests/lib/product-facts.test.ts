@@ -52,6 +52,12 @@ describe("PRODUCT_FACTS", () => {
       auditLogRetentionDays: 365,
       auditLogExportRows: "50,000",
       barcodeFormats: BARCODE_FORMATS.length,
+      // lib/affiliates/terms.ts
+      affiliateCommissionPercent: 30,
+      affiliateCommissionMonths: 12,
+      affiliateHoldDays: 30,
+      affiliateMinPayoutUsd: "US$25",
+      affiliateTermsNoticeDays: 30,
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(

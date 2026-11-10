@@ -59,6 +59,8 @@ const EVERYTHING: Record<string, string> = {
   SPOTIFY_CLIENT_SECRET: FAKE,
   NEXT_PUBLIC_APP_URL: "https://qrdx.example",
   QRDX_EE_LICENSE: FAKE,
+  QRDX_AFFILIATES: FAKE,
+  POLAR_WEBHOOK_SECRET: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -88,6 +90,7 @@ const NEEDS: Record<FeatureId, string[]> = {
   passkeys: ["NEXT_PUBLIC_APP_URL"],
   sso: ["QRDX_EE_LICENSE"],
   auditLog: ["QRDX_EE_LICENSE"],
+  affiliates: ["QRDX_AFFILIATES", "POLAR_WEBHOOK_SECRET"],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -401,6 +404,8 @@ describe("a production-like deployment", () => {
       "spamCheck",
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",
+      // Polar is set, but not the program's own switch (QRDX_AFFILIATES).
+      "affiliates",
     ]);
   });
 
