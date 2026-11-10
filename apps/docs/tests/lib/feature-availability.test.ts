@@ -13,6 +13,7 @@ import { filterPageTree } from "@/lib/docs-tree";
 import {
   catalogParagraphs,
   computeFeatures,
+  configuredEntry,
   customDomainMode,
   FEATURE_IDS,
   type FeatureContext,
@@ -59,6 +60,10 @@ const EVERYTHING: Record<string, string> = {
   SPOTIFY_CLIENT_SECRET: FAKE,
   NEXT_PUBLIC_APP_URL: "https://qrdx.example",
   QRDX_EE_LICENSE: FAKE,
+  SLACK_CLIENT_ID: FAKE,
+  SLACK_CLIENT_SECRET: FAKE,
+  SLACK_SIGNING_SECRET: FAKE,
+  INTEGRATION_ENCRYPTION_KEY: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -88,6 +93,12 @@ const NEEDS: Record<FeatureId, string[]> = {
   passkeys: ["NEXT_PUBLIC_APP_URL"],
   sso: ["QRDX_EE_LICENSE"],
   auditLog: ["QRDX_EE_LICENSE"],
+  slackBot: [
+    "SLACK_CLIENT_ID",
+    "SLACK_CLIENT_SECRET",
+    "SLACK_SIGNING_SECRET",
+    "INTEGRATION_ENCRYPTION_KEY",
+  ],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -318,6 +329,65 @@ describe("catalog paragraphs", () => {
   });
 });
 
+describe("the Slack bot", () => {
+  it("needs the Slack app, its signing secret and, in production, the encryption key", () => {
+    const slackApp = {
+      SLACK_CLIENT_ID: FAKE,
+      SLACK_CLIENT_SECRET: FAKE,
+      SLACK_SIGNING_SECRET: FAKE,
+    };
+    expect(computeFeatures(ctx(slackApp)).slackBot).toBe(true);
+    expect(computeFeatures(ctx(slackApp, vercelProd)).slackBot).toBe(false);
+    expect(
+      computeFeatures(
+        ctx({ ...slackApp, INTEGRATION_ENCRYPTION_KEY: FAKE }, vercelProd),
+      ).slackBot,
+    ).toBe(true);
+    // "Add to Slack" alerts alone (no signing secret) leave the bot off.
+    expect(
+      missingFeatureSetup(
+        "slackBot",
+        ctx({ SLACK_CLIENT_ID: FAKE, SLACK_CLIENT_SECRET: FAKE }),
+      ),
+    ).toEqual(["SLACK_SIGNING_SECRET"]);
+  });
+
+  it("hides its docs page while it's off", () => {
+    const off = toPublicAvailability(computeFeatures(ctx({}, vercelProd)));
+    expect(off.hiddenPaths).toContain("/docs/slack-bot");
+    expect(isPathShown(off.hiddenPaths, "/docs/slack-bot")).toBe(false);
+  });
+
+  it("shows the Slack entry's bot parts only where the bot works", () => {
+    initializeIntegrations();
+    const slack = getCatalogBySurface("integrations").find(
+      (entry) => entry.slug === "slack",
+    );
+    if (!slack?.configured) throw new Error("no Slack bot copy");
+    const on = configuredEntry(slack, () => true);
+    const off = configuredEntry(slack, () => false);
+    expect(off).toBe(slack);
+    expect(on.tagline).toBe(slack.configured.tagline);
+    expect(on.steps).toEqual(slack.configured.steps);
+    expect(on.capabilities.slice(0, 2)).toEqual(slack.configured.capabilities);
+    expect(on.keywords).toEqual(
+      expect.arrayContaining(slack.configured.keywords ?? []),
+    );
+    // Without the bot nothing on the entry mentions it.
+    const offText = JSON.stringify([
+      off.tagline,
+      off.steps,
+      off.capabilities,
+      off.keywords,
+      off.description,
+    ]);
+    expect(offText).not.toMatch(/\/qr|\bbot\b|@QRdx/i);
+    expect(
+      catalogParagraphs(slack, computeFeatures(ctx({}, vercelProd))),
+    ).toEqual(slack.description);
+  });
+});
+
 describe("docs sidebar", () => {
   it("drops hidden pages and folders left empty", () => {
     const tree = filterPageTree(
@@ -394,13 +464,14 @@ describe("a production-like deployment", () => {
     }
   });
 
-  it("leaves out adding custom domains, the spam check and the media pickers", () => {
+  it("leaves out adding custom domains, the spam check, the media pickers and the Slack bot", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
       "customDomains",
       "domainConnect",
       "spamCheck",
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",
+      "slackBot",
     ]);
   });
 

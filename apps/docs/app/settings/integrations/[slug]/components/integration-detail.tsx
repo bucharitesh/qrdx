@@ -46,6 +46,7 @@ import {
   usesDataKeyForm,
 } from "./data-connection-panel";
 import { DubManagement } from "./dub-management";
+import { SlackBotPanel, type SlackBotSettings } from "./slack-bot-panel";
 
 const CATEGORY_LABELS: Record<IntegrationCategory, string> = {
   analytics: "Analytics",
@@ -82,6 +83,8 @@ interface IntegrationDetailProps {
    * it before: show Disconnect and nothing else.
    */
   noLongerAvailable?: boolean;
+  /** Slack only, where the QRdx bot is set up here: its installs and links. */
+  slackBot?: SlackBotSettings;
 }
 
 export function IntegrationDetail({
@@ -103,6 +106,7 @@ export function IntegrationDetail({
   oauthConfigured,
   apiKey,
   noLongerAvailable = false,
+  slackBot,
 }: IntegrationDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -126,6 +130,9 @@ export function IntegrationDetail({
     if (success === `${slug}_connected`) {
       toast.success(`${name} connected successfully!`);
       router.replace(`/settings/integrations/${slug}`);
+    } else if (success === "slack_bot_installed") {
+      toast.success("The QRdx bot is in your Slack workspace. Try /qr there.");
+      router.replace(`/settings/integrations/${slug}`);
     } else if (error) {
       const errorMessages: Record<string, string> = {
         unauthorized: "You must be logged in to connect integrations",
@@ -144,6 +151,11 @@ export function IntegrationDetail({
         dev_disabled: "Calls to connected tools are off outside production.",
         provider_rejected: `${name} didn't finish the connection. Try again.`,
         rate_limited: "Too many attempts. Wait a minute and try again.",
+        slack_bot_cancelled: "The bot wasn't added to Slack.",
+        slack_bot_failed: "Slack didn't finish adding the bot. Try again.",
+        slack_bot_enterprise:
+          "Add the bot to one Slack workspace at a time, not to a whole Enterprise Grid organization.",
+        slack_bot_unavailable: "The QRdx bot isn't available yet.",
       };
       toast.error(errorMessages[error] || `Failed to connect ${name}`);
       router.replace(`/settings/integrations/${slug}`);
@@ -453,6 +465,8 @@ export function IntegrationDetail({
             slug={slug}
           />
         )}
+
+      {slug === "slack" && slackBot && <SlackBotPanel {...slackBot} />}
 
       <DataConnectionPanel
         apiKey={apiKey}
