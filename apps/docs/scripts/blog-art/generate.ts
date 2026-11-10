@@ -1,7 +1,7 @@
 // Writes the blog's illustrations to public/blog/<post>/<name>.svg: the
 // scenes from scenes.ts with the real codes from codes.ts rendered by qrdx.
 //
-// Run from apps/docs: pnpm exec tsx scripts/blog-art/generate.ts
+// Run from apps/docs: bun x tsx scripts/blog-art/generate.ts
 //   [--out <dir>]            write somewhere else (default public/blog)
 //   [--theme light|dark]     bake one palette instead of both (for previews)
 //   [ids...]                 only these illustrations (codes.ts keys)

@@ -208,7 +208,7 @@ export function capImageSettings(
   };
   const drawnAt = (settings: ImageSettings) =>
     resolveErrorLevel({ ...code, level: requested, imageSettings: settings });
-  const fit = (level: ErrorLevel) => {
+  const fitAt = (level: ErrorLevel) => {
     const fitted = fitLogoWidth(base, [level], width, layout);
     return fitted > 0 ? layout(fitted) : undefined;
   };
@@ -216,11 +216,11 @@ export function capImageSettings(
   // while the logo still raises it, else size it for the requested level.
   const drawn = drawnAt(imageSettings);
   if (drawn === requested) {
-    return fit(requested);
+    return fitAt(requested);
   }
-  const atDrawn = fit(drawn);
+  const atDrawn = fitAt(drawn);
   if (atDrawn && drawnAt(atDrawn) === drawn) {
     return atDrawn;
   }
-  return fit(requested);
+  return fitAt(requested);
 }

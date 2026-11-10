@@ -45,15 +45,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      # Uses the version pinned in package.json "packageManager".
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      # Bun installs the dependencies (the version pinned in package.json
+      # "packageManager"); Node 22 runs the builds, tests and tools.
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
+
+      - name: Restore Bun cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-
 
       # Turbo's local cache (builds, typechecks, test logs). A task whose
       # inputs haven't changed since a cached run replays its result instead
@@ -63,26 +73,26 @@ jobs:
         uses: actions/cache@v4
         with:
           path: .turbo/cache
-          key: turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          key: turbo-${{ runner.os }}-${{ hashFiles('bun.lock') }}-${{ github.sha }}
           restore-keys: |
-            turbo-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            turbo-${{ runner.os }}-${{ hashFiles('bun.lock') }}-
             turbo-${{ runner.os }}-
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       # The docs app, CLI and CLI tests consume qrdx from its dist/ output,
       # and the CLI tests run the CLI's own dist/index.js.
       - name: Build qrdx and the CLI
-        run: pnpm turbo build --filter=qrdx --filter=@qrdx/cli 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+        run: bun x turbo build --filter=qrdx --filter=@qrdx/cli 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
 
       - name: Typecheck packages
-        run: pnpm typecheck 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+        run: bun run typecheck 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
 
       - name: Typecheck docs app
         run: |
-          pnpm --filter docs exec next typegen
-          pnpm typecheck:docs
+          (cd apps/docs && bun x next typegen)
+          bun run typecheck:docs
 
       # Pull requests into staging test the packages they change and the
       # packages that depend on them. Release pull requests into main, pushes
@@ -96,10 +106,10 @@ jobs:
           set -o pipefail
           if [ "$AFFECTED" = "true" ]; then
             echo "Testing the packages this PR changes against $TURBO_SCM_BASE, and their dependents." | tee -a "$GITHUB_STEP_SUMMARY"
-            pnpm turbo test --affected 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+            bun x turbo test --affected 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
           else
             echo "Testing every package." | tee -a "$GITHUB_STEP_SUMMARY"
-            pnpm turbo test 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
+            bun x turbo test 2>&1 | tee -a "$RUNNER_TEMP/turbo.log"
           fi
 
       # Shows what came from the cache, so a pass that only replayed cached
@@ -120,6 +130,7 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      # Biome is a devDependency of apps/docs; run it over the whole repo.
-      - name: Lint (Biome)
-        run: ./apps/docs/node_modules/.bin/biome ci .
+      # Ultracite runs Biome (biome.jsonc) over the whole repo; findings show
+      # as annotations on the pull request.
+      - name: Lint (Ultracite)
+        run: bun run lint:ci --reporter=github

@@ -6,7 +6,7 @@
 //
 //   AUDIT_E2E_BASE_URL=http://localhost:<port> AUDIT_E2E_DEV_LOG=<dev.log> \
 //   AUDIT_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   AUDIT_E2E_SHOTS=<dir> pnpm exec tsx e2e/audit-log.e2e.mts
+//   AUDIT_E2E_SHOTS=<dir> bun x tsx e2e/audit-log.e2e.mts
 //
 // Covers: a Free workspace shows the upgrade state and records nothing; on
 // Business, an owner creates a code, changes its destination and invites a

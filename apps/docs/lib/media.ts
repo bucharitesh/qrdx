@@ -1,7 +1,7 @@
 import manifest from "./media-manifest.json";
 
 /**
- * Site videos are served from Cloudflare R2, not /public. `pnpm media:upload`
+ * Site videos are served from Cloudflare R2, not /public. `bun run media:upload`
  * (scripts/media/upload.mjs) uploads apps/docs/media/** with a content hash in
  * each key and rewrites media-manifest.json; this resolves a source path such
  * as "/videos/help/bulk-csv.mp4" to its public URL.

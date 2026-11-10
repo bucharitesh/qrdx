@@ -12,7 +12,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, test } from "vitest";
 import qrcodegen from "../src/codegen";
 import { ERROR_LEVEL_MAP } from "../src/constants";
 import { getQRAsEPS } from "../src/eps";
@@ -438,7 +438,7 @@ describe.skipIf(!ZBAR)("zbar reads crisp renders", () => {
     ["pin", silhouettes.pin],
   ];
   for (const [name, shape] of shapes) {
-    it(name, async () => {
+    test(name, async () => {
       const failed: string[] = [];
       for (const [v, value] of VALUES.entries()) {
         for (const eye of ["square", "rounded"] as const) {

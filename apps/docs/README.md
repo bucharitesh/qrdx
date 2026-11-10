@@ -16,9 +16,9 @@ The Next.js app behind [qrdx.dev](https://qrdx.dev): the marketing pages, the pl
 The app imports the engine from `packages/qrdx/dist`, so build that first. From the repository root:
 
 ```bash
-pnpm install
-pnpm --filter qrdx build:inplace
-pnpm --filter docs dev             # http://localhost:3000
+bun install
+bun run --filter qrdx build:inplace
+bun run --filter docs dev           # http://localhost:3000
 ```
 
 It needs `apps/docs/.env.local` with at least `NEXT_PUBLIC_APP_URL`, `DATABASE_URL` and `BETTER_AUTH_SECRET`. [CONTRIBUTING.md](../../CONTRIBUTING.md) walks through the setup, the checks to run and how to open a pull request. To run your own instance, follow the [self-hosting guide](https://qrdx.dev/docs/self-hosting).
@@ -28,7 +28,7 @@ It needs `apps/docs/.env.local` with at least `NEXT_PUBLIC_APP_URL`, `DATABASE_U
 Run these in `apps/docs`:
 
 ```bash
-pnpm exec tsc --noEmit    # typecheck (run `pnpm exec next typegen` first on a fresh clone)
-pnpm exec vitest run      # unit and integration tests, no database or network
-pnpm test:node            # node:test suites next to the code
+bun x tsc --noEmit        # typecheck (run `bun x next typegen` first on a fresh clone)
+bun x vitest run          # unit and integration tests, no database or network
+bun run test:node         # node:test suites next to the code
 ```

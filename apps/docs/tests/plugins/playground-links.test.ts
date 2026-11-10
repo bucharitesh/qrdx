@@ -2,7 +2,7 @@
 // local copy of the rules (plugins/*/src/playground-link.ts). These tests hold
 // every copy to the site's reader, lib/playground-links.ts.
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import {
   handoffSource,
   parseLinkUrl,
@@ -71,7 +71,7 @@ const ADDRESSES = [
 ];
 
 describe.each(PLUGINS)("$name plugin link", (plugin) => {
-  it("opens the playground on qrdx.dev, tagged with the plugin as its source", () => {
+  test("opens the playground on qrdx.dev, tagged with the plugin as its source", () => {
     const link = read(plugin.link("https://example.com"));
     expect(link.origin).toBe(ORIGIN);
     expect(link.path).toBe("/playground");
@@ -80,7 +80,7 @@ describe.each(PLUGINS)("$name plugin link", (plugin) => {
     expect(handoffSource("", ORIGIN, link.ref)).toBe(plugin.ref);
   });
 
-  it("carries a web address after the #, as the URL type", () => {
+  test("carries a web address after the #, as the URL type", () => {
     const raw = plugin.link("https://example.com/menu?table=4");
     expect(raw.split("#")[0]).not.toContain("example.com");
     const link = read(raw);
@@ -91,7 +91,7 @@ describe.each(PLUGINS)("$name plugin link", (plugin) => {
     expect(link.hashNames).toEqual(["url"]);
   });
 
-  it("judges every address the way the playground does", () => {
+  test("judges every address the way the playground does", () => {
     for (const address of ADDRESSES) {
       expect(plugin.webAddress(address), address).toBe(parseLinkUrl(address));
       const params = read(plugin.link(address)).params;
@@ -99,7 +99,7 @@ describe.each(PLUGINS)("$name plugin link", (plugin) => {
     }
   });
 
-  it("never passes text, Wi-Fi details or other content", () => {
+  test("never passes text, Wi-Fi details or other content", () => {
     for (const value of ["Meet at 6pm", "WIFI:T:WPA;S:Home;P:hunter2;;"]) {
       const raw = plugin.link(value);
       expect(raw).not.toContain("#");
@@ -108,7 +108,7 @@ describe.each(PLUGINS)("$name plugin link", (plugin) => {
     }
   });
 
-  it("sends nothing the playground would drop", () => {
+  test("sends nothing the playground would drop", () => {
     const link = read(plugin.link("https://example.com"));
     expect(link.queryNames.filter((name) => name !== "ref")).toEqual([]);
   });

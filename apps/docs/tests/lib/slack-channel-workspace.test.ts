@@ -10,7 +10,7 @@
 // (lib/events/notification-settings.ts) are the real ones, on in-memory
 // tables (tests/support/fake-db.ts). Slack itself isn't called.
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, test, vi } from "vitest";
 import { fakeDb } from "../support/fake-db";
 
 const state = vi.hoisted(() => ({
@@ -197,7 +197,7 @@ describe("never a channel outside every workspace", () => {
   });
 });
 
-it("a workspace she isn't a member of is refused before Slack", async () => {
+test("a workspace she isn't a member of is refused before Slack", async () => {
   const reply = await install(`?workspace=${STRANGERS}`);
   expect(reply.headers.get("location")).toBe(
     "http://localhost:3000/settings/integrations/slack?error=unexpected_error",

@@ -3,7 +3,7 @@
 // or a custom spec's label id). Exports never carry them: the default render
 // has none, and every export path drops the prop, so SVG, EPS and PDF bytes
 // are the same with or without it.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import { getQRAsEPS } from "../src/eps";
 import {
   FRAME_LABEL_ATTRIBUTE,
@@ -94,7 +94,7 @@ const COMMUNITY_SPEC: FrameSpec = {
   ],
 };
 
-it("the community sample is a valid spec", () => {
+test("the community sample is a valid spec", () => {
   expect(getFrameSpecIssues(COMMUNITY_SPEC)).toEqual([]);
 });
 

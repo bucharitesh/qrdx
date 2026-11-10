@@ -3,10 +3,10 @@
 # depend on them (turbo --affected; unchanged results come from the turbo
 # cache). CI runs every test on the release PR and on main.
 #
-# Every test, as before:  QRDX_PREPUSH=full git push   (or: pnpm prepush)
+# Every test, as before:  QRDX_PREPUSH=full git push   (or: bun run prepush)
 # Skip once with:         git push --no-verify
 if [ "$QRDX_PREPUSH" = "full" ]; then
-  pnpm prepush
+  bun run prepush
 else
-  pnpm prepush:quick
+  bun run prepush:quick
 fi

@@ -2,7 +2,7 @@
 // public/images/use-cases/<id>-light.svg and <id>-dark.svg: the scenes from
 // scenes.ts with the real code from codes.ts rendered by qrdx.
 //
-// Run from apps/docs: pnpm exec tsx scripts/use-case-art/generate.ts [outDir]
+// Run from apps/docs: bun x tsx scripts/use-case-art/generate.ts [outDir]
 //
 // The light and dark files share one drawing; only the colour variables in
 // their <style> differ (the hero scene's tokens, from kit.ts). They're static

@@ -12,7 +12,7 @@
 // CMYK, bleed (a gradient background continues into it), crop marks, the
 // generic SVG features (objectBoundingBox, gradientTransform, href, focal
 // point, evenodd, hard stops) and the unchanged solid output are covered too.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import qrcodegen from "../src/codegen";
 import { ERROR_LEVEL_MAP } from "../src/constants";
 import { getQRAsEPS, svgToEPS } from "../src/eps";
@@ -349,7 +349,7 @@ describe.each(CASES)("$label on the $target", ({ target, gradient }) => {
   const props: QRProps = { ...BASE, [TARGETS[target]]: gradient };
   const { points, painted, shapes } = samplesFor(target);
 
-  it("samples points where the SVG shows the gradient", async () => {
+  test("samples points where the SVG shows the gradient", async () => {
     const { image } = await reference(props);
     const first = rgbOf(gradient.stops[0]?.color as string);
     // Flattened to the first stop, the export would miss most samples.
@@ -361,7 +361,7 @@ describe.each(CASES)("$label on the $target", ({ target, gradient }) => {
     expect(spread).toBeGreaterThan(20);
   });
 
-  it("PDF shades it like the SVG and decodes", async () => {
+  test("PDF shades it like the SVG and decodes", async () => {
     const buffer = await getQRAsPrintPDFBuffer(props, {
       size: SIZE_MM,
       unit: "mm",
@@ -378,7 +378,7 @@ describe.each(CASES)("$label on the $target", ({ target, gradient }) => {
     expect(decodeQR(rendered.image)).toBe(VALUE);
   });
 
-  it("EPS shades it like the SVG and decodes", async () => {
+  test("EPS shades it like the SVG and decodes", async () => {
     const eps = await getQRAsEPS(props, { sizeMm: SIZE_MM });
     expect(eps).toContain("%%LanguageLevel: 3");
     const shadings = [...epsShadings(eps).values()] as PsDict[];

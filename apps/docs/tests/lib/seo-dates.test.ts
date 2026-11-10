@@ -14,7 +14,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, test } from "vitest";
 import { industries, placements } from "@/lib/seo-content";
 import {
   gitLastModified,
@@ -175,7 +175,7 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
     if (root) rmSync(root, { recursive: true, force: true });
   });
 
-  it("uses every file's own date from a complete history", () => {
+  test("uses every file's own date from a complete history", () => {
     expect(shallowBoundary(repo)?.size).toBe(0);
     const dates = gitLastModified(["old.ts", "mid.ts", "recent.ts"], repo);
     expect(dates.get("old.ts")?.toISOString()).toBe("2026-04-01T00:00:00.000Z");
@@ -185,7 +185,7 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
     );
   });
 
-  it("drops dates a shallow clone can't know instead of using the boundary", () => {
+  test("drops dates a shallow clone can't know instead of using the boundary", () => {
     expect(shallowBoundary(clone)).toEqual(
       new Set([Date.parse("2026-05-01T00:00:00Z")]),
     );
@@ -204,12 +204,12 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
     expect(dates.has("mid.ts")).toBe(false);
   });
 
-  it("trusts no git date outside a repository", () => {
+  test("trusts no git date outside a repository", () => {
     expect(shallowBoundary(root)).toBeNull();
     expect(gitLastModified(["repo/old.ts"], root).size).toBe(0);
   });
 
-  it("leaves the hook's repository alone when GIT_DIR points at it", () => {
+  test("leaves the hook's repository alone when GIT_DIR points at it", () => {
     // beforeAll built the fixtures with GIT_DIR aimed at a decoy repo, as a
     // pre-push hook does: the decoy must have no commits and stay non-bare.
     const decoyGit = (args: string[]) =>

@@ -4,9 +4,6 @@ Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns,
 
 It powers the [QRdx](https://qrdx.dev) QR code generator. Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) · No-code: [image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp)
 
-> [!NOTE]
-> This README documents qrdx 0.0.47, the version in this repository. npm still has 0.0.46, so `npm install qrdx` installs 0.0.46 until 0.0.47 is published. In 0.0.46 the basic code works, but most patterns, frames, Art QR, EPS export and the scan score came later, and it lists React 19, sharp and jspdf as its own dependencies. Until the release is out, use every option in the [playground](https://qrdx.dev/playground), or render images from a URL with the [image API](https://qrdx.dev/docs/developers/image-api). Run `npm view qrdx version` to see what npm installs, and see [CHANGELOG.md](./CHANGELOG.md) for what 0.0.47 adds.
-
 ## Installation
 
 ```bash

@@ -14,8 +14,8 @@
 //           tools, sends browsers to /mcp and answers CORS preflights
 //   legal   the legal pages render, unknown paths are 404s (never 500s)
 //
-//   pnpm --filter docs test:e2e:site           (E2E_BASE_URL defaults to :3000)
-//   E2E_SUITES=image,mcp pnpm --filter docs test:e2e:site
+//   bun run --filter docs test:e2e:site           (E2E_BASE_URL defaults to :3000)
+//   E2E_SUITES=image,mcp bun run --filter docs test:e2e:site
 //
 // Skips (exit 0) when no server is running or Chrome isn't installed. It
 // never signs in and never writes data. The dev server compiles each route on

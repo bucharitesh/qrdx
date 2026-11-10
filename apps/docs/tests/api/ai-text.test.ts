@@ -57,15 +57,15 @@ const enhance = await import("@/app/api/enhance-prompt/route");
 const theme = await import("@/app/api/generate-qr-theme/route");
 
 const gateway = installFakeGateway();
-afterAll(() => {
-  vi.unstubAllGlobals();
-});
 
 beforeEach(() => {
   gateway.reset();
   usage.reserved.length = 0;
   usage.finalized.length = 0;
   usage.released.length = 0;
+});
+afterAll(() => {
+  vi.unstubAllGlobals();
 });
 
 const USAGE = {

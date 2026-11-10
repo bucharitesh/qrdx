@@ -18,7 +18,7 @@ for (const key of Object.keys(process.env)) {
 const qrdx = path.resolve(root, "../../packages/qrdx");
 
 // Vitest suites live in tests/ (unit) and e2e/ (browser, run separately with
-// `pnpm test:e2e`). The older node:test files next to the code run through
+// `bun run test:e2e`). The older node:test files next to the code run through
 // scripts/run-node-tests.mjs.
 const config: ViteUserConfig = {
   esbuild: { jsx: "automatic", jsxImportSource: "react" },
@@ -31,7 +31,7 @@ const config: ViteUserConfig = {
       // Server-only modules are imported directly by these tests.
       { find: /^server-only$/, replacement: `${root}/tests/support/empty.ts` },
       // The design system imports itself by package name (its tsconfig path),
-      // which pnpm doesn't link inside the package.
+      // which Bun doesn't link inside the package.
       {
         find: /^@repo\/design-system\//,
         replacement: `${path.resolve(root, "../../packages/design-system")}/`,

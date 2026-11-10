@@ -76,7 +76,7 @@ const cspHeaders = cspEnabled
 
 let nextConfig: NextConfig = {
   ...config,
-  // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone pnpm build
+  // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone bun run build
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
   // `next build` type-checks the app without its tests. Some tests import
@@ -180,7 +180,7 @@ let nextConfig: NextConfig = {
         has: [{ type: "host" as const, value: host }],
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
       })),
-      // The OpenAPI document (pnpm openapi:generate): readable by API tools
+      // The OpenAPI document (bun run openapi:generate): readable by API tools
       // on any origin (Swagger Editor, Postman on the web, AI agents).
       {
         source: "/openapi.json",
