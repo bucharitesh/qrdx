@@ -7,7 +7,8 @@
 //                                         picker's frames a group at a time
 //   src/frames/catalogue/index.ts         id, name, collection, tags and a
 //                                         spec hash per frame, no specs
-//   src/frames/catalogue/counts.ts        counts and the tag list
+//   src/frames/catalogue/counts.ts        counts
+//   src/frames/catalogue/tags.ts          every tag, sorted
 // Run through write.mjs.
 import { readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -149,7 +150,11 @@ export function writeModules({ check = false } = {}) {
   const tags = [...new Set(frames.flatMap((frame) => frame.tags))].sort();
   out.set(
     "catalogue/counts.ts",
-    `${HEADER}\n/** How many official frames there are. */\nexport const OFFICIAL_FRAME_COUNT = ${frames.length};\n\n/** Official frames per collection. */\nexport const OFFICIAL_FRAME_COUNTS = ${JSON.stringify(counts, null, 2)} as const;\n\n/** Every tag an official frame carries, sorted. */\nexport const OFFICIAL_FRAME_TAGS: readonly string[] = ${JSON.stringify(tags, null, 2)};\n`
+    `${HEADER}\n/** How many official frames there are. */\nexport const OFFICIAL_FRAME_COUNT = ${frames.length};\n\n/** Official frames per collection. */\nexport const OFFICIAL_FRAME_COUNTS = ${JSON.stringify(counts, null, 2)} as const;\n`
+  );
+  out.set(
+    "catalogue/tags.ts",
+    `${HEADER}\n/** Every tag an official frame carries, sorted. */\nexport const OFFICIAL_FRAME_TAGS: readonly string[] = ${JSON.stringify(tags, null, 2)};\n`
   );
 
   const stale = [];
