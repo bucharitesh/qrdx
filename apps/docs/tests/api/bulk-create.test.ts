@@ -21,6 +21,9 @@ const state = vi.hoisted(() => ({
   /** INSERTs into qr_code */
   inserts: 0,
   blocked: new Set<string>(),
+  /** Destinations Web Risk "didn't answer" for */
+  unchecked: new Set<string>(),
+  rechecked: [] as string[][],
 }));
 
 vi.mock(
@@ -108,6 +111,11 @@ vi.mock("@/lib/safety/destinations", async () => {
             ]
           : [],
       );
+      const marked = rows.map((row) =>
+        state.unchecked.has(row.destinationUrl)
+          ? { ...row, webRiskRecheckAt: new Date() }
+          : row,
+      );
       if (details.length > 0) {
         throw new HttpError(
           422,
@@ -120,11 +128,16 @@ vi.mock("@/lib/safety/destinations", async () => {
           },
         );
       }
-      return rows;
+      return marked;
     },
     screenUrlChange: async () => false,
   };
 });
+vi.mock("@/lib/safety/recheck", () => ({
+  recheckAfterResponse: (ids: string[]) => {
+    if (ids.length > 0) state.rechecked.push(ids);
+  },
+}));
 vi.mock("@/lib/events/emit", () => ({
   emitCodesCreated: () => {},
   emitCodeUpdated: () => {},
@@ -190,6 +203,8 @@ beforeEach(() => {
   state.slugQueue = [];
   state.inserts = 0;
   state.blocked = new Set();
+  state.unchecked = new Set();
+  state.rechecked = [];
 });
 
 afterEach(() => {
@@ -413,6 +428,30 @@ describe("POST /v1/codes batches", () => {
     const error = (await response.json()) as ErrorJson;
     expect(error.data?.details.map((detail) => detail.index)).toEqual([3]);
     expect(codes()).toHaveLength(0);
+  });
+});
+
+describe("Web Risk re-checks", () => {
+  it("marks the codes Web Risk didn't answer for and looks them up after the response", async () => {
+    const body = rows(4);
+    state.unchecked = new Set([
+      body[1]?.destinationUrl as string,
+      body[3]?.destinationUrl as string,
+    ]);
+    const response = await create(body);
+    expect(response.status).toBe(201);
+    const { data } = (await response.json()) as { data: CodeJson[] };
+    const pending = codes().filter((row) => row.webRiskRecheckAt);
+    expect(pending.map((row) => row.destinationUrl).sort()).toEqual(
+      [body[1]?.destinationUrl, body[3]?.destinationUrl].sort(),
+    );
+    expect(state.rechecked).toEqual([[data[1]?.id, data[3]?.id]]);
+  });
+
+  it("has nothing to re-check when every lookup answered", async () => {
+    await create(rows(3));
+    expect(state.rechecked).toEqual([]);
+    expect(codes().some((row) => row.webRiskRecheckAt)).toBe(false);
   });
 });
 

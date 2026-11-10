@@ -50,6 +50,7 @@ import { PLAN_NAMES } from "@/lib/pricing";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
 import { screenNewCodes, screenUrlChange } from "@/lib/safety/destinations";
+import { recheckAfterResponse } from "@/lib/safety/recheck";
 import { asksPreciseLocation } from "@/lib/scan-location/server";
 import {
   type ActiveScope,
@@ -87,6 +88,12 @@ import { formatPlanList } from "./code-options";
 
 export const MAX_DESTINATION_LENGTH = 2048;
 export const MAX_TITLE_LENGTH = 100;
+/**
+ * How long the re-check of skipped Web Risk lookups runs after a create
+ * response (the request's function may run 60 s; screening stops at 20 s).
+ */
+const RECHECK_BUDGET_MS = 25_000;
+
 /** Codes in one create request (lib/bulk-limits.ts). */
 export const MAX_BULK_CREATE = MAX_CODES_PER_REQUEST;
 // A custom logo is stored inline as a data URL (≤ 1MB file ≈ 1.4MB of text).
@@ -1114,6 +1121,12 @@ export async function createCodesBatch(
   for (const row of [...raced, ...inserted]) byId.set(row.id, row);
   const views = await toCodeViews(ids.map((id) => byId.get(id) as QrCodeRow));
   if (inserted.length > 0) {
+    // Destinations Web Risk didn't answer for: looked up after the response
+    // (lib/safety/recheck.ts), and switched off if flagged.
+    recheckAfterResponse(
+      inserted.flatMap((row) => (row.webRiskRecheckAt ? [row.id] : [])),
+      RECHECK_BUDGET_MS,
+    );
     const insertedIds = new Set(inserted.map((row) => row.id));
     const created = views.filter((view) => insertedIds.has(view.id));
     // code.created webhooks + alerts, after the response (never throws).

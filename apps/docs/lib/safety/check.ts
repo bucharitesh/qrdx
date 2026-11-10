@@ -25,6 +25,12 @@ export interface UrlSafety {
   signals: UrlSignal[];
   threats: WebRiskThreat[];
   webRisk: WebRiskResult["status"];
+  /**
+   * Set when the lookup was skipped or failed ("error": a batch out of time,
+   * Web Risk unreachable): the destination is looked up again later
+   * (lib/safety/recheck.ts).
+   */
+  webRiskSkipped?: boolean;
   displayHostname: string | null;
 }
 
@@ -93,6 +99,8 @@ export async function checkUrlSafety(
     verdict: analysis.severity === "warn" ? "review" : "ok",
     threats: [],
     webRisk: webRisk.status,
+    ...(webRisk.status === "unknown" &&
+      webRisk.reason === "error" && { webRiskSkipped: true }),
   };
 }
 

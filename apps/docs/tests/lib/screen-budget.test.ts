@@ -66,6 +66,7 @@ describe("screenNewCodes for batches", () => {
     const elapsed = performance.now() - started;
     expect(screened).toHaveLength(1000);
     expect(state.lookups).toBe(1000);
+    expect(screened.some((row) => row.webRiskRecheckAt)).toBe(false);
     expect(state.maxInFlight).toBe(16);
     // 1000 / 16 rounds of LOOKUP_MS each, plus slack.
     expect(elapsed).toBeLessThan((1000 / 16) * LOOKUP_MS * 2.5);
@@ -80,6 +81,10 @@ describe("screenNewCodes for batches", () => {
     expect(screened).toHaveLength(1000);
     expect(state.lookups).toBeGreaterThan(0);
     expect(state.lookups).toBeLessThan(200);
+    // Rows Web Risk didn't answer for are marked for a later lookup.
+    const marked = screened.filter((row) => row.webRiskRecheckAt);
+    expect(marked.length).toBe(1000 - state.lookups);
+    expect(marked[0]?.webRiskRecheckAt).toBeInstanceOf(Date);
     expect(elapsed).toBeLessThan(600);
     expect(console.warn).toHaveBeenCalledWith(
       expect.stringContaining("safety.web_risk_budget_spent"),

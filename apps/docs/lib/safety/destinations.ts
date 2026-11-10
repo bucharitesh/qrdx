@@ -70,7 +70,7 @@ export async function screenNewCodes<
     /** The codes go to a paid workspace (a higher new-account cap) */
     paid?: boolean;
   } = {},
-): Promise<(T & { isActive?: boolean })[]> {
+): Promise<(T & { isActive?: boolean; webRiskRecheckAt?: Date })[]> {
   if (rows.length === 0) return rows;
   await enforceNewAccountVelocity(scope.userId, rows.length, { paid });
 
@@ -122,11 +122,19 @@ export async function screenNewCodes<
       { details },
     );
   }
-  if (!checks.some((safety) => safety.verdict === "review")) return rows;
-  if (!(await getAccountStanding(scope.userId)).isNew) return rows;
+  // Destinations Web Risk didn't answer for (out of time, unreachable) are
+  // marked for a later lookup (lib/safety/recheck.ts).
+  const now = new Date();
+  const marked = checks.some((safety) => safety.webRiskSkipped)
+    ? rows.map((row, index) =>
+        checks[index]?.webRiskSkipped ? { ...row, webRiskRecheckAt: now } : row,
+      )
+    : rows;
+  if (!checks.some((safety) => safety.verdict === "review")) return marked;
+  if (!(await getAccountStanding(scope.userId)).isNew) return marked;
 
   const holds: HoldRequest[] = [];
-  const screened = rows.map((row, index) => {
+  const screened = marked.map((row, index) => {
     const safety = checks[index] as UrlSafety;
     if (safety.verdict !== "review") return row;
     holds.push({

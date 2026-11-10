@@ -137,7 +137,7 @@ The response then has `"slug": "spring-menu"` and `"shortLink": "https://qrdx.de
 
 ### Many codes in one request
 
-On Pro and Business, send an array of up to {facts.apiBatchCodes} codes. Generated back-halves never repeat within the batch or clash with existing codes. A batch is all or nothing: if any row has a problem (an invalid destination, a taken or reserved `slug`, an unsafe link), nothing is created and the error's `data.details` lists every problem by `index`, the row's place in the array (from 0).
+On Pro and Business, send an array of up to {facts.apiBatchCodes} codes. Generated back-halves never repeat within the batch or clash with existing codes. Links Google Web Risk can't check in time are looked up again shortly after the batch is created, and a code whose link it lists is switched off ([safety checks](/docs/code-controls#safety-checks-on-links)). A batch is all or nothing: if any row has a problem (an invalid destination, a taken or reserved `slug`, an unsafe link), nothing is created and the error's `data.details` lists every problem by `index`, the row's place in the array (from 0).
 
 Send an `Idempotency-Key` header with a value unique to the batch, such as a UUID. If the request times out or the connection drops, send the same request with the same key again: you get back the codes the first try made, with an `Idempotent-Replayed: true` header, and a try that was cut off part way is finished without making any code twice.
 
