@@ -1,11 +1,18 @@
 import "server-only";
 
-import { database as db, qrCode, qrCodeVersion, user } from "@repo/database";
+import {
+  database as db,
+  landingPage,
+  qrCode,
+  qrCodeVersion,
+  user,
+} from "@repo/database";
 import cuid from "cuid";
 import { and, count, desc, eq, inArray, isNull, notInArray } from "drizzle-orm";
 import {
   diffVersions,
   GATED_FIELDS,
+  kindPageId,
   normalizeVersion,
   restorableColumns,
   VERSION_FIELDS,
@@ -19,11 +26,12 @@ import {
 import { codeEvents } from "@/ee/audit-log/code-events";
 import { changedFields } from "@/ee/audit-log/metadata";
 import { recordAuditEvent } from "@/ee/audit-log/record";
+import { contentTypeForDestination } from "@/lib/dynamic-content";
 import { HttpError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { screenUrlChange } from "@/lib/safety/destinations";
 import { type ActiveScope, isInScope } from "@/lib/scope";
-import { SHARED_SLUG_SCOPE } from "@/lib/short-links";
+import { SHARED_SLUG_SCOPE, SHORT_LINK_BASE } from "@/lib/short-links";
 
 /** Older versions are pruned beyond this many per code. */
 export const MAX_VERSIONS_PER_CODE = 100;
@@ -73,6 +81,42 @@ export async function snapshotCodeVersion(
 
 const notFound = (what = "QR code") =>
   new HttpError(404, "NOT_FOUND", `${what} not found`);
+
+/**
+ * Names of the scope's hosted pages among `ids` (a version's type shows the
+ * page it opened). Pages deleted since, or of another workspace, are left
+ * out. Queried here: app/dashboard/pages/_lib imports the codes service,
+ * which imports this file.
+ */
+async function scopedPageNames(
+  scope: ActiveScope,
+  ids: string[],
+  { withType = false }: { withType?: boolean } = {},
+): Promise<Map<string, string>> {
+  const unique = [...new Set(ids)];
+  if (unique.length === 0) return new Map();
+  const rows = await db
+    .select({
+      id: landingPage.id,
+      title: landingPage.title,
+      type: landingPage.type,
+      userId: landingPage.userId,
+      organizationId: landingPage.organizationId,
+    })
+    .from(landingPage)
+    .where(inArray(landingPage.id, unique));
+  // Pages can share a name: the history adds the page type ("Menu").
+  const templates = withType ? await import("@/lib/landing/templates") : null;
+  return new Map(
+    rows
+      .filter((row) => isInScope(scope, row))
+      .map((row) => {
+        const name = row.title?.trim() || "Untitled page";
+        const label = templates?.getTemplate(row.type)?.label;
+        return [row.id, label ? `${name}, ${label}` : name];
+      }),
+  );
+}
 
 async function findLiveCode(scope: ActiveScope, codeId: string) {
   const [row] = await db
@@ -127,7 +171,7 @@ export async function listCodeVersions(
   const actorIds = [
     ...new Set(versions.flatMap((version) => version.createdBy ?? [])),
   ];
-  const [domains, actors] = await Promise.all([
+  const [domains, actors, pages] = await Promise.all([
     getDomainRefs(states.map((state) => state.domainId as string | null)),
     actorIds.length > 0
       ? db
@@ -135,6 +179,11 @@ export async function listCodeVersions(
           .from(user)
           .where(inArray(user.id, actorIds))
       : Promise.resolve([]),
+    scopedPageNames(
+      scope,
+      states.flatMap((state) => kindPageId(state.kind) ?? []),
+      { withType: true },
+    ),
   ]);
   const actorById = new Map(actors.map((actor) => [actor.id, actor]));
   const domainNames = Object.fromEntries(
@@ -147,7 +196,10 @@ export async function listCodeVersions(
     const changes = diffVersions(
       states[index + 1] as (typeof states)[number],
       states[index] as (typeof states)[number],
-      { domainName: (id) => domainNames[id] ?? null },
+      {
+        domainName: (id) => domainNames[id] ?? null,
+        pageName: (id) => pages.get(id) ?? null,
+      },
     );
     if (changes.length === 0) return;
     const restores = diffVersions(
@@ -225,6 +277,9 @@ export async function restoreCodeVersion(
   const values: Partial<typeof qrCode.$inferInsert> = {};
   const restored: VersionChange[] = [];
   const skipped: string[] = [];
+  // A type that can't be put back keeps the destination that goes with it.
+  let typeSkipped = false;
+  const targetPageId = kindPageId(target.kind as string | null);
 
   for (const change of changes) {
     const field = change.field;
@@ -232,7 +287,45 @@ export async function restoreCodeVersion(
       skipped.push(VERSION_FIELDS[field].label);
       continue;
     }
-    if (field === "destinationUrl") {
+    if (field === "kind") {
+      // Back to a hosted page that still exists here, or to a website link
+      // with a usable destination (checked and screened below).
+      const toPage = target.kind !== "redirect";
+      const usable = toPage
+        ? Boolean(
+            targetPageId &&
+              (await scopedPageNames(scope, [targetPageId])).has(targetPageId),
+          )
+        : Boolean(target.destinationUrl && isHttpUrl(target.destinationUrl));
+      if (!usable) {
+        typeSkipped = true;
+        skipped.push(change.label);
+        continue;
+      }
+      Object.assign(
+        values,
+        toPage
+          ? {
+              kind: "page",
+              pageId: targetPageId,
+              contentType: "url",
+              // A hosted page's destination is its own address.
+              destinationUrl: `${SHORT_LINK_BASE}/p/${encodeURIComponent(current.slug)}`,
+            }
+          : {
+              kind: "redirect",
+              pageId: null,
+              contentType: contentTypeForDestination(
+                target.destinationUrl as string,
+              ),
+            },
+      );
+    } else if (field === "destinationUrl" && values.kind === "page") {
+      // Set with the type above.
+    } else if (field === "destinationUrl" && typeSkipped) {
+      skipped.push(change.label);
+      continue;
+    } else if (field === "destinationUrl") {
       if (!(target.destinationUrl && isHttpUrl(target.destinationUrl))) {
         skipped.push(change.label);
         continue;
