@@ -28,6 +28,7 @@ import {
 import { getDefaultThemeStyle } from "@/app/dashboard/themes/_lib/queries";
 import { codeEvents, codeUpdateEvents } from "@/ee/audit-log/code-events";
 import { recordAuditEvent } from "@/ee/audit-log/record";
+import { formatCount, MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import {
   contentTypeForDestination,
@@ -49,6 +50,7 @@ import { PLAN_NAMES } from "@/lib/pricing";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
 import { screenNewCodes, screenUrlChange } from "@/lib/safety/destinations";
+import { recheckAfterResponse } from "@/lib/safety/recheck";
 import { asksPreciseLocation } from "@/lib/scan-location/server";
 import {
   type ActiveScope,
@@ -74,11 +76,26 @@ import {
 } from "@/lib/slug-claims";
 import { UnauthorizedError } from "@/types/errors";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
+import {
+  batchMessage,
+  chunkRows,
+  INSERT_CHUNK,
+  idempotentCodeId,
+  type RowProblem,
+  uniqueSlugs,
+} from "./bulk";
 import { formatPlanList } from "./code-options";
 
 export const MAX_DESTINATION_LENGTH = 2048;
 export const MAX_TITLE_LENGTH = 100;
-export const MAX_BULK_CREATE = 100;
+/**
+ * How long the re-check of skipped Web Risk lookups runs after a create
+ * response (the request's function may run 60 s; screening stops at 20 s).
+ */
+const RECHECK_BUDGET_MS = 25_000;
+
+/** Codes in one create request (lib/bulk-limits.ts). */
+export const MAX_BULK_CREATE = MAX_CODES_PER_REQUEST;
 // A custom logo is stored inline as a data URL (≤ 1MB file ≈ 1.4MB of text).
 const MAX_STYLE_LENGTH = 1_500_000;
 
@@ -707,60 +724,195 @@ export async function getCode(
 
 // ─── Mutations ───────────────────────────────────────────────────────────────
 
-/**
- * Inserts rows; a generated slug that collides (≈1 in 3.5e12 per pair) is
- * re-rolled, a chosen one (`chosen` ids) fails the whole request with
- * SLUG_TAKEN. No conflict target: every unique index counts (shared and
- * per-domain namespaces).
- */
-async function insertWithUniqueSlugs(
-  rows: (typeof qrCode.$inferInsert)[],
-  chosen: ReadonlySet<string> = new Set(),
-): Promise<QrCodeRow[]> {
-  const inserted: QrCodeRow[] = [];
-  let pending = rows;
-
-  for (let attempt = 0; attempt < 5 && pending.length > 0; attempt++) {
-    const result = await db
-      .insert(qrCode)
-      .values(pending)
-      .onConflictDoNothing()
-      .returning();
-    inserted.push(...result);
-    const done = new Set(result.map((row) => row.id));
-    pending = pending.filter((row) => !done.has(row.id as string));
-    const taken = pending.find((row) => chosen.has(row.id as string));
-    if (taken) {
-      if (inserted.length > 0) await deleteRows(inserted.map((row) => row.id));
-      throw slugTaken(taken.slug);
-    }
-    pending = pending.map((row) => ({ ...row, slug: generateSlug() }));
-  }
-
-  if (pending.length > 0) {
-    if (inserted.length > 0) {
-      await deleteRows(inserted.map((row) => row.id));
-    }
-    throw new HttpError(503, "SLUG_UNAVAILABLE", "Please try again.");
-  }
-  return inserted;
-}
+type InsertRow = typeof qrCode.$inferInsert & { id: string; slug: string };
 
 async function deleteRows(ids: string[]) {
-  await db.delete(qrCode).where(inArray(qrCode.id, ids));
+  for (const part of chunkRows(ids, { maxRows: 500 })) {
+    await db.delete(qrCode).where(inArray(qrCode.id, part));
+  }
+}
+
+/** Rows among `ids` that exist already (an Idempotency-Key retry). */
+async function findRowsById(ids: string[]): Promise<Map<string, QrCodeRow>> {
+  const found = new Map<string, QrCodeRow>();
+  for (const part of chunkRows(ids, { maxRows: 500 })) {
+    const rows = await db.select().from(qrCode).where(inArray(qrCode.id, part));
+    for (const row of rows) found.set(row.id, row);
+  }
+  return found;
+}
+
+/** A batch problem by request index; one problem reads as itself. */
+function rowsError(
+  status: number,
+  code: string,
+  problems: RowProblem[],
+  total: number,
+): HttpError {
+  return new HttpError(
+    status,
+    code,
+    batchMessage(problems, total),
+    undefined,
+    undefined,
+    total > 1 ? { details: problems } : undefined,
+  );
+}
+
+/** Which of `slugs` are taken where generated slugs live (and on `domainIds`). */
+async function takenGeneratedSlugs(
+  slugs: string[],
+  domainIds: string[],
+): Promise<Set<string>> {
+  const sets = await Promise.all([
+    findTakenSlugs(slugs, null),
+    ...domainIds.map((domainId) => findTakenSlugs(slugs, domainId)),
+  ]);
+  return new Set(sets.flatMap((set) => [...set]));
+}
+
+/** Rough size of a row in an INSERT: the design (a logo) dominates. */
+const rowBytes = (row: InsertRow) =>
+  (row.style ? JSON.stringify(row.style).length : 4) +
+  row.destinationUrl.length +
+  (row.title?.length ?? 0) +
+  300;
+
+/**
+ * Inserts rows in chunks (INSERT_CHUNK). A generated slug taken in the
+ * meantime is rerolled; a chosen one (`chosen` ids) fails the whole request
+ * with SLUG_TAKEN. A row that exists by the time it's inserted was made by a
+ * concurrent retry under the same Idempotency-Key (`idempotent`) and counts
+ * as made. No conflict target: every unique index counts (shared and
+ * per-domain namespaces, and the id). On any failure the rows inserted so far
+ * are deleted again, so a batch is all or nothing.
+ */
+async function insertBatch(
+  rows: InsertRow[],
+  {
+    chosen,
+    indexOf,
+    total,
+    idempotent,
+  }: {
+    chosen: ReadonlySet<string>;
+    indexOf: (id: string) => number;
+    total: number;
+    idempotent: boolean;
+  },
+): Promise<{ inserted: QrCodeRow[]; raced: QrCodeRow[] }> {
+  const inserted: QrCodeRow[] = [];
+  const raced: QrCodeRow[] = [];
+  const domainIds = [
+    ...new Set(rows.flatMap((row) => (row.domainId ? [row.domainId] : []))),
+  ];
+  try {
+    for (const part of chunkRows(rows, { ...INSERT_CHUNK, sizeOf: rowBytes })) {
+      let pending = part;
+      for (let attempt = 0; pending.length > 0; attempt++) {
+        if (attempt === 5) {
+          throw new HttpError(503, "SLUG_UNAVAILABLE", "Please try again.");
+        }
+        const result = await db
+          .insert(qrCode)
+          .values(pending)
+          .onConflictDoNothing()
+          .returning();
+        inserted.push(...result);
+        const done = new Set(result.map((row) => row.id));
+        pending = pending.filter((row) => !done.has(row.id));
+        if (pending.length === 0) break;
+
+        if (idempotent) {
+          const existing = await findRowsById(pending.map((row) => row.id));
+          raced.push(...existing.values());
+          pending = pending.filter((row) => !existing.has(row.id));
+          if (pending.length === 0) break;
+        }
+        const taken = pending.filter((row) => chosen.has(row.id));
+        if (taken.length > 0) {
+          throw rowsError(
+            409,
+            "SLUG_TAKEN",
+            taken.map((row) => ({
+              index: indexOf(row.id),
+              path: `${indexOf(row.id)}.slug`,
+              message: slugTaken(row.slug).message,
+            })),
+            total,
+          );
+        }
+        const fresh = await uniqueSlugs(pending.length, (candidates) =>
+          takenGeneratedSlugs(candidates, domainIds),
+        );
+        pending = pending.map((row, index) => ({
+          ...row,
+          slug: fresh[index] as string,
+        }));
+      }
+    }
+  } catch (error) {
+    if (inserted.length > 0) {
+      await deleteRows(inserted.map((row) => row.id)).catch((cleanup) =>
+        console.error(
+          JSON.stringify({
+            event: "codes.batch_cleanup_failed",
+            rows: inserted.length,
+            error: cleanup instanceof Error ? cleanup.message : String(cleanup),
+          }),
+        ),
+      );
+    }
+    throw error;
+  }
+  return { inserted, raced };
+}
+
+export interface CreateCodesOptions {
+  /**
+   * The request's Idempotency-Key: rows get ids derived from it
+   * (bulk.ts idempotentCodeId), so a retry returns what the first request
+   * made, and finishes a request that was cut off part way.
+   */
+  idempotencyKey?: string | null;
+  /**
+   * Stop waiting for Web Risk lookups after this long (a large batch); the
+   * rest get the offline checks only (lib/safety/destinations.ts).
+   */
+  screenBudgetMs?: number;
+}
+
+export interface CreatedCodes {
+  /** Every requested code, in the request's order */
+  codes: QrCodeView[];
+  /** How many of them this call created (the rest a previous retry made) */
+  created: number;
 }
 
 /**
- * Creates codes in the scope. The plan limit is checked before the insert and
- * again after it, so concurrent requests can never exceed it.
+ * Creates codes in the scope: one, or a batch of up to MAX_BULK_CREATE (plans
+ * with bulkApi). A batch is all or nothing: problems with any row (a taken
+ * or reserved back-half, an unsafe destination) fail the request and are
+ * listed by index. The plan limit is checked before the insert and again
+ * after it, so concurrent requests can never exceed it.
  */
 export async function createCodes(
   scope: ActiveScope,
   // pageId: a hosted-page code (kind 'page'), created by actions/landing-pages
   inputs: (CreateCodeInput & { pageId?: string })[],
+  options: CreateCodesOptions = {},
 ): Promise<QrCodeView[]> {
+  return (await createCodesBatch(scope, inputs, options)).codes;
+}
+
+export async function createCodesBatch(
+  scope: ActiveScope,
+  inputs: (CreateCodeInput & { pageId?: string })[],
+  { idempotencyKey = null, screenBudgetMs }: CreateCodesOptions = {},
+): Promise<CreatedCodes> {
   assertCan(scope, "content.write");
-  if (inputs.length === 0) return [];
+  if (inputs.length === 0) return { codes: [], created: 0 };
+  const total = inputs.length;
 
   const plan = await getPlanForScope(scope);
   const limits = getPlanLimits(plan);
@@ -779,94 +931,209 @@ export async function createCodes(
     throw new HttpError(
       400,
       "TOO_MANY_CODES",
-      `Create up to ${MAX_BULK_CREATE} codes per request.`,
+      `Create up to ${formatCount(MAX_BULK_CREATE)} codes per request.`,
     );
   }
 
-  const capped = Number.isFinite(limits.dynamicCodes);
-  if (
-    capped &&
-    (await countUnarchived(scope)) + inputs.length > limits.dynamicCodes
-  ) {
-    throw limitReached(limits.dynamicCodes);
+  // Under an Idempotency-Key a row's id is derived from the request, so the
+  // rows a previous try made are found by id (and never made twice).
+  const workspace = scope.organizationId ?? `user:${scope.userId}`;
+  const ids = inputs.map((input, index) =>
+    idempotencyKey
+      ? idempotentCodeId(
+          workspace,
+          idempotencyKey,
+          index,
+          JSON.stringify([
+            input.destinationUrl,
+            input.title ?? null,
+            input.slug ?? null,
+            input.domainId ?? null,
+            input.pageId ?? null,
+            input.style ?? null,
+          ]),
+        )
+      : cuid(),
+  );
+  const indexById = new Map(ids.map((id, index) => [id, index]));
+  const indexOf = (id: string) => indexById.get(id) ?? -1;
+  const existing: Map<string, QrCodeRow> = idempotencyKey
+    ? await findRowsById(ids)
+    : new Map();
+  for (const row of existing.values()) {
+    // A derived id of another workspace: never expected (sha256).
+    if (!isInScope(scope, row)) throw new Error("Code id collision");
   }
-  await assertBindableDomains(
-    scope,
-    inputs.flatMap((input) => (input.domainId ? [input.domainId] : [])),
+  const todo = inputs.flatMap((input, index) =>
+    existing.has(ids[index] as string) ? [] : [{ input, index }],
   );
 
-  // Chosen back-halves: Pro, allowed where the code lives, once per namespace.
-  const chosenKeys = new Set<string>();
-  for (const input of inputs) {
-    if (!input.slug) continue;
-    if (!limits.customSlugs) throw slugPlanRequired();
-    assertSlugAllowed(input.slug, input.domainId ?? null);
-    const key = `${scopeForDomain(input.domainId ?? null)}/${input.slug}`;
-    if (chosenKeys.has(key)) {
-      throw new HttpError(
-        400,
-        "INVALID_SLUG",
-        `${input.slug} is in the request more than once.`,
+  let inserted: QrCodeRow[] = [];
+  let raced: QrCodeRow[] = [];
+  if (todo.length > 0) {
+    const capped = Number.isFinite(limits.dynamicCodes);
+    if (capped) {
+      const used = await countUnarchived(scope);
+      if (used + todo.length > limits.dynamicCodes) {
+        throw todo.length > 1
+          ? new HttpError(
+              402,
+              "LIMIT_REACHED",
+              `Your plan includes ${limits.dynamicCodes} active dynamic QR codes and has room for ${Math.max(0, limits.dynamicCodes - used)} more, so these ${todo.length} weren't created. Archive codes or upgrade for unlimited codes.`,
+            )
+          : limitReached(limits.dynamicCodes);
+      }
+    }
+    await assertBindableDomains(
+      scope,
+      todo.flatMap(({ input }) => (input.domainId ? [input.domainId] : [])),
+    );
+
+    // Chosen back-halves: Pro, allowed where the code lives, once per
+    // namespace, and free. Every problem is listed, by index.
+    const problems: RowProblem[] = [];
+    const chosenKeys = new Set<string>();
+    const chosenByDomain = new Map<
+      string | null,
+      { slug: string; index: number }[]
+    >();
+    for (const { input, index } of todo) {
+      if (!input.slug) continue;
+      if (!limits.customSlugs) throw slugPlanRequired();
+      const domainId = input.domainId ?? null;
+      const problem = slugProblem(input.slug, {
+        onCustomDomain: Boolean(domainId),
+      });
+      const key = `${scopeForDomain(domainId)}/${input.slug}`;
+      if (problem) {
+        problems.push({
+          index,
+          path: `${index}.slug`,
+          message: `${input.slug}: ${SLUG_PROBLEM_MESSAGES[problem]}`,
+        });
+      } else if (chosenKeys.has(key)) {
+        problems.push({
+          index,
+          path: `${index}.slug`,
+          message: `${input.slug} is in the request more than once.`,
+        });
+      } else {
+        chosenKeys.add(key);
+        const list = chosenByDomain.get(domainId) ?? [];
+        list.push({ slug: input.slug, index });
+        chosenByDomain.set(domainId, list);
+      }
+    }
+    if (problems.length > 0) {
+      throw rowsError(400, "INVALID_SLUG", problems, total);
+    }
+    for (const [domainId, wanted] of chosenByDomain) {
+      const taken = await findTakenSlugs(
+        wanted.map((item) => item.slug),
+        domainId,
       );
+      for (const item of wanted) {
+        if (taken.has(item.slug)) {
+          problems.push({
+            index: item.index,
+            path: `${item.index}.slug`,
+            message: slugTaken(item.slug).message,
+          });
+        }
+      }
     }
-    chosenKeys.add(key);
-  }
-
-  // Codes created without a design start from the scope's default theme.
-  const defaultStyle = inputs.some((input) => !input.style)
-    ? (styleSchema.safeParse(await getDefaultThemeStyle(scope)).data ?? null)
-    : null;
-  const now = new Date();
-  const chosen = new Set<string>();
-  const rows = inputs.map((input) => {
-    const id = cuid();
-    if (input.slug) chosen.add(id);
-    return {
-      id,
-      userId: scope.userId,
-      organizationId: scope.organizationId,
-      slug: input.slug || generateSlug(),
-      // Generated slugs always live in the shared namespace.
-      slugScope: input.slug
-        ? scopeForDomain(input.domainId ?? null)
-        : SHARED_SLUG_SCOPE,
-      destinationUrl: input.destinationUrl,
-      contentType: contentTypeForDestination(input.destinationUrl),
-      title: input.title ?? null,
-      style: input.style ?? defaultStyle,
-      domainId: input.domainId ?? null,
-      ...(input.pageId && { kind: "page" as const, pageId: input.pageId }),
-      createdAt: now,
-      updatedAt: now,
-    };
-  });
-  const inserted = await insertWithUniqueSlugs(
-    await screenNewCodes(scope, rows),
-    chosen,
-  );
-
-  if (capped) {
-    const used = await countUnarchived(scope);
-    if (used > limits.dynamicCodes) {
-      await deleteRows(inserted.map((row) => row.id));
-      throw limitReached(limits.dynamicCodes);
+    if (problems.length > 0) {
+      problems.sort((a, b) => a.index - b.index);
+      throw rowsError(409, "SLUG_TAKEN", problems, total);
     }
-    // Owners hear about it at 90% and 100% (after the response).
-    noteLimitUsage(scope, "dynamicCodes", {
-      used,
-      limit: limits.dynamicCodes,
+
+    // Generated slugs: distinct within the batch and free where they live.
+    const generatedCount = todo.filter(({ input }) => !input.slug).length;
+    const domainIds = [
+      ...new Set(
+        todo.flatMap(({ input }) => (input.domainId ? [input.domainId] : [])),
+      ),
+    ];
+    const generated =
+      generatedCount > 0
+        ? await uniqueSlugs(generatedCount, (candidates) =>
+            takenGeneratedSlugs(candidates, domainIds),
+          )
+        : [];
+
+    // Codes created without a design start from the scope's default theme.
+    const defaultStyle = todo.some(({ input }) => !input.style)
+      ? (styleSchema.safeParse(await getDefaultThemeStyle(scope)).data ?? null)
+      : null;
+    const now = new Date();
+    const chosen = new Set<string>();
+    let nextGenerated = 0;
+    const rows: InsertRow[] = todo.map(({ input, index }) => {
+      const id = ids[index] as string;
+      if (input.slug) chosen.add(id);
+      return {
+        id,
+        userId: scope.userId,
+        organizationId: scope.organizationId,
+        slug: input.slug || (generated[nextGenerated++] as string),
+        // Generated slugs always live in the shared namespace.
+        slugScope: input.slug
+          ? scopeForDomain(input.domainId ?? null)
+          : SHARED_SLUG_SCOPE,
+        destinationUrl: input.destinationUrl,
+        contentType: contentTypeForDestination(input.destinationUrl),
+        title: input.title ?? null,
+        style: input.style ?? defaultStyle,
+        domainId: input.domainId ?? null,
+        ...(input.pageId && { kind: "page" as const, pageId: input.pageId }),
+        createdAt: now,
+        updatedAt: now,
+      };
     });
+    const screened = await screenNewCodes(scope, rows, {
+      budgetMs: screenBudgetMs,
+      indexOf: (position) => todo[position]?.index ?? position,
+      paid: plan !== "free",
+    });
+    ({ inserted, raced } = await insertBatch(screened as InsertRow[], {
+      chosen,
+      indexOf,
+      total,
+      idempotent: Boolean(idempotencyKey),
+    }));
+
+    if (capped && inserted.length > 0) {
+      const used = await countUnarchived(scope);
+      if (used > limits.dynamicCodes) {
+        await deleteRows(inserted.map((row) => row.id));
+        throw limitReached(limits.dynamicCodes);
+      }
+      // Owners hear about it at 90% and 100% (after the response).
+      noteLimitUsage(scope, "dynamicCodes", {
+        used,
+        limit: limits.dynamicCodes,
+      });
+    }
   }
 
   // Keep the caller's order (returning() order is not guaranteed).
-  const byId = new Map(inserted.map((row) => [row.id, row]));
-  const views = await toCodeViews(
-    rows.map((row) => byId.get(row.id) as QrCodeRow),
-  );
-  // code.created webhooks + alerts, after the response (never throws).
-  (await import("@/lib/events/emit")).emitCodesCreated(scope, views);
-  recordAuditEvent(scope, codeEvents("code.created", views));
-  return views;
+  const byId = new Map<string, QrCodeRow>(existing);
+  for (const row of [...raced, ...inserted]) byId.set(row.id, row);
+  const views = await toCodeViews(ids.map((id) => byId.get(id) as QrCodeRow));
+  if (inserted.length > 0) {
+    // Destinations Web Risk didn't answer for: looked up after the response
+    // (lib/safety/recheck.ts), and switched off if flagged.
+    recheckAfterResponse(
+      inserted.flatMap((row) => (row.webRiskRecheckAt ? [row.id] : [])),
+      RECHECK_BUDGET_MS,
+    );
+    const insertedIds = new Set(inserted.map((row) => row.id));
+    const created = views.filter((view) => insertedIds.has(view.id));
+    // code.created webhooks + alerts, after the response (never throws).
+    (await import("@/lib/events/emit")).emitCodesCreated(scope, created);
+    recordAuditEvent(scope, codeEvents("code.created", created));
+  }
+  return { codes: views, created: inserted.length };
 }
 
 type SlugValues = Pick<typeof qrCode.$inferInsert, "slug" | "slugScope">;

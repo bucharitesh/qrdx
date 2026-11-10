@@ -204,7 +204,7 @@ export function FeatureRowsSection() {
           reverse
           eyebrow="Bulk"
           title="Hundreds of codes from one CSV"
-          description={`Map the columns, pick a style and download up to ${MAX_BULK_ROWS.toLocaleString("en-US")} codes as PNG or SVG in one ZIP. The file never leaves your browser.`}
+          description={`Map the columns, pick a style and download up to ${MAX_BULK_ROWS.toLocaleString("en-US")} codes as PNG or SVG, zipped. The file never leaves your browser.`}
           link={<MoreLink href="/tools/bulk">Open the bulk generator</MoreLink>}
           visual={
             <BrowserFrame url="qrdx.dev/tools/bulk">

@@ -67,6 +67,15 @@ vi.mock("@/lib/data-connections/sync", () => ({
   },
 }));
 
+// Web Risk re-checks of large batches (lib/safety/recheck.ts).
+const recheck = vi.hoisted(() => ({ calls: 0, pending: 0 }));
+vi.mock("@/lib/safety/recheck", () => ({
+  recheckWebRisk: async () => {
+    recheck.calls++;
+    return { checked: 0, flagged: 0, pending: recheck.pending };
+  },
+}));
+
 const { GET } = await import("@/app/api/cron/webhooks/route");
 const { WORKER_DUE_KEY, forgetScheduledRunsForTests, scheduleWorkerRun } =
   await import("@/lib/events/worker-due");
@@ -106,6 +115,8 @@ beforeEach(() => {
   state.nextDeliveryDueAt = null;
   state.nextSyncDueAt = null;
   state.integrations = { streams: 0, ok: 0, failed: 0, skipped: 0 };
+  recheck.calls = 0;
+  recheck.pending = 0;
 });
 
 afterEach(() => {
@@ -253,6 +264,23 @@ describe("the daily call", () => {
     state.dbCalls = [];
     await json(await call("github"));
     expect(ranWorker()).toBe(true);
+  });
+
+  it("re-checks Web Risk on full runs, and stays due while some are pending", async () => {
+    await call();
+    expect(recheck.calls).toBe(1);
+    // Nothing pending: the next frequent call skips.
+    vi.setSystemTime(T0 + 5 * MINUTE);
+    expect((await json(await call("github"))).skipped).toBe(true);
+    expect(recheck.calls).toBe(1);
+    // Some left: the next frequent call runs in full again.
+    recheck.pending = 3;
+    await call();
+    vi.setSystemTime(T0 + 10 * MINUTE);
+    state.dbCalls = [];
+    await json(await call("github"));
+    expect(ranWorker()).toBe(true);
+    expect(recheck.calls).toBe(3);
   });
 
   it("doesn't touch the database outside production", async () => {

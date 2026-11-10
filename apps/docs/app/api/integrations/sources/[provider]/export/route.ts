@@ -1,4 +1,3 @@
-import { MAX_IMPORT_ROWS } from "@/app/dashboard/codes/import/_lib/csv";
 import { providerWriteLimiter } from "@/lib/connected-accounts/server";
 import {
   dataErrorResponse,
@@ -8,6 +7,9 @@ import {
 import { listSourceItems } from "@/lib/data-connections/server";
 
 type RouteContext = { params: Promise<{ provider: string }> };
+
+/** Products in one export: the pages are fetched within this request. */
+const MAX_EXPORT_ROWS = 1000;
 
 function csvCell(value: string): string {
   // Spreadsheet formula injection: product titles stay plain text.
@@ -37,11 +39,11 @@ export async function GET(_request: Request, context: RouteContext) {
     do {
       const page = await listSourceItems(user.userId, provider, { cursor });
       for (const item of page.items) {
-        if (rows.length >= MAX_IMPORT_ROWS) break;
+        if (rows.length >= MAX_EXPORT_ROWS) break;
         rows.push([item.url, item.title.slice(0, 100), "Shopify", "shopify"]);
       }
       cursor = page.nextCursor;
-    } while (cursor && rows.length < MAX_IMPORT_ROWS);
+    } while (cursor && rows.length < MAX_EXPORT_ROWS);
 
     const csv = [["destination", "title", "folder", "tags"], ...rows]
       .map((row) => row.map(csvCell).join(","))

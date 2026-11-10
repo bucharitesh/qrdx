@@ -960,7 +960,32 @@
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Creates one dynamic code, or up to 100 at once.\n\nSend an object for one code, or an array for several (Pro). The response's `shortLink` is what the QR code encodes: point it somewhere else later with PATCH and the printed code keeps working. Render it with the image API, for example `https://api.qrdx.dev/v1/qr?data=<shortLink>`. Free workspaces have 10 active codes. Create requests are limited to 20 a minute.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Creates one dynamic code, or up to 1,000 at once.\n\nSend an object for one code, or an array for several (Pro). The response's `shortLink` is what the QR code encodes: point it somewhere else later with PATCH and the printed code keeps working. Render it with the image API, for example `https://api.qrdx.dev/v1/qr?data=<shortLink>`. Free workspaces have 10 active codes. Create requests are limited to 20 a minute.\n\nAn array is all or nothing: when any row has a problem, nothing is created and `data.details` lists every problem by `index`. Generated back-halves never repeat within a batch or clash with existing codes. Send an `Idempotency-Key` so a retry after a timeout returns the codes the first try made (`Idempotent-Replayed: true`) and finishes one that was cut off, instead of creating them twice. `Prefer: return=minimal` leaves each code's `style` out of the response.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "description": "A unique value per batch, such as a UUID. Retrying with the same key and the same codes returns the codes the first request created instead of creating them again; a request cut off part way is finished by its retry.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 255,
+              "pattern": "^[\\x21-\\x7e]+$"
+            },
+            "example": "6f1c2a9e-0b7d-4c1e-9a55-spring-tables"
+          },
+          {
+            "name": "Prefer",
+            "in": "header",
+            "required": false,
+            "description": "Send `return=minimal` to get each created code without its `style` (id, slug, links, destination, title, status, createdAt): smaller responses for large batches.",
+            "schema": {
+              "type": "string",
+              "const": "return=minimal"
+            }
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -972,12 +997,12 @@
                   },
                   {
                     "minItems": 1,
-                    "maxItems": 100,
+                    "maxItems": 1000,
                     "type": "array",
                     "items": {
                       "$ref": "#/components/schemas/CodeInput"
                     },
-                    "description": "Up to 100 codes at once (Pro)"
+                    "description": "Up to 1,000 codes at once (Pro)"
                   }
                 ]
               },
@@ -2795,7 +2820,7 @@
     },
     "responses": {
       "Error400_ValidationError": {
-        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API).",
+        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API), with the row's `index` when the body is an array of codes.",
         "content": {
           "application/json": {
             "schema": {
@@ -2823,7 +2848,7 @@
         }
       },
       "Error400_ValidationError_InvalidSlug_DomainNotVerified": {
-        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API).\n\n`INVALID_SLUG`: The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request.\n\n`DOMAIN_NOT_VERIFIED`: `domainId` points to a custom domain that isn't verified yet.",
+        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API), with the row's `index` when the body is an array of codes.\n\n`INVALID_SLUG`: The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request. For an array, `data.details` lists each row by `index`.\n\n`DOMAIN_NOT_VERIFIED`: `domainId` points to a custom domain that isn't verified yet.",
         "content": {
           "application/json": {
             "schema": {
@@ -2850,7 +2875,7 @@
                 "summary": "INVALID_SLUG",
                 "value": {
                   "code": "INVALID_SLUG",
-                  "message": "The custom back-half (slug) breaks a rule: a reserved word, or the same back-half twice in one request.",
+                  "message": "The custom back-half (slug) breaks a rule: a reserved word, or the same back-half twice in one request. For an array, data.details lists each row by index.",
                   "status": 400
                 }
               },
@@ -2867,7 +2892,7 @@
         }
       },
       "Error400_ValidationError_InvalidSlug_TooManyCodes_DomainNotVerified": {
-        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API).\n\n`INVALID_SLUG`: The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request.\n\n`TOO_MANY_CODES`: More than 100 codes in one request. The body schema normally rejects this first, as `VALIDATION_ERROR`.\n\n`DOMAIN_NOT_VERIFIED`: `domainId` points to a custom domain that isn't verified yet.",
+        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API), with the row's `index` when the body is an array of codes.\n\n`INVALID_SLUG`: The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request. For an array, `data.details` lists each row by `index`.\n\n`TOO_MANY_CODES`: More than 1,000 codes in one request. The body schema normally rejects this first, as `VALIDATION_ERROR`.\n\n`DOMAIN_NOT_VERIFIED`: `domainId` points to a custom domain that isn't verified yet.",
         "content": {
           "application/json": {
             "schema": {
@@ -2894,7 +2919,7 @@
                 "summary": "INVALID_SLUG",
                 "value": {
                   "code": "INVALID_SLUG",
-                  "message": "The custom back-half (slug) breaks a rule: a reserved word, or the same back-half twice in one request.",
+                  "message": "The custom back-half (slug) breaks a rule: a reserved word, or the same back-half twice in one request. For an array, data.details lists each row by index.",
                   "status": 400
                 }
               },
@@ -2902,7 +2927,7 @@
                 "summary": "TOO_MANY_CODES",
                 "value": {
                   "code": "TOO_MANY_CODES",
-                  "message": "More than 100 codes in one request. The body schema normally rejects this first, as VALIDATION_ERROR.",
+                  "message": "More than 1,000 codes in one request. The body schema normally rejects this first, as VALIDATION_ERROR.",
                   "status": 400
                 }
               },
@@ -2919,7 +2944,7 @@
         }
       },
       "Error400_ValidationError_SidRequired": {
-        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API).\n\n`SID_REQUIRED`: A conversion without the `qrdx_sid` of the scan (from the browser), or without `sid` or `code` (from a server).",
+        "description": "`VALIDATION_ERROR`: The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API), with the row's `index` when the body is an array of codes.\n\n`SID_REQUIRED`: A conversion without the `qrdx_sid` of the scan (from the browser), or without `sid` or `code` (from a server).",
         "content": {
           "application/json": {
             "schema": {
@@ -3360,7 +3385,7 @@
         }
       },
       "Error409_SlugTaken": {
-        "description": "`SLUG_TAKEN`: Another code already uses that back-half on that domain.",
+        "description": "`SLUG_TAKEN`: Another code already uses that back-half on that domain. For an array, `data.details` lists each taken one by `index`, and nothing is created.",
         "content": {
           "application/json": {
             "schema": {
@@ -3371,7 +3396,7 @@
                 "summary": "SLUG_TAKEN",
                 "value": {
                   "code": "SLUG_TAKEN",
-                  "message": "Another code already uses that back-half on that domain.",
+                  "message": "Another code already uses that back-half on that domain. For an array, data.details lists each taken one by index, and nothing is created.",
                   "status": 409
                 }
               }
@@ -3380,7 +3405,7 @@
         }
       },
       "Error413_PayloadTooLarge": {
-        "description": "`PAYLOAD_TOO_LARGE`: The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions.",
+        "description": "`PAYLOAD_TOO_LARGE`: The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. Also a batch of codes whose response (each code with its design) would be over 4 MB; nothing is created.",
         "content": {
           "application/json": {
             "schema": {
@@ -3391,7 +3416,7 @@
                 "summary": "PAYLOAD_TOO_LARGE",
                 "value": {
                   "code": "PAYLOAD_TOO_LARGE",
-                  "message": "The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions.",
+                  "message": "The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. Also a batch of codes whose response (each code with its design) would be over 4 MB; nothing is created.",
                   "status": 413
                 }
               }
@@ -3420,7 +3445,7 @@
         }
       },
       "Error422_UnsafeDestination": {
-        "description": "`UNSAFE_DESTINATION`: Google Web Risk flags the destination URL (malware, phishing or unwanted software).",
+        "description": "`UNSAFE_DESTINATION`: Google Web Risk flags the destination URL (malware, phishing or unwanted software). For an array, `data.details` lists each flagged row by `index`, and nothing is created.",
         "content": {
           "application/json": {
             "schema": {
@@ -3431,7 +3456,7 @@
                 "summary": "UNSAFE_DESTINATION",
                 "value": {
                   "code": "UNSAFE_DESTINATION",
-                  "message": "Google Web Risk flags the destination URL (malware, phishing or unwanted software).",
+                  "message": "Google Web Risk flags the destination URL (malware, phishing or unwanted software). For an array, data.details lists each flagged row by index, and nothing is created.",
                   "status": 422
                 }
               }

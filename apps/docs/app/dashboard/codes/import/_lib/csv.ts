@@ -9,13 +9,18 @@ import {
   splitFolderPath,
   splitTagNames,
 } from "@/app/dashboard/codes/_lib/organize-shared";
+import { IMPORT_CHUNK_ROWS } from "@/lib/bulk-limits";
 import { SLUG_PROBLEM_MESSAGES, slugProblem } from "@/lib/short-links";
 
-export const MAX_IMPORT_ROWS = 1000;
-/** Rows per server request (the create API's bulk cap). */
-export const IMPORT_CHUNK_SIZE = 100;
-// Keeps the preview request under the 2 MB server action body limit.
-export const MAX_IMPORT_FILE_BYTES = 1024 * 1024;
+export { MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
+/** Rows per create request (under the API's MAX_CODES_PER_REQUEST). */
+export const IMPORT_CHUNK_SIZE = IMPORT_CHUNK_ROWS;
+/** Rows per preview request: each stays well under the 2 MB action body limit. */
+export const PREVIEW_CHUNK_SIZE = 2500;
+/** Request bodies are kept under this (long URLs make big rows). */
+export const MAX_CHUNK_BYTES = 1024 * 1024;
+// The file is read in the browser; only rows go to the server, in chunks.
+export const MAX_IMPORT_FILE_BYTES = 10 * 1024 * 1024;
 
 const MAX_DESTINATION_LENGTH = 2048;
 const MAX_TITLE_LENGTH = 100;
@@ -198,6 +203,35 @@ export function duplicateSlugLines(
     seen.add(row.slug);
   }
   return duplicates;
+}
+
+/**
+ * Why `valid` rows can't be imported on this plan (null = they can):
+ * several rows need a plan with bulk import, and capped plans need room.
+ * `bulkPlanName`: the cheapest plan that imports in bulk, if any.
+ */
+export function importBlocked({
+  valid,
+  canBulk,
+  remaining,
+  bulkPlanName,
+}: {
+  valid: number;
+  canBulk: boolean;
+  remaining: number | null;
+  bulkPlanName: string | null;
+}): string | null {
+  if (valid > 1 && !canBulk) {
+    return `${
+      bulkPlanName
+        ? `Importing more than one code at a time is a ${bulkPlanName} feature.`
+        : "Your plan imports one code at a time."
+    } Upgrade, or import a file with a single row.`;
+  }
+  if (remaining !== null && valid > remaining) {
+    return `Your plan has room for ${remaining} more active ${remaining === 1 ? "code" : "codes"}. Archive codes or upgrade to import ${valid}.`;
+  }
+  return null;
 }
 
 export const SAMPLE_IMPORT_ROWS = [

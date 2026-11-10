@@ -35,7 +35,7 @@ const TEXT = "\x1b[38;5;145m";
 const GREEN = "\x1b[38;5;114m";
 const DIM = "\x1b[38;5;102m";
 
-interface GenerateFlags {
+export interface GenerateFlags {
   value?: string;
   level?: ErrorLevel;
   body?: BodyPattern;
@@ -360,6 +360,80 @@ function parseFlags(args: string[]): GenerateFlags {
   // Help and version win over everything else on the line, valid or not.
   if (!(flags.help || flags.version)) validateFlags(flags);
   return flags;
+}
+
+/** The QR props for `value` with these settings (generate and batch). */
+export function buildQrProps(
+  value: string,
+  settings: {
+    level: ErrorLevel;
+    body: BodyPattern;
+    eye: CornerEyePattern;
+    dot: CornerEyeDotPattern;
+    fg: ColorConfig;
+    bg: ColorConfig;
+    eyeColor?: ColorConfig;
+    dotColor?: ColorConfig;
+    margin: number;
+    size: number;
+    template?: string;
+    frame?: QRFrame;
+    logo?: string;
+  }
+) {
+  const { size, logo, template, frame, eyeColor, dotColor } = settings;
+  return {
+    value,
+    level: settings.level,
+    bodyPattern: settings.body,
+    cornerEyePattern: settings.eye,
+    cornerEyeDotPattern: settings.dot,
+    fgColor: settings.fg,
+    bgColor: settings.bg,
+    ...(eyeColor ? { eyeColor } : {}),
+    ...(dotColor ? { dotColor } : {}),
+    margin: settings.margin,
+    size,
+    ...(template ? { templateId: template } : {}),
+    ...(frame ? { frame } : {}),
+    ...(logo
+      ? {
+          imageSettings: {
+            src: logo,
+            height: Math.round(size * 0.2),
+            width: Math.round(size * 0.2),
+            excavate: true,
+          },
+        }
+      : {}),
+  };
+}
+
+/**
+ * The style options `qrdx generate` takes (everything but the data and the
+ * output file), parsed and checked, with generate's defaults: for
+ * `qrdx batch`, which renders every row of a CSV with one style.
+ */
+export function styleFromArgs(args: string[]) {
+  const flags = parseFlags(args);
+  return {
+    flags,
+    settings: {
+      level: flags.level ?? ("Q" as ErrorLevel),
+      body: flags.body ?? ("square" as BodyPattern),
+      eye: flags.eye ?? ("square" as CornerEyePattern),
+      dot: flags.dot ?? ("square" as CornerEyeDotPattern),
+      fg: flags.fg ?? "#000000",
+      bg: flags.bg ?? "#ffffff",
+      eyeColor: flags.eyeColor,
+      dotColor: flags.dotColor,
+      margin: flags.margin ?? DEFAULT_MARGIN,
+      size: flags.size ?? 512,
+      template: flags.template,
+      frame: frameFromFlags(flags),
+      logo: flags.logo,
+    },
+  };
 }
 
 function isCancel(value: unknown): boolean {
@@ -813,31 +887,21 @@ export async function runGenerate(
   spinner.start("Generating QR code...");
 
   try {
-    const qrProps = {
-      value: value as string,
+    const qrProps = buildQrProps(value as string, {
       level,
-      bodyPattern: body,
-      cornerEyePattern: eye,
-      cornerEyeDotPattern: dot,
-      fgColor: fg,
-      bgColor: bg,
-      ...(eyeColor ? { eyeColor } : {}),
-      ...(dotColor ? { dotColor } : {}),
+      body,
+      eye,
+      dot,
+      fg,
+      bg,
+      eyeColor,
+      dotColor,
       margin,
       size,
-      ...(template ? { templateId: template } : {}),
-      ...(frame ? { frame } : {}),
-      ...(logo
-        ? {
-            imageSettings: {
-              src: logo,
-              height: Math.round(size * 0.2),
-              width: Math.round(size * 0.2),
-              excavate: true,
-            },
-          }
-        : {}),
-    };
+      template,
+      frame,
+      logo,
+    });
 
     if (outputPath) {
       const format = inferFormat(outputPath, flags.format);
