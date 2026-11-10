@@ -1,4 +1,4 @@
-// pnpm --filter docs i18n:translate --locale es   (or --all)
+// bun run --filter docs i18n:translate --locale es   (or --all)
 //
 // Machine-translates the strings a locale lacks, and those whose English
 // changed since they were translated (stale), through Vercel AI Gateway.

@@ -6,7 +6,7 @@
 //
 // The state is each locale's `review` in lib/i18n/config.ts: set it to
 // "reviewed" and all three turn on at the next deploy. A list of paths
-// opens only those pages. `pnpm i18n:check` fails if a locale marked
+// opens only those pages. `bun run --filter docs i18n:check` fails if a locale marked
 // "reviewed" still has missing, machine or stale strings
 // (messages/review/<locale>.json).
 import {

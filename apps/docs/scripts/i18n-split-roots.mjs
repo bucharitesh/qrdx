@@ -335,8 +335,13 @@ const formattable = [...changes.rewrites.keys()].filter((f) =>
   /\.(?:[cm]?[jt]sx?|json)$/.test(f),
 );
 if (!DRY && formattable.length > 0) {
-  const biome = path.join(DOCS, "node_modules/.bin/biome");
+  // Biome comes with the root's Ultracite setup (Bun hoists it there).
+  const biome = [
+    path.join(REPO, "node_modules/.bin/biome"),
+    path.join(DOCS, "node_modules/.bin/biome"),
+  ].find((bin) => exists(bin));
   try {
+    if (!biome) throw new Error("no Biome binary: run bun install");
     execFileSync(
       biome,
       ["check", "--write", "--linter-enabled=false", ...formattable],
