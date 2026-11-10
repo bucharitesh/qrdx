@@ -12,6 +12,7 @@ import {
 import { remark } from "remark";
 import remarkMdx from "remark-mdx";
 import { describe, expect, it } from "vitest";
+import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import {
   fillFacts,
   fillFactsDeep,
@@ -50,6 +51,7 @@ describe("PRODUCT_FACTS", () => {
       artModel: "OpenAI's GPT Image 2",
       auditLogRetentionDays: 365,
       auditLogExportRows: "50,000",
+      barcodeFormats: BARCODE_FORMATS.length,
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(
@@ -131,7 +133,7 @@ describe("remarkNpmStatus", () => {
 // A literal number in front of one of these nouns is a count that will go
 // stale: write `{facts.<name>}` instead (lib/product-facts.ts).
 const HARD_CODED_COUNT =
-  /\b(\d+|six|nine|eleven|seventeen|nineteen|twenty(?:-one|-three)?)\s+(body patterns?|body ·|corner[- ]eye(?: shapes| patterns| dot patterns)?|eye(?: shapes| patterns)|eye[- ]dot(?: shapes| patterns)?|eye cent(?:re|er)s|(?:call-to-action )?frames|frame (?:styles|templates)|templates)\b/i;
+  /\b(\d+|six|nine|eleven|seventeen|nineteen|twenty(?:-one|-three)?)\s+(body patterns?|body ·|corner[- ]eye(?: shapes| patterns| dot patterns)?|eye(?: shapes| patterns)|eye[- ]dot(?: shapes| patterns)?|eye cent(?:re|er)s|(?:call-to-action )?frames|frame (?:styles|templates)|templates|barcode (?:formats|types|symbologies))\b/i;
 
 function filesUnder(dir: string, extensions: RegExp): string[] {
   return readdirSync(path.join(app, dir), { recursive: true })

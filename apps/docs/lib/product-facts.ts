@@ -27,6 +27,7 @@ import {
   AUDIT_RETENTION_DAYS,
 } from "../ee/audit-log/limits";
 import { ART_MODEL_LABEL } from "./ai/art-models";
+import { BARCODE_FORMATS } from "./barcode/formats";
 
 export const PRODUCT_FACTS = {
   /** Shapes for the data modules (`bodyPattern`). */
@@ -43,6 +44,8 @@ export const PRODUCT_FACTS = {
   auditLogRetentionDays: AUDIT_RETENTION_DAYS,
   /** Rows in one audit log CSV export, as copy writes it ("50,000"). */
   auditLogExportRows: AUDIT_EXPORT_MAX_ROWS.toLocaleString("en-US"),
+  /** Symbologies /barcode-generator draws (lib/barcode/formats.ts). */
+  barcodeFormats: BARCODE_FORMATS.length,
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;
