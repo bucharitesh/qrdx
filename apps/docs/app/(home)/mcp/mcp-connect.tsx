@@ -1098,9 +1098,9 @@ export function McpPromptGalleryView({
   return (
     <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       {PROMPTS.map((item) => {
-        const full = `${item.prompt}
-        
-        ${connectHint(tab, url, pageUrl)}`;
+        // A blank line between the request and how to connect QRdx, with no
+        // indentation carried into the text that's copied or sent.
+        const full = `${item.prompt}\n\n${connectHint(tab, url, pageUrl)}`;
         return (
           <li key={item.title} className="min-w-0">
             <Card className="h-full gap-4 p-5">
