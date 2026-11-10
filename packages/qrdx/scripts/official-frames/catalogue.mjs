@@ -264,7 +264,7 @@ const P = {
     frame: "#b03a0c",
     text: "#ffffff",
     accent: "#facc15",
-    word: "sunset orange and yellow",
+    word: "deep orange and sun yellow",
   },
   winter: {
     frame: "#1e4d7b",

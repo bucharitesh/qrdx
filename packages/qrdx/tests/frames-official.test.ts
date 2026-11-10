@@ -8,7 +8,6 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import business from "../src/frames/catalogue/business";
 import callToAction from "../src/frames/catalogue/call-to-action";
-import { OFFICIAL_FRAME_TAGS } from "../src/frames/catalogue/counts";
 import events from "../src/frames/catalogue/events";
 import foodDrink from "../src/frames/catalogue/food-drink";
 import healthLearning from "../src/frames/catalogue/health-learning";
@@ -16,6 +15,7 @@ import holidays from "../src/frames/catalogue/holidays";
 import places from "../src/frames/catalogue/places";
 import seasons from "../src/frames/catalogue/seasons";
 import shopping from "../src/frames/catalogue/shopping";
+import { OFFICIAL_FRAME_TAGS } from "../src/frames/catalogue/tags";
 import {
   frameSpecHash,
   getOfficialFrame,
