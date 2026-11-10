@@ -98,7 +98,7 @@ export default function McpPage() {
           id="prompts"
           eyebrow="Try it"
           title="Prompts to start with"
-          description="Each one uses what the QRdx tools really do: colors and shapes, Wi-Fi, contacts, email, SMS and map payloads, and SVG, PNG or EPS links. Open it in your assistant or copy it."
+          description="Each one uses what the QRdx tools really do: colors and shapes, Wi-Fi, contacts, email, SMS and map payloads, and SVG, PNG, WebP or EPS links. Open it in your assistant or copy it."
         />
         <Suspense
           fallback={
@@ -157,9 +157,9 @@ export default function McpPage() {
           title="What your assistant can call"
           description={
             <>
-              {MCP_TOOLS.length} tools. All but save_template are read-only and
-              need no key: they render images, format text and read the public
-              community. Full parameters are in the{" "}
+              {MCP_TOOLS.length} tools. All but save_template and save_barcode
+              are read-only and need no key: they render images, format text and
+              read the public community. Full parameters are in the{" "}
               <Link href="/docs/developers/mcp" className={textLinkClass}>
                 MCP server docs
               </Link>

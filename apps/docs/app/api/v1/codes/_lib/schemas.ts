@@ -1,5 +1,6 @@
 import type { QrCodeKind } from "@repo/database";
 import { z } from "zod";
+import { idempotencyKeySchema } from "@/app/dashboard/codes/_lib/bulk";
 import {
   createCodeSchema,
   hasAnyField,
@@ -28,15 +29,31 @@ export const listCodesQuerySchema = z.object({
 });
 
 /**
- * POST /v1/codes with an array: up to 100 codes in one request (arrays of
- * more than one need Pro). Arrays and single objects are parsed separately:
- * a union would collapse a bad destination into a bare "Invalid input" and
- * hide the reason from callers.
+ * POST /v1/codes with an array: up to MAX_BULK_CREATE codes in one request
+ * (arrays of more than one need Pro). Arrays and single objects are parsed
+ * separately: a union would collapse a bad destination into a bare "Invalid
+ * input" and hide the reason from callers.
  */
 export const createCodesBatchSchema = z
   .array(createCodeSchema)
-  .min(1)
-  .max(MAX_BULK_CREATE);
+  .min(1, "Send at least one code")
+  .max(
+    MAX_BULK_CREATE,
+    `Send up to ${MAX_BULK_CREATE.toLocaleString("en-US")} codes per request`,
+  );
+
+// ─── Large batches (feat/large-batches) ─────────────────────────────────────
+
+/** POST /v1/codes request headers, for the OpenAPI document. */
+export const createCodesHeadersSchema = z.object({
+  "Idempotency-Key": idempotencyKeySchema.optional(),
+  Prefer: z
+    .literal("return=minimal")
+    .optional()
+    .describe(
+      "Send `return=minimal` to get each created code without its `style` (id, slug, links, destination, title, status, createdAt): smaller responses for large batches.",
+    ),
+});
 
 // ─── Changing a code's type (app/dashboard/codes/_lib/code-kind.ts) ─────────
 

@@ -92,9 +92,10 @@ Download QR codes in multiple formats.
 downloadQRCode(
   qrProps: QRProps,
   options: {
-    format: 'png' | 'jpg' | 'svg' | 'pdf' | 'eps';
+    format: 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
     size: { width: number; height: number };
     filename?: string;
+    quality?: number; // WebP only: 0 to 1 for lossy; lossless when left out
   }
 ): Promise<void>
 ```
@@ -107,8 +108,20 @@ Get as data URL.
 getQRCodeDataUrl(
   qrProps: QRProps,
   format: DownloadFormat,
-  size: DownloadSize
+  size: DownloadSize,
+  options?: { quality?: number } // WebP only
 ): Promise<string>
+```
+
+### getQRAsWebP
+
+The code as a WebP `Blob`, lossless unless `quality` is set. Where the browser can't encode WebP (Safari), qrdx's built-in lossless encoder makes it. `canvasToWebP(canvas, options)` does the same for any canvas, and `encodeWebPLossless(rgba, width, height)` encodes RGBA pixels with no DOM.
+
+```tsx
+getQRAsWebP(
+  qrProps: QRProps,
+  options?: { quality?: number }
+): Promise<Blob>
 ```
 
 ### copyQRCodeToClipboard
@@ -296,7 +309,7 @@ type QRFrame = {
 ### Download Types
 
 ```tsx
-type DownloadFormat = 'png' | 'jpg' | 'svg' | 'pdf' | 'eps';
+type DownloadFormat = 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
 
 type DownloadSize = {
   width: number;

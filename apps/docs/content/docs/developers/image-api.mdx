@@ -4,7 +4,7 @@ description: Turn any URL into a QR code image you can embed in Markdown, HTML o
 icon: ImageDown
 ---
 
-`GET https://api.qrdx.dev/v1/qr` returns a QR code as an SVG or PNG image, or as a vector EPS file for print and design tools. Everything is in the query string, so the URL itself is the image: paste it into a README, an `<img>` tag or an email template. It takes the editor's styles too: gradients, frames (custom frames included), borders, eye and dot colors and logo icons.
+`GET https://api.qrdx.dev/v1/qr` returns a QR code as an SVG, PNG or WebP image, or as a vector EPS file for print and design tools. Everything is in the query string, so the URL itself is the image: paste it into a README, an `<img>` tag or an email template. It takes the editor's styles too: gradients, frames (custom frames included), borders, eye and dot colors and logo icons.
 
 ```md
 ![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
@@ -29,6 +29,12 @@ Download a PNG with curl (quote the URL so your shell keeps the `&`):
 
 ```bash
 curl -o qr.png "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&size=1024"
+```
+
+Or a WebP: the same pixels as the PNG, lossless and transparency included, in a smaller file:
+
+```bash
+curl -o qr.webp "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=webp&size=1024"
 ```
 
 Get a vector EPS for Illustrator, InDesign or a print shop (`size` is the width in points, 72 per inch, so `144` is 2 inches):
@@ -77,7 +83,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `data` | required | Text or URL to encode, up to 2048 characters |
-| `format` | `svg` | `svg`, `png` or `eps` (vector PostScript; `size` is then the width in points) |
+| `format` | `svg` | `svg`, `png`, `webp` (lossless) or `eps` (vector PostScript; `size` is then the width in points) |
 | `size` | `512` | Width and height in pixels, `64` to `2048` |
 | `fg` | `000000` | Module color as hex (`155dfc`, `fff`, or 8 digits with alpha) |
 | `bg` | `ffffff` | Background color as hex. `00000000` gives a transparent background |

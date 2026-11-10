@@ -254,6 +254,14 @@ export function exportEntries(userId: string): ExportEntry[] {
     },
     {
       kind: "json",
+      path: "barcodes.json",
+      title: "Barcodes",
+      description:
+        "Barcodes you saved: format, value, how each is drawn, and the ones in the trash.",
+      load: () => q.barcodes,
+    },
+    {
+      kind: "json",
       path: "brand-kits.json",
       title: "Brand kits",
       description: "Brand kits you created, with their logo and palette.",

@@ -100,7 +100,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       ? ` npm's latest is ${name}@${published}; these docs describe ${repo}, which isn't on npm yet.`
       : "";
 
-  const summary = `> QRdx (qrdx.dev) is an open-source (AGPL-3.0) QR code platform. Anyone can design static QR codes in the browser with no signup or watermark (${STYLE_SUMMARY}, ${PRODUCT_FACTS.frames} frames, gradients, logos, and Logo QR or Image QR art) and download PNG, JPG, SVG, PDF or EPS files. A free account adds dynamic QR codes you can change after printing, with scan analytics and hosted mobile pages; paid plans add smart routing, link controls, ${on("customDomains") ? "custom domains, " : ""}teams and webhooks. Developers get a REST API, a keyless QR image API, a remote MCP server, a CLI, a React library and a shadcn/ui registry.`;
+  const summary = `> QRdx (qrdx.dev) is an open-source (AGPL-3.0) QR code platform. Anyone can design static QR codes in the browser with no signup or watermark (${STYLE_SUMMARY}, ${PRODUCT_FACTS.frames} frames, gradients, logos, and Logo QR or Image QR art) and download PNG, JPG, WebP, SVG, PDF or EPS files. A free account adds dynamic QR codes you can change after printing, with scan analytics and hosted mobile pages; paid plans add smart routing, link controls, ${on("customDomains") ? "custom domains, " : ""}teams and webhooks. Developers get a REST API, a keyless QR image API, a remote MCP server, a CLI, a React library and a shadcn/ui registry.`;
 
   const facts = [
     "Key facts:",
@@ -115,8 +115,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "Dynamic QR codes",
       url: "/docs/dynamic-qr-codes",
-      description:
-        "Short links you can point somewhere else after printing, with scan analytics, folders, tags, version history and trash",
+      description: `Short links you can point somewhere else after printing, with scan analytics, folders, tags, version history and trash; a CSV import of up to ${PRODUCT_FACTS.importRows} codes and API batches of up to ${PRODUCT_FACTS.apiBatchCodes} (with an Idempotency-Key) on paid plans`,
     },
     {
       title: "Hosted pages",
@@ -273,7 +272,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "Barcode generator",
       url: "/barcode-generator",
-      description: `${PRODUCT_FACTS.barcodeFormats} static barcode formats (${BARCODE_FORMATS.map((format) => format.label).join(", ")}) with check digits and a scan check, as PNG, SVG or EPS; runs in the browser`,
+      description: `${PRODUCT_FACTS.barcodeFormats} static barcode formats (${BARCODE_FORMATS.map((format) => format.label).join(", ")}) with check digits and a scan check, as PNG, JPG, WebP, AVIF, SVG, PDF or EPS; no account needed, and signed in you can save barcodes to the dashboard`,
     },
     {
       title: "QR code generators by type",
@@ -325,7 +324,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "MCP server",
       url: "/docs/developers/mcp",
-      description: `Remote MCP endpoint \`${mcpUrl}\` (Streamable HTTP, no account or key, read-only tools that render QR codes and build Wi-Fi, contact, email, SMS and map payloads). Claude Code: \`${claudeCodeCommand(mcpUrl)}\``,
+      description: `Remote MCP endpoint \`${mcpUrl}\` (Streamable HTTP, no account or key, read-only tools that render QR codes and barcodes and build Wi-Fi, contact, email, SMS and map payloads). Claude Code: \`${claudeCodeCommand(mcpUrl)}\``,
     },
     {
       title: "Connect an AI app to the MCP server",
@@ -341,7 +340,13 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "QR code image API",
       url: "/docs/developers/image-api",
-      description: `\`GET ${api}/qr?data=…\` returns an SVG, PNG or EPS QR code; no key; gradients, frames, borders and logo icons through \`style\` (the editor's style JSON)`,
+      description: `\`GET ${api}/qr?data=…\` returns an SVG, PNG, WebP or EPS QR code; no key; gradients, frames, borders and logo icons through \`style\` (the editor's style JSON)`,
+    },
+    // Barcodes (lib/barcode, lib/barcodes)
+    {
+      title: "Barcode API",
+      url: "/docs/developers/barcode-api",
+      description: `\`GET ${api}/barcode?format=ean13&data=…\` returns an SVG, PNG, JPG, WebP, AVIF, PDF or EPS barcode in ${PRODUCT_FACTS.barcodeFormats} formats, with check digits worked out or verified; no key. Saved barcodes under \`${api}/barcodes\` with an API key`,
     },
     {
       title: "Example image API URL",
@@ -351,7 +356,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "CLI",
       url: "/docs/developers/cli",
-      description: `\`npx @qrdx/cli generate "https://example.com" -o qr.svg\`: styled codes from a terminal or CI.${npmNote(input.npm.cli)}`,
+      description: `\`npx @qrdx/cli generate "https://example.com" -o qr.svg\`: styled codes from a terminal or CI, and \`qrdx batch codes.csv\` for a code per CSV row with no row limit.${npmNote(input.npm.cli)}`,
     },
     {
       title: "React library",

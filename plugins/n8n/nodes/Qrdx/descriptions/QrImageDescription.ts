@@ -66,6 +66,11 @@ export const qrImageFields: INodeProperties[] = [
         value: "svg",
         description: "Vector image for the web and design tools",
       },
+      {
+        name: "WebP",
+        value: "webp",
+        description: "The same image as PNG in a smaller file, for the web",
+      },
     ],
     default: "png",
     displayOptions: { show },

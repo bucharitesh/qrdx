@@ -73,6 +73,7 @@ describe("sidebar areas", () => {
       "Home",
       "Codes ›",
       "Pages & forms ›",
+      "Barcodes",
       "Files",
       "Themes",
       "Settings ›",

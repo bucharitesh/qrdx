@@ -3,6 +3,7 @@ import "server-only";
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { auth } from "@repo/auth/server";
 import {
+  barcode,
   brandKit,
   communityItem,
   communityLike,
@@ -67,6 +68,8 @@ const TEAM_CONTENT = [
   tag,
   fileAsset,
   webhookEndpoint,
+  // Saved barcodes (manual-sql/2026-11-11-barcodes.sql)
+  barcode,
 ] as const;
 
 /** Thrown when deletion must stop; the message is shown to the user. */

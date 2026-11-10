@@ -34,9 +34,9 @@ function PlaygroundIntro() {
         scan score estimates how well it will read before you print.
       </p>
       <p>
-        Download PNG, JPG or SVG, or a print-ready PDF or EPS at an exact size.
-        Static codes are free and never expire. Sign in to make a dynamic code
-        you can edit after printing and track scans.
+        Download PNG, JPG, WebP or SVG, or a print-ready PDF or EPS at an exact
+        size. Static codes are free and never expire. Sign in to make a dynamic
+        code you can edit after printing and track scans.
       </p>
       <ul>
         {LINKS.map((link) => (

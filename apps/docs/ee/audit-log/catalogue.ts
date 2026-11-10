@@ -10,6 +10,7 @@
 export const AUDIT_CATEGORIES = [
   "codes",
   "pages",
+  "barcodes",
   "team",
   "security",
   "developers",
@@ -22,6 +23,7 @@ export type AuditCategory = (typeof AUDIT_CATEGORIES)[number];
 export const AUDIT_CATEGORY_LABELS: Record<AuditCategory, string> = {
   codes: "Codes",
   pages: "Pages",
+  barcodes: "Barcodes",
   team: "Team",
   security: "Security",
   developers: "Developers",
@@ -122,6 +124,32 @@ export const AUDIT_ACTIONS = {
   "page.created": { category: "pages", sentence: "Created the page {target}" },
   "page.published": { category: "pages", sentence: "Published {target}" },
   "page.deleted": { category: "pages", sentence: "Deleted the page {target}" },
+
+  // Saved barcodes (lib/barcodes)
+  "barcode.created": {
+    category: "barcodes",
+    sentence: "Created the barcode {target}",
+  },
+  "barcode.updated": {
+    category: "barcodes",
+    sentence: "Changed the barcode {target}",
+  },
+  "barcode.moved_to_folder": {
+    category: "barcodes",
+    sentence: "Moved {target} to another folder",
+  },
+  "barcode.trashed": {
+    category: "barcodes",
+    sentence: "Moved {target} to the trash",
+  },
+  "barcode.restored": {
+    category: "barcodes",
+    sentence: "Restored {target} from the trash",
+  },
+  "barcode.deleted": {
+    category: "barcodes",
+    sentence: "Deleted the barcode {target} for good",
+  },
 
   // Team
   "member.invited": { category: "team", sentence: "Invited {target}" },
@@ -277,6 +305,7 @@ export function auditCategoryOf(action: string): AuditCategory | null {
 /** What a row targets. */
 export type AuditTargetType =
   | "code"
+  | "barcode"
   | "folder"
   | "tag"
   | "page"
@@ -307,6 +336,7 @@ export type SentencePart = { text: string } | { target: string };
 
 const UNNAMED: Partial<Record<AuditTargetType, string>> = {
   code: "a code",
+  barcode: "a barcode",
   page: "a page",
   folder: "a folder",
   tag: "a tag",
@@ -384,6 +414,8 @@ export const AUDIT_FIELD_LABELS: Record<string, string> = {
   codes: "Codes deleted with it",
   fields: "Settings put back",
   design: "Design",
+  format: "Barcode type",
+  value: "Value",
 };
 
 export function auditFieldLabel(field: string): string {

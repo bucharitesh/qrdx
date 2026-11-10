@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  barcode,
   customDomain,
   database as db,
   landingPage,
@@ -15,6 +16,7 @@ import {
   gte,
   inArray,
   isNotNull,
+  isNull,
   lt,
   or,
   type SQL,
@@ -202,7 +204,22 @@ async function existingTargets(
           )
       : [],
   ]);
+  // Saved barcodes (lib/barcodes): link the ones not in the trash.
+  const barcodes = idsOf("barcode");
+  const barcodeRows = barcodes.length
+    ? await db
+        .select({ id: barcode.id })
+        .from(barcode)
+        .where(
+          and(
+            inArray(barcode.id, barcodes),
+            eq(barcode.organizationId, organizationId),
+            isNull(barcode.deletedAt),
+          ),
+        )
+    : [];
   return new Set([
+    ...barcodeRows.map((row) => `barcode:${row.id}`),
     ...codeRows.map((row) => `code:${row.id}`),
     ...pageRows.map((row) => `page:${row.id}`),
     ...hookRows.map((row) => `webhook:${row.id}`),
@@ -227,6 +244,8 @@ function targetHref(
       return workspaceHref(slug, `/settings/webhooks/${encoded}`);
     case "domain":
       return workspaceHref(slug, "/settings/domains");
+    case "barcode":
+      return workspaceHref(slug, `/barcodes/${encoded}`);
     default:
       return null;
   }

@@ -104,7 +104,7 @@ const softwareApplicationSchema = {
     "AI-designed QR code themes",
     // AI art is listed where it can run (lib/ai/art-availability.ts).
     ...(isArtAvailable ? ["AI QR code art that still scans"] : []),
-    "PNG, JPG, SVG, PDF and EPS downloads, with print-ready PDFs at exact sizes",
+    "PNG, JPG, WebP, SVG, PDF and EPS downloads, with print-ready PDFs at exact sizes",
     "Dynamic QR codes with editable destinations and scan analytics",
     "Hosted mobile pages: link lists, business pages, vCards, menus, coupons, events, forms, PDFs, images, audio and video",
     "Smart routing by device, country, language and time, A/B tests and UTM tags",

@@ -4,6 +4,8 @@
 // content/docs/developers/errors.mdx documents it; tests/api/openapi.test.ts
 // keeps all three in step with the codes thrown in the route code.
 
+import { formatCount, MAX_CODES_PER_REQUEST } from "@/lib/bulk-limits";
+
 export interface ApiErrorInfo {
   /** The `code` field of the error body */
   code: string;
@@ -19,22 +21,21 @@ export const API_ERRORS = [
     code: "VALIDATION_ERROR",
     status: 400,
     meaning:
-      "The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API).",
+      "The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API), with the row's `index` when the body is an array of codes.",
     fix: "Correct the fields listed in `data.details` and send the request again.",
   },
   {
     code: "INVALID_SLUG",
     status: 400,
     meaning:
-      "The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request.",
+      "The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request. For an array, `data.details` lists each row by `index`.",
     fix: "Choose another back-half. The message names the rule.",
   },
   {
     code: "TOO_MANY_CODES",
     status: 400,
-    meaning:
-      "More than 100 codes in one request. The body schema normally rejects this first, as `VALIDATION_ERROR`.",
-    fix: "Send at most 100 codes per request.",
+    meaning: `More than ${formatCount(MAX_CODES_PER_REQUEST)} codes in one request. The body schema normally rejects this first, as \`VALIDATION_ERROR\`.`,
+    fix: `Send at most ${formatCount(MAX_CODES_PER_REQUEST)} codes per request.`,
   },
   {
     code: "DOMAIN_NOT_VERIFIED",
@@ -128,15 +129,16 @@ export const API_ERRORS = [
   {
     code: "SLUG_TAKEN",
     status: 409,
-    meaning: "Another code already uses that back-half on that domain.",
+    meaning:
+      "Another code already uses that back-half on that domain. For an array, `data.details` lists each taken one by `index`, and nothing is created.",
     fix: "Choose another back-half.",
   },
   {
     code: "PAYLOAD_TOO_LARGE",
     status: 413,
     meaning:
-      "The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions.",
-    fix: "Send a smaller body. For codes, a large inline logo is the usual cause.",
+      "The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. Also a batch of codes whose response (each code with its design) would be over 4 MB; nothing is created.",
+    fix: "Send a smaller body. For codes, a large inline logo is the usual cause; for a batch, send `Prefer: return=minimal` or fewer codes.",
   },
   {
     code: "UNSUPPORTED_MEDIA_TYPE",
@@ -148,7 +150,7 @@ export const API_ERRORS = [
     code: "UNSAFE_DESTINATION",
     status: 422,
     meaning:
-      "Google Web Risk flags the destination URL (malware, phishing or unwanted software).",
+      "Google Web Risk flags the destination URL (malware, phishing or unwanted software). For an array, `data.details` lists each flagged row by `index`, and nothing is created.",
     fix: "Use another destination. If the flag is wrong, ask Google to review the site.",
   },
   {
