@@ -88,9 +88,10 @@ ${BOLD}Commands:${RESET}
 
 ${BOLD}Generate Options:${RESET}
   <data>              URL or text to encode (positional)
-  -o, --output        Output file path (.svg, .png or .eps)
+  -o, --output        Output file path (.svg, .png, .webp or .eps)
   --format            Output format when the file name has no extension:
-                        ${DIM}svg, png, eps${RESET}  ${DIM}(EPS is vector; --size = width in points)${RESET}
+                        ${DIM}svg, png, webp, eps${RESET}  ${DIM}(WebP is lossless; EPS is vector,${RESET}
+                        ${DIM}--size = width in points)${RESET}
   -l, --level         Error correction: L, M, Q, H  ${DIM}(default: Q)${RESET}
   --body              Body dot pattern, e.g.:
                         ${DIM}square, rounded, circle, circle-large, liquid,${RESET}
@@ -109,7 +110,7 @@ ${BOLD}Generate Options:${RESET}
   --logo              Logo URL for center image (use with --level H)
   --no-logo           Skip the logo prompt in interactive mode
   --margin            Quiet zone margin in modules  ${DIM}(default: 0)${RESET}
-  --size              Output pixel size for SVG/PNG  ${DIM}(default: 512)${RESET}
+  --size              Output pixel size for SVG/PNG/WebP  ${DIM}(default: 512)${RESET}
   --template          Decorative template wrapper:
                         ${DIM}Arrow, StandardBox, SquareBorder, StrikedBox, Halloween${RESET}
   --frame             Call-to-action frame (adds space around the code), e.g.:
