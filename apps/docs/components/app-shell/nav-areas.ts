@@ -6,6 +6,7 @@
 
 import {
   ArrowRight2,
+  Barcode,
   Chart,
   ColorsSquare,
   DocumentText1,
@@ -133,6 +134,12 @@ export function navAreas(
               label: "Pages & forms",
               icon: Element2,
             },
+            // Saved static barcodes (lib/barcodes): one list, no area of its own.
+            link({
+              href: workspaceHref(slug, "/barcodes"),
+              label: "Barcodes",
+              icon: Barcode,
+            }),
           ],
         },
         {
