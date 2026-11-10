@@ -82,8 +82,15 @@ let nextConfig: NextConfig = {
   // `next build` type-checks the app without its tests. Some tests import
   // files from outside the app (plugins/*, .github/scripts) that a Docker
   // build doesn't copy in. `tsc --noEmit` and CI still check every test.
+  //
+  // On Vercel the check is skipped: the Hobby build machine has 8 GB, and
+  // after the switch to Bun the in-build type check ran out of memory right
+  // after compiling (2026-11-11). The required "Typecheck, test, lint" CI job
+  // type-checks every pull request and release before anything reaches main,
+  // so Vercel would only repeat it. Docker and local builds still check.
   typescript: {
     tsconfigPath: "tsconfig.build.json",
+    ignoreBuildErrors: process.env.VERCEL === "1",
   },
   // `next dev` prints every server action call with its arguments. Those
   // include secrets typed into settings (an SSO client secret, 2FA and email
