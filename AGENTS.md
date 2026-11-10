@@ -33,7 +33,7 @@ pnpm test:node                       # node:test suites next to the code
 ../../node_modules/.bin/biome check --write <files you changed>
 ```
 
-From the root, `pnpm prepush` runs everything the pre-push hook runs: engine build, both typechecks, `biome ci` and all tests. The e2e suites (`pnpm --filter docs test:e2e`, `test:e2e:app`, `test:e2e:site`) need a running dev server and Chrome.
+The pre-push hook runs the engine build, both typechecks, `biome ci` and the tests of the packages your branch changes compared with `origin/staging`, plus the packages that depend on them (`turbo --affected`; unchanged results come from the turbo cache). `pnpm prepush`, or `QRDX_PREPUSH=full git push`, runs every test. CI runs on every pull request (affected packages for pull requests into `staging`, everything for release pull requests into `main`) and on every push to `main`. The e2e suites (`pnpm --filter docs test:e2e`, `test:e2e:app`, `test:e2e:site`) need a running dev server and Chrome.
 
 ## Rules
 

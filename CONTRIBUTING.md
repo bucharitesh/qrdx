@@ -96,18 +96,19 @@ You don't need a database or any environment variables to work on the React libr
 
 ## Checks before you open a pull request
 
-CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `main` and `staging`. Both branches require the job to pass before anything merges.
+CI (`.github/workflows/ci.yml`) runs these on every pull request and on every push to `main`. Pushes to `staging` don't run it again: every change reaches `staging` through a pull request that already did. Both branches require the job to pass before anything merges.
 
 ```bash
-pnpm turbo build --filter=qrdx      # the docs app and CLI use qrdx's build output
-pnpm --filter @qrdx/cli build       # the CLI tests run its built dist/index.js
+pnpm turbo build --filter=qrdx --filter=@qrdx/cli   # the docs app and CLI use qrdx's build output; the CLI tests run its dist/index.js
 pnpm typecheck                      # all packages with a typecheck script
 pnpm --filter docs exec next typegen && pnpm typecheck:docs
-pnpm test                           # every package's tests
+pnpm turbo test                     # every package's tests
 ./apps/docs/node_modules/.bin/biome ci .
 ```
 
-The Husky `pre-push` hook runs the same checks locally with `pnpm prepush` (engine build, both typechecks, Biome, the CLI build and `pnpm test`). Run it yourself with `pnpm prepush`, or skip it once with `git push --no-verify`.
+A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Release pull requests into `main`, pushes to `main` and manual runs test everything. Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
+
+The Husky `pre-push` hook runs `pnpm prepush:quick`: the engine build, both typechecks, Biome and the affected tests, compared with `origin/staging`. Run every test with `QRDX_PREPUSH=full git push` or `pnpm prepush`, or skip the hook once with `git push --no-verify`.
 
 To auto-fix formatting and import order in the files you changed:
 
