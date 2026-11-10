@@ -57,9 +57,9 @@ const EVERYTHING: Record<string, string> = {
   YOUTUBE_API_KEY: FAKE,
   SPOTIFY_CLIENT_ID: FAKE,
   SPOTIFY_CLIENT_SECRET: FAKE,
-  NEXT_PUBLIC_APP_URL: "https://qrdx.example",
+  // qrdx.dev: the affiliate program only runs where QRdx itself does.
+  NEXT_PUBLIC_APP_URL: "https://qrdx.dev",
   QRDX_EE_LICENSE: FAKE,
-  QRDX_AFFILIATES: FAKE,
   POLAR_WEBHOOK_SECRET: FAKE,
 };
 
@@ -90,10 +90,50 @@ const NEEDS: Record<FeatureId, string[]> = {
   passkeys: ["NEXT_PUBLIC_APP_URL"],
   sso: ["QRDX_EE_LICENSE"],
   auditLog: ["QRDX_EE_LICENSE"],
-  affiliates: ["QRDX_AFFILIATES", "POLAR_WEBHOOK_SECRET"],
+  affiliates: ["POLAR_WEBHOOK_SECRET"],
 };
 
 const vercelProd = { onVercel: true, production: true };
+
+describe("the affiliate program runs only where QRdx itself does", () => {
+  const polar = { POLAR_WEBHOOK_SECRET: FAKE };
+  const on = (env: Record<string, string>) =>
+    computeFeatures(ctx({ ...polar, ...env }, vercelProd)).affiliates;
+
+  it("is on for qrdx.dev, its previews and local dev, with Polar set", () => {
+    expect(on({ NEXT_PUBLIC_APP_URL: "https://qrdx.dev" })).toBe(true);
+    expect(on({ NEXT_PUBLIC_APP_URL: "https://www.qrdx.dev" })).toBe(true);
+    expect(on({ NEXT_PUBLIC_APP_URL: "http://localhost:3000" })).toBe(true);
+    // A preview: its own *.vercel.app URL, in the qrdx.dev project.
+    expect(
+      on({
+        NEXT_PUBLIC_APP_URL: "https://qrdx-git-x-me.vercel.app",
+        VERCEL_PROJECT_PRODUCTION_URL: "qrdx.dev",
+      }),
+    ).toBe(true);
+  });
+
+  it("is off on a self-hosted copy, with no setting to turn it on", () => {
+    expect(on({ NEXT_PUBLIC_APP_URL: "https://qr.example.org" })).toBe(false);
+    expect(on({ NEXT_PUBLIC_APP_URL: "https://qrdx.dev.example.org" })).toBe(
+      false,
+    );
+    expect(
+      on({
+        NEXT_PUBLIC_APP_URL: "https://qr.example.org",
+        QRDX_AFFILIATES: "1",
+      }),
+    ).toBe(false);
+  });
+
+  it("is off without Polar's webhook secret", () => {
+    expect(
+      computeFeatures(
+        ctx({ NEXT_PUBLIC_APP_URL: "https://qrdx.dev" }, vercelProd),
+      ).affiliates,
+    ).toBe(false);
+  });
+});
 
 describe("each feature, on and off by env", () => {
   it("is on with everything set", () => {
@@ -404,8 +444,6 @@ describe("a production-like deployment", () => {
       "spamCheck",
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",
-      // Polar is set, but not the program's own switch (QRDX_AFFILIATES).
-      "affiliates",
     ]);
   });
 
