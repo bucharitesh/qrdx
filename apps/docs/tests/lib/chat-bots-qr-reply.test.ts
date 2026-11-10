@@ -37,6 +37,41 @@ describe("readChatQrInput", () => {
     });
   });
 
+  it("turns a bare domain into an https address", () => {
+    for (const [typed, data] of [
+      ["bucharitesh.in", "https://bucharitesh.in"],
+      ["www.example.com/menu?table=4", "https://www.example.com/menu?table=4"],
+      ["shop.example.co.uk", "https://shop.example.co.uk"],
+      ["xn--bcher-kva.de", "https://xn--bcher-kva.de"],
+      ["example.xn--p1ai", "https://example.xn--p1ai"],
+      ["example.com:8080/a", "https://example.com:8080/a"],
+      ["QRDX.DEV", "https://QRDX.DEV"],
+      ["example.photography", "https://example.photography"],
+    ]) {
+      expect(readChatQrInput(typed)).toEqual({ ok: true, data, url: data });
+    }
+  });
+
+  it("leaves things that only look a bit like domains as text", () => {
+    for (const typed of [
+      "v1.2",
+      "192.168.1.10",
+      "hi@example.com",
+      "see qrdx.dev",
+      "localhost",
+      "example.",
+      "http://already.example",
+      "Mr.Smith",
+      "wifi.password",
+      "notes.txt",
+      "package.json",
+      "config.yaml",
+    ]) {
+      const input = readChatQrInput(typed);
+      expect(input).toMatchObject({ ok: true, data: typed });
+    }
+  });
+
   it("refuses empty content", () => {
     expect(readChatQrInput("   \n ")).toEqual({ ok: false, reason: "empty" });
   });
