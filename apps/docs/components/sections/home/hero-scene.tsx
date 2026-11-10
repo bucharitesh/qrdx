@@ -749,7 +749,14 @@ ${OFFSETS.join("")}
 @media (prefers-reduced-motion:reduce){.sc{--sc-at:${STILL}s}.sc .still-arm{--sc-at:${STILL_ARM}s}.sc *{animation-play-state:paused!important}}
 `;
 
-export function HeroScene({ className }: { className?: string }) {
+export function HeroScene({
+  className,
+  label,
+}: {
+  className?: string;
+  /** What the drawing shows, for screen readers (in the page's language). */
+  label: string;
+}) {
   const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
@@ -786,7 +793,7 @@ export function HeroScene({ className }: { className?: string }) {
       ref={ref}
       viewBox={VIEWBOX}
       role="img"
-      aria-label="Animated drawing of the QRdx flow: a studio screen designs and styles a QR code, a printer prints it on a card, a robot arm places the card on a conveyor, a phone on a gate scans each card as it passes, the scan travels to an analytics panel that adds a new bar, and a large dynamic QR card swaps its destination link without being reprinted"
+      aria-label={label}
       className={cn(
         "sc block h-auto w-full select-none",
         "[--sc-fill:#ffffff] [--sc-side:#eef0f3] [--sc-line:rgba(18,18,28,0.24)] [--sc-line-2:rgba(18,18,28,0.42)] [--sc-screen:#f6f7fb] [--sc-ink:#0b0b0d] [--sc-icon:rgba(18,18,28,0.6)] [--sc-glow:0.5] [--sc-lift:0] [--sc-band:#1d3fae] [--sc-eye:var(--primary)] [--sc-edge:rgba(42,91,255,0.8)]",

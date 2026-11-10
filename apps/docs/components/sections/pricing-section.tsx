@@ -13,12 +13,14 @@ import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { Book1, Driver } from "iconsax-reactjs";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { createCheckout } from "@/actions/checkout";
 import { AsciiField, RadialHalo } from "@/components/fx";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { useSlidingPill } from "@/components/mockups/sliding-pill";
-import { maxYearlySavingsPercent } from "@/components/sections/pricing/plan-content";
+import { maxYearlySavingsPercent } from "@/components/sections/pricing/savings";
 import { siteConfig } from "@/config/site";
 import { track } from "@/lib/analytics";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
@@ -55,11 +57,6 @@ interface PricingSectionProps {
 
 const PORTAL_HREF = "/settings/portal";
 
-const INTERVAL_LABELS: Record<BillingInterval, string> = {
-  month: "Monthly",
-  year: "Yearly",
-};
-
 function isPaidPlan(value: unknown): value is PaidPlan {
   return PAID_PLANS.includes(value as PaidPlan);
 }
@@ -77,10 +74,11 @@ function BillingToggle({
   onChange: (interval: BillingInterval) => void;
   savings: number;
 }) {
+  const t = useTranslations("pricing.billing");
   const { pill, capture } = useSlidingPill();
   return (
     <fieldset className="flex h-10 w-fit items-center rounded-full border bg-muted/60 p-1">
-      <legend className="sr-only">Billing period</legend>
+      <legend className="sr-only">{t("legend")}</legend>
       {BILLING_INTERVALS.map((option) => (
         <button
           aria-pressed={interval === option}
@@ -106,9 +104,9 @@ function BillingToggle({
                 : "text-muted-foreground hover:text-foreground",
             )}
           >
-            {INTERVAL_LABELS[option]}
+            {t(option)}
             {option === "year" && savings > 0 && (
-              <SavingsBadge>Save up to {savings}%</SavingsBadge>
+              <SavingsBadge>{t("saveUpTo", { percent: savings })}</SavingsBadge>
             )}
           </span>
         </button>
@@ -127,6 +125,7 @@ function SavingsBadge({ children }: { children: React.ReactNode }) {
 
 /** "Prices in ₹ for India" note with a switch; the choice is kept in a cookie. */
 function CurrencyNote({ currency }: { currency: PricingCurrency }) {
+  const t = useTranslations("pricing.currency");
   const next: PricingCurrency = currency === "INR" ? "USD" : "INR";
   const value = overrideForCurrency(next);
 
@@ -141,16 +140,16 @@ function CurrencyNote({ currency }: { currency: PricingCurrency }) {
 
   return (
     <p className="text-center text-sm text-muted-foreground">
-      {currency === "INR" ? "Prices in ₹ for India." : "Prices in US$."}{" "}
-      <Link
+      {currency === "INR" ? t("inr") : t("usd")}{" "}
+      <LocaleLink
         className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
         href={`/pricing?${CURRENCY_PARAM}=${value}`}
         onClick={remember}
         replace
         scroll={false}
       >
-        {next === "INR" ? "In India? See prices in ₹" : "Show prices in US$"}
-      </Link>
+        {next === "INR" ? t("showInr") : t("showUsd")}
+      </LocaleLink>
     </p>
   );
 }
@@ -187,16 +186,21 @@ function PriceLine({
   /** True once the visitor has switched the billing period. */
   toggled: boolean;
 }) {
+  const t = useTranslations("pricing");
+  const locale = useLocale();
+  const price = (amount: number) => formatPrice(amount, currency, locale);
   if (plan === "free") {
     return (
       <div className="flex flex-col gap-1.5">
         <p className="flex items-baseline gap-1.5">
           <span className="text-4xl font-semibold tracking-tight tabular-nums">
-            {formatPrice(0, currency)}
+            {price(0)}
           </span>
-          <span className="text-sm text-muted-foreground">forever</span>
+          <span className="text-sm text-muted-foreground">
+            {t("price.forever")}
+          </span>
         </p>
-        <p className="text-xs text-muted-foreground">No credit card needed</p>
+        <p className="text-xs text-muted-foreground">{t("price.noCard")}</p>
       </div>
     );
   }
@@ -218,21 +222,23 @@ function PriceLine({
           )}
           key={`${interval}-${currency}`}
         >
-          {formatPrice(amount, currency)}
+          {price(amount)}
         </span>
         <span className="text-sm text-muted-foreground">
-          /{interval === "year" ? "year" : "month"}
+          {interval === "year" ? t("price.perYear") : t("price.perMonth")}
         </span>
         {interval === "year" && savings > 0 && (
           <span className="ml-1 self-center">
-            <SavingsBadge>Save {savings}%</SavingsBadge>
+            <SavingsBadge>
+              {t("billing.save", { percent: savings })}
+            </SavingsBadge>
           </span>
         )}
       </p>
       <p className="text-xs text-muted-foreground">
         {interval === "year"
-          ? `About ${formatPrice(Math.round(amount / 12), currency)} a month, billed yearly`
-          : "Billed monthly, cancel anytime"}
+          ? t("price.aboutMonthly", { price: price(Math.round(amount / 12)) })
+          : t("price.billedMonthly")}
       </p>
     </div>
   );
@@ -244,7 +250,11 @@ export function PricingSection({
   description,
   highlights,
 }: PricingSectionProps) {
-  const { pricing } = siteConfig;
+  const t = useTranslations("pricing");
+  const locale = useLocale();
+  // "Free" is translated; "Pro" and "Business" stay in English.
+  const planName = (plan: Plan) =>
+    plan === "free" ? t("plans.free") : PLAN_NAMES[plan];
   const [interval, setInterval] = useState<BillingInterval>("year");
   const [toggled, setToggled] = useState(false);
   const changeInterval = (next: BillingInterval) => {
@@ -274,7 +284,7 @@ export function PricingSection({
       if (result.reason === "subscribed") {
         toast.error(result.error, {
           action: {
-            label: "Open portal",
+            label: t("cards.openPortal"),
             onClick: () => window.location.assign(PORTAL_HREF),
           },
         });
@@ -304,15 +314,14 @@ export function PricingSection({
   };
 
   const paidAction = (plan: PaidPlan) => {
-    const tier = pricing.tiers[plan];
     if (!PRICING[plan][interval].productId) {
       return {
         button: (
           <Button className="w-full" disabled variant="outline">
-            Coming soon
+            {t("cards.comingSoon")}
           </Button>
         ),
-        caption: `${PLAN_NAMES[plan]} isn't available for checkout yet.`,
+        caption: t("cards.notAvailable", { plan: planName(plan) }),
       };
     }
     if (currentPlan === plan) {
@@ -320,20 +329,22 @@ export function PricingSection({
         button: (
           <Button asChild className="w-full" variant="outline">
             {/* Route handler that redirects off-site, so no <Link>. */}
-            <a href={PORTAL_HREF}>Manage subscription</a>
+            <a href={PORTAL_HREF}>{t("cards.manage")}</a>
           </Button>
         ),
-        caption: "This is your current plan.",
+        caption: t("cards.current"),
       };
     }
     if (currentPlan && currentPlan !== "free") {
       return {
         button: (
           <Button asChild className="w-full" variant="outline">
-            <a href={PORTAL_HREF}>Switch to {PLAN_NAMES[plan]}</a>
+            <a href={PORTAL_HREF}>
+              {t("cards.switchTo", { plan: planName(plan) })}
+            </a>
           </Button>
         ),
-        caption: "Plan changes happen in the billing portal.",
+        caption: t("cards.portalNote"),
       };
     }
     const busy = isPending && pendingPlan === plan;
@@ -348,10 +359,10 @@ export function PricingSection({
           {busy ? (
             <>
               <Spinner aria-hidden />
-              Redirecting…
+              {t("cards.redirecting")}
             </>
           ) : (
-            tier.cta
+            t(`tiers.${plan}.cta`)
           )}
         </Button>
       ),
@@ -370,22 +381,21 @@ export function PricingSection({
         button: (
           <Button asChild className="w-full" variant="outline">
             <Link href={isSignedIn ? "/dashboard" : playgroundHref()}>
-              {isSignedIn ? "Go to dashboard" : pricing.tiers.free.cta}
+              {isSignedIn ? t("cards.goToDashboard") : t("tiers.free.cta")}
             </Link>
           </Button>
         ),
-        caption:
-          currentPlan === "free" ? "This is your current plan." : undefined,
+        caption: currentPlan === "free" ? t("cards.current") : undefined,
       },
     },
     {
       plan: "pro",
-      lead: "Everything in Free, plus:",
+      lead: t("cards.leadPro"),
       action: paidAction("pro"),
     },
     {
       plan: "business",
-      lead: "Everything in Pro, plus:",
+      lead: t("cards.leadBusiness"),
       action: paidAction("business"),
     },
   ];
@@ -403,10 +413,10 @@ export function PricingSection({
         />
         <div className="relative mx-auto flex max-w-[44rem] flex-col items-center gap-3 px-10 pt-14 pb-10 text-center md:pt-20">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-            Pricing
+            {t("header.eyebrow")}
           </p>
           <h1 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">
-            {pricing.title}
+            {t("header.title")}
           </h1>
           <p className="max-w-xl text-pretty text-muted-foreground md:text-lg">
             {description}
@@ -445,11 +455,11 @@ export function PricingSection({
               )}
               <div className="flex flex-col gap-1.5">
                 <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-                  {PLAN_NAMES[plan]}
-                  {popular && <Badge>Popular</Badge>}
+                  {planName(plan)}
+                  {popular && <Badge>{t("cards.popular")}</Badge>}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  {pricing.tiers[plan].tagline}
+                  {t(`tiers.${plan}.tagline`)}
                 </p>
               </div>
               <PriceLine
@@ -481,13 +491,13 @@ export function PricingSection({
             </span>
             <div className="flex flex-col gap-1">
               <h2 className="flex flex-wrap items-baseline gap-x-2 font-semibold tracking-tight">
-                {pricing.selfHost.title}
+                {t("selfHost.title")}
                 <span className="text-sm font-normal text-muted-foreground">
-                  {formatPrice(0, currency)} · {pricing.selfHost.license}
+                  {formatPrice(0, currency, locale)} · AGPL-3.0
                 </span>
               </h2>
               <p className="max-w-2xl text-sm text-pretty text-muted-foreground">
-                {pricing.selfHost.description}
+                {t("selfHost.description")}
               </p>
             </div>
           </div>
@@ -495,7 +505,7 @@ export function PricingSection({
             <Button asChild size="sm" variant="outline">
               <Link href="/docs/self-hosting">
                 <Book1 aria-hidden />
-                Self-hosting guide
+                {t("selfHost.guide")}
               </Link>
             </Button>
             <Button asChild size="sm" variant="ghost">
@@ -507,7 +517,7 @@ export function PricingSection({
           </div>
         </Card>
         <p className="mx-auto mt-6 max-w-2xl text-center text-xs text-pretty text-muted-foreground">
-          {pricing.footnote}
+          {t("footnote")}
         </p>
       </div>
     </section>

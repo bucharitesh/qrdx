@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
 import { AsciiDivider } from "@/components/fx/ascii-divider";
 import { FAQSection } from "@/components/sections/faq-section";
 import { HeroSection } from "@/components/sections/hero-section";
@@ -9,14 +10,8 @@ import { HomeNumbers } from "@/components/sections/home/numbers/home-numbers";
 import { UseCasesSection } from "@/components/sections/home/use-cases-section";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import {
-  baseUrl,
-  createMetadata,
-  defaultOgImage,
-  siteDescription,
-  siteName,
-  siteTitle,
-} from "@/lib/metadata";
+import { localizedMetadata } from "@/lib/i18n/metadata";
+import { baseUrl, defaultOgImage, siteName } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 import {
   BILLING_INTERVALS,
@@ -28,11 +23,16 @@ import {
 } from "@/lib/pricing";
 import { founderSchema, organizationId } from "@/lib/seo-schema";
 
-export const metadata: Metadata = createMetadata({
-  title: { absolute: siteTitle },
-  description: siteDescription,
-  path: "/",
-});
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "meta" });
+  return localizedMetadata({
+    locale,
+    path: "/",
+    title: { absolute: t("siteTitle") },
+    description: t("siteDescription"),
+  });
+}
 
 const url = (path: string): string => new URL(path, baseUrl).toString();
 
@@ -128,6 +128,7 @@ const softwareApplicationSchema = {
 };
 
 // The Organization node itself comes from the (home) layout (lib/seo-schema.ts).
+// The schema.org text stays English in every language for now.
 
 // No SearchAction: the site has no search results URL (docs search is a dialog).
 const webSiteSchema = {

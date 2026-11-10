@@ -1,15 +1,17 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { openCookieSettings } from "./open-cookie-settings";
 
 /** Reopens the cookie preferences dialog. Styled like a footer link by default. */
 export function CookieSettingsButton({
   className,
-  children = "Cookie settings",
+  children,
   ...props
 }: Omit<ComponentProps<"button">, "type" | "onClick">) {
+  const t = useTranslations("consent");
   return (
     <button
       type="button"
@@ -20,7 +22,7 @@ export function CookieSettingsButton({
       )}
       {...props}
     >
-      {children}
+      {children ?? t("settingsButton")}
     </button>
   );
 }

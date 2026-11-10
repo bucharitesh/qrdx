@@ -1,5 +1,6 @@
 import { Card } from "@repo/design-system/components/ui/card";
 import { ArrowDown2, MessageQuestion } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { faqSchema, JsonLd } from "@/components/sections/tools/json-ld";
 import { siteConfig } from "@/config/site";
 
@@ -9,6 +10,7 @@ interface PricingFaqProps {
 
 /** Two-column FAQ; native <details> keeps every answer in the server HTML. */
 export function PricingFaq({ faqs }: PricingFaqProps) {
+  const t = useTranslations("pricing.faq");
   return (
     <section
       aria-labelledby="pricing-faq"
@@ -22,10 +24,10 @@ export function PricingFaq({ faqs }: PricingFaqProps) {
             className="text-2xl font-semibold tracking-tight text-balance md:text-3xl"
             id="pricing-faq"
           >
-            Pricing questions
+            {t("title")}
           </h2>
           <p className="text-pretty text-muted-foreground">
-            Billing, limits and what happens to your codes if you stop paying.
+            {t("description")}
           </p>
           <Card className="mt-2 flex-row items-center gap-3 p-4 shadow-xs">
             <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40">
@@ -35,13 +37,17 @@ export function PricingFaq({ faqs }: PricingFaqProps) {
               />
             </span>
             <p className="text-sm text-muted-foreground">
-              Something else? Email{" "}
-              <a
-                className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
-                href={`mailto:${siteConfig.links.email}`}
-              >
-                {siteConfig.links.email}
-              </a>
+              {t.rich("somethingElse", {
+                email: siteConfig.links.email,
+                link: (chunks) => (
+                  <a
+                    className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+                    href={`mailto:${siteConfig.links.email}`}
+                  >
+                    {chunks}
+                  </a>
+                ),
+              })}
             </p>
           </Card>
         </div>
