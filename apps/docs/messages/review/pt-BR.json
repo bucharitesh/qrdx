@@ -1,0 +1,1734 @@
+{
+  "meta.siteTitle": {
+    "source": "7217df72135c",
+    "status": "machine"
+  },
+  "meta.siteDescription": {
+    "source": "cce90b43dadb",
+    "status": "machine"
+  },
+  "meta.ogImageAlt": {
+    "source": "b2c038f7594e",
+    "status": "machine"
+  },
+  "nav.main": {
+    "source": "eb814be3ca3b",
+    "status": "machine"
+  },
+  "nav.menu": {
+    "source": "99af6606ff9d",
+    "status": "machine"
+  },
+  "nav.openMenu": {
+    "source": "b40b3713b43d",
+    "status": "machine"
+  },
+  "nav.closeMenu": {
+    "source": "6ccd5c785604",
+    "status": "machine"
+  },
+  "nav.entries.product": {
+    "source": "fb9ef894175c",
+    "status": "machine"
+  },
+  "nav.entries.tools": {
+    "source": "ea93d6a262ec",
+    "status": "machine"
+  },
+  "nav.entries.developers": {
+    "source": "fc799da2088d",
+    "status": "machine"
+  },
+  "nav.entries.resources": {
+    "source": "e89b30aa1dc3",
+    "status": "machine"
+  },
+  "nav.entries.pricing": {
+    "source": "dfe95783edfe",
+    "status": "machine"
+  },
+  "nav.items.playground.name": {
+    "source": "a6273fb551f2",
+    "status": "machine"
+  },
+  "nav.items.playground.description": {
+    "source": "6225fd0047c0",
+    "status": "machine"
+  },
+  "nav.items.dynamicCodes.name": {
+    "source": "6089067b0798",
+    "status": "machine"
+  },
+  "nav.items.dynamicCodes.description": {
+    "source": "6cfd26f51e37",
+    "status": "machine"
+  },
+  "nav.items.aiThemes.name": {
+    "source": "0f7e5513dd4c",
+    "status": "machine"
+  },
+  "nav.items.aiThemes.description": {
+    "source": "18c508a95efe",
+    "status": "machine"
+  },
+  "nav.items.aiArt.name": {
+    "source": "fbd1abbf8fdc",
+    "status": "machine"
+  },
+  "nav.items.aiArt.description": {
+    "source": "e4172f97ec71",
+    "status": "machine"
+  },
+  "nav.items.communityThemes.name": {
+    "source": "037a4b1636b8",
+    "status": "machine"
+  },
+  "nav.items.communityThemes.description": {
+    "source": "7f84a1986809",
+    "status": "machine"
+  },
+  "nav.items.pageTemplates.name": {
+    "source": "632a00fb54a6",
+    "status": "machine"
+  },
+  "nav.items.pageTemplates.description": {
+    "source": "44312f9cc9cf",
+    "status": "machine"
+  },
+  "nav.items.generators.name": {
+    "source": "603c1d77656d",
+    "status": "machine"
+  },
+  "nav.items.generators.description": {
+    "source": "615f79e6bd38",
+    "status": "machine"
+  },
+  "nav.items.bulk.name": {
+    "source": "48c46ecdf3c7",
+    "status": "machine"
+  },
+  "nav.items.bulk.description": {
+    "source": "3a9f01d0ae7c",
+    "status": "machine"
+  },
+  "nav.items.scanner.name": {
+    "source": "f96c48da96ed",
+    "status": "machine"
+  },
+  "nav.items.scanner.description": {
+    "source": "94ea9ed03d9f",
+    "status": "machine"
+  },
+  "nav.items.scanChecker.name": {
+    "source": "208aae4852a3",
+    "status": "machine"
+  },
+  "nav.items.scanChecker.description": {
+    "source": "eb8dfd035fc3",
+    "status": "machine"
+  },
+  "nav.items.printSize.name": {
+    "source": "457447ccdac3",
+    "status": "machine"
+  },
+  "nav.items.printSize.description": {
+    "source": "fc75451dc6a2",
+    "status": "machine"
+  },
+  "nav.items.barcode.name": {
+    "source": "4717ee594681",
+    "status": "machine"
+  },
+  "nav.items.barcode.description": {
+    "source": "3919b6853880",
+    "status": "machine"
+  },
+  "nav.items.allTools.name": {
+    "source": "81c151f98a19",
+    "status": "machine"
+  },
+  "nav.items.allTools.description": {
+    "source": "0e6d7ddbe4d2",
+    "status": "machine"
+  },
+  "nav.items.docs.name": {
+    "source": "c205924de0fe",
+    "status": "machine"
+  },
+  "nav.items.docs.description": {
+    "source": "59b67e24421e",
+    "status": "machine"
+  },
+  "nav.items.mcp.name": {
+    "source": "d938c8168e3a",
+    "status": "machine"
+  },
+  "nav.items.mcp.description": {
+    "source": "977b2c1d5ca1",
+    "status": "machine"
+  },
+  "nav.items.imageApi.name": {
+    "source": "6856e461415d",
+    "status": "machine"
+  },
+  "nav.items.imageApi.description": {
+    "source": "2cef6a46994e",
+    "status": "machine"
+  },
+  "nav.items.shadcn.name": {
+    "source": "5ce934a766f9",
+    "status": "machine"
+  },
+  "nav.items.shadcn.description": {
+    "source": "7cfb7251f1f0",
+    "status": "machine"
+  },
+  "nav.items.plugins.name": {
+    "source": "9514b7ff4860",
+    "status": "machine"
+  },
+  "nav.items.plugins.description": {
+    "source": "eefe5821f4b2",
+    "status": "machine"
+  },
+  "nav.items.github.name": {
+    "source": "f911e414cf6b",
+    "status": "machine"
+  },
+  "nav.items.github.description": {
+    "source": "85a3a994b2c1",
+    "status": "machine"
+  },
+  "nav.items.help.name": {
+    "source": "e2f55c84f3b4",
+    "status": "machine"
+  },
+  "nav.items.help.description": {
+    "source": "cdd480f80c60",
+    "status": "machine"
+  },
+  "nav.items.blog.name": {
+    "source": "8c6bc099534a",
+    "status": "machine"
+  },
+  "nav.items.blog.description": {
+    "source": "598fa110bdc1",
+    "status": "machine"
+  },
+  "nav.items.compare.name": {
+    "source": "e888155d8c7d",
+    "status": "machine"
+  },
+  "nav.items.compare.description": {
+    "source": "88268c3c2897",
+    "status": "machine"
+  },
+  "nav.items.changelog.name": {
+    "source": "ead07c84baac",
+    "status": "machine"
+  },
+  "nav.items.changelog.description": {
+    "source": "3a7d3aa5b71f",
+    "status": "machine"
+  },
+  "nav.items.integrations.name": {
+    "source": "090512d93fcc",
+    "status": "machine"
+  },
+  "nav.items.integrations.description": {
+    "source": "5e7b8b2c9bb0",
+    "status": "machine"
+  },
+  "nav.items.support.name": {
+    "source": "814f4ed2d5bd",
+    "status": "machine"
+  },
+  "nav.items.support.description": {
+    "source": "b6644d31b741",
+    "status": "machine"
+  },
+  "nav.account.tryPlayground": {
+    "source": "9a49d38f2987",
+    "status": "machine"
+  },
+  "nav.account.playground": {
+    "source": "a6273fb551f2",
+    "status": "machine"
+  },
+  "nav.account.dashboard": {
+    "source": "67b696468610",
+    "status": "machine"
+  },
+  "nav.github.star": {
+    "source": "e357d396871d",
+    "status": "machine"
+  },
+  "nav.github.starOnGithub": {
+    "source": "31c0e31f23bd",
+    "status": "machine"
+  },
+  "nav.github.starOnGithubCount": {
+    "source": "20417aca9e57",
+    "status": "machine"
+  },
+  "footer.description": {
+    "source": "78e26afcf37f",
+    "status": "machine"
+  },
+  "footer.starOnGithub": {
+    "source": "9000a7b3a285",
+    "status": "machine"
+  },
+  "footer.navLabel": {
+    "source": "26c87bb51e69",
+    "status": "machine"
+  },
+  "footer.scanIt": {
+    "source": "9bbd07dba8b4",
+    "status": "machine"
+  },
+  "footer.copyright": {
+    "source": "94bde9ba3b05",
+    "status": "machine"
+  },
+  "footer.columns.product": {
+    "source": "fb9ef894175c",
+    "status": "machine"
+  },
+  "footer.columns.tools": {
+    "source": "ea93d6a262ec",
+    "status": "machine"
+  },
+  "footer.columns.developers": {
+    "source": "fc799da2088d",
+    "status": "machine"
+  },
+  "footer.columns.resources": {
+    "source": "e89b30aa1dc3",
+    "status": "machine"
+  },
+  "footer.columns.compare": {
+    "source": "e888155d8c7d",
+    "status": "machine"
+  },
+  "footer.links.playground": {
+    "source": "a6273fb551f2",
+    "status": "machine"
+  },
+  "footer.links.dynamicCodes": {
+    "source": "6089067b0798",
+    "status": "machine"
+  },
+  "footer.links.aiThemes": {
+    "source": "0f7e5513dd4c",
+    "status": "machine"
+  },
+  "footer.links.communityThemes": {
+    "source": "037a4b1636b8",
+    "status": "machine"
+  },
+  "footer.links.pageTemplates": {
+    "source": "632a00fb54a6",
+    "status": "machine"
+  },
+  "footer.links.pricing": {
+    "source": "dfe95783edfe",
+    "status": "machine"
+  },
+  "footer.links.guarantee": {
+    "source": "cc813935fc0f",
+    "status": "machine"
+  },
+  "footer.links.generators": {
+    "source": "603c1d77656d",
+    "status": "machine"
+  },
+  "footer.links.bulk": {
+    "source": "48c46ecdf3c7",
+    "status": "machine"
+  },
+  "footer.links.scanChecker": {
+    "source": "208aae4852a3",
+    "status": "machine"
+  },
+  "footer.links.printSize": {
+    "source": "457447ccdac3",
+    "status": "machine"
+  },
+  "footer.links.barcode": {
+    "source": "4717ee594681",
+    "status": "machine"
+  },
+  "footer.links.scanner": {
+    "source": "f96c48da96ed",
+    "status": "machine"
+  },
+  "footer.links.allTools": {
+    "source": "81c151f98a19",
+    "status": "machine"
+  },
+  "footer.links.docs": {
+    "source": "c205924de0fe",
+    "status": "machine"
+  },
+  "footer.links.apiReference": {
+    "source": "484ee9bb6e51",
+    "status": "machine"
+  },
+  "footer.links.imageApi": {
+    "source": "6856e461415d",
+    "status": "machine"
+  },
+  "footer.links.mcp": {
+    "source": "d938c8168e3a",
+    "status": "machine"
+  },
+  "footer.links.shadcn": {
+    "source": "5ce934a766f9",
+    "status": "machine"
+  },
+  "footer.links.plugins": {
+    "source": "9514b7ff4860",
+    "status": "machine"
+  },
+  "footer.links.selfHosting": {
+    "source": "b817cbd4d6df",
+    "status": "machine"
+  },
+  "footer.links.github": {
+    "source": "f911e414cf6b",
+    "status": "machine"
+  },
+  "footer.links.help": {
+    "source": "e2f55c84f3b4",
+    "status": "machine"
+  },
+  "footer.links.blog": {
+    "source": "8c6bc099534a",
+    "status": "machine"
+  },
+  "footer.links.changelog": {
+    "source": "ead07c84baac",
+    "status": "machine"
+  },
+  "footer.links.integrations": {
+    "source": "090512d93fcc",
+    "status": "machine"
+  },
+  "footer.links.industries": {
+    "source": "04ae407c8496",
+    "status": "machine"
+  },
+  "footer.links.placements": {
+    "source": "1dc58ba725ad",
+    "status": "machine"
+  },
+  "footer.links.affiliates": {
+    "source": "ce78cb6655b7",
+    "status": "machine"
+  },
+  "footer.links.contact": {
+    "source": "2b5c3d26721a",
+    "status": "machine"
+  },
+  "footer.links.legal": {
+    "source": "4787eaf7c938",
+    "status": "machine"
+  },
+  "footer.links.privacy": {
+    "source": "ba445cff3898",
+    "status": "machine"
+  },
+  "footer.links.terms": {
+    "source": "e69e06144877",
+    "status": "machine"
+  },
+  "footer.links.subprocessors": {
+    "source": "4fd685570eae",
+    "status": "machine"
+  },
+  "footer.links.reportAbuse": {
+    "source": "179e5a21cc1e",
+    "status": "machine"
+  },
+  "footer.links.acceptableUse": {
+    "source": "9b41b2884b0e",
+    "status": "machine"
+  },
+  "footer.links.cookies": {
+    "source": "edd5b2fd9f74",
+    "status": "machine"
+  },
+  "footer.links.dpa": {
+    "source": "5730e8c986a8",
+    "status": "machine"
+  },
+  "footer.links.aiFeatures": {
+    "source": "3c517bfd974a",
+    "status": "machine"
+  },
+  "footer.links.refunds": {
+    "source": "0942c1799b5a",
+    "status": "machine"
+  },
+  "footer.links.affiliateTerms": {
+    "source": "3f433549a264",
+    "status": "machine"
+  },
+  "footer.links.security": {
+    "source": "8f6fb4eb7f42",
+    "status": "machine"
+  },
+  "footer.links.allComparisons": {
+    "source": "ed36a5ad0845",
+    "status": "machine"
+  },
+  "localeSwitcher.label": {
+    "source": "a4fe65264ef7",
+    "status": "machine"
+  },
+  "localeSwitcher.englishOnly": {
+    "source": "f68c974d682c",
+    "status": "machine"
+  },
+  "cta.title": {
+    "source": "1f78fdd09efb",
+    "status": "machine"
+  },
+  "cta.subtext": {
+    "source": "cd7bad450b9c",
+    "status": "machine"
+  },
+  "cta.button": {
+    "source": "6d3d007809fa",
+    "status": "machine"
+  },
+  "consent.banner.title": {
+    "source": "cbb2df9e35ee",
+    "status": "machine"
+  },
+  "consent.banner.description": {
+    "source": "ab1c9ed59e6d",
+    "status": "machine"
+  },
+  "consent.banner.privacyPolicy": {
+    "source": "ba445cff3898",
+    "status": "machine"
+  },
+  "consent.actions.accept": {
+    "source": "f55ee8623408",
+    "status": "machine"
+  },
+  "consent.actions.reject": {
+    "source": "adba25230403",
+    "status": "machine"
+  },
+  "consent.actions.customize": {
+    "source": "c5276e27afba",
+    "status": "machine"
+  },
+  "consent.actions.save": {
+    "source": "035882f1a56b",
+    "status": "machine"
+  },
+  "consent.actions.dismiss": {
+    "source": "565339bc4d33",
+    "status": "machine"
+  },
+  "consent.dialog.title": {
+    "source": "df9b9219f0e5",
+    "status": "machine"
+  },
+  "consent.dialog.description": {
+    "source": "8a5654772286",
+    "status": "machine"
+  },
+  "consent.dialog.details": {
+    "source": "52b22ac1177e",
+    "status": "machine"
+  },
+  "consent.dialog.alwaysOn": {
+    "source": "044ba8a9ae43",
+    "status": "machine"
+  },
+  "consent.dialog.usedBy": {
+    "source": "4661e1d25882",
+    "status": "machine"
+  },
+  "consent.categories.necessary.title": {
+    "source": "16c37f16f5bb",
+    "status": "machine"
+  },
+  "consent.categories.necessary.description": {
+    "source": "c985fa53c034",
+    "status": "machine"
+  },
+  "consent.categories.functionality.title": {
+    "source": "d1da0752dbaa",
+    "status": "machine"
+  },
+  "consent.categories.functionality.description": {
+    "source": "37d532afc92b",
+    "status": "machine"
+  },
+  "consent.categories.measurement.title": {
+    "source": "94c116ee118a",
+    "status": "machine"
+  },
+  "consent.categories.measurement.description": {
+    "source": "4479b7d98a9e",
+    "status": "machine"
+  },
+  "consent.settingsButton": {
+    "source": "df9b9219f0e5",
+    "status": "machine"
+  },
+  "home.hero.badge": {
+    "source": "689c2ccf7665",
+    "status": "machine"
+  },
+  "home.hero.title": {
+    "source": "8389497f9874",
+    "status": "machine"
+  },
+  "home.hero.description": {
+    "source": "fc4f8e858520",
+    "status": "machine"
+  },
+  "home.hero.primary": {
+    "source": "9a49d38f2987",
+    "status": "machine"
+  },
+  "home.hero.secondary": {
+    "source": "559b1cc46027",
+    "status": "machine"
+  },
+  "home.hero.sceneLabel": {
+    "source": "011285a5fac5",
+    "status": "machine"
+  },
+  "home.editor.eyebrow": {
+    "source": "5c3bc0219454",
+    "status": "machine"
+  },
+  "home.editor.description": {
+    "source": "2ba632903b14",
+    "status": "machine"
+  },
+  "home.editor.valueLabel": {
+    "source": "06a7434969d9",
+    "status": "machine"
+  },
+  "home.editor.style": {
+    "source": "7e744141b40e",
+    "status": "machine"
+  },
+  "home.editor.frame": {
+    "source": "d0b50e064a4f",
+    "status": "machine"
+  },
+  "home.editor.styles.classic": {
+    "source": "ae25d6481fc1",
+    "status": "machine"
+  },
+  "home.editor.styles.rounded": {
+    "source": "0a62cd800f27",
+    "status": "machine"
+  },
+  "home.editor.styles.dots": {
+    "source": "6de335fa213a",
+    "status": "machine"
+  },
+  "home.editor.styles.gradient": {
+    "source": "2523561c32e9",
+    "status": "machine"
+  },
+  "home.editor.frames.none": {
+    "source": "bb8e3c58cf20",
+    "status": "machine"
+  },
+  "home.editor.frames.border": {
+    "source": "3b4bdff339e9",
+    "status": "machine"
+  },
+  "home.editor.more": {
+    "source": "15b1de5afbad",
+    "status": "machine"
+  },
+  "home.editor.customize": {
+    "source": "45dd4fcdc2a8",
+    "status": "machine"
+  },
+  "home.editor.qrLabel": {
+    "source": "5bbfbe7ebf67",
+    "status": "machine"
+  },
+  "home.editor.empty": {
+    "source": "e52ac52a2004",
+    "status": "machine"
+  },
+  "home.gallery.title": {
+    "source": "fe75f54e21c5",
+    "status": "machine"
+  },
+  "home.gallery.description": {
+    "source": "62d6ac9e8b77",
+    "status": "machine"
+  },
+  "home.gallery.seeAll": {
+    "source": "d7a8c446069a",
+    "status": "machine"
+  },
+  "home.gallery.showMore": {
+    "source": "f5c9bd131486",
+    "status": "machine"
+  },
+  "home.useCases.eyebrow": {
+    "source": "ff27a991e855",
+    "status": "machine"
+  },
+  "home.useCases.title": {
+    "source": "7dfb8c138c45",
+    "status": "machine"
+  },
+  "home.useCases.description": {
+    "source": "ef316119ea1d",
+    "status": "machine"
+  },
+  "home.useCases.items.menus.title": {
+    "source": "66771904c206",
+    "status": "machine"
+  },
+  "home.useCases.items.menus.description": {
+    "source": "8f7ad7a0b2bf",
+    "status": "machine"
+  },
+  "home.useCases.items.menus.linkText": {
+    "source": "6639c6a609a1",
+    "status": "machine"
+  },
+  "home.useCases.items.menus.cardLabel": {
+    "source": "5ad5697e8cd1",
+    "status": "machine"
+  },
+  "home.useCases.items.businessCards.title": {
+    "source": "5699dea1d828",
+    "status": "machine"
+  },
+  "home.useCases.items.businessCards.description": {
+    "source": "5d651d95de63",
+    "status": "machine"
+  },
+  "home.useCases.items.businessCards.linkText": {
+    "source": "061f0d612bb9",
+    "status": "machine"
+  },
+  "home.useCases.items.businessCards.cardLabel": {
+    "source": "2f493f53cc9f",
+    "status": "machine"
+  },
+  "home.useCases.items.wifi.title": {
+    "source": "519baa312e26",
+    "status": "machine"
+  },
+  "home.useCases.items.wifi.description": {
+    "source": "62a43574b1e9",
+    "status": "machine"
+  },
+  "home.useCases.items.wifi.linkText": {
+    "source": "51fd4ca88f8b",
+    "status": "machine"
+  },
+  "home.useCases.items.wifi.cardLabel": {
+    "source": "ac9effd1dfcd",
+    "status": "machine"
+  },
+  "home.useCases.items.payments.title": {
+    "source": "632e1c583941",
+    "status": "machine"
+  },
+  "home.useCases.items.payments.description": {
+    "source": "d483ed0146bc",
+    "status": "machine"
+  },
+  "home.useCases.items.payments.linkText": {
+    "source": "fafd67815431",
+    "status": "machine"
+  },
+  "home.useCases.items.payments.cardLabel": {
+    "source": "edf117362932",
+    "status": "machine"
+  },
+  "home.useCases.items.packaging.title": {
+    "source": "8b6bbd40eba4",
+    "status": "machine"
+  },
+  "home.useCases.items.packaging.description": {
+    "source": "6e5612dac383",
+    "status": "machine"
+  },
+  "home.useCases.items.packaging.linkText": {
+    "source": "48c46ecdf3c7",
+    "status": "machine"
+  },
+  "home.useCases.items.packaging.cardLabel": {
+    "source": "6d8010b848f1",
+    "status": "machine"
+  },
+  "home.useCases.items.events.title": {
+    "source": "c76c8987f305",
+    "status": "machine"
+  },
+  "home.useCases.items.events.description": {
+    "source": "25d8985758b9",
+    "status": "machine"
+  },
+  "home.useCases.items.events.linkText": {
+    "source": "a0e391ff51f0",
+    "status": "machine"
+  },
+  "home.useCases.items.events.cardLabel": {
+    "source": "a2c62ad45df7",
+    "status": "machine"
+  },
+  "home.useCases.items.shelves.title": {
+    "source": "1f21f7c613f8",
+    "status": "machine"
+  },
+  "home.useCases.items.shelves.description": {
+    "source": "e377a2f9a68c",
+    "status": "machine"
+  },
+  "home.useCases.items.shelves.linkText": {
+    "source": "be873dd0166c",
+    "status": "machine"
+  },
+  "home.useCases.items.shelves.cardLabel": {
+    "source": "a975b2d7f082",
+    "status": "machine"
+  },
+  "home.useCases.items.posters.title": {
+    "source": "73168b0832e1",
+    "status": "machine"
+  },
+  "home.useCases.items.posters.description": {
+    "source": "1600ed3493b0",
+    "status": "machine"
+  },
+  "home.useCases.items.posters.linkText": {
+    "source": "457447ccdac3",
+    "status": "machine"
+  },
+  "home.useCases.items.posters.cardLabel": {
+    "source": "2168540de413",
+    "status": "machine"
+  },
+  "home.features.eyebrow": {
+    "source": "5697d03daef4",
+    "status": "machine"
+  },
+  "home.features.title": {
+    "source": "968700096f64",
+    "status": "machine"
+  },
+  "home.features.description": {
+    "source": "1333b992e393",
+    "status": "machine"
+  },
+  "home.features.design.eyebrow": {
+    "source": "0072e6b93494",
+    "status": "machine"
+  },
+  "home.features.design.title": {
+    "source": "d1233230dbec",
+    "status": "machine"
+  },
+  "home.features.design.description": {
+    "source": "111ba00962a1",
+    "status": "machine"
+  },
+  "home.features.design.link": {
+    "source": "e29e52c48e42",
+    "status": "machine"
+  },
+  "home.features.scanScore.eyebrow": {
+    "source": "db109d6d23f3",
+    "status": "machine"
+  },
+  "home.features.scanScore.title": {
+    "source": "aaa1e5aa4f9b",
+    "status": "machine"
+  },
+  "home.features.scanScore.description": {
+    "source": "421ec6622851",
+    "status": "machine"
+  },
+  "home.features.scanScore.link": {
+    "source": "87763218505a",
+    "status": "machine"
+  },
+  "home.features.printSize.eyebrow": {
+    "source": "a0b08e7d4dae",
+    "status": "machine"
+  },
+  "home.features.printSize.title": {
+    "source": "4deeb29f3000",
+    "status": "machine"
+  },
+  "home.features.printSize.description": {
+    "source": "1e0cc20d0ba8",
+    "status": "machine"
+  },
+  "home.features.printSize.link": {
+    "source": "457447ccdac3",
+    "status": "machine"
+  },
+  "home.features.dynamic.eyebrow": {
+    "source": "afb239d942df",
+    "status": "machine"
+  },
+  "home.features.dynamic.title": {
+    "source": "3c6e5ad9e23d",
+    "status": "machine"
+  },
+  "home.features.dynamic.description": {
+    "source": "875d65e8a030",
+    "status": "machine"
+  },
+  "home.features.dynamic.link": {
+    "source": "8660c358a956",
+    "status": "machine"
+  },
+  "home.features.analytics.eyebrow": {
+    "source": "94c116ee118a",
+    "status": "machine"
+  },
+  "home.features.analytics.title": {
+    "source": "7f6cc3df1b47",
+    "status": "machine"
+  },
+  "home.features.analytics.description": {
+    "source": "70e771f9a62b",
+    "status": "machine"
+  },
+  "home.features.analytics.link": {
+    "source": "2699288c02d7",
+    "status": "machine"
+  },
+  "home.features.bulk.eyebrow": {
+    "source": "3140100df131",
+    "status": "machine"
+  },
+  "home.features.bulk.title": {
+    "source": "73da18379bfa",
+    "status": "machine"
+  },
+  "home.features.bulk.description": {
+    "source": "9121f7e5fe14",
+    "status": "machine"
+  },
+  "home.features.bulk.link": {
+    "source": "406f0e34a702",
+    "status": "machine"
+  },
+  "home.features.developers.eyebrow": {
+    "source": "fc799da2088d",
+    "status": "machine"
+  },
+  "home.features.developers.title": {
+    "source": "e6b0ac3e92b3",
+    "status": "machine"
+  },
+  "home.features.developers.description": {
+    "source": "846fbd914726",
+    "status": "machine"
+  },
+  "home.features.developers.link": {
+    "source": "68cfb8137789",
+    "status": "machine"
+  },
+  "home.video.eyebrow": {
+    "source": "8a2cc0673b1c",
+    "status": "machine"
+  },
+  "home.video.title": {
+    "source": "50415060c4be",
+    "status": "machine"
+  },
+  "home.video.description": {
+    "source": "97a93ff58536",
+    "status": "machine"
+  },
+  "home.video.steps.paste.title": {
+    "source": "8275f7c22a05",
+    "status": "machine"
+  },
+  "home.video.steps.paste.text": {
+    "source": "0ec77db6c2ea",
+    "status": "machine"
+  },
+  "home.video.steps.style.title": {
+    "source": "2766b2fbfeb5",
+    "status": "machine"
+  },
+  "home.video.steps.style.text": {
+    "source": "1876d983c9f6",
+    "status": "machine"
+  },
+  "home.video.steps.download.title": {
+    "source": "d6eafe823591",
+    "status": "machine"
+  },
+  "home.video.steps.download.text": {
+    "source": "9bf74606e30b",
+    "status": "machine"
+  },
+  "home.video.youtube": {
+    "source": "1f1e0a803459",
+    "status": "machine"
+  },
+  "home.faq.eyebrow": {
+    "source": "dbc468a14b60",
+    "status": "machine"
+  },
+  "home.faq.title": {
+    "source": "a3d458e1bd1e",
+    "status": "machine"
+  },
+  "home.faq.description": {
+    "source": "554990a4b9c0",
+    "status": "machine"
+  },
+  "home.faq.somethingElse": {
+    "source": "4cbecb3f90cc",
+    "status": "machine"
+  },
+  "home.faq.items.free.question": {
+    "source": "c30a72f88743",
+    "status": "machine"
+  },
+  "home.faq.items.free.answer": {
+    "source": "a98f1c61d55c",
+    "status": "machine"
+  },
+  "home.faq.items.signup.question": {
+    "source": "6764d8a056fb",
+    "status": "machine"
+  },
+  "home.faq.items.signup.answer": {
+    "source": "1ba98cda8106",
+    "status": "machine"
+  },
+  "home.faq.items.dynamic.question": {
+    "source": "f9058e754090",
+    "status": "machine"
+  },
+  "home.faq.items.dynamic.answer": {
+    "source": "3d15c90b62ae",
+    "status": "machine"
+  },
+  "home.faq.items.guarantee.question": {
+    "source": "fae7c6b28466",
+    "status": "machine"
+  },
+  "home.faq.items.guarantee.answer": {
+    "source": "966efbfe1372",
+    "status": "machine"
+  },
+  "home.faq.items.compare.question": {
+    "source": "027604fa4a53",
+    "status": "machine"
+  },
+  "home.faq.items.compare.answer": {
+    "source": "9d971d8a719c",
+    "status": "machine"
+  },
+  "home.faq.items.logo.question": {
+    "source": "4177c46781b6",
+    "status": "machine"
+  },
+  "home.faq.items.logo.answer": {
+    "source": "0b7bfbb1d8cc",
+    "status": "machine"
+  },
+  "home.faq.items.openSource.question": {
+    "source": "93fd8efdb92f",
+    "status": "machine"
+  },
+  "home.faq.items.openSource.answer": {
+    "source": "d0d075037fde",
+    "status": "machine"
+  },
+  "home.faq.items.api.question": {
+    "source": "6bb4206ee687",
+    "status": "machine"
+  },
+  "home.faq.items.api.answer": {
+    "source": "ed6aa4e0e8d5",
+    "status": "machine"
+  },
+  "home.faq.items.paidPlans.question": {
+    "source": "b36d554e01ef",
+    "status": "machine"
+  },
+  "home.faq.items.paidPlans.answer": {
+    "source": "79ab9fcc2788",
+    "status": "machine"
+  },
+  "pricing.meta.title": {
+    "source": "8008d52cdb56",
+    "status": "machine"
+  },
+  "pricing.meta.description": {
+    "source": "e3ad2e43fdbd",
+    "status": "machine"
+  },
+  "pricing.plans.free": {
+    "source": "f411a1fb6275",
+    "status": "machine"
+  },
+  "pricing.header.eyebrow": {
+    "source": "dfe95783edfe",
+    "status": "machine"
+  },
+  "pricing.header.title": {
+    "source": "d88cb934875d",
+    "status": "machine"
+  },
+  "pricing.header.intro": {
+    "source": "b0d39d5f9c73",
+    "status": "machine"
+  },
+  "pricing.extras.unlimitedDynamic": {
+    "source": "8b2eb00a9f67",
+    "status": "machine"
+  },
+  "pricing.extras.longerAnalytics": {
+    "source": "c3e335c053cd",
+    "status": "machine"
+  },
+  "pricing.extras.analyticsHistory": {
+    "source": "11944a1af311",
+    "status": "machine"
+  },
+  "pricing.extras.customDomains": {
+    "source": "c56f5d9bc51e",
+    "status": "machine"
+  },
+  "pricing.extras.teams": {
+    "source": "fadff6cf8575",
+    "status": "machine"
+  },
+  "pricing.billing.legend": {
+    "source": "a4a987fb16d9",
+    "status": "machine"
+  },
+  "pricing.billing.month": {
+    "source": "9b11f6b707d2",
+    "status": "machine"
+  },
+  "pricing.billing.year": {
+    "source": "6e69b59ed34d",
+    "status": "machine"
+  },
+  "pricing.billing.saveUpTo": {
+    "source": "b9292559197b",
+    "status": "machine"
+  },
+  "pricing.billing.save": {
+    "source": "1639f3678ad7",
+    "status": "machine"
+  },
+  "pricing.currency.inr": {
+    "source": "9e79491f6362",
+    "status": "machine"
+  },
+  "pricing.currency.usd": {
+    "source": "8417e92c0c04",
+    "status": "machine"
+  },
+  "pricing.currency.showInr": {
+    "source": "acce419310ce",
+    "status": "machine"
+  },
+  "pricing.currency.showUsd": {
+    "source": "10b749bd2aed",
+    "status": "machine"
+  },
+  "pricing.price.forever": {
+    "source": "2070f725ff1c",
+    "status": "machine"
+  },
+  "pricing.price.noCard": {
+    "source": "7a341f87a7a9",
+    "status": "machine"
+  },
+  "pricing.price.perMonth": {
+    "source": "eec5d08bc9b2",
+    "status": "machine"
+  },
+  "pricing.price.perYear": {
+    "source": "a2d5f1bcdaab",
+    "status": "machine"
+  },
+  "pricing.price.aboutMonthly": {
+    "source": "66eabd9afa3e",
+    "status": "machine"
+  },
+  "pricing.price.billedMonthly": {
+    "source": "a1b1f9085f55",
+    "status": "machine"
+  },
+  "pricing.tiers.free.tagline": {
+    "source": "fb9d56412830",
+    "status": "machine"
+  },
+  "pricing.tiers.free.cta": {
+    "source": "22a1d78d60d5",
+    "status": "machine"
+  },
+  "pricing.tiers.pro.tagline": {
+    "source": "712bfa85390c",
+    "status": "machine"
+  },
+  "pricing.tiers.pro.cta": {
+    "source": "acb320d7f3e3",
+    "status": "machine"
+  },
+  "pricing.tiers.business.tagline": {
+    "source": "27f71635ecab",
+    "status": "machine"
+  },
+  "pricing.tiers.business.cta": {
+    "source": "eabe26fccedd",
+    "status": "machine"
+  },
+  "pricing.cards.popular": {
+    "source": "76327dec9ae3",
+    "status": "machine"
+  },
+  "pricing.cards.leadPro": {
+    "source": "9e823783150f",
+    "status": "machine"
+  },
+  "pricing.cards.leadBusiness": {
+    "source": "de9235022a94",
+    "status": "machine"
+  },
+  "pricing.cards.goToDashboard": {
+    "source": "f085ee865703",
+    "status": "machine"
+  },
+  "pricing.cards.comingSoon": {
+    "source": "4f7d64017689",
+    "status": "machine"
+  },
+  "pricing.cards.notAvailable": {
+    "source": "fd666b76cfad",
+    "status": "machine"
+  },
+  "pricing.cards.manage": {
+    "source": "9041c6aa2c3d",
+    "status": "machine"
+  },
+  "pricing.cards.current": {
+    "source": "ca8e8ba77296",
+    "status": "machine"
+  },
+  "pricing.cards.switchTo": {
+    "source": "4e3823d4f9e6",
+    "status": "machine"
+  },
+  "pricing.cards.portalNote": {
+    "source": "2e79c0e99bce",
+    "status": "machine"
+  },
+  "pricing.cards.redirecting": {
+    "source": "0d83b98bebfb",
+    "status": "machine"
+  },
+  "pricing.cards.openPortal": {
+    "source": "5a69abb937d2",
+    "status": "machine"
+  },
+  "pricing.selfHost.title": {
+    "source": "37a5d04181b5",
+    "status": "machine"
+  },
+  "pricing.selfHost.description": {
+    "source": "445a289376f1",
+    "status": "machine"
+  },
+  "pricing.selfHost.guide": {
+    "source": "65858866917e",
+    "status": "machine"
+  },
+  "pricing.footnote": {
+    "source": "11d50baa54d6",
+    "status": "machine"
+  },
+  "pricing.values.unlimited": {
+    "source": "11dde17d6c3e",
+    "status": "machine"
+  },
+  "pricing.values.days": {
+    "source": "52e7b5cd5c20",
+    "status": "machine"
+  },
+  "pricing.values.years": {
+    "source": "6689c1096149",
+    "status": "machine"
+  },
+  "pricing.values.megabytes": {
+    "source": "b65bb27bce8f",
+    "status": "machine"
+  },
+  "pricing.values.gigabytes": {
+    "source": "195b1cd6ff83",
+    "status": "machine"
+  },
+  "pricing.values.included": {
+    "source": "ba829a98b799",
+    "status": "machine"
+  },
+  "pricing.values.notIncluded": {
+    "source": "b665bfc292d9",
+    "status": "machine"
+  },
+  "pricing.highlights.unlimitedStatic": {
+    "source": "59420e2bc7f6",
+    "status": "machine"
+  },
+  "pricing.highlights.dynamicWithAnalytics": {
+    "source": "5d2480fe0067",
+    "status": "machine"
+  },
+  "pricing.highlights.unlimitedScans": {
+    "source": "6bddc6206f5d",
+    "status": "machine"
+  },
+  "pricing.highlights.landingPages": {
+    "source": "9e5d786eb18c",
+    "status": "machine"
+  },
+  "pricing.highlights.historyOf": {
+    "source": "13d7600779b1",
+    "status": "machine"
+  },
+  "pricing.highlights.history": {
+    "source": "4f28f613409e",
+    "status": "machine"
+  },
+  "pricing.highlights.fileStorage": {
+    "source": "074d13784327",
+    "status": "machine"
+  },
+  "pricing.highlights.unlimitedDynamic": {
+    "source": "1a439f59fdf3",
+    "status": "machine"
+  },
+  "pricing.highlights.customDomains": {
+    "source": "ba077b9b0719",
+    "status": "machine"
+  },
+  "pricing.highlights.teams": {
+    "source": "2d9bcebedd3a",
+    "status": "machine"
+  },
+  "pricing.highlights.themesShared": {
+    "source": "362565f39fc6",
+    "status": "machine"
+  },
+  "pricing.highlights.themes": {
+    "source": "dba84dd4d23f",
+    "status": "machine"
+  },
+  "pricing.highlights.routing": {
+    "source": "73a661b9092c",
+    "status": "machine"
+  },
+  "pricing.highlights.linkControls": {
+    "source": "6f9d7a470cd2",
+    "status": "machine"
+  },
+  "pricing.highlights.storageAndForms": {
+    "source": "6d14f68213c6",
+    "status": "machine"
+  },
+  "pricing.highlights.forms": {
+    "source": "bf76e5b79d0d",
+    "status": "machine"
+  },
+  "pricing.highlights.whiteLabel": {
+    "source": "7ce3ad0cb71b",
+    "status": "machine"
+  },
+  "pricing.highlights.unlimitedTeam": {
+    "source": "b7491ee91126",
+    "status": "machine"
+  },
+  "pricing.highlights.sso": {
+    "source": "6ee9f014d9a2",
+    "status": "machine"
+  },
+  "pricing.highlights.auditLog": {
+    "source": "ba1f8a069e46",
+    "status": "machine"
+  },
+  "pricing.highlights.conversions": {
+    "source": "aae4595b0b76",
+    "status": "machine"
+  },
+  "pricing.highlights.webhooks": {
+    "source": "06b16d0c3d93",
+    "status": "machine"
+  },
+  "pricing.highlights.aiArt": {
+    "source": "84e164ba9cb5",
+    "status": "machine"
+  },
+  "pricing.comparison.title": {
+    "source": "30d9abfd7c7a",
+    "status": "machine"
+  },
+  "pricing.comparison.description": {
+    "source": "8fee92c972db",
+    "status": "machine"
+  },
+  "pricing.comparison.scrollHint": {
+    "source": "2a0f9608bc03",
+    "status": "machine"
+  },
+  "pricing.comparison.caption": {
+    "source": "f440555d62b0",
+    "status": "machine"
+  },
+  "pricing.comparison.feature": {
+    "source": "3d377ae910dc",
+    "status": "machine"
+  },
+  "pricing.comparison.groups.price": {
+    "source": "93c91c851e7a",
+    "status": "machine"
+  },
+  "pricing.comparison.groups.codes": {
+    "source": "16f16b86cc0c",
+    "status": "machine"
+  },
+  "pricing.comparison.groups.analytics": {
+    "source": "e0d2a90267b6",
+    "status": "machine"
+  },
+  "pricing.comparison.groups.brand": {
+    "source": "4a88ffedcca5",
+    "status": "machine"
+  },
+  "pricing.comparison.groups.files": {
+    "source": "60cb5e39df2c",
+    "status": "machine"
+  },
+  "pricing.comparison.groups.automation": {
+    "source": "89039ded4ba8",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.price": {
+    "source": "93c91c851e7a",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.staticCodes": {
+    "source": "456f99ef80db",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.staticCodesHint": {
+    "source": "1ad20e017d76",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.dynamicCodes": {
+    "source": "6089067b0798",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.scans": {
+    "source": "d128917a9540",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.scansHint": {
+    "source": "04a7f160490c",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.landingPages": {
+    "source": "855af69b68c0",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.savedThemes": {
+    "source": "ea4937b0f00a",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.aiThemes": {
+    "source": "c05a997fd080",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.aiArt": {
+    "source": "34922075b4c9",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.analyticsHistory": {
+    "source": "b7a1bef5f803",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.routing": {
+    "source": "b6e52e22abbd",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.routingHint": {
+    "source": "503c5d4b2796",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.linkControls": {
+    "source": "eb4a3b57d7f5",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.pixels": {
+    "source": "e21f7e082606",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.conversions": {
+    "source": "aae4595b0b76",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.customDomains": {
+    "source": "e4351f23dd28",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.customSlugs": {
+    "source": "af72fc25489f",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.customSlugsHint": {
+    "source": "a52a2c3c507c",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.teamMembers": {
+    "source": "74156382383b",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.sso": {
+    "source": "3bc44ac28dcd",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.ssoHint": {
+    "source": "6480ad2c4515",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.auditLog": {
+    "source": "e4d36f9a4e22",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.auditLogHint": {
+    "source": "b0d2ac74d0cf",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.fileStorage": {
+    "source": "879ebfba113e",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.formResponses": {
+    "source": "c4060e3f34a0",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.emailAlerts": {
+    "source": "f42018bab092",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.webhooks": {
+    "source": "06b16d0c3d93",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.apiRequests": {
+    "source": "c9c4821e29df",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.pricePaid": {
+    "source": "30de9063c02c",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.pagesWithBadge": {
+    "source": "96119ab263a9",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.pagesWhiteLabelCss": {
+    "source": "bac000dcc39f",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.pagesWhiteLabel": {
+    "source": "445079a9ab74",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.pagesNoFooter": {
+    "source": "3f6cbcb18646",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.themesShared": {
+    "source": "778f2c207e9c",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.aiThemesTotal": {
+    "source": "f4f7e58a595c",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.aiArtPooled": {
+    "source": "6f3fa6f2ee2c",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.noTeams": {
+    "source": "31512f44f842",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.storage": {
+    "source": "127687e469a6",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.apiBulk": {
+    "source": "7f1e604ea863",
+    "status": "machine"
+  },
+  "pricing.guarantee.eyebrow": {
+    "source": "2837765c81f5",
+    "status": "machine"
+  },
+  "pricing.guarantee.title": {
+    "source": "08635b409809",
+    "status": "machine"
+  },
+  "pricing.guarantee.description": {
+    "source": "a279cca28828",
+    "status": "machine"
+  },
+  "pricing.guarantee.link": {
+    "source": "64f7ed316eee",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.static.title": {
+    "source": "593b6f722e8f",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.static.body": {
+    "source": "9a26510a75cc",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.redirecting.title": {
+    "source": "3873d88a1412",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.redirecting.body": {
+    "source": "4495a56b0b00",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.noAds.title": {
+    "source": "4be137bdbbe4",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.noAds.body": {
+    "source": "e4dd2160a2c8",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.limits.title": {
+    "source": "db5c844f03ae",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.limits.body": {
+    "source": "500f9d21e414",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.export.title": {
+    "source": "7c8743780ca4",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.export.body": {
+    "source": "1bc1f995d9cf",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.notice.title": {
+    "source": "ce37fdaee399",
+    "status": "machine"
+  },
+  "pricing.guarantee.promises.notice.body": {
+    "source": "43b7da0d5c0b",
+    "status": "machine"
+  },
+  "pricing.faq.title": {
+    "source": "5af83621f419",
+    "status": "machine"
+  },
+  "pricing.faq.description": {
+    "source": "f6f43da8e72b",
+    "status": "machine"
+  },
+  "pricing.faq.somethingElse": {
+    "source": "0a12d91ad913",
+    "status": "machine"
+  },
+  "pricing.faq.items.cancel.question": {
+    "source": "91d6a02db01a",
+    "status": "machine"
+  },
+  "pricing.faq.items.cancel.answer": {
+    "source": "8bf967e25bf1",
+    "status": "machine"
+  },
+  "pricing.faq.items.paymentFails.question": {
+    "source": "2fa2244fbaa4",
+    "status": "machine"
+  },
+  "pricing.faq.items.paymentFails.answer": {
+    "source": "5b5673ce6c06",
+    "status": "machine"
+  },
+  "pricing.faq.items.scans.question": {
+    "source": "f8f4f9a5d1f3",
+    "status": "machine"
+  },
+  "pricing.faq.items.scans.answer": {
+    "source": "03bef2f43023",
+    "status": "machine"
+  },
+  "pricing.faq.items.rupees.question": {
+    "source": "7e232e9de2f3",
+    "status": "machine"
+  },
+  "pricing.faq.items.rupees.answer": {
+    "source": "4fd441009e6e",
+    "status": "machine"
+  },
+  "pricing.faq.items.switchPlans.question": {
+    "source": "261e87b59bcc",
+    "status": "machine"
+  },
+  "pricing.faq.items.switchPlans.answer": {
+    "source": "d328dc240bb5",
+    "status": "machine"
+  },
+  "pricing.faq.items.teams.question": {
+    "source": "1fd50215ba01",
+    "status": "machine"
+  },
+  "pricing.faq.items.teams.answer": {
+    "source": "fb0cae741ccf",
+    "status": "machine"
+  },
+  "pricing.faq.items.selfHost.question": {
+    "source": "1b7c3a2a5596",
+    "status": "machine"
+  },
+  "pricing.faq.items.selfHost.answer": {
+    "source": "8c5477b33a21",
+    "status": "machine"
+  },
+  "pricing.faq.items.billing.question": {
+    "source": "ff2ef69b6772",
+    "status": "machine"
+  },
+  "pricing.faq.items.billing.answer": {
+    "source": "66ec3bb6a34f",
+    "status": "machine"
+  }
+}

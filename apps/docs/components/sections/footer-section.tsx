@@ -166,7 +166,7 @@ export function FooterSection() {
           <TooltipContent side="top">{t("scanIt")}</TooltipContent>
         </Tooltip>
       </div>
-      <div className="flex flex-col gap-1 border-t px-10 py-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-3 border-t px-10 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-1">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <p className="text-sm text-muted-foreground">
             {t("copyright", { year: String(currentYear) })}

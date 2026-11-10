@@ -1,0 +1,679 @@
+{
+  "meta": {
+    "siteTitle": "Generador de códigos QR gratis y códigos QR dinámicos | QRdx",
+    "siteDescription": "Códigos QR gratis e ilimitados con logos, colores y patrones, sin registro ni marca de agua. Además, códigos dinámicos editables, páginas alojadas y analíticas de escaneo. Código abierto.",
+    "ogImageAlt": "QRdx: generador de códigos QR gratis con códigos QR dinámicos, páginas alojadas y analíticas de escaneo"
+  },
+  "nav": {
+    "main": "Principal",
+    "menu": "Menú",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "entries": {
+      "product": "Producto",
+      "tools": "Herramientas",
+      "developers": "Desarrolladores",
+      "resources": "Recursos",
+      "pricing": "Precios"
+    },
+    "items": {
+      "playground": {
+        "name": "Playground",
+        "description": "Diseña un código QR con patrones, colores, logotipos y marcos, y descárgalo. Sin registro."
+      },
+      "dynamicCodes": {
+        "name": "Códigos QR dinámicos",
+        "description": "Cambia el enlace después de imprimir y cuenta los escaneos"
+      },
+      "aiThemes": {
+        "name": "Temas con IA",
+        "description": "Describe un estilo y deja que la IA diseñe el tema"
+      },
+      "aiArt": {
+        "name": "Arte QR con IA",
+        "description": "Convierte un enlace en arte de IA que se sigue escaneando"
+      },
+      "communityThemes": {
+        "name": "Temas de la comunidad",
+        "description": "Explora y reutiliza diseños compartidos por otros"
+      },
+      "pageTemplates": {
+        "name": "Plantillas de página",
+        "description": "Demos en vivo de cada plantilla de página alojada"
+      },
+      "generators": {
+        "name": "Generadores de códigos QR",
+        "description": "Un generador para cada tipo: Wi-Fi, vCard, WhatsApp, UPI, pagos y más."
+      },
+      "bulk": {
+        "name": "Generador masivo",
+        "description": "Convierte un CSV en hasta {max, number} códigos con estilo"
+      },
+      "scanner": {
+        "name": "Lector de códigos QR",
+        "description": "Escanea códigos con vista previa segura del enlace"
+      },
+      "scanChecker": {
+        "name": "Verificador de escaneo",
+        "description": "Prueba qué tan bien se escanea un código QR"
+      },
+      "printSize": {
+        "name": "Calculadora de tamaño de impresión",
+        "description": "Encuentra el tamaño mínimo para tu distancia de escaneo"
+      },
+      "barcode": {
+        "name": "Generador de códigos de barras",
+        "description": "EAN, UPC, Code 128 y más, con dígitos de control"
+      },
+      "allTools": {
+        "name": "Todas las herramientas",
+        "description": "Todas las herramientas gratis de códigos QR en un solo lugar"
+      },
+      "docs": {
+        "name": "Documentación",
+        "description": "Guías de la biblioteca qrdx para React, los códigos dinámicos, las API y el autoalojamiento."
+      },
+      "mcp": {
+        "name": "Servidor MCP",
+        "description": "Crea códigos QR desde Claude, ChatGPT o Cursor"
+      },
+      "imageApi": {
+        "name": "Image API",
+        "description": "Una imagen de código QR desde una URL, sin clave de API"
+      },
+      "shadcn": {
+        "name": "Registro de shadcn/ui",
+        "description": "Añade componentes de código QR con un solo comando"
+      },
+      "plugins": {
+        "name": "Plugins",
+        "description": "QRdx para Chrome, Figma, Raycast y Canva"
+      },
+      "github": {
+        "name": "GitHub",
+        "description": "Código fuente, issues y versiones"
+      },
+      "help": {
+        "name": "Centro de ayuda",
+        "description": "Respuestas sobre códigos, facturación, equipos y soluciones"
+      },
+      "blog": {
+        "name": "Blog",
+        "description": "Guías y novedades sobre códigos QR"
+      },
+      "compare": {
+        "name": "Comparar",
+        "description": "QRdx frente a otros generadores y bibliotecas"
+      },
+      "changelog": {
+        "name": "Novedades",
+        "description": "Qué hay de nuevo en QRdx"
+      },
+      "integrations": {
+        "name": "Integraciones",
+        "description": "Zapier, Make, Discord, píxeles de analítica y más"
+      },
+      "support": {
+        "name": "Contactar con soporte",
+        "description": "Correo, el widget de soporte o GitHub"
+      }
+    },
+    "account": {
+      "tryPlayground": "Prueba el Playground",
+      "playground": "Playground",
+      "dashboard": "Panel"
+    },
+    "github": {
+      "star": "Star",
+      "starOnGithub": "Dale una estrella a QRdx en GitHub",
+      "starOnGithubCount": "Dale una estrella a QRdx en GitHub ({count} estrellas)"
+    }
+  },
+  "footer": {
+    "description": "Generador de códigos QR gratuito y de código abierto. Patrones personalizados, degradados, logos y marcos, con descargas en PNG, JPG, SVG, PDF y EPS y sin registro. Además, códigos dinámicos, páginas alojadas y analíticas de escaneo.",
+    "starOnGithub": "Dale una estrella en GitHub",
+    "navLabel": "Pie de página",
+    "scanIt": "Anda, escanéalo",
+    "copyright": "© {year} QRdx. Código abierto bajo AGPL-3.0.",
+    "columns": {
+      "product": "Producto",
+      "tools": "Herramientas",
+      "developers": "Desarrolladores",
+      "resources": "Recursos",
+      "compare": "Comparar"
+    },
+    "links": {
+      "playground": "Playground",
+      "dynamicCodes": "Códigos QR dinámicos",
+      "aiThemes": "Temas con IA",
+      "communityThemes": "Temas de la comunidad",
+      "pageTemplates": "Plantillas de página",
+      "pricing": "Precios",
+      "guarantee": "Garantía Never-Hostage",
+      "generators": "Generadores de códigos QR",
+      "bulk": "Generador masivo",
+      "scanChecker": "Verificador de escaneo",
+      "printSize": "Calculadora de tamaño de impresión",
+      "barcode": "Generador de códigos de barras",
+      "scanner": "Escáner de códigos QR",
+      "allTools": "Todas las herramientas",
+      "docs": "Documentación",
+      "apiReference": "Referencia de la API",
+      "imageApi": "Image API",
+      "mcp": "Servidor MCP",
+      "shadcn": "Registro de shadcn/ui",
+      "plugins": "Plugins",
+      "selfHosting": "Autoalojamiento",
+      "github": "GitHub",
+      "help": "Centro de ayuda",
+      "blog": "Blog",
+      "changelog": "Novedades",
+      "integrations": "Integraciones",
+      "industries": "Códigos QR por sector",
+      "placements": "Códigos QR por ubicación",
+      "affiliates": "Programa de afiliados",
+      "contact": "Contacto",
+      "legal": "Legal",
+      "privacy": "Política de privacidad",
+      "terms": "Términos del servicio",
+      "subprocessors": "Subencargados",
+      "reportAbuse": "Reportar abuso",
+      "acceptableUse": "Uso aceptable",
+      "cookies": "Política de cookies",
+      "dpa": "Tratamiento de datos (DPA)",
+      "aiFeatures": "Funciones de IA",
+      "refunds": "Reembolsos",
+      "affiliateTerms": "Términos de afiliados",
+      "security": "Seguridad",
+      "allComparisons": "Todas las comparativas"
+    }
+  },
+  "localeSwitcher": {
+    "label": "Idioma",
+    "englishOnly": "Esta página solo está en inglés. Los demás idiomas abren su página de inicio."
+  },
+  "cta": {
+    "title": "Crea tu próximo código QR en segundos.",
+    "subtext": "Gratis para siempre. Sin registro ni marca de agua.",
+    "button": "Empieza a crear códigos QR gratis"
+  },
+  "consent": {
+    "banner": {
+      "title": "Cookies en QRdx",
+      "description": "Contamos las visitas sin cookies; PostHog y el widget de comentarios esperan tu aprobación.",
+      "privacyPolicy": "Política de privacidad"
+    },
+    "actions": {
+      "accept": "Aceptar todo",
+      "reject": "Rechazar todo",
+      "customize": "Personalizar",
+      "save": "Guardar opciones",
+      "dismiss": "OK"
+    },
+    "dialog": {
+      "title": "Ajustes de cookies",
+      "description": "Elige qué herramientas opcionales puede usar QRdx. Nada opcional se carga hasta que lo permitas, y puedes cambiarlo cuando quieras.",
+      "details": "Más detalles en nuestra <link>política de privacidad</link>.",
+      "alwaysOn": "Siempre activo",
+      "usedBy": "Usado por {tools}"
+    },
+    "categories": {
+      "necessary": {
+        "title": "Necesarias",
+        "description": "Mantiene tu sesión iniciada, bloquea el spam en formularios y recuerda ajustes como tu tema y esta elección."
+      },
+      "functionality": {
+        "title": "Funcionalidad",
+        "description": "Muestra el widget de comentarios y soporte."
+      },
+      "measurement": {
+        "title": "Analítica",
+        "description": "Mide qué páginas y funciones se usan, para saber qué mejorar. El recuento de visitas sin cookies (Umami) funciona sin esto."
+      }
+    },
+    "settingsButton": "Ajustes de cookies"
+  },
+  "home": {
+    "hero": {
+      "badge": "Gratis y de código abierto (AGPL-3.0)",
+      "title": "Generador de códigos QR gratis, con códigos dinámicos que siguen funcionando",
+      "description": "Diseña códigos QR de marca con patrones, degradados, logotipos y marcos, y descarga PNG, SVG, PDF o EPS sin registro ni marca de agua. Inicia sesión para crear códigos dinámicos que puedes editar después de imprimirlos, páginas alojadas y analíticas de escaneo.",
+      "primary": "Prueba el Playground",
+      "secondary": "Lee la documentación",
+      "sceneLabel": "Dibujo animado del flujo de QRdx: una pantalla de estudio diseña y da estilo a un código QR, una impresora lo imprime en una tarjeta, un brazo robótico coloca la tarjeta en una cinta transportadora, un teléfono en un portón escanea cada tarjeta a medida que pasa, el escaneo viaja a un panel de analíticas que añade una barra nueva, y una gran tarjeta con un código QR dinámico cambia su enlace de destino sin volver a imprimirse"
+    },
+    "editor": {
+      "eyebrow": "Pruébalo con tu enlace",
+      "description": "El mismo renderizador que el Playground, en vivo mientras escribes.",
+      "valueLabel": "Tu enlace o texto",
+      "style": "Estilo",
+      "frame": "Marco",
+      "styles": {
+        "classic": "Clásico",
+        "rounded": "Redondeado",
+        "dots": "Puntos",
+        "gradient": "Degradado"
+      },
+      "frames": {
+        "none": "Sin marco",
+        "border": "Borde"
+      },
+      "more": "El Playground completo añade {bodyPatterns, number} patrones de cuerpo, {eyeShapes, number} formas de ojo, {eyeCentres, number} centros de ojo, cualquier color y degradado, logotipos, plantillas y descargas en PNG, SVG, PDF o EPS.",
+      "customize": "Personalizar en el Playground",
+      "qrLabel": "Código QR de {value}",
+      "empty": "Escribe un enlace para ver tu código QR."
+    },
+    "gallery": {
+      "title": "Hecho con QRdx",
+      "description": "Códigos QRdx reales con contenido de ejemplo. Escanea cualquiera de ellos o abre uno para hacerlo tuyo.",
+      "seeAll": "Ver todo",
+      "showMore": "Ver más"
+    },
+    "useCases": {
+      "eyebrow": "Casos de uso",
+      "title": "Un código QR para cada tarea",
+      "description": "Desde las mesas de una cafetería hasta las paradas de autobús, empieza con el tipo de código adecuado para cada tarea.",
+      "items": {
+        "menus": {
+          "title": "Menús y mesas",
+          "description": "Enlaza un expositor de mesa o una tarjeta de mostrador con tu menú en línea.",
+          "linkText": "Código QR de URL",
+          "cardLabel": "Menús y mesas: empieza en el Playground"
+        },
+        "businessCards": {
+          "title": "Tarjetas de visita",
+          "description": "Guarda tu nombre, número y correo en un teléfono con un solo escaneo.",
+          "linkText": "Código QR vCard",
+          "cardLabel": "Tarjetas de visita: empieza en el Playground"
+        },
+        "wifi": {
+          "title": "Wi-Fi para invitados",
+          "description": "Deja que los invitados se conecten a la red sin escribir la contraseña.",
+          "linkText": "Código QR Wi-Fi",
+          "cardLabel": "Wi-Fi para invitados: empieza en el Playground"
+        },
+        "payments": {
+          "title": "Pagos",
+          "description": "Cobra con UPI en un puesto, en el mostrador de una tienda o en una entrega.",
+          "linkText": "Código QR UPI",
+          "cardLabel": "Pagos: empieza en el Playground"
+        },
+        "packaging": {
+          "title": "Envases y etiquetas",
+          "description": "Convierte un CSV en un ZIP de códigos para cada producto o activo.",
+          "linkText": "Generador masivo",
+          "cardLabel": "Envases y etiquetas: abre el generador masivo"
+        },
+        "events": {
+          "title": "Eventos y registro de asistencia",
+          "description": "Registra a las personas en la entrada con un Google Form.",
+          "linkText": "Código QR de asistencia",
+          "cardLabel": "Eventos y registro de asistencia: empieza en el Playground"
+        },
+        "shelves": {
+          "title": "Estantes y expositores",
+          "description": "Lleva a los compradores desde la etiqueta de un estante a la ficha de tu producto.",
+          "linkText": "Código QR de Amazon",
+          "cardLabel": "Estantes y expositores: empieza en el Playground"
+        },
+        "posters": {
+          "title": "Carteles y letreros",
+          "description": "Imprímelo lo bastante grande para escanearlo desde el otro lado de la calle.",
+          "linkText": "Calculadora de tamaño",
+          "cardLabel": "Carteles y letreros: abre la calculadora de tamaño de impresión"
+        }
+      }
+    },
+    "features": {
+      "eyebrow": "Funciones",
+      "title": "Todo lo que rodea al código QR",
+      "description": "Diséñalo, comprueba que se escanea, imprímelo del tamaño correcto y mantenlo al día. Prueba cada función aquí mismo.",
+      "design": {
+        "eyebrow": "Diseño",
+        "title": "Diseña cada detalle",
+        "description": "{bodyPatterns, number} patrones de cuerpo, {eyeShapes, number} formas de ojo y {frames, number} marcos, en colores sólidos o degradados. El Playground y la librería qrdx para React dibujan con este mismo renderizador.",
+        "link": "Abrir el Playground"
+      },
+      "scanScore": {
+        "eyebrow": "Puntuación",
+        "title": "Sabe si se escanea antes de imprimir",
+        "description": "Cada diseño se decodifica en tu navegador en tres tamaños, con desenfoque de cámara. Aclara la tinta y verás cómo reacciona la puntuación.",
+        "link": "Comprobar un código impreso"
+      },
+      "printSize": {
+        "eyebrow": "Tamaño",
+        "title": "Imprímelo bien grande",
+        "description": "El tamaño mínimo depende de la distancia desde la que se escanea y de cuánta información contiene el código.",
+        "link": "Calculadora de tamaño de impresión"
+      },
+      "dynamic": {
+        "eyebrow": "Códigos dinámicos",
+        "title": "Cambia el enlace tras imprimir",
+        "description": "Un código dinámico abre un enlace corto que puedes redirigir a otro destino en cualquier momento. Las cuentas gratis tienen {count, number}.",
+        "link": "Sobre los códigos dinámicos"
+      },
+      "analytics": {
+        "eyebrow": "Analíticas",
+        "title": "Mira cada escaneo",
+        "description": "Escaneos a lo largo del tiempo, países, dispositivos, navegadores y referencias de cada código dinámico. Las cuentas gratis conservan {days, number} días.",
+        "link": "Cómo funcionan las analíticas"
+      },
+      "bulk": {
+        "eyebrow": "Por lotes",
+        "title": "Cientos de códigos desde un CSV",
+        "description": "Asigna las columnas, elige un estilo y descarga hasta {max, number} códigos en PNG o SVG dentro de un ZIP. El archivo nunca sale de tu navegador.",
+        "link": "Abrir el generador por lotes"
+      },
+      "developers": {
+        "eyebrow": "Desarrolladores",
+        "title": "Hecho para desarrolladores",
+        "description": "Genera códigos con la librería qrdx para React, obtén imágenes desde una URL con la Image API o deja que Claude, Cursor y VS Code los creen mediante el MCP server. También puedes alojar toda la aplicación tú mismo.",
+        "link": "Docs para desarrolladores"
+      }
+    },
+    "video": {
+      "eyebrow": "Demo",
+      "title": "Mira QRdx en acción",
+      "description": "Pega un enlace, dale estilo y descárgalo. Sin necesidad de cuenta.",
+      "steps": {
+        "paste": {
+          "title": "Pega un enlace",
+          "text": "O elige Wi-Fi, vCard, UPI y más."
+        },
+        "style": {
+          "title": "Dale estilo",
+          "text": "Patrones, colores, logo y un marco."
+        },
+        "download": {
+          "title": "Descarga",
+          "text": "PNG, SVG, PDF y más. Sin cuenta."
+        }
+      },
+      "youtube": "Mira la introducción completa en YouTube"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "Preguntas frecuentes",
+      "description": "Todo lo que necesitas saber sobre QRdx. Para cualquier otra duda, escríbenos a support@qrdx.dev",
+      "somethingElse": "¿Otra pregunta?",
+      "items": {
+        "free": {
+          "question": "¿QRdx es realmente gratis? ¿Hay límites ocultos?",
+          "answer": "Sí. Crear, personalizar y descargar códigos QR estáticos es gratis y no requiere cuenta: códigos ilimitados, todas las opciones de diseño ({bodyPatterns, number} patrones de cuerpo, {eyeShapes, number} formas de ojo de esquina y {eyeCentres, number} centros de ojo, degradados, logos, marcos y arte Logo QR o Image QR) y descargas en PNG, JPG, SVG, PDF y EPS. No hay marcas de agua ni anuncios. Los códigos estáticos guardan tu contenido en el propio código, así que nunca caducan y no tienen límite de escaneos. Una cuenta gratuita añade 10 códigos QR dinámicos, 3 páginas alojadas, 90 días de analíticas de escaneo, 10 temas guardados y 5 generaciones de temas con IA; Pro ({proMonthly}/mes o {proYearly}/año) y Business ({businessMonthly}/mes o {businessYearly}/año) amplían esos límites."
+        },
+        "signup": {
+          "question": "¿Necesito registrarme o crear una cuenta?",
+          "answer": "No para los códigos estáticos. Abre el Playground, introduce tu URL o contenido, personaliza el diseño y descárgalo sin registrarte. Inicia sesión (con GitHub o Google) cuando quieras códigos dinámicos que puedas editar después de imprimirlos, páginas alojadas, analíticas de escaneo, temas guardados, publicación en la comunidad o generación de temas con IA."
+        },
+        "dynamic": {
+          "question": "¿QRdx admite códigos QR dinámicos y analíticas de escaneo?",
+          "answer": "Sí. Un código dinámico codifica un enlace corto, así que puedes cambiar su destino después de imprimirlo, y cada escaneo se cuenta con analíticas de país, dispositivo y navegador. Un código puede abrir un sitio web o una página móvil alojada (lista de enlaces, menú, vCard, cupón, evento, formulario, PDF, galería, audio o vídeo). Pro y Business añaden enrutamiento inteligente por dispositivo, país, idioma u hora, pruebas A/B, etiquetas UTM, contraseñas, fechas de caducidad y límites de escaneo. Las cuentas gratuitas tienen 10 códigos dinámicos activos con 90 días de historial; Pro y Business son ilimitados y con un historial más largo."
+        },
+        "guarantee": {
+          "question": "¿Dejarán de funcionar mis códigos QR si dejo de pagar?",
+          "answer": "No. Con nuestra Garantía Never-Hostage, todos los códigos dinámicos siguen redirigiendo en cualquier plan, incluso tras una rebaja de plan, un pago fallido o una cancelación. Los escaneos son ilimitados y nunca se pausan, y jamás mostramos anuncios ni enviamos a quienes escanean a una página de QRdx. Los límites del plan solo te impiden crear cosas nuevas. Los códigos estáticos no dependen de QRdx en absoluto."
+        },
+        "compare": {
+          "question": "¿Cómo se compara QRdx con QR Tiger, QR Code Monkey o Flowcode?",
+          "answer": "QR TIGER y Flowcode son plataformas de códigos QR dinámicos: los códigos redirigen a través de su servicio para que puedas editarlos y seguir los escaneos, y el precio crece con el número de códigos. El plan gratuito de QR TIGER incluye 3 códigos dinámicos con 500 escaneos cada uno, y el de Flowcode permite 2 códigos. QR Code Monkey, igual que QRdx, crea códigos estáticos gratis. QRdx ofrece ambas cosas: códigos estáticos gratuitos e ilimitados con un diseño muy personalizable, además de códigos dinámicos con escaneos ilimitados en todos los planes, planes de pago desde {proMonthly} al mes y código abierto que puedes alojar tú mismo. Nuestras páginas de comparación cubren cada herramienta en detalle, incluido cuándo es la mejor opción."
+        },
+        "logo": {
+          "question": "¿Puedo añadir un logo a mi código QR gratis?",
+          "answer": "Sí. La superposición de logo está incluida en el plan gratuito. Sube una imagen (un PNG con fondo transparente funciona mejor) y QRdx la centra y despeja los módulos que quedan debajo. Los códigos QR usan corrección de errores Reed-Solomon (ISO/IEC 18004); QRdx usa por defecto el nivel Q, que puede recuperar aproximadamente el 25% del código, así que un logo centrado sigue siendo escaneable. Prueba con varios teléfonos antes de imprimir."
+        },
+        "openSource": {
+          "question": "¿QRdx es de código abierto?",
+          "answer": "Sí. QRdx es de código abierto bajo la GNU AGPL-3.0 (o posterior) y se desarrolla en público en GitHub. Puedes revisar el código, abrir incidencias, contribuir o alojar tu propia instancia, con códigos dinámicos y páginas alojadas incluidos. La biblioteca de QR está publicada en npm como qrdx para apps de React. AGPL es una licencia copyleft, así que comprueba que encaje con tu proyecto antes de incorporarla a software de código cerrado."
+        },
+        "api": {
+          "question": "¿Pueden los desarrolladores generar códigos QR con una API?",
+          "answer": "Sí. La Image API convierte cualquier URL en un código QR en SVG, PNG o EPS sin clave de API, y la REST API, con una clave de API del espacio de trabajo o OAuth, crea y edita códigos dinámicos y consulta sus escaneos. También hay un MCP server para Claude, Cursor y VS Code, una herramienta de línea de comandos (@qrdx/cli), un componente de shadcn/ui y la biblioteca React qrdx."
+        },
+        "paidPlans": {
+          "question": "¿Qué incluyen Pro y Business?",
+          "answer": "Pro ({proMonthly}/mes o {proYearly}/año) añade códigos dinámicos y páginas alojadas sin límite, 3 años de analíticas, {customDomains, select, yes {5 dominios personalizados, } other {}}equipos de hasta 3 personas, enrutamiento inteligente, pruebas A/B, etiquetas UTM, píxeles, alertas por correo y un resumen semanal, además de controles de enlace como contraseñas y fechas de caducidad. Business ({businessMonthly}/mes o {businessYearly}/año) añade páginas de marca blanca con CSS personalizado, historial de analíticas sin límite, {customDomains, select, yes {25 dominios personalizados, } other {}}miembros de equipo sin límite, seguimiento de conversiones, webhooks y alertas en Slack o Discord. Crear, personalizar y descargar códigos QR estáticos sigue siendo gratis."
+        }
+      }
+    }
+  },
+  "pricing": {
+    "meta": {
+      "title": "Precios: planes Gratis, Pro y Business",
+      "description": "Los códigos QR estáticos son gratis para siempre. Pro ({pro}/mes) y Business ({business}/mes) añaden {extras}. Tus códigos siguen funcionando si cancelas."
+    },
+    "plans": {
+      "free": "Gratis"
+    },
+    "header": {
+      "eyebrow": "Precios",
+      "title": "Precios sencillos. Códigos que nunca quedan como rehenes.",
+      "intro": "Los códigos QR estáticos son gratis para siempre. Los planes de pago añaden {extras}."
+    },
+    "extras": {
+      "unlimitedDynamic": "códigos dinámicos ilimitados",
+      "longerAnalytics": "analítica más extensa",
+      "analyticsHistory": "historial de analítica",
+      "customDomains": "dominios propios",
+      "teams": "equipos"
+    },
+    "billing": {
+      "legend": "Periodo de facturación",
+      "month": "Mensual",
+      "year": "Anual",
+      "saveUpTo": "Ahorra hasta un {percent, number}%",
+      "save": "Ahorra un {percent, number}%"
+    },
+    "currency": {
+      "inr": "Precios en ₹ para India.",
+      "usd": "Precios en US$.",
+      "showInr": "¿En India? Ver precios en ₹",
+      "showUsd": "Ver precios en US$"
+    },
+    "price": {
+      "forever": "para siempre",
+      "noCard": "Sin tarjeta de crédito",
+      "perMonth": "/mes",
+      "perYear": "/año",
+      "aboutMonthly": "Unos {price} al mes, facturado anualmente",
+      "billedMonthly": "Facturado mensualmente, cancela cuando quieras"
+    },
+    "tiers": {
+      "free": {
+        "tagline": "Para proyectos personales y para probar QRdx",
+        "cta": "Empieza gratis"
+      },
+      "pro": {
+        "tagline": "Para creadores, tiendas y pequeñas empresas",
+        "cta": "Pasa a Pro"
+      },
+      "business": {
+        "tagline": "Para equipos, agencias y marcas",
+        "cta": "Cambiar a Business"
+      }
+    },
+    "cards": {
+      "popular": "Popular",
+      "leadPro": "Todo lo de Gratis, más:",
+      "leadBusiness": "Todo lo de Pro, más:",
+      "goToDashboard": "Ir al panel",
+      "comingSoon": "Próximamente",
+      "notAvailable": "{plan} aún no está disponible para el pago.",
+      "manage": "Gestionar suscripción",
+      "current": "Este es tu plan actual.",
+      "switchTo": "Cambiar a {plan}",
+      "portalNote": "Los cambios de plan se hacen en el portal de facturación.",
+      "redirecting": "Redirigiendo…",
+      "openPortal": "Abrir portal"
+    },
+    "selfHost": {
+      "title": "Autoalojado",
+      "description": "Ejecuta la app de código abierto en tu propio servidor con tu propia base de datos Postgres. Los límites del plan están en un solo archivo que puedes modificar para tu instancia.",
+      "guide": "Guía de autoalojamiento"
+    },
+    "footnote": "Polar gestiona el pago como comerciante de registro; es posible que se añadan impuestos locales al pagar. A los clientes de India se les cobra en ₹ y al resto en US$.",
+    "values": {
+      "unlimited": "Ilimitado",
+      "days": "{count, plural, one {# día} other {# días}}",
+      "years": "{count, plural, one {# año} other {# años}}",
+      "megabytes": "{count} MB",
+      "gigabytes": "{count} GB",
+      "included": "Incluido",
+      "notIncluded": "No incluido"
+    },
+    "highlights": {
+      "unlimitedStatic": "Códigos QR estáticos ilimitados, sin necesidad de cuenta",
+      "dynamicWithAnalytics": "{count} códigos QR dinámicos con analíticas de escaneo",
+      "unlimitedScans": "Escaneos ilimitados, nunca pausados, sin anuncios",
+      "landingPages": "{count} páginas de destino alojadas",
+      "historyOf": "{duration} de historial de analíticas",
+      "history": "Historial de analíticas de {duration}",
+      "fileStorage": "{size} de almacenamiento de archivos",
+      "unlimitedDynamic": "Códigos dinámicos y páginas de destino ilimitados",
+      "customDomains": "{count} dominios personalizados",
+      "teams": "Equipos de hasta {count} personas",
+      "themesShared": "Temas guardados ilimitados, compartidos con tu equipo",
+      "themes": "Temas guardados ilimitados",
+      "routing": "Enrutamiento inteligente, pruebas A/B, etiquetas UTM y píxeles",
+      "linkControls": "Contraseñas, horarios, caducidad y límites de escaneos",
+      "storageAndForms": "{size} de almacenamiento, {count} respuestas de formulario al mes",
+      "forms": "{count} respuestas de formulario al mes",
+      "whiteLabel": "Páginas de marca blanca con CSS personalizado",
+      "unlimitedTeam": "Miembros de equipo ilimitados",
+      "sso": "Inicio de sesión único (SAML y OIDC)",
+      "auditLog": "Registro de auditoría con exportación a CSV",
+      "conversions": "Seguimiento de conversiones",
+      "webhooks": "Webhooks, Zapier y Slack",
+      "aiArt": "{count} imágenes de arte con IA al mes, compartidas por equipo"
+    },
+    "comparison": {
+      "title": "Compara los planes",
+      "description": "Todos los límites, lado a lado. Los escaneos son ilimitados en todos los planes.",
+      "scrollHint": "Desliza hacia los lados para ver todos los planes.",
+      "caption": "Comparativa de planes de QRdx",
+      "feature": "Función",
+      "groups": {
+        "price": "Precio",
+        "codes": "Códigos QR y páginas",
+        "analytics": "Analíticas y control de enlaces",
+        "brand": "Marca y equipo",
+        "files": "Archivos y formularios",
+        "automation": "Automatización y API"
+      },
+      "rows": {
+        "price": "Precio",
+        "staticCodes": "Códigos QR estáticos",
+        "staticCodesHint": "Sin necesidad de cuenta",
+        "dynamicCodes": "Códigos QR dinámicos",
+        "scans": "Escaneos",
+        "scansHint": "Nunca en pausa, sin anuncios",
+        "landingPages": "Páginas de destino alojadas",
+        "savedThemes": "Temas guardados",
+        "aiThemes": "Temas generados con IA",
+        "aiArt": "Imágenes de arte con IA al mes",
+        "analyticsHistory": "Historial de analíticas",
+        "routing": "Enrutamiento inteligente, pruebas A/B y etiquetas UTM",
+        "routingHint": "Dirige los escaneos según dispositivo, país, hora o idioma",
+        "linkControls": "Contraseña, programación, caducidad y límites de escaneo",
+        "pixels": "Píxeles de retargeting",
+        "conversions": "Seguimiento de conversiones",
+        "customDomains": "Dominios personalizados",
+        "customSlugs": "Enlaces personalizados",
+        "customSlugsHint": "Elige el enlace, como qrdx.dev/q/spring-menu",
+        "teamMembers": "Miembros del equipo",
+        "sso": "Inicio de sesión único",
+        "ssoHint": "SAML u OIDC, con el proveedor de identidad de tu empresa",
+        "auditLog": "Registro de auditoría",
+        "auditLogHint": "Quién cambió qué en el espacio de trabajo, conservado {days, number} días, con exportación a CSV",
+        "fileStorage": "Almacenamiento de archivos",
+        "formResponses": "Respuestas de formularios al mes",
+        "emailAlerts": "Resúmenes y alertas por correo",
+        "webhooks": "Webhooks, Zapier y Slack",
+        "apiRequests": "Solicitudes a la API por día"
+      },
+      "cells": {
+        "pricePaid": "{monthly}/mes o {yearly}/año",
+        "pagesWithBadge": "{count}, con pie de página \"Made with QRdx\"",
+        "pagesWhiteLabelCss": "{count}, marca blanca + CSS personalizado",
+        "pagesWhiteLabel": "{count}, marca blanca",
+        "pagesNoFooter": "{count}, sin pie de página",
+        "themesShared": "{count}, compartidos con tu equipo",
+        "aiThemesTotal": "{count} en total",
+        "aiArtPooled": "{count}, compartidos por equipo",
+        "noTeams": "1 (sin equipos)",
+        "storage": "{size} ({perFile} por archivo)",
+        "apiBulk": "{count} + creación masiva"
+      }
+    },
+    "guarantee": {
+      "eyebrow": "En todos los planes, incluido Gratis",
+      "title": "La Garantía Never-Hostage",
+      "description": "Los códigos impresos duran más que las suscripciones. Pase lo que pase con tu plan, los códigos que imprimiste siguen funcionando.",
+      "link": "Lee la garantía completa",
+      "promises": {
+        "static": {
+          "title": "Los códigos estáticos son gratis para siempre",
+          "body": "Crea, personaliza y descarga códigos QR estáticos sin cuenta. Contienen tu contenido directamente, nunca caducan y nunca pasan por nuestros servidores."
+        },
+        "redirecting": {
+          "title": "Los códigos dinámicos siguen redirigiendo",
+          "body": "Todo código QR dinámico sigue funcionando en todos los planes, incluso tras un cambio a un plan inferior, un pago fallido o una cancelación."
+        },
+        "noAds": {
+          "title": "Sin pausas ni anuncios",
+          "body": "Nunca pausamos tus códigos por temas de facturación, mostramos anuncios o pantallas intermedias, ni enviamos a quienes escanean a través de una página de QRdx."
+        },
+        "limits": {
+          "title": "Los límites solo frenan lo nuevo",
+          "body": "Superar un límite impide crear más. Los códigos y páginas existentes siguen funcionando, y aún puedes cambiar el destino de tus códigos."
+        },
+        "export": {
+          "title": "Exporta todo",
+          "body": "Descarga cualquier código como SVG o PNG, exporta sus escaneos como CSV y consulta tus códigos mediante la REST API, en todos los planes."
+        },
+        "notice": {
+          "title": "12 meses de aviso",
+          "body": "Si QRdx llegara a cerrar, recibirás al menos 12 meses de aviso y una vía documentada para ejecutar tú mismo la aplicación de código abierto."
+        }
+      }
+    },
+    "faq": {
+      "title": "Preguntas sobre precios",
+      "description": "Facturación, límites y qué pasa con tus códigos si dejas de pagar.",
+      "somethingElse": "¿Algo más? Escribe a <link>{email}</link>",
+      "items": {
+        "cancel": {
+          "question": "¿Qué pasa si cancelo?",
+          "answer": "No se rompe nada. Tu plan sigue activo hasta el final del periodo que pagaste y después tu cuenta pasa a Gratis. Todo código QR dinámico sigue redirigiendo y cada escaneo se sigue contando: esa es nuestra Garantía Never-Hostage. En Gratis no puedes crear más de lo que permiten los límites de Gratis, y las analíticas muestran los últimos 90 días."
+        },
+        "paymentFails": {
+          "question": "¿Qué pasa si falla un pago?",
+          "answer": "Tus códigos siguen funcionando. Si la suscripción vence, tu cuenta pasa a los límites del plan Gratis, igual que si la hubieras cancelado. Nunca pausamos códigos, mostramos anuncios ni enviamos a quienes escanean tus códigos a una página de QRdx por temas de facturación."
+        },
+        "scans": {
+          "question": "¿Los escaneos cuentan para un límite?",
+          "answer": "No. Los escaneos son ilimitados en todos los planes y nunca pausamos un código por el tráfico. Los únicos límites de escaneos son los que tú mismo defines en un código (Pro y Business)."
+        },
+        "rupees": {
+          "question": "¿Por qué veo los precios en ₹?",
+          "answer": "Los visitantes de India ven los precios en rupias indias: Pro cuesta {proMonthly} al mes o {proYearly} al año, y Business {businessMonthly} al mes o {businessYearly} al año. El pago cobra en ₹ a los clientes de India y en US$ a todos los demás, sin importar en qué moneda hayas navegado. Usa el selector sobre los planes para cambiar la moneda que se muestra."
+        },
+        "switchPlans": {
+          "question": "¿Puedo cambiar de plan o de periodo de facturación más adelante?",
+          "answer": "Sí. Abre Gestionar suscripción en tus ajustes para cambiar o cancelar tu plan en el portal de facturación de Polar. Pasar a un plan inferior nunca desactiva los códigos, páginas ni dominios existentes."
+        },
+        "teams": {
+          "question": "¿Cómo funcionan los equipos en cada plan?",
+          "answer": "Las cuentas Gratis no pueden crear equipos. Un equipo Pro tiene hasta 3 miembros, incluido el propietario; un equipo Business no tiene límite de miembros. Los límites de un equipo siguen el mejor plan entre sus propietarios, y los miembros existentes se mantienen si ese plan cambia."
+        },
+        "selfHost": {
+          "question": "¿Puedo alojarlo yo mismo?",
+          "answer": "Sí. QRdx es de código abierto bajo la licencia AGPL-3.0. Ejecútalo con tu propia base de datos Postgres siguiendo la guía de autoalojamiento; los límites de los planes se definen en un solo archivo que puedes modificar para tu instancia."
+        },
+        "billing": {
+          "question": "¿Quién gestiona la facturación y los impuestos?",
+          "answer": "Los pagos los procesa Polar (polar.sh), que actúa como merchant of record y se encarga del impuesto sobre las ventas, el VAT y el GST. QRdx nunca ve los datos de tu tarjeta."
+        }
+      }
+    }
+  }
+}
