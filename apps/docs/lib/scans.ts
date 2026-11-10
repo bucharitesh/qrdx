@@ -6,8 +6,8 @@ import {
   qrCode,
   qrScan,
   type ScanDeviceType,
-  type ScanSource,
   type ScanLocationSource,
+  type ScanSource,
 } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";

@@ -59,8 +59,9 @@ vi.mock("@/lib/events/emit", () => ({
   emitCodesCreated: () => {},
   emitCodeUpdated: () => {},
 }));
-// The daily series and breakdowns are Postgres-specific (tests/api/
-// v1-scans-themes.test.ts covers them); precise locations run for real.
+// The daily series, breakdowns and the per-scan list are Postgres-specific
+// (tests/api/v1-scans-themes.test.ts covers them); the list here returns the
+// stored rows as listScans selects them. Precise locations run for real.
 vi.mock("@/lib/scans", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/lib/scans")>();
   return {
@@ -78,6 +79,31 @@ vi.mock("@/lib/scans", async (importOriginal) => {
       browsers: [],
       referrers: [],
     }),
+    listScans: async (qrCodeId: string) => {
+      const { fakeDb: db } = await import("../support/fake-db");
+      return db
+        .rows("qrScan")
+        .filter((row) => row.qrCodeId === qrCodeId)
+        .sort(
+          (a, b) =>
+            (b.scannedAt as Date).getTime() - (a.scannedAt as Date).getTime(),
+        )
+        .map((row) => ({
+          scannedAt: row.scannedAt,
+          country: row.country,
+          region: row.region,
+          city: row.city,
+          deviceType: row.deviceType,
+          os: row.os,
+          browser: row.browser,
+          referer: row.referer,
+          source: "qr",
+          latitude: row.latitude,
+          longitude: row.longitude,
+          locationAccuracyM: row.locationAccuracyM,
+          locationSource: row.locationSource,
+        }));
+    },
   };
 });
 vi.mock("@/lib/shared", async (importOriginal) => ({
@@ -333,6 +359,7 @@ describe("CSV export", () => {
         os: "iOS",
         browser: "Safari",
         referer: null,
+        source: "qr",
         latitude: 40.758,
         longitude: -73.986,
         locationAccuracyM: 20,
@@ -341,10 +368,10 @@ describe("CSV export", () => {
     ]);
     const [header, row] = csv.trim().split("\r\n");
     expect(header).toBe(
-      "scanned_at,country,region,city,device_type,os,browser,referrer,latitude,longitude,location_accuracy_m,location_source",
+      "scanned_at,country,region,city,device_type,os,browser,referrer,source,latitude,longitude,location_accuracy_m,location_source",
     );
     expect(row).toBe(
-      "2026-11-11T12:00:00.000Z,US,NY,New York,mobile,iOS,Safari,,40.758,-73.986,20,gps",
+      "2026-11-11T12:00:00.000Z,US,NY,New York,mobile,iOS,Safari,,qr,40.758,-73.986,20,gps",
     );
   });
 });

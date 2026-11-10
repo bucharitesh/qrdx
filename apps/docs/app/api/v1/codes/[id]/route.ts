@@ -57,13 +57,13 @@ export const PATCH = withApiQuotaHeaders(
       const id = await codeId(context);
       const { archived, kind, pageId, page, preciseLocation, ...fields } =
         parseWithSchema(
-        patchCodeSchema,
-        await resolveCodeStyles(
-          scope,
-          await readJsonBody(req, MAX_BODY_BYTES),
-          async () => (await getCode(scope, id)).style?.customLogo ?? null,
-        ),
-      );
+          patchCodeSchema,
+          await resolveCodeStyles(
+            scope,
+            await readJsonBody(req, MAX_BODY_BYTES),
+            async () => (await getCode(scope, id)).style?.customLogo ?? null,
+          ),
+        );
 
       // A new page is created like one from the dashboard (same per-user cap).
       if (page) await enforceCreateRateLimit(scope.userId);
