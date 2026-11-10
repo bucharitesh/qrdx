@@ -1,8 +1,9 @@
 // Referrals at sign-up (lib/affiliates/attribution.ts and the bridge in
 // packages/auth/referral.ts), against the in-memory database: a code carried
-// through sign-up with no cookie at all, the consented cookie tried first,
-// only approved affiliates, never self-referral, the first valid referral
-// wins and is never replaced, and the bridge never stops a sign-up.
+// with the sign-up itself (same visit only: a cookie is never read), only
+// approved affiliates, an affiliate's earlier random code still counting,
+// never self-referral, the first valid referral wins and is never replaced,
+// and the bridge never stops a sign-up.
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const state = vi.hoisted(() => ({ programOn: true }));
@@ -34,11 +35,10 @@ import {
 import { OAUTH_REFERRAL_KEY, REFERRAL_HEADER } from "@repo/auth/referral-keys";
 import {
   attributeNewUser,
-  readCookie,
   referralCandidatesFrom,
 } from "@/lib/affiliates/attribution";
 import { recordSignUpReferral } from "@/lib/affiliates/attribution-hook";
-import { fakeDb } from "../support/fake-db";
+import { fakeDb, repoDatabase } from "../support/fake-db";
 import { AFFILIATE_USER, resetAffiliateDb, seedAffiliate } from "./seed";
 
 const NEW_USER = { id: "user_new", email: "carla@example.com" };
@@ -81,37 +81,43 @@ describe("what a sign-up carries", () => {
     ).toEqual([{ code: "ana-diaz-4k2p", via: "link" }]);
   });
 
-  it("tries the consented cookie (the earlier visit) first, then this sign-up's code", () => {
+  // D-C1: no cookie. One left over from an earlier version of the program,
+  // or set by anyone else, counts for nothing.
+  it("never reads a code from a cookie", () => {
+    expect(
+      referralCandidatesFrom({
+        headers: headers({ cookie: "theme=dark; qrdx_ref=first-one; other=1" }),
+      }),
+    ).toEqual([]);
     expect(
       referralCandidatesFrom({
         headers: headers({
-          cookie: "theme=dark; qrdx_ref=first-one; other=1",
+          cookie: "qrdx_ref=first-one",
           [REFERRAL_HEADER]: "second-one",
         }),
       }),
-    ).toEqual([
-      { code: "first-one", via: "cookie" },
-      { code: "second-one", via: "link" },
-    ]);
+    ).toEqual([{ code: "second-one", via: "link" }]);
   });
 
   it("drops malformed codes and repeats", () => {
     expect(
       referralCandidatesFrom({
-        headers: headers({
-          cookie: "qrdx_ref=same-code",
-          [REFERRAL_HEADER]: "same-code",
-        }),
-        oauthReferralCode: "<script>",
+        headers: headers({ [REFERRAL_HEADER]: "same-code" }),
+        oauthReferralCode: "SAME-code",
       }),
-    ).toEqual([{ code: "same-code", via: "cookie" }]);
+    ).toEqual([{ code: "same-code", via: "link" }]);
+    expect(
+      referralCandidatesFrom({
+        headers: headers({ [REFERRAL_HEADER]: "<script>" }),
+        oauthReferralCode: 42,
+      }),
+    ).toEqual([]);
     expect(referralCandidatesFrom({ headers: headers({}) })).toEqual([]);
-    expect(readCookie("a=1; qrdx_ref=%E0%A4", "qrdx_ref")).toBe(null);
   });
 });
 
 describe("attributing a new account", () => {
-  const attribute = (codes: { code: string; via: "link" | "cookie" }[]) =>
+  const attribute = (codes: { code: string; via: "link" }[]) =>
     attributeNewUser({
       userId: NEW_USER.id,
       email: NEW_USER.email,
@@ -186,13 +192,28 @@ describe("attributing a new account", () => {
     });
   });
 
-  it("the first valid referral wins: an invalid cookie code falls through to the link", async () => {
+  it("the first valid code wins: an unknown one falls through to the next", async () => {
     expect(
       await attribute([
-        { code: "nobody-1234", via: "cookie" },
+        { code: "nobody-1234", via: "link" },
         { code: "ana-diaz-4k2p", via: "link" },
       ]),
     ).toMatchObject({ status: "attributed", via: "link" });
+  });
+
+  // D-C3: the random code keeps working after the affiliate chose their own.
+  it("still counts the affiliate's earlier random code after they chose one", async () => {
+    fakeDb.rows("affiliate")[0] = {
+      ...fakeDb.rows("affiliate")[0],
+      code: "ana-picks",
+      previousCode: "k7q2mx9p",
+      codeChangedAt: new Date("2026-11-01T00:00:00Z"),
+    };
+    expect(await attribute([{ code: "k7q2mx9p", via: "link" }])).toEqual({
+      status: "attributed",
+      affiliateId: "aff_1",
+      via: "link",
+    });
   });
 
   it("never re-attributes an account that already has a referral", async () => {
@@ -248,6 +269,27 @@ describe("the bridge from Better Auth's user hooks", () => {
     expect(error).toHaveBeenCalled();
     error.mockRestore();
     registerNewUserReferralRecorder(recordSignUpReferral);
+  });
+
+  // A0: with the program off, the user-create hook does nothing at all.
+  it("does nothing at all, not even a lookup, where the program is off", async () => {
+    state.programOn = false;
+    const database = repoDatabase.database as {
+      select: (...args: unknown[]) => unknown;
+      insert: (...args: unknown[]) => unknown;
+    };
+    const select = vi.spyOn(database, "select");
+    const insert = vi.spyOn(database, "insert");
+    registerNewUserReferralRecorder(recordSignUpReferral);
+    recordNewUserReferral(NEW_USER, {
+      headers: headers({ [REFERRAL_HEADER]: "ana-diaz-4k2p" }),
+    });
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    expect(select).not.toHaveBeenCalled();
+    expect(insert).not.toHaveBeenCalled();
+    expect(referrals()).toEqual([]);
+    select.mockRestore();
+    insert.mockRestore();
   });
 
   it("records nothing when the sign-up carried no code", () => {

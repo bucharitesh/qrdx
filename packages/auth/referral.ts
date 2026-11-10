@@ -8,9 +8,9 @@ import { OAUTH_REFERRAL_KEY } from "./referral-keys";
 // - an email-code sign-up sends it in the REFERRAL_HEADER request header;
 // - a Google or GitHub sign-up sends it as the OAuth flow's additionalData
 //   (OAUTH_REFERRAL_KEY), which Better Auth keeps in the OAuth state across
-//   the provider's redirect;
-// - and a visitor who allowed Analytics may have the qrdx_ref cookie, which
-//   comes in with the request's headers.
+//   the provider's redirect.
+//
+// Same visit only: no cookie or other stored value carries a code.
 //
 // No code is trusted here: this only collects what the request carried. The
 // app checks it (an approved affiliate, not the person themselves) and
@@ -24,7 +24,7 @@ export { OAUTH_REFERRAL_KEY, REFERRAL_HEADER } from "./referral-keys";
 export interface NewUserSignUp {
   userId: string;
   email: string;
-  /** The sign-up request's headers (the cookie and REFERRAL_HEADER). */
+  /** The sign-up request's headers (REFERRAL_HEADER). */
   headers: Pick<Headers, "get"> | null;
   /** The code a Google or GitHub sign-up carried through the OAuth state. */
   oauthReferralCode: string | null;

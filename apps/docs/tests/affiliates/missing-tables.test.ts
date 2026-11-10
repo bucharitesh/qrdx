@@ -100,7 +100,7 @@ describe("with no affiliate tables", () => {
   });
 
   it("a referral link still redirects (home, without a code) and counts nothing", async () => {
-    expect(await recordReferralClick("ana-diaz-4k2p")).toBe(false);
+    expect(await recordReferralClick("ana-diaz-4k2p")).toBeNull();
     const response = await referralLink(
       new Request("http://localhost:3000/r/ana-diaz-4k2p", {
         headers: { "user-agent": BROWSER },

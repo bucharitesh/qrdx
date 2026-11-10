@@ -1,20 +1,13 @@
 // The referral code in the browser (client-safe, no server imports).
 //
-// Without any consent: the code from the link (/?ref=<code>) is kept in this
-// tab's memory and in the address bar, and the sign-in panel sends it along
-// with a sign-up (a request header for email codes, the OAuth state for
-// Google and GitHub). Nothing is written to the device.
-//
-// With Analytics allowed (components/consent/referral-capture.tsx): the code
-// is also kept in the qrdx_ref cookie for 30 days, so a sign-up on a later
-// visit counts too. The first code wins: an existing cookie isn't replaced.
-// Withdrawing Analytics deletes it (components/consent/config.ts).
+// Same visit only: the code from the link (/?ref=<code>) is kept in this
+// tab's memory (a variable in this module, gone when the tab closes or
+// reloads) and in the address bar, and the sign-in panel sends it along with
+// a sign-up (a request header for email codes, the OAuth state for Google
+// and GitHub). Nothing is ever written to the device: no cookie, no
+// localStorage, no sessionStorage.
 import { parseReferralCode } from "./rules";
-import {
-  AFFILIATE_REF_PARAM,
-  AFFILIATE_REFERRAL_COOKIE,
-  AFFILIATE_REFERRAL_COOKIE_DAYS,
-} from "./terms";
+import { AFFILIATE_REF_PARAM } from "./terms";
 
 let pending: string | null = null;
 
@@ -44,26 +37,4 @@ export function pendingReferralCode(): string | null {
 /** Clears the in-memory code (tests). */
 export function forgetPendingReferral(): void {
   pending = null;
-}
-
-export function hasReferralCookie(): boolean {
-  if (typeof document === "undefined") return false;
-  return document.cookie
-    .split(";")
-    .some((part) => part.trim().startsWith(`${AFFILIATE_REFERRAL_COOKIE}=`));
-}
-
-/**
- * Writes the qrdx_ref cookie, unless one is already there (the first link
- * wins). Call it only once the visitor has allowed Analytics.
- */
-export function storeReferralCookie(code: string): boolean {
-  if (typeof document === "undefined") return false;
-  const valid = parseReferralCode(code);
-  if (!valid || hasReferralCookie()) return false;
-  const secure = window.location.protocol === "https:" ? "; Secure" : "";
-  const maxAge = AFFILIATE_REFERRAL_COOKIE_DAYS * 24 * 60 * 60;
-  // biome-ignore lint/suspicious/noDocumentCookie: the Cookie Store API isn't in Safari or Firefox.
-  document.cookie = `${AFFILIATE_REFERRAL_COOKIE}=${encodeURIComponent(valid)}; Max-Age=${maxAge}; Path=/; SameSite=Lax${secure}`;
-  return true;
 }

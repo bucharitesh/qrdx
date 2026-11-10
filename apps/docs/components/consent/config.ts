@@ -27,12 +27,11 @@ export const consentConfig = defineConsentConfig({
       },
     ],
   }),
-  // PostHog cookies and storage keys (ph_<token>_posthog, …), the
-  // analytics-consent mirror for server-side events (lib/analytics), and an
-  // affiliate link's code (qrdx_ref, lib/affiliates/referral-client.ts).
+  // PostHog cookies and storage keys (ph_<token>_posthog, …), and the
+  // analytics-consent mirror for server-side events (lib/analytics).
   clearOnRevocation: {
     measurement: {
-      cookies: ["ph_*", "qrdx_analytics", "qrdx_ref"],
+      cookies: ["ph_*", "qrdx_analytics"],
       localStorage: ["ph_*"],
       sessionStorage: ["ph_*"],
     },
