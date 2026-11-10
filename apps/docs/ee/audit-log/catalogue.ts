@@ -97,6 +97,11 @@ export const AUDIT_ACTIONS = {
     category: "codes",
     sentence: "Moved {target} here from another workspace",
   },
+  // Changing what a printed code opens (codes/_lib/code-kind.ts)
+  "code.type_changed": {
+    category: "codes",
+    sentence: "Changed what {target} opens",
+  },
   "folder.created": {
     category: "codes",
     sentence: "Created the folder {target}",
