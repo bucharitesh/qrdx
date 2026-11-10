@@ -30,6 +30,7 @@ Every code gets a random 7-character back-half, the part after `/q/`. On Pro and
 From the dashboard you can:
 
 - **Edit link:** change the destination or title. The printed code keeps working and opens the new destination on the next scan.
+- **Change type:** turn a website link into a [hosted page](/docs/landing-pages), a page back into a link, or a page into another page type. The short link and scans stay. See [Change what a printed code opens](/docs/help/dynamic-codes/change-the-type).
 - **Edit design in playground:** opens the code in the editor, still bound to its short link.
 - **Archive:** the short link shows a "no longer active" page until you restore the code. Archived codes don't count toward your plan limit.
 - **Move to trash:** the short link shows a "no longer active" page (HTTP 410) and the code stops counting toward your plan. Restore it from **Trash**, or delete it forever there, which also removes its scan history; the short link then shows a "QR code not found" page. Deleting through the API (`DELETE /v1/codes/{id}`) is permanent immediately.
@@ -84,7 +85,7 @@ Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests ar
 | `GET` | `/v1/codes` | List codes. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
 | `POST` | `/v1/codes` | Create one code, or an array of up to 100 (arrays need Pro). Body: `destinationUrl`, optional `title`, `style`, `domainId` and `slug` |
 | `GET` | `/v1/codes/{id}` | Get one code |
-| `PATCH` | `/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)), `slug` or `archived` |
+| `PATCH` | `/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)), `slug` or `archived`, or switch `kind` between `redirect` and `page` |
 | `DELETE` | `/v1/codes/{id}` | Delete a code and its scans |
 | `GET` | `/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limited by your plan's history). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
 
@@ -108,6 +109,8 @@ curl https://api.qrdx.dev/v1/codes \
     "destinationUrl": "https://example.com/menu",
     "title": "Spring menu",
     "contentType": "url",
+    "kind": "redirect",
+    "pageId": null,
     "status": "active",
     "style": null,
     "scanCount": 0,
