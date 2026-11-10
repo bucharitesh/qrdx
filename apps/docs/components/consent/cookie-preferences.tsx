@@ -22,6 +22,8 @@ import { Switch } from "@repo/design-system/components/ui/switch";
 import { Chart2, type Icon, Lock1, MessageQuestion } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef } from "react";
+import { useAvailability } from "@/components/availability-provider";
+import { AFFILIATE_REFERRAL_COOKIE_DAYS } from "@/lib/affiliates/terms";
 import { ACTION_LABELS, PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
 import { OPEN_COOKIE_SETTINGS_EVENT } from "./open-cookie-settings";
 
@@ -115,7 +117,19 @@ export function CookiePreferences() {
   );
 }
 
+/**
+ * Where the affiliate program runs, Analytics also covers the cookie that
+ * remembers an affiliate's link (lib/affiliates/referral-client.ts).
+ */
+const MEASUREMENT_WITH_AFFILIATES: CategoryCopy | undefined =
+  CATEGORY_COPY.measurement && {
+    ...CATEGORY_COPY.measurement,
+    description: `${CATEGORY_COPY.measurement.description} It also remembers an affiliate's link for ${AFFILIATE_REFERRAL_COOKIE_DAYS} days, so the affiliate gets credit if you sign up later.`,
+    tools: "PostHog, QRdx",
+  };
+
 function PreferencesForm() {
+  const affiliates = useAvailability().has("affiliates");
   const draft = useConsentDraft();
   const { dialog, performDialogAction } = useHeadlessConsentUI();
   const actions = dialog.orderedActions.filter(
@@ -126,7 +140,10 @@ function PreferencesForm() {
     <>
       <ul className="divide-y rounded-lg border">
         {draft.displayedCategories.map((category) => {
-          const copy = CATEGORY_COPY[category];
+          const copy =
+            category === "measurement" && affiliates
+              ? MEASUREMENT_WITH_AFFILIATES
+              : CATEGORY_COPY[category];
           if (!copy) return null;
           return (
             <CategoryRow

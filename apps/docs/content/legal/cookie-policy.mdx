@@ -1,7 +1,7 @@
 ---
 title: Cookie Policy
 description: Every cookie and browser storage item QRdx uses, what it is for, how long it lasts, and how to change your choices.
-lastUpdated: 2026-11-08
+lastUpdated: 2026-11-10
 ---
 
 import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
@@ -26,7 +26,7 @@ On your first visit to qrdx.dev we ask which optional categories you allow. Noth
 | --- | --- | --- | --- |
 | **Necessary** | Keeps you signed in, blocks form spam and remembers settings such as your theme and your cookie choice | QRdx, Cloudflare Turnstile | Always on |
 | **Functionality** | Shows the feedback and support widget | Featurebase | Off until you allow it |
-| **Analytics** | Measures which pages and features get used, so we know what to improve | PostHog | Off until you allow it |
+| **Analytics** | Measures which pages and features get used, so we know what to improve, and remembers an affiliate's link so a later sign-up still counts | PostHog, QRdx | Off until you allow it |
 
 - Your choice is saved in your browser in a first-party `c15t` cookie and localStorage entry for up to 12 months. We don't keep a copy on our servers, so you'll be asked again on a new browser or device.
 - PostHog starts the moment you allow **Analytics** and stops the moment you turn it off. The page then reloads without it, and its cookies and storage are deleted.
@@ -49,6 +49,7 @@ On your first visit to qrdx.dev we ask which optional categories you allow. Noth
 | `c15t` | QRdx | Remembers your cookie choices | Up to 12 months | Necessary |
 | `ph_<project key>_posthog` | PostHog | Recognises your browser across visits for analytics | 1 year | Analytics |
 | `qrdx_analytics` | QRdx | Tells our server you allowed Analytics, so events it sends (a subscription starting, an integration connected) can be linked to your account. Removed when you turn Analytics off. | 1 year | Analytics |
+| `qrdx_ref` | QRdx | Holds the code from an [affiliate's](/affiliates) link you opened, so the affiliate gets credit if you create an account on a later visit. Holds nothing else; the first link you open is the one kept. Set only after you allow Analytics, and removed when you turn it off. Without it, a code still goes along with a sign-up made during the same visit (without reloading the page), with nothing stored. | {facts.affiliateCookieDays} days | Analytics |
 | Featurebase cookies | Featurebase | Keep the feedback widget's conversation going | Set by Featurebase | Functionality |
 
 Cloudflare Turnstile runs in a Cloudflare frame on the abuse report form and on hosted-page forms. Cloudflare may use its own storage there to tell people from bots, as described in its [Turnstile privacy policy](https://www.cloudflare.com/turnstile-privacy-policy/).
@@ -101,4 +102,4 @@ Related pages: [Privacy Policy](/legal/privacy-policy), [Subprocessors](/legal/s
 
 ---
 
-**Changes:** 1 November 2026. First version, listing every cookie and storage item in the current app. Added Umami (no cookies), the `qrdx_analytics` cookie and the `qrdx:analytics-auth` item.
+**Changes:** 10 November 2026. Added the `qrdx_ref` cookie for affiliate links, set only with Analytics allowed. 1 November 2026. First version, listing every cookie and storage item in the current app. Added Umami (no cookies), the `qrdx_analytics` cookie and the `qrdx:analytics-auth` item.

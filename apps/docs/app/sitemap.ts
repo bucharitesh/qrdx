@@ -117,6 +117,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.6,
     },
+    ...(isPathAvailable("/affiliates")
+      ? [
+          {
+            url: url("/affiliates"),
+            lastModified: pageDate("/affiliates"),
+            changeFrequency: "monthly",
+            priority: 0.5,
+          } satisfies Entry,
+        ]
+      : []),
     // AI themes and AI QR art are only listed where they can run
     // (lib/feature-availability-rules.ts).
     ...(isPathAvailable("/ai")
@@ -301,15 +311,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
           priority: 0.6,
         }) satisfies Entry,
     ),
-    ...legalSource.getPages().map(
-      (page) =>
-        ({
-          url: url(page.url),
-          lastModified: trustedLastModified(page.data.lastModified),
-          changeFrequency: "yearly",
-          priority: 0.3,
-        }) satisfies Entry,
-    ),
+    // The affiliate terms only where the program runs.
+    ...legalSource
+      .getPages()
+      .filter((page) => isPathAvailable(page.url))
+      .map(
+        (page) =>
+          ({
+            url: url(page.url),
+            lastModified: trustedLastModified(page.data.lastModified),
+            changeFrequency: "yearly",
+            priority: 0.3,
+          }) satisfies Entry,
+      ),
     {
       url: url("/report-abuse"),
       changeFrequency: "yearly",

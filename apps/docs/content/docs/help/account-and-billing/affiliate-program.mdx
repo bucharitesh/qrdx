@@ -1,0 +1,46 @@
+---
+title: Affiliate program
+description: Refer people to QRdx and earn a commission on what they pay in their first months. How to apply, share your link, follow your earnings and get paid.
+---
+
+The affiliate program runs on qrdx.dev. A self-hosted QRdx server offers it only when it's turned on (`QRDX_AFFILIATES=1`); see [Self-hosting](/docs/self-hosting#optional-services).
+
+<IfAvailable feature="affiliates">
+
+The QRdx affiliate program pays you {facts.affiliateCommissionPercent}% of what the customers you refer pay in their first {facts.affiliateCommissionMonths} months as paying customers. The [Affiliate Terms](/legal/affiliate-terms) are the full rules; this page shows where everything is.
+
+## Apply
+
+1. Sign in to QRdx, or create a free account.
+2. Open the [affiliate program page](/affiliates), read the terms and fill in the short application.
+3. We review each application by hand. The answer shows in **Settings** → **Affiliate program**.
+
+## Share your link
+
+Once you're approved, **Settings** → **Affiliate program** shows your referral link with a **Copy** button. Anyone who creates a new QRdx account through it becomes your referral.
+
+- If they sign up during that visit, without reloading the page or opening QRdx in a new tab, the code goes along with the sign-up. Nothing is stored on their device for that.
+- If they allowed **Analytics** in Cookie settings, a cookie remembers your link for {facts.affiliateCookieDays} days, so a sign-up on a later visit counts too.
+- An account that already exists can't become your referral, and an account keeps the first referral it gets.
+- Your own account doesn't count, and neither does an account using your email address under another spelling or anyone in a workspace you're a member of.
+
+## Follow your earnings
+
+The same page shows:
+
+- **Link visits**, counted without cookies (repeat visits count again), **Sign-ups** and **Paying customers**. You never see who they are.
+- **On hold**: commissions still in their {facts.affiliateHoldDays}-day wait. A refund or chargeback in that time cancels the commission.
+- **Payable**: commissions past their wait that haven't been paid.
+- **Paid**: what we've sent you, with each payout's PayPal transaction ID.
+
+Amounts stay in the currency the customer paid in, US dollars or Indian rupees.
+
+## Get paid
+
+Add your PayPal email under **Earnings**. QRdx asks you to confirm it's you before it changes, because it decides where your money goes.
+
+We pay by PayPal once a month, by hand, once what's payable reaches {facts.affiliateMinPayoutUsd}, or {facts.affiliateMinPayoutInr} for commissions in rupees. Each currency is paid on its own, and a balance below the minimum carries over. You handle the taxes on what you earn.
+
+Questions about a commission or a payout: email [support@qrdx.dev](mailto:support@qrdx.dev).
+
+</IfAvailable>
