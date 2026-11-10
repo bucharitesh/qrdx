@@ -9,6 +9,7 @@
 // (lib/account/confirmation-server.tsx) on in-memory tables
 // (tests/support/fake-db.ts); starting a provider's sign-in is recorded
 // instead of made.
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeDb } from "../support/fake-db";
 
@@ -16,7 +17,7 @@ const state = vi.hoisted(() => ({
   /** Providers whose sign-in was started (an authorization URL made) */
   started: [] as string[],
   /** Workspaces "Add to Slack" remembered for the callback */
-  remembered: [] as (string | null)[],
+  remembered: [] as string[],
 }));
 
 vi.mock(
@@ -66,7 +67,7 @@ vi.mock("@/lib/connected-accounts/server", () => ({
   revokeStoredToken: async () => false,
 }));
 vi.mock("@/lib/data-connections/server", () => ({
-  rememberSlackWorkspace: async (organizationId: string | null) => {
+  rememberSlackWorkspace: async (organizationId: string) => {
     state.remembered.push(organizationId);
   },
   cleanupDataConnection: async () => false,
@@ -144,7 +145,9 @@ describe('"Add to Slack"', () => {
       "https://slack.example/oauth/authorize",
     );
     expect(state.started).toEqual(["slack"]);
-    expect(state.remembered).toEqual([null]);
+    // The workspace Ada is in: her own (never none; that's
+    // tests/lib/slack-channel-workspace.test.ts).
+    expect(state.remembered).toEqual([ownWorkspaceId("user_1")]);
   });
 
   it("asks again once it has run out", async () => {

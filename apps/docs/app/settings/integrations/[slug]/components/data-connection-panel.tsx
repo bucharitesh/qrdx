@@ -139,9 +139,10 @@ function SheetsPanel() {
 }
 
 /**
- * "Add another channel": asks "Confirm it's you" in the page (the channel
- * will get form answers), then goes to the install route, which checks it
- * again before sending the person to Slack.
+ * "Add another channel", to the workspace the person is in (like Enable):
+ * asks "Confirm it's you" in the page (the channel will get form answers),
+ * then goes to the install route, which checks it again before sending the
+ * person to Slack.
  */
 function AddSlackChannelButton() {
   const { withConfirmation } = useConfirmation();
