@@ -2,14 +2,20 @@ import "server-only";
 
 import { firstWebAddress } from "@/lib/chat-bots/qr-reply";
 import { logError } from "@/lib/shared";
-import { answer, type BotAsk, contentAnswer, runTrack } from "./bot";
+import {
+  answer,
+  type BotAsk,
+  contentAnswer,
+  runTrack,
+  styledReply,
+} from "./bot";
 import {
   BUSY_TEXT,
   SLOW_DOWN_TEXT,
   slackLimitFor,
   withinTrackCap,
 } from "./config";
-import { noteMessage, type SlackMessage } from "./messages";
+import { noteMessage, type SlackMessage, withoutStyleMenus } from "./messages";
 import {
   isSlackResponseUrl,
   postEphemeral,
@@ -137,6 +143,11 @@ async function replyTo(
     await send(result.message, result.private);
     return;
   }
+  if (result.kind === "styled") {
+    const styled = await styledReply(result.data, result.design, result.maker);
+    await send(styled.message, styled.private);
+    return;
+  }
   if (!(await withinTrackCap())) {
     await send(noteMessage(BUSY_TEXT), true);
     return;
@@ -240,7 +251,10 @@ export async function handleShortcut(
       );
       return;
     }
-    const result = contentAnswer(firstWebAddress(text) ?? text);
+    // Someone else's message is content as it is: no style options.
+    const result = contentAnswer(firstWebAddress(text) ?? text, user, {
+      options: false,
+    });
     if (result.kind !== "message") return;
     if (result.private) {
       await privately(result.message);
@@ -256,10 +270,13 @@ export async function handleShortcut(
       if (posted.ok) return;
       logPostFailure(posted, "shortcut");
     }
+    // Slack doesn't send an ephemeral message's blocks back with a menu
+    // pick, so there's nothing to restyle from: no style menus here.
+    const shown = withoutStyleMenus(result.message);
     await privately({
-      ...result.message,
+      ...shown,
       blocks: [
-        ...(result.message.blocks ?? []),
+        ...(shown.blocks ?? []),
         {
           type: "context",
           elements: [
