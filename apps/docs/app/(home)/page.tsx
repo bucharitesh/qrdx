@@ -5,6 +5,7 @@ import { HeroSection } from "@/components/sections/hero-section";
 import { HeroVideoSection } from "@/components/sections/hero-video-section";
 import { FeatureRowsSection } from "@/components/sections/home/feature-rows-section";
 import { GallerySection } from "@/components/sections/home/gallery-section";
+import { HomeNumbers } from "@/components/sections/home/numbers/home-numbers";
 import { UseCasesSection } from "@/components/sections/home/use-cases-section";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { isFeatureAvailable } from "@/lib/feature-availability";
@@ -164,6 +165,8 @@ export default function Home() {
         <FeatureRowsSection />
         <AsciiDivider />
         <HeroVideoSection />
+        {/* Off unless QRDX_HOME_NUMBERS=1 (lib/home-numbers/flag.ts). */}
+        <HomeNumbers />
         <FAQSection />
       </main>
     </>
