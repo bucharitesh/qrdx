@@ -9,6 +9,7 @@ import { ExportSquare } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ComponentType } from "react";
+import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { CodeSnippet } from "@/components/sections/integrations/code-snippet";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import {
@@ -20,6 +21,7 @@ import {
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { TrackedLink } from "@/lib/analytics/react";
+import { isPathAvailable } from "@/lib/feature-availability";
 import { createMetadata } from "@/lib/metadata";
 import { PLUGINS, type PluginInfo, REQUEST_PLUGIN_URL } from "./plugin-data";
 import {
@@ -49,6 +51,9 @@ const MOCKS: Record<PluginInfo["slug"], ComponentType> = {
 interface Plugin extends PluginInfo {
   entry: IntegrationCatalogEntry;
 }
+
+// The chat bots this deployment has set up (each page needs its bot).
+const chatBots = CHAT_BOTS.filter((bot) => isPathAvailable(bot.path));
 
 const plugins: Plugin[] = PLUGINS.flatMap((info) => {
   const entry = getCatalogEntry(info.slug);
@@ -339,8 +344,10 @@ export default function PluginsPage() {
           title="Not the app you work in?"
           description={
             <>
-              Ask an AI assistant, connect the tools your team uses, or build on
-              the API. Missing a plugin?{" "}
+              {chatBots.length > 0
+                ? "Make codes in a chat app, ask an AI assistant, connect the tools your team uses, or build on the API."
+                : "Ask an AI assistant, connect the tools your team uses, or build on the API."}{" "}
+              Missing a plugin?{" "}
               <a
                 href={REQUEST_PLUGIN_URL}
                 target="_blank"
@@ -353,7 +360,15 @@ export default function PluginsPage() {
             </>
           }
         />
-        <CardGrid count={3}>
+        <CardGrid count={3 + chatBots.length}>
+          {chatBots.map((bot) => (
+            <LinkCard
+              key={bot.id}
+              href={bot.path}
+              title={bot.name}
+              description={bot.summary}
+            />
+          ))}
           <LinkCard
             href="/mcp"
             title="AI assistants"

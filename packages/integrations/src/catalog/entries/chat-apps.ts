@@ -31,6 +31,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
     builtBy: "QRdx",
     website: "https://discord.com",
     docs: "/docs/discord-bot",
+    page: { href: "/discord", label: "More about the Discord bot" },
     primaryAction: {
       type: "link",
       label: "Add to Discord",
@@ -102,6 +103,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
     builtBy: "QRdx",
     website: "https://telegram.org",
     docs: "/docs/telegram-bot",
+    page: { href: "/telegram", label: "More about the Telegram bot" },
     primaryAction: {
       type: "link",
       label: "Open in Telegram",
