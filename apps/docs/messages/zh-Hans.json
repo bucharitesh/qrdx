@@ -1,0 +1,679 @@
+{
+  "meta": {
+    "siteTitle": "免费二维码生成器与动态二维码 | QRdx",
+    "siteDescription": "无限制免费生成二维码，支持添加标志、颜色和图案，无需注册，无水印。还提供可编辑的动态二维码、托管页面和扫描分析。开源。",
+    "ogImageAlt": "QRdx：免费二维码生成器，提供动态二维码、托管页面和扫描分析"
+  },
+  "nav": {
+    "main": "主导航",
+    "menu": "菜单",
+    "openMenu": "打开菜单",
+    "closeMenu": "关闭菜单",
+    "entries": {
+      "product": "产品",
+      "tools": "工具",
+      "developers": "开发者",
+      "resources": "资源",
+      "pricing": "定价"
+    },
+    "items": {
+      "playground": {
+        "name": "Playground",
+        "description": "用图案、颜色、Logo 和边框设计二维码，然后下载。无需注册。"
+      },
+      "dynamicCodes": {
+        "name": "动态二维码",
+        "description": "印刷后仍可更改链接，并统计扫描次数"
+      },
+      "aiThemes": {
+        "name": "AI 主题",
+        "description": "描述一种风格，让 AI 设计主题"
+      },
+      "aiArt": {
+        "name": "AI 二维码艺术",
+        "description": "将链接变成仍可扫描的 AI 艺术作品"
+      },
+      "communityThemes": {
+        "name": "社区主题",
+        "description": "浏览并复用其他人分享的设计"
+      },
+      "pageTemplates": {
+        "name": "页面模板",
+        "description": "每个托管页面模板的在线演示"
+      },
+      "generators": {
+        "name": "二维码生成器",
+        "description": "每种类型都有对应的生成器：Wi-Fi、vCard、WhatsApp、UPI、支付等。"
+      },
+      "bulk": {
+        "name": "批量生成器",
+        "description": "将 CSV 转换为最多 {max, number} 个带样式的二维码"
+      },
+      "scanner": {
+        "name": "二维码扫描器",
+        "description": "扫描二维码，并预览链接是否安全"
+      },
+      "scanChecker": {
+        "name": "扫描检测",
+        "description": "测试二维码的扫描可靠性"
+      },
+      "printSize": {
+        "name": "打印尺寸计算器",
+        "description": "根据扫描距离计算最小印刷尺寸"
+      },
+      "barcode": {
+        "name": "条形码生成器",
+        "description": "支持 EAN、UPC、Code 128 等，含校验位"
+      },
+      "allTools": {
+        "name": "全部工具",
+        "description": "所有免费二维码工具，一站俱全"
+      },
+      "docs": {
+        "name": "文档",
+        "description": "qrdx React 库、动态二维码、API 与自托管指南。"
+      },
+      "mcp": {
+        "name": "MCP 服务器",
+        "description": "在 Claude、ChatGPT 或 Cursor 中生成二维码"
+      },
+      "imageApi": {
+        "name": "Image API",
+        "description": "通过 URL 获取二维码图片，无需 API 密钥"
+      },
+      "shadcn": {
+        "name": "shadcn/ui registry",
+        "description": "一条命令添加二维码组件"
+      },
+      "plugins": {
+        "name": "插件",
+        "description": "适用于 Chrome、Figma、Raycast 和 Canva 的 QRdx"
+      },
+      "github": {
+        "name": "GitHub",
+        "description": "源代码、问题反馈与版本发布"
+      },
+      "help": {
+        "name": "帮助中心",
+        "description": "二维码、账单、团队与故障问题解答"
+      },
+      "blog": {
+        "name": "博客",
+        "description": "二维码相关指南与资讯"
+      },
+      "compare": {
+        "name": "对比",
+        "description": "QRdx 与其他生成器和库的对比"
+      },
+      "changelog": {
+        "name": "更新日志",
+        "description": "QRdx 的最新动态"
+      },
+      "integrations": {
+        "name": "集成",
+        "description": "Zapier、Make、Discord、分析像素等"
+      },
+      "support": {
+        "name": "联系支持",
+        "description": "通过邮件、支持小组件或 GitHub"
+      }
+    },
+    "account": {
+      "tryPlayground": "试用 Playground",
+      "playground": "Playground",
+      "dashboard": "控制台"
+    },
+    "github": {
+      "star": "收藏",
+      "starOnGithub": "在 GitHub 上为 QRdx 点星",
+      "starOnGithubCount": "在 GitHub 上为 QRdx 点星（{count} 个星标）"
+    }
+  },
+  "footer": {
+    "description": "免费开源的二维码生成器。支持自定义图案、渐变、徽标和边框，可下载 PNG、JPG、SVG、PDF 和 EPS 格式，无需注册。还提供动态二维码、托管页面和扫描分析。",
+    "starOnGithub": "在 GitHub 上点星标",
+    "navLabel": "页脚",
+    "scanIt": "来，扫一下试试",
+    "copyright": "© {year} QRdx。基于 AGPL-3.0 开源。",
+    "columns": {
+      "product": "产品",
+      "tools": "工具",
+      "developers": "开发者",
+      "resources": "资源",
+      "compare": "对比"
+    },
+    "links": {
+      "playground": "Playground",
+      "dynamicCodes": "动态二维码",
+      "aiThemes": "AI 主题",
+      "communityThemes": "社区主题",
+      "pageTemplates": "页面模板",
+      "pricing": "价格",
+      "guarantee": "Never-Hostage 保障",
+      "generators": "二维码生成器",
+      "bulk": "批量生成器",
+      "scanChecker": "扫描检测",
+      "printSize": "打印尺寸计算器",
+      "barcode": "条形码生成器",
+      "scanner": "二维码扫描器",
+      "allTools": "全部工具",
+      "docs": "文档",
+      "apiReference": "API 参考",
+      "imageApi": "Image API",
+      "mcp": "MCP 服务器",
+      "shadcn": "shadcn/ui 注册表",
+      "plugins": "插件",
+      "selfHosting": "自托管",
+      "github": "GitHub",
+      "help": "帮助中心",
+      "blog": "博客",
+      "changelog": "更新日志",
+      "integrations": "集成",
+      "industries": "按行业查看二维码",
+      "placements": "按投放位置查看二维码",
+      "affiliates": "联盟计划",
+      "contact": "联系我们",
+      "legal": "法律信息",
+      "privacy": "隐私政策",
+      "terms": "服务条款",
+      "subprocessors": "子处理方",
+      "reportAbuse": "举报滥用",
+      "acceptableUse": "可接受使用政策",
+      "cookies": "Cookie 政策",
+      "dpa": "数据处理协议（DPA）",
+      "aiFeatures": "AI 功能",
+      "refunds": "退款政策",
+      "affiliateTerms": "联盟条款",
+      "security": "安全",
+      "allComparisons": "全部对比"
+    }
+  },
+  "localeSwitcher": {
+    "label": "语言",
+    "englishOnly": "此页面仅提供英文版本。选择其他语言将打开对应语言的首页。"
+  },
+  "cta": {
+    "title": "几秒钟，轻松生成你的下一个二维码。",
+    "subtext": "永久免费，无需注册，无水印。",
+    "button": "免费开始创建二维码"
+  },
+  "consent": {
+    "banner": {
+      "title": "QRdx 的 Cookie",
+      "description": "我们统计访问量时不使用 Cookie；PostHog 和反馈组件会等您同意后再启用。",
+      "privacyPolicy": "隐私政策"
+    },
+    "actions": {
+      "accept": "全部接受",
+      "reject": "全部拒绝",
+      "customize": "自定义",
+      "save": "保存选择",
+      "dismiss": "好的"
+    },
+    "dialog": {
+      "title": "Cookie 设置",
+      "description": "选择 QRdx 可以使用哪些可选工具。在您允许之前，不会加载任何可选工具，您也可以随时更改。",
+      "details": "详情请见我们的<link>隐私政策</link>。",
+      "alwaysOn": "始终开启",
+      "usedBy": "使用方：{tools}"
+    },
+    "categories": {
+      "necessary": {
+        "title": "必要",
+        "description": "用于保持登录状态、拦截表单垃圾信息，并记住主题和本次选择等设置。"
+      },
+      "functionality": {
+        "title": "功能",
+        "description": "显示反馈与支持组件。"
+      },
+      "measurement": {
+        "title": "分析",
+        "description": "统计哪些页面和功能被使用，帮助我们了解该改进什么。不使用 Cookie 的访问统计（Umami）无需此项即可运行。"
+      }
+    },
+    "settingsButton": "Cookie 设置"
+  },
+  "home": {
+    "hero": {
+      "badge": "免费开源（AGPL-3.0）",
+      "title": "免费二维码生成器，动态二维码持续可用",
+      "description": "用图案、渐变、徽标和边框设计专属品牌二维码，无需注册，无水印，可下载 PNG、SVG、PDF 或 EPS。登录后可使用打印后仍能修改的动态二维码、托管页面和扫描分析。",
+      "primary": "试用 Playground",
+      "secondary": "阅读文档",
+      "sceneLabel": "QRdx 流程动画：设计工作室屏幕设计并美化二维码，打印机将其打印在卡片上，机械臂把卡片放到传送带上，闸机上的手机在每张卡片经过时进行扫描，扫描数据传到分析面板并新增一根柱状条，一张大型动态二维码卡片无需重新打印即可更换目标链接"
+    },
+    "editor": {
+      "eyebrow": "用你的链接试试",
+      "description": "与 Playground 使用相同的渲染器，输入时实时预览。",
+      "valueLabel": "你的链接或文本",
+      "style": "样式",
+      "frame": "边框",
+      "styles": {
+        "classic": "经典",
+        "rounded": "圆角",
+        "dots": "圆点",
+        "gradient": "渐变"
+      },
+      "frames": {
+        "none": "无边框",
+        "border": "边线"
+      },
+      "more": "完整的 Playground 还提供 {bodyPatterns, number} 种主体图案、{eyeShapes, number} 种定位点形状、{eyeCentres, number} 种定位点中心、任意颜色和渐变、徽标、模板，以及 PNG、SVG、PDF 或 EPS 下载。",
+      "customize": "在 Playground 中自定义",
+      "qrLabel": "{value} 的二维码",
+      "empty": "输入链接即可查看你的二维码。"
+    },
+    "gallery": {
+      "title": "用 QRdx 制作",
+      "description": "由 QRdx 生成的真实二维码，内容为示例。可以扫描任意一个，或打开后改成你自己的。",
+      "seeAll": "查看全部",
+      "showMore": "显示更多"
+    },
+    "useCases": {
+      "eyebrow": "使用场景",
+      "title": "每项需求都有合适的二维码",
+      "description": "从咖啡馆餐桌到公交站台，选择适合场景的二维码类型开始制作。",
+      "items": {
+        "menus": {
+          "title": "菜单与桌台",
+          "description": "将桌牌或收银台卡片链接到你的在线菜单。",
+          "linkText": "网址二维码",
+          "cardLabel": "菜单与桌台：从 Playground 开始"
+        },
+        "businessCards": {
+          "title": "名片",
+          "description": "扫描一次，即可把你的姓名、电话和邮箱保存到手机。",
+          "linkText": "vCard 二维码",
+          "cardLabel": "名片：从 Playground 开始"
+        },
+        "wifi": {
+          "title": "访客 Wi-Fi",
+          "description": "访客无需输入密码，即可加入网络。",
+          "linkText": "Wi-Fi 二维码",
+          "cardLabel": "访客 Wi-Fi：从 Playground 开始"
+        },
+        "payments": {
+          "title": "收款",
+          "description": "在摊位、店铺柜台或配送时收取 UPI 付款。",
+          "linkText": "UPI 二维码",
+          "cardLabel": "收款：从 Playground 开始"
+        },
+        "packaging": {
+          "title": "包装与标签",
+          "description": "把 CSV 转成 ZIP 压缩包，为每件产品或资产生成二维码。",
+          "linkText": "批量生成器",
+          "cardLabel": "包装与标签：打开批量生成器"
+        },
+        "events": {
+          "title": "活动与签到",
+          "description": "用 Google Form 在门口为来宾签到。",
+          "linkText": "签到二维码",
+          "cardLabel": "活动与签到：从 Playground 开始"
+        },
+        "shelves": {
+          "title": "货架与陈列",
+          "description": "让顾客从货架标签直达你的商品页面。",
+          "linkText": "Amazon 二维码",
+          "cardLabel": "货架与陈列：从 Playground 开始"
+        },
+        "posters": {
+          "title": "海报与标牌",
+          "description": "印得足够大，隔着马路也能扫描。",
+          "linkText": "打印尺寸计算器",
+          "cardLabel": "海报与标牌：打开打印尺寸计算器"
+        }
+      }
+    },
+    "features": {
+      "eyebrow": "功能",
+      "title": "二维码所需的一切",
+      "description": "设计、检查能否扫描、按合适的尺寸打印，并随时保持更新。每项功能都可以在这里直接试用。",
+      "design": {
+        "eyebrow": "设计",
+        "title": "设计每一处细节",
+        "description": "{bodyPatterns, number} 种主体图案、{eyeShapes, number} 种定位点样式和 {frames, number} 种边框，支持纯色或渐变色。Playground 和 qrdx React 库使用同一个渲染器绘制。",
+        "link": "打开 Playground"
+      },
+      "scanScore": {
+        "eyebrow": "扫描评分",
+        "title": "打印前就知道能否扫描",
+        "description": "每个设计都会在浏览器中以三种尺寸解码，并模拟相机模糊。调淡墨色，就能看到评分随之变化。",
+        "link": "检查已打印的二维码"
+      },
+      "printSize": {
+        "eyebrow": "打印尺寸",
+        "title": "打印得足够大",
+        "description": "最小尺寸取决于扫描者与二维码的距离，以及二维码所含的内容量。",
+        "link": "打印尺寸计算器"
+      },
+      "dynamic": {
+        "eyebrow": "动态二维码",
+        "title": "打印后仍可更改链接",
+        "description": "动态二维码会打开一个短链接，你可以随时将它指向新的地址。免费版账户可使用 {count, number} 个。",
+        "link": "了解动态二维码"
+      },
+      "analytics": {
+        "eyebrow": "数据分析",
+        "title": "查看每一次扫描",
+        "description": "每个动态二维码都提供扫描量趋势、国家/地区、设备、浏览器和来源页面数据。免费版账户保留 {days, number} 天。",
+        "link": "扫描分析的工作方式"
+      },
+      "bulk": {
+        "eyebrow": "批量",
+        "title": "一个 CSV 生成数百个二维码",
+        "description": "映射各列、选择样式，即可将最多 {max, number} 个二维码以 PNG 或 SVG 格式打包成一个 ZIP 下载。文件不会离开你的浏览器。",
+        "link": "打开批量生成器"
+      },
+      "developers": {
+        "eyebrow": "开发者",
+        "title": "为开发者打造",
+        "description": "用 qrdx React 库渲染二维码，通过 Image API 从 URL 获取图片，或让 Claude、Cursor 和 VS Code 通过 MCP server 生成。你也可以自行部署整个应用。",
+        "link": "开发者文档"
+      }
+    },
+    "video": {
+      "eyebrow": "演示",
+      "title": "观看 QRdx 实际操作",
+      "description": "粘贴链接，设计样式，然后下载。无需账号。",
+      "steps": {
+        "paste": {
+          "title": "粘贴链接",
+          "text": "也可以选择 Wi-Fi、vCard、UPI 等类型。"
+        },
+        "style": {
+          "title": "设计样式",
+          "text": "图案、颜色、Logo 和边框。"
+        },
+        "download": {
+          "title": "下载",
+          "text": "支持 PNG、SVG、PDF 等格式。无需账号。"
+        }
+      },
+      "youtube": "在 YouTube 上观看完整介绍"
+    },
+    "faq": {
+      "eyebrow": "常见问题",
+      "title": "常见问题解答",
+      "description": "关于 QRdx 你需要了解的一切。其他问题，请联系 support@qrdx.dev",
+      "somethingElse": "还有其他问题？",
+      "items": {
+        "free": {
+          "question": "QRdx 真的免费吗？有隐藏限制吗？",
+          "answer": "是的。创建、自定义和下载静态二维码完全免费，且无需账号：二维码数量不限，所有设计选项均可使用（{bodyPatterns, number} 种主体图案、{eyeShapes, number} 种定位点外框形状和 {eyeCentres, number} 种定位点中心、渐变、Logo、边框以及 Logo QR 或 Image QR 样式），并支持下载 PNG、JPG、SVG、PDF 和 EPS。没有水印，也没有广告。静态二维码把内容直接存储在码中，因此永不过期，也没有扫描次数限制。免费账号可额外获得 10 个动态二维码、3 个托管页面、90 天扫描分析、10 个已保存主题和 5 次 AI 主题生成；Pro（{proMonthly}/月或 {proYearly}/年）和 Business（{businessMonthly}/月或 {businessYearly}/年）可提高这些上限。"
+        },
+        "signup": {
+          "question": "我需要注册或创建账号吗？",
+          "answer": "静态二维码不需要。打开 Playground，输入网址或内容，自定义设计后即可下载，无需注册。如果想使用印刷后仍可修改的动态二维码、托管页面、扫描分析、已保存主题、社区发布或 AI 主题生成，请登录（可使用 GitHub 或 Google）。"
+        },
+        "dynamic": {
+          "question": "QRdx 支持动态二维码和扫描分析吗？",
+          "answer": "支持。动态二维码编码的是一个短链接，因此印刷后仍可更改它指向的位置，每次扫描都会被计数，并提供国家、设备和浏览器分析。二维码可以打开网站或移动端托管页面（链接列表、菜单、vCard、优惠券、活动、表单、PDF、图库、音频或视频）。Pro 和 Business 还增加按设备、国家、语言或时间的智能路由、A/B 测试、UTM 标签、密码、有效期和扫描次数限制。免费账号可使用 10 个活跃的动态二维码，保留 90 天历史记录；Pro 和 Business 不限数量，历史记录更长。"
+        },
+        "guarantee": {
+          "question": "停止付费后，我的二维码会失效吗？",
+          "answer": "不会。根据 Never-Hostage 保障，无论哪种方案，每个动态二维码都会持续重定向，包括降级、付款失败或取消订阅之后。扫描次数不限，也不会暂停，我们不会展示广告，也不会把扫描者带到 QRdx 页面。方案限制只会阻止你创建新内容。静态二维码完全不依赖 QRdx。"
+        },
+        "compare": {
+          "question": "QRdx 与 QR Tiger、QR Code Monkey 或 Flowcode 相比如何？",
+          "answer": "QR TIGER 和 Flowcode 是动态二维码平台：二维码通过它们的服务重定向，因此可以编辑并追踪扫描，价格随二维码数量增长。QR TIGER 的免费方案包含 3 个动态二维码，每个 500 次扫描，Flowcode 的免费方案允许 2 个二维码。QR Code Monkey 与 QRdx 一样，提供免费的静态二维码。QRdx 两者兼顾：不限数量的免费静态二维码，样式可深度定制，另有每个方案都不限扫描次数的动态二维码，付费方案每月 {proMonthly} 起，还有可自行部署的开源代码。我们的对比页面详细介绍了每款工具，包括它在哪些方面是更好的选择。"
+        },
+        "logo": {
+          "question": "我可以免费给二维码添加 Logo 吗？",
+          "answer": "可以。免费版包含 Logo 叠加功能。上传图片（背景透明的 PNG 效果最佳），QRdx 会将其居中并清除下方的模块。二维码采用 Reed-Solomon 纠错（ISO/IEC 18004）；QRdx 默认使用 Q 级，大约可恢复 25% 的码内容，因此居中的 Logo 仍可被扫描。打印前请用几部手机测试。"
+        },
+        "openSource": {
+          "question": "QRdx 是开源的吗？",
+          "answer": "是的。QRdx 基于 GNU AGPL-3.0（或更高版本）开源，并在 GitHub 上公开开发。你可以查看代码、提交 issue、参与贡献，或自行部署自己的实例，动态二维码和托管页面也包含在内。二维码库以 qrdx 为名发布在 npm 上，供 React 应用使用。AGPL 是 copyleft 许可证，因此在嵌入闭源软件之前，请确认它适合你的项目。"
+        },
+        "api": {
+          "question": "开发者可以通过 API 生成二维码吗？",
+          "answer": "可以。Image API 无需 API 密钥，即可将任意 URL 转换为 SVG、PNG 或 EPS 二维码；REST API 则可通过工作区 API 密钥或 OAuth 创建和编辑动态二维码，并读取其扫描数据。此外还提供适用于 Claude、Cursor 和 VS Code 的 MCP server、命令行工具（@qrdx/cli）、shadcn/ui 组件以及 qrdx React 库。"
+        },
+        "paidPlans": {
+          "question": "Pro 或 Business 包含哪些功能？",
+          "answer": "Pro（{proMonthly}/月或 {proYearly}/年）可使用不限数量的动态二维码和托管页面、3 年的数据分析、{customDomains, select, yes {5 个自定义域名、} other {}}最多 3 人的团队、智能路由、A/B 测试、UTM 标签、像素、邮件提醒和每周摘要，以及密码和有效期等链接控制功能。Business（{businessMonthly}/月或 {businessYearly}/年）additionally 支持带自定义 CSS 的白标页面、不限时长的分析历史、{customDomains, select, yes {25 个自定义域名、} other {}}不限数量的团队成员、转化追踪、webhook，以及 Slack 或 Discord 提醒。创建、自定义和下载静态二维码仍然免费。"
+        }
+      }
+    }
+  },
+  "pricing": {
+    "meta": {
+      "title": "价格：免费版、Pro 和 Business 方案",
+      "description": "静态二维码永久免费。Pro（{pro}/月）和 Business（{business}/月）增加{extras}。即使取消订阅，二维码也能继续使用。"
+    },
+    "plans": {
+      "free": "免费版"
+    },
+    "header": {
+      "eyebrow": "价格",
+      "title": "价格简单明了，二维码不会被扣为人质。",
+      "intro": "静态二维码永久免费。付费方案增加{extras}。"
+    },
+    "extras": {
+      "unlimitedDynamic": "无限数量的动态二维码",
+      "longerAnalytics": "更长的数据分析周期",
+      "analyticsHistory": "历史分析数据",
+      "customDomains": "自定义域名",
+      "teams": "团队"
+    },
+    "billing": {
+      "legend": "计费周期",
+      "month": "按月",
+      "year": "按年",
+      "saveUpTo": "最高可省 {percent, number}%",
+      "save": "省 {percent, number}%"
+    },
+    "currency": {
+      "inr": "价格以印度卢比（₹）显示。",
+      "usd": "价格以美元（US$）显示。",
+      "showInr": "在印度？查看 ₹ 价格",
+      "showUsd": "显示 US$ 价格"
+    },
+    "price": {
+      "forever": "永久",
+      "noCard": "无需信用卡",
+      "perMonth": "/月",
+      "perYear": "/年",
+      "aboutMonthly": "约 {price}/月，按年计费",
+      "billedMonthly": "按月计费，随时可取消"
+    },
+    "tiers": {
+      "free": {
+        "tagline": "适合个人项目和试用 QRdx",
+        "cta": "免费开始"
+      },
+      "pro": {
+        "tagline": "适合创作者、店铺和小型企业",
+        "cta": "升级到 Pro"
+      },
+      "business": {
+        "tagline": "适用于团队、代理机构和品牌",
+        "cta": "升级到 Business"
+      }
+    },
+    "cards": {
+      "popular": "热门",
+      "leadPro": "包含免费版的全部功能，另加：",
+      "leadBusiness": "包含 Pro 的全部功能，另加：",
+      "goToDashboard": "前往控制台",
+      "comingSoon": "即将推出",
+      "notAvailable": "{plan} 暂时无法结账。",
+      "manage": "管理订阅",
+      "current": "这是您当前的方案。",
+      "switchTo": "切换到 {plan}",
+      "portalNote": "方案变更需在账单门户中进行。",
+      "redirecting": "正在跳转…",
+      "openPortal": "打开门户"
+    },
+    "selfHost": {
+      "title": "自托管",
+      "description": "在您自己的服务器上运行开源应用，并使用您自己的 Postgres 数据库。方案限额集中在一个文件中，您可以为自己的实例修改。",
+      "guide": "自托管指南"
+    },
+    "footnote": "Polar 作为商户代理（merchant of record）处理结账；结账时可能会加收当地税费。印度的客户以 ₹ 计费，其他客户以 US$ 计费。",
+    "values": {
+      "unlimited": "不限",
+      "days": "{count, plural, one {# 天} other {# 天}}",
+      "years": "{count, plural, one {# 年} other {# 年}}",
+      "megabytes": "{count} MB",
+      "gigabytes": "{count} GB",
+      "included": "包含",
+      "notIncluded": "不包含"
+    },
+    "highlights": {
+      "unlimitedStatic": "不限数量的静态二维码，无需账号",
+      "dynamicWithAnalytics": "{count} 个带扫描分析的动态二维码",
+      "unlimitedScans": "扫描次数不限，不会暂停，无广告",
+      "landingPages": "{count} 个托管落地页",
+      "historyOf": "{duration}的分析历史记录",
+      "history": "{duration}分析历史记录",
+      "fileStorage": "{size} 文件存储空间",
+      "unlimitedDynamic": "不限数量的动态二维码和落地页",
+      "customDomains": "{count} 个自定义域名",
+      "teams": "团队最多 {count} 人",
+      "themesShared": "不限数量的已保存主题，与团队共享",
+      "themes": "不限数量的已保存主题",
+      "routing": "智能路由、A/B 测试、UTM 标签和像素",
+      "linkControls": "密码、定时、过期和扫描次数限制",
+      "storageAndForms": "{size} 存储空间，每月 {count} 条表单回复",
+      "forms": "每月 {count} 条表单回复",
+      "whiteLabel": "支持自定义 CSS 的白标页面",
+      "unlimitedTeam": "不限数量的团队成员",
+      "sso": "单点登录（SAML 和 OIDC）",
+      "auditLog": "审计日志，支持 CSV 导出",
+      "conversions": "转化追踪",
+      "webhooks": "Webhook、Zapier 和 Slack",
+      "aiArt": "每月 {count} 张 AI 艺术图片，团队共享额度"
+    },
+    "comparison": {
+      "title": "套餐对比",
+      "description": "所有限额一目了然。所有套餐均不限制扫描次数。",
+      "scrollHint": "左右滑动可查看所有套餐。",
+      "caption": "QRdx 套餐对比",
+      "feature": "功能",
+      "groups": {
+        "price": "价格",
+        "codes": "二维码和页面",
+        "analytics": "分析和链接控制",
+        "brand": "品牌和团队",
+        "files": "文件和表单",
+        "automation": "自动化和 API"
+      },
+      "rows": {
+        "price": "价格",
+        "staticCodes": "静态二维码",
+        "staticCodesHint": "无需账号",
+        "dynamicCodes": "动态二维码",
+        "scans": "扫描次数",
+        "scansHint": "不暂停，无广告",
+        "landingPages": "托管落地页",
+        "savedThemes": "已保存主题",
+        "aiThemes": "AI 主题生成次数",
+        "aiArt": "每月 AI 艺术图片数量",
+        "analyticsHistory": "数据分析历史",
+        "routing": "智能路由、A/B 测试和 UTM 标签",
+        "routingHint": "按设备、国家或地区、时间或语言分流扫描",
+        "linkControls": "密码、定时、有效期和扫描次数限制",
+        "pixels": "再营销像素",
+        "conversions": "转化追踪",
+        "customDomains": "自定义域名",
+        "customSlugs": "自定义链接后缀",
+        "customSlugsHint": "自选链接，例如 qrdx.dev/q/spring-menu",
+        "teamMembers": "团队成员",
+        "sso": "单点登录",
+        "ssoHint": "支持 SAML 或 OIDC，对接贵公司的身份提供商",
+        "auditLog": "审计日志",
+        "auditLogHint": "记录工作区内谁修改了什么，保留 {days, number} 天，支持 CSV 导出",
+        "fileStorage": "文件存储",
+        "formResponses": "每月表单回复数",
+        "emailAlerts": "邮件摘要和提醒",
+        "webhooks": "Webhook、Zapier 和 Slack",
+        "apiRequests": "每日 API 请求数"
+      },
+      "cells": {
+        "pricePaid": "{monthly}/月或 {yearly}/年",
+        "pagesWithBadge": "{count}，页脚带“Made with QRdx”",
+        "pagesWhiteLabelCss": "{count}，白标 + 自定义 CSS",
+        "pagesWhiteLabel": "{count}，白标",
+        "pagesNoFooter": "{count}，无页脚",
+        "themesShared": "{count}，团队共享",
+        "aiThemesTotal": "共 {count}",
+        "aiArtPooled": "{count}，团队内共用",
+        "noTeams": "1（无团队）",
+        "storage": "{size}（每个文件 {perFile}）",
+        "apiBulk": "{count} + 批量创建"
+      }
+    },
+    "guarantee": {
+      "eyebrow": "所有套餐均适用，包括免费版",
+      "title": "Never-Hostage 保障",
+      "description": "印出去的二维码比订阅更长久。无论你的套餐发生什么变化，已印刷的二维码都会继续有效。",
+      "link": "阅读完整保障条款",
+      "promises": {
+        "static": {
+          "title": "静态二维码永久免费",
+          "body": "无需账号即可制作、设计并下载静态二维码。它们直接存储你的内容，永不过期，也不会经过我们的服务器。"
+        },
+        "redirecting": {
+          "title": "动态二维码持续跳转",
+          "body": "每个动态二维码在所有套餐下都能继续使用，降级、扣款失败或取消订阅后也一样。"
+        },
+        "noAds": {
+          "title": "不暂停，无广告",
+          "body": "我们绝不会因账单问题暂停你的二维码，也不会展示广告或插页，更不会让扫描二维码的人先经过 QRdx 页面中转。"
+        },
+        "limits": {
+          "title": "限额只会阻止新增内容",
+          "body": "超出限额只会阻止继续创建。已有的二维码和页面仍可正常使用，你也仍可修改二维码指向的地址。"
+        },
+        "export": {
+          "title": "全部可导出",
+          "body": "所有套餐均可将任意二维码下载为 SVG 或 PNG，将其扫描记录导出为 CSV，并通过 REST API 读取你的二维码。"
+        },
+        "notice": {
+          "title": "提前 12 个月通知",
+          "body": "如果 QRdx 将来停止运营，你会至少提前 12 个月收到通知，并获得一份有文档说明的路径，自行运行这款开源应用。"
+        }
+      }
+    },
+    "faq": {
+      "title": "定价常见问题",
+      "description": "账单、限额，以及停止付费后你的二维码会怎样。",
+      "somethingElse": "还有其他问题？请发邮件至 <link>{email}</link>",
+      "items": {
+        "cancel": {
+          "question": "取消订阅会怎样？",
+          "answer": "不会有任何影响。你的套餐会保持有效，直到已付费周期结束，之后账号将转为免费版。所有动态二维码继续跳转，每次扫描仍会计数：这就是我们的 Never-Hostage 保障。在免费版中，你无法创建超出免费版限额的内容，分析数据只显示最近 90 天。"
+        },
+        "paymentFails": {
+          "question": "付款失败会怎么样？",
+          "answer": "您的二维码会继续正常使用。如果订阅失效，您的账户将按免费版的限制执行，与您主动取消订阅时完全一样。我们绝不会因为账单问题而暂停二维码、展示广告，或把扫描者引导到 QRdx 的页面。"
+        },
+        "scans": {
+          "question": "扫描次数有上限吗？",
+          "answer": "没有。所有套餐的扫描次数均不限，我们也绝不会因为访问量而暂停二维码。唯一的扫描上限，是您自己在二维码上设置的上限（Pro 和 Business）。"
+        },
+        "rupees": {
+          "question": "为什么我看到的价格是 ₹？",
+          "answer": "来自印度的访客会看到以印度卢比显示的价格：Pro 为每月 {proMonthly} 或每年 {proYearly}，Business 为每月 {businessMonthly} 或每年 {businessYearly}。结账时，印度的客户以 ₹ 付款，其他地区的客户以美元（US$）付款，与您浏览时使用的货币无关。您可以使用套餐上方的开关切换显示货币。"
+        },
+        "switchPlans": {
+          "question": "之后可以更换套餐或计费周期吗？",
+          "answer": "可以。在设置中打开“管理订阅”，即可在 Polar 账单门户中更改或取消您的套餐。降级到较低的套餐不会停用已有的二维码、页面或域名。"
+        },
+        "teams": {
+          "question": "各个套餐的团队功能是怎样的？",
+          "answer": "免费版账户无法创建团队。Pro 团队最多可有 3 名成员（包括所有者），Business 团队不限成员数量。团队的限制以其所有者中最高的套餐为准，即使该套餐发生变化，现有成员也会保留。"
+        },
+        "selfHost": {
+          "question": "可以自行托管吗？",
+          "answer": "可以。QRdx 以 AGPL-3.0 协议开源。按照自托管指南，搭配您自己的 Postgres 数据库即可运行；套餐限制集中定义在一个文件中，您可以为自己的实例修改。"
+        },
+        "billing": {
+          "question": "谁负责账单和税务？",
+          "answer": "付款由 Polar（polar.sh）处理，它是登记商户（merchant of record），负责处理销售税、VAT 和 GST。QRdx 不会接触到您的银行卡信息。"
+        }
+      }
+    }
+  }
+}
