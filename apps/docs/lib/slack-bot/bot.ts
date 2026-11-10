@@ -1,6 +1,13 @@
 import "server-only";
 
-import { readChatQrInput } from "@/lib/chat-bots/qr-reply";
+import {
+  type ChatDesign,
+  checkForReply,
+  readChatQrAsk,
+  readPlainChatQrAsk,
+  STYLE_NOTES,
+} from "@/lib/chat-bots/styles";
+import { baseUrl } from "@/lib/metadata";
 import { parseLinkUrl } from "@/lib/playground-links";
 import { logError } from "@/lib/shared";
 import {
@@ -50,6 +57,11 @@ export interface BotAsk {
 
 export type BotAnswer =
   | { kind: "message"; message: SlackMessage; private: boolean }
+  /**
+   * A styled code: its scan check takes a moment, so it's done after the
+   * reply (styledReply).
+   */
+  | { kind: "styled"; data: string; design: ChatDesign; maker: string }
   /** Make a tracked code: slow, so it's done after the reply (runTrack). */
   | { kind: "track"; url: string };
 
@@ -123,18 +135,55 @@ async function linkPrompt(ask: BotAsk, lead: string): Promise<SlackMessage> {
   );
 }
 
-/** The QR code for typed content, or why there isn't one. */
-export function contentAnswer(text: string): BotAnswer {
-  const input = readChatQrInput(text);
+/**
+ * The QR code for typed content, or why there isn't one. With `options`,
+ * style options after the content (--look modern) apply; a message someone
+ * else wrote (the shortcut) is content as it is. `maker` gets the style
+ * menus under the code.
+ */
+export function contentAnswer(
+  text: string,
+  maker: string,
+  { options = true }: { options?: boolean } = {},
+): BotAnswer {
+  const input = options ? readChatQrAsk(text) : readPlainChatQrAsk(text);
   if (!input.ok) {
+    if (input.reason === "options") {
+      return privately(
+        noteMessage(`${input.message} /qr help shows them all.`),
+      );
+    }
     return input.reason === "empty"
       ? privately(helpMessage())
       : privately(noteMessage(TOO_LONG_TEXT));
   }
-  const message = qrMessage(input.data);
+  if (input.design) {
+    return { kind: "styled", data: input.data, design: input.design, maker };
+  }
+  const message = qrMessage(input.data, baseUrl, { maker });
   return message
     ? { kind: "message", message, private: false }
     : privately(tooLongForSlack());
+}
+
+/**
+ * A styled code once it passes the scan check (lib/chat-bots/styles.ts),
+ * saying so when the check changed it, with `maker`'s style menus.
+ */
+export async function styledReply(
+  data: string,
+  design: ChatDesign,
+  maker: string,
+): Promise<{ message: SlackMessage; private: boolean }> {
+  const checked = await checkForReply(data, design, "slack-bot");
+  const message = qrMessage(data, baseUrl, {
+    design: checked.design,
+    maker,
+    note: checked.note ? STYLE_NOTES[checked.note] : null,
+  });
+  return message
+    ? { message, private: false }
+    : { message: tooLongForSlack(), private: true };
 }
 
 export async function answer(ask: BotAsk): Promise<BotAnswer> {
@@ -179,7 +228,7 @@ export async function answer(ask: BotAsk): Promise<BotAnswer> {
         return { kind: "track", url };
       }
       default:
-        return contentAnswer(ask.text);
+        return contentAnswer(ask.text, ask.slackUserId);
     }
   } catch (error) {
     if (error instanceof SlackBotStoreUnavailableError) {
