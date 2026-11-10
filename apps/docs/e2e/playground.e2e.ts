@@ -4,7 +4,8 @@
 // and compares it with what the encoder produces for the same input. It also
 // walks every Design picker option and every preset, downloads PNG/SVG/PDF/EPS,
 // and checks copy, undo/redo and the type picker's search. "landing hand-offs"
-// clicks examples on the home and generator pages and checks the playground
+// reads the home page's server HTML for its generator links, then clicks
+// examples on the home and generator pages and checks the playground
 // opens with their type, design and sample content.
 //
 //   pnpm --filter docs test:e2e            (E2E_BASE_URL defaults to :3000)
@@ -1613,6 +1614,44 @@ async function testLandingHandoffs(page: Page) {
       `() => { localStorage.removeItem("editor-storage"); return true; }`,
     );
 
+  // 0. The home page as a crawler gets it (no JavaScript): every content type
+  //    it opens in the playground also has a plain link to its generator
+  //    page, and no link sits inside another.
+  const html = await (await fetch(`${BASE_URL}/`)).text();
+  const anchors = [...html.matchAll(/<a\b[^>]*\bhref="([^"]*)"/g)].map(
+    (match) => (match[1] ?? "").replaceAll("&amp;", "&"),
+  );
+  const generatorPages = new Set(
+    anchors.filter((href) => /^\/qr-code-generator\/[a-z-]+$/.test(href)),
+  );
+  const openedTypes = new Set(
+    anchors
+      .filter((href) => href.startsWith("/playground?"))
+      .map((href) => new URL(href, BASE_URL).searchParams.get("type"))
+      .filter((type): type is string => Boolean(type)),
+  );
+  const unlinked = [...openedTypes].filter(
+    (type) => !generatorPages.has(`/qr-code-generator/${type}`),
+  );
+  let depth = 0;
+  let deepest = 0;
+  for (const [tag] of html.matchAll(/<\/?a\b[^>]*>/g)) {
+    depth += tag.startsWith("</") ? -1 : 1;
+    deepest = Math.max(deepest, depth);
+  }
+  record(
+    "landing hand-offs",
+    "the server-rendered home page links the generator page of every type it opens in the playground",
+    openedTypes.size > 20 && unlinked.length === 0,
+    `${openedTypes.size} types opened, ${generatorPages.size} generator pages linked${unlinked.length ? `, missing ${unlinked.join(", ")}` : ""}`,
+  );
+  record(
+    "landing hand-offs",
+    "no link on the home page sits inside another",
+    deepest === 1,
+    `deepest <a> nesting ${deepest}`,
+  );
+
   // 1. A content tile on the home wall: its type, its theme, and a sample
   //    the visitor edits, ready to download.
   await fresh();
@@ -1705,7 +1744,7 @@ async function testLandingHandoffs(page: Page) {
   const useCaseHref = await followToPlayground(
     page,
     "/",
-    `() => [...document.querySelectorAll('#use-cases a[href^="/playground?"]')].find((a) => /guest wi-fi/i.test(a.textContent))`,
+    `() => [...document.querySelectorAll('#use-cases a[href^="/playground?"]')].find((a) => /^guest wi-fi:/i.test(a.getAttribute("aria-label") ?? ""))`,
   );
   const useCaseStyle = styleOf(useCaseHref);
   const useCase = await savedEditor(page);
@@ -1739,6 +1778,63 @@ async function testLandingHandoffs(page: Page) {
       (hero.styles.frame as { style?: string } | undefined)?.style ===
         (heroStyle.r as { style?: string } | undefined)?.style,
     `${heroHref} → ${hero.value}, ${hero.styles.bodyPattern}`,
+  );
+
+  // 6. Two separate targets where people point: the link on top at each spot.
+  await page.goto(`${BASE_URL}/`, { wait: 3000 });
+  await install(page);
+  const linkAt = (x: number, y: number) =>
+    page.evaluate(
+      `(x, y) => { const a = document.elementFromPoint(x, y)?.closest("a"); return a ? a.getAttribute("href") : null; }`,
+      x,
+      y,
+    ) as Promise<string | null>;
+  const centerOf = (selector: string) =>
+    page.waitFor(
+      `() => { const el = document.querySelector(${JSON.stringify(selector)}); if (!el) return null; el.scrollIntoView({ block: "center" }); const r = el.getBoundingClientRect(); return r.width ? { x: r.left + r.width / 2, y: r.top + r.height / 2 } : null; }`,
+      { timeout: 20_000 },
+    ) as Promise<{ x: number; y: number }>;
+
+  const typeName = await centerOf(
+    '#use-cases a[href="/qr-code-generator/wifi"]',
+  );
+  await sleep(300);
+  const onName = await linkAt(typeName.x, typeName.y);
+  const card = await centerOf("#use-cases li:nth-child(3) h3");
+  const onCard = await linkAt(card.x, card.y);
+  record(
+    "landing hand-offs",
+    "a use case's type name opens its generator page; the rest of the card opens the playground",
+    onName === "/qr-code-generator/wifi" &&
+      (onCard ?? "").startsWith("/playground?type=wifi"),
+    `name → ${onName}, card → ${onCard}`,
+  );
+
+  const tile = await centerOf('[data-wall-tile="type-wifi"]');
+  await page.cdp.send("Input.dispatchMouseEvent", {
+    type: "mouseMoved",
+    x: tile.x,
+    y: tile.y,
+  });
+  await sleep(400);
+  const onCode = await linkAt(tile.x, tile.y);
+  const chipName = await centerOf(
+    '[data-wall-tile="type-wifi"] a[href="/qr-code-generator/wifi"]',
+  );
+  // Moving to the name keeps the pointer on the tile, so its chip stays.
+  await page.cdp.send("Input.dispatchMouseEvent", {
+    type: "mouseMoved",
+    x: chipName.x,
+    y: chipName.y,
+  });
+  await sleep(400);
+  const onChip = await linkAt(chipName.x, chipName.y);
+  record(
+    "landing hand-offs",
+    "a wall tile's code opens the playground; its name opens the generator page",
+    (onCode ?? "").startsWith("/playground?type=wifi") &&
+      onChip === "/qr-code-generator/wifi",
+    `code → ${onCode}, name → ${onChip}`,
   );
 
   // Leave a plain design for the suites after this one.

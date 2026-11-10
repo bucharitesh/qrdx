@@ -3,6 +3,8 @@
 // go and what their codes hold. That every tile scans is
 // gallery-scan-*.test.ts; that the images are self-contained is
 // gallery-route.test.ts.
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -37,6 +39,8 @@ import { decodeStyleParam } from "@/lib/playground-style";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import type { ThemeCategory } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
+
+const APP = join(import.meta.dirname, "../..");
 
 const colorKind = (color: ColorConfig | undefined) =>
   !color || typeof color === "string" ? "solid" : color.type;
@@ -179,6 +183,30 @@ describe("wall tiles", () => {
       expect(params.sample, tile.id).toBe(true);
       // The link carries the flag, never the tile's own sample values.
       expect(tile.href, tile.id).not.toContain(encodeURIComponent(tile.value));
+    }
+  });
+
+  it("keep a link to the page about what they show, beside the playground", () => {
+    const frames = new Set(OFFICIAL_FRAMES.map((frame) => frame.id));
+    for (const tile of WALL_TILES) {
+      const about = tile.about?.href;
+      // Every content type keeps its generator page linked.
+      if (tile.contentType) {
+        expect(about, tile.id).toBe(`/qr-code-generator/${tile.contentType}`);
+        expect(QR_TYPE_SLUGS, tile.id).toContain(tile.contentType);
+      }
+      if (tile.band === "frames") {
+        expect(about, tile.id).toBe(`/community/frames/${tile.officialFrame}`);
+        expect(frames.has(tile.officialFrame ?? ""), tile.id).toBe(true);
+      }
+      if (about?.startsWith("/docs/")) {
+        expect(
+          existsSync(join(APP, "content", `${about}.mdx`)),
+          `${tile.id}: ${about}`,
+        ).toBe(true);
+      }
+      // Two separate targets: the about page is never the tile's own link.
+      if (about) expect(about, tile.id).not.toBe(tile.href);
     }
   });
 
