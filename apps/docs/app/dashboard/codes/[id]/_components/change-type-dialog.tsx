@@ -14,7 +14,7 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
-import { ArrowLeft, ArrowRotateLeft, Link2 } from "iconsax-reactjs";
+import { ArrowLeft, ArrowRotateLeft, Global } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import {
   type FormEvent,
@@ -296,7 +296,7 @@ export function ChangeTypeDialog({
             <div className="grid gap-2 sm:grid-cols-2">
               <TypeCard
                 description="Send scans straight to a web address"
-                icon={Link2}
+                icon={Global}
                 label="Website link"
                 onClick={() => {
                   setError(null);
