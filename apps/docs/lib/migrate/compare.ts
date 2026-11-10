@@ -147,6 +147,28 @@ export const COMPARE_MIGRATIONS: Record<string, CompareMigration> = {
   "qr-code-chimp": exportAsCsv("csv", "QR Code Chimp"),
   "qr-verse": exportAsCsv("csv", "QR-Verse"),
   "qr-code-io": exportAsCsv("csv", "QR Code.io"),
+  // QR.io (qr.io) is a different product from QR Code.io above. QR.io and QR
+  // Code Creator both pause or invalidate dynamic codes when the plan ends
+  // (see their compare pages), so the plan, not just the account, has to stay
+  // active until the reprint.
+  "qr-io": {
+    ...file(
+      "csv",
+      "QR.io",
+      "Get your code list from QR.io's List API (100 codes per page), or list Name, QR link and Destination URL for each code in a spreadsheet.",
+    ),
+    printed:
+      "QR.io's dynamic codes live on QR.io's own domain and are paused when its plan ends, so re-point each one to its new QRdx link (the mapping CSV lists them) and keep the QR.io plan active until you reprint. Static QR.io codes keep working without it.",
+  },
+  "qr-code-creator": {
+    ...file(
+      "csv",
+      "QR Code Creator",
+      "List Name, QR link and Destination URL for each QR Code Creator code in a spreadsheet.",
+    ),
+    printed:
+      "QR Code Creator's dynamic codes live on its own domain, and its help center says they become invalid once the plan expires, so re-point each one to its new QRdx link (the mapping CSV lists them) and keep that plan active until you reprint. Static codes keep working without it.",
+  },
   qrstuff: exportAsCsv("csv", "QRStuff"),
   "canva-qr": exportAsCsv("csv", "Canva"),
   "adobe-express": staticOnly("Adobe Express"),
