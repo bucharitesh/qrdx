@@ -287,7 +287,7 @@ let nextConfig: NextConfig = {
         ...base.beforeFiles,
         // Community profiles live at /community/@handle; a folder named
         // @handle would be a parallel route slot, so they render from
-        // app/(home)/community/u/[handle].
+        // app/(app)/(home)/community/u/[handle].
         {
           source: "/community/@:handle",
           destination: "/community/u/:handle",

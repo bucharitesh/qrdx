@@ -55,20 +55,20 @@ import {
   setQrCodesPaused,
   trashQrCodes,
 } from "@/actions/bulk-codes";
-import { keyLabel } from "@/app/dashboard/_lib/list-keys";
-import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
-import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
-import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
+import { keyLabel } from "@/app/(app)/dashboard/_lib/list-keys";
+import { codeTabHref } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
+import type { TagRow } from "@/app/(app)/dashboard/codes/_lib/organize";
+import type { FolderRow } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import type {
   QrCodeListItem,
   QrCodeView,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   BULK_OWNED,
   ROW_KEYS,
   type RowAction,
   resolveRowShortcut,
-} from "@/app/dashboard/codes/_lib/row-shortcuts";
+} from "@/app/(app)/dashboard/codes/_lib/row-shortcuts";
 import {
   describeFocusTarget,
   hasOpenOverlay,

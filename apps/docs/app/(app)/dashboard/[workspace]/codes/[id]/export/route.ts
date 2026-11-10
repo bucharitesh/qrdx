@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { getCode } from "@/app/dashboard/codes/_lib/qr-codes";
+import { getCode } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import {

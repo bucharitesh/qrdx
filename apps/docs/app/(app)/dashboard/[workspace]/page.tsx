@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { getHomeData } from "@/app/dashboard/_components/home/home-data";
-import { HomeView } from "@/app/dashboard/_components/home/home-view";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { getHomeData } from "@/app/(app)/dashboard/_components/home/home-data";
+import { HomeView } from "@/app/(app)/dashboard/_components/home/home-view";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 
 export const metadata: Metadata = {
   title: "Home",

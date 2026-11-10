@@ -29,7 +29,7 @@ import {
   type BulkAction,
   type ListFocus,
   resolveListKey,
-} from "@/app/dashboard/_lib/list-keys";
+} from "@/app/(app)/dashboard/_lib/list-keys";
 import {
   EMPTY_SELECTION,
   extendRange,
@@ -41,7 +41,7 @@ import {
   setRows,
   stepRow,
   toggleRow,
-} from "@/app/dashboard/_lib/list-selection";
+} from "@/app/(app)/dashboard/_lib/list-selection";
 import {
   describeFocusTarget,
   hasOpenOverlay,

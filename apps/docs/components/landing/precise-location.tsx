@@ -34,7 +34,7 @@ export async function PreciseLocationPrompt({
   qrCodeId: string;
   /** The code's `pixels` column (the setting lives there) */
   pixels: unknown;
-  /** The page's workspace plan (app/p/_lib/public-page.ts) */
+  /** The page's workspace plan (app/(app)/p/_lib/public-page.ts) */
   plan: Plan;
 }) {
   if (!(asksPreciseLocation(pixels) && getPlanLimits(plan).preciseLocation)) {

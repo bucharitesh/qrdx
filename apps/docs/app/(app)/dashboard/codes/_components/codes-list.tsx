@@ -45,19 +45,19 @@ import {
   SelectionStatus,
   type ShortcutRow,
   useListSelection,
-} from "@/app/dashboard/_components/list-selection";
+} from "@/app/(app)/dashboard/_components/list-selection";
 import {
   BULK_KEYS,
   type BulkAction,
   keyLabel,
   offeredBulkActions,
-} from "@/app/dashboard/_lib/list-keys";
-import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
+} from "@/app/(app)/dashboard/_lib/list-keys";
+import type { TagRow } from "@/app/(app)/dashboard/codes/_lib/organize";
 import type {
   CodesStatus,
   FolderRow,
-} from "@/app/dashboard/codes/_lib/organize-shared";
-import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
+import type { QrCodeListItem } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { useOptimisticCodeList } from "@/components/code-builder/use-optimistic-codes";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useCan } from "@/components/workspace-provider";

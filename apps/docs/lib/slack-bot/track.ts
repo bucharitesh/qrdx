@@ -5,7 +5,7 @@ import {
   destinationUrlSchema,
   enforceCreateRateLimit,
   MAX_TITLE_LENGTH,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { HttpError } from "@/lib/error-response";
 import { isUserBanned } from "@/lib/oauth";
 import { can } from "@/lib/permissions";

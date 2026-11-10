@@ -222,7 +222,7 @@ async function clickInDialog(page: Page, name: string) {
 }
 
 // ─── The turn-on stepper (Settings) ──────────────────────────────────────────
-// Labels from app/settings/account/_components/two-factor-setup-dialog.tsx,
+// Labels from app/(app)/settings/account/_components/two-factor-setup-dialog.tsx,
 // as e2e/two-factor.e2e.ts drives them.
 
 /** The stepper's first step: pick the authenticator app, then Continue. */

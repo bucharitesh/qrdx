@@ -38,15 +38,15 @@ import Papa from "papaparse";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { previewQrCodeImport } from "@/actions/bulk-codes";
-import { useKnownCodeOptionPlans } from "@/app/dashboard/codes/_components/code-options";
+import { useKnownCodeOptionPlans } from "@/app/(app)/dashboard/codes/_components/code-options";
 import {
   DomainPicker,
   useDomainOptions,
-} from "@/app/dashboard/codes/_components/domain-picker";
-import { plural } from "@/app/dashboard/codes/_components/use-organize-action";
-import { formatPlanList } from "@/app/dashboard/codes/_lib/code-options";
-import { MAX_TAGS_PER_CODE } from "@/app/dashboard/codes/_lib/organize-shared";
-import type { ImportPreview } from "@/app/dashboard/codes/import/_lib/import";
+} from "@/app/(app)/dashboard/codes/_components/domain-picker";
+import { plural } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
+import { formatPlanList } from "@/app/(app)/dashboard/codes/_lib/code-options";
+import { MAX_TAGS_PER_CODE } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
+import type { ImportPreview } from "@/app/(app)/dashboard/codes/import/_lib/import";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { track } from "@/lib/analytics";
 import { formatCount } from "@/lib/bulk-limits";

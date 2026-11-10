@@ -29,15 +29,15 @@ import {
 import { Add } from "iconsax-reactjs";
 import { type ReactNode, useMemo, useState, useTransition } from "react";
 import { createCodeTag } from "@/actions/tags";
-import { TagDot } from "@/app/dashboard/codes/_components/tag-chip";
-import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
+import { TagDot } from "@/app/(app)/dashboard/codes/_components/tag-chip";
+import type { TagRow } from "@/app/(app)/dashboard/codes/_lib/organize";
 import {
   buildFolderTree,
   type FolderRow,
   flattenFolderTree,
   MAX_TAG_NAME,
   MAX_TAGS_PER_CODE,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 
 const NO_FOLDER = "none";
 

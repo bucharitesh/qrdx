@@ -11,7 +11,7 @@ import { describe, expect, it } from "vitest";
 import { designQrInputSchema } from "@/app/api/mcp/design";
 import { codeStyleInputSchema } from "@/app/api/v1/codes/_lib/schemas";
 import { qrImageQuerySchema } from "@/app/api/v1/qr/_lib/query";
-import { createCodeSchema } from "@/app/dashboard/codes/_lib/qr-codes";
+import { createCodeSchema } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   CLI_TAB_ENABLED,
   CODE_TABS,

@@ -34,7 +34,7 @@ import {
   createLandingPage,
   getLandingPageUsage,
 } from "@/actions/landing-pages";
-import type { PageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
+import type { PageUsage } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { useAvailability } from "@/components/availability-provider";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { fitStyleForSave } from "@/components/code-builder/validation";

@@ -2,7 +2,7 @@ import type { NextRequest } from "next/server";
 import {
   CUSTOM_DOMAIN_HEADER,
   isCustomDomainRequest,
-} from "@/app/dashboard/domains/_lib/hostname";
+} from "@/app/(app)/dashboard/domains/_lib/hostname";
 import { resolveShortLink } from "@/app/q/[slug]/resolve";
 import { statusPage } from "@/app/q/[slug]/status-page";
 import { parseDigitalLinkPath } from "@/lib/gs1/digital-link";

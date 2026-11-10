@@ -37,11 +37,11 @@ import {
   createLandingPageCode,
   deleteLandingPage,
 } from "@/actions/landing-pages";
-import { NewCodeDialog } from "@/app/dashboard/codes/_components/new-code-dialog";
+import { NewCodeDialog } from "@/app/(app)/dashboard/codes/_components/new-code-dialog";
 import type {
   LandingPageListItem,
   PageUsage,
-} from "@/app/dashboard/pages/_lib/landing-pages";
+} from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 // Community: "Publish to community" (owners and admins; the server checks)
 import { PublishPageDialog } from "@/components/community/publish-page-dialog";
 import { CapMeter } from "@/components/limits/cap-meter";

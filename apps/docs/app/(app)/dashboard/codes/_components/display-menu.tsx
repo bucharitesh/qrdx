@@ -36,7 +36,7 @@ import {
   type CodeProperty,
   type ListView,
   toggleProperty,
-} from "@/app/dashboard/codes/_lib/display";
+} from "@/app/(app)/dashboard/codes/_lib/display";
 import { useListDisplay } from "./list-display";
 
 export function DisplayMenu({

@@ -9,7 +9,7 @@ import {
   Edit2 as Pencil,
 } from "iconsax-reactjs";
 import { type ReactNode, useState } from "react";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { CopyButton } from "@/components/copy-button";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";

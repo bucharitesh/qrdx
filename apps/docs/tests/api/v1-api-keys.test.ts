@@ -63,11 +63,11 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
   getPlanForScope: async () => state.plan,
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => null,
 }));
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));

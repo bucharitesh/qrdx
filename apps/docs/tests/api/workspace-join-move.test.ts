@@ -1,5 +1,5 @@
 // Workspace join links (lib/workspace-join.ts, actions/workspace-join.ts)
-// and moving a code to another workspace (app/dashboard/codes/_lib/
+// and moving a code to another workspace (app/(app)/dashboard/codes/_lib
 // move-workspace.ts), against in-memory tables. Better Auth's addMember is
 // a small fake that adds the member row, as the plugin does.
 import { createHash } from "node:crypto";
@@ -126,7 +126,7 @@ vi.mock("@repo/auth/server", async () => {
 const join = await import("@/actions/workspace-join");
 const { findJoinTarget, joinLinkPath } = await import("@/lib/workspace-join");
 const { moveCodeToWorkspace } = await import(
-  "@/app/dashboard/codes/_lib/move-workspace"
+  "@/app/(app)/dashboard/codes/_lib/move-workspace"
 );
 
 const NOW = new Date("2026-11-04T12:00:00Z");

@@ -16,7 +16,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   SettingsRow,
   SettingsSection,
-} from "@/app/settings/account/_components/settings-section";
+} from "@/app/(app)/settings/account/_components/settings-section";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { referralLink } from "@/lib/affiliates/links";
 import {

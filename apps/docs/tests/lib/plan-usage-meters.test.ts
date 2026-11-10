@@ -10,7 +10,7 @@ import {
   resetLine,
   type SubscriptionSummary,
   upgradeAction,
-} from "@/app/settings/usage/_lib/meters";
+} from "@/app/(app)/settings/usage/_lib/meters";
 
 const meter = (overrides: Partial<Meter>): Meter => ({
   id: "dynamicCodes",

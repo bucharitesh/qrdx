@@ -1,5 +1,5 @@
 // What the builder checks as you type, and where a server error belongs.
-// The server (app/dashboard/codes/_lib/qr-codes.ts, server-only) stays the
+// The server (app/(app)/dashboard/codes/_lib/qr-codes.ts, server-only) stays the
 // authority; these mirror its rules and messages so the form can say the
 // same thing before you press Create.
 

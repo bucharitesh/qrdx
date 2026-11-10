@@ -1,5 +1,5 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import {
   Empty,
   Facts,

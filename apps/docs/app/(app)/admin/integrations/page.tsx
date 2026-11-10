@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { Pager } from "../_components/pager";
 import { EmptyRow, Section } from "../_components/stat-card";
 import { formatDate, formatDateTime, formatNumber } from "../_lib/format";

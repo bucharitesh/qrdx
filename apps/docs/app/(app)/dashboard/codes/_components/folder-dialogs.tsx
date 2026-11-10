@@ -46,7 +46,7 @@ import {
   type FolderRow,
   flattenFolderTree,
   MAX_FOLDER_NAME,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import { plural, useOrganizeAction } from "./use-organize-action";
 
 /** Folders from props, or loaded when a dialog opens outside the list. */

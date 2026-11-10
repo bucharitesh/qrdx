@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { fetchBlockReason } from "@/app/api/scan/check/_lib/ssrf";
-import { isDnsHostname } from "@/app/dashboard/domains/_lib/hostname";
+import { isDnsHostname } from "@/app/(app)/dashboard/domains/_lib/hostname";
 
 // DNS provider discovery (spec "DNS Provider Discovery"):
 // 1. find the zone that holds the hostname (discovery works on zones only),

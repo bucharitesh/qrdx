@@ -24,11 +24,11 @@ import {
 import Link from "next/link";
 import Papa from "papaparse";
 import { useEffect, useRef, useState } from "react";
-import { plural } from "@/app/dashboard/codes/_components/use-organize-action";
+import { plural } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
 import {
   createLogoCache,
   renderCodeImage,
-} from "@/app/dashboard/codes/_components/zip-download";
+} from "@/app/(app)/dashboard/codes/_components/zip-download";
 import {
   createFilenameAllocator,
   sanitizeFilename,

@@ -3,7 +3,7 @@
 // with no indentation from the source carried into the text.
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { McpPromptGalleryView } from "@/app/(home)/mcp/mcp-connect";
+import { McpPromptGalleryView } from "@/app/(app)/(home)/mcp/mcp-connect";
 
 const SERVER = "https://mcp.qrdx.dev/mcp";
 const PAGE = "https://qrdx.dev/mcp";

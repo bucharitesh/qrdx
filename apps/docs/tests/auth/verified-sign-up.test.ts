@@ -16,8 +16,8 @@ import { beforeAll, beforeEach, describe, expect, it } from "vitest";
 import {
   signInErrorMessage,
   socialSignInErrorPath,
-} from "@/app/(auth)/sign-in/_lib/error-message";
-import { readSignInParams } from "@/app/(auth)/sign-in/_lib/params";
+} from "@/app/(app)/(auth)/sign-in/_lib/error-message";
+import { readSignInParams } from "@/app/(app)/(auth)/sign-in/_lib/params";
 import { confirmSignInErrorMessage } from "@/lib/account/confirmation";
 
 type Check = Parameters<typeof validateSocialSignUp>[0];

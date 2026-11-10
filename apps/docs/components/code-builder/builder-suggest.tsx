@@ -18,8 +18,8 @@ import {
 } from "react";
 import { suggestCodeDetailsAction } from "@/actions/code-suggestions";
 import { createCodeTag } from "@/actions/tags";
-import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
-import { MAX_TAGS_PER_CODE } from "@/app/dashboard/codes/_lib/organize-shared";
+import type { TagRow } from "@/app/(app)/dashboard/codes/_lib/organize";
+import { MAX_TAGS_PER_CODE } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 
 type SuggestState =
   | { status: "idle" }

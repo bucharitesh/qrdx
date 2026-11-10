@@ -11,11 +11,11 @@ import {
 import { CpuSetting as ServerCog } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import { DomainsManager } from "@/app/dashboard/domains/_components/domains-manager";
-import { getDomainsOverview } from "@/app/dashboard/domains/_lib/domains";
-import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
+import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { DomainsManager } from "@/app/(app)/dashboard/domains/_components/domains-manager";
+import { getDomainsOverview } from "@/app/(app)/dashboard/domains/_lib/domains";
+import { UpgradeButton } from "@/app/(app)/dashboard/team/_components/small-actions";
 import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { getDomainConnectOffers } from "@/lib/domain-connect/offers";

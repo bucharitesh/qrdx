@@ -48,7 +48,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { emptyQrCodeTrash } from "@/actions/bulk-codes";
-import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
+import type { TagRow } from "@/app/(app)/dashboard/codes/_lib/organize";
 import {
   CODE_SORT_LABELS,
   CODE_SORTS,
@@ -58,7 +58,7 @@ import {
   type CodeTypeFilter,
   codesHref,
   DEFAULT_DOMAIN_FILTER,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import { useCan } from "@/components/workspace-provider";
 import { DisplayMenu, ListSearch } from "./display-menu";
 import { TagDot } from "./tag-chip";

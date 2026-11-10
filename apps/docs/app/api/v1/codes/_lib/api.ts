@@ -2,7 +2,7 @@ import "server-only";
 
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   insufficientKeyScopeError,
   insufficientScopeError,

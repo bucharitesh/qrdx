@@ -1,5 +1,5 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
-import type { QrCodeStatus } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeStatus } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 
 const LABELS: Record<QrCodeStatus, string> = {
   active: "Active",

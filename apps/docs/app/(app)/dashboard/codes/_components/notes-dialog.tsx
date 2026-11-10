@@ -12,7 +12,7 @@ import {
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { type FormEvent, useEffect, useState } from "react";
 import { setQrCodeNotes } from "@/actions/bulk-codes";
-import { MAX_NOTES_LENGTH } from "@/app/dashboard/codes/_lib/organize-shared";
+import { MAX_NOTES_LENGTH } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import { useOrganizeAction } from "./use-organize-action";
 
 export function NotesDialog({

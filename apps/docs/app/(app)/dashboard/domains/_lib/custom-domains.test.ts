@@ -2,7 +2,7 @@
 // network). Needs dummy env values because lib/env validates on import:
 //   cd apps/docs && DATABASE_URL=postgres://test@127.0.0.1:1/test \
 //     VERCEL_API_TOKEN=test-token VERCEL_PROJECT_ID=prj_test VERCEL_TEAM_ID=team_test \
-//     npx tsx --conditions=react-server --test app/dashboard/domains/_lib/custom-domains.test.ts
+//     npx tsx --conditions=react-server --test app/(app)/dashboard/domains/_lib/custom-domains.test.ts
 import assert from "node:assert/strict";
 import { Resolver } from "node:dns/promises";
 import { before, beforeEach, describe, it } from "node:test";

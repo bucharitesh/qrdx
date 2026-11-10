@@ -153,12 +153,12 @@ describe("Organization schema", () => {
   });
 
   it("isn't in the root layout, which also wraps white-label hosted pages", () => {
-    const root = readFileSync(join(APP, "app/layout.tsx"), "utf8");
+    const root = readFileSync(join(APP, "app/(app)/layout.tsx"), "utf8");
     expect(root).not.toContain("organizationSchema");
     for (const layout of [
-      "app/(home)/layout.tsx",
-      "app/(docs)/docs/layout.tsx",
-      "app/playground/layout.tsx",
+      "app/(app)/(home)/layout.tsx",
+      "app/(app)/(docs)/docs/layout.tsx",
+      "app/(app)/playground/layout.tsx",
     ]) {
       expect(readFileSync(join(APP, layout), "utf8")).toContain(
         "<JsonLd data={organizationSchema} />",
@@ -175,7 +175,7 @@ describe("per-page Open Graph images", () => {
   const pages = appFiles.filter((file) => /\/page\.tsx$/.test(file));
   const ownsImage = (page: string) =>
     /ownOgImage: true/.test(readFileSync(page, "utf8")) ||
-    // The playground's metadata lives in app/playground/metadata.ts.
+    // The playground's metadata lives in app/(app)/playground/metadata.ts.
     /playgroundMetadata/.test(readFileSync(page, "utf8"));
 
   it.each(
@@ -205,14 +205,14 @@ describe("per-page Open Graph images", () => {
 
   it("gives /playground its image and keeps the default on shared theme links", () => {
     const metadata = readFileSync(
-      join(APP, "app/playground/metadata.ts"),
+      join(APP, "app/(app)/playground/metadata.ts"),
       "utf8",
     );
     expect(metadata).toMatch(
       /playgroundMetadata[\s\S]*?ownOgImage: true[\s\S]*?sharedThemeMetadata/,
     );
     expect(
-      readFileSync(join(APP, "app/playground/[...qrId]/page.tsx"), "utf8"),
+      readFileSync(join(APP, "app/(app)/playground/[...qrId]/page.tsx"), "utf8"),
     ).toContain("sharedThemeMetadata");
   });
 });

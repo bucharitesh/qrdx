@@ -311,7 +311,7 @@ describe("proxy.ts nonces", () => {
       },
     }));
     vi.doMock("next/headers", () => ({ headers: async () => new Headers() }));
-    vi.doMock("@/app/dashboard/domains/_lib/host-routing", () => ({
+    vi.doMock("@/app/(app)/dashboard/domains/_lib/host-routing", () => ({
       routeCustomDomain: async () => null,
     }));
     proxy = (await import("@/proxy")).default;
@@ -321,7 +321,7 @@ describe("proxy.ts nonces", () => {
     process.env = saved;
     vi.doUnmock("@repo/auth/server");
     vi.doUnmock("next/headers");
-    vi.doUnmock("@/app/dashboard/domains/_lib/host-routing");
+    vi.doUnmock("@/app/(app)/dashboard/domains/_lib/host-routing");
   });
 
   const nonceOf = (policy: string | null) =>

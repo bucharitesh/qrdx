@@ -1,7 +1,7 @@
 import {
   CodesView,
   codesMetadata,
-} from "@/app/dashboard/codes/_components/codes-view";
+} from "@/app/(app)/dashboard/codes/_components/codes-view";
 import { workspaceHref } from "@/lib/workspace-paths";
 
 export const metadata = codesMetadata;

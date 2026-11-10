@@ -56,11 +56,11 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   getPlanForScope: async () => state.plan,
   getOwnerPlanForOrganization: async () => state.plan,
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => null,
 }));
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));
@@ -77,7 +77,7 @@ vi.mock("@/lib/log-error", () => ({ logError: () => {} }));
 
 const list = await import("@/app/api/v1/codes/route");
 const one = await import("@/app/api/v1/codes/[id]/route");
-const organize = await import("@/app/dashboard/codes/_lib/organize");
+const organize = await import("@/app/(app)/dashboard/codes/_lib/organize");
 
 const ORG = "org_acme";
 const NOW = new Date("2026-11-09T12:00:00Z");

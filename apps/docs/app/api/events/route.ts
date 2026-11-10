@@ -10,7 +10,7 @@ import { and, eq, isNull } from "drizzle-orm";
 import { isbot } from "isbot";
 import { after, type NextRequest } from "next/server";
 import { z } from "zod";
-import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
+import { CUSTOM_DOMAIN_HEADER } from "@/app/(app)/dashboard/domains/_lib/hostname";
 import { getClientIp, readJsonBody } from "@/lib/request-guards";
 import { visitorHash } from "@/lib/scans";
 import { slugWhere } from "@/lib/slug-claims";
@@ -100,7 +100,7 @@ async function allowed(
   }
 }
 
-/** A code that publishes a hosted page (as app/p/_lib/public-page.ts). */
+/** A code that publishes a hosted page (as app/(app)/p/_lib/public-page.ts). */
 const livePageCode = () =>
   and(
     eq(qrCode.kind, "page"),

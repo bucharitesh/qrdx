@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { displayUrl } from "@/app/dashboard/codes/_components/format";
-import { carryOverContent } from "@/app/dashboard/codes/_lib/code-kind-shared";
+import { displayUrl } from "@/app/(app)/dashboard/codes/_components/format";
+import { carryOverContent } from "@/app/(app)/dashboard/codes/_lib/code-kind-shared";
 import {
   getCode,
   requireDashboardScope,
-} from "@/app/dashboard/codes/_lib/qr-codes";
-import { getScopedPageContent } from "@/app/dashboard/pages/_lib/landing-pages";
-import { getSavedThemePalettes } from "@/app/dashboard/pages/_lib/saved-themes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getScopedPageContent } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
+import { getSavedThemePalettes } from "@/app/(app)/dashboard/pages/_lib/saved-themes";
 import { PageEditor } from "@/components/landing/editor/page-editor";
 import { HttpError } from "@/lib/error-response";
 import { buildTemplateContent, getTemplate } from "@/lib/landing/templates";

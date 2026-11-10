@@ -2,13 +2,13 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowLeft } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
-import { UsageMeter } from "@/app/dashboard/codes/_components/usage";
+import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { UsageMeter } from "@/app/(app)/dashboard/codes/_components/usage";
 import {
   getCodeUsage,
   requireDashboardScope,
-} from "@/app/dashboard/codes/_lib/qr-codes";
-import { ImportWizard } from "@/app/dashboard/codes/import/_components/import-wizard";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { ImportWizard } from "@/app/(app)/dashboard/codes/import/_components/import-wizard";
 import { formatCount, MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
 import { plansWith } from "@/lib/plans";
 import { workspaceHref } from "@/lib/workspace-paths";

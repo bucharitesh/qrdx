@@ -40,7 +40,7 @@ const anything = vi.hoisted(() => {
   return make;
 });
 
-vi.mock("@/app/admin/_lib/guard", () => ({
+vi.mock("@/app/(app)/admin/_lib/guard", () => ({
   assertAdmin: vi.fn(async () => {
     if (!state.admin) throw new Error("Not found");
     return state.admin;
@@ -239,13 +239,13 @@ vi.mock("next/server", async (importOriginal) => ({
 }));
 
 const modules = {
-  "app/admin/actions": () => import("@/app/admin/actions"),
-  "app/admin/codes/actions": () => import("@/app/admin/codes/actions"),
-  "app/admin/abuse/actions": () => import("@/app/admin/abuse/actions"),
+  "app/admin/actions": () => import("@/app/(app)/admin/actions"),
+  "app/admin/codes/actions": () => import("@/app/(app)/admin/codes/actions"),
+  "app/admin/abuse/actions": () => import("@/app/(app)/admin/abuse/actions"),
   "app/admin/users/support-actions": () =>
-    import("@/app/admin/users/support-actions"),
+    import("@/app/(app)/admin/users/support-actions"),
   "app/admin/affiliates/actions": () =>
-    import("@/app/admin/affiliates/actions"),
+    import("@/app/(app)/admin/affiliates/actions"),
 };
 
 // A plausible, valid input for every action (each also gets a reason).
@@ -351,7 +351,7 @@ describe("with an admin", () => {
   it("stops at the rate limit before touching anything", async () => {
     state.limited = true;
     const { markEmailVerifiedAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     const result = await markEmailVerifiedAction({
       userId: "user_target",
@@ -366,7 +366,7 @@ describe("with an admin", () => {
 
   it("requires a reason for support actions", async () => {
     const { markEmailVerifiedAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     const result = await markEmailVerifiedAction({
       userId: "user_target",
@@ -377,7 +377,7 @@ describe("with an admin", () => {
 
   it("writes an audit entry with the reason", async () => {
     const { markEmailVerifiedAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     state.results = [
       [
@@ -418,7 +418,7 @@ describe("with an admin", () => {
 
   it("writes no entry when nothing changed", async () => {
     const { markEmailVerifiedAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     state.results = [
       [{ id: "user_target", email: "target@example.com", emailVerified: true }],
@@ -433,7 +433,7 @@ describe("with an admin", () => {
 
   it("moves an account to a new email: verified, signed out, old address told by support", async () => {
     const { changeEmailAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     const { afterEmailChanged } = await import(
       "@/lib/account/email-change-server"
@@ -489,7 +489,7 @@ describe("with an admin", () => {
 
   it("won't move an account without the admin's own second-factor confirmation", async () => {
     const { changeEmailAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     const target = [
       { id: "user_target", email: "lost@example.com", emailVerified: true },
@@ -524,7 +524,7 @@ describe("with an admin", () => {
 
   it("never moves an admin's account or the admin's own", async () => {
     const { changeEmailAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     state.results = [
       [
@@ -559,7 +559,7 @@ describe("with an admin", () => {
 
   it("won't move an account to its own address or one another account has", async () => {
     const { changeEmailAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     state.results = [
       [{ id: "user_target", email: "same@example.com", emailVerified: true }],
@@ -592,7 +592,7 @@ describe("with an admin", () => {
 
   it("refuses an address that isn't one", async () => {
     const { changeEmailAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     expect(
       await changeEmailAction({
@@ -606,7 +606,7 @@ describe("with an admin", () => {
 
   it("never unlinks the last sign-in method", async () => {
     const { unlinkSignInMethodAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     state.results = [
       [{ id: "user_target", email: "target@example.com", emailVerified: true }],
@@ -624,7 +624,7 @@ describe("with an admin", () => {
 
   it("unlinks one of several and logs which", async () => {
     const { unlinkSignInMethodAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     state.results = [
       [{ id: "user_target", email: "target@example.com", emailVerified: true }],
@@ -653,7 +653,7 @@ describe("with an admin", () => {
   });
 
   it("logs ban through Better Auth with the reason", async () => {
-    const { banUserAction } = await import("@/app/admin/actions");
+    const { banUserAction } = await import("@/app/(app)/admin/actions");
     state.results = [
       [{ id: "user_target", email: "target@example.com", role: null }],
     ];
@@ -671,7 +671,7 @@ describe("with an admin", () => {
   });
 
   it("refuses to ban yourself", async () => {
-    const { banUserAction } = await import("@/app/admin/actions");
+    const { banUserAction } = await import("@/app/(app)/admin/actions");
     const result = await banUserAction({
       userId: "admin_1",
       reason: "Testing",
@@ -682,7 +682,7 @@ describe("with an admin", () => {
 
   it("names the code action after what happened", async () => {
     const { setDynamicCodeActiveAction } = await import(
-      "@/app/admin/codes/actions"
+      "@/app/(app)/admin/codes/actions"
     );
     state.results = [
       [
@@ -714,7 +714,7 @@ describe("with an admin", () => {
 
   it("deletes only with the email typed back", async () => {
     const { deleteUserAccountAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     state.results = [
       [{ id: "user_target", email: "target@example.com", role: null }],
@@ -730,7 +730,7 @@ describe("with an admin", () => {
 
   it("never deletes the acting admin", async () => {
     const { deleteUserAccountAction } = await import(
-      "@/app/admin/users/support-actions"
+      "@/app/(app)/admin/users/support-actions"
     );
     const result = await deleteUserAccountAction({
       userId: "admin_1",
@@ -744,7 +744,7 @@ describe("with an admin", () => {
 
 describe("export route", () => {
   const post = async (body: string, origin = "http://localhost:3000") => {
-    const { POST } = await import("@/app/admin/users/[userId]/export/route");
+    const { POST } = await import("@/app/(app)/admin/users/[userId]/export/route");
     const { NextRequest } = await import("next/server");
     const request = new NextRequest(
       "http://localhost:3000/admin/users/user_target/export",

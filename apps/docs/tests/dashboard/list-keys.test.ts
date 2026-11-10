@@ -1,4 +1,4 @@
-// The lists' keyboard (app/dashboard/_lib/list-keys.ts): X, Shift+Space,
+// The lists' keyboard (app/(app)/dashboard/_lib/list-keys.ts): X, Shift+Space,
 // Cmd/Ctrl+A, Esc, J/K and the bulk keys, quiet while typing or behind a
 // dialog or menu, and doing nothing for a role that's offered no actions.
 import { describe, expect, it } from "vitest";
@@ -10,7 +10,7 @@ import {
   type ListKeyEvent,
   offeredBulkActions,
   resolveListKey,
-} from "@/app/dashboard/_lib/list-keys";
+} from "@/app/(app)/dashboard/_lib/list-keys";
 import { can, WORKSPACE_ROLES } from "@/lib/permissions";
 
 const press = (

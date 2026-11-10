@@ -22,7 +22,7 @@ import {
   listCodeMoveTargets,
   moveQrCodeToWorkspace,
 } from "@/actions/move-code";
-import type { MoveTarget } from "@/app/dashboard/codes/_lib/move-workspace";
+import type { MoveTarget } from "@/app/(app)/dashboard/codes/_lib/move-workspace";
 import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
 import { workspaceHref } from "@/lib/workspace-paths";
 

@@ -3,7 +3,7 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { enforceCreateRateLimit } from "@/app/dashboard/codes/_lib/qr-codes";
+import { enforceCreateRateLimit } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   createCodeForPage,
   createPage,
@@ -14,7 +14,7 @@ import {
   pageIdSchema,
   publishPage,
   publishPageSchema,
-} from "@/app/dashboard/pages/_lib/landing-pages";
+} from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { HttpError } from "@/lib/error-response";
 import { assertCan } from "@/lib/permissions-server";
 import { enforceRateLimits } from "@/lib/request-guards";

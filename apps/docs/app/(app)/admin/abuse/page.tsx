@@ -6,7 +6,7 @@ import {
   CardHeader,
 } from "@repo/design-system/components/ui/card";
 import Link from "next/link";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { abuseReasonLabel } from "@/lib/safety/abuse-reasons";
 import { isNewAccount } from "@/lib/safety/velocity";
 import { Pager } from "../_components/pager";

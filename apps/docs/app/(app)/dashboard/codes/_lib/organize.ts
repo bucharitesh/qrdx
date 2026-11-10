@@ -14,7 +14,7 @@ import {
 } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { assertBindableDomains } from "@/app/dashboard/domains/_lib/domains";
+import { assertBindableDomains } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { codeEvents, codeEventsByIds } from "@/ee/audit-log/code-events";
 import { changedFields } from "@/ee/audit-log/metadata";
 import { recordAuditEvent } from "@/ee/audit-log/record";

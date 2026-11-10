@@ -89,7 +89,7 @@ const { connectSendsDataOut } = await import(
 const slackInstall = await import("@/app/api/integrations/slack/install/route");
 const providerRoute = await import("@/app/api/integrations/[provider]/route");
 const { connectIntegrationAction } = await import(
-  "@/app/settings/integrations/actions"
+  "@/app/(app)/settings/integrations/actions"
 );
 
 const REQUIRED = { ok: false, error: "CONFIRMATION_REQUIRED" };

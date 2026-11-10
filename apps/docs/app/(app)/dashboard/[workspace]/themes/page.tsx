@@ -4,16 +4,16 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Add as Plus } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
-import { getTeam } from "@/app/dashboard/team/_lib/queries";
-import { ThemesManager } from "@/app/dashboard/themes/_components/themes-manager";
+import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { UpgradeButton } from "@/app/(app)/dashboard/team/_components/small-actions";
+import { getTeam } from "@/app/(app)/dashboard/team/_lib/queries";
+import { ThemesManager } from "@/app/(app)/dashboard/themes/_components/themes-manager";
 import {
   canManageTeamThemes,
   listVisibleThemes,
   teamThemesPlanName,
-} from "@/app/dashboard/themes/_lib/queries";
+} from "@/app/(app)/dashboard/themes/_lib/queries";
 import { can } from "@/lib/permissions";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { playgroundHref } from "@/lib/playground-links";

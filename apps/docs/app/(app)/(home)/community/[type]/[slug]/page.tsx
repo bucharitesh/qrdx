@@ -6,7 +6,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { getAdminUser } from "@/app/admin/_lib/guard";
+import { getAdminUser } from "@/app/(app)/admin/_lib/guard";
 import { CreatorLine } from "@/components/community/creator-line";
 import { ItemActions } from "@/components/community/item-actions";
 import { ItemGrid, ItemRow } from "@/components/community/item-card";

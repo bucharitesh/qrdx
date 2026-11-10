@@ -75,7 +75,7 @@ const { FILE_PAGE_TYPES, offeredPageTypes } = await import(
 );
 const { dashboardEntry } = await import("@/lib/workspace-paths");
 
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import type { BuilderServices } from "@/components/code-builder/submit";
 import type { BuilderFields } from "@/components/code-builder/types";
 

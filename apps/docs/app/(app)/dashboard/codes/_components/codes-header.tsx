@@ -34,8 +34,8 @@ import {
   codesHref,
   type FolderRow,
   flattenFolderTree,
-} from "@/app/dashboard/codes/_lib/organize-shared";
-import type { CodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
+import type { CodeUsage } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { useCan } from "@/components/workspace-provider";
 import { DeleteFolderDialog, FolderNameDialog } from "./folder-dialogs";
 import { formatNumber } from "./format";

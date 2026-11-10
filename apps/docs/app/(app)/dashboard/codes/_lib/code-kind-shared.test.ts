@@ -1,4 +1,4 @@
-// Run: cd apps/docs && npx tsx --test app/dashboard/codes/_lib/code-kind-shared.test.ts
+// Run: cd apps/docs && npx tsx --test app/(app)/dashboard/codes/_lib/code-kind-shared.test.ts
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { LandingPageContent } from "@/types/landing";

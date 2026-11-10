@@ -2,7 +2,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { useRouter } from "next/navigation";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { loadCodeIntoEditor } from "@/components/editor/dynamic-link-toggle";
 import { playgroundHref } from "@/lib/playground-links";
 

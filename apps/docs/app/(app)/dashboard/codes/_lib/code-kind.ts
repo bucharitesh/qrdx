@@ -8,7 +8,7 @@ import {
   type PageForCodeInput,
   removeUnattachedPage,
   type ScopedPageRef,
-} from "@/app/dashboard/pages/_lib/landing-pages";
+} from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { codeTarget } from "@/ee/audit-log/code-events";
 import { changedFields } from "@/ee/audit-log/metadata";
 import { type AuditEventInput, recordAuditEvent } from "@/ee/audit-log/record";

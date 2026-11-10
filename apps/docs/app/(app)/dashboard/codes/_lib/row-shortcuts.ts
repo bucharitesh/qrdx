@@ -1,7 +1,7 @@
 // Single keys for the codes row under the pointer (or holding focus): never
 // while typing, never with a modifier, never behind a dialog or menu, and off
 // with the person's keyboard shortcuts switch. X selects the row
-// (app/dashboard/_lib/list-keys.ts), so trash is Backspace or Delete. Pure,
+// (app/(app)/dashboard/_lib/list-keys.ts), so trash is Backspace or Delete. Pure,
 // so the rules are tested without a browser.
 
 export type RowAction =

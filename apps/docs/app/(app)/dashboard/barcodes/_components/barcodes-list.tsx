@@ -67,13 +67,13 @@ import {
   ListShortcuts,
   SelectionStatus,
   useListSelection,
-} from "@/app/dashboard/_components/list-selection";
+} from "@/app/(app)/dashboard/_components/list-selection";
 import {
   BULK_KEYS,
   type BulkAction,
   keyLabel,
-} from "@/app/dashboard/_lib/list-keys";
-import { formatDate } from "@/app/dashboard/codes/_components/format";
+} from "@/app/(app)/dashboard/_lib/list-keys";
+import { formatDate } from "@/app/(app)/dashboard/codes/_components/format";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useCan } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";

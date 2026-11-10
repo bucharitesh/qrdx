@@ -149,11 +149,11 @@ describe("on a self-hosted copy (its own domain, Polar set)", () => {
 
   it("404s /affiliates and Settings → Affiliate program, and hides the tab", async () => {
     const { default: AffiliatesPage } = await import(
-      "@/app/(home)/affiliates/page"
+      "@/app/(app)/(home)/affiliates/page"
     );
     expect(() => AffiliatesPage()).toThrow("NEXT_NOT_FOUND");
     const { default: AffiliateSettingsPage } = await import(
-      "@/app/settings/affiliate/page"
+      "@/app/(app)/settings/affiliate/page"
     );
     await expect(AffiliateSettingsPage()).rejects.toThrow("NEXT_NOT_FOUND");
     for (const path of [

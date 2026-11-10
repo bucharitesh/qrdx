@@ -5,12 +5,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { displayUrl } from "@/app/dashboard/codes/_components/format";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { displayUrl } from "@/app/(app)/dashboard/codes/_components/format";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import type {
   VersionChange,
   VersionField,
-} from "@/app/dashboard/codes/_lib/version-diff";
+} from "@/app/(app)/dashboard/codes/_lib/version-diff";
 import { listCodeVersions } from "@/lib/code-versions";
 import { HistoryRestoreButton } from "./history-restore-button";
 

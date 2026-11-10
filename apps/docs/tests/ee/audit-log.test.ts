@@ -107,7 +107,7 @@ const { createApiKey, revokeApiKey } = await import("@/lib/api-keys/service");
 const { createEndpoint, rotateSecret, updateEndpoint, deleteEndpoint } =
   await import("@/lib/events/endpoints");
 const { GET: exportCsv } = await import(
-  "@/app/dashboard/[workspace]/settings/audit-log/export/route"
+  "@/app/(app)/dashboard/[workspace]/settings/audit-log/export/route"
 );
 
 const ORG = "org_acme";

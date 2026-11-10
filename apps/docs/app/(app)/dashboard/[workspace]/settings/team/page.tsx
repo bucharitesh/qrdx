@@ -11,29 +11,29 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import { InviteForm } from "@/app/dashboard/team/_components/invite-form";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { InviteForm } from "@/app/(app)/dashboard/team/_components/invite-form";
 import {
   JoinLinkCard,
   type JoinLinkView,
-} from "@/app/dashboard/team/_components/join-link-card";
-import { MembersTable } from "@/app/dashboard/team/_components/members-table";
-import { PendingInvitations } from "@/app/dashboard/team/_components/pending-invitations";
-import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
-import { TwoFactorRequirementCard } from "@/app/dashboard/team/_components/two-factor-requirement-card";
+} from "@/app/(app)/dashboard/team/_components/join-link-card";
+import { MembersTable } from "@/app/(app)/dashboard/team/_components/members-table";
+import { PendingInvitations } from "@/app/(app)/dashboard/team/_components/pending-invitations";
+import { UpgradeButton } from "@/app/(app)/dashboard/team/_components/small-actions";
+import { TwoFactorRequirementCard } from "@/app/(app)/dashboard/team/_components/two-factor-requirement-card";
 import {
   getTeam,
   listPendingInvitations,
   listReceivedInvitations,
   listTeamMembers,
-} from "@/app/dashboard/team/_lib/queries";
+} from "@/app/(app)/dashboard/team/_lib/queries";
 import {
   formatUtcDateTime,
   invitePath,
   TEAM_ROLE_LABELS,
-} from "@/app/dashboard/team/_lib/team";
-import { loadTwoFactorRequirement } from "@/app/dashboard/team/_lib/two-factor-requirement";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+} from "@/app/(app)/dashboard/team/_lib/team";
+import { loadTwoFactorRequirement } from "@/app/(app)/dashboard/team/_lib/two-factor-requirement";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import {

@@ -1,5 +1,5 @@
 // Showing or rotating a webhook's signing secret asks "Confirm it's you"
-// (app/dashboard/webhooks/_lib/actions.ts): whoever has the secret can sign
+// (app/(app)/dashboard/webhooks/_lib/actions.ts): whoever has the secret can sign
 // requests the customer's server trusts as QRdx's. The confirmation is the
 // real one (lib/account/confirmation-server.tsx) on in-memory tables
 // (tests/support/fake-db.ts); the endpoint store records what it was asked.
@@ -80,7 +80,7 @@ vi.mock("@/lib/events/endpoints", async (importOriginal) => {
 const { recordConfirmation } = await import(
   "@/lib/account/confirmation-server"
 );
-const webhooks = await import("@/app/dashboard/webhooks/_lib/actions");
+const webhooks = await import("@/app/(app)/dashboard/webhooks/_lib/actions");
 
 const REQUIRED = { ok: false, error: "CONFIRMATION_REQUIRED" };
 

@@ -2,8 +2,8 @@ import "server-only";
 
 import { database as db, fileAsset, landingPage } from "@repo/database";
 import { eq, inArray } from "drizzle-orm";
-import { writeAuditLog } from "@/app/admin/_lib/audit";
-import type { AdminUser } from "@/app/admin/_lib/guard";
+import { writeAuditLog } from "@/app/(app)/admin/_lib/audit";
+import type { AdminUser } from "@/app/(app)/admin/_lib/guard";
 import { HttpError } from "@/lib/error-response";
 import { logError } from "@/lib/log-error";
 import {

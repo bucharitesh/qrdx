@@ -5,7 +5,7 @@ import {
   CODE_TABS,
   type CodeTab,
   codeTabHref,
-} from "@/app/dashboard/codes/_lib/code-tabs";
+} from "@/app/(app)/dashboard/codes/_lib/code-tabs";
 
 /** Overview · Analytics · Settings. Each tab is its own URL. */
 export function CodeTabsNav({

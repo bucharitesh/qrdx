@@ -4,12 +4,12 @@ The Next.js app behind [qrdx.dev](https://qrdx.dev): the marketing pages, the pl
 
 | Path | What's there |
 | --- | --- |
-| `app/playground` | The editor at [qrdx.dev/playground](https://qrdx.dev/playground) |
-| `app/(home)` | Marketing pages, tools, the community and the blog |
+| `app/(app)/playground` | The editor at [qrdx.dev/playground](https://qrdx.dev/playground) |
+| `app/(app)/(home)` | Marketing pages, tools, the community and the blog |
 | `content/docs` | The docs at [qrdx.dev/docs](https://qrdx.dev/docs) (Fumadocs MDX) |
-| `app/dashboard`, `app/settings` | The signed-in app: codes, pages, analytics, workspaces |
+| `app/(app)/dashboard`, `app/(app)/settings` | The signed-in app: codes, pages, analytics, workspaces |
 | `app/api` | API routes, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp` |
-| `app/q`, `app/p` | Dynamic code redirects and hosted pages |
+| `app/q`, `app/(app)/p` | Dynamic code redirects and hosted pages |
 
 ## Run it locally
 

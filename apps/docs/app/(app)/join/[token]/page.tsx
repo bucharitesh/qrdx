@@ -13,7 +13,7 @@ import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
-import { isTeamMember } from "@/app/dashboard/team/_lib/queries";
+import { isTeamMember } from "@/app/(app)/dashboard/team/_lib/queries";
 import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
 import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
 import { WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";

@@ -20,7 +20,7 @@ export interface GuaranteePromise {
   body: string;
 }
 
-/** The guarantee's promises; app/(home)/guarantee renders the full page. */
+/** The guarantee's promises; app/(app)/(home)/guarantee renders the full page. */
 export const GUARANTEE_PROMISES: GuaranteePromise[] = [
   {
     icon: ScanBarcode,

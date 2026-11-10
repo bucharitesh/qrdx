@@ -26,7 +26,7 @@ import {
 } from "@/lib/slack-bot/store";
 import { findWorkspaceById, shutsOut } from "@/lib/workspaces";
 
-// The confirm screen's Confirm (app/integrations/slack/link): links the
+// The confirm screen's Confirm (app/(app)/integrations/slack/link): links the
 // Slack person in the token to the signed-in QRdx user and the workspace
 // they picked. Everything is checked again here: the token, that this
 // session signed in with Slack as that very Slack person for this token

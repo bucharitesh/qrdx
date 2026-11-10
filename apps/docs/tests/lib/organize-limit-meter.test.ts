@@ -1,4 +1,4 @@
-// Organize actions' errors (app/dashboard/codes/_lib/organize.ts): only the
+// Organize actions' errors (app/(app)/dashboard/codes/_lib/organize.ts): only the
 // plan's active-code cap (402) is marked as a meter, so the app shows its
 // limit card and upgrade; folder and tag caps (400) are the same on every
 // plan and get no upgrade.
@@ -8,8 +8,8 @@ vi.mock("@repo/auth/server", () => ({ auth: { api: {} } }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 
-const { organizeFailure } = await import("@/app/dashboard/codes/_lib/organize");
-const { limitReached } = await import("@/app/dashboard/codes/_lib/qr-codes");
+const { organizeFailure } = await import("@/app/(app)/dashboard/codes/_lib/organize");
+const { limitReached } = await import("@/app/(app)/dashboard/codes/_lib/qr-codes");
 const { HttpError } = await import("@/lib/error-response");
 
 describe("organizeFailure", () => {

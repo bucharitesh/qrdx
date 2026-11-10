@@ -3,8 +3,8 @@
 import { cn } from "@repo/design-system/lib/utils";
 import type { ScanScoreResult } from "qrdx";
 import type { ReactNode } from "react";
-import { CodeQr } from "@/app/dashboard/codes/_components/code-qr";
-import { displayUrl } from "@/app/dashboard/codes/_components/format";
+import { CodeQr } from "@/app/(app)/dashboard/codes/_components/code-qr";
+import { displayUrl } from "@/app/(app)/dashboard/codes/_components/format";
 import { ScanScoreBadge } from "@/components/editor/scan-score";
 import type { QRStyle } from "@/types/theme";
 

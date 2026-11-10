@@ -16,10 +16,10 @@ import {
 import { Lock } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
-import { CompareChart } from "@/app/dashboard/analytics/_components/charts";
-import { ComparePicker } from "@/app/dashboard/analytics/_components/compare-picker";
-import { TimeZoneSwitch } from "@/app/dashboard/analytics/_components/time-zone-switch";
+import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
+import { CompareChart } from "@/app/(app)/dashboard/analytics/_components/charts";
+import { ComparePicker } from "@/app/(app)/dashboard/analytics/_components/compare-picker";
+import { TimeZoneSwitch } from "@/app/(app)/dashboard/analytics/_components/time-zone-switch";
 import {
   type ConversionSummary,
   filterScopeCodeIds,
@@ -28,20 +28,20 @@ import {
   getWorkspaceAnalytics,
   listCodeOptions,
   scopeScansWhere,
-} from "@/app/dashboard/analytics/_lib/queries";
+} from "@/app/(app)/dashboard/analytics/_lib/queries";
 import {
   BreakdownCard,
   type BreakdownItem,
-} from "@/app/dashboard/codes/_components/breakdown-card";
-import { formatNumber } from "@/app/dashboard/codes/_components/format";
+} from "@/app/(app)/dashboard/codes/_components/breakdown-card";
+import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
 // NFC (feat/nfc): QR scans and NFC taps.
-import { ScanSourceCard } from "@/app/dashboard/codes/_components/scan-source-card";
-import { ScansChart } from "@/app/dashboard/codes/_components/scans-chart";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { ScanSourceCard } from "@/app/(app)/dashboard/codes/_components/scan-source-card";
+import { ScansChart } from "@/app/(app)/dashboard/codes/_components/scans-chart";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   LanguagesCard,
   TimeCard,
-} from "@/app/dashboard/codes/[id]/_components/analytics-extra";
+} from "@/app/(app)/dashboard/codes/[id]/_components/analytics-extra";
 import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";

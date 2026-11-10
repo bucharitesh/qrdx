@@ -11,15 +11,15 @@ import type { ReactNode } from "react";
 import {
   BreakdownCard,
   type BreakdownItem,
-} from "@/app/dashboard/codes/_components/breakdown-card";
+} from "@/app/(app)/dashboard/codes/_components/breakdown-card";
 import {
   displayUrl,
   formatDate,
   formatNumber,
-} from "@/app/dashboard/codes/_components/format";
+} from "@/app/(app)/dashboard/codes/_components/format";
 // NFC (feat/nfc): QR scans and NFC taps.
-import { ScanSourceCard } from "@/app/dashboard/codes/_components/scan-source-card";
-import { ScansChart } from "@/app/dashboard/codes/_components/scans-chart";
+import { ScanSourceCard } from "@/app/(app)/dashboard/codes/_components/scan-source-card";
+import { ScansChart } from "@/app/(app)/dashboard/codes/_components/scans-chart";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import {
   type PublicStats,

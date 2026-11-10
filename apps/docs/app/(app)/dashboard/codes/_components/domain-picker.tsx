@@ -14,7 +14,7 @@ import { getCustomDomainOptions } from "@/actions/custom-domains";
 import type {
   DomainOptions,
   DomainRef,
-} from "@/app/dashboard/domains/_lib/domains";
+} from "@/app/(app)/dashboard/domains/_lib/domains";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useKnownCodeOptionPlans } from "./code-options";

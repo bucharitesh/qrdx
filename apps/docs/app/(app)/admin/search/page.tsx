@@ -2,7 +2,7 @@ import { hasAdminRole } from "@repo/auth/admin";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { Empty, Row, Rows } from "../_components/panel";
 import { Section } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";

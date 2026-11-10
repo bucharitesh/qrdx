@@ -55,7 +55,7 @@ import {
   removeCustomDomain,
   verifyCustomDomain,
 } from "@/actions/custom-domains";
-import type { CustomDomainView } from "@/app/dashboard/domains/_lib/domains";
+import type { CustomDomainView } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { InlineLimit } from "@/components/limits/inline-limit";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import type {

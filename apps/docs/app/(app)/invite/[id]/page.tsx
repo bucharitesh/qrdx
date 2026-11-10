@@ -11,12 +11,12 @@ import { Profile2User as Users } from "iconsax-reactjs";
 import { headers } from "next/headers";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { SignInButton } from "@/app/dashboard/team/_components/small-actions";
+import { SignInButton } from "@/app/(app)/dashboard/team/_components/small-actions";
 import {
   getInvitationDetails,
   isTeamMember,
-} from "@/app/dashboard/team/_lib/queries";
-import { formatUtcDateTime } from "@/app/dashboard/team/_lib/team";
+} from "@/app/(app)/dashboard/team/_lib/queries";
+import { formatUtcDateTime } from "@/app/(app)/dashboard/team/_lib/team";
 import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
 import { InviteActions, SignOutButton } from "./invite-actions";
 

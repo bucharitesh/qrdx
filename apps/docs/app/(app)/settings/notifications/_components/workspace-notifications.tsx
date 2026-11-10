@@ -42,8 +42,8 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useTransition } from "react";
-import { EventCheckboxes } from "@/app/dashboard/webhooks/_components/event-checkboxes";
-import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
+import { EventCheckboxes } from "@/app/(app)/dashboard/webhooks/_components/event-checkboxes";
+import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/upgrade-plan-button";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { NotificationWorkspace } from "@/lib/events/notification-settings";

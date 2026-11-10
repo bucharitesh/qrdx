@@ -13,7 +13,7 @@ import {
   type ApplyState,
   applyForAffiliateAction,
   getAffiliateApplyState,
-} from "@/app/settings/affiliate/_lib/actions";
+} from "@/app/(app)/settings/affiliate/_lib/actions";
 import { signInPath } from "@/lib/safe-redirect";
 
 const TEXT_LINK = "font-medium underline underline-offset-4";

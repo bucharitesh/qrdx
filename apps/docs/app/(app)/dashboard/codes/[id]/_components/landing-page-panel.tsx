@@ -12,7 +12,7 @@ import Link from "next/link";
 import {
   requireDashboardScope,
   scopeWhere,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { getTemplate } from "@/lib/landing/templates";
 import { can } from "@/lib/permissions";
 import { requestWorkspaceSlug } from "@/lib/scope";

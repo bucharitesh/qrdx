@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { cache } from "react";
-import { displayUrl } from "@/app/dashboard/codes/_components/format";
+import { displayUrl } from "@/app/(app)/dashboard/codes/_components/format";
 import { loadPublicStats } from "@/lib/public-stats";
 import {
   type PublicStatsRange,

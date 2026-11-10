@@ -16,7 +16,7 @@ vi.mock("@/components/confirm-identity/actions", () => ({
   finishSignInConfirmation: async () => ({ ok: true }),
   getConfirmationOptions: async () => ({ ok: false, error: "unused" }),
 }));
-vi.mock("@/app/settings/integrations/actions", () => ({
+vi.mock("@/app/(app)/settings/integrations/actions", () => ({
   connectIntegrationAction: async () => ({ url: "https://slack.example" }),
   disconnectIntegrationAction: async () => ({ success: true }),
 }));
@@ -25,7 +25,7 @@ const { ConfirmIdentityProvider } = await import(
   "@/components/confirm-identity/provider"
 );
 const { IntegrationDetail } = await import(
-  "@/app/settings/integrations/[slug]/components/integration-detail"
+  "@/app/(app)/settings/integrations/[slug]/components/integration-detail"
 );
 
 const slack = (

@@ -6,9 +6,9 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import Link from "next/link";
-import { formatNumber } from "@/app/dashboard/codes/_components/format";
-import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
+import { codeTabHref } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { cheapestPlanWith, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import { getPreciseLocations, type PreciseLocationSummary } from "@/lib/scans";

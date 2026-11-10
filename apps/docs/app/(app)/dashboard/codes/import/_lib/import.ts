@@ -3,16 +3,16 @@ import "server-only";
 import { database as db, qrCode, qrCodeTag } from "@repo/database";
 import { and, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
-import { idempotencyKeySchema } from "@/app/dashboard/codes/_lib/bulk";
-import { formatPlanList } from "@/app/dashboard/codes/_lib/code-options";
+import { idempotencyKeySchema } from "@/app/(app)/dashboard/codes/_lib/bulk";
+import { formatPlanList } from "@/app/(app)/dashboard/codes/_lib/code-options";
 import {
   assertImportTargets,
   existingFolderPaths,
   existingTagNames,
   resolveFolderPaths,
   resolveTagNames,
-} from "@/app/dashboard/codes/_lib/organize";
-import { MAX_TAGS_PER_CODE } from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize";
+import { MAX_TAGS_PER_CODE } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import {
   type CreateCodeInput,
   createCodes,
@@ -20,7 +20,7 @@ import {
   enforceCreateRateLimit,
   getCodeUsage,
   scopeWhere,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { HttpError } from "@/lib/error-response";
 import {
   cheapestPlanWith,

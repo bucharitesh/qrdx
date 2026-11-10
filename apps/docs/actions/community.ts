@@ -9,8 +9,8 @@ import {
 } from "qrdx";
 import type { QRCustomFrame } from "qrdx/types";
 import { z } from "zod";
-import { getPageForEdit } from "@/app/dashboard/pages/_lib/landing-pages";
-import { findThemeById } from "@/app/dashboard/themes/_lib/queries";
+import { getPageForEdit } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
+import { findThemeById } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { CHAT_DRAFT_SOURCE } from "@/lib/ai/agent/community";
 import { publishCollection, publishKit } from "@/lib/community/bundles";
 import {

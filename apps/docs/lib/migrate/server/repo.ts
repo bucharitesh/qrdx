@@ -14,17 +14,17 @@ import {
   existingTagNames,
   resolveFolderPaths,
   resolveTagNames,
-} from "@/app/dashboard/codes/_lib/organize";
+} from "@/app/(app)/dashboard/codes/_lib/organize";
 import {
   createCodes,
   destinationUrlSchema,
   getCodeUsage,
   scopeWhere,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   assertBindableDomains,
   getDomainRefs,
-} from "@/app/dashboard/domains/_lib/domains";
+} from "@/app/(app)/dashboard/domains/_lib/domains";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";

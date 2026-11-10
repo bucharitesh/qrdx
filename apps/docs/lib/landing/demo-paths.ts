@@ -18,7 +18,7 @@ export function gallerySectionPath(type: string): string {
 
 /**
  * The dashboard's "New page" dialog with the type and template preselected
- * (read by app/dashboard/[workspace]/pages/page.tsx), in the reader's
+ * (read by app/(app)/dashboard/[workspace]/pages/page.tsx), in the reader's
  * default workspace.
  */
 export function templateStartPath(type: string, variantId: string): string {

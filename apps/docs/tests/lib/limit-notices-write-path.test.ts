@@ -37,11 +37,11 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   getPlanForScope: async () => "free",
   getPlan: async () => "free",
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => null,
   countThemesInScope: async () => 0,
 }));
@@ -76,7 +76,7 @@ vi.mock("@/lib/email/send", () => ({
   },
 }));
 
-const { createCodes } = await import("@/app/dashboard/codes/_lib/qr-codes");
+const { createCodes } = await import("@/app/(app)/dashboard/codes/_lib/qr-codes");
 const { NOTICE_TIMEOUT_MS } = await import("@/lib/limit-notices");
 // Loaded by the background task on first use; loaded here so a busy test
 // run doesn't make the task slower than the waits below.

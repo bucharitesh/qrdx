@@ -1,6 +1,6 @@
 import { Briefcase, Ruler, Verify } from "iconsax-reactjs";
 import type { Metadata } from "next";
-import { HubPage } from "@/app/(home)/qr-codes-for/_components/hub-page";
+import { HubPage } from "@/app/(app)/(home)/qr-codes-for/_components/hub-page";
 import { createMetadata } from "@/lib/metadata";
 import { industries, placements } from "@/lib/seo-content";
 

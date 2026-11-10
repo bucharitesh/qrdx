@@ -8,7 +8,7 @@ import {
   type MoveResult,
   type MoveTarget,
   moveCodeToWorkspace,
-} from "@/app/dashboard/codes/_lib/move-workspace";
+} from "@/app/(app)/dashboard/codes/_lib/move-workspace";
 import { recordCodeMove } from "@/ee/audit-log/code-events";
 import { HttpError } from "@/lib/error-response";
 import { getActiveScope } from "@/lib/scope";
@@ -16,7 +16,7 @@ import { logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
 
 // "Move to workspace…" in the code row menu. The rules live in
-// app/dashboard/codes/_lib/move-workspace.ts.
+// app/(app)/dashboard/codes/_lib/move-workspace.ts.
 
 export type MoveCodeResult<T> =
   | { success: true; data: T }

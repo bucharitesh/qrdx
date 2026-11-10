@@ -54,9 +54,9 @@ vi.mock("@repo/rate-limit", () => ({
     }),
   }),
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", async (importOriginal) => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", async (importOriginal) => ({
   ...(await importOriginal<
-    typeof import("@/app/dashboard/domains/_lib/domains")
+    typeof import("@/app/(app)/dashboard/domains/_lib/domains")
   >()),
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},

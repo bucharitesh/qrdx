@@ -63,7 +63,7 @@ export { twoFactorEnabledFor };
 // re-renders the page in the same response with the request's old cookie,
 // which then has no session, and the page redirected to /sign-in mid-setup,
 // losing the backup codes. Everything else keeps the session and is a server
-// action (app/settings/account/_lib/two-factor-actions.ts).
+// action (app/(app)/settings/account/_lib/two-factor-actions.ts).
 
 export type TwoFactorResult<T = Record<never, never>> =
   | ({ ok: true } & T)

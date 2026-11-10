@@ -11,28 +11,28 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { getUserSettings } from "@/actions/user-settings";
-import { codeOptionPlansFor } from "@/app/dashboard/codes/_lib/code-option-plans";
+import { codeOptionPlansFor } from "@/app/(app)/dashboard/codes/_lib/code-option-plans";
 import {
   DISPLAY_COOKIES,
   parseDisplay,
-} from "@/app/dashboard/codes/_lib/display";
+} from "@/app/(app)/dashboard/codes/_lib/display";
 import {
   countTrash,
   listFolders,
   listTags,
-} from "@/app/dashboard/codes/_lib/organize";
+} from "@/app/(app)/dashboard/codes/_lib/organize";
 import {
   type CodesFilters,
   codesHref,
   isUnfiltered,
   parseCodesFilters,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import {
   getCodeUsage,
   listCodes,
   requireDashboardScope,
-} from "@/app/dashboard/codes/_lib/qr-codes";
-import { getDomainOptions } from "@/app/dashboard/domains/_lib/domains";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getDomainOptions } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { can } from "@/lib/permissions";
 import { playgroundHref } from "@/lib/playground-links";

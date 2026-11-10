@@ -16,7 +16,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatDay } from "@/app/dashboard/codes/_components/format";
+import { formatDay } from "@/app/(app)/dashboard/codes/_components/format";
 
 const barConfig = { count: { label: "Scans", color: "var(--primary)" } };
 

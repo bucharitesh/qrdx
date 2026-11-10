@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
-import { OAuthAppDetailView } from "@/app/settings/developers/_components/app-detail-view";
+import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { OAuthAppDetailView } from "@/app/(app)/settings/developers/_components/app-detail-view";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { canManageOAuthApps } from "@/lib/oauth-apps/access";

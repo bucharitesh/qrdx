@@ -17,8 +17,8 @@ import {
 import { Filter, Trash } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
-import { ListSearch } from "@/app/dashboard/codes/_components/display-menu";
-import { formatNumber } from "@/app/dashboard/codes/_components/format";
+import { ListSearch } from "@/app/(app)/dashboard/codes/_components/display-menu";
+import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
 import {
   BARCODE_FORMATS,
   getBarcodeFormat,

@@ -11,7 +11,7 @@ import { logError } from "@/lib/shared";
 
 // The sign-in panel asks this before it emails a code: when the address's
 // domain signs in with SSO, it offers that first, with the code one click
-// away (app/(auth)/components/email-code-sign-in.tsx). The answer depends on
+// away (app/(app)/(auth)/components/email-code-sign-in.tsx). The answer depends on
 // the domain only (packages/auth/ee/sso.ts ssoSignInOffered), never on
 // whether an account exists, and says no more than starting "Sign in with
 // SSO" already does. When the workspace requires SSO for the domain, it says

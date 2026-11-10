@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@repo/design-system/components/ui/table";
 import Link from "next/link";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { RemoveItemButton } from "@/components/community/remove-item-button";
 import { itemsForReview } from "@/lib/community/queries";
 import {

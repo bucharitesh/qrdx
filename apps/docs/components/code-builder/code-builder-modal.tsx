@@ -61,23 +61,23 @@ import {
   CodeOptionPanel,
   CodeOptionPlanNote,
   useCodeOptions,
-} from "@/app/dashboard/codes/_components/code-options";
-import { CodeDownloadButtons } from "@/app/dashboard/codes/_components/code-qr";
-import { DomainPicker } from "@/app/dashboard/codes/_components/domain-picker";
-import { displayUrl } from "@/app/dashboard/codes/_components/format";
+} from "@/app/(app)/dashboard/codes/_components/code-options";
+import { CodeDownloadButtons } from "@/app/(app)/dashboard/codes/_components/code-qr";
+import { DomainPicker } from "@/app/(app)/dashboard/codes/_components/domain-picker";
+import { displayUrl } from "@/app/(app)/dashboard/codes/_components/format";
 import {
   SlugField,
   useSlugCheck,
-} from "@/app/dashboard/codes/_components/slug-field";
+} from "@/app/(app)/dashboard/codes/_components/slug-field";
 import {
   CODE_OPTION_COPY,
   type CodeKind,
   type CodeOptionId,
   codeOptionsFor,
-} from "@/app/dashboard/codes/_lib/code-options";
-import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
-import { PanelFallback } from "@/app/dashboard/codes/[id]/_components/routing-panel";
+} from "@/app/(app)/dashboard/codes/_lib/code-options";
+import { codeTabHref } from "@/app/(app)/dashboard/codes/_lib/code-tabs";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { PanelFallback } from "@/app/(app)/dashboard/codes/[id]/_components/routing-panel";
 import type { ShellData } from "@/components/app-shell/shell-data";
 import { useAvailability } from "@/components/availability-provider";
 import { CopyButton } from "@/components/copy-button";

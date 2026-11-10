@@ -2,7 +2,7 @@ import { hasAdminRole } from "@repo/auth/admin";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { Facts, Panel } from "../../_components/panel";
 import { UserActions } from "../../_components/user-actions";
 import { formatAgo, formatDate, formatDateTime } from "../../_lib/format";
