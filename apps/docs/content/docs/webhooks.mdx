@@ -176,6 +176,8 @@ curl https://api.qrdx.dev/v1/hooks \
 
 Without Business the subscribe call returns `402 PLAN_REQUIRED`. A `scan.created` delivery is one batch, so in Zapier use the `data.scans` line items to act on each scan.
 
+In n8n, the QRdx Trigger node from the [QRdx nodes for n8n](/docs/developers/n8n) makes these calls for you and checks each signature. A plain Webhook node works too, set up like any other endpoint.
+
 ## Self-hosting
 
 Deliveries are sent right away; retries and scan batches whose minute has ended are sent by a scheduled job. QRdx runs it every 5 minutes from a GitHub Actions workflow, which works on Vercel's free Hobby plan, and `apps/docs/vercel.json` also runs it in full once a day. GitHub can start scheduled runs late, so expect retries within a few minutes rather than to the minute.

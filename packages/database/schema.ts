@@ -415,6 +415,72 @@ export const integration = pgTable(
   (table) => [index("integration_user_id_idx").on(table.userId)]
 );
 
+// ─── The QRdx bot for Slack (apps/docs/lib/slack-bot) ───────────────────────
+// Two tables of their own (manual-sql/2026-11-10-slack-bot.sql); the app only
+// reads or writes them while the bot is configured (SLACK_SIGNING_SECRET and
+// the Slack app keys). No message text is ever stored.
+
+/** One row per Slack workspace the bot is installed in. */
+export const slackBotInstallation = pgTable(
+  "slack_bot_installation",
+  {
+    id: text("id").primaryKey(),
+    // Slack's workspace id (T…) and, on Enterprise Grid, the org id (E…)
+    teamId: text("team_id").notNull(),
+    enterpriseId: text("enterprise_id"),
+    teamName: text("team_name"),
+    botUserId: text("bot_user_id").notNull(),
+    // Encrypted with INTEGRATION_ENCRYPTION_KEY (@repo/integrations encryptApiKey)
+    botToken: text("bot_token").notNull(),
+    // Space-separated OAuth scopes Slack granted
+    scopes: text("scopes"),
+    installedByUserId: text("installed_by_user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    // One install per workspace; a workspace outside Enterprise Grid has no
+    // enterprise id, which counts as '' here so it can't be installed twice.
+    uniqueIndex("slack_bot_installation_team_unique").on(
+      table.teamId,
+      sql`coalesce(${table.enterpriseId}, '')`
+    ),
+    index("slack_bot_installation_installed_by_idx").on(
+      table.installedByUserId
+    ),
+  ]
+);
+
+/**
+ * A Slack person allowed to make tracked codes as a QRdx user, in one of
+ * their workspaces. One per Slack user per Slack workspace.
+ */
+export const slackUserLink = pgTable(
+  "slack_user_link",
+  {
+    id: text("id").primaryKey(),
+    teamId: text("team_id").notNull(),
+    slackUserId: text("slack_user_id").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("slack_user_link_team_slack_user_unique").on(
+      table.teamId,
+      table.slackUserId
+    ),
+    index("slack_user_link_user_id_idx").on(table.userId),
+    index("slack_user_link_organization_id_idx").on(table.organizationId),
+  ]
+);
+
 export const communityTheme = pgTable(
   "community_theme",
   {

@@ -1,0 +1,14 @@
+{
+  "$schema": "../../node_modules/@biomejs/biome/configuration_schema.json",
+  "root": false,
+  "extends": "//",
+  "linter": {
+    "rules": {
+      "style": {
+        // n8n loads each node and credential by file name: Qrdx.node.js
+        // must export the class Qrdx, QrdxApi.credentials.js QrdxApi.
+        "useFilenamingConvention": "off"
+      }
+    }
+  }
+}

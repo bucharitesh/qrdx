@@ -1,0 +1,65 @@
+---
+title: Make QR codes in Discord
+description: Add the QRdx bot to a Discord server or to your own account, then make QR codes with /qr or from any message.
+---
+
+<IfAvailable feature="discordBot">
+
+The QRdx bot makes QR codes inside Discord, and you don't need a QRdx account to use it. Each reply shows the code with buttons to download it as a PNG or SVG, or to open it in the [editor](/playground) and change how it looks.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" title="Add the bot">
+
+1. Open the [Discord bot](/integrations/discord-bot) page and click **Add to Discord**.
+2. Discord asks where to add it:
+   - **Your account:** use it in DMs, group DMs and the servers you're in.
+   - **A server:** everyone in the server can use it. You need the **Manage Server** permission there.
+
+Some servers don't let members' own apps post for everyone. There, replies from the bot on your account are visible only to you.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" title="Make a code with /qr">
+
+1. In any chat, type `/qr` and pick it from the list.
+2. Type or paste a link or some text into **content**, then press Enter.
+
+The bot replies with the code, its content as the title, and three buttons: **Download PNG** (1024 px), **Download SVG** and **Open in editor**. A link opens in the editor ready to style. Text doesn't travel in the editor link, so paste it there yourself.
+
+To keep the code to yourself, set **private** to **True**. Only you see that reply, and Discord removes it when you dismiss it or reload.
+
+Very long content may not fit in one QR code, or may be too long for Discord to show as an image. The bot says so in a message only you can see.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" title="Make a code from a message">
+
+On desktop, right-click a message and choose **Apps** → **Make QR code**. On mobile, long-press the message and tap **Apps** → **Make QR code**.
+
+The code holds the first web address in the message. A message without one becomes a code of its text. Everyone in the chat sees the reply.
+
+Replies never mention or ping anyone, whatever the message says.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" title="Privacy">
+
+QRdx doesn't save the codes you make, and the bot can't read your chats. Discord sends QRdx what you type after `/qr`, or the one message you picked for **Make QR code**.
+
+The content goes into the image link, and Discord loads the picture from the QRdx [image API](/docs/developers/image-api). Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets.
+
+To stop one person flooding a channel, QRdx counts the codes each Discord account makes in a minute. The count holds no content and expires after that minute.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" title="Remove the bot">
+
+- **From your account:** open **User Settings** → **Authorized Apps** and click **Deauthorize** next to QRdx.
+- **From a server:** someone with **Manage Server** opens **Server Settings** → **Integrations**, picks QRdx and removes it.
+
+</IfAvailable>
+
+## Self-hosting
+
+The bot works on your own QRdx once you register a Discord app and set `DISCORD_APPLICATION_ID` and `DISCORD_PUBLIC_KEY`. [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) has the steps.

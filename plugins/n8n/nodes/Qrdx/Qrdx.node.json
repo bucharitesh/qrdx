@@ -1,0 +1,18 @@
+{
+  "node": "n8n-nodes-qrdx.qrdx",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": ["Marketing & Content", "Utility"],
+  "resources": {
+    "credentialDocumentation": [
+      {
+        "url": "https://github.com/bucharitesh/qrdx/tree/main/plugins/n8n#credentials"
+      }
+    ],
+    "primaryDocumentation": [
+      {
+        "url": "https://github.com/bucharitesh/qrdx/tree/main/plugins/n8n#readme"
+      }
+    ]
+  }
+}

@@ -1,0 +1,84 @@
+---
+title: n8n
+description: Make QR codes, manage dynamic codes, read scans and start n8n workflows from QRdx events with the QRdx community nodes for n8n.
+icon: Blocks
+---
+
+The `n8n-nodes-qrdx` package adds two nodes to [n8n](https://n8n.io):
+
+- **QRdx** makes QR code images, creates and edits [dynamic codes](/docs/dynamic-qr-codes), and reads their scans and your saved themes. An n8n AI Agent can use it as a tool.
+- **QRdx Trigger** starts a workflow when your codes are scanned, created or changed, or when someone submits a form on a [hosted page](/docs/forms-and-pages).
+
+The package isn't on npm yet, so it isn't in n8n's community node search. Install it from the [source on GitHub](https://github.com/bucharitesh/qrdx/tree/main/plugins/n8n) into a self-hosted n8n, as below. n8n Cloud only runs community nodes that n8n has verified.
+
+To receive events without installing anything, use a [Webhook node](#without-the-package) instead.
+
+## Install from source
+
+Build the package and pack it into a `.tgz` file. You need Node.js 22 and pnpm:
+
+```bash
+git clone https://github.com/bucharitesh/qrdx.git
+cd qrdx && pnpm install
+pnpm --filter n8n-nodes-qrdx build
+cd plugins/n8n && npm pack
+```
+
+Install the file in the `nodes` folder of your n8n user folder, then restart n8n:
+
+```bash
+mkdir -p ~/.n8n/nodes
+cd ~/.n8n/nodes
+npm install /path/to/n8n-nodes-qrdx-0.1.0.tgz
+```
+
+If n8n runs in Docker, copy the file into the container and run the same commands there (`docker exec -it n8n sh`). Search for **QRdx** in the nodes panel.
+
+## Connect your workspace
+
+Create an [API key](/docs/developers/api-keys) in [Settings → API keys & apps](/dashboard?to=settings/developers), then add a **QRdx API** credential in n8n with the key. Leave **Base URL** as `https://api.qrdx.dev/v1` unless you [self-host](/docs/self-hosting) QRdx; then use your address followed by `/api/v1`.
+
+n8n tests the credential by reading your profile, which needs the Profile scope, so a key with full access is simplest. A key acts on the workspace it was created in. Generating QR images needs no credential at all.
+
+## The QRdx node
+
+| Resource | Operations |
+| --- | --- |
+| QR Image | Generate a PNG, SVG or EPS image. No API key, no account |
+| Code | Create, Get, Get Many, Update (including archive and restore), Delete |
+| Scan | Get Many (individual scans, newest first), Get Summary (totals, daily counts and top countries, cities, devices, browsers and referrers) |
+| Theme | Get, Get Many |
+
+**Generate** puts the image in a binary field you can attach to an email or upload anywhere. You can set its size, colors, body, eye and eye dot shapes, error correction, margin, a [frame](/docs/features/frames) with its label, and a logo icon. The output also has `url`: a link to the same image from the [image API](/docs/developers/image-api), ready for an `<img>` tag.
+
+The code and scan operations call the [REST API](/docs/developers/rest-api) with your key and count toward the workspace's daily API quota. **Get Many** pages through results for you. Errors keep QRdx's own message; a custom back-half needs Pro or Business, for example, and the node shows the [error](/docs/developers/errors) QRdx returns on Free.
+
+## The QRdx Trigger node
+
+Pick the events, then activate the workflow. The node subscribes through the [REST Hooks API](/docs/webhooks#zapier-make-and-n8n-rest-hooks) and unsubscribes when you deactivate the workflow. The subscription shows in Settings → Webhooks while it's active.
+
+| Event | When |
+| --- | --- |
+| Scans | Codes are scanned. Deliveries are batched: one a minute with up to 100 scans and the exact count |
+| Scan Milestones | A code's first scan, then 10, 100, 500, 1,000 scans and beyond |
+| New Codes | A dynamic code is created |
+| Code Changes | A code's destination, title, design or domain changes |
+| Form Submissions | Someone submits a form on a hosted page |
+
+The node checks each delivery's `X-QRdx-Signature` with the signing secret QRdx returned when it subscribed, and answers `401` to anything that doesn't match. Turn on **Output One Item per Scan** to get a Scans batch as separate items, and **Include Test Events** to run the workflow when you click **Send test** in Settings → Webhooks. The payloads are the ones described in [Webhooks](/docs/webhooks#payloads).
+
+The trigger needs:
+
+- the Business plan, since [webhooks](/docs/webhooks) are part of it
+- an API key with the Manage codes scope
+- n8n at a public `https://` address, because QRdx doesn't deliver to `localhost` or private networks. Behind a proxy, set n8n's `WEBHOOK_URL`. This also applies to the test URL n8n uses while you click **Listen for test event**
+
+## Without the package
+
+QRdx can deliver events to an n8n **Webhook** node directly, on n8n Cloud or a self-hosted n8n:
+
+1. Add a Webhook node, set its HTTP method to `POST` and copy its production URL.
+2. Activate the workflow. The production URL only answers while the workflow is active.
+3. In [Settings → Webhooks](/dashboard?to=settings/webhooks), click **Add endpoint**, paste the URL and pick the events.
+
+Each event starts the workflow with the JSON payload. To check signatures, read `X-QRdx-Signature` in a Code node and [verify it](/docs/webhooks#verify-signatures) with the endpoint's signing secret.
