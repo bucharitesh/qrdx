@@ -562,3 +562,142 @@ export async function createCodeForPage(
     .where(eq(qrCode.id, code.id));
   return { codeId: code.id };
 }
+
+// ─── Pages for an existing code (codes/_lib/code-kind.ts) ───────────────────
+// Changing a printed code's type makes the page here and attaches it to the
+// code there, so the code keeps its short link and scans.
+
+export const pageForCodeSchema = z.object({
+  type: slugPart.describe(
+    "A hosted page type, such as `links` or `business` (the dashboard's page types)",
+  ),
+  variantId: slugPart
+    .nullish()
+    .describe("A template of that type; omitted = its first template"),
+  title: pageTitleSchema.describe("The page's name, up to 100 characters"),
+  /** Content as the page editor publishes it; omitted = the template's */
+  content: z
+    .unknown()
+    .optional()
+    .describe(
+      "The page content (`{ version, theme, blocks }`), validated like a publish from the page editor; omitted = the template's",
+    ),
+});
+
+export type PageForCodeInput = z.infer<typeof pageForCodeSchema>;
+
+/**
+ * A new page from a template (or with `content`, checked like a publish)
+ * that an existing code will open. The page limit is checked before and
+ * after the insert, as createPage does; no code is made. The caller attaches
+ * the page, and removes it with removeUnattachedPage if that fails.
+ */
+export async function createPageForCode(
+  scope: ActiveScope,
+  input: PageForCodeInput,
+): Promise<{ pageId: string; title: string | null; type: string }> {
+  assertCan(scope, "content.write");
+  const template = getTemplate(input.type);
+  if (!template) {
+    throw new HttpError(400, "VALIDATION_ERROR", "Unknown page type.");
+  }
+  if (
+    input.variantId &&
+    !template.variants.some((variant) => variant.id === input.variantId)
+  ) {
+    throw new HttpError(400, "VALIDATION_ERROR", "Unknown template.");
+  }
+  const content =
+    input.content === undefined
+      ? buildTemplateContent(input.type, input.variantId)
+      : validateContent(input.content);
+  await assertContentAllowed(scope, content);
+
+  const limit = getPlanLimits(await getPlanForScope(scope)).landingPages;
+  const capped = Number.isFinite(limit);
+  if (capped && (await countPages(scope)) >= limit) {
+    throw pageLimitReached(limit);
+  }
+
+  const pageId = cuid();
+  const now = new Date();
+  await db.insert(landingPage).values({
+    id: pageId,
+    userId: scope.userId,
+    organizationId: scope.organizationId,
+    type: template.type,
+    title: input.title,
+    content,
+    version: 1,
+    createdAt: now,
+    updatedAt: now,
+  });
+  if (capped) {
+    const used = await countPages(scope);
+    if (used > limit) {
+      await db.delete(landingPage).where(eq(landingPage.id, pageId));
+      throw pageLimitReached(limit);
+    }
+    noteLimitUsage(scope, "landingPages", { used, limit });
+  }
+  await insertVersion(pageId, content, scope.userId);
+  return { pageId, title: input.title, type: template.type };
+}
+
+/** Deletes a page createPageForCode made, while no code opens it yet. */
+export async function removeUnattachedPage(
+  scope: ActiveScope,
+  id: string,
+): Promise<void> {
+  const [attached] = await db
+    .select({ id: qrCode.id })
+    .from(qrCode)
+    .where(eq(qrCode.pageId, id))
+    .limit(1);
+  if (attached) return;
+  await db
+    .delete(landingPage)
+    .where(and(eq(landingPage.id, id), pageScopeWhere(scope)));
+}
+
+export interface ScopedPageRef {
+  id: string;
+  type: string;
+  title: string | null;
+  updatedAt: Date;
+}
+
+/** Pages of the scope among `ids` (others, and deleted ones, are left out). */
+export async function findScopedPages(
+  scope: ActiveScope,
+  ids: string[],
+): Promise<ScopedPageRef[]> {
+  if (ids.length === 0) return [];
+  return db
+    .select({
+      id: landingPage.id,
+      type: landingPage.type,
+      title: landingPage.title,
+      updatedAt: landingPage.updatedAt,
+    })
+    .from(landingPage)
+    .where(and(inArray(landingPage.id, ids), pageScopeWhere(scope)));
+}
+
+/** A page's content for the switch editor (blocks carried to a new type). */
+export async function getScopedPageContent(
+  scope: ActiveScope,
+  id: string,
+): Promise<{
+  title: string | null;
+  type: string;
+  content: LandingPageContent;
+} | null> {
+  try {
+    const page = await getPageForEdit(scope, id);
+    return { title: page.title, type: page.type, content: page.content };
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) return null;
+    throw error;
+  }
+}

@@ -5,6 +5,7 @@
   "pages": [
     "create",
     "change-the-link",
+    "change-the-type",
     "scans",
     "pause-schedule-limit",
     "password",

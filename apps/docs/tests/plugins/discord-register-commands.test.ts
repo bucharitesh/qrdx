@@ -5,6 +5,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { DISCORD_COMMANDS } from "@/lib/chat-bots/discord/commands";
 import {
+  describeCommand,
   readCommands,
   registerCommands,
   registerRequest,
@@ -46,6 +47,14 @@ describe("register-commands.mjs", () => {
       /^DiscordBot \(https:\/\/github\.com\/bucharitesh\/qrdx, \d+\)$/,
     );
     expect(JSON.parse(init.body as string)).toEqual(DISCORD_COMMANDS);
+  });
+
+  it("prints each saved command with /qr's options and their choices", () => {
+    const [qr, message] = DISCORD_COMMANDS;
+    expect(describeCommand({ ...qr, id: "1" })).toBe(
+      "/qr (1): content, look (9 choices), color (6 choices), frame (5 choices), private",
+    );
+    expect(describeCommand({ ...message, id: "2" })).toBe("Make QR code (2)");
   });
 
   it("names the missing variable before calling Discord", () => {

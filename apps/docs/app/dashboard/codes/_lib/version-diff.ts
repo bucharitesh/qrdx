@@ -18,6 +18,9 @@ interface FieldSpec {
 
 /** Settings a version tracks and a restore puts back (password: tracked only). */
 export const VERSION_FIELDS = {
+  // What the code opens: a website link or a hosted page (code-kind.ts).
+  // First, so a restore switches the type before it sets the destination.
+  kind: { label: "Type", kind: "text" },
   destinationUrl: { label: "Destination", kind: "url" },
   title: { label: "Title", kind: "text" },
   style: { label: "QR design", kind: "opaque" },
@@ -37,6 +40,11 @@ export type VersionField = keyof typeof VERSION_FIELDS;
 export const VERSION_FIELD_KEYS = Object.keys(VERSION_FIELDS) as VersionField[];
 
 export interface NormalizedVersion {
+  /**
+   * "redirect", or "page:<page id>" (the page it opened; empty once that
+   * page was deleted). Null when the snapshot doesn't say: never compared.
+   */
+  kind: string | null;
   destinationUrl: string | null;
   title: string | null;
   /** Key-sorted JSON (compared, never shown) */
@@ -101,6 +109,17 @@ const isEmptyJson = (value: unknown) =>
   (Array.isArray(value) && value.length === 0) ||
   (typeof value === "object" && Object.keys(value as object).length === 0);
 
+/** "redirect" or "page:<page id>"; null when the row has no `kind`. */
+export function normalizeKind(raw: Record<string, unknown>): string | null {
+  if (raw.kind === "page") return `page:${toText(raw.pageId) ?? ""}`;
+  return raw.kind === "redirect" ? "redirect" : null;
+}
+
+/** The page id in a normalized `kind`; null for website links and deleted pages. */
+export function kindPageId(kind: string | null): string | null {
+  return kind?.startsWith("page:") ? kind.slice(5) || null : null;
+}
+
 /**
  * A snapshot or live row reduced to the tracked settings. `hasPassword` comes
  * from the snapshot flag or, for live rows, from `passwordHash`.
@@ -119,6 +138,7 @@ export function normalizeVersion(
   const json = (value: unknown) =>
     isEmptyJson(value) ? null : stableStringify(value);
   return {
+    kind: normalizeKind(raw),
     destinationUrl: toText(raw.destinationUrl),
     title: toText(raw.title),
     style: json(raw.style),
@@ -138,9 +158,16 @@ function display(
   field: VersionField,
   value: VersionValue,
   domainName: (id: string) => string | null,
+  pageName: (id: string) => string | null,
 ): string | null {
   if (value === null) return null;
   if (field === "hasPassword") return value ? "On" : "Off";
+  if (field === "kind") {
+    if (value === "redirect") return "Website link";
+    const pageId = kindPageId(String(value));
+    const name = pageId ? pageName(pageId) : null;
+    return name ? `Hosted page (${name})` : "Hosted page";
+  }
   if (field === "domainId")
     return domainName(String(value)) ?? "Removed domain";
   return String(value);
@@ -152,11 +179,19 @@ export function diffVersions(
   after: NormalizedVersion,
   {
     domainName = () => null,
-  }: { domainName?: (id: string) => string | null } = {},
+    pageName = () => null,
+  }: {
+    domainName?: (id: string) => string | null;
+    pageName?: (id: string) => string | null;
+  } = {},
 ): VersionChange[] {
   const changes: VersionChange[] = [];
   for (const field of VERSION_FIELD_KEYS) {
     if (before[field] === after[field]) continue;
+    // Snapshots without a type say nothing about it.
+    if (field === "kind" && (before.kind === null || after.kind === null)) {
+      continue;
+    }
     const { label, kind } = VERSION_FIELDS[field];
     changes.push(
       kind === "opaque"
@@ -165,8 +200,8 @@ export function diffVersions(
             field,
             label,
             kind,
-            from: display(field, before[field], domainName),
-            to: display(field, after[field], domainName),
+            from: display(field, before[field], domainName, pageName),
+            to: display(field, after[field], domainName, pageName),
           },
     );
   }
@@ -197,6 +232,7 @@ export function restorableColumns(
   const jsonValue = (key: "style" | "routing" | "utm" | "pixels") =>
     isEmptyJson(snapshot[key]) ? null : snapshot[key];
   return {
+    kind: normalized.kind,
     destinationUrl: normalized.destinationUrl,
     title: normalized.title,
     style: jsonValue("style"),

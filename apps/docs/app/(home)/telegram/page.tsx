@@ -1,4 +1,5 @@
 import {
+  Brush2,
   InfoCircle,
   MessageText,
   People,
@@ -35,7 +36,14 @@ function commands(username: string): BotCommand[] {
       icon: MessageText,
       title: "Private chat",
       description:
-        "Send it in the bot's chat and the code comes back with Download PNG, Download SVG and Open in editor. It holds exactly what you sent, line breaks included.",
+        "Send it in the bot's chat and the code comes back with Download PNG, Download SVG, Open in editor and Style. It holds exactly what you sent, line breaks included.",
+    },
+    {
+      icon: Brush2,
+      title: "Style a code",
+      usage: "<link or text> --look modern --frame banner-bottom",
+      description:
+        "Tap Style under a code for a look, color, frame or logo, and the bot redraws it. Options after the content work in chats, groups and inline. Each styled code passes the editor's scan check first.",
     },
     {
       icon: Send2,
@@ -69,7 +77,7 @@ function commands(username: string): BotCommand[] {
 
 const privacyParagraphs = [
   "QRdx doesn't save the codes you make, and the bot reads each message only to answer it.",
-  "The images are drawn on request. Each one comes from a QRdx link that contains your text, which Telegram fetches to show the code. Like any link, that one can end up in logs and caches, so don't make codes of passwords or other secrets.",
+  "The images are drawn on request. Each one comes from a QRdx link that contains your text and the style you picked, which Telegram fetches to show the code. Like any link, that one can end up in logs and caches, so don't make codes of passwords or other secrets.",
   "Telegram keeps the messages in the chat, as it does for any message. If you make a lot of codes in a short time, the bot asks you to wait a minute before the next one. When a lot of people use it at once, it may say it's busy.",
 ];
 
@@ -95,9 +103,14 @@ function faqs(username: string) {
         "The bot says so. A link to a page with the full text makes a smaller code that's easier to scan.",
     },
     {
+      question: "Can I change how the code looks?",
+      answer:
+        "Yes. Tap Style under a code and pick a look, color, frame or logo, or add options after your link, such as qrdx.dev --look modern. /help lists them. In a group, only the person who asked can restyle a code. QRdx checks every styled code with the editor's scan score and adjusts it when phones would struggle to read it.",
+    },
+    {
       question: "What does Open in editor do?",
       answer:
-        "It opens the QRdx editor in your browser, where you can change the design and download the code again. A web address goes along with it. Other text doesn't, so paste it into the editor yourself.",
+        "It opens the QRdx editor in your browser with the code's design, where you can change it further and download the code again. A web address goes along with it. Other text doesn't, so paste it into the editor yourself.",
     },
     {
       question: "How do I remove the bot?",
@@ -117,7 +130,7 @@ export default function TelegramBotPage() {
       bot="telegram"
       title="Make QR codes in any Telegram chat"
       intro={[
-        `Send the QRdx bot a link or some text and it replies with the QR code, ready to download as a PNG or SVG. In any other chat, type @${username} and a link to send a code there, or add the bot to a group and use /qr.`,
+        `Send the QRdx bot a link or some text and it replies with the QR code, ready to download as a PNG or SVG or to restyle with a look, color, frame or logo. In any other chat, type @${username} and a link to send a code there, or add the bot to a group and use /qr.`,
       ]}
       action={{ label: "Open in Telegram", href: OPEN_PATH, leavesSite: true }}
       note="Free, and you don't need a QRdx account."
@@ -131,7 +144,7 @@ export default function TelegramBotPage() {
           },
           {
             title: "Send a link or text",
-            body: "The bot replies with the QR code and three buttons: Download PNG, Download SVG and Open in editor.",
+            body: "The bot replies with the QR code and four buttons: Download PNG, Download SVG, Open in editor and Style.",
           },
           {
             title: "Use it in other chats",

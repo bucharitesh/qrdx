@@ -1,4 +1,4 @@
-import { SCAN_DEVICE_TYPES } from "@repo/database";
+import { SCAN_DEVICE_TYPES, SCAN_SOURCES } from "@repo/database";
 import {
   frameSpecColorSchema,
   frameSpecPaintSchema,
@@ -89,6 +89,11 @@ export const codeSchema = named(
       .describe(
         "`https://qrdx.dev/q/<slug>`, which always works; null for a back-half chosen on a custom domain",
       ),
+    nfcLink: z
+      .url()
+      .describe(
+        "`shortLink` with `?nfc` on the end, to write to NFC tags. It opens the same place; visits through it count as NFC taps (`source: nfc`) instead of QR scans",
+      ),
     domain: z
       .object({
         id: z.string(),
@@ -102,6 +107,15 @@ export const codeSchema = named(
       .describe("Where a scan sends people; change it any time"),
     title: z.string().nullable().describe("Name shown in the dashboard"),
     contentType: z.string().describe("What the code points to, e.g. `url`"),
+    kind: z
+      .enum(["redirect", "page"])
+      .describe(
+        "`redirect`: scans go to `destinationUrl`. `page`: scans open a hosted page (`destinationUrl` is its address). Switch it with PATCH",
+      ),
+    pageId: z
+      .string()
+      .nullable()
+      .describe("The hosted page a `page` code opens; null for `redirect`"),
     status: z
       .enum(["active", "archived", "disabled"])
       .describe(
@@ -161,6 +175,11 @@ const scanEventSchema = z.object({
   os: z.string().nullable(),
   browser: z.string().nullable(),
   referer: z.string().nullable(),
+  source: z
+    .enum(SCAN_SOURCES)
+    .describe(
+      "`nfc` for a tap on an NFC tag (the code's `nfcLink`), `qr` for a QR scan or any other visit to the short link",
+    ),
 });
 
 export const scanAnalyticsSchema = named(
@@ -197,6 +216,12 @@ export const scanAnalyticsSchema = named(
     os: z.array(breakdownRow),
     browsers: z.array(breakdownRow),
     referrers: z.array(breakdownRow),
+    sources: z
+      .object({
+        qr: z.number().int().describe("QR scans in the range"),
+        nfc: z.number().int().describe("NFC taps in the range"),
+      })
+      .describe("Scans in the range by source; `qr` + `nfc` = `total`"),
     events: z
       .array(scanEventSchema)
       .optional()

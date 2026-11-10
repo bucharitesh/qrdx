@@ -16,6 +16,7 @@ import { API_KEY_PREFIX, isApiKeyFormat } from "@/lib/api-keys/shared";
 import { consumeApiQuota } from "@/lib/api-quota";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
+import { nfcLink } from "@/lib/nfc/links";
 import { type OAuthScope, validateAccessToken } from "@/lib/oauth";
 import { can } from "@/lib/permissions";
 import { assertCan } from "@/lib/permissions-server";
@@ -336,6 +337,8 @@ export function serializeCode(code: QrCodeView) {
     slug: code.slug,
     shortLink: code.shortLink,
     defaultShortLink: code.defaultShortLink,
+    // NFC (feat/nfc): the short link with ?nfc, for NFC tags (lib/nfc/links.ts)
+    nfcLink: nfcLink(code.shortLink),
     domain: code.domain
       ? {
           id: code.domain.id,
@@ -346,6 +349,9 @@ export function serializeCode(code: QrCodeView) {
     destinationUrl: code.destinationUrl,
     title: code.title,
     contentType: code.contentType,
+    // What the code opens (PATCH `kind` switches it)
+    kind: code.kind,
+    pageId: code.pageId,
     status: code.status,
     style: code.style,
     scanCount: code.scanCount,

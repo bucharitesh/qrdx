@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
   diffVersions,
+  kindPageId,
   normalizeVersion,
   restorableColumns,
   stableStringify,
@@ -107,5 +108,51 @@ describe("restorableColumns", () => {
     assert.equal(columns.pixels, null, "empty JSON restores as null");
     assert.deepEqual(columns.routing, { rules: [{ type: "device" }] });
     assert.ok(!("hasPassword" in columns));
+  });
+});
+
+describe("the code's type", () => {
+  const redirect = { ...stored, kind: "redirect", pageId: null };
+  const page = {
+    ...stored,
+    kind: "page",
+    pageId: "page_1",
+    destinationUrl: "https://qrdx.dev/p/aB3dE5f",
+  };
+
+  it("normalizes to the type and the page it opens", () => {
+    assert.equal(normalizeVersion(redirect).kind, "redirect");
+    assert.equal(normalizeVersion(page).kind, "page:page_1");
+    assert.equal(normalizeVersion({ ...page, pageId: null }).kind, "page:");
+    assert.equal(kindPageId("page:page_1"), "page_1");
+    assert.equal(kindPageId("page:"), null);
+    assert.equal(kindPageId("redirect"), null);
+  });
+
+  it("shows a switch, naming the page", () => {
+    const changes = diffVersions(
+      normalizeVersion(redirect),
+      normalizeVersion(page),
+      { pageName: (id) => (id === "page_1" ? "Spring menu" : null) },
+    );
+    assert.deepEqual(
+      changes.map((change) => [change.field, change.from, change.to]),
+      [
+        ["kind", "Website link", "Hosted page (Spring menu)"],
+        ["destinationUrl", stored.destinationUrl, page.destinationUrl],
+      ],
+    );
+  });
+
+  it("ignores snapshots that don't record a type", () => {
+    const { kind: _kind, ...legacy } = page;
+    assert.deepEqual(
+      diffVersions(normalizeVersion(legacy), normalizeVersion(page)),
+      [],
+    );
+  });
+
+  it("restores the type with the other columns", () => {
+    assert.equal(restorableColumns(page).kind, "page:page_1");
   });
 });

@@ -164,8 +164,10 @@ describe("with every bot set up", () => {
     const text = visibleText(html(page.render));
     // Privacy: codes travel in a link that can be logged, so never this.
     expect(text).not.toMatch(/nothing (is )?(kept|stored|saved)/i);
-    // Design options for the bots aren't built yet.
-    expect(text).not.toMatch(/\b(colou?rs?|logos?|frames?|styles?)\b/i);
+    // Styles are built now: each page says what they are, and that every
+    // styled code is scan-checked.
+    expect(text).toMatch(/look, colou?r, frame (and|or) logo/i);
+    expect(text).toMatch(/scan check|scan score/i);
     // No invented numbers about the bots.
     expect(text).not.toMatch(
       /\b(installs?|users|servers|workspaces) (use|trust)/i,

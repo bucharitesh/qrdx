@@ -1,3 +1,4 @@
+import type { QrCodeKind } from "@repo/database";
 import { z } from "zod";
 import {
   createCodeSchema,
@@ -5,6 +6,10 @@ import {
   MAX_BULK_CREATE,
   updateCodeFields,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import {
+  pageForCodeSchema,
+  pageIdSchema,
+} from "@/app/dashboard/pages/_lib/landing-pages";
 import { FILE_ID } from "@/lib/qr-api/style";
 import { LOGO_ICON_IDS } from "@/lib/qr-design/style";
 import { SCAN_RANGE_KEYS } from "@/lib/scans";
@@ -33,9 +38,74 @@ export const createCodesBatchSchema = z
   .min(1)
   .max(MAX_BULK_CREATE);
 
+// ─── Changing a code's type (app/dashboard/codes/_lib/code-kind.ts) ─────────
+
+/** PATCH fields that switch a code between a website link and a hosted page. */
+export const codeKindFields = {
+  kind: z
+    .enum(["redirect", "page"] as const satisfies readonly QrCodeKind[])
+    .optional()
+    .describe(
+      "Switch what the code opens, keeping its short link and scans: `redirect` (a website link; send `destinationUrl` with it) or `page` (a hosted page; send `pageId` or `page`)",
+    ),
+  pageId: pageIdSchema
+    .optional()
+    .describe(
+      'With `kind: "page"`: a hosted page of the workspace the code should open, such as one it opened before',
+    ),
+  page: pageForCodeSchema
+    .optional()
+    .describe(
+      'With `kind: "page"`: a new hosted page from a template. It counts toward the plan\'s hosted pages',
+    ),
+};
+
+/** The fields a type change needs, and none it can't use. */
+function checkKindChange(
+  body: {
+    kind?: string;
+    destinationUrl?: string;
+    pageId?: string;
+    page?: unknown;
+  },
+  ctx: z.RefinementCtx,
+) {
+  const issue = (path: string, message: string) =>
+    ctx.addIssue({ code: "custom", path: [path], message });
+  if (body.kind === undefined) {
+    if (body.pageId !== undefined)
+      issue("pageId", 'Send `kind: "page"` with `pageId`');
+    if (body.page !== undefined)
+      issue("page", 'Send `kind: "page"` with `page`');
+    return;
+  }
+  if (body.kind === "redirect") {
+    if (body.destinationUrl === undefined) {
+      issue("destinationUrl", "Send the website link as `destinationUrl`");
+    }
+    if (body.pageId !== undefined || body.page !== undefined) {
+      issue("kind", "A website link takes `destinationUrl`, not a page");
+    }
+    return;
+  }
+  if ((body.pageId === undefined) === (body.page === undefined)) {
+    issue(
+      "page",
+      "Send either `pageId` (an existing page) or `page` (a new one)",
+    );
+  }
+  if (body.destinationUrl !== undefined) {
+    issue(
+      "destinationUrl",
+      "A hosted page code opens its page: leave `destinationUrl` out",
+    );
+  }
+}
+
 /** PATCH /v1/codes/{id} body: the editable fields, plus `archived`. */
 export const patchCodeSchema = updateCodeFields
-  .extend({ archived: z.boolean().optional() })
+  .extend({ archived: z.boolean().optional(), ...codeKindFields })
+  .superRefine(checkKindChange)
   .refine(hasAnyField, { message: "Nothing to update" });
 
 /** GET /v1/codes/{id}/scans query */
@@ -84,5 +154,7 @@ export const patchCodeInputSchema = updateCodeFields
   .extend({
     archived: z.boolean().optional(),
     style: codeStyleInputSchema.optional(),
+    ...codeKindFields,
   })
+  .superRefine(checkKindChange)
   .refine(hasAnyField, { message: "Nothing to update" });

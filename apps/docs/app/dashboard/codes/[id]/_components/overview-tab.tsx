@@ -14,6 +14,8 @@ import {
   formatDate,
   formatNumber,
 } from "@/app/dashboard/codes/_components/format";
+// NFC (feat/nfc): "Use with NFC" / "Put this card on NFC".
+import { NfcCard } from "@/app/dashboard/codes/_components/nfc-card";
 import { Sparkline } from "@/app/dashboard/codes/_components/sparkline";
 import {
   CODE_OPTION_ANCHORS,
@@ -104,6 +106,8 @@ export async function OverviewTab({
           <Stat label="Last scan" value={formatDate(code.lastScannedAt)} />
         </CardContent>
       </Card>
+      {/* NFC (feat/nfc) */}
+      <NfcCard code={code} />
       <Card className="gap-3 py-4">
         <CardHeader className="px-4">
           <CardTitle className="text-base">Options</CardTitle>

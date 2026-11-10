@@ -10,6 +10,7 @@
     "../code-controls",
     "../smart-routing",
     "../tracking-and-conversions",
+    "../nfc",
     "../notifications",
     "---Pages and files---",
     "../landing-pages",

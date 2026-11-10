@@ -77,7 +77,7 @@ describe("setup.mjs", () => {
     expect(telegram.calls[1]!.params).toEqual({
       url: "https://qrdx.example/api/integrations/telegram/webhook",
       secret_token: ENV.TELEGRAM_WEBHOOK_SECRET,
-      allowed_updates: ["message", "inline_query"],
+      allowed_updates: ["message", "inline_query", "callback_query"],
       drop_pending_updates: true,
     });
 
@@ -93,7 +93,11 @@ describe("setup.mjs", () => {
 
   it("matches the webhook route and the commands the bot reads", () => {
     expect(WEBHOOK_PATH).toBe("/api/integrations/telegram/webhook");
-    expect(ALLOWED_UPDATES).toEqual(["message", "inline_query"]);
+    expect(ALLOWED_UPDATES).toEqual([
+      "message",
+      "inline_query",
+      "callback_query",
+    ]);
     expect(
       COMMANDS.map((command: { command: string }) => command.command),
     ).toEqual(["qr", "help", "start"]);
