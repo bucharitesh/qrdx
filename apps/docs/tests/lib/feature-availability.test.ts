@@ -59,6 +59,9 @@ const EVERYTHING: Record<string, string> = {
   SPOTIFY_CLIENT_SECRET: FAKE,
   NEXT_PUBLIC_APP_URL: "https://qrdx.example",
   QRDX_EE_LICENSE: FAKE,
+  TELEGRAM_BOT_TOKEN: FAKE,
+  TELEGRAM_WEBHOOK_SECRET: FAKE,
+  TELEGRAM_BOT_USERNAME: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -88,6 +91,11 @@ const NEEDS: Record<FeatureId, string[]> = {
   passkeys: ["NEXT_PUBLIC_APP_URL"],
   sso: ["QRDX_EE_LICENSE"],
   auditLog: ["QRDX_EE_LICENSE"],
+  telegramBot: [
+    "TELEGRAM_BOT_TOKEN",
+    "TELEGRAM_WEBHOOK_SECRET",
+    "TELEGRAM_BOT_USERNAME",
+  ],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -394,13 +402,14 @@ describe("a production-like deployment", () => {
     }
   });
 
-  it("leaves out adding custom domains, the spam check and the media pickers", () => {
+  it("leaves out adding custom domains, the spam check, the media pickers and the Telegram bot", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
       "customDomains",
       "domainConnect",
       "spamCheck",
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",
+      "telegramBot",
     ]);
   });
 
@@ -436,6 +445,7 @@ describe("a production-like deployment", () => {
         "notion",
         "onedrive",
         "slack",
+        "telegram",
       ].sort(),
     );
     for (const slug of [

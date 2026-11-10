@@ -34,6 +34,7 @@ export const FEATURE_IDS = [
   "passkeys",
   "sso",
   "auditLog",
+  "telegramBot",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -187,6 +188,19 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       `${WORKSPACE_PATTERN_PREFIX}/settings/audit-log`,
       "/docs/help/teams/audit-log",
     ],
+  },
+  telegramBot: {
+    // The QRdx bot in Telegram (lib/chat-bots/telegram): its token for
+    // replies, the secret Telegram sends with every webhook call, and its
+    // username for t.me links and help text. Nothing is stored.
+    name: "Telegram bot",
+    requires: () => [
+      "TELEGRAM_BOT_TOKEN",
+      "TELEGRAM_WEBHOOK_SECRET",
+      "TELEGRAM_BOT_USERNAME",
+    ],
+    paths: ["/docs/telegram-bot"],
+    catalogSlugs: ["telegram"],
   },
 };
 
