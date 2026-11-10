@@ -13,6 +13,7 @@ Only dynamic codes record scans. A static code holds your content directly and n
 - The browser's language.
 - Which version the visitor saw, if an A/B test is running.
 - A daily, salted hash of the network address and browser, so a visitor counts once per day.
+- Their location, rounded to about 100 m, only if the code's owner turned on [precise location](/docs/precise-location) and the scanner allowed it in their browser. Nothing is stored when they decline.
 
 ## What it never stores
 
@@ -30,7 +31,7 @@ Deleting a code forever deletes its scans.
 
 Pages your scanners see, like short links and mobile pages, don't show a cookie banner and don't load QRdx's analytics or support widget.
 
-The only QRdx cookie there remembers a correct code password for 6 hours. Page owners can add their own analytics pixels to their pages on paid plans.
+QRdx sets two cookies there. One remembers a correct code password for 6 hours. The other links a hosted page to the scan that opened it for 15 minutes, only when the code asks for precise location, so the location a scanner shares is added to that scan. Page owners can add their own analytics pixels to their pages on paid plans.
 
 ## The QR code scanner
 
