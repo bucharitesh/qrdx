@@ -18,6 +18,7 @@ import {
   fetchOEmbedPreview,
   type OEmbedPreview,
 } from "@repo/integrations/src/sources/oembed";
+import { httpsOrUndefined } from "@repo/integrations/src/sources/types";
 import { InfoCircle, MagicStar } from "iconsax-reactjs";
 import { useEffect, useMemo, useState } from "react";
 import { emitSound } from "@/components/editor/sound";
@@ -100,9 +101,11 @@ export function MediaLinkAssist({
       : spotifyOEmbedUrl(parsed)
     : null;
   const preview = usePreview(oembed);
-  const thumbnail =
+  // Only https images, whatever the provider (or a parsed link) gave back.
+  const thumbnail = httpsOrUndefined(
     preview?.thumbnailUrl ??
-    (parsed?.provider === "youtube" ? youTubeThumbnailUrl(parsed) : null);
+      (parsed?.provider === "youtube" ? youTubeThumbnailUrl(parsed) : null),
+  );
   const kindLabel = parsed
     ? parsed.provider === "youtube"
       ? `${parsed.music ? "YouTube Music " : ""}${YOUTUBE_KIND_LABELS[parsed.kind]}`
