@@ -42,6 +42,7 @@ import {
 import { enforceRateLimits } from "@/lib/request-guards";
 import { mapWithConcurrency } from "@/lib/safety/check";
 import { screenUrlChange } from "@/lib/safety/destinations";
+import { withPreciseLocation } from "@/lib/scan-location/settings";
 import { type ActiveScope, getActiveScope, isInScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 import { UnauthorizedError, ValidationError } from "@/types/errors";
@@ -70,6 +71,8 @@ export interface CodeMarketingSettings {
     utm: boolean;
     pixels: boolean;
     conversions: boolean;
+    /** Ask scanners for precise location, geofence rules (lib/scan-location) */
+    preciseLocation: boolean;
   };
   routing: RoutingConfig | null;
   utm: UtmConfig | null;
@@ -207,6 +210,7 @@ async function toSettings(
       utm: limits.routing,
       pixels: limits.pixels,
       conversions: limits.conversions,
+      preciseLocation: limits.preciseLocation,
     },
     routing: parseRoutingConfig(row.routing),
     utm: parseUtmConfig(row.utm),
@@ -218,7 +222,7 @@ async function toSettings(
 /** The limit (lib/plans.ts) a feature needs; the message names its cheapest plan. */
 function planRequired(
   feature: string,
-  limit: "routing" | "pixels" | "conversions",
+  limit: "routing" | "pixels" | "conversions" | "preciseLocation",
 ): HttpError {
   const plan = cheapestPlanWith((limits) => limits[limit]);
   return new HttpError(
@@ -439,18 +443,41 @@ export async function saveCodePixels(input: {
       if (parsed.conversions && !previous?.conversions && !limits.conversions) {
         throw planRequired("Conversion tracking", "conversions");
       }
+      if (
+        parsed.preciseLocation &&
+        !previous?.preciseLocation &&
+        !limits.preciseLocation
+      ) {
+        throw planRequired("Precise scan location", "preciseLocation");
+      }
     }
-    const empty =
-      !parsed ||
-      (!(
-        parsed.ga4 ||
-        parsed.gtm ||
-        parsed.meta ||
-        parsed.tiktok ||
-        parsed.linkedin
-      ) &&
-        !parsed.conversions);
-    return saveColumn(scope, row, { pixels: empty ? null : parsed });
+    // Precise location has its own switch (saveCodePreciseLocation): kept
+    // as it is unless the input sets it.
+    const next = withPreciseLocation(
+      parsed,
+      parsed?.preciseLocation ?? previous?.preciseLocation === true,
+    );
+    return saveColumn(scope, row, { pixels: next });
+  });
+}
+
+export async function saveCodePreciseLocation(input: {
+  id: string;
+  enabled: unknown;
+}): Promise<MarketingActionResult<CodeMarketingSettings>> {
+  return run("saveCodePreciseLocation", async (scope) => {
+    await enforceSaveLimit(scope.userId);
+    const row = await loadCode(scope, input.id);
+    const enabled = parse(z.boolean(), input.enabled);
+    const previous = parsePixelConfig(row.pixels);
+    const limits = getPlanLimits(await getPlanForScope(scope));
+    // Turning it off never needs the plan.
+    if (enabled && !previous?.preciseLocation && !limits.preciseLocation) {
+      throw planRequired("Precise scan location", "preciseLocation");
+    }
+    return saveColumn(scope, row, {
+      pixels: withPreciseLocation(previous, enabled),
+    });
   });
 }
 
@@ -480,6 +507,13 @@ const sampleSchema = z.object({
   at: z.iso.datetime({ offset: true }),
   scanNumber: z.int().min(1).max(1_000_000_000),
   visitor: z.string().trim().max(100),
+  /** Where the simulated scanner is, for area (geofence) conditions */
+  location: z
+    .object({
+      latitude: z.number().min(-90).max(90),
+      longitude: z.number().min(-180).max(180),
+    })
+    .nullish(),
 });
 
 const testSchema = z.object({
@@ -521,6 +555,9 @@ export async function testCodeRouting(
           visitorKey: createHash("sha256")
             .update(sample.visitor || "visitor")
             .digest("hex"),
+          location: sample.location
+            ? { ...sample.location, source: "gps" }
+            : null,
         },
         row.destinationUrl,
       );

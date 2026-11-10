@@ -1,7 +1,7 @@
 ---
 title: Cookie Policy
 description: Every cookie and browser storage item QRdx uses, what it is for, how long it lasts, and how to change your choices.
-lastUpdated: 2026-11-08
+lastUpdated: 2026-11-11
 ---
 
 import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
@@ -86,6 +86,7 @@ QRdx's own banner, analytics and feedback widget never load on the pages your co
 | Item | Purpose | Lifetime |
 | --- | --- | --- |
 | `qrdx_unlock_<code>` (cookie) | Remembers that the visitor entered the right password for a protected code | 6 hours |
+| `qrdx_loc` (cookie) | Links a hosted page to the scan that opened it, so a location the visitor chooses to share is added to that scan. Set only right after a scan, on hosted pages of codes whose owner turned on precise location. Removed once the location is shared. | 15 minutes |
 | `qrdx_consent:<page>` (localStorage) | The visitor's choice about the owner's tracking pixels | Until cleared |
 | `qrdx:coupon:<page>:<coupon>` (localStorage) | Remembers that a coupon was already redeemed on this device | Until cleared |
 
@@ -101,4 +102,4 @@ Related pages: [Privacy Policy](/legal/privacy-policy), [Subprocessors](/legal/s
 
 ---
 
-**Changes:** 1 November 2026. First version, listing every cookie and storage item in the current app. Added Umami (no cookies), the `qrdx_analytics` cookie and the `qrdx:analytics-auth` item.
+**Changes:** 11 November 2026. Added the `qrdx_loc` cookie for hosted pages of codes that ask for precise location. 1 November 2026. First version, listing every cookie and storage item in the current app. Added Umami (no cookies), the `qrdx_analytics` cookie and the `qrdx:analytics-auth` item.

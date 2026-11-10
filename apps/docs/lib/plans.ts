@@ -67,6 +67,13 @@ export interface PlanLimits {
   linkControls: boolean;
   /** Device/geo/time/language rules, A/B splits and UTM (lib/redirect/routing.ts) */
   routing: boolean;
+  /**
+   * A code may ask scanners for their precise location (opt-in per code, the
+   * scanner decides in the browser): GPS scan points in analytics and
+   * geofence rules that use them (lib/scan-location). Free keeps IP-based
+   * location.
+   */
+  preciseLocation: boolean;
   /** Retargeting pixels */
   pixels: boolean;
   /** Conversion tracking */
@@ -115,6 +122,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     auditLog: false,
     linkControls: false,
     routing: false,
+    preciseLocation: false,
     pixels: false,
     conversions: false,
     emailAlerts: false,
@@ -149,6 +157,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     auditLog: false,
     linkControls: true,
     routing: true,
+    preciseLocation: true,
     pixels: true,
     conversions: false,
     emailAlerts: true,
@@ -185,6 +194,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     auditLog: true,
     linkControls: true,
     routing: true,
+    preciseLocation: true,
     pixels: true,
     conversions: true,
     emailAlerts: true,

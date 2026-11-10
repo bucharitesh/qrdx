@@ -360,6 +360,8 @@ export function serializeCode(code: QrCodeView) {
     createdAt: code.createdAt.toISOString(),
     updatedAt: code.updatedAt.toISOString(),
     organizationId: code.organizationId,
+    // Asks scanners for precise location (lib/scan-location; Pro and Business).
+    preciseLocation: code.preciseLocation === true,
   };
 }
 

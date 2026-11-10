@@ -20,7 +20,7 @@ interface CustomHost {
 
 /** The only API routes served on custom domains (tagged with the domain id). */
 const PAGE_API_PATH =
-  /^\/api\/(?:events\/?|(?:forms|vcard|calendar)\/[^/]+\/?)$/;
+  /^\/api\/(?:events\/?|scan-location\/?|(?:forms|vcard|calendar)\/[^/]+\/?)$/;
 
 const CACHE_TTL_MS = 60_000;
 const CACHE_MAX_ENTRIES = 1000;
@@ -123,7 +123,8 @@ a{display:inline-block;margin-top:28px;color:var(--fg);font-size:14px;font-weigh
  * hosts and unknown hosts, which continue through the normal app.
  * Verified domains: `/<slug>` → `/q/<slug>` and `/p/<slug>` → `/p/<slug>`
  * (both tagged with the domain id), `/api/forms/<id>`, `/api/events`,
- * `/api/vcard/<slug>` and `/api/calendar/<slug>` pass through (tagged too),
+ * `/api/scan-location`, `/api/vcard/<slug>` and `/api/calendar/<slug>` pass
+ * through (tagged too),
  * `/` → a small page, everything else 404.
  * Pending domains serve nothing.
  */

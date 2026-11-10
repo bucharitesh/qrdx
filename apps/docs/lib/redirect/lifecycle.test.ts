@@ -37,6 +37,8 @@ function makeCode(overrides: Partial<RedirectCode> = {}): RedirectCode {
     routing: null,
     utm: null,
     pixels: null,
+    userId: "user_1",
+    organizationId: null,
     ...overrides,
   };
 }

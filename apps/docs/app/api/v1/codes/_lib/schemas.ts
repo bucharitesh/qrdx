@@ -102,9 +102,21 @@ function checkKindChange(
   }
 }
 
+/** Ask scanners for precise location (lib/scan-location): Pro and Business to turn on. */
+const preciseLocationField = z
+  .boolean()
+  .optional()
+  .describe(
+    "Ask scanners for their precise location (Pro and Business). Redirect codes show a short step with Allow and Skip; hosted pages ask on the page. Off by default; turning it off never needs a plan.",
+  );
+
 /** PATCH /v1/codes/{id} body: the editable fields, plus `archived`. */
 export const patchCodeSchema = updateCodeFields
-  .extend({ archived: z.boolean().optional(), ...codeKindFields })
+  .extend({
+    archived: z.boolean().optional(),
+    ...codeKindFields,
+    preciseLocation: preciseLocationField,
+  })
   .superRefine(checkKindChange)
   .refine(hasAnyField, { message: "Nothing to update" });
 
@@ -155,6 +167,7 @@ export const patchCodeInputSchema = updateCodeFields
     archived: z.boolean().optional(),
     style: codeStyleInputSchema.optional(),
     ...codeKindFields,
+    preciseLocation: preciseLocationField,
   })
   .superRefine(checkKindChange)
   .refine(hasAnyField, { message: "Nothing to update" });

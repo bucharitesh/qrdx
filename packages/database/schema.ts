@@ -3,6 +3,7 @@ import {
   type AnyPgColumn,
   bigint,
   boolean,
+  doublePrecision,
   index,
   integer,
   json,
@@ -1174,6 +1175,10 @@ export type ScanDeviceType = (typeof SCAN_DEVICE_TYPES)[number];
 export const SCAN_SOURCES = ["qr", "nfc"] as const;
 export type ScanSource = (typeof SCAN_SOURCES)[number];
 
+/** Where a scan's location comes from (qr_scan.location_source, manual-sql/2026-11-11-gps.sql). */
+export const SCAN_LOCATION_SOURCES = ["gps", "ip"] as const;
+export type ScanLocationSource = (typeof SCAN_LOCATION_SOURCES)[number];
+
 /** "redirect": /q/<slug> 302s to destination_url. "page": it opens the hosted page at /p/<slug>. */
 export const QR_CODE_KINDS = ["redirect", "page"] as const;
 export type QrCodeKind = (typeof QR_CODE_KINDS)[number];
@@ -1319,6 +1324,15 @@ export const qrScan = pgTable(
     // NFC taps (manual-sql/2026-11-11-nfc.sql): "qr" or "nfc"; null = before
     // sources were stored, counted as a QR scan.
     source: text("source", { enum: SCAN_SOURCES }),
+    // ── Precise location (manual-sql/2026-11-11-gps.sql) ──
+    // Only when the code asks (pixels.preciseLocation, Pro and Business) and
+    // the scanner allowed it in the browser: rounded to 3 decimals (~100 m).
+    latitude: doublePrecision("latitude"),
+    longitude: doublePrecision("longitude"),
+    /** Accuracy the browser reported, whole meters */
+    locationAccuracyM: integer("location_accuracy_m"),
+    /** "gps": shared; "ip": asked, not shared (network location only); null: not asked */
+    locationSource: text("location_source", { enum: SCAN_LOCATION_SOURCES }),
   },
   (table) => [
     index("qr_scan_qr_code_id_scanned_at_idx").on(

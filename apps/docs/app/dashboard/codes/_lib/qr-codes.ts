@@ -49,6 +49,7 @@ import { PLAN_NAMES } from "@/lib/pricing";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
 import { screenNewCodes, screenUrlChange } from "@/lib/safety/destinations";
+import { asksPreciseLocation } from "@/lib/scan-location/server";
 import {
   type ActiveScope,
   getActiveScope,
@@ -236,6 +237,8 @@ export interface QrCodeView {
   updatedAt: Date;
   organizationId: string | null;
   createdBy: string;
+  /** Asks scanners for precise location (pixels.preciseLocation, lib/scan-location) */
+  preciseLocation?: boolean;
 }
 
 type QrCodeRow = typeof qrCode.$inferSelect;
@@ -273,6 +276,7 @@ export function toCodeView(
     updatedAt: row.updatedAt,
     organizationId: row.organizationId,
     createdBy: row.userId,
+    preciseLocation: asksPreciseLocation(row.pixels),
   };
 }
 

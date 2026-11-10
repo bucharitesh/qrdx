@@ -5,7 +5,14 @@ import { qrScan, SCAN_DEVICE_TYPES, type ScanDeviceType } from "@repo/database";
 import { and, gte, inArray, lt, type SQL, sql } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "@/lib/env";
+import { networkCoordinates } from "@/lib/request-geo";
 import { getClientIp } from "@/lib/request-guards";
+import {
+  type LatLng,
+  MAX_GEOFENCE_RADIUS_M,
+  MIN_GEOFENCE_RADIUS_M,
+  withinRadius,
+} from "@/lib/scan-location/geo";
 import {
   parseUserAgent,
   preferredLanguage,
@@ -17,7 +24,7 @@ import type { Awaitable, RedirectCode } from "./code";
 /**
  * Marketing settings of a dynamic code, stored as JSON on qr_code:
  * - `routing`: ordered rules (device/OS, country/region, schedule, dates,
- *   Accept-Language, scan count) → a URL or a weighted A/B split. First
+ *   Accept-Language, scan count, geofence) → a URL or a weighted A/B split. First
  *   enabled rule whose conditions all match wins; none → destination_url.
  * - `utm`: query parameters appended to the final URL (never overriding
  *   parameters the URL already has).
@@ -179,6 +186,25 @@ export const routingConditionSchema = z.discriminatedUnion("type", [
     count: z.int().min(1).max(1_000_000_000),
     ...negatable,
   }),
+  // ── Geofence (lib/scan-location) ──
+  z.object({
+    type: z.literal("geofence"),
+    /** Center of the circle, decimal degrees */
+    latitude: z
+      .number()
+      .min(-90, "Latitude goes from -90 to 90")
+      .max(90, "Latitude goes from -90 to 90"),
+    longitude: z
+      .number()
+      .min(-180, "Longitude goes from -180 to 180")
+      .max(180, "Longitude goes from -180 to 180"),
+    /** Meters */
+    radius: z
+      .number()
+      .min(MIN_GEOFENCE_RADIUS_M, "The radius must be at least 100 m")
+      .max(MAX_GEOFENCE_RADIUS_M, "The radius can be up to 500 km"),
+    ...negatable,
+  }),
 ]);
 
 const variantSchema = z.object({
@@ -318,6 +344,13 @@ export const pixelConfigSchema = z.object({
   consent: z.enum(["auto", "always"]).default("auto"),
   /** Append qrdx_sid to the destination for conversion tracking (Business) */
   conversions: z.boolean().default(false),
+  /**
+   * Ask scanners for their precise location (Pro and Business; off unless
+   * the owner turns it on). Redirect codes show a short "Share your
+   * location?" step, hosted pages ask in-page (lib/scan-location). Lives
+   * here so the short-link lookup reads no new column.
+   */
+  preciseLocation: z.boolean().optional(),
 });
 
 export type PixelConfig = z.output<typeof pixelConfigSchema>;
@@ -385,6 +418,17 @@ export interface RoutingInput {
   scanNumber: number;
   /** Daily visitor hash, the same value recordScan stores in qr_scan.visitor_hash */
   visitorKey: string;
+  /**
+   * Where the scanner is, for geofence conditions: the precise location they
+   * shared in the location step ("gps"), else the network location when the
+   * platform provides coordinates ("ip", Vercel's IP geolocation). Missing =
+   * unknown: geofences don't match.
+   */
+  location?: ScanPoint | null;
+}
+
+export interface ScanPoint extends LatLng {
+  source: "gps" | "ip";
 }
 
 export function routingInputFromRequest(
@@ -406,7 +450,14 @@ export function routingInputFromRequest(
     now,
     scanNumber: code.scanCount + 1,
     visitorKey: visitorHash(getClientIp(request), ua, now),
+    location: networkPoint(headers),
   };
+}
+
+/** The platform's IP-based coordinates (lib/request-geo.ts), as a scan point. */
+export function networkPoint(headers: Headers): ScanPoint | null {
+  const point = networkCoordinates(headers);
+  return point ? { ...point, source: "ip" } : null;
 }
 
 // ─── Evaluation ──────────────────────────────────────────────────────────────
@@ -519,6 +570,11 @@ function conditionHolds(
       return condition.operator === "first"
         ? input.scanNumber <= condition.count
         : input.scanNumber > condition.count;
+    case "geofence":
+      return Boolean(
+        input.location &&
+          withinRadius(input.location, condition, condition.radius),
+      );
   }
 }
 
@@ -749,6 +805,14 @@ export interface RoutingContext {
    * records the scan (after the response), so recording never delays the redirect.
    */
   variant?: string | null;
+  /**
+   * The precise location the scanner shared in the location step
+   * (lib/scan-location): geofence rules use it instead of the network
+   * location.
+   */
+  location?: ScanPoint | null;
+  /** This scan's number when it was already counted (the location step) */
+  scanNumber?: number;
 }
 
 /** qr_scan.variant value for a split rule's variant. */
@@ -789,7 +853,11 @@ export function resolveDestination(
   const { url, rule, variant } = routing?.rules.length
     ? evaluateRouting(
         routing,
-        routingInputFromRequest(code, request, context.now),
+        {
+          ...routingInputFromRequest(code, request, context.now),
+          ...(context.location && { location: context.location }),
+          ...(context.scanNumber && { scanNumber: context.scanNumber }),
+        },
         code.destinationUrl,
       )
     : { url: code.destinationUrl, rule: null, variant: null };
@@ -809,7 +877,8 @@ const coalesceFalse = (expr: SQL | undefined) =>
 
 /**
  * SQL over qr_scan columns equivalent to `matchesCondition`, or null when the
- * condition depends on data scans don't store (language, scan number).
+ * condition depends on data scans don't store (language, scan number, the
+ * location a geofence used: only shared GPS points are stored).
  */
 function conditionSql(condition: RoutingCondition): SQL | null {
   let holds: SQL;
@@ -865,6 +934,7 @@ function conditionSql(condition: RoutingCondition): SQL | null {
     }
     case "language":
     case "scans":
+    case "geofence":
       return null;
   }
   return condition.not ? sql`not ${holds}` : holds;
