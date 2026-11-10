@@ -196,8 +196,28 @@ describe("bwip-js stays on /barcode-generator", () => {
         'from "@/components/sections/tools/barcode-generator"',
       ),
     );
-    expect(users).toEqual([
-      path.join("app", "(home)", "barcode-generator", "page.tsx"),
-    ]);
+    // The public page (through save-barcode.tsx) and the dashboard's editor.
+    expect(users.sort()).toEqual(
+      [
+        path.join(
+          "app",
+          "dashboard",
+          "barcodes",
+          "_components",
+          "barcode-editor.tsx",
+        ),
+        path.join("components", "sections", "tools", "save-barcode.tsx"),
+      ].sort(),
+    );
+  });
+
+  it("and the server draws with the Node build, in one server-only module", () => {
+    const importers = files.filter((file) =>
+      /from "bwip-js(?:\/node)?"/.test(read(file)),
+    );
+    expect(importers).toEqual([path.join("lib", "barcode", "server.ts")]);
+    expect(read(path.join("lib", "barcode", "server.ts"))).toMatch(
+      /^import "server-only";/,
+    );
   });
 });
