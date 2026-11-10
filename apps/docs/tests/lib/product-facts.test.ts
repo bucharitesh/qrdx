@@ -13,12 +13,12 @@ import { remark } from "remark";
 import remarkMdx from "remark-mdx";
 import { describe, expect, it } from "vitest";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
-import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
   MAX_BULK_TOOL_ROWS,
   MAX_CODES_PER_REQUEST,
   MAX_IMPORT_ROWS,
 } from "@/lib/bulk-limits";
+import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
   fillFacts,
   fillFactsDeep,
