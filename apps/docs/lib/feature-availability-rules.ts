@@ -205,7 +205,8 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "SLACK_SIGNING_SECRET",
       ...(ctx.production ? ["INTEGRATION_ENCRYPTION_KEY"] : []),
     ],
-    paths: ["/docs/slack-bot"],
+    // The docs page and the /slack landing page (app/(home)/slack).
+    paths: ["/docs/slack-bot", "/slack"],
     extrasOf: "slack",
   },
   discordBot: {
@@ -214,7 +215,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     // app's key; the id builds the "Add to Discord" link.
     name: "Discord bot",
     requires: () => ["DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY"],
-    paths: ["/docs/discord-bot"],
+    paths: ["/docs/discord-bot", "/discord"],
     catalogSlugs: ["discord-bot"],
     // The webhook alerts entry mentions the bot only where it can be added.
     extrasOf: "discord",
@@ -229,7 +230,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "TELEGRAM_WEBHOOK_SECRET",
       "TELEGRAM_BOT_USERNAME",
     ],
-    paths: ["/docs/telegram-bot"],
+    paths: ["/docs/telegram-bot", "/telegram"],
     catalogSlugs: ["telegram"],
   },
   affiliates: {

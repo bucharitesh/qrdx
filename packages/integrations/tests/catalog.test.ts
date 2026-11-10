@@ -124,6 +124,17 @@ describe("catalog data", () => {
     }
   });
 
+  it("links the chat bots to their landing pages on this site", () => {
+    expect(getCatalogEntry("slack")?.page?.href).toBe("/slack");
+    expect(getCatalogEntry("telegram")?.page?.href).toBe("/telegram");
+    expect(getCatalogEntry("discord-bot")?.page?.href).toBe("/discord");
+    for (const entry of getIntegrationCatalog()) {
+      if (!entry.page) continue;
+      expect(entry.page.href, entry.slug).toMatch(/^\/[a-z]/);
+      expect(entry.page.label, entry.slug).toBeTruthy();
+    }
+  });
+
   it("only relates entries that exist", () => {
     for (const entry of getIntegrationCatalog()) {
       for (const slug of entry.related ?? []) {

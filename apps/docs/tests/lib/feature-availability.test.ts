@@ -415,6 +415,20 @@ describe("the Slack bot", () => {
     expect(isPathShown(off.hiddenPaths, "/docs/slack-bot")).toBe(false);
   });
 
+  it("hides each chat bot's landing page with its bot", () => {
+    const off = toPublicAvailability(computeFeatures(ctx({}, vercelProd)));
+    for (const path of ["/slack", "/telegram", "/discord"]) {
+      expect(isPathShown(off.hiddenPaths, path), path).toBe(false);
+    }
+    // Discord switched off, the others set up.
+    const { DISCORD_APPLICATION_ID, ...withoutDiscord } = EVERYTHING;
+    expect(DISCORD_APPLICATION_ID).toBeDefined();
+    const some = toPublicAvailability(
+      computeFeatures(ctx(withoutDiscord, vercelProd)),
+    );
+    expect(some.hiddenPaths).toEqual(["/docs/discord-bot", "/discord"]);
+  });
+
   it("shows the Slack entry's bot parts only where the bot works", () => {
     initializeIntegrations();
     const slack = getCatalogBySurface("integrations").find(
