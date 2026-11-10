@@ -4,8 +4,9 @@ import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { baseUrl } from "@/lib/metadata";
 import { logoFileLink } from "@/lib/qr-api/logo";
 import { FILE_ID } from "@/lib/qr-api/style";
-import { logoIconDataUrl } from "@/lib/qr-design/logo";
-import { LOGO_ICON_IDS, type LogoIconId } from "@/lib/qr-design/style";
+import { logoIconDataUrl, UnknownBrandLogoError } from "@/lib/qr-design/logo";
+import { parseLogoIcon } from "@/lib/qr-design/logo-icon";
+import { LOGO_ICON_IDS } from "@/lib/qr-design/style";
 import type { ActiveScope } from "@/lib/scope";
 import { ValidationError } from "@/types/errors";
 
@@ -56,14 +57,22 @@ async function resolveOne(
     };
   }
   if (logoIcon !== undefined) {
-    if (!(LOGO_ICON_IDS as readonly unknown[]).includes(logoIcon)) {
-      throw invalid("logoIcon", `Must be one of ${LOGO_ICON_IDS.join(", ")}`);
+    if (!parseLogoIcon(logoIcon)) {
+      throw invalid(
+        "logoIcon",
+        `Must be a quick icon (${LOGO_ICON_IDS.join(", ")}) or a Simple Icons brand slug, optionally with :black or :white`,
+      );
     }
-    return {
-      ...rest,
-      showLogo: rest.showLogo ?? true,
-      customLogo: logoIconDataUrl(logoIcon as LogoIconId),
-    };
+    let customLogo: string;
+    try {
+      customLogo = logoIconDataUrl(logoIcon as string);
+    } catch (error) {
+      if (error instanceof UnknownBrandLogoError) {
+        throw invalid("logoIcon", error.message);
+      }
+      throw error;
+    }
+    return { ...rest, showLogo: rest.showLogo ?? true, customLogo };
   }
   const logo = rest.customLogo;
   if (logo === undefined || logo === null) return rest;
