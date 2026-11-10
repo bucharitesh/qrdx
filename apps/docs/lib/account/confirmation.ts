@@ -168,6 +168,7 @@ export const CONFIRMATION_ACTIONS = {
   "add-slack-channel": "add a Slack channel",
   "connect-data-out": "send your scans or form answers to another tool",
   "link-slack-account": "let a Slack account make codes as you",
+  "set-payout-email": "change where your affiliate payouts go",
 } as const;
 
 export type ConfirmationAction = keyof typeof CONFIRMATION_ACTIONS;

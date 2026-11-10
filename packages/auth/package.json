@@ -19,6 +19,8 @@
     "./passkey-check": "./passkey-check.ts",
     "./passkey-client": "./passkey-client.ts",
     "./passkey-rp": "./passkey-rp.ts",
+    "./referral": "./referral.ts",
+    "./referral-keys": "./referral-keys.ts",
     "./session-lifetime": "./session-lifetime.ts",
     "./sign-in-method": "./sign-in-method.ts",
     "./keys": "./keys.ts",

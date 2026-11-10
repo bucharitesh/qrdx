@@ -61,6 +61,8 @@ describe("sidebar areas", () => {
       "Notifications",
       "Integrations",
       "Authorized apps",
+      // Hidden where the program is off (feature-availability-rules.ts).
+      "Affiliate program",
     ]);
     expect(areas.settings.back?.href).toBe("/dashboard");
   });

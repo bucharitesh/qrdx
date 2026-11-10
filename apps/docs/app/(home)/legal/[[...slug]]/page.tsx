@@ -2,6 +2,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { isPathAvailable } from "@/lib/feature-availability";
 import { createMetadata } from "@/lib/metadata";
 import { seoOverride } from "@/lib/seo-overrides";
 import { getLegalPageImage, legalSource } from "@/lib/source";
@@ -14,14 +15,16 @@ export default async function LegalPage(
   const params = await props.params;
   const page = legalSource.getPage(params.slug);
 
-  if (!page) {
+  // A page about a feature this server doesn't run (the affiliate terms
+  // where the program is off: lib/feature-availability-rules.ts).
+  if (!(page && isPathAvailable(page.url))) {
     notFound();
   }
 
   const { body: Mdx, lastModified } = page.data;
   // The page tree keeps the order from content/legal/meta.json.
   const pages = legalSource.pageTree.children.flatMap((node) =>
-    node.type === "page" ? [node] : [],
+    node.type === "page" && isPathAvailable(node.url) ? [node] : [],
   );
 
   return (
@@ -90,7 +93,9 @@ export async function generateMetadata(
   const params = await props.params;
   const page = legalSource.getPage(params.slug);
 
-  if (!page) {
+  // A page about a feature this server doesn't run (the affiliate terms
+  // where the program is off: lib/feature-availability-rules.ts).
+  if (!(page && isPathAvailable(page.url))) {
     notFound();
   }
 

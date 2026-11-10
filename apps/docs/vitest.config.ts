@@ -42,6 +42,14 @@ const config: ViteUserConfig = {
     environment: "node",
     include: ["tests/**/*.test.{ts,tsx}"],
     testTimeout: 30_000,
+    server: {
+      deps: {
+        // Imports "next/server" without an extension, which Node's ESM
+        // resolver refuses outside Next; through Vite it resolves (the
+        // Polar webhook route's tests load it).
+        inline: ["@polar-sh/nextjs"],
+      },
+    },
     // Obviously fake values: lib/env validates on import. Nothing here
     // connects to a database or any external service.
     env: {

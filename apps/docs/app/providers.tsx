@@ -12,6 +12,7 @@ import { useCspNonce } from "@/components/csp-nonce";
 import { GetProDialogWrapper } from "@/components/get-pro-dialog-wrapper";
 import { NotOnCustomerPages } from "@/components/landing/not-on-customer-pages";
 import { NavigationHistory } from "@/components/navigation-history";
+import { ReferralCapture } from "@/components/referral-capture";
 import { SoundProvider } from "@/components/sound/sound-provider";
 import type { PublicAvailability } from "@/lib/feature-availability-rules";
 import { ChatProvider } from "@/lib/hooks/use-chat-context";
@@ -42,6 +43,10 @@ export function Provider({
               {children}
               {/* Pathnames of this tab's pages, in memory only: where a link into the playground came from. */}
               <NavigationHistory />
+              {/* An affiliate link's code, in this tab's memory only, for a sign-up in the same visit. */}
+              <NotOnCustomerPages>
+                <ReferralCapture />
+              </NotOnCustomerPages>
               {/* Cookie banner + consent-gated PostHog/Featurebase. Never on customer pages (/p, /q gates, /ended; only owner-set pixels load there) or the no-tracking scanner (/scan). */}
               <NotOnCustomerPages>
                 <ConsentManager />
