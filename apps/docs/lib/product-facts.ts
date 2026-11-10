@@ -35,6 +35,7 @@ import {
 } from "./affiliates/terms";
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
+import { BRAND_LOGO_COUNT } from "./brand-logos/catalog.generated";
 import {
   formatCount,
   MAX_BULK_TOOL_ROWS,
@@ -63,6 +64,8 @@ export const PRODUCT_FACTS = {
   barcodeFormats: BARCODE_FORMATS.length,
   /** Hosted page types in the New code picker (lib/landing/page-type-ids.ts). */
   hostedPageTypes: PAGE_TYPE_IDS.length,
+  /** Brands in the logo gallery (Simple Icons), as copy writes it ("3,467"). */
+  brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
   // The affiliate program's terms (lib/affiliates/terms.ts), for the legal
   // and help pages; the code reads the same constants.
   /** The commission, as copy writes it: "30" (followed by "%"). */
