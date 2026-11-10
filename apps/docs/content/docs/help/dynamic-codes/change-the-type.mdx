@@ -1,0 +1,49 @@
+---
+title: Change what a printed code opens
+description: Turn a website link code into a hosted page, or a page back into a link. The printed code keeps working.
+---
+
+A dynamic code opens either a website link or a hosted page, and you can switch between the two after printing. The short link doesn't change, so every printed copy opens the new page or link on its next scan, and scans keep counting on the same code.
+
+## Turn a website link into a page
+
+1. Open the code from **Codes** and click **Change type**.
+2. Pick a page type, then a template.
+3. Click **Continue to editor** and build the page.
+4. Click **Publish**.
+
+Scans keep going to the old link until you publish. If you leave the editor without publishing, nothing changes. Your unpublished edits stay in this browser.
+
+## Turn a page back into a link
+
+1. Open the code and click **Change type**.
+2. Choose **Website link**, enter the address and click **Switch to website link**.
+
+The page stays in **Pages**. To bring it back, open **Change type** again and pick it under **Switch back**.
+
+## Switch to another page type
+
+Pick a type under **Another page type**. The new page starts from the template you choose and takes what fits from the old one: the page name, settings and logo, plus any blocks the template also has, such as the header, links or contact details. The dialog lists what doesn't fit. That stays on the old page, which is kept in **Pages**.
+
+## What stays the same
+
+The short link, scan history, folder, tags, notes, QR design, password, schedule and scan limit don't change.
+
+Some settings only work with one type:
+
+- Smart routing, A/B tests, UTM parameters and conversion tracking apply to website links only.
+- Tracking pixels load on hosted pages only.
+
+They're kept when you switch and work again if you switch back. The code's **Settings** tab names any that are saved but not in use.
+
+## Plans
+
+A new page counts toward your plan's hosted pages, like any page you create. A page the code stops opening still counts until you delete it from **Pages**. Switching back to a page you already have doesn't add to the count. See [Plans and limits](/docs/plans-and-limits).
+
+## Undo a switch
+
+Each switch saves the code's previous settings in **Version history**. Restoring an earlier version switches the type back, as long as the page it opened still exists.
+
+## From the API
+
+Send `kind` with `PATCH /v1/codes/{id}`. See [Update a code](/docs/developers/api/update-code).
