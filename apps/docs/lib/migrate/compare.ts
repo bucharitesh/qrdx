@@ -110,6 +110,16 @@ export const COMPARE_MIGRATIONS: Record<string, CompareMigration> = {
     "ME-QR",
     "ME-QR has no export: list Name, QR link and Destination URL for each code in a spreadsheet.",
   ),
+  // Static types keep working; link and file codes go through its short links.
+  "qrcode-ai": {
+    ...file(
+      "csv",
+      "QR Code AI",
+      "QR Code AI's public pages don't mention a code-list export: list Name, Short link and Destination URL for each code in a spreadsheet.",
+    ),
+    printed:
+      "Wi-Fi, vCard and other static codes keep working without QR Code AI. Link, PDF and other dynamic codes go through its short links, which its FAQ says need Premium to stay active after the free trial: re-point each one to its new QRdx link (the mapping CSV lists them) and keep that account active until you reprint.",
+  },
   hovercode: exportAsCsv("hovercode", "Hovercode"),
   scanova: exportAsCsv("scanova", "Scanova"),
   qrfy: exportAsCsv("csv", "QRFY"),
