@@ -4,6 +4,12 @@
  */
 
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
+import {
+  isAmazonUrl,
+  isGoogleDriveFileUrl,
+  isOnDomain,
+  parseWebUrl,
+} from "@/utils/url-host";
 
 interface ParsedURL {
   type: ContentType;
@@ -11,16 +17,16 @@ interface ParsedURL {
 }
 
 /**
- * Parse a URL and detect its content type with extracted values
+ * Parse a URL and detect its content type with extracted values. The site is
+ * decided by the address's own hostname, never by text in its path or query.
  */
 export function parseURL(url: string): ParsedURL | null {
   const trimmedUrl = url.trim();
+  const web = parseWebUrl(trimmedUrl);
+  const on = (...domains: string[]) => isOnDomain(web, ...domains);
 
   // Instagram
-  if (
-    trimmedUrl.includes("instagram.com") ||
-    trimmedUrl.includes("instagr.am")
-  ) {
+  if (on("instagram.com", "instagr.am")) {
     const usernameMatch = trimmedUrl.match(
       /(?:instagram\.com|instagr\.am)\/([^/?]+)/,
     );
@@ -33,7 +39,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Facebook
-  if (trimmedUrl.includes("facebook.com") || trimmedUrl.includes("fb.com")) {
+  if (on("facebook.com", "fb.com")) {
     return {
       type: "facebook",
       config: { type: "facebook", profileUrl: trimmedUrl },
@@ -41,11 +47,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Twitter/X
-  if (
-    trimmedUrl.includes("twitter.com") ||
-    trimmedUrl.includes("x.com") ||
-    trimmedUrl.match(/^@\w+$/)
-  ) {
+  if (on("twitter.com", "x.com") || trimmedUrl.match(/^@\w+$/)) {
     const usernameMatch = trimmedUrl.match(/(?:twitter\.com|x\.com)\/([^/?]+)/);
     if (usernameMatch?.[1]) {
       return {
@@ -63,7 +65,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // LinkedIn
-  if (trimmedUrl.includes("linkedin.com")) {
+  if (on("linkedin.com")) {
     return {
       type: "linkedin",
       config: { type: "linkedin", profileUrl: trimmedUrl },
@@ -71,7 +73,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // TikTok
-  if (trimmedUrl.includes("tiktok.com")) {
+  if (on("tiktok.com")) {
     const usernameMatch = trimmedUrl.match(/tiktok\.com\/@([^/?]+)/);
     if (usernameMatch?.[1]) {
       return {
@@ -82,11 +84,11 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // YouTube
-  if (trimmedUrl.includes("youtube.com") || trimmedUrl.includes("youtu.be")) {
-    // Check if it's a video or channel
+  if (on("youtube.com", "youtu.be")) {
+    // Check if it's a video or channel (youtu.be links are always videos)
     if (
       trimmedUrl.includes("/watch") ||
-      trimmedUrl.includes("youtu.be/") ||
+      on("youtu.be") ||
       trimmedUrl.includes("/shorts/")
     ) {
       return {
@@ -101,7 +103,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Reddit
-  if (trimmedUrl.includes("reddit.com")) {
+  if (on("reddit.com")) {
     const subredditMatch = trimmedUrl.match(/reddit\.com\/r\/([^/?]+)/);
     const userMatch = trimmedUrl.match(/reddit\.com\/u(?:ser)?\/([^/?]+)/);
 
@@ -120,7 +122,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Pinterest
-  if (trimmedUrl.includes("pinterest.com")) {
+  if (on("pinterest.com")) {
     const usernameMatch = trimmedUrl.match(/pinterest\.com\/([^/?]+)/);
     if (usernameMatch?.[1]) {
       return {
@@ -131,7 +133,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Snapchat
-  if (trimmedUrl.includes("snapchat.com")) {
+  if (on("snapchat.com")) {
     const usernameMatch = trimmedUrl.match(/snapchat\.com\/add\/([^/?]+)/);
     if (usernameMatch?.[1]) {
       return {
@@ -142,7 +144,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Threads
-  if (trimmedUrl.includes("threads.net")) {
+  if (on("threads.net")) {
     const usernameMatch = trimmedUrl.match(/threads\.net\/@([^/?]+)/);
     if (usernameMatch?.[1]) {
       return {
@@ -153,7 +155,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Spotify
-  if (trimmedUrl.includes("spotify.com") || trimmedUrl.startsWith("spotify:")) {
+  if (on("spotify.com") || trimmedUrl.startsWith("spotify:")) {
     return {
       type: "spotify",
       config: { type: "spotify", uri: trimmedUrl },
@@ -161,7 +163,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Venmo
-  if (trimmedUrl.includes("venmo.com")) {
+  if (on("venmo.com")) {
     const usernameMatch = trimmedUrl.match(/venmo\.com\/([^/?]+)/);
     if (usernameMatch?.[1]) {
       return {
@@ -177,7 +179,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // PayPal
-  if (trimmedUrl.includes("paypal.com") || trimmedUrl.includes("paypal.me")) {
+  if (on("paypal.com", "paypal.me")) {
     return {
       type: "paypal",
       config: { type: "paypal", paypalUrl: trimmedUrl },
@@ -185,7 +187,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Amazon
-  if (trimmedUrl.includes("amazon.")) {
+  if (isAmazonUrl(web)) {
     return {
       type: "amazon",
       config: { type: "amazon", productUrl: trimmedUrl },
@@ -193,7 +195,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Flipkart
-  if (trimmedUrl.includes("flipkart.com")) {
+  if (on("flipkart.com")) {
     return {
       type: "flipkart",
       config: { type: "flipkart", productUrl: trimmedUrl },
@@ -201,7 +203,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Etsy
-  if (trimmedUrl.includes("etsy.com")) {
+  if (on("etsy.com")) {
     return {
       type: "etsy",
       config: { type: "etsy", shopUrl: trimmedUrl },
@@ -209,7 +211,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Cal.com
-  if (trimmedUrl.includes("cal.com")) {
+  if (on("cal.com")) {
     return {
       type: "calcom",
       config: { type: "calcom", bookingUrl: trimmedUrl },
@@ -217,7 +219,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Dub.sh
-  if (trimmedUrl.includes("dub.sh") || trimmedUrl.includes("dub.co")) {
+  if (on("dub.sh", "dub.co")) {
     return {
       type: "dubsh",
       config: { type: "dubsh", shortUrl: trimmedUrl },
@@ -226,8 +228,8 @@ export function parseURL(url: string): ParsedURL | null {
 
   // Google Forms (Attendance)
   if (
-    trimmedUrl.includes("docs.google.com/forms") ||
-    trimmedUrl.includes("forms.gle")
+    (on("docs.google.com") && web?.pathname.startsWith("/forms")) ||
+    on("forms.gle")
   ) {
     return {
       type: "attendance",
@@ -236,12 +238,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Google Drive and Google Workspace files
-  if (
-    trimmedUrl.includes("drive.google.com") ||
-    /docs\.google\.com\/(document|spreadsheets|presentation|drawings)\/d\//.test(
-      trimmedUrl,
-    )
-  ) {
+  if (isGoogleDriveFileUrl(web)) {
     return {
       type: "google-drive",
       config: {
@@ -254,9 +251,8 @@ export function parseURL(url: string): ParsedURL | null {
 
   // Google Maps
   if (
-    trimmedUrl.includes("google.com/maps") ||
-    trimmedUrl.includes("maps.google.com") ||
-    trimmedUrl.includes("goo.gl/maps")
+    on("maps.google.com") ||
+    (on("google.com", "goo.gl") && web?.pathname.startsWith("/maps"))
   ) {
     const coordsMatch = trimmedUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
     const queryMatch = trimmedUrl.match(/[?&]q=([^&]+)/);
@@ -313,8 +309,8 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // WhatsApp
-  if (trimmedUrl.includes("wa.me") || trimmedUrl.includes("whatsapp.com")) {
-    const phoneMatch = trimmedUrl.match(/wa\.me\/(\d+)/);
+  if (on("wa.me")) {
+    const phoneMatch = web?.pathname.match(/^\/(\d+)/);
     const messageMatch = trimmedUrl.match(/[?&]text=([^&]+)/);
 
     if (phoneMatch?.[1]) {
