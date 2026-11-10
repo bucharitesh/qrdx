@@ -9,6 +9,7 @@
     "../dynamic-qr-codes",
     "../code-controls",
     "../smart-routing",
+    "../precise-location",
     "../tracking-and-conversions",
     "../nfc",
     "../notifications",

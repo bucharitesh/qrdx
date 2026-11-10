@@ -26,6 +26,9 @@ tableRows:
   - feature: Scan tracking
     qrdx: "Built in, unlimited scans"
     competitor: true
+  - feature: GPS scan locations and geofencing
+    qrdx: "Pro and Business, opt-in per code"
+    competitor: true
   - feature: Bulk generation
     qrdx: "Free CSV tool; bulk API on Pro"
     competitor: "Advanced plan and up"
@@ -59,13 +62,13 @@ QRdx fits people who want to start free and pay little: static codes need no acc
 
 ## Where QR TIGER is the better choice
 
-- You want **GPS scan locations** or geofencing. QR TIGER offers both; QRdx records country, region and city only.
 - You want a **native scanner app** or a **site in your language**. QR TIGER has an app and is available in about 28 languages; QRdx has a web scanner and is English only.
 - You create **very large batches** in one go. QR TIGER's Advanced plan generates up to 3,000 codes per batch; QRdx's API creates up to 100 per request.
 
 ## Key differences
 
 - **Pricing model:** QR TIGER charges by number of dynamic codes and API requests. QRdx's static codes are free; Pro ($5/mo or $48/yr) adds unlimited dynamic codes, longer analytics history and custom domains.
+- **Scan locations:** both offer GPS scan locations and geofencing. On QRdx they're part of Pro and Business: you turn on [precise location](/docs/precise-location) per code, each scanner chooses whether to share theirs, and other scans record country, region and city from the network.
 - **Free tier:** both allow unlimited static codes. QR TIGER adds 3 dynamic codes capped at 500 scans each; QRdx adds 10 with unlimited scans.
 - **When a plan ends:** QR TIGER's pricing page says codes stop working once the plan expires. QRdx dynamic codes keep redirecting on every plan, including after a cancellation ([Never-Hostage Guarantee](/guarantee)).
 - **Developer access:** QR TIGER's API allows 500 requests a month on Regular, 3,000 on Advanced and 10,000 on Premium. QRdx's REST API allows 1,000 requests a day on Free, 10,000 on Pro and 100,000 on Business, and the npm package runs in your own app with no quotas.

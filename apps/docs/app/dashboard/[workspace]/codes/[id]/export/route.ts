@@ -7,6 +7,7 @@ import {
   rangeStart,
   resolveScanRange,
   scansToCsv,
+  withoutPreciseLocation,
 } from "@/lib/scans";
 import { getActiveScope } from "@/lib/scope";
 
@@ -30,10 +31,17 @@ export async function GET(
       request.nextUrl.searchParams.get("range"),
       getPlanLimits(plan).analyticsRetentionDays,
     );
-    const scans = await listScans(code.id, {
-      from: rangeStart(days),
-      limit: MAX_EXPORT_ROWS,
-    });
+    // ── Precise location (lib/scan-location) ──
+    const limits = getPlanLimits(plan);
+    const scans = (
+      await listScans(code.id, {
+        from: rangeStart(days),
+        limit: MAX_EXPORT_ROWS,
+      })
+    ).map((scan) =>
+      // Precise location columns stay empty on plans without it.
+      limits.preciseLocation ? scan : withoutPreciseLocation(scan),
+    );
 
     return new Response(scansToCsv(scans), {
       headers: {

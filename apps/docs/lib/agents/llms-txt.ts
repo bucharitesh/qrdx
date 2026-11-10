@@ -136,6 +136,12 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
         "Send scans to different links by device, country, language, time or scan count; A/B tests and UTM tags",
     },
     {
+      title: "Precise location and geofencing",
+      url: "/docs/precise-location",
+      description:
+        "Opt-in GPS scan locations (rounded to about 100 m, Pro and Business) and routing by area",
+    },
+    {
       title: "Code controls",
       url: "/docs/code-controls",
       description: "Passwords, schedules, expiry dates and scan limits",

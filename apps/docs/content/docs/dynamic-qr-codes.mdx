@@ -73,6 +73,7 @@ What is recorded for each scan:
 - Device type, operating system and browser, detected from the user agent
 - The referrer's host name only, never the full URL. Most QR scans have no referrer.
 - A visitor hash: a salted SHA-256 of the IP address, user agent and day. It counts unique visitors per day; the IP address itself is never stored.
+- On Pro and Business, when the code [asks for precise location](/docs/precise-location) and the scanner allows it: their location rounded to 3 decimal places (about 100 m) and the accuracy their browser reported
 
 Known bots, link previews and browser prefetches are not counted.
 
@@ -164,4 +165,5 @@ Dynamic codes work on self-hosted instances too:
 - `NEXT_PUBLIC_SHORT_LINK_BASE_URL` sets the origin of short links. It defaults to your app URL.
 - `SCAN_HASH_SALT` sets the secret salt for visitor hashes. Without it, one is derived from `BETTER_AUTH_SECRET`.
 - Country, region and city come from Vercel's geo headers. Behind Cloudflare only the country is available (`CF-IPCountry`); elsewhere locations show as unknown.
+- Area rules use Vercel's IP coordinates (`x-vercel-ip-latitude`, `x-vercel-ip-longitude`) when a scanner didn't share a location. Elsewhere they only match scans with a shared location.
 - Rate limits apply when Upstash Redis is configured.

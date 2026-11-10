@@ -229,6 +229,10 @@ export function exportQueries(userId: string) {
           language: qrScan.language,
           variant: qrScan.variant,
           visitorHash: qrScan.visitorHash,
+          latitude: qrScan.latitude,
+          longitude: qrScan.longitude,
+          locationAccuracyM: qrScan.locationAccuracyM,
+          locationSource: qrScan.locationSource,
         })
         .from(qrScan)
         .where(

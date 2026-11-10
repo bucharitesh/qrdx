@@ -12,6 +12,7 @@ import {
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
+import { setCodePreciseLocation } from "@/lib/scan-location/settings";
 import {
   assertJson,
   MAX_BODY_BYTES,
@@ -54,14 +55,15 @@ export const PATCH = withApiQuotaHeaders(
       const scope = await resolveApiScope(req, "write");
       assertJson(req);
       const id = await codeId(context);
-      const { archived, kind, pageId, page, ...fields } = parseWithSchema(
-        patchCodeSchema,
-        await resolveCodeStyles(
-          scope,
-          await readJsonBody(req, MAX_BODY_BYTES),
-          async () => (await getCode(scope, id)).style?.customLogo ?? null,
-        ),
-      );
+      const { archived, kind, pageId, page, preciseLocation, ...fields } =
+        parseWithSchema(
+          patchCodeSchema,
+          await resolveCodeStyles(
+            scope,
+            await readJsonBody(req, MAX_BODY_BYTES),
+            async () => (await getCode(scope, id)).style?.customLogo ?? null,
+          ),
+        );
 
       // A new page is created like one from the dashboard (same per-user cap).
       if (page) await enforceCreateRateLimit(scope.userId);
@@ -82,6 +84,11 @@ export const PATCH = withApiQuotaHeaders(
       code ??= await getCode(scope, id);
       if (archived !== undefined) {
         code = await setCodeArchived(scope, id, archived);
+      }
+      // Precise location (lib/scan-location): stored in the code's pixel settings.
+      if (preciseLocation !== undefined) {
+        await setCodePreciseLocation(scope, id, preciseLocation);
+        code = await getCode(scope, id);
       }
       return Response.json(
         { data: serializeCode(code) },
