@@ -26,6 +26,10 @@ export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
   "/tools/print-size": ["app/(home)/tools/print-size/page.tsx"],
   "/tools/scan-checker": ["app/(home)/tools/scan-checker/page.tsx"],
   "/scan": ["app/(home)/scan/page.tsx"],
+  "/barcode-generator": [
+    "app/(home)/barcode-generator/page.tsx",
+    "lib/barcode/formats.ts",
+  ],
 };
 
 /** Every /qr-code-generator/<type> page's copy lives in one file. */

@@ -61,6 +61,9 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.1161.0
         version: 3.1161.0
+      '@bwip-js/browser':
+        specifier: 4.11.4
+        version: 4.11.4
       '@c15t/nextjs':
         specifier: 3.2.1
         version: 3.2.1(next@16.4.3(@babel/core@7.29.13)(@opentelemetry/api@1.9.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(typescript@6.0.3)
@@ -368,6 +371,9 @@ importers:
       dotenv:
         specifier: ^18.0.9
         version: 18.0.9
+      sharp:
+        specifier: 0.35.5
+        version: 0.35.5(@types/node@26.6.6)
       ts-morph:
         specifier: ^28.0.0
         version: 28.0.0
@@ -2032,6 +2038,9 @@ packages:
   '@bramus/specificity@2.4.3':
     resolution: {integrity: sha512-0GEz8qJWokkUVYQYRukmkSHIFNoBH8QTreeHrAFbvz1XFYc3Y+puhMs8PQ5x8GNugiC2l5jvDBXKLbBIByeSBw==}
     hasBin: true
+
+  '@bwip-js/browser@4.11.4':
+    resolution: {integrity: sha512-WZtwXE7YrBw+do7rKqqr2c7pprLa2qTKCA63to1pkwKEBQZ22eBX+L/X6MhNhXY/qP6nIbeHo73R7emRDJpzZA==}
 
   '@c15t/core@3.2.1':
     resolution: {integrity: sha512-DB4NsPBo9ZUZjdFMuiZzpJqWSHaMKtF8hFYm0YieLf8l+opzv8vfj8i59WgR+czarbkbx3gmT1i9Q2Zp48Hwcg==}
@@ -12669,6 +12678,8 @@ snapshots:
       css-tree: 3.2.1
     optional: true
 
+  '@bwip-js/browser@4.11.4': {}
+
   '@c15t/core@3.2.1(typescript@6.0.3)':
     dependencies:
       '@c15t/schema': 3.1.2(typescript@6.0.3)
@@ -21175,7 +21186,6 @@ snapshots:
       '@img/sharp-win32-ia32': 0.35.5
       '@img/sharp-win32-x64': 0.35.5
       '@types/node': 26.6.6
-    optional: true
 
   shebang-command@2.0.0:
     dependencies:
