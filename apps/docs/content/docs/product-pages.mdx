@@ -1,0 +1,60 @@
+---
+title: Product pages and GS1 Digital Link
+description: Ingredients, nutrition, certifications and care for a product behind a QR code on the pack, with GS1 Digital Link on your own domain.
+icon: Package
+---
+
+A **Product** page is a hosted page for a code printed on packaging, a label or a hang tag. It holds what the pack has no room for: the full ingredient list, allergens, a nutrition table, certifications, care and recycling instructions. As with every [hosted page](/docs/landing-pages), you can change it after printing and see every scan.
+
+## Create a product page
+
+1. Click **New code** and pick **Product**, or **New page** in [Pages & forms](/dashboard?to=pages).
+2. Pick a template:
+   - **Food**: ingredients, allergens and a nutrition table.
+   - **Wine & drinks**: ingredients and energy per 100 ml, an e-label for a bottle.
+   - **Beauty & care**: the full ingredient list, how to use it, warnings.
+   - **Product passport**: materials, where it was made, care, repair and end of life.
+3. Replace the sample text, numbers and photo with your product's, then click **Publish**.
+
+## The Product details block
+
+| Part | What it shows |
+| --- | --- |
+| Certifications and labels | Short labels such as "Certified organic" or "Recyclable packaging". The editor suggests common ones. Only list labels your product actually holds. |
+| Ingredients or materials | Plain text, line breaks kept |
+| Allergens | The 14 allergens food businesses must declare in the EU and UK, shown as "Contains: …", plus a note such as "May contain traces of peanuts" |
+| Nutrition | A table: what the values are per ("Per 100 g"), then each nutrient and its amount. Rows can be indented ("of which sugars"). Rows without an amount are hidden. |
+| More information | Sections that open on tap: care, recycling, warnings, origin or anything else |
+| GTIN | The number under the product's barcode (8, 12, 13 or 14 digits). QRdx checks its check digit. Shown under the details unless you turn it off. |
+
+The **Details** block (labels and values, as a list or tiles) suits the facts around it: net weight, origin, alcohol content, size.
+
+<IfAvailable feature="customDomains" title="GS1 Digital Link">
+
+## GS1 Digital Link
+
+[GS1 Digital Link](https://www.gs1.org/standards/gs1-digital-link) is the GS1 standard for QR codes on products: the code holds a web address with the product's GTIN, such as `https://go.yourbrand.com/01/09506000134352`, so the same code can open your page and carry the GTIN that a point-of-sale scanner reads.
+
+When a product page's QR code uses your [custom domain](/docs/custom-domains) and the page has a GTIN, that address opens the page:
+
+- `https://<your domain>/01/<GTIN>` opens the product page and counts a scan of its code, exactly like the code's short link. Code controls (password, schedule, scan limit, pause) apply too.
+- A batch or lot (`/10/<lot>`), a serial number (`/21/<serial>`) and a consumer product variant (`/22/<variant>`) can follow the GTIN, in that order. They're accepted, and the same page opens.
+- A GTIN with a wrong check digit, or parts in the wrong order, shows "This product link isn't valid" instead of a page.
+
+To use it:
+
+1. Move the product page's code to your custom domain (**Edit link** on the code).
+2. Enter the GTIN in the page's **Product details** block and publish. The block then shows the GS1 Digital Link with a copy button.
+3. Make the QR code on your packaging from that link. The code's short link keeps working as well.
+
+A GTIN opens one product page per domain. If another page with a code on the same domain already uses it, publishing says which page, so you can change one of them.
+
+### Only on your own domain
+
+On QRdx's shared address (`qrdx.dev`), product pages use their normal short link and GTINs never open a page. Anyone can create a QRdx account, so a shared GTIN lookup would let one person claim another brand's product number. On your own domain, only your workspace's pages can answer.
+
+</IfAvailable>
+
+## Plans
+
+Product pages count as hosted pages, under the same [plan limits](/docs/plans-and-limits) as every other page type. GS1 Digital Link needs a [custom domain](/docs/custom-domains), which is part of Pro and Business.

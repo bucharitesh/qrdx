@@ -1,8 +1,8 @@
-# n8n-nodes-qrdx
+# @qrdx/n8n-nodes-qrdx
 
 n8n nodes for [QRdx](https://qrdx.dev). The **QRdx** node makes QR code images, creates and edits dynamic QR codes, and reads their scans. The **QRdx Trigger** node starts a workflow when a code is scanned, created or changed, or when someone submits a form on a hosted page. Both work in self-hosted n8n, and the QRdx node can also be a tool for an n8n AI Agent.
 
-This package isn't on npm yet. Until it is, install it from this repository as described under [Install from source](#install-from-source).
+Install it from npm: in n8n, open **Settings → Community Nodes**, click **Install** and enter `@qrdx/n8n-nodes-qrdx`. From the command line, run `npm install @qrdx/n8n-nodes-qrdx` in the `nodes` folder of your n8n user folder (`~/.n8n/nodes`) and restart n8n. To build it from this repository instead, see [Install from source](#install-from-source).
 
 ## Credentials
 
@@ -75,30 +75,30 @@ You need Node.js 22 and pnpm. In a clone of this repository:
 
 ```bash
 pnpm install
-pnpm --filter n8n-nodes-qrdx build
+pnpm --filter @qrdx/n8n-nodes-qrdx build
 cd plugins/n8n
 npm pack
 ```
 
-That writes `n8n-nodes-qrdx-0.1.0.tgz`. Install it in the `nodes` folder of your n8n user folder and restart n8n:
+That writes `qrdx-n8n-nodes-qrdx-0.1.0.tgz`. Install it in the `nodes` folder of your n8n user folder and restart n8n:
 
 ```bash
 mkdir -p ~/.n8n/nodes
 cd ~/.n8n/nodes
-npm install /path/to/n8n-nodes-qrdx-0.1.0.tgz
+npm install /path/to/qrdx-n8n-nodes-qrdx-0.1.0.tgz
 ```
 
 With Docker, copy the file into the container and run the same commands inside it (`docker exec -it n8n sh`). Search for **QRdx** in the nodes panel.
 
-n8n Cloud only runs community nodes that n8n has verified, and this one hasn't been submitted yet.
+n8n Cloud only runs community nodes that n8n has verified, and this one isn't verified yet.
 
 ## Development
 
 ```bash
-pnpm --filter n8n-nodes-qrdx build       # tsc to dist/, then copies the icons
-pnpm --filter n8n-nodes-qrdx lint        # n8n's community node lint rules
-pnpm --filter n8n-nodes-qrdx test        # lint, then the unit tests
-pnpm --filter n8n-nodes-qrdx typecheck
+pnpm --filter @qrdx/n8n-nodes-qrdx build       # tsc to dist/, then copies the icons
+pnpm --filter @qrdx/n8n-nodes-qrdx lint        # n8n's community node lint rules
+pnpm --filter @qrdx/n8n-nodes-qrdx test        # lint, then the unit tests
+pnpm --filter @qrdx/n8n-nodes-qrdx typecheck
 ```
 
 The tests use fake n8n contexts and never call the network. The lint config is the one `n8n-node lint` from [`@n8n/node-cli`](https://www.npmjs.com/package/@n8n/node-cli) uses, written out in `eslint.config.mjs` so the monorepo doesn't install the whole CLI (about 550 MB of packages). The package keeps the CLI's layout, so its commands work here too.
@@ -111,9 +111,11 @@ The dropdown values (shapes, frames, events, scan ranges) are copied from QRdx's
 
 For the maintainer:
 
-1. Publish 0.1.0 by hand once, from `plugins/n8n`: `npm publish --access public`. `prepublishOnly` builds, lints and tests first. This creates the package on npm so it can get a trusted publisher.
-2. On npmjs.com, add a Trusted Publisher for `n8n-nodes-qrdx` (GitHub Actions, this repository, the publish workflow) and add the package to that workflow. Publish the next version from CI, which adds a provenance statement. n8n only verifies versions published from GitHub Actions with provenance, so a hand-published version can't be the one you submit.
-3. Submit that version in the [n8n Creator Portal](https://creators.n8n.io/nodes). n8n checks it with `npx @n8n/scan-community-package n8n-nodes-qrdx`, which you can run yourself first.
+1. `.github/workflows/publish.yml` publishes this package from `main` with npm Trusted Publishing and a provenance statement, in its own job, whenever the `version` in `package.json` isn't on npm yet. A failed n8n publish never blocks `qrdx` or `@qrdx/cli`; re-run the workflow (it can be started by hand) once the cause is fixed.
+2. One-time setup on npmjs.com: on `@qrdx/n8n-nodes-qrdx` → Settings → Trusted publishing, add GitHub Actions with user `bucharitesh`, repository `qrdx` and workflow `publish.yml`. The package has to exist first, so its first version (0.1.0) was published by hand.
+3. Submit a version that CI published in the [n8n Creator Portal](https://creators.n8n.io/nodes). n8n only verifies versions published from GitHub Actions with provenance, and checks them with `npx @n8n/scan-community-package @qrdx/n8n-nodes-qrdx`, which you can run yourself first.
+
+The package was first published unscoped as `n8n-nodes-qrdx` 0.1.0. Use `@qrdx/n8n-nodes-qrdx` instead; the unscoped name gets no new versions.
 
 Bump `version` in `package.json` and add a line to `CHANGELOG.md` for each release.
 

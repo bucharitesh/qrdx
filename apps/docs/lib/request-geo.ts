@@ -64,3 +64,37 @@ export function scanGeo(
     city: onVercel ? headerText(headers, "x-vercel-ip-city", 100) : null,
   };
 }
+
+// ── Network coordinates (geofence routing, lib/scan-location) ──
+
+const COORDINATE = /^[-+]?\d{1,3}(?:\.\d{1,8})?$/;
+
+/**
+ * The approximate coordinates of the request's IP address: Vercel's
+ * x-vercel-ip-latitude and x-vercel-ip-longitude (usually the center of the
+ * city or area the IP is registered to). Null elsewhere (Cloudflare's
+ * coordinates aren't trusted, as above), locally, or when missing. Used for
+ * geofence rules when a scanner didn't share a precise location; never
+ * stored.
+ */
+export function networkCoordinates(
+  headers: Headers,
+  platform: GeoPlatform = geoPlatform(),
+): { latitude: number; longitude: number } | null {
+  if (platform !== "vercel") return null;
+  const lat = headerText(headers, "x-vercel-ip-latitude", 16);
+  const lng = headerText(headers, "x-vercel-ip-longitude", 16);
+  if (!(lat && lng && COORDINATE.test(lat) && COORDINATE.test(lng))) {
+    return null;
+  }
+  const latitude = Number(lat);
+  const longitude = Number(lng);
+  if (
+    !(Number.isFinite(latitude) && Number.isFinite(longitude)) ||
+    Math.abs(latitude) > 90 ||
+    Math.abs(longitude) > 180
+  ) {
+    return null;
+  }
+  return { latitude, longitude };
+}

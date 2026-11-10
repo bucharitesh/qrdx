@@ -1,0 +1,78 @@
+---
+title: Precise location and geofencing
+description: Ask the people who scan a dynamic QR code to share their location, see where it was scanned to within about 100 m, and route scans by area.
+icon: MapPin
+---
+
+Every [dynamic QR code](/docs/dynamic-qr-codes) records the country, region and city of each scan from the network. On Pro and Business you can also ask scanners to share their precise location. People who allow it show up in the code's analytics as points rounded to about 100 m, and [smart routing](/docs/smart-routing) can send them somewhere different depending on where they are.
+
+Asking is off for every code until you turn it on, and each scanner decides for themselves in their browser.
+
+## Turn it on
+
+Open the code in the [dashboard](/dashboard?to=codes), go to its **Settings** tab and switch on **Ask scanners for precise location** in the **Precise location** panel. It works for codes that open a website link and for codes that open a hosted page.
+
+With the [REST API](/docs/developers/rest-api), send `PATCH /v1/codes/{id}` with `{"preciseLocation": true}`. Codes report the setting in their `preciseLocation` field.
+
+## What scanners see
+
+**Codes that open a website link** show a short "Share your location?" step before the link opens, with **Allow** and **Skip**. Allow brings up the browser's own location prompt. The step never stops anyone from getting to your link:
+
+- Skip opens the link straight away.
+- If the scanner declines in the browser, or the browser can't find a location, the link opens.
+- If there's no location 8 seconds after they tap Allow, the link opens anyway.
+- A browser that has already said no for the site skips the step on its own, and one that has already said yes shares without a second tap.
+- Without JavaScript, the link opens at once.
+
+The step names the site the scanner will land on, and links to the privacy policy.
+
+**Codes that open a hosted page** open the page right away, as usual. Once it has loaded, the browser asks for the location on the page; the page never waits for an answer. It only asks right after a scan, never when someone opens the page's address directly.
+
+When the setting is off, nothing changes: scans go straight to the destination with no extra step.
+
+## What's stored
+
+When someone allows it, their browser rounds the location to 3 decimal places (about 100 m) before sending it, and QRdx rounds it again before storing it with that scan, together with the accuracy the browser reported. Exact positions never reach QRdx.
+
+Nothing is stored when someone skips or declines. The scan is still counted, with its country, region and city from the network as always.
+
+Precise locations are kept as long as the rest of the code's scans, and your plan decides how far back you can see them. See [What QRdx records when someone scans](/docs/help/privacy-and-security/scan-data).
+
+## In analytics
+
+The code's **Analytics** tab has a **Precise locations** card, apart from the IP-based countries and cities. It shows how many scanners were asked, how many shared their location and what share that is, then each shared point with its number of scans, average accuracy and latest scan. Sort the table by any of those, and open a point in OpenStreetMap to see where it is.
+
+The CSV export has `latitude`, `longitude`, `location_accuracy_m` and `location_source` columns. `location_source` is `gps` for a shared location, `ip` when the code asked but the scanner didn't share, and empty when the code didn't ask. [`GET /v1/codes/{id}/scans`](/docs/developers/api/get-code-scans) returns the same fields per scan, plus a `preciseLocations` summary.
+
+Shared analytics links (**Share analytics** in a code's menu) never show precise locations. They stay at country level.
+
+## Route scans by area
+
+In the code's **Smart routing** panel, add a rule with an **Area** condition: a center point and a radius between 100 m and 500 km. To get the center, right-click a place in a map app and copy its coordinates (for example `40.7580, -73.9855`), or use **Use my location** while you're there. **Check on a map** opens the point in OpenStreetMap.
+
+QRdx checks the area with the best location it has for that scan:
+
+1. The location the scanner shared in the step, when precise location is on and they allowed it.
+2. Otherwise, the approximate location of their IP address. On qrdx.dev this comes from Vercel's IP geolocation and is usually the center of the scanner's city or area, so it suits radii of several kilometers. It's used to route the scan and never stored.
+
+When neither is available, area conditions don't match, and "is not" area conditions do. Self-hosted copies that don't run on Vercel have no IP coordinates, so area rules there only work with shared locations.
+
+**Test your rules** has a **Location** field, so you can check where a scan from any point would go.
+
+### Only inside an area
+
+To show something only to people at a place, such as a venue or a store:
+
+1. Add a rule with an Area condition around the place, and set its URL to the content for people who are there.
+2. Set the code's main destination to a page for everyone else, for example one that says the offer is only available on site.
+
+Turn on precise location as well, so a location the scanner shares decides, down to about 100 m. Without it, the IP location decides, which is only city-level.
+
+Browsers let people fake their location, so an area rule isn't access control. Use a [password](/docs/code-controls) for anything that must stay private.
+
+## Good to know
+
+- Bots, link previews and HEAD requests never see the step; they get the usual redirect.
+- Codes with a password don't show the step: after the right password, the scan goes straight to the destination.
+- A/B test counts for a split behind an Area condition are estimates, because scans don't store which location the rule used.
+- If your workspace moves to Free, QRdx stops asking for precise locations. Saved area rules keep working with the IP location, and turning the setting off never needs a plan.

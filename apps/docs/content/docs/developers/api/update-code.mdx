@@ -35,6 +35,11 @@ _openapi:
           switching back.
 
 
+          `preciseLocation: true` asks scanners for their precise location (Pro
+          and Business), see [Precise location and
+          geofencing](https://qrdx.dev/docs/precise-location).
+
+
           **Scope:** `codes:write`, for API keys and OAuth tokens alike.
 ---
 
@@ -43,6 +48,8 @@ _openapi:
 Send only the fields to change. `archived: true` stops redirects and frees a plan slot; `false` restores the code. The destination, title and design stay editable on every plan.
 
 To change what a printed code opens, send `kind`. `"kind": "page"` with `page` makes a hosted page from a template (or from the `content` you send) and points the code at it; with `pageId` it opens a page the workspace already has, such as one it opened before. `"kind": "redirect"` with `destinationUrl` makes it a website link again. The short link, scans, design and link controls stay. A page the code stops opening stays in the workspace, and counts toward the plan's hosted pages until it's deleted. Routing, A/B tests, UTM parameters and conversion tracking only apply to website links, and tracking pixels only to hosted pages: they're kept and apply again after switching back.
+
+`preciseLocation: true` asks scanners for their precise location (Pro and Business), see [Precise location and geofencing](https://qrdx.dev/docs/precise-location).
 
 **Scope:** `codes:write`, for API keys and OAuth tokens alike.
 

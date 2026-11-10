@@ -47,7 +47,7 @@ function iconFiles(icon: unknown, sourceFile: string): string[] {
 
 describe("package.json", () => {
   it("is the publishable n8n community package", () => {
-    expect(pkg.name).toBe("n8n-nodes-qrdx");
+    expect(pkg.name).toBe("@qrdx/n8n-nodes-qrdx");
     expect(pkg.version).toBe("0.1.0");
     expect(pkg.keywords).toContain("n8n-community-node-package");
     expect(pkg.files).toEqual(["dist"]);

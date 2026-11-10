@@ -37,8 +37,10 @@ import {
   ArrowUp,
   TickCircle as CheckCircle2,
   Forbidden as CircleSlash,
+  ExportSquare,
   ChemicalGlass as FlaskConical,
   Diamonds as Gem,
+  Gps,
   Lock,
   Add as Plus,
   Trash as Trash2,
@@ -69,6 +71,13 @@ import type {
   RoutingConfig,
   RoutingConfigInput,
 } from "@/lib/redirect/routing";
+import {
+  formatLatLng,
+  MAX_GEOFENCE_RADIUS_M,
+  MIN_GEOFENCE_RADIUS_M,
+  osmUrl,
+  parseLatLng,
+} from "@/lib/scan-location/geo";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
 // ─── Shared by the routing, UTM and pixels panels ───────────────────────────
@@ -211,6 +220,10 @@ interface DraftCondition {
   to: string;
   operator: "first" | "after";
   count: string;
+  /** Geofence: "lat, lng" as typed or pasted */
+  point: string;
+  radius: string;
+  radiusUnit: "m" | "km";
 }
 
 interface DraftVariant {
@@ -261,6 +274,7 @@ const CONDITION_LABELS: Record<ConditionType, string> = {
   schedule: "Time of day",
   dates: "Date range",
   scans: "Scan count",
+  geofence: "Area",
 };
 
 const CONDITION_TYPES = Object.keys(CONDITION_LABELS) as ConditionType[];
@@ -310,6 +324,9 @@ function newCondition(type: ConditionType): DraftCondition {
     to: "",
     operator: "first",
     count: "100",
+    point: "",
+    radius: "1",
+    radiusUnit: "km",
   };
 }
 
@@ -366,6 +383,15 @@ function conditionToDraft(condition: RoutingCondition): DraftCondition {
         operator: condition.operator,
         count: String(condition.count),
       };
+    case "geofence": {
+      const inKm = condition.radius >= 1000;
+      return {
+        ...draft,
+        point: formatLatLng(condition),
+        radius: String(inKm ? condition.radius / 1000 : condition.radius),
+        radiusUnit: inKm ? "km" : "m",
+      };
+    }
   }
 }
 
@@ -440,7 +466,44 @@ function conditionFromDraft(
         count: Number(draft.count),
         ...not,
       };
+    case "geofence": {
+      const point = parseLatLng(draft.point);
+      return {
+        type: "geofence",
+        latitude: point?.latitude ?? Number.NaN,
+        longitude: point?.longitude ?? Number.NaN,
+        radius: geofenceRadius(draft),
+        ...not,
+      };
+    }
   }
+}
+
+/** The draft's radius in meters (NaN when it isn't a number). */
+function geofenceRadius(draft: DraftCondition): number {
+  const value = Number(draft.radius.trim().replace(",", "."));
+  if (!Number.isFinite(value)) return Number.NaN;
+  return Math.round(draft.radiusUnit === "km" ? value * 1000 : value);
+}
+
+/** What the server would refuse in an area condition, said plainly; null = fine. */
+function geofenceProblem(rules: DraftRule[]): string | null {
+  for (const [index, rule] of rules.entries()) {
+    for (const condition of rule.conditions) {
+      if (condition.type !== "geofence") continue;
+      const label = rule.name.trim() || `Rule ${index + 1}`;
+      if (!parseLatLng(condition.point)) {
+        return `${label}: enter the area's center as latitude, longitude, like 40.7128, -74.0060.`;
+      }
+      const radius = geofenceRadius(condition);
+      if (
+        !(radius >= MIN_GEOFENCE_RADIUS_M && radius <= MAX_GEOFENCE_RADIUS_M)
+      ) {
+        return `${label}: the radius must be between 100 m and 500 km.`;
+      }
+    }
+  }
+  return null;
 }
 
 function fromDraft(rules: DraftRule[]): RoutingConfigInput {
@@ -514,6 +577,15 @@ const PRESETS: { label: string; rules: () => DraftRule[] }[] = [
     label: "First scans",
     rules: () => [
       newRule({ name: "First 100 scans", conditions: [newCondition("scans")] }),
+    ],
+  },
+  {
+    label: "Inside an area (geofence)",
+    rules: () => [
+      newRule({
+        name: "Inside the area",
+        conditions: [newCondition("geofence")],
+      }),
     ],
   },
   {
@@ -611,6 +683,123 @@ const LIST_HINTS: Partial<Record<ConditionType, string>> = {
   region: "US-CA, US-NY",
   language: "es, pt-BR",
 };
+
+/** The browser's own location, for "Use my location" (rounded to ~1 m). */
+function useCurrentLocation(onPoint: (text: string) => void) {
+  const [state, setState] = useState<"idle" | "busy" | "failed">("idle");
+  const locate = () => {
+    if (!("geolocation" in navigator)) {
+      setState("failed");
+      return;
+    }
+    setState("busy");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        onPoint(
+          formatLatLng({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }),
+        );
+        setState("idle");
+      },
+      () => setState("failed"),
+      { enableHighAccuracy: true, timeout: 15_000, maximumAge: 60_000 },
+    );
+  };
+  return { state, locate };
+}
+
+function GeofenceEditor({
+  condition,
+  onChange,
+  locked,
+  id,
+}: {
+  condition: DraftCondition;
+  onChange: (patch: Partial<DraftCondition>) => void;
+  locked: boolean;
+  id: string;
+}) {
+  const point = parseLatLng(condition.point);
+  const { state, locate } = useCurrentLocation((text) =>
+    onChange({ point: text }),
+  );
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <Input
+          aria-describedby={`${id}-point-hint`}
+          aria-invalid={condition.point.trim() !== "" && !point}
+          aria-label="Center of the area (latitude, longitude)"
+          className="h-8 w-60"
+          disabled={locked}
+          inputMode="decimal"
+          onChange={(event) => onChange({ point: event.target.value })}
+          placeholder="40.7128, -74.0060"
+          spellCheck={false}
+          value={condition.point}
+        />
+        <Button
+          disabled={locked || state === "busy"}
+          onClick={locate}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
+          <Gps />
+          {state === "busy" ? "Locating…" : "Use my location"}
+        </Button>
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-muted-foreground text-sm">within</span>
+        <Input
+          aria-label="Radius"
+          className="h-8 w-24"
+          disabled={locked}
+          inputMode="decimal"
+          onChange={(event) => onChange({ radius: event.target.value })}
+          value={condition.radius}
+        />
+        <Select
+          disabled={locked}
+          onValueChange={(radiusUnit) =>
+            onChange({ radiusUnit: radiusUnit as DraftCondition["radiusUnit"] })
+          }
+          value={condition.radiusUnit}
+        >
+          <SelectTrigger
+            aria-label="Radius unit"
+            className="h-8 w-20"
+            size="sm"
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="m">m</SelectItem>
+            <SelectItem value="km">km</SelectItem>
+          </SelectContent>
+        </Select>
+        {point && (
+          <a
+            className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-xs underline"
+            href={osmUrl(point, 14)}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            Check on a map
+            <ExportSquare className="size-3" />
+          </a>
+        )}
+      </div>
+      <p className="text-muted-foreground text-xs" id={`${id}-point-hint`}>
+        {state === "failed"
+          ? "Your browser didn't share a location. Paste the center from a map app instead (right-click a place to copy its coordinates)."
+          : "Paste coordinates from a map app (right-click a place to copy them). 100 m to 500 km."}
+      </p>
+    </div>
+  );
+}
 
 function ConditionEditor({
   condition,
@@ -722,6 +911,16 @@ function ConditionEditor({
             Your time zone; leave one side empty for open-ended
           </span>
         </div>
+      );
+      break;
+    case "geofence":
+      editor = (
+        <GeofenceEditor
+          condition={condition}
+          id={id}
+          locked={locked}
+          onChange={onChange}
+        />
       );
       break;
     case "scans":
@@ -1096,6 +1295,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
     at: "",
     scanNumber: "1",
     visitor: "visitor-1",
+    location: "",
   });
   const [result, setResult] = useState<RoutingTestResult | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -1112,6 +1312,16 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
 
   const run = () => {
     setError(null);
+    const problem = geofenceProblem(rules);
+    const point = sample.location.trim() ? parseLatLng(sample.location) : null;
+    if (problem || (sample.location.trim() && !point)) {
+      setResult(null);
+      setError(
+        problem ??
+          "Enter the scanner's location as latitude, longitude, like 40.7128, -74.0060.",
+      );
+      return;
+    }
     startTransition(async () => {
       const response = await testCodeRouting({
         id: codeId,
@@ -1125,6 +1335,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
           at: fromLocalInput(sample.at) ?? new Date().toISOString(),
           scanNumber: Number(sample.scanNumber) || 1,
           visitor: sample.visitor,
+          location: point,
         },
       });
       if (response.success) {
@@ -1152,7 +1363,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
         </span>
       </summary>
       <div className="space-y-3 border-t p-3">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-1">
             <Label htmlFor={`${id}-device`}>Device</Label>
             <Select
@@ -1243,6 +1454,18 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
               maxLength={100}
               onChange={(event) => set({ visitor: event.target.value })}
               value={sample.visitor}
+            />
+          </div>
+          <div className="space-y-1 sm:col-span-2 lg:col-span-1">
+            <Label htmlFor={`${id}-location`}>Location (for areas)</Label>
+            <Input
+              id={`${id}-location`}
+              inputMode="decimal"
+              maxLength={60}
+              onChange={(event) => set({ location: event.target.value })}
+              placeholder="Latitude, longitude"
+              spellCheck={false}
+              value={sample.location}
             />
           </div>
         </div>
@@ -1351,6 +1574,11 @@ function RoutingEditor({
 
   const save = () => {
     setError(null);
+    const problem = geofenceProblem(rules);
+    if (problem) {
+      setError(problem);
+      return;
+    }
     startTransition(async () => {
       const result = await saveCodeRouting({
         id: settings.codeId,
@@ -1374,8 +1602,8 @@ function RoutingEditor({
       badge={plan}
       description={
         <>
-          Send each scan to a different URL by device, country, language, time
-          or scan count, or split traffic for A/B tests. Rules run top to
+          Send each scan to a different URL by device, country, area, language,
+          time or scan count, or split traffic for A/B tests. Rules run top to
           bottom; the first match wins, otherwise scans go to the main
           destination.{" "}
           <Link className="underline" href="/docs/smart-routing">
@@ -1479,8 +1707,13 @@ function RoutingEditor({
       )}
       <p className="text-muted-foreground text-xs">
         Country and region come from the scanner's IP address (never stored);
-        language from their browser settings. UTM parameters are added after
-        routing.
+        language from their browser settings. Areas use the location a scanner
+        shares when{" "}
+        <a className="underline" href="#location">
+          precise location
+        </a>{" "}
+        is on, otherwise the approximate location of their IP address. UTM
+        parameters are added after routing.
       </p>
     </PanelCard>
   );

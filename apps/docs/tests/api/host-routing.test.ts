@@ -59,6 +59,19 @@ describe("a verified custom domain", () => {
     expect(rewrittenTo(await get("/p/spring-menu"))).toBe("/p/spring-menu");
   });
 
+  it("sends GS1 Digital Links to the product page lookup", async () => {
+    for (const path of [
+      "/01/09506000134352",
+      "/01/09506000134352/10/LOT42/21/0007",
+    ]) {
+      const response = await get(path);
+      expect(rewrittenTo(response), path).toBe(`/gs1${path}`);
+      expect(
+        response?.headers.get("x-middleware-request-x-qrdx-custom-domain"),
+      ).toBe("dom_brand");
+    }
+  });
+
   it("lets the hosted pages' APIs through untouched", async () => {
     const response = await get("/api/events");
     expect(response?.headers.get("x-middleware-next")).toBe("1");

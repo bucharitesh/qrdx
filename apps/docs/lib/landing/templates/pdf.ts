@@ -148,5 +148,57 @@ registerTemplate({
         },
       ],
     },
+    {
+      id: "documents",
+      name: "Document library",
+      description: "Several files on one page: manuals, data sheets, forms",
+      theme: {
+        colors: {
+          background: "#f6f6f4",
+          foreground: "#161614",
+          primary: "#161614",
+          primaryForeground: "#ffffff",
+          muted: "#ebebe7",
+          mutedForeground: "#5a5a55",
+        },
+        font: "dm-sans",
+        headingFont: "space-grotesk",
+        radius: 8,
+      },
+      blocks: [
+        {
+          type: "header",
+          props: {
+            align: "left",
+            eyebrow: "Model K2 · Documents",
+            title: "Manuals and downloads",
+            size: "lg",
+            subtitle:
+              "Everything for your heater in one place, always the latest version.",
+          },
+        },
+        {
+          type: "file-download",
+          props: { title: "Downloads" },
+        },
+        {
+          type: "links",
+          props: {
+            style: "rows",
+            icons: false,
+            items: [
+              {
+                label: "Register your warranty",
+                url: "https://example.com/warranty",
+              },
+              {
+                label: "Find a service partner",
+                url: "https://example.com/service",
+              },
+            ],
+          },
+        },
+      ],
+    },
   ],
 });

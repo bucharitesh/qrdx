@@ -8,6 +8,7 @@ import {
 import { scopeCustomCss } from "@/components/landing/custom-css";
 import { LandingPageFooter } from "@/components/landing/page-footer";
 import { Pixels } from "@/components/landing/pixels";
+import { PreciseLocationPrompt } from "@/components/landing/precise-location";
 import { LandingRender } from "@/components/landing/render";
 import type { BlockRenderContext } from "@/lib/landing/blocks";
 import { baseUrl } from "@/lib/metadata";
@@ -119,6 +120,12 @@ export default async function LandingPage({ params }: Props) {
         customDomain={isCustomDomainRequest(requestHeaders)}
         pageId={page.page.id}
         pixels={page.code.pixels}
+        qrCodeId={page.code.id}
+      />
+      {/* Only when the code asks for precise location (lib/scan-location). */}
+      <PreciseLocationPrompt
+        pixels={page.code.pixels}
+        plan={page.plan}
         qrCodeId={page.code.id}
       />
     </>

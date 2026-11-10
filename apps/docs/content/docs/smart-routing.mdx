@@ -1,6 +1,6 @@
 ---
 title: Smart routing
-description: Send each scan of a dynamic QR code to a different URL by device, country, language, time or scan count, run A/B tests and add UTM parameters.
+description: Send each scan of a dynamic QR code to a different URL by device, country, area, language, time or scan count, run A/B tests and add UTM parameters.
 icon: Split
 ---
 
@@ -33,8 +33,9 @@ Each condition can be inverted with **is not** (for example "country is not US")
 | Time of day | The scan happens on the chosen weekdays between two times in a time zone you pick | A window like 22:00–02:00 runs past midnight and belongs to the day it starts |
 | Date range | The scan happens between two dates | Leave one side empty for "until" or "from"; dates are in your browser's time zone |
 | Scan count | It's one of the first N scans, or any scan after N | Counts recorded scans (bots aren't counted), so it is approximate when many people scan at once |
+| Area | The scanner is within a radius (100 m to 500 km) of a point | Uses the location the scanner shared when [precise location](/docs/precise-location) is on, otherwise the approximate location of their IP address |
 
-Country and region come from the scanner's IP address, which QRdx never stores. When a location is unknown, location conditions don't match (and "is not" conditions do).
+Country, region and the IP-based location for areas come from the scanner's IP address, which QRdx never stores. When a location is unknown, location conditions don't match (and "is not" conditions do). [Precise location and geofencing](/docs/precise-location) explains areas, including how to make a code work only inside one.
 
 ## Smart app links
 

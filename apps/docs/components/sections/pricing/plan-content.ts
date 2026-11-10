@@ -164,6 +164,11 @@ const GROUPS: {
         flag("routing"),
         "Send scans by device, country, time or language",
       ),
+      row(
+        "Precise scan location and geofencing",
+        flag("preciseLocation"),
+        "Opt-in per code; scanners choose whether to share",
+      ),
       row("Password, schedule, expiry and scan limits", flag("linkControls")),
       row("Retargeting pixels", flag("pixels"), PIXELS_HINT),
       row("Conversion tracking", flag("conversions")),

@@ -122,7 +122,13 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       title: "Hosted pages",
       url: "/docs/landing-pages",
       description:
-        "Mobile pages at /p/<slug>: link lists, business pages, contact cards, menus, coupons, events, app links, PDFs, images, audio and video",
+        "Mobile pages at /p/<slug>: link lists, social profiles, business pages, contact cards, menus, coupons, events, app links, forms, product pages, appointments, payments and tips, property listings, pet ID tags, medical IDs, PDFs, images, audio, playlists and video",
+    },
+    {
+      title: "Product pages and GS1 Digital Link",
+      url: "/docs/product-pages",
+      description:
+        "Ingredients, nutrition, certifications and care for a product; on a custom domain, https://<domain>/01/<GTIN> opens the page",
     },
     {
       title: "Forms",
@@ -134,6 +140,12 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       url: "/docs/smart-routing",
       description:
         "Send scans to different links by device, country, language, time or scan count; A/B tests and UTM tags",
+    },
+    {
+      title: "Precise location and geofencing",
+      url: "/docs/precise-location",
+      description:
+        "Opt-in GPS scan locations (rounded to about 100 m, Pro and Business) and routing by area",
     },
     {
       title: "Code controls",
