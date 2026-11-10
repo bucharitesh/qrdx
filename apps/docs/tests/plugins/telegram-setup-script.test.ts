@@ -11,6 +11,7 @@ import {
   INLINE_PLACEHOLDER,
   readSettings,
   run,
+  SETUP_METHODS,
   SHORT_DESCRIPTION,
   setupCalls,
   WEBHOOK_PATH,
@@ -96,6 +97,14 @@ describe("setup.mjs", () => {
     expect(
       COMMANDS.map((command: { command: string }) => command.command),
     ).toEqual(["qr", "help", "start"]);
+  });
+
+  it("lists its progress names in the same order as the calls", () => {
+    const calls = setupCalls({
+      secret: "s3cret_value",
+      appUrl: "https://qrdx.example",
+    });
+    expect(calls.map((call) => call.method)).toEqual(SETUP_METHODS);
   });
 
   it("keeps every text within the Bot API's limits", () => {
