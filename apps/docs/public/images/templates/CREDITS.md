@@ -70,7 +70,6 @@ absolute links to them in their saved content.
 | `photo-sunglasses.webp` | Alexander Shustov | https://unsplash.com/photos/AHBiSKaENwc |
 | `photo-tower-lines.webp` | Mihail Ribkin | https://unsplash.com/photos/VjmlDjePHjE |
 | `photo-towers.webp` | Anthony DELANOIX | https://unsplash.com/photos/b5POxb2aL9o |
-| `photo-townhouse.webp` | Jeff Sheldon | https://unsplash.com/photos/ICfoiW1d_90 |
 | `portrait-designer.webp` | Roksolana Zasiadko | https://unsplash.com/photos/LyeduBb2Auk |
 | `portrait-photographer.webp` | Benjamin Combs | https://unsplash.com/photos/hiAdjnXZxl8 |
 | `portrait-reader.webp` | hieu le | https://unsplash.com/photos/SrkuyPb3aUk |

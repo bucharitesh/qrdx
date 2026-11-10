@@ -111,6 +111,7 @@ registerTemplate({
             firstName: "Sam",
             lastName: "Rivera",
             jobTitle: "Biscuit's owner",
+            company: "",
             phones: [{ type: "mobile", number: "+1 555 0142", whatsapp: true }],
             emails: [{ type: "home", address: "sam@example.com" }],
             showSave: false,

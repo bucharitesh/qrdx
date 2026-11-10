@@ -84,10 +84,6 @@ registerTemplate({
                 "banner-dining-room",
                 "A bright dining room with white chairs",
               ),
-              listingPhoto(
-                "photo-townhouse",
-                "The street and front of the house",
-              ),
             ],
           },
         },
@@ -132,7 +128,7 @@ registerTemplate({
           type: "address-map",
           props: {
             title: "Location",
-            name: "14 Linden Row",
+            name: "",
             address: {
               street: "14 Linden Row",
               city: "Maple Falls",
@@ -261,6 +257,7 @@ registerTemplate({
         {
           type: "form",
           props: {
+            title: "",
             fields: [
               {
                 id: "name",

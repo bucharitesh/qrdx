@@ -1,17 +1,17 @@
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Bank,
-  Bitcoin,
   Card,
+  Coin,
+  Coin1,
   DollarSquare,
-  Ethereum,
   ExportSquare,
   Mobile,
   MoneyChange,
   MoneySend,
   Moneys,
-  Paypal,
   Wallet,
+  Wallet2,
 } from "iconsax-reactjs";
 import type { ComponentType } from "react";
 import {
@@ -34,19 +34,21 @@ import {
   paymentSchema,
 } from "./payment-schema";
 
+// Neutral marks, one per method, never look-alikes of a brand's logo (owner
+// rule: brand marks are the real logos). The method's name is always shown.
 const PAYMENT_ICONS: Record<
   PaymentType,
   ComponentType<{ className?: string }>
 > = {
-  paypal: Paypal,
+  paypal: Wallet2,
   venmo: MoneySend,
   cashapp: DollarSquare,
   revolut: Card,
   wise: MoneyChange,
   upi: Mobile,
   bank: Bank,
-  bitcoin: Bitcoin,
-  ethereum: Ethereum,
+  bitcoin: Coin,
+  ethereum: Coin1,
   other: Wallet,
 };
 

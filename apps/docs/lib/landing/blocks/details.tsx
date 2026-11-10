@@ -27,14 +27,20 @@ function DetailsBlock({ id, props, context }: BlockRenderProps<DetailsProps>) {
         </LpHeading>
       )}
       {props.layout === "tiles" ? (
-        <dl className="grid grid-cols-2 gap-2 min-[400px]:grid-cols-3">
+        <dl
+          className={cn(
+            "grid gap-2",
+            // Full rows: threes across when the count allows, else pairs.
+            items.length % 3 === 0 ? "grid-cols-3" : "grid-cols-2",
+          )}
+        >
           {items.map((item) => (
             <div
-              className={cn(surfaceClass, "flex flex-col gap-0.5 px-4 py-3")}
+              className={cn(surfaceClass, "flex flex-col gap-0.5 px-3.5 py-3")}
               key={item.id}
             >
               <dt className={cn(mutedTextClass, "text-xs")}>{item.label}</dt>
-              <dd className="text-lg leading-snug font-semibold break-words tabular-nums">
+              <dd className="text-base leading-snug font-semibold break-words tabular-nums">
                 {item.value}
               </dd>
             </div>
