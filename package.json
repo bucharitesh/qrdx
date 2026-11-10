@@ -60,7 +60,12 @@
       "katex@>=0.11.0 <0.18.2": "^0.18.2",
       "postcss-selector-parser@<6.1.5": "^6.1.5",
       "postcss-selector-parser@>=7.0.0 <7.1.6": "^7.1.6",
-      "uuid@<11.1.1": "^11.1.1"
+      "uuid@<11.1.1": "^11.1.1",
+      "@ts-morph/common>minimatch": "^11.0.1",
+      "@typescript-eslint/typescript-estree>minimatch": "^11.0.1",
+      "@eslint/config-array>minimatch": "^11.0.1",
+      "eslint>minimatch": "^11.0.1",
+      "@esbuild-kit/core-utils>esbuild": "^0.25.0"
     }
   },
   "type": "module"

@@ -1,8 +1,9 @@
-// The Dependabot alerts on pnpm-lock.yaml (2026-11-06): no package in the
-// lockfile resolves inside a vulnerable range that has a fix its dependents
-// can take. Fixed through the root package.json's pnpm.overrides, each scoped
-// to the vulnerable range. The ones left open say why: their only fix is a
-// major (or 0.x minor) that every dependent, at its latest version, rules out.
+// The Dependabot alerts on pnpm-lock.yaml (2026-11-06, 2026-11-10): no
+// package in the lockfile resolves inside a vulnerable range that has a fix.
+// Fixed by updating the dependency that pulls the package in where a newer
+// release takes the fix, otherwise through the root package.json's
+// pnpm.overrides, scoped to the vulnerable range or to the parent. The ones
+// left open say why.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -63,36 +64,28 @@ const FIXED: Advisory[] = [
   // <= 7.29.0
   { ghsa: "GHSA-4x5r-pxfx-6jf8", pkg: "@babel/core", below: "7.29.1" },
   { ghsa: "GHSA-w5hq-g745-h8pq", pkg: "uuid", below: "11.1.1" },
-];
-
-/** Left open, with the reason (see the PR). */
-const OPEN: (Advisory & { why: string })[] = [
+  // react-email 6.11.9 and @oclif/core 5.1.12 take ^11; ts-morph, eslint,
+  // @eslint/config-array and typescript-eslint through parent overrides.
   {
     ghsa: "GHSA-g3hv-75wg-m249",
     pkg: "minimatch",
     from: "7.0.0",
     below: "11.0.1",
-    why: "fixed only in 11; eslint, glob 13, ts-morph, oclif and typescript-eslint (latest too) need ^10",
   },
-  {
-    ghsa: "GHSA-3g3m-2fjr-6pw4",
-    pkg: "glob",
-    from: "9.0.0",
-    below: "14.0.2",
-    why: "fixed only in 14; react-email (latest too) needs ^13",
-  },
+  // <= 14.0.1; react-email 6.11.9 takes ^14.0.3
+  { ghsa: "GHSA-3g3m-2fjr-6pw4", pkg: "glob", from: "9.0.0", below: "14.0.2" },
+  // <= 0.24.2; drizzle-kit's @esbuild-kit/core-utils, through an override
+  { ghsa: "GHSA-67mh-4wv8-2f99", pkg: "esbuild", below: "0.25.0" },
+];
+
+/** Left open, with the reason (see the PR). */
+const OPEN: (Advisory & { why: string })[] = [
   {
     ghsa: "GHSA-gcqx-w48m-w2h4",
     pkg: "deepmerge",
     from: "4.2.0",
     below: "4.3.2",
-    why: "no fixed version published",
-  },
-  {
-    ghsa: "GHSA-67mh-4wv8-2f99",
-    pkg: "esbuild",
-    below: "0.25.0",
-    why: "fixed in 0.25; drizzle-kit (latest too) loads it through @esbuild-kit/core-utils, which pins ~0.18.20; the bug is in esbuild's serve(), which that loader never calls",
+    why: "no fixed version published; only dev tools merge with it (@svgr/plugin-svgo, ultracite), on the repo's own config",
   },
 ];
 
