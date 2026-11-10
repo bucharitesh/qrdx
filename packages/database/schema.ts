@@ -1277,6 +1277,12 @@ export const qrCode = pgTable(
     pixels: json("pixels").$type<unknown>(),
     // Moved to the trash (restorable)
     deletedAt: timestamp("deleted_at"),
+    // Large batches (manual-sql/2026-11-11-large-batches.sql): set when the
+    // destination's Google Web Risk lookup was skipped at creation (a batch
+    // past its time budget, or Web Risk unreachable); lib/safety/recheck.ts
+    // looks it up after the response and from the webhook worker, then
+    // clears it. NULL = nothing pending (every older code).
+    webRiskRecheckAt: timestamp("web_risk_recheck_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -1296,6 +1302,10 @@ export const qrCode = pgTable(
     ),
     // A custom domain serves each slug once (https://<domain>/<slug>).
     uniqueIndex("qr_code_domain_id_slug_unique").on(table.domainId, table.slug),
+    // The Web Risk re-check backlog (large batches).
+    index("qr_code_web_risk_recheck_at_idx")
+      .on(table.webRiskRecheckAt)
+      .where(sql`"web_risk_recheck_at" IS NOT NULL`),
   ]
 );
 
