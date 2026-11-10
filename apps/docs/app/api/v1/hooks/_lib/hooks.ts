@@ -152,6 +152,7 @@ const sampleScan = {
   os: "iOS",
   browser: "Safari",
   referer: null,
+  source: "qr" as const,
 };
 
 const envelope = <T>(
