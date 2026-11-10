@@ -1,0 +1,49 @@
+---
+title: Telegram bot
+description: Make QR codes in Telegram. Send the QRdx bot a link, call it inline in any chat, or use /qr in a group. No account needed.
+icon: Bot
+---
+
+The QRdx bot turns a link or any text into a QR code inside Telegram. It's free, and you don't need a QRdx account.
+
+<IfAvailable feature="telegramBot">
+To start, click **Open in Telegram** on the [Telegram integration page](/integrations/telegram), then tap **Start** in the bot's chat.
+</IfAvailable>
+
+## Private chat
+
+Send the bot a link or some text, and it replies with the QR code and three buttons:
+
+- **Download PNG** opens the image, ready to save or share.
+- **Download SVG** opens a vector version for print and design tools.
+- **Open in editor** opens the QRdx editor, where you can add colors, a logo or a frame. A web address goes along with it. Other text doesn't, so paste it into the editor yourself.
+
+The code holds exactly what you sent, line breaks included. Send `/help` (or `/start`) to see how to use the bot. If the text is too long for one QR code, the bot says so; a link to a page with the full text makes a smaller code that's easier to scan.
+
+## Inline mode in any chat
+
+You can send a code to any chat without adding the bot to it. In the message field, type `@`, the bot's username, a space and a link or text. The code appears above the field after a moment. Tap it to send it, with the same three buttons. The people you're writing to don't need the bot.
+
+## Groups
+
+Add the bot to the group, then send `/qr` followed by a link or text, for example `/qr https://example.com/menu`. The bot replies to your message with the code.
+
+Bots in groups have privacy mode on by default, and this one keeps it on, so it doesn't see the group's conversation. Telegram passes it only commands meant for it and replies to its own messages. It answers `/qr`, `/start` and `/help` and ignores everything else. When a group has more than one bot, or the bot doesn't answer a plain `/qr`, add its username to the command: `/qr@` followed by the username, then the link or text.
+
+## Privacy
+
+QRdx doesn't save what you send the bot or the codes it makes. The bot reads each message only to answer it.
+
+The images are drawn on request. Each one comes from a QRdx link that contains your text, which Telegram fetches to show the code, so your text passes through QRdx's servers without being saved there. Telegram keeps the messages in the chat, as it does for any message.
+
+If you make a lot of codes in a short time, the bot asks you to wait a minute before the next one.
+
+## Remove the bot
+
+In a private chat, open the bot's profile and block it, or delete the chat. In a group, an admin removes the bot from the member list.
+
+Codes the bot already sent stay in the chat. Their buttons keep working, since they link straight to QRdx.
+
+## Self-hosting
+
+A self-hosted QRdx server can run its own bot. Create one with [@BotFather](https://t.me/BotFather), set `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET` and `TELEGRAM_BOT_USERNAME` on the server, and run the setup script. The steps are in [`plugins/telegram/README.md`](https://github.com/bucharitesh/qrdx/blob/main/plugins/telegram/README.md). Until all three variables are set, the bot's routes answer 404 and your site doesn't list the bot.

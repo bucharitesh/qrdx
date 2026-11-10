@@ -1,0 +1,73 @@
+{
+  "_metadata": {
+    "major_version": 2,
+    "minor_version": 1
+  },
+  "display_information": {
+    "name": "QRdx",
+    "description": "Make QR codes in Slack, and get QRdx scan and form alerts in a channel.",
+    "background_color": "#0a0a0a",
+    "long_description": "Type /qr with a link or any text and QRdx posts a QR code image in the channel, with buttons to download it as PNG or SVG or open it in the QRdx editor. You can also mention the bot, send it a direct message, or pick Make a QR code from a message's menu. People who link their QRdx account with /qr link can make tracked (dynamic) codes with /qr track. The same app posts the QRdx alerts you choose (scan milestones, form responses, code changes) to a channel."
+  },
+  "features": {
+    "app_home": {
+      "home_tab_enabled": false,
+      "messages_tab_enabled": true,
+      "messages_tab_read_only_enabled": false
+    },
+    "bot_user": {
+      "display_name": "QRdx",
+      "always_online": true
+    },
+    "slash_commands": [
+      {
+        "command": "/qr",
+        "url": "https://qrdx.dev/api/integrations/slack/commands",
+        "description": "Make a QR code from a link or any text",
+        "usage_hint": "[link or text] | track [link] | link | unlink | help",
+        "should_escape": true
+      }
+    ],
+    "shortcuts": [
+      {
+        "name": "Make a QR code",
+        "type": "message",
+        "callback_id": "qrdx_make_qr",
+        "description": "A QR code of the message's first link, or of its text"
+      }
+    ]
+  },
+  "oauth_config": {
+    "redirect_urls": [
+      "https://qrdx.dev/api/integrations/slack/callback",
+      "https://qrdx.dev/api/integrations/slack/bot/callback"
+    ],
+    "scopes": {
+      "bot": [
+        "incoming-webhook",
+        "commands",
+        "app_mentions:read",
+        "chat:write",
+        "im:history"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "request_url": "https://qrdx.dev/api/integrations/slack/events",
+      "bot_events": [
+        "app_mention",
+        "message.im",
+        "app_uninstalled",
+        "tokens_revoked"
+      ]
+    },
+    "interactivity": {
+      "is_enabled": true,
+      "request_url": "https://qrdx.dev/api/integrations/slack/interactions"
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": false,
+    "token_rotation_enabled": false
+  }
+}
