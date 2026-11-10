@@ -2,7 +2,8 @@
 // Telegram's secret before it reads anything, answers 200 at once and replies
 // through the Bot API after the response. fetch is a fake that records each
 // Bot API call: nothing reaches Telegram. The rate limiters run in memory
-// with their real windows.
+// with their real windows; a test can mark a key as used up
+// (state.exhausted) to skip filling a big window.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const TOKEN = "123456:fake-token-for-tests";
@@ -18,6 +19,8 @@ const state = vi.hoisted(() => {
     /** Bumped per test: every limiter starts empty again */
     generation: 0,
     keys: [] as string[],
+    /** Keys whose window is full, without counting up to it */
+    exhausted: new Set<string>(),
   };
 });
 
@@ -50,6 +53,9 @@ vi.mock("@repo/rate-limit", async () => {
             memory = createMemoryLimiter(limiter);
           }
           state.keys.push(key);
+          if (state.exhausted.has(key)) {
+            return { success: false, reset: Date.now() + 60_000 };
+          }
           return memory.limit(key);
         },
       };
@@ -60,7 +66,10 @@ vi.mock("@repo/rate-limit", async () => {
 import { GET as open } from "@/app/api/integrations/telegram/open/route";
 import { POST } from "@/app/api/integrations/telegram/webhook/route";
 import { CHAT_QR_PNG_SIZE, chatQrLinks } from "@/lib/chat-bots/qr-reply";
+import { TELEGRAM_GLOBAL_PER_MINUTE } from "@/lib/chat-bots/telegram/bot";
+import { verifyPhotoLink } from "@/lib/chat-bots/telegram/photo-link";
 import {
+  BUSY_TEXT,
   RATE_LIMITED_TEXT,
   readCommand,
   TOO_LONG_TEXT,
@@ -83,6 +92,7 @@ beforeEach(() => {
   consoleLines = [];
   state.generation += 1;
   state.keys = [];
+  state.exhausted.clear();
   vi.stubGlobal(
     "fetch",
     vi.fn(async (input: string | URL, init?: RequestInit) => {
@@ -278,6 +288,11 @@ describe("private chat", () => {
       expect(call.payload.reply_parameters.message_id).toBe(42);
       expect(call.payload).not.toHaveProperty("parse_mode");
     }
+    // Honest about where the content goes.
+    const help = calls[0]!.payload.text as string;
+    expect(help).toContain("QRdx doesn't save the codes you make.");
+    expect(help).toContain("logs and caches");
+    expect(help).not.toMatch(/keep what you send|nothing kept/i);
   });
 
   it("explains when the content is too long for a QR code", async () => {
@@ -437,6 +452,26 @@ describe("inline mode", () => {
     expect(thumb.searchParams.get("data")).toBe(link);
     expect(thumb.searchParams.get("size")).toBe("256");
 
+    // Both links are signed with the webhook secret, expire together within
+    // two hours, and only verify with that secret.
+    expect(verifyPhotoLink(photo.searchParams, SECRET)).toMatchObject({
+      data: link,
+      size: CHAT_QR_PNG_SIZE,
+    });
+    expect(verifyPhotoLink(thumb.searchParams, SECRET)).toMatchObject({
+      data: link,
+      size: 256,
+    });
+    expect(verifyPhotoLink(photo.searchParams, `${SECRET}x`)).toBeNull();
+    expect(thumb.searchParams.get("exp")).toBe(photo.searchParams.get("exp"));
+    expect(thumb.searchParams.get("sig")).not.toBe(
+      photo.searchParams.get("sig"),
+    );
+    const secondsLeft =
+      Number(photo.searchParams.get("exp")) - Date.now() / 1000;
+    expect(secondsLeft).toBeGreaterThan(3500);
+    expect(secondsLeft).toBeLessThanOrEqual(7200);
+
     const links = chatQrLinks(link);
     expect(result.reply_markup.inline_keyboard.flat()).toEqual([
       { text: "Download PNG", url: links.png },
@@ -500,6 +535,71 @@ describe("rate limits", () => {
     expect(last.is_personal).toBe(true);
     expect(last.button.text).toBe("Too many codes. Try again in a minute");
     expect(state.keys).toContain("telegram-bot:inline:1003");
+  });
+});
+
+describe("the bot-wide cap", () => {
+  it(`answers ${TELEGRAM_GLOBAL_PER_MINUTE} messages and inline queries a minute from everyone together, then says it's busy`, async () => {
+    // 20 people, each within their own limits: 10 messages and 5 inline
+    // queries apiece.
+    for (let person = 0; person < 20; person++) {
+      const from = { ...PERSON, id: 5000 + person };
+      for (let i = 0; i < 10; i++) {
+        await post(groupMessage(`/qr code ${person}-${i}`, from));
+      }
+      for (let i = 0; i < 5; i++) {
+        await post(inlineQuery(`q ${person}-${i}`, from));
+      }
+    }
+    expect(calls).toHaveLength(TELEGRAM_GLOBAL_PER_MINUTE);
+    expect(calls.filter((call) => call.method === "sendPhoto")).toHaveLength(
+      200,
+    );
+    expect(
+      calls.filter((call) => call.payload.results?.length === 1),
+    ).toHaveLength(100);
+
+    // Someone new, well within their own limits, now gets "busy".
+    const newcomer = { ...PERSON, id: 9001 };
+    await post(groupMessage("/qr one more", newcomer));
+    expect(calls.at(-1)!.method).toBe("sendMessage");
+    expect(calls.at(-1)!.payload.text).toBe(BUSY_TEXT);
+    await post(inlineQuery("one more", newcomer));
+    const inline = calls.at(-1)!.payload;
+    expect(inline.results).toEqual([]);
+    expect(inline.button.text).toBe(BUSY_TEXT);
+    expect(inline.cache_time).toBeLessThanOrEqual(10);
+    expect(inline.is_personal).toBe(false);
+  });
+
+  it("says busy once a minute per person in chats, and checks each person's own limit first", async () => {
+    state.exhausted.add("telegram-bot:global");
+    await post(privateMessage("https://qrdx.dev"));
+    await post(privateMessage("https://qrdx.dev/again"));
+    await post(groupMessage("/qr https://qrdx.dev", { ...PERSON, id: 2002 }));
+    expect(calls.map((call) => [call.method, call.payload.text])).toEqual([
+      ["sendMessage", BUSY_TEXT],
+      ["sendMessage", BUSY_TEXT],
+    ]);
+    expect(calls.map((call) => call.payload.chat_id)).toEqual([777, -100_123]);
+
+    // Over their own limit: told that, and the bot-wide count isn't touched.
+    state.exhausted.add("telegram-bot:message:3003");
+    state.keys = [];
+    await post(groupMessage("/qr x", { ...PERSON, id: 3003 }));
+    expect(state.keys).toEqual([
+      "telegram-bot:message:3003",
+      "telegram-bot:notice:3003",
+    ]);
+    expect(calls.at(-1)!.payload.text).toBe(RATE_LIMITED_TEXT);
+
+    state.exhausted.add("telegram-bot:inline:3003");
+    state.keys = [];
+    await post(inlineQuery("x", { ...PERSON, id: 3003 }));
+    expect(state.keys).toEqual(["telegram-bot:inline:3003"]);
+    expect(calls.at(-1)!.payload.button.text).toBe(
+      "Too many codes. Try again in a minute",
+    );
   });
 });
 
