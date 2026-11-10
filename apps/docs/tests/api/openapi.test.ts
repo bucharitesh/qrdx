@@ -207,6 +207,7 @@ describe("errors catalogue", () => {
   const thrown = [
     ...walk(join("app", "api", "v1")).filter((file) => file.endsWith(".ts")),
     "app/dashboard/codes/_lib/qr-codes.ts",
+    "app/dashboard/codes/_lib/code-kind.ts",
     "lib/api-errors.ts",
     "lib/api-quota.ts",
     "lib/request-guards.ts",

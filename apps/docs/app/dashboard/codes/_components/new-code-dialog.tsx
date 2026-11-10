@@ -57,7 +57,7 @@ type TemplatesModule = typeof import("@/lib/landing/templates");
 type DemoModule = typeof import("@/lib/landing/demo");
 
 /** Loads the page types (and every block) only when the picker opens. */
-function useTemplates(open: boolean) {
+export function useTemplates(open: boolean) {
   const [mod, setMod] = useState<TemplatesModule | null>(null);
   useEffect(() => {
     if (!open || mod) return;
@@ -76,7 +76,7 @@ function useTemplates(open: boolean) {
  * The template gallery's thumbnails (lib/landing/demo: sample photos and
  * media, half-size images), loaded with the picker.
  */
-function useDemoContent(open: boolean) {
+export function useDemoContent(open: boolean) {
   const [mod, setMod] = useState<DemoModule | null>(null);
   useEffect(() => {
     if (!open || mod) return;
@@ -91,7 +91,7 @@ function useDemoContent(open: boolean) {
   return mod;
 }
 
-function usePageUsage(open: boolean) {
+export function usePageUsage(open: boolean) {
   const [usage, setUsage] = useState<PageUsage | null>(null);
   useEffect(() => {
     if (!open) return;
@@ -106,7 +106,7 @@ function usePageUsage(open: boolean) {
   return usage;
 }
 
-function TypeCard({
+export function TypeCard({
   icon: Icon,
   label,
   description,
@@ -138,6 +138,114 @@ function TypeCard({
         </span>
       </span>
     </button>
+  );
+}
+
+export interface TemplatePreviewItem {
+  variant: PageTemplate["variants"][number];
+  content: ReturnType<TemplatesModule["buildTemplateContent"]> | null;
+}
+
+/** Thumbnails of a page type's templates (demo photos once they load). */
+export function useTemplatePreviews(
+  templates: TemplatesModule | null,
+  demo: DemoModule | null,
+  template: PageTemplate | undefined,
+): TemplatePreviewItem[] {
+  return useMemo(() => {
+    if (!(templates && template)) return [];
+    return template.variants.map((item) => {
+      try {
+        return {
+          variant: item,
+          content: demo
+            ? demo.buildDemoContent(template.type, item.id, {
+                thumbnail: true,
+              })
+            : templates.buildTemplateContent(template.type, item.id),
+        };
+      } catch {
+        return { variant: item, content: null };
+      }
+    });
+  }, [templates, demo, template]);
+}
+
+/** A page type's templates as cards with previews; one is selected. */
+export function TemplateGallery({
+  type,
+  previews,
+  selected,
+  onSelect,
+}: {
+  type: string;
+  previews: TemplatePreviewItem[];
+  selected: string | null;
+  onSelect: (variantId: string) => void;
+}) {
+  return (
+    <fieldset>
+      <legend className="sr-only">Template</legend>
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+        {previews.map(({ variant: item, content }) => {
+          const active = item.id === selected;
+          return (
+            <div
+              className={cn(
+                "relative space-y-1.5 rounded-lg p-1.5",
+                active
+                  ? "bg-accent ring-1 ring-foreground/15"
+                  : "has-[>button:hover]:bg-muted",
+                "has-[>button:focus-visible]:ring-ring/50 has-[>button:focus-visible]:ring-[3px]",
+              )}
+              key={item.id}
+            >
+              {/* The preview has its own links and buttons, so it sits
+                    outside the card button (nested interactive content is
+                    invalid HTML, and its links would navigate away). */}
+              {content ? (
+                <TemplatePreview
+                  className={cn(
+                    "bg-muted aspect-[9/16] w-full rounded-md border",
+                    active && "ring-primary ring-2",
+                  )}
+                  content={content}
+                />
+              ) : (
+                <div className="bg-muted aspect-[9/16] rounded-md border" />
+              )}
+              {/* Its ::after covers the whole card, preview included. */}
+              <button
+                aria-pressed={active}
+                className="block w-full space-y-1.5 text-left outline-none after:absolute after:inset-0 after:rounded-lg"
+                onClick={() => onSelect(item.id)}
+                type="button"
+              >
+                <span className="block px-0.5 text-sm font-medium">
+                  {item.name}
+                </span>
+                {item.description && (
+                  <span className="text-muted-foreground block px-0.5 text-xs leading-snug">
+                    {item.description}
+                  </span>
+                )}
+              </button>
+              {/* Above the card button, so opening it never selects the card. */}
+              <a
+                aria-label={`Preview the ${item.name} template in a new tab`}
+                className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring/50 absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium shadow-xs backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]"
+                href={demoPath(type, item.id)}
+                rel="noopener"
+                target="_blank"
+              >
+                <ExportSquare aria-hidden className="size-3" />
+                Preview
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </fieldset>
   );
 }
 
@@ -206,23 +314,7 @@ export function NewCodeDialog({
     template?.variants.find((item) => item.id === variantId) ??
     template?.variants[0];
 
-  const previews = useMemo(() => {
-    if (!(templates && template)) return [];
-    return template.variants.map((item) => {
-      try {
-        return {
-          variant: item,
-          content: demo
-            ? demo.buildDemoContent(template.type, item.id, {
-                thumbnail: true,
-              })
-            : templates.buildTemplateContent(template.type, item.id),
-        };
-      } catch {
-        return { variant: item, content: null };
-      }
-    });
-  }, [templates, demo, template]);
+  const previews = useTemplatePreviews(templates, demo, template);
 
   const chooseType = (next: string) => {
     if (atPageLimit) {
@@ -367,68 +459,12 @@ export function NewCodeDialog({
           // The previews render whole pages, form blocks included, so the
           // <form> holds only the name field (forms can't nest).
           <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 py-2">
-            <fieldset>
-              <legend className="sr-only">Template</legend>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                {previews.map(({ variant: item, content }) => {
-                  const active = item.id === variant?.id;
-                  return (
-                    <div
-                      className={cn(
-                        "relative space-y-1.5 rounded-lg p-1.5",
-                        active
-                          ? "bg-accent ring-1 ring-foreground/15"
-                          : "has-[>button:hover]:bg-muted",
-                        "has-[>button:focus-visible]:ring-ring/50 has-[>button:focus-visible]:ring-[3px]",
-                      )}
-                      key={item.id}
-                    >
-                      {/* The preview has its own links and buttons, so it sits
-                            outside the card button (nested interactive content is
-                            invalid HTML, and its links would navigate away). */}
-                      {content ? (
-                        <TemplatePreview
-                          className={cn(
-                            "bg-muted aspect-[9/16] w-full rounded-md border",
-                            active && "ring-primary ring-2",
-                          )}
-                          content={content}
-                        />
-                      ) : (
-                        <div className="bg-muted aspect-[9/16] rounded-md border" />
-                      )}
-                      {/* Its ::after covers the whole card, preview included. */}
-                      <button
-                        aria-pressed={active}
-                        className="block w-full space-y-1.5 text-left outline-none after:absolute after:inset-0 after:rounded-lg"
-                        onClick={() => setVariantId(item.id)}
-                        type="button"
-                      >
-                        <span className="block px-0.5 text-sm font-medium">
-                          {item.name}
-                        </span>
-                        {item.description && (
-                          <span className="text-muted-foreground block px-0.5 text-xs leading-snug">
-                            {item.description}
-                          </span>
-                        )}
-                      </button>
-                      {/* Above the card button, so opening it never selects the card. */}
-                      <a
-                        aria-label={`Preview the ${item.name} template in a new tab`}
-                        className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring/50 absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium shadow-xs backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]"
-                        href={demoPath(template.type, item.id)}
-                        rel="noopener"
-                        target="_blank"
-                      >
-                        <ExportSquare aria-hidden className="size-3" />
-                        Preview
-                      </a>
-                    </div>
-                  );
-                })}
-              </div>
-            </fieldset>
+            <TemplateGallery
+              onSelect={setVariantId}
+              previews={previews}
+              selected={variant?.id ?? null}
+              type={template.type}
+            />
             <form className="space-y-4" id="new-page-form" onSubmit={submit}>
               <div className="space-y-1.5">
                 <Label htmlFor="new-page-title">

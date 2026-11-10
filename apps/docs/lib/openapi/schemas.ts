@@ -107,6 +107,15 @@ export const codeSchema = named(
       .describe("Where a scan sends people; change it any time"),
     title: z.string().nullable().describe("Name shown in the dashboard"),
     contentType: z.string().describe("What the code points to, e.g. `url`"),
+    kind: z
+      .enum(["redirect", "page"])
+      .describe(
+        "`redirect`: scans go to `destinationUrl`. `page`: scans open a hosted page (`destinationUrl` is its address). Switch it with PATCH",
+      ),
+    pageId: z
+      .string()
+      .nullable()
+      .describe("The hosted page a `page` code opens; null for `redirect`"),
     status: z
       .enum(["active", "archived", "disabled"])
       .describe(

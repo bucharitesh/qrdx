@@ -72,9 +72,9 @@ export async function HistoryPanel({ codeId }: { codeId: string }) {
       <CardHeader className="px-4">
         <CardTitle>Version history</CardTitle>
         <CardDescription>
-          Each edit to the destination, title, design, domain, schedule, routing
-          or pixels saves the previous settings here. Restoring a version saves
-          the current settings first, so it can be undone.
+          Each edit to the type, destination, title, design, domain, schedule,
+          routing or pixels saves the previous settings here. Restoring a
+          version saves the current settings first, so it can be undone.
         </CardDescription>
       </CardHeader>
       <CardContent className="px-4">
