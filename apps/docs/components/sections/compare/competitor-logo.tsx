@@ -16,6 +16,8 @@ const LOGOS: Partial<Record<string, string>> = {
   hovercode: "/compare/hovercode.svg",
   latestqr: "/compare/latestqr.svg",
   "me-qr": "/compare/me-qr.svg",
+  myqrcode: "/compare/myqrcode.svg",
+  pageloot: "/compare/pageloot.svg",
   "qr-code-chimp": "/compare/qr-code-chimp.svg",
   "qr-code-generator-pro": "/compare/qr-code-generator-pro.png",
   "qr-code-io": "/compare/qr-code-io.svg",
