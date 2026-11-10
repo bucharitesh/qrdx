@@ -122,12 +122,15 @@ g.main:has(> g.plot) > rect {
 :lang(ja) {
   word-break: auto-phrase;
   line-break: strict;
+  /* A phrase wider than its box (a heading on a phone) may still break. */
+  overflow-wrap: anywhere;
 }
 :lang(zh) {
   line-break: strict;
 }
 :lang(ko) {
   word-break: keep-all;
+  overflow-wrap: anywhere;
 }
 :is(:lang(ja), :lang(ko), :lang(zh))
   :is(h1, h2, .font-display, .tracking-tight, .tracking-tighter) {

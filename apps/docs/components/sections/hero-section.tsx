@@ -39,7 +39,7 @@ export function HeroSection() {
           />
         </Backdrop>
         <div className="relative mx-auto flex w-full max-w-[50rem] flex-col items-center gap-7 px-10 text-center md:gap-8">
-          <p className="flex h-8 items-center gap-2 rounded-full border bg-background/80 px-3 text-sm text-muted-foreground backdrop-blur">
+          <p className="flex min-h-8 items-center gap-2 rounded-full border bg-background/80 px-3 py-1 text-balance text-sm text-muted-foreground backdrop-blur">
             <BadgeIcon />
             {t("badge")}
           </p>
