@@ -20,6 +20,7 @@ import {
   runDeliveryWorker,
 } from "@/lib/events/deliveries";
 import { checkWorkerDue, reseedWorkerDue } from "@/lib/events/worker-due";
+import { type RecheckSummary, recheckWebRisk } from "@/lib/safety/recheck";
 import { isAuthorizedCronRequest, unauthorized } from "../_lib/auth";
 
 export const runtime = "nodejs";
@@ -30,7 +31,8 @@ const noStore = { "Cache-Control": "no-store" };
 
 /**
  * Webhook worker: retries due deliveries with exponential backoff, sends scan
- * batches whose window closed, runs data-out syncs, prunes deliveries older
+ * batches whose window closed, runs data-out syncs, looks up destinations
+ * created without a Web Risk answer, prunes deliveries older
  * than 30 days and deletes expired Better Auth verification values. The daily
  * call also forgets browsers no account has seen for 400 days and completes
  * support's turn-offs of two-step verification that are due.
@@ -130,6 +132,22 @@ export async function GET(request: Request) {
       : 0;
   // Data-out streams (Google Sheets, HubSpot, Mailchimp) ride the same cron.
   const integrations = await runIntegrationSyncs({ budgetMs: 12_000 });
+  // Destinations created without a Web Risk answer (large batches out of
+  // time, Web Risk down): look them up, switch off the flagged ones
+  // (lib/safety/recheck.ts). At most 8 s, ending by 50 s.
+  let webRisk: RecheckSummary | null = null;
+  try {
+    webRisk = await recheckWebRisk({
+      deadline: Math.min(Date.now() + 8_000, startedAt + 50_000),
+    });
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        event: "cron.webhooks.web_risk_recheck_failed",
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    );
+  }
 
   // Re-seed while Postgres is awake anyway. On failure the marker keeps what
   // was due, so the next frequent call runs in full again.
@@ -143,6 +161,8 @@ export async function GET(request: Request) {
       await nextIntegrationSyncDueAt(),
       // Out of time before every stream: go on at the next call.
       unfinished ? Date.now() : null,
+      // Web Risk re-checks left (or the step failed): the next call too.
+      webRisk === null || webRisk.pending > 0 ? Date.now() : null,
     ].filter((time): time is number => time !== null);
     nextDueAt = times.length > 0 ? Math.min(...times) : null;
     await reseedWorkerDue(startedAt, nextDueAt);
@@ -167,6 +187,7 @@ export async function GET(request: Request) {
       auditEventsPurged,
       commissionsReleased,
       integrations,
+      webRisk,
       nextDueAt: nextDueAt === null ? null : new Date(nextDueAt).toISOString(),
     }),
   );

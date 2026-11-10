@@ -13,6 +13,11 @@ import { remark } from "remark";
 import remarkMdx from "remark-mdx";
 import { describe, expect, it } from "vitest";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
+import {
+  MAX_BULK_TOOL_ROWS,
+  MAX_CODES_PER_REQUEST,
+  MAX_IMPORT_ROWS,
+} from "@/lib/bulk-limits";
 import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
   fillFacts,
@@ -60,6 +65,11 @@ describe("PRODUCT_FACTS", () => {
       affiliateHoldDays: 30,
       affiliateMinPayoutUsd: "US$25",
       affiliateTermsNoticeDays: 30,
+      // lib/bulk-limits.ts
+      apiBatchCodes: MAX_CODES_PER_REQUEST.toLocaleString("en-US"),
+      importRows: MAX_IMPORT_ROWS.toLocaleString("en-US"),
+      bulkToolRows: MAX_BULK_TOOL_ROWS.toLocaleString("en-US"),
+      newPaidAccountHourlyCodes: "2,000",
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(

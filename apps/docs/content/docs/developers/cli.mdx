@@ -1,6 +1,6 @@
 ---
 title: CLI
-description: Generate styled QR codes as SVG, PNG or vector EPS from your terminal or CI with the @qrdx/cli command-line tool.
+description: Generate styled QR codes as SVG, PNG, WebP or vector EPS from your terminal or CI with the @qrdx/cli command-line tool, one at a time or a whole CSV with qrdx batch.
 icon: Terminal
 ---
 
@@ -19,7 +19,7 @@ npm install -g @qrdx/cli
 qrdx generate "https://example.com" -o qr.png --size 1024
 ```
 
-It needs Node.js 22 or later. PNG output uses [sharp](https://sharp.pixelplumbing.com), an optional dependency npm installs where your platform supports it; SVG and EPS work without it. The `qrdx` npm package is the React library: the CLI is only in `@qrdx/cli`.
+It needs Node.js 22 or later. PNG and WebP output use [sharp](https://sharp.pixelplumbing.com), an optional dependency npm installs where your platform supports it; SVG and EPS work without it. The `qrdx` npm package is the React library: the CLI is only in `@qrdx/cli`.
 
 ## Output formats
 
@@ -29,6 +29,7 @@ The file extension picks the format, or use `--format` when the file name has no
 | --- | --- | --- |
 | `.svg` | Web pages, design tools, scaling without loss | Width in pixels (default 512) |
 | `.png` | Documents, slides, anywhere that needs an image | Width in pixels |
+| `.webp` | Websites: the PNG's pixels, lossless, in a smaller file | Width in pixels |
 | `.eps` | Print shops, Illustrator, InDesign | Width in points (72 per inch, so `144` is 2 inches) |
 
 EPS files are vector PostScript. PNG and JPEG logos are embedded as they are; other logo formats are converted with sharp when it's installed, and otherwise left out with a warning.
@@ -38,7 +39,7 @@ EPS files are vector PostScript. PNG and JPEG logos are embedded as they are; ot
 | Flag | Default | Description |
 | --- | --- | --- |
 | `-o`, `--output` | `qr.svg` | Output file |
-| `--format` | from the extension | `svg`, `png` or `eps` |
+| `--format` | from the extension | `svg`, `png`, `webp` or `eps` |
 | `--size` | `512` | Output size (see above) |
 | `-l`, `--level` | `Q` | Error correction: `L`, `M`, `Q` or `H` |
 | `--body` | `square` | Data module [pattern](/docs/features/patterns) |
@@ -54,6 +55,29 @@ EPS files are vector PostScript. PNG and JPEG logos are embedded as they are; ot
 | `--frame-color`, `--frame-text-color` | | Frame and label colors (hex) |
 
 `qrdx --help` lists every pattern name. Invalid values exit with code `1` and a message listing the accepted values.
+
+## Many codes from a CSV
+
+`qrdx batch` writes a static QR code for every row of a CSV file into a folder:
+
+```bash
+qrdx batch products.csv -o codes --format png --size 1024 --body circle
+```
+
+It reads the same columns as the [bulk generator](/tools/bulk): the content from a column named `value`, `url`, `link`, `data`, `content`, `text` or `qr` (else the first column), and file names from one named `file name`, `name`, `label`, `id`, `title` or `sku` (else `qr-00001`, `qr-00002` and so on). Choose others by header name or column number:
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-o`, `--out` | `qr-codes` | Folder for the codes |
+| `--format` | `svg` | `svg`, `png` or `eps` |
+| `--value-column` | guessed | Column with each code's content |
+| `--name-column` | guessed | Column with file names |
+| `--no-header` | | The first row is a code, not column names |
+| `--jobs` | `4` for SVG, `8` otherwise | Codes rendered at a time |
+
+Every style option above applies to all the codes. The CSV is read as a stream and each code is saved as soon as it's made, so the command has no row limit: on a laptop, 10,000 SVG codes took about 40 seconds and under 200 MB of memory. Nothing is uploaded and no account is needed. Rows that can't be encoded are skipped and listed with the reason in `errors.csv` in the output folder.
+
+To print [dynamic codes](/docs/dynamic-qr-codes) in bulk, create them first (the dashboard's CSV import or the API) and run `qrdx batch` on the results CSV the import gives you, with `--value-column short_link`.
 
 ## Examples
 

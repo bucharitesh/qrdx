@@ -67,7 +67,11 @@ import { MoveToFolderDialog } from "./folder-dialogs";
 import { useListDisplay } from "./list-display";
 import { TagsDialog } from "./tag-dialogs";
 import { plural, useOrganizeAction } from "./use-organize-action";
-import { downloadCodesZip } from "./zip-download";
+import {
+  downloadCodesZip,
+  ZIP_FORMAT_LABELS,
+  type ZipFormat,
+} from "./zip-download";
 
 const OTHERS_SKIPPED =
   "codes created by other team members were skipped: only owners and admins can delete them.";
@@ -160,7 +164,7 @@ export function CodesList({
     done(result);
   };
 
-  const zip = async (format: "png" | "svg") => {
+  const zip = async (format: ZipFormat) => {
     setZipping(true);
     const toastId = toast.loading(`Preparing ${plural(count, "QR code")}...`);
     try {
@@ -176,7 +180,7 @@ export function CodesList({
         toast.error("The QR codes couldn't be rendered.", { id: toastId });
       } else {
         toast.success(
-          `Downloaded ${plural(saved, "QR code")} as ${format.toUpperCase()}`,
+          `Downloaded ${plural(saved, "QR code")} as ${ZIP_FORMAT_LABELS[format]}`,
           {
             id: toastId,
             ...(failed > 0 && {
@@ -330,6 +334,9 @@ export function CodesList({
                 <DropdownMenuContent align="start">
                   <DropdownMenuItem onSelect={() => zip("png")}>
                     PNG images (ZIP)
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => zip("webp")}>
+                    WebP images (ZIP)
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => zip("svg")}>
                     SVG images (ZIP)

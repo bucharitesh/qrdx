@@ -35,7 +35,7 @@ const TEXT = "\x1b[38;5;145m";
 const GREEN = "\x1b[38;5;114m";
 const DIM = "\x1b[38;5;102m";
 
-interface GenerateFlags {
+export interface GenerateFlags {
   value?: string;
   level?: ErrorLevel;
   body?: BodyPattern;
@@ -71,7 +71,7 @@ export interface GenerateMeta {
 }
 
 const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
-/** Largest PNG side: beyond this sharp hits its pixel limit (and RAM). */
+/** Largest PNG or WebP side: beyond this sharp hits its pixel limit (and RAM). */
 const MAX_PNG_SIZE = 10_000;
 
 /**
@@ -185,9 +185,9 @@ function validateFlags(flags: GenerateFlags): void {
   assertOneOf("--format", flags.format, OUTPUT_FORMATS);
   if (flags.output !== undefined) {
     const ext = extname(flags.output).toLowerCase();
-    if (!["", ".svg", ".png", ".eps"].includes(ext)) {
+    if (!["", ".svg", ".png", ".webp", ".eps"].includes(ext)) {
       throw new Error(
-        `Unsupported output format "${ext}". Use a .svg, .png or .eps file name.`
+        `Unsupported output format "${ext}". Use a .svg, .png, .webp or .eps file name.`
       );
     }
     if (ext && flags.format && ext !== `.${flags.format}`) {
@@ -196,12 +196,15 @@ function validateFlags(flags: GenerateFlags): void {
       );
     }
   }
-  const isPng =
-    extname(flags.output ?? "").toLowerCase() === ".png" ||
-    flags.format === "png";
-  if (isPng && flags.size !== undefined && flags.size > MAX_PNG_SIZE) {
+  const raster = [
+    extname(flags.output ?? "")
+      .toLowerCase()
+      .slice(1),
+    flags.format,
+  ].find((format) => format === "png" || format === "webp");
+  if (raster && flags.size !== undefined && flags.size > MAX_PNG_SIZE) {
     throw new Error(
-      `Invalid --size "${flags.size}". PNG output is at most ${MAX_PNG_SIZE} px; use .svg or .eps for larger prints.`
+      `Invalid --size "${flags.size}". ${raster === "webp" ? "WebP" : "PNG"} output is at most ${MAX_PNG_SIZE} px; use .svg or .eps for larger prints.`
     );
   }
 }
@@ -362,6 +365,80 @@ function parseFlags(args: string[]): GenerateFlags {
   return flags;
 }
 
+/** The QR props for `value` with these settings (generate and batch). */
+export function buildQrProps(
+  value: string,
+  settings: {
+    level: ErrorLevel;
+    body: BodyPattern;
+    eye: CornerEyePattern;
+    dot: CornerEyeDotPattern;
+    fg: ColorConfig;
+    bg: ColorConfig;
+    eyeColor?: ColorConfig;
+    dotColor?: ColorConfig;
+    margin: number;
+    size: number;
+    template?: string;
+    frame?: QRFrame;
+    logo?: string;
+  }
+) {
+  const { size, logo, template, frame, eyeColor, dotColor } = settings;
+  return {
+    value,
+    level: settings.level,
+    bodyPattern: settings.body,
+    cornerEyePattern: settings.eye,
+    cornerEyeDotPattern: settings.dot,
+    fgColor: settings.fg,
+    bgColor: settings.bg,
+    ...(eyeColor ? { eyeColor } : {}),
+    ...(dotColor ? { dotColor } : {}),
+    margin: settings.margin,
+    size,
+    ...(template ? { templateId: template } : {}),
+    ...(frame ? { frame } : {}),
+    ...(logo
+      ? {
+          imageSettings: {
+            src: logo,
+            height: Math.round(size * 0.2),
+            width: Math.round(size * 0.2),
+            excavate: true,
+          },
+        }
+      : {}),
+  };
+}
+
+/**
+ * The style options `qrdx generate` takes (everything but the data and the
+ * output file), parsed and checked, with generate's defaults: for
+ * `qrdx batch`, which renders every row of a CSV with one style.
+ */
+export function styleFromArgs(args: string[]) {
+  const flags = parseFlags(args);
+  return {
+    flags,
+    settings: {
+      level: flags.level ?? ("Q" as ErrorLevel),
+      body: flags.body ?? ("square" as BodyPattern),
+      eye: flags.eye ?? ("square" as CornerEyePattern),
+      dot: flags.dot ?? ("square" as CornerEyeDotPattern),
+      fg: flags.fg ?? "#000000",
+      bg: flags.bg ?? "#ffffff",
+      eyeColor: flags.eyeColor,
+      dotColor: flags.dotColor,
+      margin: flags.margin ?? DEFAULT_MARGIN,
+      size: flags.size ?? 512,
+      template: flags.template,
+      frame: frameFromFlags(flags),
+      logo: flags.logo,
+    },
+  };
+}
+
 function isCancel(value: unknown): boolean {
   return p.isCancel(value);
 }
@@ -381,6 +458,9 @@ function inferFormat(
   const ext = extname(outputPath).toLowerCase();
   if (ext === ".png") {
     return "png";
+  }
+  if (ext === ".webp") {
+    return "webp";
   }
   if (ext === ".eps") {
     return "eps";
@@ -479,7 +559,7 @@ export async function runGenerate(
   if (!outputPath) {
     if (canUseClack) {
       const pathRes = await p.text({
-        message: "Output file (.svg, .png or .eps)",
+        message: "Output file (.svg, .png, .webp or .eps)",
         placeholder: defaultOutput,
         defaultValue: defaultOutput,
         validate(v) {
@@ -494,7 +574,7 @@ export async function runGenerate(
       outputPath = (pathRes as string) || defaultOutput;
     } else if (process.stdout.isTTY && !isCI) {
       const pathAns = await readLineFromTTY(
-        `Output file ${DIM}(.svg, .png or .eps, Enter = ${defaultOutput})${RESET}: `
+        `Output file ${DIM}(.svg, .png, .webp or .eps, Enter = ${defaultOutput})${RESET}: `
       );
       outputPath = pathAns?.trim() || defaultOutput;
     } else {
@@ -813,31 +893,21 @@ export async function runGenerate(
   spinner.start("Generating QR code...");
 
   try {
-    const qrProps = {
-      value: value as string,
+    const qrProps = buildQrProps(value as string, {
       level,
-      bodyPattern: body,
-      cornerEyePattern: eye,
-      cornerEyeDotPattern: dot,
-      fgColor: fg,
-      bgColor: bg,
-      ...(eyeColor ? { eyeColor } : {}),
-      ...(dotColor ? { dotColor } : {}),
+      body,
+      eye,
+      dot,
+      fg,
+      bg,
+      eyeColor,
+      dotColor,
       margin,
       size,
-      ...(template ? { templateId: template } : {}),
-      ...(frame ? { frame } : {}),
-      ...(logo
-        ? {
-            imageSettings: {
-              src: logo,
-              height: Math.round(size * 0.2),
-              width: Math.round(size * 0.2),
-              excavate: true,
-            },
-          }
-        : {}),
-    };
+      template,
+      frame,
+      logo,
+    });
 
     if (outputPath) {
       const format = inferFormat(outputPath, flags.format);

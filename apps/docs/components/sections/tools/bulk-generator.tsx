@@ -20,7 +20,7 @@ import {
 } from "@repo/design-system/components/ui/select";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { cn } from "@repo/design-system/lib/utils";
-import { strToU8, Zip, ZipDeflate, ZipPassThrough } from "fflate";
+import { strToU8 } from "fflate";
 import {
   Import as Download,
   Brush2 as EditStyle,
@@ -42,6 +42,7 @@ import { useQRThemes } from "@/lib/hooks/use-themes";
 import { playgroundHref } from "@/lib/playground-links";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
+import { createZipParts } from "@/lib/zip-stream";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThemeStyles } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
@@ -60,7 +61,8 @@ import {
 } from "./bulk-utils";
 import { buildQrProps, QUIET_ZONE_MODULES } from "./qr-props";
 
-type Format = "png" | "svg";
+/** WebP is lossless, the same pixels as PNG in a smaller file. */
+type Format = "png" | "webp" | "svg";
 type LevelChoice = "style" | "L" | "M" | "Q" | "H";
 
 interface Failure {
@@ -83,6 +85,8 @@ type Status =
       phase: "done";
       url: string;
       filename: string;
+      /** ZIP files saved: a large batch comes in parts */
+      parts: number;
       generated: number;
       failures: Failure[];
       warning?: string;
@@ -340,26 +344,15 @@ export function BulkGenerator() {
       }
     }
 
-    // fflate types chunks as ArrayBufferLike-backed; they are plain ArrayBuffers.
-    const chunks: Uint8Array<ArrayBuffer>[] = [];
-    let resolveZip: (blob: Blob) => void = () => {};
-    let rejectZip: (error: Error) => void = () => {};
-    const zipped = new Promise<Blob>((resolve, reject) => {
-      resolveZip = resolve;
-      rejectZip = reject;
-    });
-    const zip = new Zip((error, chunk, final) => {
-      if (error) {
-        rejectZip(error);
-        return;
-      }
-      chunks.push(chunk as Uint8Array<ArrayBuffer>);
-      if (final) resolveZip(new Blob(chunks, { type: "application/zip" }));
-    });
+    // Each file goes into the ZIP as soon as it's drawn, and the archive's
+    // bytes leave JavaScript memory as it grows; a batch past ZIP_PART_BYTES
+    // is saved in parts as it goes (lib/zip-stream.ts).
+    const zipBase = `${sanitizeFilename(fileName?.replace(/\.[^.]+$/, "") ?? "") || "qr-codes"}-qr-codes`;
+    const zip = createZipParts(zipBase);
 
     const allocate = createFilenameAllocator();
     const failures: Failure[] = [];
-    const size = format === "png" ? pngSize : 1024;
+    const size = format === "svg" ? 1024 : pngSize;
     let generated = 0;
 
     for (let start = 0; start < total; start += BATCH_SIZE) {
@@ -397,12 +390,7 @@ export function BulkGenerator() {
         const base =
           sanitizeFilename(rawName) ||
           `qr-${String(output.index + 1).padStart(4, "0")}`;
-        const entry =
-          format === "svg"
-            ? new ZipDeflate(allocate(base, format), { level: 6 })
-            : new ZipPassThrough(allocate(base, format));
-        zip.add(entry);
-        entry.push(output.bytes, true);
+        await zip.add(allocate(base, format), output.bytes, format === "svg");
         generated++;
       }
 
@@ -416,13 +404,13 @@ export function BulkGenerator() {
     }
 
     if (run.cancelled) {
-      zip.terminate();
+      zip.abort();
       setStatus({ phase: "idle" });
       return;
     }
 
     if (generated === 0) {
-      zip.terminate();
+      zip.abort();
       setStatus({
         phase: "error",
         message: "No codes could be generated from this file.",
@@ -432,16 +420,12 @@ export function BulkGenerator() {
     }
 
     if (failures.length > 0) {
-      const entry = new ZipDeflate("errors.csv", { level: 6 });
-      zip.add(entry);
-      entry.push(strToU8(Papa.unparse(failures)), true);
+      await zip.add("errors.csv", strToU8(Papa.unparse(failures)), true);
     }
-    zip.end();
 
     try {
-      const blob = await zipped;
+      const { blob, filename, parts } = await zip.finish();
       const url = URL.createObjectURL(blob);
-      const filename = `${sanitizeFilename(fileName?.replace(/\.[^.]+$/, "") ?? "") || "qr-codes"}-qr-codes.zip`;
       saveBlob(url, filename);
       track("qr_generated", {
         content_type: "bulk",
@@ -453,6 +437,7 @@ export function BulkGenerator() {
         phase: "done",
         url,
         filename,
+        parts,
         generated,
         failures,
         warning,
@@ -688,14 +673,15 @@ export function BulkGenerator() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="png">PNG (image)</SelectItem>
+                  <SelectItem value="webp">WebP (image, smaller)</SelectItem>
                   <SelectItem value="svg">SVG (vector, for print)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-            {format === "png" && (
+            {format !== "svg" && (
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs" htmlFor="bulk-png-size">
-                  PNG size
+                  {format === "webp" ? "WebP" : "PNG"} size
                 </Label>
                 <Select
                   value={String(pngSize)}
@@ -804,8 +790,9 @@ export function BulkGenerator() {
         {status.phase === "done" && (
           <div className="flex w-full flex-col gap-2 text-sm">
             <p>
-              Done: {status.generated.toLocaleString()} codes in{" "}
-              {status.filename}.
+              {status.parts > 1
+                ? `Done: ${status.generated.toLocaleString()} codes in ${status.parts} ZIP files (large batches are saved in parts as they're made).`
+                : `Done: ${status.generated.toLocaleString()} codes in ${status.filename}.`}
             </p>
             {status.warning && (
               <p className="text-xs text-muted-foreground">{status.warning}</p>
@@ -815,7 +802,9 @@ export function BulkGenerator() {
               size="sm"
               onClick={() => saveBlob(status.url, status.filename)}
             >
-              Download again
+              {status.parts > 1
+                ? `Download part ${status.parts} again`
+                : "Download again"}
             </Button>
           </div>
         )}

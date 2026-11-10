@@ -33,6 +33,7 @@ import {
   Copy,
   DocumentText,
   Gallery,
+  Global,
   type Icon,
   Image,
   Import,
@@ -135,6 +136,13 @@ const FORMATS: {
 }[] = [
   { id: "png", label: "PNG", bestFor: "Web, docs and slides", Icon: Gallery },
   { id: "jpg", label: "JPG", bestFor: "Email and small files", Icon: Image },
+  {
+    id: "webp",
+    label: "WebP",
+    bestFor: "Fast-loading websites",
+    Icon: Global,
+    note: "lossless, usually smaller than PNG",
+  },
   {
     id: "svg",
     label: "SVG",
@@ -540,7 +548,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   </span>
                   <ToggleGroup
                     aria-labelledby="dl-format"
-                    className="grid w-full grid-cols-5"
+                    className="grid w-full grid-cols-6"
                     onValueChange={(next) => {
                       if (next)
                         updateDownloadOption("format", next as ImageFormat);
@@ -566,7 +574,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                       </ToggleGroupItem>
                     ))}
                   </ToggleGroup>
-                  <p className="text-muted-foreground mt-2 text-xs">
+                  <p className="text-muted-foreground mt-2 text-xs text-pretty">
                     Best for {formatInfo?.bestFor.toLowerCase()}
                     {formatInfo?.vector ? " · stays sharp at any size" : ""}
                     {formatInfo?.note ? ` · ${formatInfo.note}` : ""}.

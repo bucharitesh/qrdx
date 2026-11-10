@@ -12,7 +12,6 @@ import {
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Progress } from "@repo/design-system/components/ui/progress";
 import {
   Select,
   SelectContent,
@@ -30,18 +29,15 @@ import {
 } from "@repo/design-system/components/ui/table";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  InfoCircle as CircleAlert,
-  TickCircle as CircleCheck,
   Import as Download,
   TableDocument as FileSpreadsheet,
   Diamonds as Gem,
   Export as Upload,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import Papa from "papaparse";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { importQrCodesChunk, previewQrCodeImport } from "@/actions/bulk-codes";
+import { previewQrCodeImport } from "@/actions/bulk-codes";
 import { useKnownCodeOptionPlans } from "@/app/dashboard/codes/_components/code-options";
 import {
   DomainPicker,
@@ -49,29 +45,37 @@ import {
 } from "@/app/dashboard/codes/_components/domain-picker";
 import { plural } from "@/app/dashboard/codes/_components/use-organize-action";
 import { formatPlanList } from "@/app/dashboard/codes/_lib/code-options";
-import type {
-  ImportPreview,
-  ImportRowResult,
-} from "@/app/dashboard/codes/import/_lib/import";
+import { MAX_TAGS_PER_CODE } from "@/app/dashboard/codes/_lib/organize-shared";
+import type { ImportPreview } from "@/app/dashboard/codes/import/_lib/import";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { track } from "@/lib/analytics";
+import { formatCount } from "@/lib/bulk-limits";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import {
   type ColumnMapping,
   checkImportRow,
+  duplicateSlugLines,
   guessMapping,
   IMPORT_CHUNK_SIZE,
   IMPORT_FIELD_LABELS,
   IMPORT_FIELDS,
   type ImportField,
   type ImportRowInput,
+  importBlocked,
+  MAX_CHUNK_BYTES,
   MAX_IMPORT_FILE_BYTES,
   MAX_IMPORT_ROWS,
+  PREVIEW_CHUNK_SIZE,
   rowsFromTable,
   SAMPLE_IMPORT_ROWS,
 } from "../_lib/csv";
+import { createImportJob } from "../_lib/job";
+import { BatchOrganize, type BatchTargets } from "./batch-organize";
+import { ImportProgress } from "./import-progress";
+import { ImportResults } from "./import-results";
+import { useImportRunner } from "./use-import-runner";
 
 const NOT_MAPPED = "none";
 const PREVIEW_ROWS = 200;
@@ -83,10 +87,45 @@ interface ParsedFile {
   truncated: boolean;
 }
 
-type Phase =
-  | { type: "edit" }
-  | { type: "importing"; done: number; total: number }
-  | { type: "done"; results: ImportRowResult[]; stopped: string | null };
+const NO_TARGETS: BatchTargets = { folder: null, tags: [] };
+
+/** Server checks of every row, a request per PREVIEW_CHUNK_SIZE rows, merged. */
+async function previewInChunks(
+  rows: ImportRowInput[],
+  domainId: string | null,
+  isCancelled: () => boolean,
+): Promise<{ preview: ImportPreview } | { error: string } | null> {
+  let merged: ImportPreview | null = null;
+  const folders = new Map<string, string>();
+  const tags = new Map<string, string>();
+  for (let start = 0; start < rows.length; start += PREVIEW_CHUNK_SIZE) {
+    const result = await previewQrCodeImport({
+      rows: rows.slice(start, start + PREVIEW_CHUNK_SIZE),
+      domainId,
+    });
+    if (isCancelled()) return null;
+    if (!result.success) return { error: result.error.message };
+    const part = result.data;
+    for (const name of part.newFolders) folders.set(name.toLowerCase(), name);
+    for (const name of part.newTags) tags.set(name.toLowerCase(), name);
+    merged = merged
+      ? {
+          ...part,
+          errors: [...merged.errors, ...part.errors],
+          valid: merged.valid + part.valid,
+          invalid: merged.invalid + part.invalid,
+        }
+      : part;
+  }
+  if (!merged) return null;
+  return {
+    preview: {
+      ...merged,
+      newFolders: [...folders.values()],
+      newTags: [...tags.values()],
+    },
+  };
+}
 
 function saveText(text: string, filename: string) {
   const url = URL.createObjectURL(
@@ -107,6 +146,7 @@ export function ImportWizard({
   plan,
   bulkPlans,
   basePath,
+  storeKey,
 }: {
   /** The workspace's plan may import more than one row */
   canBulk: boolean;
@@ -116,6 +156,8 @@ export function ImportWizard({
   bulkPlans: Plan[];
   /** Codes list to link to afterwards */
   basePath: string;
+  /** Where this person's import in this workspace is kept (for resume) */
+  storeKey: string;
 }) {
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
@@ -131,14 +173,21 @@ export function ImportWizard({
   const [preview, setPreview] = useState<ImportPreview | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [checking, setChecking] = useState(false);
-  const [phase, setPhase] = useState<Phase>({ type: "edit" });
+  const [targets, setTargets] = useState<BatchTargets>(NO_TARGETS);
+  const runner = useImportRunner(storeKey, {
+    // The active-code cap: its limit card (and upgrade, when it can be
+    // bought). A plan feature: the upgrade dialog.
+    onStop: (error) => {
+      if (error.meter) showLimit(error.meter);
+      else if (error.code === "PLAN_REQUIRED") openGetProDialog();
+    },
+  });
 
   const onDrop = useCallback((accepted: File[]) => {
     const picked = accepted[0];
     if (!picked) return;
     setParseError(null);
     setPreview(null);
-    setPhase({ type: "edit" });
     Papa.parse<string[]>(picked, {
       skipEmptyLines: "greedy",
       preview: MAX_IMPORT_ROWS + 2,
@@ -184,7 +233,7 @@ export function ImportWizard({
   const rejection = fileRejections[0]?.errors[0];
   const rejectionMessage =
     rejection?.code === "file-too-large"
-      ? "The file is larger than 1 MB."
+      ? `The file is larger than ${MAX_IMPORT_FILE_BYTES / 1024 / 1024} MB.`
       : rejection?.message;
 
   const rows = useMemo<ImportRowInput[]>(
@@ -193,17 +242,34 @@ export function ImportWizard({
   );
   const destinationMapped = mapping !== null && mapping.destination >= 0;
 
-  // Quick checks in the browser; the server preview adds slug and plan checks.
+  // Quick checks in the browser (every row, repeats of a back-half across the
+  // whole file, room for the batch's tags); the server preview adds slug
+  // availability and destination rules.
   const localErrors = useMemo(() => {
     const errors = new Map<number, string[]>();
-    for (const row of rows) {
-      const result = checkImportRow(row, {
+    const normalized = rows.map((row) => {
+      const { errors: problems, normalized } = checkImportRow(row, {
         onCustomDomain: Boolean(domainId),
-      }).errors;
-      if (result.length > 0) errors.set(row.line, result);
+      });
+      if (
+        normalized.tagNames.length + targets.tags.length >
+        MAX_TAGS_PER_CODE
+      ) {
+        problems.push(
+          `Up to ${MAX_TAGS_PER_CODE} tags per code, counting the ones for every code`,
+        );
+      }
+      if (problems.length > 0) errors.set(row.line, problems);
+      return normalized;
+    });
+    for (const line of duplicateSlugLines(normalized)) {
+      errors.set(line, [
+        ...(errors.get(line) ?? []),
+        "This back-half appears earlier in the file",
+      ]);
     }
     return errors;
-  }, [rows, domainId]);
+  }, [rows, domainId, targets.tags.length]);
 
   useEffect(() => {
     if (!destinationMapped || rows.length === 0) {
@@ -214,71 +280,83 @@ export function ImportWizard({
     setChecking(true);
     setPreviewError(null);
     const timer = setTimeout(async () => {
-      const result = await previewQrCodeImport({ rows, domainId });
+      // Rows the browser already rejected aren't sent.
+      const candidates = rows.filter((row) => !localErrors.has(row.line));
+      const result =
+        candidates.length > 0
+          ? await previewInChunks(candidates, domainId, () => cancelled)
+          : null;
       if (cancelled) return;
       setChecking(false);
-      if (result.success) {
-        setPreview(result.data);
-      } else {
+      if (result && "error" in result) {
         setPreview(null);
-        setPreviewError(result.error.message);
+        setPreviewError(result.error);
+      } else {
+        setPreview(result?.preview ?? null);
       }
     }, 400);
     return () => {
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [rows, destinationMapped, domainId]);
+  }, [rows, destinationMapped, domainId, localErrors]);
 
   const errorsByLine = useMemo(() => {
     if (!preview) return localErrors;
-    return new Map(preview.errors.map((item) => [item.line, item.messages]));
+    const merged = new Map(localErrors);
+    for (const item of preview.errors) {
+      merged.set(item.line, [
+        ...new Set([...(merged.get(item.line) ?? []), ...item.messages]),
+      ]);
+    }
+    return merged;
   }, [preview, localErrors]);
   const validRows = rows.filter((row) => !errorsByLine.has(row.line));
-  const busy = phase.type === "importing";
+  const blocked = preview
+    ? importBlocked({
+        valid: validRows.length,
+        canBulk: preview.canBulk,
+        remaining: preview.remaining,
+        bulkPlanName: bulkPlans[0] ? PLAN_NAMES[bulkPlans[0]] : null,
+      })
+    : null;
 
   const reset = () => {
     setFile(null);
     setMapping(null);
     setPreview(null);
     setParseError(null);
-    setPhase({ type: "edit" });
+    setTargets(NO_TARGETS);
   };
 
-  const runImport = async () => {
-    if (validRows.length === 0) return;
-    const results: ImportRowResult[] = [];
-    let stopped: string | null = null;
+  const runImport = () => {
+    if (!file || validRows.length === 0) return;
     track("import_started", { provider: "csv", count: validRows.length });
-    setPhase({ type: "importing", done: 0, total: validRows.length });
-    for (let start = 0; start < validRows.length; start += IMPORT_CHUNK_SIZE) {
-      const chunk = validRows.slice(start, start + IMPORT_CHUNK_SIZE);
-      const result = await importQrCodesChunk({ rows: chunk, domainId });
-      if (!result.success) {
-        stopped = result.error.message;
-        // The active-code cap: its limit card (and upgrade, when it can be
-        // bought). A plan feature: the upgrade dialog.
-        if (result.error.meter) {
-          showLimit(result.error.meter);
-        } else if (result.error.code === "PLAN_REQUIRED") {
-          openGetProDialog();
-        }
-        break;
-      }
-      results.push(...result.data);
-      setPhase({
-        type: "importing",
-        done: Math.min(start + chunk.length, validRows.length),
-        total: validRows.length,
-      });
-    }
-    setPhase({ type: "done", results, stopped });
-    soundEvent(stopped ? "error" : "success");
-    track("import_completed", {
-      provider: "csv",
-      count: results.filter((r) => r.ok).length,
-      failed: results.filter((r) => !r.ok).length,
-    });
+    void runner.start(
+      createImportJob({
+        id: crypto.randomUUID(),
+        fileName: file.name,
+        rows: validRows,
+        skipped: rows.flatMap((row) => {
+          const errors = errorsByLine.get(row.line);
+          return errors
+            ? [
+                {
+                  line: row.line,
+                  destination: row.destination,
+                  message: errors.join(". "),
+                },
+              ]
+            : [];
+        }),
+        domainId,
+        folder: targets.folder,
+        tags: targets.tags,
+        maxRows: IMPORT_CHUNK_SIZE,
+        maxBytes: MAX_CHUNK_BYTES,
+      }),
+    );
+    reset();
   };
 
   const downloadSample = () =>
@@ -303,69 +381,35 @@ export function ImportWizard({
       "qrdx-import-errors.csv",
     );
 
-  if (phase.type === "done") {
-    const created = phase.results.filter((result) => result.ok);
-    const failed = phase.results.filter((result) => !result.ok);
-    const notes = created.filter((result) => result.message);
-    const byLine = new Map(rows.map((row) => [row.line, row]));
+  if (!runner.loaded) {
     return (
-      <div className="space-y-4">
-        <Alert variant={created.length > 0 ? "default" : "destructive"}>
-          {created.length > 0 ? <CircleCheck /> : <CircleAlert />}
-          <AlertTitle>
-            {created.length > 0
-              ? `Created ${plural(created.length, "code")}`
-              : "No codes were created"}
-          </AlertTitle>
-          <AlertDescription>
-            {phase.stopped
-              ? `The import stopped: ${phase.stopped}`
-              : failed.length > 0
-                ? `${plural(failed.length, "row")} couldn't be imported.`
-                : "Every valid row was imported."}
-          </AlertDescription>
-        </Alert>
-        {(failed.length > 0 || notes.length > 0) && (
-          <ul className="space-y-1 rounded-lg border p-3 text-sm">
-            {[...failed, ...notes].slice(0, 50).map((result) => (
-              <li key={result.line}>
-                <span className="text-muted-foreground">
-                  Line {result.line}:
-                </span>{" "}
-                {result.message}
-              </li>
-            ))}
-          </ul>
-        )}
-        <div className="flex flex-wrap gap-2">
-          <Button asChild>
-            <Link href={basePath}>View codes</Link>
-          </Button>
-          <Button
-            onClick={() =>
-              saveText(
-                Papa.unparse(
-                  phase.results.map((result) => ({
-                    line: result.line,
-                    destination: byLine.get(result.line)?.destination ?? "",
-                    status: result.ok ? "created" : "failed",
-                    short_link: result.code?.shortLink ?? "",
-                    message: result.message ?? "",
-                  })),
-                ),
-                "qrdx-import-results.csv",
-              )
-            }
-            variant="outline"
-          >
-            <Download />
-            Download results CSV
-          </Button>
-          <Button onClick={reset} variant="ghost">
-            Import another file
-          </Button>
-        </div>
-      </div>
+      <p className="text-muted-foreground flex items-center gap-2 text-sm">
+        <Loader2 className="size-4 animate-spin" />
+        Loading...
+      </p>
+    );
+  }
+  if (runner.job?.status === "done") {
+    return (
+      <ImportResults
+        basePath={basePath}
+        job={runner.job}
+        onReset={runner.discard}
+      />
+    );
+  }
+  if (runner.job) {
+    return (
+      <ImportProgress
+        interrupted={runner.interrupted}
+        job={runner.job}
+        onFinish={runner.finish}
+        onPause={runner.pause}
+        onResume={runner.resume}
+        onRetryFailed={runner.retryFailed}
+        onUpgrade={openGetProDialog}
+        waiting={runner.waiting}
+      />
     );
   }
 
@@ -383,7 +427,7 @@ export function ImportWizard({
             <p>
               On the {PLAN_NAMES[plan]} plan you can import one code at a time.
               {bulkPlans.length > 0 &&
-                ` ${formatPlanList(bulkPlans)} import up to ${MAX_IMPORT_ROWS.toLocaleString("en-US")} codes per file.`}
+                ` ${formatPlanList(bulkPlans)} import up to ${formatCount(MAX_IMPORT_ROWS)} codes per file.`}
             </p>
             <Button className="mt-2" onClick={openGetProDialog} size="sm">
               Upgrade
@@ -412,7 +456,6 @@ export function ImportWizard({
             </div>
             <Button
               aria-label="Remove file"
-              disabled={busy}
               onClick={reset}
               size="icon-sm"
               variant="ghost"
@@ -438,8 +481,8 @@ export function ImportWizard({
               folder (use "Parent / Child" for subfolders), tags (separated by ;
               or |) and slug (optional custom back-half
               {slugPlans.length > 0 && ` on ${formatPlanList(slugPlans)}`}: 3 to
-              64 letters, digits, - or _). Up to{" "}
-              {MAX_IMPORT_ROWS.toLocaleString("en-US")} rows and 1 MB.
+              64 letters, digits, - or _). Up to {formatCount(MAX_IMPORT_ROWS)}{" "}
+              rows and {MAX_IMPORT_FILE_BYTES / 1024 / 1024} MB.
             </p>
           </div>
         )}
@@ -450,9 +493,8 @@ export function ImportWizard({
         )}
         {file?.truncated && (
           <p className="text-muted-foreground text-sm">
-            This file has more than {MAX_IMPORT_ROWS.toLocaleString("en-US")}{" "}
-            rows. Only the first {MAX_IMPORT_ROWS.toLocaleString("en-US")} are
-            shown and imported.
+            This file has more than {formatCount(MAX_IMPORT_ROWS)} rows. Only
+            the first {formatCount(MAX_IMPORT_ROWS)} are shown and imported.
           </p>
         )}
       </section>
@@ -470,7 +512,6 @@ export function ImportWizard({
                   )}
                 </Label>
                 <Select
-                  disabled={busy}
                   onValueChange={(value) =>
                     setMapping({
                       ...mapping,
@@ -502,7 +543,6 @@ export function ImportWizard({
           <div className="max-w-sm">
             <DomainPicker
               current={null}
-              disabled={busy}
               onChange={setDomainId}
               options={domainOptions}
               value={domainId}
@@ -518,9 +558,16 @@ export function ImportWizard({
 
       {file && destinationMapped && (
         <section className="space-y-3">
+          <h2 className="text-base font-semibold">3. Organize</h2>
+          <BatchOrganize onChange={setTargets} value={targets} />
+        </section>
+      )}
+
+      {file && destinationMapped && (
+        <section className="space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h2 className="flex items-center gap-2 text-base font-semibold">
-              3. Review
+              4. Review
               {checking && (
                 <Loader2 className="text-muted-foreground size-4 animate-spin" />
               )}
@@ -612,17 +659,17 @@ export function ImportWizard({
           </div>
           {rows.length > PREVIEW_ROWS && (
             <p className="text-muted-foreground text-xs">
-              Showing the first {PREVIEW_ROWS} of {rows.length} rows. Every row
-              is checked.
+              Showing the first {PREVIEW_ROWS} of {formatCount(rows.length)}{" "}
+              rows. Every row is checked.
             </p>
           )}
 
-          {preview?.blocked && (
+          {blocked && (
             <Alert>
               <Gem />
               <AlertTitle>Upgrade to import these codes</AlertTitle>
               <AlertDescription>
-                <p>{preview.blocked}</p>
+                <p>{blocked}</p>
                 <Button className="mt-2" onClick={openGetProDialog} size="sm">
                   See plans
                 </Button>
@@ -630,36 +677,26 @@ export function ImportWizard({
             </Alert>
           )}
 
-          {phase.type === "importing" ? (
-            <div className="space-y-2">
-              <Progress
-                aria-label="Import progress"
-                value={(phase.done / Math.max(1, phase.total)) * 100}
-              />
-              <p className="text-muted-foreground text-sm">
-                Imported {phase.done} of {phase.total}...
-              </p>
-            </div>
-          ) : (
-            <div className="flex flex-wrap items-center gap-3">
-              <Button
-                disabled={
-                  checking ||
-                  !preview ||
-                  Boolean(preview.blocked) ||
-                  validRows.length === 0
-                }
-                onClick={runImport}
-              >
-                Import {plural(validRows.length, "code")}
-              </Button>
-              {errorsByLine.size > 0 && validRows.length > 0 && (
-                <span className="text-muted-foreground text-sm">
-                  Rows with problems are skipped.
-                </span>
-              )}
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-3">
+            <Button
+              disabled={
+                checking ||
+                !preview ||
+                Boolean(blocked) ||
+                validRows.length === 0
+              }
+              onClick={runImport}
+            >
+              Import {plural(validRows.length, "code")}
+            </Button>
+            <span className="text-muted-foreground text-sm">
+              {errorsByLine.size > 0 && validRows.length > 0
+                ? "Rows with problems are skipped. "
+                : ""}
+              {validRows.length > IMPORT_CHUNK_SIZE &&
+                `Sent ${formatCount(IMPORT_CHUNK_SIZE)} at a time; you can pause and resume.`}
+            </span>
+          </div>
         </section>
       )}
     </div>

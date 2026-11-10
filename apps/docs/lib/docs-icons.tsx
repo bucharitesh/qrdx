@@ -1,6 +1,7 @@
 import { Bot } from "@repo/design-system/components/icons";
 import {
   Airdrop,
+  Barcode,
   Book1,
   Box,
   Brush,
@@ -50,6 +51,7 @@ import { createElement } from "react";
  * readable names while everything renders from iconsax.
  */
 export const docsIcons = {
+  Barcode,
   Bell: Notification,
   Blocks: Category,
   Book: Book1,

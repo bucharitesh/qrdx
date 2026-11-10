@@ -46,9 +46,9 @@ The image API reports query parameters as `{ "param", "message" }` instead of `{
 
 | Status | Code | Meaning | Fix |
 | --- | --- | --- | --- |
-| 400 | `VALIDATION_ERROR` | The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API). | Correct the fields listed in `data.details` and send the request again. |
-| 400 | `INVALID_SLUG` | The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request. | Choose another back-half. The message names the rule. |
-| 400 | `TOO_MANY_CODES` | More than 100 codes in one request. The body schema normally rejects this first, as `VALIDATION_ERROR`. | Send at most 100 codes per request. |
+| 400 | `VALIDATION_ERROR` | The body, query or path failed validation. `data.details` lists each problem as `{ path, message }` (`{ param, message }` on the image API), with the row's `index` when the body is an array of codes. | Correct the fields listed in `data.details` and send the request again. |
+| 400 | `INVALID_SLUG` | The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request. For an array, `data.details` lists each row by `index`. | Choose another back-half. The message names the rule. |
+| 400 | `TOO_MANY_CODES` | More than 1,000 codes in one request. The body schema normally rejects this first, as `VALIDATION_ERROR`. | Send at most 1,000 codes per request. |
 | 400 | `DOMAIN_NOT_VERIFIED` | `domainId` points to a custom domain that isn't verified yet. | Finish verifying the domain on the Domains page, or leave `domainId` out. |
 | 400 | `SID_REQUIRED` | A conversion without the `qrdx_sid` of the scan (from the browser), or without `sid` or `code` (from a server). | Send the `qrdx_sid` the short link added to your page URL, or, with an API key or token, the code id as `code`. |
 | 401 | `UNAUTHORIZED` | No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session). | Send an API key as `Authorization: Bearer <key>`; create one in Settings → API keys & apps. OAuth access tokens go in the same header. |
@@ -62,10 +62,10 @@ The image API reports query parameters as `{ "param", "message" }` instead of `{
 | 403 | `LIMIT_REACHED` | The workspace already has 20 webhook endpoints and hooks. | Delete an endpoint or hook you no longer use. |
 | 404 | `NOT_FOUND` | No such endpoint, or the code, hook, theme or custom domain doesn't exist in the workspace the key or token acts on. | Check the path and the id. An API key acts on the workspace it was created in; an OAuth token acts on its user's own workspace. |
 | 404 | `INVALID_SID` | The `qrdx_sid` is unknown or older than 30 days, the attribution window. | Send the `qrdx_sid` of a recent scan, or report the conversion by code id from your server. |
-| 409 | `SLUG_TAKEN` | Another code already uses that back-half on that domain. | Choose another back-half. |
-| 413 | `PAYLOAD_TOO_LARGE` | The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. | Send a smaller body. For codes, a large inline logo is the usual cause. |
+| 409 | `SLUG_TAKEN` | Another code already uses that back-half on that domain. For an array, `data.details` lists each taken one by `index`, and nothing is created. | Choose another back-half. |
+| 413 | `PAYLOAD_TOO_LARGE` | The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. Also a batch of codes whose response (each code with its design) would be over 4 MB; nothing is created. | Send a smaller body. For codes, a large inline logo is the usual cause; for a batch, send `Prefer: return=minimal` or fewer codes. |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | A write without `Content-Type: application/json`. | Send a JSON body with `Content-Type: application/json`. |
-| 422 | `UNSAFE_DESTINATION` | Google Web Risk flags the destination URL (malware, phishing or unwanted software). | Use another destination. If the flag is wrong, ask Google to review the site. |
+| 422 | `UNSAFE_DESTINATION` | Google Web Risk flags the destination URL (malware, phishing or unwanted software). For an array, `data.details` lists each flagged row by `index`, and nothing is created. | Use another destination. If the flag is wrong, ask Google to review the site. |
 | 429 | `RATE_LIMITED` | Too many requests: a per-minute limit (only `Retry-After` is set) or the workspace's daily quota (`Retry-After` plus `X-RateLimit-*`). | Wait `Retry-After` seconds. For the daily quota, wait for 00:00 UTC or upgrade the plan. |
 | 500 | `INTERNAL_ERROR` | Something failed on QRdx's side. It has been logged. | Try again in a moment. If it keeps happening, report it with the time of the request. |
 | 503 | `SLUG_UNAVAILABLE` | No free short-link slug could be reserved in time. | Send the same request again. |

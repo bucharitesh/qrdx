@@ -1,0 +1,163 @@
+---
+title: Barcode API
+description: Make EAN, UPC, Code 128, Data Matrix and other barcode images from a URL, with no API key, and keep barcodes in a workspace with the REST API.
+icon: Barcode
+---
+
+`GET https://api.qrdx.dev/v1/barcode` returns a barcode image. Everything is in the query string, so the URL is the image: put it in an `<img>` tag, a product feed or a label template. It draws the same {facts.barcodeFormats} formats as the [barcode generator](/barcode-generator), with the same rules, and gives back the same SVG.
+
+```html
+<img
+  src="https://api.qrdx.dev/v1/barcode?format=ean13&data=590123412345"
+  alt="EAN-13 barcode 5901234123457"
+/>
+```
+
+That number is one digit short, so the check digit (7) is added. Send all 13 digits and the check digit is verified instead: a wrong one returns `400` and says what it should be.
+
+No account or API key is needed. To keep barcodes in your workspace and edit them later, use [saved barcodes](#saved-barcodes).
+
+## Examples
+
+A PNG at 3 pixels per module (quote the URL so your shell keeps the `&`):
+
+```bash
+curl -o box.png "https://api.qrdx.dev/v1/barcode?format=ean13&data=5901234123457&type=png&scale=3"
+```
+
+A vector PDF of a GS1-128 logistics label, with brackets around each Application Identifier:
+
+```bash
+curl -o pallet.pdf "https://api.qrdx.dev/v1/barcode?format=gs1-128&type=pdf&data=(01)09501101530003(17)261231(10)AB-123"
+```
+
+Encode values that contain `&`, `#`, `+` or spaces, for example with `encodeURIComponent` in JavaScript.
+
+A Code 128 shelf label in dark blue, without the text under the bars, turned 90°:
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=code128&data=SHELF-A12&fg=1e3a8a&text=false&rotate=90
+```
+
+A Data Matrix with a wider margin:
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=datamatrix&data=SN-0042-7781&quietZone=4
+```
+
+## Parameters
+
+| Parameter | Default | Description |
+| --- | --- | --- |
+| `format` | required | The barcode type; see [Formats](#formats). Case and dashes don't matter: `EAN-13` works too |
+| `data` | required | The number or text to encode, up to 1,000 characters (less for most linear formats) |
+| `type` | `svg` | `svg`, `png`, `jpg`, `webp`, `avif`, `pdf` or `eps` |
+| `scale` | `4` | Pixels per module in PNG, JPG, WebP and AVIF, `1` to `10` |
+| `height` | depends on the format | Bar height of linear barcodes in millimetres at the vector size, `5` to `60` (23 for EAN-13) |
+| `quietZone` | the format's minimum | Blank margin in modules: each side of linear barcodes (`0` to `20`), all round 2D codes (`0` to `10`) |
+| `text` | `true` | Print the digits or text under linear barcodes |
+| `fg` | `000000` | Bars and text, as hex |
+| `bg` | `ffffff` | Background, as hex |
+| `rotate` | `0` | Clockwise rotation: `0`, `90`, `180` or `270` |
+
+Write colors without the `#`, or encode it as `%23`.
+
+## Formats
+
+| `format` | Barcode | Takes |
+| --- | --- | --- |
+| `ean13` | EAN-13 | 12 digits (check digit added) or 13 (checked) |
+| `ean8` | EAN-8 | 7 digits or 8 |
+| `upca` | UPC-A | 11 digits or 12 |
+| `upce` | UPC-E | 6 to 8 digits, or a 12-digit UPC-A that can be shortened |
+| `itf14` | ITF-14 | 13 digits or 14 |
+| `gs1-128` | GS1-128 | Application Identifiers in brackets with their values; GTIN and SSCC check digits added or checked; up to 48 characters of data |
+| `code128` | Code 128 | Up to 80 printable ASCII characters |
+| `code39` | Code 39 | Up to 40 capitals, digits, spaces and `- . $ / + %` |
+| `datamatrix` | Data Matrix | Any text up to 1,000 characters |
+| `pdf417` | PDF417 | Any text up to 1,000 characters |
+| `aztec` | Aztec | Any text up to 1,000 characters |
+
+Retail numbers (EAN, UPC, ITF-14, GS1-128's GTIN) are licensed to companies by GS1. The API draws any valid number; it doesn't issue or register them.
+
+## Sizes
+
+PNG, JPG, WebP and AVIF are `scale` pixels per module, the narrowest bar's width. A 2D cell is two modules wide.
+
+SVG, PDF and EPS are vectors at one point per module (0.353 mm), so an EAN-13 at the defaults is printed at about 107% of its nominal size. Scale vector files in your layout; for retail barcodes, keep between 80% and 200% and don't cut the bar height.
+
+## Responses
+
+A successful request returns the file with:
+
+- `Content-Type` of the file type. EPS comes as a download (`Content-Disposition: attachment`); the rest open inline with a file name such as `ean13-5901234123457.png`
+- `Cache-Control: public, max-age=31536000, immutable`: the same query always returns the same bytes
+- `Access-Control-Allow-Origin: *`, so you can `fetch` it from any website
+
+A missing or invalid parameter, or a value the format can't hold, returns `400` and names the problem:
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Invalid query parameters",
+  "data": {
+    "details": [
+      {
+        "param": "data",
+        "message": "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you."
+      }
+    ]
+  },
+  "status": 400
+}
+```
+
+## Keep the value out of the URL
+
+`POST https://api.qrdx.dev/v1/barcode` takes the same fields as JSON and returns the same file, uncached. Use it when the value shouldn't end up in logs, history or caches the way a URL can:
+
+```bash
+curl -o label.png https://api.qrdx.dev/v1/barcode \
+  -H "Content-Type: application/json" \
+  -d '{"format":"datamatrix","data":"Internal note 42","type":"png"}'
+```
+
+In JSON, `text` is a boolean and `scale`, `height`, `quietZone` and `rotate` are numbers.
+
+## Saved barcodes [#saved-barcodes]
+
+With an [API key](/docs/developers/api-keys), the REST API keeps barcodes in the key's workspace, where they show under **Barcodes** in the dashboard. Same scopes as codes: `codes:read` to list and download, `codes:write` to change.
+
+```bash
+curl https://api.qrdx.dev/v1/barcodes \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"format":"ean13","value":"590123412345","title":"Spring box"}'
+```
+
+| Endpoint | Does |
+| --- | --- |
+| [`GET /v1/barcodes`](/docs/developers/api/list-barcodes) | Lists them, newest change first; filter with `q`, `format`, `folderId`, `status=trash` |
+| [`POST /v1/barcodes`](/docs/developers/api/create-barcode) | Saves one. `options` takes `foreground`, `background`, `showText`, `barHeightMm`, `quietZone`, `scale` and `rotation` |
+| [`GET /v1/barcodes/{id}`](/docs/developers/api/get-barcode) | One barcode |
+| [`PATCH /v1/barcodes/{id}`](/docs/developers/api/update-barcode) | Changes its title, format, value, options or folder |
+| [`DELETE /v1/barcodes/{id}`](/docs/developers/api/delete-barcode) | Moves it to the trash; `?permanent=true` deletes it for good |
+| [`GET /v1/barcodes/{id}/image`](/docs/developers/api/get-saved-barcode-image) | The file, drawn as saved: `type` and `scale` as above |
+
+Each saved barcode has an `imageUrl`: the same picture from `GET /v1/barcode`, which anyone with the link can load. The `/image` endpoint is private and needs the key.
+
+Every plan saves barcodes: up to 1,000 on Free, 10,000 on Pro and 100,000 on Business, not counting the trash. These requests count toward the workspace's daily API quota and send the `X-RateLimit-*` headers, like the [REST API](/docs/developers/rest-api).
+
+## MCP
+
+The [MCP server](/docs/developers/mcp) has `generate_barcode`, which checks the value and returns a PNG with image URLs, and `save_barcode`, which saves to the workspace of the API key on the connection.
+
+## Limits
+
+- **Rate limit:** 300 requests per minute per IP address for `GET` and `POST /v1/barcode`, as for the [QR image API](/docs/developers/image-api). Over the limit you get `429` with a `Retry-After` header. Saved barcodes follow the REST API's per-minute limits and daily quota.
+- **Image size:** raster images are at most 6,000 pixels on a side. Lower `scale` for long values.
+- **No scan check here.** The [barcode generator](/barcode-generator) decodes what it draws before you download; the API draws what you ask for. Print a test and scan it with the scanners that will read it.
+
+## Self-hosting
+
+The endpoints are part of the QRdx web app, so a [self-hosted](/docs/self-hosting) instance serves them at `/api/v1/barcode` and `/api/v1/barcodes` on your own domain.
