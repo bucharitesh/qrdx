@@ -8,13 +8,13 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { Pager } from "../_components/pager";
 import { EmptyRow, StatCard } from "../_components/stat-card";
 import { formatDate, formatMoney, formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import {
   getEstimatedMrr,
   getSubscriptionStatusCounts,
@@ -22,7 +22,7 @@ import {
   parsePage,
 } from "../_lib/queries";
 
-export const metadata: Metadata = { title: "Admin · Subscriptions" };
+export const generateMetadata = adminMetadata("Admin · Subscriptions");
 
 export default async function AdminSubscriptionsPage({
   searchParams,

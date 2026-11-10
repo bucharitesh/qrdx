@@ -1,6 +1,5 @@
 import { hasAdminRole } from "@repo/auth/admin";
 import { Badge } from "@repo/design-system/components/ui/badge";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
@@ -8,6 +7,7 @@ import { Facts, Panel } from "../../_components/panel";
 import { UserActions } from "../../_components/user-actions";
 import { formatAgo, formatDate, formatDateTime } from "../../_lib/format";
 import { requireAdmin } from "../../_lib/guard";
+import { adminMetadata } from "../../_lib/metadata";
 import { loadProfile } from "../../_lib/user-360";
 import {
   AbuseSection,
@@ -27,7 +27,7 @@ import {
   WebhooksSection,
 } from "./sections";
 
-export const metadata: Metadata = { title: "Admin · User" };
+export const generateMetadata = adminMetadata("Admin · User");
 
 const SECTIONS = [
   ["billing", "Billing"],
