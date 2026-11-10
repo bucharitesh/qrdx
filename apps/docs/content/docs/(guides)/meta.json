@@ -22,6 +22,8 @@
     "---Bring your links---",
     "../migrate",
     "../short-links-and-file-pickers",
+    "---Chat apps---",
+    "../telegram-bot",
     "[Integrations directory](/integrations)"
   ]
 }
