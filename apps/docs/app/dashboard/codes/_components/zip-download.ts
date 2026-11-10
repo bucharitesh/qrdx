@@ -50,7 +50,7 @@ export function createLogoCache() {
 /** A code's image with its saved design, as the single download makes it; null if it fails. */
 export async function renderCodeImage(
   code: Pick<ZipCode, "shortLink" | "style">,
-  format: "png" | "svg",
+  format: ZipFormat,
   logoFor: (src: string) => Promise<string | null>,
 ): Promise<Uint8Array | null> {
   const s = code.style ?? defaultThemeState.styles;
