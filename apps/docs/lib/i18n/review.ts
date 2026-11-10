@@ -4,33 +4,28 @@
 // and left out of every page's hreflang alternates (an hreflang link to a
 // noindex page is an error).
 //
-// Flip a locale to "reviewed" here and all three turn on at the next deploy.
-// A list of paths opens only those pages. `pnpm i18n:check` fails if a
-// locale marked "reviewed" still has machine or stale strings in
-// messages/review/<locale>.json.
+// The state is each locale's `review` in lib/i18n/config.ts: set it to
+// "reviewed" and all three turn on at the next deploy. A list of paths
+// opens only those pages. `pnpm i18n:check` fails if a locale marked
+// "reviewed" still has missing, machine or stale strings
+// (messages/review/<locale>.json).
 import {
   DEFAULT_LOCALE,
+  LOCALE_INFO,
   LOCALES,
   type Locale,
+  type ReviewState,
+  TRANSLATED_LOCALES,
   type TranslatedLocale,
 } from "./config";
 
-export type ReviewState = "machine" | "reviewed" | readonly string[];
+export type { ReviewState } from "./config";
 
 export type ReviewTable = Record<TranslatedLocale, ReviewState>;
 
-export const REVIEW: ReviewTable = {
-  es: "machine",
-  "pt-BR": "machine",
-  fr: "machine",
-  de: "machine",
-  it: "machine",
-  ja: "machine",
-  ko: "machine",
-  "zh-Hans": "machine",
-  id: "machine",
-  hi: "machine",
-};
+export const REVIEW = Object.fromEntries(
+  TRANSLATED_LOCALES.map((locale) => [locale, LOCALE_INFO[locale].review]),
+) as ReviewTable;
 
 /** True when `path` in `locale` may be indexed (English always may). */
 export function isPublished(

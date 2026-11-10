@@ -70,10 +70,12 @@ export interface LocaleReport {
 }
 
 /**
- * Checks one translation against English: every key present and no extras,
- * the same ICU arguments and tags, every number kept, a review entry per key.
- * A locale marked "reviewed" (lib/i18n/review.ts) must have no machine or
- * stale strings left.
+ * Checks one translation against English. Always errors: keys English
+ * doesn't have, broken ICU arguments or tags, dropped numbers. A partial
+ * catalog is fine while the locale isn't reviewed (missing strings render
+ * in English): missing, unrecorded and stale strings are warnings. A locale
+ * marked "reviewed" (lib/i18n/config.ts) must be complete, recorded and
+ * signed off string by string.
  */
 export function checkLocale({
   locale,
@@ -97,25 +99,29 @@ export function checkLocale({
   const translated = flatten(catalog);
   report.counts.keys = source.size;
   const strict = state === "reviewed";
+  const soft = (message: string) =>
+    (strict ? report.errors : report.warnings).push(message);
 
   for (const [key, message] of source) {
     const translation = translated.get(key);
     if (translation === undefined || translation.trim() === "") {
       report.counts.missing++;
-      report.errors.push(`${locale}: ${key} is missing`);
+      soft(`${locale}: ${key} is missing (shows in English)`);
       continue;
     }
     const mismatch = shapeMismatch(message, translation);
     if (mismatch) report.errors.push(`${locale}: ${key}: ${mismatch}`);
     const entry = review[key];
     if (!entry) {
-      report.errors.push(`${locale}: ${key} has no review entry`);
+      report.counts.machine++;
+      soft(
+        `${locale}: ${key} has no review entry (run i18n:translate --record)`,
+      );
       continue;
     }
-    const stale = entry.source !== sourceHash(message);
-    if (stale) {
+    if (entry.source !== sourceHash(message)) {
       report.counts.stale++;
-      (strict ? report.errors : report.warnings).push(
+      soft(
         `${locale}: ${key} is stale (the English changed since it was translated)`,
       );
     } else if (entry.status === "reviewed") {
@@ -124,14 +130,15 @@ export function checkLocale({
       report.counts.machine++;
       if (strict) {
         report.errors.push(
-          `${locale}: ${key} is a machine translation, but ${locale} is marked reviewed`,
+          `${locale}: ${key} isn't reviewed, but ${locale} is marked reviewed`,
         );
       }
     }
   }
   for (const key of translated.keys()) {
-    if (!source.has(key))
+    if (!source.has(key)) {
       report.errors.push(`${locale}: ${key} isn't in English`);
+    }
   }
   for (const key of Object.keys(review)) {
     if (!source.has(key)) {

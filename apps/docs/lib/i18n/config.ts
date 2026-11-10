@@ -1,55 +1,59 @@
-// Languages the public site is translated into (wave 1 of the i18n design).
-// Client-safe: no server imports. English is the source and the canonical,
-// unprefixed URL; every other locale lives under its lowercase segment
-// (/es, /pt-br, /zh-hans). Whether search engines may index a locale is a
-// separate switch: lib/i18n/review.ts.
+// The languages the public site is translated into. Client-safe: no server
+// imports.
+//
+// Adding a language is data only (CONTRIBUTING.md, "Translating QRdx"):
+// one entry here, its catalog in messages/<locale>.json (a partial one
+// works: missing strings fall back to English) and, optionally, glossary
+// terms in messages/glossary.json. Routes, the language menu, metadata,
+// hreflang and the sitemap all read this list.
+//
+// English is the source and the canonical, unprefixed URL; every other
+// locale lives under its lowercase segment (/es, /pt-br, /zh-hans).
 
-export const DEFAULT_LOCALE = "en";
+export type ReviewState =
+  /** Machine-translated or not reviewed yet: noindex, no sitemap, no hreflang. */
+  | "machine"
+  /** A native speaker signed it off: indexed, in the sitemap and in hreflang. */
+  | "reviewed"
+  /** Only these pages are signed off ("/", "/pricing"). */
+  | readonly string[];
 
-export const LOCALES = [
-  "en",
-  "es",
-  "pt-BR",
-  "fr",
-  "de",
-  "it",
-  "ja",
-  "ko",
-  "zh-Hans",
-  "id",
-  "hi",
-] as const;
-
-export type Locale = (typeof LOCALES)[number];
-export type TranslatedLocale = Exclude<Locale, typeof DEFAULT_LOCALE>;
-
-export const TRANSLATED_LOCALES = LOCALES.filter(
-  (locale): locale is TranslatedLocale => locale !== DEFAULT_LOCALE,
-);
-
-export interface LocaleInfo {
-  /** The URL segment, and the `[lang]` param: /pt-br/pricing. */
+export interface LocaleDefinition {
+  /** The URL segment, lowercase: /pt-br/pricing. Also the `[lang]` param. */
   segment: string;
-  /** The language's own name, in its own script (the switcher's label). */
+  /** The language's own name, in its own script (the language menu). */
   name: string;
   /** Its English name, for reviewers and the translation prompt. */
   englishName: string;
   /**
-   * hreflang values for its pages. One URL may carry several: the
+   * hreflang values for its pages (BCP 47). One URL may carry several: the
    * Simplified Chinese pages serve readers in mainland China and Singapore.
    */
   hreflang: readonly string[];
   /** og:locale (language_TERRITORY). */
   ogLocale: string;
+  /**
+   * Writing direction, set on <html dir>. Right-to-left layout (logical CSS
+   * properties, mirrored icons, an Arabic font) isn't done yet: an "rtl"
+   * locale renders, but needs that work before review.
+   */
+  dir: "ltr" | "rtl";
+  /** Whether search engines may index it (lib/i18n/review.ts). */
+  review: ReviewState;
 }
 
-export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
+export const DEFAULT_LOCALE = "en";
+
+/** Every language, English first. The key is its BCP 47 code. */
+export const LOCALE_CONFIG = {
   en: {
     segment: "en",
     name: "English",
     englishName: "English",
     hreflang: ["en"],
     ogLocale: "en_US",
+    dir: "ltr",
+    review: "reviewed",
   },
   es: {
     segment: "es",
@@ -57,6 +61,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "Spanish",
     hreflang: ["es"],
     ogLocale: "es_ES",
+    dir: "ltr",
+    review: "machine",
   },
   "pt-BR": {
     segment: "pt-br",
@@ -64,6 +70,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "Brazilian Portuguese",
     hreflang: ["pt-BR"],
     ogLocale: "pt_BR",
+    dir: "ltr",
+    review: "machine",
   },
   fr: {
     segment: "fr",
@@ -71,6 +79,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "French",
     hreflang: ["fr"],
     ogLocale: "fr_FR",
+    dir: "ltr",
+    review: "machine",
   },
   de: {
     segment: "de",
@@ -78,6 +88,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "German",
     hreflang: ["de"],
     ogLocale: "de_DE",
+    dir: "ltr",
+    review: "machine",
   },
   it: {
     segment: "it",
@@ -85,6 +97,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "Italian",
     hreflang: ["it"],
     ogLocale: "it_IT",
+    dir: "ltr",
+    review: "machine",
   },
   ja: {
     segment: "ja",
@@ -92,6 +106,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "Japanese",
     hreflang: ["ja"],
     ogLocale: "ja_JP",
+    dir: "ltr",
+    review: "machine",
   },
   ko: {
     segment: "ko",
@@ -99,6 +115,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "Korean",
     hreflang: ["ko"],
     ogLocale: "ko_KR",
+    dir: "ltr",
+    review: "machine",
   },
   "zh-Hans": {
     segment: "zh-hans",
@@ -106,6 +124,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "Simplified Chinese",
     hreflang: ["zh-CN", "zh-SG"],
     ogLocale: "zh_CN",
+    dir: "ltr",
+    review: "machine",
   },
   id: {
     segment: "id",
@@ -113,6 +133,8 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "Indonesian",
     hreflang: ["id"],
     ogLocale: "id_ID",
+    dir: "ltr",
+    review: "machine",
   },
   hi: {
     segment: "hi",
@@ -120,10 +142,25 @@ export const LOCALE_INFO: Record<Locale, LocaleInfo> = {
     englishName: "Hindi",
     hreflang: ["hi"],
     ogLocale: "hi_IN",
+    dir: "ltr",
+    review: "machine",
   },
-};
+} as const satisfies Record<string, LocaleDefinition>;
 
-/** The cookie the language switcher sets (one year). Nothing redirects on it. */
+export type Locale = keyof typeof LOCALE_CONFIG;
+export type TranslatedLocale = Exclude<Locale, typeof DEFAULT_LOCALE>;
+
+/** Every locale, English first, in the language menu's order. */
+export const LOCALES = Object.keys(LOCALE_CONFIG) as Locale[];
+
+export const TRANSLATED_LOCALES = LOCALES.filter(
+  (locale): locale is TranslatedLocale => locale !== DEFAULT_LOCALE,
+);
+
+/** A locale's definition, typed as the general shape. */
+export const LOCALE_INFO: Record<Locale, LocaleDefinition> = LOCALE_CONFIG;
+
+/** The cookie the language menu sets (one year). Nothing redirects on it. */
 export const LOCALE_COOKIE = "NEXT_LOCALE";
 export const LOCALE_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 

@@ -14,10 +14,14 @@
 //   --locale <l>  one locale (repeatable)    --all     every translated locale
 //   --keys <glob> only keys starting with it --force   redo machine strings too
 //   --dry-run     list what would be sent
+//   --record      no AI: record the strings already in the catalog (after
+//                 translating by hand), so i18n:check can tell when the
+//                 English changes later
 //
-// Needs AI_GATEWAY_API_KEY in the environment. This is the only AI spend in
-// the i18n workflow; the token count is printed at the end.
-import { readFileSync, writeFileSync } from "node:fs";
+// Translating needs AI_GATEWAY_API_KEY in the environment: your own Vercel
+// AI Gateway key (QRdx's isn't shared). I18N_MODEL picks another gateway
+// model. The token count is printed at the end.
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { createGateway, generateText, Output } from "ai";
 import { z } from "zod";
@@ -36,7 +40,9 @@ import {
 import { shapeMismatch } from "@/lib/i18n/icu";
 
 const MESSAGES = path.join(__dirname, "../messages");
-const MODELS = ["anthropic/claude-sonnet-5.5", "anthropic/claude-haiku-5.5"];
+const MODELS = process.env.I18N_MODEL
+  ? [process.env.I18N_MODEL]
+  : ["anthropic/claude-sonnet-5.5", "anthropic/claude-haiku-5.5"];
 const CHUNK = 30;
 
 const args = process.argv.slice(2);
@@ -62,14 +68,20 @@ if (locales.length === 0) {
 const keyPrefixes = values("--keys");
 const DRY = flag("--dry-run");
 const FORCE = flag("--force");
+const RECORD = flag("--record");
 
+/** A catalog or review file; a new locale starts from none. */
 const readJson = <T>(file: string): T =>
-  JSON.parse(readFileSync(path.join(MESSAGES, file), "utf8")) as T;
-const writeJson = (file: string, value: unknown) =>
+  existsSync(path.join(MESSAGES, file))
+    ? (JSON.parse(readFileSync(path.join(MESSAGES, file), "utf8")) as T)
+    : ({} as T);
+const writeJson = (file: string, value: unknown) => {
+  mkdirSync(path.dirname(path.join(MESSAGES, file)), { recursive: true });
   writeFileSync(
     path.join(MESSAGES, file),
     `${JSON.stringify(value, null, 2)}\n`,
   );
+};
 
 interface Glossary {
   keep: string[];
@@ -154,7 +166,13 @@ const usage = { input: 0, output: 0, requests: 0 };
 
 async function setup() {
   const apiKey = process.env.AI_GATEWAY_API_KEY;
-  if (!apiKey) throw new Error("AI_GATEWAY_API_KEY is not set.");
+  if (!apiKey) {
+    throw new Error(
+      "AI_GATEWAY_API_KEY is not set. Use your own Vercel AI Gateway key " +
+        "(QRdx's isn't shared), or translate messages/<locale>.json by hand " +
+        "and run this with --record. See CONTRIBUTING.md, Translating QRdx.",
+    );
+  }
   gateway = createGateway({ apiKey });
   // Listing the gateway's models is free; pick the strongest text model on it.
   const { models } = await gateway.getAvailableModels();
@@ -191,6 +209,38 @@ async function translate(
 function problem(key: string, text: string | undefined): string | null {
   if (text === undefined || text.trim() === "") return "no translation";
   return shapeMismatch(source.get(key) ?? "", text);
+}
+
+/** Saves the catalog and its review entries, in English key order. */
+function save(
+  locale: TranslatedLocale,
+  catalog: Map<string, string>,
+  review: ReviewFile,
+) {
+  writeJson(`${locale}.json`, unflatten(catalog, english));
+  const ordered: ReviewFile = {};
+  for (const key of source.keys()) {
+    const entry = review[key];
+    if (entry && catalog.has(key)) ordered[key] = entry;
+  }
+  writeJson(`review/${locale}.json`, ordered);
+}
+
+/** --record: hand translations get a review entry for their English. */
+function record(locale: TranslatedLocale) {
+  const catalog = flatten(readJson<Catalog>(`${locale}.json`));
+  const review = readJson<ReviewFile>(`review/${locale}.json`);
+  let added = 0;
+  for (const key of catalog.keys()) {
+    const english = source.get(key);
+    if (english === undefined) continue;
+    const hash = sourceHash(english);
+    if (review[key]?.source === hash) continue;
+    review[key] = { source: hash, status: "machine" };
+    added++;
+  }
+  save(locale, catalog, review);
+  console.log(`${locale}: recorded ${added} string(s)`);
 }
 
 async function run(locale: TranslatedLocale) {
@@ -258,17 +308,15 @@ async function run(locale: TranslatedLocale) {
   };
   await Promise.all([worker(), worker(), worker()]);
 
-  writeJson(`${locale}.json`, unflatten(catalog, english));
-  const ordered: ReviewFile = {};
-  for (const key of source.keys()) {
-    const entry = review[key];
-    if (entry) ordered[key] = entry;
-  }
-  writeJson(`review/${locale}.json`, ordered);
+  save(locale, catalog, review);
   return { locale, failed };
 }
 
 async function main() {
+  if (RECORD) {
+    for (const locale of locales) record(locale);
+    return;
+  }
   if (!DRY) await setup();
   const results = [];
   for (const locale of locales) results.push(await run(locale));
