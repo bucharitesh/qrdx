@@ -1,6 +1,6 @@
 ---
 title: Slack bot
-description: Make QR codes in Slack with /qr, a mention, a direct message or a message shortcut, and tracked codes once you link your QRdx account.
+description: Make and style QR codes in Slack with /qr, a mention, a direct message or a message shortcut, and tracked codes once you link your QRdx account.
 icon: Bot
 ---
 
@@ -25,11 +25,48 @@ The same Slack app also posts [alerts](/docs/notifications#slack-and-discord) to
 | The bot's direct messages | Send a link or text | In the DM |
 | Any message | **More actions** → **Make a QR code** | In the message's thread |
 
-Each answer is a QR code image with the content under it and three buttons: **Download PNG** (1024 pixels), **Download SVG** and **Open in editor**, where you can change the design. A link opens the editor with that link filled in; text opens an empty editor, because text never goes into a link.
+Each answer is a QR code image with the content under it, three buttons and the style menus described below. The buttons are **Download PNG** (1024 pixels), **Download SVG** and **Open in editor**, where you can change the design further. A link opens the editor with that link filled in; text opens an empty editor, because text never goes into a link.
 
 The shortcut makes a code of the message's first web address, or of its whole text when it has none. If the bot isn't in that channel, only you see the code, and a note says to add the app to the channel.
 
 `/qr` on its own, or `/qr help`, shows the commands. Content that is too long for a QR code gets a short explanation instead of an image, and only you see it.
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" title="Style your code">
+
+Under each code are four menus: **Look**, **Color**, **Frame** and **Logo**. Pick something and the code changes in place, with new download links. Each pick builds on the code as it is now. Only the person who made the code can restyle it. When someone else picks, Slack shows them a note that only they can see, and the code stays as it was.
+
+The looks are some of the editor's built-in designs that read well at small sizes, and **Plain** goes back to black on white. A color puts the whole code in that color on white. The frames add a "Scan me" label, and the logos are the editor's quick icons.
+
+You can also style a code as you make it by adding options after the link or text, with the same names as the [QRdx CLI](/docs/developers/cli):
+
+```text
+/qr qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+Everything before the first option is the content. The look is applied first and the other options on top of it, so `--look royal --fg 0051ff` keeps Royal's shapes in blue. Options work in mentions and direct messages too. If an option or value is wrong, the bot tells you privately and lists the values it takes.
+
+| Option | What it changes | Values |
+| --- | --- | --- |
+| `--look` | The whole design, from one of the editor's presets | `plain`, `classic`, `modern`, `royal`, `folio`, `caffeine`, `retro`, `bordeaux`, `blossom` |
+| `--fg` (or `--color`) | The dots, and the corner eyes unless you set those too | A hex color such as `0051ff`, or `black`, `blue`, `green`, `red`, `purple`, `orange` |
+| `--bg` | The background | The same as `--fg` |
+| `--eye-color` | The three corner eyes | The same as `--fg` |
+| `--dot-color` | The centers of the corner eyes | The same as `--fg` |
+| `--body` | The shape of the dots | Any of the editor's {facts.bodyPatterns} dot shapes, such as `rounded`, `circle` or `classy` |
+| `--eye` | The shape of the corner eyes | Any of the {facts.eyeShapes} eye shapes, such as `square`, `rounded` or `gear` |
+| `--dot` | The shape of the eye centers | Any of the {facts.eyeCentres} center shapes, such as `square`, `rounded` or `circle` |
+| `--frame` | A frame around the code | `none` or any of the {facts.frames} built-in frames, such as `banner-bottom`, `banner-top`, `speech-bubble` or `polaroid` |
+| `--frame-text` | The frame's label, up to 24 characters | Any text, in quotes when it has spaces. Without `--frame`, it goes on a banner under the code |
+| `--template` | A decorative border | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` or `Halloween` |
+| `--logo` | An icon in the middle | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` or `none` |
+
+Before a styled code is posted, QRdx checks it with the same scan score as the editor. When a design would be hard for phones to read, QRdx adjusts it (darker colors, plainer shapes or more error correction) and says so under the code. If that still isn't enough, usually because the content is long, you get the code in black on white with a note. A styled code from `/qr` arrives a moment after you send the command, once it has been checked.
+
+**Open in editor** opens the editor with the same design: colors, shapes, frame and border. The logo icon doesn't travel in the link, so pick it again in the editor.
+
+Codes from the shortcut that only you can see have no menus, and tracked codes keep the plain design.
 
 </IfAvailable>
 
