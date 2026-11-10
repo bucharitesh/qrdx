@@ -7,7 +7,6 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { referralLinkLabel } from "@/lib/affiliates/links";
@@ -25,9 +24,10 @@ import { Empty, Row, Rows } from "../_components/panel";
 import { EmptyRow, Section, StatCard } from "../_components/stat-card";
 import { formatDate, formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import { Money } from "./money";
 
-export const metadata: Metadata = { title: "Admin · Affiliates" };
+export const generateMetadata = adminMetadata("Admin · Affiliates");
 
 const detailHref = (id: string) =>
   `/admin/affiliates/${encodeURIComponent(id)}`;

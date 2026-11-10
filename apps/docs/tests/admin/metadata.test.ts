@@ -37,6 +37,8 @@ const NOT_FOUND = "NEXT_HTTP_ERROR_FALLBACK;404";
 const TITLES: Record<string, string> = {
   "page.tsx": "Admin · Overview",
   "abuse/page.tsx": "Admin · Abuse reports",
+  "affiliates/page.tsx": "Admin · Affiliates",
+  "affiliates/[affiliateId]/page.tsx": "Admin · Affiliate",
   "ai-usage/page.tsx": "Admin · AI Usage",
   "audit-log/page.tsx": "Admin · Audit Log",
   "codes/page.tsx": "Admin · QR Codes",
