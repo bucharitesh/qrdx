@@ -1,8 +1,8 @@
 // The new-account cap on dynamic codes (lib/safety/velocity.ts): 30 an hour
 // during an account's first days, and a full CSV import an hour
-// (MAX_IMPORT_ROWS) when the codes go to a paid workspace.
+// (NEW_PAID_ACCOUNT_CODES_PER_HOUR, 2,000) when the codes go to a paid
+// workspace. The 429 says when the request will fit.
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
 import { fakeDb } from "../support/fake-db";
 
 vi.mock(
@@ -51,18 +51,54 @@ describe("enforceNewAccountVelocity", () => {
     });
   });
 
-  it("lets a new account in a paid workspace make a full import", async () => {
-    expect(NEW_PAID_ACCOUNT_CODES_PER_HOUR).toBe(MAX_IMPORT_ROWS);
+  it("lets a new account in a paid workspace create 2,000 an hour", async () => {
+    expect(NEW_PAID_ACCOUNT_CODES_PER_HOUR).toBe(2000);
     await expect(
-      enforceNewAccountVelocity("u_new", MAX_IMPORT_ROWS - 20, { paid: true }),
+      enforceNewAccountVelocity("u_new", 1980, { paid: true }),
     ).resolves.toBe(undefined);
     await expect(
-      enforceNewAccountVelocity("u_new", MAX_IMPORT_ROWS - 19, { paid: true }),
+      enforceNewAccountVelocity("u_new", 1981, { paid: true }),
     ).rejects.toMatchObject({
       status: 429,
-      message: expect.stringContaining(
-        `up to ${MAX_IMPORT_ROWS.toLocaleString("en-US")} dynamic codes per hour`,
-      ),
+      message: expect.stringContaining("up to 2,000 dynamic codes per hour"),
+    });
+  });
+
+  it("says when a request will fit: once enough codes have left the hour", async () => {
+    // 20 codes made 1 minute ago, 30 made 50 minutes ago: 50 in the hour.
+    fakeDb.seed(
+      "qrCode",
+      Array.from({ length: 30 }, (_, i) => ({
+        id: `old${i}`,
+        userId: "u_new",
+        createdAt: new Date(NOW - 50 * 60_000),
+      })),
+    );
+    // 50 + 1960 = 2010: ten must leave, the oldest ten go in 10 minutes.
+    const error = (await enforceNewAccountVelocity("u_new", 1960, {
+      paid: true,
+    }).catch((caught: unknown) => caught)) as {
+      headers: Record<string, string>;
+      message: string;
+    };
+    const retryAfter = Number(error.headers["Retry-After"]);
+    expect(retryAfter).toBeGreaterThan(9 * 60);
+    expect(retryAfter).toBeLessThanOrEqual(10 * 60 + 1);
+    expect(error.message).toMatch(
+      /You can create these 1,960 in 10 minutes\.$/,
+    );
+    // Needing room the 1-minute-old codes hold means most of an hour.
+    const later = (await enforceNewAccountVelocity("u_new", 1990, {
+      paid: true,
+    }).catch((caught: unknown) => caught)) as {
+      headers: Record<string, string>;
+    };
+    expect(Number(later.headers["Retry-After"])).toBeGreaterThan(58 * 60);
+  });
+
+  it("asks for smaller requests than the hourly cap", async () => {
+    await expect(enforceNewAccountVelocity("u_new", 40)).rejects.toMatchObject({
+      message: expect.stringContaining("send at most 30 at a time"),
     });
   });
 

@@ -52,9 +52,9 @@ The fallback URL goes through the same safety checks as a code's destination.
 
 QRdx checks every destination and fallback URL when you save it:
 
-- links listed by [Google Web Risk](https://cloud.google.com/web-risk) as malware, phishing or unwanted software are rejected (when the server has a Web Risk key);
+- links listed by [Google Web Risk](https://cloud.google.com/web-risk) as malware, phishing or unwanted software are rejected (when the server has a Web Risk key). When Web Risk can't answer in time, as can happen in a large batch, the code is created and its link is looked up again shortly after; if Web Risk lists it then, the code is switched off and a reviewer looks at it;
 - `javascript:`, `data:` and other non-web links are rejected;
-- during an account's first 7 days, codes that point to URL shorteners, bare IP addresses or lookalike (homoglyph) domains are saved switched off and **held for review**. The panel says so; nothing else is needed from you, and a reviewer turns the code on once it checks out. New accounts can also create up to 30 dynamic codes per hour, or {facts.importRows} in a workspace on a paid plan.
+- during an account's first 7 days, codes that point to URL shorteners, bare IP addresses or lookalike (homoglyph) domains are saved switched off and **held for review**. The panel says so; nothing else is needed from you, and a reviewer turns the code on once it checks out. New accounts can also create up to 30 dynamic codes per hour, or {facts.newPaidAccountHourlyCodes} in a workspace on a paid plan. Over that, the error says how many minutes until you can create more, and a dashboard import pauses until then.
 
 Anyone can report a code at [qrdx.dev/report-abuse](/report-abuse). Codes switched off after a review stop working for everyone and can't be turned back on by their owner.
 

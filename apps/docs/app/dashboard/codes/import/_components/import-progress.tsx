@@ -10,6 +10,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import {
   InfoCircle as CircleAlert,
+  Clock,
   TableDocument as FileSpreadsheet,
   Pause,
   Play,
@@ -19,7 +20,18 @@ import { plural } from "@/app/dashboard/codes/_components/use-organize-action";
 import { formatCount } from "@/lib/bulk-limits";
 import { type ImportJob, jobProgress } from "../_lib/job";
 
-/** Where an import is: sending, paused (by you, a reload or failed chunks), stopped by the plan. */
+/** "3:42 PM", or with the day when it isn't today. */
+function formatTime(epoch: number): string {
+  const at = new Date(epoch);
+  const sameDay = at.toDateString() === new Date().toDateString();
+  return at.toLocaleString(undefined, {
+    ...(sameDay ? {} : { weekday: "short" }),
+    hour: "numeric",
+    minute: "2-digit",
+  });
+}
+
+/** Where an import is: sending, paused (by you, a reload, failed chunks or an hourly limit), stopped by the plan. */
 export function ImportProgress({
   job,
   interrupted,
@@ -71,7 +83,22 @@ export function ImportProgress({
         </Alert>
       )}
 
-      {job.stopped && (
+      {job.stopped && job.resumeAfter && !running && (
+        <Alert>
+          <Clock />
+          <AlertTitle>Paused until {formatTime(job.resumeAfter)}</AlertTitle>
+          <AlertDescription>
+            <p>{job.stopped}</p>
+            <p>
+              The import goes on by itself then if this page stays open, or
+              resume it after {formatTime(job.resumeAfter)}. Codes it already
+              made aren't made again.
+            </p>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {job.stopped && !job.resumeAfter && (
         <Alert variant="destructive">
           <CircleAlert />
           <AlertTitle>The import stopped</AlertTitle>

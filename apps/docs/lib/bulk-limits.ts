@@ -26,6 +26,14 @@ export const IMPORT_CHUNK_ROWS = 500;
  */
 export const MAX_BULK_TOOL_ROWS = 25_000;
 
+/**
+ * Dynamic codes a new account (its first days, lib/safety/velocity.ts) may
+ * create an hour in a paid workspace; free workspaces stay at 30. A paid
+ * checkout isn't a throwaway sign-up, but a new customer's volume is still
+ * capped while the account is young.
+ */
+export const NEW_PAID_ACCOUNT_CODES_PER_HOUR = 2000;
+
 /** "1,000": counts as copy writes them. */
 export const formatCount = (count: number): string =>
   count.toLocaleString("en-US");
