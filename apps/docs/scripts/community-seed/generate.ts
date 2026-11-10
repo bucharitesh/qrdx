@@ -3,7 +3,7 @@
 // (./preset-themes.ts). Run after changing one of those presets in
 // utils/qr-presets.ts or a description:
 //
-//   cd apps/docs && pnpm exec tsx scripts/community-seed/generate.ts
+//   cd apps/docs && bun x tsx scripts/community-seed/generate.ts
 //
 // tests/database/seed-community.test.ts fails while the file is stale. It
 // only reads the presets and writes the file: nothing connects to a
@@ -24,7 +24,14 @@ const OUT = join(
   "scripts",
   "community-seed-presets.json",
 );
-const biomePath = join(root, "..", "..", "node_modules", ".bin", "biome");
+const ultracitePath = join(
+  root,
+  "..",
+  "..",
+  "node_modules",
+  ".bin",
+  "ultracite",
+);
 
 const themes = buildPresetSeedThemes();
 const file = {
@@ -33,12 +40,12 @@ const file = {
 };
 writeFileSync(OUT, `${JSON.stringify(file, null, 2)}\n`);
 
-// Keep the file as `biome check` formats it.
-const biome = spawnSync(biomePath, ["format", "--write", OUT], {
+// Keep the file as `ultracite check` expects it.
+const fixed = spawnSync(ultracitePath, ["fix", OUT], {
   cwd: root,
   stdio: "inherit",
 });
-if (biome.status !== 0) {
-  throw new Error("biome format failed on community-seed-presets.json");
+if (fixed.status !== 0) {
+  throw new Error("ultracite fix failed on community-seed-presets.json");
 }
 console.log(`Wrote ${themes.length} themes to ${OUT}`);

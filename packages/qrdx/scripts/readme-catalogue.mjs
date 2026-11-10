@@ -56,7 +56,7 @@ for (const file of READMES) {
 
 if (stale.length > 0) {
   console.error(
-    `Option lists are out of date in ${stale.join(" and ")}. Run: pnpm --filter qrdx readme`
+    `Option lists are out of date in ${stale.join(" and ")}. Run: bun run --filter qrdx readme`
   );
   process.exitCode = 1;
 }

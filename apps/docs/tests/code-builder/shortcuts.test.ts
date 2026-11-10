@@ -1,7 +1,7 @@
 // The builder's keys (components/code-builder/shortcuts.ts): ⌘↵ saves from
 // any field, single keys open options only outside text fields, Esc closes a
 // panel before the builder and asks first when there are unsaved changes.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import {
   CODE_OPTION_IDS,
   codeOptionsFor,
@@ -145,7 +145,7 @@ describe("Esc", () => {
   });
 });
 
-it("labels the submit key per platform", () => {
+test("labels the submit key per platform", () => {
   expect(
     submitKeyLabel("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"),
   ).toBe("⌘↵");

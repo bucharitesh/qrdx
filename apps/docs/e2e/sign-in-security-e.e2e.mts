@@ -25,10 +25,10 @@
 // throwaway one (lib/account/two-factor-notice.ts). Set it only for such a
 // database, never for one reached through a proxy or tunnel to a shared one:
 //
-//   QRDX_DISPOSABLE_DB=1 pnpm exec next dev -p <port> > <dev.log>
+//   QRDX_DISPOSABLE_DB=1 bun x next dev -p <port> > <dev.log>
 //   E_E2E_BASE_URL=http://localhost:<port> E_E2E_DEV_LOG=<dev.log> \
 //   E_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   E_E2E_SHOTS=<dir> pnpm exec tsx e2e/sign-in-security-e.e2e.mts
+//   E_E2E_SHOTS=<dir> bun x tsx e2e/sign-in-security-e.e2e.mts
 //
 // The daily cron only runs where outbound delivery is on, so completing the
 // reset it leaves due takes the dev server restarted with

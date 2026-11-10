@@ -107,25 +107,25 @@ function capLogo(
       autoLevel,
     });
   }
-  const fit = (level: ErrorLevel) => {
+  const fitAt = (level: ErrorLevel) => {
     const layout = (width?: number) =>
       logoImageSettings(src, options, { ...code, level }, width);
     const width = fitLogoWidth(code, [level], layout().width, layout);
     return width > 0 ? layout(width) : undefined;
   };
   if (drawn === requested) {
-    return fit(requested);
+    return fitAt(requested);
   }
   // autoLevel draws at H only while the logo covers more than 7%: keep the
   // H-sized logo when it still does, else size it for the requested level
-  const atH = fit(drawn);
+  const atH = fitAt(drawn);
   if (
     atH &&
     resolveErrorLevel({ ...code, imageSettings: atH, autoLevel }) === drawn
   ) {
     return atH;
   }
-  return fit(requested);
+  return fitAt(requested);
 }
 
 /**

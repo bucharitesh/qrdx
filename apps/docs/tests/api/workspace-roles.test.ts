@@ -8,7 +8,7 @@
 // "Gets past the role check" means the result isn't a role refusal: an
 // allowed role may still fail for other reasons here (no plan, no network),
 // and those are covered by each feature's own tests.
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, test, vi } from "vitest";
 import { fakeDb } from "../support/fake-db";
 
 const state = vi.hoisted(() => {
@@ -800,7 +800,7 @@ beforeAll(() => {
 afterAll(() => vi.unstubAllGlobals());
 
 describe.each(CASES)("%s (needs %s)", (_name, action, run) => {
-  it.each([...WORKSPACE_ROLES])("as %s", async (role) => {
+  test.each([...WORKSPACE_ROLES])("as %s", async (role) => {
     seed(USER[role]);
     state.scope = { userId: USER[role], organizationId: "org_t", role };
     state.authCalls = [];

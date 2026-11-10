@@ -23,7 +23,7 @@
 // runs against a local dev server whose output goes to E2E_DEV_LOG:
 //
 //   E2E_BASE_URL=http://localhost:3261 E2E_DEV_LOG=/path/to/dev.log \
-//   E2E_SHOTS=/path/to/shots pnpm exec tsx e2e/two-factor-lifecycle.e2e.ts
+//   E2E_SHOTS=/path/to/shots bun x tsx e2e/two-factor-lifecycle.e2e.ts
 //
 // E2E_DB_SQL='<command that runs SQL on the LOCAL database, reading stdin>'
 // is needed for the "Confirm it's you" step. E2E_VIEWPORT=mobile runs it at

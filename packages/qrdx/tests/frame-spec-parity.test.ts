@@ -2,7 +2,7 @@
 // artwork as the built-ins in every output: SVG (rasterized), the canvas
 // calls, PDF and EPS (both rasterized from their operators). Text isn't
 // painted by the test rasterizers, so label geometry is compared as numbers.
-import { describe, expect, it } from "vitest";
+import { describe, expect, test } from "vitest";
 import { getQRAsEPS } from "../src/eps";
 import {
   drawFrameOnCanvas,
@@ -61,12 +61,12 @@ function labelGeometry(label: FrameLabel) {
 }
 
 describe.each(STYLES)("%s as a spec", (style) => {
-  it("validates", () => {
+  test("validates", () => {
     const result = frameSpecSchema.safeParse(BUILT_IN_FRAME_SPECS[style]);
     expect(result.error?.issues ?? []).toEqual([]);
   });
 
-  it.each([160, 256, 1000])(
+  test.each([160, 256, 1000])(
     "has the built-in's size, code box and labels at %i px",
     (size) => {
       for (const [, frame, props] of THEMES) {
@@ -103,7 +103,7 @@ describe.each(STYLES)("%s as a spec", (style) => {
     }
   );
 
-  it.each(THEMES)(
+  test.each(THEMES)(
     "rasterizes like the built-in in SVG (%s)",
     (_name, frame, props) => {
       const { builtIn, custom } = pair(style, frame);
@@ -127,7 +127,7 @@ describe.each(STYLES)("%s as a spec", (style) => {
     }
   );
 
-  it("makes the same canvas calls (one extra fill: the plate)", () => {
+  test("makes the same canvas calls (one extra fill: the plate)", () => {
     const { builtIn, custom } = pair(style);
     const calls = (frame: AnyQRFrame) => {
       const layout = getFrameLayout(256, frame);
@@ -156,7 +156,7 @@ describe.each(STYLES)("%s as a spec", (style) => {
     expect(b.texts).toEqual(a.texts);
   });
 
-  it.each(THEMES)(
+  test.each(THEMES)(
     "prints like the built-in in PDF and EPS (%s)",
     async (_name, frame, props) => {
       const { builtIn, custom } = pair(style, frame);

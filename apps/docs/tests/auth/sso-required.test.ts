@@ -638,13 +638,13 @@ async function signedInBefore(email: string) {
   return browser;
 }
 
-afterEach(() => {
-  vi.useRealTimers();
-});
-
 beforeEach(() => {
   seedWorkspace();
   sessionWrites.length = 0;
+});
+
+afterEach(() => {
+  vi.useRealTimers();
 });
 
 describe("signing in while SSO is required", () => {

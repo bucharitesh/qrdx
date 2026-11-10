@@ -8,7 +8,7 @@
 // examples on the home and generator pages and checks the playground
 // opens with their type, design and sample content.
 //
-//   pnpm --filter docs test:e2e            (E2E_BASE_URL defaults to :3000)
+//   bun run --filter docs test:e2e            (E2E_BASE_URL defaults to :3000)
 //   E2E_SUITES="side panels" runs one suite
 //
 // Skips (exit 0) when no server is running or Chrome isn't installed.

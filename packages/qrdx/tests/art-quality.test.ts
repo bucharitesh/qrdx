@@ -14,7 +14,7 @@
 //   their own vector operators), so all four outputs match.
 import { readFileSync } from "node:fs";
 import { inflateSync } from "node:zlib";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, describe, expect, it, test } from "vitest";
 import {
   createQRArtImage,
   DEFAULT_ART_INTENSITY,
@@ -364,7 +364,7 @@ describe("art samples", () => {
 });
 
 describe.each(CASES)("$mode $variant: $name", (c) => {
-  it.each(STRENGTHS)(
+  test.each(STRENGTHS)(
     "decodes at 160, 320 and 640 px and through the camera at strength %s",
     (intensity) => {
       const props = propsFor(c, intensity);

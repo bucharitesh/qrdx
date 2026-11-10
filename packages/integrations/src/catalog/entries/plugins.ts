@@ -5,7 +5,7 @@ const REPO = "https://github.com/bucharitesh/qrdx";
 /** The extension's Chrome Web Store listing (live since 2026-11). */
 export const CHROME_WEB_STORE_URL =
   "https://chromewebstore.google.com/detail/bpepiomjdoicpmbihlohodghdglkhicc";
-const CLONE = `git clone ${REPO}.git\ncd qrdx && pnpm install`;
+const CLONE = `git clone ${REPO}.git\ncd qrdx && bun install`;
 
 export const plugins: IntegrationCatalogEntry[] = [
   {
@@ -93,7 +93,7 @@ export const plugins: IntegrationCatalogEntry[] = [
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: `${CLONE}\npnpm --filter @qrdx/figma-plugin build`,
+          code: `${CLONE}\nbun run --filter @qrdx/figma-plugin build`,
         },
       },
       {
@@ -216,7 +216,7 @@ export const plugins: IntegrationCatalogEntry[] = [
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: `${CLONE}\npnpm --filter @qrdx/canva-plugin start`,
+          code: `${CLONE}\nbun run --filter @qrdx/canva-plugin start`,
         },
       },
       {

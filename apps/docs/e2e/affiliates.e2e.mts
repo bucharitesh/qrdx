@@ -9,7 +9,7 @@
 //   AFF_E2E_BASE_URL=http://localhost:<port> AFF_E2E_DEV_LOG=<dev.log> \
 //   AFF_E2E_PSQL="psql -h localhost -p <pg> -U postgres -d qrdx" \
 //   AFF_E2E_SQL=../../packages/database/manual-sql/2026-11-10-affiliates.sql \
-//   AFF_E2E_SHOTS=<dir> pnpm exec tsx e2e/affiliates.e2e.mts
+//   AFF_E2E_SHOTS=<dir> bun x tsx e2e/affiliates.e2e.mts
 //
 // Start it with the affiliate tables NOT created (AFF_E2E_SQL set): the
 // first part proves sign-up, the referral link, the pages and the webhook

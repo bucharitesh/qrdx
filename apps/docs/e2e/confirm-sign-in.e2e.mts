@@ -13,12 +13,12 @@
 //   node e2e/sso/mock-idp.mjs 4455   (or another port: CONFIRM_E2E_IDP)
 //   NODE_OPTIONS="--require $PWD/e2e/sso/dns-preload.cjs" \
 //   BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:4455 \
-//     pnpm exec next dev -p <port> > <dev.log>
+//     bun x next dev -p <port> > <dev.log>
 //
 //   CONFIRM_E2E_BASE_URL=http://localhost:<port> CONFIRM_E2E_DEV_LOG=<dev.log> \
 //   CONFIRM_E2E_DNS_FILE=<records.json> \
 //   CONFIRM_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   CONFIRM_E2E_SHOTS=<dir> pnpm exec tsx e2e/confirm-sign-in.e2e.mts
+//   CONFIRM_E2E_SHOTS=<dir> bun x tsx e2e/confirm-sign-in.e2e.mts
 //
 // Covers: the dialog offers signing in again through SSO to someone who
 // signs in that way (and not to anyone else); the round trip confirms the

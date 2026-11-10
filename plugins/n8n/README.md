@@ -71,13 +71,13 @@ If you'd rather not install a package, point an n8n Webhook node at a QRdx webho
 
 ## Install from source
 
-You need Node.js 22 and pnpm. In a clone of this repository:
+You need Node.js 22 and [Bun](https://bun.com/docs/installation). In a clone of this repository:
 
 ```bash
-pnpm install
-pnpm --filter n8n-nodes-qrdx build
+bun install
+bun run --filter n8n-nodes-qrdx build
 cd plugins/n8n
-npm pack
+bun pm pack
 ```
 
 That writes `n8n-nodes-qrdx-0.1.0.tgz`. Install it in the `nodes` folder of your n8n user folder and restart n8n:
@@ -95,10 +95,10 @@ n8n Cloud only runs community nodes that n8n has verified, and this one hasn't b
 ## Development
 
 ```bash
-pnpm --filter n8n-nodes-qrdx build       # tsc to dist/, then copies the icons
-pnpm --filter n8n-nodes-qrdx lint        # n8n's community node lint rules
-pnpm --filter n8n-nodes-qrdx test        # lint, then the unit tests
-pnpm --filter n8n-nodes-qrdx typecheck
+bun run --filter n8n-nodes-qrdx build       # tsc to dist/, then copies the icons
+bun run --filter n8n-nodes-qrdx lint        # n8n's community node lint rules
+bun run --filter n8n-nodes-qrdx test        # lint, then the unit tests
+bun run --filter n8n-nodes-qrdx typecheck
 ```
 
 The tests use fake n8n contexts and never call the network. The lint config is the one `n8n-node lint` from [`@n8n/node-cli`](https://www.npmjs.com/package/@n8n/node-cli) uses, written out in `eslint.config.mjs` so the monorepo doesn't install the whole CLI (about 550 MB of packages). The package keeps the CLI's layout, so its commands work here too.

@@ -34,28 +34,30 @@ The database schema includes:
 
 ## Development
 
+Run these from the repository root. Each one works on the database that `DATABASE_URL` points at, so only run the ones that write (`db:migrate`, `db:push`) against a development database of your own that you can throw away.
+
 ### Generate Migrations
 
 ```bash
-pnpm db:generate
+bun run db:generate
 ```
 
 ### Apply Migrations
 
 ```bash
-pnpm db:migrate
+bun run db:migrate
 ```
 
 ### Push Schema Changes (Development)
 
 ```bash
-pnpm db:push
+bun run db:push
 ```
 
 ### Open Drizzle Studio
 
 ```bash
-pnpm db:studio
+bun run --filter @repo/database studio
 ```
 
 ## Environment Variables

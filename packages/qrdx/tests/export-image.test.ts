@@ -12,7 +12,7 @@
 // makes jsQR miss the odd distance at one exact blur and scale; the scan
 // score reports that as fragile at that size.
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import { EPS_IMAGE_FILL_REASON, getQRAsEPS, hasImageFill } from "../src/eps";
 import { getQRAsPrintPDFBuffer } from "../src/print";
 import {
@@ -270,7 +270,7 @@ describe("SVG", () => {
 // ── Decoding with the sample photos ────────────────────────────────────────
 
 describe.each(PHOTOS)("%s", (name) => {
-  it("as the dots, darkened until it passes, scans at phone distances", async () => {
+  test("as the dots, darkened until it passes, scans at phone distances", async () => {
     const picture = await photo(name);
     const tones = getImageTonesFromPixels(picture.bitmap);
     expect(tones).not.toBeNull();
@@ -289,7 +289,7 @@ describe.each(PHOTOS)("%s", (name) => {
     expectScans(props, imagesOf(picture), `${name} dots (opacity ${opacity})`);
   });
 
-  it("as the background, faded until it passes, scans at phone distances", async () => {
+  test("as the background, faded until it passes, scans at phone distances", async () => {
     const picture = await photo(name);
     const tones = getImageTonesFromPixels(picture.bitmap);
     const imageTones = { [picture.src]: tones as NonNullable<typeof tones> };

@@ -213,6 +213,6 @@ Keep the key out of shared or committed config files. Calls made with a key coun
 The MCP server is part of the QRdx web app, so every instance serves it at `/api/mcp`:
 
 - **Self-hosted.** When `NEXT_PUBLIC_APP_URL` is your own domain, the connect page, snippets and install links use `https://<your-domain>/api/mcp`.
-- **Local development.** `pnpm dev` serves it at `http://localhost:3000/api/mcp`. The connect page still shows the public URL and offers the local one as a hint, so you can point a client at your machine to test changes to the server before they ship.
+- **Local development.** `bun run dev` serves it at `http://localhost:3000/api/mcp`. The connect page still shows the public URL and offers the local one as a hint, so you can point a client at your machine to test changes to the server before they ship.
 
 Opening `/api/mcp` in a browser redirects to the connect page. MCP clients never ask for HTML, so they reach the server as usual.
