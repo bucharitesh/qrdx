@@ -100,6 +100,16 @@ qrdx generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
 qrdx generate
 ```
 
+## Batch: a code for every row of a CSV
+
+```bash
+qrdx batch products.csv -o codes --format png --size 1024 --body circle
+```
+
+`qrdx batch` (or `qrdx b`) reads a CSV and writes one static QR code per row into a folder, with the same columns as the free [bulk generator](https://qrdx.dev/tools/bulk). The content comes from a column named `value`, `url`, `link`, `data`, `content`, `text` or `qr` (else the first column), and file names from one named `file name`, `name`, `label`, `id`, `title` or `sku` (else `qr-00001.svg`, `qr-00002.svg` and so on). Pick others with `--value-column` and `--name-column`, by header name or column number, and use `--no-header` when the first row is a code.
+
+Every style option of `generate` applies to all the codes. The file is read as a stream and each code is written as soon as it's made, so there's no row limit; nothing is uploaded and no account is needed. Rows that can't be encoded are skipped and listed, with the reason, in `errors.csv` in the output folder. `--jobs` sets how many codes render at a time (4 for SVG, 8 for PNG and EPS by default).
+
 ## Patterns
 
 **Body** (`--body`): <!-- catalogue:BODY_PATTERN -->`circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`<!-- /catalogue -->

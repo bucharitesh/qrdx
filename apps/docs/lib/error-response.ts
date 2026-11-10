@@ -15,6 +15,8 @@ export class HttpError extends Error {
   readonly headers?: Record<string, string>;
   /** A docs page that explains the fix (sent as `docs`). */
   readonly docs?: string;
+  /** Sent as the response's `data`, e.g. `{ details }` per row of a batch. */
+  readonly data?: Record<string, unknown>;
 
   constructor(
     status: number,
@@ -22,6 +24,7 @@ export class HttpError extends Error {
     message: string,
     headers?: Record<string, string>,
     docs?: string,
+    data?: Record<string, unknown>,
   ) {
     super(message);
     this.name = "HttpError";
@@ -29,6 +32,7 @@ export class HttpError extends Error {
     this.code = code;
     this.headers = headers;
     this.docs = docs;
+    this.data = data;
   }
 }
 
@@ -78,7 +82,7 @@ export function handleError(
     return jsonError(
       error.code,
       error.message,
-      undefined,
+      error.data,
       error.status,
       error.headers,
       error.docs,

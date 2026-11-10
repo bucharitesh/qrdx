@@ -2,6 +2,8 @@
 // Write for a first-time user: plain words, one or two short sentences,
 // and only what the product really does.
 
+import { formatCount, MAX_BULK_TOOL_ROWS } from "@/lib/bulk-limits";
+
 /** Live examples drawn with the real qrdx engine (components/help/hint-visual.tsx). */
 export type LiveExample =
   | "ai-prompt"
@@ -219,7 +221,7 @@ export const HINTS = {
   // ─── Tools ────────────────────────────────────────────────────────────────
   "bulk-csv": {
     title: "Bulk from a CSV",
-    body: "Save a spreadsheet as CSV with one row per code and pick the column with each link or text. You get a ZIP of up to 5,000 PNG or SVG files, made on your device.",
+    body: `Save a spreadsheet as CSV with one row per code and pick the column with each link or text. You get up to ${formatCount(MAX_BULK_TOOL_ROWS)} PNG or SVG files, zipped, made on your device.`,
     visual: {
       type: "video",
       name: "bulk-csv",

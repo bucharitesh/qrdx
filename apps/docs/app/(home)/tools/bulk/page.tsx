@@ -5,12 +5,12 @@ import { loopVideos } from "@/components/mockups/visuals";
 import { BulkGenerator } from "@/components/sections/tools/bulk-generator";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { formatCount, MAX_BULK_TOOL_ROWS } from "@/lib/bulk-limits";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createMetadata({
   title: "Free Bulk QR Code Generator from CSV",
-  description:
-    "Generate up to 5,000 QR codes from a CSV file and download them as PNG or SVG in one ZIP. Custom styles and file names. Runs entirely in your browser.",
+  description: `Generate up to ${formatCount(MAX_BULK_TOOL_ROWS)} QR codes from a CSV file and download them as PNG or SVG, zipped. Custom styles and file names. Runs entirely in your browser.`,
   path: "/tools/bulk",
   ownOgImage: true,
 });
@@ -30,7 +30,7 @@ const steps = [
   },
   {
     title: "Generate and download",
-    body: "Codes are rendered one batch at a time with a progress bar, then packed into a single ZIP file. Rows that can't be encoded are skipped and listed in errors.csv inside the ZIP.",
+    body: "Codes are rendered a few at a time with a progress bar and go into the ZIP as they're made. A very large batch is saved as several ZIP files of about 500 MB. Rows that can't be encoded are skipped and listed in errors.csv.",
   },
 ];
 
@@ -42,8 +42,7 @@ const faqs = [
   },
   {
     question: "How many QR codes can I generate at once?",
-    answer:
-      "Up to 5,000 rows per file. For more, split the CSV into several files. Large PNG sizes take longer and use more memory, so choose 512 px unless you need bigger images.",
+    answer: `Up to ${formatCount(MAX_BULK_TOOL_ROWS)} rows per file; for more, split the CSV, or use the qrdx batch command of the CLI, which has no limit. A 512 px PNG takes about 20 ms on a laptop, so the full ${formatCount(MAX_BULK_TOOL_ROWS)} take a few minutes. Bigger PNGs take longer and make bigger files, so choose 512 px unless you need more.`,
   },
   {
     question: "What can each row contain?",
@@ -74,7 +73,7 @@ export default function BulkPage() {
         ]}
         title="Bulk QR code generator"
         intro={[
-          "Turn a spreadsheet into hundreds or thousands of QR codes in one go: product labels, event tickets, asset tags, table numbers or personalised mailers. Upload a CSV, map the columns, choose a style and download every code as PNG or SVG in a single ZIP file.",
+          "Turn a spreadsheet into hundreds or thousands of QR codes in one go: product labels, event tickets, asset tags, table numbers or personalised mailers. Upload a CSV, map the columns, choose a style and download every code as PNG or SVG, zipped.",
           "Everything happens in your browser. The CSV is never uploaded and there is no sign-up, watermark or per-code charge.",
         ]}
       />

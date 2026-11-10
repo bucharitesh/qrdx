@@ -115,8 +115,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "Dynamic QR codes",
       url: "/docs/dynamic-qr-codes",
-      description:
-        "Short links you can point somewhere else after printing, with scan analytics, folders, tags, version history and trash",
+      description: `Short links you can point somewhere else after printing, with scan analytics, folders, tags, version history and trash; a CSV import of up to ${PRODUCT_FACTS.importRows} codes and API batches of up to ${PRODUCT_FACTS.apiBatchCodes} (with an Idempotency-Key) on paid plans`,
     },
     {
       title: "Hosted pages",
@@ -351,7 +350,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "CLI",
       url: "/docs/developers/cli",
-      description: `\`npx @qrdx/cli generate "https://example.com" -o qr.svg\`: styled codes from a terminal or CI.${npmNote(input.npm.cli)}`,
+      description: `\`npx @qrdx/cli generate "https://example.com" -o qr.svg\`: styled codes from a terminal or CI, and \`qrdx batch codes.csv\` for a code per CSV row with no row limit.${npmNote(input.npm.cli)}`,
     },
     {
       title: "React library",
