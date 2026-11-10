@@ -14,6 +14,7 @@
 
 import { EE_LICENSE_ENV } from "@repo/auth/ee-license";
 import { passkeyRelyingParty } from "@repo/auth/passkey-rp";
+import { isQrdxDeployment } from "@/lib/mcp-clients";
 import {
   WORKSPACE_PATTERN_PREFIX,
   workspacePattern,
@@ -233,11 +234,17 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
   },
   affiliates: {
     // The affiliate program (lib/affiliates) is QRdx's own: commissions
-    // come from qrdx.dev's Polar orders and the terms are QRdx's. A
-    // self-hosted server leaves it off unless it sets QRDX_AFFILIATES=1 (and
-    // takes payments through Polar, where commissions come from).
-    name: "Affiliate program (QRDX_AFFILIATES)",
-    requires: () => ["QRDX_AFFILIATES", "POLAR_WEBHOOK_SECRET"],
+    // come from qrdx.dev's Polar orders and the terms are QRdx's. It runs
+    // wherever QRdx itself runs (qrdx.dev, its previews, local dev: the
+    // same test as the MCP server URL, lib/mcp-clients.ts) once Polar's
+    // webhooks are set up, and never on a self-hosted copy on its own domain.
+    name: "Affiliate program (qrdx.dev, with Polar)",
+    requires: () => ["POLAR_WEBHOOK_SECRET"],
+    usable: (ctx) =>
+      isQrdxDeployment({
+        appUrl: ctx.env.NEXT_PUBLIC_APP_URL,
+        productionUrl: ctx.env.VERCEL_PROJECT_PRODUCTION_URL,
+      }),
     paths: [
       "/affiliates",
       "/legal/affiliate-terms",

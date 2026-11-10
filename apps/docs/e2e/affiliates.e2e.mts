@@ -2,8 +2,8 @@
 // server and a THROWAWAY local database, driven over the Chrome DevTools
 // Protocol (muted, headless, closed at the end: e2e/cdp.mjs). It writes to
 // the database (test users, affiliate rows), so it refuses to run unless
-// DATABASE_URL in .env.local points at localhost. The server needs
-// QRDX_AFFILIATES=1 and a POLAR_WEBHOOK_SECRET (any value): webhooks are
+// DATABASE_URL in .env.local points at localhost. The server needs a
+// POLAR_WEBHOOK_SECRET (any value; local dev counts as QRdx): webhooks are
 // signed here with the one in .env.local, like Polar signs them.
 //
 //   AFF_E2E_BASE_URL=http://localhost:<port> AFF_E2E_DEV_LOG=<dev.log> \
