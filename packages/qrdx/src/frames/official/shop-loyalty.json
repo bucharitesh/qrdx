@@ -1,0 +1,92 @@
+{
+  "id": "shop-loyalty",
+  "name": "Loyalty card",
+  "description": "A wide card: the code on one side, a star and the label on the other.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "loyalty", "rewards"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 1080,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "star",
+        "x": 110,
+        "y": 160,
+        "size": 180,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 110,
+        "y": 870,
+        "width": 240,
+        "height": 26,
+        "radius": 13,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join our rewards",
+        "color": "frame",
+        "box": {
+          "x": 110,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to sign up",
+        "color": "frame",
+        "box": {
+          "x": 110,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

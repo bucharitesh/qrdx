@@ -1,0 +1,83 @@
+{
+  "id": "summer-ice-pop",
+  "name": "Ice pop",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and an ice pop, in sunset orange and yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "summer",
+  "contentTypes": [],
+  "tags": ["summer", "sun", "beach", "ice cream"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b03a0c",
+      "text": "#ffffff",
+      "accent": "#facc15"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M599.8 118A35.2 35.2 0 0 1 670.2 118L670.2 182Q670.2 188.4 663.8 188.4L606.2 188.4Q599.8 188.4 599.8 182ZM635 185.2L635 185.2A9.6 9.6 0 0 1 644.6 194.8L644.6 214A9.6 9.6 0 0 1 635 223.6L635 223.6A9.6 9.6 0 0 1 625.4 214L625.4 194.8A9.6 9.6 0 0 1 635 185.2ZM599.8 143.6L670.2 143.6L670.2 150L599.8 150Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Stay cool",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

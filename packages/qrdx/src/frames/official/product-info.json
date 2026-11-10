@@ -3,6 +3,7 @@
   "name": "Product info",
   "description": "A packaging label with an info glyph, for instructions and manuals.",
   "category": "use-case",
+  "collection": "shopping",
   "contentTypes": ["url", "google-drive"],
   "tags": ["packaging", "instructions", "manual", "retail"],
   "license": "CC0-1.0",

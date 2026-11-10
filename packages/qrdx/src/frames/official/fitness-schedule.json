@@ -1,0 +1,93 @@
+{
+  "id": "fitness-schedule",
+  "name": "Class schedule",
+  "description": "A light card with a dumbbell and a solid label band.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["fitness", "gym", "classes"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M555.5 126L561.5 126A4.5 4.5 0 0 1 566 130.5L566 169.5A4.5 4.5 0 0 1 561.5 174L555.5 174A4.5 4.5 0 0 1 551 169.5L551 130.5A4.5 4.5 0 0 1 555.5 126ZM575 111L584 111A6 6 0 0 1 590 117L590 183A6 6 0 0 1 584 189L575 189A6 6 0 0 1 569 183L569 117A6 6 0 0 1 575 111ZM593 142.5L647 142.5A3 3 0 0 1 650 145.5L650 154.5A3 3 0 0 1 647 157.5L593 157.5A3 3 0 0 1 590 154.5L590 145.5A3 3 0 0 1 593 142.5ZM656 111L665 111A6 6 0 0 1 671 117L671 183A6 6 0 0 1 665 189L656 189A6 6 0 0 1 650 183L650 117A6 6 0 0 1 656 111ZM678.5 126L684.5 126A4.5 4.5 0 0 1 689 130.5L689 169.5A4.5 4.5 0 0 1 684.5 174L678.5 174A4.5 4.5 0 0 1 674 169.5L674 130.5A4.5 4.5 0 0 1 678.5 126Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the timetable",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      }
+    ]
+  }
+}

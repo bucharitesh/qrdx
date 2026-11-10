@@ -1,0 +1,99 @@
+{
+  "id": "eid-fitr-gift",
+  "name": "Eid gift",
+  "description": "A gift box with a ribbon and a bow on the lid, in emerald and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "eid-al-fitr",
+  "contentTypes": [],
+  "tags": ["eid al-fitr", "eid", "eid mubarak", "gift"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1300,
+      "height": 1850
+    },
+    "qr": {
+      "x": 150,
+      "y": 480,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0f5f4a",
+      "text": "#ffffff",
+      "accent": "#c9a227"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 240,
+        "width": 1240,
+        "height": 1610,
+        "radius": 30,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 220,
+        "width": 1300,
+        "height": 150,
+        "radius": 24,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.18
+        }
+      },
+      {
+        "type": "rect",
+        "x": 580,
+        "y": 220,
+        "width": 140,
+        "height": 1630,
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M650 170C606 108.4 509.2 46.8 482.8 99.6C465.2 143.6 500.4 222.8 650 170ZM650 170C799.6 222.8 834.8 143.6 817.2 99.6C790.8 46.8 694 108.4 650 170ZM632.4 178.8L570.8 319.6L614.8 302L641.2 337.2ZM667.6 178.8L658.8 337.2L685.2 302L729.2 319.6Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M641.2 134.8L658.8 134.8A22 22 0 0 1 680.8 156.8L680.8 183.2A22 22 0 0 1 658.8 205.2L641.2 205.2A22 22 0 0 1 619.2 183.2L619.2 156.8A22 22 0 0 1 641.2 134.8Z",
+        "fill": {
+          "mix": ["accent", "#000000"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1610,
+        "width": 960,
+        "height": 190,
+        "radius": 95,
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Eid Mubarak",
+        "color": "frame",
+        "box": {
+          "x": 230,
+          "y": 1610,
+          "width": 840,
+          "height": 190
+        }
+      }
+    ]
+  }
+}

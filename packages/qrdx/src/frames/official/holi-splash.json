@@ -1,0 +1,109 @@
+{
+  "id": "holi-splash",
+  "name": "Color splash",
+  "description": "A light card with a splash of color and a pill-shaped button under the code, in magenta and teal.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "holi",
+  "contentTypes": [],
+  "tags": ["holi", "festival of colors", "spring", "colors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#be185d",
+      "text": "#ffffff",
+      "accent": "#0f766e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M666.8 93.4C667.18 100.55 656.98 107.24 653.08 115.5C649.18 123.76 649.78 140.12 643.4 142.94C637.02 145.75 624.01 132.96 614.8 132.4C605.59 131.84 594.9 142.16 588.15 139.56C581.4 136.96 579.8 124.49 574.27 116.8C568.75 109.11 554.06 100.66 555 93.4C555.94 86.14 574.16 80.57 579.9 73.25C585.64 65.93 583.63 53.72 589.45 49.49C595.27 45.27 605.92 48.65 614.8 47.9C623.68 47.15 636.75 40.87 642.75 44.99C648.75 49.11 646.82 64.53 650.83 72.6C654.83 80.67 666.42 86.25 666.8 93.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M664.2 59.6A7.8 7.8 0 1 1 679.8 59.6A7.8 7.8 0 1 1 664.2 59.6ZM659 140.2A5.2 5.2 0 1 1 669.4 140.2A5.2 5.2 0 1 1 659 140.2ZM561.5 142.8A6.5 6.5 0 1 1 574.5 142.8A6.5 6.5 0 1 1 561.5 142.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Holi",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

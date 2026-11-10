@@ -1,0 +1,84 @@
+{
+  "id": "school-palette",
+  "name": "Art class",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a paint palette, in slate and school-bus yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "back-to-school",
+  "contentTypes": [],
+  "tags": ["back to school", "school", "september", "art"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f2937",
+      "text": "#ffffff",
+      "accent": "#f2b705"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M635 82.8C683 82.8 708.6 118 705.4 153.2C702.2 182 673.4 185.2 660.6 182C644.6 178.8 641.4 194.8 647.8 207.6C654.2 220.4 635 220.4 625.4 217.2C587 210.8 564.6 185.2 564.6 150C564.6 111.6 593.4 82.8 635 82.8ZM588.6 153.2A11.2 11.2 0 1 0 611 153.2A11.2 11.2 0 1 0 588.6 153.2ZM598.2 118A11.2 11.2 0 1 0 620.6 118A11.2 11.2 0 1 0 598.2 118ZM633.4 108.4A11.2 11.2 0 1 0 655.8 108.4A11.2 11.2 0 1 0 633.4 108.4ZM665.4 130.8A11.2 11.2 0 1 0 687.8 130.8A11.2 11.2 0 1 0 665.4 130.8Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Back to school",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

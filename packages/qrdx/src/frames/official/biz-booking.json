@@ -1,0 +1,100 @@
+{
+  "id": "biz-booking",
+  "name": "Book online",
+  "description": "A wide card: the code on one side, a calendar and the label on the other.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["business", "booking"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 1080,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M138.8 188.8L261.2 188.8A14.4 14.4 0 0 1 275.6 203.2L275.6 314.8A14.4 14.4 0 0 1 261.2 329.2L138.8 329.2A14.4 14.4 0 0 1 124.4 314.8L124.4 203.2A14.4 14.4 0 0 1 138.8 188.8ZM144.2 228.4A5.4 5.4 0 0 0 138.8 233.8L138.8 309.4A5.4 5.4 0 0 0 144.2 314.8L255.8 314.8A5.4 5.4 0 0 0 261.2 309.4L261.2 233.8A5.4 5.4 0 0 0 255.8 228.4Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M164 170.8L164 170.8A7.2 7.2 0 0 1 171.2 178L171.2 199.6A7.2 7.2 0 0 1 164 206.8L164 206.8A7.2 7.2 0 0 1 156.8 199.6L156.8 178A7.2 7.2 0 0 1 164 170.8ZM236 170.8L236 170.8A7.2 7.2 0 0 1 243.2 178L243.2 199.6A7.2 7.2 0 0 1 236 206.8L236 206.8A7.2 7.2 0 0 1 228.8 199.6L228.8 178A7.2 7.2 0 0 1 236 170.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M214.4 268L239.6 268A3.6 3.6 0 0 1 243.2 271.6L243.2 296.8A3.6 3.6 0 0 1 239.6 300.4L214.4 300.4A3.6 3.6 0 0 1 210.8 296.8L210.8 271.6A3.6 3.6 0 0 1 214.4 268Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 110,
+        "y": 870,
+        "width": 240,
+        "height": 26,
+        "radius": 13,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Book online",
+        "color": "frame",
+        "box": {
+          "x": 110,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to pick a time",
+        "color": "frame",
+        "box": {
+          "x": 110,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

@@ -1,0 +1,94 @@
+{
+  "id": "cafe-bean",
+  "name": "Coffee bean",
+  "description": "A solid card with a round badge holding a coffee bean on its top edge.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "cafe", "coffee"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M583.63 129A42 61.6 30 1 1 656.37 171A42 61.6 30 1 1 583.63 129Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M645.91 98.69L642.04 101.57L638.42 104.91L635.17 108.55L632.26 112.46L629.65 116.58L627.31 120.9L625.2 125.36L623.27 129.95L621.48 134.63L619.81 139.37L618.22 144.14L616.67 148.92L615.13 153.67L613.56 158.36L611.94 162.97L610.24 167.45L608.41 171.78L606.45 175.94L604.31 179.88L601.97 183.58L599.41 187.02L596.59 190.18L593.5 193.04L589.91 195.69L594.09 201.31L597.96 198.43L601.58 195.09L604.83 191.45L607.74 187.54L610.35 183.42L612.69 179.1L614.8 174.64L616.73 170.05L618.52 165.37L620.19 160.63L621.78 155.86L623.33 151.08L624.87 146.33L626.44 141.64L628.06 137.03L629.76 132.55L631.59 128.22L633.55 124.06L635.69 120.12L638.03 116.42L640.59 112.98L643.41 109.82L646.5 106.96L650.09 104.31Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for our coffee",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Freshly roasted",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

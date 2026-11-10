@@ -1,0 +1,102 @@
+{
+  "id": "event-exhibit",
+  "name": "Exhibition",
+  "description": "A light card with a bold side bar and left-aligned text and a paint palette.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["events", "exhibition", "gallery"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1300,
+      "height": 1620
+    },
+    "qr": {
+      "x": 180,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 40,
+        "height": 1620,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 0,
+          "y": 8,
+          "width": 1292,
+          "height": 1604
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1130 1327C1175 1327 1199 1360 1196 1393C1193 1420 1166 1423 1154 1420C1139 1417 1136 1432 1142 1444C1148 1456 1130 1456 1121 1453C1085 1447 1064 1423 1064 1390C1064 1354 1091 1327 1130 1327ZM1086.5 1393A10.5 10.5 0 1 0 1107.5 1393A10.5 10.5 0 1 0 1086.5 1393ZM1095.5 1360A10.5 10.5 0 1 0 1116.5 1360A10.5 10.5 0 1 0 1095.5 1360ZM1128.5 1351A10.5 10.5 0 1 0 1149.5 1351A10.5 10.5 0 1 0 1128.5 1351ZM1158.5 1372A10.5 10.5 0 1 0 1179.5 1372A10.5 10.5 0 1 0 1158.5 1372Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the guide",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1270,
+          "width": 1000,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Exhibition",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1450,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

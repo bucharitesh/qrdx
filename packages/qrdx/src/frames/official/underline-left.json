@@ -1,0 +1,85 @@
+{
+  "id": "underline-left",
+  "name": "Left underline",
+  "description": "A bold label with a short accent underline.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "minimal"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1550
+    },
+    "qr": {
+      "x": 120,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1550,
+        "radius": 40,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1550,
+        "radius": 40,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.75
+        },
+        "hole": {
+          "x": 8,
+          "y": 8,
+          "width": 1224,
+          "height": 1534,
+          "radius": 34
+        }
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 1465,
+        "width": 200,
+        "height": 22,
+        "radius": 11,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to read more",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1270,
+          "width": 1040,
+          "height": 180
+        },
+        "align": "start"
+      }
+    ]
+  }
+}

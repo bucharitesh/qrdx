@@ -1,0 +1,71 @@
+{
+  "id": "lunar-blossom",
+  "name": "Plum blossom",
+  "description": "An arched card, like a window, with a plum blossom, in deep red and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lunar-new-year",
+  "contentTypes": [],
+  "tags": ["lunar new year", "chinese new year", "spring festival", "blossom"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#8f1d14",
+      "text": "#ffffff",
+      "accent": "#d4a017"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M630 204A30 30 0 1 1 690 204A30 30 0 1 1 630 204ZM664.24 228.88A30 30 0 1 1 724.24 228.88A30 30 0 1 1 664.24 228.88ZM651.16 269.12A30 30 0 1 1 711.16 269.12A30 30 0 1 1 651.16 269.12ZM608.84 269.12A30 30 0 1 1 668.84 269.12A30 30 0 1 1 608.84 269.12ZM595.76 228.88A30 30 0 1 1 655.76 228.88A30 30 0 1 1 595.76 228.88Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M645 240A15 15 0 1 1 675 240A15 15 0 1 1 645 240Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Lunar New Year",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

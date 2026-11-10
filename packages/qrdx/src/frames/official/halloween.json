@@ -3,6 +3,8 @@
   "name": "Halloween",
   "description": "A dark card with a pumpkin. Set a secondary color to tint the pumpkin.",
   "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "halloween",
   "contentTypes": [],
   "tags": ["seasonal", "halloween", "october"],
   "license": "CC0-1.0",

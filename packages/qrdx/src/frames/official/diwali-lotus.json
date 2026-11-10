@@ -1,0 +1,122 @@
+{
+  "id": "diwali-lotus",
+  "name": "Lotus border",
+  "description": "A thin double border with a lotus, a small divider and the label, in maroon and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "diwali",
+  "contentTypes": [],
+  "tags": ["diwali", "deepavali", "festival of lights", "lotus"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7a1f3d",
+      "text": "#ffffff",
+      "accent": "#f0a53a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M660 192C684.02 173.52 684.02 131.94 660 99.6C635.98 131.94 635.98 173.52 660 192ZM657.2 194.8C663.09 173.65 646.71 140.89 620.8 122C610.35 159.08 626.73 191.84 657.2 194.8ZM662.8 194.8C693.27 191.84 709.65 159.08 699.2 122C673.29 140.89 656.91 173.65 662.8 194.8ZM654.4 197.6C649.98 179.9 624.78 163.52 598.4 161.2C606.65 191.41 631.85 207.79 654.4 197.6ZM665.6 197.6C688.15 207.79 713.35 191.41 721.6 161.2C695.22 163.52 670.02 179.9 665.6 197.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M615.2 200.4C640.4 208.8 679.6 208.8 704.8 200.4L702 208.8C676.8 217.2 643.2 217.2 618 208.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for our greetings",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Diwali",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

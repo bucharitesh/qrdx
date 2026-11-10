@@ -1,86 +1,146 @@
-// The official frame catalogue (src/frames/official): 24 specs that ship
-// with the engine. Each must validate, print its labels (Latin-1), avoid
-// third-party marks, be monochrome until themed, and draw the same artwork
-// in SVG, canvas, PDF and EPS. Scanning is covered in
-// decode-official-frames.test.ts.
+// The official frame catalogue (src/frames/official): the files, the
+// generated modules that load them (src/frames/catalogue) and their
+// metadata. Every frame's own checks (spec, colors, print parity) are in
+// tests/official-frames/checks-*.test.ts and its scan checks in
+// tests/official-frames/decode-*.test.ts.
 import { readdirSync } from "node:fs";
 import { join } from "node:path";
-import { describe, expect, it, test } from "vitest";
-import { getQRAsEPS } from "../src/eps";
-import { drawFrameOnCanvas, frameLabels, getFrameLayout } from "../src/frame";
-import { getOfficialFrame, OFFICIAL_FRAMES } from "../src/frames/official";
-import { getQRAsPrintPDFBuffer } from "../src/print";
-import { parseColor } from "../src/utils/parse-color";
-import type { AnyQRFrame, QRProps } from "../types";
-import { frameSpecSchema, isLatin1Text } from "../types/frame-spec";
-import { PLAIN, recordCanvas } from "./support/catalog";
+import { describe, expect, it } from "vitest";
+import business from "../src/frames/catalogue/business";
+import callToAction from "../src/frames/catalogue/call-to-action";
+import { OFFICIAL_FRAME_TAGS } from "../src/frames/catalogue/counts";
+import events from "../src/frames/catalogue/events";
+import foodDrink from "../src/frames/catalogue/food-drink";
+import healthLearning from "../src/frames/catalogue/health-learning";
+import holidays from "../src/frames/catalogue/holidays";
+import places from "../src/frames/catalogue/places";
+import seasons from "../src/frames/catalogue/seasons";
+import shopping from "../src/frames/catalogue/shopping";
+import {
+  frameSpecHash,
+  getOfficialFrame,
+  OFFICIAL_FRAME_COLLECTIONS,
+  OFFICIAL_FRAME_COUNT,
+  OFFICIAL_FRAME_COUNTS,
+  OFFICIAL_FRAME_INDEX,
+  OFFICIAL_FRAMES,
+  type OfficialFrame,
+} from "../src/frames/official";
+import type { QRProps } from "../types";
 import { compareImages, SAMPLE_PAYLOADS } from "./support/frames";
-import { rasterizeEps, rasterizePdf } from "./support/print-raster";
+import { blocks } from "./support/official-frames";
 import { renderSvg } from "./support/qr";
-import { type RasterImage, rasterizeSvg } from "./support/raster";
+import { rasterizeSvg } from "./support/raster";
 
-const BRANDS =
-  /\b(paypal|venmo|upi|google|apple|iphone|ios|android|instagram|facebook|tiktok|whatsapp|twitter|linkedin|youtube|spotify|visa|mastercard)\b/i;
-
-const isGrey = (color: string) => {
-  const parsed = parseColor(color);
-  return Boolean(parsed && parsed.r === parsed.g && parsed.g === parsed.b);
+const MODULES: Record<string, readonly OfficialFrame[]> = {
+  "call-to-action": callToAction,
+  holidays,
+  seasons,
+  "food-drink": foodDrink,
+  shopping,
+  events,
+  places,
+  "health-learning": healthLearning,
+  business,
 };
 
-/**
- * The top-left `width` × `height` of an image, averaged over `block` ×
- * `block` pixels: different renderers at slightly different scales put
- * edges a fraction of a pixel apart, which this absorbs, while a missing or
- * moved shape (an icon is 40+ px here) still shows.
- */
-function blocks(
-  image: RasterImage,
-  width: number,
-  height: number,
-  block = 4
-): RasterImage {
-  const w = Math.floor(width / block);
-  const h = Math.floor(height / block);
-  const data = new Uint8ClampedArray(w * h * 4);
-  for (let y = 0; y < h; y++) {
-    for (let x = 0; x < w; x++) {
-      for (let c = 0; c < 4; c++) {
-        let sum = 0;
-        for (let dy = 0; dy < block; dy++) {
-          for (let dx = 0; dx < block; dx++) {
-            sum += image.data[
-              ((y * block + dy) * image.width + x * block + dx) * 4 + c
-            ] as number;
-          }
-        }
-        data[(y * w + x) * 4 + c] = sum / (block * block);
-      }
-    }
-  }
-  return { data, width: w, height: h };
-}
-
 describe("the official frame catalogue", () => {
-  it("has 20 use-case frames and 4 seasonal ones, one file each", () => {
-    expect(OFFICIAL_FRAMES).toHaveLength(24);
-    expect(
-      OFFICIAL_FRAMES.filter((f) => f.category === "use-case")
-    ).toHaveLength(20);
-    expect(
-      OFFICIAL_FRAMES.filter((f) => f.category === "seasonal")
-    ).toHaveLength(4);
+  it("has one file per frame, with unique ids and names", () => {
+    expect(OFFICIAL_FRAMES).toHaveLength(OFFICIAL_FRAME_COUNT);
     const files = readdirSync(join(__dirname, "../src/frames/official"))
       .filter((file) => file.endsWith(".json"))
       .map((file) => file.replace(/\.json$/, ""))
       .sort();
     expect(OFFICIAL_FRAMES.map((f) => f.id).sort()).toEqual(files);
-    expect(new Set(OFFICIAL_FRAMES.map((f) => f.name)).size).toBe(24);
+    expect(new Set(OFFICIAL_FRAMES.map((f) => f.name)).size).toBe(
+      OFFICIAL_FRAMES.length
+    );
+    for (const frame of OFFICIAL_FRAMES) {
+      expect(frame.id).toMatch(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+    }
     expect(getOfficialFrame("wifi-card")?.name).toBe("Wi-Fi card");
     expect(getOfficialFrame("nope")).toBeUndefined();
   });
 
+  it("keeps the first frames where links and seeds expect them", () => {
+    // OFFICIAL_FRAMES[0] has been the Wi-Fi card since the catalogue began
+    expect(OFFICIAL_FRAMES[0]?.id).toBe("wifi-card");
+    for (const id of ["table-tent", "review-us", "christmas", "new-year"]) {
+      expect(getOfficialFrame(id)).toBeDefined();
+    }
+  });
+
+  it("files every frame in one collection, seasonal ones with an occasion", () => {
+    const ids = OFFICIAL_FRAME_COLLECTIONS.map((collection) => collection.id);
+    let total = 0;
+    for (const id of ids) {
+      const frames = OFFICIAL_FRAMES.filter((f) => f.collection === id);
+      expect(frames.length, id).toBeGreaterThan(0);
+      expect(OFFICIAL_FRAME_COUNTS[id]).toBe(frames.length);
+      total += frames.length;
+    }
+    expect(total).toBe(OFFICIAL_FRAMES.length);
+    for (const frame of OFFICIAL_FRAMES) {
+      const seasonal =
+        frame.collection === "holidays" || frame.collection === "seasons";
+      expect(frame.category, frame.id).toBe(seasonal ? "seasonal" : "use-case");
+      if (seasonal) expect(frame.occasion, frame.id).toMatch(/^[a-z-]+$/);
+      else expect(frame.occasion, frame.id).toBeUndefined();
+    }
+    // At least 60 holiday and season frames, from many traditions
+    const seasonal = OFFICIAL_FRAMES.filter((f) => f.category === "seasonal");
+    expect(seasonal.length).toBeGreaterThanOrEqual(60);
+    expect(new Set(seasonal.map((f) => f.occasion)).size).toBeGreaterThan(20);
+  });
+
+  it("loads each collection on its own, in catalogue order", () => {
+    for (const { id } of OFFICIAL_FRAME_COLLECTIONS) {
+      expect(MODULES[id]?.map((f) => f.id)).toEqual(
+        OFFICIAL_FRAMES.filter((f) => f.collection === id).map((f) => f.id)
+      );
+    }
+  });
+
+  it("has an index without specs that matches the frames", () => {
+    expect(OFFICIAL_FRAME_INDEX).toEqual(
+      OFFICIAL_FRAMES.map((frame) => ({
+        id: frame.id,
+        name: frame.name,
+        collection: frame.collection,
+        ...(frame.occasion ? { occasion: frame.occasion } : {}),
+        tags: frame.tags,
+        hash: frameSpecHash(frame.spec),
+        ratio:
+          Math.round(
+            (frame.spec.artboard.width / frame.spec.artboard.height) * 1000
+          ) / 1000,
+      }))
+    );
+    expect(new Set(OFFICIAL_FRAME_INDEX.map((entry) => entry.hash)).size).toBe(
+      OFFICIAL_FRAME_INDEX.length
+    );
+    expect(OFFICIAL_FRAME_TAGS).toEqual(
+      [...new Set(OFFICIAL_FRAMES.flatMap((frame) => frame.tags))].sort()
+    );
+  });
+
+  it("hashes a copied spec the same, and a changed one differently", () => {
+    const wifi = getOfficialFrame("wifi-card");
+    if (!wifi) throw new Error("missing wifi-card");
+    const copy = JSON.parse(JSON.stringify(wifi.spec));
+    expect(frameSpecHash(copy)).toBe(frameSpecHash(wifi.spec));
+    // A database (jsonb) may hand the keys back in another order
+    const reordered = Object.fromEntries(Object.entries(copy).reverse());
+    expect(frameSpecHash(reordered as typeof copy)).toBe(
+      frameSpecHash(wifi.spec)
+    );
+    expect(
+      frameSpecHash({ ...copy, colors: { ...copy.colors, frame: "#222222" } })
+    ).not.toBe(frameSpecHash(wifi.spec));
+  });
+
   it("compares outputs closely enough to catch a missing glyph", () => {
-    // Negative control for the PDF/EPS comparison below
+    // Negative control for the PDF/EPS comparison in the frame checks
     const official = getOfficialFrame("wifi-card");
     if (!official) throw new Error("missing wifi-card");
     const without = {
@@ -94,7 +154,7 @@ describe("the official frame catalogue", () => {
           size: 256,
           level: "M",
           frame: { style: "custom", spec },
-        }),
+        } satisfies QRProps),
         { width: 600 }
       );
     const a = draw(official.spec);
@@ -107,144 +167,14 @@ describe("the official frame catalogue", () => {
     expect(diff.differing).toBeGreaterThan(0.002);
   });
 
-  it("is CC0 and described without placeholders", () => {
+  it("is CC0, tagged and described without placeholders", () => {
     for (const frame of OFFICIAL_FRAMES) {
       expect(frame.license).toBe("CC0-1.0");
       expect(frame.description.length).toBeGreaterThan(20);
+      expect(frame.tags.length, frame.id).toBeGreaterThan(0);
       expect(`${frame.name} ${frame.description}`).not.toMatch(
-        /TBD|TODO|lorem|\[\[/i
+        /TBD|TODO|lorem|\[\[|undefined|plenty of room/i
       );
     }
   });
 });
-
-describe.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
-  "%s",
-  (_id, official) => {
-    const frame: AnyQRFrame = { style: "custom", spec: official.spec };
-    const props: QRProps = {
-      value: SAMPLE_PAYLOADS.link,
-      size: 256,
-      level: "M",
-      ...PLAIN,
-      frame,
-    };
-
-    test("validates, with Latin-1 labels and no brand names", () => {
-      const result = frameSpecSchema.safeParse(official.spec);
-      expect(result.error?.issues ?? []).toEqual([]);
-      const texts = official.spec.labels.map((label) => label.text);
-      expect(texts.every(isLatin1Text)).toBe(true);
-      expect(
-        `${official.name} ${official.description} ${texts.join(" ")}`
-      ).not.toMatch(BRANDS);
-      expect(
-        official.spec.labels.some((label) => label.slot === "primary")
-      ).toBe(true);
-    });
-
-    test("is monochrome by default and follows the theme", () => {
-      const plain = getFrameLayout(256, frame);
-      const colors = [
-        ...plain.shapes.map((shape) => shape.fill),
-        ...frameLabels(plain).map((label) => label.color),
-      ];
-      expect(colors.filter((color) => !isGrey(color))).toEqual([]);
-      const themed = getFrameLayout(256, {
-        ...frame,
-        color: "#be123c",
-        textColor: "#fde68a",
-        secondaryColor: "#0e7490",
-      });
-      const themedColors = new Set(themed.shapes.map((shape) => shape.fill));
-      expect([...themedColors].some((color) => !isGrey(color))).toBe(true);
-    });
-
-    test("keeps the code whole and the labels off it", () => {
-      const layout = getFrameLayout(256, frame);
-      expect(layout.qrSize).toBe(256);
-      expect(layout.qrX + layout.qrSize).toBeLessThanOrEqual(
-        layout.width + 1e-9
-      );
-      expect(layout.qrY + layout.qrSize).toBeLessThanOrEqual(
-        layout.height + 1e-9
-      );
-      // The last shape is the plate under the code
-      const plate = layout.shapes.at(-1);
-      expect(plate?.type).toBe("rect");
-      if (plate?.type === "rect") {
-        expect(plate.x).toBeLessThan(layout.qrX);
-        expect(plate.x + plate.width).toBeGreaterThan(layout.qrX + 256);
-      }
-      // Frame shapes come before the code, labels after: nothing else on top
-      const svg = renderSvg(props);
-      const codeStart = svg.indexOf("<svg", 1);
-      const after = svg.slice(svg.indexOf("</svg>", codeStart) + 6);
-      expect(after).not.toMatch(/<(rect|path|polygon)\b/);
-      expect(svg).not.toMatch(
-        /<(mask|clipPath|use|pattern|filter|image)\b|opacity=/
-      );
-    });
-
-    test("draws the same shapes and labels on a canvas", () => {
-      const layout = getFrameLayout(256, frame);
-      const { ctx, calls } = recordCanvas();
-      const previous = (globalThis as Record<string, unknown>).Path2D;
-      (globalThis as Record<string, unknown>).Path2D = class {
-        readonly d: string;
-        constructor(d: string) {
-          this.d = d;
-        }
-      };
-      try {
-        drawFrameOnCanvas(ctx, layout);
-      } finally {
-        (globalThis as Record<string, unknown>).Path2D = previous;
-      }
-      expect(calls.filter((call) => call === "fill")).toHaveLength(
-        layout.shapes.length
-      );
-      expect(
-        calls
-          .filter((call) => call.startsWith("fillText:"))
-          .map((call) => call.slice(9))
-      ).toEqual(frameLabels(layout).map((label) => label.text));
-    });
-
-    test("prints the same artwork in PDF and EPS as in SVG", async () => {
-      const layout = getFrameLayout(256, frame);
-      const labels = frameLabels(layout);
-      const eps = await getQRAsEPS(props, { sizeMm: 40 });
-      expect(eps.match(/ show grestore/g)?.length ?? 0).toBe(labels.length);
-      expect(eps.match(/\bgsave\b/g)?.length).toBe(
-        eps.match(/\bgrestore\b/g)?.length
-      );
-      expect(eps).not.toMatch(/NaN|Infinity/);
-      const pdfBuffer = await getQRAsPrintPDFBuffer(props, { size: 40 });
-      const pdf = rasterizePdf(pdfBuffer, 3);
-      const epsImage = rasterizeEps(eps, 3).image;
-      const svg = rasterizeSvg(renderSvg(props), { width: pdf.image.width });
-      const width = Math.min(pdf.image.width, epsImage.width, svg.width);
-      const height = Math.min(pdf.image.height, epsImage.height, svg.height);
-      const reference = blocks(svg, width, height);
-      const pdfDiff = compareImages(
-        reference,
-        blocks(pdf.image, width, height),
-        64
-      );
-      const epsDiff = compareImages(
-        reference,
-        blocks(epsImage, width, height),
-        64
-      );
-      expect(
-        pdfDiff.differing,
-        `PDF: ${(pdfDiff.differing * 100).toFixed(3)}%, mean ${pdfDiff.mean.toFixed(2)}`
-      ).toBeLessThan(0.002);
-      expect(
-        epsDiff.differing,
-        `EPS: ${(epsDiff.differing * 100).toFixed(3)}%, mean ${epsDiff.mean.toFixed(2)}`
-      ).toBeLessThan(0.002);
-    });
-  }
-);

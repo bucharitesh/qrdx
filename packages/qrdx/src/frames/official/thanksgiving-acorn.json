@@ -1,0 +1,71 @@
+{
+  "id": "thanksgiving-acorn",
+  "name": "Acorn arch",
+  "description": "An arched card, like a window, with an acorn, in rust and harvest gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "thanksgiving",
+  "contentTypes": [],
+  "tags": ["thanksgiving", "harvest", "november", "acorn"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#8a3b12",
+      "text": "#ffffff",
+      "accent": "#d19a3a"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M621 231L699 231C699 273 678 306 660 309C642 306 621 273 621 231Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M612 234C612 204 636 195 660 195C684 195 708 204 708 234ZM660 177L660 177A4.5 4.5 0 0 1 664.5 181.5L664.5 193.5A4.5 4.5 0 0 1 660 198L660 198A4.5 4.5 0 0 1 655.5 193.5L655.5 181.5A4.5 4.5 0 0 1 660 177Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Give thanks",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

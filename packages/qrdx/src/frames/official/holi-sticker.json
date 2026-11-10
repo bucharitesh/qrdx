@@ -1,0 +1,83 @@
+{
+  "id": "holi-sticker",
+  "name": "Holi sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a splash of color, in violet and amber.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "holi",
+  "contentTypes": [],
+  "tags": ["holi", "festival of colors", "spring", "colors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#6d28d9",
+      "text": "#ffffff",
+      "accent": "#f59e0b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M692.6 146.8C693.06 155.6 680.51 163.84 675.71 174C670.91 184.16 671.65 204.3 663.8 207.77C655.95 211.23 639.93 195.49 628.6 194.8C617.27 194.11 604.11 206.81 595.8 203.61C587.49 200.41 585.52 185.07 578.72 175.6C571.92 166.13 553.85 155.73 555 146.8C556.15 137.87 578.58 131.01 585.65 122C592.71 112.99 590.24 97.96 597.4 92.76C604.56 87.56 617.67 91.72 628.6 90.8C639.53 89.88 655.61 82.15 663 87.22C670.39 92.28 668.01 111.27 672.94 121.2C677.87 131.13 692.14 138 692.6 146.8ZM689.4 105.2A9.6 9.6 0 1 1 708.6 105.2A9.6 9.6 0 1 1 689.4 105.2ZM683 204.4A6.4 6.4 0 1 1 695.8 204.4A6.4 6.4 0 1 1 683 204.4ZM563 207.6A8 8 0 1 1 579 207.6A8 8 0 1 1 563 207.6Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Holi",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

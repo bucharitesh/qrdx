@@ -1,0 +1,115 @@
+{
+  "id": "feedback-survey",
+  "name": "Survey",
+  "description": "Two chat bubbles: a light one with the note and a solid one with the label.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["reviews", "feedback", "survey"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 900,
+        "height": 200,
+        "radius": 70,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.86
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[120, 198], [260, 198], [90, 270]],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.86
+        }
+      },
+      {
+        "type": "rect",
+        "x": 300,
+        "y": 1510,
+        "width": 940,
+        "height": 220,
+        "radius": 80,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[980, 1512], [1120, 1512], [1180, 1430]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 260,
+        "width": 1160,
+        "height": 1200,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.95
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "check",
+        "x": 85,
+        "y": 1545,
+        "size": 150,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Take our survey",
+        "color": "text",
+        "box": {
+          "x": 360,
+          "y": 1530,
+          "width": 820,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Got a minute?",
+        "color": "frame",
+        "box": {
+          "x": 60,
+          "y": 40,
+          "width": 780,
+          "height": 120
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

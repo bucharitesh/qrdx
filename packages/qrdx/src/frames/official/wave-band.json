@@ -1,0 +1,77 @@
+{
+  "id": "wave-band",
+  "name": "Wave band",
+  "description": "A wavy band under the code.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "modern"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M0 1410C77.5 1360 232.5 1360 155 1410C213.75 1460 271.25 1460 310 1410C387.5 1360 542.5 1360 465 1410C523.75 1460 581.25 1460 620 1410C697.5 1360 852.5 1360 775 1410C833.75 1460 891.25 1460 930 1410C1007.5 1360 1162.5 1360 1085 1410C1143.75 1460 1201.25 1460 1240 1410L1240 1714Q1240 1770 1184 1770L56 1770Q0 1770 0 1714Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Point your camera here",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 110,
+          "width": 960,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "id": "eid-fitr-lantern",
+  "name": "Eid lantern",
+  "description": "A light card with a lantern and a solid label band, in emerald and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "eid-al-fitr",
+  "contentTypes": [],
+  "tags": ["eid al-fitr", "eid", "eid mubarak", "lantern"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0f5f4a",
+      "text": "#ffffff",
+      "accent": "#c9a227"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M608.8 48.8A11.2 11.2 0 0 1 631.2 48.8L625.6 48.8A5.6 5.6 0 0 0 614.4 48.8ZM620 51.6L642.4 74L597.6 74ZM608.8 149.6L631.2 149.6A2.8 2.8 0 0 1 634 152.4L634 155.2A2.8 2.8 0 0 1 631.2 158L608.8 158A2.8 2.8 0 0 1 606 155.2L606 152.4A2.8 2.8 0 0 1 608.8 149.6ZM614.4 158L625.6 158L620 167.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M597.6 76.8L642.4 76.8L648 93.6L648 132.8L636.8 146.8L603.2 146.8L592 132.8L592 93.6ZM620 90.8C631.2 96.4 634 104.8 634 113.2L634 132.8L606 132.8L606 113.2C606 104.8 608.8 96.4 620 90.8Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M620 96.4C628.4 100.6 629.8 107.6 629.8 113.2L629.8 128.6L610.2 128.6L610.2 113.2C610.2 107.6 611.6 100.6 620 96.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Eid Mubarak",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

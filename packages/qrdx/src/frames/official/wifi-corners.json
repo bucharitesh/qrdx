@@ -1,0 +1,117 @@
+{
+  "id": "wifi-corners",
+  "name": "Wi-Fi viewfinder",
+  "description": "Viewfinder corners around the code, the label underneath.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["wifi"],
+  "tags": ["wifi", "minimal"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1400,
+      "height": 1720
+    },
+    "qr": {
+      "x": 200,
+      "y": 340,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1400,
+        "height": 1720,
+        "radius": 48,
+        "fill": "background"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [60, 200],
+          [280, 200],
+          [280, 234],
+          [94, 234],
+          [94, 420],
+          [60, 420]
+        ],
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1340, 200],
+          [1120, 200],
+          [1120, 234],
+          [1306, 234],
+          [1306, 420],
+          [1340, 420]
+        ],
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [60, 1480],
+          [280, 1480],
+          [280, 1446],
+          [94, 1446],
+          [94, 1260],
+          [60, 1260]
+        ],
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [1340, 1480],
+          [1120, 1480],
+          [1120, 1446],
+          [1306, 1446],
+          [1306, 1260],
+          [1340, 1260]
+        ],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to join Wi-Fi",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1520,
+          "width": 1200,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Free for guests",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 40,
+          "width": 1120,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

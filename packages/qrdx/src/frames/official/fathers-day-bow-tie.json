@@ -1,0 +1,114 @@
+{
+  "id": "fathers-day-bow-tie",
+  "name": "Bow tie",
+  "description": "A light card with a bow tie and a solid label band, in forest green and tan.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "fathers-day",
+  "contentTypes": [],
+  "tags": ["father's day", "dad", "june", "gift"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#2f4a3a",
+      "text": "#ffffff",
+      "accent": "#b88a4e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 102C606 82.4 578 65.6 564 74C555.6 88 555.6 116 564 130C578 138.4 606 121.6 620 102ZM620 102C634 121.6 662 138.4 676 130C684.4 116 684.4 88 676 74C662 65.6 634 82.4 620 102Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M615.8 85.2L624.2 85.2A8.4 8.4 0 0 1 632.6 93.6L632.6 110.4A8.4 8.4 0 0 1 624.2 118.8L615.8 118.8A8.4 8.4 0 0 1 607.4 110.4L607.4 93.6A8.4 8.4 0 0 1 615.8 85.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for your gift",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Father's Day",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

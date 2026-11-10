@@ -1,0 +1,104 @@
+{
+  "id": "round-badge",
+  "name": "Round badge",
+  "description": "A round badge with a phone scanning a code inside the ring, the label set along its top and the note along its bottom.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "badge", "round"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 2000
+    },
+    "qr": {
+      "x": 500,
+      "y": 500,
+      "size": 1000,
+      "padding": 64,
+      "radius": 40
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 1000,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 820,
+        "hole": 808,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "path",
+        "d": "M972.8 236.8L1027.2 236.8A17 17 0 0 1 1044.2 253.8L1044.2 376.2A17 17 0 0 1 1027.2 393.2L972.8 393.2A17 17 0 0 1 955.8 376.2L955.8 253.8A17 17 0 0 1 972.8 236.8ZM971.1 257.2A5.1 5.1 0 0 0 966 262.3L966 364.3A5.1 5.1 0 0 0 971.1 369.4L1028.9 369.4A5.1 5.1 0 0 0 1034 364.3L1034 262.3A5.1 5.1 0 0 0 1028.9 257.2ZM989.8 376.2L1010.2 376.2A3.4 3.4 0 0 1 1013.6 379.6L1013.6 379.6A3.4 3.4 0 0 1 1010.2 383L989.8 383A3.4 3.4 0 0 1 986.4 379.6L986.4 379.6A3.4 3.4 0 0 1 989.8 376.2Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M976.2 270.8L993.2 270.8L993.2 275.9L981.3 275.9L981.3 287.8L976.2 287.8ZM1023.8 287.8L1018.7 287.8L1018.7 275.9L1006.8 275.9L1006.8 270.8L1023.8 270.8ZM976.2 338.8L981.3 338.8L981.3 350.7L993.2 350.7L993.2 355.8L976.2 355.8ZM1023.8 355.8L1006.8 355.8L1006.8 350.7L1018.7 350.7L1018.7 338.8L1023.8 338.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [[95, 974], [121, 1000], [95, 1026], [69, 1000]],
+        "fill": "text"
+      },
+      {
+        "type": "polygon",
+        "points": [[1905, 974], [1931, 1000], [1905, 1026], [1879, 1000]],
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "curved",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "top",
+          "spread": 120
+        },
+        "fontSize": 92
+      },
+      {
+        "type": "curved",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Open with your camera",
+        "color": "text",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "bottom",
+          "spread": 110
+        },
+        "fontSize": 76,
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,107 @@
+{
+  "id": "stitched-light",
+  "name": "Light stitched card",
+  "description": "A card with a stitched dashed edge and a chevron.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "stitched", "light"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1750,
+        "radius": 80,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "line",
+        "x1": 86,
+        "y1": 36,
+        "x2": 1154,
+        "y2": 36,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1204,
+        "y1": 86,
+        "x2": 1204,
+        "y2": 1664,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1154,
+        "y1": 1714,
+        "x2": 86,
+        "y2": 1714,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 36,
+        "y1": 1664,
+        "x2": 36,
+        "y2": 86,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M569.6 96L588.8 86.4L620 122.4L651.2 86.4L670.4 96L620 153.6Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to open",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1510,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

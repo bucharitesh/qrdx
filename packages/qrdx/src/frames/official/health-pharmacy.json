@@ -1,0 +1,94 @@
+{
+  "id": "health-pharmacy",
+  "name": "Pharmacy",
+  "description": "A solid card with a round badge holding a capsule on its top edge.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["healthcare", "clinic", "pharmacy"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M577.33 152.53L636.97 110.77A22.4 22.4 -35 0 1 668.17 116.27L668.17 116.27A22.4 22.4 -35 0 1 662.67 147.47L603.03 189.23A22.4 22.4 -35 0 1 571.83 183.73L571.83 183.73A22.4 22.4 -35 0 1 577.33 152.53Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M607.15 131.65L636.97 110.77A22.4 22.4 -35 0 1 662.67 147.47L632.85 168.35Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to refill",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Pharmacy",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

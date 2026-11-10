@@ -1,0 +1,93 @@
+{
+  "id": "menu-cutlery",
+  "name": "Menu card",
+  "description": "A light card with a fork and knife and a solid label band.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M581 87L581 87A3 3 0 0 1 584 90L584 126A3 3 0 0 1 581 129L581 129A3 3 0 0 1 578 126L578 90A3 3 0 0 1 581 87ZM593 87L593 87A3 3 0 0 1 596 90L596 126A3 3 0 0 1 593 129L593 129A3 3 0 0 1 590 126L590 90A3 3 0 0 1 593 87ZM605 87L605 87A3 3 0 0 1 608 90L608 126A3 3 0 0 1 605 129L605 129A3 3 0 0 1 602 126L602 90A3 3 0 0 1 605 87ZM575 126L611 126C611 141 602 147 599 150L599 213Q599 219 593 219Q587 219 587 213L587 150C584 147 575 141 575 126ZM641 87C665 99 665 135 659 159L650 159L650 213Q650 219 644 219Q638 219 638 213L638 90Q638 85.5 641 87Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the menu",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      }
+    ]
+  }
+}

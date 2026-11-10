@@ -1,0 +1,83 @@
+{
+  "id": "app-install",
+  "name": "Install",
+  "description": "A wide card: the code on one side, a phone scanning a code and the label on the other.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["app", "download", "mobile", "landscape"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 1080,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M171.2 167.2L228.8 167.2A18 18 0 0 1 246.8 185.2L246.8 314.8A18 18 0 0 1 228.8 332.8L171.2 332.8A18 18 0 0 1 153.2 314.8L153.2 185.2A18 18 0 0 1 171.2 167.2ZM169.4 188.8A5.4 5.4 0 0 0 164 194.2L164 302.2A5.4 5.4 0 0 0 169.4 307.6L230.6 307.6A5.4 5.4 0 0 0 236 302.2L236 194.2A5.4 5.4 0 0 0 230.6 188.8ZM189.2 314.8L210.8 314.8A3.6 3.6 0 0 1 214.4 318.4L214.4 318.4A3.6 3.6 0 0 1 210.8 322L189.2 322A3.6 3.6 0 0 1 185.6 318.4L185.6 318.4A3.6 3.6 0 0 1 189.2 314.8Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M174.8 203.2L192.8 203.2L192.8 208.6L180.2 208.6L180.2 221.2L174.8 221.2ZM225.2 221.2L219.8 221.2L219.8 208.6L207.2 208.6L207.2 203.2L225.2 203.2ZM174.8 275.2L180.2 275.2L180.2 287.8L192.8 287.8L192.8 293.2L174.8 293.2ZM225.2 293.2L207.2 293.2L207.2 287.8L219.8 287.8L219.8 275.2L225.2 275.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get the app",
+        "color": "text",
+        "box": {
+          "x": 110,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to install",
+        "color": "text",
+        "box": {
+          "x": 110,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

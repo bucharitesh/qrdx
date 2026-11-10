@@ -1,0 +1,82 @@
+{
+  "id": "lunar-red-envelope",
+  "name": "Red envelope",
+  "description": "An envelope with a pointed flap over the code and a lucky coin, in vermilion and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lunar-new-year",
+  "contentTypes": [],
+  "tags": [
+    "lunar new year",
+    "chinese new year",
+    "spring festival",
+    "red envelope",
+    "gift"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 500,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b3261e",
+      "text": "#ffffff",
+      "accent": "#e0a526"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1880,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M40 0L1280 0Q1320 0 1300 40L700 490Q660 520 620 490L20 40Q0 0 40 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.2
+        }
+      },
+      {
+        "type": "path",
+        "d": "M598.4 190A61.6 61.6 0 1 1 721.6 190A61.6 61.6 0 1 1 598.4 190ZM647.4 174.6A2.8 2.8 0 0 0 644.6 177.4L644.6 202.6A2.8 2.8 0 0 0 647.4 205.4L672.6 205.4A2.8 2.8 0 0 0 675.4 202.6L675.4 177.4A2.8 2.8 0 0 0 672.6 174.6Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M608.2 190A51.8 51.8 0 1 1 711.8 190A51.8 51.8 0 1 1 608.2 190ZM613.8 190A46.2 46.2 0 1 0 706.2 190A46.2 46.2 0 1 0 613.8 190Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to open",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1630,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

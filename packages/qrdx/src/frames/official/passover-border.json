@@ -1,0 +1,122 @@
+{
+  "id": "passover-border",
+  "name": "Seder border",
+  "description": "A thin double border with a kiddush cup, a small divider and the label, in wine and wheat.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "passover",
+  "contentTypes": [],
+  "tags": ["passover", "pesach", "seder", "elegant"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#6d1a36",
+      "text": "#ffffff",
+      "accent": "#c8a165"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M623.6 99.6L696.4 99.6C696.4 144.4 679.6 161.2 660 161.2C640.4 161.2 623.6 144.4 623.6 99.6ZM654.4 158.4L665.6 158.4L665.6 194.8L654.4 194.8ZM629.2 208.8C634.8 194.8 651.6 192 660 192C668.4 192 685.2 194.8 690.8 208.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M623.6 110.8L696.4 110.8L696.4 119.2L623.6 119.2Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the seder plan",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Passover",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

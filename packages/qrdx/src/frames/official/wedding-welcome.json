@@ -1,0 +1,70 @@
+{
+  "id": "wedding-welcome",
+  "name": "Welcome sign",
+  "description": "An arched card, like a window, with a bow.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["wedding", "events", "welcome sign"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M660 240C645 219 612 198 603 216C597 231 609 258 660 240ZM660 240C711 258 723 231 717 216C708 198 675 219 660 240ZM654 243L633 291L648 285L657 297ZM666 243L663 297L672 285L687 291Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M657 228L663 228A7.5 7.5 0 0 1 670.5 235.5L670.5 244.5A7.5 7.5 0 0 1 663 252L657 252A7.5 7.5 0 0 1 649.5 244.5L649.5 235.5A7.5 7.5 0 0 1 657 228Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Welcome to our wedding",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

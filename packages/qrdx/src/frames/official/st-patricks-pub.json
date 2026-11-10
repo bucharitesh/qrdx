@@ -1,0 +1,114 @@
+{
+  "id": "st-patricks-pub",
+  "name": "Pub night",
+  "description": "A light card with a beer mug and a solid label band, in emerald and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "st-patricks-day",
+  "contentTypes": [],
+  "tags": ["st patrick's day", "march", "irish", "pub", "bar"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#137a3f",
+      "text": "#ffffff",
+      "accent": "#d4a017"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 190,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M580.8 1538.4L639.6 1538.4A8.4 8.4 0 0 1 648 1546.8L648 1622.4A8.4 8.4 0 0 1 639.6 1630.8L580.8 1630.8A8.4 8.4 0 0 1 572.4 1622.4L572.4 1546.8A8.4 8.4 0 0 1 580.8 1538.4ZM648 1558A25.2 25.2 0 0 1 648 1608.4L648 1594.4A11.2 11.2 0 0 0 648 1572Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M566.8 1549.6C564 1530 580.8 1518.8 592 1527.2C597.6 1513.2 620 1513.2 625.6 1524.4C636.8 1516 656.4 1524.4 653.6 1544L653.6 1552.4L566.8 1552.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for drinks",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 30,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "St Patrick's Day",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1650,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
