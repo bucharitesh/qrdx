@@ -29,14 +29,14 @@ import {
   AFFILIATE_COMMISSION_MONTHS,
   AFFILIATE_COMMISSION_PERCENT,
   AFFILIATE_HOLD_DAYS,
-  AFFILIATE_MIN_PAYOUT_INR_LABEL,
-  AFFILIATE_MIN_PAYOUT_USD_LABEL,
+  AFFILIATE_MIN_PAYOUT_LABEL,
   formatMinorAmount,
 } from "@/lib/affiliates/terms";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { signInPath } from "@/lib/safe-redirect";
 import { SettingsHeader } from "../components/settings-header";
 import {
+  ChooseCodeForm,
   PaypalEmailForm,
   ReferralLinkField,
 } from "./_components/affiliate-client";
@@ -180,11 +180,27 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
         title="Your referral link"
       >
         <SettingsRow
-          description="Visits are counted without cookies. Repeat visits count again."
+          description="A sign-up counts when it happens in the same visit as the click. Visits are counted without cookies; repeat visits count again."
           label="Link"
         >
           <ReferralLinkField link={referralLink(row.code)} />
         </SettingsRow>
+        {!suspended && (
+          <SettingsRow
+            description={
+              row.previousCode
+                ? `You chose this code. Links with your first code (${row.previousCode}) still work.`
+                : "Your code is random. You can change it once to one you choose; links with this one keep working."
+            }
+            label="Code"
+          >
+            {row.previousCode ? (
+              <p className="font-mono text-sm">{row.code}</p>
+            ) : (
+              <ChooseCodeForm current={row.code} />
+            )}
+          </SettingsRow>
+        )}
         <div className="grid grid-cols-1 gap-3 px-5 py-5 sm:grid-cols-3 sm:px-6">
           <Stat
             label="Link visits"
@@ -202,7 +218,7 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
       </SettingsSection>
 
       <SettingsSection
-        description={`Each commission waits ${AFFILIATE_HOLD_DAYS} days; a refund or chargeback in that time cancels it. Amounts stay in the currency the customer paid in.`}
+        description={`Each commission waits ${AFFILIATE_HOLD_DAYS} days; a refund or chargeback in that time cancels it. Commissions show in the currency the customer paid in; payouts are in US dollars.`}
         id="earnings"
         title="Earnings"
       >
@@ -221,7 +237,7 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
           />
         </div>
         <SettingsRow
-          description={`Payouts go out by hand through PayPal once a month, once what's payable reaches ${AFFILIATE_MIN_PAYOUT_USD_LABEL} (or ${AFFILIATE_MIN_PAYOUT_INR_LABEL} for rupees).`}
+          description={`Payouts go out by hand through PayPal once a month, in US dollars, once everything payable reaches ${AFFILIATE_MIN_PAYOUT_LABEL}. Commissions in other currencies count at the European Central Bank's rate on the payout date. We email you whenever this address changes.`}
           label="PayPal email"
         >
           {suspended ? (
@@ -253,6 +269,17 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
                     <TableCell>{dateFormat.format(payout.paidAt)}</TableCell>
                     <TableCell className="tabular-nums">
                       {formatMinorAmount(payout.amount, payout.currency)}
+                      {payout.fxRates && payout.fxDate && (
+                        <span className="text-muted-foreground block text-xs">
+                          {Object.entries(payout.fxRates)
+                            .map(
+                              ([currency, rate]) =>
+                                `${currency.toUpperCase()} at ${rate} US$ each`,
+                            )
+                            .join(", ")}{" "}
+                          (ECB, {payout.fxDate})
+                        </span>
+                      )}
                     </TableCell>
                     <TableCell className="font-mono text-xs">
                       {payout.paypalReference}
