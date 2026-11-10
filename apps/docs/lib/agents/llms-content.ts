@@ -6,6 +6,7 @@ import {
   isFeatureAvailable,
   isPathAvailable,
 } from "@/lib/feature-availability";
+import { configuredEntry } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
@@ -65,7 +66,7 @@ export async function llmsTxt(): Promise<string> {
   ).map((entry) => ({
     title: entry.name,
     url: `/integrations/${entry.slug}`,
-    description: entry.tagline,
+    description: configuredEntry(entry, isFeatureAvailable).tagline,
   }));
   const plugins = getCatalogBySurface("plugins").map((entry) => ({
     title: entry.name,

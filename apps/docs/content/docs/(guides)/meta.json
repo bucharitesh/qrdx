@@ -22,6 +22,7 @@
     "---Bring your links---",
     "../migrate",
     "../short-links-and-file-pickers",
+    "../slack-bot",
     "[Integrations directory](/integrations)"
   ]
 }

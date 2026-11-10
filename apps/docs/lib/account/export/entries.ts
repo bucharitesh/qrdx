@@ -1,6 +1,7 @@
 import "server-only";
 
 import { isMissingSchemaError } from "@/lib/community/tables";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { listAuthorizedApps } from "@/lib/oauth-apps/authorized";
 import type { ExportEntry } from "./archive";
 import {
@@ -342,6 +343,27 @@ export function exportEntries(userId: string): ExportEntry[] {
         "Services you connected (provider, status, permissions, dates). Credentials and tokens are never included.",
       load: () => q.integrations,
     },
+    // Only where the Slack bot is set up: nothing reads its table otherwise.
+    ...(isFeatureAvailable("slackBot")
+      ? [
+          {
+            kind: "json" as const,
+            path: "slack-links.json",
+            title: "Linked Slack accounts",
+            description:
+              "Slack accounts you linked to make tracked codes with the QRdx bot: the Slack workspace and user ids, the workspace the codes go to, and when. No Slack messages are kept.",
+            load: async () => {
+              try {
+                return await q.slackLinks;
+              } catch (error) {
+                // Before manual-sql/2026-11-10-slack-bot.sql: nothing linked.
+                if (isMissingSchemaError(error)) return [];
+                throw error;
+              }
+            },
+          },
+        ]
+      : []),
     {
       kind: "json",
       path: "teams.json",

@@ -33,6 +33,52 @@ export const notifications: IntegrationCatalogEntry[] = [
       "Click Add to Slack, pick a channel, and QRdx posts the alerts you choose there: a code's first scan and milestones, new form responses and code changes. Each alert is a short message with a link back to the code or the responses.",
       "Targets are per person and per workspace, so every teammate can send their own alerts to their own channels. Already pasted an incoming webhook URL? It keeps working, and you can still paste one instead of connecting.",
     ],
+    // The QRdx bot (apps/docs lib/slack-bot): shown only where it's set up.
+    configuredExtras: [
+      "Add the QRdx bot to your Slack workspace and anyone there can make a QR code without leaving Slack: type /qr with a link or any text, mention @QRdx, send the bot a direct message, or pick Make a QR code from a message's menu. The code comes back as an image, with buttons to download it as PNG or SVG or open it in the editor.",
+      "Link your QRdx account with /qr link, and /qr track with a link makes a dynamic code in the QRdx workspace you picked, with scan analytics and a destination you can change later. It follows your role and plan, the same as making a code in the dashboard.",
+    ],
+    configured: {
+      tagline:
+        "Make QR codes in Slack with /qr, and get scan milestones, form submissions and code changes in a channel.",
+      plan: "free",
+      steps: [
+        {
+          title: "Add the QRdx bot",
+          body: "In Settings → Integrations → Slack, click Add the bot to Slack and pick your Slack workspace. Everyone in it can then make QR codes there.",
+        },
+        {
+          title: "Make a code in Slack",
+          body: "Type /qr with a link or any text, mention @QRdx in a channel, message the bot, or pick Make a QR code from a message's menu.",
+          snippet: {
+            label: "In any channel",
+            language: "text",
+            code: "/qr https://qrdx.dev",
+          },
+        },
+        {
+          title: "Link your account for tracked codes",
+          body: "Run /qr link, pick the QRdx workspace and confirm. After that, /qr track with a link makes a dynamic code there.",
+        },
+        {
+          title: "Get alerts in a channel",
+          body: "On the same settings page, click Add to Slack, pick the workspace in QRdx, then the Slack channel. Alerts are part of the Business plan; choose them in Settings → Notifications.",
+        },
+      ],
+      capabilities: [
+        {
+          title: "QR codes in Slack",
+          description:
+            "/qr, mentions, direct messages and a message shortcut reply with a QR code image and links to the PNG, the SVG and the editor.",
+        },
+        {
+          title: "Tracked codes from Slack",
+          description:
+            "Linked accounts make dynamic codes with /qr track, under their own role and plan limits.",
+        },
+      ],
+      keywords: ["bot", "slash command", "/qr", "mention", "direct message"],
+    },
     kind: "connect",
     surface: "integrations",
     categories: ["notifications"],
