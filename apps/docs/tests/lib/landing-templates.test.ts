@@ -3,6 +3,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { contrastRatio, LANDING_FONTS } from "@/components/landing/theme";
 import { buildDemoContent } from "@/lib/landing/demo";
+import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import { buildTemplateContent, listTemplates } from "@/lib/landing/templates";
 import { TEMPLATE_MEDIA_PATH } from "@/lib/landing/templates/media";
 
@@ -52,6 +53,13 @@ function mediaFiles(value: unknown, found = new Set<string>()): Set<string> {
 }
 
 describe("landing page templates", () => {
+  it("lists every page type in PAGE_TYPE_IDS, in picker order", () => {
+    // Copy counts page types from that list ({facts.hostedPageTypes}).
+    expect(templates.map((template) => template.type)).toEqual([
+      ...PAGE_TYPE_IDS,
+    ]);
+  });
+
   it("keeps every template id that has shipped", () => {
     for (const [type, ids] of Object.entries(SHIPPED)) {
       const template = templates.find((item) => item.type === type);
