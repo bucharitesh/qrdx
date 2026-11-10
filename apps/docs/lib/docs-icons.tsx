@@ -1,5 +1,6 @@
 import { Bot } from "@repo/design-system/components/icons";
 import {
+  Airdrop,
   Book1,
   Brush,
   Card,
@@ -69,6 +70,7 @@ export const docsIcons = {
   LockKeyhole: Lock1,
   MessageCircleQuestion: MessageQuestion,
   MousePointerClick: MouseCircle,
+  Nfc: Airdrop,
   Paintbrush: Brush,
   Palette: ColorSwatch,
   PanelsTopLeft: Element2,

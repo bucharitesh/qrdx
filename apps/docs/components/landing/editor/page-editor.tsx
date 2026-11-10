@@ -13,6 +13,7 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
 import {
+  Airdrop,
   InfoCircle as AlertCircle,
   ArrowDown,
   ArrowLeft,
@@ -72,7 +73,13 @@ export interface PageEditorProps {
   };
   initialContent: LandingPageContent;
   /** The page's first QR code, null when none is linked */
-  code: { id: string; pageUrl: string; shortLink: string } | null;
+  code: {
+    id: string;
+    pageUrl: string;
+    shortLink: string;
+    /** NFC (feat/nfc): the code's NFC page, for vCard Plus pages */
+    nfcHref?: string | null;
+  } | null;
   savedThemes: SavedThemePalette[];
   canUseCustomCss: boolean;
   /** badge: "Made with QRdx" footer (Free); whiteLabel: Business */
@@ -448,6 +455,16 @@ export function PageEditor({
           View live
         </a>
       </Button>
+      {/* NFC (feat/nfc) */}
+      {code.nfcHref && (
+        <Button asChild size="sm" title="Put on NFC" variant="outline">
+          <Link href={code.nfcHref}>
+            <Airdrop />
+            {/* Icon only on phones, so Publish stays on the same row. */}
+            <span className="sr-only sm:not-sr-only">Put on NFC</span>
+          </Link>
+        </Button>
+      )}
     </>
   ) : (
     <span className="text-muted-foreground text-xs">

@@ -145,6 +145,13 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       url: "/docs/tracking-and-conversions",
       description: "Scan analytics, retargeting pixels and conversion tracking",
     },
+    // NFC (feat/nfc)
+    {
+      title: "NFC tags and business cards",
+      url: "/docs/nfc",
+      description:
+        "Write a dynamic code's link to an NFC tag or card; taps are counted apart from QR scans",
+    },
     {
       title: "Teams",
       url: "/docs/teams",

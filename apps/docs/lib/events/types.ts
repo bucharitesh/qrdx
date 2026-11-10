@@ -144,6 +144,8 @@ export interface ScanSummary {
   os: string | null;
   browser: string | null;
   referer: string | null;
+  /** "nfc" for a tap on an NFC tag (the code's NFC link), "qr" for a QR scan */
+  source: "qr" | "nfc";
 }
 
 export interface ScanBatchData {

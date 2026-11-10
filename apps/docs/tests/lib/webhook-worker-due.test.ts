@@ -159,6 +159,7 @@ describe("scheduling lowers the worker marker", () => {
         os: null,
         browser: null,
         referer: null,
+        source: "qr",
       },
       { userId: "u1", organizationId: null },
       {

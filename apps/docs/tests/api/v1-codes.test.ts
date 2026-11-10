@@ -413,6 +413,7 @@ describe("GET /v1/codes", () => {
         "domain",
         "id",
         "lastScannedAt",
+        "nfcLink",
         "organizationId",
         "scanCount",
         "shortLink",
@@ -427,6 +428,8 @@ describe("GET /v1/codes", () => {
       slug: "Code001",
       shortLink: `${ORIGIN}/q/Code001`,
       defaultShortLink: `${ORIGIN}/q/Code001`,
+      // NFC (feat/nfc): the short link with ?nfc
+      nfcLink: `${ORIGIN}/q/Code001?nfc`,
       domain: null,
       status: "active",
       createdAt: new Date(NOW.getTime() - 1000).toISOString(),

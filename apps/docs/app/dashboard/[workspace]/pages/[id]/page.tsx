@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import {
+  BUSINESS_CARD_PAGE_TYPE,
+  nfcPageHref,
+} from "@/app/dashboard/codes/_lib/nfc";
 import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
 import { getPageForEdit } from "@/app/dashboard/pages/_lib/landing-pages";
 import { getSavedThemePalettes } from "@/app/dashboard/pages/_lib/saved-themes";
@@ -18,10 +22,10 @@ export const metadata: Metadata = {
 export default async function EditLandingPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; workspace: string }>;
 }) {
   const scope = await requireDashboardScope();
-  const { id } = await params;
+  const { id, workspace } = await params;
   const [page, plan, savedThemes] = await Promise.all([
     getPageForEdit(scope, id).catch((error: unknown) => {
       if (error instanceof HttpError && error.status === 404) notFound();
@@ -45,7 +49,16 @@ export default async function EditLandingPage({
       canUseCustomCss={limits.customCss}
       code={
         code
-          ? { id: code.id, pageUrl: code.pageUrl, shortLink: code.shortLink }
+          ? {
+              id: code.id,
+              pageUrl: code.pageUrl,
+              shortLink: code.shortLink,
+              // NFC (feat/nfc): vCard Plus pages go on NFC business cards.
+              nfcHref:
+                page.type === BUSINESS_CARD_PAGE_TYPE
+                  ? nfcPageHref(workspace, code.id)
+                  : null,
+            }
           : null
       }
       initialContent={page.content}
