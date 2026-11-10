@@ -1,5 +1,6 @@
 import "server-only";
 
+import { parse as parseDomain } from "tldts";
 import { imageApiUrl } from "@/lib/agents/hosts";
 import { baseUrl } from "@/lib/metadata";
 import { parseLinkUrl, playgroundHref } from "@/lib/playground-links";
@@ -20,9 +21,10 @@ import {
 // service fetches itself: nothing is uploaded or stored.
 
 /**
- * A domain typed without a scheme: dot-separated labels ending in a
- * letters-only (or punycode) top-level domain, then an optional port and
- * path. Not an IP address, an email address or a version number.
+ * The shape of a domain typed without a scheme: dot-separated labels ending
+ * in a letters-only (or punycode) label, then an optional port and path. Not
+ * an IP address, an email address or a version number. bareDomainLink then
+ * requires a real top-level domain.
  */
 const BARE_DOMAIN =
   /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:[a-z]{2,63}|xn--[a-z0-9-]{1,59})(?::\d{2,5})?(?:[/?#]\S*)?$/i;
@@ -55,8 +57,7 @@ export function readChatQrInput(raw: string): ChatQrInput {
   // "qrdx.dev" or "www.example.com/menu": chat apps show these as links, so
   // the code opens them as one (many scanners treat a bare domain as text)
   // and the editor link can carry it.
-  const data =
-    BARE_DOMAIN.test(typed) && !webAddress(typed) ? `https://${typed}` : typed;
+  const data = bareDomainLink(typed) ?? typed;
   if (data.length > QR_DATA_MAX_LENGTH)
     return { ok: false, reason: "too_long" };
   if (!fitsInQrCode(data)) return { ok: false, reason: "too_long" };
@@ -109,6 +110,18 @@ export function firstWebAddress(text: string): string | null {
     if (url) return url;
   }
   return null;
+}
+
+/**
+ * `https://<typed>` when `typed` is a domain without a scheme whose top-level
+ * domain is a real one (the IANA root list, through tldts), else null. Words
+ * with a dot such as "Mr.Smith" or "notes.txt" stay text, as chat apps
+ * leave them unlinked.
+ */
+function bareDomainLink(typed: string): string | null {
+  if (!BARE_DOMAIN.test(typed) || webAddress(typed)) return null;
+  const host = typed.split(/[/?#]/, 1)[0].replace(/:\d+$/, "").toLowerCase();
+  return parseDomain(host).isIcann ? `https://${typed}` : null;
 }
 
 /** `value` itself when it is one web address (the editor's rule), else null. */
