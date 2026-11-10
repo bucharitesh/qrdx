@@ -6,16 +6,16 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import type { Metadata } from "next";
 import Link from "next/link";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { DailyChart } from "../_components/daily-chart";
 import { EmptyRow, Section } from "../_components/stat-card";
 import { formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 import { getAiUsageStats } from "../_lib/queries";
 
-export const metadata: Metadata = { title: "Admin · AI Usage" };
+export const generateMetadata = adminMetadata("Admin · AI Usage");
 
 export default async function AdminAiUsagePage() {
   await requireAdmin();
