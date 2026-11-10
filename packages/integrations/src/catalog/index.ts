@@ -1,6 +1,7 @@
 import { ai } from "./entries/ai";
 import { analytics } from "./entries/analytics";
 import { automation } from "./entries/automation";
+import { chatApps } from "./entries/chat-apps";
 import { crm } from "./entries/crm";
 import { developers } from "./entries/developers";
 import { filePickers } from "./entries/file-pickers";
@@ -35,6 +36,11 @@ export const CATALOG_CATEGORIES: {
     id: "notifications",
     label: "Notifications",
     description: "Scan milestones and form responses where your team works.",
+  },
+  {
+    id: "chat",
+    label: "Chat apps",
+    description: "Make QR codes in a chat, without opening QRdx.",
   },
   {
     id: "automation",
@@ -104,6 +110,7 @@ export const CATALOG_PLAN_LABELS: Record<CatalogPlan, string> = {
 
 const ENTRIES: IntegrationCatalogEntry[] = [
   ...notifications,
+  ...chatApps,
   ...automation,
   ...crm,
   ...ai,

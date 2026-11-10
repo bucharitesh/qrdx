@@ -36,6 +36,7 @@ export const FEATURE_IDS = [
   "auditLog",
   "slackBot",
   "discordBot",
+  "telegramBot",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -215,6 +216,19 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     catalogSlugs: ["discord-bot"],
     // The webhook alerts entry mentions the bot only where it can be added.
     extrasOf: "discord",
+  },
+  telegramBot: {
+    // The QRdx bot in Telegram (lib/chat-bots/telegram): its token for
+    // replies, the secret Telegram sends with every webhook call, and its
+    // username for t.me links and help text. Nothing is stored.
+    name: "Telegram bot",
+    requires: () => [
+      "TELEGRAM_BOT_TOKEN",
+      "TELEGRAM_WEBHOOK_SECRET",
+      "TELEGRAM_BOT_USERNAME",
+    ],
+    paths: ["/docs/telegram-bot"],
+    catalogSlugs: ["telegram"],
   },
 };
 
