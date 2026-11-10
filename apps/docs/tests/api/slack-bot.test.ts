@@ -761,7 +761,7 @@ describe("events", () => {
     ).toBe("Table 4");
   });
 
-  it("ignores bot messages, its own, edits and other subtypes", async () => {
+  it("ignores bot messages, its own, edits, other subtypes and /qr echoes", async () => {
     seedInstall();
     const base = {
       type: "message",
@@ -778,6 +778,9 @@ describe("events", () => {
       { ...base, subtype: "bot_message" },
       { ...base, edited: { user: ANA, ts: "2" } },
       { ...base, channel_type: "channel" },
+      // Slack's copy of a public /qr reply's command (already answered).
+      { ...base, text: "/qr https://google.com" },
+      { ...base, text: "  /QR" },
     ]) {
       await events.POST(eventRequest(callbackEvent(event)));
     }
