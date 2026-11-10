@@ -305,7 +305,9 @@ export function FramePicker({
       : [...featured.slice(0, -1), value];
 
   const officialCount = index?.length ?? 0;
-  const total = choices.length + officialCount;
+  // "None" is a choice, not a frame
+  const total =
+    choices.filter((choice) => choice.id !== "none").length + officialCount;
 
   // ── Catalog contents ────────────────────────────────────────────────────
   const terms = words(query);
@@ -429,7 +431,7 @@ export function FramePicker({
     ...sections.map((section) => ({
       id: section.id,
       label: section.label,
-      count: section.items.length,
+      count: section.items.filter((item) => item.id !== "none").length,
     })),
   ];
 
@@ -458,9 +460,7 @@ export function FramePicker({
                 }
               }}
               placeholder={
-                officialCount > 0
-                  ? `Search ${total} frames: Diwali, menu, Wi-Fi…`
-                  : "Search frames"
+                officialCount > 0 ? `Search ${total} frames` : "Search frames"
               }
               ref={searchRef}
               type="search"
@@ -490,7 +490,13 @@ export function FramePicker({
               aria-pressed={filter === chip.id}
               className="h-7 shrink-0 gap-1 px-2 text-xs"
               key={chip.id}
-              onClick={() => setFilter(chip.id)}
+              onClick={(event) => {
+                setFilter(chip.id);
+                event.currentTarget.scrollIntoView({
+                  block: "nearest",
+                  inline: "nearest",
+                });
+              }}
               size="sm"
               type="button"
               variant={filter === chip.id ? "secondary" : "ghost"}

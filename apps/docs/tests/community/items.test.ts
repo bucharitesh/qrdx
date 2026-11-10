@@ -277,6 +277,44 @@ describe("reading items", () => {
     ]);
   });
 
+  it("keeps members' frames when the whole official library is seeded", async () => {
+    fakeDb.seed("communityProfile", [
+      profile("cp_official_qrdx", "u_team", {
+        kind: "official",
+        handle: "qrdx",
+        displayName: "QRdx",
+      }),
+      profile("cp_ana", "u_ana"),
+    ]);
+    fakeDb.seed("communityItem", [
+      ...OFFICIAL_FRAMES.map((frame) =>
+        item(
+          "frame",
+          "cp_official_qrdx",
+          { frame: { style: "custom", spec: frame.spec } },
+          {
+            id: `ci_official_frame_${frame.id}`,
+            slug: frame.id,
+            isOfficial: true,
+          },
+        ),
+      ),
+      item(
+        "frame",
+        "cp_ana",
+        { frame: WIFI_FRAME },
+        { slug: "ana-frame-ab12" },
+      ),
+    ]);
+    const frames = await listFrames();
+    expect(frames).toHaveLength(OFFICIAL_FRAMES.length + 1);
+    expect(
+      frames.every((card) => card.isOfficial || card.slug === "ana-frame-ab12"),
+    ).toBe(true);
+    expect(frames.filter((card) => card.id === null)).toEqual([]);
+    expect(frames.at(-1)?.slug).toBe("ana-frame-ab12");
+  });
+
   it("falls back to the catalogue for an official frame page", async () => {
     const detail = await getItem("frame", "wifi-card", null);
     expect(detail).toMatchObject({
