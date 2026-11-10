@@ -1,8 +1,13 @@
 import type { KeyObject } from "node:crypto";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
+import { after } from "next/server";
 import {
-  commandReply,
+  editOriginalResponse,
+  isInteractionToken,
+} from "@/lib/chat-bots/discord/followup";
+import {
   INTERACTION_TYPE,
+  interactionPlan,
   interactionUserId,
   NOTICES,
   notice,
@@ -17,7 +22,11 @@ import {
 import { readBodyBytes } from "@/lib/request-guards";
 import { logError } from "@/lib/shared";
 
-/** Codes one Discord user can make per minute. */
+// A styled code finishes after the response, through the interaction's
+// webhook.
+export const maxDuration = 30;
+
+/** Codes one Discord user can make (or restyle) per minute. */
 const userLimiter = createRateLimiter({ limiter: slidingWindow(20, "60 s") });
 
 /**
@@ -52,8 +61,10 @@ const json = (body: unknown, status = 200) => Response.json(body, { status });
 
 /**
  * POST /api/integrations/discord/interactions — the Discord app's
- * Interactions Endpoint URL. Discord sends each /qr and "Make QR code" here,
- * signed with the app's key; the reply goes back in the response.
+ * Interactions Endpoint URL. Discord sends each /qr, "Make QR code" and
+ * style menu pick here, signed with the app's key. A plain code goes back
+ * in the response; a styled one is scan-checked first, so the response
+ * says "thinking" and the code follows through the interaction's webhook.
  * 404 where the bot isn't set up, 401 for anything Discord didn't sign.
  */
 export async function POST(request: Request) {
@@ -84,8 +95,17 @@ export async function POST(request: Request) {
   if (!interaction) return json({ error: "Invalid interaction" }, 400);
 
   if (interaction.type === INTERACTION_TYPE.ping) return json(PONG);
-  if (interaction.type !== INTERACTION_TYPE.applicationCommand) {
+  if (
+    interaction.type !== INTERACTION_TYPE.applicationCommand &&
+    interaction.type !== INTERACTION_TYPE.messageComponent
+  ) {
     return json({ error: "Unsupported interaction type" }, 400);
+  }
+  if (
+    interaction.type === INTERACTION_TYPE.messageComponent &&
+    !interaction.data?.custom_id
+  ) {
+    return json({ error: "Invalid interaction" }, 400);
   }
 
   const userId = interactionUserId(interaction) ?? "unknown";
@@ -97,7 +117,23 @@ export async function POST(request: Request) {
   }
 
   try {
-    return json(commandReply(interaction));
+    const plan = interactionPlan(interaction);
+    if (plan.kind === "reply") return json(plan.response);
+    const token = interaction.token;
+    if (!isInteractionToken(token)) return json(notice(NOTICES.failed));
+    after(async () => {
+      let data: Awaited<ReturnType<typeof plan.followUp>>;
+      try {
+        data = await plan.followUp();
+      } catch (error) {
+        logError(error as Error, {
+          route: "/api/integrations/discord/interactions",
+        });
+        data = { content: NOTICES.failed, allowed_mentions: { parse: [] } };
+      }
+      await editOriginalResponse(settings.applicationId, token, data);
+    });
+    return json(plan.response);
   } catch (error) {
     // The error only: never the content or who sent it.
     logError(error as Error, {
