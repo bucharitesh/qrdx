@@ -70,16 +70,24 @@ import { TELEGRAM_GLOBAL_PER_MINUTE } from "@/lib/chat-bots/telegram/bot";
 import { verifyPhotoLink } from "@/lib/chat-bots/telegram/photo-link";
 import {
   BUSY_TEXT,
+  CANT_RESTYLE_TEXT,
+  NOT_YOURS_TEXT,
   RATE_LIMITED_TEXT,
+  RESTYLE_FAILED_TEXT,
   readCommand,
+  readStyleCallback,
   TOO_LONG_TEXT,
 } from "@/lib/chat-bots/telegram/replies";
+import { decodeStyleParam } from "@/lib/playground-style";
 
 interface ApiCall {
   url: string;
   method: string;
   payload: Record<string, any>;
 }
+
+/** The real fetch, for the renderer's own files. */
+const realFetch = globalThis.fetch;
 
 let calls: ApiCall[] = [];
 /** What the fake Bot API answers, by method; ok with `true` otherwise. */
@@ -97,6 +105,8 @@ beforeEach(() => {
     "fetch",
     vi.fn(async (input: string | URL, init?: RequestInit) => {
       const url = String(input);
+      // The renderer loads its own files (the scan check renders codes).
+      if (!url.startsWith("https://")) return realFetch(input, init);
       const method = url.split("/").at(-1) ?? "";
       calls.push({ url, method, payload: JSON.parse(String(init?.body)) });
       const failure = failures[method];
@@ -239,7 +249,11 @@ describe("private chat", () => {
           { text: "Download PNG", url: links.png },
           { text: "Download SVG", url: links.svg },
         ],
-        [{ text: "Open in editor", url: links.editor }],
+        [
+          { text: "Open in editor", url: links.editor },
+          // The style buttons, for the person who asked (their Telegram id).
+          { text: "Style", callback_data: "m:1001" },
+        ],
       ],
     });
   });
@@ -316,7 +330,17 @@ describe("private chat", () => {
     ]);
     const fallback = calls[1]!.payload;
     expect(fallback.text).toContain("https://qrdx.dev");
-    expect(fallback.reply_markup).toEqual(calls[0]!.payload.reply_markup);
+    // The same links; a text message has no photo to restyle.
+    const links = chatQrLinks("https://qrdx.dev");
+    expect(fallback.reply_markup).toEqual({
+      inline_keyboard: [
+        [
+          { text: "Download PNG", url: links.png },
+          { text: "Download SVG", url: links.svg },
+        ],
+        [{ text: "Open in editor", url: links.editor }],
+      ],
+    });
   });
 
   it("stays quiet when the person blocked the bot, and never logs the token or the text", async () => {
@@ -385,10 +409,6 @@ describe("updates the bot ignores", () => {
       { update_id: updateId++, channel_post: groupMessage("/qr x").message },
       {
         update_id: updateId++,
-        callback_query: { id: "c", from: PERSON, data: "x" },
-      },
-      {
-        update_id: updateId++,
         chosen_inline_result: { result_id: "r", from: PERSON, query: "x" },
       },
       privateMessage("https://qrdx.dev", {
@@ -413,6 +433,14 @@ describe("updates the bot ignores", () => {
     expect((await post("{not json")).status).toBe(200);
     expect((await post(`"${"x".repeat(70_000)}"`)).status).toBe(200);
     expect(calls).toEqual([]);
+  });
+
+  it("only answers a button press that isn't one of the bot's, so it stops spinning", async () => {
+    await post({
+      update_id: updateId++,
+      callback_query: { id: "c", from: PERSON, data: "x" },
+    });
+    expect(only("answerCallbackQuery")).toEqual({ callback_query_id: "c" });
   });
 });
 
@@ -617,6 +645,247 @@ describe("reading commands", () => {
     expect(readCommand("/Users/ada/notes.txt", USERNAME)).toBeNull();
     expect(readCommand("/qrhi", USERNAME)).toEqual({ name: "qrhi", args: "" });
     expect(readCommand("see /qr", USERNAME)).toBeNull();
+  });
+});
+
+describe("styles", () => {
+  /** The style value of an image link, decoded. */
+  const styleOf = (link: string) =>
+    decodeStyleParam(new URL(link).searchParams.get("style"));
+  const pngOf = (keyboard: { inline_keyboard: Json[][] }) =>
+    keyboard.inline_keyboard
+      .flat()
+      .find((button) => button.text === "Download PNG")?.url as string;
+
+  type Json = Record<string, any>;
+
+  /** The bot's photo reply to `text` from PERSON, as the chat now shows it. */
+  async function photoFor(text: string) {
+    await post(privateMessage(text));
+    const payload = only("sendPhoto");
+    calls = [];
+    return {
+      message_id: 50,
+      chat: { id: 777, type: "private" },
+      reply_markup: payload.reply_markup as { inline_keyboard: Json[][] },
+    };
+  }
+
+  /** A press of the button with `data` under `message`. */
+  const press = (
+    message: Awaited<ReturnType<typeof photoFor>>,
+    data: string,
+    from = PERSON,
+  ) => ({
+    update_id: updateId++,
+    callback_query: { id: "cb-1", from, data, chat_instance: "x", message },
+  });
+
+  const methods = () => calls.map((call) => call.method);
+
+  it("styles a code with options typed after the content, scan-checked", async () => {
+    await post(privateMessage("qrdx.dev --look royal --logo wifi"));
+    const payload = only("sendPhoto");
+    const photo = new URL(payload.photo);
+    expect(photo.searchParams.get("data")).toBe("https://qrdx.dev");
+    expect(photo.searchParams.get("logoIcon")).toBe("wifi");
+    expect(styleOf(payload.photo)?.preset).toBe("royal");
+    expect(payload.caption).toBe("https://qrdx.dev");
+    // Open in editor opens the same design.
+    const editor = payload.reply_markup.inline_keyboard[1][0];
+    expect(new URL(editor.url).searchParams.get("style")).toBe(
+      photo.searchParams.get("style"),
+    );
+  });
+
+  it("says what's wrong with an option, and where to see them all", async () => {
+    await post(privateMessage("/qr qrdx.dev --frame cloud"));
+    const payload = only("sendMessage");
+    expect(payload.text).toMatch(/no frame "cloud".*banner-bottom/);
+    expect(payload.text).toMatch(/\/help/);
+  });
+
+  it("Style opens Look, Color, Frame and Logo, and each opens its options", async () => {
+    const message = await photoFor("https://qrdx.dev");
+    await post(press(message, "m:1001"));
+    expect(methods()).toEqual([
+      "editMessageReplyMarkup",
+      "answerCallbackQuery",
+    ]);
+    const menu = calls[0]!.payload;
+    expect(menu).toMatchObject({ chat_id: 777, message_id: 50 });
+    expect(menu.reply_markup.inline_keyboard).toEqual([
+      [
+        { text: "Look", callback_data: "k:l:1001" },
+        { text: "Color", callback_data: "k:c:1001" },
+        { text: "Frame", callback_data: "k:f:1001" },
+        { text: "Logo", callback_data: "k:i:1001" },
+      ],
+      [
+        { text: "Download PNG", url: pngOf(message.reply_markup) },
+        { text: "Done", callback_data: "d:1001" },
+      ],
+    ]);
+    expect(calls[1]!.payload).toEqual({ callback_query_id: "cb-1" });
+
+    calls = [];
+    await post(
+      press({ ...message, reply_markup: menu.reply_markup }, "k:l:1001"),
+    );
+    const looks = calls[0]!.payload.reply_markup.inline_keyboard as Json[][];
+    // Three to a row, the current one ticked, then Download PNG and Back.
+    expect(looks[0]!.map((button) => button.text)).toEqual([
+      "✓ Plain",
+      "Classic",
+      "Modern",
+    ]);
+    expect(looks[0]![1]!.callback_data).toBe("l:classic:1001");
+    expect(looks.at(-1)!.map((button) => button.text)).toEqual([
+      "Download PNG",
+      "Back",
+    ]);
+  });
+
+  it("an option redraws the photo for the person who asked, and keeps its options open", async () => {
+    const message = await photoFor("Table 4");
+    await post(press(message, "l:royal:1001"));
+    expect(methods()).toEqual(["editMessageMedia", "answerCallbackQuery"]);
+    const edit = calls[0]!.payload;
+    expect(edit).toMatchObject({ chat_id: 777, message_id: 50 });
+    expect(edit.media.type).toBe("photo");
+    expect(new URL(edit.media.media).searchParams.get("data")).toBe("Table 4");
+    expect(styleOf(edit.media.media)?.preset).toBe("royal");
+    expect(edit.media.caption).toBe("Table 4");
+    const rows = edit.reply_markup.inline_keyboard as Json[][];
+    expect(rows.flat().find((b) => b.text.startsWith("✓"))?.text).toBe(
+      "✓ Royal",
+    );
+    expect(pngOf(edit.reply_markup)).toBe(edit.media.media);
+    // A restyle counts like a message, for the person and for everyone.
+    expect(state.keys).toEqual(
+      expect.arrayContaining([
+        "telegram-bot:message:1001",
+        "telegram-bot:global",
+      ]),
+    );
+
+    // The next option builds on it.
+    calls = [];
+    await post(
+      press(
+        { ...message, reply_markup: edit.reply_markup },
+        "f:banner-top:1001",
+      ),
+    );
+    const again = calls[0]!.payload;
+    expect(styleOf(again.media.media)).toMatchObject({
+      preset: "royal",
+      styles: { frame: { style: "banner-top" } },
+    });
+  });
+
+  it("in a group, someone else's press only gets a note", async () => {
+    const message = await photoFor("https://qrdx.dev");
+    await post(press(message, "l:royal:1001", { ...PERSON, id: 2002 }));
+    expect(only("answerCallbackQuery")).toEqual({
+      callback_query_id: "cb-1",
+      text: NOT_YOURS_TEXT,
+    });
+  });
+
+  it("restyles count toward the same limits as messages", async () => {
+    const message = await photoFor("https://qrdx.dev");
+    state.exhausted.add("telegram-bot:message:1001");
+    await post(press(message, "l:retro:1001"));
+    expect(only("answerCallbackQuery").text).toBe(RATE_LIMITED_TEXT);
+
+    calls = [];
+    state.exhausted.clear();
+    state.exhausted.add("telegram-bot:global");
+    await post(press(message, "l:retro:1001"));
+    expect(only("answerCallbackQuery").text).toBe(BUSY_TEXT);
+  });
+
+  it("says so when Telegram can't load the new image, or the code can't be read back", async () => {
+    const message = await photoFor("https://qrdx.dev");
+    failures.editMessageMedia = {
+      status: 400,
+      description: "Bad Request: wrong file identifier/HTTP URL specified",
+    };
+    await post(press(message, "c:blue:1001"));
+    expect(calls.at(-1)!.payload.text).toBe(RESTYLE_FAILED_TEXT);
+
+    calls = [];
+    const foreign = {
+      ...message,
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "Download PNG", url: "https://evil.example/qr?data=x" }],
+        ],
+      },
+    };
+    await post(press(foreign, "c:blue:1001"));
+    expect(only("answerCallbackQuery").text).toBe(CANT_RESTYLE_TEXT);
+  });
+
+  it("keeps every button's data within Telegram's 64 bytes", () => {
+    const big = 9_007_199_254_740_991;
+    for (const data of [
+      `m:${big}`,
+      `k:f:${big}`,
+      `f:banner-bottom:${big}`,
+      `i:instagram:${big}`,
+      `l:bordeaux:${big}`,
+    ]) {
+      expect(new TextEncoder().encode(data).length).toBeLessThanOrEqual(64);
+      expect(readStyleCallback(data)).not.toBeNull();
+    }
+    for (const data of ["l:neon:1", "z:x:1", "m:abc", "m:-1", "l:royal", ""]) {
+      expect(readStyleCallback(data), data).toBeNull();
+    }
+  });
+
+  it("styles inline results with typed options, through signed photo links", async () => {
+    const plain = { ...inlineQuery("https://qrdx.dev") };
+    await post(plain);
+    await post(
+      inlineQuery("https://qrdx.dev --frame banner-bottom --logo link"),
+    );
+    const [first, styled] = calls.map((call) => call.payload.results[0]);
+    expect(styled.id).not.toBe(first.id);
+    const photo = new URL(styled.photo_url);
+    expect(photo.searchParams.get("logoIcon")).toBe("link");
+    expect(
+      decodeStyleParam(photo.searchParams.get("style"))?.styles.frame,
+    ).toMatchObject({
+      style: "banner-bottom",
+    });
+    // The design is signed with the content.
+    expect(verifyPhotoLink(photo.searchParams, SECRET)).toMatchObject({
+      data: "https://qrdx.dev",
+      logoIcon: "link",
+      style: photo.searchParams.get("style"),
+    });
+    // A frame changes the picture's size, so it isn't given.
+    expect(styled).not.toHaveProperty("photo_width");
+    // No message to edit before it's sent: no Style button.
+    expect(JSON.stringify(styled.reply_markup)).not.toContain("callback_data");
+
+    calls = [];
+    await post(inlineQuery("https://qrdx.dev --look"));
+    const none = only("answerInlineQuery");
+    expect(none.results).toEqual([]);
+    expect(none.button.text).toBe(
+      "Check the options after the link. Tap for help",
+    );
+  });
+
+  it("the help lists the options", async () => {
+    await post(privateMessage("/help"));
+    const text = only("sendMessage").text as string;
+    for (const flag of ["--look", "--fg", "--frame-text", "--logo", "Style"]) {
+      expect(text).toContain(flag);
+    }
   });
 });
 
