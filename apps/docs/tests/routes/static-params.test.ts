@@ -143,6 +143,7 @@ describe("routes with a fixed param list", () => {
       "(app)/(home)/community/[type]/opengraph-image.tsx",
       "og/legal/[...slug]/route.tsx",
       "[lang]/layout.tsx",
+      "[lang]/(home)/pricing/opengraph-image.tsx",
     ]) {
       expect(ROUTES).toContain(file);
     }
