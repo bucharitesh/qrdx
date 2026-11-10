@@ -9,8 +9,11 @@ import {
   frameSpecSchema,
 } from "qrdx/types";
 import { z } from "zod";
+import type { serializeBarcode } from "@/app/api/v1/barcodes/_lib/serialize";
 import type { serializeCode } from "@/app/api/v1/codes/_lib/api";
 import type { serializeHook } from "@/app/api/v1/hooks/_lib/hooks";
+import { BARCODE_FORMAT_IDS } from "@/lib/barcode/request";
+import { BARCODE_ROTATIONS } from "@/lib/barcode/style";
 import type { CommunityApiItem } from "@/lib/community/api";
 import { WEBHOOK_EVENTS } from "@/lib/events/types";
 import {
@@ -510,6 +513,92 @@ export const oauthCompatibleErrorSchema = named(
   }),
   "The API error shape plus the OAuth fields /v1/me and /v1/themes have always sent",
 );
+
+// ─── Saved barcodes (/v1/barcodes) ──────────────────────────────────────────
+
+export const barcodeOptionsSchema = named(
+  "BarcodeOptions",
+  z.object({
+    foreground: z.string().describe("Bars and text, as #rrggbb"),
+    background: z.string().describe("Background, as #rrggbb"),
+    showText: z.boolean().describe("The digits or text under linear barcodes"),
+    barHeightMm: z
+      .number()
+      .describe(
+        "Bar height of linear barcodes, in millimetres at the vector size",
+      ),
+    quietZone: z
+      .number()
+      .int()
+      .describe(
+        "Blank margin in modules (each side of linear barcodes, all round 2D codes)",
+      ),
+    scale: z.number().int().describe("Pixels per module in raster images"),
+    rotation: z
+      .union(BARCODE_ROTATIONS.map((angle) => z.literal(angle)))
+      .describe("Clockwise rotation in degrees"),
+  }),
+  "How a barcode is drawn, every field filled in",
+);
+
+export const barcodeSchema = named(
+  "Barcode",
+  z.object({
+    id: z.string().describe("Barcode id"),
+    title: z.string().nullable().describe("Name shown in the dashboard"),
+    format: z.enum(BARCODE_FORMAT_IDS).describe("The symbology"),
+    formatLabel: z.string().describe("The symbology's name, e.g. `EAN-13`"),
+    value: z.string().describe("The value drawn, check digit included"),
+    options: barcodeOptionsSchema,
+    folderId: z
+      .string()
+      .nullable()
+      .describe("The folder it's in (the codes' folders), or null"),
+    imageUrl: z
+      .url()
+      .describe(
+        "The same barcode from the public image API (no key), for `<img>` tags; add `type=png` and so on for other files",
+      ),
+    createdAt: dateTime("Created"),
+    updatedAt: dateTime("Last changed"),
+    deletedAt: dateTime("Moved to the trash").nullable(),
+    organizationId: z
+      .string()
+      .nullable()
+      .describe("The workspace that owns it"),
+  }),
+  "A saved barcode",
+);
+
+export const barcodeResponseSchema = z.object({ data: barcodeSchema });
+
+export const barcodeListResponseSchema = z.object({
+  data: z.array(barcodeSchema),
+  pagination: z.object({
+    total: z.number().int().describe("Barcodes matching the filters"),
+    limit: z.number().int(),
+    offset: z.number().int(),
+  }),
+});
+
+export const barcodeDeletedResponseSchema = z.object({
+  data: z.object({
+    id: z.string(),
+    deleted: z
+      .boolean()
+      .describe("`true` when deleted for good (`permanent=true`)"),
+    trashed: z
+      .literal(true)
+      .optional()
+      .describe("Present when it was moved to the trash instead"),
+  }),
+});
+
+const _barcodeMatches: Equals<
+  z.output<typeof barcodeSchema>,
+  ReturnType<typeof serializeBarcode>
+> = true;
+void _barcodeMatches;
 
 // ─── Drift checks (compile time) ────────────────────────────────────────────
 
