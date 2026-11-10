@@ -15,8 +15,11 @@ import { pathToFileURL } from "node:url";
 
 export const WEBHOOK_PATH = "/api/integrations/telegram/webhook";
 
-/** Only what the bot answers (app/api/integrations/telegram/webhook). */
-export const ALLOWED_UPDATES = ["message", "inline_query"];
+/**
+ * Only what the bot answers (app/api/integrations/telegram/webhook):
+ * messages, inline queries and presses of the Style buttons under a code.
+ */
+export const ALLOWED_UPDATES = ["message", "inline_query", "callback_query"];
 
 /** The command menu. Descriptions: 1-256 characters. */
 export const COMMANDS = [
@@ -27,7 +30,7 @@ export const COMMANDS = [
 
 /** On the bot's profile and its empty chat: 0-512 characters. */
 export const DESCRIPTION = [
-  "Send me a link or some text and I'll reply with its QR code, ready to download as PNG or SVG.",
+  "Send me a link or some text and I'll reply with its QR code, ready to download as PNG or SVG. Tap Style under it for a look, color, frame or logo.",
   "In any chat, type my username followed by a link to send a code there. In groups, use /qr followed by a link or text.",
   "Made by QRdx, which doesn't save the codes you make. What you send goes into the image link, and like any link it can end up in logs and caches, so don't make codes of passwords or other secrets.",
 ].join("\n\n");

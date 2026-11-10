@@ -1,6 +1,6 @@
 ---
 title: Make QR codes in Discord
-description: Add the QRdx bot to a Discord server or to your own account, then make QR codes with /qr or from any message.
+description: Add the QRdx bot to a Discord server or to your own account, then make and style QR codes with /qr or from any message.
 ---
 
 <IfAvailable feature="discordBot">
@@ -25,11 +25,31 @@ Some servers don't let members' own apps post for everyone. There, replies from 
 1. In any chat, type `/qr` and pick it from the list.
 2. Type or paste a link or some text into **content**, then press Enter.
 
-The bot replies with the code, its content as the title, and three buttons: **Download PNG** (1024 px), **Download SVG** and **Open in editor**. A link opens in the editor ready to style. Text doesn't travel in the editor link, so paste it there yourself.
+The bot replies with the code, its content as the title, three buttons and the style menus described below. The buttons are **Download PNG** (1024 px), **Download SVG** and **Open in editor**. A link opens in the editor with the code's design. Text doesn't travel in the editor link, so paste it there yourself.
 
 To keep the code to yourself, set **private** to **True**. Only you see that reply, and Discord removes it when you dismiss it or reload.
 
 Very long content may not fit in one QR code, or may be too long for Discord to show as an image. The bot says so in a message only you can see.
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" title="Style your code">
+
+`/qr` has three more options you can fill in before pressing Enter:
+
+| Option | What it does | Choices |
+| --- | --- | --- |
+| **look** | Applies one of the editor's built-in designs | Plain, Classic, Modern, Royal, Folio, Caffeine, Retro, Bordeaux, Blossom |
+| **color** | Puts the whole code in one color on white | Black, Blue, Green, Red, Purple, Orange |
+| **frame** | Adds a frame that says "Scan me" | No frame, Banner, Top banner, Bubble, Polaroid |
+
+The look is applied first and the color on top of it, so **look** Royal with **color** Blue keeps Royal's shapes in blue.
+
+Under every code are four menus, **Look**, **Color**, **Frame** and **Logo**, with the same choices plus the editor's quick logo icons. Pick something and the code changes in place. Each change builds on the code as it is now. Only the person who made the code can restyle it. Anyone else who picks gets a note only they can see, and the code stays as it was.
+
+Before a styled code appears, QRdx checks it with the same scan score as the editor, so Discord shows that QRdx is thinking for a moment first. When a design would be hard for phones to read, QRdx adjusts it (darker colors, plainer shapes or more error correction) and says so under the code. If that still isn't enough, usually because the content is long, you get the code in black on white with a note.
+
+**Open in editor** opens the editor with the same design: colors, shapes and frame. The logo icon doesn't travel in the link, so pick it again in the editor.
 
 </IfAvailable>
 
@@ -47,9 +67,9 @@ Replies never mention or ping anyone, whatever the message says.
 
 QRdx doesn't save the codes you make, and the bot can't read your chats. Discord sends QRdx what you type after `/qr`, or the one message you picked for **Make QR code**.
 
-The content goes into the image link, and Discord loads the picture from the QRdx [image API](/docs/developers/image-api). Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets.
+The content and the design you picked go into the image link, and Discord loads the picture from the QRdx [image API](/docs/developers/image-api). Restyling a code reads both back from that link, so QRdx doesn't save the code to restyle it. Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets.
 
-To stop one person flooding a channel, QRdx counts the codes each Discord account makes in a minute. It also counts the codes everyone makes together, and when too many arrive in one minute, the bot says it's busy. Neither count holds any content, and both expire after that minute.
+To stop one person flooding a channel, QRdx counts the codes each Discord account makes or restyles in a minute. It also counts the codes everyone makes together, and when too many arrive in one minute, the bot says it's busy. Neither count holds any content, and both expire after that minute.
 
 </IfAvailable>
 

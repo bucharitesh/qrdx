@@ -2,17 +2,35 @@ import "server-only";
 
 import { createHash, timingSafeEqual } from "node:crypto";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
-import { readChatQrInput } from "@/lib/chat-bots/qr-reply";
 import {
+  applyChoice,
+  chatDesignLinks,
+  checkForReply,
+  pickerChoice,
+  readChatQrAsk,
+  readChatQrLink,
+  STYLE_NOTES,
+} from "@/lib/chat-bots/styles";
+import {
+  answerCallback,
   BUSY_TEXT,
+  CANT_RESTYLE_TEXT,
+  editKeyboard,
+  editPhoto,
   helpText,
   inlineNoResultAnswer,
   inlineQrAnswer,
+  type KeyboardView,
+  NOT_YOURS_TEXT,
   planMessage,
+  pngLinkOf,
   qrLinksReply,
   qrPhotoReply,
   RATE_LIMITED_TEXT,
+  RESTYLE_FAILED_TEXT,
+  readStyleCallback,
   type TelegramCall,
+  type TelegramCallbackQuery,
   type TelegramUpdate,
   TOO_LONG_TEXT,
   textReply,
@@ -116,6 +134,11 @@ const inlineLimiter = createRateLimiter({
 });
 // At most one "slow down" or "busy" reply a minute, however fast someone sends.
 const noticeLimiter = createRateLimiter({ limiter: slidingWindow(1, "60 s") });
+// Opening and closing the style buttons (no new image): per Telegram user.
+// A restyle draws a new code, so it counts as a message instead.
+const styleMenuLimiter = createRateLimiter({
+  limiter: slidingWindow(60, "60 s"),
+});
 
 /**
  * Messages and inline queries the bot answers in a minute, from everyone
@@ -137,10 +160,116 @@ async function allowed(
   return (await limiter.limit(key)).success;
 }
 
+/** A style option's note for the caption. */
+const noteOf = (note: keyof typeof STYLE_NOTES | null) =>
+  note ? STYLE_NOTES[note] : null;
+
+/**
+ * A style button under a code. Only the person who asked can use it (their
+ * id is in the button); the content and design come back from the code's
+ * Download PNG button. Opening a picker changes the buttons; an option
+ * draws the code again, after the scan check, and counts like a message.
+ * answerCallbackQuery is always sent, so the button stops spinning.
+ */
+async function handleStyleCallback(
+  query: TelegramCallbackQuery,
+  send: (call: TelegramCall) => Promise<unknown>,
+): Promise<void> {
+  let notice: string | undefined;
+  try {
+    const callback = readStyleCallback(query.data);
+    const message = query.message;
+    if (!(callback && message)) return;
+    if (query.from.id !== callback.userId) {
+      notice = NOT_YOURS_TEXT;
+      return;
+    }
+    const current = readChatQrLink(pngLinkOf(message.reply_markup));
+    if (!current) {
+      notice = CANT_RESTYLE_TEXT;
+      return;
+    }
+    const chatId = message.chat.id;
+    const messageId = message.message_id;
+    const { userId } = callback;
+
+    if (callback.kind !== "apply") {
+      if (
+        !(await allowed(styleMenuLimiter, `telegram-bot:style-menu:${userId}`))
+      ) {
+        notice = RATE_LIMITED_TEXT;
+        return;
+      }
+      const view: KeyboardView =
+        callback.kind === "open"
+          ? { kind: "picker", picker: callback.picker }
+          : { kind: callback.kind === "menu" ? "menu" : "main" };
+      try {
+        await send(
+          editKeyboard(
+            chatId,
+            messageId,
+            current.data,
+            current.design,
+            userId,
+            view,
+          ),
+        );
+      } catch (error) {
+        // "Message is not modified": the same buttons, tapped twice.
+        if (!(error instanceof TelegramApiError && error.errorCode === 400)) {
+          throw error;
+        }
+      }
+      return;
+    }
+
+    if (!(await allowed(messageLimiter, `telegram-bot:message:${userId}`))) {
+      notice = RATE_LIMITED_TEXT;
+      return;
+    }
+    if (!(await allowed(globalLimiter, GLOBAL_KEY))) {
+      notice = BUSY_TEXT;
+      return;
+    }
+    const choice = pickerChoice(callback.picker, callback.value);
+    if (!choice) return;
+    const checked = await checkForReply(
+      current.data,
+      applyChoice(current.design, choice),
+      "telegram-bot",
+    );
+    const note = noteOf(checked.note);
+    // The same image again (an option it already has): nothing to change.
+    const before = chatDesignLinks(current.data, current.design).png;
+    if (chatDesignLinks(current.data, checked.design).png === before) {
+      notice = note ?? undefined;
+      return;
+    }
+    try {
+      await send(
+        editPhoto(chatId, messageId, current.data, userId, callback.picker, {
+          design: checked.design,
+          note,
+        }),
+      );
+      notice = note ?? undefined;
+    } catch (error) {
+      if (!(error instanceof TelegramApiError && error.errorCode === 400)) {
+        throw error;
+      }
+      notice = RESTYLE_FAILED_TEXT;
+    }
+  } finally {
+    await send(answerCallback(query.id, notice));
+  }
+}
+
 /**
  * Answers one update: a message gets the code (or help, or why not), an
- * inline query gets the code as a result. Failures are logged by method and
- * error code only; a user who blocked the bot (403) isn't an error.
+ * inline query gets the code as a result, a style button restyles a code.
+ * Failures are logged by method and error code only; a user who blocked the
+ * bot (403) isn't an error.
  */
 export async function handleTelegramUpdate(
   update: TelegramUpdate,
@@ -148,9 +277,13 @@ export async function handleTelegramUpdate(
 ): Promise<void> {
   const send = (call: TelegramCall) => callTelegram(config.token, call);
   try {
+    if (update.callback_query) {
+      await handleStyleCallback(update.callback_query, send);
+      return;
+    }
     if (update.inline_query) {
       const query = update.inline_query;
-      const input = readChatQrInput(query.query);
+      const input = readChatQrAsk(query.query);
       if (
         !(await allowed(inlineLimiter, `telegram-bot:inline:${query.from.id}`))
       ) {
@@ -158,8 +291,18 @@ export async function handleTelegramUpdate(
       } else if (!(await allowed(globalLimiter, GLOBAL_KEY))) {
         await send(inlineNoResultAnswer(query.id, "busy"));
       } else if (input.ok) {
+        const checked = await checkForReply(
+          input.data,
+          input.design,
+          "telegram-bot",
+        );
         await send(
-          inlineQrAnswer(query.id, input.data, { secret: config.secret }),
+          inlineQrAnswer(
+            query.id,
+            input.data,
+            { secret: config.secret },
+            { design: checked.design, note: noteOf(checked.note) },
+          ),
         );
       } else {
         await send(inlineNoResultAnswer(query.id, input.reason));
@@ -191,19 +334,27 @@ export async function handleTelegramUpdate(
           messageId,
           input.reason === "too_long"
             ? TOO_LONG_TEXT
-            : helpText(config.username),
+            : input.reason === "options"
+              ? `${input.message} Send /help to see them all.`
+              : helpText(config.username),
         ),
       );
       return;
     }
+    const checked = await checkForReply(
+      input.data,
+      input.design,
+      "telegram-bot",
+    );
+    const reply = { design: checked.design, note: noteOf(checked.note) };
     try {
-      await send(qrPhotoReply(chatId, messageId, input.data));
+      await send(qrPhotoReply(chatId, messageId, input.data, userId, reply));
     } catch (error) {
       // Telegram couldn't fetch or use the image: send the links instead.
       if (!(error instanceof TelegramApiError && error.errorCode === 400)) {
         throw error;
       }
-      await send(qrLinksReply(chatId, messageId, input.data));
+      await send(qrLinksReply(chatId, messageId, input.data, reply));
     }
   } catch (error) {
     if (error instanceof TelegramApiError && error.errorCode === 403) return;

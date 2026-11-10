@@ -57,6 +57,7 @@ vi.mock("@repo/rate-limit", async () => {
 });
 
 import { GET } from "@/app/api/integrations/telegram/photo/route";
+import { applyChoice } from "@/lib/chat-bots/styles";
 import { renderQrJpeg } from "@/lib/chat-bots/telegram/jpeg";
 import {
   PHOTO_LINK_MAX_SECONDS,
@@ -65,6 +66,7 @@ import {
   verifyPhotoLink,
 } from "@/lib/chat-bots/telegram/photo-link";
 import { telegramPhotoUrl } from "@/lib/chat-bots/telegram/replies";
+import { decodeStyleParam, encodeStyleParam } from "@/lib/playground-style";
 
 const SECRET = "fake_webhook_secret-1";
 const PHOTO = "http://localhost:3000/api/integrations/telegram/photo";
@@ -279,6 +281,78 @@ describe("GET /api/integrations/telegram/photo", () => {
   });
 });
 
+describe("styled photos", () => {
+  const design = applyChoice(null, {
+    look: "royal",
+    frame: "polaroid",
+    logo: "wifi",
+  });
+  const styled = (data: string, size: number) =>
+    telegramPhotoUrl(
+      data,
+      size,
+      { secret: SECRET, origin: "http://localhost:3000" },
+      design,
+    );
+
+  it("serves the design the bot signed as a JPEG that scans, a frame's corners on white", async () => {
+    const url = styled("https://qrdx.dev/menu", 1024);
+    const params = new URL(url).searchParams;
+    expect(params.get("logoIcon")).toBe("wifi");
+    expect(decodeStyleParam(params.get("style"))?.preset).toBe("royal");
+
+    const response = await get(url);
+    expect(response.status).toBe(200);
+    const jpeg = Buffer.from(await response.arrayBuffer());
+    const meta = await sharp(jpeg).metadata();
+    // The frame adds to the code.
+    expect(meta.format).toBe("jpeg");
+    expect((meta.height ?? 0) > 1024 || (meta.width ?? 0) > 1024).toBe(true);
+    expect(await scan(jpeg)).toEqual(["https://qrdx.dev/menu"]);
+    expect(renders).toHaveBeenCalledWith("https://qrdx.dev/menu", 1024, design);
+    // Transparent corners are laid on white, not black.
+    const { data } = await sharp(jpeg)
+      .extract({ left: 0, top: 0, width: 1, height: 1 })
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    expect(Math.min(...data)).toBeGreaterThan(200);
+  });
+
+  it("answers 403 to a design that was changed, added or taken away", async () => {
+    const good = styled("hello", 256);
+    const plain = signed("hello", 256);
+    const other = encodeStyleParam({ fgColor: "#FF0000" })?.value ?? "";
+    for (const [label, url] of [
+      ["another style", withParam(good, "style", other)],
+      ["another logo", withParam(good, "logoIcon", "phone")],
+      ["no logo", withParam(good, "logoIcon", null)],
+      ["no style", withParam(good, "style", null)],
+      ["a style added to a plain link", withParam(plain, "style", other)],
+      ["a logo added to a plain link", withParam(plain, "logoIcon", "wifi")],
+      ["a logo that isn't an id", withParam(good, "logoIcon", "a\nb")],
+    ] as const) {
+      expect((await get(url)).status, label).toBe(403);
+    }
+    expect(renders).not.toHaveBeenCalled();
+  });
+
+  it("refuses a signed design it can't draw", async () => {
+    const url = new URL(PHOTO);
+    const exp = photoLinkExpiry();
+    const design = { style: "1.bm90LWEtc3R5bGU", logoIcon: "" };
+    url.searchParams.set("data", "hello");
+    url.searchParams.set("size", "256");
+    url.searchParams.set("style", design.style);
+    url.searchParams.set("exp", String(exp));
+    url.searchParams.set(
+      "sig",
+      photoLinkSignature("hello", 256, exp, SECRET, design),
+    );
+    expect((await get(url.toString())).status).toBe(400);
+    expect(renders).not.toHaveBeenCalled();
+  });
+});
+
 describe("photo links", () => {
   it("are signed, and verify only with the bot's secret", () => {
     const url = new URL(signed("Table 4", 1024));
@@ -293,6 +367,9 @@ describe("photo links", () => {
       data: "Table 4",
       size: 1024,
       sig: url.searchParams.get("sig"),
+      // The plain code: no design.
+      style: "",
+      logoIcon: "",
     });
     expect(verifyPhotoLink(url.searchParams, "another_secret")).toBeNull();
     expect(verifyPhotoLink(url.searchParams, "")).toBeNull();

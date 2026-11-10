@@ -20,6 +20,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
       "Make QR codes in Discord with /qr, or from any message, in servers and DMs.",
     description: [
       "Type /qr with a link or some text and the bot replies with the QR code, plus buttons to download it as a PNG or SVG or open it in the QRdx editor. Set private to True and only you see it.",
+      "Pick a look, color or frame in /qr, or restyle the code afterwards from the Look, Color, Frame and Logo menus under it. Every styled code is checked so phones can scan it, and Open in editor opens the same design.",
       "To make a code from a message someone posted, open the message's menu and choose Apps → Make QR code. The code holds the first web address in the message, or its text when there's no link.",
       "Add the bot to a server, or to your own account to use it in DMs, group DMs and other servers too. It needs no QRdx account, and nothing you make is saved: the content travels in the image link, and QRdx draws the image when Discord asks for it.",
     ],
@@ -78,9 +79,13 @@ export const chatApps: IntegrationCatalogEntry[] = [
           "Add it to a server, or to your own account for DMs and group DMs.",
       },
       {
-        title: "Nothing stored",
+        title: "Styles",
         description:
-          "No QRdx account, no database, and replies never ping anyone.",
+          "Looks, colors, frames and logo icons, checked so every code still scans.",
+      },
+      {
+        title: "No account needed",
+        description: "No QRdx account, and replies never ping anyone.",
       },
     ],
     keywords: ["bot", "slash command", "chat", "server", "dm", "app"],
@@ -92,7 +97,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
     tagline:
       "Make QR codes in any Telegram chat: message the QRdx bot, call it inline, or use /qr in a group.",
     description: [
-      "Send the QRdx bot a link or some text and it replies with the QR code, with buttons to download it as PNG or SVG or open it in the editor.",
+      "Send the QRdx bot a link or some text and it replies with the QR code, with buttons to download it as PNG or SVG or open it in the editor. Tap Style to pick a look, color, frame or logo, or type options after the link. Every styled code is checked so phones can scan it.",
       "In any other chat, type the bot's username followed by a link, then tap the code to send it there. In a group, add the bot and send /qr with a link or text. No QRdx account needed.",
       "QRdx doesn't save the codes you make. The content goes into the image link, and like any link it can end up in logs and caches, so don't make codes of passwords or other secrets.",
     ],
@@ -122,7 +127,7 @@ export const chatApps: IntegrationCatalogEntry[] = [
       },
       {
         title: "Send a link or text",
-        body: "The bot answers with the QR code and buttons to download a PNG or SVG, or to open it in the editor for colors, logos and frames.",
+        body: "The bot answers with the QR code and buttons to download a PNG or SVG, restyle it with Style, or open it in the editor.",
       },
       {
         title: "Use it in other chats",
@@ -144,6 +149,11 @@ export const chatApps: IntegrationCatalogEntry[] = [
         title: "Groups",
         description:
           "/qr with a link or text. With privacy mode on, the bot only sees commands meant for it.",
+      },
+      {
+        title: "Styles",
+        description:
+          "Looks, colors, frames and logo icons from the Style button or typed options, checked so every code still scans.",
       },
       {
         title: "No account",

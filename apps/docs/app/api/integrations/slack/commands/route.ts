@@ -4,6 +4,7 @@ import {
   type BotAsk,
   readSlashCommand,
   runTrack,
+  styledReply,
 } from "@/lib/slack-bot/bot";
 import {
   BUSY_TEXT,
@@ -16,14 +17,16 @@ import { noteMessage, type SlackMessage } from "@/lib/slack-bot/messages";
 import { postToResponseUrl } from "@/lib/slack-bot/slack-api";
 import { readSlackText } from "@/lib/slack-bot/text";
 
-// Making a tracked code finishes after the reply, through response_url.
+// Styled and tracked codes finish after the reply, through response_url.
 export const maxDuration = 30;
 
 /**
  * POST /api/integrations/slack/commands: /qr. Slack wants an answer within
  * 3 seconds, so it goes in this response: a QR code for the channel
  * (in_channel), or help, errors and the link button for the person who
- * typed it (ephemeral). /qr track is acknowledged here and finished through
+ * typed it (ephemeral). A styled code (/qr qrdx.dev --look modern) needs
+ * its scan check first, so the response is empty and the code follows
+ * through response_url. /qr track is acknowledged here and finished through
  * response_url after the response: the code for the channel, then its
  * dashboard link for the person alone.
  */
@@ -49,7 +52,6 @@ export async function POST(request: Request) {
   };
   const result = await answer(ask);
   if (result.kind === "message") return Response.json(result.message);
-  if (!(await withinTrackCap())) return Response.json(noteMessage(BUSY_TEXT));
 
   const post = async (message: SlackMessage) => {
     const posted = await postToResponseUrl(command.responseUrl, message);
@@ -64,6 +66,22 @@ export async function POST(request: Request) {
     }
     return posted.ok;
   };
+  if (result.kind === "styled") {
+    after(async () => {
+      const styled = await styledReply(
+        result.data,
+        result.design,
+        result.maker,
+      );
+      await post({
+        ...styled.message,
+        response_type: styled.private ? "ephemeral" : "in_channel",
+      });
+    });
+    return new Response(null, { status: 200 });
+  }
+  if (!(await withinTrackCap())) return Response.json(noteMessage(BUSY_TEXT));
+
   after(async () => {
     const done = await runTrack(ask, result.url);
     if ((await post(done.message)) && done.followUp) {

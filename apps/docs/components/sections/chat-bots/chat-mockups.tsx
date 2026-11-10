@@ -5,6 +5,7 @@ import {
 } from "@repo/integrations/src/catalog";
 import {
   AddCircle,
+  ArrowDown2,
   ArrowLeft2,
   ExportSquare,
   Profile,
@@ -17,9 +18,11 @@ import { IntegrationLogo } from "@/components/sections/integrations/integration-
 import { CHAT_MOCK_CODE, CHAT_MOCK_VALUE } from "./mock-code";
 
 // HTML/CSS mockups of a conversation with each QRdx bot. What the bot posts
-// (the image, the caption or title, the three buttons and their labels) is
-// taken from its reply code: lib/slack-bot/messages.ts, lib/chat-bots/
-// telegram/replies.ts and lib/chat-bots/discord/interactions.ts. The chat
+// (the image, the caption or title, the three buttons, the style menus or
+// Style button, and their labels) is taken from its reply code:
+// lib/slack-bot/messages.ts, lib/chat-bots/telegram/replies.ts and
+// lib/chat-bots/discord/interactions.ts, with the menus' names from
+// lib/chat-bots/styles.ts (PICKER_LABELS). The chat
 // apps around it are only suggested, in the site's own monochrome style.
 // Decorative: each window is aria-hidden and the figure has a text caption.
 
@@ -105,6 +108,24 @@ function QrImage({ className }: { className?: string }) {
 /** The three links every bot puts under a code. */
 const BUTTONS = ["Download PNG", "Download SVG", "Open in editor"] as const;
 
+/** The style menus under a code in Slack and Discord (PICKER_LABELS). */
+const MENUS = ["Look", "Color", "Frame", "Logo"] as const;
+
+/** A closed select menu, as a label and an arrow. */
+function Menu({ label, className }: { label: string; className?: string }) {
+  return (
+    <span
+      className={cn(
+        "flex h-7 items-center justify-between gap-1.5 rounded-[6px] border bg-background px-2.5 text-[11px] text-muted-foreground",
+        className,
+      )}
+    >
+      {label}
+      <ArrowDown2 className="size-3 opacity-60" />
+    </span>
+  );
+}
+
 function LinkText({ children }: { children: ReactNode }) {
   return <span className="break-all text-primary">{children}</span>;
 }
@@ -130,7 +151,7 @@ function Composer({
 /** A Slack channel: /qr, then the bot's image, context line and buttons. */
 export function SlackChatMock() {
   return (
-    <Figure caption="Mockup of a Slack channel: someone types /qr https://qrdx.dev and the QRdx bot replies in the channel with the QR code, the link under it, and Download PNG, Download SVG and Open in editor buttons.">
+    <Figure caption="Mockup of a Slack channel: someone types /qr https://qrdx.dev and the QRdx bot replies in the channel with the QR code, the link under it, Download PNG, Download SVG and Open in editor buttons, and Look, Color, Frame and Logo menus.">
       <div className={windowClass}>
         <div className="flex h-12 items-center gap-2.5 border-b px-3">
           <AppLogo slug="slack" />
@@ -171,6 +192,11 @@ export function SlackChatMock() {
                   </span>
                 ))}
               </span>
+              <span className="flex flex-wrap gap-1.5">
+                {MENUS.map((label) => (
+                  <Menu key={label} label={label} />
+                ))}
+              </span>
             </div>
           </div>
         </div>
@@ -188,7 +214,7 @@ export function SlackChatMock() {
 export function TelegramChatMock({ username }: { username: string }) {
   return (
     <Figure
-      caption={`Mockup of a Telegram chat with @${username}: someone sends https://qrdx.dev and the bot replies with the QR code, captioned with the link, and Download PNG, Download SVG and Open in editor buttons.`}
+      caption={`Mockup of a Telegram chat with @${username}: someone sends https://qrdx.dev and the bot replies with the QR code, captioned with the link, and Download PNG, Download SVG, Open in editor and Style buttons.`}
     >
       <div className={windowClass}>
         <div className="flex h-12 items-center gap-2.5 border-b px-3">
@@ -214,16 +240,16 @@ export function TelegramChatMock({ username }: { username: string }) {
               </span>
             </div>
             <span className="grid grid-cols-2 gap-1">
-              {BUTTONS.map((label) => (
+              {[...BUTTONS, "Style"].map((label) => (
                 <span
                   key={label}
-                  className={cn(
-                    "relative flex h-8 items-center justify-center rounded-[8px] border bg-background/80 px-2 text-[11px] font-medium text-foreground/85",
-                    label === "Open in editor" && "col-span-2",
-                  )}
+                  className="relative flex h-8 items-center justify-center rounded-[8px] border bg-background/80 px-2 text-[11px] font-medium text-foreground/85"
                 >
                   {label}
-                  <ExportSquare className="absolute top-1 right-1 size-2.5 opacity-50" />
+                  {/* Style opens more buttons; the others are links. */}
+                  {label !== "Style" && (
+                    <ExportSquare className="absolute top-1 right-1 size-2.5 opacity-50" />
+                  )}
                 </span>
               ))}
             </span>
@@ -239,7 +265,7 @@ export function TelegramChatMock({ username }: { username: string }) {
 /** A Discord channel: "used /qr", then the embed with the code and buttons. */
 export function DiscordChatMock() {
   return (
-    <Figure caption="Mockup of a Discord channel: someone uses /qr with https://qrdx.dev and the QRdx bot replies with the link as the title, the QR code, and Download PNG, Download SVG and Open in editor buttons.">
+    <Figure caption="Mockup of a Discord channel: someone uses /qr with https://qrdx.dev and the QRdx bot replies with the link as the title, the QR code, Download PNG, Download SVG and Open in editor buttons, and Look, Color, Frame and Logo menus.">
       <div className={windowClass}>
         <div className="flex h-12 items-center gap-2.5 border-b px-3">
           <AppLogo slug="discord-bot" />
@@ -284,6 +310,11 @@ export function DiscordChatMock() {
                     {label}
                     <ExportSquare className="size-3 opacity-60" />
                   </span>
+                ))}
+              </span>
+              <span className="flex w-full max-w-[17rem] flex-col gap-1">
+                {MENUS.map((label) => (
+                  <Menu key={label} label={label} className="bg-muted/40" />
                 ))}
               </span>
             </div>
