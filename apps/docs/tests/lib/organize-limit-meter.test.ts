@@ -8,8 +8,12 @@ vi.mock("@repo/auth/server", () => ({ auth: { api: {} } }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 
-const { organizeFailure } = await import("@/app/(app)/dashboard/codes/_lib/organize");
-const { limitReached } = await import("@/app/(app)/dashboard/codes/_lib/qr-codes");
+const { organizeFailure } = await import(
+  "@/app/(app)/dashboard/codes/_lib/organize"
+);
+const { limitReached } = await import(
+  "@/app/(app)/dashboard/codes/_lib/qr-codes"
+);
 const { HttpError } = await import("@/lib/error-response");
 
 describe("organizeFailure", () => {

@@ -62,7 +62,9 @@ const { createApiKeyAction, revokeApiKeyAction } = await import(
 );
 const { ApiKeysUnavailableError } = await import("@/lib/api-keys/service");
 const { HttpError } = await import("@/lib/error-response");
-const { requestOrigin } = await import("@/app/(app)/settings/developers/_lib/origin");
+const { requestOrigin } = await import(
+  "@/app/(app)/settings/developers/_lib/origin"
+);
 
 const input = { name: "CI", scopes: ["codes:write"], expiresInDays: null };
 

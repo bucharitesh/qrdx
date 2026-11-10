@@ -14,7 +14,10 @@ import {
   DeleteTeamButton,
   LeaveTeamButton,
 } from "@/app/(app)/dashboard/team/_components/danger-zone";
-import { getTeam, listTeamMembers } from "@/app/(app)/dashboard/team/_lib/queries";
+import {
+  getTeam,
+  listTeamMembers,
+} from "@/app/(app)/dashboard/team/_lib/queries";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
 import { WorkspaceGeneralForm } from "@/components/workspaces/workspace-general-form";

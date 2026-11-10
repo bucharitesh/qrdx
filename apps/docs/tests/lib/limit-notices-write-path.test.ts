@@ -76,7 +76,9 @@ vi.mock("@/lib/email/send", () => ({
   },
 }));
 
-const { createCodes } = await import("@/app/(app)/dashboard/codes/_lib/qr-codes");
+const { createCodes } = await import(
+  "@/app/(app)/dashboard/codes/_lib/qr-codes"
+);
 const { NOTICE_TIMEOUT_MS } = await import("@/lib/limit-notices");
 // Loaded by the background task on first use; loaded here so a busy test
 // run doesn't make the task slower than the waits below.

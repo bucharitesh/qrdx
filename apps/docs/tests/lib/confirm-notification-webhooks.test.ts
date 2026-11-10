@@ -66,7 +66,9 @@ vi.mock("@/lib/events/notification-settings", async (importOriginal) => ({
 const { recordConfirmation } = await import(
   "@/lib/account/confirmation-server"
 );
-const notifications = await import("@/app/(app)/settings/notifications/_lib/actions");
+const notifications = await import(
+  "@/app/(app)/settings/notifications/_lib/actions"
+);
 
 const REQUIRED = { ok: false, error: "CONFIRMATION_REQUIRED" };
 const SLACK = "https://hooks.slack.com/services/T000/B000/XXXX";

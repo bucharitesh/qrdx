@@ -744,7 +744,9 @@ describe("with an admin", () => {
 
 describe("export route", () => {
   const post = async (body: string, origin = "http://localhost:3000") => {
-    const { POST } = await import("@/app/(app)/admin/users/[userId]/export/route");
+    const { POST } = await import(
+      "@/app/(app)/admin/users/[userId]/export/route"
+    );
     const { NextRequest } = await import("next/server");
     const request = new NextRequest(
       "http://localhost:3000/admin/users/user_target/export",
