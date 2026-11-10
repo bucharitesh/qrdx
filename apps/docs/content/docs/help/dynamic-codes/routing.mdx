@@ -1,6 +1,6 @@
 ---
 title: Send scans to different links
-description: Route each scan by device, country, language or time, and run A/B tests with smart routing.
+description: Route each scan by device, country, area, language or time, and run A/B tests with smart routing.
 ---
 
 Smart routing sends each scan of a dynamic code to a different link, based on rules you set. Pro and Business only.
@@ -17,7 +17,9 @@ Scans that match no rule open the code's normal destination.
 
 ## Conditions you can use
 
-Device, operating system, country, region, language, time of day, date range and scan count. Each condition can also be turned around with **is not**.
+Device, operating system, country, region, area, language, time of day, date range and scan count. Each condition can also be turned around with **is not**.
+
+An **area** is a point and a radius. It uses the location a scanner shares when [precise location](/docs/precise-location) is on, and otherwise the rough location of their network.
 
 A rule can have up to 8 conditions. A code can have up to 20 rules.
 
@@ -28,6 +30,7 @@ A rule can have up to 8 conditions. A code can have up to 20 rules.
 - **Business hours**.
 - **Date range** for a campaign.
 - **First scans**: a different link for the first scans.
+- **Inside an area**: a different link for scans near a place.
 - **A/B split**: share scans between up to 5 versions.
 
 ## The first matching rule wins

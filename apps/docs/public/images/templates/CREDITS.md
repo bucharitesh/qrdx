@@ -36,12 +36,19 @@ absolute links to them in their saved content.
 | `hero-bar.webp` | Dogancan Ozturan | https://unsplash.com/photos/94taEmdowRw |
 | `hero-cookies.webp` | Olenka Kotyk | https://unsplash.com/photos/eqsEZNCm4-c |
 | `hero-flowers.webp` | Cas Cornelissen | https://unsplash.com/photos/G2UTNecskWg |
+| `hero-honey.webp` | Sonja Langford | https://unsplash.com/photos/RQHzRELE2Ss |
+| `hero-knitwear.webp` | Eli DeFaria | https://unsplash.com/photos/IN6KPUe8j04 |
 | `hero-lake.webp` | Roberto Nickson | https://unsplash.com/photos/7BjmDICVloE |
 | `hero-latte.webp` | Carli Jean | https://unsplash.com/photos/UWRqlJcDCXA |
 | `hero-night-sky.webp` | Greg Rakozy | https://unsplash.com/photos/0LU4vO5iFpM |
 | `hero-produce.webp` | Webvilla | https://unsplash.com/photos/hv1MrBzGGNY |
+| `hero-pug.webp` | Matthew Wiebe | https://unsplash.com/photos/U5rMrSI7Pn4 |
+| `hero-puppy.webp` | André Spieker | https://unsplash.com/photos/8wTPqxlnKM4 |
+| `hero-seedling.webp` | Jean Lakosnyk | https://unsplash.com/photos/N9yFjkDc0vA |
 | `hero-sparkler.webp` | Kelley Bozarth | https://unsplash.com/photos/n6vS3xlnsCc |
 | `hero-supper.webp` | Annie Spratt | https://unsplash.com/photos/R3LcfTvcGWY |
+| `hero-vineyard.webp` | Jassy Onyae | https://unsplash.com/photos/1gBUXhf0PtA |
+| `hero-yellow-house.webp` | Padurariu Alexandru | https://unsplash.com/photos/2UE1givDiPM |
 | `item-garden-bowl.webp` | Monstruo Estudio | https://unsplash.com/photos/lQy6mHZ7fYk |
 | `item-grapes.webp` | Maja Petric | https://unsplash.com/photos/vGQ49l9I4EE |
 | `item-oranges.webp` | Brian Jimenez | https://unsplash.com/photos/ch-mPpglKjQ |
@@ -59,6 +66,7 @@ absolute links to them in their saved content.
 | `photo-meadow.webp` | Morgan Sessions | https://unsplash.com/photos/TS2UKluECVE |
 | `photo-orange-tree.webp` | Brian Jimenez | https://unsplash.com/photos/ch-mPpglKjQ |
 | `photo-raspberries.webp` | Ben Moore | https://unsplash.com/photos/pJILiyPdrXI |
+| `photo-red-door.webp` | Brennan Ehrhardt | https://unsplash.com/photos/HALe2SmkWAI |
 | `photo-sunglasses.webp` | Alexander Shustov | https://unsplash.com/photos/AHBiSKaENwc |
 | `photo-tower-lines.webp` | Mihail Ribkin | https://unsplash.com/photos/VjmlDjePHjE |
 | `photo-towers.webp` | Anthony DELANOIX | https://unsplash.com/photos/b5POxb2aL9o |

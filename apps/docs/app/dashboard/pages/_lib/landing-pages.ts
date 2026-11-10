@@ -1,13 +1,24 @@
 import "server-only";
 
 import {
+  customDomain,
   database as db,
   landingPage,
   landingPageVersion,
   qrCode,
 } from "@repo/database";
 import cuid from "cuid";
-import { and, count, desc, eq, inArray, isNull, type SQL } from "drizzle-orm";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  inArray,
+  isNotNull,
+  isNull,
+  ne,
+  type SQL,
+} from "drizzle-orm";
 import { z } from "zod";
 import {
   codeStatus,
@@ -24,6 +35,7 @@ import {
 import { changedFields } from "@/ee/audit-log/metadata";
 import { recordAuditEvent } from "@/ee/audit-log/record";
 import { HttpError } from "@/lib/error-response";
+import { PRODUCT_BLOCK_TYPE, pageGtin } from "@/lib/gs1/digital-link";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import { buildTemplateContent, getTemplate } from "@/lib/landing/templates";
 import { noteLimitUsage } from "@/lib/limit-notices";
@@ -81,6 +93,8 @@ export interface PageCodeRef {
   shortLink: string;
   /** The hosted page itself */
   pageUrl: string;
+  /** Verified custom domain the code is served on, null on the shared host */
+  customDomain: string | null;
   scanCount: number;
   status: QrCodeStatus;
   inTrash: boolean;
@@ -195,6 +209,7 @@ async function codesByPage(
       slug: row.slug,
       shortLink: link,
       pageUrl: host ? `https://${host}${path}` : `${SHORT_LINK_BASE}${path}`,
+      customDomain: host,
       scanCount: row.scanCount,
       status: codeStatus(row),
       inTrash: Boolean(row.deletedAt),
@@ -445,6 +460,56 @@ export async function createPage(
   return { pageId, codeId };
 }
 
+const hasProductBlock = (content: LandingPageContent) =>
+  content.blocks.some((block) => block.type === PRODUCT_BLOCK_TYPE);
+
+/**
+ * A GTIN opens one product page per custom domain
+ * (https://<domain>/01/<GTIN>): refuses a publish when another page with
+ * this GTIN has a code on one of the domains this page's codes use. Pages
+ * whose codes are all on QRdx's shared host never clash (GTINs don't
+ * resolve there).
+ */
+async function assertGtinFree(pageId: string, gtin: string): Promise<void> {
+  const domains = await db
+    .select({ domainId: qrCode.domainId })
+    .from(qrCode)
+    .where(
+      and(
+        eq(qrCode.pageId, pageId),
+        eq(qrCode.kind, "page"),
+        isNotNull(qrCode.domainId),
+        isNull(qrCode.deletedAt),
+      ),
+    );
+  const domainIds = [
+    ...new Set(domains.flatMap((row) => (row.domainId ? [row.domainId] : []))),
+  ];
+  if (domainIds.length === 0) return;
+  const [clash] = await db
+    .select({ title: landingPage.title, hostname: customDomain.hostname })
+    .from(qrCode)
+    .innerJoin(landingPage, eq(landingPage.id, qrCode.pageId))
+    .innerJoin(customDomain, eq(customDomain.id, qrCode.domainId))
+    .where(
+      and(
+        inArray(qrCode.domainId, domainIds),
+        eq(qrCode.kind, "page"),
+        isNull(qrCode.deletedAt),
+        eq(landingPage.gtin, gtin),
+        ne(landingPage.id, pageId),
+      ),
+    )
+    .limit(1);
+  if (clash) {
+    throw new HttpError(
+      400,
+      "VALIDATION_ERROR",
+      `${clash.title ? `"${clash.title}"` : "Another product page"} already uses GTIN ${gtin} on ${clash.hostname}. A GTIN can open one page per domain: change it here or on that page.`,
+    );
+  }
+}
+
 /**
  * Publishes the editor's content: validates every block, checks plan-gated
  * features, bumps the version (rejecting stale editors) and snapshots it to
@@ -457,6 +522,8 @@ export async function publishPage(
   const page = await findPageRow(scope, input.id);
   const content = validateContent(input.content);
   await assertContentAllowed(scope, content);
+  const gtin = pageGtin(content);
+  if (gtin) await assertGtinFree(input.id, gtin);
 
   const [row] = await db
     .update(landingPage)
@@ -465,6 +532,8 @@ export async function publishPage(
       title: input.title,
       version: input.baseVersion + 1,
       updatedAt: new Date(),
+      // Product pages (GS1 Digital Link); other pages never touch the column.
+      ...((gtin || page.gtin || hasProductBlock(content)) && { gtin }),
     })
     .where(
       and(

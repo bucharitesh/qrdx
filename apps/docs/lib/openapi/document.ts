@@ -459,6 +459,7 @@ const exampleCode = {
   createdAt: EXAMPLE_TIME,
   updatedAt: EXAMPLE_TIME,
   organizationId: null,
+  preciseLocation: false,
 };
 
 const exampleHook = {
@@ -894,7 +895,9 @@ Send an object for one code, or an array for several (Pro). The response's \`sho
 
 Send only the fields to change. \`archived: true\` stops redirects and frees a plan slot; \`false\` restores the code. The destination, title and design stay editable on every plan.
 
-To change what a printed code opens, send \`kind\`. \`"kind": "page"\` with \`page\` makes a hosted page from a template (or from the \`content\` you send) and points the code at it; with \`pageId\` it opens a page the workspace already has, such as one it opened before. \`"kind": "redirect"\` with \`destinationUrl\` makes it a website link again. The short link, scans, design and link controls stay. A page the code stops opening stays in the workspace, and counts toward the plan's hosted pages until it's deleted. Routing, A/B tests, UTM parameters and conversion tracking only apply to website links, and tracking pixels only to hosted pages: they're kept and apply again after switching back.`,
+To change what a printed code opens, send \`kind\`. \`"kind": "page"\` with \`page\` makes a hosted page from a template (or from the \`content\` you send) and points the code at it; with \`pageId\` it opens a page the workspace already has, such as one it opened before. \`"kind": "redirect"\` with \`destinationUrl\` makes it a website link again. The short link, scans, design and link controls stay. A page the code stops opening stays in the workspace, and counts toward the plan's hosted pages until it's deleted. Routing, A/B tests, UTM parameters and conversion tracking only apply to website links, and tracking pixels only to hosted pages: they're kept and apply again after switching back.
+
+\`preciseLocation: true\` asks scanners for their precise location (Pro and Business), see [Precise location and geofencing](${docs("precise-location")}).`,
         requestBody: {
           required: true,
           content: {
@@ -925,6 +928,10 @@ To change what a printed code opens, send \`kind\`. \`"kind": "page"\` with \`pa
                     kind: "redirect",
                     destinationUrl: "https://example.com/menu",
                   },
+                },
+                preciseLocation: {
+                  summary: "Ask scanners for their precise location",
+                  value: { preciseLocation: true },
                 },
               },
             },
@@ -988,7 +995,9 @@ Its short link stops working, and this can't be undone. To pause a code and keep
         security: security("codes:read"),
         description: `Scan analytics of a code for a range of days.
 
-Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how long the plan keeps analytics. With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.`,
+Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how long the plan keeps analytics. With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.
+
+On Pro and Business, \`preciseLocations\` lists the locations scanners chose to share (rounded to about 100 m) for codes that ask for them, and each scan has \`latitude\`, \`longitude\`, \`locationAccuracyM\` and \`locationSource\`. On Free, \`preciseLocations\` is null and those fields are null. More in [Precise location and geofencing](${docs("precise-location")}).`,
         parameters: c.parameters(scansQuerySchema, "query", {
           range:
             "Days to cover; defaults to 30 days, or the longest range the plan keeps",
@@ -1020,6 +1029,19 @@ Totals, a daily series and the top countries, cities, devices, systems, browsers
                   browsers: [{ value: "Safari", count: 24 }],
                   referrers: [{ value: null, count: 42 }],
                   sources: { qr: 38, nfc: 4 },
+                  preciseLocations: {
+                    asked: 18,
+                    shared: 11,
+                    points: [
+                      {
+                        latitude: 52.52,
+                        longitude: 13.405,
+                        count: 7,
+                        accuracyM: 24,
+                        lastScannedAt: "2026-01-12T18:04:11.000Z",
+                      },
+                    ],
+                  },
                 },
               },
             },

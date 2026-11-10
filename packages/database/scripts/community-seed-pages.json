@@ -132,17 +132,20 @@
                     {
                       "id": "fc627c513978",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "8c017bcf13a5",
                       "network": "youtube",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "4ea30b6348db",
                       "network": "tiktok",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -285,17 +288,20 @@
                     {
                       "id": "3b76e38a0448",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "095566a6d408",
                       "network": "spotify",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "4e452be86751",
                       "network": "youtube",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -504,12 +510,14 @@
                     {
                       "id": "79cf23177042",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "4a58d4c9038f",
                       "network": "x",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -642,10 +650,281 @@
                     {
                       "id": "f067bdc92aaa",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "social-creator",
+      "slug": "social-creator",
+      "name": "Social media: Creator",
+      "description": "Photo, a line about you and every profile",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "social",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f6f2ec",
+                "foreground": "#1d1a16",
+                "primary": "#1d1a16",
+                "primaryForeground": "#f6f2ec",
+                "muted": "#ebe4d9",
+                "mutedForeground": "#5d564b"
+              },
+              "font": "dm-sans",
+              "radius": 18,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "instrument-serif",
+              "buttonShape": "pill"
+            },
+            "blocks": [
+              {
+                "id": "3e544e23b130",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "6968583abf21",
+                "type": "socials",
+                "props": {
+                  "items": [
+                    {
+                      "id": "99cd16fe96c0",
+                      "network": "instagram",
+                      "url": "https://example.com",
+                      "handle": "Text"
+                    },
+                    {
+                      "id": "495ee47e8e8f",
+                      "network": "tiktok",
+                      "url": "https://example.com",
+                      "handle": "Text"
+                    },
+                    {
+                      "id": "b192dca006fc",
+                      "network": "youtube",
+                      "url": "https://example.com",
+                      "handle": "Text"
+                    },
+                    {
+                      "id": "f185cb6195bd",
+                      "network": "behance",
+                      "url": "https://example.com",
+                      "handle": "Text"
+                    }
+                  ],
+                  "style": "list"
+                }
+              },
+              {
+                "id": "9eceb6e229c9",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "outline",
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "social-brand",
+      "slug": "social-brand",
+      "name": "Social media: Brand",
+      "description": "Your logo and channels, for packaging and counters",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "social",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#0f1720",
+                "foreground": "#eef3f7",
+                "primary": "#eef3f7",
+                "primaryForeground": "#0f1720",
+                "muted": "#18232f",
+                "mutedForeground": "#a2b0bd"
+              },
+              "font": "dm-sans",
+              "radius": 14,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "space-grotesk"
+            },
+            "blocks": [
+              {
+                "id": "7be066c771fa",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "rounded",
+                  "align": "center",
+                  "layout": "stack",
+                  "eyebrow": "",
+                  "size": "lg"
+                }
+              },
+              {
+                "id": "1c389fa5bd95",
+                "type": "socials",
+                "props": {
+                  "items": [
+                    {
+                      "id": "32cce1702cdc",
+                      "network": "instagram",
+                      "url": "https://example.com",
+                      "handle": "Text"
+                    },
+                    {
+                      "id": "676a107e1b86",
+                      "network": "facebook",
+                      "url": "https://example.com",
+                      "handle": "Text"
+                    },
+                    {
+                      "id": "0d190484b504",
+                      "network": "tiktok",
+                      "url": "https://example.com",
+                      "handle": "Text"
+                    },
+                    {
+                      "id": "542badf004f1",
+                      "network": "linkedin",
+                      "url": "https://example.com",
+                      "handle": "Text"
+                    }
+                  ],
+                  "style": "list"
+                }
+              },
+              {
+                "id": "7a88ed3a9080",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "filled",
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "social-grid",
+      "slug": "social-grid",
+      "name": "Social media: Grid",
+      "description": "Bold buttons in two columns, nothing else",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "social",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#ffffff",
+                "foreground": "#0a0a0a",
+                "primary": "#0a0a0a",
+                "primaryForeground": "#ffffff",
+                "muted": "#f2f2f2",
+                "mutedForeground": "#5d5d5d"
+              },
+              "font": "dm-sans",
+              "radius": 12,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "bricolage"
+            },
+            "blocks": [
+              {
+                "id": "6e04830581d2",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "stack",
+                  "eyebrow": "",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "4d94fe4312ed",
+                "type": "socials",
+                "props": {
+                  "items": [
+                    {
+                      "id": "34491be0e4f9",
+                      "network": "youtube",
+                      "url": "https://example.com",
+                      "handle": ""
+                    },
+                    {
+                      "id": "b0c18d75880f",
+                      "network": "instagram",
+                      "url": "https://example.com",
+                      "handle": ""
+                    },
+                    {
+                      "id": "3b6a0c3dfde2",
+                      "network": "tiktok",
+                      "url": "https://example.com",
+                      "handle": ""
+                    },
+                    {
+                      "id": "fa82be6e63ea",
+                      "network": "x",
+                      "url": "https://example.com",
+                      "handle": ""
+                    },
+                    {
+                      "id": "32cb28478aaa",
+                      "network": "threads",
+                      "url": "https://example.com",
+                      "handle": ""
+                    },
+                    {
+                      "id": "e23f1a90d77a",
+                      "network": "bluesky",
+                      "url": "https://example.com",
+                      "handle": ""
+                    }
+                  ],
+                  "style": "buttons"
                 }
               }
             ]
@@ -830,12 +1109,14 @@
                     {
                       "id": "216351059b99",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "32e934e21630",
                       "network": "facebook",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -1027,12 +1308,14 @@
                     {
                       "id": "7d139c7e37a5",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "afb1dbd5aed6",
                       "network": "pinterest",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -1336,12 +1619,14 @@
                     {
                       "id": "1fee65b74f7d",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "9ed45adfe555",
                       "network": "pinterest",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -1424,12 +1709,14 @@
                     {
                       "id": "9db5ce84f652",
                       "network": "linkedin",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "5d02fe63a9dc",
                       "network": "x",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -1539,17 +1826,20 @@
                     {
                       "id": "6a0639934aca",
                       "network": "linkedin",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "0f6dd7b0fc19",
                       "network": "dribbble",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "e4ee63d2f00f",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -2656,12 +2946,14 @@
                     {
                       "id": "00d0c78912ce",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "3057a2a8eb71",
                       "network": "tiktok",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -2742,12 +3034,14 @@
                     {
                       "id": "3eec6ef3a3c2",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "c543cba1567e",
                       "network": "tiktok",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -3063,7 +3357,8 @@
                     {
                       "id": "0635ca0b4131",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -3553,17 +3848,20 @@
                     {
                       "id": "0793e067e631",
                       "network": "discord",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "8a64e6bbd760",
                       "network": "youtube",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "9103e2dd1329",
                       "network": "tiktok",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -3940,6 +4238,2564 @@
       }
     },
     {
+      "id": "product-food",
+      "slug": "product-food",
+      "name": "Product: Food",
+      "description": "Ingredients, allergens and a nutrition table",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "product",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#faf6ee",
+                "foreground": "#231c12",
+                "primary": "#6b3f0e",
+                "primaryForeground": "#ffffff",
+                "muted": "#f1e9da",
+                "mutedForeground": "#5f5244"
+              },
+              "font": "dm-sans",
+              "radius": 16,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "fraunces",
+              "buttonShape": "pill"
+            },
+            "blocks": [
+              {
+                "id": "85e34a10b84a",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "hero",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "95285134d5ee",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "be624a244f3b",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "8d2ea99c6441",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "d8aa72f66fd4",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "b5fa614a1278",
+                "type": "product",
+                "props": {
+                  "title": "",
+                  "gtin": "",
+                  "showGtin": true,
+                  "certifications": [
+                    {
+                      "id": "73cfe7ebcf51",
+                      "label": "Link"
+                    },
+                    {
+                      "id": "819b6bd2157a",
+                      "label": "Link"
+                    },
+                    {
+                      "id": "f7f5123fdace",
+                      "label": "Link"
+                    }
+                  ],
+                  "ingredients": "Text",
+                  "allergens": [],
+                  "allergenNote": "Text",
+                  "nutrition": {
+                    "basis": "Text",
+                    "rows": [
+                      {
+                        "id": "2adaae0bafad",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      },
+                      {
+                        "id": "a5f4b84832c2",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      },
+                      {
+                        "id": "3024be295651",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      },
+                      {
+                        "id": "fd367d0da85e",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": true
+                      },
+                      {
+                        "id": "8f99716eae09",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      },
+                      {
+                        "id": "c22465fe1202",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      }
+                    ]
+                  },
+                  "sections": [
+                    {
+                      "id": "306946ce170d",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    },
+                    {
+                      "id": "492be910ba1d",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "0cd2e4b733bd",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "filled",
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "product-wine",
+      "slug": "product-wine",
+      "name": "Product: Wine & drinks",
+      "description": "An e-label: ingredients and energy per 100 ml",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "product",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#16100f",
+                "foreground": "#f4ede6",
+                "primary": "#e8c9a0",
+                "primaryForeground": "#16100f",
+                "muted": "#251b19",
+                "mutedForeground": "#b6a99e"
+              },
+              "font": "dm-sans",
+              "radius": 8,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "cormorant"
+            },
+            "blocks": [
+              {
+                "id": "d3eb312bab80",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "hero",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "aeaf333708c5",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "e2b2484f4c1a",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "0ca30930635c",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "c7bfbbc4ae08",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "tiles"
+                }
+              },
+              {
+                "id": "122b8ae6cde4",
+                "type": "product",
+                "props": {
+                  "title": "",
+                  "gtin": "",
+                  "showGtin": true,
+                  "certifications": [
+                    {
+                      "id": "8c981da69069",
+                      "label": "Link"
+                    },
+                    {
+                      "id": "63d7463d52e0",
+                      "label": "Link"
+                    }
+                  ],
+                  "ingredients": "Text",
+                  "allergens": ["sulphites"],
+                  "allergenNote": "",
+                  "nutrition": {
+                    "basis": "Text",
+                    "rows": [
+                      {
+                        "id": "b7983150b211",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      },
+                      {
+                        "id": "7122dc72bc81",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      },
+                      {
+                        "id": "037263ca4f7c",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      },
+                      {
+                        "id": "658bd6c936dd",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": true
+                      },
+                      {
+                        "id": "49b2fdc03b3e",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      },
+                      {
+                        "id": "8a329ed77387",
+                        "name": "Name",
+                        "value": "Text",
+                        "sub": false
+                      }
+                    ]
+                  },
+                  "sections": [
+                    {
+                      "id": "b8feb863dce1",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    },
+                    {
+                      "id": "024723864566",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "232dba009129",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "outline",
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "product-beauty",
+      "slug": "product-beauty",
+      "name": "Product: Beauty & care",
+      "description": "Full ingredient list, how to use and warnings",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "product",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#fbf7f5",
+                "foreground": "#2b2221",
+                "primary": "#2b2221",
+                "primaryForeground": "#fbf7f5",
+                "muted": "#f2eae6",
+                "mutedForeground": "#6a5c58"
+              },
+              "font": "dm-sans",
+              "radius": 20,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "instrument-serif",
+              "spacing": "relaxed",
+              "buttonShape": "pill"
+            },
+            "blocks": [
+              {
+                "id": "5dbe0f66f2df",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "f47257c14edd",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "9b0bb03cd9af",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "2256a6f6fc48",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "87f278345d5b",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "f42c042f5be2",
+                "type": "product",
+                "props": {
+                  "title": "",
+                  "gtin": "",
+                  "showGtin": true,
+                  "certifications": [
+                    {
+                      "id": "34d64e18effa",
+                      "label": "Link"
+                    },
+                    {
+                      "id": "20224aafe9d7",
+                      "label": "Link"
+                    },
+                    {
+                      "id": "4f9b8ab233e7",
+                      "label": "Link"
+                    }
+                  ],
+                  "ingredients": "Text",
+                  "allergens": [],
+                  "allergenNote": "",
+                  "nutrition": {
+                    "basis": "",
+                    "rows": []
+                  },
+                  "sections": [
+                    {
+                      "id": "a9b4542d0e4f",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    },
+                    {
+                      "id": "1003d8934bcc",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    },
+                    {
+                      "id": "8c8e5a0a1a0a",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "5bab9a0c50e8",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "filled",
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "product-passport",
+      "slug": "product-passport",
+      "name": "Product: Product passport",
+      "description": "Materials, origin, care, repair and recycling",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "product",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f3f2ee",
+                "foreground": "#1a1a18",
+                "primary": "#1a1a18",
+                "primaryForeground": "#f3f2ee",
+                "muted": "#e7e5df",
+                "mutedForeground": "#58574f"
+              },
+              "font": "dm-sans",
+              "radius": 6,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "space-grotesk"
+            },
+            "blocks": [
+              {
+                "id": "fa35900a7feb",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "banner",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "6635eb5fbcfe",
+                "type": "details",
+                "props": {
+                  "title": "Title",
+                  "items": [
+                    {
+                      "id": "22bb9149375f",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "7ce527f54c54",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "4917e88cf43e",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "0b5162693db1",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "0f13f2303d02",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "1fba473abcbb",
+                "type": "product",
+                "props": {
+                  "title": "",
+                  "gtin": "",
+                  "showGtin": true,
+                  "certifications": [
+                    {
+                      "id": "2cb9c81cfb9f",
+                      "label": "Link"
+                    },
+                    {
+                      "id": "8fd5e67186ac",
+                      "label": "Link"
+                    }
+                  ],
+                  "ingredients": "",
+                  "allergens": [],
+                  "allergenNote": "",
+                  "nutrition": {
+                    "basis": "",
+                    "rows": []
+                  },
+                  "sections": [
+                    {
+                      "id": "6c5bb30fffbb",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    },
+                    {
+                      "id": "74916bd901fa",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    },
+                    {
+                      "id": "860d339cbca1",
+                      "title": "Title",
+                      "body": "A few words about this."
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "92dc22a90b2c",
+                "type": "links",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "fb303af9c506",
+                      "label": "Link",
+                      "url": "https://example.com",
+                      "description": "",
+                      "featured": false
+                    },
+                    {
+                      "id": "b7bdda949380",
+                      "label": "Link",
+                      "url": "https://example.com",
+                      "description": "",
+                      "featured": false
+                    }
+                  ],
+                  "style": "rows",
+                  "icons": false,
+                  "layout": "list"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "booking-salon",
+      "slug": "booking-salon",
+      "name": "Appointments: Salon",
+      "description": "A price list, a request form and opening hours",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "booking",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f8f3ef",
+                "foreground": "#271d19",
+                "primary": "#271d19",
+                "primaryForeground": "#f8f3ef",
+                "muted": "#eee4dc",
+                "mutedForeground": "#66574e"
+              },
+              "font": "dm-sans",
+              "radius": 4,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "cormorant"
+            },
+            "blocks": [
+              {
+                "id": "5dbb58334c84",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "banner",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "4c3e028e1fcf",
+                "type": "details",
+                "props": {
+                  "title": "Title",
+                  "items": [
+                    {
+                      "id": "f93dfbfe0b66",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "5ae37a9772cc",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "3ef3f42d5ab3",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "cdec31b29780",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "d7275bfbdeac",
+                "type": "form",
+                "props": {
+                  "title": "Title",
+                  "description": "",
+                  "fields": [
+                    {
+                      "id": "542bcd8304a1",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 120
+                    },
+                    {
+                      "id": "30ac987605dd",
+                      "label": "Link",
+                      "required": true,
+                      "type": "phone"
+                    },
+                    {
+                      "id": "6d5100a5bab1",
+                      "label": "Link",
+                      "required": true,
+                      "type": "choice",
+                      "multiple": false,
+                      "options": [
+                        "Option 1",
+                        "Option 2",
+                        "Option 3",
+                        "Option 4"
+                      ]
+                    },
+                    {
+                      "id": "85e50d27afad",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 300
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              },
+              {
+                "id": "083556b74976",
+                "type": "hours",
+                "props": {
+                  "title": "Title",
+                  "timezone": "",
+                  "days": [
+                    {
+                      "ranges": []
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "10:00",
+                          "close": "19:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "10:00",
+                          "close": "19:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "10:00",
+                          "close": "20:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "10:00",
+                          "close": "20:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "09:00",
+                          "close": "17:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": []
+                    }
+                  ],
+                  "note": ""
+                }
+              },
+              {
+                "id": "8af3ebbab37a",
+                "type": "address-map",
+                "props": {
+                  "title": "",
+                  "name": "Place name",
+                  "address": {
+                    "street": "123 Main Street",
+                    "city": "Springfield",
+                    "region": "",
+                    "postalCode": "",
+                    "country": ""
+                  },
+                  "note": "",
+                  "showMap": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "booking-clinic",
+      "slug": "booking-clinic",
+      "name": "Appointments: Clinic",
+      "description": "Treatments, online booking and a call-back form",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "booking",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f1f6f5",
+                "foreground": "#102320",
+                "primary": "#1f5f57",
+                "primaryForeground": "#ffffff",
+                "muted": "#e0ebe9",
+                "mutedForeground": "#4b5f5c"
+              },
+              "font": "dm-sans",
+              "radius": 14,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "dm-sans"
+            },
+            "blocks": [
+              {
+                "id": "e8e2c8d88458",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "900326651293",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "filled",
+                  "note": "A note"
+                }
+              },
+              {
+                "id": "20c215077b92",
+                "type": "details",
+                "props": {
+                  "title": "Title",
+                  "items": [
+                    {
+                      "id": "98e58bddd5c2",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "d56dbf536da2",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "1c5e735e64e3",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "f37860d875db",
+                "type": "form",
+                "props": {
+                  "title": "Title",
+                  "description": "A short description.",
+                  "fields": [
+                    {
+                      "id": "17e5761820d1",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 120
+                    },
+                    {
+                      "id": "6106aab5da0c",
+                      "label": "Link",
+                      "required": true,
+                      "type": "phone"
+                    },
+                    {
+                      "id": "2ed393793e41",
+                      "label": "Link",
+                      "required": false,
+                      "type": "text",
+                      "multiline": true,
+                      "maxLength": 1000
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              },
+              {
+                "id": "3aec17308c24",
+                "type": "hours",
+                "props": {
+                  "title": "Title",
+                  "timezone": "",
+                  "days": [
+                    {
+                      "ranges": [
+                        {
+                          "open": "07:00",
+                          "close": "19:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "07:00",
+                          "close": "19:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "07:00",
+                          "close": "19:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "07:00",
+                          "close": "19:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "07:00",
+                          "close": "17:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": [
+                        {
+                          "open": "08:00",
+                          "close": "13:00"
+                        }
+                      ]
+                    },
+                    {
+                      "ranges": []
+                    }
+                  ],
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "booking-coach",
+      "slug": "booking-coach",
+      "name": "Appointments: Coach & tutor",
+      "description": "Sessions, a free intro call and questions",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "booking",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#fbfbf9",
+                "foreground": "#171715",
+                "primary": "#3a3fbd",
+                "primaryForeground": "#ffffff",
+                "muted": "#f0f0ec",
+                "mutedForeground": "#5d5d57"
+              },
+              "font": "dm-sans",
+              "radius": 16,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "bricolage",
+              "buttonShape": "pill"
+            },
+            "blocks": [
+              {
+                "id": "b46a8187c398",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "lg"
+                }
+              },
+              {
+                "id": "253a353b2349",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "filled",
+                  "note": ""
+                }
+              },
+              {
+                "id": "63409e986a16",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "c9868be5b329",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "37786034810c",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "4a1378e84f20",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "c362a841d605",
+                "type": "form",
+                "props": {
+                  "title": "Title",
+                  "description": "",
+                  "fields": [
+                    {
+                      "id": "9a566ddab482",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 120
+                    },
+                    {
+                      "id": "2807a2f7c800",
+                      "label": "Link",
+                      "required": true,
+                      "type": "email"
+                    },
+                    {
+                      "id": "ee6dfdc97aef",
+                      "label": "Link",
+                      "required": false,
+                      "type": "text",
+                      "multiline": true,
+                      "maxLength": 1000
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "payment-tip-jar",
+      "slug": "payment-tip-jar",
+      "name": "Payments & tips: Tip jar",
+      "description": "For a band, a barista or a street performer",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "payment",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#101010",
+                "foreground": "#f5f3ef",
+                "primary": "#f2c46d",
+                "primaryForeground": "#101010",
+                "muted": "#1c1b19",
+                "mutedForeground": "#aaa59b"
+              },
+              "font": "dm-sans",
+              "radius": 16,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "bricolage",
+              "buttonShape": "pill"
+            },
+            "blocks": [
+              {
+                "id": "1f490da26c43",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "188f5b07d77d",
+                "type": "payment",
+                "props": {
+                  "title": "",
+                  "action": "tip",
+                  "methods": [
+                    {
+                      "id": "f1d0992e9a8c",
+                      "type": "venmo",
+                      "label": "",
+                      "url": "https://example.com",
+                      "details": "Text",
+                      "note": ""
+                    },
+                    {
+                      "id": "f9bde67309f0",
+                      "type": "cashapp",
+                      "label": "",
+                      "url": "https://example.com",
+                      "details": "Text",
+                      "note": ""
+                    },
+                    {
+                      "id": "bcf7c3f60434",
+                      "type": "paypal",
+                      "label": "",
+                      "url": "https://example.com",
+                      "details": "",
+                      "note": ""
+                    }
+                  ],
+                  "note": ""
+                }
+              },
+              {
+                "id": "daa9d8aab5e6",
+                "type": "socials",
+                "props": {
+                  "items": [
+                    {
+                      "id": "b2a9c6cb649a",
+                      "network": "instagram",
+                      "url": "https://example.com",
+                      "handle": ""
+                    },
+                    {
+                      "id": "8a6fb0f19dc2",
+                      "network": "spotify",
+                      "url": "https://example.com",
+                      "handle": ""
+                    }
+                  ],
+                  "style": "icons"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "payment-donation",
+      "slug": "payment-donation",
+      "name": "Payments & tips: Donation",
+      "description": "A cause, what it pays for and ways to give",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "payment",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f3f6f1",
+                "foreground": "#15200f",
+                "primary": "#2f5a1e",
+                "primaryForeground": "#ffffff",
+                "muted": "#e3eadd",
+                "mutedForeground": "#4f5d47"
+              },
+              "font": "dm-sans",
+              "radius": 14,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "fraunces"
+            },
+            "blocks": [
+              {
+                "id": "2fc490f6a390",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "hero",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "626b3e45eada",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "8985f17c0479",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "5aad6e6e6386",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "89eecfab14a4",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "tiles"
+                }
+              },
+              {
+                "id": "ba59f5b00454",
+                "type": "payment",
+                "props": {
+                  "title": "Title",
+                  "action": "donate",
+                  "methods": [
+                    {
+                      "id": "ce841dfdf547",
+                      "type": "paypal",
+                      "label": "",
+                      "url": "https://example.com",
+                      "details": "",
+                      "note": ""
+                    },
+                    {
+                      "id": "32a2b227a695",
+                      "type": "bank",
+                      "label": "",
+                      "url": "",
+                      "details": "Text",
+                      "note": ""
+                    }
+                  ],
+                  "note": "A note"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "payment-invoice",
+      "slug": "payment-invoice",
+      "name": "Payments & tips: Pay an invoice",
+      "description": "For freelancers: bank details and payment apps",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "payment",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#fafafa",
+                "foreground": "#111111",
+                "primary": "#111111",
+                "primaryForeground": "#ffffff",
+                "muted": "#efefef",
+                "mutedForeground": "#5c5c5c"
+              },
+              "font": "geist",
+              "radius": 10,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "geist"
+            },
+            "blocks": [
+              {
+                "id": "59158819accb",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "lg"
+                }
+              },
+              {
+                "id": "22d0d5c3ff11",
+                "type": "payment",
+                "props": {
+                  "title": "",
+                  "action": "pay",
+                  "methods": [
+                    {
+                      "id": "38d20c6def1d",
+                      "type": "bank",
+                      "label": "",
+                      "url": "",
+                      "details": "Text",
+                      "note": "A note"
+                    },
+                    {
+                      "id": "9894390f6074",
+                      "type": "wise",
+                      "label": "",
+                      "url": "https://example.com",
+                      "details": "",
+                      "note": ""
+                    },
+                    {
+                      "id": "9c2b40d2a2b1",
+                      "type": "paypal",
+                      "label": "",
+                      "url": "https://example.com",
+                      "details": "",
+                      "note": ""
+                    }
+                  ],
+                  "note": ""
+                }
+              },
+              {
+                "id": "63ab1a5ad64b",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "mailto:hello@example.com",
+                  "style": "outline",
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "real-estate-for-sale",
+      "slug": "real-estate-for-sale",
+      "name": "Property listing: For sale",
+      "description": "Price, facts, photos and a viewing request form",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "real-estate",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#fbfaf7",
+                "foreground": "#1c1b18",
+                "primary": "#1c1b18",
+                "primaryForeground": "#fbfaf7",
+                "muted": "#f0eee8",
+                "mutedForeground": "#5f5d55"
+              },
+              "font": "dm-sans",
+              "radius": 12,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "fraunces"
+            },
+            "blocks": [
+              {
+                "id": "07918301c074",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "hero",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "d6e73f18f068",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "226f6f2d02bf",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "d36377385262",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "d974c7c781a7",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "9d596abea1e9",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "7c6e54e8d3a3",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "27620e1ba048",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "tiles"
+                }
+              },
+              {
+                "id": "77785c34b982",
+                "type": "text",
+                "props": {
+                  "heading": "Heading",
+                  "body": "A few words about this.",
+                  "align": "left",
+                  "size": "md",
+                  "card": false
+                }
+              },
+              {
+                "id": "75d5874cbf69",
+                "type": "gallery",
+                "props": {
+                  "title": "",
+                  "description": "",
+                  "images": [],
+                  "columns": "2",
+                  "shape": "square"
+                }
+              },
+              {
+                "id": "9484296f4a1b",
+                "type": "form",
+                "props": {
+                  "title": "Title",
+                  "description": "A short description.",
+                  "fields": [
+                    {
+                      "id": "f79b4ad225a5",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 120
+                    },
+                    {
+                      "id": "c33ef94e4613",
+                      "label": "Link",
+                      "required": true,
+                      "type": "phone"
+                    },
+                    {
+                      "id": "74d1dbc14f21",
+                      "label": "Link",
+                      "required": false,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 300
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              },
+              {
+                "id": "b42d38ced08d",
+                "type": "contact",
+                "props": {
+                  "firstName": "Your",
+                  "lastName": "Name",
+                  "jobTitle": "Your job title",
+                  "company": "Your company",
+                  "bio": "",
+                  "phones": [
+                    {
+                      "id": "5e99a77a5e06",
+                      "type": "mobile",
+                      "number": "+1 555 0100",
+                      "whatsapp": false
+                    }
+                  ],
+                  "emails": [
+                    {
+                      "id": "93ba3d2dfadc",
+                      "type": "work",
+                      "address": "hello@example.com"
+                    }
+                  ],
+                  "website": "",
+                  "address": {
+                    "street": "",
+                    "city": "",
+                    "region": "",
+                    "postalCode": "",
+                    "country": ""
+                  },
+                  "showSave": true,
+                  "showShare": false
+                }
+              },
+              {
+                "id": "941f824ac02e",
+                "type": "address-map",
+                "props": {
+                  "title": "Title",
+                  "name": "",
+                  "address": {
+                    "street": "123 Main Street",
+                    "city": "Springfield",
+                    "region": "",
+                    "postalCode": "",
+                    "country": ""
+                  },
+                  "note": "",
+                  "showMap": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "real-estate-rental",
+      "slug": "real-estate-rental",
+      "name": "Property listing: For rent",
+      "description": "Rent, deposit, pets and an inquiry form",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "real-estate",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f2f5f7",
+                "foreground": "#13202a",
+                "primary": "#1d4e6b",
+                "primaryForeground": "#ffffff",
+                "muted": "#e3e9ed",
+                "mutedForeground": "#4c5c68"
+              },
+              "font": "dm-sans",
+              "radius": 10,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "space-grotesk"
+            },
+            "blocks": [
+              {
+                "id": "15dc643acc91",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "banner",
+                  "eyebrow": "Label",
+                  "size": "lg"
+                }
+              },
+              {
+                "id": "3a877cff7a23",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "c327d16c4115",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "5d155ab80ad7",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "d486a3cf7381",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "cc8e4d89e3b0",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "e3f2e1f8072f",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "c53f8cc9dd4a",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "a8fa87babe54",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "478f700d8c7b",
+                "type": "form",
+                "props": {
+                  "title": "Title",
+                  "description": "",
+                  "fields": [
+                    {
+                      "id": "04629425964a",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 120
+                    },
+                    {
+                      "id": "37e692d440f7",
+                      "label": "Link",
+                      "required": true,
+                      "type": "email"
+                    },
+                    {
+                      "id": "541fc79f7699",
+                      "label": "Link",
+                      "required": false,
+                      "type": "choice",
+                      "multiple": false,
+                      "options": ["Option 1", "Option 2", "Option 3"]
+                    },
+                    {
+                      "id": "5c06da86f391",
+                      "label": "Link",
+                      "required": false,
+                      "type": "text",
+                      "multiline": true,
+                      "maxLength": 1000
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              },
+              {
+                "id": "10d4acc1b787",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "outline",
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "real-estate-open-house",
+      "slug": "real-estate-open-house",
+      "name": "Property listing: Open house sign-in",
+      "description": "Visitors sign in on their phone instead of a clipboard",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "real-estate",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#111111",
+                "foreground": "#f4f4f2",
+                "primary": "#f4f4f2",
+                "primaryForeground": "#111111",
+                "muted": "#1d1d1c",
+                "mutedForeground": "#a7a7a1"
+              },
+              "font": "dm-sans",
+              "radius": 14,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "instrument-serif",
+              "buttonShape": "pill"
+            },
+            "blocks": [
+              {
+                "id": "e1e8a918877c",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "618dff9056d5",
+                "type": "form",
+                "props": {
+                  "title": "",
+                  "description": "",
+                  "fields": [
+                    {
+                      "id": "ea79d3dcebc2",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 120
+                    },
+                    {
+                      "id": "0408c912b686",
+                      "label": "Link",
+                      "required": false,
+                      "type": "email"
+                    },
+                    {
+                      "id": "97ee8f2d8525",
+                      "label": "Link",
+                      "required": false,
+                      "type": "phone"
+                    },
+                    {
+                      "id": "f2d246e18713",
+                      "label": "Link",
+                      "required": false,
+                      "type": "choice",
+                      "multiple": false,
+                      "options": ["Option 1", "Option 2"]
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              },
+              {
+                "id": "8a7ad999c573",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "9e6413f1c11b",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "263f2a189390",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "1522b24abcbf",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "tiles"
+                }
+              },
+              {
+                "id": "23e4b2863a04",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "https://example.com",
+                  "style": "filled",
+                  "note": ""
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "pet-dog",
+      "slug": "pet-dog",
+      "name": "Pet ID tag: Dog",
+      "description": "Photo, call button, medical needs and a found-it form",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "pet",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f6f3ee",
+                "foreground": "#1f1b16",
+                "primary": "#1f1b16",
+                "primaryForeground": "#f6f3ee",
+                "muted": "#ebe5dc",
+                "mutedForeground": "#5f574c"
+              },
+              "font": "rounded",
+              "radius": 22,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "bricolage",
+              "buttonShape": "pill"
+            },
+            "blocks": [
+              {
+                "id": "dc219683f6e6",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "hero",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "5d897e5d9e24",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "tel:+15550100",
+                  "style": "filled",
+                  "note": "A note"
+                }
+              },
+              {
+                "id": "4951b26f34c4",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "48974584a566",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "e4fd8f2617c9",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "eb2f4ce9328b",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "a032fc5e3d0a",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "ba64cbead2f3",
+                "type": "text",
+                "props": {
+                  "heading": "Heading",
+                  "body": "A few words about this.",
+                  "align": "left",
+                  "size": "md",
+                  "card": true
+                }
+              },
+              {
+                "id": "da8e6ff74272",
+                "type": "form",
+                "props": {
+                  "title": "Title",
+                  "description": "A short description.",
+                  "fields": [
+                    {
+                      "id": "6cc3aebd94b3",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 300
+                    },
+                    {
+                      "id": "feb25742d1b6",
+                      "label": "Link",
+                      "required": true,
+                      "type": "phone"
+                    },
+                    {
+                      "id": "801f7ccf6bb8",
+                      "label": "Link",
+                      "required": false,
+                      "type": "text",
+                      "multiline": true,
+                      "maxLength": 1000
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              },
+              {
+                "id": "9ced5123bae5",
+                "type": "contact",
+                "props": {
+                  "firstName": "Your",
+                  "lastName": "Name",
+                  "jobTitle": "Your job title",
+                  "company": "",
+                  "bio": "",
+                  "phones": [
+                    {
+                      "id": "ed6966490c0d",
+                      "type": "mobile",
+                      "number": "+1 555 0100",
+                      "whatsapp": true
+                    }
+                  ],
+                  "emails": [
+                    {
+                      "id": "f0eb3ce245e8",
+                      "type": "home",
+                      "address": "hello@example.com"
+                    }
+                  ],
+                  "website": "",
+                  "address": {
+                    "street": "",
+                    "city": "",
+                    "region": "",
+                    "postalCode": "",
+                    "country": ""
+                  },
+                  "showSave": false,
+                  "showShare": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "pet-cat",
+      "slug": "pet-cat",
+      "name": "Pet ID tag: Cat",
+      "description": "Calm and simple: who I am and who to call",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "pet",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f3f1f8",
+                "foreground": "#1d1a26",
+                "primary": "#4b3f72",
+                "primaryForeground": "#ffffff",
+                "muted": "#e6e2f0",
+                "mutedForeground": "#5a5470"
+              },
+              "font": "dm-sans",
+              "radius": 18,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "fraunces"
+            },
+            "blocks": [
+              {
+                "id": "0d27671ec5e3",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "0a48beceac45",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "tel:+15550100",
+                  "style": "filled",
+                  "note": ""
+                }
+              },
+              {
+                "id": "671c1b841b01",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "68661abbc03f",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "3d24f18ec2a6",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "bd1f62edbe8a",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "f087556b74c6",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "3567d0cadeef",
+                "type": "form",
+                "props": {
+                  "title": "Title",
+                  "description": "",
+                  "fields": [
+                    {
+                      "id": "e565a1e965f9",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 300
+                    },
+                    {
+                      "id": "412ae3b0d3a5",
+                      "label": "Link",
+                      "required": true,
+                      "type": "phone"
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "pet-lost",
+      "slug": "pet-lost",
+      "name": "Pet ID tag: Lost pet",
+      "description": "For posters: last seen, a reward and sightings",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "pet",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#fffbf0",
+                "foreground": "#1a1712",
+                "primary": "#a52a12",
+                "primaryForeground": "#ffffff",
+                "muted": "#f6eedb",
+                "mutedForeground": "#5d5545"
+              },
+              "font": "dm-sans",
+              "radius": 12,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "bricolage"
+            },
+            "blocks": [
+              {
+                "id": "bdf71d45c7be",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "hero",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "be9ee6bcb85e",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "tel:+15550100",
+                  "style": "filled",
+                  "note": ""
+                }
+              },
+              {
+                "id": "bc239acf7fa5",
+                "type": "form",
+                "props": {
+                  "title": "Title",
+                  "description": "",
+                  "fields": [
+                    {
+                      "id": "de86b3cfbb33",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 300
+                    },
+                    {
+                      "id": "c7ed1fb9ef48",
+                      "label": "Link",
+                      "required": true,
+                      "type": "text",
+                      "multiline": false,
+                      "maxLength": 120
+                    },
+                    {
+                      "id": "fd79f4cd4fbe",
+                      "label": "Link",
+                      "required": false,
+                      "type": "phone"
+                    }
+                  ],
+                  "submitLabel": "Send",
+                  "successMessage": "Thank you!"
+                }
+              },
+              {
+                "id": "5a289b1b2d09",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "6f50776130d3",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "99d913f95d42",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "895b41045208",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "medical-emergency",
+      "slug": "medical-emergency",
+      "name": "Medical ID: Emergency info",
+      "description": "Conditions, allergies, medication and who to call",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "medical",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#ffffff",
+                "foreground": "#141414",
+                "primary": "#b42318",
+                "primaryForeground": "#ffffff",
+                "muted": "#f4f4f4",
+                "mutedForeground": "#5c5c5c"
+              },
+              "font": "dm-sans",
+              "radius": 12,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "dm-sans"
+            },
+            "blocks": [
+              {
+                "id": "90d29eb166e9",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "c2572f55f76f",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "tel:+15550100",
+                  "style": "filled",
+                  "note": "A note"
+                }
+              },
+              {
+                "id": "a2001c8cf83a",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "50e7038f79d8",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "4be3f7baa04f",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "2a3e6caff1d8",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "37963d8cbac4",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "10af03d706d6",
+                "type": "text",
+                "props": {
+                  "heading": "Heading",
+                  "body": "A few words about this.",
+                  "align": "left",
+                  "size": "md",
+                  "card": true
+                }
+              },
+              {
+                "id": "b91f5f07a746",
+                "type": "contact",
+                "props": {
+                  "firstName": "Your",
+                  "lastName": "Name",
+                  "jobTitle": "Your job title",
+                  "company": "",
+                  "bio": "",
+                  "phones": [
+                    {
+                      "id": "eaef5fbb6925",
+                      "type": "mobile",
+                      "number": "+1 555 0100",
+                      "whatsapp": false
+                    }
+                  ],
+                  "emails": [],
+                  "website": "",
+                  "address": {
+                    "street": "",
+                    "city": "",
+                    "region": "",
+                    "postalCode": "",
+                    "country": ""
+                  },
+                  "showSave": false,
+                  "showShare": false
+                }
+              },
+              {
+                "id": "334680f4249a",
+                "type": "text",
+                "props": {
+                  "heading": "",
+                  "body": "A few words about this.",
+                  "align": "center",
+                  "size": "sm",
+                  "card": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "medical-child",
+      "slug": "medical-child",
+      "name": "Medical ID: Child's wristband",
+      "description": "For trips and festivals: who to call if a child is lost",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "medical",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#f2f7fb",
+                "foreground": "#11202c",
+                "primary": "#1b5e8c",
+                "primaryForeground": "#ffffff",
+                "muted": "#e1ecf4",
+                "mutedForeground": "#4a5d6c"
+              },
+              "font": "rounded",
+              "radius": 20,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "bricolage",
+              "buttonShape": "pill"
+            },
+            "blocks": [
+              {
+                "id": "3fb03a888ca1",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "center",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "f9b517aa6445",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "tel:+15550100",
+                  "style": "filled",
+                  "note": ""
+                }
+              },
+              {
+                "id": "db93570b618a",
+                "type": "button",
+                "props": {
+                  "label": "Button",
+                  "url": "tel:+15550100",
+                  "style": "outline",
+                  "note": ""
+                }
+              },
+              {
+                "id": "f1d28272eee7",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "571382bf95e6",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "35d8faf64c40",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "38912ca21cdc",
+                "type": "text",
+                "props": {
+                  "heading": "",
+                  "body": "A few words about this.",
+                  "align": "center",
+                  "size": "sm",
+                  "card": false
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": "medical-allergy-card",
+      "slug": "medical-allergy-card",
+      "name": "Medical ID: Allergy card",
+      "description": "Show it to restaurant staff when you eat out",
+      "tags": [],
+      "payload": {
+        "page": {
+          "type": "medical",
+          "content": {
+            "version": 1,
+            "theme": {
+              "colors": {
+                "background": "#fff8f1",
+                "foreground": "#1f1610",
+                "primary": "#1f1610",
+                "primaryForeground": "#fff8f1",
+                "muted": "#f6eadc",
+                "mutedForeground": "#62513f"
+              },
+              "font": "dm-sans",
+              "radius": 14,
+              "background": {
+                "type": "solid"
+              },
+              "headingFont": "fraunces"
+            },
+            "blocks": [
+              {
+                "id": "5176117c5dbb",
+                "type": "header",
+                "props": {
+                  "title": "Your name",
+                  "subtitle": "A line about you",
+                  "avatarShape": "circle",
+                  "align": "left",
+                  "layout": "stack",
+                  "eyebrow": "Label",
+                  "size": "xl"
+                }
+              },
+              {
+                "id": "21984ebb5826",
+                "type": "text",
+                "props": {
+                  "heading": "Heading",
+                  "body": "A few words about this.",
+                  "align": "left",
+                  "size": "md",
+                  "card": true
+                }
+              },
+              {
+                "id": "73da7202923a",
+                "type": "text",
+                "props": {
+                  "heading": "Heading",
+                  "body": "A few words about this.",
+                  "align": "left",
+                  "size": "md",
+                  "card": false
+                }
+              },
+              {
+                "id": "35ed7d8228b5",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "9739b436fe41",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "50c5bbab3a30",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
       "id": "images-gallery",
       "slug": "images-gallery",
       "name": "Images: Lookbook",
@@ -4092,12 +6948,14 @@
                     {
                       "id": "d8b25a589807",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "78cb9166692b",
                       "network": "behance",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -4291,12 +7149,14 @@
                     {
                       "id": "bb302dfdc945",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     },
                     {
                       "id": "2dc9e0d9644d",
                       "network": "facebook",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
@@ -4381,7 +7241,8 @@
                     {
                       "id": "fdbc25ec00ef",
                       "network": "instagram",
-                      "url": "https://example.com"
+                      "url": "https://example.com",
+                      "handle": ""
                     }
                   ],
                   "style": "icons"
