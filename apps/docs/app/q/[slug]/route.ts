@@ -16,7 +16,15 @@ import {
   resolveDestination,
 } from "@/lib/redirect/routing";
 import { getClientIp } from "@/lib/request-guards";
-import { createScanId, recordScan } from "@/lib/scans";
+import {
+  asksPreciseLocation,
+  canAskPreciseLocation,
+  isSecureRequest,
+  locationCookie,
+} from "@/lib/scan-location/server";
+import { locationStepPage } from "@/lib/scan-location/step-page";
+import { signLocationToken } from "@/lib/scan-location/token";
+import { createScanId, isRecordableVisit, recordScan } from "@/lib/scans";
 import { isValidSlug } from "@/lib/short-links";
 import { slugWhere } from "@/lib/slug-claims";
 import { statusPage } from "./status-page";
@@ -109,6 +117,18 @@ async function resolveShortLink(
   const scanId = createScanId();
   // resolveDestination sets `variant`; the scan is recorded after the response.
   const routingContext: RoutingContext = { scanId, now };
+  // Precise location (lib/scan-location/server.ts): only codes whose owner
+  // turned it on look any further (plan check, step page, cookie); every
+  // other scan goes on exactly as before.
+  const askLocation =
+    record &&
+    lifecycle.action === "allow" &&
+    asksPreciseLocation(code.pixels) &&
+    isRecordableVisit(request.headers) &&
+    (await canAskPreciseLocation(code).catch((error) => {
+      console.error("Precise location check failed:", error);
+      return false;
+    }));
   if (record) {
     const qrCodeId = code.id;
     // Runs after the response is sent, so scanning never waits on analytics.
@@ -118,6 +138,7 @@ async function resolveShortLink(
         now,
         variant: routingContext.variant,
         source: scanSourceOf(request.nextUrl),
+        locationAsked: askLocation,
       }).catch((error) => {
         console.error("Failed to record scan:", error);
       }),
@@ -142,7 +163,17 @@ async function resolveShortLink(
 
   if (code.kind === "page") {
     // Relative, so the visitor stays on the host they scanned (custom domains too).
-    return redirect(`/p/${encodeURIComponent(code.slug)}`, status);
+    const response = redirect(`/p/${encodeURIComponent(code.slug)}`, status);
+    if (askLocation) {
+      // The hosted page asks in-page and posts the answer with this token.
+      response.headers.append(
+        "Set-Cookie",
+        locationCookie(signLocationToken(scanId, code.id, now), code.slug, {
+          secure: isSecureRequest(request),
+        }),
+      );
+    }
+    return response;
   }
 
   let destination = code.destinationUrl;
@@ -151,6 +182,18 @@ async function resolveShortLink(
   } catch (error) {
     // Fail open: a broken rule must never stop a code from redirecting.
     console.error("Short link routing failed:", error);
+  }
+  if (askLocation) {
+    try {
+      // "Share your location?", then the destination (Skip goes straight there).
+      return locationStepPage({
+        token: signLocationToken(scanId, code.id, now),
+        next: destination,
+        slug: code.slug,
+      });
+    } catch (error) {
+      console.error("Location step failed:", error);
+    }
   }
   return redirect(destination, status);
 }

@@ -7,12 +7,14 @@ import {
   qrScan,
   type ScanDeviceType,
   type ScanSource,
+  type ScanLocationSource,
 } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
 import {
   and,
   asc,
+  avg,
   count,
   countDistinct,
   desc,
@@ -22,6 +24,7 @@ import {
   isNotNull,
   isNull,
   lt,
+  max,
   type SQL,
   sql,
 } from "drizzle-orm";
@@ -145,6 +148,7 @@ export async function recordScan(
     now = new Date(),
     variant = null,
     source = "qr",
+    locationAsked = false,
   }: {
     scanId?: string;
     now?: Date;
@@ -152,6 +156,11 @@ export async function recordScan(
     variant?: string | null;
     /** "nfc" when the visit came through the code's NFC link (lib/nfc/links.ts) */
     source?: ScanSource;
+    /**
+     * The scanner is being asked for their precise location (lib/scan-location):
+     * stored as location_source "ip" until they share it ("gps").
+     */
+    locationAsked?: boolean;
   } = {},
 ): Promise<string | null> {
   const { headers } = request;
@@ -178,6 +187,7 @@ export async function recordScan(
     language: preferredLanguage(headers.get("accept-language")),
     variant: variant?.slice(0, 64) ?? null,
     source,
+    ...(locationAsked && { locationSource: "ip" as const }),
   };
 
   const [, [counted]] = await db.batch([
@@ -632,6 +642,13 @@ export interface ScanEvent {
   referer: string | null;
   /** "nfc" for a tap on an NFC tag, "qr" for a QR scan */
   source: ScanSource;
+  /** Precise location the scanner shared (rounded to ~100 m), else null */
+  latitude: number | null;
+  longitude: number | null;
+  /** Meters, as the scanner's browser reported it */
+  locationAccuracyM: number | null;
+  /** "gps": shared; "ip": asked, not shared; null: the code didn't ask */
+  locationSource: ScanLocationSource | null;
 }
 
 /** Individual scans in a range, newest first (visitor hashes are not exposed). */
@@ -650,6 +667,10 @@ export function listScans(
       browser: qrScan.browser,
       referer: qrScan.referer,
       source: scanSourceColumn(),
+      latitude: qrScan.latitude,
+      longitude: qrScan.longitude,
+      locationAccuracyM: qrScan.locationAccuracyM,
+      locationSource: qrScan.locationSource,
     })
     .from(qrScan)
     .where(
@@ -673,12 +694,19 @@ const CSV_COLUMNS: (keyof ScanEvent)[] = [
   "browser",
   "referer",
   "source",
+  "latitude",
+  "longitude",
+  "locationAccuracyM",
+  "locationSource",
 ];
 
 function csvCell(value: unknown): string {
   let text = value instanceof Date ? value.toISOString() : String(value ?? "");
   // Spreadsheet formula injection: header-derived values must stay plain text.
-  if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
+  // Numbers (coordinates like -73.986) are never formulas.
+  if (typeof value !== "number" && /^[=+\-@\t\r]/.test(text)) {
+    text = `'${text}`;
+  }
   return /[",\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
@@ -693,6 +721,10 @@ export function scansToCsv(events: ScanEvent[]): string {
     "browser",
     "referrer",
     "source",
+    "latitude",
+    "longitude",
+    "location_accuracy_m",
+    "location_source",
   ].join(",");
   const lines = events.map((event) =>
     CSV_COLUMNS.map((column) => csvCell(event[column])).join(","),
@@ -720,4 +752,136 @@ export const nfcTapCount = () =>
 export function scanSourceCounts(total: number, nfc: number): ScanSourceCounts {
   const taps = Math.min(Math.max(0, nfc), total);
   return { qr: total - taps, nfc: taps };
+}
+
+// ─── Precise location (lib/scan-location) ────────────────────────────────────
+
+/** A visit recordScan would count: a browser, not a bot, preview or prefetch. */
+export function isRecordableVisit(headers: Headers): boolean {
+  const ua = headers.get("user-agent")?.slice(0, 512) ?? "";
+  return Boolean(ua) && !isbot(ua) && !isPrefetch(headers);
+}
+
+/** A scan event without the precise-location fields (plans without them). */
+export function withoutPreciseLocation(event: ScanEvent): ScanEvent {
+  return {
+    ...event,
+    latitude: null,
+    longitude: null,
+    locationAccuracyM: null,
+    locationSource: null,
+  };
+}
+
+export interface PreciseLocationPoint {
+  /** Rounded to 3 decimals (~100 m), as stored */
+  latitude: number;
+  longitude: number;
+  count: number;
+  /** Average accuracy the scanners' browsers reported, meters */
+  accuracyM: number | null;
+  lastScannedAt: Date;
+}
+
+export interface PreciseLocationSummary {
+  /** Scans whose scanner was asked (the code had the setting on) */
+  asked: number;
+  /** Of those, scans whose scanner shared their location */
+  shared: number;
+  /** Shared points, most scans first */
+  points: PreciseLocationPoint[];
+}
+
+const PRECISE_POINTS_LIMIT = 500;
+
+/** Shared GPS points of a code's scans since `from`, and how many were asked. */
+export async function getPreciseLocations(
+  qrCodeId: string,
+  from: Date,
+  { limit = PRECISE_POINTS_LIMIT }: { limit?: number } = {},
+): Promise<PreciseLocationSummary> {
+  const inRange = and(
+    eq(qrScan.qrCodeId, qrCodeId),
+    gte(qrScan.scannedAt, from),
+  );
+  const shared = and(
+    inRange,
+    eq(qrScan.locationSource, "gps"),
+    isNotNull(qrScan.latitude),
+    isNotNull(qrScan.longitude),
+  );
+  const [counts, points] = await db.batch([
+    db
+      .select({ source: qrScan.locationSource, count: count() })
+      .from(qrScan)
+      .where(and(inRange, isNotNull(qrScan.locationSource)))
+      .groupBy(qrScan.locationSource),
+    db
+      .select({
+        latitude: qrScan.latitude,
+        longitude: qrScan.longitude,
+        count: count(),
+        accuracyM: avg(qrScan.locationAccuracyM),
+        lastScannedAt: max(qrScan.scannedAt),
+      })
+      .from(qrScan)
+      .where(shared)
+      .groupBy(qrScan.latitude, qrScan.longitude)
+      .orderBy(desc(count()), asc(qrScan.latitude), asc(qrScan.longitude))
+      .limit(limit),
+  ]);
+  let asked = 0;
+  let sharedCount = 0;
+  for (const row of counts) {
+    asked += row.count;
+    if (row.source === "gps") sharedCount += row.count;
+  }
+  return {
+    asked,
+    shared: sharedCount,
+    points: points.map((row) => ({
+      latitude: Number(row.latitude),
+      longitude: Number(row.longitude),
+      count: row.count,
+      accuracyM:
+        row.accuracyM === null || row.accuracyM === undefined
+          ? null
+          : Math.round(Number(row.accuracyM)),
+      lastScannedAt: new Date(row.lastScannedAt ?? 0),
+    })),
+  };
+}
+
+/**
+ * Stores the location a scanner shared on their scan (rounded by the
+ * caller), once: a scan that already has a shared location keeps it. Also
+ * stores the A/B variant the location's routing served, when given. Returns
+ * whether a row was updated (false: unknown scan, not recorded, or already
+ * shared).
+ */
+export async function attachScanLocation(
+  scanId: string,
+  qrCodeId: string,
+  location: { latitude: number; longitude: number; accuracyM: number | null },
+  { variant }: { variant?: string | null } = {},
+): Promise<boolean> {
+  const rows = await db
+    .update(qrScan)
+    .set({
+      latitude: location.latitude,
+      longitude: location.longitude,
+      locationAccuracyM: location.accuracyM,
+      locationSource: "gps",
+      ...(variant !== undefined && { variant: variant?.slice(0, 64) ?? null }),
+    })
+    .where(
+      and(
+        eq(qrScan.id, scanId),
+        eq(qrScan.qrCodeId, qrCodeId),
+        // Only scans that were asked, and only once.
+        eq(qrScan.locationSource, "ip"),
+      ),
+    )
+    .returning({ id: qrScan.id });
+  return rows.length > 0;
 }

@@ -25,6 +25,10 @@ export const redirectCodeColumns = {
   routing: qrCode.routing,
   utm: qrCode.utm,
   pixels: qrCode.pixels,
+  // The owner's plan, read only when the code asks for precise location
+  // (lib/scan-location/server.ts canAskPreciseLocation).
+  userId: qrCode.userId,
+  organizationId: qrCode.organizationId,
 };
 
 export type RedirectCode = Pick<
