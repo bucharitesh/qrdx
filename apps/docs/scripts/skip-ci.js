@@ -7,8 +7,14 @@
 // production build was missed (2026-11-05). Previews were rarely opened
 // anyway, since review happens locally.
 //
-// To build a preview on purpose, put [preview] in the commit message.
-// [skip ci] still skips any build, production included.
+// Skipped builds still count as deployments, and on 2026-11-11 agent pushes
+// hit the daily cap again. So apps/docs/vercel.json (git.deploymentEnabled)
+// now stops Vercel from creating a deployment at all for any branch other
+// than main, staging and preview/**. This script is the second line: it
+// only sees those branches.
+//
+// To build a preview on purpose, push the work to a branch named
+// preview/<something>. [skip ci] still skips any build, production included.
 const { execSync } = require("node:child_process");
 
 if (require.main === module) {
@@ -39,15 +45,15 @@ function shouldSkip({ message, env, branch }) {
   if (branch === "staging") {
     return { skip: false, reason: "Building staging." };
   }
-  if (message.includes("[preview]")) {
+  if (branch?.startsWith("preview/")) {
     return {
       skip: false,
-      reason: "Building this preview: [preview] in the commit message.",
+      reason: `Building this preview: ${branch} is a preview/ branch.`,
     };
   }
   return {
     skip: true,
-    reason: `Skipping the preview for ${branch || "this branch"}: only main and staging build. Put [preview] in a commit message to build one.`,
+    reason: `Skipping the preview for ${branch || "this branch"}: only main, staging and preview/ branches build. Push to a preview/<name> branch to build one.`,
   };
 }
 
