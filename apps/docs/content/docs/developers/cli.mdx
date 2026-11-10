@@ -1,6 +1,6 @@
 ---
 title: CLI
-description: Generate styled QR codes as SVG, PNG or vector EPS from your terminal or CI with the @qrdx/cli command-line tool, one at a time or a whole CSV with qrdx batch.
+description: Generate styled QR codes as SVG, PNG, WebP or vector EPS from your terminal or CI with the @qrdx/cli command-line tool, one at a time or a whole CSV with qrdx batch.
 icon: Terminal
 ---
 
@@ -19,7 +19,7 @@ npm install -g @qrdx/cli
 qrdx generate "https://example.com" -o qr.png --size 1024
 ```
 
-It needs Node.js 22 or later. PNG output uses [sharp](https://sharp.pixelplumbing.com), an optional dependency npm installs where your platform supports it; SVG and EPS work without it. The `qrdx` npm package is the React library: the CLI is only in `@qrdx/cli`.
+It needs Node.js 22 or later. PNG and WebP output use [sharp](https://sharp.pixelplumbing.com), an optional dependency npm installs where your platform supports it; SVG and EPS work without it. The `qrdx` npm package is the React library: the CLI is only in `@qrdx/cli`.
 
 ## Output formats
 
@@ -29,6 +29,7 @@ The file extension picks the format, or use `--format` when the file name has no
 | --- | --- | --- |
 | `.svg` | Web pages, design tools, scaling without loss | Width in pixels (default 512) |
 | `.png` | Documents, slides, anywhere that needs an image | Width in pixels |
+| `.webp` | Websites: the PNG's pixels, lossless, in a smaller file | Width in pixels |
 | `.eps` | Print shops, Illustrator, InDesign | Width in points (72 per inch, so `144` is 2 inches) |
 
 EPS files are vector PostScript. PNG and JPEG logos are embedded as they are; other logo formats are converted with sharp when it's installed, and otherwise left out with a warning.
@@ -38,7 +39,7 @@ EPS files are vector PostScript. PNG and JPEG logos are embedded as they are; ot
 | Flag | Default | Description |
 | --- | --- | --- |
 | `-o`, `--output` | `qr.svg` | Output file |
-| `--format` | from the extension | `svg`, `png` or `eps` |
+| `--format` | from the extension | `svg`, `png`, `webp` or `eps` |
 | `--size` | `512` | Output size (see above) |
 | `-l`, `--level` | `Q` | Error correction: `L`, `M`, `Q` or `H` |
 | `--body` | `square` | Data module [pattern](/docs/features/patterns) |

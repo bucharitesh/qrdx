@@ -32,7 +32,7 @@ export default function QrTypesHubPage() {
         ]}
         title="QR code generators for every type of content"
         intro={[
-          `A QR code can do more than open a website. Depending on the text inside it, a phone can join a Wi-Fi network, save a contact, start a payment or open a chat. Pick one of the ${QR_TYPES.length} types below for a generator with the right fields, a live preview and PNG or SVG download.`,
+          `A QR code can do more than open a website. Depending on the text inside it, a phone can join a Wi-Fi network, save a contact, start a payment or open a chat. Pick one of the ${QR_TYPES.length} types below for a generator with the right fields, a live preview and PNG, WebP or SVG download.`,
           "By default the codes made on these pages are static: the content is encoded in the pattern itself, so they work offline, never expire and have no scan limit. Each page also documents the exact format it writes, so you know what a scanner will read.",
         ]}
       >
@@ -92,7 +92,7 @@ export default function QrTypesHubPage() {
             href="/tools/bulk"
             icon={TableDocument}
             title="Need hundreds of codes? Use the bulk generator"
-            description="Upload a CSV and download every code as PNG or SVG in one ZIP file, generated entirely in your browser."
+            description="Upload a CSV and download every code as PNG, WebP or SVG in one ZIP file, generated entirely in your browser."
           />
           <LinkCard
             href="/tools/print-size"

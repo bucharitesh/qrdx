@@ -42,7 +42,7 @@ tableRows:
     qrdx: true
     competitor: true
   - feature: Download formats
-    qrdx: "PNG, JPG, SVG, PDF, EPS"
+    qrdx: "PNG, JPG, WebP, SVG, PDF, EPS"
     competitor: "PNG, JPEG, WebP, SVG"
   - feature: Code shape
     qrdx: "Square, circle, heart or a custom silhouette"
@@ -62,7 +62,7 @@ featureHighlights:
   - title: More shape options
     description: "QRdx has {facts.bodyPatterns} body patterns, {facts.eyeShapes} corner-eye shapes and {facts.eyeCentres} eye-dot shapes, including diamond, pacman, gear and star styles, and the whole code can be a circle, a heart or a silhouette of your own. qr-code-styling has 6 dot types and 7 types each for corner squares and corner dots."
   - title: Templates and PDF export
-    description: "QRdx ships {facts.frames} call-to-action frames and exports PDF and EPS as well as PNG, JPG and SVG. qr-code-styling exports PNG, JPEG, WebP and SVG, and adds borders through extensions."
+    description: "QRdx ships {facts.frames} call-to-action frames and exports PDF and EPS as well as PNG, JPG, WebP and SVG. qr-code-styling exports PNG, JPEG, WebP and SVG, and adds borders through extensions."
   - title: Design visually, paste the code
     description: "Style a code in the QRdx playground and copy it as a ready-to-use QRCode component, so designers and developers work from the same settings."
 ---
@@ -80,13 +80,12 @@ QRdx suits React apps that want styled codes as declarative components, a wider 
 - **Framework freedom.** It works with Vue, Angular, vanilla JS and React alike. QRdx is React-first.
 - **Raster images on a server.** It renders PNG in Node.js through node-canvas. QRdx renders SVG, PDF and EPS on a server; for PNG there, use the [image API](/docs/developers/image-api), the `@qrdx/cli` command line tool or your own rasterizer.
 - **Maturity and community.** Its user base is orders of magnitude larger, and QRdx is still pre-1.0.
-- **WebP output.**
 
 ## Key differences
 
 - **API:** class plus `append()` and `update()` versus React components with props.
 - **Shapes:** QRdx offers more body and eye-dot styles, and the code itself can be a circle, a heart or a custom silhouette; qr-code-styling has a circle. Both rotate linear gradients, and QRdx adds angular gradients and image fills.
-- **Export:** QRdx adds PDF; qr-code-styling adds WebP.
+- **Export:** QRdx adds PDF and EPS; both do WebP.
 
 ## Switching from qr-code-styling
 
