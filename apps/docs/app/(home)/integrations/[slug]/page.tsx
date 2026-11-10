@@ -28,7 +28,7 @@ import { IntegrationCard } from "@/components/sections/integrations/integration-
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import { resolveAction } from "@/components/sections/integrations/resolve-action";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
-import { getFeatures } from "@/lib/feature-availability";
+import { getFeatures, isPathAvailable } from "@/lib/feature-availability";
 import {
   catalogParagraphs,
   configuredEntry,
@@ -154,6 +154,9 @@ export default async function IntegrationDetailPage({
     isVisible(availability, item.slug),
   );
   const needsSetup = setupNeeded(availability, entry.slug);
+  // The entry's own landing page (the chat bots'), where it's shown here.
+  const page =
+    entry.page && isPathAvailable(entry.page.href) ? entry.page : null;
   const primary = resolveAction(entry.primaryAction, ORIGIN);
   const secondary = entry.secondaryAction
     ? resolveAction(entry.secondaryAction, ORIGIN)
@@ -231,6 +234,15 @@ export default async function IntegrationDetailPage({
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
+            {page && (
+              <Link
+                href={page.href}
+                className="inline-flex w-fit items-center gap-1 text-sm font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              >
+                {page.label}
+                <ArrowRight aria-hidden className="size-4" />
+              </Link>
+            )}
           </Section>
 
           <Section id="setup" title="Set it up">

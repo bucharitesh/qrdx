@@ -160,6 +160,12 @@ export interface IntegrationCatalogEntry {
   publisher?: CatalogPublisher;
   website?: string;
   docs?: string;
+  /**
+   * QRdx's own page about it, like "/slack" for the QRdx bot. The detail
+   * page links there only where that page is shown: a page that needs a
+   * feature (apps/docs lib/feature-availability-rules `paths`) hides with it.
+   */
+  page?: { href: string; label: string };
   primaryAction: CatalogAction;
   secondaryAction?: CatalogAction;
   steps: CatalogStep[];

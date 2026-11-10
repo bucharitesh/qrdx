@@ -19,6 +19,7 @@ import {
 } from "qrdx/types";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { PLUGIN_CODES } from "@/app/(home)/plugins/mock-codes";
+import { CHAT_MOCK_CODE } from "@/components/sections/chat-bots/mock-code";
 import { HOME_CODES } from "@/components/sections/home/demos/codes";
 import {
   SHOWCASE_PLACEMENTS,
@@ -139,5 +140,9 @@ describe("marketing codes scan", () => {
   it.each(pluginCodes)("plugins: %s", async (name, props) => {
     expect(getStylePairRisk(props), name).toBeNull();
     await expectScans(name, props);
+  });
+
+  it("chat bots: the code the bot mockups draw", async () => {
+    await expectScans("chat bots", CHAT_MOCK_CODE);
   });
 });
