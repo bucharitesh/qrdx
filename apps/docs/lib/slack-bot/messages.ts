@@ -5,6 +5,16 @@ import {
   chatQrCaption,
   chatQrLinks,
 } from "@/lib/chat-bots/qr-reply";
+import {
+  CHAT_FLAGS,
+  CHAT_LOOKS,
+  type ChatDesign,
+  chatDesignLinks,
+  PICKER_LABELS,
+  PICKERS,
+  type Picker,
+  pickerOptions,
+} from "@/lib/chat-bots/styles";
 import { baseUrl } from "@/lib/metadata";
 import { escapeSlack } from "./text";
 
@@ -47,6 +57,12 @@ export function helpMessage(): SlackMessage {
     "`/qr` and a link or any text: a QR code image in this channel.",
     "Mention the bot with a link or text for a code in the thread, or send it a direct message.",
     "On any message, pick *Make a QR code* from its More actions menu for a code of its first link, or of its text.",
+    "",
+    "*Style it*",
+    "Pick a look, color, frame or logo from the menus under your code. Or add options after the link or text:",
+    '`/qr qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"`',
+    `Looks: ${CHAT_LOOKS.map((look) => look.id).join(", ")}. Options: ${CHAT_FLAGS.map((flag) => `--${flag}`).join(", ")}.`,
+    "Every styled code is checked to make sure phones can scan it.",
     "",
     "*Tracked codes*",
     "`/qr link`: link your QRdx account and pick the workspace your tracked codes go to.",
@@ -92,6 +108,43 @@ export function noteWithButton(
   };
 }
 
+/** The block_id of a code's style menus, followed by who made the code. */
+export const STYLE_BLOCK_PREFIX = "qrdx_style:";
+
+/** The action_id of each style menu. */
+export const styleActionId = (picker: Picker) => `qrdx_${picker}`;
+
+/**
+ * Look, Color, Frame and Logo menus. Only `maker`, the Slack person who made
+ * the code, can use them (lib/slack-bot/restyle.ts); the block carries their
+ * id, since QRdx keeps no state for a code.
+ */
+function styleMenus(maker: string) {
+  return {
+    type: "actions",
+    block_id: `${STYLE_BLOCK_PREFIX}${maker}`,
+    elements: PICKERS.map((picker) => ({
+      type: "static_select",
+      action_id: styleActionId(picker),
+      placeholder: plain(PICKER_LABELS[picker]),
+      options: pickerOptions(picker).map((option) => ({
+        text: plain(option.label),
+        value: option.id,
+      })),
+    })),
+  };
+}
+
+/** The message without its style menus (for where they can't work). */
+export function withoutStyleMenus(message: SlackMessage): SlackMessage {
+  return {
+    ...message,
+    blocks: message.blocks?.filter(
+      (block) => !String(block.block_id ?? "").startsWith(STYLE_BLOCK_PREFIX),
+    ),
+  };
+}
+
 /** True when Slack accepts every URL the message carries. */
 function fitsSlack(links: ChatQrLinks): boolean {
   return [links.png, links.svg, links.editor].every(
@@ -99,16 +152,27 @@ function fitsSlack(links: ChatQrLinks): boolean {
   );
 }
 
+export interface QrMessageOptions {
+  /** The design (lib/chat-bots/styles.ts), already scan-checked; null: plain */
+  design?: ChatDesign | null;
+  /** The Slack person who made it: the style menus are theirs to use */
+  maker?: string;
+  /** A line about the scan check (STYLE_NOTES) */
+  note?: string | null;
+}
+
 /**
- * The QR code for `data`: image, caption and buttons. Null when its links
- * are longer than Slack allows (long text full of characters that need
- * percent-encoding); say so with tooLongForSlack().
+ * The QR code for `data`: image, caption, buttons and, with a `maker`, the
+ * style menus. Null when its links are longer than Slack allows (long text
+ * full of characters that need percent-encoding); say so with
+ * tooLongForSlack().
  */
 export function qrMessage(
   data: string,
   origin: string | URL = baseUrl,
+  { design = null, maker, note }: QrMessageOptions = {},
 ): SlackMessage | null {
-  const links = chatQrLinks(data, origin);
+  const links = chatDesignLinks(data, design, origin);
   if (!fitsSlack(links)) return null;
   const caption = chatQrCaption(data);
   return {
@@ -122,7 +186,10 @@ export function qrMessage(
       },
       {
         type: "context",
-        elements: [{ ...mrkdwn(escapeSlack(caption)), verbatim: true }],
+        elements: [
+          { ...mrkdwn(escapeSlack(caption)), verbatim: true },
+          ...(note ? [{ ...mrkdwn(escapeSlack(note)), verbatim: true }] : []),
+        ],
       },
       {
         type: "actions",
@@ -132,6 +199,7 @@ export function qrMessage(
           linkButton("Open in editor", links.editor, "qrdx_editor"),
         ],
       },
+      ...(maker ? [styleMenus(maker)] : []),
     ],
   };
 }

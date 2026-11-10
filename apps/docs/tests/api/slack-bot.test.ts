@@ -128,6 +128,8 @@ vi.mock("@/lib/account/confirmation-server", () => ({
 }));
 
 const { signSlackRequest } = await import("@/lib/slack-bot/signature");
+const { decodeStyleParam } = await import("@/lib/playground-style");
+const { BUSY_TEXT } = await import("@/lib/slack-bot/config");
 const { signLinkToken, verifyLinkToken } = await import(
   "@/lib/slack-bot/link-token"
 );
@@ -156,6 +158,9 @@ const callback = await import(
 const { linkSlackAccount } = await import(
   "@/app/integrations/slack/link/actions"
 );
+
+/** The real fetch, for the renderer's own files. */
+const realFetch = globalThis.fetch;
 
 const SIGNING_SECRET = "test-slack-signing-secret";
 const AUTH_SECRET = "test-secret-at-least-32-characters-long";
@@ -309,6 +314,8 @@ beforeEach(() => {
     "fetch",
     async (input: string | URL | Request, init?: RequestInit) => {
       const url = String(input instanceof Request ? input.url : input);
+      // The renderer loads its own files (the scan check renders codes).
+      if (!/^https?:/.test(url)) return realFetch(input, init);
       const raw = typeof init?.body === "string" ? init.body : "";
       let body: unknown = raw;
       try {
@@ -1901,6 +1908,255 @@ describe("workspace admins", () => {
     expect(fakeDb.rows("slackUserLink")).toHaveLength(3);
     await flush();
     expect(fakeDb.rows("workspaceAuditLog")).toEqual([]);
+  });
+});
+
+describe("styles", () => {
+  const STYLED =
+    'qrdx.dev --look modern --frame banner-bottom --frame-text "Scan me"';
+
+  /** The image link of a message, parsed. */
+  const imageOf = (message: Json) => new URL(message.blocks[0].image_url);
+  const styleOf = (message: Json) =>
+    decodeStyleParam(imageOf(message).searchParams.get("style"));
+  const menusOf = (message: Json) =>
+    (message.blocks as Json[]).find((block) =>
+      String(block.block_id).startsWith("qrdx_style:"),
+    );
+
+  /** A pick in a code's style menus, as Slack sends it. */
+  const pick = (message: Json, picker: string, value: string, user = ANA) => ({
+    type: "block_actions",
+    team: { id: TEAM },
+    user: { id: user },
+    channel: { id: "C0GENERAL" },
+    message: { ts: "1700000000.000900", blocks: message.blocks },
+    response_url: "https://hooks.slack.com/actions/T0ACME/3/fake",
+    actions: [
+      {
+        type: "static_select",
+        action_id: `qrdx_${picker}`,
+        block_id: menusOf(message)?.block_id,
+        selected_option: { text: { type: "plain_text", text: value }, value },
+      },
+    ],
+  });
+
+  /** A plain code from /qr, as the channel shows it. */
+  async function plainCode(text = "https://qrdx.dev") {
+    return (await (await commands.POST(slash(text))).json()) as Json;
+  }
+
+  it("puts Look, Color, Frame and Logo menus under a code, for the person who made it", async () => {
+    const reply = await plainCode();
+    expect(imageOf(reply).searchParams.has("style")).toBe(false);
+    const menus = menusOf(reply);
+    expect(menus?.block_id).toBe(`qrdx_style:${ANA}`);
+    expect(
+      menus?.elements.map((menu: Json) => [
+        menu.type,
+        menu.action_id,
+        menu.placeholder.text,
+      ]),
+    ).toEqual([
+      ["static_select", "qrdx_look", "Look"],
+      ["static_select", "qrdx_color", "Color"],
+      ["static_select", "qrdx_frame", "Frame"],
+      ["static_select", "qrdx_logo", "Logo"],
+    ]);
+    // The buttons stay first, under the caption.
+    expect(reply.blocks[2].elements[0].text.text).toBe("Download PNG");
+  });
+
+  it("/qr with options answers at once, then posts the scan-checked code in the channel", async () => {
+    const response = await commands.POST(slash(STYLED));
+    expect(response.status).toBe(200);
+    expect(await response.text()).toBe("");
+    await flush();
+    const [post] = responses();
+    expect(post?.url).toBe(RESPONSE_URL);
+    expect(post?.body.response_type).toBe("in_channel");
+    expect(imageOf(post?.body).searchParams.get("data")).toBe(
+      "https://qrdx.dev",
+    );
+    expect(styleOf(post?.body)).toMatchObject({
+      preset: "modern",
+      styles: { frame: { style: "banner-bottom", text: "Scan me" } },
+    });
+    // Open in editor carries the whole design.
+    const editor = new URL(post?.body.blocks[2].elements[2].url);
+    expect(editor.searchParams.get("style")).toBe(
+      imageOf(post?.body).searchParams.get("style"),
+    );
+    expect(menusOf(post?.body)?.block_id).toBe(`qrdx_style:${ANA}`);
+  });
+
+  it("explains an option it doesn't know, privately, with the valid ones", async () => {
+    const reply = (await (
+      await commands.POST(slash("qrdx.dev --look neon"))
+    ).json()) as Json;
+    expect(reply.response_type).toBe("ephemeral");
+    expect(reply.text).toMatch(/--look takes one of: plain, classic, modern/);
+    await flush();
+    expect(state.fetches).toEqual([]);
+  });
+
+  it("styles a code in a direct message too", async () => {
+    seedInstall();
+    await events.POST(
+      eventRequest(
+        callbackEvent({
+          type: "message",
+          channel_type: "im",
+          user: ANA,
+          text: "Table 4 --frame polaroid --logo wifi",
+          channel: "D0ANA",
+          ts: "1700000000.000200",
+        }),
+      ),
+    );
+    await flush();
+    const [post] = sentTo("chat.postMessage");
+    const image = new URL(post?.body.blocks[0].image_url);
+    expect(image.searchParams.get("data")).toBe("Table 4");
+    expect(image.searchParams.get("logoIcon")).toBe("wifi");
+    expect(
+      decodeStyleParam(image.searchParams.get("style"))?.styles.frame,
+    ).toMatchObject({ style: "polaroid" });
+  });
+
+  it("ignores Slack's echo of a styled /qr, which the command already answered", async () => {
+    seedInstall();
+    for (const text of [
+      "/qr qrdx.dev --look royal",
+      '/QR https://qrdx.dev —frame banner-bottom --frame-text "Hi"',
+    ]) {
+      await events.POST(
+        eventRequest(
+          callbackEvent({
+            type: "message",
+            channel_type: "im",
+            user: ANA,
+            text,
+            channel: "D0ANA",
+            ts: "1700000000.000300",
+          }),
+        ),
+      );
+    }
+    await flush();
+    expect(sentTo("chat.postMessage")).toEqual([]);
+    expect(sentTo("chat.postEphemeral")).toEqual([]);
+  });
+
+  it("a pick restyles the code in place, for the person who made it", async () => {
+    const reply = await plainCode("Fish &amp; chips");
+    const response = await interactions.POST(
+      interaction(pick(reply, "look", "royal")),
+    );
+    expect(response.status).toBe(200);
+    await flush();
+    const [post] = responses();
+    expect(post?.url).toBe("https://hooks.slack.com/actions/T0ACME/3/fake");
+    expect(post?.body.replace_original).toBe(true);
+    expect(imageOf(post?.body).searchParams.get("data")).toBe("Fish & chips");
+    expect(styleOf(post?.body)?.preset).toBe("royal");
+    // The menus stay, still theirs; text never goes in the editor link.
+    expect(menusOf(post?.body)?.block_id).toBe(`qrdx_style:${ANA}`);
+    const editor = post?.body.blocks[2].elements[2];
+    expect(editor.action_id).toBe("qrdx_editor");
+    expect(new URL(editor.url).searchParams.has("style")).toBe(true);
+    expect(editor.url).not.toContain("chips");
+
+    // A second pick builds on the first: royal with a frame.
+    state.fetches = [];
+    await interactions.POST(
+      interaction(pick(post?.body, "frame", "banner-top")),
+    );
+    await flush();
+    const [again] = responses();
+    expect(styleOf(again?.body)).toMatchObject({
+      preset: "royal",
+      styles: { frame: { style: "banner-top" } },
+    });
+  });
+
+  it("someone else's pick gets a note only they see, and changes nothing", async () => {
+    const reply = await plainCode();
+    await interactions.POST(interaction(pick(reply, "color", "red", EVE)));
+    await flush();
+    const [post] = responses();
+    expect(post?.body).toMatchObject({
+      response_type: "ephemeral",
+      replace_original: false,
+      text: "Only the person who made this code can restyle it. Make your own with /qr.",
+    });
+    expect(allText(post?.body)).not.toContain("image_url");
+  });
+
+  it("picks count toward the same limits as /qr", async () => {
+    const reply = await plainCode();
+    state.limitedPrefixes = ["qrdx:slack-bot:user"];
+    await interactions.POST(interaction(pick(reply, "look", "retro")));
+    await flush();
+    const [slow] = responses();
+    expect(slow?.body.response_type).toBe("ephemeral");
+    expect(slow?.body.text).toMatch(/a little fast/);
+    expect(slow?.body.replace_original).toBe(false);
+
+    state.fetches = [];
+    state.limitedPrefixes = ["qrdx:slack-bot:all"];
+    await interactions.POST(interaction(pick(reply, "look", "retro")));
+    await flush();
+    expect(responses()[0]?.body.text).toBe(BUSY_TEXT);
+  });
+
+  it("can't restyle a code whose links it didn't make, or an option it doesn't offer", async () => {
+    const reply = await plainCode();
+    const tampered = JSON.parse(
+      JSON.stringify(reply).replaceAll("api.qrdx.dev", "evil.example"),
+    );
+    await interactions.POST(interaction(pick(tampered, "look", "retro")));
+    await interactions.POST(interaction(pick(reply, "look", "neon")));
+    await flush();
+    for (const post of responses()) {
+      expect(post.body.response_type).toBe("ephemeral");
+      expect(post.body.text).toMatch(/can't be restyled/);
+    }
+    expect(responses()).toHaveLength(2);
+  });
+
+  it("the shortcut's private code has no menus, which couldn't read it back", async () => {
+    seedInstall();
+    state.postResult = { ok: false, error: "not_in_channel" };
+    await interactions.POST(
+      interaction({
+        type: "message_action",
+        callback_id: "qrdx_make_qr",
+        team: { id: TEAM },
+        user: { id: ANA },
+        channel: { id: "C0GENERAL" },
+        message: { text: "Table 4 --look royal", ts: "1.2" },
+        response_url: "https://hooks.slack.com/actions/T0ACME/2/fake",
+      }),
+    );
+    await flush();
+    const [post] = sentTo("chat.postMessage");
+    // Someone else's message is content as it is: no options read from it.
+    expect(
+      new URL(post?.body.blocks[0].image_url).searchParams.get("data"),
+    ).toBe("Table 4 --look royal");
+    expect(menusOf(post?.body)?.block_id).toBe(`qrdx_style:${ANA}`);
+    const [fallback] = responses();
+    expect(fallback?.body.response_type).toBe("ephemeral");
+    expect(menusOf(fallback?.body)).toBeUndefined();
+  });
+
+  it("the help lists the options", async () => {
+    const reply = (await (await commands.POST(slash("help"))).json()) as Json;
+    for (const flag of ["--look", "--fg", "--frame-text", "--logo"]) {
+      expect(allText(reply)).toContain(flag);
+    }
   });
 });
 

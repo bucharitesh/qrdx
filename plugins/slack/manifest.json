@@ -7,7 +7,7 @@
     "name": "QRdx",
     "description": "Make QR codes in Slack, and get QRdx scan and form alerts in a channel.",
     "background_color": "#0a0a0a",
-    "long_description": "Type /qr with a link or any text and QRdx posts a QR code image in the channel, with buttons to download it as PNG or SVG or open it in the QRdx editor. You can also mention the bot, send it a direct message, or pick Make a QR code from a message's menu. People who link their QRdx account with /qr link can make tracked (dynamic) codes with /qr track. The same app posts the QRdx alerts you choose (scan milestones, form responses, code changes) to a channel."
+    "long_description": "Type /qr with a link or any text and QRdx posts a QR code image in the channel, with buttons to download it as PNG or SVG or open it in the QRdx editor. Menus under the code change its look, color, frame and logo, and options typed after the content (/qr qrdx.dev --look modern) do the same; every styled code is checked so phones can scan it. You can also mention the bot, send it a direct message, or pick Make a QR code from a message's menu. People who link their QRdx account with /qr link can make tracked (dynamic) codes with /qr track. The same app posts the QRdx alerts you choose (scan milestones, form responses, code changes) to a channel."
   },
   "features": {
     "app_home": {
@@ -24,7 +24,7 @@
         "command": "/qr",
         "url": "https://qrdx.dev/api/integrations/slack/commands",
         "description": "Make a QR code from a link or any text",
-        "usage_hint": "[link or text] | track [link] | link | unlink | help",
+        "usage_hint": "[link or text] [--look modern --fg 0051ff --frame banner-bottom] | track [link] | link | unlink | help",
         "should_escape": true
       }
     ],

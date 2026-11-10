@@ -1,4 +1,5 @@
 import {
+  Brush2,
   CommandSquare,
   EyeSlash,
   Mouse,
@@ -38,6 +39,13 @@ const commands: BotCommand[] = [
       "The bot replies with the code, its content as the title, and Download PNG (1024 px), Download SVG and Open in editor.",
   },
   {
+    icon: Brush2,
+    title: "Style a code",
+    usage: "/qr content:<link or text> look:Modern frame:Banner",
+    description:
+      "/qr also takes a look, a color and a frame, and menus under every code change its look, color, frame and logo in place for the person who made it. Each styled code passes the editor's scan check first.",
+  },
+  {
     icon: EyeSlash,
     title: "Private reply",
     usage: "/qr content:<link or text> private:True",
@@ -67,8 +75,8 @@ const commands: BotCommand[] = [
 
 const privacyParagraphs = [
   "QRdx doesn't save the codes you make, and the bot can't read your chats. Discord sends QRdx what you type after /qr, or the one message you picked for Make QR code.",
-  "The content goes into the image link, and Discord loads the picture from the QRdx image API. Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets.",
-  "To stop one person flooding a channel, QRdx counts the codes each Discord account makes in a minute. It also counts the codes everyone makes together, and when too many arrive in one minute, the bot says it's busy. Neither count holds any content, and both expire after that minute.",
+  "The content and the style you picked go into the image link, and Discord loads the picture from the QRdx image API. Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets.",
+  "To stop one person flooding a channel, QRdx counts the codes each Discord account makes or restyles in a minute. It also counts the codes everyone makes together, and when too many arrive in one minute, the bot says it's busy. Neither count holds any content, and both expire after that minute.",
 ];
 
 const faqs = [
@@ -93,9 +101,14 @@ const faqs = [
       "Very long content may not fit in one QR code, or may be too long for Discord to show as an image. The bot says so in a message only you can see.",
   },
   {
+    question: "Can I change how the code looks?",
+    answer:
+      "Yes. Pick a look, color or frame in /qr, or use the Look, Color, Frame and Logo menus under the code. Only the person who made it can restyle it. QRdx checks every styled code with the editor's scan score and adjusts it when phones would struggle to read it, so Discord shows that QRdx is thinking for a moment first.",
+  },
+  {
     question: "What does Open in editor do?",
     answer:
-      "It opens the QRdx editor in your browser, where you can change the design and download the code again. A link opens there ready to edit. Text doesn't travel in the editor link, so paste it there yourself.",
+      "It opens the QRdx editor in your browser with the code's design, where you can change it further and download the code again. A link opens there ready to edit. Text doesn't travel in the editor link, so paste it there yourself.",
   },
   {
     question: "How do I remove the bot?",
@@ -112,7 +125,7 @@ export default function DiscordBotPage() {
       bot="discord"
       title="Make QR codes in Discord"
       intro={[
-        "Type /qr with a link or some text and the QRdx bot replies with the QR code and buttons to download it as a PNG or SVG. Any message can become a code too, from its Apps menu.",
+        "Type /qr with a link or some text and the QRdx bot replies with the QR code, buttons to download it as a PNG or SVG, and menus to change its look, color, frame and logo. Any message can become a code too, from its Apps menu.",
         "Add the bot to a server, or to your own account to use it in DMs and group DMs as well.",
       ]}
       action={{
@@ -139,7 +152,10 @@ export default function DiscordBotPage() {
           },
         ],
       }}
-      commands={{ title: "A command and a message menu", items: commands }}
+      commands={{
+        title: "A command, its menus and a message menu",
+        items: commands,
+      }}
       privacy={{ title: "What the bot sees", paragraphs: privacyParagraphs }}
       faqs={faqs}
     />

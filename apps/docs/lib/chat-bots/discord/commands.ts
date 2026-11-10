@@ -18,6 +18,8 @@ export interface DiscordCommandOption {
   required?: boolean;
   min_length?: number;
   max_length?: number;
+  /** The only values Discord lets people pick (lib/chat-bots/styles.ts) */
+  choices?: { name: string; value: string }[];
 }
 
 export interface DiscordCommand {
@@ -39,21 +41,26 @@ function commandOfType(type: number): DiscordCommand {
   return command;
 }
 
-function optionOfType(command: DiscordCommand, type: number): string {
-  const option = command.options?.find((item) => item.type === type);
-  if (!option) {
-    throw new Error(`/${command.name} has no option of type ${type}`);
+function option(command: DiscordCommand, name: string, type: number): string {
+  const found = command.options?.find((item) => item.name === name);
+  if (found?.type !== type) {
+    throw new Error(`/${command.name} has no option ${name} of type ${type}`);
   }
-  return option.name;
+  return found.name;
 }
 
 const qr = commandOfType(COMMAND_TYPE.chatInput);
 
-/** `/qr content:<link or text> private:<true|false>` */
+/**
+ * `/qr content:<link or text> [look:…] [color:…] [frame:…] [private:<true|false>]`
+ */
 export const QR_COMMAND = {
   name: qr.name,
-  content: optionOfType(qr, OPTION_TYPE.string),
-  private: optionOfType(qr, OPTION_TYPE.boolean),
+  content: option(qr, "content", OPTION_TYPE.string),
+  look: option(qr, "look", OPTION_TYPE.string),
+  color: option(qr, "color", OPTION_TYPE.string),
+  frame: option(qr, "frame", OPTION_TYPE.string),
+  private: option(qr, "private", OPTION_TYPE.boolean),
 } as const;
 
 /** The message command: Apps → Make QR code. */

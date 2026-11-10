@@ -1,6 +1,7 @@
 #!/usr/bin/env node
-// Registers the QRdx Discord app's commands (/qr and "Make QR code") as its
-// global commands. The definitions are read from
+// Registers the QRdx Discord app's commands (/qr with its content, look,
+// color, frame and private options, and "Make QR code") as its global
+// commands. The definitions are read from
 // apps/docs/lib/chat-bots/discord/commands.json, the same file the app
 // answers from, and replace every global command the app has.
 //
@@ -98,6 +99,24 @@ export async function registerCommands({
   return JSON.parse(text);
 }
 
+/**
+ * One saved command as a line for the terminal: its name and, for /qr, its
+ * options with how many choices each offers.
+ *
+ * @param {{ type: number; name: string; id?: string; options?: { name: string; choices?: unknown[] }[] }} command
+ */
+export function describeCommand(command) {
+  const label = command.type === 1 ? `/${command.name}` : command.name;
+  const options = (command.options ?? []).map((option) =>
+    option.choices?.length
+      ? `${option.name} (${option.choices.length} choices)`
+      : option.name
+  );
+  return `${label}${command.id ? ` (${command.id})` : ""}${
+    options.length > 0 ? `: ${options.join(", ")}` : ""
+  }`;
+}
+
 const runDirectly =
   process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
 
@@ -105,8 +124,7 @@ if (runDirectly) {
   try {
     const saved = await registerCommands();
     for (const command of saved) {
-      const label = command.type === 1 ? `/${command.name}` : command.name;
-      console.log(`Registered ${label} (${command.id})`);
+      console.log(`Registered ${describeCommand(command)}`);
     }
     console.log(
       "Done. If a command doesn't show up in Discord yet, reload Discord (Ctrl+R or Cmd+R)."
