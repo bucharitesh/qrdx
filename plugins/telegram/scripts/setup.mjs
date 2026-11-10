@@ -87,6 +87,14 @@ export function readSettings(env, argv) {
   return { token, secret, username, appUrl };
 }
 
+/** The Bot API methods setup calls, in order (setupCalls follows it). */
+export const SETUP_METHODS = [
+  "setWebhook",
+  "setMyCommands",
+  "setMyDescription",
+  "setMyShortDescription",
+];
+
 /** The Bot API calls that configure the bot, in order. */
 export function setupCalls({ secret, appUrl }) {
   return [
@@ -152,9 +160,12 @@ export async function run({ env, argv, fetch: fetchImpl, log }) {
     return;
   }
 
-  for (const { method, params } of setupCalls(settings)) {
+  // Progress names come from SETUP_METHODS, not the call objects: those
+  // carry the webhook secret, and nothing that travels with it is printed.
+  const calls = setupCalls(settings);
+  for (const [index, { method, params }] of calls.entries()) {
     await call(method, params);
-    log(`ok  ${method}`);
+    log(`ok  ${SETUP_METHODS[index]}`);
   }
   const info = await call("getWebhookInfo");
   log(`\nWebhook: ${info.url}`);
