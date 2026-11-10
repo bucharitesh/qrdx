@@ -1,6 +1,7 @@
 import { customDomain, database as db } from "@repo/database";
 import { eq } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
+import { GS1_PATH } from "@/lib/gs1/digital-link";
 import { baseUrl } from "@/lib/metadata";
 import { NFC_PARAM } from "@/lib/nfc/links";
 import { isValidSlug } from "@/lib/short-links";
@@ -124,8 +125,9 @@ a{display:inline-block;margin-top:28px;color:var(--fg);font-size:14px;font-weigh
  * Verified domains: `/<slug>` → `/q/<slug>` and `/p/<slug>` → `/p/<slug>`
  * (both tagged with the domain id), `/api/forms/<id>`, `/api/events`,
  * `/api/scan-location`, `/api/vcard/<slug>` and `/api/calendar/<slug>` pass
- * through (tagged too),
- * `/` → a small page, everything else 404.
+ * through (tagged too), GS1 Digital Links `/01/<GTIN>/...` →
+ * `/gs1/01/<GTIN>/...` (tagged; the product page with that GTIN on this
+ * domain), `/` → a small page, everything else 404.
  * Pending domains serve nothing.
  */
 export async function routeCustomDomain(
@@ -164,6 +166,15 @@ export async function routeCustomDomain(
     const headers = new Headers(request.headers);
     headers.set(CUSTOM_DOMAIN_HEADER, host.id);
     return NextResponse.next({ request: { headers } });
+  }
+
+  // GS1 Digital Link: a product page's GTIN, resolved for this domain only.
+  if (GS1_PATH.test(pathname)) {
+    const headers = new Headers(request.headers);
+    headers.set(CUSTOM_DOMAIN_HEADER, host.id);
+    return NextResponse.rewrite(new URL(`/gs1${pathname}`, request.url), {
+      request: { headers },
+    });
   }
 
   // `/<slug>` is the short link; `/p/<slug>` the hosted page it redirects to.
