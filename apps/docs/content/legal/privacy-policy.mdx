@@ -114,10 +114,10 @@ For OAuth apps and access tokens we store a hash of each token, its scopes and i
 
 ### Affiliate program
 
-- **If you apply.** What you write in the application (a website or profile and how you'd share QRdx), the date you accepted the [Affiliate Terms](/legal/affiliate-terms), your referral code, and our decision with a staff note.
-- **If you're approved.** The PayPal email address you add for payouts (we only keep one for approved affiliates), how many times your link was opened (a count, nothing about the visitors), the commissions you earn (the amount and currency of each payment they're based on, its Polar order ID and the dates), and the payouts we send (amount, the PayPal address and PayPal's transaction ID).
-- **If you signed up through an affiliate's link.** We record which affiliate referred your account, whether the code came with your sign-up or from the `qrdx_ref` cookie, and the date of your first payment. The affiliate sees how many people they referred and the date and amount of each payment that earns them a commission, never your name, email address or anything else about your account.
-- **The referral cookie.** If you allow **Analytics** in Cookie settings, the code from an affiliate's link is kept in the `qrdx_ref` cookie for {facts.affiliateCookieDays} days, so a sign-up on a later visit still counts. Without that choice nothing is stored on your device: the code only goes along with a sign-up made during the same visit, without reloading the page.
+- **If you apply.** What you write in the application (a website or profile and how you'd share QRdx), the date and version of the [Affiliate Terms](/legal/affiliate-terms) you accepted, your referral code (and your first one, if you chose your own), and our decision with a staff note.
+- **If you're approved.** The PayPal email address you add for payouts and when it last changed (we only keep one for approved affiliates), how many times your link was opened (a count, nothing about the visitors), the commissions you earn (the amount and currency of each payment they're based on, its Polar order ID and the dates), and the payouts we send (amount, the commissions' currencies, the exchange rates used, the PayPal address and PayPal's transaction ID).
+- **If you signed up through an affiliate's link.** We record which affiliate referred your account and the date of your first payment. The affiliate sees how many people they referred and the date and amount of each payment that earns them a commission, never your name, email address or anything else about your account.
+- **Nothing stored on your device.** The code from an affiliate's link only goes along with a sign-up made during the same visit, without reloading the page. It's kept in the page's memory and the address bar, never in a cookie or browser storage.
 
 ### Emails
 
@@ -143,7 +143,6 @@ For people in the EEA, the UK and Switzerland, these are our legal bases under t
 | Workspace audit log (Business) | Who made each change in a workspace, what changed, when, and the request's IP address and device | Contract, and legitimate interests: letting workspace owners and admins keep their workspace secure |
 | Affiliate program: reviewing applications, working out commissions and paying them | An affiliate's application, referral code, link visit count, PayPal email, commissions and payouts | Contract |
 | Affiliate program: crediting the affiliate who referred an account | Which affiliate referred the account and how, and the date and amount of its payments that earn a commission | Legitimate interests: paying affiliates for the customers they bring |
-| Remembering an affiliate's link across visits | The `qrdx_ref` cookie | Consent |
 | Scan, page and form data for code owners | End User data | Processed on the owner's instructions under the [DPA](/legal/dpa); the owner needs their own legal basis |
 | Transactional email, alerts and digests you choose | Email address, event details | Contract |
 | Prices in your currency | Country from the IP-country header | Legitimate interests |
@@ -183,8 +182,9 @@ We don't sell personal data, and we don't share it for cross-context behavioural
 | AI usage records | Until you delete your account |
 | Our billing records | Until you delete your account. Polar keeps invoices and tax records for as long as the law requires. |
 | Abuse reports and the staff audit log | As long as needed to handle the report, keep the platform safe and deal with legal claims |
-| Affiliate records: application, referral code, PayPal email, commissions and payouts | Until the affiliate's account is deleted, which deletes them with it, including commissions not yet paid |
-| Which affiliate referred an account | Until that account, or the affiliate's, is deleted. The commissions it earned stay on the affiliate's record, with the Polar order each came from, because they're what the affiliate was or will be paid. |
+| Affiliate records: application, referral code, PayPal email and commissions | Until the affiliate's account is deleted, which deletes them with it, including commissions not yet paid |
+| Affiliate payouts already sent | Kept for our accounts after the affiliate's account is deleted, without the account or the PayPal address: the amount, currencies, exchange rates, date and PayPal transaction ID |
+| Which affiliate referred an account | Until that account, or the affiliate's, is deleted. When the referred account is deleted, the commissions it earned stay on the affiliate's record with the Polar order each came from, because they're what the affiliate was or will be paid, but no longer say which account paid. |
 | Workspace audit log | 365 days, and deleted with the workspace. Entries keep the name, email address and IP address of the person who made each change for those 365 days, also after that person leaves the workspace or deletes their account |
 | Rate-limit counters, which can include an IP address | They expire on their own within 2 days |
 | Support emails | As long as needed to resolve your request and keep a record of it |
@@ -251,5 +251,5 @@ Questions or requests about privacy: [support@qrdx.dev](mailto:support@qrdx.dev)
 
 ---
 
-**Changes:** 10 November 2026. Added the affiliate program: what it records about affiliates and the accounts they refer, the `qrdx_ref` cookie (only with Analytics allowed), and PayPal for payouts. 3 November 2026. AI QR art now uses OpenAI's GPT Image 2, through Vercel AI Gateway, instead of Google's Gemini. Earlier the same day: AI features now run through Vercel AI Gateway, with Anthropic's Claude for the AI theme chat and prompt enhancement and Google's Gemini for theme design and AI art. 2 November 2026: AI QR art now uses Google's Gemini API; fal.ai no longer receives any data. 1 November 2026: rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
+**Changes:** 10 November 2026. Added the affiliate program: what it records about affiliates and the accounts they refer (no cookie: a referral counts only for a sign-up in the same visit), and PayPal for payouts. 3 November 2026. AI QR art now uses OpenAI's GPT Image 2, through Vercel AI Gateway, instead of Google's Gemini. Earlier the same day: AI features now run through Vercel AI Gateway, with Anthropic's Claude for the AI theme chat and prompt enhancement and Google's Gemini for theme design and AI art. 2 November 2026: AI QR art now uses Google's Gemini API; fal.ai no longer receives any data. 1 November 2026: rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
 

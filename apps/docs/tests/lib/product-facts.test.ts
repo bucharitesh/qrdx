@@ -57,8 +57,7 @@ describe("PRODUCT_FACTS", () => {
       affiliateCommissionMonths: 12,
       affiliateHoldDays: 30,
       affiliateMinPayoutUsd: "US$25",
-      affiliateMinPayoutInr: "₹2,200",
-      affiliateCookieDays: 30,
+      affiliateTermsNoticeDays: 30,
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(
