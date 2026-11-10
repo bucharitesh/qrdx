@@ -30,7 +30,12 @@ describe("ICU shapes", () => {
       icuShape(
         "Save {n, plural, one {# year} other {# years}} <link>now</link> '{'x'}'",
       ),
-    ).toEqual({ args: ["n"], tags: ["link"], text: "Save   now {x}" });
+    ).toEqual({
+      args: ["n"],
+      tags: ["link"],
+      // Option text counts: its numbers must survive translation too.
+      text: "Save  year years now {x}",
+    });
   });
 
   it("catches renamed arguments, lost tags, dropped numbers and bad syntax", () => {
