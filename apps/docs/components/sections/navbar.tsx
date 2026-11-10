@@ -5,13 +5,14 @@ import { Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { HamburgerMenu } from "iconsax-reactjs";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { GithubStars } from "@/components/github-stars";
 import { HeaderAccountLink } from "@/components/header-account-link";
 import bar from "@/components/header-bar.module.css";
 import { HeaderMobileNavList } from "@/components/header-mobile-nav";
 import { HeaderNav } from "@/components/header-nav";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { QrdxLogo } from "../qrdx-logo";
@@ -30,6 +31,7 @@ const DRAWER_EXIT_MS = 150;
 type DrawerState = "closed" | "open" | "closing";
 
 export function Navbar() {
+  const t = useTranslations("nav");
   const [hasScrolled, setHasScrolled] = useState(false);
   const [drawer, setDrawer] = useState<DrawerState>("closed");
   const isDrawerOpen = drawer === "open";
@@ -158,7 +160,7 @@ export function Navbar() {
           ref={pillRef}
         >
           <div className="flex h-14 items-center justify-between gap-6 px-4">
-            <Link
+            <LocaleLink
               href="/"
               className="flex shrink-0 items-center gap-2 transition-[translate] duration-300 ease-[cubic-bezier(.25,.1,.25,1)] motion-reduce:transition-none"
               style={slideStyle(1)}
@@ -168,7 +170,7 @@ export function Navbar() {
               <p className="text-lg font-semibold text-secondary-foreground">
                 QRdx
               </p>
-            </Link>
+            </LocaleLink>
 
             <HeaderNav />
 
@@ -186,7 +188,7 @@ export function Navbar() {
                 variant="secondary"
                 className="lg:hidden"
                 onClick={toggleDrawer}
-                aria-label={isDrawerOpen ? "Close menu" : "Open menu"}
+                aria-label={isDrawerOpen ? t("closeMenu") : t("openMenu")}
                 aria-expanded={isDrawerOpen}
               >
                 {isDrawerOpen ? (
@@ -226,15 +228,15 @@ export function Navbar() {
             {/* Mobile menu content */}
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
-                <Link href="/" className="flex items-center gap-2">
+                <LocaleLink href="/" className="flex items-center gap-2">
                   <QrdxLogo className="size-5 text-secondary-foreground" />
                   <p className="text-lg font-semibold text-secondary-foreground">
                     QRdx
                   </p>
-                </Link>
+                </LocaleLink>
                 <button
                   onClick={closeDrawer}
-                  aria-label="Close menu"
+                  aria-label={t("closeMenu")}
                   className="grid size-8 cursor-pointer place-items-center rounded-lg border border-border transition-colors hover:bg-accent"
                 >
                   <Close aria-hidden className="size-5" />

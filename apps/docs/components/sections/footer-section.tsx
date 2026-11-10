@@ -9,19 +9,25 @@ import {
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2 } from "iconsax-reactjs";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
 import { EGG_QR } from "@/components/fx/qr-matrix";
 import { QrMosaic } from "@/components/fx/qr-mosaic";
-import { siteConfig } from "@/config/site";
+import { LocaleLink } from "@/components/i18n/locale-link";
+import { LocaleSwitcher } from "@/components/i18n/locale-switcher";
+import { type FooterLinkConfig, siteConfig } from "@/config/site";
 import { QrdxLogo } from "../qrdx-logo";
 
 const LINK =
   "rounded-sm text-sm/snug text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
 
-type FooterLink = { id: number; title: string; url: string };
+/** A footer link's text: its translation, or a name that stays as is. */
+function useLinkText() {
+  const t = useTranslations("footer.links");
+  return (link: FooterLinkConfig) => (link.key ? t(link.key) : link.label);
+}
 
 /** A footer item that opens a nested list of links (e.g. Legal). */
 function FooterDisclosure({
@@ -29,10 +35,11 @@ function FooterDisclosure({
   links,
 }: {
   title: string;
-  links: readonly FooterLink[];
+  links: readonly FooterLinkConfig[];
 }) {
   const [open, setOpen] = useState(false);
   const id = useId();
+  const text = useLinkText();
 
   return (
     <li className="flex flex-col">
@@ -64,9 +71,9 @@ function FooterDisclosure({
         <ul className="flex min-h-0 flex-col gap-y-2 overflow-hidden border-l border-border pt-2.5 pl-3 ml-0.5">
           {links.map((link) => (
             <li key={link.id}>
-              <Link href={link.url} className={LINK} prefetch={false}>
-                {link.title}
-              </Link>
+              <LocaleLink href={link.url} className={LINK} prefetch={false}>
+                {text(link)}
+              </LocaleLink>
             </li>
           ))}
         </ul>
@@ -76,6 +83,8 @@ function FooterDisclosure({
 }
 
 export function FooterSection() {
+  const t = useTranslations("footer");
+  const text = useLinkText();
   const currentYear = new Date().getFullYear();
   // No links to pages for features this deployment can't offer.
   const { showsPath } = useAvailability();
@@ -84,7 +93,7 @@ export function FooterSection() {
     <footer id="footer" className="w-full">
       <div className="flex flex-col gap-10 px-10 pt-14 pb-10 lg:flex-row lg:justify-between">
         <div className="flex max-w-xs flex-col items-start gap-5">
-          <Link
+          <LocaleLink
             href="/"
             className="flex items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
           >
@@ -92,23 +101,23 @@ export function FooterSection() {
             <span className="text-xl font-semibold tracking-tight">
               {siteConfig.name}
             </span>
-          </Link>
+          </LocaleLink>
           <p className="text-sm text-muted-foreground text-pretty leading-relaxed">
-            {siteConfig.description}
+            {t("description")}
           </p>
           <Button asChild variant="outline">
-            <Link href={siteConfig.links.github}>
+            <a href={siteConfig.links.github}>
               <GithubLogo className="size-4" />
-              Star on GitHub
-            </Link>
+              {t("starOnGithub")}
+            </a>
           </Button>
         </div>
-        <nav aria-label="Footer" className="lg:flex-1 lg:pl-10">
+        <nav aria-label={t("navLabel")} className="lg:flex-1 lg:pl-10">
           <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 lg:grid-cols-5">
             {siteConfig.footerLinks.map((column) => (
-              <div key={column.title} className="flex flex-col gap-3">
+              <div key={column.key} className="flex flex-col gap-3">
                 <h2 className="text-xs font-medium tracking-wider text-foreground uppercase">
-                  {column.title}
+                  {t(`columns.${column.key}`)}
                 </h2>
                 <ul className="flex flex-col gap-y-2">
                   {column.links
@@ -117,21 +126,21 @@ export function FooterSection() {
                         !("url" in link && link.url) || showsPath(link.url),
                     )
                     .map((link) =>
-                      "children" in link && link.children ? (
+                      "children" in link ? (
                         <FooterDisclosure
                           key={link.id}
-                          title={link.title}
+                          title={t(`links.${link.key}`)}
                           links={link.children}
                         />
                       ) : (
                         <li key={link.id}>
-                          <Link
-                            href={link.url ?? "/"}
+                          <LocaleLink
+                            href={link.url}
                             className={LINK}
                             prefetch={false}
                           >
-                            {link.title}
-                          </Link>
+                            {text(link)}
+                          </LocaleLink>
                         </li>
                       ),
                     )}
@@ -154,22 +163,25 @@ export function FooterSection() {
               className="absolute top-1/2 left-1/2 size-[203px] -translate-x-1/2 -translate-y-1/2"
             />
           </TooltipTrigger>
-          <TooltipContent side="top">Go on, scan it</TooltipContent>
+          <TooltipContent side="top">{t("scanIt")}</TooltipContent>
         </Tooltip>
       </div>
       <div className="flex flex-col gap-1 border-t px-10 py-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <p className="text-sm text-muted-foreground">
-            © {currentYear} {siteConfig.name}. Open source under AGPL-3.0.
+            {t("copyright", { year: String(currentYear) })}
           </p>
           <CookieSettingsButton />
         </div>
-        <a
-          href="https://qrdx.dev"
-          className="w-fit font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
-        >
-          qrdx.dev
-        </a>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          <LocaleSwitcher />
+          <a
+            href="https://qrdx.dev"
+            className="w-fit font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
+          >
+            qrdx.dev
+          </a>
+        </div>
       </div>
     </footer>
   );

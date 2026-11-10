@@ -11,6 +11,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ExportSquare, HamburgerMenu } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useHeaderNavEntries } from "./header-nav";
 
@@ -25,6 +26,7 @@ export function HeaderMobileNavList({
   onNavigate?: () => void;
   className?: string;
 }) {
+  const t = useTranslations("nav");
   const pathname = usePathname() ?? "/";
   const entries = useHeaderNavEntries();
   const groups = entries.filter((entry) => entry.items);
@@ -32,7 +34,7 @@ export function HeaderMobileNavList({
 
   return (
     <nav
-      aria-label="Main"
+      aria-label={t("main")}
       className={cn("flex flex-col gap-5 overflow-y-auto", className)}
     >
       {groups.map((group) => (
@@ -107,6 +109,7 @@ export function HeaderMobileNavList({
 
 /** Menu button + sheet for headers that have no drawer of their own. */
 export function HeaderMobileMenu({ className }: { className?: string }) {
+  const t = useTranslations("nav");
   const [open, setOpen] = useState(false);
 
   return (
@@ -116,7 +119,7 @@ export function HeaderMobileMenu({ className }: { className?: string }) {
           variant="ghost"
           size="icon"
           className={cn("size-8 lg:hidden", className)}
-          aria-label="Open menu"
+          aria-label={t("openMenu")}
         >
           <HamburgerMenu aria-hidden className="size-5" />
         </Button>
@@ -126,7 +129,7 @@ export function HeaderMobileMenu({ className }: { className?: string }) {
         className="w-[22rem] max-w-[90vw] gap-5 p-5 sm:max-w-[22rem]"
         aria-describedby={undefined}
       >
-        <SheetTitle className="text-base">Menu</SheetTitle>
+        <SheetTitle className="text-base">{t("menu")}</SheetTitle>
         <HeaderMobileNavList onNavigate={() => setOpen(false)} />
       </SheetContent>
     </Sheet>

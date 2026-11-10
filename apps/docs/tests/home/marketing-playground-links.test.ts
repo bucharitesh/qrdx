@@ -108,12 +108,12 @@ describe("home studio demo: its link", () => {
 
 /** The content type each use case's card names in its link text. */
 const TYPE_OF: Record<string, string> = {
-  "Menus and tables": "url",
-  "Business cards": "vcard",
-  "Guest Wi-Fi": "wifi",
-  Payments: "upi",
-  "Events and check-ins": "attendance",
-  "Shelves and displays": "amazon",
+  menus: "url",
+  businessCards: "vcard",
+  wifi: "wifi",
+  payments: "upi",
+  events: "attendance",
+  shelves: "amazon",
 };
 
 describe("home use cases", () => {
@@ -121,7 +121,7 @@ describe("home use cases", () => {
     const opened = useCases.filter((item) =>
       item.href.startsWith("/playground"),
     );
-    expect(opened.map((item) => item.title).sort()).toEqual(
+    expect(opened.map((item) => item.key).sort()).toEqual(
       Object.keys(TYPE_OF).sort(),
     );
     for (const item of opened) {
@@ -129,9 +129,9 @@ describe("home use cases", () => {
         /\/images\/use-cases\/(.+)-light\.svg$/,
       )?.[1] as UseCaseArtId;
       const { params, design } = read(item.href);
-      expect(params.type, item.title).toBe(TYPE_OF[item.title]);
-      expect(params.sample, item.title).toBe(true);
-      expect(design?.styles, item.title).toEqual(
+      expect(params.type, item.key).toBe(TYPE_OF[item.key]);
+      expect(params.sample, item.key).toBe(true);
+      expect(design?.styles, item.key).toEqual(
         showcaseThemeStyles(USE_CASE_CODES[id].style),
       );
     }

@@ -11,51 +11,42 @@ import {
   ShieldTick,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import type { Messages } from "@/lib/i18n/messages";
+import en from "@/messages/en.json";
 
+/** "Never-Hostage" is never translated; "Guarantee" is (messages/glossary.json). */
 export const GUARANTEE_NAME = "Never-Hostage Guarantee";
 
+type PromiseKey = keyof Messages["pricing"]["guarantee"]["promises"];
+
 export interface GuaranteePromise {
+  key: PromiseKey;
   icon: Icon;
+  /** English (the guarantee page and /pricing.md); GuaranteeBlock translates. */
   title: string;
   body: string;
 }
 
+const promise = (key: PromiseKey, icon: Icon): GuaranteePromise => ({
+  key,
+  icon,
+  ...en.pricing.guarantee.promises[key],
+});
+
 /** The guarantee's promises; app/(app)/(home)/guarantee renders the full page. */
 export const GUARANTEE_PROMISES: GuaranteePromise[] = [
-  {
-    icon: ScanBarcode,
-    title: "Static codes are free forever",
-    body: "Make, style and download static QR codes without an account. They hold your content directly, never expire and never pass through our servers.",
-  },
-  {
-    icon: Link2,
-    title: "Dynamic codes keep redirecting",
-    body: "Every dynamic code keeps working on every plan, including after a downgrade, a failed payment or a cancellation.",
-  },
-  {
-    icon: Forbidden2,
-    title: "No pausing, no ads",
-    body: "We never pause your codes over billing, show ads or interstitials, or send your scanners through a QRdx page.",
-  },
-  {
-    icon: ShieldTick,
-    title: "Limits only stop new things",
-    body: "Going over a limit blocks creating more. Existing codes and pages keep working, and you can still change where your codes point.",
-  },
-  {
-    icon: Import,
-    title: "Export everything",
-    body: "Download any code as SVG or PNG, export its scans as CSV, and read your codes through the REST API, on every plan.",
-  },
-  {
-    icon: CalendarTick,
-    title: "12 months' notice",
-    body: "If QRdx ever shuts down, you get at least 12 months' notice and a documented path to run the open-source app yourself.",
-  },
+  promise("static", ScanBarcode),
+  promise("redirecting", Link2),
+  promise("noAds", Forbidden2),
+  promise("limits", ShieldTick),
+  promise("export", Import),
+  promise("notice", CalendarTick),
 ];
 
 /** Short version for the pricing page. */
 export function GuaranteeBlock({ className }: { className?: string }) {
+  const t = useTranslations("pricing.guarantee");
   return (
     <section
       aria-labelledby="guarantee"
@@ -66,24 +57,23 @@ export function GuaranteeBlock({ className }: { className?: string }) {
           <div className="flex max-w-2xl flex-col gap-2">
             <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
               <ShieldTick aria-hidden className="size-4" variant="Bold" />
-              On every plan, including Free
+              {t("eyebrow")}
             </p>
             <h2
               id="guarantee"
               className="text-2xl font-semibold tracking-tight text-balance md:text-3xl"
             >
-              The {GUARANTEE_NAME}
+              {t("title")}
             </h2>
             <p className="text-pretty text-muted-foreground">
-              Printed codes outlive subscriptions. Whatever happens to your
-              plan, the codes you printed keep working.
+              {t("description")}
             </p>
           </div>
           <Link
             className="group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
             href="/guarantee"
           >
-            Read the full guarantee
+            {t("link")}
             <ArrowRight
               aria-hidden
               className="size-4 transition-transform group-hover:translate-x-0.5"
@@ -92,7 +82,7 @@ export function GuaranteeBlock({ className }: { className?: string }) {
         </div>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {GUARANTEE_PROMISES.map((promise) => (
-            <li key={promise.title}>
+            <li key={promise.key}>
               <Card className="h-full gap-3 p-5 shadow-xs">
                 <span className="grid size-9 place-items-center rounded-full border bg-muted/40">
                   <promise.icon
@@ -102,10 +92,10 @@ export function GuaranteeBlock({ className }: { className?: string }) {
                 </span>
                 <div className="flex flex-col gap-1.5">
                   <h3 className="font-medium tracking-tight">
-                    {promise.title}
+                    {t(`promises.${promise.key}.title`)}
                   </h3>
                   <p className="text-sm leading-relaxed text-pretty text-muted-foreground">
-                    {promise.body}
+                    {t(`promises.${promise.key}.body`)}
                   </p>
                 </div>
               </Card>
