@@ -2,7 +2,7 @@
 
 n8n nodes for [QRdx](https://qrdx.dev). The **QRdx** node makes QR code images, creates and edits dynamic QR codes, and reads their scans. The **QRdx Trigger** node starts a workflow when a code is scanned, created or changed, or when someone submits a form on a hosted page. Both work in self-hosted n8n, and the QRdx node can also be a tool for an n8n AI Agent.
 
-This package isn't on npm yet. Until it is, install it from this repository as described under [Install from source](#install-from-source).
+Install it from npm: in n8n, open **Settings → Community Nodes**, click **Install** and enter `n8n-nodes-qrdx`. From the command line, run `npm install n8n-nodes-qrdx` in the `nodes` folder of your n8n user folder (`~/.n8n/nodes`) and restart n8n. To build it from this repository instead, see [Install from source](#install-from-source).
 
 ## Credentials
 
@@ -90,7 +90,7 @@ npm install /path/to/n8n-nodes-qrdx-0.1.0.tgz
 
 With Docker, copy the file into the container and run the same commands inside it (`docker exec -it n8n sh`). Search for **QRdx** in the nodes panel.
 
-n8n Cloud only runs community nodes that n8n has verified, and this one hasn't been submitted yet.
+n8n Cloud only runs community nodes that n8n has verified, and this one isn't verified yet.
 
 ## Development
 
