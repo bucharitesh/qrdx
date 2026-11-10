@@ -76,7 +76,7 @@ You don't need a database or any environment variables to work on the React libr
    pnpm --filter docs dev
    ```
 
-   Open http://localhost:3000. On a fresh clone, run `pnpm --filter docs exec next typegen` once before your first typecheck.
+   Open http://localhost:3000. On a fresh clone, run `pnpm typegen:docs` once before your first typecheck (the pre-push hook also runs it). Without `apps/docs/.env.local` it uses the same placeholder settings as CI.
 
 ## Project structure
 
@@ -101,7 +101,7 @@ CI (`.github/workflows/ci.yml`) runs these on every pull request and on every pu
 ```bash
 pnpm turbo build --filter=qrdx --filter=@qrdx/cli   # the docs app and CLI use qrdx's build output; the CLI tests run its dist/index.js
 pnpm typecheck                      # all packages with a typecheck script
-pnpm --filter docs exec next typegen && pnpm typecheck:docs
+pnpm typegen:docs && pnpm typecheck:docs   # route types (PageProps, LayoutProps), then the app typecheck
 pnpm turbo test                     # every package's tests
 ./apps/docs/node_modules/.bin/biome ci .
 ```
