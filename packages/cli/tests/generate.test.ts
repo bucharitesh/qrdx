@@ -108,6 +108,49 @@ describe("generate command", () => {
     });
   });
 
+  describe("WebP file output", () => {
+    it("-o file.webp writes WebP", () => {
+      const out = tmp("output.webp");
+      cleanups.push(out);
+      const { exitCode } = runCli(["generate", "https://qrdx.dev", "-o", out]);
+      expect(exitCode).toBe(0);
+      const buf = readFileSync(out);
+      expect(buf.toString("latin1", 0, 4)).toBe("RIFF");
+      expect(buf.toString("latin1", 8, 12)).toBe("WEBP");
+    });
+
+    it("--format webp applies to a file name without an extension", () => {
+      const out = tmp("cli-noext-webp");
+      cleanups.push(out);
+      const { exitCode } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--format",
+        "webp",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(0);
+      expect(readFileSync(out).toString("latin1", 8, 12)).toBe("WEBP");
+    });
+
+    it("caps the WebP size like PNG", () => {
+      const out = tmp("too-big.webp");
+      cleanups.push(out);
+      const { exitCode, stdout, stderr } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--size",
+        "20000",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(1);
+      expect(stdout + stderr).toContain("WebP output is at most 10000 px");
+      expect(existsSync(out)).toBe(false);
+    });
+  });
+
   describe("flags", () => {
     it("--level flag is accepted", () => {
       const out = tmp("flag-level.svg");
