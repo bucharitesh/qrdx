@@ -29,6 +29,7 @@ import {
   qrPreset,
   qrScan,
   session,
+  slackUserLink,
   subscription,
   tag,
   themeLike,
@@ -532,6 +533,19 @@ export function exportQueries(userId: string) {
       .from(integration)
       .where(eq(integration.userId, userId))
       .orderBy(asc(integration.createdAt)),
+
+    // The QRdx bot for Slack: which Slack accounts may make tracked codes
+    // as this user, and where (read only while the bot is set up).
+    slackLinks: db
+      .select({
+        slackTeamId: slackUserLink.teamId,
+        slackUserId: slackUserLink.slackUserId,
+        teamId: slackUserLink.organizationId,
+        linkedAt: slackUserLink.createdAt,
+      })
+      .from(slackUserLink)
+      .where(eq(slackUserLink.userId, userId))
+      .orderBy(asc(slackUserLink.createdAt)),
 
     teams: db
       .select({
