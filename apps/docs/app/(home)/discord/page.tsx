@@ -68,7 +68,7 @@ const commands: BotCommand[] = [
 const privacyParagraphs = [
   "QRdx doesn't save the codes you make, and the bot can't read your chats. Discord sends QRdx what you type after /qr, or the one message you picked for Make QR code.",
   "The content goes into the image link, and Discord loads the picture from the QRdx image API. Like any link, it can end up in logs and caches, so don't make codes of passwords or other secrets.",
-  "To stop one person flooding a channel, QRdx counts the codes each Discord account makes in a minute. The count holds no content and expires after that minute.",
+  "To stop one person flooding a channel, QRdx counts the codes each Discord account makes in a minute. It also counts the codes everyone makes together, and when too many arrive in one minute, the bot says it's busy. Neither count holds any content, and both expire after that minute.",
 ];
 
 const faqs = [
