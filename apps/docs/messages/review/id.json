@@ -339,6 +339,18 @@
     "source": "cc813935fc0f",
     "status": "machine"
   },
+  "footer.links.slackBot": {
+    "source": "12355a7a269d",
+    "status": "machine"
+  },
+  "footer.links.telegramBot": {
+    "source": "2120f99c74ab",
+    "status": "machine"
+  },
+  "footer.links.discordBot": {
+    "source": "edfc291b97bb",
+    "status": "machine"
+  },
   "footer.links.generators": {
     "source": "603c1d77656d",
     "status": "machine"
