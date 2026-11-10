@@ -5,6 +5,8 @@ import {
 } from "@repo/integrations/src/catalog";
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { getFeatures } from "@/lib/feature-availability";
+import { configuredEntry } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible } from "@/lib/integration-availability-rules";
 import { buildTimeParams } from "@/lib/static-params";
@@ -35,10 +37,12 @@ export default async function Image({
     notFound();
   }
 
+  const features = getFeatures();
+  const shown = configuredEntry(entry, (id) => features[id]);
   return renderPageOgImage({
     label: "Integrations",
-    title: `${entry.name} integration`,
-    description: entry.tagline,
+    title: `${shown.name} integration`,
+    description: shown.tagline,
     footer: "Open source · qrdx.dev",
   });
 }

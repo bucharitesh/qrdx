@@ -17,10 +17,12 @@ import { ArrowRight, SearchNormal1 } from "iconsax-reactjs";
 import Link from "next/link";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
+import { useAvailability } from "@/components/availability-provider";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { useSlidingPill } from "@/components/mockups/sliding-pill";
 import { IntegrationCard } from "@/components/sections/integrations/integration-card";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
+import { configuredEntry } from "@/lib/feature-availability-rules";
 
 type Filter = "all" | CatalogCategory;
 
@@ -137,12 +139,16 @@ interface DirectoryProps {
 
 /** The listed entries, their categories and the filter ids ("all" first). */
 function useListedEntries(slugs: string[]) {
+  // Cards and search include an entry's optional extra where it's set up
+  // (the Slack bot).
+  const { has } = useAvailability();
   const entries = useMemo(
     () =>
       slugs
         .map((slug) => getCatalogEntry(slug))
-        .filter((entry): entry is IntegrationCatalogEntry => Boolean(entry)),
-    [slugs],
+        .filter((entry): entry is IntegrationCatalogEntry => Boolean(entry))
+        .map((entry) => configuredEntry(entry, has)),
+    [slugs, has],
   );
   const categories = useMemo(() => getUsedCategories(entries), [entries]);
   const filters = useMemo(

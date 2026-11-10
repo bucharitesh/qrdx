@@ -34,6 +34,9 @@ export const FEATURE_IDS = [
   "passkeys",
   "sso",
   "auditLog",
+  "slackBot",
+  "discordBot",
+  "telegramBot",
   "affiliates",
 ] as const;
 
@@ -189,6 +192,45 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "/docs/help/teams/audit-log",
     ],
   },
+  slackBot: {
+    // The QRdx bot for Slack (lib/slack-bot): the same Slack app as "Add to
+    // Slack" alerts, plus its signing secret, which verifies every request
+    // Slack sends. Bot tokens are stored encrypted, so production also needs
+    // the integrations' encryption key.
+    name: "QRdx bot for Slack",
+    requires: (ctx) => [
+      "SLACK_CLIENT_ID",
+      "SLACK_CLIENT_SECRET",
+      "SLACK_SIGNING_SECRET",
+      ...(ctx.production ? ["INTEGRATION_ENCRYPTION_KEY"] : []),
+    ],
+    paths: ["/docs/slack-bot"],
+    extrasOf: "slack",
+  },
+  discordBot: {
+    // The Discord app's /qr and "Make QR code" commands, answered over HTTP
+    // (app/api/integrations/discord). Discord signs each request with the
+    // app's key; the id builds the "Add to Discord" link.
+    name: "Discord bot",
+    requires: () => ["DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY"],
+    paths: ["/docs/discord-bot"],
+    catalogSlugs: ["discord-bot"],
+    // The webhook alerts entry mentions the bot only where it can be added.
+    extrasOf: "discord",
+  },
+  telegramBot: {
+    // The QRdx bot in Telegram (lib/chat-bots/telegram): its token for
+    // replies, the secret Telegram sends with every webhook call, and its
+    // username for t.me links and help text. Nothing is stored.
+    name: "Telegram bot",
+    requires: () => [
+      "TELEGRAM_BOT_TOKEN",
+      "TELEGRAM_WEBHOOK_SECRET",
+      "TELEGRAM_BOT_USERNAME",
+    ],
+    paths: ["/docs/telegram-bot"],
+    catalogSlugs: ["telegram"],
+  },
   affiliates: {
     // The affiliate program (lib/affiliates) is QRdx's own: commissions
     // come from qrdx.dev's Polar orders and the terms are QRdx's. A
@@ -245,11 +287,59 @@ export function catalogParagraphs(
   entry: { slug: string; description: string[]; configuredExtras?: string[] },
   features: Readonly<Record<FeatureId, boolean>>,
 ): string[] {
-  const id = FEATURE_IDS.find(
-    (key) => FEATURE_RULES[key].extrasOf === entry.slug,
-  );
+  const id = extraFeatureOf(entry.slug);
   const extras = id && features[id] ? (entry.configuredExtras ?? []) : [];
   return [...entry.description, ...extras];
+}
+
+/** The optional extra a catalog entry describes when it's configured. */
+function extraFeatureOf(slug: string): FeatureId | undefined {
+  return FEATURE_IDS.find((key) => FEATURE_RULES[key].extrasOf === slug);
+}
+
+/** The catalog fields configuredEntry reads (IntegrationCatalogEntry's). */
+interface ConfigurableEntry {
+  slug: string;
+  tagline: string;
+  plan: string;
+  steps: readonly unknown[];
+  capabilities: readonly unknown[];
+  categories: readonly string[];
+  keywords?: readonly string[];
+  configured?: {
+    tagline?: string;
+    plan?: string;
+    steps?: readonly unknown[];
+    capabilities?: readonly unknown[];
+    categories?: readonly string[];
+    keywords?: readonly string[];
+  };
+}
+
+/**
+ * A catalog entry as this deployment shows it: with its `configured` parts
+ * (the QRdx bot for the Slack entry) only where the feature they describe
+ * works. `has` is getFeatures() on the server, useAvailability().has in the
+ * browser.
+ */
+export function configuredEntry<T extends ConfigurableEntry>(
+  entry: T,
+  has: (feature: FeatureId) => boolean,
+): T {
+  const id = extraFeatureOf(entry.slug);
+  const extra = entry.configured;
+  if (!(id && extra && has(id))) return entry;
+  return {
+    ...entry,
+    tagline: extra.tagline ?? entry.tagline,
+    plan: extra.plan ?? entry.plan,
+    steps: extra.steps ?? entry.steps,
+    capabilities: [...(extra.capabilities ?? []), ...entry.capabilities],
+    categories: [
+      ...new Set([...entry.categories, ...(extra.categories ?? [])]),
+    ],
+    keywords: [...(entry.keywords ?? []), ...(extra.keywords ?? [])],
+  };
 }
 
 /**
