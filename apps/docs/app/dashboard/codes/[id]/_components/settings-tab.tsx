@@ -1,10 +1,13 @@
 import { Suspense } from "react";
 import type { CodeOptionPlans } from "@/app/dashboard/codes/_lib/code-options";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import { cheapestPlanWith } from "@/lib/plans";
+import type { PaidPlan } from "@/lib/pricing";
 import { HistoryPanel } from "./history-panel";
 import { InactiveSettingsNotice } from "./inactive-settings-notice";
 import { LifecyclePanel } from "./lifecycle-panel";
 import { PixelsPanel } from "./pixels-panel";
+import { PreciseLocationPanel } from "./precise-location-panel";
 import { type MarketingSettingsPromise, RoutingPanel } from "./routing-panel";
 import { UtmPanel } from "./utm-panel";
 
@@ -57,9 +60,22 @@ export function SettingsTab({
           settings={marketing}
         />
       </section>
+      {/* Precise scan location (lib/scan-location), redirects and pages alike. */}
+      <section className="scroll-mt-20" id="location">
+        <PreciseLocationPanel
+          plan={preciseLocationPlan()}
+          settings={marketing}
+        />
+      </section>
       <section className="scroll-mt-20" id="history">
         <HistoryPanel codeId={code.id} />
       </section>
     </div>
   );
+}
+
+/** The cheapest paid plan with precise location (lib/plans.ts). */
+function preciseLocationPlan(): PaidPlan | null {
+  const plan = cheapestPlanWith((limits) => limits.preciseLocation);
+  return plan && plan !== "free" ? plan : null;
 }
