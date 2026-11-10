@@ -159,6 +159,9 @@ importers:
       bcryptjs:
         specifier: ^3.0.2
         version: 3.0.3
+      bwip-js:
+        specifier: 4.11.4
+        version: 4.11.4
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -309,6 +312,9 @@ importers:
       scroll-into-view-if-needed:
         specifier: ^3.1.0
         version: 3.1.0
+      sharp:
+        specifier: 0.35.5
+        version: 0.35.5(@types/node@26.6.6)
       shiki:
         specifier: ^4.5.0
         version: 4.5.0
@@ -382,9 +388,6 @@ importers:
       dotenv:
         specifier: ^18.0.9
         version: 18.0.9
-      sharp:
-        specifier: 0.35.5
-        version: 0.35.5(@types/node@26.6.6)
       ts-morph:
         specifier: ^28.0.0
         version: 28.0.0
@@ -6726,6 +6729,10 @@ packages:
     engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
     peerDependencies:
       esbuild: '>=0.18'
+
+  bwip-js@4.11.4:
+    resolution: {integrity: sha512-FOXnOQkinxog8FwxdnPB+8k2wRqwPnqXwxX37KcXOtMNW+9CinOkGv9MtIoRC4HX/UyogT0/9lIp6FDm2DcquQ==}
+    hasBin: true
 
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
@@ -17628,6 +17635,8 @@ snapshots:
     dependencies:
       esbuild: 0.28.2
       load-tsconfig: 0.2.5
+
+  bwip-js@4.11.4: {}
 
   bytes@3.1.2: {}
 
