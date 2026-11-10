@@ -1,9 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { notFound } from "next/navigation";
 import { lang } from "next/root-params";
 import { getTranslations } from "next-intl/server";
 import { RootDocument } from "@/components/root-document";
 import {
+  DEFAULT_LOCALE,
   LOCALE_INFO,
   LOCALE_SEGMENTS,
   localeFromSegment,
@@ -14,19 +14,21 @@ import { buildTimeParams } from "@/lib/static-params";
 // The root layout for translated public pages (lib/i18n/localized-paths.json).
 // Every locale is prerendered in builds, English included: next.config.ts
 // rewrites /pricing to /en/pricing, and /en/... redirects to the unprefixed
-// URL. Anything else in the first segment is a 404 (lib/static-params.ts:
-// dev lists no params, so dynamic params stay on).
+// URL. Anything else in the first segment is a 404 from the pages
+// (lib/static-params.ts: dev lists no params, so dynamic params stay on).
 export function generateStaticParams() {
   return buildTimeParams(() =>
     LOCALE_SEGMENTS.map((segment) => ({ lang: segment })),
   );
 }
 
-/** The page's locale; a 404 for a first segment that isn't one. */
+/**
+ * The page's locale. A first segment that isn't one renders in English:
+ * the pages answer 404 for it (lib/i18n/server.ts), and app/[lang]/
+ * not-found.tsx shows inside this layout.
+ */
 async function rootLocale() {
-  const locale = localeFromSegment(await lang());
-  if (!locale) notFound();
-  return locale;
+  return localeFromSegment(await lang()) ?? DEFAULT_LOCALE;
 }
 
 export async function generateMetadata(): Promise<Metadata> {

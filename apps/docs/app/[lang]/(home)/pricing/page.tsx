@@ -2,7 +2,7 @@ import { auth } from "@repo/auth/server";
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getMessages } from "next-intl/server";
 import { ComparisonTable } from "@/components/sections/pricing/comparison-table";
 import { GuaranteeBlock } from "@/components/sections/pricing/guarantee-block";
 import {
@@ -21,6 +21,7 @@ import { JsonLd } from "@/components/sections/tools/json-ld";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { CHROME_NAMESPACES, pickMessages } from "@/lib/i18n/messages";
 import { localizedMetadata } from "@/lib/i18n/metadata";
+import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { getPlan, PLAN_LIMITS, type Plan } from "@/lib/plans";
 import {
@@ -59,7 +60,10 @@ const PRICING_CARD_NAMESPACES = [
 
 /** The pricing copy in this page's language. */
 async function copy() {
-  const [locale, messages] = await Promise.all([getLocale(), getMessages()]);
+  const [locale, messages] = await Promise.all([
+    requireLocale(),
+    getMessages(),
+  ]);
   return { locale, messages, copy: pricingCopy(locale, messages) };
 }
 

@@ -1,6 +1,7 @@
+import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { GUARANTEE_NAME } from "@/components/sections/pricing/guarantee-block";
-import { LOCALE_SEGMENTS } from "@/lib/i18n/config";
+import { LOCALE_SEGMENTS, localeFromSegment } from "@/lib/i18n/config";
 import { formatPrice, PRICING } from "@/lib/pricing";
 import { buildTimeParams } from "@/lib/static-params";
 
@@ -16,7 +17,12 @@ export function generateStaticParams() {
   );
 }
 
-export default function Image() {
+export default async function Image({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  if (!localeFromSegment((await params).lang)) notFound();
   return renderPageOgImage({
     label: "Pricing",
     title: "Free, Pro and Business plans",
