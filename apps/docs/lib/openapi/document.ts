@@ -438,6 +438,7 @@ const exampleCode = {
   slug: "aB3dE5f",
   shortLink: `${SITE}/q/aB3dE5f`,
   defaultShortLink: `${SITE}/q/aB3dE5f`,
+  nfcLink: `${SITE}/q/aB3dE5f?nfc`,
   domain: null,
   destinationUrl: "https://example.com/menu",
   title: "Spring menu",
@@ -969,7 +970,7 @@ Its short link stops working, and this can't be undone. To pause a code and keep
         security: security("codes:read"),
         description: `Scan analytics of a code for a range of days.
 
-Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. The range is clamped to how long the plan keeps analytics. With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.`,
+Totals, a daily series and the top countries, cities, devices, systems, browsers and referrers. \`sources\` splits the scans into QR scans and NFC taps (visits through the code's \`nfcLink\`), and each listed scan has its \`source\`. The range is clamped to how long the plan keeps analytics. With \`limit\` above 0 the response also lists individual scans, newest first: pass the response's \`nextBefore\` as \`before\` for the next page.`,
         parameters: c.parameters(scansQuerySchema, "query", {
           range:
             "Days to cover; defaults to 30 days, or the longest range the plan keeps",
@@ -1000,6 +1001,7 @@ Totals, a daily series and the top countries, cities, devices, systems, browsers
                   os: [{ value: "iOS", count: 25 }],
                   browsers: [{ value: "Safari", count: 24 }],
                   referrers: [{ value: null, count: 42 }],
+                  sources: { qr: 38, nfc: 4 },
                 },
               },
             },
