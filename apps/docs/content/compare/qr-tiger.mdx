@@ -30,7 +30,7 @@ tableRows:
     qrdx: "Pro and Business, opt-in per code"
     competitor: true
   - feature: Bulk generation
-    qrdx: "Free CSV tool; bulk API on Pro"
+    qrdx: "Free CSV tool; {facts.importRows}-row CSV import and bulk API on Pro"
     competitor: "Advanced plan and up"
   - feature: Developer access
     qrdx: "REST API, MCP server, npm library"
@@ -63,7 +63,6 @@ QRdx fits people who want to start free and pay little: static codes need no acc
 ## Where QR TIGER is the better choice
 
 - You want a **native scanner app** or a **site in your language**. QR TIGER has an app and is available in about 28 languages; QRdx has a web scanner and is English only.
-- You create **very large batches** in one go. QR TIGER's Advanced plan generates up to 3,000 codes per batch; QRdx's API creates up to 100 per request.
 
 ## Key differences
 
@@ -71,6 +70,7 @@ QRdx fits people who want to start free and pay little: static codes need no acc
 - **Scan locations:** both offer GPS scan locations and geofencing. On QRdx they're part of Pro and Business: you turn on [precise location](/docs/precise-location) per code, each scanner chooses whether to share theirs, and other scans record country, region and city from the network.
 - **Free tier:** both allow unlimited static codes. QR TIGER adds 3 dynamic codes capped at 500 scans each; QRdx adds 10 with unlimited scans.
 - **When a plan ends:** QR TIGER's pricing page says codes stop working once the plan expires. QRdx dynamic codes keep redirecting on every plan, including after a cancellation ([Never-Hostage Guarantee](/guarantee)).
+- **Bulk:** QR TIGER's Advanced plan generates up to 3,000 codes per batch. QRdx's free bulk tool makes up to {facts.bulkToolRows} static codes per file in your browser; on Pro, a CSV import makes up to {facts.importRows} dynamic codes per file, and the API up to {facts.apiBatchCodes} per request.
 - **Developer access:** QR TIGER's API allows 500 requests a month on Regular, 3,000 on Advanced and 10,000 on Premium. QRdx's REST API allows 1,000 requests a day on Free, 10,000 on Pro and 100,000 on Business, and the npm package runs in your own app with no quotas.
 - **Openness:** QRdx is open source (AGPL-3.0) and self-hostable. QR TIGER is not.
 
