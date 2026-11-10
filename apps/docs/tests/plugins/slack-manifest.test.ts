@@ -1,7 +1,8 @@
 // plugins/slack/manifest.json, the Slack app the owner (or a self-hoster)
 // creates from it, against the code: every URL in it is a route that
-// exists, its scopes are the ones the two install flows ask for, and its
-// shortcut and events are the ones the bot handles.
+// exists, its scopes are the ones the two install flows and Sign in with
+// Slack (when linking an account) ask for, and its shortcut and events are
+// the ones the bot handles.
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -36,21 +37,23 @@ describe("the Slack app manifest", () => {
       manifest.settings.interactivity.request_url,
       ...manifest.oauth_config.redirect_urls,
     ];
-    expect(urls).toHaveLength(5);
+    expect(urls).toHaveLength(6);
     for (const url of urls) expect(existsSync(routeFile(url)), url).toBe(true);
     expect(manifest.oauth_config.redirect_urls).toEqual([
       "https://qrdx.dev/api/integrations/slack/callback",
       "https://qrdx.dev/api/integrations/slack/bot/callback",
+      "https://qrdx.dev/api/integrations/slack/link/callback",
     ]);
   });
 
-  it("asks for exactly the alerts' scope and the bot's", () => {
+  it("asks for exactly the alerts' scope and the bot's, and openid for Sign in with Slack", () => {
     initializeIntegrations();
     const alerts = getIntegrationRegistry().get("slack")?.oauth?.scopes ?? [];
     expect([...manifest.oauth_config.scopes.bot].sort()).toEqual(
       [...alerts, ...SLACK_BOT_SCOPES].sort(),
     );
-    expect(manifest.oauth_config.scopes.user).toBeUndefined();
+    // Only who the person is, when they link their QRdx account.
+    expect(manifest.oauth_config.scopes.user).toEqual(["openid"]);
   });
 
   it("has the /qr command, the shortcut, the events and DMs the bot handles", () => {
