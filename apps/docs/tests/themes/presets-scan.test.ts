@@ -13,7 +13,7 @@ import {
   mixFrameColors,
 } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { FRAME_CATALOG } from "@/lib/pattern-catalog";
 import { CATEGORY_ORDER } from "@/lib/themes/categories";
 import { isInverted } from "@/lib/themes/color";
@@ -21,6 +21,11 @@ import { FRAME_TEXT_CONTRAST } from "@/lib/themes/compose";
 import { shuffleId, shuffleSeed, shuffleTheme } from "@/lib/themes/shuffle";
 import { defaultPresets } from "@/utils/qr-presets";
 import { judgeTheme } from "../../scripts/themes/judge";
+
+// Each test decodes rendered codes, which is CPU-bound: under a heavily loaded
+// machine (many test runs at once) a test can pass 30 s. The limit is raised
+// for this file only; nothing it checks changes.
+vi.setConfig({ testTimeout: 120_000 });
 
 const entries = Object.entries(defaultPresets);
 

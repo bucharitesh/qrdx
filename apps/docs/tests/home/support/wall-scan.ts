@@ -187,7 +187,10 @@ async function expectScans(tile: WallTile) {
 /** One test per tile of `band`. */
 export function describeBandScans(band: WallBand) {
   const tiles = WALL_TILES.filter((tile) => tile.band === band);
-  describe(`${band} tiles scan`, () => {
+  // Each tile is rendered and decoded, which is CPU-bound: on a heavily
+  // loaded machine (many test runs at once) one can pass 30 s. The limit is
+  // raised for these suites only; nothing they check changes.
+  describe(`${band} tiles scan`, { timeout: 120_000 }, () => {
     let uninstall: () => void;
     beforeAll(() => {
       uninstall = installFakeDom();

@@ -233,6 +233,14 @@ export function fillPolygons(
   const coverage = new Float32Array(x1 - x0);
   const crossings: { x: number; dir: number }[] = [];
   const weight = 1 / SUBSAMPLES;
+  // Scanlines only move down, so each one looks at the edges it can cross
+  // (an active list fed from edges sorted by top) instead of every edge of
+  // every polygon: a code's body path has thousands. The crossings, and so
+  // the pixels, are the same; only their order before the sort differs, and
+  // crossings at the same x add nothing between them.
+  edges.sort((a, b) => a.y0 - b.y0);
+  const active: typeof edges = [];
+  let nextEdge = 0;
 
   const addSpan = (from: number, to: number) => {
     const a = Math.max(from, x0);
@@ -259,16 +267,29 @@ export function fillPolygons(
     coverage.fill(0);
     for (let s = 0; s < SUBSAMPLES; s++) {
       const sy = py + (s + 0.5) / SUBSAMPLES;
-      crossings.length = 0;
-      for (const edge of edges) {
-        if (sy >= edge.y0 && sy < edge.y1) {
-          crossings.push({
-            x:
-              edge.x0 +
-              ((sy - edge.y0) * (edge.x1 - edge.x0)) / (edge.y1 - edge.y0),
-            dir: edge.dir,
-          });
+      while (nextEdge < edges.length) {
+        const edge = edges[nextEdge] as (typeof edges)[number];
+        if (!(edge.y0 <= sy)) {
+          break;
         }
+        active.push(edge);
+        nextEdge++;
+      }
+      let kept = 0;
+      for (const edge of active) {
+        if (sy < edge.y1) {
+          active[kept++] = edge;
+        }
+      }
+      active.length = kept;
+      crossings.length = 0;
+      for (const edge of active) {
+        crossings.push({
+          x:
+            edge.x0 +
+            ((sy - edge.y0) * (edge.x1 - edge.x0)) / (edge.y1 - edge.y0),
+          dir: edge.dir,
+        });
       }
       if (crossings.length < 2) {
         continue;
@@ -755,4 +776,134 @@ export function simulateCamera(
     data[i * 4 + 3] = 255;
   }
   return { data, width, height };
+}
+
+/**
+ * The original fill, which tests each sample row against every edge. Kept
+ * only so tests/raster-fill.test.ts can check fillPolygons paints the same
+ * bytes; fillPolygons keeps an active edge list instead.
+ */
+export function fillPolygonsReference(
+  image: RasterImage,
+  polygons: Point[][],
+  color: RGBAColor,
+  alpha: number,
+  evenOdd = false,
+  mask: ClipMask | null = null
+) {
+  if (alpha <= 0 || polygons.length === 0) {
+    return;
+  }
+  const edges: {
+    x0: number;
+    y0: number;
+    x1: number;
+    y1: number;
+    dir: number;
+  }[] = [];
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  for (const polygon of polygons) {
+    for (let i = 0; i < polygon.length; i++) {
+      const a = polygon[i] as Point;
+      const b = polygon[(i + 1) % polygon.length] as Point;
+      minX = Math.min(minX, a[0]);
+      maxX = Math.max(maxX, a[0]);
+      minY = Math.min(minY, a[1]);
+      maxY = Math.max(maxY, a[1]);
+      if (a[1] === b[1]) {
+        continue;
+      }
+      edges.push(
+        a[1] < b[1]
+          ? { x0: a[0], y0: a[1], x1: b[0], y1: b[1], dir: 1 }
+          : { x0: b[0], y0: b[1], x1: a[0], y1: a[1], dir: -1 }
+      );
+    }
+  }
+  const x0 = Math.max(0, Math.floor(minX));
+  const x1 = Math.min(image.width, Math.ceil(maxX));
+  const y0 = Math.max(0, Math.floor(minY));
+  const y1 = Math.min(image.height, Math.ceil(maxY));
+  if (x0 >= x1 || y0 >= y1) {
+    return;
+  }
+  const coverage = new Float32Array(x1 - x0);
+  const crossings: { x: number; dir: number }[] = [];
+  const weight = 1 / SUBSAMPLES;
+
+  const addSpan = (from: number, to: number) => {
+    const a = Math.max(from, x0);
+    const b = Math.min(to, x1);
+    if (b <= a) {
+      return;
+    }
+    const ia = Math.floor(a);
+    const ib = Math.floor(b);
+    if (ia === ib) {
+      coverage[ia - x0] += (b - a) * weight;
+      return;
+    }
+    coverage[ia - x0] += (ia + 1 - a) * weight;
+    for (let i = ia + 1; i < ib; i++) {
+      coverage[i - x0] += weight;
+    }
+    if (ib < x1) {
+      coverage[ib - x0] += (b - ib) * weight;
+    }
+  };
+
+  for (let py = y0; py < y1; py++) {
+    coverage.fill(0);
+    for (let s = 0; s < SUBSAMPLES; s++) {
+      const sy = py + (s + 0.5) / SUBSAMPLES;
+      crossings.length = 0;
+      for (const edge of edges) {
+        if (sy >= edge.y0 && sy < edge.y1) {
+          crossings.push({
+            x:
+              edge.x0 +
+              ((sy - edge.y0) * (edge.x1 - edge.x0)) / (edge.y1 - edge.y0),
+            dir: edge.dir,
+          });
+        }
+      }
+      if (crossings.length < 2) {
+        continue;
+      }
+      crossings.sort((a, b) => a.x - b.x);
+      let winding = 0;
+      for (let i = 0; i < crossings.length - 1; i++) {
+        const crossing = crossings[i] as { x: number; dir: number };
+        winding = evenOdd ? winding ^ 1 : winding + crossing.dir;
+        if (winding !== 0) {
+          addSpan(crossing.x, (crossings[i + 1] as { x: number }).x);
+        }
+      }
+    }
+    const row = py * image.width;
+    for (let px = x0; px < x1; px++) {
+      const c =
+        Math.min(1, coverage[px - x0] as number) *
+        alpha *
+        (mask ? maskAt(mask, px, py) : 1);
+      if (c <= 0) {
+        continue;
+      }
+      const i = (row + px) * 4;
+      const { data } = image;
+      const dstA = (data[i + 3] as number) / 255;
+      const outA = c + dstA * (1 - c);
+      for (let k = 0; k < 3; k++) {
+        const src = k === 0 ? color.r : k === 1 ? color.g : color.b;
+        data[i + k] =
+          outA === 0
+            ? 0
+            : (src * c + (data[i + k] as number) * dstA * (1 - c)) / outA;
+      }
+      data[i + 3] = outA * 255;
+    }
+  }
 }
