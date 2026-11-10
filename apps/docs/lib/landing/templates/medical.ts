@@ -75,6 +75,7 @@ registerTemplate({
             firstName: "Alex",
             lastName: "Lee",
             jobTitle: "Emergency contact · partner",
+            company: "",
             phones: [{ type: "mobile", number: "+1 555 0119" }],
             showSave: false,
             showShare: false,
@@ -83,6 +84,7 @@ registerTemplate({
         {
           type: "text",
           props: {
+            heading: "",
             body: "Anyone who scans this tag can read this page.",
             size: "sm",
             align: "center",
@@ -145,6 +147,7 @@ registerTemplate({
         {
           type: "text",
           props: {
+            heading: "",
             body: "Anyone who scans this wristband can read this page.",
             size: "sm",
             align: "center",

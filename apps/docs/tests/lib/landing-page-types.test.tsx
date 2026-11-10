@@ -108,6 +108,25 @@ describe("the new page types", () => {
     }
   });
 
+  it("set every field a block's defaults would fill with other sample text", () => {
+    // A template block is merged over the block's defaults, so a field it
+    // leaves out shows the block's own sample ("Example Co.", "About").
+    const leaks: string[] = [];
+    for (const type of NEW_TYPES) {
+      for (const variant of getTemplate(type)?.variants ?? []) {
+        for (const block of variant.blocks) {
+          const defaults = getBlock(block.type)?.defaults ?? {};
+          for (const key of Object.keys(defaults)) {
+            if (!(key in (block.props ?? {}))) {
+              leaks.push(`${type}/${variant.id} ${block.type}.${key}`);
+            }
+          }
+        }
+      }
+    }
+    expect(leaks).toEqual([]);
+  });
+
   it("hide the playlist where file storage is off, like audio", () => {
     expect(FILE_PAGE_TYPES.has("playlist")).toBe(true);
     for (const type of NEW_TYPES.filter((type) => type !== "playlist")) {
@@ -195,6 +214,7 @@ describe("the details block", () => {
     const tiles = render([
       { id: "x2", type: "details", props: { items, layout: "tiles" } },
     ]);
+    // Two tiles: a full row of two.
     expect(tiles).toContain("grid-cols-2");
     expect(
       parseProps("details", { items: [{ label: "", value: "x" }] })?.success,

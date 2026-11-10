@@ -50,6 +50,16 @@ registerTemplate({
           },
         },
         {
+          type: "details",
+          props: {
+            items: [
+              { label: "Net weight", value: "340 g" },
+              { label: "Best before", value: "Printed on the lid" },
+              { label: "Batch", value: "Printed on the lid" },
+            ],
+          },
+        },
+        {
           type: "product",
           props: {
             certifications: [
@@ -80,16 +90,6 @@ registerTemplate({
                 title: "Where it comes from",
                 body: "Our forty hives sit on wildflower meadows. Every batch is extracted cold and strained once, never heated.",
               },
-            ],
-          },
-        },
-        {
-          type: "details",
-          props: {
-            items: [
-              { label: "Net weight", value: "340 g" },
-              { label: "Best before", value: "Printed on the lid" },
-              { label: "Batch", value: "Printed on the lid" },
             ],
           },
         },
@@ -220,6 +220,16 @@ registerTemplate({
           },
         },
         {
+          type: "details",
+          props: {
+            items: [
+              { label: "Size", value: "30 ml" },
+              { label: "Use within", value: "12 months of opening" },
+              { label: "Made in", value: "Portugal" },
+            ],
+          },
+        },
+        {
           type: "product",
           props: {
             certifications: [
@@ -244,16 +254,6 @@ registerTemplate({
                 title: "Recycling",
                 body: "Glass bottle and aluminium cap: recycle with glass. Dropper: general waste.",
               },
-            ],
-          },
-        },
-        {
-          type: "details",
-          props: {
-            items: [
-              { label: "Size", value: "30 ml" },
-              { label: "Use within", value: "12 months of opening" },
-              { label: "Made in", value: "Portugal" },
             ],
           },
         },
