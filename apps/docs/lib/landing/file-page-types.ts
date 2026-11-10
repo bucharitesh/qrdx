@@ -9,6 +9,7 @@ export const FILE_PAGE_TYPES: ReadonlySet<string> = new Set([
   "images",
   "mp3",
   "video",
+  "playlist",
 ]);
 
 /** The page types a picker offers on this deployment. */

@@ -13,6 +13,7 @@ import { remark } from "remark";
 import remarkMdx from "remark-mdx";
 import { describe, expect, it } from "vitest";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
+import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
   fillFacts,
   fillFactsDeep,
@@ -52,6 +53,7 @@ describe("PRODUCT_FACTS", () => {
       auditLogRetentionDays: 365,
       auditLogExportRows: "50,000",
       barcodeFormats: BARCODE_FORMATS.length,
+      hostedPageTypes: PAGE_TYPE_IDS.length,
       // lib/affiliates/terms.ts
       affiliateCommissionPercent: 30,
       affiliateCommissionMonths: 12,

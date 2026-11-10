@@ -66,6 +66,25 @@ const PAGE_KEYWORDS: Record<string, string[]> = {
   apps: ["app store", "play store", "download", "ios", "android"],
   feedback: ["survey", "nps", "form", "rating", "review", "sign-up"],
   custom: ["landing page", "blank", "page", "website"],
+  social: ["social media", "instagram", "tiktok", "profiles", "follow"],
+  product: [
+    "packaging",
+    "label",
+    "ingredients",
+    "nutrition",
+    "gs1",
+    "digital link",
+    "gtin",
+    "barcode",
+    "product passport",
+    "wine label",
+  ],
+  booking: ["booking", "appointment", "salon", "clinic", "reservation"],
+  payment: ["pay", "tip", "donation", "donate", "venmo", "bank transfer"],
+  "real-estate": ["real estate", "property", "house", "rent", "open house"],
+  pet: ["pet", "dog", "cat", "collar", "lost pet"],
+  medical: ["medical", "emergency", "ice", "allergy", "health"],
+  playlist: ["playlist", "mixtape", "audio tour", "audiobook", "tracks"],
 };
 
 interface TypeItem {

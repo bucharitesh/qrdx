@@ -87,6 +87,12 @@ export interface BlockEditorContext {
   pageId: string | null;
   /** File uploads are available (lib/storage isStorageConfigured) */
   storageEnabled: boolean;
+  /**
+   * Custom domain the page's QR code is served on (verified), or null on
+   * QRdx's shared host. Product pages resolve GS1 Digital Links there.
+   * Optional: editors outside the page editor leave it out.
+   */
+  customDomain?: string | null;
 }
 
 export interface BlockEditorProps<P extends BlockProps = BlockProps> {
