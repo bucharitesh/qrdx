@@ -26,7 +26,7 @@ const steps = [
   },
   {
     title: "Pick a style and format",
-    body: "Choose a built-in preset, the style you last used in the editor, or one of your saved themes when you're signed in. SVG is best for print; PNG for screens and documents.",
+    body: "Choose a built-in preset, the style you last used in the editor, or one of your saved themes when you're signed in. SVG is best for print; PNG for screens and documents; WebP for websites.",
   },
   {
     title: "Generate and download",
@@ -73,7 +73,7 @@ export default function BulkPage() {
         ]}
         title="Bulk QR code generator"
         intro={[
-          "Turn a spreadsheet into hundreds or thousands of QR codes in one go: product labels, event tickets, asset tags, table numbers or personalised mailers. Upload a CSV, map the columns, choose a style and download every code as PNG or SVG, zipped.",
+          "Turn a spreadsheet into hundreds or thousands of QR codes in one go: product labels, event tickets, asset tags, table numbers or personalised mailers. Upload a CSV, map the columns, choose a style and download every code as PNG, WebP or SVG, zipped.",
           "Everything happens in your browser. The CSV is never uploaded and there is no sign-up, watermark or per-code charge.",
         ]}
       />

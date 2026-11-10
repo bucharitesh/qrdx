@@ -185,3 +185,66 @@ describe("the editor's styles", () => {
     }
   });
 });
+
+describe("WebP", () => {
+  const pixels = async (response: Response) => {
+    const { default: sharp } = await import("sharp");
+    const bytes = Buffer.from(await response.arrayBuffer());
+    const { data, info } = await sharp(bytes)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    return { bytes, data: new Uint8ClampedArray(data), info };
+  };
+  const isLosslessWebp = (bytes: Buffer) =>
+    bytes.toString("latin1", 0, 4) === "RIFF" &&
+    bytes.toString("latin1", 8, 16) === "WEBPVP8L";
+
+  it("is the PNG's pixels, lossless and smaller, with the same caching", async () => {
+    const query = { data: "https://qrdx.dev/webp", size: "300", fg: "155dfc" };
+    const [webp, png] = await Promise.all([
+      get(q({ ...query, format: "webp" })),
+      get(q({ ...query, format: "png" })),
+    ]);
+    expect(webp.status).toBe(200);
+    expect(webp.headers.get("content-type")).toBe("image/webp");
+    expect(webp.headers.get("cache-control")).toBe(IMMUTABLE);
+    expect(webp.headers.get("cdn-cache-control")).toBe(IMMUTABLE);
+    expect(webp.headers.get("access-control-allow-origin")).toBe("*");
+    const fromWebp = await pixels(webp);
+    const fromPng = await pixels(png);
+    expect(isLosslessWebp(fromWebp.bytes)).toBe(true);
+    expect([fromWebp.info.width, fromWebp.info.height]).toEqual([300, 300]);
+    expect(
+      Buffer.compare(Buffer.from(fromWebp.data), Buffer.from(fromPng.data)),
+    ).toBe(0);
+    expect(fromWebp.bytes.length).toBeLessThan(fromPng.bytes.length);
+    expect(decodeQR({ data: fromWebp.data, width: 300, height: 300 })).toBe(
+      "https://qrdx.dev/webp",
+    );
+  });
+
+  it("takes WEBP in any case, and styles, frames and a transparent background", async () => {
+    const response = await get(
+      q({
+        data: "https://qrdx.dev/styled",
+        size: "240",
+        format: "WEBP",
+        frame: "border",
+        style: JSON.stringify({ bgColor: "transparent" }),
+      }),
+    );
+    expect(response.status).toBe(200);
+    expect(response.headers.get("content-type")).toBe("image/webp");
+    const { bytes, data, info } = await pixels(response);
+    expect(isLosslessWebp(bytes)).toBe(true);
+    // The frame makes it larger than the code.
+    expect(info.width).toBeGreaterThan(240);
+    const alphas = new Set<number>();
+    for (let index = 3; index < data.length; index += 4) {
+      alphas.add(data[index] as number);
+    }
+    expect(alphas.has(0)).toBe(true);
+    expect(alphas.has(255)).toBe(true);
+  });
+});

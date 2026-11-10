@@ -130,6 +130,7 @@ describe("MCP over Streamable HTTP", () => {
     const summary = content[0]?.text ?? "";
     expect(summary).toMatch(/SVG URL: https?:\/\/\S+\/v1\/qr\?/);
     expect(summary).toMatch(/PNG URL: \S+format=png/);
+    expect(summary).toMatch(/WebP URL .*format=webp/);
     expect(summary).toMatch(/EPS URL .*format=eps/);
     expect(summary).toContain("Markdown: ![QR code](");
 

@@ -17,6 +17,15 @@ import type { ThemeStyles } from "@/types/theme";
 const SIZE = 1024;
 const BATCH = 6;
 
+/** Image files a ZIP of codes can hold (WebP is lossless). */
+export type ZipFormat = "png" | "webp" | "svg";
+
+export const ZIP_FORMAT_LABELS: Record<ZipFormat, string> = {
+  png: "PNG",
+  webp: "WebP",
+  svg: "SVG",
+};
+
 interface ZipCode {
   slug: string;
   shortLink: string;
@@ -41,7 +50,7 @@ export function createLogoCache() {
 /** A code's image with its saved design, as the single download makes it; null if it fails. */
 export async function renderCodeImage(
   code: Pick<ZipCode, "shortLink" | "style">,
-  format: "png" | "svg",
+  format: ZipFormat,
   logoFor: (src: string) => Promise<string | null>,
 ): Promise<Uint8Array | null> {
   const s = code.style ?? defaultThemeState.styles;
@@ -86,7 +95,7 @@ export async function renderCodeImage(
  */
 export async function downloadCodesZip(
   codes: ZipCode[],
-  format: "png" | "svg",
+  format: ZipFormat,
   onProgress?: (done: number, total: number) => void,
 ): Promise<{ saved: number; failed: number }> {
   const logoFor = createLogoCache();
@@ -113,7 +122,7 @@ export async function downloadCodesZip(
         sanitizeFilename(code.title ?? "") || `qrdx-${code.slug}`,
         format,
       );
-      // PNGs are already compressed; SVG text shrinks a lot.
+      // PNG and WebP are already compressed; SVG text shrinks a lot.
       zip.add(name, bytes, format === "svg");
       index.push({
         file: name,

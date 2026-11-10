@@ -29,6 +29,7 @@ import {
   DocumentDownload,
   Import as Download,
   FolderAdd as FolderInput,
+  GalleryImport,
   Link21,
   More as MoreHorizontal,
   Notepad2 as NotebookPen,
@@ -74,7 +75,7 @@ import {
 } from "@/components/app-shell/paste-to-create";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { useCan, useWorkspaceSlug } from "@/components/workspace-provider";
-import { downloadCodeQr } from "./code-qr";
+import { type CodeImageFormat, downloadCodeQr } from "./code-qr";
 import { MoveToFolderDialog } from "./folder-dialogs";
 import { MoveToWorkspaceDialog } from "./move-workspace-dialog";
 import { NotesDialog } from "./notes-dialog";
@@ -197,7 +198,7 @@ export function CodeActionsMenu({
     if (result) setDialog(null);
   };
 
-  const download = (format: "png" | "svg") => {
+  const download = (format: CodeImageFormat) => {
     downloadCodeQr(code, format).catch(() =>
       toast.error("Download failed. Please try again."),
     );
@@ -357,6 +358,9 @@ export function CodeActionsMenu({
           <DropdownMenuItem onSelect={() => download("png")}>
             <Download /> Download PNG
           </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => download("webp")}>
+            <GalleryImport /> Download WebP
+          </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("svg")}>
             <DocumentDownload /> Download SVG
           </DropdownMenuItem>
@@ -401,6 +405,9 @@ export function CodeActionsMenu({
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("png")}>
             <Download /> Download PNG
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => download("webp")}>
+            <GalleryImport /> Download WebP
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("svg")}>
             <DocumentDownload /> Download SVG

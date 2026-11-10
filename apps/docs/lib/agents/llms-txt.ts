@@ -100,7 +100,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       ? ` npm's latest is ${name}@${published}; these docs describe ${repo}, which isn't on npm yet.`
       : "";
 
-  const summary = `> QRdx (qrdx.dev) is an open-source (AGPL-3.0) QR code platform. Anyone can design static QR codes in the browser with no signup or watermark (${STYLE_SUMMARY}, ${PRODUCT_FACTS.frames} frames, gradients, logos, and Logo QR or Image QR art) and download PNG, JPG, SVG, PDF or EPS files. A free account adds dynamic QR codes you can change after printing, with scan analytics and hosted mobile pages; paid plans add smart routing, link controls, ${on("customDomains") ? "custom domains, " : ""}teams and webhooks. Developers get a REST API, a keyless QR image API, a remote MCP server, a CLI, a React library and a shadcn/ui registry.`;
+  const summary = `> QRdx (qrdx.dev) is an open-source (AGPL-3.0) QR code platform. Anyone can design static QR codes in the browser with no signup or watermark (${STYLE_SUMMARY}, ${PRODUCT_FACTS.frames} frames, gradients, logos, and Logo QR or Image QR art) and download PNG, JPG, WebP, SVG, PDF or EPS files. A free account adds dynamic QR codes you can change after printing, with scan analytics and hosted mobile pages; paid plans add smart routing, link controls, ${on("customDomains") ? "custom domains, " : ""}teams and webhooks. Developers get a REST API, a keyless QR image API, a remote MCP server, a CLI, a React library and a shadcn/ui registry.`;
 
   const facts = [
     "Key facts:",
@@ -340,7 +340,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "QR code image API",
       url: "/docs/developers/image-api",
-      description: `\`GET ${api}/qr?data=…\` returns an SVG, PNG or EPS QR code; no key; gradients, frames, borders and logo icons through \`style\` (the editor's style JSON)`,
+      description: `\`GET ${api}/qr?data=…\` returns an SVG, PNG, WebP or EPS QR code; no key; gradients, frames, borders and logo icons through \`style\` (the editor's style JSON)`,
     },
     // Barcodes (lib/barcode, lib/barcodes)
     {

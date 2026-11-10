@@ -557,7 +557,7 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
         summary: "Render a QR code image",
         tags: ["QR images"],
         security: [],
-        description: `A QR code image as SVG (default), PNG or EPS, with no key.
+        description: `A QR code image as SVG (default), PNG, WebP or EPS, with no key.
 
 **No key or token needed**, and it doesn't use your daily quota: put the URL straight into an \`<img>\` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without \`#\` (or with \`#\` encoded as \`%23\`). Limit: 300 requests a minute per IP address. More in the [Image API guide](${docs("developers/image-api")}).
 
@@ -565,7 +565,9 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
 
 **Logos.** \`logoIcon\` draws one of the editor's quick icons. \`logoFileId\` draws an image you uploaded, and needs \`Authorization: Bearer qrdx_…\` from the workspace that owns it; that response is private and counts toward the daily quota. QRdx never fetches a logo from an address you send. Logo QR and Image QR art aren't available here.
 
-**Caching.** Renders with \`item\` are cached for 5 minutes (10 at the CDN), since an item can change; renders with \`logoFileId\` aren't cached.`,
+**Caching.** Renders with \`item\` are cached for 5 minutes (10 at the CDN), since an item can change; renders with \`logoFileId\` aren't cached.
+
+**WebP** is lossless: the same pixels as the PNG in a smaller file, transparency included.`,
         parameters: c.parameters(
           qrImage,
           "query",
@@ -590,6 +592,9 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
               },
               "image/png": {
                 schema: { type: "string", contentMediaType: "image/png" },
+              },
+              "image/webp": {
+                schema: { type: "string", contentMediaType: "image/webp" },
               },
               "application/postscript": {
                 schema: {

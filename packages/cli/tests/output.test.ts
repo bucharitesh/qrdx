@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, rmSync } from "node:fs";
+import { createRequire } from "node:module";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import sharp from "sharp";
@@ -247,6 +248,94 @@ describe("saveOutput – PNG", () => {
     });
     const { red } = await countRedPixels(out);
     expect(red).toBeGreaterThan(40 * 40);
+  });
+});
+
+describe("saveOutput – WebP", () => {
+  // jsqr ships with qrdx, so resolve it from there.
+  const require = createRequire(import.meta.url);
+  const jsQR = createRequire(require.resolve("qrdx/package.json"))(
+    "jsqr"
+  ) as typeof import("jsqr").default;
+
+  const pixels = async (file: string) => {
+    const { data, info } = await sharp(file)
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    return { data: new Uint8ClampedArray(data), info };
+  };
+
+  it("writes lossless WebP with the PNG's pixels, smaller, and it scans", async () => {
+    const webp = tmp("save.webp");
+    const png = tmp("same.png");
+    cleanups.push(webp, png);
+    const props = { value: "https://qrdx.dev/cli-webp", size: 300 };
+    await saveOutput({ ...props, outputPath: webp, format: "webp" });
+    await saveOutput({ ...props, outputPath: png, format: "png" });
+    const bytes = readFileSync(webp);
+    expect(bytes.toString("latin1", 0, 4)).toBe("RIFF");
+    expect(bytes.toString("latin1", 8, 16)).toBe("WEBPVP8L");
+    expect(bytes.length).toBeLessThan(readFileSync(png).length);
+    const fromWebp = await pixels(webp);
+    const fromPng = await pixels(png);
+    expect([fromWebp.info.width, fromWebp.info.height]).toEqual([300, 300]);
+    expect(
+      Buffer.compare(Buffer.from(fromWebp.data), Buffer.from(fromPng.data))
+    ).toBe(0);
+    expect(jsQR(fromWebp.data, 300, 300)?.data).toBe(
+      "https://qrdx.dev/cli-webp"
+    );
+  });
+
+  it("keeps a transparent background and a framed size", async () => {
+    const out = tmp("frame.webp");
+    cleanups.push(out);
+    await saveOutput({
+      value: "https://qrdx.dev",
+      outputPath: out,
+      format: "webp",
+      size: 200,
+      bgColor: "transparent",
+      frame: { style: "banner-bottom", text: "Scan me" },
+    });
+    const { data, info } = await pixels(out);
+    expect(info.height).toBeGreaterThan(info.width);
+    const alphas = new Set<number>();
+    for (let index = 3; index < data.length; index += 4) {
+      alphas.add(data[index] as number);
+    }
+    expect(alphas.has(0)).toBe(true);
+    expect(alphas.has(255)).toBe(true);
+  });
+
+  it("draws the center logo into the WebP", async () => {
+    const out = tmp("logo.webp");
+    cleanups.push(out);
+    const logo = await sharp({
+      create: { width: 32, height: 32, channels: 3, background: "#ff0000" },
+    })
+      .png()
+      .toBuffer();
+    await saveOutput({
+      value: "https://qrdx.dev",
+      outputPath: out,
+      format: "webp",
+      size: 256,
+      level: "H",
+      imageSettings: {
+        src: `data:image/png;base64,${logo.toString("base64")}`,
+        width: 52,
+        height: 52,
+        excavate: true,
+      },
+    });
+    expect(readFileSync(out).toString("latin1", 8, 12)).toBe("WEBP");
+    const { data, info } = await pixels(out);
+    const mid =
+      (Math.floor(info.height / 2) * info.width + Math.floor(info.width / 2)) *
+      4;
+    expect([data[mid], data[mid + 1], data[mid + 2]]).toEqual([255, 0, 0]);
   });
 });
 

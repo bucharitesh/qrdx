@@ -71,7 +71,7 @@ export interface GenerateMeta {
 }
 
 const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
-/** Largest PNG side: beyond this sharp hits its pixel limit (and RAM). */
+/** Largest PNG or WebP side: beyond this sharp hits its pixel limit (and RAM). */
 const MAX_PNG_SIZE = 10_000;
 
 /**
@@ -185,9 +185,9 @@ function validateFlags(flags: GenerateFlags): void {
   assertOneOf("--format", flags.format, OUTPUT_FORMATS);
   if (flags.output !== undefined) {
     const ext = extname(flags.output).toLowerCase();
-    if (!["", ".svg", ".png", ".eps"].includes(ext)) {
+    if (!["", ".svg", ".png", ".webp", ".eps"].includes(ext)) {
       throw new Error(
-        `Unsupported output format "${ext}". Use a .svg, .png or .eps file name.`
+        `Unsupported output format "${ext}". Use a .svg, .png, .webp or .eps file name.`
       );
     }
     if (ext && flags.format && ext !== `.${flags.format}`) {
@@ -196,12 +196,15 @@ function validateFlags(flags: GenerateFlags): void {
       );
     }
   }
-  const isPng =
-    extname(flags.output ?? "").toLowerCase() === ".png" ||
-    flags.format === "png";
-  if (isPng && flags.size !== undefined && flags.size > MAX_PNG_SIZE) {
+  const raster = [
+    extname(flags.output ?? "")
+      .toLowerCase()
+      .slice(1),
+    flags.format,
+  ].find((format) => format === "png" || format === "webp");
+  if (raster && flags.size !== undefined && flags.size > MAX_PNG_SIZE) {
     throw new Error(
-      `Invalid --size "${flags.size}". PNG output is at most ${MAX_PNG_SIZE} px; use .svg or .eps for larger prints.`
+      `Invalid --size "${flags.size}". ${raster === "webp" ? "WebP" : "PNG"} output is at most ${MAX_PNG_SIZE} px; use .svg or .eps for larger prints.`
     );
   }
 }
@@ -456,6 +459,9 @@ function inferFormat(
   if (ext === ".png") {
     return "png";
   }
+  if (ext === ".webp") {
+    return "webp";
+  }
   if (ext === ".eps") {
     return "eps";
   }
@@ -553,7 +559,7 @@ export async function runGenerate(
   if (!outputPath) {
     if (canUseClack) {
       const pathRes = await p.text({
-        message: "Output file (.svg, .png or .eps)",
+        message: "Output file (.svg, .png, .webp or .eps)",
         placeholder: defaultOutput,
         defaultValue: defaultOutput,
         validate(v) {
@@ -568,7 +574,7 @@ export async function runGenerate(
       outputPath = (pathRes as string) || defaultOutput;
     } else if (process.stdout.isTTY && !isCI) {
       const pathAns = await readLineFromTTY(
-        `Output file ${DIM}(.svg, .png or .eps, Enter = ${defaultOutput})${RESET}: `
+        `Output file ${DIM}(.svg, .png, .webp or .eps, Enter = ${defaultOutput})${RESET}: `
       );
       outputPath = pathAns?.trim() || defaultOutput;
     } else {

@@ -1,9 +1,9 @@
 # @qrdx/cli
 
-QR code generator CLI for developers. Generate styled, scannable QR codes as SVG, PNG or vector EPS. It runs non-interactively in scripts and CI, and guides you with prompts when run in a terminal. It renders with the same [`qrdx`](https://www.npmjs.com/package/qrdx) library as the [QRdx](https://qrdx.dev) web app.
+QR code generator CLI for developers. Generate styled, scannable QR codes as SVG, PNG, WebP or vector EPS. It runs non-interactively in scripts and CI, and guides you with prompts when run in a terminal. It renders with the same [`qrdx`](https://www.npmjs.com/package/qrdx) library as the [QRdx](https://qrdx.dev) web app.
 
 > [!NOTE]
-> This README documents `@qrdx/cli` 0.0.5, the version in this repository. npm still has 0.0.4, so `npx @qrdx/cli` runs 0.0.4 until 0.0.5 is published. 0.0.4 has the qrdx 0.0.46 styles and no `--format` or `--frame` options, and it writes SVG into a file named `qr.eps`. For EPS today, use the [image API](https://qrdx.dev/docs/developers/image-api): `curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://example.com&format=eps"`. For frames, download from the [playground](https://qrdx.dev/playground). Run `npm view @qrdx/cli version` to see what npm installs.
+> This README documents `@qrdx/cli` 0.0.6, the version in this repository. WebP output is new in 0.0.6; 0.0.5 has every other option here. Run `npm view @qrdx/cli version` to see what npm installs. Until it is 0.0.6, get WebP from the [image API](https://qrdx.dev/docs/developers/image-api): `curl -o qr.webp "https://api.qrdx.dev/v1/qr?data=https://example.com&format=webp"`.
 
 ## Install
 
@@ -20,7 +20,7 @@ npm install -g @qrdx/cli
 qrdx generate "https://example.com" -o qr.svg
 ```
 
-PNG output uses [sharp](https://sharp.pixelplumbing.com). It is an optional dependency that npm installs automatically when your platform supports it; if it is missing, SVG and EPS output still work and the CLI tells you how to fix PNG.
+PNG and WebP output use [sharp](https://sharp.pixelplumbing.com). It is an optional dependency that npm installs automatically when your platform supports it; if it is missing, SVG and EPS output still work and the CLI tells you how to fix PNG and WebP.
 
 > The `qrdx` npm package is the React library. The CLI lives only in `@qrdx/cli`.
 
@@ -36,9 +36,9 @@ qrdx generate <data> [options]
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--output` | `-o` | `qr.svg` | Output path; the extension sets the format (`.svg`, `.png` or `.eps`) |
-| `--format` | | from the extension | `svg`, `png` or `eps`, for a file name without an extension |
-| `--size` | | `512` | Output size: pixels for SVG and PNG, points (72 per inch) for EPS |
+| `--output` | `-o` | `qr.svg` | Output path; the extension sets the format (`.svg`, `.png`, `.webp` or `.eps`) |
+| `--format` | | from the extension | `svg`, `png`, `webp` or `eps`, for a file name without an extension |
+| `--size` | | `512` | Output size: pixels for SVG, PNG and WebP, points (72 per inch) for EPS |
 | `--level` | `-l` | `Q` | Error correction: `L` `M` `Q` `H` |
 | `--body` | | `square` | Body dot pattern |
 | `--eye` | | `square` | Corner eye pattern |
@@ -68,6 +68,9 @@ qrdx generate "https://qrdx.dev" -o qr.svg
 
 # High-res PNG for print
 qrdx generate "https://qrdx.dev" -o qr.png --size 2048 --level H
+
+# Lossless WebP for a website: the PNG's pixels in a smaller file
+qrdx generate "https://qrdx.dev" -o qr.webp --size 1024
 
 # Vector EPS for a print shop or Illustrator, 2 inches wide
 qrdx generate "https://qrdx.dev" -o qr.eps --size 144

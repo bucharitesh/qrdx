@@ -15,6 +15,15 @@ import type { ThemeStyles } from "@/types/theme";
 
 const DOWNLOAD_SIZE = 1024;
 
+/** The files a saved code downloads as; WebP is lossless. */
+export type CodeImageFormat = "png" | "webp" | "svg";
+const FORMATS: CodeImageFormat[] = ["png", "webp", "svg"];
+const FORMAT_LABELS: Record<CodeImageFormat, string> = {
+  png: "PNG",
+  webp: "WebP",
+  svg: "SVG",
+};
+
 const resolveStyle = (style: ThemeStyles | null | undefined): ThemeStyles =>
   style ?? defaultThemeState.styles;
 
@@ -59,7 +68,7 @@ export function CodeQr({
 
 export async function downloadCodeQr(
   code: { slug: string; shortLink: string; style: ThemeStyles | null },
-  format: "png" | "svg",
+  format: CodeImageFormat,
 ): Promise<void> {
   const s = resolveStyle(code.style);
   await downloadQRCode(
@@ -104,9 +113,9 @@ export function CodeDownloadButtons({
   code: { slug: string; shortLink: string; style: ThemeStyles | null };
   className?: string;
 }) {
-  const [pending, setPending] = useState<"png" | "svg" | null>(null);
+  const [pending, setPending] = useState<CodeImageFormat | null>(null);
 
-  const download = async (format: "png" | "svg") => {
+  const download = async (format: CodeImageFormat) => {
     setPending(format);
     try {
       await downloadCodeQr(code, format);
@@ -119,7 +128,7 @@ export function CodeDownloadButtons({
 
   return (
     <div className={cn("flex gap-2", className)}>
-      {(["png", "svg"] as const).map((format) => (
+      {FORMATS.map((format) => (
         <Button
           className="flex-1"
           disabled={pending !== null}
@@ -129,7 +138,7 @@ export function CodeDownloadButtons({
           variant="outline"
         >
           <Download />
-          {format.toUpperCase()}
+          {FORMAT_LABELS[format]}
         </Button>
       ))}
     </div>
