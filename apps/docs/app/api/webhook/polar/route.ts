@@ -6,6 +6,7 @@ import {
   plansBeforeBillingChange,
   recordPlanChanges,
 } from "@/ee/audit-log/plan-change";
+import { handleAffiliateWebhook } from "@/lib/affiliates/commissions";
 import { trackServer } from "@/lib/analytics/server";
 import { env } from "@/lib/env";
 import { planForProductId } from "@/lib/pricing";
@@ -127,8 +128,34 @@ const onPayload: WebhooksConfig["onPayload"] = async ({ data, type }) => {
   }
 };
 
+// Affiliate commissions (lib/affiliates/commissions.ts: order.paid,
+// order.refunded, refund.created, refund.updated). The Webhooks wrapper has
+// already verified the signature (a bad one gets a 403 before this runs),
+// and the billing state above is saved first: if that throws, nothing here
+// runs and Polar retries the whole delivery. The affiliate step never
+// fails the webhook: an error is logged and Polar still gets a 2xx.
+const onPayloadWithAffiliates: WebhooksConfig["onPayload"] = async (
+  payload,
+) => {
+  await onPayload?.(payload);
+  try {
+    await handleAffiliateWebhook(payload);
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        event: "affiliates.webhook_failed",
+        type: payload.type,
+        error: error instanceof Error ? error.message : String(error),
+      }),
+    );
+  }
+};
+
 const handleWebhook = env.POLAR_WEBHOOK_SECRET
-  ? Webhooks({ webhookSecret: env.POLAR_WEBHOOK_SECRET, onPayload })
+  ? Webhooks({
+      webhookSecret: env.POLAR_WEBHOOK_SECRET,
+      onPayload: onPayloadWithAffiliates,
+    })
   : null;
 
 export async function POST(request: NextRequest) {

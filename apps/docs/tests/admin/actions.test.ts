@@ -98,6 +98,10 @@ vi.mock("@repo/database", () => {
   return {
     database,
     abuseReport: table("abuse_report"),
+    affiliate: table("affiliate"),
+    affiliateCommission: table("affiliate_commission"),
+    affiliatePayout: table("affiliate_payout"),
+    affiliateReferral: table("affiliate_referral"),
     account: table("account"),
     adminAuditLog: table("admin_audit_log"),
     communityItem: table("community_item"),
@@ -240,6 +244,8 @@ const modules = {
   "app/admin/abuse/actions": () => import("@/app/admin/abuse/actions"),
   "app/admin/users/support-actions": () =>
     import("@/app/admin/users/support-actions"),
+  "app/admin/affiliates/actions": () =>
+    import("@/app/admin/affiliates/actions"),
 };
 
 // A plausible, valid input for every action (each also gets a reason).
@@ -265,6 +271,11 @@ const sampleInput = {
   role: "user",
   confirmation: "target@example.com",
   newEmail: "new@example.com",
+  affiliateId: "aff_1",
+  commissionId: "commission_1",
+  currency: "usd",
+  amount: 2500,
+  paypalReference: "8AB12345CD678901E",
 };
 
 type Action = (input: unknown) => Promise<{ ok: boolean; error?: string }>;
@@ -310,8 +321,9 @@ beforeEach(() => {
 describe("admin guard", () => {
   it("covers every exported server action", async () => {
     const actions = await allActions();
-    // 5 + 2 + 4 + 10 at the time of writing; new ones are picked up here.
-    expect(actions.length).toBeGreaterThanOrEqual(21);
+    // 5 + 2 + 4 + 10 + 6 (affiliates) at the time of writing; new ones are
+    // picked up here.
+    expect(actions.length).toBeGreaterThanOrEqual(27);
   });
 
   it("rejects non-admins before any query or auth call", async () => {

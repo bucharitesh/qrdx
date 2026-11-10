@@ -37,6 +37,7 @@ import {
 // Role changes and deleted teams are recorded by packages/auth/workspace-audit.ts.
 import "@/ee/audit-log/auth-changes";
 import { scheduleWorkspaceAuditCleanup } from "@/ee/audit-log/retention";
+import { anonymiseAffiliatePayouts } from "@/lib/affiliates/program";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import {
   getCustomDomainMode,
@@ -402,6 +403,10 @@ export async function executeAccountDeletion({
   //     manual-sql/0012 exists. Their own profile and items cascade with
   //     the user row.
   await uncountCommunityReactions(userId);
+
+  // 6c. Affiliate payouts stay for the books, without the PayPal address
+  //     (the affiliate and user ids are set to null with the user row).
+  await anonymiseAffiliatePayouts(userId);
 
   // 7. The account. Sessions, linked accounts, memberships, codes (their
   //    short links then show "not found"), pages, scans, tokens and the rest

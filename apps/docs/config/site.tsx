@@ -972,6 +972,7 @@ export const siteConfig = {
         { id: 3, title: "Integrations", url: "/integrations" },
         { id: 5, title: "QR codes by industry", url: "/qr-codes-for" },
         { id: 6, title: "QR codes by placement", url: "/qr-codes-on" },
+        { id: 9, title: "Affiliate program", url: "/affiliates" },
         { id: 4, title: "Contact", url: "mailto:support@qrdx.dev" },
         {
           id: 7,
@@ -994,6 +995,11 @@ export const siteConfig = {
             { id: 7, title: "Data processing (DPA)", url: "/legal/dpa" },
             { id: 8, title: "AI features", url: "/legal/ai-features" },
             { id: 9, title: "Refunds", url: "/legal/refunds" },
+            {
+              id: 11,
+              title: "Affiliate terms",
+              url: "/legal/affiliate-terms",
+            },
             { id: 10, title: "Security", url: "/legal/security" },
           ],
         },

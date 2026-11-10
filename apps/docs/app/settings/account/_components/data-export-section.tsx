@@ -66,9 +66,10 @@ export function DataExportSection() {
           <p className="text-muted-foreground text-sm text-pretty">
             A ZIP of your profile, sign-in methods and sessions, codes and their
             settings, scans, hosted pages and form responses, themes, folders,
-            tags, webhooks, apps, integrations, teams and subscription, with a
-            README that explains each file. Secrets such as passwords, tokens
-            and webhook keys are never included.
+            tags, webhooks, apps, integrations, teams, subscription and any
+            affiliate program records, with a README that explains each file.
+            Secrets such as passwords, tokens and webhook keys are never
+            included.
           </p>
           <Button disabled={preparing} onClick={download} variant="outline">
             {preparing ? (
