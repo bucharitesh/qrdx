@@ -551,6 +551,52 @@ describe("Better Auth's workspace endpoints over HTTP", () => {
     ).resolves.toBeUndefined();
   });
 
+  it("refuses a logo over HTTP, on an update or a new workspace", async () => {
+    // The app's own action checks a logo (an upload of this workspace or a
+    // public https image); Better Auth would store any string.
+    for (const logo of [
+      "javascript:alert(1)",
+      "http://10.0.0.1/x.png",
+      "https://example.com/logo.png",
+      null,
+    ]) {
+      await expect(
+        server.checkWorkspaceTwoFactorGate(
+          http("/organization/update", {
+            organizationId: TEAM,
+            data: { logo },
+          }),
+          as(ADA),
+        ),
+      ).rejects.toMatchObject({
+        body: { code: server.WORKSPACE_SETTINGS_IN_APP },
+      });
+      await expect(
+        server.checkWorkspaceTwoFactorGate(
+          http("/organization/create", { name: "New", slug: "new-a", logo }),
+          as(ADA),
+        ),
+      ).rejects.toMatchObject({
+        body: { code: server.WORKSPACE_SETTINGS_IN_APP },
+      });
+    }
+    // Server-side calls (the app's checked action) aren't affected.
+    await expect(
+      server.checkWorkspaceTwoFactorGate(
+        {
+          http: false,
+          path: "/organization/update",
+          body: {
+            organizationId: TEAM,
+            data: { logo: "https://example.com/logo.png" },
+          },
+          query: {},
+        },
+        as(ADA),
+      ),
+    ).resolves.toBeUndefined();
+  });
+
   it("refuses metadata on a new workspace over HTTP, and makes one without it", async () => {
     for (const metadata of [{ requireTwoFactor: true }, {}, null]) {
       await expect(

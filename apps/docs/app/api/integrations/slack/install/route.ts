@@ -1,3 +1,4 @@
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { lacksRequiredTwoFactor } from "@repo/auth/workspace-two-factor";
 import { database as db, member } from "@repo/database";
 import { and, eq } from "drizzle-orm";
@@ -12,11 +13,12 @@ import {
   isOAuthConfigured,
 } from "@/lib/integration-oauth";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
+import { getActiveScope, TwoFactorRequiredError } from "@/lib/scope";
 
 const workspaceSchema = z
   .string()
   .regex(/^(personal|[A-Za-z0-9_-]{1,64})$/)
-  .default("personal");
+  .optional();
 
 const back = (request: Request, error: string) =>
   NextResponse.redirect(
@@ -24,13 +26,18 @@ const back = (request: Request, error: string) =>
   );
 
 /**
- * GET /api/integrations/slack/install?workspace=<org id|personal> — "Add to
- * Slack" for one QRdx workspace: checks membership (and that the workspace
- * doesn't shut the person out for lacking two-step verification), plan and
- * a recent "Confirm it's you" (the channel gets form answers; the page asks
- * before it comes here), remembers the workspace for the callback, then
- * sends the person to Slack. The callback adds the channel through
- * addChatTarget, which checks the workspace and plan again.
+ * GET /api/integrations/slack/install[?workspace=<org id|personal>] — "Add to
+ * Slack" for one QRdx workspace: the one named, the person's own for
+ * `personal`, else the workspace they're in (the one Enable uses, and that
+ * Settings → Notifications lists the channel under). Checks membership (and
+ * that the workspace doesn't shut the person out for lacking two-step
+ * verification), plan and a recent "Confirm it's you" (the channel gets form
+ * answers; the page asks before it comes here), remembers the workspace for
+ * the callback, then sends the person to Slack. The callback adds the
+ * channel through addChatTarget, which checks the workspace and plan again.
+ *
+ * A channel always goes to a workspace: every person has one, and a channel
+ * filed under none would get no alerts and be listed nowhere.
  */
 export async function GET(request: Request) {
   const user = await requireUser(connectLimiter, "integrations:slack-install");
@@ -47,23 +54,37 @@ export async function GET(request: Request) {
     new URL(request.url).searchParams.get("workspace") ?? undefined,
   );
   if (!parsed.success) return back(request, "unexpected_error");
-  const organizationId = parsed.data === "personal" ? null : parsed.data;
-
-  if (organizationId) {
-    const [row] = await db
-      .select({ id: member.id })
-      .from(member)
-      .where(
-        and(
-          eq(member.organizationId, organizationId),
-          eq(member.userId, user.userId),
-        ),
-      )
-      .limit(1);
-    if (!row) return back(request, "unexpected_error");
-    if (await lacksRequiredTwoFactor(user.userId, organizationId)) {
-      return back(request, "two_factor_required");
+  let organizationId: string;
+  if (parsed.data === "personal") {
+    organizationId = ownWorkspaceId(user.userId);
+  } else if (parsed.data) {
+    organizationId = parsed.data;
+  } else {
+    try {
+      ({ organizationId } = await getActiveScope());
+    } catch (error) {
+      return back(
+        request,
+        error instanceof TwoFactorRequiredError
+          ? "two_factor_required"
+          : "unexpected_error",
+      );
     }
+  }
+
+  const [row] = await db
+    .select({ id: member.id })
+    .from(member)
+    .where(
+      and(
+        eq(member.organizationId, organizationId),
+        eq(member.userId, user.userId),
+      ),
+    )
+    .limit(1);
+  if (!row) return back(request, "unexpected_error");
+  if (await lacksRequiredTwoFactor(user.userId, organizationId)) {
+    return back(request, "two_factor_required");
   }
   const plan = await getPlanForScope({ userId: user.userId, organizationId });
   if (!getPlanLimits(plan).webhooks) return back(request, "plan_required");

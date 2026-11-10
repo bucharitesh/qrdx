@@ -181,21 +181,34 @@ export async function targetWorkspaces(
 }
 
 /**
- * True for a request that sets a workspace's metadata: updating one, or
- * making one with it (a new workspace's settings start empty).
+ * Settings that change only through the app's own actions, which check them
+ * first: metadata (this requirement among the settings in it) and the logo
+ * (apps/docs/actions/workspace-logo.ts accepts only an upload of this
+ * workspace or a public https image URL; Better Auth stores any string).
  */
-export function setsWorkspaceMetadata(path: string, body: unknown): boolean {
+const APP_ONLY_FIELDS = ["metadata", "logo"] as const;
+
+/**
+ * True for a request that sets a workspace's metadata or logo: updating
+ * one, or making one with them (a new workspace starts without either).
+ */
+export function setsWorkspaceSettings(path: string, body: unknown): boolean {
   const fields = record(body);
-  if (path === "/organization/update") {
-    return record(fields.data).metadata !== undefined;
-  }
-  return path === "/organization/create" && fields.metadata !== undefined;
+  const sent =
+    path === "/organization/update"
+      ? record(fields.data)
+      : path === "/organization/create"
+        ? fields
+        : null;
+  return (
+    sent !== null && APP_ONLY_FIELDS.some((field) => sent[field] !== undefined)
+  );
 }
 
 /**
  * The hook's decision for an HTTP request to a Better Auth workspace
- * endpoint. Throws for metadata sent over HTTP (the workspace's settings,
- * this requirement among them, change only through the app's checks), and
+ * endpoint. Throws for metadata or a logo sent over HTTP (they change only
+ * through the app's checks), and
  * TWO_FACTOR_REQUIRED for a request acting on a workspace that shuts the
  * person out. Anything else passes; signed out, the endpoint refuses it on
  * its own. Server-side auth.api calls aren't checked: the app's actions
@@ -207,7 +220,7 @@ export async function checkWorkspaceTwoFactorGate(
   lookups: GateLookups = defaultLookups
 ): Promise<void> {
   if (!request.http) return;
-  if (setsWorkspaceMetadata(request.path, request.body)) {
+  if (setsWorkspaceSettings(request.path, request.body)) {
     throw workspaceSettingsInAppError();
   }
   if (!organizationPathActsOnWorkspace(request.path)) return;
