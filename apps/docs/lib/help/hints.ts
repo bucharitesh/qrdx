@@ -168,7 +168,7 @@ export const HINTS = {
   },
   "download-formats": {
     title: "Which format?",
-    body: "PNG and JPG are pixel images for screens, email and slides. SVG, PDF and EPS are vectors that stay sharp at any size, which is what printers want.",
+    body: "PNG, JPG and WebP are pixel images for screens, email and slides; WebP is the smallest without losing detail, for websites. SVG, PDF and EPS are vectors that stay sharp at any size, which is what printers want.",
     visual: {
       type: "live",
       example: "download-formats",
