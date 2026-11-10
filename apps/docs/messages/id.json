@@ -364,7 +364,7 @@
       "bulk": {
         "eyebrow": "Massal",
         "title": "Ratusan kode dari satu CSV",
-        "description": "Petakan kolom, pilih gaya, lalu unduh hingga {max, number} kode sebagai PNG atau SVG dalam satu ZIP. File tidak pernah meninggalkan browser Anda.",
+        "description": "Petakan kolom, pilih gaya, lalu unduh hingga {max, number} kode dalam format PNG atau SVG, dalam bentuk ZIP. File tidak pernah keluar dari browser Anda.",
         "link": "Buka generator massal"
       },
       "developers": {
@@ -576,6 +576,8 @@
         "analyticsHistory": "Riwayat analitik",
         "routing": "Smart routing, A/B tests, dan tag UTM",
         "routingHint": "Arahkan pemindaian berdasarkan perangkat, negara, waktu, atau bahasa",
+        "preciseLocation": "Lokasi pemindaian presisi dan geofencing",
+        "preciseLocationHint": "Opsional per kode; pemindai memilih apakah ingin berbagi",
         "linkControls": "Batas kata sandi, jadwal, masa berlaku, dan pemindaian",
         "pixels": "Piksel retargeting",
         "conversions": "Pelacakan konversi",

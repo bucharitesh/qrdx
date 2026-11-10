@@ -364,7 +364,7 @@
       "bulk": {
         "eyebrow": "Massivo",
         "title": "Centinaia di codici da un CSV",
-        "description": "Associa le colonne, scegli uno stile e scarica fino a {max, number} codici in PNG o SVG in un unico ZIP. Il file non lascia mai il tuo browser.",
+        "description": "Associa le colonne, scegli uno stile e scarica fino a {max, number} codici in PNG o SVG, in un file ZIP. Il file non lascia mai il tuo browser.",
         "link": "Apri il generatore massivo"
       },
       "developers": {
@@ -576,6 +576,8 @@
         "analyticsHistory": "Storico analitiche",
         "routing": "Smart routing, test A/B e tag UTM",
         "routingHint": "Indirizza le scansioni per dispositivo, paese, orario o lingua",
+        "preciseLocation": "Posizione precisa della scansione e geofencing",
+        "preciseLocationHint": "Attivabile per singolo codice; chi scansiona sceglie se condividere",
         "linkControls": "Password, programmazione, scadenza e limiti di scansione",
         "pixels": "Pixel di retargeting",
         "conversions": "Tracciamento conversioni",

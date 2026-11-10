@@ -364,7 +364,7 @@
       "bulk": {
         "eyebrow": "Em massa",
         "title": "Centenas de códigos a partir de um CSV",
-        "description": "Mapeie as colunas, escolha um estilo e baixe até {max, number} códigos em PNG ou SVG em um único ZIP. O arquivo nunca sai do seu navegador.",
+        "description": "Mapeie as colunas, escolha um estilo e baixe até {max, number} códigos em PNG ou SVG, compactados em ZIP. O arquivo nunca sai do seu navegador.",
         "link": "Abrir o gerador em massa"
       },
       "developers": {
@@ -576,6 +576,8 @@
         "analyticsHistory": "Histórico de análises",
         "routing": "Roteamento inteligente, testes A/B e tags UTM",
         "routingHint": "Direcione as leituras por dispositivo, país, horário ou idioma",
+        "preciseLocation": "Localização precisa da leitura e geofencing",
+        "preciseLocationHint": "Ativação opcional por código; quem lê escolhe se quer compartilhar",
         "linkControls": "Senha, agendamento, validade e limite de leituras",
         "pixels": "Pixels de retargeting",
         "conversions": "Rastreamento de conversões",

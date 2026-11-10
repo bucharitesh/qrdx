@@ -364,7 +364,7 @@
       "bulk": {
         "eyebrow": "Por lotes",
         "title": "Cientos de códigos desde un CSV",
-        "description": "Asigna las columnas, elige un estilo y descarga hasta {max, number} códigos en PNG o SVG dentro de un ZIP. El archivo nunca sale de tu navegador.",
+        "description": "Asigna las columnas, elige un estilo y descarga hasta {max, number} códigos en PNG o SVG, comprimidos en ZIP. El archivo nunca sale de tu navegador.",
         "link": "Abrir el generador por lotes"
       },
       "developers": {
@@ -576,6 +576,8 @@
         "analyticsHistory": "Historial de analíticas",
         "routing": "Enrutamiento inteligente, pruebas A/B y etiquetas UTM",
         "routingHint": "Dirige los escaneos según dispositivo, país, hora o idioma",
+        "preciseLocation": "Ubicación precisa del escaneo y geovallado",
+        "preciseLocationHint": "Se activa por código; quien escanea decide si la comparte",
         "linkControls": "Contraseña, programación, caducidad y límites de escaneo",
         "pixels": "Píxeles de retargeting",
         "conversions": "Seguimiento de conversiones",
