@@ -19,6 +19,14 @@ import {
 // The image is the keyless image API (/v1/qr), so a reply is a URL the chat
 // service fetches itself: nothing is uploaded or stored.
 
+/**
+ * A domain typed without a scheme: dot-separated labels ending in a
+ * letters-only (or punycode) top-level domain, then an optional port and
+ * path. Not an IP address, an email address or a version number.
+ */
+const BARE_DOMAIN =
+  /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+(?:[a-z]{2,63}|xn--[a-z0-9-]{1,59})(?::\d{2,5})?(?:[/?#]\S*)?$/i;
+
 /** Width and height of the PNG a reply shows, in pixels. */
 export const CHAT_QR_PNG_SIZE = 1024;
 
@@ -42,8 +50,13 @@ export type ChatQrInput =
  * so a bot never posts an image that would fail to render.
  */
 export function readChatQrInput(raw: string): ChatQrInput {
-  const data = raw.trim();
-  if (!data) return { ok: false, reason: "empty" };
+  const typed = raw.trim();
+  if (!typed) return { ok: false, reason: "empty" };
+  // "qrdx.dev" or "www.example.com/menu": chat apps show these as links, so
+  // the code opens them as one (many scanners treat a bare domain as text)
+  // and the editor link can carry it.
+  const data =
+    BARE_DOMAIN.test(typed) && !webAddress(typed) ? `https://${typed}` : typed;
   if (data.length > QR_DATA_MAX_LENGTH)
     return { ok: false, reason: "too_long" };
   if (!fitsInQrCode(data)) return { ok: false, reason: "too_long" };
