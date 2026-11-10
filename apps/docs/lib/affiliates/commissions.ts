@@ -27,7 +27,7 @@ import { AFFILIATE_COMMISSION_BPS } from "./terms";
 
 // Commissions from Polar's webhooks (app/api/webhook/polar). The route calls
 // handleAffiliateWebhook after it has saved the billing state, for every
-// event. Nothing runs unless the program is on (QRDX_AFFILIATES); then only
+// event. Nothing runs unless the program is on (qrdx.dev); then only
 // these matter:
 //
 // - order.paid: a referred customer paid. Their first payment starts their

@@ -14,6 +14,7 @@
 
 import { EE_LICENSE_ENV } from "@repo/auth/ee-license";
 import { passkeyRelyingParty } from "@repo/auth/passkey-rp";
+import { isQrdxDeployment } from "@/lib/mcp-clients";
 import {
   WORKSPACE_PATTERN_PREFIX,
   workspacePattern,
@@ -204,7 +205,8 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "SLACK_SIGNING_SECRET",
       ...(ctx.production ? ["INTEGRATION_ENCRYPTION_KEY"] : []),
     ],
-    paths: ["/docs/slack-bot"],
+    // The docs page and the /slack landing page (app/(home)/slack).
+    paths: ["/docs/slack-bot", "/slack"],
     extrasOf: "slack",
   },
   discordBot: {
@@ -213,7 +215,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     // app's key; the id builds the "Add to Discord" link.
     name: "Discord bot",
     requires: () => ["DISCORD_APPLICATION_ID", "DISCORD_PUBLIC_KEY"],
-    paths: ["/docs/discord-bot"],
+    paths: ["/docs/discord-bot", "/discord"],
     catalogSlugs: ["discord-bot"],
     // The webhook alerts entry mentions the bot only where it can be added.
     extrasOf: "discord",
@@ -228,16 +230,22 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "TELEGRAM_WEBHOOK_SECRET",
       "TELEGRAM_BOT_USERNAME",
     ],
-    paths: ["/docs/telegram-bot"],
+    paths: ["/docs/telegram-bot", "/telegram"],
     catalogSlugs: ["telegram"],
   },
   affiliates: {
     // The affiliate program (lib/affiliates) is QRdx's own: commissions
-    // come from qrdx.dev's Polar orders and the terms are QRdx's. A
-    // self-hosted server leaves it off unless it sets QRDX_AFFILIATES=1 (and
-    // takes payments through Polar, where commissions come from).
-    name: "Affiliate program (QRDX_AFFILIATES)",
-    requires: () => ["QRDX_AFFILIATES", "POLAR_WEBHOOK_SECRET"],
+    // come from qrdx.dev's Polar orders and the terms are QRdx's. It runs
+    // wherever QRdx itself runs (qrdx.dev, its previews, local dev: the
+    // same test as the MCP server URL, lib/mcp-clients.ts) once Polar's
+    // webhooks are set up, and never on a self-hosted copy on its own domain.
+    name: "Affiliate program (qrdx.dev, with Polar)",
+    requires: () => ["POLAR_WEBHOOK_SECRET"],
+    usable: (ctx) =>
+      isQrdxDeployment({
+        appUrl: ctx.env.NEXT_PUBLIC_APP_URL,
+        productionUrl: ctx.env.VERCEL_PROJECT_PRODUCTION_URL,
+      }),
     paths: [
       "/affiliates",
       "/legal/affiliate-terms",

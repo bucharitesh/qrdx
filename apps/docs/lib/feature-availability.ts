@@ -29,8 +29,9 @@ export function featureContext(): FeatureContext {
       // The licence key for ee/ features (workspace SSO, the audit log), read the same way
       // by packages/auth/ee-license.ts.
       QRDX_EE_LICENSE: process.env.QRDX_EE_LICENSE,
-      // The affiliate program's switch (feature-availability-rules.ts).
-      QRDX_AFFILIATES: process.env.QRDX_AFFILIATES,
+      // Previews of the qrdx.dev project: the affiliate program runs where
+      // QRdx itself does (feature-availability-rules.ts, lib/mcp-clients.ts).
+      VERCEL_PROJECT_PRODUCTION_URL: process.env.VERCEL_PROJECT_PRODUCTION_URL,
     },
     onVercel: Boolean(process.env.VERCEL),
     production: process.env.NODE_ENV === "production",

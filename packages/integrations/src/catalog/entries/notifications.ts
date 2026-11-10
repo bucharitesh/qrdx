@@ -94,6 +94,8 @@ export const notifications: IntegrationCatalogEntry[] = [
     builtBy: "QRdx",
     website: "https://slack.com",
     docs: "/docs/notifications#slack-and-discord",
+    // Only where the bot is set up: /slack is one of its pages.
+    page: { href: "/slack", label: "More about the Slack bot" },
     primaryAction: {
       type: "link",
       label: "Add to Slack",
