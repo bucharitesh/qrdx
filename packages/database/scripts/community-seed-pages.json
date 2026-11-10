@@ -4281,6 +4281,31 @@
               },
               {
                 "id": "95285134d5ee",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "be624a244f3b",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "8d2ea99c6441",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "d8aa72f66fd4",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "b5fa614a1278",
                 "type": "product",
                 "props": {
                   "title": "",
@@ -4288,15 +4313,15 @@
                   "showGtin": true,
                   "certifications": [
                     {
-                      "id": "7e2ca4eb16b9",
+                      "id": "73cfe7ebcf51",
                       "label": "Link"
                     },
                     {
-                      "id": "6aad07afe1a2",
+                      "id": "819b6bd2157a",
                       "label": "Link"
                     },
                     {
-                      "id": "3d787b6a127f",
+                      "id": "f7f5123fdace",
                       "label": "Link"
                     }
                   ],
@@ -4307,37 +4332,37 @@
                     "basis": "Text",
                     "rows": [
                       {
-                        "id": "ae2c590a18cb",
+                        "id": "2adaae0bafad",
                         "name": "Name",
                         "value": "Text",
                         "sub": false
                       },
                       {
-                        "id": "3caa31c0d8a0",
+                        "id": "a5f4b84832c2",
                         "name": "Name",
                         "value": "Text",
                         "sub": false
                       },
                       {
-                        "id": "bad2cdbf7ad8",
+                        "id": "3024be295651",
                         "name": "Name",
                         "value": "Text",
                         "sub": false
                       },
                       {
-                        "id": "7f09eebf9a44",
+                        "id": "fd367d0da85e",
                         "name": "Name",
                         "value": "Text",
                         "sub": true
                       },
                       {
-                        "id": "611947b4d4be",
+                        "id": "8f99716eae09",
                         "name": "Name",
                         "value": "Text",
                         "sub": false
                       },
                       {
-                        "id": "60c25e757948",
+                        "id": "c22465fe1202",
                         "name": "Name",
                         "value": "Text",
                         "sub": false
@@ -4346,41 +4371,16 @@
                   },
                   "sections": [
                     {
-                      "id": "0d6d386b9f70",
+                      "id": "306946ce170d",
                       "title": "Title",
                       "body": "A few words about this."
                     },
                     {
-                      "id": "9ada7d297ff6",
+                      "id": "492be910ba1d",
                       "title": "Title",
                       "body": "A few words about this."
                     }
                   ]
-                }
-              },
-              {
-                "id": "b5fa614a1278",
-                "type": "details",
-                "props": {
-                  "title": "",
-                  "items": [
-                    {
-                      "id": "9bbb64182c67",
-                      "label": "Link",
-                      "value": "Text"
-                    },
-                    {
-                      "id": "199f88fb9016",
-                      "label": "Link",
-                      "value": "Text"
-                    },
-                    {
-                      "id": "865ec368eb0f",
-                      "label": "Link",
-                      "value": "Text"
-                    }
-                  ],
-                  "layout": "rows"
                 }
               },
               {
@@ -4599,6 +4599,31 @@
               },
               {
                 "id": "f47257c14edd",
+                "type": "details",
+                "props": {
+                  "title": "",
+                  "items": [
+                    {
+                      "id": "9b0bb03cd9af",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "2256a6f6fc48",
+                      "label": "Link",
+                      "value": "Text"
+                    },
+                    {
+                      "id": "87f278345d5b",
+                      "label": "Link",
+                      "value": "Text"
+                    }
+                  ],
+                  "layout": "rows"
+                }
+              },
+              {
+                "id": "f42c042f5be2",
                 "type": "product",
                 "props": {
                   "title": "",
@@ -4606,15 +4631,15 @@
                   "showGtin": true,
                   "certifications": [
                     {
-                      "id": "e3a14e722248",
+                      "id": "34d64e18effa",
                       "label": "Link"
                     },
                     {
-                      "id": "acbe4b531214",
+                      "id": "20224aafe9d7",
                       "label": "Link"
                     },
                     {
-                      "id": "413eb7aa04bc",
+                      "id": "4f9b8ab233e7",
                       "label": "Link"
                     }
                   ],
@@ -4627,46 +4652,21 @@
                   },
                   "sections": [
                     {
-                      "id": "0aff790b2def",
+                      "id": "a9b4542d0e4f",
                       "title": "Title",
                       "body": "A few words about this."
                     },
                     {
-                      "id": "78e87c987eca",
+                      "id": "1003d8934bcc",
                       "title": "Title",
                       "body": "A few words about this."
                     },
                     {
-                      "id": "9c4643526c24",
+                      "id": "8c8e5a0a1a0a",
                       "title": "Title",
                       "body": "A few words about this."
                     }
                   ]
-                }
-              },
-              {
-                "id": "f42c042f5be2",
-                "type": "details",
-                "props": {
-                  "title": "",
-                  "items": [
-                    {
-                      "id": "21432f206f82",
-                      "label": "Link",
-                      "value": "Text"
-                    },
-                    {
-                      "id": "688177bea0f5",
-                      "label": "Link",
-                      "value": "Text"
-                    },
-                    {
-                      "id": "974a8f480d1d",
-                      "label": "Link",
-                      "value": "Text"
-                    }
-                  ],
-                  "layout": "rows"
                 }
               },
               {
@@ -5794,7 +5794,7 @@
                 "type": "address-map",
                 "props": {
                   "title": "Title",
-                  "name": "Place name",
+                  "name": "",
                   "address": {
                     "street": "123 Main Street",
                     "city": "Springfield",
@@ -6000,7 +6000,7 @@
                 "id": "618dff9056d5",
                 "type": "form",
                 "props": {
-                  "title": "Title",
+                  "title": "",
                   "description": "",
                   "fields": [
                     {
@@ -6210,7 +6210,7 @@
                   "firstName": "Your",
                   "lastName": "Name",
                   "jobTitle": "Your job title",
-                  "company": "Your company",
+                  "company": "",
                   "bio": "",
                   "phones": [
                     {
@@ -6570,7 +6570,7 @@
                   "firstName": "Your",
                   "lastName": "Name",
                   "jobTitle": "Your job title",
-                  "company": "Your company",
+                  "company": "",
                   "bio": "",
                   "phones": [
                     {
@@ -6597,7 +6597,7 @@
                 "id": "334680f4249a",
                 "type": "text",
                 "props": {
-                  "heading": "Heading",
+                  "heading": "",
                   "body": "A few words about this.",
                   "align": "center",
                   "size": "sm",
@@ -6695,7 +6695,7 @@
                 "id": "38912ca21cdc",
                 "type": "text",
                 "props": {
-                  "heading": "Heading",
+                  "heading": "",
                   "body": "A few words about this.",
                   "align": "center",
                   "size": "sm",
