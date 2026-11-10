@@ -346,6 +346,9 @@ export function serializeCode(code: QrCodeView) {
     destinationUrl: code.destinationUrl,
     title: code.title,
     contentType: code.contentType,
+    // What the code opens (PATCH `kind` switches it)
+    kind: code.kind,
+    pageId: code.pageId,
     status: code.status,
     style: code.style,
     scanCount: code.scanCount,

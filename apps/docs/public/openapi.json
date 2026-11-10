@@ -900,6 +900,8 @@
                           "destinationUrl": "https://example.com/menu",
                           "title": "Spring menu",
                           "contentType": "url",
+                          "kind": "redirect",
+                          "pageId": null,
                           "status": "active",
                           "style": {
                             "fgColor": "#111827",
@@ -1056,6 +1058,8 @@
                         "destinationUrl": "https://example.com/menu",
                         "title": "Spring menu",
                         "contentType": "url",
+                        "kind": "redirect",
+                        "pageId": null,
                         "status": "active",
                         "style": {
                           "fgColor": "#111827",
@@ -1085,6 +1089,8 @@
                           "destinationUrl": "https://example.com/menu",
                           "title": "Spring menu",
                           "contentType": "url",
+                          "kind": "redirect",
+                          "pageId": null,
                           "status": "active",
                           "style": {
                             "fgColor": "#111827",
@@ -1211,6 +1217,8 @@
                         "destinationUrl": "https://example.com/menu",
                         "title": "Spring menu",
                         "contentType": "url",
+                        "kind": "redirect",
+                        "pageId": null,
                         "status": "active",
                         "style": {
                           "fgColor": "#111827",
@@ -1264,7 +1272,7 @@
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Changes a code's destination, title, design, domain or back-half, or archives it.\n\nSend only the fields to change. `archived: true` stops redirects and frees a plan slot; `false` restores the code. The destination, title and design stay editable on every plan.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
+        "description": "Changes a code's destination, title, design, domain or back-half, switches what it opens, or archives it.\n\nSend only the fields to change. `archived: true` stops redirects and frees a plan slot; `false` restores the code. The destination, title and design stay editable on every plan.\n\nTo change what a printed code opens, send `kind`. `\"kind\": \"page\"` with `page` makes a hosted page from a template (or from the `content` you send) and points the code at it; with `pageId` it opens a page the workspace already has, such as one it opened before. `\"kind\": \"redirect\"` with `destinationUrl` makes it a website link again. The short link, scans, design and link controls stay. A page the code stops opening stays in the workspace, and counts toward the plan's hosted pages until it's deleted. Routing, A/B tests, UTM parameters and conversion tracking only apply to website links, and tracking pixels only to hosted pages: they're kept and apply again after switching back.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1283,6 +1291,23 @@
                   "summary": "Archive",
                   "value": {
                     "archived": true
+                  }
+                },
+                "toPage": {
+                  "summary": "Turn it into a hosted page",
+                  "value": {
+                    "kind": "page",
+                    "page": {
+                      "type": "links",
+                      "title": "Spring menu"
+                    }
+                  }
+                },
+                "toRedirect": {
+                  "summary": "Turn it back into a website link",
+                  "value": {
+                    "kind": "redirect",
+                    "destinationUrl": "https://example.com/menu"
                   }
                 }
               }
@@ -1326,6 +1351,8 @@
                         "destinationUrl": "https://example.com/summer-menu",
                         "title": "Spring menu",
                         "contentType": "url",
+                        "kind": "redirect",
+                        "pageId": null,
                         "status": "active",
                         "style": {
                           "fgColor": "#111827",
@@ -3627,6 +3654,15 @@
             "type": "string",
             "description": "What the code points to, e.g. `url`"
           },
+          "kind": {
+            "type": "string",
+            "enum": ["redirect", "page"],
+            "description": "`redirect`: scans go to `destinationUrl`. `page`: scans open a hosted page (`destinationUrl` is its address). Switch it with PATCH"
+          },
+          "pageId": {
+            "description": "The hosted page a `page` code opens; null for `redirect`",
+            "type": ["string", "null"]
+          },
           "status": {
             "type": "string",
             "enum": ["active", "archived", "disabled"],
@@ -3696,6 +3732,8 @@
           "destinationUrl",
           "title",
           "contentType",
+          "kind",
+          "pageId",
           "status",
           "style",
           "scanCount",
@@ -3869,6 +3907,56 @@
           },
           "archived": {
             "type": "boolean"
+          },
+          "kind": {
+            "description": "Switch what the code opens, keeping its short link and scans: `redirect` (a website link; send `destinationUrl` with it) or `page` (a hosted page; send `pageId` or `page`)",
+            "type": "string",
+            "enum": ["redirect", "page"]
+          },
+          "pageId": {
+            "description": "With `kind: \"page\"`: a hosted page of the workspace the code should open, such as one it opened before",
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "page": {
+            "description": "With `kind: \"page\"`: a new hosted page from a template. It counts toward the plan's hosted pages",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9-]{0,47}$",
+                "description": "A hosted page type, such as `links` or `business` (the dashboard's page types)"
+              },
+              "variantId": {
+                "description": "A template of that type; omitted = its first template",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "pattern": "^[a-z][a-z0-9-]{0,47}$"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "title": {
+                "description": "The page's name, up to 100 characters",
+                "anyOf": [
+                  {
+                    "type": "string",
+                    "maxLength": 100
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "content": {
+                "description": "The page content (`{ version, theme, blocks }`), validated like a publish from the page editor; omitted = the template's"
+              }
+            },
+            "required": ["type"]
           }
         },
         "description": "The fields to change; at least one"
