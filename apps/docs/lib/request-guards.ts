@@ -59,6 +59,36 @@ export function enforceAIRateLimit(
   ]);
 }
 
+/**
+ * The raw body (empty when there's none), or null once it's larger than
+ * `maxBytes`. A content-length over the cap is refused without reading, and
+ * the body is read in chunks, so one without a content-length (or with a
+ * wrong one) stops as soon as it passes the cap.
+ */
+export async function readBodyBytes(
+  req: Request,
+  maxBytes: number,
+): Promise<Uint8Array | null> {
+  if (Number(req.headers.get("content-length") ?? 0) > maxBytes) return null;
+  if (!req.body) return new Uint8Array(0);
+
+  const reader = req.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let received = 0;
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    received += value.byteLength;
+    if (received > maxBytes) {
+      await reader.cancel();
+      return null;
+    }
+    chunks.push(value);
+  }
+  return Buffer.concat(chunks);
+}
+
 /** Reads and parses a JSON body, aborting once it exceeds `maxBytes`. */
 export async function readJsonBody(
   req: Request,
@@ -78,23 +108,15 @@ export async function readJsonBody(
     throw new ValidationError("Request body is required");
   }
 
-  const reader = req.body.getReader();
-  const chunks: Uint8Array[] = [];
-  let received = 0;
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    received += value.byteLength;
-    if (received > maxBytes) {
-      await reader.cancel();
-      throw tooLarge;
-    }
-    chunks.push(value);
-  }
+  const body = await readBodyBytes(req, maxBytes);
+  if (!body) throw tooLarge;
 
   try {
-    return JSON.parse(Buffer.concat(chunks).toString("utf8"));
+    return JSON.parse(
+      Buffer.from(body.buffer, body.byteOffset, body.byteLength).toString(
+        "utf8",
+      ),
+    );
   } catch {
     throw new ValidationError("Request body must be valid JSON");
   }
