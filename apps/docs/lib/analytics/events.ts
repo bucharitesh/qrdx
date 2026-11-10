@@ -93,6 +93,8 @@ export interface AnalyticsEvents {
   webhook_created: { event_count: number };
   mcp_connect_clicked: { client: string };
   plugin_install_clicked: { plugin: string; target: "store" | "source" };
+  /** A chat bot's landing page (/slack, /telegram, /discord): its add button. */
+  chat_bot_add_clicked: { bot: "slack" | "telegram" | "discord" };
 
   // Billing
   upgrade_clicked: { source: string; plan?: "pro" | "business" };
