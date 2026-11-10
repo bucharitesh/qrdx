@@ -120,6 +120,12 @@ export const COMPARE_MIGRATIONS: Record<string, CompareMigration> = {
   "canva-qr": exportAsCsv("csv", "Canva"),
   "adobe-express": staticOnly("Adobe Express"),
   goqr: staticOnly("goQR.me"),
+  // Mostly static codes, but some open a page or file LatestQR hosts.
+  latestqr: {
+    ...staticOnly("LatestQR"),
+    printed:
+      "Codes that encode your own link, Wi-Fi or payment details are static and keep working without LatestQR. Codes that open a page or file hosted on LatestQR depend on that copy staying online, so rebuild those in QRdx before you reprint.",
+  },
   "qr-code-monkey": staticOnly("QR Code Monkey"),
   "qr-code-styling": library("from-qr-code-styling", "qr-code-styling"),
   "qrcode-react": library("from-qrcode-react", "qrcode.react"),
