@@ -68,9 +68,9 @@ function commands(username: string): BotCommand[] {
 }
 
 const privacyParagraphs = [
-  "QRdx doesn't save what you send the bot or the codes it makes. The bot reads each message only to answer it.",
-  "The images are drawn on request. Each one comes from a QRdx link that contains your text, which Telegram fetches to show the code. QRdx doesn't save the text, but like any link, that one can end up in logs and caches, so don't make codes of passwords or other secrets.",
-  "Telegram keeps the messages in the chat, as it does for any message. If you make a lot of codes in a short time, the bot asks you to wait a minute before the next one.",
+  "QRdx doesn't save the codes you make, and the bot reads each message only to answer it.",
+  "The images are drawn on request. Each one comes from a QRdx link that contains your text, which Telegram fetches to show the code. Like any link, that one can end up in logs and caches, so don't make codes of passwords or other secrets.",
+  "Telegram keeps the messages in the chat, as it does for any message. If you make a lot of codes in a short time, the bot asks you to wait a minute before the next one. When a lot of people use it at once, it may say it's busy.",
 ];
 
 function faqs(username: string) {
