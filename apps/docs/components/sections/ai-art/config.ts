@@ -5,12 +5,17 @@ import { playgroundHref } from "@/lib/playground-links";
 /** The playground's Art tab (Logo QR, Image QR and, where it's set up, AI art). */
 export const ART_PLAYGROUND_HREF = playgroundHref({ tab: "art" });
 
-/** The Art tab on one mode: Logo QR, Image QR or AI art (with a style preset). */
+/**
+ * The Art tab on one mode: Logo QR, Image QR or AI art (with a style
+ * preset), optionally on a design (`style`, from packStyleParam or
+ * encodeStyleParam). The art's image is added in the tab.
+ */
 export const artPlaygroundHref = (
   art: "logo" | "image" | "ai",
   artStyle?: string | null,
+  style?: string,
 ): string =>
-  playgroundHref({ tab: "art", art, artStyle: artStyle ?? undefined });
+  playgroundHref({ tab: "art", art, artStyle: artStyle ?? undefined, style });
 
 export const ART_TEXT_MAX_LENGTH = 300;
 export const ART_PROMPT_MIN_LENGTH = 3;

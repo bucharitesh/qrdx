@@ -1,7 +1,7 @@
 "use client";
 
 // Live Logo QR and Image QR examples (vector art modes from the qrdx library,
-// no AI). Each card opens the playground's Art tab on its mode.
+// no AI). Each card opens the playground's Art tab on its mode and look.
 
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Card } from "@repo/design-system/components/ui/card";
@@ -18,14 +18,16 @@ import {
   SHOWCASE_STYLES,
   type ShowcaseStyleName,
   showcaseProps,
+  showcaseThemeStyles,
 } from "@/lib/landing/showcase-styles";
+import { packStyleParam } from "@/lib/playground-style-pack";
 import { artPlaygroundHref } from "./config";
 
 const VALUE = "https://qrdx.dev";
 
 // Samples from public/images/art-samples (the editor's Art tab offers
 // the same ones), styled in lib/landing/showcase-styles.ts.
-const EXAMPLES: {
+export const EXAMPLES: {
   style: ShowcaseStyleName;
   /** The Art tab mode the card opens */
   mode: "logo" | "image";
@@ -47,6 +49,18 @@ const EXAMPLES: {
       "A photo shows through every module, around a center that keeps the code scannable.",
   },
 ];
+
+/**
+ * The Art tab in the example's mode, on its shapes and colors; the sample
+ * image is picked again there (images never travel in a link). Packed
+ * without the validator; tests/home/marketing-playground-links.test.ts
+ * decodes both.
+ */
+export const artExampleHref = ({
+  style,
+  mode,
+}: Pick<(typeof EXAMPLES)[number], "style" | "mode">): string =>
+  artPlaygroundHref(mode, null, packStyleParam(showcaseThemeStyles(style)));
 
 function useArtImage(src: string | undefined, mode: QRArtMode) {
   const [image, setImage] = useState<QRArtImage | null>(null);
@@ -77,7 +91,7 @@ function ArtExample({
   return (
     <Link
       className="group block h-full rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-      href={artPlaygroundHref(mode)}
+      href={artExampleHref({ style, mode })}
     >
       <SpotlightCard
         as={Card}

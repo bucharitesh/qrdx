@@ -13,6 +13,7 @@ import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
 import { mcpServerUrl } from "@/lib/mcp-clients";
 import { baseUrl } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
+import { playgroundHref } from "@/lib/playground-links";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
 import { LiveDemo, type LiveDemoName } from "./live-demos";
 
@@ -150,7 +151,9 @@ export function FeatureRowsSection() {
           eyebrow="Design"
           title="Design every detail"
           description={`${PRODUCT_FACTS.bodyPatterns} body patterns, ${PRODUCT_FACTS.eyeShapes} eye shapes and ${PRODUCT_FACTS.frames} frames, in solid colors or gradients. The playground and the qrdx React library draw with this same renderer.`}
-          link={<MoreLink href="/playground">Open the playground</MoreLink>}
+          link={
+            <MoreLink href={playgroundHref()}>Open the playground</MoreLink>
+          }
           visual={
             <Card className="gap-0 overflow-hidden py-0">
               {/* The demo mounts as it nears the viewport, so the skeleton

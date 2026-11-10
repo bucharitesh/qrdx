@@ -10,6 +10,7 @@ import type {
   QRProps,
 } from "qrdx/types";
 import { LOGO_MARK_PATH } from "@/components/brand-marks";
+import type { ThemeStyles } from "@/types/theme";
 
 /**
  * Showcase styles: the named looks for QR codes drawn on marketing pages, so
@@ -231,6 +232,28 @@ export interface ShowcaseOptions {
   margin?: number;
   /** Art styles: the sampled image; until it loads the plain code shows. */
   artImage?: QRArtImage | null;
+}
+
+/**
+ * `name` as an editor design, for a playground link: the same colors,
+ * shapes, error correction and frame as showcaseProps. A logo style shows
+ * the editor's QRdx mark; art images and custom logos can't travel in a
+ * link, so they are left out.
+ */
+export function showcaseThemeStyles(name: ShowcaseStyleName): ThemeStyles {
+  const style = SHOWCASE_STYLES[name];
+  return {
+    bgColor: SHOWCASE_PAPER,
+    fgColor: SHOWCASE_INK,
+    eyeColor: SHOWCASE_INK,
+    dotColor: style.accent ? SHOWCASE_ACCENT : SHOWCASE_INK,
+    bodyPattern: style.bodyPattern,
+    cornerEyePattern: style.cornerEyePattern,
+    cornerEyeDotPattern: style.cornerEyeDotPattern,
+    level: style.level,
+    ...(style.frame && { frame: style.frame }),
+    ...(style.logo && { showLogo: true }),
+  };
 }
 
 /** Props for `<QRCodeSVG>` (or `getScanScore`) drawing `name`. */

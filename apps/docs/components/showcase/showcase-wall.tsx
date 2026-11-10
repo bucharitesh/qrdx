@@ -8,6 +8,7 @@ import {
   galleryImage,
   TILE_ASPECT,
   tileBackdrop,
+  type WallTile,
 } from "@/lib/landing/showcase-gallery";
 import type { WallPlacement, WallRow } from "@/lib/landing/showcase-wall";
 
@@ -49,35 +50,49 @@ function CropMarks() {
   );
 }
 
-const TILE_LINK = cn(
+/**
+ * A tile is a box with two separate links, never one inside the other: the
+ * code itself (covering the tile) opens the playground with it, and the
+ * name in its chip opens the page about it (`tile.about`), a plain link in
+ * the server-rendered HTML.
+ */
+const TILE_BOX = cn(
   "group/tile relative block min-w-0 overflow-hidden rounded-2xl",
-  "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+  "has-[a:focus-visible]:outline-2 has-[a:focus-visible]:outline-offset-2 has-[a:focus-visible]:outline-ring",
 );
 
-function TileLink({
-  placement,
-  style,
-  children,
-}: {
-  placement: WallPlacement;
-  style: CSSProperties;
-  children: ReactNode;
-}) {
-  const { tile, compact } = placement;
-  const className = cn(TILE_LINK, !compact && "max-lg:hidden");
-  // No prefetch: dozens of links to the playground, generators and docs.
+const TILE_LINK = "absolute inset-0 block rounded-[inherit] outline-none";
+
+function TileLink({ tile, children }: { tile: WallTile; children: ReactNode }) {
+  // No prefetch: dozens of links to the playground and the demos.
   return tile.appliesPreset ? (
-    <PresetLink
-      preset={tile.preset}
-      prefetch={false}
-      className={className}
-      style={style}
-    >
+    <PresetLink preset={tile.preset} prefetch={false} className={TILE_LINK}>
       {children}
     </PresetLink>
   ) : (
-    <Link href={tile.href} prefetch={false} className={className} style={style}>
+    <Link href={tile.href} prefetch={false} className={TILE_LINK}>
       {children}
+    </Link>
+  );
+}
+
+/** The tile's name in its chip: a link to the page about it, when it has one. */
+function TileName({ tile }: { tile: WallTile }) {
+  const name = "truncate font-medium text-foreground";
+  if (!tile.about) return <span className={name}>{tile.label}</span>;
+  return (
+    <Link
+      href={tile.about.href}
+      prefetch={false}
+      aria-label={`${tile.label} ${tile.about.label}`}
+      // Clickable only while the chip shows, so a tap on the code never
+      // lands on it unseen.
+      className={cn(
+        name,
+        "pointer-events-none underline underline-offset-2 decoration-foreground/30 outline-none hover:decoration-foreground focus-visible:decoration-foreground group-hover/tile:pointer-events-auto group-focus-within/tile:pointer-events-auto",
+      )}
+    >
+      {tile.label}
     </Link>
   );
 }
@@ -97,48 +112,53 @@ function Tile({ placement }: { placement: WallPlacement }) {
   const image = galleryImage(tile);
   const backdrop = tileBackdrop(tile);
   const height = codeHeight(placement, image.framed);
+  const style: CSSProperties = {
+    flex: `${ratio} 1 0%`,
+    aspectRatio: String(ratio),
+  };
   return (
-    <TileLink
-      placement={placement}
-      style={{ flex: `${ratio} 1 0%`, aspectRatio: String(ratio) }}
+    <div
+      className={cn(TILE_BOX, !placement.compact && "max-lg:hidden")}
+      data-wall-tile={tile.id}
+      style={style}
     >
-      <span
-        aria-hidden="true"
-        className="absolute inset-0 rounded-[inherit] ring-1 ring-black/[0.06] ring-inset dark:ring-0"
-        style={
-          backdrop
-            ? { backgroundColor: backdrop }
-            : {
-                backgroundImage: `repeating-conic-gradient(${GALLERY_CHECKER.dark} 0% 25%, ${GALLERY_CHECKER.light} 0% 50%)`,
-                backgroundSize: "14px 14px",
-              }
-        }
-      />
-      <span
-        className={cn(
-          "absolute inset-0 flex items-center justify-center transition-transform duration-500 group-hover/tile:scale-[1.04] group-focus-visible/tile:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover/tile:scale-100 motion-reduce:group-focus-visible/tile:scale-100",
-          EASE_CLASS,
-        )}
-      >
-        {tile.print && <CropMarks />}
-        <img
-          src={image.src}
-          alt={tile.alt}
-          width={image.width}
-          height={image.height}
-          loading="lazy"
-          decoding="async"
-          className="block w-auto max-w-[88%] object-contain"
-          style={{ height }}
+      <TileLink tile={tile}>
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 rounded-[inherit] ring-1 ring-black/[0.06] ring-inset dark:ring-0"
+          style={
+            backdrop
+              ? { backgroundColor: backdrop }
+              : {
+                  backgroundImage: `repeating-conic-gradient(${GALLERY_CHECKER.dark} 0% 25%, ${GALLERY_CHECKER.light} 0% 50%)`,
+                  backgroundSize: "14px 14px",
+                }
+          }
         />
-      </span>
-      <span className="pointer-events-none absolute bottom-2 left-2 flex max-w-[calc(100%-1rem)] flex-col rounded-md bg-background/90 px-2 py-1 text-[11px] leading-snug opacity-0 shadow-xs backdrop-blur-sm transition-opacity duration-200 group-hover/tile:opacity-100 group-focus-visible/tile:opacity-100 motion-reduce:transition-none">
-        <span className="truncate font-medium text-foreground">
-          {tile.label}
+        <span
+          className={cn(
+            "absolute inset-0 flex items-center justify-center transition-transform duration-500 group-hover/tile:scale-[1.04] group-focus-within/tile:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover/tile:scale-100 motion-reduce:group-focus-within/tile:scale-100",
+            EASE_CLASS,
+          )}
+        >
+          {tile.print && <CropMarks />}
+          <img
+            src={image.src}
+            alt={tile.alt}
+            width={image.width}
+            height={image.height}
+            loading="lazy"
+            decoding="async"
+            className="block w-auto max-w-[88%] object-contain"
+            style={{ height }}
+          />
         </span>
+      </TileLink>
+      <span className="pointer-events-none absolute bottom-2 left-2 flex max-w-[calc(100%-1rem)] flex-col rounded-md bg-background/90 px-2 py-1 text-[11px] leading-snug opacity-0 shadow-xs backdrop-blur-sm transition-opacity duration-200 group-hover/tile:opacity-100 group-focus-within/tile:opacity-100 motion-reduce:transition-none">
+        <TileName tile={tile} />
         <span className="truncate text-muted-foreground">{tile.detail}</span>
       </span>
-    </TileLink>
+    </div>
   );
 }
 

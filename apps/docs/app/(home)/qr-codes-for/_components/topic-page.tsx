@@ -5,7 +5,11 @@ import Link from "next/link";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { useCaseImages } from "@/components/mockups/visuals";
-import { TopicCodeStrip } from "@/components/sections/page-codes/page-code-sections";
+import { codePlaygroundHref } from "@/components/sections/page-codes/code-tiles";
+import {
+  TopicCodeStrip,
+  topicCodes,
+} from "@/components/sections/page-codes/page-code-sections";
 import { SectionHeader } from "@/components/sections/section-header";
 import {
   CardGrid,
@@ -116,6 +120,9 @@ export function TopicPage({
   const siblings = (group?.items ?? []).filter(
     (item) => item.slug !== topic.slug,
   );
+  // The hero's call to action starts from the page's first sample: its type
+  // and design, with QRdx's generic sample content.
+  const firstCode = topicCodes(topic, collection)?.[0];
 
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">
@@ -130,7 +137,11 @@ export function TopicPage({
       >
         <div className="flex flex-wrap items-center justify-center gap-2.5">
           <Button asChild>
-            <Link href={playgroundHref()}>
+            <Link
+              href={
+                firstCode ? codePlaygroundHref(firstCode) : playgroundHref()
+              }
+            >
               Design a free QR code
               <ArrowRight className="size-4" />
             </Link>
