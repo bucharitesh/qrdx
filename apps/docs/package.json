@@ -18,7 +18,10 @@
     "registry:build": "tsx registry/build.ts",
     "openapi:generate": "tsx --tsconfig scripts/openapi/tsconfig.json scripts/openapi/generate.ts",
     "postinstall": "fumadocs-mdx",
-    "format": "ultracite fix"
+    "format": "ultracite fix",
+    "i18n:check": "tsx scripts/i18n-check.ts",
+    "i18n:translate": "tsx scripts/i18n-translate.ts",
+    "i18n:split": "node scripts/i18n-split-roots.mjs"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.163",
@@ -82,6 +85,7 @@
     "mermaid": "^12.2.0",
     "motion": "^14.9.0",
     "next": "16.4.3",
+    "next-intl": "4.14.9",
     "next-themes": "^0.4.6",
     "nuqs": "^2.10.2",
     "octokit": "^5.0.5",

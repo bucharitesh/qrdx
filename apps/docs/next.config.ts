@@ -1,8 +1,10 @@
 import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "@/env";
 import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
+import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
 import {
   appCsp,
   cspHeaderName,
@@ -108,6 +110,9 @@ let nextConfig: NextConfig = {
       ...(config.experimental?.optimizePackageImports ?? []),
       "iconsax-reactjs",
     ],
+    // Two root layouts (app/[lang] and app/(app)): URLs that match no route
+    // get app/global-not-found.tsx.
+    globalNotFound: true,
   },
   // Server code reads QRDX_HOME_NUMBERS as its build-time value
   // (lib/home-numbers/flag.ts). While it's off, the bundler drops the home
@@ -274,6 +279,8 @@ let nextConfig: NextConfig = {
         ...redirect,
         has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
       })),
+      // English has one address: /en/pricing → /pricing (lib/i18n/routing.ts).
+      ...englishRedirects(`(?:${PLATFORM_HOSTS})`),
     ];
   },
   // Keep the shared rewrites (PostHog /ingest proxy) alongside the docs ones.
@@ -329,6 +336,10 @@ let nextConfig: NextConfig = {
             { type: "host" as const, value: "(?:api|mcp)\\.qrdx\\.dev" },
           ],
         })),
+        // Translated pages live in app/[lang]; English is [lang]=en behind
+        // its unprefixed URL (lib/i18n/routing.ts). After the Markdown
+        // rewrites, which answer agents for / and /pricing first.
+        ...englishRewrites(),
       ],
       afterFiles: [
         ...base.afterFiles,
@@ -360,4 +371,11 @@ if (env.ANALYZE === "true") {
 
 const withMDX = createMDX();
 
-export default withMDX(nextConfig);
+// next-intl's catalogs and formatters (i18n/request.ts), without its
+// middleware or navigation. The declaration types ICU arguments from en.json.
+const withNextIntl = createNextIntlPlugin({
+  requestConfig: "./i18n/request.ts",
+  experimental: { createMessagesDeclaration: "./messages/en.json" },
+});
+
+export default withNextIntl(withMDX(nextConfig));

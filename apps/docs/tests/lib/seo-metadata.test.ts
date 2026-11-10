@@ -157,6 +157,7 @@ describe("Organization schema", () => {
     expect(root).not.toContain("organizationSchema");
     for (const layout of [
       "app/(app)/(home)/layout.tsx",
+      "app/[lang]/(home)/layout.tsx",
       "app/(app)/(docs)/docs/layout.tsx",
       "app/(app)/playground/layout.tsx",
     ]) {

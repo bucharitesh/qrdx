@@ -97,6 +97,11 @@ jobs:
           (cd apps/docs && bun x next typegen)
           bun run typecheck:docs
 
+      # Every translated catalog against English: keys, ICU arguments, numbers,
+      # review status (apps/docs/scripts/i18n-check.ts).
+      - name: Check translations
+        run: pnpm --filter docs i18n:check
+
       # Pull requests into staging test the packages they change and the
       # packages that depend on them. Release pull requests into main, pushes
       # to main and manual runs test everything. Branch protection requires

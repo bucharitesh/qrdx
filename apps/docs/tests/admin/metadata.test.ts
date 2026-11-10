@@ -53,7 +53,7 @@ const TITLES: Record<string, string> = {
   "users/[userId]/page.tsx": "Admin · User",
 };
 
-const adminDir = path.resolve(import.meta.dirname, "../../app/admin");
+const adminDir = path.resolve(import.meta.dirname, "../../app/(app)/admin");
 const pages = (readdirSync(adminDir, { recursive: true }) as string[])
   .map((file) => file.split(path.sep).join("/"))
   .filter((file) => file === "page.tsx" || file.endsWith("/page.tsx"))
@@ -65,7 +65,7 @@ interface MetadataModule {
 }
 
 const load = (file: string) =>
-  import(`../../app/admin/${file}`) as Promise<MetadataModule>;
+  import(`../../app/(app)/admin/${file}`) as Promise<MetadataModule>;
 
 const props = {
   params: Promise.resolve({ userId: "u_123" }),

@@ -111,3 +111,25 @@ g.main:has(> g.plot) > rect {
   ) {
   color: var(--color-fd-foreground);
 }
+
+/*
+ * Translated pages (lib/i18n). Chinese, Japanese and Korean have no Mona Sans
+ * glyphs: they fall through to the system CJK face that <html lang> picks
+ * (Hiragino, Yu Gothic, Apple SD Gothic Neo, PingFang, Noto Sans CJK), so no
+ * web font is loaded. Lines break between phrases rather than inside words,
+ * and the negative tracking set for Latin headings doesn't apply to them.
+ */
+:lang(ja) {
+  word-break: auto-phrase;
+  line-break: strict;
+}
+:lang(zh) {
+  line-break: strict;
+}
+:lang(ko) {
+  word-break: keep-all;
+}
+:is(:lang(ja), :lang(ko), :lang(zh))
+  :is(h1, h2, .font-display, .tracking-tight, .tracking-tighter) {
+  letter-spacing: normal;
+}
