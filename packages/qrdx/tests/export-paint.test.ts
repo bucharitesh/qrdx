@@ -6,7 +6,7 @@
 // - Alpha: the SVG splits it into fill-opacity / stop-opacity, the PDF keeps
 //   it (ExtGState /ca), the EPS flattens it over the background (PostScript
 //   has no transparency). All three agree pixel for pixel and decode.
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, test } from "vitest";
 import qrcodegen from "../src/codegen";
 import { ERROR_LEVEL_MAP } from "../src/constants";
 import { getQRAsEPS } from "../src/eps";
@@ -349,7 +349,7 @@ describe.each([
     ("eyeColor" in props && props.eyeColor);
   const sweep = gradient as AngularGradient;
 
-  it("SVG draws a wedge pattern with the conic colors", async () => {
+  test("SVG draws a wedge pattern with the conic colors", async () => {
     const svg = await renderPrintSVG(props);
     expect(svg).toMatch(/<pattern[^>]*data-qrdx-conic=/);
     expect(svg).toMatch(/fill="url\(#[^)]+\)"/);
@@ -380,7 +380,7 @@ describe.each([
     expect(decodeQR(image)).toBe(VALUE);
   });
 
-  it("PDF paints the same wedges inside each shape and decodes", async () => {
+  test("PDF paints the same wedges inside each shape and decodes", async () => {
     const buffer = await getQRAsPrintPDFBuffer(props, { size: SIZE_MM });
     const rendered = rasterizePdf(buffer, SCALE);
     const reference = await svgRaster(props);
@@ -390,7 +390,7 @@ describe.each([
     expect(rendered.fills.length).toBeLessThan(40_000);
   });
 
-  it("EPS paints the same wedges inside each shape and decodes", async () => {
+  test("EPS paints the same wedges inside each shape and decodes", async () => {
     const eps = await getQRAsEPS(props, { sizeMm: SIZE_MM });
     const rendered = rasterizeEps(eps, SCALE);
     const reference = await svgRaster(props);

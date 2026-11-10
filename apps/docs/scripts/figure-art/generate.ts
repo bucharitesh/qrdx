@@ -4,9 +4,9 @@
 // hairline.tsx renders from). The scenes come from figures.ts, the real codes
 // from codes.ts, rendered by qrdx.
 //
-// Run from apps/docs: pnpm exec tsx scripts/figure-art/generate.ts
+// Run from apps/docs: bun x tsx scripts/figure-art/generate.ts
 // A contact sheet of the whole set, both themes, with the live CSS:
-//   pnpm exec tsx scripts/figure-art/generate.ts --preview <file.html>
+//   bun x tsx scripts/figure-art/generate.ts --preview <file.html>
 //
 // The markup carries classes only; colours, strokes and motion come from
 // components/mockups/hairline.module.css, so one drawing serves both themes.

@@ -113,9 +113,6 @@ None of that needs an account. With a QRdx API key on the connection, `save_temp
 
 **React library.** [`packages/qrdx`](packages/qrdx) is the engine behind the playground.
 
-> [!NOTE]
-> npm still has `qrdx` 0.0.46. This repo has 0.0.47, which isn't published yet, and the [library README](packages/qrdx/README.md) documents 0.0.47. In 0.0.46 the basic code works, but most patterns, frames, Art QR, EPS export and the scan score came later, and it lists React 19, sharp and jspdf as its own dependencies. Until 0.0.47 is on npm, use the playground or the image API for those features. Run `npm view qrdx version` to see what npm installs.
-
 ```bash
 npm install qrdx
 ```
@@ -136,7 +133,6 @@ export function Example() {
 }
 ```
 
-This example works with both 0.0.46 and 0.0.47.
 
 **CLI.** [`@qrdx/cli`](packages/cli) renders styled codes from the terminal or CI:
 
@@ -144,9 +140,6 @@ This example works with both 0.0.46 and 0.0.47.
 npx @qrdx/cli generate "https://qrdx.dev" -o qr.svg
 npx @qrdx/cli generate "https://qrdx.dev" -o qr.png --body circle --eye rounded --size 1024
 ```
-
-> [!NOTE]
-> npm still has `@qrdx/cli` 0.0.4. It has the qrdx 0.0.46 styles and no `--format` or `--frame`, and it writes SVG into a file named `qr.eps`. The repo's 0.0.5 adds EPS, frames and every current pattern but isn't published yet. For EPS today, use the image API: `curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=eps"`.
 
 **More**
 
@@ -180,6 +173,6 @@ The QRdx name and logo are trademarks. Read the [trademark policy](TRADEMARK.md)
 
 Bug reports, ideas and pull requests are welcome. [Open an issue](https://github.com/bucharitesh/qrdx/issues), or look for issues labeled `good first issue`. [CONTRIBUTING.md](CONTRIBUTING.md) covers local setup, the project layout and the checks to run. Report security issues privately, as [SECURITY.md](SECURITY.md) describes.
 
-QRdx is a pnpm and Turborepo monorepo: a Next.js app with React, TypeScript, Tailwind CSS, Drizzle on Postgres, Better Auth and the Vercel AI SDK. QR generation started from [qrcode.react](https://github.com/zpao/qrcode.react), and the playground layout was inspired by [tweakcn](https://github.com/jnsahaj/tweakcn).
+QRdx is a Bun and Turborepo monorepo: a Next.js app with React, TypeScript, Tailwind CSS, Drizzle on Postgres, Better Auth and the Vercel AI SDK. QR generation started from [qrcode.react](https://github.com/zpao/qrcode.react), and the playground layout was inspired by [tweakcn](https://github.com/jnsahaj/tweakcn).
 
 If QRdx is useful to you, a star helps other people find it.

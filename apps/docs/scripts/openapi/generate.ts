@@ -4,7 +4,7 @@
 // (content/docs/developers/api) and the errors page (scripts/openapi/pages.ts).
 // Run after changing a /v1 route, its schemas or lib/openapi:
 //
-//   pnpm openapi:generate
+//   bun run openapi:generate
 //
 // tests/api/openapi.test.ts fails while the committed files are stale.
 //
@@ -17,7 +17,14 @@ import { join } from "node:path";
 
 const root = join(__dirname, "..", "..");
 const OPENAPI_PATH = join(root, "public", "openapi.json");
-const biomePath = join(root, "..", "..", "node_modules", ".bin", "biome");
+const ultracitePath = join(
+  root,
+  "..",
+  "..",
+  "node_modules",
+  ".bin",
+  "ultracite",
+);
 
 // Same rule as vitest.config.ts: no deployment or service values.
 const DEPLOYMENT_ENV =
@@ -52,13 +59,13 @@ async function main() {
   const document = buildOpenApiDocument();
   writeFileSync(OPENAPI_PATH, `${JSON.stringify(document, null, 2)}\n`);
 
-  // Keep the file as `biome check` formats it.
-  const biome = spawnSync(biomePath, ["format", "--write", OPENAPI_PATH], {
+  // Keep the file as `ultracite check` expects it.
+  const fixed = spawnSync(ultracitePath, ["fix", OPENAPI_PATH], {
     cwd: root,
     stdio: "inherit",
   });
-  if (biome.status !== 0) {
-    throw new Error("biome format failed on public/openapi.json");
+  if (fixed.status !== 0) {
+    throw new Error("ultracite fix failed on public/openapi.json");
   }
 
   // The pages render the file just written (lib/api-reference imports it).
@@ -70,12 +77,12 @@ async function main() {
     join(root, "content", "docs", "developers", "errors.mdx"),
     errorsPage(),
   );
-  const formatted = spawnSync(biomePath, ["format", "--write", output], {
+  const formatted = spawnSync(ultracitePath, ["fix", output], {
     cwd: root,
     stdio: "inherit",
   });
   if (formatted.status !== 0) {
-    throw new Error("biome format failed on content/docs/developers/api");
+    throw new Error("ultracite fix failed on content/docs/developers/api");
   }
 
   console.log(

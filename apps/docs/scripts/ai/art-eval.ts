@@ -9,15 +9,15 @@
  * same raw image. With ffmpeg installed it also writes one sheet per model
  * and prompt: a row per seed, raw | old | new.
  *
- * Usage (from apps/docs, with the engine built: pnpm --filter qrdx build:inplace):
- *   AI_GATEWAY_API_KEY=... pnpm exec tsx --conditions=react-server scripts/ai/art-eval.ts \
+ * Usage (from apps/docs, with the engine built: bun run --filter qrdx build:inplace):
+ *   AI_GATEWAY_API_KEY=... bun x tsx --conditions=react-server scripts/ai/art-eval.ts \
  *     [--n 4] [--models google/gemini-nano-banana-2.1,openai/gpt-image-2] \
  *     [--out ./art-eval-out] [--concurrency 2] [--timeout 45000] \
  *     [--visibility 50] [--max-cost 2]
- *   pnpm exec tsx --conditions=react-server scripts/ai/art-eval.ts --replay ./art-eval-out
+ *   bun x tsx --conditions=react-server scripts/ai/art-eval.ts --replay ./art-eval-out
  *     (no key, no cost: the raw images saved by an earlier run stand in for
  *     the models, so a pipeline change can be compared on the same images)
- *   pnpm exec tsx --conditions=react-server scripts/ai/art-eval.ts --dry-run
+ *   bun x tsx --conditions=react-server scripts/ai/art-eval.ts --dry-run
  *     (no key, no network: a fake model returns the control code itself)
  *
  * Every image is a paid gateway call: n × 3 prompts × models (48 by default).

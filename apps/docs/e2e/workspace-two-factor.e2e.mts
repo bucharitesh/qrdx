@@ -18,11 +18,11 @@
 // workspace), so it refuses to run unless DATABASE_URL in .env.local points
 // at localhost.
 //
-//   pnpm exec next dev -p <port> > <dev.log>
+//   bun x next dev -p <port> > <dev.log>
 //   WS2FA_E2E_BASE_URL=http://localhost:<port> \
 //   WS2FA_E2E_DEV_LOG=<dev.log> \
 //   WS2FA_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
-//   WS2FA_E2E_SHOTS=<dir> pnpm exec tsx e2e/workspace-two-factor.e2e.mts
+//   WS2FA_E2E_SHOTS=<dir> bun x tsx e2e/workspace-two-factor.e2e.mts
 //
 // Each new screen is captured in light and dark, at desktop and phone widths.
 /** biome-ignore-all lint/performance/useDomNodeTextContent: checks must only match text a person can see */

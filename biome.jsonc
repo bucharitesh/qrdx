@@ -3,7 +3,9 @@
   "extends": [
     "ultracite/biome/core",
     "ultracite/biome/react",
-    "ultracite/biome/next"
+    "ultracite/biome/next",
+    "ultracite/biome/vitest",
+    "ultracite/biome/drizzle"
   ],
   "linter": {
     "rules": {
@@ -21,7 +23,13 @@
         // Mostly parameters and memo() function names that reuse an outer name on purpose.
         "noShadow": "off",
         // Plugins and the app target current Chromium; these features are progressive.
-        "useBaseline": "off"
+        "useBaseline": "off",
+        // Shared assertion helpers (expectScans, failsWith…) call expect() outside it()/test().
+        "noMisplacedAssertion": "off",
+        // Tests that assert through those helpers have no expect() of their own.
+        "useExpect": "off",
+        // Table-driven tests check some rows only (`if (version < 40) expect(…)`).
+        "noConditionalExpect": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off"

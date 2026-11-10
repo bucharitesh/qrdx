@@ -12,7 +12,7 @@
 #     Allowed actions:      npm publish
 #
 # Trusted publishing needs npm 11.5.1+ on Node 22.14+, so the job installs a
-# pinned npm 11. pnpm packs each package, which turns the CLI's
+# pinned npm 11. Bun packs each package (bun pm pack), which turns the CLI's
 # "qrdx": "workspace:*" into the exact qrdx version; npm then uploads the
 # tarball. Publishing a tarball skips the packages' prepublishOnly scripts,
 # so this job runs the same checks itself: build, tests and the README
@@ -56,9 +56,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      # Uses the version pinned in package.json "packageManager".
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
+      # Bun installs and packs (the version pinned in package.json
+      # "packageManager"); Node 22 and npm 11 build, test and publish.
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version-file: package.json
 
       # No dependency cache: npm recommends release builds start clean.
       - name: Setup Node
@@ -102,16 +105,16 @@ jobs:
 
       - name: Install dependencies
         if: steps.versions.outputs.any == 'true'
-        run: pnpm install --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       # The CLI and its tests consume qrdx from its dist/ output.
       - name: Build
         if: steps.versions.outputs.any == 'true'
-        run: pnpm turbo build --filter=qrdx --filter=@qrdx/cli
+        run: bun x turbo build --filter=qrdx --filter=@qrdx/cli
 
       - name: Test
         if: steps.versions.outputs.any == 'true'
-        run: pnpm turbo test --filter=qrdx --filter=@qrdx/cli
+        run: bun x turbo test --filter=qrdx --filter=@qrdx/cli
 
       # The check both packages' prepublishOnly scripts run: the option
       # lists in the qrdx and @qrdx/cli READMEs match the code.
@@ -126,7 +129,7 @@ jobs:
           dest="$RUNNER_TEMP/npm-packs"
           mkdir -p "$dest"
           for dir in qrdx cli; do
-            (cd "packages/$dir" && pnpm pack --pack-destination "$dest" > /dev/null)
+            (cd "packages/$dir" && bun pm pack --destination "$dest" --quiet > /dev/null)
           done
           qrdx="$(ls "$dest"/qrdx-[0-9]*.tgz)"
           cli="$(ls "$dest"/qrdx-cli-[0-9]*.tgz)"

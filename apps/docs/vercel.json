@@ -1,5 +1,6 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "installCommand": "bun install --frozen-lockfile",
   "ignoreCommand": "node scripts/skip-ci.js",
   "crons": [
     {

@@ -37,7 +37,7 @@ export const docs = defineDocs({
          * API routes only
          */
         method: z.string().optional(),
-        /** API reference pages (fumadocs-openapi, `pnpm openapi:generate`) */
+        /** API reference pages (fumadocs-openapi, `bun run openapi:generate`) */
         _openapi: z.looseObject({}).optional(),
       })
       .transform(fillFactsDeep),

@@ -7,7 +7,7 @@
     "dev": "next dev",
     "start": "next start",
     "media:upload": "node --env-file-if-exists=../../.env.local --env-file-if-exists=.env.local scripts/media/upload.mjs",
-    "lint": "biome check",
+    "lint": "ultracite check",
     "test": "vitest run && node scripts/run-node-tests.mjs",
     "test:unit": "vitest run",
     "test:node": "node scripts/run-node-tests.mjs",
@@ -18,7 +18,7 @@
     "registry:build": "tsx registry/build.ts",
     "openapi:generate": "tsx --tsconfig scripts/openapi/tsconfig.json scripts/openapi/generate.ts",
     "postinstall": "fumadocs-mdx",
-    "format": "biome format --write"
+    "format": "ultracite fix"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.163",
@@ -105,6 +105,7 @@
     "resend": "^6.37.0",
     "screenfull": "^6.0.2",
     "scroll-into-view-if-needed": "^3.1.0",
+    "server-only": "^0.0.1",
     "shiki": "^4.5.0",
     "sonner": "^2.0.8",
     "streamdown": "^2.7.1",
@@ -117,8 +118,8 @@
     "zustand": "^5.0.16"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.4",
     "@svgr/webpack": "^8.1.0",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/estree": "^1.0.10",
     "@types/hast": "^3.0.5",
     "@types/mdast": "^4.0.4",

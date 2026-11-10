@@ -1,5 +1,5 @@
 // The REST API's OpenAPI document (public/openapi.json, written by
-// `pnpm openapi:generate` from lib/openapi/document.ts) stays complete and
+// `bun run openapi:generate` from lib/openapi/document.ts) stays complete and
 // current: every /v1 route handler has an operation, the committed file is
 // exactly what the generator builds from today's schemas, the reference pages
 // (content/docs/developers/api) match it, and the errors catalogue
@@ -81,7 +81,7 @@ function deref(value: Json): Json {
 }
 
 describe("OpenAPI document", () => {
-  it("public/openapi.json is exactly what the generator builds (run `pnpm openapi:generate`)", () => {
+  it("public/openapi.json is exactly what the generator builds (run `bun run openapi:generate`)", () => {
     const committed = JSON.parse(read("public/openapi.json"));
     expect(committed).toEqual(document);
   });
@@ -170,7 +170,7 @@ describe("OpenAPI document", () => {
   });
 });
 
-describe("API reference pages (run `pnpm openapi:generate`)", () => {
+describe("API reference pages (run `bun run openapi:generate`)", () => {
   const api = join("content", "docs", "developers", "api");
   const pages = operationsOf(document as never);
 

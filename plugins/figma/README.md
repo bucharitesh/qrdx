@@ -16,9 +16,9 @@ A Figma plugin that inserts styled QR codes as vector layers, built with the [`q
 ## Build
 
 ```bash
-pnpm --filter @qrdx/figma-plugin build       # writes dist/code.js and dist/ui.html
-pnpm --filter @qrdx/figma-plugin dev         # rebuild on change
-pnpm --filter @qrdx/figma-plugin typecheck
+bun run --filter @qrdx/figma-plugin build       # writes dist/code.js and dist/ui.html
+bun run --filter @qrdx/figma-plugin dev         # rebuild on change
+bun run --filter @qrdx/figma-plugin typecheck
 ```
 
 `dist/ui.html` is a single file with the UI script and styles inlined, as Figma requires.

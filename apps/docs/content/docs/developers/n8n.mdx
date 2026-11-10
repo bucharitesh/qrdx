@@ -15,13 +15,13 @@ To receive events without installing anything, use a [Webhook node](#without-the
 
 ## Install from source
 
-Build the package and pack it into a `.tgz` file. You need Node.js 22 and pnpm:
+Build the package and pack it into a `.tgz` file. You need Node.js 22 and [Bun](https://bun.com/docs/installation):
 
 ```bash
 git clone https://github.com/bucharitesh/qrdx.git
-cd qrdx && pnpm install
-pnpm --filter n8n-nodes-qrdx build
-cd plugins/n8n && npm pack
+cd qrdx && bun install
+bun run --filter n8n-nodes-qrdx build
+cd plugins/n8n && bun pm pack
 ```
 
 Install the file in the `nodes` folder of your n8n user folder, then restart n8n:

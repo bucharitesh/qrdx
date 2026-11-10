@@ -2,9 +2,6 @@
 
 QR code generator CLI for developers. Generate styled, scannable QR codes as SVG, PNG or vector EPS. It runs non-interactively in scripts and CI, and guides you with prompts when run in a terminal. It renders with the same [`qrdx`](https://www.npmjs.com/package/qrdx) library as the [QRdx](https://qrdx.dev) web app.
 
-> [!NOTE]
-> This README documents `@qrdx/cli` 0.0.5, the version in this repository. npm still has 0.0.4, so `npx @qrdx/cli` runs 0.0.4 until 0.0.5 is published. 0.0.4 has the qrdx 0.0.46 styles and no `--format` or `--frame` options, and it writes SVG into a file named `qr.eps`. For EPS today, use the [image API](https://qrdx.dev/docs/developers/image-api): `curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://example.com&format=eps"`. For frames, download from the [playground](https://qrdx.dev/playground). Run `npm view @qrdx/cli version` to see what npm installs.
-
 ## Install
 
 Run without installing:

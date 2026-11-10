@@ -1,6 +1,9 @@
 {
   "root": false,
   "$schema": "https://biomejs.dev/schemas/2.6.4/schema.json",
+  // Not the root config: the app keeps Biome's recommended rules (below) and
+  // takes only Ultracite's test and Drizzle presets.
+  "extends": ["ultracite/biome/vitest", "ultracite/biome/drizzle"],
   "vcs": {
     "enabled": true,
     "clientKind": "git",
@@ -32,7 +35,11 @@
       "preset": "recommended",
       "suspicious": {
         "noExplicitAny": "off",
-        "noArrayIndexKey": "off"
+        "noArrayIndexKey": "off",
+        // As in the root biome.jsonc: assertion helpers and table-driven tests.
+        "noMisplacedAssertion": "off",
+        "useExpect": "off",
+        "noConditionalExpect": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off"

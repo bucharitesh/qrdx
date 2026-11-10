@@ -3,7 +3,7 @@
 // e2e/playground.e2e.ts ("side panels"); these cover the keyboard rules and
 // the closed markup that flow relies on.
 import { renderToStaticMarkup } from "react-dom/server";
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, test, vi } from "vitest";
 
 vi.mock("@/actions/qr-themes", () => ({ getThemes: vi.fn() }));
 vi.mock("@/actions/user-settings", () => ({ getUserSettings: vi.fn() }));
@@ -72,7 +72,7 @@ describe("grid keys", () => {
   });
 });
 
-it("opens a tile's catalog beyond the whole picker row, on either side", () => {
+test("opens a tile's catalog beyond the whole picker row, on either side", () => {
   const row = { left: 913, right: 1213 };
   const tile = { left: 1166, right: 1213 };
   // Right side (playground): the tile ends the row, so only the clearance.
@@ -81,7 +81,7 @@ it("opens a tile's catalog beyond the whole picker row, on either side", () => {
   expect(offsetBeyond("left", tile, row, 28)).toBe(1166 - 913 + 28);
 });
 
-it("focuses search on open with a mouse, the panel itself on touch", () => {
+test("focuses search on open with a mouse, the panel itself on touch", () => {
   expect(focusOnOpen(true)).toBe("search");
   expect(focusOnOpen(false)).toBe("panel");
 });

@@ -99,7 +99,6 @@ vi.mock("@/lib/ai/agent/community", () => ({
 
 const route = await import("@/app/api/generate-qr-theme/route");
 const gateway = installFakeGateway();
-afterAll(() => vi.unstubAllGlobals());
 
 beforeEach(() => {
   gateway.reset();
@@ -111,6 +110,7 @@ beforeEach(() => {
   state.published.clear();
   state.publishedLookups.length = 0;
 });
+afterAll(() => vi.unstubAllGlobals());
 
 const USAGE = {
   inputTokens: { total: 120, noCache: 120, cacheRead: 0, cacheWrite: 0 },

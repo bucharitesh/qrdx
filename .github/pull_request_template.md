@@ -33,9 +33,9 @@ private codes (anyone can scan a QR code in a screenshot).
 
 ## Checklist
 - [ ] This PR targets `staging`
-- [ ] `pnpm typecheck` and `pnpm typecheck:docs` pass
-- [ ] `pnpm prepush` passes (it also runs on `git push`)
-- [ ] `biome check` is clean for the files I changed
+- [ ] `bun run typecheck` and `bun run typecheck:docs` pass
+- [ ] `bun run prepush` passes (it also runs on `git push`)
+- [ ] `bun x ultracite check <files>` is clean for the files I changed
 - [ ] Docs or READMEs are updated if behavior or public APIs changed
 - [ ] Schema changes, if any, are additive: new columns are nullable or have a default, nothing is dropped or renamed
 - [ ] No secrets, tokens, cookies or `.env` values in the code, screenshots or logs

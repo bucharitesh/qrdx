@@ -66,7 +66,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "readme": "node scripts/readme-catalogue.mjs",
-    "prepublishOnly": "node -e \"if(!(process.env.npm_config_user_agent||'').startsWith('pnpm/')){console.error('Publish with pnpm publish: it turns workspace: ranges into real versions.');process.exit(1)}\" && pnpm run build && pnpm run test && node scripts/readme-catalogue.mjs --check"
+    "prepublishOnly": "node -e \"if(!(process.env.npm_config_user_agent||'').startsWith('bun/')){console.error('Publish through the Publish workflow, or with bun publish, which replaces workspace ranges with real versions.');process.exit(1)}\" && bun run build && bun run test && node scripts/readme-catalogue.mjs --check"
   },
   "dependencies": {
     "jsqr": "^1.4.0",

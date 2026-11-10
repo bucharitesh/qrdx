@@ -225,7 +225,7 @@ export function isFromQRdx(rawBody: string, header: string, secret: string) {
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: `git clone ${REPO}.git\ncd qrdx && pnpm install\npnpm --filter n8n-nodes-qrdx build\ncd plugins/n8n && npm pack`,
+          code: `git clone ${REPO}.git\ncd qrdx && bun install\nbun run --filter n8n-nodes-qrdx build\ncd plugins/n8n && bun pm pack`,
         },
       },
       {

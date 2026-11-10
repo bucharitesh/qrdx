@@ -14,11 +14,12 @@
 ARG NODE_VERSION=22
 
 FROM node:${NODE_VERSION}-bookworm-slim AS base
-ENV PNPM_HOME=/pnpm \
-    NEXT_TELEMETRY_DISABLED=1 \
+ENV NEXT_TELEMETRY_DISABLED=1 \
     TURBO_TELEMETRY_DISABLED=1
-# Keep in sync with "packageManager" in package.json and turbo in devDependencies.
-RUN npm install -g pnpm@10.33.0 turbo@2.8.20
+# Bun installs the dependencies; Node runs the build and the server. Keep in
+# sync with "packageManager" in package.json and turbo in devDependencies.
+COPY --from=oven/bun:1.4.4 /usr/local/bin/bun /usr/local/bin/bun
+RUN npm install -g turbo@2.11.10
 WORKDIR /app
 
 # ── 1. Prune the monorepo to the web app and the packages it needs ───────────
@@ -34,8 +35,8 @@ FROM base AS installer
 COPY --from=pruner /app/out/json/ .
 # Scripts are skipped because the sources aren't copied yet; the only workspace
 # script (fumadocs-mdx in apps/docs) runs explicitly in the build stage.
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
-    pnpm install --frozen-lockfile --ignore-scripts
+RUN --mount=type=cache,id=bun,target=/root/.bun/install/cache \
+    bun install --frozen-lockfile --ignore-scripts
 COPY --from=pruner /app/out/full/ .
 
 # ── 3. Build ─────────────────────────────────────────────────────────────────
@@ -57,7 +58,7 @@ ENV NEXT_OUTPUT=standalone \
 # Build args that were passed empty are unset, so optional URL fields are
 # treated as missing instead of failing validation.
 RUN for name in $(env | sed -n 's/^\(NEXT_PUBLIC_[A-Z0-9_]*\)=$/\1/p'); do unset "$name"; done \
- && pnpm --filter docs exec fumadocs-mdx \
+ && (cd apps/docs && bun x fumadocs-mdx) \
  && turbo build --filter=docs
 
 # ── 4. Schema sync (one-shot job used by docker-compose.yml) ─────────────────
@@ -69,7 +70,7 @@ FROM installer AS migrator
 RUN npm install --prefix /opt/migrate --no-save --no-package-lock pg@8.13.1 \
  && ln -s /opt/migrate/node_modules /node_modules
 WORKDIR /app/packages/database
-CMD ["pnpm", "exec", "drizzle-kit", "push", "--verbose"]
+CMD ["bun", "x", "drizzle-kit", "push", "--verbose"]
 
 # ── 5. Runtime ───────────────────────────────────────────────────────────────
 FROM node:${NODE_VERSION}-bookworm-slim AS runner

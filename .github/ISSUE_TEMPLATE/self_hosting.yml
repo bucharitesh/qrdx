@@ -33,7 +33,7 @@ body:
     id: runtime
     attributes:
       label: Docker or Node.js version
-      description: For Docker, the output of `docker --version` and `docker compose version`. For Node.js, `node -v` and `pnpm -v`.
+      description: For Docker, the output of `docker --version` and `docker compose version`. For Node.js, `node -v` and `bun -v`.
     validations:
       required: true
 
@@ -54,7 +54,7 @@ body:
       label: Where does it go wrong?
       options:
         - Building or starting the containers
-        - Syncing the schema (the migrate service or pnpm db:push)
+        - Syncing the schema (the migrate service or bun run db:push)
         - Signing in or creating the first user
         - Making the first admin
         - Reverse proxy, HTTPS or Content-Security-Policy
