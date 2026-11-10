@@ -25,6 +25,10 @@ import {
   RESERVED_HANDLES,
 } from "@/lib/community/handles";
 import { textProblem } from "@/lib/community/text";
+import {
+  loadFrameIndex,
+  resetFrameLibraryForTests,
+} from "@/lib/frames/library";
 import { themeStylePropsSchema } from "@/types/theme";
 
 const wifi = getOfficialFrame("wifi-card");
@@ -85,7 +89,23 @@ describe("editing a custom frame through its spec", () => {
         .success,
     ).toBe(true);
     expect(customFrameName({ style: "custom", spec })).toBe("Custom");
+  });
+
+  it("names an official frame once the library's index has loaded", async () => {
+    resetFrameLibraryForTests();
+    // Before: every custom frame is "Custom"
     expect(customFrameName({ style: "custom", spec: wifi.spec })).toBe(
+      "Custom",
+    );
+    await loadFrameIndex();
+    expect(customFrameName({ style: "custom", spec: wifi.spec })).toBe(
+      "Wi-Fi card",
+    );
+    // A database may hand the spec back with its keys in another order
+    const reordered = Object.fromEntries(
+      Object.entries(wifi.spec).reverse(),
+    ) as typeof wifi.spec;
+    expect(customFrameName({ style: "custom", spec: reordered })).toBe(
       "Wi-Fi card",
     );
   });

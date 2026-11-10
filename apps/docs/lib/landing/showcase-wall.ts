@@ -230,7 +230,8 @@ const BANDS: { band: WallBand; title: string; description: string }[] = [
   {
     band: "frames",
     title: "Frames",
-    description: "QRdx's official frames, free under CC0. Open one to use it.",
+    description:
+      "A few of QRdx's official frames, free under CC0. Open one to use it.",
   },
   {
     band: "art",

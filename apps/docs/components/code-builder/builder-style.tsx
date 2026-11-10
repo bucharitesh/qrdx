@@ -26,6 +26,7 @@ import {
 } from "@/components/editor/gradient-picker";
 import { QRStyleScopeProvider } from "@/components/editor/style-scope";
 import { defaultThemeState } from "@/config/qr";
+import { useFrameLibrary } from "@/lib/frames/library";
 import { designColors } from "@/lib/paint/swatches";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
@@ -175,6 +176,8 @@ export function BuilderStyle({
 }) {
   const current = useMemo(() => themeLook(style), [style]);
   const choices = useMemo(() => themeChoices(themes ?? []), [themes]);
+  // Names an official frame in the Frame header once the library's index loads
+  useFrameLibrary({ withIndex: current.frame?.style === "custom" });
   // The pickers' Theme swatches: the workspace's default theme
   const paintDesign = useMemo(() => {
     const workspaceDefault = choices.find((choice) => choice.isDefault);

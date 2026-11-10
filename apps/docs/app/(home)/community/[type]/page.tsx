@@ -2,10 +2,17 @@ import { cn } from "@repo/design-system/lib/utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { OFFICIAL_FRAME_COLLECTIONS } from "qrdx";
 import { Suspense } from "react";
 import { CommunityTabs } from "@/components/community/community-tabs";
 import { ItemGrid } from "@/components/community/item-card";
+import {
+  ItemPages,
+  pageOf,
+  pageParam,
+} from "@/components/community/item-pages";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { findOfficialFrame } from "@/lib/community/catalog";
 import { hasCollections, hasKits, hasTemplates } from "@/lib/community/home";
 import { LICENSE_SHORT } from "@/lib/community/licence";
 import { listFrames, listItems } from "@/lib/community/queries";
@@ -55,6 +62,11 @@ export default async function CommunityTypePage({
   const filter: Filter =
     from === "official" || from === "community" ? from : "all";
   const sort = query.sort === "newest" ? "newest" : "popular";
+  // Official frames come in groups (holidays, seasons, uses): ?group=<id>
+  const group =
+    OFFICIAL_FRAME_COLLECTIONS.find((item) => item.id === query.group)?.id ??
+    null;
+  const page = pageParam(query.page);
   const [showCollections, showTemplates, showKits] = await Promise.all([
     hasCollections(),
     hasTemplates(),
@@ -91,7 +103,13 @@ export default async function CommunityTypePage({
           </Suspense>
         </div>
       ) : (
-        <TypeGrid filter={filter} sort={sort} type={type} />
+        <TypeGrid
+          filter={filter}
+          group={type === "frame" ? group : null}
+          page={page}
+          sort={sort}
+          type={type}
+        />
       )}
     </main>
   );
@@ -135,10 +153,15 @@ async function TypeGrid({
   type,
   filter,
   sort,
+  group,
+  page: requestedPage,
 }: {
   type: Exclude<CommunityItemType, "theme">;
   filter: Filter;
   sort: "popular" | "newest";
+  /** An official frame collection (frames only) */
+  group: string | null;
+  page: number;
 }) {
   const official =
     filter === "official" ? true : filter === "community" ? false : undefined;
@@ -146,13 +169,32 @@ async function TypeGrid({
     type === "frame"
       ? await listFrames({ official, sort })
       : await listItems({ type, official, sort, limit: 200 });
+  const grouped = group
+    ? cards.filter(
+        (card) =>
+          card.isOfficial && findOfficialFrame(card.slug)?.collection === group,
+      )
+    : cards;
+  const { page, pages, items } = pageOf(grouped, requestedPage);
   const base = `/community/${TYPE_SEGMENTS[type]}`;
-  const link = (next: Partial<{ from: Filter; sort: string }>) => {
+  const link = (
+    next: Partial<{
+      from: Filter;
+      sort: string;
+      group: string | null;
+      page: number;
+    }>,
+  ) => {
     const params = new URLSearchParams();
     const nextFrom = next.from ?? filter;
     const nextSort = next.sort ?? sort;
+    const nextGroup = next.group === undefined ? group : next.group;
+    // A new filter starts at the first page
+    const nextPage = next.page ?? 1;
     if (nextFrom !== "all") params.set("from", nextFrom);
     if (nextSort !== "popular") params.set("sort", nextSort);
+    if (nextGroup) params.set("group", nextGroup);
+    if (nextPage > 1) params.set("page", String(nextPage));
     const search = params.toString();
     return search ? `${base}?${search}` : base;
   };
@@ -199,8 +241,41 @@ async function TypeGrid({
         </nav>
       </div>
 
-      {cards.length > 0 ? (
-        <ItemGrid cards={cards} />
+      {type === "frame" && filter !== "community" && (
+        <nav
+          aria-label="Official frame groups"
+          className="no-scrollbar -mx-4 flex gap-1.5 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:px-0"
+        >
+          {[
+            { id: null, label: "All groups" },
+            ...OFFICIAL_FRAME_COLLECTIONS,
+          ].map((option) => (
+            <Link
+              aria-current={option.id === group ? "true" : undefined}
+              className={cn(
+                "shrink-0 rounded-full border px-3 py-1 text-xs transition-colors",
+                option.id === group
+                  ? "bg-foreground text-background border-foreground"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+              href={link({ group: option.id })}
+              key={option.label}
+            >
+              {option.label}
+            </Link>
+          ))}
+        </nav>
+      )}
+
+      {items.length > 0 ? (
+        <>
+          <ItemGrid cards={items} />
+          <ItemPages
+            href={(next) => link({ page: next })}
+            page={page}
+            pages={pages}
+          />
+        </>
       ) : (
         <div className="flex flex-col items-center gap-3 py-20 text-center">
           <HairlineFigure className="aspect-square w-36" figure="Palette" />

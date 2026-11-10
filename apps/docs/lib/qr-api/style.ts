@@ -42,7 +42,10 @@ import {
   qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
-import { decodeStyleParam } from "@/lib/playground-style";
+import {
+  decodeStyleParam,
+  type OfficialFrameResolver,
+} from "@/lib/playground-style";
 import { logoIconSchema } from "@/lib/qr-design/logo-icon";
 import type { ThemeStyles } from "@/types/theme";
 
@@ -362,9 +365,14 @@ export function parseApiStyle(input: unknown): ParsedStyle {
 /**
  * A `style` query value: URL-decoded JSON (`{"fgColor":"#155dfc",…}`), or
  * the `style` value of a playground link ("1." + base64url, see
- * lib/playground-style.ts). Either way the strict schema checks it.
+ * lib/playground-style.ts). Either way the strict schema checks it. A link
+ * names an official frame by id: `officialFrames` finds its spec (the image
+ * API passes the full catalogue, OFFICIAL_FRAME_RESOLVER).
  */
-export function parseStyleQuery(raw: string): ParsedStyle {
+export function parseStyleQuery(
+  raw: string,
+  officialFrames?: OfficialFrameResolver,
+): ParsedStyle {
   const value = raw.trim();
   if (value.startsWith("{")) {
     let json: unknown;
@@ -384,7 +392,7 @@ export function parseStyleQuery(raw: string): ParsedStyle {
     }
     return parseApiStyle(json);
   }
-  const decoded = decodeStyleParam(value);
+  const decoded = decodeStyleParam(value, officialFrames);
   if (!decoded) {
     return {
       ok: false,

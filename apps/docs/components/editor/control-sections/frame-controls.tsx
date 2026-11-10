@@ -6,6 +6,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
 import { Brush2, DocumentUpload, Global } from "iconsax-reactjs";
+import dynamic from "next/dynamic";
 import {
   type AnyQRFrame,
   DEFAULT_FRAME_TEXT,
@@ -13,33 +14,41 @@ import {
   type FrameStyle,
   GRADIENT_FRAME_DEFAULTS,
   mixFrameColors,
-  OFFICIAL_FRAMES,
   QRCodeSVG,
   type QRCustomFrame,
 } from "qrdx";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { getSavedCommunityFrames } from "@/actions/community";
-import { ImportFrameDialog } from "@/components/community/import-frame-dialog";
-import { PublishFrameDialog } from "@/components/community/publish-frame-dialog";
 import { useEditableStyle } from "@/components/editor/style-scope";
-import {
-  BUILT_IN_SPEC_STYLES,
-  builtInSpec,
-  officialFrameOfSpec,
-} from "@/lib/community/catalog";
+import { BUILT_IN_SPEC_STYLES, builtInSpec } from "@/lib/frames/built-in";
+import { peekOfficialEntryOfSpec, useFrameLibrary } from "@/lib/frames/library";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { soundEvent } from "@/lib/sound/emit";
+import { SectionContext } from "../section-context";
 import { CustomFrameFields } from "./custom-frame-fields";
 import { FrameColorField, FrameTextSize } from "./frame-fields";
+import { type FrameChoice, FramePicker, OFFICIAL_PREFIX } from "./frame-picker";
 import { FrameShapes, frameShapeOf, withoutShape } from "./frame-shapes";
 import { carryFrameSettings, customFrameName } from "./frame-specs";
 import { FrameTextPresets } from "./frame-text-presets";
-import { ShapePicker } from "./option-tiles";
 
 // One picker for every frame: the engine's built-in call-to-action frames,
-// QRdx's official frames (frame specs, from the engine's catalogue) and the
-// frames you saved from the community. Official and saved frames are custom
-// frames: their labels, colors and icons are edited through the spec.
+// QRdx's official frame library (frame specs, loaded on demand from the
+// engine's catalogue, lib/frames/library.ts) and the frames you saved from
+// the community. Official and saved frames are custom frames: their
+// labels, colors and icons are edited through the spec.
+
+// Opened rarely: kept out of the editor's first load
+const ImportFrameDialog = dynamic(() =>
+  import("@/components/community/import-frame-dialog").then(
+    (module) => module.ImportFrameDialog,
+  ),
+);
+const PublishFrameDialog = dynamic(() =>
+  import("@/components/community/publish-frame-dialog").then(
+    (module) => module.PublishFrameDialog,
+  ),
+);
 
 const BUILT_IN_OPTIONS: { id: FrameStyle; name: string }[] = [
   { id: "none", name: "None" },
@@ -64,7 +73,6 @@ const BUILT_IN_OPTIONS: { id: FrameStyle; name: string }[] = [
   { id: "menu-card", name: "Menu card" },
 ];
 
-const OFFICIAL_PREFIX = "official:";
 const SAVED_PREFIX = "saved:";
 const CUSTOM_ID = "custom";
 /** The frame picker's value while a shaped code is on: no frame tile */
@@ -86,32 +94,6 @@ const FEATURED = [
   `${OFFICIAL_PREFIX}wifi-card`,
   `${OFFICIAL_PREFIX}review-us`,
 ];
-
-const CATEGORIES = [
-  { id: "ready-made", label: "Ready-made" },
-  { id: "seasonal", label: "Seasonal" },
-  { id: "banners", label: "Banners" },
-  { id: "borders", label: "Borders" },
-  { id: "bubbles", label: "Bubbles" },
-  { id: "objects", label: "Objects" },
-];
-
-const BUILT_IN_CATEGORY: Partial<Record<FrameStyle, string>> = {
-  none: "borders",
-  border: "borders",
-  "rounded-border": "borders",
-  "gradient-border": "borders",
-  focus: "borders",
-  circle: "borders",
-  "banner-bottom": "banners",
-  "banner-top": "banners",
-  "banner-top-bottom": "banners",
-  badge: "banners",
-  tag: "banners",
-  "speech-bubble": "bubbles",
-  "speech-bubble-top": "bubbles",
-  "chat-bubble": "bubbles",
-};
 
 // Frames whose label sits on the light area, so it defaults to the frame color
 const TEXT_ON_LIGHT = new Set<FrameStyle>([
@@ -147,77 +129,82 @@ export function FrameControls() {
   const custom = frame.style === "custom" ? frame : null;
   const builtIn = frame.style === "custom" ? null : frame;
   const { data: saved = [] } = useSavedFrames();
+  // Inside a collapsed section the picker waits (nothing is on screen)
+  const section = useContext(SectionContext);
+  const active = section ? section.isExpanded : true;
   const [importOpen, setImportOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
+  // The dialogs load on first open, then stay mounted (for their exit)
+  const [dialogs, setDialogs] = useState({ import: false, publish: false });
 
   // A frame takes the place of a shaped code (frame-shapes.tsx)
   const setFrame = (next: AnyQRFrame) =>
     setStyle({ ...withoutShape(style), frame: next });
   const shaped = frameShapeOf(style) !== null;
 
-  // Every option the picker shows, keyed by a string id
-  const options = useMemo(() => {
-    const list: { id: string; name: string; frame: AnyQRFrame }[] = [
-      ...BUILT_IN_OPTIONS.map((option) => ({
-        id: option.id as string,
-        name: option.name,
-        frame: { style: option.id, text: "" } as AnyQRFrame,
-      })),
-      ...OFFICIAL_FRAMES.map((official) => ({
-        id: `${OFFICIAL_PREFIX}${official.id}`,
-        name: official.name,
-        frame: { style: "custom", spec: official.spec } as QRCustomFrame,
-      })),
-      ...saved.map((item) => ({
-        id: `${SAVED_PREFIX}${item.id}`,
-        name: item.name,
-        frame: item.frame,
-      })),
+  // The picker's own choices: built-ins, saved frames, the custom one.
+  // Official frames come from the library (frame-picker.tsx).
+  const choices = useMemo(() => {
+    const list: FrameChoice[] = [
+      ...BUILT_IN_OPTIONS.map(
+        (option): FrameChoice => ({
+          id: option.id as string,
+          name: option.name,
+          frame: { style: option.id, text: "" } as AnyQRFrame,
+          group: "built-in",
+          keywords: "built-in classic",
+        }),
+      ),
+      ...saved.map(
+        (item): FrameChoice => ({
+          id: `${SAVED_PREFIX}${item.id}`,
+          name: item.name,
+          frame: item.frame,
+          group: "saved",
+          keywords: "saved community",
+        }),
+      ),
     ];
     return list;
   }, [saved]);
 
-  const value = useMemo(() => {
+  // Name official frames (and keep the picker current) as the library loads
+  useFrameLibrary({ withIndex: Boolean(custom) });
+  const official = custom ? peekOfficialEntryOfSpec(custom.spec) : undefined;
+
+  const value = (() => {
     if (shaped && frame.style === "none") return SHAPED_ID;
     if (!custom) return frame.style as string;
-    const official = officialFrameOfSpec(custom.spec);
     if (official) return `${OFFICIAL_PREFIX}${official.id}`;
     const json = JSON.stringify(custom.spec);
     const match = saved.find(
       (item) => JSON.stringify(item.frame.spec) === json,
     );
     return match ? `${SAVED_PREFIX}${match.id}` : CUSTOM_ID;
-  }, [custom, frame.style, saved, shaped]);
+  })();
 
-  const pickerOptions =
+  const pickerChoices =
     value === CUSTOM_ID && custom
-      ? [...options, { id: CUSTOM_ID, name: "Custom", frame: custom }]
-      : options;
-  const byId = new Map(pickerOptions.map((option) => [option.id, option]));
+      ? [
+          ...choices,
+          {
+            id: CUSTOM_ID,
+            name: "Custom",
+            frame: custom,
+            group: "custom" as const,
+          },
+        ]
+      : choices;
 
-  const categoryOf = (id: string) => {
-    if (id.startsWith(SAVED_PREFIX)) return "saved";
-    if (id === CUSTOM_ID) return "ready-made";
-    if (id.startsWith(OFFICIAL_PREFIX)) {
-      const official = OFFICIAL_FRAMES.find(
-        (item) => `${OFFICIAL_PREFIX}${item.id}` === id,
-      );
-      return official?.category === "seasonal" ? "seasonal" : "ready-made";
-    }
-    return BUILT_IN_CATEGORY[id as FrameStyle] ?? "objects";
-  };
-
-  const pick = (id: string) => {
-    const option = byId.get(id);
-    if (!option) return;
+  const pick = (id: string, picked: AnyQRFrame) => {
     soundEvent("tick");
-    if (option.frame.style === "custom") {
+    if (picked.style === "custom") {
       // A ready-made frame looks like its tile: its own labels and colors.
-      setFrame(id === CUSTOM_ID && custom ? custom : option.frame);
+      setFrame(id === CUSTOM_ID && custom ? custom : picked);
       return;
     }
     // A built-in style keeps the text and colors chosen so far.
-    setFrame({ ...carryFrameSettings(frame), style: option.frame.style });
+    setFrame({ ...carryFrameSettings(frame), style: picked.style });
   };
 
   const editableSpec =
@@ -227,39 +214,30 @@ export function FrameControls() {
 
   return (
     <div className="space-y-4">
-      <ShapePicker
-        categories={[
-          ...CATEGORIES,
-          ...(saved.length > 0 ? [{ id: "saved", label: "Saved" }] : []),
-        ]}
-        category={categoryOf}
+      <FramePicker
+        active={active}
+        choices={pickerChoices}
+        currentName={frameName(frame)}
         featured={FEATURED}
-        label="Frame"
-        noun="frames"
-        onChange={pick}
-        options={pickerOptions.map(({ id, name }) => ({ id, name }))}
-        preview={(id) => {
-          const option = byId.get(id);
-          if (!option) return null;
-          return (
-            <QRCodeSVG
-              bgColor="#ffffff"
-              bodyPattern="square"
-              cornerEyeDotPattern="square"
-              cornerEyePattern="square"
-              fgColor="#000000"
-              frame={
-                option.frame.style === "custom" || !frame.color
-                  ? option.frame
-                  : // Built-in tiles take the chosen frame color
-                    { ...option.frame, color: frame.color }
-              }
-              size={40}
-              style={{ maxHeight: "100%", maxWidth: "100%" }}
-              value="qrdx.dev"
-            />
-          );
-        }}
+        onPick={pick}
+        preview={(option) => (
+          <QRCodeSVG
+            bgColor="#ffffff"
+            bodyPattern="square"
+            cornerEyeDotPattern="square"
+            cornerEyePattern="square"
+            fgColor="#000000"
+            frame={
+              option.style === "custom" || !frame.color
+                ? option
+                : // Built-in tiles take the chosen frame color
+                  { ...option, color: frame.color }
+            }
+            size={40}
+            style={{ maxHeight: "100%", maxWidth: "100%" }}
+            value="qrdx.dev"
+          />
+        )}
         value={value}
       />
 
@@ -297,7 +275,9 @@ export function FrameControls() {
         )}
         <Button
           onClick={() => {
-            if (checkValidSession("signin")) setImportOpen(true);
+            if (!checkValidSession("signin")) return;
+            setDialogs((used) => ({ ...used, import: true }));
+            setImportOpen(true);
           }}
           size="sm"
           type="button"
@@ -309,7 +289,9 @@ export function FrameControls() {
         {custom && (
           <Button
             onClick={() => {
-              if (checkValidSession("signin")) setPublishOpen(true);
+              if (!checkValidSession("signin")) return;
+              setDialogs((used) => ({ ...used, publish: true }));
+              setPublishOpen(true);
             }}
             size="sm"
             type="button"
@@ -326,15 +308,17 @@ export function FrameControls() {
         and the code itself stays scannable.
       </p>
 
-      <ImportFrameDialog
-        onImported={(spec) => {
-          setFrame({ style: "custom", spec });
-          soundEvent("tick");
-        }}
-        onOpenChange={setImportOpen}
-        open={importOpen}
-      />
-      {custom && (
+      {dialogs.import && (
+        <ImportFrameDialog
+          onImported={(spec) => {
+            setFrame({ style: "custom", spec });
+            soundEvent("tick");
+          }}
+          onOpenChange={setImportOpen}
+          open={importOpen}
+        />
+      )}
+      {custom && dialogs.publish && (
         <PublishFrameDialog
           frame={custom}
           onOpenChange={setPublishOpen}

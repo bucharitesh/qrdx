@@ -3,6 +3,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { remarkLLMs } from "fumadocs-core/mdx-plugins/remark-llms";
+import { OFFICIAL_FRAMES } from "qrdx";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -54,7 +55,12 @@ describe("PRODUCT_FACTS", () => {
       bodyPatterns: BODY_PATTERN.length,
       eyeShapes: CORNER_EYE_PATTERNS.length,
       eyeCentres: CORNER_EYE_DOT_PATTERNS.length,
-      frames: FRAME_STYLES.length - 1,
+      frames: FRAME_STYLES.length - 1 + OFFICIAL_FRAMES.length,
+      frameStyles: FRAME_STYLES.length - 1,
+      officialFrames: OFFICIAL_FRAMES.length,
+      seasonalFrames: OFFICIAL_FRAMES.filter(
+        (frame) => frame.category === "seasonal",
+      ).length,
       artModel: "OpenAI's GPT Image 2",
       auditLogRetentionDays: 365,
       auditLogExportRows: "50,000",
@@ -191,10 +197,11 @@ describe("product counts in copy", () => {
       "body patterns": PRODUCT_FACTS.bodyPatterns,
       "corner-eye shapes": PRODUCT_FACTS.eyeShapes,
       "eye centers": PRODUCT_FACTS.eyeCentres,
-      "call-to-action frames": PRODUCT_FACTS.frames,
+      "call-to-action frames": PRODUCT_FACTS.frameStyles,
+      frames: PRODUCT_FACTS.frames,
     };
     for (const match of readme.matchAll(
-      /\b(\d+) (body patterns|corner-eye shapes|eye centers|call-to-action frames)\b/g,
+      /\b(\d+) (body patterns|corner-eye shapes|eye centers|call-to-action frames|frames)\b/g,
     )) {
       expect(`${match[1]} ${match[2]}`).toBe(
         `${expected[match[2]]} ${match[2]}`,

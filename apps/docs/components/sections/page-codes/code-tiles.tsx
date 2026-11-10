@@ -2,6 +2,7 @@ import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { EASE_CLASS } from "@/components/mockups/motion";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import {
   codeStyles,
   frameName,
@@ -38,6 +39,7 @@ export function codePlaygroundHref(code: PageCode): string {
     sample: true,
     preset: code.preset,
     design: code.frame === undefined ? undefined : codeStyles(code),
+    officialFrames: OFFICIAL_FRAME_RESOLVER,
   });
 }
 
