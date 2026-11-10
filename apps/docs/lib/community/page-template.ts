@@ -173,6 +173,8 @@ export interface ScrubReport {
   wifi: number;
   /** Coupon codes and barcode values */
   codes: number;
+  /** Product GTINs (product pages) */
+  gtins: number;
   /** Pictures removed (uploads, links, QRdx's library, logos, covers) */
   images: number;
   /** Uploaded files removed (PDF, audio, video, downloads) */
@@ -194,6 +196,7 @@ const emptyReport = (): ScrubReport => ({
   addresses: 0,
   wifi: 0,
   codes: 0,
+  gtins: 0,
   images: 0,
   files: 0,
   blocks: [],
@@ -329,6 +332,12 @@ class Scrubber {
       this.secret(value);
       this.report.codes++;
       return key === "code" ? SAMPLE_COUPON_CODE : "";
+    }
+    // A product's GTIN identifies one real product: left empty.
+    if (key === "gtin") {
+      this.secret(value);
+      this.report.gtins++;
+      return "";
     }
     if (EMAIL_ONLY.test(value.trim())) {
       this.secret(value);
@@ -469,6 +478,7 @@ const COUNTED = [
   "addresses",
   "wifi",
   "codes",
+  "gtins",
   "images",
   "files",
   "hidden",
@@ -642,6 +652,9 @@ export function scrubSummary(report: ScrubReport): string[] {
   }
   if (report.codes) {
     lines.push("Coupon code replaced with a sample one");
+  }
+  if (report.gtins) {
+    lines.push("Product GTIN removed: people add their own");
   }
   if (report.images) {
     lines.push(

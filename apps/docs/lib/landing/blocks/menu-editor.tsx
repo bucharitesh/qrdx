@@ -133,7 +133,7 @@ function PriceField({
   );
 }
 
-function TagToggles<T extends string>({
+export function TagToggles<T extends string>({
   label,
   options,
   labels,
