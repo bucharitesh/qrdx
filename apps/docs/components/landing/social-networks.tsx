@@ -13,8 +13,9 @@ type Icon = ComponentType<{ className?: string }>;
 
 // Brands get their real marks (Simple Icons) in the text color, inset like
 // the iconsax glyphs the generic entries use. LinkedIn asked Simple Icons
-// to remove its mark, so it keeps the design system's, inset the same way.
-function Linkedin({ className }: { className?: string }) {
+// to remove its mark, so it keeps the design system's, inset the same way
+// (also used by the QR type pickers and cards).
+export function LinkedinIcon({ className }: { className?: string }) {
   return (
     <LinkedinLogo aria-hidden className={className} viewBox="-2 -2 28 28" />
   );
@@ -68,7 +69,7 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "linkedin",
     label: "LinkedIn",
-    icon: Linkedin,
+    icon: LinkedinIcon,
     hosts: ["linkedin.com"],
     placeholder: "https://linkedin.com/in/yourname",
   },
