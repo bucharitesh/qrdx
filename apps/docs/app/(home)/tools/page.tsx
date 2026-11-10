@@ -1,6 +1,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import {
   ArrowRight,
+  Barcode,
   Camera,
   Category,
   Code1,
@@ -22,12 +23,13 @@ import {
 import { SpotlightLink } from "@/components/sections/tools/spotlight-link";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { createMetadata } from "@/lib/metadata";
+import { PRODUCT_FACTS } from "@/lib/product-facts";
 import { QR_TYPES } from "@/lib/qr-types-content";
 
 export const metadata: Metadata = createMetadata({
   title: "Free QR Code Tools",
   description:
-    "Free QR code tools: bulk generator from CSV, scan checker, print size calculator, Wi-Fi and vCard generators, and a QR image API for developers.",
+    "Free QR code and barcode tools: bulk generator from CSV, scan checker, print size calculator, barcode generator, Wi-Fi and vCard generators, and a QR image API.",
   path: "/tools",
   ownOgImage: true,
 });
@@ -77,6 +79,12 @@ const tools: Tool[] = [
     icon: Ruler,
     image: productShots.printSize,
     imagePosition: "object-left-top",
+  },
+  {
+    href: "/barcode-generator",
+    title: "Barcode generator",
+    description: `EAN-13, UPC, Code 128, GS1-128, ITF-14, Data Matrix and more: ${PRODUCT_FACTS.barcodeFormats} formats as PNG, SVG or EPS, with check digits worked out.`,
+    icon: Barcode,
   },
   {
     href: "/qr-code-generator/wifi",
@@ -162,7 +170,7 @@ export default function ToolsPage() {
         ]}
         title="Free QR code tools"
         intro={[
-          "Small, focused tools for the jobs around a QR code: making many at once, sizing them for print and checking that they scan. They are free, need no account and run in your browser.",
+          "Small, focused tools for the jobs around a QR code: making many at once, sizing them for print and checking that they scan, plus a barcode generator for products and labels. They are free, need no account and run in your browser.",
         ]}
       />
 

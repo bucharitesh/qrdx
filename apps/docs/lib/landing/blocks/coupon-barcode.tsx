@@ -1,5 +1,14 @@
 // Linear barcodes for coupon blocks, drawn as SVG without dependencies:
 // Code 128 (any printable ASCII) and EAN-13 (12 digits + check digit).
+//
+// This stays separate from the barcode generator's renderer (bwip-js,
+// lib/barcode/render.ts) on purpose: hosted pages render coupons on the
+// server and in the page editor, and these two symbologies cost a few
+// hundred lines here, while bwip-js is ~100 KB gzipped and loads only on
+// /barcode-generator. The check digit comes from the generator's shared
+// rules (lib/barcode/formats.ts), and tests/barcode/decode.test.ts decodes
+// this output with the scanner's reader.
+import { gs1CheckDigit } from "@/lib/barcode/formats";
 
 export type BarcodeFormat = "code128" | "ean13";
 
@@ -141,11 +150,7 @@ const EAN_PARITY = [
 
 /** EAN-13 check digit for the first 12 digits. */
 export function ean13CheckDigit(digits12: string): number {
-  let sum = 0;
-  for (let i = 0; i < 12; i++) {
-    sum += Number(digits12[i]) * (i % 2 === 0 ? 1 : 3);
-  }
-  return (10 - (sum % 10)) % 10;
+  return gs1CheckDigit(digits12.slice(0, 12));
 }
 
 /**
