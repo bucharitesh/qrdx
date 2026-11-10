@@ -42,8 +42,11 @@ describe("readChatQrInput", () => {
       ["bucharitesh.in", "https://bucharitesh.in"],
       ["www.example.com/menu?table=4", "https://www.example.com/menu?table=4"],
       ["shop.example.co.uk", "https://shop.example.co.uk"],
-      ["xn--bcher-kva.example", "https://xn--bcher-kva.example"],
+      ["xn--bcher-kva.de", "https://xn--bcher-kva.de"],
+      ["example.xn--p1ai", "https://example.xn--p1ai"],
       ["example.com:8080/a", "https://example.com:8080/a"],
+      ["QRDX.DEV", "https://QRDX.DEV"],
+      ["example.photography", "https://example.photography"],
     ]) {
       expect(readChatQrInput(typed)).toEqual({ ok: true, data, url: data });
     }
@@ -58,6 +61,11 @@ describe("readChatQrInput", () => {
       "localhost",
       "example.",
       "http://already.example",
+      "Mr.Smith",
+      "wifi.password",
+      "notes.txt",
+      "package.json",
+      "config.yaml",
     ]) {
       const input = readChatQrInput(typed);
       expect(input).toMatchObject({ ok: true, data: typed });
