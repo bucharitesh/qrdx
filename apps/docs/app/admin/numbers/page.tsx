@@ -1,5 +1,4 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
-import type { Metadata } from "next";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import { NumbersSection } from "@/components/sections/home/numbers/numbers-section";
 import {
@@ -20,11 +19,11 @@ import { Empty, Row, Rows } from "../_components/panel";
 import { Section } from "../_components/stat-card";
 import { formatDateTime, formatNumber } from "../_lib/format";
 import { requireAdmin } from "../_lib/guard";
+import { adminMetadata } from "../_lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Admin · Home page numbers",
-  robots: { index: false, follow: false },
-};
+// The title resolves only after the admin check (see _lib/metadata.ts);
+// noindex comes from app/admin/layout.tsx.
+export const generateMetadata = adminMetadata("Admin · Home page numbers");
 
 type Read =
   | { ok: true; counts: HomeNumberCounts; countedAt: string }
