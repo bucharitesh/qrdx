@@ -27,7 +27,7 @@ pnpm --filter qrdx build:inplace     # the app imports the engine's dist/, so bu
 pnpm --filter docs dev               # http://localhost:3000 (needs apps/docs/.env.local, see CONTRIBUTING)
 
 cd apps/docs
-pnpm exec tsc --noEmit               # typecheck the app (run `pnpm exec next typegen` first on a fresh clone)
+pnpm exec tsc --noEmit               # typecheck the app (on a fresh clone, run `pnpm typegen:docs` from the root first)
 pnpm exec vitest run                 # unit and integration tests (tests/**); no database or network
 pnpm test:node                       # node:test suites next to the code
 ../../node_modules/.bin/biome check --write <files you changed>
