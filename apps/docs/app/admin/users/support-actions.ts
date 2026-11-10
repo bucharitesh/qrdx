@@ -20,11 +20,6 @@ import { headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
 import { scheduleWorkspaceAuditCleanup } from "@/ee/audit-log/retention";
-import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
-import {
-  currentSession,
-  hasRecentStrongConfirmation,
-} from "@/lib/account/confirmation-server";
 import { isSameEmail, MAX_EMAIL_LENGTH } from "@/lib/account/email-change";
 import { afterEmailChanged } from "@/lib/account/email-change-server";
 import {
@@ -37,7 +32,6 @@ import {
   notifyTwoFactorResetScheduled,
   scheduleTwoFactorReset,
 } from "@/lib/account/two-factor-reset-server";
-import { twoFactorEnabledFor } from "@/lib/account/two-factor-server";
 import { revokeStoredToken } from "@/lib/connected-accounts/server";
 import { cleanupDataConnection } from "@/lib/data-connections/server";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
@@ -62,6 +56,7 @@ import {
   resentInvitationExpiry,
   signInMethodLabel,
 } from "../_lib/rules";
+import { requireStrongAdmin } from "../_lib/strong-admin";
 
 // Support actions on the user 360 page (/admin/users/<id>). Each one goes
 // through runAdminAction: admin re-check, rate limit, reason, audit entry.
@@ -108,30 +103,6 @@ export async function markEmailVerifiedAction(
       };
     },
   );
-}
-
-/**
- * The admin's own checks for a support action that hands an account over or
- * removes its protection: two-step verification on their own account and a
- * confirmation in the last 10 minutes with a passkey, an authenticator code
- * or a backup code (CONFIRMATION_REQUIRED opens that dialog). A stolen admin
- * cookie alone isn't enough.
- */
-async function requireStrongAdmin(admin: { id: string }): Promise<void> {
-  if (!(await twoFactorEnabledFor(admin.id))) {
-    throw adminError(
-      "Turn on two-step verification for your own account first.",
-    );
-  }
-  const adminSession = await currentSession();
-  if (
-    !(
-      adminSession?.userId === admin.id &&
-      (await hasRecentStrongConfirmation(adminSession))
-    )
-  ) {
-    throw adminError(CONFIRMATION_REQUIRED, 403);
-  }
 }
 
 /**

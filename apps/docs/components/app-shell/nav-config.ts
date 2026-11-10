@@ -10,6 +10,7 @@ import {
   Home2 as Home,
   KeySquare,
   type Icon as LucideIcon,
+  MoneySend,
   Element2 as PanelsTopLeft,
   Electricity as Plug,
   ScanBarcode as QrCode,
@@ -203,6 +204,14 @@ export function settingsNav(slug: string): AppNavGroup[] {
           label: "Authorized apps",
           icon: ShieldTick,
           keywords: ["oauth", "access", "revoke"],
+        },
+        {
+          // Only where the program runs (lib/feature-availability-rules.ts
+          // hides the path elsewhere).
+          href: "/settings/affiliate",
+          label: "Affiliate program",
+          icon: MoneySend,
+          keywords: ["referral", "commission", "partner", "payout", "paypal"],
         },
       ],
     },

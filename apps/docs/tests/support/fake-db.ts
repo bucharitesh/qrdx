@@ -17,7 +17,7 @@
 // onConflictDoNothing/onConflictDoUpdate; update set/where/returning (unique
 // keys checked like inserts, `sql` increments like sql`${col} + 1`, and
 // json ->> 'key' reads); delete;
-// transaction (rolled back when the callback throws); db.query.<table>
+// transaction and batch (rolled back when one throws); db.query.<table>
 // findMany/findFirst without relations. Anything else throws, so a test can never pass
 // on a query the fake silently misread.
 import { readFileSync } from "node:fs";
@@ -69,8 +69,15 @@ const isQuery = (value: unknown): value is SelectQuery =>
 const tables = new Map<string, Row[]>();
 const tableDefaults = new Map<string, () => Row>();
 const uniqueKeys = new Map<string, string[][]>();
+/** Tables that "don't exist yet": every query on them fails like Postgres. */
+const missingTables = new Set<string>();
 
 function rowsOf(table: string): Row[] {
+  if (missingTables.has(table)) {
+    throw Object.assign(new Error(`relation "${table}" does not exist`), {
+      code: "42P01",
+    });
+  }
   let rows = tables.get(table);
   if (!rows) {
     rows = [];
@@ -87,12 +94,22 @@ export const fakeDb = {
   /** Empties every table (defaults and unique keys are kept). */
   reset() {
     tables.clear();
+    missingTables.clear();
   },
   /** Forgets defaults and unique keys too. */
   resetAll() {
     tables.clear();
     tableDefaults.clear();
     uniqueKeys.clear();
+    missingTables.clear();
+  },
+  /**
+   * Makes tables behave as if their SQL hadn't been applied yet: every
+   * query that reads or writes them rejects with Postgres's 42P01. Cleared
+   * by reset().
+   */
+  missing(...names: string[]) {
+    for (const name of names) missingTables.add(name);
   },
   /** Values a real column default would fill in on insert. */
   defaults(table: string, values: Row | (() => Row)) {
@@ -798,9 +815,19 @@ const database = {
       throw error;
     }
   },
+  /** One transaction, like Neon's: a failing query rolls back the others. */
   async batch(queries: PromiseLike<unknown>[]) {
+    const snapshot = new Map(
+      [...tables].map(([name, rows]) => [name, clone(rows)]),
+    );
     const results: unknown[] = [];
-    for (const query of queries) results.push(await query);
+    try {
+      for (const query of queries) results.push(await query);
+    } catch (error) {
+      tables.clear();
+      for (const [name, rows] of snapshot) tables.set(name, rows);
+      throw error;
+    }
     return results;
   },
   execute() {
