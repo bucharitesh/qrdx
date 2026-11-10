@@ -442,6 +442,8 @@ const exampleCode = {
   destinationUrl: "https://example.com/menu",
   title: "Spring menu",
   contentType: "url",
+  kind: "redirect",
+  pageId: null,
   status: "active",
   style: {
     fgColor: "#111827",
@@ -887,9 +889,11 @@ Send an object for one code, or an array for several (Pro). The response's \`sho
         summary: "Update a code",
         tags: ["Codes"],
         security: security("codes:write"),
-        description: `Changes a code's destination, title, design, domain or back-half, or archives it.
+        description: `Changes a code's destination, title, design, domain or back-half, switches what it opens, or archives it.
 
-Send only the fields to change. \`archived: true\` stops redirects and frees a plan slot; \`false\` restores the code. The destination, title and design stay editable on every plan.`,
+Send only the fields to change. \`archived: true\` stops redirects and frees a plan slot; \`false\` restores the code. The destination, title and design stay editable on every plan.
+
+To change what a printed code opens, send \`kind\`. \`"kind": "page"\` with \`page\` makes a hosted page from a template (or from the \`content\` you send) and points the code at it; with \`pageId\` it opens a page the workspace already has, such as one it opened before. \`"kind": "redirect"\` with \`destinationUrl\` makes it a website link again. The short link, scans, design and link controls stay. A page the code stops opening stays in the workspace, and counts toward the plan's hosted pages until it's deleted. Routing, A/B tests, UTM parameters and conversion tracking only apply to website links, and tracking pixels only to hosted pages: they're kept and apply again after switching back.`,
         requestBody: {
           required: true,
           content: {
@@ -907,6 +911,20 @@ Send only the fields to change. \`archived: true\` stops redirects and frees a p
                   value: { destinationUrl: "https://example.com/summer-menu" },
                 },
                 archive: { summary: "Archive", value: { archived: true } },
+                toPage: {
+                  summary: "Turn it into a hosted page",
+                  value: {
+                    kind: "page",
+                    page: { type: "links", title: "Spring menu" },
+                  },
+                },
+                toRedirect: {
+                  summary: "Turn it back into a website link",
+                  value: {
+                    kind: "redirect",
+                    destinationUrl: "https://example.com/menu",
+                  },
+                },
               },
             },
           },
