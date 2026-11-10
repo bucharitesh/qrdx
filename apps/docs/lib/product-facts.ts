@@ -30,9 +30,8 @@ import {
   AFFILIATE_COMMISSION_MONTHS,
   AFFILIATE_COMMISSION_PERCENT,
   AFFILIATE_HOLD_DAYS,
-  AFFILIATE_MIN_PAYOUT_INR_LABEL,
-  AFFILIATE_MIN_PAYOUT_USD_LABEL,
-  AFFILIATE_REFERRAL_COOKIE_DAYS,
+  AFFILIATE_MIN_PAYOUT_LABEL,
+  AFFILIATE_TERMS_NOTICE_DAYS,
 } from "./affiliates/terms";
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
@@ -62,12 +61,10 @@ export const PRODUCT_FACTS = {
   affiliateCommissionMonths: AFFILIATE_COMMISSION_MONTHS,
   /** Days each commission waits: "30". */
   affiliateHoldDays: AFFILIATE_HOLD_DAYS,
-  /** "US$25" */
-  affiliateMinPayoutUsd: AFFILIATE_MIN_PAYOUT_USD_LABEL,
-  /** "₹2,200" */
-  affiliateMinPayoutInr: AFFILIATE_MIN_PAYOUT_INR_LABEL,
-  /** Days the qrdx_ref cookie lasts: "30". */
-  affiliateCookieDays: AFFILIATE_REFERRAL_COOKIE_DAYS,
+  /** One minimum across currencies: "US$25" */
+  affiliateMinPayoutUsd: AFFILIATE_MIN_PAYOUT_LABEL,
+  /** Days of notice before the affiliate terms change: "30". */
+  affiliateTermsNoticeDays: AFFILIATE_TERMS_NOTICE_DAYS,
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;

@@ -17,12 +17,16 @@
 // (it's idempotent), and goes on:
 // apply → the admin approves (after "Confirm it's you" with a second
 // factor) → the affiliate adds a PayPal email → a visitor who rejected
-// cookies signs up through the link (attributed with no cookie) → a visitor
-// who allowed Analytics gets the qrdx_ref cookie and signs up on a later
-// page load (attributed by the cookie) → the affiliate's own second address
+// cookies signs up through the link (attributed, no cookie) → a visitor who
+// allowed Analytics gets no cookie either, and a sign-up on a later page load
+// isn't attributed (same visit only) → the affiliate chooses their own code
+// once (the start of their email address is refused) and the random one
+// still works → the affiliate's own second address
 // isn't attributed → signed order.paid webhooks (one twice) make one pending
 // commission each → a refund voids one → after the hold it's payable → the
-// admin marks it paid with a PayPal reference → the affiliate sees the
+// admin sees the rupee commission converted at the ECB's rate (fetched live)
+// and marks everything paid in US dollars with a PayPal reference → a second
+// submit with the same reference records nothing → the affiliate sees the
 // payout. Screenshots at 1440 and 390 px, light and dark (AFF_E2E_SHOTS),
 // with a no-horizontal-scroll check at 390 px.
 import { execSync } from "node:child_process";
@@ -42,6 +46,7 @@ const ANA = `ana-${RUN}@qrdx.test`;
 const CARLA = `carla-${RUN}@qrdx.test`;
 const DAVE = `dave-${RUN}@qrdx.test`;
 const EARLY = `early-${RUN}@qrdx.test`;
+const LATE = `late-${RUN}@qrdx.test`;
 const ANA_TWIN = `ana-${RUN}+second@qrdx.test`;
 const ADMIN = "admin@qrdx.test";
 
@@ -686,7 +691,7 @@ async function program() {
   for (const phrase of [
     "30 days",
     "US$25",
-    "₹2,200",
+    "same visit",
     "PayPal",
     "You handle the taxes",
     "No spam",
@@ -719,13 +724,19 @@ async function program() {
     `select status, code, coalesce(paypal_email,'') from affiliate where user_id=${q(userId(ANA))}`,
   ).split("|");
   check(
-    "it's saved as pending, with a code and no PayPal email",
+    "it's saved as pending, with a random code (not from the name) and no PayPal email",
     applied[0] === "pending" &&
-      /^ana-[a-z0-9-]+$/.test(applied[1] ?? "") &&
+      /^[a-hjkmnp-z2-9]{8}$/.test(applied[1] ?? "") &&
       applied[2] === "",
     applied.join("|"),
   );
   const code = applied[1] ?? "";
+  check(
+    "the terms version is stored with the acceptance",
+    sql(
+      `select application->>'termsVersion' from affiliate where user_id=${q(userId(ANA))}`,
+    ) === "2026-11-10",
+  );
   const affiliateId = sql(`select id from affiliate where code=${q(code)}`);
   await goto(`${BASE}/settings/affiliate`);
   check(
@@ -814,41 +825,91 @@ async function program() {
     carlaReferral,
   );
 
-  console.log("a visitor who allowed Analytics signs up on a later page load");
+  console.log("a visitor who allowed Analytics gets no cookie either");
   await freshVisitor();
   await goto(`${BASE}/r/${code}`, { wait: 2500 });
   await cookieBanner("Accept all");
   await sleep(800);
-  const withCookie = (await evaluate(() => document.cookie)) as string;
+  const afterConsent = (await evaluate(() => document.cookie)) as string;
   check(
-    "the qrdx_ref cookie is set after consent",
-    withCookie.includes(`qrdx_ref=${code}`),
+    "no referral cookie with Analytics allowed",
+    !afterConsent.includes("qrdx_ref") && !afterConsent.includes(code),
+    afterConsent,
   );
+  check(
+    "nor anything in browser storage",
+    !(
+      (await evaluate(() =>
+        JSON.stringify({ ...localStorage, ...sessionStorage }),
+      )) as string
+    ).includes(code),
+  );
+
+  console.log("a sign-up on a later page load isn't a referral");
   await goto(`${BASE}/sign-in`);
   check(
     "the later page has no code in its address",
     !(await href()).includes("ref="),
   );
-  await fill("Email address", DAVE);
-  const sinceDave = logSize();
+  await fill("Email address", LATE);
+  const sinceLate = logSize();
   await clickButton("Email me a code");
-  const daveCode = await logLine(
-    new RegExp(`sign-in code for ${escapeRegExp(DAVE)}: (\\d{6})`),
-    sinceDave,
+  const lateCode = await logLine(
+    new RegExp(`sign-in code for ${escapeRegExp(LATE)}: (\\d{6})`),
+    sinceLate,
   );
-  if (!daveCode) throw new Error("No code for Dave");
-  await fill("Sign-in code", daveCode[1] ?? "");
+  if (!lateCode) throw new Error("No code for the later visitor");
+  await fill("Sign-in code", lateCode[1] ?? "");
   await waitFor(async () => {
     const r = await fetch("/api/auth/get-session", { cache: "no-store" });
     return Boolean((await r.json().catch(() => null))?.user);
   });
   await sleep(1000);
+  check(
+    "the account exists and isn't attributed (same visit only)",
+    Boolean(userId(LATE)) &&
+      sql(
+        `select count(*) from affiliate_referral where referred_user_id=${q(userId(LATE))}`,
+      ) === "0",
+  );
+
+  console.log("a second referral, in the same visit");
+  await signIn(DAVE, code);
+  await sleep(1000);
   const dave = userId(DAVE);
   check(
-    "the cookie attributes the sign-up",
+    "the code carried with the sign-up attributes it",
     sql(
       `select attributed_via from affiliate_referral where referred_user_id=${q(dave)}`,
-    ) === "cookie",
+    ) === "link",
+  );
+
+  console.log("the affiliate chooses their own code, once");
+  await restoreCookies(anaCookies);
+  await goto(`${BASE}/settings/affiliate`);
+  await fill("New code", `ana-${RUN}`);
+  await clickButton("Change once");
+  check(
+    "the start of their email address is refused",
+    await waitText("That's the start of your email address"),
+  );
+  const chosen = `ana-picks-${RUN}`;
+  await fill("New code", chosen);
+  await clickButton("Change once");
+  await sleep(1500);
+  check(
+    "the chosen code is saved and the random one kept",
+    sql(
+      `select code, previous_code from affiliate where id=${q(affiliateId)}`,
+    ) === `${chosen}|${code}`,
+  );
+  check(
+    "the random code's link still works, with the chosen code",
+    (await referralRedirect(code)) === `/?ref=${chosen}`,
+  );
+  check(
+    "and the code can't change again",
+    !(await bodyText()).includes("Change once"),
   );
 
   console.log("the affiliate's own second address isn't a referral");
@@ -932,9 +993,10 @@ async function program() {
   await goto(`${BASE}/admin/affiliates/${affiliateId}`);
   check("the payable amount is shown", await waitText("Payable now"));
   check(
-    "the rupee balance can't be paid yet: below ₹2,200",
-    await waitText("Below the minimum of ₹2,200"),
+    "the rupee commission is converted at the ECB's rate, with its date",
+    await waitText("European Central Bank reference rates"),
   );
+  check("and the US-dollar total is shown", await waitText("Total to send"));
   await shot("admin-affiliate");
   sql(
     `delete from verification where identifier like 'qrdx-confirmed-%' and value=${q(userId(ADMIN))}`,
@@ -942,11 +1004,35 @@ async function program() {
   await adminAction("Mark paid", "Mark paid", codes, {
     "PayPal transaction ID": "8AB12345CD678901E",
   });
+  const payout = sql(
+    `select amount, currency, commission_count, paypal_reference, paypal_email, fx_rates->>'inr', fx_date, source_amounts->>'inr' from affiliate_payout where affiliate_id=${q(affiliateId)}`,
+  ).split("|");
+  const inrRate = Number(payout[5]);
+  const expectedUsd = 4320 + Math.floor(149_970 * inrRate + 1e-9);
   check(
-    "the payout is recorded with PayPal's reference",
-    sql(
-      `select amount, currency, commission_count, paypal_reference, paypal_email from affiliate_payout where affiliate_id=${q(affiliateId)}`,
-    ) === "4320|usd|1|8AB12345CD678901E|ana-payouts@paypal.example",
+    "the payout is recorded in US dollars with the rate, its date and PayPal's reference",
+    payout[0] === String(expectedUsd) &&
+      payout[1] === "usd" &&
+      payout[2] === "2" &&
+      payout[3] === "8AB12345CD678901E" &&
+      payout[4] === "ana-payouts@paypal.example" &&
+      inrRate > 0 &&
+      /^\d{4}-\d{2}-\d{2}$/.test(payout[6] ?? "") &&
+      payout[7] === "149970",
+    payout.join("|"),
+  );
+  check(
+    "the same PayPal reference can't be recorded twice",
+    (() => {
+      try {
+        sql(
+          `insert into affiliate_payout (id, currency, amount, commission_count, paypal_reference, paid_at, created_by, created_at) values ('dup_${RUN}', 'usd', 1, 1, '8AB12345CD678901E', now(), 'x', now())`,
+        );
+        return false;
+      } catch {
+        return true;
+      }
+    })(),
   );
   check(
     "the commission it covers is paid",
@@ -955,10 +1041,10 @@ async function program() {
     ) === "paid",
   );
   check(
-    "the rupee commission is untouched",
+    "the rupee commission is paid by the same payout",
     sql(
       `select status from affiliate_commission where polar_order_id=${q(inrOrder.data.id)}`,
-    ) === "pending",
+    ) === "paid",
   );
   check(
     "mark paid is in the admin audit log",
@@ -974,7 +1060,10 @@ async function program() {
   await restoreCookies(anaCookies);
   await goto(`${BASE}/settings/affiliate`);
   check("the payout is listed", await waitText("8AB12345CD678901E"));
-  check("and counted as paid", /Paid\s*US\$43\.20/.test(await bodyText()));
+  check(
+    "and counted as paid",
+    /Paid\s*US\$43\.20 · ₹1,499\.70/.test(await bodyText()),
+  );
   await shot("settings-affiliate-paid");
 }
 

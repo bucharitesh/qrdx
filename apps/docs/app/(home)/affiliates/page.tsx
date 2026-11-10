@@ -9,10 +9,10 @@ import {
   AFFILIATE_COMMISSION_MONTHS,
   AFFILIATE_COMMISSION_PERCENT,
   AFFILIATE_HOLD_DAYS,
-  AFFILIATE_MIN_PAYOUT_INR_LABEL,
-  AFFILIATE_MIN_PAYOUT_USD_LABEL,
+  AFFILIATE_MIN_PAYOUT_LABEL,
   AFFILIATE_PAYOUT_METHOD,
-  AFFILIATE_REFERRAL_COOKIE_DAYS,
+  AFFILIATE_TERMS_NOTICE_DAYS,
+  EXAMPLE_REFERRAL_CODE,
 } from "@/lib/affiliates/terms";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { createMetadata } from "@/lib/metadata";
@@ -23,7 +23,7 @@ import { ApplyForm } from "./apply-form";
 
 export const metadata: Metadata = createMetadata({
   title: `QRdx Affiliate Program: Earn ${AFFILIATE_COMMISSION_PERCENT}% for ${AFFILIATE_COMMISSION_MONTHS} Months`,
-  description: `Refer people to QRdx and earn ${AFFILIATE_COMMISSION_PERCENT}% of what they pay in their first ${AFFILIATE_COMMISSION_MONTHS} months as paying customers. Paid by ${AFFILIATE_PAYOUT_METHOD} each month from ${AFFILIATE_MIN_PAYOUT_USD_LABEL}.`,
+  description: `Refer people to QRdx and earn ${AFFILIATE_COMMISSION_PERCENT}% of what they pay in their first ${AFFILIATE_COMMISSION_MONTHS} months as paying customers. Paid by ${AFFILIATE_PAYOUT_METHOD} each month from ${AFFILIATE_MIN_PAYOUT_LABEL}.`,
   path: "/affiliates",
 });
 
@@ -36,7 +36,7 @@ const steps = [
   {
     icon: Link21,
     title: "Share your link",
-    body: `Once you're approved you get a link like ${referralLinkLabel("your-name")}. People who create a QRdx account through it are your referrals.`,
+    body: `Once you're approved you get a link like ${referralLinkLabel(EXAMPLE_REFERRAL_CODE)}, with a random code you can swap once for one you choose. People who open it and create a QRdx account in that visit are your referrals.`,
   },
   {
     icon: MoneySend,
@@ -56,12 +56,12 @@ const terms: { term: string; detail: string }[] = [
   },
   {
     term: "Payouts",
-    detail: `By ${AFFILIATE_PAYOUT_METHOD}, once a month, sent by hand by the QRdx team. The minimum is ${AFFILIATE_MIN_PAYOUT_USD_LABEL}, or ${AFFILIATE_MIN_PAYOUT_INR_LABEL} for commissions in Indian rupees. Commissions stay in the currency the customer paid in; what's below the minimum carries over to the next month.`,
+    detail: `By ${AFFILIATE_PAYOUT_METHOD}, in US dollars, once a month, sent by hand by the QRdx team. The minimum is ${AFFILIATE_MIN_PAYOUT_LABEL} for everything payable together: commissions in other currencies, such as Indian rupees, count at their US-dollar value on the payout date, at the European Central Bank's reference rate. What's below the minimum carries over to the next month.`,
   },
   {
     term: "Who counts",
     detail:
-      "New QRdx accounts created through your link. An account that already exists can't be referred, and an account keeps the first referral it gets.",
+      "New QRdx accounts created in the same visit as a click on your link. A sign-up on a later visit doesn't count. An account that already exists can't be referred, and an account keeps the first referral it gets.",
   },
   {
     term: "Not your own",
@@ -75,7 +75,11 @@ const terms: { term: string; detail: string }[] = [
   {
     term: "Fair play",
     detail:
-      "No spam, no bidding on QRdx's name in search ads, and no misleading claims about QRdx. We can reject an application or suspend an affiliate account.",
+      "No spam, no bidding on QRdx's name in search ads, and no misleading claims about QRdx. We can reject an application or suspend an affiliate account, and cancel commissions from fraud or made by mistake.",
+  },
+  {
+    term: "Changes",
+    detail: `We tell you ${AFFILIATE_TERMS_NOTICE_DAYS} days before the terms change. Commissions you've already earned keep the terms they were earned under, and if the program ends, a payable balance from ${AFFILIATE_MIN_PAYOUT_LABEL} is paid.`,
   },
 ];
 
@@ -200,13 +204,12 @@ export default function AffiliatesPage() {
             Your link takes people to the QRdx home page with your code. If they
             sign up during that visit, without reloading the page or opening
             QRdx in a new tab, the code goes along with the sign-up and the new
-            account is your referral. No cookie is needed for that.
+            account is your referral.
           </p>
           <p>
-            If they allow Analytics in Cookie settings, a cookie also remembers
-            your link for {AFFILIATE_REFERRAL_COOKIE_DAYS} days, so a sign-up on
-            a later visit still counts. Without that choice, a later visit
-            doesn't count.
+            That's the only way a referral counts. No cookie and nothing else is
+            stored on their device, so if they come back later and sign up then,
+            the account isn't your referral.
           </p>
           <p>
             Visits to your link are counted without cookies. You see how many
