@@ -1,7 +1,9 @@
-// The QRdx bot for Slack, through its real routes and server action: signed
-// requests in, Block Kit messages out. The database is the in-memory fake
-// (tests/support/fake-db.ts), Slack's API is a stubbed fetch that records
-// what the bot sends, and every secret, id and token is a fake.
+// The QRdx bot for Slack, through its real routes and server actions: signed
+// requests in, Block Kit messages out, and linking an account with Sign in
+// with Slack. The database is the in-memory fake (tests/support/fake-db.ts),
+// Slack's API is a stubbed fetch that records what the bot sends and answers
+// the OpenID sign-in as the test says, and every secret, id and token is a
+// fake.
 import { encryptApiKey } from "@repo/integrations";
 import {
   afterAll,
@@ -19,10 +21,22 @@ const state = vi.hoisted(() => {
   process.env.SLACK_CLIENT_ID = "test-slack-client-id";
   process.env.SLACK_CLIENT_SECRET = "test-slack-client-secret";
   process.env.SLACK_SIGNING_SECRET = "test-slack-signing-secret";
+  // packages/auth/plan.ts reads the Business products when it loads (the
+  // two-step requirement applies on Business).
+  process.env.NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID =
+    "prod_business_monthly";
   return {
     plan: "business" as "free" | "pro" | "business",
+    headers: new Headers(),
+    /** Rate limiters (by prefix) that are over their limit */
+    limitedPrefixes: [] as string[],
+    /** What Slack's OpenID endpoints answer */
+    idToken: {} as Record<string, unknown>,
+    tokenResponse: null as Record<string, unknown> | null,
+    userInfo: {} as Record<string, unknown>,
     tasks: [] as Promise<unknown>[],
     session: null as null | { user: { id: string; email: string } },
+    sessionId: "s_1",
     cookies: new Map<string, string>(),
     limited: false,
     fetches: [] as { url: string; body: any; auth: string | null }[],
@@ -44,7 +58,7 @@ vi.mock("@repo/auth/server", () => ({
   auth: { api: { getSession: async () => state.session } },
 }));
 vi.mock("next/headers", () => ({
-  headers: async () => new Headers(),
+  headers: async () => state.headers,
   cookies: async () => ({
     get: (name: string) =>
       state.cookies.has(name) ? { value: state.cookies.get(name) } : undefined,
@@ -62,14 +76,18 @@ vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
   fixedWindow: () => ({}),
-  createRateLimiter: () => ({
-    limit: async () => ({
-      success: !state.limited,
-      limit: 30,
-      remaining: state.limited ? 0 : 29,
-      reset: Date.now() + 60_000,
-      pending: Promise.resolve(),
-    }),
+  createRateLimiter: (config?: { prefix?: string }) => ({
+    limit: async () => {
+      const over =
+        state.limited || state.limitedPrefixes.includes(config?.prefix ?? "");
+      return {
+        success: !over,
+        limit: 30,
+        remaining: over ? 0 : 29,
+        reset: Date.now() + 60_000,
+        pending: Promise.resolve(),
+      };
+    },
   }),
 }));
 vi.mock("@/lib/plans", async (importOriginal) => ({
@@ -100,7 +118,7 @@ vi.mock("@/lib/account/confirmation-server", () => ({
       ? {
           userId: state.session.user.id,
           email: state.session.user.email,
-          sessionId: "s_1",
+          sessionId: state.sessionId,
           sessionCreatedAt: new Date(),
           requestHeaders: new Headers(),
         }
@@ -112,6 +130,19 @@ vi.mock("@/lib/account/confirmation-server", () => ({
 const { signSlackRequest } = await import("@/lib/slack-bot/signature");
 const { signLinkToken, verifyLinkToken } = await import(
   "@/lib/slack-bot/link-token"
+);
+const { openSignInFlow, sealLinkProof } = await import(
+  "@/lib/slack-bot/link-proof"
+);
+const { database } = await import("@repo/database");
+const { saveInstallation } = await import("@/lib/slack-bot/store");
+const admin = await import("@/lib/slack-bot/admin");
+const { revokeSlackLinkAction } = await import(
+  "@/app/settings/developers/_lib/slack-link-actions"
+);
+const linkStart = await import("@/app/api/integrations/slack/link/start/route");
+const linkCallback = await import(
+  "@/app/api/integrations/slack/link/callback/route"
 );
 const commands = await import("@/app/api/integrations/slack/commands/route");
 const events = await import("@/app/api/integrations/slack/events/route");
@@ -134,6 +165,23 @@ const ANA = "U0ANA";
 const ORG = "org_acme";
 const RESPONSE_URL = "https://hooks.slack.com/commands/T0ACME/1/fake";
 const BOT_TOKEN = "xoxb-fake-bot-token";
+const CLIENT_ID = "test-slack-client-id";
+const ACCESS_TOKEN = "xoxp-fake-openid-access-token";
+const EVE = "U0EVE";
+const SESSION = {
+  user: { id: "u_ana", email: "ana@acme.test" },
+  sessionId: "s_1",
+};
+
+/** An unsigned JWT with these claims (the signature isn't read). */
+const jwt = (claims: Record<string, unknown>) =>
+  [
+    Buffer.from(JSON.stringify({ alg: "RS256", typ: "JWT" })).toString(
+      "base64url",
+    ),
+    Buffer.from(JSON.stringify(claims)).toString("base64url"),
+    "fake-signature",
+  ].join(".");
 
 async function flush() {
   while (state.tasks.length > 0) await Promise.all(state.tasks.splice(0));
@@ -245,7 +293,13 @@ beforeEach(() => {
   fakeDb.resetAll();
   state.plan = "business";
   state.tasks = [];
-  state.session = { user: { id: "u_ana", email: "ana@acme.test" } };
+  state.session = { user: SESSION.user };
+  state.sessionId = SESSION.sessionId;
+  state.headers = new Headers();
+  state.limitedPrefixes = [];
+  state.idToken = {};
+  state.tokenResponse = null;
+  state.userInfo = {};
   state.cookies = new Map();
   state.limited = false;
   state.fetches = [];
@@ -265,6 +319,19 @@ beforeEach(() => {
       const headers = new Headers(init?.headers);
       state.fetches.push({ url, body, auth: headers.get("authorization") });
       if (url.endsWith("/oauth.v2.access")) return Response.json(state.oauth);
+      if (url.endsWith("/openid.connect.token")) {
+        return Response.json(
+          state.tokenResponse ?? {
+            ok: true,
+            access_token: ACCESS_TOKEN,
+            token_type: "Bearer",
+            id_token: jwt(state.idToken),
+          },
+        );
+      }
+      if (url.endsWith("/openid.connect.userInfo")) {
+        return Response.json(state.userInfo);
+      }
       if (url.endsWith("/chat.postMessage"))
         return Response.json(state.postResult);
       if (url.startsWith("https://slack.com/api/")) {
@@ -290,6 +357,14 @@ beforeEach(() => {
       metadata: null,
       createdAt: new Date(0),
     },
+    {
+      id: "org_eve",
+      name: "Eve's",
+      slug: "eve",
+      logo: null,
+      metadata: null,
+      createdAt: new Date(0),
+    },
   ]);
   fakeDb.seed("user", [
     {
@@ -299,12 +374,26 @@ beforeEach(() => {
       banned: false,
       banExpires: null,
     },
+    {
+      id: "u_eve",
+      name: "Eve",
+      email: "eve@evil.test",
+      banned: false,
+      banExpires: null,
+    },
   ]);
   fakeDb.seed("member", [
     {
       id: "m_ana",
       organizationId: ORG,
       userId: "u_ana",
+      role: "owner",
+      createdAt: new Date(0),
+    },
+    {
+      id: "m_eve",
+      organizationId: "org_eve",
+      userId: "u_eve",
       role: "owner",
       createdAt: new Date(0),
     },
@@ -481,7 +570,7 @@ describe("/qr", () => {
       }
     });
 
-    it("makes a dynamic code as the linked QRdx user and posts its short link", async () => {
+    it("makes a dynamic code as the linked QRdx user, posts it with the workspace, and the dashboard link only to them", async () => {
       seedInstall();
       seedLink();
       const ack = (await (
@@ -500,18 +589,30 @@ describe("/qr", () => {
         destinationUrl: "https://shop.example/menu",
         title: "shop.example from Slack",
       });
-      const [posted] = responses();
+      const [posted, followUp] = responses();
       expect(posted?.url).toBe(RESPONSE_URL);
       expect(posted?.body.response_type).toBe("in_channel");
       const data = new URL(posted?.body.blocks[0].image_url).searchParams.get(
         "data",
       );
       expect(data).toMatch(new RegExp(`/q/${code?.slug}$`));
-      const open = posted?.body.blocks[2].elements[0];
+      expect(posted?.body.blocks[1].elements[0].text).toContain(
+        "in the QRdx workspace Acme",
+      );
+      // The channel never sees the workspace's address or the code's id.
+      expect(allText(posted?.body)).not.toContain("/dashboard/");
+      expect(
+        posted?.body.blocks[2].elements.map((b: Json) => b.text.text),
+      ).toEqual(["Download PNG", "Download SVG", "Open in editor"]);
+
+      expect(followUp?.url).toBe(RESPONSE_URL);
+      expect(followUp?.body.response_type).toBe("ephemeral");
+      const open = followUp?.body.blocks[1].elements[0];
       expect(open.text.text).toBe("Open in QRdx");
       expect(open.url).toMatch(
         new RegExp(`/dashboard/acme/codes/${code?.id}$`),
       );
+      expect(responses()).toHaveLength(2);
     });
 
     it("re-checks membership: a stale link makes nothing", async () => {
@@ -831,17 +932,411 @@ describe("adding the bot", () => {
   });
 });
 
-describe("linking an account", () => {
-  const token = (teamId = TEAM) =>
+describe("Sign in with Slack on the confirm page", () => {
+  const AUTH_TOKEN_FOR = (teamId: string, slackUserId: string) =>
     signLinkToken(
-      { teamId, slackUserId: ANA, teamName: "Acme", userName: "ana" },
+      { teamId, slackUserId, teamName: "Acme", userName: "ana" },
       AUTH_SECRET,
     );
+  const start = (token: string) =>
+    linkStart.GET(
+      new Request(
+        `http://localhost:3000/api/integrations/slack/link/start?t=${encodeURIComponent(token)}`,
+      ),
+    );
+  const callbackWith = (query: string) =>
+    linkCallback.GET(
+      new Request(
+        `http://localhost:3000/api/integrations/slack/link/callback?${query}`,
+      ),
+    );
+  const flow = () =>
+    openSignInFlow(state.cookies.get("slack_link_sign_in"), AUTH_SECRET);
+  /** What Slack's id_token says for a person in a workspace, for this flow. */
+  const idTokenFor = (
+    teamId: string,
+    slackUserId: string,
+    extra: Record<string, unknown> = {},
+  ) => ({
+    iss: "https://slack.com",
+    aud: CLIENT_ID,
+    sub: slackUserId,
+    exp: Math.floor(Date.now() / 1000) + 600,
+    iat: Math.floor(Date.now() / 1000),
+    nonce: flow()?.nonce,
+    "https://slack.com/team_id": teamId,
+    "https://slack.com/user_id": slackUserId,
+    ...extra,
+  });
+  /**
+   * The whole round trip: "Sign in with Slack" for `token`, then Slack
+   * signing the person in as `as` and sending the browser back.
+   */
+  async function signInWithSlack(
+    token: string,
+    as: { teamId: string; slackUserId: string },
+    idTokenExtra: Record<string, unknown> = {},
+  ) {
+    const started = await start(token);
+    expect(started.status).toBe(307);
+    state.idToken = idTokenFor(as.teamId, as.slackUserId, idTokenExtra);
+    state.userInfo = {
+      ok: true,
+      sub: as.slackUserId,
+      "https://slack.com/team_id": as.teamId,
+      "https://slack.com/user_id": as.slackUserId,
+    };
+    const sent = new URL(started.headers.get("location") ?? "");
+    return callbackWith(
+      `code=fake-code&state=${sent.searchParams.get("state")}`,
+    );
+  }
+  const backTo = (response: Response) =>
+    new URL(response.headers.get("location") ?? "");
+  const proofCookie = () => state.cookies.get("slack_link_proof");
+
+  it("sends a signed-in person to Slack's OpenID sign-in, with a state and a nonce bound to this session and token", async () => {
+    const token = AUTH_TOKEN_FOR(TEAM, ANA);
+    const response = await start(token);
+    const location = new URL(response.headers.get("location") ?? "");
+    expect(location.origin + location.pathname).toBe(
+      "https://slack.com/openid/connect/authorize",
+    );
+    expect(location.searchParams.get("scope")).toBe("openid");
+    expect(location.searchParams.get("response_type")).toBe("code");
+    expect(location.searchParams.get("client_id")).toBe(CLIENT_ID);
+    expect(location.searchParams.get("redirect_uri")).toBe(
+      "http://localhost:3000/api/integrations/slack/link/callback",
+    );
+    expect(location.searchParams.get("team")).toBe(TEAM);
+    // The token itself never goes to Slack.
+    expect(location.toString()).not.toContain(token);
+    expect(response.headers.get("referrer-policy")).toBe("no-referrer");
+
+    const first = flow();
+    expect(first).toMatchObject({
+      state: location.searchParams.get("state"),
+      nonce: location.searchParams.get("nonce"),
+      userId: "u_ana",
+      sessionId: "s_1",
+      token,
+    });
+    expect(first?.state).toHaveLength(43);
+    expect(first?.nonce).toHaveLength(43);
+    expect(first?.nonce).not.toBe(first?.state);
+
+    // A new state and nonce every time.
+    await start(token);
+    expect(flow()?.state).not.toBe(first?.state);
+    expect(flow()?.nonce).not.toBe(first?.nonce);
+
+    // The cookie is signed: a changed one doesn't open.
+    const sealed = state.cookies.get("slack_link_sign_in") ?? "";
+    expect(openSignInFlow(`${sealed.slice(0, -2)}xx`, AUTH_SECRET)).toBeNull();
+  });
+
+  it("asks a signed-out person to sign in to QRdx first, and an expired token goes back to the page", async () => {
+    const token = AUTH_TOKEN_FOR(TEAM, ANA);
+    state.session = null;
+    const signedOut = await start(token);
+    expect(backTo(signedOut).pathname).toBe("/sign-in");
+    expect(state.cookies.has("slack_link_sign_in")).toBe(false);
+
+    state.session = { user: SESSION.user };
+    const expired = signLinkToken(
+      { teamId: TEAM, slackUserId: ANA, teamName: "Acme", userName: "ana" },
+      AUTH_SECRET,
+      Date.now() - 11 * 60_000,
+    );
+    const response = await start(expired);
+    expect(backTo(response).pathname).toBe("/integrations/slack/link");
+    expect(state.cookies.has("slack_link_sign_in")).toBe(false);
+  });
+
+  it("proves the identity when Slack names the token's user in the token's workspace", async () => {
+    seedInstall();
+    const token = AUTH_TOKEN_FOR(TEAM, ANA);
+    const response = await signInWithSlack(token, {
+      teamId: TEAM,
+      slackUserId: ANA,
+    });
+    const back = backTo(response);
+    expect(back.pathname).toBe("/integrations/slack/link");
+    expect(back.searchParams.get("t")).toBe(token);
+    expect(back.searchParams.get("slack")).toBeNull();
+    // The flow is used up; the proof is there.
+    expect(state.cookies.has("slack_link_sign_in")).toBe(false);
+    expect(proofCookie()).toBeTruthy();
+
+    // The code was exchanged with the app's credentials and the same
+    // redirect URI, and userInfo read with the access token.
+    const [exchange] = sentTo("openid.connect.token");
+    expect(exchange?.body).toMatchObject({
+      code: "fake-code",
+      client_id: CLIENT_ID,
+      client_secret: "test-slack-client-secret",
+      redirect_uri:
+        "http://localhost:3000/api/integrations/slack/link/callback",
+    });
+    expect(sentTo("openid.connect.userInfo")[0]?.auth).toBe(
+      `Bearer ${ACCESS_TOKEN}`,
+    );
+    // Slack's access token is kept nowhere.
+    for (const value of state.cookies.values()) {
+      expect(value).not.toContain(ACCESS_TOKEN);
+    }
+
+    expect(await linkSlackAccount({ token, organizationId: ORG })).toEqual({
+      ok: true,
+      workspaceName: "Acme",
+    });
+    expect(fakeDb.rows("slackUserLink")).toEqual([
+      expect.objectContaining({
+        teamId: TEAM,
+        slackUserId: ANA,
+        userId: "u_ana",
+        organizationId: ORG,
+      }),
+    ]);
+  });
+
+  it("a leaked link: someone else, signed in to QRdx and to Slack as themselves, is refused and nothing is linked", async () => {
+    seedInstall();
+    // Ana's /qr link URL, opened by Eve.
+    const victimToken = AUTH_TOKEN_FOR(TEAM, ANA);
+    state.session = { user: { id: "u_eve", email: "eve@evil.test" } };
+    state.sessionId = "s_eve";
+    const response = await signInWithSlack(victimToken, {
+      teamId: TEAM,
+      slackUserId: EVE,
+    });
+    expect(backTo(response).searchParams.get("slack")).toBe("mismatch");
+    expect(proofCookie()).toBeUndefined();
+
+    expect(
+      await linkSlackAccount({
+        token: victimToken,
+        organizationId: "org_eve",
+      }),
+    ).toMatchObject({ ok: false, signIn: true });
+    expect(fakeDb.rows("slackUserLink")).toEqual([]);
+  });
+
+  it("reverse phishing: a link someone made for their own Slack account is refused when the victim signs in to Slack as themselves", async () => {
+    seedInstall("T0EVIL");
+    // Eve's own Slack workspace and user, in a link sent to Ana.
+    const attackerToken = AUTH_TOKEN_FOR("T0EVIL", EVE);
+    const response = await signInWithSlack(attackerToken, {
+      teamId: TEAM,
+      slackUserId: ANA,
+    });
+    expect(backTo(response).searchParams.get("slack")).toBe("mismatch");
+    expect(proofCookie()).toBeUndefined();
+
+    expect(
+      await linkSlackAccount({ token: attackerToken, organizationId: ORG }),
+    ).toMatchObject({ ok: false, signIn: true });
+    expect(fakeDb.rows("slackUserLink")).toEqual([]);
+  });
+
+  it("refuses the right user in another Slack workspace, and userInfo that disagrees with the id_token", async () => {
+    const token = AUTH_TOKEN_FOR(TEAM, ANA);
+    const otherTeam = await signInWithSlack(token, {
+      teamId: "T0OTHER",
+      slackUserId: ANA,
+    });
+    expect(backTo(otherTeam).searchParams.get("slack")).toBe("mismatch");
+
+    await start(token);
+    state.idToken = idTokenFor(TEAM, ANA);
+    state.userInfo = {
+      ok: true,
+      "https://slack.com/team_id": TEAM,
+      "https://slack.com/user_id": EVE,
+    };
+    const sent = flow();
+    const disagree = await callbackWith(`code=fake-code&state=${sent?.state}`);
+    expect(backTo(disagree).searchParams.get("slack")).toBe("mismatch");
+    expect(proofCookie()).toBeUndefined();
+  });
+
+  it("refuses a bad or missing state, a flow from another session and a wrong nonce", async () => {
+    const token = AUTH_TOKEN_FOR(TEAM, ANA);
+
+    await start(token);
+    state.idToken = idTokenFor(TEAM, ANA);
+    const forged = await callbackWith("code=fake-code&state=forged");
+    expect(backTo(forged).searchParams.get("slack")).toBe("state");
+    expect(backTo(forged).searchParams.get("t")).toBe(token);
+    // Nothing went to Slack.
+    expect(sentTo("openid.connect.token")).toEqual([]);
+
+    await start(token);
+    const missing = await callbackWith("code=fake-code");
+    expect(backTo(missing).searchParams.get("slack")).toBe("state");
+
+    // No flow at all (another browser): no token to go back to.
+    const noFlow = await callbackWith("code=fake-code&state=anything");
+    expect(backTo(noFlow).searchParams.get("slack")).toBe("state");
+    expect(backTo(noFlow).searchParams.get("t")).toBeNull();
+
+    // Started in one QRdx session, finished in another.
+    await start(token);
+    const started = flow();
+    state.sessionId = "s_2";
+    const otherSession = await callbackWith(
+      `code=fake-code&state=${started?.state}`,
+    );
+    expect(backTo(otherSession).searchParams.get("slack")).toBe("state");
+    state.sessionId = "s_1";
+    expect(sentTo("openid.connect.token")).toEqual([]);
+
+    // An id_token from another sign-in (its nonce isn't this flow's).
+    const wrongNonce = await signInWithSlack(
+      token,
+      { teamId: TEAM, slackUserId: ANA },
+      { nonce: "another-sign-ins-nonce" },
+    );
+    expect(backTo(wrongNonce).searchParams.get("slack")).toBe("state");
+    expect(proofCookie()).toBeUndefined();
+  });
+
+  it("refuses an id_token from another issuer or app, an expired one and one without the Slack claims", async () => {
+    const token = AUTH_TOKEN_FOR(TEAM, ANA);
+    const me = { teamId: TEAM, slackUserId: ANA };
+    for (const extra of [
+      { iss: "https://evil.test" },
+      { aud: "another-app" },
+      { aud: [CLIENT_ID, "another-app"] },
+      { exp: Math.floor(Date.now() / 1000) - 1 },
+      { exp: undefined },
+      { nonce: undefined },
+      { "https://slack.com/team_id": undefined },
+      { "https://slack.com/user_id": undefined },
+    ]) {
+      const response = await signInWithSlack(token, me, extra);
+      const reason = backTo(response).searchParams.get("slack");
+      expect(reason, JSON.stringify(extra)).toMatch(/^(failed|state)$/);
+      expect(proofCookie(), JSON.stringify(extra)).toBeUndefined();
+    }
+  });
+
+  it("explains a cancelled sign-in and Slack's errors, and logs only codes", async () => {
+    const token = AUTH_TOKEN_FOR(TEAM, ANA);
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      await start(token);
+      const cancelled = await callbackWith(
+        `error=access_denied&state=${flow()?.state}`,
+      );
+      expect(backTo(cancelled).searchParams.get("slack")).toBe("cancelled");
+
+      await start(token);
+      state.tokenResponse = { ok: false, error: "invalid_code" };
+      const failed = await callbackWith(
+        `code=fake-code&state=${flow()?.state}`,
+      );
+      expect(backTo(failed).searchParams.get("slack")).toBe("failed");
+      expect(proofCookie()).toBeUndefined();
+
+      const lines = logged.mock.calls.map((call) => String(call[0]));
+      expect(lines).toContainEqual(
+        JSON.stringify({
+          event: "slack-bot.link_sign_in_refused",
+          reason: "failed",
+          detail: "invalid_code",
+        }),
+      );
+      for (const line of lines) {
+        expect(line).not.toContain(token);
+        expect(line).not.toContain("fake-code");
+        expect(line).not.toContain(ACCESS_TOKEN);
+      }
+    } finally {
+      logged.mockRestore();
+    }
+  });
+});
+
+describe("linking an account", () => {
+  const token = (teamId = TEAM, slackUserId = ANA) =>
+    signLinkToken(
+      { teamId, slackUserId, teamName: "Acme", userName: "ana" },
+      AUTH_SECRET,
+    );
+  /** This session signed in with Slack as the token's person (the callback's proof). */
+  const prove = (
+    linkToken: string,
+    claims = { teamId: TEAM, slackUserId: ANA },
+    now = Date.now(),
+  ) =>
+    state.cookies.set(
+      "slack_link_proof",
+      sealLinkProof(
+        {
+          userId: state.session?.user.id ?? "",
+          sessionId: state.sessionId,
+          token: linkToken,
+          claims,
+        },
+        AUTH_SECRET,
+        now,
+      ),
+    );
+
+  it("needs a Slack sign-in for this token, in this session, from the last 10 minutes", async () => {
+    seedInstall();
+    const t = token();
+    expect(await linkSlackAccount({ token: t, organizationId: ORG })).toEqual({
+      ok: false,
+      error: expect.stringMatching(/^Sign in with Slack first/),
+      signIn: true,
+    });
+
+    // A sign-in for another link token (an older /qr link).
+    const older = signLinkToken(
+      { teamId: TEAM, slackUserId: ANA, teamName: "Acme", userName: "ana" },
+      AUTH_SECRET,
+      Date.now() - 60_000,
+    );
+    prove(older);
+    expect(
+      await linkSlackAccount({ token: t, organizationId: ORG }),
+    ).toMatchObject({ ok: false, signIn: true });
+
+    // A sign-in as another Slack person, with this token.
+    prove(t, { teamId: TEAM, slackUserId: EVE });
+    expect(
+      await linkSlackAccount({ token: t, organizationId: ORG }),
+    ).toMatchObject({ ok: false, signIn: true });
+
+    // An expired sign-in.
+    prove(t, undefined, Date.now() - 11 * 60_000);
+    expect(
+      await linkSlackAccount({ token: t, organizationId: ORG }),
+    ).toMatchObject({ ok: false, signIn: true });
+
+    // Another QRdx session's sign-in.
+    prove(t);
+    state.sessionId = "s_other";
+    expect(
+      await linkSlackAccount({ token: t, organizationId: ORG }),
+    ).toMatchObject({ ok: false, signIn: true });
+    state.sessionId = "s_1";
+    expect(fakeDb.rows("slackUserLink")).toEqual([]);
+
+    expect(await linkSlackAccount({ token: t, organizationId: ORG })).toEqual({
+      ok: true,
+      workspaceName: "Acme",
+    });
+    // Used up.
+    expect(state.cookies.has("slack_link_proof")).toBe(false);
+  });
 
   it("is refused when the bot isn't in that Slack workspace", async () => {
-    expect(
-      await linkSlackAccount({ token: token(), organizationId: ORG }),
-    ).toEqual({
+    const t = token();
+    prove(t);
+    expect(await linkSlackAccount({ token: t, organizationId: ORG })).toEqual({
       ok: false,
       error: expect.stringMatching(/isn't in that Slack workspace/),
     });
@@ -850,8 +1345,10 @@ describe("linking an account", () => {
 
   it("needs membership, a role that creates codes and a recent confirmation", async () => {
     seedInstall();
+    const t = token();
+    prove(t);
     expect(
-      await linkSlackAccount({ token: token(), organizationId: "org_other" }),
+      await linkSlackAccount({ token: t, organizationId: "org_other" }),
     ).toMatchObject({
       ok: false,
       error: expect.stringMatching(/not a member/),
@@ -859,7 +1356,7 @@ describe("linking an account", () => {
 
     fakeDb.rows("member")[0]!.role = "viewer";
     expect(
-      await linkSlackAccount({ token: token(), organizationId: ORG }),
+      await linkSlackAccount({ token: t, organizationId: ORG }),
     ).toMatchObject({
       ok: false,
       error: expect.stringMatching(/can't create codes/),
@@ -867,16 +1364,14 @@ describe("linking an account", () => {
     fakeDb.rows("member")[0]!.role = "member";
 
     state.confirmed = false;
-    expect(
-      await linkSlackAccount({ token: token(), organizationId: ORG }),
-    ).toEqual({
+    expect(await linkSlackAccount({ token: t, organizationId: ORG })).toEqual({
       ok: false,
       error: "CONFIRMATION_REQUIRED",
     });
     expect(fakeDb.rows("slackUserLink")).toEqual([]);
   });
 
-  it("links once per Slack person per workspace; linking again replaces it", async () => {
+  it("never replaces a link silently: replacing it needs Replace the link", async () => {
     seedInstall();
     fakeDb.seed("member", [
       {
@@ -887,14 +1382,35 @@ describe("linking an account", () => {
         createdAt: new Date(0),
       },
     ]);
+    const first = token();
+    prove(first);
     expect(
-      await linkSlackAccount({ token: token(), organizationId: ORG }),
+      await linkSlackAccount({ token: first, organizationId: ORG }),
+    ).toEqual({ ok: true, workspaceName: "Acme" });
+
+    // The same link again changes nothing and needs no confirmation.
+    const again = token();
+    prove(again);
+    expect(
+      await linkSlackAccount({ token: again, organizationId: ORG }),
+    ).toEqual({ ok: true, workspaceName: "Acme" });
+
+    const second = token();
+    prove(second);
+    expect(
+      await linkSlackAccount({ token: second, organizationId: "org_other" }),
     ).toEqual({
-      ok: true,
-      workspaceName: "Acme",
+      ok: false,
+      error: expect.stringMatching(/already linked/),
     });
+    expect(fakeDb.rows("slackUserLink")[0]?.organizationId).toBe(ORG);
+
     expect(
-      await linkSlackAccount({ token: token(), organizationId: "org_other" }),
+      await linkSlackAccount({
+        token: second,
+        organizationId: "org_other",
+        replace: true,
+      }),
     ).toEqual({ ok: true, workspaceName: "Other" });
     expect(fakeDb.rows("slackUserLink")).toEqual([
       expect.objectContaining({
@@ -906,9 +1422,93 @@ describe("linking an account", () => {
     ]);
   });
 
+  it("never takes over another QRdx account's link without Replace the link", async () => {
+    seedInstall();
+    fakeDb.seed("slackUserLink", [
+      {
+        id: "link_eve",
+        teamId: TEAM,
+        slackUserId: ANA,
+        userId: "u_eve",
+        organizationId: "org_eve",
+        createdAt: new Date(0),
+      },
+    ]);
+    const t = token();
+    prove(t);
+    expect(
+      await linkSlackAccount({ token: t, organizationId: ORG }),
+    ).toMatchObject({ ok: false, error: expect.stringMatching(/already/) });
+    expect(fakeDb.rows("slackUserLink")[0]?.userId).toBe("u_eve");
+  });
+
+  it("tells the Slack person in a direct message which QRdx account and workspace they're linked to", async () => {
+    seedInstall();
+    const t = token();
+    prove(t);
+    await linkSlackAccount({ token: t, organizationId: ORG });
+    await flush();
+    const [dm] = sentTo("chat.postMessage");
+    expect(dm?.auth).toBe(`Bearer ${BOT_TOKEN}`);
+    expect(dm?.body.channel).toBe(ANA);
+    expect(dm?.body.text).toBe(
+      "Linked to ana@acme.test in Acme. Not you? /qr unlink",
+    );
+  });
+
+  it("links even when the direct message fails, and logs only Slack's error code", async () => {
+    seedInstall();
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      state.postResult = { ok: false, error: "messages_tab_disabled" };
+      const t = token();
+      prove(t);
+      expect(await linkSlackAccount({ token: t, organizationId: ORG })).toEqual(
+        { ok: true, workspaceName: "Acme" },
+      );
+      await flush();
+      expect(fakeDb.rows("slackUserLink")).toHaveLength(1);
+      expect(logged.mock.calls.map((call) => String(call[0]))).toEqual([
+        JSON.stringify({
+          event: "slack-bot.link_notice_failed",
+          error: "messages_tab_disabled",
+        }),
+      ]);
+    } finally {
+      logged.mockRestore();
+    }
+  });
+
+  it("links even when Slack can't be reached, and logs only the error's name", async () => {
+    seedInstall();
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      vi.stubGlobal("fetch", async () => {
+        throw new TypeError("fetch failed: ana@acme.test xoxb-secret");
+      });
+      const t = token();
+      prove(t);
+      expect(await linkSlackAccount({ token: t, organizationId: ORG })).toEqual(
+        { ok: true, workspaceName: "Acme" },
+      );
+      await flush();
+      expect(fakeDb.rows("slackUserLink")).toHaveLength(1);
+      expect(logged.mock.calls.map((call) => String(call[0]))).toEqual([
+        JSON.stringify({
+          event: "slack-bot.link_notice_failed",
+          error: "TypeError",
+        }),
+      ]);
+    } finally {
+      logged.mockRestore();
+    }
+  });
+
   it("refuses an expired or changed token", async () => {
     seedInstall();
-    const [payload, signature] = token().split(".");
+    const t = token();
+    prove(t);
+    const [payload, signature] = t.split(".");
     const other = Buffer.from(
       JSON.stringify({
         ...JSON.parse(Buffer.from(payload ?? "", "base64url").toString()),
@@ -921,6 +1521,383 @@ describe("linking an account", () => {
         organizationId: ORG,
       }),
     ).toMatchObject({ ok: false, error: expect.stringMatching(/expired/) });
+  });
+});
+
+describe("tracked codes and the workspace", () => {
+  it("from a mention: the code in the thread, the dashboard link only to the person", async () => {
+    seedInstall();
+    seedLink();
+    await events.POST(
+      eventRequest(
+        callbackEvent({
+          type: "app_mention",
+          user: ANA,
+          text: `<@${BOT}> track <https://shop.example/menu>`,
+          channel: "C0GENERAL",
+          ts: "1700000000.000100",
+        }),
+      ),
+    );
+    await flush();
+    const [code] = fakeDb.rows("qrCode");
+    const [post] = sentTo("chat.postMessage");
+    expect(post?.body.thread_ts).toBe("1700000000.000100");
+    expect(allText(post?.body)).toContain("in the QRdx workspace Acme");
+    expect(allText(post?.body)).not.toContain("/dashboard/");
+    const [ephemeral] = sentTo("chat.postEphemeral");
+    expect(ephemeral?.body).toMatchObject({ channel: "C0GENERAL", user: ANA });
+    expect(ephemeral?.body.blocks[1].elements[0].url).toMatch(
+      new RegExp(`/dashboard/acme/codes/${code?.id}$`),
+    );
+  });
+
+  it("are recorded in the audit log as made via Slack, for the linked person", async () => {
+    seedInstall();
+    seedLink();
+    await commands.POST(slash("track https://shop.example/menu"));
+    await flush();
+    const [code] = fakeDb.rows("qrCode");
+    expect(fakeDb.rows("workspaceAuditLog")).toEqual([
+      expect.objectContaining({
+        organizationId: ORG,
+        action: "code.created",
+        targetId: code?.id,
+        actorType: "slack",
+        actorUserId: "u_ana",
+        actorLabel: `${ANA} in ${TEAM}`,
+        apiKeyId: null,
+        oauthAppId: null,
+        metadata: expect.objectContaining({ actingFor: "Ana <ana@acme.test>" }),
+      }),
+    ]);
+  });
+
+  it("are refused when the workspace requires two-step verification and the linked person hasn't turned it on", async () => {
+    seedInstall();
+    seedLink();
+    fakeDb.rows("organization")[0]!.metadata = JSON.stringify({
+      requireTwoFactor: true,
+    });
+    fakeDb.seed("subscription", [
+      {
+        id: "sub_ana",
+        userId: "u_ana",
+        productId: "prod_business_monthly",
+        status: "active",
+      },
+    ]);
+    fakeDb.rows("user")[0]!.twoFactorEnabled = false;
+    await commands.POST(slash("track https://shop.example/menu"));
+    await flush();
+    expect(fakeDb.rows("qrCode")).toEqual([]);
+    const [posted] = responses();
+    expect(posted?.body.response_type).toBe("ephemeral");
+    expect(posted?.body.text).toMatch(
+      /Acme requires two-step verification\. Turn it on in QRdx/,
+    );
+
+    // With two-step verification on, the same link works.
+    fakeDb.rows("user")[0]!.twoFactorEnabled = true;
+    state.fetches = [];
+    await commands.POST(slash("track https://shop.example/menu"));
+    await flush();
+    expect(fakeDb.rows("qrCode")).toHaveLength(1);
+  });
+});
+
+describe("the bot's limit across every Slack workspace", () => {
+  it("answers that QRdx is busy, and keeps each person's and workspace's limits", async () => {
+    state.limitedPrefixes = ["qrdx:slack-bot:all"];
+    const busy = (await (
+      await commands.POST(slash("https://qrdx.dev"))
+    ).json()) as Json;
+    expect(busy.response_type).toBe("ephemeral");
+    expect(busy.text).toBe("QRdx is busy right now. Try again in a minute.");
+
+    state.limitedPrefixes = ["qrdx:slack-bot:user"];
+    const person = (await (
+      await commands.POST(slash("https://qrdx.dev"))
+    ).json()) as Json;
+    expect(person.text).toMatch(/a little fast/);
+
+    state.limitedPrefixes = ["qrdx:slack-bot:team"];
+    const team = (await (
+      await commands.POST(slash("https://qrdx.dev"))
+    ).json()) as Json;
+    expect(team.text).toMatch(/a little fast/);
+  });
+
+  it("is lower for tracked codes, which then aren't made", async () => {
+    seedInstall();
+    seedLink();
+    state.limitedPrefixes = ["qrdx:slack-bot:all-track"];
+    const reply = (await (
+      await commands.POST(slash("track https://shop.example/menu"))
+    ).json()) as Json;
+    expect(reply.text).toBe("QRdx is busy right now. Try again in a minute.");
+    await flush();
+    expect(fakeDb.rows("qrCode")).toEqual([]);
+
+    // Plain codes still work.
+    const plain = (await (
+      await commands.POST(slash("https://qrdx.dev"))
+    ).json()) as Json;
+    expect(plain.response_type).toBe("in_channel");
+  });
+
+  it("applies to mentions too, privately", async () => {
+    seedInstall();
+    state.limitedPrefixes = ["qrdx:slack-bot:all"];
+    await events.POST(
+      eventRequest(
+        callbackEvent({
+          type: "app_mention",
+          user: ANA,
+          text: `<@${BOT}> https://qrdx.dev`,
+          channel: "C0GENERAL",
+          ts: "1700000000.000100",
+        }),
+      ),
+    );
+    await flush();
+    expect(sentTo("chat.postMessage")).toEqual([]);
+    expect(sentTo("chat.postEphemeral")[0]?.body.text).toBe(
+      "QRdx is busy right now. Try again in a minute.",
+    );
+  });
+});
+
+describe("adding the bot: the stored install", () => {
+  const install = {
+    ok: true,
+    token_type: "bot",
+    access_token: BOT_TOKEN,
+    bot_user_id: BOT,
+    scope: "commands,app_mentions:read,chat:write,im:history",
+    team: { id: TEAM, name: "Acme" },
+    enterprise: null,
+  };
+  const finish = (n: number) => {
+    state.cookies.set("slack_bot_oauth_state", `state-${n}`);
+    return callback.GET(
+      new Request(
+        `http://localhost:3000/api/integrations/slack/bot/callback?code=c${n}&state=state-${n}`,
+      ),
+    );
+  };
+
+  it("is one upsert on the workspace: installs at once leave one row", async () => {
+    const execute = vi.spyOn(
+      database as { execute: (q: unknown) => unknown },
+      "execute",
+    );
+    const save = (teamName: string, enterpriseId: string | null = null) =>
+      saveInstallation({
+        teamId: TEAM,
+        enterpriseId,
+        teamName,
+        botUserId: BOT,
+        botToken: BOT_TOKEN,
+        scopes: "commands",
+        installedByUserId: "u_ana",
+      });
+    try {
+      await Promise.all([save("Acme"), save("Acme Inc")]);
+      // One statement each: no lookup first that a second install could race.
+      expect(execute).toHaveBeenCalledTimes(2);
+      expect(fakeDb.rows("slackBotInstallation")).toEqual([
+        expect.objectContaining({ teamId: TEAM, teamName: "Acme Inc" }),
+      ]);
+
+      // The same workspace id in an Enterprise Grid org is another install.
+      await save("Acme Grid", "E0GRID");
+      expect(
+        fakeDb
+          .rows("slackBotInstallation")
+          .map((row) => [row.teamId, row.enterpriseId, row.teamName]),
+      ).toEqual([
+        [TEAM, null, "Acme Inc"],
+        [TEAM, "E0GRID", "Acme Grid"],
+      ]);
+    } finally {
+      execute.mockRestore();
+    }
+  });
+
+  it("logs only the error's name and code when saving fails", async () => {
+    state.oauth = install;
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+    const execute = vi
+      .spyOn(database as { execute: (q: unknown) => unknown }, "execute")
+      .mockRejectedValue(
+        Object.assign(
+          new Error(
+            'duplicate key value: params ("T0ACME","Acme","v1:secret-ciphertext")',
+          ),
+          { name: "NeonDbError", code: "23505" },
+        ),
+      );
+    try {
+      const response = await finish(4);
+      expect(response.headers.get("location")).toMatch(
+        /error=slack_bot_failed$/,
+      );
+      expect(logged.mock.calls.map((call) => String(call[0]))).toEqual([
+        JSON.stringify({
+          event: "slack-bot.install_failed",
+          error: "NeonDbError",
+          code: "23505",
+        }),
+      ]);
+    } finally {
+      execute.mockRestore();
+      logged.mockRestore();
+    }
+  });
+});
+
+describe("workspace admins", () => {
+  const owner = {
+    userId: "u_ana",
+    organizationId: ORG,
+    role: "owner" as const,
+  };
+
+  function seedLinks() {
+    seedInstall();
+    seedLink();
+    fakeDb.seed("member", [
+      {
+        id: "m_eve_acme",
+        organizationId: ORG,
+        userId: "u_eve",
+        role: "member",
+        createdAt: new Date(0),
+      },
+    ]);
+    fakeDb.seed("slackUserLink", [
+      {
+        id: "link_eve",
+        teamId: TEAM,
+        slackUserId: EVE,
+        userId: "u_eve",
+        organizationId: ORG,
+        createdAt: new Date(1),
+      },
+      {
+        id: "link_elsewhere",
+        teamId: TEAM,
+        slackUserId: "U0BEN",
+        userId: "u_eve",
+        organizationId: "org_eve",
+        createdAt: new Date(2),
+      },
+    ]);
+  }
+
+  it("owners and admins see the Slack accounts linked to their workspace", async () => {
+    seedLinks();
+    const links = await admin.loadWorkspaceSlackLinks(owner);
+    // Oldest first: Eve's was linked before Ana's.
+    expect(links).toEqual({
+      available: true,
+      links: [
+        expect.objectContaining({
+          id: "link_eve",
+          slackUserId: EVE,
+          memberEmail: "eve@evil.test",
+        }),
+        expect.objectContaining({
+          id: `link_${TEAM}_${ANA}`,
+          teamId: TEAM,
+          teamName: "Acme",
+          slackUserId: ANA,
+          userId: "u_ana",
+          memberName: "Ana",
+          memberEmail: "ana@acme.test",
+        }),
+      ],
+    });
+    expect(
+      await admin.loadWorkspaceSlackLinks({ ...owner, role: "admin" }),
+    ).toMatchObject({ available: true });
+  });
+
+  it("members, viewers and billing members don't, and no query is made", async () => {
+    seedLinks();
+    fakeDb.missing("slackUserLink");
+    for (const role of ["member", "viewer", "billing"] as const) {
+      expect(
+        await admin.loadWorkspaceSlackLinks({ ...owner, role }),
+        role,
+      ).toBeNull();
+    }
+  });
+
+  it("an admin revokes one, and the audit log records it", async () => {
+    seedLinks();
+    state.headers = new Headers({ "x-qrdx-workspace": "acme" });
+    expect(await revokeSlackLinkAction({ id: "link_eve" })).toEqual({
+      ok: true,
+    });
+    await flush();
+    expect(fakeDb.rows("slackUserLink").map((row) => row.id)).toEqual([
+      `link_${TEAM}_${ANA}`,
+      "link_elsewhere",
+    ]);
+    expect(fakeDb.rows("workspaceAuditLog")).toEqual([
+      expect.objectContaining({
+        organizationId: ORG,
+        action: "slack_link.revoked",
+        actorType: "user",
+        actorUserId: "u_ana",
+        targetType: "slack_link",
+        targetId: "link_eve",
+        targetLabel: `${EVE} in Acme`,
+        metadata: { member: "eve@evil.test" },
+      }),
+    ]);
+
+    // Eve's /qr track stops making codes there.
+    await commands.POST(
+      signed(
+        "commands",
+        new URLSearchParams({
+          command: "/qr",
+          text: "track https://shop.example",
+          team_id: TEAM,
+          team_domain: "acme",
+          user_id: EVE,
+          user_name: "eve",
+          channel_id: "C0GENERAL",
+          response_url: RESPONSE_URL,
+        }).toString(),
+      ),
+    );
+    await flush();
+    expect(fakeDb.rows("qrCode")).toEqual([]);
+  });
+
+  it("refuses members, and links of another workspace", async () => {
+    seedLinks();
+    // Eve is a member of Acme: she can't revoke Ana's link.
+    state.session = { user: { id: "u_eve", email: "eve@evil.test" } };
+    state.headers = new Headers({ "x-qrdx-workspace": "acme" });
+    expect(await revokeSlackLinkAction({ id: `link_${TEAM}_${ANA}` })).toEqual({
+      ok: false,
+      error: "Only owners and admins can revoke Slack links.",
+    });
+
+    // Ana owns Acme, but this link is to Eve's workspace.
+    state.session = { user: SESSION.user };
+    expect(await revokeSlackLinkAction({ id: "link_elsewhere" })).toEqual({
+      ok: false,
+      error: "Slack link not found.",
+    });
+    expect(fakeDb.rows("slackUserLink")).toHaveLength(3);
+    await flush();
+    expect(fakeDb.rows("workspaceAuditLog")).toEqual([]);
   });
 });
 
@@ -940,6 +1917,11 @@ describe("with the bot off", () => {
       ),
       install: await import("@/app/api/integrations/slack/bot/install/route"),
       callback: await import("@/app/api/integrations/slack/bot/callback/route"),
+      linkStart: await import("@/app/api/integrations/slack/link/start/route"),
+      linkCallback: await import(
+        "@/app/api/integrations/slack/link/callback/route"
+      ),
+      admin: await import("@/lib/slack-bot/admin"),
     };
     expect((await off.commands.POST(slash("https://qrdx.dev"))).status).toBe(
       404,
@@ -973,5 +1955,31 @@ describe("with the bot off", () => {
         )
       ).status,
     ).toBe(404);
+    expect(
+      (
+        await off.linkStart.GET(
+          new Request(
+            "http://localhost:3000/api/integrations/slack/link/start?t=x",
+          ),
+        )
+      ).status,
+    ).toBe(404);
+    expect(
+      (
+        await off.linkCallback.GET(
+          new Request(
+            "http://localhost:3000/api/integrations/slack/link/callback?code=x&state=y",
+          ),
+        )
+      ).status,
+    ).toBe(404);
+    // Nothing for the admins' settings while the bot is off.
+    expect(
+      await off.admin.loadWorkspaceSlackLinks({
+        userId: "u_ana",
+        organizationId: ORG,
+        role: "owner",
+      }),
+    ).toBeNull();
   });
 });
