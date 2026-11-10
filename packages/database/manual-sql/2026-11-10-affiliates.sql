@@ -45,8 +45,8 @@
 -- yes. If the code runs first, nothing breaks: sign-up, checkout and the
 -- Polar webhook catch the missing table, log it once per process and carry
 -- on; the affiliate pages say the program isn't available yet; no referral
--- or commission is recorded until the tables exist. The program also stays
--- off until QRDX_AFFILIATES is set.
+-- or commission is recorded until the tables exist. The program runs only
+-- where QRdx itself runs (lib/feature-availability-rules.ts).
 --
 -- Rollback: the code before this feature never reads or writes these
 -- tables, so it keeps working with them present. Leave them in place when
