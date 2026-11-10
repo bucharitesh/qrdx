@@ -1,5 +1,4 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
-import type { Metadata } from "next";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
 import {
   Empty,
@@ -20,9 +19,10 @@ import {
   getWebhookBacklog,
   type ProbeStatus,
 } from "../_lib/health";
+import { adminMetadata } from "../_lib/metadata";
 import { safeLoad } from "../_lib/safe";
 
-export const metadata: Metadata = { title: "Admin · Health" };
+export const generateMetadata = adminMetadata("Admin · Health");
 
 const STATUS_LABEL: Record<ProbeStatus, string> = {
   ok: "OK",
