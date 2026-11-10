@@ -16,8 +16,11 @@ import {
   formatDate,
   formatNumber,
 } from "@/app/dashboard/codes/_components/format";
+// NFC (feat/nfc): QR scans and NFC taps.
+import { ScanSourceCard } from "@/app/dashboard/codes/_components/scan-source-card";
 import { ScansChart } from "@/app/dashboard/codes/_components/scans-chart";
 import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
+import { nfcPageHref } from "@/app/dashboard/codes/_lib/nfc";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { AnalyticsExtra } from "@/app/dashboard/codes/[id]/_components/analytics-extra";
 import { SheetsExport } from "@/components/data-connections/sheets-export";
@@ -220,6 +223,24 @@ export async function AnalyticsTab({
         />
         <Metric label="Last scan" value={formatDate(code.lastScannedAt)} />
       </div>
+
+      {/* NFC (feat/nfc) */}
+      <ScanSourceCard
+        action={
+          analytics.sources.nfc === 0 && (
+            <Button
+              asChild
+              className="-my-1 shrink-0"
+              size="sm"
+              variant="ghost"
+            >
+              <Link href={nfcPageHref(slug, code.id)}>Use with NFC</Link>
+            </Button>
+          )
+        }
+        description={`Last ${days} days. Taps come through the code's NFC link.`}
+        sources={analytics.sources}
+      />
 
       <Card className="gap-4 py-4">
         <CardHeader className="px-4">

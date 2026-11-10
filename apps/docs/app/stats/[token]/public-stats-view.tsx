@@ -17,6 +17,8 @@ import {
   formatDate,
   formatNumber,
 } from "@/app/dashboard/codes/_components/format";
+// NFC (feat/nfc): QR scans and NFC taps.
+import { ScanSourceCard } from "@/app/dashboard/codes/_components/scan-source-card";
 import { ScansChart } from "@/app/dashboard/codes/_components/scans-chart";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import {
@@ -157,6 +159,12 @@ export function PublicStatsView({
           value={formatNumber(analytics.unique)}
         />
       </div>
+
+      {/* NFC (feat/nfc) */}
+      <ScanSourceCard
+        description={`Last ${analytics.days} days`}
+        sources={analytics.sources}
+      />
 
       <Card className="gap-4 py-4">
         <CardHeader className="px-4">

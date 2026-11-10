@@ -1,6 +1,6 @@
 // Client-safe parts of public analytics pages (lib/public-stats.ts).
 
-import type { BreakdownRow, DailyCount } from "@/lib/scans";
+import type { BreakdownRow, DailyCount, ScanSourceCounts } from "@/lib/scans";
 
 export const PUBLIC_STATS_RANGES = ["7d", "30d", "90d"] as const;
 export type PublicStatsRange = (typeof PUBLIC_STATS_RANGES)[number];
@@ -48,5 +48,7 @@ export interface PublicStats {
     devices: BreakdownRow[];
     /** Referrer hosts */
     referrers: BreakdownRow[];
+    /** QR scans and NFC taps (they add up to `total`) */
+    sources: ScanSourceCounts;
   };
 }
