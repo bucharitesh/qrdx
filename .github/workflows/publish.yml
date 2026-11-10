@@ -1,17 +1,26 @@
-# Publishes qrdx and @qrdx/cli to npm from main.
+# Publishes qrdx and @qrdx/cli to npm from main with npm Trusted Publishing
+# (OIDC). No npm token is stored anywhere: npm exchanges this run's GitHub
+# OIDC token for a short-lived publish token and attaches a provenance
+# statement on its own.
 #
-# Required secret: NPM_TOKEN (Settings → Secrets and variables → Actions).
-# Use an npm granular access token with read and write access to the qrdx
-# and @qrdx/cli packages (or a classic Automation token), so 2FA doesn't
-# block CI publishes.
+# One-time setup on npmjs.com, for each of qrdx and @qrdx/cli:
+#   Package → Settings → Trusted publishing → GitHub Actions
+#     Organization or user: bucharitesh
+#     Repository:           qrdx
+#     Workflow filename:    publish.yml
+#     Environment:          (leave empty)
+#     Allowed actions:      npm publish
+#
+# Trusted publishing needs npm 11.5.1+ on Node 22.14+, so the job installs a
+# pinned npm 11. pnpm packs each package, which turns the CLI's
+# "qrdx": "workspace:*" into the exact qrdx version; npm then uploads the
+# tarball. Publishing a tarball skips the packages' prepublishOnly scripts,
+# so this job runs the same checks itself: build, tests and the README
+# option lists.
 #
 # A package is published only when the version in its package.json is not
 # on npm yet, so a push that doesn't bump a version publishes nothing. qrdx
-# goes first because the CLI depends on it: pnpm publish turns the CLI's
-# "qrdx": "workspace:*" into the exact qrdx version from the workspace.
-# Each release gets an npm provenance statement (needs id-token: write).
-# Until the NPM_TOKEN secret exists, the run skips publishing with a notice
-# instead of failing, so merging to main stays green.
+# goes first because the CLI depends on it.
 name: Publish
 
 on:
@@ -30,6 +39,7 @@ concurrency:
 
 permissions:
   contents: read
+  # Trusted publishing (OIDC) and provenance.
   id-token: write
 
 env:
@@ -50,35 +60,22 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
 
-      # registry-url writes an .npmrc that reads the token from NODE_AUTH_TOKEN.
+      # No dependency cache: npm recommends release builds start clean.
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: pnpm
           registry-url: https://registry.npmjs.org
 
-      # Secrets can't be read in `if:`, so expose "is it set" as an output.
-      - name: Check for the npm token
-        id: token
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Install npm 11 (trusted publishing needs 11.5.1+)
         run: |
-          if [ -n "$NODE_AUTH_TOKEN" ]; then
-            echo "present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "present=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::NPM_TOKEN isn't set, so nothing was published. Add it under Settings → Secrets and variables → Actions, then re-run this workflow."
-            echo "Skipped: the NPM_TOKEN secret isn't set." >> "$GITHUB_STEP_SUMMARY"
-          fi
+          npm install -g npm@11.21.1
+          echo "node $(node --version), npm $(npm --version)"
 
       # Only a 404 from npm means "not published yet"; any other npm error
       # (network, auth) stops the run instead of guessing.
       - name: Find unpublished versions
-        if: steps.token.outputs.present == 'true'
         id: versions
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           any=false
           for dir in qrdx cli; do
@@ -116,18 +113,36 @@ jobs:
         if: steps.versions.outputs.any == 'true'
         run: pnpm turbo test --filter=qrdx --filter=@qrdx/cli
 
-      # prepublishOnly rebuilds, retests and checks the README option lists
-      # once more, so a stale dist/ can't ship.
+      # The check both packages' prepublishOnly scripts run: the option
+      # lists in the qrdx and @qrdx/cli READMEs match the code.
+      - name: Check README option lists
+        if: steps.versions.outputs.any == 'true'
+        run: node packages/qrdx/scripts/readme-catalogue.mjs --check
+
+      - name: Pack
+        if: steps.versions.outputs.any == 'true'
+        id: pack
+        run: |
+          dest="$RUNNER_TEMP/npm-packs"
+          mkdir -p "$dest"
+          for dir in qrdx cli; do
+            (cd "packages/$dir" && pnpm pack --pack-destination "$dest" > /dev/null)
+          done
+          qrdx="$(ls "$dest"/qrdx-[0-9]*.tgz)"
+          cli="$(ls "$dest"/qrdx-cli-[0-9]*.tgz)"
+          echo "qrdx=$qrdx" >> "$GITHUB_OUTPUT"
+          echo "cli=$cli" >> "$GITHUB_OUTPUT"
+          # The packed CLI must depend on a real qrdx version, never workspace:.
+          dep="$(tar -xOzf "$cli" package/package.json | node -p "JSON.parse(require('fs').readFileSync(0, 'utf8')).dependencies.qrdx")"
+          echo "@qrdx/cli depends on qrdx $dep" | tee -a "$GITHUB_STEP_SUMMARY"
+          case "$dep" in
+            workspace:*|undefined|"") echo "::error::The packed @qrdx/cli still has qrdx \"$dep\"."; exit 1 ;;
+          esac
+
       - name: Publish qrdx
         if: steps.versions.outputs.qrdx == 'true'
-        working-directory: packages/qrdx
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm publish --access public --no-git-checks --provenance
+        run: npm publish "${{ steps.pack.outputs.qrdx }}" --access public --provenance
 
       - name: Publish @qrdx/cli
         if: steps.versions.outputs.cli == 'true'
-        working-directory: packages/cli
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: pnpm publish --access public --no-git-checks --provenance
+        run: npm publish "${{ steps.pack.outputs.cli }}" --access public --provenance
