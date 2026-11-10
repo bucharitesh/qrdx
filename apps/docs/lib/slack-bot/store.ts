@@ -5,11 +5,13 @@ import {
   organization,
   slackBotInstallation,
   slackUserLink,
+  user,
 } from "@repo/database";
 import { decryptApiKey, encryptApiKey } from "@repo/integrations";
 import cuid from "cuid";
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { isMissingSchemaError } from "@/lib/community/tables";
+import { installationUpsert } from "./install-upsert";
 
 // The bot's two tables (packages/database/schema.ts, manual-sql/
 // 2026-11-10-slack-bot.sql). Only called while the bot is configured
@@ -101,7 +103,11 @@ export async function findBotToken(team: SlackTeamRef): Promise<{
   return { token: decryptApiKey(row.botToken), botUserId: row.botUserId };
 }
 
-/** Adds the workspace's install, or updates it on a reinstall. */
+/**
+ * Adds the workspace's install, or updates it on a reinstall: one upsert on
+ * the (team_id, coalesce(enterprise_id, '')) index, so two installs at once
+ * can't race (./install-upsert.ts).
+ */
 export async function saveInstallation(input: {
   teamId: string;
   enterpriseId: string | null;
@@ -111,34 +117,20 @@ export async function saveInstallation(input: {
   scopes: string | null;
   installedByUserId: string;
 }): Promise<void> {
-  const now = new Date();
-  const values = {
-    teamName: input.teamName,
-    botUserId: input.botUserId,
-    botToken: encryptApiKey(input.botToken),
-    scopes: input.scopes,
-    installedByUserId: input.installedByUserId,
-    updatedAt: now,
-  };
-  const team = { teamId: input.teamId, enterpriseId: input.enterpriseId };
-  const existing = await findInstallation(team);
-  if (existing) {
-    await guarded(() =>
-      db
-        .update(slackBotInstallation)
-        .set(values)
-        .where(eq(slackBotInstallation.id, existing.id)),
-    );
-    return;
-  }
   await guarded(() =>
-    db.insert(slackBotInstallation).values({
-      id: cuid(),
-      teamId: input.teamId,
-      enterpriseId: input.enterpriseId,
-      createdAt: now,
-      ...values,
-    }),
+    db.execute(
+      installationUpsert({
+        id: cuid(),
+        teamId: input.teamId,
+        enterpriseId: input.enterpriseId,
+        teamName: input.teamName,
+        botUserId: input.botUserId,
+        botToken: encryptApiKey(input.botToken),
+        scopes: input.scopes,
+        installedByUserId: input.installedByUserId,
+        now: new Date(),
+      }),
+    ),
   );
 }
 
@@ -182,7 +174,36 @@ export async function findUserLink(
   return row ?? null;
 }
 
-/** Links a Slack person to a QRdx user and workspace; replaces their link. */
+/** A Slack person's current link and the name of its QRdx workspace. */
+export async function describeUserLink(
+  teamId: string,
+  slackUserId: string,
+): Promise<(SlackUserLinkRow & { workspaceName: string | null }) | null> {
+  const [row] = await guarded(() =>
+    db
+      .select({
+        id: slackUserLink.id,
+        userId: slackUserLink.userId,
+        organizationId: slackUserLink.organizationId,
+        workspaceName: organization.name,
+      })
+      .from(slackUserLink)
+      .leftJoin(organization, eq(organization.id, slackUserLink.organizationId))
+      .where(
+        and(
+          eq(slackUserLink.teamId, teamId),
+          eq(slackUserLink.slackUserId, slackUserId),
+        ),
+      )
+      .limit(1),
+  );
+  return row ?? null;
+}
+
+/**
+ * Links a Slack person to a QRdx user and workspace. Replaces their link:
+ * the confirm page asks first (app/integrations/slack/link/actions.ts).
+ */
 export async function saveUserLink(input: {
   teamId: string;
   slackUserId: string;
@@ -295,4 +316,75 @@ export async function listUserLinks(
       .where(eq(slackUserLink.userId, userId))
       .orderBy(asc(slackUserLink.createdAt)),
   );
+}
+
+export interface WorkspaceSlackLink {
+  id: string;
+  teamId: string;
+  teamName: string | null;
+  slackUserId: string;
+  /** The QRdx member whose account the Slack person acts as */
+  userId: string;
+  memberName: string | null;
+  memberEmail: string | null;
+  linkedAt: Date;
+}
+
+/**
+ * The Slack people linked to a QRdx workspace (its admins' settings), or
+ * just the link `linkId` when it's one of them.
+ */
+export async function listWorkspaceLinks(
+  organizationId: string,
+  linkId?: string,
+): Promise<WorkspaceSlackLink[]> {
+  return guarded(() =>
+    db
+      .select({
+        id: slackUserLink.id,
+        teamId: slackUserLink.teamId,
+        teamName: slackBotInstallation.teamName,
+        slackUserId: slackUserLink.slackUserId,
+        userId: slackUserLink.userId,
+        memberName: user.name,
+        memberEmail: user.email,
+        linkedAt: slackUserLink.createdAt,
+      })
+      .from(slackUserLink)
+      .leftJoin(
+        slackBotInstallation,
+        eq(slackBotInstallation.teamId, slackUserLink.teamId),
+      )
+      .leftJoin(user, eq(user.id, slackUserLink.userId))
+      .where(
+        and(
+          eq(slackUserLink.organizationId, organizationId),
+          linkId === undefined ? undefined : eq(slackUserLink.id, linkId),
+        ),
+      )
+      .orderBy(asc(slackUserLink.createdAt), asc(slackUserLink.id)),
+  );
+}
+
+/** Revoke: a link to this QRdx workspace only. The removed link, or null. */
+export async function deleteWorkspaceLink(
+  organizationId: string,
+  linkId: string,
+): Promise<{ teamId: string; slackUserId: string; userId: string } | null> {
+  const [removed] = await guarded(() =>
+    db
+      .delete(slackUserLink)
+      .where(
+        and(
+          eq(slackUserLink.id, linkId),
+          eq(slackUserLink.organizationId, organizationId),
+        ),
+      )
+      .returning({
+        teamId: slackUserLink.teamId,
+        slackUserId: slackUserLink.slackUserId,
+        userId: slackUserLink.userId,
+      }),
+  );
+  return removed ?? null;
 }
