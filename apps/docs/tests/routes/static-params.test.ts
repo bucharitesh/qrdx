@@ -127,21 +127,22 @@ describe("buildTimeParams", () => {
 describe("routes with a fixed param list", () => {
   it("are all found, the generator, topic, blog, docs and catalogue routes among them", () => {
     for (const file of [
-      "(home)/qr-code-generator/[type]/page.tsx",
-      "(home)/qr-codes-for/[slug]/page.tsx",
-      "(home)/qr-codes-on/[slug]/page.tsx",
-      "(home)/blog/[slug]/page.tsx",
-      "(home)/compare/[slug]/page.tsx",
-      "(home)/integrations/[slug]/page.tsx",
-      "(home)/legal/[[...slug]]/page.tsx",
-      "(docs)/docs/[[...slug]]/page.tsx",
+      "(app)/(home)/qr-code-generator/[type]/page.tsx",
+      "(app)/(home)/qr-codes-for/[slug]/page.tsx",
+      "(app)/(home)/qr-codes-on/[slug]/page.tsx",
+      "(app)/(home)/blog/[slug]/page.tsx",
+      "(app)/(home)/compare/[slug]/page.tsx",
+      "(app)/(home)/integrations/[slug]/page.tsx",
+      "(app)/(home)/legal/[[...slug]]/page.tsx",
+      "(app)/(docs)/docs/[[...slug]]/page.tsx",
       "llms.mdx/[[...slug]]/route.ts",
       "og/docs/[...slug]/route.tsx",
-      "templates/[type]/page.tsx",
-      "templates/[type]/[template]/page.tsx",
-      "(home)/blog/category/[slug]/opengraph-image.tsx",
-      "(home)/community/[type]/opengraph-image.tsx",
+      "(app)/templates/[type]/page.tsx",
+      "(app)/templates/[type]/[template]/page.tsx",
+      "(app)/(home)/blog/category/[slug]/opengraph-image.tsx",
+      "(app)/(home)/community/[type]/opengraph-image.tsx",
       "og/legal/[...slug]/route.tsx",
+      "[lang]/layout.tsx",
     ]) {
       expect(ROUTES).toContain(file);
     }

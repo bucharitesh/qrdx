@@ -240,13 +240,16 @@ function fixImports(file, text) {
   return out;
 }
 
-// "app/(home)/pricing/page.tsx", "apps/docs/app/dashboard/…" in tests, page
-// source lists and contributor docs. Only rewritten when the new path exists.
+// "app/(home)/pricing/page.tsx", "../../app/admin", "apps/docs/app/…" in
+// tests, page source lists and contributor docs, and the segments of
+// path.join("app", "(home)", "pricing"). Only rewritten when the new path
+// exists.
 const PATH_STRING =
-  /(?<![\w@.\-/])((?:apps\/docs\/)?app\/)([^\s"'`,;*{}<>|\\]+)/g;
+  /(?<![\w@.\-/])((?:\.{1,2}\/)*(?:apps\/docs\/)?app\/)([^\s"'`,;*{}<>|\\$]+)/g;
+const PATH_SEGMENTS = /(["'])app\1((?:\s*,\s*["'][^"'\n]+["'])+)/g;
 
 function fixPathStrings(text) {
-  return text.replace(PATH_STRING, (match, prefix, rest) => {
+  const out = text.replace(PATH_STRING, (match, prefix, rest) => {
     let candidate = rest;
     for (let i = 0; i < 3; i++) {
       const abs = path.join(APP, candidate);
@@ -254,13 +257,29 @@ function fixPathStrings(text) {
       const moved = relocate(abs, resolvesAsPath);
       if (moved) {
         const next = path.relative(APP, moved).split(path.sep).join("/");
-        return `${prefix}${next}${rest.slice(candidate.length)}`;
+        const slash = candidate.endsWith("/") ? "/" : "";
+        return `${prefix}${next}${slash}${rest.slice(candidate.length)}`;
       }
       const trimmed = candidate.replace(/[).:/]+$/, "");
       if (trimmed === candidate) break;
       candidate = trimmed;
     }
     return match;
+  });
+  return out.replace(PATH_SEGMENTS, (match, quote, list) => {
+    const segments = [...list.matchAll(/["']([^"']+)["']/g)].map((m) => m[1]);
+    const whole = path.join(APP, ...segments);
+    if (resolvesAsPath(whole) || resolvesAsPath(path.join(APP, segments[0]))) {
+      return match;
+    }
+    // The full path (a file), else its first folder (a path built further on).
+    const moved =
+      relocate(whole, resolvesAsPath) ??
+      relocate(path.join(APP, segments[0]), resolvesAsPath);
+    if (!moved) return match;
+    const root = path.relative(APP, moved).split(path.sep)[0];
+    const separator = /^(\s*,\s*)/.exec(list)?.[1] ?? ", ";
+    return `${quote}app${quote}${separator}${quote}${root}${quote}${list}`;
   });
 }
 
