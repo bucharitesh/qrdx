@@ -3,15 +3,17 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card, CardContent } from "@repo/design-system/components/ui/card";
 import {
+  ArrowSwapHorizontal,
   ExportSquare as ExternalLink,
   ColorSwatch as Palette,
   Edit2 as Pencil,
 } from "iconsax-reactjs";
-import type { ReactNode } from "react";
+import { type ReactNode, useState } from "react";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { CopyButton } from "@/components/copy-button";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
+import { ChangeTypeDialog } from "../[id]/_components/change-type-dialog";
 import { CodeActionsMenu } from "./code-actions-menu";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
 import { displayUrl } from "./format";
@@ -30,6 +32,8 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
   const inWorkspace = useWorkspaceHref();
   // Viewers and billing members read only (lib/permissions.ts).
   const canWrite = useCan("content.write");
+  // Website link ⇄ hosted page, same short link (code-kind.ts).
+  const [changingType, setChangingType] = useState(false);
 
   return (
     <div className="space-y-3">
@@ -55,6 +59,16 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
               Edit link
             </Button>
           )}
+          {canWrite && (
+            <Button
+              onClick={() => setChangingType(true)}
+              size="sm"
+              variant="outline"
+            >
+              <ArrowSwapHorizontal />
+              Change type
+            </Button>
+          )}
           <CodeActionsMenu
             afterDelete={inWorkspace("/codes")}
             code={code}
@@ -66,6 +80,13 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
         <p className="bg-muted rounded-md p-3 text-sm">
           {STATUS_NOTES[code.status]}
         </p>
+      )}
+      {canWrite && (
+        <ChangeTypeDialog
+          code={code}
+          onOpenChange={setChangingType}
+          open={changingType}
+        />
       )}
     </div>
   );
