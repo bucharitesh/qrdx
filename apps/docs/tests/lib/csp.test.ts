@@ -239,6 +239,12 @@ describe("next.config.ts headers", () => {
     process.env.CSP_DEV = "1";
     process.env.NEXT_PUBLIC_APP_URL ??= "http://localhost:3000";
     vi.resetModules();
+    // createMDX() rewrites .source/*.ts in the background when it runs. In a
+    // test worker that write raced the suites importing @/lib/source and could
+    // leave the files empty. The headers don't depend on MDX, so skip it.
+    vi.doMock("fumadocs-mdx/next", () => ({
+      createMDX: () => (config: unknown) => config,
+    }));
     const config = (await import("@/next.config")).default;
     rules = (await config.headers?.()) ?? [];
   }, 60_000);
