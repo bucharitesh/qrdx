@@ -266,8 +266,8 @@ const SLACK_DEFAULT_EVENTS = ["scan.milestone", "form.submitted"] as const;
 const MAX_SLACK_CHANNELS = 20;
 
 /** "Add to Slack" from a workspace: remember which one (10 minutes). */
-export async function rememberSlackWorkspace(organizationId: string | null) {
-  (await cookies()).set(SLACK_SCOPE_COOKIE, organizationId ?? "personal", {
+export async function rememberSlackWorkspace(organizationId: string) {
+  (await cookies()).set(SLACK_SCOPE_COOKIE, organizationId, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
@@ -276,12 +276,18 @@ export async function rememberSlackWorkspace(organizationId: string | null) {
   });
 }
 
-async function takeSlackWorkspace(): Promise<string | null | undefined> {
+/**
+ * The workspace "Add to Slack" remembered, or undefined for none. The old
+ * "personal" value (a channel outside every workspace, which got no alerts
+ * and was listed nowhere) counts as none, so the workspace the person is in
+ * gets the channel.
+ */
+async function takeSlackWorkspace(): Promise<string | undefined> {
   const store = await cookies();
   const value = store.get(SLACK_SCOPE_COOKIE)?.value;
   store.delete(SLACK_SCOPE_COOKIE);
-  if (!value) return undefined;
-  return value === "personal" ? null : value.slice(0, 64);
+  if (!value || value === "personal") return undefined;
+  return value.slice(0, 64);
 }
 
 export interface SlackChannelRecord {
@@ -332,11 +338,8 @@ export async function prepareDataConnect(
   try {
     if (provider === "slack") {
       const install = readSlackInstall(tokenData);
-      const remembered = await takeSlackWorkspace();
       const organizationId =
-        remembered === undefined
-          ? (await getActiveScope()).organizationId
-          : remembered;
+        (await takeSlackWorkspace()) ?? (await getActiveScope()).organizationId;
       const { id } = await addChatTarget(userId, organizationId, {
         channel: "slack",
         url: install.webhookUrl,
