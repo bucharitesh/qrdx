@@ -2,8 +2,10 @@
 // Telegram's secret before it reads anything, answers 200 at once and replies
 // through the Bot API after the response. fetch is a fake that records each
 // Bot API call: nothing reaches Telegram. The rate limiters run in memory
-// with their real windows; a test can mark a key as used up
-// (state.exhausted) to skip filling a big window.
+// with their real windows, on a clock that stands still in the middle of a
+// minute (a test that ran across a minute's end would see part of its count
+// weighted away); a test can mark a key as used up (state.exhausted) to skip
+// filling a big window.
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const TOKEN = "123456:fake-token-for-tests";
@@ -34,6 +36,9 @@ vi.mock("@repo/rate-limit", async () => {
   const { createMemoryLimiter, parseDuration } = await import(
     "@repo/rate-limit/fallback"
   );
+  /** 30 seconds into a minute. */
+  const MID_MINUTE = Math.floor(Date.now() / 60_000) * 60_000 + 30_000;
+  const clock = () => MID_MINUTE;
   return {
     slidingWindow: (tokens: number, window: string) => ({
       tokens,
@@ -45,12 +50,12 @@ vi.mock("@repo/rate-limit", async () => {
       limiter: { tokens: number; windowMs: number };
     }) => {
       let generation = -1;
-      let memory = createMemoryLimiter(limiter);
+      let memory = createMemoryLimiter(limiter, clock);
       return {
         limit: async (key: string) => {
           if (generation !== state.generation) {
             generation = state.generation;
-            memory = createMemoryLimiter(limiter);
+            memory = createMemoryLimiter(limiter, clock);
           }
           state.keys.push(key);
           if (state.exhausted.has(key)) {
