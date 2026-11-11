@@ -88,20 +88,32 @@ export default async function PortalHomePage({ params }: Props) {
                             "Untitled code"}
                         </span>
                         {code.kind === "page" && (
-                          <Badge variant="outline">Hosted page</Badge>
+                          <Badge className="max-sm:hidden" variant="outline">
+                            Hosted page
+                          </Badge>
                         )}
                         {code.archived && (
                           <Badge variant="secondary">Archived</Badge>
                         )}
                       </div>
-                      {(code.shortLink || code.destinationHost) && (
-                        <p className="text-muted-foreground truncate font-mono text-xs">
-                          {[
-                            code.shortLink && displayUrl(code.shortLink),
-                            code.destinationHost,
-                          ]
-                            .filter(Boolean)
-                            .join(" → ")}
+                      {(code.shortLink ||
+                        code.destinationHost ||
+                        code.kind === "page") && (
+                        <p className="text-muted-foreground truncate text-xs">
+                          <span className="font-mono">
+                            {[
+                              code.shortLink && displayUrl(code.shortLink),
+                              code.destinationHost,
+                            ]
+                              .filter(Boolean)
+                              .join(" → ")}
+                          </span>
+                          {/* Phones: the badge above makes way for the title. */}
+                          {code.kind === "page" && (
+                            <span className="sm:hidden">
+                              {code.shortLink ? " · " : ""}Hosted page
+                            </span>
+                          )}
                         </p>
                       )}
                     </div>
