@@ -60,6 +60,10 @@ export const user = pgTable(
     // Better Auth two-factor plugin field: true once an authenticator app is
     // verified. SQL: packages/database/manual-sql/0019_sign_in_security.sql
     twoFactorEnabled: boolean("two_factor_enabled").default(false),
+    // i18n-play lane: the app's and the emails' language ("es", "pt-BR");
+    // null follows the language cookie. SQL:
+    // packages/database/manual-sql/2026-11-11-user-locale.sql
+    locale: text("locale"),
     createdAt: timestamp("created_at").notNull(),
     updatedAt: timestamp("updated_at").notNull(),
   },

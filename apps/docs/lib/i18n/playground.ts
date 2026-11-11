@@ -7,6 +7,7 @@ import { CHROME_NAMESPACES } from "./messages";
 /** The whole editor: /playground, shared theme links, the dashboard. */
 export const EDITOR_NAMESPACES = [
   "editor",
+  "codeBuilder",
   "playground",
   "scanChecker",
   "limits",
@@ -58,4 +59,31 @@ export const APP_NAMESPACES = [
   "barcodeTool",
   "templateDemo",
   ...EDITOR_NAMESPACES,
+  // The app's frame: sidebar, workspace switcher, command menu.
+  "app.shell",
+  "app.workspaces",
+] as const;
+
+/** The dashboard: the app and its own pages. */
+export const DASHBOARD_NAMESPACES = [
+  ...APP_NAMESPACES,
+  "app.dashboard",
+] as const;
+
+/** Settings: the app and the settings pages. */
+export const SETTINGS_NAMESPACES = [...APP_NAMESPACES, "app.settings"] as const;
+
+/** Sign-in, two-step verification and the session check (signed out). */
+export const SIGN_IN_NAMESPACES = [
+  ...CHROME_NAMESPACES,
+  "app.signIn",
+  "app.sessionCheck",
+] as const;
+
+/** Team invitations, join links and OAuth consent: the app's frame too. */
+export const ACCOUNT_FLOW_NAMESPACES = [
+  ...APP_NAMESPACES,
+  "app.invite",
+  "app.join",
+  "app.oauth",
 ] as const;
