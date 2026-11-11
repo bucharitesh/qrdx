@@ -54,6 +54,8 @@ const record = (area: string, name: string, ok: boolean, detail?: string) => {
 
 interface TypeCase {
   label: string;
+  /** Select fields (label → option text), chosen before the text fields */
+  selects?: Record<string, string>;
   fields: Record<string, string>;
   switches?: string[];
   config: QRContentConfig;
@@ -322,6 +324,203 @@ const TYPE_CASES: Record<string, TypeCase> = {
     config: {
       type: "google-drive",
       url: "https://drive.google.com/file/d/abc/view",
+    },
+  },
+  // ── Content types added 2026-11-11 ──
+  pix: {
+    label: "Pix",
+    fields: {
+      "Pix key": "+55 11 91234 5678",
+      "Receiver name": "Ana Lima",
+      City: "São Paulo",
+      "Amount (R$)": "10.50",
+    },
+    config: {
+      type: "pix",
+      pixKey: "+55 11 91234 5678",
+      name: "Ana Lima",
+      city: "São Paulo",
+      amount: "10.50",
+    },
+  },
+  sepa: {
+    label: "SEPA transfer",
+    fields: {
+      "Beneficiary name": "Ana Lima",
+      IBAN: "DE89 3704 0044 0532 0130 00",
+      "Amount (€)": "12.30",
+      "Payment reference": "Invoice 42",
+    },
+    config: {
+      type: "sepa",
+      name: "Ana Lima",
+      iban: "DE89 3704 0044 0532 0130 00",
+      amount: "12.30",
+      remittance: "Invoice 42",
+    },
+  },
+  paynow: {
+    label: "PayNow",
+    fields: {
+      "Mobile number": "+65 9123 4567",
+      "Amount (S$)": "8.50",
+      Reference: "INV1",
+    },
+    config: {
+      type: "paynow",
+      proxyType: "mobile",
+      proxy: "+65 9123 4567",
+      amount: "8.50",
+      editable: true,
+      reference: "INV1",
+    },
+  },
+  promptpay: {
+    label: "PromptPay",
+    fields: { "Mobile number": "081 234 5678", "Amount (฿)": "120" },
+    config: {
+      type: "promptpay",
+      proxyType: "mobile",
+      proxy: "081 234 5678",
+      amount: "120",
+    },
+  },
+  vietqr: {
+    label: "VietQR",
+    selects: { Bank: "ACB (ACB)" },
+    fields: {
+      "Account number": "257678859",
+      "Amount (₫)": "10000",
+      Message: "Chuyển tiền",
+    },
+    config: {
+      type: "vietqr",
+      bankBin: "970416",
+      accountType: "account",
+      accountNumber: "257678859",
+      amount: "10000",
+      message: "Chuyển tiền",
+    },
+  },
+  cashapp: {
+    label: "Cash App",
+    fields: { $Cashtag: "$qrdx" },
+    config: { type: "cashapp", username: "$qrdx" },
+  },
+  revolut: {
+    label: "Revolut",
+    fields: { "Revolut username": "@qrdx" },
+    config: { type: "revolut", username: "@qrdx" },
+  },
+  telegram: {
+    label: "Telegram",
+    fields: { "Username, channel or group": "@qrdx_dev" },
+    config: { type: "telegram", username: "@qrdx_dev" },
+  },
+  signal: {
+    label: "Signal",
+    fields: { "Phone number": "+1 415 555 0132" },
+    config: { type: "signal", phoneNumber: "+1 415 555 0132" },
+  },
+  discord: {
+    label: "Discord",
+    fields: { "Invite link or code": "discord.gg/qrdx" },
+    config: { type: "discord", invite: "discord.gg/qrdx" },
+  },
+  line: {
+    label: "LINE",
+    fields: { "LINE ID": "@qrdx" },
+    config: { type: "line", username: "@qrdx" },
+  },
+  bluesky: {
+    label: "Bluesky",
+    fields: { Handle: "qrdx.dev" },
+    config: { type: "bluesky", handle: "qrdx.dev" },
+  },
+  mastodon: {
+    label: "Mastodon",
+    fields: { Handle: "@qrdx@mastodon.social" },
+    config: { type: "mastodon", handle: "@qrdx@mastodon.social" },
+  },
+  twitch: {
+    label: "Twitch",
+    fields: { "Twitch username": "qrdxdev" },
+    config: { type: "twitch", username: "qrdxdev" },
+  },
+  soundcloud: {
+    label: "SoundCloud",
+    fields: { "Profile name or link": "qrdx" },
+    config: { type: "soundcloud", username: "qrdx" },
+  },
+  zoom: {
+    label: "Zoom",
+    fields: { "Meeting ID or invite link": "123 4567 8901" },
+    config: { type: "zoom", meeting: "123 4567 8901" },
+  },
+  "google-meet": {
+    label: "Google Meet",
+    fields: { "Meeting code or link": "abc-defg-hij" },
+    config: { type: "google-meet", meeting: "abc-defg-hij" },
+  },
+  waze: {
+    label: "Waze",
+    fields: { "Address or coordinates": "48.8584, 2.2945" },
+    config: { type: "waze", location: "48.8584, 2.2945", navigate: true },
+  },
+  litecoin: {
+    label: "Litecoin",
+    fields: {
+      "Wallet address": "ltc1qg82gu5m5c5szdx4rgrqx0ymcx8jvjf0v3qyp5c",
+      "Amount (LTC)": "0.5",
+    },
+    config: {
+      type: "litecoin",
+      address: "ltc1qg82gu5m5c5szdx4rgrqx0ymcx8jvjf0v3qyp5c",
+      amount: "0.5",
+    },
+  },
+  dogecoin: {
+    label: "Dogecoin",
+    fields: {
+      "Wallet address": "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+      "Amount (DOGE)": "42",
+    },
+    config: {
+      type: "dogecoin",
+      address: "DH5yaieqoZN36fDVciNyRueRGvGLR3mr7L",
+      amount: "42",
+    },
+  },
+  bitcoincash: {
+    label: "Bitcoin Cash",
+    fields: { "Wallet address": "qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a" },
+    config: {
+      type: "bitcoincash",
+      address: "qpm2qsznhks23z7629mms6s4cwef74vcwvy22gdx6a",
+    },
+  },
+  solana: {
+    label: "Solana",
+    fields: {
+      "Wallet address": "mvines9iiHiQTysrwkJjGf2gb9Ex9jXJX8ns3qwf2kN",
+      "Amount (SOL)": "1",
+    },
+    config: {
+      type: "solana",
+      address: "mvines9iiHiQTysrwkJjGf2gb9Ex9jXJX8ns3qwf2kN",
+      amount: "1",
+    },
+  },
+  monero: {
+    label: "Monero",
+    fields: {
+      "Wallet address":
+        "44AFFq5kSiGBoZ4NMDwYtN18obc8AemS33DBLWs3H7otXft3XjrpDtQGv7SqSsaBYBb98uNbr2VBBEt7f2wfn3RVGQBEP3A",
+    },
+    config: {
+      type: "monero",
+      address:
+        "44AFFq5kSiGBoZ4NMDwYtN18obc8AemS33DBLWs3H7otXft3XjrpDtQGv7SqSsaBYBb98uNbr2VBBEt7f2wfn3RVGQBEP3A",
     },
   },
 };
@@ -597,6 +796,40 @@ function firstError(page: Page): string {
   return /Error: [^\n]*/.exec(error)?.[0]?.slice(0, 160) ?? error.slice(0, 160);
 }
 
+/** A real mouse click at an element's center (Radix selects ignore synthetic ones). */
+async function mouseClick(page: Page, finder: string, arg: string) {
+  const point = (await page.evaluate(
+    `(arg) => { const el = (${finder})(arg); if (!el) return null; el.scrollIntoView({ block: "center" }); const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }`,
+    arg,
+  )) as { x: number; y: number } | null;
+  if (!point) return false;
+  for (const type of ["mousePressed", "mouseReleased"] as const) {
+    await page.cdp.send("Input.dispatchMouseEvent", {
+      type,
+      x: point.x,
+      y: point.y,
+      button: "left",
+      clickCount: 1,
+    });
+  }
+  return true;
+}
+
+/** Opens the select labelled `label` and picks the option named `option`. */
+async function choose(page: Page, label: string, option: string) {
+  if (!(await mouseClick(page, "(label) => __e2e.byLabel(label)", label))) {
+    throw new Error(`No select labelled "${label}"`);
+  }
+  await sleep(400);
+  const picked = await mouseClick(
+    page,
+    `(option) => __e2e.all("option").find((x) => __e2e.name(x) === __e2e.norm(option))`,
+    option,
+  );
+  if (!picked) throw new Error(`No option "${option}" in "${label}"`);
+  await sleep(400);
+}
+
 async function toggle(page: Page, label: string) {
   const ok = await page.evaluate(
     `(label) => { const el = __e2e.byLabel(label); if (!el) return false; __e2e.click(el); return true; }`,
@@ -620,6 +853,9 @@ async function testContentTypes(page: Page) {
     }
     try {
       await chooseType(page, testCase.label);
+      for (const [label, option] of Object.entries(testCase.selects ?? {})) {
+        await choose(page, label, option);
+      }
       for (const [label, value] of Object.entries(testCase.fields)) {
         await fill(page, label, value);
       }

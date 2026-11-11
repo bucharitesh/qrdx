@@ -93,6 +93,7 @@ Then ask for what you need, for example:
 | `qr_payload_email` | Builds a `mailto:` link (RFC 6068) with optional cc, bcc, subject and body. |
 | `qr_payload_sms` | Builds an `sms:` link (RFC 5724) with an optional message, or the older `SMSTO:` form. |
 | `qr_payload_geo` | Builds a `geo:` location (RFC 5870) from latitude and longitude. |
+| `qr_payload_payment` | Builds a bank payment code: a Pix BR Code, a SEPA credit transfer (EPC069-12), or a PayNow, PromptPay or VietQR code (EMV, with its CRC). It checks the fields like the playground's forms do. |
 
 The payload tools return a plain string. Your assistant then passes it as `data` to `generate_qr_code`.
 

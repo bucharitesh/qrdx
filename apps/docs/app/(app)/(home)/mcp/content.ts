@@ -2,6 +2,7 @@
 // lib/agents/markdown-pages.ts) repeats, kept in one place.
 import {
   ArchiveAdd,
+  Bank,
   Barcode,
   Brush2,
   Category,
@@ -137,6 +138,13 @@ export const MCP_TOOLS: {
     title: "Map location",
     description: "A geo: location from latitude and longitude.",
     icon: Location,
+  },
+  {
+    name: "qr_payload_payment",
+    title: "Bank payment",
+    description:
+      "A Pix, SEPA transfer, PayNow, PromptPay or VietQR payment code, checked like the playground's forms.",
+    icon: Bank,
   },
 ];
 

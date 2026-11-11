@@ -33,6 +33,12 @@ const SCHEMA: Partial<Record<ContentType, z.ZodType>> = {
   "google-review": schemas.googleReviewSchema,
   amazon: schemas.amazonSchema,
   flipkart: schemas.flipkartSchema,
+  telegram: schemas.telegramSchema,
+  bluesky: schemas.blueskySchema,
+  mastodon: schemas.mastodonSchema,
+  twitch: schemas.twitchSchema,
+  soundcloud: schemas.soundcloudSchema,
+  waze: schemas.wazeSchema,
 };
 
 /** Types whose content is contact or payment details, or a stranger's handle. */
@@ -52,6 +58,24 @@ const NEVER_SAMPLED: ContentType[] = [
   "attendance",
   "dubsh",
   "google-drive",
+  // Added 2026-11-11: payments, chats with a person, invites and meetings
+  "pix",
+  "sepa",
+  "paynow",
+  "promptpay",
+  "vietqr",
+  "cashapp",
+  "revolut",
+  "signal",
+  "discord",
+  "line",
+  "zoom",
+  "google-meet",
+  "litecoin",
+  "dogecoin",
+  "bitcoincash",
+  "solana",
+  "monero",
 ];
 
 const sampled = Object.entries(PLAYGROUND_SAMPLES) as [
@@ -93,7 +117,7 @@ describe("playground samples", () => {
     for (const [address] of text.matchAll(/https?:\/\/[^"]+/g)) {
       const host = new URL(address).hostname;
       expect(host, address).toMatch(
-        /^(example\.com|www\.(facebook|linkedin|youtube|amazon|flipkart)\.com|open\.spotify\.com)$/,
+        /^(example\.com|www\.(facebook|linkedin|youtube|amazon|flipkart)\.com|open\.spotify\.com|mastodon\.social)$/,
       );
     }
   });

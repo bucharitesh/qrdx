@@ -2,6 +2,14 @@ export { AmazonForm } from "./amazon-form";
 export { AttendanceForm } from "./attendance-form";
 export { BitcoinForm } from "./bitcoin-form";
 export { CalcomForm } from "./calcom-form";
+// Added 2026-11-11
+export {
+  BitcoinCashForm,
+  DogecoinForm,
+  LitecoinForm,
+  MoneroForm,
+  SolanaForm,
+} from "./crypto-forms";
 export { DubshForm } from "./dubsh-form";
 export { EmailForm } from "./email-form";
 export { EthereumForm } from "./ethereum-form";
@@ -11,8 +19,30 @@ export { FlipkartForm } from "./flipkart-form";
 export { GoogleDriveForm } from "./google-drive-form";
 export { GoogleReviewForm } from "./google-review-form";
 export { InstagramForm } from "./instagram-form";
+export {
+  BlueskyForm,
+  CashAppForm,
+  DiscordForm,
+  GoogleMeetForm,
+  LineForm,
+  MastodonForm,
+  RevolutForm,
+  SignalForm,
+  SoundCloudForm,
+  TelegramForm,
+  TwitchForm,
+  WazeForm,
+  ZoomForm,
+} from "./link-forms";
 export { LinkedInForm } from "./linkedin-form";
 export { MapsForm } from "./maps-form";
+export {
+  PayNowForm,
+  PixForm,
+  PromptPayForm,
+  SepaForm,
+  VietQrForm,
+} from "./payment-forms";
 export { PayPalForm } from "./paypal-form";
 export { PhoneForm } from "./phone-form";
 export { PinterestForm } from "./pinterest-form";

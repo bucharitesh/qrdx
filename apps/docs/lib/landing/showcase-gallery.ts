@@ -157,6 +157,20 @@ export const SAMPLE_HOSTS = [
   "www.amazon.com",
   "www.flipkart.com",
   "cal.com",
+  // Content types added 2026-11-11
+  "t.me",
+  "signal.me",
+  "discord.gg",
+  "line.me",
+  "bsky.app",
+  "mastodon.social",
+  "www.twitch.tv",
+  "soundcloud.com",
+  "zoom.us",
+  "meet.google.com",
+  "waze.com",
+  "cash.app",
+  "revolut.me",
 ] as const;
 
 const encode = (content: QRContentConfig) => encodeQRContent(content);
@@ -736,6 +750,147 @@ const CONTENT: Record<ContentType, ContentSpec> = {
     label: "Cal.com",
     config: { type: "calcom", bookingUrl: "https://cal.com/yourname/30min" },
     preset: "seafoam",
+  },
+  // ── Content types added 2026-11-11 ──
+  // Bank codes use each standard's documentation sample or all-zero IDs;
+  // crypto addresses fail their checksums, so wallets refuse them.
+  pix: {
+    // A phone key with area code 00, which no phone has, and "Fulano", the
+    // Portuguese placeholder name.
+    config: {
+      type: "pix",
+      pixKey: "+5500000000000",
+      name: "Fulano",
+      city: "Brasilia",
+    },
+    preset: "retro",
+  },
+  sepa: {
+    label: "SEPA transfer",
+    config: {
+      type: "sepa",
+      name: "QRdx Sample",
+      iban: "DE58123456780123456789",
+      remittance: "Sample payment",
+    },
+    preset: "cobalt",
+  },
+  paynow: {
+    config: { type: "paynow", proxyType: "uen", proxy: "T00XX0000X" },
+    preset: "classic",
+  },
+  promptpay: {
+    config: { type: "promptpay", proxyType: "id", proxy: "0000000000000" },
+    preset: "glacier",
+  },
+  vietqr: {
+    config: {
+      type: "vietqr",
+      bankBin: "970436",
+      accountType: "account",
+      accountNumber: "0000000000",
+    },
+    preset: "blaze",
+  },
+  cashapp: {
+    label: "Cash App",
+    config: { type: "cashapp", username: "$yourcashtag" },
+    preset: "emerald",
+  },
+  revolut: {
+    config: { type: "revolut", username: "yourname" },
+    preset: "graphite",
+  },
+  telegram: {
+    // Telegram's own channel.
+    config: { type: "telegram", username: "telegram" },
+    preset: "gradientOcean",
+  },
+  signal: {
+    config: { type: "signal", phoneNumber: "+1 415 555 0147" },
+    preset: "signal",
+  },
+  discord: {
+    config: { type: "discord", invite: "yourserver" },
+    preset: "royal",
+  },
+  line: {
+    label: "LINE",
+    config: { type: "line", username: "yourname" },
+    preset: "fern",
+  },
+  bluesky: {
+    // Bluesky's own account.
+    config: { type: "bluesky", handle: "bsky.app" },
+    preset: "periwinkle",
+    shape: "wide",
+  },
+  mastodon: {
+    // Mastodon's own account.
+    config: { type: "mastodon", handle: "@Mastodon@mastodon.social" },
+    preset: "dusk",
+  },
+  twitch: {
+    // Twitch's own channel.
+    config: { type: "twitch", username: "twitch" },
+    preset: "laser",
+    shape: "tall",
+  },
+  soundcloud: {
+    label: "SoundCloud",
+    // SoundCloud's own profile.
+    config: { type: "soundcloud", username: "soundcloud" },
+    preset: "ember",
+  },
+  zoom: {
+    config: { type: "zoom", meeting: "1234567890" },
+    preset: "ice",
+    shape: "wide",
+  },
+  "google-meet": {
+    label: "Google Meet",
+    // Google's documentation example code.
+    config: { type: "google-meet", meeting: "abc-defg-hij" },
+    preset: "slate",
+  },
+  waze: {
+    config: { type: "waze", location: "48.8584, 2.2945" },
+    preset: "taxi",
+  },
+  litecoin: {
+    config: {
+      type: "litecoin",
+      address: "ltc1qexampleexampleexampleexampleexample0",
+    },
+    preset: "folio",
+    shape: "wide",
+  },
+  dogecoin: {
+    config: { type: "dogecoin", address: "DTestDemoWa11etTestDemoWa11etTestD" },
+    preset: "butter",
+  },
+  bitcoincash: {
+    label: "Bitcoin Cash",
+    config: {
+      type: "bitcoincash",
+      address: "qexampleexampleexampleexampleexampleexampl",
+    },
+    preset: "jade",
+  },
+  solana: {
+    config: {
+      type: "solana",
+      address: "DemoWa11etAddressForTheQRdxExamp1eDemo",
+    },
+    preset: "lavender",
+  },
+  monero: {
+    config: {
+      type: "monero",
+      address:
+        "4DemoWa11etAddressForTheQRdxExamp1eDemoWa11etAddressForTheQRdxExamp1eDemoWa11etAddressForTheQRd",
+    },
+    preset: "classic",
   },
 };
 

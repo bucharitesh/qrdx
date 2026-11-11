@@ -57,6 +57,30 @@ const attendance = as("attendance");
 const amazon = as("amazon");
 const flipkart = as("flipkart");
 const calcom = as("calcom");
+// Content types added 2026-11-11
+const pix = as("pix");
+const sepa = as("sepa");
+const paynow = as("paynow");
+const promptpay = as("promptpay");
+const vietqr = as("vietqr");
+const cashapp = as("cashapp");
+const revolut = as("revolut");
+const telegram = as("telegram");
+const signal = as("signal");
+const discord = as("discord");
+const line = as("line");
+const bluesky = as("bluesky");
+const mastodon = as("mastodon");
+const twitch = as("twitch");
+const soundcloud = as("soundcloud");
+const zoom = as("zoom");
+const meet = as("google-meet");
+const waze = as("waze");
+const litecoin = as("litecoin");
+const dogecoin = as("dogecoin");
+const bitcoincash = as("bitcoincash");
+const solana = as("solana");
+const monero = as("monero");
 
 const TYPE_TILES: Record<ContentType, TileSpec[]> = {
   url: [
@@ -810,6 +834,555 @@ const TYPE_TILES: Record<ContentType, TileSpec[]> = {
       "rose",
       framed("speech-bubble", "Book your visit"),
     ),
+  ],
+  // ── Content types added 2026-11-11 ──
+  pix: [
+    tile(
+      "Shop counter",
+      pix.generator(),
+      "meadow",
+      official("scan-to-pay", "Pay with Pix"),
+    ),
+    tile(
+      "Tip jar",
+      pix.page("payment", "tip-jar"),
+      "butter",
+      framed("sticker", "Leave a tip"),
+    ),
+    tile(
+      "Invoice",
+      pix.page("payment", "invoice"),
+      "slate",
+      framed("banner-bottom", "Pay by Pix"),
+    ),
+    tile(
+      "Donations",
+      pix.page("payment", "donation"),
+      "jade",
+      official("donate"),
+    ),
+  ],
+  sepa: [
+    tile(
+      "Invoice",
+      sepa.page("payment", "invoice"),
+      "folio",
+      framed("banner-bottom", "Pay by transfer"),
+    ),
+    tile(
+      "Donations",
+      sepa.page("payment", "donation"),
+      "harbor",
+      official("donate", "Donate by transfer"),
+    ),
+    tile("Rent", sepa.generator(), "fog", framed("border", "Scan to pay rent")),
+    tile(
+      "Club fees",
+      sepa.page("payment", "tip-jar"),
+      "cobalt",
+      framed("badge", "Club fees"),
+    ),
+  ],
+  paynow: [
+    tile(
+      "Hawker stall",
+      paynow.generator(),
+      "tangerine",
+      official("scan-to-pay", "Pay with PayNow"),
+    ),
+    tile(
+      "Split the bill",
+      paynow.page("payment", "tip-jar"),
+      "mint",
+      framed("speech-bubble", "Split the bill"),
+    ),
+    tile(
+      "Invoice",
+      paynow.page("payment", "invoice"),
+      "minimal",
+      framed("banner-bottom", "Pay this invoice"),
+    ),
+    tile("Market stall", paynow.page("business", "local-shop"), "sunset", null),
+  ],
+  promptpay: [
+    tile(
+      "Street food",
+      promptpay.generator(),
+      "glacier",
+      official("scan-to-pay", "Pay with PromptPay"),
+    ),
+    tile(
+      "Massage shop",
+      promptpay.page("business", "studio"),
+      "rose",
+      framed("tag", "Scan to pay"),
+    ),
+    tile(
+      "Temple fund",
+      promptpay.page("payment", "donation"),
+      "gilt",
+      official("donate"),
+    ),
+    tile(
+      "Delivery",
+      promptpay.page("payment", "invoice"),
+      "ice",
+      framed("sticker", "Pay on delivery"),
+    ),
+  ],
+  vietqr: [
+    tile(
+      "Coffee cart",
+      vietqr.generator(),
+      "caffeine",
+      official("scan-to-pay", "Scan to transfer"),
+    ),
+    tile(
+      "Market stall",
+      vietqr.page("business", "local-shop"),
+      "blaze",
+      framed("tag", "Pay here"),
+    ),
+    tile(
+      "Invoice",
+      vietqr.page("payment", "invoice"),
+      "pebble",
+      framed("banner-bottom", "Pay by VietQR"),
+    ),
+    tile(
+      "Tips",
+      vietqr.page("payment", "tip-jar"),
+      "harbor",
+      framed("speech-bubble", "Tips welcome"),
+    ),
+  ],
+  cashapp: [
+    tile(
+      "Pay me",
+      cashapp.generator(),
+      "nature",
+      official("scan-to-pay", "Pay with Cash App"),
+    ),
+    tile(
+      "Tip jar",
+      cashapp.page("payment", "tip-jar"),
+      "emerald",
+      framed("sticker", "Tips welcome"),
+    ),
+    tile(
+      "Bake sale",
+      cashapp.page("menu", "juice-bar"),
+      "candyland",
+      framed("tag", "Pay here"),
+    ),
+    tile(
+      "Dues",
+      cashapp.page("feedback", "sign-up"),
+      "graphite",
+      framed("badge", "Pay your dues"),
+    ),
+  ],
+  revolut: [
+    tile(
+      "Pay me back",
+      revolut.generator(),
+      "ultramarine",
+      framed("speech-bubble", "Pay me back"),
+    ),
+    tile(
+      "Shared trip",
+      revolut.page("event", "party"),
+      "folio",
+      framed("ticket", "Trip kitty"),
+    ),
+    tile(
+      "Tips",
+      revolut.page("payment", "tip-jar"),
+      "classic",
+      official("scan-to-pay", "Pay with Revolut"),
+    ),
+    tile(
+      "Freelance",
+      revolut.page("payment", "invoice"),
+      "monochrome",
+      framed("banner-bottom", "Pay this invoice"),
+    ),
+  ],
+  telegram: [
+    tile(
+      "Channel",
+      telegram.links("podcast"),
+      "gradientBlue",
+      official("follow-us", "Join the channel"),
+    ),
+    tile(
+      "Group chat",
+      telegram.links("minimal"),
+      "ice",
+      framed("chat-bubble", "Join the group"),
+    ),
+    tile(
+      "Support",
+      telegram.generator(),
+      "harbor",
+      framed("speech-bubble", "Message us"),
+    ),
+    tile(
+      "Event updates",
+      telegram.page("event", "conference"),
+      "twitter",
+      framed("banner-top", "Live updates"),
+    ),
+  ],
+  signal: [
+    tile(
+      "Message me",
+      signal.generator(),
+      "periwinkle",
+      framed("chat-bubble", "Message me"),
+    ),
+    tile(
+      "Tips line",
+      signal.page("custom", "announcement"),
+      "slate",
+      framed("banner-bottom", "Send a tip"),
+    ),
+    tile(
+      "Group",
+      signal.links("minimal"),
+      "fog",
+      framed("speech-bubble", "Join the group"),
+    ),
+    tile("Contact", signal.page("vcard", "minimal"), "cobalt", null),
+  ],
+  discord: [
+    tile(
+      "Join the server",
+      discord.links("creator"),
+      "gradientPurple",
+      official("follow-us", "Join our Discord"),
+    ),
+    tile(
+      "Game night",
+      discord.page("event", "party"),
+      "vibrant",
+      framed("ticket", "Game night"),
+    ),
+    tile(
+      "Community",
+      discord.links("podcast"),
+      "amethystHaze",
+      framed("speech-bubble", "Come say hi"),
+    ),
+    tile(
+      "Support",
+      discord.generator(),
+      "boldTech",
+      framed("banner-bottom", "Get help"),
+    ),
+  ],
+  line: [
+    tile(
+      "Add friend",
+      line.generator(),
+      "emerald",
+      official("follow-us", "Add us on LINE"),
+    ),
+    tile(
+      "Shop",
+      line.page("business", "local-shop"),
+      "fern",
+      framed("tag", "Add for coupons"),
+    ),
+    tile(
+      "Restaurant",
+      line.page("menu", "juice-bar"),
+      "butter",
+      framed("speech-bubble", "Order on LINE"),
+    ),
+    tile(
+      "Salon",
+      line.page("booking", "salon"),
+      "seafoam",
+      framed("chat-bubble", "Book by chat"),
+    ),
+  ],
+  bluesky: [
+    tile(
+      "Follow",
+      bluesky.links("creator"),
+      "gradientOcean",
+      official("follow-us", "Follow on Bluesky"),
+    ),
+    tile(
+      "Talk slides",
+      bluesky.page("event", "conference"),
+      "periwinkle",
+      framed("banner-bottom", "Follow along"),
+    ),
+    tile(
+      "Newsroom",
+      bluesky.links("podcast"),
+      "ice",
+      framed("speech-bubble", "Read our posts"),
+    ),
+    tile("Profile", bluesky.generator(), "minimal", null),
+  ],
+  mastodon: [
+    tile(
+      "Follow",
+      mastodon.links("minimal"),
+      "orchid",
+      official("follow-us", "Follow on Mastodon"),
+    ),
+    tile(
+      "Community",
+      mastodon.links("podcast"),
+      "lavender",
+      framed("chat-bubble", "Join the chat"),
+    ),
+    tile(
+      "Meetup",
+      mastodon.page("event", "webinar"),
+      "harbor",
+      framed("badge", "Find us here"),
+    ),
+    tile("Profile", mastodon.generator(), "fog", null),
+  ],
+  twitch: [
+    tile(
+      "Watch live",
+      twitch.links("creator"),
+      "electric",
+      official("follow-us", "Watch on Twitch"),
+    ),
+    tile(
+      "Stream night",
+      twitch.page("event", "party"),
+      "gradientPurple",
+      framed("ticket", "Live tonight"),
+    ),
+    tile(
+      "Merch table",
+      twitch.links("shop"),
+      "pacman",
+      framed("sticker", "Follow the stream"),
+    ),
+    tile("Channel", twitch.generator(), "amethystHaze", null),
+  ],
+  soundcloud: [
+    tile(
+      "New track",
+      soundcloud.links("musician"),
+      "sunset",
+      official("audio-guide", "Listen now"),
+    ),
+    tile(
+      "DJ set",
+      soundcloud.page("event", "party"),
+      "ember",
+      framed("circle", "Hear the mix"),
+    ),
+    tile(
+      "Demo tape",
+      soundcloud.links("creator"),
+      "retro",
+      framed("polaroid", "Press play"),
+    ),
+    tile(
+      "Podcast",
+      soundcloud.links("podcast"),
+      "clay",
+      framed("phone", "Listen on the go"),
+    ),
+  ],
+  zoom: [
+    tile(
+      "Join the call",
+      zoom.page("event", "webinar"),
+      "gradientBlue",
+      framed("banner-bottom", "Join on Zoom"),
+    ),
+    tile(
+      "Class",
+      zoom.generator(),
+      "classic",
+      official("check-in", "Join the class"),
+    ),
+    tile(
+      "Office hours",
+      zoom.page("booking", "coach"),
+      "mint",
+      framed("speech-bubble", "Drop in"),
+    ),
+    tile(
+      "Webinar",
+      zoom.page("event", "conference"),
+      "eventTicket",
+      framed("ticket", "Save your seat"),
+    ),
+  ],
+  "google-meet": [
+    tile(
+      "Stand-up",
+      meet.generator(),
+      "nature",
+      framed("banner-bottom", "Join the meeting"),
+    ),
+    tile(
+      "Workshop",
+      meet.page("event", "webinar"),
+      "butter",
+      framed("ticket", "Join online"),
+    ),
+    tile(
+      "Tutoring",
+      meet.page("booking", "coach"),
+      "periwinkle",
+      framed("rounded-border", "Join the session"),
+    ),
+    tile(
+      "Room sign",
+      meet.page("custom", "announcement"),
+      "slate",
+      official("table-tent", "Join from here"),
+    ),
+  ],
+  waze: [
+    tile(
+      "Find us",
+      waze.page("business", "local-shop"),
+      "taxi",
+      official("check-in", "Drive here"),
+    ),
+    tile(
+      "Event parking",
+      waze.page("event", "wedding"),
+      "rose",
+      framed("banner-bottom", "Get directions"),
+    ),
+    tile(
+      "Shop",
+      waze.page("business", "florist"),
+      "terracotta",
+      framed("tag", "Drive to us"),
+    ),
+    tile(
+      "Delivery hub",
+      waze.generator(),
+      "fire",
+      framed("sticker", "Navigate here"),
+    ),
+  ],
+  litecoin: [
+    tile(
+      "Checkout",
+      litecoin.generator(),
+      "brass",
+      official("scan-to-pay", "Pay with Litecoin"),
+    ),
+    tile(
+      "Donate",
+      litecoin.page("payment", "donation"),
+      "slate",
+      official("donate"),
+    ),
+    tile(
+      "Meetup",
+      litecoin.page("event", "conference"),
+      "ice",
+      framed("sticker", "LTC accepted"),
+    ),
+    tile("Wallet", litecoin.page("business", "studio"), "fog", null),
+  ],
+  dogecoin: [
+    tile(
+      "Tip jar",
+      dogecoin.page("payment", "tip-jar"),
+      "butter",
+      framed("speech-bubble", "Tip in DOGE"),
+    ),
+    tile(
+      "Checkout",
+      dogecoin.generator(),
+      "amberMinimal",
+      official("scan-to-pay", "Pay with Dogecoin"),
+    ),
+    tile(
+      "Fundraiser",
+      dogecoin.page("payment", "donation"),
+      "sweetheart",
+      official("donate"),
+    ),
+    tile(
+      "Stall",
+      dogecoin.page("business", "local-shop"),
+      "popsicle",
+      framed("tag", "DOGE accepted"),
+    ),
+  ],
+  bitcoincash: [
+    tile(
+      "Checkout",
+      bitcoincash.generator(),
+      "jade",
+      official("scan-to-pay", "Pay with BCH"),
+    ),
+    tile(
+      "Cafe",
+      bitcoincash.page("menu", "juice-bar"),
+      "mint",
+      framed("tag", "BCH accepted"),
+    ),
+    tile(
+      "Donate",
+      bitcoincash.page("payment", "donation"),
+      "emerald",
+      official("donate"),
+    ),
+    tile("Invoice", bitcoincash.page("payment", "invoice"), "minimal", null),
+  ],
+  solana: [
+    tile(
+      "Checkout",
+      solana.generator(),
+      "gradientPurple",
+      official("scan-to-pay", "Pay with Solana"),
+    ),
+    tile(
+      "Event pass",
+      solana.page("event", "conference"),
+      "eventTicket",
+      framed("ticket", "Event pass"),
+    ),
+    tile(
+      "Tips",
+      solana.page("payment", "tip-jar"),
+      "lavender",
+      framed("speech-bubble", "Tips in SOL"),
+    ),
+    tile("Merch", solana.page("business", "studio"), "boldTech", null),
+  ],
+  monero: [
+    tile(
+      "Checkout",
+      monero.generator(),
+      "tangerine",
+      official("scan-to-pay", "Pay with Monero"),
+    ),
+    tile(
+      "Donate",
+      monero.page("payment", "donation"),
+      "graphite",
+      official("donate"),
+    ),
+    tile(
+      "Stall",
+      monero.page("business", "local-shop"),
+      "sunset",
+      framed("sticker", "XMR accepted"),
+    ),
+    tile("Invoice", monero.page("payment", "invoice"), "monochrome", null),
   ],
 };
 

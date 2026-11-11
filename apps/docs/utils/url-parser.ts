@@ -25,6 +25,10 @@ export function parseURL(url: string): ParsedURL | null {
   const web = parseWebUrl(trimmedUrl);
   const on = (...domains: string[]) => isOnDomain(web, ...domains);
 
+  // Content types added 2026-11-11, by the link's host
+  const linked = linkedContent(web, trimmedUrl);
+  if (linked) return linked;
+
   // Instagram
   if (on("instagram.com", "instagr.am")) {
     const usernameMatch = trimmedUrl.match(
@@ -401,6 +405,77 @@ export function parseURL(url: string): ParsedURL | null {
     type: "text",
     config: { type: "text", text: trimmedUrl },
   };
+}
+
+/**
+ * Links that belong to the content types added on 2026-11-11 (Telegram,
+ * Signal, Discord, LINE, Bluesky, Twitch, SoundCloud, Zoom, Google Meet,
+ * Waze, Cash App, Revolut). Each form takes the pasted link as it is.
+ */
+function linkedContent(web: URL | null, raw: string): ParsedURL | null {
+  if (!web) return null;
+  const on = (...domains: string[]) => isOnDomain(web, ...domains);
+  const path = web.pathname;
+  const as = (config: QRContentConfig): ParsedURL => ({
+    type: config.type,
+    config,
+  });
+
+  if (on("t.me", "telegram.me", "telegram.dog") && path.length > 1) {
+    return as({ type: "telegram", username: raw });
+  }
+  if (on("signal.me", "signal.group") && web.hash.length > 2) {
+    return as({ type: "signal", link: raw });
+  }
+  if (
+    (on("discord.gg") && path.length > 1) ||
+    (on("discord.com", "discordapp.com") && path.startsWith("/invite/"))
+  ) {
+    return as({ type: "discord", invite: raw });
+  }
+  if (on("line.me", "lin.ee") && path.length > 1) {
+    return as({ type: "line", username: raw });
+  }
+  if (on("bsky.app") && path.startsWith("/profile/")) {
+    return as({ type: "bluesky", handle: raw });
+  }
+  if (on("twitch.tv") && /^\/[A-Za-z0-9_]{4,25}\/?$/.test(path)) {
+    return as({ type: "twitch", username: raw });
+  }
+  if (on("soundcloud.com", "snd.sc") && path.length > 1) {
+    return as({ type: "soundcloud", username: raw });
+  }
+  if (
+    on("zoom.us", "zoom.com", "zoomgov.com") &&
+    /^\/(?:j|w|s|my)\/[^/]+/.test(path)
+  ) {
+    return as({ type: "zoom", meeting: raw });
+  }
+  if (
+    on("meet.google.com") &&
+    /^\/[a-z]{3}-[a-z]{4}-[a-z]{3}\/?$/i.test(path)
+  ) {
+    return as({ type: "google-meet", meeting: raw });
+  }
+  if (on("waze.com") && path.startsWith("/ul")) {
+    const point = web.searchParams.get("ll");
+    const query = web.searchParams.get("q");
+    const location = point ? point.replace(",", ", ") : query;
+    if (location) {
+      return as({
+        type: "waze",
+        location,
+        navigate: web.searchParams.get("navigate") === "yes",
+      });
+    }
+  }
+  if (on("cash.app") && path.startsWith("/$")) {
+    return as({ type: "cashapp", username: raw });
+  }
+  if (on("revolut.me") && path.length > 1) {
+    return as({ type: "revolut", username: raw });
+  }
+  return null;
 }
 
 /**
