@@ -1,0 +1,41 @@
+---
+title: "Escáner de códigos QR"
+description: "Una zona de arrastre que lee un código QR desde una imagen en el navegador, con acciones para copiar y abrir el enlace."
+icon: Scan
+---
+
+<ComponentLinks name="qr-code-scanner" />
+
+<ComponentPreview name="qr-code-scanner-demo" />
+
+## Instalación [#installation]
+
+<InstallationTabs name="qr-code-scanner" />
+
+## Uso [#usage]
+
+```tsx
+import { QrCodeScanner } from "@/components/qr-code-scanner";
+```
+
+```tsx
+<QrCodeScanner onResult={(value) => console.log(value)} />
+```
+
+Las personas sueltan una imagen o hacen clic para elegir una. La decodificación se ejecuta en el navegador con los [ayudantes de detección](/docs/qr-detection) de qrdx, así que la imagen nunca sale del dispositivo. Lee archivos de imagen, no una transmisión de cámara en vivo.
+
+El resultado aparece con un botón de copiar, además de un botón "Abrir enlace" cuando es una URL `http` o `https`.
+
+## Ejemplos [#examples]
+
+### Comprobar un resultado [#checking-a-result]
+
+`onResult` recibe el texto decodificado, así que puedes actuar con él, por ejemplo para registrar la entrada de un ticket. `label` cambia el encabezado de la zona de arrastre. Descarga el código de ejemplo de arriba y suéltalo para ver un ticket válido.
+
+<ComponentPreview name="qr-code-scanner-tickets" />
+
+## Referencia de la API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-scanner.tsx" type="{ [K in keyof QrCodeScannerProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeScannerProps[K] }" />
+
+Cualquier otra prop, como `className`, se pasa al `<div>` que lo envuelve.

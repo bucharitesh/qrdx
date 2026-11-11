@@ -1,0 +1,95 @@
+---
+title: "短縮リンクとファイルピッカー"
+description: "お持ちの Bitly、Rebrandly、Short.io のアカウントでQRコードのリンクを短縮したり、Dropbox の共有リンクをエンコードしたりできます。"
+icon: Blocks
+---
+
+[設定 → 連携](/settings/integrations)でアカウントを接続すると、QRエディターの **URL** タイプにある **Webサイトのアドレス** 欄の横の **リンクを使用…** メニューに表示されます。**あなたのアカウント** の下に、各サービスでできることが表示されます。
+
+- **短縮**: Bitly、Rebrandly、Short.io です。**新規作成** でリンクを作成するか、**既存を使用** で既にあるリンクを選びます。QRコードにはその短縮リンクがエンコードされるため、リンク先は後からそのサービス側で変更でき、クリック数も計測されます。
+- **ファイル**: Dropbox<IfAvailable integration="onedrive">、OneDrive</IfAvailable><IfAvailable integration="box">、Box</IfAvailable><IfAvailable integration="notion">、Notion</IfAvailable>。参照または検索して、ファイルまたはフォルダーを選びます。QRdx がそのアイテムの共有リンクを作成し、QRコードにエンコードします。
+
+まだ接続していないサービスは、同じメニューの下部にある **アカウントを接続** から接続できます。
+
+ホスト型ページでもクラウド上のファイルを使えます。PDF、音声、動画、ダウンロードの各ブロックでは、アップロードボタンの横に **Dropbox から**<IfAvailable integration="onedrive">、**OneDrive から**</IfAvailable><IfAvailable integration="box">、**Box から**</IfAvailable> が表示されます。
+
+連携はユーザーアカウントに紐づきます。トークンと API キーは暗号化して保存され、いつでも接続を解除できます。
+
+## 短縮リンク [#short-links]
+
+| サービス | 接続方法 | ドメイン | バックハーフ |
+| --- | --- | --- | --- |
+| Bitly | Bitly でサインインするか、汎用アクセストークンを貼り付けます（Settings → Developer settings → API） | bit.ly とお持ちのブランドドメイン | Bitly が決定 |
+| Rebrandly | API キーを貼り付けます（Account → API keys） | rebrand.ly とお持ちのブランドドメイン | 任意のスラッシュタグ、またはランダム |
+| Short.io | シークレット API キーを貼り付けます（Integrations & API → API） | お持ちの Short.io ドメイン | 任意のパス、またはランダム |
+
+各連携の設定ページには、お持ちのドメインが表示され、新しいリンクで使うデフォルトのドメインを選べます。リンクごとに別のドメインを選ぶこともできます。
+
+<Callout type="info" title="リンク先を後から変更する">
+QRdx はリンクを作成するだけで、リンク先の編集は Bitly、Rebrandly、Short.io で行います。Bitly では、リンク先を変更できるのは有料プランのみです。
+</Callout>
+
+リンク先を QRdx 上で編集でき、スキャン分析も使いたい場合は、代わりに[動的QRコード](/docs/dynamic-qr-codes)を使ってください。
+
+## ファイルピッカー [#file-pickers]
+
+**Dropbox** は共有リンクをエンコードします（新規作成するか、既存のリンクを再利用します）。チームがチームリンクのみを許可している場合を除き、リンクを知っていれば誰でも開けます。
+
+<IfAvailable integration="onedrive">
+
+**OneDrive** は閲覧専用の共有リンクをエンコードします。リンクを知っていれば誰でも開けますが、管理者が「Anyone」リンクを無効にしている場合は、組織内のユーザーのみが開けます。
+
+</IfAvailable>
+
+<IfAvailable integration="box">
+
+**Box** は「リンクを知っているユーザー」に設定したアイテムの共有リンクをエンコードします。リンクを知っていれば誰でも開けますが、管理者が要求している場合は、社内のユーザーのみが開けます。
+
+</IfAvailable>
+
+<IfAvailable integration="notion">
+
+**Notion** はページの「Publish to web」リンクをエンコードします。ページを公開すると、誰でも開けます。
+
+</IfAvailable>
+
+全員がリンクを開けるわけではない場合、選択した直後に QRdx がその旨をお知らせします。そのため、印刷したコードがサインインページに誘導してしまうことはありません。
+
+<IfAvailable integration="notion">
+
+**Notion のページ。** QRdx は、共有されたページだけを参照できます。接続時に Notion からどのページを共有するか尋ねられます。後から追加するには、Notion でページを開き、**•••** → **Connections** をクリックして QRdx を追加します（または再接続してページを選びます）。
+
+Notion の API ではページを公開できません。ご自身で公開（**Share** → **Publish** → **Publish to web**）してから、もう一度ページを選ぶと、QRdx が公開リンクを使用します。
+
+</IfAvailable>
+
+### ホスト型ページのファイル [#files-on-hosted-pages]
+
+Dropbox<IfAvailable integration="box">と Box</IfAvailable>では、ページのブロックにファイルへの直接リンクが設定されるため、音声・動画プレーヤーや PDF ビューアーで読み込めます。<IfAvailable integration="onedrive">OneDrive の共有リンクは OneDrive のビューアーで開くため、ブロックではリンクとして表示されます。</IfAvailable>
+
+## 接続の解除 [#disconnecting]
+
+接続を解除すると、保存されているトークンが削除されます。Dropbox<IfAvailable integration="box">、Box</IfAvailable><IfAvailable integration="notion">、Notion</IfAvailable> では、QRdx がサービス側でもトークンを失効させます。Bitly、Rebrandly、Short.io では、今後使わない場合はそのサービス側でもキーを削除してください<IfAvailable integration="onedrive">。OneDrive では、Microsoft アカウントのアプリのアクセス許可から QRdx を削除してください</IfAvailable>。
+
+既に作成したQRコードは引き続き動作します。QRコードに含まれているのは短縮リンクまたは共有リンクであり、トークンではありません。
+
+## セルフホスティング [#self-hosting]
+
+Rebrandly と Short.io はサーバー側の設定が不要です。それ以外は各サービスでアプリを作成し、そのクライアント ID とシークレットを環境変数に設定する必要があります。設定がない場合、連携には「未設定」と表示されます。Bitly は、貼り付けたアクセストークンを使えば、設定がなくても動作します。
+
+| 連携 | 変数 | リダイレクト URI |
+| --- | --- | --- |
+| Bitly（サインイン） | `BITLY_CLIENT_ID`, `BITLY_CLIENT_SECRET` | `<app url>/api/integrations/bitly/callback` |
+| Dropbox | `DROPBOX_CLIENT_ID`, `DROPBOX_CLIENT_SECRET` | `<app url>/api/integrations/dropbox/callback` |
+| OneDrive | `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET` | `<app url>/api/integrations/onedrive/callback` |
+| Box | `BOX_CLIENT_ID`, `BOX_CLIENT_SECRET` | `<app url>/api/integrations/box/callback` |
+| Notion | `NOTION_CLIENT_ID`, `NOTION_CLIENT_SECRET` | `<app url>/api/integrations/notion/callback` |
+
+`<app url>` は、開発環境では `http://localhost:3000`、それ以外では本番環境の URL です。また、本番環境ではどの連携にも `INTEGRATION_ENCRYPTION_KEY` が必要です。保存されるトークンとキーの暗号化に使われます。
+
+要求するスコープ:
+
+- **Dropbox:** `account_info.read`, `files.metadata.read`, `sharing.read`, `sharing.write`
+- **OneDrive:** `offline_access`, `Files.ReadWrite`（共有リンクの作成に Microsoft Graph の書き込みアクセスが必要です）
+- **Box:** すべてのファイルとフォルダーの読み取りと書き込み（`root_readwrite`）
+- **Bitly、Notion:** スコープなし。Notion では、共有するページをユーザーに尋ねます

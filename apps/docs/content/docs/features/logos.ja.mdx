@@ -1,0 +1,166 @@
+---
+title: "ロゴ"
+description: "スキャンを妨げずに、QRコードの中央にロゴを追加できます。"
+icon: Image
+---
+
+スキャンのしやすさを保ったまま、QRコードにブランドロゴを追加できます。
+
+## 基本のロゴ [#basic-logo]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+ロゴを使うときは、必ず高めの誤り訂正レベル（`Q` または `H`）を使用してください。
+
+## サイズ、余白、位置 [#size-clear-space-and-position]
+
+`logoOptions` は、描画サイズに依存しない単位でロゴをレイアウトします。`QRCode` と `getQRData` で使用できます。
+
+- `size`: コードの幅に対するロゴの幅の割合で、`0.1` から `0.3` の範囲です（デフォルトは `0.25`）。当社のデコードテストでは、レベル H でも 25% を超えると読み取れなくなります。
+- `padding`: ロゴの周囲の余白で、`0` から `2` モジュールの範囲です。
+- `x` と `y`: コード上でのロゴの中心の位置で、`0` から `1` の範囲です（デフォルトは中央を表す `0.5`）。ロゴは常にコードの内側に収まります。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="https://example.com/logo.png"
+  level="H"
+  logoOptions={{ size: 0.2, padding: 1, x: 0.6, y: 0.55 }}
+/>
+```
+
+`QRCode` と `getQRData` は、コードが修復できる範囲を超える大きさのロゴを描画しません。ロゴ（余白を含む）は、重なったすべてのコードワードを損ないます。また、各誤り訂正ブロックが修復できる数には限りがあります。そのため、損なわれたコードワードをブロックごとに数え、最も負荷の大きいブロックでも修復容量の 60% 以下になるまでロゴを縮小します（Logo QR バッジと同じ基準です）。小さいコードに入る量はより少なくなります。レベル Q で短いリンクの場合、ロゴは幅の約 13〜17% が目安です。レベル H や短いコンテンツでは、より大きなロゴが入ります。`getLogoSizeLimit(props)` は、そのコードで使える最大サイズを返します。スキャンスコアも同じ数え方で判定します。`QRCodeSVG`、`QRCodeCanvas`、`getQRAsSVG` の生の `imageSettings` にも同じ上限が適用されます。収まるロゴは指定どおりに描画され、大きすぎるロゴはその中心を基準に縮小されます。
+
+ロゴを移動する場合は、3つの角のアイと、右下隅付近の小さな四角形（デコーダーが遠近を補正するために使うアライメントパターン）に重ならないようにしてください。これらのいずれかを覆うロゴは、スキャンスコアで不合格になります。
+
+Playground では、**デザイン → ロゴオプション** で同じ設定を操作できます。さらに **大きなロゴ向けに誤り訂正を引き上げる**（`autoLevel`）も使えます。
+
+## 形状、プレート、背景 [#shape-plate-and-background]
+
+- `shape`: ロゴを `"square"`（アップロードしたまま。デフォルト）、角丸の `"rounded"`、または `"circle"` に切り抜きます。
+- `plate`: ロゴの背後に同じ形で描かれる単色の塗りです。ロゴはその内側に配置されます。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="/logo.png"
+  level="H"
+  logoOptions={{ size: 0.22, shape: "circle", plate: "#ffffff" }}
+/>
+```
+
+切り抜きは SVG のクリップパスです。印刷用の PDF と EPS も同じ輪郭で切り抜かれるため、どのダウンロード形式でも見た目は同じです。EPS は透明をサポートしないため、ロゴの透明部分は白で印刷されます。
+
+アップロードしたロゴが単色の四角形の上に乗っている場合（JPEG によくあります）、Playground には **背景を削除** が表示されます。四隅が同じ色のとき、その色を端から内側へ向かって消去します。そのため、マーク内部にある同じ色（たとえば白い文字）は残ります。コードでは、ブラウザー上で `removeLogoBackground(src)` が処理後の PNG をデータ URL として返します。`removeLogoBackdrop(pixels)` は、RGBA ピクセルに対してどこでも同じ処理を行います。
+
+## 詳細設定 [#advanced-control]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "https://example.com/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true,
+    x: 216,
+    y: 216,
+    opacity: 0.9
+  }}
+  level="Q"
+/>
+```
+
+## サイズの目安 [#size-guidelines]
+
+- **256px の QR**: 32〜48px のロゴ
+- **512px の QR**: 64〜96px のロゴ
+- **1024px の QR**: 128〜192px のロゴ
+
+ロゴはQRコードのサイズの 10〜30% に収めてください。
+
+## ロゴのくり抜き [#logo-excavation]
+
+### 機能の概要 [#what-it-does]
+
+くり抜きは、ロゴの下にあるQRモジュールを取り除き、スキャンしやすくします。
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true  // Recommended for most logos
+  }}
+/>
+```
+
+### 余白と誤り訂正 [#clear-space-and-error-correction]
+
+`padding`（`width` と `height` と同じピクセル単位）は、ロゴの周囲の余分なモジュールを消去し、ロゴの端がコードに触れないようにします。`autoLevel` は、消去した領域がコードの 7% を超えると誤り訂正を H に引き上げ、大きなロゴでも読み取れるようにします。デフォルトではオフのため、既存のコードのレベルは変わりません。
+
+```tsx
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  autoLevel
+  imageSettings={{ src: "/logo.png", height: 110, width: 110, excavate: true, padding: 8 }}
+/>
+```
+
+ロゴは `margin` に関係なくピクセルサイズを保ちます（0.0.46 までのリリースでは、マージンが大きくなるとロゴが縮小されていました）。
+
+### 使うべき場面 [#when-to-use]
+
+- ✅ 背景が単色のロゴ
+- ✅ スキャンの妨げになるおそれのあるロゴ
+- ❌ 透明なロゴ（任意）
+- ⚠️ 必ず実機でスキャンをテストしてください
+
+## ロゴの形式 [#logo-formats]
+
+- **PNG** — 透明を扱えるため最適です
+- **JPG** — 写真に向いています
+- **SVG** — 拡大縮小できますが、読み込みで問題が起きる場合があります
+- **WebP** — 新しい形式で、圧縮率が高いです
+
+## 中心位置の計算 [#center-calculation]
+
+```tsx
+const qrSize = 512;
+const logoSize = 80;
+const position = {
+  x: (qrSize - logoSize) / 2,  // 216
+  y: (qrSize - logoSize) / 2   // 216
+};
+```
+
+## ベストプラクティス [#best-practices]
+
+1. 透明対応の PNG 形式を使う
+2. 単色背景のロゴにはくり抜きを有効にする
+3. 誤り訂正は `Q` または `H` を使う
+4. ロゴのサイズは適度に保つ（10〜30%）
+5. 対象のデバイスでスキャンをテストする
+
+## 次のステップ [#next-steps]
+
+- [ダウンロード](/docs/features/downloads) — ロゴ付きのQRコードをエクスポートします
+- [テンプレート](/docs/features/templates) — ロゴとテンプレートを組み合わせます
+- [色とグラデーション](/docs/features/colors-gradients) — 色でロゴをスタイリングします

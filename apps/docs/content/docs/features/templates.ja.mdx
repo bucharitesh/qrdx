@@ -1,0 +1,141 @@
+---
+title: "テンプレート"
+description: "デザイン済みのフレームテンプレートをQRコードに適用したり、独自のテンプレートを登録したりできます。"
+icon: LayoutTemplate
+---
+
+プロフェッショナルなQRコードのスタイルをすぐに適用できます。
+
+## テンプレートとは [#what-are-templates]
+
+テンプレートは、色、パターン、ビジュアルスタイルを組み合わせた、すぐに使えるパッケージです。
+
+## 利用可能なテンプレート [#available-templates]
+
+### Default [#default]
+クラシックな白黒のデザインです。
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" templateId="default" size={256} />
+```
+
+### Arrow [#arrow]
+モダンな幾何学デザインです。
+
+```tsx
+<QRCode value="https://example.com" templateId="Arrow" size={256} />
+```
+
+### Standard Box [#standard-box]
+すっきりと整った構造のデザインです。
+
+```tsx
+<QRCode value="https://example.com" templateId="StandardBox" size={256} />
+```
+
+### Square Border [#square-border]
+輪郭がはっきりした枠付きのデザインです。
+
+```tsx
+<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
+```
+
+### Striked Box [#striked-box]
+斜めの要素を使ったダイナミックなデザインです。
+
+```tsx
+<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
+```
+
+### Halloween [#halloween]
+ハロウィンの季節限定テーマです。
+
+```tsx
+<QRCode value="https://example.com" templateId="Halloween" size={256} />
+```
+
+## テンプレートのカスタマイズ [#customize-templates]
+
+テンプレートの既定値を上書きします。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  fgColor="#your-brand-color"
+  hideLogo={false}
+  logo="/your-logo.png"
+  size={512}
+/>
+```
+
+## テンプレートレジストリ [#template-registry]
+
+### すべてのテンプレートを取得 [#get-all-templates]
+
+```tsx
+import { getAllTemplates } from 'qrdx';
+
+const templates = getAllTemplates();
+```
+
+### テンプレートIDを取得 [#get-template-ids]
+
+```tsx
+import { getTemplateIds } from 'qrdx';
+
+const ids = getTemplateIds();
+// Returns: ['default', 'Arrow', 'StandardBox', ...]
+```
+
+## カスタムテンプレート [#custom-templates]
+
+独自のテンプレートを作成できます。
+
+```tsx
+const brandTemplate = {
+  id: 'brand-template',
+  name: 'Brand Template',
+  colors: {
+    fgColor: '#1a56db',
+    bgColor: '#ffffff',
+    eyeColor: '#0d47a1',
+    dotColor: '#3b82f6'
+  },
+  bodyPattern: 'rounded',
+  cornerEyePattern: 'rounded',
+  cornerEyeDotPattern: 'rounded'
+};
+
+<QRCode
+  value="https://example.com"
+  customTemplate={brandTemplate}
+  size={256}
+/>
+```
+
+## テンプレートを使う場面 [#when-to-use-templates]
+
+- **ブランドの一貫性** — すべてのQRコードのスタイルをそろえられます
+- **簡単なセットアップ** — プロ品質の仕上がりをすばやく得られます
+- **季節のキャンペーン** — テーマに合ったテンプレートを使えます
+- **一括生成** — 統一したスタイルを適用できます
+
+## テンプレート選択ガイド [#template-selection-guide]
+
+| テンプレート | 適した用途 | 雰囲気 |
+|----------|----------|------|
+| Default | プロフェッショナル | ニュートラル |
+| Arrow | テック、モダン | ダイナミック |
+| Standard Box | 企業向け | プロフェッショナル |
+| Square Border | フォーマル | 構造的 |
+| Striked Box | マーケティング | エネルギッシュ |
+| Halloween | 季節限定 | 楽しい |
+
+## 次のステップ [#next-steps]
+
+- [パターン](/docs/features/patterns) — パターンの詳細なカスタマイズ
+- [カラーとグラデーション](/docs/features/colors-gradients) — 高度な色設定
+- [ロゴ](/docs/features/logos) — テンプレートにロゴを追加

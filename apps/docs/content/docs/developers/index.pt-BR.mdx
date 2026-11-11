@@ -1,0 +1,110 @@
+---
+title: "Desenvolvedores"
+description: "Todas as formas de criar com o QRdx, desde uma URL de imagem sem chave até a REST API, webhooks, MCP e a CLI."
+icon: Terminal
+---
+
+Escolha a opção que combina com o que você está criando. As três primeiras não exigem conta nem chave.
+
+## Sem precisar de chave [#no-key-needed]
+
+<Cards>
+  <Card
+    icon={<ImageDown />}
+    href="/docs/developers/image-api"
+    title="API de imagem de QR code"
+    description="Uma imagem de QR code a partir de uma URL. Cole em Markdown, HTML ou em um e-mail."
+  />
+  <Card
+    icon={<Bot />}
+    href="/docs/developers/mcp"
+    title="Servidor MCP"
+    description="Deixe Claude, Cursor, VS Code e outras ferramentas de IA criarem QR codes estilizados."
+  />
+  <Card
+    icon={<Terminal />}
+    href="/docs/developers/cli"
+    title="CLI"
+    description="QR codes em SVG, PNG, WebP ou EPS direto do seu terminal ou do CI."
+  />
+</Cards>
+
+## Com uma conta [#with-an-account]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/developers/quickstart"
+    title="Início rápido"
+    description="Sua primeira requisição à API em menos de dois minutos, depois uma chave de API e um QR code dinâmico."
+  />
+  <Card
+    icon={<LockKeyhole />}
+    href="/docs/developers/api-keys"
+    title="Chaves de API"
+    description="Crie uma chave qrdx_ para seus servidores e scripts, restrita a um workspace."
+  />
+  <Card
+    icon={<Code />}
+    href="/docs/developers/rest-api"
+    title="REST API e OAuth"
+    description="Crie e edite QRs dinâmicos, consulte leituras e reporte conversões via HTTP."
+  />
+  <Card
+    icon={<FileCode />}
+    href="/docs/developers/api"
+    title="Referência da API"
+    description="Todos os endpoints, com exemplos em curl, JavaScript e Python, e um painel Try it."
+  />
+  <Card
+    icon={<Webhook />}
+    href="/docs/webhooks"
+    title="Webhooks"
+    description="Eventos assinados para leituras, alterações de QR codes e respostas de formulários. Funciona com Zapier, Make e n8n."
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/n8n"
+    title="n8n"
+    description="Nós do QRdx para o n8n: imagens de QR code, QR codes dinâmicos, leituras e um gatilho para eventos do QRdx."
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/build-an-integration"
+    title="Crie uma integração"
+    description="Permita que as pessoas conectem a conta do QRdx ao seu app com OAuth 2.0 e PKCE."
+  />
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/developers/errors"
+    title="Erros"
+    description="Todos os erros que a API retorna, o que significam e como corrigi-los."
+  />
+</Cards>
+
+## No seu próprio código [#in-your-own-code]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/getting-started"
+    title="Biblioteca React"
+    description="Renderize e exporte QR codes estilizados com o pacote qrdx."
+  />
+  <Card
+    icon={<Server />}
+    href="/docs/self-hosting"
+    title="Hospedagem própria"
+    description="Rode o app inteiro, incluindo os QR codes dinâmicos, nos seus próprios servidores."
+  />
+</Cards>
+
+## URL base e autenticação [#base-url-and-authentication]
+
+A REST API fica em `https://api.qrdx.dev/v1`. As mesmas rotas também respondem em `https://qrdx.dev/api/v1`.
+
+As requisições se autenticam com uma [chave de API](/docs/developers/api-keys) no header `Authorization: Bearer`. Apps que agem em nome de outros usuários do QRdx enviam ali um [token de acesso OAuth 2.0](/docs/developers/rest-api#get-an-access-token). O [início rápido](/docs/developers/quickstart#create-an-api-key) cria uma chave e faz uma primeira requisição.
+
+## Fique por dentro das novidades [#stay-up-to-date]
+
+As mudanças na biblioteca, na CLI e na API estão no [changelog](/changelogs). O código-fonte está no [GitHub](https://github.com/bucharitesh/qrdx).

@@ -1,0 +1,183 @@
+---
+title: "快速入门"
+description: "两分钟内发出你的第一个 QRdx API 请求，无需密钥。然后获取 API 密钥，创建你的第一个动态二维码。"
+icon: Rocket
+---
+
+QRdx API 分为两部分。图片部分什么都不需要：无需账户，无需密钥。动态二维码、扫描和 webhook 属于某个工作区，因此需要 API 密钥。
+
+## 1. 生成二维码（无需密钥） [#1-make-a-qr-code-no-key]
+
+运行下面的命令。它会保存一张打开 qrdx.dev 的二维码 PNG 图片：
+
+<Tabs groupId="language" persist items={["curl", "JavaScript", "Python"]}>
+  <Tab value="curl">
+    ```bash
+    curl "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png" -o qr.png
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    // Node 18 or later (save as qr.mjs)
+    import { writeFile } from "node:fs/promises";
+
+    const url = new URL("https://api.qrdx.dev/v1/qr");
+    url.searchParams.set("data", "https://qrdx.dev");
+    url.searchParams.set("format", "png");
+
+    const response = await fetch(url);
+    await writeFile("qr.png", Buffer.from(await response.arrayBuffer()));
+    ```
+  </Tab>
+  <Tab value="Python">
+    ```python
+    # pip install requests
+    import requests
+
+    response = requests.get(
+        "https://api.qrdx.dev/v1/qr",
+        params={"data": "https://qrdx.dev", "format": "png"},
+    )
+    response.raise_for_status()
+    open("qr.png", "wb").write(response.content)
+    ```
+  </Tab>
+</Tabs>
+
+这就是一次可用的 API 调用。URL 本身就是图片，因此也可以直接用在 `<img>` 标签中：
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&fg=111111&body=circle" alt="QR code for qrdx.dev" />
+```
+
+通过查询参数可以更改颜色、形状、尺寸和格式，也可以在浏览器中到[生成二维码图片](/docs/developers/api/get-qr-image)页面试用：其中的 **Try it** 面板会发送请求并显示图片。图片请求不计入任何配额；限制为每个 IP 地址每分钟 300 次请求。
+
+## 2. 创建 API 密钥 [#create-an-api-key]
+
+API 的其他功能都作用于某个工作区：创建动态二维码、更改它们的指向、读取它们的扫描数据。这些请求需要在 `Authorization` 标头中携带 API 密钥。
+
+1. 打开[设置 → API 密钥与应用](/dashboard?to=settings/developers&new=1)（如有需要请先登录）。**创建密钥**表单随即打开。
+2. 保持选中**完全访问**，然后选择**创建密钥**。
+3. 复制密钥。它只显示一次。如果你想直接粘贴使用，对话框中还会显示一条用于创建动态二维码的 curl 请求，其中已填入你的密钥。
+
+为后续步骤导出密钥：
+
+```bash
+export QRDX_API_KEY=qrdx_...
+```
+
+该密钥以你的身份在创建它时所打开的工作区中执行操作，使用它的请求会计入该工作区的每日配额（免费版为 1,000 次请求）。[API 密钥](/docs/developers/api-keys)介绍了权限范围、团队、有效期和吊销。
+
+## 3. 创建动态二维码 [#3-create-a-dynamic-code]
+
+动态二维码是一个短链接，打印之后你仍可以把它指向别处：
+
+<Tabs groupId="language" persist items={["curl", "JavaScript", "Python"]}>
+  <Tab value="curl">
+    ```bash
+    curl -X POST https://api.qrdx.dev/v1/codes \
+      -H "Authorization: Bearer $QRDX_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"destinationUrl": "https://example.com", "title": "My first code"}'
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    const response = await fetch("https://api.qrdx.dev/v1/codes", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.QRDX_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        destinationUrl: "https://example.com",
+        title: "My first code",
+      }),
+    });
+    const { data: code } = await response.json();
+    console.log(code.shortLink);
+    ```
+  </Tab>
+  <Tab value="Python">
+    ```python
+    import os
+    import requests
+
+    response = requests.post(
+        "https://api.qrdx.dev/v1/codes",
+        headers={"Authorization": f"Bearer {os.environ['QRDX_API_KEY']}"},
+        json={"destinationUrl": "https://example.com", "title": "My first code"},
+    )
+    response.raise_for_status()
+    code = response.json()["data"]
+    print(code["shortLink"])
+    ```
+  </Tab>
+</Tabs>
+
+响应为 `201 Created`，并附带新建的二维码：
+
+```json
+{
+  "data": {
+    "id": "cm5code0spring0menu00001",
+    "slug": "aB3dE5f",
+    "shortLink": "https://qrdx.dev/q/aB3dE5f",
+    "destinationUrl": "https://example.com/",
+    "title": "My first code",
+    "status": "active",
+    "scanCount": 0
+  }
+}
+```
+
+（此处有删减：[创建二维码](/docs/developers/api/create-codes)列出了所有字段。）二维码编码的是 `shortLink`。用第 1 步中的 Image API 渲染它，即 `https://api.qrdx.dev/v1/qr?data=https://qrdx.dev/q/aB3dE5f`，然后打印即可。
+
+## 4. 把它指向别处 [#4-point-it-somewhere-else]
+
+你可以随时更改目标地址；已打印的二维码仍然有效：
+
+```bash
+curl -X PATCH https://api.qrdx.dev/v1/codes/$CODE_ID \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/new-page"}'
+```
+
+扫描一次二维码，然后用 `GET /v1/codes/$CODE_ID/scans` 读取它的分析数据（[获取扫描分析](/docs/developers/api/get-code-scans)）。
+
+## 出错时 [#when-something-goes-wrong]
+
+每个错误都是 JSON 格式，带有稳定的 `code` 和说明如何处理的消息：
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Missing API key. Send an API key as \"Authorization: Bearer <key>\"; create one at https://qrdx.dev/dashboard?to=settings/developers. OAuth access tokens go in the same header.",
+  "status": 401,
+  "docs": "https://qrdx.dev/docs/developers/api-keys"
+}
+```
+
+[错误页面](/docs/developers/errors)列出了每个错误代码及其解决办法。
+
+## 代表其他人操作 [#get-an-access-token]
+
+API 密钥以你自己的身份操作。如果你的产品需要代表其他人调用 QRdx，请改为注册一个 OAuth 应用：每个人只需批准一次，你的服务器就会获得对应其账户的访问令牌，并通过同样的 `Authorization: Bearer` 标头发送。上面的所有请求，只要把密钥换成令牌，无需任何改动即可使用。参见 [REST API 与 OAuth](/docs/developers/rest-api#get-an-access-token) 和[构建集成](/docs/developers/build-an-integration)。
+
+## 后续步骤 [#next-steps]
+
+<Cards>
+  <Card title="API 参考" href="/docs/developers/api">
+    所有端点，附有 curl、JavaScript 和 Python 示例以及 Try it 面板。
+  </Card>
+  <Card title="错误" href="/docs/developers/errors">
+    所有错误代码、含义及解决方法。
+  </Card>
+  <Card title="Webhook" href="/docs/webhooks">
+    将扫描和新建的二维码推送到你的服务器（Business）。
+  </Card>
+  <Card title="速率限制" href="/docs/developers/rest-api#rate-limits">
+    各套餐的每日配额以及 `X-RateLimit-*` 标头。
+  </Card>
+</Cards>

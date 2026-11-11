@@ -1,0 +1,88 @@
+---
+title: "帮助中心"
+description: "解答二维码制作、动态二维码、页面、账单和账户方面的问题。无需编写代码。"
+icon: LifeBuoy
+---
+
+import { HelpSearch, StillStuck } from "@/components/docs/help-home";
+
+<HelpSearch />
+
+## 常见问题 [#common-questions]
+
+- [制作你的第一个二维码](/docs/help/getting-started/first-qr-code)
+- [静态还是动态，你需要哪一种？](/docs/help/getting-started/static-vs-dynamic)
+- [更改二维码指向的链接](/docs/help/dynamic-codes/change-the-link)
+- [二维码无法扫描](/docs/help/troubleshooting/wont-scan)
+- [下载并打印二维码](/docs/help/getting-started/download-and-print)
+- [停止付费后，你的二维码会怎样](/docs/help/account-and-billing/never-hostage)
+- [取消订阅](/docs/help/account-and-billing/cancel)
+- [扫描后显示错误页面](/docs/help/troubleshooting/error-pages)
+
+## 按主题浏览 [#browse-by-topic]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/help/getting-started/first-qr-code"
+    title="入门"
+    description="制作、下载并打印你的第一个二维码。静态或动态。"
+  />
+  <Card
+    icon={<Palette />}
+    href="/docs/help/designing/colors-and-contrast"
+    title="设计"
+    description="颜色、徽标、边框和艺术样式，以及始终可扫描的二维码。"
+  />
+  <Card
+    icon={<QrCode />}
+    href="/docs/help/dynamic-codes/create"
+    title="动态二维码"
+    description="更改链接、查看扫描数据、暂停、保护和路由二维码。"
+  />
+  <Card
+    icon={<PanelsTopLeft />}
+    href="/docs/help/pages-and-forms/create-a-page"
+    title="页面和表单"
+    description="由 QRdx 托管的移动端页面和表单。"
+  />
+  <Card
+    icon={<CreditCard />}
+    href="/docs/help/account-and-billing/plans"
+    title="账户和账单"
+    description="套餐、发票、取消订阅、你的数据和你的账户。"
+  />
+  <Card
+    icon={<Users />}
+    href="/docs/help/teams/create-and-invite"
+    title="工作区和团队"
+    description="创建工作区、邀请成员、角色和席位。"
+  />
+  <IfAvailable path="/docs/help/domains/custom-domains">
+    <Card
+      icon={<Globe />}
+      href="/docs/help/domains/custom-domains"
+      title="域名"
+      description="使用你自己的域名生成短链接。"
+    />
+  </IfAvailable>
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/help/troubleshooting/wont-scan"
+    title="故障排查"
+    description="无法扫描的二维码、页面错误、错误页面和收不到邮件。"
+  />
+  <Card
+    icon={<ShieldCheck />}
+    href="/docs/help/privacy-and-security/scan-data"
+    title="隐私和安全"
+    description="扫描会记录什么、账户安全以及举报滥用。"
+  />
+</Cards>
+
+## 更多 [#more]
+
+- [最新动态与后续计划](/docs/help/whats-new)，以及完整的[更新日志](/changelogs)。
+- 想要开发？[开发者](/docs/developers)标签页提供 REST API、webhook、MCP 和命令行工具。
+
+<StillStuck />

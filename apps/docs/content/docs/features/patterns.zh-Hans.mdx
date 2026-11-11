@@ -1,0 +1,215 @@
+---
+title: "图案"
+description: "更改数据模块、角点定位框和定位点圆心的形状。"
+icon: Grid3x3
+---
+
+更改二维码各元素的形状，打造独一无二的设计。在 [形状、定位框与边框](/docs/styles) 中可以查看每个选项的实时绘制效果（并在浏览器中解码验证）。
+
+## 主体图案 [#body-patterns]
+
+控制数据点的形状。共有 {facts.bodyPatterns} 种主体图案：
+
+- 经典：`square`、`small-square`、`horizontal-line`、`vertical-line`、`octagon`
+- 圆润：`circle`（默认）、`circle-large`、`rounded`、`liquid`、`liquid-horizontal`、`liquid-vertical`、`random-dots`
+- 装饰：`classy`、`classy-rounded`、`leaf`、`diamond`、`hexagon`
+- 趣味：`mosaic`、`plus`、`star`、`heart`、`pacman`、`circle-mixed`
+
+`liquid`、`classy` 和 `classy-rounded` 会把相邻模块连接成一个平滑的轮廓（`liquid-horizontal` 和 `liquid-vertical` 只按行或按列连接）。`random-dots` 和 `mosaic` 的每个模块各不相同，但相同的值始终绘制出相同的二维码。无论使用哪种图案，对齐图案都始终绘制为实心方块，以便解码器可靠地找到它们。
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" bodyPattern="circle" size={256} />
+<QRCode value="https://example.com" bodyPattern="liquid" size={256} />
+<QRCode value="https://example.com" bodyPattern="classy-rounded" size={256} />
+```
+
+### 模块缩放 [#module-scale]
+
+`moduleScale`（0.5 到 1，默认 1）会让每个数据模块围绕其中心缩小，呈现更轻盈、间距更大的效果；相连的图案则会让线条变细。每种图案缩小到在我们的测试中仍可解码的最小尺寸时就会停止（例如 `circle` 为 0.95，`classy` 为 0.7；参见 `MODULE_SCALE_FLOOR`），对齐图案保持原始大小。
+
+```tsx
+<QRCode value="https://example.com" bodyPattern="liquid" moduleScale={0.8} />
+```
+
+## 角点定位框图案 [#corner-eye-patterns]
+
+控制角落标记的形状。共有 {facts.eyeShapes} 种角点定位框图案（React 组件默认为 `gear`；CLI 默认为 `square`）：`square`、`rounded`、`extra-rounded`、`squircle`、`cushion`、`bevel`、`octagon`、`leaf`、`leaf-reverse`、`drop`、`petal`、`shield`、`gear`、`circle`、`diya`、`message` 和 `pointy`。
+
+`leaf`、`leaf-reverse`、`drop` 和 `petal` 会让三个定位框各自朝向二维码对应的角。部分扫描应用可能无法识别 `circle` 定位框；[扫描评分](/docs/utilities)会对此发出警告。
+
+```tsx
+<QRCode value="https://example.com" cornerEyePattern="square" />
+<QRCode value="https://example.com" cornerEyePattern="leaf" />
+<QRCode value="https://example.com" cornerEyePattern="squircle" />
+```
+
+## 角点定位点图案 [#corner-eye-dot-patterns]
+
+控制每个角落标记内部的圆点。共有 {facts.eyeCentres} 种角点定位点图案（React 组件默认为 `circle`；CLI 默认为 `square`）：`square`、`rounded`、`extra-rounded`、`circle`、`squircle`、`octagon`、`hexagon`、`dots`、`leaf`、`leaf-reverse`、`drop`、`drop-reverse`、`plus`、`cross-rounded`、`flower`、`heart`、`message`、`message-reverse`、`diya`、`diya-reverse` 和 `rounded-triangle`。
+
+```tsx
+<QRCode value="https://example.com" cornerEyeDotPattern="square" />
+<QRCode value="https://example.com" cornerEyeDotPattern="flower" />
+<QRCode value="https://example.com" cornerEyeDotPattern="heart" />
+```
+
+### 应避免的组合与已停用的形状 [#pairs-to-avoid-and-retired-shapes]
+
+`diamond` 主体搭配 `square` 定位框、`pacman` 搭配 `rounded`，以及 `small-square` 搭配 `square` 或 `rounded` 定位框，近距离扫描时容易识别失败；Playground 不会让它们组合，它们以 `WEAK_BODY_EYES` 提供，`getStylePairRisk(props)` 会返回扫描评分中显示的警告。
+
+在带方角的定位框（`square`、`rounded`、`extra-rounded` 及其他大多数）内使用 `circle` 中心，在清晰锐利的渲染中可能被严格的解码器漏读：包括屏幕显示、PNG 导出和大幅印刷。jsQR 在某些尺寸下会漏读，而 zbar 可以读取。实心主体（`square`、`liquid`、`classy`、`classy-rounded`）通常仍可读取，`gear`、`circle` 和 `octagon` 定位框不受影响。扫描评分会对此发出警告（`style-pair`），你仍然可以选用。这些组合以 `WEAK_SHARP_DOT_EYES`（以及 `SHARP_DOT_EYE_SAFE_BODIES`）提供，改用 `rounded` 中心即可避免该问题。
+
+`curly` 定位框以及 `diamond`、`star` 和 `banner` 中心因扫描不可靠而被停用。用它们保存的设计仍会正常渲染，但不再提供选择，也不再列出（参见[已停用的形状](/docs/styles#retired-shapes)）。
+
+## 圆形码 [#circle-codes]
+
+`shape="circle"` 会把二维码放进一个圆盘中，并用相同圆点形状的装饰模块填满圆盘的其余部分。真正的二维码四周保留 `margin` 个模块宽的浅色环（至少 3 个），扫描器只会读取中间的二维码。圆盘比二维码大，所以在相同扫描距离下要印得稍大一些；打印尺寸计算器按整个圆盘计算。
+
+```tsx
+<QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
+```
+
+在我们的解码测试中，使用实心圆点形状（`square`、`rounded`、`classy`、`liquid`）的圆形码与方形码一样容易读取。在 Playground 中的路径是 **Design → Frame → Shaped code → Dot circle**。
+
+{/* Heart and custom shapes (feat/heart-silhouette-shapes) */}
+
+## 心形码 [#heart-codes]
+
+`shape="heart"` 与圆形码类似，只是形状为心形。真正的二维码位于心形中间，四周有至少 3 个模块宽的浅色环，心形的其余部分用装饰模块填满。二维码在心形中所占的比例比在圆形中更小，所以在相同扫描距离下，心形码要印得比方形码更大。扫描评分会将此计算在内：在相同尺寸下，心形码的得分低于圆形码。
+
+```tsx
+<QRCode value="https://example.com" shape="heart" bodyPattern="rounded" />
+```
+
+在 Playground 中，形状码会取代边框：选择形状码会清除边框，选择边框会清除形状。每种边框都会在二维码下方绘制一块浅色底板，这会遮住轮廓。如果同时传入 `shape` 和 `frame`，引擎仍会绘制两者。
+
+在我们的解码测试中，心形码在所有实心圆点形状下、搭配 `square`、`rounded` 和 `gear` 定位框时，以及默认外观下都可以读取，zbar 在清晰锐利的渲染中也能读取。
+
+## 自定义形状 [#custom-shapes]
+
+`shape` 也可以接受轮廓：由你自己的图片描摹出的小网格（每边最多 64 个单元）。二维码位于形状中最宽敞的中间部分，形状的其余部分用装饰模块填满。只保留网格，绝不保留图片。
+
+```tsx
+import { getQRSilhouetteFit, loadQRSilhouette, QRCode } from "qrdx";
+
+const shape = await loadQRSilhouette(file); // a PNG, JPEG or SVG, in the browser
+const fit = getQRSilhouetteFit(shape);
+if (!fit.ok) throw new Error(fit.message);
+
+<QRCode value="https://example.com" shape={shape} />;
+```
+
+`loadQRSilhouette` 会把图片绘制到画布上，并使用其透明度；如果图片不透明，则使用其暗度（深色背景上的浅色形状同样可行）。在服务器上，请把解码后的像素传给 `createQRSilhouette`。`getQRSilhouetteFit` 会拒绝过于细窄、容纳不下二维码及其静区的形状，例如细星形、条形或环形。被拒绝的形状会绘制为方形二维码。
+
+在 Playground 中，选择 **Design → Frame → Shaped code → Silhouette** 并上传 PNG、JPEG 或 SVG（心形在那里是 **Heart**）。你的形状会像上传的标志一样与设计一起保存：分享链接、社区项目、代码片段和 AI 聊天则改用方形二维码。
+
+{/* end heart and custom shapes */}
+
+## 单独设置定位框颜色 [#per-eye-colors]
+
+`eyeColor` 和 `dotColor` 会为三个定位框统一设置颜色。`eyeColors` 可按定位框单独覆盖它们（`topLeft`、`topRight`、`bottomLeft`），每个都有 `outer`（外框）和 `inner`（圆点）的颜色或渐变：
+
+```tsx
+<QRCode
+  value="https://example.com"
+  eyeColor="#111827"
+  eyeColors={{
+    topLeft: { outer: "#dc2626", inner: "#1d4ed8" },
+    topRight: { outer: "#16a34a" },
+  }}
+/>
+```
+
+请让每个定位框与背景保持深浅对比：解码器靠三个定位框找到二维码。扫描评分会检查每个定位框自身颜色的对比度。
+
+在 Playground 中，**Design → Eye colors** 可为每个定位框设置外框和中心颜色，**Design → Dot size** 可在当前圆点形状允许的范围内设置 `moduleScale`。
+
+## 组合图案 [#combine-patterns]
+
+混合不同的图案，打造独特设计：
+
+```tsx
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+  cornerEyeDotPattern="circle"
+  size={256}
+/>
+```
+
+## 性能 [#performance]
+
+### 快速图案 [#fast-patterns]
+- `circle` — 性能出色
+- `square` — 非常快
+
+### 中等图案 [#medium-patterns]
+- `rounded` — 均衡良好
+- `diamond` — 中等
+
+### 复杂图案 [#complex-patterns]
+- `pacman` — 处理开销较高
+- `circle-mixed` — 复杂度不定
+
+## 图案选择 [#pattern-selection]
+
+### 品牌形象 [#for-brand-identity]
+```tsx
+// Minimal, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="square"
+/>
+
+// Modern, tech-focused
+<QRCode
+  value="https://example.com"
+  bodyPattern="circle"
+  cornerEyePattern="rounded"
+/>
+```
+
+### 市场营销 [#for-marketing]
+```tsx
+// Eye-catching
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+/>
+
+// Elegant
+<QRCode
+  value="https://example.com"
+  bodyPattern="diamond"
+  cornerEyePattern="rounded"
+/>
+```
+
+### 印刷 [#for-print]
+```tsx
+// High contrast
+<QRCode
+  value="https://example.com"
+  bodyPattern="square"
+  cornerEyePattern="square"
+/>
+
+// Smooth, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="rounded"
+/>
+```
+
+## 下一步 [#next-steps]
+
+- [颜色与渐变](/docs/features/colors-gradients) — 为图案添加颜色
+- [模板](/docs/features/templates) — 预先配置的图案
+- [标志](/docs/features/logos) — 将图案与标志结合

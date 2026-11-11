@@ -1,0 +1,91 @@
+---
+title: "Mantenha sua conta segura"
+description: "Como funciona o login, a verificação em duas etapas, as passkeys, a checagem quando um login é usado em um lugar novo, os emails que o QRdx envia sobre a segurança da sua conta, quanto tempo dura um login, como encerrar a sessão em outros dispositivos e como relatar um problema de segurança."
+---
+
+## Nenhuma senha para vazar [#no-password-to-leak]
+
+O QRdx não tem senhas. Você entra com Google, GitHub ou um código de uso único enviado para o seu email<IfAvailable feature="passkeys">, ou com uma passkey</IfAvailable>.<IfAvailable feature="sso"> Se o seu workspace está no plano Business, ele também pode permitir que você entre com o [login único (SSO)](/docs/help/teams/single-sign-on) da sua empresa, ou exigi-lo.</IfAvailable>
+
+Isso faz da sua conta de email, e da sua conta Google ou GitHub, as chaves de acesso ao QRdx. Ative a verificação em duas etapas nelas também.
+
+<IfAvailable feature="sso" id="if-your-company-requires-single-sign-on" title="Se a sua empresa exige login único">
+Um workspace Business pode [exigir login único](/docs/help/teams/single-sign-on#require-single-sign-on) para o domínio de email da empresa. Se o seu endereço é desse domínio:
+
+- você entra somente com login único: um código por email, Google ou GitHub<IfAvailable feature="passkeys">, ou **Continue with passkey**,</IfAvailable> não vai fazer o seu login;
+- a verificação em duas etapas continua valendo depois da página de login da sua empresa<IfAvailable feature="passkeys">, e uma passkey continua funcionando como sua segunda etapa</IfAvailable>;
+- cada login dura no máximo 24 horas, depois você entra com login único de novo;
+- o seu email no QRdx não pode ser trocado por um endereço fora do domínio.
+
+Quando o workspace ativa essa exigência, você é desconectado das sessões que não começaram com login único. Os proprietários do workspace mantêm as outras formas de entrar, para que um problema na página de login da empresa não deixe todo mundo sem acesso.
+</IfAvailable>
+
+## Ative a verificação em duas etapas [#turn-on-two-step-verification]
+
+A [verificação em duas etapas](/docs/help/privacy-and-security/two-step-verification) faz o QRdx pedir uma segunda etapa depois que você entra, seja qual for a forma de login: <IfAvailable feature="passkeys">sua passkey ou </IfAvailable>um código de um app autenticador. Quem conseguir acessar o seu email ou a sua conta Google ainda não consegue entrar no QRdx sem ela. Você recebe 10 códigos de backup para quando não puder fazer a segunda etapa. Ao ativá-la, todos os outros navegadores ou dispositivos conectados à sua conta são desconectados, então cada um precisa entrar de novo com a segunda etapa.
+
+<IfAvailable feature="passkeys" id="add-a-passkey" title="Adicione uma passkey">
+Uma [passkey](/docs/help/privacy-and-security/passkeys) confirma que é você com a sua digital, o rosto ou o bloqueio de tela. Ela só funciona no site do próprio QRdx, então um site falso não consegue capturá-la. Ela pode fazer o seu login sozinha com **Continue with passkey**, ou ser a sua segunda etapa. Adicionar uma passkey com a verificação em duas etapas desativada a ativa, o que desconecta os seus outros dispositivos.
+</IfAvailable>
+
+## Mudanças pedem que você confirme que é você [#changes-ask-you-to-confirm-its-you]
+
+Antes de uma mudança na segurança da sua conta, o QRdx pede que você [confirme que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), mesmo com o login feito: trocar o seu endereço de email, excluir a conta, ativar ou desativar a verificação em duas etapas, gerar novos códigos de backup, mudar os métodos da segunda etapa, ou vincular e desvincular Google ou GitHub. O mesmo vale para criar uma chave de API ou o client secret de um app OAuth, aprovar um app que pede para usar a sua conta, adicionar um webhook ou mudar a URL dele, mostrar ou rotacionar o segredo de assinatura de um webhook, adicionar um webhook de notificação do Slack ou do Discord ou conectar uma integração que envia suas leituras ou respostas de formulário para outra ferramenta e, em um workspace, excluí-lo, mudar o papel de alguém, remover alguém ou convidar um administrador.<IfAvailable feature="sso"> O mesmo vale para mudanças na conexão de login único de um workspace e para exigir login único.</IfAvailable>
+
+Com a verificação em duas etapas ativada, você confirma com <IfAvailable feature="passkeys">sua passkey, </IfAvailable>um código do autenticador ou um código de backup, nunca com um código enviado por email. Sem ela, você pode usar um código de 6 dígitos que o QRdx envia por email<IfAvailable feature="passkeys">, sua passkey, se você tiver uma,</IfAvailable> ou entrar de novo com uma conta Google ou GitHub que você vinculou<IfAvailable feature="sso"> (ou com o login único do seu workspace, quando ele usa OIDC)</IfAvailable>. Uma confirmação dura 10 minutos nesse navegador.
+
+Trocar o seu endereço de email também exige um código enviado ao novo endereço. Depois disso, você é desconectado de todos os outros lugares, e o endereço antigo recebe um email avisando da mudança. Perdeu o acesso ao seu email? Veja [o que fazer](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+## Um login usado em um lugar novo [#a-sign-in-used-somewhere-new]
+
+Quando você entra, o QRdx anota o país de onde você entrou e o seu navegador, como "Chrome no macOS". Se esse login for usado depois em outro país e em outro navegador, o QRdx pede que você [confirme que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) antes de fazer qualquer outra coisa na sua conta. Até você confirmar, esse navegador é tratado como desconectado em todos os outros lugares do QRdx. Assim, quem copiar o seu login do seu navegador não consegue usá-lo de longe, a menos que também consiga confirmar que é você.
+
+Ele só pergunta quando os dois mudaram. Viajar com o mesmo navegador, ou atualizar o navegador ou o sistema, não conta. Depois que você confirma, o QRdx anota o novo país e o novo navegador para esse login. Você também pode sair e entrar de novo, se preferir.
+
+É uma checagem extra, não uma garantia: um login copiado e usado do seu próprio país, ou do mesmo tipo de navegador, não é questionado. O QRdx só sabe o país quando a hospedagem informa, e onde isso não acontece, essa checagem não roda. Para encerrar um login que você não reconhece, [saia dos outros dispositivos](#sign-out-other-devices).
+
+## Emails sobre a segurança da sua conta [#emails-about-your-accounts-security]
+
+Enviamos um email para o endereço da sua conta quando:
+
+- um navegador ou dispositivo entra na sua conta pela primeira vez;
+- a verificação em duas etapas é ativada ou desativada, um app autenticador<IfAvailable feature="passkeys"> ou uma passkey</IfAvailable> é adicionado ou removido, ou novos códigos de backup são gerados;
+- um código de backup é usado, para entrar ou para confirmar que é você, com a quantidade de códigos que restam;
+- o suporte é solicitado a desativar a sua verificação em duas etapas, com o dia em que isso acontece e como impedir, e quando isso é cancelado;
+- o seu endereço de email é alterado (para o endereço antigo).
+
+Cada um diz o que aconteceu, em qual dispositivo e navegador (como "Chrome no macOS"), mais ou menos onde, de qual endereço IP e quando. **Review security** abre as suas configurações de segurança. Se não foi você, siga os passos do email e entre em contato com o suporte.
+
+Emails com um código, como os códigos de login e o código que confirma que é você, informam mais ou menos de onde o código foi pedido. O QRdx nunca vai pedir um código por telefone, chat ou email: não passe um código para ninguém.
+
+### Novos logins [#new-sign-ins]
+
+O QRdx reconhece um navegador por um cookie que ele define quando você termina de entrar. Quando um navegador ou dispositivo sem esse cookie entra na sua conta, você recebe um email. Com a verificação em duas etapas ativada, ele é enviado depois que a segunda etapa é concluída.
+
+Entrar de novo em um navegador que o QRdx já reconhece não envia o email, e criar a sua conta também não. Se você limpar os cookies ou usar uma janela privada, o próximo login ali conta como novo.
+
+Cada navegador novo gera o seu próprio email, até 10 por dia, para que uma enxurrada de logins não lote a sua caixa de entrada. Todo login continua aparecendo em **Sessions**. O QRdx se lembra dos 50 navegadores que você usou mais recentemente e esquece um que não entra há 400 dias.
+
+<IfAvailable feature="sso">
+Uma exceção: quando você entra pelo provedor de identidade SAML do seu workspace e a verificação em duas etapas está desativada, o QRdx não consegue reconhecer o navegador na volta, então não envia esse email.
+</IfAvailable>
+
+## Quanto tempo você fica conectado [#how-long-you-stay-signed-in]
+
+Um login dura até 30 dias. Depois disso, o QRdx pede que você entre de novo nesse navegador, não importa com que frequência você o tenha usado. Se você não usa o QRdx em um navegador por cerca de uma semana, a sessão ali termina antes.
+
+## Saia dos outros dispositivos [#sign-out-other-devices]
+
+Vá em **Settings** → **Profile & security**. Em **Sessions**, saia de um dispositivo ou clique em **Sign out everywhere else**. Isso nunca pede que você confirme que é você, então dá para fazer na hora.
+
+Ativar a verificação em duas etapas também desconecta todos os outros dispositivos. Se o suporte a desativar para você, o que [espera 7 dias](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes), todos os dispositivos são desconectados nesse dia, inclusive o que você está usando.<IfAvailable feature="sso"> Se a sua empresa passar a exigir login único, você é desconectado das sessões que não começaram com ele, e uma sessão de login único dura no máximo 24 horas.</IfAvailable>
+
+## Remova os apps que você conectou [#remove-apps-you-connected]
+
+Se você deixou outro app usar a sua conta do QRdx, ele aparece em **Settings** → **Authorized apps**. Remova os que você não usa. Um app continua funcionando depois que você sai, por isso aprovar um pede que você confirme que é você.
+
+## Relate um problema de segurança [#report-a-security-problem]
+
+Envie um email para [support@qrdx.dev](mailto:support@qrdx.dev) com um assunto começando por `[security]`. Por favor, não publique isso em issues públicas do GitHub. Veja a [política de segurança](/legal/security).
+
+Um QR code nocivo não é uma falha de segurança: [denuncie-o](/docs/help/privacy-and-security/report-abuse).

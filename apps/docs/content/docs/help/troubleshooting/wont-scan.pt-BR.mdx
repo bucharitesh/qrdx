@@ -1,0 +1,44 @@
+---
+title: "O código não é lido"
+description: "Por que um QR code não é lido e como corrigir cada causa."
+---
+
+Se a câmera do celular não reage ao seu código, ou só o lê às vezes, siga estas verificações.
+
+Comece pelo **Scan score** abaixo da prévia no [Playground](/playground). Clique nele para ver quais verificações falham. Veja [Verifique um design com o scan score](/docs/help/designing/scan-score).
+
+Para um código que já foi impresso, tire uma foto e envie para o [verificador de leitura](/tools/scan-checker). Ele mostra o que o código diz e testa quão bem ele é lido.
+
+## Causas comuns [#common-causes]
+
+### Contraste baixo ou código claro sobre fundo escuro [#low-contrast-or-light-on-dark]
+
+Os leitores procuram quadrados escuros sobre um fundo claro. Deixe o código mais escuro ou o fundo mais claro, e evite códigos claros sobre fundos escuros. Veja [Escolha cores que funcionam na leitura](/docs/help/designing/colors-and-contrast).
+
+### Um logo cobre demais [#a-logo-covers-too-much]
+
+Defina **Correção de erro** como **Alta** na aba **Design**. Veja [Adicione um logo](/docs/help/designing/logos).
+
+### Formatos de olho incomuns [#unusual-eye-shapes]
+
+Os olhos em círculo e em canto ondulado falham em alguns apps leitores. Os olhos quadrados, arredondados e de engrenagem são lidos em qualquer lugar.
+
+### Sem borda livre [#no-clear-border]
+
+Os leitores precisam de espaço vazio ao redor do código. Defina **Margem** como **Padrão** ou **Grande**, e não deixe outras artes encostarem no código.
+
+### Impresso pequeno demais [#printed-too-small]
+
+Faça o código com cerca de um décimo da distância de leitura: 2 cm para um cartão lido a 20 cm, 10 cm para um pôster lido a 1 m. A [calculadora de tamanho de impressão](/tools/print-size) faz essa conta para você.
+
+### Conteúdo demais [#too-much-content]
+
+Um QR code estático com muito texto fica denso e difícil de ler quando pequeno. Use um QR code dinâmico: ele guarda apenas um link curto. Veja [Estático ou dinâmico](/docs/help/getting-started/static-vs-dynamic).
+
+### A própria impressão [#the-print-itself]
+
+Impressão borrada, superfícies brilhantes que refletem a luz e superfícies curvas ou dobradas dificultam a leitura dos códigos. Imprima em arquivo vetorial (SVG, EPS ou um PDF de **Pronto para impressão**) e teste uma cópia antes de imprimir muitas.
+
+## Ele é lido, mas mostra um erro [#it-scans-but-shows-an-error]
+
+Se a câmera lê o código, mas você vê uma página como "QR code não encontrado", veja [Uma leitura mostra uma página de erro](/docs/help/troubleshooting/error-pages).

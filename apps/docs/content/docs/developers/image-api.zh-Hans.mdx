@@ -1,0 +1,211 @@
+---
+title: "二维码图片 API"
+description: "将任意 URL 变成可嵌入 Markdown、HTML 或邮件的二维码图片。无需 API 密钥。"
+icon: ImageDown
+---
+
+`GET https://api.qrdx.dev/v1/qr` 会返回 SVG、PNG 或 WebP 格式的二维码图片，也可以返回适用于印刷和设计工具的矢量 EPS 文件。所有参数都放在查询字符串中，因此 URL 本身就是图片：可以直接粘贴到 README、`<img>` 标签或邮件模板中。它同样支持编辑器中的各种样式：渐变色、边框、外框（包括自定义外框）、定位点和圆点颜色，以及 Logo 图标。
+
+```md
+![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
+```
+
+无需账号，也无需 API 密钥。唯一的例外是上传到 QRdx 的 Logo（参见 [Logo](#logos)）。
+
+[在 Playground 中试用](/playground?open=code&lang=image)：先在其中设计好样式，再复制它的图片 URL。
+
+## 示例 [#examples]
+
+```html
+<img
+  src="https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&size=256&fg=155dfc"
+  width="256"
+  height="256"
+  alt="QR code for qrdx.dev"
+/>
+```
+
+使用 curl 下载 PNG（请给 URL 加上引号，以免 shell 吞掉 `&`）：
+
+```bash
+curl -o qr.png "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&size=1024"
+```
+
+或者下载 WebP：像素与 PNG 相同，无损且保留透明度，文件更小：
+
+```bash
+curl -o qr.webp "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=webp&size=1024"
+```
+
+获取可用于 Illustrator、InDesign 或印刷厂的矢量 EPS（`size` 是以点为单位的宽度，每英寸 72 点，因此 `144` 即 2 英寸）：
+
+```bash
+curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=eps&size=144"
+```
+
+带外框的风格化圆点：
+
+```txt
+https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&body=rounded&eye=rounded&dot=rounded&template=Arrow
+```
+
+内置外框及其标签，以及按 id 指定的社区外框：
+
+```txt
+https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&frame=banner-bottom&frameText=Scan%20the%20menu
+https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&item=frame:wifi-card
+```
+
+在 `style` 中用 JSON 描述完整设计，这里是渐变色、红色定位点和一个外框：
+
+```js
+const style = {
+  fgColor: {
+    type: "linear",
+    angle: 45,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 100 },
+    ],
+  },
+  eyeColor: "#b91c1c",
+  frame: { style: "banner-bottom", text: "Scan the menu" },
+};
+const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=${encodeURIComponent(JSON.stringify(style))}`;
+```
+
+<Callout>
+  当 `data` 的值包含 `&`、`#`、`+` 或空格时，需要对其进行编码，例如在 JavaScript 中使用 `encodeURIComponent`。否则 URL 会在这些字符处被截断。`style` 也要用同样的方式编码。
+</Callout>
+
+## 参数 [#parameters]
+
+| 参数 | 默认值 | 说明 |
+|-----------|---------|-------------|
+| `data` | 必填 | 要编码的文本或 URL，最多 2048 个字符 |
+| `format` | `svg` | `svg`、`png`、`webp`（无损）或 `eps`（矢量 PostScript；此时 `size` 为以点为单位的宽度） |
+| `size` | `512` | 宽度和高度，单位为像素，范围 `64` 到 `2048` |
+| `fg` | `000000` | 模块颜色，十六进制（`155dfc`、`fff`，或带透明度的 8 位） |
+| `bg` | `ffffff` | 背景颜色，十六进制。`00000000` 表示透明背景 |
+| `eyeColor` | `fg` | 三个角上定位点的颜色 |
+| `dotColor` | `fg` | 每个定位点内部圆点的颜色 |
+| `body` | `square` | 数据模块的形状 |
+| `eye` | `square` | 角上定位点外框的形状 |
+| `dot` | `square` | 每个定位点内部圆点的形状 |
+| `level` | `Q` | 纠错级别：`L`（约 7%）、`M`（约 15%）、`Q`（约 25%）或 `H`（约 30%） |
+| `margin` | `4` | 二维码周围的静区，单位为模块，范围 `0` 到 `16` |
+| `template` | 无 | 装饰性边框模板 |
+| `frame` | 无 | 内置的行动号召[外框](/docs/features/frames)，例如 `banner-bottom`、`speech-bubble` 或 `circle`（{facts.frameStyles} 种样式中的任意一种） |
+| `frameText` | `Scan me` | 外框的标签，最多 24 个字符。也可用来修改 `style` 或 `item` 中外框的标签 |
+| `style` | 无 | 编辑器的完整设计，以 JSON 表示；参见[样式](#style) |
+| `item` | 无 | 按 id 指定的社区外框或主题，例如 `frame:wifi-card`；参见[社区项目](#community-items) |
+| `logoIcon` | 无 | 放在中心的快捷图标或品牌 Logo；参见 [Logo](#logos) |
+| `logoFileId` | 无 | 按文件 id 指定的已上传 Logo；需要 API 密钥；参见 [Logo](#logos) |
+
+颜色请不要带 `#`，或将其编码为 `%23`：单独的 `#` 会开启 URL 片段，且不会被发送。枚举值（`level`、`format`、`template`、`frame`）不区分大小写。
+
+使用外框时，`size` 是二维码本身的宽度，外框会在此基础上增加图片尺寸，所有格式都是如此。
+
+## 样式 [#style]
+
+`style` 接受 JSON 格式的设计，字段与已保存的主题相同，因此来自 [`GET /v1/themes`](/docs/developers/api/list-themes) 的主题，或 [MCP 服务器](/docs/developers/mcp)的 `design_qr` 返回的 `qrdxStyle`，都可以原样传入（上传的 Logo 除外，见下文）：
+
+| 字段 | 取值 |
+| --- | --- |
+| `bgColor`、`fgColor`、`eyeColor`、`dotColor` | 一个颜色（十六进制如 `#155dfc`、`rgb()`、`hsl()` 或颜色名称），或一个渐变：`{ "type": "linear", "angle": 45, "stops": [...] }` 或 `{ "type": "radial", "stops": [...] }`，包含 2 到 8 个 `{ "color", "offset" }` 形式的色标（offset 为 0 到 100） |
+| `bodyPattern`、`cornerEyePattern`、`cornerEyeDotPattern` | [图案取值](#pattern-values) |
+| `level`、`margin` | 与上述参数相同（`margin` 为 0 到 16） |
+| `templateId` | 边框模板，`default` 表示不使用 |
+| `frame` | 内置外框 `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`，或自定义外框 `{ "style": "custom", "spec": { … } }`，其中外框规范来自[社区](#community-items)，或来自在 Playground 的“外框”部分制作的自定义外框。规范会按引擎的外框规范规则进行校验（不允许标记、链接或图片；最大 32 KB） |
+| `eyeColors` | 每个定位点各自的颜色，优先于 `eyeColor` 和 `dotColor`：`{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`，每项可以是颜色或渐变 |
+| `moduleScale` | 每个圆点的大小，`0.5` 到 `1`（默认 `1`） |
+| `shape` | `square`（默认）或 `circle`：二维码呈圆盘形，由装饰性圆点围成 |
+| `autoLevel` | 当 Logo 覆盖二维码超过 7% 时，将纠错级别提高到 `H`（有 Logo 时此处始终启用） |
+| `logoOptions` | Logo 的布局：`size`（占二维码宽度的 `0.1` 到 `0.3`；当二维码空不出足够的模块时，QRdx 会将其缩小）、`padding`（`0` 到 `2` 个模块）、`x` 和 `y`（`0` 到 `1`）、`shape`（`square`、`rounded` 或 `circle` 裁剪）以及 `plate`（Logo 底下的颜色） |
+| `showLogo`、`logoIcon`、`logoFileId` | 参见 [Logo](#logos) |
+
+`style` 也接受 Playground 链接中的 `style` 值（以 `1.` 开头），因此从 [Playground](/playground) 分享的设计会渲染成与那里一致的外观，但不含其 Logo。
+
+通过平铺参数（`fg`、`body`、`frame` 等）设置的字段优先于 `style`，而 `style` 优先于 `item`。未知字段、Logo 地址（`customLogo`）以及 Logo QR 或 Image QR 的图稿（`art`）会被拒绝，并返回说明原因的 `400`。
+
+## 社区项目 [#community-items]
+
+`item` 会渲染已发布的[社区](/community)外框或主题，以 CC0 协议免费使用。可通过 [`GET /v1/community/items`](/docs/developers/api/list-community-items) 查找 id，也可以打开某个项目页面，使用其类型和 slug：`/community/frames/wifi-card` 对应 `frame:wifi-card`。外框项目会配上纯黑底白的二维码；可添加 `style` 或平铺参数来修改其下的二维码。
+
+## Logo [#logos]
+
+- **快捷图标。** `logoIcon` 会把编辑器中的一个图标放在中央的白色底块上，可选值有：`wifi`、`location`、`phone`、`email`、`link`、`file`、`calendar`、`whatsapp` 或 `instagram`。这些图标由 QRdx 自行绘制，无需密钥。
+- **品牌 Logo。** `logoIcon` 还可以通过 slug 使用 [Simple Icons](https://simpleicons.org) 中 {facts.brandLogos} 个品牌里的任意一个：`spotify`、`paypal`、`googlemaps`、`appstore`。标志会以品牌色直接绘制；添加 `:black` 或 `:white` 可改用黑色或白色（`whatsapp:white`），在 `style` 中设置 `logoOptions.plate` 可在标志后添加底板。[`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos) 会列出所有 slug。如果使用了 QRdx 不支持的 slug，将返回 `400`。
+- **QRdx 标志**是编辑器默认显示的标志，在这里不会绘制：仅设置 `showLogo: true` 不会添加任何 Logo。
+- **使用 Logo 时纠错级别会提高。** 当 Logo 覆盖超过 7% 的二维码面积时，无论 `level` 设置为何，二维码都会按 `H` 级绘制，以确保仍可扫描。
+
+<IfAvailable feature="fileStorage">
+
+**使用你自己的 Logo。** `logoFileId` 会绘制你在 [控制台 → 文件](/docs/files) 中上传的 PNG 或 JPEG 图片，大小不超过 1 MB。该 id 是文件链接的最后一部分，即 `https://qrdx.dev/api/files/<id>`。请发送该文件所属工作区的 [API 密钥](/docs/developers/api-keys)：
+
+```bash
+curl -o qr.png -H "Authorization: Bearer $QRDX_API_KEY" \
+  "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&logoFileId=<id>"
+```
+
+响应为私有（`Cache-Control: private, no-store`），并计入工作区的每日 API 配额。如果文件属于其他工作区，将返回 `404`；如果请求未携带密钥，将返回 `401`。QRdx 从自己的存储中读取图片，并检查它确实是 PNG 或 JPEG；它不会从你发送的网址获取 Logo。
+
+</IfAvailable>
+
+`logoOptions` 可以为上述任意 Logo 设置大小、位置、裁剪和底板。去除已上传 Logo 自身的背景需要在 Playground 中完成；Image API 会按原样绘制上传的文件。
+
+这里不支持 Logo QR 和 Image QR 艺术码：Playground 会在浏览器中根据你的图片生成它们，而 Image API 不会根据上传的图片生成艺术码。请在 [Playground](/playground?tab=art) 中设计艺术码。
+
+### 图案取值 [#pattern-values]
+
+- `body`：`circle`、`circle-large`、`square`、`diamond`、`circle-mixed`、`pacman`、`rounded`、`small-square`、`vertical-line`、`horizontal-line`、`liquid`、`liquid-horizontal`、`liquid-vertical`、`classy`、`classy-rounded`、`leaf`、`plus`、`hexagon`、`star`、`heart`、`random-dots`、`mosaic`、`octagon`
+- `eye`：`square`、`rounded`、`gear`、`circle`、`diya`、`extra-rounded`、`message`、`pointy`、`leaf`、`drop`、`octagon`、`bevel`、`squircle`、`cushion`、`shield`、`petal`、`leaf-reverse`
+- `dot`：`square`、`rounded`、`circle`、`message`、`message-reverse`、`diya`、`diya-reverse`、`rounded-triangle`、`leaf`、`drop`、`plus`、`cross-rounded`、`hexagon`、`octagon`、`flower`、`heart`、`squircle`、`dots`、`extra-rounded`、`leaf-reverse`、`drop-reverse`
+- `template`：`default`、`Arrow`、`StandardBox`、`SquareBorder`、`StrikedBox`、`Halloween`
+
+这些样式与 [`qrdx` React 库](/docs/features/patterns)中的样式相同。[MCP 服务器](/docs/developers/mcp)也可以列出它们，并附有简短说明。
+
+## 响应 [#responses]
+
+请求成功时，将返回图片，并带有以下响应头：
+
+- `Content-Type: image/svg+xml`、`image/png` 或 `application/postscript`（EPS 会作为名为 `qr-code.eps` 的下载文件发送）
+- `Cache-Control: public, max-age=31536000, immutable`，但以下情况除外：带有 `item` 的渲染（5 分钟，CDN 上为 10 分钟，因为条目可能会有新版本或被下架），以及带有 `logoFileId` 的渲染（`private, no-store`）
+- `Access-Control-Allow-Origin: *`，因此你可以在任何网站上通过 `fetch` 获取它
+
+渲染是确定性的：相同的查询字符串始终返回相同的字节，因此响应可以缓存一年。仅使用原有参数的 URL 渲染结果与以往完全一致。
+
+参数无效时将返回 `400`，并附带一个指明每个问题的 JSON 响应体：
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Invalid query parameters",
+  "data": {
+    "details": [
+      { "param": "size", "message": "Too small: expected number to be >=64" }
+    ]
+  },
+  "status": 400
+}
+```
+
+如果数据在所选纠错级别下无法放入二维码，同样会返回 `400`，其中 `param: "data"`。请使用较低的 `level` 或更短的数据。
+
+## 限制 [#limits]
+
+- **速率限制：** 每个 IP 地址每分钟 300 次请求。超出限制时将返回 `429`，并带有 `Retry-After` 响应头。
+- **不检查扫描效果。** Image API 只会按你的要求绘制。若要先检查并修复设计的扫描评分，请使用 [MCP 服务器](/docs/developers/mcp)上的 `design_qr`，或使用 [Playground](/playground?tab=design) 中的扫描评分。
+- **`style` 在 URL 中最多 8,192 个字符**，其 JSON 最大为 40 KB。
+- **数据是 URL 的一部分。** 与任何 URL 一样，它可能会出现在服务器日志、浏览器历史记录和缓存中。请勿在其中放入密码或其他机密信息。
+
+## 扫描提示 [#scanning-tips]
+
+- 当图片位于深色或复杂的背景上时（例如 GitHub 深色模式下的 README），请将 `margin` 保持在 `2` 或更大。
+- 保持 `fg` 与 `bg` 之间有良好的对比度。浅色背景上的深色模块扫描最可靠。
+- 默认设置（方形模块、4 个模块的边距）可被所有读码器扫描。`circle` 圆点等风格化形状看起来更柔和，但部分较旧的扫描器识别它们时可靠性较低，请使用[扫描检测工具](/tools/scan-checker)检查。
+- 打印前，请用几部手机测试二维码。
+
+## 自托管 [#self-hosting]
+
+该端点是 QRdx Web 应用的一部分，因此[自托管](/docs/self-hosting)的实例会在你自己的域名下通过 `/api/v1/qr` 提供它（例如 `https://qr.example.com/api/v1/qr?data=…`）。较短的 `/v1/qr` 路径仅适用于 `api.qrdx.dev`。配置了 Upstash Redis 时，速率限制会使用它；否则不启用速率限制。

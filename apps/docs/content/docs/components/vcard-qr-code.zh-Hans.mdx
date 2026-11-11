@@ -1,0 +1,52 @@
+---
+title: "vCard 二维码"
+description: "扫描后即可保存联系人名片的二维码，附带类型化的 vCard 3.0 构建器。"
+icon: Users
+---
+
+<ComponentLinks name="vcard-qr-code" />
+
+<ComponentPreview name="vcard-qr-code-demo" />
+
+## 安装 [#installation]
+
+<InstallationTabs name="vcard-qr-code" />
+
+## 用法 [#usage]
+
+```tsx
+import { VCardQrCode } from "@/components/vcard-qr-code";
+```
+
+```tsx
+<VCardQrCode
+  contact={{
+    firstName: "Ada",
+    lastName: "Lovelace",
+    organization: "Analytical Engines",
+    email: "ada@example.com",
+  }}
+/>
+```
+
+手机相机在扫描该二维码时，会提示保存联系人。空字段会被省略，这样二维码更小，扫描也更快。
+
+## 示例 [#examples]
+
+### vCard 构建器 [#vcard-builder]
+
+`buildVCard` 返回二维码所编码的 vCard 3.0 文本，其中的逗号、分号、反斜杠和换行符都已转义。你可以将它用于任何二维码渲染器，也可以用它把同一个联系人作为 `.vcf` 文件提供下载。
+
+<ComponentPreview name="vcard-qr-code-payload" />
+
+联系人名片包含的文字比链接更多，因此该组件使用纠错级别 `M`，以保持模块较大。只添加用户需要的字段，并用[打印尺寸计算器](/tools/print-size)确认需要打印多大。
+
+## API 参考 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" type="{ [K in keyof VCardQrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: VCardQrCodeProps[K] }" />
+
+其他任何属性（例如 `className`）都会传递给外层的 `<figure>`。
+
+### VCardContact [#vcardcontact]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" name="VCardContact" />

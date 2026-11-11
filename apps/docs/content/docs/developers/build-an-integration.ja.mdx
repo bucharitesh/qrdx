@@ -1,0 +1,298 @@
+---
+title: "連携を構築する"
+description: "OAuthアプリを作成し、OAuth 2.0とPKCEでユーザーのQRdxアカウントを接続できるようにして、ユーザーに代わってREST APIを呼び出し、連携ディレクトリに掲載されるまでの手順を説明します。"
+icon: Rocket
+---
+
+連携とは、OAuthアプリのことです。ユーザーはあなたのプロダクト内で **QRdxに接続** をクリックし、QRdxの同意画面でアプリを承認します。すると、あなたのサーバーはアクセストークンを受け取り、ユーザーが承認したスコープの範囲内で、ユーザーに代わって `https://api.qrdx.dev/v1` を呼び出せるようになります。
+
+このガイドでは、アプリの作成、ユーザーをQRdxへ誘導する方法、コードとトークンの交換、APIの呼び出し、イベントの受信、ディレクトリへの掲載まで、一連の流れを説明します。
+
+## 1. OAuthアプリを作成する [#1-create-an-oauth-app]
+
+[設定 → APIキーとアプリ](/dashboard?to=settings/developers)を開き、**新しいアプリ** をクリックします。アプリは、現在開いているワークスペース（ワークスペース切り替えで選択しているもの）に属します。アプリを作成・変更できるのはワークスペースのオーナーだけで、管理者とメンバーは閲覧のみ可能です。
+
+| 項目 | 用途 |
+| --- | --- |
+| 名前、説明、ロゴ、ウェブサイト | 同意画面に表示されます。正方形のロゴをアップロードするか、ロゴの `https://` リンクを貼り付けてください |
+| リダイレクトURI | QRdxがユーザーを戻す先です。最大10件まで登録できます。使えるのは `https://` のみで、開発用に `http://localhost`（または `127.0.0.1`）も使えます。ワイルドカードや `#fragments` は使えません。すべてのリクエストで、登録したURIのいずれかと完全に一致させる必要があります |
+| スコープ | アプリが要求できる権限の上限です。各認可リクエストでは、このうち一部または全部を要求します |
+| PKCEを必須にする | すべての認可リクエストで `S256` のコードチャレンジの送信が必須になります。推奨設定で、デフォルトでオンです |
+
+アプリを作成すると、QRdxに **クライアントID** と **クライアントシークレット** が表示されます。シークレットはこのときに必ずコピーしてください。QRdxはそのハッシュ値しか保持しておらず、再表示できません。紛失または漏えいした場合は、アプリのページで **シークレットを再生成** をクリックしてください。古いシークレットはただちに無効になりますが、すでに接続しているユーザーの接続は維持されます。アプリの作成とシークレットの再生成では、先に[本人確認](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)が求められます。ただし、同じブラウザーで直近10分以内に確認済みの場合は求められません。
+
+| プラン | ワークスペースあたりのOAuthアプリ数 |
+| --- | --- |
+| フリー | 1 |
+| Pro | 5 |
+| Business | 25 |
+
+ほかの[上限](/docs/plans-and-limits)と同様に、ワークスペースにはオーナーのうち最も上位のプランが適用されます。
+
+## 2. ユーザーをQRdxへ誘導する [#2-send-people-to-qrdx]
+
+ランダムな `state` とPKCEの `code_verifier` を生成し、どちらもユーザーのセッションに保存してから、認可URLへリダイレクトします。
+
+```txt
+https://qrdx.dev/api/oauth/authorize
+  ?response_type=code
+  &client_id=<client id>
+  &redirect_uri=https://acme.example/oauth/qrdx/callback
+  &scope=profile:read codes:read codes:write
+  &state=<random value>
+  &code_challenge=<BASE64URL(SHA256(code_verifier))>
+  &code_challenge_method=S256
+```
+
+| パラメーター | 必須 | 値 |
+| --- | --- | --- |
+| `response_type` | はい | `code` |
+| `client_id` | はい | アプリのクライアントID |
+| `redirect_uri` | はい | アプリのリダイレクトURIのいずれか（1文字も違わず一致させる） |
+| `scope` | はい | スペースまたはカンマ区切り。アプリが持つスコープのみ指定可能 |
+| `state` | 推奨 | 任意の値。QRdxはそのまま返します。CSRFを防ぐために、返された値を確認してください |
+| `code_challenge` | アプリがPKCEを必須にしている場合 | 43〜128文字。`code_verifier` のSHA-256をbase64urlエンコードしたもの |
+| `code_challenge_method` | いいえ | `S256`。デフォルトであり、受け付けられる唯一の方式です。`plain` は `invalid_request` で拒否されます |
+| `prompt` | いいえ | `consent` を指定すると、ユーザーが以前に同じスコープを承認していても同意画面を表示します |
+
+```ts title="lib/qrdx-oauth.ts"
+import { createHash, randomBytes } from "node:crypto";
+
+export const QRDX_AUTHORIZE_URL = "https://qrdx.dev/api/oauth/authorize";
+
+export function createPkce() {
+  const verifier = randomBytes(32).toString("base64url"); // 43 characters
+  const challenge = createHash("sha256").update(verifier).digest("base64url");
+  return { verifier, challenge };
+}
+
+export function authorizeUrl({
+  state,
+  challenge,
+}: {
+  state: string;
+  challenge: string;
+}) {
+  const url = new URL(QRDX_AUTHORIZE_URL);
+  url.search = new URLSearchParams({
+    response_type: "code",
+    client_id: process.env.QRDX_CLIENT_ID!,
+    redirect_uri: "https://acme.example/oauth/qrdx/callback",
+    scope: "profile:read codes:read codes:write",
+    state,
+    code_challenge: challenge,
+    code_challenge_method: "S256",
+  }).toString();
+  return url.toString();
+}
+```
+
+QRdxにサインインしていないユーザーは、先にサインインします。続いて同意画面が表示され、アプリのロゴ、名前、ウェブサイト、開発者、要求された権限、サインイン中のアカウントを確認できます。QRdxが確認していないアプリには **未確認のアプリ** という注意書きが付きます。**承認** をクリックすると、直近10分以内に確認済みでない限り、[本人確認](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)が求められます（直前にサインインした場合は、通常は確認済みとして扱われます）。同じスコープをすでに承認済みのユーザーは、そのままあなたのアプリに戻ります。
+
+その後、QRdxは `redirect_uri` へリダイレクトします。
+
+- 承認した場合: `?code=<authorization code>&state=<your state>`。コードは1回のみ、10分以内に使用できます。
+- キャンセルした場合: `?error=access_denied&error_description=...&state=<your state>`。
+
+無効なリクエスト（不明な `client_id`、未登録の `redirect_uri`、アプリが持たないスコープ、PKCE必須なのにチャレンジがない場合、`code_challenge_method=plain`）はリダイレクトされず、`{ "error": "invalid_scope", "error_description": "..." }` のようなJSONエラーが返されます。
+
+## 3. コードをトークンと交換する [#3-exchange-the-code-for-tokens]
+
+サーバーから、コードをトークンエンドポイントにPOSTします。ボディはフォームエンコード形式で、`redirect_uri` はステップ2で使用したものと同じにする必要があります。
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=authorization_code \
+  -d client_id=$QRDX_CLIENT_ID \
+  -d client_secret=$QRDX_CLIENT_SECRET \
+  -d code=$CODE \
+  -d redirect_uri=https://acme.example/oauth/qrdx/callback \
+  -d code_verifier=$CODE_VERIFIER
+```
+
+```ts title="app/oauth/qrdx/callback/route.ts"
+export async function GET(req: Request) {
+  const params = new URL(req.url).searchParams;
+  const session = await getSession(req); // your own session store
+  if (params.get("state") !== session.qrdxState) {
+    return new Response("Invalid state", { status: 400 });
+  }
+  if (params.get("error")) {
+    return Response.redirect("https://acme.example/settings?qrdx=cancelled");
+  }
+
+  const response = await fetch("https://qrdx.dev/api/oauth/token", {
+    method: "POST",
+    body: new URLSearchParams({
+      grant_type: "authorization_code",
+      client_id: process.env.QRDX_CLIENT_ID!,
+      client_secret: process.env.QRDX_CLIENT_SECRET!,
+      code: params.get("code") ?? "",
+      redirect_uri: "https://acme.example/oauth/qrdx/callback",
+      code_verifier: session.qrdxVerifier,
+    }),
+  });
+  if (!response.ok) {
+    const { error, error_description } = await response.json();
+    throw new Error(`QRdx token exchange failed: ${error} ${error_description}`);
+  }
+
+  const tokens: {
+    access_token: string;
+    token_type: "Bearer";
+    expires_in: number;
+    refresh_token: string;
+    scope: string;
+  } = await response.json();
+  await saveQrdxTokens(session.userId, tokens); // encrypt at rest
+  return Response.redirect("https://acme.example/settings?qrdx=connected");
+}
+```
+
+```json
+{
+  "access_token": "...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "...",
+  "scope": "profile:read codes:read codes:write"
+}
+```
+
+`scope` には、付与されたスコープがスペース区切りで入ります。アクセストークンの有効期間は1時間、リフレッシュトークンは30日です。`code_verifier` は、認可時に `code_challenge` があった場合にのみ送信してください。チャレンジなしで発行されたコードにverifierを付けると拒否されます。
+
+### リフレッシュトークン [#refresh-tokens]
+
+アクセストークンの有効期限が切れる前に、リフレッシュトークンを新しいトークンのペアと交換します。リフレッシュトークンはローテーションされ、それぞれ1回しか使えないため、毎回新しいものを保存してください。
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=refresh_token \
+  -d client_id=$QRDX_CLIENT_ID \
+  -d client_secret=$QRDX_CLIENT_SECRET \
+  -d refresh_token=$REFRESH_TOKEN
+```
+
+```ts
+export async function refreshQrdxTokens(refreshToken: string) {
+  const response = await fetch("https://qrdx.dev/api/oauth/token", {
+    method: "POST",
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      client_id: process.env.QRDX_CLIENT_ID!,
+      client_secret: process.env.QRDX_CLIENT_SECRET!,
+      refresh_token: refreshToken,
+    }),
+  });
+  // invalid_grant: revoked, expired or already used. Ask the person to reconnect.
+  if (!response.ok) throw new Error((await response.json()).error);
+  return response.json();
+}
+```
+
+トークンエンドポイントは、IPアドレスごとに1分あたり30リクエストまで受け付けます。
+
+## 4. スコープ [#4-scopes]
+
+| スコープ | 許可される内容 |
+| --- | --- |
+| `profile:read` | ユーザーのID、名前、メールアドレス、アバター: `GET /v1/me` と `GET /api/oauth/userinfo` |
+| `themes:read` | 保存済みのQRテーマ: `GET /v1/themes`、`GET /v1/themes/{id}` |
+| `codes:read` | 動的QRコードとスキャン分析の取得、Webhookサブスクリプションの一覧表示 |
+| `codes:write` | `codes:read` で許可されるすべてに加え、コードの作成・編集・削除、コンバージョンの報告、Webhookの購読 |
+
+連携に必要な最小限のスコープだけを要求してください。各スコープは同意画面でユーザーに表示されます。
+
+## 5. APIを呼び出す [#5-call-the-api]
+
+アクセストークンをBearerトークンとして `https://api.qrdx.dev/v1` に送信します。トークンを使ったリクエストは、アプリを承認したユーザー自身のワークスペース（どのアカウントにも1つあります）に対して、そのワークスペースのプランのもとで実行されます。
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+```ts
+const response = await fetch("https://api.qrdx.dev/v1/codes", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    destinationUrl: "https://acme.example/menu",
+    title: "Spring menu",
+  }),
+});
+const { data: code } = await response.json(); // code.shortLink is what the QR encodes
+```
+
+`invalid_token` を伴う `401` は、トークンの有効期限切れまたは失効を意味します。トークンを更新するか、ユーザーに再接続を依頼してください。`insufficient_scope` を伴う `403` は、トークンに必要なスコープがないことを意味します。各エンドポイント、そのスコープ、エラーについては[REST APIとOAuth](/docs/developers/rest-api)に一覧があります。
+
+## 6. Webhookでイベントを受信する [#6-receive-events-with-webhooks]
+
+ユーザーにURLの貼り付けを求める代わりに、REST Hooks APIを使ってユーザーに代わって購読します。`codes:write` が必要で、ユーザーのプランに[Webhook](/docs/webhooks)（Business）が含まれている必要があります。含まれていない場合は `402 PLAN_REQUIRED` が返されます。
+
+```bash
+curl https://api.qrdx.dev/v1/hooks \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"target_url": "https://acme.example/webhooks/qrdx", "events": ["scan.created", "form.submitted"]}'
+```
+
+`201` レスポンスには、サブスクリプションの `id` と署名用の `secret` が含まれます。`secret` は一度しか表示されません。すべての配信は、この値で署名されて `X-QRdx-Signature` に付与されます。詳しくは[署名を検証する](/docs/webhooks#verify-signatures)をご覧ください。ユーザーが接続を解除したときは、`DELETE /v1/hooks/{id}` で購読を解除してください。サブスクリプションは、ユーザー自身のワークスペースの設定 → Webhookにも表示され、そこから削除することもできます。
+
+## 7. 取り消しとuserinfo [#7-revoke-and-userinfo]
+
+ユーザーがあなたのプロダクトでQRdxとの接続を解除したときは、そのトークンを取り消してください。ペアのどちらのトークンを取り消しても、ペア全体が取り消されます。このエンドポイントは、存在しないトークンに対しても `200` を返します。
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/revoke -d token=$REFRESH_TOKEN
+```
+
+```ts
+await fetch("https://qrdx.dev/api/oauth/revoke", {
+  method: "POST",
+  body: new URLSearchParams({ token: refreshToken }),
+});
+```
+
+### アクセスの取り消し [#revoking-access]
+
+ユーザーは、QRdxの **設定 → 承認済みアプリ** から、いつでも自分でアクセスを取り消せます。そのアカウントに対してアプリが保持しているすべてのトークンはただちに無効になり、API呼び出しは `invalid_token` を伴う `401` を返し、トークンの更新は `invalid_grant` を返します。どちらも「接続解除」として扱い、再接続を依頼してください。ユーザーには再び同意画面が表示されます。
+
+接続したユーザーを識別するには、`profile:read` トークンで `GET /api/oauth/userinfo` を呼び出します。OpenID形式のクレームが返されます。
+
+```bash
+curl https://qrdx.dev/api/oauth/userinfo -H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+```json
+{
+  "sub": "user id",
+  "name": "Ada Lovelace",
+  "email": "ada@example.com",
+  "picture": "https://..."
+}
+```
+
+`sub` は変わらないアカウントIDとして使ってください。メールアドレスは変更される可能性があります。
+
+## 8. ディレクトリに掲載する [#8-get-listed]
+
+連携がエンドツーエンドで動作したら、[連携ディレクトリ](/integrations)への追加を依頼してください。あなたが開発した **コミュニティ** 連携として表示されます。次の内容を記載して、[support@qrdx.dev](mailto:support@qrdx.dev?subject=List%20my%20integration)にメールしてください（アプリのページにある **掲載を依頼** ボタンで、詳細が自動入力されます）。
+
+- アプリの名前とクライアントID
+- 何をするものか、誰向けかを1行で
+- セットアップ手順、またはその手順へのリンク
+- サポートの連絡先
+
+QRdxチームは掲載されたアプリを審査し、**確認済み** のマークを付けます。これにより、同意画面の「未確認のアプリ」の注意書きが表示されなくなります。確認済みアプリの名前、ロゴ、ウェブサイトを変更すると、再審査されるまでバッジは外れます。
+
+## セキュリティチェックリスト [#security-checklist]
+
+- クライアントシークレットはサーバー上で保管してください。ブラウザーやモバイルのコードには絶対に渡さないでください。
+- PKCE（`S256`）を使い、認可のたびに新しい `state` を使用して、戻ってきたときに `state` を確認してください。
+- リダイレクトURIは正確に登録してください。QRdxは1文字ずつ照合します。
+- アクセストークンとリフレッシュトークンは暗号化して保存し、更新のたびに新しいリフレッシュトークンを保存してください。
+- ユーザーが接続を解除したら、トークンを取り消してください。設定 → APIキーとアプリでアプリを削除すると、発行済みのすべてのトークンが取り消されます。一時停止すると、再開するまでトークンは拒否されます。

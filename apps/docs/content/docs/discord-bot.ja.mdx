@@ -1,0 +1,85 @@
+---
+title: "DiscordでQRコードを作成する"
+description: "QRdxボットをDiscordサーバーまたはご自身のアカウントに追加し、/qr やメッセージからQRコードを作成してスタイルを変更できます。"
+---
+
+<IfAvailable feature="discordBot">
+
+QRdxボットを使うと、Discord内でQRコードを作成できます。QRdxアカウントは必要ありません。返信にはQRコードが表示され、PNGまたはSVGでダウンロードするボタンと、[エディタ](/playground)で開いて見た目を変更するボタンが付きます。
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="add-the-bot" title="ボットを追加する">
+
+1. [Discordボット](/integrations/discord-bot)のページを開き、**Add to Discord** をクリックします。
+2. Discordで追加先を選びます。
+   - **ご自身のアカウント:** DM、グループDM、参加しているサーバーで使えます。
+   - **サーバー:** サーバーのメンバー全員が使えます。追加するには、そのサーバーで **サーバー管理** 権限が必要です。
+
+サーバーによっては、メンバー個人のアプリが全員向けに投稿することを許可していない場合があります。その場合、ご自身のアカウントのボットからの返信は、あなたにだけ表示されます。
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="make-a-code-with-qr" title="/qr でQRコードを作成する">
+
+1. 任意のチャットで `/qr` と入力し、一覧から選びます。
+2. **content** にリンクまたはテキストを入力または貼り付け、Enter を押します。
+
+ボットは、QRコード、タイトルとして表示される内容、3つのボタン、以下で説明するスタイルメニューを返信します。ボタンは **Download PNG**（1024 px）、**Download SVG**、**Open in editor** です。リンクの場合は、QRコードのデザインを保ったままエディタで開きます。テキストはエディタのリンクには含まれないため、エディタで自分で貼り付けてください。
+
+QRコードを自分だけに表示するには、**private** を **True** に設定します。その返信はあなたにだけ表示され、閉じるかリロードするとDiscordから削除されます。
+
+内容が非常に長いと、1つのQRコードに収まらない場合や、Discordで画像として表示するには長すぎる場合があります。その場合、ボットはあなただけに見えるメッセージでお知らせします。
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="style-your-code" title="QRコードのスタイルを変更する">
+
+`/qr` には、Enter を押す前に指定できるオプションがさらに3つあります。
+
+| オプション | 内容 | 選択肢 |
+| --- | --- | --- |
+| **look** | エディタに組み込まれているデザインを適用します | Plain, Classic, Modern, Royal, Folio, Caffeine, Retro, Bordeaux, Blossom |
+| **color** | QRコード全体を白地に1色で表示します | Black, Blue, Green, Red, Purple, Orange |
+| **frame** | 「Scan me」と書かれたフレームを追加します | No frame, Banner, Top banner, Bubble, Polaroid |
+
+先に look が適用され、その上に color が適用されます。たとえば **look** を Royal、**color** を Blue にすると、Royalの形状のまま青色になります。
+
+すべてのQRコードの下に、**Look**、**Color**、**Frame**、**Logo** の4つのメニューがあります。選択肢は上と同じで、Logo にはエディタのクイックロゴアイコンも加わります。選ぶとQRコードがその場で変わります。変更は、そのときのQRコードを基準に重ねて適用されます。スタイルを変更できるのは、QRコードを作成した本人だけです。ほかの人が選ぶと、その人にだけ表示される通知が出て、QRコードは変わりません。
+
+スタイルを適用したQRコードが表示される前に、QRdxはエディタと同じスキャンスコアで確認します。そのため、Discordにはしばらく QRdx が処理中であることが表示されます。スマートフォンで読み取りにくいデザインの場合、QRdxは色を濃くする、形状をシンプルにする、誤り訂正を強めるなどの調整を行い、その旨をQRコードの下に表示します。それでも十分でない場合（多くは内容が長いとき）は、白地に黒のQRコードがメモ付きで表示されます。
+
+**Open in editor** を押すと、色、形状、フレームなど、同じデザインでエディタが開きます。ロゴアイコンはリンクに含まれないため、エディタで選び直してください。
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="make-a-code-from-a-message" title="メッセージからQRコードを作成する">
+
+デスクトップでは、メッセージを右クリックして **アプリ** → **Make QR code** を選びます。モバイルでは、メッセージを長押しして **アプリ** → **Make QR code** をタップします。
+
+QRコードには、メッセージ内の最初のWebアドレスが含まれます。Webアドレスがないメッセージの場合は、そのテキストがQRコードになります。返信はチャットの全員に表示されます。
+
+メッセージの内容にかかわらず、返信で誰かにメンションや通知が送られることはありません。
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="privacy" title="プライバシー">
+
+QRdxは、作成したQRコードを保存しません。また、ボットがチャットを読み取ることはできません。QRdxに送信されるのは、`/qr` の後に入力した内容、または **Make QR code** で選んだ1件のメッセージだけです。
+
+内容と選択したデザインは画像のリンクに含まれ、DiscordはQRdxの[Image API](/docs/developers/image-api)から画像を読み込みます。QRコードのスタイルを変更するときは、そのリンクから内容とデザインの両方を読み取ります。そのため、QRdxはスタイル変更のためにQRコードを保存しません。ほかのリンクと同様に、このリンクもログやキャッシュに残る可能性があります。パスワードなどの機密情報でQRコードを作成しないでください。
+
+1人がチャンネルに大量に投稿するのを防ぐため、QRdxはDiscordアカウントごとに、1分間に作成または再スタイルしたQRコードの数をカウントします。全員が作成したQRコードの合計数もカウントしており、1分間にあまりに多く届くと、ボットは混み合っていると返信します。どちらのカウントにも内容は含まれず、1分後に失効します。
+
+</IfAvailable>
+
+<IfAvailable feature="discordBot" id="remove-the-bot" title="ボットを削除する">
+
+- **アカウントから:** **ユーザー設定** → **認証済みのアプリ** を開き、QRdxの横にある **認証解除** をクリックします。
+- **サーバーから:** **サーバー管理** 権限を持つ人が **サーバー設定** → **連携サービス** を開き、QRdxを選んで削除します。
+
+</IfAvailable>
+
+## セルフホスティング [#self-hosting]
+
+Discordアプリを登録し、`DISCORD_APPLICATION_ID` と `DISCORD_PUBLIC_KEY` を設定すれば、ご自身のQRdxでもボットを使えます。手順は [`plugins/discord/README.md`](https://github.com/bucharitesh/qrdx/tree/main/plugins/discord) をご覧ください。

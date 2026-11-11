@@ -1,0 +1,83 @@
+---
+title: "Telegram 机器人"
+description: "在 Telegram 中生成并设计二维码样式。给 QRdx 机器人发送链接,在任意聊天中以内联方式调用它,或在群组中使用 /qr。无需账号。"
+icon: Bot
+---
+
+QRdx 机器人可以在 Telegram 内把链接或任意文本变成二维码。它免费使用,也不需要 QRdx 账号。
+
+<IfAvailable feature="telegramBot">
+开始使用时,请在 [Telegram 集成页面](/integrations/telegram)点击 **Open in Telegram**,然后在机器人的聊天中点按 **Start**。
+</IfAvailable>
+
+## 私聊 [#private-chat]
+
+给机器人发送链接或文本,它会回复二维码和四个按钮:
+
+- **Download PNG** 打开图片,可直接保存或分享。
+- **Download SVG** 打开矢量版本,适用于印刷和设计工具。
+- **Open in editor** 用相同的设计打开 QRdx 编辑器。如果内容是网址,会一并带过去。其他文本不会带过去,请自行粘贴到编辑器中。
+- **Style** 直接在聊天中更改二维码的外观(见下文)。
+
+二维码中的内容与你发送的完全一致,包括换行。发送 `/help`(或 `/start`)可以查看机器人的用法。如果文本太长,一个二维码放不下,机器人会告知;改用指向完整文本页面的链接,可以得到更小、更易扫描的二维码。
+
+## 设计二维码样式 [#style-your-code]
+
+点按二维码下方的 **Style**,原有按钮会被四个按钮取代:**Look**、**Color**、**Frame** 和 **Logo**。每个按钮都会打开对应的选项,二维码当前使用的选项旁会显示 ✓。点按某个选项,机器人就会重新绘制图片。**Back** 返回这四个分组,**Done** 则恢复下载按钮。每次更改都基于二维码当前的样子。在群组中,只有请求生成该二维码的人可以重新设计样式;其他人点按时会收到一条简短提示。
+
+这些外观是编辑器内置设计中在小尺寸下也易于识别的一部分,**Plain** 会恢复为白底黑码。选择颜色会让整个二维码变为该颜色,背景为白色。边框会添加“Scan me”标签,Logo 则是编辑器中的快捷图标。
+
+你也可以在生成二维码时设置样式,方法是在链接或文本后面添加选项,选项名称与 [QRdx CLI](/docs/developers/cli) 相同。这在私聊中、群组里的 `/qr` 之后以及内联模式中都适用。在内联模式下,这是设计样式的唯一方式,因为还没有可以修改的消息:
+
+```text
+qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+第一个选项之前的所有内容都是二维码的内容。系统先应用外观,再在其基础上应用其他选项,因此 `--look royal --fg 0051ff` 会在保留 Royal 形状的同时改为蓝色。如果你的手机把 `--` 自动换成长破折号,同样有效。选项或值有误时,机器人会回复该选项可用的值列表。
+
+| 选项 | 更改内容 | 取值 |
+| --- | --- | --- |
+| `--look` | 整体设计,取自编辑器的某个预设 | `plain`, `classic`, `modern`, `royal`, `folio`, `caffeine`, `retro`, `bordeaux`, `blossom` |
+| `--fg`(或 `--color`) | 圆点颜色;除非另外设置,角上的定位眼也使用该颜色 | 十六进制颜色,如 `0051ff`,或 `black`, `blue`, `green`, `red`, `purple`, `orange` |
+| `--bg` | 背景 | 与 `--fg` 相同 |
+| `--eye-color` | 三个角上的定位眼 | 与 `--fg` 相同 |
+| `--dot-color` | 定位眼的中心 | 与 `--fg` 相同 |
+| `--body` | 圆点的形状 | 编辑器中 {facts.bodyPatterns} 种圆点形状的任意一种,如 `rounded`、`circle` 或 `classy` |
+| `--eye` | 角上定位眼的形状 | {facts.eyeShapes} 种定位眼形状的任意一种,如 `square`、`rounded` 或 `gear` |
+| `--dot` | 定位眼中心的形状 | {facts.eyeCentres} 种中心形状的任意一种,如 `square`、`rounded` 或 `circle` |
+| `--frame` | 二维码周围的边框 | `none` 或 {facts.frameStyles} 种内置边框的任意一种,如 `banner-bottom`、`banner-top`、`speech-bubble` 或 `polaroid` |
+| `--frame-text` | 边框上的标签,最多 24 个字符 | 任意文本;含空格时请加引号。未设置 `--frame` 时,文本会显示在二维码下方的横幅上 |
+| `--template` | 装饰性边框 | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` 或 `Halloween` |
+| `--logo` | 中间的图标 | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar` 或 `none` |
+
+机器人发送带样式的二维码之前,QRdx 会使用与编辑器相同的扫描评分对其进行检查。如果某个设计让手机难以识别,QRdx 会进行调整(更深的颜色、更简单的形状或更高的纠错级别),并在说明文字中告知。如果这样仍然不够,通常是因为内容太长,你会收到白底黑码的二维码,并附有一条说明。
+
+**Open in editor** 会用相同的设计打开编辑器:颜色、形状、边框和边缘装饰。Logo 图标不会随链接带过去,请在编辑器中重新选择。
+
+## 在任意聊天中使用内联模式 [#inline-mode-in-any-chat]
+
+无需把机器人添加到聊天中,就可以向任意聊天发送二维码。在消息输入框中依次输入 `@`、机器人的用户名、一个空格,以及链接或文本。稍等片刻,二维码会出现在输入框上方。点按它即可发送,同样带有三个按钮。你的聊天对象不需要使用这个机器人。
+
+## 群组 [#groups]
+
+先把机器人添加到群组,然后发送 `/qr`,后面跟上链接或文本,例如 `/qr https://example.com/menu`。机器人会回复你的消息并附上二维码。
+
+群组中的机器人默认开启隐私模式,这个机器人也保持开启,因此它看不到群组中的对话。Telegram 只会把发给它的命令以及对它自己消息的回复传递给它。它只响应 `/qr`、`/start` 和 `/help`,其他内容一律忽略。如果群组中有多个机器人,或者机器人对单独的 `/qr` 没有响应,请在命令中加上它的用户名:`/qr@` 后面跟用户名,再接链接或文本。
+
+## 隐私 [#privacy]
+
+QRdx 不会保存你生成的二维码,机器人读取每条消息也只是为了回复它。
+
+内容会包含在图片链接中:Telegram 会从一个 QRdx 链接加载每个二维码的图片,该链接包含你的文本以及你选择的设计。重新设计样式时会从该链接读回这两项内容,因此 QRdx 不需要保存二维码就能重新设计样式。与任何链接一样,它可能会留在日志和缓存中,所以请不要为密码或其他机密信息生成二维码。Telegram 会像保存任何消息一样,把这些消息保留在聊天中。
+
+如果你在短时间内生成大量二维码,机器人会请你等待一分钟再生成下一个。每次重新设计样式都算作一个二维码。当同时使用的人很多时,机器人可能会提示繁忙。请一分钟后再试。
+
+## 移除机器人 [#remove-the-bot]
+
+在私聊中,打开机器人的资料页并将其屏蔽,或删除该聊天。在群组中,由管理员从成员列表中移除机器人。
+
+机器人已发送的二维码会保留在聊天中。它们的按钮仍然可用,因为这些按钮直接链接到 QRdx。
+
+## 自托管 [#self-hosting]
+
+自托管的 QRdx 服务器可以运行自己的机器人。请通过 [@BotFather](https://t.me/BotFather) 创建一个机器人,在服务器上设置 `TELEGRAM_BOT_TOKEN`、`TELEGRAM_WEBHOOK_SECRET` 和 `TELEGRAM_BOT_USERNAME`,然后运行设置脚本。具体步骤见 [`plugins/telegram/README.md`](https://github.com/bucharitesh/qrdx/blob/main/plugins/telegram/README.md)。在这三个变量全部设置之前,机器人的路由会返回 404,你的网站也不会列出该机器人。

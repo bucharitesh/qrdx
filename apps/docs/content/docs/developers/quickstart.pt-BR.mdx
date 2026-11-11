@@ -1,0 +1,183 @@
+---
+title: "Início rápido"
+description: "Sua primeira requisição à API do QRdx em menos de dois minutos, sem chave. Depois, uma chave de API e seu primeiro QR code dinâmico."
+icon: Rocket
+---
+
+A API do QRdx tem duas metades. Imagens não exigem nada: nem conta, nem chave. QR codes dinâmicos, leituras e webhooks pertencem a um workspace, então precisam de uma chave de API.
+
+## 1. Crie um QR code (sem chave) [#1-make-a-qr-code-no-key]
+
+Execute isto. Ele salva um PNG de um QR code que abre qrdx.dev:
+
+<Tabs groupId="language" persist items={["curl", "JavaScript", "Python"]}>
+  <Tab value="curl">
+    ```bash
+    curl "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png" -o qr.png
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    // Node 18 or later (save as qr.mjs)
+    import { writeFile } from "node:fs/promises";
+
+    const url = new URL("https://api.qrdx.dev/v1/qr");
+    url.searchParams.set("data", "https://qrdx.dev");
+    url.searchParams.set("format", "png");
+
+    const response = await fetch(url);
+    await writeFile("qr.png", Buffer.from(await response.arrayBuffer()));
+    ```
+  </Tab>
+  <Tab value="Python">
+    ```python
+    # pip install requests
+    import requests
+
+    response = requests.get(
+        "https://api.qrdx.dev/v1/qr",
+        params={"data": "https://qrdx.dev", "format": "png"},
+    )
+    response.raise_for_status()
+    open("qr.png", "wb").write(response.content)
+    ```
+  </Tab>
+</Tabs>
+
+Essa é uma chamada de API funcionando. A própria URL é a imagem, então ela também funciona direto em uma tag `<img>`:
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&fg=111111&body=circle" alt="QR code for qrdx.dev" />
+```
+
+Mude cores, formatos, tamanho e formato do arquivo com parâmetros de consulta, ou teste tudo no navegador na página [Gerar a imagem de um QR code](/docs/developers/api/get-qr-image): o painel **Try it** envia a requisição e mostra a imagem. Imagens não contam para nenhuma cota; o limite é de 300 requisições por minuto por endereço IP.
+
+## 2. Crie uma chave de API [#create-an-api-key]
+
+Todo o resto da API atua sobre um workspace: criar QR codes dinâmicos, mudar para onde eles apontam, ler suas leituras. Essas requisições levam uma chave de API no cabeçalho `Authorization`.
+
+1. Abra [Configurações → Chaves de API e apps](/dashboard?to=settings/developers&new=1) (faça login antes, se precisar). O formulário **Criar chave** será aberto.
+2. Mantenha **Acesso total** e escolha **Criar chave**.
+3. Copie a chave. Ela aparece só uma vez. A janela também mostra uma requisição curl que cria um QR code dinâmico, já com a sua chave preenchida, caso você prefira colar essa.
+
+Exporte a chave para os próximos passos:
+
+```bash
+export QRDX_API_KEY=qrdx_...
+```
+
+A chave age como você no workspace que estava aberto quando a criou, e as requisições feitas com ela contam para a cota diária desse workspace (1.000 requisições no plano Grátis). [Chaves de API](/docs/developers/api-keys) explica escopos, equipes, validade e revogação.
+
+## 3. Crie um QR code dinâmico [#3-create-a-dynamic-code]
+
+Um QR code dinâmico é um link curto que você pode apontar para outro lugar depois de impresso:
+
+<Tabs groupId="language" persist items={["curl", "JavaScript", "Python"]}>
+  <Tab value="curl">
+    ```bash
+    curl -X POST https://api.qrdx.dev/v1/codes \
+      -H "Authorization: Bearer $QRDX_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"destinationUrl": "https://example.com", "title": "My first code"}'
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    const response = await fetch("https://api.qrdx.dev/v1/codes", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.QRDX_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        destinationUrl: "https://example.com",
+        title: "My first code",
+      }),
+    });
+    const { data: code } = await response.json();
+    console.log(code.shortLink);
+    ```
+  </Tab>
+  <Tab value="Python">
+    ```python
+    import os
+    import requests
+
+    response = requests.post(
+        "https://api.qrdx.dev/v1/codes",
+        headers={"Authorization": f"Bearer {os.environ['QRDX_API_KEY']}"},
+        json={"destinationUrl": "https://example.com", "title": "My first code"},
+    )
+    response.raise_for_status()
+    code = response.json()["data"]
+    print(code["shortLink"])
+    ```
+  </Tab>
+</Tabs>
+
+A resposta é `201 Created` com o novo QR code:
+
+```json
+{
+  "data": {
+    "id": "cm5code0spring0menu00001",
+    "slug": "aB3dE5f",
+    "shortLink": "https://qrdx.dev/q/aB3dE5f",
+    "destinationUrl": "https://example.com/",
+    "title": "My first code",
+    "status": "active",
+    "scanCount": 0
+  }
+}
+```
+
+(Resumida: [Criar QR codes](/docs/developers/api/create-codes) mostra todos os campos.) O QR code codifica `shortLink`. Gere a imagem com a Image API, como no passo 1, `https://api.qrdx.dev/v1/qr?data=https://qrdx.dev/q/aB3dE5f`, e imprima.
+
+## 4. Aponte para outro lugar [#4-point-it-somewhere-else]
+
+Mude o destino quando quiser; o QR code impresso continua funcionando:
+
+```bash
+curl -X PATCH https://api.qrdx.dev/v1/codes/$CODE_ID \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/new-page"}'
+```
+
+Faça uma leitura do QR code e depois consulte as análises com `GET /v1/codes/$CODE_ID/scans` ([Obter análises de leituras](/docs/developers/api/get-code-scans)).
+
+## Quando algo dá errado [#when-something-goes-wrong]
+
+Todo erro é um JSON com um `code` estável e uma mensagem que diz o que fazer:
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Missing API key. Send an API key as \"Authorization: Bearer <key>\"; create one at https://qrdx.dev/dashboard?to=settings/developers. OAuth access tokens go in the same header.",
+  "status": 401,
+  "docs": "https://qrdx.dev/docs/developers/api-keys"
+}
+```
+
+A [página de erros](/docs/developers/errors) lista cada código com a solução.
+
+## Agir em nome de outras pessoas [#get-an-access-token]
+
+Uma chave de API age como você. Se o seu produto chama o QRdx em nome de outras pessoas, registre um app OAuth: cada pessoa o aprova uma vez, e seu servidor recebe um token de acesso para a conta dela, enviado no mesmo cabeçalho `Authorization: Bearer`. Todas as requisições acima funcionam sem mudanças com um token no lugar da chave. Veja [REST API e OAuth](/docs/developers/rest-api#get-an-access-token) e [Crie uma integração](/docs/developers/build-an-integration).
+
+## Próximos passos [#next-steps]
+
+<Cards>
+  <Card title="Referência da API" href="/docs/developers/api">
+    Todos os endpoints, com exemplos em curl, JavaScript e Python e um painel Try it.
+  </Card>
+  <Card title="Erros" href="/docs/developers/errors">
+    Todos os códigos de erro, o que significam e como resolvê-los.
+  </Card>
+  <Card title="Webhooks" href="/docs/webhooks">
+    Receba leituras e novos QR codes no seu servidor (Business).
+  </Card>
+  <Card title="Limites de requisições" href="/docs/developers/rest-api#rate-limits">
+    Cotas diárias por plano e os cabeçalhos `X-RateLimit-*`.
+  </Card>
+</Cards>

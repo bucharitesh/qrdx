@@ -1,0 +1,64 @@
+---
+title: "Gerador de QR Code"
+description: "Um campo de texto com prévia ao vivo do QR code, estilos predefinidos e botões de download."
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## Instalação [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## Uso [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+A prévia é atualizada conforme você digita. Cada botão de estilo predefinido mostra uma pequena amostra do seu visual, e os downloads usam o estilo selecionado com 1024 pixels.
+
+## Exemplos [#examples]
+
+### Estilos personalizados [#custom-presets]
+
+Substitua os estilos predefinidos integrados pelos seus. Um estilo predefinido é composto por um `id`, um `name` e um `style` com qualquer opção do qrdx, incluindo gradientes, logos e o `level` de correção de erros.
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+Os estilos predefinidos integrados são exportados como `QR_CODE_PRESETS`, então você pode estendê-los:
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### Salvando o resultado [#saving-the-result]
+
+`onChange` informa o texto e o estilo predefinido selecionado a cada alteração, por exemplo para guardar a escolha do usuário:
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## Referência da API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

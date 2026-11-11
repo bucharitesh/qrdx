@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "Biblioteca React",
+  "description": "Componentes de qrdx y el registro de shadcn",
+  "icon": "Code",
+  "root": true,
+  "pages": [
+    "---Primeros pasos---",
+    "../getting-started",
+    "../usage",
+    "---Estilos y exportación---",
+    "../styles",
+    "...../features",
+    "---Componentes---",
+    "../developers/shadcn",
+    "...../components",
+    "---Referencia---",
+    "../api-reference",
+    "../utilities",
+    "../qr-detection"
+  ]
+}

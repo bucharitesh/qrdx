@@ -1,0 +1,106 @@
+---
+title: "艺术二维码"
+description: "将徽标或照片融入可扫描二维码的模块中（矢量输出，无需 AI），或围绕二维码生成 AI 艺术图。"
+icon: Sparkles
+---
+
+QRdx 提供三种方式，把二维码变成艺术作品：
+
+| | 工作原理 | 输出 | 费用 |
+|---|---|---|---|
+| **Logo QR** | 位于徽标形状内的模块采用徽标的颜色，其余模块淡化为较浅的色调 | 矢量（SVG、PDF、EPS、PNG） | 免费 |
+| **Image QR** | 每个模块都显示你的照片，中心方块保留真实的模块值（半色调） | 矢量（SVG、PDF、EPS、PNG） | 免费 |
+| **AI 艺术图** | AI 图像模型把二维码重绘为一个场景，且每张图像都经过扫描验证 | 1024 px 图像，2048 px 印刷版 | AI 艺术图额度 |
+
+Logo QR 和 Image QR 由 `qrdx` 库自身绘制，因此可以离线运行，在编辑器、服务器和 Node 中都能使用，而且结果始终是真正的二维码：定位图案、定时图案和校正图案不会被改动。
+
+## 在编辑器中 [#in-the-editor]
+
+打开 [Playground](/playground?tab=art)，进入 **Art** 标签页，选择 **Logo QR** 或 **Image QR**：
+
+1. 上传徽标或照片（PNG、JPG、WebP 或 SVG，最大 1 MB）。透明背景的 PNG 或 SVG 能得到最干净的 Logo QR。
+2. 设置**强度**：强度低时二维码看起来更朴素，强度高时显示更多图片内容。
+3. 查看滑块旁边的**扫描检查**。它会在浏览器中以三种尺寸解码艺术二维码，和预览中的[扫描评分](/docs/qr-detection)一样。
+
+上传艺术图片后，纠错级别会设为 `H`，为艺术效果留出最大空间。图片不会离开你的浏览器：设计中只保存一个小的颜色网格（宽 64 或 96 像素）。
+
+## 在代码中 [#in-code]
+
+传入 `art` 属性，包含模式、采样后的图像和可选的强度（0 到 1，默认 0.6）：
+
+```tsx
+import { QRCodeSVG, loadQRArtImage } from 'qrdx';
+
+// Browser: sample an uploaded file, a data URL or an <img>
+const image = await loadQRArtImage(file, { mode: 'logo' });
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  level="H"
+  art={{ mode: 'logo', image, intensity: 0.7 }}
+/>;
+```
+
+在服务器或 Node 中，请自行解码图像，并把 RGBA 像素传给 `createQRArtImage`：
+
+```ts
+import sharp from 'sharp';
+import { createQRArtImage } from 'qrdx';
+
+const { data, info } = await sharp('photo.jpg')
+  .ensureAlpha()
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+
+const image = createQRArtImage(
+  { data, width: info.width, height: info.height },
+  { maxSize: 96 }
+);
+// art={{ mode: 'halftone', image, intensity: 0.8 }}
+```
+
+`art.image` 是普通的 JSON（`{ width, height, data }`，其中 data 为 base64 编码的 RGBA），因此你可以把它与已保存的设计一起存储，并在任何地方同步渲染出相同的二维码，无需再次获取图片。
+
+| 选项 | 取值 | 说明 |
+|---|---|---|
+| `mode` | `logo`、`halftone` | `halftone` 在编辑器中对应“Image QR” |
+| `image` | 来自 `loadQRArtImage` 或 `createQRArtImage` | 最多 192 × 192 个采样点 |
+| `intensity` | `0` 到 `1` | 默认 `0.6`；`0` 看起来与普通二维码相同 |
+
+艺术效果会取代主体图案；角落的定位眼保留各自的 `cornerEyePattern`、`cornerEyeDotPattern` 和颜色。艺术效果使用渐变 `fgColor`/`bgColor` 的第一种颜色，并且要求浅色背景上有深色前景（颜色反转时会回退为普通外观）。
+
+### 如何保持可扫描性 [#how-scannability-is-kept]
+
+- **Logo QR**：徽标内的深色模块会被重新着色，但只会加深到扫描器仍视为深色的亮度；徽标内的浅色模块使用淡色调，并保持在浅色阈值之上。徽标外的深色模块会淡化为灰色，但不会比深色阈值更浅。
+- **Logo QR 徽章**：徽章底板下的每个模块都可能破坏一个码字。底板的大小经过计算，使任何纠错块损失的码字都不超过其可修复数量的 60%，其余部分留给相机使用。强度越高，底板越大，直到达到这个上限。较小的二维码使用较小的徽标，最小的几种（版本 1、纠错级别为 L 或 M 的版本 2、纠错级别为 L 的版本 3）不绘制底板。
+- **Image QR**：每个模块被划分为 3 × 3 的网格。外围单元格显示照片，并根据模块的值调深或调浅，中心单元格保留精确的前景色或背景色，这里正是扫描器的采样位置。
+- 定位、定时、校正、格式和版本模块始终以实心方式绘制。
+
+打印前请用 `getScanScore(props)` 检查设计，并用真实的手机相机测试。
+
+## 导出艺术二维码 [#exporting-art-codes]
+
+艺术二维码是矢量图形，因此每种导出格式都能保持清晰：
+
+```ts
+import { downloadQRCode, getQRAsEPS, getQRAsPrintPDF } from 'qrdx';
+
+await downloadQRCode(props, { format: 'svg', size: { width: 1024, height: 1024 } });
+const pdf = await getQRAsPrintPDF(props, { size: 40, unit: 'mm', colorMode: 'cmyk' });
+const eps = await getQRAsEPS(props, { sizeMm: 40, bleedMm: 3, colorMode: 'cmyk' });
+```
+
+`getQRAsEPS` 会写出 EPSF-3.0 文件，其中的 `%%BoundingBox` 以点为单位，每个模块、定位眼和边框都是 PostScript 路径。与印刷版 PDF 一样，它保留线性和径向渐变（以 PostScript Level 3 渐变填充表示），且不含透明度。PNG 和 JPEG 徽标会作为图像嵌入；其他格式的徽标在浏览器中会被转换，在服务器上则会被省略。边框文字使用 Helvetica，因此 Latin-1 之外的字符会以 `?` 打印。`svgToEPS(svg, { width })` 可转换由本库渲染的任何 SVG。
+
+CLI 同样可以写出 EPS：`qrdx generate "https://example.com" -o qr.eps`。
+
+<IfAvailable feature="aiArt" id="ai-art" title="AI 艺术图">
+
+[AI 二维码艺术图](/ai/art)通过 Vercel AI Gateway，使用 {facts.artModel} 把你的二维码变成一个场景。你可以使用 30 多种风格预设、设置要避免的内容、调节**二维码可见度**滑块（模型对二维码的偏重程度）和**创意度**滑块（模型理解你的提示词的自由程度），每次生成 1 到 4 个变体，还可以选择上传参考图像，例如徽标或调色板，其颜色和形状会被延续到结果中。
+
+每张图像在你看到之前，都会先在服务器上检查。QRdx 会向模型发送一个纯黑白的二维码（纠错级别 H、方形模块、较宽的静区），并要求模型保留模块网格、定位眼和静区。随后它用 jsQR 解码模型生成的图像，先直接解码，再通过手机相机模型解码。如果失败，它会找到模型绘制的模块网格，并尽可能少地在模型自己的图像上增强二维码：先增强定位眼和静区，再增强模块，逐步提高强度直到图像可以扫描，二维码在相机视野中较小时也是如此。二维码可见度决定了它最多可以增强到什么程度。只有这样仍然不够时，才会把图像重绘为 Image QR 二维码。仍然无法解码出你的确切内容的图像不会交付。随后你的浏览器会为各个变体评分并选出最佳的一个；你可以下载 1024 px 版本，或 2048 px 印刷版（经过重新采样并再次检查）。
+
+每张交付的图像消耗一个 AI 艺术图额度：免费版账户每月 3 个，Pro 30 个，Business 150 个，由工作区内所有成员共用。生成失败或未通过扫描检查的图像不消耗额度，印刷版免费。AI 艺术图是栅格图像，内容固定不变，因此如果想要可编辑的链接，请把[动态二维码](/docs/dynamic-qr-codes)的短链接放进去。
+
+</IfAvailable>

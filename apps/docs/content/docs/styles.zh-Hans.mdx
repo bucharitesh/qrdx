@@ -1,0 +1,59 @@
+---
+title: "形状、定位眼与边框"
+description: "所有主体图案、定位眼边框、定位眼中心和行动号召边框，均由 qrdx 渲染器实时绘制，并在你的浏览器中解码。"
+icon: Grid3x3
+---
+
+import { QrCatalog } from "@/components/docs/qr-catalog";
+
+下面的每一种样式都由与下载文件相同的渲染器绘制，并附有选项名称和可直接复制的 API 值。每个图块都会在你的浏览器中使用 [jsQR](https://github.com/cozmo/jsQR) 逐个解码，因此 **Scans** 标记是实时结果，而不是一句承诺。
+
+所有样式也都在软件包中经过测试（`packages/qrdx/tests/catalog-*.test.ts`）：每个值都会通过手机摄像头模型（对比度损失和四分之一模块的模糊）解码，分别在每模块 4、6 和 9 像素下，与其他所有主体、定位眼和中心搭配，在纠错等级 L、M、Q 和 H 下，在 148 px 和 1024 px 尺寸下，在深色背景浅色图案下，使用品牌颜色，以及带中心 Logo 的情况；我们还用 ZXing 和 sharp 渲染图进行了检查。少数组合搭配在一起效果较差，请参阅[应避免的搭配](#pairs-to-avoid)。
+
+## 主体图案 [#body-patterns]
+
+数据模块的形状（`bodyPattern`）。连接式样式（`liquid`、`classy`）会把相邻模块合并为一个轮廓。`random-dots` 和 `mosaic` 每个模块的外观各不相同，但结果是确定的：相同的值始终绘制出相同的二维码。
+
+<QrCatalog kind="body" />
+
+## 定位眼边框 [#eye-frames]
+
+三个角标的外环（`cornerEyePattern`）。`leaf`、`leaf-reverse`、`drop` 和 `petal` 会旋转每个定位眼，使其朝向二维码的角落。每个图块都将定位眼与其推荐的中心搭配展示。
+
+<QrCatalog kind="eye" />
+
+## 定位眼中心 [#eye-centers]
+
+每个角标的实心中心（`cornerEyeDotPattern`），显示在方形定位眼内部。
+
+<QrCatalog kind="dot" />
+
+## 边框 [#frames]
+
+行动号召边框绘制在二维码外围，因此二维码及其静区不会被遮挡，下载的图片会相应变大。每种边框都支持 `text`（最多 24 个字符）、`color`、`textColor` 和 `fontScale`（0.5 到 1.5）。`banner-top-bottom`、`circle` 和 `menu-card` 还会显示 `secondaryText`；`gradient-border` 的渐变从 `color` 过渡到 `secondaryColor`。
+
+<QrCatalog kind="frame" />
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
+/>;
+```
+
+## 应避免的搭配 [#pairs-to-avoid]
+
+有些形状单独使用时可以扫描，但搭配在一起时无法通过我们的解码测试。Playground 不允许你同时选择它们，扫描评分也会对此发出警告（`style-pair`）：
+
+- `diamond` 主体搭配 `square` 定位眼，`pacman` 搭配 `rounded`，以及 `small-square` 搭配 `square` 或 `rounded` 定位眼（近距离无法识别）。
+
+`circle` 定位眼在我们测试的两种解码器（jsQR 和 ZXing）中都能识别，但被标记为**谨慎使用**：部分扫描应用无法识别。这些搭配在软件包中以 `WEAK_BODY_EYES` 提供，`getStylePairRisk(props)` 会返回某个样式的警告。
+
+## 已停用的形状 [#retired-shapes]
+
+`curly` 定位眼以及 `diamond`、`star` 和 `banner` 中心已被移除，因为它们无法可靠扫描：ZXing（大多数 Android 扫描器使用的解码器）在手机常见距离下无法识别 curly 定位眼以及 diamond 和 star 中心，而 jsQR 在所有清晰渲染图中都无法识别 banner 中心。使用这些样式保存的二维码仍可加载，渲染效果与之前完全一致，图片 API 也仍会为现有链接绘制它们，但任何选择器、预设或 AI 主题都不再提供它们，它们的名称仅作为已弃用的值保留（`RETIRED_CORNER_EYE_PATTERNS`、`RETIRED_CORNER_EYE_DOT_PATTERNS`）。

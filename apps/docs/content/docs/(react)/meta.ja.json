@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "Reactライブラリ",
+  "description": "qrdxコンポーネントとshadcnレジストリ",
+  "icon": "Code",
+  "root": true,
+  "pages": [
+    "---はじめに---",
+    "../getting-started",
+    "../usage",
+    "---スタイルとエクスポート---",
+    "../styles",
+    "...../features",
+    "---コンポーネント---",
+    "../developers/shadcn",
+    "...../components",
+    "---リファレンス---",
+    "../api-reference",
+    "../utilities",
+    "../qr-detection"
+  ]
+}

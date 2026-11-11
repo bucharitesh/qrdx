@@ -1,0 +1,69 @@
+---
+title: "Registro de auditoría"
+description: "Consulta quién cambió qué en tu espacio de trabajo y cuándo, fíltralo y expórtalo como CSV. Forma parte del plan Business."
+---
+
+El registro de auditoría es una función de Business bajo la licencia comercial de QRdx. Un servidor QRdx autoalojado necesita una clave de licencia (`QRDX_EE_LICENSE`) para activarlo; consulta [Autoalojamiento](/docs/self-hosting#optional-services).
+
+<IfAvailable feature="auditLog">
+
+El registro de auditoría muestra los cambios que hacen las personas en un espacio de trabajo: quién los hizo, qué cambió y cuándo. Los propietarios y administradores lo leen en **Ajustes** → **Registro de auditoría**, donde pueden filtrarlo y exportarlo como archivo CSV.
+
+## Quién lo tiene [#who-has-it]
+
+El registro de auditoría forma parte del plan **Business**. Un espacio de trabajo lo tiene cuando uno de sus propietarios o miembros de facturación está en Business. Consulta [Asientos y límites del espacio de trabajo](/docs/help/teams/seats).
+
+El historial empieza cuando el espacio de trabajo obtiene Business. Los cambios hechos antes, o mientras estaba en otro plan, no se registran. Si el espacio de trabajo deja Business, el registro se detiene; las entradas ya guardadas permanecen hasta que cumplan {facts.auditLogRetentionDays} días, y podrás verlas de nuevo si el espacio de trabajo vuelve a Business.
+
+Solo los **propietarios** y los **administradores** pueden abrir el registro de auditoría y exportarlo. Los miembros, los lectores y los miembros de facturación no pueden. Consulta [Roles](/docs/help/teams/roles).
+
+## Qué se registra [#whats-recorded]
+
+Cada entrada tiene la hora, quién hizo el cambio, qué cambió y el objetivo (un código, una página, una persona, un dominio). Cuando corresponde, la entrada guarda el valor anterior y el nuevo, como el destino anterior y el nuevo de un código. Haz clic en la flecha de una entrada para verlos.
+
+Quien hizo el cambio es una persona, o una clave de API o una aplicación que actúa en nombre de una persona. Los cambios hechos mediante la [REST API](/docs/developers/rest-api) con una clave de API muestran el nombre de la clave; los hechos mediante una aplicación que autorizaste muestran el nombre de la aplicación.<IfAvailable feature="slackBot"> Los códigos creados en Slack con `/qr track` muestran a la persona vinculada "vía Slack", con los ids del usuario y del espacio de trabajo de Slack. Cuando un propietario o administrador revoca el vínculo de una cuenta de Slack en [Ajustes → Claves de API y aplicaciones](/dashboard?to=settings/developers), queda registrado en Desarrolladores.</IfAvailable>
+
+Cada entrada también guarda la dirección IP y el dispositivo de la solicitud, es decir, el navegador y el sistema, como "Chrome en macOS". Los cambios que hace el sistema, como un cambio de plan desde la facturación, no tienen ninguno de los dos.
+
+Se registran estos cambios:
+
+- **Códigos:** creado (incluidas importaciones y copias), destino cambiado, renombrado, diseño cambiado, enlace corto cambiado, controles del enlace cambiados (contraseña activada o desactivada, fechas de inicio y fin, límite de escaneos, URL alternativa), reglas de enrutamiento cambiadas, pausado o reanudado, archivado o desarchivado, movido a la papelera, restaurado, eliminado definitivamente, versión anterior restaurada, movido a otra carpeta, movido a otro espacio de trabajo o desde otro. Carpetas y etiquetas creadas, renombradas o eliminadas.
+- **Páginas:** creadas, publicadas, eliminadas.
+- **Equipo:** invitaciones enviadas y revocadas, personas que se unen con una invitación, el enlace para unirse o el inicio de sesión único, cambios de rol, personas eliminadas, personas que se van, y el enlace para unirse activado, cambiado o desactivado. Se registran sea cual sea la forma de hacer el cambio, en QRdx o mediante su API.
+- **Seguridad:** "Exigir verificación en dos pasos" y "Exigir inicio de sesión único" activados o desactivados (al activar el inicio de sesión único también se indica cuántas sesiones cerró), inicio de sesión único configurado, cambiado, verificado o eliminado, el rol que reciben las personas nuevas la primera vez que inician sesión con inicio de sesión único, y las exportaciones del registro de auditoría.
+- **Desarrolladores:** claves de API creadas y revocadas (su nombre y permisos), aplicaciones autorizadas o revocadas, endpoints de webhook añadidos, cambiados o eliminados, y secreto de firma de un webhook reemplazado. De un endpoint el registro guarda solo su servidor, como `https://hooks.zapier.com/…`, ya que el resto de la URL de un webhook suele ser secreto.
+- **Dominios:** dominios personalizados añadidos, verificados o eliminados.
+- **Espacio de trabajo:** nombre o URL cambiados, y el espacio de trabajo pasando a Business (registrado como "Facturación").
+
+El registro de auditoría nunca guarda una clave de API, un token de OAuth, una contraseña, la ruta o la consulta de la URL de un webhook, el secreto de firma de un webhook ni el secreto de cliente o el certificado del inicio de sesión único. Registra que se creó, reemplazó o eliminó uno, no su valor.
+
+Las aplicaciones que autorizas actúan en tu propio espacio de trabajo, así que autorizar o revocar una aplicación se registra allí.
+
+Esto no está en el registro de auditoría:
+
+- los escaneos, las respuestas de formularios y las analíticas, que no son cambios en el espacio de trabajo (consúltalos en Analíticas y Respuestas);
+- los cambios en tu propia cuenta, como tu nombre, correo electrónico o verificación en dos pasos.
+
+## Filtrar el registro [#filter-the-log]
+
+Los cambios más recientes aparecen primero, de 50 en 50. Haz clic en **Cargar más** al final para ver los más antiguos.
+
+- **Quién**: una persona, con las claves de API y aplicaciones que actúan en su nombre.
+- **Categoría**: Códigos (con carpetas y etiquetas), Páginas, Equipo, Seguridad, Desarrolladores, Dominios o Espacio de trabajo.
+- **Desde** y **Hasta**: el primer y el último día que se muestran. Los días están en UTC; las horas de cada entrada están en tu zona horaria.
+
+## Exportar como CSV [#export-as-csv]
+
+Haz clic en **Exportar CSV** para descargar lo que muestran los filtros, empezando por lo más reciente. Una exportación contiene hasta {facts.auditLogExportRows} entradas. Para obtener más, exporta un intervalo de fechas más corto cada vez.
+
+El archivo tiene una fila por cambio: la hora en UTC, la categoría, la acción, una frase que lo describe, quién lo hizo (y la clave de API o aplicación, si la hay), el objetivo, la dirección IP, el dispositivo, y los valores anterior y nuevo como JSON.
+
+La exportación también queda registrada, con los filtros que se usaron.
+
+## Cuánto tiempo se conservan las entradas [#how-long-entries-are-kept]
+
+Las entradas se conservan durante {facts.auditLogRetentionDays} días y luego se eliminan. Al eliminar un espacio de trabajo, se elimina con él su registro de auditoría.
+
+Las direcciones IP y los dispositivos del registro de auditoría son datos personales de las personas que trabajan en el espacio de trabajo. La [política de privacidad](/legal/privacy-policy) explica cómo los trata QRdx.
+
+</IfAvailable>
