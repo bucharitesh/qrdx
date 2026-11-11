@@ -10,6 +10,7 @@ import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArchiveAdd } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { saveBarcode } from "@/actions/barcodes";
 import {
@@ -32,6 +33,7 @@ export function PublicBarcodeGenerator() {
 }
 
 export function SaveBarcode({ current }: { current: CurrentBarcode | null }) {
+  const t = useTranslations("barcodeTool.save");
   const router = useRouter();
   const { data: session, isPending } = authClient.useSession();
   const openSignInTo = useAuthStore((state) => state.openSignInTo);
@@ -42,14 +44,17 @@ export function SaveBarcode({ current }: { current: CurrentBarcode | null }) {
   if (!session?.user) {
     return (
       <p className="text-center text-xs text-muted-foreground">
-        <button
-          className="text-foreground underline underline-offset-4 hover:no-underline"
-          onClick={() => openSignInTo("/barcode-generator")}
-          type="button"
-        >
-          Sign in
-        </button>{" "}
-        to save barcodes to your dashboard and edit them later.
+        {t.rich("signIn", {
+          link: (chunks) => (
+            <button
+              className="text-foreground underline underline-offset-4 hover:no-underline"
+              onClick={() => openSignInTo("/barcode-generator")}
+              type="button"
+            >
+              {chunks}
+            </button>
+          ),
+        })}
       </p>
     );
   }
@@ -66,7 +71,7 @@ export function SaveBarcode({ current }: { current: CurrentBarcode | null }) {
       });
       if (!result.success) {
         soundEvent("error");
-        toast.error("Couldn't save the barcode", {
+        toast.error(t("failed"), {
           description: result.error.message,
         });
         return;
@@ -81,9 +86,9 @@ export function SaveBarcode({ current }: { current: CurrentBarcode | null }) {
         symbology: current.format,
         source: "generator",
       });
-      toast.success(`Saved to ${workspace.name}`, {
-        description: "Find it under Barcodes in your dashboard.",
-        action: { label: "Open", onClick: () => router.push(href) },
+      toast.success(t("saved", { workspace: workspace.name }), {
+        description: t("savedDescription"),
+        action: { label: t("open"), onClick: () => router.push(href) },
       });
     } finally {
       setSaving(false);
@@ -102,7 +107,7 @@ export function SaveBarcode({ current }: { current: CurrentBarcode | null }) {
       ) : (
         <ArchiveAdd aria-hidden className="size-4" />
       )}
-      Save to dashboard
+      {t("save")}
     </Button>
   );
 }

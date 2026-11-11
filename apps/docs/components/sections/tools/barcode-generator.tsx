@@ -37,6 +37,7 @@ import {
   Import as Download,
   Warning2,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   type ReactNode,
   useEffect,
@@ -45,6 +46,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { useContentText } from "@/components/i18n/content-text";
 import { track } from "@/lib/analytics";
 import {
   barcodeColorWarnings,
@@ -123,6 +125,7 @@ function ColorField({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const t = useTranslations("barcodeTool");
   const id = useId();
   const [text, setText] = useState(value);
   useEffect(() => setText(value), [value]);
@@ -136,7 +139,7 @@ function ColorField({
           style={{ background: value }}
         >
           <input
-            aria-label={`Pick the ${label.toLowerCase()}`}
+            aria-label={t("pickColor", { label })}
             className="absolute inset-0 size-full cursor-pointer opacity-0"
             type="color"
             value={value}
@@ -207,6 +210,7 @@ function RangeField({
 }
 
 function Notice({ warning }: { warning: ColorWarning }) {
+  const tc = useContentText();
   return (
     <p
       className={cn(
@@ -222,7 +226,7 @@ function Notice({ warning }: { warning: ColorWarning }) {
         )}
         variant="Bold"
       />
-      <span>{warning.message}</span>
+      <span>{tc(warning.message)}</span>
     </p>
   );
 }
@@ -239,11 +243,12 @@ function ScanStatus({
   /** What was drawn; readers report some formats differently (UPC-E expanded) */
   value: string;
 }) {
+  const t = useTranslations("barcodeTool.scan");
   if (checking || !result) {
     return (
       <p className="flex items-center gap-2 text-xs text-muted-foreground">
         <Spinner className="size-4 animate-spin" />
-        Checking the PNG with a barcode reader…
+        {t("checking")}
       </p>
     );
   }
@@ -251,8 +256,7 @@ function ScanStatus({
     return (
       <p className="flex gap-2 text-xs text-muted-foreground">
         <Warning2 aria-hidden className="mt-px size-4 shrink-0" />
-        The scan check couldn't load its decoder, so this barcode wasn't
-        checked. Test the printed code with a scanner.
+        {t("unavailable")}
       </p>
     );
   }
@@ -265,8 +269,13 @@ function ScanStatus({
           variant="Bold"
         />
         <span>
-          Scan check passed: a barcode reader decodes the PNG as {label}{" "}
-          <span className="break-all font-mono">{value}</span>
+          {t.rich("passed", {
+            label,
+            value,
+            mono: (chunks) => (
+              <span className="break-all font-mono">{chunks}</span>
+            ),
+          })}
         </span>
       </p>
     );
@@ -276,8 +285,8 @@ function ScanStatus({
       <CircleX aria-hidden className="mt-px size-4 shrink-0" variant="Bold" />
       <span>
         {result.status === "mismatch"
-          ? `Scan check failed: the reader got "${result.decoded}" instead of this ${label}.`
-          : `Scan check failed: the reader couldn't decode this ${label}. Raise the contrast, the size or the quiet zone.`}
+          ? t("mismatch", { decoded: result.decoded, label })
+          : t("failed", { label })}
       </span>
     </p>
   );
@@ -292,14 +301,11 @@ export function BarcodeGenerator({
   initial,
   formTop,
   renderActions,
-  footnote = (
-    <>
-      Made in your browser; nothing you type is sent to QRdx. WebP and AVIF are
-      encoded by QRdx's server when you pick them, and nothing is kept.
-    </>
-  ),
+  footnote,
   source = "generator",
 }: BarcodeGeneratorProps = {}) {
+  const t = useTranslations("barcodeTool");
+  const tc = useContentText();
   const start = useRef({
     format: initial?.format ?? DEFAULT_BARCODE_FORMAT,
     value:
@@ -379,13 +385,10 @@ export function BarcodeGenerator({
       };
     } catch (error) {
       return {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Couldn't draw this barcode.",
+        error: error instanceof Error ? error.message : t("drawFailed"),
       };
     }
-  }, [renderer, checked, formatId, style]);
+  }, [renderer, checked, formatId, style, t]);
   const rendered = drawn && "rendered" in drawn ? drawn.rendered : null;
   const value = checked.ok ? checked.value : null;
   const current = useMemo<CurrentBarcode | null>(
@@ -439,7 +442,7 @@ export function BarcodeGenerator({
 
   /** WebP and AVIF: browsers can't encode them, so the image API does. */
   const serverFile = async (type: BarcodeFileType): Promise<Blob> => {
-    if (!value) throw new Error("Fix the input first.");
+    if (!value) throw new Error(t("fixFirst"));
     const response = await fetch("/api/v1/barcode", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -462,9 +465,7 @@ export function BarcodeGenerator({
         data?: { details?: { message?: string }[] };
       } | null;
       throw new Error(
-        body?.data?.details?.[0]?.message ??
-          body?.message ??
-          "The server couldn't make this file.",
+        body?.data?.details?.[0]?.message ?? body?.message ?? t("serverFailed"),
       );
     }
     return response.blob();
@@ -513,7 +514,7 @@ export function BarcodeGenerator({
       });
     } catch (error) {
       soundEvent("error");
-      toast.error("Download failed", {
+      toast.error(t("downloadFailed"), {
         description: error instanceof Error ? error.message : undefined,
       });
     } finally {
@@ -538,7 +539,7 @@ export function BarcodeGenerator({
       <div className="flex flex-col gap-5 rounded-xl border border-border bg-card p-5">
         {formTop}
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor={`${inputId}-format`}>Barcode type</Label>
+          <Label htmlFor={`${inputId}-format`}>{t("type")}</Label>
           <Select value={formatId} onValueChange={changeFormat}>
             <SelectTrigger id={`${inputId}-format`} className="w-full">
               {/* Just the name; the list shows what each one is for. */}
@@ -546,13 +547,13 @@ export function BarcodeGenerator({
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectLabel>Linear (1D)</SelectLabel>
+                <SelectLabel>{t("linear")}</SelectLabel>
                 {LINEAR.map((item) => (
                   <SelectItem key={item.id} value={item.id}>
                     {item.label}
                     <span className="text-muted-foreground">
                       {" "}
-                      · {item.summary}
+                      · {tc(item.summary)}
                     </span>
                   </SelectItem>
                 ))}
@@ -564,7 +565,7 @@ export function BarcodeGenerator({
                     {item.label}
                     <span className="text-muted-foreground">
                       {" "}
-                      · {item.summary}
+                      · {tc(item.summary)}
                     </span>
                   </SelectItem>
                 ))}
@@ -575,7 +576,7 @@ export function BarcodeGenerator({
 
         <div className="flex flex-col gap-1.5">
           <Label htmlFor={inputId}>
-            {linear ? "Number or text to encode" : "Text to encode"}
+            {t(linear ? "linearInput" : "textInput")}
           </Label>
           {linear ? (
             <Input
@@ -610,18 +611,20 @@ export function BarcodeGenerator({
             ) : checked.ok && checked.note ? (
               <p className="text-xs text-foreground">{checked.note}</p>
             ) : null}
-            <p className="text-xs text-muted-foreground">{format.inputHint}</p>
+            <p className="text-xs text-muted-foreground">
+              {tc(format.inputHint)}
+            </p>
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <ColorField
-            label="Bar color"
+            label={t("barColor")}
             value={foreground}
             onChange={setForeground}
           />
           <ColorField
-            label="Background"
+            label={t("background")}
             value={background}
             onChange={setBackground}
           />
@@ -629,7 +632,7 @@ export function BarcodeGenerator({
 
         {linear && (
           <RangeField
-            label="Bar height"
+            label={t("barHeight")}
             max={60}
             min={5}
             readout={`${barHeightMm} mm`}
@@ -639,10 +642,10 @@ export function BarcodeGenerator({
         )}
 
         <RangeField
-          label="Quiet zone"
+          label={t("quietZone")}
           max={maxQuietZone(formatId)}
           min={0}
-          readout={`${quietZone} ${quietZone === 1 ? "module" : "modules"}`}
+          readout={t("modules", { count: quietZone })}
           value={quietZone}
           onChange={setQuietZone}
         >
@@ -653,13 +656,21 @@ export function BarcodeGenerator({
             )}
           >
             {quietZoneLow
-              ? `${format.label} needs at least ${format.quietZone.min} modules of blank space ${linear ? "on each side" : "all round"}. Leave it in your layout if you trim it here.`
-              : `The blank margin ${linear ? "left and right of the bars" : "around the code"}, in modules (the width of the narrowest bar${linear ? "" : " or one cell"}). ${format.label} needs ${format.quietZone.min === 0 ? "none" : `at least ${format.quietZone.min}`}.`}
+              ? t("quietZoneLow", {
+                  format: format.label,
+                  min: format.quietZone.min,
+                  kind: linear ? "linear" : "matrix",
+                })
+              : t("quietZoneHelp", {
+                  format: format.label,
+                  min: format.quietZone.min,
+                  kind: linear ? "linear" : "matrix",
+                })}
           </p>
         </RangeField>
 
         <RangeField
-          label="Image size"
+          label={t("imageSize")}
           max={BARCODE_LIMITS.scale.max}
           min={BARCODE_LIMITS.scale.min}
           readout={
@@ -674,8 +685,7 @@ export function BarcodeGenerator({
         {linear && (
           <div className="flex items-center justify-between gap-3">
             <Label htmlFor={`${inputId}-text`}>
-              Show the {TEXT_FORMATS.has(format.id) ? "text" : "digits"} under
-              the bars
+              {t(TEXT_FORMATS.has(format.id) ? "showText" : "showDigits")}
             </Label>
             <Switch
               id={`${inputId}-text`}
@@ -686,7 +696,7 @@ export function BarcodeGenerator({
         )}
 
         <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
-          <Label id={`${inputId}-rotation`}>Rotation</Label>
+          <Label id={`${inputId}-rotation`}>{t("rotation")}</Label>
           <ToggleGroup
             aria-labelledby={`${inputId}-rotation`}
             onValueChange={(next) => {
@@ -699,7 +709,7 @@ export function BarcodeGenerator({
           >
             {BARCODE_ROTATIONS.map((angle) => (
               <ToggleGroupItem
-                aria-label={`${angle} degrees`}
+                aria-label={t("degrees", { angle })}
                 className="px-2.5 font-mono text-xs tabular-nums"
                 key={angle}
                 value={String(angle)}
@@ -719,7 +729,7 @@ export function BarcodeGenerator({
           {rendered ? (
             // A data URL in an <img>: the SVG never becomes page markup.
             <img
-              alt={`${format.label} barcode for ${value}`}
+              alt={t("alt", { format: format.label, value: value ?? "" })}
               className="h-auto max-h-80 w-auto max-w-full"
               height={rendered.height}
               src={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(rendered.svg)}`}
@@ -727,25 +737,26 @@ export function BarcodeGenerator({
             />
           ) : loadError ? (
             <p className="max-w-xs text-center text-sm text-destructive">
-              The barcode drawing code didn't load. Check your connection and
-              reload the page.
+              {t("loadFailed")}
             </p>
           ) : !renderer && checked.ok ? (
             <Spinner className="size-6 animate-spin text-muted-foreground" />
           ) : (
             <p className="max-w-xs text-center text-sm text-muted-foreground">
-              Fix the highlighted input to see the barcode.
+              {t("fixInput")}
             </p>
           )}
         </div>
 
         {rendered && renderer && (
           <p className="text-xs text-muted-foreground">
-            PNG, JPG, WebP and AVIF {Math.round(rendered.width)} ×{" "}
-            {Math.round(rendered.height)} px. SVG, PDF and EPS are vectors sized{" "}
-            {mm(rendered.widthUnits)} × {mm(rendered.heightUnits)} mm, with a{" "}
-            {mm(renderer.MODULE_UNITS[formatId], 2)} mm module; scale them in
-            your layout as needed.
+            {t("sizes", {
+              width: Math.round(rendered.width),
+              height: Math.round(rendered.height),
+              widthMm: mm(rendered.widthUnits),
+              heightMm: mm(rendered.heightUnits),
+              moduleMm: mm(renderer.MODULE_UNITS[formatId], 2),
+            })}
           </p>
         )}
 
@@ -787,12 +798,12 @@ export function BarcodeGenerator({
                 {downloading && MORE_FILES.includes(downloading) ? (
                   <Spinner className="size-4 animate-spin" />
                 ) : null}
-                More
+                {t("more")}
                 <ArrowDown2 aria-hidden className="size-3.5 opacity-70" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-64">
-              <DropdownMenuLabel>More formats</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("moreFormats")}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {MORE_FILES.map((type) => (
                 <DropdownMenuItem key={type} onSelect={() => download(type)}>
@@ -800,7 +811,7 @@ export function BarcodeGenerator({
                     {BARCODE_FILES[type].label}
                   </span>
                   <span className="text-muted-foreground text-xs">
-                    {BARCODE_FILES[type].hint}
+                    {tc(BARCODE_FILES[type].hint)}
                   </span>
                 </DropdownMenuItem>
               ))}
@@ -808,11 +819,11 @@ export function BarcodeGenerator({
           </DropdownMenu>
         </div>
         {renderActions?.(current)}
-        {footnote ? (
+        {footnote === null ? null : (
           <p className="text-center text-[11px] text-muted-foreground text-pretty">
-            {footnote}
+            {footnote ?? t("footnote")}
           </p>
-        ) : null}
+        )}
       </div>
     </div>
   );

@@ -8,21 +8,36 @@ import { join, relative } from "node:path";
 import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
 import { loader } from "fumadocs-core/source";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import * as integrationImage from "@/app/(app)/(home)/integrations/[slug]/opengraph-image";
-import * as integrationPage from "@/app/(app)/(home)/integrations/[slug]/page";
-import * as typeImage from "@/app/(app)/(home)/qr-code-generator/[type]/opengraph-image";
-import * as typePage from "@/app/(app)/(home)/qr-code-generator/[type]/page";
-import * as industryImage from "@/app/(app)/(home)/qr-codes-for/[slug]/opengraph-image";
-import * as industryPage from "@/app/(app)/(home)/qr-codes-for/[slug]/page";
-import * as placementImage from "@/app/(app)/(home)/qr-codes-on/[slug]/opengraph-image";
-import * as placementPage from "@/app/(app)/(home)/qr-codes-on/[slug]/page";
+
+// The marketing routes are translated pages (lib/i18n): English here.
+vi.mock(
+  "next-intl/server",
+  async () => (await import("../support/intl")).intlServer,
+);
+vi.mock(
+  "@/lib/i18n/server",
+  async () => (await import("../support/intl")).i18nServer,
+);
+
 import * as templateTypePage from "@/app/(app)/templates/[type]/page";
-import type { Locale } from "@/lib/i18n/config";
+import * as integrationImage from "@/app/[lang]/(home)/integrations/[slug]/opengraph-image";
+import * as integrationPage from "@/app/[lang]/(home)/integrations/[slug]/page";
+import * as typeImage from "@/app/[lang]/(home)/qr-code-generator/[type]/opengraph-image";
+import * as typePage from "@/app/[lang]/(home)/qr-code-generator/[type]/page";
+import * as industryImage from "@/app/[lang]/(home)/qr-codes-for/[slug]/opengraph-image";
+import * as industryPage from "@/app/[lang]/(home)/qr-codes-for/[slug]/page";
+import * as placementImage from "@/app/[lang]/(home)/qr-codes-on/[slug]/opengraph-image";
+import * as placementPage from "@/app/[lang]/(home)/qr-codes-on/[slug]/page";
+import { type Locale, LOCALE_SEGMENTS } from "@/lib/i18n/config";
 import { docsI18n, docsUrl, translationLocale } from "@/lib/i18n/docs";
 import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { industries, placements } from "@/lib/seo-content";
 import { buildTimeParams } from "@/lib/static-params";
+
+/** An OG image under app/[lang]: its params in every language. */
+const inLocales = <T extends Record<string, string>>(list: T[]) =>
+  LOCALE_SEGMENTS.flatMap((lang) => list.map((entry) => ({ ...entry, lang })));
 
 const APP = join(import.meta.dirname, "../../app");
 
@@ -63,7 +78,11 @@ const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
     typePage,
     QR_TYPE_SLUGS.map((type) => ({ type })),
   ],
-  ["its OG image", typeImage, QR_TYPE_SLUGS.map((type) => ({ type }))],
+  [
+    "its OG image",
+    typeImage,
+    inLocales(QR_TYPE_SLUGS.map((type) => ({ type }))),
+  ],
   [
     "/qr-codes-for/[slug]",
     industryPage,
@@ -72,7 +91,7 @@ const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
   [
     "its OG image",
     industryImage,
-    industries.items.map((item) => ({ slug: item.slug })),
+    inLocales(industries.items.map((item) => ({ slug: item.slug }))),
   ],
   [
     "/qr-codes-on/[slug]",
@@ -82,7 +101,7 @@ const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
   [
     "its OG image",
     placementImage,
-    placements.items.map((item) => ({ slug: item.slug })),
+    inLocales(placements.items.map((item) => ({ slug: item.slug }))),
   ],
   [
     "/integrations/[slug]",
@@ -92,7 +111,7 @@ const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
   [
     "its OG image",
     integrationImage,
-    getIntegrationCatalog().map((entry) => ({ slug: entry.slug })),
+    inLocales(getIntegrationCatalog().map((entry) => ({ slug: entry.slug }))),
   ],
   [
     "/templates/[type]",
@@ -129,12 +148,12 @@ describe("buildTimeParams", () => {
 describe("routes with a fixed param list", () => {
   it("are all found, the generator, topic, blog, docs and catalogue routes among them", () => {
     for (const file of [
-      "(app)/(home)/qr-code-generator/[type]/page.tsx",
-      "(app)/(home)/qr-codes-for/[slug]/page.tsx",
-      "(app)/(home)/qr-codes-on/[slug]/page.tsx",
+      "[lang]/(home)/qr-code-generator/[type]/page.tsx",
+      "[lang]/(home)/qr-codes-for/[slug]/page.tsx",
+      "[lang]/(home)/qr-codes-on/[slug]/page.tsx",
       "(app)/(home)/blog/[slug]/page.tsx",
       "(app)/(home)/compare/[slug]/page.tsx",
-      "(app)/(home)/integrations/[slug]/page.tsx",
+      "[lang]/(home)/integrations/[slug]/page.tsx",
       "(app)/(home)/legal/[[...slug]]/page.tsx",
       "[lang]/docs/[[...slug]]/page.tsx",
       "llms.mdx/[[...slug]]/route.ts",
@@ -159,7 +178,8 @@ describe("routes with a fixed param list", () => {
       // dynamicParams = false with no params in dev would 404 every page there.
       expect(source).not.toMatch(/export const dynamicParams/);
       expect(source).toMatch(
-        /export function generateStaticParams\(\) \{\s*return buildTimeParams\(/,
+        // lib/i18n/static-params.ts wraps it for the routes under [lang].
+        /export function generateStaticParams\(\) \{\s*return (?:buildTimeParams|withLocaleParams|localeParams)\(/,
       );
     },
   );

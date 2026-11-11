@@ -1,6 +1,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight2 as ChevronRight } from "iconsax-reactjs";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { LocaleLink } from "@/components/i18n/locale-link";
 
 export interface BreadcrumbItem {
   name: string;
@@ -20,11 +21,12 @@ export function Breadcrumbs({
   align = "center",
   className,
 }: BreadcrumbsProps) {
+  const t = useTranslations("common");
   const trail = items.slice(0, -1);
   const current = items.at(-1);
 
   return (
-    <nav aria-label="Breadcrumb" className={className}>
+    <nav aria-label={t("breadcrumb")} className={className}>
       <ol
         className={cn(
           "flex flex-wrap items-center gap-1 text-xs text-muted-foreground",
@@ -33,12 +35,12 @@ export function Breadcrumbs({
       >
         {trail.map((crumb) => (
           <li key={crumb.path} className="flex items-center gap-1">
-            <Link
+            <LocaleLink
               href={crumb.path}
               className="hover:text-foreground transition-colors"
             >
               {crumb.name}
-            </Link>
+            </LocaleLink>
             <ChevronRight aria-hidden className="size-3" />
           </li>
         ))}

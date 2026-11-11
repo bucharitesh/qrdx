@@ -4,7 +4,7 @@
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { MCP_TOOLS } from "@/app/(app)/(home)/mcp/content";
+import { MCP_TOOLS } from "@/app/[lang]/(home)/mcp/content";
 import { MCP_SERVER_INFO } from "@/app/api/mcp/tools";
 import robots from "@/app/robots";
 import { apiBaseUrl, imageApiUrl, isOfficialOrigin } from "@/lib/agents/hosts";

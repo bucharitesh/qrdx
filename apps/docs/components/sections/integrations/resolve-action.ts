@@ -22,6 +22,8 @@ const isExternal = (href: string) => /^[a-z][a-z0-9+.-]*:/i.test(href);
 export function resolveAction(
   action: CatalogAction,
   origin: string,
+  /** The toast after a copy when the action names none, in the page's language. */
+  copied = "Copied to clipboard",
 ): ResolvedAction {
   switch (action.type) {
     case "link": {
@@ -38,7 +40,7 @@ export function resolveAction(
         type: "copy",
         label: action.label,
         text: withOrigin(action.text, origin),
-        toast: action.toast ?? "Copied to clipboard",
+        toast: action.toast ?? copied,
       };
     case "copy-open":
       return {

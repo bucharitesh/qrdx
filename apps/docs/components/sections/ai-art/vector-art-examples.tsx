@@ -8,6 +8,7 @@ import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { loadQRArtImage, QRCodeSVG } from "qrdx";
 import type { QRArtImage, QRArtMode } from "qrdx/types";
 import { useEffect, useState } from "react";
@@ -79,12 +80,8 @@ function useArtImage(src: string | undefined, mode: QRArtMode) {
   return image;
 }
 
-function ArtExample({
-  style,
-  mode,
-  title,
-  description,
-}: (typeof EXAMPLES)[number]) {
+function ArtExample({ style, mode, title }: (typeof EXAMPLES)[number]) {
+  const t = useTranslations("aiArt.vector");
   const art = SHOWCASE_STYLES[style].art;
   const image = useArtImage(art?.src, art?.mode ?? "logo");
 
@@ -120,14 +117,14 @@ function ArtExample({
               className="font-normal text-muted-foreground"
               variant="outline"
             >
-              Vector
+              {t("badge")}
             </Badge>
           </div>
           <p className="text-sm text-pretty text-muted-foreground">
-            {description}
+            {t(mode === "logo" ? "logo" : "image")}
           </p>
           <p className="mt-1 flex items-center gap-1.5 text-sm font-medium">
-            Open in the playground
+            {t("open")}
             <ArrowRight
               aria-hidden
               className="size-4 transition-transform group-hover:translate-x-0.5"

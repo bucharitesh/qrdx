@@ -1,4 +1,28 @@
 {
-  "$comment": "Public pages that live under app/[lang] and exist in every locale. scripts/i18n-split-roots.mjs moves each one from app/(app)/(home) to app/[lang]/(home); lib/i18n/paths.ts reads the same list for links, rewrites, hreflang and the sitemap.",
-  "paths": ["/", "/pricing"]
+  "$comment": "Public pages that live under app/[lang] and exist in every locale. scripts/i18n-split-roots.mjs moves each one from app/(app)/(home) to app/[lang]/(home); lib/i18n/paths.ts reads the same list for links, rewrites, hreflang and the sitemap. A dynamic segment is written like its folder: /compare/[slug] covers every slug.",
+  "paths": [
+    "/",
+    "/pricing",
+    "/guarantee",
+    "/tools",
+    "/tools/bulk",
+    "/tools/print-size",
+    "/tools/scan-checker",
+    "/scan",
+    "/barcode-generator",
+    "/qr-code-generator",
+    "/qr-code-generator/[type]",
+    "/qr-codes-for",
+    "/qr-codes-for/[slug]",
+    "/qr-codes-on",
+    "/qr-codes-on/[slug]",
+    "/templates",
+    "/integrations",
+    "/integrations/[slug]",
+    "/plugins",
+    "/mcp",
+    "/ai",
+    "/ai/art",
+    "/compare"
+  ]
 }
