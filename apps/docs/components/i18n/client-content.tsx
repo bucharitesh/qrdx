@@ -1,6 +1,6 @@
 import { useLocale } from "next-intl";
 import { type ReactNode, use } from "react";
-import { DEFAULT_LOCALE } from "@/lib/i18n/config";
+import { DEFAULT_LOCALE, type Locale } from "@/lib/i18n/config";
 import type { ContentRules } from "@/lib/i18n/content";
 import { loadMemory, pickTranslations } from "@/lib/i18n/content-server";
 import { ContentTextProvider } from "./content-text";
@@ -14,13 +14,17 @@ import { ContentTextProvider } from "./content-text";
 export function ClientContent({
   data,
   rules,
+  locale: given,
   children,
 }: {
   data: unknown;
   rules?: ContentRules;
+  /** The page's language by default; pages without one pass it. */
+  locale?: Locale;
   children: ReactNode;
 }) {
-  const locale = useLocale();
+  const pageLocale = useLocale();
+  const locale = given ?? pageLocale;
   const translations =
     locale === DEFAULT_LOCALE
       ? NONE

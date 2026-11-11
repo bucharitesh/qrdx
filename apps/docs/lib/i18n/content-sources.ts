@@ -49,6 +49,8 @@ import type { SeoGroup } from "@/lib/seo-content/types";
 import { type ContentRules, contentStrings } from "./content";
 import {
   BARCODE_CONTENT_RULES,
+  EDITOR_CONTENT,
+  EDITOR_CONTENT_RULES,
   INTEGRATION_RULES,
   MCP_RULES,
   PAGE_CODE_RULES,
@@ -78,6 +80,14 @@ const withVariants = (groups: SeoGroup[]) => [
 ];
 
 export const CONTENT_SOURCES: readonly ContentSource[] = [
+  // i18n-play lane: the editor's type picker (components/editor/content-type-*).
+  {
+    namespace: "contentTypes",
+    surface:
+      "the QR code editor's type picker: each content type's short name (1 to 3 words, like a menu item) with a one-line description of what the code opens, and the picker's group names. Brand and product names stay in English",
+    data: () => EDITOR_CONTENT,
+    rules: EDITOR_CONTENT_RULES,
+  },
   {
     namespace: "qrTypes",
     surface:

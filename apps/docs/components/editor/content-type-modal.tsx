@@ -32,6 +32,7 @@ import {
 } from "@/components/editor/content-type-icons";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { InfoHint } from "@/components/help/info-hint";
+import { useContentText } from "@/components/i18n/content-text";
 import { offeredPageTypes } from "@/lib/landing/file-page-types";
 import type { BlockIcon } from "@/lib/landing/registry";
 import { soundEvent } from "@/lib/sound/emit";
@@ -283,6 +284,8 @@ export function ContentTypeModal({
   onOpenChange,
 }: ContentTypeModalProps) {
   const t = useTranslations("editor.contentTypeModal");
+  // Type names, descriptions and groups: lib/i18n/content-sources.ts.
+  const tc = useContentText();
   const { data: session } = authClient.useSession();
   const openAuthDialog = useAuthStore((state) => state.openAuthDialog);
   const fileStorage = useAvailability().has("fileStorage");
@@ -522,7 +525,7 @@ export function ContentTypeModal({
         )}
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2 text-sm leading-5 font-medium">
-            <span className="truncate">{item.label}</span>
+            <span className="truncate">{tc(item.label)}</span>
             {isCurrent && (
               <span className="text-muted-foreground shrink-0 rounded-full border px-1.5 text-[10px] leading-4 font-medium">
                 {t("current")}
@@ -530,7 +533,7 @@ export function ContentTypeModal({
             )}
           </span>
           <span className="text-muted-foreground block truncate text-xs leading-4">
-            {item.description}
+            {tc(item.description)}
           </span>
         </span>
         {item.kind === "page" ? (
@@ -605,7 +608,7 @@ export function ContentTypeModal({
                       variant="outline"
                     >
                       <ItemIcon className="size-3.5" />
-                      {item.label}
+                      {tc(item.label)}
                     </Button>
                   );
                 })}
@@ -628,7 +631,7 @@ export function ContentTypeModal({
                       activeSection === section.id ? "secondary" : "outline"
                     }
                   >
-                    {section.label}
+                    {tc(section.label)}
                   </Button>
                 ))}
               </nav>
@@ -657,7 +660,7 @@ export function ContentTypeModal({
                   >
                     <section.Icon className="size-4" />
                     <span className="flex-1 truncate text-left">
-                      {section.label}
+                      {tc(section.label)}
                     </span>
                     <span className="text-muted-foreground/70 text-xs tabular-nums">
                       {section.items.length}
@@ -723,11 +726,11 @@ export function ContentTypeModal({
                           className="text-muted-foreground text-xs font-medium tracking-wider uppercase"
                           id={`picker-${section.id}`}
                         >
-                          {section.label}
+                          {tc(section.label)}
                         </h3>
                         {section.description && (
                           <p className="text-muted-foreground mt-1 text-xs text-pretty">
-                            {section.description}
+                            {tc(section.description)}
                           </p>
                         )}
                         {section.id === PAGES_SECTION && (

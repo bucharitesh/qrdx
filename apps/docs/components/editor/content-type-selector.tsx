@@ -6,12 +6,14 @@ import { useTranslations } from "next-intl";
 import * as React from "react";
 import { TypeIconTile } from "@/components/editor/content-type-icons";
 import { ContentTypeModal } from "@/components/editor/content-type-modal";
+import { useContentText } from "@/components/i18n/content-text";
 import { useQREditorStore } from "@/store/editor-store";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
 
 /** Compact "current QR type" row at the top of the Content tab; opens the type picker. */
 export function ContentTypeSelector({ className }: { className?: string }) {
   const t = useTranslations("editor.contentTypeSelector");
+  const tc = useContentText();
   const contentType = useQREditorStore((state) => state.contentType);
   const [modalOpen, setModalOpen] = React.useState(false);
 
@@ -37,11 +39,11 @@ export function ContentTypeSelector({ className }: { className?: string }) {
             {t("qrCodeType")}
           </span>
           <span className="block truncate text-sm leading-5 font-medium">
-            {currentType?.label ?? t("chooseAType")}
+            {currentType ? tc(currentType.label) : t("chooseAType")}
             {currentType && (
               <span className="text-muted-foreground font-normal">
                 {" "}
-                · {currentType.description}
+                · {tc(currentType.description)}
               </span>
             )}
           </span>
