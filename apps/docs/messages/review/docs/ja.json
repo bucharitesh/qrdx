@@ -67,6 +67,10 @@
     "source": "88d634e0955f",
     "status": "machine"
   },
+  "developers/api/meta.json": {
+    "source": "8a4ae145eec7",
+    "status": "machine"
+  },
   "developers/barcode-api.mdx": {
     "source": "c2e8a24c3cfc",
     "status": "machine"
@@ -405,6 +409,10 @@
   },
   "landing-pages.mdx": {
     "source": "aacd46593aff",
+    "status": "machine"
+  },
+  "meta.json": {
+    "source": "ae8cda98ce69",
     "status": "machine"
   },
   "migrate.mdx": {
