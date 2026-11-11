@@ -28,6 +28,7 @@ export function pricingOptions(): PricingOptions {
     emailAlerts: isFeatureAvailable("email"),
     sso: isFeatureAvailable("sso"),
     auditLog: isFeatureAvailable("auditLog"),
+    invoiceRequests: isFeatureAvailable("invoiceRequests"),
   };
 }
 

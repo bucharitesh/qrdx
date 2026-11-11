@@ -56,6 +56,11 @@ const base: PlanLimits = {
   teamThemes: false,
   brandKits: 1,
   savedBarcodes: 1000,
+  // Agency tools (feat/agency-tools)
+  clientReports: false,
+  clientReportsWhiteLabel: false,
+  clientPortal: false,
+  invoiceBilling: false,
 };
 
 const LIMITS: PlanLimitsByPlan = {
@@ -85,6 +90,7 @@ const LIMITS: PlanLimitsByPlan = {
     savedThemes: UNLIMITED,
     teamThemes: true,
     brandKits: UNLIMITED,
+    clientReports: true,
   },
   business: {
     ...base,
@@ -120,6 +126,10 @@ const LIMITS: PlanLimitsByPlan = {
     savedThemes: UNLIMITED,
     teamThemes: true,
     brandKits: UNLIMITED,
+    clientReports: true,
+    clientReportsWhiteLabel: true,
+    clientPortal: true,
+    invoiceBilling: true,
   },
 };
 

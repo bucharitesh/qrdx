@@ -78,6 +78,23 @@ describe("a verified custom domain", () => {
     expect(rewrittenTo(response)).toBeNull();
   });
 
+  // Agency tools: client-branded stats pages assigned to this domain
+  // (lib/public-stats.ts answers only for those).
+  it("lets shared stats pages and their preview image through, tagged", async () => {
+    const token = "A".repeat(16) + "b_-9".repeat(4);
+    for (const path of [`/stats/${token}`, `/stats/${token}/og`]) {
+      const response = await get(path);
+      expect(response?.headers.get("x-middleware-next"), path).toBe("1");
+      expect(
+        response?.headers.get("x-middleware-request-x-qrdx-custom-domain"),
+      ).toBe("dom_brand");
+    }
+    for (const path of ["/stats/short", `/stats/${token}/raw`, "/stats"]) {
+      const response = await get(path);
+      expect(response?.headers.get("x-middleware-next"), path).toBeNull();
+    }
+  });
+
   it("serves nothing else of QRdx", async () => {
     for (const path of [
       "/favicon.ico",

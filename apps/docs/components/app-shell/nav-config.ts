@@ -2,6 +2,7 @@ import {
   ClipboardText as AuditLog,
   Barcode,
   Notification as Bell,
+  Briefcase,
   Chart as ChartNoAxesColumn,
   ProfileCircle as CircleUser,
   Code1 as CodeXml,
@@ -145,6 +146,13 @@ export function settingsNav(slug: string): AppNavGroup[] {
           label: "Team",
           icon: Users,
           keywords: ["members", "invite", "roles"],
+        },
+        {
+          // Agency tools (Business): read-only access for clients
+          href: workspaceHref(slug, "/settings/clients"),
+          label: "Client portal",
+          icon: Briefcase,
+          keywords: ["clients", "agency", "white-label", "reports", "share"],
         },
         {
           href: workspaceHref(slug, "/settings/domains"),
