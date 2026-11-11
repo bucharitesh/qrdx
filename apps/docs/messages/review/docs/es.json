@@ -1,6 +1,6 @@
 {
   "(guides)/meta.json": {
-    "source": "abcadd5f38cc",
+    "source": "3f96b0cec187",
     "status": "machine"
   },
   "(react)/meta.json": {
@@ -13,6 +13,14 @@
   },
   "api-reference.mdx": {
     "source": "1a86b891af9b",
+    "status": "machine"
+  },
+  "client-portal.mdx": {
+    "source": "e751d5b63704",
+    "status": "machine"
+  },
+  "client-reports.mdx": {
+    "source": "81fd390efbd3",
     "status": "machine"
   },
   "code-controls.mdx": {
@@ -128,7 +136,7 @@
     "status": "machine"
   },
   "features/art-qr.mdx": {
-    "source": "45343a857e29",
+    "source": "6af0e9d8a318",
     "status": "machine"
   },
   "features/colors-gradients.mdx": {
@@ -196,11 +204,15 @@
     "status": "machine"
   },
   "help/account-and-billing/meta.json": {
-    "source": "630ad083b9ad",
+    "source": "e8069c442747",
     "status": "machine"
   },
   "help/account-and-billing/never-hostage.mdx": {
     "source": "71b7da0290bd",
+    "status": "machine"
+  },
+  "help/account-and-billing/pay-by-invoice.mdx": {
+    "source": "25970e7c9578",
     "status": "machine"
   },
   "help/account-and-billing/plans.mdx": {
@@ -428,7 +440,7 @@
     "status": "machine"
   },
   "plans-and-limits.mdx": {
-    "source": "298ca54c2e6f",
+    "source": "8c805d953dc7",
     "status": "machine"
   },
   "precise-location.mdx": {
