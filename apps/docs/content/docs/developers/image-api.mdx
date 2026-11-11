@@ -99,7 +99,7 @@ const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=$
 | `frameText` | `Scan me` | The frame's label, up to 24 characters. Also relabels the frame of a `style` or `item` |
 | `style` | none | The editor's whole design as JSON; see [Styles](#style) |
 | `item` | none | A community frame or theme by id, such as `frame:wifi-card`; see [Community items](#community-items) |
-| `logoIcon` | none | A quick logo icon in the center; see [Logos](#logos) |
+| `logoIcon` | none | A quick icon or a brand logo in the center; see [Logos](#logos) |
 | `logoFileId` | none | A logo you uploaded, by file id; needs an API key; see [Logos](#logos) |
 
 Write colors without the `#`, or encode it as `%23`: a bare `#` starts the URL fragment and is never sent. Enum values (`level`, `format`, `template`, `frame`) are case-insensitive.
@@ -135,6 +135,7 @@ Fields you set with the flat parameters (`fg`, `body`, `frame` and the rest) win
 ## Logos [#logos]
 
 - **Quick icons.** `logoIcon` puts one of the editor's icons on a white tile in the center: `wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` or `instagram`. QRdx draws them itself, and they need no key.
+- **Brand logos.** `logoIcon` also takes any of the {facts.brandLogos} brands from [Simple Icons](https://simpleicons.org) by slug: `spotify`, `paypal`, `googlemaps`, `appstore`. The mark is drawn bare in its brand color; add `:black` or `:white` for those colors (`whatsapp:white`), and `logoOptions.plate` in `style` for a plate behind it. [`GET /api/brand-logos`](https://qrdx.dev/api/brand-logos) lists every slug. A slug QRdx doesn't have gets a `400`.
 - **The QRdx mark** that the editor shows by default isn't drawn here: `showLogo: true` alone adds no logo.
 - **Error correction rises for a logo.** When a logo covers more than 7% of the code, the code is drawn at level `H`, whatever `level` says, so it still scans.
 

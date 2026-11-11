@@ -7,7 +7,6 @@ import {
   Element3,
   ElementPlus,
   ExportSquare,
-  Figma,
   Lock,
   RotateRight,
   Shapes,
@@ -17,6 +16,7 @@ import { QRCodeSVG } from "qrdx";
 import type { QRProps } from "qrdx/types";
 import type { ReactNode } from "react";
 import { QrdxLogo } from "@/components/qrdx-logo";
+import { BrandLogo } from "@/lib/brand-logos/brand-logo";
 import { CANVA_PICKED, PLUGIN_CODES, VALUE } from "./mock-codes";
 
 // HTML/CSS mockups of each plugin's real UI (labels, controls and actions
@@ -316,8 +316,10 @@ export function FigmaMock() {
     <Figure caption="Mockup of the QRdx Figma plugin: a QR code inserted as vector layers on a menu design is selected, the plugin window offers Replace selected QR and Insert new, and the right panel shows the Edit QR code button.">
       <div className={windowClass}>
         <div className="flex h-10 items-center gap-3 border-b px-3">
-          <Figma
-            variant="Bold"
+          <BrandLogo
+            slug="figma"
+            color="currentColor"
+            inset={2}
             className="size-4 shrink-0 text-foreground/80"
           />
           <span className="hidden gap-1.5 @sm:flex">

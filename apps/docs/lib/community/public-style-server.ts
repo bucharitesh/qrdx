@@ -1,16 +1,21 @@
 import "server-only";
 
 import { logoIconDataUrl } from "@/lib/qr-design/logo";
-import type { LogoIconId } from "@/lib/qr-design/style";
 import type { ThemeStyles } from "@/types/theme";
 import { isLogoIconId, toPublishableStyle } from "./public-style";
 
-const iconCache = new Map<LogoIconId, string>();
+const iconCache = new Map<string, string | null>();
 
-function iconUrl(id: LogoIconId): string {
+/** The icon or brand logo drawn from its id; null for an unknown brand. */
+function iconUrl(id: string): string | null {
   let url = iconCache.get(id);
-  if (!url) {
-    url = logoIconDataUrl(id);
+  if (url === undefined) {
+    try {
+      url = logoIconDataUrl(id);
+    } catch {
+      url = null;
+    }
+    if (iconCache.size > 500) iconCache.clear();
     iconCache.set(id, url);
   }
   return url;
@@ -25,9 +30,13 @@ export function toPublicStyle(
   logoIcon: unknown,
 ): ThemeStyles {
   const { customLogo: _never, art: _none, ...rest } = style;
-  if (isLogoIconId(logoIcon) && rest.showLogo !== false) {
-    return { ...rest, showLogo: true, customLogo: iconUrl(logoIcon) };
-  }
+  const url =
+    isLogoIconId(logoIcon) && rest.showLogo !== false
+      ? iconUrl(logoIcon)
+      : null;
+  if (url) return { ...rest, showLogo: true, customLogo: url };
+  // A brand that isn't there (anymore) shows no logo, never the QRdx mark.
+  if (isLogoIconId(logoIcon)) return { ...rest, showLogo: false };
   return rest;
 }
 

@@ -4,11 +4,8 @@
 import { OFFICIAL_FRAMES } from "qrdx";
 import { customFrameSchema, type QRCustomFrame } from "qrdx/types";
 import { z } from "zod";
-import {
-  CLASSIC_STYLE,
-  LOGO_ICON_IDS,
-  toThemeStyles,
-} from "@/lib/qr-design/style";
+import { logoIconSchema } from "@/lib/qr-design/logo-icon";
+import { CLASSIC_STYLE, toThemeStyles } from "@/lib/qr-design/style";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
 import { toPublishableStyle } from "./public-style";
 
@@ -17,11 +14,11 @@ export const DESCRIPTION_MAX_LENGTH = 500;
 export const MAX_ITEM_TAGS = 5;
 export const COLLECTION_MAX_ITEMS = 48;
 
-/** A theme: the design without images, quick logo icons by id. */
+/** A theme: the design without images, quick icons and brand logos by id. */
 export const themePayloadSchema = z
   .object({
     style: themeStylePropsSchema,
-    logoIcon: z.enum(LOGO_ICON_IDS).optional(),
+    logoIcon: logoIconSchema.optional(),
   })
   .strict();
 export type ThemePayload = z.infer<typeof themePayloadSchema>;

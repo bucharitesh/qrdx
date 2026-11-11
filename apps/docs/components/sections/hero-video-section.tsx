@@ -1,9 +1,10 @@
-import { ExportSquare, Youtube } from "iconsax-reactjs";
+import { ExportSquare } from "iconsax-reactjs";
 import { BrowserFrame } from "@/components/mockups/browser-frame";
 import { LoopVideo } from "@/components/mockups/loop-video";
 import { Reveal } from "@/components/mockups/reveal";
 import { loopVideos } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
+import { BrandLogo } from "@/lib/brand-logos/brand-logo";
 
 const STEPS = [
   { title: "Paste a link", text: "Or pick Wi-Fi, vCard, UPI and more." },
@@ -54,7 +55,12 @@ export function HeroVideoSection() {
           rel="noopener noreferrer"
           className="group inline-flex items-center gap-2 rounded-sm text-sm font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
-          <Youtube variant="Bold" className="size-4" />
+          <BrandLogo
+            slug="youtube"
+            color="currentColor"
+            inset={2}
+            className="size-4"
+          />
           Watch the full introduction on YouTube
           <ExportSquare className="size-3.5 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px" />
         </a>

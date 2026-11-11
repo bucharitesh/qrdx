@@ -4,7 +4,6 @@ import { unstable_cache } from "next/cache";
 import { FRAME_TEXT_MAX_LENGTH, type QRCustomFrame } from "qrdx/types";
 import { logError } from "@/lib/log-error";
 import { baseUrl } from "@/lib/metadata";
-import type { LogoIconId } from "@/lib/qr-design/style";
 import type { ThemeStyles } from "@/types/theme";
 import { COMMUNITY_LICENSE } from "./licence";
 import {
@@ -101,10 +100,10 @@ export interface CommunityApiItem {
 export interface CommunityApiItemDetail extends CommunityApiItem {
   /**
    * What the item applies, in the editor's style JSON: a theme's style, or
-   * `{ frame }` for a frame. Quick logo icons are given as `logoIcon`.
+   * `{ frame }` for a frame. Quick logo icons and brand logos are given as `logoIcon`.
    * Null for collections.
    */
-  style: (ThemeStyles & { logoIcon?: LogoIconId }) | null;
+  style: (ThemeStyles & { logoIcon?: string }) | null;
   /** Content types a frame suits (empty: any) */
   contentTypes: string[];
   scanScore: number | null;
@@ -181,9 +180,7 @@ function cleanFrame(frame: ThemeStyles["frame"]): ThemeStyles["frame"] {
 }
 
 /** The style an item applies, as agents get it: icons by id, labels cleaned. */
-function apiStyleOf(
-  apply: ThemeStyles,
-): ThemeStyles & { logoIcon?: LogoIconId } {
+function apiStyleOf(apply: ThemeStyles): ThemeStyles & { logoIcon?: string } {
   const { customLogo, ...rest } = apply;
   const icon = presetLogoIcon(customLogo);
   return {

@@ -3,7 +3,7 @@ import "server-only";
 import { svgToEPS } from "qrdx";
 import { communityItemStyle } from "@/lib/community/api";
 import { presetLogoIcon } from "@/lib/community/public-style";
-import { logoIconDataUrl } from "@/lib/qr-design/logo";
+import { logoIconDataUrl, UnknownBrandLogoError } from "@/lib/qr-design/logo";
 import {
   DesignTooLongError,
   renderDesignPng,
@@ -122,8 +122,13 @@ export async function resolveRender(
     // The item's quick icon, drawn again from its id: never a stored image.
     const icon = presetLogoIcon(itemLogo);
     if (icon && itemStyle.showLogo !== false) {
-      logo = logoIconDataUrl(icon);
-      logoSource = "item";
+      try {
+        logo = logoIconDataUrl(icon);
+        logoSource = "item";
+      } catch (error) {
+        // A brand the catalogue doesn't have: the item shows no logo.
+        if (!(error instanceof UnknownBrandLogoError)) throw error;
+      }
     }
   }
   if (fromStyle.showLogo === false) {

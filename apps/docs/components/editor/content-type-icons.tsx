@@ -1,91 +1,68 @@
 "use client";
 
-import {
-  LinkedinLogo,
-  Star,
-  XLogo,
-} from "@repo/design-system/components/icons";
+import { Star } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Bag2,
-  Bitcoin,
-  Bookmark,
-  CalendarTick,
   Call,
-  Ethereum,
-  Facebook,
-  Google,
-  GoogleDrive,
   Hashtag,
   type Icon,
-  Instagram,
   Link,
   Link2,
   Location,
-  Messages2,
   MessageText,
   MoneySend,
-  Musicnote,
-  Paypal,
   Personalcard,
   Shop,
   ShoppingCart,
   Sms,
-  Snapchat,
-  Spotify,
   TaskSquare,
   Text,
   WalletMoney,
-  Whatsapp,
   Wifi,
-  Youtube,
 } from "iconsax-reactjs";
 import type { ComponentType } from "react";
+import { LinkedinIcon } from "@/components/landing/social-networks";
 import {
   IntegrationLogo,
   logoForIntegration,
 } from "@/components/sections/integrations/integration-logo";
+import { brandIcon } from "@/lib/brand-logos/brand-logo";
+import { CONTENT_TYPE_BRANDS } from "@/lib/brand-logos/content-types";
 import { getIntegrationByContentType } from "@/lib/integration-catalog";
 import type { ContentType } from "@/types/qr-content";
 
 type AnyIcon = Icon | ComponentType<{ className?: string }>;
 
-/** iconsax names used by CONTENT_TYPES_METADATA and CONTENT_CATEGORIES. */
+/**
+ * Icon names used by CONTENT_TYPES_METADATA and CONTENT_CATEGORIES: iconsax
+ * names, and "brand:<type>" for a type's real brand mark.
+ */
 const ICONS: Record<string, AnyIcon> = {
   Bag2,
-  Bitcoin,
-  Bookmark,
-  CalendarTick,
   Call,
-  Ethereum,
-  Facebook,
-  Google,
-  GoogleDrive,
   Hashtag,
-  Instagram,
   Link,
   Link2,
-  LinkedinLogo,
+  LinkedinLogo: LinkedinIcon,
   Location,
   MessageText,
-  Messages2,
   MoneySend,
-  Musicnote,
-  Paypal,
   Personalcard,
   Shop,
   ShoppingCart,
   Sms,
-  Snapchat,
-  Spotify,
   Star1: Star,
   TaskSquare,
   Text,
   WalletMoney,
-  Whatsapp,
   Wifi,
-  XLogo,
-  Youtube,
+  ...Object.fromEntries(
+    Object.entries(CONTENT_TYPE_BRANDS).map(([type, slug]) => [
+      `brand:${type}`,
+      brandIcon(slug),
+    ]),
+  ),
 };
 
 export function getTypeIcon(name: string | undefined): AnyIcon {

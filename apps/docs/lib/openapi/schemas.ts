@@ -441,7 +441,9 @@ export const communityItemDetailSchema = named(
         logoIcon: z
           .string()
           .optional()
-          .describe("A quick logo icon, by id (instead of customLogo)"),
+          .describe(
+            "A quick logo icon or a brand logo, by id (instead of customLogo): `wifi`, `spotify`, `paypal:white`",
+          ),
       })
       .nullable()
       .describe(

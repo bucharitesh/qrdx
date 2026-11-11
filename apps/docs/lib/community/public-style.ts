@@ -11,11 +11,8 @@
 // never republished.
 
 import { hasImageFills, withoutImageFills } from "@/lib/paint/image-fills";
-import { LOGO_ICON_IDS, type LogoIconId } from "@/lib/qr-design/style";
+import { logoIconOf, parseLogoIcon } from "@/lib/qr-design/logo-icon";
 import type { ThemeStyles } from "@/types/theme";
-
-const SVG_DATA_URL = "data:image/svg+xml,";
-const MARKER = "data-qrdx-icon";
 
 /** What was taken out of a design before it was shared. */
 export type RemovedPart = "logo" | "art" | "image";
@@ -23,26 +20,24 @@ export type RemovedPart = "logo" | "art" | "image";
 /** A design as it is stored in the community: no images, icons by id. */
 export interface PublishableStyle {
   style: ThemeStyles;
-  /** A quick logo icon, drawn again from its id on read */
-  logoIcon: LogoIconId | null;
+  /** A quick logo icon or brand logo, drawn again from its id on read */
+  logoIcon: string | null;
   removed: RemovedPart[];
 }
 
 /**
- * The quick logo icon a stored logo is tagged with, or null. Only the id is
- * read (and only a known one); the rest of the data URL is ignored.
+ * The quick logo icon or brand logo a stored logo is tagged with, as a
+ * logoIcon (`wifi`, `spotify`, `paypal:white`), or null. Only the tag is
+ * read; the rest of the data URL is ignored. A brand is drawn again from
+ * QRdx's own copy of Simple Icons, so a forged tag can only ever show a
+ * real brand mark (and an unknown slug shows none).
  */
-export function presetLogoIcon(logo: unknown): LogoIconId | null {
-  if (typeof logo !== "string" || !logo.startsWith(SVG_DATA_URL)) return null;
-  for (const id of LOGO_ICON_IDS) {
-    if (logo.includes(encodeURIComponent(`${MARKER}="${id}"`))) return id;
-  }
-  return null;
+export function presetLogoIcon(logo: unknown): string | null {
+  return logoIconOf(logo);
 }
 
-export const isLogoIconId = (value: unknown): value is LogoIconId =>
-  typeof value === "string" &&
-  (LOGO_ICON_IDS as readonly string[]).includes(value);
+export const isLogoIconId = (value: unknown): value is string =>
+  parseLogoIcon(value) !== null;
 
 /**
  * `style` without uploaded logos or image art. A quick icon becomes its id;
@@ -53,7 +48,7 @@ export const isLogoIconId = (value: unknown): value is LogoIconId =>
 export function toPublishableStyle(style: ThemeStyles): PublishableStyle {
   const { customLogo, art, ...rest } = style;
   const removed: RemovedPart[] = [];
-  let logoIcon: LogoIconId | null = null;
+  let logoIcon: string | null = null;
   // Image fills are uploads too: each gives way to its underlay color
   const next: ThemeStyles = withoutImageFills({ ...rest });
   if (hasImageFills(rest)) removed.push("image");

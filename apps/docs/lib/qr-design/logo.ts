@@ -5,23 +5,30 @@ import {
   Call,
   DocumentText,
   type Icon,
-  Instagram,
   Link21,
   Location,
   Sms,
-  Whatsapp,
   Wifi,
 } from "iconsax-reactjs";
 import { createElement } from "react";
+import { brandMark } from "@/lib/brand-logos/brand-logo";
+import { getBrandIcon } from "@/lib/brand-logos/server";
+import { brandLogoDataUrl, brandQuickIconDataUrl } from "@/lib/brand-logos/svg";
+import { HttpError } from "@/lib/error-response";
 import { serializeQrSvg } from "@/lib/qr-render";
+import { parseLogoIcon } from "./logo-icon";
 import type { LogoChoice, LogoIconId } from "./style";
 
 // The editor's quick logo icons (components/editor/control-sections/
 // logo-presets.tsx) built on the server: the same glyph on the same white
 // tile with the same marker, so the editor's logo picker shows the icon as
-// selected after a design is applied.
+// selected after a design is applied. WhatsApp and Instagram are the real
+// marks (Simple Icons); the rest are iconsax glyphs, since they aren't
+// brands. Any other brand comes bare from the full catalogue.
 
-const GLYPHS: Record<LogoIconId, Icon> = {
+type GenericIconId = Exclude<LogoIconId, "whatsapp" | "instagram">;
+
+const GLYPHS: Record<GenericIconId, Icon> = {
   wifi: Wifi,
   location: Location,
   phone: Call,
@@ -29,15 +36,39 @@ const GLYPHS: Record<LogoIconId, Icon> = {
   link: Link21,
   file: DocumentText,
   calendar: Calendar,
-  whatsapp: Whatsapp,
-  instagram: Instagram,
 };
 
 const GLYPH_COLOR = "#111111";
 const MARKER = "data-qrdx-icon";
 
-/** The icon as the SVG data URL an uploaded logo is stored as. */
-export function logoIconDataUrl(id: LogoIconId): string {
+/** A brand logoIcon that names no Simple Icons brand. */
+export class UnknownBrandLogoError extends HttpError {
+  constructor(slug: string) {
+    super(
+      400,
+      "VALIDATION_ERROR",
+      `logoIcon "${slug}" isn't a brand QRdx has. Use a Simple Icons slug (spotify, paypal, googlemaps) or a quick icon (wifi, phone, email).`,
+    );
+  }
+}
+
+/**
+ * A logoIcon (a quick icon id, or a brand slug with an optional color, see
+ * ./logo-icon.ts) as the SVG data URL an uploaded logo is stored as.
+ * Throws UnknownBrandLogoError for a slug Simple Icons doesn't have.
+ */
+export function logoIconDataUrl(icon: string): string {
+  const parsed = parseLogoIcon(icon);
+  if (!parsed) throw new UnknownBrandLogoError(icon);
+  if (parsed.kind === "brand") {
+    const brand = getBrandIcon(parsed.slug);
+    if (!brand) throw new UnknownBrandLogoError(parsed.slug);
+    return brandLogoDataUrl(brand, parsed.color);
+  }
+  const id = parsed.id;
+  if (id === "whatsapp" || id === "instagram") {
+    return brandQuickIconDataUrl(brandMark(id), id);
+  }
   const glyph = serializeQrSvg(
     createElement(GLYPHS[id], { variant: "Bold", color: GLYPH_COLOR }),
   );
