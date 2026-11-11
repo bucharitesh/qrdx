@@ -309,7 +309,9 @@ export function SchemaForm({
                 aria-describedby={describedBy}
                 aria-invalid={Boolean(error)}
                 autoComplete={field.autoComplete ?? "off"}
-                className={cn(field.mono && "font-mono text-[13px]")}
+                className={cn(
+                  field.mono && "font-mono text-[13px] placeholder:font-sans",
+                )}
                 id={fieldId}
                 inputMode={field.inputMode}
                 onChange={(event) => update(field, event.target.value)}

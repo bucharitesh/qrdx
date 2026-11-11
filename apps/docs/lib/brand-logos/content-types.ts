@@ -27,7 +27,7 @@ export const CONTENT_TYPE_BRANDS = {
   "google-drive": "googledrive",
   calcom: "caldotcom",
   // Added 2026-11-11. PayNow, PromptPay and VietQR aren't in Simple Icons,
-  // so they keep generic glyphs (CardSend, MoneyRecive, Bank) until their
+  // so they keep generic glyphs (CardSend, Mobile, Bank) until their
   // owners' marks can be added here.
   pix: "pix",
   sepa: "sepa",

@@ -796,20 +796,38 @@ function firstError(page: Page): string {
   return /Error: [^\n]*/.exec(error)?.[0]?.slice(0, 160) ?? error.slice(0, 160);
 }
 
+/** A real mouse click at an element's center (Radix selects ignore synthetic ones). */
+async function mouseClick(page: Page, finder: string, arg: string) {
+  const point = (await page.evaluate(
+    `(arg) => { const el = (${finder})(arg); if (!el) return null; el.scrollIntoView({ block: "center" }); const r = el.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; }`,
+    arg,
+  )) as { x: number; y: number } | null;
+  if (!point) return false;
+  for (const type of ["mousePressed", "mouseReleased"] as const) {
+    await page.cdp.send("Input.dispatchMouseEvent", {
+      type,
+      x: point.x,
+      y: point.y,
+      button: "left",
+      clickCount: 1,
+    });
+  }
+  return true;
+}
+
 /** Opens the select labelled `label` and picks the option named `option`. */
 async function choose(page: Page, label: string, option: string) {
-  const opened = await page.evaluate(
-    `(label) => { const el = __e2e.byLabel(label); if (!el) return false; __e2e.click(el); return true; }`,
-    label,
-  );
-  if (!opened) throw new Error(`No select labelled "${label}"`);
-  await sleep(300);
-  const picked = await page.evaluate(
-    `(option) => { const el = __e2e.all("option").find((x) => __e2e.name(x) === __e2e.norm(option)); if (!el) return false; __e2e.click(el); return true; }`,
+  if (!(await mouseClick(page, "(label) => __e2e.byLabel(label)", label))) {
+    throw new Error(`No select labelled "${label}"`);
+  }
+  await sleep(400);
+  const picked = await mouseClick(
+    page,
+    `(option) => __e2e.all("option").find((x) => __e2e.name(x) === __e2e.norm(option))`,
     option,
   );
   if (!picked) throw new Error(`No option "${option}" in "${label}"`);
-  await sleep(300);
+  await sleep(400);
 }
 
 async function toggle(page: Page, label: string) {

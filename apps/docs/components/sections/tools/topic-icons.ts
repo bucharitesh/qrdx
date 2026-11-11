@@ -42,7 +42,6 @@ import {
   Lovely,
   MessageText,
   Mobile,
-  MoneyRecive,
   Moneys,
   Monitor,
   Musicnote,
@@ -114,7 +113,7 @@ export const QR_TYPE_ICONS: Record<ContentType, CardIcon> = {
   flipkart: ShoppingBag,
   // No Simple Icons mark for these payment schemes (lib/brand-logos/content-types.ts)
   paynow: CardSend,
-  promptpay: MoneyRecive,
+  promptpay: Mobile,
   vietqr: Bank,
 };
 

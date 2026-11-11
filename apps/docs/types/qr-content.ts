@@ -931,7 +931,7 @@ export const CONTENT_TYPES_METADATA: ContentTypeMetadata[] = [
   {
     type: "promptpay",
     label: "PromptPay",
-    icon: "MoneyRecive",
+    icon: "Mobile",
     description: "Get paid by PromptPay in Thailand",
     keywords: ["thailand", "thai qr", "payment", "pay", "bank transfer"],
   },
