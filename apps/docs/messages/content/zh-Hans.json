@@ -1,4 +1,232 @@
 {
+  "3a78695388b3": {
+    "source": "Home",
+    "text": "首页",
+    "status": "machine",
+    "context": "appNav.main.main.items.0.label"
+  },
+  "e0d1d308a679": {
+    "source": "Codes",
+    "text": "二维码",
+    "status": "machine",
+    "context": "integrations.entries.rest-api.capabilities.0.title"
+  },
+  "78cc9c75d90e": {
+    "source": "Pages & forms",
+    "text": "页面与表单",
+    "status": "machine",
+    "context": "appNav.main.main.items.2.label"
+  },
+  "94c116ee118a": {
+    "source": "Analytics",
+    "text": "数据分析",
+    "status": "machine",
+    "context": "appNav.main.main.items.3.label"
+  },
+  "eb409b2f71a8": {
+    "source": "Barcodes",
+    "text": "条形码",
+    "status": "machine",
+    "context": "appNav.main.main.items.4.label"
+  },
+  "dc20b3d5d2cd": {
+    "source": "Library",
+    "text": "资源库",
+    "status": "machine",
+    "context": "appNav.main.library.label"
+  },
+  "abc7e9892806": {
+    "source": "Files",
+    "text": "文件",
+    "status": "machine",
+    "context": "appNav.main.library.items.0.label"
+  },
+  "43ae3265b99f": {
+    "source": "Themes",
+    "text": "主题",
+    "status": "machine",
+    "context": "appNav.main.library.items.1.label"
+  },
+  "87bb59ba2f92": {
+    "source": "Workspace",
+    "text": "工作区",
+    "status": "machine",
+    "context": "appNav.settings.workspace.label"
+  },
+  "c910d474dcd7": {
+    "source": "General",
+    "text": "常规",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.0.label"
+  },
+  "9556e350ef76": {
+    "source": "Plan & usage",
+    "text": "套餐与用量",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.1.label"
+  },
+  "5985039f106d": {
+    "source": "Team",
+    "text": "团队",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.2.label"
+  },
+  "a26687bd738a": {
+    "source": "Client portal",
+    "text": "客户门户",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.3.label"
+  },
+  "ced67718ea0f": {
+    "source": "Domains",
+    "text": "域名",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.4.label"
+  },
+  "3bc44ac28dcd": {
+    "source": "Single sign-on",
+    "text": "单点登录",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.5.label"
+  },
+  "e4d36f9a4e22": {
+    "source": "Audit log",
+    "text": "审计日志",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.6.label"
+  },
+  "45808d75bf89": {
+    "source": "Webhooks",
+    "text": "Webhooks",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.7.label"
+  },
+  "1238cef73b97": {
+    "source": "API keys & apps",
+    "text": "API 密钥与应用",
+    "status": "machine",
+    "context": "appNav.settings.workspace.items.8.label"
+  },
+  "7e1b0d5641f2": {
+    "source": "Account",
+    "text": "账户",
+    "status": "machine",
+    "context": "appNav.settings.account.label"
+  },
+  "07877769c55c": {
+    "source": "Profile & security",
+    "text": "个人资料与安全",
+    "status": "machine",
+    "context": "appNav.settings.account.items.0.label"
+  },
+  "66962f72a088": {
+    "source": "Preferences",
+    "text": "偏好设置",
+    "status": "machine",
+    "context": "appNav.settings.account.items.1.label"
+  },
+  "788011833a5a": {
+    "source": "Notifications",
+    "text": "通知",
+    "status": "machine",
+    "context": "appNav.settings.account.items.2.label"
+  },
+  "090512d93fcc": {
+    "source": "Integrations",
+    "text": "集成",
+    "status": "machine",
+    "context": "appNav.settings.account.items.3.label"
+  },
+  "c3ecd1b4dd0e": {
+    "source": "Authorized apps",
+    "text": "已授权应用",
+    "status": "machine",
+    "context": "appNav.settings.account.items.4.label"
+  },
+  "ce78cb6655b7": {
+    "source": "Affiliate program",
+    "text": "推广计划",
+    "status": "machine",
+    "context": "appNav.settings.account.items.5.label"
+  },
+  "67b696468610": {
+    "source": "Dashboard",
+    "text": "控制台",
+    "status": "machine",
+    "context": "appNav.areas.dashboard.title"
+  },
+  "64a7994c6feb": {
+    "source": "codes",
+    "text": "二维码",
+    "status": "machine",
+    "context": "appNav.areas.dashboard.groups.main.rows.1.area"
+  },
+  "bfa062de040f": {
+    "source": "pages",
+    "text": "页面",
+    "status": "machine",
+    "context": "appNav.areas.dashboard.groups.main.rows.2.area"
+  },
+  "cde0fb0dec14": {
+    "source": "settings",
+    "text": "设置",
+    "status": "machine",
+    "context": "appNav.areas.dashboard.groups.settings.rows.0.area"
+  },
+  "74a883a037bc": {
+    "source": "Settings",
+    "text": "设置",
+    "status": "machine",
+    "context": "appNav.areas.dashboard.groups.settings.rows.0.label"
+  },
+  "2e2b6c46649f": {
+    "source": "All codes",
+    "text": "全部二维码",
+    "status": "machine",
+    "context": "appNav.areas.codes.groups.codes.rows.0.item.label"
+  },
+  "2cff9baabf56": {
+    "source": "Import",
+    "text": "导入",
+    "status": "machine",
+    "context": "appNav.areas.codes.groups.codes.rows.2.item.label"
+  },
+  "903542125c00": {
+    "source": "All pages",
+    "text": "全部页面",
+    "status": "machine",
+    "context": "appNav.areas.pages.groups.pages.rows.0.item.label"
+  },
+  "8e9184c3b766": {
+    "source": "Start from a template",
+    "text": "从模板开始",
+    "status": "machine",
+    "context": "appNav.areas.pages.groups.templates.label"
+  },
+  "c4d7f1f792df": {
+    "source": "page-templates",
+    "text": "page-templates",
+    "status": "machine",
+    "context": "appNav.areas.pages.groups.templates.rows.0.action"
+  },
+  "632a00fb54a6": {
+    "source": "Page templates",
+    "text": "页面模板",
+    "status": "machine",
+    "context": "appNav.areas.pages.groups.templates.rows.0.label"
+  },
+  "2ee3a5483bd4": {
+    "source": "form-templates",
+    "text": "form-templates",
+    "status": "machine",
+    "context": "appNav.areas.pages.groups.templates.rows.1.action"
+  },
+  "6ad7f7c0e2e4": {
+    "source": "Form templates",
+    "text": "表单模板",
+    "status": "machine",
+    "context": "appNav.areas.pages.groups.templates.rows.1.label"
+  },
   "e7a241debad5": {
     "source": "URL",
     "text": "网址",
@@ -26974,12 +27202,6 @@
     "text": "把响应中的 shortLink 放进你的二维码，例如使用 qrdx React 库。之后用 PATCH 修改 destinationUrl，已印刷的二维码会随之指向新地址。",
     "status": "machine",
     "context": "integrations.entries.rest-api.steps.2.body"
-  },
-  "e0d1d308a679": {
-    "source": "Codes",
-    "text": "二维码",
-    "status": "machine",
-    "context": "integrations.entries.rest-api.capabilities.0.title"
   },
   "a31e96c6a0d0": {
     "source": "List, create, update (destination, title, style, domain) and delete.",
