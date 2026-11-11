@@ -16,6 +16,7 @@ import {
   Call,
   Car,
   Card,
+  CardSend,
   ClipboardText,
   ClipboardTick,
   Coffee,
@@ -41,6 +42,7 @@ import {
   Lovely,
   MessageText,
   Mobile,
+  MoneyRecive,
   Moneys,
   Monitor,
   Musicnote,
@@ -110,6 +112,10 @@ export const QR_TYPE_ICONS: Record<ContentType, CardIcon> = {
   attendance: ClipboardTick,
   amazon: ShoppingCart,
   flipkart: ShoppingBag,
+  // No Simple Icons mark for these payment schemes (lib/brand-logos/content-types.ts)
+  paynow: CardSend,
+  promptpay: MoneyRecive,
+  vietqr: Bank,
 };
 
 export const QR_TYPE_GROUP_ICONS: Record<QrTypeGroup, CardIcon> = {

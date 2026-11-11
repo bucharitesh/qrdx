@@ -16,6 +16,13 @@ import { AmazonForm } from "@/components/editor/content-forms/amazon-form";
 import { AttendanceForm } from "@/components/editor/content-forms/attendance-form";
 import { BitcoinForm } from "@/components/editor/content-forms/bitcoin-form";
 import { CalcomForm } from "@/components/editor/content-forms/calcom-form";
+import {
+  BitcoinCashForm,
+  DogecoinForm,
+  LitecoinForm,
+  MoneroForm,
+  SolanaForm,
+} from "@/components/editor/content-forms/crypto-forms";
 import { EmailForm } from "@/components/editor/content-forms/email-form";
 import { EthereumForm } from "@/components/editor/content-forms/ethereum-form";
 import { EtsyForm } from "@/components/editor/content-forms/etsy-form";
@@ -23,8 +30,30 @@ import { FacebookForm } from "@/components/editor/content-forms/facebook-form";
 import { FlipkartForm } from "@/components/editor/content-forms/flipkart-form";
 import { GoogleReviewForm } from "@/components/editor/content-forms/google-review-form";
 import { InstagramForm } from "@/components/editor/content-forms/instagram-form";
+import {
+  BlueskyForm,
+  CashAppForm,
+  DiscordForm,
+  GoogleMeetForm,
+  LineForm,
+  MastodonForm,
+  RevolutForm,
+  SignalForm,
+  SoundCloudForm,
+  TelegramForm,
+  TwitchForm,
+  WazeForm,
+  ZoomForm,
+} from "@/components/editor/content-forms/link-forms";
 import { LinkedInForm } from "@/components/editor/content-forms/linkedin-form";
 import { MapsForm } from "@/components/editor/content-forms/maps-form";
+import {
+  PayNowForm,
+  PixForm,
+  PromptPayForm,
+  SepaForm,
+  VietQrForm,
+} from "@/components/editor/content-forms/payment-forms";
 import { PayPalForm } from "@/components/editor/content-forms/paypal-form";
 import { PhoneForm } from "@/components/editor/content-forms/phone-form";
 import { PinterestForm } from "@/components/editor/content-forms/pinterest-form";
@@ -98,6 +127,30 @@ const FORMS: Partial<Record<ContentType, ComponentType>> = {
   whatsapp: WhatsAppForm,
   wifi: WifiForm,
   youtube: YouTubeForm,
+  // Added 2026-11-11
+  pix: PixForm,
+  sepa: SepaForm,
+  paynow: PayNowForm,
+  promptpay: PromptPayForm,
+  vietqr: VietQrForm,
+  cashapp: CashAppForm,
+  revolut: RevolutForm,
+  telegram: TelegramForm,
+  signal: SignalForm,
+  discord: DiscordForm,
+  line: LineForm,
+  bluesky: BlueskyForm,
+  mastodon: MastodonForm,
+  twitch: TwitchForm,
+  soundcloud: SoundCloudForm,
+  zoom: ZoomForm,
+  "google-meet": GoogleMeetForm,
+  waze: WazeForm,
+  litecoin: LitecoinForm,
+  dogecoin: DogecoinForm,
+  bitcoincash: BitcoinCashForm,
+  solana: SolanaForm,
+  monero: MoneroForm,
 };
 
 function LinkOnlyForm({ type }: { type: "dubsh" | "google-drive" }) {
