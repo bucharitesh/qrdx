@@ -1,5 +1,7 @@
 // Run: cd apps/docs && npx tsx --test components/sections/ai-art/config.test.ts
 import assert from "node:assert/strict";
+import { existsSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
 import { describe, it } from "node:test";
 import {
   ART_MAX_SEED,
@@ -7,7 +9,14 @@ import {
   aiArtRequestSchema,
   seedsForRun,
 } from "./config";
-import { AI_ART_CATEGORIES, AI_ART_PRESETS } from "./presets";
+import { AI_ART_PRESET_COUNT, aiArtPresetPreview } from "./preset-meta";
+import {
+  AI_ART_CATEGORIES,
+  AI_ART_FEATURED_PRESET_IDS,
+  AI_ART_PRESETS,
+} from "./presets";
+
+const PUBLIC = join(import.meta.dirname, "../../../public");
 
 const base = { text: "https://qrdx.dev", prompt: "a zen garden" };
 const png = (bytes: number) =>
@@ -84,22 +93,74 @@ describe("aiArtRequestSchema", () => {
 });
 
 describe("presets", () => {
-  it("offers at least 30 styles with unique ids in known categories", () => {
+  it("offers styles with unique ids in known categories", () => {
     assert.ok(AI_ART_PRESETS.length >= 30);
     assert.equal(
       new Set(AI_ART_PRESETS.map((preset) => preset.id)).size,
+      AI_ART_PRESETS.length,
+    );
+    assert.equal(
+      new Set(AI_ART_PRESETS.map((preset) => preset.name)).size,
       AI_ART_PRESETS.length,
     );
     const categories = new Set(AI_ART_CATEGORIES.map(({ id }) => id));
     for (const preset of AI_ART_PRESETS) {
       assert.ok(categories.has(preset.category), preset.id);
       assert.ok(preset.prompt.length <= 400, preset.id);
-      assert.ok(preset.swatch.startsWith("linear-gradient("), preset.id);
+      assert.ok(preset.tags.length > 0, preset.id);
+      for (const tag of preset.tags) {
+        assert.equal(tag, tag.toLowerCase(), preset.id);
+      }
+      if (preset.swatch) {
+        assert.ok(preset.swatch.startsWith("linear-gradient("), preset.id);
+      }
     }
     for (const { id } of AI_ART_CATEGORIES) {
       assert.ok(
         AI_ART_PRESETS.filter((preset) => preset.category === id).length >= 3,
         id,
+      );
+    }
+  });
+
+  it("counts them where copy reads the number (preset-meta.ts)", () => {
+    assert.equal(AI_ART_PRESET_COUNT, AI_ART_PRESETS.length);
+  });
+
+  it("has a small preview for every style and none left over", () => {
+    for (const preset of AI_ART_PRESETS) {
+      const file = join(PUBLIC, aiArtPresetPreview(preset.id));
+      assert.ok(existsSync(file), `no preview for ${preset.id}`);
+      assert.ok(
+        statSync(file).size < 40 * 1024,
+        `${preset.id} preview is large`,
+      );
+    }
+    const ids = new Set(AI_ART_PRESETS.map((preset) => preset.id));
+    const stray = readdirSync(join(PUBLIC, "images/ai-art-styles")).filter(
+      (file) => !ids.has(file.replace(/\.webp$/, "")),
+    );
+    assert.deepEqual(stray, []);
+  });
+
+  it("features known styles, once each", () => {
+    const ids = new Set(AI_ART_PRESETS.map((preset) => preset.id));
+    assert.ok(AI_ART_FEATURED_PRESET_IDS.length >= 6);
+    assert.equal(
+      new Set(AI_ART_FEATURED_PRESET_IDS).size,
+      AI_ART_FEATURED_PRESET_IDS.length,
+    );
+    for (const id of AI_ART_FEATURED_PRESET_IDS) assert.ok(ids.has(id), id);
+  });
+
+  it("keeps artists, brands and characters out of the prompts", () => {
+    const names =
+      /\b(van gogh|monet|picasso|hokusai|klimt|mucha|warhol|lichtenstein|seurat|matisse|ghibli|disney|pixar|lego|polaroid|kodak|kodachrome|lomo|instagram|pantone|tiffany|spirograph|minecraft|pokemon|marvel)\b/i;
+    for (const preset of AI_ART_PRESETS) {
+      assert.doesNotMatch(
+        `${preset.name} ${preset.prompt} ${preset.tags.join(" ")}`,
+        names,
+        preset.id,
       );
     }
   });
