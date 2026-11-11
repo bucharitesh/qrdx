@@ -9,21 +9,26 @@ import { LOCALIZED_PATHS } from "./paths";
 const EN = `/${LOCALE_INFO.en.segment}`;
 
 /**
- * A route path in next.config.ts syntax: "/compare/[slug]" → "/compare/:slug",
- * "[...slug]" → ":slug+", "[[...slug]]" → ":slug*".
+ * A route path in next.config.ts syntax: "/compare/[slug]" →
+ * "/compare/:slug([^/.]+)", "[...slug]" → ":slug+", "[[...slug]]" →
+ * ":slug*". A single segment never contains a dot, so files in public/
+ * that share the prefix (/integrations/zapier.svg) aren't rewritten: these
+ * rules run before the filesystem.
  */
 export function rewriteSource(route: string): string {
   return route
     .replace(/\[\[\.\.\.([^/[\]]+)\]\]/g, ":$1*")
     .replace(/\[\.\.\.([^/[\]]+)\]/g, ":$1+")
-    .replace(/\[([^/[\]]+)\]/g, ":$1");
+    .replace(/\[([^/[\]]+)\]/g, ":$1([^/.]+)");
 }
 
 /** /pricing → /en/pricing, /compare/:slug → /en/compare/:slug (beforeFiles). */
 export function englishRewrites(): { source: string; destination: string }[] {
   return LOCALIZED_PATHS.map((path) => {
     const source = rewriteSource(path);
-    return { source, destination: source === "/" ? EN : `${EN}${source}` };
+    // The destination names the params; their patterns belong to the source.
+    const target = source.replace(/\([^)]*\)/g, "");
+    return { source, destination: target === "/" ? EN : `${EN}${target}` };
   });
 }
 

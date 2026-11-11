@@ -155,9 +155,15 @@ describe("paths", () => {
       path: "/docs/help",
     });
     expect(splitLocale("/fr/docs")).toEqual({ locale: "en", path: "/fr/docs" });
+    // What an English page prerenders as (usePathname() says /en/pricing
+    // there): the same English path as the browser's /pricing.
     expect(splitLocale("/en/pricing")).toEqual({
       locale: "en",
-      path: "/en/pricing",
+      path: "/pricing",
+    });
+    expect(splitLocale("/en/q/abc")).toEqual({
+      locale: "en",
+      path: "/en/q/abc",
     });
     expect(isLocalizedPath("/docs")).toBe(false);
   });
@@ -290,15 +296,16 @@ describe("next.config.ts routing", () => {
     expect(englishRewrites()).toEqual(
       LOCALIZED_PATHS.map((path) => {
         const source = rewriteSource(path);
+        const target = source.replace(/\([^)]*\)/g, "");
         return {
           source,
-          destination: source === "/" ? "/en" : `/en${source}`,
+          destination: target === "/" ? "/en" : `/en${target}`,
         };
       }),
     );
     // Dynamic routes are one rule each, in next.config.ts syntax.
     expect(englishRewrites()).toContainEqual({
-      source: "/qr-code-generator/:type",
+      source: "/qr-code-generator/:type([^/.]+)",
       destination: "/en/qr-code-generator/:type",
     });
     for (const rule of englishRewrites()) {
@@ -310,13 +317,14 @@ describe("next.config.ts routing", () => {
   });
 
   it("matches dynamic segments the way the folders name them", () => {
-    expect(rewriteSource("/compare/[slug]")).toBe("/compare/:slug");
+    expect(rewriteSource("/compare/[slug]")).toBe("/compare/:slug([^/.]+)");
     expect(rewriteSource("/docs/[...slug]")).toBe("/docs/:slug+");
     expect(rewriteSource("/docs/[[...slug]]")).toBe("/docs/:slug*");
     const one = routeMatcher("/compare/[slug]");
     expect(one("/compare/qr-tiger")).toBe(true);
     expect(one("/compare")).toBe(false);
     expect(one("/compare/a/b")).toBe(false);
+    expect(one("/compare/logo.svg")).toBe(false);
     const some = routeMatcher("/docs/[...slug]");
     expect(some("/docs/a/b")).toBe(true);
     expect(some("/docs")).toBe(false);

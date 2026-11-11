@@ -35,7 +35,8 @@ export function routeMatcher(route: string): (path: string) => boolean {
       if (index === 0) return "";
       if (/^\[\[\.\.\.[^/[\]]+\]\]$/.test(segment)) return "(?:/[^?#]*)?";
       if (/^\[\.\.\.[^/[\]]+\]$/.test(segment)) return "/[^?#]+";
-      if (/^\[[^/[\].]+\]$/.test(segment)) return "/[^/?#]+";
+      // One segment, never a file name (public/integrations/zapier.svg).
+      if (/^\[[^/[\].]+\]$/.test(segment)) return "/[^/.?#]+";
       return `/${escapeRegex(segment)}`;
     })
     .join("");
@@ -95,7 +96,9 @@ export function splitLocale(pathname: string): {
 } {
   const match = /^\/([^/]+)(\/.*)?$/.exec(pathname);
   const locale = localeFromSegment(match?.[1]);
-  if (match && locale && locale !== DEFAULT_LOCALE) {
+  // "/en/scan" too: the route an English page prerenders as, which is what
+  // usePathname() says while it does, before the browser's "/scan".
+  if (match && locale) {
     const path = match[2] ?? "/";
     if (isPathIn(path, locale)) return { locale, path };
   }
