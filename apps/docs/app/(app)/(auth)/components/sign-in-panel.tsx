@@ -294,7 +294,9 @@ export function SignInPanel({
       )}
 
       <footer className="flex items-center justify-between gap-4 border-t px-6 py-3 text-xs text-muted-foreground">
-        <span>{t("valueQrdx", { value: String(new Date().getFullYear()) })}</span>
+        <span>
+          {t("valueQrdx", { value: String(new Date().getFullYear()) })}
+        </span>
         <nav aria-label={t("helpAndLegal")} className="flex gap-3">
           <a className={FOOTER_LINK} href={`mailto:${siteConfig.links.email}`}>
             {t("support")}
