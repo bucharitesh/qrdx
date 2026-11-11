@@ -92,6 +92,12 @@ export interface EmailLayoutProps {
   reason?: string;
   /** Shows an Unsubscribe link; pass the same URL to sendEmail's `unsubscribeUrl` */
   unsubscribeUrl?: string;
+  /**
+   * Sent on a workspace's behalf (agency tools: client-portal invitations on
+   * Business): its name heads the email instead of the QRdx wordmark, and
+   * the footer only names the host that sends it.
+   */
+  sender?: { name: string };
 }
 
 export function EmailLayout({
@@ -99,6 +105,7 @@ export function EmailLayout({
   children,
   reason,
   unsubscribeUrl,
+  sender,
 }: EmailLayoutProps) {
   const origin = baseUrl.origin;
   return (
@@ -108,15 +115,20 @@ export function EmailLayout({
       <Body style={styles.body}>
         <Container style={styles.container}>
           <Section>
-            <Link href={origin} style={styles.logo}>
-              QR<span style={{ color: EMAIL_ACCENT }}>dx</span>
-            </Link>
+            {sender ? (
+              <Text style={{ ...styles.logo, margin: 0 }}>{sender.name}</Text>
+            ) : (
+              <Link href={origin} style={styles.logo}>
+                QR<span style={{ color: EMAIL_ACCENT }}>dx</span>
+              </Link>
+            )}
           </Section>
           <Section style={styles.card}>{children}</Section>
           <Section style={styles.footer}>
             {reason ? <Text style={styles.footerText}>{reason}</Text> : null}
             <Text style={styles.footerText}>
-              QRdx ·{" "}
+              {sender ? "Sent for " : "QRdx · "}
+              {sender ? `${sender.name} by ` : null}
               <Link href={origin} style={styles.footerLink}>
                 {baseUrl.host}
               </Link>
