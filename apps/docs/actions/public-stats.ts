@@ -7,8 +7,11 @@ import {
   disablePublicStats,
   enablePublicStats,
   getPublicStatsShare,
+  getStatsBranding,
   type PublicStatsShare,
   resetPublicStats,
+  type StatsBranding,
+  setStatsBranding,
 } from "@/lib/public-stats";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
@@ -25,17 +28,23 @@ const KNOWN = new Set([
   "RATE_LIMITED",
   "UNAVAILABLE",
   "VALIDATION_ERROR",
+  // Client branding (agency tools)
+  "PLAN_REQUIRED",
+  "CONFLICT",
 ]);
 
 const codeId = z.string().trim().min(1).max(64);
 const writeLimiter = createRateLimiter({ limiter: slidingWindow(20, "60 s") });
 
-async function run(
+async function run<T = PublicStatsShare>(
   action: string,
   id: unknown,
-  fn: (scope: ActiveScope, codeId: string) => Promise<PublicStatsShare>,
+  fn: (scope: ActiveScope, codeId: string) => Promise<T>,
   { write = false } = {},
-): Promise<PublicStatsResult> {
+): Promise<
+  | { success: true; data: T }
+  | { success: false; error: { code: string; message: string } }
+> {
   try {
     const parsed = codeId.safeParse(id);
     if (!parsed.success) {
@@ -96,4 +105,53 @@ export async function resetPublicStatsShareAction(input: {
   return run("resetPublicStats", input.codeId, resetPublicStats, {
     write: true,
   });
+}
+
+// ─── Client branding (agency tools) ──────────────────────────────────────────
+
+export type StatsBrandingResult =
+  | { success: true; data: StatsBranding }
+  | { success: false; error: { code: string; message: string } };
+
+export async function getStatsBrandingAction(input: {
+  codeId: string;
+}): Promise<StatsBrandingResult> {
+  return run("getStatsBranding", input.codeId, getStatsBranding);
+}
+
+const optionalId = z.string().trim().min(1).max(64).nullable();
+
+/** Sets the page's client brand and custom domain (null clears each). */
+export async function setStatsBrandingAction(input: {
+  codeId: string;
+  brandId: string | null;
+  domainId: string | null;
+}): Promise<
+  | {
+      success: true;
+      data: { share: PublicStatsShare; branding: StatsBranding };
+    }
+  | { success: false; error: { code: string; message: string } }
+> {
+  const brandId = optionalId.safeParse(input.brandId ?? null);
+  const domainId = optionalId.safeParse(input.domainId ?? null);
+  if (!(brandId.success && domainId.success)) {
+    return {
+      success: false,
+      error: {
+        code: "VALIDATION_ERROR",
+        message: "Choose a brand and a link.",
+      },
+    };
+  }
+  return run(
+    "setStatsBranding",
+    input.codeId,
+    (scope, codeId) =>
+      setStatsBranding(scope, codeId, {
+        brandId: brandId.data,
+        domainId: domainId.data,
+      }),
+    { write: true },
+  );
 }
