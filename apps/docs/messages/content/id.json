@@ -25745,9 +25745,9 @@
     "status": "machine",
     "context": "aiArt.faqs.9.question"
   },
-  "828fb382c058": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 39 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "GPT Image 2 dari OpenAI, melalui Vercel AI Gateway, dengan 39 preset gaya. QRdx menggambar kode QR hitam-putih polos di server, model melukis ulang kode itu menjadi adegan sesuai keinginan Anda, lalu pemeriksaan pemindaian milik QRdx memastikan hasilnya dapat didekode, dengan memperkuat kode hanya sebatas yang diperlukan.",
+  "81399be3dc7a": {
+    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
+    "text": "GPT Image 2 dari OpenAI, melalui Vercel AI Gateway, dengan 171 preset gaya. QRdx menggambar kode QR hitam-putih polos di server, model mengecatnya ulang menjadi adegan pilihan Anda, lalu pemeriksaan pemindaian milik QRdx memastikan hasilnya dapat dibaca, dengan memperkuat kode hanya sebatas yang diperlukan.",
     "status": "machine",
     "context": "aiArt.faqs.9.answer"
   },
