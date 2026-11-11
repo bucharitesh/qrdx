@@ -6439,7 +6439,8 @@
           "scansAllTime": "전체 기간 스캔",
           "landingPages": "랜딩 페이지",
           "scan": "스캔",
-          "scans": "스캔"
+          "scans": "스캔",
+          "usedOfLimit": "{limit}개 중 {used}개"
         },
         "newCodeButton": {
           "newDynamicCode": "새 동적 코드"
@@ -7050,7 +7051,7 @@
       "lastUsed": "마지막 사용",
       "or": "또는",
       "newToQrdxGoogleGithub": "QRdx가 처음이신가요? Google, GitHub 또는 이메일 코드로 무료 계정을 만들 수 있어요.",
-      "valueQrdx": "© {value, number} QRdx",
+      "valueQrdx": "© {value} QRdx",
       "support": "지원",
       "privacy": "개인정보 처리방침",
       "terms": "이용약관",

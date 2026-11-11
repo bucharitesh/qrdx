@@ -6439,7 +6439,8 @@
           "scansAllTime": "Total pemindaian",
           "landingPages": "Halaman arahan",
           "scan": "pemindaian",
-          "scans": "pemindaian"
+          "scans": "pemindaian",
+          "usedOfLimit": "{used} dari {limit}"
         },
         "newCodeButton": {
           "newDynamicCode": "Kode dinamis baru"
@@ -7050,7 +7051,7 @@
       "lastUsed": "Terakhir dipakai",
       "or": "atau",
       "newToQrdxGoogleGithub": "Baru di QRdx? Google, GitHub, atau kode email akan membuat akun gratis Anda.",
-      "valueQrdx": "© {value, number} QRdx",
+      "valueQrdx": "© {value} QRdx",
       "support": "Dukungan",
       "privacy": "Privasi",
       "terms": "Ketentuan",

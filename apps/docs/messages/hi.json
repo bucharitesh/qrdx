@@ -6439,7 +6439,8 @@
           "scansAllTime": "स्कैन, कुल मिलाकर",
           "landingPages": "लैंडिंग पेज",
           "scan": "स्कैन",
-          "scans": "स्कैन"
+          "scans": "स्कैन",
+          "usedOfLimit": "{limit} में से {used}"
         },
         "newCodeButton": {
           "newDynamicCode": "नया डायनेमिक कोड"
@@ -7050,7 +7051,7 @@
       "lastUsed": "पिछली बार इस्तेमाल किया",
       "or": "या",
       "newToQrdxGoogleGithub": "QRdx पर नए हैं? Google, GitHub या ईमेल कोड से आपका फ़्री अकाउंट बन जाएगा।",
-      "valueQrdx": "© {value, number} QRdx",
+      "valueQrdx": "© {value} QRdx",
       "support": "सपोर्ट",
       "privacy": "प्राइवेसी",
       "terms": "शर्तें",

@@ -6532,7 +6532,8 @@
           "scansAllTime": "スキャン数（累計）",
           "landingPages": "ランディングページ",
           "scan": "スキャン",
-          "scans": "スキャン"
+          "scans": "スキャン",
+          "usedOfLimit": "{used} / {limit}"
         },
         "newCodeButton": {
           "newDynamicCode": "新しい動的コード"
@@ -7143,7 +7144,7 @@
       "lastUsed": "前回の利用",
       "or": "または",
       "newToQrdxGoogleGithub": "QRdxは初めてですか？Google、GitHub、またはメールコードで無料アカウントを作成できます。",
-      "valueQrdx": "© {value, number} QRdx",
+      "valueQrdx": "© {value} QRdx",
       "support": "サポート",
       "privacy": "プライバシー",
       "terms": "利用規約",
