@@ -4,6 +4,11 @@
 // has none, and every export path drops the prop, so SVG, EPS and PDF bytes
 // are the same with or without it.
 import { describe, expect, it, test } from "vitest";
+import { HAND_MADE } from "../scripts/official-frames/modules.mjs";
+import {
+  fullFrameScan,
+  layoutSample,
+} from "../scripts/official-frames/sample.mjs";
 import { getQRAsEPS } from "../src/eps";
 import {
   FRAME_LABEL_ATTRIBUTE,
@@ -20,6 +25,13 @@ import { getFrameSpecIssues } from "../types/frame-spec";
 import { renderSvg } from "./support/qr";
 
 const VALUE = "https://qrdx.dev/q/Ab3dE9x";
+// Official frames draw labels through one code path: the hand-made frames
+// and one frame per generator layout cover it (every frame with
+// QRDX_FULL_FRAME_SCAN=1, scripts/official-frames/sample.mjs).
+const MARKED_IDS = new Set([...HAND_MADE, ...layoutSample()]);
+const MARKER_FRAMES = fullFrameScan()
+  ? OFFICIAL_FRAMES
+  : OFFICIAL_FRAMES.filter((frame) => MARKED_IDS.has(frame.id));
 const BUILT_IN = FRAME_STYLES.filter((style) => style !== "none");
 // The built-in styles that draw `secondaryText`
 const SECOND_LINE = ["banner-top-bottom", "circle", "menu-card"];
@@ -128,7 +140,7 @@ describe("every frame label carries its field", () => {
     expect(byField).toEqual({ text: "Scan me now", secondaryText: "qrdx.dev" });
   });
 
-  it.each(OFFICIAL_FRAMES.map((frame) => [frame.id, frame] as const))(
+  it.each(MARKER_FRAMES.map((frame) => [frame.id, frame] as const))(
     "official %s: each label by its spec id",
     (_id, frame) => {
       const markers = markersOf(official(frame.spec));
@@ -162,7 +174,7 @@ describe("every frame label carries its field", () => {
 describe("exports never carry the marker", () => {
   const cases: [string, QRProps][] = [
     ...BUILT_IN.map((style): [string, QRProps] => [style, builtIn(style)]),
-    ...OFFICIAL_FRAMES.map((frame): [string, QRProps] => [
+    ...MARKER_FRAMES.map((frame): [string, QRProps] => [
       `official:${frame.id}`,
       official(frame.spec),
     ]),

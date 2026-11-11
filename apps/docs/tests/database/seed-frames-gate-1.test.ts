@@ -1,4 +1,4 @@
-// Shard 1 of 6 (tests/support/seed-frame-gate.ts).
+// Shard 1 of 2 (tests/support/seed-frame-gate.ts).
 import { describeSeedFrameGate } from "../support/seed-frame-gate";
 
-describeSeedFrameGate(1, 6);
+describeSeedFrameGate(1, 2);
