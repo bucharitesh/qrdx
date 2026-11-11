@@ -9,7 +9,8 @@
 // phone numbers, email addresses, payment handles or wallets), and never a
 // placeholder handle that could be a stranger's account. Types without a
 // generic sample (contacts, phone, email, payments, bookings, forms, shops,
-// and the signed-in Dub and Drive types) open with their empty form.
+// chat invites, meetings, and the signed-in Dub and Drive types) open with
+// their empty form.
 // tests/lib/playground-samples.test.ts checks every value against the
 // form's own validation.
 
@@ -56,6 +57,13 @@ export const PLAYGROUND_SAMPLES = {
   },
   amazon: { type: "amazon", productUrl: "https://www.amazon.com/" },
   flipkart: { type: "flipkart", productUrl: "https://www.flipkart.com/" },
+  // Added 2026-11-11: each platform's own account, and a public place.
+  telegram: { type: "telegram", username: "telegram" },
+  bluesky: { type: "bluesky", handle: "bsky.app" },
+  mastodon: { type: "mastodon", handle: "https://mastodon.social/@Mastodon" },
+  twitch: { type: "twitch", username: "twitch" },
+  soundcloud: { type: "soundcloud", username: "soundcloud" },
+  waze: { type: "waze", location: "Eiffel Tower, Paris" },
 } as const satisfies {
   [Type in ContentType]?: Extract<QRContentConfig, { type: Type }>;
 };

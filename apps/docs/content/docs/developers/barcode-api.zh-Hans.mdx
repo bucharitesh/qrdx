@@ -1,0 +1,163 @@
+---
+title: "条形码 API"
+description: "通过 URL 生成 EAN、UPC、Code 128、Data Matrix 等条形码图片，无需 API 密钥，还可以用 REST API 在工作区中保存条形码。"
+icon: Barcode
+---
+
+`GET https://api.qrdx.dev/v1/barcode` 会返回一张条形码图片。所有参数都在查询字符串中，所以 URL 本身就是图片：可以把它放进 `<img>` 标签、商品数据源或标签模板。它支持与[条形码生成器](/barcode-generator)相同的 {facts.barcodeFormats} 种格式，规则相同，返回的 SVG 也相同。
+
+```html
+<img
+  src="https://api.qrdx.dev/v1/barcode?format=ean13&data=590123412345"
+  alt="EAN-13 barcode 5901234123457"
+/>
+```
+
+这个数字少了一位，所以会补上校验位（7）。如果传入完整的 13 位数字，则会校验其中的校验位：校验位错误时返回 `400`，并说明正确的校验位应是多少。
+
+无需账号或 API 密钥。若要在工作区中保存条形码并在之后编辑，请使用[已保存的条形码](#saved-barcodes)。
+
+## 示例 [#examples]
+
+每个模块 3 像素的 PNG（请为 URL 加上引号，以免 shell 吞掉 `&`）：
+
+```bash
+curl -o box.png "https://api.qrdx.dev/v1/barcode?format=ean13&data=5901234123457&type=png&scale=3"
+```
+
+GS1-128 物流标签的矢量 PDF，每个应用标识符（Application Identifier）外加括号：
+
+```bash
+curl -o pallet.pdf "https://api.qrdx.dev/v1/barcode?format=gs1-128&type=pdf&data=(01)09501101530003(17)261231(10)AB-123"
+```
+
+如果值中包含 `&`、`#`、`+` 或空格，请先进行编码，例如在 JavaScript 中使用 `encodeURIComponent`。
+
+深蓝色的 Code 128 货架标签，不显示条形下方的文字，并旋转 90°：
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=code128&data=SHELF-A12&fg=1e3a8a&text=false&rotate=90
+```
+
+边距更宽的 Data Matrix：
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=datamatrix&data=SN-0042-7781&quietZone=4
+```
+
+## 参数 [#parameters]
+
+| 参数 | 默认值 | 说明 |
+| --- | --- | --- |
+| `format` | 必填 | 条形码类型，参见[格式](#formats)。不区分大小写和连字符：`EAN-13` 同样有效 |
+| `data` | 必填 | 要编码的数字或文本，最多 1,000 个字符（大多数线性格式更少） |
+| `type` | `svg` | `svg`、`png`、`jpg`、`webp`、`avif`、`pdf` 或 `eps` |
+| `scale` | `4` | PNG、JPG、WebP 和 AVIF 中每个模块的像素数，范围 `1` 到 `10` |
+| `height` | 取决于格式 | 线性条形码的条高，按矢量尺寸以毫米计，范围 `5` 到 `60`（EAN-13 为 23） |
+| `quietZone` | 该格式的最小值 | 以模块为单位的空白边距：线性条形码为左右两侧（`0` 到 `20`），二维码为四周（`0` 到 `10`） |
+| `text` | `true` | 在线性条形码下方打印数字或文本 |
+| `fg` | `000000` | 条形和文字的颜色，十六进制 |
+| `bg` | `ffffff` | 背景颜色，十六进制 |
+| `rotate` | `0` | 顺时针旋转：`0`、`90`、`180` 或 `270` |
+
+颜色值不要带 `#`，或将其编码为 `%23`。
+
+## 格式 [#formats]
+
+| `format` | 条形码 | 接受的内容 |
+| --- | --- | --- |
+| `ean13` | EAN-13 | 12 位数字（补上校验位）或 13 位（校验） |
+| `ean8` | EAN-8 | 7 位或 8 位数字 |
+| `upca` | UPC-A | 11 位或 12 位数字 |
+| `upce` | UPC-E | 6 到 8 位数字，或可压缩的 12 位 UPC-A |
+| `itf14` | ITF-14 | 13 位或 14 位数字 |
+| `gs1-128` | GS1-128 | 带括号的应用标识符及其值；GTIN 和 SSCC 的校验位会被补上或校验；数据最多 48 个字符 |
+| `code128` | Code 128 | 最多 80 个可打印 ASCII 字符 |
+| `code39` | Code 39 | 最多 40 个大写字母、数字、空格以及 `- . $ / + %` |
+| `datamatrix` | Data Matrix | 最多 1,000 个字符的任意文本 |
+| `pdf417` | PDF417 | 最多 1,000 个字符的任意文本 |
+| `aztec` | Aztec | 最多 1,000 个字符的任意文本 |
+
+零售编码（EAN、UPC、ITF-14、GS1-128 的 GTIN）由 GS1 授权给企业使用。该 API 可以绘制任何有效的编码，但不负责分配或注册编码。
+
+## 尺寸 [#sizes]
+
+PNG、JPG、WebP 和 AVIF 中，每个模块为 `scale` 个像素，即最窄条的宽度。二维码的一个单元宽两个模块。
+
+SVG、PDF 和 EPS 是矢量文件，每个模块为一个点（0.353 毫米），因此默认设置下的 EAN-13 打印出来约为标称尺寸的 107%。请在排版中缩放矢量文件；对于零售条形码，请保持在 80% 到 200% 之间，并且不要裁切条高。
+
+## 响应 [#responses]
+
+请求成功时，返回文件，并带有：
+
+- `Content-Type`：对应文件类型。EPS 作为下载返回（`Content-Disposition: attachment`）；其余格式以内联方式打开，文件名形如 `ean13-5901234123457.png`
+- `Cache-Control: public, max-age=31536000, immutable`：相同的查询始终返回相同的字节
+- `Access-Control-Allow-Origin: *`，因此可以在任何网站上用 `fetch` 获取
+
+缺少参数、参数无效，或值无法用该格式表示时，返回 `400` 并指明问题：
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Invalid query parameters",
+  "data": {
+    "details": [
+      {
+        "param": "data",
+        "message": "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you."
+      }
+    ]
+  },
+  "status": 400
+}
+```
+
+## 不让值出现在 URL 中 [#keep-the-value-out-of-the-url]
+
+`POST https://api.qrdx.dev/v1/barcode` 以 JSON 接收相同的字段，并返回相同的文件，不做缓存。当值不应像 URL 那样留在日志、历史记录或缓存中时，请使用它：
+
+```bash
+curl -o label.png https://api.qrdx.dev/v1/barcode \
+  -H "Content-Type: application/json" \
+  -d '{"format":"datamatrix","data":"Internal note 42","type":"png"}'
+```
+
+在 JSON 中，`text` 是布尔值，`scale`、`height`、`quietZone` 和 `rotate` 是数字。
+
+## 已保存的条形码 [#saved-barcodes]
+
+使用 [API 密钥](/docs/developers/api-keys)时，REST API 会把条形码保存在该密钥所属的工作区中，并显示在控制台的**条形码**下。权限范围与二维码相同：`codes:read` 用于列出和下载，`codes:write` 用于修改。
+
+```bash
+curl https://api.qrdx.dev/v1/barcodes \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"format":"ean13","value":"590123412345","title":"Spring box"}'
+```
+
+| 端点 | 作用 |
+| --- | --- |
+| [`GET /v1/barcodes`](/docs/developers/api/list-barcodes) | 列出条形码，按最近修改时间倒序；可用 `q`、`format`、`folderId`、`status=trash` 筛选 |
+| [`POST /v1/barcodes`](/docs/developers/api/create-barcode) | 保存一个条形码。`options` 接受 `foreground`、`background`、`showText`、`barHeightMm`、`quietZone`、`scale` 和 `rotation` |
+| [`GET /v1/barcodes/{id}`](/docs/developers/api/get-barcode) | 获取单个条形码 |
+| [`PATCH /v1/barcodes/{id}`](/docs/developers/api/update-barcode) | 修改标题、格式、值、选项或文件夹 |
+| [`DELETE /v1/barcodes/{id}`](/docs/developers/api/delete-barcode) | 移入回收站；`?permanent=true` 则永久删除 |
+| [`GET /v1/barcodes/{id}/image`](/docs/developers/api/get-saved-barcode-image) | 按保存时的样式绘制的文件：`type` 和 `scale` 同上 |
+
+每个已保存的条形码都有一个 `imageUrl`：即 `GET /v1/barcode` 生成的同一张图片，任何拿到链接的人都可以加载。`/image` 端点是私有的，需要使用密钥。
+
+所有套餐都可以保存条形码：免费版最多 1,000 个，Pro 最多 10,000 个，Business 最多 100,000 个，回收站中的不计入。这些请求会计入工作区的每日 API 配额，并返回 `X-RateLimit-*` 响应头，与 [REST API](/docs/developers/rest-api) 相同。
+
+## MCP [#mcp]
+
+[MCP 服务器](/docs/developers/mcp)提供 `generate_barcode` 和 `save_barcode`：前者检查值并返回 PNG 及图片 URL，后者将条形码保存到连接所用 API 密钥所属的工作区。
+
+## 限制 [#limits]
+
+- **速率限制：**`GET` 和 `POST /v1/barcode` 每个 IP 地址每分钟 300 次请求，与[二维码图片 API](/docs/developers/image-api)相同。超出限制时会返回 `429` 和 `Retry-After` 响应头。已保存的条形码遵循 REST API 的每分钟限制和每日配额。
+- **图片尺寸：**位图每边最多 6,000 像素。值较长时请调低 `scale`。
+- **这里不做扫描检查。**[条形码生成器](/barcode-generator)会在下载前解码所绘制的内容；API 则只按你的要求绘制。请打印一份测试样张，并用实际会读取它的扫描器进行扫描。
+
+## 自托管 [#self-hosting]
+
+这些端点是 QRdx Web 应用的一部分，因此[自托管](/docs/self-hosting)的实例会在你自己的域名下通过 `/api/v1/barcode` 和 `/api/v1/barcodes` 提供它们。

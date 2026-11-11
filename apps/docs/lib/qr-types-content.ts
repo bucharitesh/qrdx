@@ -54,23 +54,25 @@ export const QR_TYPE_GROUPS: {
     id: "contact",
     title: "Contact and messaging",
     description:
-      "Save a contact, start a call, text, email or WhatsApp chat in one scan.",
+      "Save a contact, call, text or email, or open a chat in WhatsApp, Telegram, Signal or LINE.",
   },
   {
     id: "social",
     title: "Social media and music",
-    description: "Send people to a profile, channel, community or playlist.",
+    description:
+      "Send people to a profile, channel, Discord server or playlist.",
   },
   {
     id: "payments",
     title: "Payments",
     description:
-      "Payment requests for UPI, PayPal, Venmo, Bitcoin and Ethereum.",
+      "Bank payment codes (UPI, Pix, SEPA, PayNow, PromptPay, VietQR), payment links and crypto wallets.",
   },
   {
     id: "business",
     title: "Business and events",
-    description: "Reviews, directions, bookings and attendance check-ins.",
+    description:
+      "Reviews, directions, bookings, meetings and attendance check-ins.",
   },
   {
     id: "shopping",
@@ -1687,6 +1689,938 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["linkedin", "vcard", "attendance", "email"],
+  },
+  // ── Content types added 2026-11-11 ──
+  {
+    type: "pix",
+    name: "Pix",
+    group: "payments",
+    summary: "Get paid by Pix from any Brazilian bank app.",
+    metaDescription:
+      "Make a static Pix QR code (BR Code) for your Pix key, with an optional amount and message. Built to the Banco Central rules, in your browser. Free.",
+    intro: [
+      "A Pix QR code lets anyone in Brazil pay you from their bank app: they scan, check the name and amount, and confirm. It works with every kind of Pix key: CPF, CNPJ, phone number, email or a random key.",
+      "QRdx makes a static BR Code, the format the Banco Central do Brasil defines for Pix. Static codes can be paid many times, so one printed code works at a counter, on an invoice or on a tip jar. Leave the amount empty to let each payer type it, or set one for a fixed price. The same text also works as Pix copia e cola.",
+    ],
+    steps: [
+      "Enter your Pix key exactly as it is registered at your bank. Phone keys start with +55.",
+      "Add the receiver name and city as they should appear to the payer (up to 25 and 15 characters).",
+      "Optionally set an amount, a message and a transaction ID to match payments in your statement.",
+      "Scan the preview with your own bank app to check the details, then download the code.",
+    ],
+    payload: {
+      format:
+        "EMV TLV: 00 format · 26 Pix account (br.gov.bcb.pix, key, message) · 52 0000 · 53 986 · 54 amount · 58 BR · 59 name · 60 city · 62 txid · 63 CRC",
+      example:
+        "00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-4266554400005204000053039865802BR5913Fulano de Tal6008BRASILIA62070503***63041D3D",
+      notes: [
+        "The code is a string of data objects, each an ID, a two-digit length and a value, ending with a CRC16-CCITT checksum that bank apps verify.",
+        "Names, cities and messages are written without accents (São Paulo becomes Sao Paulo), as the format only takes plain letters.",
+        "Without a transaction ID the code uses ***, the value the rules give for codes that aren't tied to one charge.",
+        "The key and the message share one data object of 99 characters, so a long email key leaves less room for the message.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can people pay the same Pix code more than once?",
+        answer:
+          "Yes. A static Pix code can be paid any number of times, which suits shops, stalls and donations. Use a transaction ID if you want to tell payments apart.",
+      },
+      {
+        question: "Does QRdx see my payments?",
+        answer:
+          "No. The code is made in your browser and payments go from the payer's bank to yours. QRdx never receives the key or the money.",
+      },
+      {
+        question: "Can I make a dynamic Pix charge with an expiry?",
+        answer:
+          "Not here. Dynamic Pix codes point to a charge your bank or payment provider hosts, so they come from that provider's API. QRdx makes static codes.",
+      },
+    ],
+    related: ["upi", "sepa", "paypal", "vcard"],
+  },
+  {
+    type: "sepa",
+    name: "SEPA Transfer",
+    group: "payments",
+    summary: "Fill in a euro bank transfer with IBAN, amount and reference.",
+    metaDescription:
+      "Create a SEPA credit transfer QR code (EPC QR, also called GiroCode) with IBAN, amount and reference. Built to the EPC069-12 guidelines. Free.",
+    intro: [
+      "A SEPA transfer QR code fills in a bank transfer for the person paying: your name, IBAN, the amount and the payment reference. They scan it with their banking app, check the details and confirm, so nobody retypes a 22-character IBAN from an invoice.",
+      "The format comes from the European Payments Council's guidelines, EPC069-12, and is often called a GiroCode. Banking apps in several euro countries read it, Germany and Austria especially. It suits invoices, rent, club fees and donation posters.",
+    ],
+    steps: [
+      "Enter the beneficiary name and IBAN. QRdx checks the IBAN's length and check digits.",
+      "Add the BIC only if your bank asks for it; inside the EEA it's optional.",
+      "Optionally set an amount in euros and a payment reference, or a structured RF creditor reference.",
+      "Switch the design to error correction level M if the form asks, then scan the preview with a banking app.",
+    ],
+    payload: {
+      format:
+        "BCD\n002\n1\nSCT\n<BIC>\n<name>\n<IBAN>\nEUR<amount>\n<purpose>\n<RF reference>\n<reference text>",
+      example:
+        "BCD\n002\n1\nSCT\n\nBloom Cafe\nDE58123456780123456789\nEUR12.50\n\n\nInvoice 1024",
+      notes: [
+        "Each field is one line, in a fixed order. QRdx writes version 002 with UTF-8 text and leaves empty trailing lines out.",
+        "The whole code holds at most 331 bytes. Names are up to 70 characters and reference texts up to 140.",
+        "A transfer takes either a structured RF creditor reference or free reference text, never both. RF references are checked with their check digits.",
+        "The guidelines ask for error correction level M, and the form offers to switch the design to it.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Which banking apps read SEPA QR codes?",
+        answer:
+          "Many apps in Germany and Austria, and a number in other euro countries, read EPC codes. Some apps call it GiroCode or photo transfer. Test with the apps your payers use.",
+      },
+      {
+        question: "Does the code pay automatically?",
+        answer:
+          "No. It only fills in the transfer form. The payer checks the details and confirms in their banking app.",
+      },
+      {
+        question: "Is my IBAN sent to QRdx?",
+        answer:
+          "No. The code is made in your browser, and the playground never puts bank details in a link.",
+      },
+    ],
+    related: ["pix", "paypal", "revolut", "vcard"],
+  },
+  {
+    type: "paynow",
+    name: "PayNow",
+    group: "payments",
+    summary: "Get paid by PayNow to a mobile number or UEN.",
+    metaDescription:
+      "Make a PayNow QR code for a Singapore mobile number or company UEN, with an optional amount, reference and expiry date. SGQR format, free.",
+    intro: [
+      "A PayNow QR code lets people in Singapore pay you from their banking app. It can pay a mobile number, for personal payments, or a business UEN, for shops and companies.",
+      "QRdx builds the code in the SGQR format that Singapore banking apps scan. Leave the amount empty for a code anyone can pay any amount, or set one and choose whether the payer may change it. A reference shows up with the payment, and an expiry date makes the code stop working after a given day.",
+    ],
+    steps: [
+      "Choose whether the payment goes to a mobile number or a UEN, and enter it.",
+      "Optionally add the name payers should see, an amount and a reference such as an invoice number.",
+      "Set an expiry date if the code should only work for a while, for an invoice say.",
+      "Scan the preview with your banking app to check the details, then download the code.",
+    ],
+    payload: {
+      format:
+        "EMV TLV: 00 format · 01 static/dynamic · 26 PayNow account (SG.PAYNOW, proxy type, proxy, editable, expiry) · 52 0000 · 53 702 · 54 amount · 58 SG · 59 name · 60 Singapore · 62 reference · 63 CRC",
+      example:
+        "00020101021226370009SG.PAYNOW010120210T00XX0000X03010520400005303702540512.505802SG5910Bloom Cafe6009Singapore62110107INV10246304F9D7",
+      notes: [
+        "Proxy type 0 is a mobile number (+65 and 8 digits) and 2 is a UEN.",
+        "A code with an amount or an expiry date is marked dynamic (point of initiation 12); others are static (11).",
+        "The checksum is CRC16-CCITT over the whole payload, as in every EMV payment code.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can I use PayNow with my personal mobile number?",
+        answer:
+          "Yes, if your number is registered for PayNow with your bank. Payers see the name your bank registered.",
+      },
+      {
+        question: "What does the expiry date do?",
+        answer:
+          "Banking apps refuse to pay the code after that day. Leave it empty for a code you print once and keep.",
+      },
+      {
+        question: "Does QRdx take a fee?",
+        answer:
+          "No. The money moves between the two banks through PayNow. QRdx only draws the code, in your browser.",
+      },
+    ],
+    related: ["promptpay", "vietqr", "upi", "pix"],
+  },
+  {
+    type: "promptpay",
+    name: "PromptPay",
+    group: "payments",
+    summary: "Get paid by PromptPay to a phone number or ID.",
+    metaDescription:
+      "Create a PromptPay QR code for a Thai mobile number, national ID, tax ID or e-wallet ID, with an optional amount. Thai QR standard, free.",
+    intro: [
+      "A PromptPay QR code lets anyone with a Thai banking app pay you by scanning. It pays the mobile number, national ID, tax ID or e-wallet ID linked to your PromptPay account.",
+      "QRdx makes the code to the Thai QR Code Payment Standard. Without an amount, payers type what they owe, which suits a stall or a shop counter. With an amount, the code is marked dynamic, as the standard asks for a code made for one payment.",
+    ],
+    steps: [
+      "Choose mobile number, national or tax ID, or e-wallet ID.",
+      "Enter the number linked to your PromptPay account.",
+      "Optionally set an amount in baht.",
+      "Scan the preview with your banking app to check the name, then download the code.",
+    ],
+    payload: {
+      format:
+        "EMV TLV: 00 format · 01 static/dynamic · 29 PromptPay (A000000677010111, proxy) · 53 764 · 54 amount · 58 TH · 63 CRC",
+      example:
+        "00020101021229370016A0000006770101110213000000000000053037645406120.005802TH6304E112",
+      notes: [
+        "Mobile numbers are written as 0066 and the number without its leading 0, 13 digits in all. National and tax IDs are 13 digits, e-wallet IDs 15.",
+        "Point of initiation 11 means a reusable code; 12, used when there's an amount, means a code for one payment.",
+        "The code ends with a CRC16-CCITT checksum that banking apps check before they pay.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Which number should I use?",
+        answer:
+          "The one you registered for PromptPay at your bank. Most people use their mobile number; businesses often use their tax ID.",
+      },
+      {
+        question: "Can foreign visitors pay with it?",
+        answer:
+          "Only with an app that pays Thai QR codes, such as a Thai banking app. Some foreign wallets support Thai QR through partner networks; check before you rely on it.",
+      },
+      {
+        question: "Is my ID number stored by QRdx?",
+        answer:
+          "No. The code is made in your browser and the playground never puts payment details in a link.",
+      },
+    ],
+    related: ["paynow", "vietqr", "upi", "pix"],
+  },
+  {
+    type: "vietqr",
+    name: "VietQR",
+    group: "payments",
+    summary: "Get a bank transfer in Vietnam with one scan.",
+    metaDescription:
+      "Make a VietQR code for a Vietnamese bank account or card, with an optional amount and message. NAPAS format, works with VietQR banking apps. Free.",
+    intro: [
+      "A VietQR code fills in a bank transfer in Vietnamese banking apps: the bank, your account or card number and, if you like, the amount and a message. The payer scans, checks the name their bank shows and confirms.",
+      "QRdx builds the code to the NAPAS VietQR specification. Pick your bank from the list (it maps each bank to the 6-digit number the code needs), enter the account or card, and the code is ready for a shop counter, an invoice or a tip jar.",
+    ],
+    steps: [
+      "Choose your bank from the list.",
+      "Enter your account number, or switch to card and enter the card number.",
+      "Optionally add an amount in dong and a short message, without accents.",
+      "Scan the preview with your banking app, then download the code.",
+    ],
+    payload: {
+      format:
+        "EMV TLV: 00 format · 01 static/dynamic · 38 VietQR (A000000727, bank BIN and account, QRIBFTTA or QRIBFTTC) · 53 704 · 54 amount · 58 VN · 62 message · 63 CRC",
+      example:
+        "00020101021238540010A00000072701240006970436011000000000000208QRIBFTTA53037045405500005802VN62230819Thanh toan don hang6304789D",
+      notes: [
+        "QRIBFTTA pays an account and QRIBFTTC a card.",
+        "Amounts are whole dong. Messages are up to 25 characters, and Vietnamese accents are removed as banks expect.",
+        "The bank list comes from the public VietQR bank directory.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Is my bank on the list?",
+        answer:
+          "The list has every bank the VietQR directory marks as taking transfers. If yours is missing, it may not accept VietQR transfers yet.",
+      },
+      {
+        question: "Can people pay more than once?",
+        answer:
+          "Yes. A code without an amount works for any number of transfers. With an amount, it's marked for one payment, though banks may still accept it again.",
+      },
+      {
+        question: "Is my account number sent to QRdx?",
+        answer:
+          "No. The code is made in your browser, and the playground never puts bank details in a link.",
+      },
+    ],
+    related: ["promptpay", "paynow", "upi", "pix"],
+  },
+  {
+    type: "cashapp",
+    name: "Cash App",
+    group: "payments",
+    summary: "Open your $Cashtag so people can pay you.",
+    metaDescription:
+      "Create a Cash App QR code that opens your $Cashtag page, so people can pay you in a few taps. For tip jars, stalls and splitting bills. Free.",
+    intro: [
+      "A Cash App QR code opens your $Cashtag page, where people send you money in Cash App. It saves them from spelling your $Cashtag right from a sign.",
+      "Type your $Cashtag and QRdx builds the cash.app link. The payer picks the amount in the app, so one printed code works for tips, a market stall or club fees.",
+    ],
+    steps: [
+      "Enter your $Cashtag, with or without the $.",
+      "Scan the preview to check it opens your page.",
+      "Download the code as PNG, WebP or SVG.",
+    ],
+    payload: {
+      format: "https://cash.app/$<cashtag>",
+      example: "https://cash.app/$yourcashtag",
+      notes: [
+        "$Cashtags are up to 20 letters and digits and must include a letter.",
+        "The link opens Cash App when it's installed, or your cash.app page in the browser.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can I set an amount?",
+        answer:
+          "No. The code opens your page and the payer enters the amount. For a fixed amount, send a request from Cash App instead.",
+      },
+      {
+        question: "Can I change my $Cashtag later?",
+        answer:
+          "Cash App limits changes, and a new $Cashtag needs a new code. A dynamic QRdx code lets you change where the code points without reprinting.",
+      },
+    ],
+    related: ["venmo", "paypal", "revolut", "upi"],
+  },
+  {
+    type: "revolut",
+    name: "Revolut",
+    group: "payments",
+    summary: "Open your revolut.me page so people can pay you.",
+    metaDescription:
+      "Make a Revolut QR code that opens your revolut.me link, so friends and customers can pay you. Type your username and download. Free.",
+    intro: [
+      "A Revolut QR code opens your revolut.me page, where people can send you money. It suits paying back a shared dinner, a trip kitty or small freelance invoices.",
+      "Type your Revolut username (your Revtag) and QRdx builds the revolut.me link. The payer chooses the amount.",
+    ],
+    steps: [
+      "Enter your Revolut username, with or without the @.",
+      "Scan the preview to check it opens your revolut.me page.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "https://revolut.me/<username>",
+      example: "https://revolut.me/yourname",
+      notes: [
+        "Find your username in the Revolut app under your profile.",
+        "The link opens Revolut when it's installed, or revolut.me in the browser.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Do payers need Revolut?",
+        answer:
+          "Your revolut.me page tells them which ways to pay are open to them. People with Revolut pay in the app.",
+      },
+      {
+        question: "Can the code include an amount?",
+        answer:
+          "Not this one. The payer picks the amount on your revolut.me page.",
+      },
+    ],
+    related: ["sepa", "paypal", "cashapp", "venmo"],
+  },
+  {
+    type: "telegram",
+    name: "Telegram",
+    group: "contact",
+    summary: "Open a Telegram chat, channel or group.",
+    metaDescription:
+      "Create a Telegram QR code for a username, channel, group or phone number, using t.me links. For signs, posters and business cards. Free.",
+    intro: [
+      "A Telegram QR code opens a chat, channel or group in Telegram. Businesses use it for support chats, creators for their channels and communities for their groups.",
+      "Enter a public username and QRdx builds the t.me link, or paste an invite link for a private group. You can also start a chat with a phone number, which opens only if that person lets people find them by number.",
+    ],
+    steps: [
+      "Choose whether the code opens a username, channel or group, or a chat with a phone number.",
+      "Enter the username (5 to 32 letters, digits and underscores) or paste a t.me link.",
+      "Scan the preview to check the right chat opens.",
+      "Download the code as PNG, WebP or SVG.",
+    ],
+    payload: {
+      format: "https://t.me/<username>   or   https://t.me/+<phone number>",
+      example: "https://t.me/telegram",
+      notes: [
+        "t.me links open the Telegram app when it's installed, or a page that offers to open it.",
+        "Phone numbers need the country code. Whether the chat opens depends on the person's privacy settings.",
+        "Private group invite links (t.me/+…) are kept as pasted.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can I link a private group?",
+        answer:
+          "Yes. Copy the group's invite link in Telegram and paste it. Anyone who scans the code can join, so revoke the link in Telegram if it spreads too far.",
+      },
+      {
+        question: "Why doesn't the phone number open a chat?",
+        answer:
+          "Telegram opens a chat by number only when that person allows it in Privacy and Security, under Phone Number. A username always works.",
+      },
+      {
+        question: "Is this the QRdx Telegram bot?",
+        answer:
+          "No. This code opens your own Telegram chat or channel. The QRdx bot is a separate integration that makes codes inside Telegram.",
+      },
+    ],
+    related: ["whatsapp", "signal", "line", "discord"],
+  },
+  {
+    type: "signal",
+    name: "Signal",
+    group: "contact",
+    summary: "Start a Signal chat with a number or username link.",
+    metaDescription:
+      "Make a Signal QR code that opens a chat with a phone number or your Signal username link. For cards, newsrooms and tip lines. Free.",
+    intro: [
+      "A Signal QR code opens a chat in Signal, the private messaging app. Journalists use it for tip lines, organizers for group sign-ups, and people on business cards.",
+      "With a phone number, QRdx builds a signal.me link. For a username or a group, copy the link from the Signal app and paste it: usernames can't be turned into links outside Signal.",
+    ],
+    steps: [
+      "Choose a phone number, or a username or group link.",
+      "Enter the number with its country code, or paste the link from Signal (Settings › Profile › Username › QR code or link).",
+      "Scan the preview to check that Signal opens the chat.",
+      "Download the code.",
+    ],
+    payload: {
+      format:
+        "https://signal.me/#p/+<phone number>   or   https://signal.me/#eu/…",
+      example: "https://signal.me/#p/+14155550132",
+      notes: [
+        "The number sits after the #, a part of the link browsers never send to a server.",
+        "A number opens a chat only if its owner lets people find them by number in Signal's privacy settings.",
+        "Username links (#eu/…) and group links (signal.group) are kept as pasted.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Should I share my number or a username?",
+        answer:
+          "A username link keeps your number private, and you can reset the link in Signal at any time, which stops the old code from working.",
+      },
+      {
+        question: "Does it work without Signal installed?",
+        answer:
+          "The link opens a signal.me page that offers to install Signal. The chat opens once the app is there.",
+      },
+    ],
+    related: ["telegram", "whatsapp", "sms", "vcard"],
+  },
+  {
+    type: "discord",
+    name: "Discord",
+    group: "social",
+    summary: "Invite people to your Discord server.",
+    metaDescription:
+      "Create a Discord QR code from a server invite link or code. For streams, events, posters and merch. Make the invite permanent first. Free.",
+    intro: [
+      "A Discord QR code opens an invite to your server, so people join from a poster, a stream overlay, a sticker or a game box.",
+      "Paste an invite link (discord.gg or discord.com/invite) or just its code. Invites expire after 7 days by default, so set Expire after to Never when you create one for print.",
+    ],
+    steps: [
+      "In Discord, open Invite People, choose Edit invite link and set Expire after to Never.",
+      "Copy the invite link and paste it here.",
+      "Scan the preview to check the invite opens.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "https://discord.gg/<invite code>",
+      example: "https://discord.gg/yourserver",
+      notes: [
+        "QRdx writes every invite as a discord.gg link, the shortest form, which makes a less dense code.",
+        "Servers with a vanity URL can use it as the code.",
+        "An expired or deleted invite stops working, and the code with it.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Why did my Discord QR code stop working?",
+        answer:
+          "The invite probably expired or reached its use limit. Create one that never expires, then make a new code, or use a dynamic QRdx code you can repoint.",
+      },
+      {
+        question: "Is this the QRdx Discord bot?",
+        answer:
+          "No. This code opens an invite to your own server. The QRdx bot is a separate integration that makes codes inside Discord.",
+      },
+    ],
+    related: ["twitch", "telegram", "youtube", "reddit"],
+  },
+  {
+    type: "line",
+    name: "LINE",
+    group: "contact",
+    summary: "Add you as a friend on LINE.",
+    metaDescription:
+      "Make a LINE QR code that adds you or your official account as a friend, from a LINE ID or link. For shops, menus and cards. Free.",
+    intro: [
+      "A LINE QR code opens LINE and offers to add you as a friend. Shops and restaurants in Japan, Thailand and Taiwan use it for their official accounts, and people put it on cards.",
+      "Enter your LINE ID, or an official account's ID starting with @. You can also paste a line.me or lin.ee link from the app.",
+    ],
+    steps: [
+      "Enter your LINE ID. Official accounts start with @.",
+      "For a personal ID, check that Allow others to add me by ID is on in LINE's privacy settings.",
+      "Scan the preview to check LINE opens your profile.",
+      "Download the code.",
+    ],
+    payload: {
+      format:
+        "https://line.me/ti/p/~<LINE ID>   or   https://line.me/R/ti/p/@<official ID>",
+      example: "https://line.me/R/ti/p/@yourshop",
+      notes: [
+        "LINE IDs are letters, digits, dots, dashes and underscores.",
+        "Pasted line.me and lin.ee links are kept as they are.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Why does the code say the user can't be found?",
+        answer:
+          "Personal IDs work only when the owner allows people to add them by ID. Turn it on in LINE under Settings › Privacy.",
+      },
+      {
+        question: "Can I use the QR code LINE gives me?",
+        answer:
+          "Yes. Copy the link behind it in LINE and paste it here to restyle it with your colors and logo.",
+      },
+    ],
+    related: ["telegram", "whatsapp", "signal", "instagram"],
+  },
+  {
+    type: "bluesky",
+    name: "Bluesky",
+    group: "social",
+    summary: "Open a Bluesky profile.",
+    metaDescription:
+      "Create a Bluesky QR code for your handle, including custom domain handles. Opens your bsky.app profile. For talks, cards and posters. Free.",
+    intro: [
+      "A Bluesky QR code opens your profile so people can follow you from a slide, a badge or a poster.",
+      "Type your handle, such as yourname.bsky.social or your own domain, and QRdx builds the bsky.app profile link. A bare name gets .bsky.social added.",
+    ],
+    steps: [
+      "Enter your handle, with or without the @.",
+      "Scan the preview to check your profile opens.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "https://bsky.app/profile/<handle>",
+      example: "https://bsky.app/profile/bsky.app",
+      notes: [
+        "Handles are domain names, so they're written in lower case.",
+        "A profile link with a DID (did:plc:…) also works, and keeps working if you change your handle.",
+      ],
+    },
+    faqs: [
+      {
+        question: "What happens if I change my handle?",
+        answer:
+          "A code with the old handle stops finding you. Use your DID in the code, or a dynamic QRdx code you can repoint.",
+      },
+      {
+        question: "Does it open the Bluesky app?",
+        answer:
+          "bsky.app links open the app when it's installed, or the profile in the browser.",
+      },
+    ],
+    related: ["mastodon", "threads", "twitter", "linkedin"],
+  },
+  {
+    type: "mastodon",
+    name: "Mastodon",
+    group: "social",
+    summary: "Open a Mastodon profile on its server.",
+    metaDescription:
+      "Make a Mastodon QR code from your full handle, like @you@mastodon.social. Opens your profile on your server. For talks and cards. Free.",
+    intro: [
+      "A Mastodon QR code opens your profile on your server, where people can follow you from their own account, on any server.",
+      "Enter your full handle with the server, such as @you@mastodon.social, or paste your profile link. QRdx builds the profile address from it.",
+    ],
+    steps: [
+      "Enter your handle, server included.",
+      "Scan the preview to check your profile opens.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "https://<server>/@<username>",
+      example: "https://mastodon.social/@Mastodon",
+      notes: [
+        "A handle without its server can't be found, because the same name can exist on many servers.",
+        "Other fediverse servers that use /@username profile links work the same way.",
+      ],
+    },
+    faqs: [
+      {
+        question: "How do people follow me from another server?",
+        answer:
+          "Your profile page has a Follow button that asks for their own server and sends them there to confirm.",
+      },
+      {
+        question: "What if I move to another server?",
+        answer:
+          "Mastodon can redirect your old profile, but print a new code for the new server, or use a dynamic QRdx code you can repoint.",
+      },
+    ],
+    related: ["bluesky", "threads", "twitter", "reddit"],
+  },
+  {
+    type: "twitch",
+    name: "Twitch",
+    group: "social",
+    summary: "Open a Twitch channel.",
+    metaDescription:
+      "Create a Twitch QR code that opens your channel. For stream overlays, merch, posters and event badges. Type your username. Free.",
+    intro: [
+      "A Twitch QR code opens your channel so people can follow and watch live. Streamers put it on overlays, merch, posters and convention badges.",
+      "Type your Twitch username, or paste your channel link, and QRdx builds the twitch.tv address.",
+    ],
+    steps: [
+      "Enter your Twitch username.",
+      "Scan the preview to check your channel opens.",
+      "Download the code, as SVG for merch and print.",
+    ],
+    payload: {
+      format: "https://www.twitch.tv/<username>",
+      example: "https://www.twitch.tv/twitch",
+      notes: [
+        "Twitch usernames are 4 to 25 letters, digits and underscores.",
+        "The link opens the Twitch app when it's installed.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can the code open a specific stream or clip?",
+        answer:
+          "This one opens your channel. For a clip or video, paste its link into the URL generator.",
+      },
+      {
+        question: "Will a code on a stream overlay scan?",
+        answer:
+          "Yes, if it's big enough on screen. Test it from a phone at viewing distance before you go live.",
+      },
+    ],
+    related: ["youtube", "discord", "tiktok", "instagram"],
+  },
+  {
+    type: "soundcloud",
+    name: "SoundCloud",
+    group: "social",
+    summary: "Play a SoundCloud profile, track or playlist.",
+    metaDescription:
+      "Make a SoundCloud QR code for your profile, a track or a playlist. For flyers, merch, demo CDs and gig posters. Free, no signup.",
+    intro: [
+      "A SoundCloud QR code opens your profile, a track or a playlist, so people can listen from a gig poster, a flyer or a merch tag.",
+      "Type your profile name and QRdx builds the link, or paste a track or playlist link to open it directly.",
+    ],
+    steps: [
+      "Enter your SoundCloud profile name, or paste a track or playlist link.",
+      "Scan the preview to check it opens and plays.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "https://soundcloud.com/<profile>[/<track>]",
+      example: "https://soundcloud.com/soundcloud",
+      notes: [
+        "Profile names are 3 to 25 letters, digits, underscores and dashes.",
+        "Pasted soundcloud.com and on.soundcloud.com links are kept as they are.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can I link a private track?",
+        answer:
+          "Yes, with its secret link. Anyone who scans the code can listen, so share it only where you mean to.",
+      },
+      {
+        question: "Does it open the SoundCloud app?",
+        answer:
+          "SoundCloud links open the app when it's installed, or the page in the browser.",
+      },
+    ],
+    related: ["spotify", "youtube", "twitch", "instagram"],
+  },
+  {
+    type: "zoom",
+    name: "Zoom",
+    group: "business",
+    summary: "Join a Zoom meeting with one scan.",
+    metaDescription:
+      "Create a Zoom QR code from a meeting ID or invite link. People join from slides, room signs and printed agendas. Keep the passcode. Free.",
+    intro: [
+      "A Zoom QR code opens a meeting in Zoom, so people join from a slide, a room sign or a printed agenda without typing an 11-digit ID.",
+      "Paste the meeting's invite link to keep its passcode, or type just the meeting ID, and Zoom asks for the passcode when people join.",
+    ],
+    steps: [
+      "Copy the invite link in Zoom (Copy invitation, or the link in the calendar event).",
+      "Paste it here, or type the meeting ID.",
+      "Scan the preview to check the meeting opens.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "https://zoom.us/j/<meeting ID>[?pwd=…]",
+      example: "https://zoom.us/j/12345678901",
+      notes: [
+        "An invite link's pwd value is an encoded passcode Zoom generates. QRdx keeps it as pasted; it can't build one from the passcode.",
+        "Personal meeting links (zoom.us/my/…) and webinar links work too.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can I use one code for a recurring meeting?",
+        answer:
+          "Yes. Recurring meetings and personal meeting rooms keep their ID, so the code keeps working.",
+      },
+      {
+        question: "Can strangers join with the code?",
+        answer:
+          "Anyone who scans it can try. Turn on the waiting room in Zoom if the meeting is private.",
+      },
+    ],
+    related: ["google-meet", "calcom", "attendance", "email"],
+  },
+  {
+    type: "google-meet",
+    name: "Google Meet",
+    group: "business",
+    summary: "Join a Google Meet call with one scan.",
+    metaDescription:
+      "Make a Google Meet QR code from a meeting code or link. People join from room signs, slides and handouts. Free, no signup.",
+    intro: [
+      "A Google Meet QR code opens a call in Meet, so people join from a meeting room sign, a slide or a class handout.",
+      "Paste the meeting link or type its code (three letters, four, then three, like abc-defg-hij), and QRdx builds the meet.google.com link.",
+    ],
+    steps: [
+      "Copy the meeting link from Google Calendar or Meet.",
+      "Paste it here, or type the code.",
+      "Scan the preview to check the call opens.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "https://meet.google.com/<abc-defg-hij>",
+      example: "https://meet.google.com/abc-defg-hij",
+      notes: [
+        "Meeting codes are 10 letters; QRdx adds the dashes if you leave them out.",
+        "Whether people join right away or wait to be let in depends on the meeting's settings in Google.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Does a Meet code expire?",
+        answer:
+          "Codes from calendar events and recurring meetings last as long as the meeting. Instant meetings can expire when they end, so make the code from a scheduled one.",
+      },
+      {
+        question: "Do people need a Google account?",
+        answer:
+          "That depends on the host's Workspace settings. Many meetings let guests ask to join without signing in.",
+      },
+    ],
+    related: ["zoom", "calcom", "attendance", "email"],
+  },
+  {
+    type: "waze",
+    name: "Waze",
+    group: "business",
+    summary: "Open directions to a place in Waze.",
+    metaDescription:
+      "Create a Waze QR code that starts directions to an address or coordinates. For shop windows, event signs and delivery notes. Free.",
+    intro: [
+      "A Waze QR code opens directions in Waze to your shop, venue, parking entrance or loading dock. It suits places that are easy to miss in a maps search.",
+      "Enter an address or coordinates. With directions on, Waze starts navigating when the code is scanned; without, it shows the place first.",
+    ],
+    steps: [
+      "Enter the address, or coordinates as latitude, longitude for an exact spot.",
+      "Choose whether directions start right away.",
+      "Scan the preview to check Waze finds the place.",
+      "Download the code.",
+    ],
+    payload: {
+      format:
+        "https://waze.com/ul?ll=<lat>,<long>&navigate=yes   or   https://waze.com/ul?q=<address>",
+      example: "https://waze.com/ul?ll=48.8584,2.2945&navigate=yes",
+      notes: [
+        "Coordinates point at the exact spot, which is best for gates and car park entrances. An address is searched in Waze.",
+        "The link opens Waze when it's installed, or waze.com in the browser.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Waze or Google Maps?",
+        answer:
+          "Waze suits drivers. For walkers or a general audience, the Location generator opens Google Maps.",
+      },
+      {
+        question: "How do I get coordinates?",
+        answer:
+          "In Google Maps or Waze, press and hold the spot and copy the numbers shown.",
+      },
+    ],
+    related: ["maps", "google-review", "calcom", "vcard"],
+  },
+  {
+    type: "litecoin",
+    name: "Litecoin",
+    group: "payments",
+    summary: "Receive Litecoin with an optional amount.",
+    metaDescription:
+      "Make a Litecoin QR code (litecoin: URI) with your wallet address and an optional amount, label and message. Made in your browser. Free.",
+    intro: [
+      "A Litecoin QR code holds a payment request: your wallet address and, if you like, an amount in LTC and a note. Wallets fill in the payment when they scan it.",
+      "QRdx writes the litecoin: URI in the same form as Bitcoin's BIP-21, which Litecoin wallets read. It's made in your browser, and the address never leaves it.",
+    ],
+    steps: [
+      "Copy a receiving address from your Litecoin wallet and paste it.",
+      "Optionally add an amount in LTC, a label and a message.",
+      "Scan the preview with your wallet and check every character of the address.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "litecoin:<address>?amount=<LTC>&label=<label>&message=<message>",
+      example:
+        "litecoin:ltc1qexampleexampleexampleexampleexample0?amount=0.25&label=Bloom%20Cafe",
+      notes: [
+        "Amounts are in LTC with up to 8 decimals.",
+        "QRdx checks the address's shape (ltc1, L, M or 3) but not its checksum. Your wallet does that when it scans.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can a payment be reversed?",
+        answer:
+          "No. Crypto payments are final, so check the address before you print.",
+      },
+      {
+        question: "Can I reuse the code?",
+        answer:
+          "Yes. A code without an amount can be paid any number of times. Some wallets give you a new address for privacy; reuse is your choice.",
+      },
+    ],
+    related: ["bitcoin", "dogecoin", "bitcoincash", "ethereum"],
+  },
+  {
+    type: "dogecoin",
+    name: "Dogecoin",
+    group: "payments",
+    summary: "Receive Dogecoin with an optional amount.",
+    metaDescription:
+      "Create a Dogecoin QR code (dogecoin: URI) with your wallet address and an optional amount. For tip jars and stalls. Free.",
+    intro: [
+      "A Dogecoin QR code holds a payment request with your wallet address and, if you like, an amount in DOGE. It's popular for tip jars and small stalls.",
+      "QRdx writes the dogecoin: URI that Dogecoin wallets read, in the browser, so the address stays with you.",
+    ],
+    steps: [
+      "Paste a receiving address from your Dogecoin wallet.",
+      "Optionally add an amount, a label and a message.",
+      "Scan the preview with a wallet to check the address.",
+      "Download the code.",
+    ],
+    payload: {
+      format:
+        "dogecoin:<address>?amount=<DOGE>&label=<label>&message=<message>",
+      example: "dogecoin:DTestDemoWa11etTestDemoWa11etTestD?amount=42",
+      notes: [
+        "Amounts are in DOGE with up to 8 decimals.",
+        "QRdx checks the address's shape (it starts with D, A or 9) but not its checksum.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Can I take back a payment sent to the wrong address?",
+        answer:
+          "No. Crypto payments are final, so check the address before you print.",
+      },
+    ],
+    related: ["litecoin", "bitcoin", "solana", "ethereum"],
+  },
+  {
+    type: "bitcoincash",
+    name: "Bitcoin Cash",
+    group: "payments",
+    summary: "Receive Bitcoin Cash with an optional amount.",
+    metaDescription:
+      "Make a Bitcoin Cash QR code (bitcoincash: URI) with your CashAddr address and an optional amount. Made in your browser. Free.",
+    intro: [
+      "A Bitcoin Cash QR code holds a payment request: your address and, if you like, an amount in BCH and a note.",
+      "QRdx writes the bitcoincash: URI with your CashAddr address (starting with q or p), which Bitcoin Cash wallets read.",
+    ],
+    steps: [
+      "Paste a receiving address from your Bitcoin Cash wallet, with or without bitcoincash:.",
+      "Optionally add an amount, a label and a message.",
+      "Scan the preview with your wallet to check the address.",
+      "Download the code.",
+    ],
+    payload: {
+      format:
+        "bitcoincash:<address>?amount=<BCH>&label=<label>&message=<message>",
+      example:
+        "bitcoincash:qexampleexampleexampleexampleexampleexampl?amount=0.1",
+      notes: [
+        "Amounts are in BCH with up to 8 decimals.",
+        "Legacy addresses starting with 1 or 3 are accepted too, but CashAddr avoids mixing them up with Bitcoin addresses.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Is this the same as a Bitcoin code?",
+        answer:
+          "No. Bitcoin Cash is a separate coin with its own wallets. For bitcoin, use the Bitcoin generator.",
+      },
+    ],
+    related: ["bitcoin", "litecoin", "dogecoin", "ethereum"],
+  },
+  {
+    type: "solana",
+    name: "Solana",
+    group: "payments",
+    summary: "Receive SOL with a Solana Pay request.",
+    metaDescription:
+      "Create a Solana Pay QR code for SOL payments to your wallet, with an optional amount, label and message. Solana Pay transfer request format. Free.",
+    intro: [
+      "A Solana QR code holds a Solana Pay transfer request: your wallet address and, if you like, an amount in SOL, a label and a message. Wallets that support Solana Pay fill in the payment.",
+      "QRdx writes the solana: URI from the Solana Pay specification, in your browser.",
+    ],
+    steps: [
+      "Paste your Solana wallet address.",
+      "Optionally add an amount in SOL, a label and a message.",
+      "Scan the preview with a Solana Pay wallet to check it.",
+      "Download the code.",
+    ],
+    payload: {
+      format: "solana:<address>?amount=<SOL>&label=<label>&message=<message>",
+      example:
+        "solana:DemoWa11etAddressForTheQRdxExamp1eDemo?amount=0.5&label=Bloom%20Cafe",
+      notes: [
+        "Amounts are in SOL with up to 9 decimals.",
+        "This code requests SOL. Token payments (USDC and others) need the token's mint address, which this generator doesn't add.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Which wallets read Solana Pay codes?",
+        answer:
+          "Most mobile Solana wallets scan them. Test with the wallets your customers use.",
+      },
+    ],
+    related: ["ethereum", "bitcoin", "litecoin", "monero"],
+  },
+  {
+    type: "monero",
+    name: "Monero",
+    group: "payments",
+    summary: "Receive Monero with an optional amount.",
+    metaDescription:
+      "Make a Monero QR code (monero: URI) with your address and an optional amount, recipient name and description. Made in your browser. Free.",
+    intro: [
+      "A Monero QR code holds a payment request: your address and, if you like, an amount in XMR, your name and a description.",
+      "QRdx writes the monero: URI that Monero wallets read, in your browser. Monero addresses are 95 characters long, so the code is denser than most; print it a little larger.",
+    ],
+    steps: [
+      "Paste a receiving address or subaddress from your Monero wallet.",
+      "Optionally add an amount, a recipient name and a description.",
+      "Scan the preview with your wallet to check the address.",
+      "Download the code.",
+    ],
+    payload: {
+      format:
+        "monero:<address>?tx_amount=<XMR>&recipient_name=<name>&tx_description=<text>",
+      example:
+        "monero:4DemoWa11etAddressForTheQRdxExamp1eDemoWa11etAddressForTheQRdxExamp1eDemoWa11etAddressForTheQRd?tx_amount=0.1&recipient_name=Bloom%20Cafe",
+      notes: [
+        "Amounts are in XMR with up to 12 decimals.",
+        "Standard addresses start with 4, subaddresses with 8; integrated addresses are 106 characters.",
+      ],
+    },
+    faqs: [
+      {
+        question: "Should I use a subaddress?",
+        answer:
+          "Many wallets suggest a new subaddress for each code you publish, so payments to different codes aren't linked.",
+      },
+    ],
+    related: ["bitcoin", "litecoin", "solana", "ethereum"],
   },
 ];
 

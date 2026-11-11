@@ -1,0 +1,133 @@
+---
+title: "Verificación en dos pasos"
+description: "Añade un segundo paso a cada inicio de sesión con una passkey o una app de autenticación, guarda códigos de respaldo y recupera el acceso si pierdes el teléfono."
+---
+
+La verificación en dos pasos (también llamada 2FA) añade un segundo paso al inicio de sesión. Después de iniciar sesión con un código por correo, con Google o con GitHub<IfAvailable feature="sso"> (o con el inicio de sesión único de tu espacio de trabajo)</IfAvailable>, QRdx te pide <IfAvailable feature="passkeys">tu passkey o </IfAvailable>un código de 6 dígitos de una app de autenticación. Así, alguien que acceda a tu correo o a tu cuenta de Google no podrá entrar en QRdx sin ese paso.
+
+<IfAvailable feature="passkeys">
+Una [passkey](/docs/help/privacy-and-security/passkeys) comprueba que eres tú con tu huella, tu rostro, el bloqueo de pantalla o una llave de seguridad. Solo funciona en el sitio oficial de QRdx, así que un sitio falso no puede capturarla.
+</IfAvailable>
+
+También sirve una app de autenticación: cualquier app que muestre códigos de 6 dígitos que cambian cada 30 segundos, incluida la función de códigos de un solo uso de la mayoría de los gestores de contraseñas. QRdx no envía códigos del segundo paso por correo ni por mensaje de texto.
+
+Puedes configurar ambos y usar el que tengas a mano al iniciar sesión.
+
+## Actívala [#turn-it-on]
+
+1. Ve a **Settings** → **Profile & security**.
+2. En **Two-step verification**, haz clic en **Turn on** y [confirma que eres tú](#confirm-its-you).
+3. Configura tu segundo paso<IfAvailable feature="passkeys">: elige **Passkey** o **Authenticator app**</IfAvailable>, como se describe más abajo.
+4. Guarda tus 10 códigos de respaldo. Cópialos o descárgalos como archivo de texto y guárdalos en un lugar seguro, como un gestor de contraseñas. QRdx los muestra una sola vez. Marca **I've saved my backup codes** y haz clic en **Done**.
+
+<IfAvailable feature="passkeys">
+Para una passkey, conserva el nombre sugerido (tu navegador y sistema, como "Chrome on macOS") o escribe el tuyo, haz clic en **Continue** y deja que tu navegador guarde la passkey.
+</IfAvailable>
+
+Para una app de autenticación, escanea el código QR con la app o escribe la clave que aparece debajo. Introduce el código de 6 dígitos que muestra la app y haz clic en **Verify**.
+
+La verificación en dos pasos ya está activada y se cierra la sesión de cualquier otro navegador o dispositivo con la sesión iniciada en tu cuenta. Cada uno tendrá que iniciar sesión de nuevo, ahora con el segundo paso. El navegador en el que la activaste mantiene la sesión iniciada.<IfAvailable feature="passkeys"> Para añadir el otro método más tarde, usa la misma sección. Conservas los códigos de respaldo que ya tienes y no se cierra la sesión de nadie.</IfAvailable>
+
+<IfAvailable feature="passkeys">
+Si añadiste una passkey antes de que la verificación en dos pasos pudiera usarla, Settings muestra **Your passkey is ready to be your second step**. Haz clic en **Turn on**, confirma que eres tú, comprueba que eres tú con esa passkey y guarda tus códigos de respaldo. Esto también cierra la sesión en tus otros dispositivos.
+</IfAvailable>
+
+Enviamos un correo a la dirección de tu cuenta cada vez que se activa o desactiva la verificación en dos pasos, se añade o elimina un método, se generan nuevos códigos de respaldo o se usa un código de respaldo. También lo hacemos cuando se pide al soporte que desactive la verificación en dos pasos por ti.
+
+## Inicia sesión con ella [#sign-in-with-it]
+
+Inicia sesión como siempre. Después, QRdx te pide el segundo paso.
+
+<IfAvailable feature="passkeys">
+Si tienes una passkey, el aviso de passkey de tu navegador se abre solo. Algunos navegadores solo lo abren tras un clic: en ese caso, haz clic en **Continue with passkey**. Si cerraste el aviso o caducó, inténtalo de nuevo o elige otro método.
+</IfAvailable>
+
+Debajo del paso, **Use an authenticator code** y **Use a backup code** cambian a los otros métodos que tengas. QRdx recuerda cuál usaste por última vez en este navegador y empieza con ese la próxima vez.
+
+Los códigos de autenticación cambian cada 30 segundos, así que si te rechazan uno, espera al siguiente.
+
+Cada paso de inicio de sesión admite 5 códigos incorrectos<IfAvailable feature="passkeys">, y una passkey que no se verifica cuenta como uno</IfAvailable>. Después, empieza de nuevo el inicio de sesión. Tras 10 códigos incorrectos seguidos, QRdx deja de aceptar códigos para tu cuenta durante 15 minutos.
+
+El paso caduca a los 10 minutos. Si caduca, inicia sesión de nuevo.
+
+## Códigos de respaldo [#backup-codes]
+
+Un código de respaldo sirve en lugar de tu segundo paso, para cuando no tienes el teléfono<IfAvailable feature="passkeys"> o tu passkey</IfAvailable>. En el segundo paso, haz clic en **Use a backup code** e introduce uno. Los códigos tienen este aspecto: `ABCDE-FGH23`: letras mayúsculas y los dígitos del 2 al 9, sin 0, O, 1 ni I para evitar confusiones. Puedes escribirlos en minúsculas, con guion o sin él. Cada código funciona una sola vez.
+
+Cada vez que se usa un código de respaldo, ya sea para iniciar sesión o para confirmar que eres tú, enviamos un correo a la dirección de tu cuenta con el número de códigos que te quedan. Si no fuiste tú, alguien tiene tus códigos de respaldo: contacta con el soporte de inmediato.
+
+Settings muestra cuántos códigos te quedan. Cuando te queden 2 o menos, genera otros nuevos: haz clic en **New codes** y confirma que eres tú. Tus códigos anteriores dejan de funcionar.
+
+## Dispositivos de confianza [#trusted-devices]
+
+En el segundo paso, marca **Don't ask again on this device for 30 days** para omitirlo en ese navegador durante 30 días. Úsalo solo en un dispositivo que sea tuyo. Al desactivar la verificación en dos pasos se olvidan todos los dispositivos de confianza.
+
+## Qué inicios de sesión la piden [#which-sign-ins-ask-for-it]
+
+Todos: códigos por correo, Google y GitHub<IfAvailable feature="sso">, y el inicio de sesión único del espacio de trabajo</IfAvailable>. Esto incluye volver a iniciar sesión en un navegador donde ya tienes la sesión iniciada.
+
+<IfAvailable feature="passkeys">
+Iniciar sesión con **Continue with passkey** es la excepción. Un inicio de sesión con passkey ya usa dos factores, el dispositivo y tu huella, rostro o bloqueo de pantalla, así que QRdx no pide un segundo paso. QRdx solo acepta passkeys que te verifiquen de ese modo.
+</IfAvailable>
+
+## Cambia tus métodos [#change-your-methods]
+
+En **Settings** → **Profile & security**, en **Two-step verification**, configura o elimina la app de autenticación<IfAvailable feature="passkeys">, y añade, renombra o elimina passkeys</IfAvailable>. Cada cambio te pide confirmar que eres tú.
+
+Si eliminas tu último método, la verificación en dos pasos se desactiva y tus códigos de respaldo dejan de funcionar. QRdx te avisa antes de que confirmes.
+
+## Confirma que eres tú [#confirm-its-you]
+
+Antes de un cambio en la seguridad de tu cuenta, QRdx te pide confirmar que eres tú, aunque ya hayas iniciado sesión. Esto incluye:
+
+- cambiar tu dirección de correo;
+- eliminar tu cuenta;
+- activar o desactivar la verificación en dos pasos, y generar nuevos códigos de respaldo;
+- añadir o eliminar la app de autenticación<IfAvailable feature="passkeys">, y añadir, renombrar o eliminar una passkey</IfAvailable>;
+- vincular o desvincular una cuenta de Google o GitHub;
+- crear una clave de API, crear una app OAuth o generar un nuevo secreto de cliente para una;
+- aprobar una app que solicita usar tu cuenta de QRdx, en la pantalla **Authorize**;
+- añadir un endpoint de webhook, cambiar la URL de un endpoint, y mostrar o rotar su secreto de firma;
+- añadir un webhook de notificaciones de Slack o Discord, o conectar una integración que envía tus escaneos o las respuestas de tus formularios a otra herramienta;
+- en un espacio de trabajo: eliminarlo, cambiar el rol de alguien, eliminar a alguien, invitar a un administrador por correo o con un enlace de invitación, y [exigir la verificación en dos pasos](/docs/help/teams/require-two-step-verification) o dejar de exigirla.
+
+<IfAvailable feature="sso">
+Lo mismo ocurre al crear, editar, verificar o eliminar la conexión de inicio de sesión único de un espacio de trabajo, o al exigir el inicio de sesión único.
+</IfAvailable>
+
+Con la verificación en dos pasos activada, confirma con <IfAvailable feature="passkeys">tu passkey, </IfAvailable>un código de tu app de autenticación o un código de respaldo (que se consume). QRdx no ofrece aquí un código por correo, así que acceder a tu correo no basta para cambiar tu seguridad.
+
+Con ella desactivada, confirma con cualquiera de estas opciones:
+
+- un código de 6 dígitos que QRdx te envía por correo;
+- volver a iniciar sesión con una cuenta de Google o GitHub que hayas vinculado<IfAvailable feature="sso">, o con el inicio de sesión único de tu espacio de trabajo cuando usa OIDC</IfAvailable>.
+
+<IfAvailable feature="passkeys">
+Tu passkey también sirve, si tienes una.
+</IfAvailable>
+
+Volver a iniciar sesión te lleva a ese inicio de sesión, donde se te pide elegir o iniciar sesión en tu cuenta, y luego regresas a la misma página. Tu cambio no se guarda mientras estás fuera, así que vuelve a hacerlo cuando regreses. Usa la cuenta que vinculaste: QRdx no te cambiará a otra cuenta ni creará una.
+
+Así, si no puedes acceder a tu correo, aún puedes confirmar de otra forma. Si no tienes ninguna, consulta [Pérdida de acceso a tu correo](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+Una confirmación dura 10 minutos en ese navegador, así que varios cambios seguidos la piden una sola vez.
+
+Iniciar sesión también cuenta como confirmación durante 10 minutos en ese navegador. Con la verificación en dos pasos activada, solo cuenta un inicio de sesión en el que respondiste al segundo paso<IfAvailable feature="passkeys"> o usaste **Continue with passkey**</IfAvailable>, no uno en el que un dispositivo de confianza lo omitió.<IfAvailable feature="sso"> Abrir QRdx desde el panel de aplicaciones de tu proveedor de identidad tampoco cuenta, a menos que hayas respondido a tu segundo paso.</IfAvailable>
+
+Cerrar la sesión en tus otros dispositivos nunca pide confirmación, así que si alguien más accedió a tu cuenta, puedes cerrarle la sesión de inmediato.
+
+## Desactivarla [#turn-it-off]
+
+Ve a **Settings** → **Profile & security**, haz clic en **Turn off** en **Two-step verification** y confirma que eres tú. Tus códigos de respaldo, y la configuración de tu app de autenticación si tienes una, se eliminan.
+
+Si un espacio de trabajo al que perteneces [exige la verificación en dos pasos](/docs/help/teams/require-two-step-verification), no podrás volver a abrirlo hasta que la actives de nuevo.
+
+## Perdiste tu teléfono y tus códigos de respaldo [#lost-your-phone-and-your-backup-codes]
+
+Si todavía tienes <IfAvailable feature="passkeys">una passkey, </IfAvailable>tu app de autenticación o un código de respaldo, inicia sesión con eso y cambia tus métodos en Settings.
+
+Si has perdido todas las formas de completar el segundo paso, escribe a [support@qrdx.dev](mailto:support@qrdx.dev) desde la dirección de correo de tu cuenta y cuéntanos qué pasó. Quien nos escribe podría no ser tú, así que, una vez que confirmemos que la solicitud vino de esa dirección, la desactivación por parte de soporte espera 7 días:
+
+- **Ese mismo día enviamos un correo a esa dirección.** Hasta entonces no cambia nada y sigues con la sesión iniciada donde estás.
+- **Si no lo pediste, detenlo.** Inicia sesión con tu app de autenticación o con un código de respaldo: eso lo cancela.<IfAvailable feature="passkeys"> Iniciar sesión con una passkey no lo cancela, porque el restablecimiento es para un dispositivo perdido y una passkey podría estar en él.</IfAvailable> También puedes hacer clic en **Cancel** en **Two-step verification**, dentro de **Settings** → **Profile & security**, y [confirmar que eres tú](#confirm-its-you), o responder al correo. Te escribimos por correo cuando se cancele.
+- **Ese día, la verificación en dos pasos se desactiva.** La configuración de tu app de autenticación, tus códigos de respaldo y tus dispositivos de confianza se eliminan,<IfAvailable feature="passkeys"> tus passkeys se conservan,</IfAvailable> se cierra la sesión de tu cuenta en todos los dispositivos y te enviamos un correo para avisarte. Después inicia sesión como siempre y vuelve a activarla.

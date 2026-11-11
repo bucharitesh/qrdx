@@ -17,6 +17,7 @@ import {
 import { useTreeContext } from "fumadocs-ui/contexts/tree";
 import { ArrowRight } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
 import { track } from "@/lib/analytics";
 
@@ -38,8 +39,12 @@ function useTrackDocsSearch(search: string, loading: boolean, results: number) {
 }
 
 export default function CustomSearchDialog(props: SharedProps) {
+  // The docs' language (app/api/search keeps an index per language).
+  const locale = useLocale();
+  const t = useTranslations("docs.client.search");
   const { search, setSearch, query } = useDocsSearch({
     type: "fetch",
+    locale,
   });
   const { full } = useTreeContext();
   const router = useRouter();
@@ -77,17 +82,21 @@ export default function CustomSearchDialog(props: SharedProps) {
           <div className="inline-flex items-center gap-2 text-fd-muted-foreground">
             <ArrowRight className="size-4" />
             <p>
-              Jump to{" "}
-              <span className="font-medium text-fd-foreground">
-                {page.name}
-              </span>
+              {t.rich("jumpTo", {
+                name: String(page.name),
+                page: (chunks) => (
+                  <span className="font-medium text-fd-foreground">
+                    {chunks}
+                  </span>
+                ),
+              })}
             </p>
           </div>
         ),
         onSelect: () => router.push(page.url),
       };
     }
-  }, [router, search, searchMap]);
+  }, [router, search, searchMap, t]);
 
   return (
     <SearchDialog

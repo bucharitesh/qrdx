@@ -1,0 +1,234 @@
+---
+title: "下载"
+description: "将二维码导出为 PNG、JPG、WebP、SVG、PDF 或矢量 EPS,也可以复制到剪贴板或获取 data URL。"
+icon: Download
+---
+
+将二维码导出为 PNG、JPG、WebP、SVG、PDF 或 EPS。
+
+## 快速下载 [#quick-download]
+
+```tsx
+import { downloadQRCode, PRESET_SIZES } from 'qrdx';
+
+await downloadQRCode(
+  {
+    value: "https://example.com",
+    size: 1024,
+    fgColor: "#000000",
+    bgColor: "#ffffff",
+  },
+  {
+    format: "png",
+    size: PRESET_SIZES.large,
+    filename: "my-qrcode.png"
+  }
+);
+```
+
+## 支持的格式 [#supported-formats]
+
+### PNG [#png]
+最适合网页,支持透明背景。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  {
+    format: "png",
+    size: { width: 512, height: 512 },
+    filename: "qrcode.png"
+  }
+);
+```
+
+### JPG [#jpg]
+文件更小,仅支持纯色背景。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "jpg", size: { width: 512, height: 512 }, filename: "qrcode.jpg" }
+);
+```
+
+### WebP [#webp]
+像素与 PNG 相同,但文件更小,适合网站使用。WebP 默认为无损格式,因此模块边缘保持精确,透明背景也依然透明。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "webp", size: { width: 512, height: 512 }, filename: "qrcode.webp" }
+);
+```
+
+如果浏览器的 canvas 能写出无损 WebP(Chrome 和 Edge 可以),则由浏览器生成文件。如果不能,qrdx 会检查字节内容,并用内置的小型无损编码器自行编码像素。Safari 就属于这种情况:请求 WebP 时,它会返回 PNG。无论哪种方式,`.webp` 文件始终是 WebP 格式。
+
+`quality`(0 到 1)可在浏览器支持时改为生成更小的有损文件。有损 WebP 会使模块边缘和颜色变得模糊,因此对于需要远距离扫描的二维码,请保持默认值。`getQRAsWebP` 以 `Blob` 形式返回文件:
+
+```tsx
+import { getQRAsWebP } from "qrdx";
+
+const lossless = await getQRAsWebP({ value: "https://example.com", size: 1024 });
+const lossy = await getQRAsWebP({ value: "https://example.com", size: 1024 }, { quality: 0.9 });
+```
+
+### SVG [#svg]
+非常适合印刷,可无限缩放。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "svg", size: { width: 512, height: 512 }, filename: "qrcode.svg" }
+);
+```
+
+### PDF [#pdf]
+适合专业文档。PDF 导出需要可选的 `jspdf` 包(`npm i jspdf`);如果没有安装,PDF 下载会抛出明确的错误。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 1024 },
+  { format: "pdf", size: { width: 1024, height: 1024 }, filename: "qrcode.pdf" }
+);
+```
+
+### EPS [#eps]
+矢量 PostScript 格式,适用于印刷厂和设计工具(Illustrator、CorelDRAW、InDesign)。无需额外安装包。这里的 `size.width` 以点为单位(每英寸 72 点),所以这个文件宽 512 pt:
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "eps", size: { width: 512, height: 512 }, filename: "qrcode.eps" }
+);
+```
+
+如需精确的物理尺寸,请使用 `getQRAsEPS`。它以字符串形式返回 EPS:二维码宽度为 `sizeMm`(默认 50 mm),边框会在此基础上增加尺寸。
+
+```tsx
+import { getQRAsEPS } from "qrdx";
+
+const eps = await getQRAsEPS(
+  { value: "https://example.com" },
+  { sizeMm: 40, bleedMm: 3, colorMode: "cmyk" }
+);
+```
+
+EPS 不支持透明,也没有裁切标记。线性渐变和径向渐变会以平滑的 PostScript Level 3 底纹输出。PNG 和 JPEG 格式的 Logo 会被嵌入。
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+角度渐变会以一组细小的扇形楔块输出。半透明颜色会与背景混合,背景再与白纸混合。EPS 无法承载[图像填充](/docs/features/colors-gradients#image-fills):`getQRAsEPS` 会抛出 `EPS_IMAGE_FILL_REASON`,下载对话框则改为提供 PDF、SVG 和 PNG。
+
+## 预设尺寸 [#preset-sizes]
+
+```tsx
+import { PRESET_SIZES } from 'qrdx';
+
+PRESET_SIZES.small    // 200x200
+PRESET_SIZES.medium   // 400x400
+PRESET_SIZES.large    // 800x800
+PRESET_SIZES.xlarge   // 1200x1200
+PRESET_SIZES["2xl"]   // 1600x1600
+PRESET_SIZES["3xl"]   // 2000x2000
+```
+
+### 尺寸建议 [#size-recommendations]
+
+- **小(200px)** — 社交媒体缩略图
+- **中(400px)** — 标准网页使用
+- **大(800px)** — 高质量网页
+- **特大(1200px)** — 印刷材料
+- **2 倍特大(1600px)** — 大幅面印刷
+- **3 倍特大(2000px)** — 最高质量
+
+## 高级选项 [#advanced-options]
+
+### 获取 Data URL [#get-data-url]
+
+```tsx
+import { getQRCodeDataUrl } from 'qrdx';
+
+const dataUrl = await getQRCodeDataUrl(
+  { value: "https://example.com", size: 512 },
+  "png",
+  { width: 512, height: 512 }
+);
+```
+
+### 复制到剪贴板 [#copy-to-clipboard]
+
+```tsx
+import { copyQRCodeToClipboard } from 'qrdx';
+
+await copyQRCodeToClipboard(
+  { value: "https://example.com" },
+  { width: 512, height: 512 }
+);
+```
+
+### 获取 SVG 字符串 [#get-svg-string]
+
+```tsx
+import { getSVGString } from 'qrdx';
+
+const svgString = await getSVGString({
+  value: "https://example.com",
+  size: 512
+});
+```
+
+## 批量下载 [#batch-downloads]
+
+下载多个二维码:
+
+```tsx
+const qrCodes = [
+  {
+    props: { value: "https://example.com", size: 512 },
+    options: { format: "png", size: { width: 512, height: 512 }, filename: "site.png" }
+  },
+  {
+    props: { value: "tel:+1234567890", size: 512 },
+    options: { format: "svg", size: { width: 512, height: 512 }, filename: "phone.svg" }
+  }
+];
+
+for (const qr of qrCodes) {
+  await downloadQRCode(qr.props, qr.options);
+}
+```
+
+## 错误处理 [#error-handling]
+
+```tsx
+try {
+  await downloadQRCode(
+    { value: "https://example.com", size: 512 },
+    { format: "png", size: { width: 512, height: 512 }, filename: "qr.png" }
+  );
+} catch (error) {
+  console.error("Download failed:", error);
+}
+```
+
+## 格式选择 [#format-selection]
+
+- **PNG** — 质量最佳,文件较大,支持透明
+- **JPG** — 文件更小,不支持透明
+- **WebP** — 具备 PNG 的质量和透明支持,文件更小,适合网站
+- **SVG** — 可缩放,文件小,适合网页和印刷
+- **PDF** — 专业文档,文件较大
+- **EPS** — 面向印刷厂和设计工具的矢量印刷文件
+
+## 尺寸优化 [#size-optimization]
+
+- **网页使用** — 256-512px,PNG 或 WebP
+- **印刷** — 1024px 以上,PDF 或 PNG
+- **移动端** — 256px,已优化
+- **邮件** — 200-300px,兼顾质量与体积
+
+## 后续步骤 [#next-steps]
+
+- [使用方法](/docs/usage) — 了解基本的生成方式
+- [模板](/docs/features/templates) — 下载带样式的二维码
+- [API 参考](/docs/api-reference) — 完整的下载 API

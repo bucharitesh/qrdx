@@ -546,7 +546,10 @@
       "auditLog": "Audit log with CSV export",
       "conversions": "Conversion tracking",
       "webhooks": "Webhooks, Zapier and Slack",
-      "aiArt": "{count} AI art images a month, pooled per team"
+      "aiArt": "{count} AI art images a month, pooled per team",
+      "clientReports": "Client-branded stats pages",
+      "clientWork": "Client portal and unbranded client reports",
+      "invoiceBilling": "Pay yearly by invoice"
     },
     "comparison": {
       "title": "Compare plans",
@@ -560,7 +563,8 @@
         "analytics": "Analytics and link controls",
         "brand": "Brand and team",
         "files": "Files and forms",
-        "automation": "Automation and API"
+        "automation": "Automation and API",
+        "agency": "Client work"
       },
       "rows": {
         "price": "Price",
@@ -593,7 +597,12 @@
         "formResponses": "Form responses per month",
         "emailAlerts": "Email digests and alerts",
         "webhooks": "Webhooks, Zapier and Slack",
-        "apiRequests": "API requests per day"
+        "apiRequests": "API requests per day",
+        "clientReports": "Client-branded stats pages",
+        "clientReportsHint": "A client's name, logo and color on a code's shared stats page",
+        "clientPortal": "Client portal",
+        "clientPortalHint": "Read-only access to the folders you share, under your branding",
+        "invoiceBilling": "Pay yearly by invoice"
       },
       "cells": {
         "pricePaid": "{monthly}/mo or {yearly}/yr",
@@ -606,7 +615,9 @@
         "aiArtPooled": "{count}, pooled per team",
         "noTeams": "1 (no teams)",
         "storage": "{size} ({perFile} per file)",
-        "apiBulk": "{count} + bulk creation"
+        "apiBulk": "{count} + bulk creation",
+        "clientReportsBadge": "With a small footer credit",
+        "clientReportsWhiteLabel": "White-label"
       }
     },
     "guarantee": {
@@ -679,6 +690,118 @@
           "answer": "Payments are processed by Polar (polar.sh), which acts as merchant of record and handles sales tax, VAT and GST. QRdx never sees your card details."
         }
       }
+    },
+    "invoice": {
+      "open": "Pay by invoice instead",
+      "title": "Pay for {plan} by invoice",
+      "description": "Checkout takes cards and wallets. To pay a year of {plan} by bank transfer or invoice instead, send us your billing details. We arrange invoices by hand and reply by email.",
+      "company": "Company",
+      "billingEmail": "Billing email",
+      "country": "Country",
+      "taxId": "Tax or VAT ID (optional)",
+      "address": "Billing address (optional)",
+      "notes": "Anything else (optional)",
+      "notesPlaceholder": "A purchase order number, or who should receive the invoice",
+      "submit": "Send request",
+      "sending": "Sending…",
+      "sentTitle": "Request sent",
+      "sent": "We'll reply to {email} with the invoice and how to pay it. Nothing has been charged.",
+      "close": "Close",
+      "signIn": "Sign in to ask for an invoice",
+      "signInNote": "We send the invoice for your account's workspace, so sign in first."
+    }
+  },
+  "docs": {
+    "meta": {
+      "titleSuffix": "QRdx Docs"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "docs": "Docs"
+    },
+    "untranslated": {
+      "title": "This page isn't translated yet",
+      "body": "You're reading the English version."
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Copy Markdown",
+        "open": "Open",
+        "openIn": "Open in {app}",
+        "askPrompt": "Read {url}, I want to ask questions about it."
+      },
+      "search": {
+        "jumpTo": "Jump to <page>{name}</page>"
+      },
+      "language": {
+        "label": "Docs language",
+        "note": "The docs are in these languages. Other languages read the English docs."
+      }
+    },
+    "help": {
+      "search": "Search help and docs",
+      "stillStuck": {
+        "title": "Still stuck?",
+        "body": "Tell us what you were trying to do and what happened. Include the code's short link if it's about a code.",
+        "widget": "The support widget on qrdx.dev, once you allow Functionality cookies.",
+        "github": "Report a bug on GitHub",
+        "contact": "All the ways to contact us"
+      }
+    },
+    "notFound": {
+      "title": "This page isn't in the docs",
+      "body": "It may have moved or been renamed. Search the docs, or start from one of these.",
+      "places": {
+        "gettingStarted": {
+          "title": "Getting started",
+          "description": "Design and download your first code."
+        },
+        "dynamic": {
+          "title": "Dynamic QR codes",
+          "description": "Short links you can change after printing."
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "Create and manage codes from your own app."
+        },
+        "components": {
+          "title": "Components",
+          "description": "React and shadcn/ui components for QR codes."
+        }
+      }
+    },
+    "ui": {
+      "search": "Search",
+      "searchPlaceholder": "Search",
+      "openSearch": "Open Search",
+      "closeSearch": "Close Search",
+      "noResults": "No results found",
+      "searchFailed": "Search failed",
+      "onThisPage": "On this page",
+      "noHeadings": "No Headings",
+      "tableOfContents": "Table of Contents",
+      "lastUpdated": "Last updated on",
+      "previousPage": "Previous Page",
+      "nextPage": "Next Page",
+      "copyCode": "Copy Text",
+      "copiedCode": "Copied Text",
+      "copyAnchor": "Copy Anchor Link",
+      "copiedAnchor": "Copied Anchor Link",
+      "copyLink": "Copy Link",
+      "copiedLink": "Copied Link",
+      "toggleMenu": "Toggle Menu",
+      "toggleTheme": "Toggle Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System",
+      "openSidebar": "Open Sidebar",
+      "closeSidebar": "Close Sidebar",
+      "collapseSidebar": "Collapse Sidebar",
+      "typeTableProp": "Prop",
+      "typeTableType": "Type",
+      "typeTableDefault": "Default",
+      "typeTableParameters": "Parameters",
+      "typeTableReturns": "Returns"
     }
   }
 }

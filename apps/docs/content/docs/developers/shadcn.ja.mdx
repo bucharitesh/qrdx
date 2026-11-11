@@ -1,0 +1,72 @@
+---
+title: "shadcn/uiレジストリ"
+description: "shadcn/uiプロジェクト向けの8つのQRコードコンポーネントです。qrdxライブラリをベースにしています。コマンド1つでインストールでき、コードは自分のものとして扱えます。"
+icon: Blocks
+---
+
+QRdxは、[`qrdx`](https://www.npmjs.com/package/qrdx)ライブラリをベースにしたQRコードコンポーネントの[shadcn/ui](https://ui.shadcn.com)レジストリを公開しています。shadcn CLIがソースコードをプロジェクトにコピーするため、コードは自分のものとして扱え、自由に変更できます。
+
+<NpmStatus package="qrdx" />
+
+<PackageManagerTabs command="npx shadcn@latest add https://qrdx.dev/r/qr-code.json" />
+
+各コンポーネントには専用のページがあり、ライブプレビュー、ソースコード、インストール手順、使用例、APIリファレンスを掲載しています。
+
+[Playgroundで試す](/playground?open=code&lang=shadcn)：Playgroundでコードのスタイルを整えたら、レジストリのQR Codeコンポーネント用にコピーできます。
+
+## コンポーネント [#components]
+
+<Cards>
+  <Card title="QR Code" href="/docs/components/qr-code" icon={<QrCode />}>
+    ダウンロードボタン、色、グラデーション、パターン、ロゴ、フレームテンプレートに対応した、スタイル付きでアクセシブルなQRコードです。
+  </Card>
+  <Card title="QR Code Card" href="/docs/components/qr-code-card" icon={<Frame />}>
+    「Scan me」フレーム内のコード、タイトル、説明、アクション用のスペースを備えたカードです。
+  </Card>
+  <Card title="QR Code Download" href="/docs/components/qr-code-download" icon={<Download />}>
+    PNG、SVG、JPG、PDFを選んだサイズで書き出したり、画像をコピーしたりできるメニューです。
+  </Card>
+  <Card title="QR Code Share Dialog" href="/docs/components/qr-code-share-dialog" icon={<Webhook />}>
+    リンク用のコード、コピーボタン、PNGのダウンロード、ネイティブの共有シートを備えたダイアログです。
+  </Card>
+  <Card title="QR Code Generator" href="/docs/components/qr-code-generator" icon={<Sparkles />}>
+    ライブプレビュー、スタイルプリセット、ダウンロードボタンを備えたテキスト入力です。
+  </Card>
+  <Card title="QR Code Scanner" href="/docs/components/qr-code-scanner" icon={<Scan />}>
+    ブラウザー上で画像からQRコードを読み取るドロップゾーンです。
+  </Card>
+  <Card title="Wi-Fi QR Code" href="/docs/components/wifi-qr-code" icon={<Globe />}>
+    Wi-Fiネットワークに接続できるコードです。エスケープ処理済みのペイロードビルダーが付いています。
+  </Card>
+  <Card title="vCard QR Code" href="/docs/components/vcard-qr-code" icon={<Users />}>
+    連絡先カードを保存できるコードです。vCard 3.0ビルダーが付いています。
+  </Card>
+</Cards>
+
+## インストールされるもの [#what-gets-installed]
+
+各コンポーネントは`components/`内の単一ファイルです。CLIは`qrdx`（コンポーネントによってはアイコン用の`lucide-react`も）をインストールし、ベースとなるshadcn/uiのコンポーネント（`button`、`card`、`dialog`、`dropdown-menu`、`input`など）も追加します。
+
+全体のインデックスは[`https://qrdx.dev/r/registry.json`](https://qrdx.dev/r/registry.json)にあります。
+
+## レジストリの名前空間を使う [#using-the-registry-namespace]
+
+短い名前でインストールするには、`components.json`にレジストリを追加します。
+
+```json
+{
+  "registries": {
+    "@qrdx": "https://qrdx.dev/r/{name}.json"
+  }
+}
+```
+
+そのあと、名前を指定してコンポーネントを1つまたは複数追加します。
+
+<PackageManagerTabs command="npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-download @qrdx/qr-code-share-dialog" />
+
+## スタイリング [#styling]
+
+コンポーネントはTailwindのクラスと、標準のshadcn/uiテーマトークン（`bg-card`、`border`、`text-muted-foreground`、`ring-ring`）を使い、プロジェクト内のButton、Card、Dialog、Inputを利用します。そのため、テーマやダークモードにそのまま従います。QRコードの背景は、デフォルトでは明るい色のままです。明るいタイル上の暗いモジュールは、どのリーダーでもスキャンできるためです。
+
+PDFのダウンロードには、オプションの`jspdf`パッケージが必要です（`npm install jspdf`）。

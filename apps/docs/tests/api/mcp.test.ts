@@ -97,6 +97,7 @@ describe("MCP over Streamable HTTP", () => {
         "list_qr_styles",
         "qr_payload_email",
         "qr_payload_geo",
+        "qr_payload_payment",
         "qr_payload_sms",
         "qr_payload_vcard",
         "qr_payload_wifi",
@@ -191,6 +192,26 @@ describe("MCP over Streamable HTTP", () => {
     expect(tooShort.message?.result.isError).toBe(true);
     expect(tooShort.message?.result.content[0]?.text).toContain(
       "8-63 characters",
+    );
+
+    // Bank payment codes come from the playground's own encoders.
+    const pix = await call("qr_payload_payment", {
+      scheme: "pix",
+      pixKey: "123e4567-e12b-12d1-a456-426655440000",
+      name: "Fulano de Tal",
+      city: "BRASILIA",
+    });
+    expect(pix.message?.result.content[0]?.text).toBe(
+      "00020126580014br.gov.bcb.pix0136123e4567-e12b-12d1-a456-4266554400005204000053039865802BR5913Fulano de Tal6008BRASILIA62070503***63041D3D",
+    );
+    const badIban = await call("qr_payload_payment", {
+      scheme: "sepa",
+      name: "Ana",
+      iban: "DE89 3704 0044 0532 0130 01",
+    });
+    expect(badIban.message?.result.isError).toBe(true);
+    expect(badIban.message?.result.content[0]?.text).toMatch(
+      /^iban: .*check digits/,
     );
 
     const geo = await call("qr_payload_geo", {

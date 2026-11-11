@@ -3,7 +3,10 @@
 // The loader is mocked; nothing touches a database.
 import { describe, expect, it, vi } from "vitest";
 
-const found = vi.hoisted(() => ({ value: true }));
+const found = vi.hoisted(() => ({
+  value: true,
+  brand: null as null | { hideQrdx: boolean },
+}));
 
 vi.mock("@/lib/public-stats", () => ({
   loadPublicStats: async () =>
@@ -26,8 +29,19 @@ vi.mock("@/lib/public-stats", () => ({
             devices: [],
             referrers: [],
           },
+          ...(found.brand
+            ? {
+                brand: { name: "Bloom Cafe", logo: null, accent: "#1f6feb" },
+                hideQrdx: found.brand.hideQrdx,
+                hideShortLink: found.brand.hideQrdx,
+              }
+            : { brand: null, hideQrdx: false, hideShortLink: false }),
         }
       : null,
+}));
+// A request on QRdx's own host (custom domains: agency tools).
+vi.mock("next/headers", () => ({
+  headers: async () => new Headers({ host: "qrdx.dev" }),
 }));
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
@@ -54,6 +68,27 @@ describe("/stats/<token> metadata", () => {
     expect(metadata.referrer).toBe("no-referrer");
     expect(metadata.openGraph).toBeNull();
     expect(metadata.twitter).toBeNull();
+  });
+
+  it("names the client on a branded page (agency tools)", async () => {
+    found.value = true;
+    found.brand = { hideQrdx: false };
+    const pro = await generateMetadata(props);
+    expect(pro.title).toBe("Bloom Cafe · Spring menu scan report");
+    expect(pro.robots).toMatchObject({ index: false, follow: false });
+    expect(pro.openGraph).toMatchObject({
+      title: "Bloom Cafe · Spring menu scan report",
+      images: [{ url: `/stats/${"a".repeat(32)}/og` }],
+    });
+    // Business: no " | QRdx" suffix, the client's name and icon instead.
+    found.brand = { hideQrdx: true };
+    const business = await generateMetadata(props);
+    expect(business.title).toEqual({
+      absolute: "Bloom Cafe · Spring menu scan report",
+    });
+    expect(business.applicationName).toBe("Bloom Cafe");
+    expect(JSON.stringify(business)).not.toMatch(/qrdx/i);
+    found.brand = null;
   });
 
   it("stays noindex for unknown or switched-off links", async () => {

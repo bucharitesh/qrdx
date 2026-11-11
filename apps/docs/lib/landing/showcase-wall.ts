@@ -47,7 +47,8 @@ function place(slot: Slot, index: number): WallPlacement {
 const HOME_COMPACT_ROWS = 2;
 
 /**
- * The home wall: every content type, each drawn in a look from a different
+ * The home wall: a content type from every section of the type picker
+ * (the community wall has them all), each drawn in a look from a different
  * family (gradient, neon, pastel, earthy, luxury, brand, mono, print-safe,
  * playful, framed, bordered, logo), plus Logo QR, Image QR, the QRdx logo,
  * hosted pages and a print-ready code. Neighbours differ in theme, shape

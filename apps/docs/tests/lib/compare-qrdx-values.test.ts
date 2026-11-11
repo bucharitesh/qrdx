@@ -8,6 +8,7 @@ import { describe, expect, it, test } from "vitest";
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { PLAN_LIMITS, UNLIMITED } from "@/lib/plans";
 import { type BillingInterval, PAID_PLANS, PRICING } from "@/lib/pricing";
+import { PRODUCT_FACTS } from "@/lib/product-facts";
 import { QR_TYPES } from "@/lib/qr-types-content";
 
 const COMPARE = join(import.meta.dirname, "..", "..", "content", "compare");
@@ -77,7 +78,7 @@ describe.each(["qr-io.mdx", "qr-code-creator.mdx"])(
       expect(rows.get("Price")).toBe(
         `Free; Pro ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr; Business ${usd("business", "month")}/mo or ${usd("business", "year")}/yr`,
       );
-      expect(rows.get("QR types")).toBe(`${QR_TYPES.length} static types`);
+      expect(rows.get("QR types")).toBe("{facts.contentTypes} static types");
       expect(rows.get("Dynamic (editable) codes")).toBe(
         `${free.dynamicCodes} free; unlimited on Pro`,
       );
@@ -158,7 +159,7 @@ describe("LatestQR compare page", () => {
     expect(rows.get("Price")).toBe(
       `Free; Pro ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr; Business ${usd("business", "month")}/mo or ${usd("business", "year")}/yr`,
     );
-    expect(rows.get("QR types")).toBe(`${QR_TYPES.length} static types`);
+    expect(rows.get("QR types")).toBe("{facts.contentTypes} static types");
     expect(rows.get("Dynamic (editable) codes")).toBe(
       `${free.dynamicCodes} free; unlimited on Pro`,
     );
@@ -204,7 +205,7 @@ describe("QR Code AI compare page", () => {
     expect(rows.get("Price")).toBe(
       `Free; Pro ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr; Business ${usd("business", "month")}/mo or ${usd("business", "year")}/yr`,
     );
-    expect(rows.get("QR types")).toBe(`${QR_TYPES.length} static types`);
+    expect(rows.get("QR types")).toBe("{facts.contentTypes} static types");
     expect(rows.get("Dynamic (editable) codes")).toBe(
       `${free.dynamicCodes} free; unlimited on Pro`,
     );
@@ -230,7 +231,7 @@ describe("QR Code AI compare page", () => {
       `The Free plan adds ${free.dynamicCodes} dynamic codes, ${free.landingPages} hosted pages and ${free.aiArtPerMonth} AI art images a month, with no trial.`,
       `Pro (${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr) makes codes and pages unlimited`,
       `Business (${usd("business", "month")}/mo or ${usd("business", "year")}/yr) adds unlimited team members and white-label pages`,
-      `${free.aiArtPerMonth} images a month on Free and ${pro.aiArtPerMonth} on Pro, from a much shorter list of style presets`,
+      `${free.aiArtPerMonth} images a month on Free and ${pro.aiArtPerMonth} on Pro, from {facts.aiArtStyles} style presets`,
       `keeps ${free.analyticsRetentionDays} days of scan history on Free, ${years(pro.analyticsRetentionDays)} years on Pro and all of it on Business`,
       `(${perDay(free.apiRequestsPerDay)} requests a day on Free, ${perDay(pro.apiRequestsPerDay)} on Pro)`,
     ]) {
@@ -239,14 +240,28 @@ describe("QR Code AI compare page", () => {
   });
 
   it("stays true where it says QR Code AI is ahead", () => {
-    // "a much shorter list of style presets" than its 1,200+ templates
+    // Its 1,200+ templates against QRdx's style presets: still far more
     expect(text).toContain("advertises 1,200+ templates");
-    expect(AI_ART_PRESETS.length).toBeLessThan(1200 / 10);
+    expect(AI_ART_PRESETS.length).toBeLessThan(1200 / 2);
     // The help page is the source for "No uptime SLA yet"
     expect(rows.get("Uptime commitment")).toBe("No uptime SLA yet");
     expect(
       readFileSync(join(COMPARE, "..", "docs", "help", "contact.mdx"), "utf8"),
     ).toContain("QRdx doesn't offer an uptime SLA yet");
+  });
+});
+
+describe("QR-Verse compare page", () => {
+  const text = readFileSync(join(COMPARE, "qr-verse.mdx"), "utf8");
+
+  it("counts QRdx's AI art styles from the catalogue", () => {
+    expect(text).toContain("QR-Verse advertises 157 AI art styles.");
+    expect(text).toContain("QRdx has {facts.aiArtStyles} style presets");
+    // It no longer calls QR-Verse's catalogue the bigger one: QRdx's isn't smaller.
+    expect(text).not.toMatch(
+      /smaller set of presets|very large style catalogue/,
+    );
+    expect(AI_ART_PRESETS.length).toBeGreaterThan(157);
   });
 });
 
@@ -282,7 +297,7 @@ describe("MyQRCode compare page", () => {
     expect(rows.get("Price")).toBe(
       `Free; Pro ${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr; Business ${usd("business", "month")}/mo or ${usd("business", "year")}/yr`,
     );
-    expect(rows.get("QR types")).toBe(`${QR_TYPES.length} static types`);
+    expect(rows.get("QR types")).toBe("{facts.contentTypes} static types");
     expect(rows.get("Dynamic (editable) codes")).toBe(
       `${free.dynamicCodes} free; unlimited on Pro`,
     );
@@ -360,6 +375,22 @@ describe("Pageloot compare page", () => {
       `QRdx Free includes ${free.dynamicCodes} dynamic codes with no time limit.`,
     ]) {
       expect(text).toContain(phrase);
+    }
+  });
+});
+
+describe("the static type count", () => {
+  it("is the number of generator pages, one per content type", () => {
+    expect(PRODUCT_FACTS.contentTypes).toBe(QR_TYPES.length);
+  });
+
+  it.each(pages)("%s writes it as a facts token", (file) => {
+    const text = readFileSync(join(COMPARE, file), "utf8");
+    for (const [feature, value] of qrdxValues(text)) {
+      if (!/types/i.test(feature)) continue;
+      expect(value, `${file}: ${feature}`).not.toMatch(
+        /(?:^|\s)\d+\+?(?:\s|,|$)/,
+      );
     }
   });
 });

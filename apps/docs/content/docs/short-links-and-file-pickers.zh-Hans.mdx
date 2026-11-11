@@ -1,0 +1,95 @@
+---
+title: "短链接与文件选择器"
+description: "使用你自己的 Bitly、Rebrandly 或 Short.io 账号缩短二维码的链接,或编码 Dropbox 分享链接。"
+icon: Blocks
+---
+
+在[设置 → 集成](/settings/integrations)中连接账号后,它会出现在二维码编辑器的 **URL** 类型中,位于 **网站地址** 字段旁边的 **使用链接来自…** 菜单里。在 **你的账号** 下,每个服务都会说明它的用途:
+
+- **缩短**:Bitly、Rebrandly 或 Short.io。在 **新建** 下创建链接,或在 **使用已有** 下选择你已有的链接。二维码会编码这个短链接,因此你以后可以在该服务中更改它指向的位置,并且它会统计点击次数。
+- **文件**:Dropbox<IfAvailable integration="onedrive">、OneDrive</IfAvailable><IfAvailable integration="box">、Box</IfAvailable><IfAvailable integration="notion">、Notion</IfAvailable>。浏览或搜索,然后选择文件或文件夹。QRdx 会创建该项目的分享链接,二维码会编码这个链接。
+
+尚未连接的服务位于同一菜单底部的 **连接账号** 中。
+
+托管页面也可以使用云端文件:PDF、音频、视频和下载区块在上传按钮旁会显示 **来自 Dropbox**<IfAvailable integration="onedrive">、**来自 OneDrive**</IfAvailable><IfAvailable integration="box">、**来自 Box**</IfAvailable>。
+
+集成归属于你的用户账号。令牌和 API 密钥以加密方式存储,你可以随时断开连接。
+
+## 短链接 [#short-links]
+
+| 服务 | 连接方式 | 域名 | 后缀 |
+| --- | --- | --- | --- |
+| Bitly | 使用 Bitly 登录,或粘贴通用访问令牌(Settings → Developer settings → API) | bit.ly 和你的品牌域名 | 由 Bitly 指定 |
+| Rebrandly | 粘贴 API 密钥(Account → API keys) | rebrand.ly 和你的品牌域名 | 你自己的 slashtag,或随机生成 |
+| Short.io | 粘贴私密 API 密钥(Integrations & API → API) | 你的 Short.io 域名 | 你自己的路径,或随机生成 |
+
+每个集成的设置页面会显示你的域名,并可让你为新链接选择默认域名。你仍然可以为每个链接另选其他域名。
+
+<Callout type="info" title="以后更改目标地址">
+QRdx 负责创建链接;修改链接指向的位置需要在 Bitly、Rebrandly 或 Short.io 中进行。Bitly 只允许付费方案更改链接的目标地址。
+</Callout>
+
+如果你希望直接在 QRdx 中编辑目标地址,并获得扫描分析,请改用[动态二维码](/docs/dynamic-qr-codes)。
+
+## 文件选择器 [#file-pickers]
+
+**Dropbox** 会编码一个分享链接(新建的,或复用已有的)。任何拿到该链接的人都可以打开,除非你的团队只允许使用团队链接。
+
+<IfAvailable integration="onedrive">
+
+**OneDrive** 会编码一个仅可查看的分享链接。任何拿到该链接的人都可以打开;如果你的管理员关闭了“任何人”链接,则只有你的组织成员可以打开。
+
+</IfAvailable>
+
+<IfAvailable integration="box">
+
+**Box** 会编码该项目的分享链接,并设置为“拥有链接的人”。任何拿到该链接的人都可以打开;如果你的管理员有此要求,则只有你的公司成员可以打开。
+
+</IfAvailable>
+
+<IfAvailable integration="notion">
+
+**Notion** 会编码页面的“发布到网络”链接。页面发布后,任何人都可以打开。
+
+</IfAvailable>
+
+当链接无法让所有人打开时,QRdx 会在你选择之后立即告知,避免打印出的二维码把人带到登录页面。
+
+<IfAvailable integration="notion">
+
+**Notion 页面。** QRdx 只能看到你与它共享的页面:连接时 Notion 会询问共享哪些页面。若之后要添加更多,请在 Notion 中打开该页面,点击 **•••** → **连接**,然后添加 QRdx(或重新连接并选择这些页面)。
+
+Notion 的 API 无法发布页面。请自行发布(**分享** → **发布** → **发布到网络**),然后重新选择该页面,让 QRdx 使用公开链接。
+
+</IfAvailable>
+
+### 托管页面上的文件 [#files-on-hosted-pages]
+
+对于 Dropbox<IfAvailable integration="box">和 Box</IfAvailable>,页面区块会获得文件的直接链接,因此音频和视频播放器以及 PDF 查看器都可以加载它。<IfAvailable integration="onedrive"> OneDrive 分享链接会打开 OneDrive 的查看器,因此区块会将其显示为链接。</IfAvailable>
+
+## 断开连接 [#disconnecting]
+
+断开连接会删除已存储的令牌。对于 Dropbox<IfAvailable integration="box">、Box</IfAvailable><IfAvailable integration="notion">、Notion</IfAvailable>,QRdx 还会向该服务撤销令牌。对于 Bitly、Rebrandly 和 Short.io,如果你不再使用,也请在该服务中删除密钥<IfAvailable integration="onedrive">;对于 OneDrive,请在你的 Microsoft 账号的应用权限中移除 QRdx</IfAvailable>。
+
+你已创建的二维码仍可继续使用:它们保存的是短链接或分享链接,而不是你的令牌。
+
+## 自托管 [#self-hosting]
+
+Rebrandly 和 Short.io 不需要在服务器上做任何配置。其他服务需要在各自的平台中创建一个应用,并将其客户端 ID 和密钥写入环境变量;缺少这些时,集成会显示“未配置”。Bitly 即使没有这些,也可以通过粘贴访问令牌继续使用。
+
+| 集成 | 变量 | 重定向 URI |
+| --- | --- | --- |
+| Bitly(登录) | `BITLY_CLIENT_ID`, `BITLY_CLIENT_SECRET` | `<app url>/api/integrations/bitly/callback` |
+| Dropbox | `DROPBOX_CLIENT_ID`, `DROPBOX_CLIENT_SECRET` | `<app url>/api/integrations/dropbox/callback` |
+| OneDrive | `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET` | `<app url>/api/integrations/onedrive/callback` |
+| Box | `BOX_CLIENT_ID`, `BOX_CLIENT_SECRET` | `<app url>/api/integrations/box/callback` |
+| Notion | `NOTION_CLIENT_ID`, `NOTION_CLIENT_SECRET` | `<app url>/api/integrations/notion/callback` |
+
+`<app url>` 在开发环境中是 `http://localhost:3000`,否则是你的生产环境 URL。在生产环境中,每个集成还需要 `INTEGRATION_ENCRYPTION_KEY`,用于加密已存储的令牌和密钥。
+
+需要申请的权限范围:
+
+- **Dropbox:** `account_info.read`, `files.metadata.read`, `sharing.read`, `sharing.write`
+- **OneDrive:** `offline_access`, `Files.ReadWrite`(Microsoft Graph 需要写入权限才能创建分享链接)
+- **Box:** 读取和写入所有文件和文件夹(`root_readwrite`)
+- **Bitly、Notion:** 无需权限范围;Notion 会询问用户要共享哪些页面

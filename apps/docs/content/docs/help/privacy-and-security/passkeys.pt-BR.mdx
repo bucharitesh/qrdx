@@ -1,0 +1,58 @@
+---
+title: "Passkeys"
+description: "Entre com sua impressão digital, seu rosto ou o bloqueio de tela, use uma passkey como segunda etapa e renomeie ou remova uma que você não usa mais."
+---
+
+Uma passkey confirma que é você com sua impressão digital, seu rosto, o bloqueio de tela do seu dispositivo ou uma chave de segurança. Ela fica salva no seu dispositivo ou no seu gerenciador de senhas e só funciona no site oficial do QRdx, então um site falso não consegue capturá-la.
+
+Uma passkey tem duas funções no QRdx:
+
+- ela faz o login sozinha, com **Continuar com passkey** na página de login;
+- ela é a segunda etapa da [verificação em duas etapas](/docs/help/privacy-and-security/two-step-verification) depois que você entra com um código por e-mail, com o Google ou com o GitHub<IfAvailable feature="sso"> (ou com o login único do seu workspace)</IfAvailable>.
+
+Ela também [confirma que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) antes de mudanças na segurança da sua conta, como ativar ou desativar a verificação em duas etapas. Isso ajuda se você não consegue acessar seu e-mail.
+
+## Adicionar uma passkey [#add-a-passkey]
+
+1. Vá em **Configurações** → **Perfil e segurança**.
+2. Em **Verificação em duas etapas**, clique em **Adicionar passkey** e confirme que é você.
+3. Mantenha o nome sugerido (seu navegador e sistema, como "Chrome on macOS") ou digite o seu, e clique em **Continuar**.
+4. Seu navegador pergunta onde salvar a passkey e verifica sua impressão digital, seu rosto ou o bloqueio de tela.
+
+Se a verificação em duas etapas estiver desativada, adicionar uma passkey a ativa, e o QRdx mostra 10 códigos de backup para você guardar. Eles permitem que você entre quando estiver sem a passkey.
+
+A passkey precisa confirmar que é você a cada uso. Celulares, computadores e gerenciadores de senhas fazem isso com sua impressão digital, seu rosto ou o bloqueio de tela. Uma chave de segurança precisa ter um PIN definido.
+
+O QRdx envia um e-mail para o endereço da sua conta sempre que uma passkey é adicionada ou removida.
+
+## Entrar com uma passkey [#sign-in-with-a-passkey]
+
+Na página de login, clique em **Continuar com passkey**, na parte de baixo das formas de entrar, e escolha a sua. Entrar com passkey vale pelas duas etapas, então o QRdx não pede mais nada.
+
+O campo de e-mail não sugere passkeys: use o botão.
+
+Uma passkey entra na conta à qual foi adicionada. Ela não cria uma conta: se você é novo no QRdx, entre primeiro com o Google, com o GitHub ou com um código por e-mail e depois adicione uma passkey.
+
+## Usar uma passkey como segunda etapa [#use-a-passkey-as-your-second-step]
+
+Com a verificação em duas etapas ativada, entre do jeito que você costuma entrar. O aviso de passkey do navegador abre sozinho; confirme que é você e pronto. Alguns navegadores só abrem o aviso depois de um clique: nesse caso, clique em **Continuar com passkey**.
+
+Sem a passkey por perto? Clique em **Usar um código do autenticador** (se você configurou um app autenticador) ou em **Usar um código de backup**.
+
+Se você adicionou uma passkey antes de ela poder ser uma segunda etapa e a verificação em duas etapas está desativada, as Configurações mostram **Sua passkey está pronta para ser sua segunda etapa**. Clique em **Ativar** para usá-la assim: confirme que é você, verifique com a passkey que é você e guarde seus códigos de backup.
+
+## Passkeys sincronizadas e vinculadas ao dispositivo [#synced-and-device-bound-passkeys]
+
+Uma passkey sincronizada tem backup em um gerenciador de senhas ou em um chaveiro na nuvem, como o Chaveiro do iCloud ou o Gerenciador de Senhas do Google. Ela funciona em todos os dispositivos conectados a essa conta.
+
+Uma passkey vinculada ao dispositivo fica só no celular, no computador ou na chave de segurança que a criou. Para entrar em outro lugar, use outra forma de login ou adicione uma passkey nesse dispositivo também.
+
+## Renomear ou remover uma passkey [#rename-or-remove-a-passkey]
+
+Em **Verificação em duas etapas**, abra o menu ao lado da passkey, clique em **Renomear** ou **Remover** e confirme que é você. Uma passkey removida deixa de funcionar no QRdx na hora. Seu dispositivo ou gerenciador de senhas pode continuar listando a passkey até você excluí-la lá também.
+
+Se essa passkey for sua única segunda etapa, removê-la desativa a verificação em duas etapas. O QRdx avisa antes de você confirmar.
+
+Perdeu um dispositivo que tinha uma passkey? Entre de outra forma e remova essa passkey.
+
+Você sempre pode entrar com um código enviado ao seu e-mail, então remover sua última passkey não deixa você sem acesso.

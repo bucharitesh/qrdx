@@ -1,0 +1,41 @@
+---
+title: "Comprueba un diseño con la puntuación de escaneo"
+description: "La puntuación de escaneo prueba tu diseño como lo ve la cámara de un teléfono y te indica qué corregir."
+---
+
+Cada diseño del Playground recibe una **Puntuación de escaneo** de 0 a 100. Aparece debajo de la vista previa, por ejemplo "Puntuación de escaneo 92 · Excelente".
+
+## Qué significa la puntuación [#what-the-score-means]
+
+- **Excelente** (85 o más): listo para imprimir.
+- **Aceptable** (de 65 a 84): debería escanearse, pero revisa las advertencias.
+- **Arriesgado** (menos de 65): corrige las comprobaciones marcadas con una cruz.
+- **Falla**: el código no se decodificó en las pruebas, o el contraste es demasiado bajo. No lo imprimas.
+
+## Descubre qué corregir [#see-what-to-fix]
+
+Haz clic en la puntuación. El panel **¿Se escaneará?** muestra todas las comprobaciones, con las fallidas primero.
+
+La puntuación comprueba lo siguiente:
+
+- **Decodificación**: el código se lee a tamaños pequeños con un desenfoque similar al de una cámara.
+- **Contraste**: el código y el fondo deben diferir en una proporción de 4.5:1 o más.
+- **Oscuro sobre claro**: los códigos oscuros sobre fondos claros se escanean en más aplicaciones.
+- **Tamaño del logo**: un logo no debe cubrir más de lo que la corrección de errores puede reconstruir.
+- **Forma de los ojos**: los ojos circulares y ondulados fallan en algunas aplicaciones de escaneo.
+- **Espacio libre**: el borde vacío alrededor del código. Lo ideal son cuatro módulos.
+
+## Correcciones rápidas [#quick-fixes]
+
+- Contraste bajo: oscurece el código o aclara el fondo. Consulta [Elige colores que se escaneen](/docs/help/designing/colors-and-contrast).
+- El logo cubre demasiado: establece **Corrección de errores** en **Alta**. Consulta [Añade un logo](/docs/help/designing/logos).
+- Ojos: cambia a ojos cuadrados, redondeados o de engranaje.
+- Espacio libre: establece **Relleno** en **Estándar** o **Grande**.
+
+## Comprueba un código impreso [#check-a-printed-code]
+
+La puntuación prueba el diseño en pantalla. Para probar un código que ya imprimiste, haz una foto y suéltala en el [verificador de escaneo](/tools/scan-checker). La imagen nunca sale de tu dispositivo.
+
+## Relacionado [#related]
+
+- [Un código no se escanea](/docs/help/troubleshooting/wont-scan)

@@ -85,10 +85,89 @@ export const CONTENT_EXAMPLES: { [T in ContentType]: Example<T> } = {
     productUrl: "https://www.flipkart.com/example-ceramic-mug/p/itmexample01",
   },
   calcom: { bookingUrl: "https://cal.com/alex-rivera-example/30min" },
+  // Added 2026-11-11. Bank details use the standards' own sample values or
+  // unassigned numbers: the Pix key is the Banco Central's documentation
+  // example, the IBAN's bank code 12345678 is unassigned, and the PayNow UEN,
+  // PromptPay ID and VietQR account are all zeros.
+  pix: {
+    pixKey: "123e4567-e12b-12d1-a456-426655440000",
+    name: "Fulano de Tal",
+    city: "Brasilia",
+    amount: "12.50",
+    message: "Example payment",
+  },
+  sepa: {
+    name: "Bloom Cafe Example",
+    iban: "DE58 1234 5678 0123 4567 89",
+    amount: "12.50",
+    remittance: "Example invoice 1024",
+  },
+  paynow: {
+    proxyType: "uen",
+    proxy: "T00XX0000X",
+    name: "Bloom Cafe Example",
+    amount: "12.50",
+    editable: false,
+    reference: "EXAMPLE1024",
+  },
+  promptpay: { proxyType: "id", proxy: "0000000000000", amount: "120" },
+  vietqr: {
+    bankBin: "970436",
+    accountType: "account",
+    accountNumber: "0000000000",
+    amount: "50000",
+    message: "Example payment",
+  },
+  cashapp: { username: "$BloomAndLeafExample" },
+  revolut: { username: "bloomandleafexample" },
+  telegram: { username: "bloomandleafstudio" },
+  signal: { phoneNumber: "+1 202 555 0142" },
+  discord: { invite: "https://discord.gg/BloomLeafExample" },
+  line: { username: "bloomandleaf-example" },
+  bluesky: { handle: "bloomandleaf.bsky.social" },
+  mastodon: { handle: "@bloomandleaf@mastodon.social" },
+  twitch: { username: "bloomandleafstudio" },
+  soundcloud: { username: "bloomandleaf-studio" },
+  zoom: { meeting: "123 4567 8901" },
+  "google-meet": { meeting: "abc-defg-hij" },
+  waze: { location: "37.7955, -122.3937", navigate: true },
+  litecoin: {
+    address: "ltc1qexampleexampleexampleexampleexample0",
+    label: "Bloom Café",
+    message: "Example payment",
+  },
+  dogecoin: {
+    address: "DTestDemoWa11etTestDemoWa11etTestD",
+    label: "Bloom Café",
+  },
+  bitcoincash: {
+    address: "qexampleexampleexampleexampleexampleexampl",
+    label: "Bloom Café",
+  },
+  solana: {
+    address: "DemoWa11etAddressForTheQRdxExamp1eDemo",
+    label: "Bloom Café",
+    message: "Example payment",
+  },
+  monero: {
+    address:
+      "4DemoWa11etAddressForTheQRdxExamp1eDemoWa11etAddressForTheQRdxExamp1eDemoWa11etAddressForTheQRd",
+    label: "Bloom Café",
+  },
 };
 
 /** Fields that only pick a mode, so they don't count as entered content. */
-const NEUTRAL_FIELDS = new Set(["type", "encryption", "source", "hidden"]);
+const NEUTRAL_FIELDS = new Set([
+  "type",
+  "encryption",
+  "source",
+  "hidden",
+  // Added 2026-11-11: choices and switches with a default
+  "proxyType",
+  "accountType",
+  "editable",
+  "navigate",
+]);
 
 /** True when nobody has typed anything into this type's form yet. */
 export function isContentEmpty(config: QRContentConfig | undefined): boolean {

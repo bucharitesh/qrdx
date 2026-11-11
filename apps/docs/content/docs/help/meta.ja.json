@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "ヘルプ",
+  "description": "QRdxをご利用のみなさまへの回答集",
+  "icon": "LifeBuoy",
+  "root": true,
+  "pages": [
+    "index",
+    "getting-started",
+    "designing",
+    "dynamic-codes",
+    "pages-and-forms",
+    "account-and-billing",
+    "teams",
+    "domains",
+    "troubleshooting",
+    "privacy-and-security",
+    "---その他のヘルプ---",
+    "contact",
+    "whats-new",
+    "[変更履歴](/changelogs)"
+  ]
+}

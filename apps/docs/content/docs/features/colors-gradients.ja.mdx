@@ -1,0 +1,174 @@
+---
+title: "カラーとグラデーション"
+description: "単色、線形グラデーション、放射状グラデーションを使い、コントラストを確認してスキャンしやすいコードに仕上げます。"
+icon: Palette
+---
+
+カラーとグラデーションを適用して、ブランドに合ったQRコードを作成できます。
+
+## 単色 [#solid-colors]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#f9fafb"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+対応フォーマット：`#hex`、`rgb()`、`rgba()`、`hsl()`、`hsla()`、名前付きカラー
+
+`eyeColors` では、各アイを個別に設定できます（`topLeft`、`topRight`、`bottomLeft`。それぞれに `outer` と `inner` のカラーまたはグラデーションを指定します）。詳しくは[パターン](/docs/features/patterns#per-eye-colors)をご覧ください。
+
+### 透明な背景 [#transparent-background]
+
+`bgColor="transparent"` を指定すると背景が描画されないため、PNGとSVGでダウンロードしたコードは透過になり、PDFとEPSでは背景の塗りつぶしがなくなります。コードは明るく無地の面に置いてください。デコーダーはモジュール間の明るい隙間を必要とします。
+
+## 線形グラデーション [#linear-gradients]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0,
+    x2: 1, y2: 1
+  }}
+/>
+```
+
+### グラデーションの方向 [#gradient-directions]
+
+- **水平**：`x1: 0, y1: 0, x2: 1, y2: 0`
+- **垂直**：`x1: 0, y1: 0, x2: 0, y2: 1`
+- **斜め**：`x1: 0, y1: 0, x2: 1, y2: 1`
+
+### 複数ストップのグラデーション [#multi-stop-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 0.3, color: '#764ba2' },
+      { offset: 0.7, color: '#f093fb' },
+      { offset: 1, color: '#f5576c' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+## 放射状グラデーション [#radial-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'radial',
+    stops: [
+      { offset: 0, color: '#ff6b6b' },
+      { offset: 1, color: '#4ecdc4' }
+    ],
+    cx: 0.5, cy: 0.5,
+    r: 0.5
+  }}
+/>
+```
+
+## カラーユーティリティ [#color-utilities]
+
+### コントラストの確認 [#check-contrast]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+
+const level = getContrastLevel(ratio);
+// Returns: { level: 'AAA', warning: false, message: 'Excellent contrast' }
+```
+
+### コントラストのガイドライン [#contrast-guidelines]
+
+- **最小**：3.0:1の比率
+- **推奨**：4.5:1以上
+- **優秀**：7.0:1以上
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+
+## 角度グラデーション [#angular-gradients]
+
+角度グラデーションは、CSSの `conic-gradient` のように、塗りつぶす領域の中心を軸に時計回りに色が変化します。`angle` は変化の開始位置で、真上から時計回りの角度（度）で指定します。オフセットは1周を0から100として指定します。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "angular",
+    angle: 30,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 50 },
+      { color: "#1d4ed8", offset: 100 },
+    ],
+  }}
+/>
+```
+
+SVGには円錐グラデーションがないため、色のレベルが約2段階ずつ異なる細いくさび形を扇状に並べて描画します。PDFとEPSでも同じくさび形を描画します。
+
+## 透過カラー [#see-through-colors]
+
+カラーやグラデーションのストップにはアルファ値を指定できます（例：`#1d4ed8cc`、`rgba(29, 78, 216, 0.8)`）。SVGでは `fill-opacity` と `stop-opacity` として出力され、PDFでも保持されます。EPSは透過に対応していないため、透過カラーは背景と混ぜ合わせた色になります。スキャンチェックでは、透過カラーを背景の上での見え方で判定します。
+
+## 画像塗り [#image-fills]
+
+画像塗りでは、背景、ドット、アイのいずれかに画像を敷き詰めます。画像はコード全体に重ねて配置されるため、同じ画像を共有するドットとアイには、1枚の画像として表示されます。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "image",
+    src: "data:image/jpeg;base64,…",
+    fit: "cover", // or "contain", "tile"
+    position: "center",
+    scale: 1,
+    opacity: 0.45,
+    underlay: "#000000",
+  }}
+/>
+```
+
+- `src` はロゴと同様に、画像そのものです。QRdxが画像塗りを保存できるのは（コード、テーマ、REST APIのいずれでも）、1.5 MB以下のbase64形式の `data:image` URL（PNG、JPEG、WebP、GIF）だけで、リンクで指定した画像は受け付けません。PNGとJPEGはすべてのエクスポートに埋め込まれ、サーバーがリンクを取得することはありません。
+- `underlay` は画像の下に敷く単色です。`opacity` を指定すると、その色が透けて見えます。黒の上ではドット用の写真が暗くなり、白の上では背景用の写真が明るくなります。
+- 画像のディテールはカメラにはノイズとして読み取られるため、スキャンチェックではより高いコントラストが求められます。ドットまたはアイでは7:1、その背後では12:1です（`SCAN_IMAGE_CONTRAST_MIN`）。画像は、最も明るい10分の1と最も暗い10分の1で測定されます（`getImageTones`）。エディターの「Make it scannable」を使うと、下地色に対して基準を満たす不透明度が見つかります。
+- 画像塗りに対応しているのはSVG、PNG、PDFです。EPSは非対応です（[ダウンロード](/docs/features/downloads#eps)）。
+
+画像塗りはロゴと同じ扱いです。エディター、保存したコード、保存したテーマではデザインと一緒に保持されます。一方、`?style=` リンク、公開されたコミュニティスタイル、Get codeスニペット、チャットのコンテキストには含まれず、これらではそれぞれの画像塗りが下地色に置き換わります。Image API（`GET /v1/qr`）とMCPサーバーは、まだ画像塗りに対応していません。`POST /v1/codes` と `PATCH /v1/codes/{id}` で受け付けるのは `data:image` URLのみで、それ以外には400を返します。画像用のアップロード済みファイルIDは、まだありません。
+
+角度グラデーションと画像塗りはqrdxのソースに含まれており、次のnpmリリースで提供されます。npmのqrdx 0.0.46には含まれていません。
+
+## 次のステップ [#next-steps]
+
+- [ロゴ](/docs/features/logos) — カラーのQRコードにロゴを追加
+- [パターン](/docs/features/patterns) — カラーとパターンを組み合わせる
+- [ダウンロード](/docs/features/downloads) — カラーのQRコードをエクスポート

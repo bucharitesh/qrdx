@@ -179,9 +179,16 @@ export function ItemRow({
 }
 
 /** Every card of a list, in a responsive grid. */
-export function ItemGrid({ cards }: { cards: CommunityItemCard[] }) {
+export function ItemGrid({
+  cards,
+  className = "grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4",
+}: {
+  cards: CommunityItemCard[];
+  /** The grid's columns (a gallery with a sidebar has less room) */
+  className?: string;
+}) {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+    <div className={className}>
       {cards.map((card) => (
         <ItemCard card={card} key={`${card.type}-${card.slug || card.id}`} />
       ))}

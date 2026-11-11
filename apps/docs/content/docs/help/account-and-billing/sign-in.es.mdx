@@ -1,0 +1,68 @@
+---
+title: "Métodos de inicio de sesión y dirección de correo electrónico"
+description: "Inicia sesión con Google, GitHub o un código por correo, vincula métodos de inicio de sesión, cambia tu dirección de correo electrónico y qué hacer si perdiste el acceso a tu correo."
+---
+
+## Formas de iniciar sesión [#ways-to-sign-in]
+
+- **Google** o **GitHub**.
+- **Código por correo**: introduce tu correo y escribe el código de 6 dígitos que te enviamos. Un código funciona durante 5 minutos.
+
+<IfAvailable feature="passkeys">
+Cuando hayas [añadido una passkey](/docs/help/privacy-and-security/passkeys), también puedes iniciar sesión con tu huella, tu rostro o el bloqueo de pantalla.
+</IfAvailable>
+
+La primera vez que inicias sesión, QRdx crea tu cuenta. No hay contraseña que recordar.
+
+Con Google o GitHub, QRdx solo crea la cuenta si verificaron tu dirección de correo. Si la tuya no está verificada allí, verifícala primero (GitHub muestra tus direcciones en **Settings** → **Emails**), o inicia sesión con un código por correo.
+
+## Una cuenta para tu dirección que no creaste [#an-account-for-your-address-you-didnt-make]
+
+Si QRdx ya tiene una cuenta para tu dirección y no la creaste tú, inicia sesión con un código por correo. Cuando eso demuestre que la dirección es tuya, QRdx elimina lo que el registro anterior podría usar para volver a entrar o para seguir recibiendo los datos de la cuenta:
+
+- sus vínculos con Google y GitHub, y todas las sesiones;
+- su verificación en dos pasos y los dispositivos de confianza<IfAvailable feature="passkeys">, y sus passkeys</IfAvailable>;
+- sus claves de API y las aplicaciones a las que permitió usar la cuenta;
+- los webhooks y las alertas de Slack y Discord que configuró, y cualquier sincronización que configurara para enviar escaneos o respuestas de formularios a otra herramienta.
+
+Todo lo demás de la cuenta se conserva, así que revisa después sus espacios de trabajo y sus miembros.
+
+## Vincular Google o GitHub [#link-google-or-github]
+
+Ve a **Ajustes** → **Perfil y seguridad** → **Métodos de inicio de sesión**.
+
+- **Código por correo** siempre está activado.
+- Vincula Google o GitHub para iniciar sesión con un clic. La cuenta debe usar la misma dirección de correo que tu cuenta de QRdx.
+- Haz clic en **Desvincular** para quitar uno.
+
+## Cambiar tu dirección de correo electrónico [#change-your-email-address]
+
+1. Ve a **Ajustes** → **Perfil y seguridad**.
+2. Junto a **Correo electrónico**, haz clic en **Cambiar** y [confirma que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+3. Introduce la nueva dirección y escribe el código que enviamos a ella.
+
+Después, QRdx cierra tu sesión en todos los demás dispositivos y navegadores, y tu dirección anterior recibe un correo que indica que la cuenta se movió, con una forma de contactar con soporte si no fuiste tú.
+
+## Perdiste el acceso a tu correo [#lost-access-to-your-email]
+
+Si aún puedes entrar en QRdx, cambia tú mismo el correo, como se explica arriba. Para confirmar que eres tú sin tu buzón, usa <IfAvailable feature="passkeys">tu passkey, </IfAvailable>una cuenta de Google o GitHub que hayas vinculado, o tu método de verificación en dos pasos si está activado. ¿Sin sesión? Primero inicia sesión con <IfAvailable feature="passkeys">tu passkey o </IfAvailable>una cuenta de Google o GitHub vinculada.
+
+Si nada de eso funciona, escribe a [support@qrdx.dev](mailto:support@qrdx.dev) desde la dirección que quieres usar. Mover una cuenta a una nueva dirección es lo más delicado que hace soporte, así que:
+
+- **Necesitamos una prueba de que la cuenta es tuya.** Te pediremos la dirección de correo de la cuenta y una de estas cosas:
+  - si has pagado por QRdx, el número de una de tus [facturas](/docs/help/account-and-billing/invoices) y aproximadamente cuándo pagaste;
+  - si un espacio de trabajo de tu cuenta usa su propio [dominio](/docs/help/domains/custom-domains), un registro DNS que te enviamos, añadido a ese dominio.
+- **Avisamos a la dirección anterior y esperamos 7 días.** Si alguien responde desde ella en ese plazo y dice que no, nos detenemos.
+- **Después movemos la cuenta.** Cambiamos su correo a la nueva dirección, cerramos sus sesiones en todas partes y enviamos un correo a la dirección anterior. Inicia sesión con un código enviado a la nueva dirección. Tu verificación en dos pasos, si está activada, se queda como está.
+
+Si no podemos confirmar que la cuenta es tuya, no la moveremos, aunque eso la deje fuera de tu alcance. Entregarla a la persona equivocada sería peor.
+
+Antes de que tu dirección anterior deje de funcionar, añade una passkey o vincula Google o GitHub, para poder confirmar siempre que eres tú.
+
+## Cerrar sesión en otros dispositivos [#sign-out-of-other-devices]
+
+En **Sesiones**, dentro de **Ajustes** → **Perfil y seguridad**, cierra la sesión de un dispositivo o haz clic en **Cerrar sesión en todos los demás**.
+
+## Problemas para iniciar sesión [#trouble-signing-in]
+
+Consulta [No llegan los códigos ni los correos de inicio de sesión](/docs/help/troubleshooting/emails).

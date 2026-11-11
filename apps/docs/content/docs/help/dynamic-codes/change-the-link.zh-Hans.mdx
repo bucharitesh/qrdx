@@ -1,0 +1,43 @@
+---
+title: "更改二维码指向的链接"
+description: "编辑动态二维码的目标地址。已印刷的二维码在下次扫描时会打开新链接。"
+---
+
+你可以随时更改动态二维码的目标地址。每一份已印刷的二维码在下次扫描时都会打开新链接。
+
+## 在控制台中更改 [#from-your-dashboard]
+
+1. 前往 **Codes**。
+2. 打开二维码的菜单（**⋯**），选择 **Edit link**。你也可以打开该二维码，然后点击 **Edit link**。
+3. 修改 **Destination URL**。
+4. 点击 **Save changes**。
+
+QRdx 会提示“Scans now open the updated destination.”，表示更改已生效。
+
+## 在 Playground 中更改 [#from-the-playground]
+
+如果二维码在 Playground 中处于打开状态，请修改地址。在你点击 **Point it to the new address** 之前，卡片会显示“Printed codes still open”旧链接。
+
+## 更改立即生效 [#changes-take-effect-right-away]
+
+QRdx 不会缓存重定向。下一次扫描就会打开新的目标地址，所有手机都一样。
+
+## 不要更改短链接本身 [#dont-change-the-short-link-itself]
+
+更改目标地址始终是安全的。但更改二维码的 **back-half** 或 **domain** 则不然：已经用旧短链接印刷的二维码将无法再使用。
+
+## 撤销更改 [#undo-a-change]
+
+1. 在 **Codes** 中打开该二维码。
+2. 在 **Settings** 下，打开 **Version history**。
+3. 点击所需版本旁的 **Restore**，然后点击 **Restore version**。
+
+QRdx 为每个二维码最多保留 100 个版本。
+
+## 改为打开页面 [#open-a-page-instead]
+
+如果想让二维码打开托管页面而不是链接，请在二维码页面上使用 **Change type**。参见[更改已印刷二维码打开的内容](/docs/help/dynamic-codes/change-the-type)。
+
+## 静态二维码无法更改 [#static-codes-cant-change]
+
+静态二维码把链接直接存储在二维码内部。如需更改，你需要重新印刷新的二维码。参见[静态还是动态](/docs/help/getting-started/static-vs-dynamic)。

@@ -4,6 +4,11 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "@/env";
 import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
+import {
+  docsEnglishRewrites,
+  docsMarkdownAcceptRewrites,
+  docsMarkdownRewrites,
+} from "@/lib/i18n/docs";
 import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
 import {
   appCsp,
@@ -113,6 +118,20 @@ let nextConfig: NextConfig = {
     // Two root layouts (app/[lang] and app/(app)): URLs that match no route
     // get app/global-not-found.tsx.
     globalNotFound: true,
+    // Vercel builds on 2 cores and 8 GB, and Turbopack's compile ran out of
+    // memory once the docs had 5 languages (2026-11-11). Measured locally,
+    // these two cut the compiler's peak by about a third:
+    // - the build cache: writing it makes Turbopack track every task's
+    //   dependencies, and Vercel never restores it ("build cache was too
+    //   large"), so it costs memory and buys nothing there;
+    // - source maps: nothing reads them in production (they aren't uploaded
+    //   anywhere, and the server only applies them when Node runs with
+    //   source maps on, which this app doesn't). `next dev` and local builds
+    //   keep both.
+    ...(process.env.VERCEL === "1" && {
+      turbopackFileSystemCacheForBuild: false,
+      turbopackSourceMaps: false,
+    }),
   },
   // Server code reads QRDX_HOME_NUMBERS as its build-time value
   // (lib/home-numbers/flag.ts). While it's off, the bundler drops the home
@@ -326,6 +345,8 @@ let nextConfig: NextConfig = {
           { source: "/mcp", destination: "/mcp.md" },
           { source: "/docs", destination: "/llms.mdx" },
           { source: "/docs/:path+", destination: "/llms.mdx/:path+" },
+          // Translated docs pages (/es/docs/...): app/docs-md.
+          ...docsMarkdownAcceptRewrites(),
         ].map((rule) => ({
           ...rule,
           has: [
@@ -340,6 +361,9 @@ let nextConfig: NextConfig = {
         // its unprefixed URL (lib/i18n/routing.ts). After the Markdown
         // rewrites, which answer agents for / and /pricing first.
         ...englishRewrites(),
+        // The docs too (app/[lang]/docs), apart from their .md and .mdx
+        // versions, which the afterFiles rules below answer.
+        ...docsEnglishRewrites(),
       ],
       afterFiles: [
         ...base.afterFiles,
@@ -360,6 +384,8 @@ let nextConfig: NextConfig = {
           source: "/docs/:path*.md",
           destination: "/llms.mdx/:path*",
         },
+        // A translated docs page as Markdown: /es/docs/x.md (app/docs-md).
+        ...docsMarkdownRewrites(),
       ],
     };
   },

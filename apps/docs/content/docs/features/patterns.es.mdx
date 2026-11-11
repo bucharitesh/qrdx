@@ -1,0 +1,215 @@
+---
+title: "Patrones"
+description: "Cambia la forma de los módulos de datos, los ojos de las esquinas y los puntos de los ojos."
+icon: Grid3x3
+---
+
+Cambia la forma de los elementos del código QR para lograr diseños únicos. Mira todas las opciones dibujadas en vivo (y decodificadas en tu navegador) en [Formas, ojos y marcos](/docs/styles).
+
+## Patrones del cuerpo [#body-patterns]
+
+Controla la forma de los puntos de datos. Hay {facts.bodyPatterns} patrones de cuerpo:
+
+- Clásicos: `square`, `small-square`, `horizontal-line`, `vertical-line`, `octagon`
+- Redondeados: `circle` (predeterminado), `circle-large`, `rounded`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `random-dots`
+- Decorativos: `classy`, `classy-rounded`, `leaf`, `diamond`, `hexagon`
+- Divertidos: `mosaic`, `plus`, `star`, `heart`, `pacman`, `circle-mixed`
+
+`liquid`, `classy` y `classy-rounded` unen los módulos vecinos en un único contorno suave (`liquid-horizontal` y `liquid-vertical` los unen solo en filas o columnas). `random-dots` y `mosaic` varían según el módulo, pero siempre dibujan el mismo código para el mismo valor. Los patrones de alineación siempre se dibujan como cuadrados sólidos, sea cual sea el patrón, para que los decodificadores los encuentren de forma fiable.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" bodyPattern="circle" size={256} />
+<QRCode value="https://example.com" bodyPattern="liquid" size={256} />
+<QRCode value="https://example.com" bodyPattern="classy-rounded" size={256} />
+```
+
+### Escala del módulo [#module-scale]
+
+`moduleScale` (de 0.5 a 1, predeterminado 1) reduce cada módulo de datos alrededor de su centro para lograr un aspecto más ligero y espaciado; los patrones conectados obtienen líneas más finas. Cada patrón deja de reducirse en el tamaño más pequeño que aún se decodifica en nuestras pruebas (por ejemplo 0.95 para `circle`, 0.7 para `classy`; consulta `MODULE_SCALE_FLOOR`), y los patrones de alineación conservan su tamaño completo.
+
+```tsx
+<QRCode value="https://example.com" bodyPattern="liquid" moduleScale={0.8} />
+```
+
+## Patrones de los ojos de las esquinas [#corner-eye-patterns]
+
+Controla la forma de los marcadores de las esquinas. Hay {facts.eyeShapes} patrones de ojos de esquina (el componente de React usa `gear` por defecto; la CLI usa `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message` y `pointy`.
+
+`leaf`, `leaf-reverse`, `drop` y `petal` orientan cada uno de los tres ojos hacia su esquina del código. Algunas apps de escaneo pueden no detectar los ojos `circle`; la [puntuación de escaneo](/docs/utilities) avisa de ello.
+
+```tsx
+<QRCode value="https://example.com" cornerEyePattern="square" />
+<QRCode value="https://example.com" cornerEyePattern="leaf" />
+<QRCode value="https://example.com" cornerEyePattern="squircle" />
+```
+
+## Patrones de los puntos de los ojos [#corner-eye-dot-patterns]
+
+Controla el punto dentro de cada marcador de esquina. Hay {facts.eyeCentres} patrones de punto de ojo de esquina (el componente de React usa `circle` por defecto; la CLI usa `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `message`, `message-reverse`, `diya`, `diya-reverse` y `rounded-triangle`.
+
+```tsx
+<QRCode value="https://example.com" cornerEyeDotPattern="square" />
+<QRCode value="https://example.com" cornerEyeDotPattern="flower" />
+<QRCode value="https://example.com" cornerEyeDotPattern="heart" />
+```
+
+### Combinaciones que conviene evitar y formas retiradas [#pairs-to-avoid-and-retired-shapes]
+
+Los cuerpos `diamond` junto a ojos `square`, `pacman` junto a `rounded` y `small-square` junto a ojos `square` o `rounded` no se detectan de cerca; el Playground no los combina, se incluyen como `WEAK_BODY_EYES` y `getStylePairRisk(props)` devuelve la advertencia que muestra la puntuación de escaneo.
+
+Un centro `circle` dentro de ojos con esquinas cuadradas (`square`, `rounded`, `extra-rounded` y la mayoría de los demás) puede pasar desapercibido para decodificadores estrictos en renders nítidos: en pantallas, en exportaciones PNG y en impresiones grandes. jsQR no lo detecta en algunos tamaños y zbar sí lo lee. Los cuerpos sólidos (`square`, `liquid`, `classy`, `classy-rounded`) normalmente se siguen leyendo, y los ojos `gear`, `circle` y `octagon` no se ven afectados. La puntuación de escaneo lo advierte (`style-pair`) y aun así puedes elegirlo. Las combinaciones se incluyen como `WEAK_SHARP_DOT_EYES` (con `SHARP_DOT_EYE_SAFE_BODIES`), y un centro `rounded` evita el problema.
+
+Los ojos `curly` y los centros `diamond`, `star` y `banner` se retiraron porque no se escanean de forma fiable. Los diseños guardados con ellos siguen mostrándose, pero ya no se ofrecen ni aparecen en las listas (consulta [Formas retiradas](/docs/styles#retired-shapes)).
+
+## Códigos circulares [#circle-codes]
+
+`shape="circle"` coloca el código en un disco y rellena el resto con módulos decorativos con la misma forma de punto. El código real conserva un anillo claro de `margin` módulos a su alrededor (al menos 3), y los escáneres leen solo el código del centro. El disco es más grande que el código, así que imprímelo un poco más grande para la misma distancia de escaneo; la calculadora de tamaño de impresión cuenta el disco completo.
+
+```tsx
+<QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
+```
+
+En nuestras pruebas de decodificación, los códigos circulares se leen igual que los cuadrados con formas de punto sólidas (`square`, `rounded`, `classy`, `liquid`). En el Playground es **Design → Frame → Shaped code → Dot circle**.
+
+{/* Heart and custom shapes (feat/heart-silhouette-shapes) */}
+
+## Códigos con forma de corazón [#heart-codes]
+
+`shape="heart"` funciona como un código circular, pero con forma de corazón. El código real queda en el centro del corazón con su anillo claro de al menos 3 módulos, y el resto del corazón se rellena con módulos decorativos. El código ocupa una parte menor de un corazón que de un círculo, así que imprime un código en corazón más grande que uno cuadrado para la misma distancia de escaneo. La puntuación de escaneo lo tiene en cuenta: con el mismo tamaño, un código en corazón obtiene una puntuación menor que uno circular.
+
+```tsx
+<QRCode value="https://example.com" shape="heart" bodyPattern="rounded" />
+```
+
+Un código con forma ocupa el lugar de un marco en el Playground: al elegir una forma se quita el marco, y al elegir un marco se quita la forma. Todos los marcos pintan una placa clara bajo el código, que ocultaría el contorno. El motor sigue dibujando `shape` con un `frame` si pasas ambos.
+
+En nuestras pruebas de decodificación, los códigos en corazón se leen con todas las formas de punto sólidas, con ojos `square`, `rounded` y `gear`, y con el aspecto predeterminado, y zbar los lee en renders nítidos.
+
+## Formas personalizadas [#custom-shapes]
+
+`shape` también acepta una silueta: una pequeña cuadrícula trazada a partir de una imagen tuya (como máximo 64 celdas por lado). El código se coloca en la parte central más amplia de la forma, y el resto de la forma se rellena con módulos decorativos. Solo se guarda la cuadrícula, nunca la imagen.
+
+```tsx
+import { getQRSilhouetteFit, loadQRSilhouette, QRCode } from "qrdx";
+
+const shape = await loadQRSilhouette(file); // a PNG, JPEG or SVG, in the browser
+const fit = getQRSilhouetteFit(shape);
+if (!fit.ok) throw new Error(fit.message);
+
+<QRCode value="https://example.com" shape={shape} />;
+```
+
+`loadQRSilhouette` dibuja la imagen en un canvas y usa su transparencia, o su oscuridad cuando es opaca (una forma clara sobre un fondo oscuro también funciona). En un servidor, pasa los píxeles decodificados a `createQRSilhouette`. `getQRSilhouetteFit` rechaza una forma demasiado delgada para contener el código con su zona de silencio, como una estrella fina, una barra o un anillo. Una forma rechazada se dibuja como un código cuadrado.
+
+En el Playground, elige **Design → Frame → Shaped code → Silhouette** y sube un PNG, JPEG o SVG (el corazón es **Heart** allí). Tu forma se queda con tu diseño, igual que un logo subido: los enlaces compartidos, los elementos de la comunidad, los fragmentos de código y el chat de IA usan un código cuadrado.
+
+{/* end heart and custom shapes */}
+
+## Colores por ojo [#per-eye-colors]
+
+`eyeColor` y `dotColor` colorean los tres ojos. `eyeColors` los sobrescribe para cada ojo (`topLeft`, `topRight`, `bottomLeft`), cada uno con un color o degradado `outer` (marco) e `inner` (punto):
+
+```tsx
+<QRCode
+  value="https://example.com"
+  eyeColor="#111827"
+  eyeColors={{
+    topLeft: { outer: "#dc2626", inner: "#1d4ed8" },
+    topRight: { outer: "#16a34a" },
+  }}
+/>
+```
+
+Mantén cada ojo oscuro frente al fondo: los decodificadores encuentran el código por sus tres ojos. La puntuación de escaneo comprueba el contraste de los colores propios de cada ojo.
+
+En el Playground, **Design → Eye colors** define un color de marco y de centro para cada ojo, y **Design → Dot size** ajusta `moduleScale` dentro del rango que permite la forma de punto actual.
+
+## Combinar patrones [#combine-patterns]
+
+Mezcla distintos patrones para lograr diseños únicos:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+  cornerEyeDotPattern="circle"
+  size={256}
+/>
+```
+
+## Rendimiento [#performance]
+
+### Patrones rápidos [#fast-patterns]
+- `circle` — Rendimiento excelente
+- `square` — Muy rápido
+
+### Patrones medios [#medium-patterns]
+- `rounded` — Buen equilibrio
+- `diamond` — Moderado
+
+### Patrones complejos [#complex-patterns]
+- `pacman` — Mayor procesamiento
+- `circle-mixed` — Complejidad variable
+
+## Selección de patrones [#pattern-selection]
+
+### Para la identidad de marca [#for-brand-identity]
+```tsx
+// Minimal, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="square"
+/>
+
+// Modern, tech-focused
+<QRCode
+  value="https://example.com"
+  bodyPattern="circle"
+  cornerEyePattern="rounded"
+/>
+```
+
+### Para marketing [#for-marketing]
+```tsx
+// Eye-catching
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+/>
+
+// Elegant
+<QRCode
+  value="https://example.com"
+  bodyPattern="diamond"
+  cornerEyePattern="rounded"
+/>
+```
+
+### Para impresión [#for-print]
+```tsx
+// High contrast
+<QRCode
+  value="https://example.com"
+  bodyPattern="square"
+  cornerEyePattern="square"
+/>
+
+// Smooth, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="rounded"
+/>
+```
+
+## Próximos pasos [#next-steps]
+
+- [Colores y degradados](/docs/features/colors-gradients) — Añade colores a los patrones
+- [Plantillas](/docs/features/templates) — Patrones preconfigurados
+- [Logos](/docs/features/logos) — Combina patrones con logos

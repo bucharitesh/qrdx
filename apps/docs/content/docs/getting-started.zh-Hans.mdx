@@ -1,0 +1,58 @@
+---
+title: "安装 React 库"
+description: "安装 qrdx React 库,只需几行代码即可渲染你的第一个二维码。"
+icon: Rocket
+---
+
+安装 `qrdx`,几分钟内即可创建你的第一个二维码。
+
+<NpmStatus package="qrdx" />
+
+## 安装软件包 [#install-the-package]
+
+```package-install
+qrdx@latest
+```
+
+`react` 和 `react-dom`(18 或更高版本)是对等依赖,因此 `qrdx` 会使用你的应用已有的版本。PDF 导出为可选功能:只有需要时才安装 `jspdf`。
+
+## 快速开始 [#quick-start]
+
+创建你的第一个二维码:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function App() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+    />
+  );
+}
+```
+
+就这么简单。你现在已经有了一个可用的二维码。
+
+想先设计一下?[在 Playground 中试用](/playground?open=code&lang=react):在那里设计好样式,然后将其复制为 React 组件。
+
+## 后续步骤 [#next-steps]
+
+<Cards>
+  <Card
+    href="/docs/usage"
+    title="学习使用方法"
+    description="自定义颜色、图案等"
+  />
+  <Card
+    href="/docs/features/templates"
+    title="使用模板"
+    description="立即应用预置样式"
+  />
+  <Card
+    href="/docs/api-reference"
+    title="API 参考"
+    description="完整的属性文档"
+  />
+</Cards>

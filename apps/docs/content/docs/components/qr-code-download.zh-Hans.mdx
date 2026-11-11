@@ -1,0 +1,50 @@
+---
+title: "二维码下载"
+description: "下载菜单,可按所选尺寸将二维码导出为 PNG、SVG、JPG 或 PDF,也可将其作为图片复制。"
+icon: Download
+---
+
+<ComponentLinks name="qr-code-download" />
+
+<ComponentPreview name="qr-code-download-demo" />
+
+## 安装 [#installation]
+
+<InstallationTabs name="qr-code-download" />
+
+## 用法 [#usage]
+
+```tsx
+import { QrCodeDownload } from "@/components/qr-code-download";
+```
+
+```tsx
+<QrCodeDownload value="https://qrdx.dev" />
+```
+
+菜单列出每种格式及简短说明,并提供尺寸选择器和“复制图片”(会将 PNG 放入剪贴板)。文件在浏览器中生成,不会上传任何内容。
+
+## 示例 [#examples]
+
+### 带样式导出 [#styled-export]
+
+为 `qr` 传入与屏幕上渲染时相同的样式对象,这样导出的每个文件都与预览一致。`formats`、`sizes`、`label` 和 `variant` 用于调整菜单及其按钮。
+
+<ComponentPreview name="qr-code-download-styled" />
+
+### 格式 [#formats]
+
+| 格式 | 输出 |
+|--------|--------|
+| `png` | 带二维码背景的图片 |
+| `jpg` | 带纯色背景的图片 |
+| `svg` | 可缩放至任意大小的矢量图 |
+| `pdf` | 单页文档。需要可选的 `jspdf` 包(`npm install jspdf`) |
+
+栅格图尺寸范围为 50 到 5000 像素。在 `sizes` 中只传入一项,即可隐藏尺寸选择器。
+
+## API 参考 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-download.tsx" type="{ [K in keyof QrCodeDownloadProps as K extends Exclude<keyof ComponentProps<'div'>, 'onError'> ? never : K]: QrCodeDownloadProps[K] }" />
+
+其他任何属性(例如 `className`)都会传递给外层的 `<div>`。

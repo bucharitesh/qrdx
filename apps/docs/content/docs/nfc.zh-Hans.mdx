@@ -1,0 +1,72 @@
+---
+title: "NFC 标签与名片"
+description: "将动态二维码的链接写入 NFC 标签或卡片,把轻触次数与二维码扫描分开统计,并把 vCard Plus 页面放到 NFC 名片上。"
+icon: Nfc
+---
+
+任何[动态二维码](/docs/dynamic-qr-codes)都可以放到 NFC 标签上。你把二维码的 NFC 链接写入标签、贴纸或卡片,手机轻触后会打开与二维码相同的目标。轻触次数会和二维码扫描一起显示在该二维码的分析数据中,但分开统计。所有套餐均可使用。
+
+QRdx 不销售、印刷或寄送标签和卡片。请从任意 NFC 供应商处购买空白标签,再在二维码页面中自行写入。
+
+## NFC 链接 [#the-nfc-link]
+
+二维码的 NFC 链接是在其短链接末尾加上 `?nfc`,例如 `https://qrdx.dev/q/aB3dE5f?nfc`,或在[自定义域名](/docs/custom-domains)上的 `https://go.example.com/menu?nfc`。它与短链接走同一套重定向,因此智能路由、密码、计划时间和扫描次数限制同样适用于轻触。`?nfc` 后缀只是告诉分析系统这次访问是一次轻触。二维码本身的链接保持不变,你已经印刷的二维码也和以前完全一样可用。
+
+要找到它,请在[控制台](/dashboard?to=codes)中打开该二维码,在“概览”标签页选择 **Use with NFC**。[REST API](/docs/developers/rest-api) 会在每个二维码上以 `nfcLink` 返回它。
+
+## 在 Android 上写入标签 [#write-a-tag-on-android]
+
+Android 版 Chrome 可以直接在二维码的 NFC 页面写入标签:
+
+1. 在手机设置中打开 NFC。
+2. 在 Chrome 中打开该二维码,选择 **Use with NFC**,然后点按 **Write to NFC tag**。
+3. 将标签平贴在手机背面,直到页面显示 **Written**。
+4. 用标签轻触手机进行测试,它应当会打开该链接。
+
+通过网页写入需要 Web NFC,只有 Android 版 Chrome 支持。在电脑上,NFC 页面会显示一个二维码:用 Android 手机扫描它,登录后在手机上写入标签。
+
+### 锁定标签 [#locking-a-tag]
+
+标签写入后,如果浏览器支持,页面会提供锁定选项。已锁定的标签任何人都无法再修改或擦除,包括你自己,因此只应锁定那些放在陌生人可能改写的地方的标签,比如咖啡馆桌上的贴纸。标签中保存的是二维码的链接而不是目标地址,所以即使标签已锁定,你仍可在 QRdx 中更改它指向的目标。
+
+## 在 iPhone 上写入标签 [#write-a-tag-on-iphone]
+
+Safari 无法写入 NFC 标签,请使用 App Store 中任意一款 NFC 写入应用:
+
+1. 从二维码的 NFC 页面复制 NFC 链接。
+2. 在应用中添加一条 URL 记录(有些应用称之为 Link 或 URI),并粘贴该链接。
+3. 选择写入,将 iPhone 顶部靠近标签,直到应用提示完成。
+
+写入需要 iPhone 7 或更新机型,且系统为 iOS 13 或更高版本。
+
+## 该买哪种标签 [#which-tags-to-buy]
+
+请选择 NTAG213、NTAG215 或 NTAG216 芯片。它们有贴纸、卡片、钥匙扣和腕带等形式。
+
+| 芯片 | 容量 |
+| --- | --- |
+| NTAG213 | 144 字节 |
+| NTAG215 | 504 字节 |
+| NTAG216 | 888 字节 |
+
+qrdx.dev 上的 NFC 链接约占 30 字节,所以这三种芯片都能存下。使用较长的自定义域名或较长的后半段路径时,链接会占用更多空间;NFC 页面会显示你的链接需要多少字节,以及适合哪些芯片。
+
+已开启 NFC 的 Android 手机,以及 iPhone XS 或更新机型,在标签接触手机后会立即打开其中的链接,无需安装应用。
+
+## NFC 名片 [#nfc-business-cards]
+
+[vCard Plus 页面](/docs/landing-pages)是带有 **Save contact** 按钮的联系人页面,很适合做成 NFC 名片。对于打开这类页面的二维码,“概览”标签页会显示 **Put this card on NFC**,页面编辑器中也有 **Put on NFC** 按钮。两者都会打开同一个 NFC 页面,并附带名片使用指南。
+
+1. 购买空白 NFC 名片,或为已有名片购买 NFC 贴纸。
+2. 同时把该二维码印在名片上。没有 NFC 或未开启 NFC 的手机可以改为扫描它。
+3. 在二维码的 NFC 页面中,将 NFC 链接写入每一张名片。
+
+由于每张名片保存的是二维码的链接,在 QRdx 中编辑 vCard Plus 页面,就会更新你已经发出的所有名片。
+
+## 分析中的轻触数据 [#taps-in-analytics]
+
+二维码的“分析”标签页会按你选择的日期显示 **QR scans and NFC taps**,上方的总数同时包含两者。工作区的“分析”页面和共享的分析页面也会显示同样的区分。
+
+CSV 导出文件中有一列 `source`,每次扫描的值为 `qr` 或 `nfc`。在 REST API 中,[扫描分析](/docs/developers/api/get-code-scans)包含带有两种计数的 `sources`,每条列出的扫描上也有 `source`;`scan.created` 的 [webhook](/docs/webhooks) 同样带有 `source`。
+
+NFC 链接出现之前的扫描都计为二维码扫描。轻触遵循与扫描相同的规则:机器人和链接预览不计入。

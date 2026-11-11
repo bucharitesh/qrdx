@@ -2,8 +2,9 @@
 //
 // A page is translated once it lives under app/[lang] and its path is in
 // localized-paths.json (scripts/i18n-split-roots.mjs moves it there). Links
-// to any other page stay unprefixed in every language: Spanish visitors
-// reach the English docs at /docs, never a /es/docs that doesn't exist.
+// to any other page stay unprefixed in every language. The docs are the
+// exception: in a language with docs (lib/i18n/docs.ts) every /docs page has
+// a prefixed URL; French visitors reach the English docs at /docs.
 
 import {
   DEFAULT_LOCALE,
@@ -11,6 +12,7 @@ import {
   type Locale,
   localeFromSegment,
 } from "./config";
+import { hasDocs, isDocsPath } from "./docs";
 import localized from "./localized-paths.json";
 
 export const LOCALIZED_PATHS: readonly string[] = localized.paths;
@@ -19,9 +21,18 @@ export function isLocalizedPath(path: string): boolean {
   return LOCALIZED_PATHS.includes(path);
 }
 
+/**
+ * Whether `path` has its own URL in `locale`: a translated page, or a docs
+ * page in a language with docs (lib/i18n/docs.ts). Docs pages that aren't
+ * translated yet show the English text at that URL, with a note.
+ */
+export function isPathIn(path: string, locale: Locale): boolean {
+  return isLocalizedPath(path) || (isDocsPath(path) && hasDocs(locale));
+}
+
 /** "/pricing" in Spanish → "/es/pricing"; "/" → "/es". English is unprefixed. */
 export function localizePath(path: string, locale: Locale): string {
-  if (locale === DEFAULT_LOCALE || !isLocalizedPath(path)) return path;
+  if (locale === DEFAULT_LOCALE || !isPathIn(path, locale)) return path;
   const prefix = `/${LOCALE_INFO[locale].segment}`;
   return path === "/" ? prefix : `${prefix}${path}`;
 }
@@ -48,7 +59,7 @@ export function localizeHref(href: string, locale: Locale): string {
 /**
  * Splits a pathname into its language and the page's English path:
  * "/es/pricing" → { locale: "es", path: "/pricing" }, "/docs" → English.
- * Only translated pages carry a prefix; "/es/docs" isn't one.
+ * Only translated pages carry a prefix (docs pages: in languages with docs).
  */
 export function splitLocale(pathname: string): {
   locale: Locale;
@@ -58,7 +69,7 @@ export function splitLocale(pathname: string): {
   const locale = localeFromSegment(match?.[1]);
   if (match && locale && locale !== DEFAULT_LOCALE) {
     const path = match[2] ?? "/";
-    if (isLocalizedPath(path)) return { locale, path };
+    if (isPathIn(path, locale)) return { locale, path };
   }
   return { locale: DEFAULT_LOCALE, path: pathname };
 }

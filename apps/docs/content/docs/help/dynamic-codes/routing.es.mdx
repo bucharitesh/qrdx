@@ -1,0 +1,53 @@
+---
+title: "Envía los escaneos a enlaces diferentes"
+description: "Dirige cada escaneo según el dispositivo, el país, el área, el idioma o la hora, y haz pruebas A/B con el enrutamiento inteligente."
+---
+
+El enrutamiento inteligente envía cada escaneo de un código QR dinámico a un enlace distinto, según las reglas que definas. Solo para Pro y Business.
+
+## Añade una regla [#add-a-rule]
+
+1. Abre el código desde **Códigos**.
+2. En **Ajustes**, abre **Enrutamiento inteligente**.
+3. Haz clic en **Añadir regla** o parte de una plantilla.
+4. Elige una condición y el enlace que abrirán los escaneos que la cumplan.
+5. Haz clic en **Guardar reglas**.
+
+Los escaneos que no cumplan ninguna regla abren el destino normal del código.
+
+## Condiciones que puedes usar [#conditions-you-can-use]
+
+Dispositivo, sistema operativo, país, región, área, idioma, hora del día, intervalo de fechas y número de escaneos. Cada condición también se puede invertir con **no es**.
+
+Un **área** es un punto y un radio. Usa la ubicación que comparte quien escanea cuando la [ubicación precisa](/docs/precise-location) está activada y, si no, la ubicación aproximada de su red.
+
+Una regla puede tener hasta 8 condiciones. Un código puede tener hasta 20 reglas.
+
+## Plantillas [#templates]
+
+- **Enlace inteligente a la app**: los iPhone a la App Store y los teléfonos Android a Google Play.
+- **País** e **Idioma del visitante**.
+- **Horario laboral**.
+- **Intervalo de fechas** para una campaña.
+- **Primeros escaneos**: un enlace distinto para los primeros escaneos.
+- **Dentro de un área**: un enlace distinto para los escaneos cerca de un lugar.
+- **División A/B**: reparte los escaneos entre hasta 5 versiones.
+
+## Gana la primera regla que coincida [#the-first-matching-rule-wins]
+
+Las reglas se comprueban de arriba abajo. Pon primero las más específicas.
+
+Haz clic en **Probar tus reglas** para ver adónde iría un escaneo antes de guardar.
+
+## Pruebas A/B [#ab-tests]
+
+Una división A/B envía a cada visitante a una versión. El mismo visitante ve la misma versión durante el resto del día. La página del código muestra cómo se reparten los escaneos entre las versiones.
+
+## Tras bajar de plan [#after-a-downgrade]
+
+Las reglas guardadas siguen funcionando.
+
+## Relacionado [#related]
+
+- [Guía de enrutamiento inteligente](/docs/smart-routing)
+- [Un código abre la página equivocada](/docs/help/troubleshooting/wrong-destination)

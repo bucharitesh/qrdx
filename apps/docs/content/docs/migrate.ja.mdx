@@ -1,0 +1,174 @@
+---
+title: "Bitly、Rebrandlyなどからの移行"
+description: "短縮リンクと動的QRコードをQRdxにインポートし、印刷済みのコードをそのまま使い続け、ブランド付きのバックハーフも維持できます。"
+icon: Download
+---
+
+QRdxでは、他のプロバイダーのリンクと動的コードをまとめてインポートできます。[ダッシュボード → コード](/dashboard?to=codes)を開き、**Import** をクリックしてください。インポートの手順はどれも同じ3ステップです。取り込む対象を選び、プレビューで確認し、インポートします。
+
+- **連携済みアカウント:** Bitly、Rebrandly、Short.io。QRdxはプロバイダーのAPIを通じてリンクを一覧表示します。
+- **エクスポートファイル:** QR Code Generator PRO、Uniqode（Beaconstac）、Flowcode、QR TIGER、ME-QR、TinyURL、Hovercode、Scanova、または遷移先URLを含む任意のCSV。
+
+インポート中、以前のアカウントには何も変更は加わりません。
+
+## インポートで作成されるもの [#what-an-import-creates]
+
+リンクまたはコードはそれぞれ、次の内容を持つ[動的QRコード](/docs/dynamic-qr-codes)になります。
+
+- 遷移先とタイトル
+- タグ（任意）と、「Imported from Bitly」のようなフォルダー（名前の変更やオフにもできます）
+- `Imported from Bitly bit.ly/3AbCdEf on 2026-11-01.` のようなメモと、リンクの元の作成日。新しいコードの作成日はQRdxが設定します。
+
+プレビューには、作成されるコードの数、新しいタグ、スキップされる対象が表示されます。
+
+- **Already imported:** 以前に（過去のどの実行でも）インポートしたリンクは常にスキップされるため、インポートを2回実行しても重複は作成されません。
+- **Same destination:** 遷移先にすでにQRdxのコードがあるリンクは、デフォルトでスキップされます。それでもインポートするには、オプションにチェックを入れてください。
+- **Can't import:** 遷移先がない、または無効なリンクと、すでにQRdxの短縮リンクを指しているリンク。
+
+インポートは50件ずつのバッチで実行され、進行状況バーが表示されます。ダイアログを閉じても問題ありません。もう一度 **Import** を開くと、**Recent imports** からインポートが再開されます。サマリーには、作成、スキップ、失敗したコードが理由とともに一覧表示されます。
+
+<Callout type="info">
+プランの上限は、通常の新規コードと同じく適用されます。フリーには有効な動的コードが10個含まれます。インポートでそれを超える場合は、プレビューに収まる件数が表示され、先頭から取り込むか、アップグレードするかを選べます。ProとBusinessには上限がありません。
+</Callout>
+
+## 連携済みアカウントから [#from-a-connected-account]
+
+1. **Import** をクリックし、プロバイダーを選びます。まだ連携していない場合は、その場で連携してください（サインインするか、APIキーまたはトークンを貼り付けます）。トークンは暗号化して保存され、設定 → 連携からいつでも連携を解除できます。
+2. 検索したり、ドメインやタグで絞り込んだりして、リンクを選択します。**Select all matching links** では、1回のインポートで最大1,000件のリンクを取り込めます。残りは再度実行してください。
+3. プレビューを確認し、**Import** をクリックします。
+
+| プロバイダー | 連携方法 | リンクの一覧 | 印刷済みコードを使い続ける |
+|---|---|---|---|
+| Bitly | サインイン、または汎用アクセストークン | 可 | Bitlyの有料プランのみ：リンクのリダイレクトは月にCoreで5件、Growthで20件、Premiumで110件 |
+| Rebrandly | APIキー | 可 | Rebrandlyの月間の遷移先編集の範囲内：Essentialsで10件、Professionalで50件、Growthで150件（Freeは不可） |
+| Short.io | APIキー | 可（1回につき1ドメイン） | 可（すべてのプランで） |
+
+プランの上限は各プロバイダー独自のもので、時間とともに変わります。各社の料金ページをご確認ください。
+
+## 印刷済みコードを使い続ける [#keep-printed-codes-working]
+
+他のプロバイダーで印刷したQRコードには、そのプロバイダーの短縮リンクがエンコードされています。連携済みアカウントからのインポート後、サマリーに **Keep my printed codes working** が表示されます。
+
+1. **ドライラン**で、すべての旧リンクと、そのリンクが指すことになるQRdxのリンクが一覧表示されます。この時点では何も変更されません。
+2. 確定すると、QRdxが各旧リンクの遷移先を新しいQRdxコードに変更します。訪問者はこれまでと同じページに到達し、すべてのスキャンがQRdxの分析に表示されるようになります。ただし、旧プロバイダーには先にクリックが記録されます。
+3. **Undo** を使うと、インポート時にQRdxが保存しておいた元の遷移先に戻せます。
+
+プロバイダーが拒否した場合（たとえば、Bitlyのプランでリンクのリダイレクトの残りがない場合）、QRdxは処理を停止して理由を表示し、残りのリンクは変更しません。遷移先にすでにQRdxのコードがあったためスキップされたリンクは、その既存のコードを指します。<IfAvailable feature="customDomains"> バックハーフが独自ドメインとともに移るリンク（下記）は変更されません。DNSを切り替えた後は、それらがQRdxのリンクになります。</IfAvailable>
+
+## 元のバックハーフを維持する [#keep-the-original-back-halves]
+
+ProとBusinessでは、インポートのプレビューで **Keep the original back-halves** にチェックを入れます。QRdxで維持できる場合、各コードにはランダムなものではなく元のバックハーフが付くため、`bit.ly/spring-menu` は `qrdx.dev/q/spring-menu` になります。
+
+- バックハーフが維持されるのは、3〜64文字の英字、数字、`-`、`_` で構成されていて（[カスタムバックハーフ](/docs/dynamic-qr-codes#custom-back-halves)を参照）、予約されておらず、`qrdx.dev` 上でどのQRdxコードにもまだ使われていない場合です<IfAvailable feature="customDomains">（独自ドメインでは、そこにある自分のコードにのみ使われていないこと）</IfAvailable>。
+- そうでない場合、コードには生成されたバックハーフが付き、プレビューに理由とともに変更が表示されます。例：`spring-menu → Ab3xK9q · Another QRdx code already uses this back-half on qrdx.dev`。インポートでは、プレビューに表示されたとおりのバックハーフが使われます。
+- バックハーフは、BitlyやShort.ioと同様に大文字と小文字が区別されます。
+
+<Callout type="warn">
+確信が持てるまで、プロバイダーの連携は維持してください。元に戻すには連携が必要です。また、リンクがリダイレクトを続けるには、以前のアカウントを有効なままにしておく必要があります。
+</Callout>
+
+<IfAvailable feature="customDomains" id="your-own-domain-go-yourbrand-com" title="独自ドメイン（go.yourbrand.com）">
+
+リンクに独自ドメインを使っている場合は、そのドメインをQRdxに移してバックハーフを維持できます。これにより、DNSの切り替え後も `go.yourbrand.com/spring-menu` は引き続き使えます。
+
+1. まず[設定 → ドメイン](/dashboard?to=settings/domains)でドメインを追加します。現時点では未認証のままで構いません。その場合、バックハーフはドメイン自体で維持され、自分のコードの間でだけ一意であればよく、予約されているのは `api`、`p`、`q` のみです。
+2. インポートのプレビューで **Keep the original back-halves** にチェックを入れ、**Links on** でドメインを選びます。プレビューには、維持されるバックハーフが表示されます。
+3. インポートします。コードはそのドメインに置かれ、バックハーフがすぐに確保されます。
+4. ドメインのDNSをQRdxに向け、認証します（[カスタムドメイン](/docs/custom-domains)を参照）。作業は利用の少ない時間帯に行ってください。DNSが切り替わった時点で、ドメイン上のリンクは以前のプロバイダーでは動作しなくなり、認証が完了するとQRdxで動作し始めます。
+
+インポート時にドメインがまだQRdxにない場合、そのバックハーフは代わりに `qrdx.dev` 上で維持されます（この場合、QRdx全体で未使用である必要があります）。ドメインを追加して認証したら、インポートのサマリーで **Attach codes** をクリックすると、それらのコードをドメインに移せます。
+
+</IfAvailable>
+
+維持できないバックハーフには生成されたものが付きます。そのようなリンクは、再印刷するか、以前のプロバイダーでリダイレクトを設定する必要があります。カスタムバックハーフはProとBusinessに含まれます。
+
+## エクスポートファイルから [#from-an-export-file]
+
+1. ファイルを入手します（手順は以下を参照）。QRdx は CSV を読み込みます。Excel ファイルの場合は、先に CSV として保存またはダウンロードしてください。
+2. **Import** をクリックし、プロバイダーを選んでファイルをアップロードします。QRdx は可能な範囲でプロバイダーの列を認識し、マッピングは変更できます。必須なのは遷移先のみです。以前の短縮リンク（またはコード ID）があれば、再アップロード時にインポート済みのコードをスキップできます。
+3. プレビューしてインポートし、**Copy all new links** または **Download mapping CSV**（以前のリンク → 新しい QRdx リンク）を使用します。
+
+これらのプロバイダーのコードはプロバイダーのドメイン上にあるため、QRdx では変更できません。印刷済みのコードを使い続けるには、以前のプロバイダーで古い動的QRコードをそれぞれ開き、遷移先をマッピングにある新しい QRdx リンクに設定してください。これらのコードがリダイレクトされるには、以前のアカウントを有効なままにしておく必要があります。解約する前に、QRdx のコードで再印刷してください。
+
+### QR Code Generator PRO [#qr-code-generator-pro]
+
+コード一覧の公式なエクスポート機能はありません。各コードの **Name**、**Short URL**、**Destination URL** をまとめたスプレッドシートを作成してください。コードの遷移先を変更するには、コードを開き、**Details** → **Edit** の順に進んで URL を置き換え、保存します。コードが多い場合は、一括更新で、最大 500 件のコードの新しい URL を CSV で渡せます。
+
+### Uniqode (Beaconstac) [#uniqode-beaconstac]
+
+**QR Codes → Dynamic** を開き、すべて選択して **⋯ → Export** を選びます。組織ごと、またはフォルダごとにエクスポートします。エクスポートの列（QR Code Name、QR Code URL、Destination URL、Labels など）は認識されます。遷移先を変更するには、コードを開き、**Edit** → 新しい URL → **Next** → **Save** の順に進みます。
+
+### Flowcode [#flowcode]
+
+コード一覧の公式なエクスポート機能はありません。一括作成用のシート（Flowcode Name、Flowcode Scan URL）を再利用するか、Name、Scan URL、Destination を一覧にしてください。遷移先を変更するには、**Assets** → 対象のコード → **Overview** → **Destination** → **Save** の順に進みます。
+
+### QR TIGER [#qr-tiger]
+
+**My Account** → カテゴリ（例: URL）を選択 → **Download QR List** の順に進みます。これはカテゴリごとに1回行います。遷移先を変更するには、**My Account → Dashboard → URL** → 対象のキャンペーン → **Edit** → **Save** の順に進みます。
+
+### ME-QR [#me-qr]
+
+エクスポート機能はありません。各コードの Name、QR link、Destination URL を一覧にしてください。遷移先を変更するには、ME-QR のコード一覧でコードを編集します。
+
+### TinyURL [#tinyurl]
+
+TinyURL では、CSV エクスポートは有料プランで提供されると記載されています。リンクを CSV としてエクスポートするか、Alias と Long URL を一覧にしてください。TinyURL の遷移先を編集するには、有料の TinyURL プランが必要です。
+
+### Hovercode、Scanova、その他 [#hovercode-scanova-and-others]
+
+プロバイダーからコードを CSV としてエクスポートし（Hovercode では CSV エクスポートが Business プランで提供されると記載されています。Scanova はダウンロードリンクをメールで送信します）、列のマッピングを確認してください。遷移先の列がある CSV であれば、**Another provider (CSV)** で使用できます。
+
+静的QRコード（goQR.me、QR Code Monkey、Adobe Express などのツールで作成したもの）は遷移先そのものをエンコードしているため、ツールがなくても使い続けられます。新しい印刷物向けに、編集可能でトラッキングできるコードが必要な場合に限り、CSV から遷移先をインポートしてください。
+
+## QR コードライブラリから [#from-a-qr-code-library]
+
+ライブラリが生成するのは静的QRコードのため、移行は不要です。すでに印刷したコードはそのまま使えます。アプリ内の描画を切り替えるには、`qrdx` をインストールしてコンポーネントを置き換えてください。
+
+### qrcode.react から [#from-qrcode-react]
+
+```tsx
+// Before
+import { QRCodeSVG } from "qrcode.react";
+
+<QRCodeSVG value="https://example.com" size={256} fgColor="#111827" />;
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  fgColor="#111827"
+  bodyPattern="rounded"
+/>;
+```
+
+`value`、`size`、`level`、`fgColor`、`bgColor`、`marginSize`（`margin` として）、`imageSettings` はそのまま引き継がれます。qrdx ではさらにパターン、グラデーション、テンプレートが使えます。[API リファレンス](/docs/api-reference)を参照してください。
+
+### qr-code-styling から [#from-qr-code-styling]
+
+```tsx
+// Before
+import QRCodeStyling from "qr-code-styling";
+
+const qr = new QRCodeStyling({
+  data: "https://example.com",
+  width: 256,
+  dotsOptions: { type: "rounded", color: "#111827" },
+  image: "/logo.png",
+});
+qr.append(ref.current);
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  fgColor="#111827"
+  imageSettings={{ src: "/logo.png", width: 64, height: 64, excavate: true }}
+/>;
+```
+
+qrdx は React コンポーネントのため、追加先となるインスタンスはありません。ほかの要素と同じように描画してください。ダウンロードには、[API リファレンス](/docs/api-reference)のヘルパーを使用します。

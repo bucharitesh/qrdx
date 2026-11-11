@@ -37,6 +37,7 @@ import {
   TRANSLATED_LOCALES,
   type TranslatedLocale,
 } from "@/lib/i18n/config";
+import { hasDocs } from "@/lib/i18n/docs";
 import { shapeMismatch } from "@/lib/i18n/icu";
 
 const MESSAGES = path.join(__dirname, "../messages");
@@ -105,6 +106,7 @@ const SURFACES: Record<string, string> = {
   home: "the home page of qrdx.dev, a free QR code generator",
   pricing:
     "the pricing page: plan cards, the comparison table, the guarantee and FAQ",
+  docs: "the documentation site's interface: search, table of contents, page buttons, the language menu, the help center's boxes, the 404 page and a note on pages not translated yet",
 };
 
 /** Short strings (labels, buttons) get a length budget. */
@@ -251,6 +253,8 @@ async function run(locale: TranslatedLocale) {
     if (keyPrefixes.length && !keyPrefixes.some((p) => key.startsWith(p))) {
       return false;
     }
+    // The docs chrome only shows in languages with docs (lib/i18n/docs.ts).
+    if (key.startsWith("docs.") && !hasDocs(locale)) return false;
     const entry = review[key];
     const fresh = entry?.source === sourceHash(source.get(key) ?? "");
     if (!(catalog.has(key) && entry)) return true;

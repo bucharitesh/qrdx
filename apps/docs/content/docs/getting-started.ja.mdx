@@ -1,0 +1,58 @@
+---
+title: "Reactライブラリのインストール"
+description: "qrdxのReactライブラリをインストールして、数行のコードで最初のQRコードを表示します。"
+icon: Rocket
+---
+
+`qrdx`をインストールして、すぐに最初のQRコードを作成しましょう。
+
+<NpmStatus package="qrdx" />
+
+## パッケージのインストール [#install-the-package]
+
+```package-install
+qrdx@latest
+```
+
+`react`と`react-dom`(18以降)はピア依存関係です。そのため、`qrdx`はアプリにすでに入っているバージョンを使用します。PDFエクスポートは任意です。必要な場合のみ`jspdf`をインストールしてください。
+
+## クイックスタート [#quick-start]
+
+最初のQRコードを作成します。
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function App() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+    />
+  );
+}
+```
+
+これで完了です。QRコードが動作するようになりました。
+
+先にデザインしたい場合は、[Playgroundで試す](/playground?open=code&lang=react)をご利用ください。Playgroundでコードのスタイルを整え、Reactコンポーネントとしてコピーできます。
+
+## 次のステップ [#next-steps]
+
+<Cards>
+  <Card
+    href="/docs/usage"
+    title="使い方を学ぶ"
+    description="色やパターンなどをカスタマイズします"
+  />
+  <Card
+    href="/docs/features/templates"
+    title="テンプレートを使う"
+    description="あらかじめ用意されたスタイルをすぐに適用します"
+  />
+  <Card
+    href="/docs/api-reference"
+    title="APIリファレンス"
+    description="プロパティの完全なドキュメント"
+  />
+</Cards>

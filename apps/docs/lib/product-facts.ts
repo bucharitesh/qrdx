@@ -27,10 +27,12 @@ import { CORNER_EYE_DOT_PATTERNS } from "../../../packages/qrdx/types/corner-dot
 import { CORNER_EYE_PATTERNS } from "../../../packages/qrdx/types/corner-eye";
 import { FRAME_STYLES } from "../../../packages/qrdx/types/frame";
 import { BODY_PATTERN } from "../../../packages/qrdx/types/image-pattern";
+import { AI_ART_PRESET_COUNT } from "../components/sections/ai-art/preset-meta";
 import {
   AUDIT_EXPORT_MAX_ROWS,
   AUDIT_RETENTION_DAYS,
 } from "../ee/audit-log/limits";
+import { CONTENT_TYPE_IDS } from "../types/content-type-ids";
 import {
   AFFILIATE_COMMISSION_MONTHS,
   AFFILIATE_COMMISSION_PERCENT,
@@ -48,6 +50,7 @@ import {
   MAX_IMPORT_ROWS,
   NEW_PAID_ACCOUNT_CODES_PER_HOUR,
 } from "./bulk-limits";
+import { TRANSLATED_LOCALES } from "./i18n/config";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
 
 export const PRODUCT_FACTS = {
@@ -73,6 +76,10 @@ export const PRODUCT_FACTS = {
     OFFICIAL_FRAME_COUNTS.holidays + OFFICIAL_FRAME_COUNTS.seasons,
   /** The AI art model as copy names it ("OpenAI's GPT Image 2"), from lib/ai/models.ts. */
   artModel: ART_MODEL_LABEL,
+  // AI art style presets (components/sections/ai-art/preset-meta.ts, checked
+  // against the catalogue in presets.ts).
+  /** AI art style presets in the picker. */
+  aiArtStyles: AI_ART_PRESET_COUNT,
   /** Days the workspace audit log keeps a row (ee/audit-log/limits.ts). */
   auditLogRetentionDays: AUDIT_RETENTION_DAYS,
   /** Rows in one audit log CSV export, as copy writes it ("50,000"). */
@@ -81,8 +88,12 @@ export const PRODUCT_FACTS = {
   barcodeFormats: BARCODE_FORMATS.length,
   /** Hosted page types in the New code picker (lib/landing/page-type-ids.ts). */
   hostedPageTypes: PAGE_TYPE_IDS.length,
+  /** Static content types in the playground's picker (types/content-type-ids.ts). */
+  contentTypes: CONTENT_TYPE_IDS.length,
   /** Brands in the logo gallery (Simple Icons), as copy writes it ("3,467"). */
   brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
+  /** Languages the site has besides English (lib/i18n/config.ts), reviewed or not. */
+  translatedLanguages: TRANSLATED_LOCALES.length,
   // The affiliate program's terms (lib/affiliates/terms.ts), for the legal
   // and help pages; the code reads the same constants.
   /** The commission, as copy writes it: "30" (followed by "%"). */

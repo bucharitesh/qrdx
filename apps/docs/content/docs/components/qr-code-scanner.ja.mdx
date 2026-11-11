@@ -1,0 +1,41 @@
+---
+title: "QRコードスキャナー"
+description: "ブラウザ上で画像からQRコードを読み取るドロップゾーンです。コピーとリンクを開く操作を備えています。"
+icon: Scan
+---
+
+<ComponentLinks name="qr-code-scanner" />
+
+<ComponentPreview name="qr-code-scanner-demo" />
+
+## インストール [#installation]
+
+<InstallationTabs name="qr-code-scanner" />
+
+## 使い方 [#usage]
+
+```tsx
+import { QrCodeScanner } from "@/components/qr-code-scanner";
+```
+
+```tsx
+<QrCodeScanner onResult={(value) => console.log(value)} />
+```
+
+画像をドロップするか、クリックして画像を選択します。デコードはブラウザ上で qrdx の[検出ヘルパー](/docs/qr-detection)を使って実行されるため、画像がデバイスの外に出ることはありません。読み取れるのは画像ファイルのみで、カメラのライブ映像には対応していません。
+
+読み取り結果にはコピーボタンが表示されます。結果が `http` または `https` のURLの場合は、「リンクを開く」ボタンも表示されます。
+
+## 例 [#examples]
+
+### 結果を確認する [#checking-a-result]
+
+`onResult` はデコードされたテキストを受け取るため、その内容に応じた処理を行えます。たとえば、チケットのチェックインに利用できます。`label` を指定すると、ドロップゾーンの見出しを変更できます。上のサンプルコードをダウンロードしてドロップすると、有効なチケットを確認できます。
+
+<ComponentPreview name="qr-code-scanner-tickets" />
+
+## APIリファレンス [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-scanner.tsx" type="{ [K in keyof QrCodeScannerProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeScannerProps[K] }" />
+
+`className` など、その他のpropは外側の `<div>` に渡されます。

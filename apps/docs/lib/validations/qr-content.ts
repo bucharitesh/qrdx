@@ -4,6 +4,30 @@
 
 import { z } from "zod";
 import {
+  payNowIssue,
+  pixIssue,
+  promptPayIssue,
+  sepaIssue,
+  vietQrIssue,
+} from "@/utils/payment-qr-codes";
+import {
+  blueskyIssue,
+  type ContentIssue,
+  cashAppIssue,
+  cryptoIssue,
+  discordIssue,
+  googleMeetIssue,
+  lineIssue,
+  mastodonIssue,
+  revolutIssue,
+  signalIssue,
+  soundCloudIssue,
+  telegramIssue,
+  twitchIssue,
+  wazeIssue,
+  zoomIssue,
+} from "@/utils/qr-content-encoder";
+import {
   isAmazonUrl,
   isGoogleDriveFileUrl,
   isOnDomain,
@@ -343,6 +367,181 @@ export const calcomSchema = z.object({
     .url("Invalid URL")
     .refine(onDomain("cal.com"), "Must be a Cal.com URL"),
 });
+
+// ─── Content types added 2026-11-11 ─────────────────────────────────────────
+// Each schema shapes the fields, then runs the encoder's own check
+// (utils/qr-content-encoder.ts, utils/payment-qr-codes.ts), so the form, the
+// AI chat and MCP report the same problem on the same field.
+
+/** Reports the encoder's check on the field it names. */
+function checkedBy<T>(check: (value: T) => ContentIssue | null) {
+  return (value: T, ctx: z.RefinementCtx) => {
+    const found = check(value);
+    if (found) {
+      ctx.addIssue({
+        code: "custom",
+        message: found.message,
+        path: found.field ? [found.field] : [],
+      });
+    }
+  };
+}
+
+const optionalText = z.string().optional();
+
+// Pix (Brazil)
+export const pixSchema = z
+  .object({
+    pixKey: z.string().min(1, "Pix key is required"),
+    name: z.string().min(1, "Receiver name is required"),
+    city: z.string().min(1, "City is required"),
+    amount: optionalText,
+    txid: optionalText,
+    message: optionalText,
+  })
+  .superRefine(checkedBy(pixIssue));
+
+// SEPA credit transfer (EPC069-12)
+export const sepaSchema = z
+  .object({
+    name: z.string().min(1, "Beneficiary name is required"),
+    iban: z.string().min(1, "IBAN is required"),
+    bic: optionalText,
+    amount: optionalText,
+    reference: optionalText,
+    remittance: optionalText,
+  })
+  .superRefine(checkedBy(sepaIssue));
+
+// PayNow (Singapore)
+export const paynowSchema = z
+  .object({
+    proxyType: z.enum(["mobile", "uen"]).optional(),
+    proxy: z.string().min(1, "Mobile number or UEN is required"),
+    amount: optionalText,
+    editable: z.boolean().optional(),
+    reference: optionalText,
+    expiry: optionalText,
+    name: optionalText,
+  })
+  .superRefine(checkedBy((value) => payNowIssue(value)));
+
+// PromptPay (Thailand)
+export const promptpaySchema = z
+  .object({
+    proxyType: z.enum(["mobile", "id", "ewallet"]).optional(),
+    proxy: z.string().min(1, "Mobile number or ID is required"),
+    amount: optionalText,
+  })
+  .superRefine(checkedBy(promptPayIssue));
+
+// VietQR (Vietnam)
+export const vietqrSchema = z
+  .object({
+    bankBin: z.string().min(1, "Bank is required"),
+    accountType: z.enum(["account", "card"]).optional(),
+    accountNumber: z.string().min(1, "Account number is required"),
+    amount: optionalText,
+    message: optionalText,
+  })
+  .superRefine(checkedBy(vietQrIssue));
+
+// Cash App
+export const cashappSchema = z
+  .object({ username: z.string().min(1, "$Cashtag is required") })
+  .superRefine(checkedBy(cashAppIssue));
+
+// Revolut
+export const revolutSchema = z
+  .object({ username: z.string().min(1, "Revolut username is required") })
+  .superRefine(checkedBy(revolutIssue));
+
+// Telegram: a username (or t.me link), or a phone number
+export const telegramSchema = z
+  .object({ username: optionalText, phoneNumber: optionalText })
+  .superRefine(checkedBy(telegramIssue));
+
+// Signal: a phone number, or a username or group link
+export const signalSchema = z
+  .object({ phoneNumber: optionalText, link: optionalText })
+  .superRefine(checkedBy(signalIssue));
+
+// Discord
+export const discordSchema = z
+  .object({
+    invite: z.string().min(1, "Discord invite link or code is required"),
+  })
+  .superRefine(checkedBy(discordIssue));
+
+// LINE
+export const lineSchema = z
+  .object({ username: z.string().min(1, "LINE ID is required") })
+  .superRefine(checkedBy(lineIssue));
+
+// Bluesky
+export const blueskySchema = z
+  .object({ handle: z.string().min(1, "Bluesky handle is required") })
+  .superRefine(checkedBy(blueskyIssue));
+
+// Mastodon
+export const mastodonSchema = z
+  .object({ handle: z.string().min(1, "Mastodon handle is required") })
+  .superRefine(checkedBy(mastodonIssue));
+
+// Twitch
+export const twitchSchema = z
+  .object({ username: z.string().min(1, "Twitch username is required") })
+  .superRefine(checkedBy(twitchIssue));
+
+// SoundCloud
+export const soundcloudSchema = z
+  .object({
+    username: z.string().min(1, "SoundCloud profile or link is required"),
+  })
+  .superRefine(checkedBy(soundCloudIssue));
+
+// Zoom
+export const zoomSchema = z
+  .object({ meeting: z.string().min(1, "Zoom meeting ID or link is required") })
+  .superRefine(checkedBy(zoomIssue));
+
+// Google Meet
+export const googleMeetSchema = z
+  .object({
+    meeting: z.string().min(1, "Google Meet code or link is required"),
+  })
+  .superRefine(checkedBy(googleMeetIssue));
+
+// Waze
+export const wazeSchema = z
+  .object({
+    location: z.string().min(1, "Address or coordinates are required"),
+    navigate: z.boolean().optional(),
+  })
+  .superRefine(checkedBy(wazeIssue));
+
+/** A crypto payment request: address, optional amount, label and message. */
+function cryptoSchema(
+  type: "litecoin" | "dogecoin" | "bitcoincash" | "solana" | "monero",
+  name: string,
+) {
+  return z
+    .object({
+      address: z.string().min(1, `${name} address is required`),
+      amount: optionalText,
+      label: optionalText,
+      message: optionalText,
+    })
+    .superRefine(checkedBy((value) => cryptoIssue({ ...value, type })));
+}
+
+export const litecoinSchema = cryptoSchema("litecoin", "Litecoin");
+export const dogecoinSchema = cryptoSchema("dogecoin", "Dogecoin");
+export const bitcoincashSchema = cryptoSchema("bitcoincash", "Bitcoin Cash");
+export const solanaSchema = cryptoSchema("solana", "Solana");
+export const moneroSchema = cryptoSchema("monero", "Monero");
+
+// ─── end of the 2026-11-11 schemas ──────────────────────────────────────────
 
 // Export type inference helpers
 export type UrlFormData = z.infer<typeof urlSchema>;
