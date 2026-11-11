@@ -31,6 +31,7 @@ import {
 } from "@/lib/product-facts";
 import { remarkNpmStatus } from "@/lib/remark-npm-status";
 import { remarkProductFacts } from "@/lib/remark-product-facts";
+import { CONTENT_TYPE_IDS } from "@/types/content-type-ids";
 import qrdxPackage from "../../../../packages/qrdx/package.json";
 
 const app = path.resolve(import.meta.dirname, "../..");
@@ -69,6 +70,8 @@ describe("PRODUCT_FACTS", () => {
       auditLogExportRows: "50,000",
       barcodeFormats: BARCODE_FORMATS.length,
       hostedPageTypes: PAGE_TYPE_IDS.length,
+      // types/content-type-ids.ts, one generator page each
+      contentTypes: CONTENT_TYPE_IDS.length,
       // lib/brand-logos (the pinned simple-icons release)
       brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
       translatedLanguages: TRANSLATED_LOCALES.length,

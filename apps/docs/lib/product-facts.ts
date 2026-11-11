@@ -32,6 +32,7 @@ import {
   AUDIT_EXPORT_MAX_ROWS,
   AUDIT_RETENTION_DAYS,
 } from "../ee/audit-log/limits";
+import { CONTENT_TYPE_IDS } from "../types/content-type-ids";
 import {
   AFFILIATE_COMMISSION_MONTHS,
   AFFILIATE_COMMISSION_PERCENT,
@@ -87,6 +88,8 @@ export const PRODUCT_FACTS = {
   barcodeFormats: BARCODE_FORMATS.length,
   /** Hosted page types in the New code picker (lib/landing/page-type-ids.ts). */
   hostedPageTypes: PAGE_TYPE_IDS.length,
+  /** Static content types in the playground's picker (types/content-type-ids.ts). */
+  contentTypes: CONTENT_TYPE_IDS.length,
   /** Brands in the logo gallery (Simple Icons), as copy writes it ("3,467"). */
   brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
   /** Languages the site has besides English (lib/i18n/config.ts), reviewed or not. */
