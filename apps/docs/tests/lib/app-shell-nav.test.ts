@@ -47,6 +47,8 @@ describe("app nav", () => {
       ["General", "/dashboard/acme/settings"],
       ["Plan & usage", "/dashboard/acme/settings/usage"],
       ["Team", "/dashboard/acme/settings/team"],
+      // Agency tools (Business)
+      ["Client portal", "/dashboard/acme/settings/clients"],
       ["Domains", "/dashboard/acme/settings/domains"],
       ["Single sign-on", "/dashboard/acme/settings/sso"],
       ["Audit log", "/dashboard/acme/settings/audit-log"],

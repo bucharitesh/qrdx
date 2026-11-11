@@ -1,0 +1,110 @@
+---
+title: "Landing pages"
+description: "Crie uma página mobile para um QR code a partir de blocos, sem precisar de site. Lista de links, página de negócio, vCard Plus, páginas de produto e {facts.hostedPageTypes} tipos de página no total."
+icon: PanelsTopLeft
+---
+
+Uma landing page hospedada é uma página mobile que o QRdx serve para você em `https://qrdx.dev/p/<slug>` (ou no seu [domínio personalizado](/docs/custom-domains)). Toda página vem com um [QR code dinâmico](/docs/dynamic-qr-codes), então você pode continuar editando a página depois que o código for impresso e ver todas as leituras.
+
+## Crie uma página [#create-a-page]
+
+1. Abra [Painel → Páginas e formulários](/dashboard?to=pages) e clique em **Nova página**, ou clique em **Novo código** na lista de códigos e escolha um tipo de página em vez de **Link de site**.
+2. Escolha um dos {facts.hostedPageTypes} [tipos de página](#page-types) e um modelo da galeria dele.
+3. Clique em **Criar página**. O editor abre com os blocos do modelo, e o QR code fica pronto para baixar em **QR code**.
+
+Já imprimiu um código que abre um site? Abra-o e clique em **Alterar tipo** para transformá-lo em uma página com o mesmo link curto. Veja [Mude o que um código impresso abre](/docs/help/dynamic-codes/change-the-type).
+
+Os modelos começam com nomes, preços, números e fotos de exemplo para você ver como a página se encaixa. Até a primeira publicação, o editor lembra você de trocá-los pelos seus.
+
+## Tipos de página [#page-types]
+
+Todo tipo de página é um ponto de partida: qualquer bloco pode ser adicionado a qualquer página, e uma página criada a partir de um tipo pode ficar parecida com outro.
+
+| Tipo de página | Feito para | Começa com |
+| --- | --- | --- |
+| **Lista de links** | Link na bio, criadores, podcasts | Cabeçalho de perfil, links, ícones sociais |
+| **Redes sociais** | Todos os perfis em um só código | Cabeçalho de perfil, uma linha por rede com o seu usuário |
+| **Negócio** | Lojas, salões, escritórios | Horários, endereço e mapa, contato, uma chamada para ação |
+| **vCard Plus** | Cartões de visita digitais | Cartão de contato com **Salvar contato** |
+| **Cardápio** | Cafés, restaurantes, bares | Cardápio, Wi-Fi, horário de funcionamento ([saiba mais](/docs/forms-and-pages#menu)) |
+| **Cupom** | Descontos e brindes | Cupom com código de barras e **Resgatar** ([saiba mais](/docs/forms-and-pages#coupon)) |
+| **Evento** | Festas, conferências, webinars, casamentos | Evento com adição ao calendário ([saiba mais](/docs/forms-and-pages#event)) |
+| **Download de app** | Um código para todas as lojas de apps | Download de app ([saiba mais](/docs/forms-and-pages#app-download)) |
+| **Feedback e formulários** | Avaliações, pesquisas NPS, inscrições | Formulário e links de avaliação ([saiba mais](/docs/forms-and-pages#forms)) |
+| **Produto** | Embalagens, rótulos, etiquetas | Ingredientes, alérgenos, informação nutricional, certificações, cuidados, GS1 Digital Link ([saiba mais](/docs/product-pages)) |
+| **Agendamentos** | Salões, clínicas, professores particulares | Serviços e preços, um formulário de pedido de agendamento, horários |
+| **Pagamentos e gorjetas** | Potes de gorjeta, doações, faturas | Links de pagamento e dados bancários para copiar |
+| **Anúncio de imóvel** | Casas à venda ou para alugar, open houses | Preço e características, fotos, corretor, um formulário de pedido de visita ou de registro |
+| **Plaqueta de pet** | Plaquetas de coleira, cartazes de pet perdido | Botão de ligar, dados do pet, um formulário "encontrei" |
+| **Ficha médica** | Plaquetas, pulseiras, cartões de alergia | Contato de emergência, condições, alergias, medicamentos |
+| **PDF** | Folhetos, manuais, bibliotecas de documentos | Um PDF para ler ou baixar, ou vários arquivos |
+| **Imagens** | Galerias e portfólios | Galeria de fotos |
+| **MP3 / Áudio** | Música, podcasts, mensagens de voz | Player de áudio |
+| **Vídeo** | Vídeos de produto, clipes | Vídeo |
+| **Playlist** | Mixes, tours em áudio, audiolivros | Várias faixas que tocam em sequência |
+| **Página personalizada** | Qualquer outra coisa | Uma página em branco ou um aviso |
+
+Onde o envio de arquivos não está configurado, os tipos baseados em upload (PDF, Imagens, MP3 / Áudio, Vídeo e Playlist) ficam ocultos no seletor.
+
+**Agendamentos** envia os pedidos de agendamento para as [respostas](/docs/forms-and-pages#responses) e as notificações da página, e pode apontar para a sua ferramenta de agendamento. Não mostra um calendário ao vivo com horários livres: você confirma cada pedido por conta própria.
+
+**Pagamentos e gorjetas** nunca processa um pagamento. Cada botão abre a página do próprio app de pagamento (PayPal, Venmo, Cash App, Revolut, Wise), e dados bancários, IDs UPI e endereços de carteira têm botões de copiar.
+
+As páginas **Plaqueta de pet** e **Ficha médica** podem ser lidas por qualquer pessoa que fizer a leitura do código. Adicione apenas o que ajuda quem encontrar o seu pet ou quem for ajudar você em uma emergência.
+
+## Edite e publique [#edit-and-publish]
+
+O editor tem três abas e uma prévia ao vivo do celular. Toque em um bloco na prévia para ir direto às configurações dele.
+
+- **Blocos**: adicione blocos com **Adicionar bloco**, reordene arrastando (ou com os botões de seta), oculte um bloco sem excluí-lo, duplique-o ou remova-o. Cada bloco tem o próprio formulário; os problemas (por exemplo, um link sem `https://`) são sinalizados no bloco e precisam ser corrigidos antes de publicar.
+- **Design**: use as cores de um dos seus [temas de QR salvos](/dashboard?to=themes) para que a página combine com o código impresso, escolha uma paleta pronta ou defina cada cor você mesmo. Escolha uma fonte, o raio dos cantos, um fundo sólido, em degradê ou com imagem e um logo opcional. **Combinar cores** gera cores legíveis de texto e de cartão a partir do seu fundo e da cor de destaque, e um aviso aparece quando o contraste do texto está baixo.
+- **Configurações**: a descrição e a imagem da prévia de compartilhamento, se os mecanismos de busca podem indexar a página (desativado por padrão) e CSS personalizado em Negócio.
+
+Clique em **Publicar** (ou pressione <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>S</kbd>) para colocar suas alterações no ar. Nada muda para os visitantes até você publicar; as edições não publicadas ficam guardadas no seu navegador, então você pode restaurá-las depois de fechar a aba. Cada publicação é guardada como uma versão. Se um colega publicar a mesma página enquanto você edita, o QRdx pede que você recarregue em vez de sobrescrever as alterações dele.
+
+## Blocos principais [#core-blocks]
+
+| Bloco | O que mostra |
+| --- | --- |
+| Cabeçalho de perfil | Foto ou logo, nome, bio e uma imagem de capa opcional |
+| Texto | Um título e um parágrafo (as quebras de linha são mantidas) |
+| Botão | Uma chamada para ação: um link da web, e-mail ou número de telefone |
+| Lista de links | Uma pilha de botões de link, com ícones de sites como Instagram, YouTube, WhatsApp e mais |
+| Ícones sociais | Perfis como ícones redondos, botões ou uma lista com cada usuário |
+| Imagem | Uma foto ou banner, com link opcional |
+| Vídeo | Um vídeo do YouTube, Vimeo ou Loom. Ele só carrega do site de vídeo depois que o visitante toca em reproduzir |
+| Cartão de contato | Nome, cargo, telefones, e-mails, site, endereço, ações rápidas (ligar, WhatsApp, e-mail, rotas), **Salvar contato** e **Compartilhar** |
+| Endereço e mapa | Seu endereço com rotas no Google Maps e no Apple Maps, e um mapa incorporado opcional |
+| Horário de funcionamento | Horários por dia (inclusive turnos divididos e horários que passam da meia-noite) com um selo **Aberto agora** no seu fuso horário |
+| Detalhes | Rótulos e valores em lista ou em uma grade de blocos (quartos, raça, tipo sanguíneo, peso líquido) |
+| Detalhes do produto | Certificações, ingredientes, alérgenos, uma tabela nutricional, seções que abrem ao toque e o GTIN ([saiba mais](/docs/product-pages)) |
+| Links de pagamento | PayPal, Venmo, Cash App, Revolut, Wise, UPI, transferência bancária e carteiras de cripto. Os botões abrem cada app; os dados têm botões de copiar. A página nunca processa o pagamento. |
+| Divisor, Espaçador | Auxiliares de layout |
+
+### vCard Plus e Salvar contato [#vcard-plus-and-save-contact]
+
+**Salvar contato** baixa um arquivo vCard 3.0 (`.vcf`) que os celulares abrem no app de contatos. Ele contém nome, empresa, cargo, telefones, e-mails, site, endereço, bio, os perfis sociais da página e a foto. As fotos enviadas para o armazenamento do QRdx são incorporadas ao arquivo; as fotos com link de outros sites entram como um link (o QRdx nunca baixa imagens de outros sites). **Compartilhar** abre a folha de compartilhamento do celular, ou copia o link da página no computador.
+
+## Planos [#plans]
+
+| | Grátis | Pro | Business |
+| --- | --- | --- | --- |
+| Páginas hospedadas | 3 | Ilimitadas | Ilimitadas |
+| Rodapé "Made with QRdx" | Exibido | Removido | Removido |
+| White-label (seu logo como ícone do navegador, sem a marca QRdx) | — | — | ✓ |
+| CSS personalizado | — | — | ✓ |
+
+Os limites só impedem que você crie novas páginas. As páginas que você já tem continuam funcionando em qualquer plano, inclusive depois de um downgrade; ao fazer downgrade do Business, o CSS personalizado simplesmente deixa de ser aplicado. Cada página também usa um dos QR codes dinâmicos do seu plano. Veja [Planos e limites](/docs/plans-and-limits).
+
+### CSS personalizado (Business) [#custom-css-business]
+
+Escreva CSS puro em **Configurações → CSS personalizado**. As regras só valem dentro da sua página: todo seletor é restrito ao conteúdo da página, e cada bloco pode ser alvo de `.lp-block-<type>`, por exemplo `.lp-block-links a` ou `.lp-block-contact h1`. Por segurança, o CSS não pode carregar arquivos (`url()`, `@import`, `@font-face`), não pode usar escapes com barra invertida e aceita somente as at-rules `@media`, `@supports`, `@container` e `@keyframes`.
+
+## O que os visitantes recebem [#what-visitors-get]
+
+- Páginas rápidas, renderizadas no servidor e feitas para celulares, sem scripts de analytics nem de chat do QRdx. Pixels de rastreamento só são carregados se você mesmo os adicionar ao código.
+- Ocultas dos mecanismos de busca, a menos que você ative **Mostrar nos mecanismos de busca**.
+- Prévias de compartilhamento (título, descrição, imagem) para apps de chat e redes sociais. QR codes protegidos por senha nunca revelam detalhes da página nas prévias.
+- Um pequeno link **Denunciar abuso** em todas as páginas, inclusive nas páginas white-label.
+
+A proteção por senha, as datas de início e fim, os limites de leitura e a pausa dos [controles do código](/docs/code-controls) valem também para a página e para o arquivo **Salvar contato**, mesmo quando alguém abre o link da página diretamente.

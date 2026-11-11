@@ -1,0 +1,45 @@
+---
+title: "O que o QRdx registra quando alguém faz uma leitura"
+description: "Os dados que a leitura de um código dinâmico registra, o que nunca é armazenado e por quanto tempo ficam guardados."
+---
+
+Só os códigos dinâmicos registram leituras. Um código estático guarda seu conteúdo diretamente e nunca passa pelo QRdx.
+
+## O que uma leitura registra [#what-a-scan-records]
+
+- País, região e cidade, calculados a partir da rede.
+- Tipo de dispositivo, sistema operacional e navegador.
+- O site de origem, se houver.
+- O idioma do navegador.
+- Qual versão o visitante viu, se um teste A/B estiver em andamento.
+- Um hash diário, com salt, do endereço de rede e do navegador, para que um visitante seja contado uma vez por dia.
+- A localização da pessoa, arredondada para cerca de 100 m, somente se o dono do código ativou a [localização precisa](/docs/precise-location) e quem leu o código permitiu isso no navegador. Nada é armazenado quando a pessoa recusa.
+
+## O que nunca é armazenado [#what-it-never-stores]
+
+O QRdx nunca armazena o endereço IP de quem faz a leitura. O hash acima não pode ser revertido para o endereço e muda todos os dias.
+
+Bots e pré-visualizações de links não são registrados.
+
+## Por quanto tempo as leituras ficam guardadas [#how-long-scans-are-kept]
+
+As leituras ficam guardadas enquanto o código existir. Seu plano define até quando você pode ver o histórico: 90 dias no Grátis, 3 anos no Pro e sem limite no Business.
+
+Excluir um código exclui suas leituras para sempre.
+
+## Cookies para quem faz a leitura [#cookies-for-people-who-scan]
+
+As páginas que quem lê o código vê, como links curtos e páginas para celular, não mostram banner de cookies e não carregam a análise nem o widget de suporte do QRdx.
+
+O QRdx define dois cookies nessas páginas. Um lembra por 6 horas a senha correta de um código. O outro vincula por 15 minutos uma página hospedada à leitura que a abriu, somente quando o código pede localização precisa, para que a localização compartilhada por quem leu seja adicionada a essa leitura. Os donos das páginas podem adicionar seus próprios pixels de análise às páginas nos planos pagos.
+
+## O leitor de QR code [#the-qr-code-scanner]
+
+O [leitor do QRdx](/scan) guarda o histórico de leituras somente no seu dispositivo.
+
+## Mais detalhes [#more-detail]
+
+- [Política de privacidade](/legal/privacy-policy)
+- [Política de cookies](/legal/cookie-policy)
+- [Subprocessadores](/legal/subprocessors)
+- [Acordo de processamento de dados](/legal/dpa)

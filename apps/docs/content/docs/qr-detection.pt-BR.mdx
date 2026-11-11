@@ -1,0 +1,152 @@
+---
+title: "Detecção de QR code"
+description: "Leia e decodifique QR codes a partir de imagens no navegador."
+icon: Scan
+---
+
+Leia e decodifique QR codes a partir de imagens enviadas.
+
+## Detecção básica [#basic-detection]
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function detectQR(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const img = new Image();
+      img.onload = async () => {
+        try {
+          const result = await handleImageLoad(img, 400, false);
+          if (result === "NO_QR") {
+            resolve("No QR code found");
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+```
+
+## Componente React [#react-component]
+
+```tsx
+import { useState } from 'react';
+import { handleImageLoad } from 'qrdx';
+
+export default function QRDetector() {
+  const [result, setResult] = useState('');
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const qrData = await detectQR(file);
+      setResult(qrData);
+    } catch (error) {
+      setResult(`Error: ${error.message}`);
+    }
+  };
+
+  return (
+    <div>
+      <input type="file" accept="image/*" onChange={handleFile} />
+      {result && <p>{result}</p>}
+    </div>
+  );
+}
+```
+
+## Parâmetros de detecção [#detection-parameters]
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,              // Processing size (recommended: 400)
+  returnFullData?: boolean   // Return full data or just text
+)
+```
+
+### Parâmetro de tamanho [#size-parameter]
+
+- **200-400** — Mais rápido, bom para imagens nítidas
+- **600+** — Melhor para QR codes pequenos ou danificados
+- **Recomendado** — 400 para a maioria dos casos
+
+## Resposta completa de dados [#full-data-response]
+
+Obtenha as informações completas da detecção:
+
+```tsx
+const fullData = await handleImageLoad(img, 400, true);
+// Returns:
+// {
+//   data: "https://example.com",
+//   binaryData: Uint8ClampedArray,
+//   location: { topLeftCorner, topRightCorner, ... },
+//   chunks: [...]
+// }
+```
+
+## Visualização de depuração [#debug-visualization]
+
+Baixe imagens com caixas delimitadoras:
+
+```tsx
+import { downloadImageWithBoundingBox } from 'qrdx';
+
+const fullData = await handleImageLoad(img, 400, true);
+if (fullData?.location) {
+  const boundingBox = [
+    fullData.location.topLeftCorner,
+    fullData.location.topRightCorner,
+    fullData.location.bottomRightCorner,
+    fullData.location.bottomLeftCorner,
+  ];
+  downloadImageWithBoundingBox(img, boundingBox, "debug.png");
+}
+```
+
+## Tratamento de erros [#error-handling]
+
+```tsx
+try {
+  const result = await handleImageLoad(img, 400, false);
+  if (result === "NO_QR") {
+    console.log("No QR code found");
+  } else {
+    console.log("QR data:", result);
+  }
+} catch (error) {
+  console.error("Detection failed:", error);
+}
+```
+
+## Quando usar [#when-to-use]
+
+- Processar imagens de QR code enviadas
+- Extrair dados de capturas de tela
+- Criar leitores de QR code
+- Verificar o conteúdo de QR codes
+- Depurar problemas em QR codes
+
+## Requisitos do navegador [#browser-requirements]
+
+- FileReader API
+- HTMLCanvasElement
+- ImageData e getImageData
+- Recursos do ES6+
+
+## Próximos passos [#next-steps]
+
+- [Utilitários](/docs/utilities) — Utilitários de detecção
+- [Downloads](/docs/features/downloads) — Exporte os dados detectados
+- [Referência da API](/docs/api-reference) — API de detecção completa

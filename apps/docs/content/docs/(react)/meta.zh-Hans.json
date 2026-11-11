@@ -1,0 +1,22 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "React 库",
+  "description": "qrdx 组件与 shadcn 注册表",
+  "icon": "Code",
+  "root": true,
+  "pages": [
+    "---快速开始---",
+    "../getting-started",
+    "../usage",
+    "---样式与导出---",
+    "../styles",
+    "...../features",
+    "---组件---",
+    "../developers/shadcn",
+    "...../components",
+    "---参考---",
+    "../api-reference",
+    "../utilities",
+    "../qr-detection"
+  ]
+}

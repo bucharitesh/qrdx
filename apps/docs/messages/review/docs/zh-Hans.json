@@ -1,0 +1,502 @@
+{
+  "(guides)/meta.json": {
+    "source": "3f96b0cec187",
+    "status": "machine"
+  },
+  "(react)/meta.json": {
+    "source": "f39f7612dd28",
+    "status": "machine"
+  },
+  "(self-hosting)/meta.json": {
+    "source": "0346eef0c1a6",
+    "status": "machine"
+  },
+  "api-reference.mdx": {
+    "source": "1a86b891af9b",
+    "status": "machine"
+  },
+  "client-portal.mdx": {
+    "source": "e751d5b63704",
+    "status": "machine"
+  },
+  "client-reports.mdx": {
+    "source": "81fd390efbd3",
+    "status": "machine"
+  },
+  "code-controls.mdx": {
+    "source": "0e257802de92",
+    "status": "machine"
+  },
+  "components/meta.json": {
+    "source": "bd4440f9a80a",
+    "status": "machine"
+  },
+  "components/qr-code-card.mdx": {
+    "source": "d69a08f01029",
+    "status": "machine"
+  },
+  "components/qr-code-download.mdx": {
+    "source": "d50f6275f526",
+    "status": "machine"
+  },
+  "components/qr-code-generator.mdx": {
+    "source": "378a4b369f75",
+    "status": "machine"
+  },
+  "components/qr-code-scanner.mdx": {
+    "source": "639d25a0d8e1",
+    "status": "machine"
+  },
+  "components/qr-code-share-dialog.mdx": {
+    "source": "6e986ab1cd95",
+    "status": "machine"
+  },
+  "components/qr-code.mdx": {
+    "source": "9dc032d49d03",
+    "status": "machine"
+  },
+  "components/vcard-qr-code.mdx": {
+    "source": "abaa0b546bbe",
+    "status": "machine"
+  },
+  "components/wifi-qr-code.mdx": {
+    "source": "ba6ebf7d9510",
+    "status": "machine"
+  },
+  "custom-domains.mdx": {
+    "source": "e5d93bfb84ca",
+    "status": "machine"
+  },
+  "developers/ai-agents.mdx": {
+    "source": "5bfff9eebeb6",
+    "status": "machine"
+  },
+  "developers/api-keys.mdx": {
+    "source": "88d634e0955f",
+    "status": "machine"
+  },
+  "developers/api/meta.json": {
+    "source": "8a4ae145eec7",
+    "status": "machine"
+  },
+  "developers/barcode-api.mdx": {
+    "source": "c2e8a24c3cfc",
+    "status": "machine"
+  },
+  "developers/build-an-integration.mdx": {
+    "source": "fac75b5093ce",
+    "status": "machine"
+  },
+  "developers/cli.mdx": {
+    "source": "ce4d18504c6a",
+    "status": "machine"
+  },
+  "developers/errors.mdx": {
+    "source": "eaf24098059d",
+    "status": "machine"
+  },
+  "developers/image-api.mdx": {
+    "source": "adb6c5eaf03d",
+    "status": "machine"
+  },
+  "developers/index.mdx": {
+    "source": "f0f0d2433a2f",
+    "status": "machine"
+  },
+  "developers/mcp.mdx": {
+    "source": "ac738cdada24",
+    "status": "machine"
+  },
+  "developers/meta.json": {
+    "source": "19c0a1c8ead7",
+    "status": "machine"
+  },
+  "developers/n8n.mdx": {
+    "source": "cc3d8f0b3966",
+    "status": "machine"
+  },
+  "developers/quickstart.mdx": {
+    "source": "39779f662581",
+    "status": "machine"
+  },
+  "developers/rest-api.mdx": {
+    "source": "beced47930c4",
+    "status": "machine"
+  },
+  "developers/shadcn.mdx": {
+    "source": "74ef1dd58552",
+    "status": "machine"
+  },
+  "discord-bot.mdx": {
+    "source": "3fc32b399824",
+    "status": "machine"
+  },
+  "dynamic-qr-codes.mdx": {
+    "source": "587194efb22c",
+    "status": "machine"
+  },
+  "features/art-qr.mdx": {
+    "source": "6af0e9d8a318",
+    "status": "machine"
+  },
+  "features/colors-gradients.mdx": {
+    "source": "c08dc46b4d5c",
+    "status": "machine"
+  },
+  "features/downloads.mdx": {
+    "source": "eecfa5081c7b",
+    "status": "machine"
+  },
+  "features/frames.mdx": {
+    "source": "984c29607483",
+    "status": "machine"
+  },
+  "features/logos.mdx": {
+    "source": "a273f8edf705",
+    "status": "machine"
+  },
+  "features/meta.json": {
+    "source": "941f17076e7f",
+    "status": "machine"
+  },
+  "features/patterns.mdx": {
+    "source": "751ee6974db7",
+    "status": "machine"
+  },
+  "features/templates.mdx": {
+    "source": "1921356e5c36",
+    "status": "machine"
+  },
+  "files.mdx": {
+    "source": "3d27ce46cbdb",
+    "status": "machine"
+  },
+  "forms-and-pages.mdx": {
+    "source": "acb048a3b64e",
+    "status": "machine"
+  },
+  "getting-started.mdx": {
+    "source": "f37d67de3c6b",
+    "status": "machine"
+  },
+  "help/account-and-billing/affiliate-program.mdx": {
+    "source": "810d6f835b6c",
+    "status": "machine"
+  },
+  "help/account-and-billing/cancel.mdx": {
+    "source": "42ca138b8ad5",
+    "status": "machine"
+  },
+  "help/account-and-billing/change-plan.mdx": {
+    "source": "0a6d993ff76c",
+    "status": "machine"
+  },
+  "help/account-and-billing/delete-your-account.mdx": {
+    "source": "0a0602279728",
+    "status": "machine"
+  },
+  "help/account-and-billing/export-your-data.mdx": {
+    "source": "a36f1b9a5c5b",
+    "status": "machine"
+  },
+  "help/account-and-billing/invoices.mdx": {
+    "source": "32ced6762159",
+    "status": "machine"
+  },
+  "help/account-and-billing/meta.json": {
+    "source": "e8069c442747",
+    "status": "machine"
+  },
+  "help/account-and-billing/never-hostage.mdx": {
+    "source": "71b7da0290bd",
+    "status": "machine"
+  },
+  "help/account-and-billing/pay-by-invoice.mdx": {
+    "source": "25970e7c9578",
+    "status": "machine"
+  },
+  "help/account-and-billing/plans.mdx": {
+    "source": "11e1c15a872d",
+    "status": "machine"
+  },
+  "help/account-and-billing/sign-in.mdx": {
+    "source": "848afba91691",
+    "status": "machine"
+  },
+  "help/contact.mdx": {
+    "source": "045c7d5b1881",
+    "status": "machine"
+  },
+  "help/designing/art.mdx": {
+    "source": "3960de42933c",
+    "status": "machine"
+  },
+  "help/designing/colors-and-contrast.mdx": {
+    "source": "e68f34eec300",
+    "status": "machine"
+  },
+  "help/designing/frames.mdx": {
+    "source": "b4f7a677f30e",
+    "status": "machine"
+  },
+  "help/designing/logos.mdx": {
+    "source": "3d743f309348",
+    "status": "machine"
+  },
+  "help/designing/meta.json": {
+    "source": "2cdf3e8f17b5",
+    "status": "machine"
+  },
+  "help/designing/save-a-design.mdx": {
+    "source": "388259cae004",
+    "status": "machine"
+  },
+  "help/designing/scan-score.mdx": {
+    "source": "5e6a6d3d3f37",
+    "status": "machine"
+  },
+  "help/domains/custom-domains.mdx": {
+    "source": "7630a75622ca",
+    "status": "machine"
+  },
+  "help/domains/meta.json": {
+    "source": "34f40a46f14b",
+    "status": "machine"
+  },
+  "help/dynamic-codes/archive-and-delete.mdx": {
+    "source": "d284d5b6decd",
+    "status": "machine"
+  },
+  "help/dynamic-codes/change-the-link.mdx": {
+    "source": "d303630d8aac",
+    "status": "machine"
+  },
+  "help/dynamic-codes/change-the-type.mdx": {
+    "source": "4b929303ebdf",
+    "status": "machine"
+  },
+  "help/dynamic-codes/create.mdx": {
+    "source": "9db9913c257d",
+    "status": "machine"
+  },
+  "help/dynamic-codes/import.mdx": {
+    "source": "1b531b5d95c0",
+    "status": "machine"
+  },
+  "help/dynamic-codes/meta.json": {
+    "source": "385b3f21e9d7",
+    "status": "machine"
+  },
+  "help/dynamic-codes/password.mdx": {
+    "source": "fea999b3b881",
+    "status": "machine"
+  },
+  "help/dynamic-codes/pause-schedule-limit.mdx": {
+    "source": "2c2525e73696",
+    "status": "machine"
+  },
+  "help/dynamic-codes/routing.mdx": {
+    "source": "0021f3b22368",
+    "status": "machine"
+  },
+  "help/dynamic-codes/scans.mdx": {
+    "source": "a6459065128b",
+    "status": "machine"
+  },
+  "help/getting-started/download-and-print.mdx": {
+    "source": "f092a1798ab9",
+    "status": "machine"
+  },
+  "help/getting-started/first-qr-code.mdx": {
+    "source": "f1087c5f8b12",
+    "status": "machine"
+  },
+  "help/getting-started/meta.json": {
+    "source": "5fdb2a9a17ce",
+    "status": "machine"
+  },
+  "help/getting-started/static-vs-dynamic.mdx": {
+    "source": "adb7d83f6840",
+    "status": "machine"
+  },
+  "help/index.mdx": {
+    "source": "9424fb801030",
+    "status": "machine"
+  },
+  "help/meta.json": {
+    "source": "98a31b31756b",
+    "status": "machine"
+  },
+  "help/pages-and-forms/create-a-page.mdx": {
+    "source": "af05f5788edd",
+    "status": "machine"
+  },
+  "help/pages-and-forms/forms.mdx": {
+    "source": "fb1203d6bd7f",
+    "status": "machine"
+  },
+  "help/pages-and-forms/meta.json": {
+    "source": "e1aac9a1a753",
+    "status": "machine"
+  },
+  "help/privacy-and-security/account-security.mdx": {
+    "source": "b980c9c3ea7f",
+    "status": "machine"
+  },
+  "help/privacy-and-security/meta.json": {
+    "source": "3aa19e89b861",
+    "status": "machine"
+  },
+  "help/privacy-and-security/passkeys.mdx": {
+    "source": "30d4c5be6200",
+    "status": "machine"
+  },
+  "help/privacy-and-security/report-abuse.mdx": {
+    "source": "44f5cc26bbf3",
+    "status": "machine"
+  },
+  "help/privacy-and-security/scan-data.mdx": {
+    "source": "111f7cdc97d0",
+    "status": "machine"
+  },
+  "help/privacy-and-security/two-step-verification.mdx": {
+    "source": "b3e2c70a3f3a",
+    "status": "machine"
+  },
+  "help/teams/audit-log.mdx": {
+    "source": "e02fb7d70f4a",
+    "status": "machine"
+  },
+  "help/teams/create-and-invite.mdx": {
+    "source": "d06b1738c7d7",
+    "status": "machine"
+  },
+  "help/teams/meta.json": {
+    "source": "136986768993",
+    "status": "machine"
+  },
+  "help/teams/require-two-step-verification.mdx": {
+    "source": "aa2832b4fe2b",
+    "status": "machine"
+  },
+  "help/teams/roles.mdx": {
+    "source": "e5ed665b2e52",
+    "status": "machine"
+  },
+  "help/teams/seats.mdx": {
+    "source": "401f4f851ced",
+    "status": "machine"
+  },
+  "help/teams/single-sign-on.mdx": {
+    "source": "f3fb1f4ec575",
+    "status": "machine"
+  },
+  "help/troubleshooting/emails.mdx": {
+    "source": "f25be57e4184",
+    "status": "machine"
+  },
+  "help/troubleshooting/error-pages.mdx": {
+    "source": "360906cf0afe",
+    "status": "machine"
+  },
+  "help/troubleshooting/meta.json": {
+    "source": "d902736d106a",
+    "status": "machine"
+  },
+  "help/troubleshooting/wont-scan.mdx": {
+    "source": "43e9cb836593",
+    "status": "machine"
+  },
+  "help/troubleshooting/wrong-destination.mdx": {
+    "source": "004555cab107",
+    "status": "machine"
+  },
+  "help/whats-new.mdx": {
+    "source": "43dad45698e8",
+    "status": "machine"
+  },
+  "index.mdx": {
+    "source": "c584b61bf311",
+    "status": "machine"
+  },
+  "landing-pages.mdx": {
+    "source": "aacd46593aff",
+    "status": "machine"
+  },
+  "meta.json": {
+    "source": "ae8cda98ce69",
+    "status": "machine"
+  },
+  "migrate.mdx": {
+    "source": "06fa10cc4a4a",
+    "status": "machine"
+  },
+  "nfc.mdx": {
+    "source": "e6a4ec36f404",
+    "status": "machine"
+  },
+  "notifications.mdx": {
+    "source": "132532d90bf2",
+    "status": "machine"
+  },
+  "plans-and-limits.mdx": {
+    "source": "8c805d953dc7",
+    "status": "machine"
+  },
+  "precise-location.mdx": {
+    "source": "4b2a7cbe3af3",
+    "status": "machine"
+  },
+  "product-pages.mdx": {
+    "source": "2ba133e07125",
+    "status": "machine"
+  },
+  "qr-detection.mdx": {
+    "source": "fd54d6aa4e95",
+    "status": "machine"
+  },
+  "self-hosting.mdx": {
+    "source": "d53496d2103e",
+    "status": "machine"
+  },
+  "short-links-and-file-pickers.mdx": {
+    "source": "4ddd81df147d",
+    "status": "machine"
+  },
+  "slack-bot.mdx": {
+    "source": "2f612b88f758",
+    "status": "machine"
+  },
+  "smart-routing.mdx": {
+    "source": "78fca9c833b6",
+    "status": "machine"
+  },
+  "styles.mdx": {
+    "source": "d0ea089a62aa",
+    "status": "machine"
+  },
+  "teams.mdx": {
+    "source": "90bf492080d1",
+    "status": "machine"
+  },
+  "telegram-bot.mdx": {
+    "source": "561fc758806f",
+    "status": "machine"
+  },
+  "tracking-and-conversions.mdx": {
+    "source": "ff747a211bf0",
+    "status": "machine"
+  },
+  "usage.mdx": {
+    "source": "2111b24add8f",
+    "status": "machine"
+  },
+  "utilities.mdx": {
+    "source": "40385e9a9f9c",
+    "status": "machine"
+  },
+  "webhooks.mdx": {
+    "source": "7b7ae150c33c",
+    "status": "machine"
+  }
+}

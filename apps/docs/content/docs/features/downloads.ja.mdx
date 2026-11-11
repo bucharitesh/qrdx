@@ -1,0 +1,234 @@
+---
+title: "ダウンロード"
+description: "QRコードをPNG、JPG、WebP、SVG、PDF、ベクターEPSで書き出したり、クリップボードにコピーしたり、データURLとして取得したりできます。"
+icon: Download
+---
+
+QRコードをPNG、JPG、WebP、SVG、PDF、EPSで書き出せます。
+
+## クイックダウンロード [#quick-download]
+
+```tsx
+import { downloadQRCode, PRESET_SIZES } from 'qrdx';
+
+await downloadQRCode(
+  {
+    value: "https://example.com",
+    size: 1024,
+    fgColor: "#000000",
+    bgColor: "#ffffff",
+  },
+  {
+    format: "png",
+    size: PRESET_SIZES.large,
+    filename: "my-qrcode.png"
+  }
+);
+```
+
+## 対応フォーマット [#supported-formats]
+
+### PNG [#png]
+Webに最適で、透過に対応しています。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  {
+    format: "png",
+    size: { width: 512, height: 512 },
+    filename: "qrcode.png"
+  }
+);
+```
+
+### JPG [#jpg]
+ファイルサイズは小さくなりますが、背景は単色のみです。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "jpg", size: { width: 512, height: 512 }, filename: "qrcode.jpg" }
+);
+```
+
+### WebP [#webp]
+PNGと同じピクセルをより小さなファイルで出力でき、Webサイト向けです。WebPはデフォルトでロスレスのため、モジュールの端が正確に保たれ、透明な背景も透明のままです。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "webp", size: { width: 512, height: 512 }, filename: "qrcode.webp" }
+);
+```
+
+ブラウザーのキャンバスがロスレスWebPを書き出せる場合(ChromeとEdgeが該当)は、ブラウザーがファイルを作成します。書き出せない場合は、qrdxがバイト列を確認し、内蔵の小さなロスレスエンコーダーでピクセルを自らエンコードします。Safariがその一例で、WebPを要求してもPNGを返します。どちらの場合でも、`.webp`ファイルは必ずWebPです。
+
+`quality`(0〜1)を指定すると、ブラウザーが対応していれば、代わりにサイズの小さい非可逆ファイルを要求できます。非可逆WebPではモジュールの端や色が少しぼやけるため、遠くからスキャンするコードにはデフォルトのままご利用ください。`getQRAsWebP`はファイルを`Blob`として返します。
+
+```tsx
+import { getQRAsWebP } from "qrdx";
+
+const lossless = await getQRAsWebP({ value: "https://example.com", size: 1024 });
+const lossy = await getQRAsWebP({ value: "https://example.com", size: 1024 }, { quality: 0.9 });
+```
+
+### SVG [#svg]
+印刷に最適で、いくらでも拡大できます。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "svg", size: { width: 512, height: 512 }, filename: "qrcode.svg" }
+);
+```
+
+### PDF [#pdf]
+業務用ドキュメントに適しています。PDFの書き出しにはオプションの`jspdf`パッケージ(`npm i jspdf`)が必要です。未インストールの場合、PDFのダウンロードは分かりやすいエラーをスローします。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 1024 },
+  { format: "pdf", size: { width: 1024, height: 1024 }, filename: "qrcode.pdf" }
+);
+```
+
+### EPS [#eps]
+印刷会社やデザインツール(Illustrator、CorelDRAW、InDesign)向けのベクターPostScriptです。追加パッケージは不要です。ここでは`size.width`の単位はポイント(1インチあたり72)なので、このファイルの幅は512ptです。
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "eps", size: { width: 512, height: 512 }, filename: "qrcode.eps" }
+);
+```
+
+物理的なサイズを正確に指定するには、`getQRAsEPS`を使います。EPSを文字列として返します。コードの幅は`sizeMm`(デフォルトは50 mm)で、フレームはその外側に加わります。
+
+```tsx
+import { getQRAsEPS } from "qrdx";
+
+const eps = await getQRAsEPS(
+  { value: "https://example.com" },
+  { sizeMm: 40, bleedMm: 3, colorMode: "cmyk" }
+);
+```
+
+EPSは透過とトリムマークに対応していません。線形グラデーションと放射状グラデーションは、なめらかなPostScript Level 3のシェーディングとして出力されます。PNGとJPEGのロゴは埋め込まれます。
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+角度グラデーションは、細いくさび形を扇状に並べて出力されます。透ける色は背景と混ぜ合わされ、背景は白い紙と混ぜ合わされます。EPSは[画像塗りつぶし](/docs/features/colors-gradients#image-fills)を扱えません。`getQRAsEPS`は`EPS_IMAGE_FILL_REASON`をスローし、ダウンロードダイアログではPDF、SVG、PNGが代わりに提示されます。
+
+## プリセットサイズ [#preset-sizes]
+
+```tsx
+import { PRESET_SIZES } from 'qrdx';
+
+PRESET_SIZES.small    // 200x200
+PRESET_SIZES.medium   // 400x400
+PRESET_SIZES.large    // 800x800
+PRESET_SIZES.xlarge   // 1200x1200
+PRESET_SIZES["2xl"]   // 1600x1600
+PRESET_SIZES["3xl"]   // 2000x2000
+```
+
+### サイズの目安 [#size-recommendations]
+
+- **小(200px)** — SNSのサムネイル
+- **中(400px)** — 標準的なWeb利用
+- **大(800px)** — 高品質なWeb利用
+- **特大(1200px)** — 印刷物
+- **2特大(1600px)** — 大判印刷
+- **3特大(2000px)** — 最高品質
+
+## 高度なオプション [#advanced-options]
+
+### データURLの取得 [#get-data-url]
+
+```tsx
+import { getQRCodeDataUrl } from 'qrdx';
+
+const dataUrl = await getQRCodeDataUrl(
+  { value: "https://example.com", size: 512 },
+  "png",
+  { width: 512, height: 512 }
+);
+```
+
+### クリップボードにコピー [#copy-to-clipboard]
+
+```tsx
+import { copyQRCodeToClipboard } from 'qrdx';
+
+await copyQRCodeToClipboard(
+  { value: "https://example.com" },
+  { width: 512, height: 512 }
+);
+```
+
+### SVG文字列の取得 [#get-svg-string]
+
+```tsx
+import { getSVGString } from 'qrdx';
+
+const svgString = await getSVGString({
+  value: "https://example.com",
+  size: 512
+});
+```
+
+## 一括ダウンロード [#batch-downloads]
+
+複数のQRコードをダウンロードします。
+
+```tsx
+const qrCodes = [
+  {
+    props: { value: "https://example.com", size: 512 },
+    options: { format: "png", size: { width: 512, height: 512 }, filename: "site.png" }
+  },
+  {
+    props: { value: "tel:+1234567890", size: 512 },
+    options: { format: "svg", size: { width: 512, height: 512 }, filename: "phone.svg" }
+  }
+];
+
+for (const qr of qrCodes) {
+  await downloadQRCode(qr.props, qr.options);
+}
+```
+
+## エラー処理 [#error-handling]
+
+```tsx
+try {
+  await downloadQRCode(
+    { value: "https://example.com", size: 512 },
+    { format: "png", size: { width: 512, height: 512 }, filename: "qr.png" }
+  );
+} catch (error) {
+  console.error("Download failed:", error);
+}
+```
+
+## フォーマットの選び方 [#format-selection]
+
+- **PNG** — 最高品質、ファイルは大きめ、透過対応
+- **JPG** — ファイルは小さめ、透過非対応
+- **WebP** — PNGの品質と透過を、より小さなファイルで実現。Webサイト向け
+- **SVG** — 拡大縮小が自由、ファイルが小さい、Web・印刷向け
+- **PDF** — 業務用ドキュメント向け、ファイルは大きめ
+- **EPS** — 印刷会社やデザインツール向けのベクター印刷用ファイル
+
+## サイズの最適化 [#size-optimization]
+
+- **Web利用** — 256〜512px、PNGまたはWebP
+- **印刷** — 1024px以上、PDFまたはPNG
+- **モバイル** — 256px、最適化済み
+- **メール** — 200〜300px、バランス重視
+
+## 次のステップ [#next-steps]
+
+- [使い方](/docs/usage) — 基本的な生成方法を学ぶ
+- [テンプレート](/docs/features/templates) — スタイル付きQRコードをダウンロードする
+- [APIリファレンス](/docs/api-reference) — ダウンロードAPIの詳細

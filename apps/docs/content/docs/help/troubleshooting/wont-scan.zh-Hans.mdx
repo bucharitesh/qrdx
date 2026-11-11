@@ -1,0 +1,44 @@
+---
+title: "二维码无法扫描"
+description: "二维码无法扫描的原因，以及各种情况的解决方法。"
+---
+
+如果手机相机对你的二维码没有反应，或只是偶尔才能识别，请按以下步骤逐项检查。
+
+先看 [Playground](/playground) 中预览下方的**扫描评分**。点击它即可查看哪些检查未通过。参见[用扫描评分检查设计](/docs/help/designing/scan-score)。
+
+对于已经印刷出来的二维码，可以拍一张照片，放进[扫描检测工具](/tools/scan-checker)。它会显示二维码的内容，并测试其识别效果。
+
+## 常见原因 [#common-causes]
+
+### 对比度低，或深色背景上的浅色二维码 [#low-contrast-or-light-on-dark]
+
+扫描器查找的是浅色背景上的深色方块。请把二维码颜色调深，或把背景调浅，并避免在深色背景上使用浅色二维码。参见[选择易于扫描的颜色](/docs/help/designing/colors-and-contrast)。
+
+### Logo 遮挡过多 [#a-logo-covers-too-much]
+
+在**设计**选项卡中，将**纠错级别**设为**高**。参见[添加 Logo](/docs/help/designing/logos)。
+
+### 不常见的定位点形状 [#unusual-eye-shapes]
+
+圆形和卷曲边角的定位点在某些扫描应用中无法识别。方形、圆角和齿轮形定位点在所有应用中都能正常识别。
+
+### 没有清晰的边距 [#no-clear-border]
+
+扫描器需要二维码周围有空白区域。将**内边距**设为**标准**或**大**，并且不要让其他图案接触二维码。
+
+### 印刷尺寸过小 [#printed-too-small]
+
+二维码的大小应约为扫描距离的十分之一：在 20 cm 处读取的名片用 2 cm，在 1 m 处读取的海报用 10 cm。[印刷尺寸计算器](/tools/print-size)可以帮你算出具体数值。
+
+### 内容过多 [#too-much-content]
+
+存放大量文字的静态二维码会变得密集，尺寸较小时难以识别。请改用动态二维码：它只存放一个简短的链接。参见[静态还是动态](/docs/help/getting-started/static-vs-dynamic)。
+
+### 印刷本身的问题 [#the-print-itself]
+
+印刷模糊、表面光滑反光，以及弯曲或折叠的表面，都会让二维码更难识别。请以矢量文件（SVG、EPS，或来自**可直接印刷**的 PDF）进行印刷，并在大批量印刷前先测试一份样品。
+
+## 能扫描，但显示错误 [#it-scans-but-shows-an-error]
+
+如果相机能读取二维码，但你看到的页面显示“未找到二维码”之类的内容，请参见[扫描后显示错误页面](/docs/help/troubleshooting/error-pages)。

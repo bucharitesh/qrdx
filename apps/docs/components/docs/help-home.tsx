@@ -3,16 +3,19 @@
 
 import Link from "fumadocs-core/link";
 import { ArrowRight, Messages2, SearchNormal1, Sms } from "iconsax-reactjs";
+import { getLocale, getTranslations } from "next-intl/server";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { siteConfig } from "@/config/site";
+import { localizeHref } from "@/lib/i18n/paths";
 import { HelpSearchTrigger } from "./help-search-trigger";
 
 /** Large search box: opens the same search dialog as ⌘K. */
-export function HelpSearch() {
+export async function HelpSearch() {
+  const t = await getTranslations("docs.help");
   return (
     <HelpSearchTrigger className="not-prose group flex w-full items-center gap-3 rounded-xl border bg-fd-card px-4 py-3.5 text-start text-fd-muted-foreground shadow-xs transition-colors hover:border-fd-foreground/20 hover:text-fd-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fd-ring">
       <SearchNormal1 aria-hidden className="size-5 shrink-0" />
-      <span className="flex-1 text-base">Search help and docs</span>
+      <span className="flex-1 text-base">{t("search")}</span>
       <kbd className="hidden rounded-md border bg-fd-muted px-1.5 py-0.5 font-mono text-xs sm:inline">
         ⌘K
       </kbd>
@@ -23,7 +26,12 @@ export function HelpSearch() {
 const githubIssues = `${siteConfig.links.github}/issues`;
 
 /** "Still stuck?": the ways to reach a person, with the help figure. */
-export function StillStuck() {
+export async function StillStuck() {
+  const locale = await getLocale();
+  const t = await getTranslations({
+    locale,
+    namespace: "docs.help.stillStuck",
+  });
   const email = siteConfig.links.email;
   return (
     <section
@@ -36,11 +44,10 @@ export function StillStuck() {
             className="text-lg font-semibold tracking-tight text-fd-foreground"
             id="still-stuck"
           >
-            Still stuck?
+            {t("title")}
           </h2>
           <p className="text-sm text-fd-muted-foreground text-pretty">
-            Tell us what you were trying to do and what happened. Include the
-            code's short link if it's about a code.
+            {t("body")}
           </p>
         </div>
         <ul className="flex flex-col gap-2.5 text-sm">
@@ -55,10 +62,7 @@ export function StillStuck() {
           </li>
           <li className="flex items-start gap-2 text-fd-muted-foreground">
             <Messages2 aria-hidden className="mt-0.5 size-4 shrink-0" />
-            <span>
-              The support widget on qrdx.dev, once you allow Functionality
-              cookies.
-            </span>
+            <span>{t("widget")}</span>
           </li>
           <li>
             <a
@@ -68,15 +72,15 @@ export function StillStuck() {
               target="_blank"
             >
               <ArrowRight aria-hidden className="size-4 shrink-0" />
-              Report a bug on GitHub
+              {t("github")}
             </a>
           </li>
         </ul>
         <Link
           className="text-sm font-medium text-fd-foreground underline decoration-fd-foreground/30 underline-offset-4 hover:decoration-fd-foreground"
-          href="/docs/help/contact"
+          href={localizeHref("/docs/help/contact", locale)}
         >
-          All the ways to contact us
+          {t("contact")}
         </Link>
       </div>
       <HairlineFigure

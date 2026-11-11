@@ -1,0 +1,64 @@
+---
+title: "Generador de códigos QR"
+description: "Un campo de texto con vista previa en vivo del código QR, estilos predefinidos y botones de descarga."
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## Instalación [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## Uso [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+La vista previa se actualiza mientras escribes. Cada botón de estilo predefinido muestra una pequeña muestra de su estilo, y las descargas usan el estilo seleccionado a 1024 píxeles.
+
+## Ejemplos [#examples]
+
+### Estilos predefinidos personalizados [#custom-presets]
+
+Sustituye los estilos predefinidos integrados por los tuyos. Un estilo predefinido consta de un `id`, un `name` y un `style` con cualquier opción de qrdx, incluidos degradados, logotipos y el `level` de corrección de errores.
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+Los estilos predefinidos integrados se exportan como `QR_CODE_PRESETS`, así que puedes ampliarlos:
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### Guardar el resultado [#saving-the-result]
+
+`onChange` informa del texto y del estilo predefinido seleccionado en cada cambio, por ejemplo para guardar la elección del usuario:
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## Referencia de la API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

@@ -1,0 +1,78 @@
+---
+title: "Localização precisa e geofencing"
+description: "Peça às pessoas que fazem a leitura de um QR code dinâmico que compartilhem a localização, veja onde ele foi lido com precisão de cerca de 100 m e direcione as leituras por área."
+icon: MapPin
+---
+
+Todo [QR code dinâmico](/docs/dynamic-qr-codes) registra o país, a região e a cidade de cada leitura a partir da rede. No Pro e no Business, você também pode pedir que quem faz a leitura compartilhe a localização precisa. Quem permite aparece na análise do código como pontos arredondados para cerca de 100 m, e o [roteamento inteligente](/docs/smart-routing) pode enviar essas pessoas para destinos diferentes, dependendo de onde estão.
+
+O pedido fica desativado em todos os códigos até você ativá-lo, e cada pessoa decide por conta própria no navegador.
+
+## Ative o recurso [#turn-it-on]
+
+Abra o código no [painel](/dashboard?to=codes), vá até a aba **Configurações** e ative **Pedir localização precisa a quem fizer a leitura** no painel **Localização precisa**. Funciona para códigos que abrem um link de site e para códigos que abrem uma página hospedada.
+
+Com a [REST API](/docs/developers/rest-api), envie `PATCH /v1/codes/{id}` com `{"preciseLocation": true}`. Os códigos informam essa configuração no campo `preciseLocation`.
+
+## O que quem faz a leitura vê [#what-scanners-see]
+
+**Códigos que abrem um link de site** mostram uma etapa curta "Compartilhar sua localização?" antes de abrir o link, com **Permitir** e **Pular**. Permitir abre o pedido de localização do próprio navegador. Essa etapa nunca impede alguém de chegar ao seu link:
+
+- Pular abre o link imediatamente.
+- Se a pessoa recusar no navegador, ou o navegador não conseguir encontrar a localização, o link abre.
+- Se não houver localização 8 segundos depois de tocar em Permitir, o link abre mesmo assim.
+- Um navegador que já negou para o site pula a etapa sozinho, e um que já permitiu compartilha sem um segundo toque.
+- Sem JavaScript, o link abre na hora.
+
+A etapa mostra o nome do site de destino e um link para a política de privacidade.
+
+**Códigos que abrem uma página hospedada** abrem a página imediatamente, como de costume. Depois que ela carrega, o navegador pede a localização na própria página; a página nunca espera por uma resposta. O pedido só aparece logo após uma leitura, nunca quando alguém abre o endereço da página diretamente.
+
+Com a configuração desativada, nada muda: as leituras vão direto ao destino, sem etapa extra.
+
+## O que é armazenado [#whats-stored]
+
+Quando alguém permite, o navegador arredonda a localização para 3 casas decimais (cerca de 100 m) antes de enviá-la, e o QRdx arredonda de novo antes de armazená-la com aquela leitura, junto com a precisão informada pelo navegador. Posições exatas nunca chegam ao QRdx.
+
+Nada é armazenado quando alguém pula ou recusa. A leitura continua sendo contada, com país, região e cidade vindos da rede, como sempre.
+
+As localizações precisas são mantidas pelo mesmo tempo que o restante das leituras do código, e o seu plano define até quando no passado você consegue vê-las. Veja [O que o QRdx registra quando alguém faz uma leitura](/docs/help/privacy-and-security/scan-data).
+
+## Na análise [#in-analytics]
+
+A aba **Análises** do código tem um cartão **Localizações precisas**, separado dos países e cidades baseados em IP. Ele mostra quantas pessoas receberam o pedido, quantas compartilharam a localização e que porcentagem isso representa, e depois cada ponto compartilhado com o número de leituras, a precisão média e a leitura mais recente. Ordene a tabela por qualquer um desses itens e abra um ponto no OpenStreetMap para ver onde ele fica.
+
+A exportação em CSV tem as colunas `latitude`, `longitude`, `location_accuracy_m` e `location_source`. `location_source` é `gps` para uma localização compartilhada, `ip` quando o código pediu mas a pessoa não compartilhou, e vazio quando o código não pediu. [`GET /v1/codes/{id}/scans`](/docs/developers/api/get-code-scans) retorna os mesmos campos por leitura, além de um resumo `preciseLocations`.
+
+Links de análise compartilhados (**Compartilhar análises** no menu de um código) nunca mostram localizações precisas. Eles ficam no nível de país.
+
+## Direcione leituras por área [#route-scans-by-area]
+
+No painel **Roteamento inteligente** do código, adicione uma regra com uma condição de **Área**: um ponto central e um raio entre 100 m e 500 km. Para obter o centro, clique com o botão direito em um lugar em um app de mapas e copie as coordenadas (por exemplo, `40.7580, -73.9855`), ou use **Usar minha localização** enquanto estiver no local. **Ver no mapa** abre o ponto no OpenStreetMap.
+
+O QRdx verifica a área com a melhor localização que tiver para aquela leitura:
+
+1. A localização que a pessoa compartilhou na etapa, quando a localização precisa está ativada e ela permitiu.
+2. Caso contrário, a localização aproximada do endereço IP. No qrdx.dev, ela vem da geolocalização de IP da Vercel e geralmente é o centro da cidade ou da região da pessoa, então serve para raios de vários quilômetros. Ela é usada para direcionar a leitura e nunca é armazenada.
+
+Quando nenhuma das duas está disponível, as condições de área não correspondem, e as condições de área "não é" correspondem. Cópias auto-hospedadas que não rodam na Vercel não têm coordenadas de IP, então as regras de área nelas só funcionam com localizações compartilhadas.
+
+**Teste suas regras** tem um campo **Localização**, para você conferir para onde iria uma leitura feita de qualquer ponto.
+
+### Somente dentro de uma área [#only-inside-an-area]
+
+Para mostrar algo apenas a quem está em um lugar, como um evento ou uma loja:
+
+1. Adicione uma regra com uma condição de Área ao redor do lugar e defina o URL dela como o conteúdo para quem está lá.
+2. Defina o destino principal do código como uma página para todas as outras pessoas, por exemplo uma que diga que a oferta só está disponível no local.
+
+Ative também a localização precisa, para que uma localização compartilhada pela pessoa decida, com precisão de cerca de 100 m. Sem ela, quem decide é a localização por IP, que só chega ao nível da cidade.
+
+Os navegadores permitem que as pessoas falsifiquem a localização, então uma regra de área não é controle de acesso. Use uma [senha](/docs/code-controls) para qualquer coisa que precise continuar privada.
+
+## Bom saber [#good-to-know]
+
+- Bots, pré-visualizações de links e requisições HEAD nunca veem a etapa; eles recebem o redirecionamento normal.
+- Códigos com senha não mostram a etapa: depois da senha correta, a leitura vai direto ao destino.
+- As contagens de teste A/B de uma divisão por trás de uma condição de Área são estimativas, porque as leituras não armazenam qual localização a regra usou.
+- Se o seu workspace passar para o plano Grátis, o QRdx para de pedir localizações precisas. As regras de área salvas continuam funcionando com a localização por IP, e desativar a configuração nunca exige um plano.

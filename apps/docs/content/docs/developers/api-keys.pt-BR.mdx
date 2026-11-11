@@ -1,0 +1,61 @@
+---
+title: "Chaves de API"
+description: "Crie uma chave de API qrdx_ em Configurações → Chaves de API e apps e use-a para chamar a REST API. Escopos, workspaces e funções, expiração, último uso e revogação."
+icon: LockKeyhole
+---
+
+Uma chave de API permite que seus próprios servidores, scripts e jobs de CI chamem a [REST API](/docs/developers/rest-api) sem passar por um fluxo OAuth. Envie a chave no cabeçalho `Authorization`:
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+Todo endpoint que aceita um token de acesso OAuth aceita uma chave no mesmo cabeçalho, e a [Image API](/docs/developers/image-api) não precisa de nenhum dos dois. Quando o seu produto age em nome de outros usuários do QRdx, use um [app OAuth](/docs/developers/build-an-integration), para que cada pessoa o aprove.
+
+## Criar uma chave [#create-a-key]
+
+1. Abra [Configurações → Chaves de API e apps](/dashboard?to=settings/developers&new=1) no workspace para o qual a chave será usada. O link abre o último workspace que você usou; escolha outro no seletor de workspace.
+2. Escolha **Criar chave**. Dê a ela o nome do lugar onde ela vai rodar, escolha o acesso e, se quiser, quando ela expira. Uma chave funciona sem você, então o QRdx pede que você [confirme que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) antes, a menos que você já tenha feito isso nesse navegador nos últimos 10 minutos.
+3. Copie a chave. Ela é exibida uma única vez: o QRdx guarda apenas um hash dela, então ela não pode ser exibida de novo. A mesma janela mostra uma requisição curl com a chave e o endereço da API deste site já preenchidos, pronta para colar.
+
+Uma chave é `qrdx_` seguido de 40 letras e dígitos. As listas mostram só o início dela, como `qrdx_7KpQ2m…`, para você distinguir as chaves.
+
+## Acesso [#access]
+
+As chaves usam os mesmos escopos dos apps OAuth. Escolha uma de três opções ao criar a chave:
+
+| Acesso | Escopos | Permite |
+| --- | --- | --- |
+| Acesso total | `profile:read`, `themes:read`, `codes:read`, `codes:write` | Tudo o que a API faz |
+| Somente leitura | `profile:read`, `themes:read`, `codes:read` | Ler códigos, análises de leitura, temas e o perfil |
+| Personalizado | Os que você escolher | O que esses escopos permitem ([a lista de escopos](/docs/developers/rest-api#get-an-access-token)) |
+
+`codes:write` também permite tudo o que `codes:read` permite. Os escopos de uma chave não podem ser alterados depois; crie uma nova chave. Uma requisição fora dos escopos da chave recebe `403 INSUFFICIENT_SCOPE`, e a mensagem indica o escopo necessário.
+
+## Workspaces e funções [#workspaces-and-roles]
+
+Uma chave pertence ao workspace que estava aberto quando você a criou e age ali como você:
+
+- A chave trabalha com os códigos, leituras, hooks e temas desse workspace, de acordo com o plano do workspace e a [cota diária](/docs/developers/rest-api#rate-limits).
+- Ela pode fazer o que você pode fazer no workspace, conforme sua [função](/docs/teams) no momento de cada requisição. No seu próprio workspace, você é o proprietário. Se sua função mudar, os direitos da chave mudam junto; se você sair do workspace, a chave deixa de funcionar, e excluir um workspace exclui as chaves dele.
+
+Todo membro de um workspace pode criar chaves. Proprietários e administradores veem todas as chaves do workspace e podem revogar qualquer uma; membros veem e revogam apenas as próprias. `GET /v1/me` retorna o perfil da pessoa que criou a chave.
+
+## Expiração, último uso e revogação [#revoke]
+
+- **Expiração.** Uma chave nunca expira, ou expira após 30 dias, 90 dias ou 1 ano. Uma chave expirada recebe `401 INVALID_TOKEN` e continua na lista, marcada como **Expirada**, até você revogá-la.
+- **Último uso.** A lista mostra a data em que cada chave autenticou uma requisição pela última vez.
+- **Revogação.** Escolha **Revogar** ao lado de uma chave. A partir daí, as requisições com ela recebem `401 INVALID_TOKEN`. A revogação não pode ser desfeita.
+
+Cada pessoa pode ter até 25 chaves ativas em cada workspace. Chaves revogadas e expiradas não contam.
+
+## Mantenha as chaves seguras [#keep-keys-safe]
+
+- Guarde a chave em um servidor: em uma variável de ambiente ou em um gerenciador de segredos. Nunca a coloque em uma página web, em um app mobile, em um prompt ou em um repositório.
+- Use uma chave para cada lugar onde ela roda, para poder revogar uma sem quebrar as outras.
+- Dê uma chave somente leitura aos scripts que só geram relatórios, e dê aos jobs de curta duração uma chave que expire.
+- Se uma chave vazar, revogue-a e crie uma nova. O prefixo `qrdx_` facilita a busca de chaves em código e logs.
+
+## Auto-hospedagem [#self-hosting]
+
+Uma instância [auto-hospedada](/docs/self-hosting) precisa da tabela `api_key` no banco de dados, que a sincronização de esquema habitual após uma atualização cria (o serviço `migrate` com Docker, `bun run db:push` nos outros casos; veja [atualização](/docs/self-hosting)). Enquanto ela não existir, Configurações → Chaves de API e apps informa que as chaves de API não estão disponíveis e a API recusa chaves com `401`. A API dela fica em `/api/v1` no próprio domínio, que é o endereço que a janela de nova chave preenche.

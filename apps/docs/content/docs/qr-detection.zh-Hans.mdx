@@ -1,0 +1,152 @@
+---
+title: "二维码检测"
+description: "在浏览器中读取并解码图片中的二维码。"
+icon: Scan
+---
+
+读取并解码已上传图片中的二维码。
+
+## 基本检测 [#basic-detection]
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function detectQR(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const img = new Image();
+      img.onload = async () => {
+        try {
+          const result = await handleImageLoad(img, 400, false);
+          if (result === "NO_QR") {
+            resolve("No QR code found");
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+```
+
+## React 组件 [#react-component]
+
+```tsx
+import { useState } from 'react';
+import { handleImageLoad } from 'qrdx';
+
+export default function QRDetector() {
+  const [result, setResult] = useState('');
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const qrData = await detectQR(file);
+      setResult(qrData);
+    } catch (error) {
+      setResult(`Error: ${error.message}`);
+    }
+  };
+
+  return (
+    <div>
+      <input type="file" accept="image/*" onChange={handleFile} />
+      {result && <p>{result}</p>}
+    </div>
+  );
+}
+```
+
+## 检测参数 [#detection-parameters]
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,              // Processing size (recommended: 400)
+  returnFullData?: boolean   // Return full data or just text
+)
+```
+
+### 尺寸参数 [#size-parameter]
+
+- **200-400** — 速度更快，适合清晰的图片
+- **600+** — 更适合较小或已损坏的二维码
+- **推荐值** — 大多数情况下使用 400
+
+## 完整数据响应 [#full-data-response]
+
+获取完整的检测信息：
+
+```tsx
+const fullData = await handleImageLoad(img, 400, true);
+// Returns:
+// {
+//   data: "https://example.com",
+//   binaryData: Uint8ClampedArray,
+//   location: { topLeftCorner, topRightCorner, ... },
+//   chunks: [...]
+// }
+```
+
+## 调试可视化 [#debug-visualization]
+
+下载带有边界框的图片：
+
+```tsx
+import { downloadImageWithBoundingBox } from 'qrdx';
+
+const fullData = await handleImageLoad(img, 400, true);
+if (fullData?.location) {
+  const boundingBox = [
+    fullData.location.topLeftCorner,
+    fullData.location.topRightCorner,
+    fullData.location.bottomRightCorner,
+    fullData.location.bottomLeftCorner,
+  ];
+  downloadImageWithBoundingBox(img, boundingBox, "debug.png");
+}
+```
+
+## 错误处理 [#error-handling]
+
+```tsx
+try {
+  const result = await handleImageLoad(img, 400, false);
+  if (result === "NO_QR") {
+    console.log("No QR code found");
+  } else {
+    console.log("QR data:", result);
+  }
+} catch (error) {
+  console.error("Detection failed:", error);
+}
+```
+
+## 适用场景 [#when-to-use]
+
+- 处理已上传的二维码图片
+- 从截图中提取数据
+- 构建二维码扫描器
+- 验证二维码内容
+- 调试二维码问题
+
+## 浏览器要求 [#browser-requirements]
+
+- FileReader API
+- HTMLCanvasElement
+- ImageData 和 getImageData
+- ES6+ 特性
+
+## 后续步骤 [#next-steps]
+
+- [工具函数](/docs/utilities) — 检测工具函数
+- [下载](/docs/features/downloads) — 导出检测到的数据
+- [API 参考](/docs/api-reference) — 完整的检测 API

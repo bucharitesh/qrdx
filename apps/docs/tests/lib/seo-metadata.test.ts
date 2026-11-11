@@ -158,7 +158,7 @@ describe("Organization schema", () => {
     for (const layout of [
       "app/(app)/(home)/layout.tsx",
       "app/[lang]/(home)/layout.tsx",
-      "app/(app)/(docs)/docs/layout.tsx",
+      "app/[lang]/docs/layout.tsx",
       "app/(app)/playground/layout.tsx",
     ]) {
       expect(readFileSync(join(APP, layout), "utf8")).toContain(

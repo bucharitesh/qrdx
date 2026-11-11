@@ -43,6 +43,7 @@ const OPTIONS: PricingOptions = {
   emailAlerts: isFeatureAvailable("email"),
   sso: isFeatureAvailable("sso"),
   auditLog: isFeatureAvailable("auditLog"),
+  invoiceRequests: isFeatureAvailable("invoiceRequests"),
 };
 
 /** What the plan cards (a client component) read from the catalog. */
@@ -56,6 +57,8 @@ const PRICING_CARD_NAMESPACES = [
   "pricing.cards",
   "pricing.selfHost",
   "pricing.footnote",
+  // Agency tools: the pay-by-invoice dialog on the Business card
+  "pricing.invoice",
 ];
 
 /** The pricing copy in this page's language. */

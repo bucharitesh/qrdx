@@ -1,0 +1,163 @@
+---
+title: "Barcode API"
+description: "EAN、UPC、Code 128、Data Matrix などのバーコード画像を、APIキーなしでURLから生成できます。REST APIを使えば、ワークスペースにバーコードを保存することもできます。"
+icon: Barcode
+---
+
+`GET https://api.qrdx.dev/v1/barcode` はバーコード画像を返します。指定はすべてクエリ文字列に含まれるため、URLそのものが画像になります。`<img>` タグ、商品フィード、ラベルテンプレートにそのまま使えます。[バーコードジェネレーター](/barcode-generator)と同じ {facts.barcodeFormats} 種類のフォーマットを同じルールで描画し、同じSVGを返します。
+
+```html
+<img
+  src="https://api.qrdx.dev/v1/barcode?format=ean13&data=590123412345"
+  alt="EAN-13 barcode 5901234123457"
+/>
+```
+
+この番号は1桁足りないため、チェックディジット（7）が追加されます。13桁すべてを送った場合は、チェックディジットが検証されます。誤っていると `400` が返され、正しい値が示されます。
+
+アカウントもAPIキーも不要です。ワークスペースにバーコードを保存して後から編集するには、[保存済みバーコード](#saved-barcodes)を使ってください。
+
+## 例 [#examples]
+
+1モジュールあたり3ピクセルのPNG（シェルが `&` をそのまま扱えるよう、URLは引用符で囲みます）:
+
+```bash
+curl -o box.png "https://api.qrdx.dev/v1/barcode?format=ean13&data=5901234123457&type=png&scale=3"
+```
+
+GS1-128の物流ラベルをベクターPDFで出力する例です。各Application Identifierはかっこで囲みます:
+
+```bash
+curl -o pallet.pdf "https://api.qrdx.dev/v1/barcode?format=gs1-128&type=pdf&data=(01)09501101530003(17)261231(10)AB-123"
+```
+
+`&`、`#`、`+`、スペースを含む値は、JavaScriptの `encodeURIComponent` などでエンコードしてください。
+
+濃紺のCode 128棚札で、バーの下の文字なし、90°回転した例:
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=code128&data=SHELF-A12&fg=1e3a8a&text=false&rotate=90
+```
+
+余白を広くしたData Matrix:
+
+```txt
+https://api.qrdx.dev/v1/barcode?format=datamatrix&data=SN-0042-7781&quietZone=4
+```
+
+## パラメーター [#parameters]
+
+| パラメーター | デフォルト | 説明 |
+| --- | --- | --- |
+| `format` | 必須 | バーコードの種類。[フォーマット](#formats)を参照してください。大文字小文字やダッシュは区別されず、`EAN-13` でも使えます |
+| `data` | 必須 | エンコードする数字またはテキスト。最大1,000文字（多くの線形フォーマットではこれより少なくなります） |
+| `type` | `svg` | `svg`、`png`、`jpg`、`webp`、`avif`、`pdf`、`eps` |
+| `scale` | `4` | PNG、JPG、WebP、AVIFでの1モジュールあたりのピクセル数。`1`〜`10` |
+| `height` | フォーマットにより異なる | ベクターサイズでの線形バーコードのバーの高さ（ミリメートル）。`5`〜`60`（EAN-13は23） |
+| `quietZone` | フォーマットの最小値 | モジュール単位の余白。線形バーコードでは左右それぞれ（`0`〜`20`）、2Dコードでは四方すべて（`0`〜`10`） |
+| `text` | `true` | 線形バーコードの下に数字またはテキストを表示します |
+| `fg` | `000000` | バーと文字の色（16進数） |
+| `bg` | `ffffff` | 背景色（16進数） |
+| `rotate` | `0` | 時計回りの回転。`0`、`90`、`180`、`270` |
+
+色は `#` を付けずに書くか、`%23` としてエンコードしてください。
+
+## フォーマット [#formats]
+
+| `format` | バーコード | 受け付ける値 |
+| --- | --- | --- |
+| `ean13` | EAN-13 | 12桁（チェックディジットを追加）または13桁（検証） |
+| `ean8` | EAN-8 | 7桁または8桁 |
+| `upca` | UPC-A | 11桁または12桁 |
+| `upce` | UPC-E | 6〜8桁、または短縮可能な12桁のUPC-A |
+| `itf14` | ITF-14 | 13桁または14桁 |
+| `gs1-128` | GS1-128 | かっこで囲んだApplication Identifierとその値。GTINとSSCCのチェックディジットは追加または検証されます。データは最大48文字 |
+| `code128` | Code 128 | 印字可能なASCII文字で最大80文字 |
+| `code39` | Code 39 | 大文字、数字、スペース、`- . $ / + %` で最大40文字 |
+| `datamatrix` | Data Matrix | 最大1,000文字までの任意のテキスト |
+| `pdf417` | PDF417 | 最大1,000文字までの任意のテキスト |
+| `aztec` | Aztec | 最大1,000文字までの任意のテキスト |
+
+小売用の番号（EAN、UPC、ITF-14、GS1-128のGTIN）は、GS1が企業にライセンスしています。このAPIは有効な番号であれば何でも描画しますが、番号の発行や登録は行いません。
+
+## サイズ [#sizes]
+
+PNG、JPG、WebP、AVIFは、最も細いバーの幅である1モジュールが `scale` ピクセルになります。2Dのセルは幅2モジュールです。
+
+SVG、PDF、EPSは1モジュールあたり1ポイント（0.353 mm）のベクターのため、デフォルトのEAN-13は公称サイズの約107%で印刷されます。ベクターファイルはレイアウト側で拡大縮小してください。小売用バーコードでは80%〜200%の範囲に収め、バーの高さを削らないでください。
+
+## レスポンス [#responses]
+
+リクエストが成功すると、次のヘッダーとともにファイルが返されます。
+
+- ファイル形式に応じた `Content-Type`。EPSはダウンロード（`Content-Disposition: attachment`）として返され、それ以外は `ean13-5901234123457.png` のようなファイル名でインライン表示されます
+- `Cache-Control: public, max-age=31536000, immutable`: 同じクエリは常に同じバイト列を返します
+- `Access-Control-Allow-Origin: *`: どのWebサイトからでも `fetch` できます
+
+パラメーターが不足または無効な場合や、フォーマットで扱えない値の場合は `400` が返され、問題点が示されます:
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Invalid query parameters",
+  "data": {
+    "details": [
+      {
+        "param": "data",
+        "message": "EAN-13: The check digit should be 7, not 8. Check the number, or leave the last digit off and it's worked out for you."
+      }
+    ]
+  },
+  "status": 400
+}
+```
+
+## 値をURLに含めない [#keep-the-value-out-of-the-url]
+
+`POST https://api.qrdx.dev/v1/barcode` は同じフィールドをJSONで受け取り、同じファイルをキャッシュなしで返します。URLのようにログ、履歴、キャッシュに値を残したくない場合に使ってください:
+
+```bash
+curl -o label.png https://api.qrdx.dev/v1/barcode \
+  -H "Content-Type: application/json" \
+  -d '{"format":"datamatrix","data":"Internal note 42","type":"png"}'
+```
+
+JSONでは、`text` はブール値、`scale`、`height`、`quietZone`、`rotate` は数値です。
+
+## 保存済みバーコード [#saved-barcodes]
+
+[APIキー](/docs/developers/api-keys)を使うと、REST APIがキーのワークスペースにバーコードを保存します。保存したバーコードはダッシュボードの **Barcodes** に表示されます。スコープはコードと同じで、一覧取得とダウンロードには `codes:read`、変更には `codes:write` が必要です。
+
+```bash
+curl https://api.qrdx.dev/v1/barcodes \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"format":"ean13","value":"590123412345","title":"Spring box"}'
+```
+
+| エンドポイント | 内容 |
+| --- | --- |
+| [`GET /v1/barcodes`](/docs/developers/api/list-barcodes) | 更新が新しい順に一覧表示します。`q`、`format`、`folderId`、`status=trash` で絞り込めます |
+| [`POST /v1/barcodes`](/docs/developers/api/create-barcode) | 1件保存します。`options` には `foreground`、`background`、`showText`、`barHeightMm`、`quietZone`、`scale`、`rotation` を指定できます |
+| [`GET /v1/barcodes/{id}`](/docs/developers/api/get-barcode) | バーコード1件を取得します |
+| [`PATCH /v1/barcodes/{id}`](/docs/developers/api/update-barcode) | タイトル、フォーマット、値、オプション、フォルダーを変更します |
+| [`DELETE /v1/barcodes/{id}`](/docs/developers/api/delete-barcode) | ゴミ箱に移動します。`?permanent=true` を付けると完全に削除します |
+| [`GET /v1/barcodes/{id}/image`](/docs/developers/api/get-saved-barcode-image) | 保存した設定のまま描画したファイル。`type` と `scale` は上記と同じです |
+
+保存した各バーコードには `imageUrl` があります。これは `GET /v1/barcode` と同じ画像で、リンクを知っていれば誰でも読み込めます。`/image` エンドポイントは非公開で、キーが必要です。
+
+バーコードの保存はすべてのプランで利用できます。上限はゴミ箱を除き、フリーが1,000件、Proが10,000件、Businessが100,000件です。これらのリクエストはワークスペースの1日あたりのAPIクォータに含まれ、[REST API](/docs/developers/rest-api)と同様に `X-RateLimit-*` ヘッダーが返されます。
+
+## MCP [#mcp]
+
+[MCPサーバー](/docs/developers/mcp)には、値を検証してPNGと画像URLを返す `generate_barcode` と、接続中のAPIキーのワークスペースに保存する `save_barcode` があります。
+
+## 制限 [#limits]
+
+- **レート制限:** `GET` および `POST /v1/barcode` は、[QR画像API](/docs/developers/image-api)と同じく、IPアドレスごとに1分あたり300リクエストです。制限を超えると `429` と `Retry-After` ヘッダーが返されます。保存済みバーコードには、REST APIの1分あたりの制限と1日のクォータが適用されます。
+- **画像サイズ:** ラスター画像は一辺が最大6,000ピクセルです。長い値には `scale` を小さくしてください。
+- **ここではスキャン確認を行いません。** [バーコードジェネレーター](/barcode-generator)はダウンロード前に描画結果をデコードして確認しますが、APIは指定された内容をそのまま描画します。試し刷りをして、実際に読み取るスキャナーでスキャンしてください。
+
+## セルフホスティング [#self-hosting]
+
+エンドポイントはQRdxのWebアプリに含まれているため、[セルフホスト](/docs/self-hosting)したインスタンスでは、自分のドメインの `/api/v1/barcode` と `/api/v1/barcodes` で利用できます。

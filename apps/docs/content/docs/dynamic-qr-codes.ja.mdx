@@ -1,0 +1,187 @@
+---
+title: "動的QRコード"
+description: "QRコードを一度印刷すれば、あとからリンク先を変更でき、スキャン回数も確認できます。"
+icon: QrCode
+---
+
+動的QRコードには、最終的なURLではなく、`https://qrdx.dev/q/aB3dE5f` のような短縮リンクがエンコードされます。スキャンすると短縮リンクが開き、設定した遷移先にリダイレクトされます。遷移先はいつでも変更できるため、印刷済みのコードが古くなることはなく、スキャンはすべてカウントされます。
+
+Playgroundや `qrdx` ライブラリで作成する静的QRコードは、これまでどおり無料で無制限に利用できます。動的コードにはQRdxアカウントが必要です。
+
+## 動的コードを作成する [#create-a-dynamic-code]
+
+- **ダッシュボード:** [ダッシュボード](/dashboard)を開き、**New code** をクリックして、遷移先のURLと任意のタイトルを入力します。コードはPNG、WebP、SVGでダウンロードできます。
+- **Playground:** コンテンツタイプで **URL** を選び、リンクを入力して **Make it dynamic** をオンにします。QRコードが短縮リンクに切り替わり、デザインはそのまま維持されます。その後URLを編集した場合は、**Point it to the new URL** をクリックして遷移先を更新します。**Save design to code** を押すと、現在のデザインがコードに保存されます。
+
+遷移先は `http://` または `https://` のリンクである必要があります。ユーザー名やパスワードを含むリンク、および他のQRdx短縮リンクへのリンクは拒否されます。
+
+## カスタムバックハーフ [#custom-back-halves]
+
+コードにはそれぞれ、`/q/` の後ろの部分として、ランダムな7文字のバックハーフが割り当てられます。ProとBusinessでは、`https://qrdx.dev/q/spring-menu` のように、任意のバックハーフを指定できます。コードの作成時または編集時に **Custom back-half** を入力すると、入力中にそのバックハーフが使用可能かどうかがダイアログに表示されます。
+
+- 3〜64文字で、使用できるのは英字、数字、`-`、`_` です。先頭と末尾を `-` にすることはできません。
+- 自動生成されたものと同様に、バックハーフは大文字と小文字を区別します。`Spring-Menu` と `spring-menu` は別のリンクになります。
+- `qrdx.dev` では、バックハーフはQRdx全体で一意である必要があります。また、QRdxのページと紛らわしい語(`admin`、`api`、`docs`、`login`、`pricing`、`settings` など)は予約されています。
+- ご自身の[カスタムドメイン](/docs/custom-domains)では、そのドメイン内で一意であればよく、予約されているのは `api`、`p`、`q` のみです。そのため `go.yourbrand.com/pricing` も使えます。このようなバックハーフはドメインに属するため、`qrdx.dev/q/` のリンクはありません。
+- コードのバックハーフを変更すると、リンクも変わります。以前のバックハーフで印刷したQRコードは動作しなくなるため、コードをダウンロードし直してください。
+
+## コードを管理する [#manage-codes]
+
+ダッシュボードでは、次の操作ができます。
+
+- **Edit link:** 遷移先やタイトルを変更します。印刷済みのコードはそのまま使え、次回のスキャンから新しい遷移先が開きます。
+- **Change type:** ウェブサイトへのリンクを[ホスト型ページ](/docs/landing-pages)に、ページをリンクに、またはページを別のページタイプに切り替えます。短縮リンクとスキャン履歴は維持されます。詳しくは[印刷済みコードの遷移先を変更する](/docs/help/dynamic-codes/change-the-type)をご覧ください。
+- **Edit design in playground:** コードをエディタで開きます。短縮リンクとの関連付けは維持されます。
+- **Archive:** コードを復元するまで、短縮リンクには「無効になりました」というページが表示されます。アーカイブしたコードはプランの上限にカウントされません。
+- **Move to trash:** 短縮リンクには「無効になりました」というページ(HTTP 410)が表示され、コードはプランの上限にカウントされなくなります。**Trash** から復元するか、そこで完全に削除できます。完全に削除するとスキャン履歴も消え、その後は短縮リンクに「QRコードが見つかりません」というページが表示されます。API経由の削除(`DELETE /v1/codes/{id}`)は、実行した時点で即座に完全削除されます。
+- **Duplicate:** 遷移先、デザイン、フォルダ、タグ、メモを、新しい短縮リンクを持つ新しいコードにコピーします。スキャン履歴はコピーされません。
+- **Version history:** すべての変更がコードのページに記録されます。バージョンを復元すると、先に現在の設定が保存されるため、復元は元に戻せます。
+
+## コードを整理する [#organize-codes]
+
+- **フォルダ:** 最大5階層までネストできます。コードをフォルダにドラッグするか、**Move to folder** を使います。フォルダを削除すると、そのコードとサブフォルダは1階層上に移動します。
+- **タグ:** 複数のタグで絞り込むと、そのすべてを持つコードが表示されます。
+- **お気に入りとメモ:** コードにスターを付けたり、非公開のメモを残したりできます。メモは検索の対象になります。
+- **検索**は、タイトル、遷移先、メモ、タグ、バックハーフが対象です(短縮リンクを貼り付けると、そのコードを探せます)。
+- **一括操作:** コードを選択して、移動、タグ付け、一時停止、アーカイブ、お気に入り登録、ゴミ箱への移動ができます。また、PNG、WebP、SVGファイルのZIPとしてダウンロードすることもできます。
+- **CSVインポート:** **Codes → Import** では、1つのCSVから最大{facts.importRows}件の動的コードを作成できます(遷移先、タイトル、フォルダ、タグ、および `slug` 列の任意のカスタムバックハーフ)。すべてのコードを1つのフォルダにまとめたり、全コードにタグを追加したりすることもできます。長時間のインポートは一時停止でき、ページの再読み込みや接続の切断後も、コードが重複して作成されることなく再開されます。最後に、結果のCSV(各行の短縮リンク)と、PNGまたはSVGのコードをまとめたZIPが出力されます。2行以上のインポートとカスタムバックハーフにはProが必要です。
+
+コードは、作成したワークスペースに属します。ワークスペースのメンバーは全員、コードを作成および編集できます。メンバーは自分のコードを削除でき、オーナーと管理者はワークスペース内のすべてのコードを削除できます。
+
+<Callout type="info">
+  コードが使えなくなることはありません。プランをダウングレードしても、既存のコードが無効になることはありません。上限を超えている間も、コードの編集とアーカイブはできますが、上限を下回るまでは新規作成や復元はできません。
+</Callout>
+
+## プラン [#plans]
+
+| | フリー | Pro | Business |
+| --- | --- | --- | --- |
+| 有効な動的コード | 10 | 無制限 | 無制限 |
+| スキャン | 無制限 | 無制限 | 無制限 |
+| スキャン履歴 | 90日間 | 3年間 | 無制限 |
+| APIによる一括作成 | 不可 | 1リクエストあたり最大{facts.apiBatchCodes}件 | 1リクエストあたり最大{facts.apiBatchCodes}件 |
+
+ワークスペースのコードには、オーナーが持つプランのうち最も上位のものが適用されます。各プランに含まれるその他の内容については、[プランと制限](/docs/plans-and-limits)をご覧ください。
+
+## スキャン分析 [#scan-analytics]
+
+各コードには分析ページがあり、直近7日間、30日間、90日間、1年間、3年間(プランの履歴期間まで)について、時系列のスキャン数、ユニーク訪問者数、上位の国と都市、デバイス、OS、ブラウザ、リファラーを確認できます。選択した期間のスキャンはCSVでエクスポートできます。
+
+スキャンごとに記録される内容は次のとおりです。
+
+- 時刻(UTC)。ホスティングプラットフォームから提供される場合は、国、地域、都市も記録されます(qrdx.devではVercelのgeoヘッダー)
+- デバイスの種類、OS、ブラウザ(ユーザーエージェントから判別)
+- リファラーのホスト名のみ。完全なURLは記録されません。ほとんどのQRコードのスキャンにはリファラーがありません。
+- 訪問者ハッシュ:IPアドレス、ユーザーエージェント、日付にソルトを加えたSHA-256です。1日ごとのユニーク訪問者数のカウントに使われ、IPアドレス自体は保存されません。
+- ProとBusinessで、コードが[正確な位置情報を要求](/docs/precise-location)し、スキャンした人が許可した場合:小数点以下3桁(約100 m)に丸めた位置情報と、ブラウザが報告した精度
+
+既知のボット、リンクプレビュー、ブラウザのプリフェッチはカウントされません。
+
+## REST API [#rest-api]
+
+`https://api.qrdx.dev/v1/codes` 配下で、コードをプログラムから管理できます。リクエストの認証には、[APIキー](/docs/developers/api-keys)、または `codes:read` か `codes:write` のスコープを持つ OAuth アクセストークン（`Authorization: Bearer <key or token>`）を使います。取得方法は [REST API](/docs/developers/rest-api) を参照してください。キーは作成したワークスペースに対して動作し、トークンを使ったリクエストはご自身のワークスペースに対して動作します。サインイン済みのブラウザセッションからのリクエストも使え、ダッシュボードで最後に開いたワークスペースに対して動作します。
+
+| メソッド | パス | 説明 |
+| --- | --- | --- |
+| `GET` | `/v1/codes` | コードを一覧表示します。クエリ: `status`（`active`、`archived`、`all`）、`q`、`limit`（100以下）、`offset` |
+| `POST` | `/v1/codes` | コードを1件、または最大100件の配列で作成します（配列は Pro が必要です）。本文: `destinationUrl`、任意で `title`、`style`、`domainId`、`slug` |
+| `GET` | `/v1/codes/{id}` | コードを1件取得します |
+| `PATCH` | `/v1/codes/{id}` | `destinationUrl`、`title`、`style`、`domainId`（[カスタムドメイン](/docs/custom-domains)）、`slug`、`archived` を更新します。また、`kind` を `redirect` と `page` の間で切り替えられます |
+| `DELETE` | `/v1/codes/{id}` | コードとそのスキャンを削除します |
+| `GET` | `/v1/codes/{id}/scans` | `range`（`7d`、`30d`、`90d`、`365d`、`1095d`。プランの履歴期間が上限）の分析データを取得します。個別のスキャンを取得するには `limit`（500以下）を、次のページには `before`（最後の `scannedAt`）を追加します |
+
+コードを作成します。
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'
+```
+
+```json
+{
+  "data": {
+    "id": "cm3x...",
+    "slug": "aB3dE5f",
+    "shortLink": "https://qrdx.dev/q/aB3dE5f",
+    "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+    "domain": null,
+    "destinationUrl": "https://example.com/menu",
+    "title": "Spring menu",
+    "contentType": "url",
+    "kind": "redirect",
+    "pageId": null,
+    "status": "active",
+    "style": null,
+    "scanCount": 0,
+    "lastScannedAt": null,
+    "archivedAt": null,
+    "createdAt": "2026-10-31T12:00:00.000Z",
+    "updatedAt": "2026-10-31T12:00:00.000Z",
+    "organizationId": null
+  }
+}
+```
+
+`slug` を渡すと、バックハーフを指定できます（Pro と Business。ルールは[カスタムバックハーフ](#custom-back-halves)を参照）。`domainId` を指定した場合はそのドメイン上で、指定しない場合は `qrdx.dev` 上で重複が確認されます。
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
+```
+
+レスポンスには `"slug": "spring-menu"` と `"shortLink": "https://qrdx.dev/q/spring-menu"` が含まれます。カスタムドメイン上で選んだバックハーフは、そのドメインにしか存在しないため、`"defaultShortLink": null` になります。配列では、すべての `slug` が異なっている必要があります。
+
+### 1回のリクエストで多数のコードを作成する [#many-codes-in-one-request]
+
+Pro と Business では、最大 {facts.apiBatchCodes} 件のコードを配列で送信できます。自動生成されるバックハーフは、バッチ内で重複することも、既存のコードと衝突することもありません。Google Web Risk が時間内に確認できなかったリンクは、バッチの作成直後に再度確認され、リンクが登録されていたコードは無効になります（[リンクの安全性チェック](/docs/code-controls#safety-checks-on-links)）。バッチはすべて成功するか、すべて失敗するかのどちらかです。いずれかの行に問題（無効な宛先、使用済みまたは予約済みの `slug`、安全でないリンク）がある場合は何も作成されず、エラーの `data.details` に、配列内での行の位置（0始まり）を示す `index` とともにすべての問題が一覧で返されます。
+
+バッチごとに一意の値（UUID など）を `Idempotency-Key` ヘッダーに指定して送信してください。リクエストがタイムアウトしたり接続が切れたりした場合は、同じキーで同じリクエストを再送します。すると、最初の試行で作成されたコードが `Idempotent-Replayed: true` ヘッダー付きで返されます。途中で中断された試行は、コードが二重に作成されることなく最後まで完了します。
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: 6f1c2a9e-spring-tables" \
+  -H "Prefer: return=minimal" \
+  -d '[{"destinationUrl": "https://example.com/table/1", "title": "Table 1"},
+       {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
+```
+
+各コードはデザイン付きで返されます。ワークスペースのデフォルトテーマにロゴが埋め込まれている場合、大きなバッチではデータ量が膨らみます。`Prefer: return=minimal` を送信すると、`style` を除いた形（ID、スラッグ、リンク、宛先、タイトル、ステータス、作成日時）で各コードが返されます。レスポンスが 4 MB に収まらないバッチは、何も作成される前に `PAYLOAD_TOO_LARGE` で拒否されます。
+
+宛先を変更します。
+
+```bash
+curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/summer-menu"}'
+```
+
+`style` には、Playground と同じデザインのフィールド（`fgColor`、`bgColor`、`bodyPattern`、`cornerEyePattern`、`level` など）を指定できます。ロゴを使う場合は、`logoIcon`<IfAvailable feature="fileStorage"> またはアップロード済みファイルの `logoFileId`</IfAvailable> を送信します（[コードのスタイルに含めるロゴ](/docs/developers/rest-api#code-logos)）。`shortLink` は、たとえば [`qrdx` ライブラリ](/docs/getting-started)や [Image API](/docs/developers/image-api) を使って、QRコードにエンコードしてください。
+
+エラーは単一の JSON 形式 `{ "code": "...", "message": "...", "status": 400 }` で返されます。解決方法を説明するページがある場合は、`docs` リンクも付きます。
+
+| ステータス | コード | 発生条件 |
+| --- | --- | --- |
+| 400 | `VALIDATION_ERROR`、`INVALID_SLUG` | 本文またはクエリが無効です（詳細は `data` に含まれ、バッチでは `index` ごとに示されます）。または、`slug` がルールに違反しているか予約済みです |
+| 401 | `UNAUTHORIZED`、`INVALID_TOKEN` | `Authorization: Bearer` トークンがない、または無効、期限切れ、失効済みです（[トークンの取得](/docs/developers/rest-api#get-an-access-token)） |
+| 402 | `LIMIT_REACHED`、`PLAN_REQUIRED` | プランの有効コード数の上限を超えています。または、Pro なしで一括作成やカスタム `slug` を使用しています |
+| 403 | `INSUFFICIENT_SCOPE`、`FORBIDDEN` | トークンに必要なスコープがないか、ワークスペースのロールでは実行できない操作です |
+| 404 | `NOT_FOUND` | コードが存在しないかご自身のものではない、またはそのエンドポイントが存在しません |
+| 409 | `SLUG_TAKEN` | 別のコードがすでにその `slug` を使用しています（`qrdx.dev` 上、またはカスタムドメイン上） |
+| 429 | `RATE_LIMITED` | リクエストが多すぎます。`Retry-After` ヘッダーの時間が経過してから再試行してください |
+
+## セルフホスティング [#self-hosting]
+
+動的QRコードは、セルフホストしたインスタンスでも動作します。
+
+- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` で、短縮リンクのオリジンを設定します。デフォルトはアプリのURLです。
+- `SCAN_HASH_SALT` で、訪問者のハッシュに使うシークレットソルトを設定します。未設定の場合は、`BETTER_AUTH_SECRET` から生成されます。
+- 国、地域、市区町村は Vercel のジオヘッダーから取得されます。Cloudflare の背後では国のみ取得でき（`CF-IPCountry`）、それ以外の環境では位置情報は不明と表示されます。
+- スキャンした人が位置情報を共有しなかった場合、エリアルールは Vercel の IP 座標（`x-vercel-ip-latitude`、`x-vercel-ip-longitude`）を使います。それ以外の環境では、位置情報が共有されたスキャンにのみ一致します。
+- レート制限は、Upstash Redis を設定している場合に適用されます。

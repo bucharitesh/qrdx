@@ -1,0 +1,152 @@
+---
+title: "基本用法"
+description: "使用 QRCode 组件渲染二维码，然后调整其颜色、图案、徽标、模板和纠错级别。"
+icon: FileCode
+---
+
+按需创建并自定义二维码。
+
+<NpmStatus package="qrdx" />
+
+## 基础二维码 [#basic-qr-code]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+/>
+```
+
+## 自定义颜色 [#customize-colors]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#ffffff"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+## 添加图案 [#add-patterns]
+
+可选择 {facts.bodyPatterns} 种主体图案、{facts.eyeShapes} 种角落定位眼图案和 {facts.eyeCentres} 种角落定位眼圆点图案：
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+/>
+```
+
+共有 {facts.bodyPatterns} 种主体图案，从 `square`、`rounded` 和 `circle`，到相连的 `liquid` 和 `classy` 风格，再到活泼的 `star` 或 `heart` 圆点。完整列表以及角落定位眼和定位眼圆点选项请参阅[图案](/docs/features/patterns)，查看全部样式请参阅[形状、定位眼和边框](/docs/styles)。
+
+## 添加徽标 [#add-a-logo]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+添加徽标时，请使用更高的纠错级别（`Q` 或 `H`）。
+
+## 使用模板 [#use-templates]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  size={256}
+/>
+```
+
+可用模板：`default`、`Arrow`、`StandardBox`、`SquareBorder`、`StrikedBox`、`Halloween`
+
+## 纠错级别 [#error-correction]
+
+请根据使用场景选择：
+
+- **L（低）** — 约 7% 的纠错能力，适用于干净的环境
+- **M（中）** — 约 15% 的纠错能力，适用于一般场景
+- **Q（四分位）** — 约 25% 的纠错能力，适用于带徽标的二维码
+- **H（高）** — 约 30% 的纠错能力，抗损能力最强
+
+```tsx
+<QRCode
+  value="https://example.com"
+  level="Q"
+/>
+```
+
+## 组件变体 [#component-variants]
+
+### QRCodeCanvas [#qrcodecanvas]
+
+用于渐变等高级自定义：
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+用于可缩放矢量图形：
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## 最佳实践 [#best-practices]
+
+### 尺寸建议 [#size-guidelines]
+
+- **128px** — 可扫描的最小尺寸
+- **256-512px** — 网页推荐尺寸
+- **1024px+** — 高质量印刷
+
+### 纠错级别 [#error-correction-1]
+
+- 添加徽标时使用 `Q` 或 `H`
+- 一般应用使用 `M`
+- 仅在干净的环境中使用 `L`
+
+### 性能 [#performance]
+
+- 尽可能使用纯色而非渐变
+- 选择更简单的图案以获得更好的性能
+- 尽可能在服务端缓存二维码
+
+## 后续步骤 [#next-steps]
+
+- [颜色与渐变](/docs/features/colors-gradients) — 高级颜色选项
+- [模板](/docs/features/templates) — 预置样式
+- [下载](/docs/features/downloads) — 导出选项

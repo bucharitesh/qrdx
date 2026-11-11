@@ -1,0 +1,58 @@
+---
+title: "通行密钥"
+description: "使用指纹、面部或屏幕锁登录，将通行密钥用作第二步验证，并重命名或删除不再使用的通行密钥。"
+---
+
+通行密钥通过你的指纹、面部、设备屏幕锁或安全密钥来确认是你本人。它保存在你的设备或密码管理器中，并且只能在 QRdx 自己的网站上使用，因此外观相似的仿冒网站无法获取它。
+
+通行密钥在 QRdx 中有两个用途：
+
+- 单独用于登录：在登录页面点击 **Continue with passkey**；
+- 作为[两步验证](/docs/help/privacy-and-security/two-step-verification)的第二步：在你使用邮箱验证码、Google 或 GitHub<IfAvailable feature="sso"> （或工作区的单点登录）</IfAvailable>登录之后。
+
+在更改账户安全设置（开启或关闭两步验证）之前，它也会用来[确认是你本人](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)。如果你无法访问自己的邮箱，这会很方便。
+
+## 添加通行密钥 [#add-a-passkey]
+
+1. 前往 **Settings** → **Profile & security**。
+2. 在 **Two-step verification** 下，点击 **Add passkey**，并确认是你本人。
+3. 保留建议的名称（你的浏览器和系统，例如“Chrome on macOS”），或输入自己的名称，然后点击 **Continue**。
+4. 浏览器会询问通行密钥的保存位置，并验证你的指纹、面部或屏幕锁。
+
+如果两步验证处于关闭状态，添加通行密钥会将其开启，同时 QRdx 会显示 10 个备用码供你保存。当你无法使用通行密钥时，可以用它们登录。
+
+每次使用通行密钥时，它都必须确认是你本人。手机、电脑和密码管理器会通过你的指纹、面部或屏幕锁来完成确认。安全密钥则需要为其设置 PIN。
+
+每当添加或删除通行密钥时，QRdx 都会向你账户的邮箱发送邮件。
+
+## 使用通行密钥登录 [#sign-in-with-a-passkey]
+
+在登录页面，点击登录方式列表底部的 **Continue with passkey**，然后选择你的通行密钥。使用通行密钥登录会同时算作两步验证的两个步骤，因此 QRdx 不会再要求其他验证。
+
+邮箱输入框不会提示通行密钥，请使用该按钮。
+
+通行密钥只能登录它所添加到的账户，不能用来创建账户：如果你是 QRdx 的新用户，请先使用 Google、GitHub 或邮箱验证码登录，然后再添加通行密钥。
+
+## 将通行密钥用作第二步验证 [#use-a-passkey-as-your-second-step]
+
+开启两步验证后，按平时的方式登录即可。随后浏览器的通行密钥提示会自动弹出，确认是你本人就能完成登录。有些浏览器只有在你点击后才会弹出提示，这时请点击 **Continue with passkey**。
+
+手边没有通行密钥？点击 **Use an authenticator code**（如果你已设置验证器应用）或 **Use a backup code**。
+
+如果你添加通行密钥时它还不能作为第二步验证，且两步验证处于关闭状态，Settings 中会显示 **Your passkey is ready to be your second step**。点击 **Turn on** 即可这样使用：确认是你本人，用通行密钥验证是你本人，并保存你的备用码。
+
+## 同步通行密钥与设备绑定通行密钥 [#synced-and-device-bound-passkeys]
+
+同步通行密钥会备份到密码管理器或云端钥匙串，例如 iCloud Keychain 或 Google Password Manager。它可在所有登录了该账户的设备上使用。
+
+设备绑定通行密钥只保留在创建它的那一部手机、电脑或安全密钥上。若要在其他地方登录，请使用其他登录方式，或同样在那台设备上添加通行密钥。
+
+## 重命名或删除通行密钥 [#rename-or-remove-a-passkey]
+
+在 **Two-step verification** 下，打开通行密钥旁边的菜单，点击 **Rename** 或 **Remove**，然后确认是你本人。删除后的通行密钥会立即在 QRdx 上失效。你的设备或密码管理器可能仍会继续列出它，直到你也在那里将其删除。
+
+如果该通行密钥是你唯一的第二步验证方式，删除它会关闭两步验证。在你确认之前，QRdx 会先告知你。
+
+装有通行密钥的设备丢了？请用其他方式登录，然后删除该通行密钥。
+
+你始终可以使用发送到邮箱的验证码登录，因此删除最后一个通行密钥不会让你无法登录。

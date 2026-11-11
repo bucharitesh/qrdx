@@ -1,0 +1,47 @@
+---
+title: "Uma leitura mostra uma página de erro"
+description: "O que significa cada página de erro de QR code, de \"QR code não encontrado\" a \"Esta campanha terminou\", e como resolver."
+---
+
+Quando um QR code dinâmico não consegue abrir o destino, quem faz a leitura vê uma página curta. Veja o que cada uma significa.
+
+## "QR code não encontrado" [#qr-code-not-found]
+
+Essa é uma página 404: o link curto não pertence a nenhum código.
+
+- O código foi **excluído permanentemente**.
+- O **final do link** (back-half) ou o **domínio** do código foi alterado depois da impressão.
+- A conta que era dona do código foi excluída.
+- O link foi digitado à mão com algum erro. Links curtos diferenciam maiúsculas de minúsculas.
+
+Um código excluído não pode voltar. Se você alterou o final do link, volte ao valor anterior com **Editar link**.
+
+## "Este QR code não está mais ativo" [#this-qr-code-is-no-longer-active]
+
+O código está **arquivado** ou na **lixeira**. Escolha **Desarquivar** ou **Restaurar** em **Códigos**. Veja [Arquivar, excluir e restaurar códigos](/docs/help/dynamic-codes/archive-and-delete).
+
+A QRdx também desativa códigos que levam a sites nocivos.
+
+## "Esta campanha está pausada", "ainda não começou" ou "terminou" [#this-campaign-is-paused-hasnt-started-yet-or-has-ended]
+
+Essas mensagens vêm das configurações do próprio código: uma pausa, uma data de início ou de término, ou um limite de leituras. Altere-as em **Acesso e agendamento**. Veja [Pausar, agendar ou limitar um código](/docs/help/dynamic-codes/pause-schedule-limit).
+
+## "Este QR code é protegido por senha" [#this-qr-code-is-password-protected]
+
+O código tem uma senha. Digite-a e clique em **Continuar**. Veja [Proteger um código com senha](/docs/help/dynamic-codes/password).
+
+## "Muitas requisições" [#too-many-requests]
+
+Uma mesma rede abriu muitos QR codes em poucos segundos. Espere um pouco e faça a leitura de novo.
+
+## "Este domínio ainda não está conectado" [#this-domain-isnt-connected-yet]
+
+O código usa um domínio personalizado cuja configuração de DNS não foi concluída. Verifique o domínio na página **Domínios** do seu painel.
+
+## "Não foi possível encontrar esta página" em uma página [#this-page-could-not-be-found-on-a-page]
+
+Uma página para celular em `/p/…` mostra essa mensagem quando a página foi excluída ou o endereço foi digitado errado.
+
+## "Este formulário não está aceitando respostas no momento" [#this-form-isnt-accepting-responses-right-now]
+
+O workspace atingiu o limite mensal de respostas de formulário. Veja [Colete respostas com um formulário](/docs/help/pages-and-forms/forms#monthly-limits).

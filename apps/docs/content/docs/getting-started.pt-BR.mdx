@@ -1,0 +1,58 @@
+---
+title: "Instale a biblioteca React"
+description: "Instale a biblioteca React qrdx e renderize seu primeiro QR code em poucas linhas."
+icon: Rocket
+---
+
+Instale o `qrdx` e crie seu primeiro QR code em minutos.
+
+<NpmStatus package="qrdx" />
+
+## Instale o pacote [#install-the-package]
+
+```package-install
+qrdx@latest
+```
+
+`react` e `react-dom` (versão 18 ou mais recente) são peer dependencies, então o `qrdx` usa as versões que seu app já tem. A exportação em PDF é opcional: instale o `jspdf` somente se precisar dela.
+
+## Início rápido [#quick-start]
+
+Crie seu primeiro QR code:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function App() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+    />
+  );
+}
+```
+
+Pronto. Agora você tem um QR code funcionando.
+
+Quer criar o design antes? [Experimente no Playground](/playground?open=code&lang=react): estilize um código lá e depois copie como um componente React.
+
+## Próximos passos [#next-steps]
+
+<Cards>
+  <Card
+    href="/docs/usage"
+    title="Aprenda a usar"
+    description="Personalize cores, padrões e muito mais"
+  />
+  <Card
+    href="/docs/features/templates"
+    title="Use modelos"
+    description="Aplique estilos prontos na hora"
+  />
+  <Card
+    href="/docs/api-reference"
+    title="Referência da API"
+    description="Documentação completa das props"
+  />
+</Cards>

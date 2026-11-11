@@ -1,0 +1,93 @@
+---
+title: "Domínios personalizados"
+description: "Sirva os links curtos dos seus QR codes dinâmicos a partir de um domínio que você possui."
+icon: Globe
+---
+
+Por padrão, um [QR code dinâmico](/docs/dynamic-qr-codes) codifica um link curto como `https://qrdx.dev/q/aB3dE5f`. Com um domínio personalizado, ele codifica `https://go.yourbrand.com/aB3dE5f`, então as pessoas veem a sua marca antes de fazer a leitura. Redirecionamentos, edição e análises de leitura funcionam do mesmo jeito.
+
+Domínios personalizados fazem parte do Pro (até 5 por workspace) e do Business (até 25).
+
+## Conectar um domínio [#connect-a-domain]
+
+1. Abra [Configurações → Domínios](/dashboard?to=settings/domains) e informe o domínio, por exemplo `go.yourbrand.com`. Um subdomínio é o ideal, porque o seu site principal continua onde está.
+2. Adicione os registros DNS mostrados para o domínio no seu provedor de DNS (onde você comprou o domínio, Cloudflare, ...):
+   - um subdomínio recebe um registro `CNAME`,
+   - um domínio raiz (`yourbrand.com`) recebe um registro `A`,
+   - um registro `TXT` também é mostrado quando é preciso confirmar a propriedade.
+
+   Copie os valores exatos do painel. A maioria dos provedores quer como nome apenas a parte antes do seu domínio (`go`, ou `@` para a raiz).
+3. Clique em **Verificar**. As mudanças de DNS costumam aparecer em poucos minutos, mas podem levar até 48 horas, então tente de novo mais tarde se os registros ainda não forem encontrados.
+
+Depois de verificado, o domínio aparece no seletor **Domínio do link curto** quando você cria ou edita um código dinâmico. Domínios verificados continuam verificados até você removê-los, e **Verificar DNS** lê os registros de novo a qualquer momento.
+
+<Callout type="info">
+  Um domínio que não for verificado em 3 dias pode ser adicionado por outra conta, para que ninguém fique com um domínio que não controla.
+</Callout>
+
+<IfAvailable feature="domainConnect" id="one-click-dns-setup" title="Configuração de DNS com um clique">
+
+Alguns provedores de DNS são compatíveis com o [Domain Connect](https://www.domainconnect.org), um padrão aberto que permite a um serviço adicionar os registros dele para você. Quando o seu provedor oferece suporte e disponibiliza a configuração do QRdx, um domínio aguardando o DNS mostra um botão **Configurar com …** com o nome do seu provedor.
+
+1. Clique no botão. O seu provedor de DNS abre e lista os registros de que o QRdx precisa.
+2. Entre lá, se for pedido, e aprove a mudança. Nada muda até você aprovar.
+3. Você volta para a página Domínios, que verifica o DNS imediatamente e de novo ao longo dos próximos 30 segundos.
+
+O botão aparece apenas para subdomínios como `go.yourbrand.com`, e somente quando o seu provedor consegue adicionar exatamente os registros mostrados. Caso contrário, adicione você mesmo os registros da tabela, como descrito acima.
+
+</IfAvailable>
+
+## Usar nos códigos [#use-it-for-codes]
+
+- **Código novo:** escolha o domínio em **Domínio do link curto** antes de clicar em **Criar código**.
+- **Código existente:** escolha o domínio em **Editar link**, salve e baixe o QR code de novo, porque o link codificado muda.
+
+Todo código também continua funcionando no link padrão `https://qrdx.dev/q/<slug>`, então os QR codes que você imprimiu antes de mover um código para o seu domínio nunca deixam de funcionar. Mover um código de um domínio personalizado para outro (ou de volta ao padrão) quebra os QR codes impressos com o link antigo do domínio personalizado; a janela avisa você antes de salvar.
+
+### Seus próprios back-halves [#your-own-back-halves]
+
+No Pro e no Business, você pode escolher o [back-half](/docs/dynamic-qr-codes#custom-back-halves) de um código no seu domínio, como `go.yourbrand.com/spring-menu`. Ele só precisa ser único nesse domínio, então não importa se outro cliente do QRdx usa `spring-menu`, e só `api`, `p` e `q` são reservados ali. Um back-half escolhido no seu domínio pertence a ele e não tem link `qrdx.dev/q/`. Mover esse código para outro domínio mantém o back-half se ele estiver livre lá; movê-lo de volta ao link padrão mantém o back-half se ele estiver livre em `qrdx.dev`, senão o código recebe um novo, gerado automaticamente.
+
+No seu domínio:
+
+- `https://go.yourbrand.com/<slug>` redireciona os códigos que usam esse domínio. Códigos em outros domínios, ou só no link padrão, mostram ali uma página de "não encontrado".
+- `https://go.yourbrand.com/` mostra uma pequena página dizendo que o domínio hospeda links de QR code.
+- `https://go.yourbrand.com/01/<GTIN>` ([GS1 Digital Link](/docs/product-pages#gs1-digital-link)) abre a página de produto com esse GTIN cujo código usa o domínio.
+- Qualquer outro caminho retorna "não encontrado". O domínio nunca serve o resto do QRdx.
+
+As mudanças (um domínio recém-verificado ou removido) levam até um minuto para chegar a todos os servidores.
+
+## Workspaces e funções [#workspaces-and-roles]
+
+Um domínio pertence ao workspace em que foi adicionado. Proprietários e administradores adicionam, verificam e removem; todos os membros podem usar os domínios verificados do workspace nos seus códigos.
+
+## Planos e remoção de domínios [#plans-and-removing-domains]
+
+- Fazer downgrade nunca quebra nada: os domínios verificados continuam servindo os códigos que os usam. Sem o Pro ou o Business, você não pode adicionar nem verificar domínios, nem mover mais códigos para um deles, mas ainda pode editar esses códigos e remover domínios.
+- Remover um domínio devolve os códigos dele ao link padrão `qrdx.dev/q/<slug>`. Os back-halves escolhidos no domínio vão para `qrdx.dev` quando estiverem livres lá; os outros recebem um novo back-half gerado. Os QR codes impressos com o link do domínio personalizado deixam de funcionar, por isso a janela mostra antes quantos códigos usam o domínio.
+
+## REST API [#rest-api]
+
+A [API de códigos](/docs/dynamic-qr-codes#rest-api) aceita `domainId` (o id de um domínio verificado no mesmo workspace) em `POST /v1/codes` e `PATCH /v1/codes/{id}`. Envie `"domainId": null` em um `PATCH` para voltar ao link padrão. Mover um código para um domínio exige o Pro e, caso contrário, retorna `402 PLAN_REQUIRED`.
+
+Cada código em uma resposta inclui:
+
+| Campo | Descrição |
+| --- | --- |
+| `shortLink` | O link a codificar: no domínio personalizado, depois de verificado |
+| `defaultShortLink` | `https://qrdx.dev/q/<slug>`, que sempre funciona; `null` para um back-half escolhido no domínio personalizado |
+| `domain` | `{ "id", "hostname", "verified" }`, ou `null` |
+
+## Hospedagem própria [#self-hosting]
+
+A forma de conectar domínios depende da sua implantação:
+
+- **Na Vercel:** defina `VERCEL_API_TOKEN` (um token com acesso ao projeto), `VERCEL_PROJECT_ID` e, para um projeto de equipe, `VERCEL_TEAM_ID`. Os domínios são então adicionados ao projeto pela Vercel Domains API, que também emite os certificados TLS. Sem essas variáveis, a página Domínios explica que os domínios personalizados não estão configurados, porque a Vercel só roteia domínios que foram adicionados ao projeto.
+- **Em qualquer outro lugar** (Docker, Node.js): deixe essas variáveis sem definir. Os domínios são verificados manualmente:
+  1. Aponte o domínio para o seu servidor com um `CNAME` (para o nome de host do seu app) ou um registro `A` (o IP do seu servidor).
+  2. Faça o seu proxy reverso aceitar o domínio, servir HTTPS para ele (por exemplo com o TLS sob demanda do Caddy ou um certificado do certbot) e encaminhar o cabeçalho `Host` original para o app. No nginx isso é `proxy_set_header Host $host;`; o Caddy faz isso por padrão.
+  3. Adicione o domínio na página Domínios, crie o registro `TXT` que ela mostra (`_qrdx-challenge.<your-domain>` com o valor `qrdx-verify=<token>`) e clique em **Verificar**. O app confere o registro com uma consulta DNS.
+
+A **configuração de DNS com um clique** (opcional) usa o [Domain Connect](https://www.domainconnect.org). Ela exige um template seu, aceito por cada provedor de DNS que você quiser suportar, e uma chave RSA que assina os links de configuração: defina `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID` e `DOMAIN_CONNECT_PRIVATE_KEY` (PEM) e publique a chave pública como registros `TXT` em `_dck1.<provider id>`. O template do próprio QRdx (`domain-connect/` no repositório) funciona apenas para qrdx.dev, porque os provedores verificam a assinatura com a chave dele. Enquanto a chave publicada não corresponder, nenhum botão é mostrado e o app registra o motivo no log.
+
+O app reconhece domínios personalizados pelo cabeçalho `Host`. Requisições para a URL do seu próprio app, `NEXT_PUBLIC_SHORT_LINK_BASE_URL`, `localhost` e `*.vercel.app` são sempre tratadas como o app principal.
