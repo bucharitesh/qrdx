@@ -12,7 +12,7 @@ import {
 } from "@/lib/ai/art-models";
 import type { AIArtAllowances } from "./ai-art-studio";
 import { ART_MAX_VARIATIONS, ART_TEXT_MAX_LENGTH } from "./config";
-import { AI_ART_PRESETS } from "./presets";
+import { AI_ART_PRESET_COUNT } from "./preset-meta";
 
 const count = (value: number | null) =>
   value === null ? "unlimited" : String(value);
@@ -67,7 +67,7 @@ function faqItems(allowances: AIArtAllowances) {
     },
     {
       question: "Which AI model is used?",
-      answer: `${ART_MODEL_LABEL}, through Vercel AI Gateway, with ${AI_ART_PRESETS.length} style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.`,
+      answer: `${ART_MODEL_LABEL}, through Vercel AI Gateway, with ${AI_ART_PRESET_COUNT} style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.`,
     },
     {
       question: "Does QRdx store my prompt or image?",

@@ -15,7 +15,7 @@ import {
   AIArtStudio,
 } from "@/components/sections/ai-art/ai-art-studio";
 import { ART_PLAYGROUND_HREF } from "@/components/sections/ai-art/config";
-import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
+import { AI_ART_PRESET_COUNT } from "@/components/sections/ai-art/preset-meta";
 import { VectorArtExamples } from "@/components/sections/ai-art/vector-art-examples";
 import { isArtConfigured } from "@/lib/ai/art";
 import {
@@ -30,7 +30,7 @@ export const metadata: Metadata = createMetadata(
   isArtConfigured
     ? {
         title: "AI QR Code Art Generator: Scannable Artistic QR Codes",
-        description: `Turn a link into scannable AI art made with ${ART_MODEL_LABEL}: ${AI_ART_PRESETS.length} styles, up to 4 variations a run, each checked to scan. Free accounts get ${PLAN_LIMITS.free.aiArtPerMonth} a month.`,
+        description: `Turn a link into scannable AI art made with ${ART_MODEL_LABEL}: ${AI_ART_PRESET_COUNT} styles, up to 4 variations a run, each checked to scan. Free accounts get ${PLAN_LIMITS.free.aiArtPerMonth} a month.`,
         keywords: [
           "ai qr code art",
           "ai qr code art generator",
@@ -201,7 +201,7 @@ export default function AIArtPage() {
           </h1>
           {isArtConfigured ? (
             <p className="max-w-xl text-pretty text-muted-foreground md:text-lg">
-              Pick one of {AI_ART_PRESETS.length} styles or describe your own
+              Pick one of {AI_ART_PRESET_COUNT} styles or describe your own
               scene, and {ART_MODEL_LABEL} paints it into your QR code. Every
               image is checked to scan before you see it. Sign in to generate:
               free accounts get {PLAN_LIMITS.free.aiArtPerMonth} images a month,
