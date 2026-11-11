@@ -495,26 +495,49 @@ describe("the Art tab", () => {
     expect(useArtSessionStore.getState().draft).toEqual(DEFAULT_AI_ART_DRAFT);
   });
 
-  it("opens AI art on a style preset, whose prompt comes from the preset", () => {
+  it("opens AI art on a style preset, whose prompt comes from the preset", async () => {
     const preset = AI_ART_PRESETS.find(({ id }) => id === "zen-garden");
     const outcome = apply(
       "/playground?tab=art&art=ai&artStyle=zen-garden&prompt=ignored",
       { aiArtAvailable: true },
     );
-    expect(outcome.applied).toEqual(["art", "artStyle"]);
-    const { picked, draft } = useArtSessionStore.getState();
-    expect(picked).toBe("ai");
+    expect(outcome.applied).toEqual(["art"]);
+    expect(useArtSessionStore.getState().picked).toBe("ai");
+    // The style catalogue loads on demand, then fills in the form.
+    await expect(outcome.artStyle).resolves.toBe(true);
+    const { draft } = useArtSessionStore.getState();
     expect(draft.presetId).toBe("zen-garden");
     expect(draft.prompt).toBe(preset?.prompt);
     expect(draft.prompt).not.toContain("ignored");
   });
 
-  it("leaves the form alone for an unknown style", () => {
+  it("leaves the form alone for an unknown style", async () => {
     const outcome = apply("/playground?tab=art&art=ai&artStyle=nope", {
       aiArtAvailable: true,
     });
     expect(outcome.applied).toEqual(["art"]);
+    await expect(outcome.artStyle).resolves.toBe(false);
     expect(useArtSessionStore.getState().draft.prompt).toBe("");
+  });
+
+  it("keeps what was typed while the styles were loading", async () => {
+    const outcome = apply("/playground?tab=art&art=ai&artStyle=zen-garden", {
+      aiArtAvailable: true,
+    });
+    useArtSessionStore.getState().updateDraft({ prompt: "my own scene" });
+    await expect(outcome.artStyle).resolves.toBe(false);
+    const { draft } = useArtSessionStore.getState();
+    expect(draft.prompt).toBe("my own scene");
+    expect(draft.presetId).toBeNull();
+  });
+
+  it("opens AI art without a style straight away", () => {
+    const outcome = apply("/playground?tab=art&art=ai", {
+      aiArtAvailable: true,
+    });
+    expect(outcome.applied).toEqual(["art"]);
+    expect(outcome.artStyle).toBeUndefined();
+    expect(useArtSessionStore.getState().picked).toBe("ai");
   });
 
   it("lands the old Design art link on the Art tab", () => {
