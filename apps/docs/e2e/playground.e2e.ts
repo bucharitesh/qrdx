@@ -9,7 +9,8 @@
 // opens with their type, design and sample content.
 //
 //   bun run --filter docs test:e2e            (E2E_BASE_URL defaults to :3000)
-//   E2E_SUITES="side panels" runs one suite
+//   E2E_SUITES="side panels" runs one suite; "languages" opens the playground
+//   in es, ja, de and hi (lang, tab names, noindex, console)
 //
 // Skips (exit 0) when no server is running or Chrome isn't installed.
 // Elements are found by role, label or text only.
@@ -31,6 +32,8 @@ import {
   simulateCamera,
 } from "../../../packages/qrdx/tests/support/raster";
 import { xmlProblems } from "../../../packages/qrdx/tests/support/xml";
+import { LOCALE_INFO, type Locale } from "../lib/i18n/config";
+import { localizePath } from "../lib/i18n/paths";
 import {
   CONTENT_TYPES_METADATA,
   type QRContentConfig,
@@ -2078,6 +2081,93 @@ async function testLandingHandoffs(page: Page) {
   await openPlayground(page);
 }
 
+// ── Languages ───────────────────────────────────────────────────────────────
+
+/** The playground in other languages: /es/playground and friends. */
+const LANGUAGE_CHECKS: Locale[] = ["es", "ja", "de", "hi"];
+
+/** Console errors and exceptions (hydration warnings included) while `run` runs. */
+async function consoleDuring(page: Page, run: () => Promise<void>) {
+  const errors: string[] = [];
+  const listener = (event: {
+    method: string;
+    params: {
+      type?: string;
+      args?: { value?: unknown; description?: string }[];
+      exceptionDetails?: { exception?: { description?: string } };
+    };
+  }) => {
+    if (event.method === "Runtime.exceptionThrown") {
+      errors.push(
+        event.params.exceptionDetails?.exception?.description ?? "exception",
+      );
+    } else if (
+      event.method === "Runtime.consoleAPICalled" &&
+      event.params.type === "error"
+    ) {
+      errors.push(
+        (event.params.args ?? [])
+          .map((arg) => String(arg.value ?? arg.description ?? ""))
+          .join(" "),
+      );
+    }
+  };
+  page.cdp.on(listener);
+  try {
+    await run();
+  } finally {
+    page.cdp.off(listener);
+  }
+  return errors;
+}
+
+async function testLanguages(page: Page) {
+  for (const locale of LANGUAGE_CHECKS) {
+    const catalog = JSON.parse(
+      readFileSync(join(__dirname, `../messages/${locale}.json`), "utf8"),
+    ) as { editor?: { qrControlPanel?: Record<string, string> } };
+    const tabs = catalog.editor?.qrControlPanel ?? {};
+    const path = localizePath("/playground", locale);
+    const errors = await consoleDuring(page, async () => {
+      await page.goto(`${BASE_URL}${path}`, { wait: 3000 });
+      await install(page);
+      await page.waitFor(
+        `() => !!(window.__e2e && __e2e.byRole("tab", ${JSON.stringify(tabs.content ?? "content")}))`,
+        { timeout: 30_000 },
+      );
+    });
+    const lang = await page.evaluate("() => document.documentElement.lang");
+    record("languages", `${path} lang`, lang === locale, `lang=${lang}`);
+    const found = (await page.evaluate(
+      `(names) => names.filter((name) => !!__e2e.byRole("tab", name, { exact: true }))`,
+      [tabs.content, tabs.design, tabs.art].filter(Boolean),
+    )) as string[];
+    record(
+      "languages",
+      `${path} tabs in ${LOCALE_INFO[locale].englishName}`,
+      found.length === 3,
+      found.join(", ") || "none found",
+    );
+    const robots = await page.evaluate(
+      `() => document.querySelector('meta[name="robots"]')?.content ?? ""`,
+    );
+    record(
+      "languages",
+      `${path} stays out of search until reviewed`,
+      /noindex/.test(String(robots)),
+      String(robots),
+    );
+    record(
+      "languages",
+      `${path} console`,
+      errors.length === 0,
+      errors.slice(0, 2).join(" | ") || "no errors or hydration warnings",
+    );
+  }
+  // Back to English for the suites after this one.
+  await openPlayground(page);
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -2106,6 +2196,7 @@ async function main() {
     ["community preview", testCommunityPreview],
     ["cookie banner", testCookieBannerOverlays],
     ["landing hand-offs", testLandingHandoffs],
+    ["languages", testLanguages],
   ];
   const selected = process.env.E2E_SUITES?.split(",").map((s) => s.trim());
   try {
