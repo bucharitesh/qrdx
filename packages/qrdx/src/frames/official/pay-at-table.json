@@ -1,0 +1,103 @@
+{
+  "id": "pay-at-table",
+  "name": "Pay at table",
+  "description": "A light card with a receipt and a pill-shaped button under the code.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["restaurant", "food", "payments", "table"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M575.8 38.8L664.2 38.8L664.2 150.6L656.83 142.8L649.47 150.6L642.1 142.8L634.74 150.6L627.37 142.8L620.01 150.6L612.64 142.8L605.28 150.6L597.91 142.8L590.55 150.6L583.18 142.8L575.83 150.6ZM595.3 59.6A3.9 3.9 0 0 0 591.4 63.5L591.4 63.5A3.9 3.9 0 0 0 595.3 67.4L644.7 67.4A3.9 3.9 0 0 0 648.6 63.5L648.6 63.5A3.9 3.9 0 0 0 644.7 59.6ZM595.3 77.8A3.9 3.9 0 0 0 591.4 81.7L591.4 81.7A3.9 3.9 0 0 0 595.3 85.6L634.3 85.6A3.9 3.9 0 0 0 638.2 81.7L638.2 81.7A3.9 3.9 0 0 0 634.3 77.8ZM595.3 96A3.9 3.9 0 0 0 591.4 99.9L591.4 99.9A3.9 3.9 0 0 0 595.3 103.8L644.7 103.8A3.9 3.9 0 0 0 648.6 99.9L648.6 99.9A3.9 3.9 0 0 0 644.7 96ZM595.3 114.2A3.9 3.9 0 0 0 591.4 118.1L591.4 118.1A3.9 3.9 0 0 0 595.3 122L621.3 122A3.9 3.9 0 0 0 625.2 118.1L625.2 118.1A3.9 3.9 0 0 0 621.3 114.2Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to pay",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Pay at your table",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

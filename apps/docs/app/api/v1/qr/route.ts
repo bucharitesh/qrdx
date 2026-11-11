@@ -1,6 +1,7 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
 import { CommunityItemError } from "@/lib/community/api";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import { handleError } from "@/lib/error-response";
 import {
   type FlatStyle,
@@ -112,7 +113,7 @@ function imageResponse(
 function styleLayer(query: Query): ApiStyle | undefined {
   let style: ApiStyle | undefined;
   if (query.style !== undefined) {
-    const parsed = parseStyleQuery(query.style);
+    const parsed = parseStyleQuery(query.style, OFFICIAL_FRAME_RESOLVER);
     if (!parsed.ok) {
       throw new ValidationError(
         "Invalid query parameters",

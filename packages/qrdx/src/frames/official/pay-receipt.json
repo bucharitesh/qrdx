@@ -1,0 +1,131 @@
+{
+  "id": "pay-receipt",
+  "name": "Digital receipt",
+  "description": "A receipt with zigzag edges and dashed separators.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["payments", "receipt"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1780
+    },
+    "qr": {
+      "x": 120,
+      "y": 340,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "polygon",
+        "points": [
+          [0, 0],
+          [62, 30],
+          [124, 0],
+          [186, 30],
+          [248, 0],
+          [310, 30],
+          [372, 0],
+          [434, 30],
+          [496, 0],
+          [558, 30],
+          [620, 0],
+          [682, 30],
+          [744, 0],
+          [806, 30],
+          [868, 0],
+          [930, 30],
+          [992, 0],
+          [1054, 30],
+          [1116, 0],
+          [1178, 30],
+          [1240, 0],
+          [1240, 1780],
+          [1178, 1750],
+          [1116, 1780],
+          [1054, 1750],
+          [992, 1780],
+          [930, 1750],
+          [868, 1780],
+          [806, 1750],
+          [744, 1780],
+          [682, 1750],
+          [620, 1780],
+          [558, 1750],
+          [496, 1780],
+          [434, 1750],
+          [372, 1780],
+          [310, 1750],
+          [248, 1780],
+          [186, 1750],
+          [124, 1780],
+          [62, 1750],
+          [0, 1780]
+        ],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "line",
+        "x1": 80,
+        "y1": 220,
+        "x2": 1160,
+        "y2": 220,
+        "width": 8,
+        "dash": [24, 16],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 80,
+        "y1": 1460,
+        "x2": 1160,
+        "y2": 1460,
+        "width": 8,
+        "dash": [24, 16],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for your receipt",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1500,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Thank you",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 80,
+          "width": 1040,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

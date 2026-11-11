@@ -1,0 +1,104 @@
+{
+  "id": "side-bar-arrow",
+  "name": "Side bar with arrow",
+  "description": "A light card with a bold side bar and left-aligned text and an arrow.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "editorial"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1300,
+      "height": 1620
+    },
+    "qr": {
+      "x": 180,
+      "y": 140,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 40,
+        "height": 1620,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1300,
+        "height": 1620,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 0,
+          "y": 8,
+          "width": 1292,
+          "height": 1604
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1064 1372L1139 1372L1139 1339L1196 1390L1139 1441L1139 1408L1064 1408Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1270,
+          "width": 1000,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "See more online",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1450,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

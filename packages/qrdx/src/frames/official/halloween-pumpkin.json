@@ -1,0 +1,100 @@
+{
+  "id": "halloween-pumpkin",
+  "name": "Pumpkin band",
+  "description": "A light card with a pumpkin and a solid label band, in black and pumpkin orange.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "halloween",
+  "contentTypes": [],
+  "tags": ["halloween", "october", "spooky", "pumpkin"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1c1c1c",
+      "text": "#ffffff",
+      "accent": "#e46a1b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M560 165A60 48 0 1 1 680 165A60 48 0 1 1 560 165ZM590 165A30 49.5 0 1 1 650 165A30 49.5 0 1 1 590 165Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M614 120C614 105 620 93 632 87L635 96C626 102 626 111 626 120Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Trick or treat",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      }
+    ]
+  }
+}

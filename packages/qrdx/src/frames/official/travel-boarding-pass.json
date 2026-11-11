@@ -1,0 +1,118 @@
+{
+  "id": "travel-boarding-pass",
+  "name": "Boarding pass",
+  "description": "A boarding pass with a header band and a perforated stub.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["travel", "flights"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1240
+    },
+    "qr": {
+      "x": 150,
+      "y": 330,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1240,
+        "radius": 60,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 220,
+        "radius": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 160,
+        "width": 2000,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M195.2 110C195.2 116 185.6 117.2 176 117.2L154.4 117.2L130.4 162.8L120.8 162.8L132.8 117.2L106.4 117.2L94.4 131.6L87.2 131.6L94.4 110L87.2 88.4L94.4 88.4L106.4 102.8L132.8 102.8L120.8 57.2L130.4 57.2L154.4 102.8L176 102.8C185.6 102.8 195.2 104 195.2 110Z",
+        "fill": "text"
+      },
+      {
+        "type": "line",
+        "x1": 1100,
+        "y1": 290,
+        "x2": 1100,
+        "y2": 1180,
+        "width": 8,
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1229.6 471.6L1370.4 471.6A17.6 17.6 0 0 1 1388 489.2L1388 581.6A17.6 17.6 0 0 1 1370.4 599.2L1229.6 599.2A17.6 17.6 0 0 1 1212 581.6L1212 489.2A17.6 17.6 0 0 1 1229.6 471.6ZM1282.4 436.4L1317.6 436.4A13.2 13.2 0 0 1 1330.8 449.6L1330.8 462.8A13.2 13.2 0 0 1 1317.6 476L1282.4 476A13.2 13.2 0 0 1 1269.2 462.8L1269.2 449.6A13.2 13.2 0 0 1 1282.4 436.4ZM1289 449.6A6.6 6.6 0 0 0 1282.4 456.2L1282.4 465A6.6 6.6 0 0 0 1289 471.6L1311 471.6A6.6 6.6 0 0 0 1317.6 465L1317.6 456.2A6.6 6.6 0 0 0 1311 449.6Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M1251.6 471.6L1264.8 471.6L1264.8 599.2L1251.6 599.2ZM1335.2 471.6L1348.4 471.6L1348.4 599.2L1335.2 599.2Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for your trip",
+        "color": "frame",
+        "box": {
+          "x": 1180,
+          "y": 760,
+          "width": 760,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Boarding pass",
+        "color": "text",
+        "box": {
+          "x": 240,
+          "y": 45,
+          "width": 1000,
+          "height": 130
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

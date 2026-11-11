@@ -1,0 +1,71 @@
+{
+  "id": "easter-egg",
+  "name": "Easter egg",
+  "description": "An arched card, like a window, with a painted egg, in sage and blush.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "easter",
+  "contentTypes": [],
+  "tags": ["easter", "spring", "egg"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#4d6b53",
+      "text": "#ffffff",
+      "accent": "#e4a3b0"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M660 174C696 174 717 240 717 261C717 291 693 309 660 309C627 309 603 291 603 261C603 240 624 174 660 174Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M605.25 243L621 231L640.5 243L660 231L679.5 243L699 231L714.75 243L716.4 255L699 243L679.5 255L660 243L640.5 255L621 243L603.6 255Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Easter",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "id": "fathers-day-tie",
+  "name": "Necktie",
+  "description": "A solid card with a necktie over the code and the label underneath, in navy and tan.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "fathers-day",
+  "contentTypes": [],
+  "tags": ["father's day", "dad", "june", "tie"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f3a5f",
+      "text": "#ffffff",
+      "accent": "#8f5f2e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M602 47L638 47L632 71L608 71ZM608 74L632 74L650 152L620 179L590 152Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M611.75 95L633.5 116L635.75 126.5L607.25 98ZM601.4 122L641.75 161L636.5 167L596.6 129.5Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Father's Day",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "id": "fitness-challenge",
+  "name": "Challenge",
+  "description": "A shield with a medal and a banner across the bottom.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["fitness", "gym", "challenge"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1860
+    },
+    "qr": {
+      "x": 250,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#3a3a3a"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 60Q750 -40 1500 60L1500 1400C1500 1600 1080 1780 750 1860C420 1780 0 1600 0 1400Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 80,
+        "y": 1480,
+        "width": 1340,
+        "height": 190,
+        "radius": 20,
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M705.2 95.6L736 95.6L761.2 151.6L741.6 160ZM794.8 95.6L764 95.6L738.8 151.6L758.4 160Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M710.8 182.4A39.2 39.2 0 1 1 789.2 182.4A39.2 39.2 0 1 1 710.8 182.4ZM744.24 177.27L728.7 178.28L740.68 188.23L736.83 203.32L750 195L763.17 203.32L759.32 188.23L771.3 178.28L755.76 177.27L750 162.8Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join the challenge",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1490,
+          "width": 1220,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

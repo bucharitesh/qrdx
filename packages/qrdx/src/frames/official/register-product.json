@@ -3,6 +3,7 @@
   "name": "Register product",
   "description": "A card with a check badge on its top edge, for product registration.",
   "category": "use-case",
+  "collection": "shopping",
   "contentTypes": ["url"],
   "tags": ["warranty", "registration", "packaging"],
   "license": "CC0-1.0",

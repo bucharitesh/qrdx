@@ -1,0 +1,95 @@
+{
+  "id": "thanksgiving-table",
+  "name": "Table card",
+  "description": "A solid card with a round badge holding a feather on its top edge, in rust and harvest gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "thanksgiving",
+  "contentTypes": [],
+  "tags": ["thanksgiving", "harvest", "november", "dinner", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#8a3b12",
+      "text": "#ffffff",
+      "accent": "#d19a3a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M667.6 91.2C634 94 592 122 580.8 175.2L592 178C617.2 172.4 656.4 144.4 667.6 91.2Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M668.75 86.68L663.7 91.51L658.64 96.48L653.58 101.58L648.52 106.8L643.46 112.15L638.4 117.62L633.35 123.22L628.29 128.95L623.23 134.8L618.18 140.77L613.12 146.87L608.06 153.1L603.01 159.45L597.96 165.93L592.9 172.54L587.85 179.27L582.8 186.12L577.75 193.11L572.69 200.21L567.65 207.44A2.38 2.38 0 0 1 571.55 210.16L576.59 202.95L581.61 195.88L586.64 188.93L591.67 182.11L596.7 175.41L601.72 168.84L606.75 162.4L611.78 156.08L616.8 149.89L621.82 143.83L626.85 137.89L631.87 132.08L636.89 126.39L641.92 120.83L646.94 115.4L651.96 110.09L656.98 104.91L662 99.86L667.02 94.93L672.05 90.12A2.38 2.38 0 0 1 668.75 86.68Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the menu",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Thanksgiving dinner",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

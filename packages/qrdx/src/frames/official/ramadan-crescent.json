@@ -1,0 +1,81 @@
+{
+  "id": "ramadan-crescent",
+  "name": "Crescent and star",
+  "description": "A solid card with a crescent and star over the code and the label underneath, in indigo and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "ramadan",
+  "contentTypes": [],
+  "tags": ["ramadan", "iftar", "ramadan kareem", "crescent"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#26215c",
+      "text": "#ffffff",
+      "accent": "#e0b84f"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M635.75 62.01A57 57 0 1 0 635.75 157.99A48 48 0 0 1 635.75 62.01Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M659 74L663.94 88.2L678.97 88.51L666.99 97.6L671.34 111.99L659 103.4L646.66 111.99L651.01 97.6L639.03 88.51L654.06 88.2Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Ramadan Kareem",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for iftar times",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

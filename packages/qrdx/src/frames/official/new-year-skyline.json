@@ -1,0 +1,102 @@
+{
+  "id": "new-year-skyline",
+  "name": "City countdown",
+  "description": "A city skyline along the bottom, in navy and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "new-year",
+  "contentTypes": [],
+  "tags": ["new year", "celebration", "party", "city", "countdown"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1800
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1b2a4a",
+      "text": "#ffffff",
+      "accent": "#d4af37"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1800,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M0 1744L0 1580L0 1560L90 1560L90 1470L190 1470L190 1520L280 1520L280 1400L360 1400L360 1490L450 1490L450 1440L540 1440L540 1530L620 1530L620 1370L700 1370L700 1480L800 1480L800 1420L890 1420L890 1510L980 1510L980 1450L1070 1450L1070 1540L1150 1540L1150 1490L1240 1490L1240 1580L1240 1744Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1600,
+        "width": 1240,
+        "height": 200,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1600,
+        "width": 1240,
+        "height": 60,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.25
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy New Year",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the party",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 60,
+          "width": 1040,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

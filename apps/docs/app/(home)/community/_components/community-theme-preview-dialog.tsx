@@ -34,7 +34,9 @@ import { useQREditorStore } from "@/store/editor-store";
 import type { CommunityTheme } from "@/types/community";
 
 const QRCode = lazy(() =>
-  import("qrdx").then((module) => ({ default: module.QRCode })),
+  import("@/lib/qrdx-lazy/qr-code").then((module) => ({
+    default: module.QRCode,
+  })),
 );
 
 const PREVIEW_VALUE = "https://qrdx.app";

@@ -3,6 +3,7 @@
   "name": "Check in",
   "description": "A sign with a location pin, for check-in desks and front doors.",
   "category": "use-case",
+  "collection": "events",
   "contentTypes": ["attendance", "url"],
   "tags": ["check-in", "reception", "events", "visitors"],
   "license": "CC0-1.0",

@@ -1,0 +1,106 @@
+{
+  "id": "fathers-day-photo",
+  "name": "Dad's photo",
+  "description": "An instant photo with a strip of tape and the label in its wide bottom margin, in forest green and tan.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "fathers-day",
+  "contentTypes": [],
+  "tags": ["father's day", "dad", "june", "photo"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1610
+    },
+    "qr": {
+      "x": 140,
+      "y": 200,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#2f4a3a",
+      "text": "#ffffff",
+      "accent": "#b88a4e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 40,
+        "width": 1280,
+        "height": 1570,
+        "radius": 16,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.78
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 1570,
+        "radius": 16,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1280,
+        "height": 1570,
+        "radius": 16,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.72
+        },
+        "hole": {
+          "x": 6,
+          "y": 6,
+          "width": 1268,
+          "height": 1558,
+          "radius": 12
+        }
+      },
+      {
+        "type": "rect",
+        "x": 100,
+        "y": 80,
+        "width": 1080,
+        "height": 1240,
+        "radius": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[470, 40], [810, 20], [820, 110], [480, 130]],
+        "fill": {
+          "mix": ["accent", "background"],
+          "amount": 0.35
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Love you, Dad",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 1360,
+          "width": 1040,
+          "height": 150
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

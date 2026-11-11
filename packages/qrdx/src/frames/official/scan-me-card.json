@@ -1,0 +1,69 @@
+{
+  "id": "scan-me-card",
+  "name": "Scan me card",
+  "description": "A solid card with the note over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "minimal"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1610
+    },
+    "qr": {
+      "x": 120,
+      "y": 280,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1610,
+        "radius": 72,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1400,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Point your camera here",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 50,
+          "width": 1000,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

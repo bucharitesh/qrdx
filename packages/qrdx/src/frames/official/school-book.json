@@ -1,0 +1,71 @@
+{
+  "id": "school-book",
+  "name": "Open book",
+  "description": "An arched card, like a window, with an open book, in brick red and yellow.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "back-to-school",
+  "contentTypes": [],
+  "tags": ["back to school", "school", "september", "book"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7f1d1d",
+      "text": "#ffffff",
+      "accent": "#f2b705"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M660 198C642 183 612 183 594 189L594 291C612 285 642 285 660 300C678 285 708 285 726 291L726 189C708 183 678 183 660 198Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M657.75 198L662.25 198L662.25 297L657.75 297Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Back to school",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "id": "hanging-tab",
+  "name": "Hanging tab",
+  "description": "A framed code with a tab hanging below it for the label.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "tab"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1470
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1240,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 210,
+        "y": 1176,
+        "width": 820,
+        "height": 294,
+        "radius": 64,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 1250,
+          "width": 720,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

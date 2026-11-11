@@ -1,7 +1,6 @@
 // Reading and editing a custom frame (a frame spec) in the editor: which
 // theme colors it uses, its labels, and swapping its icons. The engine
 // validates and draws the result; nothing here renders.
-import { OFFICIAL_FRAMES } from "qrdx";
 import type {
   AnyQRFrame,
   FrameSpec,
@@ -11,7 +10,7 @@ import type {
   FrameSpecPaint,
   QRCustomFrame,
 } from "qrdx/types";
-import { officialFrameOfSpec } from "@/lib/community/catalog";
+import { peekOfficialEntryOfSpec } from "@/lib/frames/library";
 
 export type FrameToken = "frame" | "text" | "accent";
 
@@ -89,9 +88,13 @@ export function swapSpecIcon(
   };
 }
 
-/** A name for the frame header: the official frame's, else "Custom". */
+/**
+ * A name for the frame header: the official frame's, else "Custom". Official
+ * names come from the frame library's index once it has loaded
+ * (useFrameLibrary({ withIndex: true }) loads it and re-renders).
+ */
 export function customFrameName(frame: QRCustomFrame): string {
-  return officialFrameOfSpec(frame.spec)?.name ?? "Custom";
+  return peekOfficialEntryOfSpec(frame.spec)?.name ?? "Custom";
 }
 
 /** Keeps a frame's text and colors when its style changes. */
@@ -107,5 +110,3 @@ export function carryFrameSettings(frame: AnyQRFrame) {
     ...(frame.fontScale !== undefined ? { fontScale: frame.fontScale } : {}),
   };
 }
-
-export const OFFICIAL_FRAME_COUNT = OFFICIAL_FRAMES.length;

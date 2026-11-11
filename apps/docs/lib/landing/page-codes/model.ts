@@ -17,7 +17,10 @@ import { defaultPresets } from "@/utils/qr-presets";
  * each one at build time, and tests/page-codes/ decodes every one.
  */
 
-/** The official frames for use cases (the seasonal ones come and go). */
+/**
+ * The official frames page codes use: the first use-case frames (the
+ * seasonal ones come and go; the library has many more).
+ */
 export const OFFICIAL_FRAME_IDS = [
   "attendance",
   "audio-guide",

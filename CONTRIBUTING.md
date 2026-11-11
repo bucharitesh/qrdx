@@ -110,6 +110,15 @@ bun run lint:ci                     # ultracite check: Biome's lint and format r
 
 A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Release pull requests into `main`, pushes to `main` and manual runs test everything. Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
 
+The official frames (`packages/qrdx/src/frames/official`, hundreds of them) all get their spec, color, layout and generator checks and one crisp decode on every run, but the slow scan checks (the phone-camera model at three distances, 160 and 320 px, the scan score, zbar, PDF and EPS) only go to a sample: the hand-made frames, one frame per layout, and a set that rotates daily so every frame comes round (`packages/qrdx/scripts/official-frames/sample.mjs`). To scan every frame, as the weekly and release `Frame scan` workflow does, set `QRDX_FULL_FRAME_SCAN=1`:
+
+```bash
+cd packages/qrdx && QRDX_FULL_FRAME_SCAN=1 bun x vitest run tests/official-frames tests/frame-label-markers.test.ts
+cd apps/docs && QRDX_FULL_FRAME_SCAN=1 bun x vitest run tests/database/seed-frames-gate-1.test.ts tests/database/seed-frames-gate-2.test.ts
+```
+
+`QRDX_FRAME_SCAN_DAY=<n>` replays the sample a failing run named ("day n").
+
 The Husky `pre-push` hook runs `bun run prepush:quick`: the engine build, both typechecks, the lint check and the affected tests, compared with `origin/staging`. Run every test with `QRDX_PREPUSH=full git push` or `bun run prepush`, or skip the hook once with `git push --no-verify`.
 
 To auto-fix formatting, import order and the lint rules that have a safe fix in the files you changed, run this from the repository root:

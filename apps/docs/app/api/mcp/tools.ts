@@ -566,7 +566,7 @@ export function registerQrTools(server: McpServer) {
     {
       title: "List design options",
       description:
-        "List every value design_qr accepts: content types with their fields, colors and gradients, body patterns, eye and eye center shapes, frame styles and their text limit, custom frames, border templates, logo icons, built-in presets, error correction levels, margin and size limits, and how the scan score works.",
+        "List every value design_qr accepts: content types with their fields, colors and gradients, body patterns, eye and eye center shapes, frame styles and their text limit, custom frames, QRdx's official frames by id (holidays, seasons and uses), border templates, logo icons, built-in presets, error correction levels, margin and size limits, and how the scan score works.",
       annotations: { ...readOnly, title: "List design options" },
     },
     () => ({

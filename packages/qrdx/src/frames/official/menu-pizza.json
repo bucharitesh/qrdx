@@ -1,0 +1,86 @@
+{
+  "id": "menu-pizza",
+  "name": "Pizza sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and a pizza slice.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "pizza", "ordering"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M635 220.4L571 98.8C612.6 79.6 657.4 79.6 699 98.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M571 98.8C612.6 79.6 657.4 79.6 699 98.8L692.6 111.6C654.2 95.6 615.8 95.6 577.4 111.6ZM609.4 127.6A9.6 9.6 0 1 1 628.6 127.6A9.6 9.6 0 1 1 609.4 127.6ZM641.4 143.6A9.6 9.6 0 1 1 660.6 143.6A9.6 9.6 0 1 1 641.4 143.6ZM623.8 172.4A8 8 0 1 1 639.8 172.4A8 8 0 1 1 623.8 172.4Z",
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to order pizza",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

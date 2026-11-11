@@ -1,0 +1,86 @@
+{
+  "id": "st-patricks-horseshoe",
+  "name": "Horseshoe ticket",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a horseshoe, in emerald and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "st-patricks-day",
+  "contentTypes": [],
+  "tags": ["st patrick's day", "march", "irish", "party"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#137a3f",
+      "text": "#ffffff",
+      "accent": "#d4a017"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M568.04 144A60 60 0 1 1 671.96 144L651.18 132A36 36 0 1 0 588.82 132ZM567.5 114A4.5 4.5 0 1 0 576.5 114A4.5 4.5 0 1 0 567.5 114ZM573.93 90A4.5 4.5 0 1 0 582.93 90A4.5 4.5 0 1 0 573.93 90ZM657.07 90A4.5 4.5 0 1 0 666.07 90A4.5 4.5 0 1 0 657.07 90ZM663.5 114A4.5 4.5 0 1 0 672.5 114A4.5 4.5 0 1 0 663.5 114Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the party",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "St Patrick's Day",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

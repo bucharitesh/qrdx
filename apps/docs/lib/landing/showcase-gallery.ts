@@ -6,6 +6,7 @@ import type {
   QRArtVariant,
   QRProps,
 } from "qrdx/types";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import { itemPath } from "@/lib/community/types";
 import { demoPath } from "@/lib/landing/demo-paths";
 import { generatorPath } from "@/lib/landing/generator-paths";
@@ -187,6 +188,7 @@ function tileHref(
     ...options,
     preset: look.preset,
     design: look.style ? { ...preset.styles, ...look.style } : undefined,
+    officialFrames: OFFICIAL_FRAME_RESOLVER,
   });
 }
 
@@ -305,7 +307,45 @@ const FRAME_CONTENT: Record<string, QRContentConfig | string> = {
   },
 };
 
-const frameTiles: WallTile[] = OFFICIAL_FRAMES.map((frame) => {
+const OFFICIAL_BY_ID = new Map(
+  OFFICIAL_FRAMES.map((frame) => [frame.id, frame]),
+);
+
+/**
+ * The official frames on the wall: the first 24 the catalogue had. The
+ * whole library (hundreds, with every holiday) lives at /community/frames,
+ * which the wall's frames band links to.
+ */
+export const WALL_FRAME_IDS: readonly string[] = [
+  "wifi-card",
+  "table-tent",
+  "order-at-table",
+  "review-us",
+  "scan-to-pay",
+  "event-ticket",
+  "rsvp-card",
+  "save-contact",
+  "follow-us",
+  "get-the-app",
+  "feedback-bubble",
+  "product-info",
+  "register-product",
+  "donate",
+  "check-in",
+  "audio-guide",
+  "sign-rider",
+  "book-now",
+  "shop-window",
+  "attendance",
+  "winter",
+  "halloween",
+  "christmas",
+  "new-year",
+];
+
+const frameTiles: WallTile[] = WALL_FRAME_IDS.map((id) => {
+  const frame = OFFICIAL_BY_ID.get(id);
+  if (!frame) throw new Error(`Unknown official frame "${id}"`);
   const style: Partial<ThemeStyles> = {
     frame: { style: "custom", spec: frame.spec },
   };
@@ -818,7 +858,7 @@ const PAGES: (Look & { type: string; variant: string; label: string })[] = [
   },
 ];
 
-const OFFICIAL = new Map(OFFICIAL_FRAMES.map((frame) => [frame.id, frame]));
+const OFFICIAL = OFFICIAL_BY_ID;
 
 /** A look's styles, detail text and alt description. */
 function resolveLook(look: Look) {

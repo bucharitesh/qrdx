@@ -17,6 +17,7 @@
     },
     "test": {
       "dependsOn": ["^build"],
+      "env": ["QRDX_FULL_FRAME_SCAN", "QRDX_FRAME_SCAN_DAY"],
       "outputs": []
     },
     "@qrdx/cli#test": {

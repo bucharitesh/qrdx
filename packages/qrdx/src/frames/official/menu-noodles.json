@@ -1,0 +1,94 @@
+{
+  "id": "menu-noodles",
+  "name": "Noodle bar",
+  "description": "A solid card with a round badge holding a bowl and chopsticks on its top edge.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "asian", "ordering"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M558.4 144.4L681.6 144.4C678.8 183.6 653.6 206 620 206C586.4 206 561.2 183.6 558.4 144.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M630.45 138.3L680.85 93.5A3.08 3.08 0 0 1 676.75 88.9L626.35 133.7A3.08 3.08 0 0 1 630.45 138.3ZM641.45 141.26L686.25 107.66A3.08 3.08 0 0 1 682.55 102.74L637.75 136.34A3.08 3.08 0 0 1 641.45 141.26Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to order",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Noodle bar",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

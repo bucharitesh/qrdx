@@ -3,6 +3,7 @@
   "name": "Review us",
   "description": "Five stars over the code and a review prompt on a band.",
   "category": "use-case",
+  "collection": "business",
   "contentTypes": ["google-review", "url"],
   "tags": ["reviews", "feedback", "restaurant", "retail"],
   "license": "CC0-1.0",

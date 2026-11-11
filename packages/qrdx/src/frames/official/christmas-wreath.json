@@ -1,0 +1,96 @@
+{
+  "id": "christmas-wreath",
+  "name": "Wreath badge",
+  "description": "A solid card with a round badge holding a wreath on its top edge, in pine green and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "christmas",
+  "contentTypes": [],
+  "tags": ["christmas", "holidays", "december", "wreath", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1f4d3a",
+      "text": "#ffffff",
+      "accent": "#b8862b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M566.8 144.4A53.2 53.2 0 1 1 673.2 144.4A53.2 53.2 0 1 1 566.8 144.4ZM585 144.4A35 35 0 1 0 655 144.4A35 35 0 1 0 585 144.4Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M620 192L592 178L592 208.8ZM620 192L648 208.8L648 178ZM611.6 192A8.4 8.4 0 1 1 628.4 192A8.4 8.4 0 1 1 611.6 192Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to order",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Holiday menu",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

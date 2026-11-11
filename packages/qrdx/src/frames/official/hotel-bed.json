@@ -1,0 +1,99 @@
+{
+  "id": "hotel-bed",
+  "name": "Guest guide",
+  "description": "A light card with a bed and a solid label band.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["hotel", "hospitality", "guest info"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M557 111L563 111A3 3 0 0 1 566 114L566 207A3 3 0 0 1 563 210L557 210A3 3 0 0 1 554 207L554 114A3 3 0 0 1 557 111ZM558.5 156L681.5 156A4.5 4.5 0 0 1 686 160.5L686 181.5A4.5 4.5 0 0 1 681.5 186L558.5 186A4.5 4.5 0 0 1 554 181.5L554 160.5A4.5 4.5 0 0 1 558.5 156ZM677 186L683 186A3 3 0 0 1 686 189L686 207A3 3 0 0 1 683 210L677 210A3 3 0 0 1 674 207L674 189A3 3 0 0 1 677 186ZM557 186L563 186A3 3 0 0 1 566 189L566 207A3 3 0 0 1 563 210L557 210A3 3 0 0 1 554 207L554 189A3 3 0 0 1 557 186Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M579.5 135L600.5 135A7.5 7.5 0 0 1 608 142.5L608 145.5A7.5 7.5 0 0 1 600.5 153L579.5 153A7.5 7.5 0 0 1 572 145.5L572 142.5A7.5 7.5 0 0 1 579.5 135ZM620 141L680 141A6 6 0 0 1 686 147L686 150A6 6 0 0 1 680 156L620 156A6 6 0 0 1 614 150L614 147A6 6 0 0 1 620 141Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the guest guide",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      }
+    ]
+  }
+}

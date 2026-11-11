@@ -8,7 +8,7 @@
 // remote resource. Decoding validates every field and rejects the whole
 // value when anything is off.
 
-import { getOfficialFrame, getTemplateIds, OFFICIAL_FRAMES } from "qrdx";
+import { type FrameSpec, getTemplateIds } from "qrdx";
 import {
   anyFrameSchema,
   bodyPatternSchema,
@@ -28,6 +28,7 @@ import {
   qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
+import { LOADED_OFFICIAL_FRAMES } from "@/lib/frames/library";
 import {
   hasImageFills,
   hasSilhouette,
@@ -176,19 +177,49 @@ const pack = (
   packStyleParam(style as Partial<ThemeStyles>, preset, officialFrame);
 
 /**
+ * Where links find QRdx's official frames: the id of an unchanged official
+ * spec, and the spec of an id. In the browser, the library loaded so far
+ * (lib/frames/library.ts, the default); on the server, the full catalogue
+ * (OFFICIAL_FRAME_RESOLVER in lib/community/catalog.ts).
+ */
+export interface OfficialFrameResolver {
+  idOfSpec: (spec: FrameSpec) => string | undefined;
+  specOf: (id: string) => FrameSpec | undefined;
+}
+
+/**
  * The official frame (qrdx OFFICIAL_FRAMES) whose exact spec `frame`
  * draws, by id; undefined for any other frame. Its spec then travels as the
  * id, and decodeStyleParam puts the spec back.
  */
-function officialFrameId(frame: unknown): string | undefined {
+function officialFrameId(
+  frame: unknown,
+  officialFrames: OfficialFrameResolver,
+): string | undefined {
   if (!frame || typeof frame !== "object") return undefined;
   const { style, spec } = frame as { style?: unknown; spec?: unknown };
-  if (style !== "custom" || !spec) return undefined;
-  const json = JSON.stringify(spec);
-  return OFFICIAL_FRAMES.find(
-    (official) =>
-      official.spec === spec || JSON.stringify(official.spec) === json,
-  )?.id;
+  if (style !== "custom" || !spec || typeof spec !== "object") return undefined;
+  return officialFrames.idOfSpec(spec as FrameSpec);
+}
+
+/**
+ * The official frame id a `style` value names (its spec travels as the id),
+ * so a caller can load that frame before decoding. Null for none.
+ */
+export function officialFrameIdOfStyleParam(
+  raw: string | null | undefined,
+): string | null {
+  const value = parseStyleValue(raw);
+  if (!value) return null;
+  const json = fromBase64Url(value.slice(STYLE_PARAM_VERSION.length + 1));
+  if (json === null) return null;
+  try {
+    const compact = JSON.parse(json) as Record<string, unknown> | null;
+    const id = compact?.[OFFICIAL_FRAME_KEY];
+    return typeof id === "string" ? id : null;
+  } catch {
+    return null;
+  }
 }
 
 export interface EncodedStyle {
@@ -206,7 +237,7 @@ export interface EncodedStyle {
  */
 export function encodeStyleParam(
   styles: ThemeStyles,
-  options: { preset?: string } = {},
+  options: { preset?: string; officialFrames?: OfficialFrameResolver } = {},
 ): EncodedStyle | null {
   const omitted: OmittedPart[] = [];
   const style: LinkedStyle = {};
@@ -238,7 +269,12 @@ export function encodeStyleParam(
 
   const preset = parsePresetId(options.preset) ?? undefined;
   // An official frame travels by id (the spec is checked as it was given).
-  const official = style.frame ? officialFrameId(linked.frame) : undefined;
+  const official = style.frame
+    ? officialFrameId(
+        linked.frame,
+        options.officialFrames ?? LOADED_OFFICIAL_FRAMES,
+      )
+    : undefined;
   let value = pack(style, preset, official);
   if (value.length > MAX_STYLE_PARAM_LENGTH && style.frame) {
     delete style.frame;
@@ -259,6 +295,7 @@ export interface DecodedStyle {
 /** The design in a `style` value, or null when anything about it is invalid. */
 export function decodeStyleParam(
   raw: string | null | undefined,
+  officialFrames: OfficialFrameResolver = LOADED_OFFICIAL_FRAMES,
 ): DecodedStyle | null {
   const value = parseStyleValue(raw);
   if (!value) return null;
@@ -285,13 +322,13 @@ export function decodeStyleParam(
   // must name no spec of its own. Then it's checked like any other frame.
   const officialRaw = source[OFFICIAL_FRAME_KEY];
   if (officialRaw !== undefined) {
-    const official =
+    const officialSpec =
       typeof officialRaw === "string"
-        ? getOfficialFrame(officialRaw)
+        ? officialFrames.specOf(officialRaw)
         : undefined;
     const frame = expanded.frame;
     if (
-      !official ||
+      !officialSpec ||
       !frame ||
       typeof frame !== "object" ||
       Array.isArray(frame) ||
@@ -300,7 +337,7 @@ export function decodeStyleParam(
     ) {
       return null;
     }
-    expanded.frame = { ...frame, spec: official.spec };
+    expanded.frame = { ...frame, spec: officialSpec };
   }
   const parsed = linkedStyleSchema.safeParse(expanded);
   if (!parsed.success || Object.keys(parsed.data).length === 0) return null;
@@ -329,12 +366,15 @@ export function decodeStyleParam(
  */
 export function playgroundDesignHref({
   design,
+  officialFrames,
   ...options
 }: Omit<PlaygroundLinkOptions, "style" | "themeId"> & {
   design?: ThemeStyles;
+  /** Server code passes the full catalogue (OFFICIAL_FRAME_RESOLVER) */
+  officialFrames?: OfficialFrameResolver;
 }): string {
   const encoded = design
-    ? encodeStyleParam(design, { preset: options.preset })
+    ? encodeStyleParam(design, { preset: options.preset, officialFrames })
     : null;
   return encoded
     ? playgroundHref({ ...options, preset: undefined, style: encoded.value })

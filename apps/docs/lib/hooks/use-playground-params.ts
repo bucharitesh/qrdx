@@ -9,6 +9,7 @@ import { openPlaygroundBuilder } from "@/components/code-builder/in-place";
 import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
 import { track } from "@/lib/analytics";
 import { isUntrackedAnalyticsPath } from "@/lib/analytics/privacy";
+import { loadOfficialFrame, peekOfficialFrame } from "@/lib/frames/library";
 import { previousPathname } from "@/lib/navigation-history";
 import { applyPlaygroundParams, SIGNED_IN_TYPES } from "@/lib/playground-apply";
 import {
@@ -19,6 +20,7 @@ import {
   resolveControlTab,
   stripOneShotParams,
 } from "@/lib/playground-links";
+import { officialFrameIdOfStyleParam } from "@/lib/playground-style";
 import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -63,10 +65,13 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
   // The address last handled, so each link applies once (React's dev mode
   // runs effects twice).
   const handled = useRef<string | null>(null);
+  const failedFrames = useRef(new Set<string>());
   const [settled, setSettled] = useState(false);
   // Changes to these re-read window.location: a new link to the open page.
   const searchKey = useSearchParams().toString();
   const [hashKey, setHashKey] = useState("");
+  // Bumped when an official frame a link names has loaded
+  const [framesLoaded, setFramesLoaded] = useState(0);
 
   useEffect(() => {
     const update = () => setHashKey(window.location.hash);
@@ -86,7 +91,7 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     );
   }, [hydrated]);
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: searchKey and hashKey only signal a new address; it is read from window.location
+  // biome-ignore lint/correctness/useExhaustiveDependencies: searchKey, hashKey and framesLoaded only signal a new address or a loaded frame; the address is read from window.location
   useEffect(() => {
     if (!hydrated) return;
     const { search, hash, href, origin } = window.location;
@@ -113,6 +118,21 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     }
     // open=dynamic asks for sign-in when signed out; wait until that's known.
     if (params.open === DYNAMIC_OPEN_TARGET && sessionPending) return;
+    // A shared design names an official frame by id: load its spec first
+    // (the frame library loads on demand, lib/frames/library.ts).
+    const officialFrame = themePath
+      ? null
+      : officialFrameIdOfStyleParam(params.style);
+    if (officialFrame && !peekOfficialFrame(officialFrame)) {
+      loadOfficialFrame(officialFrame)
+        .catch(() => undefined)
+        .then((frame) => {
+          // An unknown id (or a failed load) decodes to no design, as before
+          if (!frame) failedFrames.current.add(officialFrame);
+          setFramesLoaded((count) => count + 1);
+        });
+      if (!failedFrames.current.has(officialFrame)) return;
+    }
     handled.current = href;
 
     const presets = useThemePresetStore.getState();
@@ -181,6 +201,7 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     themePath,
     searchKey,
     hashKey,
+    framesLoaded,
   ]);
 
   return { settled };

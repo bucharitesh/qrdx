@@ -1,0 +1,99 @@
+{
+  "id": "pay-card",
+  "name": "Card payment",
+  "description": "A light card with a payment card and a solid label band.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["payments", "checkout"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M566 105L674 105A12 12 0 0 1 686 117L686 183A12 12 0 0 1 674 195L566 195A12 12 0 0 1 554 183L554 117A12 12 0 0 1 566 105Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M554 123L686 123L686 141L554 141ZM572 162L611 162A3 3 0 0 1 614 165L614 171A3 3 0 0 1 611 174L572 174A3 3 0 0 1 569 171L569 165A3 3 0 0 1 572 162Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to pay",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      }
+    ]
+  }
+}

@@ -1,0 +1,123 @@
+{
+  "id": "spring-sprout",
+  "name": "Sprout",
+  "description": "A card with a stitched dashed edge and a sprout, in leaf green and blossom pink.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "spring",
+  "contentTypes": [],
+  "tags": ["spring", "flowers", "garden"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#3f7d3a",
+      "text": "#ffffff",
+      "accent": "#f4a6b8"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1750,
+        "radius": 80,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.92
+        }
+      },
+      {
+        "type": "line",
+        "x1": 86,
+        "y1": 36,
+        "x2": 1154,
+        "y2": 36,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1204,
+        "y1": 86,
+        "x2": 1204,
+        "y2": 1664,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 1154,
+        "y1": 1714,
+        "x2": 86,
+        "y2": 1714,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 36,
+        "y1": 1664,
+        "x2": 36,
+        "y2": 86,
+        "width": 8,
+        "cap": "round",
+        "dash": [26, 18],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M623.6 172.8L623.6 169.93L623.6 167.06L623.6 164.21L623.6 161.38L623.6 158.55L623.6 155.74L623.6 152.93L623.6 150.14L623.6 147.37L623.6 144.6L623.6 141.85L623.6 139.1L623.6 136.37L623.6 133.66L623.6 130.95L623.6 128.26L623.6 125.57L623.6 122.9L623.6 120.25L623.6 117.6A3.6 3.6 0 0 1 616.4 117.6L616.4 120.25L616.4 122.9L616.4 125.57L616.4 128.26L616.4 130.95L616.4 133.66L616.4 136.37L616.4 139.1L616.4 141.85L616.4 144.6L616.4 147.37L616.4 150.14L616.4 152.93L616.4 155.74L616.4 158.55L616.4 161.38L616.4 164.21L616.4 167.06L616.4 169.93L616.4 172.8A3.6 3.6 0 0 1 623.6 172.8ZM620 122.4C618.79 105.5 599.35 92.54 576.8 93.6C576.5 126.8 595.94 139.76 620 122.4ZM620 115.2C647.65 132.92 667.09 117.8 663.2 81.6C637.91 80.29 618.47 95.41 620 115.2Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Spring is here",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1510,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 190,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

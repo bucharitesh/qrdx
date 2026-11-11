@@ -1,0 +1,79 @@
+{
+  "id": "event-announcement",
+  "name": "Announcements",
+  "description": "A speech bubble around the code with a megaphone and the label inside.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["events", "updates"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1670,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[130, 1660], [310, 1660], [80, 1820]],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M576 86.8L598 86.8L653 58.2L653 141.8L598 113.2L576 113.2ZM598 113.2L602.4 113.2A4.4 4.4 0 0 1 606.8 117.6L606.8 137.4A4.4 4.4 0 0 1 602.4 141.8L598 141.8A4.4 4.4 0 0 1 593.6 137.4L593.6 117.6A4.4 4.4 0 0 1 598 113.2ZM661.8 89L664 89A4.4 4.4 0 0 1 668.4 93.4L668.4 106.6A4.4 4.4 0 0 1 664 111L661.8 111A4.4 4.4 0 0 1 657.4 106.6L657.4 93.4A4.4 4.4 0 0 1 661.8 89Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for updates",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1465,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Live announcements",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 170,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

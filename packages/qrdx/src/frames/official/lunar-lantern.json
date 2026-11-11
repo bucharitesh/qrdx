@@ -1,0 +1,120 @@
+{
+  "id": "lunar-lantern",
+  "name": "Red lantern",
+  "description": "A light card with a round paper lantern and a solid label band, in vermilion and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lunar-new-year",
+  "contentTypes": [],
+  "tags": ["lunar new year", "chinese new year", "spring festival", "lantern"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b3261e",
+      "text": "#ffffff",
+      "accent": "#e0a526"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M617.9 34.8L622.1 34.8L622.1 51.6L617.9 51.6ZM606 48.8L634 48.8A2.8 2.8 0 0 1 636.8 51.6L636.8 57.2A2.8 2.8 0 0 1 634 60L606 60A2.8 2.8 0 0 1 603.2 57.2L603.2 51.6A2.8 2.8 0 0 1 606 48.8ZM606 144L634 144A2.8 2.8 0 0 1 636.8 146.8L636.8 152.4A2.8 2.8 0 0 1 634 155.2L606 155.2A2.8 2.8 0 0 1 603.2 152.4L603.2 146.8A2.8 2.8 0 0 1 606 144ZM618.6 155.2L621.4 155.2A1.4 1.4 0 0 1 622.8 156.6L622.8 167.8A1.4 1.4 0 0 1 621.4 169.2L618.6 169.2A1.4 1.4 0 0 1 617.2 167.8L617.2 156.6A1.4 1.4 0 0 1 618.6 155.2ZM611.6 160.8L628.4 160.8L631.2 172L608.8 172Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M569.6 102A50.4 43.4 0 1 1 670.4 102A50.4 43.4 0 1 1 569.6 102Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M594.8 102A25.2 43.4 0 1 1 645.2 102A25.2 43.4 0 1 1 594.8 102ZM599 102A21 40.6 0 1 0 641 102A21 40.6 0 1 0 599 102ZM617.9 58.6L622.1 58.6L622.1 145.4L617.9 145.4Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1550,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Lunar New Year",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

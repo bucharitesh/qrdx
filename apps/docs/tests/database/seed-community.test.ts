@@ -83,7 +83,7 @@ const shownStyle = (item: (typeof items)[number]) =>
       );
 
 describe("the seed's items", () => {
-  it("publishes the engine's 24 official frames, 51 themes and 8 collections", () => {
+  it("publishes the engine's official frames, 51 themes and 8 collections", () => {
     expect(byType("frame").map((item) => item.slug)).toEqual(
       OFFICIAL_FRAMES.map((frame) => frame.id),
     );
@@ -145,12 +145,12 @@ describe("the seed's items", () => {
     return failures;
   };
 
-  it("scans Great with the publish gate, every frame and hand-made theme", {
+  // Every frame is gated in seed-frames-gate-*.test.ts (hundreds, in shards)
+  it("scans Great with the publish gate, every hand-made theme", {
     timeout: 240_000,
   }, async () => {
     const gated = items.filter(
-      (item) =>
-        (item.type === "frame" || item.type === "theme") && !isPreset(item),
+      (item) => item.type === "theme" && !isPreset(item),
     );
     expect(await gateFailures(gated)).toEqual([]);
   });
@@ -331,7 +331,9 @@ describe("seed-community", () => {
     );
     expect(pg.rows("community_item")).toHaveLength(0);
     expect(lines.join("\n")).toMatch(
-      /Planned: 24 frame\(s\), 51 theme\(s\), 8 collection\(s\), 0 existing theme\(s\) marked official/,
+      new RegExp(
+        `Planned: ${OFFICIAL_FRAMES.length} frame\\(s\\), 51 theme\\(s\\), 8 collection\\(s\\), 0 existing theme\\(s\\) marked official`,
+      ),
     );
   });
 
@@ -369,8 +371,12 @@ describe("seed-community", () => {
       .rows("community_item")
       .filter((i) => String(i.id).startsWith("ci_official_"));
     expect(seeded).toHaveLength(items.length);
+    // The official frames, 51 themes and 8 collections, then the pages
     expect(items).toHaveLength(
-      83 + byType("page-template").length + byType("kit").length,
+      OFFICIAL_FRAMES.length +
+        59 +
+        byType("page-template").length +
+        byType("kit").length,
     );
     expect(
       seeded.every((i) => i.is_official && i.profile_id === profile?.id),

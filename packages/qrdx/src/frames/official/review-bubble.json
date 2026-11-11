@@ -1,0 +1,82 @@
+{
+  "id": "review-bubble",
+  "name": "Review bubble",
+  "description": "A speech bubble around the code with a star and the label inside.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["google-review", "url"],
+  "tags": ["reviews", "feedback", "rating"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1670,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[530, 1660], [710, 1660], [620, 1820]],
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "star",
+        "x": 565,
+        "y": 45,
+        "size": 110,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "How did we do?",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1465,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to rate us",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 170,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

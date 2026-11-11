@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 // Seed: QRdx's official community items, published by the official @qrdx
 // profile (the team@qrdx.dev account, workspace "qrdx"), verified:
-// - the 24 official frames of the qrdx engine (packages/qrdx/src/frames/
-//   official/*.json), with the engine's ids as their slugs, so
-//   /community/frames/<id> keeps the same URL it had before the seed;
+// - the official frames of the qrdx engine (packages/qrdx/src/frames/
+//   official/*.json, listed in ./community-seed.json in catalogue order),
+//   with the engine's ids as their slugs, so /community/frames/<id> keeps
+//   the same URL it had before the seed;
 // - the 10 new themes and 8 collections in ./community-seed.json;
 // - 41 of the app's built-in themes (apps/docs/utils/qr-presets.ts), as
 //   ./community-seed-presets.json stores them: written from the presets by

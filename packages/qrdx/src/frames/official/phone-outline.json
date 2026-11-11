@@ -1,0 +1,94 @@
+{
+  "id": "phone-outline",
+  "name": "Phone outline",
+  "description": "A phone with the code on its screen and a phone scanning a code.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "phone", "mockup", "light"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 26,
+        "width": 1308,
+        "height": 1948,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 56,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M660.8 194.8L699.2 194.8A12 12 0 0 1 711.2 206.8L711.2 293.2A12 12 0 0 1 699.2 305.2L660.8 305.2A12 12 0 0 1 648.8 293.2L648.8 206.8A12 12 0 0 1 660.8 194.8ZM659.6 209.2A3.6 3.6 0 0 0 656 212.8L656 284.8A3.6 3.6 0 0 0 659.6 288.4L700.4 288.4A3.6 3.6 0 0 0 704 284.8L704 212.8A3.6 3.6 0 0 0 700.4 209.2ZM672.8 293.2L687.2 293.2A2.4 2.4 0 0 1 689.6 295.6L689.6 295.6A2.4 2.4 0 0 1 687.2 298L672.8 298A2.4 2.4 0 0 1 670.4 295.6L670.4 295.6A2.4 2.4 0 0 1 672.8 293.2Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M663.2 218.8L675.2 218.8L675.2 222.4L666.8 222.4L666.8 230.8L663.2 230.8ZM696.8 230.8L693.2 230.8L693.2 222.4L684.8 222.4L684.8 218.8L696.8 218.8ZM663.2 266.8L666.8 266.8L666.8 275.2L675.2 275.2L675.2 278.8L663.2 278.8ZM696.8 278.8L684.8 278.8L684.8 275.2L693.2 275.2L693.2 266.8L696.8 266.8Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1910,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to open",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

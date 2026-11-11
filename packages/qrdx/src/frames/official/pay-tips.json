@@ -1,0 +1,81 @@
+{
+  "id": "pay-tips",
+  "name": "Tips welcome",
+  "description": "A takeaway cup with a lid and a sleeve carrying the label.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["payments", "tips"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1400,
+      "height": 1830
+    },
+    "qr": {
+      "x": 200,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#8a8a8a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 70,
+        "width": 1280,
+        "height": 110,
+        "radius": 40,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "rect",
+        "x": 20,
+        "y": 160,
+        "width": 1360,
+        "height": 110,
+        "radius": 30,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[40, 260], [1360, 260], [1280, 1830], [120, 1830]],
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[81.8, 1520], [1318.2, 1520], [1300, 1770], [100, 1770]],
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Tips appreciated",
+        "color": "frame",
+        "box": {
+          "x": 220,
+          "y": 1550,
+          "width": 960,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

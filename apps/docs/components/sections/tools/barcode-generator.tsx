@@ -494,7 +494,7 @@ export function BarcodeGenerator({
         });
       } else if (type === "eps") {
         // The engine's SVG-to-EPS converter; loaded only when asked for.
-        const { svgToEPS } = await import("qrdx");
+        const { svgToEPS } = await import("@/lib/qrdx-lazy/eps");
         const eps = await svgToEPS(rendered.svg, {
           width: rendered.widthUnits,
           background,

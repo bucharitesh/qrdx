@@ -29,6 +29,7 @@ import {
   type SQL,
   sql,
 } from "drizzle-orm";
+import { OFFICIAL_FRAME_COUNT } from "qrdx";
 import { customFrameSchema, type QRCustomFrame } from "qrdx/types";
 import type {
   CommunityTheme,
@@ -368,17 +369,25 @@ export async function listItems(
 export async function listFrames(
   options: Omit<ListOptions, "type"> = {},
 ): Promise<CommunityItemCard[]> {
-  const stored = await listItems({ ...options, type: "frame", limit: 200 });
   if (options.official === false || options.featured || options.profileId) {
-    return stored;
+    return listItems({ ...options, type: "frame", limit: 200 });
   }
-  const seeded = new Set(
-    stored.filter((card) => card.isOfficial).map((card) => card.slug),
-  );
+  // Official and member frames apart: the official library alone is
+  // hundreds of frames, which would crowd members' frames out of one list.
+  const [official, others] = await Promise.all([
+    listItems({
+      ...options,
+      type: "frame",
+      official: true,
+      limit: OFFICIAL_FRAME_COUNT + 100,
+    }),
+    options.official
+      ? Promise.resolve([])
+      : listItems({ ...options, type: "frame", official: false, limit: 200 }),
+  ]);
+  const seeded = new Set(official.map((card) => card.slug));
   const missing = officialFrameCards().filter((card) => !seeded.has(card.slug));
-  const official = stored.filter((card) => card.isOfficial);
-  const others = stored.filter((card) => !card.isOfficial);
-  return [...official, ...missing, ...(options.official ? [] : others)];
+  return [...official, ...missing, ...others];
 }
 
 /** One item page; frames fall back to the official catalogue. */

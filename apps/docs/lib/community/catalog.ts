@@ -1,13 +1,10 @@
 // QRdx's official frames straight from the engine (qrdx OFFICIAL_FRAMES):
-// what the editor's frame picker offers, and what the community shows for
-// @qrdx until the seed puts them in the database (with the same slugs, so
-// their links never change). Safe to import anywhere.
-import {
-  BUILT_IN_FRAME_SPECS,
-  OFFICIAL_FRAMES,
-  type OfficialFrame,
-} from "qrdx";
-import type { FrameSpec, FrameStyle, QRCustomFrame } from "qrdx/types";
+// what the community shows for @qrdx until the seed puts them in the
+// database (with the same slugs, so their links never change), and the
+// full catalogue for server code. It holds every spec, so the browser
+// loads the library through lib/frames/library.ts instead.
+import { frameSpecHash, OFFICIAL_FRAMES, type OfficialFrame } from "qrdx";
+import type { FrameSpec, QRCustomFrame } from "qrdx/types";
 import { framePreviewStyle } from "./payloads";
 import type {
   CommunityCreator,
@@ -67,18 +64,24 @@ export const officialFrameCards = (): CommunityItemCard[] =>
 export const findOfficialFrame = (slug: string): OfficialFrame | undefined =>
   OFFICIAL_FRAMES.find((frame) => frame.id === slug);
 
+const BY_HASH = new Map(
+  OFFICIAL_FRAMES.map((frame) => [frameSpecHash(frame.spec), frame]),
+);
+
 /** The official frame a spec is an unchanged copy of, if any. */
 export function officialFrameOfSpec(
   spec: FrameSpec,
 ): OfficialFrame | undefined {
-  const json = JSON.stringify(spec);
-  return OFFICIAL_FRAMES.find((frame) => JSON.stringify(frame.spec) === json);
+  return BY_HASH.get(frameSpecHash(spec));
 }
 
-/** Built-in frame styles that can be opened as an editable spec. */
-export const BUILT_IN_SPEC_STYLES = Object.keys(
-  BUILT_IN_FRAME_SPECS,
-) as FrameStyle[];
+/**
+ * Every official frame, for playground links made on the server
+ * (encodeStyleParam, decodeStyleParam, playgroundDesignHref).
+ */
+export const OFFICIAL_FRAME_RESOLVER = {
+  idOfSpec: (spec: FrameSpec) => officialFrameOfSpec(spec)?.id,
+  specOf: (id: string) => findOfficialFrame(id)?.spec,
+};
 
-export const builtInSpec = (style: FrameStyle): FrameSpec | undefined =>
-  BUILT_IN_FRAME_SPECS[style];
+export { BUILT_IN_SPEC_STYLES, builtInSpec } from "@/lib/frames/built-in";

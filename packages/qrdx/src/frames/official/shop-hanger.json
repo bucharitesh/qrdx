@@ -1,0 +1,88 @@
+{
+  "id": "shop-hanger",
+  "name": "Clothing",
+  "description": "A solid card with a round badge holding a clothes hanger on its top edge.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "fashion", "clothing"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M623.06 127.91L623.41 124.33L624.29 121.59L625.62 119.15L627.33 116.85L629.3 114.6L631.4 112.27L633.47 109.75L635.29 106.86L636.6 103.47L637.06 99.98L637.04 99.12L636.38 95.19L634.35 91.21L631.19 88.05L627.21 86.02L622.8 85.32L618.39 86.02L614.41 88.05L611.25 91.21L609.22 95.19L608.56 99.12A3.08 3.08 0 0 1 614.64 100.08L615.08 97.09L616.23 94.83L618.03 93.03L620.29 91.88L622.8 91.48L625.31 91.88L627.57 93.03L629.37 94.83L630.52 97.09L630.96 100.08L630.94 99.22L630.62 101.99L629.79 104.08L628.48 106.13L626.74 108.25L624.7 110.5L622.53 112.99L620.42 115.84L618.62 119.19L617.37 123.11L616.94 127.29A3.08 3.08 0 0 1 623.06 127.91ZM563.67 191.67L620 133.9L676.33 186.73L561.2 185.7L561.2 192.7L681.27 191.67L620 126.9L558.73 186.73Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to see the look",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "New season",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
