@@ -28,7 +28,7 @@ import * as industryImage from "@/app/[lang]/(home)/qr-codes-for/[slug]/opengrap
 import * as industryPage from "@/app/[lang]/(home)/qr-codes-for/[slug]/page";
 import * as placementImage from "@/app/[lang]/(home)/qr-codes-on/[slug]/opengraph-image";
 import * as placementPage from "@/app/[lang]/(home)/qr-codes-on/[slug]/page";
-import { type Locale, LOCALE_SEGMENTS } from "@/lib/i18n/config";
+import { LOCALE_SEGMENTS, type Locale } from "@/lib/i18n/config";
 import { docsI18n, docsUrl, translationLocale } from "@/lib/i18n/docs";
 import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";

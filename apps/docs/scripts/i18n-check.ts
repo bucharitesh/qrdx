@@ -23,6 +23,8 @@ import {
   type ReviewFile,
 } from "@/lib/i18n/catalog";
 import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
+import type { TranslationMemory } from "@/lib/i18n/content";
+import { contentEnglish } from "@/lib/i18n/content-sources";
 import {
   DOCS_LOCALES,
   englishFile,
@@ -34,8 +36,6 @@ import {
   type DocsReviewFile,
   strayTranslations,
 } from "@/lib/i18n/docs-check";
-import type { TranslationMemory } from "@/lib/i18n/content";
-import { contentEnglish } from "@/lib/i18n/content-sources";
 import { icuShape } from "@/lib/i18n/icu";
 import { fileHash } from "@/lib/i18n/mdx";
 import { REVIEW } from "@/lib/i18n/review";
