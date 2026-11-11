@@ -70,7 +70,6 @@ const COPY_ATTRIBUTES = new Set([
   "label",
   "description",
   "tooltip",
-  "hint",
   "emptyText",
   "helperText",
   "subtitle",
@@ -87,11 +86,11 @@ const COPY_ATTRIBUTES = new Set([
 /** Object literal fields that hold copy (inside components only). */
 const COPY_FIELDS = new Set([
   "label",
+  "hint",
   "title",
   "description",
   "placeholder",
   "tooltip",
-  "hint",
   "heading",
   "subtitle",
   "helperText",
@@ -317,6 +316,15 @@ function isSimpleValue(expression: Node): boolean {
   ) {
     return false;
   }
+  // `busy && "Saving…"`, `a ?? "None"`: copy in a condition, not a value.
+  const binary = expression.asKind(SyntaxKind.BinaryExpression);
+  if (
+    binary &&
+    ["&&", "||", "??"].includes(binary.getOperatorToken().getText()) &&
+    copyLeaves(binary)?.length
+  ) {
+    return false;
+  }
   const kind = expression.getKind();
   return [
     SyntaxKind.Identifier,
@@ -402,7 +410,7 @@ function classify(
 ): "text" | "value" | "inline" | "node" | "complex" {
   const kind = child.getKind();
   if (kind === SyntaxKind.JsxText) {
-    return isCopy(jsxText(child.getText())) ? "text" : "value";
+    return isCopy(jsxText(child.getFullText())) ? "text" : "value";
   }
   if (kind === SyntaxKind.JsxExpression) {
     const expression = child
@@ -497,7 +505,7 @@ function childrenMessage(
   for (const child of children) {
     const kind = child.getKind();
     if (kind === SyntaxKind.JsxText) {
-      out.text += icuText(jsxText((child as JsxText).getText()));
+      out.text += icuText(jsxText((child as JsxText).getFullText()));
       continue;
     }
     if (kind === SyntaxKind.JsxExpression) {
@@ -738,7 +746,11 @@ function extract(source: SourceFile): { count: number; text: string } {
       kinds.length -
       1 -
       [...kinds].reverse().findIndex((kind) => kind !== "node");
-    const run = meaningful.slice(firstIndex, lastIndex + 1);
+    // Whitespace between the pieces is part of the sentence.
+    const run = children.slice(
+      children.indexOf(meaningful[firstIndex] as (typeof children)[number]),
+      children.indexOf(meaningful[lastIndex] as (typeof children)[number]) + 1,
+    );
     const first = run[0] as Node;
     const last = run.at(-1) as Node;
     const english = run
