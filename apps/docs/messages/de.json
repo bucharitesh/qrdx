@@ -546,7 +546,10 @@
       "auditLog": "Audit-Log mit CSV-Export",
       "conversions": "Conversion-Tracking",
       "webhooks": "Webhooks, Zapier und Slack",
-      "aiArt": "{count} KI-Bilder pro Monat, im Team gebündelt"
+      "aiArt": "{count} KI-Bilder pro Monat, im Team gebündelt",
+      "clientReports": "Statistikseiten im Kundenbranding",
+      "clientWork": "Kundenportal und Kundenberichte ohne Branding",
+      "invoiceBilling": "Jährlich per Rechnung zahlen"
     },
     "comparison": {
       "title": "Pläne vergleichen",
@@ -560,7 +563,8 @@
         "analytics": "Analytics und Link-Steuerung",
         "brand": "Marke und Team",
         "files": "Dateien und Formulare",
-        "automation": "Automatisierung und API"
+        "automation": "Automatisierung und API",
+        "agency": "Kundenarbeit"
       },
       "rows": {
         "price": "Preis",
@@ -593,7 +597,12 @@
         "formResponses": "Formularantworten pro Monat",
         "emailAlerts": "E-Mail-Berichte und Benachrichtigungen",
         "webhooks": "Webhooks, Zapier und Slack",
-        "apiRequests": "API-Anfragen pro Tag"
+        "apiRequests": "API-Anfragen pro Tag",
+        "clientReports": "Statistikseiten im Kundenbranding",
+        "clientReportsHint": "Name, Logo und Farbe eines Kunden auf der geteilten Statistikseite eines Codes",
+        "clientPortal": "Kundenportal",
+        "clientPortalHint": "Lesezugriff auf die Ordner, die du teilst, in deinem Branding",
+        "invoiceBilling": "Jährlich per Rechnung zahlen"
       },
       "cells": {
         "pricePaid": "{monthly}/Monat oder {yearly}/Jahr",
@@ -606,7 +615,9 @@
         "aiArtPooled": "{count}, pro Team gebündelt",
         "noTeams": "1 (keine Teams)",
         "storage": "{size} ({perFile} pro Datei)",
-        "apiBulk": "{count} + Massenerstellung"
+        "apiBulk": "{count} + Massenerstellung",
+        "clientReportsBadge": "Mit kleinem Hinweis im Footer",
+        "clientReportsWhiteLabel": "White-Label"
       }
     },
     "guarantee": {
@@ -679,6 +690,25 @@
           "answer": "Zahlungen werden von Polar (polar.sh) abgewickelt. Polar fungiert als Merchant of Record und kümmert sich um Umsatzsteuer, VAT und GST. QRdx bekommt deine Kartendaten nie zu sehen."
         }
       }
+    },
+    "invoice": {
+      "open": "Stattdessen per Rechnung zahlen",
+      "title": "{plan} per Rechnung bezahlen",
+      "description": "Beim Checkout kannst du mit Karte oder Wallet zahlen. Wenn du ein Jahr {plan} lieber per Überweisung oder Rechnung bezahlen möchtest, schick uns deine Rechnungsdaten. Wir erstellen Rechnungen von Hand und antworten per E-Mail.",
+      "company": "Firma",
+      "billingEmail": "Rechnungs-E-Mail",
+      "country": "Land",
+      "taxId": "Steuer- oder VAT-Nr. (optional)",
+      "address": "Rechnungsadresse (optional)",
+      "notes": "Sonstiges (optional)",
+      "notesPlaceholder": "Eine Bestellnummer oder wer die Rechnung erhalten soll",
+      "submit": "Anfrage senden",
+      "sending": "Wird gesendet…",
+      "sentTitle": "Anfrage gesendet",
+      "sent": "Wir antworten an {email} mit der Rechnung und der Zahlungsweise. Es wurde nichts abgebucht.",
+      "close": "Schließen",
+      "signIn": "Melde dich an, um eine Rechnung anzufordern",
+      "signInNote": "Wir stellen die Rechnung für den Workspace deines Kontos aus, also melde dich zuerst an."
     }
   },
   "common": {
