@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The dynamic QR code builder: a create and edit modal with the QR design
 // first-class.
@@ -208,6 +209,7 @@ export default function CodeBuilderModal({
   /** "Hosted page": continue in the page template gallery, in this design */
   onChoosePageType: (type: string, style: QRStyle | null) => void;
 }) {
+  const t = useTranslations("codeBuilder.codeBuilderModal");
   const router = useRouter();
   // Links into the dashboard carry the workspace (/dashboard/<workspace>/...).
   const workspaceSlug = useWorkspaceSlug();
@@ -477,7 +479,7 @@ export default function CodeBuilderModal({
     setFields({ ...draft.fields, tagIds: [...draft.fields.tagIds] });
     setError(null);
     setDraftState("saved");
-    toast.success("Draft restored");
+    toast.success(t("draftRestored"));
   };
 
   // ─── Closing ──────────────────────────────────────────────────────────────
@@ -539,12 +541,9 @@ export default function CodeBuilderModal({
     setDraftState("idle");
     for (const warning of result.warnings) toast.error(warning);
     if (result.styleTrimmed) {
-      toast.warning(
-        "Your logo or picture was too large to save with the code.",
-        {
-          description: "Upload a smaller one, or add it in the full editor.",
-        },
-      );
+      toast.warning(t("yourLogoOrPictureWas"), {
+        description: t("uploadASmallerOneOr"),
+      });
     }
     router.refresh();
 
@@ -570,12 +569,14 @@ export default function CodeBuilderModal({
       }
       soundEvent("apply");
       toast.success(
-        "Changes saved",
+        t("changesSaved"),
         result.code.shortLink !== code.shortLink
           ? {
-              description: `Download the QR code again: it now encodes ${result.code.shortLink}.`,
+              description: t("downloadTheQrCodeAgain", {
+                shortLink: result.code.shortLink,
+              }),
             }
-          : { description: "Scans now open the updated destination." },
+          : { description: t("scansNowOpenTheUpdated") },
       );
       finishClose({ keepDraft: false });
       return;
@@ -899,7 +900,7 @@ export default function CodeBuilderModal({
       variant="outline"
     >
       <Brush2 aria-hidden />
-      Design
+      {t("design")}
     </Button>
   );
 
@@ -924,15 +925,15 @@ export default function CodeBuilderModal({
       title={
         target || destination.ok
           ? fromPlayground
-            ? "Use this design in the playground and close"
-            : "Art, AI art, padding and more in the playground"
-          : "Enter a destination first"
+            ? t("useThisDesignInThe")
+            : t("artAiArtPaddingAnd")
+          : t("enterADestinationFirst")
       }
       type="button"
       variant="outline"
     >
       <Brush2 aria-hidden />
-      {fromPlayground ? "Continue in the editor" : "Open full editor"}
+      {fromPlayground ? t("continueInTheEditor") : t("openFullEditor")}
     </Button>
   );
 
@@ -942,12 +943,12 @@ export default function CodeBuilderModal({
       className="w-full"
       onClick={openAiArt}
       size="sm"
-      title={`AI art for ${displayUrl(target.shortLink)} in the playground's Art tab`}
+      title={t("aiArtForValueIn", { value: displayUrl(target.shortLink) })}
       type="button"
       variant="ghost"
     >
       <MagicStar aria-hidden />
-      Make AI art in the playground
+      {t("makeAiArtInThe")}
     </Button>
   );
 
@@ -971,22 +972,22 @@ export default function CodeBuilderModal({
         />
       ) : isPage && code ? (
         <div className="rounded-lg border p-3 text-sm">
-          <p className="text-muted-foreground">
-            This code opens a hosted page.
-          </p>
+          <p className="text-muted-foreground">{t("thisCodeOpensAHosted")}</p>
           {code.pageId && (
             <Link
               className="font-medium underline underline-offset-4"
               href={inWorkspace(`/pages/${code.pageId}`)}
             >
-              Edit page
+              {t("editPage")}
             </Link>
           )}
         </div>
       ) : (
         <div className="space-y-1.5">
           <div className="flex items-center gap-1.5">
-            <Label htmlFor="code-builder-destination">Destination URL</Label>
+            <Label htmlFor="code-builder-destination">
+              {t("destinationUrl")}
+            </Label>
             <InfoHint align="start" id="dynamic-destination" />
           </div>
           <Input
@@ -1035,7 +1036,7 @@ export default function CodeBuilderModal({
               suggestOn && (
                 <SuggestButton
                   disabled={!destination.ok}
-                  label="Suggest back-halves"
+                  label={t("suggestBackHalves")}
                   loading={suggestions.loading}
                   onClick={() => suggestions.request("slug")}
                 />
@@ -1066,9 +1067,7 @@ export default function CodeBuilderModal({
       ) : builderData || builderError ? (
         // Loaded without domain options: the server still generates a link.
         <p className="text-muted-foreground text-xs">
-          {editing
-            ? "The short link stays as it is."
-            : "The short link is generated when you create the code."}
+          {editing ? t("theShortLinkStaysAs") : t("theShortLinkIsGenerated")}
         </p>
       ) : (
         // The plan's rights are still loading: the field itself, read-only,
@@ -1095,22 +1094,30 @@ export default function CodeBuilderModal({
         >
           {code.domain?.verified
             ? code.defaultShortLink
-              ? `QR codes already printed with ${code.shortLink} will stop working. Codes printed with ${code.defaultShortLink} keep working.`
-              : `QR codes already printed with ${code.shortLink} will stop working. Its back-half moves with the code when it's free there, otherwise the code gets a new one.`
-            : "The QR code changes to the new link, so download it again after saving. Codes you already printed keep working."}
+              ? t("qrCodesAlreadyPrintedWith", {
+                  shortLink: code.shortLink,
+                  defaultShortLink: code.defaultShortLink,
+                })
+              : t("qrCodesAlreadyPrintedWith2", { shortLink: code.shortLink })
+            : t("theQrCodeChangesTo")}
         </p>
       )}
 
       <div className="space-y-1.5">
         <Label htmlFor="code-builder-title">
-          Title{" "}
-          <span className="text-muted-foreground font-normal">(optional)</span>
+          {t.rich("titleOptional", {
+            span: (chunks) => (
+              <span className="text-muted-foreground font-normal">
+                {chunks}
+              </span>
+            ),
+          })}
         </Label>
         <Input
           id="code-builder-title"
           maxLength={MAX_TITLE_LENGTH}
           onChange={(event) => update("title", event.target.value)}
-          placeholder="Table tent, spring menu"
+          placeholder={t("tableTentSpringMenu")}
           value={fields.title}
         />
       </div>
@@ -1128,7 +1135,7 @@ export default function CodeBuilderModal({
               suggestOn && (
                 <SuggestButton
                   disabled={!destination.ok || tags === null}
-                  label="Suggest tags"
+                  label={t("suggestTags")}
                   loading={suggestions.loading}
                   onClick={() => suggestions.request("tags")}
                 />
@@ -1158,7 +1165,7 @@ export default function CodeBuilderModal({
         </div>
       ) : (
         <p className="text-muted-foreground text-xs">
-          Change this code's folder and tags from the codes list.
+          {t("changeThisCodesFolderAnd")}
         </p>
       )}
       {(builderError || (builderData?.problems.length ?? 0) > 0) && (
@@ -1174,9 +1181,7 @@ export default function CodeBuilderModal({
 
   const pageTypePicker = (
     <div className="space-y-2">
-      <p className="text-muted-foreground text-sm">
-        Pick a page type. You choose its template next.
-      </p>
+      <p className="text-muted-foreground text-sm">{t("pickAPageTypeYou")}</p>
       {pageTypes ? (
         <div className="grid gap-2 sm:grid-cols-2">
           {offeredPageTypes(pageTypes.listTemplates(), fileStorage).map(
@@ -1221,31 +1226,31 @@ export default function CodeBuilderModal({
   const successBody = created && (
     <div className="space-y-5">
       <div className="space-y-1.5">
-        <Label>Short link</Label>
+        <Label>{t("shortLink")}</Label>
         <div className="flex items-center gap-1">
           <code className="bg-muted min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-sm">
             {created.code.shortLink}
           </code>
           <CopyButton
             className="size-8"
-            successMessage={{ title: "Short link copied" }}
+            successMessage={{ title: t("shortLinkCopied") }}
             textToCopy={created.code.shortLink}
           />
         </div>
         {created.copied && (
           <p className="text-muted-foreground text-xs">
-            Copied to your clipboard.
+            {t("copiedToYourClipboard")}
           </p>
         )}
       </div>
       <div className="space-y-1.5">
-        <Label>Opens</Label>
+        <Label>{t("opens")}</Label>
         <p className="text-muted-foreground text-sm break-all">
           {created.code.destinationUrl}
         </p>
         {fromPlayground && (
           <p className="text-muted-foreground text-xs">
-            The playground now uses this short link.
+            {t("thePlaygroundNowUsesThis")}
           </p>
         )}
       </div>
@@ -1270,7 +1275,7 @@ export default function CodeBuilderModal({
             onClick={() => finishClose({ keepDraft: false })}
           >
             <ExportSquare aria-hidden />
-            Open the code
+            {t("openTheCode")}
           </Link>
         </Button>
         <Button asChild size="sm" variant="ghost">
@@ -1278,7 +1283,7 @@ export default function CodeBuilderModal({
             href={codeTabHref(workspaceSlug, created.code.id, "analytics")}
             onClick={() => finishClose({ keepDraft: false })}
           >
-            View analytics
+            {t("viewAnalytics")}
           </Link>
         </Button>
       </div>
@@ -1296,7 +1301,7 @@ export default function CodeBuilderModal({
           variant="ghost"
         >
           <ArrowLeft aria-hidden />
-          Back
+          {t("back")}
         </Button>
         <span className="text-sm font-medium">
           {CODE_OPTION_COPY[optionPanel].label}
@@ -1348,7 +1353,7 @@ export default function CodeBuilderModal({
         role="status"
       >
         <Spinner className="size-4 animate-spin" />
-        Loading this code…
+        {t("loadingThisCode")}
       </p>
     );
   } else if (optionBody) {
@@ -1364,7 +1369,7 @@ export default function CodeBuilderModal({
           variant="ghost"
         >
           <ArrowLeft aria-hidden />
-          Back
+          {t("back")}
         </Button>
         <div className="-mx-4 border-y">{styleBody}</div>
         {fullEditorButton}
@@ -1386,7 +1391,7 @@ export default function CodeBuilderModal({
       >
         {!editing && (
           <div className="space-y-1.5">
-            <p className="text-sm font-medium">What does it open?</p>
+            <p className="text-sm font-medium">{t("whatDoesItOpen")}</p>
             <ToggleGroup
               className="w-full"
               onValueChange={(value) => {
@@ -1400,15 +1405,15 @@ export default function CodeBuilderModal({
             >
               <ToggleGroupItem className="flex-1 gap-1.5" value="link">
                 <Link2 aria-hidden className="size-4 max-sm:hidden" />
-                Website link
+                {t("websiteLink")}
               </ToggleGroupItem>
               <ToggleGroupItem className="flex-1 gap-1.5" value="page">
                 <DocumentText1 aria-hidden className="size-4 max-sm:hidden" />
-                Hosted page
+                {t("hostedPage")}
               </ToggleGroupItem>
               <ToggleGroupItem className="flex-1 gap-1.5" value="other">
                 <Category2 aria-hidden className="size-4 max-sm:hidden" />
-                More types
+                {t("moreTypes")}
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
@@ -1457,10 +1462,10 @@ export default function CodeBuilderModal({
               </ResponsiveDialogTitle>
               <ResponsiveDialogDescription className="truncate text-xs max-sm:sr-only">
                 {phase === "success"
-                  ? "Download it and print it anywhere. You can change where it points at any time."
+                  ? t("downloadItAndPrintIt")
                   : code
                     ? displayUrl(code.shortLink)
-                    : "It encodes a short link, so you can change where it points after printing."}
+                    : t("itEncodesAShortLink")}
               </ResponsiveDialogDescription>
             </div>
             {phase === "form" && (
@@ -1472,7 +1477,7 @@ export default function CodeBuilderModal({
               />
             )}
             <Button
-              aria-label="Close"
+              aria-label={t("close")}
               className="size-8 shrink-0"
               onClick={requestClose}
               size="icon"
@@ -1546,8 +1551,11 @@ export default function CodeBuilderModal({
             <div className="flex shrink-0 items-center justify-end gap-2">
               {nearCap && phase === "form" && usage && plans && (
                 <span className="text-muted-foreground mr-1 text-xs">
-                  {usage.used} of {usage.limit} active codes on{" "}
-                  {PLAN_NAMES[plans.plan]}
+                  {t("usedOfLimitActiveCodes", {
+                    used: usage.used,
+                    limit: usage.limit,
+                    value: PLAN_NAMES[plans.plan],
+                  })}
                 </span>
               )}
               {phase === "success" ? (
@@ -1557,19 +1565,19 @@ export default function CodeBuilderModal({
                     type="button"
                     variant="outline"
                   >
-                    Create another
+                    {t("createAnother")}
                   </Button>
                   <Button
                     onClick={() => finishClose({ keepDraft: false })}
                     type="button"
                   >
-                    Done
+                    {t("done")}
                   </Button>
                 </>
               ) : contentType === "page" && !editing ? null : (
                 <Button
                   aria-keyshortcuts="Meta+Enter Control+Enter"
-                  aria-label={editing ? "Save changes" : "Create code"}
+                  aria-label={editing ? t("saveChanges") : t("createCode")}
                   className="max-md:w-full"
                   disabled={
                     isPending ||
@@ -1583,11 +1591,11 @@ export default function CodeBuilderModal({
                 >
                   {isPending
                     ? editing
-                      ? "Saving..."
-                      : "Creating..."
+                      ? t("saving")
+                      : t("creating")
                     : editing
-                      ? "Save changes"
-                      : "Create code"}
+                      ? t("saveChanges")
+                      : t("createCode")}
                   {!isPending && (
                     <Kbd
                       aria-hidden
@@ -1611,27 +1619,27 @@ export default function CodeBuilderModal({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Close without saving?</AlertDialogTitle>
+            <AlertDialogTitle>{t("closeWithoutSaving")}</AlertDialogTitle>
             <AlertDialogDescription>
               {draftState === "failed" || !userId
-                ? "This browser can't keep a draft, so your changes will be lost."
-                : "Your changes stay in Drafts in this browser for 7 days."}
+                ? t("thisBrowserCantKeepA")
+                : t("yourChangesStayInDrafts")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep editing</AlertDialogCancel>
+            <AlertDialogCancel>{t("keepEditing")}</AlertDialogCancel>
             <Button
               onClick={() => finishClose({ keepDraft: false })}
               type="button"
               variant="outline"
             >
-              Discard draft
+              {t("discardDraft")}
             </Button>
             {draftState !== "failed" && userId && (
               <AlertDialogAction
                 onClick={() => finishClose({ keepDraft: true })}
               >
-                Keep draft
+                {t("keepDraft")}
               </AlertDialogAction>
             )}
           </AlertDialogFooter>
@@ -1646,15 +1654,14 @@ export default function CodeBuilderModal({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>This design may not scan</AlertDialogTitle>
+            <AlertDialogTitle>{t("thisDesignMayNotScan")}</AlertDialogTitle>
             <AlertDialogDescription>
-              The scan check couldn't read it at every size. Change the design,
-              or {editing ? "save" : "create"} it anyway and test-scan it before
-              you print.
+              {t("theScanCheckCouldntRead")} {editing ? t("save") : t("create")}{" "}
+              {t("itAnywayAndTestScan")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Change the design</AlertDialogCancel>
+            <AlertDialogCancel>{t("changeTheDesign")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 const thenOpen =
@@ -1665,7 +1672,7 @@ export default function CodeBuilderModal({
                 submit({ thenOpen, confirmed: true });
               }}
             >
-              {editing ? "Save anyway" : "Create anyway"}
+              {editing ? t("saveAnyway") : t("createAnyway")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

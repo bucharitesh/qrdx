@@ -15,6 +15,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Warning2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import { deleteAccount } from "@/actions/account";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -70,6 +71,7 @@ function DeleteAccountDialog({
   onOpenChange: (open: boolean) => void;
   summary: DeletionSummary;
 }) {
+  const t = useTranslations("app.settings.account.dangerZoneSection");
   const id = useId();
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
@@ -128,10 +130,9 @@ function DeleteAccountDialog({
         className="max-sm:[&_[data-slot=alert-dialog-footer]_button]:h-10 max-sm:[&_[data-slot=input]]:h-10 sm:max-w-md"
       >
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete your account?</AlertDialogTitle>
+          <AlertDialogTitle>{t("deleteYourAccount")}</AlertDialogTitle>
           <AlertDialogDescription>
-            This can't be undone. If you want a copy of your data, download it
-            first.
+            {t("thisCantBeUndoneIf")}
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -146,8 +147,9 @@ function DeleteAccountDialog({
 
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor={`${id}-confirm`}>
-              Type <span className="font-mono">{DELETE_CONFIRMATION}</span> to
-              confirm
+              {t("type")}{" "}
+              <span className="font-mono">{DELETE_CONFIRMATION}</span>{" "}
+              {t("toConfirm")}
             </label>
             <Input
               autoCapitalize="off"
@@ -172,7 +174,7 @@ function DeleteAccountDialog({
 
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting} type="button">
-              Cancel
+              {t("cancel")}
             </AlertDialogCancel>
             <Button
               disabled={!ready || deleting}
@@ -180,7 +182,7 @@ function DeleteAccountDialog({
               variant="destructive"
             >
               {deleting && <Spinner className="animate-spin" />}
-              Delete account
+              {t("deleteAccount")}
             </Button>
           </AlertDialogFooter>
         </form>
@@ -190,18 +192,19 @@ function DeleteAccountDialog({
 }
 
 export function DangerZoneSection({ summary }: { summary: DeletionSummary }) {
+  const t = useTranslations("app.settings.account.dangerZoneSection");
   const [open, setOpen] = useState(false);
 
   return (
     <SettingsSection
-      description="Permanent actions on your account."
+      description={t("permanentActionsOnYourAccount")}
       id="danger"
-      title="Danger zone"
+      title={t("dangerZone")}
       tone="danger"
     >
       <SettingsRow
-        description="Delete your account and everything in your own workspace. This can't be undone."
-        label="Delete account"
+        description={t("deleteYourAccountAndEverything")}
+        label={t("deleteAccount")}
       >
         <div className="space-y-4">
           <Consequences items={summary.consequences} />
@@ -211,7 +214,7 @@ export function DangerZoneSection({ summary }: { summary: DeletionSummary }) {
             onClick={() => setOpen(true)}
             variant="destructive"
           >
-            Delete account…
+            {t("deleteAccount2")}
           </Button>
         </div>
       </SettingsRow>

@@ -28,7 +28,9 @@ import {
   SearchNormal1,
   Warning2,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { Translator } from "@/lib/i18n/translator";
 import { MigrateApiError, type MigrateClient } from "@/lib/migrate/client";
 import { displayLink } from "@/lib/migrate/normalize";
 import { API_PROVIDERS, type ApiProviderId } from "@/lib/migrate/providers";
@@ -51,11 +53,15 @@ const ALL = "__all";
 // ─── Connect ─────────────────────────────────────────────────────────────────
 
 /** What the OAuth callback's `connect_error` means to the person connecting. */
-function connectErrorMessage(code: string | null, name: string) {
+function connectErrorMessage(
+  code: string | null,
+  name: string,
+  t: Translator<"app.dashboard.codes.importLinksStep">,
+) {
   if (!code) return null;
   return code === "access_denied"
-    ? `The ${name} sign-in was cancelled.`
-    : `Couldn't connect ${name}. Try again.`;
+    ? t("theNameSignInWas", { name })
+    : t("couldntConnectNameTryAgain", { name });
 }
 
 function ConnectPanel({
@@ -73,17 +79,18 @@ function ConnectPanel({
   connectError: string | null;
   onConnected: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.importLinksStep");
   const { name } = API_PROVIDERS[provider];
   const [key, setKey] = useState("");
   const [busy, setBusy] = useState<"oauth" | "key" | null>(null);
   const [error, setError] = useState<string | null>(() =>
-    connectErrorMessage(connectError, name),
+    connectErrorMessage(connectError, name, t),
   );
 
   if (status && !status.available) {
     return (
       <Note icon={<Info />}>
-        <p>Importing from {name} isn't available yet.</p>
+        <p>{t("importingFromNameIsntAvailable", { name })}</p>
       </Note>
     );
   }
@@ -132,11 +139,11 @@ function ConnectPanel({
         <ProviderLogo provider={provider} />
         <div>
           <h3 className="font-semibold">
-            {status?.connection === "error" ? "Reconnect" : "Connect"} {name}
+            {status?.connection === "error" ? t("reconnect") : t("connect")}{" "}
+            {name}
           </h3>
           <p className="text-muted-foreground text-sm">
-            QRdx reads your links to import them. The token is stored encrypted;
-            disconnect any time in Settings.
+            {t("qrdxReadsYourLinksTo")}
           </p>
         </div>
       </div>
@@ -145,10 +152,10 @@ function ConnectPanel({
         <div className="space-y-1.5">
           <Button className="w-full" disabled={busy !== null} onClick={signIn}>
             {busy === "oauth" ? <Spinner className="animate-spin" /> : null}
-            Sign in with {name}
+            {t("signInWith")} {name}
           </Button>
           <p className="text-muted-foreground text-xs">
-            After signing in you come straight back here to pick your links.
+            {t("afterSigningInYouCome")}
           </p>
         </div>
       )}
@@ -158,7 +165,7 @@ function ConnectPanel({
           {status.oauth && (
             <div className="text-muted-foreground flex items-center gap-3 text-xs">
               <span className="h-px flex-1 bg-border" />
-              or paste a key
+              {t("orPasteAKey")}
               <span className="h-px flex-1 bg-border" />
             </div>
           )}
@@ -179,7 +186,7 @@ function ConnectPanel({
               variant={status.oauth ? "outline" : "default"}
             >
               {busy === "key" ? <Spinner className="animate-spin" /> : <Key />}
-              Connect
+              {t("connect")}
             </Button>
           </div>
           {status.apiKey.helpText && (
@@ -192,7 +199,7 @@ function ConnectPanel({
                   rel="noopener noreferrer"
                   target="_blank"
                 >
-                  Open {name}
+                  {t("openName", { name })}
                   <ExportSquare aria-hidden className="size-3" />
                 </a>
               )}
@@ -203,10 +210,7 @@ function ConnectPanel({
 
       {!(status?.oauth || status?.apiKey) && status && (
         <Note icon={<Info />}>
-          <p>
-            Connecting {name} isn't available right now. Export your links as
-            CSV from {name} and use "Another provider (CSV)" instead.
-          </p>
+          <p>{t("connectingNameIsntAvailableRight", { name, name2: name })}</p>
         </Note>
       )}
 
@@ -247,6 +251,7 @@ export function LinksStep({
   onBack: () => void;
   onContinue: (links: SourceLink[]) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.importLinksStep");
   const { name, capabilities } = API_PROVIDERS[provider];
   const connected = status?.connection === "active";
   const [search, setSearch] = useState("");
@@ -341,7 +346,7 @@ export function LinksStep({
         footer={
           <Button onClick={onBack} size="sm" variant="ghost">
             <ArrowLeft />
-            All providers
+            {t("allProviders")}
           </Button>
         }
       >
@@ -414,17 +419,17 @@ export function LinksStep({
         <>
           <Button onClick={onBack} size="sm" variant="ghost">
             <ArrowLeft />
-            All providers
+            {t("allProviders")}
           </Button>
           <div className="flex items-center gap-3">
             <span className="text-muted-foreground text-sm tabular-nums">
-              {plural(selected.size, "link")} selected
+              {t("valueSelected", { value: plural(selected.size, "link") })}
             </span>
             <Button
               disabled={selected.size === 0 || loadingAll !== null}
               onClick={() => onContinue([...selected.values()])}
             >
-              Preview import
+              {t("previewImport")}
               <ArrowRight />
             </Button>
           </div>
@@ -439,23 +444,23 @@ export function LinksStep({
               className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
             />
             <Input
-              aria-label={`Search ${name} links`}
+              aria-label={t("searchNameLinks", { name })}
               className="pl-9"
               onChange={(event) => setSearch(event.target.value)}
               placeholder={
                 capabilities.search
-                  ? "Search title, link or destination"
-                  : "Filter loaded links"
+                  ? t("searchTitleLinkOrDestination")
+                  : t("filterLoadedLinks")
               }
               value={search}
             />
           </div>
           <Select onValueChange={setDomain} value={domain}>
-            <SelectTrigger aria-label="Domain" className="sm:w-44">
+            <SelectTrigger aria-label={t("domain")} className="sm:w-44">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value={ALL}>All domains</SelectItem>
+              <SelectItem value={ALL}>{t("allDomains")}</SelectItem>
               {domainOptions.map((value) => (
                 <SelectItem key={value} value={value}>
                   {value}
@@ -465,11 +470,11 @@ export function LinksStep({
           </Select>
           {tagOptions.length > 0 && (
             <Select onValueChange={setTag} value={tag}>
-              <SelectTrigger aria-label="Tag" className="sm:w-36">
+              <SelectTrigger aria-label={t("tag")} className="sm:w-36">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={ALL}>All tags</SelectItem>
+                <SelectItem value={ALL}>{t("allTags")}</SelectItem>
                 {tagOptions.map((value) => (
                   <SelectItem key={value} value={value}>
                     {value}
@@ -492,23 +497,23 @@ export function LinksStep({
               <TableRow className="hover:bg-transparent">
                 <TableHead className="w-10">
                   <Checkbox
-                    aria-label="Select this page"
+                    aria-label={t("selectThisPage")}
                     checked={allOnPage}
                     disabled={selectable.length === 0}
                     onCheckedChange={(value) => togglePage(value === true)}
                   />
                 </TableHead>
-                <TableHead>Link</TableHead>
+                <TableHead>{t("link")}</TableHead>
                 <TableHead className="hidden md:table-cell">
-                  Destination
+                  {t("destination")}
                 </TableHead>
                 {showClicks && (
                   <TableHead className="hidden w-20 text-right sm:table-cell">
-                    Clicks
+                    {t("clicks")}
                   </TableHead>
                 )}
                 <TableHead className="hidden w-28 sm:table-cell">
-                  Created
+                  {t("created")}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -528,8 +533,8 @@ export function LinksStep({
                     colSpan={5}
                   >
                     {filters.search || filters.domain || filters.tag
-                      ? "No links match these filters."
-                      : `No links in this ${name} account.`}
+                      ? t("noLinksMatchTheseFilters")
+                      : t("noLinksInThisName", { name })}
                   </TableCell>
                 </TableRow>
               ) : (
@@ -544,7 +549,9 @@ export function LinksStep({
                     >
                       <TableCell>
                         <Checkbox
-                          aria-label={`Select ${link.title ?? link.shortLink ?? link.id}`}
+                          aria-label={t("selectValue", {
+                            value: link.title ?? link.shortLink ?? link.id,
+                          })}
                           checked={selected.has(link.id)}
                           disabled={Boolean(done)}
                           onCheckedChange={(value) =>
@@ -562,7 +569,7 @@ export function LinksStep({
                           </span>
                           {done && (
                             <span className="shrink-0 rounded-full border px-1.5 py-px text-[10px]">
-                              Imported
+                              {t("imported")}
                             </span>
                           )}
                         </div>
@@ -593,7 +600,9 @@ export function LinksStep({
             {loadingAll !== null ? (
               <>
                 <Spinner className="size-4 animate-spin" />
-                Loading links… {formatCount(loadingAll)}
+                {t("loadingLinksLoadingall", {
+                  loadingAll: formatCount(loadingAll),
+                })}
               </>
             ) : (
               <Button
@@ -603,7 +612,7 @@ export function LinksStep({
                 size="sm"
                 variant="link"
               >
-                Select all matching links
+                {t("selectAllMatchingLinks")}
               </Button>
             )}
             {selected.size > 0 && loadingAll === null && (
@@ -613,7 +622,7 @@ export function LinksStep({
                 size="sm"
                 variant="link"
               >
-                Clear
+                {t("clear")}
               </Button>
             )}
           </div>
@@ -627,7 +636,7 @@ export function LinksStep({
               size="sm"
               variant="outline"
             >
-              Previous
+              {t("previous")}
             </Button>
             <Button
               disabled={loading || !(pages[pageIndex + 1] || page?.next)}
@@ -639,15 +648,15 @@ export function LinksStep({
               size="sm"
               variant="outline"
             >
-              Next
+              {t("next")}
             </Button>
           </div>
         </div>
         {selected.size >= MAX_JOB_LINKS && (
           <p className="text-muted-foreground text-xs">
-            One import takes up to {formatCount(MAX_JOB_LINKS)} links. Import
-            these, then run Import again for the rest (imported links are
-            skipped).
+            {t("oneImportTakesUpTo", {
+              MAX_JOB_LINKS: formatCount(MAX_JOB_LINKS),
+            })}
           </p>
         )}
       </div>

@@ -1,10 +1,13 @@
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
+import { use } from "react";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 
 /** Shown inside the app shell while a dashboard page loads, so navigation never looks frozen. */
 export default function DashboardLoading() {
+  const t = use(getAppTranslations("app.dashboard.loading"));
   return (
     <div aria-busy="true" aria-live="polite" className="space-y-6">
-      <span className="sr-only">Loading…</span>
+      <span className="sr-only">{t("loading")}</span>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
           <Skeleton className="h-7 w-48" />

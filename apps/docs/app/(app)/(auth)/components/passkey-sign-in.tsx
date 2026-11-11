@@ -6,6 +6,7 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { FingerScan } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { signInFailureMessage } from "@/lib/account/passkeys";
@@ -33,6 +34,7 @@ export function PasskeySignIn({
   disabled = false,
   lastUsed = false,
 }: PasskeySignInProps) {
+  const t = useTranslations("auth.passkeySignIn");
   const router = useRouter();
   const offered = useAvailability().has("passkeys");
   const [usable, setUsable] = useState(false);
@@ -81,7 +83,7 @@ export function PasskeySignIn({
           variant="outline"
         >
           <FingerScan className="size-5" />
-          <span className="font-medium">Continue with passkey</span>
+          <span className="font-medium">{t("continueWithPasskey")}</span>
           {loading && <Spinner className="size-4 animate-spin" />}
         </Button>
         {lastUsed && (
@@ -89,7 +91,7 @@ export function PasskeySignIn({
             className="pointer-events-none absolute -top-2 right-3 px-1.5 py-0 text-[10px]"
             variant="secondary"
           >
-            Last used
+            {t("lastUsed")}
           </Badge>
         )}
       </div>

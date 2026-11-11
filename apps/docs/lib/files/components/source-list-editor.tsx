@@ -8,6 +8,7 @@ import {
   Link2,
   Trash as Trash2,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { CloudFileButton } from "@/components/connected-accounts/cloud-file-button";
 import { type FileSource, sourceName } from "../source";
@@ -53,6 +54,7 @@ export function SourceListEditor<T extends SourceItem>({
   itemTitle?: (item: T) => string;
   linkPlaceholder?: string;
 }) {
+  const t = useTranslations("editor.connections.sourceListEditor");
   const room = Math.max(0, max - items.length);
   const full = room === 0;
 
@@ -108,7 +110,7 @@ export function SourceListEditor<T extends SourceItem>({
                     {title}
                   </span>
                   <Button
-                    aria-label={`Move ${title} up`}
+                    aria-label={t("moveTitleUp", { title })}
                     disabled={index === 0}
                     onClick={() => move(index, -1)}
                     className="size-7"
@@ -119,7 +121,7 @@ export function SourceListEditor<T extends SourceItem>({
                     <ArrowUp />
                   </Button>
                   <Button
-                    aria-label={`Move ${title} down`}
+                    aria-label={t("moveTitleDown", { title })}
                     disabled={index === items.length - 1}
                     onClick={() => move(index, 1)}
                     className="size-7"
@@ -130,7 +132,7 @@ export function SourceListEditor<T extends SourceItem>({
                     <ArrowDown />
                   </Button>
                   <Button
-                    aria-label={`Remove ${title}`}
+                    aria-label={t("removeTitle", { title })}
                     onClick={() =>
                       onChange(items.filter((_, i) => i !== index))
                     }
@@ -151,7 +153,7 @@ export function SourceListEditor<T extends SourceItem>({
 
       {full ? (
         <p className="text-muted-foreground text-xs">
-          This block holds up to {max} items.
+          {t("thisBlockHoldsUpTo", { max })}
         </p>
       ) : (
         <div className="space-y-2">
@@ -163,10 +165,10 @@ export function SourceListEditor<T extends SourceItem>({
                 onUploaded={addFiles}
                 size="sm"
               >
-                Upload{" "}
+                {t("upload")}{" "}
                 {kinds.length === 1
                   ? FILE_KIND_LABELS[kinds[0]].toLowerCase()
-                  : "files"}
+                  : t("files")}
               </UploadButton>
               <LibraryButton
                 kind={kinds.length === 1 ? kinds[0] : undefined}
@@ -178,14 +180,14 @@ export function SourceListEditor<T extends SourceItem>({
             </div>
           ) : (
             <p className="text-muted-foreground text-xs">
-              {STORAGE_OFF_MESSAGE} Add files by link instead.
+              {t("storageOffMessageAddFiles", { STORAGE_OFF_MESSAGE })}
             </p>
           )}
           <CloudFileButton
             onPick={(url) => add([createItem({ type: "url", url })])}
           />
           <LinkInput
-            buttonLabel="Add link"
+            buttonLabel={t("addLink")}
             onSubmit={(url) => add([createItem({ type: "url", url })])}
             placeholder={linkPlaceholder}
           />

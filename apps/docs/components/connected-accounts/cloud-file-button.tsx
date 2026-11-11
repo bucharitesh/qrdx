@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { DocumentCloud } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import type { ConnectedProvider } from "@/lib/connected-accounts/client";
@@ -26,6 +27,7 @@ interface CloudFileButtonProps {
  * connected, so file blocks stay unchanged for everyone else.
  */
 export function CloudFileButton({ onPick }: CloudFileButtonProps) {
+  const t = useTranslations("editor.connections.cloudFileButton");
   const providers = useConnections();
   const [provider, setProvider] = useState<ConnectedProvider | null>(null);
 
@@ -60,14 +62,14 @@ export function CloudFileButton({ onPick }: CloudFileButtonProps) {
           variant="outline"
         >
           <DocumentCloud aria-hidden className="size-4" />
-          From {only.name}
+          {t("fromName", { name: only.name })}
         </Button>
       ) : (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button size="sm" type="button" variant="outline">
               <DocumentCloud aria-hidden className="size-4" />
-              From cloud storage
+              {t("fromCloudStorage")}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">

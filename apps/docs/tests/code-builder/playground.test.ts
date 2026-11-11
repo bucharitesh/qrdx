@@ -410,7 +410,7 @@ describe("the builder over the playground", () => {
     expect(result).toMatchObject({ ok: false, field: "form" });
     if (result.ok) throw new Error("expected the limit");
     const html = renderIntl(
-      BuilderFormBanner({
+      createElement(BuilderFormBanner, {
         error: result.error,
         onUpgrade: () => {},
         unlimitedCodesPlan: "pro",

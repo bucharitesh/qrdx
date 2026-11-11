@@ -22,6 +22,7 @@ import {
   webhookPlan,
 } from "@/lib/events/endpoints";
 import { MAX_WEBHOOK_ENDPOINTS } from "@/lib/events/types";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { isOwnWorkspaceScope } from "@/lib/own-workspace";
 import { PLAN_NAMES } from "@/lib/pricing";
 
@@ -33,6 +34,7 @@ export const metadata: Metadata = {
 const DOCS_HREF = "/docs/webhooks";
 
 export default async function WebhooksPage() {
+  const t = await getAppTranslations("app.dashboard.settings.webhooks.page");
   const scope = await requireDashboardScope();
   const [{ plan, allowed }, endpoints] = await Promise.all([
     webhookPlan(scope),
@@ -43,23 +45,26 @@ export default async function WebhooksPage() {
 
   const header = (
     <PageHeader
-      description="Send scans, new and changed codes, and form responses to your own server, Zapier or Make."
+      description={t("sendScansNewAndChanged")}
       title={
         <>
-          Webhooks <InfoHint align="start" id="webhooks" side="bottom" />
+          {t("webhooks")} <InfoHint align="start" id="webhooks" side="bottom" />
         </>
       }
     >
       {allowed && (
         <Badge variant="outline">
-          {endpoints.length} / {MAX_WEBHOOK_ENDPOINTS} endpoints
+          {t("lengthMaxWebhookEndpointsEndpoints", {
+            length: endpoints.length,
+            MAX_WEBHOOK_ENDPOINTS,
+          })}
         </Badge>
       )}
       <Badge variant={plan === "business" ? "default" : "secondary"}>
         {PLAN_NAMES[plan]}
       </Badge>
       <Button asChild size="sm" variant="outline">
-        <Link href={DOCS_HREF}>Docs</Link>
+        <Link href={DOCS_HREF}>{t("docs")}</Link>
       </Button>
     </PageHeader>
   );
@@ -74,19 +79,13 @@ export default async function WebhooksPage() {
               className="mx-auto mb-2 h-28 w-40"
               figure="Webhook"
             />
-            <EmptyTitle>Webhooks are part of Business</EmptyTitle>
-            <EmptyDescription>
-              Get a signed HTTPS request the moment something happens: scans
-              (batched every minute), scan milestones, new or changed codes and
-              form submissions. Connect Zapier, Make or n8n with REST hooks, and
-              post alerts to Slack or Discord.
-            </EmptyDescription>
+            <EmptyTitle>{t("webhooksArePartOfBusiness")}</EmptyTitle>
+            <EmptyDescription>{t("getASignedHttpsRequest")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             {isTeam ? (
               <p className="text-muted-foreground text-sm">
-                Team features follow the plan of the team's owners. A team owner
-                on Business unlocks webhooks for the team.
+                {t("teamFeaturesFollowThePlan")}
               </p>
             ) : (
               <UpgradePlanButton plan="business" />
@@ -95,7 +94,7 @@ export default async function WebhooksPage() {
               className="text-muted-foreground text-xs underline"
               href={DOCS_HREF}
             >
-              How webhooks work
+              {t("howWebhooksWork")}
             </Link>
           </EmptyContent>
         </Empty>
@@ -111,10 +110,9 @@ export default async function WebhooksPage() {
         <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
           <p className="text-sm">
             {isTeam
-              ? "This team's plan no longer includes webhooks."
-              : "Your plan no longer includes webhooks."}{" "}
-            Your endpoints are kept but nothing is sent until the workspace is
-            on Business again. You can still delete them.
+              ? t("thisTeamsPlanNoLonger")
+              : t("yourPlanNoLongerIncludes")}{" "}
+            {t("yourEndpointsAreKeptBut")}
           </p>
           {!isTeam && <UpgradePlanButton plan="business" size="sm" />}
         </div>
@@ -122,7 +120,7 @@ export default async function WebhooksPage() {
 
       {!canManage && (
         <p className="text-muted-foreground rounded-lg border p-4 text-sm">
-          Only team owners and admins can add, change or test endpoints.
+          {t("onlyTeamOwnersAndAdmins")}
         </p>
       )}
 

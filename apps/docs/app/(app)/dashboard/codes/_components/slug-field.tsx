@@ -5,6 +5,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { Lock } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useRef, useState } from "react";
 import { checkQrCodeSlug } from "@/actions/qr-codes";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -129,6 +130,7 @@ export function SlugField({
   /** A small action on the label row (the builder's "Suggest") */
   action?: ReactNode;
 }) {
+  const t = useTranslations("app.dashboard.codes.slugField");
   const describedBy = "code-slug-status";
   // Plans with custom back-halves (lib/plans.ts), when the page knows them.
   const slugPlans = useKnownCodeOptionPlans()?.upgrades.customSlugs ?? [];
@@ -136,8 +138,13 @@ export function SlugField({
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-2">
         <Label htmlFor="code-slug">
-          Custom back-half{" "}
-          <span className="text-muted-foreground font-normal">(optional)</span>
+          {t.rich("customBackHalfOptional", {
+            span: (chunks) => (
+              <span className="text-muted-foreground font-normal">
+                {chunks}
+              </span>
+            ),
+          })}
         </Label>
         {action}
         {!(allowed || pending) && (
@@ -147,7 +154,7 @@ export function SlugField({
             type="button"
           >
             <Lock aria-hidden className="size-3" />
-            {slugPlans[0] ? PLAN_NAMES[slugPlans[0]] : "Upgrade"}
+            {slugPlans[0] ? PLAN_NAMES[slugPlans[0]] : t("upgrade")}
           </button>
         )}
       </div>
@@ -175,7 +182,7 @@ export function SlugField({
           maxLength={CUSTOM_SLUG_MAX}
           onChange={(event) => onChange(event.target.value)}
           placeholder={
-            allowed && !pending ? "spring-menu" : "Generated for you"
+            allowed && !pending ? t("springMenu") : t("generatedForYou")
           }
           spellCheck={false}
           value={value}
@@ -201,23 +208,25 @@ export function SlugField({
       >
         {pending
           ? editing
-            ? "Leave empty to keep the current link."
-            : "Leave empty for a generated link."
+            ? t("leaveEmptyToKeepThe")
+            : t("leaveEmptyForAGenerated")
           : !allowed
             ? slugPlans.length > 0
-              ? `Choose your own link, like qrdx.dev/q/spring-menu, on ${formatPlanList(slugPlans)}.`
-              : "Choose your own link, like qrdx.dev/q/spring-menu, on a higher plan."
+              ? t("chooseYourOwnLinkLike", {
+                  slugPlans: formatPlanList(slugPlans),
+                })
+              : t("chooseYourOwnLinkLike2")
             : status.state === "blocked" || status.state === "unknown"
               ? status.message
               : status.state === "available"
                 ? editing
-                  ? "Available. QR codes printed with the old link stop working."
-                  : "Available."
+                  ? t("availableQrCodesPrintedWith")
+                  : t("available")
                 : status.state === "checking"
-                  ? "Checking…"
+                  ? t("checking")
                   : editing
-                    ? "Letters, digits, - and _. Changing it changes the link."
-                    : "Letters, digits, - and _. Leave empty for a generated link."}
+                    ? t("lettersDigitsAndChangingIt")
+                    : t("lettersDigitsAndLeaveEmpty")}
       </p>
     </div>
   );

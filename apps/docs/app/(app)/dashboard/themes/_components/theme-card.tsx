@@ -47,6 +47,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import {
   copyThemeToTeam,
@@ -77,6 +78,7 @@ interface ThemeCardProps {
 }
 
 export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
+  const t = useTranslations("app.dashboard.themes.themeCard");
   const router = useRouter();
   const openGetProDialog = useGetProDialogStore((s) => s.openGetProDialog);
   const deleteThemeMutation = useDeleteTheme();
@@ -111,7 +113,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
       if (!result.ok) {
         toast.error(result.error, {
           action: result.upgrade
-            ? { label: "Upgrade", onClick: openGetProDialog }
+            ? { label: t("upgrade"), onClick: openGetProDialog }
             : undefined,
         });
         return;
@@ -141,10 +143,10 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
       try {
         await updateTheme({ id: theme.id, name: next });
         setShowRenameDialog(false);
-        toast.success("Theme renamed");
+        toast.success(t("themeRenamed"));
         router.refresh();
       } catch {
-        toast.error("Could not rename the theme. Please try again.");
+        toast.error(t("couldNotRenameTheTheme"));
       }
     });
   };
@@ -156,10 +158,10 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
     ).toString();
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Theme link copied");
+      toast.success(t("themeLinkCopied"));
       soundEvent("copy");
     } catch {
-      toast.error("Could not copy the link");
+      toast.error(t("couldNotCopyTheLink"));
     }
   };
 
@@ -184,7 +186,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
   return (
     <Card className="group gap-0 overflow-hidden border py-0 shadow-sm transition-shadow hover:shadow-md">
       <Link
-        aria-label={`Open ${theme.name} in the playground`}
+        aria-label={t("openNameInThePlayground", { name: theme.name })}
         className="bg-muted/40 flex items-center justify-center p-6"
         href={playgroundHref({ themeId: theme.id })}
       >
@@ -202,18 +204,18 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               {theme.name}
             </h3>
             {theme.isActiveDefault ? (
-              <Badge className="px-1.5 py-0 text-[10px]">Default</Badge>
+              <Badge className="px-1.5 py-0 text-[10px]">{t("default")}</Badge>
             ) : (
               theme.isDefault &&
               !isTeamTheme && (
                 <Badge className="px-1.5 py-0 text-[10px]" variant="outline">
-                  Your default
+                  {t("yourDefault")}
                 </Badge>
               )
             )}
             {theme.isPublished && (
               <Badge className="px-1.5 py-0 text-[10px]" variant="secondary">
-                Published
+                {t("published")}
               </Badge>
             )}
           </div>
@@ -228,7 +230,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              aria-label={`Actions for ${theme.name}`}
+              aria-label={t("actionsForName", { name: theme.name })}
               disabled={busy}
               size="icon"
               variant="ghost"
@@ -244,7 +246,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
             <DropdownMenuItem asChild>
               <Link href={playgroundHref({ themeId: theme.id })}>
                 <ExternalLink className="size-4" />
-                {theme.canEdit ? "Edit in playground" : "Open in playground"}
+                {theme.canEdit ? t("editInPlayground") : t("openInPlayground")}
               </Link>
             </DropdownMenuItem>
             {theme.canEdit && (
@@ -255,7 +257,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
                 }}
               >
                 <Pencil className="size-4" />
-                Rename
+                {t("rename")}
               </DropdownMenuItem>
             )}
             {canSetDefault && (
@@ -266,21 +268,21 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
                   <Star className="size-4" />
                 )}
                 {theme.isDefault
-                  ? "Remove as default"
+                  ? t("removeAsDefault")
                   : isTeamTheme
-                    ? "Set as workspace default"
-                    : "Set as default"}
+                    ? t("setAsWorkspaceDefault")
+                    : t("setAsDefault")}
               </DropdownMenuItem>
             )}
             {canCopyToTeam && !isTeamTheme && (
               <DropdownMenuItem onSelect={copyToTeam}>
                 <Users className="size-4" />
-                Copy to this workspace
+                {t("copyToThisWorkspace")}
               </DropdownMenuItem>
             )}
             <DropdownMenuItem onSelect={handleShare}>
               <Copy className="size-4" />
-              Copy link
+              {t("copyLink")}
             </DropdownMenuItem>
             {canPublish && (
               <>
@@ -294,7 +296,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
                       }}
                     >
                       <Tag className="size-4" />
-                      Edit tags
+                      {t("editTags")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       disabled={unpublishMutation.isPending}
@@ -305,19 +307,19 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
                       }
                     >
                       <GlobeLock className="size-4" />
-                      Unpublish from community
+                      {t("unpublishFromCommunity")}
                     </DropdownMenuItem>
                   </>
                 ) : (
                   <DropdownMenuItem onSelect={() => setShowPublishDialog(true)}>
                     <Globe className="size-4" />
-                    Publish to community
+                    {t("publishToCommunity")}
                   </DropdownMenuItem>
                 )}
                 {hasCustomFrame && (
                   <DropdownMenuItem onSelect={() => setShowFrameDialog(true)}>
                     <FrameIcon className="size-4" />
-                    Publish its frame
+                    {t("publishItsFrame")}
                   </DropdownMenuItem>
                 )}
               </>
@@ -330,7 +332,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
                   onSelect={() => setShowDeleteDialog(true)}
                 >
                   <Trash2 className="size-4" />
-                  Delete
+                  {t("delete")}
                 </DropdownMenuItem>
               </>
             )}
@@ -341,7 +343,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
       <Dialog onOpenChange={setShowRenameDialog} open={showRenameDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Rename theme</DialogTitle>
+            <DialogTitle>{t("renameTheme")}</DialogTitle>
           </DialogHeader>
           <form
             className="space-y-2"
@@ -350,7 +352,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               handleRename();
             }}
           >
-            <Label htmlFor={`theme-name-${theme.id}`}>Name</Label>
+            <Label htmlFor={`theme-name-${theme.id}`}>{t("name")}</Label>
             <Input
               autoFocus
               id={`theme-name-${theme.id}`}
@@ -364,11 +366,11 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               onClick={() => setShowRenameDialog(false)}
               variant="outline"
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button disabled={isPending || !name.trim()} onClick={handleRename}>
               {isPending && <Loader2 className="size-4 animate-spin" />}
-              Save
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -377,17 +379,18 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
       <AlertDialog onOpenChange={setShowDeleteDialog} open={showDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {theme.name}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("deleteName", { name: theme.name })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              QR codes you already made with this theme keep their look. This
-              only removes the saved theme
-              {isTeamTheme ? " for everyone in this workspace" : ""}.
-              {theme.isPublished && " It is also removed from the community."}
+              {t("qrCodesYouAlreadyMade")}
+              {isTeamTheme ? t("forEveryoneInThisWorkspace") : ""}.
+              {theme.isPublished && t("itIsAlsoRemovedFrom")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleteThemeMutation.isPending}>
-              Cancel
+              {t("cancel")}
             </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive hover:bg-destructive/90 text-white"
@@ -400,7 +403,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               {deleteThemeMutation.isPending && (
                 <Loader2 className="size-4 animate-spin" />
               )}
-              Delete theme
+              {t("deleteTheme")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -428,9 +431,9 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
       <Dialog onOpenChange={setShowEditTagsDialog} open={showEditTagsDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Edit tags</DialogTitle>
+            <DialogTitle>{t("editTags")}</DialogTitle>
             <DialogDescription>
-              Update the tags for &quot;{theme.name}&quot;.
+              {t("updateTheTagsForName", { name: theme.name })}
             </DialogDescription>
           </DialogHeader>
           <TagSelector
@@ -443,7 +446,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               onClick={() => setShowEditTagsDialog(false)}
               variant="outline"
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button
               disabled={updateTagsMutation.isPending}
@@ -452,7 +455,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               {updateTagsMutation.isPending && (
                 <Loader2 className="size-4 animate-spin" />
               )}
-              Save tags
+              {t("saveTags")}
             </Button>
           </DialogFooter>
         </DialogContent>

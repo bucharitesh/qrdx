@@ -11,6 +11,7 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useState } from "react";
 import { WEBHOOK_EVENTS, type WebhookEvent } from "@/lib/events/types";
 import { EventCheckboxes } from "./event-checkboxes";
@@ -38,6 +39,7 @@ export function EndpointDialog({
   error: string | null;
   onSubmit: (values: EndpointFormValues) => void;
 }) {
+  const t = useTranslations("app.dashboard.webhooks.endpointDialog");
   const [url, setUrl] = useState(initial?.url ?? "");
   const [events, setEvents] = useState<WebhookEvent[]>(
     initial?.events ?? [...WEBHOOK_EVENTS],
@@ -61,16 +63,13 @@ export function EndpointDialog({
         <form className="space-y-5" onSubmit={submit}>
           <DialogHeader>
             <DialogTitle>
-              {mode === "create" ? "Add webhook endpoint" : "Edit endpoint"}
+              {mode === "create" ? t("addWebhookEndpoint") : t("editEndpoint")}
             </DialogTitle>
-            <DialogDescription>
-              QRdx sends a signed JSON POST to this URL for every event you
-              pick. Respond with any 2xx status within 10 seconds.
-            </DialogDescription>
+            <DialogDescription>{t("qrdxSendsASignedJson")}</DialogDescription>
           </DialogHeader>
 
           <div className="space-y-2">
-            <Label htmlFor="webhook-url">Endpoint URL</Label>
+            <Label htmlFor="webhook-url">{t("endpointUrl")}</Label>
             <Input
               autoComplete="off"
               id="webhook-url"
@@ -83,12 +82,12 @@ export function EndpointDialog({
               value={url}
             />
             <p className="text-muted-foreground text-xs">
-              Public https URLs only. Redirects aren't followed.
+              {t("publicHttpsUrlsOnlyRedirects")}
             </p>
           </div>
 
           <fieldset className="space-y-2">
-            <legend className="mb-2 text-sm font-medium">Events</legend>
+            <legend className="mb-2 text-sm font-medium">{t("events")}</legend>
             <EventCheckboxes
               events={WEBHOOK_EVENTS}
               idPrefix={`webhook-${mode}`}
@@ -109,14 +108,14 @@ export function EndpointDialog({
               type="button"
               variant="outline"
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button disabled={pending || events.length === 0} type="submit">
               {pending
-                ? "Saving..."
+                ? t("saving")
                 : mode === "create"
-                  ? "Add endpoint"
-                  : "Save changes"}
+                  ? t("addEndpoint")
+                  : t("saveChanges")}
             </Button>
           </DialogFooter>
         </form>

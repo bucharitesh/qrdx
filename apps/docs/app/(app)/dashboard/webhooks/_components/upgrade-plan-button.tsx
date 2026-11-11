@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Diamonds as Gem } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import type { PaidPlan } from "@/lib/pricing";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -13,11 +14,12 @@ export function UpgradePlanButton({
   children,
   ...props
 }: { plan: PaidPlan } & ComponentProps<typeof Button>) {
+  const t = useTranslations("app.dashboard.webhooks.upgradePlanButton");
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
   return (
     <Button onClick={() => openUpgradeDialog(plan)} {...props}>
       <Gem className="size-4" />
-      {children ?? `Upgrade to ${PLAN_NAMES[plan]}`}
+      {children ?? t("upgradeToValue", { value: PLAN_NAMES[plan] })}
     </Button>
   );
 }

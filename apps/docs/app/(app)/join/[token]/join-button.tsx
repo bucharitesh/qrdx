@@ -4,12 +4,14 @@ import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { joinWorkspaceWithLink } from "@/actions/workspace-join";
 import { useRefreshTeams } from "@/components/org-switcher";
 import { workspaceHref } from "@/lib/workspace-paths";
 
 export function JoinButton({ token, name }: { token: string; name: string }) {
+  const t = useTranslations("app.join.joinButton");
   const router = useRouter();
   const refresh = useRefreshTeams();
   const [error, setError] = useState<string | null>(null);
@@ -25,8 +27,8 @@ export function JoinButton({ token, name }: { token: string; name: string }) {
       }
       toast.success(
         result.data.status === "already"
-          ? `You're already a member of ${name}`
-          : `You joined ${name}`,
+          ? t("youreAlreadyAMemberOf", { name })
+          : t("youJoinedName", { name }),
       );
       refresh();
       router.push(workspaceHref(result.data.slug));
@@ -36,7 +38,7 @@ export function JoinButton({ token, name }: { token: string; name: string }) {
     <div className="space-y-3">
       <Button className="w-full" disabled={isPending} onClick={join}>
         {isPending && <Spinner aria-hidden className="animate-spin" />}
-        Join workspace
+        {t("joinWorkspace")}
       </Button>
       {error && (
         <p className="text-destructive text-sm text-pretty" role="alert">

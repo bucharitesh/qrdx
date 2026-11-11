@@ -40,6 +40,7 @@ import {
   Trash as Trash2,
 } from "iconsax-reactjs";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   type FormEvent,
   type ReactNode,
@@ -98,15 +99,16 @@ const plural = (count: number, word: string) =>
   `${count} ${word}${count === 1 ? "" : "s"}`;
 
 function DomainStatusBadge({ verified }: { verified: boolean }) {
+  const t = useTranslations("app.dashboard.domains.domainsManager");
   return verified ? (
     <Badge variant="secondary">
       <CheckCircle2 />
-      Verified
+      {t("verified")}
     </Badge>
   ) : (
     <Badge variant="outline">
       <Clock />
-      Waiting for DNS
+      {t("waitingForDns")}
     </Badge>
   );
 }
@@ -127,6 +129,7 @@ function DomainCard({
   onVerify: () => void;
   onRemove: () => void;
 }) {
+  const t = useTranslations("app.dashboard.domains.domainsManager");
   const [showRecords, setShowRecords] = useState(false);
   const recordsVisible = !domain.verified || showRecords;
   const oneClick = offer && canManage && !domain.verified ? offer : null;
@@ -145,10 +148,13 @@ function DomainCard({
             </div>
             <CardDescription>
               {domain.verified
-                ? `Short links look like https://${domain.hostname}/aB3dE5f · used by ${plural(domain.codeCount, "code")}`
+                ? t("shortLinksLookLikeHttps", {
+                    hostname: domain.hostname,
+                    value: plural(domain.codeCount, "code"),
+                  })
                 : oneClick
                   ? `${provider ? `Your DNS is at ${provider}, which` : "Your DNS provider"} can add these records for you.`
-                  : "Add these records at your DNS provider, then click Verify."}
+                  : t("addTheseRecordsAtYour")}
             </CardDescription>
           </div>
           {canManage && (
@@ -160,10 +166,10 @@ function DomainCard({
                 variant={domain.verified || oneClick ? "outline" : "default"}
               >
                 {busy ? <Spinner /> : <RefreshCw />}
-                {domain.verified ? "Check DNS" : "Verify"}
+                {domain.verified ? t("checkDns") : t("verify")}
               </Button>
               <Button
-                aria-label={`Remove ${domain.hostname}`}
+                aria-label={t("removeHostname2", { hostname: domain.hostname })}
                 disabled={busy}
                 onClick={onRemove}
                 size="icon-sm"
@@ -181,7 +187,9 @@ function DomainCard({
             <Button asChild className="w-full sm:w-auto">
               <a href={oneClick.url}>
                 <Flash />
-                {provider ? `Set up with ${provider}` : "Set up automatically"}
+                {provider
+                  ? t("setUpWithProvider", { provider })
+                  : t("setUpAutomatically")}
               </a>
             </Button>
             <p className="text-muted-foreground text-xs">
@@ -198,12 +206,14 @@ function DomainCard({
                 : "bg-amber-500/10 text-amber-800 dark:text-amber-300",
             )}
           >
-            {domain.verified ? `Last check: ${domain.message}` : domain.message}
+            {domain.verified
+              ? t("lastCheckMessage", { message: domain.message })
+              : domain.message}
           </p>
         )}
         {recordsVisible && oneClick && domain.records.length > 0 && (
           <p className="text-muted-foreground text-xs">
-            Or add these records yourself:
+            {t("orAddTheseRecordsYourself")}
           </p>
         )}
         {recordsVisible && (
@@ -212,8 +222,10 @@ function DomainCard({
         <div className="text-muted-foreground flex flex-wrap items-center justify-between gap-2 text-xs">
           <span>
             {domain.checkedAt
-              ? `Last checked ${checkedFormat.format(new Date(domain.checkedAt))}`
-              : "Not checked yet"}
+              ? t("lastCheckedValue", {
+                  value: checkedFormat.format(new Date(domain.checkedAt)),
+                })
+              : t("notCheckedYet")}
           </span>
           {domain.verified && domain.records.length > 0 && (
             <Button
@@ -222,7 +234,7 @@ function DomainCard({
               size="sm"
               variant="link"
             >
-              {showRecords ? "Hide DNS records" : "Show DNS records"}
+              {showRecords ? t("hideDnsRecords") : t("showDnsRecords")}
             </Button>
           )}
         </div>
@@ -256,6 +268,7 @@ export function DomainsManager({
   /** Back from the DNS provider's consent page */
   connectReturn?: ConnectReturn | null;
 }) {
+  const t = useTranslations("app.dashboard.domains.domainsManager");
   const router = useRouter();
   const pathname = usePathname();
   const openGetProDialog = useGetProDialogStore((s) => s.openGetProDialog);
@@ -285,8 +298,8 @@ export function DomainsManager({
         return;
       }
       setHostname("");
-      toast.success(`Added ${result.data.hostname}`, {
-        description: "Add the DNS records shown, then click Verify.",
+      toast.success(t("addedHostname", { hostname: result.data.hostname }), {
+        description: t("addTheDnsRecordsShown"),
       });
       router.refresh();
     });
@@ -301,22 +314,22 @@ export function DomainsManager({
         return;
       }
       if (result.data.verified && !domain.verified) {
-        toast.success(`${domain.hostname} is verified`, {
-          description: "You can now pick it for your dynamic codes.",
+        toast.success(t("hostnameIsVerified", { hostname: domain.hostname }), {
+          description: t("youCanNowPickIt"),
         });
       } else if (result.data.verified) {
         toast.success(
-          result.data.message ? "Checked DNS" : "DNS looks good",
+          result.data.message ? t("checkedDns") : t("dnsLooksGood"),
           result.data.message ? { description: result.data.message } : {},
         );
       } else {
-        toast.info("Not verified yet", {
+        toast.info(t("notVerifiedYet"), {
           description: result.data.message ?? undefined,
         });
       }
       router.refresh();
     } catch {
-      toast.error("Something went wrong. Please try again.");
+      toast.error(t("somethingWentWrongPleaseTry"));
     } finally {
       setBusyId(null);
     }
@@ -332,14 +345,16 @@ export function DomainsManager({
     const domain = domains.find(({ id }) => id === connectReturn.domainId);
     if (!domain || domain.verified) return;
     if (!connectReturn.applied) {
-      toast.info("Your DNS provider didn't add the records", {
-        description: "Add them yourself below, then click Verify.",
+      toast.info(t("yourDnsProviderDidntAdd"), {
+        description: t("addThemYourselfBelowThen"),
       });
       return;
     }
     const checkAfterSetup = async () => {
       setBusyId(domain.id);
-      const toastId = toast.loading(`Checking DNS for ${domain.hostname}...`);
+      const toastId = toast.loading(
+        t("checkingDnsForHostname", { hostname: domain.hostname }),
+      );
       try {
         let message: string | null = null;
         for (const delay of AUTO_VERIFY_DELAYS_MS) {
@@ -350,20 +365,23 @@ export function DomainsManager({
             return;
           }
           if (result.data.verified) {
-            toast.success(`${domain.hostname} is verified`, {
-              id: toastId,
-              description: "You can now pick it for your dynamic codes.",
-            });
+            toast.success(
+              t("hostnameIsVerified", { hostname: domain.hostname }),
+              {
+                id: toastId,
+                description: t("youCanNowPickIt"),
+              },
+            );
             return;
           }
           message = result.data.message;
         }
-        toast.info("Not verified yet", {
+        toast.info(t("notVerifiedYet"), {
           id: toastId,
           description: message ?? undefined,
         });
       } catch {
-        toast.error("Something went wrong. Please try again.", {
+        toast.error(t("somethingWentWrongPleaseTry"), {
           id: toastId,
         });
       } finally {
@@ -372,7 +390,7 @@ export function DomainsManager({
       }
     };
     checkAfterSetup();
-  }, [connectReturn, domains, pathname, router]);
+  }, [connectReturn, domains, pathname, router, t]);
 
   const renderCards = (offers: DomainConnectOffers) => (
     <div className="space-y-3">
@@ -402,7 +420,7 @@ export function DomainsManager({
         return;
       }
       setRemoving(null);
-      toast.success(`Removed ${domain.hostname}`);
+      toast.success(t("removedHostname", { hostname: domain.hostname }));
       router.refresh();
     });
   };
@@ -413,7 +431,7 @@ export function DomainsManager({
         <Card className="gap-3 py-4">
           <CardContent className="px-4">
             <form className="space-y-2" onSubmit={add}>
-              <Label htmlFor="custom-domain">Add a domain</Label>
+              <Label htmlFor="custom-domain">{t("addADomain")}</Label>
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Input
                   autoCapitalize="none"
@@ -432,21 +450,23 @@ export function DomainsManager({
                   type="submit"
                 >
                   <Plus />
-                  {isAdding ? "Adding..." : "Add domain"}
+                  {isAdding ? t("adding") : t("addDomain")}
                 </Button>
               </div>
               {canAdd || limit === 0 ? (
                 <p className="text-muted-foreground text-xs">
                   {canAdd
-                    ? "A subdomain such as go. or qr. works best: your main website stays where it is."
-                    : "Adding domains needs Pro or Business."}
+                    ? t("aSubdomainSuchAsGo")
+                    : t("addingDomainsNeedsProOr")}
                 </p>
               ) : (
                 <InlineLimit
                   className="mt-1"
                   fallback={
                     <p className="text-muted-foreground text-xs">
-                      {`You've added ${plural(limit, "domain")}, the most your plan includes. Remove one to add another.`}
+                      {t("youveAddedValueTheMost", {
+                        value: plural(limit, "domain"),
+                      })}
                     </p>
                   }
                   meterId="customDomains"
@@ -466,8 +486,7 @@ export function DomainsManager({
         </Card>
       ) : (
         <p className="text-muted-foreground text-sm">
-          Team owners and admins add and verify domains. You can use verified
-          domains for your codes.
+          {t("teamOwnersAndAdminsAdd")}
         </p>
       )}
 
@@ -477,12 +496,8 @@ export function DomainsManager({
             <EmptyMedia variant="icon">
               <Globe />
             </EmptyMedia>
-            <EmptyTitle>No custom domains yet</EmptyTitle>
-            <EmptyDescription>
-              Add a domain, create the DNS records we show you, then click
-              Verify. Verified domains appear in the domain picker when you
-              create or edit a dynamic code.
-            </EmptyDescription>
+            <EmptyTitle>{t("noCustomDomainsYet")}</EmptyTitle>
+            <EmptyDescription>{t("addADomainCreateThe")}</EmptyDescription>
           </EmptyHeader>
         </Empty>
       ) : connectOffers ? (
@@ -502,7 +517,9 @@ export function DomainsManager({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove {removing?.hostname}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("removeHostname", { hostname: removing?.hostname ?? "" })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {removing && removing.codeCount > 0
                 ? `${removing.codeCount === 1 ? "1 code uses" : `${removing.codeCount} codes use`} this domain. QR codes printed with ${removing.hostname} links will stop working, and the codes switch to their ${defaultHost}/q/… link. Back-halves chosen on the domain stay when they're free on ${defaultHost}; the others get a new one.`
@@ -510,13 +527,15 @@ export function DomainsManager({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isRemoving}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isRemoving}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button
               disabled={isRemoving}
               onClick={confirmRemove}
               variant="destructive"
             >
-              {isRemoving ? "Removing..." : "Remove domain"}
+              {isRemoving ? t("removing") : t("removeDomain")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

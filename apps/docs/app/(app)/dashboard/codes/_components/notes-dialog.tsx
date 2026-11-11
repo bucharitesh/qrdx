@@ -10,6 +10,7 @@ import {
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useState } from "react";
 import { setQrCodeNotes } from "@/actions/bulk-codes";
 import { MAX_NOTES_LENGTH } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
@@ -24,6 +25,7 @@ export function NotesDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.notesDialog");
   const { run, isPending } = useOrganizeAction();
   const [notes, setNotes] = useState("");
 
@@ -44,19 +46,18 @@ export function NotesDialog({
       <DialogContent className="sm:max-w-md">
         <form className="space-y-4" onSubmit={submit}>
           <DialogHeader>
-            <DialogTitle>Notes</DialogTitle>
+            <DialogTitle>{t("notes")}</DialogTitle>
             <DialogDescription>
-              Private to your workspace: where it's printed, who asked for it,
-              what to change next. Notes are searchable.
+              {t("privateToYourWorkspaceWhere")}
             </DialogDescription>
           </DialogHeader>
           <Textarea
-            aria-label="Notes"
+            aria-label={t("notes")}
             autoFocus
             className="min-h-32"
             maxLength={MAX_NOTES_LENGTH}
             onChange={(event) => setNotes(event.target.value)}
-            placeholder="Printed on 500 table tents, Oct 2026"
+            placeholder={t("printedOn500TableTents")}
             value={notes}
           />
           <DialogFooter>
@@ -66,10 +67,10 @@ export function NotesDialog({
               type="button"
               variant="ghost"
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button disabled={isPending} type="submit">
-              Save notes
+              {t("saveNotes")}
             </Button>
           </DialogFooter>
         </form>

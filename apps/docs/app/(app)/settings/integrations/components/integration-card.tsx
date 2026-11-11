@@ -7,12 +7,14 @@ import type {
 } from "@repo/integrations";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { use } from "react";
 import { PRESSABLE } from "@/components/mockups/motion";
 import { NeedsSetupBadge } from "@/components/needs-setup";
 import {
   IntegrationLogo,
   logoForIntegration,
 } from "@/components/sections/integrations/integration-logo";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 
 interface IntegrationCardProps {
   slug: string;
@@ -34,6 +36,9 @@ export function IntegrationCard({
   isConnected,
   needsSetup,
 }: IntegrationCardProps) {
+  const t = use(
+    getAppTranslations("app.settings.integrations.integrationCard"),
+  );
   return (
     <Link
       href={`/settings/integrations/${slug}`}
@@ -49,7 +54,7 @@ export function IntegrationCard({
             variant="outline"
             className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
           >
-            Connected
+            {t("connected")}
           </Badge>
         )}
         <NeedsSetupBadge names={needsSetup} />

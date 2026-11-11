@@ -113,10 +113,11 @@ function ThemeStrip({
   style: QRStyle;
   onPick: (style: QRStyle) => void;
 }) {
+  const t = useTranslations("codeBuilder.builderStyle");
   const active = choices.find((choice) => sameLook(choice.style, style));
   return (
     <fieldset
-      aria-label="Themes"
+      aria-label={t("themes")}
       className="m-0 grid min-w-0 grid-cols-4 gap-2 border-0 p-0 @[20rem]:grid-cols-5"
     >
       {choices.map((choice) => {
@@ -125,8 +126,8 @@ function ThemeStrip({
           <button
             aria-label={
               choice.isDefault
-                ? `${choice.name}, the workspace default theme`
-                : `${choice.name} theme`
+                ? t("nameTheWorkspaceDefaultTheme", { name: choice.name })
+                : t("nameTheme", { name: choice.name })
             }
             aria-pressed={selected}
             className={cn(
@@ -148,7 +149,7 @@ function ThemeStrip({
               value="https://qrdx.dev"
             />
             <span className="text-muted-foreground w-full truncate text-center text-[10px] leading-tight">
-              {choice.isDefault ? "Default" : choice.name}
+              {choice.isDefault ? t("default") : choice.name}
             </span>
           </button>
         );
@@ -175,6 +176,7 @@ export function BuilderStyle({
   /** Saved themes of the workspace; null while loading */
   themes: SavedTheme[] | null;
 }) {
+  const t = useTranslations("codeBuilder.builderStyle");
   const tFrame = useTranslations("editor.controlSections.frameControls");
   const current = useMemo(() => themeLook(style), [style]);
   const choices = useMemo(() => themeChoices(themes ?? []), [themes]);
@@ -203,7 +205,7 @@ export function BuilderStyle({
               summary={
                 choices.find((choice) => sameLook(choice.style, current))?.name
               }
-              title="Theme"
+              title={t("theme")}
             >
               <ThemeStrip choices={choices} onPick={onChange} style={current} />
             </ControlSection>
@@ -219,33 +221,33 @@ export function BuilderStyle({
                   ]}
                 />
               }
-              title="Colors"
+              title={t("colors")}
             >
               <div className="grid grid-cols-2 gap-2">
                 <GradientPicker
                   kinds={QR_IMAGE_KINDS}
-                  label="Background"
+                  label={t("background")}
                   name="bgColor"
                   onChange={(color) => update("bgColor", color)}
                   value={current.bgColor}
                 />
                 <GradientPicker
                   kinds={QR_IMAGE_KINDS}
-                  label="Foreground"
+                  label={t("foreground")}
                   name="fgColor"
                   onChange={(color) => update("fgColor", color)}
                   value={current.fgColor}
                 />
                 <GradientPicker
                   kinds={QR_IMAGE_KINDS}
-                  label="Eyes"
+                  label={t("eyes")}
                   name="eyeColor"
                   onChange={(color) => update("eyeColor", color)}
                   value={current.eyeColor}
                 />
                 <GradientPicker
                   kinds={QR_IMAGE_KINDS}
-                  label="Dots"
+                  label={t("dots")}
                   name="dotColor"
                   onChange={(color) => update("dotColor", color)}
                   value={current.dotColor}
@@ -259,7 +261,7 @@ export function BuilderStyle({
             <ControlSection
               hint="dots"
               summary={patternName(current.bodyPattern)}
-              title="Dots"
+              title={t("dots")}
             >
               <DotPatternControl />
             </ControlSection>
@@ -270,7 +272,7 @@ export function BuilderStyle({
                 current.cornerEyePattern,
                 current.cornerEyeDotPattern,
               )}
-              title="Eyes"
+              title={t("eyes")}
             >
               <EyeControls />
             </ControlSection>
@@ -289,7 +291,7 @@ export function BuilderStyle({
               hint="frame"
               popover
               summary={frameName(current.frame, tFrame("none"))}
-              title="Frame"
+              title={t("frame")}
             >
               <FrameControls />
             </ControlSection>

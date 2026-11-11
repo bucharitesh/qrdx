@@ -9,8 +9,11 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { ArrowLeft2, Sms } from "iconsax-reactjs";
 import Link from "next/link";
+import { use } from "react";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
+import type { Translator } from "@/lib/i18n/translator";
 import type { OAuthAppView } from "@/lib/oauth-apps/service";
 import { SettingsHeader } from "../../components/settings-header";
 import { AppCredentials } from "./app-credentials";
@@ -20,18 +23,26 @@ import { AppDangerZone, EditOAuthApp } from "./manage-app";
 
 const SUPPORT_EMAIL = "support@qrdx.dev";
 
-function listingMailto(app: { name: string; clientId: string }): string {
-  const subject = `List ${app.name} in the QRdx integrations directory`;
+function listingMailto(
+  app: { name: string; clientId: string },
+  t: Translator<"app.settings.developers.appDetailView">,
+): string {
+  const subject = t("listNameInTheQrdx", { name: app.name });
   const body = [
-    `App: ${app.name}`,
-    `Client ID: ${app.clientId}`,
+    t("appName", { name: app.name }),
+    t("clientIdClientid", { clientId: app.clientId }),
     "",
-    "What it does (one line):",
-    "Who it's for:",
-    "Setup steps or a link to them:",
-    "Support contact:",
+    t("whatItDoesOneLine"),
+    t("whoItsFor"),
+    t("setupStepsOrALink"),
+    t("supportContact"),
   ].join("\n");
-  return `mailto:${SUPPORT_EMAIL}?${new URLSearchParams({ subject, body }).toString().replaceAll("+", "%20")}`;
+  return t("mailtoSupportEmailValue", {
+    SUPPORT_EMAIL,
+    value: new URLSearchParams({ subject, body })
+      .toString()
+      .replaceAll("+", "%20"),
+  });
 }
 
 /**
@@ -54,6 +65,7 @@ export function OAuthAppDetailView({
   /** Public origin for the example URLs, e.g. https://qrdx.dev */
   origin: string;
 }) {
+  const t = use(getAppTranslations("app.settings.developers.appDetailView"));
   return (
     <ConfirmIdentityProvider>
       <div className="space-y-6">
@@ -62,11 +74,14 @@ export function OAuthAppDetailView({
           href={base}
         >
           <ArrowLeft2 aria-hidden className="size-3.5" />
-          API keys & apps
+          {t("apiKeysApps")}
         </Link>
 
         <SettingsHeader
-          description={`Created ${formatDate(app.createdAt)} · Updated ${formatDate(app.updatedAt)}`}
+          description={t("createdCreatedatUpdatedUpdatedat", {
+            createdAt: formatDate(app.createdAt),
+            updatedAt: formatDate(app.updatedAt),
+          })}
           title={
             <span className="flex min-w-0 items-center gap-3">
               <OAuthAppLogo logoUrl={app.logoUrl} name={app.name} size="sm" />
@@ -75,14 +90,14 @@ export function OAuthAppDetailView({
           }
         >
           <Badge variant={app.verified ? "secondary" : "outline"}>
-            {app.verified ? "Verified" : "Unverified"}
+            {app.verified ? t("verified") : t("unverified")}
           </Badge>
-          {!app.active && <Badge variant="outline">Paused</Badge>}
+          {!app.active && <Badge variant="outline">{t("paused")}</Badge>}
         </SettingsHeader>
 
         {!canManage && (
           <p className="text-muted-foreground rounded-lg border p-4 text-sm">
-            Only team owners can change this app or its secret.
+            {t("onlyTeamOwnersCanChange")}
           </p>
         )}
 
@@ -111,18 +126,16 @@ export function OAuthAppDetailView({
 
         <Card>
           <CardHeader>
-            <CardTitle>Get listed</CardTitle>
+            <CardTitle>{t("getListed")}</CardTitle>
             <CardDescription>
-              Once your integration works end to end, ask to have it added to
-              the QRdx integrations directory as a community integration. Listed
-              apps are reviewed and marked verified.
+              {t("onceYourIntegrationWorksEnd")}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button asChild size="sm" variant="outline">
-              <a href={listingMailto(app)}>
+              <a href={listingMailto(app, t)}>
                 <Sms />
-                Email {SUPPORT_EMAIL}
+                {t("emailSupportEmail", { SUPPORT_EMAIL })}
               </a>
             </Button>
           </CardContent>

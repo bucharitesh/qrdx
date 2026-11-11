@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { NewOAuthApp } from "@/app/(app)/settings/developers/_components/new-app";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { canManageOAuthApps } from "@/lib/oauth-apps/access";
 import { getOAuthAppsOverview } from "@/lib/oauth-apps/service";
 import { isStorageConfigured } from "@/lib/storage/r2";
@@ -20,6 +21,9 @@ export default async function NewOAuthAppPage({
 }: {
   params: Promise<{ workspace: string }>;
 }) {
+  const t = await getAppTranslations(
+    "app.dashboard.settings.developers.new.page",
+  );
   const [scope, { workspace }] = await Promise.all([
     requireDashboardScope(),
     params,
@@ -37,11 +41,11 @@ export default async function NewOAuthAppPage({
         href={base}
       >
         <ArrowLeft2 aria-hidden className="size-3.5" />
-        API keys & apps
+        {t("apiKeysApps")}
       </Link>
       <SettingsHeader
         description={`The app belongs to ${isTeam ? workspaceName : "your own workspace"}, and its consent screen says it's built by ${isTeam ? workspaceName : "you (your account name)"}. You'll see its client secret once, right after creating it.`}
-        title="New OAuth app"
+        title={t("newOauthApp")}
       />
       <NewOAuthApp storageEnabled={isStorageConfigured} />
     </div>

@@ -1,5 +1,7 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { use } from "react";
 import type { QrCodeStatus } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 
 const LABELS: Record<QrCodeStatus, string> = {
   active: "Active",
@@ -15,23 +17,17 @@ export function StatusBadge({
   /** Shown instead of "Active" for paused codes */
   paused?: boolean;
 }) {
+  const t = use(getAppTranslations("app.dashboard.codes.statusBadge"));
   if (paused && status === "active") {
     return (
-      <Badge
-        title="Paused: scans go to the fallback URL or a neutral 'paused' page"
-        variant="outline"
-      >
-        Paused
+      <Badge title={t("pausedScansGoToThe")} variant="outline">
+        {t("paused")}
       </Badge>
     );
   }
   return (
     <Badge
-      title={
-        status === "disabled"
-          ? "Turned off by QRdx moderation. Contact support if this is a mistake."
-          : undefined
-      }
+      title={status === "disabled" ? t("turnedOffByQrdxModeration") : undefined}
       variant={
         status === "active"
           ? "secondary"

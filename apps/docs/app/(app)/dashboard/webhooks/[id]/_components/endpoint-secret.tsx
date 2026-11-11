@@ -24,6 +24,7 @@ import {
   EyeSlash as EyeOff,
   Refresh2 as RefreshCw,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import { CopyButton } from "../../_components/event-checkboxes";
@@ -36,6 +37,7 @@ export function EndpointSecret({
   endpointId: string;
   secretPreview: string;
 }) {
+  const t = useTranslations("app.dashboard.webhooks.endpointSecret");
   const { withConfirmation } = useConfirmation();
   const [secret, setSecret] = useState<string | null>(null);
   const [confirmRotate, setConfirmRotate] = useState(false);
@@ -68,21 +70,22 @@ export function EndpointSecret({
         return;
       }
       setSecret(result.data.secret);
-      toast.success("New secret created. Update your server to use it.");
+      toast.success(t("newSecretCreatedUpdateYour"));
     });
 
   return (
     <Card className="gap-3 py-4">
       <CardHeader className="px-4">
-        <CardTitle className="text-sm">Signing secret</CardTitle>
+        <CardTitle className="text-sm">{t("signingSecret")}</CardTitle>
         <CardDescription>
-          Verify the <code className="font-mono">X-QRdx-Signature</code> header
-          with it. Only owners and admins can see it.
+          {t.rich("verifyTheXQrdxSignature", {
+            code: (chunks) => <code className="font-mono">{chunks}</code>,
+          })}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap items-center gap-2 px-4">
         <Input
-          aria-label="Signing secret"
+          aria-label={t("signingSecret")}
           className="min-w-0 flex-1 font-mono text-xs"
           onFocus={(event) => secret && event.currentTarget.select()}
           readOnly
@@ -95,9 +98,9 @@ export function EndpointSecret({
           variant="outline"
         >
           {secret ? <EyeOff /> : <Eye />}
-          {secret ? "Hide" : "Reveal"}
+          {secret ? t("hide") : t("reveal")}
         </Button>
-        {secret && <CopyButton label="Copy signing secret" value={secret} />}
+        {secret && <CopyButton label={t("copySigningSecret")} value={secret} />}
         <Button
           disabled={isPending}
           onClick={() => setConfirmRotate(true)}
@@ -105,23 +108,22 @@ export function EndpointSecret({
           variant="outline"
         >
           <RefreshCw />
-          Rotate
+          {t("rotate")}
         </Button>
       </CardContent>
 
       <AlertDialog onOpenChange={setConfirmRotate} open={confirmRotate}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Rotate the signing secret?</AlertDialogTitle>
+            <AlertDialogTitle>{t("rotateTheSigningSecret")}</AlertDialogTitle>
             <AlertDialogDescription>
-              The current secret stops working immediately, so requests fail
-              your verification until your server uses the new one.
+              {t("theCurrentSecretStopsWorking")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <Button disabled={isPending} onClick={rotate} variant="destructive">
-              Rotate secret
+              {t("rotateSecret")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

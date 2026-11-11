@@ -19,6 +19,7 @@ import {
 } from "@repo/design-system/components/ui/input-otp";
 import { Label } from "@repo/design-system/components/ui/label";
 import { FingerScan } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useRef, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import {
@@ -97,6 +98,7 @@ export function TwoFactorChallenge({
   onCancel,
   onStepChange,
 }: TwoFactorChallengeProps) {
+  const t = useTranslations("auth.twoFactorChallenge");
   const id = useId();
   const passkeysOffered = useAvailability().has("passkeys");
   // The methods this person can use here; null while they're looked up.
@@ -358,7 +360,7 @@ export function TwoFactorChallenge({
             ? PASSKEY_STEP_MESSAGES.waiting
             : mode === "passkey"
               ? PASSKEY_STEP_MESSAGES.checking
-              : "Checking code…"}
+              : t("checkingCode")}
         </>
       ) : (
         (error ??
@@ -377,7 +379,7 @@ export function TwoFactorChallenge({
           className="flex h-11 w-full items-center justify-center"
         >
           <Spinner className="size-5 text-muted-foreground" />
-          <span className="sr-only">Loading your sign-in methods</span>
+          <span className="sr-only">{t("loadingYourSignInMethods")}</span>
         </div>
       ) : mode === "passkey" ? (
         <Button
@@ -387,13 +389,13 @@ export function TwoFactorChallenge({
           onClick={() => void startPasskey({ fromButton: true })}
         >
           <FingerScan className="size-5" />
-          Continue with passkey
+          {t("continueWithPasskey")}
           {working && <Spinner className="size-4" />}
         </Button>
       ) : mode === "totp" ? (
         <InputOTP
           aria-describedby={statusId}
-          aria-label="Authenticator code"
+          aria-label={t("authenticatorCode")}
           autoComplete="one-time-code"
           autoFocus
           containerClassName="justify-center gap-3"
@@ -429,7 +431,7 @@ export function TwoFactorChallenge({
           onSubmit={submitBackupCode}
         >
           <Label className="sr-only" htmlFor={`${id}-backup`}>
-            Backup code
+            {t("backupCode")}
           </Label>
           <Input
             aria-describedby={statusId}
@@ -445,7 +447,7 @@ export function TwoFactorChallenge({
               setBackupCode(event.target.value);
               if (!over) setError(null);
             }}
-            placeholder="ABCDE-FGH23"
+            placeholder={t("abcdeFgh23")}
             spellCheck={false}
             value={backupCode}
           />
@@ -454,7 +456,7 @@ export function TwoFactorChallenge({
             disabled={over || leaving || checking || !backupCode.trim()}
             type="submit"
           >
-            Verify
+            {t("verify")}
             {checking && <Spinner className="size-4" />}
           </Button>
         </form>
@@ -469,7 +471,7 @@ export function TwoFactorChallenge({
           onClick={() => void leave()}
           variant="outline"
         >
-          Sign in again
+          {t("signInAgain")}
           {leaving && <Spinner className="size-4" />}
         </Button>
       ) : (
@@ -488,7 +490,7 @@ export function TwoFactorChallenge({
                 className="-my-3 min-h-10 py-3 text-xs font-normal text-muted-foreground"
                 htmlFor={`${id}-trust`}
               >
-                Don't ask again on this device for {TRUST_DEVICE_DAYS} days
+                {t("dontAskAgainOnThis", { TRUST_DEVICE_DAYS })}
               </Label>
             </div>
           )}
@@ -513,7 +515,7 @@ export function TwoFactorChallenge({
               onClick={() => void leave()}
               type="button"
             >
-              Use another account
+              {t("useAnotherAccount")}
             </button>
           </div>
         </>

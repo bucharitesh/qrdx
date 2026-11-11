@@ -2,6 +2,9 @@
 // (lib/i18n/content.ts). Shared by lib/i18n/content-sources.ts, which
 // decides what gets translated, and the pages that render the data, so a
 // value that happens to match a translated string is never swapped.
+
+import { navAreas } from "@/components/app-shell/nav-areas";
+import { mainNav, settingsNav } from "@/components/app-shell/nav-config";
 import { CONTENT_CATEGORIES, CONTENT_TYPES_METADATA } from "@/types/qr-content";
 import type { ContentRules } from "./content";
 
@@ -60,3 +63,15 @@ export const EDITOR_CONTENT = {
 export const EDITOR_CONTENT_RULES: ContentRules = {
   skip: ["keywords", "types"],
 };
+
+/**
+ * The signed-in app's navigation (components/app-shell): sidebar groups,
+ * items, areas and their titles. Search words stay English.
+ */
+export const APP_NAV_CONTENT = () => ({
+  main: mainNav("workspace"),
+  settings: settingsNav("workspace"),
+  areas: navAreas("workspace"),
+  accountAreas: navAreas(null),
+});
+export const APP_NAV_RULES: ContentRules = { skip: ["keywords"] };

@@ -2,6 +2,7 @@
 
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { emitSound } from "@/components/editor/sound";
@@ -26,6 +27,7 @@ export function SheetsExportButton(
     needsSetup?: string[];
   },
 ) {
+  const t = useTranslations("editor.connections.sheetsExportButton");
   const [pending, setPending] = useState(false);
 
   const run = async () => {
@@ -41,7 +43,7 @@ export function SheetsExportButton(
         `Exported ${result.rows.toLocaleString()} rows${result.truncated ? " (the first 50,000)" : ""}`,
         {
           action: {
-            label: "Open sheet",
+            label: t("openSheet"),
             onClick: () =>
               window.open(result.url, "_blank", "noopener,noreferrer"),
           },
@@ -55,16 +57,16 @@ export function SheetsExportButton(
         code === "RECONNECT" ||
         code === "reconnect"
       ) {
-        toast.error("Connect Google Sheets first", {
+        toast.error(t("connectGoogleSheetsFirst"), {
           action: {
-            label: "Connect",
+            label: t("connect"),
             onClick: () => {
               window.location.href = "/settings/integrations/google-sheets";
             },
           },
         });
       } else {
-        toast.error(error instanceof Error ? error.message : "Export failed");
+        toast.error(error instanceof Error ? error.message : t("exportFailed"));
       }
     } finally {
       setPending(false);
@@ -84,7 +86,7 @@ export function SheetsExportButton(
       ) : (
         <img alt="" className="size-4" src="/integrations/google-sheets.svg" />
       )}
-      {pending ? "Exporting…" : "Export to Google Sheets"}
+      {pending ? t("exporting") : t("exportToGoogleSheets")}
     </Button>
   );
   if (!props.needsSetup?.length) return button;

@@ -22,6 +22,7 @@ import {
 import { ExportSquare } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
@@ -43,13 +44,14 @@ function hostOf(url: string): string {
 
 /** Settings → Authorized apps: everything that can use this account. */
 export function AuthorizedAppsView({ apps }: { apps: AuthorizedAppView[] }) {
+  const t = useTranslations("app.settings.authorizedApps.authorizedAppsView");
   const [revoking, setRevoking] = useState<AuthorizedAppView | null>(null);
 
   return (
     <div className="space-y-6">
       <SettingsHeader
-        description="Apps you've allowed to use your QRdx account through the API. Revoke access to sign an app out right away."
-        title="Authorized apps"
+        description={t("appsYouveAllowedToUse")}
+        title={t("authorizedApps")}
       />
 
       {apps.length === 0 ? (
@@ -59,18 +61,15 @@ export function AuthorizedAppsView({ apps }: { apps: AuthorizedAppView[] }) {
               className="mx-auto mb-2 h-28 w-40"
               figure="AuthorizedApp"
             />
-            <EmptyTitle>No apps have access</EmptyTitle>
-            <EmptyDescription>
-              When you approve an app on the QRdx consent screen, it shows up
-              here with what it can do, and you can revoke it at any time.
-            </EmptyDescription>
+            <EmptyTitle>{t("noAppsHaveAccess")}</EmptyTitle>
+            <EmptyDescription>{t("whenYouApproveAnApp")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Link
               className="text-muted-foreground text-xs underline"
               href={DOCS_HREF}
             >
-              How app access works
+              {t("howAppAccessWorks")}
             </Link>
           </EmptyContent>
         </Empty>
@@ -87,16 +86,18 @@ export function AuthorizedAppsView({ apps }: { apps: AuthorizedAppView[] }) {
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="truncate text-sm font-medium">{app.name}</p>
                     {app.firstParty ? (
-                      <Badge variant="secondary">By QRdx</Badge>
+                      <Badge variant="secondary">{t("byQrdx")}</Badge>
                     ) : app.verified ? (
-                      <Badge variant="secondary">Verified</Badge>
+                      <Badge variant="secondary">{t("verified")}</Badge>
                     ) : (
-                      <Badge variant="outline">Unverified</Badge>
+                      <Badge variant="outline">{t("unverified")}</Badge>
                     )}
-                    {app.paused && <Badge variant="outline">Paused</Badge>}
+                    {app.paused && (
+                      <Badge variant="outline">{t("paused")}</Badge>
+                    )}
                   </div>
                   <p className="text-muted-foreground flex flex-wrap items-center gap-x-1.5 text-xs">
-                    <span>Built by {app.builtBy}</span>
+                    <span>{t("builtByBuiltby", { builtBy: app.builtBy })}</span>
                     {app.websiteUrl && (
                       <>
                         <span aria-hidden>·</span>
@@ -117,13 +118,15 @@ export function AuthorizedAppsView({ apps }: { apps: AuthorizedAppView[] }) {
                       ? app.scopes
                           .map((scope) => OAUTH_SCOPE_INFO[scope].consent)
                           .join(" · ")
-                      : "No API permissions"}
+                      : t("noApiPermissions")}
                   </p>
                   <p className="text-muted-foreground text-xs">
-                    Authorized {formatDate(app.authorizedAt)}
+                    {t("authorized")} {formatDate(app.authorizedAt)}
                     {formatDate(app.lastActiveAt) !==
                       formatDate(app.authorizedAt) &&
-                      ` · last active ${formatDate(app.lastActiveAt)}`}
+                      t("lastActiveLastactiveat", {
+                        lastActiveAt: formatDate(app.lastActiveAt),
+                      })}
                   </p>
                 </div>
               </div>
@@ -133,7 +136,7 @@ export function AuthorizedAppsView({ apps }: { apps: AuthorizedAppView[] }) {
                 size="sm"
                 variant="outline"
               >
-                Revoke access
+                {t("revokeAccess")}
               </Button>
             </li>
           ))}
@@ -152,6 +155,7 @@ function RevokeDialog({
   app: AuthorizedAppView | null;
   onClose: () => void;
 }) {
+  const t = useTranslations("app.settings.authorizedApps.authorizedAppsView");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -163,7 +167,7 @@ function RevokeDialog({
         toast.error(result.error);
         return;
       }
-      toast.success(`${app.name} can no longer use your account`);
+      toast.success(t("nameCanNoLongerUse", { name: app.name }));
       onClose();
       router.refresh();
     });
@@ -176,17 +180,19 @@ function RevokeDialog({
     >
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Revoke {app?.name}'s access?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t("revokeNameSAccess", { name: app?.name ?? "" })}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            It's signed out of your QRdx account right away and its API calls
-            stop working. Your codes and data stay as they are. To use it again,
-            you'll approve it on the consent screen again.
+            {t("itsSignedOutOfYour")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={pending}>
+            {t("cancel")}
+          </AlertDialogCancel>
           <Button disabled={pending} onClick={revoke} variant="destructive">
-            {pending ? "Revoking…" : "Revoke access"}
+            {pending ? t("revoking") : t("revokeAccess")}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

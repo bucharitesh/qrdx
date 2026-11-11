@@ -7,6 +7,7 @@ import { Switch } from "@repo/design-system/components/ui/switch";
 import type { IntegrationApiKeyConfig } from "@repo/integrations";
 import { ExportSquare } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
 import { toast } from "sonner";
 import { ensureConfirmed } from "@/components/confirm-identity/actions";
@@ -51,6 +52,7 @@ function Card({
 }
 
 function SheetsPanel() {
+  const t = useTranslations("app.settings.integrations.dataConnectionPanel");
   const id = useId();
   const [view, setView] = useState<SinkViewData | null>(null);
   const [busy, setBusy] = useState(false);
@@ -77,37 +79,32 @@ function SheetsPanel() {
     setBusy(true);
     try {
       setView(await saveSink("google-sheets", { enabled }));
-      toast.success(
-        enabled ? "New scans will be added to the sheet" : "Sync off",
-      );
+      toast.success(enabled ? t("newScansWillBeAdded") : t("syncOff"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't save");
+      toast.error(err instanceof Error ? err.message : t("couldntSave"));
     } finally {
       setBusy(false);
     }
   };
 
   return (
-    <Card title="Export scans">
+    <Card title={t("exportScans")}>
       <p className="text-muted-foreground text-sm text-pretty">
-        A new spreadsheet with every scan of the workspace's codes (oldest
-        first, up to 50,000): time, code, country, city, device, OS, browser,
-        referrer and language. For one code, use Export on the code's page; for
-        form responses, on the page's Responses screen.
+        {t("aNewSpreadsheetWithEvery")}
       </p>
       <SheetsExportButton codeId={null} size="default" />
       {settings.lastExport && (
         <div className="space-y-3 rounded-lg border p-4">
           <p className="text-sm">
-            Last export: {settings.lastExport.label},{" "}
-            {settings.lastExport.rowsWritten.toLocaleString()} rows.{" "}
+            {t("lastExport")} {settings.lastExport.label},{" "}
+            {settings.lastExport.rowsWritten.toLocaleString()} {t("rows")}{" "}
             <a
               className={linkClass}
               href={settings.lastExport.spreadsheetUrl}
               rel="noopener noreferrer"
               target="_blank"
             >
-              Open sheet
+              {t("openSheet")}
               <ExportSquare aria-hidden className="size-3.5" />
             </a>
           </p>
@@ -118,17 +115,16 @@ function SheetsPanel() {
               id={`${id}-sync`}
               onCheckedChange={toggle}
             />
-            <Label htmlFor={`${id}-sync`}>Keep this sheet in sync</Label>
+            <Label htmlFor={`${id}-sync`}>{t("keepThisSheetInSync")}</Label>
             {busy && <Spinner className="size-3.5" />}
           </div>
           <p className="text-muted-foreground text-xs text-pretty">
-            New scans are appended in batches, at most one request every five
-            minutes, retried with backoff and never added twice.
+            {t("newScansAreAppendedIn")}
           </p>
         </div>
       )}
       <SyncStatus
-        noun="scans"
+        noun={t("scans")}
         onRetry={async () =>
           setView(await retrySinkNow("google-sheets").catch(() => view))
         }
@@ -145,6 +141,7 @@ function SheetsPanel() {
  * person to Slack.
  */
 function AddSlackChannelButton() {
+  const t = useTranslations("app.settings.integrations.dataConnectionPanel");
   const { withConfirmation } = useConfirmation();
   const [busy, setBusy] = useState(false);
 
@@ -161,7 +158,7 @@ function AddSlackChannelButton() {
       }
       if (result) toast.error(result.error);
     } catch {
-      toast.error("Something went wrong. Check your connection and try again.");
+      toast.error(t("somethingWentWrongCheckYour"));
     }
     setBusy(false);
   };
@@ -169,12 +166,13 @@ function AddSlackChannelButton() {
   return (
     <Button disabled={busy} onClick={add}>
       {busy && <Spinner className="size-3.5" />}
-      Add another channel
+      {t("addAnotherChannel")}
     </Button>
   );
 }
 
 function SlackPanel({ metadata }: { metadata?: Record<string, unknown> }) {
+  const t = useTranslations("app.settings.integrations.dataConnectionPanel");
   const channels = Array.isArray(metadata?.channels)
     ? (metadata.channels as Array<{
         targetId: string;
@@ -184,7 +182,7 @@ function SlackPanel({ metadata }: { metadata?: Record<string, unknown> }) {
       }>)
     : [];
   return (
-    <Card title="Channels">
+    <Card title={t("channels")}>
       {channels.length > 0 ? (
         <ul className="divide-y rounded-lg border">
           {channels.map((channel) => (
@@ -202,23 +200,23 @@ function SlackPanel({ metadata }: { metadata?: Record<string, unknown> }) {
                 )}
               </span>
               <span className="text-muted-foreground text-xs">
-                Added {new Date(channel.addedAt).toLocaleDateString()}
+                {t("addedValue", {
+                  value: new Date(channel.addedAt).toLocaleDateString(),
+                })}
               </span>
             </li>
           ))}
         </ul>
       ) : (
-        <p className="text-muted-foreground text-sm">No channels yet.</p>
+        <p className="text-muted-foreground text-sm">{t("noChannelsYet")}</p>
       )}
       <p className="text-muted-foreground text-sm text-pretty">
-        Each channel gets scan milestones and form responses at first. Choose
-        its alerts or send a test in Settings → Notifications. Disconnecting
-        removes these channels; webhooks you pasted yourself keep working.
+        {t("eachChannelGetsScanMilestones")}
       </p>
       <div className="flex flex-wrap gap-2">
         <AddSlackChannelButton />
         <Button asChild variant="outline">
-          <Link href="/settings/notifications">Choose alerts</Link>
+          <Link href="/settings/notifications">{t("chooseAlerts")}</Link>
         </Button>
       </div>
     </Card>
@@ -245,17 +243,19 @@ export function DataConnectionPanel({
   metadata,
   apiKey,
 }: DataConnectionPanelProps) {
+  const t = useTranslations("app.settings.integrations.dataConnectionPanel");
   const active = isConnected && status === "active";
 
   if (NO_ACCOUNT.has(slug)) {
     return (
-      <Card title="No account needed">
+      <Card title={t("noAccountNeeded")}>
         <p className="text-muted-foreground text-sm text-pretty">
-          Paste any {name} link in the {name} content type: QRdx recognizes it,
-          removes tracking and shows a preview.
+          {t("pasteAnyNameLinkIn", { name, name2: name })}
         </p>
         <Button asChild variant="outline">
-          <Link href={`/qr-code-generator/${slug}`}>Make a {name} QR code</Link>
+          <Link href={`/qr-code-generator/${slug}`}>
+            {t("makeANameQrCode", { name })}
+          </Link>
         </Button>
       </Card>
     );

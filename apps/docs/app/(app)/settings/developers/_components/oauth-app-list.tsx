@@ -1,12 +1,20 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { ArrowRight2 } from "iconsax-reactjs";
 import Link from "next/link";
+import { use } from "react";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
+import type { Translator } from "@/lib/i18n/translator";
 import type { OAuthAppView } from "@/lib/oauth-apps/service";
 import { OAUTH_SCOPE_INFO } from "@/lib/oauth-scopes";
 
-function usersLabel(count: number): string {
-  return count === 1 ? "1 user" : `${count.toLocaleString("en")} users`;
+function usersLabel(
+  count: number,
+  t: Translator<"app.settings.developers.oauthAppList">,
+): string {
+  return count === 1
+    ? t("n1User")
+    : t("valueUsers", { value: count.toLocaleString("en") });
 }
 
 export function OAuthAppList({
@@ -17,6 +25,7 @@ export function OAuthAppList({
   /** The workspace's API keys & apps page */
   base: string;
 }) {
+  const t = use(getAppTranslations("app.settings.developers.oauthAppList"));
   return (
     <ul className="divide-y overflow-hidden rounded-xl border">
       {apps.map((app) => (
@@ -29,8 +38,10 @@ export function OAuthAppList({
             <div className="min-w-0 flex-1 space-y-1">
               <div className="flex flex-wrap items-center gap-2">
                 <p className="truncate text-sm font-medium">{app.name}</p>
-                {app.verified && <Badge variant="secondary">Verified</Badge>}
-                {!app.active && <Badge variant="outline">Paused</Badge>}
+                {app.verified && (
+                  <Badge variant="secondary">{t("verified")}</Badge>
+                )}
+                {!app.active && <Badge variant="outline">{t("paused")}</Badge>}
               </div>
               <p className="text-muted-foreground truncate font-mono text-xs">
                 {app.clientId}
@@ -40,7 +51,7 @@ export function OAuthAppList({
                   .map((scope) => OAUTH_SCOPE_INFO[scope].label)
                   .join(", ")}
                 {" · "}
-                {usersLabel(app.userCount)}
+                {usersLabel(app.userCount, t)}
               </p>
             </div>
             <ArrowRight2

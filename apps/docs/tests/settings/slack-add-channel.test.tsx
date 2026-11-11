@@ -3,8 +3,9 @@
 // plain link to the install route (which would only refuse and come back).
 // The server side is tests/lib/confirm-data-out-connect.test.ts. Rendered to
 // static markup, so the click itself isn't run here.
-import { renderToStaticMarkup } from "react-dom/server";
+
 import { describe, expect, it, vi } from "vitest";
+import { renderIntl } from "../support/intl";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: () => {}, push: () => {}, refresh: () => {} }),
@@ -58,7 +59,7 @@ const slack = (
 
 describe('"Add another channel"', () => {
   it("is a button, not a link straight to the install route", () => {
-    const html = renderToStaticMarkup(
+    const html = renderIntl(
       <ConfirmIdentityProvider>{slack}</ConfirmIdentityProvider>,
     );
     expect(html).toMatch(
@@ -68,7 +69,7 @@ describe('"Add another channel"', () => {
   });
 
   it("needs the page's ConfirmIdentityProvider", () => {
-    expect(() => renderToStaticMarkup(slack)).toThrow(
+    expect(() => renderIntl(slack)).toThrow(
       /needs a <ConfirmIdentityProvider>/,
     );
   });

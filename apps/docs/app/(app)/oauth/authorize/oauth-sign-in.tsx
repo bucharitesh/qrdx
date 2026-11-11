@@ -7,6 +7,7 @@ import {
   Spinner as Loader2,
 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
 import type { OAuthScope } from "@/lib/oauth-scopes";
@@ -22,6 +23,7 @@ export function OAuthSignIn({
   scopes: OAuthScope[];
   callbackURL: string;
 }) {
+  const t = useTranslations("app.oauth.authorize.oauthSignIn");
   const [loadingProvider, setLoadingProvider] = useState<string | null>(null);
 
   const handleSignIn = async (provider: "google" | "github") => {
@@ -45,7 +47,7 @@ export function OAuthSignIn({
       <div className="mb-8 flex flex-col items-center text-center">
         <OAuthAppLogo logoUrl={app.logoUrl} name={app.name} />
         <p className="text-muted-foreground mt-4 text-sm">
-          Sign in to QRdx to continue to
+          {t("signInToQrdxTo")}
         </p>
         <h1 className="mt-1 text-lg font-semibold text-balance">{app.name}</h1>
       </div>
@@ -58,7 +60,7 @@ export function OAuthSignIn({
           variant="outline"
         >
           <GoogleLogo className="h-4 w-4" />
-          Continue with Google
+          {t("continueWithGoogle")}
           {loadingProvider === "google" && (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
           )}
@@ -71,7 +73,7 @@ export function OAuthSignIn({
           variant="outline"
         >
           <GithubLogo className="h-4 w-4" />
-          Continue with GitHub
+          {t("continueWithGithub")}
           {loadingProvider === "github" && (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
           )}
@@ -85,7 +87,7 @@ export function OAuthSignIn({
       )}
 
       <p className="text-muted-foreground mt-6 text-center text-xs">
-        You'll review these permissions before anything is shared.
+        {t("youllReviewThesePermissionsBefore")}
       </p>
     </AuthorizeShell>
   );

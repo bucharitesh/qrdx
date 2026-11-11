@@ -12,6 +12,7 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { updateUserSettings } from "@/actions/user-settings";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
@@ -23,6 +24,7 @@ interface GeneralSettingsFormProps {
 export function GeneralSettingsForm({
   initialSettings,
 }: GeneralSettingsFormProps) {
+  const t = useTranslations("app.settings.general.generalSettingsForm");
   const [keyboardShortcuts, setKeyboardShortcuts] = useState(
     initialSettings?.keyboardShortcuts ?? true,
   );
@@ -38,15 +40,15 @@ export function GeneralSettingsForm({
       });
 
       if (result.success) {
-        toast.success("Settings saved successfully");
+        toast.success(t("settingsSavedSuccessfully"));
         // Refresh the settings context so components update immediately
         await refreshSettings();
       } else {
-        toast.error("Failed to save settings");
+        toast.error(t("failedToSaveSettings"));
       }
     } catch (error) {
       console.error("Error saving settings:", error);
-      toast.error("Failed to save settings");
+      toast.error(t("failedToSaveSettings"));
     } finally {
       setIsSaving(false);
     }
@@ -59,19 +61,19 @@ export function GeneralSettingsForm({
     <div className="space-y-6">
       <Card>
         <CardHeader className="sr-only">
-          <CardTitle>Keyboard Shortcuts</CardTitle>
+          <CardTitle>{t("keyboardShortcuts")}</CardTitle>
           <CardDescription>
-            Control keyboard shortcuts throughout the application
+            {t("controlKeyboardShortcutsThroughoutThe")}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
               <Label htmlFor="keyboard-shortcuts">
-                Enable keyboard shortcuts
+                {t("enableKeyboardShortcuts")}
               </Label>
               <p className="text-muted-foreground text-sm">
-                Allow keyboard shortcuts for quick actions in the playground
+                {t("allowKeyboardShortcutsForQuick")}
               </p>
             </div>
             <Switch
@@ -86,7 +88,7 @@ export function GeneralSettingsForm({
       {hasChanges && (
         <div className="flex justify-end">
           <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save Changes"}
+            {isSaving ? t("saving") : t("saveChanges")}
           </Button>
         </div>
       )}

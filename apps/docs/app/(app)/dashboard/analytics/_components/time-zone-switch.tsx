@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Global as Globe } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 
 /** Links between UTC and the viewer's time zone (`?tz=`), keeping other params. */
@@ -16,6 +17,7 @@ export function TimeZoneSwitch({
   params: Record<string, string>;
   current: string;
 }) {
+  const t = useTranslations("app.dashboard.analytics.timeZoneSwitch");
   const [local, setLocal] = useState<string | null>(null);
   useEffect(() => {
     setLocal(Intl.DateTimeFormat().resolvedOptions().timeZone || null);
@@ -33,7 +35,7 @@ export function TimeZoneSwitch({
       <Button asChild size="sm" variant="ghost">
         <Link href={href(null)} scroll={false}>
           <Globe />
-          {current} · show UTC
+          {t("currentShowUtc", { current })}
         </Link>
       </Button>
     );
@@ -43,7 +45,7 @@ export function TimeZoneSwitch({
     <Button asChild size="sm" variant="ghost">
       <Link href={href(local)} scroll={false}>
         <Globe />
-        UTC · show {local}
+        {t("utcShowLocal", { local })}
       </Link>
     </Button>
   );

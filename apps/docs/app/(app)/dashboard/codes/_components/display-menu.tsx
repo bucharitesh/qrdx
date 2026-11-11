@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The Display menu and the live search field the codes and pages lists
 // share.
@@ -52,18 +53,21 @@ export function DisplayMenu({
   /** The properties offered; none hides the "Show" section */
   properties?: readonly CodeProperty[];
 }) {
+  const t = useTranslations("app.dashboard.codes.displayMenu");
   const { display, setDisplay } = useListDisplay();
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline">
           <Setting4 aria-hidden />
-          Display
+          {t("display")}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-72 space-y-4 p-4">
         <div className="space-y-1.5">
-          <p className="text-muted-foreground text-xs font-medium">View</p>
+          <p className="text-muted-foreground text-xs font-medium">
+            {t("view")}
+          </p>
           <ToggleGroup
             className="w-full"
             onValueChange={(value) => {
@@ -77,20 +81,22 @@ export function DisplayMenu({
           >
             <ToggleGroupItem className="flex-1 gap-1.5" value="cards">
               <Element3 aria-hidden className="size-4" />
-              Cards
+              {t("cards")}
             </ToggleGroupItem>
             <ToggleGroupItem className="flex-1 gap-1.5" value="rows">
               <RowVertical aria-hidden className="size-4" />
-              Rows
+              {t("rows")}
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
 
         {sort && (
           <div className="space-y-1.5">
-            <p className="text-muted-foreground text-xs font-medium">Sort by</p>
+            <p className="text-muted-foreground text-xs font-medium">
+              {t("sortBy")}
+            </p>
             <Select onValueChange={sort.onChange} value={sort.value}>
-              <SelectTrigger aria-label="Sort by" className="w-full">
+              <SelectTrigger aria-label={t("sortBy")} className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -106,7 +112,9 @@ export function DisplayMenu({
 
         {properties.length > 0 && (
           <div className="space-y-1.5">
-            <p className="text-muted-foreground text-xs font-medium">Show</p>
+            <p className="text-muted-foreground text-xs font-medium">
+              {t("show")}
+            </p>
             <div className="flex flex-wrap gap-1.5">
               {properties.map((property) => {
                 const on = display.properties.includes(property);
@@ -154,6 +162,7 @@ export function ListSearch({
   label: string;
   className?: string;
 }) {
+  const t = useTranslations("app.dashboard.codes.displayMenu");
   const [text, setText] = useState(value);
   const sent = useRef(value);
   const onSearchRef = useRef(onSearch);
@@ -197,7 +206,7 @@ export function ListSearch({
       />
       {text && (
         <button
-          aria-label="Clear search"
+          aria-label={t("clearSearch")}
           className="text-muted-foreground hover:text-foreground absolute top-1/2 right-2 -translate-y-1/2 rounded-sm p-0.5"
           onClick={() => setText("")}
           type="button"

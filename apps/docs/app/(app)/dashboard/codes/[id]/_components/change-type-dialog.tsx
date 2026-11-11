@@ -16,6 +16,7 @@ import {
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { ArrowLeft, ArrowRotateLeft, Global } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
   type FormEvent,
   type ReactNode,
@@ -48,6 +49,7 @@ import { useAvailability } from "@/components/availability-provider";
 import { InlineLimit } from "@/components/limits/inline-limit";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useWorkspaceHref } from "@/components/workspace-provider";
+import type { Translator } from "@/lib/i18n/translator";
 import { offeredPageTypes } from "@/lib/landing/file-page-types";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
@@ -60,8 +62,12 @@ type Step =
 
 type CodeOptionsList = CodeTypeOptions["inactiveAfterSwitch"];
 
-const pageName = (page: { title: string | null; typeLabel: string }) =>
-  page.title?.trim() || `Untitled ${page.typeLabel.toLowerCase()}`;
+const pageName = (
+  page: { title: string | null; typeLabel: string },
+  t: Translator<"app.dashboard.codes.changeTypeDialog">,
+) =>
+  page.title?.trim() ||
+  t("untitledTypelabel", { typeLabel: page.typeLabel.toLowerCase() });
 
 /** Options a switch leaves saved but unused, in one sentence. */
 function InactiveNote({
@@ -71,14 +77,15 @@ function InactiveNote({
   options: CodeOptionsList;
   to: "page" | "redirect";
 }) {
+  const t = useTranslations("app.dashboard.codes.changeTypeDialog");
   if (options.length === 0) return null;
   const names = listLabels(options.map((id) => CODE_OPTION_COPY[id].label));
   return (
     <p className="text-muted-foreground text-sm">
       {to === "page"
-        ? `${names} only apply to website links.`
-        : `${names} only load on hosted pages.`}{" "}
-      They stay saved and work again if you switch back.
+        ? t("namesOnlyApplyToWebsite", { names })
+        : t("namesOnlyLoadOnHosted", { names })}{" "}
+      {t("theyStaySavedAndWork")}
     </p>
   );
 }
@@ -90,6 +97,7 @@ function PageRow({
   page: CodeTypePage;
   onClick: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.changeTypeDialog");
   return (
     <button
       className="hover:bg-muted/60 focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-lg border p-3 text-left transition-colors outline-none focus-visible:ring-[3px]"
@@ -101,10 +109,10 @@ function PageRow({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-medium">
-          {pageName(page)}
+          {pageName(page, t)}
         </span>
         <span className="text-muted-foreground block text-xs">
-          {page.typeLabel} page this code opened before
+          {t("typelabelPageThisCodeOpened", { typeLabel: page.typeLabel })}
         </span>
       </span>
     </button>
@@ -125,6 +133,7 @@ export function ChangeTypeDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.changeTypeDialog");
   const router = useRouter();
   const inWorkspace = useWorkspaceHref();
   const fileStorage = useAvailability().has("fileStorage");
@@ -227,7 +236,7 @@ export function ChangeTypeDialog({
         pageId: page.id,
       });
       if (!result.success) return fail(result.error.message);
-      done(`Scans now open ${pageName(page)}.`);
+      done(`Scans now open ${pageName(page, t)}.`);
     });
   };
 
@@ -245,7 +254,7 @@ export function ChangeTypeDialog({
 
   const opensNow = isPage
     ? options?.page
-      ? pageName(options.page)
+      ? pageName(options.page, t)
       : "a page that was deleted"
     : displayUrl(code.destinationUrl);
 
@@ -259,7 +268,7 @@ export function ChangeTypeDialog({
       variant="outline"
     >
       <ArrowLeft />
-      Back
+      {t("back")}
     </Button>
   );
 
@@ -291,13 +300,13 @@ export function ChangeTypeDialog({
         {isPage && (
           <div className="space-y-2">
             <p className="text-muted-foreground text-xs font-medium uppercase">
-              Link
+              {t("link")}
             </p>
             <div className="grid gap-2 sm:grid-cols-2">
               <TypeCard
-                description="Send scans straight to a web address"
+                description={t("sendScansStraightToA")}
                 icon={Global}
-                label="Website link"
+                label={t("websiteLink")}
                 onClick={() => {
                   setError(null);
                   setStep({ name: "redirect" });
@@ -309,7 +318,7 @@ export function ChangeTypeDialog({
         {options && options.previousPages.length > 0 && (
           <div className="space-y-2">
             <p className="text-muted-foreground text-xs font-medium uppercase">
-              Switch back
+              {t("switchBack")}
             </p>
             {options.previousPages.map((page) => (
               <PageRow
@@ -326,11 +335,15 @@ export function ChangeTypeDialog({
         <div className="space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-muted-foreground text-xs font-medium uppercase">
-              {isPage ? "Another page type" : "Hosted page"}
+              {isPage ? t("anotherPageType") : t("hostedPage")}
             </p>
             {usage && usage.limit !== null && (
               <span className="text-muted-foreground text-xs">
-                {usage.used} / {usage.limit} pages ({PLAN_NAMES[usage.plan]})
+                {t("usedLimitPagesValue", {
+                  used: usage.used,
+                  limit: usage.limit,
+                  value: PLAN_NAMES[usage.plan],
+                })}
               </span>
             )}
           </div>
@@ -368,26 +381,24 @@ export function ChangeTypeDialog({
             <>
               <p>
                 {carry && carry.carried.length > 0
-                  ? `Comes along: the page name, settings and logo, plus ${listLabels(carry.carried)}.`
-                  : "Comes along: the page name, settings and logo."}
+                  ? t("comesAlongThePageName", {
+                      value: listLabels(carry.carried),
+                    })
+                  : t("comesAlongThePageName2")}
               </p>
               {carry && carry.left.length > 0 && (
                 <p>
-                  Not in this template: {listLabels(carry.left)}.{" "}
-                  {carry.left.length === 1 ? "It stays" : "They stay"} on your
-                  current page.
+                  {t("notInThisTemplate")} {listLabels(carry.left)}.{" "}
+                  {carry.left.length === 1 ? t("itStays") : t("theyStay")}{" "}
+                  {t("onYourCurrentPage")}
                 </p>
               )}
               <p className="text-muted-foreground">
-                {pageName(options.page)} stays in Pages, so you can switch back.
-                Scans keep opening it until you publish the new page.
+                {t("valueStaysInPagesSo", { value: pageName(options.page, t) })}
               </p>
             </>
           ) : (
-            <p>
-              You edit the page next. Scans keep going to {opensNow} until you
-              publish it.
-            </p>
+            <p>{t("youEditThePageNext", { opensNow })}</p>
           )}
           {!isPage && options && (
             <InactiveNote options={options.inactiveAfterSwitch} to="page" />
@@ -409,7 +420,7 @@ export function ChangeTypeDialog({
       <>
         {back}
         <Button disabled={!(template && variant)} onClick={openEditor}>
-          Continue to editor
+          {t("continueToEditor")}
         </Button>
       </>
     );
@@ -421,7 +432,7 @@ export function ChangeTypeDialog({
         onSubmit={switchToRedirect}
       >
         <div className="space-y-1.5">
-          <Label htmlFor="change-type-destination">Destination URL</Label>
+          <Label htmlFor="change-type-destination">{t("destinationUrl")}</Label>
           <Input
             autoFocus
             id="change-type-destination"
@@ -436,8 +447,8 @@ export function ChangeTypeDialog({
         <div className="bg-muted space-y-2 rounded-md p-3 text-sm">
           <p>
             {options?.page
-              ? `${pageName(options.page)} stays in Pages, so you can switch back later. It counts toward your hosted pages until you delete it.`
-              : "Scans go straight to this address."}
+              ? t("valueStaysInPagesSo2", { value: pageName(options.page, t) })
+              : t("scansGoStraightToThis")}
           </p>
           {options && (
             <InactiveNote options={options.inactiveAfterSwitch} to="redirect" />
@@ -455,7 +466,7 @@ export function ChangeTypeDialog({
           type="submit"
         >
           {isPending && <Loader2 className="animate-spin" />}
-          {isPending ? "Switching..." : "Switch to website link"}
+          {isPending ? t("switching") : t("switchToWebsiteLink")}
         </Button>
       </>
     );
@@ -465,11 +476,15 @@ export function ChangeTypeDialog({
       <div className="space-y-4 py-2">
         <div className="bg-muted space-y-2 rounded-md p-3 text-sm">
           <p>
-            Scans open {pageName(page)} ({page.typeLabel}) again, as it was last
-            published. Edit it any time from Pages.
+            {t("scansOpenValueTypelabelAgain", {
+              value: pageName(page, t),
+              typeLabel: page.typeLabel,
+            })}
           </p>
           {isPage && options?.page && (
-            <p>{pageName(options.page)} stays in Pages.</p>
+            <p>
+              {t("valueStaysInPages", { value: pageName(options.page, t) })}
+            </p>
           )}
           {!isPage && options && (
             <InactiveNote options={options.inactiveAfterSwitch} to="page" />
@@ -483,7 +498,7 @@ export function ChangeTypeDialog({
         {back}
         <Button disabled={isPending} onClick={() => switchToPage(page)}>
           {isPending && <Loader2 className="animate-spin" />}
-          {isPending ? "Switching..." : "Switch to this page"}
+          {isPending ? t("switching") : t("switchToThisPage")}
         </Button>
       </>
     );
@@ -498,17 +513,17 @@ export function ChangeTypeDialog({
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {step.name === "template" && template
-              ? `Switch to a ${template.label.toLowerCase()} page`
+              ? t("switchToALabelPage", { label: template.label.toLowerCase() })
               : step.name === "redirect"
-                ? "Switch to a website link"
+                ? t("switchToAWebsiteLink")
                 : step.name === "restore"
-                  ? "Switch back to a page"
-                  : "Change what this code opens"}
+                  ? t("switchBackToAPage")
+                  : t("changeWhatThisCodeOpens")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
             {step.name === "template"
-              ? "Pick a starting point. You can change every block, color and text in the editor."
-              : `The short link and printed codes stay the same, and scans keep counting here. It opens ${opensNow} now.`}
+              ? t("pickAStartingPointYou")
+              : t("theShortLinkAndPrinted", { opensNow })}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
         {body}

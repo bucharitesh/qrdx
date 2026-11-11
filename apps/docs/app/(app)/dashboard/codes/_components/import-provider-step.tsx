@@ -3,7 +3,9 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight2, Clock, DocumentUpload } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useWorkspaceHref } from "@/components/workspace-provider";
+import type { Translator } from "@/lib/i18n/translator";
 import {
   API_PROVIDERS,
   type ApiProviderId,
@@ -22,16 +24,17 @@ function metaFor(
   id: ApiProviderId,
   entry: ProviderStatus | undefined,
   loaded: boolean,
+  t: Translator<"app.dashboard.codes.importProviderStep">,
 ): string {
-  if (!loaded) return "Checking…";
-  if (entry?.connection === "active") return "Connected";
+  if (!loaded) return t("checking");
+  if (entry?.connection === "active") return t("connected");
   // Local dev only: production leaves these providers out.
   if (entry?.needsSetup?.length)
-    return `Needs setup · ${entry.needsSetup.join(", ")}`;
-  if (entry?.connection === "error") return "Reconnect needed";
+    return t("needsSetupValue", { value: entry.needsSetup.join(", ") });
+  if (entry?.connection === "error") return t("reconnectNeeded");
   return API_PROVIDERS[id].connect === "oauth"
-    ? "Sign in to connect"
-    : "Paste an API key";
+    ? t("signInToConnect")
+    : t("pasteAnApiKey");
 }
 
 function Tile({
@@ -81,6 +84,7 @@ export function ProviderStep({
   onPickFile: (provider: FileProviderId) => void;
   onOpenJob: (job: JobSummary) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.importProviderStep");
   const inWorkspace = useWorkspaceHref();
   const status = (id: ApiProviderId) =>
     statuses?.find((entry) => entry.id === id);
@@ -97,11 +101,10 @@ export function ProviderStep({
           <section className="space-y-2.5">
             <div>
               <h3 className="text-sm font-semibold">
-                From a connected account
+                {t("fromAConnectedAccount")}
               </h3>
               <p className="text-muted-foreground text-xs">
-                Pick links from the account, preview, import. Where the API
-                allows it, old links can then point to their new QRdx codes.
+                {t("pickLinksFromTheAccount")}
               </p>
             </div>
             {/* Three providers: one row from md (where each tile still fits
@@ -110,7 +113,7 @@ export function ProviderStep({
               {apiIds.map((id) => (
                 <Tile
                   key={id}
-                  meta={metaFor(id, status(id), statuses !== null)}
+                  meta={metaFor(id, status(id), statuses !== null, t)}
                   onClick={() => onPickApi(id)}
                   provider={id}
                 />
@@ -121,10 +124,9 @@ export function ProviderStep({
 
         <section className="space-y-2.5">
           <div>
-            <h3 className="text-sm font-semibold">From an export file</h3>
+            <h3 className="text-sm font-semibold">{t("fromAnExportFile")}</h3>
             <p className="text-muted-foreground text-xs">
-              For providers without API access. Upload a CSV, check the columns,
-              then preview and import.
+              {t("forProvidersWithoutApiAccess")}
             </p>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
@@ -147,19 +149,22 @@ export function ProviderStep({
           </div>
           <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
             <DocumentUpload aria-hidden className="size-3.5" />
-            Already using the QRdx CSV template?{" "}
-            <Link
-              className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
-              href={inWorkspace("/codes/import")}
-            >
-              Import CSV
-            </Link>
+            {t.rich("alreadyUsingTheQrdxCsv", {
+              link: (chunks) => (
+                <Link
+                  className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+                  href={inWorkspace("/codes/import")}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </section>
 
         {jobs.length > 0 && (
           <section className="space-y-2.5">
-            <h3 className="text-sm font-semibold">Recent imports</h3>
+            <h3 className="text-sm font-semibold">{t("recentImports")}</h3>
             <ul className="divide-y rounded-xl border">
               {jobs.slice(0, 5).map((job) => (
                 <li key={job.id}>
@@ -171,13 +176,17 @@ export function ProviderStep({
                     <ProviderLogo provider={job.provider} size="sm" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate font-medium">
-                        {providerName(job.provider)} ·{" "}
-                        {plural(job.created, "code")} created
+                        {t("valueValue2Created", {
+                          value: providerName(job.provider),
+                          value2: plural(job.created, "code"),
+                        })}
                       </span>
                       <span className="text-muted-foreground block truncate text-xs">
                         {formatDay(job.createdAt)}
                         {job.redirected > 0 &&
-                          ` · ${plural(job.redirected, "old link")} pointing to QRdx`}
+                          t("valuePointingToQrdx", {
+                            value: plural(job.redirected, "old link"),
+                          })}
                       </span>
                     </span>
                     <span
@@ -191,10 +200,13 @@ export function ProviderStep({
                       {job.status === "running" ? (
                         <>
                           <Clock aria-hidden className="size-3.5" />
-                          Resume {job.processed}/{job.total}
+                          {t("resumeProcessedTotal", {
+                            processed: job.processed,
+                            total: job.total,
+                          })}
                         </>
                       ) : (
-                        "Open"
+                        t("open")
                       )}
                     </span>
                   </button>
