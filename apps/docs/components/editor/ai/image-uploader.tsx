@@ -1,6 +1,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { GalleryAdd as ImagePlus } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
@@ -18,6 +19,7 @@ export function ImageUploader({
   className,
   ...props
 }: ImageUploaderProps) {
+  const t = useTranslations("editor.ai.imageUploader");
   const handleImagesUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = event.target.files;
     if (!fileList) return;
@@ -35,12 +37,12 @@ export function ImageUploader({
         size={MAX_IMAGE_FILE_SIZE}
         accept={ALLOWED_IMAGE_TYPES.join(",")}
         className="hidden"
-        aria-label="Upload image for theme generation"
+        aria-label={t("uploadImageForThemeGeneration")}
         ref={fileInputRef}
         onChange={handleImagesUpload}
         disabled={disabled}
       />
-      <TooltipWrapper label="Attach image" asChild>
+      <TooltipWrapper label={t("attachImage")} asChild>
         <Button
           variant="ghost"
           size="sm"
@@ -53,7 +55,7 @@ export function ImageUploader({
           {...props}
         >
           <ImagePlus />{" "}
-          <span className="hidden @[350px]/form:inline-flex">Image</span>
+          <span className="hidden @[350px]/form:inline-flex">{t("image")}</span>
         </Button>
       </TooltipWrapper>
     </>

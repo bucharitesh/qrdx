@@ -8,6 +8,7 @@ import {
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
 import { Blend, Clock, Magicpen, MagicStar } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrdx";
 import { useEffect, useState } from "react";
 import { getClientSeason } from "@/lib/seasonal";
@@ -25,17 +26,18 @@ import { AIHero } from "./ai-hero";
 import { PromptCard } from "./prompt-card";
 import {
   CREATE_SUGGESTIONS,
-  MODE_DESCRIPTIONS,
+  type MODE_DESCRIPTIONS,
   type PromptSuggestion,
 } from "./prompt-suggestions";
 import { useRecentGenerations } from "./recent-generations";
 
 type Mode = keyof typeof MODE_DESCRIPTIONS;
 
-const MODES: { id: Mode; label: string; Icon: typeof MagicStar }[] = [
-  { id: "create", label: "Create", Icon: MagicStar },
-  { id: "remix", label: "Remix", Icon: Blend },
-  { id: "tweak", label: "Tweak", Icon: Magicpen },
+// Names and descriptions: editor.ai.noMessagesPlaceholder.modes.
+const MODES: { id: Mode; Icon: typeof MagicStar }[] = [
+  { id: "create", Icon: MagicStar },
+  { id: "remix", Icon: Blend },
+  { id: "tweak", Icon: Magicpen },
 ];
 
 /** "@Modern" → "Modern", "@Current Style" → "your style". */
@@ -53,9 +55,12 @@ export function NoMessagesPlaceholder({
   onGenerateTheme: (promptData: AIPromptData) => void;
   isGeneratingTheme: boolean;
 }) {
+  const t = useTranslations("editor.ai.noMessagesPlaceholder");
   const { data: session } = authClient.useSession();
   const userName = session?.user.name?.split(" ")[0];
-  const greeting = `What can I help you theme${userName ? `, ${userName}` : ""}?`;
+  const greeting = userName
+    ? t("greetingName", { name: userName })
+    : t("greeting");
   const [mode, setMode] = useState<Mode>("create");
   const currentStyles = useQREditorStore((state) => state.themeState.styles);
   const recent = useRecentGenerations();
@@ -80,15 +85,15 @@ export function NoMessagesPlaceholder({
       >
         <div className="space-y-2">
           <TabsList className="grid h-9 w-full grid-cols-3">
-            {MODES.map(({ id, label, Icon }) => (
+            {MODES.map(({ id, Icon }) => (
               <TabsTrigger className="gap-1.5" key={id} value={id}>
                 <Icon className="size-4" />
-                {label}
+                {t(`modes.${id}.label`)}
               </TabsTrigger>
             ))}
           </TabsList>
           <p aria-live="polite" className="text-muted-foreground px-1 text-xs">
-            {MODE_DESCRIPTIONS[mode]}
+            {t(`modes.${mode}.description`)}
           </p>
         </div>
 
@@ -158,15 +163,15 @@ export function NoMessagesPlaceholder({
             id="ai-recent-title"
           >
             <Clock className="size-3.5" />
-            Recent generations
+            {t("recentGenerations")}
           </h3>
           <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
             {recent.map((item) => (
               <button
                 aria-label={
                   item.prompt
-                    ? `Apply: ${item.prompt.slice(0, 60)}`
-                    : "Apply this generated theme"
+                    ? t("applyValue", { value: item.prompt.slice(0, 60) })
+                    : t("applyThisGeneratedTheme")
                 }
                 className="hover:ring-foreground/30 focus-visible:ring-ring/50 grid size-12 shrink-0 place-items-center overflow-hidden rounded-[10px] bg-white p-0.5 ring-1 ring-black/10 transition-[box-shadow,transform] outline-none hover:-translate-y-0.5 focus-visible:ring-[3px] [&_svg]:size-full"
                 key={item.id}

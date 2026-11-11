@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { getAllTemplates, getQRData, getSVGString } from "qrdx";
 import { patterns as cornerEyeDotPatterns } from "@/components/playground/corner-eye-dot-pattern-selector";
@@ -32,6 +33,7 @@ export function usePlaygroundShortcuts({
   onCode,
   onReset,
 }: UsePlaygroundShortcutsOptions = {}) {
+  const tx = useTranslations("editor.hooks.usePlaygroundShortcuts");
   const { themeState, setThemeState, applyThemePreset, value } =
     useQREditorStore();
   const { getAllPresets } = useThemePresetStore();
@@ -157,11 +159,11 @@ export function usePlaygroundShortcuts({
         const svgContent = await getSVGString(qrProps);
         await navigator.clipboard.writeText(svgContent);
         track("qr_copied", { format: "svg", source: "playground" });
-        toast.success("SVG copied to clipboard");
+        toast.success(tx("svgCopiedToClipboard"));
         soundEvent("copy");
       } catch (error) {
         console.error("Error copying SVG:", error);
-        toast.error("Failed to copy SVG");
+        toast.error(tx("failedToCopySvg"));
       }
     },
     { enabled: shortcutsEnabled },

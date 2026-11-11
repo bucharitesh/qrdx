@@ -34,6 +34,7 @@ import {
   SearchNormal1,
   Verify,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   type ReactNode,
   type RefObject,
@@ -292,13 +293,15 @@ export function publishStep(input: {
 const COUNT = new Intl.NumberFormat("en", { notation: "compact" });
 /** While searching, the sheet loads up to this many pages (20 themes each). */
 const SEARCH_PAGE_LIMIT = 10;
-const SORTS: { value: CommunitySortOption; label: string }[] = [
-  { value: "popular", label: "Popular" },
-  { value: "newest", label: "Newest" },
-];
+// Names in messages/en.json: editor.communitySheet.sorts.
+const SORTS = [
+  { value: "popular" },
+  { value: "newest" },
+] as const satisfies readonly { value: CommunitySortOption }[];
 const sheetKey = [...communityKeys.all, "sheet"] as const;
 
 export function CommunitySheet() {
+  const t = useTranslations("editor.communitySheet");
   const open = useCommunitySheetStore((state) => state.open);
   const setOpen = useCommunitySheetStore((state) => state.setOpen);
   const publishRequested = useCommunitySheetStore(
@@ -335,7 +338,9 @@ export function CommunitySheet() {
       toggleCommunityLike(id),
     );
     if (result.ok) {
-      toast.success(data.name ? `Liked "${data.name}"` : "Liked");
+      toast.success(
+        data.name ? t("likedName", { name: data.name }) : t("liked"),
+      );
     } else {
       toast.error(result.message);
     }
@@ -391,6 +396,7 @@ export function CommunitySheet() {
 
 /** "Publish this style": sign in, save if needed, then the publish dialog. */
 function usePublishFlow(signedIn: boolean) {
+  const t = useTranslations("editor.communitySheet");
   const themeState = useQREditorStore((state) => state.themeState);
   const applyThemePreset = useQREditorStore((state) => state.applyThemePreset);
   const presets = useThemePresetStore((state) => state.presets);
@@ -462,13 +468,13 @@ function usePublishFlow(signedIn: boolean) {
   const dialogs = (
     <>
       <QRSaveDialog
-        ctaLabel="Save and continue"
-        description="Publishing shares a saved theme. Name this look to continue."
+        ctaLabel={t("saveAndContinue")}
+        description={t("publishingSharesASavedTheme")}
         isSaving={createTheme.isPending}
         onOpenChange={setSaveOpen}
         onSave={saveThenPublish}
         open={saveOpen}
-        title="Save to publish"
+        title={t("saveToPublish")}
       />
       {target && (
         <PublishThemeDialog
@@ -498,6 +504,7 @@ function CommunitySheetBody({
   onSignInToLike: (theme: CommunityTheme) => void;
   searchRef: RefObject<HTMLInputElement | null>;
 }) {
+  const t = useTranslations("editor.communitySheet");
   const queryClient = useQueryClient();
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id ?? null;
@@ -572,7 +579,7 @@ function CommunitySheetBody({
     // One toast, replaced as you try themes: only the latest can be undone.
     toast(`Applied "${theme.name}"`, {
       id: "community-theme-applied",
-      action: { label: "Undo", onClick: undo },
+      action: { label: t("undo"), onClick: undo },
     });
   };
 
@@ -600,7 +607,7 @@ function CommunitySheetBody({
       <div className="flex shrink-0 flex-col gap-2.5 border-b px-4 pt-3 pb-3">
         <div className="flex items-center justify-between gap-2 pr-8">
           <SheetTitle className="truncate text-base leading-7">
-            Community themes
+            {t("communityThemes")}
           </SheetTitle>
           <Button
             className="h-7 shrink-0 gap-1.5 px-2.5 text-xs"
@@ -615,11 +622,11 @@ function CommunitySheetBody({
             ) : (
               <People aria-hidden className="size-3.5" />
             )}
-            {published ? "Published" : "Publish this style"}
+            {published ? t("published") : t("publishThisStyle")}
           </Button>
         </div>
         <SheetDescription className="-mt-2 text-xs">
-          Free to use under CC0. Applying keeps your content.
+          {t("freeToUseUnderCc0")}
         </SheetDescription>
 
         <div className="relative">
@@ -628,10 +635,10 @@ function CommunitySheetBody({
             className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
           />
           <Input
-            aria-label="Search community themes"
+            aria-label={t("searchCommunityThemes")}
             className="pl-9"
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search themes"
+            placeholder={t("searchThemes")}
             ref={searchRef}
             type="search"
             value={query}
@@ -640,7 +647,7 @@ function CommunitySheetBody({
 
         <div className="flex items-center justify-between gap-2">
           <fieldset className="bg-muted/60 m-0 flex min-w-0 rounded-full border-0 p-0.5">
-            <legend className="sr-only">Sort</legend>
+            <legend className="sr-only">{t("sort")}</legend>
             {SORTS.map((option) => (
               <button
                 aria-pressed={sort === option.value}
@@ -654,7 +661,7 @@ function CommunitySheetBody({
                 onClick={() => setSort(option.value)}
                 type="button"
               >
-                {option.label}
+                {t(`sorts.${option.value}`)}
               </button>
             ))}
           </fieldset>
@@ -670,7 +677,7 @@ function CommunitySheetBody({
                   type="button"
                   variant={tag ? "secondary" : "ghost"}
                 >
-                  {tag ?? "Tags"}
+                  {tag ?? t("tags")}
                   <ArrowDown2 aria-hidden className="size-3.5 opacity-60" />
                 </Button>
               </DropdownMenuTrigger>
@@ -682,7 +689,7 @@ function CommunitySheetBody({
                   className="justify-between"
                   onSelect={() => setTag(null)}
                 >
-                  All tags
+                  {t("allTags")}
                   {tag === null && <Tick className="size-3.5" />}
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -713,7 +720,10 @@ function CommunitySheetBody({
         ref={scrollRef}
       >
         {list.isPending ? (
-          <ul aria-label="Loading themes" className="grid grid-cols-3 gap-1">
+          <ul
+            aria-label={t("loadingThemes")}
+            className="grid grid-cols-3 gap-1"
+          >
             {Array.from({ length: 9 }).map((_, index) => (
               <li className="space-y-1.5 p-1.5" key={index}>
                 <Skeleton className="aspect-square rounded-lg" />
@@ -730,10 +740,10 @@ function CommunitySheetBody({
                 type="button"
                 variant="outline"
               >
-                Try again
+                {t("tryAgain")}
               </Button>
             }
-            title="Couldn't load community themes"
+            title={t("couldntLoadCommunityThemes")}
           />
         ) : shown.length === 0 ? (
           isFetchingNextPage ? (
@@ -750,7 +760,7 @@ function CommunitySheetBody({
                     type="button"
                     variant="outline"
                   >
-                    Clear search
+                    {t("clearSearch")}
                   </Button>
                 ) : tag ? (
                   <Button
@@ -759,16 +769,16 @@ function CommunitySheetBody({
                     type="button"
                     variant="outline"
                   >
-                    Show all tags
+                    {t("showAllTags")}
                   </Button>
                 ) : null
               }
               title={
                 searching
-                  ? `No themes match "${query.trim()}"`
+                  ? t("noThemesMatchQuery", { query: query.trim() })
                   : tag
-                    ? `No themes tagged ${tag} yet`
-                    : "No community themes yet"
+                    ? t("noThemesTaggedTagYet", { tag })
+                    : t("noCommunityThemesYet")
               }
             />
           )
@@ -794,7 +804,7 @@ function CommunitySheetBody({
             </div>
             {searchCapped && (
               <p className="text-muted-foreground pb-2 text-center text-xs">
-                Search covers the first {themes.length} themes.
+                {t("searchCoversTheFirstLength", { length: themes.length })}
               </p>
             )}
           </>
@@ -828,11 +838,12 @@ function ThemeCard({
   onLike: () => void;
   rootRef: RefObject<HTMLDivElement | null>;
 }) {
+  const t = useTranslations("editor.communitySheet");
   const liked = theme.isLikedByMe;
   return (
     <li className="min-w-0">
       <button
-        aria-label={`Apply ${theme.name}`}
+        aria-label={t("applyName", { name: theme.name })}
         aria-pressed={current}
         className={cn(
           "group flex w-full min-w-0 flex-col gap-1.5 rounded-xl p-1.5 text-left transition-colors outline-none",
@@ -863,7 +874,7 @@ function ThemeCard({
         <span className="text-muted-foreground flex min-w-0 items-center gap-1 text-[11px] leading-4">
           {theme.official && (
             <Verify
-              aria-label="Official"
+              aria-label={t("official")}
               className="size-3 shrink-0"
               variant="Bold"
             />
@@ -872,7 +883,11 @@ function ThemeCard({
         </span>
         {isLikeable(theme) ? (
           <button
-            aria-label={liked ? `Unlike ${theme.name}` : `Like ${theme.name}`}
+            aria-label={
+              liked
+                ? t("unlikeName", { name: theme.name })
+                : t("likeName", { name: theme.name })
+            }
             aria-pressed={liked}
             className={cn(
               "-mr-1 flex shrink-0 items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] tabular-nums transition-colors",
@@ -890,7 +905,7 @@ function ThemeCard({
         ) : (
           theme.likeCount > 0 && (
             <span className="text-muted-foreground flex shrink-0 items-center gap-0.5 text-[11px] tabular-nums">
-              <Heart aria-label="Likes" className="size-3" />
+              <Heart aria-label={t("likes")} className="size-3" />
               {COUNT.format(theme.likeCount)}
             </span>
           )

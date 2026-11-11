@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { AmazonFormData } from "@/lib/validations/qr-content";
 import { amazonSchema } from "@/lib/validations/qr-content";
@@ -11,6 +12,7 @@ import { encodeAmazon } from "@/utils/qr-content-encoder";
 import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function AmazonForm() {
+  const t = useTranslations("editor.contentForms.amazonForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -50,7 +52,7 @@ export function AmazonForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="amazon-product-url">
-          Amazon product URL *
+          {t("amazonProductUrl")}
         </Label>
         <Input
           id="amazon-product-url"
@@ -66,7 +68,7 @@ export function AmazonForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Amazon product or store
+        {t("scanningWillOpenYourAmazon")}
       </p>
     </div>
   );

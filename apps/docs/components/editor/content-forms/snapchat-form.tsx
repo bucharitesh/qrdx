@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { SnapchatContent } from "@/types/qr-content";
 import { encodeSnapchat } from "@/utils/qr-content-encoder";
 
 export function SnapchatForm() {
+  const t = useTranslations("editor.contentForms.snapchatForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -31,12 +33,12 @@ export function SnapchatForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="snapchat-username">
-          Snapchat username *
+          {t("snapchatUsername")}
         </Label>
         <Input
           id="snapchat-username"
           type="text"
-          placeholder="username"
+          placeholder={t("username")}
           value={snapchatData.username}
           onChange={(e) =>
             setSnapchatData({ ...snapchatData, username: e.target.value })
@@ -45,7 +47,7 @@ export function SnapchatForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Snapchat add-friend page
+        {t("scanningWillOpenYourSnapchat")}
       </p>
     </div>
   );

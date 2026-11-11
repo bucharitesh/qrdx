@@ -2,6 +2,7 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { getFrameDimensions, isFrameActive } from "qrdx";
 import type React from "react";
 import { lazy, useRef } from "react";
@@ -37,6 +38,7 @@ export const SAMPLE_PREVIEW_VALUE = "https://qrdx.dev";
 const openPhotoCheck = () => usePhotoScanDialogStore.getState().setOpen(true);
 
 function SampleLabel({ className }: { className?: string }) {
+  const t = useTranslations("editor.qrPreviewPanel");
   const contentType = useQREditorStore((state) => state.contentType);
   return (
     <p
@@ -46,12 +48,12 @@ function SampleLabel({ className }: { className?: string }) {
       )}
     >
       <span className="bg-muted text-foreground rounded-full px-2 py-0.5 text-[11px] font-medium">
-        Sample
+        {t("sample")}
       </span>
       <span className="truncate">
         {contentType === "url"
-          ? "Add your link to make it yours"
-          : "Add your details to make it yours"}
+          ? t("addYourLinkToMake")
+          : t("addYourDetailsToMake")}
       </span>
     </p>
   );

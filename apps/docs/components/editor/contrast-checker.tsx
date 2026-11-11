@@ -19,8 +19,9 @@ import {
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
 import { Moon, Sun1, Warning2 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
-import type { ColorConfig, EyePosition } from "qrdx/types";
+import type { ColorConfig } from "qrdx/types";
 import { EYE_POSITIONS, isGradient, normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
 import { useContrastChecker } from "@/lib/hooks/use-contrast-checker";
@@ -33,12 +34,6 @@ type ContrastCheckerProps = {
 };
 
 const MIN_CONTRAST_RATIO = 4.5;
-
-const EYE_POSITION_LABELS: Record<EyePosition, string> = {
-  topLeft: "Top-left",
-  topRight: "Top-right",
-  bottomLeft: "Bottom-left",
-};
 
 type ColorCategory = "content" | "interactive" | "functional";
 
@@ -98,6 +93,8 @@ function getColorDisplayText(color: ColorConfig | string | undefined): string {
 }
 
 const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
+  const tx = useTranslations("editor.contrastChecker");
+  const t = useTranslations("editor.contrastChecker");
   const [filter, setFilter] = useState<"all" | "issues">("all");
   const { theme, setTheme } = useTheme();
 
@@ -109,7 +106,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
         backgroundId: "bgColor",
         foreground: currentStyles?.fgColor,
         background: currentStyles?.bgColor,
-        label: "QR Code Base",
+        label: t("qrCodeBase"),
         category: "content",
       },
       {
@@ -118,7 +115,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
         backgroundId: "bgColor",
         foreground: currentStyles?.eyeColor || currentStyles?.fgColor,
         background: currentStyles?.bgColor,
-        label: "Corner Eyes",
+        label: t("cornerEyes"),
         category: "interactive",
       },
       {
@@ -130,13 +127,13 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
           currentStyles?.eyeColor ||
           currentStyles?.fgColor,
         background: currentStyles?.bgColor,
-        label: "Eye Dots",
+        label: t("eyeDots"),
         category: "functional",
       },
       // Per-eye colors (Eye colors section) override the two above
       ...EYE_POSITIONS.flatMap((position): ColorPair[] => {
         const eye = currentStyles?.eyeColors?.[position];
-        const name = EYE_POSITION_LABELS[position];
+        const name = t(`eyePositions.${position}`);
         return [
           ...(eye?.outer
             ? [
@@ -146,7 +143,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                   backgroundId: "bgColor",
                   foreground: eye.outer,
                   background: currentStyles?.bgColor,
-                  label: `${name} eye`,
+                  label: t("nameEye", { name }),
                   category: "interactive",
                 } satisfies ColorPair,
               ]
@@ -159,7 +156,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                   backgroundId: "bgColor",
                   foreground: eye.inner,
                   background: currentStyles?.bgColor,
-                  label: `${name} eye dot`,
+                  label: t("nameEyeDot", { name }),
                   category: "functional",
                 } satisfies ColorPair,
               ]
@@ -167,7 +164,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
         ];
       }),
     ],
-    [currentStyles],
+    [currentStyles, t],
   );
 
   const validColorPairsToCheck = useMemo(
@@ -218,12 +215,12 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
 
   return (
     <ResponsiveDialog>
-      <TooltipWrapper label="Contrast Checker" asChild>
+      <TooltipWrapper label={t("contrastChecker")} asChild>
         <ResponsiveDialogTrigger asChild>
           <Button
             variant="ghost"
             size="icon"
-            aria-label="Open contrast checker"
+            aria-label={t("openContrastChecker")}
             className="justify-start px-2"
             disabled={disabled}
           >
@@ -235,19 +232,24 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
       <ResponsiveDialogContent className="flex max-h-[95dvh] flex-col gap-0 space-y-6 overflow-hidden shadow-lg sm:max-h-[min(700px,85dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl sm:pt-6">
         <div className="flex flex-col items-end justify-between gap-4 px-6 sm:flex-row">
           <ResponsiveDialogHeader className="text-left">
-            <ResponsiveDialogTitle>Contrast Checker</ResponsiveDialogTitle>
+            <ResponsiveDialogTitle>
+              {t("contrastChecker")}
+            </ResponsiveDialogTitle>
             <ResponsiveDialogDescription>
-              WCAG 2.0 AA requires a contrast ratio of at least{" "}
-              {MIN_CONTRAST_RATIO}:1{" • "}
-              <a
-                href="https://www.w3.org/TR/WCAG21/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Learn more about WCAG contrast requirements"
-                className="text-primary hover:text-primary/80 underline transition-colors"
-              >
-                Learn more
-              </a>
+              {t.rich("wcag20AaRequires", {
+                MIN_CONTRAST_RATIO,
+                link: (chunks) => (
+                  <a
+                    href="https://www.w3.org/TR/WCAG21/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={tx("learnMoreAboutWcagContrast")}
+                    className="text-primary hover:text-primary/80 underline transition-colors"
+                  >
+                    {chunks}
+                  </a>
+                ),
+              })}
             </ResponsiveDialogDescription>
           </ResponsiveDialogHeader>
 
@@ -267,7 +269,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="bottom">
-                <p className="text-xs">Toggle theme</p>
+                <p className="text-xs">{t("toggleTheme")}</p>
               </TooltipContent>
             </Tooltip>
             <Button
@@ -275,7 +277,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
               size="sm"
               onClick={() => setFilter("all")}
             >
-              All
+              {t("all")}
             </Button>
             <Button
               size="sm"
@@ -284,7 +286,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
               onClick={() => setFilter("issues")}
             >
               <Warning2 className={cn("mr-1 h-3 w-3")} />
-              Issues ({totalIssues})
+              {t("issuesTotalissues", { totalIssues })}
             </Button>
           </div>
         </div>
@@ -360,7 +362,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                                 ></div>
                                 <div className="flex flex-col">
                                   <span className="text-xs font-medium">
-                                    Background
+                                    {t("background")}
                                   </span>
                                   <span className="text-muted-foreground font-mono text-xs">
                                     {getColorDisplayText(pair.background)}
@@ -403,7 +405,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                                 ></div>
                                 <div className="flex flex-col">
                                   <span className="text-xs font-medium">
-                                    Foreground
+                                    {t("foreground")}
                                   </span>
                                   <span className="text-muted-foreground font-mono text-xs">
                                     {getColorDisplayText(pair.foreground)}
@@ -456,7 +458,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                                     }}
                                     className="mb-2 text-4xl font-bold tracking-wider"
                                   >
-                                    Aa
+                                    {t("aa")}
                                   </p>
                                   <p
                                     style={{
@@ -469,12 +471,12 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                                     }}
                                     className="text-sm font-medium"
                                   >
-                                    Sample Text
+                                    {t("sampleText")}
                                   </p>
                                 </div>
                               ) : (
                                 <p className="text-muted-foreground text-xs">
-                                  Preview
+                                  {t("preview")}
                                 </p>
                               )}
                             </div>

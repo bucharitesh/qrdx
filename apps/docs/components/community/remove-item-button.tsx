@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { removeCommunityItemAction } from "@/app/(app)/admin/actions";
@@ -17,6 +18,7 @@ export function RemoveItemButton({
   /** Item pages go back to the community; the admin queue reloads */
   afterRemove?: "community" | "refresh";
 }) {
+  const t = useTranslations("community.removeItemButton");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -28,7 +30,7 @@ export function RemoveItemButton({
     startTransition(async () => {
       const result = await removeCommunityItemAction({ itemId, reason });
       if (result.ok) {
-        toast.success(`Removed "${name}" from the community`);
+        toast.success(t("removedNameFromTheCommunity", { name }));
         if (afterRemove === "refresh") router.refresh();
         else router.push("/community");
       } else {
@@ -39,7 +41,7 @@ export function RemoveItemButton({
 
   return (
     <Button disabled={isPending} onClick={onClick} size="sm" variant="outline">
-      {afterRemove === "refresh" ? "Remove" : "Remove from the community"}
+      {afterRemove === "refresh" ? t("remove") : t("removeFromTheCommunity")}
     </Button>
   );
 }

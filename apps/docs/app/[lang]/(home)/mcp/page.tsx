@@ -6,7 +6,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import { ClientContent } from "@/components/i18n/client-content";
 import { ClientMessages } from "@/components/i18n/client-messages";
-import { LocaleLink as Link } from "@/components/i18n/locale-link";
+import { LocaleLink as Link, LocaleLink } from "@/components/i18n/locale-link";
 import { McpTerminal } from "@/components/mockups/mcp-terminal";
 import {
   IconTile,
@@ -116,13 +116,13 @@ export default async function McpPage() {
             {t("docs")}
             <ArrowRight2 aria-hidden className="size-3.5" />
           </Link>
-          <Link
+          <LocaleLink
             href={playgroundHref({ open: "code", lang: "mcp" })}
             className="inline-flex items-center gap-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
             {t("playground")}
             <ArrowRight2 aria-hidden className="size-3.5" />
-          </Link>
+          </LocaleLink>
         </div>
       </ToolHero>
 

@@ -15,6 +15,7 @@ import {
   ScanBarcode,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   getQRData,
   getScanScore,
@@ -31,12 +32,15 @@ import type { QRStyle } from "@/types/theme";
 
 const SCORE_DEBOUNCE_MS = 700;
 
-export const GRADE_LABELS: Record<ScanGrade, string> = {
-  great: "Great",
-  ok: "OK",
-  risky: "Risky",
-  fails: "Fails",
-};
+export function useGradeLabels(): Record<ScanGrade, string> {
+  const t = useTranslations("editor.scanScore");
+  return {
+    great: t("grades.great"),
+    ok: t("grades.ok"),
+    risky: t("grades.risky"),
+    fails: t("grades.fails"),
+  };
+}
 
 export const GRADE_COLORS: Record<ScanGrade, string> = {
   great: "bg-emerald-500",
@@ -50,6 +54,7 @@ const checkOrder = (check: ScanCheck) =>
   check.passed ? (check.skipped ? 2 : 1) : 0;
 
 export function ScanCheckList({ checks }: { checks: ScanCheck[] }) {
+  const t = useTranslations("editor.scanScore");
   const sorted = [...checks].sort((a, b) => checkOrder(a) - checkOrder(b));
   return (
     <ul className="space-y-2.5">
@@ -58,7 +63,7 @@ export function ScanCheckList({ checks }: { checks: ScanCheck[] }) {
           {check.skipped ? (
             // Couldn't be checked: neither a pass nor a problem.
             <CircleMinus
-              aria-label="Not checked"
+              aria-label={t("notChecked")}
               className="mt-0.5 size-4 shrink-0 text-muted-foreground"
               variant="Bold"
             />
@@ -120,6 +125,8 @@ export function ScanScoreBadge({
   onResult,
   onCheckPhoto,
 }: ScanScoreBadgeProps) {
+  const gradeLabels = useGradeLabels();
+  const t = useTranslations("editor.scanScore");
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [scored, setScored] = useState<{
     key: string;
@@ -243,8 +250,11 @@ export function ScanScoreBadge({
           aria-busy={checking}
           aria-label={
             result
-              ? `Scan score ${result.score}, ${GRADE_LABELS[result.grade]}. Show checks`
-              : "Checking scan score"
+              ? t("scanScoreScoreValueShow", {
+                  score: result.score,
+                  value: gradeLabels[result.grade],
+                })
+              : t("checkingScanScore")
           }
           className={cn(
             "bg-background/90 hover:bg-muted inline-flex h-8 items-center gap-2 overflow-hidden rounded-full border px-3 text-xs font-medium whitespace-nowrap shadow-sm backdrop-blur transition-colors",
@@ -274,8 +284,11 @@ export function ScanScoreBadge({
             key={state}
           >
             {result
-              ? `Scan score ${result.score} · ${GRADE_LABELS[result.grade]}`
-              : "Checking scan…"}
+              ? t("scanScoreScoreValue", {
+                  score: result.score,
+                  value: gradeLabels[result.grade],
+                })
+              : t("checkingScan")}
           </span>
         </button>
       </PopoverTrigger>
@@ -290,11 +303,11 @@ export function ScanScoreBadge({
         <div className="space-y-3">
           <div className="flex items-baseline justify-between">
             <h3 className="text-sm font-semibold">
-              Will it scan? <InfoHint id="scan-score" side="right" />
+              {t("willItScan")} <InfoHint id="scan-score" side="right" />
             </h3>
             {result && (
               <span className="text-muted-foreground text-xs tabular-nums">
-                {result.score}/100 · {GRADE_LABELS[result.grade]}
+                {result.score}/100 · {gradeLabels[result.grade]}
               </span>
             )}
           </div>
@@ -303,18 +316,16 @@ export function ScanScoreBadge({
           ) : (
             <p className="text-muted-foreground flex items-center gap-2 text-sm">
               <Spinner className="size-4" />
-              Decoding your design at a few sizes…
+              {t("decodingYourDesignAtA")}
             </p>
           )}
           <p className="text-muted-foreground border-t pt-3 text-xs leading-relaxed">
-            Simulated in your browser with the open-source jsQR decoder at a few
-            sizes with camera blur. Phone apps vary, so test-scan before you
-            print.{" "}
+            {t("simulatedInYourBrowserWith")}
             <Link
               className="text-foreground font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
               href="/tools/scan-checker"
             >
-              {onCheckPhoto ? "Full scan checker" : "Check a printed code"}
+              {onCheckPhoto ? t("fullScanChecker") : t("checkAPrintedCode")}
             </Link>
           </p>
           {onCheckPhoto && (
@@ -329,7 +340,7 @@ export function ScanScoreBadge({
               variant="outline"
             >
               <ScanBarcode className="size-4" />
-              Check a photo of the print
+              {t("checkAPhotoOfThe")}
             </Button>
           )}
         </div>

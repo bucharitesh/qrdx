@@ -2,6 +2,7 @@ import { Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { InfoCircle } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useRef } from "react";
 import {
   Conversation,
@@ -44,6 +45,7 @@ export function Messages({
   isGeneratingTheme,
   onSuggestion,
 }: ChatMessagesProps) {
+  const t = useTranslations("editor.ai.messages");
   const { status, error, clearError } = useChatContext();
   const { isScrollStart, isScrollEnd, scrollStartRef, scrollEndRef } =
     useScrollStartEnd();
@@ -168,7 +170,7 @@ export function Messages({
                 <div className="bg-card group/error-banner relative flex w-full items-start gap-2 rounded-lg border p-3">
                   <p className="text-foreground/90 text-sm">{errorText}</p>
 
-                  <TooltipWrapper label="Clear error" asChild>
+                  <TooltipWrapper label={t("clearError")} asChild>
                     <Button
                       variant="ghost"
                       size="icon"

@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { TagSelector } from "@/components/tag-selector";
 import {
@@ -50,6 +51,7 @@ export function PublishThemeDialog({
   workspaceTheme?: boolean;
   onPublished?: () => void;
 }) {
+  const t = useTranslations("community.publishThemeDialog");
   const publish = usePublishTheme();
   const [tags, setTags] = useState<string[]>([]);
   const [accepted, setAccepted] = useState(false);
@@ -88,14 +90,12 @@ export function PublishThemeDialog({
         <DialogHeader>
           <DialogTitle>
             {themeName
-              ? `Publish "${themeName}" to the community`
-              : "Publish to the community"}
+              ? t("publishThemenameToTheCommunity", { themeName })
+              : t("publishToTheCommunity")}
           </DialogTitle>
           <DialogDescription>
-            Anyone can find it in the community gallery and use it. You can
-            unpublish it at any time.
-            {workspaceTheme &&
-              " It's published under your profile; the theme stays in this workspace."}
+            {t("anyoneCanFindItIn")}
+            {workspaceTheme && ` ${t("publishedUnderYourProfile")}`}
           </DialogDescription>
         </DialogHeader>
 
@@ -132,11 +132,11 @@ export function PublishThemeDialog({
 
         <DialogFooter>
           <Button onClick={() => onOpenChange(false)} variant="outline">
-            Cancel
+            {t("cancel")}
           </Button>
           <Button disabled={!accepted || publish.isPending} onClick={submit}>
             {publish.isPending && <Spinner className="size-4" />}
-            {publish.isPending ? "Checking and publishing" : "Publish"}
+            {publish.isPending ? t("checkingAndPublishing") : t("publish")}
           </Button>
         </DialogFooter>
       </DialogContent>

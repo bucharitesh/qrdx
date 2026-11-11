@@ -16,6 +16,7 @@ import {
 } from "@repo/design-system/components/ui/toggle-group";
 import { cn } from "@repo/design-system/lib/utils";
 import { Bookmark, Magicpen, Warning2 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { ImageToneMap } from "qrdx";
 import {
   type ColorConfig,
@@ -169,14 +170,6 @@ export const QR_PAINT_KINDS: PaintKind[] = [
  * builder and saved themes; never links or published styles).
  */
 export const QR_IMAGE_KINDS: PaintKind[] = [...QR_PAINT_KINDS, "image"];
-
-const KIND_LABELS: Record<PaintKind, string> = {
-  solid: "Solid",
-  linear: "Linear",
-  radial: "Radial",
-  angular: "Angular",
-  image: "Image",
-};
 
 /** A second color to start a gradient from `color`: hue +40°, or a tone. */
 function partnerOf(color: string): string {
@@ -397,6 +390,7 @@ function HexField({
   alpha: boolean;
   onColor: (color: RGBA) => void;
 }) {
+  const t = useTranslations("editor.paintPicker.paintPanel");
   const hex = toHex(hsbToRgb(color), { alpha: false }).toUpperCase();
   const [draft, setDraft] = useState(hex);
   const [focused, setFocused] = useState(false);
@@ -405,7 +399,7 @@ function HexField({
   }, [hex, focused]);
   return (
     <Input
-      aria-label="Hex or any CSS color"
+      aria-label={t("hexOrAnyCssColor")}
       className="h-8 min-w-0 flex-1 px-2 font-mono text-xs uppercase"
       onBlur={() => {
         setFocused(false);
@@ -431,7 +425,7 @@ function HexField({
         if (event.key === "Enter") event.currentTarget.blur();
       }}
       spellCheck={false}
-      title="Hex, or paste any CSS color (rgb, hsl, oklch, a name)"
+      title={t("hexOrPasteAnyCss")}
       value={draft}
     />
   );
@@ -441,14 +435,14 @@ function HexField({
 
 type SwatchSource = "design" | "saved" | "recent" | "theme" | "suggested";
 const SOURCE_KEY = "qrdx:paint:source";
-const SOURCE_LABELS: Record<SwatchSource, string> = {
-  design: "In this design",
-  saved: "Saved",
-  recent: "Recent",
-  theme: "Theme",
-  suggested: "Defaults",
-};
-
+/** Names: editor.paintPicker.paintPanel.sources. */
+const SWATCH_SOURCES = [
+  "design",
+  "saved",
+  "recent",
+  "theme",
+  "suggested",
+] as const;
 function useStoredSwatches() {
   const [recent, setRecent] = useState<string[]>([]);
   const [saved, setSaved] = useState<string[]>([]);
@@ -484,6 +478,7 @@ function SwatchGrid({
   leading?: ReactNode;
   empty: string;
 }) {
+  const t = useTranslations("editor.paintPicker.paintPanel");
   const onKeyDown = (event: KeyboardEvent<HTMLFieldSetElement>) => {
     const buttons = [
       ...event.currentTarget.querySelectorAll<HTMLButtonElement>("button"),
@@ -504,7 +499,7 @@ function SwatchGrid({
   };
   return (
     <fieldset
-      aria-label="Swatches"
+      aria-label={t("swatches")}
       className="flex min-h-6 flex-wrap items-center gap-1.5"
       onKeyDown={onKeyDown}
     >
@@ -561,6 +556,7 @@ function SafetyRow({
   tones: ImageToneMap;
   onFix: (paint: ColorConfig) => void;
 }) {
+  const t = useTranslations("editor.paintPicker.paintPanel");
   const safety = useMemo(
     () => paintSafety(role, paint, style, tones),
     [role, paint, style, tones],
@@ -575,14 +571,16 @@ function SafetyRow({
   if (isImagePaint(paint) && !tones[paint.src] && !pictureMeasured(paint.src)) {
     return (
       <p className="text-muted-foreground text-xs" aria-live="polite">
-        Measuring the picture's contrast…
+        {t("measuringThePicturesContrast")}
       </p>
     );
   }
   return (
     <div className="space-y-1.5" aria-live="polite">
       <div className="flex items-center justify-between gap-2 text-xs">
-        <span className="text-muted-foreground">Contrast {against}</span>
+        <span className="text-muted-foreground">
+          {t("contrastAgainst", { against })}
+        </span>
         <span
           className={cn(
             "font-medium tabular-nums",
@@ -611,11 +609,11 @@ function SafetyRow({
               variant="outline"
             >
               <Magicpen className="size-3.5" />
-              Make it scannable
+              {t("makeItScannable")}
             </Button>
           ) : (
             <span className="text-muted-foreground shrink-0 pr-1">
-              {role === "code" ? "Lighten the background" : "Darken the code"}
+              {role === "code" ? t("lightenTheBackground") : t("darkenTheCode")}
             </span>
           )}
         </div>
@@ -659,6 +657,7 @@ export function PaintPanel({
   fallback = "#000000",
   design: inDesign = true,
 }: PaintPanelProps) {
+  const t = useTranslations("editor.paintPicker.paintPanel");
   const design = usePaintDesign(inDesign);
   const paint = normalizeColorConfig(value, fallback);
   const kind = paint.type as PaintKind;
@@ -769,7 +768,9 @@ export function PaintPanel({
   useEffect(() => {
     try {
       const stored = window.localStorage.getItem(SOURCE_KEY);
-      if (stored && stored in SOURCE_LABELS) setSource(stored as SwatchSource);
+      if (stored && (SWATCH_SOURCES as readonly string[]).includes(stored)) {
+        setSource(stored as SwatchSource);
+      }
     } catch {
       // Default source
     }
@@ -786,7 +787,7 @@ export function PaintPanel({
   const theme = (design.themeColors ?? [])
     .map((color) => swatchHex(color))
     .filter((color): color is string => Boolean(color));
-  const sources = (Object.keys(SOURCE_LABELS) as SwatchSource[]).filter(
+  const sources = [...SWATCH_SOURCES].filter(
     (id) =>
       (id !== "design" || design.style) && (id !== "theme" || theme.length > 0),
   );
@@ -819,7 +820,7 @@ export function PaintPanel({
     <div className="space-y-3" onPaste={onPaste}>
       {kinds.length > 1 && (
         <ToggleGroup
-          aria-label="Fill type"
+          aria-label={t("fillType")}
           className="bg-muted grid w-full gap-0 rounded-lg p-0.5"
           onValueChange={(item) => {
             if (!item || (item === kind && !picking)) return;
@@ -856,7 +857,7 @@ export function PaintPanel({
               key={item}
               value={item}
             >
-              {KIND_LABELS[item]}
+              {t(`kinds.${item}`)}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
@@ -920,11 +921,11 @@ export function PaintPanel({
             <div className="flex items-center gap-2">
               {canPick && (
                 <Button
-                  aria-label="Pick a color from the screen"
+                  aria-label={t("pickAColorFromThe")}
                   className="size-8 shrink-0"
                   onClick={pickFromScreen}
                   size="icon"
-                  title="Pick from the screen"
+                  title={t("pickFromTheScreen")}
                   type="button"
                   variant="ghost"
                 >
@@ -934,7 +935,7 @@ export function PaintPanel({
               <div className="min-w-0 flex-1 space-y-2.5 px-1.5">
                 <ChannelSlider
                   background={HUE_TRACK}
-                  label="Hue"
+                  label={t("hue")}
                   max={360}
                   onChange={(h) => setColor({ ...working.current, h })}
                   thumbColor={toHex(
@@ -947,7 +948,7 @@ export function PaintPanel({
                   <ChannelSlider
                     background={`linear-gradient(to right, ${opaqueHex}00, ${opaqueHex})`}
                     checker
-                    label="Opacity"
+                    label={t("opacity")}
                     max={100}
                     onChange={(a) =>
                       setColor({ ...working.current, a: a / 100 })
@@ -977,7 +978,7 @@ export function PaintPanel({
               value={model}
             >
               <SelectTrigger
-                aria-label="Color model"
+                aria-label={t("colorModel")}
                 className="h-8 w-[4.25rem] shrink-0 px-2 text-xs"
                 size="sm"
               >
@@ -1010,7 +1011,7 @@ export function PaintPanel({
             {alpha && (
               <NumberField
                 className="max-w-[3.25rem]"
-                label="Opacity, percent"
+                label={t("opacityPercent")}
                 max={100}
                 onChange={(next) =>
                   setColor({ ...working.current, a: next / 100 })
@@ -1047,7 +1048,7 @@ export function PaintPanel({
       {!imageMode && (
         <div className="space-y-2">
           <div
-            aria-label="Swatches"
+            aria-label={t("swatches")}
             className="text-muted-foreground -mx-1 flex flex-nowrap gap-x-0.5 overflow-x-auto text-[11px] whitespace-nowrap [scrollbar-width:none]"
             role="tablist"
           >
@@ -1065,7 +1066,7 @@ export function PaintPanel({
                 role="tab"
                 type="button"
               >
-                {SOURCE_LABELS[id]}
+                {t(`sources.${id}`)}
               </button>
             ))}
           </div>
@@ -1083,13 +1084,13 @@ export function PaintPanel({
               activeSource === "saved" ? (
                 <Button
                   aria-label={
-                    isSaved ? "Remove this color from saved" : "Save this color"
+                    isSaved ? t("removeThisColorFromSaved") : t("saveThisColor")
                   }
                   aria-pressed={isSaved}
                   className="size-6 rounded-full"
                   onClick={() => setSaved(toggleSaved(currentHex))}
                   size="icon"
-                  title={isSaved ? "Saved: click to remove" : "Save this color"}
+                  title={isSaved ? t("savedClickToRemove") : t("saveThisColor")}
                   type="button"
                   variant="outline"
                 >
@@ -1114,7 +1115,18 @@ export function PaintPanel({
 }
 
 /** Short text for a paint: its hex (and opacity), or the gradient's kind. */
-export function paintSummary(value: ColorConfig | undefined, fallback: string) {
+/** A paint in a section header: hex, or the kind and its angle. */
+export function usePaintSummary() {
+  const t = useTranslations("editor.paintPicker.paintPanel");
+  return (value: ColorConfig | undefined, fallback: string) =>
+    paintSummary(value, fallback, t);
+}
+
+function paintSummary(
+  value: ColorConfig | undefined,
+  fallback: string,
+  t: ReturnType<typeof useTranslations<"editor.paintPicker.paintPanel">>,
+) {
   const paint = normalizeColorConfig(value, fallback);
   if (paint.type === "solid") {
     const parsed = parseCssColor(paint.color);
@@ -1124,9 +1136,11 @@ export function paintSummary(value: ColorConfig | undefined, fallback: string) {
   }
   if (paint.type === "image") {
     const opacity = paint.opacity ?? 1;
-    return opacity < 1 ? `Image · ${round(opacity * 100)}%` : "Image";
+    return opacity < 1
+      ? t("imageOpacity", { percent: round(opacity * 100) })
+      : t("kinds.image");
   }
-  const label = KIND_LABELS[paint.type as PaintKind];
+  const label = t(`kinds.${paint.type as PaintKind}`);
   return paint.type === "radial"
     ? label
     : `${label} ${Math.round(paint.angle ?? 0)}°`;

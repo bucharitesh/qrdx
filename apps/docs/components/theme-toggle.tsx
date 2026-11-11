@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Moon, Sun1 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { TooltipWrapper } from "./tooltip-wrapper";
@@ -10,6 +11,7 @@ import { TooltipWrapper } from "./tooltip-wrapper";
 interface ThemeToggleProps extends React.ComponentProps<typeof Button> {}
 
 export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
+  const t = useTranslations("nav.themeToggle");
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -22,9 +24,9 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   };
 
   return (
-    <TooltipWrapper label="Toggle theme" kbd="L" asChild>
+    <TooltipWrapper label={t("toggleTheme")} kbd="L" asChild>
       <Button
-        aria-label="Toggle theme"
+        aria-label={t("toggleTheme")}
         variant="ghost"
         size="icon"
         className={cn("cursor-pointer", className)}

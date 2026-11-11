@@ -3,6 +3,7 @@
 
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { AnimatedBot } from "@/components/editor/ai/animated-bot";
 import type { AIPromptData, ChatMessage } from "@/types/ai";
 import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
@@ -115,13 +116,14 @@ function AssistantMessage({
   isLastMessageStreaming,
   superseded,
 }: AssistantMessageProps) {
+  const t = useTranslations("editor.ai.message");
   return (
     <div className="flex items-start gap-3">
       <div className="bg-background/70 relative grid size-8 shrink-0 place-items-center rounded-full border shadow-xs backdrop-blur-sm select-none">
         <AnimatedBot
           className="size-5"
           thinking={isLastMessageStreaming}
-          title="QRdx AI"
+          title={t("qrdxAi")}
         />
       </div>
 
@@ -264,6 +266,7 @@ function UserMessage({
   onEditCancel,
   isGeneratingTheme,
 }: UserMessageProps) {
+  const t = useTranslations("editor.ai.message");
   const promptData = message.metadata?.promptData;
   const shouldDisplayMsgContent = promptData?.content?.trim() !== "";
 
@@ -287,7 +290,7 @@ function UserMessage({
         <div className="self-end mb-2">
           <ChatImagePreview
             src={images[0].url}
-            alt="Image preview"
+            alt={t("imagePreview")}
             className="rounded-xl border border-border/20 shadow-sm"
           />
         </div>
@@ -300,7 +303,7 @@ function UserMessage({
               <ChatImagePreview
                 className="size-full object-cover rounded-xl border border-border/20 shadow-sm"
                 src={image.url}
-                alt="Image preview"
+                alt={t("imagePreview")}
               />
             </div>
           ))}

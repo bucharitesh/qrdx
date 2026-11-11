@@ -8,7 +8,6 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { ArrowRight, Import as Download } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { downloadQRCode, QRCode } from "qrdx";
 import { type ComponentType, useEffect, useState } from "react";
@@ -416,7 +415,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         <Button asChild variant="ghost" className="w-full">
           {/* The link names the type; what was typed stays in this browser's
               editor store, never in the address. */}
-          <Link
+          <LocaleLink
             href={playgroundHref({
               type: LINK_ONLY.has(activeType) ? "url" : activeType,
             })}
@@ -432,7 +431,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
           >
             {t("customize")}
             <ArrowRight className="size-4" />
-          </Link>
+          </LocaleLink>
         </Button>
 
         {payload && (

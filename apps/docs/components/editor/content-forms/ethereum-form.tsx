@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { EthereumFormData } from "@/lib/validations/qr-content";
 import { ethereumSchema } from "@/lib/validations/qr-content";
@@ -10,6 +11,7 @@ import type { EthereumContent } from "@/types/qr-content";
 import { encodeEthereum } from "@/utils/qr-content-encoder";
 
 export function EthereumForm() {
+  const t = useTranslations("editor.contentForms.ethereumForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -47,12 +49,12 @@ export function EthereumForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="ethereum-address">
-          Ethereum address *
+          {t("ethereumAddress")}
         </Label>
         <Input
           id="ethereum-address"
           type="text"
-          placeholder="0xfb6916095ca1df60bb79Ce92ce3ea74c37c5d359"
+          placeholder={t("n0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359")}
           value={ethereumData.address}
           onChange={(e) =>
             setEthereumData({ ...ethereumData, address: e.target.value })
@@ -66,7 +68,7 @@ export function EthereumForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="ethereum-amount">
-          Amount (ETH)
+          {t("amountEth")}
         </Label>
         <Input
           id="ethereum-amount"
@@ -85,7 +87,7 @@ export function EthereumForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="ethereum-gas">
-          Gas limit
+          {t("gasLimit")}
         </Label>
         <Input
           id="ethereum-gas"
@@ -103,7 +105,7 @@ export function EthereumForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open an Ethereum wallet with these payment details
+        {t("scanningWillOpenAnEthereum")}
       </p>
     </div>
   );

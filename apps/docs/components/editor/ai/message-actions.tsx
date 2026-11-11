@@ -1,6 +1,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Edit2 as Edit, Refresh2 as RefreshCw } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/copy-button";
 import { DebugButton } from "@/components/debug-button";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -21,6 +22,7 @@ export function MessageActions({
   isGeneratingTheme,
   isEditing,
 }: MessageActionsProps) {
+  const t = useTranslations("editor.ai.messageActions");
   const isUser = message.role === "user";
   const isAssistant = message.role === "assistant";
 
@@ -53,7 +55,7 @@ export function MessageActions({
       )}
     >
       {onRetry && (
-        <TooltipWrapper label="Retry" asChild>
+        <TooltipWrapper label={t("retry")} asChild>
           <Button
             size="icon"
             variant="ghost"
@@ -67,7 +69,7 @@ export function MessageActions({
       )}
 
       {onEdit && isUser && (
-        <TooltipWrapper label="Edit" asChild>
+        <TooltipWrapper label={t("edit")} asChild>
           <Button
             size="icon"
             variant="ghost"

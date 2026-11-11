@@ -4,6 +4,7 @@ import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowUp } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { shinePressClass } from "./shine-border";
@@ -25,6 +26,7 @@ export function AISendButton({
   onStop?: () => void;
   label?: string;
 }) {
+  const t = useTranslations("editor.ai.aiSendButton");
   if (generating) {
     return (
       <Button
@@ -35,13 +37,13 @@ export function AISendButton({
         variant="outline"
       >
         <Spinner className="size-3.5" />
-        Stop
+        {t("stop")}
       </Button>
     );
   }
 
   return (
-    <TooltipWrapper asChild label={`${label} (Enter)`}>
+    <TooltipWrapper asChild label={t("labelEnter", { label })}>
       <Button
         aria-label={label}
         className={cn(

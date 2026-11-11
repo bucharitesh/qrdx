@@ -25,9 +25,12 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { markSignOutIntent } from "@/app/(app)/(auth)/sign-out/_lib/intent";
 import { hasAdminRole } from "@/components/app-shell/nav-config";
+import { useLocalizeHref } from "@/components/i18n/locale-link";
 import { useSubscription } from "@/lib/hooks/use-subscription";
+import { splitLocale } from "@/lib/i18n/paths";
 import { playgroundHref } from "@/lib/playground-links";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { useAuthStore } from "@/store/auth-store";
@@ -37,13 +40,16 @@ const FADE_IN = "animate-in fade-in-0 duration-200 motion-reduce:animate-none";
 
 /** "Try the Playground", except on the playground itself. */
 function PlaygroundLink() {
-  const pathname = usePathname() ?? "/";
-  if (pathname === "/playground" || pathname.startsWith("/playground/")) {
+  const t = useTranslations("nav.userProfileDropdown");
+  const localize = useLocalizeHref();
+  // /es/playground too: the playground in another language.
+  const { path } = splitLocale(usePathname() ?? "/");
+  if (path === "/playground" || path.startsWith("/playground/")) {
     return null;
   }
   return (
-    <Link className="hidden sm:block" href={playgroundHref()}>
-      <Button>Try the Playground</Button>
+    <Link className="hidden sm:block" href={localize(playgroundHref())}>
+      <Button>{t("tryThePlayground")}</Button>
     </Link>
   );
 }
@@ -60,6 +66,7 @@ export function UserProfileDropdown({
   /** The page only renders for signed-in people (the app shell). */
   signedIn?: boolean;
 } = {}) {
+  const t = useTranslations("nav.userProfileDropdown");
   const { data: session, isPending } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const router = useRouter();
@@ -102,7 +109,7 @@ export function UserProfileDropdown({
       >
         <PlaygroundLink />
         <Button tabIndex={-1} variant="outline">
-          Sign in
+          {t("signIn")}
         </Button>
       </div>
     );
@@ -113,7 +120,7 @@ export function UserProfileDropdown({
       <div key="auth-buttons" className={cn("flex gap-3.5", FADE_IN)}>
         <PlaygroundLink />
         <Button variant="outline" onClick={() => openAuthDialog("signin")}>
-          Sign in
+          {t("signIn")}
         </Button>
       </div>
     );
@@ -167,12 +174,12 @@ export function UserProfileDropdown({
           <DropdownMenuSeparator className="bg-border opacity-80" />
           <DropdownMenuItem asChild>
             <Link href="/dashboard">
-              <Link2 /> Dashboard
+              <Link2 /> {t("dashboard")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/settings/account">
-              <Setting2 /> Account settings
+              <Setting2 /> {t("accountSettings")}
             </Link>
           </DropdownMenuItem>
           {(plan || subscriptionStatus) &&
@@ -180,20 +187,20 @@ export function UserProfileDropdown({
               <DropdownMenuItem asChild>
                 {/* Route handler that redirects to the Polar portal. */}
                 <a href="/settings/portal">
-                  <Card /> Manage billing
+                  <Card /> {t("manageBilling")}
                 </a>
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem asChild>
                 <Link href="/pricing">
-                  <Crown1 /> Upgrade to Pro
+                  <Crown1 /> {t("upgradeToPro")}
                 </Link>
               </DropdownMenuItem>
             ))}
           {hasAdminRole(session.user.role) && (
             <DropdownMenuItem asChild>
               <Link href="/admin">
-                <Lock /> Admin
+                <Lock /> {t("admin")}
               </Link>
             </DropdownMenuItem>
           )}
@@ -201,11 +208,11 @@ export function UserProfileDropdown({
           <DropdownMenuItem asChild>
             <Link href="/legal/privacy-policy">
               <SecuritySafe />
-              Privacy policy
+              {t("privacyPolicy")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={handleSignOut}>
-            <Logout /> Sign out
+            <Logout /> {t("signOut")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

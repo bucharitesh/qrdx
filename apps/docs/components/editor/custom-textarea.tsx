@@ -8,6 +8,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { SuggestionPluginKey } from "@tiptap/suggestion";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef } from "react";
 import { suggestion } from "@/components/editor/mention-suggestion";
 
@@ -39,6 +40,7 @@ export default function CustomTextarea({
   isStreamingContent = false,
   placeholders,
 }: CustomTextareaProps) {
+  const t = useTranslations("editor.customTextarea");
   const placeholderIndex = useRef(0);
   const placeholderList = useRef(placeholders);
   placeholderList.current = placeholders;
@@ -57,7 +59,7 @@ export default function CustomTextarea({
         placeholder: () =>
           placeholderList.current?.[
             placeholderIndex.current % (placeholderList.current?.length || 1)
-          ] ?? "Describe your theme…",
+          ] ?? t("describeYourTheme"),
         emptyEditorClass:
           "cursor-text before:content-[attr(data-placeholder)] before:absolute before:inset-x-1 before:top-1 before:opacity-50 before-pointer-events-none",
       }),
@@ -131,8 +133,8 @@ export default function CustomTextarea({
 
         if (totalCharacters > characterLimit) {
           event.preventDefault();
-          toast.error("Text too long", {
-            description: `The pasted content would exceed the ${characterLimit} character limit.`,
+          toast.error(t("textTooLong"), {
+            description: t("thePastedContentWouldExceed", { characterLimit }),
           });
           return true;
         }

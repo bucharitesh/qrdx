@@ -9,6 +9,7 @@ import {
 } from "@repo/design-system/components/ui/toggle-group";
 import { cn } from "@repo/design-system/lib/utils";
 import { GalleryAdd, GalleryEdit } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   getImageTones,
   type ImageFit,
@@ -140,22 +141,23 @@ export function useImageTones(sources: string[]): ImageToneMap {
 
 // ── Controls ───────────────────────────────────────────────────────────────
 
-const FITS: { id: ImageFit; label: string }[] = [
-  { id: "cover", label: "Fill" },
-  { id: "contain", label: "Fit" },
-  { id: "tile", label: "Tile" },
+// Names in messages/en.json: editor.paintPicker.imageFill.fits and .positions.
+const FITS: { id: ImageFit }[] = [
+  { id: "cover" },
+  { id: "contain" },
+  { id: "tile" },
 ];
 
-const POSITIONS: { id: ImagePosition; label: string }[] = [
-  { id: "top-left", label: "Top left" },
-  { id: "top", label: "Top" },
-  { id: "top-right", label: "Top right" },
-  { id: "left", label: "Left" },
-  { id: "center", label: "Center" },
-  { id: "right", label: "Right" },
-  { id: "bottom-left", label: "Bottom left" },
-  { id: "bottom", label: "Bottom" },
-  { id: "bottom-right", label: "Bottom right" },
+const POSITIONS: { id: ImagePosition }[] = [
+  { id: "top-left" },
+  { id: "top" },
+  { id: "top-right" },
+  { id: "left" },
+  { id: "center" },
+  { id: "right" },
+  { id: "bottom-left" },
+  { id: "bottom" },
+  { id: "bottom-right" },
 ];
 
 /** A file input behind a button; reports the picture or the error. */
@@ -220,13 +222,14 @@ export function PictureEmpty({
 }: {
   onPicture: (src: string) => void;
 }) {
+  const t = useTranslations("editor.paintPicker.imageFill");
   const [error, setError] = useState<string | null>(null);
   return (
     <div className="space-y-2">
       <div className="border-input flex flex-col items-center gap-2 rounded-md border border-dashed px-3 py-6 text-center">
         <GalleryAdd aria-hidden className="text-muted-foreground size-6" />
         <p className="text-muted-foreground text-xs text-pretty">
-          Paint a picture through these shapes. PNG, JPEG or WebP, up to 10 MB.
+          {t("paintAPictureThroughThese")}
         </p>
         <PicturePicker
           className="h-8 text-xs"
@@ -236,7 +239,7 @@ export function PictureEmpty({
             onPicture(src);
           }}
         >
-          Choose a picture
+          {t("chooseAPicture")}
         </PicturePicker>
       </div>
       {error && (
@@ -288,13 +291,14 @@ function UnderlayField({
   value: string | undefined;
   onChange: (value: string | undefined) => void;
 }) {
+  const t = useTranslations("editor.paintPicker.imageFill");
   const id = useId();
   const [draft, setDraft] = useState(value ?? "");
   useEffect(() => setDraft(value ?? ""), [value]);
   return (
     <div className="space-y-1.5">
       <label className="text-muted-foreground text-xs" htmlFor={id}>
-        Underlay
+        {t("underlay")}
       </label>
       <div className="flex items-center gap-1.5">
         <span
@@ -318,9 +322,9 @@ function UnderlayField({
               onChange(toHex({ ...parsed, a: 1 }));
             }
           }}
-          placeholder="None"
+          placeholder={t("none")}
           spellCheck={false}
-          title="A solid color under the picture; its opacity lets it through"
+          title={t("aSolidColorUnderThe")}
           value={draft}
         />
         {value && (
@@ -331,7 +335,7 @@ function UnderlayField({
             type="button"
             variant="ghost"
           >
-            None
+            {t("none")}
           </Button>
         )}
       </div>
@@ -350,6 +354,7 @@ export function ImageFillEditor({
   paint: ImagePaint;
   onChange: (paint: ImagePaint) => void;
 }) {
+  const t = useTranslations("editor.paintPicker.imageFill");
   const [error, setError] = useState<string | null>(null);
   const set = (patch: Partial<ImagePaint>) => onChange({ ...paint, ...patch });
   const fit = paint.fit ?? "cover";
@@ -386,7 +391,7 @@ export function ImageFillEditor({
           }}
         >
           <GalleryEdit className="size-3.5" />
-          Replace
+          {t("replace")}
         </PicturePicker>
       </div>
       {error && (
@@ -396,7 +401,7 @@ export function ImageFillEditor({
       )}
 
       <ToggleGroup
-        aria-label="How the picture fills the code"
+        aria-label={t("howThePictureFillsThe")}
         className="bg-muted grid w-full grid-cols-3 gap-0 rounded-lg p-0.5"
         onValueChange={(next) => next && set({ fit: next as ImageFit })}
         type="single"
@@ -408,14 +413,14 @@ export function ImageFillEditor({
             key={item.id}
             value={item.id}
           >
-            {item.label}
+            {t(`fits.${item.id}`)}
           </ToggleGroupItem>
         ))}
       </ToggleGroup>
 
       <div className="flex items-start gap-3">
         <ToggleGroup
-          aria-label="Position"
+          aria-label={t("position")}
           className={cn(
             "grid shrink-0 grid-cols-3 gap-0.5",
             fit === "tile" && "pointer-events-none opacity-40",
@@ -429,24 +434,24 @@ export function ImageFillEditor({
         >
           {POSITIONS.map((item) => (
             <ToggleGroupItem
-              aria-label={item.label}
+              aria-label={t(`positions.${item.id}`)}
               className="data-[state=on]:bg-foreground border-input size-5 min-w-0 rounded-sm border p-0 data-[state=on]:border-transparent"
               key={item.id}
-              title={item.label}
+              title={t(`positions.${item.id}`)}
               value={item.id}
             />
           ))}
         </ToggleGroup>
         <div className="min-w-0 flex-1 space-y-3">
           <PercentSlider
-            label={fit === "tile" ? "Tile size" : "Scale"}
+            label={fit === "tile" ? t("tileSize") : t("scale")}
             max={4}
             min={0.1}
             onChange={(scale) => set({ scale })}
             value={paint.scale ?? 1}
           />
           <PercentSlider
-            label="Opacity"
+            label={t("opacity")}
             max={1}
             min={0}
             onChange={(opacity) => set({ opacity })}
@@ -461,8 +466,7 @@ export function ImageFillEditor({
       />
 
       <p className="text-muted-foreground text-[11px] text-pretty">
-        The picture stays with this design, like a logo: it isn't shared in
-        links or published styles, and EPS can't carry it.
+        {t("thePictureStaysWithThis")}
       </p>
     </div>
   );

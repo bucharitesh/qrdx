@@ -3,6 +3,7 @@
 import { toast } from "@repo/design-system";
 import { cn } from "@repo/design-system/lib/utils";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import React from "react";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
@@ -36,6 +37,7 @@ const NoMessagesPlaceholder = dynamic(
 );
 
 export function ChatInterface() {
+  const t = useTranslations("editor.ai.chatInterface");
   const { messages, regenerate, resetMessagesUpToIndex } = useChatContext();
   const { isGenerating, generateQRCore, cancelGeneration } =
     useAIQRGenerationCore();
@@ -80,8 +82,8 @@ export function ChatInterface() {
     if (messageToRetry) {
       regenerate({ messageId: messageToRetry.id });
     } else {
-      toast.error("Cannot retry this message", {
-        description: "Seems like this message is not longer available.",
+      toast.error(t("cannotRetryThisMessage"), {
+        description: t("seemsLikeThisMessageIs"),
       });
     }
   };

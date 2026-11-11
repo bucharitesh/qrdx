@@ -5,6 +5,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import {
   getCommunityTagCounts,
   getCommunityThemes,
@@ -101,6 +102,7 @@ const INLINE_REFUSALS = new Set<ErrorCode>([
 ]);
 
 export function usePublishTheme() {
+  const t = useTranslations("editor.hooks.useCommunityThemes");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -120,8 +122,8 @@ export function usePublishTheme() {
       return result.data;
     },
     onSuccess: () => {
-      toast.success("Theme published", {
-        description: "Your theme is now visible in the community.",
+      toast.success(t("themePublished"), {
+        description: t("yourThemeIsNowVisible"),
       });
       queryClient.invalidateQueries({ queryKey: communityKeys.all });
       queryClient.invalidateQueries({ queryKey: communityKeys.myPublished() });
@@ -134,37 +136,37 @@ export function usePublishTheme() {
       ) {
         return;
       }
-      toast.error("Failed to publish theme", {
-        description:
-          (error as Error).message || "An unexpected error occurred.",
+      toast.error(t("failedToPublishTheme"), {
+        description: (error as Error).message || t("anUnexpectedErrorOccurred"),
       });
     },
   });
 }
 
 export function useUnpublishTheme() {
+  const t = useTranslations("editor.hooks.useCommunityThemes");
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (themeId: string) => unpublishTheme(themeId),
     onSuccess: () => {
-      toast.success("Theme unpublished", {
-        description: "Your theme has been removed from the community.",
+      toast.success(t("themeUnpublished"), {
+        description: t("yourThemeHasBeenRemoved"),
       });
       queryClient.invalidateQueries({ queryKey: communityKeys.all });
       queryClient.invalidateQueries({ queryKey: communityKeys.myPublished() });
       queryClient.invalidateQueries({ queryKey: themeKeys.lists() });
     },
     onError: (error) => {
-      toast.error("Failed to unpublish theme", {
-        description:
-          (error as Error).message || "An unexpected error occurred.",
+      toast.error(t("failedToUnpublishTheme"), {
+        description: (error as Error).message || t("anUnexpectedErrorOccurred"),
       });
     },
   });
 }
 
 export function useToggleLike() {
+  const t = useTranslations("editor.hooks.useCommunityThemes");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -221,8 +223,8 @@ export function useToggleLike() {
           queryClient.setQueryData(queryKey, data);
         }
       }
-      toast.error("Failed to update like", {
-        description: "An unexpected error occurred.",
+      toast.error(t("failedToUpdateLike"), {
+        description: t("anUnexpectedErrorOccurred"),
       });
     },
     onSettled: () => {
@@ -232,6 +234,7 @@ export function useToggleLike() {
 }
 
 export function useUpdateCommunityThemeTags() {
+  const t = useTranslations("editor.hooks.useCommunityThemes");
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -249,15 +252,14 @@ export function useUpdateCommunityThemeTags() {
       return result.data;
     },
     onSuccess: () => {
-      toast.success("Tags updated", {
-        description: "Your theme tags have been updated.",
+      toast.success(t("tagsUpdated"), {
+        description: t("yourThemeTagsHaveBeen"),
       });
       queryClient.invalidateQueries({ queryKey: communityKeys.all });
     },
     onError: (error) => {
-      toast.error("Failed to update tags", {
-        description:
-          (error as Error).message || "An unexpected error occurred.",
+      toast.error(t("failedToUpdateTags"), {
+        description: (error as Error).message || t("anUnexpectedErrorOccurred"),
       });
     },
   });

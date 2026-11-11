@@ -2,6 +2,7 @@
 
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import type { AnyQRFrame } from "qrdx";
 import {
   type RefObject,
@@ -112,6 +113,7 @@ export function FrameTextOverlay({
   /** An AI art result covers the code */
   disabled?: boolean;
 }) {
+  const t = useTranslations("editor.frameInline.frameTextOverlay");
   const isMobile = useIsMobile();
   const { handleSetTab } = useControlsTabFromUrl();
   const [labels, setLabels] = useState<PreviewLabel[]>([]);
@@ -328,7 +330,7 @@ export function FrameTextOverlay({
           const pad = 4;
           return (
             <button
-              aria-label={`Edit frame text: ${target.value}`}
+              aria-label={t("editFrameTextValue", { value: target.value })}
               className={cn(
                 "pointer-events-auto absolute cursor-text rounded-[5px] outline-none transition-shadow",
                 "hover:ring-1 hover:ring-current/45 focus-visible:ring-2 focus-visible:ring-current/70",
@@ -349,7 +351,7 @@ export function FrameTextOverlay({
                 height: label.box.height + 2 * pad,
               }}
               tabIndex={editingHere ? -1 : 0}
-              title="Edit text"
+              title={t("editText")}
               type="button"
             />
           );

@@ -9,6 +9,7 @@ import {
   lastAssistantMessageIsCompleteWithApprovalResponses,
   lastAssistantMessageIsCompleteWithToolCalls,
 } from "ai";
+import { useTranslations } from "next-intl";
 import {
   useCallback,
   useEffect,
@@ -201,6 +202,7 @@ export function ChatEngine({
 }: {
   onChange: (chat: ChatContextValue) => void;
 }) {
+  const t = useTranslations("editor.hooks.chatEngine");
   const queryClient = useQueryClient();
   const storedMessages = useAIChatStore((s) => s.messages);
   const setStoredMessages = useAIChatStore((s) => s.setMessages);
@@ -252,7 +254,7 @@ export function ChatEngine({
       setThemeEvent((prev) => ({ kind: "error", at: (prev?.at ?? 0) + 1 }));
       emitSound("error");
       track("ai_theme_generated", { status: "fail" });
-      toast.error("An error occurred", {
+      toast.error(t("anErrorOccurred"), {
         description: normalizedError.message,
       });
     },
@@ -384,13 +386,13 @@ export function ChatEngine({
       if (Date.now() - lastActivity.current > STALLED_STREAM_MS) {
         chat.stop();
         track("ai_theme_generated", { status: "fail" });
-        toast.error("The AI stopped responding", {
-          description: "Try again in a moment.",
+        toast.error(t("theAiStoppedResponding"), {
+          description: t("tryAgainInAMoment"),
         });
       }
     }, 5_000);
     return () => clearInterval(timer);
-  }, [requestActive, chat.stop]);
+  }, [requestActive, chat.stop, t]);
 
   const startNewChat = () => {
     chat.stop();

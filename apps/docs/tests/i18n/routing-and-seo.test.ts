@@ -105,8 +105,10 @@ describe("paths", () => {
     expect(localizePath("/pricing", "pt-BR")).toBe("/pt-br/pricing");
     expect(localizePath("/pricing", "zh-Hans")).toBe("/zh-hans/pricing");
     expect(localizePath("/pricing", "en")).toBe("/pricing");
-    // Not translated: the playground, short links.
-    for (const path of ["/playground", "/q/abc", "/p/abc", "/m/abc"]) {
+    // The playground is translated; its shared theme links and short
+    // links keep one URL in every language.
+    expect(localizePath("/playground", "ja")).toBe("/ja/playground");
+    for (const path of ["/playground/abc", "/q/abc", "/p/abc", "/m/abc"]) {
       expect(localizePath(path, "ja")).toBe(path);
     }
   });

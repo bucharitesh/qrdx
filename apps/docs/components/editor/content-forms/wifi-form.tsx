@@ -10,12 +10,14 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { Switch } from "@repo/design-system/components/ui/switch";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { WifiContent } from "@/types/qr-content";
 import { encodeWifi } from "@/utils/qr-content-encoder";
 
 export function WifiForm() {
+  const t = useTranslations("editor.contentForms.wifiForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -38,12 +40,12 @@ export function WifiForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="wifi-ssid">
-          Network name *
+          {t("networkName")}
         </Label>
         <Input
           id="wifi-ssid"
           type="text"
-          placeholder="My Wi-Fi network"
+          placeholder={t("myWiFiNetwork")}
           value={wifiData.ssid}
           onChange={(e) => setWifiData({ ...wifiData, ssid: e.target.value })}
         />
@@ -51,7 +53,7 @@ export function WifiForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="wifi-encryption">
-          Security
+          {t("security")}
         </Label>
         <Select
           value={wifiData.encryption}
@@ -63,9 +65,9 @@ export function WifiForm() {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="WPA">WPA/WPA2</SelectItem>
+            <SelectItem value="WPA">{t("wpaWpa2")}</SelectItem>
             <SelectItem value="WEP">WEP</SelectItem>
-            <SelectItem value="nopass">No password</SelectItem>
+            <SelectItem value="nopass">{t("noPassword")}</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -73,12 +75,12 @@ export function WifiForm() {
       {wifiData.encryption !== "nopass" && (
         <div className="space-y-2">
           <Label className="text-xs" htmlFor="wifi-password">
-            Password *
+            {t("password")}
           </Label>
           <Input
             id="wifi-password"
             type="password"
-            placeholder="Network password"
+            placeholder={t("networkPassword")}
             value={wifiData.password}
             onChange={(e) =>
               setWifiData({ ...wifiData, password: e.target.value })
@@ -89,7 +91,7 @@ export function WifiForm() {
 
       <div className="flex items-center justify-between rounded-lg border px-3 py-2 transition-colors hover:bg-muted/50">
         <Label className="cursor-pointer text-xs" htmlFor="wifi-hidden">
-          Hidden network
+          {t("hiddenNetwork")}
         </Label>
         <Switch
           id="wifi-hidden"
@@ -101,7 +103,7 @@ export function WifiForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will offer to join this Wi-Fi network
+        {t("scanningWillOfferToJoin")}
       </p>
     </div>
   );

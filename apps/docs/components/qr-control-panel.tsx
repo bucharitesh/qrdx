@@ -8,6 +8,7 @@ import {
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
 import { Brush2, Edit2, MagicStar } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type * as React from "react";
 import { AnimatedBot } from "@/components/editor/ai/animated-bot";
 import { ChatInterface } from "@/components/editor/ai/chat-interface";
@@ -39,13 +40,14 @@ const triggerClass =
   "h-full flex-auto gap-1 px-1.5 text-[13px] data-[state=active]:text-foreground text-muted-foreground [&>svg]:@max-[19.5rem]:hidden";
 
 function GenerateTrigger({ thinking }: { thinking: boolean }) {
+  const t = useTranslations("editor.qrControlPanel");
   // Same tab as its siblings (no coloured border); the only accent is a
   // colour shine passing through the label every few seconds.
   return (
     <TabsTrigger className={triggerClass} value="ai">
       <AnimatedBot thinking={thinking} />
       <ShineText className="font-medium" tone="color">
-        Generate
+        {t("generate")}
       </ShineText>
     </TabsTrigger>
   );
@@ -58,6 +60,7 @@ function GenerateTrigger({ thinking }: { thinking: boolean }) {
  * Logo section, and a link's ?section= at its section.
  */
 const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
+  const t = useTranslations("editor.qrControlPanel");
   const { tab, handleSetTab, aiAvailable } = useControlsTabFromUrl();
   const { isGenerating } = useAIQRGenerationCore();
   const focusSection = usePlaygroundFocusStore((state) => state.section);
@@ -98,15 +101,15 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
           <TabsList className="flex h-10 w-full">
             <TabsTrigger className={triggerClass} value="content">
               <Edit2 className="size-4" />
-              Content
+              {t("content")}
             </TabsTrigger>
             <TabsTrigger className={triggerClass} value="customisations">
               <Brush2 className="size-4" />
-              Design
+              {t("design")}
             </TabsTrigger>
             <TabsTrigger className={triggerClass} value="art">
               <MagicStar className="size-4" />
-              Art
+              {t("art")}
             </TabsTrigger>
             {aiAvailable && <GenerateTrigger thinking={isGenerating} />}
           </TabsList>

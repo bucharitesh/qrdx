@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Export as Upload } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useDropzone } from "react-dropzone";
 
 interface DragAndDropImageUploaderProps {
@@ -13,6 +14,7 @@ export function DragAndDropImageUploader({
   disabled,
   className,
 }: DragAndDropImageUploaderProps) {
+  const t = useTranslations("editor.ai.dragAndDropImageUploader");
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     multiple: true,
@@ -42,7 +44,7 @@ export function DragAndDropImageUploader({
         <div className="flex w-full items-center justify-center gap-2">
           <Upload className="text-muted-foreground size-4" />
           <span className="text-muted-foreground text-sm font-medium">
-            Drop images here
+            {t("dropImagesHere")}
           </span>
         </div>
       </div>

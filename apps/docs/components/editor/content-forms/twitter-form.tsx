@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { TwitterContent } from "@/types/qr-content";
@@ -9,6 +10,7 @@ import { encodeTwitter } from "@/utils/qr-content-encoder";
 import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function TwitterForm() {
+  const t = useTranslations("editor.contentForms.twitterForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -38,12 +40,12 @@ export function TwitterForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="twitter-username">
-          Twitter / X username *
+          {t("twitterXUsername")}
         </Label>
         <Input
           id="twitter-username"
           type="text"
-          placeholder="username or @username"
+          placeholder={t("usernameOrUsername")}
           value={twitterData.username}
           onChange={(e) =>
             setTwitterData({ ...twitterData, username: e.target.value })
@@ -52,7 +54,7 @@ export function TwitterForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Twitter / X profile
+        {t("scanningWillOpenYourTwitter")}
       </p>
     </div>
   );

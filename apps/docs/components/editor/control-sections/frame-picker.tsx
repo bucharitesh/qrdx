@@ -5,6 +5,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { cn } from "@repo/design-system/lib/utils";
 import { SearchNormal1 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   type AnyQRFrame,
   OFFICIAL_FRAME_COLLECTIONS,
@@ -199,6 +200,7 @@ export function FramePicker({
   /** Name shown over the row for the current choice */
   currentName: string;
 }) {
+  const t = useTranslations("editor.controlSections.framePicker");
   const inPanel = useInsideSidePanel();
   const side = useSidePanelSide();
   const [open, setOpen] = React.useState(false);
@@ -331,10 +333,10 @@ export function FramePicker({
       )
       .map((entry) => ({ id: `${OFFICIAL_PREFIX}${entry.id}`, entry }));
     return [
-      { id: COMING_UP, label: "Coming up", items: comingUp },
+      { id: COMING_UP, label: t("comingUp"), items: comingUp },
       {
         id: BUILT_IN,
-        label: "Built-in",
+        label: t("builtIn"),
         items: builtIn.map((choice) => ({ id: choice.id })),
       },
       ...OFFICIAL_FRAME_COLLECTIONS.map((collection) => ({
@@ -344,11 +346,11 @@ export function FramePicker({
       })),
       {
         id: SAVED,
-        label: "Saved",
+        label: t("saved"),
         items: saved.map((choice) => ({ id: choice.id })),
       },
     ].filter((section) => section.items.length > 0);
-  }, [choices, index, upcoming]);
+  }, [choices, index, upcoming, t]);
 
   const shown: Section[] = (() => {
     if (terms.length > 0) {
@@ -363,7 +365,9 @@ export function FramePicker({
           if (matches(text, terms)) found.set(item.id, item);
         }
       }
-      return [{ id: "results", label: "Results", items: [...found.values()] }];
+      return [
+        { id: "results", label: t("results"), items: [...found.values()] },
+      ];
     }
     if (filter === ALL) return sections;
     return sections.filter((section) => section.id === filter);
@@ -396,7 +400,7 @@ export function FramePicker({
       aria-controls={inPanel ? browserId : undefined}
       aria-expanded={open}
       aria-haspopup={inPanel ? undefined : "dialog"}
-      aria-label="More frames"
+      aria-label={t("moreFrames")}
       className={cn(
         "group bg-muted/40 text-muted-foreground hover:text-foreground relative flex aspect-square min-w-0 flex-col items-center justify-center gap-0 rounded-[14px] border p-1 text-center transition-[background-color,border-color,transform] outline-none active:scale-[0.96] hover:border-foreground/20 hover:bg-accent/40 focus-visible:border-foreground/30 focus-visible:ring-ring/40 focus-visible:ring-[3px]",
         open && "border-foreground/30 bg-accent text-foreground",
@@ -410,24 +414,26 @@ export function FramePicker({
           : undefined
       }
       ref={moreRef}
-      title={officialCount > 0 ? `All ${total} frames` : "All frames"}
+      title={
+        officialCount > 0 ? t("allTotalFrames", { total }) : t("allFrames")
+      }
       type="button"
     >
       <span className="text-sm font-semibold tabular-nums leading-none">
         {inPanel && open
-          ? "Less"
+          ? t("less")
           : officialCount > 0
             ? `+${total - row.length}`
-            : "All"}
+            : t("all")}
       </span>
       {!(inPanel && open) && (
-        <span className="mt-1 text-[10px] leading-none">More</span>
+        <span className="mt-1 text-[10px] leading-none">{t("more")}</span>
       )}
     </button>
   );
 
   const chips = [
-    { id: ALL, label: "All", count: total },
+    { id: ALL, label: t("all"), count: total },
     ...sections.map((section) => ({
       id: section.id,
       label: section.label,
@@ -450,7 +456,7 @@ export function FramePicker({
               className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2"
             />
             <Input
-              aria-label="Search frames"
+              aria-label={t("searchFrames")}
               className="h-8 pl-8 text-sm"
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={(event) => {
@@ -460,7 +466,9 @@ export function FramePicker({
                 }
               }}
               placeholder={
-                officialCount > 0 ? `Search ${total} frames` : "Search frames"
+                officialCount > 0
+                  ? t("searchTotalFrames", { total })
+                  : t("searchFrames")
               }
               ref={searchRef}
               type="search"
@@ -469,7 +477,7 @@ export function FramePicker({
           </div>
           {inPanel && (
             <Button
-              aria-label="Close frames"
+              aria-label={t("closeFrames")}
               onClick={closeInline}
               size="icon-sm"
               type="button"
@@ -481,7 +489,7 @@ export function FramePicker({
         </div>
 
         <div
-          aria-label="Filter frames"
+          aria-label={t("filterFrames")}
           className="no-scrollbar -mx-2.5 flex gap-0.5 overflow-x-auto px-2.5 [mask-image:linear-gradient(to_right,transparent,black_10px,black_calc(100%-16px),transparent)]"
           role="toolbar"
         >
@@ -538,7 +546,7 @@ export function FramePicker({
                 className={
                   inPanel ? undefined : "grid-cols-4 @[25rem]:grid-cols-5"
                 }
-                label={`${section.label} frames`}
+                label={t("labelFrames", { label: section.label })}
               >
                 {section.items.map((item) => (
                   <OptionTile
@@ -558,8 +566,8 @@ export function FramePicker({
       ) : (
         <div className="text-muted-foreground flex flex-col items-center gap-2 py-6 text-center text-xs">
           {index || terms.length > 0
-            ? `No frames match "${query}".`
-            : "Loading frames…"}
+            ? t("noFramesMatchQuery", { query })
+            : t("loadingFrames")}
           {(terms.length > 0 || filter !== ALL) && (
             <Button
               onClick={() => {
@@ -570,7 +578,7 @@ export function FramePicker({
               type="button"
               variant="outline"
             >
-              Show all
+              {t("showAll")}
             </Button>
           )}
         </div>
@@ -581,13 +589,13 @@ export function FramePicker({
   return (
     <div ref={rootRef}>
       <div className="mb-2 flex items-baseline justify-between gap-3 text-xs">
-        <span className="text-muted-foreground font-medium">Frame</span>
+        <span className="text-muted-foreground font-medium">{t("frame")}</span>
         <span className="text-foreground min-w-0 truncate font-medium">
           {currentName}
         </span>
       </div>
 
-      <OptionGrid columns={6} label="Common frames">
+      <OptionGrid columns={6} label={t("commonFrames")}>
         {row.map((id) => (
           <CompactTile
             key={id}
@@ -602,12 +610,12 @@ export function FramePicker({
           moreTile
         ) : (
           <SidePanel
-            description="Every frame: built-in styles, QRdx's official frames and the frames you saved. Picking one applies it right away."
+            description={t("everyFrameBuiltInStyles")}
             initialFocus={searchRef}
             onOpenChange={openCatalog}
             open={open}
             sideOffset={sideOffset}
-            title="Frame"
+            title={t("frame")}
             trigger={moreTile}
           >
             {catalog}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
+import { useTranslations } from "next-intl";
 import { type ColorConfig, getSolidColor } from "qrdx/types";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
@@ -124,12 +125,13 @@ interface ColorPresetsProps {
 
 /** One-click palettes that set background, code, eye and eye-dot colors. */
 export function ColorPresets({ style, onApply }: ColorPresetsProps) {
+  const t = useTranslations("editor.controlSections.colorPresets");
   const active = PALETTES.find((palette) => matches(palette, style));
 
   return (
     <div className="space-y-2">
       <fieldset
-        aria-label="Color palettes"
+        aria-label={t("colorPalettes")}
         className="m-0 flex min-w-0 flex-wrap gap-1.5 border-0 p-0"
       >
         {PALETTES.map((palette) => {
@@ -149,11 +151,7 @@ export function ColorPresets({ style, onApply }: ColorPresetsProps) {
                 soundEvent("apply");
               }}
               size="sm"
-              title={
-                palette.inverted
-                  ? "Light code on dark. May not scan on older phones."
-                  : undefined
-              }
+              title={palette.inverted ? t("lightCodeOnDarkMay") : undefined}
               type="button"
               variant={selected ? "secondary" : "outline"}
             >
@@ -164,9 +162,7 @@ export function ColorPresets({ style, onApply }: ColorPresetsProps) {
         })}
       </fieldset>
       {active?.inverted && (
-        <p className="text-muted-foreground text-xs">
-          Light code on a dark background may not scan on older phones.
-        </p>
+        <p className="text-muted-foreground text-xs">{t("lightCodeOnADark")}</p>
       )}
     </div>
   );

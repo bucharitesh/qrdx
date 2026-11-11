@@ -5,6 +5,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { cn } from "@repo/design-system/lib/utils";
 import { SearchNormal1 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { SHAPE_CATEGORIES } from "./shape-catalog";
 import {
@@ -128,7 +129,8 @@ export function OptionTile({
   children: React.ReactNode;
   className?: string;
 }) {
-  const note = blocked ? "Won't scan here" : risk ? "May not scan" : hint;
+  const t = useTranslations("editor.controlSections.optionTiles");
+  const note = blocked ? t("wontScanHere") : risk ? t("mayNotScan") : hint;
   return (
     <button
       aria-pressed={selected}
@@ -212,13 +214,14 @@ export function CompactTile({
   onSelect: () => void;
   children: React.ReactNode;
 }) {
+  const t = useTranslations("editor.controlSections.optionTiles");
   return (
     <button
       aria-label={
         blocked
-          ? `${name}, won't scan with this style`
+          ? t("nameWontScanWithThis", { name })
           : risk
-            ? `${name}, may not scan`
+            ? t("nameMayNotScan", { name })
             : name
       }
       aria-pressed={selected}
@@ -232,9 +235,9 @@ export function CompactTile({
       onClick={onSelect}
       title={
         blocked
-          ? `${name}: won't scan with this style`
+          ? t("nameWontScanWithThis2", { name })
           : risk
-            ? `${name}: may not scan`
+            ? t("nameMayNotScan2", { name })
             : name
       }
       type="button"
@@ -304,6 +307,7 @@ export function ShapePicker<T extends string>({
   riskOf,
   blockedOf,
 }: ShapePickerProps<T>) {
+  const t = useTranslations("editor.controlSections.optionTiles");
   const inPanel = useInsideSidePanel();
   const side = useSidePanelSide();
   const [open, setOpen] = React.useState(false);
@@ -380,7 +384,7 @@ export function ShapePicker<T extends string>({
       aria-controls={inPanel ? browserId : undefined}
       aria-expanded={open}
       aria-haspopup={inPanel ? undefined : "dialog"}
-      aria-label={`More ${noun}`}
+      aria-label={t("moreNoun", { noun })}
       className={cn(
         SMALL_TILE,
         "bg-muted/40 text-muted-foreground hover:text-foreground flex flex-col items-center justify-center gap-0 text-center",
@@ -390,14 +394,14 @@ export function ShapePicker<T extends string>({
         inPanel ? () => (open ? closeInline() : setOpen(true)) : undefined
       }
       ref={moreRef}
-      title={`All ${options.length} ${noun}`}
+      title={t("allLengthNoun", { length: options.length, noun })}
       type="button"
     >
       <span className="text-sm font-semibold tabular-nums leading-none">
-        {inPanel && open ? "Less" : `+${options.length - row.length}`}
+        {inPanel && open ? t("less") : `+${options.length - row.length}`}
       </span>
       {!(inPanel && open) && (
-        <span className="mt-1 text-[10px] leading-none">More</span>
+        <span className="mt-1 text-[10px] leading-none">{t("more")}</span>
       )}
     </button>
   );
@@ -418,7 +422,7 @@ export function ShapePicker<T extends string>({
               className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2"
             />
             <Input
-              aria-label={`Search ${noun}`}
+              aria-label={t("searchNoun", { noun })}
               className="h-8 pl-8 text-sm"
               onChange={(event) => setQuery(event.target.value)}
               onKeyDown={(event) => {
@@ -427,14 +431,17 @@ export function ShapePicker<T extends string>({
                   focusGrid();
                 }
               }}
-              placeholder={`Search ${options.length} ${noun}`}
+              placeholder={t("searchLengthNoun", {
+                length: options.length,
+                noun,
+              })}
               ref={searchRef}
               value={query}
             />
           </div>
           {inPanel && (
             <Button
-              aria-label={`Close ${noun}`}
+              aria-label={t("closeNoun", { noun })}
               onClick={closeInline}
               size="icon-sm"
               type="button"
@@ -446,13 +453,13 @@ export function ShapePicker<T extends string>({
         </div>
 
         <div
-          aria-label={`Filter ${noun}`}
+          aria-label={t("filterNoun", { noun })}
           // One line that scrolls sideways if the panel is narrow.
           className="no-scrollbar -mx-2.5 flex gap-0.5 overflow-x-auto px-2.5 [mask-image:linear-gradient(to_right,transparent,black_10px,black_calc(100%-16px),transparent)]"
           role="toolbar"
         >
           {[
-            { id: "all", label: "All", count: options.length },
+            { id: "all", label: t("all"), count: options.length },
             ...categories
               .filter((item) => counts.has(item.id))
               .map((item) => ({ ...item, count: counts.get(item.id) ?? 0 })),
@@ -504,18 +511,23 @@ export function ShapePicker<T extends string>({
         </div>
       ) : (
         <div className="text-muted-foreground flex flex-col items-center gap-2 py-6 text-center text-xs">
-          No {noun} match "{query}".
-          <Button
-            onClick={() => {
-              setQuery("");
-              setFilter("all");
-            }}
-            size="sm"
-            type="button"
-            variant="outline"
-          >
-            Show all
-          </Button>
+          {t.rich("noNounMatchQueryShow", {
+            noun,
+            query,
+            button: (chunks) => (
+              <Button
+                onClick={() => {
+                  setQuery("");
+                  setFilter("all");
+                }}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
+                {chunks}
+              </Button>
+            ),
+          })}
         </div>
       )}
     </div>
@@ -532,13 +544,13 @@ export function ShapePicker<T extends string>({
               className="text-amber-700 dark:text-amber-400"
               title={currentRisk}
             >
-              May not scan
+              {t("mayNotScan")}
             </span>
           )}
         </span>
       </div>
 
-      <OptionGrid columns={6} label={`Common ${noun}`}>
+      <OptionGrid columns={6} label={t("commonNoun", { noun })}>
         {row.map((id) => (
           <CompactTile
             blocked={value !== id && blockedOf?.(id)}
@@ -555,7 +567,10 @@ export function ShapePicker<T extends string>({
           moreTile
         ) : (
           <SidePanel
-            description={`All ${options.length} ${noun}. Picking one applies it right away.`}
+            description={t("allLengthNounPickingOne", {
+              length: options.length,
+              noun,
+            })}
             initialFocus={searchRef}
             onOpenChange={openCatalog}
             open={open}

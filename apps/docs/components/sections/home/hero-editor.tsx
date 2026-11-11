@@ -6,12 +6,12 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { QRCode } from "qrdx";
 import { useState } from "react";
 import { ScanScoreBadge } from "@/components/editor/scan-score";
 import { AsciiField } from "@/components/fx";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
@@ -98,10 +98,10 @@ export function HeroEditor() {
         </p>
         <Button asChild className="w-fit">
           {/* The look and the link carry over; other text is typed again. */}
-          <Link href={heroPlaygroundHref(styleKey, frameKey, trimmed)}>
+          <LocaleLink href={heroPlaygroundHref(styleKey, frameKey, trimmed)}>
             {t("customize")}
             <ArrowRight className="size-4" />
-          </Link>
+          </LocaleLink>
         </Button>
       </div>
       <div className="relative flex flex-col items-center justify-center gap-4 bg-muted/40 p-6 md:p-8">

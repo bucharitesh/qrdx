@@ -15,6 +15,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { ShieldTick } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrdx";
 import { useAvailability } from "@/components/availability-provider";
 import { GridLines } from "@/components/fx";
@@ -35,6 +36,7 @@ export function GetProDialog({
   onClose,
   plan = "pro",
 }: GetProDialogProps) {
+  const t = useTranslations("nav.getProDialog");
   // Headline features; nothing this deployment can't offer (custom domains).
   const { has } = useAvailability();
   const features = buildUpgradeHighlights({
@@ -50,12 +52,12 @@ export function GetProDialog({
           <section className="w-full space-y-6 border-r md:w-3/5">
             <ResponsiveDialogHeader className="sm:p-6 sm:pb-0">
               <ResponsiveDialogTitle>
-                Upgrade to {PLAN_NAMES[plan]}
+                {t("upgradeToValue", { value: PLAN_NAMES[plan] })}
               </ResponsiveDialogTitle>
               <ResponsiveDialogDescription>
                 {plan === "business"
-                  ? "This feature is part of the Business plan."
-                  : "This feature is part of Pro and Business."}
+                  ? t("thisFeatureIsPartOf")
+                  : t("thisFeatureIsPartOf2")}
               </ResponsiveDialogDescription>
             </ResponsiveDialogHeader>
 
@@ -85,7 +87,7 @@ export function GetProDialog({
                           className="text-muted-foreground"
                           variant="outline"
                         >
-                          Unlocks this
+                          {t("unlocksThis")}
                         </Badge>
                       )}
                     </p>
@@ -115,15 +117,17 @@ export function GetProDialog({
                 variant="Bold"
               />
               <span>
-                Static QR codes stay free, and your codes keep working if you
-                ever cancel.{" "}
-                <Link
-                  className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
-                  href="/guarantee"
-                  onNavigate={onClose}
-                >
-                  Our guarantee
-                </Link>
+                {t.rich("staticQrCodesStayFree", {
+                  link: (chunks) => (
+                    <Link
+                      className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+                      href="/guarantee"
+                      onNavigate={onClose}
+                    >
+                      {chunks}
+                    </Link>
+                  ),
+                })}
               </span>
             </p>
 
@@ -136,11 +140,11 @@ export function GetProDialog({
                   }
                   onNavigate={onClose}
                 >
-                  Compare plans and prices
+                  {t("comparePlansAndPrices")}
                 </Link>
               </Button>
               <Button variant="ghost" onClick={onClose}>
-                Maybe later
+                {t("maybeLater")}
               </Button>
             </ResponsiveDialogFooter>
           </section>
