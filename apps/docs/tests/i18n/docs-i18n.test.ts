@@ -12,6 +12,7 @@ import {
   translatedFile,
   translationLocale,
 } from "@/lib/i18n/docs";
+import { localizedMeta, localizedPages } from "@/lib/i18n/docs-meta";
 import { segmenterTokenizer } from "@/lib/i18n/docs-search";
 import {
   docsLanguageAlternates,
@@ -190,5 +191,72 @@ describe("docs search tokenizers", () => {
     expect(zh.tokenize("使用 REST API 创建")).toEqual(
       expect.arrayContaining(["rest", "api"]),
     );
+  });
+});
+
+describe("docs sidebar in other languages", () => {
+  const translated = [
+    "index",
+    "---Primeros pasos---",
+    "first",
+    "second",
+    "---Más ayuda---",
+    "contact",
+    "[Registro de cambios](/changelogs)",
+  ];
+
+  it("keeps the English pages and order, with the translated labels", () => {
+    const english = [
+      "index",
+      "---Getting started---",
+      "first",
+      "new-page",
+      "second",
+      "---Agencies---",
+      "agency-page",
+      "---More help---",
+      "contact",
+      "[Changelog](/changelogs)",
+    ];
+    expect(localizedPages(english, translated)).toEqual([
+      "index",
+      "---Primeros pasos---",
+      "first",
+      "new-page",
+      "second",
+      // A new separator stays English until the folder is translated again.
+      "---Agencies---",
+      "agency-page",
+      "---Más ayuda---",
+      "contact",
+      "[Registro de cambios](/changelogs)",
+    ]);
+  });
+
+  it("matches a separator by the page before it when the page after it moved", () => {
+    const english = ["first", "---More help---", "inserted", "contact"];
+    expect(
+      localizedPages(english, ["first", "---Más ayuda---", "contact"]),
+    ).toEqual(["first", "---Más ayuda---", "inserted", "contact"]);
+  });
+
+  it("uses each label once, even one that reads like the English", () => {
+    const english = ["---REST API---", "a", "---New---", "b"];
+    expect(localizedPages(english, ["---REST API---", "a", "b"])).toEqual(
+      english,
+    );
+  });
+
+  it("takes title and description from the translation, the rest from English", () => {
+    const meta = localizedMeta(
+      { title: "Help", icon: "LifeBuoy", root: true, pages: ["a", "b"] },
+      { title: "Ayuda", icon: "Old", root: false, pages: ["a"] },
+    );
+    expect(meta).toEqual({
+      title: "Ayuda",
+      icon: "LifeBuoy",
+      root: true,
+      pages: ["a", "b"],
+    });
   });
 });
