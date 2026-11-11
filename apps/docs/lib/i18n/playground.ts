@@ -37,6 +37,8 @@ export const AI_CHAT_NAMESPACES = [
   "editor.hooks.useAiEnhancePrompt",
   "editor.mentionList",
   "editor.themeGallery",
+  "editor.qrPresetSelect",
+  "editor.hooks.useImageUpload",
   "nav.themeToggle",
 ] as const;
 
