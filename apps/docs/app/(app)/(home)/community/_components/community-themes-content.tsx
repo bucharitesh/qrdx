@@ -1,33 +1,11 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
-import { Info, Spinner, Tick } from "@repo/design-system/components/icons";
+import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@repo/design-system/components/ui/dropdown-menu";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@repo/design-system/components/ui/popover";
-import { Separator } from "@repo/design-system/components/ui/separator";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@repo/design-system/components/ui/sheet";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
-import { cn } from "@repo/design-system/lib/utils";
-import { ArrowDown2, Brush2, Filter } from "iconsax-reactjs";
+import { Brush2 } from "iconsax-reactjs";
 import Link from "next/link";
 import {
   parseAsArrayOf,
@@ -36,6 +14,12 @@ import {
   useQueryState,
 } from "nuqs";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { BrowseLayout } from "@/components/community/browse-layout";
+import {
+  GALLERY_GRID,
+  HowToPublish,
+  SortMenu,
+} from "@/components/community/browse-sidebar";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { useCommunityThemes } from "@/lib/hooks/themes/use-community-themes";
@@ -49,15 +33,13 @@ import { CommunitySidebarContent } from "./community-sidebar";
 import { CommunityThemeCard } from "./community-theme-card";
 import { CommunityThemePreviewDialog } from "./community-theme-preview-dialog";
 
-const GRID = "grid gap-5 sm:grid-cols-2 xl:grid-cols-3";
-
 const popularOptions: {
   timeRange: CommunityTimeRange;
   label: string;
 }[] = [
-  { timeRange: "all", label: "All Time" },
-  { timeRange: "monthly", label: "This Month" },
-  { timeRange: "weekly", label: "This Week" },
+  { timeRange: "all", label: "All time" },
+  { timeRange: "monthly", label: "This month" },
+  { timeRange: "weekly", label: "This week" },
 ];
 
 const otherSortOptions: {
@@ -90,7 +72,6 @@ export function CommunityThemesContent() {
       "all",
     ),
   );
-  const [sheetOpen, setSheetOpen] = useState(false);
   const [previewThemeId, setPreviewThemeId] = useState<string | null>(null);
 
   // A preview draws the theme in the dialog only; the visitor's saved design
@@ -102,7 +83,6 @@ export function CommunityThemesContent() {
   const handleFilterChange = useCallback(
     (newFilter: CommunityFilterOption) => {
       setFilter(newFilter);
-      setSheetOpen(false);
     },
     [setFilter],
   );
@@ -146,8 +126,6 @@ export function CommunityThemesContent() {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const hasActiveFilters = filter !== "all" || tags.length > 0;
-
   const sidebarProps = {
     filter,
     selectedTags: tags,
@@ -155,204 +133,132 @@ export function CommunityThemesContent() {
     onTagToggle: handleTagToggle,
   };
 
+  const sortLabel =
+    sort === "popular"
+      ? `Popular / ${popularOptions.find((o) => o.timeRange === timeRange)?.label ?? "All time"}`
+      : sort === "newest"
+        ? "Newest"
+        : "Oldest";
+
   return (
-    <div className="flex min-h-[60vh] flex-1 px-6">
-      {/* Desktop sidebar */}
-      <aside className="hidden w-56 shrink-0 border-r lg:block">
-        <div className="p-3">
-          <CommunitySidebarContent {...sidebarProps} />
-        </div>
-      </aside>
-
-      {/* Main content */}
-      <div className="min-w-0 flex-1">
-        <div className="space-y-6 p-3">
-          <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              {/* Mobile filter button */}
-              <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-                <SheetTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className={cn(
-                      "gap-1.5 lg:hidden",
-                      hasActiveFilters && "border-foreground/30",
-                    )}
-                  >
-                    <Filter className="size-3.5" />
-                    Filters
-                    {hasActiveFilters && (
-                      <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-[10px] font-semibold text-background tabular-nums">
-                        {(filter !== "all" ? 1 : 0) + tags.length}
-                      </span>
-                    )}
-                  </Button>
-                </SheetTrigger>
-                <SheetContent side="left" className="w-72 p-0">
-                  <SheetHeader className="border-b px-6 py-4">
-                    <SheetTitle>Community Themes</SheetTitle>
-                  </SheetHeader>
-                  <div className="p-4">
-                    <CommunitySidebarContent {...sidebarProps} />
-                  </div>
-                </SheetContent>
-              </Sheet>
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="gap-1.5">
-                    {sort === "popular"
-                      ? `Popular / ${popularOptions.find((o) => o.timeRange === timeRange)?.label ?? "All Time"}`
-                      : sort === "newest"
-                        ? "Newest"
-                        : "Oldest"}
-                    <ArrowDown2 className="size-3.5 opacity-60" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-44">
-                  <DropdownMenuLabel>Popular</DropdownMenuLabel>
-                  {popularOptions.map((option) => {
-                    const isActive =
-                      sort === "popular" && timeRange === option.timeRange;
-                    return (
-                      <DropdownMenuItem
-                        key={option.timeRange}
-                        onClick={() => {
-                          setSort("popular");
-                          setTimeRange(option.timeRange);
-                        }}
-                        className="cursor-pointer justify-between"
-                      >
-                        {option.label}
-                        {isActive && <Tick className="size-3.5" />}
-                      </DropdownMenuItem>
-                    );
-                  })}
-                  <DropdownMenuSeparator />
-                  {otherSortOptions.map((option) => {
-                    const isActive = sort === option.sort;
-                    return (
-                      <DropdownMenuItem
-                        key={option.sort}
-                        onClick={() => {
-                          setSort(option.sort);
-                        }}
-                        className="cursor-pointer justify-between"
-                      >
-                        {option.label}
-                        {isActive && <Tick className="size-3.5" />}
-                      </DropdownMenuItem>
-                    );
-                  })}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground gap-1.5 text-xs"
-                >
-                  <Info className="size-3.5" />
-                  <span className="hidden sm:inline">How to publish</span>
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent align="end" className="w-72 p-0">
-                <div className="p-4">
-                  <p className="text-sm font-medium">Publish your theme</p>
-                  <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">
-                    After saving a theme, click the{" "}
-                    <span className="text-foreground font-medium">Publish</span>{" "}
-                    button in the editor to share it.
-                  </p>
-                </div>
-                <Separator />
-                <div className="p-4">
-                  <p className="text-muted-foreground text-xs leading-relaxed">
-                    You can also manage all your saved themes from{" "}
-                    <Link
-                      href={inWorkspace("/themes")}
-                      className="text-foreground font-medium underline underline-offset-2"
-                    >
-                      Themes
-                    </Link>
-                    .
-                  </p>
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
-
-          {isLoading ? (
-            <div className={GRID}>
-              {Array.from({ length: 6 }).map((_, i) => (
-                <Card className="gap-0 overflow-hidden py-0 shadow-xs" key={i}>
-                  <Skeleton className="h-44 rounded-none" />
-                  <div className="flex items-center gap-2 px-4 py-3">
-                    <Skeleton className="size-5 rounded-full" />
-                    <Skeleton className="h-3 w-1/3" />
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : themes.length === 0 ? (
-            <div className="flex flex-col items-center gap-3 py-20 text-center">
-              <HairlineFigure className="aspect-square w-40" figure="Palette" />
-              <h3 className="text-lg font-semibold tracking-tight">
-                {filter === "mine"
-                  ? "No published themes"
-                  : filter === "liked"
-                    ? "No liked themes"
-                    : "No themes yet"}
-              </h3>
-              <p className="max-w-sm text-sm text-pretty text-muted-foreground">
-                {filter === "mine"
-                  ? "Save a theme in the editor, then publish it to share it here."
-                  : filter === "liked"
-                    ? "Tap the heart on any community theme to keep it here."
-                    : "Be the first: save a theme in the editor, then publish it."}
-              </p>
-              {filter === "liked" ? (
-                <Button
-                  className="mt-2"
-                  onClick={() => handleFilterChange("all")}
-                  variant="outline"
-                >
-                  Browse all themes
-                </Button>
-              ) : (
-                <Button asChild className="mt-2" variant="outline">
-                  <Link href={playgroundHref({ tab: "design" })}>
-                    <Brush2 aria-hidden />
-                    Open the editor
-                  </Link>
-                </Button>
-              )}
-            </div>
-          ) : (
+    <BrowseLayout
+      activeFilters={(filter !== "all" ? 1 : 0) + tags.length}
+      aside={
+        <HowToPublish
+          footer={
             <>
-              <div className={GRID}>
-                {themes.map((theme) => (
-                  <CommunityThemeCard
-                    key={theme.id}
-                    theme={theme}
-                    onPreview={handlePreview}
-                  />
-                ))}
-              </div>
-
-              <div ref={sentinelRef} className="flex justify-center pt-4">
-                {isFetchingNextPage && (
-                  <Spinner className="size-6 text-muted-foreground" />
-                )}
-              </div>
+              You can also manage all your saved themes from{" "}
+              <Link
+                className="text-foreground font-medium underline underline-offset-2"
+                href={inWorkspace("/themes")}
+              >
+                Themes
+              </Link>
+              .
             </>
+          }
+          title="Publish your theme"
+        >
+          After saving a theme, click the{" "}
+          <span className="text-foreground font-medium">Publish</span> button in
+          the editor to share it.
+        </HowToPublish>
+      }
+      sheetTitle="Community themes"
+      sidebar={<CommunitySidebarContent {...sidebarProps} />}
+      toolbar={
+        <SortMenu
+          groups={[
+            {
+              label: "Popular",
+              options: popularOptions.map((option) => ({
+                label: option.label,
+                active: sort === "popular" && timeRange === option.timeRange,
+                onSelect: () => {
+                  setSort("popular");
+                  setTimeRange(option.timeRange);
+                },
+              })),
+            },
+            {
+              options: otherSortOptions.map((option) => ({
+                label: option.label,
+                active: sort === option.sort,
+                onSelect: () => {
+                  setSort(option.sort);
+                },
+              })),
+            },
+          ]}
+          label={sortLabel}
+        />
+      }
+    >
+      {isLoading ? (
+        <div className={GALLERY_GRID}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <Card className="gap-0 overflow-hidden py-0 shadow-xs" key={i}>
+              <Skeleton className="h-44 rounded-none" />
+              <div className="flex items-center gap-2 px-4 py-3">
+                <Skeleton className="size-5 rounded-full" />
+                <Skeleton className="h-3 w-1/3" />
+              </div>
+            </Card>
+          ))}
+        </div>
+      ) : themes.length === 0 ? (
+        <div className="flex flex-col items-center gap-3 py-20 text-center">
+          <HairlineFigure className="aspect-square w-40" figure="Palette" />
+          <h3 className="text-lg font-semibold tracking-tight">
+            {filter === "mine"
+              ? "No published themes"
+              : filter === "liked"
+                ? "No liked themes"
+                : "No themes yet"}
+          </h3>
+          <p className="max-w-sm text-sm text-pretty text-muted-foreground">
+            {filter === "mine"
+              ? "Save a theme in the editor, then publish it to share it here."
+              : filter === "liked"
+                ? "Tap the heart on any community theme to keep it here."
+                : "Be the first: save a theme in the editor, then publish it."}
+          </p>
+          {filter === "liked" ? (
+            <Button
+              className="mt-2"
+              onClick={() => handleFilterChange("all")}
+              variant="outline"
+            >
+              Browse all themes
+            </Button>
+          ) : (
+            <Button asChild className="mt-2" variant="outline">
+              <Link href={playgroundHref({ tab: "design" })}>
+                <Brush2 aria-hidden />
+                Open the editor
+              </Link>
+            </Button>
           )}
         </div>
-      </div>
+      ) : (
+        <>
+          <div className={GALLERY_GRID}>
+            {themes.map((theme) => (
+              <CommunityThemeCard
+                key={theme.id}
+                theme={theme}
+                onPreview={handlePreview}
+              />
+            ))}
+          </div>
+
+          <div ref={sentinelRef} className="flex justify-center pt-4">
+            {isFetchingNextPage && (
+              <Spinner className="size-6 text-muted-foreground" />
+            )}
+          </div>
+        </>
+      )}
       <CommunityThemePreviewDialog
         theme={previewTheme}
         themes={themes}
@@ -362,6 +268,6 @@ export function CommunityThemesContent() {
         }}
         onNavigate={handlePreview}
       />
-    </div>
+    </BrowseLayout>
   );
 }
