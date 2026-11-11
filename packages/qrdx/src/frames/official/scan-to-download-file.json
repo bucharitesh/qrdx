@@ -1,0 +1,74 @@
+{
+  "id": "scan-to-download-file",
+  "name": "Download file",
+  "description": "A solid card with a download arrow over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": ["pdf", "url"],
+  "tags": ["call to action", "download", "file"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M608 44L632 44L632 104L656 104L620 143L584 104L608 104ZM566 155L674 155A6 6 0 0 1 680 161L680 167A6 6 0 0 1 674 173L566 173A6 6 0 0 1 560 167L560 161A6 6 0 0 1 566 155Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to download",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Free",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

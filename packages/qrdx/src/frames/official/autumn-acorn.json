@@ -1,0 +1,83 @@
+{
+  "id": "autumn-acorn",
+  "name": "Acorn sticker",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and an acorn, in burnt orange and ochre.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "autumn",
+  "contentTypes": [],
+  "tags": ["autumn", "fall", "leaves", "acorn"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#9a3412",
+      "text": "#ffffff",
+      "accent": "#d97706"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M593.4 140.4L676.6 140.4C676.6 185.2 654.2 220.4 635 223.6C615.8 220.4 593.4 185.2 593.4 140.4ZM583.8 143.6C583.8 111.6 609.4 102 635 102C660.6 102 686.2 111.6 686.2 143.6ZM635 82.8L635 82.8A4.8 4.8 0 0 1 639.8 87.6L639.8 100.4A4.8 4.8 0 0 1 635 105.2L635 105.2A4.8 4.8 0 0 1 630.2 100.4L630.2 87.6A4.8 4.8 0 0 1 635 82.8Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Hello autumn",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

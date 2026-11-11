@@ -3,7 +3,7 @@
 import { database as db, landingPage } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, desc, eq, ilike, type SQL } from "drizzle-orm";
-import { listCodes } from "@/app/dashboard/codes/_lib/qr-codes";
+import { listCodes } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { getTemplate } from "@/lib/landing/templates";
 import { type ActiveScope, getActiveWorkspace } from "@/lib/scope";
 import { logError } from "@/lib/shared";

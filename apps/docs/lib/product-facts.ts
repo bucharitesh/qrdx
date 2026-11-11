@@ -18,6 +18,11 @@
 // points at dist/, which doesn't exist yet when `bun install` runs the docs
 // postinstall (fumadocs-mdx loads source.config.ts, which imports this file),
 // so CI and Vercel failed at install. These files only depend on zod.
+
+import {
+  OFFICIAL_FRAME_COUNT,
+  OFFICIAL_FRAME_COUNTS,
+} from "../../../packages/qrdx/src/frames/catalogue/counts";
 import { CORNER_EYE_DOT_PATTERNS } from "../../../packages/qrdx/types/corner-dot";
 import { CORNER_EYE_PATTERNS } from "../../../packages/qrdx/types/corner-eye";
 import { FRAME_STYLES } from "../../../packages/qrdx/types/frame";
@@ -35,6 +40,7 @@ import {
 } from "./affiliates/terms";
 import { ART_MODEL_LABEL } from "./ai/art-models";
 import { BARCODE_FORMATS } from "./barcode/formats";
+import { BRAND_LOGO_COUNT } from "./brand-logos/catalog.generated";
 import {
   formatCount,
   MAX_BULK_TOOL_ROWS,
@@ -51,8 +57,20 @@ export const PRODUCT_FACTS = {
   eyeShapes: CORNER_EYE_PATTERNS.length,
   /** Dots inside the corner eyes (`cornerEyeDotPattern`). */
   eyeCentres: CORNER_EYE_DOT_PATTERNS.length,
-  /** Call-to-action frames (`frame.style`); `none` isn't a frame. */
-  frames: FRAME_STYLES.filter((style) => style !== "none").length,
+  /**
+   * Every frame QRdx has: the engine's built-in styles plus the official
+   * frame library (qrdx OFFICIAL_FRAMES).
+   */
+  frames:
+    FRAME_STYLES.filter((style) => style !== "none").length +
+    OFFICIAL_FRAME_COUNT,
+  /** Built-in frame styles (`frame.style`); `none` isn't a frame. */
+  frameStyles: FRAME_STYLES.filter((style) => style !== "none").length,
+  /** Official frames (frame specs in qrdx OFFICIAL_FRAMES). */
+  officialFrames: OFFICIAL_FRAME_COUNT,
+  /** Official frames for holidays and seasons. */
+  seasonalFrames:
+    OFFICIAL_FRAME_COUNTS.holidays + OFFICIAL_FRAME_COUNTS.seasons,
   /** The AI art model as copy names it ("OpenAI's GPT Image 2"), from lib/ai/models.ts. */
   artModel: ART_MODEL_LABEL,
   /** Days the workspace audit log keeps a row (ee/audit-log/limits.ts). */
@@ -63,6 +81,8 @@ export const PRODUCT_FACTS = {
   barcodeFormats: BARCODE_FORMATS.length,
   /** Hosted page types in the New code picker (lib/landing/page-type-ids.ts). */
   hostedPageTypes: PAGE_TYPE_IDS.length,
+  /** Brands in the logo gallery (Simple Icons), as copy writes it ("3,467"). */
+  brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
   // The affiliate program's terms (lib/affiliates/terms.ts), for the legal
   // and help pages; the code reads the same constants.
   /** The commission, as copy writes it: "30" (followed by "%"). */

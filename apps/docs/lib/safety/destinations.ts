@@ -1,6 +1,6 @@
 import "server-only";
 
-import { batchMessage } from "@/app/dashboard/codes/_lib/bulk";
+import { batchMessage } from "@/app/(app)/dashboard/codes/_lib/bulk";
 import { HttpError } from "@/lib/error-response";
 import {
   checkUrlSafety,

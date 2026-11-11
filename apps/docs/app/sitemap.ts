@@ -4,6 +4,7 @@ import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { isPathAvailable } from "@/lib/feature-availability";
+import { localizedEntries } from "@/lib/i18n/sitemap";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
@@ -96,22 +97,22 @@ export default function sitemap(): MetadataRoute.Sitemap {
   });
 
   return [
-    {
-      url: url("/"),
+    // Translated pages: one entry per indexable language, each listing the
+    // others as alternates (lib/i18n/sitemap.ts).
+    ...localizedEntries("/", {
       changeFrequency: "monthly",
       priority: 1,
-    },
+    }),
     {
       url: url("/playground"),
       changeFrequency: "weekly",
       priority: 0.9,
     },
-    {
-      url: url("/pricing"),
+    ...localizedEntries("/pricing", {
       lastModified: pageDate("/pricing"),
       changeFrequency: "monthly",
       priority: 0.9,
-    },
+    }),
     {
       url: url("/guarantee"),
       lastModified: pageDate("/guarantee"),

@@ -26,13 +26,15 @@ vi.hoisted(() => {
 
 import DiscordPage, {
   metadata as discordMetadata,
-} from "@/app/(home)/discord/page";
-import IntegrationDetailPage from "@/app/(home)/integrations/[slug]/page";
-import PluginsPage from "@/app/(home)/plugins/page";
-import SlackPage, { metadata as slackMetadata } from "@/app/(home)/slack/page";
+} from "@/app/(app)/(home)/discord/page";
+import IntegrationDetailPage from "@/app/(app)/(home)/integrations/[slug]/page";
+import PluginsPage from "@/app/(app)/(home)/plugins/page";
+import SlackPage, {
+  metadata as slackMetadata,
+} from "@/app/(app)/(home)/slack/page";
 import TelegramPage, {
   metadata as telegramMetadata,
-} from "@/app/(home)/telegram/page";
+} from "@/app/(app)/(home)/telegram/page";
 import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import {
   isFeatureAvailable,
@@ -179,7 +181,7 @@ describe("with every bot set up", () => {
     expect(text).toContain(`@${USERNAME}`);
     expect(text).toContain(`/qr@${USERNAME}`);
     for (const file of [
-      "app/(home)/telegram/page.tsx",
+      "app/(app)/(home)/telegram/page.tsx",
       "components/sections/chat-bots/chat-mockups.tsx",
     ]) {
       expect(readFileSync(join(APP, file), "utf8")).not.toMatch(/@QRdxbot/i);

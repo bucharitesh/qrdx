@@ -1,0 +1,87 @@
+{
+  "id": "lunar-knot",
+  "name": "Lucky knot",
+  "description": "A solid card with a lucky knot over the code and the label underneath, in vermilion and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "lunar-new-year",
+  "contentTypes": [],
+  "tags": [
+    "lunar new year",
+    "chinese new year",
+    "spring festival",
+    "knot",
+    "luck"
+  ],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b3261e",
+      "text": "#ffffff",
+      "accent": "#e0a526"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M626.36 50.45L664.55 88.64A9 9 45 0 1 664.55 101.36L626.36 139.55A9 9 45 0 1 613.64 139.55L575.45 101.36A9 9 45 0 1 575.45 88.64L613.64 50.45A9 9 45 0 1 626.36 50.45ZM623.18 68.48A4.5 4.5 45 0 0 616.82 68.48L593.48 91.82A4.5 4.5 45 0 0 593.48 98.18L616.82 121.52A4.5 4.5 45 0 0 623.18 121.52L646.52 98.18A4.5 4.5 45 0 0 646.52 91.82Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M617 143L623 143A1.5 1.5 0 0 1 624.5 144.5L624.5 153.5A1.5 1.5 0 0 1 623 155L617 155A1.5 1.5 0 0 1 615.5 153.5L615.5 144.5A1.5 1.5 0 0 1 617 143ZM608 155L632 155L638 182L602 182Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for good luck",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy New Year",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "id": "holi-corners",
+  "name": "Holi corners",
+  "description": "A light card with a quarter circle and a triangle in opposite corners, in violet and amber.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "holi",
+  "contentTypes": [],
+  "tags": ["holi", "festival of colors", "spring", "colors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1720
+    },
+    "qr": {
+      "x": 120,
+      "y": 340,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#6d28d9",
+      "text": "#ffffff",
+      "accent": "#f59e0b"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 48,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M0 48Q0 0 48 0L420 0A420 420 0 0 1 0 420Z",
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [[1240, 1260], [1240, 1672], [1192, 1720], [780, 1720]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 48,
+        "fill": "frame",
+        "hole": {
+          "x": 14,
+          "y": 14,
+          "width": 1212,
+          "height": 1692,
+          "radius": 38
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1470,
+          "width": 860,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Holi",
+        "color": "frame",
+        "box": {
+          "x": 460,
+          "y": 90,
+          "width": 680,
+          "height": 110
+        },
+        "weight": "regular",
+        "align": "end"
+      }
+    ]
+  }
+}

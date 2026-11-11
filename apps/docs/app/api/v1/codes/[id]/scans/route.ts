@@ -1,5 +1,8 @@
 import type { NextRequest } from "next/server";
-import { codeIdSchema, getCode } from "@/app/dashboard/codes/_lib/qr-codes";
+import {
+  codeIdSchema,
+  getCode,
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";

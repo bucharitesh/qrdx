@@ -1,0 +1,76 @@
+{
+  "id": "autumn-maple",
+  "name": "Falling leaf",
+  "description": "A solid card with a maple leaf over the code and the label underneath, in burnt orange and ochre.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "autumn",
+  "contentTypes": [],
+  "tags": ["autumn", "fall", "leaves", "maple"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#9a3412",
+      "text": "#ffffff",
+      "accent": "#d97706"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 41L632 68L647 59L641 92L665 74L671 86L689 83L677 107L686 113L653 134L659 146L626 140L626 179L614 179L614 140L581 146L587 134L554 113L563 107L551 83L569 86L575 74L599 92L593 59L608 68Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Hello autumn",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

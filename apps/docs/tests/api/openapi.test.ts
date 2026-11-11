@@ -208,8 +208,8 @@ describe("errors catalogue", () => {
   // Files whose thrown errors reach /v1 callers.
   const thrown = [
     ...walk(join("app", "api", "v1")).filter((file) => file.endsWith(".ts")),
-    "app/dashboard/codes/_lib/qr-codes.ts",
-    "app/dashboard/codes/_lib/code-kind.ts",
+    "app/(app)/dashboard/codes/_lib/qr-codes.ts",
+    "app/(app)/dashboard/codes/_lib/code-kind.ts",
     "lib/api-errors.ts",
     "lib/api-quota.ts",
     "lib/request-guards.ts",
@@ -237,7 +237,7 @@ describe("errors catalogue", () => {
     const anywhere = errorsIn([
       ...thrown,
       // assertBindableDomains (custom domains on codes)
-      "app/dashboard/domains/_lib/domains.ts",
+      "app/(app)/dashboard/domains/_lib/domains.ts",
     ]);
     // lib/error-response's own: ValidationError, UnauthorizedError, crashes.
     for (const own of [

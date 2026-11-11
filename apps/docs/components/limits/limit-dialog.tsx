@@ -10,8 +10,8 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { useCallback, useEffect } from "react";
 import { create } from "zustand";
-import { limitCopy } from "@/app/settings/usage/_lib/limit-copy";
-import type { MeterId } from "@/app/settings/usage/_lib/meters";
+import { limitCopy } from "@/app/(app)/settings/usage/_lib/limit-copy";
+import type { MeterId } from "@/app/(app)/settings/usage/_lib/meters";
 import type { PaidPlan } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { LimitCard } from "./limit-card";

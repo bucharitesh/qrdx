@@ -9,7 +9,7 @@
 //   flat parameters where they say it, and `style` (lib/qr-api/style.ts) for
 //   gradients, other colors and frames with more than a label.
 // - REST API: POST https://api.qrdx.dev/v1/codes (createCodeSchema in
-//   app/dashboard/codes/_lib/qr-codes.ts, logo fields in
+//   app/(app)/dashboard/codes/_lib/qr-codes.ts, logo fields in
 //   app/api/v1/codes/_lib/style.ts).
 // - MCP: the design_qr tool at https://mcp.qrdx.dev/mcp
 //   (app/api/mcp/design.ts, lib/qr-design/style.ts).
@@ -42,7 +42,6 @@ import { type CodeLang, parseLinkUrl } from "@/lib/playground-links";
 import { GRADIENT_STOPS_MAX, isSafeColor } from "@/lib/qr-api/style";
 import { CONTENT_FIELDS } from "@/lib/qr-design/content";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
-import type { LogoIconId } from "@/lib/qr-design/style";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
 
@@ -297,8 +296,8 @@ function noteApiArt(style: ThemeStyles, notes: Notes) {
   if (style.art) notes.add(LEFT_OUT.apiArt);
 }
 
-/** The editor's quick logo icon the style shows, by id. */
-function logoIconOf(style: ThemeStyles): LogoIconId | null {
+/** The quick logo icon or brand logo the style shows, as a logoIcon. */
+function logoIconOf(style: ThemeStyles): string | null {
   return style.showLogo ? presetLogoIcon(style.customLogo) : null;
 }
 
@@ -818,7 +817,7 @@ export function restSnippet(input: SnippetInput): RestSnippet {
     SAMPLE_VALUE;
 
   const { customLogo, art, ...rest } = snippetStyle(input.style, notes);
-  const style: ThemeStyles & { logoIcon?: LogoIconId; logoFileId?: string } = {
+  const style: ThemeStyles & { logoIcon?: string; logoFileId?: string } = {
     ...rest,
   };
   const icon = logoIconOf(input.style);

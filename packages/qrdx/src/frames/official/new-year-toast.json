@@ -1,0 +1,71 @@
+{
+  "id": "new-year-toast",
+  "name": "Midnight toast",
+  "description": "An arched card, like a window, with two raised glasses, in navy and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "new-year",
+  "contentTypes": [],
+  "tags": ["new year", "celebration", "party", "toast"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1b2a4a",
+      "text": "#ffffff",
+      "accent": "#d4af37"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        }
+      },
+      {
+        "type": "path",
+        "d": "M622.9 198.27L649.1 191.73C657.08 223.75 657.07 242.31 649.06 247.4C639.61 246.66 630.88 230.29 622.9 198.27ZM646.52 246.48L650.88 245.4L658.87 277.42L654.5 278.5ZM645.7 279.15L666.95 273.86A2.55 2.55 -14 0 1 670.04 275.71L670.07 275.86A2.55 2.55 -14 0 1 668.22 278.95L646.97 284.25A2.55 2.55 -14 0 1 643.88 282.39L643.84 282.25A2.55 2.55 -14 0 1 645.7 279.15ZM670.9 191.73L697.1 198.27C689.12 230.29 680.39 246.66 670.94 247.4C662.93 242.31 662.92 223.75 670.9 191.73ZM669.12 245.4L673.48 246.48L665.5 278.5L661.13 277.42ZM653.05 273.86L674.3 279.15A2.55 2.55 14 0 1 676.16 282.25L676.12 282.39A2.55 2.55 14 0 1 673.03 284.25L651.78 278.95A2.55 2.55 14 0 1 649.93 275.86L649.96 275.71A2.55 2.55 14 0 1 653.05 273.86Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M660 166.5L663.18 176.82L673.5 180L663.18 183.18L660 193.5L656.82 183.18L646.5 180L656.82 176.82Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Cheers to the new year",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

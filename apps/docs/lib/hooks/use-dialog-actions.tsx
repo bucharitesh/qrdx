@@ -4,6 +4,7 @@ import { createContext, type ReactNode, useContext, useState } from "react";
 import { QRSaveDialog } from "@/components/editor/qr-save-dialog";
 import { QRShareDialog } from "@/components/editor/qr-share-dialog";
 import { track } from "@/lib/analytics";
+import { loadFrameIndex } from "@/lib/frames/library";
 import {
   useCreateTheme,
   useUpdateTheme,
@@ -195,6 +196,13 @@ function useDialogActionsStore(): DialogActionsContextType {
       !isShuffleId(presetId)
         ? presetId
         : undefined;
+    // An official frame travels by id: its id comes from the frame
+    // library's index, so load that first (one small chunk).
+    if (themeState.styles.frame?.style === "custom") {
+      await loadFrameIndex().catch(() => {
+        // Offline: the frame's spec travels in the link instead
+      });
+    }
     const encoded = encodeStyleParam(themeState.styles, {
       preset: builtInPreset,
     });

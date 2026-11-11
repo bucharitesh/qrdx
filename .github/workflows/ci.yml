@@ -32,7 +32,10 @@ jobs:
   check:
     name: Typecheck, test, lint
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    # The full suite (pushes to main, release pull requests) took 17.8 and
+    # 18.9 minutes on 2026-11-10, with the Test step at 15.5 and 16.7. 30
+    # keeps the guard against a hung job without cancelling a healthy run.
+    timeout-minutes: 30
     # An explicit bash shell runs with -eo pipefail, so a failing command
     # piped into tee still fails its step.
     defaults:
@@ -93,6 +96,11 @@ jobs:
         run: |
           (cd apps/docs && bun x next typegen)
           bun run typecheck:docs
+
+      # Every translated catalog against English: keys, ICU arguments, numbers,
+      # review status (apps/docs/scripts/i18n-check.ts).
+      - name: Check translations
+        run: bun run --filter docs i18n:check
 
       # Pull requests into staging test the packages they change and the
       # packages that depend on them. Release pull requests into main, pushes

@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
-import { NewCodeDialog } from "@/app/dashboard/codes/_components/new-code-dialog";
+import { NewCodeDialog } from "@/app/(app)/dashboard/codes/_components/new-code-dialog";
 import type { ShellData } from "@/components/app-shell/shell-data";
 import type { QRStyle } from "@/types/theme";
 import { useCodeBuilderHostSlot, useCodeBuilderStore } from "./store";

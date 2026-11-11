@@ -14,7 +14,7 @@ import { AsciiQr } from "@/components/fx/ascii-qr";
 import { EGG_QR } from "@/components/fx/qr-matrix";
 import { siteConfig } from "@/config/site";
 
-/** The route error screen; app/error.tsx loads it only when a page throws. */
+/** The route error screen; app/(app)/error.tsx loads it only when a page throws. */
 export function RouteErrorScreen({
   error,
   reset,

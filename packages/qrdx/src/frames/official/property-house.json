@@ -1,0 +1,71 @@
+{
+  "id": "property-house",
+  "name": "House",
+  "description": "A house with a roof and chimney around the code.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "listing"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1400,
+      "height": 1960
+    },
+    "qr": {
+      "x": 200,
+      "y": 580,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 1000,
+        "y": 60,
+        "width": 120,
+        "height": 260,
+        "radius": 8,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [700, 0],
+          [1400, 460],
+          [1340, 460],
+          [1340, 1960],
+          [60, 1960],
+          [60, 460],
+          [0, 460]
+        ],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the listing",
+        "color": "text",
+        "box": {
+          "x": 160,
+          "y": 1710,
+          "width": 1080,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

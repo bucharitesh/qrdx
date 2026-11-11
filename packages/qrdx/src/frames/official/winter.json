@@ -3,6 +3,8 @@
   "name": "Winter",
   "description": "A light card with snowflakes over the code and on the label band.",
   "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "winter",
   "contentTypes": [],
   "tags": ["seasonal", "winter", "snow"],
   "license": "CC0-1.0",

@@ -9,7 +9,7 @@ import {
   useContext,
   useState,
 } from "react";
-import { NewCodeDialog } from "@/app/dashboard/codes/_components/new-code-dialog";
+import { NewCodeDialog } from "@/app/(app)/dashboard/codes/_components/new-code-dialog";
 import { CodeBuilderHost } from "@/components/code-builder/code-builder-host";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { useShowLimit } from "@/components/limits/limit-dialog";

@@ -1,0 +1,79 @@
+{
+  "id": "property-open-house",
+  "name": "Open house",
+  "description": "A solid card with a front door over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "open house"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M578 179L578 86A42 42 0 0 1 662 86L662 179Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M636.5 131A7.5 7.5 0 1 1 651.5 131A7.5 7.5 0 1 1 636.5 131ZM597.5 83L642.5 83A4.5 4.5 0 0 1 647 87.5L647 114.5A4.5 4.5 0 0 1 642.5 119L597.5 119A4.5 4.5 0 0 1 593 114.5L593 87.5A4.5 4.5 0 0 1 597.5 83Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Open house",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for times",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

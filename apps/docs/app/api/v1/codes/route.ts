@@ -4,8 +4,8 @@ import {
   createCodesBatch,
   enforceCreateRateLimit,
   listCodes,
-} from "@/app/dashboard/codes/_lib/qr-codes";
-import { getDefaultThemeStyle } from "@/app/dashboard/themes/_lib/queries";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getDefaultThemeStyle } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { formatCount } from "@/lib/bulk-limits";
 import { HttpError, handleError } from "@/lib/error-response";

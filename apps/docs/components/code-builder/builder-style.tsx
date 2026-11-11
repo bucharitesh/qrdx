@@ -3,8 +3,8 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { type ColorConfig, getColorString } from "qrdx";
 import { useMemo } from "react";
-import { CodeQr } from "@/app/dashboard/codes/_components/code-qr";
-import type { SavedTheme } from "@/app/dashboard/themes/_lib/theme";
+import { CodeQr } from "@/app/(app)/dashboard/codes/_components/code-qr";
+import type { SavedTheme } from "@/app/(app)/dashboard/themes/_lib/theme";
 import ControlSection from "@/components/editor/control-section";
 import { ColorPresets } from "@/components/editor/control-sections/color-presets";
 import {
@@ -26,6 +26,7 @@ import {
 } from "@/components/editor/gradient-picker";
 import { QRStyleScopeProvider } from "@/components/editor/style-scope";
 import { defaultThemeState } from "@/config/qr";
+import { useFrameLibrary } from "@/lib/frames/use-frame-library";
 import { designColors } from "@/lib/paint/swatches";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
@@ -175,6 +176,8 @@ export function BuilderStyle({
 }) {
   const current = useMemo(() => themeLook(style), [style]);
   const choices = useMemo(() => themeChoices(themes ?? []), [themes]);
+  // Names an official frame in the Frame header once the library's index loads
+  useFrameLibrary({ withIndex: current.frame?.style === "custom" });
   // The pickers' Theme swatches: the workspace's default theme
   const paintDesign = useMemo(() => {
     const workspaceDefault = choices.find((choice) => choice.isDefault);
@@ -275,6 +278,7 @@ export function BuilderStyle({
                   ...current,
                   customLogo: next.customLogo,
                   showLogo: next.showLogo,
+                  logoOptions: next.logoOptions,
                 })
               }
               style={current}

@@ -1,4 +1,4 @@
-// What a customer's custom domain serves (app/dashboard/domains/_lib/
+// What a customer's custom domain serves (app/(app)/dashboard/domains/_lib
 // host-routing.ts, used by proxy.ts), as content/docs/custom-domains.mdx
 // describes it: `/<slug>` (generated or a custom back-half) is the short link,
 // `/p/<slug>` its hosted page, the page APIs pass through, `/` is a small page
@@ -17,7 +17,7 @@ vi.mock(
 );
 
 const { routeCustomDomain } = await import(
-  "@/app/dashboard/domains/_lib/host-routing"
+  "@/app/(app)/dashboard/domains/_lib/host-routing"
 );
 
 beforeEach(() => {

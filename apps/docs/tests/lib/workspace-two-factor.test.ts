@@ -123,12 +123,12 @@ const appRules = await import("@/lib/workspace-two-factor");
 const { plansWith } = await import("@/lib/plans");
 const confirmation = await import("@/lib/account/confirmation-server");
 const { setTwoFactorRequirement } = await import(
-  "@/app/dashboard/team/_lib/two-factor-requirement-actions"
+  "@/app/(app)/dashboard/team/_lib/two-factor-requirement-actions"
 );
 const { OWN_TWO_FACTOR_FIRST } = await import(
-  "@/app/dashboard/team/_lib/two-factor-requirement"
+  "@/app/(app)/dashboard/team/_lib/two-factor-requirement"
 );
-const move = await import("@/app/dashboard/codes/_lib/move-workspace");
+const move = await import("@/app/(app)/dashboard/codes/_lib/move-workspace");
 
 const ADA = "user_ada"; // owner, two-step on, pays for Business
 const BOB = "user_bob"; // member, two-step off

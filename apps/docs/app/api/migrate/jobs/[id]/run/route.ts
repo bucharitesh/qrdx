@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { enforceCreateRateLimit } from "@/app/dashboard/codes/_lib/qr-codes";
+import { enforceCreateRateLimit } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { runJobChunk } from "@/lib/migrate/importer";
 import { deps, migrateScope, respond } from "@/lib/migrate/server/http";
 import { parseWithSchema } from "@/lib/request-guards";

@@ -155,12 +155,12 @@ vi.mock("@/lib/account/two-factor-server", async (importOriginal) => {
 
 // Support's action runs through the real runAdminAction, with the admin
 // check, limits and audit log stubbed.
-vi.mock("@/app/admin/_lib/guard", () => ({
+vi.mock("@/app/(app)/admin/_lib/guard", () => ({
   assertAdmin: async () => state.admin,
   requireAdmin: async () => state.admin,
   getAdminUser: async () => state.admin,
 }));
-vi.mock("@/app/admin/_lib/audit", () => ({
+vi.mock("@/app/(app)/admin/_lib/audit", () => ({
   writeAuditLog: async ({ action }: { action: string }) => {
     state.audit.push(action);
   },
@@ -309,10 +309,10 @@ vi.mock("@repo/auth/server", async () => {
 const server = await import("@/lib/account/confirmation-server");
 const manage = await import("@/lib/account/two-factor-manage");
 const passkeyActions = await import(
-  "@/app/settings/account/_lib/passkey-actions"
+  "@/app/(app)/settings/account/_lib/passkey-actions"
 );
 const { resetTwoFactorAction } = await import(
-  "@/app/admin/users/support-actions"
+  "@/app/(app)/admin/users/support-actions"
 );
 const reset = await import("@/lib/account/two-factor-reset-server");
 

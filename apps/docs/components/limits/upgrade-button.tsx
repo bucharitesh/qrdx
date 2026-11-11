@@ -3,7 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import type { ComponentProps } from "react";
-import type { UpgradeAction } from "@/app/settings/usage/_lib/meters";
+import type { UpgradeAction } from "@/app/(app)/settings/usage/_lib/meters";
 import { track } from "@/lib/analytics";
 
 /** An upgrade link from a limit (limitCopy's `upgrade`), tracked on click. */

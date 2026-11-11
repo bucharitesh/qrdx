@@ -1,0 +1,120 @@
+{
+  "id": "diwali-lantern",
+  "name": "Sky lantern",
+  "description": "A light card with a lantern and a solid label band, in maroon and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "diwali",
+  "contentTypes": [],
+  "tags": ["diwali", "deepavali", "festival of lights", "lantern", "sale"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1770
+    },
+    "qr": {
+      "x": 120,
+      "y": 390,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7a1f3d",
+      "text": "#ffffff",
+      "accent": "#f0a53a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1770,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 20,
+          "y": 20,
+          "width": 1200,
+          "height": 1730,
+          "radius": 38
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 250,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 190,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M608.8 1518.8A11.2 11.2 0 0 1 631.2 1518.8L625.6 1518.8A5.6 5.6 0 0 0 614.4 1518.8ZM620 1521.6L642.4 1544L597.6 1544ZM608.8 1619.6L631.2 1619.6A2.8 2.8 0 0 1 634 1622.4L634 1625.2A2.8 2.8 0 0 1 631.2 1628L608.8 1628A2.8 2.8 0 0 1 606 1625.2L606 1622.4A2.8 2.8 0 0 1 608.8 1619.6ZM614.4 1628L625.6 1628L620 1637.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M597.6 1546.8L642.4 1546.8L648 1563.6L648 1602.8L636.8 1616.8L603.2 1616.8L592 1602.8L592 1563.6ZM620 1560.8C631.2 1566.4 634 1574.8 634 1583.2L634 1602.8L606 1602.8L606 1583.2C606 1574.8 608.8 1566.4 620 1560.8Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M620 1566.4C628.4 1570.6 629.8 1577.6 629.8 1583.2L629.8 1598.6L610.2 1598.6L610.2 1583.2C610.2 1577.6 611.6 1570.6 620 1566.4Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the sale",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 30,
+          "width": 1040,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Diwali offers",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1650,
+          "width": 960,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

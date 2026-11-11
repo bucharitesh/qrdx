@@ -3,6 +3,7 @@
   "name": "Sign rider",
   "description": "A wide rider for property signs, with the prompt beside the code.",
   "category": "use-case",
+  "collection": "places",
   "contentTypes": ["url"],
   "tags": ["real estate", "property", "signage"],
   "license": "CC0-1.0",

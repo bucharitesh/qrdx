@@ -3,6 +3,7 @@
   "name": "Donate",
   "description": "A heart badge over a donation prompt.",
   "category": "use-case",
+  "collection": "business",
   "contentTypes": ["paypal", "upi", "url"],
   "tags": ["charity", "donations", "nonprofit"],
   "license": "CC0-1.0",

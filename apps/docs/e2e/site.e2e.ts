@@ -246,6 +246,12 @@ const EXPECTED_REDIRECTS: {
     status: [307],
     why: "decorative easter-egg codes (lib/easter-eggs.ts)",
   },
+  {
+    from: /^\/api\/integrations\/telegram\/open$/,
+    to: /^https:\/\/t\.me\/\w+$/,
+    status: [307],
+    why: '"Open in Telegram" goes to the bot named by TELEGRAM_BOT_USERNAME',
+  },
 ];
 
 /** Same-origin page paths worth checking (no build assets or auth API). */
@@ -969,12 +975,17 @@ async function testMcp() {
     return [status === 202 || status === 200, String(status)];
   });
 
-  // The tools this server registers, read from its source.
-  const registered = [
-    ...readFileSync(join(APP_DIR, "app/api/mcp/tools.ts"), "utf8").matchAll(
-      /registerTool\(\s*"([^"]+)"/g,
-    ),
-  ].map((m) => m[1] as string);
+  // The tools this server registers, read from its source (tools.ts and the
+  // files it pulls tools from, such as barcodes.ts).
+  const mcpDir = join(APP_DIR, "app/api/mcp");
+  const registered = readdirSync(mcpDir)
+    .filter((file) => file.endsWith(".ts"))
+    .flatMap((file) => [
+      ...readFileSync(join(mcpDir, file), "utf8").matchAll(
+        /registerTool\(\s*"([^"]+)"/g,
+      ),
+    ])
+    .map((m) => m[1] as string);
 
   await check("mcp", "tools/list", async () => {
     const { message } = await mcpCall("tools/list", {}, 2);

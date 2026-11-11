@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { switchCodeKind } from "@/app/dashboard/codes/_lib/code-kind";
+import { switchCodeKind } from "@/app/(app)/dashboard/codes/_lib/code-kind";
 import {
   codeIdSchema,
   deleteCode,
@@ -8,7 +8,7 @@ import {
   hasAnyField,
   setCodeArchived,
   updateCode,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";

@@ -1,0 +1,71 @@
+{
+  "id": "spring-tulip",
+  "name": "Spring tulip",
+  "description": "An arched card, like a window, with a tulip, in lilac and green.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "spring",
+  "contentTypes": [],
+  "tags": ["spring", "flowers", "tulip", "sale"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#56508a",
+      "text": "#ffffff",
+      "accent": "#b9e0a5"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M624 192L642 210L660 183L678 210L696 192C702 225 690 246 660 249C630 246 618 225 624 192Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M660 246L660 246A3 3 0 0 1 663 249L663 306A3 3 0 0 1 660 309L660 309A3 3 0 0 1 657 306L657 249A3 3 0 0 1 660 246ZM660 303C662.17 285.3 644.62 263.7 621 255C620.03 283.68 637.58 305.28 660 303ZM660 306C679.87 310.55 698.77 293 702 267C679.91 272.69 661.01 290.24 660 306Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for spring deals",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

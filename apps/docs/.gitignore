@@ -29,3 +29,6 @@ next-env.d.ts
 
 # video sources (served from R2; see scripts/media/upload.mjs)
 /media/
+
+# next-intl types en.json's ICU arguments from this (next dev, build and typegen write it)
+/messages/*.d.json.ts

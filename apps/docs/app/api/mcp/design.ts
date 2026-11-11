@@ -1,6 +1,10 @@
 import "server-only";
 
-import { getAllTemplates } from "qrdx";
+import {
+  getAllTemplates,
+  OFFICIAL_FRAME_COLLECTIONS,
+  OFFICIAL_FRAMES,
+} from "qrdx";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -12,7 +16,9 @@ import {
   type QRCustomFrame,
 } from "qrdx/types";
 import { z } from "zod";
+import { brandLogoOptions } from "@/lib/brand-logos/options";
 import { communityItemStyle } from "@/lib/community/api";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import { presetLogoIcon } from "@/lib/community/public-style";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
@@ -33,6 +39,7 @@ import {
   validateDesignContent,
 } from "@/lib/qr-design/content";
 import { logoIconDataUrl } from "@/lib/qr-design/logo";
+import { isQuickLogoIcon, LOGO_ICON_PATTERN } from "@/lib/qr-design/logo-icon";
 import {
   GREAT_SCORE,
   MAX_REPAIRS,
@@ -158,10 +165,15 @@ const styleInputSchema = designStyleSchema
         'A built-in frame ({ "style": "banner-bottom", "text": "Scan me" }) or a custom one ({ "style": "custom", "spec": … })',
       ),
     logo: z
-      .enum(LOGO_INPUTS)
+      .union([
+        z.enum(LOGO_INPUTS),
+        z
+          .string()
+          .regex(LOGO_ICON_PATTERN, "Must be a quick icon or a brand slug"),
+      ])
       .optional()
       .describe(
-        "A quick logo icon in the center (wifi, location, phone, email, link, file, calendar, whatsapp, instagram), or none. For your own image use logo_file_id.",
+        "The logo in the center: a quick icon on a white tile (wifi, location, phone, email, link, file, calendar, whatsapp, instagram), any brand from Simple Icons by slug (spotify, paypal, googlemaps; add :black or :white for those colors, else it's the brand color), or none. For your own image use logo_file_id.",
       ),
     ...engineInputFields,
   })
@@ -332,7 +344,10 @@ export function playgroundLink(
   styles: ThemeStyles,
   preset?: string,
 ): { url: string | null; leftOut: OmittedPart[] } {
-  const encoded = encodeStyleParam(styles, preset ? { preset } : {});
+  const encoded = encodeStyleParam(styles, {
+    ...(preset ? { preset } : {}),
+    officialFrames: OFFICIAL_FRAME_RESOLVER,
+  });
   if (!encoded) return { url: null, leftOut: [] };
   const href = playgroundHref({
     style: encoded.value,
@@ -430,10 +445,27 @@ export async function designQr(
       );
     }
 
-    // ── The logo: your file, an icon, or the base's icon ──
+    // ── The logo: your file, a brand, an icon, or the base's icon ──
+    // A brand logo goes through the loop like a file does ("keep"): the
+    // design style's logo choices are the quick icons only.
     let logoFile: string | null = null;
     let logoIcon: LogoIconId | null = null;
-    if (input.logo_file_id) {
+    let brandLogo: string | null = null;
+    const requestedLogo = input.style?.logo;
+    if (
+      requestedLogo &&
+      !(LOGO_INPUTS as readonly string[]).includes(requestedLogo)
+    ) {
+      if (input.logo_file_id) {
+        throw new HttpError(
+          400,
+          "VALIDATION_ERROR",
+          "Pass either a brand logo in style.logo or logo_file_id, not both.",
+        );
+      }
+      brandLogo = requestedLogo;
+      logoFile = logoIconDataUrl(requestedLogo);
+    } else if (input.logo_file_id) {
       const scope = await context.scope();
       if (!scope) {
         throw new HttpError(
@@ -443,10 +475,20 @@ export async function designQr(
         );
       }
       logoFile = await readLogoDataUrl(scope, input.logo_file_id);
-    } else if (input.style?.logo && input.style.logo !== "none") {
-      logoIcon = input.style.logo;
+    } else if (requestedLogo && requestedLogo !== "none") {
+      logoIcon = requestedLogo as LogoIconId;
     } else if (input.style?.logo === undefined && base) {
-      logoIcon = presetLogoIcon(base.customLogo);
+      const baseIcon = presetLogoIcon(base.customLogo);
+      if (isQuickLogoIcon(baseIcon)) {
+        logoIcon = baseIcon;
+      } else if (baseIcon) {
+        try {
+          logoFile = logoIconDataUrl(baseIcon);
+          brandLogo = baseIcon;
+        } catch {
+          // A brand the catalogue doesn't have: no logo.
+        }
+      }
     }
     initial.logo = logoFile ? "keep" : (logoIcon ?? "none");
 
@@ -484,6 +526,9 @@ export async function designQr(
       ...withoutLogo,
       ...(showLogo && result.style.logo === "keep" && input.logo_file_id
         ? { showLogo: true, logoFileId: input.logo_file_id }
+        : {}),
+      ...(showLogo && result.style.logo === "keep" && brandLogo
+        ? { showLogo: true, logoIcon: brandLogo }
         : {}),
       ...(showLogo &&
       result.style.logo !== "keep" &&
@@ -581,6 +626,27 @@ export async function designQr(
   }
 }
 
+/**
+ * QRdx's official frames by collection, by id: each is a community item
+ * ("frame:<id>"), so design_qr, generate_qr_code and the image API take it.
+ */
+function officialFrameOptions() {
+  return {
+    how: "QRdx's official frames (CC0), by collection. Pass \"frame:<id>\" as community_item to design_qr, or as item to generate_qr_code and the image API; get_community_item returns one's style. Seasonal ids name their holiday or season.",
+    collections: Object.fromEntries(
+      OFFICIAL_FRAME_COLLECTIONS.map((collection) => [
+        collection.id,
+        {
+          label: collection.label,
+          ids: OFFICIAL_FRAMES.filter(
+            (frame) => frame.collection === collection.id,
+          ).map((frame) => frame.id),
+        },
+      ]),
+    ),
+  };
+}
+
 /** Every value design_qr accepts, for the list_options tool. */
 export function designOptions() {
   return {
@@ -600,6 +666,7 @@ export function designOptions() {
           "{ style, text, secondaryText (banner-top-bottom, circle, menu-card), color, textColor }",
         custom:
           '{ style: "custom", spec } with a frame spec, such as a community frame\'s style.frame from get_community_item. It is drawn as it is; repairs never change it.',
+        official: officialFrameOptions(),
       },
       templates: getAllTemplates()
         .filter((template) => TEMPLATE_IDS.includes(template.id))
@@ -616,7 +683,8 @@ export function designOptions() {
         "eyeColors { topLeft, topRight, bottomLeft: { outer, inner } } (#RRGGBB), moduleScale 0.5-1 (dot size), autoLevel, shape (square or circle), logoOptions { size 0.1-0.3, padding 0-2 modules, x and y 0-1, shape square|rounded|circle (crop), plate (color) }. Drawn and scored as given; repairs never change them.",
       logos: {
         icons: LOGO_ICON_IDS,
-        how: "style.logo picks a quick icon QRdx draws on a white tile. logo_file_id uses an image you uploaded to QRdx (PNG or JPEG, up to 1 MB) and needs the workspace's API key on the MCP connection. Logos are scored by the modules they cover; a repair may raise error correction to H or remove the logo.",
+        brands: brandLogoOptions(),
+        how: "style.logo picks a quick icon QRdx draws on a white tile, or a brand logo by its Simple Icons slug (brands.popular; add :black or :white). logo_file_id uses an image you uploaded to QRdx (PNG or JPEG, up to 1 MB) and needs the workspace's API key on the MCP connection. Logos are scored by the modules they cover; a repair may raise error correction to H or remove the logo.",
       },
     },
     presets: Object.entries(defaultPresets).map(([id, preset]) => ({

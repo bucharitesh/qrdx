@@ -34,7 +34,7 @@ vi.mock("@repo/rate-limit", () => ({
   createRateLimiter: () => ({ limit: async () => ({ success: true }) }),
 }));
 
-const { generateMetadata } = await import("@/app/stats/[token]/page");
+const { generateMetadata } = await import("@/app/(app)/stats/[token]/page");
 
 const props = {
   params: Promise.resolve({ token: "a".repeat(32) }),

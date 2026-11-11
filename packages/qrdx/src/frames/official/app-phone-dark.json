@@ -1,0 +1,87 @@
+{
+  "id": "app-phone-dark",
+  "name": "Dark app phone",
+  "description": "A phone with the code on its screen and a download arrow.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url"],
+  "tags": ["app", "download", "mobile", "phone"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1360,
+      "height": 2000
+    },
+    "qr": {
+      "x": 180,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1360,
+        "height": 2000,
+        "radius": 190,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1240,
+        "height": 1880,
+        "radius": 150,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 550,
+        "y": 76,
+        "width": 260,
+        "height": 64,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M670.4 197.2L689.6 197.2L689.6 245.2L708.8 245.2L680 276.4L651.2 245.2L670.4 245.2ZM636.8 286L723.2 286A4.8 4.8 0 0 1 728 290.8L728 295.6A4.8 4.8 0 0 1 723.2 300.4L636.8 300.4A4.8 4.8 0 0 1 632 295.6L632 290.8A4.8 4.8 0 0 1 636.8 286Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 510,
+        "y": 1880,
+        "width": 340,
+        "height": 18,
+        "radius": 9,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Download the app",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1550,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

@@ -12,8 +12,8 @@ import {
   parseInput,
   renameFolder,
   runOrganize,
-} from "@/app/dashboard/codes/_lib/organize";
-import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize";
+import type { FolderRow } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 
 const parentSchema = idSchema.nullable();
 

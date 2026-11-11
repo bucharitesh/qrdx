@@ -1,18 +1,18 @@
 import type { QrCodeKind } from "@repo/database";
 import { z } from "zod";
-import { idempotencyKeySchema } from "@/app/dashboard/codes/_lib/bulk";
+import { idempotencyKeySchema } from "@/app/(app)/dashboard/codes/_lib/bulk";
 import {
   createCodeSchema,
   hasAnyField,
   MAX_BULK_CREATE,
   updateCodeFields,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   pageForCodeSchema,
   pageIdSchema,
-} from "@/app/dashboard/pages/_lib/landing-pages";
+} from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { FILE_ID } from "@/lib/qr-api/style";
-import { LOGO_ICON_IDS } from "@/lib/qr-design/style";
+import { LOGO_ICON_HELP, logoIconSchema } from "@/lib/qr-design/logo-icon";
 import { SCAN_RANGE_KEYS } from "@/lib/scans";
 import { themeStylePropsSchema } from "@/types/theme";
 
@@ -55,7 +55,7 @@ export const createCodesHeadersSchema = z.object({
     ),
 });
 
-// ─── Changing a code's type (app/dashboard/codes/_lib/code-kind.ts) ─────────
+// ─── Changing a code's type (app/(app)/dashboard/codes/_lib/code-kind.ts) ─────────
 
 /** PATCH fields that switch a code between a website link and a hosted page. */
 export const codeKindFields = {
@@ -161,11 +161,10 @@ export const codeStyleInputSchema = z.intersection(
         .describe(
           "A logo uploaded to the workspace (PNG or JPEG image), by file id. Saved as the file's link in `customLogo`, with `showLogo: true`.",
         ),
-      logoIcon: z
-        .enum(LOGO_ICON_IDS)
+      logoIcon: logoIconSchema
         .optional()
         .describe(
-          "One of the editor's quick logo icons, saved in `customLogo` as the editor saves it",
+          `${LOGO_ICON_HELP} Saved in \`customLogo\` as the editor saves it.`,
         ),
     })
     .describe(

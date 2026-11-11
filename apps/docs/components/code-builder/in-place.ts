@@ -5,7 +5,7 @@
 // The playground always mounts a host (playground-host.tsx), so its
 // requests go straight to the store.
 
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   loadCodeIntoEditor,
   useDynamicLinkStore,

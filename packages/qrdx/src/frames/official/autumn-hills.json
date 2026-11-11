@@ -1,0 +1,93 @@
+{
+  "id": "autumn-hills",
+  "name": "Autumn hills",
+  "description": "Rolling hills under the code and a sun in the sky, in olive and copper.",
+  "category": "seasonal",
+  "collection": "seasons",
+  "occasion": "autumn",
+  "contentTypes": [],
+  "tags": ["autumn", "fall", "leaves", "hills"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#4d5226",
+      "text": "#ffffff",
+      "accent": "#c2702a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1820,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M888.2 170A41.8 41.8 0 1 1 971.8 170A41.8 41.8 0 1 1 888.2 170ZM924.3 116.8L935.7 116.8L930 82.6ZM951.66 121.08L961.54 126.78L973.7 94.31ZM973.22 138.46L978.92 148.34L1005.69 126.3ZM983.2 164.3L983.2 175.7L1017.4 170ZM978.92 191.66L973.22 201.54L1005.69 213.7ZM961.54 213.22L951.66 218.92L973.7 245.69ZM935.7 223.2L924.3 223.2L930 257.4ZM908.34 218.92L898.46 213.22L886.3 245.69ZM886.78 201.54L881.08 191.66L854.31 213.7ZM876.8 175.7L876.8 164.3L842.6 170ZM881.08 148.34L886.78 138.46L854.31 126.3ZM898.46 126.78L908.34 121.08L886.3 94.31Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M0 1330C300 1190 600 1430 1240 1270L1240 1764Q1240 1820 1184 1820L56 1820Q0 1820 0 1764Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "path",
+        "d": "M0 1530C380 1420 820 1610 1240 1480L1240 1764Q1240 1820 1184 1820L56 1820Q0 1820 0 1764Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1600,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Hello autumn",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 120,
+          "width": 640,
+          "height": 110
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

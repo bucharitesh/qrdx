@@ -9,7 +9,7 @@ import {
 import cuid from "cuid";
 import { and, eq, gte } from "drizzle-orm";
 import { after } from "next/server";
-import { isPlatformHostname } from "@/app/dashboard/domains/_lib/hostname";
+import { isPlatformHostname } from "@/app/(app)/dashboard/domains/_lib/hostname";
 import { baseUrl } from "@/lib/metadata";
 import {
   isGeneratedSlug,

@@ -1,10 +1,10 @@
 import "server-only";
 
 import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
+import { getCodeUsage } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getPageUsage } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
+import { countThemesInScope } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { getFormResponseUsage } from "@/app/api/forms/_lib/responses";
-import { getCodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
-import { getPageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
-import { countThemesInScope } from "@/app/dashboard/themes/_lib/queries";
 import { getArtCredits } from "@/lib/ai/art";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { getStorageOverview } from "@/lib/files/service";
@@ -19,7 +19,7 @@ import type { KnownUsage, LimitScope } from "./index";
 import type { NoticeLimitId } from "./levels";
 
 // One limit's usage, counted exactly as Plan & usage counts it
-// (app/settings/usage/_lib/plan-usage.ts), for the notice emails.
+// (app/(app)/settings/usage/_lib/plan-usage.ts), for the notice emails.
 
 export interface LimitUsage {
   plan: Plan;

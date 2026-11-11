@@ -1,0 +1,121 @@
+{
+  "id": "wedding-toast",
+  "name": "Toast",
+  "description": "A thin double border with two raised glasses, a small divider and the label.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["wedding", "events", "reception", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1830
+    },
+    "qr": {
+      "x": 160,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1830,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 30,
+        "y": 30,
+        "width": 1260,
+        "height": 1770,
+        "fill": "frame",
+        "hole": {
+          "x": 40,
+          "y": 40,
+          "width": 1240,
+          "height": 1750
+        }
+      },
+      {
+        "type": "rect",
+        "x": 60,
+        "y": 60,
+        "width": 1200,
+        "height": 1710,
+        "fill": "frame",
+        "hole": {
+          "x": 64,
+          "y": 64,
+          "width": 1192,
+          "height": 1702
+        }
+      },
+      {
+        "type": "path",
+        "d": "M625.37 111.05L649.83 104.95C657.28 134.84 657.27 152.15 649.79 156.9C640.96 156.22 632.83 140.93 625.37 111.05ZM647.42 156.05L651.49 155.04L658.94 184.92L654.87 185.94ZM646.65 186.54L666.48 181.6A2.38 2.38 -14 0 1 669.37 183.33L669.4 183.47A2.38 2.38 -14 0 1 667.67 186.35L647.84 191.3A2.38 2.38 -14 0 1 644.95 189.56L644.92 189.43A2.38 2.38 -14 0 1 646.65 186.54ZM670.17 104.95L694.63 111.05C687.17 140.93 679.04 156.22 670.21 156.9C662.73 152.15 662.72 134.84 670.17 104.95ZM668.51 155.04L672.58 156.05L665.13 185.94L661.06 184.92ZM653.52 181.6L673.35 186.54A2.38 2.38 14 0 1 675.08 189.43L675.05 189.56A2.38 2.38 14 0 1 672.16 191.3L652.33 186.35A2.38 2.38 14 0 1 650.6 183.47L650.63 183.33A2.38 2.38 14 0 1 653.52 181.6Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M660 81.4L662.97 91.03L672.6 94L662.97 96.97L660 106.6L657.03 96.97L647.4 94L657.03 91.03Z",
+        "fill": "accent"
+      },
+      {
+        "type": "line",
+        "x1": 470,
+        "y1": 1570,
+        "x2": 850,
+        "y2": 1570,
+        "width": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 1550], [680, 1570], [660, 1590], [640, 1570]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the menu",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 1610,
+          "width": 960,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Let's raise a glass",
+        "color": "frame",
+        "box": {
+          "x": 180,
+          "y": 225,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

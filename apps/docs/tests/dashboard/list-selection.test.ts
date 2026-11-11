@@ -1,4 +1,4 @@
-// Range selection for the codes and pages lists (app/dashboard/_lib/
+// Range selection for the codes and pages lists (app/(app)/dashboard/_lib
 // list-selection.ts): a shift-click covers the rows between the anchor and
 // the clicked row in the order the list shows them, shift-clicking again
 // extends or shrinks that range, and nothing reaches rows off screen.
@@ -14,7 +14,7 @@ import {
   setRows,
   stepRow,
   toggleRow,
-} from "@/app/dashboard/_lib/list-selection";
+} from "@/app/(app)/dashboard/_lib/list-selection";
 
 const ids = (state: ListSelection) => [...state.selected].sort();
 

@@ -1,0 +1,89 @@
+{
+  "id": "property-house-light",
+  "name": "Light house",
+  "description": "A house with a roof and chimney around the code and a key.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "viewing"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1400,
+      "height": 1960
+    },
+    "qr": {
+      "x": 200,
+      "y": 580,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 1000,
+        "y": 60,
+        "width": 120,
+        "height": 260,
+        "radius": 8,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [700, 0],
+          [1400, 460],
+          [1340, 460],
+          [1340, 1960],
+          [60, 1960],
+          [60, 460],
+          [0, 460]
+        ],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [
+          [700, 0],
+          [1400, 460],
+          [1340, 460],
+          [700, 56],
+          [60, 460],
+          [0, 460]
+        ],
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M647.2 300A26.4 26.4 0 1 1 700 300A26.4 26.4 0 1 1 647.2 300ZM662.8 300A10.8 10.8 0 1 0 684.4 300A10.8 10.8 0 1 0 662.8 300ZM697.6 295.2L750.4 295.2A2.4 2.4 0 0 1 752.8 297.6L752.8 302.4A2.4 2.4 0 0 1 750.4 304.8L697.6 304.8A2.4 2.4 0 0 1 695.2 302.4L695.2 297.6A2.4 2.4 0 0 1 697.6 295.2ZM734.8 304.8L742 304.8A1.2 1.2 0 0 1 743.2 306L743.2 320.4A1.2 1.2 0 0 1 742 321.6L734.8 321.6A1.2 1.2 0 0 1 733.6 320.4L733.6 306A1.2 1.2 0 0 1 734.8 304.8ZM718 304.8L725.2 304.8A1.2 1.2 0 0 1 726.4 306L726.4 315.6A1.2 1.2 0 0 1 725.2 316.8L718 316.8A1.2 1.2 0 0 1 716.8 315.6L716.8 306A1.2 1.2 0 0 1 718 304.8Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to book a viewing",
+        "color": "frame",
+        "box": {
+          "x": 160,
+          "y": 1710,
+          "width": 1080,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

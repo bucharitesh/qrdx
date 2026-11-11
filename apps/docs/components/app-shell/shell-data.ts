@@ -1,12 +1,15 @@
 import "server-only";
 
 import { unstable_rethrow } from "next/navigation";
-import { countUnarchived } from "@/app/dashboard/codes/_lib/qr-codes";
-import { attentionMeters, type Meter } from "@/app/settings/usage/_lib/meters";
+import { countUnarchived } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import {
+  attentionMeters,
+  type Meter,
+} from "@/app/(app)/settings/usage/_lib/meters";
 import {
   getUsageMeters,
   meterCapsFor,
-} from "@/app/settings/usage/_lib/plan-usage";
+} from "@/app/(app)/settings/usage/_lib/plan-usage";
 import type { ShellLimits } from "@/components/limits/plan-limits-provider";
 import { getChangelogSeen } from "@/lib/changelog-feed-server";
 import { getCheckoutOpen } from "@/lib/checkout-availability";

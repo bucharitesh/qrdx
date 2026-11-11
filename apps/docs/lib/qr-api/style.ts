@@ -42,8 +42,11 @@ import {
   qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
-import { decodeStyleParam } from "@/lib/playground-style";
-import { LOGO_ICON_IDS, type LogoIconId } from "@/lib/qr-design/style";
+import {
+  decodeStyleParam,
+  type OfficialFrameResolver,
+} from "@/lib/playground-style";
+import { logoIconSchema } from "@/lib/qr-design/logo-icon";
 import type { ThemeStyles } from "@/types/theme";
 
 /** Largest `style` JSON, in UTF-8 bytes (a custom frame spec is up to 32 KB). */
@@ -262,10 +265,7 @@ export const apiStyleFields = {
     .describe(
       "Show a logo in the center. With logoIcon or logoFileId it's that logo; alone it's the QRdx mark, which only the editor draws",
     ),
-  logoIcon: z
-    .enum(LOGO_ICON_IDS)
-    .optional()
-    .describe("A quick logo icon, drawn by QRdx on a white tile"),
+  logoIcon: logoIconSchema.optional(),
   logoFileId: z
     .string()
     .regex(FILE_ID, "Must be an uploaded file id")
@@ -365,9 +365,14 @@ export function parseApiStyle(input: unknown): ParsedStyle {
 /**
  * A `style` query value: URL-decoded JSON (`{"fgColor":"#155dfc",…}`), or
  * the `style` value of a playground link ("1." + base64url, see
- * lib/playground-style.ts). Either way the strict schema checks it.
+ * lib/playground-style.ts). Either way the strict schema checks it. A link
+ * names an official frame by id: `officialFrames` finds its spec (the image
+ * API passes the full catalogue, OFFICIAL_FRAME_RESOLVER).
  */
-export function parseStyleQuery(raw: string): ParsedStyle {
+export function parseStyleQuery(
+  raw: string,
+  officialFrames?: OfficialFrameResolver,
+): ParsedStyle {
   const value = raw.trim();
   if (value.startsWith("{")) {
     let json: unknown;
@@ -387,7 +392,7 @@ export function parseStyleQuery(raw: string): ParsedStyle {
     }
     return parseApiStyle(json);
   }
-  const decoded = decodeStyleParam(value);
+  const decoded = decodeStyleParam(value, officialFrames);
   if (!decoded) {
     return {
       ok: false,
@@ -412,10 +417,7 @@ export function themeFieldsOf(style: ApiStyle): ThemeStyles {
 /** The logo a style asks for, if any. */
 export function logoRequestOf(
   style: Pick<ApiStyle, "logoIcon" | "logoFileId">,
-):
-  | { kind: "icon"; icon: LogoIconId }
-  | { kind: "file"; fileId: string }
-  | null {
+): { kind: "icon"; icon: string } | { kind: "file"; fileId: string } | null {
   if (style.logoFileId) return { kind: "file", fileId: style.logoFileId };
   if (style.logoIcon) return { kind: "icon", icon: style.logoIcon };
   return null;

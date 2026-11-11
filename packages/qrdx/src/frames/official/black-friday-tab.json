@@ -1,0 +1,95 @@
+{
+  "id": "black-friday-tab",
+  "name": "Sale tab",
+  "description": "A folder tab on top carrying the label and a percent sign, in black and red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "black-friday",
+  "contentTypes": [],
+  "tags": ["black friday", "sale", "deals", "percent"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1560
+    },
+    "qr": {
+      "x": 120,
+      "y": 290,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0a0a0a",
+      "text": "#ffffff",
+      "accent": "#e11d48"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1000,
+        "height": 220,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 1240,
+        "height": 1390,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 170,
+        "width": 200,
+        "height": 100,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M842 73.6A21.6 21.6 0 1 1 885.2 73.6A21.6 21.6 0 1 1 842 73.6ZM852.8 73.6A10.8 10.8 0 1 0 874.4 73.6A10.8 10.8 0 1 0 852.8 73.6ZM894.8 126.4A21.6 21.6 0 1 1 938 126.4A21.6 21.6 0 1 1 894.8 126.4ZM905.6 126.4A10.8 10.8 0 1 0 927.2 126.4A10.8 10.8 0 1 0 905.6 126.4ZM918.86 53.12L851.66 139.52A6 6 0 0 1 861.14 146.88L928.34 60.48A6 6 0 0 1 918.86 53.12Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Black Friday",
+        "color": "text",
+        "box": {
+          "x": 60,
+          "y": 25,
+          "width": 740,
+          "height": 150
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to shop the sale",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1400,
+          "width": 1000,
+          "height": 100
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

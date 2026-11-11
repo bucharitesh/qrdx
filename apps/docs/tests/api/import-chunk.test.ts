@@ -1,4 +1,4 @@
-// One chunk of the dashboard's CSV import (app/dashboard/codes/import/_lib/
+// One chunk of the dashboard's CSV import (app/(app)/dashboard/codes/import/_lib
 // import.ts): the batch's folder and tags, the chunk's idempotency key (a
 // chunk sent twice makes its codes once) and a back-half taken since the
 // preview (that row gets a generated one, the rest go through). Real codes
@@ -37,11 +37,11 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
   getPlanForScope: async () => state.plan,
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => ({ fgColor: "#123456" }),
 }));
 vi.mock("@/lib/safety/destinations", () => ({
@@ -66,7 +66,7 @@ vi.mock("@/lib/slug-claims", async (importOriginal) => {
 vi.mock("@/ee/audit-log/record", () => ({ recordAuditEvent: () => {} }));
 
 const { importChunk } = await import(
-  "@/app/dashboard/codes/import/_lib/import"
+  "@/app/(app)/dashboard/codes/import/_lib/import"
 );
 
 const scope = {

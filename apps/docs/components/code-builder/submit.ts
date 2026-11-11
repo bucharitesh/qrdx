@@ -4,7 +4,7 @@
 // createCodeSchema has no fields for them. Save sends only what changed.
 // Errors are told apart by QRdx's typed error codes, not keyword matching.
 
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import type { QRStyle } from "@/types/theme";
 import type { BuilderFields } from "./types";
 import {

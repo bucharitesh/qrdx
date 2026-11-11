@@ -1,6 +1,10 @@
 import type { OpenAPIV3_1 } from "fumadocs-openapi";
 import { z } from "zod";
 import {
+  codeIdSchema,
+  MAX_BULK_CREATE,
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import {
   createCodeInputSchema,
   createCodesHeadersSchema,
   listCodesQuerySchema,
@@ -19,10 +23,6 @@ import {
   subscribeSchema,
 } from "@/app/api/v1/hooks/_lib/hooks";
 import { qrImageQuerySchema } from "@/app/api/v1/qr/_lib/query";
-import {
-  codeIdSchema,
-  MAX_BULK_CREATE,
-} from "@/app/dashboard/codes/_lib/qr-codes";
 import {
   insufficientKeyScopeError,
   invalidApiKeyError,
@@ -563,7 +563,7 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
 
 **The editor's styles.** \`style\` takes the whole design as URL-encoded JSON, with the same fields as a saved theme: gradients (linear, radial), frames including custom frame specs, border templates, eye and dot colors, and a logo icon. It also takes the \`style\` value of a playground link. \`item\` renders a community frame or theme (\`/community/items\`); \`frame\` and \`frameText\` add a built-in frame. Flat parameters you set win over \`style\`, and \`style\` wins over \`item\`. With a frame, \`size\` is the code's width and the frame adds to it.
 
-**Logos.** \`logoIcon\` draws one of the editor's quick icons. \`logoFileId\` draws an image you uploaded, and needs \`Authorization: Bearer qrdx_…\` from the workspace that owns it; that response is private and counts toward the daily quota. QRdx never fetches a logo from an address you send. Logo QR and Image QR art aren't available here.
+**Logos.** \`logoIcon\` draws one of the editor's quick icons, or a brand logo by its Simple Icons slug (\`spotify\`, \`paypal:white\`). \`logoFileId\` draws an image you uploaded, and needs \`Authorization: Bearer qrdx_…\` from the workspace that owns it; that response is private and counts toward the daily quota. QRdx never fetches a logo from an address you send. Logo QR and Image QR art aren't available here.
 
 **Caching.** Renders with \`item\` are cached for 5 minutes (10 at the CDN), since an item can change; renders with \`logoFileId\` aren't cached.
 

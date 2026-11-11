@@ -2,7 +2,7 @@
 // and only in the open builder.
 // Pure, so the rules are tested without a browser.
 
-import type { CodeOptionId } from "@/app/dashboard/codes/_lib/code-options";
+import type { CodeOptionId } from "@/app/(app)/dashboard/codes/_lib/code-options";
 
 /** One key per option; none repeats, and none clashes with ⌘↵ or Esc. */
 export const OPTION_KEYS: Record<CodeOptionId, string> = {

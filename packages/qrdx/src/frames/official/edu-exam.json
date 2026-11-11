@@ -1,0 +1,83 @@
+{
+  "id": "edu-exam",
+  "name": "Exam timer",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and an hourglass.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "exams"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M573.5 51L666.5 51A4.5 4.5 0 0 1 671 55.5L671 58.5A4.5 4.5 0 0 1 666.5 63L573.5 63A4.5 4.5 0 0 1 569 58.5L569 55.5A4.5 4.5 0 0 1 573.5 51ZM573.5 177L666.5 177A4.5 4.5 0 0 1 671 181.5L671 184.5A4.5 4.5 0 0 1 666.5 189L573.5 189A4.5 4.5 0 0 1 569 184.5L569 181.5A4.5 4.5 0 0 1 573.5 177ZM581 66L659 66C659 99 629 111 629 120C629 129 659 141 659 174L581 174C581 141 611 129 611 120C611 111 581 99 581 66Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for exam info",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Exams",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

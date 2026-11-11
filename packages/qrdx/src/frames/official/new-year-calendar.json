@@ -1,0 +1,115 @@
+{
+  "id": "new-year-calendar",
+  "name": "First page",
+  "description": "A calendar page with binder rings and a header band, in black and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "new-year",
+  "contentTypes": [],
+  "tags": ["new year", "celebration", "party", "calendar"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1780
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#c9a227"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 60,
+        "width": 1240,
+        "height": 1720,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 60,
+        "width": 1240,
+        "height": 280,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 300,
+        "width": 1240,
+        "height": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 250,
+        "y": 0,
+        "width": 60,
+        "height": 170,
+        "radius": 30,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      },
+      {
+        "type": "rect",
+        "x": 930,
+        "y": 0,
+        "width": 60,
+        "height": 170,
+        "radius": 30,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0.3
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for our plans",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy New Year",
+        "color": "text",
+        "box": {
+          "x": 340,
+          "y": 140,
+          "width": 560,
+          "height": 130
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

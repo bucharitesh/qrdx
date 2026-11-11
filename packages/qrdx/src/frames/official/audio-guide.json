@@ -3,6 +3,7 @@
   "name": "Audio guide",
   "description": "Headphones around the code, for museum and tour audio guides.",
   "category": "use-case",
+  "collection": "places",
   "contentTypes": ["url"],
   "tags": ["museum", "tour", "audio", "gallery"],
   "license": "CC0-1.0",

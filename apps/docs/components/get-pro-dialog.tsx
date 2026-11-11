@@ -18,7 +18,7 @@ import Link from "next/link";
 import { QRCodeSVG } from "qrdx";
 import { useAvailability } from "@/components/availability-provider";
 import { GridLines } from "@/components/fx";
-import { buildUpgradeHighlights } from "@/components/sections/pricing/plan-content";
+import { buildUpgradeHighlights } from "@/components/sections/pricing/upgrade-highlights";
 import { track } from "@/lib/analytics";
 import { easterEggUrl } from "@/lib/easter-eggs";
 import { PAID_PLANS, type PaidPlan, PLAN_NAMES } from "@/lib/pricing";

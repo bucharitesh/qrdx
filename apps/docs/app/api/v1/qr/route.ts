@@ -1,6 +1,7 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
 import { CommunityItemError } from "@/lib/community/api";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import { handleError } from "@/lib/error-response";
 import {
   type FlatStyle,
@@ -12,6 +13,7 @@ import {
   resolveRender,
 } from "@/lib/qr-api/render";
 import { type ApiStyle, parseStyleQuery } from "@/lib/qr-api/style";
+import { UnknownBrandLogoError } from "@/lib/qr-design/logo";
 import {
   type ConvertedFormat,
   IMAGE_CONTENT_TYPES,
@@ -111,7 +113,7 @@ function imageResponse(
 function styleLayer(query: Query): ApiStyle | undefined {
   let style: ApiStyle | undefined;
   if (query.style !== undefined) {
-    const parsed = parseStyleQuery(query.style);
+    const parsed = parseStyleQuery(query.style, OFFICIAL_FRAME_RESOLVER);
     if (!parsed.ok) {
       throw new ValidationError(
         "Invalid query parameters",
@@ -210,6 +212,9 @@ async function styled(req: NextRequest, query: Query) {
   } catch (error) {
     if (error instanceof CommunityItemError) {
       throw invalid("item", error.message);
+    }
+    if (error instanceof UnknownBrandLogoError) {
+      throw invalid("logoIcon", error.message);
     }
     throw error;
   }

@@ -298,7 +298,7 @@ export async function setOAuthAppActive(
   if (active) {
     // An app the QRdx team suspended stays off until the team lifts it.
     const { isOAuthAppSuspended } = await import(
-      "@/app/admin/_lib/suspensions"
+      "@/app/(app)/admin/_lib/suspensions"
     );
     if (await isOAuthAppSuspended(id)) {
       throw new HttpError(

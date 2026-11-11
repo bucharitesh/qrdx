@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { getThemes } from "@/actions/qr-themes";
-import type { ThemeScopeKind } from "@/app/dashboard/themes/_lib/theme";
+import type { ThemeScopeKind } from "@/app/(app)/dashboard/themes/_lib/theme";
 import type { ThemePreset } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
 

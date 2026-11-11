@@ -18,11 +18,11 @@ import {
   VERSION_FIELDS,
   type VersionChange,
   type VersionField,
-} from "@/app/dashboard/codes/_lib/version-diff";
+} from "@/app/(app)/dashboard/codes/_lib/version-diff";
 import {
   assertBindableDomains,
   getDomainRefs,
-} from "@/app/dashboard/domains/_lib/domains";
+} from "@/app/(app)/dashboard/domains/_lib/domains";
 import { codeEvents } from "@/ee/audit-log/code-events";
 import { changedFields } from "@/ee/audit-log/metadata";
 import { recordAuditEvent } from "@/ee/audit-log/record";
@@ -85,7 +85,7 @@ const notFound = (what = "QR code") =>
 /**
  * Names of the scope's hosted pages among `ids` (a version's type shows the
  * page it opened). Pages deleted since, or of another workspace, are left
- * out. Queried here: app/dashboard/pages/_lib imports the codes service,
+ * out. Queried here: app/(app)/dashboard/pages/_lib imports the codes service,
  * which imports this file.
  */
 async function scopedPageNames(

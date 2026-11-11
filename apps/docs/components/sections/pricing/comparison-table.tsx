@@ -2,6 +2,7 @@ import { Tick } from "@repo/design-system/components/icons";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { Minus } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import type { CellValue, ComparisonGroup } from "./plan-content";
 
@@ -11,11 +12,12 @@ const COLUMNS: readonly Plan[] = ["free", "pro", "business"];
 const PRO_COLUMN = "bg-foreground/[0.025] dark:bg-foreground/[0.035]";
 
 function Cell({ value }: { value: CellValue }) {
+  const t = useTranslations("pricing.values");
   if (value === true) {
     return (
       <>
         <Tick aria-hidden className="size-4 text-foreground" strokeWidth={2} />
-        <span className="sr-only">Included</span>
+        <span className="sr-only">{t("included")}</span>
       </>
     );
   }
@@ -23,7 +25,7 @@ function Cell({ value }: { value: CellValue }) {
     return (
       <>
         <Minus aria-hidden className="size-4 text-muted-foreground/50" />
-        <span className="sr-only">Not included</span>
+        <span className="sr-only">{t("notIncluded")}</span>
       </>
     );
   }
@@ -31,6 +33,10 @@ function Cell({ value }: { value: CellValue }) {
 }
 
 export function ComparisonTable({ groups }: { groups: ComparisonGroup[] }) {
+  const t = useTranslations("pricing");
+  // "Free" is translated; "Pro" and "Business" stay in English.
+  const planName = (plan: Plan) =>
+    plan === "free" ? t("plans.free") : PLAN_NAMES[plan];
   return (
     <section
       aria-labelledby="compare-plans"
@@ -41,30 +47,30 @@ export function ComparisonTable({ groups }: { groups: ComparisonGroup[] }) {
           id="compare-plans"
           className="text-2xl font-semibold tracking-tight text-balance md:text-3xl"
         >
-          Compare plans
+          {t("comparison.title")}
         </h2>
         <p className="text-pretty text-muted-foreground">
-          Every limit, side by side. Scans are unlimited on every plan.
+          {t("comparison.description")}
         </p>
       </div>
 
       <div className="mt-10 w-full max-w-5xl">
         <p className="mb-3 text-center text-xs text-muted-foreground md:hidden">
-          Scroll sideways to see every plan.
+          {t("comparison.scrollHint")}
         </p>
         {/* Scrolls sideways on narrow screens; the feature column stays put. */}
         {/* `relative` keeps the sr-only labels (position: absolute) inside
             the scroller, so they can't widen the page on phones. */}
         <Card className="relative gap-0 overflow-x-auto py-0 shadow-xs">
           <table className="w-full min-w-[600px] border-collapse text-left">
-            <caption className="sr-only">QRdx plans compared</caption>
+            <caption className="sr-only">{t("comparison.caption")}</caption>
             <thead>
               <tr>
                 <th
                   className="sticky left-0 z-10 bg-card p-4 text-sm font-medium text-muted-foreground max-md:w-36"
                   scope="col"
                 >
-                  Feature
+                  {t("comparison.feature")}
                 </th>
                 {COLUMNS.map((plan) => (
                   <th
@@ -75,7 +81,7 @@ export function ComparisonTable({ groups }: { groups: ComparisonGroup[] }) {
                     key={plan}
                     scope="col"
                   >
-                    {PLAN_NAMES[plan]}
+                    {planName(plan)}
                   </th>
                 ))}
               </tr>

@@ -12,8 +12,8 @@
     "typecheck:docs": "cd apps/docs && bun x tsc --noEmit",
     "typegen:docs": "node scripts/typegen-docs.mjs",
     "lint:ci": "ultracite check",
-    "prepush": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:docs && bun run typecheck:docs && bun run lint:ci && bun run --filter @qrdx/cli build && bun run test",
-    "prepush:quick": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:docs && bun run typecheck:docs && bun run lint:ci && bun run --filter @qrdx/cli build && TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/staging} turbo test --affected --only --concurrency=2",
+    "prepush": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:docs && bun run typecheck:docs && bun run --filter docs i18n:check && bun run lint:ci && bun run --filter @qrdx/cli build && bun run test",
+    "prepush:quick": "bun run --filter qrdx build:inplace && bun run typecheck && bun run typegen:docs && bun run typecheck:docs && bun run --filter docs i18n:check && bun run lint:ci && bun run --filter @qrdx/cli build && TURBO_SCM_BASE=${TURBO_SCM_BASE:-origin/staging} turbo test --affected --only --concurrency=2",
     "analyze": "turbo analyze",
     "translate": "turbo translate",
     "boundaries": "turbo boundaries",
@@ -69,7 +69,9 @@
     "@typescript-eslint/typescript-estree>minimatch": "^11.0.1",
     "@eslint/config-array>minimatch": "^11.0.1",
     "eslint>minimatch": "^11.0.1",
-    "@esbuild-kit/core-utils>esbuild": "^0.25.0"
+    "@esbuild-kit/core-utils>esbuild": "^0.25.0",
+    "use-intl": "4.14.9",
+    "icu-minify": "4.14.9"
   },
   "trustedDependencies": [],
   "type": "module"

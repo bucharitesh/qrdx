@@ -3,6 +3,8 @@
   "name": "New Year",
   "description": "A card shaded from the frame color, with sparkles. Uses a gradient fill.",
   "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "new-year",
   "contentTypes": [],
   "tags": ["seasonal", "new year", "celebration"],
   "license": "CC0-1.0",

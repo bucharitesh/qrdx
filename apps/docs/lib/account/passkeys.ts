@@ -4,7 +4,7 @@ import { describeUserAgent } from "./sessions";
 /**
  * Settings → Profile & security → Passkeys: what the page shows for each
  * passkey, and the messages for adding, renaming and removing one. Pure and
- * client-safe; the server actions are app/settings/account/_lib/
+ * client-safe; the server actions are app/(app)/settings/account/_lib
  * passkey-actions.ts. Better Auth's passkey plugin stores the rows
  * (packages/auth/passkey.ts has QRdx's rules).
  */

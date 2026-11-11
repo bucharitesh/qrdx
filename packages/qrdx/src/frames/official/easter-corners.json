@@ -1,0 +1,99 @@
+{
+  "id": "easter-corners",
+  "name": "Easter corners",
+  "description": "A light card with a quarter circle and a triangle in opposite corners, in sage and blush.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "easter",
+  "contentTypes": [],
+  "tags": ["easter", "spring", "modern"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1720
+    },
+    "qr": {
+      "x": 120,
+      "y": 340,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#4d6b53",
+      "text": "#ffffff",
+      "accent": "#e4a3b0"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 48,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M0 48Q0 0 48 0L420 0A420 420 0 0 1 0 420Z",
+        "fill": "accent"
+      },
+      {
+        "type": "polygon",
+        "points": [[1240, 1260], [1240, 1672], [1192, 1720], [780, 1720]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 48,
+        "fill": "frame",
+        "hole": {
+          "x": 14,
+          "y": 14,
+          "width": 1212,
+          "height": 1692,
+          "radius": 38
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1470,
+          "width": 860,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Easter",
+        "color": "frame",
+        "box": {
+          "x": 460,
+          "y": 90,
+          "width": 680,
+          "height": 110
+        },
+        "weight": "regular",
+        "align": "end"
+      }
+    ]
+  }
+}

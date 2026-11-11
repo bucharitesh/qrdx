@@ -3,6 +3,7 @@
   "name": "Follow us",
   "description": "A speech bubble with a share glyph, for a page of your social links.",
   "category": "use-case",
+  "collection": "business",
   "contentTypes": ["url", "instagram", "tiktok", "facebook"],
   "tags": ["social", "followers", "marketing"],
   "license": "CC0-1.0",

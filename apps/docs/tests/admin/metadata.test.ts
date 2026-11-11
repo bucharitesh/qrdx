@@ -7,7 +7,7 @@
 // generateMetadata, after the admin check, so for a visitor it throws the
 // same 404 as the page and Next falls back to the site's "Page not found".
 //
-// Every page under app/admin is found on disk, so a new one is checked too.
+// Every page under app/(app)/admin is found on disk, so a new one is checked too.
 // The guard is mocked; nothing touches a database or a service.
 import { readdirSync } from "node:fs";
 import path from "node:path";
@@ -18,7 +18,7 @@ const state = vi.hoisted(() => ({
   admin: null as null | { id: string; email: string; name: string },
 }));
 
-vi.mock("@/app/admin/_lib/guard", () => ({
+vi.mock("@/app/(app)/admin/_lib/guard", () => ({
   getAdminUser: vi.fn(async () => state.admin),
   requireAdmin: vi.fn(async () => {
     if (!state.admin) notFound();
@@ -53,7 +53,7 @@ const TITLES: Record<string, string> = {
   "users/[userId]/page.tsx": "Admin · User",
 };
 
-const adminDir = path.resolve(import.meta.dirname, "../../app/admin");
+const adminDir = path.resolve(import.meta.dirname, "../../app/(app)/admin");
 const pages = (readdirSync(adminDir, { recursive: true }) as string[])
   .map((file) => file.split(path.sep).join("/"))
   .filter((file) => file === "page.tsx" || file.endsWith("/page.tsx"))
@@ -65,7 +65,7 @@ interface MetadataModule {
 }
 
 const load = (file: string) =>
-  import(`../../app/admin/${file}`) as Promise<MetadataModule>;
+  import(`../../app/(app)/admin/${file}`) as Promise<MetadataModule>;
 
 const props = {
   params: Promise.resolve({ userId: "u_123" }),
@@ -101,7 +101,7 @@ describe("admin page metadata", () => {
 
   it("puts no title or name in the admin layout's metadata", async () => {
     const layout = (await import(
-      "@/app/admin/layout"
+      "@/app/(app)/admin/layout"
     )) as unknown as MetadataModule;
     expect(layout.generateMetadata).toBeUndefined();
     expect(layout.metadata?.title).toBeUndefined();

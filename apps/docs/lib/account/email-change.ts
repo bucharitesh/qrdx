@@ -1,6 +1,6 @@
 /**
  * Settings → Account → Email: moving an account to a new address. Pure and
- * client-safe; the server actions are app/settings/account/_lib/
+ * client-safe; the server actions are app/(app)/settings/account/_lib
  * email-change-actions.ts.
  *
  * 1. The user enters the new address and Better Auth's emailOTP plugin

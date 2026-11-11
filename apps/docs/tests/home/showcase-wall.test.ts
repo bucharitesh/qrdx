@@ -17,12 +17,14 @@ import {
 } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
 import { describe, expect, it } from "vitest";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import {
   SAMPLE_HOSTS,
   TILE_ASPECT,
   tileBackdrop,
   tileLogo,
   tileStyles,
+  WALL_FRAME_IDS,
   WALL_TILES,
   type WallTile,
 } from "@/lib/landing/showcase-gallery";
@@ -35,9 +37,14 @@ import {
 } from "@/lib/landing/showcase-wall";
 import { getTemplate, listTemplates } from "@/lib/landing/templates";
 import { parsePlaygroundParams } from "@/lib/playground-links";
-import { decodeStyleParam } from "@/lib/playground-style";
+import { decodeStyleParam as decodeWithLoaded } from "@/lib/playground-style";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import type { ThemeCategory } from "@/types/theme";
+
+// Wall links are made on the server, with the whole catalogue
+const decodeStyleParam = (raw: string | null | undefined) =>
+  decodeWithLoaded(raw, OFFICIAL_FRAME_RESOLVER);
+
 import { defaultPresets } from "@/utils/qr-presets";
 
 const APP = join(import.meta.dirname, "../..");
@@ -450,14 +457,17 @@ describe("the community wall", () => {
     }
   });
 
-  it("uses every frame style, official frame and border template", () => {
+  it("uses every frame style, the wall's official frames and every border template", () => {
     const frames = used((s) => s.frame?.style);
     for (const style of FRAME_STYLES) {
       if (style !== "none") expect(frames, style).toContain(style);
     }
     const official = new Set(tiles.map((t) => t.officialFrame));
-    for (const frame of OFFICIAL_FRAMES)
-      expect(official, frame.id).toContain(frame.id);
+    const ids = new Set(OFFICIAL_FRAMES.map((frame) => frame.id));
+    for (const id of WALL_FRAME_IDS) {
+      expect(ids, id).toContain(id);
+      expect(official, id).toContain(id);
+    }
     const templates = used((s) => s.templateId);
     for (const id of getTemplateIds()) {
       if (id !== "default") expect(templates, id).toContain(id);

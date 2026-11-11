@@ -58,7 +58,7 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
   getPlanForScope: async () => state.plan,
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", async () => {
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", async () => {
   const { HttpError } = await import("@/lib/error-response");
   return {
     getDomainRefs: async (ids: (string | null)[]) =>
@@ -77,7 +77,7 @@ vi.mock("@/app/dashboard/domains/_lib/domains", async () => {
     },
   };
 });
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => null,
 }));
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));
@@ -94,7 +94,7 @@ vi.mock("@/lib/shared", () => ({ logError: () => {} }));
 const list = await import("@/app/api/v1/codes/route");
 const one = await import("@/app/api/v1/codes/[id]/route");
 const { checkSlugAvailability } = await import(
-  "@/app/dashboard/codes/_lib/qr-codes"
+  "@/app/(app)/dashboard/codes/_lib/qr-codes"
 );
 const { releaseDomainSlugs, findTakenSlugs } = await import(
   "@/lib/slug-claims"

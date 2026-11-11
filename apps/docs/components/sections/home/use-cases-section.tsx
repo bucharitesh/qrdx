@@ -1,12 +1,14 @@
 import { Card } from "@repo/design-system/components/ui/card";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { SpotlightCard } from "@/components/fx/spotlight-card";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { PRESSABLE } from "@/components/mockups/motion";
 import { Reveal } from "@/components/mockups/reveal";
 import { useCaseImages, type Visual } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
+import type { Messages } from "@/lib/i18n/messages";
 import { generatorPath } from "@/lib/landing/generator-paths";
 import {
   type ShowcaseStyleName,
@@ -16,12 +18,11 @@ import { playgroundDesignHref } from "@/lib/playground-style";
 import type { ContentType } from "@/types/qr-content";
 
 export interface UseCase {
-  title: string;
-  description: string;
+  /** Its copy: messages (home.useCases.items.<key>). */
+  key: keyof Messages["home"]["useCases"]["items"];
   /** Where the card goes. */
   href: string;
-  linkText: string;
-  /** The type's generator page, linked from `linkText` beside the card's own link. */
+  /** The type's generator page, linked from the card's link text beside its own link. */
   about?: string;
   image: Visual;
 }
@@ -44,80 +45,64 @@ const startWith = (type: ContentType, look: ShowcaseStyleName) => ({
 
 export const useCases: UseCase[] = [
   {
-    title: "Menus and tables",
-    description: "Link a table tent or counter card to your online menu.",
+    key: "menus",
     ...startWith("url", "menu"),
-    linkText: "URL QR code",
     image: useCaseImages.cafeTableTent,
   },
   {
-    title: "Business cards",
-    description: "Save your name, number and email to a phone in one scan.",
+    key: "businessCards",
     ...startWith("vcard", "signature"),
-    linkText: "vCard QR code",
     image: useCaseImages.businessCard,
   },
   {
-    title: "Guest Wi-Fi",
-    description: "Let guests join the network without typing the password.",
+    key: "wifi",
     ...startWith("wifi", "dots"),
-    linkText: "Wi-Fi QR code",
     image: useCaseImages.hotelWifi,
   },
   {
-    title: "Payments",
-    description: "Take UPI payments at a stall, shop counter or delivery.",
+    key: "payments",
     ...startWith("upi", "classy"),
-    linkText: "UPI QR code",
     image: useCaseImages.marketStallUpi,
   },
   {
-    title: "Packaging and labels",
-    description: "Turn a CSV into a ZIP of codes for every product or asset.",
+    key: "packaging",
     href: "/tools/bulk",
-    linkText: "Bulk generator",
     image: useCaseImages.productPackaging,
   },
   {
-    title: "Events and check-ins",
-    description: "Check people in at the door with a Google Form.",
+    key: "events",
     ...startWith("attendance", "ticket"),
-    linkText: "Attendance QR code",
     image: useCaseImages.eventCheckIn,
   },
   {
-    title: "Shelves and displays",
-    description: "Send shoppers from a shelf tag to your product listing.",
+    key: "shelves",
     ...startWith("amazon", "facet"),
-    linkText: "Amazon QR code",
     image: useCaseImages.retailShelf,
   },
   {
-    title: "Posters and signs",
-    description: "Print it big enough to scan from across the street.",
+    key: "posters",
     href: "/tools/print-size",
-    linkText: "Print size calculator",
     image: useCaseImages.busStopPoster,
   },
 ];
 
 export function UseCasesSection() {
+  const t = useTranslations("home.useCases");
   return (
     <section
       id="use-cases"
       aria-labelledby="use-cases-heading"
       className="flex w-full flex-col items-center"
     >
-      <SectionHeader eyebrow="Use cases" pattern="ramp" focus={[0, 0]}>
+      <SectionHeader eyebrow={t("eyebrow")} pattern="ramp" focus={[0, 0]}>
         <h2
           id="use-cases-heading"
           className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance"
         >
-          A QR code for every job
+          {t("title")}
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          From café tables to bus stops, start from the right kind of code for
-          the job.
+          {t("description")}
         </p>
       </SectionHeader>
       <ul className="grid w-full gap-4 px-10 py-12 sm:grid-cols-2 md:py-16 lg:grid-cols-4">
@@ -133,7 +118,7 @@ export function UseCasesSection() {
                 <SpotlightCard asChild>
                   <Card className="h-full gap-0 py-0 transition-[border-color,box-shadow] duration-200 group-hover:border-foreground/15 group-hover:shadow-md">
                     <Link
-                      aria-label={`${useCase.title}: ${useCase.about ? "start in the playground" : `open the ${useCase.linkText.toLowerCase()}`}`}
+                      aria-label={t(`items.${useCase.key}.cardLabel`)}
                       className="absolute inset-0 z-0 rounded-[inherit] outline-none"
                       data-card-link=""
                       href={useCase.href}
@@ -151,10 +136,10 @@ export function UseCasesSection() {
                     </div>
                     <div className="flex flex-1 flex-col gap-1.5 px-4 pt-4 pb-4">
                       <h3 className="font-medium tracking-tight text-foreground">
-                        {useCase.title}
+                        {t(`items.${useCase.key}.title`)}
                       </h3>
                       <p className="text-sm text-muted-foreground text-pretty leading-relaxed">
-                        {useCase.description}
+                        {t(`items.${useCase.key}.description`)}
                       </p>
                       <span className="mt-auto flex items-center justify-between gap-2 pt-3 text-sm font-medium text-foreground">
                         {useCase.about ? (
@@ -162,10 +147,10 @@ export function UseCasesSection() {
                             className="relative z-10 rounded-sm underline decoration-foreground/25 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                             href={useCase.about}
                           >
-                            {useCase.linkText}
+                            {t(`items.${useCase.key}.linkText`)}
                           </Link>
                         ) : (
-                          useCase.linkText
+                          t(`items.${useCase.key}.linkText`)
                         )}
                         <span
                           aria-hidden="true"

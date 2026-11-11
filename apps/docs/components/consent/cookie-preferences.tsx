@@ -21,35 +21,31 @@ import {
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Chart2, type Icon, Lock1, MessageQuestion } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useLayoutEffect, useRef } from "react";
-import { ACTION_LABELS, PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
+import { PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
 import { OPEN_COOKIE_SETTINGS_EVENT } from "./open-cookie-settings";
 
+/** Title and description: messages (consent.categories). Tool names stay as is. */
 type CategoryCopy = {
-  title: string;
-  description: string;
+  key: "necessary" | "functionality" | "measurement";
   tools: string;
   icon: Icon;
 };
 
 const CATEGORY_COPY: Partial<Record<AllConsentNames, CategoryCopy>> = {
   necessary: {
-    title: "Necessary",
-    description:
-      "Keeps you signed in, blocks form spam and remembers settings like your theme and this choice.",
+    key: "necessary",
     tools: "QRdx, Cloudflare Turnstile",
     icon: Lock1,
   },
   functionality: {
-    title: "Functionality",
-    description: "Shows the feedback and support widget.",
+    key: "functionality",
     tools: "Featurebase",
     icon: MessageQuestion,
   },
   measurement: {
-    title: "Analytics",
-    description:
-      "Measures which pages and features get used, so we know what to improve. Cookieless visit counts (Umami) run without it.",
+    key: "measurement",
     tools: "PostHog",
     icon: Chart2,
   },
@@ -57,6 +53,7 @@ const CATEGORY_COPY: Partial<Record<AllConsentNames, CategoryCopy>> = {
 
 /** Preference center: opened from the banner or any Cookie settings trigger. */
 export function CookiePreferences() {
+  const t = useTranslations("consent.dialog");
   const { dialog, openDialog, openBanner, closeUI } = useHeadlessConsentUI();
   const prompt = usePromptRequirement();
   // No DialogTrigger here, so remember who opened the dialog (banner button,
@@ -100,10 +97,9 @@ export function CookiePreferences() {
         onCloseAutoFocus={onCloseAutoFocus}
       >
         <DialogHeader>
-          <DialogTitle>Cookie settings</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
           <DialogDescription className="text-pretty">
-            Choose which optional tools QRdx may use. Nothing optional loads
-            until you allow it, and you can change this any time.
+            {t("description")}
           </DialogDescription>
         </DialogHeader>
         {/* Mounted with the dialog, so every open starts from the saved choice. */}
@@ -116,6 +112,7 @@ export function CookiePreferences() {
 }
 
 function PreferencesForm() {
+  const t = useTranslations("consent");
   const draft = useConsentDraft();
   const { dialog, performDialogAction } = useHeadlessConsentUI();
   const actions = dialog.orderedActions.filter(
@@ -140,11 +137,13 @@ function PreferencesForm() {
         })}
       </ul>
       <p className="text-xs text-muted-foreground">
-        Details in our{" "}
-        <Link href={PRIVACY_POLICY_URL} className={TEXT_LINK}>
-          privacy policy
-        </Link>
-        .
+        {t.rich("dialog.details", {
+          link: (chunks) => (
+            <Link href={PRIVACY_POLICY_URL} className={TEXT_LINK}>
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
       <DialogFooter className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {actions.map((action) => (
@@ -158,7 +157,7 @@ function PreferencesForm() {
             onClick={() => void performDialogAction(action)}
           >
             {action === "save" && <Tick aria-hidden="true" />}
-            {ACTION_LABELS[action]}
+            {t(`actions.${action}`)}
           </Button>
         ))}
       </DialogFooter>
@@ -177,6 +176,7 @@ function CategoryRow({
   checked: boolean;
   onCheckedChange: (value: boolean) => void;
 }) {
+  const t = useTranslations("consent");
   const switchId = `cookie-category-${category}`;
   const descriptionId = `${switchId}-description`;
   const required = category === "necessary";
@@ -193,16 +193,18 @@ function CategoryRow({
       <div className="flex min-w-0 flex-1 flex-col gap-1">
         <div className="flex min-h-9 items-center justify-between gap-3">
           {required ? (
-            <span className="text-sm font-medium">{copy.title}</span>
+            <span className="text-sm font-medium">
+              {t(`categories.${copy.key}.title`)}
+            </span>
           ) : (
             <label htmlFor={switchId} className="text-sm font-medium">
-              {copy.title}
+              {t(`categories.${copy.key}.title`)}
             </label>
           )}
           {required ? (
             <Badge variant="outline" className="text-muted-foreground">
               <Tick aria-hidden="true" />
-              Always on
+              {t("dialog.alwaysOn")}
             </Badge>
           ) : (
             <Switch
@@ -217,9 +219,11 @@ function CategoryRow({
           id={descriptionId}
           className="text-pretty text-sm text-muted-foreground"
         >
-          {copy.description}
+          {t(`categories.${copy.key}.description`)}
         </p>
-        <p className="text-xs text-muted-foreground/80">Used by {copy.tools}</p>
+        <p className="text-xs text-muted-foreground/80">
+          {t("dialog.usedBy", { tools: copy.tools })}
+        </p>
       </div>
     </li>
   );

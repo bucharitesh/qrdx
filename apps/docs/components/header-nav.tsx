@@ -11,8 +11,8 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import {
-  type ComponentType,
   type CSSProperties,
   useEffect,
   useMemo,
@@ -20,21 +20,22 @@ import {
   useState,
 } from "react";
 import { useAvailability } from "@/components/availability-provider";
-import { siteConfig } from "@/config/site";
+import { useLocalizeHref } from "@/components/i18n/locale-link";
+import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
+import {
+  type NavEntryConfig,
+  type NavItemConfig,
+  siteConfig,
+} from "@/config/site";
+import { splitLocale } from "@/lib/i18n/paths";
 import bar from "./header-bar.module.css";
 import styles from "./header-nav.module.css";
 import { NavPanel, navPanelRootClass } from "./header-nav-panel";
 
-export interface HeaderNavItem {
+/** A header link with its copy in the visitor's language. */
+export interface HeaderNavItem extends Omit<NavItemConfig, "key"> {
   name: string;
-  href: string;
   description: string;
-  icon: ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
-  external?: boolean;
-  /** Shown as the large panel on the left of the dropdown. */
-  featured?: boolean;
-  /** The group's hub page: the footer link of the dropdown. */
-  hub?: boolean;
 }
 
 export interface HeaderNavEntry {
@@ -44,28 +45,40 @@ export interface HeaderNavEntry {
   items?: HeaderNavItem[];
 }
 
-export const headerNavEntries: HeaderNavEntry[] = siteConfig.nav.links;
+export const headerNavEntries: NavEntryConfig[] = siteConfig.nav.links;
 
 /**
- * The header entries without links to pages for features this deployment
- * can't offer (lib/feature-availability-rules.ts), like AI QR art.
+ * The header entries in the visitor's language, without links to pages for
+ * features this deployment can't offer (lib/feature-availability-rules.ts),
+ * like AI QR art. Hrefs point at the page in that language where it exists.
  */
 export function useHeaderNavEntries(): HeaderNavEntry[] {
   const { showsPath } = useAvailability();
+  const t = useTranslations("nav");
+  const localize = useLocalizeHref();
   return useMemo(
     () =>
       headerNavEntries.flatMap((entry) => {
-        if (!entry.items) return showsPath(entry.href) ? [entry] : [];
-        const items = entry.items.filter(
-          (item) => item.external || showsPath(item.href),
-        );
-        return items.length > 0 ? [{ ...entry, items }] : [];
+        const name = t(`entries.${entry.key}`);
+        const href = localize(entry.href);
+        if (!entry.items) {
+          return showsPath(entry.href) ? [{ id: entry.id, name, href }] : [];
+        }
+        const items = entry.items
+          .filter((item) => item.external || showsPath(item.href))
+          .map(({ key, ...item }) => ({
+            ...item,
+            href: localize(item.href),
+            name: t(`items.${key}.name`),
+            description: t(`items.${key}.description`, { max: MAX_BULK_ROWS }),
+          }));
+        return items.length > 0 ? [{ id: entry.id, name, href, items }] : [];
       }),
-    [showsPath],
+    [showsPath, t, localize],
   );
 }
 
-const isExternal = (item: HeaderNavItem) => Boolean(item.external);
+const isExternal = (item: NavItemConfig) => Boolean(item.external);
 
 /** True when `pathname` is `href` or a page below it. */
 export function matchesPath(pathname: string, href: string) {
@@ -158,9 +171,12 @@ interface MenuState {
 }
 
 export function HeaderNav({ className }: { className?: string }) {
+  const t = useTranslations("nav");
   const entries = useHeaderNavEntries();
+  // Hrefs are localized, so match the current page by its localized URL…
   const pathname = usePathname() ?? "/";
-  const activeId = getActiveEntryId(pathname);
+  // …and the active entry by its English path.
+  const activeId = getActiveEntryId(splitLocale(pathname).path);
   const rootRef = useRef<HTMLElement>(null);
   const triggers = useRef(new Map<string, HTMLButtonElement>());
   const closedAt = useRef(0);
@@ -223,7 +239,7 @@ export function HeaderNav({ className }: { className?: string }) {
       value={menu.value}
       onValueChange={onValueChange}
       delayDuration={HOVER_INTENT_MS}
-      aria-label="Main"
+      aria-label={t("main")}
       data-morph={menu.morph ? "" : undefined}
       style={anchorStyle(menu.anchor)}
       className={cn(

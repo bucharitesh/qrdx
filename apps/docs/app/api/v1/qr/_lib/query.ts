@@ -6,7 +6,7 @@ import {
 } from "qrdx/types";
 import { z } from "zod";
 import { FILE_ID } from "@/lib/qr-api/style";
-import { LOGO_ICON_IDS } from "@/lib/qr-design/style";
+import { logoIconSchema } from "@/lib/qr-design/logo-icon";
 import {
   QR_DEFAULTS,
   QR_MARGIN_MAX,
@@ -84,10 +84,7 @@ export const qrImageQuerySchema = qrOptionsSchema.extend({
     .describe(
       `The frame's label, up to ${FRAME_TEXT_MAX_LENGTH} characters (default "Scan me"; empty hides it)`,
     ),
-  logoIcon: z
-    .enum(LOGO_ICON_IDS)
-    .optional()
-    .describe("A quick logo icon in the center, drawn by QRdx"),
+  logoIcon: logoIconSchema.optional(),
   logoFileId: z
     .string()
     .regex(FILE_ID, "Must be an uploaded file id")

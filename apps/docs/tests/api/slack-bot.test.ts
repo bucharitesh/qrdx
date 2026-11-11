@@ -95,11 +95,11 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   getPlanForScope: async () => state.plan,
   getOwnerPlanForOrganization: async () => state.plan,
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => null,
 }));
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));
@@ -140,7 +140,7 @@ const { database } = await import("@repo/database");
 const { saveInstallation } = await import("@/lib/slack-bot/store");
 const admin = await import("@/lib/slack-bot/admin");
 const { revokeSlackLinkAction } = await import(
-  "@/app/settings/developers/_lib/slack-link-actions"
+  "@/app/(app)/settings/developers/_lib/slack-link-actions"
 );
 const linkStart = await import("@/app/api/integrations/slack/link/start/route");
 const linkCallback = await import(
@@ -156,7 +156,7 @@ const callback = await import(
   "@/app/api/integrations/slack/bot/callback/route"
 );
 const { linkSlackAccount } = await import(
-  "@/app/integrations/slack/link/actions"
+  "@/app/(app)/integrations/slack/link/actions"
 );
 
 /** The real fetch, for the renderer's own files. */

@@ -1,0 +1,280 @@
+"use client";
+
+import { toast } from "@repo/design-system";
+import { Button } from "@repo/design-system/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/design-system/components/ui/dialog";
+import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
+import { cn } from "@repo/design-system/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "facehash";
+import {
+  ArrowLeft2,
+  ArrowRight,
+  ArrowRight2,
+  Heart,
+  Share,
+} from "iconsax-reactjs";
+import { useRouter } from "next/navigation";
+import { lazy, useCallback, useEffect } from "react";
+import ExamplesPreviewContainer from "@/components/editor/theme-preview/examples-preview-container";
+import { defaultThemeState } from "@/config/qr";
+import { siteConfig } from "@/config/site";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { useToggleLike } from "@/lib/hooks/themes";
+import { useSessionGuard } from "@/lib/hooks/use-gaurds";
+import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import { playgroundHref } from "@/lib/playground-links";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
+import { soundEvent } from "@/lib/sound/emit";
+import { useQREditorStore } from "@/store/editor-store";
+import type { CommunityTheme } from "@/types/community";
+
+const QRCode = lazy(() =>
+  import("@/lib/qrdx-lazy/qr-code").then((module) => ({
+    default: module.QRCode,
+  })),
+);
+
+const PREVIEW_VALUE = "https://qrdx.app";
+
+interface CommunityThemePreviewDialogProps {
+  theme: CommunityTheme | null;
+  themes: CommunityTheme[];
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onNavigate: (theme: CommunityTheme) => void;
+}
+
+export function CommunityThemePreviewDialog({
+  theme,
+  themes,
+  open,
+  onOpenChange,
+  onNavigate,
+}: CommunityThemePreviewDialogProps) {
+  const router = useRouter();
+  const toggleLike = useToggleLike();
+  const { checkValidSession } = useSessionGuard();
+
+  const displayTheme = theme
+    ? (themes.find((t) => t.id === theme.id) ?? theme)
+    : null;
+
+  const currentIndex = displayTheme
+    ? themes.findIndex((t) => t.id === displayTheme.id)
+    : -1;
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex >= 0 && currentIndex < themes.length - 1;
+
+  const goToPrev = useCallback(() => {
+    if (hasPrev) onNavigate(themes[currentIndex - 1]);
+  }, [hasPrev, themes, currentIndex, onNavigate]);
+
+  const goToNext = useCallback(() => {
+    if (hasNext) onNavigate(themes[currentIndex + 1]);
+  }, [hasNext, themes, currentIndex, onNavigate]);
+
+  useEffect(() => {
+    if (!open) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goToPrev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        goToNext();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [open, goToPrev, goToNext]);
+
+  usePostLoginAction("LIKE_THEME", (data?: { communityThemeId: string }) => {
+    if (displayTheme && data?.communityThemeId === displayTheme.id) {
+      toggleLike.mutate(displayTheme.id);
+    }
+  });
+
+  if (!displayTheme) return null;
+
+  const handleLike = () => {
+    if (
+      !checkValidSession("signin", "LIKE_THEME", {
+        communityThemeId: displayTheme.id,
+      })
+    ) {
+      return;
+    }
+    toggleLike.mutate(displayTheme.id);
+  };
+
+  // The gallery's cleaned design goes into the editor through the store; never
+  // a /playground/<savedThemeId> link, which shows the whole saved theme. A
+  // `style` link can't carry it either: it drops the logo icon a published
+  // theme may keep (lib/community/public-style-server.ts).
+  // One undo step, so the visitor's own design is one Undo away.
+  const handleViewDetails = () => {
+    useQREditorStore.getState().applyDesign({
+      ...defaultThemeState.styles,
+      ...displayTheme.styles,
+    });
+    onOpenChange(false);
+    router.push(playgroundHref({ tab: "design" }));
+  };
+
+  const handleShare = async () => {
+    const url = displayTheme.slug
+      ? `${siteConfig.url}/community/themes/${displayTheme.slug}`
+      : `${siteConfig.url}/community`;
+    try {
+      await navigator.clipboard.writeText(url);
+      toast.success("Community link copied");
+      soundEvent("copy");
+    } catch {
+      toast.error("Failed to copy URL");
+    }
+  };
+
+  const authorInitials = displayTheme.author.name
+    ?.split(" ")
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const styles = displayTheme.styles;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent
+        // The title names the theme; there's no description to point at.
+        aria-describedby={undefined}
+        className="flex h-[80vh] w-[95vw] max-w-6xl flex-col gap-0 overflow-visible p-0"
+        style={
+          {
+            "--tw-enter-translate-x": "0",
+            "--tw-enter-translate-y": "0",
+            "--tw-exit-translate-x": "0",
+            "--tw-exit-translate-y": "0",
+          } as React.CSSProperties
+        }
+      >
+        {hasPrev && (
+          <button
+            type="button"
+            onClick={goToPrev}
+            className="absolute -left-14 top-1/2 -translate-y-1/2 rounded-full border bg-background/80 p-2 text-foreground shadow-lg backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
+            aria-label="Previous theme"
+          >
+            <ArrowLeft2 className="size-5" />
+          </button>
+        )}
+        {hasNext && (
+          <button
+            type="button"
+            onClick={goToNext}
+            className="absolute -right-14 top-1/2 -translate-y-1/2 rounded-full border bg-background/80 p-2 text-foreground shadow-lg backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
+            aria-label="Next theme"
+          >
+            <ArrowRight2 className="size-5" />
+          </button>
+        )}
+
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-[inherit]">
+          <DialogHeader className="shrink-0 px-4 pt-4 pb-3">
+            <div className="flex items-center gap-3">
+              <DialogTitle className="text-base font-semibold">
+                {displayTheme.name}
+              </DialogTitle>
+              <span className="text-muted-foreground/40">|</span>
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <Avatar className="h-5 w-5">
+                  <AvatarImage
+                    src={displayTheme.author.image}
+                    alt={displayTheme.author.name}
+                    referrerPolicy="no-referrer"
+                  />
+                  <AvatarFallback className="text-[9px]">
+                    {authorInitials}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-xs">{displayTheme.author.name}</span>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="flex shrink-0 items-center justify-between px-4 py-1">
+            <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground/70">
+              Preview
+            </span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={handleLike}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium tabular-nums transition-colors",
+                  displayTheme.isLikedByMe
+                    ? "bg-rose-500/10 text-rose-600 hover:bg-rose-500/15 dark:text-rose-400"
+                    : "text-muted-foreground hover:bg-accent hover:text-foreground",
+                )}
+                title={displayTheme.isLikedByMe ? "Unlike theme" : "Like theme"}
+              >
+                <Heart
+                  className="size-4"
+                  variant={displayTheme.isLikedByMe ? "Bold" : "Linear"}
+                />
+                {displayTheme.likeCount > 0 && (
+                  <span>{displayTheme.likeCount}</span>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleShare}
+                aria-label="Share theme"
+                className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                title="Share theme"
+              >
+                <Share className="size-4" />
+              </button>
+              <div className="mr-2 h-4 w-px bg-border" />
+              <Button onClick={handleViewDetails} size="sm">
+                Open in Playground
+                <ArrowRight aria-hidden />
+              </Button>
+            </div>
+          </div>
+
+          <div className="min-h-0 flex-1">
+            <ScrollArea className="h-full">
+              <ExamplesPreviewContainer className="size-full">
+                <div className="flex size-full items-center justify-center p-8">
+                  <QRCode
+                    bgColor={styles.bgColor}
+                    cornerEyeDotPattern={styles.cornerEyeDotPattern}
+                    cornerEyePattern={styles.cornerEyePattern}
+                    dotColor={styles.dotColor}
+                    bodyPattern={styles.bodyPattern}
+                    level={styles.level}
+                    eyeColor={styles.eyeColor}
+                    fgColor={styles.fgColor}
+                    hideLogo={!styles.showLogo}
+                    logo={styles.customLogo ?? DEFAULT_QR_LOGO}
+                    scale={4}
+                    margin={styles.margin}
+                    templateId={styles.templateId}
+                    value={PREVIEW_VALUE}
+                    {...styleEngineOptions(styles)}
+                  />
+                </div>
+              </ExamplesPreviewContainer>
+            </ScrollArea>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -84,7 +84,7 @@ You don't need a database or any environment variables to work on the React libr
 
 | Path | What it is |
 | --- | --- |
-| `apps/docs` | The Next.js app behind qrdx.dev: marketing pages, the editor (`app/playground`), docs (`content/docs`), the blog, the signed-in app (`app/dashboard`, `app/settings`), admin, and the API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`) |
+| `apps/docs` | The Next.js app behind qrdx.dev: marketing pages, the editor (`app/(app)/playground`), docs (`content/docs`), the blog, the signed-in app (`app/(app)/dashboard`, `app/(app)/settings`), admin, and the API routes (`app/api`, served as `api.qrdx.dev/v1` and `mcp.qrdx.dev/mcp`) |
 | `packages/qrdx` | The QR engine and React library, published to npm as `qrdx` |
 | `packages/cli` | The command-line tool, published to npm as `@qrdx/cli` |
 | `packages/auth` | Better Auth server and client configuration |
@@ -104,11 +104,21 @@ CI (`.github/workflows/ci.yml`) runs these on every pull request and on every pu
 bun x turbo build --filter=qrdx --filter=@qrdx/cli   # the docs app and CLI use qrdx's build output; the CLI tests run its dist/index.js
 bun run typecheck                   # all packages with a typecheck script
 bun run typegen:docs && bun run typecheck:docs   # route types (PageProps, LayoutProps), then the app typecheck
+bun run --filter docs i18n:check    # translations against English (see Translating QRdx)
 bun run test                        # every package's tests, through turbo
 bun run lint:ci                     # ultracite check: Biome's lint and format rules over the whole repository
 ```
 
 A pull request into `staging` tests only the packages it changes and the packages that depend on them (`turbo test --affected`). A content-only change runs the docs app's tests and skips the engine's; a change to `packages/qrdx` runs the engine, the CLI and the docs app. Release pull requests into `main`, pushes to `main` and manual runs test everything. Turbo's cache (`.turbo/cache`, kept between runs with `actions/cache`) replays any task whose inputs haven't changed, and the job's summary lists what was replayed and what ran.
+
+The official frames (`packages/qrdx/src/frames/official`, hundreds of them) all get their spec, color, layout and generator checks and one crisp decode on every run, but the slow scan checks (the phone-camera model at three distances, 160 and 320 px, the scan score, zbar, PDF and EPS) only go to a sample: the hand-made frames, one frame per layout, and a set that rotates daily so every frame comes round (`packages/qrdx/scripts/official-frames/sample.mjs`). To scan every frame, as the weekly and release `Frame scan` workflow does, set `QRDX_FULL_FRAME_SCAN=1`:
+
+```bash
+cd packages/qrdx && QRDX_FULL_FRAME_SCAN=1 bun x vitest run tests/official-frames tests/frame-label-markers.test.ts
+cd apps/docs && QRDX_FULL_FRAME_SCAN=1 bun x vitest run tests/database/seed-frames-gate-1.test.ts tests/database/seed-frames-gate-2.test.ts
+```
+
+`QRDX_FRAME_SCAN_DAY=<n>` replays the sample a failing run named ("day n").
 
 The Husky `pre-push` hook runs `bun run prepush:quick`: the engine build, both typechecks, the lint check and the affected tests, compared with `origin/staging`. Run every test with `QRDX_PREPUSH=full git push` or `bun run prepush`, or skip the hook once with `git push --no-verify`.
 
@@ -141,6 +151,68 @@ The app suite signs in with a test account's Better Auth session cookie. Sign in
 Edit `packages/database/schema.ts` and apply it to your own development database with `bun run db:push`.
 
 A maintainer applies schema changes to the production database before the code that needs them ships, so the code already running has to keep working against the new schema. That means schema changes are additive and safe to run twice: new columns are nullable or have a default, and a pull request never drops or renames a column or table. Put the SQL for your change in `packages/database/manual-sql/`, numbered after the last file there and guarded so it can run more than once (`IF NOT EXISTS`), and describe it in your pull request.
+
+## Translating QRdx
+
+English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page and `/pricing`. The docs, the blog, the legal pages and the signed-in app are English only.
+
+The copy is in `apps/docs/messages/`:
+
+| File | What it holds |
+| --- | --- |
+| `en.json` | The English source: every key, with ICU placeholders such as `{count}` |
+| `<locale>.json` | One language's translations of those keys. A missing key shows in English |
+| `review/<locale>.json` | For each translated string, a hash of the English it came from and its status, `machine` or `reviewed` |
+| `glossary.json` | Names that are never translated (`keep`), fixed translations per language (`fixed`) and each language's tone (`register`) |
+
+### Add a language
+
+Open an issue first, so two people don't start the same language. A new language touches these files and nothing else:
+
+1. `apps/docs/lib/i18n/config.ts`: one entry in `LOCALE_CONFIG`. The key is the BCP 47 code (`nl`, `zh-Hant`). Give it the lowercase URL `segment`, its `name` written in the language itself, its `englishName`, the `hreflang` values, `ogLocale`, `dir` (`"rtl"` for Arabic, Hebrew or Persian) and `review: "machine"`.
+2. `apps/docs/messages/<code>.json`: the translations. It can start as `{}`, and a partial file is fine to merge, because untranslated strings show in English.
+3. `apps/docs/messages/review/<code>.json`: written by the translate script (below). Don't edit the hashes by hand.
+4. `apps/docs/messages/glossary.json` (optional): the language's fixed terms under `fixed`, such as the Free plan's name, and its tone under `register`.
+
+Routes, the language menu, `<html lang>` and `<html dir>`, page metadata and the sitemap read the config, so nothing else needs editing. A right-to-left language renders with `dir="rtl"`, but the layout hasn't been converted yet (logical CSS properties, mirrored icons, a font for the script). That work has its own issue.
+
+### Translate
+
+By hand: copy the keys you're translating from `en.json` into `<code>.json`, keeping the same nesting. Then record them, so a later change to the English shows up as stale:
+
+```bash
+bun run --filter docs i18n:translate --locale <code> --record
+```
+
+With a model: the script translates missing and stale strings through Vercel AI Gateway. Each request carries the glossary, the key, the page the string appears on and a length budget for short labels. The script checks every answer and keeps the English for any that fail. QRdx's gateway key isn't shared, so use your own:
+
+```bash
+AI_GATEWAY_API_KEY=<your key> bun run --filter docs i18n:translate --locale <code>
+I18N_MODEL=<gateway model id> AI_GATEWAY_API_KEY=<your key> bun run --filter docs i18n:translate --locale <code>
+```
+
+Read the result before you open the pull request. Machine output gets the same review as a hand translation.
+
+The rules for every string:
+
+- Keep placeholders and tags exactly as they are (`{count}`, `{count, plural, one {…} other {…}}`, `<link>…</link>`) and translate only the words around and inside them.
+- Keep every number the English states, written in Western digits. Add no feature, number, promise or adjective the English doesn't have.
+- Leave the names in the glossary's `keep` list in English: QRdx, Pro, Business, Never-Hostage, file formats and product names. The Free plan's name is translated.
+- Follow the language's `register`, and keep buttons and labels about as short as the English.
+- Legal pages stay in English, and links to them stay as they are.
+
+### Check
+
+```bash
+bun run --filter docs i18n:check            # CI runs this
+bun run --filter docs i18n:check --verbose  # also lists missing, unrecorded and stale strings
+```
+
+It fails on keys that English doesn't have, on placeholders or tags that changed, and on numbers that went missing. In a language that isn't reviewed yet, missing and stale strings only produce warnings. Also open `/<segment>` and `/<segment>/pricing` and attach screenshots at 1440 px and 390 px to the pull request; long German or Finnish words are the usual overflow.
+
+### Review and search engines
+
+A language with `review: "machine"` is live on the site but hidden from search engines. Its pages are `noindex`, they're left out of the sitemap, and no page links to them with hreflang. To publish a language, a native speaker reads every string, sets each one's `status` to `"reviewed"` in `review/<code>.json`, and changes the language's `review` to `"reviewed"` in the config. From the next deploy its pages are indexed, listed in the sitemap and linked with hreflang. `i18n:check` then fails on any string in that language that is missing, machine-made or stale. To publish single pages first, set `review` to a list of paths, such as `["/", "/pricing"]`.
 
 ## Pull requests
 

@@ -135,7 +135,11 @@ const list = await import("@/app/api/v1/community/items/route");
 const one = await import("@/app/api/v1/community/items/[id]/route");
 const image = await import("@/app/api/v1/qr/route");
 const mcp = await import("@/app/api/mcp/route");
-const { decodeStyleParam } = await import("@/lib/playground-style");
+const { decodeStyleParam: decodeWith } = await import("@/lib/playground-style");
+const { OFFICIAL_FRAME_RESOLVER } = await import("@/lib/community/catalog");
+// The MCP server makes its links with the whole catalogue: read them so
+const decodeStyleParam = (raw: string | null | undefined) =>
+  decodeWith(raw, OFFICIAL_FRAME_RESOLVER);
 
 const ORIGIN = "http://localhost:3000";
 const get = (path: string) => new NextRequest(`${ORIGIN}${path}`);

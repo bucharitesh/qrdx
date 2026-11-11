@@ -3,6 +3,7 @@
   "name": "Scan to pay",
   "description": "Payment prompt with a card glyph and a line for a note.",
   "category": "use-case",
+  "collection": "business",
   "contentTypes": ["upi", "paypal", "venmo", "url"],
   "tags": ["payments", "checkout", "retail"],
   "license": "CC0-1.0",

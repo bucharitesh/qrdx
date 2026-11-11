@@ -1,0 +1,89 @@
+{
+  "id": "property-key",
+  "name": "Keys",
+  "description": "A solid card with a round badge holding a key on its top edge.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "move-in"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M558.4 150A30.8 30.8 0 1 1 620 150A30.8 30.8 0 1 1 558.4 150ZM576.6 150A12.6 12.6 0 1 0 601.8 150A12.6 12.6 0 1 0 576.6 150ZM617.2 144.4L678.8 144.4A2.8 2.8 0 0 1 681.6 147.2L681.6 152.8A2.8 2.8 0 0 1 678.8 155.6L617.2 155.6A2.8 2.8 0 0 1 614.4 152.8L614.4 147.2A2.8 2.8 0 0 1 617.2 144.4ZM660.6 155.6L669 155.6A1.4 1.4 0 0 1 670.4 157L670.4 173.8A1.4 1.4 0 0 1 669 175.2L660.6 175.2A1.4 1.4 0 0 1 659.2 173.8L659.2 157A1.4 1.4 0 0 1 660.6 155.6ZM641 155.6L649.4 155.6A1.4 1.4 0 0 1 650.8 157L650.8 168.2A1.4 1.4 0 0 1 649.4 169.6L641 169.6A1.4 1.4 0 0 1 639.6 168.2L639.6 157A1.4 1.4 0 0 1 641 155.6Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for move-in info",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Welcome home",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

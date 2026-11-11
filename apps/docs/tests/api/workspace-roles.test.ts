@@ -147,8 +147,10 @@ const logo = await import("@/actions/workspace-logo");
 const themes = await import("@/actions/qr-themes");
 const publicStats = await import("@/actions/public-stats");
 const utmTemplates = await import("@/actions/utm-templates");
-const apiKeys = await import("@/app/settings/developers/_lib/api-key-actions");
-const webhooks = await import("@/app/dashboard/webhooks/_lib/actions");
+const apiKeys = await import(
+  "@/app/(app)/settings/developers/_lib/api-key-actions"
+);
+const webhooks = await import("@/app/(app)/dashboard/webhooks/_lib/actions");
 const { resolveApiCaller } = await import("@/app/api/v1/codes/_lib/api");
 const { migrateScope } = await import("@/lib/migrate/server/http");
 const { resolveUploadScope } = await import("@/lib/files/http");
@@ -884,7 +886,7 @@ describe("saving a shared theme", () => {
 
 // ─── The lists' bulk keys (feat/bulk-keys-range-select) ─────────────────────
 // What the codes and pages lists' bulk toolbar and keys call, with several
-// rows selected (app/dashboard/_lib/list-keys.ts offers these keys only with
+// rows selected (app/(app)/dashboard/_lib/list-keys.ts offers these keys only with
 // content.write). Viewers and billing members are refused on the server
 // before anything changes; the roles that write get past the role check.
 describe("bulk keys' endpoints, with several rows", () => {

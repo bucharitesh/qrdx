@@ -1,11 +1,11 @@
 // The affiliate program's server actions against the in-memory database.
-// Admin (app/admin/affiliates/actions.ts): approve, reject, suspend and
+// Admin (app/(app)/admin/affiliates/actions.ts): approve, reject, suspend and
 // mark paid ask for the admin's own second factor (requireStrongAdmin) and
 // write the admin audit log; mark paid records exactly the signed quote the
 // page showed (every currency, converted to US dollars at its rates), only
 // from the one US$25 minimum, only to a PayPal address, refuses rather than
 // shrink when something changed, and never twice for one PayPal reference.
-// Affiliate (app/settings/affiliate/_lib/actions.ts): applying once with a
+// Affiliate (app/(app)/settings/affiliate/_lib/actions.ts): applying once with a
 // random code and the terms version, choosing a code once, and the PayPal
 // email only once approved, after "Confirm it's you", with a security email.
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -35,7 +35,7 @@ vi.mock(
 vi.mock("@/lib/feature-availability", () => ({
   isFeatureAvailable: (id: string) => id === "affiliates",
 }));
-vi.mock("@/app/admin/_lib/guard", () => ({
+vi.mock("@/app/(app)/admin/_lib/guard", () => ({
   assertAdmin: vi.fn(async () => {
     if (!state.admin) throw new Error("Not found");
     return state.admin;
@@ -109,13 +109,13 @@ import {
   rejectAffiliateAction,
   suspendAffiliateAction,
   voidCommissionAction,
-} from "@/app/admin/affiliates/actions";
+} from "@/app/(app)/admin/affiliates/actions";
 import {
   applyForAffiliateAction,
   chooseReferralCodeAction,
   getAffiliateApplyState,
   savePaypalEmailAction,
-} from "@/app/settings/affiliate/_lib/actions";
+} from "@/app/(app)/settings/affiliate/_lib/actions";
 import { quotePayout, signPayoutQuote } from "@/lib/affiliates/payout-quote";
 import {
   anonymiseAffiliatePayouts,
