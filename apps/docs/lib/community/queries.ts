@@ -317,12 +317,18 @@ async function buildCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
   });
 }
 
+export type ListSort = "popular" | "newest" | "oldest";
+
 export interface ListOptions {
   type: CommunityItemType;
-  sort?: "popular" | "newest";
+  sort?: ListSort;
   official?: boolean;
   featured?: boolean;
   profileId?: string;
+  /** Items this account published */
+  createdBy?: string;
+  /** Items this account saved */
+  savedBy?: string;
   limit?: number;
   offset?: number;
 }
@@ -343,16 +349,36 @@ export async function listItems(
     if (options.profileId) {
       conditions.push(eq(communityItem.profileId, options.profileId));
     }
+    if (options.createdBy) {
+      conditions.push(eq(communityItem.createdBy, options.createdBy));
+    }
+    if (options.savedBy) {
+      conditions.push(
+        exists(
+          db
+            .select({ one: sql`1` })
+            .from(communitySave)
+            .where(
+              and(
+                eq(communitySave.itemId, communityItem.id),
+                eq(communitySave.userId, options.savedBy),
+              ),
+            ),
+        ),
+      );
+    }
     const order = options.featured
       ? [desc(communityItem.featuredAt)]
       : options.sort === "newest"
         ? [desc(communityItem.publishedAt), asc(communityItem.id)]
-        : [
-            desc(communityItem.likeCount),
-            desc(communityItem.useCount),
-            desc(communityItem.publishedAt),
-            asc(communityItem.id),
-          ];
+        : options.sort === "oldest"
+          ? [asc(communityItem.publishedAt), asc(communityItem.id)]
+          : [
+              desc(communityItem.likeCount),
+              desc(communityItem.useCount),
+              desc(communityItem.publishedAt),
+              asc(communityItem.id),
+            ];
     const rows = (await itemsQuery()
       .where(and(...conditions))
       .orderBy(...order)
@@ -369,7 +395,13 @@ export async function listItems(
 export async function listFrames(
   options: Omit<ListOptions, "type"> = {},
 ): Promise<CommunityItemCard[]> {
-  if (options.official === false || options.featured || options.profileId) {
+  if (
+    options.official === false ||
+    options.featured ||
+    options.profileId ||
+    options.createdBy ||
+    options.savedBy
+  ) {
     return listItems({ ...options, type: "frame", limit: 200 });
   }
   // Official and member frames apart: the official library alone is
