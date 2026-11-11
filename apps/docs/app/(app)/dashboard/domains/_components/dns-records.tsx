@@ -6,10 +6,9 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import { use } from "react";
+import { useTranslations } from "next-intl";
 import { CopyButton } from "@/components/copy-button";
 import type { DnsRecord } from "@/lib/custom-domains";
-import { getAppTranslations } from "@/lib/i18n/app-locale";
 
 /** Record name as most DNS providers want it: relative to the zone, "@" for the apex. */
 function relativeName(name: string, apexName: string | null): string {
@@ -27,7 +26,7 @@ export function DnsRecords({
   records: DnsRecord[];
   apexName: string | null;
 }) {
-  const t = use(getAppTranslations("app.dashboard.domains.dnsRecords"));
+  const t = useTranslations("app.dashboard.domains.dnsRecords");
   if (records.length === 0) return null;
 
   return (

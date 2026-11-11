@@ -80,8 +80,8 @@ export function CodesHeader({
   const title = current
     ? current.name
     : filters.folder === "none"
-      ? "Not in a folder"
-      : "All codes";
+      ? t("notInAFolder")
+      : t("allCodes");
   const parentName = (folder: FolderRow) =>
     folders.find((row) => row.id === folder.parentId)?.name ?? null;
   const to = (folder: string | null) =>
