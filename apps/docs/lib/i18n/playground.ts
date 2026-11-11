@@ -8,6 +8,11 @@ import { CHROME_NAMESPACES } from "./messages";
 export const EDITOR_NAMESPACES = [
   "editor",
   "codeBuilder",
+  // The code builder over the editor reuses the dashboard's code panels.
+  "app.dashboard.codes.routingPanel",
+  "app.dashboard.codes.utmTemplates",
+  "app.dashboard.codes.codeOptions",
+  "app.shell.whatsNew",
   "playground",
   "scanChecker",
   "limits",
@@ -24,6 +29,7 @@ export const PLAYGROUND_NAMESPACES = [
 /** The content forms embedded in the generator pages (/qr-code-generator/<type>). */
 export const CONTENT_FORM_NAMESPACES = [
   "editor.contentForms",
+  "editor.connections",
   "editor.dynamicLinkToggle",
   "editor.linkSourceMenu",
 ] as const;
@@ -40,11 +46,13 @@ export const AI_CHAT_NAMESPACES = [
   "editor.themeGallery",
   "editor.qrPresetSelect",
   "editor.hooks.useImageUpload",
+  "editor.connections",
   "nav.themeToggle",
 ] as const;
 
 /** The AI art studio on /ai/art. */
 export const AI_ART_STUDIO_NAMESPACES = [
+  "editor.connections",
   "aiArt.aiArtStudio",
   "aiArt.aiArtResult",
   "aiArt.aiArtPresetGallery",
@@ -68,10 +76,18 @@ export const APP_NAMESPACES = [
 export const DASHBOARD_NAMESPACES = [
   ...APP_NAMESPACES,
   "app.dashboard",
+  // Workspace settings (dashboard/<slug>/settings) use the account
+  // settings' developer components.
+  "app.settings.developers",
 ] as const;
 
 /** Settings: the app and the settings pages. */
-export const SETTINGS_NAMESPACES = [...APP_NAMESPACES, "app.settings"] as const;
+export const SETTINGS_NAMESPACES = [
+  ...APP_NAMESPACES,
+  "app.settings",
+  // Notifications reuse the webhook event picker.
+  "app.dashboard.webhooks",
+] as const;
 
 /** Sign-in, two-step verification and the session check (signed out). */
 export const SIGN_IN_NAMESPACES = [
