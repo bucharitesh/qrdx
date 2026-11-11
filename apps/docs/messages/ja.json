@@ -546,7 +546,10 @@
       "auditLog": "CSVエクスポート対応の監査ログ",
       "conversions": "コンバージョン計測",
       "webhooks": "Webhook、Zapier、Slack",
-      "aiArt": "AIアート画像は月{count}枚、チーム単位で共有"
+      "aiArt": "AIアート画像は月{count}枚、チーム単位で共有",
+      "clientReports": "クライアントブランドの統計ページ",
+      "clientWork": "クライアントポータルとブランド表示なしのクライアント向けレポート",
+      "invoiceBilling": "年払いを請求書で支払い"
     },
     "comparison": {
       "title": "プランを比較",
@@ -560,7 +563,8 @@
         "analytics": "分析とリンク設定",
         "brand": "ブランドとチーム",
         "files": "ファイルとフォーム",
-        "automation": "自動化とAPI"
+        "automation": "自動化とAPI",
+        "agency": "クライアント業務"
       },
       "rows": {
         "price": "料金",
@@ -593,7 +597,12 @@
         "formResponses": "月あたりのフォーム回答数",
         "emailAlerts": "メールダイジェストとアラート",
         "webhooks": "Webhook、Zapier、Slack",
-        "apiRequests": "1日あたりのAPIリクエスト数"
+        "apiRequests": "1日あたりのAPIリクエスト数",
+        "clientReports": "クライアントブランドの統計ページ",
+        "clientReportsHint": "共有されるQRコードの統計ページに、クライアントの名前、ロゴ、色を表示します",
+        "clientPortal": "クライアントポータル",
+        "clientPortalHint": "共有したフォルダを、お客様のブランドで閲覧専用として公開します",
+        "invoiceBilling": "年払いを請求書で支払い"
       },
       "cells": {
         "pricePaid": "月額{monthly}または年額{yearly}",
@@ -606,7 +615,9 @@
         "aiArtPooled": "{count}、チームで共有枠",
         "noTeams": "1（チームなし）",
         "storage": "{size}（1ファイル{perFile}）",
-        "apiBulk": "{count}＋一括作成"
+        "apiBulk": "{count}＋一括作成",
+        "clientReportsBadge": "フッターに小さくクレジット表記あり",
+        "clientReportsWhiteLabel": "ホワイトラベル"
       }
     },
     "guarantee": {
@@ -679,6 +690,25 @@
           "answer": "お支払いはPolar（polar.sh）が処理します。Polarはマーチャント・オブ・レコードとして、売上税、VAT、GSTを取り扱います。QRdxがカード情報を目にすることはありません。"
         }
       }
+    },
+    "invoice": {
+      "open": "請求書払いに変更する",
+      "title": "{plan}を請求書で支払う",
+      "description": "チェックアウトではカードとウォレットをご利用いただけます。{plan}の1年分を銀行振込または請求書でお支払いになる場合は、請求先情報をお送りください。請求書は個別に手配し、メールでご返信します。",
+      "company": "会社名",
+      "billingEmail": "請求先メール",
+      "country": "国",
+      "taxId": "税務ID・VAT ID（任意）",
+      "address": "請求先住所（任意）",
+      "notes": "その他（任意）",
+      "notesPlaceholder": "発注書番号や、請求書の宛先となる担当者など",
+      "submit": "送信する",
+      "sending": "送信中…",
+      "sentTitle": "送信しました",
+      "sent": "請求書とお支払い方法を{email}にご返信します。まだ請求は発生していません。",
+      "close": "閉じる",
+      "signIn": "ログインして請求書を依頼する",
+      "signInNote": "請求書はアカウントのワークスペース宛てに送付するため、先にログインしてください。"
     }
   },
   "docs": {

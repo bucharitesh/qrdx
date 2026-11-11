@@ -546,7 +546,10 @@
       "auditLog": "审计日志，支持 CSV 导出",
       "conversions": "转化追踪",
       "webhooks": "Webhook、Zapier 和 Slack",
-      "aiArt": "每月 {count} 张 AI 艺术图片，团队共享额度"
+      "aiArt": "每月 {count} 张 AI 艺术图片，团队共享额度",
+      "clientReports": "客户品牌统计页面",
+      "clientWork": "客户门户和无品牌标识的客户报告",
+      "invoiceBilling": "按年开具发票付款"
     },
     "comparison": {
       "title": "套餐对比",
@@ -560,7 +563,8 @@
         "analytics": "分析和链接控制",
         "brand": "品牌和团队",
         "files": "文件和表单",
-        "automation": "自动化和 API"
+        "automation": "自动化和 API",
+        "agency": "客户项目"
       },
       "rows": {
         "price": "价格",
@@ -593,7 +597,12 @@
         "formResponses": "每月表单回复数",
         "emailAlerts": "邮件摘要和提醒",
         "webhooks": "Webhook、Zapier 和 Slack",
-        "apiRequests": "每日 API 请求数"
+        "apiRequests": "每日 API 请求数",
+        "clientReports": "客户品牌统计页面",
+        "clientReportsHint": "在二维码的共享统计页面上显示客户的名称、标志和颜色",
+        "clientPortal": "客户门户",
+        "clientPortalHint": "以你的品牌为客户提供所共享文件夹的只读访问",
+        "invoiceBilling": "按年开具发票付款"
       },
       "cells": {
         "pricePaid": "{monthly}/月或 {yearly}/年",
@@ -606,7 +615,9 @@
         "aiArtPooled": "{count}，团队内共用",
         "noTeams": "1（无团队）",
         "storage": "{size}（每个文件 {perFile}）",
-        "apiBulk": "{count} + 批量创建"
+        "apiBulk": "{count} + 批量创建",
+        "clientReportsBadge": "页脚带有小字署名",
+        "clientReportsWhiteLabel": "白标"
       }
     },
     "guarantee": {
@@ -679,6 +690,25 @@
           "answer": "付款由 Polar（polar.sh）处理，它是登记商户（merchant of record），负责处理销售税、VAT 和 GST。QRdx 不会接触到您的银行卡信息。"
         }
       }
+    },
+    "invoice": {
+      "open": "改用发票付款",
+      "title": "通过发票支付 {plan}",
+      "description": "结账支持银行卡和电子钱包。如需通过银行转账或发票支付一年的 {plan} 费用，请把账单信息发给我们。发票由我们人工安排，并通过电子邮件回复。",
+      "company": "公司",
+      "billingEmail": "账单邮箱",
+      "country": "国家或地区",
+      "taxId": "税号或 VAT 号（选填）",
+      "address": "账单地址（选填）",
+      "notes": "其他说明（选填）",
+      "notesPlaceholder": "例如采购订单号，或发票的接收人",
+      "submit": "发送申请",
+      "sending": "发送中…",
+      "sentTitle": "申请已发送",
+      "sent": "我们会把发票和付款方式回复到 {email}。目前尚未扣款。",
+      "close": "关闭",
+      "signIn": "登录后申请发票",
+      "signInNote": "发票会开给你账户的工作区，请先登录。"
     }
   },
   "docs": {

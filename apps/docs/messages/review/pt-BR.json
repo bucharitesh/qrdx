@@ -1399,6 +1399,18 @@
     "source": "84e164ba9cb5",
     "status": "machine"
   },
+  "pricing.highlights.clientReports": {
+    "source": "abf7aa22ca39",
+    "status": "machine"
+  },
+  "pricing.highlights.clientWork": {
+    "source": "85d46d784525",
+    "status": "machine"
+  },
+  "pricing.highlights.invoiceBilling": {
+    "source": "8b89509bc3a3",
+    "status": "machine"
+  },
   "pricing.comparison.title": {
     "source": "30d9abfd7c7a",
     "status": "machine"
@@ -1441,6 +1453,10 @@
   },
   "pricing.comparison.groups.automation": {
     "source": "89039ded4ba8",
+    "status": "machine"
+  },
+  "pricing.comparison.groups.agency": {
+    "source": "b09ece0dc768",
     "status": "machine"
   },
   "pricing.comparison.rows.price": {
@@ -1567,6 +1583,26 @@
     "source": "c9c4821e29df",
     "status": "machine"
   },
+  "pricing.comparison.rows.clientReports": {
+    "source": "abf7aa22ca39",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.clientReportsHint": {
+    "source": "71678af0a648",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.clientPortal": {
+    "source": "a26687bd738a",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.clientPortalHint": {
+    "source": "418969031dd7",
+    "status": "machine"
+  },
+  "pricing.comparison.rows.invoiceBilling": {
+    "source": "8b89509bc3a3",
+    "status": "machine"
+  },
   "pricing.comparison.cells.pricePaid": {
     "source": "30de9063c02c",
     "status": "machine"
@@ -1609,6 +1645,14 @@
   },
   "pricing.comparison.cells.apiBulk": {
     "source": "7f1e604ea863",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.clientReportsBadge": {
+    "source": "b362971ee4c5",
+    "status": "machine"
+  },
+  "pricing.comparison.cells.clientReportsWhiteLabel": {
+    "source": "c711077aba84",
     "status": "machine"
   },
   "pricing.guarantee.eyebrow": {
@@ -1749,6 +1793,74 @@
   },
   "pricing.faq.items.billing.answer": {
     "source": "66ec3bb6a34f",
+    "status": "machine"
+  },
+  "pricing.invoice.open": {
+    "source": "7241aa0134d7",
+    "status": "machine"
+  },
+  "pricing.invoice.title": {
+    "source": "580b3e823507",
+    "status": "machine"
+  },
+  "pricing.invoice.description": {
+    "source": "bfe9928d2292",
+    "status": "machine"
+  },
+  "pricing.invoice.company": {
+    "source": "de4743c87973",
+    "status": "machine"
+  },
+  "pricing.invoice.billingEmail": {
+    "source": "8805b92842c5",
+    "status": "machine"
+  },
+  "pricing.invoice.country": {
+    "source": "701d021d08c5",
+    "status": "machine"
+  },
+  "pricing.invoice.taxId": {
+    "source": "ad851a4b01f8",
+    "status": "machine"
+  },
+  "pricing.invoice.address": {
+    "source": "77c938125e7c",
+    "status": "machine"
+  },
+  "pricing.invoice.notes": {
+    "source": "ac37ddf3d625",
+    "status": "machine"
+  },
+  "pricing.invoice.notesPlaceholder": {
+    "source": "3e9a6876f372",
+    "status": "machine"
+  },
+  "pricing.invoice.submit": {
+    "source": "3a69f897298e",
+    "status": "machine"
+  },
+  "pricing.invoice.sending": {
+    "source": "b8ed5279e897",
+    "status": "machine"
+  },
+  "pricing.invoice.sentTitle": {
+    "source": "a73f99f6bfc8",
+    "status": "machine"
+  },
+  "pricing.invoice.sent": {
+    "source": "8ee6e9dffc0c",
+    "status": "machine"
+  },
+  "pricing.invoice.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "pricing.invoice.signIn": {
+    "source": "d62c55d24066",
+    "status": "machine"
+  },
+  "pricing.invoice.signInNote": {
+    "source": "c6d5bfba58c3",
     "status": "machine"
   },
   "docs.meta.titleSuffix": {

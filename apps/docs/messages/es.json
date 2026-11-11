@@ -546,7 +546,10 @@
       "auditLog": "Registro de auditoría con exportación a CSV",
       "conversions": "Seguimiento de conversiones",
       "webhooks": "Webhooks, Zapier y Slack",
-      "aiArt": "{count} imágenes de arte con IA al mes, compartidas por equipo"
+      "aiArt": "{count} imágenes de arte con IA al mes, compartidas por equipo",
+      "clientReports": "Páginas de estadísticas con marca del cliente",
+      "clientWork": "Portal de clientes e informes sin marca",
+      "invoiceBilling": "Pago anual con factura"
     },
     "comparison": {
       "title": "Compara los planes",
@@ -560,7 +563,8 @@
         "analytics": "Analíticas y control de enlaces",
         "brand": "Marca y equipo",
         "files": "Archivos y formularios",
-        "automation": "Automatización y API"
+        "automation": "Automatización y API",
+        "agency": "Trabajo con clientes"
       },
       "rows": {
         "price": "Precio",
@@ -593,7 +597,12 @@
         "formResponses": "Respuestas de formularios al mes",
         "emailAlerts": "Resúmenes y alertas por correo",
         "webhooks": "Webhooks, Zapier y Slack",
-        "apiRequests": "Solicitudes a la API por día"
+        "apiRequests": "Solicitudes a la API por día",
+        "clientReports": "Estadísticas con marca del cliente",
+        "clientReportsHint": "El nombre, el logo y el color de un cliente en la página de estadísticas compartida de un código",
+        "clientPortal": "Portal de clientes",
+        "clientPortalHint": "Acceso de solo lectura a las carpetas que compartes, con tu marca",
+        "invoiceBilling": "Pago anual con factura"
       },
       "cells": {
         "pricePaid": "{monthly}/mes o {yearly}/año",
@@ -606,7 +615,9 @@
         "aiArtPooled": "{count}, compartidos por equipo",
         "noTeams": "1 (sin equipos)",
         "storage": "{size} ({perFile} por archivo)",
-        "apiBulk": "{count} + creación masiva"
+        "apiBulk": "{count} + creación masiva",
+        "clientReportsBadge": "Con un pequeño crédito al pie",
+        "clientReportsWhiteLabel": "Marca blanca"
       }
     },
     "guarantee": {
@@ -679,6 +690,25 @@
           "answer": "Los pagos los procesa Polar (polar.sh), que actúa como merchant of record y se encarga del impuesto sobre las ventas, el VAT y el GST. QRdx nunca ve los datos de tu tarjeta."
         }
       }
+    },
+    "invoice": {
+      "open": "Pagar con factura",
+      "title": "Paga {plan} con factura",
+      "description": "El pago admite tarjetas y billeteras digitales. Si prefieres pagar un año de {plan} por transferencia bancaria o con factura, envíanos tus datos de facturación. Preparamos las facturas a mano y respondemos por correo.",
+      "company": "Empresa",
+      "billingEmail": "Correo de facturación",
+      "country": "País",
+      "taxId": "ID fiscal o VAT (opcional)",
+      "address": "Dirección de facturación (opcional)",
+      "notes": "Algo más (opcional)",
+      "notesPlaceholder": "Un número de orden de compra o quién debe recibir la factura",
+      "submit": "Enviar solicitud",
+      "sending": "Enviando…",
+      "sentTitle": "Solicitud enviada",
+      "sent": "Responderemos a {email} con la factura y la forma de pagarla. No se ha cobrado nada.",
+      "close": "Cerrar",
+      "signIn": "Inicia sesión para pedir una factura",
+      "signInNote": "Enviamos la factura para el espacio de trabajo de tu cuenta, así que primero inicia sesión."
     }
   },
   "docs": {

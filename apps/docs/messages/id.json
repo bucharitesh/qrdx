@@ -546,7 +546,10 @@
       "auditLog": "Log audit dengan ekspor CSV",
       "conversions": "Pelacakan konversi",
       "webhooks": "Webhook, Zapier, dan Slack",
-      "aiArt": "{count} gambar seni AI per bulan, dipakai bersama per tim"
+      "aiArt": "{count} gambar seni AI per bulan, dipakai bersama per tim",
+      "clientReports": "Halaman statistik berbrand klien",
+      "clientWork": "Portal klien dan laporan klien tanpa brand",
+      "invoiceBilling": "Bayar tahunan dengan faktur"
     },
     "comparison": {
       "title": "Bandingkan paket",
@@ -560,7 +563,8 @@
         "analytics": "Analitik dan kontrol tautan",
         "brand": "Merek dan tim",
         "files": "File dan formulir",
-        "automation": "Otomatisasi dan API"
+        "automation": "Otomatisasi dan API",
+        "agency": "Pekerjaan klien"
       },
       "rows": {
         "price": "Harga",
@@ -593,7 +597,12 @@
         "formResponses": "Respons formulir per bulan",
         "emailAlerts": "Ringkasan dan peringatan email",
         "webhooks": "Webhook, Zapier, dan Slack",
-        "apiRequests": "Permintaan API per hari"
+        "apiRequests": "Permintaan API per hari",
+        "clientReports": "Halaman statistik berbrand klien",
+        "clientReportsHint": "Nama, logo, dan warna klien pada halaman statistik bersama milik sebuah kode",
+        "clientPortal": "Portal klien",
+        "clientPortalHint": "Akses hanya-baca ke folder yang Anda bagikan, dengan brand Anda",
+        "invoiceBilling": "Bayar tahunan dengan faktur"
       },
       "cells": {
         "pricePaid": "{monthly}/bln atau {yearly}/thn",
@@ -606,7 +615,9 @@
         "aiArtPooled": "{count}, digabung per tim",
         "noTeams": "1 (tanpa tim)",
         "storage": "{size} ({perFile} per file)",
-        "apiBulk": "{count} + pembuatan massal"
+        "apiBulk": "{count} + pembuatan massal",
+        "clientReportsBadge": "Dengan kredit kecil di footer",
+        "clientReportsWhiteLabel": "White-label"
       }
     },
     "guarantee": {
@@ -679,6 +690,25 @@
           "answer": "Pembayaran diproses oleh Polar (polar.sh), yang bertindak sebagai merchant of record dan mengurus pajak penjualan, VAT, dan GST. QRdx tidak pernah melihat detail kartu Anda."
         }
       }
+    },
+    "invoice": {
+      "open": "Bayar dengan faktur",
+      "title": "Bayar {plan} dengan faktur",
+      "description": "Checkout menerima kartu dan dompet digital. Untuk membayar {plan} setahun lewat transfer bank atau faktur, kirimkan data penagihan Anda kepada kami. Kami menyiapkan faktur secara manual dan membalas lewat email.",
+      "company": "Perusahaan",
+      "billingEmail": "Email penagihan",
+      "country": "Negara",
+      "taxId": "NPWP atau ID VAT (opsional)",
+      "address": "Alamat penagihan (opsional)",
+      "notes": "Lainnya (opsional)",
+      "notesPlaceholder": "Nomor purchase order, atau siapa yang harus menerima faktur",
+      "submit": "Kirim permintaan",
+      "sending": "Mengirim…",
+      "sentTitle": "Permintaan terkirim",
+      "sent": "Kami akan membalas ke {email} dengan faktur dan cara pembayarannya. Belum ada biaya yang ditagihkan.",
+      "close": "Tutup",
+      "signIn": "Masuk untuk meminta faktur",
+      "signInNote": "Kami mengirim faktur untuk workspace akun Anda, jadi masuk terlebih dahulu."
     }
   },
   "common": {
