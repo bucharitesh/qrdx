@@ -230,7 +230,7 @@ describe("QR Code AI compare page", () => {
       `The Free plan adds ${free.dynamicCodes} dynamic codes, ${free.landingPages} hosted pages and ${free.aiArtPerMonth} AI art images a month, with no trial.`,
       `Pro (${usd("pro", "month")}/mo or ${usd("pro", "year")}/yr) makes codes and pages unlimited`,
       `Business (${usd("business", "month")}/mo or ${usd("business", "year")}/yr) adds unlimited team members and white-label pages`,
-      `${free.aiArtPerMonth} images a month on Free and ${pro.aiArtPerMonth} on Pro, from a much shorter list of style presets`,
+      `${free.aiArtPerMonth} images a month on Free and ${pro.aiArtPerMonth} on Pro, from {facts.aiArtStyles} style presets`,
       `keeps ${free.analyticsRetentionDays} days of scan history on Free, ${years(pro.analyticsRetentionDays)} years on Pro and all of it on Business`,
       `(${perDay(free.apiRequestsPerDay)} requests a day on Free, ${perDay(pro.apiRequestsPerDay)} on Pro)`,
     ]) {
@@ -239,14 +239,28 @@ describe("QR Code AI compare page", () => {
   });
 
   it("stays true where it says QR Code AI is ahead", () => {
-    // "a much shorter list of style presets" than its 1,200+ templates
+    // Its 1,200+ templates against QRdx's style presets: still far more
     expect(text).toContain("advertises 1,200+ templates");
-    expect(AI_ART_PRESETS.length).toBeLessThan(1200 / 10);
+    expect(AI_ART_PRESETS.length).toBeLessThan(1200 / 2);
     // The help page is the source for "No uptime SLA yet"
     expect(rows.get("Uptime commitment")).toBe("No uptime SLA yet");
     expect(
       readFileSync(join(COMPARE, "..", "docs", "help", "contact.mdx"), "utf8"),
     ).toContain("QRdx doesn't offer an uptime SLA yet");
+  });
+});
+
+describe("QR-Verse compare page", () => {
+  const text = readFileSync(join(COMPARE, "qr-verse.mdx"), "utf8");
+
+  it("counts QRdx's AI art styles from the catalogue", () => {
+    expect(text).toContain("QR-Verse advertises 157 AI art styles.");
+    expect(text).toContain("QRdx has {facts.aiArtStyles} style presets");
+    // It no longer calls QR-Verse's catalogue the bigger one: QRdx's isn't smaller.
+    expect(text).not.toMatch(
+      /smaller set of presets|very large style catalogue/,
+    );
+    expect(AI_ART_PRESETS.length).toBeGreaterThan(157);
   });
 });
 

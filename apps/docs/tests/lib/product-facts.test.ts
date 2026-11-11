@@ -13,6 +13,7 @@ import {
 import { remark } from "remark";
 import remarkMdx from "remark-mdx";
 import { describe, expect, it } from "vitest";
+import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import { BRAND_LOGO_COUNT } from "@/lib/brand-logos/catalog.generated";
 import {
@@ -63,6 +64,7 @@ describe("PRODUCT_FACTS", () => {
         (frame) => frame.category === "seasonal",
       ).length,
       artModel: "OpenAI's GPT Image 2",
+      aiArtStyles: AI_ART_PRESETS.length,
       auditLogRetentionDays: 365,
       auditLogExportRows: "50,000",
       barcodeFormats: BARCODE_FORMATS.length,
@@ -162,7 +164,7 @@ describe("remarkNpmStatus", () => {
 // A literal number in front of one of these nouns is a count that will go
 // stale: write `{facts.<name>}` instead (lib/product-facts.ts).
 const HARD_CODED_COUNT =
-  /\b(\d+|six|nine|eleven|seventeen|nineteen|twenty(?:-one|-three)?)\s+(body patterns?|body ·|corner[- ]eye(?: shapes| patterns| dot patterns)?|eye(?: shapes| patterns)|eye[- ]dot(?: shapes| patterns)?|eye cent(?:re|er)s|(?:call-to-action )?frames|frame (?:styles|templates)|templates|barcode (?:formats|types|symbologies))\b/i;
+  /\b(\d+|six|nine|eleven|seventeen|nineteen|twenty(?:-one|-three)?)\s+(body patterns?|body ·|corner[- ]eye(?: shapes| patterns| dot patterns)?|eye(?: shapes| patterns)|eye[- ]dot(?: shapes| patterns)?|eye cent(?:re|er)s|(?:call-to-action )?frames|frame (?:styles|templates)|templates|barcode (?:formats|types|symbologies)|(?:AI art )?style presets)\b/i;
 
 function filesUnder(dir: string, extensions: RegExp): string[] {
   return readdirSync(path.join(app, dir), { recursive: true })

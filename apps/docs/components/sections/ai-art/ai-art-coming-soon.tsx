@@ -1,3 +1,5 @@
+"use client";
+
 import { Bot } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -6,15 +8,20 @@ import { MagicStar } from "iconsax-reactjs";
 import Link from "next/link";
 import { AsciiField } from "@/components/fx";
 import { ART_PLAYGROUND_HREF } from "./config";
-import { AI_ART_PRESETS } from "./presets";
-
-const SWATCHES = AI_ART_PRESETS.slice(0, 10);
+import { useAIArtPresets } from "./load-presets";
+import { AI_ART_PRESET_COUNT, aiArtPresetPreview } from "./preset-meta";
 
 /**
  * Shown when AI artwork can't be generated. Visitor-facing copy only: the
  * self-hosting setup lives in the docs.
  */
 export function AIArtComingSoon() {
+  // A few featured styles, once the catalogue has loaded (it isn't bundled).
+  const { catalogue } = useAIArtPresets();
+  const samples = (catalogue?.AI_ART_FEATURED_PRESET_IDS ?? [])
+    .slice(0, 10)
+    .flatMap((id) => catalogue?.AI_ART_PRESETS.find((p) => p.id === id) ?? []);
+
   return (
     <Card className="relative mx-auto max-w-5xl gap-6 overflow-hidden p-6 shadow-xs md:p-8">
       <AsciiField
@@ -35,27 +42,30 @@ export function AIArtComingSoon() {
             </Badge>
           </div>
           <p className="max-w-xl text-sm text-pretty text-muted-foreground">
-            Describe a scene or pick one of {AI_ART_PRESETS.length} styles, and
-            an image model paints it around your QR code. Every result gets a
-            scan check before you download it.
+            Describe a scene or pick one of {AI_ART_PRESET_COUNT} styles, and an
+            image model paints it around your QR code. Every result gets a scan
+            check before you download it.
           </p>
         </div>
       </div>
 
       <ul
         aria-label="A few of the styles"
-        className="relative flex flex-wrap gap-2"
+        className="relative flex min-h-7 flex-wrap gap-2"
       >
-        {SWATCHES.map((preset) => (
+        {samples.map((preset) => (
           <li key={preset.id}>
             <Badge
               className="gap-1.5 bg-background py-1 pl-1 font-normal text-muted-foreground"
               variant="outline"
             >
-              <span
-                aria-hidden
-                className="size-4 rounded-full"
-                style={{ background: preset.swatch }}
+              <img
+                alt=""
+                className="size-4 rounded-full bg-muted object-cover"
+                height={16}
+                loading="lazy"
+                src={aiArtPresetPreview(preset.id)}
+                width={16}
               />
               {preset.name}
             </Badge>
