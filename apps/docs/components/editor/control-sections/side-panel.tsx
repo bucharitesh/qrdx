@@ -15,6 +15,7 @@ import {
   SheetTrigger,
 } from "@repo/design-system/components/ui/sheet";
 import useMediaQuery from "@repo/design-system/hooks/use-media-query";
+import { useTranslations } from "next-intl";
 import {
   createContext,
   type ReactNode,
@@ -116,6 +117,7 @@ export function SidePanel({
   sideOffset?: number;
   children: ReactNode;
 }) {
+  const t = useTranslations("editor.controlSections.sidePanel");
   const { side } = useContext(SidePanelContext);
   const sheet = useMediaQuery(SIDE_PANEL_SHEET_QUERY) ?? false;
   const bannerInset = useConsentBannerInset();
@@ -189,7 +191,7 @@ export function SidePanel({
             {title}
           </p>
           <Button
-            aria-label={`Close ${title.toLowerCase()}`}
+            aria-label={t("closeTitle", { title: title.toLowerCase() })}
             onClick={() => onOpenChange(false)}
             size="icon-sm"
             type="button"

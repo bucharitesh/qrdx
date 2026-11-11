@@ -2,6 +2,7 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { getAllTemplates, getStylePairRisk, QRCodeSVG } from "qrdx";
 import type {
   BodyPattern,
@@ -142,14 +143,15 @@ export function eyeSummary(
 }
 
 export function DotPatternControl() {
+  const t = useTranslations("editor.controlSections.patternControls");
   const { style, set } = useStyleSetter();
   const selected = (style.bodyPattern || "circle") as BodyPattern;
   return (
     <ShapePicker
       category={(id) => BODY_CATEGORY[id] ?? "decorative"}
       featured={BODY_FEATURED}
-      label="Dot shape"
-      noun="dot shapes"
+      label={t("dotShape")}
+      noun={t("dotShapes")}
       onChange={(id) => set("bodyPattern", id)}
       options={bodyPatterns}
       preview={(id) => (
@@ -169,6 +171,7 @@ export function DotPatternControl() {
  * with the two shapes on their own behind "Customize outer and center".
  */
 export function EyeControls() {
+  const t = useTranslations("editor.controlSections.patternControls");
   const { style, setStyle, set } = useStyleSetter();
   const outer = (style.cornerEyePattern || "square") as CornerEyePattern;
   const centre = (style.cornerEyeDotPattern || "circle") as CornerEyeDotPattern;
@@ -186,8 +189,8 @@ export function EyeControls() {
           return (item && EYE_CATEGORY[item.outer]) ?? "decorative";
         }}
         featured={EYE_PRESET_FEATURED}
-        label="Eye style"
-        noun="eye styles"
+        label={t("eyeStyle")}
+        noun={t("eyeStyles")}
         onChange={(id) => {
           const item = EYE_PRESETS.find((entry) => entry.id === id);
           if (!item) return;
@@ -235,7 +238,7 @@ export function EyeControls() {
           onClick={() => setCustom((open) => !open)}
           type="button"
         >
-          <span>Customize outer and center</span>
+          <span>{t("customizeOuterAndCenter")}</span>
           <span className="text-muted-foreground flex min-w-0 items-center gap-2 font-normal">
             {!preset && (
               <span className="truncate">
@@ -256,8 +259,8 @@ export function EyeControls() {
             <ShapePicker
               category={(id) => EYE_CATEGORY[id] ?? "decorative"}
               featured={EYE_FEATURED}
-              label="Outer eye shape"
-              noun="outer shapes"
+              label={t("outerEyeShape")}
+              noun={t("outerShapes")}
               onChange={(id) => set("cornerEyePattern", id)}
               options={eyePatterns}
               preview={(id) => (
@@ -272,8 +275,8 @@ export function EyeControls() {
             <ShapePicker
               category={(id) => EYE_DOT_CATEGORY[id] ?? "decorative"}
               featured={EYE_DOT_FEATURED}
-              label="Inner eye shape"
-              noun="center shapes"
+              label={t("innerEyeShape")}
+              noun={t("centerShapes")}
               onChange={(id) => set("cornerEyeDotPattern", id)}
               options={eyeDotPatterns}
               preview={(id) => (
@@ -295,13 +298,14 @@ export function EyeControls() {
 }
 
 export function BorderControl() {
+  const t = useTranslations("editor.controlSections.patternControls");
   const { style, setStyle } = useStyleSetter();
   const templates = getAllTemplates();
   const selected = style.templateId ?? "default";
   return (
     <div>
-      <OptionGroupLabel>Border</OptionGroupLabel>
-      <OptionGrid columns={3} label="Border">
+      <OptionGroupLabel>{t("border")}</OptionGroupLabel>
+      <OptionGrid columns={3} label={t("border")}>
         {templates.map((template) => (
           <OptionTile
             key={template.id}
@@ -330,11 +334,12 @@ export function BorderControl() {
 }
 
 export function ErrorLevelControl() {
+  const t = useTranslations("editor.controlSections.patternControls");
   const { style, set } = useStyleSetter();
   const selected = style.level || "L";
   return (
     <div className="space-y-3">
-      <OptionGrid label="Error correction">
+      <OptionGrid label={t("errorCorrection")}>
         {ERROR_LEVELS.map((level) => (
           <OptionTile
             hint={level.recovery}
@@ -354,8 +359,7 @@ export function ErrorLevelControl() {
         ))}
       </OptionGrid>
       <p className="text-muted-foreground text-xs text-pretty">
-        Higher levels survive scratches and logos but add more dots. Use H when
-        you add a logo.
+        {t("higherLevelsSurviveScratchesAnd")}
       </p>
     </div>
   );

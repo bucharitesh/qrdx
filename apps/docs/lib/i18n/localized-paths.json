@@ -23,6 +23,7 @@
     "/mcp",
     "/ai",
     "/ai/art",
-    "/compare"
+    "/compare",
+    "/playground"
   ]
 }

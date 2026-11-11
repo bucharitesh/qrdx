@@ -14,9 +14,10 @@ import {
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
 import { ArrowRight, GalleryAdd, Lock } from "iconsax-reactjs";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import { SignInLink } from "@/components/auth/sign-in-link";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { ART_MODEL_LABEL, ART_SUPPORTS_SEED } from "@/lib/ai/art-models";
 import { playgroundHref } from "@/lib/playground-links";
 import { AIArtComingSoon } from "./ai-art-coming-soon";
@@ -60,6 +61,7 @@ interface AIArtStudioProps {
 }
 
 export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
+  const t = useTranslations("aiArt.aiArtStudio");
   const [store] = useState(() => createAIArtRunStore(configured));
   const art = useAIArtRun({ store });
   const [text, setText] = useState("");
@@ -130,7 +132,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
         }}
       >
         <div className="flex flex-col gap-2">
-          <Label htmlFor="ai-art-text">Link or text</Label>
+          <Label htmlFor="ai-art-text">{t("linkOrText")}</Label>
           <Input
             autoComplete="off"
             disabled={isGenerating}
@@ -142,14 +144,13 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             value={text}
           />
           <p className="text-muted-foreground text-xs">
-            Shorter content means fewer, larger modules: cleaner art and more
-            reliable scans.
+            {t("shorterContentMeansFewerLarger")}
           </p>
         </div>
 
         <div className="flex flex-col gap-2">
           <div className="flex items-baseline justify-between gap-2">
-            <Label htmlFor="ai-art-prompt">Style</Label>
+            <Label htmlFor="ai-art-prompt">{t("style")}</Label>
             <span className="text-muted-foreground text-xs tabular-nums">
               {prompt.length}/{ART_PROMPT_MAX_LENGTH}
             </span>
@@ -173,33 +174,33 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                 setPreset(null);
               }
             }}
-            placeholder="Describe a scene, e.g. a lighthouse on a rocky coast at sunset, oil painting"
+            placeholder={t("describeASceneEG")}
             rows={3}
             value={prompt}
           />
         </div>
 
         <SliderField
-          description={["More artistic", "Clearer code"]}
+          description={[t("moreArtistic"), t("clearerCode")]}
           disabled={isGenerating}
           id="ai-art-visibility"
-          label="QR visibility"
+          label={t("qrVisibility")}
           onChange={setVisibility}
           range={ART_QR_VISIBILITY}
           value={visibility}
         />
         <SliderField
-          description={["Follows your prompt", "Interprets freely"]}
+          description={[t("followsYourPrompt"), t("interpretsFreely")]}
           disabled={isGenerating}
           id="ai-art-creativity"
-          label="Creativity"
+          label={t("creativity")}
           onChange={setCreativity}
           range={ART_CREATIVITY}
           value={creativity}
         />
 
         <div className="flex flex-col gap-2">
-          <Label id="ai-art-variations-label">Variations</Label>
+          <Label id="ai-art-variations-label">{t("variations")}</Label>
           <ToggleGroup
             aria-labelledby="ai-art-variations-label"
             disabled={isGenerating}
@@ -219,45 +220,43 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             ))}
           </ToggleGroup>
           <p className="text-muted-foreground text-xs">
-            Each variation is its own image and uses 1 credit. Every image is
-            verified to scan before you see it, and the best one is picked for
-            you.
+            {t("eachVariationIsItsOwn")}
           </p>
         </div>
 
         <details className="group rounded-lg border p-3">
           <summary className="cursor-pointer text-sm font-medium">
             {ART_SUPPORTS_SEED
-              ? "Advanced: negative prompt, seed, reference image"
-              : "Advanced: negative prompt, reference image"}
+              ? t("advancedNegativePromptSeedReference")
+              : t("advancedNegativePromptReferenceImage")}
           </summary>
           <div className="mt-4 flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <Label htmlFor="ai-art-negative">Negative prompt</Label>
+              <Label htmlFor="ai-art-negative">{t("negativePrompt")}</Label>
               <Textarea
                 disabled={isGenerating}
                 id="ai-art-negative"
                 maxLength={ART_NEGATIVE_PROMPT_MAX_LENGTH}
                 onChange={(event) => setNegativePrompt(event.target.value)}
-                placeholder="Things to avoid, e.g. people, buildings, dark colors"
+                placeholder={t("thingsToAvoidEG")}
                 rows={2}
                 value={negativePrompt}
               />
               <p className="text-muted-foreground text-xs">
-                The model is asked to keep these out of the image.
+                {t("theModelIsAskedTo")}
               </p>
             </div>
 
             {ART_SUPPORTS_SEED && (
               <div className="flex flex-col gap-2">
                 <div className="flex items-center justify-between gap-2">
-                  <Label htmlFor="ai-art-seed">Seed</Label>
+                  <Label htmlFor="ai-art-seed">{t("seed")}</Label>
                   <div className="flex items-center gap-2">
                     <Label
                       className="text-muted-foreground text-xs"
                       htmlFor="ai-art-seed-lock"
                     >
-                      Lock seed
+                      {t("lockSeed")}
                     </Label>
                     <Switch
                       checked={seedLocked}
@@ -275,21 +274,20 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                   onChange={(event) =>
                     setSeed(event.target.value.replace(/[^\d]/g, ""))
                   }
-                  placeholder={seedLocked ? "e.g. 42" : "Random each run"}
+                  placeholder={seedLocked ? "e.g. 42" : t("randomEachRun")}
                   value={seed}
                 />
                 <p className="text-muted-foreground text-xs">
-                  The same seed and settings give a similar image (the model can
-                  still vary it); variations use seed, seed + 1, …
+                  {t("theSameSeedAndSettings")}
                 </p>
               </div>
             )}
 
             <div className="flex flex-col gap-2">
-              <Label>Reference image</Label>
+              <Label>{t("referenceImage")}</Label>
               <input
                 accept={AI_ART_REFERENCE_TYPES.join(",")}
-                aria-label="Upload a reference image"
+                aria-label={t("uploadAReferenceImage")}
                 className="sr-only"
                 onChange={handleReference}
                 ref={referenceInputRef}
@@ -298,7 +296,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
               {reference ? (
                 <div className="flex items-center gap-3">
                   <img
-                    alt="Reference"
+                    alt={t("reference")}
                     className="size-16 rounded border object-cover"
                     src={reference}
                   />
@@ -310,7 +308,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                     variant="ghost"
                   >
                     <Close />
-                    Remove
+                    {t("remove")}
                   </Button>
                 </div>
               ) : (
@@ -323,14 +321,11 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                   variant="outline"
                 >
                   <GalleryAdd />
-                  Upload reference
+                  {t("uploadReference")}
                 </Button>
               )}
               <p className="text-muted-foreground text-xs">
-                Optional. A logo, photo or palette for the model to work into
-                the artwork: its colors and shapes carry over. It's resized in
-                your browser and sent with your prompt through Vercel AI Gateway
-                to {ART_MODEL_LABEL}.
+                {t("optionalALogoPhotoOr", { ART_MODEL_LABEL })}
               </p>
             </div>
           </div>
@@ -345,13 +340,13 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             >
               {isGenerating ? <Spinner /> : <Bot />}
               {isGenerating
-                ? "Generating…"
-                : `Generate ${variations > 1 ? `${variations} variations` : "QR art"}`}
+                ? t("generating")
+                : t("generateVariations", { count: variations })}
             </Button>
             {isGenerating && (
               <Button onClick={art.cancel} type="button" variant="outline">
                 <Close />
-                Cancel
+                {t("cancel")}
               </Button>
             )}
           </div>
@@ -366,25 +361,25 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
         <div className="bg-muted/50 flex items-start gap-3 rounded-lg border p-3 text-sm">
           <Lock className="text-muted-foreground mt-0.5 size-4 shrink-0" />
           <p className="text-muted-foreground">
-            <span className="text-foreground font-medium">
-              AI art codes are static.
-            </span>{" "}
-            The content is baked into the image and can't be changed after you
-            share it. For a link you can edit later, with scan analytics, create
-            a{" "}
-            <SignInLink
-              className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
-              href="/dashboard"
-            >
-              dynamic code
-            </SignInLink>{" "}
-            and use its short link here.
+            {t.rich("aiArtCodesAreStatic", {
+              span: (chunks) => (
+                <span className="text-foreground font-medium">{chunks}</span>
+              ),
+              signInLink: (chunks) => (
+                <SignInLink
+                  className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+                  href="/dashboard"
+                >
+                  {chunks}
+                </SignInLink>
+              ),
+            })}
           </p>
         </div>
 
         <p className="text-muted-foreground -mt-2 text-sm text-pretty">
-          Already designing a code?{" "}
-          <Link
+          {t("alreadyDesigningACode")}{" "}
+          <LocaleLink
             className="text-foreground inline-flex items-center gap-1 font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
             href={playgroundHref({
               tab: "art",
@@ -392,10 +387,10 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
               artStyle: presetId ?? undefined,
             })}
           >
-            Open in playground
+            {t("openInPlayground")}
             <ArrowRight aria-hidden className="size-3.5" />
-          </Link>{" "}
-          to paint its content, dynamic link included.
+          </LocaleLink>{" "}
+          {t("toPaintItsContentDynamic")}
         </p>
       </form>
 
@@ -406,8 +401,8 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             ? (value) => {
                 setSeed(String(value));
                 setSeedLocked(true);
-                toast.success(`Seed ${value} locked`, {
-                  description: "Find it under Advanced.",
+                toast.success(t("seedValueLocked", { value }), {
+                  description: t("findItUnderAdvanced"),
                 });
               }
             : undefined
@@ -479,18 +474,19 @@ function CreditsNote({
   signedIn: boolean;
   variations: number;
 }) {
+  const t = useTranslations("aiArt.aiArtStudio");
   const plans = `Free ${formatAllowance(allowances.free)}, Pro ${formatAllowance(allowances.pro)}, Business ${formatAllowance(allowances.business)} (shared by the team) images a month.`;
   if (!signedIn) {
     return (
       <p className="text-muted-foreground text-xs">
-        Sign in to generate. {plans}
+        {t("signInToGeneratePlans", { plans })}
       </p>
     );
   }
   if (!credits) {
     return (
       <p className="text-muted-foreground text-xs">
-        Each image uses 1 AI art credit; failed images are refunded. {plans}
+        {t("eachImageUses1Ai", { plans })}
       </p>
     );
   }
@@ -502,23 +498,30 @@ function CreditsNote({
   if (credits.remaining === null) {
     return (
       <p className="text-muted-foreground text-xs">
-        Unlimited AI art on your plan. This run uses {variations}.
+        {t("unlimitedAiArtOnYour", { variations })}
       </p>
     );
   }
   return (
     <p className="text-muted-foreground text-xs">
-      <span className="text-foreground font-medium tabular-nums">
-        {credits.remaining} of {credits.limit}
-      </span>{" "}
-      AI art images left this month
-      {credits.pooled ? " (shared by your team)" : ""}, resets {resets}. This
-      run uses {variations}; failed images are refunded.
+      {t.rich("creditsLeft", {
+        remaining: credits.remaining,
+        limit: credits.limit ?? 0,
+        pooled: credits.pooled ? "yes" : "no",
+        resets,
+        variations,
+        count: (chunks) => (
+          <span className="text-foreground font-medium tabular-nums">
+            {chunks}
+          </span>
+        ),
+      })}
       {credits.remaining < variations && (
         <span className="text-amber-600 dark:text-amber-400">
           {" "}
-          Not enough left for {variations}: pick fewer variations
-          {credits.plan === "business" ? "." : " or upgrade."}
+          {credits.plan === "business"
+            ? t("notEnoughLeft", { variations })
+            : t("notEnoughLeftOrUpgrade", { variations })}
         </span>
       )}
     </p>

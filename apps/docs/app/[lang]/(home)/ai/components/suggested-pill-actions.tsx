@@ -1,6 +1,7 @@
 "use client";
 
 import { Gallery as ImageIcon } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useEffect, useReducer } from "react";
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
 import { PromptSwatch } from "@/components/editor/ai/prompt-swatch";
@@ -18,6 +19,7 @@ export function SuggestedPillActions({
   onThemeGeneration: (promptData: AIPromptData) => void;
   isGeneratingTheme: boolean;
 }) {
+  const t = useTranslations("ai.chat.suggestedPillActions");
   const [uploadedImages, dispatch] = useReducer(imageUploadReducer, []);
 
   const {
@@ -79,7 +81,7 @@ export function SuggestedPillActions({
           disabled={isGeneratingTheme}
           style={{ display: "none" }}
         />
-        <ImageIcon /> From an Image
+        <ImageIcon /> {t("fromAnImage")}
       </PillActionButton>
 
       {Object.entries(PROMPTS).map(([key, { label, prompt, swatch }]) => (

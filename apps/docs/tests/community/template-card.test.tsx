@@ -1,8 +1,9 @@
 // A page template's card and preview render on the server (the card is a
 // server component, so the page never goes to the browser): the scrubbed
 // page shows, its personal data doesn't.
-import { renderToStaticMarkup } from "react-dom/server";
+
 import { describe, expect, it, vi } from "vitest";
+import { renderIntl } from "../support/intl";
 
 // next/font only works inside Next's compiler.
 vi.mock("next/font/google", () => {
@@ -70,7 +71,7 @@ describe("page template cards", () => {
       preview: {},
       page: { type: "links", content },
     };
-    const html = renderToStaticMarkup(ItemGrid({ cards: [card] }));
+    const html = renderIntl(ItemGrid({ cards: [card] }));
     expect(html).toContain('href="/community/templates/harbour-menu-ab12"');
     // The page shows its sample text, never what the person wrote.
     expect(html).toContain("Your name");

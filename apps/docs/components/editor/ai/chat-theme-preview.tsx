@@ -10,6 +10,7 @@ import {
   ArrowDown2 as ChevronsUpDown,
   MagicStar as Zap,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { getNormalizedColor, QRCodeSVG } from "qrdx";
 import { type ComponentProps, useState } from "react";
 import { useFeedbackText } from "@/lib/hooks/use-feedback-text";
@@ -47,12 +48,13 @@ export function ChatThemePreview({
   children,
   ...props
 }: ChatThemePreviewProps) {
+  const t = useTranslations("editor.ai.chatThemePreview");
   const [isExpanded, setIsExpanded] = useState(expanded);
   const loading = status === "loading";
 
   const feedbackText = useFeedbackText({
     showFeedbackText: loading,
-    feedbackMessages: FEEDBACK_MESSAGES,
+    feedbackMessages: FEEDBACK_KEYS.map((key) => t(`feedback.${key}`)),
     rotationIntervalInSeconds: 8,
   });
 
@@ -85,7 +87,7 @@ export function ChatThemePreview({
             <AlertCircle className="size-4" />
           </div>
           <span className="text-foreground/90 text-sm">
-            Stopped or failed. Retry from the message above.
+            {t("stoppedOrFailedRetryFrom")}
           </span>
         </div>
       </Card>
@@ -159,13 +161,15 @@ export function ChatThemePreview({
               onClick={handleApplyTheme}
             >
               <Zap className="size-3.5!" />
-              Apply
+              {t("apply")}
             </Button>
 
             <button
               type="button"
               className="text-foreground/75 group-hover/control:text-foreground ml-auto transition-colors"
-              aria-label={isExpanded ? "Collapse section" : "Expand section"}
+              aria-label={
+                isExpanded ? t("collapseSection") : t("expandSection")
+              }
             >
               <ChevronsUpDown
                 className={cn(
@@ -195,9 +199,5 @@ export function ChatThemePreview({
   return null;
 }
 
-const FEEDBACK_MESSAGES = [
-  "Picking colors that scan…",
-  "Shaping the dots and eyes…",
-  "Checking contrast…",
-  "Almost there…",
-];
+// The lines shown while a theme generates: editor.ai.chatThemePreview.feedback.
+const FEEDBACK_KEYS = ["colors", "shapes", "contrast", "almost"] as const;

@@ -26,8 +26,8 @@ import {
 import { useDropzone } from "react-dropzone";
 import {
   GRADE_COLORS,
-  GRADE_LABELS,
   ScanCheckList,
+  useGradeLabels,
 } from "@/components/editor/scan-score";
 import { InfoHint } from "@/components/help/info-hint";
 import { compareDecoded, type DecodedMatch } from "@/lib/scan-match";
@@ -78,6 +78,7 @@ export function ScanChecker({
   expected,
   renderLinkAction,
 }: ScanCheckerProps) {
+  const gradeLabels = useGradeLabels();
   const t = useTranslations("scanChecker");
   const [status, setStatus] = useState<Status>({ phase: "idle" });
   const [preview, setPreview] = useState<string | null>(null);
@@ -244,7 +245,7 @@ export function ScanChecker({
         <span
           className={cn("size-2 rounded-full", GRADE_COLORS[result.grade])}
         />
-        {GRADE_LABELS[result.grade]}
+        {gradeLabels[result.grade]}
       </span>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import type { CalcomFormData } from "@/lib/validations/qr-content";
@@ -11,6 +12,7 @@ import type { CalcomContent } from "@/types/qr-content";
 import { encodeCalcom } from "@/utils/qr-content-encoder";
 
 export function CalcomForm() {
+  const t = useTranslations("editor.contentForms.calcomForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -44,7 +46,7 @@ export function CalcomForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="calcom-booking-url">
-          Cal.com booking URL *
+          {t("calComBookingUrl")}
         </Label>
         <Input
           id="calcom-booking-url"
@@ -64,7 +66,7 @@ export function CalcomForm() {
       />
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Cal.com booking page
+        {t("scanningWillOpenYourCal")}
       </p>
     </div>
   );

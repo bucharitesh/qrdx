@@ -14,6 +14,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
 import { publishCommunityDesign } from "@/actions/community";
 import { TagSelector } from "@/components/tag-selector";
@@ -55,6 +56,7 @@ export function PublishDesignDialog({
   chatDraftId?: string;
   onPublished?: (href: string) => void;
 }) {
+  const t = useTranslations("community.publishDesignDialog");
   const nameId = useId();
   const descriptionId = useId();
   const [name, setName] = useState(draft.name);
@@ -116,35 +118,34 @@ export function PublishDesignDialog({
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Tick aria-hidden className="size-5" />
-                Published
+                {t("published")}
               </DialogTitle>
               <DialogDescription>
-                {name.trim() || "Your design"} is live in the community.
+                {t("valueIsLiveInThe", { value: name.trim() || "Your design" })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button onClick={() => onOpenChange(false)} variant="outline">
-                Done
+                {t("done")}
               </Button>
               <Button asChild>
-                <Link href={published}>View it</Link>
+                <Link href={published}>{t("viewIt")}</Link>
               </Button>
             </DialogFooter>
           </>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Publish to the community</DialogTitle>
+              <DialogTitle>{t("publishToTheCommunity")}</DialogTitle>
               <DialogDescription>
-                The chat drafted these details. Change anything you like;
-                nothing is shared until you publish.
+                {t("theChatDraftedTheseDetails")}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor={nameId}>Name</Label>
+                  <Label htmlFor={nameId}>{t("name")}</Label>
                   <span className="text-muted-foreground text-xs tabular-nums">
                     {name.length}/{NAME_MAX_LENGTH}
                   </span>
@@ -159,7 +160,7 @@ export function PublishDesignDialog({
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor={descriptionId}>Description</Label>
+                  <Label htmlFor={descriptionId}>{t("description")}</Label>
                   <span className="text-muted-foreground text-xs tabular-nums">
                     {description.length}/{DESCRIPTION_MAX_LENGTH}
                   </span>
@@ -169,7 +170,7 @@ export function PublishDesignDialog({
                   id={descriptionId}
                   maxLength={DESCRIPTION_MAX_LENGTH}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Optional: what it suits"
+                  placeholder={t("optionalWhatItSuits")}
                   rows={3}
                   value={description}
                 />
@@ -204,7 +205,7 @@ export function PublishDesignDialog({
                       className="underline underline-offset-2"
                       href={refusal.href}
                     >
-                      See it
+                      {t("seeIt")}
                     </Link>
                   )}
                 </p>
@@ -213,14 +214,14 @@ export function PublishDesignDialog({
 
             <DialogFooter>
               <Button onClick={() => onOpenChange(false)} variant="outline">
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 disabled={!(accepted && name.trim()) || pending}
                 onClick={submit}
               >
                 {pending && <Spinner className="size-4" />}
-                {pending ? "Checking and publishing" : "Publish"}
+                {pending ? t("checkingAndPublishing") : t("publish")}
               </Button>
             </DialogFooter>
           </>

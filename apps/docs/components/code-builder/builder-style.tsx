@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { type ColorConfig, getColorString } from "qrdx";
 import { useMemo } from "react";
 import { CodeQr } from "@/app/(app)/dashboard/codes/_components/code-qr";
@@ -174,6 +175,7 @@ export function BuilderStyle({
   /** Saved themes of the workspace; null while loading */
   themes: SavedTheme[] | null;
 }) {
+  const tFrame = useTranslations("editor.controlSections.frameControls");
   const current = useMemo(() => themeLook(style), [style]);
   const choices = useMemo(() => themeChoices(themes ?? []), [themes]);
   // Names an official frame in the Frame header once the library's index loads
@@ -286,7 +288,7 @@ export function BuilderStyle({
             <ControlSection
               hint="frame"
               popover
-              summary={frameName(current.frame)}
+              summary={frameName(current.frame, tFrame("none"))}
               title="Frame"
             >
               <FrameControls />

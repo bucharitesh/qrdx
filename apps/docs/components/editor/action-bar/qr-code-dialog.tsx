@@ -19,6 +19,7 @@ import {
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Book1, Copy, Element3, InfoCircle } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useCodeDialogStore } from "@/components/editor/action-bar/code-dialog-store";
 import {
@@ -86,6 +87,7 @@ export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
 }
 
 function GetCode({ onLeave }: { onLeave: () => void }) {
+  const t = useTranslations("editor.actionBar.qrCodeDialog");
   const lang = useCodeDialogStore((state) => state.lang);
   const style = useQREditorStore((state) => state.themeState.styles);
   const value = useQREditorStore((state) => state.value);
@@ -130,7 +132,7 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
       clearTimeout(copiedTimer.current);
       copiedTimer.current = setTimeout(() => setCopied(null), 2000);
     } catch {
-      toast.error("Couldn't copy to the clipboard");
+      toast.error(t("couldntCopyToTheClipboard"));
     }
   };
   const copyProps = (id: string, text: string) => ({
@@ -156,10 +158,9 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
     <div className="flex max-h-[inherit] min-h-0 flex-col">
       <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
         <div className="min-w-0 flex-1 space-y-1">
-          <ResponsiveDialogTitle>Get code</ResponsiveDialogTitle>
+          <ResponsiveDialogTitle>{t("getCode")}</ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
-            Use this design in your app, on a web page, through the API or with
-            an AI assistant.
+            {t("useThisDesignInYour")}
           </ResponsiveDialogDescription>
         </div>
         <DialogCloseButton className="-mt-1 -mr-2 hidden sm:inline-flex" />
@@ -191,9 +192,12 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
         <div className="min-h-0 flex-1 overflow-y-auto px-6 pt-4 pb-6">
           <TabsContent className="mt-0 space-y-4" value="react">
             <Lead>
-              Install the open-source{" "}
-              <code className="font-mono text-xs">qrdx</code> package (
-              {NPM_QRDX.version} on npm) and drop in this component.
+              {t.rich("installTheOpenSourceQrdx", {
+                version: NPM_QRDX.version,
+                code: (chunks) => (
+                  <code className="font-mono text-xs">{chunks}</code>
+                ),
+              })}
             </Lead>
             <CommandLine
               prefix="$"
@@ -211,10 +215,7 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
           </TabsContent>
 
           <TabsContent className="mt-0 space-y-4" value="shadcn">
-            <Lead>
-              Add the QR Code component from the QRdx registry, then use it with
-              this design.
-            </Lead>
+            <Lead>{t("addTheQrCodeComponent")}</Lead>
             <CommandLine
               prefix="$"
               text={shadcn.install}
@@ -230,9 +231,7 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
           </TabsContent>
 
           <TabsContent className="mt-0 space-y-4" value="image">
-            <Lead>
-              A public image of this code to embed anywhere. No API key needed.
-            </Lead>
+            <Lead>{t("aPublicImageOfThis")}</Lead>
             <CodeCard
               code={image.code}
               lang="html"
@@ -240,7 +239,7 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
               {...copyProps("image-html", image.code)}
             />
             <UrlBox
-              label="Image URL"
+              label={t("imageUrl")}
               text={image.url}
               {...copyProps("image-url", image.url)}
             />
@@ -255,20 +254,22 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
             ) : (
               <>
                 <Lead>
-                  Creates a dynamic code with this design. It needs an{" "}
-                  <Link
-                    className={linkClass}
-                    href="/docs/developers/api-keys"
-                    onNavigate={onLeave}
-                  >
-                    API key
-                  </Link>
-                  .
+                  {t.rich("createsADynamicCodeWith", {
+                    link: (chunks) => (
+                      <Link
+                        className={linkClass}
+                        href="/docs/developers/api-keys"
+                        onNavigate={onLeave}
+                      >
+                        {chunks}
+                      </Link>
+                    ),
+                  })}
                 </Lead>
                 <CodeCard
                   code={rest.code}
                   lang="bash"
-                  title="Terminal"
+                  title={t("terminal")}
                   {...copyProps("api-curl", rest.code)}
                 />
                 <LeftOut items={rest.omitted} />
@@ -278,14 +279,17 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
 
           <TabsContent className="mt-0 space-y-4" value="mcp">
             <Lead>
-              Add this server to your AI assistant; no key needed.{" "}
-              <Link
-                className={linkClass}
-                href="/docs/developers/mcp"
-                onNavigate={onLeave}
-              >
-                Set it up
-              </Link>
+              {t.rich("addThisServerToYour", {
+                link: (chunks) => (
+                  <Link
+                    className={linkClass}
+                    href="/docs/developers/mcp"
+                    onNavigate={onLeave}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </Lead>
             <CommandLine
               text={MCP_SERVER_URL}
@@ -294,23 +298,22 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
             <CodeCard
               code={mcp.code}
               lang="json"
-              title="design_qr arguments"
+              title={t("designQrArguments")}
               {...copyProps("mcp-args", mcp.code)}
             />
             <p className="text-muted-foreground text-xs">
-              Ask: “Use QRdx design_qr with these arguments.” QRdx may change
-              the style until the code scans well.
+              {t("askUseQrdxDesignQr")}
             </p>
             <LeftOut items={mcp.omitted} />
           </TabsContent>
 
           {cli ? (
             <TabsContent className="mt-0 space-y-4" value="cli">
-              <Lead>Writes this design to qr.svg.</Lead>
+              <Lead>{t("writesThisDesignToQr")}</Lead>
               <CodeCard
                 code={cli.code}
                 lang="bash"
-                title="Terminal"
+                title={t("terminal")}
                 {...copyProps("cli", cli.code)}
               />
               <LeftOut items={cli.omitted} />
@@ -325,13 +328,13 @@ function GetCode({ onLeave }: { onLeave: () => void }) {
                 href="/docs/developers"
                 onNavigate={onLeave}
               >
-                Developer docs
+                {t("developerDocs")}
               </Link>
             </span>
             <span className="flex items-center gap-1.5">
               <Element3 className="size-3.5 shrink-0" />
               <Link className={linkClass} href="/plugins" onNavigate={onLeave}>
-                Plugins for Figma, Canva, Raycast and Chrome
+                {t("pluginsForFigmaCanvaRaycast")}
               </Link>
             </span>
           </div>
@@ -355,9 +358,12 @@ function CopyIconButton({
   onCopy,
   label,
 }: CopyProps & { label: string }) {
+  const t = useTranslations("editor.actionBar.qrCodeDialog");
   return (
     <Button
-      aria-label={copied ? `${label} copied` : `Copy ${label}`}
+      aria-label={
+        copied ? t("labelCopied", { label }) : t("copyLabel", { label })
+      }
       className="text-muted-foreground hover:text-foreground shrink-0"
       onClick={onCopy}
       size="icon-sm"
@@ -374,6 +380,7 @@ function CommandLine({
   prefix,
   ...copy
 }: CopyProps & { text: string; prefix?: string }) {
+  const t = useTranslations("editor.actionBar.qrCodeDialog");
   return (
     <div className="bg-muted/40 flex h-10 items-center gap-2 rounded-full border pr-1 pl-4">
       {prefix ? (
@@ -384,7 +391,7 @@ function CommandLine({
       <code className="min-w-0 flex-1 truncate font-mono text-xs" title={text}>
         {text}
       </code>
-      <CopyIconButton label={prefix ? "command" : "address"} {...copy} />
+      <CopyIconButton label={prefix ? t("command") : t("address")} {...copy} />
     </div>
   );
 }
@@ -423,6 +430,7 @@ function CodeCard({
   code: string;
   lang: string;
 }) {
+  const t = useTranslations("editor.actionBar.qrCodeDialog");
   const lines = code.split("\n").length;
   return (
     <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border">
@@ -431,7 +439,7 @@ function CodeCard({
           {title}
           <span className="text-muted-foreground/60">
             {" "}
-            · {lines} {lines === 1 ? "line" : "lines"}
+            · {lines} {lines === 1 ? t("line") : t("lines")}
           </span>{" "}
           {hint}
         </span>
@@ -443,7 +451,7 @@ function CodeCard({
           variant={copied ? "secondary" : "outline"}
         >
           {copied ? <Tick /> : <Copy />}
-          {copied ? "Copied" : "Copy"}
+          {copied ? t("copied") : t("copy")}
         </Button>
       </div>
       <div className="max-h-[min(40dvh,360px)] overflow-auto [&_button]:hidden [&_figure]:my-0 [&_figure]:rounded-none [&_figure]:border-0 [&_figure]:bg-transparent [&_figure]:shadow-none [&_figure>div]:max-h-none [&_pre]:py-3 [&_pre]:text-[13px]">
@@ -455,11 +463,12 @@ function CodeCard({
 
 /** What this tab can't express, on one muted line. */
 function LeftOut({ items }: { items: string[] }) {
+  const t = useTranslations("editor.actionBar.qrCodeDialog");
   if (items.length === 0) return null;
   return (
     <p className="text-muted-foreground flex items-start gap-1.5 text-xs">
       <InfoCircle className="mt-px size-3.5 shrink-0" />
-      <span>Left out: {listItems(items)}.</span>
+      <span>{t("leftOutValue", { value: listItems(items) })}</span>
     </p>
   );
 }

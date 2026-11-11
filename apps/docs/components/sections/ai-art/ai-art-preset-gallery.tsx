@@ -5,6 +5,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
 import { SearchNormal1 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type KeyboardEvent, useMemo, useRef, useState } from "react";
 import { useAIArtPresets } from "./load-presets";
 import {
@@ -26,9 +27,11 @@ interface AIArtPresetGalleryProps {
   onSelect: (preset: AIArtPreset) => void;
 }
 
-const TABS: { id: AIArtPresetTab; label: string }[] = [
-  { id: "featured", label: "Featured" },
-  { id: "all", label: "All" },
+// Featured and All are named in messages/en.json (aiArt.aiArtPresetGallery);
+// the categories keep the catalogue's names.
+const TABS: { id: AIArtPresetTab; label?: string }[] = [
+  { id: "featured" },
+  { id: "all" },
   ...AI_ART_CATEGORIES,
 ];
 
@@ -46,6 +49,7 @@ export function AIArtPresetGallery({
   disabled,
   onSelect,
 }: AIArtPresetGalleryProps) {
+  const t = useTranslations("aiArt.aiArtPresetGallery");
   const { catalogue, failed, retry } = useAIArtPresets();
   const [query, setQuery] = useState("");
   const [pickedTab, setPickedTab] = useState<AIArtPresetTab | null>(null);
@@ -92,7 +96,7 @@ export function AIArtPresetGallery({
           className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
         />
         <Input
-          aria-label="Search styles"
+          aria-label={t("searchStyles")}
           className="pl-9"
           disabled={disabled}
           onChange={(event) => {
@@ -100,18 +104,20 @@ export function AIArtPresetGallery({
             listRef.current?.scrollTo({ top: 0 });
           }}
           onKeyDown={onSearchKeyDown}
-          placeholder="Search styles: cats, gold, tiles…"
+          placeholder={t("searchStylesCatsGoldTiles")}
           type="search"
           value={query}
         />
       </div>
 
       <div
-        aria-label="Style categories"
+        aria-label={t("styleCategories")}
         className="-mx-1 flex gap-1 overflow-x-auto px-1 [mask-image:linear-gradient(to_right,transparent,black_8px,black_calc(100%-24px),transparent)] [scrollbar-width:none]"
         role="toolbar"
       >
-        {TABS.map(({ id, label }) => {
+        {TABS.map(({ id, label: name }) => {
+          const label =
+            id === "featured" ? t("featured") : id === "all" ? t("all") : name;
           const current = !searching && tab === id;
           return (
             <Button
@@ -153,8 +159,7 @@ export function AIArtPresetGallery({
           ) : (
             <div className="flex flex-col items-center gap-2 py-8 text-center">
               <p className="text-muted-foreground text-xs">
-                No styles match “{query.trim()}”. Describe it in the prompt
-                instead.
+                {t("noStylesMatchQueryDescribe", { query: query.trim() })}
               </p>
               <Button
                 onClick={() => setQuery("")}
@@ -162,17 +167,17 @@ export function AIArtPresetGallery({
                 type="button"
                 variant="ghost"
               >
-                Clear search
+                {t("clearSearch")}
               </Button>
             </div>
           )
         ) : failed ? (
           <div className="flex flex-col items-center gap-2 py-8 text-center">
             <p className="text-muted-foreground text-xs">
-              The styles didn't load.
+              {t("theStylesDidntLoad")}
             </p>
             <Button onClick={retry} size="sm" type="button" variant="outline">
-              Try again
+              {t("tryAgain")}
             </Button>
           </div>
         ) : (
@@ -197,9 +202,11 @@ export function AIArtPresetGallery({
 
       <p className="text-muted-foreground text-xs">
         {searching && catalogue
-          ? `${shown.length} of ${presets.length} styles. `
-          : `${catalogue ? presets.length : AI_ART_PRESET_COUNT} styles. `}
-        Picking one fills in the prompt; edit it freely.
+          ? t("someStyles", { shown: shown.length, total: presets.length })
+          : t("allStyles", {
+              total: catalogue ? presets.length : AI_ART_PRESET_COUNT,
+            })}{" "}
+        {t("pickingOneFillsInThe")}
       </p>
     </div>
   );

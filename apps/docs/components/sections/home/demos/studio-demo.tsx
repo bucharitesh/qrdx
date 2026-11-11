@@ -5,7 +5,6 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import Link from "next/link";
 import { QRCodeSVG } from "qrdx";
 import {
   BODY_PATTERN,
@@ -18,6 +17,7 @@ import {
   type FrameStyle,
 } from "qrdx/types";
 import { useId, useState } from "react";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { DURATION, EASE } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
 import {
@@ -359,13 +359,13 @@ export function StudioDemo() {
             )}
           </motion.div>
         </AnimatePresence>
-        <Link
+        <LocaleLink
           className="mt-auto inline-flex w-fit items-center gap-1 text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
           href={studioPlaygroundHref(look)}
         >
           {MORE_LABEL}
           <ArrowRight aria-hidden className="size-3.5" />
-        </Link>
+        </LocaleLink>
       </div>
       <DemoStage className="flex items-center justify-center border-t bg-muted/30 p-6 md:border-t-0 md:border-l">
         <motion.div

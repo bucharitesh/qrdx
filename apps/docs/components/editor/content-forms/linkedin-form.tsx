@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { LinkedInContent } from "@/types/qr-content";
 import { encodeLinkedIn } from "@/utils/qr-content-encoder";
 
 export function LinkedInForm() {
+  const t = useTranslations("editor.contentForms.linkedinForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -31,7 +33,7 @@ export function LinkedInForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="linkedin-url">
-          LinkedIn profile URL *
+          {t("linkedinProfileUrl")}
         </Label>
         <Input
           id="linkedin-url"
@@ -45,7 +47,7 @@ export function LinkedInForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your LinkedIn profile or company page
+        {t("scanningWillOpenYourLinkedin")}
       </p>
     </div>
   );

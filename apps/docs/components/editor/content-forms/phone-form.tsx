@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { PhoneContent } from "@/types/qr-content";
 import { encodePhone } from "@/utils/qr-content-encoder";
 
 export function PhoneForm() {
+  const t = useTranslations("editor.contentForms.phoneForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -26,7 +28,7 @@ export function PhoneForm() {
   return (
     <div className="space-y-2">
       <Label className="text-xs" htmlFor="phone-number">
-        Phone number *
+        {t("phoneNumber")}
       </Label>
       <Input
         id="phone-number"
@@ -36,7 +38,7 @@ export function PhoneForm() {
         onChange={(e) => setPhoneData({ phoneNumber: e.target.value })}
       />
       <p className="text-muted-foreground text-xs">
-        Include the country code, like +1. Scanning starts a call.
+        {t("includeTheCountryCodeLike")}
       </p>
     </div>
   );

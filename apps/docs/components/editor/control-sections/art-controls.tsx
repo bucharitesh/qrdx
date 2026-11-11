@@ -21,6 +21,7 @@ import {
 } from "@repo/design-system/components/ui/toggle-group";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2, GalleryAdd as ImageUp, InfoCircle } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   DEFAULT_ART_INTENSITY,
   getQRData,
@@ -34,8 +35,8 @@ import type { QRArt, QRArtImage, QRArtMode, QRArtVariant } from "qrdx/types";
 import * as React from "react";
 import {
   GRADE_COLORS,
-  GRADE_LABELS,
   ScanCheckList,
+  useGradeLabels,
 } from "@/components/editor/scan-score";
 import { useEditorValue } from "@/components/editor/style-scope";
 import { DEFAULT_QR_LOGO, MAX_LOGO_FILE_SIZE } from "@/lib/constants";
@@ -60,17 +61,6 @@ const ALLOWED_ART_TYPES = [
   "image/webp",
   "image/svg+xml",
 ];
-
-const MODE_COPY: Record<QRArtMode, { upload: string; samples: string }> = {
-  logo: {
-    upload: "Transparent PNG or SVG logos work best",
-    samples: "Try a sample logo",
-  },
-  halftone: {
-    upload: "Photos with one clear subject work best",
-    samples: "Try a sample photo",
-  },
-};
 
 const SCORE_DEBOUNCE_MS = 700;
 
@@ -133,6 +123,7 @@ export function useVectorArt(
   styles: QRStyle,
   onChange: (styles: QRStyle) => void,
 ) {
+  const t = useTranslations("editor.controlSections.artControls");
   const art = styles.art;
   const source = useArtSessionStore((state) => state.source);
   const setSource = useArtSessionStore((state) => state.setSource);
@@ -163,14 +154,14 @@ export function useVectorArt(
     } catch (error) {
       toast.error(
         options.sampleId
-          ? "Couldn't load this sample"
-          : "Couldn't use this image",
+          ? t("couldntLoadThisSample")
+          : t("couldntUseThisImage"),
         {
           description: options.sampleId
-            ? "Check your connection and try again, or upload your own image."
+            ? t("checkYourConnectionAndTry")
             : error instanceof Error
               ? error.message
-              : "Try a PNG or JPG instead.",
+              : t("tryAPngOrJpg"),
         },
       );
     } finally {
@@ -219,6 +210,7 @@ export function ArtControls({
   mode,
   vector,
 }: ArtControlsProps) {
+  const t = useTranslations("editor.controlSections.artControls");
   const style = styles;
   const { art, isLoading, update, applyImage, removeArt } = vector;
   const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -241,14 +233,16 @@ export function ArtControls({
     event.target.value = "";
     if (!file) return;
     if (!ALLOWED_ART_TYPES.includes(file.type)) {
-      toast.error("Unsupported image format", {
-        description: "Use a PNG, JPG, WebP or SVG image.",
+      toast.error(t("unsupportedImageFormat"), {
+        description: t("useAPngJpgWebp"),
       });
       return;
     }
     if (file.size > MAX_LOGO_FILE_SIZE) {
-      toast.error("Image is too large", {
-        description: `Images must be ${MAX_LOGO_FILE_SIZE / 1024 / 1024}MB or smaller.`,
+      toast.error(t("imageIsTooLarge"), {
+        description: t("imagesMustBeValueMb", {
+          value: MAX_LOGO_FILE_SIZE / 1024 / 1024,
+        }),
       });
       return;
     }
@@ -277,19 +271,20 @@ export function ArtControls({
             variant="outline"
           >
             {colorIssue === "inverted"
-              ? "Swap dot and background colors"
-              : "Put the dots on white"}
+              ? t("swapDotAndBackgroundColors")
+              : t("putTheDotsOnWhite")}
           </Button>
         </div>
       )}
 
       <p className="text-muted-foreground text-xs">
-        {variantOption(mode, art).hint} Finder, alignment and format patterns
-        stay crisp.
+        {t("hintFinderAlignmentAndFormat", {
+          hint: variantOption(mode, art).hint,
+        })}
       </p>
       <ArtSampleGrid
         key={mode}
-        label={MODE_COPY[mode].samples}
+        label={t(`modeCopy.${mode}.samples`)}
         mode={mode}
         onPick={applySample}
         selected={art?.mode === mode ? pickedSample : undefined}
@@ -297,7 +292,7 @@ export function ArtControls({
       <div className="flex flex-wrap gap-2">
         <input
           accept={ALLOWED_ART_TYPES.join(",")}
-          aria-label={MODE_COPY[mode].upload}
+          aria-label={t(`modeCopy.${mode}.upload`)}
           className="sr-only"
           onChange={handleUpload}
           ref={fileInputRef}
@@ -311,7 +306,7 @@ export function ArtControls({
           variant="outline"
         >
           {isLoading ? <LoaderCircle className="animate-spin" /> : <ImageUp />}
-          {art ? "Upload another" : "Upload your own"}
+          {art ? t("uploadAnother") : t("uploadYourOwn")}
         </Button>
         {mode === "logo" && customLogo && (
           <Button
@@ -320,22 +315,23 @@ export function ArtControls({
             size="sm"
             variant="ghost"
           >
-            Use my logo
+            {t("useMyLogo")}
           </Button>
         )}
       </div>
       <p className="text-muted-foreground text-xs">
-        {MODE_COPY[mode].upload}. PNG, JPG, WebP or SVG, up to{" "}
-        {MAX_LOGO_FILE_SIZE / 1024 / 1024}MB. Your image stays in your browser;
-        only a small color grid is saved.
+        {t("uploadPngJpgWebpOr", {
+          upload: t(`modeCopy.${mode}.upload`),
+          value: MAX_LOGO_FILE_SIZE / 1024 / 1024,
+        })}
       </p>
 
       {art && (
         <>
           <div>
-            <OptionGroupLabel>Look</OptionGroupLabel>
+            <OptionGroupLabel>{t("look")}</OptionGroupLabel>
             <ToggleGroup
-              aria-label="Art look"
+              aria-label={t("artLook")}
               className="w-full"
               onValueChange={(id) => {
                 if (id) update({ ...art, variant: id as QRArtVariant });
@@ -361,7 +357,7 @@ export function ArtControls({
                 className="cursor-pointer text-xs"
                 htmlFor="art-match-eyes"
               >
-                Eyes match the logo
+                {t("eyesMatchTheLogo")}
               </Label>
               <Switch
                 checked={art.matchEyes !== false}
@@ -378,19 +374,22 @@ export function ArtControls({
           />
           {followsRecommended ? (
             <p className="text-muted-foreground text-xs">
-              Uses high error correction and a clear border so it still scans.
+              {t("usesHighErrorCorrectionAnd")}
             </p>
           ) : (
             <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-xs">
-              Art scans best with high error correction and a clear border.
-              <Button
-                className="h-auto p-0 text-xs"
-                onClick={() => update(art, recommendedSettings(style))}
-                size="sm"
-                variant="link"
-              >
-                Apply
-              </Button>
+              {t.rich("artScansBestWithHigh", {
+                button: (chunks) => (
+                  <Button
+                    className="h-auto p-0 text-xs"
+                    onClick={() => update(art, recommendedSettings(style))}
+                    size="sm"
+                    variant="link"
+                  >
+                    {chunks}
+                  </Button>
+                ),
+              })}
             </p>
           )}
           <ArtScanScore art={art} style={style} />
@@ -401,7 +400,7 @@ export function ArtControls({
             variant="ghost"
           >
             <X />
-            Remove art
+            {t("removeArt")}
           </Button>
         </>
       )}
@@ -499,6 +498,7 @@ function ArtStrength({
   value: number;
   onChange: (value: number) => void;
 }) {
+  const t = useTranslations("editor.controlSections.artControls");
   const preset = ART_STRENGTHS.find(
     (strength) => Math.abs(strength.value - value) < 0.001,
   );
@@ -510,10 +510,10 @@ function ArtStrength({
       <OptionGroupLabel
         kbd={<span className="font-normal tabular-nums">{percent}%</span>}
       >
-        Strength
+        {t("strength")}
       </OptionGroupLabel>
       <ToggleGroup
-        aria-label="Art strength"
+        aria-label={t("artStrength")}
         className="w-full"
         onValueChange={(id) => {
           const next = ART_STRENGTHS.find((strength) => strength.id === id);
@@ -540,7 +540,7 @@ function ArtStrength({
             size="sm"
             variant="ghost"
           >
-            Fine-tune
+            {t("fineTune")}
             <ArrowDown2
               className={cn(
                 "size-3.5 transition-transform duration-200",
@@ -551,7 +551,7 @@ function ArtStrength({
         </CollapsibleTrigger>
         <CollapsibleContent className="space-y-2 pt-1">
           <Slider
-            aria-label="Art strength"
+            aria-label={t("artStrength")}
             max={100}
             min={0}
             onValueChange={([next]) =>
@@ -561,8 +561,8 @@ function ArtStrength({
             value={[percent]}
           />
           <div className="text-muted-foreground flex justify-between text-xs">
-            <span>Easier to scan</span>
-            <span>More art</span>
+            <span>{t("easierToScan")}</span>
+            <span>{t("moreArt")}</span>
           </div>
         </CollapsibleContent>
       </Collapsible>
@@ -572,6 +572,8 @@ function ArtStrength({
 
 /** Live preview of the art code plus the library's scan score for it. */
 function ArtScanScore({ art, style }: { art: QRArt; style: QRStyle }) {
+  const gradeLabels = useGradeLabels();
+  const t = useTranslations("editor.controlSections.artControls");
   const value = useEditorValue();
   const [result, setResult] = React.useState<ScanScoreResult | null>(null);
   const [checking, setChecking] = React.useState(false);
@@ -630,7 +632,7 @@ function ArtScanScore({ art, style }: { art: QRArt; style: QRStyle }) {
           className="size-20 shrink-0 rounded"
         />
         <div className="min-w-0 space-y-1">
-          <p className="text-xs font-medium">Scan check</p>
+          <p className="text-xs font-medium">{t("scanCheck")}</p>
           {result ? (
             <p className="flex items-center gap-2 text-sm">
               <span
@@ -642,7 +644,7 @@ function ArtScanScore({ art, style }: { art: QRArt; style: QRStyle }) {
               />
               <span className="tabular-nums">{result.score}</span>
               <span className="text-muted-foreground">
-                {GRADE_LABELS[result.grade]}
+                {gradeLabels[result.grade]}
               </span>
               {checking && (
                 <LoaderCircle className="text-muted-foreground size-3.5 animate-spin" />
@@ -651,13 +653,11 @@ function ArtScanScore({ art, style }: { art: QRArt; style: QRStyle }) {
           ) : (
             <p className="text-muted-foreground flex items-center gap-2 text-xs">
               <LoaderCircle className="size-3.5 animate-spin" />
-              Checking…
+              {t("checking")}
             </p>
           )}
           <p className="text-muted-foreground text-xs">
-            {value
-              ? "Decoded in your browser at three sizes."
-              : "Add content to check your real code."}
+            {value ? t("decodedInYourBrowserAt") : t("addContentToCheckYour")}
           </p>
         </div>
       </div>

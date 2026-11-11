@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTheme } from "@/actions/qr-themes";
 import { LazyEditor as Editor } from "@/components/lazy-editor";
+import { sharedThemeMetadata } from "@/components/playground/playground-metadata";
 import { QRCodeThemeNotFoundError } from "@/types/errors";
-import { sharedThemeMetadata } from "../metadata";
 
 export const metadata: Metadata = sharedThemeMetadata;
 

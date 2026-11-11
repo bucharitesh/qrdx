@@ -3,12 +3,14 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { VCardContent } from "@/types/qr-content";
 import { encodeVCard } from "@/utils/qr-content-encoder";
 
 export function VCardForm() {
+  const t = useTranslations("editor.contentForms.vcardForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -36,12 +38,12 @@ export function VCardForm() {
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-2">
           <Label className="text-xs" htmlFor="vcard-firstname">
-            First name *
+            {t("firstName")}
           </Label>
           <Input
             id="vcard-firstname"
             type="text"
-            placeholder="John"
+            placeholder={t("john")}
             value={vcardData.firstName}
             onChange={(e) =>
               setVcardData({ ...vcardData, firstName: e.target.value })
@@ -50,12 +52,12 @@ export function VCardForm() {
         </div>
         <div className="space-y-2">
           <Label className="text-xs" htmlFor="vcard-lastname">
-            Last name
+            {t("lastName")}
           </Label>
           <Input
             id="vcard-lastname"
             type="text"
-            placeholder="Doe"
+            placeholder={t("doe")}
             value={vcardData.lastName}
             onChange={(e) =>
               setVcardData({ ...vcardData, lastName: e.target.value })
@@ -66,12 +68,12 @@ export function VCardForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="vcard-organization">
-          Organization
+          {t("organization")}
         </Label>
         <Input
           id="vcard-organization"
           type="text"
-          placeholder="Company name"
+          placeholder={t("companyName")}
           value={vcardData.organization}
           onChange={(e) =>
             setVcardData({ ...vcardData, organization: e.target.value })
@@ -81,7 +83,7 @@ export function VCardForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="vcard-phone">
-          Phone
+          {t("phone")}
         </Label>
         <Input
           id="vcard-phone"
@@ -96,12 +98,12 @@ export function VCardForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="vcard-email">
-          Email
+          {t("email")}
         </Label>
         <Input
           id="vcard-email"
           type="email"
-          placeholder="john@example.com"
+          placeholder={t("johnExampleCom")}
           value={vcardData.email}
           onChange={(e) =>
             setVcardData({ ...vcardData, email: e.target.value })
@@ -111,7 +113,7 @@ export function VCardForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="vcard-url">
-          Website
+          {t("website")}
         </Label>
         <Input
           id="vcard-url"
@@ -124,12 +126,12 @@ export function VCardForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="vcard-address">
-          Address
+          {t("address")}
         </Label>
         <Input
           id="vcard-address"
           type="text"
-          placeholder="123 Main St, City, Country"
+          placeholder={t("n123MainStCityCountry")}
           value={vcardData.address}
           onChange={(e) =>
             setVcardData({ ...vcardData, address: e.target.value })
@@ -139,11 +141,11 @@ export function VCardForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="vcard-note">
-          Note
+          {t("note")}
         </Label>
         <Textarea
           id="vcard-note"
-          placeholder="Additional notes"
+          placeholder={t("additionalNotes")}
           value={vcardData.note}
           onChange={(e) => setVcardData({ ...vcardData, note: e.target.value })}
           rows={3}
@@ -152,7 +154,7 @@ export function VCardForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will offer to save this contact
+        {t("scanningWillOfferToSave")}
       </p>
     </div>
   );

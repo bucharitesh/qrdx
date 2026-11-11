@@ -4,6 +4,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "facehash";
 import { Verify } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { profilePath } from "@/lib/community/handles";
 import type { CommunityCreator } from "@/lib/community/types";
@@ -29,6 +30,7 @@ export function CreatorLine({
   link?: boolean;
   className?: string;
 }) {
+  const t = useTranslations("community.creatorLine");
   const avatar =
     size === "lg" ? "size-12" : size === "md" ? "size-8" : "size-5";
   const handle = creator.handle ? `@${creator.handle}` : null;
@@ -77,7 +79,7 @@ export function CreatorLine({
       </span>
       {creator.verified && (
         <Verify
-          aria-label="Verified"
+          aria-label={t("verified")}
           className="text-foreground size-3.5 shrink-0"
           variant="Bold"
         />

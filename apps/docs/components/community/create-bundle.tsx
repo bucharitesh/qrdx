@@ -8,6 +8,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import {
   publishCommunityCollection,
@@ -54,6 +55,7 @@ export function CreateBundle({
   sources: BundleSource[];
   initialMode?: Mode;
 }) {
+  const t = useTranslations("community.createBundle");
   const nameId = useId();
   const descriptionId = useId();
   const [mode, setMode] = useState<Mode>(initialMode);
@@ -121,13 +123,13 @@ export function CreateBundle({
       <div className="space-y-3 rounded-xl border p-6">
         <p className="flex items-center gap-2 text-lg font-semibold">
           <Tick aria-hidden className="size-5" />
-          Published
+          {t("published")}
         </p>
         <p className="text-muted-foreground text-sm">
-          {name.trim()} is live in the community.
+          {t("nameIsLiveInThe", { name: name.trim() })}
         </p>
         <Button asChild>
-          <Link href={published}>View it</Link>
+          <Link href={published}>{t("viewIt")}</Link>
         </Button>
       </div>
     );
@@ -139,7 +141,7 @@ export function CreateBundle({
   return (
     <div className="space-y-6">
       <fieldset className="bg-muted inline-flex rounded-full p-1">
-        <legend className="sr-only">What to make</legend>
+        <legend className="sr-only">{t("whatToMake")}</legend>
         {(["collection", "kit"] as const).map((option) => (
           <button
             aria-pressed={mode === option}
@@ -153,34 +155,41 @@ export function CreateBundle({
             onClick={() => setMode(option)}
             type="button"
           >
-            {option === "collection" ? "Collection" : "Kit"}
+            {option === "collection" ? t("collection") : t("kit")}
           </button>
         ))}
       </fieldset>
 
       <p className="text-muted-foreground max-w-2xl text-sm text-pretty">
         {mode === "collection"
-          ? "Group frames, themes and page templates people can browse together, for example everything for a café. Pick 2 or more."
-          : "A page template and the look it goes with. Using a kit copies the page as a draft and the look as a saved theme."}
+          ? t("groupFramesThemesAndPage")
+          : t("aPageTemplateAndThe")}
       </p>
 
       {sources.length === 0 ? (
         <div className="text-muted-foreground rounded-xl border border-dashed p-8 text-center text-sm">
-          Items you save in the community or publish yourself show up here.{" "}
-          <Link
-            className="text-foreground underline underline-offset-2"
-            href="/community"
-          >
-            Browse the community
-          </Link>
+          {t.rich("itemsYouSaveInThe", {
+            link: (chunks) => (
+              <Link
+                className="text-foreground underline underline-offset-2"
+                href="/community"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </div>
       ) : mode === "collection" ? (
         <fieldset className="space-y-2">
           <legend className="mb-2 flex w-full items-baseline justify-between text-sm font-medium">
-            Items
-            <span className="text-muted-foreground text-xs font-normal tabular-nums">
-              {selected.length} picked
-            </span>
+            {t.rich("itemsLengthPicked", {
+              length: selected.length,
+              span: (chunks) => (
+                <span className="text-muted-foreground text-xs font-normal tabular-nums">
+                  {chunks}
+                </span>
+              ),
+            })}
           </legend>
           <ul className="divide-y rounded-xl border">
             {sources.map((source) => {
@@ -204,7 +213,7 @@ export function CreateBundle({
                     <span className="truncate text-sm">{source.name}</span>
                     <span className="text-muted-foreground shrink-0 text-xs">
                       {TYPE_LABELS[source.type].one} ·{" "}
-                      {source.mine ? "yours" : source.creator}
+                      {source.mine ? t("yours") : source.creator}
                     </span>
                   </Label>
                   {position >= 0 && (
@@ -228,8 +237,7 @@ export function CreateBundle({
                   {slot.label}
                   {slot.optional && (
                     <span className="text-muted-foreground font-normal">
-                      {" "}
-                      (optional)
+                      {t("optional")}
                     </span>
                   )}
                 </Label>
@@ -247,14 +255,17 @@ export function CreateBundle({
                 >
                   <option value="">
                     {options.length === 0
-                      ? `No saved ${TYPE_LABELS[slot.type].many.toLowerCase()}`
+                      ? t("noSavedMany", {
+                          many: TYPE_LABELS[slot.type].many.toLowerCase(),
+                        })
                       : slot.optional
-                        ? "None"
-                        : "Pick one"}
+                        ? t("none")
+                        : t("pickOne")}
                   </option>
                   {options.map((source) => (
                     <option key={source.id} value={source.id}>
-                      {source.name} ({source.mine ? "yours" : source.creator})
+                      {source.name} ({source.mine ? t("yours") : source.creator}
+                      )
                     </option>
                   ))}
                 </select>
@@ -268,7 +279,7 @@ export function CreateBundle({
         <div className="grid max-w-2xl gap-4">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label htmlFor={nameId}>Name</Label>
+              <Label htmlFor={nameId}>{t("name")}</Label>
               <span className="text-muted-foreground text-xs tabular-nums">
                 {name.length}/{NAME_MAX_LENGTH}
               </span>
@@ -280,15 +291,15 @@ export function CreateBundle({
               onChange={(event) => setName(event.target.value)}
               placeholder={
                 mode === "collection"
-                  ? "e.g. Everything for a café"
-                  : "e.g. Café table kit"
+                  ? t("eGEverythingForA")
+                  : t("eGCaféTableKit")
               }
               value={name}
             />
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label htmlFor={descriptionId}>Description</Label>
+              <Label htmlFor={descriptionId}>{t("description")}</Label>
               <span className="text-muted-foreground text-xs tabular-nums">
                 {description.length}/{DESCRIPTION_MAX_LENGTH}
               </span>
@@ -298,7 +309,7 @@ export function CreateBundle({
               id={descriptionId}
               maxLength={DESCRIPTION_MAX_LENGTH}
               onChange={(event) => setDescription(event.target.value)}
-              placeholder="Optional: what it's for"
+              placeholder={t("optionalWhatItsFor")}
               rows={3}
               value={description}
             />
@@ -316,7 +327,7 @@ export function CreateBundle({
                   className="underline underline-offset-2"
                   href={refusal.href}
                 >
-                  See it
+                  {t("seeIt")}
                 </Link>
               )}
             </p>
@@ -325,10 +336,10 @@ export function CreateBundle({
             <Button disabled={!ready || pending} onClick={submit}>
               {pending && <Spinner className="size-4" />}
               {pending
-                ? "Publishing"
+                ? t("publishing")
                 : mode === "collection"
-                  ? "Publish collection"
-                  : "Publish kit"}
+                  ? t("publishCollection")
+                  : t("publishKit")}
             </Button>
           </div>
         </div>

@@ -3,8 +3,9 @@
 // gallery), the one-click Dynamic toggle, and what the builder writes back to
 // the editor in place (create, edit, "Continue in the editor"). Every server
 // action is a fake: nothing here reaches a database.
-import { renderToStaticMarkup } from "react-dom/server";
+import { createElement } from "react";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { renderIntl } from "../support/intl";
 
 // The editor, auth and dynamic link stores persist to window.localStorage,
 // which Node doesn't have.
@@ -321,8 +322,11 @@ describe("one-click Dynamic (the toggle)", () => {
       message: "Your plan includes 10 active dynamic codes.",
     });
     if (outcome.kind !== "limit") throw new Error("expected the limit");
-    const html = renderToStaticMarkup(
-      DynamicLimitCard({ message: outcome.message, onUpgrade: () => {} }),
+    const html = renderIntl(
+      createElement(DynamicLimitCard, {
+        message: outcome.message,
+        onUpgrade: () => {},
+      }),
     );
     expect(html).toContain("Your plan includes 10 active dynamic codes.");
     expect(html).toContain("Upgrade to Pro");
@@ -405,7 +409,7 @@ describe("the builder over the playground", () => {
     );
     expect(result).toMatchObject({ ok: false, field: "form" });
     if (result.ok) throw new Error("expected the limit");
-    const html = renderToStaticMarkup(
+    const html = renderIntl(
       BuilderFormBanner({
         error: result.error,
         onUpgrade: () => {},

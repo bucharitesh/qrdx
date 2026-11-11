@@ -2,6 +2,7 @@
 
 import { Label } from "@repo/design-system/components/ui/label";
 import { Slider } from "@repo/design-system/components/ui/slider";
+import { useTranslations } from "next-intl";
 import { FRAME_FONT_SCALE_MAX, FRAME_FONT_SCALE_MIN } from "qrdx";
 import { SolidColorField } from "@/components/editor/gradient-picker";
 
@@ -46,11 +47,12 @@ export function FrameTextSize({
   disabled?: boolean;
   onChange: (value: number) => void;
 }) {
+  const t = useTranslations("editor.controlSections.frameFields");
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
         <Label className="text-xs" htmlFor="frame-font-scale">
-          Text size
+          {t("textSize")}
         </Label>
         <span className="text-muted-foreground text-xs tabular-nums">
           {Math.round(value * 100)}%

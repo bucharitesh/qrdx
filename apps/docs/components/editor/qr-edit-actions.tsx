@@ -14,6 +14,7 @@ import {
   Refresh2 as RefreshCw,
   ArrowRotateLeft as Undo2,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 
 interface MenuItemProps {
   icon: LucideIcon;
@@ -62,22 +63,23 @@ const ThemeControlActions = ({
   onReset,
   onResetToPreset,
 }: ThemeControlActionsProps) => {
+  const t = useTranslations("editor.qrEditActions");
   const menuItems: MenuItemProps[] = [
     {
       icon: RefreshCw,
-      label: "Reset to Current Preset",
+      label: t("resetToCurrentPreset"),
       onClick: onResetToPreset,
       disabled: !hasPresetChanges,
       title: hasPresetChanges
-        ? "Reset to current preset"
-        : "No changes from preset",
+        ? t("resetToCurrentPreset2")
+        : t("noChangesFromPreset"),
     },
     {
       icon: Undo2,
-      label: "Reset to Default Theme",
+      label: t("resetToDefaultTheme"),
       onClick: onReset,
       disabled: !hasChanges,
-      title: hasChanges ? "Reset to base theme" : "No changes to reset",
+      title: hasChanges ? t("resetToBaseTheme") : t("noChangesToReset"),
     },
   ];
 
@@ -90,7 +92,7 @@ const ThemeControlActions = ({
           className="h-8 px-2 gap-1.5 text-muted-foreground hover:text-foreground hover:bg-accent/50"
         >
           <Palette className="size-3.5" />
-          <span className="text-sm">Options</span>
+          <span className="text-sm">{t("options")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-fit p-2">

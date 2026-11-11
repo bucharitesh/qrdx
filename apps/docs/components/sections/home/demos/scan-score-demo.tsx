@@ -4,7 +4,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { getScanScore, QRCodeSVG, type ScanScoreResult } from "qrdx";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { GRADE_COLORS, GRADE_LABELS } from "@/components/editor/scan-score";
+import { GRADE_COLORS, useGradeLabels } from "@/components/editor/scan-score";
 import { EASE } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
 import { HOME_CODES } from "./codes";
@@ -28,6 +28,7 @@ const CIRC = 2 * Math.PI * R;
 
 /** Lighten the ink and watch the real scan score (decoded in your browser) react. */
 export function ScanScoreDemo() {
+  const gradeLabels = useGradeLabels();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
   const reduce = useReducedMotion();
@@ -158,7 +159,7 @@ export function ScanScoreDemo() {
                   )}
                 />
                 {result
-                  ? GRADE_LABELS[result.grade]
+                  ? gradeLabels[result.grade]
                   : failed
                     ? "Couldn't check"
                     : "Checking"}

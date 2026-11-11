@@ -15,6 +15,7 @@ import {
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
 import { Gallery, Image, Import, Printer } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import type { AIArtRun } from "@/components/sections/ai-art/ai-art-run";
@@ -52,6 +53,7 @@ export function AIArtDownloadDialog({
   result: AIArtRun;
   variant: AIArtVariant;
 }) {
+  const t = useTranslations("editor.art.aiArtDownload");
   const [format, setFormat] = useState<ArtFormat>("png");
   const [busy, setBusy] = useState<"download" | "image-qr" | null>(null);
 
@@ -70,8 +72,8 @@ export function AIArtDownloadDialog({
         ART_PRINT_SIZE,
       );
       if (!blob) {
-        toast.error("The print-size copy didn't pass the scan check", {
-          description: `Download the ${variant.width} px image instead.`,
+        toast.error(t("thePrintSizeCopyDidnt"), {
+          description: t("downloadTheWidthPxImage", { width: variant.width }),
         });
         return;
       }
@@ -79,7 +81,7 @@ export function AIArtDownloadDialog({
       track("qr_downloaded", { format: "ai-art-print", source: "playground" });
       onOpenChange(false);
     } catch {
-      toast.error("Couldn't prepare the print-size image");
+      toast.error(t("couldntPrepareThePrintSize"));
     } finally {
       setBusy(null);
     }
@@ -91,11 +93,11 @@ export function AIArtDownloadDialog({
       await applyResultAsImageQR(variant.imageUrl);
       soundEvent("apply");
       // The dialog stays: it now offers every format for the vector code.
-      toast.success("Now an Image QR code", {
-        description: "Pick SVG, PDF or EPS for it.",
+      toast.success(t("nowAnImageQrCode"), {
+        description: t("pickSvgPdfOrEps"),
       });
     } catch {
-      toast.error("Couldn't turn this image into an Image QR code");
+      toast.error(t("couldntTurnThisImageInto"));
     } finally {
       setBusy(null);
     }
@@ -106,7 +108,7 @@ export function AIArtDownloadDialog({
       <ResponsiveDialogContent className="max-h-[92dvh] gap-0 overflow-hidden p-0 sm:max-w-[34rem] dark:!border-border">
         <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
           <div className="min-w-0 flex-1 space-y-1">
-            <ResponsiveDialogTitle>Download AI art</ResponsiveDialogTitle>
+            <ResponsiveDialogTitle>{t("downloadAiArt")}</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>
               {AI_ART_DOWNLOAD_REASON}.
             </ResponsiveDialogDescription>
@@ -116,7 +118,7 @@ export function AIArtDownloadDialog({
 
         <div className="grid gap-6 overflow-y-auto px-6 py-6 sm:grid-cols-[9rem_1fr]">
           <img
-            alt={`AI-generated QR code artwork that encodes ${result.text}`}
+            alt={t("aiGeneratedQrCodeArtwork", { text: result.text })}
             className="mx-auto aspect-square w-full max-w-36 rounded-[14px] border object-cover"
             height={variant.height}
             src={variant.imageUrl}
@@ -124,7 +126,7 @@ export function AIArtDownloadDialog({
           />
           <div className="min-w-0 space-y-4">
             <ToggleGroup
-              aria-label="Format"
+              aria-label={t("format")}
               className="grid w-full grid-cols-2"
               onValueChange={(next) => next && setFormat(next as ArtFormat)}
               type="single"
@@ -140,7 +142,7 @@ export function AIArtDownloadDialog({
                   PNG
                 </span>
                 <span className="text-muted-foreground text-[11px] tabular-nums">
-                  {variant.width} px
+                  {t("widthPx", { width: variant.width })}
                 </span>
               </ToggleGroupItem>
               <ToggleGroupItem
@@ -149,17 +151,17 @@ export function AIArtDownloadDialog({
               >
                 <span className="flex items-center gap-1.5 text-xs font-medium">
                   <Printer className="size-4" />
-                  Print PNG
+                  {t("printPng")}
                 </span>
                 <span className="text-muted-foreground text-[11px] tabular-nums">
-                  {ART_PRINT_SIZE} px, checked again
+                  {t("artPrintSizePxChecked", { ART_PRINT_SIZE })}
                 </span>
               </ToggleGroupItem>
             </ToggleGroup>
             <div className="flex flex-col gap-2">
               <Button disabled={busy !== null} onClick={download}>
                 {busy === "download" ? <Spinner /> : <Import />}
-                {format === "png" ? "Download PNG" : "Download print PNG"}
+                {format === "png" ? t("downloadPng") : t("downloadPrintPng")}
               </Button>
               <Button
                 disabled={busy !== null}
@@ -167,7 +169,7 @@ export function AIArtDownloadDialog({
                 variant="outline"
               >
                 {busy === "image-qr" ? <Spinner /> : <Gallery />}
-                Use as Image QR
+                {t("useAsImageQr")}
               </Button>
             </div>
           </div>

@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { TikTokContent } from "@/types/qr-content";
 import { encodeTikTok } from "@/utils/qr-content-encoder";
 
 export function TikTokForm() {
+  const t = useTranslations("editor.contentForms.tiktokForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -29,12 +31,12 @@ export function TikTokForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="tiktok-username">
-          TikTok username *
+          {t("tiktokUsername")}
         </Label>
         <Input
           id="tiktok-username"
           type="text"
-          placeholder="username or @username"
+          placeholder={t("usernameOrUsername")}
           value={tiktokData.username}
           onChange={(e) =>
             setTiktokData({ ...tiktokData, username: e.target.value })
@@ -43,7 +45,7 @@ export function TikTokForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your TikTok profile
+        {t("scanningWillOpenYourTiktok")}
       </p>
     </div>
   );

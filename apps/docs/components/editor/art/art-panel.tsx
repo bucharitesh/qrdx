@@ -4,6 +4,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
+import { useTranslations } from "next-intl";
 import type { QRArtMode } from "qrdx/types";
 import { useCallback } from "react";
 import { useAvailability } from "@/components/availability-provider";
@@ -13,21 +14,10 @@ import {
 } from "@/components/editor/control-sections/art-controls";
 import { InfoHint } from "@/components/help/info-hint";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
-import {
-  type ArtTabMode,
-  resolveArtMode,
-  useArtSessionStore,
-} from "@/store/art-session-store";
+import { resolveArtMode, useArtSessionStore } from "@/store/art-session-store";
 import type { QRStyle } from "@/types/theme";
 import { parseArtGenerateIntent } from "./ai-art-intent";
 import { AIArtPanel } from "./ai-art-panel";
-
-const MODE_COPY: Record<ArtTabMode, string> = {
-  off: "A plain code. Logo QR and Image QR blend a picture into the dots, with no AI, in every format.",
-  logo: "No AI: your logo becomes part of the code, in every format.",
-  halftone: "No AI: your photo becomes part of the code, in every format.",
-  ai: "AI paints a scene into your code. Every image is checked to scan.",
-};
 
 interface ArtPanelProps {
   styles: QRStyle;
@@ -40,6 +30,7 @@ interface ArtPanelProps {
  * shown over the preview; components/editor/art/art-canvas.tsx).
  */
 export function ArtPanel({ styles, onChange }: ArtPanelProps) {
+  const t = useTranslations("editor.art.artPanel");
   const configured = useArtSessionStore((state) => state.configured);
   const aiArt = useAvailability().has("aiArt") && configured;
   const picked = useArtSessionStore((state) => state.picked);
@@ -74,16 +65,16 @@ export function ArtPanel({ styles, onChange }: ArtPanelProps) {
     <div className="space-y-4 px-4 pt-4 pb-6">
       <div className="space-y-1">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm font-medium">Art</h2>
+          <h2 className="text-sm font-medium">{t("art")}</h2>
           <InfoHint id="art" />
         </div>
         <p className="text-muted-foreground text-xs text-pretty">
-          {MODE_COPY[mode]}
+          {t(`modes.${mode}`)}
         </p>
       </div>
 
       <ToggleGroup
-        aria-label="Art mode"
+        aria-label={t("artMode")}
         className="w-full"
         onValueChange={choose}
         type="single"
@@ -91,17 +82,17 @@ export function ArtPanel({ styles, onChange }: ArtPanelProps) {
         variant="outline"
       >
         <ToggleGroupItem className="flex-1 px-1 text-xs" value="off">
-          Off
+          {t("off")}
         </ToggleGroupItem>
         <ToggleGroupItem className="flex-1 px-1 text-xs" value="logo">
-          Logo QR
+          {t("logoQr")}
         </ToggleGroupItem>
         <ToggleGroupItem className="flex-1 px-1 text-xs" value="halftone">
-          Image QR
+          {t("imageQr")}
         </ToggleGroupItem>
         {aiArt && (
           <ToggleGroupItem className="flex-1 px-1 text-xs" value="ai">
-            AI art
+            {t("aiArt")}
           </ToggleGroupItem>
         )}
       </ToggleGroup>

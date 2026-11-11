@@ -13,6 +13,7 @@ import {
   Sms,
   Wifi,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   BrandLogo,
   type BrandMarkSlug,
@@ -93,18 +94,19 @@ export function LogoPresets({
   onPick,
   onUpload,
 }: LogoPresetsProps) {
+  const t = useTranslations("editor.controlSections.logoPresets");
   const current = active ? logoIconName(logo) : null;
 
   return (
     <fieldset
-      aria-label="Quick logo icons"
+      aria-label={t("quickLogoIcons")}
       className="m-0 grid max-w-[17.5rem] min-w-0 grid-cols-5 gap-2 border-0 p-0"
     >
       {LOGO_ICONS.map(({ id, name, Glyph, brand }) => {
         const selected = current === name;
         return (
           <button
-            aria-label={`${name} icon`}
+            aria-label={t("nameIcon", { name })}
             aria-pressed={selected}
             className={cn(
               tileClass,
@@ -146,10 +148,10 @@ export function LogoPresets({
         );
       })}
       <button
-        aria-label="Upload your logo"
+        aria-label={t("uploadYourLogo")}
         className={cn(tileClass, "border-dashed")}
         onClick={onUpload}
-        title="Your logo"
+        title={t("yourLogo")}
         type="button"
       >
         <GalleryAdd className="text-muted-foreground group-hover:text-foreground size-5 transition-colors" />

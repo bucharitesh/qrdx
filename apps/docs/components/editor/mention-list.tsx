@@ -2,6 +2,7 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import {
   forwardRef,
   useEffect,
@@ -29,6 +30,7 @@ export interface MentionListRef {
 
 export const MentionList = forwardRef<MentionListRef, MentionListProps>(
   (props, ref) => {
+    const t = useTranslations("editor.mentionList");
     const [selectedIndex, setSelectedIndex] = useState(0);
     const containerRef = useRef<HTMLDivElement>(null);
     const selectedItemRef = useRef<HTMLButtonElement>(null);
@@ -133,7 +135,7 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
               "text-muted-foreground relative flex cursor-default items-center rounded-sm p-1.5 text-xs select-none",
             )}
           >
-            No result
+            {t("noResult")}
           </div>
         )}
       </div>

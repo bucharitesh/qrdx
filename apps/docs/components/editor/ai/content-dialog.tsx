@@ -14,6 +14,7 @@ import {
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2, ArrowLeft, Global, InfoCircle } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useId, useRef, useState } from "react";
 import { TypeIconTile } from "@/components/editor/content-type-icons";
 import { FORMS } from "@/components/editor/control-sections/content-controls";
@@ -83,6 +84,7 @@ export function ContentDialogBody({
   onCancel,
   restore,
 }: Omit<ContentDialogProps, "open">) {
+  const t = useTranslations("editor.ai.contentDialog");
   const [view, setView] = useState<"pick" | ContentType>("pick");
   const [link, setLink] = useState("");
   const [linkTouched, setLinkTouched] = useState(false);
@@ -152,17 +154,17 @@ export function ContentDialogBody({
       <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-6 pt-0 sm:pt-6">
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
-            What should the code open?
+            {t("whatShouldTheCodeOpen")}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
-            Add a link or choose a type. Your design continues right after.
+            {t("addALinkOrChoose")}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
         {view === "pick" ? (
           <>
             <div className="space-y-2">
-              <Label htmlFor="content-dialog-link">Link</Label>
+              <Label htmlFor="content-dialog-link">{t("link")}</Label>
               <Input
                 aria-describedby={helperId}
                 aria-invalid={showLinkError || undefined}
@@ -198,12 +200,12 @@ export function ContentDialogBody({
                   <>
                     <Global className="mt-px size-3.5 shrink-0" />
                     <span className="min-w-0 truncate">
-                      Scans open{" "}
+                      {t("scansOpen")}
                       <span className="text-foreground">{parsedLink.host}</span>
                     </span>
                   </>
                 ) : (
-                  "A website, a menu, a form: any web address."
+                  t("aWebsiteAMenuA")
                 )}
               </p>
             </div>
@@ -211,7 +213,7 @@ export function ContentDialogBody({
             <div className="flex items-center gap-3">
               <Separator className="flex-1" />
               <span className="text-muted-foreground text-xs">
-                or choose a type
+                {t("orChooseAType")}
               </span>
               <Separator className="flex-1" />
             </div>
@@ -229,7 +231,7 @@ export function ContentDialogBody({
                   variant="ghost"
                 >
                   <ArrowDown2 className="size-3.5" />
-                  {MORE_CONTENT_TYPES.length} more types
+                  {t("lengthMoreTypes", { length: MORE_CONTENT_TYPES.length })}
                 </Button>
               )}
             </div>
@@ -238,7 +240,7 @@ export function ContentDialogBody({
           <div className="space-y-4">
             <div className="flex items-center gap-3">
               <Button
-                aria-label="Back to all types"
+                aria-label={t("backToAllTypes")}
                 className="-ml-2 shrink-0"
                 onClick={back}
                 size="icon-sm"
@@ -275,9 +277,9 @@ export function ContentDialogBody({
 
       <ResponsiveDialogFooter className="bg-muted/30 border-t px-6 py-4">
         <Button onClick={onCancel} type="button" variant="ghost">
-          Cancel
+          {t("cancel")}
         </Button>
-        <Button type="submit">Continue</Button>
+        <Button type="submit">{t("continue")}</Button>
       </ResponsiveDialogFooter>
     </form>
   );

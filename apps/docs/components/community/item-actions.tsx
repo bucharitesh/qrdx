@@ -23,6 +23,7 @@ import {
   Heart,
 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   copyCommunityItem,
@@ -69,6 +70,7 @@ export function ItemActions({
   item: CommunityItemDetail;
   layout?: "panel" | "bar";
 }) {
+  const t = useTranslations("community.itemActions");
   const router = useRouter();
   const apply = useApplyToEditor();
   const inWorkspace = useWorkspaceHref();
@@ -103,8 +105,8 @@ export function ItemActions({
       "themeRefused" in result.data ? result.data.themeRefused : null;
     toast.success(
       look
-        ? `"${result.data.name}" is in your pages as a draft, and its look in your themes.`
-        : `"${result.data.name}" is in your pages as a draft.`,
+        ? t("nameIsInYourPages", { name: result.data.name })
+        : t("nameIsInYourPages2", { name: result.data.name }),
       typeof refused === "string" ? { description: refused } : undefined,
     );
     router.push(
@@ -139,9 +141,9 @@ export function ItemActions({
     toast.success(
       result.data.saved
         ? item.type === "frame"
-          ? "Saved. It's in the editor's frame picker."
-          : "Saved."
-        : "Removed from saved.",
+          ? t("savedItsInTheEditors")
+          : t("saved2")
+        : t("removedFromSaved"),
     );
   };
 
@@ -160,9 +162,9 @@ export function ItemActions({
     soundEvent("success");
     const where =
       result.data.where === "team" ? "this workspace's themes" : "your themes";
-    toast.success(`Copied to ${where} as "${result.data.name}"`, {
+    toast.success(t("copiedToWhereAsName", { where, name: result.data.name }), {
       action: {
-        label: "Open",
+        label: t("open"),
         onClick: () => router.push(inWorkspace("/themes")),
       },
     });
@@ -174,13 +176,13 @@ export function ItemActions({
         {copyable && (
           <Button className="flex-1" onClick={() => apply(item)}>
             <Brush2 aria-hidden className="size-4" />
-            Use in editor
+            {t("useInEditor")}
           </Button>
         )}
         {stored && (
           <>
             <Button
-              aria-label={saved ? "Remove from saved" : "Save"}
+              aria-label={saved ? t("removeFromSaved") : t("save")}
               aria-pressed={saved}
               disabled={busy !== null}
               onClick={save}
@@ -190,7 +192,7 @@ export function ItemActions({
               <Archive className="size-4" variant={saved ? "Bold" : "Linear"} />
             </Button>
             <Button
-              aria-label={liked ? "Unlike" : "Like"}
+              aria-label={liked ? t("unlike") : t("like")}
               aria-pressed={liked}
               disabled={busy !== null}
               onClick={like}
@@ -210,7 +212,7 @@ export function ItemActions({
       {copyable && (
         <Button className="w-full" onClick={() => apply(item)} size="lg">
           <Brush2 aria-hidden className="size-4" />
-          Use in editor
+          {t("useInEditor")}
         </Button>
       )}
       {template && (
@@ -225,7 +227,7 @@ export function ItemActions({
           ) : (
             <DocumentCopy aria-hidden className="size-4" />
           )}
-          {item.type === "kit" ? "Use kit" : "Use template"}
+          {item.type === "kit" ? t("useKit") : t("useTemplate")}
         </Button>
       )}
       <div className="flex flex-wrap gap-2">
@@ -242,7 +244,7 @@ export function ItemActions({
             ) : (
               <Archive className="size-4" variant={saved ? "Bold" : "Linear"} />
             )}
-            {saved ? "Saved" : "Save"}
+            {saved ? t("saved") : t("save")}
           </Button>
         )}
         {stored && (
@@ -259,7 +261,7 @@ export function ItemActions({
             ) : (
               <Heart className="size-4" variant={liked ? "Bold" : "Linear"} />
             )}
-            {likes > 0 ? likes : "Like"}
+            {likes > 0 ? likes : t("like")}
           </Button>
         )}
         {copyable && (
@@ -274,7 +276,7 @@ export function ItemActions({
             ) : (
               <FolderAdd aria-hidden className="size-4" />
             )}
-            Copy to workspace
+            {t("copyToWorkspace")}
           </Button>
         )}
       </div>
@@ -285,6 +287,7 @@ export function ItemActions({
 
 /** The creator's own item: take it out of the community. */
 function UnpublishButton({ item }: { item: CommunityItemDetail }) {
+  const t = useTranslations("community.itemActions");
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
@@ -299,7 +302,7 @@ function UnpublishButton({ item }: { item: CommunityItemDetail }) {
       return;
     }
     setOpen(false);
-    toast.success(`"${item.name}" is no longer in the community.`);
+    toast.success(t("nameIsNoLongerIn", { name: item.name }));
     router.push("/community");
   };
 
@@ -307,19 +310,18 @@ function UnpublishButton({ item }: { item: CommunityItemDetail }) {
     <AlertDialog onOpenChange={setOpen} open={open}>
       <AlertDialogTrigger asChild>
         <Button className="px-0" size="sm" variant="link">
-          Unpublish
+          {t("unpublish")}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Remove from the community?</AlertDialogTitle>
+          <AlertDialogTitle>{t("removeFromTheCommunity")}</AlertDialogTitle>
           <AlertDialogDescription>
-            It leaves the community at once. People who already used it keep
-            their copies: it was shared under CC0.
+            {t("itLeavesTheCommunityAt")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
           <AlertDialogAction
             disabled={pending}
             onClick={(event) => {
@@ -328,7 +330,7 @@ function UnpublishButton({ item }: { item: CommunityItemDetail }) {
             }}
           >
             {pending && <Spinner className="size-4" />}
-            Unpublish
+            {t("unpublish")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
