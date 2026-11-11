@@ -8,12 +8,23 @@ import { LOCALIZED_PATHS } from "./paths";
 
 const EN = `/${LOCALE_INFO.en.segment}`;
 
-/** /pricing → /en/pricing (beforeFiles). */
+/**
+ * A route path in next.config.ts syntax: "/compare/[slug]" → "/compare/:slug",
+ * "[...slug]" → ":slug+", "[[...slug]]" → ":slug*".
+ */
+export function rewriteSource(route: string): string {
+  return route
+    .replace(/\[\[\.\.\.([^/[\]]+)\]\]/g, ":$1*")
+    .replace(/\[\.\.\.([^/[\]]+)\]/g, ":$1+")
+    .replace(/\[([^/[\]]+)\]/g, ":$1");
+}
+
+/** /pricing → /en/pricing, /compare/:slug → /en/compare/:slug (beforeFiles). */
 export function englishRewrites(): { source: string; destination: string }[] {
-  return LOCALIZED_PATHS.map((path) => ({
-    source: path,
-    destination: path === "/" ? EN : `${EN}${path}`,
-  }));
+  return LOCALIZED_PATHS.map((path) => {
+    const source = rewriteSource(path);
+    return { source, destination: source === "/" ? EN : `${EN}${source}` };
+  });
 }
 
 /**

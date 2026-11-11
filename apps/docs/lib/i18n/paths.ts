@@ -15,10 +15,38 @@ import {
 import { hasDocs, isDocsPath } from "./docs";
 import localized from "./localized-paths.json";
 
+/**
+ * Translated pages, as their route paths. Dynamic segments are written the
+ * way their folders are named: "/compare/[slug]" matches one segment there
+ * ("/compare/qr-tiger"), "[...slug]" one or more, "[[...slug]]" none or
+ * more. A slug that doesn't exist still 404s, in every language.
+ */
 export const LOCALIZED_PATHS: readonly string[] = localized.paths;
 
+const escapeRegex = (text: string) =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** "/compare/[slug]" → /^\/compare\/[^/]+$/; plain paths match only themselves. */
+export function routeMatcher(route: string): (path: string) => boolean {
+  if (!route.includes("[")) return (path) => path === route;
+  const pattern = route
+    .split("/")
+    .map((segment, index) => {
+      if (index === 0) return "";
+      if (/^\[\[\.\.\.[^/[\]]+\]\]$/.test(segment)) return "(?:/[^?#]*)?";
+      if (/^\[\.\.\.[^/[\]]+\]$/.test(segment)) return "/[^?#]+";
+      if (/^\[[^/[\].]+\]$/.test(segment)) return "/[^/?#]+";
+      return `/${escapeRegex(segment)}`;
+    })
+    .join("");
+  const regex = new RegExp(`^${pattern || "/"}$`);
+  return (path) => regex.test(path);
+}
+
+const MATCHERS = LOCALIZED_PATHS.map(routeMatcher);
+
 export function isLocalizedPath(path: string): boolean {
-  return LOCALIZED_PATHS.includes(path);
+  return MATCHERS.some((matches) => matches(path));
 }
 
 /**
