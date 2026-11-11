@@ -7,8 +7,13 @@ import { z } from "zod";
 import {
   amazonSchema,
   attendanceSchema,
+  bitcoincashSchema,
   bitcoinSchema,
+  blueskySchema,
   calcomSchema,
+  cashappSchema,
+  discordSchema,
+  dogecoinSchema,
   dubshSchema,
   emailSchema,
   ethereumSchema,
@@ -16,28 +21,46 @@ import {
   facebookSchema,
   flipkartSchema,
   googleDriveSchema,
+  googleMeetSchema,
   googleReviewSchema,
   instagramSchema,
+  lineSchema,
   linkedinSchema,
+  litecoinSchema,
   mapsSchema,
+  mastodonSchema,
+  moneroSchema,
+  paynowSchema,
   paypalSchema,
   phoneSchema,
   pinterestSchema,
+  pixSchema,
+  promptpaySchema,
   redditSchema,
+  revolutSchema,
+  sepaSchema,
+  signalSchema,
   smsSchema,
   snapchatSchema,
+  solanaSchema,
+  soundcloudSchema,
   spotifySchema,
+  telegramSchema,
   textSchema,
   threadsSchema,
   tiktokSchema,
+  twitchSchema,
   twitterSchema,
   upiSchema,
   urlSchema,
   vcardSchema,
   venmoSchema,
+  vietqrSchema,
+  wazeSchema,
   whatsappSchema,
   wifiSchema,
   youtubeSchema,
+  zoomSchema,
 } from "@/lib/validations/qr-content";
 import {
   CONTENT_TYPES_METADATA,
@@ -81,6 +104,30 @@ export const CONTENT_FORM_SCHEMAS = {
   flipkart: flipkartSchema,
   calcom: calcomSchema,
   "google-drive": googleDriveSchema,
+  // Added 2026-11-11
+  pix: pixSchema,
+  sepa: sepaSchema,
+  paynow: paynowSchema,
+  promptpay: promptpaySchema,
+  vietqr: vietqrSchema,
+  cashapp: cashappSchema,
+  revolut: revolutSchema,
+  telegram: telegramSchema,
+  signal: signalSchema,
+  discord: discordSchema,
+  line: lineSchema,
+  bluesky: blueskySchema,
+  mastodon: mastodonSchema,
+  twitch: twitchSchema,
+  soundcloud: soundcloudSchema,
+  zoom: zoomSchema,
+  "google-meet": googleMeetSchema,
+  waze: wazeSchema,
+  litecoin: litecoinSchema,
+  dogecoin: dogecoinSchema,
+  bitcoincash: bitcoincashSchema,
+  solana: solanaSchema,
+  monero: moneroSchema,
 } satisfies Record<ContentType, z.ZodType>;
 
 export const CONTENT_TYPE_IDS = Object.keys(CONTENT_FORM_SCHEMAS) as [
@@ -123,8 +170,10 @@ function fieldsOf(type: ContentType): ContentField[] {
     .filter(([name]) => !INTERNAL_FIELDS.has(name))
     .map(([name, schema]) => {
       const optional = schema.safeParse(undefined).success;
+      // An optional choice (PayNow's proxyType) still lists its values.
+      const inner = schema instanceof z.ZodOptional ? schema.unwrap() : schema;
       const values =
-        schema instanceof z.ZodEnum ? (schema.options as string[]) : undefined;
+        inner instanceof z.ZodEnum ? (inner.options as string[]) : undefined;
       const kind = schema.safeParse(true).success ? "boolean" : "string";
       // A field the form always sends, possibly empty (a Wi-Fi password).
       const emptyByDefault = !optional && schema.safeParse("").success;
@@ -184,6 +233,15 @@ const ALL_FIELD_NAMES = [
   ),
 ].sort();
 
+/** Fields that are true/false (Wi-Fi's hidden, PayNow's editable, …). */
+const BOOLEAN_FIELD_NAMES = new Set(
+  CONTENT_TYPE_IDS.flatMap((type) =>
+    CONTENT_FIELDS[type]
+      .filter((field) => field.kind === "boolean")
+      .map((field) => field.name),
+  ),
+);
+
 const FIELD_DESCRIPTIONS: Record<string, string> = {
   url: "Web address (url, google-drive); website (vcard)",
   text: "Plain text",
@@ -191,7 +249,8 @@ const FIELD_DESCRIPTIONS: Record<string, string> = {
   subject: "Email subject",
   body: "Email body",
   phoneNumber: "Phone number, international format, e.g. +14155550123",
-  message: "Prefilled message (sms, whatsapp) or payment message (bitcoin)",
+  message:
+    "Prefilled message (sms, whatsapp) or payment message (bitcoin, crypto, pix, vietqr)",
   ssid: "Wi-Fi network name",
   password: "Wi-Fi password (8-63 characters for WPA)",
   encryption: "Wi-Fi security: WPA (WPA/WPA2/WPA3), WEP or nopass (open)",
@@ -203,19 +262,42 @@ const FIELD_DESCRIPTIONS: Record<string, string> = {
   email: "Contact email",
   address: "Contact street address, or a crypto wallet address",
   note: "Note (vcard, upi, venmo)",
+  // Added 2026-11-11
+  pixKey: "Pix key: CPF, CNPJ, +55 phone, email or random key",
+  city: "Receiver city (pix), up to 15 characters",
+  txid: "Pix transaction ID, up to 25 letters and digits",
+  iban: "IBAN (sepa)",
+  bic: "BIC (sepa), optional",
+  reference:
+    "Structured RF creditor reference (sepa) or bill reference (paynow)",
+  remittance: "Payment reference text (sepa), up to 140 characters",
+  proxyType: "Who gets paid: paynow mobile|uen, promptpay mobile|id|ewallet",
+  proxy: "Mobile number, UEN (paynow) or national/tax/e-wallet ID (promptpay)",
+  editable: "Whether the payer may change the amount (paynow)",
+  expiry: "Last day the code works, YYYY-MM-DD (paynow)",
+  bankBin: "The bank's 6-digit BIN (vietqr)",
+  accountType: "account or card (vietqr)",
+  accountNumber: "Bank account or card number (vietqr)",
+  link: "signal.me username link or signal.group link (signal)",
+  invite: "Discord invite link or code",
+  handle: "Handle: alice.bsky.social (bluesky) or @alice@mastodon.social",
+  meeting: "Meeting ID or invite link (zoom), or meeting code (google-meet)",
+  navigate: "Start directions right away (waze), default true",
   location: "Address or 'lat,long'",
   profileUrl: "Profile URL",
-  username: "Username or handle",
+  username:
+    "Username or handle; LINE ID (line), $Cashtag (cashapp), SoundCloud profile or link",
   subreddit: "Subreddit name",
   channelUrl: "YouTube channel URL",
   videoUrl: "YouTube video URL",
   upiId: "UPI ID, e.g. name@bank",
-  name: "Payee name (upi) or file name (google-drive)",
-  amount: "Amount, digits only",
+  name: "Payee name (upi, paynow), receiver (pix), beneficiary (sepa) or file name (google-drive)",
+  amount:
+    "Amount in the payment's currency, digits and an optional decimal point",
   paypalUrl: "PayPal.me link",
   placeId: "Google Maps place ID",
   uri: "Spotify URI or URL",
-  label: "Bitcoin payment label",
+  label: "Payment label (bitcoin and other crypto)",
   gas: "Ethereum gas limit",
   shopUrl: "Etsy shop URL",
   shortUrl: "Dub short link URL",
@@ -236,7 +318,7 @@ export const contentInputSchema = z.object({
   ...Object.fromEntries(
     ALL_FIELD_NAMES.map((name) => [
       name,
-      (name === "hidden" ? z.boolean() : z.string())
+      (BOOLEAN_FIELD_NAMES.has(name) ? z.boolean() : z.string())
         .optional()
         .describe(FIELD_DESCRIPTIONS[name] ?? name),
     ]),
@@ -330,6 +412,15 @@ export function describeContent(content: QRContentConfig): string {
         return content.text.length > 40
           ? `${content.text.slice(0, 40)}…`
           : content.text;
+      // Bank codes: the receiver's name, never the key or account number.
+      case "pix":
+      case "sepa":
+        return content.name;
+      case "paynow":
+        return content.name ?? "";
+      case "promptpay":
+      case "vietqr":
+        return "";
       default: {
         const first = Object.entries(content).find(
           ([key, value]) =>

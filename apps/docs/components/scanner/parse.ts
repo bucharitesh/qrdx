@@ -1,6 +1,9 @@
 // Turns a decoded barcode value into a typed result for the scanner's cards.
 // Pure (no DOM), so it runs in tests and on the server alike.
 
+import { vietQrBank } from "@/lib/vietqr-banks";
+import { emvTemplate, parseEmvPayload } from "@/utils/emv-qr";
+
 export interface Field {
   label: string;
   value: string;
@@ -32,7 +35,19 @@ export type PaymentScheme =
   | "ethereum"
   | "paypal"
   | "venmo"
-  | "epc";
+  | "epc"
+  // EMV merchant-presented bank codes, and other EMV codes by name
+  | "pix"
+  | "paynow"
+  | "promptpay"
+  | "vietqr"
+  | "emv"
+  // Crypto payment URIs
+  | "litecoin"
+  | "dogecoin"
+  | "bitcoincash"
+  | "solana"
+  | "monero";
 
 export interface Gs1Data {
   /** Human-readable application identifiers, in the order they appeared. */
@@ -130,6 +145,18 @@ export function parseScan(raw: string, format?: string): ParsedScan {
   if (lower.startsWith("ethereum:")) return parseEthereum(value) ?? text(raw);
   if (lower.startsWith("venmo:")) return parseVenmoApp(value) ?? text(raw);
   if (/^bcd\r?\n/i.test(value)) return parseEpc(value) ?? text(raw);
+  const crypto = /^(litecoin|dogecoin|bitcoincash|solana|monero):/i.exec(value);
+  if (crypto) {
+    return (
+      parseCryptoUri(crypto[1]?.toLowerCase() as CryptoScheme, value) ??
+      text(raw)
+    );
+  }
+  // EMV merchant-presented codes (Pix, PayNow, PromptPay, VietQR…). A GS1
+  // string can start with the same digits, so one that doesn't parse as
+  // EMV falls through.
+  const emv = value.startsWith("000201") ? parseEmvPayment(value) : null;
+  if (emv) return emv;
 
   const gs1 = parseGs1ElementString(value);
   if (gs1) return { kind: "gs1", data: gs1 };
@@ -718,6 +745,200 @@ function parseEpc(value: string): ParsedScan | null {
       ["Remittance info", lines[10]?.trim()],
     ]),
     copyValue: iban,
+  };
+}
+
+// ─── EMV bank payment codes and crypto URIs (2026-11-11) ────────────────────
+
+/** ISO 4217 numeric codes of the currencies EMV codes most often carry. */
+const EMV_CURRENCIES: Record<string, string> = {
+  "036": "AUD",
+  "116": "KHR",
+  "156": "CNY",
+  "344": "HKD",
+  "356": "INR",
+  "360": "IDR",
+  "392": "JPY",
+  "410": "KRW",
+  "458": "MYR",
+  "586": "PKR",
+  "608": "PHP",
+  "702": "SGD",
+  "704": "VND",
+  "764": "THB",
+  "784": "AED",
+  "826": "GBP",
+  "840": "USD",
+  "978": "EUR",
+  "986": "BRL",
+};
+
+const PROMPTPAY_AID = "A000000677010111";
+
+/** "0066812345678" → "+66 81 234 5678"-ish: the number as dialled. */
+function promptPayMobile(value: string): string {
+  return value.startsWith("0066") ? `+66${value.slice(4)}` : value;
+}
+
+/** "20261231" → "2026-12-31". */
+function isoDate(value: string | undefined): string | undefined {
+  return value && /^\d{8}$/.test(value)
+    ? `${value.slice(0, 4)}-${value.slice(4, 6)}-${value.slice(6)}`
+    : value;
+}
+
+function parseEmvPayment(value: string): ParsedScan | null {
+  const parsed = parseEmvPayload(value);
+  if (!parsed) return null;
+  const { fields } = parsed;
+  const currency = fields.get("53");
+  const code = currency ? (EMV_CURRENCIES[currency] ?? currency) : undefined;
+  const rawAmount = fields.get("54");
+  const amount = rawAmount
+    ? [code, rawAmount].filter(Boolean).join(" ")
+    : undefined;
+  const name = fields.get("59")?.trim();
+  const city = fields.get("60")?.trim();
+  const extra = emvTemplate(fields.get("62"));
+  const checksum: [string, string | undefined] = [
+    "Checksum",
+    parsed.crcValid ? undefined : "Doesn't match: the code may be damaged",
+  ];
+  const result = (
+    scheme: PaymentScheme,
+    payee: string,
+    copyValue: string,
+    entries: [string, string | undefined][],
+  ): ParsedScan => ({
+    kind: "payment",
+    scheme,
+    payee,
+    amount,
+    fields: compactFields([...entries, checksum]),
+    copyValue,
+  });
+
+  // Merchant account information sits in IDs 26 to 51, each a template
+  // whose first object names the scheme.
+  for (let id = 26; id <= 51; id++) {
+    const template = emvTemplate(fields.get(String(id)));
+    const gui = template.get("00")?.trim();
+    if (!gui) continue;
+    if (gui.toLowerCase() === "br.gov.bcb.pix") {
+      const key = template.get("01");
+      const url = template.get("25");
+      return result("pix", name ?? key ?? "Pix", key ?? url ?? value, [
+        ["Receiver", name],
+        ["City", city],
+        ["Pix key", key],
+        ["Charge", url],
+        ["Amount", amount],
+        ["Message", template.get("02")],
+        ["Transaction ID", extra.get("05")],
+      ]);
+    }
+    if (gui.toUpperCase() === "SG.PAYNOW") {
+      const proxy = template.get("02") ?? "";
+      const isUen = template.get("01") === "2";
+      return result("paynow", name && name !== "NA" ? name : proxy, proxy, [
+        ["Name", name && name !== "NA" ? name : undefined],
+        [isUen ? "UEN" : "Mobile number", proxy],
+        ["Amount", amount],
+        [
+          "Amount can change",
+          rawAmount ? (template.get("03") === "0" ? "No" : "Yes") : undefined,
+        ],
+        ["Reference", extra.get("01")],
+        ["Expires", isoDate(template.get("04"))],
+      ]);
+    }
+    if (gui.toUpperCase() === PROMPTPAY_AID) {
+      const mobile = template.get("01");
+      const id = template.get("02");
+      const wallet = template.get("03");
+      const proxy = mobile ? promptPayMobile(mobile) : (id ?? wallet ?? "");
+      return result("promptpay", proxy, proxy, [
+        ["Mobile number", mobile ? promptPayMobile(mobile) : undefined],
+        ["National or tax ID", id],
+        ["E-wallet ID", wallet],
+        ["Amount", amount],
+      ]);
+    }
+    if (gui.toUpperCase() === "A000000727") {
+      const beneficiary = emvTemplate(template.get("01"));
+      const bin = beneficiary.get("00");
+      const account = beneficiary.get("01") ?? "";
+      const bank = vietQrBank(bin);
+      const isCard = template.get("02") === "QRIBFTTC";
+      return result("vietqr", account, account, [
+        ["Bank", bank ? `${bank.shortName} (${bin})` : bin],
+        [isCard ? "Card number" : "Account number", account],
+        ["Amount", amount],
+        ["Message", extra.get("08")],
+      ]);
+    }
+  }
+
+  return result("emv", name ?? "Payment code", name ?? value, [
+    ["Merchant", name],
+    ["City", city],
+    ["Amount", amount],
+    ["Bill number", extra.get("01")],
+    ["Reference", extra.get("05")],
+  ]);
+}
+
+type CryptoScheme =
+  | "litecoin"
+  | "dogecoin"
+  | "bitcoincash"
+  | "solana"
+  | "monero";
+
+const CRYPTO_TICKERS: Record<CryptoScheme, string> = {
+  litecoin: "LTC",
+  dogecoin: "DOGE",
+  bitcoincash: "BCH",
+  solana: "SOL",
+  monero: "XMR",
+};
+
+/**
+ * BIP-21-style payment URIs: litecoin:, dogecoin:, bitcoincash:, Solana
+ * Pay transfer requests and monero: (tx_amount, recipient_name,
+ * tx_description).
+ */
+function parseCryptoUri(
+  scheme: CryptoScheme,
+  value: string,
+): ParsedScan | null {
+  const rest = value.slice(scheme.length + 1);
+  const [path = "", query = ""] = rest.split("?");
+  const address = path.replace(/^\/\//, "").trim();
+  if (!/^[a-zA-Z0-9]{25,110}$/.test(address)) return null;
+  const search = params(query);
+  const isMonero = scheme === "monero";
+  const rawAmount = param(search, isMonero ? "tx_amount" : "amount");
+  const amount = rawAmount
+    ? `${rawAmount} ${CRYPTO_TICKERS[scheme]}`
+    : undefined;
+  const label = param(search, isMonero ? "recipient_name" : "label");
+  const message = param(search, isMonero ? "tx_description" : "message");
+  return {
+    kind: "payment",
+    scheme,
+    payee: label ?? address,
+    amount,
+    fields: compactFields([
+      ["Address", address],
+      ["Amount", amount],
+      [isMonero ? "Name" : "Label", label],
+      [isMonero ? "Description" : "Message", message],
+      ["Memo", scheme === "solana" ? param(search, "memo") : undefined],
+      ["Token", scheme === "solana" ? param(search, "spl-token") : undefined],
+    ]),
+    openUrl: value,
+    copyValue: address,
   };
 }
 

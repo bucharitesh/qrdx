@@ -138,6 +138,93 @@ export const DYNAMIC_TYPE_FIELDS: Record<OtherDynamicType, ContentFieldSpec[]> =
     etsy: [link("shopUrl", "Shop link", "https://etsy.com/shop/…")],
     amazon: [link("productUrl", "Product link", "https://amazon.com/dp/…")],
     flipkart: [link("productUrl", "Product link", "https://flipkart.com/…")],
+    // Added 2026-11-11
+    telegram: [
+      {
+        name: "username",
+        label: "Username, channel or group",
+        placeholder: "@username or t.me link",
+      },
+      {
+        name: "phoneNumber",
+        label: "Or a phone number",
+        placeholder: "+1 202 555 0142",
+        hint: "With the country code.",
+        optional: true,
+        inputMode: "tel",
+      },
+    ],
+    signal: [
+      {
+        name: "phoneNumber",
+        label: "Phone number",
+        placeholder: "+1 202 555 0142",
+        hint: "With the country code.",
+        inputMode: "tel",
+      },
+      {
+        ...link(
+          "link",
+          "Or a username or group link",
+          "https://signal.me/#eu/…",
+        ),
+        optional: true,
+      },
+    ],
+    line: [
+      {
+        name: "username",
+        label: "LINE ID",
+        placeholder: "your-line-id or @official",
+      },
+    ],
+    discord: [
+      {
+        name: "invite",
+        label: "Invite link or code",
+        placeholder: "discord.gg/…",
+        hint: "Use an invite set to never expire.",
+      },
+    ],
+    bluesky: [
+      { name: "handle", label: "Handle", placeholder: "yourname.bsky.social" },
+    ],
+    mastodon: [
+      { name: "handle", label: "Handle", placeholder: "@you@mastodon.social" },
+    ],
+    twitch: [username("yourchannel")],
+    soundcloud: [
+      {
+        name: "username",
+        label: "Profile name or link",
+        placeholder: "yourname",
+      },
+    ],
+    zoom: [
+      {
+        name: "meeting",
+        label: "Meeting ID or invite link",
+        placeholder: "123 4567 8901",
+      },
+    ],
+    "google-meet": [
+      {
+        name: "meeting",
+        label: "Meeting code or link",
+        placeholder: "abc-defg-hij",
+      },
+    ],
+    waze: [
+      {
+        name: "location",
+        label: "Address or coordinates",
+        placeholder: "Pike Place Market, Seattle",
+      },
+    ],
+    cashapp: [
+      { name: "username", label: "$Cashtag", placeholder: "$yourcashtag" },
+    ],
+    revolut: [username("@yourname")],
   };
 
 const META = new Map(CONTENT_TYPES_METADATA.map((meta) => [meta.type, meta]));

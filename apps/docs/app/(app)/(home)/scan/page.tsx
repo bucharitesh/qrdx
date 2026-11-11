@@ -82,7 +82,7 @@ const CONTENT_TYPES: { name: string; detail: string; icon: CardIcon }[] = [
   {
     name: "Payments",
     detail:
-      "UPI, Bitcoin, Ethereum, PayPal, Venmo and SEPA (EPC) codes, always with a confirm step.",
+      "UPI, Pix, PayNow, PromptPay, VietQR and SEPA (EPC) codes, PayPal, Venmo and crypto wallets, always with a confirm step.",
     icon: Card,
   },
   {

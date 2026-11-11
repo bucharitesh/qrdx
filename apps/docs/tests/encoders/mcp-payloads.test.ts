@@ -1,15 +1,17 @@
 // The MCP server's structured payload builders against their specs: ZXing
-// WIFI:, vCard 3.0 (RFC 2426), mailto: (RFC 6068), sms: (RFC 5724) and geo:
-// (RFC 5870).
+// WIFI:, vCard 3.0 (RFC 2426), mailto: (RFC 6068), sms: (RFC 5724), geo:
+// (RFC 5870) and the bank payment codes (EMV and EPC069-12).
 import { describe, expect, it } from "vitest";
 import {
   buildEmailPayload,
   buildGeoPayload,
+  buildPaymentPayload,
   buildSmsPayload,
   buildVcardPayload,
   buildWifiPayload,
   emailPayloadSchema,
   geoPayloadSchema,
+  paymentPayloadSchema,
   smsPayloadSchema,
   vcardPayloadSchema,
   wifiPayloadSchema,
@@ -156,5 +158,50 @@ describe("geo: (RFC 5870)", () => {
     { latitude: 0, longitude: 0, uncertainty: -1 },
   ])("rejects out-of-range %j", (input) => {
     expect(geoPayloadSchema.safeParse(input).success).toBe(false);
+  });
+});
+
+describe("bank payments", () => {
+  const build = (input: unknown) =>
+    buildPaymentPayload(paymentPayloadSchema.parse(input));
+
+  it("builds each scheme with the playground's encoders", () => {
+    const vietqr = build({
+      scheme: "vietqr",
+      bankBin: "970416",
+      accountNumber: "257678859",
+    });
+    expect(vietqr).toEqual({
+      ok: true,
+      value:
+        "00020101021138530010A0000007270123000697041601092576788590208QRIBFTTA53037045802VN6304AE9F",
+    });
+    const paynow = build({
+      scheme: "paynow",
+      proxyType: "uen",
+      proxy: "201403121W",
+      amount: "12",
+      editable: false,
+    });
+    expect(paynow.ok && paynow.value).toContain("0009SG.PAYNOW");
+    expect(paynow.ok && paynow.value).toContain("0301052040000");
+    const sepa = build({
+      scheme: "sepa",
+      name: "Ana",
+      iban: "DE89370400440532013000",
+    });
+    expect(sepa.ok && sepa.value).toBe(
+      "BCD\n002\n1\nSCT\n\nAna\nDE89370400440532013000",
+    );
+  });
+
+  it("names the field that's wrong", () => {
+    expect(
+      build({ scheme: "promptpay", proxyType: "uen", proxy: "1" }),
+    ).toMatchObject({ ok: false, message: expect.stringMatching(/proxyType/) });
+    expect(build({ scheme: "pix", pixKey: "x" })).toMatchObject({
+      ok: false,
+      message: expect.stringMatching(/name|city|pixKey/),
+    });
   });
 });

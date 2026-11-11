@@ -35,6 +35,20 @@ export const DYNAMIC_CONTENT_TYPES = [
   "etsy",
   "amazon",
   "flipkart",
+  // Added 2026-11-11
+  "telegram",
+  "signal",
+  "line",
+  "discord",
+  "bluesky",
+  "mastodon",
+  "twitch",
+  "soundcloud",
+  "zoom",
+  "google-meet",
+  "waze",
+  "cashapp",
+  "revolut",
 ] as const satisfies readonly ContentType[];
 
 export type DynamicContentType = (typeof DYNAMIC_CONTENT_TYPES)[number];
@@ -57,6 +71,17 @@ export const STATIC_ONLY_TYPES = [
   "upi",
   "bitcoin",
   "ethereum",
+  // Added 2026-11-11
+  "pix",
+  "sepa",
+  "paynow",
+  "promptpay",
+  "vietqr",
+  "litecoin",
+  "dogecoin",
+  "bitcoincash",
+  "solana",
+  "monero",
 ] as const satisfies readonly ContentType[];
 
 /**

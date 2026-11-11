@@ -36,7 +36,31 @@ export type ContentType =
   | "amazon"
   | "flipkart"
   | "calcom"
-  | "google-drive";
+  | "google-drive"
+  // Added 2026-11-11 (payments, messaging, social, meetings, maps, crypto)
+  | "pix"
+  | "sepa"
+  | "paynow"
+  | "promptpay"
+  | "vietqr"
+  | "cashapp"
+  | "revolut"
+  | "telegram"
+  | "signal"
+  | "discord"
+  | "line"
+  | "bluesky"
+  | "mastodon"
+  | "twitch"
+  | "soundcloud"
+  | "zoom"
+  | "google-meet"
+  | "waze"
+  | "litecoin"
+  | "dogecoin"
+  | "bitcoincash"
+  | "solana"
+  | "monero";
 
 /**
  * URL/Plain Text Content
@@ -338,6 +362,192 @@ export interface CalcomContent {
   bookingUrl: string;
 }
 
+// ─── Content types added 2026-11-11 ─────────────────────────────────────────
+
+/** Pix (Brazil): a static BR Code, EMV merchant-presented. */
+export interface PixContent {
+  type: "pix";
+  /** CPF, CNPJ, +55 phone, email or random (EVP) key */
+  pixKey: string;
+  /** Receiver name, up to 25 characters */
+  name: string;
+  /** Receiver city, up to 15 characters */
+  city: string;
+  amount?: string;
+  /** Transaction ID, up to 25 letters and digits ("***" when empty) */
+  txid?: string;
+  message?: string;
+}
+
+/** SEPA credit transfer (EPC069-12). */
+export interface SepaContent {
+  type: "sepa";
+  /** Beneficiary name */
+  name: string;
+  iban: string;
+  bic?: string;
+  /** Euros */
+  amount?: string;
+  /** Structured creditor reference (ISO 11649, RF…) */
+  reference?: string;
+  /** Unstructured remittance information */
+  remittance?: string;
+}
+
+/** PayNow (Singapore), SGQR / EMV merchant-presented. */
+export interface PayNowContent {
+  type: "paynow";
+  proxyType: "mobile" | "uen";
+  /** Singapore mobile number or company UEN */
+  proxy: string;
+  amount?: string;
+  /** Whether the payer may change the amount (default yes) */
+  editable?: boolean;
+  /** Bill number or reference */
+  reference?: string;
+  /** Last day the code works, YYYY-MM-DD */
+  expiry?: string;
+  /** Name shown in the payer's app */
+  name?: string;
+}
+
+/** PromptPay (Thailand), Thai QR Payment / EMV merchant-presented. */
+export interface PromptPayContent {
+  type: "promptpay";
+  proxyType: "mobile" | "id" | "ewallet";
+  /** Thai mobile number, 13-digit national or tax ID, or 15-digit e-wallet ID */
+  proxy: string;
+  amount?: string;
+}
+
+/** VietQR (Vietnam), NAPAS / EMV merchant-presented. */
+export interface VietQrContent {
+  type: "vietqr";
+  /** The bank's 6-digit BIN (lib/vietqr-banks.ts) */
+  bankBin: string;
+  accountType: "account" | "card";
+  accountNumber: string;
+  /** Vietnamese dong, whole numbers */
+  amount?: string;
+  message?: string;
+}
+
+/** Cash App: a $Cashtag link. */
+export interface CashAppContent {
+  type: "cashapp";
+  username: string;
+}
+
+/** Revolut: a revolut.me link. */
+export interface RevolutContent {
+  type: "revolut";
+  username: string;
+}
+
+/** Telegram: a username, channel or group, or a phone number. */
+export interface TelegramContent {
+  type: "telegram";
+  username?: string;
+  phoneNumber?: string;
+}
+
+/** Signal: a phone number, or a username or group link from the app. */
+export interface SignalContent {
+  type: "signal";
+  phoneNumber?: string;
+  /** A signal.me username link or signal.group link */
+  link?: string;
+}
+
+/** Discord: a server invite. */
+export interface DiscordContent {
+  type: "discord";
+  /** Invite code or invite link */
+  invite: string;
+}
+
+/** LINE: add a friend by LINE ID, or an official account (@id). */
+export interface LineContent {
+  type: "line";
+  username: string;
+}
+
+/** Bluesky: a profile by handle. */
+export interface BlueskyContent {
+  type: "bluesky";
+  handle: string;
+}
+
+/** Mastodon (and other fediverse servers): @user@server. */
+export interface MastodonContent {
+  type: "mastodon";
+  handle: string;
+}
+
+/** Twitch: a channel. */
+export interface TwitchContent {
+  type: "twitch";
+  username: string;
+}
+
+/** SoundCloud: a profile, or a track or playlist link. */
+export interface SoundCloudContent {
+  type: "soundcloud";
+  username: string;
+}
+
+/** Zoom: a meeting ID or invite link. */
+export interface ZoomContent {
+  type: "zoom";
+  meeting: string;
+}
+
+/** Google Meet: a meeting code or link. */
+export interface GoogleMeetContent {
+  type: "google-meet";
+  meeting: string;
+}
+
+/** Waze: directions to an address or coordinates. */
+export interface WazeContent {
+  type: "waze";
+  location: string;
+  /** Start navigating right away (default yes) */
+  navigate?: boolean;
+}
+
+/** A crypto payment request (BIP-21 style URI) to one address. */
+interface CryptoPaymentFields {
+  address: string;
+  amount?: string;
+  label?: string;
+  message?: string;
+}
+
+export interface LitecoinContent extends CryptoPaymentFields {
+  type: "litecoin";
+}
+
+export interface DogecoinContent extends CryptoPaymentFields {
+  type: "dogecoin";
+}
+
+export interface BitcoinCashContent extends CryptoPaymentFields {
+  type: "bitcoincash";
+}
+
+/** Solana Pay transfer request. */
+export interface SolanaContent extends CryptoPaymentFields {
+  type: "solana";
+}
+
+/** Monero payment request (monero: URI). */
+export interface MoneroContent extends CryptoPaymentFields {
+  type: "monero";
+}
+
+// ─── end of the 2026-11-11 types ────────────────────────────────────────────
+
 /**
  * Union type for all content configurations
  */
@@ -374,7 +584,30 @@ export type QRContentConfig =
   | AttendanceContent
   | AmazonContent
   | FlipkartContent
-  | CalcomContent;
+  | CalcomContent
+  | PixContent
+  | SepaContent
+  | PayNowContent
+  | PromptPayContent
+  | VietQrContent
+  | CashAppContent
+  | RevolutContent
+  | TelegramContent
+  | SignalContent
+  | DiscordContent
+  | LineContent
+  | BlueskyContent
+  | MastodonContent
+  | TwitchContent
+  | SoundCloudContent
+  | ZoomContent
+  | GoogleMeetContent
+  | WazeContent
+  | LitecoinContent
+  | DogecoinContent
+  | BitcoinCashContent
+  | SolanaContent
+  | MoneroContent;
 
 /**
  * Content type metadata for UI rendering
@@ -665,6 +898,176 @@ export const CONTENT_TYPES_METADATA: ContentTypeMetadata[] = [
       "calendly",
     ],
   },
+  // ─── Added 2026-11-11 ─────────────────────────────────────────────────────
+  {
+    type: "pix",
+    label: "Pix",
+    icon: "brand:pix",
+    description: "Get paid by Pix from any Brazilian bank",
+    keywords: ["brazil", "brasil", "br code", "copia e cola", "payment", "pay"],
+  },
+  {
+    type: "sepa",
+    label: "SEPA transfer",
+    icon: "brand:sepa",
+    description: "Fill in a euro bank transfer (EPC)",
+    keywords: [
+      "epc",
+      "girocode",
+      "iban",
+      "bank transfer",
+      "euro",
+      "europe",
+      "payment",
+    ],
+  },
+  {
+    type: "paynow",
+    label: "PayNow",
+    icon: "CardSend",
+    description: "Get paid by PayNow in Singapore",
+    keywords: ["singapore", "sgqr", "uen", "payment", "pay", "bank transfer"],
+  },
+  {
+    type: "promptpay",
+    label: "PromptPay",
+    icon: "Mobile",
+    description: "Get paid by PromptPay in Thailand",
+    keywords: ["thailand", "thai qr", "payment", "pay", "bank transfer"],
+  },
+  {
+    type: "vietqr",
+    label: "VietQR",
+    icon: "Bank",
+    description: "Get a bank transfer in Vietnam",
+    keywords: ["vietnam", "napas", "bank transfer", "payment", "pay"],
+  },
+  {
+    type: "cashapp",
+    label: "Cash App",
+    icon: "brand:cashapp",
+    description: "Get paid to your $Cashtag",
+    keywords: ["cashtag", "cash app", "payment", "pay", "money"],
+  },
+  {
+    type: "revolut",
+    label: "Revolut",
+    icon: "brand:revolut",
+    description: "Get paid with a revolut.me link",
+    keywords: ["revolut.me", "revtag", "payment", "pay", "money"],
+  },
+  {
+    type: "telegram",
+    label: "Telegram",
+    icon: "brand:telegram",
+    description: "Open a Telegram chat, channel or group",
+    keywords: ["tg", "t.me", "channel", "group", "chat", "message"],
+  },
+  {
+    type: "signal",
+    label: "Signal",
+    icon: "brand:signal",
+    description: "Start a Signal chat",
+    keywords: ["signal.me", "private", "chat", "message", "secure"],
+  },
+  {
+    type: "discord",
+    label: "Discord",
+    icon: "brand:discord",
+    description: "Invite people to your Discord server",
+    keywords: ["server", "invite", "community", "gaming", "discord.gg"],
+  },
+  {
+    type: "line",
+    label: "LINE",
+    icon: "brand:line",
+    description: "Add you as a friend on LINE",
+    keywords: ["line id", "official account", "japan", "thailand", "chat"],
+  },
+  {
+    type: "bluesky",
+    label: "Bluesky",
+    icon: "brand:bluesky",
+    description: "Open a Bluesky profile",
+    keywords: ["bsky", "at protocol", "social"],
+  },
+  {
+    type: "mastodon",
+    label: "Mastodon",
+    icon: "brand:mastodon",
+    description: "Open a Mastodon or fediverse profile",
+    keywords: ["fediverse", "toot", "activitypub", "social"],
+  },
+  {
+    type: "twitch",
+    label: "Twitch",
+    icon: "brand:twitch",
+    description: "Open a Twitch channel",
+    keywords: ["stream", "streaming", "live", "gaming"],
+  },
+  {
+    type: "soundcloud",
+    label: "SoundCloud",
+    icon: "brand:soundcloud",
+    description: "Play a SoundCloud profile or track",
+    keywords: ["music", "track", "mix", "dj", "audio"],
+  },
+  {
+    type: "zoom",
+    label: "Zoom",
+    icon: "brand:zoom",
+    description: "Join a Zoom meeting",
+    keywords: ["meeting", "video call", "webinar", "conference call"],
+  },
+  {
+    type: "google-meet",
+    label: "Google Meet",
+    icon: "brand:google-meet",
+    description: "Join a Google Meet call",
+    keywords: ["meet", "meeting", "video call", "hangouts"],
+  },
+  {
+    type: "waze",
+    label: "Waze",
+    icon: "brand:waze",
+    description: "Get directions in Waze",
+    keywords: ["directions", "navigation", "navigate", "drive", "route"],
+  },
+  {
+    type: "litecoin",
+    label: "Litecoin",
+    icon: "brand:litecoin",
+    description: "Receive Litecoin to your wallet",
+    keywords: ["ltc", "crypto", "wallet", "payment"],
+  },
+  {
+    type: "dogecoin",
+    label: "Dogecoin",
+    icon: "brand:dogecoin",
+    description: "Receive Dogecoin to your wallet",
+    keywords: ["doge", "crypto", "wallet", "payment"],
+  },
+  {
+    type: "bitcoincash",
+    label: "Bitcoin Cash",
+    icon: "brand:bitcoincash",
+    description: "Receive Bitcoin Cash to your wallet",
+    keywords: ["bch", "crypto", "wallet", "payment"],
+  },
+  {
+    type: "solana",
+    label: "Solana",
+    icon: "brand:solana",
+    description: "Receive SOL with Solana Pay",
+    keywords: ["sol", "solana pay", "crypto", "wallet", "web3", "payment"],
+  },
+  {
+    type: "monero",
+    label: "Monero",
+    icon: "brand:monero",
+    description: "Receive Monero to your wallet",
+    keywords: ["xmr", "crypto", "wallet", "privacy", "payment"],
+  },
 ];
 
 /**
@@ -705,7 +1108,17 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
     id: "connect",
     label: "Contact & connect",
     icon: "Personalcard",
-    types: ["vcard", "phone", "email", "sms", "whatsapp", "wifi"],
+    types: [
+      "vcard",
+      "phone",
+      "email",
+      "sms",
+      "whatsapp",
+      "wifi",
+      "telegram",
+      "signal",
+      "line",
+    ],
   },
   {
     id: "social",
@@ -723,19 +1136,57 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
       "pinterest",
       "reddit",
       "spotify",
+      "discord",
+      "bluesky",
+      "mastodon",
+      "twitch",
+      "soundcloud",
     ],
   },
   {
     id: "business",
     label: "Business",
     icon: "Shop",
-    types: ["google-review", "calcom", "attendance", "maps"],
+    types: [
+      "google-review",
+      "calcom",
+      "attendance",
+      "maps",
+      "waze",
+      "zoom",
+      "google-meet",
+    ],
   },
   {
     id: "payments",
     label: "Payments",
     icon: "WalletMoney",
-    types: ["upi", "paypal", "venmo", "bitcoin", "ethereum"],
+    types: [
+      "upi",
+      "pix",
+      "sepa",
+      "paynow",
+      "promptpay",
+      "vietqr",
+      "paypal",
+      "venmo",
+      "cashapp",
+      "revolut",
+    ],
+  },
+  {
+    id: "crypto",
+    label: "Crypto",
+    icon: "Coin1",
+    types: [
+      "bitcoin",
+      "ethereum",
+      "solana",
+      "litecoin",
+      "dogecoin",
+      "bitcoincash",
+      "monero",
+    ],
   },
   {
     id: "shopping",

@@ -7,7 +7,10 @@ import type {
   AmazonContent,
   AttendanceContent,
   BitcoinContent,
+  BlueskyContent,
   CalcomContent,
+  CashAppContent,
+  DiscordContent,
   DubshContent,
   EmailContent,
   EthereumContent,
@@ -15,30 +18,52 @@ import type {
   FacebookContent,
   FlipkartContent,
   GoogleDriveContent,
+  GoogleMeetContent,
   GoogleReviewContent,
   InstagramContent,
+  LineContent,
   LinkedInContent,
   MapsContent,
+  MastodonContent,
   PayPalContent,
   PhoneContent,
   PinterestContent,
   QRContentConfig,
   RedditContent,
+  RevolutContent,
+  SignalContent,
   SmsContent,
   SnapchatContent,
+  SoundCloudContent,
   SpotifyContent,
+  TelegramContent,
   TextContent,
   ThreadsContent,
   TikTokContent,
+  TwitchContent,
   TwitterContent,
   UPIContent,
   UrlContent,
   VCardContent,
   VenmoContent,
+  WazeContent,
   WhatsAppContent,
   WifiContent,
   YouTubeContent,
+  ZoomContent,
 } from "@/types/qr-content";
+import {
+  encodePayNow,
+  encodePix,
+  encodePromptPay,
+  encodeSepa,
+  encodeVietQr,
+  payNowIssue,
+  pixIssue,
+  promptPayIssue,
+  sepaIssue,
+  vietQrIssue,
+} from "./payment-qr-codes";
 
 /** Largest payload a QR code holds (version 40-L, byte mode). */
 export const MAX_QR_PAYLOAD_BYTES = 2953;
@@ -629,6 +654,606 @@ export function encodeGoogleDrive(content: GoogleDriveContent): string {
   return normalizeWebUrl(content.url || "");
 }
 
+// ─── Content types added 2026-11-11 ─────────────────────────────────────────
+// Messaging, social, meeting, map, payment-link and crypto types. The bank
+// payment standards (Pix, SEPA, PayNow, PromptPay, VietQR) live in
+// ./payment-qr-codes.ts. Each type has an `…Issue` check, used by its form
+// (lib/validations/qr-content.ts) and by validateContent, and an encoder
+// that returns "" while the check fails.
+
+/** A problem with one field of a form, or (no field) with the whole content. */
+export interface ContentIssue {
+  field?: string;
+  message: string;
+}
+
+const problem = (field: string, message: string): ContentIssue => ({
+  field,
+  message,
+});
+
+/** The text as an http(s) link on one of `hosts` (or below one), else null. */
+function linkOn(raw: string, ...hosts: string[]): URL | null {
+  const value = raw.trim();
+  if (!/[./]/.test(value) || /\s/.test(value)) return null;
+  let url: URL;
+  try {
+    url = new URL(normalizeWebUrl(value));
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "https:" && url.protocol !== "http:") return null;
+  const host = url.hostname.toLowerCase().replace(/\.$/, "");
+  return hosts.some((item) => host === item || host.endsWith(`.${item}`))
+    ? url
+    : null;
+}
+
+/** A link as an https address. */
+function httpsLink(url: URL): string {
+  const copy = new URL(url.toString());
+  copy.protocol = "https:";
+  return copy.toString();
+}
+
+/** International numbers only: links like t.me/+… need the country code. */
+function internationalPhoneIssue(
+  raw: string,
+  field: string,
+): ContentIssue | null {
+  const check = validatePhone(raw);
+  if (!check.valid)
+    return problem(field, check.error ?? "Invalid phone number");
+  if (!normalizePhone(raw).number.startsWith("+")) {
+    return problem(field, "Add the country code, starting with +");
+  }
+  return null;
+}
+
+const internationalDigits = (raw: string) =>
+  normalizePhone(raw).number.replace(/^\+/, "");
+
+/** "lat, long" within the WGS 84 ranges, else null. */
+function coordinates(location: string): [string, string] | null {
+  const match = /^([+-]?\d+(?:\.\d+)?),\s*([+-]?\d+(?:\.\d+)?)$/.exec(
+    location.trim(),
+  );
+  if (!match) return null;
+  const [lat, long] = [match[1] as string, match[2] as string];
+  if (Math.abs(Number(lat)) > 90 || Math.abs(Number(long)) > 180) return null;
+  return [lat.replace(/^\+/, ""), long.replace(/^\+/, "")];
+}
+
+// Telegram: https://t.me/<username> or https://t.me/+<phone number>
+
+const TELEGRAM_HOSTS = ["t.me", "telegram.me", "telegram.dog"];
+/** 5-32 characters: letters, digits and "_", starting with a letter. */
+const TELEGRAM_USERNAME = /^[A-Za-z][A-Za-z0-9_]{3,30}[A-Za-z0-9]$/;
+
+export function telegramIssue(
+  content: Partial<TelegramContent>,
+): ContentIssue | null {
+  const username = content.username?.trim() ?? "";
+  if (username) {
+    if (linkOn(username, ...TELEGRAM_HOSTS)) return null;
+    return TELEGRAM_USERNAME.test(username.replace(/^@/, ""))
+      ? null
+      : problem(
+          "username",
+          "Telegram usernames are 5-32 letters, digits and underscores, starting with a letter",
+        );
+  }
+  if (content.phoneNumber?.trim()) {
+    return internationalPhoneIssue(content.phoneNumber, "phoneNumber");
+  }
+  return { message: "Telegram username or phone number is required" };
+}
+
+export function encodeTelegram(content: TelegramContent): string {
+  if (telegramIssue(content)) return "";
+  const username = content.username?.trim();
+  if (username) {
+    const link = linkOn(username, ...TELEGRAM_HOSTS);
+    return link
+      ? httpsLink(link)
+      : `https://t.me/${username.replace(/^@/, "")}`;
+  }
+  return `https://t.me/+${internationalDigits(content.phoneNumber ?? "")}`;
+}
+
+// Signal: https://signal.me/#p/+<number>, or a username or group link
+
+/** A signal.me username or number link, or a signal.group link, else null. */
+function signalLink(raw: string): URL | null {
+  const url = linkOn(raw, "signal.me", "signal.group");
+  if (!url) return null;
+  if (url.hostname.endsWith("signal.group"))
+    return url.hash.length > 2 ? url : null;
+  return /^#(?:eu|p)\/.+/.test(url.hash) ? url : null;
+}
+
+export function signalIssue(
+  content: Partial<SignalContent>,
+): ContentIssue | null {
+  if (content.link?.trim()) {
+    return signalLink(content.link)
+      ? null
+      : problem(
+          "link",
+          "Paste the signal.me username link or signal.group link from the Signal app",
+        );
+  }
+  if (content.phoneNumber?.trim()) {
+    return internationalPhoneIssue(content.phoneNumber, "phoneNumber");
+  }
+  return { message: "Signal phone number or link is required" };
+}
+
+export function encodeSignal(content: SignalContent): string {
+  if (signalIssue(content)) return "";
+  const link = content.link?.trim() ? signalLink(content.link) : null;
+  if (link) return httpsLink(link);
+  return `https://signal.me/#p/+${internationalDigits(content.phoneNumber ?? "")}`;
+}
+
+// Discord: https://discord.gg/<invite code>
+
+const DISCORD_INVITE = /^[A-Za-z0-9-]{2,32}$/;
+
+/** The invite code from a code, discord.gg/<code> or discord.com/invite/<code>. */
+function discordInvite(raw: string): string | null {
+  const value = raw.trim();
+  const url = linkOn(value, "discord.gg", "discord.com", "discordapp.com");
+  if (url) {
+    const segments = url.pathname.split("/").filter(Boolean);
+    const code = url.hostname.endsWith("discord.gg")
+      ? segments[0]
+      : segments[0] === "invite"
+        ? segments[1]
+        : undefined;
+    return code && DISCORD_INVITE.test(code) ? code : null;
+  }
+  return DISCORD_INVITE.test(value) ? value : null;
+}
+
+export function discordIssue(
+  content: Partial<DiscordContent>,
+): ContentIssue | null {
+  if (!content.invite?.trim()) {
+    return problem("invite", "Discord invite link or code is required");
+  }
+  return discordInvite(content.invite)
+    ? null
+    : problem(
+        "invite",
+        "Paste a server invite link (discord.gg/…) or just its code",
+      );
+}
+
+export function encodeDiscord(content: DiscordContent): string {
+  if (discordIssue(content)) return "";
+  return `https://discord.gg/${discordInvite(content.invite) as string}`;
+}
+
+// LINE: https://line.me/ti/p/~<LINE ID>, or https://line.me/R/ti/p/@<id> for
+// an official account
+
+const LINE_ID = /^[A-Za-z0-9._-]{3,20}$/;
+
+export function lineIssue(content: Partial<LineContent>): ContentIssue | null {
+  const value = content.username?.trim() ?? "";
+  if (!value) return problem("username", "LINE ID is required");
+  if (linkOn(value, "line.me", "lin.ee")) return null;
+  return LINE_ID.test(value.replace(/^[@~]/, ""))
+    ? null
+    : problem(
+        "username",
+        'LINE IDs are letters, digits, ".", "-" and "_". Official accounts start with @.',
+      );
+}
+
+export function encodeLine(content: LineContent): string {
+  if (lineIssue(content)) return "";
+  const value = content.username.trim();
+  const link = linkOn(value, "line.me", "lin.ee");
+  if (link) return httpsLink(link);
+  return value.startsWith("@")
+    ? `https://line.me/R/ti/p/@${encodeURIComponent(value.slice(1))}`
+    : `https://line.me/ti/p/~${encodeURIComponent(value.replace(/^~/, ""))}`;
+}
+
+// Bluesky: https://bsky.app/profile/<handle>
+
+const DOMAIN_HANDLE =
+  /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
+/** "alice" → "alice.bsky.social"; a domain handle or DID as given. */
+function blueskyHandle(raw: string): string | null {
+  let value = raw.trim();
+  // "bsky.app" alone is Bluesky's own handle; only a path makes it a link.
+  const url = value.includes("/") ? linkOn(value, "bsky.app") : null;
+  if (url) {
+    const match = /^\/profile\/([^/]+)/.exec(url.pathname);
+    if (!match) return null;
+    value = decodeURIComponent(match[1] as string);
+  }
+  value = value.replace(/^@/, "");
+  if (/^did:(?:plc|web):[A-Za-z0-9._:%-]+$/.test(value)) return value;
+  value = value.toLowerCase();
+  if (!value.includes(".")) value = `${value}.bsky.social`;
+  return value.length <= 253 && DOMAIN_HANDLE.test(value) ? value : null;
+}
+
+export function blueskyIssue(
+  content: Partial<BlueskyContent>,
+): ContentIssue | null {
+  if (!content.handle?.trim()) {
+    return problem("handle", "Bluesky handle is required");
+  }
+  return blueskyHandle(content.handle)
+    ? null
+    : problem(
+        "handle",
+        "Enter a handle like alice.bsky.social or your own domain",
+      );
+}
+
+export function encodeBluesky(content: BlueskyContent): string {
+  if (blueskyIssue(content)) return "";
+  return `https://bsky.app/profile/${blueskyHandle(content.handle) as string}`;
+}
+
+// Mastodon and other fediverse servers: https://<server>/@<user>
+
+const FEDIVERSE_USER = /^[A-Za-z0-9_](?:[A-Za-z0-9_.-]{0,62}[A-Za-z0-9_])?$/;
+
+/** "@user@server", "user@server" or "https://server/@user". */
+function fediverseProfile(
+  raw: string,
+): { user: string; server: string } | null {
+  const value = raw.trim();
+  const handle = /^@?([^@\s/]+)@([^@\s/]+)$/.exec(value);
+  if (handle) {
+    const [user, server] = [
+      handle[1] as string,
+      (handle[2] as string).toLowerCase(),
+    ];
+    return FEDIVERSE_USER.test(user) && DOMAIN_HANDLE.test(server)
+      ? { user, server }
+      : null;
+  }
+  if (!value.includes("/")) return null;
+  let url: URL;
+  try {
+    url = new URL(normalizeWebUrl(value));
+  } catch {
+    return null;
+  }
+  const path = /^\/@([^/@]+)\/?$/.exec(url.pathname);
+  const server = url.hostname.toLowerCase();
+  if (!path || !DOMAIN_HANDLE.test(server)) return null;
+  const user = decodeURIComponent(path[1] as string);
+  return FEDIVERSE_USER.test(user) ? { user, server } : null;
+}
+
+export function mastodonIssue(
+  content: Partial<MastodonContent>,
+): ContentIssue | null {
+  if (!content.handle?.trim()) {
+    return problem("handle", "Mastodon handle is required");
+  }
+  return fediverseProfile(content.handle)
+    ? null
+    : problem(
+        "handle",
+        "Enter your full handle, like @alice@mastodon.social, or your profile link",
+      );
+}
+
+export function encodeMastodon(content: MastodonContent): string {
+  if (mastodonIssue(content)) return "";
+  const { user, server } = fediverseProfile(content.handle) as {
+    user: string;
+    server: string;
+  };
+  return `https://${server}/@${user}`;
+}
+
+// Twitch: https://www.twitch.tv/<channel>
+
+const TWITCH_NAME = /^[A-Za-z0-9_]{4,25}$/;
+
+export function twitchIssue(
+  content: Partial<TwitchContent>,
+): ContentIssue | null {
+  if (!content.username?.trim()) {
+    return problem("username", "Twitch username is required");
+  }
+  return TWITCH_NAME.test(handleFrom(content.username, "twitch.tv"))
+    ? null
+    : problem("username", 'Twitch usernames are 4-25 letters, digits and "_"');
+}
+
+export function encodeTwitch(content: TwitchContent): string {
+  if (twitchIssue(content)) return "";
+  return `https://www.twitch.tv/${handleFrom(content.username, "twitch.tv").toLowerCase()}`;
+}
+
+// SoundCloud: https://soundcloud.com/<profile>, or a pasted track or playlist
+
+const SOUNDCLOUD_NAME = /^[A-Za-z0-9_-]{3,25}$/;
+
+export function soundCloudIssue(
+  content: Partial<SoundCloudContent>,
+): ContentIssue | null {
+  const value = content.username?.trim() ?? "";
+  if (!value) {
+    return problem("username", "SoundCloud profile or link is required");
+  }
+  const link = linkOn(value, "soundcloud.com", "snd.sc");
+  if (link) {
+    return link.pathname.length > 1
+      ? null
+      : problem("username", "Paste a profile, track or playlist link");
+  }
+  return SOUNDCLOUD_NAME.test(value.replace(/^@/, ""))
+    ? null
+    : problem(
+        "username",
+        'SoundCloud profile names are 3-25 letters, digits, "_" and "-"',
+      );
+}
+
+export function encodeSoundCloud(content: SoundCloudContent): string {
+  if (soundCloudIssue(content)) return "";
+  const value = content.username.trim();
+  const link = linkOn(value, "soundcloud.com", "snd.sc");
+  return link
+    ? httpsLink(link)
+    : `https://soundcloud.com/${value.replace(/^@/, "").toLowerCase()}`;
+}
+
+// Zoom: https://zoom.us/j/<meeting ID>, or a pasted invite link
+
+const ZOOM_HOSTS = ["zoom.us", "zoom.com", "zoomgov.com"];
+
+function zoomMeetingId(raw: string): string | null {
+  const digits = raw.replace(/[\s-]/g, "");
+  return /^\d{9,11}$/.test(digits) ? digits : null;
+}
+
+export function zoomIssue(content: Partial<ZoomContent>): ContentIssue | null {
+  const value = content.meeting?.trim() ?? "";
+  if (!value) return problem("meeting", "Zoom meeting ID or link is required");
+  const link = linkOn(value, ...ZOOM_HOSTS);
+  if (link) {
+    return /^\/(?:j|w|s|my|wc\/join)\/[^/]+/.test(link.pathname)
+      ? null
+      : problem("meeting", "Paste the meeting's invite link (…zoom.us/j/…)");
+  }
+  return zoomMeetingId(value)
+    ? null
+    : problem(
+        "meeting",
+        "Meeting IDs are 9 to 11 digits. Or paste the invite link to keep its passcode.",
+      );
+}
+
+export function encodeZoom(content: ZoomContent): string {
+  if (zoomIssue(content)) return "";
+  const link = linkOn(content.meeting, ...ZOOM_HOSTS);
+  return link
+    ? httpsLink(link)
+    : `https://zoom.us/j/${zoomMeetingId(content.meeting) as string}`;
+}
+
+// Google Meet: https://meet.google.com/<abc-defg-hij>
+
+function meetCode(raw: string): string | null {
+  let value = raw.trim();
+  const link = linkOn(value, "meet.google.com");
+  if (link) value = link.pathname.replace(/^\/|\/$/g, "");
+  const letters = value.toLowerCase().replace(/[\s-]/g, "");
+  return /^[a-z]{10}$/.test(letters)
+    ? `${letters.slice(0, 3)}-${letters.slice(3, 7)}-${letters.slice(7)}`
+    : null;
+}
+
+export function googleMeetIssue(
+  content: Partial<GoogleMeetContent>,
+): ContentIssue | null {
+  if (!content.meeting?.trim()) {
+    return problem("meeting", "Google Meet code or link is required");
+  }
+  return meetCode(content.meeting)
+    ? null
+    : problem(
+        "meeting",
+        "Meeting codes look like abc-defg-hij. Paste the code or the meet.google.com link.",
+      );
+}
+
+export function encodeGoogleMeet(content: GoogleMeetContent): string {
+  if (googleMeetIssue(content)) return "";
+  return `https://meet.google.com/${meetCode(content.meeting) as string}`;
+}
+
+// Waze: https://waze.com/ul?ll=<lat>,<long>&navigate=yes or ?q=<address>
+
+export function wazeIssue(content: Partial<WazeContent>): ContentIssue | null {
+  return content.location?.trim()
+    ? null
+    : problem("location", "Address or coordinates are required");
+}
+
+export function encodeWaze(content: WazeContent): string {
+  if (wazeIssue(content)) return "";
+  const location = content.location.trim();
+  const point = coordinates(location);
+  const target = point
+    ? `ll=${point[0]},${point[1]}`
+    : `q=${encodeURIComponent(location)}`;
+  return `https://waze.com/ul?${target}${content.navigate === false ? "" : "&navigate=yes"}`;
+}
+
+// Cash App: https://cash.app/$<cashtag>
+
+/** 1-20 letters, digits or "_", with at least one letter. */
+const CASHTAG = /^(?=[^A-Za-z]*[A-Za-z])[A-Za-z0-9_]{1,20}$/;
+
+const cashtagFrom = (raw: string) =>
+  handleFrom(raw, "cash.app", "\\$?").replace(/^\$/, "");
+
+export function cashAppIssue(
+  content: Partial<CashAppContent>,
+): ContentIssue | null {
+  if (!content.username?.trim()) {
+    return problem("username", "$Cashtag is required");
+  }
+  return CASHTAG.test(cashtagFrom(content.username))
+    ? null
+    : problem(
+        "username",
+        "A $Cashtag is up to 20 letters and digits, with at least one letter",
+      );
+}
+
+export function encodeCashApp(content: CashAppContent): string {
+  if (cashAppIssue(content)) return "";
+  return `https://cash.app/$${cashtagFrom(content.username)}`;
+}
+
+// Revolut: https://revolut.me/<username>
+
+const REVTAG = /^[A-Za-z0-9._-]{3,32}$/;
+
+export function revolutIssue(
+  content: Partial<RevolutContent>,
+): ContentIssue | null {
+  if (!content.username?.trim()) {
+    return problem("username", "Revolut username is required");
+  }
+  return REVTAG.test(handleFrom(content.username, "revolut.me"))
+    ? null
+    : problem(
+        "username",
+        'Revolut usernames are letters, digits, ".", "-" and "_"',
+      );
+}
+
+export function encodeRevolut(content: RevolutContent): string {
+  if (revolutIssue(content)) return "";
+  return `https://revolut.me/${encodeURIComponent(handleFrom(content.username, "revolut.me").toLowerCase())}`;
+}
+
+// Crypto payment URIs: one address, an optional amount and descriptions
+
+type CryptoType = "litecoin" | "dogecoin" | "bitcoincash" | "solana" | "monero";
+
+interface CryptoUriSpec {
+  name: string;
+  scheme: string;
+  address: RegExp;
+  /** Decimals of the coin's unit */
+  decimals: number;
+  params: { amount: string; label: string; message: string };
+}
+
+const BIP21_PARAMS = { amount: "amount", label: "label", message: "message" };
+
+/** URI schemes: BIP-21 for the Bitcoin forks, Solana Pay, Monero's own. */
+export const CRYPTO_URIS: Record<CryptoType, CryptoUriSpec> = {
+  litecoin: {
+    name: "Litecoin",
+    scheme: "litecoin",
+    address:
+      /^(?:[LM3][a-km-zA-HJ-NP-Z1-9]{25,33}|ltc1[02-9ac-hj-np-z]{8,87})$/,
+    decimals: 8,
+    params: BIP21_PARAMS,
+  },
+  dogecoin: {
+    name: "Dogecoin",
+    scheme: "dogecoin",
+    address: /^[DA9][a-km-zA-HJ-NP-Z1-9]{25,34}$/,
+    decimals: 8,
+    params: BIP21_PARAMS,
+  },
+  bitcoincash: {
+    name: "Bitcoin Cash",
+    scheme: "bitcoincash",
+    address: /^(?:[qp][02-9ac-hj-np-z]{41}|[13][a-km-zA-HJ-NP-Z1-9]{25,33})$/,
+    decimals: 8,
+    params: BIP21_PARAMS,
+  },
+  solana: {
+    name: "Solana",
+    scheme: "solana",
+    address: /^[1-9A-HJ-NP-Za-km-z]{32,44}$/,
+    decimals: 9,
+    params: BIP21_PARAMS,
+  },
+  monero: {
+    name: "Monero",
+    scheme: "monero",
+    address: /^(?:[48][1-9A-HJ-NP-Za-km-z]{94}|4[1-9A-HJ-NP-Za-km-z]{105})$/,
+    decimals: 12,
+    params: {
+      amount: "tx_amount",
+      label: "recipient_name",
+      message: "tx_description",
+    },
+  },
+};
+
+type CryptoContent = Extract<QRContentConfig, { type: CryptoType }>;
+
+/** The address without a pasted "bitcoincash:" (or other) prefix. */
+const cryptoAddress = (type: CryptoType, raw: string) =>
+  raw.trim().replace(new RegExp(`^${CRYPTO_URIS[type].scheme}:`, "i"), "");
+
+export function cryptoIssue(
+  content: Partial<CryptoContent> & { type: CryptoType },
+): ContentIssue | null {
+  const spec = CRYPTO_URIS[content.type];
+  if (!content.address?.trim()) {
+    return problem("address", `${spec.name} address is required`);
+  }
+  if (!spec.address.test(cryptoAddress(content.type, content.address))) {
+    return problem("address", `Enter a valid ${spec.name} address`);
+  }
+  const amount = validateAmount(content.amount, spec.decimals, "Amount");
+  return amount.valid
+    ? null
+    : problem("amount", amount.error ?? "Invalid amount");
+}
+
+export function encodeCrypto(content: CryptoContent): string {
+  if (cryptoIssue(content)) return "";
+  const spec = CRYPTO_URIS[content.type];
+  const params: string[] = [];
+  if (content.amount?.trim()) {
+    params.push(`${spec.params.amount}=${content.amount.trim()}`);
+  }
+  if (content.label?.trim()) {
+    params.push(
+      `${spec.params.label}=${encodeURIComponent(content.label.trim())}`,
+    );
+  }
+  if (content.message?.trim()) {
+    params.push(
+      `${spec.params.message}=${encodeURIComponent(content.message.trim())}`,
+    );
+  }
+  const query = params.length > 0 ? `?${params.join("&")}` : "";
+  return `${spec.scheme}:${cryptoAddress(content.type, content.address)}${query}`;
+}
+
+/** The checks above as validateContent results. */
+const fromIssue = (found: ContentIssue | null): Validation =>
+  found ? { valid: false, error: found.message } : { valid: true };
+
+// ─── end of the 2026-11-11 types ────────────────────────────────────────────
+
 /**
  * Main encoder function that handles all content types
  */
@@ -702,6 +1327,49 @@ export function encodeQRContent(content: QRContentConfig | null): string {
       return encodeCalcom(content);
     case "google-drive":
       return encodeGoogleDrive(content);
+    // Added 2026-11-11
+    case "pix":
+      return encodePix(content);
+    case "sepa":
+      return encodeSepa(content);
+    case "paynow":
+      return encodePayNow(content);
+    case "promptpay":
+      return encodePromptPay(content);
+    case "vietqr":
+      return encodeVietQr(content);
+    case "cashapp":
+      return encodeCashApp(content);
+    case "revolut":
+      return encodeRevolut(content);
+    case "telegram":
+      return encodeTelegram(content);
+    case "signal":
+      return encodeSignal(content);
+    case "discord":
+      return encodeDiscord(content);
+    case "line":
+      return encodeLine(content);
+    case "bluesky":
+      return encodeBluesky(content);
+    case "mastodon":
+      return encodeMastodon(content);
+    case "twitch":
+      return encodeTwitch(content);
+    case "soundcloud":
+      return encodeSoundCloud(content);
+    case "zoom":
+      return encodeZoom(content);
+    case "google-meet":
+      return encodeGoogleMeet(content);
+    case "waze":
+      return encodeWaze(content);
+    case "litecoin":
+    case "dogecoin":
+    case "bitcoincash":
+    case "solana":
+    case "monero":
+      return encodeCrypto(content);
     default:
       return "";
   }
@@ -1029,6 +1697,50 @@ function validateFields(content: QRContentConfig): Validation {
         return { valid: false, error: "Google Drive URL is required" };
       }
       return { valid: true };
+
+    // Added 2026-11-11
+    case "pix":
+      return fromIssue(pixIssue(content));
+    case "sepa":
+      return fromIssue(sepaIssue(content));
+    case "paynow":
+      return fromIssue(payNowIssue(content));
+    case "promptpay":
+      return fromIssue(promptPayIssue(content));
+    case "vietqr":
+      return fromIssue(vietQrIssue(content));
+    case "cashapp":
+      return fromIssue(cashAppIssue(content));
+    case "revolut":
+      return fromIssue(revolutIssue(content));
+    case "telegram":
+      return fromIssue(telegramIssue(content));
+    case "signal":
+      return fromIssue(signalIssue(content));
+    case "discord":
+      return fromIssue(discordIssue(content));
+    case "line":
+      return fromIssue(lineIssue(content));
+    case "bluesky":
+      return fromIssue(blueskyIssue(content));
+    case "mastodon":
+      return fromIssue(mastodonIssue(content));
+    case "twitch":
+      return fromIssue(twitchIssue(content));
+    case "soundcloud":
+      return fromIssue(soundCloudIssue(content));
+    case "zoom":
+      return fromIssue(zoomIssue(content));
+    case "google-meet":
+      return fromIssue(googleMeetIssue(content));
+    case "waze":
+      return fromIssue(wazeIssue(content));
+    case "litecoin":
+    case "dogecoin":
+    case "bitcoincash":
+    case "solana":
+    case "monero":
+      return fromIssue(cryptoIssue(content));
 
     default:
       return { valid: false, error: "Unknown content type" };

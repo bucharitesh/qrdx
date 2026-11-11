@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { validateDesignContent } from "@/lib/qr-design/content";
 
 // QR payload builders for structured content. Each follows the format that
 // scanner apps (iOS Camera, Google Lens, ZXing) recognize:
@@ -274,4 +275,83 @@ export function buildGeoPayload(
       ? ""
       : `;u=${formatNumber(input.uncertainty)}`;
   return `geo:${coordinates.map(formatNumber).join(",")}${uncertainty}`;
+}
+
+// ── Bank payments (2026-11-11) ──────────────────────────────────────────────
+// Pix, SEPA (EPC069-12), PayNow, PromptPay and VietQR, built by the same
+// encoders and checks as the playground's forms (utils/payment-qr-codes.ts).
+
+export const PAYMENT_SCHEMES = [
+  "pix",
+  "sepa",
+  "paynow",
+  "promptpay",
+  "vietqr",
+] as const;
+
+const optionalField = (description: string) =>
+  z.string().optional().describe(description);
+
+export const paymentPayloadSchema = z.object({
+  scheme: z
+    .enum(PAYMENT_SCHEMES)
+    .describe(
+      "pix (Brazil), sepa (euro credit transfer, EPC069-12), paynow (Singapore), promptpay (Thailand) or vietqr (Vietnam)",
+    ),
+  name: optionalField(
+    "pix: receiver name (required, up to 25 characters); sepa: beneficiary name (required); paynow: name shown to the payer",
+  ),
+  amount: optionalField(
+    "Amount in the scheme's currency (BRL, EUR, SGD, THB, or whole VND). Leave out to let the payer choose.",
+  ),
+  pixKey: optionalField("pix: CPF, CNPJ, +55 phone, email or random key"),
+  city: optionalField("pix: receiver city, up to 15 characters"),
+  txid: optionalField("pix: transaction ID, up to 25 letters and digits"),
+  message: optionalField("pix or vietqr: message for the payer"),
+  iban: optionalField("sepa: IBAN"),
+  bic: optionalField("sepa: BIC, optional inside the EEA"),
+  reference: optionalField(
+    "sepa: structured RF creditor reference; paynow: bill reference",
+  ),
+  remittance: optionalField(
+    "sepa: payment reference text, up to 140 characters (not with reference)",
+  ),
+  proxyType: z
+    .enum(["mobile", "uen", "id", "ewallet"])
+    .optional()
+    .describe("paynow: mobile or uen; promptpay: mobile, id or ewallet"),
+  proxy: optionalField(
+    "paynow or promptpay: the mobile number, UEN, national/tax ID or e-wallet ID",
+  ),
+  editable: z
+    .boolean()
+    .optional()
+    .describe("paynow: whether the payer may change the amount (default true)"),
+  expiry: optionalField("paynow: last day the code works, YYYY-MM-DD"),
+  bankBin: optionalField("vietqr: the bank's 6-digit BIN"),
+  accountType: z
+    .enum(["account", "card"])
+    .optional()
+    .describe("vietqr: account (default) or card"),
+  accountNumber: optionalField("vietqr: account or card number"),
+});
+
+export type PaymentPayloadResult =
+  | { ok: true; value: string }
+  | { ok: false; message: string };
+
+export function buildPaymentPayload(
+  input: z.output<typeof paymentPayloadSchema>,
+): PaymentPayloadResult {
+  const { scheme, ...fields } = input;
+  const result = validateDesignContent({ type: scheme, ...fields });
+  if (result.ok) return { ok: true, value: result.value };
+  return {
+    ok: false,
+    message: result.issues
+      .map((issue) =>
+        issue.field ? `${issue.field}: ${issue.message}` : issue.message,
+      )
+      .join("; "),
+  };
 }
