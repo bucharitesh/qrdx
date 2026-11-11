@@ -177,6 +177,12 @@ function systemPrompt(locale: TranslatedLocale, plain: boolean): string {
     "- Write numbers with Western digits (0-9), exactly as many and the same values as the English.",
     "- Plan names: Pro and Business stay in English; the Free plan uses the fixed translation below.",
     ...(plain
+      ? []
+      : [
+          "- In these ICU messages an ASCII apostrophe (') right before {, }, # or < starts a quoted literal and breaks the message: for elisions and possessives use the typographic apostrophe (’), as in “l’<link>éditeur</link>”.",
+          "- Every tag in the English (<link>…</link>, <code>…</code>) appears exactly once in the translation, around the words that mean the same thing; never merge, drop or nest them differently.",
+        ]),
+    ...(plain
       ? [
           "- These strings are plain text, not ICU messages: braces, quotes, URLs, file names, field names in single quotes and example values stay exactly as written.",
           "- Text in single quotes that names a button or setting in the QRdx editor ('Make it dynamic') is translated like a UI label, keeping the quotes.",
