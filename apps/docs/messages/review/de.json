@@ -20467,6 +20467,10 @@
     "source": "5982f892947e",
     "status": "machine"
   },
+  "app.dashboard.home.homeView.usedOfLimit": {
+    "source": "e191398f9241",
+    "status": "machine"
+  },
   "app.dashboard.home.newCodeButton.newDynamicCode": {
     "source": "fbd99af4f3c0",
     "status": "machine"
@@ -22332,7 +22336,7 @@
     "status": "machine"
   },
   "auth.signInPanel.valueQrdx": {
-    "source": "097983f497e3",
+    "source": "c27a3f5694a2",
     "status": "machine"
   },
   "auth.signInPanel.support": {

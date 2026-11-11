@@ -6439,7 +6439,8 @@
           "scansAllTime": "Scans insgesamt",
           "landingPages": "Landingpages",
           "scan": "Scan",
-          "scans": "Scans"
+          "scans": "Scans",
+          "usedOfLimit": "{used} von {limit}"
         },
         "newCodeButton": {
           "newDynamicCode": "Neuer dynamischer Code"
@@ -7050,7 +7051,7 @@
       "lastUsed": "Zuletzt genutzt",
       "or": "oder",
       "newToQrdxGoogleGithub": "Neu bei QRdx? Mit Google, GitHub oder einem E-Mail-Code erstellst du dein kostenloses Konto.",
-      "valueQrdx": "© {value, number} QRdx",
+      "valueQrdx": "© {value} QRdx",
       "support": "Support",
       "privacy": "Datenschutz",
       "terms": "AGB",

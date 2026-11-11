@@ -6532,7 +6532,8 @@
           "scansAllTime": "累计扫描",
           "landingPages": "落地页",
           "scan": "次扫描",
-          "scans": "次扫描"
+          "scans": "次扫描",
+          "usedOfLimit": "{used} / {limit}"
         },
         "newCodeButton": {
           "newDynamicCode": "新建动态码"
@@ -7143,7 +7144,7 @@
       "lastUsed": "上次使用",
       "or": "或",
       "newToQrdxGoogleGithub": "初次使用 QRdx？通过 Google、GitHub 或邮箱验证码即可创建免费账号。",
-      "valueQrdx": "© {value, number} QRdx",
+      "valueQrdx": "© {value} QRdx",
       "support": "支持",
       "privacy": "隐私",
       "terms": "条款",

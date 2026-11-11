@@ -73,7 +73,10 @@ export function HomeView({ data, slug }: { data: HomeData; slug: string }) {
           value={
             data.codes.limit === null
               ? number(data.codes.used)
-              : `${number(data.codes.used)} of ${number(data.codes.limit)}`
+              : t("usedOfLimit", {
+                  used: number(data.codes.used),
+                  limit: number(data.codes.limit),
+                })
           }
         />
         <Stat
