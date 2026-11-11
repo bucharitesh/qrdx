@@ -1,3 +1,4 @@
+import { type EmailIntl, ENGLISH_EMAIL } from "@/lib/i18n/email";
 import { EmailButton, EmailHeading, EmailLayout, EmailText } from "./layout";
 import { codeLabel, DetailsTable } from "./parts";
 
@@ -15,6 +16,8 @@ export interface CodeActivityEmailProps {
   codeUrl: string;
   workspaceName: string;
   unsubscribeUrl: string;
+  /** The recipient's language */
+  intl?: EmailIntl;
 }
 
 export function CodeActivityEmail({
@@ -25,32 +28,32 @@ export function CodeActivityEmail({
   codeUrl,
   workspaceName,
   unsubscribeUrl,
+  intl = ENGLISH_EMAIL,
 }: CodeActivityEmailProps) {
+  const { t } = intl;
   const label = codeLabel(code);
-  const who = actorName?.trim() || "Someone";
-  const heading =
-    kind === "created" ? `New code: ${label}` : `${label} was changed`;
+  const who = actorName?.trim() || t("codeActivity.someone");
+  const heading = t(`codeActivity.${kind}.heading`, { code: label });
   const rows = [
-    { label: "Short link", value: code.shortLink },
-    { label: "Opens", value: code.destination },
+    { label: t("codeActivity.shortLink"), value: code.shortLink },
+    { label: t("codeActivity.opens"), value: code.destination },
     ...(changes.length > 0
-      ? [{ label: "Changed", value: changes.join(", ") }]
+      ? [{ label: t("codeActivity.changed"), value: changes.join(", ") }]
       : []),
   ];
   return (
     <EmailLayout
+      intl={intl}
       preview={heading}
-      reason={`You get this because ${kind === "created" ? "new code" : "code change"} alerts are on for ${workspaceName}.`}
+      reason={t(`codeActivity.${kind}.reason`, { workspace: workspaceName })}
       unsubscribeUrl={unsubscribeUrl}
     >
       <EmailHeading>{heading}</EmailHeading>
       <EmailText>
-        {kind === "created"
-          ? `${who} created a dynamic QR code in ${workspaceName}.`
-          : `${who} changed this dynamic QR code in ${workspaceName}. Printed QR codes keep working and now follow the new settings.`}
+        {t(`codeActivity.${kind}.body`, { who, workspace: workspaceName })}
       </EmailText>
       <DetailsTable rows={rows} />
-      <EmailButton href={codeUrl}>Open the code</EmailButton>
+      <EmailButton href={codeUrl}>{t("codeActivity.open")}</EmailButton>
     </EmailLayout>
   );
 }

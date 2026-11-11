@@ -1,10 +1,15 @@
 import type { CSSProperties } from "react";
 import { Section, Text } from "react-email";
+import { type EmailIntl, ENGLISH_EMAIL } from "@/lib/i18n/email";
 import { EmailDivider, EmailHeading, EmailLayout, EmailText } from "./layout";
 import { MutedText } from "./parts";
 import { NeverAskForCode } from "./security-parts";
 
 export const SIGN_IN_CODE_SUBJECT = "Your QRdx sign-in code";
+
+/** The subject line in the recipient's language. */
+export const signInCodeSubject = (intl: EmailIntl = ENGLISH_EMAIL) =>
+  intl.t("signInCode.subject");
 
 const MONO =
   'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace';
@@ -49,6 +54,8 @@ export interface SignInCodeEmailProps {
   expiresInMinutes?: number;
   /** Where the code was asked for, approximately ("Mumbai, India") */
   location?: string | null;
+  /** The recipient's language */
+  intl?: EmailIntl;
 }
 
 /** Transactional: the one-time code for signing in with email. No links. */
@@ -56,28 +63,25 @@ export function SignInCodeEmail({
   code,
   expiresInMinutes = 5,
   location = null,
+  intl = ENGLISH_EMAIL,
 }: SignInCodeEmailProps) {
-  const expiry = `${expiresInMinutes} minute${expiresInMinutes === 1 ? "" : "s"}`;
+  const { t } = intl;
   return (
     <EmailLayout
-      preview={`Enter this code to sign in. It expires in ${expiry}.`}
-      reason="You got this email because someone asked to sign in to QRdx with this address."
+      intl={intl}
+      preview={t("signInCode.preview", { minutes: expiresInMinutes })}
+      reason={t("signInCode.reason")}
     >
-      <EmailHeading>Your QRdx sign-in code</EmailHeading>
+      <EmailHeading>{t("signInCode.heading")}</EmailHeading>
       {location ? (
-        <EmailText>Someone asked to sign in from {location}.</EmailText>
+        <EmailText>{t("signInCode.location", { location })}</EmailText>
       ) : null}
-      <EmailText>Enter this code in the QRdx sign-in window:</EmailText>
+      <EmailText>{t("signInCode.enter")}</EmailText>
       <EmailCodeBox code={code} />
-      <EmailText>
-        The code expires in {expiry} and works once. Don't share it with anyone.
-      </EmailText>
-      <NeverAskForCode />
+      <EmailText>{t("codes.expires", { minutes: expiresInMinutes })}</EmailText>
+      <NeverAskForCode intl={intl} />
       <EmailDivider />
-      <MutedText>
-        If you didn't ask for this, ignore this email. Nobody can sign in
-        without the code.
-      </MutedText>
+      <MutedText>{t("signInCode.ignore")}</MutedText>
     </EmailLayout>
   );
 }
