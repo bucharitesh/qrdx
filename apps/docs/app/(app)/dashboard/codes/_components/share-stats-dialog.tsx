@@ -25,6 +25,8 @@ import {
   resetPublicStatsShareAction,
   setPublicStatsShareAction,
 } from "@/actions/public-stats";
+// Client branding (agency tools)
+import { StatsBrandingSection } from "@/components/agency/stats-branding-section";
 import { CopyButton } from "@/components/copy-button";
 import type { PublicStatsShare } from "@/lib/public-stats-shared";
 
@@ -110,7 +112,7 @@ export function ShareStatsDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Share analytics</DialogTitle>
           <DialogDescription>
@@ -179,6 +181,10 @@ export function ShareStatsDialog({
                   old.
                 </p>
               </div>
+            )}
+            {/* Client branding (agency tools): once the page is on. */}
+            {share.url && (
+              <StatsBrandingSection codeId={code.id} onShareChange={setShare} />
             )}
           </div>
         ) : null}
