@@ -23,7 +23,7 @@ import {
 import { isLocalizedPath, localizePath, splitLocale } from "@/lib/i18n/paths";
 
 /** Remembers the choice for later (the signed-in app, phase 2). Never redirects. */
-function remember(locale: Locale) {
+export function remember(locale: Locale) {
   try {
     // biome-ignore lint/suspicious/noDocumentCookie: a display preference, read on the server later
     document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax`;

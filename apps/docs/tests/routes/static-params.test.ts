@@ -17,6 +17,8 @@ import * as industryPage from "@/app/(app)/(home)/qr-codes-for/[slug]/page";
 import * as placementImage from "@/app/(app)/(home)/qr-codes-on/[slug]/opengraph-image";
 import * as placementPage from "@/app/(app)/(home)/qr-codes-on/[slug]/page";
 import * as templateTypePage from "@/app/(app)/templates/[type]/page";
+import type { Locale } from "@/lib/i18n/config";
+import { docsI18n, docsUrl, translationLocale } from "@/lib/i18n/docs";
 import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { industries, placements } from "@/lib/seo-content";
@@ -134,8 +136,9 @@ describe("routes with a fixed param list", () => {
       "(app)/(home)/compare/[slug]/page.tsx",
       "(app)/(home)/integrations/[slug]/page.tsx",
       "(app)/(home)/legal/[[...slug]]/page.tsx",
-      "(app)/(docs)/docs/[[...slug]]/page.tsx",
+      "[lang]/docs/[[...slug]]/page.tsx",
       "llms.mdx/[[...slug]]/route.ts",
+      "docs-md/[lang]/[[...slug]]/route.ts",
       "og/docs/[...slug]/route.tsx",
       "(app)/templates/[type]/page.tsx",
       "(app)/templates/[type]/[template]/page.tsx",
@@ -217,6 +220,32 @@ describe("fumadocs sources (docs, legal, blog, compare, llms.mdx, OG)", () => {
     ]) {
       expect(source.getPage(slugs), slugs.join("/")).toBeUndefined();
     }
+  });
+
+  it("serve the English page where a language has no translation (docs)", () => {
+    const docs = loader({
+      baseUrl: "/docs",
+      source: {
+        files: [
+          { type: "page", path: "guide.mdx", data: { title: "Guide" } },
+          { type: "page", path: "guide.es.mdx", data: { title: "Guía" } },
+          { type: "page", path: "other.mdx", data: { title: "Other" } },
+        ],
+      },
+      i18n: docsI18n,
+      url: (slugs, locale) => docsUrl(slugs, (locale ?? "en") as Locale),
+    });
+    const guide = docs.getPage(["guide"], "es");
+    expect(guide?.data.title).toBe("Guía");
+    expect(guide?.url).toBe("/es/docs/guide");
+    expect(translationLocale(guide?.path ?? "")).toBe("es");
+    const other = docs.getPage(["other"], "es");
+    expect(other?.data.title).toBe("Other");
+    expect(other?.url).toBe("/es/docs/other");
+    expect(translationLocale(other?.path ?? "")).toBeUndefined();
+    expect(docs.getPage(["guide"], "en")?.data.title).toBe("Guide");
+    expect(docs.getPage(["nope"], "es")).toBeUndefined();
+    expect(docs.getPage(["guide.es"], "en")).toBeUndefined();
   });
 });
 

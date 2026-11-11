@@ -4,6 +4,7 @@ import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { isPathAvailable } from "@/lib/feature-availability";
+import { docsSitemapEntries } from "@/lib/i18n/docs-seo";
 import { localizedEntries } from "@/lib/i18n/sitemap";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
@@ -25,6 +26,7 @@ import {
   blogSource,
   changelogSource,
   compareSource,
+  docsPageLocales,
   legalSource,
   source,
 } from "@/lib/source";
@@ -209,18 +211,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     // Docs for features this deployment can't offer (custom domains) are
-    // left out; the pages stay up for existing users.
+    // left out; the pages stay up for existing users. Translations a native
+    // reviewer signed off follow their English page (lib/i18n/docs-seo.ts).
     ...source
       .getPages()
       .filter((page) => isPathAvailable(page.url))
-      .map(
-        (page) =>
-          ({
-            url: url(page.url),
-            lastModified: trustedLastModified(page.data.lastModified),
-            changeFrequency: "weekly",
-            priority: page.url === "/docs" ? 0.8 : 0.5,
-          }) satisfies Entry,
+      .flatMap((page) =>
+        docsSitemapEntries(page.slugs, docsPageLocales(page.slugs), {
+          lastModified: trustedLastModified(page.data.lastModified),
+          changeFrequency: "weekly",
+          priority: page.url === "/docs" ? 0.8 : 0.5,
+        }),
       ),
     {
       url: url("/blog"),

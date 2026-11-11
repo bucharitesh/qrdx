@@ -40,6 +40,11 @@ export interface LocaleDefinition {
   dir: "ltr" | "rtl";
   /** Whether search engines may index it (lib/i18n/review.ts). */
   review: ReviewState;
+  /**
+   * The docs are translated into it (content/docs/<page>.<locale>.mdx,
+   * lib/i18n/docs.ts). Without it, its pages link to the English docs.
+   */
+  docs?: boolean;
 }
 
 export const DEFAULT_LOCALE = "en";
@@ -54,6 +59,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "en_US",
     dir: "ltr",
     review: "reviewed",
+    docs: true,
   },
   es: {
     segment: "es",
@@ -63,6 +69,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "es_ES",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   "pt-BR": {
     segment: "pt-br",
@@ -72,6 +79,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "pt_BR",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   fr: {
     segment: "fr",
@@ -108,6 +116,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "ja_JP",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   ko: {
     segment: "ko",
@@ -126,6 +135,7 @@ export const LOCALE_CONFIG = {
     ogLocale: "zh_CN",
     dir: "ltr",
     review: "machine",
+    docs: true,
   },
   id: {
     segment: "id",
