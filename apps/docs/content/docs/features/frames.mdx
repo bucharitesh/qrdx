@@ -1,6 +1,6 @@
 ---
 title: Frames & print
-description: Call-to-action frames, a "Will it scan?" score and print-ready PDF export.
+description: Call-to-action frames, the official frame library, a "Will it scan?" score and print-ready PDF export.
 icon: Frame
 ---
 
@@ -23,7 +23,7 @@ The frame is added **around** the code: the output gets bigger, and the QR modul
 
 | Option | Default | Notes |
 | --- | --- | --- |
-| `style` | — | One of the {facts.frames} styles below, or `none` (`FRAME_STYLES`) |
+| `style` | — | One of the {facts.frameStyles} styles below, or `none` (`FRAME_STYLES`) |
 | `text` | `"Scan me"` | Up to 24 characters. Pass `""` to hide the label |
 | `color` | `#000000` | Frame color (`gradient-border`: start color, default violet) |
 | `textColor` | white on the frame, `color` on light areas | Label color |
@@ -64,6 +64,29 @@ qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Sca
 ```
 
 `--frame-color` and `--frame-text-color` take hex colors. Passing text or colors without `--frame` uses `banner-bottom`.
+
+## Official frames
+
+On top of the built-in styles, QRdx has {facts.officialFrames} official frames: ready-made designs for calls to action, restaurants and cafes, shops and packaging, events and weddings, hotels, travel and real estate, health, fitness and education, and business and social. {facts.seasonalFrames} of them are for holidays and seasons, from Lunar New Year, Holi, Eid and Diwali to Hanukkah, Easter, Thanksgiving and Christmas. Each one is a frame spec with labels and colors you can change, released under CC0, and each is tested to scan at phone distances.
+
+In the [playground](/playground), open **Frame** and then **More**. Search by name, use or holiday, or pick a group. Frames for the holidays and seasons coming up are listed first. You'll also find them in the [community](/community/frames), published by @qrdx.
+
+The engine exports them as `OFFICIAL_FRAMES`:
+
+```tsx
+import { getOfficialFrame, QRCode } from "qrdx";
+
+const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
+
+{diwali && (
+  <QRCode
+    value="https://example.com/offers"
+    frame={{ style: "custom", spec: diwali.spec, text: "Scan for offers" }}
+  />
+)}
+```
+
+`OFFICIAL_FRAME_INDEX` lists every frame without its spec, so a picker can show the whole library and load specs only as they're needed. In the [image API](/docs/developers/image-api#community-items) and the [MCP server](/docs/developers/mcp), use an official frame as a community item, such as `item=frame:diwali-diya`.
 
 ## Will it scan?
 

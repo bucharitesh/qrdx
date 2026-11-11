@@ -1,0 +1,93 @@
+{
+  "id": "easter-egg-hunt",
+  "name": "Egg hunt ticket",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a painted egg, in lilac and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "easter",
+  "contentTypes": [],
+  "tags": ["easter", "spring", "egg hunt"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#5f4785",
+      "text": "#ffffff",
+      "accent": "#f2c14e"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M620 54C656 54 677 120 677 141C677 171 653 189 620 189C587 189 563 171 563 141C563 120 584 54 620 54Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M565.25 123L581 111L600.5 123L620 111L639.5 123L659 111L674.75 123L676.4 135L659 123L639.5 135L620 123L600.5 135L581 123L563.6 135Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Egg hunt",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the map",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

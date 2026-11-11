@@ -1,0 +1,81 @@
+{
+  "id": "passover-cup",
+  "name": "Kiddush cup",
+  "description": "A solid card with a kiddush cup over the code and the label underneath, in wine and wheat.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "passover",
+  "contentTypes": [],
+  "tags": ["passover", "pesach", "seder"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#6d1a36",
+      "text": "#ffffff",
+      "accent": "#c8a165"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M581 56L659 56C659 104 641 122 620 122C599 122 581 104 581 56ZM614 119L626 119L626 158L614 158ZM587 173C593 158 611 155 620 155C629 155 647 158 653 173Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M581 68L659 68L659 77L581 77Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Chag Pesach Sameach",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for the Haggadah",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

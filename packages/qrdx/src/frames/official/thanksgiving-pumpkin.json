@@ -1,0 +1,81 @@
+{
+  "id": "thanksgiving-pumpkin",
+  "name": "Harvest pumpkin",
+  "description": "A solid card with a pumpkin over the code and the label underneath, in walnut and amber.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "thanksgiving",
+  "contentTypes": [],
+  "tags": ["thanksgiving", "harvest", "november", "pumpkin"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#4a3222",
+      "text": "#ffffff",
+      "accent": "#c67b2f"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M560 125A60 48 0 1 1 680 125A60 48 0 1 1 560 125ZM590 125A30 49.5 0 1 1 650 125A30 49.5 0 1 1 590 125Z",
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M614 80C614 65 620 53 632 47L635 56C626 62 626 71 626 80Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Thanksgiving",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for our hours",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

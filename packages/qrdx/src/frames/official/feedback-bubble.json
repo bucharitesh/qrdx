@@ -3,6 +3,7 @@
   "name": "Feedback bubble",
   "description": "A chat bubble that asks for feedback.",
   "category": "use-case",
+  "collection": "business",
   "contentTypes": ["url"],
   "tags": ["feedback", "survey", "customer service"],
   "license": "CC0-1.0",

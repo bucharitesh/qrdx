@@ -3,6 +3,7 @@
   "name": "Order at table",
   "description": "Order prompt with a service bell and a pill for the table number.",
   "category": "use-case",
+  "collection": "food-drink",
   "contentTypes": ["url"],
   "tags": ["restaurant", "ordering", "table"],
   "license": "CC0-1.0",

@@ -1,0 +1,78 @@
+{
+  "id": "cyber-monday-wide",
+  "name": "Cyber Monday wide",
+  "description": "A wide card: the code on one side, a cursor and the label on the other, in deep blue.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "cyber-monday",
+  "contentTypes": [],
+  "tags": ["cyber monday", "sale", "online", "landscape"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#0b1f4d",
+      "text": "#ffffff",
+      "accent": "#60a5fa"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1069.6 174.4L1174 260.8L1127.2 264.4L1152.4 318.4L1130.8 329.2L1105.6 275.2L1069.6 307.6Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Cyber Monday",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for online deals",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

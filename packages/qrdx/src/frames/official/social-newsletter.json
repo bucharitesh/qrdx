@@ -1,0 +1,69 @@
+{
+  "id": "social-newsletter",
+  "name": "Newsletter",
+  "description": "An envelope with a pointed flap over the code and an envelope.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url", "instagram", "tiktok", "facebook"],
+  "tags": ["social", "followers", "newsletter", "email"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 500,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1880,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M40 0L1280 0Q1320 0 1300 40L700 490Q660 520 620 490L20 40Q0 0 40 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.2
+        }
+      },
+      {
+        "type": "path",
+        "d": "M609.6 145.2L710.4 145.2A11.2 11.2 0 0 1 721.6 156.4L721.6 223.6A11.2 11.2 0 0 1 710.4 234.8L609.6 234.8A11.2 11.2 0 0 1 598.4 223.6L598.4 156.4A11.2 11.2 0 0 1 609.6 145.2ZM606.8 164.8L660 206.8L713.2 164.8L713.2 153.6L660 195.6L606.8 153.6Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Join our newsletter",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1630,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

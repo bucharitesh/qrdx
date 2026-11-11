@@ -1,6 +1,10 @@
 import "server-only";
 
-import { getAllTemplates } from "qrdx";
+import {
+  getAllTemplates,
+  OFFICIAL_FRAME_COLLECTIONS,
+  OFFICIAL_FRAMES,
+} from "qrdx";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
@@ -14,6 +18,7 @@ import {
 import { z } from "zod";
 import { brandLogoOptions } from "@/lib/brand-logos/options";
 import { communityItemStyle } from "@/lib/community/api";
+import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import { presetLogoIcon } from "@/lib/community/public-style";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
@@ -339,7 +344,10 @@ export function playgroundLink(
   styles: ThemeStyles,
   preset?: string,
 ): { url: string | null; leftOut: OmittedPart[] } {
-  const encoded = encodeStyleParam(styles, preset ? { preset } : {});
+  const encoded = encodeStyleParam(styles, {
+    ...(preset ? { preset } : {}),
+    officialFrames: OFFICIAL_FRAME_RESOLVER,
+  });
   if (!encoded) return { url: null, leftOut: [] };
   const href = playgroundHref({
     style: encoded.value,
@@ -618,6 +626,27 @@ export async function designQr(
   }
 }
 
+/**
+ * QRdx's official frames by collection, by id: each is a community item
+ * ("frame:<id>"), so design_qr, generate_qr_code and the image API take it.
+ */
+function officialFrameOptions() {
+  return {
+    how: "QRdx's official frames (CC0), by collection. Pass \"frame:<id>\" as community_item to design_qr, or as item to generate_qr_code and the image API; get_community_item returns one's style. Seasonal ids name their holiday or season.",
+    collections: Object.fromEntries(
+      OFFICIAL_FRAME_COLLECTIONS.map((collection) => [
+        collection.id,
+        {
+          label: collection.label,
+          ids: OFFICIAL_FRAMES.filter(
+            (frame) => frame.collection === collection.id,
+          ).map((frame) => frame.id),
+        },
+      ]),
+    ),
+  };
+}
+
 /** Every value design_qr accepts, for the list_options tool. */
 export function designOptions() {
   return {
@@ -637,6 +666,7 @@ export function designOptions() {
           "{ style, text, secondaryText (banner-top-bottom, circle, menu-card), color, textColor }",
         custom:
           '{ style: "custom", spec } with a frame spec, such as a community frame\'s style.frame from get_community_item. It is drawn as it is; repairs never change it.',
+        official: officialFrameOptions(),
       },
       templates: getAllTemplates()
         .filter((template) => TEMPLATE_IDS.includes(template.id))

@@ -3,6 +3,7 @@
   "name": "Save my contact",
   "description": "A business-card style frame with a corner tab and a contact prompt.",
   "category": "use-case",
+  "collection": "business",
   "contentTypes": ["vcard"],
   "tags": ["business card", "contact", "networking"],
   "license": "CC0-1.0",

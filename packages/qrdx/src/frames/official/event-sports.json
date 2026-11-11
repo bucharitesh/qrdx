@@ -1,0 +1,71 @@
+{
+  "id": "event-sports",
+  "name": "Match day",
+  "description": "A shield with a trophy and a banner across the bottom.",
+  "category": "use-case",
+  "collection": "events",
+  "contentTypes": ["url"],
+  "tags": ["events", "sports", "match"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1500,
+      "height": 1860
+    },
+    "qr": {
+      "x": 250,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#3a3a3a"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 60Q750 -40 1500 60L1500 1400C1500 1600 1080 1780 750 1860C420 1780 0 1600 0 1400Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 80,
+        "y": 1480,
+        "width": 1340,
+        "height": 190,
+        "radius": 20,
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M713.6 101.2L786.4 101.2L786.4 132C786.4 160 769.6 174 750 174C730.4 174 713.6 160 713.6 132ZM713.6 147.4A21 21 0 0 1 713.6 105.4L713.6 113.8A12.6 12.6 0 0 0 713.6 139ZM786.4 105.4A21 21 0 0 1 786.4 147.4L786.4 139A12.6 12.6 0 0 0 786.4 113.8Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M743 171.2L757 171.2L757 196.4L743 196.4ZM724.8 196.4L775.2 196.4A2.8 2.8 0 0 1 778 199.2L778 204.8A2.8 2.8 0 0 1 775.2 207.6L724.8 207.6A2.8 2.8 0 0 1 722 204.8L722 199.2A2.8 2.8 0 0 1 724.8 196.4ZM717.8 207.6L782.2 207.6A4.2 4.2 0 0 1 786.4 211.8L786.4 217.4A4.2 4.2 0 0 1 782.2 221.6L717.8 221.6A4.2 4.2 0 0 1 713.6 217.4L713.6 211.8A4.2 4.2 0 0 1 717.8 207.6Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for match info",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1490,
+          "width": 1220,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

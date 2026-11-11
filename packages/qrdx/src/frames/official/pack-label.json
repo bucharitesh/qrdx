@@ -1,0 +1,91 @@
+{
+  "id": "pack-label",
+  "name": "Product label",
+  "description": "A wide label with curved top and bottom edges, the code beside a leaf.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "packaging", "ingredients"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1400
+    },
+    "qr": {
+      "x": 200,
+      "y": 300,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 100Q1000 0 2000 100L2000 1300Q1000 1400 0 1300Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "path",
+        "d": "M40 150Q1000 50 1960 150L1960 162Q1000 62 40 162Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M40 1238Q1000 1338 1960 1238L1960 1250Q1000 1350 40 1250Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1145.2 538.4C1222.14 560.01 1282.08 498.45 1278.4 401.6C1196.96 415.58 1137.02 477.14 1145.2 538.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1147.98 540.68L1152.68 534.97L1157.41 529.31L1162.21 523.72L1167.05 518.17L1171.95 512.69L1176.9 507.25L1181.91 501.87L1186.97 496.54L1192.08 491.27L1197.25 486.05L1202.47 480.88L1207.74 475.77L1213.07 470.71L1218.45 465.7L1223.89 460.75L1229.37 455.85L1234.92 451.01L1240.51 446.21L1246.17 441.48L1251.88 436.78A3.6 3.6 0 0 1 1247.32 431.22L1241.57 435.94L1235.86 440.72L1230.21 445.56L1224.61 450.45L1219.06 455.4L1213.57 460.4L1208.14 465.46L1202.76 470.57L1197.43 475.74L1192.15 480.95L1186.94 486.23L1181.77 491.56L1176.66 496.94L1171.6 502.37L1166.6 507.86L1161.65 513.41L1156.76 519.01L1151.92 524.66L1147.14 530.37L1142.42 536.12A3.6 3.6 0 0 1 1147.98 540.68Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for ingredients",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 640,
+          "width": 800,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Ingredients",
+        "color": "frame",
+        "box": {
+          "x": 1110,
+          "y": 830,
+          "width": 800,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

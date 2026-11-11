@@ -1,0 +1,94 @@
+{
+  "id": "bar-bottle",
+  "name": "Bottle label",
+  "description": "A wide label with curved top and bottom edges, the code beside a bottle.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "bar", "drinks", "label"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1400
+    },
+    "qr": {
+      "x": 200,
+      "y": 300,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 100Q1000 0 2000 100L2000 1300Q1000 1400 0 1300Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M40 150Q1000 50 1960 150L1960 162Q1000 62 40 162Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M40 1238Q1000 1338 1960 1238L1960 1250Q1000 1350 40 1250Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "path",
+        "d": "M1195.6 387.2L1224.4 387.2L1224.4 430.4C1224.4 444.8 1246 452 1246 477.2L1246 545.6Q1246 552.8 1238.8 552.8L1181.2 552.8Q1174 552.8 1174 545.6L1174 477.2C1174 452 1195.6 444.8 1195.6 430.4Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M1174 484.4L1246 484.4L1246 524L1174 524Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the story",
+        "color": "text",
+        "box": {
+          "x": 1110,
+          "y": 640,
+          "width": 800,
+          "height": 170
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Small batch",
+        "color": "text",
+        "box": {
+          "x": 1110,
+          "y": 830,
+          "width": 800,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

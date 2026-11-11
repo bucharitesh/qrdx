@@ -3,6 +3,7 @@
   "name": "Shop window",
   "description": "A landscape window sticker with a bag glyph and a shop prompt.",
   "category": "use-case",
+  "collection": "shopping",
   "contentTypes": ["url"],
   "tags": ["retail", "shop", "window", "sticker"],
   "license": "CC0-1.0",

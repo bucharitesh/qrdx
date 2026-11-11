@@ -1,0 +1,101 @@
+{
+  "id": "round-badge-light",
+  "name": "Light round badge",
+  "description": "A round badge with scan corners inside the ring, the label set along its top and the note along its bottom.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "badge", "round", "light"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 2000
+    },
+    "qr": {
+      "x": 500,
+      "y": 500,
+      "size": 1000,
+      "padding": 64,
+      "radius": 40
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 1000,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 970,
+        "fill": "background"
+      },
+      {
+        "type": "circle",
+        "cx": 1000,
+        "cy": 1000,
+        "r": 815,
+        "hole": 805,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M928.6 243.6L979.6 243.6L979.6 258.9L943.9 258.9L943.9 294.6L928.6 294.6ZM1071.4 294.6L1056.1 294.6L1056.1 258.9L1020.4 258.9L1020.4 243.6L1071.4 243.6ZM928.6 335.4L943.9 335.4L943.9 371.1L979.6 371.1L979.6 386.4L928.6 386.4ZM1071.4 386.4L1020.4 386.4L1020.4 371.1L1056.1 371.1L1056.1 335.4L1071.4 335.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[95, 974], [121, 1000], [95, 1026], [69, 1000]],
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[1905, 974], [1931, 1000], [1905, 1026], [1879, 1000]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "curved",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Point and scan",
+        "color": "frame",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "top",
+          "spread": 120
+        },
+        "fontSize": 92
+      },
+      {
+        "type": "curved",
+        "id": "note",
+        "slot": "secondary",
+        "text": "No app needed",
+        "color": "frame",
+        "curve": {
+          "cx": 1000,
+          "cy": 1000,
+          "radius": 905,
+          "side": "bottom",
+          "spread": 110
+        },
+        "fontSize": 76,
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "id": "eid-adha-envelope",
+  "name": "Eid envelope",
+  "description": "An envelope with a pointed flap over the code and a crescent and star, in emerald and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "eid-al-adha",
+  "contentTypes": [],
+  "tags": ["eid al-adha", "eid", "eid mubarak", "card"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 500,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0f5f4a",
+      "text": "#ffffff",
+      "accent": "#c9a227"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1880,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M40 0L1280 0Q1320 0 1300 40L700 490Q660 520 620 490L20 40Q0 0 40 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.2
+        }
+      },
+      {
+        "type": "path",
+        "d": "M674.7 145.21A53.2 53.2 0 1 0 674.7 234.79A44.8 44.8 0 0 1 674.7 145.21Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M696.4 156.4L701.01 169.66L715.04 169.94L703.86 178.42L707.92 191.86L696.4 183.84L684.88 191.86L688.94 178.42L677.76 169.94L691.79 169.66Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to open",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1630,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

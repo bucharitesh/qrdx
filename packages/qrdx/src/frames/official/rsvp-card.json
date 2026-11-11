@@ -3,6 +3,7 @@
   "name": "RSVP card",
   "description": "An invitation card with a double rule border and a diamond ornament.",
   "category": "use-case",
+  "collection": "events",
   "contentTypes": ["url"],
   "tags": ["events", "wedding", "party", "invitation"],
   "license": "CC0-1.0",

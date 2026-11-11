@@ -1,0 +1,65 @@
+{
+  "id": "biz-salon",
+  "name": "Salon",
+  "description": "An arched card, like a window, with scissors.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["business", "salon", "booking"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M594 276A24 24 0 1 1 642 276A24 24 0 1 1 594 276ZM604.5 276A13.5 13.5 0 1 0 631.5 276A13.5 13.5 0 1 0 604.5 276ZM678 276A24 24 0 1 1 726 276A24 24 0 1 1 678 276ZM688.5 276A13.5 13.5 0 1 0 715.5 276A13.5 13.5 0 1 0 688.5 276ZM634.64 261.81L703.64 177.81A6 6 0 0 1 694.36 170.19L625.36 254.19A6 6 0 0 1 634.64 261.81ZM694.64 254.19L625.64 170.19A6 6 0 0 1 616.36 177.81L685.36 261.81A6 6 0 0 1 694.64 254.19Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to book",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

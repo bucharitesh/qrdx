@@ -1,0 +1,128 @@
+{
+  "id": "independence-us",
+  "name": "Fourth of July",
+  "description": "Flag colors in a band over the code and a star, in navy and red.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "independence-day",
+  "contentTypes": [],
+  "tags": ["independence day", "national day", "usa", "july 4"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#1c2f5e",
+      "text": "#ffffff",
+      "accent": "#b22234"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 56.2,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 79.2,
+        "width": 1192,
+        "height": 56.2,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 134.4,
+        "width": 1192,
+        "height": 56.2,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 189.6,
+        "width": 1192,
+        "height": 56.2,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 244.8,
+        "width": 1192,
+        "height": 55.2,
+        "fill": "accent"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 162,
+        "r": 118,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M620 93.2L637.87 142.21L690 144.06L648.91 176.19L663.26 226.34L620 197.2L576.74 226.34L591.09 176.19L550 144.06L602.13 142.21Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Fourth of July",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

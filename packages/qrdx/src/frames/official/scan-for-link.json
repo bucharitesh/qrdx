@@ -1,0 +1,120 @@
+{
+  "id": "scan-for-link",
+  "name": "Link",
+  "description": "Two chat bubbles: a light one with the note and a solid one with the label.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "link"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1750
+    },
+    "qr": {
+      "x": 120,
+      "y": 360,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 900,
+        "height": 200,
+        "radius": 70,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.86
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[120, 198], [260, 198], [90, 270]],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.86
+        }
+      },
+      {
+        "type": "rect",
+        "x": 300,
+        "y": 1510,
+        "width": 940,
+        "height": 220,
+        "radius": 80,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[980, 1512], [1120, 1512], [1180, 1430]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 260,
+        "width": 1160,
+        "height": 1200,
+        "radius": 56,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.95
+        }
+      },
+      {
+        "type": "path",
+        "d": "M110.11 1621.97L132.23 1606.49A27 27 -35 0 1 169.83 1613.12L169.83 1613.12A27 27 -35 0 1 163.2 1650.72L141.08 1666.21A27 27 -35 0 1 103.48 1659.58L103.48 1659.58A27 27 -35 0 1 110.11 1621.97ZM118.71 1634.26A12 12 -35 0 0 115.77 1650.97L115.77 1650.97A12 12 -35 0 0 132.48 1653.92L154.6 1638.43A12 12 -35 0 0 157.54 1621.72L157.54 1621.72A12 12 -35 0 0 140.83 1618.77Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M156.8 1589.28L178.92 1573.79A27 27 -35 0 1 216.52 1580.42L216.52 1580.42A27 27 -35 0 1 209.89 1618.03L187.77 1633.51A27 27 -35 0 1 150.17 1626.88L150.17 1626.88A27 27 -35 0 1 156.8 1589.28ZM165.4 1601.57A12 12 -35 0 0 162.46 1618.28L162.46 1618.28A12 12 -35 0 0 179.17 1621.23L201.29 1605.74A12 12 -35 0 0 204.23 1589.03L204.23 1589.03A12 12 -35 0 0 187.52 1586.08Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the link",
+        "color": "text",
+        "box": {
+          "x": 360,
+          "y": 1530,
+          "width": 820,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Looking for this?",
+        "color": "frame",
+        "box": {
+          "x": 60,
+          "y": 40,
+          "width": 780,
+          "height": 120
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

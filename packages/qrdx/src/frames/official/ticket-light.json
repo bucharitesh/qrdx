@@ -1,0 +1,67 @@
+{
+  "id": "ticket-light",
+  "name": "Light ticket",
+  "description": "A ticket with side notches, a perforated line and a stub for the label.",
+  "category": "use-case",
+  "collection": "call-to-action",
+  "contentTypes": [],
+  "tags": ["call to action", "ticket", "light"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1600
+    },
+    "qr": {
+      "x": 120,
+      "y": 160,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1240A60 60 0 0 0 1240 1360L1240 1536A64 64 0 0 1 1176 1600L64 1600A64 64 0 0 1 0 1536L0 1360A60 60 0 0 0 0 1240L0 64A64 64 0 0 1 64 0Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.88
+        }
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1300,
+        "x2": 1140,
+        "y2": 1300,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for details",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1350,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

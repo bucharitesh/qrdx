@@ -1,0 +1,55 @@
+{
+  "id": "wifi-tile",
+  "name": "Wi-Fi tile",
+  "description": "The code on a solid tile with the label inside.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["wifi"],
+  "tags": ["wifi", "minimal"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1420
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1420,
+        "radius": 48,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for Wi-Fi",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1220,
+          "width": 1080,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

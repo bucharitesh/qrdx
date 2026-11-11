@@ -1,0 +1,109 @@
+{
+  "id": "mothers-day-daisy",
+  "name": "Daisy card",
+  "description": "A light card with a daisy and a pill-shaped button under the code, in plum and pink.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "mothers-day",
+  "contentTypes": [],
+  "tags": ["mother's day", "mom", "may", "flowers", "gift"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 380,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7b3f61",
+      "text": "#ffffff",
+      "accent": "#e9b8c9"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 64,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.82
+        },
+        "hole": {
+          "x": 12,
+          "y": 12,
+          "width": 1216,
+          "height": 1736,
+          "radius": 54
+        }
+      },
+      {
+        "type": "path",
+        "d": "M630.4 96C640.54 108.87 663.36 108.87 681.1 96C663.36 83.13 640.54 83.13 630.4 96ZM629.01 101.2C631.35 117.42 651.11 128.82 672.91 126.55C663.98 106.53 644.22 95.12 629.01 101.2ZM625.2 105.01C619.12 120.22 630.53 139.98 650.55 148.91C652.82 127.11 641.42 107.35 625.2 105.01ZM620 106.4C607.13 116.54 607.13 139.35 620 157.1C632.87 139.35 632.87 116.54 620 106.4ZM614.8 105.01C598.58 107.35 587.18 127.11 589.45 148.91C609.47 139.98 620.88 120.22 614.8 105.01ZM610.99 101.2C595.78 95.12 576.02 106.53 567.09 126.55C588.89 128.82 608.65 117.42 610.99 101.2ZM609.6 96C599.46 83.13 576.65 83.13 558.9 96C576.65 108.87 599.46 108.87 609.6 96ZM610.99 90.8C608.65 74.58 588.89 63.18 567.09 65.45C576.02 85.47 595.78 96.88 610.99 90.8ZM614.8 86.99C620.88 71.78 609.47 52.02 589.45 43.09C587.18 64.89 598.58 84.65 614.8 86.99ZM620 85.6C632.87 75.46 632.87 52.64 620 34.9C607.13 52.65 607.13 75.46 620 85.6ZM625.2 86.99C641.42 84.65 652.82 64.89 650.55 43.09C630.53 52.02 619.12 71.78 625.2 86.99ZM629.01 90.8C644.22 96.88 663.98 85.47 672.91 65.45C651.11 63.18 631.35 74.58 629.01 90.8Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M603.1 96A16.9 16.9 0 1 1 636.9 96A16.9 16.9 0 1 1 603.1 96Z",
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 1520,
+        "width": 900,
+        "height": 180,
+        "radius": 90,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for your gift",
+        "color": "text",
+        "box": {
+          "x": 230,
+          "y": 1520,
+          "width": 780,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Mother's Day",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 180,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

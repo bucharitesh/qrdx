@@ -3,6 +3,7 @@
   "name": "Wi-Fi card",
   "description": "A dark card with a Wi-Fi glyph, a join prompt and a pill for the network name.",
   "category": "use-case",
+  "collection": "places",
   "contentTypes": ["wifi"],
   "tags": ["wifi", "hospitality", "cafe", "hotel"],
   "license": "CC0-1.0",

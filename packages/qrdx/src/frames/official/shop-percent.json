@@ -1,0 +1,75 @@
+{
+  "id": "shop-percent",
+  "name": "Percent off",
+  "description": "A solid card with a percent sign over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "sale", "discount"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M560 77A27 27 0 1 1 614 77A27 27 0 1 1 560 77ZM573.5 77A13.5 13.5 0 1 0 600.5 77A13.5 13.5 0 1 0 573.5 77ZM626 143A27 27 0 1 1 680 143A27 27 0 1 1 626 143ZM639.5 143A13.5 13.5 0 1 0 666.5 143A13.5 13.5 0 1 0 639.5 143ZM656.08 51.4L572.08 159.4A7.5 7.5 0 0 1 583.92 168.6L667.92 60.6A7.5 7.5 0 0 1 656.08 51.4Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the discount",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Sale",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

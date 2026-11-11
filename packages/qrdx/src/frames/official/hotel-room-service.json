@@ -1,0 +1,66 @@
+{
+  "id": "hotel-room-service",
+  "name": "Room service",
+  "description": "A door hanger with a round cut-out at the top.",
+  "category": "use-case",
+  "collection": "places",
+  "contentTypes": ["url"],
+  "tags": ["hotel", "hospitality", "room service"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1960
+    },
+    "qr": {
+      "x": 120,
+      "y": 550,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M70 0L1170 0A70 70 0 0 1 1240 70L1240 1890A70 70 0 0 1 1170 1960L70 1960A70 70 0 0 1 0 1890L0 70A70 70 0 0 1 70 0ZM470 210A150 150 0 1 0 770 210A150 150 0 1 0 470 210Z",
+        "fill": "frame",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Room service",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1680,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to order",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1845,
+          "width": 1040,
+          "height": 92
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

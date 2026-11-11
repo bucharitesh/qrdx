@@ -1,0 +1,112 @@
+{
+  "id": "independence-brazil",
+  "name": "Brazilian Independence Day",
+  "description": "Flag colors in a band over the code and a star badge, in green and yellow.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "independence-day",
+  "contentTypes": [],
+  "tags": ["independence day", "national day", "brazil", "september 7"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#00733a",
+      "text": "#ffffff",
+      "accent": "#ffdf00"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 276,
+        "radius": 36,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 24,
+        "width": 1192,
+        "height": 93,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 116,
+        "width": 1192,
+        "height": 93,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 24,
+        "y": 208,
+        "width": 1192,
+        "height": 92,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M24 24L60 24A36 36 0 0 0 24 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1216 24L1180 24A36 36 0 0 1 1216 60Z",
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 162,
+        "r": 118,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M546.4 162A73.6 73.6 0 1 1 693.6 162A73.6 73.6 0 1 1 546.4 162ZM606.83 147.08L568.26 148.39L598.7 172.12L588.02 209.21L620 187.6L651.98 209.21L641.3 172.12L671.74 148.39L633.17 147.08L620 110.8Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Feliz Independência",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1530,
+          "width": 1040,
+          "height": 180
+        }
+      }
+    ]
+  }
+}

@@ -10,6 +10,7 @@ import {
   QR_IMAGE_KINDS,
 } from "@/components/editor/gradient-picker";
 import { defaultThemeState } from "@/config/qr";
+import { useFrameLibrary } from "@/lib/frames/use-frame-library";
 import type { DesignSection } from "@/lib/playground-links";
 import type { QRStyle } from "@/types/theme";
 import { ColorPresets } from "./color-presets";
@@ -105,6 +106,9 @@ export function DesignControls({
     return () => cancelAnimationFrame(frame);
   }, [focus]);
 
+  // Names an official frame in the collapsed header once the library's
+  // index has loaded (a small chunk, only when a custom frame is on)
+  useFrameLibrary({ withIndex: current.frame?.style === "custom" });
   const level = ERROR_LEVELS.find((item) => item.id === (current.level || "L"));
   const frameStyle = current.frame?.style ?? "none";
   const shape = frameShapeOf(current);

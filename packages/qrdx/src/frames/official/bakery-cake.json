@@ -1,0 +1,70 @@
+{
+  "id": "bakery-cake",
+  "name": "Bakery",
+  "description": "An arched card, like a window, with a birthday cake.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "bakery", "cake"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1880
+    },
+    "qr": {
+      "x": 160,
+      "y": 470,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 660A660 660 0 0 1 1320 660L1320 1840Q1320 1880 1280 1880L40 1880Q0 1880 0 1840Z",
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.9
+        }
+      },
+      {
+        "type": "path",
+        "d": "M50 660A610 610 0 0 1 1270 660L1270 1830L50 1830ZM62 660L62 1818L1258 1818L1258 660A598 598 0 0 0 62 660Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M612 252L708 252A6 6 0 0 1 714 258L714 294A6 6 0 0 1 708 300L612 300A6 6 0 0 1 606 294L606 258A6 6 0 0 1 612 252ZM627 219L693 219A6 6 0 0 1 699 225L699 249A6 6 0 0 1 693 255L627 255A6 6 0 0 1 621 249L621 225A6 6 0 0 1 627 219Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M621 231C630 240 639 231 648 240C657 231 666 240 675 231C684 240 693 231 699 240L699 228L621 228ZM657 192L663 192A1.5 1.5 0 0 1 664.5 193.5L664.5 217.5A1.5 1.5 0 0 1 663 219L657 219A1.5 1.5 0 0 1 655.5 217.5L655.5 193.5A1.5 1.5 0 0 1 657 192ZM660 169.5C662.1 175.8 666 180.9 666 184.5A6 6 0 0 1 654 184.5C654 180.9 657.9 175.8 660 169.5Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to order a cake",
+        "color": "frame",
+        "box": {
+          "x": 140,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}

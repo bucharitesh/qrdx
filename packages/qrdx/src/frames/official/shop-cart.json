@@ -1,0 +1,76 @@
+{
+  "id": "shop-cart",
+  "name": "Shop online",
+  "description": "A wide card: the code on one side, a shopping cart and the label on the other.",
+  "category": "use-case",
+  "collection": "shopping",
+  "contentTypes": ["url"],
+  "tags": ["retail", "shop", "online shop"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1037.2 185.2L1066 185.2L1076.8 206.8L1199.2 206.8L1181.2 271.6L1087.6 271.6L1094.8 286L1184.8 286L1184.8 300.4L1084 300.4L1055.2 199.6L1037.2 199.6ZM1082.2 318.4A12.6 12.6 0 1 1 1107.4 318.4A12.6 12.6 0 1 1 1082.2 318.4ZM1157.8 318.4A12.6 12.6 0 1 1 1183 318.4A12.6 12.6 0 1 1 1157.8 318.4Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Shop online",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan to browse the range",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

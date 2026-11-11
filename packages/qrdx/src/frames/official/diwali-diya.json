@@ -1,0 +1,82 @@
+{
+  "id": "diwali-diya",
+  "name": "Diya",
+  "description": "A solid card with a diya lamp over the code and the label underneath, in maroon and marigold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "diwali",
+  "contentTypes": [],
+  "tags": ["diwali", "deepavali", "festival of lights", "diya", "lamp"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#7a1f3d",
+      "text": "#ffffff",
+      "accent": "#f0a53a"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M563 128L677 128C674 155 650 170 620 170C590 170 566 155 563 128ZM563 128L554 119L578 125ZM623 83C625.36 92 629.75 102.2 629.75 106.25A6.75 6.75 0 0 1 616.25 106.25C616.25 102.2 620.64 92 623 83Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M623 59C628.25 77 638 95 638 104A15 15 0 0 1 608 104C608 95 617.75 77 623 59Z",
+        "fill": "accent",
+        "fillRule": "evenodd"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Happy Diwali",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

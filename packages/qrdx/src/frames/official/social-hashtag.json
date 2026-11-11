@@ -1,0 +1,74 @@
+{
+  "id": "social-hashtag",
+  "name": "Hashtag",
+  "description": "A solid card with a hashtag over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["url", "instagram", "tiktok", "facebook"],
+  "tags": ["social", "followers", "hashtag"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M590 44L608 44L596 176L578 176ZM638 44L656 44L644 176L626 176ZM560 80L683 80A3 3 0 0 1 686 83L686 95A3 3 0 0 1 683 98L560 98A3 3 0 0 1 557 95L557 83A3 3 0 0 1 560 80ZM557 125L680 125A3 3 0 0 1 683 128L683 140A3 3 0 0 1 680 143L557 143A3 3 0 0 1 554 140L554 128A3 3 0 0 1 557 125Z",
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Follow us",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for our socials",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

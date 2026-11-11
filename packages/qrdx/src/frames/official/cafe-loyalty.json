@@ -1,0 +1,89 @@
+{
+  "id": "cafe-loyalty",
+  "name": "Coffee loyalty",
+  "description": "A ticket with side notches, a perforated line and a stub for the label and a coffee bean.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "cafe", "loyalty"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1820
+    },
+    "qr": {
+      "x": 120,
+      "y": 300,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M64 0L1176 0A64 64 0 0 1 1240 64L1240 1380A60 60 0 0 0 1240 1500L1240 1756A64 64 0 0 1 1176 1820L64 1820A64 64 0 0 1 0 1756L0 1500A60 60 0 0 0 0 1380L0 64A64 64 0 0 1 64 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 100,
+        "y1": 1440,
+        "x2": 1140,
+        "y2": 1440,
+        "width": 10,
+        "dash": [36, 24],
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.55
+        }
+      },
+      {
+        "type": "path",
+        "d": "M581.03 97.5A45 66 30 1 1 658.97 142.5A45 66 30 1 1 581.03 97.5Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M647.77 65.03L643.62 68.11L639.73 71.69L636.25 75.59L633.13 79.78L630.34 84.2L627.83 88.82L625.57 93.6L623.5 98.52L621.59 103.53L619.8 108.61L618.09 113.72L616.43 118.84L614.78 123.93L613.1 128.96L611.37 133.89L609.54 138.7L607.59 143.34L605.48 147.79L603.19 152.01L600.68 155.98L597.94 159.67L594.92 163.05L591.6 166.11L587.77 168.95L592.23 174.97L596.38 171.89L600.27 168.31L603.75 164.41L606.87 160.22L609.66 155.8L612.17 151.18L614.43 146.4L616.5 141.48L618.41 136.47L620.2 131.39L621.91 126.28L623.57 121.16L625.22 116.07L626.9 111.04L628.63 106.11L630.46 101.3L632.41 96.66L634.52 92.21L636.81 87.99L639.32 84.02L642.06 80.33L645.08 76.95L648.4 73.89L652.23 71.05Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for your stamp",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1040,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Coffee club",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1675,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

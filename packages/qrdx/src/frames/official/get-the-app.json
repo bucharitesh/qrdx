@@ -3,6 +3,7 @@
   "name": "Get the app",
   "description": "A phone outline with a download glyph and an app prompt on the screen.",
   "category": "use-case",
+  "collection": "business",
   "contentTypes": ["url"],
   "tags": ["app", "download", "mobile"],
   "license": "CC0-1.0",

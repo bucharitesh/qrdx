@@ -1,0 +1,83 @@
+{
+  "id": "pay-wallet",
+  "name": "Wallet",
+  "description": "A wide card: the code on one side, a wallet and the label on the other.",
+  "category": "use-case",
+  "collection": "business",
+  "contentTypes": ["upi", "paypal", "url"],
+  "tags": ["payments", "checkout", "landscape"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 2000,
+      "height": 1040
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 800,
+      "padding": 64,
+      "radius": 19.2
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 2000,
+        "height": 1040,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M1058.8 206.8L1181.2 206.8A14.4 14.4 0 0 1 1195.6 221.2L1195.6 300.4A14.4 14.4 0 0 1 1181.2 314.8L1058.8 314.8A14.4 14.4 0 0 1 1044.4 300.4L1044.4 221.2A14.4 14.4 0 0 1 1058.8 206.8ZM1148.8 242.8A10.8 10.8 0 0 0 1138 253.6L1138 268A10.8 10.8 0 0 0 1148.8 278.8L1184.8 278.8A10.8 10.8 0 0 0 1195.6 268L1195.6 253.6A10.8 10.8 0 0 0 1184.8 242.8ZM1148.8 260.8A7.2 7.2 0 1 1 1163.2 260.8A7.2 7.2 0 1 1 1148.8 260.8Z",
+        "fill": "text",
+        "fillRule": "evenodd"
+      },
+      {
+        "type": "path",
+        "d": "M1058.8 206.8L1156 178L1166.8 206.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to pay",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 400,
+          "width": 860,
+          "height": 190
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Fast and contactless",
+        "color": "text",
+        "box": {
+          "x": 1030,
+          "y": 610,
+          "width": 860,
+          "height": 100
+        },
+        "weight": "regular",
+        "align": "start"
+      }
+    ]
+  }
+}

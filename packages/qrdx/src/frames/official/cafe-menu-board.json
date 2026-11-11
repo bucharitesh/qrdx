@@ -1,0 +1,66 @@
+{
+  "id": "cafe-menu-board",
+  "name": "Cafe board",
+  "description": "A chalkboard in a wooden frame.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "cafe", "menu"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1560
+    },
+    "qr": {
+      "x": 160,
+      "y": 180,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#6e6e6e"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1560,
+        "radius": 30,
+        "fill": "accent"
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1220,
+        "height": 1460,
+        "radius": 10,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the cafe menu",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1300,
+          "width": 1040,
+          "height": 170
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

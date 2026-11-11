@@ -1,0 +1,80 @@
+{
+  "id": "bar-beer",
+  "name": "Beer tap",
+  "description": "A solid card with a beer mug over the code and the label underneath.",
+  "category": "use-case",
+  "collection": "food-drink",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "food", "bar", "beer"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1740
+    },
+    "qr": {
+      "x": 120,
+      "y": 410,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#ececec"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1740,
+        "radius": 72,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M578 74L641 74A9 9 0 0 1 650 83L650 164A9 9 0 0 1 641 173L578 173A9 9 0 0 1 569 164L569 83A9 9 0 0 1 578 74ZM650 95A27 27 0 0 1 650 149L650 134A12 12 0 0 0 650 110Z",
+        "fill": "text"
+      },
+      {
+        "type": "path",
+        "d": "M563 86C560 65 578 53 590 62C596 47 620 47 626 59C638 50 659 59 656 80L656 89L563 89Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for what's on tap",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 1530,
+          "width": 1080,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Craft beer",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 200,
+          "width": 1000,
+          "height": 96
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

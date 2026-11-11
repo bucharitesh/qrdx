@@ -1,12 +1,14 @@
 // What each item type stores (community_item.payload and every version),
 // validated on the server before anything is written. Safe to import
 // anywhere: no database, no Node APIs.
-import { OFFICIAL_FRAMES } from "qrdx";
+// The official frames' tags only (no specs), so the publish dialogs stay light
+
 import { customFrameSchema, type QRCustomFrame } from "qrdx/types";
 import { z } from "zod";
 import { logoIconSchema } from "@/lib/qr-design/logo-icon";
 import { CLASSIC_STYLE, toThemeStyles } from "@/lib/qr-design/style";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
+import { OFFICIAL_FRAME_TAGS } from "../../../../packages/qrdx/src/frames/catalogue/tags";
 import { toPublishableStyle } from "./public-style";
 
 export const NAME_MAX_LENGTH = 60;
@@ -83,7 +85,7 @@ export const framePreviewStyle = (frame: QRCustomFrame): ThemeStyles => ({
 /** Tags a frame can carry: the official catalogue's, plus looks. */
 export const FRAME_TAGS: string[] = [
   ...new Set([
-    ...OFFICIAL_FRAMES.flatMap((frame) => frame.tags),
+    ...OFFICIAL_FRAME_TAGS,
     "minimal",
     "bold",
     "playful",

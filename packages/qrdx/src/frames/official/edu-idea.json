@@ -1,0 +1,94 @@
+{
+  "id": "edu-idea",
+  "name": "Learn more",
+  "description": "A solid card with a round badge holding a light bulb on its top edge.",
+  "category": "use-case",
+  "collection": "health-learning",
+  "contentTypes": ["url"],
+  "tags": ["education", "school", "learning"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1830
+    },
+    "qr": {
+      "x": 120,
+      "y": 420,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 150,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 120,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M620 88.4C650.8 88.4 670.4 110.8 670.4 136C670.4 158.4 648 166.8 642.4 183.6L597.6 183.6C592 166.8 569.6 158.4 569.6 136C569.6 110.8 589.2 88.4 620 88.4Z",
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M601.8 189.2L638.2 189.2A4.2 4.2 0 0 1 642.4 193.4L642.4 193.4A4.2 4.2 0 0 1 638.2 197.6L601.8 197.6A4.2 4.2 0 0 1 597.6 193.4L597.6 193.4A4.2 4.2 0 0 1 601.8 189.2ZM604.6 201.8L635.4 201.8A4.2 4.2 0 0 1 639.6 206L639.6 206A4.2 4.2 0 0 1 635.4 210.2L604.6 210.2A4.2 4.2 0 0 1 600.4 206L600.4 206A4.2 4.2 0 0 1 604.6 201.8Z",
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to learn more",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1540,
+          "width": 1040,
+          "height": 170
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Did you know?",
+        "color": "text",
+        "box": {
+          "x": 140,
+          "y": 1710,
+          "width": 960,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -5,6 +5,11 @@ import { notFound } from "next/navigation";
 import { cache } from "react";
 import { CreatorLine } from "@/components/community/creator-line";
 import { ItemGrid } from "@/components/community/item-card";
+import {
+  ItemPages,
+  pageOf,
+  pageParam,
+} from "@/components/community/item-pages";
 import { normalizeHandle, profilePath } from "@/lib/community/handles";
 import { LICENSE_SHORT } from "@/lib/community/licence";
 import { getProfileByHandle } from "@/lib/community/queries";
@@ -58,9 +63,10 @@ export default async function CreatorProfilePage({
   for (const item of profile.items) {
     counts.set(item.type, (counts.get(item.type) ?? 0) + 1);
   }
-  const items = tab
+  const listed = tab
     ? profile.items.filter((item) => item.type === tab)
     : profile.items;
+  const { page, pages, items } = pageOf(listed, pageParam(query.page));
   const base = profilePath(profile.creator.handle);
   const tabs: { id: CommunityItemType | null; label: string; count: number }[] =
     [
@@ -130,7 +136,21 @@ export default async function CreatorProfilePage({
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
         {items.length > 0 ? (
-          <ItemGrid cards={items} />
+          <div className="space-y-5">
+            <ItemGrid cards={items} />
+            <ItemPages
+              href={(next) => {
+                const params = new URLSearchParams();
+                if (typeof query.type === "string")
+                  params.set("type", query.type);
+                if (next > 1) params.set("page", String(next));
+                const search = params.toString();
+                return search ? `${base}?${search}` : base;
+              }}
+              page={page}
+              pages={pages}
+            />
+          </div>
         ) : (
           <p className="text-muted-foreground py-16 text-center text-sm">
             Nothing published here yet.

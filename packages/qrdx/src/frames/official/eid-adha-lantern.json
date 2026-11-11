@@ -1,0 +1,80 @@
+{
+  "id": "eid-adha-lantern",
+  "name": "Lantern tab",
+  "description": "A framed code with a tab hanging below it for the label, in emerald and gold.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "eid-al-adha",
+  "contentTypes": [],
+  "tags": ["eid al-adha", "eid", "eid mubarak", "tab"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1540
+    },
+    "qr": {
+      "x": 120,
+      "y": 120,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#0f5f4a",
+      "text": "#ffffff",
+      "accent": "#c9a227"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1240,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 210,
+        "y": 1176,
+        "width": 820,
+        "height": 364,
+        "radius": 64,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Eid Mubarak",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 1250,
+          "width": 720,
+          "height": 160
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Scan for our greetings",
+        "color": "text",
+        "box": {
+          "x": 280,
+          "y": 1405,
+          "width": 680,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

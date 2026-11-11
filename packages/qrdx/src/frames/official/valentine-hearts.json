@@ -1,0 +1,83 @@
+{
+  "id": "valentine-hearts",
+  "name": "Two hearts",
+  "description": "A die-cut sticker with a thick outline and an offset shadow and two hearts, in crimson and pink.",
+  "category": "seasonal",
+  "collection": "holidays",
+  "occasion": "valentines-day",
+  "contentTypes": [],
+  "tags": ["valentine's day", "love", "february", "hearts"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1750
+    },
+    "qr": {
+      "x": 110,
+      "y": 370,
+      "size": 1000,
+      "padding": 80,
+      "radius": 24
+    },
+    "colors": {
+      "frame": "#b0123a",
+      "text": "#ffffff",
+      "accent": "#f4a7b9"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": {
+          "mix": ["frame", "#000000"],
+          "amount": 0
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1270,
+        "height": 1700,
+        "radius": 110,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 36,
+        "y": 36,
+        "width": 1198,
+        "height": 1628,
+        "radius": 80,
+        "fill": "background"
+      },
+      {
+        "type": "path",
+        "d": "M619 201.26C609.08 189.36 568.41 161.58 569.4 137.78C570.39 111.98 609.08 108.02 619 133.81C628.92 108.02 667.61 111.98 668.6 137.78C669.59 161.58 628.92 189.36 619 201.26ZM670.2 151.79C664.44 144.88 640.82 128.75 641.4 114.93C641.98 99.95 664.44 97.65 670.2 112.62C675.96 97.65 698.42 99.95 699 114.93C699.58 128.75 675.96 144.88 670.2 151.79Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me, sweetheart",
+        "color": "frame",
+        "box": {
+          "x": 100,
+          "y": 1490,
+          "width": 1070,
+          "height": 170
+        }
+      }
+    ]
+  }
+}
