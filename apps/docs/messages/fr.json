@@ -680,5 +680,1169 @@
         }
       }
     }
+  },
+  "common": {
+    "breadcrumb": "Fil d'Ariane",
+    "home": "Accueil",
+    "pricing": "Tarifs",
+    "tools": "Outils",
+    "seeAll": "Tout voir",
+    "faq": "FAQ",
+    "designFree": "Créer un QR code gratuit",
+    "createDynamic": "Créer un QR code dynamique"
+  },
+  "pageCodes": {
+    "sampleNote": "Exemples dans les thèmes intégrés. Chacun se scanne, et aucun ne mène à un vrai compte.",
+    "startNote": "Choisissez-en un pour partir de celui-ci dans le Playground.",
+    "typeDesigns": "Designs de QR code {name}",
+    "topicSamples": "Exemples de QR codes pour {noun}",
+    "generatorSamples": "Exemples de codes des générateurs",
+    "industrySamples": "Exemples de codes par secteur",
+    "placementSamples": "Exemples de codes par emplacement",
+    "sizesTitle": "Tailles par emplacement",
+    "sizesDescription": "Chaque guide d'emplacement comprend un tableau de tailles selon la distance de scan.",
+    "sizesLabel": "Guides d'emplacement avec tableaux de tailles",
+    "alt": "QR code {type}, thème {theme}",
+    "altFramed": "QR code {type}, thème {theme} avec un cadre {frame}"
+  },
+  "qrGenerator": {
+    "crumb": "Générateurs de QR code",
+    "hub": {
+      "metaTitle": "Types de QR code : {count, number} générateurs gratuits (Wi-Fi, vCard, UPI)",
+      "metaDescription": "{count, number} types de QR code, chacun avec un générateur gratuit : Wi-Fi, vCard, WhatsApp, UPI, e-mail, profils sociaux et paiements. Chaque page indique son format de données exact.",
+      "title": "Des générateurs de QR code pour chaque type de contenu",
+      "intro1": "Un QR code peut faire plus qu'ouvrir un site web. Selon le texte qu'il contient, un téléphone peut rejoindre un réseau Wi-Fi, enregistrer un contact, lancer un paiement ou ouvrir une conversation. Choisissez l'un des {count, number} types ci-dessous pour accéder à un générateur avec les bons champs, un aperçu en direct et un téléchargement en PNG, WebP ou SVG.",
+      "intro2": "Par défaut, les codes créés sur ces pages sont statiques : le contenu est encodé dans le motif lui-même, ils fonctionnent donc hors ligne, n'expirent jamais et n'ont aucune limite de scans. Chaque page documente aussi le format exact qu'elle écrit, pour que vous sachiez ce qu'un lecteur va lire.",
+      "cardTitle": "Générateur de QR code {name}",
+      "moreTools": "Autres outils",
+      "bulkTitle": "Besoin de centaines de codes ? Utilisez le générateur en masse",
+      "bulkDescription": "Importez un fichier CSV et téléchargez tous les codes en PNG, WebP ou SVG dans un seul fichier ZIP, généré entièrement dans votre navigateur.",
+      "printTitle": "Vous imprimez votre code ? Vérifiez la taille",
+      "printDescription": "Calculez la taille minimale d'impression à partir de la distance de scan et de la quantité de données du code."
+    },
+    "type": {
+      "title": "Générateur de QR code {name} gratuit",
+      "generatorLabel": "Générateur de QR code {name}",
+      "howTo": "Comment créer un QR code {name}",
+      "format": "Format du QR code {name}",
+      "formatLabel": "Format",
+      "exampleLabel": "Exemple",
+      "faqTitle": "FAQ QR code {name}",
+      "related": "Générateurs de QR code associés",
+      "allTypes": "Les {count, number} types",
+      "relatedCard": "QR code {name}"
+    }
+  },
+  "typeGenerator": {
+    "invalidLink": "Lien invalide",
+    "dubLabel": "Lien court Dub *",
+    "driveLabel": "Lien Google Drive *",
+    "dubHelp": "Collez un lien court existant. Connectez Dub dans l'éditeur complet pour choisir ou créer des liens.",
+    "driveHelp": "Collez un lien Drive, Docs, Sheets ou Slides. Connectez Google Drive dans l'éditeur complet pour parcourir vos fichiers.",
+    "downloadFailed": "Échec du téléchargement",
+    "detected": "Lien {type} détecté.",
+    "about": "À propos des QR codes {type}",
+    "back": "Retour à {type}",
+    "empty": "Remplissez le formulaire pour voir votre QR code.",
+    "quietZone": "Zone de silence (bordure vide)",
+    "customize": "Personnaliser dans l'éditeur complet",
+    "showEncoded": "Afficher le contenu encodé",
+    "footnote": "Généré dans votre navigateur. Le style provient des réglages de votre éditeur."
+  },
+  "seoTopics": {
+    "related": "Guides et outils associés",
+    "faqTitle": "{hub} : FAQ",
+    "industries": {
+      "hubName": "QR codes par secteur",
+      "ideasHeading": "Idées de QR codes pour {noun}",
+      "faqTitle": "QR codes pour {noun} : FAQ",
+      "metaTitle": "QR codes par secteur : idées et tailles d'impression",
+      "metaDescription": "Des idées de QR codes pour {count, number} secteurs, de la restauration et du commerce de détail à la santé et au BTP : quel type de code utiliser, tailles d'impression et textes d'appel à l'action.",
+      "title": "QR codes par secteur",
+      "intro1": "Un restaurant a besoin d'un menu modifiable à 6 h du soir, un chantier a besoin de documents de sécurité derrière un panneau résistant aux intempéries, et un musée a besoin d'audioguides en quatre langues. Le bon QR code dépend de l'usage. Chaque guide ci-dessous traite donc un secteur : vers quoi renvoient les entreprises concernées, quel type de code QRdx convient, quelle taille d'impression choisir et quoi écrire à côté du code.",
+      "intro2": "Les codes statiques des générateurs sont gratuits et ne nécessitent aucun compte. Les codes dynamiques et les pages hébergées peuvent être modifiés après l'impression et comptabilisent chaque scan, et ils continuent de fonctionner avec tous les forfaits.",
+      "placementsTitle": "Parcourir par support",
+      "placementsDescription": "Cartes de visite, emballages, panneaux d'affichage, tickets de caisse et {count, number} autres supports, avec les tailles pour chacun.",
+      "generatorsTitle": "Générateurs gratuits par type",
+      "generatorsDescription": "Wi-Fi, vCard, UPI, WhatsApp, avis Google et plus encore, avec pour chacun le format exact encodé.",
+      "dynamicTitle": "Fonctionnement des codes dynamiques",
+      "dynamicDescription": "Des liens courts que vous pouvez rediriger après l'impression, avec des statistiques de scan et sans limite de scans.",
+      "faq": {
+        "benefitQuestion": "Quels secteurs tirent le plus profit des QR codes ?",
+        "benefitAnswer": "Toute entreprise qui imprime un support qu'un client tient en main ou devant lequel il passe : menus, emballages, panneaux, billets, étiquettes et publipostages. Le gain est le plus élevé lorsque les informations changent après l'impression (menus, prix, horaires, documents), car un QR code dynamique se met à jour sans nouvelle impression.",
+        "staticQuestion": "Une entreprise doit-elle utiliser des QR codes statiques ou dynamiques ?",
+        "staticAnswer": "Utilisez des QR codes statiques pour un contenu qui ne change jamais, comme un identifiant Wi-Fi, un identifiant de paiement ou une carte de contact : ils sont gratuits et fonctionnent sans service intermédiaire. Utilisez des QR codes dynamiques pour tout ce qui est imprimé en volume ou conservé pendant des mois, afin de corriger un lien erroné, de changer la destination et de mesurer les scans.",
+        "cancelQuestion": "Les codes QRdx cessent-ils de fonctionner si je résilie ?",
+        "cancelAnswer": "Non. Les QR codes statiques n'expirent jamais. Les QR codes dynamiques continuent de rediriger avec tous les forfaits, y compris après un passage à une formule inférieure, un paiement refusé ou une résiliation, sans publicité ni page intermédiaire. Les limites du forfait vous empêchent seulement de créer de nouveaux codes."
+      }
+    },
+    "placements": {
+      "hubName": "QR codes par support",
+      "ideasHeading": "Vers quoi renvoyer depuis les QR codes sur {noun}",
+      "faqTitle": "QR codes sur {noun} : FAQ",
+      "metaTitle": "Où placer un QR code : tailles pour chaque support",
+      "metaDescription": "QR codes sur cartes de visite, emballages, menus, panneaux d'affichage, tickets de caisse et {count, number} autres supports : vers quoi renvoyer, quelle taille imprimer et où les placer.",
+      "title": "QR codes par support",
+      "intro1": "L'emplacement d'un QR code détermine presque tout : sa taille, le matériau nécessaire et la durée pendant laquelle il doit rester fonctionnel. Le code d'un ticket de caisse est scanné à 30 cm puis jeté le jour même ; une enseigne sur un bâtiment est lue à plusieurs mètres pendant des années. Chaque guide ci-dessous traite d'un support, avec un tableau des tailles selon les distances réelles de scan.",
+      "intro2": "Les tailles sont calculées avec la même formule que le calculateur de taille d'impression de QRdx, pour un lien court dynamique avec une correction d'erreur Q. Les QR codes statiques contenant plus de données doivent être plus grands.",
+      "industriesTitle": "Parcourir par secteur",
+      "industriesDescription": "Restaurants, commerce de détail, immobilier, santé et {count, number} autres secteurs, avec les types de codes utilisés par chacun.",
+      "printTitle": "Calculateur de taille imprimée",
+      "printDescription": "La taille minimale pour votre contenu exact, votre distance et votre niveau de correction d'erreur.",
+      "checkerTitle": "Test de scan",
+      "checkerDescription": "Importez votre design pour le décoder et vérifier le contraste, la zone de silence et la taille des modules avant l'impression.",
+      "faq": {
+        "sizeQuestion": "Quelle taille doit avoir un QR code\\u00a0?",
+        "sizeAnswer": "Environ un dixième de la distance de scan, un peu plus pour les codes plus denses\\u00a0: environ 2,5 à 3 cm pour une carte tenue en main, 23 cm pour une affiche à 2 m et environ 70 cm pour un panneau à 6 m. Gardez chaque module à 0,4 mm minimum et laissez une marge blanche de quatre modules autour du code.",
+        "failQuestion": "Pourquoi un QR code imprimé ne se scanne-t-il pas\\u00a0?",
+        "failAnswer": "Les causes habituelles sont un faible contraste (couleurs pâles ou inversées), l'absence de zone de silence, une impression trop petite pour la distance, les reflets des finitions brillantes, et un emplacement sur des courbes, des plis ou des jointures. Testez l'épreuve imprimée, pas seulement le fichier.",
+        "formatQuestion": "Quel format de fichier envoyer à l'imprimeur\\u00a0?",
+        "formatAnswer": "Un format vectoriel\\u00a0: SVG ou PDF CMJN prêt pour l'impression, tous deux gratuits avec QRdx. Les vectoriels restent nets à toute taille, d'une étiquette de 2 cm à une bannière de 2 m."
+      }
+    },
+    "topic": {
+      "badgeStatic": "Statique · gratuit, sans compte",
+      "staticTitle": "QR code {name}",
+      "staticLink": "Ouvrir le générateur {name}",
+      "badgeDynamic": "Dynamique · modifiable, suivi",
+      "dynamicLink": "Créer un QR code dynamique",
+      "badgePage": "Page hébergée · modifiable, suivie",
+      "pageLink": "Voir les modèles en direct",
+      "typesTitle": "Quel QR code choisir",
+      "typesDescription": "Les codes statiques sont gratuits et sans compte, mais ne peuvent plus être modifiés après l'impression. Les codes dynamiques et les pages hébergées peuvent être modifiés à tout moment, comptent chaque scan et continuent de fonctionner avec tous les forfaits, même si vous annulez.",
+      "sizingTitle": "Quelle taille d'impression",
+      "sizingCaption": "Taille minimale imprimée du QR code selon la distance de scan",
+      "colWhere": "Où les gens scannent",
+      "colDistance": "Distance",
+      "colMinimum": "Largeur minimale du code",
+      "sizingNote": "Pour un lien court dynamique tel que <code>{link}</code> avec correction d'erreur Q, sans la marge blanche. Les codes statiques Wi-Fi, vCard ou à longue URL contiennent plus de données et doivent être plus grands. Vérifiez le vôtre avec le <size>calculateur de taille d'impression</size> et le <checker>test de scan</checker>.",
+      "tipsTitle": "Conseils de placement",
+      "ctaTitle": "Texte d'appel à l'action",
+      "ctaDescription": "Un code accompagné d'une raison de le scanner obtient plus de scans qu'un code seul. Des phrases à imprimer à côté du vôtre\\u00a0:",
+      "moreIn": "Plus dans {group}"
+    }
+  },
+  "tools": {
+    "hub": {
+      "metaTitle": "Outils QR code gratuits",
+      "metaDescription": "Outils gratuits pour QR codes et codes-barres\\u00a0: générateur en masse à partir d’un CSV, vérificateur de scan, calculateur de taille d’impression, générateur de codes-barres, générateurs Wi-Fi et vCard, et API d’image de QR code.",
+      "title": "Outils QR code gratuits",
+      "intro": "Des outils simples et ciblés pour tout ce qui entoure un QR code\\u00a0: en créer beaucoup à la fois, les dimensionner pour l’impression et vérifier qu’ils se scannent, plus un générateur de codes-barres pour les produits et les étiquettes. Ils sont gratuits, sans compte, et fonctionnent dans votre navigateur.",
+      "listLabel": "Outils",
+      "items": {
+        "scanner": {
+          "title": "Scanner de QR code",
+          "description": "Scannez des QR codes et des codes-barres avec votre caméra ou une image, avec un aperçu sécurisé du lien avant d’ouvrir quoi que ce soit."
+        },
+        "bulk": {
+          "title": "Générateur de QR code en masse",
+          "description": "Importez un CSV et téléchargez jusqu’à {rows, number} codes stylisés au format PNG ou SVG, dans une archive ZIP, générés dans votre navigateur."
+        },
+        "scanChecker": {
+          "title": "Vérificateur de scan QR code",
+          "description": "Importez l’image d’un QR code pour le décoder et vérifier la fiabilité de son scan."
+        },
+        "printSize": {
+          "title": "Calcul de la taille d’impression",
+          "description": "Déterminez la taille minimale d’impression à partir de la distance de scan, de la longueur des données et de la correction d’erreur."
+        },
+        "barcode": {
+          "title": "Générateur de codes-barres",
+          "description": "EAN-13, UPC, Code 128, GS1-128, ITF-14, Data Matrix et plus encore\\u00a0: {count, number} formats en PNG, SVG ou EPS, avec calcul des chiffres de contrôle."
+        },
+        "wifi": {
+          "title": "Générateur de QR code Wi-Fi",
+          "description": "Laissez vos invités rejoindre votre réseau en un seul scan au lieu de saisir le mot de passe."
+        },
+        "vcard": {
+          "title": "Générateur de QR code vCard",
+          "description": "Placez vos coordonnées sur une carte de visite qui s’enregistre directement dans le téléphone."
+        },
+        "types": {
+          "title": "Les {count, number} types de QR code",
+          "description": "Des générateurs pour WhatsApp, UPI, e-mail, SMS, profils sociaux, paiements et plus encore."
+        },
+        "imageApi": {
+          "title": "API d’image de QR code",
+          "description": "Obtenez une image de QR code à partir d’une URL pour vos README, e-mails et HTML, sans clé API."
+        }
+      }
+    },
+    "bulk": {
+      "metaTitle": "Générateur de QR code en masse gratuit à partir d’un CSV",
+      "metaDescription": "Générez jusqu’à {rows, number} QR codes à partir d’un fichier CSV et téléchargez-les au format PNG ou SVG, dans une archive ZIP. Styles et noms de fichiers personnalisés. Fonctionne entièrement dans votre navigateur.",
+      "crumb": "Générateur en masse",
+      "title": "Générateur de QR code en masse",
+      "intro1": "Transformez un tableur en centaines ou en milliers de QR codes d’un seul coup\\u00a0: étiquettes produit, billets d’événement, étiquettes d’inventaire, numéros de table ou courriers personnalisés. Importez un CSV, associez les colonnes, choisissez un style et téléchargez chaque code au format PNG, WebP ou SVG, dans une archive ZIP.",
+      "intro2": "Tout se passe dans votre navigateur. Le CSV n’est jamais envoyé, et il n’y a ni inscription, ni filigrane, ni frais par code.",
+      "toolLabel": "Générateur de QR code en masse",
+      "howTitle": "Comment ça marche",
+      "steps": {
+        "prepare": {
+          "title": "Préparer un CSV",
+          "body": "Une ligne par QR code. Placez le contenu (un lien, une chaîne Wi-Fi, un numéro de téléphone ou n'importe quel texte) dans une colonne et, si vous le souhaitez, le nom de fichier voulu dans une autre. Téléchargez le CSV d'exemple pour voir la structure."
+        },
+        "map": {
+          "title": "Associer les colonnes",
+          "body": "Indiquez quelle colonne contient le contenu du QR code et laquelle nomme les fichiers. Sans colonne de nom de fichier, les codes sont numérotés qr-0001, qr-0002, etc., dans l'ordre des lignes."
+        },
+        "style": {
+          "title": "Choisir un style et un format",
+          "body": "Choisissez un préréglage intégré, le dernier style utilisé dans l'éditeur ou l'un de vos thèmes enregistrés si vous êtes connecté. Le SVG convient le mieux à l'impression, le PNG aux écrans et aux documents, le WebP aux sites web."
+        },
+        "download": {
+          "title": "Générer et télécharger",
+          "body": "Les codes sont générés quelques-uns à la fois, avec une barre de progression, et sont ajoutés au ZIP au fur et à mesure. Un lot très volumineux est enregistré en plusieurs fichiers ZIP d'environ 500 Mo. Les lignes qui ne peuvent pas être encodées sont ignorées et listées dans errors.csv."
+        }
+      },
+      "faqTitle": "FAQ sur les QR codes en masse",
+      "faq": {
+        "uploadQuestion": "Mon CSV est-il envoyé quelque part ?",
+        "uploadAnswer": "Non. Le fichier est lu, les QR codes sont dessinés et le ZIP est créé dans votre navigateur. Rien n'est envoyé aux serveurs de QRdx : vous pouvez donc l'utiliser en toute sécurité pour des liens internes, des mots de passe Wi-Fi ou des données clients.",
+        "howManyQuestion": "Combien de QR codes puis-je générer à la fois ?",
+        "howManyAnswer": "Jusqu'à {rows, number} lignes par fichier. Au-delà, scindez le CSV ou utilisez la commande qrdx batch de la CLI, qui n'a aucune limite. Un PNG de 512 px prend environ 20 ms sur un ordinateur portable : les {rows, number} lignes demandent donc quelques minutes. Les PNG plus grands sont plus longs à générer et plus lourds ; choisissez donc 512 px sauf si vous avez besoin de plus.",
+        "rowQuestion": "Que peut contenir chaque ligne ?",
+        "rowAnswer": "N'importe quel texte, dans la limite du QR code : liens, texte brut ou contenus tels que WIFI:..., mailto:..., tel:... et BEGIN:VCARD. Le contenu est encodé exactement tel qu'il apparaît dans la cellule.",
+        "staticQuestion": "Les codes générés sont-ils statiques ou dynamiques ?",
+        "staticAnswer": "Statiques. Chaque code contient directement le contenu de sa ligne, fonctionne hors ligne, n'expire jamais et ne peut plus être modifié après impression. Pour des codes modifiables avec des statistiques de scan, créez des QR codes dynamiques depuis votre tableau de bord QRdx.",
+        "namesQuestion": "Que se passe-t-il avec des noms de fichier en double ou non valides ?",
+        "namesAnswer": "Les caractères non autorisés dans les noms de fichier sont remplacés par un tiret, et les noms en double reçoivent un numéro en suffixe (menu.png, menu-2.png) afin qu'aucun fichier ne soit écrasé."
+      },
+      "generator": {
+        "errorTooMuch": "Trop de données pour un seul QR code",
+        "errorFailed": "Génération impossible",
+        "errorEmpty": "Le fichier est vide.",
+        "errorTooLarge": "Le fichier dépasse 10 Mo.",
+        "errorEmptyValue": "Valeur vide",
+        "errorNone": "Aucun code n'a pu être généré à partir de ce fichier.",
+        "logoFailed": "Le logo n'a pas pu être chargé : les codes ont donc été créés sans lui.",
+        "editorStyle": "Style de mon éditeur",
+        "stepUpload": "1. Importer un CSV",
+        "sampleCsv": "CSV d'exemple",
+        "fileRows": "{file} · {count, plural, one {# ligne} other {# lignes}}",
+        "removeFile": "Retirer le fichier",
+        "drop": "Déposez un fichier CSV ici, ou cliquez pour en choisir un",
+        "dropHelp": "Jusqu’à {rows, number} lignes et 10 Mo. Le fichier reste sur votre appareil.",
+        "truncated": "Ce fichier contient plus de {rows, number} lignes. Seules les {rows, number} premières seront utilisées.",
+        "header": "La première ligne contient les noms de colonnes",
+        "stepMap": "2. Associer les colonnes",
+        "valueColumn": "Contenu du QR code",
+        "filenameColumn": "Nom de fichier (facultatif)",
+        "numbered": "Numéroté (qr-0001)",
+        "stepStyle": "{step, number}. Choisir un style",
+        "style": "Style",
+        "yours": "Le vôtre",
+        "presets": "Préréglages",
+        "savedMissing": "Ce thème enregistré est introuvable dans votre compte.",
+        "savedSignIn": "Connectez-vous pour utiliser votre thème enregistré.",
+        "editStyle": "Modifier ce style dans le Playground",
+        "ecc": "Correction d’erreur",
+        "eccFromStyle": "Selon le style",
+        "format": "Format",
+        "formatPng": "PNG (image)",
+        "formatWebp": "WebP (image, plus léger)",
+        "formatSvg": "SVG (vectoriel, pour l’impression)",
+        "size": "Taille du {format}",
+        "quietZone": "Ajouter une zone de silence de {modules, number} modules (recommandé pour l’impression)",
+        "empty": "Importez un CSV pour prévisualiser le premier code.",
+        "cancel": "Annuler",
+        "generate": "Générer les codes",
+        "generateCount": "Générer {count, plural, one {# code} other {# codes}}",
+        "preparing": "Préparation…",
+        "doneParts": "Terminé : {count, plural, one {# code} other {# codes}} dans {parts, number} fichiers ZIP (les lots volumineux sont enregistrés en plusieurs parties au fil de la génération).",
+        "done": "Terminé : {count, plural, one {# code} other {# codes}} dans {file}.",
+        "downloadPartAgain": "Télécharger à nouveau la partie {part, number}",
+        "downloadAgain": "Télécharger à nouveau",
+        "skipped": "{count, plural, one {# ligne ignorée} other {# lignes ignorées}} :",
+        "skippedListed": "{count, plural, one {# ligne ignorée} other {# lignes ignorées}} (listées dans errors.csv) :",
+        "line": "Ligne {row, number} : {error}",
+        "private": "Tout s'exécute dans votre navigateur. Votre fichier CSV et les codes générés ne sont jamais envoyés."
+      }
+    },
+    "printSize": {
+      "metaTitle": "Calculateur de taille d'impression de QR code",
+      "metaDescription": "Trouvez la taille d'impression minimale d'un QR code à partir de la distance de scan, des données qu'il contient et de son niveau de correction d'erreur. Résultats en mm et en pouces.",
+      "crumb": "Calculateur de taille d'impression",
+      "title": "Calculateur de taille d'impression de QR code",
+      "intro1": "Imprimé trop petit, un QR code échoue précisément là où cela compte : sur une affiche à l'autre bout de la pièce, un panneau au bord de la route ou une étiquette sur une étagère bien remplie. Indiquez à quelle distance les gens scanneront et ce que contient le code, et le calculateur détermine la plus petite taille qui se scannera encore de façon fiable.",
+      "intro2": "Il va plus loin que la simple règle distance ÷ 10 en tenant compte de la densité de votre code : un long lien ou une vCard demande plus de modules qu'une URL courte, donc chaque module, et le code entier, doivent être imprimés plus grands.",
+      "toolLabel": "Calculateur de taille d'impression",
+      "howTitle": "Comment la taille est calculée",
+      "how1": "Le contenu détermine la version du QR code. Le calculateur choisit la plus petite version (de 1 à 40) qui contient votre texte au niveau de correction d'erreur choisi, avec les mêmes tables de capacité que l'encodeur QRdx. La version n mesure 17 + 4n modules de large.",
+      "how2": "La distance détermine la taille du module. La règle empirique {ratio, number}:1 est considérée comme décrivant un code simple de {reference, number} × {reference, number} modules, donc chaque module doit mesurer au moins distance ÷ ({divisor, number}), et jamais moins de {minimum, number} mm.",
+      "how3": "La taille du module × le nombre de modules par côté donne la taille du code. Ajouter {quiet, number} modules vierges de chaque côté donne l'espace dont le code a besoin sur la page.",
+      "tipsTitle": "Conseils pour des codes qui se scannent",
+      "tip1": "Gardez un contenu court. Un lien plus court donne une version plus basse : à taille imprimée égale, les modules sont donc plus grands.",
+      "tip2": "Utilisez des modules foncés sur un fond clair, avec un fort contraste ; les codes inversés ou aux couleurs pastel échouent sur certains lecteurs.",
+      "tip3": "Testez le code imprimé avec plusieurs téléphones, à la distance et dans l'éclairage réels, avant un grand tirage.",
+      "tip4": "Besoin d’abord d’un code ? Utilisez les <generators>générateurs de QR code</generators> ou l’<editor>éditeur complet</editor>, puis exportez en SVG pour l’impression.",
+      "faqTitle": "FAQ sur la taille des QR codes",
+      "faq": {
+        "minimumQuestion": "Quelle est la taille minimale d'un QR code ?",
+        "minimumAnswer": "Cela dépend de la distance à laquelle on scanne et de la densité du code. Pour un lien court scanné à environ 25 cm, 2,5 cm (1 pouce) environ suffisent. Quelle que soit la distance, gardez chaque module à au moins {minimum, number} mm de large pour que les imprimantes et les caméras puissent le distinguer.",
+        "ruleQuestion": "Qu'est-ce que la règle du 10:1 pour les QR codes ?",
+        "ruleAnswer": "Une règle empirique courante veut qu'un QR code puisse être scanné à environ dix fois sa largeur : un code de 10 cm fonctionne donc à environ 1 m. Elle suppose un code assez simple ; les codes contenant plus de données doivent être imprimés plus grands, et c'est ce que ce calculateur ajuste.",
+        "logoQuestion": "Un logo ou une correction d'erreur plus élevée change-t-il la taille ?",
+        "logoAnswer": "Une correction d'erreurs plus élevée ajoute de la redondance : pour le même contenu, il faut donc une version supérieure avec plus de modules, et par conséquent une impression plus grande. Un logo ne change pas le nombre de modules, mais il en masque une partie ; utilisez donc le niveau Q ou H si vous en ajoutez un.",
+        "quietQuestion": "La zone de silence compte-t-elle dans la taille ?",
+        "quietAnswer": "La taille du code indiquée va d'un bord à l'autre. Les lecteurs ont aussi besoin d'une marge vierge de {quiet, number} modules sur chaque côté, que le second chiffre inclut. Les téléchargements QRdx n'ont aucune marge, sauf si vous activez la zone de silence : laissez donc cet espace autour du code dans votre mise en page.",
+        "resolutionQuestion": "Quelle résolution dois-je exporter pour l'impression ?",
+        "resolutionAnswer": "Utilisez SVG dès que possible : c'est un format vectoriel qui reste net à toutes les tailles. Pour PNG, exportez au moins la largeur en pixels indiquée pour 300 DPI, qui est le minimum habituel pour l'impression."
+      },
+      "calculator": {
+        "units": {
+          "cm": "centimètres",
+          "m": "mètres",
+          "in": "pouces",
+          "ft": "pieds"
+        },
+        "eccLevels": {
+          "L": "L, récupère ~7 %",
+          "M": "M, récupère ~15 %",
+          "Q": "Q, récupère ~25 % (par défaut dans QRdx)",
+          "H": "H, récupère ~30 %"
+        },
+        "modes": {
+          "numeric": "numérique",
+          "alphanumeric": "alphanumérique",
+          "byte": "octet"
+        },
+        "errorNoContent": "Saisissez le contenu que votre code contiendra.",
+        "errorTooMuch": "Trop de données pour un seul QR code au niveau {ecc} : la limite est de {limit, number} {bytes, select, yes {octets} other {caractères}}.",
+        "errorVersion": "Saisissez une version de 1 à 40.",
+        "distance": "Distance de scan",
+        "unit": "Unité de distance",
+        "distanceHelp": "La distance maximale à laquelle quelqu'un scannera : environ 20–30 cm pour un chevalet de table, 1–2 m pour une affiche, davantage pour des panneaux.",
+        "ecc": "Correction d'erreurs",
+        "fromContent": "Depuis le contenu",
+        "fromVersion": "Depuis la version QR",
+        "content": "Contenu du code",
+        "contentLength": "{count, number} {bytes, select, yes {octets} other {caractères}} en mode {mode}.",
+        "contentHelp": "Collez le texte, le lien ou la charge exacte que le code contiendra.",
+        "version": "Version QR (1–40)",
+        "versionHelp": "La version n compte 17 + 4n modules par côté : la version 1 fait 21 × 21, la version 40 fait 177 × 177.",
+        "resultTitle": "Taille d'impression minimale",
+        "errorDistance": "Saisissez une distance de scan supérieure à zéro.",
+        "codeSize": "Taille du code (bord à bord)",
+        "codeSizeHint": "Version {version, number}, {modules, number} × {modules, number} modules",
+        "withQuietZone": "Avec une zone de silence de {modules, number} modules",
+        "withQuietZoneHint": "La marge vierge dont les lecteurs ont besoin autour du code",
+        "moduleSize": "Taille du module (un carré)",
+        "moduleRaised": "Portée au minimum de {mm, number} mm pour une impression fiable",
+        "moduleByDistance": "Déterminée par la distance de scan",
+        "export": "Exporter à 300 DPI",
+        "exportHint": "Largeur d'image minimale, zone de silence comprise",
+        "capacity": "Au niveau {ecc}, la version {version, number} peut contenir jusqu'à {count, number} {bytes, select, yes {octets} other {caractères}} en mode {mode}.",
+        "ruleOfThumb": "À titre de comparaison, la règle simple distance ÷ 10 donne {size}. Imprimez au-dessus du minimum pour les surfaces courbes, un faible contraste, une matière brillante ou un mauvais éclairage.",
+        "makeCode": "Créer un code de cette taille",
+        "makeCodeHint": "Ouvre le téléchargement prêt à imprimer de l'éditeur, dimensionné pour une lecture à {distance} du code."
+      }
+    },
+    "scanChecker": {
+      "metaTitle": "Testeur de scan de QR code",
+      "metaDescription": "Ajoutez l'image d'un QR code pour le lire et tester la fiabilité de son scan en petite taille, avec du flou et un faible contraste. Fonctionne dans votre navigateur\\u00a0; rien n'est envoyé.",
+      "crumb": "Testeur de scan",
+      "title": "Testeur de scan de QR code",
+      "intro1": "Va-t-il se scanner\\u00a0? Importez, déposez ou collez une capture d'écran ou une photo de n'importe quel QR code pour voir ce qu'il contient et sa fiabilité de lecture, avant de l'imprimer sur un menu, une affiche ou un emballage.",
+      "intro2": "Le testeur décode le code, puis le réduit et le floute comme le ferait un appareil photo de téléphone, et le teste à nouveau à plusieurs tailles, avec des contrôles du contraste, de l'espace libre et de la résolution. Tout se passe dans votre navigateur.",
+      "toolLabel": "Testeur de scan de QR code",
+      "testsTitle": "Ce que le testeur vérifie",
+      "test1": "Décodage en 96, 160 et 320 pixels de large avec un flou d'appareil photo simulé\\u00a0: en gros, une impression petite ou lointaine, une distance normale de téléphone et un gros plan.",
+      "test2": "Contraste entre les modules sombres et clairs, mesuré à partir des pixels de l'image.",
+      "test3": "Polarité\\u00a0: les codes clairs sur fond sombre ne sont pas lus par toutes les applications de scan.",
+      "test4": "Espace libre (la zone de silence) autour du code, lorsque l'image le montre.",
+      "test5": "Résolution de l'image\\u00a0: nombre de pixels par module.",
+      "designTitle": "Vous créez un nouveau code\\u00a0?",
+      "design": "L’<editor>éditeur QRdx</editor> affiche un score de scan en direct pendant que vous créez votre design, signale les formes d’yeux risquées et les logos trop grands, et exporte des PDF vectoriels prêts à imprimer. Utilisez le <size>calculateur de taille d’impression</size> pour choisir la taille à imprimer.",
+      "restyle": "Modifier le style dans le Playground",
+      "faqTitle": "FAQ du vérificateur de scan",
+      "faq": {
+        "uploadQuestion": "Mon image est-elle envoyée quelque part ?",
+        "uploadAnswer": "Non. Le vérificateur s'exécute entièrement dans votre navigateur avec JavaScript. L'image est lue sur votre appareil et n'est jamais envoyée à un serveur.",
+        "scoreQuestion": "Comment le score de scan est-il calculé ?",
+        "scoreAnswer": "Le vérificateur repère le code avec le décodeur open source jsQR, le réduit à 96, 160 et 320 pixels de large, ajoute un flou et une perte de contraste semblables à ceux d'une caméra, puis tente de le décoder plusieurs fois à chaque taille. Il mesure ensuite le contraste entre les modules sombres et clairs, si le code est sombre sur fond clair, l'espace libre autour du code et la résolution de l'image. Chaque problème fait baisser le score à partir de 100.",
+        "lowQuestion": "Mon code a un score faible mais il se scanne sur mon téléphone. Pourquoi ?",
+        "lowAnswer": "Les applications d'appareil photo des téléphones sont souvent plus tolérantes que jsQR, et une photo peut perdre en contraste ou en netteté par rapport au code imprimé. Considérez un score faible comme un avertissement : des lecteurs moins performants, des impressions plus petites ou un mauvais éclairage peuvent poser problème. Testez le scan avec plusieurs téléphones avant un gros tirage.",
+        "sizeQuestion": "Quelle taille doit avoir un QR code imprimé ?",
+        "sizeAnswer": "Une règle pratique courante : largeur ≈ distance de scan ÷ 10. Un code scanné à 20 cm doit donc faire environ 2 cm de large. Les codes qui contiennent plus de données doivent être plus grands ; le calculateur de taille d'impression fait le calcul pour vous.",
+        "fixQuestion": "Comment améliorer un score faible ?",
+        "fixAnswer": "Utilisez un code sombre sur un fond clair avec un fort contraste, gardez un espace libre autour du code, choisissez des yeux simples carrés ou arrondis, optez pour un niveau de correction d'erreur plus élevé s'il y a un logo, raccourcissez le contenu ou imprimez-le plus grand."
+      }
+    }
+  },
+  "scanChecker": {
+    "errors": {
+      "notImage": "Ce fichier n’est pas une image. Utilisez un PNG, JPG, WebP ou GIF.",
+      "tooBig": "Cette image dépasse 20 Mo. Utilisez-en une plus légère.",
+      "unreadable": "Impossible de lire cette image. Essayez un PNG ou un JPG."
+    },
+    "noClipboardImage": "Aucune image dans le presse-papiers",
+    "clipboardBlocked": "L’accès au presse-papiers a été bloqué. Appuyez plutôt sur Ctrl+V ou ⌘V.",
+    "copied": "Copié",
+    "copyFailed": "Copie impossible",
+    "copy": "Copier",
+    "openLink": "Ouvrir le lien",
+    "checkAddress": "Vérifiez l’adresse avant de l’ouvrir : un QR code peut mener n’importe où.",
+    "checking": "Décodage et test en cours…",
+    "imageLabel": "Image du QR code",
+    "dropCompact": "Déposez ici une photo du code, collez-la ou choisissez un fichier",
+    "drop": "Déposez ici une image de QR code, choisissez un fichier ou collez-la",
+    "dropHelp": "Les captures d’écran et les photos fonctionnent. Appuyez sur Ctrl+V ou ⌘V pour coller.",
+    "choose": "Choisir une image",
+    "paste": "Coller l’image",
+    "private": "Vérification dans votre navigateur. L’image n’est jamais envoyée.",
+    "previewAltCompact": "Le code ajouté",
+    "previewAlt": "QR code importé",
+    "decoded": "Contenu décodé",
+    "decodedVersion": "Contenu décodé · version {version, number}",
+    "footnote": "Testé avec le décodeur open source jsQR. Les applications d’appareil photo des téléphones sont souvent plus tolérantes : considérez donc un score faible comme un avertissement et faites un scan de test avant d’imprimer.",
+    "opens": "<muted>Ouvre</muted> <strong>{link}</strong>",
+    "matches": "Correspond à ce design",
+    "differentLink": "Cette photo ouvre un autre lien",
+    "differentContent": "Cette photo contient un autre contenu",
+    "designOpens": "Ce design ouvre {link}"
+  },
+  "scan": {
+    "metaTitle": "Scanner de QR code en ligne",
+    "metaDescription": "Scanner de QR code et de codes-barres gratuit en ligne. Scannez avec votre caméra ou depuis une image et vérifiez où mène réellement un lien avant de l'ouvrir. Sans application, sans inscription.",
+    "crumb": "Scanner de QR code",
+    "title": "Scanner de QR code en ligne",
+    "intro1": "Scannez des QR codes et des codes-barres avec la caméra de votre téléphone ou de votre ordinateur, ou depuis une capture d'écran ou une photo. Gratuit, sans application et sans inscription.",
+    "intro2": "Les liens bénéficient d'un aperçu de sécurité avant toute ouverture : le scanner montre où le lien mène réellement{webRisk, select, yes {, le vérifie avec Google Web Risk} other {}} et signale les astuces de phishing courantes. Les codes sont décodés sur votre appareil, et votre historique reste dans ce navigateur.",
+    "toolLabel": "Scanner de QR code",
+    "formatsEyebrow": "Formats",
+    "readsTitle": "Ce qu'il lit",
+    "readsDescription": "{formats}. Plusieurs codes dans un même cadre ou une même image sont lus ensemble, et chaque type de contenu propose ses propres actions.",
+    "formatQr": "QR code",
+    "formatEan": "EAN-13 et EAN-8",
+    "formatUpc": "UPC-A et UPC-E",
+    "types": {
+      "links": {
+        "name": "Liens",
+        "detail": "Un aperçu de sécurité d'abord ; ne s'ouvre que lorsque vous appuyez sur Ouvrir."
+      },
+      "wifi": {
+        "name": "Wi-Fi",
+        "detail": "Nom du réseau, sécurité et mot de passe copiable."
+      },
+      "contacts": {
+        "name": "Contacts (vCard, MeCard)",
+        "detail": "Enregistrez directement en fichier .vcf."
+      },
+      "events": {
+        "name": "Événements d'agenda",
+        "detail": "Ajoutez à votre agenda sous forme de fichier .ics."
+      },
+      "locations": {
+        "name": "Lieux",
+        "detail": "Ouvrez dans Google Maps ou OpenStreetMap."
+      },
+      "phone": {
+        "name": "Téléphone, SMS et e-mail",
+        "detail": "Lancez un appel, un SMS ou un e-mail."
+      },
+      "payments": {
+        "name": "Paiements",
+        "detail": "Codes UPI, Bitcoin, Ethereum, PayPal, Venmo et SEPA (EPC), toujours avec une étape de confirmation."
+      },
+      "products": {
+        "name": "Codes produit",
+        "detail": "Numéros EAN/UPC et données GS1 (GTIN, lot, péremption), y compris GS1 Digital Link."
+      },
+      "text": {
+        "name": "Texte brut",
+        "detail": "Lire et copier."
+      }
+    },
+    "safetyEyebrow": "Sécurité",
+    "safetyTitle": "Un aperçu de sécurité pour chaque lien",
+    "safetyDescription": "Vous créez des codes plutôt que de les lire ? Utilisez les <generators>générateurs de QR code</generators> ou l’<editor>éditeur</editor>, et testez un design avec le <checker>vérificateur de scan</checker> avant d’imprimer.",
+    "safety1": "Le lien s'affiche d'abord, avec son domaine mis en évidence. Rien ne s'ouvre automatiquement.",
+    "safety2": "QRdx suit les redirections depuis son serveur (jusqu'à cinq, sans télécharger les pages) et affiche la destination finale du lien.",
+    "safety3": "{webRisk, select, yes {Chaque adresse est vérifiée avec Google Web Risk pour détecter l'hameçonnage et les logiciels malveillants, ainsi que par rapport aux astuces courantes} other {Chaque adresse est vérifiée par rapport aux astuces courantes}} : lettres trompeuses, adresses IP, raccourcisseurs, noms d'utilisateur cachés, noms de marques sur des domaines sans rapport, pages non chiffrées et téléchargements d'applications.",
+    "safety4": "Les codes QRdx authentiques et actifs reçoivent un badge Verified QRdx code. Les codes protégés par mot de passe gardent leur destination cachée.",
+    "safety5": "Vous avez repéré une arnaque ? Utilisez <report>Signaler ce code</report> sur le résultat.",
+    "faqTitle": "FAQ du scanner de QR code",
+    "faq": {
+      "howQuestion": "Comment scanner un QR code en ligne ?",
+      "howAnswer": "Ouvrez cette page, appuyez sur Démarrer la caméra et autorisez l'accès à la caméra, puis dirigez-la vers le code. Sur un ordinateur portable, ou si le code est déjà affiché à l'écran, passez à Image et importez, glissez ou collez une capture d'écran. Le résultat apparaît sous le scanner. Les liens ne s'ouvrent jamais avant que vous n'appuyiez sur Ouvrir.",
+      "safeQuestion": "Est-il sûr d'ouvrir un lien issu d'un QR code ?",
+      "safeAnswer": "En général oui, mais les faux QR codes collés sur les vrais (« quishing ») sont une arnaque courante. Avant que vous n'ouvriez un lien, le scanner suit ses redirections (jusqu'à cinq) pour montrer où il mène vraiment{webRisk, select, yes {, vérifie chaque adresse avec Google Web Risk} other {}} et recherche les astuces courantes : lettres trompeuses issues d'autres alphabets, adresses IP brutes, raccourcisseurs de liens, faux nom de site caché avant un @, noms de marques sur des domaines sans rapport, pages non chiffrées et téléchargements d'applications. Aucune vérification ne détecte tout, restez donc prudent sur les pages de connexion et de paiement.",
+      "verifiedQuestion": "Que signifie « Verified QRdx code » ?",
+      "verifiedAnswer": "Le lien correspond à un véritable QR code dynamique actif créé avec QRdx (un lien qrdx.dev/q/{domains, select, yes { ou un domaine personnalisé vérifié} other {}}) et ne fait l'objet d'aucun signalement d'abus ouvert. Cela vous indique que le code est authentique et n'a pas été désactivé ; son propriétaire décide toujours de la destination, les autres contrôles de sécurité restent donc utiles.",
+      "privateQuestion": "Mes scans sont-ils envoyés ou enregistrés ?",
+      "privateAnswer": "Non. Les images de la caméra et les images importées sont décodées dans votre navigateur et ne quittent jamais votre appareil. Votre historique de scans est stocké uniquement dans ce navigateur (IndexedDB) ; vous pouvez le désactiver, supprimer des scans un par un ou tout effacer. Pour afficher l'aperçu d'un lien, seule cette adresse est envoyée à QRdx{webRisk, select, yes { et à Google Web Risk} other {}}, et QRdx ne la conserve pas. Ce que vous scannez est exclu des statistiques du site.",
+      "wifiQuestion": "Pourquoi le scanner ne peut-il pas me connecter à un réseau Wi-Fi ?",
+      "wifiAnswer": "Les navigateurs web n'ont pas le droit de modifier les réglages Wi-Fi de votre appareil. Le scanner affiche le nom du réseau et vous permet de copier le mot de passe, afin de le coller dans vos réglages Wi-Fi. L'appli appareil photo de votre téléphone peut généralement rejoindre directement un QR code Wi-Fi.",
+      "batchQuestion": "Puis-je scanner plusieurs codes à la suite ?",
+      "batchAnswer": "Oui. Activez le mode Lot et continuez à diriger la caméra vers des codes, ou ajoutez plusieurs images à la fois. Chaque nouveau code n'est ajouté qu'une fois à la liste, et vous pouvez exporter le lot, ou tout votre historique, en fichier CSV.",
+      "offlineQuestion": "Fonctionne-t-il hors ligne ?",
+      "offlineAnswer": "Une fois que vous l'avez utilisé pour un scan, votre navigateur conserve la page du scanner et son décodeur : il s'ouvre et lit les codes sans connexion. Les vérifications de sécurité des liens nécessitent une connexion, et les liens trouvés hors ligne peuvent être vérifiés plus tard depuis votre historique.",
+      "browsersQuestion": "Quels navigateurs sont pris en charge ?",
+      "browsersAnswer": "Tout navigateur récent avec accès à la caméra : Chrome, Edge, Safari et Firefox sur téléphone et ordinateur. Les navigateurs dotés d'un lecteur de codes-barres intégré (Chrome sur Android et macOS) l'utilisent directement ; les autres téléchargent un décodeur open source (ZXing, compilé en WebAssembly, environ 1 Mo depuis le CDN jsDelivr) lors de votre premier scan. La caméra nécessite une page en https et votre autorisation.",
+      "installQuestion": "Puis-je installer le scanner comme une application ?",
+      "installAnswer": "Oui. Utilisez l'option Installer ou Ajouter à l'écran d'accueil de votre navigateur sur cette page pour obtenir une icône de scanner qui s'ouvre directement sur la caméra."
+    }
+  },
+  "scanner": {
+    "kinds": {
+      "url": "Lien",
+      "wifi": "Réseau Wi-Fi",
+      "contact": "Contact",
+      "event": "Événement",
+      "geo": "Lieu",
+      "phone": "Numéro de téléphone",
+      "sms": "SMS",
+      "email": "E-mail",
+      "payment": "Paiement",
+      "gs1": "Données produit GS1",
+      "product": "Code-barres produit",
+      "text": "Texte"
+    },
+    "main": {
+      "camera": "Caméra",
+      "image": "Image",
+      "batch": "Mode lot",
+      "batchHint": "scannez en continu, exportez en CSV",
+      "thisBatch": "Ce lot",
+      "exportCsv": "Exporter en CSV",
+      "clear": "Effacer",
+      "batchEmpty": "Continuez à pointer la caméra vers des codes, ou ajoutez des images. Chaque nouveau code n'est ajouté qu'une seule fois ; touchez-en un pour voir ce qu'il fait.",
+      "result": "Résultat du scan",
+      "found": "{count, plural, one {# code trouvé} other {# codes trouvés}}",
+      "scanAnother": "Scanner un autre",
+      "history": "Historique",
+      "saveHistory": "Enregistrer les scans sur cet appareil",
+      "clearAll": "Tout effacer",
+      "clearTitle": "Effacer l'historique des scans ?",
+      "clearDescription": "Cela supprime {count, plural, one {# scan enregistré} other {# scans enregistrés}} de cet appareil. Cette action est irréversible.",
+      "cancel": "Annuler",
+      "clearHistory": "Effacer l'historique",
+      "showMore": "Voir plus",
+      "historyLoading": "Chargement de l’historique…",
+      "historyEmpty": "Les codes que vous scannez apparaissent ici. L’historique est conservé uniquement dans ce navigateur, sur cet appareil.",
+      "historyOff": "L’historique est désactivé. Les scans ne sont enregistrés nulle part.",
+      "privacy": "Les images de la caméra et les images importées sont décodées sur votre appareil et ne sont jamais envoyées. Pour vérifier un lien, seule son adresse est transmise à QRdx (et à Google Web Risk), et elle n’est pas conservée. Ce que vous scannez n’est pas inclus dans les statistiques du site.",
+      "detailsTitle": "Détails du scan",
+      "detailsDescription": "Ce que contient le code scanné et ce que vous pouvez en faire.",
+      "remove": "Supprimer {summary} de l’historique",
+      "removeScan": "Supprimer le scan de l’historique",
+      "copy": "Copier",
+      "copied": "Copié",
+      "copyFailed": "Copie impossible. Sélectionnez le texte et copiez-le manuellement."
+    },
+    "camera": {
+      "errors": {
+        "blocked": "L’accès à la caméra a été bloqué. Autorisez la caméra pour ce site dans les paramètres de votre navigateur, ou scannez plutôt une image.",
+        "notFound": "Aucune caméra n’a été trouvée. Scannez plutôt une image.",
+        "busy": "La caméra est utilisée par une autre application ou un autre onglet. Fermez-le et réessayez.",
+        "failed": "La caméra n’a pas pu démarrer. Réessayez, ou scannez plutôt une image.",
+        "loadFailed": "Le scanner n’a pas pu se charger. Vérifiez votre connexion et réessayez.",
+        "unsupported": "Ce navigateur ne peut pas utiliser la caméra. Scannez plutôt une image.",
+        "insecure": "La caméra ne fonctionne que sur une page sécurisée (https). Scannez plutôt une image."
+      },
+      "preview": "Aperçu de la caméra",
+      "starting": "Démarrage de la caméra…",
+      "idle": "Dirigez votre caméra vers un QR code ou un code-barres. Rien ne s’ouvre sans votre accord.",
+      "retry": "Réessayer",
+      "start": "Activer la caméra",
+      "loading": "Chargement du scanner…",
+      "torchOn": "Allumer la lampe",
+      "torchOff": "Éteindre la lampe",
+      "switch": "Changer de caméra",
+      "stop": "Arrêter la caméra",
+      "zoom": "Zoom"
+    },
+    "image": {
+      "notImage": "Ce fichier n'est pas une image. Utilisez un fichier PNG, JPG, WebP ou GIF.",
+      "firstOnly": "Seules les {count, number} premières images ont été scannées.",
+      "noCode": "Aucun code trouvé dans cette image. Essayez avec une photo plus nette et plus rapprochée, où le code apparaît en entier.",
+      "noCodeSome": "Aucun code trouvé dans {count, plural, one {# des images} other {# des images}}.",
+      "unreadable": "{count, plural, one {Une image n'a pas pu être lue} other {# images n'ont pas pu être lues}} (fichier de plus de 20 Mo, ou format non pris en charge).",
+      "noClipboardImage": "Aucune image dans le presse-papiers",
+      "clipboardBlocked": "L'accès au presse-papiers a été bloqué. Appuyez plutôt sur Ctrl+V ou ⌘V.",
+      "inputLabel": "Images avec QR codes ou codes-barres",
+      "reading": "Lecture des codes…",
+      "drop": "Déposez des images ici, choisissez des fichiers ou collez",
+      "dropHelp": "Les captures d'écran et les photos fonctionnent, avec plusieurs codes par image.",
+      "choose": "Choisir des images",
+      "paste": "Coller une image"
+    },
+    "result": {
+      "starts": "Début",
+      "ends": "Fin",
+      "where": "Lieu",
+      "details": "Détails",
+      "ssid": "Réseau (SSID)",
+      "security": "Sécurité",
+      "hidden": "Réseau masqué",
+      "yes": "Oui",
+      "password": "Mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "showPassword": "Afficher le mot de passe",
+      "copyPassword": "Copier le mot de passe",
+      "copyNetwork": "Copier le nom du réseau",
+      "wifiNote": "Les navigateurs ne sont pas autorisés à rejoindre un réseau Wi-Fi à votre place. Copiez le mot de passe, ouvrez les réglages Wi-Fi et choisissez « {ssid} ». L'appareil photo de votre téléphone peut généralement s'y connecter en un seul geste.",
+      "payTitle": "Ouvrir {name} pour payer {payee} ?",
+      "payBody": "Vous êtes sur le point de transmettre ce paiement à votre application {name}. Les QR codes sur les autocollants et les affiches sont parfois remplacés par des escrocs.",
+      "payBodyAmount": "Vous êtes sur le point de transmettre ce paiement de {amount} à votre application {name}. Les QR codes sur les autocollants et les affiches sont parfois remplacés par des escrocs.",
+      "payCheck": "Vérifiez le bénéficiaire et le montant dans l'application avant de confirmer.",
+      "payOpen": "Ouvrir {name}",
+      "payWith": "Payer avec {name}",
+      "copyUpi": "Copier l'ID UPI",
+      "copyAddress": "Copier l'adresse",
+      "copyLink": "Copier le lien",
+      "copyUsername": "Copier l'identifiant",
+      "copyIban": "Copier l'IBAN",
+      "epcNote": "Les applications bancaires de la zone euro peuvent scanner directement ce code. Vous pouvez aussi copier l'IBAN dans un nouveau virement.",
+      "upiNote": "Ouvre une application UPI (Google Pay, PhonePe, Paytm, BHIM…) sur les téléphones qui en ont une.",
+      "restyle": "Restyliser dans le Playground",
+      "name": "Nom",
+      "organization": "Organisation",
+      "jobTitle": "Poste",
+      "phone": "Téléphone",
+      "phoneN": "Téléphone {n, number}",
+      "email": "E-mail",
+      "emailN": "E-mail {n, number}",
+      "website": "Site web",
+      "websiteN": "Site web {n, number}",
+      "address": "Adresse",
+      "note": "Note",
+      "saveContact": "Enregistrer le contact (.vcf)",
+      "event": "Événement",
+      "addToCalendar": "Ajouter au calendrier (.ics)",
+      "place": "Lieu",
+      "coordinates": "Coordonnées",
+      "copyCoordinates": "Copier les coordonnées",
+      "number": "Numéro",
+      "call": "Appeler",
+      "copyNumber": "Copier le numéro",
+      "to": "À",
+      "message": "Message",
+      "writeText": "Écrire un SMS",
+      "smsNote": "Votre application de messagerie s'ouvre avec le texte déjà saisi. Rien n'est envoyé tant que vous n'appuyez pas sur envoyer.",
+      "subject": "Objet",
+      "writeEmail": "Écrire un e-mail",
+      "checkDigit": "Chiffre de contrôle",
+      "checkDigitBad": "Ne correspond pas. Le code a peut-être été mal lu ; faites un nouveau scan.",
+      "searchWeb": "Rechercher sur le web",
+      "copyText": "Copier le texte",
+      "raw": "Contenu brut",
+      "copyRaw": "Copier le contenu brut"
+    },
+    "link": {
+      "verdicts": {
+        "verified": {
+          "title": "Code QRdx vérifié",
+          "body": "Un vrai QR code actif créé avec QRdx, sans signalement d'abus en cours. Son propriétaire a choisi sa destination."
+        },
+        "ok": {
+          "title": "Aucun avertissement",
+          "body": "Aucun des points que nous vérifions n'a été détecté. Examinez tout de même l'adresse avant de vous connecter ou de payer."
+        },
+        "caution": {
+          "title": "Soyez prudent",
+          "body": "Certains éléments de ce lien méritent un second regard avant de l'ouvrir."
+        },
+        "danger": {
+          "title": "N'ouvrez pas ce lien",
+          "body": "Ce lien présente de forts signes d'hameçonnage, de logiciel malveillant ou d'adresse déguisée."
+        },
+        "unknown": {
+          "title": "Vérification impossible",
+          "body": "Vérifiez attentivement l'adresse avant de l'ouvrir."
+        }
+      },
+      "dangerTitle": "Ouvrir un lien dangereux ?",
+      "dangerBody": "Ce lien a été signalé comme dangereux. Ne continuez que si vous savez exactement où il mène, et n'y saisissez jamais de mots de passe ni de données de paiement.",
+      "openAnyway": "Ouvrir quand même",
+      "uncheckedTitle": "Ouvrir sans vérification ?",
+      "uncheckedBody": "Nous n'avons pas pu vérifier ce lien. Lisez d'abord attentivement l'adresse.",
+      "open": "Ouvrir le lien",
+      "offline": "Vous semblez être hors ligne, le lien n'a donc pas pu être vérifié.",
+      "checking": "Vérification de la destination du lien…",
+      "checkingBody": "Suivi des redirections et vérification de l'adresse. Rien ne s'ouvre tant que vous ne l'avez pas décidé.",
+      "passwordHidden": "La destination reste masquée tant que vous n'avez pas saisi le mot de passe du code.",
+      "endsUpAt": "Mène à",
+      "redirects": "{count, plural, one {# redirection} other {# redirections}}",
+      "redirectsIncomplete": "{count, plural, one {# redirection} other {# redirections}} (non suivies jusqu'au bout)",
+      "checkedWebRisk": "Vérifié avec Google Web Risk et les contrôles propres à QRdx.",
+      "webRiskUnavailable": "Impossible de joindre Google Web Risk\\u00a0; les contrôles propres à QRdx ont été effectués.",
+      "checkedOwn": "Vérifié avec les contrôles de QRdx.",
+      "noCheckCatchesAll": "Aucun contrôle ne détecte tout.",
+      "copy": "Copier le lien",
+      "retry": "Réessayer",
+      "report": "Signaler ce code"
+    }
+  },
+  "barcodeGenerator": {
+    "metaTitle": "Générateur de codes-barres gratuit : EAN-13, UPC, Code 128",
+    "metaDescription": "Créez des codes EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix et plus encore : {count, number} types de codes-barres, avec chiffre de contrôle calculé pour vous. PNG, JPG, SVG, PDF et EPS. Gratuit, sans inscription.",
+    "crumb": "Générateur de codes-barres",
+    "title": "Générateur de codes-barres gratuit",
+    "intro1": "Créez des codes-barres pour le commerce, l'expédition et l'inventaire dans {count, number} formats, d'EAN-13 et UPC-A à Code 128, GS1-128, ITF-14 et Data Matrix. Saisissez le numéro : le chiffre de contrôle est calculé pour vous, et un chiffre erroné est détecté avant l'impression.",
+    "intro2": "Chaque code-barres est dessiné et vérifié par scan dans votre navigateur, puis enregistré en PNG ou JPG pour les écrans, ou en SVG, PDF et EPS pour l'impression. C'est gratuit, sans compte et sans filigrane. Connectez-vous pour conserver vos codes-barres dans votre tableau de bord et les modifier plus tard.",
+    "toolLabel": "Générateur de codes-barres",
+    "formatsEyebrow": "Formats",
+    "whichTitle": "Quel code-barres choisir ?",
+    "whichDescription": "Vous vendez en magasin ? Utilisez le type demandé par vos distributeurs : EAN-13 presque partout, UPC-A aux États-Unis et au Canada, tous deux porteurs d'un GTIN attribué par GS1. Vous expédiez chez eux ? ITF-14 sur les cartons, GS1-128 sur les étiquettes logistiques. Vous étiquetez vos propres articles ? Code 128.",
+    "linear": "Linéaire",
+    "printingEyebrow": "Impression",
+    "tipsTitle": "Conseils pour des codes-barres lisibles",
+    "tipsDescription": "Les codes-barres sont statiques : le numéro ou le texte est inscrit dans les barres, ils fonctionnent donc hors ligne, n'expirent jamais et n'offrent aucune statistique de scan. Besoin d'un lien que l'on peut scanner avec un téléphone ? Utilisez les <generators>générateurs de QR code</generators>. Pour lire un code-barres, ouvrez le <scanner>scanner</scanner>.",
+    "credits": "Les codes-barres sont dessinés par <bwip>bwip-js</bwip> (licence MIT), et la vérification par scan utilise <zxing>ZXing</zxing> compilé en WebAssembly, téléchargé depuis le CDN jsDelivr lors de sa première exécution.",
+    "faqTitle": "FAQ du générateur de codes-barres"
+  },
+  "barcodeTool": {
+    "pickColor": "Choisir : {label}",
+    "drawFailed": "Impossible de dessiner ce code-barres.",
+    "fixFirst": "Corrigez d'abord la saisie.",
+    "serverFailed": "Le serveur n'a pas pu créer ce fichier.",
+    "downloadFailed": "Échec du téléchargement",
+    "type": "Type de code-barres",
+    "linear": "Linéaire (1D)",
+    "linearInput": "Nombre ou texte à encoder",
+    "textInput": "Texte à encoder",
+    "barColor": "Couleur des barres",
+    "background": "Arrière-plan",
+    "barHeight": "Hauteur des barres",
+    "quietZone": "Zone de silence",
+    "modules": "{count, plural, one {# module} other {# modules}}",
+    "quietZoneLow": "{format} nécessite au moins {min, number} modules d'espace vide {kind, select, linear {de chaque côté} other {tout autour}}. Conservez-le dans votre mise en page si vous le réduisez ici.",
+    "quietZoneHelp": "La marge vide {kind, select, linear {à gauche et à droite des barres} other {autour du code}}, en modules (la largeur de la barre la plus fine{kind, select, linear {} other { ou d'une cellule}}). {format} nécessite {min, plural, =0 {aucune} other {au moins #}}.",
+    "imageSize": "Taille de l'image",
+    "showText": "Afficher le texte sous les barres",
+    "showDigits": "Afficher les chiffres sous les barres",
+    "rotation": "Rotation",
+    "degrees": "{angle, number} degrés",
+    "alt": "Code-barres {format} pour {value}",
+    "loadFailed": "Le code de dessin du code-barres ne s'est pas chargé. Vérifiez votre connexion et rechargez la page.",
+    "fixInput": "Corrigez la saisie signalée pour voir le code-barres.",
+    "sizes": "PNG, JPG, WebP et AVIF : {width, number} × {height, number} px. SVG, PDF et EPS sont des fichiers vectoriels de {widthMm} × {heightMm} mm, avec un module de {moduleMm} mm ; redimensionnez-les dans votre mise en page si besoin.",
+    "more": "Plus",
+    "moreFormats": "Plus de formats",
+    "footnote": "Généré dans votre navigateur ; rien de ce que vous saisissez n'est envoyé à QRdx. Les formats WebP et AVIF sont encodés par le serveur de QRdx lorsque vous les choisissez, et rien n'est conservé.",
+    "scan": {
+      "checking": "Vérification du PNG avec un lecteur de code-barres…",
+      "unavailable": "La vérification du scan n'a pas pu charger son décodeur, ce code-barres n'a donc pas été vérifié. Testez le code imprimé avec un lecteur.",
+      "passed": "Vérification du scan réussie : un lecteur de codes-barres décode le PNG comme {label} <mono>{value}</mono>",
+      "mismatch": "Échec de la vérification du scan : le lecteur a obtenu « {decoded} » au lieu de ce {label}.",
+      "failed": "Échec de la vérification du scan : le lecteur n'a pas pu décoder ce {label}. Augmentez le contraste, la taille ou la zone de silence."
+    },
+    "save": {
+      "signIn": "<link>Connectez-vous</link> pour enregistrer des codes-barres dans votre tableau de bord et les modifier plus tard.",
+      "failed": "Enregistrement impossible",
+      "saved": "Enregistré dans {workspace}",
+      "savedDescription": "Retrouvez-le dans Codes-barres, dans votre tableau de bord.",
+      "open": "Ouvrir",
+      "save": "Enregistrer"
+    }
+  },
+  "guarantee": {
+    "metaTitle": "Garantie Never-Hostage : vos QR codes continuent de fonctionner",
+    "metaDescription": "QRdx ne prend jamais vos QR codes en otage : les codes dynamiques continuent de rediriger après un passage à un plan inférieur, un paiement refusé ou une résiliation. Pas de mise en pause, pas de publicités, export complet.",
+    "crumb": "Garantie Never-Hostage",
+    "title": "La garantie Never-Hostage",
+    "intro1": "Un QR code imprimé ne peut pas être réimprimé lorsqu'un abonnement prend fin. Sur QRdx, les codes que vous placez sur des emballages, des menus et des affiches continuent donc de fonctionner, quoi qu'il arrive à votre plan.",
+    "intro2": "Cela s'applique à tous les comptes, y compris Gratuit.",
+    "seePricing": "Voir les tarifs",
+    "selfHosting": "Guide d'auto-hébergement",
+    "promisesTitle": "Nos engagements",
+    "scenariosTitle": "Que se passe-t-il quand...",
+    "scenarios": {
+      "cancel": {
+        "when": "Vous résiliez",
+        "outcome": "Votre plan reste actif jusqu'à la fin de la période payée, puis votre compte passe à Gratuit. Chaque QR code dynamique continue de rediriger et chaque scan est toujours enregistré."
+      },
+      "failed": {
+        "when": "Un paiement échoue",
+        "outcome": "C'est la même chose qu'une résiliation une fois l'abonnement expiré. Les codes ne sont jamais mis en pause pendant que la facturation est réglée."
+      },
+      "downgrade": {
+        "when": "Vous passez à un plan inférieur",
+        "outcome": "Les codes existants, les pages d'atterrissage{domains, select, yes { et les domaines personnalisés vérifiés} other {}} continuent de fonctionner. Les statistiques affichent l'historique inclus dans votre nouveau plan."
+      },
+      "limit": {
+        "when": "Vous dépassez une limite",
+        "outcome": "Vous ne pouvez pas en créer davantage tant que vous n'êtes pas repassé sous la limite. Vous pouvez toujours modifier la destination des codes existants, les archiver et les exporter."
+      },
+      "team": {
+        "when": "Le plan d'un propriétaire d'équipe change",
+        "outcome": "Les codes de l'équipe continuent de fonctionner et les membres actuels restent. Les limites de l'équipe suivent le meilleur plan parmi ses propriétaires."
+      },
+      "ended": {
+        "when": "Un code que vous avez programmé, mis en pause ou plafonné prend fin",
+        "outcome": "Les personnes qui scannent sont redirigées vers l'URL de secours que vous avez choisie, ou vers une page neutre « Cette campagne est terminée ». Jamais vers une page d'inscription ou de vente incitative de QRdx."
+      },
+      "shutdown": {
+        "when": "QRdx ferme",
+        "outcome": "Vous bénéficiez d'un préavis d'au moins 12 mois, du temps nécessaire pour tout exporter et d'une procédure documentée pour faire fonctionner l'application open source sur votre propre serveur."
+      }
+    },
+    "exceptionTitle": "La seule exception : les abus",
+    "exception": "Nous ne désactivons un code que s'il enfreint nos <terms>conditions d'utilisation</terms>, par exemple en redirigeant vers du phishing ou des logiciels malveillants. C'est une décision de sécurité prise après un signalement ou un examen, jamais une décision de facturation. Chacun peut <report>signaler un code</report>.",
+    "questions": "Des questions sur la garantie ? Écrivez à <mail>{email}</mail>. Dernière mise à jour : <time>{date, date, long}</time>."
+  },
+  "templates": {
+    "metaTitle": "Modèles de pages de destination pour QR code avec démos en direct",
+    "metaDescription": "{count, number} modèles gratuits de pages de destination pour QR codes : lien en bio, carte de visite, menu, coupon, événement, formulaire, PDF, galerie, audio et vidéo. Ouvrez d'abord une démo en direct.",
+    "crumb": "Modèles",
+    "title": "Modèles de pages pour vos QR codes",
+    "intro": "{templates, number} modèles pour {types, number} types de pages, chacun avec son propre type, ses couleurs et ses photos. Ouvrez une démo en direct ou scannez-la avec votre téléphone, puis personnalisez-la : chaque bloc, chaque couleur et chaque mot peut changer, même après l'impression.",
+    "count": "{count, plural, one {# modèle} other {# modèles}}",
+    "faqTitle": "Questions sur les modèles",
+    "faq": {
+      "freeQuestion": "Les modèles sont-ils gratuits ?",
+      "freeAnswer": "Oui. Tous les modèles sont gratuits. Le plan Gratuit inclut 3 pages hébergées ; Pro et Business n'ont aucune limite de pages.",
+      "changeQuestion": "Puis-je modifier la page après avoir imprimé le QR code ?",
+      "changeAnswer": "Oui. Chaque page reçoit un QR code dynamique qui ouvre toujours le même lien court : vous pouvez donc modifier les blocs, les couleurs et les textes à tout moment, sans réimprimer.",
+      "photosQuestion": "Puis-je utiliser mes propres photos et polices ?",
+      "photosAnswer": "Oui. Remplacez n'importe quelle photo par la vôtre, choisissez parmi les polices système et web pour les textes et les titres, et modifiez les couleurs, les angles, les boutons et les espacements dans l'éditeur de page.",
+      "websiteQuestion": "Ai-je besoin d'un site web ?",
+      "websiteAnswer": "Non. QRdx héberge la page pour vous sur un lien court.{domains, select, yes { Pro et Business peuvent aussi utiliser leur propre domaine.} other {}}",
+      "dataQuestion": "Les démos collectent-elles des données ?",
+      "dataAnswer": "Non. Les formulaires d'une démo affichent le message de remerciement sans rien envoyer, et les démos n'enregistrent ni vues ni clics. Sur votre propre page, les réponses aux formulaires arrivent dans votre tableau de bord."
+    },
+    "filter": {
+      "all": "Tous",
+      "label": "Types de pages",
+      "showingAll": "Affichage des {count, number} modèles",
+      "showing": "Affichage des modèles {type}"
+    },
+    "card": {
+      "viewLabel": "Voir la démo {name}",
+      "view": "Voir la démo",
+      "use": "Utiliser le modèle"
+    }
+  },
+  "templateDemo": {
+    "showQr": "Afficher un QR code qui ouvre la démo {name} sur votre téléphone",
+    "scan": "Scanner",
+    "qrLabel": "QR code de la démo {name}",
+    "scanHint": "Scannez avec l'appareil photo de votre téléphone pour ouvrir la démo en direct."
+  },
+  "integrations": {
+    "metaTitle": "Intégrations",
+    "metaDescription": "Connectez QRdx à {names} et bien d’autres outils : {count, number} intégrations avec les étapes de configuration exactes.",
+    "hero": {
+      "eyebrow": "Intégrations",
+      "title": "Connectez QRdx à {names}",
+      "titleMore": "Connectez QRdx à {names} et {count, plural, one {# autre outil} other {# autres outils}}",
+      "description": "Envoyez les paliers de scans et les réponses aux formulaires dans le chat de votre équipe, lancez des workflows Zapier, Make et n8n à chaque événement, ajoutez vos propres pixels d’analyse aux pages hébergées et transformez ce qui se trouve déjà dans vos comptes en codes. Chaque intégration est accompagnée d’étapes de configuration précises.",
+      "browse": "Parcourir les intégrations",
+      "build": "Créer avec QRdx",
+      "stats": {
+        "integrations": "{count, plural, one {intégration} other {intégrations}}",
+        "categories": "{count, plural, one {catégorie} other {catégories}}",
+        "builtIn": "intégrées"
+      }
+    },
+    "directory": {
+      "onMcp": "Sur la page du serveur MCP",
+      "onPlugins": "Sur la page des plugins",
+      "inDocs": "Dans la doc",
+      "all": "Toutes",
+      "categoriesLabel": "Catégories d’intégrations",
+      "categories": "Catégories",
+      "alsoOn": "Aussi sur QRdx",
+      "more": {
+        "ai": "Assistants IA",
+        "plugins": "Plugins",
+        "build": "Créer avec QRdx"
+      },
+      "searchPlaceholder": "Rechercher Zapier, Discord, Stripe, pixels…",
+      "searchLabel": "Rechercher des intégrations",
+      "allTitle": "Toutes les intégrations",
+      "allDescription": "Intégrations natives, connexions en un clic et guides pas à pas.",
+      "shown": "{count, plural, one {# intégration affichée} other {# intégrations affichées}}",
+      "elsewhere": "« {query} » se trouve sur une autre page",
+      "noMatch": "Aucun résultat pour « {query} »",
+      "noMatchIn": "Aucun résultat pour « {query} » dans {category}",
+      "elsewhereHelp": "Cette liste couvre les outils tiers. Les assistants IA, les plugins et les outils pour développeurs ont leurs propres pages.",
+      "noMatchHelp": "Tout outil qui accepte un webhook ou appelle une REST API peut quand même se connecter à QRdx.",
+      "clear": "Effacer la recherche",
+      "webhooks": "Voir les webhooks"
+    },
+    "more": {
+      "label": "Assistants IA et plugins",
+      "mcpEyebrow": "Serveur MCP · gratuit, sans compte",
+      "mcpTitle": "Utilisez QRdx depuis des assistants IA",
+      "mcpDescription": "Claude, ChatGPT, Cursor, VS Code et d'autres applications MCP créent des QR codes stylisés et des données Wi-Fi, de contact et d'e-mail directement dans la conversation.",
+      "pluginsEyebrow": "{count, number} plugins · open source",
+      "pluginsTitle": "QRdx dans Chrome, Figma, Raycast et Canva",
+      "pluginsDescription": "Créez un code pour la page que vous consultez, insérez des codes vectoriels dans un design ou générez-en un depuis le lanceur.",
+      "buildEyebrow": "Développeurs",
+      "buildTitle": "Créez avec QRdx",
+      "buildDescription": "Vous ne voyez pas votre outil ? Tout ce qui accepte un webhook ou appelle une API HTTP fonctionne avec QRdx, et vous pouvez publier votre propre intégration sur la plateforme.",
+      "buildOwn": "Créer votre propre intégration",
+      "request": "Demander une intégration",
+      "build": {
+        "restApi": "Gérez les codes et lisez les scans",
+        "webhooks": "Événements signés vers votre URL",
+        "imageApi": "Une image QR depuis une URL",
+        "react": "Des composants pour votre app",
+        "cli": "Des codes depuis le terminal ou la CI",
+        "shadcn": "Ajoutez un composant en une commande"
+      }
+    },
+    "detail": {
+      "metaTitle": "Intégration {name}",
+      "crumb": "Intégrations",
+      "copied": "Copié dans le presse-papiers",
+      "noAccount": "Aucun compte requis",
+      "planBadge": "Offre {plan}",
+      "about": "Ce qu'elle fait",
+      "setup": "Configuration",
+      "capabilities": "Ce que vous obtenez",
+      "type": "Type",
+      "category": "Catégorie",
+      "plan": "Offre",
+      "builtBy": "Créé par",
+      "website": "Site web",
+      "docs": "Docs",
+      "readGuide": "Lire le guide",
+      "related": "Intégrations similaires",
+      "all": "Toutes les intégrations"
+    }
+  },
+  "codeSnippet": {
+    "copied": "Copié",
+    "copy": "Copier",
+    "copyLabel": "Copier {label}",
+    "code": "Code",
+    "codeLower": "code",
+    "copyFailed": "Copie impossible. Sélectionnez le texte et copiez-le manuellement."
+  },
+  "plugins": {
+    "metaTitle": "Plugins QR code pour Chrome, Figma, Raycast et Canva",
+    "metaDescription": "Des QR codes stylisés sans quitter vos outils : une extension Chrome, un plugin Figma, une extension Raycast et une application Canva. Gratuit et open source, sans compte.",
+    "crumb": "Plugins",
+    "title": "Des QR codes dans les applications que vous utilisez déjà",
+    "intro": "Créez un code pour la page que vous consultez dans Chrome, insérez des codes vectoriels dans un design Figma, générez-en un depuis le lanceur Raycast ou ajoutez-en un à un design Canva. Les quatre sont gratuits et open source, et aucun ne nécessite de compte QRdx.",
+    "badges": "Gratuit · Sans compte · Open source (MIT)",
+    "kinds": {
+      "chrome": "Extension de navigateur",
+      "figma": "Plugin Figma",
+      "raycast": "Extension Raycast",
+      "canva": "Application Canva"
+    },
+    "runsOn": "Compatible avec",
+    "getIt": "Obtenir sur le {store}",
+    "installSource": "Installer depuis la source",
+    "setupSteps": "Étapes d'installation",
+    "notListed": "Pas encore sur le {store}.",
+    "install": "Installer",
+    "onGithub": "{path} sur GitHub",
+    "moreEyebrow": "Autres façons d'utiliser QRdx",
+    "moreTitle": "Ce n'est pas votre application de travail ?",
+    "moreWithBots": "Créez des codes dans une application de messagerie, demandez à un assistant IA, connectez les outils de votre équipe ou développez avec l'API.",
+    "more": "Demandez à un assistant IA, connectez les outils de votre équipe ou développez avec l'API.",
+    "request": "Il manque un plugin ? <link>Demandez-le</link>.",
+    "aiTitle": "Assistants IA",
+    "aiDescription": "Claude, ChatGPT, Cursor et VS Code créent des QR codes via le serveur MCP gratuit.",
+    "integrationsTitle": "Intégrations",
+    "integrationsDescription": "Zapier, Make, Discord, pixels d'analyse et les autres outils auxquels QRdx se connecte.",
+    "buildTitle": "Créez votre propre intégration",
+    "buildDescription": "L'API REST, les webhooks et les applications OAuth, pour votre propre plugin.",
+    "library": "Vous préférez le code ? La <link>bibliothèque React qrdx</link> qui alimente chaque plugin est disponible sur npm.",
+    "faqTitle": "FAQ des plugins",
+    "faq": {
+      "storeAll": "Pourquoi installer depuis les sources ?",
+      "storeSome": "Pourquoi certains s’installent-ils depuis les sources ?",
+      "storeListed": "{count, plural, one {{names} est disponible dans {store}} other {{names} sont disponibles dans leurs stores}}.",
+      "storeSource": "{count, plural, one {{names} n’est pas encore référencé} other {{names} ne sont pas encore référencés}}. D’ici là, chacun se compile à partir du dépôt open source de QRdx en quelques commandes ; les étapes figurent sur cette page et dans le dossier de chaque plugin sur GitHub.",
+      "accountQuestion": "Faut-il un compte QRdx ?",
+      "accountAnswer": "Non. Les plugins sont gratuits et fonctionnent sans compte. Chacun renvoie vers l’éditeur complet sur qrdx.dev (Open in QRdx dans Chrome et Raycast, More options dans Figma et Canva), où vous pouvez vous connecter pour créer des codes dynamiques modifiables après impression.",
+      "dataQuestion": "Les plugins envoient-ils mes données quelque part ?",
+      "dataAnswer": "L’extension Chrome et le plugin Figma n’effectuent aucune requête réseau : les codes sont dessinés sur votre appareil par la bibliothèque qrdx. L’extension Raycast conserve les codes enregistrés dans le stockage local de Raycast, et Generate QR with AI envoie votre description à Raycast AI. L’app Canva dessine le code dans son panneau et l’ajoute à votre design sous forme d’image. Lorsque vous ouvrez le playground depuis un plugin, seule une adresse web est transmise, après le # dans le lien, que les navigateurs n’envoient jamais à un serveur.",
+      "changeQuestion": "Puis-je modifier un code après l’avoir ajouté ?",
+      "changeAnswer": "Dans Figma, sélectionnez-le et cliquez sur Edit QR code, ou utilisez Replace selected QR pour conserver sa taille et sa position. Dans Raycast, les codes enregistrés peuvent être modifiés et exportés de nouveau. Dans Chrome et Canva, créez un nouveau code ; pour les codes imprimés dont vous voudrez changer le lien plus tard, utilisez un code dynamique depuis le tableau de bord QRdx."
+    }
+  },
+  "mcp": {
+    "metaTitle": "Serveur MCP de QR code pour Claude, ChatGPT et Cursor",
+    "metaDescription": "Connectez Claude, ChatGPT, Cursor, VS Code ou toute application MCP au serveur MCP QRdx gratuit et créez des QR codes stylisés, Wi-Fi, vCard et plus encore. Sans compte ni clé API.",
+    "crumb": "Serveur MCP",
+    "title": "Créez des QR codes depuis votre assistant IA",
+    "facts": {
+      "free": "Gratuit",
+      "noKey": "Sans compte ni clé API",
+      "readOnly": "Outils en lecture seule"
+    },
+    "docs": "Docs MCP",
+    "playground": "Essayer dans le Playground",
+    "promptsEyebrow": "Essayez",
+    "promptsTitle": "Des prompts pour commencer",
+    "promptsDescription": "Chacun s'appuie sur ce que font réellement les outils QRdx : couleurs et formes, Wi-Fi, contacts, e-mail, SMS et données de carte, ainsi que des liens SVG, PNG, WebP ou EPS. Ouvrez-le dans votre assistant ou copiez-le.",
+    "howEyebrow": "Fonctionnement",
+    "howTitle": "Trois étapes, puis demandez",
+    "howDescription": "Votre assistant appelle les outils QRdx à votre place. Vous n'avez jamais à toucher à une API.",
+    "toolsEyebrow": "Outils",
+    "toolsTitle": "Ce que votre assistant peut appeler",
+    "toolsDescription": "{count, number} outils. Tous, sauf save_template et save_barcode, sont en lecture seule et ne nécessitent aucune clé : ils génèrent des images, mettent du texte en forme et lisent la communauté publique. Les paramètres complets figurent dans la <link>documentation du serveur MCP</link>.",
+    "faqTitle": "FAQ du serveur MCP",
+    "connect": {
+      "copyFailed": "Copie impossible. Sélectionnez le texte et copiez-le manuellement.",
+      "copyLabel": "Copier {label}",
+      "copied": "Copié",
+      "copy": "Copier",
+      "terminal": "Terminal",
+      "serverUrl": "URL du serveur :",
+      "serverUrlLabel": "URL du serveur",
+      "urlCopied": "URL copiée.",
+      "local": "En test local ? Utilisez <code>{url}</code>",
+      "how": "Comment se connecter ?",
+      "app": "Appli IA",
+      "more": "Plus",
+      "moreClients": "Autres clients",
+      "back": "Retour à tous les clients",
+      "connect": "Connecter {name}",
+      "anotherTitle": "Connecter un autre client",
+      "anotherDescription": "Toute application compatible MCP peut utiliser QRdx. Choisissez la vôtre pour obtenir la configuration exacte.",
+      "search": "Rechercher un client",
+      "noMatch": "Aucun client ne correspond à « {query} ». Utilisez <any>Any MCP client</any> avec l'URL du serveur.",
+      "connectHint": "Si QRdx n'est pas connecté, ajoutez-le d'abord dans {where} avec {url}.",
+      "quoted": "« {prompt} »",
+      "tryIn": "Essayer dans {app}",
+      "promptLabel": "prompt : {title}",
+      "promptCopied": "Prompt copié.",
+      "copyPrompt": "Copier le prompt",
+      "clients": {
+        "claude": {
+          "title": "Créez des QR codes dans Claude avec QRdx",
+          "lead": "Un clic ouvre la boîte de dialogue « Add connector » de Claude, avec QRdx et l'URL du serveur déjà renseignés. Cliquez sur Add, puis demandez un QR code.",
+          "toast": "Ouverture de Claude. L'URL est aussi copiée, au cas où.",
+          "action": "Connecter à Claude",
+          "steps": {
+            "1": "Cliquez sur Connecter à Claude. Claude ouvre Customize → Connectors avec la boîte de dialogue « Add custom connector » déjà remplie (nom QRdx, URL du serveur).",
+            "2": "Vérifiez les informations et laissez les champs avancés (OAuth) vides : le serveur ne nécessite aucune connexion. Si les champs sont vides, collez l'URL (elle est dans votre presse-papiers) et nommez le connecteur QRdx.",
+            "3": "Cliquez sur Add, puis activez QRdx depuis le menu des outils d'une conversation.",
+            "4": "Demandez un QR code. Les offres Claude gratuites permettent d'ajouter un connecteur personnalisé ; avec les offres Team et Enterprise, un propriétaire l'ajoute pour l'organisation."
+          }
+        },
+        "chatgpt": {
+          "title": "Créez des QR codes dans ChatGPT avec QRdx",
+          "lead": "Un clic copie l'URL du serveur et ouvre la page Plugins de ChatGPT, où vous ajoutez QRdx comme serveur MCP personnalisé.",
+          "toast": "URL copiée. Collez-la dans ChatGPT.",
+          "action": "Connecter à ChatGPT",
+          "steps": {
+            "1": "Cliquez sur Connecter à ChatGPT. L'URL du serveur est copiée et ChatGPT ouvre sa page Plugins.",
+            "2": "Cliquez sur +, puis choisissez Add custom MCP server. Nommez-le QRdx et collez l'URL sous Connection.",
+            "3": "Choisissez l'absence d'authentification, acceptez l'avertissement, puis créez le serveur.",
+            "4": "Dans une nouvelle conversation, saisissez @, choisissez QRdx et demandez un QR code. Votre offre ChatGPT et les paramètres de votre espace de travail déterminent si les serveurs MCP personnalisés sont autorisés."
+          }
+        },
+        "claude-code": {
+          "title": "Créez des QR codes dans Claude Code avec QRdx",
+          "lead": "Exécutez une seule commande dans votre terminal. Le serveur est ensuite disponible dans chaque session Claude Code.",
+          "toast": "Commande copiée. Exécutez-la dans votre terminal.",
+          "action": "Copier la commande",
+          "steps": {
+            "1": "Cliquez sur Copier la commande et exécutez-la dans votre terminal.",
+            "2": "Lancez Claude Code et exécutez /mcp pour vérifier que qrdx est connecté.",
+            "3": "Demandez un QR code. Claude Code peut aussi enregistrer l'image ou le SVG dans votre projet."
+          }
+        },
+        "cursor": {
+          "title": "Créez des QR codes dans Cursor avec QRdx",
+          "lead": "Un clic ouvre Cursor avec le serveur QRdx prêt à installer.",
+          "action": "Ajouter à Cursor",
+          "steps": {
+            "1": "Cliquez sur Ajouter à Cursor et autorisez le navigateur à ouvrir Cursor.",
+            "2": "Cursor affiche le serveur qrdx : cliquez sur Install.",
+            "3": "Vérifiez qu'il est activé sous Cursor Settings → MCP, puis demandez un QR code à l'agent.",
+            "4": "Vous préférez les fichiers de configuration ? Ajoutez l'extrait ci-dessus à ~/.cursor/mcp.json pour tous les projets, ou à .cursor/mcp.json pour un seul."
+          }
+        },
+        "vscode": {
+          "title": "Créez des QR codes dans VS Code avec QRdx",
+          "lead": "Un clic ouvre la page d'installation de VS Code pour le serveur QRdx. Utilisez-le depuis Copilot Chat en mode agent.",
+          "action": "Installer dans VS Code",
+          "direct": "Ouvrir VS Code directement",
+          "steps": {
+            "1": "Cliquez sur Installer dans VS Code. La page passe la main à VS Code, qui affiche le serveur qrdx.",
+            "2": "Cliquez sur Install.",
+            "3": "Dans Copilot Chat, passez en mode agent, ouvrez le sélecteur d'outils, vérifiez que qrdx est activé et demandez un QR code.",
+            "4": "Vous préférez les fichiers de configuration ? Ajoutez l'extrait ci-dessus à .vscode/mcp.json dans votre espace de travail."
+          }
+        },
+        "windsurf": {
+          "title": "Créez des QR codes dans Windsurf avec QRdx",
+          "lead": "Windsurf est désormais Devin Desktop. Copiez la configuration dans ses paramètres MCP et l'agent pourra appeler les outils QRdx.",
+          "toast": "Configuration Windsurf copiée.",
+          "action": "Copier la config Windsurf",
+          "steps": {
+            "1": "Cliquez sur Copier la config Windsurf.",
+            "2": "Dans Devin Desktop, collez-la dans ~/.config/devin/mcp_config.json (ou .devin/mcp_config.json pour un seul projet). Fusionnez-la dans mcpServers si vous avez déjà des serveurs.",
+            "3": "Les anciennes versions de Windsurf lisent ~/.codeium/windsurf/mcp_config.json et attendent serverUrl à la place de url.",
+            "4": "Actualisez les serveurs MCP, vérifiez que qrdx est activé, puis demandez un QR code à l'agent."
+          }
+        }
+      }
+    }
+  },
+  "ai": {
+    "metaTitle": "Générateur de QR code IA : créez des QR codes à partir d'un prompt",
+    "metaDescription": "Indiquez à l'IA de QRdx ce que le code doit ouvrir (un lien, un Wi-Fi, une carte de contact, etc.) et son apparence. Elle vérifie le score de scan, répare le design jusqu'à obtenir « Excellent » et demande votre accord avant de modifier votre éditeur. Les comptes gratuits incluent {count, number} requêtes IA\r ; Pro offre un nombre illimité.",
+    "artLink": "Ou transformez un lien en art QR IA scannable",
+    "chat": {
+      "upgrade": "Passez à Pro pour des requêtes illimitées",
+      "heading": "Quel QR code puis-je créer pour vous ?"
+    }
+  },
+  "aiArt": {
+    "metaTitle": "Générateur de QR code artistique par IA : QR codes artistiques scannables",
+    "metaDescription": "Transformez un lien en illustration IA scannable créée avec {model} : {styles, number} styles, jusqu'à 4 variantes par génération, chacune vérifiée pour le scan. Les comptes gratuits disposent de {free, number} par mois.",
+    "metaTitleSoon": "QR code artistique : Logo QR et Image QR",
+    "metaDescriptionSoon": "Fondez votre logo ou une photo dans un QR code vectoriel scannable, gratuitement dans le Playground QRdx, et exportez en SVG, PDF ou EPS. Les QR codes artistiques peints par IA arrivent bientôt.",
+    "eyebrow": "QR art",
+    "title": "Transformez n'importe quel lien en QR code artistique scannable",
+    "intro": "Choisissez l'un des {styles, number} styles ou décrivez votre propre scène, et {model} la peint dans votre QR code. Chaque image est vérifiée pour le scan avant que vous la voyiez. Connectez-vous pour générer : les comptes gratuits disposent de {free, number} images par mois, Pro de {pro, number} et Business de {business, number} partagées par l'équipe.",
+    "introSoon": "Fondez votre logo ou une photo dans un QR code vectoriel qui reste scannable, gratuitement dans le Playground. Les illustrations peintes par IA arrivent bientôt.",
+    "make": "Créer un QR art",
+    "examples": "Voir des exemples",
+    "howTitle": "Comment fonctionne le QR art IA",
+    "vectorEyebrowLead": "Disponible, gratuit",
+    "vectorEyebrow": "Sans IA",
+    "vectorTitleLead": "Logo QR et Image QR",
+    "vectorTitle": "Un code vectoriel au scan garanti ?",
+    "vectorDescription": "Fondez un logo ou une photo dans le code lui-même. Il est dessiné en vectoriel, garde bien pleins les motifs sur lesquels s'appuient les lecteurs, et ne demande aucun crédit.",
+    "openArt": "Ouvrir l'onglet Art",
+    "vector": {
+      "badge": "Vectoriel",
+      "logo": "Les couleurs de votre logo se diffusent dans les modules à l'intérieur de sa forme ; les motifs de repérage restent pleins.",
+      "image": "Une photo transparaît dans chaque module, autour d'un centre qui garde le code scannable.",
+      "open": "Ouvrir dans le Playground"
+    },
+    "comingSoon": {
+      "title": "QR art peint par IA",
+      "badge": "Bientôt",
+      "description": "Décrivez une scène ou choisissez l'un des {count, number} styles, et un modèle d'image la peint autour de votre QR code. Chaque résultat est vérifié pour le scan avant son téléchargement.",
+      "styles": "Quelques styles",
+      "makeNow": "Créer un Logo QR ou un Image QR maintenant",
+      "theme": "Générer un thème avec l'IA"
+    },
+    "faq": {
+      "title": "FAQ sur le QR art IA",
+      "description": "Comment sont créées les illustrations scannables, combien cela coûte et quoi vérifier avant d'imprimer."
+    }
+  },
+  "compare": {
+    "metaTitle": "QRdx face aux autres générateurs de QR code et aux bibliothèques React QR",
+    "metaDescription": "Comment QRdx se compare à QR Code Monkey, QR TIGER, Canva, Bitly, Flowcode, qrcode.react et d'autres : tarifs, limites gratuites et cas où chaque outil est le meilleur choix.",
+    "crumb": "Comparer",
+    "eyebrow": "{count, plural, one {# comparatif honnête} other {# comparatifs honnêtes}}",
+    "title": "QRdx face aux autres générateurs de QR code",
+    "intro": "QRdx est un générateur de QR code gratuit et open source (AGPL-3.0-or-later) avec une bibliothèque React sous licence MIT. Chaque page le compare à un outil auquel on le confronte, y compris lorsque l'autre outil est le meilleur choix. Les prix et limites des concurrents ont été vérifiés sur leurs propres sites web.",
+    "groups": {
+      "generator": {
+        "heading": "Générateurs de QR code",
+        "intro": "Des outils hébergés pour créer des QR codes dans le navigateur. La plupart vendent des QR codes dynamiques (modifiables, avec suivi) ; QRdx propose des QR codes statiques gratuits, ainsi que des QR codes dynamiques et des pages hébergées qui continuent de fonctionner avec tous les forfaits."
+      },
+      "library": {
+        "heading": "Bibliothèques QR code React et JavaScript",
+        "intro": "Des paquets à installer depuis npm pour générer des QR codes dans votre propre application. Les deux sont bien plus utilisés que le paquet npm de QRdx."
+      }
+    }
   }
 }
