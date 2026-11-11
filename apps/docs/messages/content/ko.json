@@ -27982,5 +27982,287 @@
     "text": "QRdx는 프롬프트, 참조 이미지, 생성된 이미지를 저장하지 않으며 크레딧 사용량만 집계해요. 아트워크를 만들기 위해 프롬프트, QR 코드 이미지, 참조 이미지는 Vercel AI Gateway를 거쳐 OpenAI의 GPT Image 2로 전송되고, 결과는 곧바로 브라우저로 돌아와요. 보관하고 싶은 이미지는 꼭 다운로드하세요.",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
+  },
+  "4473afd14cb9": {
+    "source": "Open any website or web page",
+    "text": "모든 웹사이트나 웹 페이지 열기",
+    "status": "machine",
+    "context": "contentTypes.list.url.description"
+  },
+  "b4e85fdf01c5": {
+    "source": "Show a short note or message",
+    "text": "짧은 메모나 메시지 보여주기",
+    "status": "machine",
+    "context": "contentTypes.list.text.description"
+  },
+  "41c3b7d764f3": {
+    "source": "Draft an email with a subject and body",
+    "text": "제목과 본문이 담긴 이메일 작성하기",
+    "status": "machine",
+    "context": "contentTypes.list.email.description"
+  },
+  "63dceb8800b2": {
+    "source": "Phone",
+    "text": "전화",
+    "status": "machine",
+    "context": "contentTypes.list.phone.label"
+  },
+  "bbf50884e10f": {
+    "source": "Call a number with one tap",
+    "text": "한 번의 탭으로 전화 걸기",
+    "status": "machine",
+    "context": "contentTypes.list.phone.description"
+  },
+  "8129c6e42c2a": {
+    "source": "Open a pre-filled text message",
+    "text": "내용이 미리 입력된 문자 메시지 열기",
+    "status": "machine",
+    "context": "contentTypes.list.sms.description"
+  },
+  "cc39c085735c": {
+    "source": "Start a WhatsApp chat with a message",
+    "text": "메시지와 함께 WhatsApp 채팅 시작하기",
+    "status": "machine",
+    "context": "contentTypes.list.whatsapp.description"
+  },
+  "10df5f541da7": {
+    "source": "WiFi",
+    "text": "Wi-Fi",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.label"
+  },
+  "0c3e491ad9b7": {
+    "source": "Join a Wi-Fi network without typing",
+    "text": "입력 없이 Wi-Fi 네트워크에 연결하기",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.description"
+  },
+  "5ee17deb4ffb": {
+    "source": "Save your contact card to a phone",
+    "text": "내 연락처 카드를 휴대폰에 저장하기",
+    "status": "machine",
+    "context": "contentTypes.list.vcard.description"
+  },
+  "15b61974b270": {
+    "source": "Location",
+    "text": "위치",
+    "status": "machine",
+    "context": "contentTypes.list.maps.label"
+  },
+  "63bd51938ca9": {
+    "source": "Open a place or directions in Maps",
+    "text": "지도에서 장소나 길찾기 열기",
+    "status": "machine",
+    "context": "contentTypes.list.maps.description"
+  },
+  "8a06e5f8ef9d": {
+    "source": "Open a Facebook page or profile",
+    "text": "Facebook 페이지나 프로필 열기",
+    "status": "machine",
+    "context": "contentTypes.list.facebook.description"
+  },
+  "7af66c4bc9d9": {
+    "source": "Open an Instagram profile",
+    "text": "Instagram 프로필 열기",
+    "status": "machine",
+    "context": "contentTypes.list.instagram.description"
+  },
+  "73d9e832dc15": {
+    "source": "Open a subreddit or Reddit profile",
+    "text": "서브레딧이나 Reddit 프로필 열기",
+    "status": "machine",
+    "context": "contentTypes.list.reddit.description"
+  },
+  "cd29fe404136": {
+    "source": "Open a TikTok profile",
+    "text": "TikTok 프로필 열기",
+    "status": "machine",
+    "context": "contentTypes.list.tiktok.description"
+  },
+  "3a409cda219d": {
+    "source": "Twitter / X",
+    "text": "Twitter / X",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.label"
+  },
+  "65e335f23f7f": {
+    "source": "Open an X (Twitter) profile",
+    "text": "X(Twitter) 프로필 열기",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.description"
+  },
+  "a95b9305d767": {
+    "source": "Open a LinkedIn profile or company page",
+    "text": "LinkedIn 프로필이나 회사 페이지 열기",
+    "status": "machine",
+    "context": "contentTypes.list.linkedin.description"
+  },
+  "81dfe5941ed0": {
+    "source": "Open a YouTube channel or video",
+    "text": "YouTube 채널이나 동영상 열기",
+    "status": "machine",
+    "context": "contentTypes.list.youtube.description"
+  },
+  "dfd9caf97fa7": {
+    "source": "Open a Pinterest profile",
+    "text": "Pinterest 프로필 열기",
+    "status": "machine",
+    "context": "contentTypes.list.pinterest.description"
+  },
+  "b5ce116c6f18": {
+    "source": "Add you as a friend on Snapchat",
+    "text": "Snapchat에서 친구로 추가하기",
+    "status": "machine",
+    "context": "contentTypes.list.snapchat.description"
+  },
+  "0a672d38b9af": {
+    "source": "Open a Threads profile",
+    "text": "Threads 프로필 열기",
+    "status": "machine",
+    "context": "contentTypes.list.threads.description"
+  },
+  "9c26139ca220": {
+    "source": "UPI Payment",
+    "text": "UPI 결제",
+    "status": "machine",
+    "context": "contentTypes.list.upi.label"
+  },
+  "16def4a4f56e": {
+    "source": "Get paid from any UPI app in India",
+    "text": "인도의 모든 UPI 앱으로 결제 받기",
+    "status": "machine",
+    "context": "contentTypes.list.upi.description"
+  },
+  "edbafd65d55b": {
+    "source": "Get paid with a PayPal.me link",
+    "text": "PayPal.me 링크로 결제 받기",
+    "status": "machine",
+    "context": "contentTypes.list.paypal.description"
+  },
+  "436c48b655f2": {
+    "source": "Ask customers for a Google review",
+    "text": "고객에게 Google 리뷰 요청하기",
+    "status": "machine",
+    "context": "contentTypes.list.google-review.description"
+  },
+  "4b6f2fb13a28": {
+    "source": "Request money on Venmo",
+    "text": "Venmo에서 송금 요청하기",
+    "status": "machine",
+    "context": "contentTypes.list.venmo.description"
+  },
+  "c6a63235a8dc": {
+    "source": "Play a song, album, playlist or podcast",
+    "text": "노래, 앨범, 플레이리스트, 팟캐스트 재생하기",
+    "status": "machine",
+    "context": "contentTypes.list.spotify.description"
+  },
+  "e67cd215efb8": {
+    "source": "Receive Bitcoin to your wallet",
+    "text": "내 지갑으로 Bitcoin 받기",
+    "status": "machine",
+    "context": "contentTypes.list.bitcoin.description"
+  },
+  "6c0ebe263a4f": {
+    "source": "Receive ETH to your wallet",
+    "text": "지갑으로 ETH 받기",
+    "status": "machine",
+    "context": "contentTypes.list.ethereum.description"
+  },
+  "bb8ed82e85a8": {
+    "source": "Open your Etsy shop",
+    "text": "내 Etsy 숍 열기",
+    "status": "machine",
+    "context": "contentTypes.list.etsy.description"
+  },
+  "34af43e8f247": {
+    "source": "Dub",
+    "text": "Dub",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.label"
+  },
+  "a5a865ee3833": {
+    "source": "Use a Dub short link with its analytics",
+    "text": "분석 기능이 있는 Dub 단축 링크 사용",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.description"
+  },
+  "e61168c0f91d": {
+    "source": "Share a Drive file or folder",
+    "text": "Drive 파일이나 폴더 공유하기",
+    "status": "machine",
+    "context": "contentTypes.list.google-drive.description"
+  },
+  "67f5f288d26a": {
+    "source": "Check people in with a Google Form",
+    "text": "Google Form으로 출석 체크하기",
+    "status": "machine",
+    "context": "contentTypes.list.attendance.description"
+  },
+  "d3d1f53cf2cc": {
+    "source": "Open an Amazon product page",
+    "text": "Amazon 상품 페이지 열기",
+    "status": "machine",
+    "context": "contentTypes.list.amazon.description"
+  },
+  "e7ec6e993e01": {
+    "source": "Open a Flipkart product page",
+    "text": "Flipkart 상품 페이지 열기",
+    "status": "machine",
+    "context": "contentTypes.list.flipkart.description"
+  },
+  "69b2a1089f85": {
+    "source": "Let people book a meeting with you",
+    "text": "다른 사람이 나와 미팅을 예약해요",
+    "status": "machine",
+    "context": "contentTypes.list.calcom.description"
+  },
+  "76327dec9ae3": {
+    "source": "Popular",
+    "text": "인기",
+    "status": "machine",
+    "context": "contentTypes.groups.popular.label"
+  },
+  "b307203708c8": {
+    "source": "Links & files",
+    "text": "링크 및 파일",
+    "status": "machine",
+    "context": "contentTypes.groups.links.label"
+  },
+  "9c4e1630ebb0": {
+    "source": "Contact & connect",
+    "text": "연락 및 연결",
+    "status": "machine",
+    "context": "contentTypes.groups.connect.label"
+  },
+  "7a781ff80909": {
+    "source": "Social & media",
+    "text": "소셜 및 미디어",
+    "status": "machine",
+    "context": "contentTypes.groups.social.label"
+  },
+  "5d66dbd5936f": {
+    "source": "Save a contact, start a call, text, email or WhatsApp chat in one scan.",
+    "text": "한 번의 스캔으로 연락처 저장, 전화, 문자, 이메일, WhatsApp 채팅을 시작해요.",
+    "status": "machine",
+    "context": "qrTypes.groups.contact.description"
+  },
+  "ed283660be99": {
+    "source": "Send people to a profile, channel, community or playlist.",
+    "text": "프로필, 채널, 커뮤니티, 플레이리스트로 안내해요.",
+    "status": "machine",
+    "context": "qrTypes.groups.social.description"
+  },
+  "998321187b6c": {
+    "source": "Payment requests for UPI, PayPal, Venmo, Bitcoin and Ethereum.",
+    "text": "UPI, PayPal, Venmo, Bitcoin, Ethereum 결제 요청을 만들어요.",
+    "status": "machine",
+    "context": "qrTypes.groups.payments.description"
+  },
+  "e0f2e577a1a3": {
+    "source": "Reviews, directions, bookings and attendance check-ins.",
+    "text": "리뷰, 길 안내, 예약, 참석 체크인을 위한 코드예요.",
+    "status": "machine",
+    "context": "qrTypes.groups.business.description"
   }
 }

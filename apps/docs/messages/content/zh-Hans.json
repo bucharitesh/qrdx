@@ -27982,5 +27982,287 @@
     "text": "QRdx 不会保存你的提示词、参考图片或生成的图片，只会统计你的额度用量。提示词、二维码图片和所有参考图片会通过 Vercel AI Gateway 发送给 OpenAI 的 GPT Image 2 以生成作品，结果会直接返回到你的浏览器，因此请下载你想保留的图片。",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
+  },
+  "4473afd14cb9": {
+    "source": "Open any website or web page",
+    "text": "打开任意网站或网页",
+    "status": "machine",
+    "context": "contentTypes.list.url.description"
+  },
+  "b4e85fdf01c5": {
+    "source": "Show a short note or message",
+    "text": "显示一段简短的备注或消息",
+    "status": "machine",
+    "context": "contentTypes.list.text.description"
+  },
+  "41c3b7d764f3": {
+    "source": "Draft an email with a subject and body",
+    "text": "撰写带有主题和正文的电子邮件",
+    "status": "machine",
+    "context": "contentTypes.list.email.description"
+  },
+  "63dceb8800b2": {
+    "source": "Phone",
+    "text": "电话",
+    "status": "machine",
+    "context": "contentTypes.list.phone.label"
+  },
+  "bbf50884e10f": {
+    "source": "Call a number with one tap",
+    "text": "轻点一下即可拨打号码",
+    "status": "machine",
+    "context": "contentTypes.list.phone.description"
+  },
+  "8129c6e42c2a": {
+    "source": "Open a pre-filled text message",
+    "text": "打开预先填好内容的短信",
+    "status": "machine",
+    "context": "contentTypes.list.sms.description"
+  },
+  "cc39c085735c": {
+    "source": "Start a WhatsApp chat with a message",
+    "text": "发起带有消息的 WhatsApp 聊天",
+    "status": "machine",
+    "context": "contentTypes.list.whatsapp.description"
+  },
+  "10df5f541da7": {
+    "source": "WiFi",
+    "text": "Wi-Fi",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.label"
+  },
+  "0c3e491ad9b7": {
+    "source": "Join a Wi-Fi network without typing",
+    "text": "无需输入即可加入 Wi-Fi 网络",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.description"
+  },
+  "5ee17deb4ffb": {
+    "source": "Save your contact card to a phone",
+    "text": "将你的名片保存到手机",
+    "status": "machine",
+    "context": "contentTypes.list.vcard.description"
+  },
+  "15b61974b270": {
+    "source": "Location",
+    "text": "位置",
+    "status": "machine",
+    "context": "contentTypes.list.maps.label"
+  },
+  "63bd51938ca9": {
+    "source": "Open a place or directions in Maps",
+    "text": "在地图中打开地点或路线",
+    "status": "machine",
+    "context": "contentTypes.list.maps.description"
+  },
+  "8a06e5f8ef9d": {
+    "source": "Open a Facebook page or profile",
+    "text": "打开 Facebook 主页或个人资料",
+    "status": "machine",
+    "context": "contentTypes.list.facebook.description"
+  },
+  "7af66c4bc9d9": {
+    "source": "Open an Instagram profile",
+    "text": "打开 Instagram 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.instagram.description"
+  },
+  "73d9e832dc15": {
+    "source": "Open a subreddit or Reddit profile",
+    "text": "打开 subreddit 或 Reddit 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.reddit.description"
+  },
+  "cd29fe404136": {
+    "source": "Open a TikTok profile",
+    "text": "打开 TikTok 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.tiktok.description"
+  },
+  "3a409cda219d": {
+    "source": "Twitter / X",
+    "text": "Twitter / X",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.label"
+  },
+  "65e335f23f7f": {
+    "source": "Open an X (Twitter) profile",
+    "text": "打开 X（Twitter）个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.description"
+  },
+  "a95b9305d767": {
+    "source": "Open a LinkedIn profile or company page",
+    "text": "打开 LinkedIn 个人主页或公司主页",
+    "status": "machine",
+    "context": "contentTypes.list.linkedin.description"
+  },
+  "81dfe5941ed0": {
+    "source": "Open a YouTube channel or video",
+    "text": "打开 YouTube 频道或视频",
+    "status": "machine",
+    "context": "contentTypes.list.youtube.description"
+  },
+  "dfd9caf97fa7": {
+    "source": "Open a Pinterest profile",
+    "text": "打开 Pinterest 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.pinterest.description"
+  },
+  "b5ce116c6f18": {
+    "source": "Add you as a friend on Snapchat",
+    "text": "在 Snapchat 上添加你为好友",
+    "status": "machine",
+    "context": "contentTypes.list.snapchat.description"
+  },
+  "0a672d38b9af": {
+    "source": "Open a Threads profile",
+    "text": "打开 Threads 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.threads.description"
+  },
+  "9c26139ca220": {
+    "source": "UPI Payment",
+    "text": "UPI 支付",
+    "status": "machine",
+    "context": "contentTypes.list.upi.label"
+  },
+  "16def4a4f56e": {
+    "source": "Get paid from any UPI app in India",
+    "text": "通过印度任意 UPI 应用收款",
+    "status": "machine",
+    "context": "contentTypes.list.upi.description"
+  },
+  "edbafd65d55b": {
+    "source": "Get paid with a PayPal.me link",
+    "text": "通过 PayPal.me 链接收款",
+    "status": "machine",
+    "context": "contentTypes.list.paypal.description"
+  },
+  "436c48b655f2": {
+    "source": "Ask customers for a Google review",
+    "text": "邀请顾客留下 Google 评价",
+    "status": "machine",
+    "context": "contentTypes.list.google-review.description"
+  },
+  "4b6f2fb13a28": {
+    "source": "Request money on Venmo",
+    "text": "在 Venmo 上请求付款",
+    "status": "machine",
+    "context": "contentTypes.list.venmo.description"
+  },
+  "c6a63235a8dc": {
+    "source": "Play a song, album, playlist or podcast",
+    "text": "播放歌曲、专辑、播放列表或播客",
+    "status": "machine",
+    "context": "contentTypes.list.spotify.description"
+  },
+  "e67cd215efb8": {
+    "source": "Receive Bitcoin to your wallet",
+    "text": "将比特币收入你的钱包",
+    "status": "machine",
+    "context": "contentTypes.list.bitcoin.description"
+  },
+  "6c0ebe263a4f": {
+    "source": "Receive ETH to your wallet",
+    "text": "向你的钱包接收 ETH",
+    "status": "machine",
+    "context": "contentTypes.list.ethereum.description"
+  },
+  "bb8ed82e85a8": {
+    "source": "Open your Etsy shop",
+    "text": "打开你的 Etsy 店铺",
+    "status": "machine",
+    "context": "contentTypes.list.etsy.description"
+  },
+  "34af43e8f247": {
+    "source": "Dub",
+    "text": "Dub",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.label"
+  },
+  "a5a865ee3833": {
+    "source": "Use a Dub short link with its analytics",
+    "text": "使用 Dub 短链接及其数据分析",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.description"
+  },
+  "e61168c0f91d": {
+    "source": "Share a Drive file or folder",
+    "text": "分享 Drive 文件或文件夹",
+    "status": "machine",
+    "context": "contentTypes.list.google-drive.description"
+  },
+  "67f5f288d26a": {
+    "source": "Check people in with a Google Form",
+    "text": "通过 Google Form 为人员签到",
+    "status": "machine",
+    "context": "contentTypes.list.attendance.description"
+  },
+  "d3d1f53cf2cc": {
+    "source": "Open an Amazon product page",
+    "text": "打开 Amazon 商品页面",
+    "status": "machine",
+    "context": "contentTypes.list.amazon.description"
+  },
+  "e7ec6e993e01": {
+    "source": "Open a Flipkart product page",
+    "text": "打开 Flipkart 商品页面",
+    "status": "machine",
+    "context": "contentTypes.list.flipkart.description"
+  },
+  "69b2a1089f85": {
+    "source": "Let people book a meeting with you",
+    "text": "让他人预约与你的会议",
+    "status": "machine",
+    "context": "contentTypes.list.calcom.description"
+  },
+  "76327dec9ae3": {
+    "source": "Popular",
+    "text": "热门",
+    "status": "machine",
+    "context": "contentTypes.groups.popular.label"
+  },
+  "b307203708c8": {
+    "source": "Links & files",
+    "text": "链接与文件",
+    "status": "machine",
+    "context": "contentTypes.groups.links.label"
+  },
+  "9c4e1630ebb0": {
+    "source": "Contact & connect",
+    "text": "联系与互动",
+    "status": "machine",
+    "context": "contentTypes.groups.connect.label"
+  },
+  "7a781ff80909": {
+    "source": "Social & media",
+    "text": "社交与媒体",
+    "status": "machine",
+    "context": "contentTypes.groups.social.label"
+  },
+  "5d66dbd5936f": {
+    "source": "Save a contact, start a call, text, email or WhatsApp chat in one scan.",
+    "text": "一次扫描即可保存联系人、拨打电话、发送短信或邮件，或开启 WhatsApp 对话。",
+    "status": "machine",
+    "context": "qrTypes.groups.contact.description"
+  },
+  "ed283660be99": {
+    "source": "Send people to a profile, channel, community or playlist.",
+    "text": "引导用户访问主页、频道、社群或播放列表。",
+    "status": "machine",
+    "context": "qrTypes.groups.social.description"
+  },
+  "998321187b6c": {
+    "source": "Payment requests for UPI, PayPal, Venmo, Bitcoin and Ethereum.",
+    "text": "适用于 UPI、PayPal、Venmo、比特币和以太坊的收款请求。",
+    "status": "machine",
+    "context": "qrTypes.groups.payments.description"
+  },
+  "e0f2e577a1a3": {
+    "source": "Reviews, directions, bookings and attendance check-ins.",
+    "text": "评价、导航、预订和到场签到。",
+    "status": "machine",
+    "context": "qrTypes.groups.business.description"
   }
 }

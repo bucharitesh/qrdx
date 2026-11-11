@@ -27982,5 +27982,287 @@
     "text": "O QRdx não salva seu prompt, sua imagem de referência nem as imagens geradas; ele só conta seus créditos. O prompt, a imagem do QR code e qualquer imagem de referência são enviados pelo Vercel AI Gateway ao GPT Image 2 da OpenAI para criar a arte, e o resultado volta direto para o seu navegador, então baixe as que quiser guardar.",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
+  },
+  "4473afd14cb9": {
+    "source": "Open any website or web page",
+    "text": "Abre qualquer site ou página web",
+    "status": "machine",
+    "context": "contentTypes.list.url.description"
+  },
+  "b4e85fdf01c5": {
+    "source": "Show a short note or message",
+    "text": "Mostra uma nota ou mensagem curta",
+    "status": "machine",
+    "context": "contentTypes.list.text.description"
+  },
+  "41c3b7d764f3": {
+    "source": "Draft an email with a subject and body",
+    "text": "Cria um e-mail com assunto e mensagem",
+    "status": "machine",
+    "context": "contentTypes.list.email.description"
+  },
+  "63dceb8800b2": {
+    "source": "Phone",
+    "text": "Telefone",
+    "status": "machine",
+    "context": "contentTypes.list.phone.label"
+  },
+  "bbf50884e10f": {
+    "source": "Call a number with one tap",
+    "text": "Ligue para um número com um toque",
+    "status": "machine",
+    "context": "contentTypes.list.phone.description"
+  },
+  "8129c6e42c2a": {
+    "source": "Open a pre-filled text message",
+    "text": "Abre um SMS já preenchido",
+    "status": "machine",
+    "context": "contentTypes.list.sms.description"
+  },
+  "cc39c085735c": {
+    "source": "Start a WhatsApp chat with a message",
+    "text": "Inicia uma conversa no WhatsApp com uma mensagem",
+    "status": "machine",
+    "context": "contentTypes.list.whatsapp.description"
+  },
+  "10df5f541da7": {
+    "source": "WiFi",
+    "text": "Wi-Fi",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.label"
+  },
+  "0c3e491ad9b7": {
+    "source": "Join a Wi-Fi network without typing",
+    "text": "Conecte-se a uma rede Wi-Fi sem digitar",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.description"
+  },
+  "5ee17deb4ffb": {
+    "source": "Save your contact card to a phone",
+    "text": "Salva seu cartão de contato no celular",
+    "status": "machine",
+    "context": "contentTypes.list.vcard.description"
+  },
+  "15b61974b270": {
+    "source": "Location",
+    "text": "Localização",
+    "status": "machine",
+    "context": "contentTypes.list.maps.label"
+  },
+  "63bd51938ca9": {
+    "source": "Open a place or directions in Maps",
+    "text": "Abre um local ou rotas no Maps",
+    "status": "machine",
+    "context": "contentTypes.list.maps.description"
+  },
+  "8a06e5f8ef9d": {
+    "source": "Open a Facebook page or profile",
+    "text": "Abre uma página ou perfil do Facebook",
+    "status": "machine",
+    "context": "contentTypes.list.facebook.description"
+  },
+  "7af66c4bc9d9": {
+    "source": "Open an Instagram profile",
+    "text": "Abre um perfil do Instagram",
+    "status": "machine",
+    "context": "contentTypes.list.instagram.description"
+  },
+  "73d9e832dc15": {
+    "source": "Open a subreddit or Reddit profile",
+    "text": "Abre um subreddit ou perfil do Reddit",
+    "status": "machine",
+    "context": "contentTypes.list.reddit.description"
+  },
+  "cd29fe404136": {
+    "source": "Open a TikTok profile",
+    "text": "Abre um perfil do TikTok",
+    "status": "machine",
+    "context": "contentTypes.list.tiktok.description"
+  },
+  "3a409cda219d": {
+    "source": "Twitter / X",
+    "text": "Twitter / X",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.label"
+  },
+  "65e335f23f7f": {
+    "source": "Open an X (Twitter) profile",
+    "text": "Abre um perfil do X (Twitter)",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.description"
+  },
+  "a95b9305d767": {
+    "source": "Open a LinkedIn profile or company page",
+    "text": "Abre um perfil ou página de empresa do LinkedIn",
+    "status": "machine",
+    "context": "contentTypes.list.linkedin.description"
+  },
+  "81dfe5941ed0": {
+    "source": "Open a YouTube channel or video",
+    "text": "Abre um canal ou vídeo do YouTube",
+    "status": "machine",
+    "context": "contentTypes.list.youtube.description"
+  },
+  "dfd9caf97fa7": {
+    "source": "Open a Pinterest profile",
+    "text": "Abre um perfil do Pinterest",
+    "status": "machine",
+    "context": "contentTypes.list.pinterest.description"
+  },
+  "b5ce116c6f18": {
+    "source": "Add you as a friend on Snapchat",
+    "text": "Adiciona você como amigo no Snapchat",
+    "status": "machine",
+    "context": "contentTypes.list.snapchat.description"
+  },
+  "0a672d38b9af": {
+    "source": "Open a Threads profile",
+    "text": "Abre um perfil do Threads",
+    "status": "machine",
+    "context": "contentTypes.list.threads.description"
+  },
+  "9c26139ca220": {
+    "source": "UPI Payment",
+    "text": "Pagamento UPI",
+    "status": "machine",
+    "context": "contentTypes.list.upi.label"
+  },
+  "16def4a4f56e": {
+    "source": "Get paid from any UPI app in India",
+    "text": "Receba por qualquer app UPI na Índia",
+    "status": "machine",
+    "context": "contentTypes.list.upi.description"
+  },
+  "edbafd65d55b": {
+    "source": "Get paid with a PayPal.me link",
+    "text": "Receba com um link do PayPal.me",
+    "status": "machine",
+    "context": "contentTypes.list.paypal.description"
+  },
+  "436c48b655f2": {
+    "source": "Ask customers for a Google review",
+    "text": "Peça avaliações no Google aos clientes",
+    "status": "machine",
+    "context": "contentTypes.list.google-review.description"
+  },
+  "4b6f2fb13a28": {
+    "source": "Request money on Venmo",
+    "text": "Solicita dinheiro pelo Venmo",
+    "status": "machine",
+    "context": "contentTypes.list.venmo.description"
+  },
+  "c6a63235a8dc": {
+    "source": "Play a song, album, playlist or podcast",
+    "text": "Toca uma música, álbum, playlist ou podcast",
+    "status": "machine",
+    "context": "contentTypes.list.spotify.description"
+  },
+  "e67cd215efb8": {
+    "source": "Receive Bitcoin to your wallet",
+    "text": "Receba Bitcoin na sua carteira",
+    "status": "machine",
+    "context": "contentTypes.list.bitcoin.description"
+  },
+  "6c0ebe263a4f": {
+    "source": "Receive ETH to your wallet",
+    "text": "Receba ETH na sua carteira",
+    "status": "machine",
+    "context": "contentTypes.list.ethereum.description"
+  },
+  "bb8ed82e85a8": {
+    "source": "Open your Etsy shop",
+    "text": "Abra sua loja no Etsy",
+    "status": "machine",
+    "context": "contentTypes.list.etsy.description"
+  },
+  "34af43e8f247": {
+    "source": "Dub",
+    "text": "Dub",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.label"
+  },
+  "a5a865ee3833": {
+    "source": "Use a Dub short link with its analytics",
+    "text": "Use um link curto do Dub com suas análises",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.description"
+  },
+  "e61168c0f91d": {
+    "source": "Share a Drive file or folder",
+    "text": "Compartilhe um arquivo ou pasta do Drive",
+    "status": "machine",
+    "context": "contentTypes.list.google-drive.description"
+  },
+  "67f5f288d26a": {
+    "source": "Check people in with a Google Form",
+    "text": "Faça check-in de pessoas com um Google Form",
+    "status": "machine",
+    "context": "contentTypes.list.attendance.description"
+  },
+  "d3d1f53cf2cc": {
+    "source": "Open an Amazon product page",
+    "text": "Abra a página de um produto da Amazon",
+    "status": "machine",
+    "context": "contentTypes.list.amazon.description"
+  },
+  "e7ec6e993e01": {
+    "source": "Open a Flipkart product page",
+    "text": "Abra a página de um produto do Flipkart",
+    "status": "machine",
+    "context": "contentTypes.list.flipkart.description"
+  },
+  "69b2a1089f85": {
+    "source": "Let people book a meeting with you",
+    "text": "Deixe as pessoas agendarem uma reunião com você",
+    "status": "machine",
+    "context": "contentTypes.list.calcom.description"
+  },
+  "76327dec9ae3": {
+    "source": "Popular",
+    "text": "Populares",
+    "status": "machine",
+    "context": "contentTypes.groups.popular.label"
+  },
+  "b307203708c8": {
+    "source": "Links & files",
+    "text": "Links e arquivos",
+    "status": "machine",
+    "context": "contentTypes.groups.links.label"
+  },
+  "9c4e1630ebb0": {
+    "source": "Contact & connect",
+    "text": "Contato e conexão",
+    "status": "machine",
+    "context": "contentTypes.groups.connect.label"
+  },
+  "7a781ff80909": {
+    "source": "Social & media",
+    "text": "Social e mídia",
+    "status": "machine",
+    "context": "contentTypes.groups.social.label"
+  },
+  "5d66dbd5936f": {
+    "source": "Save a contact, start a call, text, email or WhatsApp chat in one scan.",
+    "text": "Salve um contato, inicie uma ligação, envie um SMS, um e-mail ou abra uma conversa no WhatsApp em uma só leitura.",
+    "status": "machine",
+    "context": "qrTypes.groups.contact.description"
+  },
+  "ed283660be99": {
+    "source": "Send people to a profile, channel, community or playlist.",
+    "text": "Leve as pessoas a um perfil, canal, comunidade ou playlist.",
+    "status": "machine",
+    "context": "qrTypes.groups.social.description"
+  },
+  "998321187b6c": {
+    "source": "Payment requests for UPI, PayPal, Venmo, Bitcoin and Ethereum.",
+    "text": "Cobranças para UPI, PayPal, Venmo, Bitcoin e Ethereum.",
+    "status": "machine",
+    "context": "qrTypes.groups.payments.description"
+  },
+  "e0f2e577a1a3": {
+    "source": "Reviews, directions, bookings and attendance check-ins.",
+    "text": "Avaliações, rotas, reservas e check-ins de presença.",
+    "status": "machine",
+    "context": "qrTypes.groups.business.description"
   }
 }
