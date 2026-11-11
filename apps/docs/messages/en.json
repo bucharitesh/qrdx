@@ -6143,7 +6143,9 @@
           "activeDynamic": "active dynamic",
           "planUnlimitedCodes": "plan, unlimited codes",
           "code": "code",
-          "codes": "codes"
+          "codes": "codes",
+          "archivedNote": "Archived codes don't count. Existing codes keep working on every plan.",
+          "newCode": "New code"
         }
       },
       "files": {
