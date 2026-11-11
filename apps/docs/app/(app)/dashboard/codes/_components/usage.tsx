@@ -29,7 +29,7 @@ export function UsageMeter({ usage }: { usage: CodeUsage }) {
   return (
     <CapMeter
       meterId="dynamicCodes"
-      note="Archived codes don't count. Existing codes keep working on every plan."
+      note={t("archivedNote")}
       plan={usage.plan}
       source="codes_meter"
       used={usage.used}
@@ -40,9 +40,10 @@ export function UsageMeter({ usage }: { usage: CodeUsage }) {
 
 export function NewCodeButton({
   usage,
-  children = "New code",
+  children,
   ...props
 }: { usage: CodeUsage } & ComponentProps<typeof Button>) {
+  const t = useTranslations("app.dashboard.codes.usage");
   const showLimit = useShowLimit();
 
   const onClick = () => {
@@ -58,7 +59,7 @@ export function NewCodeButton({
   return (
     <Button onClick={onClick} {...props}>
       <Plus />
-      {children}
+      {children ?? t("newCode")}
     </Button>
   );
 }

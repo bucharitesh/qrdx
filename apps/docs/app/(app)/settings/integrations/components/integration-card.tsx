@@ -7,14 +7,13 @@ import type {
 } from "@repo/integrations";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
-import { use } from "react";
+import { useTranslations } from "next-intl";
 import { PRESSABLE } from "@/components/mockups/motion";
 import { NeedsSetupBadge } from "@/components/needs-setup";
 import {
   IntegrationLogo,
   logoForIntegration,
 } from "@/components/sections/integrations/integration-logo";
-import { getAppTranslations } from "@/lib/i18n/app-locale";
 
 interface IntegrationCardProps {
   slug: string;
@@ -36,9 +35,7 @@ export function IntegrationCard({
   isConnected,
   needsSetup,
 }: IntegrationCardProps) {
-  const t = use(
-    getAppTranslations("app.settings.integrations.integrationCard"),
-  );
+  const t = useTranslations("app.settings.integrations.integrationCard");
   return (
     <Link
       href={`/settings/integrations/${slug}`}
