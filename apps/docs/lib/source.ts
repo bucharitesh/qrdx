@@ -21,6 +21,7 @@ import {
   docsUrl,
   translationLocale,
 } from "@/lib/i18n/docs";
+import { withEnglishStructure } from "@/lib/i18n/docs-meta";
 
 const docsFiles = docs.toFumadocsSource();
 
@@ -47,7 +48,9 @@ export const source = loader({
  */
 export const localizedSource = loader({
   baseUrl: "/docs",
-  source: docsFiles,
+  // Sidebar structure from the English meta.json, labels from the
+  // translations (lib/i18n/docs-meta.ts): new English pages appear at once.
+  source: { files: withEnglishStructure(docsFiles.files) },
   i18n: docsI18n,
   url: (slugs, locale) => docsUrl(slugs, (locale ?? "en") as Locale),
   icon: resolveDocsIcon,

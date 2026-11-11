@@ -18,6 +18,7 @@ import {
   englishDocsPath,
   translationLocale,
 } from "@/lib/i18n/docs";
+import { withEnglishStructure } from "@/lib/i18n/docs-meta";
 
 const CONTENT = join(import.meta.dirname, "../../content/docs");
 
@@ -102,7 +103,7 @@ function buildSource() {
 function buildLocalizedSource() {
   return loader({
     baseUrl: "/docs",
-    source: { files: contentFiles() },
+    source: { files: withEnglishStructure(contentFiles()) },
     i18n: docsI18n,
     url: (slugs, locale) => docsUrl(slugs, (locale ?? "en") as Locale),
   });
@@ -210,6 +211,34 @@ describe("docs tabs", () => {
 
 describe("docs in other languages", () => {
   const localized = buildLocalizedSource();
+
+  it("show a page added to the English sidebar at once, in the same tab", () => {
+    // A new English page that no language has a translation or meta entry for.
+    const files = contentFiles().map(
+      (file): VirtualFile =>
+        file.type === "meta" && file.path === "(guides)/meta.json"
+          ? {
+              ...file,
+              data: {
+                ...file.data,
+                pages: [...(file.data.pages ?? []), "../zz-new"],
+              },
+            }
+          : file,
+    );
+    files.push({ type: "page", path: "zz-new.mdx", data: { title: "New" } });
+    const docs = loader({
+      baseUrl: "/docs",
+      source: { files: withEnglishStructure(files) },
+      i18n: docsI18n,
+      url: (slugs, locale) => docsUrl(slugs, (locale ?? "en") as Locale),
+    });
+    for (const locale of DOCS_LOCALES) {
+      const guides = tabFolders(docs.getPageTree(locale))[1];
+      const urls = JSON.stringify(guides);
+      expect(urls, locale).toContain(`"${docsUrl(["zz-new"], locale)}"`);
+    }
+  });
   const translated = DOCS_LOCALES.filter((locale) => locale !== "en");
 
   it.each(translated)(
