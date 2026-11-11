@@ -1,0 +1,21 @@
+-- The signed-in app's language (feat/i18n-playground-app, phase 2).
+--
+-- user.locale holds the language the app, its toasts and the emails QRdx
+-- sends to this person use: a code from apps/docs/lib/i18n/config.ts ("es",
+-- "pt-BR", "zh-Hans"). NULL means "not chosen": the app then follows the
+-- language menu's cookie (NEXT_LOCALE) and emails go out in English. New
+-- accounts start with the cookie's language; Settings > General changes it.
+--
+-- Additive and idempotent: one nullable column, no default, no index, safe
+-- to run more than once. Adding a nullable column without a default is a
+-- metadata-only change in Postgres (no table rewrite, no long lock).
+--
+-- Order: apply it BEFORE deploying the code that uses it. The app reads the
+-- column on its own (lib/i18n/app-locale.ts) and falls back to the cookie if
+-- the read fails, but packages/database/schema.ts lists it, so queries that
+-- select whole user rows need it to exist.
+--
+-- Rollback: the code before this feature never reads the column, so it can
+-- stay. To remove it: ALTER TABLE "user" DROP COLUMN IF EXISTS locale;
+
+ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "locale" text;
