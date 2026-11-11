@@ -61,6 +61,16 @@ const PAYMENT_NAMES: Record<PaymentScheme, string> = {
   paypal: "PayPal",
   venmo: "Venmo",
   epc: "SEPA transfer (EPC)",
+  pix: "Pix",
+  paynow: "PayNow",
+  promptpay: "PromptPay",
+  vietqr: "VietQR",
+  emv: "Payment code (EMV)",
+  litecoin: "Litecoin",
+  dogecoin: "Dogecoin",
+  bitcoincash: "Bitcoin Cash",
+  solana: "Solana Pay",
+  monero: "Monero",
 };
 
 const COPY_LABELS: Record<PaymentScheme, string> = {
@@ -70,7 +80,26 @@ const COPY_LABELS: Record<PaymentScheme, string> = {
   paypal: "Copy link",
   venmo: "Copy username",
   epc: "Copy IBAN",
+  pix: "Copy Pix key",
+  paynow: "Copy number",
+  promptpay: "Copy number",
+  vietqr: "Copy account",
+  emv: "Copy merchant",
+  litecoin: "Copy address",
+  dogecoin: "Copy address",
+  bitcoincash: "Copy address",
+  solana: "Copy address",
+  monero: "Copy address",
 };
+
+/** Bank codes paid by scanning them in a banking app (no link to open). */
+const BANK_APP_SCHEMES = new Set<PaymentScheme>([
+  "pix",
+  "paynow",
+  "promptpay",
+  "vietqr",
+  "emv",
+]);
 
 /**
  * "Restyle in the playground" for a scanned web address: the address goes
@@ -194,7 +223,9 @@ function PaymentDetails({
       <FieldList
         fields={parsed.fields.map((field) => ({
           ...field,
-          mono: /address|iban|upi id|recipient|contract/i.test(field.label),
+          mono: /address|iban|upi id|recipient|contract|pix key|account|uen/i.test(
+            field.label,
+          ),
         }))}
       />
       {parsed.openUrl && /^https:/i.test(parsed.openUrl) ? (
@@ -221,6 +252,11 @@ function PaymentDetails({
         <p className="text-muted-foreground text-xs leading-relaxed">
           Banking apps in the euro area can scan this code directly. You can
           also copy the IBAN into a new transfer.
+        </p>
+      )}
+      {BANK_APP_SCHEMES.has(parsed.scheme) && (
+        <p className="text-muted-foreground text-xs leading-relaxed">
+          Pay it by scanning the code with a banking app that supports {name}.
         </p>
       )}
       {parsed.scheme === "upi" && (
