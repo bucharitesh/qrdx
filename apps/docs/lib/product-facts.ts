@@ -48,6 +48,7 @@ import {
   MAX_IMPORT_ROWS,
   NEW_PAID_ACCOUNT_CODES_PER_HOUR,
 } from "./bulk-limits";
+import { TRANSLATED_LOCALES } from "./i18n/config";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
 
 export const PRODUCT_FACTS = {
@@ -83,6 +84,8 @@ export const PRODUCT_FACTS = {
   hostedPageTypes: PAGE_TYPE_IDS.length,
   /** Brands in the logo gallery (Simple Icons), as copy writes it ("3,467"). */
   brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
+  /** Languages the site has besides English (lib/i18n/config.ts), reviewed or not. */
+  translatedLanguages: TRANSLATED_LOCALES.length,
   // The affiliate program's terms (lib/affiliates/terms.ts), for the legal
   // and help pages; the code reads the same constants.
   /** The commission, as copy writes it: "30" (followed by "%"). */

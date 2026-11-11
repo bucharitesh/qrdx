@@ -20,6 +20,7 @@ import {
   MAX_CODES_PER_REQUEST,
   MAX_IMPORT_ROWS,
 } from "@/lib/bulk-limits";
+import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
 import { PAGE_TYPE_IDS } from "@/lib/landing/page-type-ids";
 import {
   fillFacts,
@@ -68,6 +69,7 @@ describe("PRODUCT_FACTS", () => {
       hostedPageTypes: PAGE_TYPE_IDS.length,
       // lib/brand-logos (the pinned simple-icons release)
       brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
+      translatedLanguages: TRANSLATED_LOCALES.length,
       // lib/affiliates/terms.ts
       affiliateCommissionPercent: 30,
       affiliateCommissionMonths: 12,
