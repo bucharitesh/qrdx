@@ -8,18 +8,19 @@ import * as layouts from "./layouts.mjs";
 import { contrast, labelFont, resolveColor } from "./lib.mjs";
 import { usage } from "./motifs.mjs";
 
-let types;
-try {
-  types = await import(new URL("../../dist/types/index.mjs", import.meta.url));
-} catch (error) {
-  throw new Error(
-    `Could not load qrdx/types from dist. Build qrdx first (pnpm --filter qrdx build:inplace). (${error.message})`
-  );
-}
+// The spec schema from the built qrdx/types; tests pass the source one
+const types = await import(
+  new URL("../../dist/types/index.mjs", import.meta.url)
+).catch(() => null);
 
 const MONO = { frame: "#111111", text: "#ffffff", accent: "#111111" };
 
-export function make(entry) {
+export function make(entry, schema = types?.frameSpecSchema) {
+  if (!schema) {
+    throw new Error(
+      "Could not load qrdx/types from dist. Build qrdx first (bun run --filter qrdx build:inplace)."
+    );
+  }
   const layout = layouts[entry.layout];
   if (!layout) throw new Error(`${entry.id}: no layout ${entry.layout}`);
   usage.length = 0;
@@ -71,7 +72,7 @@ export function make(entry) {
     shapes: out.shapes,
     labels,
   };
-  const result = types.frameSpecSchema.safeParse(spec);
+  const result = schema.safeParse(spec);
   if (!result.success) {
     problems.push(
       ...result.error.issues.map(

@@ -1,12 +1,19 @@
-// The checks every official frame (src/frames/official) is held to, split
-// into shards so vitest runs them on several workers at once (there are
-// hundreds of frames, and each decode check renders and reads dozens of
-// images). tests/official-frames/*.test.ts each run one shard.
+// The checks the official frames (src/frames/official) are held to. Every
+// frame gets the basics on every run (spec, colors, layout, a crisp decode;
+// tests/official-frames/basics-*.test.ts). The scan model and the PDF/EPS
+// comparison take about 1.5 s a frame, so a normal run gives them to the
+// frames scripts/official-frames/sample.mjs picks, and QRDX_FULL_FRAME_SCAN=1
+// gives them to every frame (tests/official-frames/scan-*.test.ts).
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, describe, expect, test } from "vitest";
+import { afterAll, describe, expect, test as it, test } from "vitest";
+import {
+  frameScanPlan,
+  fullFrameScan,
+  shardOf,
+} from "../../scripts/official-frames/sample.mjs";
 import { getQRAsEPS } from "../../src/eps";
 import {
   drawFrameOnCanvas,
@@ -38,6 +45,34 @@ import {
 /** Shard `index` (1-based) of `count`: every count-th frame. */
 export function officialShard(index: number, count: number): OfficialFrame[] {
   return OFFICIAL_FRAMES.filter((_, i) => i % count === index - 1);
+}
+
+const byId = new Map(OFFICIAL_FRAMES.map((frame) => [frame.id, frame]));
+const framesOf = (ids: string[]): OfficialFrame[] =>
+  ids.map((id) => {
+    const frame = byId.get(id);
+    if (!frame) throw new Error(`No official frame ${id}`);
+    return frame;
+  });
+
+/**
+ * Shard `index` of `count` of the scan checks: every check for the plan's
+ * full set, the link payload's scan checks for its light set.
+ */
+export function describeOfficialFrameScanShard(index: number, count: number) {
+  const plan = frameScanPlan(OFFICIAL_FRAMES.map((frame) => frame.id));
+  const full = framesOf(shardOf(plan.full, index, count));
+  const light = framesOf(shardOf(plan.light, index, count));
+  describe(`frame scan, day ${plan.day}${fullFrameScan() ? " (every frame)" : ""}`, () => {
+    if (full.length > 0) {
+      describeOfficialFramePrint(full);
+      describeOfficialFrameDecoding(full);
+    }
+    if (light.length > 0) describeOfficialFrameScanLight(light);
+    if (full.length + light.length === 0) {
+      it("has nothing in this shard today", () => undefined);
+    }
+  });
 }
 
 const BRANDS =
@@ -84,10 +119,10 @@ export function blocks(
 /**
  * Validates, prints Latin-1 labels, names no third-party brand, is
  * monochrome until themed (seasonal frames may be in color but must still
- * follow the theme), keeps the code whole and the labels off it, and draws
- * the same artwork in SVG, canvas, PDF and EPS.
+ * follow the theme), keeps the code whole and the labels off it, draws the
+ * same artwork on a canvas, and decodes from one crisp render.
  */
-export function describeOfficialFrameChecks(frames: OfficialFrame[]) {
+export function describeOfficialFrameBasics(frames: OfficialFrame[]) {
   describe.each(frames.map((frame) => [frame.id, frame] as const))(
     "%s",
     (_id, official) => {
@@ -186,6 +221,29 @@ export function describeOfficialFrameChecks(frames: OfficialFrame[]) {
         ).toEqual(frameLabels(layout).map((label) => label.text));
       });
 
+      test("decodes crisp, so the modules and quiet zone are whole", () => {
+        // One render at 4 px a module, no camera model: the full scan
+        // checks (scan-*.test.ts) cover distances, blur and the score.
+        expect(captureCrisp(props, 4)).toBe(SAMPLE_PAYLOADS.link);
+      });
+    }
+  );
+}
+
+/** The same artwork in PDF and EPS as in SVG (SVG is the reference). */
+export function describeOfficialFramePrint(frames: OfficialFrame[]) {
+  describe.each(frames.map((frame) => [frame.id, frame] as const))(
+    "%s",
+    (_id, official) => {
+      const frame: AnyQRFrame = { style: "custom", spec: official.spec };
+      const props: QRProps = {
+        value: SAMPLE_PAYLOADS.link,
+        size: 256,
+        level: "M",
+        ...PLAIN,
+        frame,
+      };
+
       test("prints the same artwork in PDF and EPS as in SVG", async () => {
         const layout = getFrameLayout(256, frame);
         const labels = frameLabels(layout);
@@ -226,6 +284,51 @@ export function describeOfficialFrameChecks(frames: OfficialFrame[]) {
 }
 
 const PAYLOADS = Object.entries(SAMPLE_PAYLOADS);
+
+/** Renders the framed code at `modulePx` a module and decodes it as drawn. */
+function captureCrisp(props: QRProps, modulePx: number): string | null {
+  const svg = renderSvg(props);
+  const size = props.size ?? 256;
+  const modules = symbolSize(props.value, props.level);
+  const { width } = getFrameDimensions(size, props.frame);
+  const scale = (modules * modulePx) / size;
+  return decodeQR(
+    rasterizeSvg(svg, { width: width * scale, pad: 4 * modulePx })
+  );
+}
+
+/**
+ * The scan checks on the link payload only: the camera model at the phone
+ * distances and the scan score. For the one-per-layout sample.
+ */
+export function describeOfficialFrameScanLight(frames: OfficialFrame[]) {
+  describe.each(frames.map((frame) => [frame.id, frame] as const))(
+    "%s (layout sample)",
+    (_id, official) => {
+      const frame: AnyQRFrame = { style: "custom", spec: official.spec };
+      test("decodes a link at phone distances and scores Great", async () => {
+        const value = SAMPLE_PAYLOADS.link;
+        const failed = PHONE_MODULE_SIZES.filter(
+          (px) => captureFramed(propsFor(frame, value), px) !== value
+        );
+        expect(failed).toEqual([]);
+        const props = propsFor(frame, value, 1024);
+        const artwork = getFrameDimensions(1024, frame);
+        const pixels = rasterizeSvg(renderSvg(props), {
+          width: Math.round(
+            (artwork.width * PIXEL_SCORE_MIN_CODE_WIDTH) / 1024
+          ),
+          background: null,
+        });
+        const result = await getScanScoreFromPixels(props, pixels);
+        expect(
+          result.grade,
+          JSON.stringify(result.checks.filter((c) => !c.passed))
+        ).toBe("great");
+      });
+    }
+  );
+}
 
 const ZBAR = (() => {
   const probe = spawnSync("zbarimg", ["--version"], { encoding: "utf8" });
