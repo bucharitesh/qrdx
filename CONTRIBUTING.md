@@ -221,7 +221,7 @@ The docs (`apps/docs/content/docs`) are translated into the languages whose entr
 | `messages/review/docs/<code>.json` | For each English file, a hash of the English the translation came from and its status, `machine` or `reviewed` |
 | `messages/<code>.json`, key `docs` | The docs interface: search, table of contents, page buttons, the language menu, the 404 page |
 
-A page that isn't translated shows the English text at the language's URL, with a note saying so. The API reference (`developers/api`) stays English: it's generated from the OpenAPI document.
+A page that isn't translated shows the English text at the language's URL, with a note saying so. The sidebar's structure always comes from the English `meta.json`; a translated `meta.<code>.json` only supplies labels. So a new English page shows up in every language's sidebar right away, in English, until someone translates it. The API reference (`developers/api`) stays English: it's generated from the OpenAPI document.
 
 Translate missing and stale pages with a model (same key as above):
 
