@@ -20,8 +20,12 @@ export type DocsReviewFile = Record<
   { source: string; status: "machine" | "reviewed" }
 >;
 
-/** Generated pages that stay English (scripts/i18n-translate-docs.ts SKIP). */
-export const UNTRANSLATED_DOCS = [/^developers\/api\//];
+/**
+ * Pages that stay English (scripts/i18n-translate-docs.ts SKIP): the API
+ * reference, generated from the OpenAPI document. Its sidebar labels
+ * (developers/api/meta.json) are translated.
+ */
+export const UNTRANSLATED_DOCS = [/^developers\/api\/.*\.mdx$/];
 
 /** "help/index.mdx" → "/docs/help"; "(guides)/teams.mdx" → "/docs/teams". */
 export function docsPathOfFile(file: string): string {
