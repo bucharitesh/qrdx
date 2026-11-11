@@ -1,0 +1,6 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Solución de problemas",
+  "icon": "TriangleAlert",
+  "pages": ["wont-scan", "wrong-destination", "error-pages", "emails"]
+}

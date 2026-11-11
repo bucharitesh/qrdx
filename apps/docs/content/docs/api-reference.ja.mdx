@@ -1,0 +1,418 @@
+---
+title: "ライブラリAPIリファレンス"
+description: "qrdx Reactライブラリがエクスポートするすべてのコンポーネント、関数、型を紹介します。HTTPエンドポイントについては、REST APIをご覧ください。"
+icon: Code
+---
+
+`qrdx` のすべてのコンポーネント、関数、型の完全なリファレンスです。
+
+<NpmStatus package="qrdx" />
+
+## コンポーネント [#components]
+
+### QRCode [#qrcode]
+
+QRコードを描画するメインコンポーネントです。
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#000000"
+  bgColor="#ffffff"
+/>
+```
+
+#### Props [#props]
+
+| Prop | 型 | デフォルト | 説明 |
+|------|------|---------|-------------|
+| `value` | `string` | **必須** | エンコードするURLまたはテキスト |
+| `size` | `number` | `128` | ピクセル単位のサイズ |
+| `scale` | `number` | `1` | 拡大率 |
+| `fgColor` | `ColorConfig` | `#000000` | QRコードの色 |
+| `bgColor` | `ColorConfig` | `#ffffff` | 背景色 |
+| `eyeColor` | `ColorConfig` | `fgColor` | 角のマーカーの色 |
+| `dotColor` | `ColorConfig` | `fgColor` | 各コーナーアイの内側にあるドットの色 |
+| `bodyPattern` | `BodyPattern` | `'circle'` | データドットのパターン |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | 角のマーカーのパターン |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 角のドットのパターン |
+| `hideLogo` | `boolean` | `false` | ロゴを非表示にします。`logo` を設定しない限りロゴは描画されません |
+| `logo` | `string` | — | ロゴのURL |
+| `templateId` | `string` | `'default'` | テンプレートID |
+| `customTemplate` | `TemplateDefinition` | — | カスタムテンプレート |
+| `level` | `ErrorLevel` | `'Q'` | 誤り訂正レベル |
+| `autoLevel` | `boolean` | `false` | ロゴがコードの7%を超えて覆う場合に、`level` をHに引き上げます（`AUTO_LEVEL_LOGO_COVERAGE`） |
+| `margin` | `number` | `0` | モジュール単位の余白 |
+| `imageSettings` | `ImageSettings` | — | ロゴの設定 |
+| `eyeColors` | `EyeColors` | — | `topLeft`、`topRight`、`bottomLeft` ごとの `outer` / `inner` の色。それぞれ `eyeColor` / `dotColor` より優先されます |
+| `moduleScale` | `number` | `1` | データモジュールのサイズ（0.5〜1）。各パターンは、スキャンできる最小のサイズで止まります（`MODULE_SCALE_FLOOR`） |
+| `frame` | `QRFrame` | — | 行動を促すフレーム。[フレームと印刷](/docs/features/frames)を参照してください |
+| `art` | `QRArt` | — | ロゴや写真をモジュールに溶け込ませます（Logo QR、Image QR）。[アートQR](/docs/features/art-qr)を参照してください |
+| `frameLabelMarkers` | `boolean` | `false` | エディター向け：各フレームラベルの `<text>` に `data-qrdx-frame-label`（`"text"`、`"secondaryText"`、またはスペックラベルのID）を付けます。ダウンロードやエクスポートには含まれません |
+
+{facts.bodyPatterns} 種類のボディパターン、{facts.eyeShapes} 種類のアイ、{facts.eyeCentres} 種類のアイ中心、{facts.frameStyles} 種類のフレームスタイルは、すべて[図形・アイ・フレーム](/docs/styles)で実際の表示を確認できます。
+
+### QRCodeCanvas [#qrcodecanvas]
+
+Canvasベースの描画です。
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor="#000000"
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+SVGベースの描画です。
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## ダウンロード関数 [#download-functions]
+
+### downloadQRCode [#downloadqrcode]
+
+QRコードを複数の形式でダウンロードします。
+
+```tsx
+downloadQRCode(
+  qrProps: QRProps,
+  options: {
+    format: 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+    size: { width: number; height: number };
+    filename?: string;
+    quality?: number; // WebP only: 0 to 1 for lossy; lossless when left out
+  }
+): Promise<void>
+```
+
+### getQRCodeDataUrl [#getqrcodedataurl]
+
+データURLとして取得します。
+
+```tsx
+getQRCodeDataUrl(
+  qrProps: QRProps,
+  format: DownloadFormat,
+  size: DownloadSize,
+  options?: { quality?: number } // WebP only
+): Promise<string>
+```
+
+### getQRAsWebP [#getqraswebp]
+
+コードをWebPの `Blob` として返します。`quality` を指定しない限りロスレスです。ブラウザーがWebPをエンコードできない場合（Safari）は、qrdx内蔵のロスレスエンコーダーが生成します。`canvasToWebP(canvas, options)` は任意のcanvasに対して同じ処理を行い、`encodeWebPLossless(rgba, width, height)` はDOMなしでRGBAピクセルをエンコードします。
+
+```tsx
+getQRAsWebP(
+  qrProps: QRProps,
+  options?: { quality?: number }
+): Promise<Blob>
+```
+
+### copyQRCodeToClipboard [#copyqrcodetoclipboard]
+
+クリップボードにコピーします。
+
+```tsx
+copyQRCodeToClipboard(
+  qrProps: QRProps,
+  size?: DownloadSize
+): Promise<void>
+```
+
+### getSVGString [#getsvgstring]
+
+SVGマークアップを取得します。
+
+```tsx
+getSVGString(qrProps: QRProps): Promise<string>
+```
+
+## 印刷とスキャンの関数 [#print-and-scan-functions]
+
+これらの関数は、各機能ページで例とともに説明しています。
+
+| 関数 | 機能 | ドキュメント |
+|----------|--------------|------|
+| `getQRAsSVG(props)` | フレームを含む、コードのSVGマークアップ | [フレーム](/docs/features/frames) |
+| `getQRAsPrintPDF`、`downloadPrintPDF` | 裁ち落とし、トンボ、CMYKに対応した、正確な物理サイズのベクターPDF（`jspdf` が必要） | [印刷用エクスポート](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | 正確な物理サイズの印刷用SVG | [印刷用エクスポート](/docs/features/frames#print-ready-export) |
+| `getQRAsEPS`、`downloadPrintEPS` | 印刷所やデザインツール向けのベクターEPS | [ダウンロード](/docs/features/downloads) |
+| `getScanScore(props)` | デザインがどれだけ確実にスキャンできるかを推定します | [スキャンできる？](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | 手元にあるQRコード画像をスコア化します（ブラウザーのみ） | [スキャンできる？](/docs/features/frames#will-it-scan) |
+| `scanQRPixels(pixels, expected)` | 生のRGBAピクセルが `expected` にデコードされるかを、ぼかして縮小した場合も含めて確認します。Nodeで動作します | — |
+| `getStylePairRisk(...)` | 一部のスキャナーが読み取れない、アイとパターンの組み合わせを警告します | [パターン](/docs/features/patterns) |
+
+## 検出関数 [#detection-functions]
+
+### handleImageLoad [#handleimageload]
+
+画像からQRコードを検出します。
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,
+  returnFullData?: boolean
+): Promise<string | any>
+```
+
+### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
+
+バウンディングボックス付きでデバッグします。
+
+```tsx
+downloadImageWithBoundingBox(
+  imgElement: HTMLImageElement,
+  boundingBox: { x: number; y: number }[],
+  filename: string
+): void
+```
+
+## テンプレート関数 [#template-functions]
+
+### getTemplate [#gettemplate]
+
+特定のテンプレートを取得します。
+
+```tsx
+getTemplate(templateId: string): TemplateDefinition | undefined
+```
+
+### getAllTemplates [#getalltemplates]
+
+すべてのテンプレートを取得します。
+
+```tsx
+getAllTemplates(): TemplateDefinition[]
+```
+
+### getTemplateIds [#gettemplateids]
+
+テンプレートIDを取得します。
+
+```tsx
+getTemplateIds(): string[]
+```
+
+## ユーティリティ関数 [#utility-functions]
+
+### 色とコントラスト [#color--contrast]
+
+```tsx
+getSolidColor(colorConfig: ColorConfig, fallback?: string): string
+getContrastRatio(color1: string, color2: string): number
+getContrastLevel(ratio: number): ContrastLevel
+getLuminance(r: number, g: number, b: number): number
+hexToRgb(hex: string): { r: number; g: number; b: number }
+```
+
+### バリデーション [#validation]
+
+```tsx
+validateSize(width: number, height: number): {
+  isValid: boolean;
+  error?: string;
+}
+```
+
+### 機能検出 [#feature-detection]
+
+```tsx
+SUPPORTS_PATH2D: boolean
+```
+
+## 型 [#types]
+
+### コア型 [#core-types]
+
+```tsx
+type QRProps = {
+  value: string;
+  size?: number;
+  level?: ErrorLevel;
+  bgColor?: ColorConfig;
+  fgColor?: ColorConfig;
+  margin?: number;
+  imageSettings?: ImageSettings;
+  // ...
+};
+
+type ColorConfig =
+  | string
+  | { type: 'solid'; color: string }
+  | LinearGradient
+  | RadialGradient;
+
+type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
+```
+
+### パターン型 [#pattern-types]
+
+```tsx
+// The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
+// FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+
+type BodyPattern =
+  | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
+  | 'pacman' | 'rounded' | 'small-square' | 'vertical-line'
+  | 'horizontal-line' | 'liquid' | 'liquid-horizontal' | 'liquid-vertical'
+  | 'classy' | 'classy-rounded' | 'leaf' | 'plus' | 'hexagon' | 'star'
+  | 'heart' | 'random-dots' | 'mosaic' | 'octagon';
+
+type CornerEyePattern =
+  | 'square' | 'rounded' | 'gear' | 'circle' | 'diya' | 'extra-rounded'
+  | 'message' | 'pointy' | 'leaf' | 'drop' | 'octagon' | 'bevel'
+  | 'squircle' | 'cushion' | 'shield' | 'petal' | 'leaf-reverse';
+
+type CornerEyeDotPattern =
+  | 'square' | 'rounded' | 'circle' | 'message' | 'message-reverse'
+  | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'leaf' | 'drop' | 'plus'
+  | 'cross-rounded' | 'hexagon' | 'octagon' | 'flower' | 'heart'
+  | 'squircle' | 'dots' | 'extra-rounded' | 'leaf-reverse' | 'drop-reverse';
+
+// Retired (deprecated) values still render for saved designs but are not
+// offered: RETIRED_CORNER_EYE_PATTERNS, RETIRED_CORNER_EYE_DOT_PATTERNS.
+
+type EyeColors = {
+  topLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+  topRight?: { outer?: ColorConfig; inner?: ColorConfig };
+  bottomLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+};
+
+type QRFrame = {
+  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  text?: string; // up to 24 characters, default "Scan me"
+  color?: string;
+  textColor?: string;
+  secondaryText?: string; // banner-top-bottom, circle, menu-card
+  secondaryColor?: string; // gradient-border end color
+  fontScale?: number; // 0.5 to 1.5
+};
+```
+
+### ダウンロード型 [#download-types]
+
+```tsx
+type DownloadFormat = 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+
+type DownloadSize = {
+  width: number;
+  height: number;
+};
+
+const PRESET_SIZES: Record<string, DownloadSize> = {
+  small: { width: 200, height: 200 },
+  medium: { width: 400, height: 400 },
+  large: { width: 800, height: 800 },
+  xlarge: { width: 1200, height: 1200 },
+  '2xl': { width: 1600, height: 1600 },
+  '3xl': { width: 2000, height: 2000 },
+};
+```
+
+### グラデーション型 [#gradient-types]
+
+```tsx
+type LinearGradient = {
+  type: 'linear';
+  stops: GradientStop[];
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
+
+type RadialGradient = {
+  type: 'radial';
+  stops: GradientStop[];
+  cx: number;
+  cy: number;
+  r: number;
+};
+
+type GradientStop = {
+  offset: number;
+  color: string;
+};
+```
+
+### 画像設定 [#image-settings]
+
+```tsx
+type ImageSettings = {
+  src: string;
+  height: number;
+  width: number;
+  excavate?: boolean;
+  x?: number;
+  y?: number;
+  /** Extra clear space around the logo when excavating, in pixels */
+  padding?: number;
+  opacity?: number;
+};
+```
+
+## 誤り訂正レベル [#error-correction-levels]
+
+```tsx
+const ERROR_LEVELS = {
+  L: 'Low (~7%)',
+  M: 'Medium (~15%)',
+  Q: 'Quartile (~25%)',
+  H: 'High (~30%)',
+} as const;
+```
+
+## エラー処理 [#error-handling]
+
+非同期関数はtry-catchで囲んでください。
+
+```tsx
+try {
+  await downloadQRCode(props, options);
+} catch (error) {
+  console.error('Failed:', error);
+}
+```
+
+よくあるエラー：
+- 無効な画像URL
+- ネットワーク障害
+- 無効なサイズパラメーター
+- Canvasコンテキストを利用できない
+
+## ブラウザー対応 [#browser-support]
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+## サーバー対応 [#server-support]
+
+Node.js環境で動作します。
+- Next.js
+- Remix
+- Express.js
+- その他のNode.jsフレームワーク
+
+一部の機能にはブラウザーAPIが必要です。
+- Canvas操作
+- Clipboard API
+- File API

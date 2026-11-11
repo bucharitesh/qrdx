@@ -680,5 +680,98 @@
         }
       }
     }
+  },
+  "docs": {
+    "meta": {
+      "titleSuffix": "Docs do QRdx"
+    },
+    "breadcrumb": {
+      "home": "Início",
+      "docs": "Docs"
+    },
+    "untranslated": {
+      "title": "Esta página ainda não foi traduzida",
+      "body": "Você está lendo a versão em inglês."
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Copiar Markdown",
+        "open": "Abrir",
+        "openIn": "Abrir no {app}",
+        "askPrompt": "Leia {url}, quero tirar dúvidas sobre o conteúdo."
+      },
+      "search": {
+        "jumpTo": "Ir para <page>{name}</page>"
+      },
+      "language": {
+        "label": "Idioma da documentação",
+        "note": "A documentação está disponível nestes idiomas. Os demais idiomas leem a documentação em inglês."
+      }
+    },
+    "help": {
+      "search": "Buscar na ajuda e na documentação",
+      "stillStuck": {
+        "title": "Ainda com dúvida?",
+        "body": "Conte o que você estava tentando fazer e o que aconteceu. Se for sobre um código, inclua o link curto dele.",
+        "widget": "O widget de suporte em qrdx.dev, depois que você permitir os cookies de Funcionalidade.",
+        "github": "Reportar um bug no GitHub",
+        "contact": "Todas as formas de falar com a gente"
+      }
+    },
+    "notFound": {
+      "title": "Esta página não está na documentação",
+      "body": "Ela pode ter sido movida ou renomeada. Busque na documentação ou comece por um destes links.",
+      "places": {
+        "gettingStarted": {
+          "title": "Primeiros passos",
+          "description": "Crie e baixe seu primeiro código."
+        },
+        "dynamic": {
+          "title": "QR codes dinâmicos",
+          "description": "Links curtos que você pode alterar depois de imprimir."
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "Crie e gerencie códigos a partir do seu próprio app."
+        },
+        "components": {
+          "title": "Componentes",
+          "description": "Componentes React e shadcn/ui para QR codes."
+        }
+      }
+    },
+    "ui": {
+      "search": "Buscar",
+      "searchPlaceholder": "Buscar",
+      "openSearch": "Abrir busca",
+      "closeSearch": "Fechar busca",
+      "noResults": "Nenhum resultado",
+      "searchFailed": "A busca falhou",
+      "onThisPage": "Nesta página",
+      "noHeadings": "Sem títulos",
+      "tableOfContents": "Índice",
+      "lastUpdated": "Última atualização em",
+      "previousPage": "Página anterior",
+      "nextPage": "Próxima página",
+      "copyCode": "Copiar texto",
+      "copiedCode": "Texto copiado",
+      "copyAnchor": "Copiar link da âncora",
+      "copiedAnchor": "Link da âncora copiado",
+      "copyLink": "Copiar link",
+      "copiedLink": "Link copiado",
+      "toggleMenu": "Alternar menu",
+      "toggleTheme": "Alternar tema",
+      "themeLight": "Claro",
+      "themeDark": "Escuro",
+      "themeSystem": "Sistema",
+      "openSidebar": "Abrir barra lateral",
+      "closeSidebar": "Fechar barra lateral",
+      "collapseSidebar": "Recolher barra lateral",
+      "typeTableProp": "Prop",
+      "typeTableType": "Tipo",
+      "typeTableDefault": "Padrão",
+      "typeTableParameters": "Parâmetros",
+      "typeTableReturns": "Retorna"
+    }
   }
 }

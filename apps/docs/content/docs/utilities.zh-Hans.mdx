@@ -1,0 +1,180 @@
+---
+title: "实用工具"
+description: "qrdx 导出的颜色、对比度、尺寸校验和功能检测辅助函数。"
+icon: Wrench
+---
+
+用于处理颜色、对比度和二维码的辅助函数。
+
+## 颜色工具 [#color-utilities]
+
+### getSolidColor [#getsolidcolor]
+
+从任意颜色配置中提取纯色：
+
+```tsx
+import { getSolidColor } from 'qrdx';
+
+const color = getSolidColor({
+  type: 'linear',
+  stops: [
+    { offset: 0, color: '#ff6b6b' },
+    { offset: 1, color: '#4ecdc4' }
+  ],
+  x1: 0, y1: 0, x2: 1, y2: 1
+});
+// Returns: "#ff6b6b"
+```
+
+### hexToRgb [#hextorgb]
+
+将十六进制颜色转换为 RGB：
+
+```tsx
+import { hexToRgb } from 'qrdx';
+
+const rgb = hexToRgb('#ff6b6b');
+// Returns: { r: 255, g: 107, b: 107 }
+```
+
+## 对比度检查 [#contrast-checking]
+
+### getContrastRatio [#getcontrastratio]
+
+计算 WCAG 对比度：
+
+```tsx
+import { getContrastRatio } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+```
+
+### getContrastLevel [#getcontrastlevel]
+
+获取对比度评估结果：
+
+```tsx
+import { getContrastLevel } from 'qrdx';
+
+const level = getContrastLevel(4.5);
+// Returns: { level: 'AA', warning: false, message: 'Good contrast' }
+```
+
+**对比度指南：**
+- **`AAA`（7.0 及以上）** — 对比度极佳
+- **`AA`（4.5 – 7.0）** — 对比度良好
+- **`AA Large`（3.0 – 4.5）** — 对比度较低，`warning: true`，可能难以扫描
+- **`Fail`（低于 3.0）** — 不推荐，`warning: true`
+
+### getLuminance [#getluminance]
+
+计算相对亮度：
+
+```tsx
+import { getLuminance } from 'qrdx';
+
+const luminance = getLuminance(255, 255, 255);
+// Returns: 1.0 (white)
+```
+
+## 校验 [#validation]
+
+### validateSize [#validatesize]
+
+校验下载尺寸：
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Valid size");
+} else {
+  console.error(validation.error);
+}
+```
+
+## 功能检测 [#feature-detection]
+
+### SUPPORTS_PATH2D [#supports_path2d]
+
+检测是否支持 Path2D：
+
+```tsx
+import { SUPPORTS_PATH2D } from 'qrdx';
+
+if (SUPPORTS_PATH2D) {
+  // Use optimized rendering
+} else {
+  // Use fallback
+}
+```
+
+## 示例：对比度检查器 [#example-contrast-checker]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+import { useState } from 'react';
+
+export default function ContrastChecker() {
+  const [fgColor, setFgColor] = useState('#000000');
+  const [bgColor, setBgColor] = useState('#ffffff');
+
+  const ratio = getContrastRatio(fgColor, bgColor);
+  const level = getContrastLevel(ratio);
+
+  return (
+    <div>
+      <input
+        type="color"
+        value={fgColor}
+        onChange={(e) => setFgColor(e.target.value)}
+      />
+      <input
+        type="color"
+        value={bgColor}
+        onChange={(e) => setBgColor(e.target.value)}
+      />
+      <p>Ratio: {ratio.toFixed(2)}:1</p>
+      <p>Level: {level.level}</p>
+      <p>{level.message}</p>
+    </div>
+  );
+}
+```
+
+## 示例：尺寸计算器 [#example-size-calculator]
+
+```tsx
+import { validateSize } from 'qrdx';
+import { useState } from 'react';
+
+export default function SizeCalculator() {
+  const [width, setWidth] = useState(512);
+  const [height, setHeight] = useState(512);
+
+  const validation = validateSize(width, height);
+
+  return (
+    <div>
+      <input
+        type="number"
+        value={width}
+        onChange={(e) => setWidth(Number(e.target.value))}
+      />
+      <input
+        type="number"
+        value={height}
+        onChange={(e) => setHeight(Number(e.target.value))}
+      />
+      <p>{validation.isValid ? 'Valid' : validation.error}</p>
+    </div>
+  );
+}
+```
+
+## 下一步 [#next-steps]
+
+- [使用方法](/docs/usage) — 将这些工具应用于二维码
+- [API 参考](/docs/api-reference) — 完整的工具函数参考

@@ -1,0 +1,53 @@
+---
+title: "Diálogo para compartir código QR"
+description: "Un diálogo para compartir con un código QR de un enlace, un botón de copiar, una descarga en PNG y la hoja nativa de compartir."
+icon: Webhook
+---
+
+<ComponentLinks name="qr-code-share-dialog" />
+
+<ComponentPreview name="qr-code-share-dialog-demo" />
+
+## Instalación [#installation]
+
+<InstallationTabs name="qr-code-share-dialog" />
+
+## Uso [#usage]
+
+```tsx
+import { QrCodeShareDialog } from "@/components/qr-code-share-dialog";
+```
+
+```tsx
+<QrCodeShareDialog url="https://example.com/invite/abc123" />
+```
+
+El diálogo muestra el código, el enlace en un campo de solo lectura con un botón de copiar y una descarga en PNG. En dispositivos con hoja de compartir (la mayoría de los teléfonos), un botón "Compartir…" la abre.
+
+## Ejemplos [#examples]
+
+### Disparador personalizado [#custom-trigger]
+
+Pasa tu propio disparador como children, por ejemplo un botón de icono en una barra de herramientas. `title`, `description` y `qr` personalizan el diálogo.
+
+<ComponentPreview name="qr-code-share-dialog-trigger" />
+
+### Controlado [#controlled]
+
+El diálogo acepta las props de [Dialog](https://ui.shadcn.com/docs/components/dialog), así que puedes abrirlo desde el código:
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<QrCodeShareDialog
+  url="https://example.com"
+  open={open}
+  onOpenChange={setOpen}
+/>
+```
+
+## Referencia de la API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-share-dialog.tsx" type="{ [K in keyof QrCodeShareDialogProps as K extends Exclude<keyof ComponentProps<typeof Dialog>, 'children'> ? never : K]: QrCodeShareDialogProps[K] }" />
+
+`open`, `defaultOpen`, `onOpenChange` y `modal` se pasan al Dialog.

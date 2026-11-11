@@ -1,0 +1,83 @@
+---
+title: "QRコード"
+description: "スタイル付きでアクセシビリティに配慮したQRコードコンポーネントです。ダウンロードボタンも備えています。色、グラデーション、パターン、ロゴ、フレームテンプレートには qrdx ライブラリを使用します。"
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## インストール [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## 使い方 [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+QRコードはアクセシブルな名前を持つSVGとして描画されます。そのため、どんなサイズでも鮮明に表示され、スクリーンリーダーがリンク先を読み上げます。
+
+## 例 [#examples]
+
+### サイズ [#sizes]
+
+`size` は画面上の幅と高さをピクセルで指定します。ダウンロードには `downloadSize` が使われるため、ページ上で小さく表示しても、印刷に適したファイルを書き出せます。
+
+<ComponentPreview name="qr-code-sizes" />
+
+### 色 [#colors]
+
+`fgColor` と `bgColor` には任意のCSSカラーを指定できます。`eyeColor` と `dotColor` では、3つのコーナーアイの色を個別に指定します。どのスキャナーでも読み取れるように、モジュールは背景よりも暗い色にしてください。
+
+<ComponentPreview name="qr-code-colors" />
+
+### グラデーション [#gradients]
+
+色の代わりに qrdx のグラデーションを渡せます。`angle` を指定した `linear` か、`radial` を使用します。グラデーションは PNG、SVG、PDF のダウンロードにも反映されます。
+
+<ComponentPreview name="qr-code-gradient" />
+
+### パターン [#patterns]
+
+`bodyPattern` はデータモジュールの形、`cornerEyePattern` はコーナーの枠、`cornerEyeDotPattern` は枠の内側のドットの形を決めます。すべての形については [パターン](/docs/features/patterns) をご覧ください。
+
+<ComponentPreview name="qr-code-patterns" />
+
+### ロゴ [#logo]
+
+`logo` は中央に画像を配置し、その背後のモジュールを取り除きます。一部が隠れてもスキャンできるように、誤り訂正レベルは `H` を使用してください。ロゴをダウンロードにも含めるにはデータURLを使います。外部の画像を使う場合は、CORSヘッダーが必要です。
+
+<ComponentPreview name="qr-code-logo" />
+
+### フレームテンプレート [#frame-templates]
+
+`templateId` を指定すると、QRコードの周囲に qrdx の[テンプレート](/docs/features/templates)が描画されます。`caption` と組み合わせると、フレームの下に行動を促す文言を表示できます。
+
+<ComponentPreview name="qr-code-template" />
+
+### ダウンロード形式 [#download-formats]
+
+`downloadFormats` でボタンを指定します。指定できるのは `png`、`jpg`、`svg`、`pdf` です。PDF の書き出しには、オプションの `jspdf` パッケージ(`npm install jspdf`)が必要です。ボタンを非表示にするには `[]` を渡します。
+
+<ComponentPreview name="qr-code-downloads" />
+
+形式とサイズを1つのメニューにまとめたい場合は、[QR Code Download](/docs/components/qr-code-download) を使用してください。
+
+### ダークモード [#dark-mode]
+
+ダークテーマでも、既定の白い背景が最も安全です。明るい下地に暗いモジュールを置けば、どのリーダーでもスキャンできます。代わりにテーマに合わせたい場合は、`fgColor="currentColor"` を指定し、背景を透明にします。この場合、ダークモードではQRコードが反転します。スマートフォンのカメラは読み取れますが、一部の古いスキャナーでは読み取れません。
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## APIリファレンス [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+`className` などその他のプロパティは、外側の `<figure>` に渡されます。

@@ -1,0 +1,31 @@
+---
+title: "Trae códigos desde otro servicio"
+description: "Importa enlaces desde un archivo CSV o traslada tus códigos desde Bitly y otros servicios de códigos QR."
+---
+
+## Desde un archivo CSV [#from-a-csv-file]
+
+1. Ve a **Codes** y haz clic en **Import CSV**.
+2. Sube un archivo CSV con un código por fila.
+
+La única columna obligatoria es el destino. También puedes incluir un título, una carpeta, etiquetas y un back-half personalizado. Un archivo puede tener hasta {facts.importRows} filas y pesar hasta 10 MB. Se revisa cada fila antes de crear nada; las filas con problemas se omiten y se muestran en una lista.
+
+También puedes elegir una carpeta y etiquetas para todos los códigos del archivo. Una fila con su propia carpeta la conserva, y las etiquetas del archivo se suman a las que elijas.
+
+Los archivos grandes se envían por partes mientras se llena una barra de progreso. Puedes pausar y reanudar. Si la página se recarga o se corta la conexión, la importación se detiene y te ofrece reanudar o reintentar, y ningún código se crea dos veces. Al terminar, descarga un CSV de resultados con el enlace corto de cada fila, o un ZIP con los códigos nuevos como archivos PNG o SVG.
+
+En Gratis puedes importar un código a la vez. Pro y Business pueden importar muchos a la vez.
+
+## Desde otro servicio [#from-another-service]
+
+Haz clic en **Import** en la página **Codes** y elige dónde están tus códigos ahora.
+
+- **Bitly**: inicia sesión en Bitly y elige los enlaces.
+- **Rebrandly** y **Short.io**: pega una clave de API de ese servicio.
+- **QR Code Generator PRO, Uniqode, Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova** y otros: sube el archivo de exportación de ese servicio.
+
+## Mantén funcionando los códigos impresos [#keep-printed-codes-working]
+
+Los códigos impresos siguen apuntando al servicio anterior. La guía de migración explica cómo mantenerlos funcionando y cómo conservar tus back-halves originales.
+
+Consulta [Migrar desde Bitly, Rebrandly y otros](/docs/migrate).

@@ -1,0 +1,72 @@
+---
+title: "Tags NFC e cartões de visita"
+description: "Grave o link de um QR code dinâmico em uma tag ou cartão NFC, conte os toques separados das leituras de QR e coloque uma página vCard Plus em um cartão de visita NFC."
+icon: Nfc
+---
+
+Qualquer [QR code dinâmico](/docs/dynamic-qr-codes) também pode ir em uma tag NFC. Você grava o link NFC do código em uma tag, adesivo ou cartão, e um celular que encosta nele abre o mesmo destino do QR code. Os toques aparecem na análise do código ao lado das leituras de QR, contados separadamente. Funciona em todos os planos.
+
+A QRdx não vende, imprime nem envia tags ou cartões. Compre os virgens em qualquer fornecedor de NFC e grave você mesmo a partir da página do código.
+
+## O link NFC [#the-nfc-link]
+
+O link NFC de um código é o link curto dele com `?nfc` no final, como `https://qrdx.dev/q/aB3dE5f?nfc`, ou `https://go.example.com/menu?nfc` em um [domínio personalizado](/docs/custom-domains). Ele passa pelo mesmo redirecionamento do link curto, então roteamento inteligente, senhas, agendamentos e limites de leitura valem para os toques também. O final `?nfc` só avisa a análise de que a visita foi um toque. O QR code mantém o próprio link, e os códigos que você já imprimiu funcionam exatamente como antes.
+
+Para encontrá-lo, abra o código no [painel](/dashboard?to=codes) e escolha **Use with NFC** na aba Overview dele. A [REST API](/docs/developers/rest-api) o retorna como `nfcLink` em todos os códigos.
+
+## Gravar uma tag no Android [#write-a-tag-on-android]
+
+O Chrome no Android consegue gravar tags direto da página NFC do código:
+
+1. Ative o NFC nas configurações do celular.
+2. Abra o código no Chrome, escolha **Use with NFC** e toque em **Write to NFC tag**.
+3. Segure a tag encostada na parte de trás do celular até a página mostrar **Written**.
+4. Encoste a tag no celular para testar. Ela deve abrir o link.
+
+Gravar a partir de uma página web exige Web NFC, que só o Chrome no Android tem. No computador, a página NFC mostra um QR code: leia com o celular Android, entre na conta e grave a tag por lá.
+
+### Bloquear uma tag [#locking-a-tag]
+
+Depois que a tag é gravada, a página oferece bloqueá-la quando o navegador permite. Uma tag bloqueada nunca mais pode ser alterada nem apagada, por ninguém, nem por você. Por isso, bloqueie só as tags que ficam onde estranhos poderiam regravá-las, como um adesivo na mesa de uma cafeteria. A tag guarda o link do código, e não o destino, então você ainda pode mudar na QRdx para onde uma tag bloqueada leva.
+
+## Gravar uma tag no iPhone [#write-a-tag-on-iphone]
+
+O Safari não grava tags NFC, então use qualquer app gravador de NFC da App Store:
+
+1. Copie o link NFC da página NFC do código.
+2. No app, adicione um registro de URL (alguns apps chamam de Link ou URI) e cole o link.
+3. Escolha Gravar e segure a parte de cima do iPhone contra a tag até o app avisar que terminou.
+
+Para gravar, é preciso um iPhone 7 ou mais recente com iOS 13 ou superior.
+
+## Quais tags comprar [#which-tags-to-buy]
+
+Procure um chip NTAG213, NTAG215 ou NTAG216. Eles vêm como adesivos, cartões, chaveiros e pulseiras.
+
+| Chip | Memória |
+| --- | --- |
+| NTAG213 | 144 bytes |
+| NTAG215 | 504 bytes |
+| NTAG216 | 888 bytes |
+
+Um link NFC em qrdx.dev ocupa cerca de 30 bytes, então os três comportam. Links em domínios personalizados longos ou com finais longos ocupam mais; a página NFC mostra quantos bytes o seu precisa e em quais chips ele cabe.
+
+Celulares Android com NFC ativado e iPhone XS ou mais recente abrem o link de uma tag assim que ela encosta no celular, sem app.
+
+## Cartões de visita NFC [#nfc-business-cards]
+
+Uma [página vCard Plus](/docs/landing-pages) é uma página de contato com um botão **Save contact**, e funciona bem como cartão de visita NFC. Para um código que abre uma delas, a aba Overview mostra **Put this card on NFC**, e o editor de página tem um botão **Put on NFC**. Os dois abrem a mesma página NFC, com um guia para cartões.
+
+1. Compre cartões de visita NFC virgens, ou adesivos NFC para cartões que você já tem.
+2. Imprima também o QR code do código no cartão. Celulares sem NFC, ou com o NFC desativado, fazem a leitura dele.
+3. Grave o link NFC em cada cartão a partir da página NFC do código.
+
+Como cada cartão guarda o link do código, editar a página vCard Plus na QRdx atualiza todos os cartões que você já entregou.
+
+## Toques na análise [#taps-in-analytics]
+
+A aba Analytics de um código mostra **QR scans and NFC taps** para as datas escolhidas, e os totais acima contam os dois. A página Analytics do workspace e as páginas de análise compartilhadas mostram a mesma divisão.
+
+A exportação em CSV tem uma coluna `source` com `qr` ou `nfc` para cada leitura. Na REST API, a [análise de leituras](/docs/developers/api/get-code-scans) inclui `sources` com as duas contagens e um `source` em cada leitura listada, e os [webhooks](/docs/webhooks) de `scan.created` também trazem `source`.
+
+Leituras de antes de os links NFC existirem contam como leituras de QR. Os toques seguem as mesmas regras das leituras: bots e pré-visualizações de link não são contados.

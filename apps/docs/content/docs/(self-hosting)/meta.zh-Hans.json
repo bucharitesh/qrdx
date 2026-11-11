@@ -1,0 +1,8 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "自托管",
+  "description": "在你自己的服务器上运行 QRdx",
+  "icon": "Server",
+  "root": true,
+  "pages": ["../self-hosting"]
+}

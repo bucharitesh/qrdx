@@ -154,7 +154,7 @@ A maintainer applies schema changes to the production database before the code t
 
 ## Translating QRdx
 
-English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page and `/pricing`. The docs, the blog, the legal pages and the signed-in app are English only.
+English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page and `/pricing`. The docs are also in Spanish, Brazilian Portuguese, Japanese and Simplified Chinese (see [Docs](#docs) below). The blog, the legal pages and the signed-in app are English only.
 
 The copy is in `apps/docs/messages/`:
 
@@ -210,9 +210,37 @@ bun run --filter docs i18n:check --verbose  # also lists missing, unrecorded and
 
 It fails on keys that English doesn't have, on placeholders or tags that changed, and on numbers that went missing. In a language that isn't reviewed yet, missing and stale strings only produce warnings. Also open `/<segment>` and `/<segment>/pricing` and attach screenshots at 1440 px and 390 px to the pull request; long German or Finnish words are the usual overflow.
 
+### Docs
+
+The docs (`apps/docs/content/docs`) are translated into the languages whose entry in `lib/i18n/config.ts` has `docs: true`: today `es`, `pt-BR`, `ja` and `zh-Hans`. Their pages live at `/es/docs/...`, `/pt-br/docs/...`, `/ja/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. Other languages link to the English docs.
+
+| File | What it holds |
+| --- | --- |
+| `content/docs/<page>.<code>.mdx` | A page's translation, beside the English `<page>.mdx` |
+| `content/docs/<folder>/meta.<code>.json` | The folder's sidebar labels: tab and folder names, separators |
+| `messages/review/docs/<code>.json` | For each English file, a hash of the English the translation came from and its status, `machine` or `reviewed` |
+| `messages/<code>.json`, key `docs` | The docs interface: search, table of contents, page buttons, the language menu, the 404 page |
+
+A page that isn't translated shows the English text at the language's URL, with a note saying so. The API reference (`developers/api`) stays English: it's generated from the OpenAPI document.
+
+Translate missing and stale pages with a model (same key as above):
+
+```bash
+AI_GATEWAY_API_KEY=<your key> bun run --filter docs i18n:docs --locale <code>
+bun run --filter docs i18n:docs --locale <code> --page help/   # one folder
+```
+
+The script sends prose only. Code blocks, imports and component expressions are swapped out first, and every answer is checked: the same code, inline code, link URLs, `{facts.…}` tokens, components and their props, headings, lists, table rows and numbers, and valid MDX. Headings keep their English anchors (`## Título [#title]`), so links to `#section` work in every language. A page that fails three times stays English, and the script lists it.
+
+By hand: write `<page>.<code>.mdx` with the same frontmatter keys, translating `title` and `description`, and leave code, URLs, `{facts.…}` tokens and component props other than `title`, `description`, `label` and `alt` as they are. Then record it with `bun run --filter docs i18n:docs --locale <code> --record`. Links to other docs pages keep their English URL (`/docs/...`): the page points them at the reader's language.
+
+`i18n:check` lists, per language, how many pages are translated, reviewed, machine-made, stale (the English changed since) or still English.
+
 ### Review and search engines
 
 A language with `review: "machine"` is live on the site but hidden from search engines. Its pages are `noindex`, they're left out of the sitemap, and no page links to them with hreflang. To publish a language, a native speaker reads every string, sets each one's `status` to `"reviewed"` in `review/<code>.json`, and changes the language's `review` to `"reviewed"` in the config. From the next deploy its pages are indexed, listed in the sitemap and linked with hreflang. `i18n:check` then fails on any string in that language that is missing, machine-made or stale. To publish single pages first, set `review` to a list of paths, such as `["/", "/pricing"]`.
+
+Docs pages follow the same `review`: a list can name docs paths (`"/docs/help"`), and `"reviewed"` publishes every translated docs page. Before that, a native speaker sets each page's `status` to `"reviewed"` in `review/docs/<code>.json`; `i18n:check` fails on a published docs page that is machine-made or stale. A page that isn't translated is never indexed: it carries `noindex` and a canonical link to the English page.
 
 ## Pull requests
 

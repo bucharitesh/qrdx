@@ -1,0 +1,298 @@
+---
+title: "Crea una integración"
+description: "Crea una app OAuth, deja que las personas conecten su cuenta de QRdx con OAuth 2.0 y PKCE, llama a la REST API en su nombre y consigue que te incluyan en el directorio de integraciones."
+icon: Rocket
+---
+
+Una integración es una app OAuth. Las personas hacen clic en **Connect QRdx** en tu producto, aprueban tu app en la pantalla de consentimiento de QRdx y tu servidor obtiene un token de acceso que llama a `https://api.qrdx.dev/v1` en su nombre, limitado a los permisos que aprobaron.
+
+Esta guía cubre todo el flujo: crear una app, enviar a las personas a QRdx, canjear el código por tokens, llamar a la API, recibir eventos y aparecer en el directorio.
+
+## 1. Crea una app OAuth [#1-create-an-oauth-app]
+
+Abre [Ajustes → Claves de API y apps](/dashboard?to=settings/developers) y haz clic en **Nueva app**. La app pertenece al espacio de trabajo que tienes abierto, el seleccionado en el selector de espacios de trabajo. Solo los propietarios del espacio de trabajo pueden crear y modificar apps; los administradores y los miembros pueden verlas.
+
+| Campo | Para qué sirve |
+| --- | --- |
+| Nombre, descripción, logotipo, sitio web | Se muestran en la pantalla de consentimiento. Sube un logotipo cuadrado o pega un enlace `https://` a uno |
+| URI de redirección | Adónde QRdx devuelve a las personas, hasta 10. Solo `https://`, más `http://localhost` (o `127.0.0.1`) para desarrollo. Sin comodines ni `#fragments`: cada solicitud debe usar una de ellas exactamente |
+| Permisos | Lo máximo que tu app puede solicitar. Cada autorización pide algunos o todos |
+| Exigir PKCE | Cada autorización debe enviar un code challenge `S256`. Recomendado y activado por defecto |
+
+Después de crear la app, QRdx muestra su **client ID** y su **client secret**. Copia el secreto en ese momento: QRdx solo guarda un hash y no puede mostrarlo de nuevo. Si lo pierdes o se filtra, haz clic en **Regenerar secreto** en la página de la app. El secreto anterior deja de funcionar al instante; las personas que ya se conectaron siguen conectadas. Crear una app y regenerar su secreto piden primero [confirmar que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), salvo que lo hayas hecho en ese navegador en los últimos 10 minutos.
+
+| Plan | Apps OAuth por espacio de trabajo |
+| --- | --- |
+| Gratis | 1 |
+| Pro | 5 |
+| Business | 25 |
+
+Un espacio de trabajo usa el mejor plan entre sus propietarios, como en cualquier otro [límite](/docs/plans-and-limits).
+
+## 2. Envía a las personas a QRdx [#2-send-people-to-qrdx]
+
+Genera un `state` aleatorio y un `code_verifier` de PKCE, guarda ambos en la sesión del usuario y redirige a la URL de autorización:
+
+```txt
+https://qrdx.dev/api/oauth/authorize
+  ?response_type=code
+  &client_id=<client id>
+  &redirect_uri=https://acme.example/oauth/qrdx/callback
+  &scope=profile:read codes:read codes:write
+  &state=<random value>
+  &code_challenge=<BASE64URL(SHA256(code_verifier))>
+  &code_challenge_method=S256
+```
+
+| Parámetro | Obligatorio | Valor |
+| --- | --- | --- |
+| `response_type` | Sí | `code` |
+| `client_id` | Sí | El client ID de tu app |
+| `redirect_uri` | Sí | Una de las URI de redirección de la app, carácter por carácter |
+| `scope` | Sí | Separados por espacios o comas; solo permisos que la app tenga |
+| `state` | Recomendado | Cualquier valor; QRdx lo devuelve sin cambios. Compruébalo para evitar CSRF |
+| `code_challenge` | Si la app exige PKCE | De 43 a 128 caracteres: el SHA-256 en base64url de tu `code_verifier` |
+| `code_challenge_method` | No | `S256`, el valor por defecto y el único método aceptado. `plain` se rechaza con `invalid_request` |
+| `prompt` | No | `consent` muestra la pantalla de consentimiento aunque la persona ya haya aprobado esos permisos antes |
+
+```ts title="lib/qrdx-oauth.ts"
+import { createHash, randomBytes } from "node:crypto";
+
+export const QRDX_AUTHORIZE_URL = "https://qrdx.dev/api/oauth/authorize";
+
+export function createPkce() {
+  const verifier = randomBytes(32).toString("base64url"); // 43 characters
+  const challenge = createHash("sha256").update(verifier).digest("base64url");
+  return { verifier, challenge };
+}
+
+export function authorizeUrl({
+  state,
+  challenge,
+}: {
+  state: string;
+  challenge: string;
+}) {
+  const url = new URL(QRDX_AUTHORIZE_URL);
+  url.search = new URLSearchParams({
+    response_type: "code",
+    client_id: process.env.QRDX_CLIENT_ID!,
+    redirect_uri: "https://acme.example/oauth/qrdx/callback",
+    scope: "profile:read codes:read codes:write",
+    state,
+    code_challenge: challenge,
+    code_challenge_method: "S256",
+  }).toString();
+  return url.toString();
+}
+```
+
+Las personas que no han iniciado sesión en QRdx lo hacen primero. Después ven la pantalla de consentimiento: el logotipo, el nombre y el sitio web de tu app, quién la creó, los permisos que pediste y la cuenta con la que han iniciado sesión. Las apps que QRdx no ha verificado llevan una nota **Unverified app**. **Authorize** les pide [confirmar que son ellas](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), salvo que lo hayan hecho en los últimos 10 minutos (haber iniciado sesión hace un momento suele contar). Quien ya aprobó los mismos permisos para tu app vuelve directamente a ti.
+
+Después QRdx redirige a tu `redirect_uri`:
+
+- Aprobada: `?code=<authorization code>&state=<your state>`. El código funciona una sola vez, dentro de 10 minutos.
+- Cancelada: `?error=access_denied&error_description=...&state=<your state>`.
+
+Las solicitudes no válidas (un `client_id` desconocido, un `redirect_uri` no registrado, un permiso que la app no tiene, un challenge ausente cuando se exige PKCE, `code_challenge_method=plain`) nunca redirigen. Devuelven un error JSON como `{ "error": "invalid_scope", "error_description": "..." }`.
+
+## 3. Canjea el código por tokens [#3-exchange-the-code-for-tokens]
+
+Desde tu servidor, envía el código al endpoint de tokens. El cuerpo va codificado como formulario y el `redirect_uri` debe ser el que usaste en el paso 2.
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=authorization_code \
+  -d client_id=$QRDX_CLIENT_ID \
+  -d client_secret=$QRDX_CLIENT_SECRET \
+  -d code=$CODE \
+  -d redirect_uri=https://acme.example/oauth/qrdx/callback \
+  -d code_verifier=$CODE_VERIFIER
+```
+
+```ts title="app/oauth/qrdx/callback/route.ts"
+export async function GET(req: Request) {
+  const params = new URL(req.url).searchParams;
+  const session = await getSession(req); // your own session store
+  if (params.get("state") !== session.qrdxState) {
+    return new Response("Invalid state", { status: 400 });
+  }
+  if (params.get("error")) {
+    return Response.redirect("https://acme.example/settings?qrdx=cancelled");
+  }
+
+  const response = await fetch("https://qrdx.dev/api/oauth/token", {
+    method: "POST",
+    body: new URLSearchParams({
+      grant_type: "authorization_code",
+      client_id: process.env.QRDX_CLIENT_ID!,
+      client_secret: process.env.QRDX_CLIENT_SECRET!,
+      code: params.get("code") ?? "",
+      redirect_uri: "https://acme.example/oauth/qrdx/callback",
+      code_verifier: session.qrdxVerifier,
+    }),
+  });
+  if (!response.ok) {
+    const { error, error_description } = await response.json();
+    throw new Error(`QRdx token exchange failed: ${error} ${error_description}`);
+  }
+
+  const tokens: {
+    access_token: string;
+    token_type: "Bearer";
+    expires_in: number;
+    refresh_token: string;
+    scope: string;
+  } = await response.json();
+  await saveQrdxTokens(session.userId, tokens); // encrypt at rest
+  return Response.redirect("https://acme.example/settings?qrdx=connected");
+}
+```
+
+```json
+{
+  "access_token": "...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "...",
+  "scope": "profile:read codes:read codes:write"
+}
+```
+
+`scope` lista lo que se concedió, separado por espacios. Los tokens de acceso duran 1 hora y los tokens de actualización 30 días. Envía `code_verifier` exactamente cuando la autorización tuvo un `code_challenge`; un verifier para un código emitido sin él se rechaza.
+
+### Tokens de actualización [#refresh-tokens]
+
+Antes de que el token de acceso caduque, cambia el token de actualización por un nuevo par. Los tokens de actualización rotan: cada uno funciona una vez, así que guarda el nuevo cada vez.
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=refresh_token \
+  -d client_id=$QRDX_CLIENT_ID \
+  -d client_secret=$QRDX_CLIENT_SECRET \
+  -d refresh_token=$REFRESH_TOKEN
+```
+
+```ts
+export async function refreshQrdxTokens(refreshToken: string) {
+  const response = await fetch("https://qrdx.dev/api/oauth/token", {
+    method: "POST",
+    body: new URLSearchParams({
+      grant_type: "refresh_token",
+      client_id: process.env.QRDX_CLIENT_ID!,
+      client_secret: process.env.QRDX_CLIENT_SECRET!,
+      refresh_token: refreshToken,
+    }),
+  });
+  // invalid_grant: revoked, expired or already used. Ask the person to reconnect.
+  if (!response.ok) throw new Error((await response.json()).error);
+  return response.json();
+}
+```
+
+El endpoint de tokens permite 30 solicitudes por minuto por dirección IP.
+
+## 4. Permisos [#4-scopes]
+
+| Permiso | Permite |
+| --- | --- |
+| `profile:read` | El id, nombre, correo electrónico y avatar del usuario: `GET /v1/me` y `GET /api/oauth/userinfo` |
+| `themes:read` | Sus temas de QR guardados: `GET /v1/themes`, `GET /v1/themes/{id}` |
+| `codes:read` | Sus códigos dinámicos y las analíticas de escaneo; listar suscripciones de webhooks |
+| `codes:write` | Todo lo que permite `codes:read`, además de crear, editar y eliminar códigos, informar conversiones y suscribirse a webhooks |
+
+Pide lo mínimo que tu integración necesite: las personas ven cada permiso en la pantalla de consentimiento.
+
+## 5. Llama a la API [#5-call-the-api]
+
+Envía el token de acceso como token Bearer a `https://api.qrdx.dev/v1`. Las solicitudes con token actúan sobre el espacio de trabajo propio de la persona que autorizó tu app (toda cuenta tiene uno), con el plan de ese espacio de trabajo.
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+```ts
+const response = await fetch("https://api.qrdx.dev/v1/codes", {
+  method: "POST",
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    destinationUrl: "https://acme.example/menu",
+    title: "Spring menu",
+  }),
+});
+const { data: code } = await response.json(); // code.shortLink is what the QR encodes
+```
+
+Un `401` con `invalid_token` significa que el token caducó o fue revocado: actualízalo o pide a la persona que vuelva a conectarse. Un `403` con `insufficient_scope` significa que al token le falta el permiso. Cada endpoint, su permiso y sus errores están en [REST API y OAuth](/docs/developers/rest-api).
+
+## 6. Recibe eventos con webhooks [#6-receive-events-with-webhooks]
+
+Suscríbete en nombre de la persona con la API de REST Hooks en lugar de pedirle que pegue una URL. Requiere `codes:write` y el plan de la persona debe incluir [webhooks](/docs/webhooks) (Business); de lo contrario devuelve `402 PLAN_REQUIRED`.
+
+```bash
+curl https://api.qrdx.dev/v1/hooks \
+  -H "Authorization: Bearer $ACCESS_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"target_url": "https://acme.example/webhooks/qrdx", "events": ["scan.created", "form.submitted"]}'
+```
+
+La respuesta `201` incluye el `id` de la suscripción y un `secret` de firma, que se muestra una sola vez. Cada entrega se firma con él en `X-QRdx-Signature`; consulta [Verificar firmas](/docs/webhooks#verify-signatures). Cancela la suscripción con `DELETE /v1/hooks/{id}` cuando la persona se desconecte. Las suscripciones también aparecen en Ajustes → Webhooks de su propio espacio de trabajo, donde pueden eliminarlas.
+
+## 7. Revocación y userinfo [#7-revoke-and-userinfo]
+
+Cuando alguien desconecta QRdx en tu producto, revoca sus tokens. Revocar cualquiera de los dos tokens de un par revoca el par; el endpoint responde `200` incluso con tokens desconocidos.
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/revoke -d token=$REFRESH_TOKEN
+```
+
+```ts
+await fetch("https://qrdx.dev/api/oauth/revoke", {
+  method: "POST",
+  body: new URLSearchParams({ token: refreshToken }),
+});
+```
+
+### Revocar el acceso [#revoking-access]
+
+Las personas pueden retirar el acceso por sí mismas en cualquier momento, en **Ajustes → Apps autorizadas** de QRdx. Todos los tokens que tu app tenga para su cuenta dejan de funcionar al instante: las llamadas a la API responden `401` con `invalid_token` y la actualización responde `invalid_grant`. Trata ambos casos como "desconectado" y pídeles que se conecten de nuevo; verán otra vez la pantalla de consentimiento.
+
+Para identificar quién se conectó, llama a `GET /api/oauth/userinfo` con un token `profile:read`. Devuelve claims al estilo OpenID:
+
+```bash
+curl https://qrdx.dev/api/oauth/userinfo -H "Authorization: Bearer $ACCESS_TOKEN"
+```
+
+```json
+{
+  "sub": "user id",
+  "name": "Ada Lovelace",
+  "email": "ada@example.com",
+  "picture": "https://..."
+}
+```
+
+Usa `sub` como id estable de la cuenta; los correos electrónicos pueden cambiar.
+
+## 8. Aparece en el directorio [#8-get-listed]
+
+Cuando tu integración funcione de principio a fin, pide que la añadan al [directorio de integraciones](/integrations), donde aparecerá como una integración **Community** creada por ti. Escribe a [support@qrdx.dev](mailto:support@qrdx.dev?subject=List%20my%20integration) (el botón **Get listed** de la página de tu app rellena los datos) con:
+
+- el nombre de tu app y su client ID;
+- una línea sobre qué hace y para quién es;
+- los pasos de configuración, o un enlace a ellos;
+- un contacto de soporte.
+
+El equipo de QRdx revisa las apps incluidas y las marca como **verificadas**, lo que elimina la nota "Unverified app" de la pantalla de consentimiento. Cambiar el nombre, el logotipo o el sitio web de una app verificada elimina la insignia hasta que se revise de nuevo.
+
+## Lista de comprobación de seguridad [#security-checklist]
+
+- Guarda el client secret en tu servidor. El código de navegador y de móvil nunca debe verlo.
+- Usa PKCE (`S256`) y un `state` nuevo en cada autorización, y comprueba `state` al volver.
+- Registra URI de redirección exactas; QRdx las compara carácter por carácter.
+- Guarda los tokens de acceso y de actualización cifrados, y guarda el nuevo token de actualización después de cada actualización.
+- Revoca los tokens cuando las personas se desconecten. Eliminar tu app en Ajustes → Claves de API y apps revoca todos los tokens que emitió; pausarla los rechaza hasta que la reanudes.

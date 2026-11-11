@@ -1,0 +1,64 @@
+---
+title: "QRコードジェネレーター"
+description: "ライブQRコードプレビュー、スタイルプリセット、ダウンロードボタンを備えたテキスト入力コンポーネントです。"
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## インストール [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## 使い方 [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+プレビューは入力に合わせて更新されます。各プリセットボタンには、そのスタイルの小さなサンプルが表示されます。ダウンロードでは、選択中のプリセットが1024ピクセルで使用されます。
+
+## 例 [#examples]
+
+### カスタムプリセット [#custom-presets]
+
+組み込みのプリセットを独自のものに置き換えます。プリセットは `id`、`name`、そして任意のqrdxオプションを指定できる `style` で構成されます。グラデーション、ロゴ、誤り訂正の `level` も指定できます。
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+組み込みのプリセットは `QR_CODE_PRESETS` としてエクスポートされているため、拡張することもできます。
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### 結果の保存 [#saving-the-result]
+
+`onChange` は、変更のたびにテキストと選択中のプリセットを通知します。たとえば、ユーザーの選択を保存する場合に使えます。
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## APIリファレンス [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

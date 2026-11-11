@@ -1,0 +1,174 @@
+---
+title: "Colores y degradados"
+description: "Usa colores sólidos o degradados lineales y radiales, y comprueba el contraste para que los códigos sigan siendo escaneables."
+icon: Palette
+---
+
+Aplica colores y degradados para crear códigos QR con tu marca.
+
+## Colores sólidos [#solid-colors]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#f9fafb"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+Formatos admitidos: `#hex`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, colores con nombre
+
+`eyeColors` define cada ojo por separado (`topLeft`, `topRight`, `bottomLeft`, cada uno con un color o degradado `outer` e `inner`); consulta [Patrones](/docs/features/patterns#per-eye-colors).
+
+### Fondo transparente [#transparent-background]
+
+`bgColor="transparent"` no pinta ningún fondo, así que las descargas en PNG y SVG son transparentes y los archivos PDF y EPS no tienen relleno de fondo. Coloca el código sobre una superficie clara y lisa: los decodificadores necesitan los espacios claros entre módulos.
+
+## Degradados lineales [#linear-gradients]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0,
+    x2: 1, y2: 1
+  }}
+/>
+```
+
+### Direcciones del degradado [#gradient-directions]
+
+- **Horizontal**: `x1: 0, y1: 0, x2: 1, y2: 0`
+- **Vertical**: `x1: 0, y1: 0, x2: 0, y2: 1`
+- **Diagonal**: `x1: 0, y1: 0, x2: 1, y2: 1`
+
+### Degradados con varias paradas [#multi-stop-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 0.3, color: '#764ba2' },
+      { offset: 0.7, color: '#f093fb' },
+      { offset: 1, color: '#f5576c' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+## Degradados radiales [#radial-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'radial',
+    stops: [
+      { offset: 0, color: '#ff6b6b' },
+      { offset: 1, color: '#4ecdc4' }
+    ],
+    cx: 0.5, cy: 0.5,
+    r: 0.5
+  }}
+/>
+```
+
+## Utilidades de color [#color-utilities]
+
+### Comprobar el contraste [#check-contrast]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+
+const level = getContrastLevel(ratio);
+// Returns: { level: 'AAA', warning: false, message: 'Excellent contrast' }
+```
+
+### Pautas de contraste [#contrast-guidelines]
+
+- **Mínimo**: proporción de 3.0:1
+- **Recomendado**: 4.5:1 o más
+- **Excelente**: 7.0:1 o más
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+
+## Degradados angulares [#angular-gradients]
+
+Un degradado angular barre en sentido horario alrededor del centro de lo que rellena, como `conic-gradient` de CSS. `angle` es el punto donde empieza el barrido, en grados en sentido horario desde la parte superior. Los desplazamientos van de 0 a 100 a lo largo de la vuelta.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "angular",
+    angle: 30,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 50 },
+      { color: "#1d4ed8", offset: 100 },
+    ],
+  }}
+/>
+```
+
+SVG no tiene degradado cónico, así que el código dibuja un abanico de cuñas finas, separadas por unos dos niveles de color. PDF y EPS dibujan las mismas cuñas.
+
+## Colores translúcidos [#see-through-colors]
+
+Los colores y las paradas del degradado pueden llevar alfa, como `#1d4ed8cc` o `rgba(29, 78, 216, 0.8)`. SVG lo escribe como `fill-opacity` y `stop-opacity`, y PDF lo conserva. EPS no admite transparencia, así que un color translúcido se mezcla con el fondo. La comprobación de escaneo evalúa un color translúcido tal como se ve sobre el fondo.
+
+## Rellenos de imagen [#image-fills]
+
+Un relleno de imagen pinta una imagen a través del fondo, los puntos o los ojos. La imagen se coloca sobre todo el código, por lo que los puntos y los ojos que comparten una muestran una sola imagen.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "image",
+    src: "data:image/jpeg;base64,…",
+    fit: "cover", // or "contain", "tile"
+    position: "center",
+    scale: 1,
+    opacity: 0.45,
+    underlay: "#000000",
+  }}
+/>
+```
+
+- `src` es la propia imagen, igual que con un logo. QRdx guarda un relleno de imagen (en códigos, temas y la REST API) solo como una URL `data:image` en base64 (PNG, JPEG, WebP o GIF) de 1,5 MB como máximo; se rechaza una imagen procedente de un enlace. PNG y JPEG se incrustan en todas las exportaciones, y los servidores nunca descargan un enlace.
+- `underlay` es un color sólido bajo la imagen. `opacity` lo deja pasar: sobre negro oscurece una foto para los puntos, y sobre blanco aclara una para el fondo.
+- El detalle de una imagen se lee como ruido para una cámara, así que la comprobación de escaneo exige más contraste: 7:1 en los puntos o los ojos y 12:1 detrás de ellos (`SCAN_IMAGE_CONTRAST_MIN`). Mide una imagen por su décima parte más clara y más oscura (`getImageTones`). En el editor, "Make it scannable" encuentra la opacidad sobre el color base que supera la prueba.
+- SVG, PNG y PDF admiten rellenos de imagen. EPS no puede ([Descargas](/docs/features/downloads#eps)).
+
+Los rellenos de imagen viajan como los logos. Se quedan con el diseño en el editor, en los códigos guardados y en los temas guardados. No pasan a los enlaces `?style=`, a los estilos de la comunidad publicados, a los fragmentos de Get code ni al contexto del chat: allí cada relleno de imagen se sustituye por su color `underlay`. La Image API (`GET /v1/qr`) y el servidor MCP todavía no los admiten. `POST /v1/codes` y `PATCH /v1/codes/{id}` aceptan uno solo como URL `data:image` y responden 400 ante cualquier otra cosa; todavía no hay un id de archivo subido para imágenes.
+
+Los degradados angulares y los rellenos de imagen están en el código fuente de qrdx y llegarán con la próxima versión de npm. qrdx 0.0.46 en npm no los incluye.
+
+## Siguientes pasos [#next-steps]
+
+- [Logos](/docs/features/logos) — Añade logos a códigos QR de colores
+- [Patrones](/docs/features/patterns) — Combina colores con patrones
+- [Descargas](/docs/features/downloads) — Exporta códigos QR de colores

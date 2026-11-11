@@ -1,0 +1,174 @@
+---
+title: "颜色与渐变"
+description: "使用纯色、线性渐变或径向渐变，并检查对比度，确保二维码仍可被扫描。"
+icon: Palette
+---
+
+通过应用颜色和渐变，创建具有品牌特色的二维码。
+
+## 纯色 [#solid-colors]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#f9fafb"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+支持的格式：`#hex`、`rgb()`、`rgba()`、`hsl()`、`hsla()`、命名颜色
+
+`eyeColors` 可单独设置每个定位点（`topLeft`、`topRight`、`bottomLeft`，每个都有 `outer` 和 `inner` 颜色或渐变）；参见[图案](/docs/features/patterns#per-eye-colors)。
+
+### 透明背景 [#transparent-background]
+
+`bgColor="transparent"` 不绘制背景，因此下载的 PNG 和 SVG 是透明的，PDF 和 EPS 文件也没有背景填充。请将二维码放在浅色、单一的表面上：解码器需要模块之间的浅色间隙。
+
+## 线性渐变 [#linear-gradients]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0,
+    x2: 1, y2: 1
+  }}
+/>
+```
+
+### 渐变方向 [#gradient-directions]
+
+- **水平**：`x1: 0, y1: 0, x2: 1, y2: 0`
+- **垂直**：`x1: 0, y1: 0, x2: 0, y2: 1`
+- **对角**：`x1: 0, y1: 0, x2: 1, y2: 1`
+
+### 多色标渐变 [#multi-stop-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 0.3, color: '#764ba2' },
+      { offset: 0.7, color: '#f093fb' },
+      { offset: 1, color: '#f5576c' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+## 径向渐变 [#radial-gradients]
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={256}
+  fgColor={{
+    type: 'radial',
+    stops: [
+      { offset: 0, color: '#ff6b6b' },
+      { offset: 1, color: '#4ecdc4' }
+    ],
+    cx: 0.5, cy: 0.5,
+    r: 0.5
+  }}
+/>
+```
+
+## 颜色工具 [#color-utilities]
+
+### 检查对比度 [#check-contrast]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+
+const level = getContrastLevel(ratio);
+// Returns: { level: 'AAA', warning: false, message: 'Excellent contrast' }
+```
+
+### 对比度指南 [#contrast-guidelines]
+
+- **最低**：对比度 3.0:1
+- **推荐**：4.5:1 或更高
+- **极佳**：7.0:1 或更高
+
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+
+## 角向渐变 [#angular-gradients]
+
+角向渐变围绕所填充区域的中心顺时针扫过，类似 CSS 的 `conic-gradient`。`angle` 是扫描的起点，以从顶部起顺时针的度数表示。偏移量在一整圈内从 0 到 100。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "angular",
+    angle: 30,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 50 },
+      { color: "#1d4ed8", offset: 100 },
+    ],
+  }}
+/>
+```
+
+SVG 没有锥形渐变，所以代码会绘制一圈细小的楔形，相邻楔形约相差两个颜色等级。PDF 和 EPS 绘制相同的楔形。
+
+## 半透明颜色 [#see-through-colors]
+
+颜色和渐变色标可以带有 alpha，例如 `#1d4ed8cc` 或 `rgba(29, 78, 216, 0.8)`。SVG 会将其写为 `fill-opacity` 和 `stop-opacity`，PDF 会保留它。EPS 不支持透明度，因此半透明颜色会与背景混合。扫描检查按半透明颜色在背景上呈现的样子来判断。
+
+## 图像填充 [#image-fills]
+
+图像填充会通过背景、圆点或定位点绘制一张图片。图片铺在整个二维码上，因此共用同一张图片的圆点和定位点会显示同一幅图片。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "image",
+    src: "data:image/jpeg;base64,…",
+    fit: "cover", // or "contain", "tile"
+    position: "center",
+    scale: 1,
+    opacity: 0.45,
+    underlay: "#000000",
+  }}
+/>
+```
+
+- `src` 就是图片本身，与徽标相同。QRdx 只会保存 base64 `data:image` URL 形式的图像填充（在二维码、主题和 REST API 中均如此），格式为 PNG、JPEG、WebP 或 GIF，大小不超过 1.5 MB；来自链接的图片会被拒绝。PNG 和 JPEG 会嵌入所有导出格式，服务器也绝不会获取链接。
+- `underlay` 是图片下方的纯色。`opacity` 会让它透出来：黑色底色会让用于圆点的照片变暗，白色底色会让用于背景的照片变亮。
+- 图片中的细节在相机看来就是噪点，因此扫描检查要求更高的对比度：圆点或定位点中为 7:1，其后方为 12:1（`SCAN_IMAGE_CONTRAST_MIN`）。它以图片最亮和最暗的十分之一来衡量图片（`getImageTones`）。在编辑器中，“Make it scannable”会找出在底色之上能通过检查的不透明度。
+- SVG、PNG 和 PDF 支持图像填充。EPS 不支持（[下载](/docs/features/downloads#eps)）。
+
+图像填充与徽标的处理方式相同。它们会随设计保留在编辑器、已保存的二维码和已保存的主题中。它们不会进入 `?style=` 链接、已发布的社区样式、Get code 代码片段或聊天上下文：在这些位置，每个图像填充都会改用其底色。Image API（`GET /v1/qr`）和 MCP 服务器暂不支持。`POST /v1/codes` 和 `PATCH /v1/codes/{id}` 仅接受 `data:image` URL 形式的图像填充，其他形式一律返回 400；目前还没有图片的上传文件 ID。
+
+角向渐变和图像填充已包含在 qrdx 源代码中，将随下一个 npm 版本发布。npm 上的 qrdx 0.0.46 尚不包含它们。
+
+## 后续步骤 [#next-steps]
+
+- [徽标](/docs/features/logos) — 为彩色二维码添加徽标
+- [图案](/docs/features/patterns) — 将颜色与图案结合
+- [下载](/docs/features/downloads) — 导出彩色二维码

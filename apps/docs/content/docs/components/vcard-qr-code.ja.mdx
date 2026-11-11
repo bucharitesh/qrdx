@@ -1,0 +1,52 @@
+---
+title: "vCard QRコード"
+description: "スキャンすると連絡先カードを保存できるQRコードです。型付きのvCard 3.0ビルダーを備えています。"
+icon: Users
+---
+
+<ComponentLinks name="vcard-qr-code" />
+
+<ComponentPreview name="vcard-qr-code-demo" />
+
+## インストール [#installation]
+
+<InstallationTabs name="vcard-qr-code" />
+
+## 使い方 [#usage]
+
+```tsx
+import { VCardQrCode } from "@/components/vcard-qr-code";
+```
+
+```tsx
+<VCardQrCode
+  contact={{
+    firstName: "Ada",
+    lastName: "Lovelace",
+    organization: "Analytical Engines",
+    email: "ada@example.com",
+  }}
+/>
+```
+
+スマートフォンのカメラでコードをスキャンすると、連絡先の保存を促す表示が出ます。空のフィールドは省かれるため、コードが小さくなり、スキャンも速くなります。
+
+## 例 [#examples]
+
+### vCardビルダー [#vcard-builder]
+
+`buildVCard` は、コードにエンコードされるvCard 3.0のテキストを返します。カンマ、セミコロン、バックスラッシュ、改行はエスケープされます。任意のQRレンダラーで使えるほか、同じ連絡先を `.vcf` ファイルのダウンロードとして提供する際にも使えます。
+
+<ComponentPreview name="vcard-qr-code-payload" />
+
+連絡先カードにはリンクよりも多くのテキストが含まれるため、このコンポーネントはモジュールを大きく保つために誤り訂正レベル `M` を使用します。必要なフィールドだけを追加し、印刷サイズの目安は[印刷サイズ計算ツール](/tools/print-size)で確認してください。
+
+## APIリファレンス [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" type="{ [K in keyof VCardQrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: VCardQrCodeProps[K] }" />
+
+`className` などその他のプロパティは、外側の `<figure>` に渡されます。
+
+### VCardContact [#vcardcontact]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" name="VCardContact" />

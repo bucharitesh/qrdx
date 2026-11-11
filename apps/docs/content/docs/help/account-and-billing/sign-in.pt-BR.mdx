@@ -1,0 +1,68 @@
+---
+title: "Métodos de login e endereço de e-mail"
+description: "Entre com Google, GitHub ou um código por e-mail, vincule métodos de login, altere seu endereço de e-mail e saiba o que fazer se você perdeu o acesso ao e-mail."
+---
+
+## Formas de entrar [#ways-to-sign-in]
+
+- **Google** ou **GitHub**.
+- **Código por e-mail**: informe seu e-mail e digite o código de 6 dígitos que enviamos. Cada código vale por 5 minutos.
+
+<IfAvailable feature="passkeys">
+Depois de [adicionar uma passkey](/docs/help/privacy-and-security/passkeys), você também pode entrar com sua impressão digital, seu rosto ou o bloqueio de tela.
+</IfAvailable>
+
+Na primeira vez que você entra, o QRdx cria sua conta. Não existe senha para lembrar.
+
+Com Google ou GitHub, o QRdx só cria a conta se eles tiverem verificado seu endereço de e-mail. Se o seu não estiver verificado lá, verifique-o primeiro (o GitHub lista seus endereços em **Settings** → **Emails**) ou entre com um código por e-mail.
+
+## Uma conta no seu endereço que não foi você que criou [#an-account-for-your-address-you-didnt-make]
+
+Se o QRdx já tem uma conta para o seu endereço e não foi você que a criou, entre com um código por e-mail. Quando isso comprova que o endereço é seu, o QRdx remove tudo o que o cadastro anterior poderia usar para voltar a entrar ou para continuar recebendo os dados da conta:
+
+- os vínculos com Google e GitHub, e todas as sessões;
+- a verificação em duas etapas e os dispositivos confiáveis<IfAvailable feature="passkeys">, além das passkeys</IfAvailable>;
+- as chaves de API e os apps que ela autorizou a usar a conta;
+- os webhooks e os alertas do Slack e do Discord que ela configurou, e quaisquer sincronizações configuradas que enviem leituras ou respostas de formulários para outra ferramenta.
+
+Todo o resto da conta permanece, então confira depois os workspaces e os membros deles.
+
+## Vincular Google ou GitHub [#link-google-or-github]
+
+Acesse **Configurações** → **Perfil e segurança** → **Métodos de login**.
+
+- O **código por e-mail** está sempre ativo.
+- Vincule Google ou GitHub para entrar com um clique. A conta precisa usar o mesmo endereço de e-mail da sua conta QRdx.
+- Clique em **Desvincular** para remover um deles.
+
+## Alterar seu endereço de e-mail [#change-your-email-address]
+
+1. Acesse **Configurações** → **Perfil e segurança**.
+2. Ao lado de **E-mail**, clique em **Alterar** e [confirme que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+3. Informe o novo endereço e digite o código que enviamos para ele.
+
+Em seguida, o QRdx desconecta você em todos os outros dispositivos e navegadores, e seu endereço antigo recebe um e-mail avisando que a conta foi movida, com um jeito de falar com o suporte caso não tenha sido você.
+
+## Perdi o acesso ao meu e-mail [#lost-access-to-your-email]
+
+Se você ainda consegue entrar no QRdx, altere o e-mail por conta própria, como descrito acima. Para confirmar que é você sem acesso à caixa de entrada, use <IfAvailable feature="passkeys">sua passkey, </IfAvailable>uma conta Google ou GitHub que você tenha vinculado ou seu método de verificação em duas etapas, se estiver ativo. Está desconectado? Entre primeiro com <IfAvailable feature="passkeys">sua passkey ou </IfAvailable>uma conta Google ou GitHub vinculada.
+
+Se nada disso funcionar, escreva para [support@qrdx.dev](mailto:support@qrdx.dev) a partir do endereço que você quer usar. Mover uma conta para um novo endereço é a ação mais sensível que o suporte faz, então:
+
+- **Precisamos de uma prova de que a conta é sua.** Vamos pedir o endereço de e-mail da conta e um destes itens:
+  - se você já pagou pelo QRdx, o número de uma de suas [faturas](/docs/help/account-and-billing/invoices) e mais ou menos quando pagou;
+  - se um workspace da sua conta usa um [domínio](/docs/help/domains/custom-domains) próprio, um registro DNS que enviamos para você, adicionado a esse domínio.
+- **Avisamos o endereço antigo e esperamos 7 dias.** Se alguém responder a partir dele nesse período e disser que não, paramos.
+- **Depois movemos a conta.** Trocamos o e-mail dela para o novo endereço, desconectamos a conta de todos os lugares e enviamos um e-mail para o endereço antigo. Entre com um código enviado para o novo endereço. Sua verificação em duas etapas, se estiver ativa, continua como está.
+
+Se não conseguirmos confirmar que a conta é sua, não vamos movê-la, mesmo que isso a deixe fora de alcance. Entregá-la à pessoa errada seria pior.
+
+Antes que seu endereço antigo deixe de funcionar, adicione uma passkey ou vincule Google ou GitHub, para sempre poder confirmar que é você.
+
+## Sair de outros dispositivos [#sign-out-of-other-devices]
+
+Em **Sessões**, dentro de **Configurações** → **Perfil e segurança**, saia de um dispositivo ou clique em **Sair em todos os outros lugares**.
+
+## Problemas para entrar [#trouble-signing-in]
+
+Veja [Os códigos ou e-mails de login não chegam](/docs/help/troubleshooting/emails).

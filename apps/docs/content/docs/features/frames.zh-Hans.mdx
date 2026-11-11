@@ -1,0 +1,153 @@
+---
+title: "边框与印刷"
+description: "行动号召边框、官方边框库、“能扫出来吗?”评分,以及可直接印刷的 PDF 导出。"
+icon: Frame
+---
+
+添加“Scan me”边框,在发布前检查设计能否被扫描,并按精确的物理尺寸导出矢量文件。
+
+## 行动号召边框 [#call-to-action-frames]
+
+`frame` 属性会在二维码周围绘制一个带简短标签的边框。它适用于 `QRCode`、`QRCodeSVG`、`QRCodeCanvas`、`getQRAsSVG`、`getQRData` 以及所有下载辅助函数。
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com/menu"
+  frame={{ style: "banner-bottom", text: "Scan for the menu", color: "#1e3a8a" }}
+/>
+```
+
+边框添加在二维码**外侧**:输出尺寸会变大,二维码模块和静区不会被遮挡,因此可扫描性不受影响。二维码与边框之间留有一道与二维码背景色相同的浅色间隙。
+
+| 选项 | 默认值 | 说明 |
+| --- | --- | --- |
+| `style` | — | 下方 {facts.frameStyles} 种样式之一,或 `none`(`FRAME_STYLES`) |
+| `text` | `"Scan me"` | 最多 24 个字符。传入 `""` 可隐藏标签 |
+| `color` | `#000000` | 边框颜色(`gradient-border`:起始颜色,默认为紫色) |
+| `textColor` | 边框上为白色,浅色区域上为 `color` | 标签颜色 |
+| `secondaryText` | 无 | 第二个标签,最多 24 个字符:`banner-top-bottom` 的底部横幅、`circle` 的下半弧、`menu-card` 的页脚 |
+| `secondaryColor` | `#db2777` | `gradient-border` 的结束颜色 |
+| `fontScale` | `1` | 标签大小,范围 0.5 到 1.5;标签仍会自动缩小以适应空间 |
+
+样式:
+
+- 横幅与边框:`banner-bottom`、`banner-top`、`banner-top-bottom`、`border`、`rounded-border`、`gradient-border`、`focus`(角括号)
+- 气泡:`speech-bubble`、`speech-bubble-top`、`chat-bubble`
+- 徽章:`circle`(文字环绕圆环)、`badge`(丝带)、`sticker`(带阴影的模切贴纸)
+- 物件:`polaroid`、`phone`、`ticket`、`tag`(带孔的吊牌)、`envelope`、`menu-card`
+
+在[形状、定位眼与边框](/docs/styles#frames)中可以在浏览器里查看全部样式及其解码结果。每种边框都由纯形状和文字构成,颜色均不透明,因此 SVG、PNG、PDF 和 EPS 导出效果一致(渐变边框由细密的纯色色阶绘制,circle 边框中的弧形文字在所有格式中都是旋转后的文字)。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com", fontScale: 1.2 }}
+/>
+```
+
+标签使用系统字体栈,因此无需下载任何字体。由于输出尺寸会变大,当你需要最终的宽度和高度时,请使用 `getFrameDimensions(size, frame)`:
+
+```ts
+import { getFrameDimensions } from "qrdx";
+
+getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
+```
+
+`FRAME_STYLES`、`frameSchema`(zod)以及 `QRFrame` / `FrameStyle` 类型也从 `qrdx/types` 导出,可用于服务端校验。
+
+### 在 CLI 中 [#in-the-cli]
+
+```bash
+qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
+```
+
+`--frame-color` 和 `--frame-text-color` 接受十六进制颜色。如果传入了文字或颜色但没有 `--frame`,则使用 `banner-bottom`。
+
+## 官方边框 [#official-frames]
+
+除内置样式外,QRdx 还提供 {facts.officialFrames} 款官方边框:现成的设计,涵盖行动号召、餐厅与咖啡馆、商店与包装、活动与婚礼、酒店、旅行与房产、健康、健身与教育,以及商务与社交。其中 {facts.seasonalFrames} 款适用于节日和季节,从农历新年、侯丽节、开斋节、排灯节,到光明节、复活节、感恩节和圣诞节。每款都是一份边框规格,其中的标签和颜色均可修改,以 CC0 协议发布,并且都经过测试,在手机常见的扫描距离下可以正常扫描。
+
+在 [Playground](/playground) 中,打开**边框**,然后点击**更多**。你可以按名称、用途或节日搜索,也可以选择一个分组。即将到来的节日和季节对应的边框会排在最前面。你也可以在[社区](/community/frames)中找到它们,发布者为 @qrdx。
+
+引擎将它们导出为 `OFFICIAL_FRAMES`:
+
+```tsx
+import { getOfficialFrame, QRCode } from "qrdx";
+
+const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
+
+{diwali && (
+  <QRCode
+    value="https://example.com/offers"
+    frame={{ style: "custom", spec: diwali.spec, text: "Scan for offers" }}
+  />
+)}
+```
+
+`OFFICIAL_FRAME_INDEX` 列出每一款边框(不含规格),因此选择器可以展示整个库,并只在需要时才加载规格。在 [Image API](/docs/developers/image-api#community-items) 和 [MCP 服务器](/docs/developers/mcp)中,可以把官方边框当作社区项目使用,例如 `item=frame:diwali-diya`。
+
+## 能扫出来吗? [#will-it-scan]
+
+`getScanScore` 用于估算设计被扫描的可靠程度。它在浏览器中运行,并按需加载 [jsQR](https://github.com/cozmo/jsQR)。
+
+```ts
+import { getScanScore } from "qrdx";
+
+const { score, grade, checks } = await getScanScore({
+  value: "https://example.com",
+  bodyPattern: "circle",
+  cornerEyePattern: "gear",
+});
+// score: 0–100, grade: "great" | "ok" | "risky" | "fails"
+// checks: [{ id, passed, message, fix? }]
+```
+
+检查内容:
+
+- **在 96、160 和 320 px 下解码。** 设计会按每种宽度渲染,加入类似摄像头的模糊和对比度损失,并在略有不同的缩放比例下解码数次。
+- **对比度**:二维码的每种颜色(包括渐变色标、定位眼颜色和圆点颜色)与背景之间的对比度,以及二维码是否为浅底深色。
+- **徽标覆盖率**:与当前纠错级别所能恢复的范围相比。
+- **静区**:边距,加上边框带来的间隙。
+- **定位眼形状风险**:`circle` 定位眼可能无法被部分扫描应用识别(已停用的 `curly` 定位眼,如果已保存的设计仍在使用,会导致严格的解码器解码失败)。
+- **样式组合**(`style-pair`):在我们的解码测试中会一起失败的形状组合,例如 `small-square` 圆点搭配方形定位眼,以及已保存设计中已停用的中心样式(参见 `getStylePairRisk`)。
+
+`getImageScanScore(fileOrImage)` 对现有图片执行同样的检查:它返回解码内容,以及根据像素测得的解码、对比度、极性、静区和分辨率检查结果。[扫描检查器](/tools/scan-checker)就是基于它构建的。
+
+<Callout type="info">
+  该评分是基于单一开源解码器的启发式估算。手机相机应用通常更宽容,因此请将其作为参考,并对重要的印刷品进行实际扫描测试。
+</Callout>
+
+## 可直接印刷的导出 [#print-ready-export]
+
+`downloadPrintPDF` 会按精确的物理尺寸写出矢量 PDF。模块、定位眼和边框都是矢量路径(徽标仍为位图图像)。
+
+```ts
+import { downloadPrintPDF, downloadPrintSVG, getPrintLayout } from "qrdx";
+
+const props = { value: "https://example.com", frame: { style: "banner-bottom" } } as const;
+
+await downloadPrintPDF(props, {
+  size: 40, // width of the code itself
+  unit: "mm", // or "in"
+  bleed: 3, // millimetres on every side
+  cropMarks: true,
+  colorMode: "cmyk",
+});
+
+await downloadPrintSVG(props, { size: 1.5, unit: "in" }); // width="…in" height="…in"
+
+const layout = getPrintLayout(props, { size: 40 });
+layout.trimWidth; // finished width in mm, frame included
+layout.maxScanDistance; // 400 (mm)
+```
+
+- `size` 是二维码的宽度;边框会增加成品尺寸。
+- 设置出血后,背景(或方形边框的颜色)会延伸到裁切边之外,这样裁切后不会留下白边。裁切标记位于出血区之外。
+- `colorMode: "cmyk"` 使用简单转换(`rgbToCmyk`:K = 1 − max(R, G, B),不使用 ICC 配置文件;纯黑仅以 K 通道印刷)。当品牌色需要精确还原时,请向印刷商索取经过色彩管理的转换。
+- 线性渐变和径向渐变在 PDF 中以平滑渐变着色印刷,当 PDF 为 CMYK 时使用 CMYK;印刷用 SVG 会保留渐变,但仍为 RGB。
+- PDF 中的边框文字使用 Helvetica Bold,因此 Latin-1 之外的字符可能无法显示。其他文字请使用 SVG。
+- `getQRAsPrintPDF` 和 `getQRAsPrintPDFBuffer` 返回文件而不是直接下载,并且也可在 Node 中使用。
+
+**印多大:** 二维码大约可以在其宽度十倍的距离外被扫描,因此尺寸 ≈ 扫描距离 ÷ 10(20 cm 的距离需要 2 cm 宽)。更密集的二维码需要更大的尺寸;[印刷尺寸计算器](/tools/print-size)已将这一点考虑在内。

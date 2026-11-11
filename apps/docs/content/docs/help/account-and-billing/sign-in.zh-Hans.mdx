@@ -1,0 +1,68 @@
+---
+title: "登录方式与邮箱地址"
+description: "使用 Google、GitHub 或邮箱验证码登录,关联登录方式,更改邮箱地址,以及无法访问邮箱时该怎么办。"
+---
+
+## 登录方式 [#ways-to-sign-in]
+
+- **Google** 或 **GitHub**。
+- **邮箱验证码**:输入你的邮箱,然后输入我们发送的 6 位验证码。验证码的有效期为 5 分钟。
+
+<IfAvailable feature="passkeys">
+[添加通行密钥](/docs/help/privacy-and-security/passkeys)后,你还可以使用指纹、面部或屏幕锁登录。
+</IfAvailable>
+
+首次登录时,QRdx 会为你创建账户。你无需记住任何密码。
+
+使用 Google 或 GitHub 登录时,只有它们已验证你的邮箱地址,QRdx 才会创建账户。如果你的邮箱在那里尚未验证,请先完成验证(GitHub 在 **Settings** → **Emails** 下列出你的地址),或改用邮箱验证码登录。
+
+## 并非你本人创建的、使用你的邮箱地址的账户 [#an-account-for-your-address-you-didnt-make]
+
+如果 QRdx 中已有一个使用你的邮箱地址的账户,而且不是你创建的,请使用邮箱验证码登录。验证码证明该地址属于你之后,QRdx 会移除之前的注册者可用来重新登录或继续获取该账户数据的内容:
+
+- 该账户关联的 Google 和 GitHub,以及所有会话;
+- 该账户的两步验证和受信任设备<IfAvailable feature="passkeys">,以及它的通行密钥</IfAvailable>;
+- 该账户的 API 密钥,以及它授权访问该账户的应用;
+- 它设置的 webhook,以及 Slack 和 Discord 提醒,还有它设置的、将扫描记录或表单回复发送到其他工具的任何同步。
+
+账户中的其他内容都会保留,所以之后请检查它的工作区及其成员。
+
+## 关联 Google 或 GitHub [#link-google-or-github]
+
+前往 **Settings** → **Profile & security** → **Sign-in methods**。
+
+- **邮箱验证码**始终处于开启状态。
+- 关联 Google 或 GitHub 后,可以一键登录。该账户使用的邮箱地址必须与你的 QRdx 账户相同。
+- 点击 **Unlink** 可移除其中一个。
+
+## 更改邮箱地址 [#change-your-email-address]
+
+1. 前往 **Settings** → **Profile & security**。
+2. 在 **Email** 旁点击 **Change**,然后[确认是你本人操作](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)。
+3. 输入新地址,并输入我们发送到该地址的验证码。
+
+之后,QRdx 会让你在其他所有设备和浏览器上退出登录,你的旧地址会收到一封邮件,说明账户已迁移,并提供联系支持团队的方式,以防不是你本人操作。
+
+## 无法访问邮箱 [#lost-access-to-your-email]
+
+如果你仍能进入 QRdx,请按上述步骤自行更改邮箱。如果无法通过邮箱确认是你本人,可以使用<IfAvailable feature="passkeys">你的通行密钥、</IfAvailable>你已关联的 Google 或 GitHub 账户,或者你的两步验证方式(如果已开启)。已退出登录?请先使用<IfAvailable feature="passkeys">你的通行密钥或</IfAvailable>已关联的 Google 或 GitHub 账户登录。
+
+如果这些方式都不可行,请用你想要使用的邮箱地址发邮件至 [support@qrdx.dev](mailto:support@qrdx.dev)。将账户迁移到新地址是支持团队处理的最敏感的操作,因此:
+
+- **我们需要证明该账户属于你。**我们会询问账户使用的邮箱地址,以及以下其中一项:
+  - 如果你为 QRdx 付过费,提供你的某张[发票](/docs/help/account-and-billing/invoices)上的编号,以及大致的付款时间;
+  - 如果你账户中的某个工作区使用自己的[域名](/docs/help/domains/custom-domains),则需在该域名下添加我们发送给你的 DNS 记录。
+- **我们会通知旧地址,并等待 7 天。**如果在此期间有人从旧地址回复并表示不同意,我们会停止操作。
+- **然后我们迁移账户。**我们会把账户的邮箱改为新地址,让它在所有地方退出登录,并向旧地址发送邮件。请使用发送到新地址的验证码登录。你的两步验证(如果已开启)保持不变。
+
+如果我们无法确认账户属于你,就不会迁移它,即使这会导致你无法访问该账户。把账户交给错误的人后果会更严重。
+
+在旧地址失效之前,请先添加通行密钥或关联 Google 或 GitHub,这样你始终能确认是你本人操作。
+
+## 退出其他设备 [#sign-out-of-other-devices]
+
+在 **Settings** → **Profile & security** 的 **Sessions** 下,可以退出某一台设备,或点击 **Sign out everywhere else**。
+
+## 登录遇到问题 [#trouble-signing-in]
+
+请参阅[收不到登录验证码或邮件](/docs/help/troubleshooting/emails)。

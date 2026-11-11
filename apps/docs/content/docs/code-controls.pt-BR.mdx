@@ -1,0 +1,65 @@
+---
+title: "Controles do código"
+description: "Pause um QR code dinâmico, proteja com senha, agende, limite as leituras e escolha para onde os códigos encerrados levam as pessoas."
+icon: LockKeyhole
+---
+
+Todo [QR code dinâmico](/docs/dynamic-qr-codes) tem um painel **Acesso e agendamento** na página dele no [painel](/dashboard?to=codes) (abra um código e depois a aba **Configurações**). As mudanças valem a partir da próxima leitura; você nunca precisa reimprimir o código.
+
+| Controle | O que quem lê vê | Plano |
+| --- | --- | --- |
+| Pausar | Sua URL alternativa ou uma página neutra de "esta campanha está pausada" | Todos os planos |
+| Senha | Uma tela de senha; a senha correta abre o código | Pro e Business |
+| Início | Antes do início: uma página de "ainda não começou" | Pro e Business |
+| Término | Após o término: sua URL alternativa ou uma página neutra de "campanha encerrada" | Pro e Business |
+| Limite de leituras | Ao atingir o limite: sua URL alternativa ou a página de "encerrada" | Pro e Business |
+| URL alternativa | Para onde os códigos pausados, encerrados e acima do limite levam as pessoas | Pro e Business |
+
+## Pausar [#pause]
+
+Ative **Pausar código** para interromper um código temporariamente, por exemplo entre dois eventos, e desative para retomar. As leituras feitas enquanto ele está pausado vão para sua URL alternativa, se você definiu uma; caso contrário, vão para uma página simples que diz que a campanha está pausada. Pausar é grátis em todos os planos.
+
+## Senha [#password]
+
+Defina uma senha (com pelo menos 4 caracteres) e quem ler o código verá primeiro uma tela de senha. Depois de digitar a senha correta, aquele navegador fica desbloqueado por 6 horas, tanto no link curto quanto na página hospedada que ele abre. Alterar ou remover a senha bloqueia todos os navegadores que desbloquearam a senha antiga.
+
+As senhas são armazenadas como hashes bcrypt; o QRdx não consegue mostrar uma senha depois, só substituí-la. Tentativas erradas repetidas de um mesmo visitante são desaceleradas.
+
+## Datas de início e término [#start-and-end-dates]
+
+- **Início:** até lá, as leituras mostram "Esta campanha ainda não começou. Leia este código novamente mais tarde."
+- **Término:** a partir dessa data, as leituras vão para sua URL alternativa ou mostram "Esta campanha foi encerrada".
+
+As datas são inseridas no seu próprio fuso horário e armazenadas como momentos exatos, então um código termina no mesmo instante em qualquer lugar. O término deve ser depois do início.
+
+## Limite de leituras [#scan-limit]
+
+O limite conta as leituras do mesmo jeito que suas análises: bots, pré-visualizações de links e leituras repetidas em sequência de um mesmo dispositivo não são contados. Quando o código atinge o limite, as próximas leituras vão para sua URL alternativa ou para a página de "encerrada". Aumente ou remova o limite para reabrir o código.
+
+## URL alternativa [#fallback-url]
+
+O endereço para onde os códigos pausados, expirados e acima do limite levam as pessoas, como sua página inicial ou a próxima campanha. Sem ele, quem lê vê uma pequena página neutra. Essa página nunca mostra anúncios, promoção do QRdx nem convite para cadastro, apenas o status da campanha e um link "Denunciar abuso".
+
+A URL alternativa passa pelas mesmas verificações de segurança que o destino de um código.
+
+## Planos e downgrades [#plans-and-downgrades]
+
+- Pausar funciona em todos os planos.
+- Definir ou alterar senha, datas, limite de leituras ou URL alternativa exige Pro ou Business.
+- **Um downgrade nunca encerra nem bloqueia um código.** Os controles definidos enquanto você estava no Pro continuam funcionando exatamente como configurados, e você pode remover qualquer um deles em qualquer plano.
+
+## Verificações de segurança nos links [#safety-checks-on-links]
+
+O QRdx verifica cada destino e URL alternativa quando você salva:
+
+- links listados pelo [Google Web Risk](https://cloud.google.com/web-risk) como malware, phishing ou software indesejado são rejeitados (quando o servidor tem uma chave do Web Risk). Quando o Web Risk não consegue responder a tempo, como pode acontecer em um lote grande, o código é criado e o link é consultado de novo pouco depois; se o Web Risk o listar nesse momento, o código é desativado e um revisor o analisa;
+- `javascript:`, `data:` e outros links que não são da web são rejeitados;
+- nos primeiros 7 dias de uma conta, códigos que apontam para encurtadores de URL, endereços IP puros ou domínios parecidos (homóglifos) são salvos desativados e **retidos para revisão**. O painel avisa; você não precisa fazer mais nada, e um revisor ativa o código quando ele for aprovado. Contas novas também podem criar até 30 códigos dinâmicos por hora, ou {facts.newPaidAccountHourlyCodes} em um workspace com plano pago. Acima disso, o erro informa quantos minutos faltam para você poder criar mais, e uma importação pelo painel fica em pausa até lá.
+
+Qualquer pessoa pode denunciar um código em [qrdx.dev/report-abuse](/report-abuse). Códigos desativados após uma revisão deixam de funcionar para todos e não podem ser reativados pelo dono.
+
+## Hospedagem própria [#self-hosting]
+
+- `WEB_RISK_API_KEY`: uma chave de API do Google Cloud com a Web Risk API ativada. Sem ela, os links são verificados apenas pelas regras offline acima.
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` e `TURNSTILE_SECRET_KEY`: Cloudflare Turnstile no formulário público de denúncia (opcional).
+- Os cookies de desbloqueio são assinados com `BETTER_AUTH_SECRET`.

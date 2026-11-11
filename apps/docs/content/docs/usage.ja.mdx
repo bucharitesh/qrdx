@@ -1,0 +1,152 @@
+---
+title: "基本的な使い方"
+description: "QRCodeコンポーネントでQRコードを表示し、色、パターン、ロゴ、テンプレート、誤り訂正を変更する方法を説明します。"
+icon: FileCode
+---
+
+用途に合わせてQRコードを作成し、カスタマイズします。
+
+<NpmStatus package="qrdx" />
+
+## 基本のQRコード [#basic-qr-code]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+/>
+```
+
+## 色のカスタマイズ [#customize-colors]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#ffffff"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+## パターンの追加 [#add-patterns]
+
+{facts.bodyPatterns}種類のボディパターン、{facts.eyeShapes}種類の角のアイパターン、{facts.eyeCentres}種類の角のアイドットパターンから選べます。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+/>
+```
+
+ボディパターンは{facts.bodyPatterns}種類あり、`square`、`rounded`、`circle` から、つながった `liquid` や `classy` のスタイル、遊び心のある `star` や `heart` のドットまで揃っています。一覧と、角のアイやアイドットのオプションについては[パターン](/docs/features/patterns)を、すべてを見るには[シェイプ、アイ、フレーム](/docs/styles)をご覧ください。
+
+## ロゴの追加 [#add-a-logo]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+ロゴを追加するときは、より高い誤り訂正レベル(`Q` または `H`)を使用してください。
+
+## テンプレートの使用 [#use-templates]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  size={256}
+/>
+```
+
+利用可能なテンプレート: `default`、`Arrow`、`StandardBox`、`SquareBorder`、`StrikedBox`、`Halloween`
+
+## 誤り訂正 [#error-correction]
+
+用途に応じて選択します。
+
+- **L(低)** — 訂正能力は約7%、きれいな環境向け
+- **M(中)** — 訂正能力は約15%、一般的な用途向け
+- **Q(四分位)** — 訂正能力は約25%、ロゴを入れる場合向け
+- **H(高)** — 訂正能力は約30%、最大の耐性
+
+```tsx
+<QRCode
+  value="https://example.com"
+  level="Q"
+/>
+```
+
+## コンポーネントのバリエーション [#component-variants]
+
+### QRCodeCanvas [#qrcodecanvas]
+
+グラデーションを使った高度なカスタマイズ向けです。
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+拡大縮小できるベクターグラフィックス向けです。
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## ベストプラクティス [#best-practices]
+
+### サイズの目安 [#size-guidelines]
+
+- **128px** — スキャンできる最小サイズ
+- **256〜512px** — Webでの推奨サイズ
+- **1024px以上** — 高品質な印刷向け
+
+### 誤り訂正 [#error-correction-1]
+
+- ロゴを追加するときは `Q` または `H` を使用します
+- 一般的な用途には `M` を使用します
+- `L` はきれいな環境でのみ使用します
+
+### パフォーマンス [#performance]
+
+- 可能な限り、グラデーションよりも単色を使用します
+- パフォーマンスを高めるには、よりシンプルなパターンを選びます
+- 可能な場合は、QRコードをサーバー側でキャッシュします
+
+## 次のステップ [#next-steps]
+
+- [カラーとグラデーション](/docs/features/colors-gradients) — 高度な色のオプション
+- [テンプレート](/docs/features/templates) — 用意されたスタイル
+- [ダウンロード](/docs/features/downloads) — エクスポートのオプション

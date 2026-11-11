@@ -1,0 +1,53 @@
+---
+title: "Envie leituras para links diferentes"
+description: "Direcione cada leitura por dispositivo, país, área, idioma ou horário e faça testes A/B com o roteamento inteligente."
+---
+
+O roteamento inteligente envia cada leitura de um QR code dinâmico para um link diferente, com base nas regras que você define. Apenas para Pro e Business.
+
+## Adicione uma regra [#add-a-rule]
+
+1. Abra o código em **Codes**.
+2. Em **Settings**, abra **Smart routing**.
+3. Clique em **Add rule** ou comece por um modelo.
+4. Escolha uma condição e o link que as leituras correspondentes abrem.
+5. Clique em **Save rules**.
+
+As leituras que não correspondem a nenhuma regra abrem o destino normal do código.
+
+## Condições que você pode usar [#conditions-you-can-use]
+
+Dispositivo, sistema operacional, país, região, área, idioma, horário do dia, intervalo de datas e número de leituras. Cada condição também pode ser invertida com **is not**.
+
+Uma **área** é um ponto com um raio. Ela usa a localização que quem faz a leitura compartilha quando a [localização precisa](/docs/precise-location) está ativada e, caso contrário, a localização aproximada da rede da pessoa.
+
+Uma regra pode ter até 8 condições. Um código pode ter até 20 regras.
+
+## Modelos [#templates]
+
+- **Smart app link**: iPhones para a App Store, celulares Android para o Google Play.
+- **Country** e **Visitor language**.
+- **Business hours**.
+- **Date range** para uma campanha.
+- **First scans**: um link diferente para as primeiras leituras.
+- **Inside an area**: um link diferente para leituras perto de um lugar.
+- **A/B split**: divide as leituras entre até 5 versões.
+
+## A primeira regra que corresponder vence [#the-first-matching-rule-wins]
+
+As regras são verificadas de cima para baixo. Coloque as regras mais específicas primeiro.
+
+Clique em **Test your rules** para ver para onde uma leitura iria antes de salvar.
+
+## Testes A/B [#ab-tests]
+
+Uma divisão A/B envia cada visitante para uma versão. O mesmo visitante vê a mesma versão pelo resto do dia. A página do código mostra como as leituras se dividem entre as versões.
+
+## Depois de um downgrade [#after-a-downgrade]
+
+As regras salvas continuam funcionando.
+
+## Relacionados [#related]
+
+- [Guia de roteamento inteligente](/docs/smart-routing)
+- [Um código abre a página errada](/docs/help/troubleshooting/wrong-destination)

@@ -1,0 +1,91 @@
+---
+title: "Mantén tu cuenta segura"
+description: "Cómo funciona el inicio de sesión, la verificación en dos pasos, las passkeys, la comprobación cuando un inicio de sesión se usa desde un lugar nuevo, los correos que QRdx envía sobre la seguridad de tu cuenta, cuánto dura un inicio de sesión, cómo cerrar sesión en otros dispositivos y cómo informar de un problema de seguridad."
+---
+
+## Sin contraseñas que se puedan filtrar [#no-password-to-leak]
+
+QRdx no tiene contraseñas. Inicias sesión con Google, GitHub o un código de un solo uso enviado a tu correo<IfAvailable feature="passkeys">, o con una passkey</IfAvailable>.<IfAvailable feature="sso"> Si tu espacio de trabajo está en el plan Business, también puede permitirte iniciar sesión con el [inicio de sesión único](/docs/help/teams/single-sign-on) de tu empresa, o exigirlo.</IfAvailable>
+
+Eso convierte tu cuenta de correo, y tu cuenta de Google o GitHub, en llaves de acceso a QRdx. Activa también la verificación en dos pasos en ellas.
+
+<IfAvailable feature="sso" id="if-your-company-requires-single-sign-on" title="Si tu empresa exige el inicio de sesión único">
+Un espacio de trabajo Business puede [exigir el inicio de sesión único](/docs/help/teams/single-sign-on#require-single-sign-on) para el dominio de correo de su empresa. Si tu dirección pertenece a ese dominio:
+
+- inicias sesión solo con el inicio de sesión único: un código por correo, Google o GitHub<IfAvailable feature="passkeys">, o **Continue with passkey**,</IfAvailable> no te permitirán entrar;
+- la verificación en dos pasos se sigue aplicando después de la página de inicio de sesión de tu empresa<IfAvailable feature="passkeys">, y una passkey sigue sirviendo como segundo paso</IfAvailable>;
+- cada inicio de sesión dura 24 horas como máximo, y después vuelves a iniciar sesión con el inicio de sesión único;
+- no puedes cambiar tu correo de QRdx por una dirección de fuera del dominio.
+
+Cuando el espacio de trabajo lo activa, se cierran tus sesiones que no empezaron con el inicio de sesión único. Los propietarios del espacio de trabajo conservan sus otras formas de iniciar sesión, para que un problema con la página de inicio de sesión de la empresa no deje a todos fuera.
+</IfAvailable>
+
+## Activa la verificación en dos pasos [#turn-on-two-step-verification]
+
+La [verificación en dos pasos](/docs/help/privacy-and-security/two-step-verification) hace que QRdx te pida un segundo paso después de iniciar sesión, sea cual sea la forma en que lo hagas: <IfAvailable feature="passkeys">tu passkey o </IfAvailable>un código de una aplicación de autenticación. Quien acceda a tu correo o a tu cuenta de Google seguirá sin poder entrar en QRdx sin ese paso. Recibes 10 códigos de respaldo para cuando no puedas completar el segundo paso. Al activarla se cierra la sesión en todos los demás navegadores o dispositivos con tu cuenta, así que cada uno tendrá que iniciar sesión de nuevo con el segundo paso.
+
+<IfAvailable feature="passkeys" id="add-a-passkey" title="Añade una passkey">
+Una [passkey](/docs/help/privacy-and-security/passkeys) comprueba que eres tú con tu huella, tu rostro o el bloqueo de pantalla. Solo funciona en el sitio propio de QRdx, así que un sitio falso no puede obtenerla. Puede iniciar tu sesión por sí sola con **Continue with passkey**, o ser tu segundo paso. Añadir una passkey mientras la verificación en dos pasos está desactivada la activa, lo que cierra la sesión en tus otros dispositivos.
+</IfAvailable>
+
+## Los cambios te piden confirmar que eres tú [#changes-ask-you-to-confirm-its-you]
+
+Antes de un cambio en la seguridad de tu cuenta, QRdx te pide que [confirmes que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), aunque ya hayas iniciado sesión: cambiar tu dirección de correo, eliminar tu cuenta, activar o desactivar la verificación en dos pasos, generar nuevos códigos de respaldo, cambiar tus métodos del segundo paso, o vincular o desvincular Google o GitHub. Lo mismo ocurre al crear una clave de API o el secreto de cliente de una aplicación OAuth, aprobar una aplicación que pide usar tu cuenta, añadir un webhook o cambiar su URL, mostrar o rotar el secreto de firma de un webhook, añadir un webhook de notificaciones de Slack o Discord o conectar una integración que envía tus escaneos o las respuestas de formularios a otra herramienta y, en un espacio de trabajo, eliminarlo, cambiar el rol de alguien, quitar a alguien o invitar a un administrador.<IfAvailable feature="sso"> Lo mismo ocurre con los cambios en la conexión de inicio de sesión único de un espacio de trabajo y al exigir el inicio de sesión único.</IfAvailable>
+
+Con la verificación en dos pasos activada, confirmas con <IfAvailable feature="passkeys">tu passkey, </IfAvailable>un código de autenticación o un código de respaldo, nunca con un código enviado por correo. Sin ella, puedes usar un código de 6 dígitos que QRdx te envía por correo<IfAvailable feature="passkeys">, tu passkey si tienes una,</IfAvailable> o volver a iniciar sesión con una cuenta de Google o GitHub que hayas vinculado<IfAvailable feature="sso"> (o con el inicio de sesión único de tu espacio de trabajo, cuando usa OIDC)</IfAvailable>. Una confirmación dura 10 minutos en ese navegador.
+
+Cambiar tu dirección de correo también requiere un código enviado a la nueva dirección. Después se cierra tu sesión en todos los demás sitios y la dirección anterior recibe un correo avisando del cambio. ¿Has perdido el acceso a tu correo? Consulta [qué hacer](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+## Un inicio de sesión usado desde un lugar nuevo [#a-sign-in-used-somewhere-new]
+
+Cuando inicias sesión, QRdx anota el país desde el que lo hiciste y tu navegador, por ejemplo "Chrome on macOS". Si ese inicio de sesión se usa después desde otro país y con otro navegador, QRdx te pide que [confirmes que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) antes de poder hacer nada más en tu cuenta. Hasta que lo hagas, ese navegador se trata como si hubiera cerrado sesión en todos los demás sitios de QRdx. Así, quien copie tu inicio de sesión de tu navegador no podrá usarlo desde lejos a menos que también pueda confirmar que eres tú.
+
+Solo lo pide cuando han cambiado ambas cosas. Viajar con el mismo navegador, o actualizar tu navegador o tu sistema, no cuenta. Cuando confirmas, QRdx anota el nuevo país y navegador para ese inicio de sesión. También puedes cerrar sesión e iniciarla de nuevo.
+
+Es una comprobación adicional, no una garantía: no se pide confirmación si un inicio de sesión copiado se usa desde tu propio país o con el mismo tipo de navegador. QRdx solo conoce el país cuando su proveedor de alojamiento lo facilita, y donde no lo hace, esta comprobación no se ejecuta. Para terminar un inicio de sesión que no reconoces, [cierra sesión en otros dispositivos](#sign-out-other-devices).
+
+## Correos sobre la seguridad de tu cuenta [#emails-about-your-accounts-security]
+
+Enviamos un correo a la dirección de tu cuenta cuando:
+
+- un navegador o dispositivo inicia sesión en tu cuenta por primera vez;
+- se activa o desactiva la verificación en dos pasos, se añade o se quita una aplicación de autenticación<IfAvailable feature="passkeys"> o una passkey</IfAvailable>, o se generan nuevos códigos de respaldo;
+- se usa un código de respaldo, para iniciar sesión o para confirmar que eres tú, indicando cuántos códigos te quedan;
+- se pide al soporte que desactive tu verificación en dos pasos, con el día en que ocurrirá y cómo evitarlo, y cuando se cancela;
+- se cambia tu dirección de correo (se envía a la dirección anterior).
+
+Cada correo indica qué ocurrió, en qué dispositivo y navegador (por ejemplo "Chrome on macOS"), aproximadamente dónde, desde qué dirección IP y cuándo. **Review security** abre los ajustes de seguridad. Si no fuiste tú, sigue los pasos del correo y contacta con el soporte.
+
+Los correos que contienen un código, como los códigos de inicio de sesión y el código que confirma que eres tú, indican aproximadamente desde dónde se pidió el código. QRdx nunca te pedirá un código por teléfono, chat o correo: no se lo des a nadie.
+
+### Inicios de sesión nuevos [#new-sign-ins]
+
+QRdx reconoce un navegador por una cookie que establece cuando terminas de iniciar sesión. Cuando un navegador o dispositivo sin esa cookie inicia sesión en tu cuenta, recibes un correo. Con la verificación en dos pasos activada, se envía una vez completado el segundo paso.
+
+Iniciar sesión de nuevo en un navegador que QRdx ya reconoce no envía correo, y crear tu cuenta tampoco. Si borras tus cookies o usas una ventana privada, el siguiente inicio de sesión allí cuenta como nuevo.
+
+Cada navegador nuevo recibe su propio correo, hasta 10 al día, para que una ráfaga de inicios de sesión no inunde tu bandeja de entrada. Todos los inicios de sesión siguen apareciendo en **Sessions**. QRdx recuerda los 50 navegadores que has usado más recientemente y olvida uno que no ha iniciado sesión en 400 días.
+
+<IfAvailable feature="sso">
+Una excepción: cuando inicias sesión a través del proveedor de identidad SAML de tu espacio de trabajo y la verificación en dos pasos está desactivada, QRdx no puede reconocer el navegador al volver, por lo que no envía este correo.
+</IfAvailable>
+
+## Cuánto tiempo permaneces con la sesión iniciada [#how-long-you-stay-signed-in]
+
+Un inicio de sesión dura hasta 30 días. Después, QRdx te pide que inicies sesión de nuevo en ese navegador, sin importar la frecuencia con que lo hayas usado. Si no usas QRdx en un navegador durante aproximadamente una semana, se cierra tu sesión allí antes.
+
+## Cierra sesión en otros dispositivos [#sign-out-other-devices]
+
+Ve a **Settings** → **Profile & security**. En **Sessions**, cierra la sesión de un dispositivo o haz clic en **Sign out everywhere else**. Esto nunca te pide confirmar que eres tú, así que puedes hacerlo de inmediato.
+
+Activar la verificación en dos pasos también cierra la sesión en todos los demás dispositivos. Si el soporte la desactiva por ti, lo cual [espera 7 días](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes), se cierra la sesión en todos los dispositivos ese día, incluido el que estás usando.<IfAvailable feature="sso"> Si tu empresa empieza a exigir el inicio de sesión único, se cierran tus sesiones que no empezaron con él, y una sesión de inicio de sesión único dura 24 horas como máximo.</IfAvailable>
+
+## Quita las aplicaciones que conectaste [#remove-apps-you-connected]
+
+Si dejaste que otra aplicación use tu cuenta de QRdx, aparece en **Settings** → **Authorized apps**. Quita las que no uses. Una aplicación sigue funcionando después de que cierres sesión, por eso aprobar una te pide confirmar que eres tú.
+
+## Informa de un problema de seguridad [#report-a-security-problem]
+
+Escribe a [support@qrdx.dev](mailto:support@qrdx.dev) con un asunto que empiece por `[security]`. Por favor, no lo publiques en incidencias públicas de GitHub. Consulta la [política de seguridad](/legal/security).
+
+Un código QR dañino no es un error de seguridad: [infórmalo](/docs/help/privacy-and-security/report-abuse) en su lugar.

@@ -201,7 +201,9 @@ describe.each(TRANSLATED_LOCALES)("the %s catalog", (locale) => {
 
   test("keeps product and brand names", () => {
     for (const [key, english] of flatten(en)) {
-      const translation = messages.get(key) ?? "";
+      // A missing string shows the English, which keeps the names.
+      const translation = messages.get(key);
+      if (translation === undefined) continue;
       for (const name of ["QRdx", "Never-Hostage", "AGPL-3.0", "GitHub"]) {
         if (english.includes(name)) expect(translation, key).toContain(name);
       }

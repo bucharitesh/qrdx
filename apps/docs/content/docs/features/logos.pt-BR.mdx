@@ -1,0 +1,166 @@
+---
+title: "Logos"
+description: "Adicione um logo no centro de um QR code sem prejudicar a leitura."
+icon: Image
+---
+
+Adicione logos de marca aos QR codes mantendo a legibilidade.
+
+## Logo básico [#basic-logo]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+Sempre use uma correção de erros maior (`Q` ou `H`) com logos.
+
+## Tamanho, espaço livre e posição [#size-clear-space-and-position]
+
+`logoOptions` posiciona o logo em unidades que não dependem do tamanho da renderização, em `QRCode` e em `getQRData`:
+
+- `size`: a largura do logo como proporção da largura do código, de `0.1` a `0.3` (padrão `0.25`). Nos nossos testes de decodificação, até o nível H deixa de ler acima de 25%.
+- `padding`: espaço livre ao redor do logo, de `0` a `2` módulos.
+- `x` e `y`: onde fica o centro do logo ao longo do código, de `0` a `1` (padrão `0.5`, o meio). O logo sempre fica dentro do código.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="https://example.com/logo.png"
+  level="H"
+  logoOptions={{ size: 0.2, padding: 1, x: 0.6, y: 0.55 }}
+/>
+```
+
+`QRCode` e `getQRData` nunca desenham um logo maior do que o código consegue reparar. Um logo (com seu espaço livre) estraga todas as palavras-código que ele toca, e cada bloco de correção de erros repara só um certo número delas. Por isso, eles contam as palavras-código estragadas bloco a bloco e reduzem o logo até que o pior bloco use no máximo 60% da sua capacidade de reparo (o mesmo orçamento do selo Logo QR). Códigos pequenos comportam menos: no nível Q, um link curto comporta um logo de cerca de 13–17% da largura, e o nível H ou um conteúdo mais curto abre espaço para mais. `getLogoSizeLimit(props)` retorna o maior tamanho para um código, e a pontuação de leitura verifica a mesma contagem. O `imageSettings` bruto em `QRCodeSVG`, `QRCodeCanvas` e `getQRAsSVG` recebe o mesmo limite: um logo que cabe é desenhado como foi definido, e um maior é reduzido em torno do próprio centro.
+
+Mantenha um logo deslocado longe dos três olhos dos cantos e do quadrado pequeno perto do canto inferior direito (o padrão de alinhamento que os decodificadores usam para corrigir a perspectiva). A pontuação de leitura reprova um logo que cubra um deles.
+
+No playground, **Design → Logo options** tem os mesmos controles, além de **Raise error correction for big logos** (`autoLevel`).
+
+## Forma, base e fundo [#shape-plate-and-background]
+
+- `shape`: recorta o logo em `"square"` (como foi enviado, o padrão), cantos `"rounded"` ou `"circle"`.
+- `plate`: uma cor sólida desenhada atrás do logo, na mesma forma; o logo fica encaixado dentro dela.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="/logo.png"
+  level="H"
+  logoOptions={{ size: 0.22, shape: "circle", plate: "#ffffff" }}
+/>
+```
+
+O recorte é um clip path de SVG. O PDF e o EPS de impressão recortam o mesmo contorno, então todos os formatos de download ficam iguais. O EPS não tem transparência, então as partes transparentes de um logo saem brancas nele.
+
+Se um logo enviado estiver sobre uma caixa de cor sólida (comum em JPEGs), o playground oferece **Remove background**. Quando os quatro cantos têm a mesma cor, ele apaga essa cor das bordas para dentro, então a mesma cor dentro da marca (letras brancas, por exemplo) permanece. No código, `removeLogoBackground(src)` retorna o PNG limpo como data URL no navegador, e `removeLogoBackdrop(pixels)` faz o mesmo em pixels RGBA em qualquer lugar.
+
+## Controle avançado [#advanced-control]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "https://example.com/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true,
+    x: 216,
+    y: 216,
+    opacity: 0.9
+  }}
+  level="Q"
+/>
+```
+
+## Diretrizes de tamanho [#size-guidelines]
+
+- **QR de 256px**: logo de 32-48px
+- **QR de 512px**: logo de 64-96px
+- **QR de 1024px**: logo de 128-192px
+
+Mantenha os logos entre 10-30% do tamanho do QR code.
+
+## Escavação do logo [#logo-excavation]
+
+### O que faz [#what-it-does]
+
+A escavação remove os módulos do QR sob o logo para melhorar a leitura.
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true  // Recommended for most logos
+  }}
+/>
+```
+
+### Espaço livre e correção de erros [#clear-space-and-error-correction]
+
+`padding` (nos mesmos pixels de `width` e `height`) limpa módulos extras ao redor do logo, para que suas bordas nunca encostem no código. `autoLevel` eleva a correção de erros para H sempre que a área limpa cobre mais de 7% do código, para que um logo maior continue legível; ele vem desativado por padrão, então os códigos existentes mantêm o nível.
+
+```tsx
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  autoLevel
+  imageSettings={{ src: "/logo.png", height: 110, width: 110, excavate: true, padding: 8 }}
+/>
+```
+
+O logo mantém seu tamanho em pixels independentemente de `margin` (as versões até a 0.0.46 o reduziam conforme a margem aumentava).
+
+### Quando usar [#when-to-use]
+
+- ✅ Logos com fundo sólido
+- ✅ Logos que podem atrapalhar a leitura
+- ❌ Logos transparentes (opcional)
+- ⚠️ Sempre teste a leitura em dispositivos reais
+
+## Formatos de logo [#logo-formats]
+
+- **PNG** — Melhor para transparência
+- **JPG** — Bom para fotos
+- **SVG** — Escalável, mas pode ter problemas de carregamento
+- **WebP** — Formato moderno, boa compressão
+
+## Cálculo do centro [#center-calculation]
+
+```tsx
+const qrSize = 512;
+const logoSize = 80;
+const position = {
+  x: (qrSize - logoSize) / 2,  // 216
+  y: (qrSize - logoSize) / 2   // 216
+};
+```
+
+## Boas práticas [#best-practices]
+
+1. Use o formato PNG com transparência
+2. Ative a escavação para logos sólidos
+3. Use correção de erros `Q` ou `H`
+4. Mantenha o tamanho do logo razoável (10-30%)
+5. Teste a leitura nos dispositivos de destino
+
+## Próximos passos [#next-steps]
+
+- [Downloads](/docs/features/downloads) — Exporte QR codes com logos
+- [Templates](/docs/features/templates) — Combine logos com templates
+- [Cores e gradientes](/docs/features/colors-gradients) — Estilize logos com cores
