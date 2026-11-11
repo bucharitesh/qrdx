@@ -39,7 +39,7 @@ import {
   ART_TEXT_MAX_LENGTH,
   seedsForRun,
 } from "./config";
-import { AI_ART_PRESETS } from "./presets";
+import type { AIArtPreset } from "./presets";
 import {
   AI_ART_REFERENCE_TYPES,
   readReferenceFile,
@@ -64,7 +64,9 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const art = useAIArtRun({ store });
   const [text, setText] = useState("");
   const [prompt, setPrompt] = useState("");
-  const [presetId, setPresetId] = useState<string | null>(null);
+  // The style preset the prompt came from, until the prompt is edited.
+  const [preset, setPreset] = useState<AIArtPreset | null>(null);
+  const presetId = preset?.id ?? null;
   const [negativePrompt, setNegativePrompt] = useState("");
   const [visibility, setVisibility] = useState<number>(
     ART_QR_VISIBILITY.default,
@@ -155,10 +157,10 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
           <AIArtPresetGallery
             activePresetId={presetId}
             disabled={isGenerating}
-            onSelect={(preset) => {
-              setPresetId(preset.id);
-              setPrompt(preset.prompt);
-              setNegativePrompt(preset.negativePrompt ?? "");
+            onSelect={(picked) => {
+              setPreset(picked);
+              setPrompt(picked.prompt);
+              setNegativePrompt(picked.negativePrompt ?? "");
             }}
           />
           <Textarea
@@ -167,9 +169,8 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             maxLength={ART_PROMPT_MAX_LENGTH}
             onChange={(event) => {
               setPrompt(event.target.value);
-              const preset = AI_ART_PRESETS.find((p) => p.id === presetId);
               if (preset && preset.prompt !== event.target.value) {
-                setPresetId(null);
+                setPreset(null);
               }
             }}
             placeholder="Describe a scene, e.g. a lighthouse on a rocky coast at sunset, oil painting"

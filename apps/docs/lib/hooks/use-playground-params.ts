@@ -169,15 +169,26 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     window.history.replaceState(null, "", stripped);
     setSettled(true);
 
-    if (outcome.applied.length > 0) {
+    const trackHandoff = (applied: string[]) => {
+      if (applied.length === 0) return;
       track("playground_handoff", {
         source: handoffSource(
           handoffReferrer(origin),
           origin,
           new URLSearchParams(search).get("ref"),
         ),
-        target: outcome.applied.join("+"),
+        target: applied.join("+"),
       });
+    };
+    // A link's AI art style is applied once the style catalogue loads.
+    if (outcome.artStyle) {
+      void outcome.artStyle.then((applied) =>
+        trackHandoff(
+          applied ? [...outcome.applied, "artStyle"] : outcome.applied,
+        ),
+      );
+    } else {
+      trackHandoff(outcome.applied);
     }
     if (outcome.applied.includes("preset") && params.preset) {
       track("theme_applied", { method: "preset", preset: params.preset });

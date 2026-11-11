@@ -21,7 +21,7 @@ import { useCommunitySheetStore } from "@/components/editor/community-sheet-stor
 import { checkUrl } from "@/components/editor/content-forms/url-check";
 import type { LinkedDynamicCode } from "@/components/editor/dynamic-link-toggle";
 import { usePhotoScanDialogStore } from "@/components/editor/photo-scan-dialog-store";
-import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
+import { loadAIArtPresets } from "@/components/sections/ai-art/load-presets";
 import { toPayload } from "@/components/sections/tools/payload";
 import { defaultThemeState } from "@/config/qr";
 import {
@@ -87,6 +87,12 @@ export interface ApplyOutcome {
   notice?: string | null;
   /** Puts back the design and content from before */
   undo: () => void;
+  /**
+   * A link's AI art style, applied once the preset catalogue has loaded (it
+   * isn't in the playground's first load): true when it was a known style
+   * and filled in the form, so analytics can count `artStyle` then.
+   */
+  artStyle?: Promise<boolean>;
 }
 
 const typeLabel = (type: ContentType) =>
@@ -244,7 +250,7 @@ export function applyPlaygroundParams(
     notice = dynamic.notice;
   }
 
-  // 4. The Art tab's mode (and AI art's style preset).
+  // 4. The Art tab's mode (and AI art's style preset, a moment later).
   const art = applyArtParams(params, context);
   applied.push(...art.applied);
   if (art.look) {
@@ -298,6 +304,7 @@ export function applyPlaygroundParams(
     needsContent,
     notice,
     undo,
+    ...(art.artStyle ? { artStyle: art.artStyle } : {}),
   };
 }
 
@@ -320,16 +327,32 @@ function hostOf(url: string): string {
 function applyArtParams(
   params: PlaygroundParams,
   context: ApplyContext,
-): { applied: string[]; look: string | null } {
+): { applied: string[]; look: string | null; artStyle?: Promise<boolean> } {
   if (!params.art) return { applied: [], look: null };
   const session = useArtSessionStore.getState();
 
   if (params.art === "ai") {
     if (!context.aiArtAvailable) return { applied: [], look: null };
     session.pick("ai");
-    const preset = AI_ART_PRESETS.find(({ id }) => id === params.artStyle);
-    if (preset) session.applyStylePreset(preset);
-    return { applied: preset ? ["art", "artStyle"] : ["art"], look: null };
+    const { artStyle } = params;
+    if (!artStyle) return { applied: ["art"], look: null };
+    // The catalogue loads on demand; the preset fills the form when it's in,
+    // unless the form was changed meanwhile.
+    const draft = useArtSessionStore.getState().draft;
+    return {
+      applied: ["art"],
+      look: null,
+      artStyle: loadAIArtPresets().then(
+        ({ AI_ART_PRESETS }) => {
+          const preset = AI_ART_PRESETS.find(({ id }) => id === artStyle);
+          const store = useArtSessionStore.getState();
+          if (!preset || store.draft !== draft) return false;
+          store.applyStylePreset(preset);
+          return true;
+        },
+        () => false,
+      ),
+    };
   }
 
   const mode = params.art === "image" ? "halftone" : "logo";
