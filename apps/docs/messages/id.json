@@ -1173,7 +1173,7 @@
       },
       "payments": {
         "name": "Pembayaran",
-        "detail": "Kode UPI, Bitcoin, Ethereum, PayPal, Venmo, dan SEPA (EPC), selalu dengan langkah konfirmasi."
+        "detail": "Kode UPI, Pix, PayNow, PromptPay, VietQR, dan SEPA (EPC), PayPal, Venmo, serta dompet kripto, selalu dengan langkah konfirmasi."
       },
       "products": {
         "name": "Kode produk",
@@ -1324,7 +1324,12 @@
       "copyLink": "Salin tautan",
       "copyUsername": "Salin nama pengguna",
       "copyIban": "Salin IBAN",
+      "copyPixKey": "Salin kunci Pix",
+      "copyNumber": "Salin nomor",
+      "copyAccount": "Salin akun",
+      "copyMerchant": "Salin merchant",
       "epcNote": "Aplikasi perbankan di kawasan zona euro dapat memindai kode ini secara langsung. Anda juga dapat menyalin IBAN ke transfer baru.",
+      "bankAppNote": "Bayar dengan memindai kode ini menggunakan aplikasi perbankan yang mendukung {name}.",
       "upiNote": "Membuka aplikasi UPI (Google Pay, PhonePe, Paytm, BHIM…) di ponsel yang memilikinya.",
       "restyle": "Ubah gaya di Playground",
       "name": "Nama",
@@ -1346,7 +1351,6 @@
       "copyCoordinates": "Salin koordinat",
       "number": "Nomor",
       "call": "Telepon",
-      "copyNumber": "Salin nomor",
       "to": "Kepada",
       "message": "Pesan",
       "writeText": "Tulis pesan",
