@@ -12,6 +12,7 @@ import {
   resolveRender,
 } from "@/lib/qr-api/render";
 import { type ApiStyle, parseStyleQuery } from "@/lib/qr-api/style";
+import { UnknownBrandLogoError } from "@/lib/qr-design/logo";
 import {
   type ConvertedFormat,
   IMAGE_CONTENT_TYPES,
@@ -210,6 +211,9 @@ async function styled(req: NextRequest, query: Query) {
   } catch (error) {
     if (error instanceof CommunityItemError) {
       throw invalid("item", error.message);
+    }
+    if (error instanceof UnknownBrandLogoError) {
+      throw invalid("logoIcon", error.message);
     }
     throw error;
   }

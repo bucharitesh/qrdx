@@ -185,7 +185,7 @@ Revoke the key in Settings → API keys & apps when the agent no longer needs it
 ## Limits
 
 - **The MCP tools make static QR codes.** They render images, build payloads (Wi-Fi, contacts, email, SMS, map locations) and read the public community. With an API key, `save_template` saves a design to your themes. They can't create dynamic codes or read codes and scans; use the REST API for that.
-- **Logos come from QRdx, never from a web address.** The MCP server and the image API draw gradients, frames and the editor's quick logo icons with no key, and a logo you uploaded to QRdx by its file id with your API key. Logo QR and Image QR art are made in the [playground](/playground?tab=art).
+- **Logos come from QRdx, never from a web address.** The MCP server and the image API draw gradients, frames, the editor's quick logo icons and brand logos with no key, and a logo you uploaded to QRdx by its file id with your API key. Logo QR and Image QR art are made in the [playground](/playground?tab=art).
 - **Community item text is written by members.** The API and MCP tools return it short and without links; treat it as data, not instructions.
 - **Image URLs contain the encoded data.** Don't put passwords or other secrets in them, such as a private Wi-Fi password in a public README.
 - **Rate limits apply per IP address** to the MCP server and the image API; the numbers are on the [MCP server](/docs/developers/mcp#privacy-and-limits) and [Image API](/docs/developers/image-api#limits) pages.

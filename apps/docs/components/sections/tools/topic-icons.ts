@@ -1,14 +1,8 @@
 import {
-  LinkedinLogo,
-  Star,
-  XLogo,
-} from "@repo/design-system/components/icons";
-import {
   Airplane,
   ArchiveBook,
   Award,
   Bank,
-  Bitcoin,
   Book,
   Book1,
   Box,
@@ -30,26 +24,21 @@ import {
   DirectSend,
   DocumentCopy,
   DocumentText,
-  Ethereum,
-  Facebook,
   Flag,
   Flag2,
   Gallery,
   Glass,
-  GoogleDrive,
   Hashtag,
   Health,
   Heart,
   Hospital,
   House,
   Image,
-  Instagram,
   Judge,
   Link,
   Link2,
   Location,
   Lovely,
-  Messages2,
   MessageText,
   Mobile,
   Moneys,
@@ -57,7 +46,6 @@ import {
   Musicnote,
   MusicPlaylist,
   Note,
-  Paypal,
   People,
   Personalcard,
   Pet,
@@ -75,8 +63,6 @@ import {
   ShoppingCart,
   Signpost,
   Sms,
-  Snapchat,
-  Spotify,
   Sticker,
   Tag,
   Teacher,
@@ -88,53 +74,42 @@ import {
   TruckFast,
   UserSquare,
   VideoPlay,
-  VideoVertical,
-  Wallet,
   Weight,
-  Whatsapp,
   Wifi,
-  Youtube,
 } from "iconsax-reactjs";
+import { LinkedinIcon } from "@/components/landing/social-networks";
+import { brandIcon } from "@/lib/brand-logos/brand-logo";
+import { CONTENT_TYPE_BRANDS } from "@/lib/brand-logos/content-types";
 import type { QrTypeGroup } from "@/lib/qr-types-content";
 import type { PageTypeId } from "@/lib/seo-content/page-types";
 import type { ContentType } from "@/types/qr-content";
 import type { CardIcon } from "./cards";
 
+const BRAND_TYPE_ICONS = Object.fromEntries(
+  Object.entries(CONTENT_TYPE_BRANDS).map(([type, slug]) => [
+    type,
+    brandIcon(slug),
+  ]),
+) as Record<keyof typeof CONTENT_TYPE_BRANDS, CardIcon>;
+
 /** Icons for the /qr-code-generator/[type] cards. */
 export const QR_TYPE_ICONS: Record<ContentType, CardIcon> = {
+  // Brands: their real marks (Simple Icons), in the text color.
+  ...BRAND_TYPE_ICONS,
   url: Link,
   text: DocumentText,
   email: Sms,
   phone: Call,
   sms: MessageText,
-  whatsapp: Whatsapp,
   wifi: Wifi,
   vcard: Personalcard,
   maps: Location,
-  facebook: Facebook,
-  instagram: Instagram,
-  reddit: Messages2,
-  tiktok: VideoVertical,
-  twitter: XLogo,
-  linkedin: LinkedinLogo,
-  youtube: Youtube,
-  pinterest: Gallery,
-  snapchat: Snapchat,
-  threads: Hashtag,
+  linkedin: LinkedinIcon,
   upi: Card,
-  paypal: Paypal,
-  "google-review": Star,
-  venmo: Wallet,
-  spotify: Spotify,
-  bitcoin: Bitcoin,
-  ethereum: Ethereum,
-  etsy: Shop,
   dubsh: Link2,
-  "google-drive": GoogleDrive,
   attendance: ClipboardTick,
   amazon: ShoppingCart,
   flipkart: ShoppingBag,
-  calcom: Calendar,
 };
 
 export const QR_TYPE_GROUP_ICONS: Record<QrTypeGroup, CardIcon> = {

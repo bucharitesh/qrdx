@@ -16,13 +16,14 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
-import { Copy, Facebook, Share, Sms, Whatsapp } from "iconsax-reactjs";
+import { Copy, Share, Sms } from "iconsax-reactjs";
 import { QRCodeSVG } from "qrdx";
 import { type ComponentType, useEffect, useState } from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { brandIcon } from "@/lib/brand-logos/brand-logo";
 import type { OmittedPart } from "@/lib/playground-style";
 import { styleSvgOptions } from "@/lib/qr-design/engine-options";
 import { useQREditorStore } from "@/store/editor-store";
@@ -60,6 +61,10 @@ function omittedNote(parts: OmittedPart[]): string | null {
 
 const SAMPLE_VALUE = "https://qrdx.dev";
 
+// Real marks, filling the box like the X and LinkedIn logos beside them.
+const FacebookMark = brandIcon("facebook", { inset: 0 });
+const WhatsappMark = brandIcon("whatsapp", { inset: 0 });
+
 function shareTargets(url: string, title: string) {
   const link = encodeURIComponent(url);
   const text = encodeURIComponent(title);
@@ -76,12 +81,12 @@ function shareTargets(url: string, title: string) {
     },
     {
       label: "Share on Facebook",
-      Icon: Facebook,
+      Icon: FacebookMark,
       href: `https://www.facebook.com/sharer/sharer.php?u=${link}`,
     },
     {
       label: "Send on WhatsApp",
-      Icon: Whatsapp,
+      Icon: WhatsappMark,
       href: `https://wa.me/?text=${text}%20${link}`,
     },
     {

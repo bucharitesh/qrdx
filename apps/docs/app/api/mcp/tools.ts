@@ -11,6 +11,7 @@ import {
   apiKeyRequiredError,
   optionalApiKeyCaller,
 } from "@/app/api/v1/codes/_lib/api";
+import { brandLogoOptions } from "@/lib/brand-logos/options";
 import {
   COMMUNITY_PAGE_MAX,
   CommunityItemError,
@@ -41,6 +42,7 @@ import {
   FILE_ID,
   parseApiStyle,
 } from "@/lib/qr-api/style";
+import { logoIconSchema } from "@/lib/qr-design/logo-icon";
 import { LOGO_ICON_IDS } from "@/lib/qr-design/style";
 import {
   buildQrImageUrl,
@@ -214,7 +216,7 @@ const generateInput = z.object({
     .max(FRAME_TEXT_MAX_LENGTH)
     .optional()
     .describe(`The frame's label, up to ${FRAME_TEXT_MAX_LENGTH} characters`),
-  logoIcon: z.enum(LOGO_ICON_IDS).optional().describe("A quick logo icon"),
+  logoIcon: logoIconSchema.optional(),
   logoFileId: z
     .string()
     .regex(FILE_ID, "Must be an uploaded file id")
@@ -621,6 +623,7 @@ export function registerQrTools(server: McpServer) {
               frames: FRAME_STYLES.filter((style) => style !== "none"),
               frameTextMaxLength: FRAME_TEXT_MAX_LENGTH,
               logoIcons: LOGO_ICON_IDS,
+              brandLogos: brandLogoOptions(),
               style:
                 "generate_qr_code also takes `style`: the editor's style JSON (gradients, custom frames, logoIcon, logoFileId); see list_options.",
             },

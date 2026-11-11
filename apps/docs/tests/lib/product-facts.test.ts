@@ -13,6 +13,7 @@ import { remark } from "remark";
 import remarkMdx from "remark-mdx";
 import { describe, expect, it } from "vitest";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
+import { BRAND_LOGO_COUNT } from "@/lib/brand-logos/catalog.generated";
 import {
   MAX_BULK_TOOL_ROWS,
   MAX_CODES_PER_REQUEST,
@@ -59,6 +60,8 @@ describe("PRODUCT_FACTS", () => {
       auditLogExportRows: "50,000",
       barcodeFormats: BARCODE_FORMATS.length,
       hostedPageTypes: PAGE_TYPE_IDS.length,
+      // lib/brand-logos (the pinned simple-icons release)
+      brandLogos: BRAND_LOGO_COUNT.toLocaleString("en-US"),
       // lib/affiliates/terms.ts
       affiliateCommissionPercent: 30,
       affiliateCommissionMonths: 12,

@@ -205,6 +205,7 @@ export function DesignControls({
             ...styles,
             customLogo: next.customLogo,
             showLogo: next.showLogo,
+            logoOptions: next.logoOptions,
           })
         }
         style={current}

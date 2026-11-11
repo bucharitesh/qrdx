@@ -8,6 +8,7 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { signatureHeader } from "@/lib/events/signature";
 import { PING_EVENT, WEBHOOK_EVENTS } from "@/lib/events/types";
+import { LOGO_ICON_IDS } from "@/lib/qr-design/style";
 import * as n8n from "../../../../plugins/n8n/nodes/Qrdx/constants";
 import { verifySignature } from "../../../../plugins/n8n/nodes/Qrdx/webhook";
 
@@ -18,6 +19,7 @@ interface Parameter {
     minimum?: number;
     maximum?: number;
     maxLength?: number;
+    pattern?: string;
     default?: unknown;
   };
 }
@@ -48,9 +50,17 @@ describe("n8n node: GET /qr options", () => {
     ["dot", n8n.EYE_DOT_SHAPES],
     ["level", n8n.ERROR_CORRECTION_LEVELS],
     ["frame", n8n.FRAMES],
-    ["logoIcon", n8n.LOGO_ICONS],
   ] as const)("%s offers exactly the API's values", (name, values) => {
     expect(sorted(values)).toEqual(sorted(parameter("/qr", name).enum));
+  });
+
+  // The API's logoIcon also takes any Simple Icons brand slug (a pattern,
+  // not an enum); the node offers the quick icons, every one of which the
+  // API accepts.
+  it("offers the API's quick logo icons", () => {
+    expect(sorted(n8n.LOGO_ICONS)).toEqual(sorted(LOGO_ICON_IDS));
+    const pattern = new RegExp(parameter("/qr", "logoIcon").pattern ?? "^$");
+    for (const icon of n8n.LOGO_ICONS) expect(icon).toMatch(pattern);
   });
 
   it("uses the API's limits and defaults", () => {

@@ -43,7 +43,7 @@ import {
 } from "qrdx/types";
 import { z } from "zod";
 import { decodeStyleParam } from "@/lib/playground-style";
-import { LOGO_ICON_IDS, type LogoIconId } from "@/lib/qr-design/style";
+import { logoIconSchema } from "@/lib/qr-design/logo-icon";
 import type { ThemeStyles } from "@/types/theme";
 
 /** Largest `style` JSON, in UTF-8 bytes (a custom frame spec is up to 32 KB). */
@@ -262,10 +262,7 @@ export const apiStyleFields = {
     .describe(
       "Show a logo in the center. With logoIcon or logoFileId it's that logo; alone it's the QRdx mark, which only the editor draws",
     ),
-  logoIcon: z
-    .enum(LOGO_ICON_IDS)
-    .optional()
-    .describe("A quick logo icon, drawn by QRdx on a white tile"),
+  logoIcon: logoIconSchema.optional(),
   logoFileId: z
     .string()
     .regex(FILE_ID, "Must be an uploaded file id")
@@ -412,10 +409,7 @@ export function themeFieldsOf(style: ApiStyle): ThemeStyles {
 /** The logo a style asks for, if any. */
 export function logoRequestOf(
   style: Pick<ApiStyle, "logoIcon" | "logoFileId">,
-):
-  | { kind: "icon"; icon: LogoIconId }
-  | { kind: "file"; fileId: string }
-  | null {
+): { kind: "icon"; icon: string } | { kind: "file"; fileId: string } | null {
   if (style.logoFileId) return { kind: "file", fileId: style.logoFileId };
   if (style.logoIcon) return { kind: "icon", icon: style.logoIcon };
   return null;

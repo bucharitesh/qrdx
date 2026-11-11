@@ -1,18 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import {
-  Bank,
-  Card,
-  Coin,
-  Coin1,
-  DollarSquare,
-  ExportSquare,
-  Mobile,
-  MoneyChange,
-  MoneySend,
-  Moneys,
-  Wallet,
-  Wallet2,
-} from "iconsax-reactjs";
+import { Bank, ExportSquare, Mobile, Moneys, Wallet } from "iconsax-reactjs";
 import type { ComponentType } from "react";
 import {
   buttonClass,
@@ -22,6 +9,7 @@ import {
   surfaceClass,
 } from "@/components/landing/block-kit";
 import { LpHeading } from "@/components/landing/heading";
+import { brandIcon } from "@/lib/brand-logos/brand-logo";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { CopyButton } from "./coupon-copy";
 import { PaymentEditor } from "./payment-editor";
@@ -34,21 +22,22 @@ import {
   paymentSchema,
 } from "./payment-schema";
 
-// Neutral marks, one per method, never look-alikes of a brand's logo (owner
-// rule: brand marks are the real logos). The method's name is always shown.
+// Brands get their real marks (Simple Icons) in the text color, never
+// look-alikes (owner rule). UPI isn't in Simple Icons, so it and the
+// generic methods keep neutral iconsax glyphs. The name is always shown.
 const PAYMENT_ICONS: Record<
   PaymentType,
   ComponentType<{ className?: string }>
 > = {
-  paypal: Wallet2,
-  venmo: MoneySend,
-  cashapp: DollarSquare,
-  revolut: Card,
-  wise: MoneyChange,
+  paypal: brandIcon("paypal"),
+  venmo: brandIcon("venmo"),
+  cashapp: brandIcon("cashapp"),
+  revolut: brandIcon("revolut"),
+  wise: brandIcon("wise"),
   upi: Mobile,
   bank: Bank,
-  bitcoin: Coin,
-  ethereum: Coin1,
+  bitcoin: brandIcon("bitcoin"),
+  ethereum: brandIcon("ethereum"),
   other: Wallet,
 };
 
