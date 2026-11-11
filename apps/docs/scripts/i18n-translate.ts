@@ -46,13 +46,13 @@ import {
   TRANSLATED_LOCALES,
   type TranslatedLocale,
 } from "@/lib/i18n/config";
-import { hasDocs } from "@/lib/i18n/docs";
 import type { TranslationMemory } from "@/lib/i18n/content";
 import {
   CONTENT_SOURCES,
   type ContentString,
   contentEnglish,
 } from "@/lib/i18n/content-sources";
+import { hasDocs } from "@/lib/i18n/docs";
 import { numberMismatch, shapeMismatch } from "@/lib/i18n/icu";
 
 const MESSAGES = path.join(__dirname, "../messages");
