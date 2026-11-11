@@ -244,6 +244,34 @@ const GROUPS: {
       },
     ],
   },
+  // Agency tools (feat/agency-tools)
+  {
+    title: "agency",
+    rows: [
+      {
+        id: "clientReports",
+        hint: "clientReportsHint",
+        value: (l, _, copy) =>
+          l.clientReports
+            ? copy.t(
+                l.clientReportsWhiteLabel
+                  ? "comparison.cells.clientReportsWhiteLabel"
+                  : "comparison.cells.clientReportsBadge",
+              )
+            : false,
+      },
+      {
+        id: "clientPortal",
+        hint: "clientPortalHint",
+        value: flag("clientPortal"),
+      },
+      {
+        id: "invoiceBilling",
+        feature: "invoiceRequests",
+        value: flag("invoiceBilling"),
+      },
+    ],
+  },
   {
     title: "files",
     rows: [
@@ -325,6 +353,8 @@ export interface PricingOptions {
   sso?: boolean;
   /** The workspace audit log (QRDX_EE_LICENSE). */
   auditLog?: boolean;
+  /** Pay-by-invoice requests (qrdx.dev with email; agency tools). */
+  invoiceRequests?: boolean;
 }
 
 const offered = (options: PricingOptions, feature?: keyof PricingOptions) =>
@@ -474,6 +504,7 @@ export function buildHighlights(
       pro.teamThemes ? t("highlights.themesShared") : t("highlights.themes"),
       t("highlights.routing"),
       t("highlights.linkControls"),
+      ...(pro.clientReports ? [t("highlights.clientReports")] : []),
       storageAndForms(pro, storage, copy),
     ],
     business: [
@@ -495,6 +526,12 @@ export function buildHighlights(
         : []),
       t("highlights.conversions"),
       t("highlights.webhooks"),
+      ...(business.clientPortal && business.clientReportsWhiteLabel
+        ? [t("highlights.clientWork")]
+        : []),
+      ...(business.invoiceBilling && offered(options, "invoiceRequests")
+        ? [t("highlights.invoiceBilling")]
+        : []),
       storageAndForms(business, storage, copy),
       ...(aiArt
         ? [t("highlights.aiArt", { count: count(business.aiArtPerMonth) })]

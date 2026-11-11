@@ -1,0 +1,45 @@
+---
+title: Client portal
+description: Give clients read-only access to the folders you choose, with your agency's name and logo instead of QRdx's.
+icon: Briefcase
+---
+
+The client portal is for agencies that run QR codes for their clients. You invite a client by email and pick the folders they can see. They sign in at your workspace's portal and find the codes in those folders, each with its scan analytics and, for hosted pages, a link to the page. Everything there is read-only.
+
+The portal is part of Business. Clients aren't members of your workspace and don't take a seat.
+
+## Set it up
+
+Open [Settings → Client portal](/dashboard?to=settings/clients). Owners and admins manage it.
+
+1. Under **Branding**, enter the name clients see, add a logo and pick an accent color. Empty fields use the workspace's own name and logo.
+2. Put each client's codes in a folder of their own in [Codes](/dashboard?to=codes).
+3. Under **Clients**, enter the client's email address, tick their folders and click **Invite client**.
+
+QRdx emails the client a link to the portal, in your portal's name. If email isn't set up on the server you use, copy the address from **Portal address** and send it yourself.
+
+Only the folders you tick are shared. A subfolder isn't shared unless you tick it too.
+
+## What clients see
+
+The portal lives at `https://qrdx.dev/portal/<your workspace's URL name>`. Clients sign in there with a one-time code sent to the address you invited. The email with the code comes from QRdx. The first time, signing in also gives them a free QRdx account of their own, which they don't need to use.
+
+Signed in, they see:
+
+- each shared folder with its codes, scan totals and last scan
+- for each code, scans over time, unique visitors, QR scans and NFC taps, top countries, devices and referrer sites for the last 7, 30 or 90 days
+- for codes that open a hosted page, a button to open the page (opening it there doesn't count as a scan)
+
+They can't see other folders, codes in the trash, a destination's full address, cities, precise locations, your members, settings or billing. The portal shows your name, logo and color and no QRdx mark.
+
+Someone who signs in with an address you didn't invite sees that they have no access. An invitation belongs to the account that first signs in with it, so it keeps working if the client later changes their email.
+
+## Change or remove access
+
+In **Clients**, **Folders** changes what a client sees, and **Remove** takes their access away. Both apply on their next page load. Inviting an address again updates its folders and sends the link again.
+
+If the workspace leaves Business, the portal stops opening until it's back on Business. You can still remove clients in the meantime.
+
+## Why the portal stays on QRdx's address
+
+Clients stay signed in with a cookie for QRdx's own site. Serving signed-in pages on your domain would place that sign-in cookie on a domain whose DNS you control, outside QRdx. So the portal is on QRdx's address and shows your branding there. Shared [client reports](/docs/client-reports) don't need a sign-in, so Business can serve those on your own domain.

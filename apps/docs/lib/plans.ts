@@ -104,6 +104,29 @@ export interface PlanLimits {
    * so nothing is hosted: every plan saves them, the cap only stops abuse.
    */
   savedBarcodes: number;
+
+  // ─── Agency tools (feat/agency-tools) ──────────────────────────────────────
+  /**
+   * Shared stats pages (/stats/<token>) can carry a client's name, logo and
+   * accent color (lib/client-brands.ts). Pro keeps a small "Made with QRdx".
+   */
+  clientReports: boolean;
+  /**
+   * Client-branded stats pages show no QRdx mark, and their link can be
+   * served on one of the workspace's verified custom domains.
+   */
+  clientReportsWhiteLabel: boolean;
+  /**
+   * The read-only client portal (/portal/<workspace>, lib/portal): invited
+   * clients see the folders shared with them, under the workspace's branding.
+   */
+  clientPortal: boolean;
+  /**
+   * A yearly plan can be paid by invoice. Polar's checkout only takes cards
+   * and wallets, so a request reaches QRdx and the invoice is arranged by
+   * hand (lib/invoice-requests.ts).
+   */
+  invoiceBilling: boolean;
 }
 
 export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
@@ -142,6 +165,11 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teamThemes: false,
     brandKits: 1,
     savedBarcodes: 1000,
+    // Agency tools (feat/agency-tools)
+    clientReports: false,
+    clientReportsWhiteLabel: false,
+    clientPortal: false,
+    invoiceBilling: false,
   },
   pro: {
     dynamicCodes: UNLIMITED,
@@ -179,6 +207,11 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teamThemes: true,
     brandKits: UNLIMITED,
     savedBarcodes: 10_000,
+    // Agency tools (feat/agency-tools)
+    clientReports: true,
+    clientReportsWhiteLabel: false,
+    clientPortal: false,
+    invoiceBilling: false,
   },
   business: {
     dynamicCodes: UNLIMITED,
@@ -216,6 +249,11 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teamThemes: true,
     brandKits: UNLIMITED,
     savedBarcodes: 100_000,
+    // Agency tools (feat/agency-tools)
+    clientReports: true,
+    clientReportsWhiteLabel: true,
+    clientPortal: true,
+    invoiceBilling: true,
   },
 };
 

@@ -19,6 +19,13 @@ interface CustomHost {
   verified: boolean;
 }
 
+/**
+ * Client-branded stats pages and their preview image (agency tools,
+ * Business): served on the domain they're assigned to, tagged with its id;
+ * lib/public-stats.ts serves nothing else there.
+ */
+const STATS_PATH = /^\/stats\/[A-Za-z0-9_-]{32}(?:\/og)?\/?$/;
+
 /** The only API routes served on custom domains (tagged with the domain id). */
 const PAGE_API_PATH =
   /^\/api\/(?:events\/?|scan-location\/?|(?:forms|vcard|calendar)\/[^/]+\/?)$/;
@@ -127,7 +134,9 @@ a{display:inline-block;margin-top:28px;color:var(--fg);font-size:14px;font-weigh
  * `/api/scan-location`, `/api/vcard/<slug>` and `/api/calendar/<slug>` pass
  * through (tagged too), GS1 Digital Links `/01/<GTIN>/...` →
  * `/gs1/01/<GTIN>/...` (tagged; the product page with that GTIN on this
- * domain), `/` → a small page, everything else 404.
+ * domain), `/stats/<token>` and its `/og` image pass through (tagged; only
+ * shares assigned to this domain answer), `/` → a small page, everything
+ * else 404.
  * Pending domains serve nothing.
  */
 export async function routeCustomDomain(
@@ -163,6 +172,13 @@ export async function routeCustomDomain(
 
   // Endpoints hosted pages call same-origin (forms, events, vCard, .ics).
   if (PAGE_API_PATH.test(pathname)) {
+    const headers = new Headers(request.headers);
+    headers.set(CUSTOM_DOMAIN_HEADER, host.id);
+    return NextResponse.next({ request: { headers } });
+  }
+
+  // Shared stats pages (agency tools): the token decides, on this domain only.
+  if (STATS_PATH.test(pathname)) {
     const headers = new Headers(request.headers);
     headers.set(CUSTOM_DOMAIN_HEADER, host.id);
     return NextResponse.next({ request: { headers } });
