@@ -1,0 +1,77 @@
+---
+title: "n8n"
+description: "通过适用于 n8n 的 QRdx 社区节点，生成二维码、管理动态二维码、读取扫描数据，并由 QRdx 事件启动 n8n 工作流。"
+icon: Blocks
+---
+
+`@qrdx/n8n-nodes-qrdx` 软件包为 [n8n](https://n8n.io) 添加了两个节点：
+
+- **QRdx**：生成二维码图片，创建和编辑[动态二维码](/docs/dynamic-qr-codes)，并读取它们的扫描数据和你保存的主题。n8n AI Agent 可以把它当作工具使用。
+- **QRdx Trigger**：当你的二维码被扫描、创建或更改，或有人在[托管页面](/docs/forms-and-pages)上提交表单时，启动工作流。
+
+该软件包以 [`@qrdx/n8n-nodes-qrdx`](https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx) 的名称发布在 npm 上，可安装到自托管的 n8n 中。n8n Cloud 只运行经 n8n 验证的社区节点，而这个节点尚未通过验证。
+
+如果想在不安装任何软件的情况下接收事件，请改用 [Webhook 节点](#without-the-package)。
+
+## 安装 [#install]
+
+在 n8n 中，打开 **Settings → Community Nodes**，点击 **Install**，输入 `@qrdx/n8n-nodes-qrdx`，确认关于社区节点的提示，然后点击 **Install**。之后在节点面板中搜索 **QRdx** 即可。
+
+如果你的 n8n 隐藏了该页面，或者你通过命令行管理 n8n，请将软件包安装到 n8n 用户文件夹的 `nodes` 文件夹中，然后重启 n8n：
+
+```bash
+mkdir -p ~/.n8n/nodes
+cd ~/.n8n/nodes
+npm install @qrdx/n8n-nodes-qrdx
+```
+
+如果 n8n 在 Docker 中运行，请在容器内执行同样的命令（`docker exec -it n8n sh`），或在你的镜像中完成相应配置。
+
+## 连接你的工作区 [#connect-your-workspace]
+
+在 [Settings → API keys & apps](/dashboard?to=settings/developers) 中创建一个 [API 密钥](/docs/developers/api-keys)，然后在 n8n 中使用该密钥添加一个 **QRdx API** 凭据。除非你[自托管](/docs/self-hosting) QRdx，否则请将 **Base URL** 保持为 `https://api.qrdx.dev/v1`；自托管时，请填写你的地址并加上 `/api/v1`。
+
+n8n 通过读取你的个人资料来测试凭据，这需要 Profile 权限范围，因此使用拥有完全访问权限的密钥最为简单。密钥只作用于创建它的工作区。生成二维码图片完全不需要凭据。
+
+## QRdx 节点 [#the-qrdx-node]
+
+| 资源 | 操作 |
+| --- | --- |
+| QR Image | 生成 PNG、WebP、SVG 或 EPS 图片。无需 API 密钥，无需账户 |
+| Code | Create、Get、Get Many、Update（包括归档和恢复）、Delete |
+| Scan | Get Many（单次扫描，按时间从新到旧排列）、Get Summary（总数、每日数量，以及排名靠前的国家、城市、设备、浏览器和来源） |
+| Theme | Get、Get Many |
+
+**Generate** 会把图片放入一个二进制字段，你可以将它附加到电子邮件或上传到任何地方。你可以设置图片的尺寸、颜色、码点形状、码眼和码眼中心点形状、纠错级别、边距、带标签的[边框](/docs/features/frames)以及 Logo 图标。输出中还包含 `url`：指向[Image API](/docs/developers/image-api) 上同一张图片的链接，可直接用于 `<img>` 标签。
+
+Code 和 Scan 操作会使用你的密钥调用 [REST API](/docs/developers/rest-api)，并计入工作区的每日 API 配额。**Get Many** 会自动为你翻页获取结果。出错时会保留 QRdx 自己的错误信息；例如，自定义后缀需要 Pro 或 Business，节点会显示 QRdx 在免费版上返回的[错误](/docs/developers/errors)。
+
+## QRdx Trigger 节点 [#the-qrdx-trigger-node]
+
+选择事件，然后激活工作流。该节点通过 [REST Hooks API](/docs/webhooks#zapier-make-and-n8n-rest-hooks) 订阅事件，并在你停用工作流时取消订阅。订阅在激活期间会显示在 Settings → Webhooks 中。
+
+| 事件 | 触发时机 |
+| --- | --- |
+| Scans | 二维码被扫描。推送会分批进行：每分钟一次，最多包含 100 次扫描以及确切的扫描次数 |
+| Scan Milestones | 某个二维码的首次扫描，然后是 10、100、500、1,000 次扫描及更多 |
+| New Codes | 创建了动态二维码 |
+| Code Changes | 二维码的目标地址、标题、设计或域名发生更改 |
+| Form Submissions | 有人在托管页面上提交表单 |
+
+节点会使用订阅时 QRdx 返回的签名密钥校验每次推送的 `X-QRdx-Signature`，对任何不匹配的请求返回 `401`。开启 **Output One Item per Scan**，可将 Scans 批次拆分为单独的条目；开启 **Include Test Events**，则在你于 Settings → Webhooks 中点击 **Send test** 时运行工作流。载荷与 [Webhooks](/docs/webhooks#payloads) 中描述的相同。
+
+使用该触发器需要：
+
+- Business 套餐，因为 [Webhooks](/docs/webhooks) 属于该套餐的功能
+- 具有 Manage codes 权限范围的 API 密钥
+- n8n 部署在公网 `https://` 地址上，因为 QRdx 不会向 `localhost` 或私有网络推送。如果使用代理，请设置 n8n 的 `WEBHOOK_URL`。这同样适用于你点击 **Listen for test event** 时 n8n 使用的测试 URL
+
+## 不使用软件包 [#without-the-package]
+
+无论在 n8n Cloud 还是自托管的 n8n 上，QRdx 都可以直接向 n8n 的 **Webhook** 节点推送事件：
+
+1. 添加一个 Webhook 节点，将其 HTTP 方法设为 `POST`，并复制它的生产 URL。
+2. 激活工作流。生产 URL 只在工作流处于激活状态时才会响应。
+3. 在 [Settings → Webhooks](/dashboard?to=settings/webhooks) 中点击 **Add endpoint**，粘贴该 URL 并选择事件。
+
+每个事件都会携带 JSON 载荷启动工作流。如需校验签名，请在 Code 节点中读取 `X-QRdx-Signature`，并使用该端点的签名密钥[进行验证](/docs/webhooks#verify-signatures)。

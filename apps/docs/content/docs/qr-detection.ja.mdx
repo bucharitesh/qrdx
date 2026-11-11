@@ -1,0 +1,152 @@
+---
+title: "QR検出"
+description: "ブラウザ上で画像からQRコードを読み取り、デコードします。"
+icon: Scan
+---
+
+アップロードした画像からQRコードを読み取り、デコードします。
+
+## 基本的な検出 [#basic-detection]
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function detectQR(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const img = new Image();
+      img.onload = async () => {
+        try {
+          const result = await handleImageLoad(img, 400, false);
+          if (result === "NO_QR") {
+            resolve("No QR code found");
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+```
+
+## Reactコンポーネント [#react-component]
+
+```tsx
+import { useState } from 'react';
+import { handleImageLoad } from 'qrdx';
+
+export default function QRDetector() {
+  const [result, setResult] = useState('');
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const qrData = await detectQR(file);
+      setResult(qrData);
+    } catch (error) {
+      setResult(`Error: ${error.message}`);
+    }
+  };
+
+  return (
+    <div>
+      <input type="file" accept="image/*" onChange={handleFile} />
+      {result && <p>{result}</p>}
+    </div>
+  );
+}
+```
+
+## 検出パラメータ [#detection-parameters]
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,              // Processing size (recommended: 400)
+  returnFullData?: boolean   // Return full data or just text
+)
+```
+
+### サイズパラメータ [#size-parameter]
+
+- **200-400** — 高速で、鮮明な画像に適しています
+- **600以上** — 小さいQRコードや破損したQRコードに適しています
+- **推奨** — ほとんどの場合は400
+
+## 完全なデータレスポンス [#full-data-response]
+
+検出情報をすべて取得します。
+
+```tsx
+const fullData = await handleImageLoad(img, 400, true);
+// Returns:
+// {
+//   data: "https://example.com",
+//   binaryData: Uint8ClampedArray,
+//   location: { topLeftCorner, topRightCorner, ... },
+//   chunks: [...]
+// }
+```
+
+## デバッグ用の可視化 [#debug-visualization]
+
+バウンディングボックス付きの画像をダウンロードします。
+
+```tsx
+import { downloadImageWithBoundingBox } from 'qrdx';
+
+const fullData = await handleImageLoad(img, 400, true);
+if (fullData?.location) {
+  const boundingBox = [
+    fullData.location.topLeftCorner,
+    fullData.location.topRightCorner,
+    fullData.location.bottomRightCorner,
+    fullData.location.bottomLeftCorner,
+  ];
+  downloadImageWithBoundingBox(img, boundingBox, "debug.png");
+}
+```
+
+## エラー処理 [#error-handling]
+
+```tsx
+try {
+  const result = await handleImageLoad(img, 400, false);
+  if (result === "NO_QR") {
+    console.log("No QR code found");
+  } else {
+    console.log("QR data:", result);
+  }
+} catch (error) {
+  console.error("Detection failed:", error);
+}
+```
+
+## 利用シーン [#when-to-use]
+
+- アップロードされたQRコード画像を処理する
+- スクリーンショットからデータを抽出する
+- QRコードスキャナーを構築する
+- QRコードの内容を検証する
+- QRコードの問題をデバッグする
+
+## ブラウザー要件 [#browser-requirements]
+
+- FileReader API
+- HTMLCanvasElement
+- ImageDataとgetImageData
+- ES6以降の機能
+
+## 次のステップ [#next-steps]
+
+- [ユーティリティ](/docs/utilities) — 検出ユーティリティ
+- [ダウンロード](/docs/features/downloads) — 検出したデータをエクスポート
+- [APIリファレンス](/docs/api-reference) — 検出APIの完全なリファレンス

@@ -1,0 +1,72 @@
+---
+title: "Etiquetas NFC y tarjetas de visita"
+description: "Escribe el enlace de un código QR dinámico en una etiqueta o tarjeta NFC, cuenta los toques por separado de los escaneos de QR y pon una página vCard Plus en una tarjeta de visita NFC."
+icon: Nfc
+---
+
+Cualquier [código QR dinámico](/docs/dynamic-qr-codes) también puede ir en una etiqueta NFC. Escribes el enlace NFC del código en una etiqueta, un adhesivo o una tarjeta, y un teléfono que lo toque abre el mismo destino que el código QR. Los toques aparecen en las analíticas del código junto a los escaneos de QR, contados por separado. Funciona en todos los planes.
+
+QRdx no vende, imprime ni envía etiquetas ni tarjetas. Compra etiquetas en blanco a cualquier proveedor de NFC y escríbelas tú mismo desde la página del código.
+
+## El enlace NFC [#the-nfc-link]
+
+El enlace NFC de un código es su enlace corto con `?nfc` al final, como `https://qrdx.dev/q/aB3dE5f?nfc`, o `https://go.example.com/menu?nfc` en un [dominio personalizado](/docs/custom-domains). Pasa por la misma redirección que el enlace corto, así que el enrutamiento inteligente, las contraseñas, las programaciones y los límites de escaneo también se aplican a los toques. El final `?nfc` solo le indica a las analíticas que la visita fue un toque. El código QR conserva su propio enlace, y los códigos que ya imprimiste funcionan exactamente igual que antes.
+
+Para encontrarlo, abre el código en el [panel](/dashboard?to=codes) y elige **Use with NFC** en su pestaña Overview. La [REST API](/docs/developers/rest-api) lo devuelve como `nfcLink` en cada código.
+
+## Escribir una etiqueta en Android [#write-a-tag-on-android]
+
+Chrome en Android puede escribir etiquetas directamente desde la página NFC del código:
+
+1. Activa NFC en los ajustes del teléfono.
+2. Abre el código en Chrome, elige **Use with NFC** y toca **Write to NFC tag**.
+3. Mantén la etiqueta plana contra la parte trasera del teléfono hasta que la página muestre **Written**.
+4. Acerca la etiqueta al teléfono para probarla. Debería abrir el enlace.
+
+Escribir desde una página web requiere Web NFC, que solo tiene Chrome en Android. En un ordenador, la página NFC muestra un código QR en su lugar: escanéalo con el teléfono Android, inicia sesión y escribe la etiqueta desde allí.
+
+### Bloquear una etiqueta [#locking-a-tag]
+
+Después de escribir una etiqueta, la página ofrece bloquearla si el navegador puede hacerlo. Una etiqueta bloqueada no se puede cambiar ni borrar nunca más, por nadie, tú incluido, así que bloquea solo las etiquetas que estén donde desconocidos podrían reescribirlas, como un adhesivo en la mesa de una cafetería. La etiqueta contiene el enlace del código y no su destino, así que aún puedes cambiar desde QRdx adónde lleva una etiqueta bloqueada.
+
+## Escribir una etiqueta en iPhone [#write-a-tag-on-iphone]
+
+Safari no puede escribir etiquetas NFC, así que usa cualquier app de escritura NFC de la App Store:
+
+1. Copia el enlace NFC desde la página NFC del código.
+2. En la app, añade un registro de URL (algunas apps lo llaman Link o URI) y pega el enlace.
+3. Elige Write y mantén la parte superior del iPhone contra la etiqueta hasta que la app indique que ha terminado.
+
+Escribir requiere un iPhone 7 o posterior con iOS 13 o posterior.
+
+## Qué etiquetas comprar [#which-tags-to-buy]
+
+Busca un chip NTAG213, NTAG215 o NTAG216. Se venden como adhesivos, tarjetas, llaveros y pulseras.
+
+| Chip | Memoria |
+| --- | --- |
+| NTAG213 | 144 bytes |
+| NTAG215 | 504 bytes |
+| NTAG216 | 888 bytes |
+
+Un enlace NFC en qrdx.dev ocupa unos 30 bytes, así que caben en los tres. Los enlaces en dominios personalizados largos o con finales largos ocupan más; la página NFC muestra cuántos bytes necesita el tuyo y en qué chips cabe.
+
+Los teléfonos Android con NFC activado y los iPhone XS o posteriores abren el enlace de una etiqueta en cuanto toca el teléfono, sin ninguna app.
+
+## Tarjetas de visita NFC [#nfc-business-cards]
+
+Una [página vCard Plus](/docs/landing-pages) es una página de contacto con un botón **Save contact**, y es una buena opción para una tarjeta de visita NFC. En un código que abre una, la pestaña Overview muestra **Put this card on NFC**, y el editor de páginas tiene un botón **Put on NFC**. Ambos abren la misma página NFC con una guía para tarjetas.
+
+1. Compra tarjetas de visita NFC en blanco, o adhesivos NFC para las tarjetas que ya tengas.
+2. Imprime también el código QR en la tarjeta. Los teléfonos sin NFC, o con NFC desactivado, lo escanearán en su lugar.
+3. Escribe el enlace NFC en cada tarjeta desde la página NFC del código.
+
+Como cada tarjeta contiene el enlace del código, editar la página vCard Plus en QRdx actualiza todas las tarjetas que hayas entregado.
+
+## Toques en las analíticas [#taps-in-analytics]
+
+La pestaña Analytics de un código muestra **QR scans and NFC taps** para las fechas que elegiste, y los totales de arriba cuentan ambos. La página Analytics del espacio de trabajo y las páginas de analíticas compartidas muestran la misma división.
+
+La exportación CSV tiene una columna `source` con `qr` o `nfc` para cada escaneo. En la REST API, las [analíticas de escaneos](/docs/developers/api/get-code-scans) incluyen `sources` con ambos recuentos y un `source` en cada escaneo listado, y los [webhooks](/docs/webhooks) de `scan.created` también llevan `source`.
+
+Los escaneos anteriores a la existencia de los enlaces NFC cuentan como escaneos de QR. Los toques siguen las mismas reglas que los escaneos: los bots y las vistas previas de enlaces no se cuentan.

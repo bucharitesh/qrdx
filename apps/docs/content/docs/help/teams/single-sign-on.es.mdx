@@ -1,0 +1,162 @@
+---
+title: "Inicio de sesión único (SSO)"
+description: "Permite que tu equipo inicie sesión en QRdx con el proveedor de identidad de tu empresa, mediante OIDC o SAML 2.0. Incluido en el plan Business."
+---
+
+El inicio de sesión único permite que las personas de tu empresa inicien sesión en QRdx a través de tu proveedor de identidad, en lugar de usar un código por correo, Google o GitHub. Configuras una conexión para un dominio de correo, demuestras que eres el propietario del dominio, y a las personas de ese dominio se les ofrece el inicio de sesión único cuando escriben su correo de trabajo para iniciar sesión. Al iniciar sesión así, pasan a ser miembros de tu espacio de trabajo. También puedes [exigirlo](#require-single-sign-on), de modo que tu proveedor de identidad sea la única forma de entrar para ese dominio.
+
+El inicio de sesión único forma parte del plan **Business**. Un espacio de trabajo lo tiene cuando uno de sus propietarios o miembros de facturación está en Business. Consulta [Asientos y límites del espacio de trabajo](/docs/help/teams/seats).
+
+El inicio de sesión único es una función de Business bajo la licencia comercial de QRdx. Un servidor QRdx autoalojado necesita una clave de licencia (`QRDX_EE_LICENSE`) para activarlo; consulta [Autoalojamiento](/docs/self-hosting#optional-services).
+
+## Antes de empezar [#before-you-start]
+
+- Debes ser **propietario** o **administrador** del espacio de trabajo.
+- Debes poder añadir un registro DNS para tu dominio de correo, como `acme.com`.
+- Configurar, cambiar, verificar o eliminar la conexión, y exigir el inicio de sesión único, requiere que primero [confirmes que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you): con tu passkey o un código de verificación en dos pasos, o, si la verificación en dos pasos está desactivada, con un código que te enviamos por correo o, en una conexión OIDC, iniciando sesión de nuevo a través de ella. Una confirmación cubre tus cambios durante los siguientes 10 minutos.
+
+QRdx usa los ajustes estándar de OIDC y SAML 2.0 que piden los proveedores de identidad. Los pasos siguientes indican los valores; dónde pegarlos depende de tu proveedor.
+
+## Configurar con OIDC [#set-up-with-oidc]
+
+1. En el espacio de trabajo, ve a **Ajustes** → **Inicio de sesión único**. **OIDC** está seleccionado.
+2. En tu proveedor de identidad, crea una aplicación web (cliente OIDC) para QRdx y añade el **Redirect URI** que se muestra en la página como redirección permitida.
+3. De vuelta en QRdx, completa:
+   - **Dominio de correo**: el dominio de tu empresa, como `acme.com`.
+   - **URL del emisor**: el emisor de tu proveedor. QRdx lee el resto de `<issuer>/.well-known/openid-configuration`, así que el emisor debe coincidir exactamente con ese documento.
+   - **Client ID** y **Client secret** de la aplicación que creaste.
+4. Haz clic en **Guardar conexión**.
+
+QRdx solicita los scopes `openid`, `email` y `profile` y usa PKCE. El emisor debe ser accesible por HTTPS desde internet; no se admiten proveedores de identidad en una red privada.
+
+## Configurar con SAML 2.0 [#set-up-with-saml-20]
+
+1. En el espacio de trabajo, ve a **Ajustes** → **Inicio de sesión único** y elige **SAML 2.0**.
+2. En tu proveedor de identidad, crea una aplicación SAML para QRdx con los valores que se muestran en la página:
+   - **Assertion Consumer Service (ACS) URL**
+   - **Entity ID (audience)**
+   - **Metadata URL**, si tu proveedor puede leer los ajustes de QRdx desde una URL
+3. Envía la dirección de correo de la persona como **NameID** (formato de correo) o como un atributo llamado `email`. Para su nombre, envía `givenName` y `surname` (o `firstName` y `lastName`, o los nombres X.500 `urn:oid:2.5.4.42` y `urn:oid:2.5.4.4`), o un nombre para mostrar (`displayName`, `name` o `urn:oid:2.16.840.1.113730.3.1.241`). Sin nombre, QRdx usa la parte de la dirección anterior a la @.
+4. De vuelta en QRdx, escribe tu **Dominio de correo** y pega el **XML de metadatos** de tu proveedor. O haz clic en **Introducir los datos manualmente** y completa la **URL de inicio de sesión (SSO URL)**, el **entity ID** del proveedor y su **certificado de firma**.
+5. Haz clic en **Guardar conexión**.
+
+Tu proveedor debe firmar sus respuestas e incluir una URL de inicio de sesión HTTP-Redirect. QRdx rechaza las respuestas sin una firma válida o sin tiempos de validez (`NotBefore` y `NotOnOrAfter`).
+
+Las firmas deben usar SHA-256 o un algoritmo más fuerte. QRdx rechaza las respuestas firmadas o con resumen SHA-1; si tu proveedor está configurado con SHA-1 para la aplicación de QRdx, cámbialo a SHA-256.
+
+QRdx no firma sus solicitudes de inicio de sesión. Si tu proveedor está configurado para exigir solicitudes firmadas a la aplicación de QRdx, desactiva esa opción, o rechazará a las personas antes de que puedan iniciar sesión.
+
+## Verificar tu dominio [#verify-your-domain]
+
+Nadie puede iniciar sesión a través de la conexión hasta que demuestres que eres el propietario del dominio.
+
+1. En **Verificar**, en la página de inicio de sesión único, copia el **Nombre** y el **Valor** del registro TXT.
+2. Añade el registro TXT en tu proveedor de DNS.
+3. Haz clic en **Verificar**. Los registros nuevos pueden tardar unos minutos, a veces más, en aparecer. Si QRdx aún no encuentra el registro, te lo indica; espera e inténtalo de nuevo.
+
+El valor de verificación es válido durante 7 días. Si caduca, recarga la página para obtener uno nuevo y actualiza el registro.
+
+Un dominio verificado también cubre sus subdominios, así que `acme.com` también cubre `eu.acme.com`. Un dominio solo puede verificarse para el inicio de sesión único en un espacio de trabajo. Si otro espacio de trabajo ya lo verificó, o verificó un dominio que se solapa con él, QRdx te avisa al guardar o verificar.
+
+## Lo que ve tu equipo [#what-your-team-sees]
+
+1. En la página de inicio de sesión, escriben su correo de trabajo y hacen clic en **Enviarme un código por correo**, como en cualquier inicio de sesión por correo.
+2. Antes de enviar un código, QRdx comprueba el dominio de la dirección. Para tu dominio verificado, indica que tu empresa inicia sesión con inicio de sesión único y ofrece **Continuar con SSO**. No se envía ningún código a menos que lo pidan.
+3. **Continuar con SSO** los lleva a tu proveedor de identidad y luego de vuelta a QRdx, con la sesión iniciada y dentro de tu espacio de trabajo.
+
+Pueden elegir **Enviarme un código por correo** en su lugar, a menos que [exijas el inicio de sesión único](#require-single-sign-on). **Iniciar sesión con SSO**, debajo del campo de correo, también sigue funcionando: pide su correo de trabajo y los lleva directamente a tu proveedor de identidad.
+
+QRdx ofrece el inicio de sesión único solo mientras el dominio esté verificado y el espacio de trabajo esté en Business. La comprobación mira únicamente el dominio, así que nunca revela si alguien tiene una cuenta de QRdx.
+
+Si alguien activó la [verificación en dos pasos](/docs/help/privacy-and-security/two-step-verification), QRdx le sigue pidiendo el segundo paso después de que tu proveedor de identidad inicie su sesión, a menos que haya elegido que no se le pida de nuevo en ese dispositivo. Ocurre igual cuando el inicio de sesión único es obligatorio.
+
+Cada inicio de sesión con SSO se asegura de que la persona esté en tu espacio de trabajo:
+
+- Quien no es miembro se une con el rol que elijas en **Nuevos miembros**: **Miembro** (el predeterminado) o **Lector**.
+- Quien tiene una invitación pendiente al espacio de trabajo se une con el rol de la invitación, y la invitación se marca como aceptada.
+- Los miembros conservan el rol que tienen. Puedes cambiar el rol de cualquiera en la página **Equipo**.
+
+Esto incluye a las personas que eliminaste del espacio de trabajo: vuelven a unirse la próxima vez que inicien sesión con SSO.
+
+Si alguien ya tiene una cuenta de QRdx con la misma dirección de correo, el inicio de sesión con SSO usa esa cuenta. Conservan su propio espacio de trabajo y todo lo que hay en él.
+
+QRdx solo inicia sesión a través de tu conexión si la dirección que envía tu proveedor pertenece a tu dominio verificado. Sus otras formas de iniciar sesión, como un código por correo a la misma dirección, siguen funcionando a menos que exijas el inicio de sesión único.
+
+Las direcciones de correo deben estar verificadas en tu proveedor de identidad. Si este le indica a QRdx que una dirección no está verificada (el claim `email_verified` de OIDC, o un atributo SAML `email_verified` o `emailVerified`, con valor false), QRdx no inicia la sesión de la persona, no le crea una cuenta y no vincula una existente. La persona ve un mensaje que pide a tu administrador que verifique las direcciones allí. Si tu proveedor no indica nada al respecto, QRdx confía en él para tu dominio verificado.
+
+Cerrar sesión en QRdx no cierra la sesión de nadie en tu proveedor de identidad. Mientras sigan con la sesión iniciada allí, su próximo inicio de sesión con SSO pasa directamente sin pedir la contraseña. En un ordenador compartido, cierra también la sesión en tu proveedor de identidad.
+
+## Abre QRdx desde tu proveedor de identidad [#open-qrdx-from-your-identity-provider]
+
+Con una conexión SAML, las personas también pueden empezar desde tu proveedor de identidad: al hacer clic en la aplicación de QRdx en el panel de aplicaciones del proveedor, inician sesión en QRdx sin pasar por la página de inicio de sesión de QRdx. Esto suele llamarse inicio de sesión iniciado por el IdP.
+
+En tu proveedor de identidad, abre la aplicación SAML que creaste para QRdx y comprueba que se muestre a las personas en el panel de aplicaciones y que permita el inicio de sesión iniciado desde el proveedor de identidad. Las personas llegan al panel de tu espacio de trabajo. QRdx ignora cualquier **RelayState** que envíe la aplicación, así que un inicio de sesión que QRdx no solicitó nunca decide qué página se abre.
+
+Se aplican las mismas reglas que cuando el inicio de sesión empieza en QRdx: el dominio debe estar verificado, el espacio de trabajo debe estar en Business y la respuesta debe estar firmada con SHA-256 o superior. Además, QRdx necesita:
+
+- exactamente una aserción, con un ID, que no esté cifrada;
+- una caducidad en la aserción (`NotOnOrAfter` en su `Conditions`), que la mayoría de los proveedores de identidad envían por defecto.
+
+Cada respuesta inicia sesión una sola vez. Si la misma respuesta llega de nuevo, QRdx la rechaza y pide a la persona que inicie sesión otra vez. Si alguien activó la verificación en dos pasos, QRdx le pide primero su segundo paso y después la lleva al panel.
+
+Un inicio de sesión desde el panel de aplicaciones no cuenta como [confirmar que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) a menos que la persona haya completado su segundo paso, porque QRdx no lo pidió. Antes de un cambio que lo requiera, confirman como de costumbre.
+
+Una conexión OIDC siempre empieza en QRdx. Para poner QRdx en el panel de aplicaciones de tu proveedor de identidad, añádelo como un enlace a la página de inicio de sesión de QRdx.
+
+## Exige el inicio de sesión único [#require-single-sign-on]
+
+Una vez verificado tu dominio, puedes hacer que tu proveedor de identidad sea la única vía de acceso para las personas de ese dominio. En la página **Single sign-on**, activa **Require single sign-on for** tu dominio. También cubre los subdominios, igual que la conexión.
+
+Mientras esté activado, para una dirección de tu dominio:
+
+- Los códigos por correo, Google y GitHub no les permiten iniciar sesión<IfAvailable feature="passkeys">, ni tampoco **Continue with passkey**</IfAvailable>. Verán que tu empresa exige el inicio de sesión único, y **Continue with SSO**.
+- Su [verificación en dos pasos](/docs/help/privacy-and-security/two-step-verification) se sigue aplicando después de que tu proveedor de identidad los autentique.<IfAvailable feature="passkeys"> Una clave de acceso sigue funcionando como ese segundo paso.</IfAvailable>
+- Un inicio de sesión dura 24 horas como máximo. Después, pasan de nuevo por tu proveedor de identidad, de modo que alguien a quien desasignes allí no podrá volver a iniciar sesión en QRdx y se le cerrará la sesión en un día.
+- Su correo de QRdx no se puede cambiar a una dirección de otro dominio, y el de ninguna otra persona se puede cambiar a una de tu dominio. Iniciar sesión con inicio de sesión único es la forma en que una dirección de tu dominio entra en QRdx.
+
+Al activarlo, se cierran las sesiones de todas las personas de tu dominio que no empezaron con inicio de sesión único, y las que sí lo hicieron terminan 24 horas después de ese inicio de sesión. Nadie recibe un correo al respecto; la próxima vez se les pide iniciar sesión con SSO.
+
+**Los propietarios conservan sus otras formas de iniciar sesión.** Nada de esto se aplica a los propietarios del espacio de trabajo: pueden seguir usando un código por correo, Google o GitHub<IfAvailable feature="passkeys">, o una clave de acceso</IfAvailable>, sus sesiones no se acortan y pueden cambiar su correo. Así, un problema con tu proveedor de identidad no puede dejar a todos fuera de este ajuste. Limita el rol de propietario a las pocas personas que lo necesiten.
+
+Para activarlo:
+
+- Debes ser **propietario** o **administrador** en el plan Business, con un dominio verificado, y se te pedirá [confirmar que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+- Si eres administrador y tienes una dirección en el dominio, inicia sesión primero con inicio de sesión único. De lo contrario, al activarlo se cerraría tu sesión, y iniciar sesión así demuestra que la conexión funciona.
+
+Desactivarlo, eliminar la conexión o que el espacio de trabajo deje Business hace que ya no se exija. Las personas conservan las sesiones que tienen y pueden volver a usar sus otras formas de iniciar sesión. Puede tardar hasta un minuto en llegar a todos los servidores de QRdx: quien inicie sesión de otra forma en ese minuto podría ver cerrada su sesión de inmediato, y podrá volver a iniciarla un minuto después.
+
+El inicio de sesión único se refiere a iniciar sesión. Las claves de API no son inicios de sesión, así que exigirlo no las detiene; eliminar a alguien en la página **Team** sí detiene las claves de API que creó para el espacio de trabajo.
+
+## Elimina a alguien definitivamente [#remove-someone-for-good]
+
+Como cada inicio de sesión con SSO vuelve a añadir a la persona, eliminarla en la página **Team** no basta por sí solo:
+
+1. En tu proveedor de identidad, desasígnala de la aplicación de QRdx (o desactiva su cuenta allí), para que no pueda iniciar sesión en QRdx.
+2. Después, elimínala en la página **Team**. El cuadro de diálogo de eliminación te lo recuerda cuando la dirección de la persona pertenece a tu dominio verificado.
+
+Si [exiges el inicio de sesión único](#require-single-sign-on), el paso 1 también cierra su sesión en QRdx en un plazo de 24 horas. Elimínala también en la página **Team**, para que deje de ser miembro y sus claves de API para el espacio de trabajo dejen de funcionar.
+
+Eliminar a alguien del espacio de trabajo no borra su cuenta de QRdx. A menos que se exija el inicio de sesión único para su dirección, puede seguir iniciando sesión en su propio espacio de trabajo con un código por correo, Google o GitHub.
+
+## Cambia o elimina la conexión [#change-or-remove-the-connection]
+
+- **Replace secret** (OIDC) o **Replace certificate** (SAML) actualiza la conexión cuando los rotas en tu proveedor de identidad. Una conexión SAML configurada a partir de metadatos XML se cambia eliminándola y configurándola de nuevo.
+- **Remove** desactiva el inicio de sesión único y deja de exigirlo. Todos permanecen en el espacio de trabajo y pueden iniciar sesión con un código por correo, Google o GitHub.
+
+## Si cambia el plan [#if-the-plan-changes]
+
+Si el espacio de trabajo ya no está en Business, nadie puede iniciar sesión con SSO, incluso a mitad de un inicio de sesión, y el inicio de sesión único deja de ser obligatorio. Las personas ven un mensaje y pueden iniciar sesión de otra forma. La conexión y sus ajustes se conservan, así que vuelven a funcionar cuando el espacio de trabajo regrese a Business, y aún puedes eliminarla.
+
+## Lo que no se admite [#what-isnt-supported]
+
+- El aprovisionamiento y la eliminación automáticos (SCIM). Eliminar a alguien de tu proveedor de identidad no lo elimina del espacio de trabajo. Sin [inicio de sesión único obligatorio](#require-single-sign-on) tampoco termina sus sesiones de QRdx; elimínalo también en la página **Team** (consulta [Elimina a alguien definitivamente](#remove-someone-for-good)).
+- Roles o grupos de tu proveedor de identidad. Todos se unen con el rol indicado en **New members**.
+- Más de una conexión, o más de un dominio, por espacio de trabajo.
+- El inicio de sesión iniciado desde tu proveedor de identidad con una conexión OIDC (con SAML sí funciona: consulta [Abre QRdx desde tu proveedor de identidad](#open-qrdx-from-your-identity-provider)), el cierre de sesión único de SAML y las aserciones cifradas.
+- Proveedores de identidad que no son accesibles desde internet.
+
+## Relacionado [#related]
+
+- [Roles del equipo](/docs/help/teams/roles)
+- [Puestos y límites del espacio de trabajo](/docs/help/teams/seats)
+- [Crea un espacio de trabajo e invita a personas](/docs/help/teams/create-and-invite)

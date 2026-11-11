@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "账户与账单",
+  "icon": "CreditCard",
+  "pages": [
+    "plans",
+    "change-plan",
+    "invoices",
+    "cancel",
+    "never-hostage",
+    "affiliate-program",
+    "sign-in",
+    "export-your-data",
+    "delete-your-account"
+  ]
+}

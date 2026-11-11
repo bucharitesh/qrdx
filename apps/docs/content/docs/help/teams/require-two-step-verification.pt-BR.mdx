@@ -1,0 +1,48 @@
+---
+title: "Exigir verificação em duas etapas"
+description: "Faça com que todos em um workspace ativem a verificação em duas etapas antes de poderem acessá-lo. Faz parte do plano Business."
+---
+
+Proprietários e administradores podem exigir que todos em um workspace usem a [verificação em duas etapas](/docs/help/privacy-and-security/two-step-verification). Um membro que ainda não a ativou não consegue abrir o workspace até ativá-la. Assim, ter acesso ao e-mail de alguém não basta para entrar no seu workspace.
+
+Exigir a verificação em duas etapas faz parte do plano **Business**. Um workspace tem esse recurso quando um dos proprietários ou membros de cobrança está no Business. Veja [Assentos e limites do workspace](/docs/help/teams/seats).
+
+## Ative a exigência [#turn-it-on]
+
+1. Primeiro, ative a verificação em duas etapas na sua própria conta, em **Configurações** → **Perfil e segurança**. Você não pode exigi-la sem ter ativado para si mesmo.
+2. No workspace, vá em **Configurações** → **Equipe**.
+3. Em **Verificação em duas etapas**, ative **Exigir verificação em duas etapas**.
+4. Se alguns membros ainda não a ativaram, o QRdx informa quantos são e pede sua confirmação antes de continuar.
+5. [Confirme que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+
+Somente proprietários e administradores podem alterar essa opção, e ativá-la ou desativá-la exige que você confirme que é você.
+
+Ninguém recebe e-mail. Os membros sem verificação em duas etapas descobrem na próxima vez que abrirem o workspace.
+
+## Veja quem ativou [#see-who-has-it-on]
+
+Na página **Configurações** → **Equipe**, proprietários e administradores veem se a verificação em duas etapas de cada membro está **Ativada** ou **Desativada**. No celular, essa informação aparece embaixo do e-mail de cada pessoa.
+
+## O que os membros sem a verificação veem [#what-members-without-it-see]
+
+Ao abrir o workspace, eles veem que ele exige verificação em duas etapas, com um botão **Ativar verificação em duas etapas**. O botão leva a **Configurações** → **Perfil e segurança** e, depois que a verificação é ativada, **Voltar para** o workspace leva à página em que a pessoa estava.
+
+Até lá, eles não conseguem ver nem alterar nada nesse workspace. Os outros workspaces deles funcionam normalmente.
+
+Isso inclui o que o workspace envia para eles. Os alertas por e-mail, o resumo semanal e os alertas do Slack ou do Discord desse workspace são interrompidos, e eles não podem adicionar novos. As sincronizações que configuraram para enviar os dados dele a outras ferramentas ficam pausadas. Os alertas voltam quando a verificação em duas etapas é ativada; uma sincronização pausada precisa ser reativada.
+
+Se alguém desativar a verificação em duas etapas depois, o workspace fecha para essa pessoa de novo até ela reativá-la. Isso vale também para proprietários e administradores.
+
+## Chaves de API [#api-keys]
+
+As chaves de API criadas no workspace continuam funcionando para quem as criou, com ou sem verificação em duas etapas. A verificação em duas etapas protege o login, e uma chave é uma credencial própria. Ninguém consegue criar uma chave nova no workspace sem conseguir abri-lo, e proprietários e administradores podem ver e revogar as chaves de todos em **Configurações** → **Desenvolvedores** do workspace.
+
+Os apps conectados à conta de alguém via OAuth só funcionam no workspace pessoal dessa pessoa, então nunca chegam a um workspace de equipe.
+
+## Se o workspace sair do Business [#if-the-workspace-leaves-business]
+
+A exigência deixa de valer, e a opção aparece como desativada. Se o workspace voltar ao Business, ela volta a valer.
+
+## Desative a exigência [#turn-it-off]
+
+Na página **Configurações** → **Equipe**, desative **Exigir verificação em duas etapas** e confirme que é você. Os membros sem verificação em duas etapas podem abrir o workspace de novo imediatamente.

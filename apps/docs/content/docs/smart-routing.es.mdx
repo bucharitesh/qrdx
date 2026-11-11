@@ -1,0 +1,66 @@
+---
+title: "Enrutamiento inteligente"
+description: "Envía cada escaneo de un código QR dinámico a una URL distinta según el dispositivo, el país, la zona, el idioma, la hora o el número de escaneos, haz pruebas A/B y añade parámetros UTM."
+icon: Split
+---
+
+Un [código QR dinámico](/docs/dynamic-qr-codes) normalmente envía todos los escaneos a un mismo destino. Con el enrutamiento inteligente, un único código impreso puede abrir la App Store en iPhone y Google Play en Android, una página en español para visitantes hispanohablantes, o una oferta distinta fuera del horario laboral. Lo configuras en el panel **Enrutamiento inteligente** de la página del código, en el [panel](/dashboard?to=codes) (abre un código y luego su pestaña **Ajustes**).
+
+El enrutamiento inteligente y los parámetros UTM forman parte de Pro y Business. Se aplican a los códigos que abren un enlace web; las [páginas alojadas](/docs/landing-pages) no redirigen, así que no tienen enrutamiento.
+
+## Cómo funcionan las reglas [#how-rules-work]
+
+- Un código tiene hasta 20 **reglas**. Cada regla tiene condiciones ("cuando") y una acción ("entonces").
+- Las reglas se comprueban **de arriba abajo** en cada escaneo. La **primera regla cuyas condiciones se cumplen todas** decide a dónde va el escaneo. Usa las flechas para reordenar las reglas.
+- Si ninguna regla coincide, el escaneo va al destino principal del código.
+- Una regla sin condiciones coincide con todos los escaneos, así que las reglas que haya debajo nunca se ejecutan.
+- **Desactiva** una regla para conservarla sin usarla.
+- Los cambios se aplican al siguiente escaneo; nunca necesitas volver a imprimir el código.
+
+Si por algún motivo una regla no se puede evaluar, el escaneo igualmente va al destino principal: el enrutamiento nunca impide que un código funcione.
+
+## Condiciones [#conditions]
+
+Cada condición se puede invertir con **no es** (por ejemplo, "el país no es US").
+
+| Condición | Coincide cuando | Notas |
+| --- | --- | --- |
+| Dispositivo | Quien escanea usa un teléfono, una tableta, un ordenador de escritorio u otro dispositivo | A partir del user agent del navegador |
+| Sistema operativo | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS, … | iPhone y iPad cuentan ambos como iOS |
+| País | El escaneo procede de uno de los países indicados | Códigos de 2 letras como `US, CA, GB` |
+| Región | El escaneo procede de una de las regiones indicadas | Códigos como `US-CA, US-NY` (país + subdivisión) |
+| Idioma | El idioma preferido del navegador del visitante es uno de los indicados | `es` coincide con todas las variantes del español (`es-MX`, `es-ES`); `pt-BR` solo con el portugués de Brasil |
+| Hora del día | El escaneo ocurre en los días de la semana elegidos entre dos horas, en una zona horaria que tú eliges | Una franja como 22:00–02:00 pasa de medianoche y pertenece al día en que empieza |
+| Rango de fechas | El escaneo ocurre entre dos fechas | Deja un lado vacío para "hasta" o "desde"; las fechas usan la zona horaria de tu navegador |
+| Número de escaneos | Es uno de los primeros N escaneos, o cualquier escaneo posterior a N | Cuenta los escaneos registrados (los bots no se cuentan), por lo que es aproximado cuando muchas personas escanean a la vez |
+| Zona | Quien escanea está dentro de un radio (de 100 m a 500 km) alrededor de un punto | Usa la ubicación que compartió quien escanea cuando la [ubicación precisa](/docs/precise-location) está activada; si no, la ubicación aproximada de su dirección IP |
+
+El país, la región y la ubicación basada en IP para las zonas proceden de la dirección IP de quien escanea, que QRdx nunca almacena. Cuando no se conoce la ubicación, las condiciones de ubicación no coinciden (y las condiciones "no es" sí). [Ubicación precisa y geovallas](/docs/precise-location) explica las zonas, incluido cómo hacer que un código funcione solo dentro de una.
+
+## Enlaces inteligentes a apps [#smart-app-links]
+
+Elige **Añadir regla → Enlace inteligente a app** para crear dos reglas a la vez: iOS va a tu enlace de la App Store y Android a tu enlace de Google Play. Todos los demás (ordenador, otros teléfonos) van al destino principal, por ejemplo tu sitio web.
+
+## Pruebas A/B [#ab-tests]
+
+Establece la acción de una regla en **Dividir entre URLs (A/B)** y añade de 2 a 5 variantes, cada una con una URL y un peso. Una división de 70 y 30 envía aproximadamente al 70 % de los visitantes a la primera URL.
+
+- La asignación es **persistente**: un visitante que vuelve a escanear el mismo día recibe la misma variante. Se basa en un hash anónimo diario del visitante, nunca en una cookie.
+- Las analíticas del código muestran los **escaneos por variante** desde la última vez que cambiaron las variantes o los pesos de la división. Cada escaneo guarda la variante que se le mostró. Los escaneos registrados antes de que QRdx guardara las variantes se recalculan con tus reglas actuales y la tarjeta se marca como estimación.
+- Una división también puede tener condiciones, por ejemplo "prueba A/B solo para visitantes de Alemania".
+
+## Prueba tus reglas [#test-your-rules]
+
+**Prueba tus reglas**, al final del panel, muestra a dónde iría un escaneo para cualquier dispositivo, sistema operativo, país, región, idioma, fecha y hora, número de escaneo y visitante, usando tus cambios sin guardar. Indica qué regla coincidió y por qué las demás no, y muestra la URL final con los parámetros UTM.
+
+## Parámetros UTM [#utm-parameters]
+
+El panel **Parámetros UTM** añade `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` y hasta 10 parámetros propios a la URL que abre cada escaneo, para que las herramientas de analítica puedan distinguir el tráfico del QR.
+
+- Los parámetros se añaden después del enrutamiento, a la URL a la que vaya el escaneo.
+- Un parámetro que la URL ya tenga nunca se reemplaza, y el resto de la URL se conserva exactamente como la escribiste.
+- Los nombres que empiezan por `qrdx_` están reservados para el [seguimiento de conversiones](/docs/tracking-and-conversions).
+
+## Planes y cambios a un plan inferior [#plans-and-downgrades]
+
+Las reglas y los parámetros UTM guardados en Pro siguen funcionando si cambias a un plan inferior: los límites solo impiden crear cosas nuevas. Sin Pro todavía puedes desactivar y eliminar reglas o quitar parámetros UTM; para modificarlos necesitas Pro de nuevo.

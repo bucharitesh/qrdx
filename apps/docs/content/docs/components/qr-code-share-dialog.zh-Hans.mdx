@@ -1,0 +1,53 @@
+---
+title: "二维码分享对话框"
+description: "用于分享链接的对话框,包含二维码、复制按钮、PNG 下载和系统原生分享面板。"
+icon: Webhook
+---
+
+<ComponentLinks name="qr-code-share-dialog" />
+
+<ComponentPreview name="qr-code-share-dialog-demo" />
+
+## 安装 [#installation]
+
+<InstallationTabs name="qr-code-share-dialog" />
+
+## 用法 [#usage]
+
+```tsx
+import { QrCodeShareDialog } from "@/components/qr-code-share-dialog";
+```
+
+```tsx
+<QrCodeShareDialog url="https://example.com/invite/abc123" />
+```
+
+对话框会显示二维码、带复制按钮的只读链接输入框,以及 PNG 下载按钮。在支持系统分享面板的设备(大多数手机)上,还会出现“分享…”按钮,点击即可打开分享面板。
+
+## 示例 [#examples]
+
+### 自定义触发器 [#custom-trigger]
+
+可以通过 children 传入自己的触发器,例如工具栏中的图标按钮。`title`、`description` 和 `qr` 可用于自定义对话框。
+
+<ComponentPreview name="qr-code-share-dialog-trigger" />
+
+### 受控模式 [#controlled]
+
+该对话框支持 [Dialog](https://ui.shadcn.com/docs/components/dialog) 的属性,因此可以通过代码打开:
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<QrCodeShareDialog
+  url="https://example.com"
+  open={open}
+  onOpenChange={setOpen}
+/>
+```
+
+## API 参考 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-share-dialog.tsx" type="{ [K in keyof QrCodeShareDialogProps as K extends Exclude<keyof ComponentProps<typeof Dialog>, 'children'> ? never : K]: QrCodeShareDialogProps[K] }" />
+
+`open`、`defaultOpen`、`onOpenChange` 和 `modal` 会传递给 Dialog。

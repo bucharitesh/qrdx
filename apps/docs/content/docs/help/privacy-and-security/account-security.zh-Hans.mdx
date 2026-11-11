@@ -1,0 +1,91 @@
+---
+title: "保障账户安全"
+description: "登录方式、两步验证、通行密钥、在新位置使用登录时的检查、QRdx 发送的账户安全邮件、登录的有效时长、退出其他设备，以及如何报告安全问题。"
+---
+
+## 没有密码，不怕泄露 [#no-password-to-leak]
+
+QRdx 没有密码。你可以使用 Google、GitHub 或发送到邮箱的一次性验证码登录<IfAvailable feature="passkeys">，也可以使用通行密钥登录</IfAvailable>。<IfAvailable feature="sso"> 如果你的工作区使用 Business 方案，还可以允许你通过公司的[单点登录](/docs/help/teams/single-sign-on)登录，或者强制要求使用单点登录。</IfAvailable>
+
+这样一来，你的邮箱账户以及 Google 或 GitHub 账户就成了进入 QRdx 的钥匙。请同样为它们开启两步验证。
+
+<IfAvailable feature="sso" id="if-your-company-requires-single-sign-on" title="如果你的公司要求使用单点登录">
+Business 工作区可以对公司的邮箱域名[要求使用单点登录](/docs/help/teams/single-sign-on#require-single-sign-on)。如果你的邮箱地址属于该域名：
+
+- 你只能通过单点登录登录：邮箱验证码、Google 或 GitHub<IfAvailable feature="passkeys">，或者 **使用通行密钥继续**，</IfAvailable>都无法让你登录；
+- 在公司的登录页面之后，仍然需要两步验证<IfAvailable feature="passkeys">，通行密钥仍可作为你的第二步验证</IfAvailable>；
+- 每次登录最长有效 24 小时，之后你需要再次通过单点登录登录；
+- 你的 QRdx 邮箱不能更改为该域名以外的地址。
+
+工作区开启该要求时，你会退出那些不是通过单点登录开始的会话。工作区的所有者仍保留其他登录方式，因此公司登录页面出现问题时，不会把所有人都锁在门外。
+</IfAvailable>
+
+## 开启两步验证 [#turn-on-two-step-verification]
+
+[两步验证](/docs/help/privacy-and-security/two-step-verification)会让 QRdx 在你登录之后要求完成第二步，无论你用哪种方式登录：<IfAvailable feature="passkeys">你的通行密钥或</IfAvailable>验证器应用中的验证码。即使有人进入了你的邮箱或 Google 账户，没有第二步也无法进入 QRdx。你会获得 10 个备用码，用于无法完成第二步时。开启两步验证会让你账户上其他所有已登录的浏览器或设备退出登录，因此它们都需要通过第二步重新登录。
+
+<IfAvailable feature="passkeys" id="add-a-passkey" title="添加通行密钥">
+[通行密钥](/docs/help/privacy-and-security/passkeys)通过你的指纹、面容或屏幕锁来确认是你本人。它只能在 QRdx 自己的网站上使用，所以外观相似的仿冒网站无法获取它。它可以通过 **使用通行密钥继续** 单独完成登录，也可以作为你的第二步验证。在两步验证关闭时添加通行密钥会将其开启，并让你的其他设备退出登录。
+</IfAvailable>
+
+## 更改前需要确认是你本人 [#changes-ask-you-to-confirm-its-you]
+
+在更改账户的安全设置之前，即使你已登录，QRdx 也会要求你[确认是你本人](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)：更改邮箱地址、删除账户、开启或关闭两步验证、生成新的备用码、更改第二步验证方式，以及关联或取消关联 Google 或 GitHub。以下操作也是如此：创建 API 密钥或 OAuth 应用的客户端密钥、批准请求使用你账户的应用、添加 webhook 或更改其 URL、显示或轮换 webhook 的签名密钥、添加 Slack 或 Discord 通知 webhook，或连接会把你的扫描数据或表单回答发送到其他工具的集成；在工作区中，还包括删除工作区、更改某人的角色、移除成员或邀请管理员。<IfAvailable feature="sso"> 更改工作区的单点登录连接以及要求使用单点登录，同样需要确认。</IfAvailable>
+
+开启两步验证后，你可以使用<IfAvailable feature="passkeys">通行密钥、</IfAvailable>验证器应用的验证码或备用码来确认，不会使用邮件验证码。未开启时，你可以使用 QRdx 发到你邮箱的 6 位验证码<IfAvailable feature="passkeys">、你的通行密钥（如果有）</IfAvailable>，或者用你已关联的 Google 或 GitHub 账户重新登录<IfAvailable feature="sso">（如果工作区的单点登录使用 OIDC，也可以使用它）</IfAvailable>。一次确认在该浏览器中有效 10 分钟。
+
+更改邮箱地址还需要一个发送到新地址的验证码。完成后，你会在其他所有位置退出登录，旧地址会收到一封说明邮箱已更改的邮件。无法访问你的邮箱？请查看[处理方法](/docs/help/account-and-billing/sign-in#lost-access-to-your-email)。
+
+## 在新位置使用的登录 [#a-sign-in-used-somewhere-new]
+
+你登录时，QRdx 会记录你登录所在的国家或地区以及你的浏览器，例如“macOS 上的 Chrome”。如果之后这个登录在另一个国家或地区、并且用另一种浏览器被使用，QRdx 会要求你先[确认是你本人](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)，才能在账户中继续操作。在你确认之前，该浏览器在 QRdx 的其他所有位置都会被视为已退出登录。因此，即使有人从你的浏览器中复制了登录信息，除非也能确认是你本人，否则无法在远处使用。
+
+只有当两者都发生变化时才会询问。使用同一个浏览器出行、或者更新浏览器或系统，都不算。你确认之后，QRdx 会为该登录记录新的国家或地区和浏览器。你也可以选择退出后重新登录。
+
+这是一项额外的检查，而不是绝对保证：如果被复制的登录在你所在的国家或地区、或用同类浏览器被使用，就不会被询问。只有当托管服务提供国家或地区信息时，QRdx 才能知道，没有提供的地方不会执行这项检查。若要结束你不认识的登录，请[退出其他设备](#sign-out-other-devices)。
+
+## 账户安全邮件 [#emails-about-your-accounts-security]
+
+在以下情况下，我们会向你账户的邮箱地址发送邮件：
+
+- 有浏览器或设备首次登录你的账户；
+- 两步验证被开启或关闭，添加或移除了验证器应用<IfAvailable feature="passkeys">或通行密钥</IfAvailable>，或生成了新的备用码；
+- 使用了备用码（用于登录或确认是你本人），并说明你还剩多少个备用码；
+- 有人请求支持团队关闭你的两步验证，邮件会说明生效的日期以及如何阻止，取消时也会发送邮件；
+- 你的邮箱地址被更改（发送到旧地址）。
+
+每封邮件都会说明发生了什么、在哪台设备和浏览器上（例如“macOS 上的 Chrome”）、大致位置、来自哪个 IP 地址以及时间。点击 **检查安全设置** 会打开你的安全设置。如果不是你本人操作，请按照邮件中的步骤操作并联系支持团队。
+
+包含验证码的邮件，例如登录验证码和确认是你本人的验证码，会说明验证码大致是从哪里请求的。QRdx 绝不会通过电话、聊天或邮件向你索要验证码：请不要把验证码告诉任何人。
+
+### 新的登录 [#new-sign-ins]
+
+QRdx 通过你完成登录时设置的一个 cookie 来识别浏览器。当没有该 cookie 的浏览器或设备登录你的账户时，你会收到一封邮件。如果开启了两步验证，则在完成第二步之后发送。
+
+在 QRdx 已识别的浏览器中再次登录不会发送邮件，创建账户时也不会发送。如果你清除了 cookie 或使用隐私窗口，那里的下一次登录会被视为新的登录。
+
+每个新浏览器都会各收到一封邮件，每天最多 10 封，这样大量登录不会塞满你的收件箱。每次登录仍会显示在 **会话** 下。QRdx 会记住你最近使用的 50 个浏览器，并忘记 400 天未登录的浏览器。
+
+<IfAvailable feature="sso">
+有一个例外：当你通过工作区的 SAML 身份提供商登录且两步验证处于关闭状态时，QRdx 在你返回时无法识别该浏览器，因此不会发送这封邮件。
+</IfAvailable>
+
+## 登录状态保持多久 [#how-long-you-stay-signed-in]
+
+一次登录最长有效 30 天。之后，无论你使用得多频繁，QRdx 都会要求你在该浏览器中重新登录。如果你在某个浏览器中大约一周没有使用 QRdx，则会更早在那里退出登录。
+
+## 退出其他设备 [#sign-out-other-devices]
+
+前往 **设置** → **个人资料与安全**。在 **会话** 下，可以退出某一台设备，也可以点击 **退出其他所有设备**。此操作不会要求你确认是你本人，所以可以立即进行。
+
+开启两步验证也会让其他所有设备退出登录。如果支持团队为你关闭两步验证（该操作会[等待 7 天](/docs/help/privacy-and-security/two-step-verification#lost-your-phone-and-your-backup-codes)），所有设备都会在当天退出登录，包括你正在使用的这台。<IfAvailable feature="sso"> 如果你的公司开始要求使用单点登录，你会退出那些不是通过单点登录开始的会话，单点登录的会话最长有效 24 小时。</IfAvailable>
+
+## 移除你已连接的应用 [#remove-apps-you-connected]
+
+如果你允许其他应用使用你的 QRdx 账户，它会列在 **设置** → **已授权的应用** 下。请移除你不再使用的应用。应用在你退出登录后仍会继续工作，因此批准应用时需要你确认是你本人。
+
+## 报告安全问题 [#report-a-security-problem]
+
+请发送邮件至 [support@qrdx.dev](mailto:support@qrdx.dev)，主题以 `[security]` 开头。请不要发布在公开的 GitHub issue 中。请参阅[安全政策](/legal/security)。
+
+有害的二维码不属于安全漏洞：请改为[举报](/docs/help/privacy-and-security/report-abuse)。

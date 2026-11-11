@@ -1,0 +1,141 @@
+---
+title: "模板"
+description: "为二维码套用预先设计好的边框模板，或注册您自己的模板。"
+icon: LayoutTemplate
+---
+
+即刻应用专业的二维码样式。
+
+## 什么是模板？ [#what-are-templates]
+
+模板把颜色、图案和视觉样式组合成开箱即用的方案。
+
+## 可用模板 [#available-templates]
+
+### Default [#default]
+经典黑白配色。
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" templateId="default" size={256} />
+```
+
+### Arrow [#arrow]
+现代几何设计。
+
+```tsx
+<QRCode value="https://example.com" templateId="Arrow" size={256} />
+```
+
+### Standard Box [#standard-box]
+简洁、结构分明的设计。
+
+```tsx
+<QRCode value="https://example.com" templateId="StandardBox" size={256} />
+```
+
+### Square Border [#square-border]
+边缘清晰的带边框设计。
+
+```tsx
+<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
+```
+
+### Striked Box [#striked-box]
+带有斜线元素的动感设计。
+
+```tsx
+<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
+```
+
+### Halloween [#halloween]
+应季的万圣节主题。
+
+```tsx
+<QRCode value="https://example.com" templateId="Halloween" size={256} />
+```
+
+## 自定义模板 [#customize-templates]
+
+覆盖模板的默认设置：
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  fgColor="#your-brand-color"
+  hideLogo={false}
+  logo="/your-logo.png"
+  size={512}
+/>
+```
+
+## 模板注册表 [#template-registry]
+
+### 获取所有模板 [#get-all-templates]
+
+```tsx
+import { getAllTemplates } from 'qrdx';
+
+const templates = getAllTemplates();
+```
+
+### 获取模板 ID [#get-template-ids]
+
+```tsx
+import { getTemplateIds } from 'qrdx';
+
+const ids = getTemplateIds();
+// Returns: ['default', 'Arrow', 'StandardBox', ...]
+```
+
+## 自定义模板 [#custom-templates]
+
+创建您自己的模板：
+
+```tsx
+const brandTemplate = {
+  id: 'brand-template',
+  name: 'Brand Template',
+  colors: {
+    fgColor: '#1a56db',
+    bgColor: '#ffffff',
+    eyeColor: '#0d47a1',
+    dotColor: '#3b82f6'
+  },
+  bodyPattern: 'rounded',
+  cornerEyePattern: 'rounded',
+  cornerEyeDotPattern: 'rounded'
+};
+
+<QRCode
+  value="https://example.com"
+  customTemplate={brandTemplate}
+  size={256}
+/>
+```
+
+## 何时使用模板 [#when-to-use-templates]
+
+- **品牌一致性** — 确保所有二维码风格统一
+- **快速设置** — 快速获得专业效果
+- **季节性活动** — 使用主题模板
+- **批量生成** — 应用统一的样式
+
+## 模板选择指南 [#template-selection-guide]
+
+| 模板 | 最适合 | 风格 |
+|----------|----------|------|
+| Default | 专业场景 | 中性 |
+| Arrow | 科技、现代 | 动感 |
+| Standard Box | 企业 | 专业 |
+| Square Border | 正式场合 | 结构分明 |
+| Striked Box | 营销 | 活力 |
+| Halloween | 季节性 | 趣味 |
+
+## 后续步骤 [#next-steps]
+
+- [图案](/docs/features/patterns) — 详细的图案自定义
+- [颜色与渐变](/docs/features/colors-gradients) — 高级颜色设置
+- [Logo](/docs/features/logos) — 为模板添加 Logo

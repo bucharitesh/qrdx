@@ -1,0 +1,166 @@
+---
+title: "Logo"
+description: "在二维码中央添加 Logo,同时不影响扫描。"
+icon: Image
+---
+
+为二维码添加品牌 Logo,同时保持可扫描性。
+
+## 基础 Logo [#basic-logo]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+使用 Logo 时,请始终采用较高的纠错级别(`Q` 或 `H`)。
+
+## 尺寸、留白和位置 [#size-clear-space-and-position]
+
+`logoOptions` 以不依赖渲染尺寸的单位排布 Logo,在 `QRCode` 和 `getQRData` 中均可使用:
+
+- `size`:Logo 宽度占二维码宽度的比例,取值 `0.1` 到 `0.3`(默认 `0.25`)。在我们的解码测试中,即使是 H 级,超过 25% 也无法读取。
+- `padding`:Logo 周围的留白,取值 `0` 到 `2` 个模块。
+- `x` 和 `y`:Logo 中心在二维码上的横向和纵向位置,取值 `0` 到 `1`(默认 `0.5`,即正中央)。Logo 始终位于二维码范围之内。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="https://example.com/logo.png"
+  level="H"
+  logoOptions={{ size: 0.2, padding: 1, x: 0.6, y: 0.55 }}
+/>
+```
+
+`QRCode` 和 `getQRData` 绝不会绘制超出二维码修复能力的 Logo。Logo(连同其留白)会破坏它所覆盖的每个码字,而每个纠错块能修复的码字数量有限,因此它们会逐块统计被破坏的码字,并缩小 Logo,直到最差的那个块最多只用掉其修复容量的 60%(与 Logo QR 徽章使用的预算相同)。较小的二维码容量更少:在 Q 级下,短链接可容纳的 Logo 约为宽度的 13–17%,而 H 级或内容更短时能容纳更大的 Logo。`getLogoSizeLimit(props)` 会返回某个二维码可用的最大尺寸,扫描评分检查的也是同样的统计结果。`QRCodeSVG`、`QRCodeCanvas` 和 `getQRAsSVG` 上的原始 `imageSettings` 同样受此上限约束:能容纳的 Logo 按给定值绘制,过大的 Logo 则围绕自身中心缩小。
+
+移动 Logo 时,请避开三个角上的定位图案,以及右下角附近的小方块(解码器用来校正透视的校正图案)。如果 Logo 遮住了其中任何一个,扫描评分会判定为不通过。
+
+在 Playground 中,**设计 → Logo 选项** 提供相同的控件,另外还有 **为大 Logo 提高纠错级别**(`autoLevel`)。
+
+## 形状、底板和背景 [#shape-plate-and-background]
+
+- `shape`:将 Logo 裁剪为 `"square"`(方形,保持上传时的样子,默认值)、`"rounded"`(圆角)或 `"circle"`(圆形)。
+- `plate`:在 Logo 后面以相同形状绘制的纯色底板;Logo 内嵌于底板之上。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="/logo.png"
+  level="H"
+  logoOptions={{ size: 0.22, shape: "circle", plate: "#ffffff" }}
+/>
+```
+
+裁剪使用的是 SVG 裁剪路径。用于打印的 PDF 和 EPS 也会按相同轮廓裁剪,因此所有下载格式看起来一致。EPS 不支持透明,所以 Logo 的透明部分在其中会打印为白色。
+
+如果上传的 Logo 带有纯色底框(JPEG 中很常见),Playground 会提供 **移除背景**。当四个角颜色相同时,它会从边缘向内清除该颜色,因此图案内部的相同颜色(例如白色字母)会保留。在代码中,`removeLogoBackground(src)` 在浏览器中以 data URL 形式返回清理后的 PNG,而 `removeLogoBackdrop(pixels)` 可在任何环境中对 RGBA 像素执行同样的处理。
+
+## 高级控制 [#advanced-control]
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "https://example.com/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true,
+    x: 216,
+    y: 216,
+    opacity: 0.9
+  }}
+  level="Q"
+/>
+```
+
+## 尺寸指南 [#size-guidelines]
+
+- **256px 二维码**:32-48px 的 Logo
+- **512px 二维码**:64-96px 的 Logo
+- **1024px 二维码**:128-192px 的 Logo
+
+请将 Logo 控制在二维码尺寸的 10-30%。
+
+## Logo 挖空 [#logo-excavation]
+
+### 作用 [#what-it-does]
+
+挖空会移除 Logo 下方的二维码模块,以获得更好的扫描效果。
+
+```tsx
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "/logo.png",
+    height: 80,
+    width: 80,
+    excavate: true  // Recommended for most logos
+  }}
+/>
+```
+
+### 留白与纠错 [#clear-space-and-error-correction]
+
+`padding`(与 `width` 和 `height` 使用相同的像素单位)会在 Logo 周围清除额外的模块,使其边缘不会碰到二维码图案。只要被清除的区域超过二维码的 7%,`autoLevel` 就会将纠错级别提高到 H,使较大的 Logo 仍可读取;它默认关闭,因此现有二维码会保持原有级别。
+
+```tsx
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  autoLevel
+  imageSettings={{ src: "/logo.png", height: 110, width: 110, excavate: true, padding: 8 }}
+/>
+```
+
+无论 `margin` 为多少,Logo 都保持其像素尺寸(0.0.46 及之前的版本中,Logo 会随边距增大而缩小)。
+
+### 适用场景 [#when-to-use]
+
+- ✅ 带纯色背景的 Logo
+- ✅ 可能干扰扫描的 Logo
+- ❌ 透明 Logo(可选)
+- ⚠️ 务必在真实设备上测试扫描
+
+## Logo 格式 [#logo-formats]
+
+- **PNG** — 最适合透明背景
+- **JPG** — 适合照片
+- **SVG** — 可无损缩放,但可能出现加载问题
+- **WebP** — 现代格式,压缩效果好
+
+## 中心点计算 [#center-calculation]
+
+```tsx
+const qrSize = 512;
+const logoSize = 80;
+const position = {
+  x: (qrSize - logoSize) / 2,  // 216
+  y: (qrSize - logoSize) / 2   // 216
+};
+```
+
+## 最佳实践 [#best-practices]
+
+1. 使用带透明背景的 PNG 格式
+2. 对纯色 Logo 启用挖空
+3. 使用 `Q` 或 `H` 纠错级别
+4. 保持合理的 Logo 尺寸(10-30%)
+5. 在目标设备上测试扫描
+
+## 下一步 [#next-steps]
+
+- [下载](/docs/features/downloads) — 导出带 Logo 的二维码
+- [模板](/docs/features/templates) — 将 Logo 与模板结合使用
+- [颜色与渐变](/docs/features/colors-gradients) — 用颜色为 Logo 设计样式

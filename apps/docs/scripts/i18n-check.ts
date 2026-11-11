@@ -9,11 +9,23 @@
 //
 // Fill gaps with `bun run --filter docs i18n:translate --locale <locale>`, or
 // translate by hand and record it with `i18n:translate --record`.
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { type Catalog, checkLocale, type ReviewFile } from "@/lib/i18n/catalog";
 import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
+import {
+  DOCS_LOCALES,
+  englishFile,
+  hasDocs,
+  translationLocale,
+} from "@/lib/i18n/docs";
+import {
+  checkDocsLocale,
+  type DocsReviewFile,
+  strayTranslations,
+} from "@/lib/i18n/docs-check";
 import { icuShape } from "@/lib/i18n/icu";
+import { fileHash } from "@/lib/i18n/mdx";
 import { REVIEW } from "@/lib/i18n/review";
 
 const VERBOSE = process.argv.includes("--verbose");
@@ -25,6 +37,7 @@ const read = <T>(file: string): T =>
 const errors: string[] = [];
 const warnings: string[] = [];
 const english = read<Catalog>("en.json");
+const withoutDocs = ({ docs: _docs, ...rest }: Catalog): Catalog => rest;
 
 // The source itself must parse.
 const walk = (catalog: Catalog, prefix = "") => {
@@ -56,7 +69,8 @@ for (const locale of TRANSLATED_LOCALES) {
     : {};
   const report = checkLocale({
     locale,
-    english,
+    // The docs chrome (`docs`) only shows in languages with docs.
+    english: hasDocs(locale) ? english : withoutDocs(english),
     catalog: read<Catalog>(`${locale}.json`),
     review: reviewEntries,
     state: REVIEW[locale],
@@ -71,6 +85,55 @@ for (const locale of TRANSLATED_LOCALES) {
       : `reviewed pages: ${review.join(", ")}`;
   console.log(
     `${locale.padEnd(8)} ${state.padEnd(9)} ${keys} strings: ${reviewed} reviewed, ${machine} machine, ${stale} stale, ${missing} missing`,
+  );
+}
+
+// Docs translations: content/docs/<page>.<locale>.mdx and meta.<locale>.json
+// beside the English files, recorded in messages/review/docs/<locale>.json
+// (lib/i18n/docs-check.ts).
+const DOCS = path.join(__dirname, "../content/docs");
+const docsFiles: string[] = [];
+const walkDocs = (dir: string) => {
+  for (const name of readdirSync(dir)) {
+    const full = path.join(dir, name);
+    if (statSync(full).isDirectory()) walkDocs(full);
+    else docsFiles.push(path.relative(DOCS, full).split(path.sep).join("/"));
+  }
+};
+walkDocs(DOCS);
+const isContent = (file: string) =>
+  file.endsWith(".mdx") || /(?:^|\/)meta(?:\.[^./]+)?\.json$/.test(file);
+const englishDocs = new Map(
+  docsFiles
+    .filter((file) => isContent(file) && !translationLocale(file))
+    .map((file) => [
+      file,
+      fileHash(readFileSync(path.join(DOCS, file), "utf8")),
+    ]),
+);
+errors.push(...strayTranslations(docsFiles));
+for (const locale of DOCS_LOCALES) {
+  if (locale === "en") continue;
+  const reviewPath = path.join(MESSAGES, `review/docs/${locale}.json`);
+  const report = checkDocsLocale({
+    locale,
+    english: englishDocs,
+    translations: new Set(
+      docsFiles
+        .filter((file) => isContent(file) && translationLocale(file) === locale)
+        .map(englishFile),
+    ),
+    review: existsSync(reviewPath)
+      ? (JSON.parse(readFileSync(reviewPath, "utf8")) as DocsReviewFile)
+      : {},
+    state: REVIEW[locale as keyof typeof REVIEW],
+  });
+  errors.push(...report.errors);
+  warnings.push(...report.warnings);
+  const { pages, translated, machine, reviewed, stale, missing } =
+    report.counts;
+  console.log(
+    `docs ${locale.padEnd(8)} ${translated} of ${pages} pages translated: ${reviewed} reviewed, ${machine} machine, ${stale} stale, ${missing} in English`,
   );
 }
 

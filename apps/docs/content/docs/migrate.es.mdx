@@ -1,0 +1,174 @@
+---
+title: "Cambia desde Bitly, Rebrandly y otros"
+description: "Importa tus enlaces cortos y códigos QR dinámicos a QRdx, mantén operativos los códigos ya impresos y conserva tus back-halves personalizados."
+icon: Download
+---
+
+QRdx importa enlaces y códigos dinámicos de otros proveedores de una sola vez. Abre [Panel → Códigos](/dashboard?to=codes) y haz clic en **Importar**. Todas las importaciones siguen los mismos tres pasos: elige qué traer, revísalo en la vista previa e impórtalo.
+
+- **Cuentas conectadas:** Bitly, Rebrandly y Short.io. QRdx lista tus enlaces a través de la API del proveedor.
+- **Archivos de exportación:** QR Code Generator PRO, Uniqode (Beaconstac), Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova, o cualquier CSV con URL de destino.
+
+Durante la importación no cambia nada en tu cuenta anterior.
+
+## Qué crea una importación [#what-an-import-creates]
+
+Cada enlace o código se convierte en un [código QR dinámico](/docs/dynamic-qr-codes) con:
+
+- su destino y su título;
+- sus etiquetas (opcional) y una carpeta como "Imported from Bitly" (puedes renombrarla o desactivarla);
+- notas como `Imported from Bitly bit.ly/3AbCdEf on 2026-11-01.` más la fecha de creación original del enlace. QRdx asigna su propia fecha de creación al código nuevo.
+
+La vista previa muestra cuántos códigos se crearán, qué etiquetas son nuevas y qué se omite:
+
+- **Ya importados:** los enlaces importados antes (en cualquier ejecución anterior) siempre se omiten, así que importar dos veces nunca crea duplicados.
+- **Mismo destino:** los enlaces cuyo destino ya tiene un código en QRdx se omiten por defecto. Marca la opción para importarlos igualmente.
+- **No se pueden importar:** destinos ausentes o no válidos, y enlaces que ya apuntan a un enlace corto de QRdx.
+
+Las importaciones se ejecutan en lotes de 50 con una barra de progreso. Puedes cerrar el diálogo sin problema: abre **Importar** de nuevo y la importación continúa desde **Importaciones recientes**. El resumen muestra los códigos creados, omitidos y fallidos con sus motivos.
+
+<Callout type="info">
+Se aplican los límites del plan como con cualquier código nuevo. Gratis incluye 10 códigos dinámicos activos; si una importación necesita más, la vista previa indica cuántos caben y te ofrece importar los primeros o mejorar de plan. Pro y Business no tienen límite.
+</Callout>
+
+## Desde una cuenta conectada [#from-a-connected-account]
+
+1. Haz clic en **Importar** y elige el proveedor. Si aún no está conectado, conéctalo ahí mismo (inicia sesión o pega una clave de API o un token). Los tokens se guardan cifrados y puedes desconectarlos en Ajustes → Integraciones.
+2. Busca, filtra por dominio o etiqueta y selecciona enlaces. **Seleccionar todos los enlaces coincidentes** toma hasta 1.000 enlaces por importación; vuelve a ejecutarla para el resto.
+3. Revisa la vista previa y haz clic en **Importar**.
+
+| Proveedor | Conectar con | Listar enlaces | Mantener operativos los códigos impresos |
+|---|---|---|---|
+| Bitly | Inicio de sesión o un token de acceso genérico | Sí | Solo planes de pago de Bitly: 5 redirecciones de enlaces al mes en Core, 20 en Growth, 110 en Premium |
+| Rebrandly | Clave de API | Sí | Dentro de las ediciones mensuales de destino de Rebrandly: 10 en Essentials, 50 en Professional, 150 en Growth (ninguna en Gratis) |
+| Short.io | Clave de API | Sí, un dominio a la vez | Sí, en todos los planes |
+
+Los límites de los planes son los propios de cada proveedor y cambian con el tiempo. Consulta sus páginas de precios.
+
+## Mantén operativos los códigos impresos [#keep-printed-codes-working]
+
+Los códigos QR que imprimiste con otro proveedor codifican el enlace corto de ese proveedor. Tras una importación desde una cuenta conectada, el resumen ofrece **Mantener operativos mis códigos impresos**:
+
+1. Una **simulación** lista cada enlace antiguo y el enlace de QRdx al que apuntaría. Todavía no cambia nada.
+2. Confirma y QRdx cambia el destino de cada enlace antiguo a su nuevo código de QRdx. Los visitantes siguen llegando a la misma página y cada escaneo aparece ahora en las analíticas de QRdx. El proveedor anterior sigue registrando primero un clic.
+3. **Deshacer** restaura los destinos originales, que QRdx guardó con la importación.
+
+Si el proveedor lo rechaza (por ejemplo, un plan de Bitly sin redirecciones de enlaces disponibles), QRdx se detiene, explica el motivo y deja sin cambios los enlaces restantes. Los enlaces omitidos porque su destino ya tenía un código en QRdx apuntan a ese código existente.<IfAvailable feature="customDomains"> Los enlaces cuyo back-half se traslada con tu propio dominio (más abajo) no se modifican: tras el cambio de DNS son el enlace de QRdx.</IfAvailable>
+
+## Conserva los back-halves originales [#keep-the-original-back-halves]
+
+En Pro y Business, marca **Conservar los back-halves originales** en la vista previa de la importación. Cada código recibe entonces su back-half antiguo en lugar de uno aleatorio cuando QRdx puede conservarlo, de modo que `bit.ly/spring-menu` pasa a ser `qrdx.dev/q/spring-menu`:
+
+- Un back-half se conserva cuando tiene de 3 a 64 letras, dígitos, `-` o `_` (consulta [back-halves personalizados](/docs/dynamic-qr-codes#custom-back-halves)), no está reservado y ningún código de QRdx lo usa todavía en `qrdx.dev`<IfAvailable feature="customDomains"> (en tu propio dominio, solo cuentan tus códigos de ese dominio)</IfAvailable>.
+- En caso contrario, el código recibe un back-half generado y la vista previa muestra el cambio con el motivo, por ejemplo `spring-menu → Ab3xK9q · Another QRdx code already uses this back-half on qrdx.dev`. La importación usa exactamente el back-half que muestra la vista previa.
+- Los back-halves distinguen mayúsculas de minúsculas, como en Bitly y Short.io.
+
+<Callout type="warn">
+Mantén conectado el proveedor hasta estar seguro: deshacer necesita la conexión. La cuenta anterior también debe seguir activa para que sus enlaces sigan redirigiendo.
+</Callout>
+
+<IfAvailable feature="customDomains" id="your-own-domain-go-yourbrand-com" title="Tu propio dominio (go.yourbrand.com)">
+
+Si tus enlaces usan tu propio dominio, puedes trasladarlo a QRdx y conservar los back-halves, de modo que `go.yourbrand.com/spring-menu` siga funcionando tras el cambio de DNS.
+
+1. Primero añade el dominio en [Ajustes → Dominios](/dashboard?to=settings/domains). Puede quedar sin verificar por ahora: los back-halves se conservan entonces en el propio dominio, donde solo tienen que ser únicos entre tus códigos, y solo están reservados `api`, `p` y `q`.
+2. En la vista previa de la importación, marca **Conservar los back-halves originales** y elige el dominio en **Enlaces en**. La vista previa muestra qué back-halves se conservan.
+3. Importa. Los códigos se crean en el dominio y reclaman sus back-halves de inmediato.
+4. Apunta el DNS del dominio a QRdx y verifícalo (consulta [Dominios personalizados](/docs/custom-domains)). Hazlo en un momento tranquilo: los enlaces del dominio dejan de funcionar en el proveedor anterior en cuanto cambia el DNS y empiezan a funcionar en QRdx cuando se verifica.
+
+Si el dominio aún no está en QRdx cuando importas, sus back-halves se conservan en `qrdx.dev` (donde deben estar libres en todo QRdx). Después de añadir y verificar el dominio, haz clic en **Asociar códigos** en el resumen de la importación para trasladar esos códigos a él.
+
+</IfAvailable>
+
+Los back-halves que no se pueden conservar reciben uno generado; esos enlaces necesitan una reimpresión o una redirección en el proveedor anterior. Los back-halves personalizados forman parte de Pro y Business.
+
+## Desde un archivo de exportación [#from-an-export-file]
+
+1. Consigue el archivo (pasos abajo). QRdx lee CSV; si tienes un archivo de Excel, guárdalo o descárgalo primero como CSV.
+2. Haz clic en **Import**, elige el proveedor y sube el archivo. QRdx reconoce las columnas del proveedor cuando puede, y puedes cambiar la asignación. Solo el destino es obligatorio; el enlace corto antiguo (o el ID del código) permite que, al volver a subir el archivo, se omitan los códigos ya importados.
+3. Previsualiza e importa; después usa **Copy all new links** o **Download mapping CSV** (enlace antiguo → nuevo enlace de QRdx).
+
+Los códigos de estos proveedores viven en el dominio del proveedor, por lo que QRdx no puede modificarlos. Para que los códigos impresos sigan funcionando, abre cada código dinámico antiguo en el proveedor anterior y establece como destino el nuevo enlace de QRdx de la asignación. La cuenta antigua debe seguir activa para que esos códigos redirijan; vuelve a imprimir con los códigos de QRdx antes de cancelarla.
+
+### QR Code Generator PRO [#qr-code-generator-pro]
+
+No hay una exportación documentada de la lista de códigos. Crea una hoja de cálculo con **Name**, **Short URL** y **Destination URL** de cada código. Para cambiar el destino de los códigos: abre el código → **Details** → **Edit**, sustituye la URL y guarda. Para muchos códigos, su actualización masiva admite un CSV con nuevas URLs para hasta 500 códigos.
+
+### Uniqode (Beaconstac) [#uniqode-beaconstac]
+
+**QR Codes → Dynamic**, selecciona todo, **⋯ → Export**, por organización o carpeta. Se reconocen las columnas de la exportación (QR Code Name, QR Code URL, Destination URL, Labels, …). Para cambiar el destino: abre el código → **Edit** → nueva URL → **Next** → **Save**.
+
+### Flowcode [#flowcode]
+
+No hay una exportación documentada de la lista de códigos. Reutiliza tu hoja de creación masiva (Flowcode Name, Flowcode Scan URL) o anota Name, Scan URL y Destination. Para cambiar el destino: **Assets** → el código → **Overview** → **Destination** → **Save**.
+
+### QR TIGER [#qr-tiger]
+
+**My Account** → elige una categoría (por ejemplo, URL) → **Download QR List**, una vez por categoría. Para cambiar el destino: **My Account → Dashboard → URL** → la campaña → **Edit** → **Save**.
+
+### ME-QR [#me-qr]
+
+No hay exportación. Anota Name, QR link y Destination URL de cada código. Para cambiar el destino: edita el código en tu lista de códigos de ME-QR.
+
+### TinyURL [#tinyurl]
+
+TinyURL indica que la exportación a CSV está en sus planes de pago. Exporta tus enlaces como CSV, o anota Alias y Long URL. Editar el destino de un enlace de TinyURL requiere un plan de pago de TinyURL.
+
+### Hovercode, Scanova y otros [#hovercode-scanova-and-others]
+
+Exporta tus códigos como CSV desde el proveedor (Hovercode indica que ofrece exportaciones CSV en sus planes Business; Scanova envía un enlace de descarga por correo) y revisa la asignación de columnas. Cualquier CSV con una columna de destino funciona con **Another provider (CSV)**.
+
+Los códigos QR estáticos (de goQR.me, QR Code Monkey, Adobe Express y herramientas similares) codifican el propio destino, así que siguen funcionando sin la herramienta. Importa sus destinos desde un CSV solo si quieres códigos editables y con seguimiento para nuevas impresiones.
+
+## Desde una biblioteca de códigos QR [#from-a-qr-code-library]
+
+Las bibliotecas generan códigos estáticos, así que no hay nada que migrar: los códigos ya impresos siguen funcionando. Para cambiar el renderizado en tu app, instala `qrdx` y sustituye el componente.
+
+### Desde qrcode.react [#from-qrcode-react]
+
+```tsx
+// Before
+import { QRCodeSVG } from "qrcode.react";
+
+<QRCodeSVG value="https://example.com" size={256} fgColor="#111827" />;
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  fgColor="#111827"
+  bodyPattern="rounded"
+/>;
+```
+
+`value`, `size`, `level`, `fgColor`, `bgColor`, `marginSize` (como `margin`) e `imageSettings` se mantienen; qrdx añade patrones, degradados y plantillas. Consulta la [referencia de la API](/docs/api-reference).
+
+### Desde qr-code-styling [#from-qr-code-styling]
+
+```tsx
+// Before
+import QRCodeStyling from "qr-code-styling";
+
+const qr = new QRCodeStyling({
+  data: "https://example.com",
+  width: 256,
+  dotsOptions: { type: "rounded", color: "#111827" },
+  image: "/logo.png",
+});
+qr.append(ref.current);
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  fgColor="#111827"
+  imageSettings={{ src: "/logo.png", width: 64, height: 64, excavate: true }}
+/>;
+```
+
+qrdx es un componente de React, así que no hay una instancia que añadir: renderízalo como cualquier elemento. Las descargas usan los helpers de la [referencia de la API](/docs/api-reference).

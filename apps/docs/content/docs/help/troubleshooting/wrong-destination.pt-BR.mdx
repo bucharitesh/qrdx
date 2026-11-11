@@ -1,0 +1,45 @@
+---
+title: "Um código abre a página errada"
+description: "Por que um QR code abre um link antigo ou inesperado e como descobrir o que ele realmente guarda."
+---
+
+## Primeiro, veja o que o código guarda [#first-see-what-the-code-holds]
+
+Tire uma foto do código impresso e envie para o [verificador de leitura](/tools/scan-checker). Ele mostra exatamente o que o código contém.
+
+- Se aparecer o endereço do seu site, o código é **estático**.
+- Se aparecer um link curto como `qrdx.dev/q/…`, o código é **dinâmico**.
+
+## Um código estático [#a-static-code]
+
+Um código estático guarda o link dentro do próprio código. Ele não pode ser alterado depois de impresso.
+
+Isso acontece quando o código é baixado antes de se tornar dinâmico. Para corrigir, imprima a versão dinâmica. Veja [Criar um QR code dinâmico](/docs/help/dynamic-codes/create).
+
+## Um código dinâmico [#a-dynamic-code]
+
+Abra o código em **Codes** e confira cada um destes pontos.
+
+### O novo destino não foi salvo [#the-new-destination-wasnt-saved]
+
+No Playground, mudar o endereço não basta: clique em **Point it to the new address**. No painel, use **Edit link** e **Save changes**. Veja [Mudar para onde um código aponta](/docs/help/dynamic-codes/change-the-link).
+
+### Uma regra de roteamento inteligente foi aplicada [#a-smart-routing-rule-matched]
+
+As regras podem enviar algumas leituras para outro lugar, por exemplo por dispositivo ou país. A primeira regra que corresponder é a que vale. Abra **Smart routing** e clique em **Test your rules**.
+
+### Um teste A/B está em andamento [#an-ab-test-is-running]
+
+Cada visitante vê uma versão por dia. Outra pessoa pode ver uma página diferente.
+
+### O código está pausado ou encerrado [#the-code-is-paused-or-ended]
+
+Um código pausado ou encerrado abre a **Fallback URL**, se você tiver definido uma. Confira **Access & schedule**.
+
+### Parâmetros UTM foram adicionados [#utm-parameters-were-added]
+
+Se você definiu parâmetros UTM, as leituras abrem seu link com tags `utm_` adicionadas. Isso é esperado, e a página é a mesma.
+
+## Ainda vendo a página antiga? [#still-seeing-the-old-page]
+
+O QRdx não faz cache de redirecionamentos, então a próxima leitura usa o novo destino. Se o seu celular mostra uma versão antiga da própria página, recarregue-a no navegador.

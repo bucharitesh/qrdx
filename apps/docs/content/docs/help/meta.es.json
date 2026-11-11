@@ -1,0 +1,23 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "Ayuda",
+  "description": "Respuestas para todos los que usan QRdx",
+  "icon": "LifeBuoy",
+  "root": true,
+  "pages": [
+    "index",
+    "getting-started",
+    "designing",
+    "dynamic-codes",
+    "pages-and-forms",
+    "account-and-billing",
+    "teams",
+    "domains",
+    "troubleshooting",
+    "privacy-and-security",
+    "---Más ayuda---",
+    "contact",
+    "whats-new",
+    "[Registro de cambios](/changelogs)"
+  ]
+}

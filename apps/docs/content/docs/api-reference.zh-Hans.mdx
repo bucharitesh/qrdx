@@ -1,0 +1,418 @@
+---
+title: "库 API 参考"
+description: "qrdx React 库导出的所有组件、函数和类型。HTTP 端点请参阅 REST API。"
+icon: Code
+---
+
+`qrdx` 所有组件、函数和类型的完整参考。
+
+<NpmStatus package="qrdx" />
+
+## 组件 [#components]
+
+### QRCode [#qrcode]
+
+用于渲染二维码的主组件。
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#000000"
+  bgColor="#ffffff"
+/>
+```
+
+#### 属性 [#props]
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|---------|-------------|
+| `value` | `string` | **必填** | 要编码的 URL 或文本 |
+| `size` | `number` | `128` | 尺寸，单位为像素 |
+| `scale` | `number` | `1` | 缩放倍数 |
+| `fgColor` | `ColorConfig` | `#000000` | 二维码颜色 |
+| `bgColor` | `ColorConfig` | `#ffffff` | 背景颜色 |
+| `eyeColor` | `ColorConfig` | `fgColor` | 角标记颜色 |
+| `dotColor` | `ColorConfig` | `fgColor` | 每个角标记内部圆点的颜色 |
+| `bodyPattern` | `BodyPattern` | `'circle'` | 数据点图案 |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | 角标记图案 |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | 角标记圆点图案 |
+| `hideLogo` | `boolean` | `false` | 隐藏徽标。除非设置了 `logo`，否则不会绘制徽标 |
+| `logo` | `string` | — | 徽标 URL |
+| `templateId` | `string` | `'default'` | 模板 ID |
+| `customTemplate` | `TemplateDefinition` | — | 自定义模板 |
+| `level` | `ErrorLevel` | `'Q'` | 纠错级别 |
+| `autoLevel` | `boolean` | `false` | 当徽标覆盖超过二维码的 7%（`AUTO_LEVEL_LOGO_COVERAGE`）时，将 `level` 提升为 H |
+| `margin` | `number` | `0` | 边距，单位为模块 |
+| `imageSettings` | `ImageSettings` | — | 徽标设置 |
+| `eyeColors` | `EyeColors` | — | 为 `topLeft`、`topRight` 和 `bottomLeft` 分别设置 `outer` / `inner` 颜色；各自覆盖 `eyeColor` / `dotColor` |
+| `moduleScale` | `number` | `1` | 数据模块大小，范围 0.5 到 1。每种图案都会在仍可扫描的最小尺寸处停止缩小（`MODULE_SCALE_FLOOR`） |
+| `frame` | `QRFrame` | — | 行动号召边框；参见[边框与打印](/docs/features/frames) |
+| `art` | `QRArt` | — | 将徽标或照片融入模块（Logo QR、Image QR）；参见[艺术二维码](/docs/features/art-qr) |
+| `frameLabelMarkers` | `boolean` | `false` | 供编辑器使用：为每个边框标签 `<text>` 添加 `data-qrdx-frame-label` 标记（值为 `"text"`、`"secondaryText"` 或某个规格标签的 id）。下载和导出的内容从不包含该标记 |
+
+所有 {facts.bodyPatterns} 种主体图案、{facts.eyeShapes} 种码眼、{facts.eyeCentres} 种码眼中心和 {facts.frameStyles} 种边框样式都可在[图案、码眼与边框](/docs/styles)中实时查看。
+
+### QRCodeCanvas [#qrcodecanvas]
+
+基于 Canvas 的渲染。
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor="#000000"
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+基于 SVG 的渲染。
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## 下载函数 [#download-functions]
+
+### downloadQRCode [#downloadqrcode]
+
+以多种格式下载二维码。
+
+```tsx
+downloadQRCode(
+  qrProps: QRProps,
+  options: {
+    format: 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+    size: { width: number; height: number };
+    filename?: string;
+    quality?: number; // WebP only: 0 to 1 for lossy; lossless when left out
+  }
+): Promise<void>
+```
+
+### getQRCodeDataUrl [#getqrcodedataurl]
+
+获取 data URL。
+
+```tsx
+getQRCodeDataUrl(
+  qrProps: QRProps,
+  format: DownloadFormat,
+  size: DownloadSize,
+  options?: { quality?: number } // WebP only
+): Promise<string>
+```
+
+### getQRAsWebP [#getqraswebp]
+
+以 WebP `Blob` 形式返回二维码；除非设置了 `quality`，否则为无损。在浏览器无法编码 WebP 的情况下（Safari），由 qrdx 内置的无损编码器生成。`canvasToWebP(canvas, options)` 可对任意 canvas 执行同样的操作，`encodeWebPLossless(rgba, width, height)` 则无需 DOM 即可编码 RGBA 像素。
+
+```tsx
+getQRAsWebP(
+  qrProps: QRProps,
+  options?: { quality?: number }
+): Promise<Blob>
+```
+
+### copyQRCodeToClipboard [#copyqrcodetoclipboard]
+
+复制到剪贴板。
+
+```tsx
+copyQRCodeToClipboard(
+  qrProps: QRProps,
+  size?: DownloadSize
+): Promise<void>
+```
+
+### getSVGString [#getsvgstring]
+
+获取 SVG 标记。
+
+```tsx
+getSVGString(qrProps: QRProps): Promise<string>
+```
+
+## 打印与扫描函数 [#print-and-scan-functions]
+
+这些函数在各自的功能页面中附有示例说明。
+
+| 函数 | 作用 | 文档 |
+|----------|--------------|------|
+| `getQRAsSVG(props)` | 返回二维码的 SVG 标记，包含其边框 | [边框](/docs/features/frames) |
+| `getQRAsPrintPDF`、`downloadPrintPDF` | 按精确物理尺寸输出矢量 PDF，支持出血、裁切标记和 CMYK（需要 `jspdf`） | [可直接印刷的导出](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | 按精确物理尺寸输出可直接印刷的 SVG | [可直接印刷的导出](/docs/features/frames#print-ready-export) |
+| `getQRAsEPS`、`downloadPrintEPS` | 面向印刷厂和设计工具的矢量 EPS | [下载](/docs/features/downloads) |
+| `getScanScore(props)` | 估算某个设计的扫描可靠程度 | [能扫出来吗？](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | 为你已有的二维码图片打分（仅限浏览器） | [能扫出来吗？](/docs/features/frames#will-it-scan) |
+| `scanQRPixels(pixels, expected)` | 检查原始 RGBA 像素能否解码为 `expected`，包括模糊和缩小后的情况；可在 Node 中运行 | — |
+| `getStylePairRisk(...)` | 对部分扫描器会漏识的码眼与图案组合发出警告 | [图案](/docs/features/patterns) |
+
+## 检测函数 [#detection-functions]
+
+### handleImageLoad [#handleimageload]
+
+从图片中检测二维码。
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,
+  returnFullData?: boolean
+): Promise<string | any>
+```
+
+### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
+
+使用边界框进行调试。
+
+```tsx
+downloadImageWithBoundingBox(
+  imgElement: HTMLImageElement,
+  boundingBox: { x: number; y: number }[],
+  filename: string
+): void
+```
+
+## 模板函数 [#template-functions]
+
+### getTemplate [#gettemplate]
+
+获取指定模板。
+
+```tsx
+getTemplate(templateId: string): TemplateDefinition | undefined
+```
+
+### getAllTemplates [#getalltemplates]
+
+获取所有模板。
+
+```tsx
+getAllTemplates(): TemplateDefinition[]
+```
+
+### getTemplateIds [#gettemplateids]
+
+获取模板 ID。
+
+```tsx
+getTemplateIds(): string[]
+```
+
+## 实用函数 [#utility-functions]
+
+### 颜色与对比度 [#color--contrast]
+
+```tsx
+getSolidColor(colorConfig: ColorConfig, fallback?: string): string
+getContrastRatio(color1: string, color2: string): number
+getContrastLevel(ratio: number): ContrastLevel
+getLuminance(r: number, g: number, b: number): number
+hexToRgb(hex: string): { r: number; g: number; b: number }
+```
+
+### 验证 [#validation]
+
+```tsx
+validateSize(width: number, height: number): {
+  isValid: boolean;
+  error?: string;
+}
+```
+
+### 功能检测 [#feature-detection]
+
+```tsx
+SUPPORTS_PATH2D: boolean
+```
+
+## 类型 [#types]
+
+### 核心类型 [#core-types]
+
+```tsx
+type QRProps = {
+  value: string;
+  size?: number;
+  level?: ErrorLevel;
+  bgColor?: ColorConfig;
+  fgColor?: ColorConfig;
+  margin?: number;
+  imageSettings?: ImageSettings;
+  // ...
+};
+
+type ColorConfig =
+  | string
+  | { type: 'solid'; color: string }
+  | LinearGradient
+  | RadialGradient;
+
+type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
+```
+
+### 图案类型 [#pattern-types]
+
+```tsx
+// The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
+// FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+
+type BodyPattern =
+  | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
+  | 'pacman' | 'rounded' | 'small-square' | 'vertical-line'
+  | 'horizontal-line' | 'liquid' | 'liquid-horizontal' | 'liquid-vertical'
+  | 'classy' | 'classy-rounded' | 'leaf' | 'plus' | 'hexagon' | 'star'
+  | 'heart' | 'random-dots' | 'mosaic' | 'octagon';
+
+type CornerEyePattern =
+  | 'square' | 'rounded' | 'gear' | 'circle' | 'diya' | 'extra-rounded'
+  | 'message' | 'pointy' | 'leaf' | 'drop' | 'octagon' | 'bevel'
+  | 'squircle' | 'cushion' | 'shield' | 'petal' | 'leaf-reverse';
+
+type CornerEyeDotPattern =
+  | 'square' | 'rounded' | 'circle' | 'message' | 'message-reverse'
+  | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'leaf' | 'drop' | 'plus'
+  | 'cross-rounded' | 'hexagon' | 'octagon' | 'flower' | 'heart'
+  | 'squircle' | 'dots' | 'extra-rounded' | 'leaf-reverse' | 'drop-reverse';
+
+// Retired (deprecated) values still render for saved designs but are not
+// offered: RETIRED_CORNER_EYE_PATTERNS, RETIRED_CORNER_EYE_DOT_PATTERNS.
+
+type EyeColors = {
+  topLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+  topRight?: { outer?: ColorConfig; inner?: ColorConfig };
+  bottomLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+};
+
+type QRFrame = {
+  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  text?: string; // up to 24 characters, default "Scan me"
+  color?: string;
+  textColor?: string;
+  secondaryText?: string; // banner-top-bottom, circle, menu-card
+  secondaryColor?: string; // gradient-border end color
+  fontScale?: number; // 0.5 to 1.5
+};
+```
+
+### 下载类型 [#download-types]
+
+```tsx
+type DownloadFormat = 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+
+type DownloadSize = {
+  width: number;
+  height: number;
+};
+
+const PRESET_SIZES: Record<string, DownloadSize> = {
+  small: { width: 200, height: 200 },
+  medium: { width: 400, height: 400 },
+  large: { width: 800, height: 800 },
+  xlarge: { width: 1200, height: 1200 },
+  '2xl': { width: 1600, height: 1600 },
+  '3xl': { width: 2000, height: 2000 },
+};
+```
+
+### 渐变类型 [#gradient-types]
+
+```tsx
+type LinearGradient = {
+  type: 'linear';
+  stops: GradientStop[];
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
+
+type RadialGradient = {
+  type: 'radial';
+  stops: GradientStop[];
+  cx: number;
+  cy: number;
+  r: number;
+};
+
+type GradientStop = {
+  offset: number;
+  color: string;
+};
+```
+
+### 图片设置 [#image-settings]
+
+```tsx
+type ImageSettings = {
+  src: string;
+  height: number;
+  width: number;
+  excavate?: boolean;
+  x?: number;
+  y?: number;
+  /** Extra clear space around the logo when excavating, in pixels */
+  padding?: number;
+  opacity?: number;
+};
+```
+
+## 纠错级别 [#error-correction-levels]
+
+```tsx
+const ERROR_LEVELS = {
+  L: 'Low (~7%)',
+  M: 'Medium (~15%)',
+  Q: 'Quartile (~25%)',
+  H: 'High (~30%)',
+} as const;
+```
+
+## 错误处理 [#error-handling]
+
+用 try-catch 包裹异步函数：
+
+```tsx
+try {
+  await downloadQRCode(props, options);
+} catch (error) {
+  console.error('Failed:', error);
+}
+```
+
+常见错误：
+- 无效的图片 URL
+- 网络故障
+- 无效的尺寸参数
+- Canvas 上下文不可用
+
+## 浏览器支持 [#browser-support]
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+## 服务器端支持 [#server-support]
+
+可在 Node.js 环境中运行：
+- Next.js
+- Remix
+- Express.js
+- 其他 Node.js 框架
+
+部分功能需要浏览器 API：
+- Canvas 操作
+- Clipboard API
+- File API

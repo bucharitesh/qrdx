@@ -1,0 +1,48 @@
+---
+title: "Exigir la verificación en dos pasos"
+description: "Haz que todos los miembros de un espacio de trabajo activen la verificación en dos pasos antes de poder abrirlo. Forma parte del plan Business."
+---
+
+Los propietarios y administradores pueden exigir que todos los miembros de un espacio de trabajo usen la [verificación en dos pasos](/docs/help/privacy-and-security/two-step-verification). Un miembro que no la haya activado no podrá abrir el espacio de trabajo hasta que lo haga, así que acceder al correo de alguien no basta para entrar en tu espacio de trabajo.
+
+Exigir la verificación en dos pasos forma parte del plan **Business**. Un espacio de trabajo la tiene cuando uno de sus propietarios o miembros de facturación está en Business. Consulta [Asientos y límites del espacio de trabajo](/docs/help/teams/seats).
+
+## Actívala [#turn-it-on]
+
+1. Activa primero la verificación en dos pasos en tu propia cuenta, en **Ajustes** → **Perfil y seguridad**. No puedes exigirla sin tenerla tú.
+2. En el espacio de trabajo, ve a **Ajustes** → **Equipo**.
+3. En **Verificación en dos pasos**, activa **Exigir la verificación en dos pasos**.
+4. Si algunos miembros aún no la tienen activada, QRdx te indica cuántos y te pregunta antes de continuar.
+5. [Confirma que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+
+Solo los propietarios y administradores pueden cambiarla, y para activarla o desactivarla se te pide confirmar que eres tú.
+
+No se envía ningún correo. Los miembros sin verificación en dos pasos se enterarán la próxima vez que abran el espacio de trabajo.
+
+## Consulta quién la tiene activada [#see-who-has-it-on]
+
+En la página **Ajustes** → **Equipo**, los propietarios y administradores ven si cada miembro tiene la verificación en dos pasos **Activada** o **Desactivada**. En el móvil aparece debajo del correo electrónico de cada persona.
+
+## Qué ven los miembros que no la tienen [#what-members-without-it-see]
+
+Al abrir el espacio de trabajo, ven que exige la verificación en dos pasos, con un botón **Activar la verificación en dos pasos**. El botón les lleva a **Ajustes** → **Perfil y seguridad** y, una vez activada, **Volver al** espacio de trabajo los lleva a la página en la que estaban.
+
+Hasta entonces no pueden ver ni cambiar nada en ese espacio de trabajo. Sus otros espacios de trabajo funcionan como siempre.
+
+Eso incluye lo que el espacio de trabajo les envía. Dejan de recibir sus alertas por correo, el resumen semanal y las alertas de Slack o Discord de ese espacio, y no pueden añadir otras nuevas. Las sincronizaciones que configuraron para enviar sus datos a otras herramientas se pausan. Las alertas se reanudan cuando se activa la verificación en dos pasos; una sincronización pausada hay que volver a activarla.
+
+Si alguien desactiva la verificación en dos pasos más adelante, el espacio de trabajo se cierra de nuevo para esa persona hasta que la vuelva a activar. Esto incluye a propietarios y administradores.
+
+## Claves de API [#api-keys]
+
+Las claves de API creadas en el espacio de trabajo siguen funcionando para quien las creó, con o sin verificación en dos pasos. La verificación en dos pasos protege el inicio de sesión, y una clave es una credencial independiente. Nadie puede crear una clave nueva en el espacio de trabajo sin poder abrirlo, y los propietarios y administradores pueden ver y revocar las claves de todos en **Ajustes** → **Desarrolladores** del espacio de trabajo.
+
+Las aplicaciones conectadas a la cuenta de alguien mediante OAuth solo funcionan en el espacio de trabajo personal de esa persona, así que nunca llegan a un espacio de trabajo de equipo.
+
+## Si el espacio de trabajo deja Business [#if-the-workspace-leaves-business]
+
+El requisito deja de aplicarse y el ajuste aparece desactivado. Si el espacio de trabajo vuelve a Business, se aplica de nuevo.
+
+## Desactívala [#turn-it-off]
+
+En la página **Ajustes** → **Equipo**, desactiva **Exigir la verificación en dos pasos** y confirma que eres tú. Los miembros sin verificación en dos pasos podrán volver a abrir el espacio de trabajo de inmediato.

@@ -680,5 +680,98 @@
         }
       }
     }
+  },
+  "docs": {
+    "meta": {
+      "titleSuffix": "QRdx ドキュメント"
+    },
+    "breadcrumb": {
+      "home": "ホーム",
+      "docs": "ドキュメント"
+    },
+    "untranslated": {
+      "title": "このページはまだ翻訳されていません",
+      "body": "英語版を表示しています。"
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Markdownをコピー",
+        "open": "開く",
+        "openIn": "{app}で開く",
+        "askPrompt": "{url} を読んでください。この内容について質問したいです。"
+      },
+      "search": {
+        "jumpTo": "<page>{name}</page>に移動"
+      },
+      "language": {
+        "label": "ドキュメントの言語",
+        "note": "ドキュメントは以下の言語で提供しています。それ以外の言語では英語版が表示されます。"
+      }
+    },
+    "help": {
+      "search": "ヘルプとドキュメントを検索",
+      "stillStuck": {
+        "title": "解決しませんか?",
+        "body": "やろうとしていたことと、起きたことをお知らせください。コードに関する内容の場合は、そのコードの短縮リンクも添えてください。",
+        "widget": "機能性Cookieを許可すると使える、qrdx.devのサポートウィジェットです。",
+        "github": "GitHubでバグを報告",
+        "contact": "お問い合わせ方法の一覧"
+      }
+    },
+    "notFound": {
+      "title": "このページはドキュメントにありません",
+      "body": "移動または名前が変更された可能性があります。ドキュメントを検索するか、以下から始めてください。",
+      "places": {
+        "gettingStarted": {
+          "title": "はじめに",
+          "description": "最初のコードをデザインしてダウンロードします。"
+        },
+        "dynamic": {
+          "title": "動的QRコード",
+          "description": "印刷後も変更できる短縮リンクです。"
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "ご自身のアプリからコードを作成・管理できます。"
+        },
+        "components": {
+          "title": "コンポーネント",
+          "description": "QRコード用のReactとshadcn/uiのコンポーネントです。"
+        }
+      }
+    },
+    "ui": {
+      "search": "検索",
+      "searchPlaceholder": "検索",
+      "openSearch": "検索を開く",
+      "closeSearch": "検索を閉じる",
+      "noResults": "結果が見つかりません",
+      "searchFailed": "検索に失敗しました",
+      "onThisPage": "このページの内容",
+      "noHeadings": "見出しはありません",
+      "tableOfContents": "目次",
+      "lastUpdated": "最終更新日",
+      "previousPage": "前のページ",
+      "nextPage": "次のページ",
+      "copyCode": "テキストをコピー",
+      "copiedCode": "テキストをコピーしました",
+      "copyAnchor": "アンカーリンクをコピー",
+      "copiedAnchor": "アンカーリンクをコピーしました",
+      "copyLink": "リンクをコピー",
+      "copiedLink": "リンクをコピーしました",
+      "toggleMenu": "メニューの切り替え",
+      "toggleTheme": "テーマの切り替え",
+      "themeLight": "ライト",
+      "themeDark": "ダーク",
+      "themeSystem": "システム",
+      "openSidebar": "サイドバーを開く",
+      "closeSidebar": "サイドバーを閉じる",
+      "collapseSidebar": "サイドバーを折りたたむ",
+      "typeTableProp": "プロパティ",
+      "typeTableType": "型",
+      "typeTableDefault": "デフォルト",
+      "typeTableParameters": "パラメータ",
+      "typeTableReturns": "戻り値"
+    }
   }
 }

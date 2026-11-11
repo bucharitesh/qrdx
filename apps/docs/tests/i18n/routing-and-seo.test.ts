@@ -100,10 +100,25 @@ describe("paths", () => {
     expect(localizePath("/pricing", "pt-BR")).toBe("/pt-br/pricing");
     expect(localizePath("/pricing", "zh-Hans")).toBe("/zh-hans/pricing");
     expect(localizePath("/pricing", "en")).toBe("/pricing");
-    // Not translated: the docs, the playground, short links.
-    for (const path of ["/docs", "/playground", "/q/abc", "/p/abc", "/m/abc"]) {
+    // Not translated: the playground, short links.
+    for (const path of ["/playground", "/q/abc", "/p/abc", "/m/abc"]) {
       expect(localizePath(path, "ja")).toBe(path);
     }
+  });
+
+  it("prefix docs pages in the languages with docs only", () => {
+    expect(localizePath("/docs", "ja")).toBe("/ja/docs");
+    expect(localizePath("/docs/developers/mcp", "pt-BR")).toBe(
+      "/pt-br/docs/developers/mcp",
+    );
+    expect(localizeHref("/docs/help#faq", "zh-Hans")).toBe(
+      "/zh-hans/docs/help#faq",
+    );
+    // French has no docs: its links go to the English docs.
+    expect(localizePath("/docs", "fr")).toBe("/docs");
+    expect(localizeHref("/docs/help", "de")).toBe("/docs/help");
+    // Not a docs path, only a prefix of one.
+    expect(localizePath("/docsearch", "ja")).toBe("/docsearch");
   });
 
   it("keep queries and hashes, and leave external links alone", () => {
@@ -128,8 +143,13 @@ describe("paths", () => {
     });
     expect(splitLocale("/ja")).toEqual({ locale: "ja", path: "/" });
     expect(splitLocale("/pricing")).toEqual({ locale: "en", path: "/pricing" });
-    // /es/docs isn't a page; /id is a locale, not a short link here.
-    expect(splitLocale("/es/docs")).toEqual({ locale: "en", path: "/es/docs" });
+    // Docs pages, in a language with docs; /fr/docs isn't a page.
+    expect(splitLocale("/es/docs")).toEqual({ locale: "es", path: "/docs" });
+    expect(splitLocale("/zh-hans/docs/help")).toEqual({
+      locale: "zh-Hans",
+      path: "/docs/help",
+    });
+    expect(splitLocale("/fr/docs")).toEqual({ locale: "en", path: "/fr/docs" });
     expect(splitLocale("/en/pricing")).toEqual({
       locale: "en",
       path: "/en/pricing",

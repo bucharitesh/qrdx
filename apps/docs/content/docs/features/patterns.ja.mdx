@@ -1,0 +1,215 @@
+---
+title: "パターン"
+description: "データモジュール、コーナーアイ、アイドットの形を変更します。"
+icon: Grid3x3
+---
+
+QRコードの要素の形を変えて、独自のデザインに仕上げられます。すべてのオプションをライブで描画し、ブラウザー上でデコードして確認できます。詳しくは[図形、アイ、フレーム](/docs/styles)をご覧ください。
+
+## ボディパターン [#body-patterns]
+
+データドットの形を設定します。ボディパターンは {facts.bodyPatterns} 種類あります。
+
+- クラシック: `square`、`small-square`、`horizontal-line`、`vertical-line`、`octagon`
+- 丸み系: `circle`（デフォルト）、`circle-large`、`rounded`、`liquid`、`liquid-horizontal`、`liquid-vertical`、`random-dots`
+- 装飾系: `classy`、`classy-rounded`、`leaf`、`diamond`、`hexagon`
+- ポップ系: `mosaic`、`plus`、`star`、`heart`、`pacman`、`circle-mixed`
+
+`liquid`、`classy`、`classy-rounded` は、隣り合うモジュールを1つのなめらかな輪郭につなげます（`liquid-horizontal` と `liquid-vertical` は、行または列の方向だけでつなげます）。`random-dots` と `mosaic` はモジュールごとに形が変わりますが、同じ値からは常に同じコードを描画します。位置合わせパターンは、どのパターンを選んでも常に塗りつぶしの正方形で描画されるため、デコーダーが確実に検出できます。
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" bodyPattern="circle" size={256} />
+<QRCode value="https://example.com" bodyPattern="liquid" size={256} />
+<QRCode value="https://example.com" bodyPattern="classy-rounded" size={256} />
+```
+
+### モジュールスケール [#module-scale]
+
+`moduleScale`（0.5〜1、デフォルトは 1）は、各データモジュールを中心に向かって縮小し、より軽やかで間隔の空いた見た目にします。連結するパターンでは、代わりに線が細くなります。各パターンは、当社のテストでデコードできる最小サイズで縮小が止まります（例: `circle` は 0.95、`classy` は 0.7。`MODULE_SCALE_FLOOR` を参照）。位置合わせパターンは元のサイズのままです。
+
+```tsx
+<QRCode value="https://example.com" bodyPattern="liquid" moduleScale={0.8} />
+```
+
+## コーナーアイパターン [#corner-eye-patterns]
+
+コーナーマーカーの形を設定します。コーナーアイパターンは {facts.eyeShapes} 種類あります（React コンポーネントのデフォルトは `gear`、CLI のデフォルトは `square` です）: `square`、`rounded`、`extra-rounded`、`squircle`、`cushion`、`bevel`、`octagon`、`leaf`、`leaf-reverse`、`drop`、`petal`、`shield`、`gear`、`circle`、`diya`、`message`、`pointy`。
+
+`leaf`、`leaf-reverse`、`drop`、`petal` は、3つのアイそれぞれがコードの角の方向を向くようになります。`circle` のアイは、一部のスキャナーアプリで読み取れないことがあります。[スキャンスコア](/docs/utilities)で警告が表示されます。
+
+```tsx
+<QRCode value="https://example.com" cornerEyePattern="square" />
+<QRCode value="https://example.com" cornerEyePattern="leaf" />
+<QRCode value="https://example.com" cornerEyePattern="squircle" />
+```
+
+## コーナーアイドットパターン [#corner-eye-dot-patterns]
+
+各コーナーマーカーの内側のドットの形を設定します。コーナーアイドットパターンは {facts.eyeCentres} 種類あります（React コンポーネントのデフォルトは `circle`、CLI のデフォルトは `square` です）: `square`、`rounded`、`extra-rounded`、`circle`、`squircle`、`octagon`、`hexagon`、`dots`、`leaf`、`leaf-reverse`、`drop`、`drop-reverse`、`plus`、`cross-rounded`、`flower`、`heart`、`message`、`message-reverse`、`diya`、`diya-reverse`、`rounded-triangle`。
+
+```tsx
+<QRCode value="https://example.com" cornerEyeDotPattern="square" />
+<QRCode value="https://example.com" cornerEyeDotPattern="flower" />
+<QRCode value="https://example.com" cornerEyeDotPattern="heart" />
+```
+
+### 避けるべき組み合わせと廃止された形 [#pairs-to-avoid-and-retired-shapes]
+
+`diamond` のボディと `square` のアイ、`pacman` と `rounded`、`small-square` と `square` または `rounded` のアイの組み合わせは、近距離で読み取れなくなります。Playground ではこれらを組み合わせられません。これらは `WEAK_BODY_EYES` として提供され、`getStylePairRisk(props)` はスキャンスコアに表示される警告を返します。
+
+角が四角いアイ（`square`、`rounded`、`extra-rounded` など大半）の内側に `circle` の中心を置くと、シャープなレンダリング（画面表示、PNG エクスポート、大判印刷）で、厳密なデコーダーが読み取れないことがあります。jsQR は一部のサイズで読み取れず、zbar は読み取れます。塗りつぶしのボディ（`square`、`liquid`、`classy`、`classy-rounded`）なら、たいていは読み取れます。`gear`、`circle`、`octagon` のアイは影響を受けません。スキャンスコアはこれを警告し（`style-pair`）、それでも選択することは可能です。この組み合わせは `WEAK_SHARP_DOT_EYES`（および `SHARP_DOT_EYE_SAFE_BODIES`）として提供されます。中心を `rounded` にすると問題を避けられます。
+
+`curly` のアイと、`diamond`、`star`、`banner` の中心は、確実にスキャンできないため廃止されました。これらを使って保存されたデザインは引き続き描画されますが、新たに選択することも一覧に表示されることもありません（[廃止された形](/docs/styles#retired-shapes)を参照）。
+
+## 円形コード [#circle-codes]
+
+`shape="circle"` は、コードを円盤の中に配置し、残りの部分を同じドット形状の装飾モジュールで埋めます。実際のコードの周囲には、`margin` モジュール分（最低 3）の明るいリングが残り、スキャナーは中央のコードだけを読み取ります。円盤はコードより大きいため、同じスキャン距離にするには少し大きめに印刷してください。印刷サイズ計算ツールは円盤全体を対象に計算します。
+
+```tsx
+<QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
+```
+
+当社のデコードテストでは、塗りつぶしのドット形状（`square`、`rounded`、`classy`、`liquid`）の円形コードは、正方形のコードと同様に読み取れました。Playground では **デザイン → フレーム → 形状コード → ドット円** から選べます。
+
+{/* Heart and custom shapes (feat/heart-silhouette-shapes) */}
+
+## ハート型コード [#heart-codes]
+
+`shape="heart"` は円形コードと同様に動作し、形がハートになります。実際のコードは、最低 3 モジュールの明るいリングとともにハートの中央に配置され、ハートの残りの部分は装飾モジュールで埋められます。ハートではコードが占める割合が円より小さいため、同じスキャン距離にするには、正方形のコードより大きく印刷してください。スキャンスコアにもこれが反映されます。同じサイズなら、ハート型コードのスコアは円形コードより低くなります。
+
+```tsx
+<QRCode value="https://example.com" shape="heart" bodyPattern="rounded" />
+```
+
+Playground では、形状コードはフレームの代わりに使われます。形状を選ぶとフレームが解除され、フレームを選ぶと形状が解除されます。すべてのフレームはコードの下に明るいプレートを描画するため、輪郭が隠れてしまうからです。ただし、両方を渡した場合、エンジンは `frame` とともに `shape` も描画します。
+
+当社のデコードテストでは、ハート型コードは、塗りつぶしのすべてのドット形状、`square`、`rounded`、`gear` のアイ、およびデフォルトの見た目で読み取れました。zbar はシャープなレンダリングでも読み取れます。
+
+## カスタム形状 [#custom-shapes]
+
+`shape` にはシルエットも指定できます。シルエットは、お手持ちの画像からトレースした小さなグリッドです（1辺は最大 64 セル）。コードは形状の中で最も広い中央部分に配置され、残りの部分は装飾モジュールで埋められます。保存されるのはグリッドだけで、画像は保存されません。
+
+```tsx
+import { getQRSilhouetteFit, loadQRSilhouette, QRCode } from "qrdx";
+
+const shape = await loadQRSilhouette(file); // a PNG, JPEG or SVG, in the browser
+const fit = getQRSilhouetteFit(shape);
+if (!fit.ok) throw new Error(fit.message);
+
+<QRCode value="https://example.com" shape={shape} />;
+```
+
+`loadQRSilhouette` は画像をキャンバスに描画し、その透明度を使います。不透明な画像の場合は暗さを使います（暗い背景に明るい形状でも機能します）。サーバー上では、デコード済みのピクセルを `createQRSilhouette` に渡してください。`getQRSilhouetteFit` は、細い星、バー、リングなど、クワイエットゾーンを含めてコードを収められないほど細い形状を受け付けません。受け付けられなかった形状は、正方形のコードとして描画されます。
+
+Playground では、**デザイン → フレーム → 形状コード → シルエット** を選び、PNG、JPEG、SVG をアップロードします（ハートはそこでは **ハート** です）。アップロードしたロゴと同様に、形状はデザインと一緒に保持されます。共有リンク、コミュニティのアイテム、コードスニペット、AI チャットでは、代わりに正方形のコードが使われます。
+
+{/* end heart and custom shapes */}
+
+## アイごとの色 [#per-eye-colors]
+
+`eyeColor` と `dotColor` は、3つのアイすべての色を設定します。`eyeColors` を使うと、アイごと（`topLeft`、`topRight`、`bottomLeft`）に上書きでき、それぞれに `outer`（フレーム）と `inner`（ドット）の色またはグラデーションを指定できます。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  eyeColor="#111827"
+  eyeColors={{
+    topLeft: { outer: "#dc2626", inner: "#1d4ed8" },
+    topRight: { outer: "#16a34a" },
+  }}
+/>
+```
+
+すべてのアイは背景に対して暗い色にしてください。デコーダーは3つのアイを手がかりにコードを見つけます。スキャンスコアは、各アイ自身の色のコントラストをチェックします。
+
+Playground では、**デザイン → アイの色** で各アイのフレームと中心の色を設定でき、**デザイン → ドットサイズ** で、現在のドット形状が許容する範囲内で `moduleScale` を設定できます。
+
+## パターンの組み合わせ [#combine-patterns]
+
+異なるパターンを組み合わせて、独自のデザインを作れます。
+
+```tsx
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+  cornerEyeDotPattern="circle"
+  size={256}
+/>
+```
+
+## パフォーマンス [#performance]
+
+### 高速なパターン [#fast-patterns]
+- `circle` — 非常に優れたパフォーマンス
+- `square` — 非常に高速
+
+### 中程度のパターン [#medium-patterns]
+- `rounded` — バランスが良好
+- `diamond` — 中程度
+
+### 複雑なパターン [#complex-patterns]
+- `pacman` — 処理負荷が高め
+- `circle-mixed` — 複雑さが変動
+
+## パターンの選び方 [#pattern-selection]
+
+### ブランドアイデンティティ向け [#for-brand-identity]
+```tsx
+// Minimal, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="square"
+/>
+
+// Modern, tech-focused
+<QRCode
+  value="https://example.com"
+  bodyPattern="circle"
+  cornerEyePattern="rounded"
+/>
+```
+
+### マーケティング向け [#for-marketing]
+```tsx
+// Eye-catching
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+/>
+
+// Elegant
+<QRCode
+  value="https://example.com"
+  bodyPattern="diamond"
+  cornerEyePattern="rounded"
+/>
+```
+
+### 印刷向け [#for-print]
+```tsx
+// High contrast
+<QRCode
+  value="https://example.com"
+  bodyPattern="square"
+  cornerEyePattern="square"
+/>
+
+// Smooth, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="rounded"
+/>
+```
+
+## 次のステップ [#next-steps]
+
+- [カラーとグラデーション](/docs/features/colors-gradients) — パターンに色を追加
+- [テンプレート](/docs/features/templates) — 設定済みのパターン
+- [ロゴ](/docs/features/logos) — パターンとロゴを組み合わせる
