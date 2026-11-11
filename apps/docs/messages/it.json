@@ -127,6 +127,32 @@
       "star": "Star",
       "starOnGithub": "Metti una stella a QRdx su GitHub",
       "starOnGithubCount": "Metti una stella a QRdx su GitHub ({count} stelle)"
+    },
+    "userProfileDropdown": {
+      "tryThePlayground": "Prova il Playground",
+      "signIn": "Accedi",
+      "dashboard": "Dashboard",
+      "accountSettings": "Impostazioni account",
+      "manageBilling": "Gestisci fatturazione",
+      "upgradeToPro": "Passa a Pro",
+      "admin": "Admin",
+      "privacyPolicy": "Privacy policy",
+      "signOut": "Esci"
+    },
+    "getProCta": {
+      "getPro": "Passa a Pro"
+    },
+    "getProDialog": {
+      "upgradeToValue": "Passa a {value}",
+      "unlocksThis": "Sblocca questa funzione",
+      "staticQrCodesStayFree": "I QR code statici restano gratuiti e i tuoi codici continuano a funzionare anche se annulli. <link>La nostra garanzia</link>",
+      "comparePlansAndPrices": "Confronta piani e prezzi",
+      "maybeLater": "Forse più tardi",
+      "thisFeatureIsPartOf": "Questa funzione fa parte del piano Business.",
+      "thisFeatureIsPartOf2": "Questa funzione fa parte di Pro e Business."
+    },
+    "themeToggle": {
+      "toggleTheme": "Cambia tema"
     }
   },
   "footer": {
@@ -999,7 +1025,7 @@
       "toolLabel": "Calcolatore dimensione di stampa",
       "howTitle": "Come viene calcolata la dimensione",
       "how1": "Il contenuto determina la versione del QR. Il calcolatore sceglie la versione più piccola (da 1 a 40) che contiene il tuo testo al livello di correzione degli errori scelto, usando le stesse tabelle di capacità dell'encoder di QRdx. La versione n è larga 17 + 4n moduli.",
-      "how2": "La distanza determina la dimensione del modulo. La regola empirica {ratio, number}:1 viene considerata riferita a un codice semplice di {reference, number} × {reference, number} moduli, quindi ogni modulo deve essere almeno distanza ÷ ({divisor, number}) e mai meno di {minimum, number} mm.",
+      "how2": "La distanza determina la dimensione del modulo. La regola empirica {ratio, number}:1 viene considerata come riferita a un semplice codice di {reference, number, ::group-off} × {reference, number}, quindi ogni modulo deve misurare almeno distanza ÷ ({divisor, number}) e mai meno di {minimum, number} mm.",
       "how3": "Dimensione del modulo × moduli per lato dà la dimensione del codice. Aggiungendo {quiet, number} moduli vuoti per lato si ottiene lo spazio di cui il codice ha bisogno sulla pagina.",
       "tipsTitle": "Consigli per codici che si scansionano",
       "tip1": "Mantieni il contenuto breve. Un link più corto significa una versione più bassa, quindi a parità di dimensione stampata i moduli risultano più grandi.",
@@ -1054,7 +1080,7 @@
         "resultTitle": "Dimensione minima di stampa",
         "errorDistance": "Inserisci una distanza di scansione maggiore di zero.",
         "codeSize": "Dimensione del codice (da bordo a bordo)",
-        "codeSizeHint": "Versione {version, number}, {modules, number} × {modules, number} moduli",
+        "codeSizeHint": "Versione {version, number}, {modules, number, ::group-off} × {modules, number} moduli",
         "withQuietZone": "Con quiet zone di {modules, number} moduli",
         "withQuietZoneHint": "Il margine bianco che gli scanner richiedono attorno al codice",
         "moduleSize": "Dimensione del modulo (singolo quadrato)",
@@ -1452,7 +1478,7 @@
     "alt": "Codice a barre {format} per {value}",
     "loadFailed": "Il codice per disegnare il codice a barre non si è caricato. Controlla la connessione e ricarica la pagina.",
     "fixInput": "Correggi l'input evidenziato per vedere il codice a barre.",
-    "sizes": "PNG, JPG, WebP e AVIF {width, number} × {height, number} px. SVG, PDF ed EPS sono vettoriali, di {widthMm} × {heightMm} mm, con un modulo da {moduleMm} mm; ridimensionali nel tuo layout se serve.",
+    "sizes": "PNG, JPG, WebP e AVIF da {width, number, ::group-off} × {height, number, ::group-off} px. SVG, PDF ed EPS sono vettoriali, con dimensioni di {widthMm} × {heightMm} mm e un modulo da {moduleMm} mm; ridimensionali nel tuo layout come preferisci.",
     "more": "Altro",
     "moreFormats": "Altri formati",
     "footnote": "Creato nel tuo browser; nulla di ciò che scrivi viene inviato a QRdx. WebP e AVIF vengono codificati dal server di QRdx quando li scegli, e nulla viene conservato.",
@@ -1821,7 +1847,23 @@
     "artLink": "Oppure trasforma un link in arte QR con AI da scansionare",
     "chat": {
       "upgrade": "Passa a Pro per richieste illimitate",
-      "heading": "Che QR code posso creare per te?"
+      "heading": "Che QR code posso creare per te?",
+      "aiChatForm": {
+        "generate": "Genera"
+      },
+      "communityThemeCard": {
+        "viewDetails": "Vedi dettagli",
+        "viewInEditor": "Vedi nell’editor",
+        "unknownCreationDate": "Data di creazione sconosciuta"
+      },
+      "communityThemes": {
+        "fromTheCommunity": "Dalla community",
+        "viewAll": "Vedi tutti",
+        "exploreTheThemesTheCommunity": "Scopri i temi che la community sta creando con tweakcn."
+      },
+      "suggestedPillActions": {
+        "fromAnImage": "Da un’immagine"
+      }
     }
   },
   "aiArt": {
@@ -1859,6 +1901,111 @@
     "faq": {
       "title": "FAQ sull'arte QR con AI",
       "description": "Come si crea un'illustrazione scansionabile, quanto costa e cosa controllare prima di stampare."
+    },
+    "aiArtPresetGallery": {
+      "noStylesMatchQueryDescribe": "Nessuno stile corrisponde a “{query}”. Descrivilo invece nel prompt.",
+      "clearSearch": "Cancella ricerca",
+      "theStylesDidntLoad": "Gli stili non si sono caricati.",
+      "tryAgain": "Riprova",
+      "pickingOneFillsInThe": "Scegliendone uno, il prompt si compila da solo; modificalo come vuoi.",
+      "searchStyles": "Cerca stili",
+      "searchStylesCatsGoldTiles": "Cerca stili: gatti, oro, piastrelle…",
+      "styleCategories": "Categorie di stile",
+      "featured": "In evidenza",
+      "all": "Tutti",
+      "someStyles": "{shown, number} stili su {total, number}.",
+      "allStyles": "{total, number} stili."
+    },
+    "aiArtResult": {
+      "yourQrArtWillAppear": "La tua QR art apparirà qui",
+      "generating": "Generazione in corso",
+      "eachImageIsCheckedTo": "Ogni immagine viene verificata per essere sicuri che si scansioni prima che tu la veda. Può richiedere fino a un minuto.",
+      "bestScannable": "Più scansionabile",
+      "download": "Scarica",
+      "printSize": "Dimensione di stampa (",
+      "px": "px)",
+      "retryWithAClearerCode": "Riprova con un codice più chiaro",
+      "lockSeedSeed": "Blocca seed {seed, number}",
+      "scanScoreScore": "Punteggio di scansione {score, number}",
+      "bestOfThisRun": "Il migliore di questa generazione",
+      "theModelsImageDidntScan": "L’immagine del modello non si scansionava così com’era, quindi QRdx ha rinforzato i suoi occhi agli angoli, il bordo e, dove serviva, i moduli, quanto basta per la scansione (intensità di fusione {value, number}%).",
+      "theModelsImageDidntScan2": "L’immagine del modello non si scansionava nemmeno con il codice rinforzato, quindi QRdx l’ha ridisegnata come Image QR, lasciando trasparire l’immagine.",
+      "aiGeneratedQrCodeArtwork": "Opera d’arte QR code generata dall’AI che codifica {text}",
+      "variations": "Varianti",
+      "variationValueSeedSeed": "Variante {value, number}, seed {seed, number}",
+      "variationValue": "Variante {value, number}",
+      "pendingvariationsVariations": "{pendingVariations, number} varianti",
+      "yourArtwork": "la tua opera",
+      "downloadTheWidthPxImage": "Scarica invece l’immagine da {width, number, ::group-off} px.",
+      "thePrintSizeCopyDidnt": "La copia in formato stampa non ha superato il controllo della scansione",
+      "couldntPrepareThePrintSize": "Impossibile preparare l’immagine in formato stampa",
+      "status": {
+        "checking": {
+          "title": "Valutazione della scansione…",
+          "description": "Decodificato sul server; ora lo provo rimpicciolito e sfocato."
+        },
+        "scannable": {
+          "title": "Scansione verificata",
+          "description": "Decodificato sul nostro server e di nuovo nel tuo browser, con il tuo contenuto. Prima di stampare, provalo comunque con la fotocamera di un telefono."
+        },
+        "unreadable": {
+          "title": "Difficile da leggere in piccolo: prova un codice più chiaro",
+          "description": "È stato decodificato sul nostro server, ma non nel test nel browser. Aumenta la visibilità del QR o provalo con la fotocamera di un telefono prima di usarlo."
+        },
+        "mismatch": {
+          "title": "Porta a un contenuto diverso: prova un codice più chiaro",
+          "description": "Il testo decodificato non corrisponde a quello che hai inserito. Non usare questa immagine."
+        },
+        "unverified": {
+          "title": "Impossibile eseguire il controllo nel browser",
+          "description": "È stato decodificato sul nostro server. Provalo con la fotocamera di un telefono prima di stamparlo o condividerlo."
+        }
+      },
+      "resultSummary": "Visibilità del QR {visibility, number} · Creatività {creativity, number} · {width, number, ::group-off} px{failed, plural, =0 {} one { · # variazione non riuscita, nessun credito usato} other { · # variazioni non riuscite, nessun credito usato}}. Ogni immagine usa 1 credito di arte AI; il download in formato stampa è gratuito."
+    },
+    "aiArtStudio": {
+      "linkOrText": "Link o testo",
+      "shorterContentMeansFewerLarger": "Un contenuto più breve significa moduli meno numerosi e più grandi: grafica più pulita e scansioni più affidabili.",
+      "style": "Stile",
+      "variations": "Variazioni",
+      "eachVariationIsItsOwn": "Ogni variazione è un’immagine a sé e usa 1 credito. Ogni immagine viene verificata prima che tu la veda e quella migliore viene scelta per te.",
+      "negativePrompt": "Prompt negativo",
+      "theModelIsAskedTo": "Al modello viene chiesto di tenere questi elementi fuori dall’immagine.",
+      "seed": "Seed",
+      "lockSeed": "Blocca seed",
+      "theSameSeedAndSettings": "Lo stesso seed con le stesse impostazioni dà un’immagine simile (il modello può comunque variarla); le variazioni usano seed, seed + 1, …",
+      "referenceImage": "Immagine di riferimento",
+      "remove": "Rimuovi",
+      "uploadReference": "Carica riferimento",
+      "optionalALogoPhotoOr": "Facoltativo. Un logo, una foto o una palette che il modello userà nell’opera: colori e forme vengono ripresi. Viene ridimensionata nel tuo browser e inviata con il tuo prompt tramite Vercel AI Gateway a {ART_MODEL_LABEL}.",
+      "cancel": "Annulla",
+      "aiArtCodesAreStatic": "<span>I codici AI art sono statici.</span> Il contenuto è incorporato nell’immagine e non può essere modificato dopo la condivisione. Per un link che puoi modificare in seguito, con analisi delle scansioni, crea un <signInLink>QR code dinamico</signInLink> e usa qui il suo link breve.",
+      "alreadyDesigningACode": "Stai già creando un codice?",
+      "toPaintItsContentDynamic": "per dipingerne il contenuto, link dinamico incluso.",
+      "openInPlayground": "Apri nel Playground",
+      "signInToGeneratePlans": "Accedi per generare. {plans}",
+      "eachImageUses1Ai": "Ogni immagine usa 1 credito AI art; le immagini non riuscite vengono rimborsate. {plans}",
+      "unlimitedAiArtOnYour": "AI art illimitata con il tuo piano. Questa generazione ne usa {variations, number}.",
+      "describeASceneEG": "Descrivi una scena, ad es. un faro su una costa rocciosa al tramonto, dipinto a olio",
+      "qrVisibility": "Visibilità del QR",
+      "creativity": "Creatività",
+      "thingsToAvoidEG": "Cosa evitare, ad es. persone, edifici, colori scuri",
+      "randomEachRun": "Casuale a ogni generazione",
+      "uploadAReferenceImage": "Carica un’immagine di riferimento",
+      "reference": "Riferimento",
+      "advancedNegativePromptSeedReference": "Avanzate: prompt negativo, seed, immagine di riferimento",
+      "advancedNegativePromptReferenceImage": "Avanzate: prompt negativo, immagine di riferimento",
+      "generating": "Generazione in corso…",
+      "findItUnderAdvanced": "La trovi in Avanzate.",
+      "seedValueLocked": "Seed {value, number} bloccato",
+      "creditsLeft": "<count>{remaining, number} di {limit, number}</count> immagini AI art rimaste questo mese{pooled, select, yes { (condivise con il tuo team)} other {}}, si azzera il {resets}. Questa generazione ne usa {variations, number}; le immagini non riuscite vengono rimborsate.",
+      "notEnoughLeft": "Non te ne restano abbastanza per {variations, number}: scegli meno varianti.",
+      "notEnoughLeftOrUpgrade": "Non te ne restano abbastanza per {variations, number}: scegli meno varianti o passa a un piano superiore.",
+      "moreArtistic": "Più artistico",
+      "clearerCode": "Codice più chiaro",
+      "followsYourPrompt": "Segue il tuo prompt",
+      "interpretsFreely": "Interpreta liberamente",
+      "generateVariations": "{count, plural, one {Genera QR art} other {Genera # varianti}}"
     }
   },
   "compare": {
@@ -1877,6 +2024,1750 @@
         "heading": "Librerie QR code per React e JavaScript",
         "intro": "Pacchetti da installare da npm per generare QR code nella tua app. Entrambi sono molto più diffusi del pacchetto npm di QRdx."
       }
+    }
+  },
+  "editor": {
+    "actionBar": {
+      "codeButton": {
+        "code": "Codice",
+        "getCode": "Ottieni codice"
+      },
+      "copySvgButton": {
+        "copied": "Copiato",
+        "copySvg": "Copia SVG",
+        "svgCopiedToClipboard": "SVG copiato negli appunti",
+        "failedToCopySvg": "Copia dell’SVG non riuscita"
+      },
+      "downloadButton": {
+        "download": "Scarica",
+        "downloadQrCode": "Scarica QR code"
+      },
+      "downloadDialog": {
+        "addContentToSeeYour": "Aggiungi un contenuto per vedere il tuo codice.",
+        "format": "Formato",
+        "pixels": "Pixel",
+        "at300Dpi": "A 300 dpi",
+        "width": "Larghezza",
+        "color": "Colore",
+        "bleed": "Abbondanza",
+        "downloadQrCode": "Scarica QR code",
+        "imageFile": "File immagine",
+        "printReady": "Pronto per la stampa",
+        "size": "Dimensione",
+        "custom": "Personalizzata",
+        "px": "px",
+        "widthAndHeight": "Larghezza e altezza",
+        "scale": "Scala",
+        "transparentBackground": "Sfondo trasparente",
+        "makeManyFromACsv": "Creane molti da un CSV con questo stile",
+        "scannedFromAbout": "Scansionabile da circa",
+        "setsTheCodeWidthBelow": "Imposta la larghezza del codice qui sotto.",
+        "codeWidth": "Larghezza codice",
+        "unit": "Unità",
+        "mm": "mm",
+        "inches": "pollici",
+        "colorMode": "Modalità colore",
+        "none": "Nessuna",
+        "n3Mm": "3 mm",
+        "cropMarksPdf": "Crocini di taglio (PDF)",
+        "scansFromUpToAbout": "Si scansiona da una distanza fino a circa {value} (circa 250× la dimensione di un punto).",
+        "under2CmIsHard": "Sotto i 2 cm è difficile da scansionare per i telefoni; se puoi, fai più grande.",
+        "eachDotIsOnlyValue": "Ogni punto misura solo {value, number} mm e potrebbe sbavare in stampa. Ingrandisci il codice o accorcia il contenuto.",
+        "cmykUsesASimpleConversion": "CMYK usa una conversione semplice senza profilo colore; chiedi al tuo stampatore se i colori esatti del brand sono importanti.",
+        "pdfAndEpsDrawEvery": "PDF ed EPS disegnano ogni punto come forma vettoriale e mantengono i gradienti lineari e radiali come sfumature vettoriali morbide.",
+        "jpgCantBeTransparent": "Il JPG non può essere trasparente",
+        "vector": " · vettoriale",
+        "anySize": "Qualsiasi",
+        "printbleedMm": "{printBleed, number} mm",
+        "vectorPdfOrEpsAt": "PDF o EPS vettoriale a una dimensione fisica esatta, pronto per la tipografia.",
+        "pickAFormatAndSize": "Scegli formato e dimensione. L’anteprima mostra il risultato.",
+        "svgCopied": "SVG copiato",
+        "copySvg": "Copia SVG",
+        "preparing": "Preparazione…",
+        "downloadFilename": "Scarica {filename}",
+        "downloadQrCodePrintPrintsize": "Scarica qr-code-print-{printSize, number}{printUnit}.pdf",
+        "enterMinMaxUnitOr": "Inserisci {min, number}–{max, number} {unit}, oppure una distanza di {distanceMin, number}–{distanceMax, number} {distanceUnit}.",
+        "enterMinMaxUnit": "Inserisci {min, number}–{max, number} {unit}.",
+        "downloadedFilename": "{filename} scaricato",
+        "failedToDownloadQrCode": "Download del QR code non riuscito",
+        "downloadedPrintfilename": "{printFilename} scaricato",
+        "failedToCreatePrintFile": "Creazione del file di stampa non riuscita",
+        "couldntCopyTheSvg": "Impossibile copiare l’SVG",
+        "formatHints": {
+          "png": "Ideale per web, documenti e slide.",
+          "jpg": "Ideale per email e file leggeri.",
+          "webp": "Ideale per siti web a caricamento rapido · lossless, di solito più leggero del PNG.",
+          "svg": "Ideale per Figma, Illustrator, siti web · resta nitido a qualsiasi dimensione.",
+          "pdf": "Ideale per documenti e stampe veloci · per un PDF vettoriale, usa Pronto per la stampa.",
+          "eps": "Ideale per tipografie e app vettoriali · resta nitido a qualsiasi dimensione."
+        },
+        "sizePresets": {
+          "small": "Email",
+          "medium": "Web",
+          "large": "Social",
+          "xlarge": "Stampa",
+          "3xl": "Poster"
+        },
+        "finishedSize": "Dimensione finale {width} × {height}",
+        "finishedSizeOnPage": "Dimensione finale {width} × {height} (pagina {pageWidth} × {pageHeight})"
+      },
+      "editButton": {
+        "edit": "Modifica",
+        "editTheme": "Modifica tema"
+      },
+      "moreMenu": {
+        "more": "Altro",
+        "moreThingsToDoWith": "Altre cose da fare con questo design",
+        "makeManyFromACsv": "Creane molti da un CSV",
+        "checkAPhotoOfThe": "Controlla una foto della stampa",
+        "publishToCommunity": "Pubblica nella community",
+        "useQrdxInFigmaAnd": "Usa QRdx in Figma e altro",
+        "keyboardShortcuts": "Scorciatoie da tastiera",
+        "makeItDynamic": "Rendilo dinamico…",
+        "linkOptions": "Opzioni del link…",
+        "oneCodePerRowOf": "Un codice per ogni riga del tuo CSV, in questo stile.",
+        "makeSureThePrintedCode": "Verifica che il codice stampato venga letto come questo.",
+        "shareThisStyleForOthers": "Condividi questo stile così che altri possano applicarlo.",
+        "itsShortLinkFolderTags": "Il suo link breve, la cartella, i tag e il routing.",
+        "changeWhereItPointsAfter": "Cambia dove punta dopo la stampa e conta le scansioni.",
+        "signInToChangeWhere": "Accedi per cambiare dove punta dopo la stampa.",
+        "pluginsHint": {
+          "noneListed": "Non ancora negli store: installa dal sorgente.",
+          "someListed": "Per ora alcuni si installano dal sorgente."
+        }
+      },
+      "publishButton": {
+        "published": "Pubblicato",
+        "publish": "Pubblica",
+        "publishedToCommunity": "Pubblicato nella community",
+        "publishToCommunity": "Pubblica nella community"
+      },
+      "qrCodeDialog": {
+        "getCode": "Ottieni codice",
+        "useThisDesignInYour": "Usa questo design nella tua app, in una pagina web, tramite l’API o con un assistente AI.",
+        "installTheOpenSourceQrdx": "Installa il pacchetto open source <code>qrdx</code> ({version} su npm) e inserisci questo componente.",
+        "addTheQrCodeComponent": "Aggiungi il componente QR Code dal registro di QRdx, poi usalo con questo design.",
+        "aPublicImageOfThis": "Un’immagine pubblica di questo codice da incorporare ovunque. Non serve nessuna chiave API.",
+        "createsADynamicCodeWith": "Crea un codice dinamico con questo design. Serve una <link>chiave API</link>.",
+        "addThisServerToYour": "Aggiungi questo server al tuo assistente AI; non serve nessuna chiave. <link>Configuralo</link>",
+        "askUseQrdxDesignQr": "Chiedi: “Usa QRdx design_qr con questi argomenti.” QRdx può modificare lo stile finché il codice non viene scansionato bene.",
+        "writesThisDesignToQr": "Scrive questo design in qr.svg.",
+        "developerDocs": "Documentazione sviluppatori",
+        "pluginsForFigmaCanvaRaycast": "Plugin per Figma, Canva, Raycast e Chrome",
+        "leftOutValue": "Escluso: {value}.",
+        "imageUrl": "URL immagine",
+        "terminal": "Terminale",
+        "designQrArguments": "Argomenti di design_qr",
+        "labelCopied": "{label} copiato",
+        "copyLabel": "Copia {label}",
+        "command": "comando",
+        "address": "indirizzo",
+        "line": "riga",
+        "lines": "righe",
+        "copied": "Copiato",
+        "copy": "Copia",
+        "couldntCopyToTheClipboard": "Impossibile copiare negli appunti"
+      },
+      "resetButton": {
+        "reset": "Ripristina",
+        "resetToPresetDefaults": "Ripristina i valori predefiniti del preset"
+      },
+      "saveButton": {
+        "save": "Salva",
+        "saveDesign": "Salva design"
+      },
+      "shareButton": {
+        "share": "Condividi",
+        "shareDesign": "Condividi design"
+      },
+      "undoRedoButtons": {
+        "undo": "Annulla",
+        "redo": "Ripeti"
+      }
+    },
+    "ai": {
+      "agentParts": {
+        "scanScoreScoreValue": "Punteggio di scansione {score, number} · {value}",
+        "theDesignStepFailedTry": "Il passaggio del design non è riuscito. Riprova.",
+        "theContentNeedsAFix": "Il contenuto va corretto: {value}",
+        "setTheContentContentline": "Imposta il contenuto: {contentLine}",
+        "checkedScanScoreScoreValue": "Punteggio di scansione verificato: {score, number} · {value}",
+        "repairing": "Riparazione…",
+        "stop": "Ferma",
+        "checkedScanScore": "Punteggio di scansione verificato:",
+        "youAnsweredAnswered": "Hai risposto: {answered}",
+        "notAnswered": "Nessuna risposta",
+        "send": "Invia",
+        "reject": "Rifiuta",
+        "changedToGetThere": "Modificato per arrivarci:",
+        "scoredWithASampleLink": "Valutato con un link di esempio finché non aggiungi un contenuto.",
+        "replacesTheContentWithSummary": "Sostituisce il contenuto con {summary}",
+        "turnsOffTheLogoQr": "Disattiva l’arte Logo QR / Image QR",
+        "applyToYourEditor": "Applicare all’editor?",
+        "undone": "Annullato",
+        "applyAgain": "Applica di nuovo",
+        "applied": "Applicato",
+        "undo": "Annulla",
+        "applying": "Applicazione…",
+        "couldntApplyItTryAgain": "Impossibile applicarlo. Riprova.",
+        "notApplied": "Non applicato",
+        "templateName": "Template “{name}”",
+        "savesTheLookToYour": "Salva lo stile nei tuoi temi: colori, forme, cornice con il suo testo, bordo e logo. Non il contenuto.",
+        "saveToYourAccount": "Salvare nel tuo account?",
+        "savedToYourThemes": "Salvato nei tuoi temi",
+        "openThemes": "Apri i temi",
+        "upgrade": "Passa a Pro",
+        "saving": "Salvataggio…",
+        "notSaved": "Non salvato",
+        "steps": "Passaggi",
+        "yourAnswer": "La tua risposta",
+        "orTypeYourAnswer": "Oppure scrivi la risposta",
+        "designingTheStyle": "Sto progettando lo stile…",
+        "designedTheStyle": "Stile progettato",
+        "fellBackToAClassic": "Ripiegato su un classico QR code nero su bianco",
+        "repairedValue": "Riparato: {value}",
+        "couldntCheckTheScanScore": "Impossibile controllare il punteggio di scansione",
+        "checkingTheScanScore": "Controllo del punteggio di scansione…",
+        "showLess": "Mostra meno",
+        "showValueMore": "Mostrane altri {value, number}",
+        "applyThisDesign": "Applica questo design",
+        "notAppliedYourEditorIs": "Non applicato. Il tuo editor è invariato."
+      },
+      "aiBotBadge": {
+        "qrdxAi": "QRdx AI"
+      },
+      "aiChatFormBody": {
+        "chatInput": "Messaggio della chat"
+      },
+      "aiSendButton": {
+        "stop": "Interrompi",
+        "labelEnter": "{label} (Invio)"
+      },
+      "alertBanner": {
+        "youHaveFreepromessagesleftFreePro": "Ti restano {freeProMessagesLeft, number} messaggi <span>Pro</span> gratuiti.",
+        "upgradeToProToUnlock": "Passa a <span>Pro</span> per sbloccare richieste illimitate.",
+        "upgrade": "Passa a Pro"
+      },
+      "chatImagePreview": {
+        "imagePreview": "Anteprima immagine",
+        "imagePreview2": "Anteprima immagine",
+        "fullImagePreview": "Anteprima a schermo intero"
+      },
+      "chatInput": {
+        "designingYourCode": "Sto progettando il tuo codice…",
+        "newChat": "Nuova chat",
+        "toSend": "per inviare",
+        "newLine": "a capo",
+        "startANewChat": "Nuova chat",
+        "generate": "Genera"
+      },
+      "chatInterface": {
+        "seemsLikeThisMessageIs": "Sembra che questo messaggio non sia più disponibile.",
+        "cannotRetryThisMessage": "Impossibile riprovare il messaggio"
+      },
+      "chatThemePreview": {
+        "stoppedOrFailedRetryFrom": "Interrotto o non riuscito. Riprova dal messaggio qui sopra.",
+        "apply": "Applica",
+        "collapseSection": "Comprimi sezione",
+        "expandSection": "Espandi sezione",
+        "feedback": {
+          "colors": "Scelgo colori leggibili…",
+          "shapes": "Modello punti e occhi…",
+          "contrast": "Controllo il contrasto…",
+          "almost": "Ci siamo quasi…"
+        }
+      },
+      "closeableSuggestedPillActions": {
+        "suggestions": "Suggerimenti",
+        "hideSuggestions": "Nascondi suggerimenti"
+      },
+      "contentDialog": {
+        "whatShouldTheCodeOpen": "Cosa deve aprire il codice?",
+        "addALinkOrChoose": "Aggiungi un link o scegli un tipo. Il tuo design prosegue subito dopo.",
+        "link": "Link",
+        "scansOpen": "La scansione apre",
+        "orChooseAType": "oppure scegli un tipo",
+        "lengthMoreTypes": "Altri {length, number} tipi",
+        "cancel": "Annulla",
+        "continue": "Continua",
+        "backToAllTypes": "Torna a tutti i tipi",
+        "aWebsiteAMenuA": "Un sito web, un menu, un modulo: qualsiasi indirizzo web."
+      },
+      "dragAndDropImageUploader": {
+        "dropImagesHere": "Trascina qui le immagini"
+      },
+      "enhancePromptButton": {
+        "stop": "Ferma",
+        "enhancePrompt": "Migliora prompt"
+      },
+      "imageParts": {
+        "useIt": "Usa",
+        "addContent": "Aggiungi contenuto",
+        "notAdded": "Non aggiunto",
+        "whatShouldTheCodeOpen": "Cosa deve aprire il codice?",
+        "undone": "Annullato",
+        "applyAgain": "Applica di nuovo",
+        "applied": "Applicato",
+        "undo": "Annulla",
+        "openedAiArtInThe": "Arte AI aperta nella scheda Art",
+        "notAppliedYourEditorIs": "Non applicato. Il tuo editor è invariato.",
+        "placedAsValue": "Inserito come {value}",
+        "applyToYourEditor": "Applicare al tuo editor?",
+        "apply": "Applica",
+        "reject": "Rifiuta",
+        "notGreatYetTryAnother": "Non è ancora il massimo. Prova un altro modo qui sopra.",
+        "keepMyCode": "Tieni il mio codice",
+        "addWhatTheCodeOpens": "Prima aggiungi cosa apre il codice.",
+        "placingYourPicture": "Inserimento dell’immagine…",
+        "asValueWithNoAi": "Come {value}, senza crediti AI",
+        "replacesTheContentWithSummary": "Sostituisce il contenuto con {summary}",
+        "openAiArt": "Apri l’arte AI",
+        "aiArtIsntOnHere": "L’arte AI non è attiva qui. Image QR usa la tua immagine senza AI.",
+        "useAsImageQr": "Usa come Image QR",
+        "aiPaintsANewScene": "L’AI dipinge una nuova scena nel tuo codice, usando la tua immagine come riferimento.",
+        "steps": "Passaggi",
+        "addedValue": "Aggiunto: {value}",
+        "noContentAdded": "Nessun contenuto aggiunto",
+        "yourEditorHasContentNow": "Ora il tuo editor ha dei contenuti.",
+        "noContentYet": "Ancora nessun contenuto.",
+        "addALinkOrChoose": "Aggiungi un link o scegli un tipo {reason}.",
+        "addALinkOrChoose2": "Aggiungi un link o scegli un tipo, poi il design continua.",
+        "placedYourPicture": "Immagine inserita",
+        "youStartItInThe": "Lo avvii dalla scheda Art. Usa i crediti per l’arte AI.",
+        "checkedScore": "Verificato, punteggio di scansione: {score, number}",
+        "repairedThenCheckedScore": "Riparato e poi verificato, punteggio di scansione: {score, number}",
+        "place": {
+          "logo": "Usa come logo",
+          "logo_qr": "Usa come Logo QR",
+          "image_qr": "Usa come Image QR",
+          "background": "Usa come sfondo",
+          "dots": "Usa nei punti"
+        }
+      },
+      "imageUploader": {
+        "image": "Immagine",
+        "uploadImageForThemeGeneration": "Carica un’immagine per generare il tema",
+        "attachImage": "Allega immagine"
+      },
+      "messageActions": {
+        "retry": "Riprova",
+        "edit": "Modifica"
+      },
+      "messageEditForm": {
+        "cancelEdit": "Annulla modifica",
+        "confirmEdit": "Conferma modifica"
+      },
+      "message": {
+        "qrdxAi": "QRdx AI",
+        "imagePreview": "Anteprima immagine"
+      },
+      "messages": {
+        "clearError": "Cancella errore"
+      },
+      "noMessagesPlaceholder": {
+        "recentGenerations": "Generazioni recenti",
+        "applyValue": "Applica: {value}",
+        "applyThisGeneratedTheme": "Applica questo tema generato",
+        "modes": {
+          "create": {
+            "label": "Crea",
+            "description": "Parti da zero: cosa apre il codice, più un’atmosfera, un brand o un mood."
+          },
+          "remix": {
+            "label": "Remix",
+            "description": "Prendi un preset e portalo in una direzione nuova."
+          },
+          "tweak": {
+            "label": "Ritocca",
+            "description": "Modifica il design che hai in questo momento."
+          }
+        },
+        "greeting": "Con quale tema posso aiutarti?",
+        "greetingName": "Con quale tema posso aiutarti, {name}?"
+      },
+      "publishCard": {
+        "publishNameToTheCommunity": "Pubblica “{name}” nella community",
+        "aThemeAnyoneCanUse": "Un tema che chiunque può usare, gratis con {COMMUNITY_LICENSE_NAME}. Modifichi i dettagli prima della pubblicazione.",
+        "shareItInTheCommunity": "Vuoi condividerlo con la community?",
+        "editAndPublish": "Modifica e pubblica",
+        "notNow": "Non ora",
+        "published": "Pubblicato",
+        "viewIt": "Guardalo",
+        "notPublishedNothingWasShared": "Non pubblicato. Non è stato condiviso nulla.",
+        "checking": "Controllo…",
+        "couldntCheckItLookFor": "Non siamo riusciti a controllare. Cercalo nel tuo profilo della community.",
+        "notPublished": "Non pubblicato"
+      },
+      "suggestionChips": {
+        "suggestions": "Suggerimenti",
+        "chips": {
+          "differentStyle": "Prova uno stile diverso",
+          "frameText": "Cambia il testo della cornice",
+          "addFrame": "Aggiungi una cornice con “Scan me”",
+          "darker": "Rendilo più scuro",
+          "lighter": "Rendilo più chiaro",
+          "removeLogo": "Rimuovi il logo",
+          "addLogo": "Aggiungi un logo",
+          "saveTemplate": "Salvalo come template",
+          "keepColors": "Mantieni i colori, cambia le forme",
+          "behindCode": "Mettilo dietro il codice",
+          "asLogo": "Usalo come logo",
+          "variation": "Crea una variante",
+          "darkVersion": "Crea una versione scura"
+        }
+      },
+      "uploadedImagePreview": {
+        "uploadedPreview": "Anteprima caricata",
+        "removeImage": "Rimuovi immagine",
+        "uploadedPreviewEnlarged": "Anteprima caricata ingrandita"
+      }
+    },
+    "art": {
+      "aiArtDownload": {
+        "downloadAiArt": "Scarica arte AI",
+        "widthPx": "{width, number, ::group-off} px",
+        "printPng": "PNG per la stampa",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, ricontrollato",
+        "useAsImageQr": "Usa come Image QR",
+        "aiGeneratedQrCodeArtwork": "Immagine di QR code generata dall’AI che codifica {text}",
+        "format": "Formato",
+        "downloadPng": "Scarica PNG",
+        "downloadPrintPng": "Scarica PNG per la stampa",
+        "downloadTheWidthPxImage": "Scarica invece l’immagine da {width, number, ::group-off} px.",
+        "pickSvgPdfOrEps": "Scegli SVG, PDF o EPS.",
+        "thePrintSizeCopyDidnt": "La copia in formato stampa non ha superato il controllo della scansione",
+        "couldntPrepareThePrintSize": "Impossibile preparare l’immagine in formato stampa",
+        "nowAnImageQrCode": "Ora è un Image QR",
+        "couldntTurnThisImageInto": "Impossibile trasformare questa immagine in un Image QR"
+      },
+      "aiArtPanel": {
+        "style": "Stile",
+        "variations": "Varianti",
+        "eachVariationIsItsOwn": "Ogni variazione è un’immagine a sé e usa 1 credito. Ti viene proposta quella più facile da scansionare.",
+        "cancel": "Annulla",
+        "addYourContentFirstAi": "Aggiungi prima il tuo contenuto: l’arte AI dipinge il codice che stai modificando.",
+        "addContent": "Aggiungi contenuto",
+        "aiArtFitsUpTo": "L’arte AI supporta fino a {ART_TEXT_MAX_LENGTH, number} caratteri, e questo codice ne ha {length, number}. Va bene un link più corto, oppure il link breve di un QR code dinamico.",
+        "encodesYourDynamicLinkValue": "Codifica il tuo link dinamico <span>{value}</span>, così puoi cambiare la destinazione anche dopo la stampa.",
+        "encodesValueFixedOncePrinted": "Codifica <span>{value}</span>, che non cambia più dopo la stampa. Rendilo dinamico in Contenuto per modificarlo in seguito.",
+        "encodesYourLabelDetailsFixed": "Codifica i tuoi dati di {label}, che non cambiano più dopo la stampa.",
+        "thingsToAvoid": "Cose da evitare",
+        "seed": "Seed",
+        "lockSeed": "Blocca seed",
+        "referenceImage": "Immagine di riferimento",
+        "useMyLogoAsReference": "Usa il mio logo come riferimento",
+        "remove": "Rimuovi",
+        "uploadReference": "Carica riferimento",
+        "optionalItsColorsAndShapes": "Facoltativo. I suoi colori e le sue forme vengono ripresi nell’opera. Viene ridimensionata nel tuo browser e inviata con il tuo prompt tramite Vercel AI Gateway a {ART_MODEL_LABEL}.",
+        "signInToGenerateEvery": "Accedi per generare. Ogni piano include ogni mese immagini di arte AI; <link>scopri i piani</link>.",
+        "eachImageUses1Ai": "Ogni immagine usa 1 credito di arte AI; le immagini non riuscite vengono rimborsate.",
+        "unlimitedAiArtOnYour": "Arte AI illimitata con il tuo piano. Questa generazione ne usa {variations, number}.",
+        "describeASceneEG": "Descrivi una scena, ad es. un faro su una costa rocciosa al tramonto, dipinto a olio",
+        "qrVisibility": "Visibilità del QR",
+        "creativity": "Creatività",
+        "eGPeopleBuildingsDark": "es. persone, edifici, colori scuri",
+        "randomEachRun": "Casuale a ogni generazione",
+        "uploadAReferenceImage": "Carica un’immagine di riferimento",
+        "reference": "Riferimento",
+        "generating": "Generazione in corso…",
+        "signInToGenerate": "Accedi per generare",
+        "advancedCreativitySeedReference": "Avanzate: creatività, seed, riferimento",
+        "advancedCreativityReference": "Avanzate: creatività, riferimento",
+        "uploadItAsAReference": "Caricalo invece come immagine di riferimento.",
+        "couldntUseYourLogo": "Impossibile usare il tuo logo",
+        "creditsLeft": "<count>{remaining, number} di {limit, number}</count> immagini AI art rimaste questo mese{pooled, select, yes { (condivise dal tuo team)} other {}}, si azzera il {resets}. Questa generazione ne usa {variations, number}.",
+        "notEnoughLeft": "Non ne restano abbastanza: scegli meno varianti.",
+        "notEnoughLeftOrUpgrade": "Non ne restano abbastanza: scegli meno varianti o passa a un piano superiore.",
+        "showResults": "{count, plural, one {Mostra il tuo risultato} other {Mostra i tuoi risultati}}",
+        "moreArtistic": "Più artistico",
+        "clearerCode": "Codice più nitido",
+        "followsYourPrompt": "Segue il tuo prompt",
+        "interpretsFreely": "Interpreta liberamente",
+        "generateVariations": "{count, plural, one {Genera QR art} other {Genera # varianti}}"
+      },
+      "artCanvas": {
+        "downloadPng": "Scarica PNG",
+        "printPng": "Stampa PNG",
+        "useAsImageQr": "Usa come Image QR",
+        "retryClearer": "Riprova più nitido",
+        "aiArt": "AI art",
+        "encodesValue": "Codifica {value}",
+        "backToCode": "Torna al codice",
+        "eachImageIsCheckedTo": "Ogni immagine viene controllata per verificarne la scansione prima che tu la veda. Può richiedere fino a un minuto.",
+        "printPngArtPrintSize": "Stampa PNG, {ART_PRINT_SIZE, number, ::group-off} px",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, controllata di nuovo per la scansione",
+        "variations": "Varianti",
+        "aiArtResult": "Risultato AI art",
+        "aiGeneratedQrCodeArtwork": "Grafica QR code generata dall’AI che codifica {text}",
+        "verifiedToScanScanScore": "Scansione verificata · Punteggio di scansione {score, number}",
+        "checkBeforePrinting": "Controlla prima di stampare",
+        "scoringTheScan": "Calcolo del punteggio…",
+        "downloadTheWidthPxImage": "Scarica invece l’immagine da {width, number, ::group-off} px.",
+        "itsVectorArtDownloadIt": "È una grafica vettoriale: scaricala in SVG, PDF o EPS.",
+        "undo": "Annulla",
+        "thePrintSizeCopyDidnt": "La copia in formato di stampa non ha superato il controllo della scansione",
+        "couldntPrepareThePrintSize": "Impossibile preparare l’immagine in formato di stampa",
+        "nowAnImageQrCode": "Ora è un Image QR",
+        "couldntTurnThisImageInto": "Impossibile trasformare questa immagine in un Image QR",
+        "generatingVariations": "Generazione di {count, number} varianti in corso…",
+        "generatingYourArtwork": "Generazione dell’opera in corso…",
+        "resultSummary": "Visibilità del QR {visibility, number} · Creatività {creativity, number} · PNG {width, number, ::group-off} px, PNG per la stampa {printSize, number, ::group-off} px{failed, plural, =0 {} one { · # variante non riuscita e nessun credito usato} other { · # varianti non riuscite e nessun credito usato}}. Per SVG, PDF o EPS, usalo come Image QR."
+      },
+      "artPanel": {
+        "art": "Arte",
+        "off": "No",
+        "logoQr": "Logo QR",
+        "imageQr": "Image QR",
+        "aiArt": "Arte IA",
+        "artMode": "Modalità arte",
+        "modes": {
+          "off": "Un codice semplice. Logo QR e Image QR fondono un’immagine nei punti, senza IA, in ogni formato.",
+          "logo": "Senza IA: il tuo logo diventa parte del codice, in ogni formato.",
+          "halftone": "Senza IA: la tua foto diventa parte del codice, in ogni formato.",
+          "ai": "L’IA dipinge una scena nel tuo codice. Ogni immagine viene controllata per garantire la scansione."
+        }
+      }
+    },
+    "brandLogos": {
+      "brandLogoGallery": {
+        "brandLogos": "Loghi di brand",
+        "theBrandLogosDidntLoad": "I loghi dei brand non si sono caricati.",
+        "tryAgain": "Riprova",
+        "noBrandMatchesQuerySome": "Nessun brand corrisponde a “{query}”. Alcuni brand hanno chiesto a Simple Icons di rimuovere i loro marchi, quindi non sono qui.",
+        "allBrandsAToZ": "Tutti i brand, dalla A alla Z",
+        "logosFromSimpleIconsCc0": "Loghi da Simple Icons (CC0). I marchi dei brand sono di proprietà dei rispettivi titolari; usane uno per indirizzare le persone a quel brand.",
+        "showMore": "Mostra altro",
+        "searchBrands": "Cerca brand",
+        "searchSpotifyPaypalGoogleMaps": "Cerca: Spotify, PayPal, Google Maps…",
+        "logoColor": "Colore del logo",
+        "results": "Risultati",
+        "titleLogo": "Logo {title}",
+        "valueBrandsFromSimpleIcons": "{value} brand da Simple Icons. Ogni marchio appartiene al suo titolare.",
+        "brandsFromSimpleIconsEach": "Brand da Simple Icons. Ogni marchio appartiene al suo proprietario.",
+        "plateNeededForWhite": "Sfondo (serve per il bianco)",
+        "plate": "Sfondo",
+        "n1Brand": "1 brand",
+        "valueBrands": "{value} brand"
+      }
+    },
+    "communitySheet": {
+      "communityThemes": "Temi della community",
+      "freeToUseUnderCc0": "Uso libero con licenza CC0. Applicandolo, i tuoi contenuti restano invariati.",
+      "sort": "Ordina",
+      "allTags": "Tutti i tag",
+      "tryAgain": "Riprova",
+      "clearSearch": "Cancella ricerca",
+      "showAllTags": "Mostra tutti i tag",
+      "searchCoversTheFirstLength": "La ricerca copre i primi {length, number} temi.",
+      "saveAndContinue": "Salva e continua",
+      "publishingSharesASavedTheme": "Pubblicare condivide un tema salvato. Dai un nome a questo stile per continuare.",
+      "saveToPublish": "Salva per pubblicare",
+      "searchCommunityThemes": "Cerca temi della community",
+      "searchThemes": "Cerca temi",
+      "loadingThemes": "Caricamento dei temi",
+      "couldntLoadCommunityThemes": "Impossibile caricare i temi della community",
+      "noThemesMatchQuery": "Nessun tema per \"{query}\"",
+      "noThemesTaggedTagYet": "Ancora nessun tema con tag {tag}",
+      "noCommunityThemesYet": "Ancora nessun tema della community",
+      "applyName": "Applica {name}",
+      "official": "Ufficiale",
+      "unlikeName": "Non mi piace più {name}",
+      "likeName": "Mi piace {name}",
+      "likes": "Mi piace",
+      "published": "Pubblicato",
+      "publishThisStyle": "Pubblica questo stile",
+      "tags": "Tag",
+      "undo": "Annulla",
+      "likedName": "Ti piace \"{name}\"",
+      "liked": "Piaciuto",
+      "sorts": {
+        "popular": "Popolari",
+        "newest": "Più recenti"
+      }
+    },
+    "contentForms": {
+      "amazonForm": {
+        "amazonProductUrl": "URL del prodotto Amazon *",
+        "scanningWillOpenYourAmazon": "La scansione aprirà il tuo prodotto o negozio Amazon"
+      },
+      "attendanceForm": {
+        "googleFormUrl": "URL di Google Form *",
+        "scanningWillOpenYourAttendance": "La scansione aprirà il tuo modulo di presenza",
+        "httpsFormsGleOrHttps": "https://forms.gle/... o https://docs.google.com/forms/..."
+      },
+      "bitcoinForm": {
+        "bitcoinAddress": "Indirizzo Bitcoin *",
+        "amountBtc": "Importo (BTC)",
+        "label": "Etichetta",
+        "message": "Messaggio",
+        "scanningWillOpenABitcoin": "La scansione aprirà un wallet Bitcoin con questi dettagli di pagamento",
+        "n1a1zp1ep5qgefi2dmptftl5slmv7divfna": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+        "paymentLabel": "Etichetta pagamento",
+        "paymentMessage": "Messaggio pagamento"
+      },
+      "calcomForm": {
+        "calComBookingUrl": "URL di prenotazione Cal.com *",
+        "scanningWillOpenYourCal": "La scansione aprirà la tua pagina di prenotazione Cal.com"
+      },
+      "dubshForm": {
+        "dubShortLink": "Link breve Dub *",
+        "scanningWillOpenYourDub": "La scansione aprirà il tuo link breve Dub.",
+        "connectDub": "Connetti Dub",
+        "connectDubToCreatePick": "Connetti Dub per creare, scegliere e tracciare qui i tuoi link Dub.",
+        "enterManually": "Inserisci a mano",
+        "createNew": "Crea nuovo",
+        "selectExisting": "Scegli esistente",
+        "pasteALink": "Incolla un link",
+        "destinationUrl": "URL di destinazione *",
+        "domain": "Dominio",
+        "customEnding": "Finale personalizzato",
+        "title": "Titolo",
+        "description": "Descrizione",
+        "createDubLink": "Crea link Dub",
+        "loadingYourDubLinks": "Caricamento dei tuoi link Dub…",
+        "clicksClicks": "({clicks, number} clic)",
+        "selectAShortLink": "Seleziona un link breve…",
+        "noLinksFound": "Nessun link trovato.",
+        "scansGoToUrl": "Le scansioni vanno a {url}",
+        "campaign": "campagna",
+        "springCampaign": "Campagna di primavera",
+        "optionalInternalNote": "Nota interna facoltativa",
+        "searchLinks": "Cerca link…",
+        "failedToConnectDub": "Connessione a Dub non riuscita",
+        "dubLinkCreated": "Link Dub creato",
+        "failedToCreateDubLink": "Creazione del link Dub non riuscita"
+      },
+      "emailForm": {
+        "recipientEmail": "Email del destinatario *",
+        "subject": "Oggetto",
+        "message": "Messaggio",
+        "scanningWillOpenAnEmail": "La scansione aprirà una bozza di email verso questo indirizzo",
+        "contactExampleCom": "contatto@esempio.it",
+        "emailSubject": "Oggetto dell’email",
+        "emailMessage": "Messaggio email"
+      },
+      "ethereumForm": {
+        "ethereumAddress": "Indirizzo Ethereum *",
+        "amountEth": "Importo (ETH)",
+        "gasLimit": "Limite di gas",
+        "scanningWillOpenAnEthereum": "La scansione aprirà un wallet Ethereum con questi dati di pagamento",
+        "n0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359": "0xfb6916095ca1df60bb79Ce92ce3ea74c37c5d359"
+      },
+      "etsyForm": {
+        "etsyShopUrl": "URL del negozio Etsy *",
+        "scanningWillOpenYourEtsy": "La scansione aprirà il tuo negozio Etsy o la pagina di un prodotto"
+      },
+      "exampleForm": {
+        "exampleDataReplaceItWith": "Dati di esempio. Sostituiscili con i tuoi.",
+        "clear": "Cancella",
+        "tryAnExample": "Prova un esempio"
+      },
+      "facebookForm": {
+        "facebookProfileUrl": "URL del profilo Facebook *",
+        "scanningWillOpenYourFacebook": "La scansione aprirà il tuo profilo o la tua pagina Facebook"
+      },
+      "flipkartForm": {
+        "flipkartProductUrl": "URL del prodotto Flipkart *",
+        "scanningWillOpenYourFlipkart": "La scansione aprirà il tuo prodotto o il tuo negozio Flipkart"
+      },
+      "googleDriveForm": {
+        "connectGoogleDriveToPick": "Collega Google Drive per scegliere un file oppure incolla un link qui sotto.",
+        "connectGoogleDrive": "Collega Google Drive",
+        "googleDriveUrl": "URL di Google Drive *",
+        "scanningWillOpenTheSelected": "La scansione aprirà il file o la cartella di Google Drive selezionati.",
+        "search": "Cerca",
+        "loadMore": "Carica altro",
+        "searchDriveFilesAndFolders": "Cerca file e cartelle su Drive",
+        "failedToConnectGoogleDrive": "Impossibile collegare Google Drive"
+      },
+      "googleReviewForm": {
+        "googlePlaceId": "Google Place ID *",
+        "findYoursWithTheGoogle": "Trova il tuo con il <link>Google Place ID Finder</link>",
+        "scanningWillOpenGoogleTo": "La scansione aprirà Google per recensire la tua attività",
+        "chijn1tTdeuemsrusoyg83fry4": "ChIJN1t_tDeuEmsRUsoyG83frY4"
+      },
+      "instagramForm": {
+        "instagramUsername": "Nome utente Instagram *",
+        "scanningWillOpenYourInstagram": "La scansione aprirà il tuo profilo Instagram",
+        "usernameOrUsername": "nome utente o @nomeutente"
+      },
+      "linkedinForm": {
+        "linkedinProfileUrl": "URL del profilo LinkedIn *",
+        "scanningWillOpenYourLinkedin": "La scansione aprirà il tuo profilo LinkedIn o la pagina della tua azienda"
+      },
+      "mapsForm": {
+        "location": "Posizione *",
+        "scanningWillOpenThisPlace": "La scansione aprirà questo luogo in Google Maps",
+        "addressOrCoordinates407128": "Indirizzo o coordinate (40.7128, -74.0060)"
+      },
+      "paypalForm": {
+        "paypalMeUrlOrPayment": "URL PayPal.Me o link di pagamento *",
+        "scanningWillOpenThePaypal": "La scansione aprirà la pagina di pagamento PayPal",
+        "httpsPaypalMeUsernameOr": "https://paypal.me/nomeutente o link di pagamento"
+      },
+      "phoneForm": {
+        "phoneNumber": "Numero di telefono *",
+        "includeTheCountryCodeLike": "Includi il prefisso internazionale, ad esempio +1. La scansione avvia una chiamata."
+      },
+      "pinterestForm": {
+        "pinterestUsername": "Nome utente Pinterest *",
+        "scanningWillOpenYourPinterest": "La scansione aprirà il tuo profilo Pinterest",
+        "username": "nome utente"
+      },
+      "redditForm": {
+        "redditUsername": "Nome utente Reddit",
+        "subreddit": "Subreddit",
+        "fillInOneIfBoth": "Compilane uno. Se sono compilati entrambi, viene usato il subreddit.",
+        "scanningWillOpenTheReddit": "La scansione aprirà il profilo Reddit o il subreddit",
+        "usernameOrUUsername": "nome utente o u/nomeutente",
+        "subredditOrRSubreddit": "subreddit o r/subreddit"
+      },
+      "smsForm": {
+        "phoneNumber": "Numero di telefono *",
+        "message": "Messaggio",
+        "scanningWillOpenAText": "La scansione aprirà un messaggio di testo a questo numero",
+        "preFilledSmsMessage": "Messaggio SMS precompilato"
+      },
+      "snapchatForm": {
+        "snapchatUsername": "Nome utente Snapchat *",
+        "scanningWillOpenYourSnapchat": "La scansione aprirà la tua pagina Snapchat per aggiungere amici",
+        "username": "nome utente"
+      },
+      "spotifyForm": {
+        "spotifyUriOrUrl": "URI o URL Spotify *",
+        "scanningWillOpenTheContent": "La scansione aprirà il contenuto in Spotify",
+        "spotifyTrackOrHttpsOpen": "spotify:track:... o https://open.spotify.com/..."
+      },
+      "textForm": {
+        "textContent": "Contenuto testuale *",
+        "pasteALinkAndIt": "Incolla un link e passerai al tipo corrispondente.",
+        "enterAnyText": "Scrivi un testo…"
+      },
+      "threadsForm": {
+        "threadsUsername": "Nome utente Threads *",
+        "scanningWillOpenYourThreads": "La scansione aprirà il tuo profilo Threads",
+        "usernameOrUsername": "nome utente o @nomeutente"
+      },
+      "tiktokForm": {
+        "tiktokUsername": "Nome utente TikTok *",
+        "scanningWillOpenYourTiktok": "La scansione aprirà il tuo profilo TikTok",
+        "usernameOrUsername": "nome utente o @nomeutente"
+      },
+      "twitterForm": {
+        "twitterXUsername": "Nome utente Twitter / X *",
+        "scanningWillOpenYourTwitter": "La scansione aprirà il tuo profilo Twitter / X",
+        "usernameOrUsername": "nome utente o @nomeutente"
+      },
+      "upiForm": {
+        "upiId": "UPI ID *",
+        "payeeName": "Beneficiario",
+        "amount": "Importo (₹)",
+        "note": "Nota",
+        "scanningWillOpenAUpi": "La scansione aprirà un’app UPI con questi dettagli di pagamento",
+        "usernameBankname": "nomeutente@nomebanca",
+        "yourName": "Il tuo nome",
+        "paymentFor": "Pagamento per..."
+      },
+      "urlForm": {
+        "websiteAddress": "Indirizzo del sito web",
+        "scansOpen": "Scansione apre",
+        "pasteAnyLinkSocialAnd": "Incolla un link qualsiasi. I link social e WhatsApp hanno un tipo dedicato."
+      },
+      "vcardForm": {
+        "firstName": "Nome *",
+        "lastName": "Cognome",
+        "organization": "Azienda",
+        "phone": "Telefono",
+        "email": "Email",
+        "website": "Sito web",
+        "address": "Indirizzo",
+        "note": "Nota",
+        "scanningWillOfferToSave": "La scansione proporrà di salvare questo contatto",
+        "john": "Mario",
+        "doe": "Rossi",
+        "companyName": "Nome dell’azienda",
+        "johnExampleCom": "mario@example.com",
+        "n123MainStCityCountry": "Via Roma 123, Città, Paese",
+        "additionalNotes": "Note aggiuntive"
+      },
+      "venmoForm": {
+        "venmoUsername": "Username Venmo *",
+        "amount": "Importo ($)",
+        "note": "Nota",
+        "scanningWillOpenVenmoWith": "La scansione aprirà Venmo con questi dati di pagamento",
+        "username": "@username",
+        "paymentFor": "Pagamento per..."
+      },
+      "whatsappForm": {
+        "phoneNumber": "Numero di telefono *",
+        "includeCountryCodeWithoutSpaces": "Includi il prefisso internazionale senza spazi o simboli",
+        "message": "Messaggio",
+        "scanningWillOpenAWhatsapp": "La scansione aprirà una chat WhatsApp con questo numero",
+        "preFilledWhatsappMessage": "Messaggio WhatsApp precompilato"
+      },
+      "wifiForm": {
+        "networkName": "Nome della rete *",
+        "security": "Sicurezza",
+        "wpaWpa2": "WPA/WPA2",
+        "noPassword": "Nessuna password",
+        "password": "Password *",
+        "hiddenNetwork": "Rete nascosta",
+        "scanningWillOfferToJoin": "La scansione proporrà di collegarsi a questa rete Wi-Fi",
+        "myWiFiNetwork": "La mia rete Wi-Fi",
+        "networkPassword": "Password della rete"
+      },
+      "youtubeForm": {
+        "videoUrl": "URL del video",
+        "channelUrl": "URL del canale",
+        "fillInOneIfBoth": "Compilane uno. Se compili entrambi, viene usato il video.",
+        "scanningWillOpenTheYoutube": "La scansione aprirà il video o il canale YouTube"
+      }
+    },
+    "contentTypeModal": {
+      "current": "Attuale",
+      "chooseAQrCodeType": "Scegli un tipo di QR code",
+      "whatShouldHappenWhenSomeone": "Cosa deve succedere quando qualcuno scansiona il tuo codice?",
+      "toPick": "per scegliere",
+      "recent": "Recenti",
+      "noTypeMatchesQueryA": "Nessun tipo corrisponde a “{query}”. Un codice URL va bene per qualsiasi indirizzo web.",
+      "useAUrlCode": "Usa un codice URL",
+      "previewEveryTemplate": "Anteprima di tutti i modelli",
+      "move": "sposta",
+      "pick": "scegli",
+      "escClose": "<kbd>esc</kbd> chiudi",
+      "searchQrCodeTypes": "Cerca tipi di QR code",
+      "searchWiFiMenuGpay": "Cerca: Wi-Fi, menu, gpay, biglietto da visita…",
+      "categories": "Categorie",
+      "hostedPages": "Pagine ospitate",
+      "mobilePagesQrdxHostsFor": "Pagine mobile che QRdx ospita per te, ognuna con un QR code dinamico in questo design. Modifichi la pagina dalla tua dashboard.",
+      "mobilePagesQrdxHostsFor2": "Pagine mobile che QRdx ospita per te, ognuna con un QR code dinamico in questo design. Accedi per crearne una.",
+      "matchesFor": "{count, plural, one {# risultato} other {# risultati}} per “{query}”"
+    },
+    "contentTypeSelector": {
+      "qrCodeType": "Tipo di QR code",
+      "change": "Cambia",
+      "chooseAType": "Scegli un tipo"
+    },
+    "contrastChecker": {
+      "contrastChecker": "Controllo contrasto",
+      "wcag20AaRequires": "WCAG 2.0 AA richiede un rapporto di contrasto di almeno {MIN_CONTRAST_RATIO, number}:1 • <link>Scopri di più</link>",
+      "toggleTheme": "Cambia tema",
+      "all": "Tutti",
+      "issuesTotalissues": "Problemi ({totalIssues, number})",
+      "background": "Sfondo",
+      "foreground": "Primo piano",
+      "aa": "Aa",
+      "sampleText": "Testo di esempio",
+      "preview": "Anteprima",
+      "openContrastChecker": "Apri controllo contrasto",
+      "qrCodeBase": "Base del QR code",
+      "cornerEyes": "Occhi d’angolo",
+      "eyeDots": "Punti occhio",
+      "nameEye": "Occhio {name}",
+      "nameEyeDot": "Punto occhio {name}",
+      "learnMoreAboutWcagContrast": "Scopri di più sui requisiti di contrasto WCAG",
+      "eyePositions": {
+        "topLeft": "In alto a sx",
+        "topRight": "In alto a dx",
+        "bottomLeft": "In basso a sx"
+      }
+    },
+    "controlSections": {
+      "artControls": {
+        "hintFinderAlignmentAndFormat": "{hint} I pattern di posizione, allineamento e formato restano nitidi.",
+        "useMyLogo": "Usa il mio logo",
+        "uploadPngJpgWebpOr": "{upload}. PNG, JPG, WebP o SVG, fino a {value, number} MB. L’immagine resta nel tuo browser; viene salvata solo una piccola griglia di colori.",
+        "look": "Aspetto",
+        "eyesMatchTheLogo": "Occhi come il logo",
+        "usesHighErrorCorrectionAnd": "Usa una correzione degli errori alta e un bordo libero, così la scansione funziona ancora.",
+        "artScansBestWithHigh": "La scansione dell’arte funziona meglio con una correzione degli errori alta e un bordo libero.<button>Applica</button>",
+        "removeArt": "Rimuovi l’arte",
+        "strength": "Intensità",
+        "fineTune": "Regola",
+        "easierToScan": "Più facile da scansionare",
+        "moreArt": "Più artistico",
+        "scanCheck": "Verifica scansione",
+        "checking": "Verifica in corso…",
+        "artLook": "Stile artistico",
+        "artStrength": "Intensità arte",
+        "swapDotAndBackgroundColors": "Inverti i colori di punti e sfondo",
+        "putTheDotsOnWhite": "Punti su sfondo bianco",
+        "uploadAnother": "Carica un altro file",
+        "uploadYourOwn": "Carica il tuo",
+        "decodedInYourBrowserAt": "Decodificato nel tuo browser in tre dimensioni.",
+        "addContentToCheckYour": "Aggiungi un contenuto per verificare il tuo codice reale.",
+        "checkYourConnectionAndTry": "Controlla la connessione e riprova, oppure carica la tua immagine.",
+        "tryAPngOrJpg": "Prova con un PNG o un JPG.",
+        "useAPngJpgWebp": "Usa un’immagine PNG, JPG, WebP o SVG.",
+        "imagesMustBeValueMb": "Le immagini devono pesare al massimo {value, number} MB.",
+        "couldntLoadThisSample": "Impossibile caricare questo esempio",
+        "couldntUseThisImage": "Impossibile usare questa immagine",
+        "unsupportedImageFormat": "Formato immagine non supportato",
+        "imageIsTooLarge": "L’immagine è troppo grande",
+        "modeCopy": {
+          "logo": {
+            "upload": "Funzionano meglio i loghi in PNG trasparente o SVG",
+            "samples": "Prova un logo di esempio"
+          },
+          "halftone": {
+            "upload": "Funzionano meglio le foto con un solo soggetto ben visibile",
+            "samples": "Prova una foto di esempio"
+          }
+        }
+      },
+      "colorPresets": {
+        "lightCodeOnADark": "Un codice chiaro su sfondo scuro potrebbe non essere letto dai telefoni meno recenti.",
+        "colorPalettes": "Palette di colori",
+        "lightCodeOnDarkMay": "Codice chiaro su scuro. Potrebbe non essere letto dai telefoni meno recenti."
+      },
+      "contentControls": {
+        "startFromAStyle": "Parti da uno stile",
+        "browseAllLength": "Mostra tutti ({length, number})",
+        "fineTuneColorsDotsAnd": "Perfeziona colori, punti e logo",
+        "applyTheLabelStyle": "Applica lo stile {label}"
+      },
+      "customFrameFields": {
+        "thisFrameHasNoLabels": "Questa cornice non ha etichette da modificare.",
+        "icon": "Icona",
+        "label": "Etichetta",
+        "leaveEmptyForNoLabel": "Lascia vuoto per nessuna etichetta",
+        "secondLine": "Seconda riga",
+        "leaveEmptyToHideIt": "Lascia vuoto per nasconderla",
+        "frameColor": "Colore cornice",
+        "textColor": "Colore del testo",
+        "accentColor": "Colore di accento"
+      },
+      "designControls": {
+        "colors": "Colori",
+        "background": "Sfondo",
+        "foreground": "Primo piano",
+        "eyes": "Occhi",
+        "dots": "Punti",
+        "frame": "Cornice",
+        "padding": "Margine",
+        "errorCorrection": "Correzione errori",
+        "border": "Bordo",
+        "none": "Nessuno"
+      },
+      "dotSizeSection": {
+        "sizeOfEachDot": "Dimensione dei punti",
+        "dotSize": "Dim. punti",
+        "valueDotsKeepTheirFull": "I punti {value} mantengono la dimensione piena: quelli più piccoli non vengono più letti.",
+        "smallerDotsGiveALighter": "Punti più piccoli danno un aspetto più leggero. I punti {value} scendono fino al {floor, number}%, la dimensione minima che si legge ancora."
+      },
+      "eyeColorsSection": {
+        "giveEachCornerEyeIts": "Dai a ogni occhio d’angolo un colore per la cornice e uno per il centro. Gli occhi che non modifichi usano i colori di Occhi e Punti.",
+        "useTheSameColorsFor": "Usa gli stessi colori per tutti gli occhi",
+        "sameForAll": "Uguale per tutti",
+        "eyeColors": "Colori occhi",
+        "frame": "Cornice",
+        "center": "Centro",
+        "positions": {
+          "topLeft": "In alto a sinistra",
+          "topRight": "In alto a destra",
+          "bottomLeft": "In basso a sinistra"
+        }
+      },
+      "frameControls": {
+        "customise": "Personalizza",
+        "importSvg": "Importa SVG",
+        "publishFrame": "Pubblica cornice",
+        "theFrameIsAddedAround": "La cornice viene aggiunta attorno al codice, quindi l’immagine scaricata diventa più grande e il codice resta leggibile alla scansione.",
+        "label": "Etichetta",
+        "secondLine": "Seconda riga",
+        "leaveEmptyForNoLabel": "Lascia vuoto per nessuna etichetta",
+        "pickAFrameFirst": "Scegli prima una cornice",
+        "frameColor": "Colore cornice",
+        "textColor": "Colore testo",
+        "endColor": "Colore finale",
+        "optionalEGYourWebsite": "Facoltativo, es. il tuo sito",
+        "none": "Nessuna"
+      },
+      "frameFields": {
+        "textSize": "Dimensione testo"
+      },
+      "framePicker": {
+        "more": "Altre",
+        "showAll": "Mostra tutte",
+        "frame": "Cornice",
+        "moreFrames": "Altre cornici",
+        "allTotalFrames": "Tutte le {total, number} cornici",
+        "allFrames": "Tutte le cornici",
+        "searchFrames": "Cerca cornici",
+        "searchTotalFrames": "Cerca tra {total, number} cornici",
+        "closeFrames": "Chiudi cornici",
+        "filterFrames": "Filtra cornici",
+        "labelFrames": "Cornici {label}",
+        "commonFrames": "Cornici comuni",
+        "everyFrameBuiltInStyles": "Tutte le cornici: stili integrati, le cornici ufficiali di QRdx e quelle che hai salvato. Se ne scegli una, viene applicata subito.",
+        "less": "Meno",
+        "all": "Tutte",
+        "noFramesMatchQuery": "Nessuna cornice per \"{query}\".",
+        "loadingFrames": "Caricamento cornici…",
+        "comingUp": "In arrivo",
+        "builtIn": "Integrate",
+        "saved": "Salvate",
+        "results": "Risultati"
+      },
+      "frameShapes": {
+        "shapedCode": "QR con forma",
+        "pngJpegOrSvgA": "PNG, JPEG o SVG: una forma scura o piena su sfondo chiaro o trasparente.",
+        "remove": "Rimuovi",
+        "uploadASilhouette": "Carica una silhouette",
+        "tracing": "Tracciamento…",
+        "replace": "Sostituisci",
+        "uploadAShape": "Carica una forma",
+        "shapeHelp": {
+          "circle": "Il codice è inserito in un cerchio di punti decorativi, con un anello vuoto intorno. Gli scanner leggono solo il codice al centro, quindi il cerchio è un po’ più grande a parità di distanza di scansione.",
+          "heart": "Il codice è inserito in un cuore di punti decorativi, con un anello vuoto intorno. Gli scanner leggono solo il codice al centro, quindi stampa un cuore più grande di un codice quadrato a parità di distanza di scansione.",
+          "silhouette": "Il codice occupa la parte centrale più spaziosa della tua forma, con un anello vuoto intorno. Viene conservato solo il contorno, mai l’immagine, e link, community e snippet usano un codice quadrato."
+        },
+        "names": {
+          "circle": "Cerchio di punti",
+          "heart": "Cuore",
+          "silhouette": "Silhouette"
+        }
+      },
+      "frameTextPresets": {
+        "labelIdeas": "Idee per le etichette"
+      },
+      "logoControls": {
+        "logoInTheCenter": "Logo al centro",
+        "coversAFewDotsError": "Copre qualche punto: la correzione degli errori li ripristina.",
+        "quickIcons": "Icone rapide",
+        "brandLogos": "Loghi di brand",
+        "pngJpgWebpOrSvg": "PNG, JPG, WebP o SVG, fino a {value, number} MB. Le immagini quadrate con un po’ di margine rendono meglio.",
+        "remove": "Rimuovi",
+        "off": "No",
+        "logo": "Logo",
+        "uploadLogo": "Carica logo",
+        "brandLogosBrandbuttonlabel": "Loghi di marchi: {brandButtonLabel}",
+        "replace": "Sostituisci",
+        "uploadYourLogo": "Carica il tuo logo",
+        "useAPngJpgWebp": "Usa un’immagine PNG, JPG, WebP o SVG.",
+        "logosMustBeValueMb": "I loghi devono pesare al massimo {value, number} MB.",
+        "unsupportedLogoFormat": "Formato del logo non supportato",
+        "logoIsTooLarge": "Il logo è troppo grande",
+        "failedToReadLogoFile": "Impossibile leggere il file del logo"
+      },
+      "logoCropControls": {
+        "shape": "Forma",
+        "plateBehindTheLogo": "Base dietro al logo",
+        "aSolidValueTheLogo": "Una base piena a forma di {value} su cui poggia il logo.",
+        "removeBackground": "Rimuovi sfondo",
+        "logoShape": "Forma del logo",
+        "plateColor": "Colore della base",
+        "backgroundRemovedUndoBringsIt": "Sfondo rimosso. Con Annulla lo recuperi.",
+        "yourLogoHasNoSolid": "Il tuo logo non ha uno sfondo pieno da rimuovere.",
+        "removeTheSolidBackgroundAround": "Rimuovi lo sfondo pieno attorno al tuo logo.",
+        "backgroundRemoved": "Sfondo rimosso",
+        "plateNouns": {
+          "square": "quadrato",
+          "rounded": "quadrato arrotondato",
+          "circle": "cerchio"
+        },
+        "shapes": {
+          "square": "Quadrato",
+          "rounded": "Arrotondato",
+          "circle": "Cerchio"
+        }
+      },
+      "logoOptionsSection": {
+        "position": "Posizione",
+        "center": "Centro",
+        "keepTheLogoOffThe": "Tieni il logo lontano dai tre occhi degli angoli e dal quadratino vicino all’angolo in basso a destra. Il punteggio di scansione ti avvisa quando ne copre uno.",
+        "raiseErrorCorrectionForBig": "Aumenta la correzione errori per i loghi grandi",
+        "switchesToLevelHWhen": "Passa al livello H quando il logo copre più del {value, number}% del codice.",
+        "logoOptions": "Opzioni logo",
+        "size": "Dimensione",
+        "logoSize": "Grandezza logo",
+        "clearSpace": "Spazio libero",
+        "clearSpaceAroundTheLogo": "Spazio libero attorno al logo",
+        "leftToRight": "Da sinistra a destra",
+        "logoPositionLeftToRight": "Posizione del logo, da sinistra a destra",
+        "topToBottom": "Dall’alto in basso",
+        "logoPositionTopToBottom": "Posizione del logo, dall’alto in basso",
+        "upToMaxpercentForThis": "Fino al {maxPercent, number}% per questo codice: un logo più grande nasconderebbe più di quanto la correzione degli errori possa ripristinare.",
+        "thisCodeIsTooSmall": "Questo codice è troppo piccolo per contenere un logo.",
+        "shorterContentMakesRoom": "Un contenuto più breve fa spazio.",
+        "levelHOrShorterContent": "Il livello H o un contenuto più breve fanno spazio."
+      },
+      "logoPresets": {
+        "quickLogoIcons": "Icone logo rapide",
+        "nameIcon": "Icona {name}",
+        "uploadYourLogo": "Carica il tuo logo",
+        "yourLogo": "Il tuo logo"
+      },
+      "optionTiles": {
+        "more": "Altro",
+        "noNounMatchQueryShow": "Nessun risultato per “{query}” in {noun}.<button>Mostra tutto</button>",
+        "mayNotScan": "Scansione incerta",
+        "nameWontScanWithThis": "{name}, non si scansiona con questo stile",
+        "nameMayNotScan": "{name}, scansione incerta",
+        "nameWontScanWithThis2": "{name}: non si scansiona con questo stile",
+        "nameMayNotScan2": "{name}: scansione incerta",
+        "moreNoun": "Altri {noun}",
+        "allLengthNoun": "Tutti i {length, number} {noun}",
+        "searchNoun": "Cerca {noun}",
+        "searchLengthNoun": "Cerca tra {length, number} {noun}",
+        "closeNoun": "Chiudi {noun}",
+        "filterNoun": "Filtra {noun}",
+        "commonNoun": "{noun} comuni",
+        "allLengthNounPickingOne": "Tutti i {length, number} {noun}. Se ne scegli uno, viene applicato subito.",
+        "less": "Meno",
+        "all": "Tutti",
+        "wontScanHere": "Non si scansiona"
+      },
+      "paddingControls": {
+        "quietZoneAroundTheCode": "Zona di rispetto attorno al codice",
+        "scannersNeedABlankBorder": "Gli scanner hanno bisogno di un bordo vuoto attorno al codice. Usa 4 moduli (lo standard QR) quando stampi su sfondi complessi o scuri.",
+        "padding": "Margine",
+        "module": "modulo",
+        "modules": "moduli",
+        "presets": {
+          "none": "Nessuno",
+          "small": "Piccolo",
+          "standard": "Standard",
+          "large": "Grande"
+        }
+      },
+      "patternControls": {
+        "customizeOuterAndCenter": "Personalizza esterno e centro",
+        "border": "Bordo",
+        "higherLevelsSurviveScratchesAnd": "I livelli più alti resistono a graffi e loghi, ma aggiungono più punti. Usa H quando aggiungi un logo.",
+        "dotShape": "Forma dei punti",
+        "dotShapes": "forme dei punti",
+        "eyeStyle": "Stile degli occhi",
+        "eyeStyles": "stili degli occhi",
+        "outerEyeShape": "Forma occhio esterno",
+        "outerShapes": "forme esterne",
+        "innerEyeShape": "Forma occhio interno",
+        "centerShapes": "forme centrali",
+        "errorCorrection": "Correzione errori"
+      },
+      "sidePanel": {
+        "closeTitle": "Chiudi {title}"
+      }
+    },
+    "customTextarea": {
+      "thePastedContentWouldExceed": "Il contenuto incollato supererebbe il limite di {characterLimit, number} caratteri.",
+      "textTooLong": "Testo troppo lungo",
+      "describeYourTheme": "Descrivi il tuo tema…"
+    },
+    "dialogCloseButton": {
+      "close": "Chiudi"
+    },
+    "dynamicLinkToggle": {
+      "upgradeToPro": "Passa a Pro",
+      "manageCodes": "Gestisci i codici",
+      "static": "Statico",
+      "fixedOncePrinted": "Fisso dopo la stampa",
+      "dynamic": "Dinamico",
+      "editLaterCountScans": "Modifica dopo, conta le scansioni",
+      "linkOptions": "Opzioni del link…",
+      "printedCodesStillOpenDestinationurl": "I codici stampati aprono ancora <span>{destinationUrl}</span>.",
+      "pointItToTheNew": "Punta al nuovo indirizzo",
+      "scansSettings": "Scansioni e impostazioni",
+      "staticOrDynamicQrCode": "QR code statico o dinamico",
+      "shortLinkCopied": "Link breve copiato",
+      "copyShortLink": "Copia link breve",
+      "designSaved": "Design salvato",
+      "saveDesignToCode": "Salva il design nel codice",
+      "theQrCodeShowsYour": "Il QR code mostra di nuovo direttamente il tuo URL.",
+      "changeWhereItPointsAt": "Puoi cambiare la destinazione in qualsiasi momento. Il tuo logo era troppo grande per essere salvato con il codice.",
+      "changeWhereItPointsAt2": "Puoi cambiare la destinazione in qualsiasi momento dalla tua dashboard.",
+      "theDynamicCodeStaysIn": "Il QR code dinamico resta nella tua dashboard.",
+      "printedCopiesOfThisCode": "Le copie stampate di questo codice ora aprono il nuovo URL.",
+      "yourLogoWasTooLarge": "Il tuo logo era troppo grande per essere salvato ed è stato escluso.",
+      "dashboardPreviewsAndDownloadsUse": "Le anteprime e i download della dashboard usano questo design.",
+      "thisDynamicCodeIsNo": "Questo QR code dinamico non è più disponibile",
+      "yourQrCodeIsNow": "Il tuo QR code ora è dinamico",
+      "destinationUpdated": "Destinazione aggiornata",
+      "designSavedToTheCode": "Design salvato nel codice",
+      "couldntCopyTheShortLink": "Impossibile copiare il link breve"
+    },
+    "frameInline": {
+      "frameTextMenu": {
+        "lowContrastValue1The": "Contrasto basso ({value}:1). Il testo potrebbe essere difficile da leggere; punta ad almeno {MIN_LABEL_CONTRAST, number}:1."
+      },
+      "frameTextOverlay": {
+        "editFrameTextValue": "Modifica testo cornice: {value}",
+        "editText": "Modifica testo"
+      },
+      "frameTextSheet": {
+        "editFrameText": "Modifica testo cornice",
+        "changesShowOnTheCode": "Le modifiche si vedono sul codice mentre scrivi. Con Fine le mantieni.",
+        "valueLeft": "{value, number} rimasti",
+        "moreFrameOptions": "Altre opzioni cornice",
+        "done": "Fine"
+      },
+      "inlineFrameEditor": {
+        "leftLeft": "{left, number} rimasti",
+        "frameTextName": "Testo cornice: {name}",
+        "frameTextOptions": "Opzioni testo cornice",
+        "textSize": "Dimensione testo",
+        "textColor": "Colore testo",
+        "frameColor": "Colore cornice",
+        "icon": "Icona",
+        "moreFrameOptions": "Altre opzioni cornice"
+      }
+    },
+    "gradientPicker": {
+      "pickASolidColorA": "Scegli un colore pieno, un gradiente o un campione per {label}."
+    },
+    "linkSourceMenu": {
+      "useALinkFrom": "Usa un link da…",
+      "yourAccounts": "I tuoi account",
+      "connectAnAccount": "Collega un account",
+      "undo": "Annulla"
+    },
+    "mentionList": {
+      "noResult": "Nessun risultato"
+    },
+    "paintPicker": {
+      "controls": {
+        "saturationAndBrightness": "Saturazione e luminosità",
+        "saturationValueBrightnessValue2": "Saturazione {value, number}%, luminosità {value2, number}%"
+      },
+      "gradientEditor": {
+        "clickToAddAStop": "Clicca per aggiungere un punto",
+        "stopValueColor": "Punto {value, number}, {color}",
+        "startAngle": "Angolo iniziale",
+        "angle": "Angolo",
+        "startAngleInDegrees": "Angolo iniziale in gradi",
+        "angleInDegrees": "Angolo in gradi",
+        "anglePresets": "Angoli predefiniti",
+        "rotate90": "Ruota di 90°",
+        "reverseTheGradient": "Inverti il gradiente",
+        "reverse": "Inverti",
+        "removeTheSelectedStop": "Rimuovi il punto selezionato",
+        "removeStopDelete": "Rimuovi punto (Canc)",
+        "aGradientKeepsMinStops": "Un gradiente mantiene {MIN_STOPS, number} punti"
+      },
+      "imageFill": {
+        "paintAPictureThroughThese": "Dipingi un’immagine attraverso queste forme. PNG, JPEG o WebP, fino a 10 MB.",
+        "chooseAPicture": "Scegli un’immagine",
+        "underlay": "Sfondo",
+        "none": "Nessuno",
+        "replace": "Sostituisci",
+        "thePictureStaysWithThis": "L’immagine resta legata a questo design, come un logo: non viene condivisa nei link né negli stili pubblicati, e l’EPS non può includerla.",
+        "aSolidColorUnderThe": "Un colore pieno sotto l’immagine; la sua opacità la lascia trasparire",
+        "howThePictureFillsThe": "Come l’immagine riempie il codice",
+        "position": "Posizione",
+        "tileSize": "Dimensione tassello",
+        "scale": "Scala",
+        "opacity": "Opacità",
+        "fits": {
+          "cover": "Riempi",
+          "contain": "Adatta",
+          "tile": "Ripeti"
+        },
+        "positions": {
+          "top-left": "In alto a sinistra",
+          "top": "In alto",
+          "top-right": "In alto a destra",
+          "left": "Sinistra",
+          "center": "Centro",
+          "right": "Destra",
+          "bottom-left": "In basso a sinistra",
+          "bottom": "In basso",
+          "bottom-right": "In basso a destra"
+        }
+      },
+      "paintPanel": {
+        "measuringThePicturesContrast": "Misuro il contrasto dell’immagine…",
+        "contrastAgainst": "Contrasto {against}",
+        "makeItScannable": "Rendilo scansionabile",
+        "hexOrAnyCssColor": "Hex o qualsiasi colore CSS",
+        "hexOrPasteAnyCss": "Hex, o incolla qualsiasi colore CSS (rgb, hsl, oklch, un nome)",
+        "swatches": "Campioni",
+        "fillType": "Tipo di riempimento",
+        "pickAColorFromThe": "Scegli un colore dallo schermo",
+        "pickFromTheScreen": "Scegli dallo schermo",
+        "hue": "Tonalità",
+        "opacity": "Opacità",
+        "colorModel": "Modello colore",
+        "opacityPercent": "Opacità, percentuale",
+        "removeThisColorFromSaved": "Rimuovi questo colore dai salvati",
+        "saveThisColor": "Salva questo colore",
+        "savedClickToRemove": "Salvato: clicca per rimuovere",
+        "lightenTheBackground": "Schiarisci lo sfondo",
+        "darkenTheCode": "Scurisci il codice",
+        "kinds": {
+          "solid": "Tinta unita",
+          "linear": "Lineare",
+          "radial": "Radiale",
+          "angular": "Angolare",
+          "image": "Immagine"
+        },
+        "sources": {
+          "design": "In questo design",
+          "saved": "Salvati",
+          "recent": "Recenti",
+          "theme": "Tema",
+          "suggested": "Predefiniti"
+        },
+        "imageOpacity": "Immagine · {percent, number}%"
+      }
+    },
+    "photoScanDialog": {
+      "checkAPhotoOfThe": "Controlla la foto della stampa",
+      "checkedInYourBrowserThe": "Controllo eseguito nel tuo browser. L’immagine non viene mai caricata.",
+      "fullScanChecker": "Controllo scansione completo"
+    },
+    "qrEditActions": {
+      "options": "Opzioni",
+      "resetToCurrentPreset": "Ripristina il preset attuale",
+      "resetToCurrentPreset2": "Ripristina il preset attuale",
+      "noChangesFromPreset": "Nessuna modifica al preset",
+      "resetToDefaultTheme": "Ripristina il tema predefinito",
+      "resetToBaseTheme": "Ripristina il tema base",
+      "noChangesToReset": "Nessuna modifica da ripristinare"
+    },
+    "qrPresetSelect": {
+      "theme": "tema",
+      "browseAll": "Sfoglia tutti",
+      "noThemesFound": "Nessun tema trovato.",
+      "manage": "Gestisci",
+      "default": "Predefinito",
+      "new": "Nuovo",
+      "save": "Salva",
+      "aThemeToFindIt": "un tema per trovarlo qui.",
+      "discoverMoreThemes": "Scopri altri temi →",
+      "shuffleANewTheme": "Mescola un nuovo tema",
+      "previousTheme": "Tema precedente",
+      "nextTheme": "Tema successivo",
+      "searchThemes": "Cerca temi...",
+      "builtInThemes": "Temi integrati",
+      "default2": "predefinito",
+      "sharedThemes": "Temi condivisi",
+      "yourThemes": "I tuoi temi",
+      "savedThemes": "Temi salvati"
+    },
+    "qrSaveDialog": {
+      "updating": "Aggiornamento",
+      "updateExistingthemename": "Aggiorna “{existingThemeName}”",
+      "orSaveAsANew": "oppure salva come nuovo tema",
+      "name": "Nome",
+      "cancel": "Annulla",
+      "saving": "Salvataggio",
+      "myAwesomeTheme": "Il mio tema fantastico",
+      "saveAsNew": "Salva come nuovo",
+      "defaultTitle": "Salva tema del QR code",
+      "defaultDescription": "Salva il design del tuo QR code come tema da riutilizzare più tardi.",
+      "defaultCta": "Salva tema"
+    },
+    "qrShareDialog": {
+      "shareThisDesign": "Condividi questo design",
+      "theLinkOpensThisStyle": "Il link apre questo stile nel Playground, così chiunque può usarlo per il proprio codice. Il tuo contenuto non è incluso.",
+      "stylePreviewOpensInThe": "Anteprima dello stile · si apre nel Playground di QRdx",
+      "link": "Link",
+      "shareTo": "Condividi su",
+      "more": "Altro…",
+      "openOnYourPhone": "Aprilo sul telefono",
+      "scanThisCodeToOpen": "Inquadra questo codice per aprire il link di condivisione su un altro dispositivo.",
+      "copied": "Copiato",
+      "copyLinkToThisDesign": "Copia il link a questo design",
+      "saveItAsATheme": "Salvalo invece come tema",
+      "saveItAsATheme2": "Salvalo come tema per un link più corto",
+      "couldntCopyTheLink": "Impossibile copiare il link",
+      "omitted": {
+        "logo": "il tuo logo",
+        "art": "l’arte",
+        "frame": "il frame personalizzato",
+        "image": "i riempimenti con immagine",
+        "silhouette": "la forma del codice"
+      },
+      "omittedNote": "{count, plural, one {{list} non è incluso nel link.} other {{list} non sono inclusi nel link.}}",
+      "targets": {
+        "x": "Pubblica su X",
+        "linkedin": "Condividi su LinkedIn",
+        "facebook": "Condividi su Facebook",
+        "whatsapp": "Invia su WhatsApp",
+        "email": "Invia via email"
+      },
+      "myQrDesign": "Il mio design QR",
+      "shareTitle": "{name} · un design di QR code su QRdx"
+    },
+    "scanScore": {
+      "willItScan": "Si legge?",
+      "decodingYourDesignAtA": "Decodifica del tuo design a varie dimensioni…",
+      "simulatedInYourBrowserWith": "Simulato nel tuo browser con il decoder open source jsQR a varie dimensioni e con sfocatura da fotocamera. Le app dei telefoni variano, quindi prova una scansione prima di stampare.",
+      "checkAPhotoOfThe": "Controlla una foto della stampa",
+      "notChecked": "Non controllato",
+      "scanScoreScoreValueShow": "Punteggio di scansione {score, number}, {value}. Mostra i controlli",
+      "checkingScanScore": "Controllo del punteggio di scansione",
+      "scanScoreScoreValue": "Punteggio di scansione {score, number} · {value}",
+      "checkingScan": "Controllo scansione…",
+      "fullScanChecker": "Verifica completa scansione",
+      "checkAPrintedCode": "Controlla un codice stampato",
+      "grades": {
+        "great": "Ottimo",
+        "ok": "OK",
+        "risky": "A rischio",
+        "fails": "Fallisce"
+      }
+    },
+    "themeGallery": {
+      "shuffled": "Mescolato ·",
+      "back": "Indietro",
+      "themes": "Temi",
+      "lengthBuiltInLooksEach": "{length, number} stili integrati, ognuno testato per la scansione. Oppure mescolane uno nuovo.",
+      "shuffle": "Mescola",
+      "lightCodesOnADark": "Codici chiari su sfondo scuro. {DARK_THEME_NOTE}, quindi fai dei test con i telefoni che usa il tuo pubblico.",
+      "noThemeMatchesQuery": "Nessun tema corrisponde a “{query}”.",
+      "shuffleOneInstead": "Mescolane uno",
+      "toMove": "per spostarti",
+      "toApply": "per applicare",
+      "toShuffle": "per mescolare",
+      "escToClose": "<kbd>esc</kbd> per chiudere",
+      "searchThemes": "Cerca temi",
+      "searchMenuGoldPastelDots": "Cerca: menu, oro, pastello, punti…",
+      "categories": "Categorie",
+      "all": "Tutti"
+    },
+    "themePreview": {
+      "colorPreview": {
+        "primaryThemeColors": "Colori principali del tema",
+        "editColor": "Modifica colore",
+        "background": "Sfondo",
+        "foreground": "Primo piano",
+        "dotColor": "Colore punti",
+        "eyeColor": "Colore occhi"
+      }
+    },
+    "editor": {
+      "loadingTheEditor": "Caricamento dell’editor…",
+      "fetchedQrPresetDataIs": "I dati del preset QR recuperati non sono validi."
+    },
+    "qrControlPanel": {
+      "generate": "Genera",
+      "content": "Contenuto",
+      "design": "Design",
+      "art": "Arte"
+    },
+    "qrPreviewPanel": {
+      "sample": "Esempio",
+      "addYourLinkToMake": "Aggiungi il tuo link per personalizzarlo",
+      "addYourDetailsToMake": "Aggiungi i tuoi dati per personalizzarlo"
+    },
+    "keyboardShortcutsModal": {
+      "keyboardShortcuts": "Scorciatoie da tastiera",
+      "keyboardShortcutsAreCurrentlyDisabled": "Le scorciatoie da tastiera sono attualmente disattivate. Attivale nelle impostazioni per usarle.",
+      "quickReferenceForAllAvailable": "Riepilogo rapido di tutte le scorciatoie da tastiera disponibili",
+      "proTipPressAnytimeTo": "<span>Consiglio Pro:</span> premi <kbd>?</kbd> in qualsiasi momento per aprire questa finestra",
+      "categories": {
+        "navigation": "Navigazione",
+        "actions": "Azioni",
+        "themeAppearance": "Tema e aspetto",
+        "patternCustomization": "Personalizzazione pattern",
+        "help": "Aiuto"
+      },
+      "shortcuts": {
+        "openContentTab": "Apri scheda Contenuto",
+        "openDesignTab": "Apri scheda Design",
+        "openArtTab": "Apri scheda Arte",
+        "openGenerateAiTab": "Apri scheda Genera (AI)",
+        "saveQrTheme": "Salva tema QR",
+        "downloadQrCode": "Scarica QR code",
+        "copySvgToClipboard": "Copia SVG negli appunti",
+        "viewCode": "Vedi codice",
+        "shareQrCode": "Condividi QR code",
+        "resetToPresetDefaults": "Ripristina i valori predefiniti del preset",
+        "shuffleANewTheme": "Mescola un nuovo tema",
+        "toggleLightDarkMode": "Passa da chiaro a scuro",
+        "previousThemePreset": "Preset tema precedente",
+        "nextThemePreset": "Preset tema successivo",
+        "cycleDotPatterns": "Cambia stile dei punti",
+        "cycleCornerEyePatterns": "Cambia occhi angolari",
+        "cycleInternalEyePatterns": "Cambia occhi interni",
+        "cycleFrames": "Cambia cornice",
+        "showThisShortcutsDialog": "Mostra questa finestra scorciatoie"
+      }
+    },
+    "soundSwitch": {
+      "sounds": "Suoni"
+    },
+    "hooks": {
+      "chatEngine": {
+        "tryAgainInAMoment": "Riprova tra un attimo.",
+        "anErrorOccurred": "Si è verificato un errore",
+        "theAiStoppedResponding": "L’AI ha smesso di rispondere"
+      },
+      "useCommunityThemes": {
+        "yourThemeIsNowVisible": "Il tuo tema ora è visibile nella community.",
+        "anUnexpectedErrorOccurred": "Si è verificato un errore imprevisto.",
+        "yourThemeHasBeenRemoved": "Il tuo tema è stato rimosso dalla community.",
+        "yourThemeTagsHaveBeen": "I tag del tuo tema sono stati aggiornati.",
+        "themePublished": "Tema pubblicato",
+        "failedToPublishTheme": "Pubblicazione del tema non riuscita",
+        "themeUnpublished": "Tema non più pubblico",
+        "failedToUnpublishTheme": "Rimozione del tema non riuscita",
+        "failedToUpdateLike": "Aggiornamento del like non riuscito",
+        "tagsUpdated": "Tag aggiornati",
+        "failedToUpdateTags": "Aggiornamento dei tag non riuscito"
+      },
+      "useThemeMutations": {
+        "nameHasBeenCreatedSuccessfully": "\"{name}\" è stato creato correttamente.",
+        "nameHasBeenUpdatedSuccessfully": "\"{name}\" è stato aggiornato correttamente.",
+        "nameHasBeenDeletedSuccessfully": "\"{name}\" è stato eliminato correttamente.",
+        "themeLimitReached": "Limite di temi raggiunto",
+        "themeCreated": "Tema creato",
+        "themeUpdated": "Tema aggiornato",
+        "themeDeleted": "Tema eliminato",
+        "errors": {
+          "signIn": "Accedi per continuare.",
+          "invalidInput": "Input non valido.",
+          "notFound": "Tema non trovato.",
+          "unexpected": "Si è verificato un errore imprevisto. Riprova."
+        },
+        "failed": {
+          "create": "Creazione del tema non riuscita",
+          "update": "Aggiornamento del tema non riuscito",
+          "delete": "Eliminazione del tema non riuscita"
+        }
+      },
+      "useAiEnhancePrompt": {
+        "anErrorOccurred": "Si è verificato un errore"
+      },
+      "useDialogActions": {
+        "saveToShare": {
+          "title": "Salva per condividere",
+          "description": "Salva prima il tuo tema per condividerlo con altri.",
+          "ctaLabel": "Salva e condividi"
+        }
+      },
+      "useImageUpload": {
+        "youCanOnlyUploadUp": "Puoi caricare al massimo {maxFiles, number} immagini.",
+        "nameIsNotSupportedPlease": "“{name}” non è supportato. Usa file JPG, PNG, WebP o SVG.",
+        "imageNameExceedsTheValue": "L’immagine “{name}” supera il limite di {value, number} MB.",
+        "nameMayContainUnsafeContent": "“{name}” potrebbe contenere contenuti non sicuri, ma verrà elaborato comunque.",
+        "failedToReadNamePlease": "Impossibile leggere “{name}”. Riprova.",
+        "imageUploadLimitReached": "Limite di caricamento immagini raggiunto",
+        "unsupportedFileType": "Tipo di file non supportato",
+        "fileTooLarge": "File troppo grande",
+        "potentiallyUnsafeSvg": "SVG potenzialmente non sicuro",
+        "fileReadError": "Errore di lettura del file"
+      },
+      "usePlaygroundParams": {
+        "undo": "Annulla"
+      },
+      "usePlaygroundShortcuts": {
+        "svgCopiedToClipboard": "SVG copiato negli appunti",
+        "failedToCopySvg": "Copia dell’SVG non riuscita"
+      }
+    }
+  },
+  "playground": {
+    "heading": "Designer di QR code personalizzati",
+    "loading": "Caricamento di Playground...",
+    "metaTitle": "Designer di QR code personalizzati: logo, colori, cornici",
+    "metaDescription": "Crea un QR code personalizzato con il tuo logo, colori, sfumature, motivi dei punti e cornici, poi scarica PNG, SVG, PDF o EPS. Gratuito, senza registrazione, senza filigrana.",
+    "intro": {
+      "label": "Informazioni sul designer di QR code",
+      "summary": "Designer di QR code personalizzati. QR code statici gratuiti con il tuo logo, colori e cornici. Senza registrazione, senza filigrana.",
+      "types": "Crea un QR code per un link, una rete Wi-Fi, un biglietto da visita, un pagamento o uno qualsiasi dei {types, number} tipi di contenuto. Personalizzalo con {bodyPatterns, number} motivi di punti, {eyeShapes, number} forme degli occhi agli angoli, colori pieni o sfumati, un logo al centro e {frames, number} cornici con invito all’azione. Il punteggio di scansione stima quanto bene sarà letto prima di stampare.",
+      "downloads": "Scarica PNG, JPG, WebP o SVG, oppure un PDF o EPS pronto per la stampa a una dimensione esatta. I QR code statici sono gratuiti e non scadono mai. Accedi per creare un QR code dinamico che puoi modificare dopo la stampa e monitorare le scansioni.",
+      "links": {
+        "allTypes": "Tutti i tipi di QR code",
+        "scanChecker": "Verifica scansione",
+        "printSize": "Calcolatore dimensioni di stampa",
+        "styleGuide": "Guida di stile"
+      }
+    },
+    "presetSelector": {
+      "presets": "Preset"
+    },
+    "themeSaveDialog": {
+      "name": "Nome",
+      "cancel": "Annulla",
+      "saving": "Salvataggio",
+      "myAwesomeTheme": "Il mio tema fantastico",
+      "defaultTitle": "Salva tema",
+      "defaultDescription": "Inserisci un nome per il tuo tema, così potrai ritrovarlo più tardi.",
+      "defaultCta": "Salva tema"
+    }
+  },
+  "limits": {
+    "capMeter": {
+      "labelUsed": "{label} usati"
+    },
+    "limitCard": {
+      "planUsage": "Piano e utilizzo",
+      "notNow": "Non ora",
+      "labelUsed": "{label} usati"
+    },
+    "limitDialog": {
+      "limitReached": "Limite raggiunto"
+    }
+  },
+  "community": {
+    "browseLayout": {
+      "filters": "Filtri"
+    },
+    "communityTabs": {
+      "community": "Community"
+    },
+    "createBundle": {
+      "published": "Pubblicato",
+      "nameIsLiveInThe": "{name} è online nella community.",
+      "viewIt": "Vedilo",
+      "whatToMake": "Cosa creare",
+      "itemsYouSaveInThe": "Gli elementi che salvi dalla community o pubblichi tu compaiono qui. <link>Sfoglia la community</link>",
+      "itemsLengthPicked": "Elementi<span>{length, number} selezionati</span>",
+      "optional": "(facoltativo)",
+      "name": "Nome",
+      "description": "Descrizione",
+      "seeIt": "Guardalo",
+      "eGEverythingForA": "es. Tutto per un caffè",
+      "eGCaféTableKit": "es. Kit per i tavoli del caffè",
+      "optionalWhatItsFor": "Facoltativo: a cosa serve",
+      "collection": "Collezione",
+      "kit": "Kit",
+      "groupFramesThemesAndPage": "Raggruppa cornici, temi e template di pagina da sfogliare insieme, per esempio tutto per un caffè. Scegline 2 o più.",
+      "aPageTemplateAndThe": "Un template di pagina e lo stile che lo accompagna. Usando un kit, la pagina viene copiata come bozza e lo stile come tema salvato.",
+      "yours": "tuoi",
+      "noSavedMany": "Nessun {many} salvato",
+      "none": "Nessuno",
+      "pickOne": "Scegline uno",
+      "publishing": "Pubblicazione",
+      "publishCollection": "Pubblica collezione",
+      "publishKit": "Pubblica kit"
+    },
+    "creatorLine": {
+      "verified": "Verificato"
+    },
+    "importFrameDialog": {
+      "importAnSvgFrame": "Importa una cornice SVG",
+      "shapesAndColorsBecomeA": "Forme e colori diventano una cornice. Testo, immagini ed effetti vengono esclusi.",
+      "colors": "Colori",
+      "whatChanged": "Cosa è cambiato",
+      "cancel": "Annulla",
+      "useThisFrame": "Usa questa cornice",
+      "chooseAnSvgFileUp": "Scegli un file SVG (fino a 200 KB)",
+      "refs": {
+        "frame": "Colore cornice",
+        "accent": "Colore d’accento",
+        "fixed": "Resta invariato"
+      }
+    },
+    "itemActions": {
+      "useInEditor": "Usa nell’editor",
+      "copyToWorkspace": "Copia nel workspace",
+      "unpublish": "Ritira",
+      "removeFromTheCommunity": "Rimuovere dalla community?",
+      "itLeavesTheCommunityAt": "Esce subito dalla community. Chi l’ha già usato conserva le proprie copie: è stato condiviso con licenza CC0.",
+      "cancel": "Annulla",
+      "removeFromSaved": "Rimuovi dai salvati",
+      "save": "Salva",
+      "unlike": "Togli like",
+      "like": "Mi piace",
+      "useKit": "Usa il kit",
+      "useTemplate": "Usa il modello",
+      "saved": "Salvato",
+      "open": "Apri",
+      "nameIsInYourPages": "“{name}” è nelle tue pagine come bozza e il suo aspetto nei tuoi temi.",
+      "nameIsInYourPages2": "“{name}” è nelle tue pagine come bozza.",
+      "savedItsInTheEditors": "Salvato. Lo trovi nel selettore di cornici dell’editor.",
+      "saved2": "Salvato.",
+      "removedFromSaved": "Rimosso dai salvati.",
+      "copiedToWhereAsName": "Copiato in {where} come “{name}”",
+      "nameIsNoLongerIn": "“{name}” non è più nella community."
+    },
+    "itemCard": {
+      "empty": "Vuoto",
+      "official": "Ufficiale",
+      "usecountUses": "{useCount} utilizzi",
+      "seeAll": "Vedi tutti",
+      "likes": "Mi piace"
+    },
+    "itemPages": {
+      "previous": "Precedente",
+      "pagePageOfPages": "Pagina {page, number} di {pages, number}",
+      "next": "Successiva",
+      "pages": "Pagine"
+    },
+    "licenceConfirm": {
+      "licence": "Licenza:"
+    },
+    "newBundle": {
+      "signInToMakeA": "Accedi per creare una raccolta o un kit con gli elementi che hai salvato.",
+      "signIn": "Accedi"
+    },
+    "publishDesignDialog": {
+      "published": "Pubblicato",
+      "valueIsLiveInThe": "{value} è online nella community.",
+      "done": "Fatto",
+      "viewIt": "Vedilo",
+      "publishToTheCommunity": "Pubblica nella community",
+      "theChatDraftedTheseDetails": "La chat ha preparato questi dettagli. Modifica pure quello che vuoi: non viene condiviso nulla finché non pubblichi.",
+      "name": "Nome",
+      "description": "Descrizione",
+      "seeIt": "Guardalo",
+      "cancel": "Annulla",
+      "optionalWhatItSuits": "Facoltativo: a cosa si adatta",
+      "checkingAndPublishing": "Controllo e pubblicazione",
+      "publish": "Pubblica"
+    },
+    "publishFrameDialog": {
+      "published": "Pubblicato",
+      "valueIsLiveInThe": "{value} è online nella community.",
+      "done": "Fatto",
+      "viewIt": "Vedila",
+      "publishThisFrame": "Pubblica questa cornice",
+      "anyoneCanFindItIn": "Chiunque può trovarla nella community e usarla con i propri codici.",
+      "name": "Nome",
+      "description": "Descrizione",
+      "seeIt": "Guarda",
+      "cancel": "Annulla",
+      "eGCaféTableCard": "es. Segnatavolo del caffè",
+      "optionalWhatItsFor": "Facoltativo: a cosa serve",
+      "checkingAndPublishing": "Controllo e pubblicazione",
+      "publish": "Pubblica"
+    },
+    "publishPageDialog": {
+      "published": "Pubblicato",
+      "valueIsLiveInThe": "{value} è online nella community. La tua pagina non è cambiata.",
+      "done": "Fatto",
+      "viewIt": "Vedi",
+      "shareAsAPageTemplate": "Condividi come modello di pagina",
+      "step1Of2This": "Passaggio 1 di 2 · Questo è ciò che ricevono le persone. I tuoi dati personali vengono rimossi prima.",
+      "whatWeChanged": "Cosa abbiamo modificato",
+      "checkingThePage": "Controllo della pagina",
+      "yourTextIsReplacedWith": "Il tuo testo viene sostituito con un testo di esempio. Seleziona un campo per pubblicarlo come l’hai scritto.",
+      "everyPhotoIsTakenOut": "Ogni foto viene rimossa, così ognuno aggiunge le sue. Il testo che mantieni non può contenere link, email, numeri di telefono o indirizzi.",
+      "nothingIsLeftToShare": "Una volta rimossi i tuoi dati, non resta nulla da condividere.",
+      "cancel": "Annulla",
+      "continue": "Continua",
+      "step2Of2Details": "Passaggio 2 di 2 · Dettagli. Viene pubblicato subito nella community e la tua pagina resta com’è.",
+      "name": "Nome",
+      "description": "Descrizione",
+      "seeIt": "Guarda",
+      "back": "Indietro",
+      "eGCaféMenu": "es. Menu del caffè",
+      "optionalWhatItsFor": "Facoltativo: a cosa serve",
+      "kept": " · mantenuto",
+      "empty": "(vuoto)",
+      "publishing": "Pubblicazione",
+      "publish": "Pubblica"
+    },
+    "publishThemeDialog": {
+      "anyoneCanFindItIn": "Chiunque può trovarlo nella galleria della community e usarlo. Puoi annullarne la pubblicazione in qualsiasi momento.",
+      "cancel": "Annulla",
+      "publishThemenameToTheCommunity": "Pubblica \"{themeName}\" nella community",
+      "publishToTheCommunity": "Pubblica nella community",
+      "checkingAndPublishing": "Verifica e pubblicazione",
+      "publish": "Pubblica",
+      "publishedUnderYourProfile": "Viene pubblicato sotto il tuo profilo; il tema resta in questo workspace."
+    },
+    "removeItemButton": {
+      "remove": "Rimuovi",
+      "removeFromTheCommunity": "Rimuovi dalla community",
+      "removedNameFromTheCommunity": "\"{name}\" rimosso dalla community"
+    },
+    "tryIt": {
+      "tryItWithYourLink": "Provalo con il tuo link",
+      "drawnInYourBrowserNothing": "Disegnato nel tuo browser. Non viene inviato nulla."
     }
   }
 }

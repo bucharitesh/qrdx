@@ -127,6 +127,32 @@
       "star": "Star",
       "starOnGithub": "GitHub पर QRdx को Star करें",
       "starOnGithubCount": "GitHub पर QRdx को Star करें ({count} stars)"
+    },
+    "userProfileDropdown": {
+      "tryThePlayground": "Playground आज़माएँ",
+      "signIn": "साइन इन करें",
+      "dashboard": "डैशबोर्ड",
+      "accountSettings": "अकाउंट सेटिंग्स",
+      "manageBilling": "बिलिंग मैनेज करें",
+      "upgradeToPro": "Pro में अपग्रेड करें",
+      "admin": "एडमिन",
+      "privacyPolicy": "प्राइवेसी पॉलिसी",
+      "signOut": "साइन आउट करें"
+    },
+    "getProCta": {
+      "getPro": "Pro लें"
+    },
+    "getProDialog": {
+      "upgradeToValue": "{value} में अपग्रेड करें",
+      "unlocksThis": "यह इससे खुलता है",
+      "staticQrCodesStayFree": "स्टैटिक QR कोड फ़्री रहते हैं, और अगर आप कभी प्लान रद्द करें तब भी आपके कोड काम करते रहेंगे। <link>हमारी गारंटी</link>",
+      "comparePlansAndPrices": "प्लान और कीमतें देखें",
+      "maybeLater": "बाद में",
+      "thisFeatureIsPartOf": "यह फ़ीचर Business प्लान में शामिल है।",
+      "thisFeatureIsPartOf2": "यह फ़ीचर Pro और Business में शामिल है।"
+    },
+    "themeToggle": {
+      "toggleTheme": "थीम बदलें"
     }
   },
   "footer": {
@@ -999,7 +1025,7 @@
       "toolLabel": "प्रिंट साइज़ कैलकुलेटर",
       "howTitle": "साइज़ कैसे निकाला जाता है",
       "how1": "कंटेंट से QR वर्शन तय होता है। कैलकुलेटर चुने गए एरर-करेक्शन लेवल पर आपका टेक्स्ट समा सके, ऐसा सबसे छोटा वर्शन (1 से 40) चुनता है, QRdx एनकोडर वाली ही कैपेसिटी टेबल से। वर्शन n की चौड़ाई 17 + 4n मॉड्यूल होती है।",
-      "how2": "दूरी से मॉड्यूल का साइज़ तय होता है। {ratio, number}:1 के अंदाज़े वाले नियम को {reference, number} × {reference, number} के सरल कोड का वर्णन माना गया है, इसलिए हर मॉड्यूल कम से कम दूरी ÷ ({divisor, number}) होना चाहिए, और {minimum, number} mm से कम कभी नहीं।",
+      "how2": "दूरी से मॉड्यूल का साइज़ तय होता है। {ratio, number}:1 के अंदाज़े वाले नियम को एक सामान्य {reference, number, ::group-off} × {reference, number} कोड के लिए माना गया है, इसलिए हर मॉड्यूल कम से कम दूरी ÷ ({divisor, number}) का होना चाहिए, और {minimum, number} mm से कम कभी नहीं।",
       "how3": "मॉड्यूल साइज़ × प्रति साइड मॉड्यूल से कोड का साइज़ मिलता है। हर तरफ़ {quiet, number} खाली मॉड्यूल जोड़ने पर पेज पर कोड के लिए ज़रूरी जगह मिलती है।",
       "tipsTitle": "स्कैन होने वाले कोड के लिए टिप्स",
       "tip1": "कंटेंट छोटा रखें। छोटे लिंक का मतलब कम वर्शन है, इसलिए उसी प्रिंट साइज़ में मॉड्यूल बड़े मिलते हैं।",
@@ -1054,7 +1080,7 @@
         "resultTitle": "न्यूनतम प्रिंट साइज़",
         "errorDistance": "स्कैन करने की दूरी शून्य से ज़्यादा डालें।",
         "codeSize": "कोड का साइज़ (किनारे से किनारे)",
-        "codeSizeHint": "वर्ज़न {version, number}, {modules, number} × {modules, number} मॉड्यूल",
+        "codeSizeHint": "वर्शन {version, number}, {modules, number, ::group-off} × {modules, number} मॉड्यूल",
         "withQuietZone": "{modules, number}-मॉड्यूल क्वाइट ज़ोन के साथ",
         "withQuietZoneHint": "कोड के चारों ओर खाली मार्जिन, जो स्कैनर को चाहिए",
         "moduleSize": "मॉड्यूल (एक चौकोर) का साइज़",
@@ -1452,7 +1478,7 @@
     "alt": "{value} के लिए {format} बारकोड",
     "loadFailed": "बारकोड बनाने वाला कोड लोड नहीं हुआ। अपना कनेक्शन जाँचें और पेज रीलोड करें।",
     "fixInput": "बारकोड देखने के लिए हाइलाइट किया गया इनपुट ठीक करें।",
-    "sizes": "PNG, JPG, WebP और AVIF {width, number} × {height, number} px के हैं। SVG, PDF और EPS वेक्टर हैं, जिनका साइज़ {widthMm} × {heightMm} mm है और मॉड्यूल {moduleMm} mm का है; ज़रूरत हो तो इन्हें अपने लेआउट में स्केल करें।",
+    "sizes": "PNG, JPG, WebP और AVIF {width, number, ::group-off} × {height, number, ::group-off} px में। SVG, PDF और EPS वेक्टर हैं, जिनका साइज़ {widthMm} × {heightMm} mm है और मॉड्यूल {moduleMm} mm का है; ज़रूरत हो तो अपने लेआउट में इन्हें स्केल कर लें।",
     "more": "और",
     "moreFormats": "और फ़ॉर्मैट",
     "footnote": "यह आपके ब्राउज़र में बनता है; आप जो भी टाइप करते हैं, वह QRdx को नहीं भेजा जाता। WebP और AVIF चुनने पर वे QRdx के सर्वर पर एन्कोड होते हैं, और कुछ भी सेव नहीं किया जाता।",
@@ -1821,7 +1847,23 @@
     "artLink": "या किसी लिंक को स्कैन होने वाले AI QR आर्ट में बदलें",
     "chat": {
       "upgrade": "अनलिमिटेड रिक्वेस्ट के लिए Pro लें",
-      "heading": "मैं आपके लिए कौन सा QR कोड बनाऊँ?"
+      "heading": "मैं आपके लिए कौन सा QR कोड बनाऊँ?",
+      "aiChatForm": {
+        "generate": "जनरेट करें"
+      },
+      "communityThemeCard": {
+        "viewDetails": "विवरण देखें",
+        "viewInEditor": "एडिटर में देखें",
+        "unknownCreationDate": "बनाने की तारीख़ पता नहीं"
+      },
+      "communityThemes": {
+        "fromTheCommunity": "कम्युनिटी से",
+        "viewAll": "सभी देखें",
+        "exploreTheThemesTheCommunity": "देखिए कम्युनिटी tweakcn से कौन-कौन सी थीम बना रही है।"
+      },
+      "suggestedPillActions": {
+        "fromAnImage": "इमेज से"
+      }
     }
   },
   "aiArt": {
@@ -1859,6 +1901,111 @@
     "faq": {
       "title": "AI QR आर्ट FAQ",
       "description": "स्कैन होने वाला आर्टवर्क कैसे बनता है, इसकी कीमत क्या है और प्रिंट करने से पहले क्या देखना चाहिए।"
+    },
+    "aiArtPresetGallery": {
+      "noStylesMatchQueryDescribe": "“{query}” से मेल खाने वाला कोई स्टाइल नहीं मिला। इसके बजाय प्रॉम्प्ट में बताइए।",
+      "clearSearch": "सर्च हटाएँ",
+      "theStylesDidntLoad": "स्टाइल लोड नहीं हुए।",
+      "tryAgain": "फिर कोशिश करें",
+      "pickingOneFillsInThe": "कोई स्टाइल चुनने पर प्रॉम्प्ट भर जाता है; उसे अपनी मर्ज़ी से बदलें।",
+      "searchStyles": "स्टाइल खोजें",
+      "searchStylesCatsGoldTiles": "स्टाइल खोजें: बिल्ली, सोना, टाइल…",
+      "styleCategories": "स्टाइल श्रेणियाँ",
+      "featured": "चुनिंदा",
+      "all": "सभी",
+      "someStyles": "{total, number} में से {shown, number} स्टाइल।",
+      "allStyles": "{total, number} स्टाइल।"
+    },
+    "aiArtResult": {
+      "yourQrArtWillAppear": "आपकी QR आर्ट यहाँ दिखेगी",
+      "generating": "बन रहा है",
+      "eachImageIsCheckedTo": "हर इमेज आपको दिखने से पहले जाँची जाती है कि वह स्कैन होती है या नहीं। इसमें एक मिनट तक लग सकता है।",
+      "bestScannable": "सबसे अच्छा स्कैन होने वाला",
+      "download": "डाउनलोड",
+      "printSize": "प्रिंट साइज़ (",
+      "px": "px)",
+      "retryWithAClearerCode": "साफ़ कोड के साथ दोबारा करें",
+      "lockSeedSeed": "सीड {seed, number} लॉक करें",
+      "scanScoreScore": "स्कैन स्कोर {score, number}",
+      "bestOfThisRun": "इस रन की सबसे अच्छी",
+      "theModelsImageDidntScan": "मॉडल की इमेज जैसी बनी थी वैसी स्कैन नहीं हुई, इसलिए QRdx ने उसकी कॉर्नर आइज़, बॉर्डर और ज़रूरत पड़ने पर मॉड्यूल को बस इतना मज़बूत किया कि वह स्कैन हो जाए (ब्लेंड स्ट्रेंथ {value, number}%)।",
+      "theModelsImageDidntScan2": "कोड मज़बूत करने के बाद भी मॉडल की इमेज स्कैन नहीं हुई, इसलिए QRdx ने उसे Image QR कोड के रूप में दोबारा बनाया, जिसमें तस्वीर दिखती रहती है।",
+      "aiGeneratedQrCodeArtwork": "AI से बनी QR कोड आर्टवर्क, जिसमें {text} एन्कोड है",
+      "variations": "वेरिएशन",
+      "variationValueSeedSeed": "वेरिएशन {value, number}, सीड {seed, number}",
+      "variationValue": "वेरिएशन {value, number}",
+      "pendingvariationsVariations": "{pendingVariations, number} वेरिएशन",
+      "yourArtwork": "आपका आर्टवर्क",
+      "downloadTheWidthPxImage": "इसके बजाय {width, number, ::group-off} px की इमेज डाउनलोड करें।",
+      "thePrintSizeCopyDidnt": "प्रिंट-साइज़ कॉपी स्कैन चेक में पास नहीं हुई",
+      "couldntPrepareThePrintSize": "प्रिंट-साइज़ इमेज तैयार नहीं हो सकी",
+      "status": {
+        "checking": {
+          "title": "स्कैन की जाँच हो रही है…",
+          "description": "सर्वर पर डीकोड हो गया; अब इसे छोटा और धुंधला करके जाँच रहे हैं।"
+        },
+        "scannable": {
+          "title": "स्कैन होना सत्यापित",
+          "description": "हमारे सर्वर पर और आपके ब्राउज़र में भी यह आपके कंटेंट पर डीकोड हुआ। फिर भी प्रिंट करने से पहले फ़ोन कैमरे से टेस्ट ज़रूर करें।"
+        },
+        "unreadable": {
+          "title": "छोटा होने पर पढ़ना मुश्किल है — ज़्यादा साफ़ कोड आज़माएँ",
+          "description": "यह हमारे सर्वर पर डीकोड हुआ, लेकिन ब्राउज़र टेस्ट में नहीं। QR विज़िबिलिटी बढ़ाएँ, या इस्तेमाल करने से पहले फ़ोन कैमरे से टेस्ट करें।"
+        },
+        "mismatch": {
+          "title": "स्कैन करने पर अलग कंटेंट खुलता है — ज़्यादा साफ़ कोड आज़माएँ",
+          "description": "डीकोड किया गया टेक्स्ट आपके दिए टेक्स्ट से मेल नहीं खाता। इस इमेज का इस्तेमाल न करें।"
+        },
+        "unverified": {
+          "title": "ब्राउज़र में जाँच नहीं चल सकी",
+          "description": "यह हमारे सर्वर पर डीकोड हुआ। प्रिंट या शेयर करने से पहले फ़ोन कैमरे से टेस्ट करें।"
+        }
+      },
+      "resultSummary": "QR विज़िबिलिटी {visibility, number} · क्रिएटिविटी {creativity, number} · {width, number, ::group-off} px{failed, plural, =0 {} one { · # वेरिएशन फ़ेल हुआ और कोई क्रेडिट नहीं लगा} other { · # वेरिएशन फ़ेल हुए और कोई क्रेडिट नहीं लगा}}। हर इमेज में 1 AI आर्ट क्रेडिट लगता है; प्रिंट-साइज़ डाउनलोड फ़्री है।"
+    },
+    "aiArtStudio": {
+      "linkOrText": "लिंक या टेक्स्ट",
+      "shorterContentMeansFewerLarger": "छोटा कंटेंट यानी कम और बड़े मॉड्यूल: ज़्यादा साफ़ आर्ट और ज़्यादा भरोसेमंद स्कैन।",
+      "style": "स्टाइल",
+      "variations": "वेरिएशन",
+      "eachVariationIsItsOwn": "हर वेरिएशन अपनी अलग इमेज है और उसमें 1 क्रेडिट लगता है। आपके देखने से पहले हर इमेज का स्कैन होना जाँचा जाता है, और उनमें से सबसे अच्छी आपके लिए चुनी जाती है।",
+      "negativePrompt": "नेगेटिव प्रॉम्प्ट",
+      "theModelIsAskedTo": "मॉडल से कहा जाता है कि इन्हें इमेज से बाहर रखे।",
+      "seed": "सीड",
+      "lockSeed": "सीड लॉक करें",
+      "theSameSeedAndSettings": "वही सीड और सेटिंग एक जैसी इमेज देती हैं (मॉडल फिर भी थोड़ा बदल सकता है); वेरिएशन सीड, सीड + 1, … इस्तेमाल करते हैं।",
+      "referenceImage": "रेफ़रेंस इमेज",
+      "remove": "हटाएँ",
+      "uploadReference": "रेफ़रेंस अपलोड करें",
+      "optionalALogoPhotoOr": "वैकल्पिक। कोई लोगो, फ़ोटो या पैलेट, जिसे मॉडल आर्टवर्क में ढाल सके: उसके रंग और आकार साथ आते हैं। इसे आपके ब्राउज़र में रीसाइज़ किया जाता है और आपके प्रॉम्प्ट के साथ Vercel AI Gateway के ज़रिए {ART_MODEL_LABEL} को भेजा जाता है।",
+      "cancel": "रद्द करें",
+      "aiArtCodesAreStatic": "<span>AI आर्ट कोड स्टैटिक होते हैं।</span> कंटेंट इमेज में ही बना होता है और शेयर करने के बाद बदला नहीं जा सकता। ऐसे लिंक के लिए जिसे आप बाद में एडिट कर सकें और जिसमें स्कैन एनालिटिक्स मिले, <signInLink>डायनेमिक कोड</signInLink> बनाएँ और उसका शॉर्ट लिंक यहाँ इस्तेमाल करें।",
+      "alreadyDesigningACode": "पहले से कोड डिज़ाइन कर रहे हैं?",
+      "toPaintItsContentDynamic": "ताकि उसका कंटेंट पेंट हो सके, डायनेमिक लिंक समेत।",
+      "openInPlayground": "Playground में खोलें",
+      "signInToGeneratePlans": "जनरेट करने के लिए साइन इन करें। {plans}",
+      "eachImageUses1Ai": "हर इमेज में 1 AI आर्ट क्रेडिट लगता है; फ़ेल हुई इमेज के क्रेडिट वापस कर दिए जाते हैं। {plans}",
+      "unlimitedAiArtOnYour": "आपके प्लान में AI आर्ट अनलिमिटेड है। इस बार {variations, number} इमेज बनेंगी।",
+      "describeASceneEG": "कोई सीन बताएँ, जैसे सूर्यास्त के समय चट्टानी तट पर एक लाइटहाउस, ऑयल पेंटिंग",
+      "qrVisibility": "QR की दृश्यता",
+      "creativity": "क्रिएटिविटी",
+      "thingsToAvoidEG": "जो नहीं चाहिए, जैसे लोग, इमारतें, गहरे रंग",
+      "randomEachRun": "हर बार रैंडम",
+      "uploadAReferenceImage": "रेफ़रेंस इमेज अपलोड करें",
+      "reference": "रेफ़रेंस",
+      "advancedNegativePromptSeedReference": "एडवांस्ड: नेगेटिव प्रॉम्प्ट, सीड, रेफ़रेंस इमेज",
+      "advancedNegativePromptReferenceImage": "एडवांस्ड: नेगेटिव प्रॉम्प्ट, रेफ़रेंस इमेज",
+      "generating": "जनरेट हो रहा है…",
+      "findItUnderAdvanced": "यह एडवांस्ड में मिलेगा।",
+      "seedValueLocked": "सीड {value, number} लॉक है",
+      "creditsLeft": "इस महीने <count>{limit, number} में से {remaining, number}</count> AI आर्ट इमेज बची हैं{pooled, select, yes { (आपकी टीम में शेयर्ड)} other {}}, {resets} को रीसेट होंगी। इस बार {variations, number} इमेज बनेंगी; फ़ेल हुई इमेज के क्रेडिट वापस कर दिए जाते हैं।",
+      "notEnoughLeft": "{variations, number} के लिए क्रेडिट काफ़ी नहीं हैं: कम वेरिएशन चुनें।",
+      "notEnoughLeftOrUpgrade": "{variations, number} के लिए क्रेडिट काफ़ी नहीं हैं: कम वेरिएशन चुनें या अपग्रेड करें।",
+      "moreArtistic": "ज़्यादा आर्टिस्टिक",
+      "clearerCode": "ज़्यादा साफ़ कोड",
+      "followsYourPrompt": "आपके प्रॉम्प्ट के अनुसार",
+      "interpretsFreely": "अपने ढंग से व्याख्या",
+      "generateVariations": "{count, plural, one {QR आर्ट जनरेट करें} other {# वेरिएशन जनरेट करें}}"
     }
   },
   "compare": {
@@ -1877,6 +2024,1750 @@
         "heading": "React और JavaScript QR कोड लाइब्रेरी",
         "intro": "ऐसे पैकेज जिन्हें आप npm से इंस्टॉल करके अपने ऐप में QR कोड बनाते हैं। दोनों QRdx के npm पैकेज से कहीं ज़्यादा इस्तेमाल होते हैं।"
       }
+    }
+  },
+  "editor": {
+    "actionBar": {
+      "codeButton": {
+        "code": "कोड",
+        "getCode": "कोड पाएँ"
+      },
+      "copySvgButton": {
+        "copied": "कॉपी हो गया",
+        "copySvg": "SVG कॉपी करें",
+        "svgCopiedToClipboard": "SVG क्लिपबोर्ड पर कॉपी हो गया",
+        "failedToCopySvg": "SVG कॉपी नहीं हो सका"
+      },
+      "downloadButton": {
+        "download": "डाउनलोड",
+        "downloadQrCode": "QR कोड डाउनलोड करें"
+      },
+      "downloadDialog": {
+        "addContentToSeeYour": "अपना कोड देखने के लिए कंटेंट जोड़ें।",
+        "format": "फ़ॉर्मैट",
+        "pixels": "पिक्सल",
+        "at300Dpi": "300 dpi पर",
+        "width": "चौड़ाई",
+        "color": "रंग",
+        "bleed": "ब्लीड",
+        "downloadQrCode": "QR कोड डाउनलोड करें",
+        "imageFile": "इमेज फ़ाइल",
+        "printReady": "प्रिंट के लिए तैयार",
+        "size": "साइज़",
+        "custom": "कस्टम",
+        "px": "px",
+        "widthAndHeight": "चौड़ाई और ऊँचाई",
+        "scale": "स्केल",
+        "transparentBackground": "पारदर्शी बैकग्राउंड",
+        "makeManyFromACsv": "इसी स्टाइल में CSV से कई कोड बनाएँ",
+        "scannedFromAbout": "लगभग इतनी दूरी से स्कैन",
+        "setsTheCodeWidthBelow": "नीचे कोड की चौड़ाई तय करता है।",
+        "codeWidth": "कोड की चौड़ाई",
+        "unit": "इकाई",
+        "mm": "mm",
+        "inches": "इंच",
+        "colorMode": "कलर मोड",
+        "none": "कोई नहीं",
+        "n3Mm": "3 mm",
+        "cropMarksPdf": "क्रॉप मार्क (PDF)",
+        "scansFromUpToAbout": "लगभग {value} की दूरी तक से स्कैन हो जाता है (एक डॉट के आकार का करीब 250 गुना)।",
+        "under2CmIsHard": "2 cm से छोटा कोड फ़ोन से स्कैन करना मुश्किल होता है; हो सके तो बड़ा रखें।",
+        "eachDotIsOnlyValue": "हर डॉट सिर्फ़ {value, number} mm का है और प्रिंट में फैल सकता है। कोड को बड़ा करें या उसका कंटेंट छोटा करें।",
+        "cmykUsesASimpleConversion": "CMYK में कलर प्रोफ़ाइल के बिना सीधा कन्वर्ज़न होता है; ब्रांड के सटीक रंग ज़रूरी हों तो अपने प्रिंटर से पूछें।",
+        "pdfAndEpsDrawEvery": "PDF और EPS हर डॉट को वेक्टर शेप की तरह बनाते हैं और लीनियर व रेडियल ग्रेडिएंट को स्मूद वेक्टर शेडिंग के रूप में रखते हैं।",
+        "jpgCantBeTransparent": "JPG ट्रांसपेरेंट नहीं हो सकता",
+        "vector": " · वेक्टर",
+        "anySize": "कोई भी साइज़",
+        "printbleedMm": "{printBleed, number} mm",
+        "vectorPdfOrEpsAt": "प्रिंट शॉप के लिए तैयार, सटीक फ़िज़िकल साइज़ में वेक्टर PDF या EPS।",
+        "pickAFormatAndSize": "फ़ॉर्मेट और साइज़ चुनें। प्रीव्यू में दिखता है कि आपको क्या मिलेगा।",
+        "svgCopied": "SVG कॉपी हो गया",
+        "copySvg": "SVG कॉपी करें",
+        "preparing": "तैयार हो रहा है…",
+        "downloadFilename": "{filename} डाउनलोड करें",
+        "downloadQrCodePrintPrintsize": "qr-code-print-{printSize, number}{printUnit}.pdf डाउनलोड करें",
+        "enterMinMaxUnitOr": "{min, number}–{max, number} {unit} डालें, या {distanceMin, number}–{distanceMax, number} {distanceUnit} की दूरी डालें।",
+        "enterMinMaxUnit": "{min, number}–{max, number} {unit} डालें।",
+        "downloadedFilename": "{filename} डाउनलोड हो गया",
+        "failedToDownloadQrCode": "QR कोड डाउनलोड नहीं हो सका",
+        "downloadedPrintfilename": "{printFilename} डाउनलोड हो गया",
+        "failedToCreatePrintFile": "प्रिंट फ़ाइल नहीं बन सकी",
+        "couldntCopyTheSvg": "SVG कॉपी नहीं हो सका",
+        "formatHints": {
+          "png": "वेब, डॉक्स और स्लाइड के लिए बेहतरीन।",
+          "jpg": "ईमेल और छोटी फ़ाइलों के लिए बेहतरीन।",
+          "webp": "तेज़ लोड होने वाली वेबसाइटों के लिए बेहतरीन · लॉसलेस, आमतौर पर PNG से छोटा।",
+          "svg": "Figma, Illustrator और वेबसाइटों के लिए बेहतरीन · किसी भी साइज़ पर साफ़ रहता है।",
+          "pdf": "दस्तावेज़ों और झटपट प्रिंट के लिए बेहतरीन · वेक्टर PDF के लिए Print-ready चुनें।",
+          "eps": "प्रिंट शॉप और वेक्टर ऐप्स के लिए बेहतरीन · किसी भी साइज़ पर साफ़ रहता है।"
+        },
+        "sizePresets": {
+          "small": "ईमेल",
+          "medium": "वेब",
+          "large": "सोशल",
+          "xlarge": "प्रिंट",
+          "3xl": "पोस्टर"
+        },
+        "finishedSize": "फ़ाइनल साइज़ {width} × {height}",
+        "finishedSizeOnPage": "फ़ाइनल साइज़ {width} × {height} (पेज {pageWidth} × {pageHeight})"
+      },
+      "editButton": {
+        "edit": "एडिट करें",
+        "editTheme": "थीम एडिट करें"
+      },
+      "moreMenu": {
+        "more": "और",
+        "moreThingsToDoWith": "इस डिज़ाइन के साथ और क्या करें",
+        "makeManyFromACsv": "CSV से कई कोड बनाएँ",
+        "checkAPhotoOfThe": "प्रिंट की फ़ोटो जाँचें",
+        "publishToCommunity": "कम्युनिटी में पब्लिश करें",
+        "useQrdxInFigmaAnd": "Figma और अन्य में QRdx इस्तेमाल करें",
+        "keyboardShortcuts": "कीबोर्ड शॉर्टकट",
+        "makeItDynamic": "इसे डायनेमिक बनाएँ…",
+        "linkOptions": "लिंक विकल्प…",
+        "oneCodePerRowOf": "आपकी CSV की हर पंक्ति के लिए एक कोड, इसी स्टाइल में।",
+        "makeSureThePrintedCode": "पक्का करें कि प्रिंट किया गया कोड इसी की तरह स्कैन हो।",
+        "shareThisStyleForOthers": "इस स्टाइल को शेयर करें ताकि दूसरे इसे लगा सकें।",
+        "itsShortLinkFolderTags": "इसका शॉर्ट लिंक, फ़ोल्डर, टैग और रूटिंग।",
+        "changeWhereItPointsAfter": "प्रिंट के बाद बदलें कि यह कहाँ जाए, और स्कैन गिनें।",
+        "signInToChangeWhere": "प्रिंट के बाद यह कहाँ जाए, यह बदलने के लिए साइन इन करें।",
+        "pluginsHint": {
+          "noneListed": "अभी उनके स्टोर में नहीं हैं: सोर्स से इंस्टॉल करें।",
+          "someListed": "कुछ अभी सोर्स से इंस्टॉल होते हैं।"
+        }
+      },
+      "publishButton": {
+        "published": "पब्लिश हो गया",
+        "publish": "पब्लिश करें",
+        "publishedToCommunity": "कम्युनिटी में पब्लिश हो गया",
+        "publishToCommunity": "कम्युनिटी में पब्लिश करें"
+      },
+      "qrCodeDialog": {
+        "getCode": "कोड पाएँ",
+        "useThisDesignInYour": "इस डिज़ाइन को अपने app में, किसी वेब पेज पर, API के ज़रिए या AI असिस्टेंट के साथ इस्तेमाल करें।",
+        "installTheOpenSourceQrdx": "ओपन-सोर्स <code>qrdx</code> पैकेज इंस्टॉल करें (npm पर {version}) और इस कॉम्पोनेंट को जोड़ें।",
+        "addTheQrCodeComponent": "QRdx रजिस्ट्री से QR Code कॉम्पोनेंट जोड़ें, फिर इसे इस डिज़ाइन के साथ इस्तेमाल करें।",
+        "aPublicImageOfThis": "इस कोड की एक पब्लिक इमेज, जिसे कहीं भी एम्बेड किया जा सकता है। API key की ज़रूरत नहीं।",
+        "createsADynamicCodeWith": "इस डिज़ाइन के साथ डायनेमिक कोड बनाता है। इसके लिए <link>API key</link> चाहिए।",
+        "addThisServerToYour": "इस सर्वर को अपने AI असिस्टेंट में जोड़ें; किसी key की ज़रूरत नहीं। <link>सेट अप करें</link>",
+        "askUseQrdxDesignQr": "कहें: “इन arguments के साथ QRdx design_qr इस्तेमाल करो।” कोड ठीक से स्कैन होने तक QRdx स्टाइल बदल सकता है।",
+        "writesThisDesignToQr": "इस डिज़ाइन को qr.svg में लिखता है।",
+        "developerDocs": "डेवलपर डॉक्स",
+        "pluginsForFigmaCanvaRaycast": "Figma, Canva, Raycast और Chrome के लिए प्लगइन",
+        "leftOutValue": "छोड़ा गया: {value}।",
+        "imageUrl": "इमेज URL",
+        "terminal": "टर्मिनल",
+        "designQrArguments": "design_qr arguments",
+        "labelCopied": "{label} कॉपी हो गया",
+        "copyLabel": "{label} कॉपी करें",
+        "command": "कमांड",
+        "address": "पता",
+        "line": "लाइन",
+        "lines": "लाइनें",
+        "copied": "कॉपी हो गया",
+        "copy": "कॉपी करें",
+        "couldntCopyToTheClipboard": "क्लिपबोर्ड पर कॉपी नहीं हो सका"
+      },
+      "resetButton": {
+        "reset": "रीसेट",
+        "resetToPresetDefaults": "प्रीसेट डिफ़ॉल्ट पर रीसेट करें"
+      },
+      "saveButton": {
+        "save": "सेव करें",
+        "saveDesign": "डिज़ाइन सेव करें"
+      },
+      "shareButton": {
+        "share": "शेयर करें",
+        "shareDesign": "डिज़ाइन शेयर करें"
+      },
+      "undoRedoButtons": {
+        "undo": "पूर्ववत करें",
+        "redo": "रीडू"
+      }
+    },
+    "ai": {
+      "agentParts": {
+        "scanScoreScoreValue": "स्कैन स्कोर {score, number} · {value}",
+        "theDesignStepFailedTry": "डिज़ाइन स्टेप पूरा नहीं हो पाया। फिर से कोशिश करें।",
+        "theContentNeedsAFix": "कंटेंट में सुधार चाहिए: {value}",
+        "setTheContentContentline": "कंटेंट सेट करें: {contentLine}",
+        "checkedScanScoreScoreValue": "स्कैन स्कोर जाँचा गया: {score, number} · {value}",
+        "repairing": "ठीक किया जा रहा है…",
+        "stop": "रोकें",
+        "checkedScanScore": "स्कैन स्कोर जाँचा गया:",
+        "youAnsweredAnswered": "आपका जवाब: {answered}",
+        "notAnswered": "जवाब नहीं दिया",
+        "send": "भेजें",
+        "reject": "अस्वीकार करें",
+        "changedToGetThere": "यहाँ तक पहुँचने के लिए बदला गया:",
+        "scoredWithASampleLink": "जब तक आप कंटेंट नहीं जोड़ते, स्कोर एक सैंपल लिंक से निकाला गया है।",
+        "replacesTheContentWithSummary": "कंटेंट को {summary} से बदल देता है",
+        "turnsOffTheLogoQr": "Logo QR / Image QR आर्ट बंद कर देता है",
+        "applyToYourEditor": "अपने एडिटर में लागू करें?",
+        "undone": "वापस किया गया",
+        "applyAgain": "फिर से लागू करें",
+        "applied": "लागू हो गया",
+        "undo": "पूर्ववत करें",
+        "applying": "लागू हो रहा है…",
+        "couldntApplyItTryAgain": "लागू नहीं हो पाया। फिर से कोशिश करें।",
+        "notApplied": "लागू नहीं हुआ",
+        "templateName": "टेम्पलेट “{name}”",
+        "savesTheLookToYour": "यह लुक आपकी थीम में सेव करता है: रंग, आकार, फ़्रेम और उसका टेक्स्ट, बॉर्डर और लोगो। कंटेंट नहीं।",
+        "saveToYourAccount": "अपने अकाउंट में सेव करें?",
+        "savedToYourThemes": "आपकी थीम में सेव हो गया",
+        "openThemes": "थीम खोलें",
+        "upgrade": "अपग्रेड करें",
+        "saving": "सेव हो रहा है…",
+        "notSaved": "सेव नहीं हुआ",
+        "steps": "स्टेप्स",
+        "yourAnswer": "आपका जवाब",
+        "orTypeYourAnswer": "या अपना जवाब लिखें",
+        "designingTheStyle": "स्टाइल डिज़ाइन हो रही है…",
+        "designedTheStyle": "स्टाइल डिज़ाइन हो गई",
+        "fellBackToAClassic": "क्लासिक सफ़ेद पर काले कोड पर लौट आया",
+        "repairedValue": "ठीक किया गया: {value}",
+        "couldntCheckTheScanScore": "स्कैन स्कोर चेक नहीं हो सका",
+        "checkingTheScanScore": "स्कैन स्कोर चेक हो रहा है…",
+        "showLess": "कम दिखाएँ",
+        "showValueMore": "{value, number} और दिखाएँ",
+        "applyThisDesign": "यह डिज़ाइन लागू करें",
+        "notAppliedYourEditorIs": "लागू नहीं हुआ। आपका एडिटर वैसा ही है।"
+      },
+      "aiBotBadge": {
+        "qrdxAi": "QRdx AI"
+      },
+      "aiChatFormBody": {
+        "chatInput": "चैट इनपुट"
+      },
+      "aiSendButton": {
+        "stop": "रोकें",
+        "labelEnter": "{label} (Enter)"
+      },
+      "alertBanner": {
+        "youHaveFreepromessagesleftFreePro": "आपके पास {freeProMessagesLeft, number} फ़्री<span> Pro </span>मैसेज बचे हैं।",
+        "upgradeToProToUnlock": "अनलिमिटेड रिक्वेस्ट के लिए <span>Pro</span> में अपग्रेड करें।",
+        "upgrade": "अपग्रेड करें"
+      },
+      "chatImagePreview": {
+        "imagePreview": "इमेज प्रीव्यू",
+        "imagePreview2": "इमेज प्रीव्यू",
+        "fullImagePreview": "पूरी इमेज का प्रीव्यू"
+      },
+      "chatInput": {
+        "designingYourCode": "आपका कोड डिज़ाइन हो रहा है…",
+        "newChat": "नई चैट",
+        "toSend": "भेजने के लिए",
+        "newLine": "नई लाइन",
+        "startANewChat": "नई चैट शुरू करें",
+        "generate": "बनाएँ"
+      },
+      "chatInterface": {
+        "seemsLikeThisMessageIs": "लगता है यह मैसेज अब उपलब्ध नहीं है।",
+        "cannotRetryThisMessage": "इस मैसेज को दोबारा नहीं आज़मा सकते"
+      },
+      "chatThemePreview": {
+        "stoppedOrFailedRetryFrom": "रुक गया या फ़ेल हो गया। ऊपर के मैसेज से दोबारा कोशिश करें।",
+        "apply": "लागू करें",
+        "collapseSection": "सेक्शन छोटा करें",
+        "expandSection": "सेक्शन खोलें",
+        "feedback": {
+          "colors": "स्कैन होने वाले रंग चुन रहे हैं…",
+          "shapes": "डॉट्स और आइज़ को आकार दे रहे हैं…",
+          "contrast": "कॉन्ट्रास्ट जाँच रहे हैं…",
+          "almost": "बस होने ही वाला है…"
+        }
+      },
+      "closeableSuggestedPillActions": {
+        "suggestions": "सुझाव",
+        "hideSuggestions": "सुझाव छिपाएँ"
+      },
+      "contentDialog": {
+        "whatShouldTheCodeOpen": "कोड स्कैन करने पर क्या खुले?",
+        "addALinkOrChoose": "कोई लिंक जोड़ें या टाइप चुनें। आपका डिज़ाइन इसके बाद वहीं से जारी रहेगा।",
+        "link": "लिंक",
+        "scansOpen": "स्कैन पर खुलता है",
+        "orChooseAType": "या टाइप चुनें",
+        "lengthMoreTypes": "{length, number} और टाइप",
+        "cancel": "रद्द करें",
+        "continue": "आगे बढ़ें",
+        "backToAllTypes": "सभी टाइप पर वापस जाएँ",
+        "aWebsiteAMenuA": "वेबसाइट, मेन्यू, फ़ॉर्म: कोई भी वेब एड्रेस।"
+      },
+      "dragAndDropImageUploader": {
+        "dropImagesHere": "इमेज यहाँ डालें"
+      },
+      "enhancePromptButton": {
+        "stop": "रोकें",
+        "enhancePrompt": "प्रॉम्प्ट बेहतर करें"
+      },
+      "imageParts": {
+        "useIt": "इस्तेमाल करें",
+        "addContent": "कंटेंट जोड़ें",
+        "notAdded": "जोड़ा नहीं गया",
+        "whatShouldTheCodeOpen": "कोड क्या खोले?",
+        "undone": "वापस लिया गया",
+        "applyAgain": "फिर लागू करें",
+        "applied": "लागू हो गया",
+        "undo": "वापस लें",
+        "openedAiArtInThe": "AI आर्ट को Art टैब में खोला गया",
+        "notAppliedYourEditorIs": "लागू नहीं किया गया। आपका एडिटर वैसा ही है।",
+        "placedAsValue": "{value} के रूप में लगाया गया",
+        "applyToYourEditor": "अपने एडिटर में लागू करें?",
+        "apply": "लागू करें",
+        "reject": "अस्वीकार करें",
+        "notGreatYetTryAnother": "अभी बात नहीं बनी। ऊपर कोई और तरीका आज़माएँ।",
+        "keepMyCode": "मेरा कोड रखें",
+        "addWhatTheCodeOpens": "पहले जोड़ें कि कोड क्या खोलेगा।",
+        "placingYourPicture": "आपकी तस्वीर लगाई जा रही है…",
+        "asValueWithNoAi": "{value} के रूप में, बिना AI क्रेडिट के",
+        "replacesTheContentWithSummary": "कंटेंट को {summary} से बदल देता है",
+        "openAiArt": "AI आर्ट खोलें",
+        "aiArtIsntOnHere": "यहाँ AI आर्ट चालू नहीं है। Image QR आपकी तस्वीर बिना AI के इस्तेमाल करता है।",
+        "useAsImageQr": "Image QR के रूप में इस्तेमाल करें",
+        "aiPaintsANewScene": "AI आपकी तस्वीर को रेफ़रेंस मानकर आपके कोड में एक नया दृश्य बनाता है।",
+        "steps": "स्टेप",
+        "addedValue": "जोड़ा गया: {value}",
+        "noContentAdded": "कोई कंटेंट नहीं जोड़ा गया",
+        "yourEditorHasContentNow": "अब आपके एडिटर में कंटेंट है।",
+        "noContentYet": "अभी कोई कंटेंट नहीं है।",
+        "addALinkOrChoose": "कोई लिंक जोड़ें या टाइप चुनें {reason}।",
+        "addALinkOrChoose2": "कोई लिंक जोड़ें या टाइप चुनें, फिर डिज़ाइन आगे बढ़ेगा।",
+        "placedYourPicture": "आपकी तस्वीर लगा दी गई",
+        "youStartItInThe": "इसे Art टैब में शुरू करें। इसमें AI आर्ट क्रेडिट लगते हैं।",
+        "checkedScore": "जाँचा गया, स्कैन स्कोर: {score, number}",
+        "repairedThenCheckedScore": "ठीक किया, फिर जाँचा गया, स्कैन स्कोर: {score, number}",
+        "place": {
+          "logo": "लोगो के रूप में इस्तेमाल करें",
+          "logo_qr": "Logo QR के रूप में लें",
+          "image_qr": "Image QR के रूप में लें",
+          "background": "बैकग्राउंड के रूप में लें",
+          "dots": "डॉट्स में इस्तेमाल करें"
+        }
+      },
+      "imageUploader": {
+        "image": "इमेज",
+        "uploadImageForThemeGeneration": "थीम बनाने के लिए इमेज अपलोड करें",
+        "attachImage": "इमेज जोड़ें"
+      },
+      "messageActions": {
+        "retry": "फिर कोशिश करें",
+        "edit": "एडिट करें"
+      },
+      "messageEditForm": {
+        "cancelEdit": "एडिट रद्द करें",
+        "confirmEdit": "एडिट की पुष्टि करें"
+      },
+      "message": {
+        "qrdxAi": "QRdx AI",
+        "imagePreview": "इमेज प्रीव्यू"
+      },
+      "messages": {
+        "clearError": "एरर हटाएँ"
+      },
+      "noMessagesPlaceholder": {
+        "recentGenerations": "हाल के जनरेशन",
+        "applyValue": "लागू करें: {value}",
+        "applyThisGeneratedTheme": "यह बनाई गई थीम लागू करें",
+        "modes": {
+          "create": {
+            "label": "बनाएँ",
+            "description": "नए सिरे से शुरू करें: यह क्या खोलेगा, और कोई वाइब, ब्रांड या मूड।"
+          },
+          "remix": {
+            "label": "रीमिक्स",
+            "description": "कोई प्रीसेट लें और उसे कुछ नया रूप दें।"
+          },
+          "tweak": {
+            "label": "ट्वीक",
+            "description": "अभी जो डिज़ाइन है, उसमें बदलाव करें।"
+          }
+        },
+        "greeting": "थीम बनाने में मैं क्या मदद करूँ?",
+        "greetingName": "{name}, थीम बनाने में मैं क्या मदद करूँ?"
+      },
+      "publishCard": {
+        "publishNameToTheCommunity": "“{name}” को कम्युनिटी में पब्लिश करें",
+        "aThemeAnyoneCanUse": "ऐसी थीम जिसे कोई भी इस्तेमाल कर सकता है, {COMMUNITY_LICENSE_NAME} के तहत फ़्री। पब्लिश होने से पहले आप विवरण एडिट करते हैं।",
+        "shareItInTheCommunity": "कम्युनिटी में शेयर करें?",
+        "editAndPublish": "एडिट करें और पब्लिश करें",
+        "notNow": "अभी नहीं",
+        "published": "पब्लिश हो गया",
+        "viewIt": "देखें",
+        "notPublishedNothingWasShared": "पब्लिश नहीं हुआ। कुछ भी शेयर नहीं हुआ।",
+        "checking": "जाँच हो रही है…",
+        "couldntCheckItLookFor": "जाँच नहीं हो सकी। इसे अपनी कम्युनिटी प्रोफ़ाइल में देखें।",
+        "notPublished": "पब्लिश नहीं हुआ"
+      },
+      "suggestionChips": {
+        "suggestions": "सुझाव",
+        "chips": {
+          "differentStyle": "कोई दूसरा स्टाइल आज़माएँ",
+          "frameText": "फ़्रेम का टेक्स्ट बदलें",
+          "addFrame": "“मुझे स्कैन करें” वाला फ़्रेम जोड़ें",
+          "darker": "इसे और गहरा करें",
+          "lighter": "इसे और हल्का करें",
+          "removeLogo": "लोगो हटाएँ",
+          "addLogo": "लोगो जोड़ें",
+          "saveTemplate": "टेम्पलेट के रूप में सेव करें",
+          "keepColors": "रंग वही रखें, शेप बदलें",
+          "behindCode": "इसे कोड के पीछे लगाएँ",
+          "asLogo": "इसे लोगो की तरह इस्तेमाल करें",
+          "variation": "एक वेरिएशन बनाएँ",
+          "darkVersion": "डार्क वर्शन बनाएँ"
+        }
+      },
+      "uploadedImagePreview": {
+        "uploadedPreview": "अपलोड किया गया प्रीव्यू",
+        "removeImage": "इमेज हटाएँ",
+        "uploadedPreviewEnlarged": "अपलोड किया गया प्रीव्यू बड़ा किया गया"
+      }
+    },
+    "art": {
+      "aiArtDownload": {
+        "downloadAiArt": "AI आर्ट डाउनलोड करें",
+        "widthPx": "{width, number, ::group-off} px",
+        "printPng": "प्रिंट PNG",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, दोबारा जाँचा गया",
+        "useAsImageQr": "Image QR के रूप में इस्तेमाल करें",
+        "aiGeneratedQrCodeArtwork": "AI से बनाया गया QR कोड आर्टवर्क, जिसमें {text} एन्कोड है",
+        "format": "फ़ॉर्मैट",
+        "downloadPng": "PNG डाउनलोड करें",
+        "downloadPrintPng": "प्रिंट PNG डाउनलोड करें",
+        "downloadTheWidthPxImage": "इसके बजाय {width, number, ::group-off} px वाली इमेज डाउनलोड करें।",
+        "pickSvgPdfOrEps": "इसके लिए SVG, PDF या EPS चुनें।",
+        "thePrintSizeCopyDidnt": "प्रिंट साइज़ वाली कॉपी स्कैन जाँच में पास नहीं हुई",
+        "couldntPrepareThePrintSize": "प्रिंट साइज़ की इमेज तैयार नहीं हो सकी",
+        "nowAnImageQrCode": "अब यह Image QR कोड है",
+        "couldntTurnThisImageInto": "इस इमेज को Image QR कोड में नहीं बदला जा सका"
+      },
+      "aiArtPanel": {
+        "style": "स्टाइल",
+        "variations": "वेरिएशन",
+        "eachVariationIsItsOwn": "हर वेरिएशन अपनी अलग इमेज होती है और 1 क्रेडिट लेती है। स्कैन के लिए सबसे अच्छी वाली आपके लिए चुन ली जाती है।",
+        "cancel": "रद्द करें",
+        "addYourContentFirstAi": "पहले अपना कंटेंट जोड़ें: AI art उसी कोड को पेंट करता है जिसे आप एडिट कर रहे हैं।",
+        "addContent": "कंटेंट जोड़ें",
+        "aiArtFitsUpTo": "AI art में अधिकतम {ART_TEXT_MAX_LENGTH, number} अक्षर आ सकते हैं, और इस कोड में {length, number} हैं। छोटा लिंक या डायनेमिक कोड का शॉर्ट लिंक चल जाएगा।",
+        "encodesYourDynamicLinkValue": "यह आपका डायनेमिक लिंक <span>{value}</span> एन्कोड करता है, इसलिए प्रिंट के बाद भी आप बदल सकते हैं कि वह कहाँ ले जाए।",
+        "encodesValueFixedOncePrinted": "यह <span>{value}</span> एन्कोड करता है, जो प्रिंट होने के बाद बदला नहीं जा सकता। बाद में बदलने के लिए Content में इसे डायनेमिक बनाएँ।",
+        "encodesYourLabelDetailsFixed": "यह आपकी {label} की जानकारी एन्कोड करता है, जो प्रिंट होने के बाद बदली नहीं जा सकती।",
+        "thingsToAvoid": "जो नहीं चाहिए",
+        "seed": "सीड",
+        "lockSeed": "सीड लॉक करें",
+        "referenceImage": "रेफ़रेंस इमेज",
+        "useMyLogoAsReference": "मेरा लोगो रेफ़रेंस बनाएँ",
+        "remove": "हटाएँ",
+        "uploadReference": "रेफ़रेंस अपलोड करें",
+        "optionalItsColorsAndShapes": "वैकल्पिक। इसके रंग और आकार आर्टवर्क में आ जाते हैं। इसे आपके ब्राउज़र में रीसाइज़ किया जाता है और आपके प्रॉम्प्ट के साथ Vercel AI Gateway के ज़रिए {ART_MODEL_LABEL} को भेजा जाता है।",
+        "signInToGenerateEvery": "जनरेट करने के लिए साइन इन करें। हर प्लान में हर महीने AI art इमेज मिलती हैं; <link>प्लान देखें</link>।",
+        "eachImageUses1Ai": "हर इमेज में 1 AI art क्रेडिट लगता है; फ़ेल हुई इमेज का क्रेडिट वापस हो जाता है।",
+        "unlimitedAiArtOnYour": "आपके प्लान में AI art अनलिमिटेड है। इस बार {variations, number} का उपयोग होगा।",
+        "describeASceneEG": "कोई दृश्य बताएँ, जैसे सूर्यास्त के समय चट्टानी तट पर एक लाइटहाउस, ऑयल पेंटिंग",
+        "qrVisibility": "QR की दृश्यता",
+        "creativity": "क्रिएटिविटी",
+        "eGPeopleBuildingsDark": "जैसे लोग, इमारतें, गहरे रंग",
+        "randomEachRun": "हर बार अलग",
+        "uploadAReferenceImage": "रेफ़रेंस इमेज अपलोड करें",
+        "reference": "रेफ़रेंस",
+        "generating": "जनरेट हो रहा है…",
+        "signInToGenerate": "जनरेट करने के लिए साइन इन करें",
+        "advancedCreativitySeedReference": "एडवांस्ड: क्रिएटिविटी, सीड, रेफ़रेंस",
+        "advancedCreativityReference": "एडवांस्ड: क्रिएटिविटी, रेफ़रेंस",
+        "uploadItAsAReference": "इसके बजाय इसे रेफ़रेंस इमेज के रूप में अपलोड करें।",
+        "couldntUseYourLogo": "आपका लोगो इस्तेमाल नहीं हो सका",
+        "creditsLeft": "इस महीने के AI आर्ट की <count>{limit, number} में से {remaining, number}</count> इमेज बची हैं{pooled, select, yes { (आपकी टीम में साझा)} other {}}, {resets} को रीसेट होंगी। इस बार {variations, number} इस्तेमाल होंगी।",
+        "notEnoughLeft": "पर्याप्त नहीं बचीं: कम वेरिएशन चुनें।",
+        "notEnoughLeftOrUpgrade": "पर्याप्त नहीं बचीं: कम वेरिएशन चुनें या अपग्रेड करें।",
+        "showResults": "{count, plural, one {अपना नतीजा दिखाएँ} other {अपने नतीजे दिखाएँ}}",
+        "moreArtistic": "ज़्यादा कलात्मक",
+        "clearerCode": "साफ़ कोड",
+        "followsYourPrompt": "आपके प्रॉम्प्ट के अनुसार",
+        "interpretsFreely": "खुली व्याख्या के साथ",
+        "generateVariations": "{count, plural, one {QR आर्ट बनाएँ} other {# वेरिएशन बनाएँ}}"
+      },
+      "artCanvas": {
+        "downloadPng": "PNG डाउनलोड करें",
+        "printPng": "PNG प्रिंट करें",
+        "useAsImageQr": "Image QR के रूप में इस्तेमाल करें",
+        "retryClearer": "साफ़ कोड के लिए फिर कोशिश करें",
+        "aiArt": "AI आर्ट",
+        "encodesValue": "{value} एन्कोड करता है",
+        "backToCode": "कोड पर वापस जाएँ",
+        "eachImageIsCheckedTo": "हर इमेज आपको दिखने से पहले स्कैन के लिए जाँची जाती है। इसमें एक मिनट तक लग सकता है।",
+        "printPngArtPrintSize": "PNG प्रिंट करें, {ART_PRINT_SIZE, number, ::group-off} px",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, स्कैन के लिए दोबारा जाँची गई",
+        "variations": "वेरिएशन",
+        "aiArtResult": "AI आर्ट का नतीजा",
+        "aiGeneratedQrCodeArtwork": "AI से बनी QR कोड आर्टवर्क, जो {text} एन्कोड करती है",
+        "verifiedToScanScanScore": "स्कैन के लिए जाँचा गया · स्कैन स्कोर {score, number}",
+        "checkBeforePrinting": "प्रिंट करने से पहले जाँच लें",
+        "scoringTheScan": "स्कैन का स्कोर निकाला जा रहा है…",
+        "downloadTheWidthPxImage": "इसके बजाय {width, number, ::group-off} px की इमेज डाउनलोड करें।",
+        "itsVectorArtDownloadIt": "यह वेक्टर आर्ट है: इसे SVG, PDF या EPS में डाउनलोड करें।",
+        "undo": "पूर्ववत करें",
+        "thePrintSizeCopyDidnt": "प्रिंट-साइज़ कॉपी स्कैन जाँच में पास नहीं हुई",
+        "couldntPrepareThePrintSize": "प्रिंट-साइज़ इमेज तैयार नहीं हो सकी",
+        "nowAnImageQrCode": "अब यह Image QR कोड है",
+        "couldntTurnThisImageInto": "इस इमेज को Image QR कोड में नहीं बदला जा सका",
+        "generatingVariations": "{count, number} वैरिएशन बन रहे हैं…",
+        "generatingYourArtwork": "आपका आर्टवर्क बन रहा है…",
+        "resultSummary": "QR विज़िबिलिटी {visibility, number} · क्रिएटिविटी {creativity, number} · PNG {width, number, ::group-off} px, प्रिंट PNG {printSize, number, ::group-off} px{failed, plural, =0 {} one { · # वैरिएशन फ़ेल हुआ और कोई क्रेडिट इस्तेमाल नहीं हुआ} other { · # वैरिएशन फ़ेल हुए और कोई क्रेडिट इस्तेमाल नहीं हुआ}}। SVG, PDF या EPS के लिए इसे Image QR की तरह इस्तेमाल करें।"
+      },
+      "artPanel": {
+        "art": "आर्ट",
+        "off": "बंद",
+        "logoQr": "Logo QR",
+        "imageQr": "Image QR",
+        "aiArt": "AI आर्ट",
+        "artMode": "आर्ट मोड",
+        "modes": {
+          "off": "एक सादा कोड। Logo QR और Image QR बिना AI के, हर फ़ॉर्मैट में, तस्वीर को डॉट्स में मिला देते हैं।",
+          "logo": "बिना AI: आपका लोगो कोड का हिस्सा बन जाता है, हर फ़ॉर्मैट में।",
+          "halftone": "बिना AI: आपकी फ़ोटो कोड का हिस्सा बन जाती है, हर फ़ॉर्मैट में।",
+          "ai": "AI आपके कोड में एक दृश्य बनाता है। हर इमेज की स्कैन के लिए जाँच की जाती है।"
+        }
+      }
+    },
+    "brandLogos": {
+      "brandLogoGallery": {
+        "brandLogos": "ब्रांड लोगो",
+        "theBrandLogosDidntLoad": "ब्रांड लोगो लोड नहीं हुए।",
+        "tryAgain": "फिर कोशिश करें",
+        "noBrandMatchesQuerySome": "“{query}” से कोई ब्रांड नहीं मिला। कुछ ब्रांड ने Simple Icons से अपने मार्क हटवा दिए हैं, इसलिए वे यहाँ नहीं हैं।",
+        "allBrandsAToZ": "सभी ब्रांड, A से Z",
+        "logosFromSimpleIconsCc0": "लोगो Simple Icons (CC0) से हैं। ब्रांड मार्क उनके मालिकों के ट्रेडमार्क हैं; इन्हें लोगों को उस ब्रांड तक पहुँचाने के लिए इस्तेमाल करें।",
+        "showMore": "और दिखाएँ",
+        "searchBrands": "ब्रांड खोजें",
+        "searchSpotifyPaypalGoogleMaps": "खोजें: Spotify, PayPal, Google Maps…",
+        "logoColor": "लोगो का रंग",
+        "results": "नतीजे",
+        "titleLogo": "{title} लोगो",
+        "valueBrandsFromSimpleIcons": "Simple Icons से {value} ब्रांड। हर मार्क उसके मालिक का है।",
+        "brandsFromSimpleIconsEach": "ब्रांड Simple Icons से लिए गए हैं। हर मार्क उसके मालिक का है।",
+        "plateNeededForWhite": "प्लेट (सफ़ेद के लिए ज़रूरी)",
+        "plate": "प्लेट",
+        "n1Brand": "1 ब्रांड",
+        "valueBrands": "{value} ब्रांड"
+      }
+    },
+    "communitySheet": {
+      "communityThemes": "कम्युनिटी थीम",
+      "freeToUseUnderCc0": "CC0 के तहत इस्तेमाल के लिए फ़्री। लागू करने पर आपका कंटेंट वैसा ही रहता है।",
+      "sort": "क्रमबद्ध करें",
+      "allTags": "सभी टैग",
+      "tryAgain": "फिर कोशिश करें",
+      "clearSearch": "सर्च हटाएँ",
+      "showAllTags": "सभी टैग दिखाएँ",
+      "searchCoversTheFirstLength": "सर्च में पहली {length, number} थीम शामिल हैं।",
+      "saveAndContinue": "सेव करें और आगे बढ़ें",
+      "publishingSharesASavedTheme": "पब्लिश करने पर सेव की हुई थीम शेयर होती है। आगे बढ़ने के लिए इस लुक को नाम दें।",
+      "saveToPublish": "पब्लिश के लिए सेव करें",
+      "searchCommunityThemes": "कम्युनिटी थीम खोजें",
+      "searchThemes": "थीम खोजें",
+      "loadingThemes": "थीम लोड हो रही हैं",
+      "couldntLoadCommunityThemes": "कम्युनिटी थीम लोड नहीं हो सकीं",
+      "noThemesMatchQuery": "\"{query}\" से कोई थीम मेल नहीं खाती",
+      "noThemesTaggedTagYet": "{tag} टैग वाली कोई थीम अभी नहीं है",
+      "noCommunityThemesYet": "अभी कोई कम्युनिटी थीम नहीं है",
+      "applyName": "{name} लागू करें",
+      "official": "आधिकारिक",
+      "unlikeName": "{name} का लाइक हटाएँ",
+      "likeName": "{name} को लाइक करें",
+      "likes": "लाइक",
+      "published": "पब्लिश की गई",
+      "publishThisStyle": "यह स्टाइल पब्लिश करें",
+      "tags": "टैग",
+      "undo": "पहले जैसा करें",
+      "likedName": "\"{name}\" को लाइक किया",
+      "liked": "लाइक किया",
+      "sorts": {
+        "popular": "लोकप्रिय",
+        "newest": "नई"
+      }
+    },
+    "contentForms": {
+      "amazonForm": {
+        "amazonProductUrl": "Amazon प्रोडक्ट URL *",
+        "scanningWillOpenYourAmazon": "स्कैन करने पर आपका Amazon प्रोडक्ट या स्टोर खुलेगा"
+      },
+      "attendanceForm": {
+        "googleFormUrl": "Google Form URL *",
+        "scanningWillOpenYourAttendance": "स्कैन करने पर आपका अटेंडेंस फ़ॉर्म खुलेगा",
+        "httpsFormsGleOrHttps": "https://forms.gle/... या https://docs.google.com/forms/..."
+      },
+      "bitcoinForm": {
+        "bitcoinAddress": "Bitcoin एड्रेस *",
+        "amountBtc": "राशि (BTC)",
+        "label": "लेबल",
+        "message": "संदेश",
+        "scanningWillOpenABitcoin": "स्कैन करने पर इन पेमेंट डिटेल्स के साथ Bitcoin वॉलेट खुलेगा",
+        "n1a1zp1ep5qgefi2dmptftl5slmv7divfna": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+        "paymentLabel": "पेमेंट लेबल",
+        "paymentMessage": "पेमेंट मैसेज"
+      },
+      "calcomForm": {
+        "calComBookingUrl": "Cal.com बुकिंग URL *",
+        "scanningWillOpenYourCal": "स्कैन करने पर आपका Cal.com बुकिंग पेज खुलेगा"
+      },
+      "dubshForm": {
+        "dubShortLink": "Dub शॉर्ट लिंक *",
+        "scanningWillOpenYourDub": "स्कैन करने पर आपका Dub शॉर्ट लिंक खुलेगा।",
+        "connectDub": "Dub कनेक्ट करें",
+        "connectDubToCreatePick": "यहाँ Dub लिंक बनाने, चुनने और ट्रैक करने के लिए Dub कनेक्ट करें।",
+        "enterManually": "खुद दर्ज करें",
+        "createNew": "नया बनाएँ",
+        "selectExisting": "मौजूदा चुनें",
+        "pasteALink": "लिंक पेस्ट करें",
+        "destinationUrl": "डेस्टिनेशन URL *",
+        "domain": "डोमेन",
+        "customEnding": "कस्टम एंडिंग",
+        "title": "टाइटल",
+        "description": "विवरण",
+        "createDubLink": "Dub लिंक बनाएँ",
+        "loadingYourDubLinks": "आपके Dub लिंक लोड हो रहे हैं…",
+        "clicksClicks": "({clicks, number} क्लिक)",
+        "selectAShortLink": "शॉर्ट लिंक चुनें…",
+        "noLinksFound": "कोई लिंक नहीं मिला।",
+        "scansGoToUrl": "स्कैन करने पर {url} खुलेगा",
+        "campaign": "कैंपेन",
+        "springCampaign": "स्प्रिंग कैंपेन",
+        "optionalInternalNote": "वैकल्पिक इंटरनल नोट",
+        "searchLinks": "लिंक खोजें…",
+        "failedToConnectDub": "Dub कनेक्ट नहीं हो सका",
+        "dubLinkCreated": "Dub लिंक बन गया",
+        "failedToCreateDubLink": "Dub लिंक नहीं बन सका"
+      },
+      "emailForm": {
+        "recipientEmail": "पाने वाले का ईमेल *",
+        "subject": "विषय",
+        "message": "संदेश",
+        "scanningWillOpenAnEmail": "स्कैन करने पर इस पते पर ईमेल ड्राफ़्ट खुलेगा",
+        "contactExampleCom": "contact@example.com",
+        "emailSubject": "ईमेल का विषय",
+        "emailMessage": "ईमेल संदेश"
+      },
+      "ethereumForm": {
+        "ethereumAddress": "Ethereum पता *",
+        "amountEth": "राशि (ETH)",
+        "gasLimit": "Gas limit",
+        "scanningWillOpenAnEthereum": "स्कैन करने पर इन पेमेंट डिटेल्स के साथ Ethereum वॉलेट खुलेगा",
+        "n0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359": "0xfb6916095ca1df60bb79Ce92ce3ea74c37c5d359"
+      },
+      "etsyForm": {
+        "etsyShopUrl": "Etsy शॉप URL *",
+        "scanningWillOpenYourEtsy": "स्कैन करने पर आपकी Etsy शॉप या प्रोडक्ट पेज खुलेगा"
+      },
+      "exampleForm": {
+        "exampleDataReplaceItWith": "उदाहरण डेटा। इसे अपने डेटा से बदलें।",
+        "clear": "हटाएँ",
+        "tryAnExample": "उदाहरण आज़माएँ"
+      },
+      "facebookForm": {
+        "facebookProfileUrl": "Facebook प्रोफ़ाइल URL *",
+        "scanningWillOpenYourFacebook": "स्कैन करने पर आपकी Facebook प्रोफ़ाइल या पेज खुलेगा"
+      },
+      "flipkartForm": {
+        "flipkartProductUrl": "Flipkart प्रोडक्ट URL *",
+        "scanningWillOpenYourFlipkart": "स्कैन करने पर आपका Flipkart प्रोडक्ट या स्टोर खुलेगा"
+      },
+      "googleDriveForm": {
+        "connectGoogleDriveToPick": "फ़ाइल चुनने के लिए Google Drive कनेक्ट करें, या नीचे लिंक पेस्ट करें।",
+        "connectGoogleDrive": "Google Drive कनेक्ट करें",
+        "googleDriveUrl": "Google Drive URL *",
+        "scanningWillOpenTheSelected": "स्कैन करने पर चुनी हुई Google Drive फ़ाइल या फ़ोल्डर खुलेगा।",
+        "search": "खोजें",
+        "loadMore": "और दिखाएँ",
+        "searchDriveFilesAndFolders": "Drive की फ़ाइलें और फ़ोल्डर खोजें",
+        "failedToConnectGoogleDrive": "Google Drive कनेक्ट नहीं हो सका"
+      },
+      "googleReviewForm": {
+        "googlePlaceId": "Google Place ID *",
+        "findYoursWithTheGoogle": "<link>Google Place ID Finder</link> से अपनी ID खोजें",
+        "scanningWillOpenGoogleTo": "स्कैन करने पर आपके बिज़नेस का रिव्यू देने के लिए Google खुलेगा",
+        "chijn1tTdeuemsrusoyg83fry4": "ChIJN1t_tDeuEmsRUsoyG83frY4"
+      },
+      "instagramForm": {
+        "instagramUsername": "Instagram यूज़रनेम *",
+        "scanningWillOpenYourInstagram": "स्कैन करने पर आपकी Instagram प्रोफ़ाइल खुलेगी",
+        "usernameOrUsername": "username या @username"
+      },
+      "linkedinForm": {
+        "linkedinProfileUrl": "LinkedIn प्रोफ़ाइल URL *",
+        "scanningWillOpenYourLinkedin": "स्कैन करने पर आपकी LinkedIn प्रोफ़ाइल या कंपनी पेज खुलेगा"
+      },
+      "mapsForm": {
+        "location": "लोकेशन *",
+        "scanningWillOpenThisPlace": "स्कैन करने पर यह जगह Google Maps में खुलेगी",
+        "addressOrCoordinates407128": "पता या कोऑर्डिनेट (40.7128, -74.0060)"
+      },
+      "paypalForm": {
+        "paypalMeUrlOrPayment": "PayPal.Me URL या पेमेंट लिंक *",
+        "scanningWillOpenThePaypal": "स्कैन करने पर PayPal पेमेंट पेज खुलेगा",
+        "httpsPaypalMeUsernameOr": "https://paypal.me/username या पेमेंट लिंक"
+      },
+      "phoneForm": {
+        "phoneNumber": "फ़ोन नंबर *",
+        "includeTheCountryCodeLike": "+1 जैसा कंट्री कोड शामिल करें। स्कैन करने पर कॉल शुरू होगी।"
+      },
+      "pinterestForm": {
+        "pinterestUsername": "Pinterest यूज़रनेम *",
+        "scanningWillOpenYourPinterest": "स्कैन करने पर आपकी Pinterest प्रोफ़ाइल खुलेगी",
+        "username": "username"
+      },
+      "redditForm": {
+        "redditUsername": "Reddit यूज़रनेम",
+        "subreddit": "सबरेडिट",
+        "fillInOneIfBoth": "कोई एक भरें। दोनों भरे होने पर सबरेडिट का इस्तेमाल होगा।",
+        "scanningWillOpenTheReddit": "स्कैन करने पर Reddit प्रोफ़ाइल या सबरेडिट खुलेगा",
+        "usernameOrUUsername": "username या u/username",
+        "subredditOrRSubreddit": "subreddit या r/subreddit"
+      },
+      "smsForm": {
+        "phoneNumber": "फ़ोन नंबर *",
+        "message": "मैसेज",
+        "scanningWillOpenAText": "स्कैन करने पर इस नंबर पर टेक्स्ट मैसेज खुलेगा",
+        "preFilledSmsMessage": "पहले से भरा SMS मैसेज"
+      },
+      "snapchatForm": {
+        "snapchatUsername": "Snapchat यूज़रनेम *",
+        "scanningWillOpenYourSnapchat": "स्कैन करने पर आपका Snapchat ऐड-फ़्रेंड पेज खुलेगा",
+        "username": "username"
+      },
+      "spotifyForm": {
+        "spotifyUriOrUrl": "Spotify URI या URL *",
+        "scanningWillOpenTheContent": "स्कैन करने पर कंटेंट Spotify में खुलेगा",
+        "spotifyTrackOrHttpsOpen": "spotify:track:... या https://open.spotify.com/..."
+      },
+      "textForm": {
+        "textContent": "टेक्स्ट कंटेंट *",
+        "pasteALinkAndIt": "लिंक पेस्ट करें, यह अपने आप सही टाइप पर चला जाएगा।",
+        "enterAnyText": "कोई भी टेक्स्ट लिखें…"
+      },
+      "threadsForm": {
+        "threadsUsername": "Threads यूज़रनेम *",
+        "scanningWillOpenYourThreads": "स्कैन करने पर आपकी Threads प्रोफ़ाइल खुलेगी",
+        "usernameOrUsername": "username या @username"
+      },
+      "tiktokForm": {
+        "tiktokUsername": "TikTok यूज़रनेम *",
+        "scanningWillOpenYourTiktok": "स्कैन करने पर आपकी TikTok प्रोफ़ाइल खुलेगी",
+        "usernameOrUsername": "username या @username"
+      },
+      "twitterForm": {
+        "twitterXUsername": "Twitter / X यूज़रनेम *",
+        "scanningWillOpenYourTwitter": "स्कैन करने पर आपकी Twitter / X प्रोफ़ाइल खुलेगी",
+        "usernameOrUsername": "username या @username"
+      },
+      "upiForm": {
+        "upiId": "UPI ID *",
+        "payeeName": "पाने वाले का नाम",
+        "amount": "राशि (₹)",
+        "note": "नोट",
+        "scanningWillOpenAUpi": "स्कैन करने पर इन पेमेंट डिटेल के साथ UPI ऐप खुलेगा",
+        "usernameBankname": "username@bankname",
+        "yourName": "आपका नाम",
+        "paymentFor": "पेमेंट किसलिए..."
+      },
+      "urlForm": {
+        "websiteAddress": "वेबसाइट का पता",
+        "scansOpen": "स्कैन पर खुलेगा",
+        "pasteAnyLinkSocialAnd": "कोई भी लिंक पेस्ट करें। सोशल और WhatsApp लिंक का अपना अलग टाइप होता है।"
+      },
+      "vcardForm": {
+        "firstName": "पहला नाम *",
+        "lastName": "उपनाम",
+        "organization": "संस्था",
+        "phone": "फ़ोन",
+        "email": "ईमेल",
+        "website": "वेबसाइट",
+        "address": "पता",
+        "note": "नोट",
+        "scanningWillOfferToSave": "स्कैन करने पर यह कॉन्टैक्ट सेव करने का विकल्प दिखेगा",
+        "john": "जॉन",
+        "doe": "डो",
+        "companyName": "कंपनी का नाम",
+        "johnExampleCom": "john@example.com",
+        "n123MainStCityCountry": "123 मेन स्ट्रीट, शहर, देश",
+        "additionalNotes": "अतिरिक्त नोट"
+      },
+      "venmoForm": {
+        "venmoUsername": "Venmo यूज़रनेम *",
+        "amount": "राशि ($)",
+        "note": "नोट",
+        "scanningWillOpenVenmoWith": "स्कैन करने पर इन पेमेंट विवरणों के साथ Venmo खुलेगा",
+        "username": "@username",
+        "paymentFor": "भुगतान किसलिए..."
+      },
+      "whatsappForm": {
+        "phoneNumber": "फ़ोन नंबर *",
+        "includeCountryCodeWithoutSpaces": "कंट्री कोड डालें, स्पेस या चिह्न न लगाएँ",
+        "message": "संदेश",
+        "scanningWillOpenAWhatsapp": "स्कैन करने पर इस नंबर के साथ WhatsApp चैट खुलेगी",
+        "preFilledWhatsappMessage": "पहले से भरा WhatsApp संदेश"
+      },
+      "wifiForm": {
+        "networkName": "नेटवर्क का नाम *",
+        "security": "सिक्योरिटी",
+        "wpaWpa2": "WPA/WPA2",
+        "noPassword": "पासवर्ड नहीं",
+        "password": "पासवर्ड *",
+        "hiddenNetwork": "छिपा नेटवर्क",
+        "scanningWillOfferToJoin": "स्कैन करने पर इस Wi-Fi नेटवर्क से जुड़ने का विकल्प मिलेगा",
+        "myWiFiNetwork": "मेरा Wi-Fi नेटवर्क",
+        "networkPassword": "नेटवर्क पासवर्ड"
+      },
+      "youtubeForm": {
+        "videoUrl": "वीडियो URL",
+        "channelUrl": "चैनल URL",
+        "fillInOneIfBoth": "किसी एक को भरें। दोनों भरे होने पर वीडियो इस्तेमाल होगा।",
+        "scanningWillOpenTheYoutube": "स्कैन करने पर YouTube वीडियो या चैनल खुलेगा"
+      }
+    },
+    "contentTypeModal": {
+      "current": "मौजूदा",
+      "chooseAQrCodeType": "QR कोड का प्रकार चुनें",
+      "whatShouldHappenWhenSomeone": "कोई आपका कोड स्कैन करे तो क्या होना चाहिए?",
+      "toPick": "चुनने के लिए",
+      "recent": "हाल के",
+      "noTypeMatchesQueryA": "“{query}” से मेल खाता कोई प्रकार नहीं है। URL कोड किसी भी वेब एड्रेस के लिए काम करता है।",
+      "useAUrlCode": "URL कोड इस्तेमाल करें",
+      "previewEveryTemplate": "सभी टेम्पलेट का प्रीव्यू देखें",
+      "move": "चलाएँ",
+      "pick": "चुनें",
+      "escClose": "<kbd>esc</kbd> बंद करें",
+      "searchQrCodeTypes": "QR कोड प्रकार खोजें",
+      "searchWiFiMenuGpay": "खोजें: Wi-Fi, मेन्यू, gpay, बिज़नेस कार्ड…",
+      "categories": "श्रेणियाँ",
+      "hostedPages": "होस्टेड पेज",
+      "mobilePagesQrdxHostsFor": "QRdx आपके लिए मोबाइल पेज होस्ट करता है, हर पेज के साथ इसी डिज़ाइन में एक डायनेमिक QR कोड होता है। पेज को आप अपने डैशबोर्ड में एडिट करते हैं।",
+      "mobilePagesQrdxHostsFor2": "QRdx आपके लिए मोबाइल पेज होस्ट करता है, हर पेज के साथ इसी डिज़ाइन में एक डायनेमिक QR कोड होता है। बनाने के लिए साइन इन करें।",
+      "matchesFor": "“{query}” के लिए {count, plural, one {# परिणाम} other {# परिणाम}}"
+    },
+    "contentTypeSelector": {
+      "qrCodeType": "QR कोड का प्रकार",
+      "change": "बदलें",
+      "chooseAType": "टाइप चुनें"
+    },
+    "contrastChecker": {
+      "contrastChecker": "कंट्रास्ट चेकर",
+      "wcag20AaRequires": "WCAG 2.0 AA के लिए कंट्रास्ट रेशियो कम से कम {MIN_CONTRAST_RATIO, number}:1 होना ज़रूरी है • <link>और जानें</link>",
+      "toggleTheme": "थीम बदलें",
+      "all": "सभी",
+      "issuesTotalissues": "समस्याएँ ({totalIssues, number})",
+      "background": "बैकग्राउंड",
+      "foreground": "फ़ोरग्राउंड",
+      "aa": "Aa",
+      "sampleText": "सैंपल टेक्स्ट",
+      "preview": "प्रीव्यू",
+      "openContrastChecker": "कंट्रास्ट चेकर खोलें",
+      "qrCodeBase": "QR कोड बेस",
+      "cornerEyes": "कॉर्नर आइज़",
+      "eyeDots": "आई डॉट्स",
+      "nameEye": "{name} आई",
+      "nameEyeDot": "{name} आई डॉट",
+      "learnMoreAboutWcagContrast": "WCAG कंट्रास्ट ज़रूरतों के बारे में और जानें",
+      "eyePositions": {
+        "topLeft": "ऊपर-बाएँ",
+        "topRight": "ऊपर-दाएँ",
+        "bottomLeft": "नीचे-बाएँ"
+      }
+    },
+    "controlSections": {
+      "artControls": {
+        "hintFinderAlignmentAndFormat": "{hint} फ़ाइंडर, अलाइनमेंट और फ़ॉर्मैट पैटर्न साफ़ रहते हैं.",
+        "useMyLogo": "अपना लोगो लगाएँ",
+        "uploadPngJpgWebpOr": "{upload}. PNG, JPG, WebP या SVG, {value, number}MB तक. आपकी इमेज आपके ब्राउज़र में ही रहती है; सिर्फ़ एक छोटा कलर ग्रिड सेव होता है.",
+        "look": "लुक",
+        "eyesMatchTheLogo": "आइज़ लोगो से मैच करती हैं",
+        "usesHighErrorCorrectionAnd": "हाई एरर करेक्शन और साफ़ बॉर्डर का इस्तेमाल होता है, ताकि कोड स्कैन होता रहे.",
+        "artScansBestWithHigh": "आर्ट तब सबसे अच्छा स्कैन होता है जब हाई एरर करेक्शन और साफ़ बॉर्डर हो।<button>लागू करें</button>",
+        "removeArt": "आर्ट हटाएँ",
+        "strength": "स्ट्रेंथ",
+        "fineTune": "बारीक ट्यूनिंग",
+        "easierToScan": "स्कैन करना आसान",
+        "moreArt": "ज़्यादा आर्ट",
+        "scanCheck": "स्कैन जाँच",
+        "checking": "जाँच हो रही है…",
+        "artLook": "आर्ट लुक",
+        "artStrength": "आर्ट की मात्रा",
+        "swapDotAndBackgroundColors": "डॉट और बैकग्राउंड के रंग बदलें",
+        "putTheDotsOnWhite": "डॉट्स को सफ़ेद पर रखें",
+        "uploadAnother": "दूसरी अपलोड करें",
+        "uploadYourOwn": "अपनी खुद की अपलोड करें",
+        "decodedInYourBrowserAt": "आपके ब्राउज़र में तीन साइज़ पर डिकोड किया गया।",
+        "addContentToCheckYour": "अपना असली कोड जाँचने के लिए कंटेंट जोड़ें।",
+        "checkYourConnectionAndTry": "अपना कनेक्शन जाँचें और फिर कोशिश करें, या अपनी खुद की इमेज अपलोड करें।",
+        "tryAPngOrJpg": "इसके बजाय PNG या JPG आज़माएँ।",
+        "useAPngJpgWebp": "PNG, JPG, WebP या SVG इमेज इस्तेमाल करें।",
+        "imagesMustBeValueMb": "इमेज {value, number}MB या उससे छोटी होनी चाहिए।",
+        "couldntLoadThisSample": "यह सैंपल लोड नहीं हो सका",
+        "couldntUseThisImage": "यह इमेज इस्तेमाल नहीं हो सकी",
+        "unsupportedImageFormat": "इमेज फ़ॉर्मेट सपोर्टेड नहीं है",
+        "imageIsTooLarge": "इमेज बहुत बड़ी है",
+        "modeCopy": {
+          "logo": {
+            "upload": "ट्रांसपेरेंट PNG या SVG लोगो सबसे अच्छे चलते हैं",
+            "samples": "सैंपल लोगो आज़माएँ"
+          },
+          "halftone": {
+            "upload": "एक साफ़ सब्जेक्ट वाली फ़ोटो सबसे अच्छी रहती हैं",
+            "samples": "सैंपल फ़ोटो आज़माएँ"
+          }
+        }
+      },
+      "colorPresets": {
+        "lightCodeOnADark": "गहरे बैकग्राउंड पर हल्का कोड पुराने फ़ोन पर स्कैन न हो।",
+        "colorPalettes": "कलर पैलेट",
+        "lightCodeOnDarkMay": "गहरे पर हल्का कोड। पुराने फ़ोन पर स्कैन न हो।"
+      },
+      "contentControls": {
+        "startFromAStyle": "स्टाइल से शुरू करें",
+        "browseAllLength": "सभी {length, number} देखें",
+        "fineTuneColorsDotsAnd": "रंग, डॉट और लोगो को ठीक से सेट करें",
+        "applyTheLabelStyle": "{label} स्टाइल लगाएं"
+      },
+      "customFrameFields": {
+        "thisFrameHasNoLabels": "इस फ़्रेम में बदलने के लिए कोई लेबल नहीं है।",
+        "icon": "आइकन",
+        "label": "लेबल",
+        "leaveEmptyForNoLabel": "लेबल न चाहिए तो खाली छोड़ें",
+        "secondLine": "दूसरी लाइन",
+        "leaveEmptyToHideIt": "छिपाने के लिए खाली छोड़ें",
+        "frameColor": "फ़्रेम का रंग",
+        "textColor": "टेक्स्ट का रंग",
+        "accentColor": "एक्सेंट रंग"
+      },
+      "designControls": {
+        "colors": "रंग",
+        "background": "बैकग्राउंड",
+        "foreground": "फ़ोरग्राउंड",
+        "eyes": "आई",
+        "dots": "डॉट",
+        "frame": "फ़्रेम",
+        "padding": "पैडिंग",
+        "errorCorrection": "एरर करेक्शन",
+        "border": "बॉर्डर",
+        "none": "कोई नहीं"
+      },
+      "dotSizeSection": {
+        "sizeOfEachDot": "हर डॉट का साइज़",
+        "dotSize": "डॉट साइज़",
+        "valueDotsKeepTheirFull": "{value} डॉट अपने पूरे साइज़ में रहते हैं: इससे छोटे डॉट स्कैन नहीं होते।",
+        "smallerDotsGiveALighter": "छोटे डॉट से लुक हल्का दिखता है। {value} डॉट घटकर {floor, number}% तक जाते हैं, जो सबसे छोटा साइज़ है जो अब भी स्कैन होता है।"
+      },
+      "eyeColorsSection": {
+        "giveEachCornerEyeIts": "हर कॉर्नर आई के फ़्रेम और सेंटर को अलग रंग दें। जिन आई को आप नहीं बदलते, वे आई और डॉट के रंग इस्तेमाल करती हैं।",
+        "useTheSameColorsFor": "सभी आई के लिए एक ही रंग इस्तेमाल करें",
+        "sameForAll": "सबके लिए एक जैसा",
+        "eyeColors": "आई के रंग",
+        "frame": "फ़्रेम",
+        "center": "बीच का",
+        "positions": {
+          "topLeft": "ऊपर बाएँ",
+          "topRight": "ऊपर दाएँ",
+          "bottomLeft": "नीचे बाएँ"
+        }
+      },
+      "frameControls": {
+        "customise": "कस्टमाइज़ करें",
+        "importSvg": "SVG इंपोर्ट करें",
+        "publishFrame": "फ़्रेम पब्लिश करें",
+        "theFrameIsAddedAround": "फ़्रेम कोड के चारों ओर जुड़ता है, इसलिए डाउनलोड की गई इमेज बड़ी हो जाती है और कोड खुद स्कैन होने लायक रहता है।",
+        "label": "लेबल",
+        "secondLine": "दूसरी लाइन",
+        "leaveEmptyForNoLabel": "लेबल न चाहिए तो खाली छोड़ें",
+        "pickAFrameFirst": "पहले फ़्रेम चुनें",
+        "frameColor": "फ़्रेम का रंग",
+        "textColor": "टेक्स्ट का रंग",
+        "endColor": "आखिरी रंग",
+        "optionalEGYourWebsite": "वैकल्पिक, जैसे आपकी वेबसाइट",
+        "none": "कोई नहीं"
+      },
+      "frameFields": {
+        "textSize": "टेक्स्ट साइज़"
+      },
+      "framePicker": {
+        "more": "और",
+        "showAll": "सभी देखें",
+        "frame": "फ़्रेम",
+        "moreFrames": "और फ़्रेम",
+        "allTotalFrames": "सभी {total, number} फ़्रेम",
+        "allFrames": "सभी फ़्रेम",
+        "searchFrames": "फ़्रेम खोजें",
+        "searchTotalFrames": "{total, number} फ़्रेम में खोजें",
+        "closeFrames": "फ़्रेम बंद करें",
+        "filterFrames": "फ़्रेम फ़िल्टर करें",
+        "labelFrames": "{label} फ़्रेम",
+        "commonFrames": "आम फ़्रेम",
+        "everyFrameBuiltInStyles": "सभी फ़्रेम: बिल्ट-इन स्टाइल, QRdx के आधिकारिक फ़्रेम और आपके सेव किए हुए फ़्रेम। कोई एक चुनते ही वह तुरंत लागू हो जाता है।",
+        "less": "कम",
+        "all": "सभी",
+        "noFramesMatchQuery": "\"{query}\" से कोई फ़्रेम नहीं मिला।",
+        "loadingFrames": "फ़्रेम लोड हो रहे हैं…",
+        "comingUp": "जल्द आ रहे हैं",
+        "builtIn": "बिल्ट-इन",
+        "saved": "सेव किए गए",
+        "results": "नतीजे"
+      },
+      "frameShapes": {
+        "shapedCode": "आकार वाला कोड",
+        "pngJpegOrSvgA": "PNG, JPEG या SVG: हल्के या पारदर्शी बैकग्राउंड पर गहरे रंग या ठोस रंग का आकार।",
+        "remove": "हटाएँ",
+        "uploadASilhouette": "सिल्हूट अपलोड करें",
+        "tracing": "ट्रेस हो रहा है…",
+        "replace": "बदलें",
+        "uploadAShape": "आकार अपलोड करें",
+        "shapeHelp": {
+          "circle": "कोड सजावटी डॉट्स के एक गोले में रहता है, जिसके चारों ओर खाली घेरा होता है। स्कैनर सिर्फ़ बीच का कोड पढ़ते हैं, इसलिए उतनी ही स्कैन दूरी के लिए गोला थोड़ा बड़ा होता है।",
+          "heart": "कोड सजावटी डॉट्स के एक दिल में रहता है, जिसके चारों ओर खाली घेरा होता है। स्कैनर सिर्फ़ बीच का कोड पढ़ते हैं, इसलिए उतनी ही स्कैन दूरी के लिए दिल को चौकोर कोड से बड़ा प्रिंट करें।",
+          "silhouette": "कोड आपके आकार के सबसे खुले बीच वाले हिस्से में रहता है, जिसके चारों ओर खाली घेरा होता है। सिर्फ़ आउटलाइन रखी जाती है, तस्वीर कभी नहीं, और लिंक, कम्युनिटी और स्निपेट चौकोर कोड का इस्तेमाल करते हैं।"
+        },
+        "names": {
+          "circle": "डॉट सर्कल",
+          "heart": "दिल",
+          "silhouette": "सिल्हूट"
+        }
+      },
+      "frameTextPresets": {
+        "labelIdeas": "लेबल के आइडिया"
+      },
+      "logoControls": {
+        "logoInTheCenter": "बीच में लोगो",
+        "coversAFewDotsError": "कुछ डॉट्स ढकता है; एरर करेक्शन उन्हें भर देता है।",
+        "quickIcons": "क्विक आइकन",
+        "brandLogos": "ब्रैंड लोगो",
+        "pngJpgWebpOrSvg": "PNG, JPG, WebP या SVG, {value, number}MB तक। थोड़ी पैडिंग वाली चौकोर इमेज सबसे अच्छी लगती हैं।",
+        "remove": "हटाएँ",
+        "off": "बंद",
+        "logo": "लोगो",
+        "uploadLogo": "लोगो अपलोड करें",
+        "brandLogosBrandbuttonlabel": "ब्रांड लोगो: {brandButtonLabel}",
+        "replace": "बदलें",
+        "uploadYourLogo": "अपना लोगो अपलोड करें",
+        "useAPngJpgWebp": "PNG, JPG, WebP या SVG इमेज इस्तेमाल करें।",
+        "logosMustBeValueMb": "लोगो {value, number}MB या उससे छोटा होना चाहिए।",
+        "unsupportedLogoFormat": "लोगो फ़ॉर्मैट सपोर्टेड नहीं है",
+        "logoIsTooLarge": "लोगो बहुत बड़ा है",
+        "failedToReadLogoFile": "लोगो फ़ाइल पढ़ नहीं सके"
+      },
+      "logoCropControls": {
+        "shape": "आकार",
+        "plateBehindTheLogo": "लोगो के पीछे प्लेट",
+        "aSolidValueTheLogo": "एक ठोस {value}, जिस पर लोगो टिका होता है।",
+        "removeBackground": "बैकग्राउंड हटाएं",
+        "logoShape": "लोगो का आकार",
+        "plateColor": "प्लेट का रंग",
+        "backgroundRemovedUndoBringsIt": "बैकग्राउंड हट गया। Undo करने पर वापस आ जाएगा।",
+        "yourLogoHasNoSolid": "आपके लोगो में हटाने लायक कोई ठोस बैकग्राउंड नहीं है।",
+        "removeTheSolidBackgroundAround": "अपने लोगो के आसपास का ठोस बैकग्राउंड हटाएं।",
+        "backgroundRemoved": "बैकग्राउंड हट गया",
+        "plateNouns": {
+          "square": "चौकोर",
+          "rounded": "गोल किनारों वाला चौकोर",
+          "circle": "गोला"
+        },
+        "shapes": {
+          "square": "चौकोर",
+          "rounded": "गोल किनारे",
+          "circle": "गोला"
+        }
+      },
+      "logoOptionsSection": {
+        "position": "पोज़िशन",
+        "center": "बीच में",
+        "keepTheLogoOffThe": "लोगो को तीनों कॉर्नर आई और नीचे-दाएं कोने के पास वाले छोटे चौकोर से दूर रखें। अगर लोगो इनमें से किसी को ढकता है, तो स्कैन स्कोर चेतावनी देता है।",
+        "raiseErrorCorrectionForBig": "बड़े लोगो के लिए एरर करेक्शन बढ़ाएं",
+        "switchesToLevelHWhen": "जब लोगो कोड के {value, number}% से ज़्यादा हिस्से को ढकता है, तो यह लेवल H पर स्विच हो जाता है।",
+        "logoOptions": "लोगो विकल्प",
+        "size": "साइज़",
+        "logoSize": "लोगो साइज़",
+        "clearSpace": "खाली जगह",
+        "clearSpaceAroundTheLogo": "लोगो के चारों ओर खाली जगह",
+        "leftToRight": "बाएँ से दाएँ",
+        "logoPositionLeftToRight": "लोगो की स्थिति, बाएँ से दाएँ",
+        "topToBottom": "ऊपर से नीचे",
+        "logoPositionTopToBottom": "लोगो की स्थिति, ऊपर से नीचे",
+        "upToMaxpercentForThis": "इस कोड के लिए अधिकतम {maxPercent, number}%: इससे बड़ा लोगो उतना हिस्सा छिपा देगा जितना इसकी एरर करेक्शन ठीक नहीं कर सकती।",
+        "thisCodeIsTooSmall": "यह कोड इतना छोटा है कि इसमें लोगो नहीं लग सकता।",
+        "shorterContentMakesRoom": "छोटा कंटेंट रखने से जगह बनती है।",
+        "levelHOrShorterContent": "लेवल H या छोटा कंटेंट रखने से जगह बनती है।"
+      },
+      "logoPresets": {
+        "quickLogoIcons": "क्विक लोगो आइकन",
+        "nameIcon": "{name} आइकन",
+        "uploadYourLogo": "अपना लोगो अपलोड करें",
+        "yourLogo": "आपका लोगो"
+      },
+      "optionTiles": {
+        "more": "और",
+        "noNounMatchQueryShow": "कोई {noun} \"{query}\" से मेल नहीं खाता।<button>सभी दिखाएँ</button>",
+        "mayNotScan": "शायद स्कैन न हो",
+        "nameWontScanWithThis": "{name}, इस स्टाइल में स्कैन नहीं होगा",
+        "nameMayNotScan": "{name}, शायद स्कैन न हो",
+        "nameWontScanWithThis2": "{name}: इस स्टाइल में स्कैन नहीं होगा",
+        "nameMayNotScan2": "{name}: शायद स्कैन न हो",
+        "moreNoun": "और {noun}",
+        "allLengthNoun": "सभी {length, number} {noun}",
+        "searchNoun": "{noun} खोजें",
+        "searchLengthNoun": "{length, number} {noun} खोजें",
+        "closeNoun": "{noun} बंद करें",
+        "filterNoun": "{noun} फ़िल्टर करें",
+        "commonNoun": "आम {noun}",
+        "allLengthNounPickingOne": "सभी {length, number} {noun}। कोई एक चुनते ही वह तुरंत लागू हो जाता है।",
+        "less": "कम",
+        "all": "सभी",
+        "wontScanHere": "यहाँ स्कैन नहीं होगा"
+      },
+      "paddingControls": {
+        "quietZoneAroundTheCode": "कोड के चारों ओर खाली जगह",
+        "scannersNeedABlankBorder": "स्कैनर को कोड के चारों ओर खाली बॉर्डर चाहिए। भीड़-भाड़ वाले या गहरे बैकग्राउंड पर प्रिंट करते समय 4 मॉड्यूल (QR स्टैंडर्ड) रखें।",
+        "padding": "पैडिंग",
+        "module": "मॉड्यूल",
+        "modules": "मॉड्यूल",
+        "presets": {
+          "none": "कोई नहीं",
+          "small": "छोटा",
+          "standard": "स्टैंडर्ड",
+          "large": "बड़ा"
+        }
+      },
+      "patternControls": {
+        "customizeOuterAndCenter": "बाहरी और बीच का हिस्सा बदलें",
+        "border": "बॉर्डर",
+        "higherLevelsSurviveScratchesAnd": "ऊँचे लेवल खरोंच और लोगो होने पर भी स्कैन होते हैं, लेकिन उनमें डॉट ज़्यादा होते हैं। लोगो जोड़ें तो H चुनें।",
+        "dotShape": "डॉट का आकार",
+        "dotShapes": "डॉट आकार",
+        "eyeStyle": "आई स्टाइल",
+        "eyeStyles": "आई स्टाइल",
+        "outerEyeShape": "बाहरी आई का आकार",
+        "outerShapes": "बाहरी आकार",
+        "innerEyeShape": "भीतरी आई का आकार",
+        "centerShapes": "बीच के आकार",
+        "errorCorrection": "एरर करेक्शन"
+      },
+      "sidePanel": {
+        "closeTitle": "{title} बंद करें"
+      }
+    },
+    "customTextarea": {
+      "thePastedContentWouldExceed": "पेस्ट किया गया कंटेंट {characterLimit, number} अक्षरों की सीमा से ज़्यादा हो जाएगा।",
+      "textTooLong": "टेक्स्ट बहुत लंबा है",
+      "describeYourTheme": "अपनी थीम बताइए…"
+    },
+    "dialogCloseButton": {
+      "close": "बंद करें"
+    },
+    "dynamicLinkToggle": {
+      "upgradeToPro": "Pro में अपग्रेड करें",
+      "manageCodes": "कोड मैनेज करें",
+      "static": "स्टैटिक",
+      "fixedOncePrinted": "प्रिंट के बाद नहीं बदलता",
+      "dynamic": "डायनेमिक",
+      "editLaterCountScans": "बाद में बदलें, स्कैन गिनें",
+      "linkOptions": "लिंक विकल्प…",
+      "printedCodesStillOpenDestinationurl": "प्रिंट किए गए कोड अब भी <span>{destinationUrl}</span> खोलते हैं।",
+      "pointItToTheNew": "इसे नए पते पर भेजें",
+      "scansSettings": "स्कैन और सेटिंग्स",
+      "staticOrDynamicQrCode": "स्टैटिक या डायनेमिक QR कोड",
+      "shortLinkCopied": "शॉर्ट लिंक कॉपी हो गया",
+      "copyShortLink": "शॉर्ट लिंक कॉपी करें",
+      "designSaved": "डिज़ाइन सेव हो गया",
+      "saveDesignToCode": "डिज़ाइन कोड में सेव करें",
+      "theQrCodeShowsYour": "QR कोड अब फिर से सीधे आपका URL दिखाता है।",
+      "changeWhereItPointsAt": "यह कहाँ खुले, इसे कभी भी बदल सकते हैं। आपका लोगो कोड के साथ सेव करने के लिए बहुत बड़ा था।",
+      "changeWhereItPointsAt2": "यह कहाँ खुले, इसे अपने डैशबोर्ड से कभी भी बदल सकते हैं।",
+      "theDynamicCodeStaysIn": "डायनेमिक कोड आपके डैशबोर्ड में रहता है।",
+      "printedCopiesOfThisCode": "इस कोड की प्रिंट की गई कॉपियाँ अब नया URL खोलेंगी।",
+      "yourLogoWasTooLarge": "आपका लोगो सेव करने के लिए बहुत बड़ा था, इसलिए उसे छोड़ दिया गया।",
+      "dashboardPreviewsAndDownloadsUse": "डैशबोर्ड के प्रिव्यू और डाउनलोड इसी डिज़ाइन का उपयोग करते हैं।",
+      "thisDynamicCodeIsNo": "यह डायनेमिक कोड अब उपलब्ध नहीं है",
+      "yourQrCodeIsNow": "आपका QR कोड अब डायनेमिक है",
+      "destinationUpdated": "डेस्टिनेशन अपडेट हो गया",
+      "designSavedToTheCode": "डिज़ाइन कोड में सेव हो गया",
+      "couldntCopyTheShortLink": "शॉर्ट लिंक कॉपी नहीं हो सका"
+    },
+    "frameInline": {
+      "frameTextMenu": {
+        "lowContrastValue1The": "कम कंट्रास्ट ({value}:1)। टेक्स्ट पढ़ने में मुश्किल हो सकता है; कम से कम {MIN_LABEL_CONTRAST, number}:1 रखें।"
+      },
+      "frameTextOverlay": {
+        "editFrameTextValue": "फ़्रेम टेक्स्ट बदलें: {value}",
+        "editText": "टेक्स्ट बदलें"
+      },
+      "frameTextSheet": {
+        "editFrameText": "फ़्रेम टेक्स्ट बदलें",
+        "changesShowOnTheCode": "आप जैसे-जैसे टाइप करते हैं, बदलाव कोड पर दिखते जाते हैं। Done दबाने पर वे सेव रहते हैं।",
+        "valueLeft": "{value, number} बाकी",
+        "moreFrameOptions": "फ़्रेम के और विकल्प",
+        "done": "हो गया"
+      },
+      "inlineFrameEditor": {
+        "leftLeft": "{left, number} बाकी",
+        "frameTextName": "फ़्रेम टेक्स्ट: {name}",
+        "frameTextOptions": "फ़्रेम टेक्स्ट के विकल्प",
+        "textSize": "टेक्स्ट का साइज़",
+        "textColor": "टेक्स्ट का रंग",
+        "frameColor": "फ़्रेम का रंग",
+        "icon": "आइकन",
+        "moreFrameOptions": "फ़्रेम के और विकल्प"
+      }
+    },
+    "gradientPicker": {
+      "pickASolidColorA": "{label} के लिए सॉलिड रंग, ग्रेडिएंट या स्वैच चुनें।"
+    },
+    "linkSourceMenu": {
+      "useALinkFrom": "इससे लिंक लें…",
+      "yourAccounts": "आपके अकाउंट",
+      "connectAnAccount": "अकाउंट कनेक्ट करें",
+      "undo": "पूर्ववत करें"
+    },
+    "mentionList": {
+      "noResult": "कोई नतीजा नहीं"
+    },
+    "paintPicker": {
+      "controls": {
+        "saturationAndBrightness": "सैचुरेशन और ब्राइटनेस",
+        "saturationValueBrightnessValue2": "सैचुरेशन {value, number}%, ब्राइटनेस {value2, number}%"
+      },
+      "gradientEditor": {
+        "clickToAddAStop": "स्टॉप जोड़ने के लिए क्लिक करें",
+        "stopValueColor": "स्टॉप {value, number}, {color}",
+        "startAngle": "शुरुआती एंगल",
+        "angle": "एंगल",
+        "startAngleInDegrees": "शुरुआती एंगल डिग्री में",
+        "angleInDegrees": "एंगल डिग्री में",
+        "anglePresets": "एंगल प्रीसेट",
+        "rotate90": "90° घुमाएँ",
+        "reverseTheGradient": "ग्रेडिएंट उलटें",
+        "reverse": "उलटें",
+        "removeTheSelectedStop": "चुना हुआ स्टॉप हटाएँ",
+        "removeStopDelete": "स्टॉप हटाएँ (Delete)",
+        "aGradientKeepsMinStops": "ग्रेडिएंट में कम से कम {MIN_STOPS, number} स्टॉप रहते हैं"
+      },
+      "imageFill": {
+        "paintAPictureThroughThese": "इन आकारों के ज़रिए एक तस्वीर पेंट करें। PNG, JPEG या WebP, 10 MB तक।",
+        "chooseAPicture": "तस्वीर चुनें",
+        "underlay": "अंडरले",
+        "none": "कोई नहीं",
+        "replace": "बदलें",
+        "thePictureStaysWithThis": "तस्वीर इस डिज़ाइन के साथ ही रहती है, लोगो की तरह: यह लिंक या पब्लिश किए गए स्टाइल में शेयर नहीं होती, और EPS में नहीं जा सकती।",
+        "aSolidColorUnderThe": "तस्वीर के नीचे एक ठोस रंग; उसकी ओपैसिटी से वह दिखाई देता है",
+        "howThePictureFillsThe": "तस्वीर कोड को कैसे भरती है",
+        "position": "पोज़िशन",
+        "tileSize": "टाइल साइज़",
+        "scale": "स्केल",
+        "opacity": "ओपैसिटी",
+        "fits": {
+          "cover": "भरें",
+          "contain": "फ़िट",
+          "tile": "टाइल"
+        },
+        "positions": {
+          "top-left": "ऊपर बाएँ",
+          "top": "ऊपर",
+          "top-right": "ऊपर दाएँ",
+          "left": "बाएँ",
+          "center": "बीच में",
+          "right": "दाएँ",
+          "bottom-left": "नीचे बाएँ",
+          "bottom": "नीचे",
+          "bottom-right": "नीचे दाएँ"
+        }
+      },
+      "paintPanel": {
+        "measuringThePicturesContrast": "तस्वीर का कंट्रास्ट नापा जा रहा है…",
+        "contrastAgainst": "कंट्रास्ट {against}",
+        "makeItScannable": "स्कैन करने लायक बनाएँ",
+        "hexOrAnyCssColor": "Hex या कोई भी CSS रंग",
+        "hexOrPasteAnyCss": "Hex, या कोई भी CSS रंग पेस्ट करें (rgb, hsl, oklch, नाम)",
+        "swatches": "रंग-नमूने",
+        "fillType": "फ़िल का प्रकार",
+        "pickAColorFromThe": "स्क्रीन से रंग चुनें",
+        "pickFromTheScreen": "स्क्रीन से चुनें",
+        "hue": "ह्यू",
+        "opacity": "ओपेसिटी",
+        "colorModel": "कलर मॉडल",
+        "opacityPercent": "ओपेसिटी, प्रतिशत",
+        "removeThisColorFromSaved": "इस रंग को सेव से हटाएँ",
+        "saveThisColor": "यह रंग सेव करें",
+        "savedClickToRemove": "सेव है: हटाने के लिए क्लिक करें",
+        "lightenTheBackground": "बैकग्राउंड हल्का करें",
+        "darkenTheCode": "कोड गहरा करें",
+        "kinds": {
+          "solid": "सॉलिड",
+          "linear": "लीनियर",
+          "radial": "रेडियल",
+          "angular": "एंगुलर",
+          "image": "इमेज"
+        },
+        "sources": {
+          "design": "इस डिज़ाइन में",
+          "saved": "सेव किए",
+          "recent": "हाल के",
+          "theme": "थीम",
+          "suggested": "डिफ़ॉल्ट"
+        },
+        "imageOpacity": "इमेज · {percent, number}%"
+      }
+    },
+    "photoScanDialog": {
+      "checkAPhotoOfThe": "प्रिंट की फ़ोटो जाँचें",
+      "checkedInYourBrowserThe": "आपके ब्राउज़र में जाँच होती है। इमेज कभी अपलोड नहीं होती।",
+      "fullScanChecker": "पूरा स्कैन चेकर"
+    },
+    "qrEditActions": {
+      "options": "विकल्प",
+      "resetToCurrentPreset": "मौजूदा प्रीसेट पर रीसेट करें",
+      "resetToCurrentPreset2": "मौजूदा प्रीसेट पर रीसेट करें",
+      "noChangesFromPreset": "प्रीसेट से कोई बदलाव नहीं",
+      "resetToDefaultTheme": "डिफ़ॉल्ट थीम पर रीसेट करें",
+      "resetToBaseTheme": "बेस थीम पर रीसेट करें",
+      "noChangesToReset": "रीसेट करने के लिए कोई बदलाव नहीं"
+    },
+    "qrPresetSelect": {
+      "theme": "थीम",
+      "browseAll": "सभी देखें",
+      "noThemesFound": "कोई थीम नहीं मिली।",
+      "manage": "मैनेज करें",
+      "default": "डिफ़ॉल्ट",
+      "new": "नया",
+      "save": "सेव करें",
+      "aThemeToFindIt": "थीम सेव करें, ताकि वह यहाँ मिल सके।",
+      "discoverMoreThemes": "और थीम देखें →",
+      "shuffleANewTheme": "नई थीम शफ़ल करें",
+      "previousTheme": "पिछली थीम",
+      "nextTheme": "अगली थीम",
+      "searchThemes": "थीम खोजें...",
+      "builtInThemes": "बिल्ट-इन थीम",
+      "default2": "डिफ़ॉल्ट",
+      "sharedThemes": "शेयर की गई थीम",
+      "yourThemes": "आपकी थीम",
+      "savedThemes": "सेव की गई थीम"
+    },
+    "qrSaveDialog": {
+      "updating": "अपडेट हो रहा है",
+      "updateExistingthemename": "“{existingThemeName}” अपडेट करें",
+      "orSaveAsANew": "या नई थीम के रूप में सेव करें",
+      "name": "नाम",
+      "cancel": "रद्द करें",
+      "saving": "सेव हो रहा है",
+      "myAwesomeTheme": "मेरी शानदार थीम",
+      "saveAsNew": "नई के रूप में सेव करें",
+      "defaultTitle": "QR कोड थीम सेव करें",
+      "defaultDescription": "अपना QR कोड डिज़ाइन थीम के रूप में सेव करें, ताकि बाद में दोबारा इस्तेमाल कर सकें।",
+      "defaultCta": "थीम सेव करें"
+    },
+    "qrShareDialog": {
+      "shareThisDesign": "यह डिज़ाइन शेयर करें",
+      "theLinkOpensThisStyle": "यह लिंक इस स्टाइल को playground में खोलता है, ताकि कोई भी इसे अपने कोड के लिए इस्तेमाल कर सके। आपका कंटेंट इसमें शामिल नहीं है।",
+      "stylePreviewOpensInThe": "स्टाइल प्रीव्यू · QRdx playground में खुलता है",
+      "link": "लिंक",
+      "shareTo": "यहाँ शेयर करें",
+      "more": "और…",
+      "openOnYourPhone": "अपने फ़ोन पर खोलें",
+      "scanThisCodeToOpen": "शेयर लिंक को दूसरे डिवाइस पर खोलने के लिए इस कोड को स्कैन करें।",
+      "copied": "कॉपी हो गया",
+      "copyLinkToThisDesign": "इस डिज़ाइन का लिंक कॉपी करें",
+      "saveItAsATheme": "इसकी जगह थीम के रूप में सेव करें",
+      "saveItAsATheme2": "छोटे लिंक के लिए इसे थीम के रूप में सेव करें",
+      "couldntCopyTheLink": "लिंक कॉपी नहीं हो सका",
+      "omitted": {
+        "logo": "आपका लोगो",
+        "art": "आर्ट",
+        "frame": "कस्टम फ़्रेम",
+        "image": "आपकी इमेज फ़िल",
+        "silhouette": "आपके कोड का आकार"
+      },
+      "omittedNote": "{count, plural, one {{list} लिंक में शामिल नहीं है।} other {{list} लिंक में शामिल नहीं हैं।}}",
+      "targets": {
+        "x": "X पर पोस्ट करें",
+        "linkedin": "LinkedIn पर शेयर करें",
+        "facebook": "Facebook पर शेयर करें",
+        "whatsapp": "WhatsApp पर भेजें",
+        "email": "ईमेल से भेजें"
+      },
+      "myQrDesign": "मेरा QR डिज़ाइन",
+      "shareTitle": "{name} · QRdx पर एक QR कोड डिज़ाइन"
+    },
+    "scanScore": {
+      "willItScan": "क्या यह स्कैन होगा?",
+      "decodingYourDesignAtA": "आपके डिज़ाइन को कुछ साइज़ में डिकोड किया जा रहा है…",
+      "simulatedInYourBrowserWith": "ओपन-सोर्स jsQR डिकोडर से आपके ब्राउज़र में, कैमरा ब्लर के साथ कुछ साइज़ पर सिम्युलेट किया गया। फ़ोन ऐप अलग-अलग हो सकते हैं, इसलिए प्रिंट से पहले टेस्ट-स्कैन करें।",
+      "checkAPhotoOfThe": "प्रिंट की फ़ोटो जाँचें",
+      "notChecked": "जाँचा नहीं गया",
+      "scanScoreScoreValueShow": "स्कैन स्कोर {score, number}, {value}। चेक देखें",
+      "checkingScanScore": "स्कैन स्कोर जाँचा जा रहा है",
+      "scanScoreScoreValue": "स्कैन स्कोर {score, number} · {value}",
+      "checkingScan": "स्कैन जाँच रहे हैं…",
+      "fullScanChecker": "पूरा स्कैन चेकर",
+      "checkAPrintedCode": "प्रिंट किया कोड जाँचें",
+      "grades": {
+        "great": "बढ़िया",
+        "ok": "ठीक",
+        "risky": "जोखिम",
+        "fails": "फ़ेल"
+      }
+    },
+    "themeGallery": {
+      "shuffled": "शफ़ल किया ·",
+      "back": "वापस",
+      "themes": "थीम",
+      "lengthBuiltInLooksEach": "{length, number} बिल्ट-इन लुक, हर एक स्कैन के लिए टेस्ट किया हुआ। या नया शफ़ल करें।",
+      "shuffle": "शफ़ल",
+      "lightCodesOnADark": "गहरे बैकग्राउंड पर हल्के कोड। {DARK_THEME_NOTE}, इसलिए उन फ़ोन से टेस्ट करें जो आपके दर्शक इस्तेमाल करते हैं।",
+      "noThemeMatchesQuery": "“{query}” से कोई थीम मेल नहीं खाती।",
+      "shuffleOneInstead": "इसके बजाय शफ़ल करें",
+      "toMove": "हिलाने के लिए",
+      "toApply": "लागू करने के लिए",
+      "toShuffle": "शफ़ल करने के लिए",
+      "escToClose": "बंद करने के लिए <kbd>esc</kbd>",
+      "searchThemes": "थीम खोजें",
+      "searchMenuGoldPastelDots": "खोजें: मेन्यू, गोल्ड, पेस्टल, डॉट्स…",
+      "categories": "श्रेणियाँ",
+      "all": "सभी"
+    },
+    "themePreview": {
+      "colorPreview": {
+        "primaryThemeColors": "मुख्य थीम रंग",
+        "editColor": "रंग बदलें",
+        "background": "बैकग्राउंड",
+        "foreground": "फ़ोरग्राउंड",
+        "dotColor": "डॉट का रंग",
+        "eyeColor": "आई का रंग"
+      }
+    },
+    "editor": {
+      "loadingTheEditor": "एडिटर लोड हो रहा है…",
+      "fetchedQrPresetDataIs": "लाया गया QR प्रीसेट डेटा अमान्य है।"
+    },
+    "qrControlPanel": {
+      "generate": "बनाएँ",
+      "content": "कंटेंट",
+      "design": "डिज़ाइन",
+      "art": "आर्ट"
+    },
+    "qrPreviewPanel": {
+      "sample": "सैंपल",
+      "addYourLinkToMake": "अपना लिंक जोड़ें और इसे अपना बनाएँ",
+      "addYourDetailsToMake": "अपनी जानकारी जोड़ें और इसे अपना बनाएँ"
+    },
+    "keyboardShortcutsModal": {
+      "keyboardShortcuts": "कीबोर्ड शॉर्टकट",
+      "keyboardShortcutsAreCurrentlyDisabled": "कीबोर्ड शॉर्टकट अभी बंद हैं। इन शॉर्टकट का उपयोग करने के लिए सेटिंग में जाकर इन्हें चालू करें।",
+      "quickReferenceForAllAvailable": "सभी उपलब्ध कीबोर्ड शॉर्टकट की त्वरित सूची",
+      "proTipPressAnytimeTo": "<span>प्रो टिप:</span> यह डायलॉग देखने के लिए कभी भी <kbd>?</kbd> दबाएँ",
+      "categories": {
+        "navigation": "नेविगेशन",
+        "actions": "एक्शन",
+        "themeAppearance": "थीम और लुक",
+        "patternCustomization": "पैटर्न कस्टमाइज़ेशन",
+        "help": "मदद"
+      },
+      "shortcuts": {
+        "openContentTab": "कंटेंट टैब खोलें",
+        "openDesignTab": "डिज़ाइन टैब खोलें",
+        "openArtTab": "आर्ट टैब खोलें",
+        "openGenerateAiTab": "जनरेट (AI) टैब खोलें",
+        "saveQrTheme": "QR थीम सेव करें",
+        "downloadQrCode": "QR कोड डाउनलोड करें",
+        "copySvgToClipboard": "SVG को क्लिपबोर्ड पर कॉपी करें",
+        "viewCode": "कोड देखें",
+        "shareQrCode": "QR कोड शेयर करें",
+        "resetToPresetDefaults": "प्रीसेट डिफ़ॉल्ट पर रीसेट करें",
+        "shuffleANewTheme": "नई थीम शफ़ल करें",
+        "toggleLightDarkMode": "लाइट/डार्क मोड बदलें",
+        "previousThemePreset": "पिछला थीम प्रीसेट",
+        "nextThemePreset": "अगला थीम प्रीसेट",
+        "cycleDotPatterns": "डॉट पैटर्न बदलें",
+        "cycleCornerEyePatterns": "कॉर्नर आई पैटर्न बदलें",
+        "cycleInternalEyePatterns": "इंटरनल आई पैटर्न बदलें",
+        "cycleFrames": "फ़्रेम बदलें",
+        "showThisShortcutsDialog": "शॉर्टकट की यह विंडो दिखाएँ"
+      }
+    },
+    "soundSwitch": {
+      "sounds": "साउंड"
+    },
+    "hooks": {
+      "chatEngine": {
+        "tryAgainInAMoment": "कुछ देर बाद फिर कोशिश करें।",
+        "anErrorOccurred": "कोई एरर हुआ",
+        "theAiStoppedResponding": "AI ने जवाब देना बंद कर दिया"
+      },
+      "useCommunityThemes": {
+        "yourThemeIsNowVisible": "आपकी थीम अब कम्युनिटी में दिख रही है।",
+        "anUnexpectedErrorOccurred": "कोई अनपेक्षित एरर हुआ।",
+        "yourThemeHasBeenRemoved": "आपकी थीम कम्युनिटी से हटा दी गई है।",
+        "yourThemeTagsHaveBeen": "आपकी थीम के टैग अपडेट हो गए हैं।",
+        "themePublished": "थीम पब्लिश हो गई",
+        "failedToPublishTheme": "थीम पब्लिश नहीं हो सकी",
+        "themeUnpublished": "थीम अनपब्लिश हो गई",
+        "failedToUnpublishTheme": "थीम अनपब्लिश नहीं हो सकी",
+        "failedToUpdateLike": "लाइक अपडेट नहीं हो सका",
+        "tagsUpdated": "टैग अपडेट हो गए",
+        "failedToUpdateTags": "टैग अपडेट नहीं हो सके"
+      },
+      "useThemeMutations": {
+        "nameHasBeenCreatedSuccessfully": "\"{name}\" सफलतापूर्वक बन गई।",
+        "nameHasBeenUpdatedSuccessfully": "\"{name}\" सफलतापूर्वक अपडेट हो गई।",
+        "nameHasBeenDeletedSuccessfully": "\"{name}\" सफलतापूर्वक डिलीट हो गई।",
+        "themeLimitReached": "थीम की सीमा पूरी हो गई",
+        "themeCreated": "थीम बन गई",
+        "themeUpdated": "थीम अपडेट हो गई",
+        "themeDeleted": "थीम डिलीट हो गई",
+        "errors": {
+          "signIn": "आगे बढ़ने के लिए साइन इन करें।",
+          "invalidInput": "गलत इनपुट दिया गया है।",
+          "notFound": "थीम नहीं मिली।",
+          "unexpected": "कोई अनपेक्षित एरर हुआ। कृपया फिर कोशिश करें।"
+        },
+        "failed": {
+          "create": "थीम नहीं बन सकी",
+          "update": "थीम अपडेट नहीं हो सकी",
+          "delete": "थीम डिलीट नहीं हो सकी"
+        }
+      },
+      "useAiEnhancePrompt": {
+        "anErrorOccurred": "कोई एरर हुआ"
+      },
+      "useDialogActions": {
+        "saveToShare": {
+          "title": "शेयर करने के लिए सेव करें",
+          "description": "दूसरों के साथ शेयर करने के लिए पहले अपनी थीम सेव करें।",
+          "ctaLabel": "सेव करें और शेयर करें"
+        }
+      },
+      "useImageUpload": {
+        "youCanOnlyUploadUp": "आप ज़्यादा से ज़्यादा {maxFiles, number} इमेज अपलोड कर सकते हैं।",
+        "nameIsNotSupportedPlease": "\"{name}\" सपोर्टेड नहीं है। कृपया JPG, PNG, WebP या SVG फ़ाइलें इस्तेमाल करें।",
+        "imageNameExceedsTheValue": "इमेज \"{name}\" {value, number}MB की साइज़ लिमिट से बड़ी है।",
+        "nameMayContainUnsafeContent": "\"{name}\" में असुरक्षित कंटेंट हो सकता है, फिर भी इसे प्रोसेस किया जाएगा।",
+        "failedToReadNamePlease": "\"{name}\" पढ़ने में विफल रहा। कृपया दोबारा कोशिश करें।",
+        "imageUploadLimitReached": "इमेज अपलोड की लिमिट पूरी हो गई",
+        "unsupportedFileType": "फ़ाइल टाइप सपोर्टेड नहीं है",
+        "fileTooLarge": "फ़ाइल बहुत बड़ी है",
+        "potentiallyUnsafeSvg": "संभावित रूप से असुरक्षित SVG",
+        "fileReadError": "फ़ाइल पढ़ने में गड़बड़ी"
+      },
+      "usePlaygroundParams": {
+        "undo": "पूर्ववत करें"
+      },
+      "usePlaygroundShortcuts": {
+        "svgCopiedToClipboard": "SVG क्लिपबोर्ड पर कॉपी हो गया",
+        "failedToCopySvg": "SVG कॉपी नहीं हो सका"
+      }
+    }
+  },
+  "playground": {
+    "heading": "कस्टम QR कोड डिज़ाइनर",
+    "loading": "Playground लोड हो रहा है...",
+    "metaTitle": "कस्टम QR कोड डिज़ाइनर: लोगो, रंग, फ़्रेम",
+    "metaDescription": "अपने लोगो, रंग, ग्रेडिएंट, डॉट पैटर्न और फ़्रेम के साथ कस्टम QR कोड डिज़ाइन करें, फिर PNG, SVG, PDF या EPS डाउनलोड करें। फ़्री, साइनअप के बिना, वॉटरमार्क के बिना।",
+    "intro": {
+      "label": "QR कोड डिज़ाइनर के बारे में",
+      "summary": "कस्टम QR कोड डिज़ाइनर। आपके लोगो, रंगों और फ़्रेम के साथ फ़्री स्टैटिक कोड। साइनअप नहीं, वॉटरमार्क नहीं।",
+      "types": "किसी लिंक, Wi-Fi नेटवर्क, कॉन्टैक्ट कार्ड, पेमेंट या {types, number} कंटेंट टाइप में से किसी का भी QR कोड बनाएँ। उसे {bodyPatterns, number} डॉट पैटर्न, {eyeShapes, number} कॉर्नर-आई शेप, सॉलिड या ग्रेडिएंट रंग, बीच में लोगो और {frames, number} कॉल-टू-एक्शन फ़्रेम के साथ स्टाइल करें। प्रिंट करने से पहले स्कैन स्कोर बताता है कि वह कितनी अच्छी तरह पढ़ा जाएगा।",
+      "downloads": "PNG, JPG, WebP या SVG डाउनलोड करें, या सही साइज़ में प्रिंट के लिए तैयार PDF या EPS। स्टैटिक कोड फ़्री हैं और कभी एक्सपायर नहीं होते। प्रिंट के बाद भी बदलाव किए जा सकने वाला डायनेमिक QR कोड बनाने और स्कैन ट्रैक करने के लिए साइन इन करें।",
+      "links": {
+        "allTypes": "QR कोड के सभी प्रकार",
+        "scanChecker": "स्कैन चेकर",
+        "printSize": "प्रिंट साइज़ कैलकुलेटर",
+        "styleGuide": "स्टाइल गाइड"
+      }
+    },
+    "presetSelector": {
+      "presets": "प्रीसेट"
+    },
+    "themeSaveDialog": {
+      "name": "नाम",
+      "cancel": "रद्द करें",
+      "saving": "सेव हो रहा है",
+      "myAwesomeTheme": "मेरी शानदार थीम",
+      "defaultTitle": "थीम सेव करें",
+      "defaultDescription": "अपनी थीम का नाम लिखें, ताकि आप उसे बाद में ढूँढ सकें।",
+      "defaultCta": "थीम सेव करें"
+    }
+  },
+  "limits": {
+    "capMeter": {
+      "labelUsed": "{label} इस्तेमाल हुआ"
+    },
+    "limitCard": {
+      "planUsage": "प्लान और उपयोग",
+      "notNow": "अभी नहीं",
+      "labelUsed": "{label} इस्तेमाल हुआ"
+    },
+    "limitDialog": {
+      "limitReached": "लिमिट पूरी हो गई"
+    }
+  },
+  "community": {
+    "browseLayout": {
+      "filters": "फ़िल्टर"
+    },
+    "communityTabs": {
+      "community": "कम्युनिटी"
+    },
+    "createBundle": {
+      "published": "पब्लिश हो गया",
+      "nameIsLiveInThe": "{name} अब कम्युनिटी में लाइव है।",
+      "viewIt": "देखें",
+      "whatToMake": "क्या बनाना है",
+      "itemsYouSaveInThe": "कम्युनिटी में जो आइटम आप सेव करते हैं या खुद पब्लिश करते हैं, वे यहाँ दिखते हैं। <link>कम्युनिटी देखें</link>",
+      "itemsLengthPicked": "आइटम<span>{length, number} चुने गए</span>",
+      "optional": "(वैकल्पिक)",
+      "name": "नाम",
+      "description": "विवरण",
+      "seeIt": "देखें",
+      "eGEverythingForA": "जैसे: कैफ़े के लिए सब कुछ",
+      "eGCaféTableKit": "जैसे: कैफ़े टेबल किट",
+      "optionalWhatItsFor": "वैकल्पिक: यह किसलिए है",
+      "collection": "कलेक्शन",
+      "kit": "किट",
+      "groupFramesThemesAndPage": "फ़्रेम, थीम और पेज टेम्पलेट को एक साथ ग्रुप करें ताकि लोग उन्हें साथ में देख सकें, जैसे कैफ़े के लिए सब कुछ। कम से कम 2 चुनें।",
+      "aPageTemplateAndThe": "एक पेज टेम्पलेट और उसके साथ जाने वाला लुक। किट इस्तेमाल करने पर पेज ड्राफ़्ट के रूप में और लुक सेव की गई थीम के रूप में कॉपी होता है।",
+      "yours": "आपके",
+      "noSavedMany": "कोई सेव {many} नहीं",
+      "none": "कोई नहीं",
+      "pickOne": "एक चुनें",
+      "publishing": "पब्लिश हो रहा है",
+      "publishCollection": "कलेक्शन पब्लिश करें",
+      "publishKit": "किट पब्लिश करें"
+    },
+    "creatorLine": {
+      "verified": "वेरिफ़ाइड"
+    },
+    "importFrameDialog": {
+      "importAnSvgFrame": "SVG फ़्रेम इम्पोर्ट करें",
+      "shapesAndColorsBecomeA": "शेप और रंग फ़्रेम बन जाते हैं। टेक्स्ट, इमेज और इफ़ेक्ट शामिल नहीं किए जाते।",
+      "colors": "रंग",
+      "whatChanged": "क्या बदला",
+      "cancel": "रद्द करें",
+      "useThisFrame": "यह फ़्रेम इस्तेमाल करें",
+      "chooseAnSvgFileUp": "SVG फ़ाइल चुनें (200 KB तक)",
+      "refs": {
+        "frame": "फ़्रेम का रंग",
+        "accent": "एक्सेंट रंग",
+        "fixed": "जैसा है वैसा रहेगा"
+      }
+    },
+    "itemActions": {
+      "useInEditor": "एडिटर में इस्तेमाल करें",
+      "copyToWorkspace": "वर्कस्पेस में कॉपी करें",
+      "unpublish": "अनपब्लिश करें",
+      "removeFromTheCommunity": "कम्युनिटी से हटाएँ?",
+      "itLeavesTheCommunityAt": "यह तुरंत कम्युनिटी से हट जाएगा। जिन लोगों ने इसे पहले ही इस्तेमाल किया है, उनके पास अपनी कॉपी रहेगी: इसे CC0 के तहत शेयर किया गया था।",
+      "cancel": "रद्द करें",
+      "removeFromSaved": "सेव किए गए से हटाएँ",
+      "save": "सेव करें",
+      "unlike": "लाइक हटाएँ",
+      "like": "लाइक करें",
+      "useKit": "किट इस्तेमाल करें",
+      "useTemplate": "टेम्पलेट इस्तेमाल करें",
+      "saved": "सेव हो गया",
+      "open": "खोलें",
+      "nameIsInYourPages": "\"{name}\" आपके पेज में ड्राफ़्ट के रूप में है, और इसका लुक आपकी थीम में।",
+      "nameIsInYourPages2": "\"{name}\" आपके पेज में ड्राफ़्ट के रूप में है।",
+      "savedItsInTheEditors": "सेव हो गया। यह एडिटर के फ़्रेम पिकर में है।",
+      "saved2": "सेव हो गया।",
+      "removedFromSaved": "सेव किए गए से हटा दिया गया।",
+      "copiedToWhereAsName": "{where} में \"{name}\" नाम से कॉपी किया गया",
+      "nameIsNoLongerIn": "\"{name}\" अब कम्युनिटी में नहीं है।"
+    },
+    "itemCard": {
+      "empty": "खाली",
+      "official": "आधिकारिक",
+      "usecountUses": "{useCount} बार इस्तेमाल हुआ",
+      "seeAll": "सब देखें",
+      "likes": "लाइक"
+    },
+    "itemPages": {
+      "previous": "पिछला",
+      "pagePageOfPages": "पेज {page, number} / {pages, number}",
+      "next": "अगला",
+      "pages": "पेज"
+    },
+    "licenceConfirm": {
+      "licence": "लाइसेंस:"
+    },
+    "newBundle": {
+      "signInToMakeA": "अपने सेव किए आइटम से कलेक्शन या किट बनाने के लिए साइन इन करें।",
+      "signIn": "साइन इन करें"
+    },
+    "publishDesignDialog": {
+      "published": "पब्लिश हो गया",
+      "valueIsLiveInThe": "{value} कम्युनिटी में लाइव है।",
+      "done": "हो गया",
+      "viewIt": "देखें",
+      "publishToTheCommunity": "कम्युनिटी में पब्लिश करें",
+      "theChatDraftedTheseDetails": "चैट ने ये जानकारी तैयार की है। जो चाहें बदल सकते हैं; पब्लिश करने तक कुछ भी शेयर नहीं होता।",
+      "name": "नाम",
+      "description": "विवरण",
+      "seeIt": "देखें",
+      "cancel": "रद्द करें",
+      "optionalWhatItSuits": "वैकल्पिक: यह किसके लिए सही है",
+      "checkingAndPublishing": "जाँच कर पब्लिश कर रहे हैं",
+      "publish": "पब्लिश करें"
+    },
+    "publishFrameDialog": {
+      "published": "पब्लिश हो गया",
+      "valueIsLiveInThe": "{value} कम्युनिटी में लाइव है।",
+      "done": "हो गया",
+      "viewIt": "देखें",
+      "publishThisFrame": "यह फ़्रेम पब्लिश करें",
+      "anyoneCanFindItIn": "कोई भी इसे कम्युनिटी में ढूँढ सकता है और अपने कोड के साथ इस्तेमाल कर सकता है।",
+      "name": "नाम",
+      "description": "विवरण",
+      "seeIt": "देखें",
+      "cancel": "रद्द करें",
+      "eGCaféTableCard": "जैसे: कैफ़े टेबल कार्ड",
+      "optionalWhatItsFor": "वैकल्पिक: यह किसलिए है",
+      "checkingAndPublishing": "जाँच और पब्लिश हो रहा है",
+      "publish": "पब्लिश करें"
+    },
+    "publishPageDialog": {
+      "published": "पब्लिश हो गया",
+      "valueIsLiveInThe": "{value} कम्युनिटी में लाइव है। आपका पेज जैसा था वैसा ही है।",
+      "done": "हो गया",
+      "viewIt": "देखें",
+      "shareAsAPageTemplate": "पेज टेम्पलेट के रूप में शेयर करें",
+      "step1Of2This": "चरण 1 / 2 · लोगों को यही मिलेगा। पहले आपकी अपनी जानकारी हटा दी जाती है।",
+      "whatWeChanged": "हमने क्या बदला",
+      "checkingThePage": "पेज की जाँच हो रही है",
+      "yourTextIsReplacedWith": "आपका टेक्स्ट सैंपल टेक्स्ट से बदल दिया जाता है। किसी फ़ील्ड को जैसा आपने लिखा वैसा ही पब्लिश करने के लिए उस पर टिक करें।",
+      "everyPhotoIsTakenOut": "हर फ़ोटो हटा दी जाती है, ताकि लोग अपनी फ़ोटो जोड़ सकें। जो टेक्स्ट आप रखते हैं उसमें लिंक, ईमेल, फ़ोन नंबर या पते नहीं हो सकते।",
+      "nothingIsLeftToShare": "आपकी जानकारी हटाने के बाद शेयर करने के लिए कुछ नहीं बचता।",
+      "cancel": "रद्द करें",
+      "continue": "आगे बढ़ें",
+      "step2Of2Details": "चरण 2 / 2 · विवरण। यह तुरंत कम्युनिटी में लाइव हो जाता है, और आपका पेज जैसा है वैसा ही रहता है।",
+      "name": "नाम",
+      "description": "विवरण",
+      "seeIt": "देखें",
+      "back": "वापस",
+      "eGCaféMenu": "जैसे: कैफ़े मेन्यू",
+      "optionalWhatItsFor": "वैकल्पिक: यह किसलिए है",
+      "kept": " · रखा गया",
+      "empty": "(खाली)",
+      "publishing": "पब्लिश हो रहा है",
+      "publish": "पब्लिश करें"
+    },
+    "publishThemeDialog": {
+      "anyoneCanFindItIn": "कोई भी इसे कम्युनिटी गैलरी में ढूँढकर इस्तेमाल कर सकता है। आप इसे कभी भी अनपब्लिश कर सकते हैं।",
+      "cancel": "रद्द करें",
+      "publishThemenameToTheCommunity": "\"{themeName}\" को कम्युनिटी में पब्लिश करें",
+      "publishToTheCommunity": "कम्युनिटी में पब्लिश करें",
+      "checkingAndPublishing": "जाँच कर पब्लिश कर रहे हैं",
+      "publish": "पब्लिश करें",
+      "publishedUnderYourProfile": "यह आपकी प्रोफ़ाइल के तहत पब्लिश होती है; थीम इसी वर्कस्पेस में रहती है।"
+    },
+    "removeItemButton": {
+      "remove": "हटाएँ",
+      "removeFromTheCommunity": "कम्युनिटी से हटाएँ",
+      "removedNameFromTheCommunity": "\"{name}\" को कम्युनिटी से हटा दिया गया"
+    },
+    "tryIt": {
+      "tryItWithYourLink": "अपने लिंक के साथ आज़माएँ",
+      "drawnInYourBrowserNothing": "यह आपके ब्राउज़र में बनता है। कुछ भी भेजा नहीं जाता।"
     }
   }
 }

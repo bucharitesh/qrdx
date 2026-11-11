@@ -127,6 +127,32 @@
       "star": "收藏",
       "starOnGithub": "在 GitHub 上为 QRdx 点星",
       "starOnGithubCount": "在 GitHub 上为 QRdx 点星（{count} 个星标）"
+    },
+    "userProfileDropdown": {
+      "tryThePlayground": "试用 Playground",
+      "signIn": "登录",
+      "dashboard": "控制台",
+      "accountSettings": "账户设置",
+      "manageBilling": "管理账单",
+      "upgradeToPro": "升级到 Pro",
+      "admin": "管理员",
+      "privacyPolicy": "隐私政策",
+      "signOut": "退出登录"
+    },
+    "getProCta": {
+      "getPro": "获取 Pro"
+    },
+    "getProDialog": {
+      "upgradeToValue": "升级到 {value}",
+      "unlocksThis": "解锁此功能",
+      "staticQrCodesStayFree": "静态二维码保持免费，即使你取消订阅，已有的二维码也能继续使用。<link>我们的保障</link>",
+      "comparePlansAndPrices": "对比方案与价格",
+      "maybeLater": "以后再说",
+      "thisFeatureIsPartOf": "此功能属于 Business 方案。",
+      "thisFeatureIsPartOf2": "此功能属于 Pro 和 Business 方案。"
+    },
+    "themeToggle": {
+      "toggleTheme": "切换主题"
     }
   },
   "footer": {
@@ -1092,7 +1118,7 @@
       "toolLabel": "打印尺寸计算器",
       "howTitle": "尺寸是如何计算的",
       "how1": "内容决定二维码的版本。计算器会使用与 QRdx 编码器相同的容量表，在所选纠错级别下选出能容纳你的文本的最小版本（1 到 40）。版本 n 的宽度为 17 + 4n 个模块。",
-      "how2": "距离决定模块大小。经验法则 {ratio, number}:1 被视为针对简单的 {reference, number} × {reference, number} 二维码，因此每个模块至少为距离 ÷ ({divisor, number})，且不小于 {minimum, number} 毫米。",
+      "how2": "距离决定模块大小。经验法则 {ratio, number}:1 被视为适用于简单的 {reference, number, ::group-off} × {reference, number} 二维码，因此每个模块至少为 距离 ÷ ({divisor, number})，且不小于 {minimum, number} mm。",
       "how3": "模块大小 × 每边模块数即为二维码尺寸。在每一边加上 {quiet, number} 个空白模块，就是二维码在页面上所需的空间。",
       "tipsTitle": "让二维码顺利扫描的小贴士",
       "tip1": "内容尽量简短。链接越短，版本越低，相同的打印尺寸下模块就越大。",
@@ -1147,7 +1173,7 @@
         "resultTitle": "最小打印尺寸",
         "errorDistance": "请输入大于零的扫描距离。",
         "codeSize": "二维码尺寸（边到边）",
-        "codeSizeHint": "版本 {version, number}，{modules, number} × {modules, number} 个模块",
+        "codeSizeHint": "版本 {version, number}，{modules, number, ::group-off} × {modules, number} 个模块",
         "withQuietZone": "含 {modules, number} 个模块宽的静区",
         "withQuietZoneHint": "扫描器需要在二维码四周留出的空白边距",
         "moduleSize": "模块（单个方块）尺寸",
@@ -1545,7 +1571,7 @@
     "alt": "{value} 的 {format} 条形码",
     "loadFailed": "条形码绘制代码未能加载。请检查网络连接后重新加载页面。",
     "fixInput": "请修正高亮的输入内容，以查看条形码。",
-    "sizes": "PNG、JPG、WebP 和 AVIF 的尺寸为 {width, number} × {height, number} 像素。SVG、PDF 和 EPS 为矢量格式，尺寸为 {widthMm} × {heightMm} 毫米，模块宽 {moduleMm} 毫米；可在排版中按需缩放。",
+    "sizes": "PNG、JPG、WebP 和 AVIF 的尺寸为 {width, number, ::group-off} × {height, number, ::group-off} 像素。SVG、PDF 和 EPS 为矢量格式，尺寸为 {widthMm} × {heightMm} 毫米，模块大小为 {moduleMm} 毫米；可根据需要在版面中自行缩放。",
     "more": "更多",
     "moreFormats": "更多格式",
     "footnote": "在浏览器中生成；你输入的任何内容都不会发送到 QRdx。选择 WebP 和 AVIF 时，由 QRdx 的服务器编码，且不会保留任何内容。",
@@ -1914,7 +1940,23 @@
     "artLink": "或者把链接变成可扫描的 AI 二维码艺术图",
     "chat": {
       "upgrade": "升级到 Pro，享无限次请求",
-      "heading": "想让我为你做什么样的二维码？"
+      "heading": "想让我为你做什么样的二维码？",
+      "aiChatForm": {
+        "generate": "生成"
+      },
+      "communityThemeCard": {
+        "viewDetails": "查看详情",
+        "viewInEditor": "在编辑器中查看",
+        "unknownCreationDate": "创建日期未知"
+      },
+      "communityThemes": {
+        "fromTheCommunity": "来自社区",
+        "viewAll": "查看全部",
+        "exploreTheThemesTheCommunity": "探索社区使用 tweakcn 创建的主题。"
+      },
+      "suggestedPillActions": {
+        "fromAnImage": "从图片生成"
+      }
     }
   },
   "aiArt": {
@@ -1952,6 +1994,111 @@
     "faq": {
       "title": "AI 二维码艺术常见问题",
       "description": "可扫描的艺术作品如何制作、费用多少，以及打印前需要检查什么。"
+    },
+    "aiArtPresetGallery": {
+      "noStylesMatchQueryDescribe": "没有与“{query}”匹配的风格。请改在提示词中描述。",
+      "clearSearch": "清除搜索",
+      "theStylesDidntLoad": "风格未能加载。",
+      "tryAgain": "重试",
+      "pickingOneFillsInThe": "选择一种风格会自动填入提示词，你可以随意修改。",
+      "searchStyles": "搜索风格",
+      "searchStylesCatsGoldTiles": "搜索风格：猫、金色、瓷砖…",
+      "styleCategories": "风格分类",
+      "featured": "精选",
+      "all": "全部",
+      "someStyles": "共 {total, number} 种风格，显示 {shown, number} 种。",
+      "allStyles": "共 {total, number} 种风格。"
+    },
+    "aiArtResult": {
+      "yourQrArtWillAppear": "你的二维码艺术图将显示在这里",
+      "generating": "正在生成",
+      "eachImageIsCheckedTo": "每张图片在展示给你之前，都会先检查能否扫描。这最多可能需要一分钟。",
+      "bestScannable": "扫描效果最佳",
+      "download": "下载",
+      "printSize": "打印尺寸（",
+      "px": "像素）",
+      "retryWithAClearerCode": "用更清晰的二维码重试",
+      "lockSeedSeed": "锁定种子 {seed, number}",
+      "scanScoreScore": "扫描得分 {score, number}",
+      "bestOfThisRun": "本次最佳",
+      "theModelsImageDidntScan": "模型生成的图片按原样无法扫描，因此 QRdx 加强了它的定位角、边框，并在必要时加强了模块，刚好达到可扫描的程度（融合强度 {value, number}%）。",
+      "theModelsImageDidntScan2": "模型生成的图片即使加强二维码后仍无法扫描，因此 QRdx 将它重绘为 Image QR 二维码，并透出原图。",
+      "aiGeneratedQrCodeArtwork": "AI 生成的二维码艺术图，编码内容为 {text}",
+      "variations": "变体",
+      "variationValueSeedSeed": "变体 {value, number}，种子 {seed, number}",
+      "variationValue": "变体 {value, number}",
+      "pendingvariationsVariations": "{pendingVariations, number} 个变体",
+      "yourArtwork": "你的作品",
+      "downloadTheWidthPxImage": "改为下载 {width, number, ::group-off} px 的图片。",
+      "thePrintSizeCopyDidnt": "印刷尺寸的副本未通过扫描检测",
+      "couldntPrepareThePrintSize": "无法准备印刷尺寸的图片",
+      "status": {
+        "checking": {
+          "title": "正在评估扫描效果…",
+          "description": "已在服务器上解码，现在测试缩小和模糊后的效果。"
+        },
+        "scannable": {
+          "title": "已验证可扫描",
+          "description": "已在我们的服务器和你的浏览器中成功解码为你的内容。印刷前仍请用手机相机再测试一次。"
+        },
+        "unreadable": {
+          "title": "缩小后难以识别，请尝试更清晰的二维码",
+          "description": "服务器上可以解码，但浏览器内测试未通过。请提高二维码可见度，或在使用前用手机相机测试。"
+        },
+        "mismatch": {
+          "title": "扫描结果与内容不符，请尝试更清晰的二维码",
+          "description": "解码出的文本与你输入的内容不一致。请勿使用这张图片。"
+        },
+        "unverified": {
+          "title": "无法运行浏览器内检测",
+          "description": "服务器上已成功解码。印刷或分享前，请用手机相机测试。"
+        }
+      },
+      "resultSummary": "二维码可见度 {visibility, number} · 创意度 {creativity, number} · {width, number, ::group-off} px{failed, plural, =0 {} other { · # 个变体生成失败，未消耗点数}}。每张图片消耗 1 个 AI 艺术点数；印刷尺寸下载免费。"
+    },
+    "aiArtStudio": {
+      "linkOrText": "链接或文本",
+      "shorterContentMeansFewerLarger": "内容越短，模块越少也越大：图案更清爽，扫描也更可靠。",
+      "style": "风格",
+      "variations": "变体数量",
+      "eachVariationIsItsOwn": "每个变体都是独立的图片，消耗 1 个点数。每张图片在展示给你之前都会验证可扫描，并为你选出最佳的一张。",
+      "negativePrompt": "负面提示词",
+      "theModelIsAskedTo": "模型会被要求避免在图片中出现这些内容。",
+      "seed": "种子",
+      "lockSeed": "锁定种子",
+      "theSameSeedAndSettings": "相同的种子和设置会生成相近的图片（模型仍可能有所变化）；变体使用种子、种子 + 1……",
+      "referenceImage": "参考图片",
+      "remove": "移除",
+      "uploadReference": "上传参考图",
+      "optionalALogoPhotoOr": "可选。提供标志、照片或调色板，供模型融入作品：其颜色和形状会被保留。图片会在你的浏览器中调整大小，并随提示词通过 Vercel AI Gateway 发送到 {ART_MODEL_LABEL}。",
+      "cancel": "取消",
+      "aiArtCodesAreStatic": "<span>AI 艺术二维码是静态的。</span>内容已嵌入图像，分享后无法更改。如果需要之后可编辑、可查看扫描分析的链接，请创建<signInLink>动态二维码</signInLink>，并在此处使用它的短链接。",
+      "alreadyDesigningACode": "已经在设计二维码了？",
+      "toPaintItsContentDynamic": "来绘制其内容，包括动态链接。",
+      "openInPlayground": "在 Playground 中打开",
+      "signInToGeneratePlans": "请登录后生成。{plans}",
+      "eachImageUses1Ai": "每张图像消耗 1 点 AI 艺术额度，生成失败的图像会退还额度。{plans}",
+      "unlimitedAiArtOnYour": "您的套餐不限 AI 艺术生成次数。本次将生成 {variations, number} 张。",
+      "describeASceneEG": "描述一个场景，例如：日落时分岩石海岸上的灯塔，油画",
+      "qrVisibility": "二维码可见度",
+      "creativity": "创意度",
+      "thingsToAvoidEG": "想要避免的内容，例如：人物、建筑、深色",
+      "randomEachRun": "每次随机",
+      "uploadAReferenceImage": "上传参考图像",
+      "reference": "参考图",
+      "advancedNegativePromptSeedReference": "高级：负面提示词、种子、参考图像",
+      "advancedNegativePromptReferenceImage": "高级：负面提示词、参考图像",
+      "generating": "生成中…",
+      "findItUnderAdvanced": "请在“高级”中查找。",
+      "seedValueLocked": "种子 {value, number} 已锁定",
+      "creditsLeft": "本月 AI 艺术图像剩余 <count>{remaining, number}/{limit, number}</count> 张{pooled, select, yes {（团队共享）} other {}}，将于 {resets} 重置。本次将生成 {variations, number} 张；生成失败的图像会退还额度。",
+      "notEnoughLeft": "剩余额度不足以生成 {variations, number} 张：请减少变体数量。",
+      "notEnoughLeftOrUpgrade": "剩余额度不足以生成 {variations, number} 张：请减少变体数量或升级套餐。",
+      "moreArtistic": "更具艺术感",
+      "clearerCode": "二维码更清晰",
+      "followsYourPrompt": "紧贴您的提示词",
+      "interpretsFreely": "自由发挥",
+      "generateVariations": "{count, plural, one {生成二维码艺术图} other {生成 # 个变体}}"
     }
   },
   "compare": {
@@ -1970,6 +2117,1750 @@
         "heading": "React 和 JavaScript 二维码库",
         "intro": "可从 npm 安装、在自己的应用中生成二维码的软件包。这两个库的使用范围都比 QRdx 的 npm 包广得多。"
       }
+    }
+  },
+  "editor": {
+    "actionBar": {
+      "codeButton": {
+        "code": "代码",
+        "getCode": "获取代码"
+      },
+      "copySvgButton": {
+        "copied": "已复制",
+        "copySvg": "复制 SVG",
+        "svgCopiedToClipboard": "SVG 已复制到剪贴板",
+        "failedToCopySvg": "复制 SVG 失败"
+      },
+      "downloadButton": {
+        "download": "下载",
+        "downloadQrCode": "下载二维码"
+      },
+      "downloadDialog": {
+        "addContentToSeeYour": "添加内容后即可查看二维码。",
+        "format": "格式",
+        "pixels": "像素",
+        "at300Dpi": "300 dpi 下",
+        "width": "宽度",
+        "color": "颜色",
+        "bleed": "出血",
+        "downloadQrCode": "下载二维码",
+        "imageFile": "图片文件",
+        "printReady": "印刷就绪",
+        "size": "尺寸",
+        "custom": "自定义",
+        "px": "px",
+        "widthAndHeight": "宽度和高度",
+        "scale": "缩放",
+        "transparentBackground": "透明背景",
+        "makeManyFromACsv": "用此样式从 CSV 批量生成",
+        "scannedFromAbout": "可扫描距离约",
+        "setsTheCodeWidthBelow": "将设置下方的二维码宽度。",
+        "codeWidth": "二维码宽度",
+        "unit": "单位",
+        "mm": "mm",
+        "inches": "英寸",
+        "colorMode": "颜色模式",
+        "none": "无",
+        "n3Mm": "3 mm",
+        "cropMarksPdf": "裁切标记（PDF）",
+        "scansFromUpToAbout": "最远可在约 {value} 的距离外扫描（约为单个圆点尺寸的 250 倍）。",
+        "under2CmIsHard": "小于 2 cm 的二维码手机很难扫描，条件允许请做大一些。",
+        "eachDotIsOnlyValue": "每个圆点仅 {value, number} mm，打印时可能会晕开。请放大二维码或精简内容。",
+        "cmykUsesASimpleConversion": "CMYK 采用不含色彩配置文件的简单转换；如果品牌色要求精确，请咨询印刷商。",
+        "pdfAndEpsDrawEvery": "PDF 和 EPS 将每个圆点绘制为矢量形状，并将线性和径向渐变保留为平滑的矢量渐变。",
+        "jpgCantBeTransparent": "JPG 不支持透明",
+        "vector": " · 矢量",
+        "anySize": "任意尺寸",
+        "printbleedMm": "{printBleed, number} mm",
+        "vectorPdfOrEpsAt": "按精确物理尺寸输出的矢量 PDF 或 EPS，可直接交给印刷厂。",
+        "pickAFormatAndSize": "选择格式和尺寸，预览即为最终效果。",
+        "svgCopied": "SVG 已复制",
+        "copySvg": "复制 SVG",
+        "preparing": "正在准备…",
+        "downloadFilename": "下载 {filename}",
+        "downloadQrCodePrintPrintsize": "下载 qr-code-print-{printSize, number}{printUnit}.pdf",
+        "enterMinMaxUnitOr": "请输入 {min, number}–{max, number} {unit}，或 {distanceMin, number}–{distanceMax, number} {distanceUnit} 的距离。",
+        "enterMinMaxUnit": "请输入 {min, number}–{max, number} {unit}。",
+        "downloadedFilename": "已下载 {filename}",
+        "failedToDownloadQrCode": "二维码下载失败",
+        "downloadedPrintfilename": "已下载 {printFilename}",
+        "failedToCreatePrintFile": "创建印刷文件失败",
+        "couldntCopyTheSvg": "无法复制 SVG",
+        "formatHints": {
+          "png": "适合网页、文档和幻灯片。",
+          "jpg": "适合电子邮件和小文件。",
+          "webp": "适合需要快速加载的网站 · 无损，通常比 PNG 更小。",
+          "svg": "适合 Figma、Illustrator 和网站 · 任意尺寸都保持清晰。",
+          "pdf": "适合文档和快速打印 · 如需矢量 PDF，请使用“印刷就绪”。",
+          "eps": "适合印刷厂和矢量应用 · 任意尺寸都保持清晰。"
+        },
+        "sizePresets": {
+          "small": "电子邮件",
+          "medium": "网页",
+          "large": "社交",
+          "xlarge": "印刷",
+          "3xl": "海报"
+        },
+        "finishedSize": "成品尺寸 {width} × {height}",
+        "finishedSizeOnPage": "成品尺寸 {width} × {height}（页面 {pageWidth} × {pageHeight}）"
+      },
+      "editButton": {
+        "edit": "编辑",
+        "editTheme": "编辑主题"
+      },
+      "moreMenu": {
+        "more": "更多",
+        "moreThingsToDoWith": "此设计的更多用法",
+        "makeManyFromACsv": "用 CSV 批量生成",
+        "checkAPhotoOfThe": "检查印刷品照片",
+        "publishToCommunity": "发布到社区",
+        "useQrdxInFigmaAnd": "在 Figma 等工具中使用 QRdx",
+        "keyboardShortcuts": "键盘快捷键",
+        "makeItDynamic": "设为动态二维码…",
+        "linkOptions": "链接选项…",
+        "oneCodePerRowOf": "CSV 的每一行生成一个二维码，采用此样式。",
+        "makeSureThePrintedCode": "确保印刷出的二维码和这个一样可以扫描。",
+        "shareThisStyleForOthers": "分享此样式，供他人套用。",
+        "itsShortLinkFolderTags": "它的短链接、文件夹、标签和路由。",
+        "changeWhereItPointsAfter": "印刷后仍可更改指向的位置，并统计扫描次数。",
+        "signInToChangeWhere": "登录后可在印刷后更改指向的位置。",
+        "pluginsHint": {
+          "noneListed": "尚未上架其应用商店：请从源码安装。",
+          "someListed": "部分目前需从源码安装。"
+        }
+      },
+      "publishButton": {
+        "published": "已发布",
+        "publish": "发布",
+        "publishedToCommunity": "已发布到社区",
+        "publishToCommunity": "发布到社区"
+      },
+      "qrCodeDialog": {
+        "getCode": "获取代码",
+        "useThisDesignInYour": "在你的应用、网页中使用此设计，或通过 API、AI 助手来使用。",
+        "installTheOpenSourceQrdx": "安装开源的 <code>qrdx</code> 包（npm 上的版本为 {version}），然后引入此组件。",
+        "addTheQrCodeComponent": "从 QRdx 注册表中添加二维码组件，然后配合此设计使用。",
+        "aPublicImageOfThis": "此二维码的公开图片，可嵌入到任何地方，无需 API 密钥。",
+        "createsADynamicCodeWith": "使用此设计创建动态二维码，需要 <link>API 密钥</link>。",
+        "addThisServerToYour": "将此服务器添加到你的 AI 助手，无需密钥。<link>查看设置方法</link>",
+        "askUseQrdxDesignQr": "请这样问：“使用 QRdx design_qr 和这些参数。”QRdx 可能会调整样式，直到二维码能够顺利扫描。",
+        "writesThisDesignToQr": "将此设计写入 qr.svg。",
+        "developerDocs": "开发者文档",
+        "pluginsForFigmaCanvaRaycast": "适用于 Figma、Canva、Raycast 和 Chrome 的插件",
+        "leftOutValue": "已省略：{value}。",
+        "imageUrl": "图片网址",
+        "terminal": "终端",
+        "designQrArguments": "design_qr 参数",
+        "labelCopied": "已复制{label}",
+        "copyLabel": "复制{label}",
+        "command": "命令",
+        "address": "地址",
+        "line": "行",
+        "lines": "行",
+        "copied": "已复制",
+        "copy": "复制",
+        "couldntCopyToTheClipboard": "无法复制到剪贴板"
+      },
+      "resetButton": {
+        "reset": "重置",
+        "resetToPresetDefaults": "重置为预设默认值"
+      },
+      "saveButton": {
+        "save": "保存",
+        "saveDesign": "保存设计"
+      },
+      "shareButton": {
+        "share": "分享",
+        "shareDesign": "分享设计"
+      },
+      "undoRedoButtons": {
+        "undo": "撤销",
+        "redo": "重做"
+      }
+    },
+    "ai": {
+      "agentParts": {
+        "scanScoreScoreValue": "扫描评分 {score, number} · {value}",
+        "theDesignStepFailedTry": "设计步骤失败，请重试。",
+        "theContentNeedsAFix": "内容需要修正：{value}",
+        "setTheContentContentline": "设置内容：{contentLine}",
+        "checkedScanScoreScoreValue": "已检查扫描评分：{score, number} · {value}",
+        "repairing": "正在修复…",
+        "stop": "停止",
+        "checkedScanScore": "已检查扫描评分：",
+        "youAnsweredAnswered": "你的回答：{answered}",
+        "notAnswered": "未回答",
+        "send": "发送",
+        "reject": "拒绝",
+        "changedToGetThere": "为此所做的更改：",
+        "scoredWithASampleLink": "在你添加内容之前，使用示例链接进行评分。",
+        "replacesTheContentWithSummary": "将内容替换为 {summary}",
+        "turnsOffTheLogoQr": "关闭 Logo QR / Image QR 艺术效果",
+        "applyToYourEditor": "应用到你的编辑器？",
+        "undone": "已撤销",
+        "applyAgain": "再次应用",
+        "applied": "已应用",
+        "undo": "撤销",
+        "applying": "正在应用…",
+        "couldntApplyItTryAgain": "无法应用，请重试。",
+        "notApplied": "未应用",
+        "templateName": "模板“{name}”",
+        "savesTheLookToYour": "将此外观保存到你的主题：颜色、形状、边框及其文字、边框线和 Logo。不包含内容。",
+        "saveToYourAccount": "保存到你的账户？",
+        "savedToYourThemes": "已保存到你的主题",
+        "openThemes": "打开主题",
+        "upgrade": "升级",
+        "saving": "保存中…",
+        "notSaved": "未保存",
+        "steps": "步骤",
+        "yourAnswer": "你的回答",
+        "orTypeYourAnswer": "或输入你的回答",
+        "designingTheStyle": "正在设计样式…",
+        "designedTheStyle": "已设计样式",
+        "fellBackToAClassic": "已回退为经典的白底黑色二维码",
+        "repairedValue": "已修复：{value}",
+        "couldntCheckTheScanScore": "无法检查扫描分数",
+        "checkingTheScanScore": "正在检查扫描分数…",
+        "showLess": "收起",
+        "showValueMore": "再显示 {value, number} 项",
+        "applyThisDesign": "应用此设计",
+        "notAppliedYourEditorIs": "未应用。编辑器保持不变。"
+      },
+      "aiBotBadge": {
+        "qrdxAi": "QRdx AI"
+      },
+      "aiChatFormBody": {
+        "chatInput": "聊天输入"
+      },
+      "aiSendButton": {
+        "stop": "停止",
+        "labelEnter": "{label}（Enter）"
+      },
+      "alertBanner": {
+        "youHaveFreepromessagesleftFreePro": "你还剩 {freeProMessagesLeft, number} 条免费<span> Pro </span>消息。",
+        "upgradeToProToUnlock": "升级到 <span>Pro</span>，即可解锁不限次数的请求。",
+        "upgrade": "升级"
+      },
+      "chatImagePreview": {
+        "imagePreview": "图片预览",
+        "imagePreview2": "图片预览",
+        "fullImagePreview": "完整图片预览"
+      },
+      "chatInput": {
+        "designingYourCode": "正在设计你的二维码…",
+        "newChat": "新对话",
+        "toSend": "发送",
+        "newLine": "换行",
+        "startANewChat": "开始新对话",
+        "generate": "生成"
+      },
+      "chatInterface": {
+        "seemsLikeThisMessageIs": "这条消息似乎已不可用。",
+        "cannotRetryThisMessage": "无法重试此消息"
+      },
+      "chatThemePreview": {
+        "stoppedOrFailedRetryFrom": "已停止或失败。请从上方消息重试。",
+        "apply": "应用",
+        "collapseSection": "收起此部分",
+        "expandSection": "展开此部分",
+        "feedback": {
+          "colors": "正在挑选可扫描的颜色…",
+          "shapes": "正在调整圆点和定位眼…",
+          "contrast": "正在检查对比度…",
+          "almost": "马上就好…"
+        }
+      },
+      "closeableSuggestedPillActions": {
+        "suggestions": "建议",
+        "hideSuggestions": "隐藏建议"
+      },
+      "contentDialog": {
+        "whatShouldTheCodeOpen": "二维码要打开什么？",
+        "addALinkOrChoose": "添加链接或选择类型，您的设计会接着保留。",
+        "link": "链接",
+        "scansOpen": "扫描后打开",
+        "orChooseAType": "或选择类型",
+        "lengthMoreTypes": "另外 {length, number} 种类型",
+        "cancel": "取消",
+        "continue": "继续",
+        "backToAllTypes": "返回所有类型",
+        "aWebsiteAMenuA": "网站、菜单、表单：任何网址均可。"
+      },
+      "dragAndDropImageUploader": {
+        "dropImagesHere": "将图片拖放到此处"
+      },
+      "enhancePromptButton": {
+        "stop": "停止",
+        "enhancePrompt": "优化提示词"
+      },
+      "imageParts": {
+        "useIt": "使用",
+        "addContent": "添加内容",
+        "notAdded": "未添加",
+        "whatShouldTheCodeOpen": "二维码要打开什么内容？",
+        "undone": "已撤销",
+        "applyAgain": "重新应用",
+        "applied": "已应用",
+        "undo": "撤销",
+        "openedAiArtInThe": "已在“艺术”标签页中打开 AI 艺术图",
+        "notAppliedYourEditorIs": "未应用，编辑器内容保持不变。",
+        "placedAsValue": "已作为{value}放置",
+        "applyToYourEditor": "应用到编辑器？",
+        "apply": "应用",
+        "reject": "拒绝",
+        "notGreatYetTryAnother": "效果还不够好，请试试上面的其他方式。",
+        "keepMyCode": "保留我的二维码",
+        "addWhatTheCodeOpens": "请先添加二维码要打开的内容。",
+        "placingYourPicture": "正在放置你的图片…",
+        "asValueWithNoAi": "作为{value}，不消耗 AI 额度",
+        "replacesTheContentWithSummary": "将内容替换为{summary}",
+        "openAiArt": "打开 AI 艺术图",
+        "aiArtIsntOnHere": "此处未启用 AI 艺术图。Image QR 直接使用你的图片，不使用 AI。",
+        "useAsImageQr": "用作 Image QR",
+        "aiPaintsANewScene": "AI 以你的图片为参考，在二维码中绘制全新的场景。",
+        "steps": "步骤",
+        "addedValue": "已添加：{value}",
+        "noContentAdded": "未添加内容",
+        "yourEditorHasContentNow": "你的编辑器现在已有内容。",
+        "noContentYet": "暂无内容。",
+        "addALinkOrChoose": "请添加链接或选择类型{reason}。",
+        "addALinkOrChoose2": "请添加链接或选择类型，然后继续设计。",
+        "placedYourPicture": "已放置你的图片",
+        "youStartItInThe": "请在“艺术”标签页中开始，这会消耗 AI 艺术额度。",
+        "checkedScore": "已检查，扫描评分：{score, number}",
+        "repairedThenCheckedScore": "已修复并检查，扫描评分：{score, number}",
+        "place": {
+          "logo": "用作徽标",
+          "logo_qr": "用作 Logo QR",
+          "image_qr": "用作 Image QR",
+          "background": "用作背景",
+          "dots": "用于码点"
+        }
+      },
+      "imageUploader": {
+        "image": "图片",
+        "uploadImageForThemeGeneration": "上传图片以生成主题",
+        "attachImage": "添加图片"
+      },
+      "messageActions": {
+        "retry": "重试",
+        "edit": "编辑"
+      },
+      "messageEditForm": {
+        "cancelEdit": "取消编辑",
+        "confirmEdit": "确认编辑"
+      },
+      "message": {
+        "qrdxAi": "QRdx AI",
+        "imagePreview": "图片预览"
+      },
+      "messages": {
+        "clearError": "清除错误"
+      },
+      "noMessagesPlaceholder": {
+        "recentGenerations": "最近生成",
+        "applyValue": "应用：{value}",
+        "applyThisGeneratedTheme": "应用此生成的主题",
+        "modes": {
+          "create": {
+            "label": "创建",
+            "description": "从零开始：它打开什么内容，再加上一种风格、品牌或情绪。"
+          },
+          "remix": {
+            "label": "改编",
+            "description": "选一个预设，把它改成全新的样子。"
+          },
+          "tweak": {
+            "label": "微调",
+            "description": "调整你当前的设计。"
+          }
+        },
+        "greeting": "想让我帮你设计什么主题？",
+        "greetingName": "{name}，想让我帮你设计什么主题？"
+      },
+      "publishCard": {
+        "publishNameToTheCommunity": "将“{name}”发布到社区",
+        "aThemeAnyoneCanUse": "一个任何人都能使用的主题，基于 {COMMUNITY_LICENSE_NAME} 免费提供。发布前你可以先编辑详情。",
+        "shareItInTheCommunity": "要分享到社区吗？",
+        "editAndPublish": "编辑并发布",
+        "notNow": "暂不",
+        "published": "已发布",
+        "viewIt": "查看",
+        "notPublishedNothingWasShared": "未发布，没有分享任何内容。",
+        "checking": "正在检查…",
+        "couldntCheckItLookFor": "无法检查，请到你的社区主页查找。",
+        "notPublished": "未发布"
+      },
+      "suggestionChips": {
+        "suggestions": "建议",
+        "chips": {
+          "differentStyle": "试试其他风格",
+          "frameText": "修改边框文字",
+          "addFrame": "添加带“扫描我”的边框",
+          "darker": "调深一点",
+          "lighter": "调浅一点",
+          "removeLogo": "移除标志",
+          "addLogo": "添加标志",
+          "saveTemplate": "保存为模板",
+          "keepColors": "保留颜色，更换形状",
+          "behindCode": "改为放在二维码后面",
+          "asLogo": "改为用作标志",
+          "variation": "生成一个变体",
+          "darkVersion": "生成深色版本"
+        }
+      },
+      "uploadedImagePreview": {
+        "uploadedPreview": "已上传的预览图",
+        "removeImage": "移除图片",
+        "uploadedPreviewEnlarged": "已上传预览图的放大图"
+      }
+    },
+    "art": {
+      "aiArtDownload": {
+        "downloadAiArt": "下载 AI 艺术图",
+        "widthPx": "{width, number, ::group-off} px",
+        "printPng": "打印用 PNG",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px，已再次检查",
+        "useAsImageQr": "用作 Image QR",
+        "aiGeneratedQrCodeArtwork": "AI 生成的二维码艺术图，编码内容为 {text}",
+        "format": "格式",
+        "downloadPng": "下载 PNG",
+        "downloadPrintPng": "下载打印用 PNG",
+        "downloadTheWidthPxImage": "请改为下载 {width, number, ::group-off} px 的图片。",
+        "pickSvgPdfOrEps": "请为它选择 SVG、PDF 或 EPS。",
+        "thePrintSizeCopyDidnt": "打印尺寸的副本未通过扫描检查",
+        "couldntPrepareThePrintSize": "无法准备打印尺寸的图片",
+        "nowAnImageQrCode": "现已成为 Image QR 二维码",
+        "couldntTurnThisImageInto": "无法将此图片转为 Image QR 二维码"
+      },
+      "aiArtPanel": {
+        "style": "风格",
+        "variations": "变体",
+        "eachVariationIsItsOwn": "每个变体都是独立的图片，各消耗 1 个额度。系统会为你挑选最容易扫描的一张。",
+        "cancel": "取消",
+        "addYourContentFirstAi": "请先添加内容：AI 艺术图会为你正在编辑的二维码作画。",
+        "addContent": "添加内容",
+        "aiArtFitsUpTo": "AI 艺术图最多支持 {ART_TEXT_MAX_LENGTH, number} 个字符，而这个二维码有 {length, number} 个。更短的链接，或动态二维码的短链接，则可以使用。",
+        "encodesYourDynamicLinkValue": "编码的是你的动态链接 <span>{value}</span>，因此印刷后仍可更改它的指向。",
+        "encodesValueFixedOncePrinted": "编码的是 <span>{value}</span>，印刷后无法更改。在“内容”中改为动态二维码，即可日后修改。",
+        "encodesYourLabelDetailsFixed": "编码的是你的{label}详情，印刷后无法更改。",
+        "thingsToAvoid": "避免出现的内容",
+        "seed": "种子",
+        "lockSeed": "锁定种子",
+        "referenceImage": "参考图",
+        "useMyLogoAsReference": "使用我的 Logo 作为参考图",
+        "remove": "移除",
+        "uploadReference": "上传参考图",
+        "optionalItsColorsAndShapes": "可选。图片的颜色和形状会融入作品。图片会在浏览器中缩放，并随提示词通过 Vercel AI Gateway 发送给 {ART_MODEL_LABEL}。",
+        "signInToGenerateEvery": "登录后即可生成。每个套餐每月都包含 AI 艺术图；<link>查看套餐</link>。",
+        "eachImageUses1Ai": "每张图片消耗 1 个 AI 艺术图额度；生成失败的图片会退还额度。",
+        "unlimitedAiArtOnYour": "你的套餐不限 AI 艺术图次数。本次生成会使用 {variations, number} 个变体。",
+        "describeASceneEG": "描述一个场景，例如：日落时岩岸上的灯塔，油画",
+        "qrVisibility": "二维码可见度",
+        "creativity": "创意度",
+        "eGPeopleBuildingsDark": "例如：人物、建筑、深色",
+        "randomEachRun": "每次随机",
+        "uploadAReferenceImage": "上传参考图",
+        "reference": "参考图",
+        "generating": "生成中…",
+        "signInToGenerate": "登录后生成",
+        "advancedCreativitySeedReference": "高级：创意度、种子、参考图",
+        "advancedCreativityReference": "高级：创意度、参考图",
+        "uploadItAsAReference": "改为将它上传为参考图片。",
+        "couldntUseYourLogo": "无法使用你的徽标",
+        "creditsLeft": "本月 AI 艺术图还剩 <count>{remaining, number}/{limit, number}</count> 张{pooled, select, yes {（团队共享）} other {}}，将于 {resets} 重置。本次生成将使用 {variations, number} 张。",
+        "notEnoughLeft": "额度不足：请减少变体数量。",
+        "notEnoughLeftOrUpgrade": "额度不足：请减少变体数量或升级。",
+        "showResults": "{count, plural, other {查看结果}}",
+        "moreArtistic": "更具艺术感",
+        "clearerCode": "更清晰的二维码",
+        "followsYourPrompt": "贴合你的提示词",
+        "interpretsFreely": "自由发挥",
+        "generateVariations": "{count, plural, =1 {生成二维码艺术图} other {生成 # 个变体}}"
+      },
+      "artCanvas": {
+        "downloadPng": "下载 PNG",
+        "printPng": "打印用 PNG",
+        "useAsImageQr": "用作 Image QR",
+        "retryClearer": "更清晰地重试",
+        "aiArt": "AI 艺术图",
+        "encodesValue": "编码内容：{value}",
+        "backToCode": "返回二维码",
+        "eachImageIsCheckedTo": "每张图片在呈现给你之前，都会检查是否可扫描，最长可能需要一分钟。",
+        "printPngArtPrintSize": "打印用 PNG，{ART_PRINT_SIZE, number, ::group-off} px",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px，已再次检查可扫描",
+        "variations": "变体",
+        "aiArtResult": "AI 艺术图结果",
+        "aiGeneratedQrCodeArtwork": "编码了 {text} 的 AI 生成二维码艺术作品",
+        "verifiedToScanScanScore": "已验证可扫描 · 扫描评分 {score, number}",
+        "checkBeforePrinting": "打印前请检查",
+        "scoringTheScan": "正在为扫描评分…",
+        "downloadTheWidthPxImage": "改为下载 {width, number, ::group-off} px 的图片。",
+        "itsVectorArtDownloadIt": "这是矢量图：可下载为 SVG、PDF 或 EPS。",
+        "undo": "撤销",
+        "thePrintSizeCopyDidnt": "打印尺寸的图片未通过扫描检测",
+        "couldntPrepareThePrintSize": "无法准备打印尺寸的图片",
+        "nowAnImageQrCode": "已转为 Image QR",
+        "couldntTurnThisImageInto": "无法将这张图片转为 Image QR",
+        "generatingVariations": "正在生成 {count, number} 个变体…",
+        "generatingYourArtwork": "正在生成你的作品…",
+        "resultSummary": "二维码可见度 {visibility, number} · 创意度 {creativity, number} · PNG {width, number, ::group-off} px，打印版 PNG {printSize, number, ::group-off} px{failed, plural, =0 {} one { · {failed, number} 个变体生成失败，未消耗额度} other { · # 个变体生成失败，未消耗额度}}。如需 SVG、PDF 或 EPS，请将其作为 Image QR 使用。"
+      },
+      "artPanel": {
+        "art": "艺术",
+        "off": "关闭",
+        "logoQr": "Logo QR",
+        "imageQr": "Image QR",
+        "aiArt": "AI 艺术",
+        "artMode": "艺术模式",
+        "modes": {
+          "off": "普通二维码。Logo QR 和 Image QR 无需 AI，即可将图片融入圆点，支持所有格式。",
+          "logo": "无需 AI：你的 Logo 成为二维码的一部分，支持所有格式。",
+          "halftone": "无需 AI：你的照片成为二维码的一部分，支持所有格式。",
+          "ai": "AI 将场景绘入你的二维码。每张图片都会检查能否扫描。"
+        }
+      }
+    },
+    "brandLogos": {
+      "brandLogoGallery": {
+        "brandLogos": "品牌 Logo",
+        "theBrandLogosDidntLoad": "品牌 Logo 未能加载。",
+        "tryAgain": "重试",
+        "noBrandMatchesQuerySome": "没有与“{query}”匹配的品牌。部分品牌已要求 Simple Icons 移除其标志，因此不在此列。",
+        "allBrandsAToZ": "全部品牌，按 A 到 Z 排序",
+        "logosFromSimpleIconsCc0": "Logo 来自 Simple Icons（CC0）。品牌标志是其所有者的商标；请仅用它来引导人们了解该品牌。",
+        "showMore": "显示更多",
+        "searchBrands": "搜索品牌",
+        "searchSpotifyPaypalGoogleMaps": "搜索：Spotify、PayPal、Google Maps…",
+        "logoColor": "Logo 颜色",
+        "results": "结果",
+        "titleLogo": "{title} Logo",
+        "valueBrandsFromSimpleIcons": "来自 Simple Icons 的 {value} 个品牌。每个标志均归其所有者所有。",
+        "brandsFromSimpleIconsEach": "品牌来自 Simple Icons，各标志归其所有者所有。",
+        "plateNeededForWhite": "底板（白色需要）",
+        "plate": "底板",
+        "n1Brand": "1 个品牌",
+        "valueBrands": "{value} 个品牌"
+      }
+    },
+    "communitySheet": {
+      "communityThemes": "社区主题",
+      "freeToUseUnderCc0": "依据 CC0 免费使用。应用主题不会改动你的内容。",
+      "sort": "排序",
+      "allTags": "全部标签",
+      "tryAgain": "重试",
+      "clearSearch": "清除搜索",
+      "showAllTags": "显示全部标签",
+      "searchCoversTheFirstLength": "搜索范围为前 {length, number} 个主题。",
+      "saveAndContinue": "保存并继续",
+      "publishingSharesASavedTheme": "发布将分享已保存的主题。请先为此样式命名后继续。",
+      "saveToPublish": "保存后发布",
+      "searchCommunityThemes": "搜索社区主题",
+      "searchThemes": "搜索主题",
+      "loadingThemes": "正在加载主题",
+      "couldntLoadCommunityThemes": "无法加载社区主题",
+      "noThemesMatchQuery": "没有与“{query}”匹配的主题",
+      "noThemesTaggedTagYet": "暂无标签为 {tag} 的主题",
+      "noCommunityThemesYet": "暂无社区主题",
+      "applyName": "应用 {name}",
+      "official": "官方",
+      "unlikeName": "取消点赞 {name}",
+      "likeName": "点赞 {name}",
+      "likes": "点赞数",
+      "published": "已发布",
+      "publishThisStyle": "发布此样式",
+      "tags": "标签",
+      "undo": "撤销",
+      "likedName": "已点赞“{name}”",
+      "liked": "已点赞",
+      "sorts": {
+        "popular": "最受欢迎",
+        "newest": "最新"
+      }
+    },
+    "contentForms": {
+      "amazonForm": {
+        "amazonProductUrl": "Amazon 商品链接 *",
+        "scanningWillOpenYourAmazon": "扫描后将打开你的 Amazon 商品或店铺"
+      },
+      "attendanceForm": {
+        "googleFormUrl": "Google Form 链接 *",
+        "scanningWillOpenYourAttendance": "扫描后将打开你的考勤表单",
+        "httpsFormsGleOrHttps": "https://forms.gle/... 或 https://docs.google.com/forms/..."
+      },
+      "bitcoinForm": {
+        "bitcoinAddress": "比特币地址 *",
+        "amountBtc": "金额（BTC）",
+        "label": "标签",
+        "message": "留言",
+        "scanningWillOpenABitcoin": "扫描后将打开比特币钱包，并填入这些付款信息",
+        "n1a1zp1ep5qgefi2dmptftl5slmv7divfna": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+        "paymentLabel": "付款标签",
+        "paymentMessage": "付款留言"
+      },
+      "calcomForm": {
+        "calComBookingUrl": "Cal.com 预约链接 *",
+        "scanningWillOpenYourCal": "扫描后将打开你的 Cal.com 预约页面"
+      },
+      "dubshForm": {
+        "dubShortLink": "Dub 短链接 *",
+        "scanningWillOpenYourDub": "扫描后将打开你的 Dub 短链接。",
+        "connectDub": "连接 Dub",
+        "connectDubToCreatePick": "连接 Dub 后，可在此创建、选择并追踪 Dub 链接。",
+        "enterManually": "手动输入",
+        "createNew": "新建",
+        "selectExisting": "选择已有",
+        "pasteALink": "粘贴链接",
+        "destinationUrl": "目标网址 *",
+        "domain": "域名",
+        "customEnding": "自定义后缀",
+        "title": "标题",
+        "description": "描述",
+        "createDubLink": "创建 Dub 链接",
+        "loadingYourDubLinks": "正在加载你的 Dub 链接…",
+        "clicksClicks": "（{clicks, number} 次点击）",
+        "selectAShortLink": "选择短链接…",
+        "noLinksFound": "未找到链接。",
+        "scansGoToUrl": "扫描后将跳转到 {url}",
+        "campaign": "活动",
+        "springCampaign": "春季活动",
+        "optionalInternalNote": "可选的内部备注",
+        "searchLinks": "搜索链接…",
+        "failedToConnectDub": "连接 Dub 失败",
+        "dubLinkCreated": "Dub 链接已创建",
+        "failedToCreateDubLink": "创建 Dub 链接失败"
+      },
+      "emailForm": {
+        "recipientEmail": "收件人邮箱 *",
+        "subject": "主题",
+        "message": "正文",
+        "scanningWillOpenAnEmail": "扫描后将打开发往该地址的邮件草稿",
+        "contactExampleCom": "contact@example.com",
+        "emailSubject": "邮件主题",
+        "emailMessage": "邮件正文"
+      },
+      "ethereumForm": {
+        "ethereumAddress": "以太坊地址 *",
+        "amountEth": "金额（ETH）",
+        "gasLimit": "Gas 上限",
+        "scanningWillOpenAnEthereum": "扫描后将打开以太坊钱包，并带入这些付款信息",
+        "n0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359": "0xfb6916095ca1df60bb79Ce92ce3ea74c37c5d359"
+      },
+      "etsyForm": {
+        "etsyShopUrl": "Etsy 店铺网址 *",
+        "scanningWillOpenYourEtsy": "扫描后将打开你的 Etsy 店铺或商品页面"
+      },
+      "exampleForm": {
+        "exampleDataReplaceItWith": "示例数据，请替换为你自己的内容。",
+        "clear": "清除",
+        "tryAnExample": "试试示例"
+      },
+      "facebookForm": {
+        "facebookProfileUrl": "Facebook 主页网址 *",
+        "scanningWillOpenYourFacebook": "扫描后将打开你的 Facebook 个人主页或公共主页"
+      },
+      "flipkartForm": {
+        "flipkartProductUrl": "Flipkart 商品网址 *",
+        "scanningWillOpenYourFlipkart": "扫描后将打开你的 Flipkart 商品或店铺"
+      },
+      "googleDriveForm": {
+        "connectGoogleDriveToPick": "连接 Google Drive 以选择文件，或在下方粘贴链接。",
+        "connectGoogleDrive": "连接 Google Drive",
+        "googleDriveUrl": "Google Drive 网址 *",
+        "scanningWillOpenTheSelected": "扫描后将打开所选的 Google Drive 文件或文件夹。",
+        "search": "搜索",
+        "loadMore": "加载更多",
+        "searchDriveFilesAndFolders": "搜索 Drive 文件和文件夹",
+        "failedToConnectGoogleDrive": "无法连接 Google Drive"
+      },
+      "googleReviewForm": {
+        "googlePlaceId": "Google Place ID *",
+        "findYoursWithTheGoogle": "使用 <link>Google Place ID Finder</link> 查找你的 Place ID",
+        "scanningWillOpenGoogleTo": "扫描后将打开 Google，为你的商家撰写评价",
+        "chijn1tTdeuemsrusoyg83fry4": "ChIJN1t_tDeuEmsRUsoyG83frY4"
+      },
+      "instagramForm": {
+        "instagramUsername": "Instagram 用户名 *",
+        "scanningWillOpenYourInstagram": "扫描后将打开你的 Instagram 主页",
+        "usernameOrUsername": "用户名或 @用户名"
+      },
+      "linkedinForm": {
+        "linkedinProfileUrl": "LinkedIn 个人主页链接 *",
+        "scanningWillOpenYourLinkedin": "扫描后将打开你的 LinkedIn 个人主页或公司主页"
+      },
+      "mapsForm": {
+        "location": "位置 *",
+        "scanningWillOpenThisPlace": "扫描后将在 Google Maps 中打开此地点",
+        "addressOrCoordinates407128": "地址或坐标 (40.7128, -74.0060)"
+      },
+      "paypalForm": {
+        "paypalMeUrlOrPayment": "PayPal.Me 链接或付款链接 *",
+        "scanningWillOpenThePaypal": "扫描后将打开 PayPal 付款页面",
+        "httpsPaypalMeUsernameOr": "https://paypal.me/username 或付款链接"
+      },
+      "phoneForm": {
+        "phoneNumber": "电话号码 *",
+        "includeTheCountryCodeLike": "请包含国家/地区代码，如 +1。扫描后将拨打电话。"
+      },
+      "pinterestForm": {
+        "pinterestUsername": "Pinterest 用户名 *",
+        "scanningWillOpenYourPinterest": "扫描后将打开你的 Pinterest 主页",
+        "username": "用户名"
+      },
+      "redditForm": {
+        "redditUsername": "Reddit 用户名",
+        "subreddit": "Subreddit",
+        "fillInOneIfBoth": "请填写其中一项。如果两项都已填写，将使用 subreddit。",
+        "scanningWillOpenTheReddit": "扫描后将打开 Reddit 个人主页或 subreddit",
+        "usernameOrUUsername": "用户名或 u/用户名",
+        "subredditOrRSubreddit": "subreddit 或 r/subreddit"
+      },
+      "smsForm": {
+        "phoneNumber": "电话号码 *",
+        "message": "短信内容",
+        "scanningWillOpenAText": "扫描后将向此号码打开一条短信",
+        "preFilledSmsMessage": "预填的短信内容"
+      },
+      "snapchatForm": {
+        "snapchatUsername": "Snapchat 用户名 *",
+        "scanningWillOpenYourSnapchat": "扫描后将打开你的 Snapchat 添加好友页面",
+        "username": "用户名"
+      },
+      "spotifyForm": {
+        "spotifyUriOrUrl": "Spotify URI 或链接 *",
+        "scanningWillOpenTheContent": "扫描后将在 Spotify 中打开该内容",
+        "spotifyTrackOrHttpsOpen": "spotify:track:... 或 https://open.spotify.com/..."
+      },
+      "textForm": {
+        "textContent": "文本内容 *",
+        "pasteALinkAndIt": "粘贴链接后，将自动切换为对应的类型。",
+        "enterAnyText": "输入任意文本…"
+      },
+      "threadsForm": {
+        "threadsUsername": "Threads 用户名 *",
+        "scanningWillOpenYourThreads": "扫描后将打开你的 Threads 主页",
+        "usernameOrUsername": "用户名或 @用户名"
+      },
+      "tiktokForm": {
+        "tiktokUsername": "TikTok 用户名 *",
+        "scanningWillOpenYourTiktok": "扫描后将打开你的 TikTok 主页",
+        "usernameOrUsername": "用户名或 @用户名"
+      },
+      "twitterForm": {
+        "twitterXUsername": "Twitter / X 用户名 *",
+        "scanningWillOpenYourTwitter": "扫描后将打开你的 Twitter / X 主页",
+        "usernameOrUsername": "用户名或 @用户名"
+      },
+      "upiForm": {
+        "upiId": "UPI ID *",
+        "payeeName": "收款人姓名",
+        "amount": "金额 (₹)",
+        "note": "备注",
+        "scanningWillOpenAUpi": "扫描后将打开 UPI 应用并带入这些付款信息",
+        "usernameBankname": "username@bankname",
+        "yourName": "你的姓名",
+        "paymentFor": "付款事由..."
+      },
+      "urlForm": {
+        "websiteAddress": "网站地址",
+        "scansOpen": "扫描后打开",
+        "pasteAnyLinkSocialAnd": "粘贴任意链接。社交媒体和 WhatsApp 链接会有各自的类型。"
+      },
+      "vcardForm": {
+        "firstName": "名 *",
+        "lastName": "姓",
+        "organization": "公司/组织",
+        "phone": "电话",
+        "email": "电子邮箱",
+        "website": "网站",
+        "address": "地址",
+        "note": "备注",
+        "scanningWillOfferToSave": "扫描后将提示保存此联系人",
+        "john": "John",
+        "doe": "Doe",
+        "companyName": "公司名称",
+        "johnExampleCom": "john@example.com",
+        "n123MainStCityCountry": "某某市某某路 123 号",
+        "additionalNotes": "补充备注"
+      },
+      "venmoForm": {
+        "venmoUsername": "Venmo 用户名 *",
+        "amount": "金额（$）",
+        "note": "备注",
+        "scanningWillOpenVenmoWith": "扫描后将打开 Venmo 并带入这些付款信息",
+        "username": "@用户名",
+        "paymentFor": "付款用途..."
+      },
+      "whatsappForm": {
+        "phoneNumber": "电话号码 *",
+        "includeCountryCodeWithoutSpaces": "请包含国家/地区区号，不要有空格或符号",
+        "message": "消息",
+        "scanningWillOpenAWhatsapp": "扫描后将打开与此号码的 WhatsApp 聊天",
+        "preFilledWhatsappMessage": "预填的 WhatsApp 消息"
+      },
+      "wifiForm": {
+        "networkName": "网络名称 *",
+        "security": "加密方式",
+        "wpaWpa2": "WPA/WPA2",
+        "noPassword": "无密码",
+        "password": "密码 *",
+        "hiddenNetwork": "隐藏网络",
+        "scanningWillOfferToJoin": "扫描后将提示加入此 Wi-Fi 网络",
+        "myWiFiNetwork": "我的 Wi-Fi 网络",
+        "networkPassword": "网络密码"
+      },
+      "youtubeForm": {
+        "videoUrl": "视频网址",
+        "channelUrl": "频道网址",
+        "fillInOneIfBoth": "请填写其中一项。如果两项都填写，则使用视频。",
+        "scanningWillOpenTheYoutube": "扫描后将打开 YouTube 视频或频道"
+      }
+    },
+    "contentTypeModal": {
+      "current": "当前",
+      "chooseAQrCodeType": "选择二维码类型",
+      "whatShouldHappenWhenSomeone": "有人扫描你的二维码时，应该发生什么？",
+      "toPick": "选择",
+      "recent": "最近使用",
+      "noTypeMatchesQueryA": "没有与“{query}”匹配的类型。网址二维码适用于任何网页地址。",
+      "useAUrlCode": "使用网址二维码",
+      "previewEveryTemplate": "预览所有模板",
+      "move": "移动",
+      "pick": "选择",
+      "escClose": "<kbd>esc</kbd> 关闭",
+      "searchQrCodeTypes": "搜索二维码类型",
+      "searchWiFiMenuGpay": "搜索：Wi-Fi、菜单、gpay、名片……",
+      "categories": "分类",
+      "hostedPages": "托管页面",
+      "mobilePagesQrdxHostsFor": "由 QRdx 为你托管的移动端页面，每个页面都配有此设计的动态二维码。你可以在控制台中编辑页面。",
+      "mobilePagesQrdxHostsFor2": "由 QRdx 为你托管的移动端页面，每个页面都配有此设计的动态二维码。登录后即可创建。",
+      "matchesFor": "“{query}”共有 {count, plural, other {# 个匹配项}}"
+    },
+    "contentTypeSelector": {
+      "qrCodeType": "二维码类型",
+      "change": "更改",
+      "chooseAType": "选择类型"
+    },
+    "contrastChecker": {
+      "contrastChecker": "对比度检查器",
+      "wcag20AaRequires": "WCAG 2.0 AA 要求对比度至少为 {MIN_CONTRAST_RATIO, number}:1 • <link>了解更多</link>",
+      "toggleTheme": "切换主题",
+      "all": "全部",
+      "issuesTotalissues": "问题（{totalIssues, number}）",
+      "background": "背景",
+      "foreground": "前景",
+      "aa": "Aa",
+      "sampleText": "示例文字",
+      "preview": "预览",
+      "openContrastChecker": "打开对比度检查器",
+      "qrCodeBase": "二维码主体",
+      "cornerEyes": "角定位点",
+      "eyeDots": "定位点中心",
+      "nameEye": "{name}定位点",
+      "nameEyeDot": "{name}定位点中心",
+      "learnMoreAboutWcagContrast": "了解更多 WCAG 对比度要求",
+      "eyePositions": {
+        "topLeft": "左上",
+        "topRight": "右上",
+        "bottomLeft": "左下"
+      }
+    },
+    "controlSections": {
+      "artControls": {
+        "hintFinderAlignmentAndFormat": "{hint}定位图案、校正图案和格式图案仍保持清晰。",
+        "useMyLogo": "使用我的标志",
+        "uploadPngJpgWebpOr": "{upload}。支持 PNG、JPG、WebP 或 SVG，最大 {value, number}MB。图片只保存在你的浏览器中，仅会保存一个小的色块网格。",
+        "look": "外观",
+        "eyesMatchTheLogo": "定位点与标志匹配",
+        "usesHighErrorCorrectionAnd": "使用高纠错级别和清晰的边框，确保仍可扫描。",
+        "artScansBestWithHigh": "使用高纠错级别和清晰的边框时，艺术二维码的扫描效果最佳。<button>应用</button>",
+        "removeArt": "移除艺术效果",
+        "strength": "强度",
+        "fineTune": "微调",
+        "easierToScan": "更易扫描",
+        "moreArt": "更多艺术感",
+        "scanCheck": "扫描检测",
+        "checking": "检测中…",
+        "artLook": "艺术风格",
+        "artStrength": "艺术强度",
+        "swapDotAndBackgroundColors": "交换圆点与背景颜色",
+        "putTheDotsOnWhite": "将圆点置于白色背景上",
+        "uploadAnother": "上传其他图片",
+        "uploadYourOwn": "上传自己的图片",
+        "decodedInYourBrowserAt": "在浏览器中以三种尺寸解码。",
+        "addContentToCheckYour": "添加内容后即可检测你的实际二维码。",
+        "checkYourConnectionAndTry": "请检查网络连接后重试，或上传你自己的图片。",
+        "tryAPngOrJpg": "请改用 PNG 或 JPG 图片试试。",
+        "useAPngJpgWebp": "请使用 PNG、JPG、WebP 或 SVG 图片。",
+        "imagesMustBeValueMb": "图片大小不能超过 {value, number}MB。",
+        "couldntLoadThisSample": "无法加载此示例",
+        "couldntUseThisImage": "无法使用此图片",
+        "unsupportedImageFormat": "不支持的图片格式",
+        "imageIsTooLarge": "图片过大",
+        "modeCopy": {
+          "logo": {
+            "upload": "透明背景的 PNG 或 SVG 徽标效果最佳",
+            "samples": "试试示例徽标"
+          },
+          "halftone": {
+            "upload": "主体清晰的单主体照片效果最佳",
+            "samples": "试试示例照片"
+          }
+        }
+      },
+      "colorPresets": {
+        "lightCodeOnADark": "深色背景上的浅色二维码在较旧的手机上可能无法扫描。",
+        "colorPalettes": "调色板",
+        "lightCodeOnDarkMay": "深色背景浅色码，在较旧的手机上可能无法扫描。"
+      },
+      "contentControls": {
+        "startFromAStyle": "从样式开始",
+        "browseAllLength": "浏览全部 {length, number} 个",
+        "fineTuneColorsDotsAnd": "微调颜色、圆点和徽标",
+        "applyTheLabelStyle": "应用{label}样式"
+      },
+      "customFrameFields": {
+        "thisFrameHasNoLabels": "此外框没有可编辑的标签。",
+        "icon": "图标",
+        "label": "标签",
+        "leaveEmptyForNoLabel": "留空则不显示标签",
+        "secondLine": "第二行",
+        "leaveEmptyToHideIt": "留空则隐藏",
+        "frameColor": "外框颜色",
+        "textColor": "文字颜色",
+        "accentColor": "强调色"
+      },
+      "designControls": {
+        "colors": "颜色",
+        "background": "背景",
+        "foreground": "前景",
+        "eyes": "码眼",
+        "dots": "圆点",
+        "frame": "外框",
+        "padding": "边距",
+        "errorCorrection": "纠错级别",
+        "border": "边框",
+        "none": "无"
+      },
+      "dotSizeSection": {
+        "sizeOfEachDot": "每个圆点的大小",
+        "dotSize": "圆点大小",
+        "valueDotsKeepTheirFull": "{value}圆点会保持完整大小：更小的圆点将无法扫描。",
+        "smallerDotsGiveALighter": "较小的圆点外观更轻盈。{value}圆点最小可缩至 {floor, number}%，这是仍可扫描的最小尺寸。"
+      },
+      "eyeColorsSection": {
+        "giveEachCornerEyeIts": "为每个码眼单独设置外框和中心颜色。未调整的码眼将使用“码眼”和“圆点”的颜色。",
+        "useTheSameColorsFor": "所有码眼使用相同颜色",
+        "sameForAll": "全部相同",
+        "eyeColors": "码眼颜色",
+        "frame": "外框",
+        "center": "中心",
+        "positions": {
+          "topLeft": "左上",
+          "topRight": "右上",
+          "bottomLeft": "左下"
+        }
+      },
+      "frameControls": {
+        "customise": "自定义",
+        "importSvg": "导入 SVG",
+        "publishFrame": "发布边框",
+        "theFrameIsAddedAround": "边框会添加在二维码外围，因此下载的图片尺寸会变大，二维码本身仍可正常扫描。",
+        "label": "标签",
+        "secondLine": "第二行",
+        "leaveEmptyForNoLabel": "留空则不显示标签",
+        "pickAFrameFirst": "请先选择边框",
+        "frameColor": "边框颜色",
+        "textColor": "文字颜色",
+        "endColor": "结束颜色",
+        "optionalEGYourWebsite": "选填，例如你的网站",
+        "none": "无"
+      },
+      "frameFields": {
+        "textSize": "文字大小"
+      },
+      "framePicker": {
+        "more": "更多",
+        "showAll": "显示全部",
+        "frame": "边框",
+        "moreFrames": "更多边框",
+        "allTotalFrames": "全部 {total, number} 个边框",
+        "allFrames": "全部边框",
+        "searchFrames": "搜索边框",
+        "searchTotalFrames": "在 {total, number} 个边框中搜索",
+        "closeFrames": "关闭边框",
+        "filterFrames": "筛选边框",
+        "labelFrames": "{label}边框",
+        "commonFrames": "常用边框",
+        "everyFrameBuiltInStyles": "所有边框：内置样式、QRdx 官方边框和你保存的边框。选择后立即应用。",
+        "less": "收起",
+        "all": "全部",
+        "noFramesMatchQuery": "没有与“{query}”匹配的边框。",
+        "loadingFrames": "正在加载边框…",
+        "comingUp": "即将推出",
+        "builtIn": "内置",
+        "saved": "已保存",
+        "results": "结果"
+      },
+      "frameShapes": {
+        "shapedCode": "异形二维码",
+        "pngJpegOrSvgA": "PNG、JPEG 或 SVG：浅色或透明背景上的深色或纯色形状。",
+        "remove": "移除",
+        "uploadASilhouette": "上传轮廓图",
+        "tracing": "正在描摹…",
+        "replace": "替换",
+        "uploadAShape": "上传形状",
+        "shapeHelp": {
+          "circle": "二维码位于由装饰性圆点组成的圆形中，四周留有一圈空白。扫描器只读取中间的二维码，因此在相同扫描距离下，圆形会稍大一些。",
+          "heart": "二维码位于由装饰性圆点组成的心形中，四周留有一圈空白。扫描器只读取中间的二维码，因此在相同扫描距离下，心形要比方形二维码印得更大。",
+          "silhouette": "二维码位于你所选形状中最宽敞的中间部分，四周留有一圈空白。只保留轮廓，不保留图片；链接、社区和代码片段使用方形二维码。"
+        },
+        "names": {
+          "circle": "圆点圆形",
+          "heart": "心形",
+          "silhouette": "轮廓"
+        }
+      },
+      "frameTextPresets": {
+        "labelIdeas": "标签灵感"
+      },
+      "logoControls": {
+        "logoInTheCenter": "中心 logo",
+        "coversAFewDotsError": "会覆盖少量圆点，纠错功能会将其补全。",
+        "quickIcons": "快捷图标",
+        "brandLogos": "品牌 logo",
+        "pngJpgWebpOrSvg": "PNG、JPG、WebP 或 SVG，最大 {value, number}MB。带适当留白的方形图片效果最佳。",
+        "remove": "移除",
+        "off": "关闭",
+        "logo": "Logo",
+        "uploadLogo": "上传 Logo",
+        "brandLogosBrandbuttonlabel": "品牌 Logo：{brandButtonLabel}",
+        "replace": "替换",
+        "uploadYourLogo": "上传你的 Logo",
+        "useAPngJpgWebp": "请使用 PNG、JPG、WebP 或 SVG 图片。",
+        "logosMustBeValueMb": "Logo 大小不能超过 {value, number}MB。",
+        "unsupportedLogoFormat": "不支持的 Logo 格式",
+        "logoIsTooLarge": "Logo 文件过大",
+        "failedToReadLogoFile": "读取 Logo 文件失败"
+      },
+      "logoCropControls": {
+        "shape": "形状",
+        "plateBehindTheLogo": "Logo 背后的底板",
+        "aSolidValueTheLogo": "Logo 放置其上的纯色{value}。",
+        "removeBackground": "移除背景",
+        "logoShape": "Logo 形状",
+        "plateColor": "底板颜色",
+        "backgroundRemovedUndoBringsIt": "背景已移除。撤销即可恢复。",
+        "yourLogoHasNoSolid": "你的 Logo 没有可移除的纯色背景。",
+        "removeTheSolidBackgroundAround": "移除 Logo 周围的纯色背景。",
+        "backgroundRemoved": "背景已移除",
+        "plateNouns": {
+          "square": "方形",
+          "rounded": "圆角方形",
+          "circle": "圆形"
+        },
+        "shapes": {
+          "square": "方形",
+          "rounded": "圆角",
+          "circle": "圆形"
+        }
+      },
+      "logoOptionsSection": {
+        "position": "位置",
+        "center": "居中",
+        "keepTheLogoOffThe": "让 Logo 避开三个码眼和右下角附近的小方块。若 Logo 遮住其中之一，扫描评分会发出警告。",
+        "raiseErrorCorrectionForBig": "Logo 较大时，请提高纠错级别",
+        "switchesToLevelHWhen": "当 Logo 覆盖超过 {value, number}% 的二维码面积时，将切换为 H 级纠错。",
+        "logoOptions": "Logo 选项",
+        "size": "大小",
+        "logoSize": "Logo 大小",
+        "clearSpace": "留白",
+        "clearSpaceAroundTheLogo": "Logo 周围的留白",
+        "leftToRight": "从左到右",
+        "logoPositionLeftToRight": "Logo 位置，从左到右",
+        "topToBottom": "从上到下",
+        "logoPositionTopToBottom": "Logo 位置，从上到下",
+        "upToMaxpercentForThis": "此二维码最大为 {maxPercent, number}%：更大的 Logo 会遮住超出其纠错能力可修复范围的内容。",
+        "thisCodeIsTooSmall": "此二维码太小，无法放置 Logo。",
+        "shorterContentMakesRoom": "内容更短可腾出空间。",
+        "levelHOrShorterContent": "使用 H 级纠错或缩短内容可腾出空间。"
+      },
+      "logoPresets": {
+        "quickLogoIcons": "快速 Logo 图标",
+        "nameIcon": "{name}图标",
+        "uploadYourLogo": "上传你的 Logo",
+        "yourLogo": "你的 Logo"
+      },
+      "optionTiles": {
+        "more": "更多",
+        "noNounMatchQueryShow": "没有与“{query}”匹配的{noun}。<button>显示全部</button>",
+        "mayNotScan": "可能无法扫描",
+        "nameWontScanWithThis": "{name}，此样式下无法扫描",
+        "nameMayNotScan": "{name}，可能无法扫描",
+        "nameWontScanWithThis2": "{name}：此样式下无法扫描",
+        "nameMayNotScan2": "{name}：可能无法扫描",
+        "moreNoun": "更多{noun}",
+        "allLengthNoun": "全部 {length, number} 个{noun}",
+        "searchNoun": "搜索{noun}",
+        "searchLengthNoun": "搜索 {length, number} 个{noun}",
+        "closeNoun": "关闭{noun}",
+        "filterNoun": "筛选{noun}",
+        "commonNoun": "常用{noun}",
+        "allLengthNounPickingOne": "全部 {length, number} 种{noun}。选择其中一个即可立即应用。",
+        "less": "收起",
+        "all": "全部",
+        "wontScanHere": "此处无法扫描"
+      },
+      "paddingControls": {
+        "quietZoneAroundTheCode": "二维码周围的空白区域",
+        "scannersNeedABlankBorder": "扫描器需要二维码周围留有空白边框。在复杂或深色背景上印刷时，请使用 4 个模块（二维码标准）。",
+        "padding": "边距",
+        "module": "模块",
+        "modules": "模块",
+        "presets": {
+          "none": "无",
+          "small": "小",
+          "standard": "标准",
+          "large": "大"
+        }
+      },
+      "patternControls": {
+        "customizeOuterAndCenter": "自定义外圈与中心",
+        "border": "边框",
+        "higherLevelsSurviveScratchesAnd": "更高级别可承受划痕和徽标遮挡，但会增加点的数量。添加徽标时请使用 H。",
+        "dotShape": "点形状",
+        "dotShapes": "点形状",
+        "eyeStyle": "码眼样式",
+        "eyeStyles": "码眼样式",
+        "outerEyeShape": "码眼外框形状",
+        "outerShapes": "外框形状",
+        "innerEyeShape": "码眼内部形状",
+        "centerShapes": "中心形状",
+        "errorCorrection": "纠错等级"
+      },
+      "sidePanel": {
+        "closeTitle": "关闭{title}"
+      }
+    },
+    "customTextarea": {
+      "thePastedContentWouldExceed": "粘贴的内容将超出 {characterLimit, number} 个字符的上限。",
+      "textTooLong": "文本过长",
+      "describeYourTheme": "描述你想要的主题…"
+    },
+    "dialogCloseButton": {
+      "close": "关闭"
+    },
+    "dynamicLinkToggle": {
+      "upgradeToPro": "升级到 Pro",
+      "manageCodes": "管理二维码",
+      "static": "静态",
+      "fixedOncePrinted": "打印后内容固定",
+      "dynamic": "动态",
+      "editLaterCountScans": "稍后可编辑，统计扫描次数",
+      "linkOptions": "链接选项…",
+      "printedCodesStillOpenDestinationurl": "已打印的二维码仍会打开 <span>{destinationUrl}</span>。",
+      "pointItToTheNew": "指向新地址",
+      "scansSettings": "扫描与设置",
+      "staticOrDynamicQrCode": "静态或动态二维码",
+      "shortLinkCopied": "短链接已复制",
+      "copyShortLink": "复制短链接",
+      "designSaved": "设计已保存",
+      "saveDesignToCode": "将设计保存到二维码",
+      "theQrCodeShowsYour": "二维码将再次直接显示你的网址。",
+      "changeWhereItPointsAt": "你可以随时更改它的指向。你的 logo 过大，无法随二维码一起保存。",
+      "changeWhereItPointsAt2": "你可以随时在控制台中更改它的指向。",
+      "theDynamicCodeStaysIn": "动态二维码会保留在你的控制台中。",
+      "printedCopiesOfThisCode": "此二维码的已打印副本现在会打开新网址。",
+      "yourLogoWasTooLarge": "你的 logo 过大，无法保存，已被略去。",
+      "dashboardPreviewsAndDownloadsUse": "控制台中的预览和下载将使用此设计。",
+      "thisDynamicCodeIsNo": "此动态二维码已不可用",
+      "yourQrCodeIsNow": "你的二维码现已成为动态二维码",
+      "destinationUpdated": "目标地址已更新",
+      "designSavedToTheCode": "设计已保存到二维码",
+      "couldntCopyTheShortLink": "无法复制短链接"
+    },
+    "frameInline": {
+      "frameTextMenu": {
+        "lowContrastValue1The": "对比度偏低（{value}:1）。文字可能难以阅读，建议达到 {MIN_LABEL_CONTRAST, number}:1。"
+      },
+      "frameTextOverlay": {
+        "editFrameTextValue": "编辑边框文字：{value}",
+        "editText": "编辑文字"
+      },
+      "frameTextSheet": {
+        "editFrameText": "编辑边框文字",
+        "changesShowOnTheCode": "更改会在输入时显示在二维码上，点击“完成”即可保留。",
+        "valueLeft": "还可输入 {value, number} 个字",
+        "moreFrameOptions": "更多边框选项",
+        "done": "完成"
+      },
+      "inlineFrameEditor": {
+        "leftLeft": "还可输入 {left, number} 个字",
+        "frameTextName": "边框文字：{name}",
+        "frameTextOptions": "边框文字选项",
+        "textSize": "文字大小",
+        "textColor": "文字颜色",
+        "frameColor": "边框颜色",
+        "icon": "图标",
+        "moreFrameOptions": "更多边框选项"
+      }
+    },
+    "gradientPicker": {
+      "pickASolidColorA": "为{label}选择纯色、渐变或色板。"
+    },
+    "linkSourceMenu": {
+      "useALinkFrom": "使用来自以下位置的链接…",
+      "yourAccounts": "你的账号",
+      "connectAnAccount": "连接账号",
+      "undo": "撤销"
+    },
+    "mentionList": {
+      "noResult": "无结果"
+    },
+    "paintPicker": {
+      "controls": {
+        "saturationAndBrightness": "饱和度和亮度",
+        "saturationValueBrightnessValue2": "饱和度 {value, number}%，亮度 {value2, number}%"
+      },
+      "gradientEditor": {
+        "clickToAddAStop": "点击以添加色标",
+        "stopValueColor": "色标 {value, number}，{color}",
+        "startAngle": "起始角度",
+        "angle": "角度",
+        "startAngleInDegrees": "起始角度（度）",
+        "angleInDegrees": "角度（度）",
+        "anglePresets": "预设角度",
+        "rotate90": "旋转 90°",
+        "reverseTheGradient": "反转渐变",
+        "reverse": "反转",
+        "removeTheSelectedStop": "移除所选色标",
+        "removeStopDelete": "移除色标（Delete）",
+        "aGradientKeepsMinStops": "渐变至少保留 {MIN_STOPS, number} 个色标"
+      },
+      "imageFill": {
+        "paintAPictureThroughThese": "用这些形状绘出一幅图片。支持 PNG、JPEG 或 WebP，最大 10 MB。",
+        "chooseAPicture": "选择图片",
+        "underlay": "底层",
+        "none": "无",
+        "replace": "替换",
+        "thePictureStaysWithThis": "图片会随此设计保存，与 logo 一样：不会包含在链接或已发布的样式中，EPS 也无法携带它。",
+        "aSolidColorUnderThe": "图片下方的纯色，通过不透明度让其透出",
+        "howThePictureFillsThe": "图片填充二维码的方式",
+        "position": "位置",
+        "tileSize": "平铺大小",
+        "scale": "缩放",
+        "opacity": "不透明度",
+        "fits": {
+          "cover": "填充",
+          "contain": "适应",
+          "tile": "平铺"
+        },
+        "positions": {
+          "top-left": "左上",
+          "top": "顶部",
+          "top-right": "右上",
+          "left": "左侧",
+          "center": "居中",
+          "right": "右侧",
+          "bottom-left": "左下",
+          "bottom": "底部",
+          "bottom-right": "右下"
+        }
+      },
+      "paintPanel": {
+        "measuringThePicturesContrast": "正在测量图片对比度…",
+        "contrastAgainst": "对比度 {against}",
+        "makeItScannable": "确保可扫描",
+        "hexOrAnyCssColor": "十六进制或任意 CSS 颜色",
+        "hexOrPasteAnyCss": "输入十六进制，或粘贴任意 CSS 颜色（rgb、hsl、oklch、颜色名称）",
+        "swatches": "色板",
+        "fillType": "填充类型",
+        "pickAColorFromThe": "从屏幕上取色",
+        "pickFromTheScreen": "从屏幕取色",
+        "hue": "色相",
+        "opacity": "不透明度",
+        "colorModel": "颜色模式",
+        "opacityPercent": "不透明度（百分比）",
+        "removeThisColorFromSaved": "从已保存颜色中移除",
+        "saveThisColor": "保存此颜色",
+        "savedClickToRemove": "已保存：点击移除",
+        "lightenTheBackground": "调亮背景",
+        "darkenTheCode": "调暗二维码",
+        "kinds": {
+          "solid": "纯色",
+          "linear": "线性",
+          "radial": "径向",
+          "angular": "角度",
+          "image": "图片"
+        },
+        "sources": {
+          "design": "当前设计中",
+          "saved": "已保存",
+          "recent": "最近使用",
+          "theme": "主题",
+          "suggested": "默认颜色"
+        },
+        "imageOpacity": "图片 · {percent, number}%"
+      }
+    },
+    "photoScanDialog": {
+      "checkAPhotoOfThe": "检查印刷品的照片",
+      "checkedInYourBrowserThe": "在浏览器中检查，图片不会被上传。",
+      "fullScanChecker": "完整扫描检测"
+    },
+    "qrEditActions": {
+      "options": "选项",
+      "resetToCurrentPreset": "重置为当前预设",
+      "resetToCurrentPreset2": "重置为当前预设",
+      "noChangesFromPreset": "与预设相比没有更改",
+      "resetToDefaultTheme": "重置为默认主题",
+      "resetToBaseTheme": "重置为基础主题",
+      "noChangesToReset": "没有可重置的更改"
+    },
+    "qrPresetSelect": {
+      "theme": "主题",
+      "browseAll": "浏览全部",
+      "noThemesFound": "未找到主题。",
+      "manage": "管理",
+      "default": "默认",
+      "new": "新建",
+      "save": "保存",
+      "aThemeToFindIt": "一个主题，即可在这里找到它。",
+      "discoverMoreThemes": "发现更多主题 →",
+      "shuffleANewTheme": "随机换一个主题",
+      "previousTheme": "上一个主题",
+      "nextTheme": "下一个主题",
+      "searchThemes": "搜索主题...",
+      "builtInThemes": "内置主题",
+      "default2": "默认",
+      "sharedThemes": "共享主题",
+      "yourThemes": "我的主题",
+      "savedThemes": "已保存的主题"
+    },
+    "qrSaveDialog": {
+      "updating": "正在更新",
+      "updateExistingthemename": "更新“{existingThemeName}”",
+      "orSaveAsANew": "或另存为新主题",
+      "name": "名称",
+      "cancel": "取消",
+      "saving": "正在保存",
+      "myAwesomeTheme": "我的精彩主题",
+      "saveAsNew": "另存为新主题",
+      "defaultTitle": "保存二维码主题",
+      "defaultDescription": "将你的二维码设计保存为主题，方便以后复用。",
+      "defaultCta": "保存主题"
+    },
+    "qrShareDialog": {
+      "shareThisDesign": "分享此设计",
+      "theLinkOpensThisStyle": "该链接会在 Playground 中打开此样式，任何人都可以将其用于自己的二维码。你的内容不会包含在内。",
+      "stylePreviewOpensInThe": "样式预览 · 在 QRdx Playground 中打开",
+      "link": "链接",
+      "shareTo": "分享到",
+      "more": "更多…",
+      "openOnYourPhone": "在手机上打开",
+      "scanThisCodeToOpen": "用另一台设备扫描此二维码，即可打开分享链接。",
+      "copied": "已复制",
+      "copyLinkToThisDesign": "复制此设计的链接",
+      "saveItAsATheme": "改为保存为主题",
+      "saveItAsATheme2": "保存为主题，链接更短",
+      "couldntCopyTheLink": "无法复制链接",
+      "omitted": {
+        "logo": "你的 Logo",
+        "art": "艺术图",
+        "frame": "自定义边框",
+        "image": "你的图片填充",
+        "silhouette": "你的二维码形状"
+      },
+      "omittedNote": "{count, plural, one {{list}不在链接中。} other {{list}不在链接中。}}",
+      "targets": {
+        "x": "在 X 上发布",
+        "linkedin": "分享到 LinkedIn",
+        "facebook": "分享到 Facebook",
+        "whatsapp": "通过 WhatsApp 发送",
+        "email": "通过电子邮件发送"
+      },
+      "myQrDesign": "我的二维码设计",
+      "shareTitle": "{name} · QRdx 上的二维码设计"
+    },
+    "scanScore": {
+      "willItScan": "能扫描吗？",
+      "decodingYourDesignAtA": "正在以多种尺寸解码你的设计…",
+      "simulatedInYourBrowserWith": "在浏览器中使用开源的 jsQR 解码器，以多种尺寸并加入相机模糊进行模拟。各手机应用的表现不尽相同，打印前请先测试扫描。",
+      "checkAPhotoOfThe": "检查印刷品的照片",
+      "notChecked": "未检查",
+      "scanScoreScoreValueShow": "扫描评分 {score, number}，{value}。显示检查项",
+      "checkingScanScore": "正在检查扫描评分",
+      "scanScoreScoreValue": "扫描评分 {score, number} · {value}",
+      "checkingScan": "正在检查扫描…",
+      "fullScanChecker": "完整扫描检测",
+      "checkAPrintedCode": "检查已打印的二维码",
+      "grades": {
+        "great": "优秀",
+        "ok": "良好",
+        "risky": "有风险",
+        "fails": "无法扫描"
+      }
+    },
+    "themeGallery": {
+      "shuffled": "已随机 ·",
+      "back": "返回",
+      "themes": "主题",
+      "lengthBuiltInLooksEach": "{length, number} 种内置样式，均已测试可扫描。也可以随机换一个新的。",
+      "shuffle": "随机",
+      "lightCodesOnADark": "深色背景上的浅色二维码。{DARK_THEME_NOTE}，请使用目标受众常用的手机进行测试。",
+      "noThemeMatchesQuery": "没有与“{query}”匹配的主题。",
+      "shuffleOneInstead": "改为随机选一个",
+      "toMove": "移动",
+      "toApply": "应用",
+      "toShuffle": "随机",
+      "escToClose": "<kbd>esc</kbd> 关闭",
+      "searchThemes": "搜索主题",
+      "searchMenuGoldPastelDots": "搜索：菜单、金色、粉彩、圆点…",
+      "categories": "分类",
+      "all": "全部"
+    },
+    "themePreview": {
+      "colorPreview": {
+        "primaryThemeColors": "主题主色",
+        "editColor": "编辑颜色",
+        "background": "背景色",
+        "foreground": "前景色",
+        "dotColor": "点颜色",
+        "eyeColor": "码眼颜色"
+      }
+    },
+    "editor": {
+      "loadingTheEditor": "正在加载编辑器…",
+      "fetchedQrPresetDataIs": "获取的二维码预设数据无效。"
+    },
+    "qrControlPanel": {
+      "generate": "生成",
+      "content": "内容",
+      "design": "设计",
+      "art": "艺术"
+    },
+    "qrPreviewPanel": {
+      "sample": "示例",
+      "addYourLinkToMake": "添加你的链接，让它属于你",
+      "addYourDetailsToMake": "添加你的信息，让它属于你"
+    },
+    "keyboardShortcutsModal": {
+      "keyboardShortcuts": "键盘快捷键",
+      "keyboardShortcutsAreCurrentlyDisabled": "键盘快捷键当前已停用。请在设置中启用后再使用这些快捷键。",
+      "quickReferenceForAllAvailable": "所有可用键盘快捷键的速查表",
+      "proTipPressAnytimeTo": "<span>小提示：</span>随时按 <kbd>?</kbd> 即可查看此对话框",
+      "categories": {
+        "navigation": "导航",
+        "actions": "操作",
+        "themeAppearance": "主题与外观",
+        "patternCustomization": "图案自定义",
+        "help": "帮助"
+      },
+      "shortcuts": {
+        "openContentTab": "打开内容标签页",
+        "openDesignTab": "打开设计标签页",
+        "openArtTab": "打开艺术标签页",
+        "openGenerateAiTab": "打开生成（AI）标签页",
+        "saveQrTheme": "保存二维码主题",
+        "downloadQrCode": "下载二维码",
+        "copySvgToClipboard": "复制 SVG 到剪贴板",
+        "viewCode": "查看代码",
+        "shareQrCode": "分享二维码",
+        "resetToPresetDefaults": "重置为预设默认值",
+        "shuffleANewTheme": "随机切换新主题",
+        "toggleLightDarkMode": "切换浅色/深色模式",
+        "previousThemePreset": "上一个主题预设",
+        "nextThemePreset": "下一个主题预设",
+        "cycleDotPatterns": "循环切换圆点样式",
+        "cycleCornerEyePatterns": "循环切换角部定位点样式",
+        "cycleInternalEyePatterns": "循环切换内部定位点样式",
+        "cycleFrames": "循环切换边框",
+        "showThisShortcutsDialog": "显示此快捷键对话框"
+      }
+    },
+    "soundSwitch": {
+      "sounds": "音效"
+    },
+    "hooks": {
+      "chatEngine": {
+        "tryAgainInAMoment": "请稍后再试。",
+        "anErrorOccurred": "发生错误",
+        "theAiStoppedResponding": "AI 已停止响应"
+      },
+      "useCommunityThemes": {
+        "yourThemeIsNowVisible": "您的主题现已在社区中可见。",
+        "anUnexpectedErrorOccurred": "发生了意外错误。",
+        "yourThemeHasBeenRemoved": "您的主题已从社区中移除。",
+        "yourThemeTagsHaveBeen": "您的主题标签已更新。",
+        "themePublished": "主题已发布",
+        "failedToPublishTheme": "发布主题失败",
+        "themeUnpublished": "主题已取消发布",
+        "failedToUnpublishTheme": "取消发布主题失败",
+        "failedToUpdateLike": "更新点赞失败",
+        "tagsUpdated": "标签已更新",
+        "failedToUpdateTags": "更新标签失败"
+      },
+      "useThemeMutations": {
+        "nameHasBeenCreatedSuccessfully": "“{name}”创建成功。",
+        "nameHasBeenUpdatedSuccessfully": "“{name}”更新成功。",
+        "nameHasBeenDeletedSuccessfully": "“{name}”删除成功。",
+        "themeLimitReached": "已达主题数量上限",
+        "themeCreated": "主题已创建",
+        "themeUpdated": "主题已更新",
+        "themeDeleted": "主题已删除",
+        "errors": {
+          "signIn": "请登录后继续。",
+          "invalidInput": "输入内容无效。",
+          "notFound": "未找到该主题。",
+          "unexpected": "发生了意外错误，请重试。"
+        },
+        "failed": {
+          "create": "创建主题失败",
+          "update": "更新主题失败",
+          "delete": "删除主题失败"
+        }
+      },
+      "useAiEnhancePrompt": {
+        "anErrorOccurred": "发生错误"
+      },
+      "useDialogActions": {
+        "saveToShare": {
+          "title": "保存后分享",
+          "description": "请先保存您的主题，再分享给他人。",
+          "ctaLabel": "保存并分享"
+        }
+      },
+      "useImageUpload": {
+        "youCanOnlyUploadUp": "最多只能上传 {maxFiles, number} 张图片。",
+        "nameIsNotSupportedPlease": "不支持“{name}”。请使用 JPG、PNG、WebP 或 SVG 文件。",
+        "imageNameExceedsTheValue": "图片“{name}”超过了 {value, number}MB 的大小限制。",
+        "nameMayContainUnsafeContent": "“{name}”可能包含不安全内容，但仍会继续处理。",
+        "failedToReadNamePlease": "无法读取“{name}”。请重试。",
+        "imageUploadLimitReached": "已达到图片上传上限",
+        "unsupportedFileType": "不支持的文件类型",
+        "fileTooLarge": "文件过大",
+        "potentiallyUnsafeSvg": "SVG 可能不安全",
+        "fileReadError": "文件读取错误"
+      },
+      "usePlaygroundParams": {
+        "undo": "撤销"
+      },
+      "usePlaygroundShortcuts": {
+        "svgCopiedToClipboard": "SVG 已复制到剪贴板",
+        "failedToCopySvg": "复制 SVG 失败"
+      }
+    }
+  },
+  "playground": {
+    "heading": "自定义二维码设计器",
+    "loading": "正在加载 Playground…",
+    "metaTitle": "自定义二维码设计器：Logo、颜色、边框",
+    "metaDescription": "为二维码添加你的 Logo、颜色、渐变、码点样式和边框，然后下载 PNG、SVG、PDF 或 EPS。免费，无需注册，无水印。",
+    "intro": {
+      "label": "关于二维码设计器",
+      "summary": "自定义二维码设计器。免费的静态二维码，可添加你的 Logo、颜色和边框。无需注册，无水印。",
+      "types": "可为链接、Wi-Fi 网络、联系人名片、付款或 {types, number} 种内容类型中的任意一种生成二维码。你可以使用 {bodyPatterns, number} 种码点样式、{eyeShapes, number} 种定位点形状、纯色或渐变色、中心 Logo 以及 {frames, number} 种行动号召边框来设计外观。打印之前，扫描评分会预估它的识别效果。",
+      "downloads": "可下载 PNG、JPG、WebP 或 SVG，也可按精确尺寸下载可直接印刷的 PDF 或 EPS。静态二维码免费且永不过期。登录后可创建动态二维码，印刷后仍可编辑，并可追踪扫描情况。",
+      "links": {
+        "allTypes": "所有二维码类型",
+        "scanChecker": "扫描检测工具",
+        "printSize": "打印尺寸计算器",
+        "styleGuide": "样式指南"
+      }
+    },
+    "presetSelector": {
+      "presets": "预设"
+    },
+    "themeSaveDialog": {
+      "name": "名称",
+      "cancel": "取消",
+      "saving": "正在保存",
+      "myAwesomeTheme": "我的超赞主题",
+      "defaultTitle": "保存主题",
+      "defaultDescription": "请为你的主题输入一个名称，方便日后查找。",
+      "defaultCta": "保存主题"
+    }
+  },
+  "limits": {
+    "capMeter": {
+      "labelUsed": "已使用{label}"
+    },
+    "limitCard": {
+      "planUsage": "套餐与用量",
+      "notNow": "暂不升级",
+      "labelUsed": "已使用{label}"
+    },
+    "limitDialog": {
+      "limitReached": "已达到上限"
+    }
+  },
+  "community": {
+    "browseLayout": {
+      "filters": "筛选"
+    },
+    "communityTabs": {
+      "community": "社区"
+    },
+    "createBundle": {
+      "published": "已发布",
+      "nameIsLiveInThe": "{name} 已在社区上线。",
+      "viewIt": "查看",
+      "whatToMake": "创建类型",
+      "itemsYouSaveInThe": "你保存到社区或自己发布的内容会显示在这里。<link>浏览社区</link>",
+      "itemsLengthPicked": "项目<span>已选 {length, number} 项</span>",
+      "optional": "（可选）",
+      "name": "名称",
+      "description": "描述",
+      "seeIt": "查看",
+      "eGEverythingForA": "例如：咖啡馆全套物料",
+      "eGCaféTableKit": "例如：咖啡馆桌面套装",
+      "optionalWhatItsFor": "可选：用途说明",
+      "collection": "合集",
+      "kit": "套装",
+      "groupFramesThemesAndPage": "将边框、主题和页面模板组合在一起，方便大家一起浏览，例如咖啡馆全套物料。请选择 2 项或更多。",
+      "aPageTemplateAndThe": "一个页面模板及与之搭配的外观。使用套装时，页面会复制为草稿，外观会保存为主题。",
+      "yours": "我的",
+      "noSavedMany": "没有已保存的{many}",
+      "none": "无",
+      "pickOne": "请选择一项",
+      "publishing": "发布中",
+      "publishCollection": "发布合集",
+      "publishKit": "发布套装"
+    },
+    "creatorLine": {
+      "verified": "已认证"
+    },
+    "importFrameDialog": {
+      "importAnSvgFrame": "导入 SVG 边框",
+      "shapesAndColorsBecomeA": "形状和颜色会转为边框，文字、图片和特效不会保留。",
+      "colors": "颜色",
+      "whatChanged": "更改内容",
+      "cancel": "取消",
+      "useThisFrame": "使用此边框",
+      "chooseAnSvgFileUp": "选择 SVG 文件（最大 200 KB）",
+      "refs": {
+        "frame": "边框颜色",
+        "accent": "强调色",
+        "fixed": "保持不变"
+      }
+    },
+    "itemActions": {
+      "useInEditor": "在编辑器中使用",
+      "copyToWorkspace": "复制到工作区",
+      "unpublish": "取消发布",
+      "removeFromTheCommunity": "从社区中移除？",
+      "itLeavesTheCommunityAt": "它会立即从社区中移除。已经使用过的用户会保留各自的副本：它是以 CC0 协议共享的。",
+      "cancel": "取消",
+      "removeFromSaved": "从已保存中移除",
+      "save": "保存",
+      "unlike": "取消点赞",
+      "like": "点赞",
+      "useKit": "使用套件",
+      "useTemplate": "使用模板",
+      "saved": "已保存",
+      "open": "打开",
+      "nameIsInYourPages": "“{name}”已作为草稿加入你的页面，其外观已加入你的主题。",
+      "nameIsInYourPages2": "“{name}”已作为草稿加入你的页面。",
+      "savedItsInTheEditors": "已保存。可在编辑器的边框选择器中找到。",
+      "saved2": "已保存。",
+      "removedFromSaved": "已从已保存中移除。",
+      "copiedToWhereAsName": "已复制到{where}，名称为“{name}”",
+      "nameIsNoLongerIn": "“{name}”已不在社区中。"
+    },
+    "itemCard": {
+      "empty": "空",
+      "official": "官方",
+      "usecountUses": "{useCount} 次使用",
+      "seeAll": "查看全部",
+      "likes": "点赞"
+    },
+    "itemPages": {
+      "previous": "上一页",
+      "pagePageOfPages": "第 {page, number} 页，共 {pages, number} 页",
+      "next": "下一页",
+      "pages": "页面"
+    },
+    "licenceConfirm": {
+      "licence": "许可协议："
+    },
+    "newBundle": {
+      "signInToMakeA": "登录后，可用你收藏的内容创建合集或套件。",
+      "signIn": "登录"
+    },
+    "publishDesignDialog": {
+      "published": "已发布",
+      "valueIsLiveInThe": "{value} 已在社区上线。",
+      "done": "完成",
+      "viewIt": "查看",
+      "publishToTheCommunity": "发布到社区",
+      "theChatDraftedTheseDetails": "以下信息由聊天草拟。你可以随意修改，发布之前不会分享任何内容。",
+      "name": "名称",
+      "description": "描述",
+      "seeIt": "查看",
+      "cancel": "取消",
+      "optionalWhatItSuits": "选填：适用场景",
+      "checkingAndPublishing": "正在检查并发布",
+      "publish": "发布"
+    },
+    "publishFrameDialog": {
+      "published": "已发布",
+      "valueIsLiveInThe": "{value} 已在社区上线。",
+      "done": "完成",
+      "viewIt": "查看",
+      "publishThisFrame": "发布此边框",
+      "anyoneCanFindItIn": "任何人都可以在社区中找到它，并用于自己的二维码。",
+      "name": "名称",
+      "description": "描述",
+      "seeIt": "查看效果",
+      "cancel": "取消",
+      "eGCaféTableCard": "例如：咖啡馆桌卡",
+      "optionalWhatItsFor": "选填：用途说明",
+      "checkingAndPublishing": "正在检查并发布",
+      "publish": "发布"
+    },
+    "publishPageDialog": {
+      "published": "已发布",
+      "valueIsLiveInThe": "{value} 已在社区上线。你的页面本身没有变化。",
+      "done": "完成",
+      "viewIt": "查看",
+      "shareAsAPageTemplate": "分享为页面模板",
+      "step1Of2This": "第 1 步，共 2 步 · 这是他人将获得的内容。你的个人信息会先被移除。",
+      "whatWeChanged": "我们做了哪些修改",
+      "checkingThePage": "正在检查页面",
+      "yourTextIsReplacedWith": "你的文字会被替换为示例文字。勾选某个字段，即可按你的原文发布。",
+      "everyPhotoIsTakenOut": "所有照片都会被移除，由使用者自行添加。保留的文字不能包含链接、电子邮件、电话号码或地址。",
+      "nothingIsLeftToShare": "移除你的个人信息后，没有可分享的内容了。",
+      "cancel": "取消",
+      "continue": "继续",
+      "step2Of2Details": "第 2 步，共 2 步 · 详细信息。内容会立即在社区上线，你的页面保持不变。",
+      "name": "名称",
+      "description": "描述",
+      "seeIt": "查看效果",
+      "back": "返回",
+      "eGCaféMenu": "例如：咖啡馆菜单",
+      "optionalWhatItsFor": "选填：用途说明",
+      "kept": " · 已保留",
+      "empty": "（空）",
+      "publishing": "正在发布",
+      "publish": "发布"
+    },
+    "publishThemeDialog": {
+      "anyoneCanFindItIn": "任何人都可以在社区图库中找到并使用它。你可以随时取消发布。",
+      "cancel": "取消",
+      "publishThemenameToTheCommunity": "将“{themeName}”发布到社区",
+      "publishToTheCommunity": "发布到社区",
+      "checkingAndPublishing": "正在检查并发布",
+      "publish": "发布",
+      "publishedUnderYourProfile": "它会发布在你的个人主页下，主题仍保留在此工作区中。"
+    },
+    "removeItemButton": {
+      "remove": "移除",
+      "removeFromTheCommunity": "从社区移除",
+      "removedNameFromTheCommunity": "已从社区移除“{name}”"
+    },
+    "tryIt": {
+      "tryItWithYourLink": "用你的链接试试",
+      "drawnInYourBrowserNothing": "在你的浏览器中绘制，不会发送任何内容。"
     }
   }
 }

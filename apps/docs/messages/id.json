@@ -127,6 +127,32 @@
       "star": "Star",
       "starOnGithub": "Beri bintang QRdx di GitHub",
       "starOnGithubCount": "Beri bintang QRdx di GitHub ({count} bintang)"
+    },
+    "userProfileDropdown": {
+      "tryThePlayground": "Coba Playground",
+      "signIn": "Masuk",
+      "dashboard": "Dasbor",
+      "accountSettings": "Pengaturan akun",
+      "manageBilling": "Kelola tagihan",
+      "upgradeToPro": "Upgrade ke Pro",
+      "admin": "Admin",
+      "privacyPolicy": "Kebijakan privasi",
+      "signOut": "Keluar"
+    },
+    "getProCta": {
+      "getPro": "Dapatkan Pro"
+    },
+    "getProDialog": {
+      "upgradeToValue": "Upgrade ke {value}",
+      "unlocksThis": "Membuka fitur ini",
+      "staticQrCodesStayFree": "Kode QR statis tetap gratis, dan kode Anda tetap berfungsi jika Anda berhenti berlangganan. <link>Jaminan kami</link>",
+      "comparePlansAndPrices": "Bandingkan paket dan harga",
+      "maybeLater": "Nanti saja",
+      "thisFeatureIsPartOf": "Fitur ini termasuk dalam paket Business.",
+      "thisFeatureIsPartOf2": "Fitur ini termasuk dalam paket Pro dan Business."
+    },
+    "themeToggle": {
+      "toggleTheme": "Ganti tema"
     }
   },
   "footer": {
@@ -999,7 +1025,7 @@
       "toolLabel": "Kalkulator ukuran cetak",
       "howTitle": "Cara ukuran dihitung",
       "how1": "Isi menentukan versi QR. Kalkulator memilih versi terkecil (1 sampai 40) yang memuat teks Anda pada tingkat koreksi kesalahan yang dipilih, dengan tabel kapasitas yang sama seperti encoder QRdx. Versi n memiliki lebar 17 + 4n modul.",
-      "how2": "Jarak menentukan ukuran modul. Aturan praktis {ratio, number}:1 dianggap menggambarkan kode sederhana {reference, number} × {reference, number}, sehingga setiap modul minimal berukuran jarak ÷ ({divisor, number}), dan tidak kurang dari {minimum, number} mm.",
+      "how2": "Jarak menentukan ukuran modul. Aturan praktis {ratio, number}:1 dianggap menggambarkan kode sederhana berukuran {reference, number, ::group-off} × {reference, number}, sehingga setiap modul minimal berukuran jarak ÷ ({divisor, number}), dan tidak pernah kurang dari {minimum, number} mm.",
       "how3": "Ukuran modul × jumlah modul per sisi menghasilkan ukuran kode. Menambahkan {quiet, number} modul kosong di setiap sisi menghasilkan ruang yang dibutuhkan kode pada halaman.",
       "tipsTitle": "Tips agar kode dapat dipindai",
       "tip1": "Buat isinya singkat. Tautan yang lebih pendek berarti versi yang lebih rendah, sehingga ukuran cetak yang sama menghasilkan modul yang lebih besar.",
@@ -1054,7 +1080,7 @@
         "resultTitle": "Ukuran cetak minimum",
         "errorDistance": "Masukkan jarak pemindaian yang lebih besar dari nol.",
         "codeSize": "Ukuran kode (tepi ke tepi)",
-        "codeSizeHint": "Versi {version, number}, {modules, number} × {modules, number} modul",
+        "codeSizeHint": "Versi {version, number}, {modules, number, ::group-off} × {modules, number} modul",
         "withQuietZone": "Dengan quiet zone {modules, number} modul",
         "withQuietZoneHint": "Margin kosong yang dibutuhkan pemindai di sekeliling kode",
         "moduleSize": "Ukuran modul (satu kotak)",
@@ -1452,7 +1478,7 @@
     "alt": "Barcode {format} untuk {value}",
     "loadFailed": "Kode penggambar barcode tidak termuat. Periksa koneksi Anda dan muat ulang halaman.",
     "fixInput": "Perbaiki input yang disorot untuk melihat barcode.",
-    "sizes": "PNG, JPG, WebP, dan AVIF berukuran {width, number} × {height, number} px. SVG, PDF, dan EPS berupa vektor berukuran {widthMm} × {heightMm} mm, dengan modul {moduleMm} mm; ubah skalanya di tata letak Anda sesuai kebutuhan.",
+    "sizes": "PNG, JPG, WebP, dan AVIF berukuran {width, number, ::group-off} × {height, number, ::group-off} px. SVG, PDF, dan EPS adalah vektor berukuran {widthMm} × {heightMm} mm, dengan modul {moduleMm} mm; skalakan di tata letak Anda sesuai kebutuhan.",
     "more": "Lainnya",
     "moreFormats": "Format lainnya",
     "footnote": "Dibuat di browser Anda; tidak ada yang Anda ketik dikirim ke QRdx. WebP dan AVIF dikodekan oleh server QRdx saat Anda memilihnya, dan tidak ada yang disimpan.",
@@ -1821,7 +1847,23 @@
     "artLink": "Atau ubah tautan menjadi seni kode QR AI yang bisa dipindai",
     "chat": {
       "upgrade": "Upgrade ke Pro untuk permintaan tanpa batas",
-      "heading": "Kode QR apa yang bisa saya buatkan untuk Anda?"
+      "heading": "Kode QR apa yang bisa saya buatkan untuk Anda?",
+      "aiChatForm": {
+        "generate": "Buat"
+      },
+      "communityThemeCard": {
+        "viewDetails": "Lihat Detail",
+        "viewInEditor": "Lihat di Editor",
+        "unknownCreationDate": "Tanggal dibuat tidak diketahui"
+      },
+      "communityThemes": {
+        "fromTheCommunity": "Dari Komunitas",
+        "viewAll": "Lihat Semua",
+        "exploreTheThemesTheCommunity": "Jelajahi tema yang dibuat komunitas dengan tweakcn."
+      },
+      "suggestedPillActions": {
+        "fromAnImage": "Dari Gambar"
+      }
     }
   },
   "aiArt": {
@@ -1859,6 +1901,111 @@
     "faq": {
       "title": "FAQ seni QR AI",
       "description": "Cara karya seni yang dapat dipindai dibuat, biayanya, dan apa yang perlu diperiksa sebelum mencetak."
+    },
+    "aiArtPresetGallery": {
+      "noStylesMatchQueryDescribe": "Tidak ada gaya yang cocok dengan “{query}”. Jelaskan saja di prompt.",
+      "clearSearch": "Hapus pencarian",
+      "theStylesDidntLoad": "Gaya gagal dimuat.",
+      "tryAgain": "Coba lagi",
+      "pickingOneFillsInThe": "Memilih salah satu akan mengisi prompt; Anda bebas mengeditnya.",
+      "searchStyles": "Cari gaya",
+      "searchStylesCatsGoldTiles": "Cari gaya: kucing, emas, ubin…",
+      "styleCategories": "Kategori gaya",
+      "featured": "Unggulan",
+      "all": "Semua",
+      "someStyles": "{shown, number} dari {total, number} gaya.",
+      "allStyles": "{total, number} gaya."
+    },
+    "aiArtResult": {
+      "yourQrArtWillAppear": "Karya seni QR Anda akan muncul di sini",
+      "generating": "Membuat",
+      "eachImageIsCheckedTo": "Setiap gambar diperiksa agar dapat dipindai sebelum Anda melihatnya. Proses ini bisa memakan waktu hingga satu menit.",
+      "bestScannable": "Paling terpindai",
+      "download": "Unduh",
+      "printSize": "Ukuran cetak (",
+      "px": "px)",
+      "retryWithAClearerCode": "Coba lagi dengan kode yang lebih jelas",
+      "lockSeedSeed": "Kunci seed {seed, number}",
+      "scanScoreScore": "Skor pemindaian {score, number}",
+      "bestOfThisRun": "Terbaik dari proses ini",
+      "theModelsImageDidntScan": "Gambar dari model tidak terpindai seperti aslinya, sehingga QRdx memperkuat mata sudut, bingkai, dan jika perlu modulnya, secukupnya agar dapat dipindai (kekuatan perpaduan {value, number}%).",
+      "theModelsImageDidntScan2": "Gambar dari model tidak terpindai meski kodenya sudah diperkuat, sehingga QRdx menggambarnya ulang sebagai kode Image QR, dengan gambar yang tetap terlihat.",
+      "aiGeneratedQrCodeArtwork": "Karya seni kode QR buatan AI yang menyandikan {text}",
+      "variations": "Variasi",
+      "variationValueSeedSeed": "Variasi {value, number}, seed {seed, number}",
+      "variationValue": "Variasi {value, number}",
+      "pendingvariationsVariations": "{pendingVariations, number} variasi",
+      "yourArtwork": "karya seni Anda",
+      "downloadTheWidthPxImage": "Unduh gambar {width, number, ::group-off} px saja.",
+      "thePrintSizeCopyDidnt": "Salinan ukuran cetak tidak lolos pemeriksaan pemindaian",
+      "couldntPrepareThePrintSize": "Gambar ukuran cetak tidak dapat disiapkan",
+      "status": {
+        "checking": {
+          "title": "Menilai pemindaian…",
+          "description": "Sudah dibaca di server; kini diuji dalam ukuran kecil dan buram."
+        },
+        "scannable": {
+          "title": "Terverifikasi dapat dipindai",
+          "description": "Terbaca sebagai konten Anda di server kami dan sekali lagi di browser Anda. Tetap ujilah dengan kamera ponsel sebelum dicetak."
+        },
+        "unreadable": {
+          "title": "Sulit dibaca saat kecil — coba kode yang lebih jelas",
+          "description": "Kode ini terbaca di server kami, tetapi tidak dalam pengujian di browser. Naikkan visibilitas QR, atau ujilah dengan kamera ponsel sebelum digunakan."
+        },
+        "mismatch": {
+          "title": "Mengarah ke konten yang berbeda — coba kode yang lebih jelas",
+          "description": "Teks yang terbaca tidak sesuai dengan yang Anda masukkan. Jangan gunakan gambar ini."
+        },
+        "unverified": {
+          "title": "Pemeriksaan di browser tidak dapat dijalankan",
+          "description": "Kode ini terbaca di server kami. Ujilah dengan kamera ponsel sebelum mencetak atau membagikannya."
+        }
+      },
+      "resultSummary": "Visibilitas QR {visibility, number} · Kreativitas {creativity, number} · {width, number, ::group-off} px{failed, plural, =0 {} other { · # variasi gagal dan tidak memakai kredit}}. Setiap gambar memakai 1 kredit seni AI; unduhan ukuran cetak gratis."
+    },
+    "aiArtStudio": {
+      "linkOrText": "Tautan atau teks",
+      "shorterContentMeansFewerLarger": "Konten yang lebih singkat berarti modul yang lebih sedikit dan lebih besar: karya lebih bersih dan pemindaian lebih andal.",
+      "style": "Gaya",
+      "variations": "Variasi",
+      "eachVariationIsItsOwn": "Setiap variasi adalah gambar tersendiri dan memakai 1 kredit. Setiap gambar diverifikasi dapat dipindai sebelum Anda melihatnya, dan yang terbaik dipilihkan untuk Anda.",
+      "negativePrompt": "Prompt negatif",
+      "theModelIsAskedTo": "Model diminta untuk tidak memasukkan hal-hal ini ke dalam gambar.",
+      "seed": "Seed",
+      "lockSeed": "Kunci seed",
+      "theSameSeedAndSettings": "Seed dan pengaturan yang sama menghasilkan gambar yang serupa (model masih bisa memvariasikannya); variasi memakai seed, seed + 1, …",
+      "referenceImage": "Gambar referensi",
+      "remove": "Hapus",
+      "uploadReference": "Unggah referensi",
+      "optionalALogoPhotoOr": "Opsional. Logo, foto, atau palet warna untuk diolah model ke dalam karya: warna dan bentuknya akan terbawa. Gambar diubah ukurannya di browser Anda dan dikirim bersama prompt Anda melalui Vercel AI Gateway ke {ART_MODEL_LABEL}.",
+      "cancel": "Batal",
+      "aiArtCodesAreStatic": "<span>Kode seni AI bersifat statis.</span> Konten tertanam di dalam gambar dan tidak dapat diubah setelah Anda membagikannya. Untuk tautan yang dapat diedit nanti, lengkap dengan analitik pemindaian, buat <signInLink>kode dinamis</signInLink> dan gunakan tautan pendeknya di sini.",
+      "alreadyDesigningACode": "Sudah mendesain kode?",
+      "toPaintItsContentDynamic": "untuk melukis kontennya, termasuk tautan dinamis.",
+      "openInPlayground": "Buka di Playground",
+      "signInToGeneratePlans": "Masuk untuk membuat. {plans}",
+      "eachImageUses1Ai": "Setiap gambar menggunakan 1 kredit seni AI; gambar yang gagal akan dikembalikan. {plans}",
+      "unlimitedAiArtOnYour": "Seni AI tanpa batas di paket Anda. Proses ini menggunakan {variations, number}.",
+      "describeASceneEG": "Deskripsikan sebuah adegan, misalnya mercusuar di pantai berbatu saat matahari terbenam, lukisan cat minyak",
+      "qrVisibility": "Visibilitas QR",
+      "creativity": "Kreativitas",
+      "thingsToAvoidEG": "Hal yang dihindari, misalnya orang, bangunan, warna gelap",
+      "randomEachRun": "Acak setiap proses",
+      "uploadAReferenceImage": "Unggah gambar referensi",
+      "reference": "Referensi",
+      "advancedNegativePromptSeedReference": "Lanjutan: prompt negatif, seed, gambar referensi",
+      "advancedNegativePromptReferenceImage": "Lanjutan: prompt negatif, gambar referensi",
+      "generating": "Membuat…",
+      "findItUnderAdvanced": "Temukan di bagian Lanjutan.",
+      "seedValueLocked": "Seed {value, number} terkunci",
+      "creditsLeft": "<count>{remaining, number} dari {limit, number}</count> gambar seni AI tersisa bulan ini{pooled, select, yes { (dibagikan dengan tim Anda)} other {}}, diatur ulang {resets}. Proses ini menggunakan {variations, number}; gambar yang gagal akan dikembalikan.",
+      "notEnoughLeft": "Sisa tidak cukup untuk {variations, number}: pilih lebih sedikit variasi.",
+      "notEnoughLeftOrUpgrade": "Sisa tidak cukup untuk {variations, number}: pilih lebih sedikit variasi atau upgrade.",
+      "moreArtistic": "Lebih artistik",
+      "clearerCode": "Kode lebih jelas",
+      "followsYourPrompt": "Mengikuti prompt Anda",
+      "interpretsFreely": "Menafsirkan dengan bebas",
+      "generateVariations": "{count, plural, one {Buat seni QR} other {Buat # variasi}}"
     }
   },
   "compare": {
@@ -1877,6 +2024,1750 @@
         "heading": "Pustaka kode QR React dan JavaScript",
         "intro": "Paket yang Anda instal dari npm untuk menampilkan kode QR di aplikasi Anda sendiri. Keduanya jauh lebih banyak digunakan daripada paket npm milik QRdx."
       }
+    }
+  },
+  "editor": {
+    "actionBar": {
+      "codeButton": {
+        "code": "Kode",
+        "getCode": "Dapatkan kode"
+      },
+      "copySvgButton": {
+        "copied": "Tersalin",
+        "copySvg": "Salin SVG",
+        "svgCopiedToClipboard": "SVG disalin ke papan klip",
+        "failedToCopySvg": "Gagal menyalin SVG"
+      },
+      "downloadButton": {
+        "download": "Unduh",
+        "downloadQrCode": "Unduh kode QR"
+      },
+      "downloadDialog": {
+        "addContentToSeeYour": "Tambahkan konten untuk melihat kode Anda.",
+        "format": "Format",
+        "pixels": "Piksel",
+        "at300Dpi": "Pada 300 dpi",
+        "width": "Lebar",
+        "color": "Warna",
+        "bleed": "Bleed",
+        "downloadQrCode": "Unduh kode QR",
+        "imageFile": "File gambar",
+        "printReady": "Siap cetak",
+        "size": "Ukuran",
+        "custom": "Kustom",
+        "px": "px",
+        "widthAndHeight": "Lebar dan tinggi",
+        "scale": "Skala",
+        "transparentBackground": "Latar belakang transparan",
+        "makeManyFromACsv": "Buat banyak kode dari CSV dengan gaya ini",
+        "scannedFromAbout": "Dipindai dari sekitar",
+        "setsTheCodeWidthBelow": "Menentukan lebar kode di bawah.",
+        "codeWidth": "Lebar kode",
+        "unit": "Satuan",
+        "mm": "mm",
+        "inches": "inci",
+        "colorMode": "Mode warna",
+        "none": "Tidak ada",
+        "n3Mm": "3 mm",
+        "cropMarksPdf": "Tanda potong (PDF)",
+        "scansFromUpToAbout": "Dapat dipindai dari jarak hingga sekitar {value} (sekitar 250× ukuran satu titik).",
+        "under2CmIsHard": "Ukuran di bawah 2 cm sulit dipindai ponsel; pilih yang lebih besar jika memungkinkan.",
+        "eachDotIsOnlyValue": "Setiap titik hanya berukuran {value, number} mm dan bisa menyebar saat dicetak. Perbesar kode atau persingkat isinya.",
+        "cmykUsesASimpleConversion": "CMYK menggunakan konversi sederhana tanpa profil warna; tanyakan kepada percetakan jika warna merek yang persis itu penting.",
+        "pdfAndEpsDrawEvery": "PDF dan EPS menggambar setiap titik sebagai bentuk vektor dan mempertahankan gradasi linear dan radial sebagai shading vektor yang halus.",
+        "jpgCantBeTransparent": "JPG tidak bisa transparan",
+        "vector": " · vektor",
+        "anySize": "Ukuran bebas",
+        "printbleedMm": "{printBleed, number} mm",
+        "vectorPdfOrEpsAt": "PDF atau EPS vektor dengan ukuran fisik yang tepat, siap untuk percetakan.",
+        "pickAFormatAndSize": "Pilih format dan ukuran. Pratinjau menampilkan hasil yang Anda dapatkan.",
+        "svgCopied": "SVG disalin",
+        "copySvg": "Salin SVG",
+        "preparing": "Menyiapkan…",
+        "downloadFilename": "Unduh {filename}",
+        "downloadQrCodePrintPrintsize": "Unduh qr-code-print-{printSize, number}{printUnit}.pdf",
+        "enterMinMaxUnitOr": "Masukkan {min, number}–{max, number} {unit}, atau jarak {distanceMin, number}–{distanceMax, number} {distanceUnit}.",
+        "enterMinMaxUnit": "Masukkan {min, number}–{max, number} {unit}.",
+        "downloadedFilename": "{filename} diunduh",
+        "failedToDownloadQrCode": "Gagal mengunduh kode QR",
+        "downloadedPrintfilename": "{printFilename} diunduh",
+        "failedToCreatePrintFile": "Gagal membuat file cetak",
+        "couldntCopyTheSvg": "Tidak dapat menyalin SVG",
+        "formatHints": {
+          "png": "Terbaik untuk web, dokumen, dan slide.",
+          "jpg": "Terbaik untuk email dan file berukuran kecil.",
+          "webp": "Terbaik untuk situs web yang cepat dimuat · lossless, biasanya lebih kecil dari PNG.",
+          "svg": "Terbaik untuk Figma, Illustrator, dan situs web · tetap tajam di ukuran berapa pun.",
+          "pdf": "Terbaik untuk dokumen dan cetak cepat · untuk PDF vektor, gunakan Siap cetak.",
+          "eps": "Terbaik untuk percetakan dan aplikasi vektor · tetap tajam di ukuran berapa pun."
+        },
+        "sizePresets": {
+          "small": "Email",
+          "medium": "Web",
+          "large": "Sosial",
+          "xlarge": "Cetak",
+          "3xl": "Poster"
+        },
+        "finishedSize": "Ukuran akhir {width} × {height}",
+        "finishedSizeOnPage": "Ukuran akhir {width} × {height} (halaman {pageWidth} × {pageHeight})"
+      },
+      "editButton": {
+        "edit": "Edit",
+        "editTheme": "Edit tema"
+      },
+      "moreMenu": {
+        "more": "Lainnya",
+        "moreThingsToDoWith": "Hal lain yang bisa dilakukan dengan desain ini",
+        "makeManyFromACsv": "Buat banyak dari CSV",
+        "checkAPhotoOfThe": "Periksa foto hasil cetak",
+        "publishToCommunity": "Publikasikan ke komunitas",
+        "useQrdxInFigmaAnd": "Gunakan QRdx di Figma dan lainnya",
+        "keyboardShortcuts": "Pintasan keyboard",
+        "makeItDynamic": "Jadikan dinamis…",
+        "linkOptions": "Opsi tautan…",
+        "oneCodePerRowOf": "Satu kode untuk setiap baris CSV Anda, dengan gaya ini.",
+        "makeSureThePrintedCode": "Pastikan kode yang dicetak bisa dipindai seperti kode ini.",
+        "shareThisStyleForOthers": "Bagikan gaya ini agar orang lain bisa menerapkannya.",
+        "itsShortLinkFolderTags": "Tautan pendek, folder, tag, dan pengalamatannya.",
+        "changeWhereItPointsAfter": "Ubah tujuannya setelah dicetak, dan hitung pemindaian.",
+        "signInToChangeWhere": "Masuk untuk mengubah tujuannya setelah dicetak.",
+        "pluginsHint": {
+          "noneListed": "Belum ada di toko mereka: pasang dari sumber.",
+          "someListed": "Sebagian dipasang dari sumber untuk saat ini."
+        }
+      },
+      "publishButton": {
+        "published": "Dipublikasikan",
+        "publish": "Publikasikan",
+        "publishedToCommunity": "Dipublikasikan ke komunitas",
+        "publishToCommunity": "Publikasikan ke komunitas"
+      },
+      "qrCodeDialog": {
+        "getCode": "Dapatkan kode",
+        "useThisDesignInYour": "Gunakan desain ini di aplikasi Anda, di halaman web, melalui API, atau dengan asisten AI.",
+        "installTheOpenSourceQrdx": "Instal paket open source <code>qrdx</code> ({version} di npm) dan pasang komponen ini.",
+        "addTheQrCodeComponent": "Tambahkan komponen QR Code dari registri QRdx, lalu gunakan dengan desain ini.",
+        "aPublicImageOfThis": "Gambar publik dari kode ini untuk disematkan di mana saja. Tidak perlu kunci API.",
+        "createsADynamicCodeWith": "Membuat kode dinamis dengan desain ini. Memerlukan <link>kunci API</link>.",
+        "addThisServerToYour": "Tambahkan server ini ke asisten AI Anda; tidak perlu kunci. <link>Panduan penyiapan</link>",
+        "askUseQrdxDesignQr": "Minta: “Gunakan QRdx design_qr dengan argumen ini.” QRdx dapat mengubah gaya hingga kode terpindai dengan baik.",
+        "writesThisDesignToQr": "Menulis desain ini ke qr.svg.",
+        "developerDocs": "Dokumen developer",
+        "pluginsForFigmaCanvaRaycast": "Plugin untuk Figma, Canva, Raycast, dan Chrome",
+        "leftOutValue": "Dihilangkan: {value}.",
+        "imageUrl": "URL gambar",
+        "terminal": "Terminal",
+        "designQrArguments": "Argumen design_qr",
+        "labelCopied": "{label} disalin",
+        "copyLabel": "Salin {label}",
+        "command": "perintah",
+        "address": "alamat",
+        "line": "baris",
+        "lines": "baris",
+        "copied": "Disalin",
+        "copy": "Salin",
+        "couldntCopyToTheClipboard": "Tidak dapat menyalin ke papan klip"
+      },
+      "resetButton": {
+        "reset": "Atur ulang",
+        "resetToPresetDefaults": "Kembalikan ke default preset"
+      },
+      "saveButton": {
+        "save": "Simpan",
+        "saveDesign": "Simpan desain"
+      },
+      "shareButton": {
+        "share": "Bagikan",
+        "shareDesign": "Bagikan desain"
+      },
+      "undoRedoButtons": {
+        "undo": "Urungkan",
+        "redo": "Ulangi"
+      }
+    },
+    "ai": {
+      "agentParts": {
+        "scanScoreScoreValue": "Skor pemindaian {score, number} · {value}",
+        "theDesignStepFailedTry": "Langkah desain gagal. Coba lagi.",
+        "theContentNeedsAFix": "Konten perlu diperbaiki: {value}",
+        "setTheContentContentline": "Atur konten: {contentLine}",
+        "checkedScanScoreScoreValue": "Skor pemindaian diperiksa: {score, number} · {value}",
+        "repairing": "Memperbaiki…",
+        "stop": "Hentikan",
+        "checkedScanScore": "Skor pemindaian diperiksa:",
+        "youAnsweredAnswered": "Jawaban Anda: {answered}",
+        "notAnswered": "Belum dijawab",
+        "send": "Kirim",
+        "reject": "Tolak",
+        "changedToGetThere": "Diubah untuk mencapainya:",
+        "scoredWithASampleLink": "Dinilai dengan tautan contoh sampai Anda menambahkan konten.",
+        "replacesTheContentWithSummary": "Mengganti konten dengan {summary}",
+        "turnsOffTheLogoQr": "Menonaktifkan tampilan Logo QR / Image QR",
+        "applyToYourEditor": "Terapkan ke editor Anda?",
+        "undone": "Dibatalkan",
+        "applyAgain": "Terapkan lagi",
+        "applied": "Diterapkan",
+        "undo": "Urungkan",
+        "applying": "Menerapkan…",
+        "couldntApplyItTryAgain": "Tidak dapat menerapkannya. Coba lagi.",
+        "notApplied": "Tidak diterapkan",
+        "templateName": "Templat “{name}”",
+        "savesTheLookToYour": "Menyimpan tampilan ke tema Anda: warna, bentuk, bingkai beserta teksnya, tepi, dan logo. Bukan kontennya.",
+        "saveToYourAccount": "Simpan ke akun Anda?",
+        "savedToYourThemes": "Disimpan ke tema Anda",
+        "openThemes": "Buka tema",
+        "upgrade": "Upgrade",
+        "saving": "Menyimpan…",
+        "notSaved": "Belum disimpan",
+        "steps": "Langkah",
+        "yourAnswer": "Jawaban Anda",
+        "orTypeYourAnswer": "Atau ketik jawaban Anda",
+        "designingTheStyle": "Merancang gaya…",
+        "designedTheStyle": "Gaya telah dirancang",
+        "fellBackToAClassic": "Kembali ke kode klasik hitam di atas putih",
+        "repairedValue": "Diperbaiki: {value}",
+        "couldntCheckTheScanScore": "Tidak dapat memeriksa skor pemindaian",
+        "checkingTheScanScore": "Memeriksa skor pemindaian…",
+        "showLess": "Tampilkan lebih sedikit",
+        "showValueMore": "Tampilkan {value, number} lagi",
+        "applyThisDesign": "Terapkan desain ini",
+        "notAppliedYourEditorIs": "Tidak diterapkan. Editor Anda tidak berubah."
+      },
+      "aiBotBadge": {
+        "qrdxAi": "QRdx AI"
+      },
+      "aiChatFormBody": {
+        "chatInput": "Input chat"
+      },
+      "aiSendButton": {
+        "stop": "Berhenti",
+        "labelEnter": "{label} (Enter)"
+      },
+      "alertBanner": {
+        "youHaveFreepromessagesleftFreePro": "Anda memiliki {freeProMessagesLeft, number} pesan<span> Pro </span>Gratis tersisa.",
+        "upgradeToProToUnlock": "Upgrade ke <span>Pro</span> untuk membuka permintaan tanpa batas.",
+        "upgrade": "Upgrade"
+      },
+      "chatImagePreview": {
+        "imagePreview": "Pratinjau Gambar",
+        "imagePreview2": "Pratinjau gambar",
+        "fullImagePreview": "Pratinjau gambar penuh"
+      },
+      "chatInput": {
+        "designingYourCode": "Merancang kode Anda…",
+        "newChat": "Chat baru",
+        "toSend": "untuk kirim",
+        "newLine": "baris baru",
+        "startANewChat": "Mulai obrolan baru",
+        "generate": "Buat"
+      },
+      "chatInterface": {
+        "seemsLikeThisMessageIs": "Sepertinya pesan ini sudah tidak tersedia.",
+        "cannotRetryThisMessage": "Pesan ini tidak dapat dicoba lagi"
+      },
+      "chatThemePreview": {
+        "stoppedOrFailedRetryFrom": "Dihentikan atau gagal. Coba lagi dari pesan di atas.",
+        "apply": "Terapkan",
+        "collapseSection": "Ciutkan bagian",
+        "expandSection": "Luaskan bagian",
+        "feedback": {
+          "colors": "Memilih warna yang bisa dipindai…",
+          "shapes": "Membentuk titik dan mata sudut…",
+          "contrast": "Memeriksa kontras…",
+          "almost": "Hampir selesai…"
+        }
+      },
+      "closeableSuggestedPillActions": {
+        "suggestions": "Saran",
+        "hideSuggestions": "Sembunyikan saran"
+      },
+      "contentDialog": {
+        "whatShouldTheCodeOpen": "Apa yang harus dibuka kode ini?",
+        "addALinkOrChoose": "Tambahkan tautan atau pilih jenis. Desain Anda berlanjut setelahnya.",
+        "link": "Tautan",
+        "scansOpen": "Pemindaian membuka",
+        "orChooseAType": "atau pilih jenis",
+        "lengthMoreTypes": "{length, number} jenis lainnya",
+        "cancel": "Batal",
+        "continue": "Lanjutkan",
+        "backToAllTypes": "Kembali ke semua jenis",
+        "aWebsiteAMenuA": "Situs web, menu, formulir: alamat web apa pun."
+      },
+      "dragAndDropImageUploader": {
+        "dropImagesHere": "Letakkan gambar di sini"
+      },
+      "enhancePromptButton": {
+        "stop": "Berhenti",
+        "enhancePrompt": "Sempurnakan prompt"
+      },
+      "imageParts": {
+        "useIt": "Gunakan",
+        "addContent": "Tambah konten",
+        "notAdded": "Tidak ditambahkan",
+        "whatShouldTheCodeOpen": "Apa yang harus dibuka kode ini?",
+        "undone": "Dibatalkan",
+        "applyAgain": "Terapkan lagi",
+        "applied": "Diterapkan",
+        "undo": "Urungkan",
+        "openedAiArtInThe": "Seni AI dibuka di tab Art",
+        "notAppliedYourEditorIs": "Tidak diterapkan. Editor Anda tidak berubah.",
+        "placedAsValue": "Ditempatkan sebagai {value}",
+        "applyToYourEditor": "Terapkan ke editor Anda?",
+        "apply": "Terapkan",
+        "reject": "Tolak",
+        "notGreatYetTryAnother": "Belum bagus. Coba cara lain di atas.",
+        "keepMyCode": "Pertahankan kode saya",
+        "addWhatTheCodeOpens": "Tambahkan dulu apa yang dibuka kode ini.",
+        "placingYourPicture": "Menempatkan gambar Anda…",
+        "asValueWithNoAi": "Sebagai {value}, tanpa kredit AI",
+        "replacesTheContentWithSummary": "Mengganti konten dengan {summary}",
+        "openAiArt": "Buka seni AI",
+        "aiArtIsntOnHere": "Seni AI tidak aktif di sini. Image QR memakai gambar Anda tanpa AI.",
+        "useAsImageQr": "Pakai sebagai Image QR",
+        "aiPaintsANewScene": "AI melukis adegan baru ke dalam kode Anda, dengan gambar Anda sebagai referensi.",
+        "steps": "Langkah",
+        "addedValue": "Ditambahkan: {value}",
+        "noContentAdded": "Tidak ada konten ditambahkan",
+        "yourEditorHasContentNow": "Editor Anda kini berisi konten.",
+        "noContentYet": "Belum ada konten.",
+        "addALinkOrChoose": "Tambahkan tautan atau pilih jenis {reason}.",
+        "addALinkOrChoose2": "Tambahkan tautan atau pilih jenis, lalu desain dilanjutkan.",
+        "placedYourPicture": "Gambar Anda ditempatkan",
+        "youStartItInThe": "Anda memulainya di tab Art. Ini memakai kredit seni AI.",
+        "checkedScore": "Sudah dicek, skor pemindaian: {score, number}",
+        "repairedThenCheckedScore": "Diperbaiki, lalu dicek, skor pemindaian: {score, number}",
+        "place": {
+          "logo": "Pakai sebagai logo",
+          "logo_qr": "Pakai sebagai Logo QR",
+          "image_qr": "Pakai sebagai Image QR",
+          "background": "Pakai sebagai latar",
+          "dots": "Pakai di titik"
+        }
+      },
+      "imageUploader": {
+        "image": "Gambar",
+        "uploadImageForThemeGeneration": "Unggah gambar untuk membuat tema",
+        "attachImage": "Lampirkan gambar"
+      },
+      "messageActions": {
+        "retry": "Coba lagi",
+        "edit": "Edit"
+      },
+      "messageEditForm": {
+        "cancelEdit": "Batalkan edit",
+        "confirmEdit": "Konfirmasi edit"
+      },
+      "message": {
+        "qrdxAi": "QRdx AI",
+        "imagePreview": "Pratinjau gambar"
+      },
+      "messages": {
+        "clearError": "Hapus galat"
+      },
+      "noMessagesPlaceholder": {
+        "recentGenerations": "Hasil terbaru",
+        "applyValue": "Terapkan: {value}",
+        "applyThisGeneratedTheme": "Terapkan tema yang dibuat ini",
+        "modes": {
+          "create": {
+            "label": "Buat",
+            "description": "Mulai dari nol: apa yang dibuka, serta suasana, merek, atau mood."
+          },
+          "remix": {
+            "label": "Remix",
+            "description": "Ambil sebuah preset dan kembangkan ke arah baru."
+          },
+          "tweak": {
+            "label": "Sesuaikan",
+            "description": "Atur desain yang sedang Anda pakai saat ini."
+          }
+        },
+        "greeting": "Tema apa yang bisa saya bantu buat?",
+        "greetingName": "Tema apa yang bisa saya bantu buat, {name}?"
+      },
+      "publishCard": {
+        "publishNameToTheCommunity": "Publikasikan “{name}” ke komunitas",
+        "aThemeAnyoneCanUse": "Tema yang bisa dipakai siapa saja, gratis di bawah {COMMUNITY_LICENSE_NAME}. Anda dapat mengedit detailnya sebelum dipublikasikan.",
+        "shareItInTheCommunity": "Bagikan ke komunitas?",
+        "editAndPublish": "Edit dan publikasikan",
+        "notNow": "Nanti saja",
+        "published": "Dipublikasikan",
+        "viewIt": "Lihat",
+        "notPublishedNothingWasShared": "Tidak dipublikasikan. Tidak ada yang dibagikan.",
+        "checking": "Memeriksa…",
+        "couldntCheckItLookFor": "Tidak dapat memeriksanya. Cari di profil komunitas Anda.",
+        "notPublished": "Tidak dipublikasikan"
+      },
+      "suggestionChips": {
+        "suggestions": "Saran",
+        "chips": {
+          "differentStyle": "Coba gaya lain",
+          "frameText": "Ubah teks bingkai",
+          "addFrame": "Tambah bingkai “Pindai saya”",
+          "darker": "Buat lebih gelap",
+          "lighter": "Buat lebih terang",
+          "removeLogo": "Hapus logo",
+          "addLogo": "Tambah logo",
+          "saveTemplate": "Simpan sebagai templat",
+          "keepColors": "Pertahankan warna, ubah bentuk",
+          "behindCode": "Taruh di belakang kode saja",
+          "asLogo": "Pakai sebagai logo saja",
+          "variation": "Buat variasi",
+          "darkVersion": "Buat versi gelap"
+        }
+      },
+      "uploadedImagePreview": {
+        "uploadedPreview": "Pratinjau unggahan",
+        "removeImage": "Hapus gambar",
+        "uploadedPreviewEnlarged": "Pratinjau unggahan diperbesar"
+      }
+    },
+    "art": {
+      "aiArtDownload": {
+        "downloadAiArt": "Unduh seni AI",
+        "widthPx": "{width, number, ::group-off} px",
+        "printPng": "PNG cetak",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, sudah diperiksa ulang",
+        "useAsImageQr": "Pakai sebagai Image QR",
+        "aiGeneratedQrCodeArtwork": "Karya seni kode QR buatan AI yang mengodekan {text}",
+        "format": "Format",
+        "downloadPng": "Unduh PNG",
+        "downloadPrintPng": "Unduh PNG cetak",
+        "downloadTheWidthPxImage": "Unduh gambar {width, number, ::group-off} px saja.",
+        "pickSvgPdfOrEps": "Pilih SVG, PDF, atau EPS untuk itu.",
+        "thePrintSizeCopyDidnt": "Salinan ukuran cetak tidak lolos pemeriksaan pemindaian",
+        "couldntPrepareThePrintSize": "Tidak dapat menyiapkan gambar ukuran cetak",
+        "nowAnImageQrCode": "Sekarang kode Image QR",
+        "couldntTurnThisImageInto": "Tidak dapat mengubah gambar ini menjadi kode Image QR"
+      },
+      "aiArtPanel": {
+        "style": "Gaya",
+        "variations": "Variasi",
+        "eachVariationIsItsOwn": "Setiap variasi adalah gambar tersendiri dan menggunakan 1 kredit. Variasi yang paling mudah dipindai dipilihkan untuk Anda.",
+        "cancel": "Batal",
+        "addYourContentFirstAi": "Tambahkan konten Anda terlebih dahulu: AI art melukis kode yang sedang Anda edit.",
+        "addContent": "Tambah konten",
+        "aiArtFitsUpTo": "AI art mendukung hingga {ART_TEXT_MAX_LENGTH, number} karakter, sedangkan kode ini memiliki {length, number}. Tautan yang lebih pendek, atau tautan pendek dari kode dinamis, bisa digunakan.",
+        "encodesYourDynamicLinkValue": "Menyandikan tautan dinamis Anda <span>{value}</span>, sehingga Anda bisa mengubah tujuannya setelah dicetak.",
+        "encodesValueFixedOncePrinted": "Menyandikan <span>{value}</span>, tidak dapat diubah setelah dicetak. Jadikan dinamis di Konten untuk mengubahnya nanti.",
+        "encodesYourLabelDetailsFixed": "Menyandikan detail {label} Anda, tidak dapat diubah setelah dicetak.",
+        "thingsToAvoid": "Hal yang dihindari",
+        "seed": "Seed",
+        "lockSeed": "Kunci seed",
+        "referenceImage": "Gambar referensi",
+        "useMyLogoAsReference": "Gunakan logo saya sebagai referensi",
+        "remove": "Hapus",
+        "uploadReference": "Unggah referensi",
+        "optionalItsColorsAndShapes": "Opsional. Warna dan bentuknya terbawa ke karya seni. Ukurannya diubah di browser Anda dan dikirim bersama prompt Anda melalui Vercel AI Gateway ke {ART_MODEL_LABEL}.",
+        "signInToGenerateEvery": "Masuk untuk membuat. Setiap paket menyertakan gambar AI art setiap bulan; <link>lihat paket</link>.",
+        "eachImageUses1Ai": "Setiap gambar menggunakan 1 kredit AI art; gambar yang gagal dikembalikan kreditnya.",
+        "unlimitedAiArtOnYour": "AI art tanpa batas di paket Anda. Proses ini menggunakan {variations, number}.",
+        "describeASceneEG": "Deskripsikan sebuah adegan, misalnya mercusuar di pesisir berbatu saat matahari terbenam, lukisan cat minyak",
+        "qrVisibility": "Visibilitas QR",
+        "creativity": "Kreativitas",
+        "eGPeopleBuildingsDark": "mis. orang, bangunan, warna gelap",
+        "randomEachRun": "Acak setiap proses",
+        "uploadAReferenceImage": "Unggah gambar referensi",
+        "reference": "Referensi",
+        "generating": "Membuat…",
+        "signInToGenerate": "Masuk untuk membuat",
+        "advancedCreativitySeedReference": "Lanjutan: kreativitas, seed, referensi",
+        "advancedCreativityReference": "Lanjutan: kreativitas, referensi",
+        "uploadItAsAReference": "Unggah sebagai gambar referensi saja.",
+        "couldntUseYourLogo": "Logo Anda tidak dapat dipakai",
+        "creditsLeft": "Sisa <count>{remaining, number} dari {limit, number}</count> gambar AI art bulan ini{pooled, select, yes { (dibagi dengan tim Anda)} other {}}, diatur ulang {resets}. Proses ini memakai {variations, number}.",
+        "notEnoughLeft": "Sisa tidak cukup: pilih lebih sedikit variasi.",
+        "notEnoughLeftOrUpgrade": "Sisa tidak cukup: pilih lebih sedikit variasi atau upgrade.",
+        "showResults": "{count, plural, other {Tampilkan hasil Anda}}",
+        "moreArtistic": "Lebih artistik",
+        "clearerCode": "Kode lebih jelas",
+        "followsYourPrompt": "Sesuai prompt Anda",
+        "interpretsFreely": "Ditafsirkan bebas",
+        "generateVariations": "{count, plural, one {Buat QR art} other {Buat # variasi}}"
+      },
+      "artCanvas": {
+        "downloadPng": "Unduh PNG",
+        "printPng": "Cetak PNG",
+        "useAsImageQr": "Pakai sebagai Image QR",
+        "retryClearer": "Coba lagi, lebih jelas",
+        "aiArt": "AI art",
+        "encodesValue": "Berisi {value}",
+        "backToCode": "Kembali ke kode",
+        "eachImageIsCheckedTo": "Setiap gambar diperiksa agar dapat dipindai sebelum Anda melihatnya. Proses ini bisa memakan waktu hingga satu menit.",
+        "printPngArtPrintSize": "Cetak PNG, {ART_PRINT_SIZE, number, ::group-off} px",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, diperiksa ulang agar dapat dipindai",
+        "variations": "Variasi",
+        "aiArtResult": "Hasil AI art",
+        "aiGeneratedQrCodeArtwork": "Karya seni kode QR buatan AI yang berisi {text}",
+        "verifiedToScanScanScore": "Terverifikasi dapat dipindai · Skor pemindaian {score, number}",
+        "checkBeforePrinting": "Periksa sebelum mencetak",
+        "scoringTheScan": "Menilai pemindaian…",
+        "downloadTheWidthPxImage": "Unduh gambar {width, number, ::group-off} px saja.",
+        "itsVectorArtDownloadIt": "Ini seni vektor: unduh sebagai SVG, PDF, atau EPS.",
+        "undo": "Urungkan",
+        "thePrintSizeCopyDidnt": "Salinan ukuran cetak tidak lolos pemeriksaan pemindaian",
+        "couldntPrepareThePrintSize": "Tidak dapat menyiapkan gambar ukuran cetak",
+        "nowAnImageQrCode": "Kini menjadi Image QR",
+        "couldntTurnThisImageInto": "Tidak dapat mengubah gambar ini menjadi Image QR",
+        "generatingVariations": "Membuat {count, number} variasi…",
+        "generatingYourArtwork": "Membuat karya seni Anda…",
+        "resultSummary": "Visibilitas QR {visibility, number} · Kreativitas {creativity, number} · PNG {width, number, ::group-off} px, PNG cetak {printSize, number, ::group-off} px{failed, plural, =0 {} one { · # variasi gagal dan tidak memakai kredit} other { · # variasi gagal dan tidak memakai kredit}}. Untuk SVG, PDF atau EPS, gunakan sebagai Image QR."
+      },
+      "artPanel": {
+        "art": "Seni",
+        "off": "Mati",
+        "logoQr": "Logo QR",
+        "imageQr": "Image QR",
+        "aiArt": "Seni AI",
+        "artMode": "Mode seni",
+        "modes": {
+          "off": "Kode polos. Logo QR dan Image QR memadukan gambar ke dalam titik-titik kode, tanpa AI, di semua format.",
+          "logo": "Tanpa AI: logo Anda menjadi bagian dari kode, di semua format.",
+          "halftone": "Tanpa AI: foto Anda menjadi bagian dari kode, di semua format.",
+          "ai": "AI melukis sebuah pemandangan ke dalam kode Anda. Setiap gambar diperiksa agar dapat dipindai."
+        }
+      }
+    },
+    "brandLogos": {
+      "brandLogoGallery": {
+        "brandLogos": "Logo merek",
+        "theBrandLogosDidntLoad": "Logo merek gagal dimuat.",
+        "tryAgain": "Coba lagi",
+        "noBrandMatchesQuerySome": "Tidak ada merek yang cocok dengan “{query}”. Beberapa merek meminta Simple Icons menghapus logonya, jadi tidak tersedia di sini.",
+        "allBrandsAToZ": "Semua merek, A sampai Z",
+        "logosFromSimpleIconsCc0": "Logo dari Simple Icons (CC0). Logo merek adalah merek dagang milik pemiliknya; gunakan untuk mengarahkan orang ke merek tersebut.",
+        "showMore": "Tampilkan lagi",
+        "searchBrands": "Cari merek",
+        "searchSpotifyPaypalGoogleMaps": "Cari: Spotify, PayPal, Google Maps…",
+        "logoColor": "Warna logo",
+        "results": "Hasil",
+        "titleLogo": "Logo {title}",
+        "valueBrandsFromSimpleIcons": "{value} merek dari Simple Icons. Setiap logo adalah milik pemiliknya.",
+        "brandsFromSimpleIconsEach": "Merek dari Simple Icons. Setiap logo adalah milik pemiliknya.",
+        "plateNeededForWhite": "Alas (diperlukan untuk putih)",
+        "plate": "Alas",
+        "n1Brand": "1 merek",
+        "valueBrands": "{value} merek"
+      }
+    },
+    "communitySheet": {
+      "communityThemes": "Tema komunitas",
+      "freeToUseUnderCc0": "Gratis digunakan dengan lisensi CC0. Menerapkan tema tidak mengubah konten Anda.",
+      "sort": "Urutkan",
+      "allTags": "Semua tag",
+      "tryAgain": "Coba lagi",
+      "clearSearch": "Hapus pencarian",
+      "showAllTags": "Tampilkan semua tag",
+      "searchCoversTheFirstLength": "Pencarian mencakup {length, number} tema pertama.",
+      "saveAndContinue": "Simpan dan lanjutkan",
+      "publishingSharesASavedTheme": "Menerbitkan akan membagikan tema yang tersimpan. Beri nama tampilan ini untuk melanjutkan.",
+      "saveToPublish": "Simpan untuk terbit",
+      "searchCommunityThemes": "Cari tema komunitas",
+      "searchThemes": "Cari tema",
+      "loadingThemes": "Memuat tema",
+      "couldntLoadCommunityThemes": "Tema komunitas tidak dapat dimuat",
+      "noThemesMatchQuery": "Tidak ada tema untuk \"{query}\"",
+      "noThemesTaggedTagYet": "Belum ada tema dengan tag {tag}",
+      "noCommunityThemesYet": "Belum ada tema komunitas",
+      "applyName": "Terapkan {name}",
+      "official": "Resmi",
+      "unlikeName": "Batal suka {name}",
+      "likeName": "Sukai {name}",
+      "likes": "Suka",
+      "published": "Diterbitkan",
+      "publishThisStyle": "Terbitkan gaya ini",
+      "tags": "Tag",
+      "undo": "Urungkan",
+      "likedName": "Menyukai \"{name}\"",
+      "liked": "Disukai",
+      "sorts": {
+        "popular": "Populer",
+        "newest": "Terbaru"
+      }
+    },
+    "contentForms": {
+      "amazonForm": {
+        "amazonProductUrl": "URL produk Amazon *",
+        "scanningWillOpenYourAmazon": "Pemindaian akan membuka produk atau toko Amazon Anda"
+      },
+      "attendanceForm": {
+        "googleFormUrl": "URL Google Form *",
+        "scanningWillOpenYourAttendance": "Pemindaian akan membuka formulir kehadiran Anda",
+        "httpsFormsGleOrHttps": "https://forms.gle/... atau https://docs.google.com/forms/..."
+      },
+      "bitcoinForm": {
+        "bitcoinAddress": "Alamat Bitcoin *",
+        "amountBtc": "Jumlah (BTC)",
+        "label": "Label",
+        "message": "Pesan",
+        "scanningWillOpenABitcoin": "Pemindaian akan membuka dompet Bitcoin dengan detail pembayaran ini",
+        "n1a1zp1ep5qgefi2dmptftl5slmv7divfna": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+        "paymentLabel": "Label pembayaran",
+        "paymentMessage": "Pesan pembayaran"
+      },
+      "calcomForm": {
+        "calComBookingUrl": "URL pemesanan Cal.com *",
+        "scanningWillOpenYourCal": "Pemindaian akan membuka halaman pemesanan Cal.com Anda"
+      },
+      "dubshForm": {
+        "dubShortLink": "Tautan pendek Dub *",
+        "scanningWillOpenYourDub": "Pemindaian akan membuka tautan pendek Dub Anda.",
+        "connectDub": "Hubungkan Dub",
+        "connectDubToCreatePick": "Hubungkan Dub untuk membuat, memilih, dan melacak tautan Dub di sini.",
+        "enterManually": "Masukkan manual",
+        "createNew": "Buat baru",
+        "selectExisting": "Pilih yang ada",
+        "pasteALink": "Tempel tautan",
+        "destinationUrl": "URL tujuan *",
+        "domain": "Domain",
+        "customEnding": "Akhiran kustom",
+        "title": "Judul",
+        "description": "Deskripsi",
+        "createDubLink": "Buat tautan Dub",
+        "loadingYourDubLinks": "Memuat tautan Dub Anda…",
+        "clicksClicks": "({clicks, number} klik)",
+        "selectAShortLink": "Pilih tautan pendek…",
+        "noLinksFound": "Tautan tidak ditemukan.",
+        "scansGoToUrl": "Pemindaian menuju {url}",
+        "campaign": "kampanye",
+        "springCampaign": "Kampanye musim semi",
+        "optionalInternalNote": "Catatan internal opsional",
+        "searchLinks": "Cari tautan…",
+        "failedToConnectDub": "Gagal menghubungkan Dub",
+        "dubLinkCreated": "Tautan Dub dibuat",
+        "failedToCreateDubLink": "Gagal membuat tautan Dub"
+      },
+      "emailForm": {
+        "recipientEmail": "Email penerima *",
+        "subject": "Subjek",
+        "message": "Pesan",
+        "scanningWillOpenAnEmail": "Pemindaian akan membuka draf email ke alamat ini",
+        "contactExampleCom": "kontak@example.com",
+        "emailSubject": "Subjek email",
+        "emailMessage": "Pesan email"
+      },
+      "ethereumForm": {
+        "ethereumAddress": "Alamat Ethereum *",
+        "amountEth": "Jumlah (ETH)",
+        "gasLimit": "Batas gas",
+        "scanningWillOpenAnEthereum": "Pemindaian akan membuka dompet Ethereum dengan detail pembayaran ini",
+        "n0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359": "0xfb6916095ca1df60bb79Ce92ce3ea74c37c5d359"
+      },
+      "etsyForm": {
+        "etsyShopUrl": "URL toko Etsy *",
+        "scanningWillOpenYourEtsy": "Pemindaian akan membuka toko Etsy atau halaman produk Anda"
+      },
+      "exampleForm": {
+        "exampleDataReplaceItWith": "Data contoh. Ganti dengan data Anda sendiri.",
+        "clear": "Hapus",
+        "tryAnExample": "Coba contoh"
+      },
+      "facebookForm": {
+        "facebookProfileUrl": "URL profil Facebook *",
+        "scanningWillOpenYourFacebook": "Pemindaian akan membuka profil atau halaman Facebook Anda"
+      },
+      "flipkartForm": {
+        "flipkartProductUrl": "URL produk Flipkart *",
+        "scanningWillOpenYourFlipkart": "Pemindaian akan membuka produk atau toko Flipkart Anda"
+      },
+      "googleDriveForm": {
+        "connectGoogleDriveToPick": "Hubungkan Google Drive untuk memilih file, atau tempel tautan di bawah.",
+        "connectGoogleDrive": "Hubungkan Google Drive",
+        "googleDriveUrl": "URL Google Drive *",
+        "scanningWillOpenTheSelected": "Pemindaian akan membuka file atau folder Google Drive yang dipilih.",
+        "search": "Cari",
+        "loadMore": "Muat lagi",
+        "searchDriveFilesAndFolders": "Cari file dan folder Drive",
+        "failedToConnectGoogleDrive": "Gagal menghubungkan Google Drive"
+      },
+      "googleReviewForm": {
+        "googlePlaceId": "Google Place ID *",
+        "findYoursWithTheGoogle": "Temukan milik Anda dengan <link>Google Place ID Finder</link>",
+        "scanningWillOpenGoogleTo": "Pemindaian akan membuka Google untuk mengulas bisnis Anda",
+        "chijn1tTdeuemsrusoyg83fry4": "ChIJN1t_tDeuEmsRUsoyG83frY4"
+      },
+      "instagramForm": {
+        "instagramUsername": "Nama pengguna Instagram *",
+        "scanningWillOpenYourInstagram": "Pemindaian akan membuka profil Instagram Anda",
+        "usernameOrUsername": "namapengguna atau @namapengguna"
+      },
+      "linkedinForm": {
+        "linkedinProfileUrl": "URL profil LinkedIn *",
+        "scanningWillOpenYourLinkedin": "Pemindaian akan membuka profil LinkedIn atau halaman perusahaan Anda"
+      },
+      "mapsForm": {
+        "location": "Lokasi *",
+        "scanningWillOpenThisPlace": "Pemindaian akan membuka tempat ini di Google Maps",
+        "addressOrCoordinates407128": "Alamat atau koordinat (40.7128, -74.0060)"
+      },
+      "paypalForm": {
+        "paypalMeUrlOrPayment": "URL PayPal.Me atau tautan pembayaran *",
+        "scanningWillOpenThePaypal": "Pemindaian akan membuka halaman pembayaran PayPal",
+        "httpsPaypalMeUsernameOr": "https://paypal.me/namapengguna atau tautan pembayaran"
+      },
+      "phoneForm": {
+        "phoneNumber": "Nomor telepon *",
+        "includeTheCountryCodeLike": "Sertakan kode negara, seperti +1. Pemindaian akan memulai panggilan."
+      },
+      "pinterestForm": {
+        "pinterestUsername": "Nama pengguna Pinterest *",
+        "scanningWillOpenYourPinterest": "Pemindaian akan membuka profil Pinterest Anda",
+        "username": "namapengguna"
+      },
+      "redditForm": {
+        "redditUsername": "Nama pengguna Reddit",
+        "subreddit": "Subreddit",
+        "fillInOneIfBoth": "Isi salah satu. Jika keduanya diisi, subreddit yang digunakan.",
+        "scanningWillOpenTheReddit": "Pemindaian akan membuka profil Reddit atau subreddit",
+        "usernameOrUUsername": "namapengguna atau u/namapengguna",
+        "subredditOrRSubreddit": "subreddit atau r/subreddit"
+      },
+      "smsForm": {
+        "phoneNumber": "Nomor telepon *",
+        "message": "Pesan",
+        "scanningWillOpenAText": "Pemindaian akan membuka pesan teks ke nomor ini",
+        "preFilledSmsMessage": "Pesan SMS yang sudah terisi"
+      },
+      "snapchatForm": {
+        "snapchatUsername": "Nama pengguna Snapchat *",
+        "scanningWillOpenYourSnapchat": "Pemindaian akan membuka halaman tambah teman Snapchat Anda",
+        "username": "namapengguna"
+      },
+      "spotifyForm": {
+        "spotifyUriOrUrl": "URI atau URL Spotify *",
+        "scanningWillOpenTheContent": "Pemindaian akan membuka konten di Spotify",
+        "spotifyTrackOrHttpsOpen": "spotify:track:... atau https://open.spotify.com/..."
+      },
+      "textForm": {
+        "textContent": "Konten teks *",
+        "pasteALinkAndIt": "Tempel tautan dan jenisnya akan beralih ke jenis yang sesuai.",
+        "enterAnyText": "Masukkan teks apa saja…"
+      },
+      "threadsForm": {
+        "threadsUsername": "Nama pengguna Threads *",
+        "scanningWillOpenYourThreads": "Pemindaian akan membuka profil Threads Anda",
+        "usernameOrUsername": "namapengguna atau @namapengguna"
+      },
+      "tiktokForm": {
+        "tiktokUsername": "Nama pengguna TikTok *",
+        "scanningWillOpenYourTiktok": "Pemindaian akan membuka profil TikTok Anda",
+        "usernameOrUsername": "namapengguna atau @namapengguna"
+      },
+      "twitterForm": {
+        "twitterXUsername": "Nama pengguna Twitter / X *",
+        "scanningWillOpenYourTwitter": "Pemindaian akan membuka profil Twitter / X Anda",
+        "usernameOrUsername": "namapengguna atau @namapengguna"
+      },
+      "upiForm": {
+        "upiId": "UPI ID *",
+        "payeeName": "Nama penerima",
+        "amount": "Jumlah (₹)",
+        "note": "Catatan",
+        "scanningWillOpenAUpi": "Pemindaian akan membuka aplikasi UPI dengan detail pembayaran ini",
+        "usernameBankname": "namapengguna@namabank",
+        "yourName": "Nama Anda",
+        "paymentFor": "Pembayaran untuk..."
+      },
+      "urlForm": {
+        "websiteAddress": "Alamat situs web",
+        "scansOpen": "Saat dipindai",
+        "pasteAnyLinkSocialAnd": "Tempel tautan apa pun. Tautan media sosial dan WhatsApp memiliki tipenya sendiri."
+      },
+      "vcardForm": {
+        "firstName": "Nama depan *",
+        "lastName": "Nama belakang",
+        "organization": "Organisasi",
+        "phone": "Telepon",
+        "email": "Email",
+        "website": "Situs web",
+        "address": "Alamat",
+        "note": "Catatan",
+        "scanningWillOfferToSave": "Pemindaian akan menawarkan untuk menyimpan kontak ini",
+        "john": "John",
+        "doe": "Doe",
+        "companyName": "Nama perusahaan",
+        "johnExampleCom": "john@example.com",
+        "n123MainStCityCountry": "Jl. Utama No. 123, Kota, Negara",
+        "additionalNotes": "Catatan tambahan"
+      },
+      "venmoForm": {
+        "venmoUsername": "Nama pengguna Venmo *",
+        "amount": "Jumlah ($)",
+        "note": "Catatan",
+        "scanningWillOpenVenmoWith": "Pemindaian akan membuka Venmo dengan detail pembayaran ini",
+        "username": "@namapengguna",
+        "paymentFor": "Pembayaran untuk..."
+      },
+      "whatsappForm": {
+        "phoneNumber": "Nomor telepon *",
+        "includeCountryCodeWithoutSpaces": "Sertakan kode negara tanpa spasi atau simbol",
+        "message": "Pesan",
+        "scanningWillOpenAWhatsapp": "Pemindaian akan membuka obrolan WhatsApp dengan nomor ini",
+        "preFilledWhatsappMessage": "Pesan WhatsApp yang sudah terisi"
+      },
+      "wifiForm": {
+        "networkName": "Nama jaringan *",
+        "security": "Keamanan",
+        "wpaWpa2": "WPA/WPA2",
+        "noPassword": "Tanpa kata sandi",
+        "password": "Kata sandi *",
+        "hiddenNetwork": "Jaringan tersembunyi",
+        "scanningWillOfferToJoin": "Pemindaian akan menawarkan untuk terhubung ke jaringan Wi-Fi ini",
+        "myWiFiNetwork": "Jaringan Wi-Fi saya",
+        "networkPassword": "Kata sandi jaringan"
+      },
+      "youtubeForm": {
+        "videoUrl": "URL video",
+        "channelUrl": "URL kanal",
+        "fillInOneIfBoth": "Isi salah satu. Jika keduanya diisi, video yang digunakan.",
+        "scanningWillOpenTheYoutube": "Pemindaian akan membuka video atau kanal YouTube"
+      }
+    },
+    "contentTypeModal": {
+      "current": "Saat ini",
+      "chooseAQrCodeType": "Pilih jenis kode QR",
+      "whatShouldHappenWhenSomeone": "Apa yang harus terjadi saat seseorang memindai kode Anda?",
+      "toPick": "untuk memilih",
+      "recent": "Terbaru",
+      "noTypeMatchesQueryA": "Tidak ada jenis yang cocok dengan “{query}”. Kode URL bisa dipakai untuk alamat web apa pun.",
+      "useAUrlCode": "Gunakan kode URL",
+      "previewEveryTemplate": "Pratinjau semua templat",
+      "move": "pindah",
+      "pick": "pilih",
+      "escClose": "<kbd>esc</kbd> tutup",
+      "searchQrCodeTypes": "Cari jenis kode QR",
+      "searchWiFiMenuGpay": "Cari: Wi-Fi, menu, gpay, kartu nama…",
+      "categories": "Kategori",
+      "hostedPages": "Halaman hosting",
+      "mobilePagesQrdxHostsFor": "Halaman seluler yang di-hosting oleh QRdx untuk Anda, masing-masing dengan kode QR dinamis dalam desain ini. Anda mengedit halaman di dasbor Anda.",
+      "mobilePagesQrdxHostsFor2": "Halaman seluler yang di-hosting oleh QRdx untuk Anda, masing-masing dengan kode QR dinamis dalam desain ini. Masuk untuk membuatnya.",
+      "matchesFor": "{count, plural, other {# hasil}} untuk “{query}”"
+    },
+    "contentTypeSelector": {
+      "qrCodeType": "Jenis kode QR",
+      "change": "Ubah",
+      "chooseAType": "Pilih jenis"
+    },
+    "contrastChecker": {
+      "contrastChecker": "Pemeriksa Kontras",
+      "wcag20AaRequires": "WCAG 2.0 AA mensyaratkan rasio kontras minimal {MIN_CONTRAST_RATIO, number}:1 • <link>Pelajari lebih lanjut</link>",
+      "toggleTheme": "Ganti tema",
+      "all": "Semua",
+      "issuesTotalissues": "Masalah ({totalIssues, number})",
+      "background": "Latar belakang",
+      "foreground": "Latar depan",
+      "aa": "Aa",
+      "sampleText": "Teks Contoh",
+      "preview": "Pratinjau",
+      "openContrastChecker": "Buka pemeriksa kontras",
+      "qrCodeBase": "Dasar Kode QR",
+      "cornerEyes": "Mata Sudut",
+      "eyeDots": "Titik Mata",
+      "nameEye": "Mata {name}",
+      "nameEyeDot": "Titik mata {name}",
+      "learnMoreAboutWcagContrast": "Pelajari lebih lanjut persyaratan kontras WCAG",
+      "eyePositions": {
+        "topLeft": "Kiri atas",
+        "topRight": "Kanan atas",
+        "bottomLeft": "Kiri bawah"
+      }
+    },
+    "controlSections": {
+      "artControls": {
+        "hintFinderAlignmentAndFormat": "{hint} Pola pencari, penyelaras, dan format tetap tajam.",
+        "useMyLogo": "Gunakan logo saya",
+        "uploadPngJpgWebpOr": "{upload}. PNG, JPG, WebP, atau SVG, hingga {value, number}MB. Gambar Anda tetap berada di browser; hanya kisi warna kecil yang disimpan.",
+        "look": "Tampilan",
+        "eyesMatchTheLogo": "Mata sesuai logo",
+        "usesHighErrorCorrectionAnd": "Menggunakan koreksi kesalahan tinggi dan batas yang jelas agar tetap dapat dipindai.",
+        "artScansBestWithHigh": "Seni paling baik dipindai dengan koreksi kesalahan tinggi dan batas yang jelas.<button>Terapkan</button>",
+        "removeArt": "Hapus seni",
+        "strength": "Kekuatan",
+        "fineTune": "Penyesuaian",
+        "easierToScan": "Lebih mudah dipindai",
+        "moreArt": "Lebih artistik",
+        "scanCheck": "Cek pemindaian",
+        "checking": "Memeriksa…",
+        "artLook": "Tampilan seni",
+        "artStrength": "Kekuatan seni",
+        "swapDotAndBackgroundColors": "Tukar warna titik dan latar belakang",
+        "putTheDotsOnWhite": "Letakkan titik di atas putih",
+        "uploadAnother": "Unggah yang lain",
+        "uploadYourOwn": "Unggah milik Anda",
+        "decodedInYourBrowserAt": "Didekode di browser Anda pada tiga ukuran.",
+        "addContentToCheckYour": "Tambahkan konten untuk memeriksa kode asli Anda.",
+        "checkYourConnectionAndTry": "Periksa koneksi Anda lalu coba lagi, atau unggah gambar Anda sendiri.",
+        "tryAPngOrJpg": "Coba gunakan PNG atau JPG.",
+        "useAPngJpgWebp": "Gunakan gambar PNG, JPG, WebP, atau SVG.",
+        "imagesMustBeValueMb": "Ukuran gambar maksimal {value, number}MB.",
+        "couldntLoadThisSample": "Contoh ini tidak dapat dimuat",
+        "couldntUseThisImage": "Gambar ini tidak dapat digunakan",
+        "unsupportedImageFormat": "Format gambar tidak didukung",
+        "imageIsTooLarge": "Gambar terlalu besar",
+        "modeCopy": {
+          "logo": {
+            "upload": "Logo PNG transparan atau SVG paling cocok",
+            "samples": "Coba contoh logo"
+          },
+          "halftone": {
+            "upload": "Foto dengan satu subjek yang jelas paling cocok",
+            "samples": "Coba contoh foto"
+          }
+        }
+      },
+      "colorPresets": {
+        "lightCodeOnADark": "Kode terang pada latar gelap mungkin tidak dapat dipindai di ponsel lama.",
+        "colorPalettes": "Palet warna",
+        "lightCodeOnDarkMay": "Kode terang pada latar gelap. Mungkin tidak terpindai di ponsel lama."
+      },
+      "contentControls": {
+        "startFromAStyle": "Mulai dari sebuah gaya",
+        "browseAllLength": "Jelajahi semua {length, number}",
+        "fineTuneColorsDotsAnd": "Atur warna, titik, dan logo",
+        "applyTheLabelStyle": "Terapkan gaya {label}"
+      },
+      "customFrameFields": {
+        "thisFrameHasNoLabels": "Bingkai ini tidak memiliki label untuk diedit.",
+        "icon": "Ikon",
+        "label": "Label",
+        "leaveEmptyForNoLabel": "Kosongkan jika tanpa label",
+        "secondLine": "Baris kedua",
+        "leaveEmptyToHideIt": "Kosongkan untuk menyembunyikan",
+        "frameColor": "Warna bingkai",
+        "textColor": "Warna teks",
+        "accentColor": "Warna aksen"
+      },
+      "designControls": {
+        "colors": "Warna",
+        "background": "Latar belakang",
+        "foreground": "Latar depan",
+        "eyes": "Mata",
+        "dots": "Titik",
+        "frame": "Bingkai",
+        "padding": "Padding",
+        "errorCorrection": "Koreksi kesalahan",
+        "border": "Garis tepi",
+        "none": "Tidak ada"
+      },
+      "dotSizeSection": {
+        "sizeOfEachDot": "Ukuran tiap titik",
+        "dotSize": "Ukuran titik",
+        "valueDotsKeepTheirFull": "Titik {value} mempertahankan ukuran penuhnya: titik yang lebih kecil tidak dapat dipindai.",
+        "smallerDotsGiveALighter": "Titik yang lebih kecil memberi tampilan lebih ringan. Titik {value} dapat mengecil hingga {floor, number}%, ukuran terkecil yang masih bisa dipindai."
+      },
+      "eyeColorsSection": {
+        "giveEachCornerEyeIts": "Berikan setiap mata sudut warna bingkai dan warna tengahnya sendiri. Mata yang tidak diubah memakai warna Mata dan Titik.",
+        "useTheSameColorsFor": "Gunakan warna yang sama untuk semua mata",
+        "sameForAll": "Sama untuk semua",
+        "eyeColors": "Warna mata",
+        "frame": "Bingkai",
+        "center": "Tengah",
+        "positions": {
+          "topLeft": "Kiri atas",
+          "topRight": "Kanan atas",
+          "bottomLeft": "Kiri bawah"
+        }
+      },
+      "frameControls": {
+        "customise": "Kustomisasi",
+        "importSvg": "Impor SVG",
+        "publishFrame": "Publikasikan bingkai",
+        "theFrameIsAddedAround": "Bingkai ditambahkan di sekeliling kode, sehingga gambar yang diunduh menjadi lebih besar dan kodenya sendiri tetap dapat dipindai.",
+        "label": "Label",
+        "secondLine": "Baris kedua",
+        "leaveEmptyForNoLabel": "Kosongkan jika tanpa label",
+        "pickAFrameFirst": "Pilih bingkai terlebih dahulu",
+        "frameColor": "Warna bingkai",
+        "textColor": "Warna teks",
+        "endColor": "Warna akhir",
+        "optionalEGYourWebsite": "Opsional, mis. situs web Anda",
+        "none": "Tidak ada"
+      },
+      "frameFields": {
+        "textSize": "Ukuran teks"
+      },
+      "framePicker": {
+        "more": "Lainnya",
+        "showAll": "Lihat semua",
+        "frame": "Bingkai",
+        "moreFrames": "Bingkai lainnya",
+        "allTotalFrames": "Semua {total, number} bingkai",
+        "allFrames": "Semua bingkai",
+        "searchFrames": "Cari bingkai",
+        "searchTotalFrames": "Cari {total, number} bingkai",
+        "closeFrames": "Tutup bingkai",
+        "filterFrames": "Filter bingkai",
+        "labelFrames": "Bingkai {label}",
+        "commonFrames": "Bingkai umum",
+        "everyFrameBuiltInStyles": "Semua bingkai: gaya bawaan, bingkai resmi QRdx, dan bingkai yang Anda simpan. Begitu dipilih, bingkai langsung diterapkan.",
+        "less": "Lebih sedikit",
+        "all": "Semua",
+        "noFramesMatchQuery": "Tidak ada bingkai yang cocok dengan \"{query}\".",
+        "loadingFrames": "Memuat bingkai…",
+        "comingUp": "Segera hadir",
+        "builtIn": "Bawaan",
+        "saved": "Tersimpan",
+        "results": "Hasil"
+      },
+      "frameShapes": {
+        "shapedCode": "Kode berbentuk",
+        "pngJpegOrSvgA": "PNG, JPEG, atau SVG: bentuk gelap atau solid di atas latar terang atau transparan.",
+        "remove": "Hapus",
+        "uploadASilhouette": "Unggah siluet",
+        "tracing": "Melacak…",
+        "replace": "Ganti",
+        "uploadAShape": "Unggah bentuk",
+        "shapeHelp": {
+          "circle": "Kode berada di dalam lingkaran titik dekoratif, dengan cincin kosong di sekelilingnya. Pemindai hanya membaca kode di bagian tengah, sehingga lingkarannya sedikit lebih besar untuk jarak pemindaian yang sama.",
+          "heart": "Kode berada di dalam bentuk hati dari titik dekoratif, dengan cincin kosong di sekelilingnya. Pemindai hanya membaca kode di bagian tengah, jadi cetak bentuk hati lebih besar daripada kode persegi untuk jarak pemindaian yang sama.",
+          "silhouette": "Kode berada di bagian tengah bentuk Anda yang paling lapang, dengan cincin kosong di sekelilingnya. Hanya garis tepinya yang disimpan, bukan gambarnya, dan tautan, komunitas, serta cuplikan menggunakan kode persegi."
+        },
+        "names": {
+          "circle": "Lingkaran titik",
+          "heart": "Hati",
+          "silhouette": "Siluet"
+        }
+      },
+      "frameTextPresets": {
+        "labelIdeas": "Ide label"
+      },
+      "logoControls": {
+        "logoInTheCenter": "Logo di tengah",
+        "coversAFewDotsError": "Menutupi beberapa titik; koreksi kesalahan akan melengkapinya.",
+        "quickIcons": "Ikon cepat",
+        "brandLogos": "Logo merek",
+        "pngJpgWebpOrSvg": "PNG, JPG, WebP, atau SVG, hingga {value, number}MB. Gambar persegi dengan sedikit ruang kosong di tepinya terlihat paling bagus.",
+        "remove": "Hapus",
+        "off": "Mati",
+        "logo": "Logo",
+        "uploadLogo": "Unggah logo",
+        "brandLogosBrandbuttonlabel": "Logo merek: {brandButtonLabel}",
+        "replace": "Ganti",
+        "uploadYourLogo": "Unggah logo Anda",
+        "useAPngJpgWebp": "Gunakan gambar PNG, JPG, WebP, atau SVG.",
+        "logosMustBeValueMb": "Ukuran logo maksimal {value, number}MB.",
+        "unsupportedLogoFormat": "Format logo tidak didukung",
+        "logoIsTooLarge": "Logo terlalu besar",
+        "failedToReadLogoFile": "Gagal membaca file logo"
+      },
+      "logoCropControls": {
+        "shape": "Bentuk",
+        "plateBehindTheLogo": "Alas di belakang logo",
+        "aSolidValueTheLogo": "{value} solid tempat logo berada.",
+        "removeBackground": "Hapus latar belakang",
+        "logoShape": "Bentuk logo",
+        "plateColor": "Warna alas",
+        "backgroundRemovedUndoBringsIt": "Latar belakang dihapus. Urungkan untuk mengembalikannya.",
+        "yourLogoHasNoSolid": "Logo Anda tidak memiliki latar belakang solid untuk dihapus.",
+        "removeTheSolidBackgroundAround": "Hapus latar belakang solid di sekitar logo Anda.",
+        "backgroundRemoved": "Latar belakang dihapus",
+        "plateNouns": {
+          "square": "persegi",
+          "rounded": "persegi membulat",
+          "circle": "lingkaran"
+        },
+        "shapes": {
+          "square": "Persegi",
+          "rounded": "Membulat",
+          "circle": "Lingkaran"
+        }
+      },
+      "logoOptionsSection": {
+        "position": "Posisi",
+        "center": "Tengah",
+        "keepTheLogoOffThe": "Jauhkan logo dari tiga mata sudut dan kotak kecil di dekat sudut kanan bawah. Skor pemindaian memberi peringatan jika logo menutupi salah satunya.",
+        "raiseErrorCorrectionForBig": "Naikkan koreksi kesalahan untuk logo besar",
+        "switchesToLevelHWhen": "Beralih ke level H saat logo menutupi lebih dari {value, number}% kode.",
+        "logoOptions": "Opsi logo",
+        "size": "Ukuran",
+        "logoSize": "Ukuran logo",
+        "clearSpace": "Ruang kosong",
+        "clearSpaceAroundTheLogo": "Ruang kosong di sekitar logo",
+        "leftToRight": "Kiri ke kanan",
+        "logoPositionLeftToRight": "Posisi logo, kiri ke kanan",
+        "topToBottom": "Atas ke bawah",
+        "logoPositionTopToBottom": "Posisi logo, atas ke bawah",
+        "upToMaxpercentForThis": "Hingga {maxPercent, number}% untuk kode ini: logo yang lebih besar akan menutupi lebih banyak daripada yang dapat diperbaiki oleh koreksi kesalahannya.",
+        "thisCodeIsTooSmall": "Kode ini terlalu kecil untuk memuat logo.",
+        "shorterContentMakesRoom": "Konten yang lebih pendek memberi ruang.",
+        "levelHOrShorterContent": "Level H atau konten yang lebih pendek memberi ruang."
+      },
+      "logoPresets": {
+        "quickLogoIcons": "Ikon logo cepat",
+        "nameIcon": "Ikon {name}",
+        "uploadYourLogo": "Unggah logo Anda",
+        "yourLogo": "Logo Anda"
+      },
+      "optionTiles": {
+        "more": "Lainnya",
+        "noNounMatchQueryShow": "Tidak ada {noun} yang cocok dengan \"{query}\".<button>Tampilkan semua</button>",
+        "mayNotScan": "Mungkin tak terpindai",
+        "nameWontScanWithThis": "{name}, tidak akan terpindai dengan gaya ini",
+        "nameMayNotScan": "{name}, mungkin tak terpindai",
+        "nameWontScanWithThis2": "{name}: tidak akan terpindai dengan gaya ini",
+        "nameMayNotScan2": "{name}: mungkin tak terpindai",
+        "moreNoun": "{noun} lainnya",
+        "allLengthNoun": "Semua {length, number} {noun}",
+        "searchNoun": "Cari {noun}",
+        "searchLengthNoun": "Cari {length, number} {noun}",
+        "closeNoun": "Tutup {noun}",
+        "filterNoun": "Filter {noun}",
+        "commonNoun": "{noun} umum",
+        "allLengthNounPickingOne": "Semua {length, number} {noun}. Memilih salah satu langsung menerapkannya.",
+        "less": "Lebih sedikit",
+        "all": "Semua",
+        "wontScanHere": "Tidak bisa dipindai"
+      },
+      "paddingControls": {
+        "quietZoneAroundTheCode": "Zona tenang di sekitar kode",
+        "scannersNeedABlankBorder": "Pemindai membutuhkan batas kosong di sekeliling kode. Gunakan 4 modul (standar QR) saat mencetak pada latar yang ramai atau gelap.",
+        "padding": "Padding",
+        "module": "modul",
+        "modules": "modul",
+        "presets": {
+          "none": "Tidak ada",
+          "small": "Kecil",
+          "standard": "Standar",
+          "large": "Besar"
+        }
+      },
+      "patternControls": {
+        "customizeOuterAndCenter": "Sesuaikan bagian luar dan tengah",
+        "border": "Bingkai",
+        "higherLevelsSurviveScratchesAnd": "Level yang lebih tinggi tahan terhadap goresan dan logo, tetapi menambah jumlah titik. Gunakan H saat Anda menambahkan logo.",
+        "dotShape": "Bentuk titik",
+        "dotShapes": "bentuk titik",
+        "eyeStyle": "Gaya mata",
+        "eyeStyles": "gaya mata",
+        "outerEyeShape": "Bentuk mata luar",
+        "outerShapes": "bentuk luar",
+        "innerEyeShape": "Bentuk mata dalam",
+        "centerShapes": "bentuk tengah",
+        "errorCorrection": "Koreksi kesalahan"
+      },
+      "sidePanel": {
+        "closeTitle": "Tutup {title}"
+      }
+    },
+    "customTextarea": {
+      "thePastedContentWouldExceed": "Konten yang ditempel akan melebihi batas {characterLimit, number} karakter.",
+      "textTooLong": "Teks terlalu panjang",
+      "describeYourTheme": "Deskripsikan tema Anda…"
+    },
+    "dialogCloseButton": {
+      "close": "Tutup"
+    },
+    "dynamicLinkToggle": {
+      "upgradeToPro": "Upgrade ke Pro",
+      "manageCodes": "Kelola kode",
+      "static": "Statis",
+      "fixedOncePrinted": "Tetap setelah dicetak",
+      "dynamic": "Dinamis",
+      "editLaterCountScans": "Edit nanti, hitung pemindaian",
+      "linkOptions": "Opsi tautan…",
+      "printedCodesStillOpenDestinationurl": "Kode yang sudah dicetak tetap membuka <span>{destinationUrl}</span>.",
+      "pointItToTheNew": "Arahkan ke alamat baru",
+      "scansSettings": "Pemindaian & pengaturan",
+      "staticOrDynamicQrCode": "Kode QR statis atau dinamis",
+      "shortLinkCopied": "Tautan pendek disalin",
+      "copyShortLink": "Salin tautan pendek",
+      "designSaved": "Desain disimpan",
+      "saveDesignToCode": "Simpan desain ke kode",
+      "theQrCodeShowsYour": "Kode QR kembali menampilkan URL Anda secara langsung.",
+      "changeWhereItPointsAt": "Ubah tujuannya kapan saja. Logo Anda terlalu besar untuk disimpan bersama kode.",
+      "changeWhereItPointsAt2": "Ubah tujuannya kapan saja dari dasbor Anda.",
+      "theDynamicCodeStaysIn": "Kode QR dinamis tetap ada di dasbor Anda.",
+      "printedCopiesOfThisCode": "Salinan cetak kode ini sekarang membuka URL yang baru.",
+      "yourLogoWasTooLarge": "Logo Anda terlalu besar untuk disimpan sehingga tidak disertakan.",
+      "dashboardPreviewsAndDownloadsUse": "Pratinjau dan unduhan di dasbor menggunakan desain ini.",
+      "thisDynamicCodeIsNo": "Kode QR dinamis ini sudah tidak tersedia",
+      "yourQrCodeIsNow": "Kode QR Anda kini dinamis",
+      "destinationUpdated": "Tujuan diperbarui",
+      "designSavedToTheCode": "Desain disimpan ke kode",
+      "couldntCopyTheShortLink": "Tidak dapat menyalin tautan pendek"
+    },
+    "frameInline": {
+      "frameTextMenu": {
+        "lowContrastValue1The": "Kontras rendah ({value}:1). Teks mungkin sulit dibaca; usahakan {MIN_LABEL_CONTRAST, number}:1."
+      },
+      "frameTextOverlay": {
+        "editFrameTextValue": "Ubah teks bingkai: {value}",
+        "editText": "Ubah teks"
+      },
+      "frameTextSheet": {
+        "editFrameText": "Ubah teks bingkai",
+        "changesShowOnTheCode": "Perubahan langsung tampil di kode saat Anda mengetik. Tekan Selesai untuk menyimpannya.",
+        "valueLeft": "Sisa {value, number}",
+        "moreFrameOptions": "Opsi bingkai lainnya",
+        "done": "Selesai"
+      },
+      "inlineFrameEditor": {
+        "leftLeft": "Sisa {left, number}",
+        "frameTextName": "Teks bingkai: {name}",
+        "frameTextOptions": "Opsi teks bingkai",
+        "textSize": "Ukuran teks",
+        "textColor": "Warna teks",
+        "frameColor": "Warna bingkai",
+        "icon": "Ikon",
+        "moreFrameOptions": "Opsi bingkai lainnya"
+      }
+    },
+    "gradientPicker": {
+      "pickASolidColorA": "Pilih warna solid, gradien, atau sampel warna untuk {label}."
+    },
+    "linkSourceMenu": {
+      "useALinkFrom": "Pakai tautan dari…",
+      "yourAccounts": "Akun Anda",
+      "connectAnAccount": "Hubungkan akun",
+      "undo": "Urungkan"
+    },
+    "mentionList": {
+      "noResult": "Tidak ada hasil"
+    },
+    "paintPicker": {
+      "controls": {
+        "saturationAndBrightness": "Saturasi dan kecerahan",
+        "saturationValueBrightnessValue2": "Saturasi {value, number}%, kecerahan {value2, number}%"
+      },
+      "gradientEditor": {
+        "clickToAddAStop": "Klik untuk menambah titik warna",
+        "stopValueColor": "Titik {value, number}, {color}",
+        "startAngle": "Sudut awal",
+        "angle": "Sudut",
+        "startAngleInDegrees": "Sudut awal dalam derajat",
+        "angleInDegrees": "Sudut dalam derajat",
+        "anglePresets": "Preset sudut",
+        "rotate90": "Putar 90°",
+        "reverseTheGradient": "Balikkan gradien",
+        "reverse": "Balikkan",
+        "removeTheSelectedStop": "Hapus titik warna yang dipilih",
+        "removeStopDelete": "Hapus titik (Delete)",
+        "aGradientKeepsMinStops": "Gradien harus memiliki minimal {MIN_STOPS, number} titik warna"
+      },
+      "imageFill": {
+        "paintAPictureThroughThese": "Lukis gambar melalui bentuk-bentuk ini. PNG, JPEG, atau WebP, hingga 10 MB.",
+        "chooseAPicture": "Pilih gambar",
+        "underlay": "Alas",
+        "none": "Tidak ada",
+        "replace": "Ganti",
+        "thePictureStaysWithThis": "Gambar ini tetap menyatu dengan desain ini, seperti logo: tidak dibagikan lewat tautan atau gaya yang dipublikasikan, dan EPS tidak dapat memuatnya.",
+        "aSolidColorUnderThe": "Warna solid di bawah gambar; opasitasnya membuat warna ini tembus",
+        "howThePictureFillsThe": "Cara gambar mengisi kode",
+        "position": "Posisi",
+        "tileSize": "Ukuran ubin",
+        "scale": "Skala",
+        "opacity": "Opasitas",
+        "fits": {
+          "cover": "Isi",
+          "contain": "Pas",
+          "tile": "Ubin"
+        },
+        "positions": {
+          "top-left": "Kiri atas",
+          "top": "Atas",
+          "top-right": "Kanan atas",
+          "left": "Kiri",
+          "center": "Tengah",
+          "right": "Kanan",
+          "bottom-left": "Kiri bawah",
+          "bottom": "Bawah",
+          "bottom-right": "Kanan bawah"
+        }
+      },
+      "paintPanel": {
+        "measuringThePicturesContrast": "Mengukur kontras gambar…",
+        "contrastAgainst": "Kontras {against}",
+        "makeItScannable": "Buat agar bisa dipindai",
+        "hexOrAnyCssColor": "Hex atau warna CSS apa pun",
+        "hexOrPasteAnyCss": "Hex, atau tempel warna CSS apa pun (rgb, hsl, oklch, nama)",
+        "swatches": "Contoh warna",
+        "fillType": "Jenis isian",
+        "pickAColorFromThe": "Pilih warna dari layar",
+        "pickFromTheScreen": "Pilih dari layar",
+        "hue": "Rona",
+        "opacity": "Opasitas",
+        "colorModel": "Model warna",
+        "opacityPercent": "Opasitas, persen",
+        "removeThisColorFromSaved": "Hapus warna ini dari tersimpan",
+        "saveThisColor": "Simpan warna ini",
+        "savedClickToRemove": "Tersimpan: klik untuk hapus",
+        "lightenTheBackground": "Cerahkan latar belakang",
+        "darkenTheCode": "Gelapkan kode",
+        "kinds": {
+          "solid": "Solid",
+          "linear": "Linear",
+          "radial": "Radial",
+          "angular": "Angular",
+          "image": "Gambar"
+        },
+        "sources": {
+          "design": "Di desain ini",
+          "saved": "Tersimpan",
+          "recent": "Terbaru",
+          "theme": "Tema",
+          "suggested": "Bawaan"
+        },
+        "imageOpacity": "Gambar · {percent, number}%"
+      }
+    },
+    "photoScanDialog": {
+      "checkAPhotoOfThe": "Periksa foto hasil cetak",
+      "checkedInYourBrowserThe": "Diperiksa di browser Anda. Gambar tidak pernah diunggah.",
+      "fullScanChecker": "Pemeriksa pemindaian lengkap"
+    },
+    "qrEditActions": {
+      "options": "Opsi",
+      "resetToCurrentPreset": "Atur ulang ke preset saat ini",
+      "resetToCurrentPreset2": "Atur ulang ke preset saat ini",
+      "noChangesFromPreset": "Tidak ada perubahan dari preset",
+      "resetToDefaultTheme": "Atur ulang ke tema default",
+      "resetToBaseTheme": "Atur ulang ke tema dasar",
+      "noChangesToReset": "Tidak ada yang perlu diatur ulang"
+    },
+    "qrPresetSelect": {
+      "theme": "tema",
+      "browseAll": "Lihat semua",
+      "noThemesFound": "Tema tidak ditemukan.",
+      "manage": "Kelola",
+      "default": "Default",
+      "new": "Baru",
+      "save": "Simpan",
+      "aThemeToFindIt": "sebuah tema untuk menemukannya di sini.",
+      "discoverMoreThemes": "Temukan tema lainnya →",
+      "shuffleANewTheme": "Acak tema baru",
+      "previousTheme": "Tema sebelumnya",
+      "nextTheme": "Tema berikutnya",
+      "searchThemes": "Cari tema...",
+      "builtInThemes": "Tema bawaan",
+      "default2": "default",
+      "sharedThemes": "Tema bersama",
+      "yourThemes": "Tema Anda",
+      "savedThemes": "Tema tersimpan"
+    },
+    "qrSaveDialog": {
+      "updating": "Memperbarui",
+      "updateExistingthemename": "Perbarui “{existingThemeName}”",
+      "orSaveAsANew": "atau simpan sebagai tema baru",
+      "name": "Nama",
+      "cancel": "Batal",
+      "saving": "Menyimpan",
+      "myAwesomeTheme": "Tema Keren Saya",
+      "saveAsNew": "Simpan sebagai baru",
+      "defaultTitle": "Simpan tema kode QR",
+      "defaultDescription": "Simpan desain kode QR Anda sebagai tema untuk dipakai lagi nanti.",
+      "defaultCta": "Simpan tema"
+    },
+    "qrShareDialog": {
+      "shareThisDesign": "Bagikan desain ini",
+      "theLinkOpensThisStyle": "Tautan ini membuka gaya ini di playground, sehingga siapa pun dapat memakainya untuk kode mereka sendiri. Konten Anda tidak disertakan.",
+      "stylePreviewOpensInThe": "Pratinjau gaya · terbuka di playground QRdx",
+      "link": "Tautan",
+      "shareTo": "Bagikan ke",
+      "more": "Lainnya…",
+      "openOnYourPhone": "Buka di ponsel Anda",
+      "scanThisCodeToOpen": "Pindai kode ini untuk membuka tautan berbagi di perangkat lain.",
+      "copied": "Disalin",
+      "copyLinkToThisDesign": "Salin tautan desain ini",
+      "saveItAsATheme": "Simpan sebagai tema saja",
+      "saveItAsATheme2": "Simpan sebagai tema untuk tautan yang lebih pendek",
+      "couldntCopyTheLink": "Tautan tidak dapat disalin",
+      "omitted": {
+        "logo": "logo Anda",
+        "art": "karya seni",
+        "frame": "bingkai kustom",
+        "image": "isian gambar Anda",
+        "silhouette": "bentuk kode Anda"
+      },
+      "omittedNote": "{count, plural, other {{list} tidak ada di tautan.}}",
+      "targets": {
+        "x": "Posting di X",
+        "linkedin": "Bagikan di LinkedIn",
+        "facebook": "Bagikan di Facebook",
+        "whatsapp": "Kirim lewat WhatsApp",
+        "email": "Kirim lewat email"
+      },
+      "myQrDesign": "Desain QR saya",
+      "shareTitle": "{name} · desain kode QR di QRdx"
+    },
+    "scanScore": {
+      "willItScan": "Bisa dipindai?",
+      "decodingYourDesignAtA": "Mendekode desain Anda pada beberapa ukuran…",
+      "simulatedInYourBrowserWith": "Disimulasikan di browser Anda dengan dekoder open-source jsQR pada beberapa ukuran dengan keburaman kamera. Aplikasi ponsel bisa berbeda, jadi coba pindai dulu sebelum mencetak.",
+      "checkAPhotoOfThe": "Periksa foto hasil cetak",
+      "notChecked": "Belum diperiksa",
+      "scanScoreScoreValueShow": "Skor pemindaian {score, number}, {value}. Tampilkan pemeriksaan",
+      "checkingScanScore": "Memeriksa skor pemindaian",
+      "scanScoreScoreValue": "Skor pemindaian {score, number} · {value}",
+      "checkingScan": "Memeriksa pemindaian…",
+      "fullScanChecker": "Pemeriksa pemindaian lengkap",
+      "checkAPrintedCode": "Periksa kode yang dicetak",
+      "grades": {
+        "great": "Bagus",
+        "ok": "OK",
+        "risky": "Berisiko",
+        "fails": "Gagal"
+      }
+    },
+    "themeGallery": {
+      "shuffled": "Diacak ·",
+      "back": "Kembali",
+      "themes": "Tema",
+      "lengthBuiltInLooksEach": "{length, number} tampilan bawaan, masing-masing sudah diuji untuk dipindai. Atau acak tampilan baru.",
+      "shuffle": "Acak",
+      "lightCodesOnADark": "Kode terang di atas latar belakang gelap. {DARK_THEME_NOTE}, jadi uji dengan ponsel yang digunakan audiens Anda.",
+      "noThemeMatchesQuery": "Tidak ada tema yang cocok dengan “{query}”.",
+      "shuffleOneInstead": "Acak satu tema saja",
+      "toMove": "untuk berpindah",
+      "toApply": "untuk menerapkan",
+      "toShuffle": "untuk mengacak",
+      "escToClose": "<kbd>esc</kbd> untuk menutup",
+      "searchThemes": "Cari tema",
+      "searchMenuGoldPastelDots": "Cari: menu, emas, pastel, titik…",
+      "categories": "Kategori",
+      "all": "Semua"
+    },
+    "themePreview": {
+      "colorPreview": {
+        "primaryThemeColors": "Warna Tema Utama",
+        "editColor": "Ubah warna",
+        "background": "Latar belakang",
+        "foreground": "Latar depan",
+        "dotColor": "Warna Titik",
+        "eyeColor": "Warna Mata"
+      }
+    },
+    "editor": {
+      "loadingTheEditor": "Memuat editor…",
+      "fetchedQrPresetDataIs": "Data preset QR yang diambil tidak valid."
+    },
+    "qrControlPanel": {
+      "generate": "Buat",
+      "content": "Konten",
+      "design": "Desain",
+      "art": "Seni"
+    },
+    "qrPreviewPanel": {
+      "sample": "Contoh",
+      "addYourLinkToMake": "Tambahkan tautan Anda agar menjadi milik Anda",
+      "addYourDetailsToMake": "Tambahkan detail Anda agar menjadi milik Anda"
+    },
+    "keyboardShortcutsModal": {
+      "keyboardShortcuts": "Pintasan Keyboard",
+      "keyboardShortcutsAreCurrentlyDisabled": "Pintasan keyboard saat ini dinonaktifkan. Aktifkan di pengaturan untuk menggunakan pintasan ini.",
+      "quickReferenceForAllAvailable": "Referensi cepat untuk semua pintasan keyboard yang tersedia",
+      "proTipPressAnytimeTo": "<span>Tips Pro:</span> Tekan <kbd>?</kbd> kapan saja untuk melihat dialog ini",
+      "categories": {
+        "navigation": "Navigasi",
+        "actions": "Tindakan",
+        "themeAppearance": "Tema & Tampilan",
+        "patternCustomization": "Kustomisasi Pola",
+        "help": "Bantuan"
+      },
+      "shortcuts": {
+        "openContentTab": "Buka tab Konten",
+        "openDesignTab": "Buka tab Desain",
+        "openArtTab": "Buka tab Seni",
+        "openGenerateAiTab": "Buka tab Buat (AI)",
+        "saveQrTheme": "Simpan tema QR",
+        "downloadQrCode": "Unduh kode QR",
+        "copySvgToClipboard": "Salin SVG ke papan klip",
+        "viewCode": "Lihat kode",
+        "shareQrCode": "Bagikan kode QR",
+        "resetToPresetDefaults": "Setel ulang ke bawaan preset",
+        "shuffleANewTheme": "Acak tema baru",
+        "toggleLightDarkMode": "Beralih mode terang/gelap",
+        "previousThemePreset": "Preset tema sebelumnya",
+        "nextThemePreset": "Preset tema berikutnya",
+        "cycleDotPatterns": "Ganti pola titik",
+        "cycleCornerEyePatterns": "Ganti pola mata sudut",
+        "cycleInternalEyePatterns": "Ganti pola mata dalam",
+        "cycleFrames": "Ganti bingkai",
+        "showThisShortcutsDialog": "Tampilkan dialog pintasan ini"
+      }
+    },
+    "soundSwitch": {
+      "sounds": "Suara"
+    },
+    "hooks": {
+      "chatEngine": {
+        "tryAgainInAMoment": "Coba lagi sebentar lagi.",
+        "anErrorOccurred": "Terjadi kesalahan",
+        "theAiStoppedResponding": "AI berhenti merespons"
+      },
+      "useCommunityThemes": {
+        "yourThemeIsNowVisible": "Tema Anda kini terlihat di komunitas.",
+        "anUnexpectedErrorOccurred": "Terjadi kesalahan tak terduga.",
+        "yourThemeHasBeenRemoved": "Tema Anda telah dihapus dari komunitas.",
+        "yourThemeTagsHaveBeen": "Tag tema Anda telah diperbarui.",
+        "themePublished": "Tema dipublikasikan",
+        "failedToPublishTheme": "Gagal memublikasikan tema",
+        "themeUnpublished": "Publikasi tema dibatalkan",
+        "failedToUnpublishTheme": "Gagal membatalkan publikasi tema",
+        "failedToUpdateLike": "Gagal memperbarui suka",
+        "tagsUpdated": "Tag diperbarui",
+        "failedToUpdateTags": "Gagal memperbarui tag"
+      },
+      "useThemeMutations": {
+        "nameHasBeenCreatedSuccessfully": "\"{name}\" berhasil dibuat.",
+        "nameHasBeenUpdatedSuccessfully": "\"{name}\" berhasil diperbarui.",
+        "nameHasBeenDeletedSuccessfully": "\"{name}\" berhasil dihapus.",
+        "themeLimitReached": "Batas tema tercapai",
+        "themeCreated": "Tema dibuat",
+        "themeUpdated": "Tema diperbarui",
+        "themeDeleted": "Tema dihapus",
+        "errors": {
+          "signIn": "Silakan masuk untuk melanjutkan.",
+          "invalidInput": "Input yang diberikan tidak valid.",
+          "notFound": "Tema tidak ditemukan.",
+          "unexpected": "Terjadi kesalahan tak terduga. Silakan coba lagi."
+        },
+        "failed": {
+          "create": "Gagal membuat tema",
+          "update": "Gagal memperbarui tema",
+          "delete": "Gagal menghapus tema"
+        }
+      },
+      "useAiEnhancePrompt": {
+        "anErrorOccurred": "Terjadi kesalahan"
+      },
+      "useDialogActions": {
+        "saveToShare": {
+          "title": "Simpan untuk berbagi",
+          "description": "Simpan tema Anda terlebih dahulu untuk membagikannya kepada orang lain.",
+          "ctaLabel": "Simpan & Bagikan"
+        }
+      },
+      "useImageUpload": {
+        "youCanOnlyUploadUp": "Anda hanya dapat mengunggah hingga {maxFiles, number} gambar.",
+        "nameIsNotSupportedPlease": "\"{name}\" tidak didukung. Gunakan file JPG, PNG, WebP, atau SVG.",
+        "imageNameExceedsTheValue": "Gambar \"{name}\" melebihi batas ukuran {value, number}MB.",
+        "nameMayContainUnsafeContent": "\"{name}\" mungkin berisi konten yang tidak aman, tetapi tetap akan diproses.",
+        "failedToReadNamePlease": "Gagal membaca \"{name}\". Silakan coba lagi.",
+        "imageUploadLimitReached": "Batas unggah gambar tercapai",
+        "unsupportedFileType": "Jenis file tidak didukung",
+        "fileTooLarge": "File terlalu besar",
+        "potentiallyUnsafeSvg": "SVG berpotensi tidak aman",
+        "fileReadError": "Kesalahan membaca file"
+      },
+      "usePlaygroundParams": {
+        "undo": "Urungkan"
+      },
+      "usePlaygroundShortcuts": {
+        "svgCopiedToClipboard": "SVG disalin ke papan klip",
+        "failedToCopySvg": "Gagal menyalin SVG"
+      }
+    }
+  },
+  "playground": {
+    "heading": "Desainer kode QR kustom",
+    "loading": "Memuat Playground...",
+    "metaTitle": "Desainer Kode QR Kustom: Logo, Warna, Bingkai",
+    "metaDescription": "Desain kode QR kustom dengan logo, warna, gradasi, pola titik, dan bingkai Anda, lalu unduh PNG, SVG, PDF, atau EPS. Gratis, tanpa pendaftaran, tanpa watermark.",
+    "intro": {
+      "label": "Tentang desainer kode QR",
+      "summary": "Desainer kode QR kustom. Kode statis gratis dengan logo, warna, dan bingkai Anda. Tanpa pendaftaran, tanpa watermark.",
+      "types": "Buat kode QR untuk tautan, jaringan Wi-Fi, kartu kontak, pembayaran, atau salah satu dari {types, number} jenis konten. Atur gayanya dengan {bodyPatterns, number} pola titik, {eyeShapes, number} bentuk mata sudut, warna solid atau gradasi, logo di tengah, dan {frames, number} bingkai ajakan bertindak. Skor pemindaian memperkirakan seberapa baik kode terbaca sebelum Anda mencetak.",
+      "downloads": "Unduh PNG, JPG, WebP, atau SVG, atau PDF atau EPS siap cetak dengan ukuran persis. Kode statis gratis dan tidak pernah kedaluwarsa. Masuk untuk membuat kode dinamis yang bisa Anda ubah setelah dicetak dan untuk melacak pemindaian.",
+      "links": {
+        "allTypes": "Semua jenis kode QR",
+        "scanChecker": "Pemeriksa pemindaian",
+        "printSize": "Kalkulator ukuran cetak",
+        "styleGuide": "Panduan gaya"
+      }
+    },
+    "presetSelector": {
+      "presets": "Preset"
+    },
+    "themeSaveDialog": {
+      "name": "Nama",
+      "cancel": "Batal",
+      "saving": "Menyimpan",
+      "myAwesomeTheme": "Tema Keren Saya",
+      "defaultTitle": "Simpan Tema",
+      "defaultDescription": "Masukkan nama untuk tema Anda agar mudah ditemukan nanti.",
+      "defaultCta": "Simpan Tema"
+    }
+  },
+  "limits": {
+    "capMeter": {
+      "labelUsed": "{label} terpakai"
+    },
+    "limitCard": {
+      "planUsage": "Paket & penggunaan",
+      "notNow": "Nanti saja",
+      "labelUsed": "{label} terpakai"
+    },
+    "limitDialog": {
+      "limitReached": "Batas tercapai"
+    }
+  },
+  "community": {
+    "browseLayout": {
+      "filters": "Filter"
+    },
+    "communityTabs": {
+      "community": "Komunitas"
+    },
+    "createBundle": {
+      "published": "Dipublikasikan",
+      "nameIsLiveInThe": "{name} kini tersedia di komunitas.",
+      "viewIt": "Lihat",
+      "whatToMake": "Apa yang dibuat",
+      "itemsYouSaveInThe": "Item yang Anda simpan dari komunitas atau Anda publikasikan sendiri akan muncul di sini. <link>Jelajahi komunitas</link>",
+      "itemsLengthPicked": "Item<span>{length, number} dipilih</span>",
+      "optional": "(opsional)",
+      "name": "Nama",
+      "description": "Deskripsi",
+      "seeIt": "Lihat",
+      "eGEverythingForA": "mis. Semua untuk kafe",
+      "eGCaféTableKit": "mis. Kit meja kafe",
+      "optionalWhatItsFor": "Opsional: untuk apa ini",
+      "collection": "Koleksi",
+      "kit": "Kit",
+      "groupFramesThemesAndPage": "Kelompokkan bingkai, tema, dan templat halaman yang dapat dijelajahi bersama, misalnya semua kebutuhan untuk kafe. Pilih 2 atau lebih.",
+      "aPageTemplateAndThe": "Satu templat halaman beserta tampilan yang cocok dengannya. Menggunakan kit akan menyalin halaman sebagai draf dan tampilannya sebagai tema tersimpan.",
+      "yours": "milik Anda",
+      "noSavedMany": "Belum ada {many} tersimpan",
+      "none": "Tidak ada",
+      "pickOne": "Pilih satu",
+      "publishing": "Memublikasikan",
+      "publishCollection": "Publikasikan koleksi",
+      "publishKit": "Publikasikan kit"
+    },
+    "creatorLine": {
+      "verified": "Terverifikasi"
+    },
+    "importFrameDialog": {
+      "importAnSvgFrame": "Impor bingkai SVG",
+      "shapesAndColorsBecomeA": "Bentuk dan warna menjadi bingkai. Teks, gambar, dan efek tidak disertakan.",
+      "colors": "Warna",
+      "whatChanged": "Yang berubah",
+      "cancel": "Batal",
+      "useThisFrame": "Gunakan bingkai ini",
+      "chooseAnSvgFileUp": "Pilih file SVG (maks. 200 KB)",
+      "refs": {
+        "frame": "Warna bingkai",
+        "accent": "Warna aksen",
+        "fixed": "Tetap seperti semula"
+      }
+    },
+    "itemActions": {
+      "useInEditor": "Gunakan di editor",
+      "copyToWorkspace": "Salin ke ruang kerja",
+      "unpublish": "Batalkan publikasi",
+      "removeFromTheCommunity": "Hapus dari komunitas?",
+      "itLeavesTheCommunityAt": "Item ini langsung keluar dari komunitas. Orang yang sudah menggunakannya tetap menyimpan salinannya: item ini dibagikan di bawah CC0.",
+      "cancel": "Batal",
+      "removeFromSaved": "Hapus dari tersimpan",
+      "save": "Simpan",
+      "unlike": "Batal suka",
+      "like": "Suka",
+      "useKit": "Gunakan kit",
+      "useTemplate": "Gunakan templat",
+      "saved": "Tersimpan",
+      "open": "Buka",
+      "nameIsInYourPages": "\"{name}\" ada di halaman Anda sebagai draf, dan tampilannya ada di tema Anda.",
+      "nameIsInYourPages2": "\"{name}\" ada di halaman Anda sebagai draf.",
+      "savedItsInTheEditors": "Tersimpan. Ada di pemilih bingkai pada editor.",
+      "saved2": "Tersimpan.",
+      "removedFromSaved": "Dihapus dari tersimpan.",
+      "copiedToWhereAsName": "Disalin ke {where} sebagai \"{name}\"",
+      "nameIsNoLongerIn": "\"{name}\" tidak lagi ada di komunitas."
+    },
+    "itemCard": {
+      "empty": "Kosong",
+      "official": "Resmi",
+      "usecountUses": "{useCount} penggunaan",
+      "seeAll": "Lihat semua",
+      "likes": "Suka"
+    },
+    "itemPages": {
+      "previous": "Sebelumnya",
+      "pagePageOfPages": "Halaman {page, number} dari {pages, number}",
+      "next": "Berikutnya",
+      "pages": "Halaman"
+    },
+    "licenceConfirm": {
+      "licence": "Lisensi:"
+    },
+    "newBundle": {
+      "signInToMakeA": "Masuk untuk membuat koleksi atau kit dari item yang Anda simpan.",
+      "signIn": "Masuk"
+    },
+    "publishDesignDialog": {
+      "published": "Dipublikasikan",
+      "valueIsLiveInThe": "{value} sudah tayang di komunitas.",
+      "done": "Selesai",
+      "viewIt": "Lihat",
+      "publishToTheCommunity": "Publikasikan ke komunitas",
+      "theChatDraftedTheseDetails": "Chat telah menyusun detail ini. Ubah sesuka Anda; tidak ada yang dibagikan sampai Anda mempublikasikannya.",
+      "name": "Nama",
+      "description": "Deskripsi",
+      "seeIt": "Lihat",
+      "cancel": "Batal",
+      "optionalWhatItSuits": "Opsional: cocok untuk apa",
+      "checkingAndPublishing": "Memeriksa dan memublikasikan",
+      "publish": "Publikasikan"
+    },
+    "publishFrameDialog": {
+      "published": "Dipublikasikan",
+      "valueIsLiveInThe": "{value} sudah tayang di komunitas.",
+      "done": "Selesai",
+      "viewIt": "Lihat",
+      "publishThisFrame": "Publikasikan bingkai ini",
+      "anyoneCanFindItIn": "Siapa pun dapat menemukannya di komunitas dan menggunakannya dengan kode mereka sendiri.",
+      "name": "Nama",
+      "description": "Deskripsi",
+      "seeIt": "Lihat",
+      "cancel": "Batal",
+      "eGCaféTableCard": "mis. Kartu meja kafe",
+      "optionalWhatItsFor": "Opsional: untuk apa ini dipakai",
+      "checkingAndPublishing": "Memeriksa dan memublikasikan",
+      "publish": "Publikasikan"
+    },
+    "publishPageDialog": {
+      "published": "Dipublikasikan",
+      "valueIsLiveInThe": "{value} sudah tayang di komunitas. Halaman Anda sendiri tidak berubah.",
+      "done": "Selesai",
+      "viewIt": "Lihat",
+      "shareAsAPageTemplate": "Bagikan sebagai templat halaman",
+      "step1Of2This": "Langkah 1 dari 2 · Inilah yang akan didapat orang lain. Data pribadi Anda dihapus terlebih dahulu.",
+      "whatWeChanged": "Yang kami ubah",
+      "checkingThePage": "Memeriksa halaman",
+      "yourTextIsReplacedWith": "Teks Anda diganti dengan teks contoh. Centang kolom untuk memublikasikannya sesuai tulisan Anda.",
+      "everyPhotoIsTakenOut": "Semua foto dihapus agar orang lain menambahkan foto mereka sendiri. Teks yang Anda pertahankan tidak boleh berisi tautan, email, nomor telepon, atau alamat.",
+      "nothingIsLeftToShare": "Tidak ada yang tersisa untuk dibagikan setelah data pribadi Anda dihapus.",
+      "cancel": "Batal",
+      "continue": "Lanjutkan",
+      "step2Of2Details": "Langkah 2 dari 2 · Detail. Templat langsung tayang di komunitas, dan halaman Anda tetap seperti semula.",
+      "name": "Nama",
+      "description": "Deskripsi",
+      "seeIt": "Lihat",
+      "back": "Kembali",
+      "eGCaféMenu": "mis. Menu kafe",
+      "optionalWhatItsFor": "Opsional: untuk apa ini dipakai",
+      "kept": " · dipertahankan",
+      "empty": "(kosong)",
+      "publishing": "Memublikasikan",
+      "publish": "Publikasikan"
+    },
+    "publishThemeDialog": {
+      "anyoneCanFindItIn": "Siapa pun dapat menemukannya di galeri komunitas dan menggunakannya. Anda dapat membatalkan publikasinya kapan saja.",
+      "cancel": "Batal",
+      "publishThemenameToTheCommunity": "Publikasikan \"{themeName}\" ke komunitas",
+      "publishToTheCommunity": "Publikasikan ke komunitas",
+      "checkingAndPublishing": "Memeriksa dan memublikasikan",
+      "publish": "Publikasikan",
+      "publishedUnderYourProfile": "Tema ini dipublikasikan di bawah profil Anda; tema tetap ada di workspace ini."
+    },
+    "removeItemButton": {
+      "remove": "Hapus",
+      "removeFromTheCommunity": "Hapus dari komunitas",
+      "removedNameFromTheCommunity": "\"{name}\" dihapus dari komunitas"
+    },
+    "tryIt": {
+      "tryItWithYourLink": "Coba dengan tautan Anda",
+      "drawnInYourBrowserNothing": "Digambar di browser Anda. Tidak ada yang dikirim."
     }
   }
 }
