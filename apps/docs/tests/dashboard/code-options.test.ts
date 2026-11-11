@@ -7,11 +7,11 @@ import {
   codeOptionsFor,
   formatPlanList,
   resolveCodeOptionPlans,
-} from "@/app/dashboard/codes/_lib/code-options";
+} from "@/app/(app)/dashboard/codes/_lib/code-options";
 import {
   codeTabHref,
   resolveCodeTab,
-} from "@/app/dashboard/codes/_lib/code-tabs";
+} from "@/app/(app)/dashboard/codes/_lib/code-tabs";
 import { cheapestPlanWith, PLAN_LIMITS, PLANS, plansWith } from "@/lib/plans";
 import type { PixelConfig, RoutingConfig } from "@/lib/redirect/routing";
 

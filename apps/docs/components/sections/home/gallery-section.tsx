@@ -1,5 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { ShowcaseWall } from "@/components/showcase/showcase-wall";
 import {
   WALL_PATH,
@@ -15,6 +16,7 @@ import { HOME_WALL } from "@/lib/landing/showcase-wall";
 // their live demo).
 
 export function GallerySection() {
+  const t = useTranslations("home.gallery");
   return (
     <section
       id="gallery"
@@ -23,9 +25,9 @@ export function GallerySection() {
     >
       <WallHeading
         id="gallery-heading"
-        title="Made with QRdx"
-        description="Real QRdx codes with sample content. Scan any of them, or open one to make it yours."
-        action={<WallLink href={WALL_PATH}>See all</WallLink>}
+        title={t("title")}
+        description={t("description")}
+        action={<WallLink href={WALL_PATH}>{t("seeAll")}</WallLink>}
       />
       <div className="relative">
         <ShowcaseWall rows={HOME_WALL} fade />
@@ -35,7 +37,7 @@ export function GallerySection() {
             variant="outline"
             className="rounded-full bg-background px-5 shadow-sm dark:bg-background"
           >
-            <Link href={WALL_PATH}>Show more</Link>
+            <Link href={WALL_PATH}>{t("showMore")}</Link>
           </Button>
         </div>
       </div>

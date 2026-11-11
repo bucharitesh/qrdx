@@ -10,12 +10,12 @@ import {
 } from "@repo/database";
 import cuid from "cuid";
 import { and, eq, inArray, like } from "drizzle-orm";
-import { limitCopy } from "@/app/settings/usage/_lib/limit-copy";
+import { limitCopy } from "@/app/(app)/settings/usage/_lib/limit-copy";
 import {
   type Meter,
   meterLabel,
   resolveMeterCaps,
-} from "@/app/settings/usage/_lib/meters";
+} from "@/app/(app)/settings/usage/_lib/meters";
 import { getCheckoutOpen } from "@/lib/checkout-availability";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import { sendEmail } from "@/lib/email/send";

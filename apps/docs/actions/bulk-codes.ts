@@ -18,8 +18,8 @@ import {
   setNotes,
   setPaused,
   trashCodes,
-} from "@/app/dashboard/codes/_lib/organize";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/organize";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   type ImportChunkResult,
   type ImportPreview,
@@ -27,7 +27,7 @@ import {
   importChunkSchema,
   importPreviewSchema,
   previewImport,
-} from "@/app/dashboard/codes/import/_lib/import";
+} from "@/app/(app)/dashboard/codes/import/_lib/import";
 import { type RestoreResult, restoreCodeVersion } from "@/lib/code-versions";
 
 type Counted = { updated: number };

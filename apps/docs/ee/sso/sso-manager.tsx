@@ -51,7 +51,7 @@ import {
 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useId, useState } from "react";
-import { RoleSelect } from "@/app/dashboard/team/_components/role-select";
+import { RoleSelect } from "@/app/(app)/dashboard/team/_components/role-select";
 import {
   ConfirmIdentityProvider,
   useConfirmation,

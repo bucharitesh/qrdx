@@ -9,7 +9,7 @@
 //   flat parameters where they say it, and `style` (lib/qr-api/style.ts) for
 //   gradients, other colors and frames with more than a label.
 // - REST API: POST https://api.qrdx.dev/v1/codes (createCodeSchema in
-//   app/dashboard/codes/_lib/qr-codes.ts, logo fields in
+//   app/(app)/dashboard/codes/_lib/qr-codes.ts, logo fields in
 //   app/api/v1/codes/_lib/style.ts).
 // - MCP: the design_qr tool at https://mcp.qrdx.dev/mcp
 //   (app/api/mcp/design.ts, lib/qr-design/style.ts).

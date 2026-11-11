@@ -1,10 +1,10 @@
-// The CSV import as a resumable job (app/dashboard/codes/import/_lib/job.ts):
+// The CSV import as a resumable job (app/(app)/dashboard/codes/import/_lib/job.ts):
 // fixed chunks, one idempotency key per chunk, progress that survives a
 // reload (the job round-trips through structured clone, as IndexedDB
 // stores it), failed chunks that go back in the queue, and a results CSV
 // with every row of the file.
 import { describe, expect, it } from "vitest";
-import type { ImportRowInput } from "@/app/dashboard/codes/import/_lib/csv";
+import type { ImportRowInput } from "@/app/(app)/dashboard/codes/import/_lib/csv";
 import {
   chunkRowsOf,
   chunkStartsFor,
@@ -19,7 +19,7 @@ import {
   withChunkDone,
   withChunkFailed,
   withFailedRetried,
-} from "@/app/dashboard/codes/import/_lib/job";
+} from "@/app/(app)/dashboard/codes/import/_lib/job";
 
 const row = (line: number, destination = `https://example.com/${line}`) =>
   ({

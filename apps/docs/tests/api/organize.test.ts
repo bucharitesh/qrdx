@@ -1,5 +1,5 @@
 // Folders, tags, trash and duplicates for dynamic codes
-// (app/dashboard/codes/_lib/organize.ts), as content/docs/dynamic-qr-codes.mdx
+// (app/(app)/dashboard/codes/_lib/organize.ts), as content/docs/dynamic-qr-codes.mdx
 // and teams.mdx describe them: everything is per workspace; team members
 // delete only what they created; trashed codes free their plan slot and
 // restoring needs one; duplicates copy destination, design, folder, tags and
@@ -43,11 +43,11 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
   getPlanForScope: async () => state.plan,
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => null,
 }));
 vi.mock("@/lib/code-versions", () => ({ snapshotCodeVersion: async () => {} }));
@@ -61,7 +61,7 @@ vi.mock("@/lib/events/emit", () => ({
 }));
 vi.mock("@/lib/shared", () => ({ logError: () => {} }));
 
-const organize = await import("@/app/dashboard/codes/_lib/organize");
+const organize = await import("@/app/(app)/dashboard/codes/_lib/organize");
 const { HttpError } = await import("@/lib/error-response");
 const { ValidationError } = await import("@/types/errors");
 

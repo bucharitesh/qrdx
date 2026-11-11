@@ -5,8 +5,8 @@ import { useEffect, useMemo } from "react";
 import {
   isUnfiltered,
   parseCodesFilters,
-} from "@/app/dashboard/codes/_lib/organize-shared";
-import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
+import type { QrCodeListItem } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { mergeOptimisticCodes, settledKeys } from "./optimistic";
 import { useCodeBuilderStore } from "./store";
 

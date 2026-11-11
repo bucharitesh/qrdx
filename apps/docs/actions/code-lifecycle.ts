@@ -9,7 +9,7 @@ import { z } from "zod";
 import {
   codeIdSchema,
   destinationUrlSchema,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { codeEvents, linkControlChanges } from "@/ee/audit-log/code-events";
 import { recordAuditEvent } from "@/ee/audit-log/record";
 import { snapshotCodeVersion } from "@/lib/code-versions";

@@ -1,4 +1,4 @@
-import { isDnsHostname } from "@/app/dashboard/domains/_lib/hostname";
+import { isDnsHostname } from "@/app/(app)/dashboard/domains/_lib/hostname";
 import {
   type DnsRecord,
   MANUAL_CHALLENGE_LABEL,

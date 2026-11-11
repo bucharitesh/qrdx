@@ -2,7 +2,7 @@ import "server-only";
 
 import { database as db, organization, user } from "@repo/database";
 import { eq } from "drizzle-orm";
-import { invitePath } from "@/app/dashboard/team/_lib/team";
+import { invitePath } from "@/app/(app)/dashboard/team/_lib/team";
 import { isEmailConfigured, sendEmail } from "@/lib/email/send";
 import {
   TeamInviteEmail,

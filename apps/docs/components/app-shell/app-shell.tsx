@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { CodeOptionPlansProvider } from "@/app/dashboard/codes/_components/code-options";
-import { codeOptionPlansFor } from "@/app/dashboard/codes/_lib/code-option-plans";
+import { CodeOptionPlansProvider } from "@/app/(app)/dashboard/codes/_components/code-options";
+import { codeOptionPlansFor } from "@/app/(app)/dashboard/codes/_lib/code-option-plans";
 import { LimitDialogHost } from "@/components/limits/limit-dialog";
 import { PlanLimitsProvider } from "@/components/limits/plan-limits-provider";
 import { WorkspaceProvider } from "@/components/workspace-provider";

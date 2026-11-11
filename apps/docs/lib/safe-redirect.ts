@@ -2,7 +2,7 @@
 // it is untrusted: only a path on this site is accepted, never another origin
 // (an open redirect). No imports, so the proxy, pages and tests share it.
 
-/** The sign-in page (app/(auth)/sign-in). */
+/** The sign-in page (app/(app)/(auth)/sign-in). */
 export const SIGN_IN_PATH = "/sign-in";
 
 /** Where sign-in lands when `next` is missing or rejected. */

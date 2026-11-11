@@ -16,8 +16,8 @@ import {
   tagColorSchema,
   tagNameSchema,
   updateTag,
-} from "@/app/dashboard/codes/_lib/organize";
-import { MAX_TAGS_PER_CODE } from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize";
+import { MAX_TAGS_PER_CODE } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 
 const createSchema = z.object({
   name: tagNameSchema,

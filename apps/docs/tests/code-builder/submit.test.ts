@@ -1,7 +1,7 @@
 // Create and Save (components/code-builder/submit.ts) against fake server
 // actions: nothing here reaches a database.
 import { describe, expect, it, vi } from "vitest";
-import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   listItemFromView,
   mergeOptimisticCodes,

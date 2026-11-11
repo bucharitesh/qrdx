@@ -4,7 +4,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 import { toast } from "sonner";
-import { removeCommunityItemAction } from "@/app/admin/actions";
+import { removeCommunityItemAction } from "@/app/(app)/admin/actions";
 
 /** Admins only: take an item out of the community (post-moderation). */
 export function RemoveItemButton({

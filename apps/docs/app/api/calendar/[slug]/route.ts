@@ -2,7 +2,7 @@ import { database as db, landingPage, qrCode } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
-import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
+import { CUSTOM_DOMAIN_HEADER } from "@/app/(app)/dashboard/domains/_lib/hostname";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import { buildIcs, icsFilename } from "@/lib/landing/blocks/event-calendar";
 import {

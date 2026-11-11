@@ -8,25 +8,25 @@ import {
   lastRedirectDestination,
   rememberedPages,
   switchCodeKind,
-} from "@/app/dashboard/codes/_lib/code-kind";
-import { inactiveOptions } from "@/app/dashboard/codes/_lib/code-kind-shared";
+} from "@/app/(app)/dashboard/codes/_lib/code-kind";
+import { inactiveOptions } from "@/app/(app)/dashboard/codes/_lib/code-kind-shared";
 import type {
   CodeKind,
   CodeOptionId,
-} from "@/app/dashboard/codes/_lib/code-options";
+} from "@/app/(app)/dashboard/codes/_lib/code-options";
 import {
   codeIdSchema,
   destinationUrlSchema,
   enforceCreateRateLimit,
   getCode,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import {
   getPageUsage,
   getScopedPageContent,
   type PageUsage,
   pageForCodeSchema,
   pageIdSchema,
-} from "@/app/dashboard/pages/_lib/landing-pages";
+} from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { HttpError } from "@/lib/error-response";
 import { getBlock } from "@/lib/landing/blocks";
 import { getTemplate } from "@/lib/landing/templates";

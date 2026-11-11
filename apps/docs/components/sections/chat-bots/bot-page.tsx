@@ -28,7 +28,7 @@ import { TrackedAnchor, TrackedLink } from "@/lib/analytics/react";
 import { isPathAvailable } from "@/lib/feature-availability";
 import { CHAT_BOTS, type ChatBotId, chatBot } from "./bots";
 
-// The layout every chat bot landing page shares (app/(home)/slack, telegram
+// The layout every chat bot landing page shares (app/(app)/(home)/slack, telegram
 // and discord): the hero with the add button and the conversation mockup,
 // three steps, the commands, privacy, links to the docs and the other bots,
 // and the FAQ (with FAQPage JSON-LD from FaqList). The copy is each page's.

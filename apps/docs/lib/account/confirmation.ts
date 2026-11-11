@@ -182,7 +182,7 @@ export const CONFIRMATION_REASONS: Partial<Record<ConfirmationAction, string>> =
     // A session used from a new country and browser (./session-origin.ts).
     "continue-session":
       "This sign-in is being used from a different country and a different browser than where it started, so we check it's you before anything else.",
-    // The Slack bot's /qr link (app/integrations/slack/link).
+    // The Slack bot's /qr link (app/(app)/integrations/slack/link).
     "link-slack-account":
       "Once linked, whoever uses that Slack account can make tracked codes in your workspace with /qr track, so we check it's you first.",
   };

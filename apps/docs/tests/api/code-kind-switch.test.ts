@@ -1,4 +1,4 @@
-// Changing what a printed code opens (app/dashboard/codes/_lib/code-kind.ts),
+// Changing what a printed code opens (app/(app)/dashboard/codes/_lib/code-kind.ts),
 // as content/docs/help/dynamic-codes/change-the-type.mdx describes it: a
 // website link becomes a hosted page and back with the same short link and
 // scans; the page it leaves stays in Pages and can be brought back; a new
@@ -63,11 +63,11 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   getPlanForScope: async () => state.plan,
   getOwnerPlanForOrganization: async () => state.plan,
 }));
-vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
   assertBindableDomains: async () => {},
 }));
-vi.mock("@/app/dashboard/themes/_lib/queries", () => ({
+vi.mock("@/app/(app)/dashboard/themes/_lib/queries", () => ({
   getDefaultThemeStyle: async () => null,
 }));
 vi.mock("@/lib/safety/destinations", () => ({
@@ -92,12 +92,12 @@ vi.mock("@/lib/log-error", () => ({ logError: () => {} }));
 
 const one = await import("@/app/api/v1/codes/[id]/route");
 const shortLink = await import("@/app/q/[slug]/route");
-const { loadPublicPage } = await import("@/app/p/_lib/public-page");
+const { loadPublicPage } = await import("@/app/(app)/p/_lib/public-page");
 const { rememberedPages, switchCodeKind } = await import(
-  "@/app/dashboard/codes/_lib/code-kind"
+  "@/app/(app)/dashboard/codes/_lib/code-kind"
 );
 const { deletePage, listPages } = await import(
-  "@/app/dashboard/pages/_lib/landing-pages"
+  "@/app/(app)/dashboard/pages/_lib/landing-pages"
 );
 const { listCodeVersions, restoreCodeVersion } = await import(
   "@/lib/code-versions"
@@ -106,7 +106,9 @@ const { SHORT_LINK_BASE } = await import("@/lib/short-links");
 const { PAGE_SETTINGS_TYPE } = await import(
   "@/components/landing/page-settings-block"
 );
-const shared = await import("@/app/dashboard/codes/_lib/code-kind-shared");
+const shared = await import(
+  "@/app/(app)/dashboard/codes/_lib/code-kind-shared"
+);
 
 const ORG = "org_acme";
 const NOW = new Date("2026-11-11T12:00:00Z");

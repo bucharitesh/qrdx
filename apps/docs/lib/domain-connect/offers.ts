@@ -1,7 +1,7 @@
 import "server-only";
 
 import { Resolver } from "node:dns/promises";
-import { isDnsHostname } from "@/app/dashboard/domains/_lib/hostname";
+import { isDnsHostname } from "@/app/(app)/dashboard/domains/_lib/hostname";
 import type { DnsRecord } from "@/lib/custom-domains";
 import { env } from "@/lib/env";
 import { isFeatureAvailable } from "@/lib/feature-availability";

@@ -60,7 +60,7 @@ const {
   regenerateOAuthAppSecretAction,
   setOAuthAppActiveAction,
   updateOAuthAppAction,
-} = await import("@/app/settings/developers/_lib/actions");
+} = await import("@/app/(app)/settings/developers/_lib/actions");
 
 const input = {
   name: "E2E app",

@@ -12,7 +12,7 @@ import {
 import { HamburgerMenu as Menu } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
-import type { Meter } from "@/app/settings/usage/_lib/meters";
+import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { AppSidebar } from "./app-sidebar";
 import type { ShellData } from "./shell-data";
 

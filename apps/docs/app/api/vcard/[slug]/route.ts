@@ -1,7 +1,7 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
-import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
-import { loadPublicPage } from "@/app/p/_lib/public-page";
+import { CUSTOM_DOMAIN_HEADER } from "@/app/(app)/dashboard/domains/_lib/hostname";
+import { loadPublicPage } from "@/app/(app)/p/_lib/public-page";
 import { env } from "@/lib/env";
 import { type ContactProps, contactSchema } from "@/lib/landing/blocks/contact";
 import { socialsSchema } from "@/lib/landing/blocks/socials";

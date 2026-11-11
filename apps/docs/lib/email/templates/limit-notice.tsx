@@ -20,7 +20,7 @@ export interface LimitNoticeEmailProps {
   /** "Free" */
   planName: string;
   /**
-   * The app's own limit sentences (app/settings/usage/_lib/limit-copy.ts),
+   * The app's own limit sentences (app/(app)/settings/usage/_lib/limit-copy.ts),
    * with the reset date for monthly allowances
    */
   reason: string;

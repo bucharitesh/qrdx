@@ -127,7 +127,7 @@ vi.mock("@/lib/account/two-factor-server", async (importOriginal) => {
     },
   };
 });
-vi.mock("@/app/admin/_lib/guard", () => ({
+vi.mock("@/app/(app)/admin/_lib/guard", () => ({
   assertAdmin: async () => {
     if (!state.admin) throw new Error("Not found");
     return state.admin;
@@ -135,7 +135,7 @@ vi.mock("@/app/admin/_lib/guard", () => ({
   requireAdmin: async () => state.admin,
   getAdminUser: async () => state.admin,
 }));
-vi.mock("@/app/admin/_lib/audit", () => ({
+vi.mock("@/app/(app)/admin/_lib/audit", () => ({
   writeAuditLog: async (entry: (typeof state.audit)[number]) => {
     state.audit.push(entry);
   },
@@ -161,9 +161,9 @@ vi.mock("@/lib/account/email-change-server", () => ({
 const rules = await import("@repo/auth/two-factor-reset");
 const reset = await import("@/lib/account/two-factor-reset-server");
 const confirmation = await import("@/lib/account/confirmation-server");
-const support = await import("@/app/admin/users/support-actions");
+const support = await import("@/app/(app)/admin/users/support-actions");
 const settings = await import(
-  "@/app/settings/account/_lib/two-factor-reset-actions"
+  "@/app/(app)/settings/account/_lib/two-factor-reset-actions"
 );
 
 /** The account (2FA on with an app), its sessions, a trusted device, an admin. */

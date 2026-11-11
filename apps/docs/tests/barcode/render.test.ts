@@ -201,6 +201,7 @@ describe("bwip-js stays on /barcode-generator", () => {
       [
         path.join(
           "app",
+          "(app)",
           "dashboard",
           "barcodes",
           "_components",

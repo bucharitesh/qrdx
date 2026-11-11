@@ -1,5 +1,5 @@
 // The stolen-session check on the app's side (lib/account/session-origin*.ts,
-// proxy.ts, app/(auth)/session-check), against in-memory tables
+// proxy.ts, app/(app)/(auth)/session-check), against in-memory tables
 // (tests/support/fake-db.ts) and a fake Better Auth whose getSession hands
 // back the session as it is (its hold for ordinary reads is tested in
 // tests/auth/session-origin.test.ts). Covers: what counts as the same
@@ -109,11 +109,11 @@ vi.mock("@/lib/account/two-factor-notice-server", () => ({
   sendTwoFactorNotice: async () => {},
   sendBackupCodeUsedNotice: async () => {},
 }));
-vi.mock("@/app/dashboard/domains/_lib/host-routing", () => ({
+vi.mock("@/app/(app)/dashboard/domains/_lib/host-routing", () => ({
   routeCustomDomain: async () => null,
 }));
 // The page's client part; the page itself is what's tested.
-vi.mock("@/app/(auth)/session-check/session-check", () => ({
+vi.mock("@/app/(app)/(auth)/session-check/session-check", () => ({
   SessionCheck: (props: unknown) => ({ type: "SessionCheck", props }),
 }));
 /** The session row as it is, held or not (Better Auth's side holds it). */
@@ -143,9 +143,11 @@ vi.mock("@repo/auth/server", async () => {
 const server = await import("@/lib/account/confirmation-server");
 const origin = await import("@/lib/account/session-origin-server");
 const { checkSession } = await import(
-  "@/app/(auth)/session-check/_lib/actions"
+  "@/app/(app)/(auth)/session-check/_lib/actions"
 );
-const { default: checkPage } = await import("@/app/(auth)/session-check/page");
+const { default: checkPage } = await import(
+  "@/app/(app)/(auth)/session-check/page"
+);
 const { default: proxy } = await import("@/proxy");
 
 const DAY = 24 * 60 * 60 * 1000;

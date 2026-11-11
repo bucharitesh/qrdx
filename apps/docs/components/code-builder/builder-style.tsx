@@ -3,8 +3,8 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { type ColorConfig, getColorString } from "qrdx";
 import { useMemo } from "react";
-import { CodeQr } from "@/app/dashboard/codes/_components/code-qr";
-import type { SavedTheme } from "@/app/dashboard/themes/_lib/theme";
+import { CodeQr } from "@/app/(app)/dashboard/codes/_components/code-qr";
+import type { SavedTheme } from "@/app/(app)/dashboard/themes/_lib/theme";
 import ControlSection from "@/components/editor/control-section";
 import { ColorPresets } from "@/components/editor/control-sections/color-presets";
 import {

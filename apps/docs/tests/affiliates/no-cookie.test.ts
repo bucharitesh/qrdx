@@ -60,9 +60,9 @@ function programFiles(): string[] {
   const roots = [
     "lib/affiliates",
     "app/r",
-    "app/(home)/affiliates",
-    "app/settings/affiliate",
-    "app/admin/affiliates",
+    "app/(app)/(home)/affiliates",
+    "app/(app)/settings/affiliate",
+    "app/(app)/admin/affiliates",
     "components/referral-capture.tsx",
     "../../packages/auth/referral.ts",
     "../../packages/auth/referral-keys.ts",

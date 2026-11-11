@@ -6,13 +6,13 @@ import {
   parseDisplay,
   serializeDisplay,
   toggleProperty,
-} from "@/app/dashboard/codes/_lib/display";
+} from "@/app/(app)/dashboard/codes/_lib/display";
 import {
   codesHref,
   DEFAULT_DOMAIN_FILTER,
   isUnfiltered,
   parseCodesFilters,
-} from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 
 describe("list display", () => {
   it("starts as cards with every property", () => {

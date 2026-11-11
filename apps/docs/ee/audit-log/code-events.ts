@@ -2,7 +2,7 @@ import "server-only";
 
 import { database as db, organization, qrCode } from "@repo/database";
 import { eq, inArray } from "drizzle-orm";
-import { getDomainRefs } from "@/app/dashboard/domains/_lib/domains";
+import { getDomainRefs } from "@/app/(app)/dashboard/domains/_lib/domains";
 import type { AuditAction } from "@/ee/audit-log/catalogue";
 import { changedFields, hasChanges } from "@/ee/audit-log/metadata";
 import {

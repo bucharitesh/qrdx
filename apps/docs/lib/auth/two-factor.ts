@@ -1,6 +1,6 @@
 /**
  * Two-step verification: the client-safe parts. The sign-in challenge
- * (app/(auth)/components/two-factor-challenge.tsx) and Settings → Profile &
+ * (app/(app)/(auth)/components/two-factor-challenge.tsx) and Settings → Profile &
  * security (two-factor-section.tsx, _lib/two-factor-actions.ts) share these.
  * The rules themselves live in @repo/auth/sign-in-challenge-rules.
  */

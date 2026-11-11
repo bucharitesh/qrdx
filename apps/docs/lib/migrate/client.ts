@@ -3,8 +3,8 @@
 // Browser side of /api/migrate/**. The dialog talks to `MigrateClient`, so
 // the dev-only mock (lib/migrate/mock.ts) can stand in without a session.
 
-import { connectIntegrationAction } from "@/app/settings/integrations/actions";
-import { connectWithApiKeyAction } from "@/app/settings/integrations/connected-account-actions";
+import { connectIntegrationAction } from "@/app/(app)/settings/integrations/actions";
+import { connectWithApiKeyAction } from "@/app/(app)/settings/integrations/connected-account-actions";
 import type { ApiProviderId } from "./providers";
 import { API_PROVIDERS } from "./providers";
 import type {

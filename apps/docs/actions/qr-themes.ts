@@ -19,11 +19,11 @@ import {
   setOnlyDefaultTheme,
   teamThemesPlanName,
   themeScopeWhere,
-} from "@/app/dashboard/themes/_lib/queries";
+} from "@/app/(app)/dashboard/themes/_lib/queries";
 import type {
   SavedTheme,
   ThemeActionResult,
-} from "@/app/dashboard/themes/_lib/theme";
+} from "@/app/(app)/dashboard/themes/_lib/theme";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { can } from "@/lib/permissions";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
