@@ -680,5 +680,98 @@
         }
       }
     }
+  },
+  "docs": {
+    "meta": {
+      "titleSuffix": "QRdx Docs"
+    },
+    "breadcrumb": {
+      "home": "Home",
+      "docs": "Docs"
+    },
+    "untranslated": {
+      "title": "This page isn't translated yet",
+      "body": "You're reading the English version."
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Copy Markdown",
+        "open": "Open",
+        "openIn": "Open in {app}",
+        "askPrompt": "Read {url}, I want to ask questions about it."
+      },
+      "search": {
+        "jumpTo": "Jump to <page>{name}</page>"
+      },
+      "language": {
+        "label": "Docs language",
+        "note": "The docs are in these languages. Other languages read the English docs."
+      }
+    },
+    "help": {
+      "search": "Search help and docs",
+      "stillStuck": {
+        "title": "Still stuck?",
+        "body": "Tell us what you were trying to do and what happened. Include the code's short link if it's about a code.",
+        "widget": "The support widget on qrdx.dev, once you allow Functionality cookies.",
+        "github": "Report a bug on GitHub",
+        "contact": "All the ways to contact us"
+      }
+    },
+    "notFound": {
+      "title": "This page isn't in the docs",
+      "body": "It may have moved or been renamed. Search the docs, or start from one of these.",
+      "places": {
+        "gettingStarted": {
+          "title": "Getting started",
+          "description": "Design and download your first code."
+        },
+        "dynamic": {
+          "title": "Dynamic QR codes",
+          "description": "Short links you can change after printing."
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "Create and manage codes from your own app."
+        },
+        "components": {
+          "title": "Components",
+          "description": "React and shadcn/ui components for QR codes."
+        }
+      }
+    },
+    "ui": {
+      "search": "Search",
+      "searchPlaceholder": "Search",
+      "openSearch": "Open Search",
+      "closeSearch": "Close Search",
+      "noResults": "No results found",
+      "searchFailed": "Search failed",
+      "onThisPage": "On this page",
+      "noHeadings": "No Headings",
+      "tableOfContents": "Table of Contents",
+      "lastUpdated": "Last updated on",
+      "previousPage": "Previous Page",
+      "nextPage": "Next Page",
+      "copyCode": "Copy Text",
+      "copiedCode": "Copied Text",
+      "copyAnchor": "Copy Anchor Link",
+      "copiedAnchor": "Copied Anchor Link",
+      "copyLink": "Copy Link",
+      "copiedLink": "Copied Link",
+      "toggleMenu": "Toggle Menu",
+      "toggleTheme": "Toggle Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark",
+      "themeSystem": "System",
+      "openSidebar": "Open Sidebar",
+      "closeSidebar": "Close Sidebar",
+      "collapseSidebar": "Collapse Sidebar",
+      "typeTableProp": "Prop",
+      "typeTableType": "Type",
+      "typeTableDefault": "Default",
+      "typeTableParameters": "Parameters",
+      "typeTableReturns": "Returns"
+    }
   }
 }

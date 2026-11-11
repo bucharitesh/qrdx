@@ -4,6 +4,11 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { env } from "@/env";
 import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
+import {
+  docsEnglishRewrites,
+  docsMarkdownAcceptRewrites,
+  docsMarkdownRewrites,
+} from "@/lib/i18n/docs";
 import { englishRedirects, englishRewrites } from "@/lib/i18n/routing";
 import {
   appCsp,
@@ -326,6 +331,8 @@ let nextConfig: NextConfig = {
           { source: "/mcp", destination: "/mcp.md" },
           { source: "/docs", destination: "/llms.mdx" },
           { source: "/docs/:path+", destination: "/llms.mdx/:path+" },
+          // Translated docs pages (/es/docs/...): app/docs-md.
+          ...docsMarkdownAcceptRewrites(),
         ].map((rule) => ({
           ...rule,
           has: [
@@ -340,6 +347,9 @@ let nextConfig: NextConfig = {
         // its unprefixed URL (lib/i18n/routing.ts). After the Markdown
         // rewrites, which answer agents for / and /pricing first.
         ...englishRewrites(),
+        // The docs too (app/[lang]/docs), apart from their .md and .mdx
+        // versions, which the afterFiles rules below answer.
+        ...docsEnglishRewrites(),
       ],
       afterFiles: [
         ...base.afterFiles,
@@ -360,6 +370,8 @@ let nextConfig: NextConfig = {
           source: "/docs/:path*.md",
           destination: "/llms.mdx/:path*",
         },
+        // A translated docs page as Markdown: /es/docs/x.md (app/docs-md).
+        ...docsMarkdownRewrites(),
       ],
     };
   },

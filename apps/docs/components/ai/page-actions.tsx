@@ -9,6 +9,7 @@ import {
 } from "fumadocs-ui/components/ui/popover";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { ArrowDown2, Copy, ExportSquare, MessageCircle } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { soundEvent } from "@/lib/sound/emit";
 
@@ -22,6 +23,7 @@ export function LLMCopyButton({
 }: {
   markdownUrl: string;
 }) {
+  const t = useTranslations("docs.client.actions");
   const [isLoading, setLoading] = useState(false);
   const [checked, onClick] = useCopyButton(async () => {
     const cached = cache.get(markdownUrl);
@@ -64,7 +66,7 @@ export function LLMCopyButton({
       onClick={onClick}
     >
       {checked ? <Tick /> : <Copy />}
-      Copy Markdown
+      {t("copyMarkdown")}
     </button>
   );
 }
@@ -87,16 +89,17 @@ export function ViewOptions({
    */
   githubUrl: string;
 }) {
+  const t = useTranslations("docs.client.actions");
   const items = useMemo(() => {
     const fullMarkdownUrl =
       typeof window !== "undefined"
         ? new URL(markdownUrl, window.location.origin)
         : "loading";
-    const q = `Read ${fullMarkdownUrl}, I want to ask questions about it.`;
+    const q = t("askPrompt", { url: String(fullMarkdownUrl) });
 
     return [
       {
-        title: "Open in GitHub",
+        title: t("openIn", { app: "GitHub" }),
         href: githubUrl,
         icon: (
           <svg fill="currentColor" role="img" viewBox="0 0 24 24">
@@ -106,7 +109,7 @@ export function ViewOptions({
         ),
       },
       {
-        title: "Open in Scira AI",
+        title: t("openIn", { app: "Scira AI" }),
         href: `https://scira.ai/?${new URLSearchParams({
           q,
         })}`,
@@ -170,7 +173,7 @@ export function ViewOptions({
         ),
       },
       {
-        title: "Open in ChatGPT",
+        title: t("openIn", { app: "ChatGPT" }),
         href: `https://chatgpt.com/?${new URLSearchParams({
           hints: "search",
           q,
@@ -188,7 +191,7 @@ export function ViewOptions({
         ),
       },
       {
-        title: "Open in Claude",
+        title: t("openIn", { app: "Claude" }),
         href: `https://claude.ai/new?${new URLSearchParams({
           q,
         })}`,
@@ -205,14 +208,14 @@ export function ViewOptions({
         ),
       },
       {
-        title: "Open in T3 Chat",
+        title: t("openIn", { app: "T3 Chat" }),
         href: `https://t3.chat/new?${new URLSearchParams({
           q,
         })}`,
         icon: <MessageCircle />,
       },
     ];
-  }, [githubUrl, markdownUrl]);
+  }, [githubUrl, markdownUrl, t]);
 
   return (
     <Popover>
@@ -225,7 +228,7 @@ export function ViewOptions({
           }),
         )}
       >
-        Open
+        {t("open")}
         <ArrowDown2 className="size-3.5 text-fd-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent className="flex flex-col">
