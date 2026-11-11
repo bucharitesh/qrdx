@@ -1173,7 +1173,7 @@
       },
       "payments": {
         "name": "पेमेंट",
-        "detail": "UPI, Bitcoin, Ethereum, PayPal, Venmo और SEPA (EPC) कोड, हमेशा कन्फ़र्म स्टेप के साथ।"
+        "detail": "UPI, Pix, PayNow, PromptPay, VietQR और SEPA (EPC) कोड, PayPal, Venmo और क्रिप्टो वॉलेट, हर बार कन्फ़र्म स्टेप के साथ।"
       },
       "products": {
         "name": "प्रोडक्ट कोड",
@@ -1324,7 +1324,12 @@
       "copyLink": "लिंक कॉपी करें",
       "copyUsername": "यूज़रनेम कॉपी करें",
       "copyIban": "IBAN कॉपी करें",
+      "copyPixKey": "Pix की कॉपी करें",
+      "copyNumber": "नंबर कॉपी करें",
+      "copyAccount": "अकाउंट कॉपी करें",
+      "copyMerchant": "मर्चेंट कॉपी करें",
       "epcNote": "यूरो क्षेत्र के बैंकिंग ऐप इस कोड को सीधे स्कैन कर सकते हैं। आप IBAN को कॉपी करके नए ट्रांसफ़र में भी डाल सकते हैं।",
+      "bankAppNote": "{name} सपोर्ट करने वाले बैंकिंग ऐप से कोड स्कैन करके पेमेंट करें।",
       "upiNote": "जिन फ़ोन में UPI ऐप (Google Pay, PhonePe, Paytm, BHIM…) हो, उनमें वह ऐप खुलता है।",
       "restyle": "Playground में नया स्टाइल दें",
       "name": "नाम",
@@ -1346,7 +1351,6 @@
       "copyCoordinates": "निर्देशांक कॉपी करें",
       "number": "नंबर",
       "call": "कॉल करें",
-      "copyNumber": "नंबर कॉपी करें",
       "to": "प्रति",
       "message": "संदेश",
       "writeText": "टेक्स्ट लिखें",

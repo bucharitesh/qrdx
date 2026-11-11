@@ -3316,7 +3316,7 @@
     "status": "machine"
   },
   "scan.types.payments.detail": {
-    "source": "e07a333ebaed",
+    "source": "05f774e5fcc6",
     "status": "machine"
   },
   "scan.types.products.name": {
@@ -3835,8 +3835,28 @@
     "source": "b2e745c28017",
     "status": "machine"
   },
+  "scanner.result.copyPixKey": {
+    "source": "83738837bfd8",
+    "status": "machine"
+  },
+  "scanner.result.copyNumber": {
+    "source": "f35c40de4435",
+    "status": "machine"
+  },
+  "scanner.result.copyAccount": {
+    "source": "ee337b2a7ca7",
+    "status": "machine"
+  },
+  "scanner.result.copyMerchant": {
+    "source": "693b696a4cc4",
+    "status": "machine"
+  },
   "scanner.result.epcNote": {
     "source": "6d0d5d5277df",
+    "status": "machine"
+  },
+  "scanner.result.bankAppNote": {
+    "source": "a4bb5333bcd7",
     "status": "machine"
   },
   "scanner.result.upiNote": {
@@ -3921,10 +3941,6 @@
   },
   "scanner.result.call": {
     "source": "d6e645b7d2b2",
-    "status": "machine"
-  },
-  "scanner.result.copyNumber": {
-    "source": "f35c40de4435",
     "status": "machine"
   },
   "scanner.result.to": {

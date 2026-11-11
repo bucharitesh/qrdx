@@ -17,9 +17,9 @@
     "status": "machine",
     "context": "qrTypes.groups.contact.title"
   },
-  "5d66dbd5936f": {
-    "source": "Save a contact, start a call, text, email or WhatsApp chat in one scan.",
-    "text": "Kontakt speichern, Anruf starten, SMS, E-Mail oder WhatsApp-Chat öffnen, alles mit einem Scan.",
+  "1771803787ab": {
+    "source": "Save a contact, call, text or email, or open a chat in WhatsApp, Telegram, Signal or LINE.",
+    "text": "Speichere einen Kontakt, ruf an, schick eine SMS oder E-Mail oder öffne einen Chat in WhatsApp, Telegram, Signal oder LINE.",
     "status": "machine",
     "context": "qrTypes.groups.contact.description"
   },
@@ -29,9 +29,9 @@
     "status": "machine",
     "context": "qrTypes.groups.social.title"
   },
-  "ed283660be99": {
-    "source": "Send people to a profile, channel, community or playlist.",
-    "text": "Schick Leute zu einem Profil, Kanal, einer Community oder Playlist.",
+  "c5bddd3ef7b6": {
+    "source": "Send people to a profile, channel, Discord server or playlist.",
+    "text": "Leite Leute zu einem Profil, Kanal, Discord-Server oder einer Playlist.",
     "status": "machine",
     "context": "qrTypes.groups.social.description"
   },
@@ -41,9 +41,9 @@
     "status": "machine",
     "context": "qrTypes.groups.payments.title"
   },
-  "998321187b6c": {
-    "source": "Payment requests for UPI, PayPal, Venmo, Bitcoin and Ethereum.",
-    "text": "Zahlungsanfragen für UPI, PayPal, Venmo, Bitcoin und Ethereum.",
+  "ef99c34580c4": {
+    "source": "Bank payment codes (UPI, Pix, SEPA, PayNow, PromptPay, VietQR), payment links and crypto wallets.",
+    "text": "Bankzahlungscodes (UPI, Pix, SEPA, PayNow, PromptPay, VietQR), Zahlungslinks und Krypto-Wallets.",
     "status": "machine",
     "context": "qrTypes.groups.payments.description"
   },
@@ -53,9 +53,9 @@
     "status": "machine",
     "context": "qrTypes.groups.business.title"
   },
-  "e0f2e577a1a3": {
-    "source": "Reviews, directions, bookings and attendance check-ins.",
-    "text": "Bewertungen, Wegbeschreibungen, Buchungen und Check-ins für Veranstaltungen.",
+  "40ae6347e760": {
+    "source": "Reviews, directions, bookings, meetings and attendance check-ins.",
+    "text": "Bewertungen, Wegbeschreibungen, Buchungen, Meetings und Anwesenheits-Check-ins.",
     "status": "machine",
     "context": "qrTypes.groups.business.description"
   },
@@ -3766,6 +3766,1992 @@
     "text": "Ja, in Cal.com. Jeder Termintyp hat eigene Dauer, Verfügbarkeit, Pufferzeiten und Buchungslimits; der QR-Code öffnet nur die Seite.",
     "status": "machine",
     "context": "qrTypes.types.calcom.faqs.3.answer"
+  },
+  "fa7d3d951464": {
+    "source": "Pix",
+    "text": "Pix",
+    "status": "machine",
+    "context": "qrTypes.types.pix.name"
+  },
+  "167d96bf1f00": {
+    "source": "Get paid by Pix from any Brazilian bank app.",
+    "text": "Lass dich per Pix aus jeder brasilianischen Banking-App bezahlen.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.summary"
+  },
+  "1893119c2a87": {
+    "source": "Make a static Pix QR code (BR Code) for your Pix key, with an optional amount and message. Built to the Banco Central rules, in your browser. Free.",
+    "text": "Erstelle einen statischen Pix-QR-Code (BR Code) für deinen Pix-Schlüssel, optional mit Betrag und Nachricht. Nach den Regeln des Banco Central, direkt in deinem Browser. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.metaDescription"
+  },
+  "f19cccb611d1": {
+    "source": "A Pix QR code lets anyone in Brazil pay you from their bank app: they scan, check the name and amount, and confirm. It works with every kind of Pix key: CPF, CNPJ, phone number, email or a random key.",
+    "text": "Mit einem Pix-QR-Code kann dich in Brasilien jeder aus seiner Banking-App bezahlen: Er scannt den Code, prüft Name und Betrag und bestätigt. Das funktioniert mit jeder Art von Pix-Schlüssel: CPF, CNPJ, Telefonnummer, E-Mail oder zufälliger Schlüssel.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.intro.0"
+  },
+  "66a45d33d88c": {
+    "source": "QRdx makes a static BR Code, the format the Banco Central do Brasil defines for Pix. Static codes can be paid many times, so one printed code works at a counter, on an invoice or on a tip jar. Leave the amount empty to let each payer type it, or set one for a fixed price. The same text also works as Pix copia e cola.",
+    "text": "QRdx erstellt einen statischen BR Code, das Format, das der Banco Central do Brasil für Pix festlegt. Statische Codes können beliebig oft bezahlt werden, ein gedruckter Code reicht also für die Ladentheke, eine Rechnung oder die Trinkgeldkasse. Lass den Betrag leer, damit jeder Zahlende ihn selbst eingibt, oder lege für einen Festpreis einen Betrag fest. Derselbe Text funktioniert auch als Pix copia e cola.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.intro.1"
+  },
+  "730938a998b2": {
+    "source": "Enter your Pix key exactly as it is registered at your bank. Phone keys start with +55.",
+    "text": "Gib deinen Pix-Schlüssel genau so ein, wie er bei deiner Bank registriert ist. Telefonschlüssel beginnen mit +55.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.steps.0"
+  },
+  "5a3394a05037": {
+    "source": "Add the receiver name and city as they should appear to the payer (up to 25 and 15 characters).",
+    "text": "Füge Empfängername und Stadt so hinzu, wie sie dem Zahlenden angezeigt werden sollen (maximal 25 bzw. 15 Zeichen).",
+    "status": "machine",
+    "context": "qrTypes.types.pix.steps.1"
+  },
+  "430d45bd1305": {
+    "source": "Optionally set an amount, a message and a transaction ID to match payments in your statement.",
+    "text": "Lege optional einen Betrag, eine Nachricht und eine Transaktions-ID fest, um Zahlungen auf deinem Kontoauszug zuzuordnen.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.steps.2"
+  },
+  "1397b2363cba": {
+    "source": "Scan the preview with your own bank app to check the details, then download the code.",
+    "text": "Scanne die Vorschau mit deiner eigenen Banking-App, um die Angaben zu prüfen, und lade den Code dann herunter.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.steps.3"
+  },
+  "40153bff7804": {
+    "source": "The code is a string of data objects, each an ID, a two-digit length and a value, ending with a CRC16-CCITT checksum that bank apps verify.",
+    "text": "Der Code ist eine Folge von Datenobjekten, jeweils aus einer ID, einer zweistelligen Länge und einem Wert, und endet mit einer CRC16-CCITT-Prüfsumme, die Banking-Apps überprüfen.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.payload.notes.0"
+  },
+  "3a9b27e8f2ad": {
+    "source": "Names, cities and messages are written without accents (São Paulo becomes Sao Paulo), as the format only takes plain letters.",
+    "text": "Namen, Städte und Nachrichten werden ohne Akzente geschrieben (aus São Paulo wird Sao Paulo), da das Format nur einfache Buchstaben zulässt.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.payload.notes.1"
+  },
+  "9eaea8e1d1fb": {
+    "source": "Without a transaction ID the code uses ***, the value the rules give for codes that aren't tied to one charge.",
+    "text": "Ohne Transaktions-ID verwendet der Code ***, den Wert, den die Regeln für Codes vorsehen, die nicht an eine bestimmte Zahlung gebunden sind.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.payload.notes.2"
+  },
+  "1099c866765f": {
+    "source": "The key and the message share one data object of 99 characters, so a long email key leaves less room for the message.",
+    "text": "Der Schlüssel und die Nachricht teilen sich ein Datenobjekt mit 99 Zeichen, ein langer E-Mail-Schlüssel lässt also weniger Platz für die Nachricht.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.payload.notes.3"
+  },
+  "080f40f67d68": {
+    "source": "Can people pay the same Pix code more than once?",
+    "text": "Können Leute denselben Pix-Code mehrfach bezahlen?",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.0.question"
+  },
+  "99df84de197a": {
+    "source": "Yes. A static Pix code can be paid any number of times, which suits shops, stalls and donations. Use a transaction ID if you want to tell payments apart.",
+    "text": "Ja. Ein statischer Pix-Code kann beliebig oft bezahlt werden, das passt zu Läden, Ständen und Spenden. Nutze eine Transaktions-ID, wenn du Zahlungen voneinander unterscheiden willst.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.0.answer"
+  },
+  "e2bf6d00ccd9": {
+    "source": "Does QRdx see my payments?",
+    "text": "Sieht QRdx meine Zahlungen?",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.1.question"
+  },
+  "49bb5e53cfd2": {
+    "source": "No. The code is made in your browser and payments go from the payer's bank to yours. QRdx never receives the key or the money.",
+    "text": "Nein. Der Code wird in deinem Browser erstellt, und Zahlungen laufen von der Bank des Zahlenden zu deiner. QRdx erhält weder den Schlüssel noch das Geld.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.1.answer"
+  },
+  "bace6d27fe43": {
+    "source": "Can I make a dynamic Pix charge with an expiry?",
+    "text": "Kann ich eine dynamische Pix-Zahlungsanforderung mit Ablaufdatum erstellen?",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.2.question"
+  },
+  "95b08f6c4181": {
+    "source": "Not here. Dynamic Pix codes point to a charge your bank or payment provider hosts, so they come from that provider's API. QRdx makes static codes.",
+    "text": "Hier nicht. Dynamische Pix-Codes verweisen auf eine Zahlungsanforderung, die deine Bank oder dein Zahlungsanbieter hostet, sie kommen also über die API dieses Anbieters. QRdx erstellt statische Codes.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.2.answer"
+  },
+  "2a0d29312c06": {
+    "source": "SEPA Transfer",
+    "text": "SEPA-Überweisung",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.name"
+  },
+  "5e2d5565bb6a": {
+    "source": "Fill in a euro bank transfer with IBAN, amount and reference.",
+    "text": "Fülle eine Euro-Überweisung mit IBAN, Betrag und Verwendungszweck aus.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.summary"
+  },
+  "b742417a4028": {
+    "source": "Create a SEPA credit transfer QR code (EPC QR, also called GiroCode) with IBAN, amount and reference. Built to the EPC069-12 guidelines. Free.",
+    "text": "Erstelle einen QR-Code für SEPA-Überweisungen (EPC-QR-Code, auch GiroCode genannt) mit IBAN, Betrag und Verwendungszweck. Nach den EPC069-12-Richtlinien erstellt. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.metaDescription"
+  },
+  "d9bd15f6fe08": {
+    "source": "A SEPA transfer QR code fills in a bank transfer for the person paying: your name, IBAN, the amount and the payment reference. They scan it with their banking app, check the details and confirm, so nobody retypes a 22-character IBAN from an invoice.",
+    "text": "Ein SEPA-Überweisungs-QR-Code füllt für die zahlende Person eine Überweisung aus: dein Name, IBAN, der Betrag und der Verwendungszweck. Sie scannt ihn mit der Banking-App, prüft die Angaben und bestätigt, sodass niemand mehr eine 22-stellige IBAN von einer Rechnung abtippen muss.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.intro.0"
+  },
+  "e3b15797a880": {
+    "source": "The format comes from the European Payments Council's guidelines, EPC069-12, and is often called a GiroCode. Banking apps in several euro countries read it, Germany and Austria especially. It suits invoices, rent, club fees and donation posters.",
+    "text": "Das Format stammt aus den Richtlinien des European Payments Council, EPC069-12, und wird oft GiroCode genannt. Banking-Apps in mehreren Euro-Ländern können es lesen, besonders in Deutschland und Österreich. Es eignet sich für Rechnungen, Miete, Vereinsbeiträge und Spendenplakate.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.intro.1"
+  },
+  "dd25434a5973": {
+    "source": "Enter the beneficiary name and IBAN. QRdx checks the IBAN's length and check digits.",
+    "text": "Gib den Namen des Zahlungsempfängers und die IBAN ein. QRdx prüft Länge und Prüfziffern der IBAN.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.steps.0"
+  },
+  "2ad6021b7318": {
+    "source": "Add the BIC only if your bank asks for it; inside the EEA it's optional.",
+    "text": "Füge die BIC nur hinzu, wenn deine Bank sie verlangt. Innerhalb des EWR ist sie optional.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.steps.1"
+  },
+  "4e5e693ccf34": {
+    "source": "Optionally set an amount in euros and a payment reference, or a structured RF creditor reference.",
+    "text": "Lege optional einen Betrag in Euro und einen Verwendungszweck fest, oder eine strukturierte RF-Gläubigerreferenz.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.steps.2"
+  },
+  "25ae805ba325": {
+    "source": "Switch the design to error correction level M if the form asks, then scan the preview with a banking app.",
+    "text": "Stelle das Design auf Fehlerkorrekturstufe M um, wenn das Formular dazu auffordert, und scanne dann die Vorschau mit einer Banking-App.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.steps.3"
+  },
+  "be10e33e1bbe": {
+    "source": "Each field is one line, in a fixed order. QRdx writes version 002 with UTF-8 text and leaves empty trailing lines out.",
+    "text": "Jedes Feld steht in einer eigenen Zeile, in fester Reihenfolge. QRdx schreibt Version 002 mit UTF-8-Text und lässt leere Zeilen am Ende weg.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.payload.notes.0"
+  },
+  "4d016f4f01a3": {
+    "source": "The whole code holds at most 331 bytes. Names are up to 70 characters and reference texts up to 140.",
+    "text": "Der gesamte Code fasst höchstens 331 Bytes. Namen dürfen bis zu 70 Zeichen lang sein, Verwendungszwecke bis zu 140.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.payload.notes.1"
+  },
+  "0d3ab50df0a1": {
+    "source": "A transfer takes either a structured RF creditor reference or free reference text, never both. RF references are checked with their check digits.",
+    "text": "Eine Überweisung enthält entweder eine strukturierte RF-Gläubigerreferenz oder einen freien Verwendungszweck, nie beides. RF-Referenzen werden anhand ihrer Prüfziffern geprüft.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.payload.notes.2"
+  },
+  "72f8e2aa3157": {
+    "source": "The guidelines ask for error correction level M, and the form offers to switch the design to it.",
+    "text": "Die Richtlinien verlangen Fehlerkorrekturstufe M, und das Formular bietet an, das Design darauf umzustellen.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.payload.notes.3"
+  },
+  "fd92f1ba44b1": {
+    "source": "Which banking apps read SEPA QR codes?",
+    "text": "Welche Banking-Apps lesen SEPA-QR-Codes?",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.0.question"
+  },
+  "a082acf1a79c": {
+    "source": "Many apps in Germany and Austria, and a number in other euro countries, read EPC codes. Some apps call it GiroCode or photo transfer. Test with the apps your payers use.",
+    "text": "Viele Apps in Deutschland und Österreich sowie einige in anderen Euro-Ländern lesen EPC-Codes. Manche Apps nennen es GiroCode oder Foto-Überweisung. Teste es mit den Apps, die deine Zahlenden nutzen.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.0.answer"
+  },
+  "bd29bfc21066": {
+    "source": "Does the code pay automatically?",
+    "text": "Zahlt der Code automatisch?",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.1.question"
+  },
+  "4731d1c72463": {
+    "source": "No. It only fills in the transfer form. The payer checks the details and confirms in their banking app.",
+    "text": "Nein. Er füllt nur das Überweisungsformular aus. Die zahlende Person prüft die Angaben und bestätigt in ihrer Banking-App.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.1.answer"
+  },
+  "7a268f30895b": {
+    "source": "Is my IBAN sent to QRdx?",
+    "text": "Wird meine IBAN an QRdx gesendet?",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.2.question"
+  },
+  "73736cd952ed": {
+    "source": "No. The code is made in your browser, and the playground never puts bank details in a link.",
+    "text": "Nein. Der Code wird in deinem Browser erstellt, und der Playground legt Bankdaten nie in einem Link ab.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.2.answer"
+  },
+  "5c5af06729d3": {
+    "source": "PayNow",
+    "text": "PayNow",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.name"
+  },
+  "3fb99b5cd301": {
+    "source": "Get paid by PayNow to a mobile number or UEN.",
+    "text": "Lass dich per PayNow auf eine Handynummer oder UEN bezahlen.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.summary"
+  },
+  "82bfbb36f3ca": {
+    "source": "Make a PayNow QR code for a Singapore mobile number or company UEN, with an optional amount, reference and expiry date. SGQR format, free.",
+    "text": "Erstelle einen PayNow-QR-Code für eine Handynummer aus Singapur oder die UEN deiner Firma, optional mit Betrag, Referenz und Ablaufdatum. Im SGQR-Format, kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.metaDescription"
+  },
+  "6ddc50878bd0": {
+    "source": "A PayNow QR code lets people in Singapore pay you from their banking app. It can pay a mobile number, for personal payments, or a business UEN, for shops and companies.",
+    "text": "Mit einem PayNow-QR-Code können Menschen in Singapur dich direkt aus ihrer Banking-App bezahlen. Er kann auf eine Handynummer lauten, für private Zahlungen, oder auf eine Geschäfts-UEN, für Läden und Unternehmen.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.intro.0"
+  },
+  "f835e55d1e60": {
+    "source": "QRdx builds the code in the SGQR format that Singapore banking apps scan. Leave the amount empty for a code anyone can pay any amount, or set one and choose whether the payer may change it. A reference shows up with the payment, and an expiry date makes the code stop working after a given day.",
+    "text": "QRdx erstellt den Code im SGQR-Format, das Banking-Apps in Singapur scannen. Lass den Betrag leer, wenn jeder einen beliebigen Betrag zahlen können soll, oder lege einen fest und bestimme, ob der Zahlende ihn ändern darf. Eine Referenz wird bei der Zahlung angezeigt, und mit einem Ablaufdatum funktioniert der Code nach einem bestimmten Tag nicht mehr.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.intro.1"
+  },
+  "38b5f9777045": {
+    "source": "Choose whether the payment goes to a mobile number or a UEN, and enter it.",
+    "text": "Wähle, ob die Zahlung an eine Handynummer oder eine UEN gehen soll, und gib sie ein.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.steps.0"
+  },
+  "9adb4c229d2a": {
+    "source": "Optionally add the name payers should see, an amount and a reference such as an invoice number.",
+    "text": "Füge optional den Namen hinzu, den Zahlende sehen sollen, dazu einen Betrag und eine Referenz, zum Beispiel eine Rechnungsnummer.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.steps.1"
+  },
+  "07f99efb5812": {
+    "source": "Set an expiry date if the code should only work for a while, for an invoice say.",
+    "text": "Lege ein Ablaufdatum fest, wenn der Code nur eine Zeit lang funktionieren soll, etwa bei einer Rechnung.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.steps.2"
+  },
+  "6e0bda346e3d": {
+    "source": "Scan the preview with your banking app to check the details, then download the code.",
+    "text": "Scanne die Vorschau mit deiner Banking-App, um die Angaben zu prüfen, und lade den Code dann herunter.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.steps.3"
+  },
+  "314b0c4ac2c3": {
+    "source": "Proxy type 0 is a mobile number (+65 and 8 digits) and 2 is a UEN.",
+    "text": "Proxy-Typ 0 steht für eine Handynummer (+65 und 8 Ziffern) und 2 für eine UEN.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.payload.notes.0"
+  },
+  "a3f5f131be8c": {
+    "source": "A code with an amount or an expiry date is marked dynamic (point of initiation 12); others are static (11).",
+    "text": "Ein Code mit Betrag oder Ablaufdatum wird als dynamisch markiert (Point of Initiation 12), alle anderen sind statisch (11).",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.payload.notes.1"
+  },
+  "6d6767b2c514": {
+    "source": "The checksum is CRC16-CCITT over the whole payload, as in every EMV payment code.",
+    "text": "Die Prüfsumme ist CRC16-CCITT über den gesamten Payload, wie bei jedem EMV-Zahlungscode.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.payload.notes.2"
+  },
+  "31ef246d6b2f": {
+    "source": "Can I use PayNow with my personal mobile number?",
+    "text": "Kann ich PayNow mit meiner privaten Handynummer nutzen?",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.0.question"
+  },
+  "368882e06531": {
+    "source": "Yes, if your number is registered for PayNow with your bank. Payers see the name your bank registered.",
+    "text": "Ja, wenn deine Nummer bei deiner Bank für PayNow registriert ist. Zahlende sehen den Namen, den deine Bank hinterlegt hat.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.0.answer"
+  },
+  "e2e787da3230": {
+    "source": "What does the expiry date do?",
+    "text": "Was bewirkt das Ablaufdatum?",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.1.question"
+  },
+  "556e62223f38": {
+    "source": "Banking apps refuse to pay the code after that day. Leave it empty for a code you print once and keep.",
+    "text": "Banking-Apps verweigern die Zahlung mit dem Code nach diesem Tag. Lass das Feld leer für einen Code, den du einmal druckst und dauerhaft behältst.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.1.answer"
+  },
+  "119fbf96eb25": {
+    "source": "No. The money moves between the two banks through PayNow. QRdx only draws the code, in your browser.",
+    "text": "Nein. Das Geld wird über PayNow direkt zwischen den beiden Banken übertragen. QRdx zeichnet nur den Code, in deinem Browser.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.2.answer"
+  },
+  "a29179a6b7b9": {
+    "source": "PromptPay",
+    "text": "PromptPay",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.name"
+  },
+  "f9585e5bef7b": {
+    "source": "Get paid by PromptPay to a phone number or ID.",
+    "text": "Lass dich per PromptPay auf eine Telefonnummer oder ID bezahlen.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.summary"
+  },
+  "d78b78e6aab0": {
+    "source": "Create a PromptPay QR code for a Thai mobile number, national ID, tax ID or e-wallet ID, with an optional amount. Thai QR standard, free.",
+    "text": "Erstelle einen PromptPay-QR-Code für eine thailändische Handynummer, Personalausweisnummer, Steuer-ID oder E-Wallet-ID, auf Wunsch mit Betrag. Thai-QR-Standard, kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.metaDescription"
+  },
+  "f34dbc2e308c": {
+    "source": "A PromptPay QR code lets anyone with a Thai banking app pay you by scanning. It pays the mobile number, national ID, tax ID or e-wallet ID linked to your PromptPay account.",
+    "text": "Mit einem PromptPay-QR-Code kann dich jeder mit einer thailändischen Banking-App per Scan bezahlen. Das Geld geht an die Handynummer, Personalausweisnummer, Steuer-ID oder E-Wallet-ID, die mit deinem PromptPay-Konto verknüpft ist.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.intro.0"
+  },
+  "5a79fc0fe3c5": {
+    "source": "QRdx makes the code to the Thai QR Code Payment Standard. Without an amount, payers type what they owe, which suits a stall or a shop counter. With an amount, the code is marked dynamic, as the standard asks for a code made for one payment.",
+    "text": "QRdx erstellt den Code nach dem Thai QR Code Payment Standard. Ohne Betrag geben die Zahlenden selbst ein, was sie schulden. Das passt zu einem Marktstand oder einer Ladentheke. Mit Betrag wird der Code als dynamisch markiert, wie es der Standard für einen Code vorsieht, der für eine einzelne Zahlung gedacht ist.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.intro.1"
+  },
+  "b4c7b14a926f": {
+    "source": "Choose mobile number, national or tax ID, or e-wallet ID.",
+    "text": "Wähle Handynummer, Personalausweis- oder Steuer-ID oder E-Wallet-ID.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.steps.0"
+  },
+  "58af1a2fc856": {
+    "source": "Enter the number linked to your PromptPay account.",
+    "text": "Gib die Nummer ein, die mit deinem PromptPay-Konto verknüpft ist.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.steps.1"
+  },
+  "e2e15b312975": {
+    "source": "Optionally set an amount in baht.",
+    "text": "Lege optional einen Betrag in Baht fest.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.steps.2"
+  },
+  "c3df02e38e3f": {
+    "source": "Scan the preview with your banking app to check the name, then download the code.",
+    "text": "Scanne die Vorschau mit deiner Banking-App, um den Namen zu prüfen, und lade den Code dann herunter.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.steps.3"
+  },
+  "84c98d15a9a7": {
+    "source": "Mobile numbers are written as 0066 and the number without its leading 0, 13 digits in all. National and tax IDs are 13 digits, e-wallet IDs 15.",
+    "text": "Handynummern werden als 0066 plus die Nummer ohne führende 0 geschrieben, insgesamt 13 Ziffern. Personalausweis- und Steuer-IDs haben 13 Ziffern, E-Wallet-IDs 15.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.payload.notes.0"
+  },
+  "b05389da592e": {
+    "source": "Point of initiation 11 means a reusable code; 12, used when there's an amount, means a code for one payment.",
+    "text": "Point of Initiation 11 steht für einen wiederverwendbaren Code; 12, der bei einem Betrag verwendet wird, steht für einen Code für eine einzelne Zahlung.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.payload.notes.1"
+  },
+  "e64f71291372": {
+    "source": "The code ends with a CRC16-CCITT checksum that banking apps check before they pay.",
+    "text": "Am Ende des Codes steht eine CRC16-CCITT-Prüfsumme, die Banking-Apps vor der Zahlung prüfen.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.payload.notes.2"
+  },
+  "d7de81b21306": {
+    "source": "Which number should I use?",
+    "text": "Welche Nummer soll ich verwenden?",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.0.question"
+  },
+  "c70d2350f459": {
+    "source": "The one you registered for PromptPay at your bank. Most people use their mobile number; businesses often use their tax ID.",
+    "text": "Die Nummer, die du bei deiner Bank für PromptPay registriert hast. Die meisten nutzen ihre Handynummer, Unternehmen oft ihre Steuer-ID.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.0.answer"
+  },
+  "4508abffd5f1": {
+    "source": "Can foreign visitors pay with it?",
+    "text": "Können ausländische Gäste damit zahlen?",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.1.question"
+  },
+  "2888b1e92aef": {
+    "source": "Only with an app that pays Thai QR codes, such as a Thai banking app. Some foreign wallets support Thai QR through partner networks; check before you rely on it.",
+    "text": "Nur mit einer App, die Thai-QR-Codes bezahlen kann, zum Beispiel einer thailändischen Banking-App. Einige ausländische Wallets unterstützen Thai QR über Partnernetzwerke; prüf das, bevor du dich darauf verlässt.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.1.answer"
+  },
+  "4f415a66a11c": {
+    "source": "Is my ID number stored by QRdx?",
+    "text": "Speichert QRdx meine Ausweisnummer?",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.2.question"
+  },
+  "135da77d4575": {
+    "source": "No. The code is made in your browser and the playground never puts payment details in a link.",
+    "text": "Nein. Der Code wird in deinem Browser erstellt, und der Playground legt Zahlungsdaten nie in einem Link ab.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.2.answer"
+  },
+  "d3f03ab05542": {
+    "source": "VietQR",
+    "text": "VietQR",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.name"
+  },
+  "810e974513d0": {
+    "source": "Get a bank transfer in Vietnam with one scan.",
+    "text": "Banküberweisung in Vietnam mit einem Scan.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.summary"
+  },
+  "a02aab66a06d": {
+    "source": "Make a VietQR code for a Vietnamese bank account or card, with an optional amount and message. NAPAS format, works with VietQR banking apps. Free.",
+    "text": "Erstelle einen VietQR-Code für ein vietnamesisches Bankkonto oder eine Karte, optional mit Betrag und Nachricht. NAPAS-Format, funktioniert mit VietQR-Banking-Apps. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.metaDescription"
+  },
+  "d5e30416fd14": {
+    "source": "A VietQR code fills in a bank transfer in Vietnamese banking apps: the bank, your account or card number and, if you like, the amount and a message. The payer scans, checks the name their bank shows and confirms.",
+    "text": "Ein VietQR-Code füllt in vietnamesischen Banking-Apps eine Überweisung aus: die Bank, deine Konto- oder Kartennummer und auf Wunsch den Betrag und eine Nachricht. Die zahlende Person scannt, prüft den Namen, den ihre Bank anzeigt, und bestätigt.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.intro.0"
+  },
+  "2a1895f26510": {
+    "source": "QRdx builds the code to the NAPAS VietQR specification. Pick your bank from the list (it maps each bank to the 6-digit number the code needs), enter the account or card, and the code is ready for a shop counter, an invoice or a tip jar.",
+    "text": "QRdx erstellt den Code nach der NAPAS-VietQR-Spezifikation. Wähle deine Bank aus der Liste (sie ordnet jeder Bank die 6-stellige Nummer zu, die der Code braucht), gib das Konto oder die Karte ein, und der Code ist bereit für eine Ladentheke, eine Rechnung oder eine Trinkgeldkasse.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.intro.1"
+  },
+  "47e1d1c3dc5e": {
+    "source": "Choose your bank from the list.",
+    "text": "Wähle deine Bank aus der Liste.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.steps.0"
+  },
+  "19f82b884462": {
+    "source": "Enter your account number, or switch to card and enter the card number.",
+    "text": "Gib deine Kontonummer ein oder wechsle zu Karte und gib die Kartennummer ein.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.steps.1"
+  },
+  "f526c8fc3511": {
+    "source": "Optionally add an amount in dong and a short message, without accents.",
+    "text": "Füge optional einen Betrag in Dong und eine kurze Nachricht ohne Akzente hinzu.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.steps.2"
+  },
+  "0db4b4cf14cd": {
+    "source": "Scan the preview with your banking app, then download the code.",
+    "text": "Scanne die Vorschau mit deiner Banking-App und lade dann den Code herunter.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.steps.3"
+  },
+  "47d5635bbd9a": {
+    "source": "QRIBFTTA pays an account and QRIBFTTC a card.",
+    "text": "QRIBFTTA zahlt auf ein Konto, QRIBFTTC auf eine Karte.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.payload.notes.0"
+  },
+  "723a6cc3b3fa": {
+    "source": "Amounts are whole dong. Messages are up to 25 characters, and Vietnamese accents are removed as banks expect.",
+    "text": "Beträge sind ganze Dong. Nachrichten haben bis zu 25 Zeichen, und vietnamesische Akzente werden entfernt, wie Banken es erwarten.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.payload.notes.1"
+  },
+  "d1ef2ddb6b4e": {
+    "source": "The bank list comes from the public VietQR bank directory.",
+    "text": "Die Bankliste stammt aus dem öffentlichen VietQR-Bankverzeichnis.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.payload.notes.2"
+  },
+  "1562c44f8ba0": {
+    "source": "Is my bank on the list?",
+    "text": "Ist meine Bank in der Liste?",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.0.question"
+  },
+  "61f9ca75ea86": {
+    "source": "The list has every bank the VietQR directory marks as taking transfers. If yours is missing, it may not accept VietQR transfers yet.",
+    "text": "Die Liste enthält jede Bank, die das VietQR-Verzeichnis als überweisungsfähig markiert. Fehlt deine, akzeptiert sie vielleicht noch keine VietQR-Überweisungen.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.0.answer"
+  },
+  "a7574edb8201": {
+    "source": "Can people pay more than once?",
+    "text": "Können Leute mehrmals zahlen?",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.1.question"
+  },
+  "d84dfb1141a7": {
+    "source": "Yes. A code without an amount works for any number of transfers. With an amount, it's marked for one payment, though banks may still accept it again.",
+    "text": "Ja. Ein Code ohne Betrag funktioniert für beliebig viele Überweisungen. Mit Betrag ist er für eine Zahlung markiert, Banken akzeptieren ihn aber unter Umständen trotzdem erneut.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.1.answer"
+  },
+  "9f1b1b147cad": {
+    "source": "Is my account number sent to QRdx?",
+    "text": "Wird meine Kontonummer an QRdx gesendet?",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.2.question"
+  },
+  "2105f7da1289": {
+    "source": "Cash App",
+    "text": "Cash App",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.name"
+  },
+  "a838de2cb259": {
+    "source": "Open your $Cashtag so people can pay you.",
+    "text": "Öffne deinen $Cashtag, damit man dich bezahlen kann.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.summary"
+  },
+  "03d0019a515e": {
+    "source": "Create a Cash App QR code that opens your $Cashtag page, so people can pay you in a few taps. For tip jars, stalls and splitting bills. Free.",
+    "text": "Erstelle einen Cash App QR-Code, der deine $Cashtag-Seite öffnet, damit man dich mit wenigen Taps bezahlen kann. Für Trinkgeld, Marktstände und geteilte Rechnungen. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.metaDescription"
+  },
+  "a608467f8147": {
+    "source": "A Cash App QR code opens your $Cashtag page, where people send you money in Cash App. It saves them from spelling your $Cashtag right from a sign.",
+    "text": "Ein Cash App QR-Code öffnet deine $Cashtag-Seite, auf der man dir in Cash App Geld sendet. So muss niemand deinen $Cashtag von einem Schild korrekt abtippen.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.intro.0"
+  },
+  "45adb612cf8a": {
+    "source": "Type your $Cashtag and QRdx builds the cash.app link. The payer picks the amount in the app, so one printed code works for tips, a market stall or club fees.",
+    "text": "Gib deinen $Cashtag ein, und QRdx erstellt den cash.app-Link. Die zahlende Person wählt den Betrag in der App, daher funktioniert ein gedruckter Code für Trinkgeld, einen Marktstand oder Vereinsbeiträge.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.intro.1"
+  },
+  "b40b1b88da2a": {
+    "source": "Enter your $Cashtag, with or without the $.",
+    "text": "Gib deinen $Cashtag ein, mit oder ohne $.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.steps.0"
+  },
+  "ae34dd758668": {
+    "source": "Scan the preview to check it opens your page.",
+    "text": "Scanne die Vorschau und prüfe, ob sie deine Seite öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.steps.1"
+  },
+  "f301138770db": {
+    "source": "$Cashtags are up to 20 letters and digits and must include a letter.",
+    "text": "$Cashtags bestehen aus bis zu 20 Buchstaben und Ziffern und müssen mindestens einen Buchstaben enthalten.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.payload.notes.0"
+  },
+  "88ce23f062c8": {
+    "source": "The link opens Cash App when it's installed, or your cash.app page in the browser.",
+    "text": "Der Link öffnet Cash App, wenn sie installiert ist, sonst deine cash.app-Seite im Browser.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.payload.notes.1"
+  },
+  "db3d3b199975": {
+    "source": "Can I set an amount?",
+    "text": "Kann ich einen Betrag festlegen?",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.faqs.0.question"
+  },
+  "e7734f2b61b4": {
+    "source": "No. The code opens your page and the payer enters the amount. For a fixed amount, send a request from Cash App instead.",
+    "text": "Nein. Der Code öffnet deine Seite, und die zahlende Person gibt den Betrag ein. Für einen festen Betrag sendest du stattdessen eine Anfrage aus Cash App.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.faqs.0.answer"
+  },
+  "3ac0ab3b7994": {
+    "source": "Can I change my $Cashtag later?",
+    "text": "Kann ich meinen $Cashtag später ändern?",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.faqs.1.question"
+  },
+  "4136d2821f02": {
+    "source": "Cash App limits changes, and a new $Cashtag needs a new code. A dynamic QRdx code lets you change where the code points without reprinting.",
+    "text": "Cash App begrenzt Änderungen, und ein neuer $Cashtag braucht einen neuen Code. Mit einem dynamischen QR-Code von QRdx kannst du das Ziel des Codes ändern, ohne neu zu drucken.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.faqs.1.answer"
+  },
+  "dd53271a2e06": {
+    "source": "Revolut",
+    "text": "Revolut",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.name"
+  },
+  "c4b130848e4c": {
+    "source": "Open your revolut.me page so people can pay you.",
+    "text": "Öffne deine revolut.me-Seite, damit andere dich bezahlen können.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.summary"
+  },
+  "215feac12664": {
+    "source": "Make a Revolut QR code that opens your revolut.me link, so friends and customers can pay you. Type your username and download. Free.",
+    "text": "Erstelle einen Revolut QR-Code, der deinen revolut.me-Link öffnet, damit Freunde und Kunden dich bezahlen können. Gib deinen Nutzernamen ein und lade ihn herunter. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.metaDescription"
+  },
+  "2bd28c07313f": {
+    "source": "A Revolut QR code opens your revolut.me page, where people can send you money. It suits paying back a shared dinner, a trip kitty or small freelance invoices.",
+    "text": "Ein Revolut QR-Code öffnet deine revolut.me-Seite, auf der andere dir Geld senden können. Er eignet sich, um ein gemeinsames Abendessen zu begleichen, für eine Reisekasse oder für kleine Freelance-Rechnungen.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.intro.0"
+  },
+  "d5bcac8c8b4f": {
+    "source": "Type your Revolut username (your Revtag) and QRdx builds the revolut.me link. The payer chooses the amount.",
+    "text": "Gib deinen Revolut-Nutzernamen (deinen Revtag) ein, und QRdx erstellt den revolut.me-Link. Den Betrag wählt die zahlende Person selbst.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.intro.1"
+  },
+  "d3171ded9f56": {
+    "source": "Enter your Revolut username, with or without the @.",
+    "text": "Gib deinen Revolut-Nutzernamen ein, mit oder ohne @.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.steps.0"
+  },
+  "154f0081472e": {
+    "source": "Scan the preview to check it opens your revolut.me page.",
+    "text": "Mach einen Scan der Vorschau und prüfe, ob sie deine revolut.me-Seite öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.steps.1"
+  },
+  "2422e338862f": {
+    "source": "Download the code.",
+    "text": "Lade den Code herunter.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.steps.2"
+  },
+  "6bcfcc2616f9": {
+    "source": "Find your username in the Revolut app under your profile.",
+    "text": "Deinen Nutzernamen findest du in der Revolut-App in deinem Profil.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.payload.notes.0"
+  },
+  "6d1e1d764422": {
+    "source": "The link opens Revolut when it's installed, or revolut.me in the browser.",
+    "text": "Der Link öffnet Revolut, wenn die App installiert ist, sonst revolut.me im Browser.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.payload.notes.1"
+  },
+  "327714a182b6": {
+    "source": "Do payers need Revolut?",
+    "text": "Brauchen Zahlende Revolut?",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.faqs.0.question"
+  },
+  "33de9ea4c5c0": {
+    "source": "Your revolut.me page tells them which ways to pay are open to them. People with Revolut pay in the app.",
+    "text": "Deine revolut.me-Seite zeigt ihnen, welche Zahlungswege ihnen offenstehen. Wer Revolut hat, zahlt in der App.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.faqs.0.answer"
+  },
+  "0d7604828f17": {
+    "source": "Can the code include an amount?",
+    "text": "Kann der Code einen Betrag enthalten?",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.faqs.1.question"
+  },
+  "d662cbcd933b": {
+    "source": "Not this one. The payer picks the amount on your revolut.me page.",
+    "text": "Dieser nicht. Die zahlende Person wählt den Betrag auf deiner revolut.me-Seite.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.faqs.1.answer"
+  },
+  "acdd1e734125": {
+    "source": "Telegram",
+    "text": "Telegram",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.name"
+  },
+  "0ca01009349b": {
+    "source": "Open a Telegram chat, channel or group.",
+    "text": "Öffne einen Telegram-Chat, -Kanal oder eine Gruppe.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.summary"
+  },
+  "45a96ff4f80f": {
+    "source": "Create a Telegram QR code for a username, channel, group or phone number, using t.me links. For signs, posters and business cards. Free.",
+    "text": "Erstelle einen Telegram-QR-Code für einen Benutzernamen, Kanal, eine Gruppe oder Telefonnummer mit t.me-Links. Für Schilder, Poster und Visitenkarten. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.metaDescription"
+  },
+  "b53bf36fb0b0": {
+    "source": "A Telegram QR code opens a chat, channel or group in Telegram. Businesses use it for support chats, creators for their channels and communities for their groups.",
+    "text": "Ein Telegram-QR-Code öffnet einen Chat, einen Kanal oder eine Gruppe in Telegram. Unternehmen nutzen ihn für Support-Chats, Creator für ihre Kanäle und Communitys für ihre Gruppen.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.intro.0"
+  },
+  "653a28b1b112": {
+    "source": "Enter a public username and QRdx builds the t.me link, or paste an invite link for a private group. You can also start a chat with a phone number, which opens only if that person lets people find them by number.",
+    "text": "Gib einen öffentlichen Benutzernamen ein, und QRdx erstellt den t.me-Link, oder füge einen Einladungslink für eine private Gruppe ein. Du kannst auch einen Chat mit einer Telefonnummer starten. Er öffnet sich nur, wenn die Person sich per Nummer finden lässt.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.intro.1"
+  },
+  "2a10017c453b": {
+    "source": "Choose whether the code opens a username, channel or group, or a chat with a phone number.",
+    "text": "Wähle, ob der Code einen Benutzernamen, einen Kanal, eine Gruppe oder einen Chat per Telefonnummer öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.steps.0"
+  },
+  "2e3827e6b9ab": {
+    "source": "Enter the username (5 to 32 letters, digits and underscores) or paste a t.me link.",
+    "text": "Gib den Benutzernamen ein (5 bis 32 Buchstaben, Ziffern und Unterstriche) oder füge einen t.me-Link ein.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.steps.1"
+  },
+  "f5f025ae51f4": {
+    "source": "Scan the preview to check the right chat opens.",
+    "text": "Scanne die Vorschau, um zu prüfen, ob der richtige Chat geöffnet wird.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.steps.2"
+  },
+  "36963e026a45": {
+    "source": "t.me links open the Telegram app when it's installed, or a page that offers to open it.",
+    "text": "t.me-Links öffnen die Telegram-App, sofern sie installiert ist, oder eine Seite, die anbietet, sie zu öffnen.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.payload.notes.0"
+  },
+  "e7ccc0faaea8": {
+    "source": "Phone numbers need the country code. Whether the chat opens depends on the person's privacy settings.",
+    "text": "Telefonnummern brauchen die Ländervorwahl. Ob der Chat sich öffnet, hängt von den Privatsphäre-Einstellungen der Person ab.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.payload.notes.1"
+  },
+  "081560236365": {
+    "source": "Private group invite links (t.me/+…) are kept as pasted.",
+    "text": "Einladungslinks für private Gruppen (t.me/+…) bleiben so, wie du sie einfügst.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.payload.notes.2"
+  },
+  "9785ff1846e5": {
+    "source": "Can I link a private group?",
+    "text": "Kann ich eine private Gruppe verlinken?",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.0.question"
+  },
+  "b7867258275f": {
+    "source": "Yes. Copy the group's invite link in Telegram and paste it. Anyone who scans the code can join, so revoke the link in Telegram if it spreads too far.",
+    "text": "Ja. Kopiere den Einladungslink der Gruppe in Telegram und füge ihn ein. Jeder, der den Code scannt, kann beitreten. Widerrufe den Link in Telegram, falls er sich zu weit verbreitet.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.0.answer"
+  },
+  "f174d6fa0ffb": {
+    "source": "Why doesn't the phone number open a chat?",
+    "text": "Warum öffnet die Telefonnummer keinen Chat?",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.1.question"
+  },
+  "8a0df715aaab": {
+    "source": "Telegram opens a chat by number only when that person allows it in Privacy and Security, under Phone Number. A username always works.",
+    "text": "Telegram öffnet einen Chat per Nummer nur, wenn die Person das unter Privatsphäre und Sicherheit bei Telefonnummer erlaubt. Ein Benutzername funktioniert immer.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.1.answer"
+  },
+  "3ee5e4faea31": {
+    "source": "Is this the QRdx Telegram bot?",
+    "text": "Ist das der QRdx-Telegram-Bot?",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.2.question"
+  },
+  "959860f19e74": {
+    "source": "No. This code opens your own Telegram chat or channel. The QRdx bot is a separate integration that makes codes inside Telegram.",
+    "text": "Nein. Dieser Code öffnet deinen eigenen Telegram-Chat oder -Kanal. Der QRdx-Bot ist eine separate Integration, die Codes direkt in Telegram erstellt.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.2.answer"
+  },
+  "1e9806e4227b": {
+    "source": "Signal",
+    "text": "Signal",
+    "status": "machine",
+    "context": "qrTypes.types.signal.name"
+  },
+  "cd978d8773f2": {
+    "source": "Start a Signal chat with a number or username link.",
+    "text": "Starte einen Signal-Chat über einen Link mit Nummer oder Benutzernamen.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.summary"
+  },
+  "6e84c397b749": {
+    "source": "Make a Signal QR code that opens a chat with a phone number or your Signal username link. For cards, newsrooms and tip lines. Free.",
+    "text": "Erstelle einen Signal-QR-Code, der einen Chat mit einer Telefonnummer oder deinem Signal-Benutzernamen-Link öffnet. Für Visitenkarten, Redaktionen und Hinweisgeber-Hotlines. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.metaDescription"
+  },
+  "3408948e8e9f": {
+    "source": "A Signal QR code opens a chat in Signal, the private messaging app. Journalists use it for tip lines, organizers for group sign-ups, and people on business cards.",
+    "text": "Ein Signal-QR-Code öffnet einen Chat in Signal, dem privaten Messenger. Journalisten nutzen ihn für Hinweisgeber-Hotlines, Organisatoren für Gruppenanmeldungen und viele auf Visitenkarten.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.intro.0"
+  },
+  "0f2c8c1e4533": {
+    "source": "With a phone number, QRdx builds a signal.me link. For a username or a group, copy the link from the Signal app and paste it: usernames can't be turned into links outside Signal.",
+    "text": "Bei einer Telefonnummer baut QRdx einen signal.me-Link. Für einen Benutzernamen oder eine Gruppe kopierst du den Link aus der Signal-App und fügst ihn ein: Benutzernamen lassen sich außerhalb von Signal nicht in Links umwandeln.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.intro.1"
+  },
+  "cbe7248ddb2b": {
+    "source": "Choose a phone number, or a username or group link.",
+    "text": "Wähle eine Telefonnummer oder einen Benutzernamen- oder Gruppenlink.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.steps.0"
+  },
+  "e985d8279f5f": {
+    "source": "Enter the number with its country code, or paste the link from Signal (Settings › Profile › Username › QR code or link).",
+    "text": "Gib die Nummer mit Ländervorwahl ein oder füge den Link aus Signal ein (Einstellungen › Profil › Benutzername › QR-Code oder Link).",
+    "status": "machine",
+    "context": "qrTypes.types.signal.steps.1"
+  },
+  "4f782f931e84": {
+    "source": "Scan the preview to check that Signal opens the chat.",
+    "text": "Mach einen Scan der Vorschau und prüfe, ob Signal den Chat öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.steps.2"
+  },
+  "7fd073b292d3": {
+    "source": "The number sits after the #, a part of the link browsers never send to a server.",
+    "text": "Die Nummer steht hinter dem #, einem Teil des Links, den Browser nie an einen Server senden.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.payload.notes.0"
+  },
+  "e82a8f0ac43b": {
+    "source": "A number opens a chat only if its owner lets people find them by number in Signal's privacy settings.",
+    "text": "Eine Nummer öffnet nur dann einen Chat, wenn ihr Inhaber in den Datenschutzeinstellungen von Signal erlaubt, per Nummer gefunden zu werden.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.payload.notes.1"
+  },
+  "d0f301d73313": {
+    "source": "Username links (#eu/…) and group links (signal.group) are kept as pasted.",
+    "text": "Benutzernamen-Links (#eu/…) und Gruppenlinks (signal.group) bleiben so, wie du sie eingefügt hast.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.payload.notes.2"
+  },
+  "57ae595d541b": {
+    "source": "Should I share my number or a username?",
+    "text": "Sollte ich meine Nummer oder einen Benutzernamen teilen?",
+    "status": "machine",
+    "context": "qrTypes.types.signal.faqs.0.question"
+  },
+  "2c9d0cbf0f8d": {
+    "source": "A username link keeps your number private, and you can reset the link in Signal at any time, which stops the old code from working.",
+    "text": "Ein Benutzernamen-Link hält deine Nummer privat, und du kannst den Link in Signal jederzeit zurücksetzen, wodurch der alte Code nicht mehr funktioniert.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.faqs.0.answer"
+  },
+  "6806384b927a": {
+    "source": "Does it work without Signal installed?",
+    "text": "Funktioniert er ohne installiertes Signal?",
+    "status": "machine",
+    "context": "qrTypes.types.signal.faqs.1.question"
+  },
+  "f15a560f6586": {
+    "source": "The link opens a signal.me page that offers to install Signal. The chat opens once the app is there.",
+    "text": "Der Link öffnet eine signal.me-Seite, die anbietet, Signal zu installieren. Sobald die App da ist, öffnet sich der Chat.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.faqs.1.answer"
+  },
+  "053bc65874ad": {
+    "source": "Discord",
+    "text": "Discord",
+    "status": "machine",
+    "context": "qrTypes.types.discord.name"
+  },
+  "3c77f3abcb47": {
+    "source": "Invite people to your Discord server.",
+    "text": "Lade Leute auf deinen Discord-Server ein.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.summary"
+  },
+  "27475c5904a9": {
+    "source": "Create a Discord QR code from a server invite link or code. For streams, events, posters and merch. Make the invite permanent first. Free.",
+    "text": "Erstelle einen Discord-QR-Code aus einem Einladungslink oder -code des Servers. Für Streams, Events, Poster und Merch. Mach die Einladung vorher dauerhaft. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.metaDescription"
+  },
+  "145dc5ae940c": {
+    "source": "A Discord QR code opens an invite to your server, so people join from a poster, a stream overlay, a sticker or a game box.",
+    "text": "Ein Discord-QR-Code öffnet eine Einladung zu deinem Server, sodass Leute von einem Poster, einem Stream-Overlay, einem Sticker oder einer Spielebox aus beitreten.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.intro.0"
+  },
+  "5d74e8b924f2": {
+    "source": "Paste an invite link (discord.gg or discord.com/invite) or just its code. Invites expire after 7 days by default, so set Expire after to Never when you create one for print.",
+    "text": "Füge einen Einladungslink (discord.gg oder discord.com/invite) oder nur den Code ein. Einladungen laufen standardmäßig nach 7 Tagen ab. Stelle daher bei Einladungen für den Druck „Läuft ab nach“ auf Nie.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.intro.1"
+  },
+  "6311f94d5f0c": {
+    "source": "In Discord, open Invite People, choose Edit invite link and set Expire after to Never.",
+    "text": "Öffne in Discord „Leute einladen“, wähle „Einladungslink bearbeiten“ und stelle „Läuft ab nach“ auf Nie.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.steps.0"
+  },
+  "60aea856ff91": {
+    "source": "Copy the invite link and paste it here.",
+    "text": "Kopiere den Einladungslink und füge ihn hier ein.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.steps.1"
+  },
+  "48fa0e87f842": {
+    "source": "Scan the preview to check the invite opens.",
+    "text": "Mach einen Scan der Vorschau und prüfe, ob die Einladung sich öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.steps.2"
+  },
+  "6d2d5fa1181d": {
+    "source": "QRdx writes every invite as a discord.gg link, the shortest form, which makes a less dense code.",
+    "text": "QRdx schreibt jede Einladung als discord.gg-Link, die kürzeste Form, die einen weniger dichten Code ergibt.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.payload.notes.0"
+  },
+  "0c11e72bcffb": {
+    "source": "Servers with a vanity URL can use it as the code.",
+    "text": "Server mit einer individuellen URL können diese als Code verwenden.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.payload.notes.1"
+  },
+  "eb08b60dc9c2": {
+    "source": "An expired or deleted invite stops working, and the code with it.",
+    "text": "Eine abgelaufene oder gelöschte Einladung funktioniert nicht mehr, und der Code damit auch nicht.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.payload.notes.2"
+  },
+  "bc8bf06cfa13": {
+    "source": "Why did my Discord QR code stop working?",
+    "text": "Warum funktioniert mein Discord-QR-Code nicht mehr?",
+    "status": "machine",
+    "context": "qrTypes.types.discord.faqs.0.question"
+  },
+  "8225f9f59ed9": {
+    "source": "The invite probably expired or reached its use limit. Create one that never expires, then make a new code, or use a dynamic QRdx code you can repoint.",
+    "text": "Die Einladung ist wahrscheinlich abgelaufen oder hat ihr Nutzungslimit erreicht. Erstelle eine Einladung, die nie abläuft, und dann einen neuen Code, oder nutze einen dynamischen QRdx-Code, dessen Ziel du ändern kannst.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.faqs.0.answer"
+  },
+  "312dc6efac61": {
+    "source": "Is this the QRdx Discord bot?",
+    "text": "Ist das der QRdx-Discord-Bot?",
+    "status": "machine",
+    "context": "qrTypes.types.discord.faqs.1.question"
+  },
+  "3097031bd3a7": {
+    "source": "No. This code opens an invite to your own server. The QRdx bot is a separate integration that makes codes inside Discord.",
+    "text": "Nein. Dieser Code öffnet eine Einladung zu deinem eigenen Server. Der QRdx-Bot ist eine separate Integration, die Codes direkt in Discord erstellt.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.faqs.1.answer"
+  },
+  "81a0d84c9895": {
+    "source": "LINE",
+    "text": "LINE",
+    "status": "machine",
+    "context": "qrTypes.types.line.name"
+  },
+  "d021bee86eb5": {
+    "source": "Add you as a friend on LINE.",
+    "text": "Dich auf LINE als Freund hinzufügen.",
+    "status": "machine",
+    "context": "qrTypes.types.line.summary"
+  },
+  "b516843ad8bc": {
+    "source": "Make a LINE QR code that adds you or your official account as a friend, from a LINE ID or link. For shops, menus and cards. Free.",
+    "text": "Erstelle einen LINE-QR-Code, der dich oder deinen offiziellen Account als Freund hinzufügt, per LINE-ID oder Link. Für Shops, Speisekarten und Visitenkarten. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.line.metaDescription"
+  },
+  "33a71088a267": {
+    "source": "A LINE QR code opens LINE and offers to add you as a friend. Shops and restaurants in Japan, Thailand and Taiwan use it for their official accounts, and people put it on cards.",
+    "text": "Ein LINE-QR-Code öffnet LINE und bietet an, dich als Freund hinzuzufügen. Shops und Restaurants in Japan, Thailand und Taiwan nutzen ihn für ihre offiziellen Accounts, und Privatpersonen drucken ihn auf Visitenkarten.",
+    "status": "machine",
+    "context": "qrTypes.types.line.intro.0"
+  },
+  "7504de0ce119": {
+    "source": "Enter your LINE ID, or an official account's ID starting with @. You can also paste a line.me or lin.ee link from the app.",
+    "text": "Gib deine LINE-ID ein oder die ID eines offiziellen Accounts, die mit @ beginnt. Du kannst auch einen line.me- oder lin.ee-Link aus der App einfügen.",
+    "status": "machine",
+    "context": "qrTypes.types.line.intro.1"
+  },
+  "b8c898579a8b": {
+    "source": "Enter your LINE ID. Official accounts start with @.",
+    "text": "Gib deine LINE-ID ein. Offizielle Accounts beginnen mit @.",
+    "status": "machine",
+    "context": "qrTypes.types.line.steps.0"
+  },
+  "27cf13e38f45": {
+    "source": "For a personal ID, check that Allow others to add me by ID is on in LINE's privacy settings.",
+    "text": "Prüfe bei einer persönlichen ID, ob in den Datenschutzeinstellungen von LINE „Hinzufügen per ID erlauben“ aktiviert ist.",
+    "status": "machine",
+    "context": "qrTypes.types.line.steps.1"
+  },
+  "82952c7584c6": {
+    "source": "Scan the preview to check LINE opens your profile.",
+    "text": "Mach einen Scan der Vorschau und prüfe, ob LINE dein Profil öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.line.steps.2"
+  },
+  "bb3c9b290ebd": {
+    "source": "LINE IDs are letters, digits, dots, dashes and underscores.",
+    "text": "LINE-IDs bestehen aus Buchstaben, Ziffern, Punkten, Bindestrichen und Unterstrichen.",
+    "status": "machine",
+    "context": "qrTypes.types.line.payload.notes.0"
+  },
+  "3f86a96b55f9": {
+    "source": "Pasted line.me and lin.ee links are kept as they are.",
+    "text": "Eingefügte line.me- und lin.ee-Links bleiben unverändert.",
+    "status": "machine",
+    "context": "qrTypes.types.line.payload.notes.1"
+  },
+  "24994da8521b": {
+    "source": "Why does the code say the user can't be found?",
+    "text": "Warum meldet der Code, dass der Nutzer nicht gefunden wird?",
+    "status": "machine",
+    "context": "qrTypes.types.line.faqs.0.question"
+  },
+  "5f998d01c57c": {
+    "source": "Personal IDs work only when the owner allows people to add them by ID. Turn it on in LINE under Settings › Privacy.",
+    "text": "Persönliche IDs funktionieren nur, wenn der Inhaber das Hinzufügen per ID erlaubt. Aktiviere das in LINE unter Einstellungen › Privatsphäre.",
+    "status": "machine",
+    "context": "qrTypes.types.line.faqs.0.answer"
+  },
+  "5fb4e017a8a4": {
+    "source": "Can I use the QR code LINE gives me?",
+    "text": "Kann ich den QR-Code verwenden, den LINE mir gibt?",
+    "status": "machine",
+    "context": "qrTypes.types.line.faqs.1.question"
+  },
+  "ab7a38c80d0d": {
+    "source": "Yes. Copy the link behind it in LINE and paste it here to restyle it with your colors and logo.",
+    "text": "Ja. Kopiere in LINE den Link dahinter und füge ihn hier ein, um den Code mit deinen Farben und deinem Logo zu gestalten.",
+    "status": "machine",
+    "context": "qrTypes.types.line.faqs.1.answer"
+  },
+  "4ed485c71401": {
+    "source": "Bluesky",
+    "text": "Bluesky",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.name"
+  },
+  "8c9b68c7ec8b": {
+    "source": "Open a Bluesky profile.",
+    "text": "Ein Bluesky-Profil öffnen.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.summary"
+  },
+  "684c942db7f4": {
+    "source": "Create a Bluesky QR code for your handle, including custom domain handles. Opens your bsky.app profile. For talks, cards and posters. Free.",
+    "text": "Erstelle einen Bluesky-QR-Code für deinen Handle, auch für Handles mit eigener Domain. Er öffnet dein Profil auf bsky.app. Für Vorträge, Visitenkarten und Poster. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.metaDescription"
+  },
+  "e5b8c0868e8a": {
+    "source": "A Bluesky QR code opens your profile so people can follow you from a slide, a badge or a poster.",
+    "text": "Ein Bluesky-QR-Code öffnet dein Profil, sodass man dir von einer Folie, einem Badge oder einem Poster aus folgen kann.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.intro.0"
+  },
+  "dcdc83d12962": {
+    "source": "Type your handle, such as yourname.bsky.social or your own domain, and QRdx builds the bsky.app profile link. A bare name gets .bsky.social added.",
+    "text": "Gib deinen Handle ein, etwa yourname.bsky.social oder deine eigene Domain, und QRdx erstellt den bsky.app-Profillink. Bei einem Namen ohne Domain wird .bsky.social ergänzt.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.intro.1"
+  },
+  "f78eabd59f9c": {
+    "source": "Enter your handle, with or without the @.",
+    "text": "Gib deinen Handle ein, mit oder ohne @.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.steps.0"
+  },
+  "7037796a9291": {
+    "source": "Scan the preview to check your profile opens.",
+    "text": "Mach einen Scan der Vorschau und prüfe, ob sich dein Profil öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.steps.1"
+  },
+  "ee3e80d21139": {
+    "source": "Handles are domain names, so they're written in lower case.",
+    "text": "Handles sind Domainnamen und werden daher kleingeschrieben.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.payload.notes.0"
+  },
+  "569528f0a99f": {
+    "source": "A profile link with a DID (did:plc:…) also works, and keeps working if you change your handle.",
+    "text": "Ein Profillink mit einer DID (did:plc:…) funktioniert ebenfalls und bleibt gültig, wenn du deinen Handle änderst.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.payload.notes.1"
+  },
+  "617888c8f6d9": {
+    "source": "What happens if I change my handle?",
+    "text": "Was passiert, wenn ich meinen Handle ändere?",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.faqs.0.question"
+  },
+  "c5233e2afee8": {
+    "source": "A code with the old handle stops finding you. Use your DID in the code, or a dynamic QRdx code you can repoint.",
+    "text": "Ein Code mit dem alten Handle findet dich nicht mehr. Verwende deine DID im Code oder einen dynamischen QRdx-Code, dessen Ziel du ändern kannst.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.faqs.0.answer"
+  },
+  "5d2855034ad3": {
+    "source": "Does it open the Bluesky app?",
+    "text": "Öffnet es die Bluesky-App?",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.faqs.1.question"
+  },
+  "30c43d633f06": {
+    "source": "bsky.app links open the app when it's installed, or the profile in the browser.",
+    "text": "bsky.app-Links öffnen die App, wenn sie installiert ist, sonst das Profil im Browser.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.faqs.1.answer"
+  },
+  "a53bdbbb43f0": {
+    "source": "Mastodon",
+    "text": "Mastodon",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.name"
+  },
+  "13556a44a159": {
+    "source": "Open a Mastodon profile on its server.",
+    "text": "Öffne ein Mastodon-Profil auf seinem Server.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.summary"
+  },
+  "c41f2090b23f": {
+    "source": "Make a Mastodon QR code from your full handle, like @you@mastodon.social. Opens your profile on your server. For talks and cards. Free.",
+    "text": "Erstelle einen Mastodon-QR-Code aus deinem vollständigen Handle, z. B. @you@mastodon.social. Öffnet dein Profil auf deinem Server. Für Vorträge und Karten. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.metaDescription"
+  },
+  "670c8998ae03": {
+    "source": "A Mastodon QR code opens your profile on your server, where people can follow you from their own account, on any server.",
+    "text": "Ein Mastodon-QR-Code öffnet dein Profil auf deinem Server. Dort können Leute dir von ihrem eigenen Account aus folgen, auf jedem Server.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.intro.0"
+  },
+  "1bdac41cabcf": {
+    "source": "Enter your full handle with the server, such as @you@mastodon.social, or paste your profile link. QRdx builds the profile address from it.",
+    "text": "Gib dein vollständiges Handle mit Server ein, etwa @you@mastodon.social, oder füge deinen Profillink ein. QRdx erstellt daraus die Profiladresse.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.intro.1"
+  },
+  "2be0da765aad": {
+    "source": "Enter your handle, server included.",
+    "text": "Gib dein Handle samt Server ein.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.steps.0"
+  },
+  "b030c3cb4e23": {
+    "source": "A handle without its server can't be found, because the same name can exist on many servers.",
+    "text": "Ein Handle ohne Server lässt sich nicht finden, weil derselbe Name auf vielen Servern existieren kann.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.payload.notes.0"
+  },
+  "f579bb4be42b": {
+    "source": "Other fediverse servers that use /@username profile links work the same way.",
+    "text": "Andere Fediverse-Server, die Profillinks im Format /@username nutzen, funktionieren genauso.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.payload.notes.1"
+  },
+  "08dc838545c1": {
+    "source": "How do people follow me from another server?",
+    "text": "Wie können mir Leute von einem anderen Server aus folgen?",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.faqs.0.question"
+  },
+  "ed127d9f96af": {
+    "source": "Your profile page has a Follow button that asks for their own server and sends them there to confirm.",
+    "text": "Auf deiner Profilseite gibt es einen Folgen-Button. Er fragt nach dem eigenen Server und leitet dorthin weiter, um das Folgen zu bestätigen.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.faqs.0.answer"
+  },
+  "15d21a7f7800": {
+    "source": "What if I move to another server?",
+    "text": "Was, wenn ich auf einen anderen Server umziehe?",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.faqs.1.question"
+  },
+  "73bf401773aa": {
+    "source": "Mastodon can redirect your old profile, but print a new code for the new server, or use a dynamic QRdx code you can repoint.",
+    "text": "Mastodon kann dein altes Profil weiterleiten. Drucke aber einen neuen Code für den neuen Server oder nutze einen dynamischen QRdx-Code, den du umlenken kannst.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.faqs.1.answer"
+  },
+  "a731a58c4cf3": {
+    "source": "Twitch",
+    "text": "Twitch",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.name"
+  },
+  "02d4fcb3c104": {
+    "source": "Open a Twitch channel.",
+    "text": "Öffne einen Twitch-Kanal.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.summary"
+  },
+  "5863b50dd4de": {
+    "source": "Create a Twitch QR code that opens your channel. For stream overlays, merch, posters and event badges. Type your username. Free.",
+    "text": "Erstelle einen Twitch-QR-Code, der deinen Kanal öffnet. Für Stream-Overlays, Merch, Poster und Event-Badges. Gib deinen Nutzernamen ein. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.metaDescription"
+  },
+  "9a649d9111c9": {
+    "source": "A Twitch QR code opens your channel so people can follow and watch live. Streamers put it on overlays, merch, posters and convention badges.",
+    "text": "Ein Twitch-QR-Code öffnet deinen Kanal, damit Leute dir folgen und live zuschauen können. Streamer setzen ihn auf Overlays, Merch, Poster und Convention-Badges.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.intro.0"
+  },
+  "af4bc44148fd": {
+    "source": "Type your Twitch username, or paste your channel link, and QRdx builds the twitch.tv address.",
+    "text": "Gib deinen Twitch-Nutzernamen ein oder füge deinen Kanallink ein, und QRdx erstellt die twitch.tv-Adresse.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.intro.1"
+  },
+  "f1d49d247c17": {
+    "source": "Enter your Twitch username.",
+    "text": "Gib deinen Twitch-Nutzernamen ein.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.steps.0"
+  },
+  "7e924aec7452": {
+    "source": "Scan the preview to check your channel opens.",
+    "text": "Scanne die Vorschau, um zu prüfen, ob sich dein Kanal öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.steps.1"
+  },
+  "43a212093ce6": {
+    "source": "Download the code, as SVG for merch and print.",
+    "text": "Lade den Code herunter, für Merch und Druck als SVG.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.steps.2"
+  },
+  "4aebce86f0e3": {
+    "source": "Twitch usernames are 4 to 25 letters, digits and underscores.",
+    "text": "Twitch-Nutzernamen bestehen aus 4 bis 25 Buchstaben, Ziffern und Unterstrichen.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.payload.notes.0"
+  },
+  "def18138bcf2": {
+    "source": "The link opens the Twitch app when it's installed.",
+    "text": "Der Link öffnet die Twitch-App, wenn sie installiert ist.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.payload.notes.1"
+  },
+  "05437ce4608d": {
+    "source": "Can the code open a specific stream or clip?",
+    "text": "Kann der Code einen bestimmten Stream oder Clip öffnen?",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.faqs.0.question"
+  },
+  "b88817b9e17f": {
+    "source": "This one opens your channel. For a clip or video, paste its link into the URL generator.",
+    "text": "Dieser hier öffnet deinen Kanal. Für einen Clip oder ein Video füge den Link in den URL-Generator ein.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.faqs.0.answer"
+  },
+  "a21cc665c85a": {
+    "source": "Will a code on a stream overlay scan?",
+    "text": "Lässt sich ein Code auf einem Stream-Overlay scannen?",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.faqs.1.question"
+  },
+  "eeaf46c0896e": {
+    "source": "Yes, if it's big enough on screen. Test it from a phone at viewing distance before you go live.",
+    "text": "Ja, wenn er auf dem Bildschirm groß genug ist. Teste ihn vor dem Livegang mit einem Handy aus Zuschauerentfernung.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.faqs.1.answer"
+  },
+  "8506b11e2d83": {
+    "source": "SoundCloud",
+    "text": "SoundCloud",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.name"
+  },
+  "2bada9b2aa22": {
+    "source": "Play a SoundCloud profile, track or playlist.",
+    "text": "Spiele ein SoundCloud-Profil, einen Track oder eine Playlist ab.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.summary"
+  },
+  "32a2026b4b36": {
+    "source": "Make a SoundCloud QR code for your profile, a track or a playlist. For flyers, merch, demo CDs and gig posters. Free, no signup.",
+    "text": "Erstelle einen SoundCloud-QR-Code für dein Profil, einen Track oder eine Playlist. Für Flyer, Merch, Demo-CDs und Gig-Poster. Kostenlos, ohne Anmeldung.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.metaDescription"
+  },
+  "df66b6af6501": {
+    "source": "A SoundCloud QR code opens your profile, a track or a playlist, so people can listen from a gig poster, a flyer or a merch tag.",
+    "text": "Ein SoundCloud-QR-Code öffnet dein Profil, einen Track oder eine Playlist, damit man direkt von einem Gig-Poster, einem Flyer oder einem Merch-Anhänger aus reinhören kann.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.intro.0"
+  },
+  "2868babcfe58": {
+    "source": "Type your profile name and QRdx builds the link, or paste a track or playlist link to open it directly.",
+    "text": "Gib deinen Profilnamen ein und QRdx baut den Link, oder füge einen Track- oder Playlist-Link ein, um ihn direkt zu öffnen.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.intro.1"
+  },
+  "7a1489f81f4f": {
+    "source": "Enter your SoundCloud profile name, or paste a track or playlist link.",
+    "text": "Gib deinen SoundCloud-Profilnamen ein oder füge einen Track- oder Playlist-Link ein.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.steps.0"
+  },
+  "cafaee51af85": {
+    "source": "Scan the preview to check it opens and plays.",
+    "text": "Mach einen Scan der Vorschau und prüfe, ob sie sich öffnet und abspielt.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.steps.1"
+  },
+  "016e9641a7b2": {
+    "source": "Profile names are 3 to 25 letters, digits, underscores and dashes.",
+    "text": "Profilnamen bestehen aus 3 bis 25 Buchstaben, Ziffern, Unterstrichen und Bindestrichen.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.payload.notes.0"
+  },
+  "72773034536d": {
+    "source": "Pasted soundcloud.com and on.soundcloud.com links are kept as they are.",
+    "text": "Eingefügte Links von soundcloud.com und on.soundcloud.com bleiben unverändert.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.payload.notes.1"
+  },
+  "5e74c3b7cc88": {
+    "source": "Can I link a private track?",
+    "text": "Kann ich einen privaten Track verlinken?",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.faqs.0.question"
+  },
+  "9a4274cd8e41": {
+    "source": "Yes, with its secret link. Anyone who scans the code can listen, so share it only where you mean to.",
+    "text": "Ja, mit seinem geheimen Link. Jeder, der den Code scannt, kann zuhören. Teile ihn also nur dort, wo du es willst.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.faqs.0.answer"
+  },
+  "128e08abc64f": {
+    "source": "Does it open the SoundCloud app?",
+    "text": "Öffnet er die SoundCloud-App?",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.faqs.1.question"
+  },
+  "c6435a2cc24c": {
+    "source": "SoundCloud links open the app when it's installed, or the page in the browser.",
+    "text": "SoundCloud-Links öffnen die App, wenn sie installiert ist, sonst die Seite im Browser.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.faqs.1.answer"
+  },
+  "509c517ede79": {
+    "source": "Zoom",
+    "text": "Zoom",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.name"
+  },
+  "7f0489e32909": {
+    "source": "Join a Zoom meeting with one scan.",
+    "text": "Tritt mit einem Scan einem Zoom-Meeting bei.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.summary"
+  },
+  "4be9ea48eb5a": {
+    "source": "Create a Zoom QR code from a meeting ID or invite link. People join from slides, room signs and printed agendas. Keep the passcode. Free.",
+    "text": "Erstelle einen Zoom-QR-Code aus einer Meeting-ID oder einem Einladungslink. Man tritt von Folien, Raumschildern und gedruckten Agenden aus bei. Das Kennwort bleibt erhalten. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.metaDescription"
+  },
+  "f5c14cedc08e": {
+    "source": "A Zoom QR code opens a meeting in Zoom, so people join from a slide, a room sign or a printed agenda without typing an 11-digit ID.",
+    "text": "Ein Zoom-QR-Code öffnet ein Meeting in Zoom, sodass man von einer Folie, einem Raumschild oder einer gedruckten Agenda aus beitreten kann, ohne eine 11-stellige ID einzutippen.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.intro.0"
+  },
+  "31460335551f": {
+    "source": "Paste the meeting's invite link to keep its passcode, or type just the meeting ID, and Zoom asks for the passcode when people join.",
+    "text": "Füge den Einladungslink des Meetings ein, um sein Kennwort beizubehalten, oder gib nur die Meeting-ID ein. Zoom fragt dann beim Beitritt nach dem Kennwort.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.intro.1"
+  },
+  "a3671ea51626": {
+    "source": "Copy the invite link in Zoom (Copy invitation, or the link in the calendar event).",
+    "text": "Kopiere den Einladungslink in Zoom (Einladung kopieren oder den Link im Kalendereintrag).",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.steps.0"
+  },
+  "d9ba6821ce9b": {
+    "source": "Paste it here, or type the meeting ID.",
+    "text": "Füge ihn hier ein oder gib die Meeting-ID ein.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.steps.1"
+  },
+  "40b407098e5d": {
+    "source": "Scan the preview to check the meeting opens.",
+    "text": "Mach einen Scan der Vorschau und prüfe, ob sich das Meeting öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.steps.2"
+  },
+  "691fc7d13447": {
+    "source": "An invite link's pwd value is an encoded passcode Zoom generates. QRdx keeps it as pasted; it can't build one from the passcode.",
+    "text": "Der pwd-Wert in einem Einladungslink ist ein von Zoom erzeugtes, codiertes Kennwort. QRdx übernimmt ihn unverändert; aus dem Kennwort selbst kann es keinen erstellen.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.payload.notes.0"
+  },
+  "83bca807261f": {
+    "source": "Personal meeting links (zoom.us/my/…) and webinar links work too.",
+    "text": "Links zu persönlichen Meetings (zoom.us/my/…) und Webinar-Links funktionieren ebenfalls.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.payload.notes.1"
+  },
+  "935f1f42fe64": {
+    "source": "Can I use one code for a recurring meeting?",
+    "text": "Kann ich einen Code für ein wiederkehrendes Meeting nutzen?",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.faqs.0.question"
+  },
+  "fe15c591d4e7": {
+    "source": "Yes. Recurring meetings and personal meeting rooms keep their ID, so the code keeps working.",
+    "text": "Ja. Wiederkehrende Meetings und persönliche Meetingräume behalten ihre ID, deshalb funktioniert der Code weiter.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.faqs.0.answer"
+  },
+  "e0b46dbe696f": {
+    "source": "Can strangers join with the code?",
+    "text": "Können Fremde mit dem Code beitreten?",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.faqs.1.question"
+  },
+  "d869f1cebb9a": {
+    "source": "Anyone who scans it can try. Turn on the waiting room in Zoom if the meeting is private.",
+    "text": "Jeder, der ihn scannt, kann es versuchen. Aktiviere in Zoom den Warteraum, wenn das Meeting privat ist.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.faqs.1.answer"
+  },
+  "78aeb390abbc": {
+    "source": "Google Meet",
+    "text": "Google Meet",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.name"
+  },
+  "97f878659f17": {
+    "source": "Join a Google Meet call with one scan.",
+    "text": "Mit einem Scan einem Google-Meet-Anruf beitreten.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.summary"
+  },
+  "15bb3995429d": {
+    "source": "Make a Google Meet QR code from a meeting code or link. People join from room signs, slides and handouts. Free, no signup.",
+    "text": "Erstelle einen Google-Meet-QR-Code aus einem Meeting-Code oder Link. Alle treten per Raumschild, Folie oder Handout bei. Kostenlos, ohne Anmeldung.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.metaDescription"
+  },
+  "47163746af2c": {
+    "source": "A Google Meet QR code opens a call in Meet, so people join from a meeting room sign, a slide or a class handout.",
+    "text": "Ein Google-Meet-QR-Code öffnet einen Anruf in Meet, sodass Leute über ein Schild am Besprechungsraum, eine Folie oder ein Kurs-Handout beitreten können.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.intro.0"
+  },
+  "61c28b9faf9d": {
+    "source": "Paste the meeting link or type its code (three letters, four, then three, like abc-defg-hij), and QRdx builds the meet.google.com link.",
+    "text": "Füge den Meeting-Link ein oder tippe den Code ein (drei Buchstaben, vier, dann drei, zum Beispiel abc-defg-hij). QRdx baut daraus den meet.google.com-Link.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.intro.1"
+  },
+  "5681e96f7c5c": {
+    "source": "Copy the meeting link from Google Calendar or Meet.",
+    "text": "Kopiere den Meeting-Link aus Google Kalender oder Meet.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.steps.0"
+  },
+  "0f67b76c4011": {
+    "source": "Paste it here, or type the code.",
+    "text": "Füge ihn hier ein oder tippe den Code ein.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.steps.1"
+  },
+  "4e3b717cbd40": {
+    "source": "Scan the preview to check the call opens.",
+    "text": "Mach einen Scan der Vorschau, um zu prüfen, ob der Anruf sich öffnet.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.steps.2"
+  },
+  "4ac7593e07fc": {
+    "source": "Meeting codes are 10 letters; QRdx adds the dashes if you leave them out.",
+    "text": "Meeting-Codes bestehen aus 10 Buchstaben. QRdx ergänzt die Bindestriche, wenn du sie weglässt.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.payload.notes.0"
+  },
+  "bfb8a9d3ba4f": {
+    "source": "Whether people join right away or wait to be let in depends on the meeting's settings in Google.",
+    "text": "Ob Leute sofort beitreten oder erst eingelassen werden müssen, hängt von den Einstellungen des Meetings in Google ab.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.payload.notes.1"
+  },
+  "157c3a3e0810": {
+    "source": "Does a Meet code expire?",
+    "text": "Läuft ein Meet-Code ab?",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.faqs.0.question"
+  },
+  "1eb18a80d9c2": {
+    "source": "Codes from calendar events and recurring meetings last as long as the meeting. Instant meetings can expire when they end, so make the code from a scheduled one.",
+    "text": "Codes aus Kalendereinträgen und wiederkehrenden Meetings gelten so lange wie das Meeting. Spontane Meetings können nach ihrem Ende ablaufen. Erstelle den Code deshalb aus einem geplanten Meeting.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.faqs.0.answer"
+  },
+  "2cb830dc1f1d": {
+    "source": "Do people need a Google account?",
+    "text": "Brauchen Leute ein Google-Konto?",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.faqs.1.question"
+  },
+  "b06624ed0a9b": {
+    "source": "That depends on the host's Workspace settings. Many meetings let guests ask to join without signing in.",
+    "text": "Das hängt von den Workspace-Einstellungen des Gastgebers ab. Bei vielen Meetings können Gäste ohne Anmeldung eine Beitrittsanfrage stellen.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.faqs.1.answer"
+  },
+  "302415affc9a": {
+    "source": "Waze",
+    "text": "Waze",
+    "status": "machine",
+    "context": "qrTypes.types.waze.name"
+  },
+  "6df35d8f9921": {
+    "source": "Open directions to a place in Waze.",
+    "text": "Öffne die Route zu einem Ort in Waze.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.summary"
+  },
+  "0a02793245ba": {
+    "source": "Create a Waze QR code that starts directions to an address or coordinates. For shop windows, event signs and delivery notes. Free.",
+    "text": "Erstelle einen Waze-QR-Code, der die Route zu einer Adresse oder zu Koordinaten startet. Für Schaufenster, Event-Schilder und Lieferscheine. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.metaDescription"
+  },
+  "9ee2f547ac44": {
+    "source": "A Waze QR code opens directions in Waze to your shop, venue, parking entrance or loading dock. It suits places that are easy to miss in a maps search.",
+    "text": "Ein Waze-QR-Code öffnet in Waze die Route zu deinem Laden, deiner Location, der Parkplatzeinfahrt oder der Laderampe. Er passt zu Orten, die man in einer Kartensuche leicht übersieht.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.intro.0"
+  },
+  "55ea4ae84543": {
+    "source": "Enter an address or coordinates. With directions on, Waze starts navigating when the code is scanned; without, it shows the place first.",
+    "text": "Gib eine Adresse oder Koordinaten ein. Ist die Route aktiviert, startet Waze beim Scan die Navigation. Ohne sie zeigt Waze zuerst den Ort.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.intro.1"
+  },
+  "d2bae5e6db1b": {
+    "source": "Enter the address, or coordinates as latitude, longitude for an exact spot.",
+    "text": "Gib die Adresse ein, oder für einen exakten Punkt Koordinaten als Breitengrad, Längengrad.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.steps.0"
+  },
+  "cef53ba3cf07": {
+    "source": "Choose whether directions start right away.",
+    "text": "Wähle, ob die Route sofort startet.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.steps.1"
+  },
+  "d1ad8de5c312": {
+    "source": "Scan the preview to check Waze finds the place.",
+    "text": "Mach einen Scan der Vorschau, um zu prüfen, ob Waze den Ort findet.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.steps.2"
+  },
+  "1476b419b16a": {
+    "source": "Coordinates point at the exact spot, which is best for gates and car park entrances. An address is searched in Waze.",
+    "text": "Koordinaten zeigen auf den exakten Punkt, das ist ideal für Tore und Parkplatzeinfahrten. Eine Adresse wird in Waze gesucht.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.payload.notes.0"
+  },
+  "d1d9b04e0961": {
+    "source": "The link opens Waze when it's installed, or waze.com in the browser.",
+    "text": "Der Link öffnet Waze, wenn die App installiert ist, sonst waze.com im Browser.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.payload.notes.1"
+  },
+  "7500c3b45bbf": {
+    "source": "Waze or Google Maps?",
+    "text": "Waze oder Google Maps?",
+    "status": "machine",
+    "context": "qrTypes.types.waze.faqs.0.question"
+  },
+  "7ad4828e1f55": {
+    "source": "Waze suits drivers. For walkers or a general audience, the Location generator opens Google Maps.",
+    "text": "Waze passt zu Autofahrern. Für Fußgänger oder ein breites Publikum öffnet der Standort-Generator Google Maps.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.faqs.0.answer"
+  },
+  "f0a8433544ea": {
+    "source": "How do I get coordinates?",
+    "text": "Wie bekomme ich Koordinaten?",
+    "status": "machine",
+    "context": "qrTypes.types.waze.faqs.1.question"
+  },
+  "0129ff7bf19d": {
+    "source": "In Google Maps or Waze, press and hold the spot and copy the numbers shown.",
+    "text": "Halte in Google Maps oder Waze den Punkt gedrückt und kopiere die angezeigten Zahlen.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.faqs.1.answer"
+  },
+  "eaa4e0ba3c89": {
+    "source": "Litecoin",
+    "text": "Litecoin",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.name"
+  },
+  "7f6af520aa46": {
+    "source": "Receive Litecoin with an optional amount.",
+    "text": "Empfange Litecoin mit optionalem Betrag.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.summary"
+  },
+  "586a906afa44": {
+    "source": "Make a Litecoin QR code (litecoin: URI) with your wallet address and an optional amount, label and message. Made in your browser. Free.",
+    "text": "Erstelle einen Litecoin-QR-Code (litecoin:-URI) mit deiner Wallet-Adresse und optional Betrag, Bezeichnung und Nachricht. Im Browser erstellt. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.metaDescription"
+  },
+  "7773b6f03e52": {
+    "source": "A Litecoin QR code holds a payment request: your wallet address and, if you like, an amount in LTC and a note. Wallets fill in the payment when they scan it.",
+    "text": "Ein Litecoin-QR-Code enthält eine Zahlungsanfrage: deine Wallet-Adresse und auf Wunsch einen Betrag in LTC und eine Notiz. Wallets füllen die Zahlung beim Scan automatisch aus.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.intro.0"
+  },
+  "6a76071cb1a1": {
+    "source": "QRdx writes the litecoin: URI in the same form as Bitcoin's BIP-21, which Litecoin wallets read. It's made in your browser, and the address never leaves it.",
+    "text": "QRdx schreibt die litecoin:-URI in derselben Form wie Bitcoins BIP-21, die Litecoin-Wallets lesen. Der Code entsteht in deinem Browser, und die Adresse verlässt ihn nie.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.intro.1"
+  },
+  "a46bfc066434": {
+    "source": "Copy a receiving address from your Litecoin wallet and paste it.",
+    "text": "Kopiere eine Empfangsadresse aus deiner Litecoin-Wallet und füge sie ein.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.steps.0"
+  },
+  "8618cedc3f03": {
+    "source": "Optionally add an amount in LTC, a label and a message.",
+    "text": "Füge optional einen Betrag in LTC, eine Bezeichnung und eine Nachricht hinzu.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.steps.1"
+  },
+  "ba5fd09e4266": {
+    "source": "Scan the preview with your wallet and check every character of the address.",
+    "text": "Scanne die Vorschau mit deiner Wallet und prüfe jedes Zeichen der Adresse.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.steps.2"
+  },
+  "cb36ea235354": {
+    "source": "Amounts are in LTC with up to 8 decimals.",
+    "text": "Beträge werden in LTC mit bis zu 8 Nachkommastellen angegeben.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.payload.notes.0"
+  },
+  "3b04b1c7bc23": {
+    "source": "QRdx checks the address's shape (ltc1, L, M or 3) but not its checksum. Your wallet does that when it scans.",
+    "text": "QRdx prüft das Format der Adresse (ltc1, L, M oder 3), aber nicht ihre Prüfsumme. Das übernimmt deine Wallet beim Scan.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.payload.notes.1"
+  },
+  "c5ad3cd3bc68": {
+    "source": "Can a payment be reversed?",
+    "text": "Lässt sich eine Zahlung rückgängig machen?",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.faqs.0.question"
+  },
+  "cc4b2946d472": {
+    "source": "No. Crypto payments are final, so check the address before you print.",
+    "text": "Nein. Krypto-Zahlungen sind endgültig, prüfe die Adresse also vor dem Drucken.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.faqs.0.answer"
+  },
+  "ea65b9b7149a": {
+    "source": "Can I reuse the code?",
+    "text": "Kann ich den Code wiederverwenden?",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.faqs.1.question"
+  },
+  "4b803c9b9267": {
+    "source": "Yes. A code without an amount can be paid any number of times. Some wallets give you a new address for privacy; reuse is your choice.",
+    "text": "Ja. Ein Code ohne Betrag kann beliebig oft bezahlt werden. Manche Wallets geben dir aus Datenschutzgründen eine neue Adresse; ob du die alte weiterverwendest, entscheidest du.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.faqs.1.answer"
+  },
+  "bbc8f6fd09a9": {
+    "source": "Dogecoin",
+    "text": "Dogecoin",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.name"
+  },
+  "14f89759d816": {
+    "source": "Receive Dogecoin with an optional amount.",
+    "text": "Empfange Dogecoin mit optionalem Betrag.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.summary"
+  },
+  "5922b8cd2928": {
+    "source": "Create a Dogecoin QR code (dogecoin: URI) with your wallet address and an optional amount. For tip jars and stalls. Free.",
+    "text": "Erstelle einen Dogecoin-QR-Code (dogecoin:-URI) mit deiner Wallet-Adresse und optionalem Betrag. Für Trinkgeldgläser und Marktstände. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.metaDescription"
+  },
+  "9bd08f5d861f": {
+    "source": "A Dogecoin QR code holds a payment request with your wallet address and, if you like, an amount in DOGE. It's popular for tip jars and small stalls.",
+    "text": "Ein Dogecoin-QR-Code enthält eine Zahlungsanfrage mit deiner Wallet-Adresse und auf Wunsch einem Betrag in DOGE. Er ist beliebt für Trinkgeldgläser und kleine Stände.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.intro.0"
+  },
+  "d07e6e6e15f8": {
+    "source": "QRdx writes the dogecoin: URI that Dogecoin wallets read, in the browser, so the address stays with you.",
+    "text": "QRdx schreibt die dogecoin:-URI, die Dogecoin-Wallets lesen, direkt im Browser, damit die Adresse bei dir bleibt.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.intro.1"
+  },
+  "a56799f027f1": {
+    "source": "Paste a receiving address from your Dogecoin wallet.",
+    "text": "Füge eine Empfangsadresse aus deiner Dogecoin-Wallet ein.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.steps.0"
+  },
+  "38cce5fe5dac": {
+    "source": "Optionally add an amount, a label and a message.",
+    "text": "Füge optional einen Betrag, eine Bezeichnung und eine Nachricht hinzu.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.steps.1"
+  },
+  "08bbb4d3d341": {
+    "source": "Scan the preview with a wallet to check the address.",
+    "text": "Scanne die Vorschau mit einer Wallet, um die Adresse zu prüfen.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.steps.2"
+  },
+  "94aeac6c47dd": {
+    "source": "Amounts are in DOGE with up to 8 decimals.",
+    "text": "Beträge werden in DOGE mit bis zu 8 Nachkommastellen angegeben.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.payload.notes.0"
+  },
+  "e7b6497c86e7": {
+    "source": "QRdx checks the address's shape (it starts with D, A or 9) but not its checksum.",
+    "text": "QRdx prüft das Format der Adresse (sie beginnt mit D, A oder 9), aber nicht ihre Prüfsumme.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.payload.notes.1"
+  },
+  "d7ffcea07d85": {
+    "source": "Can I take back a payment sent to the wrong address?",
+    "text": "Kann ich eine Zahlung zurückholen, die an die falsche Adresse gegangen ist?",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.faqs.0.question"
+  },
+  "8a9851255d67": {
+    "source": "Bitcoin Cash",
+    "text": "Bitcoin Cash",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.name"
+  },
+  "6dc9a0aa25cf": {
+    "source": "Receive Bitcoin Cash with an optional amount.",
+    "text": "Empfange Bitcoin Cash mit optionalem Betrag.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.summary"
+  },
+  "a2ef5e3964e3": {
+    "source": "Make a Bitcoin Cash QR code (bitcoincash: URI) with your CashAddr address and an optional amount. Made in your browser. Free.",
+    "text": "Erstelle einen Bitcoin-Cash-QR-Code (bitcoincash:-URI) mit deiner CashAddr-Adresse und optionalem Betrag. Direkt in deinem Browser erstellt. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.metaDescription"
+  },
+  "05b1ee8ea58b": {
+    "source": "A Bitcoin Cash QR code holds a payment request: your address and, if you like, an amount in BCH and a note.",
+    "text": "Ein Bitcoin-Cash-QR-Code enthält eine Zahlungsanfrage: deine Adresse und, wenn du möchtest, einen Betrag in BCH und eine Notiz.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.intro.0"
+  },
+  "85d94e821770": {
+    "source": "QRdx writes the bitcoincash: URI with your CashAddr address (starting with q or p), which Bitcoin Cash wallets read.",
+    "text": "QRdx schreibt den bitcoincash:-URI mit deiner CashAddr-Adresse (beginnt mit q oder p), den Bitcoin-Cash-Wallets lesen können.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.intro.1"
+  },
+  "87c72308cd34": {
+    "source": "Paste a receiving address from your Bitcoin Cash wallet, with or without bitcoincash:.",
+    "text": "Füge eine Empfangsadresse aus deiner Bitcoin-Cash-Wallet ein, mit oder ohne bitcoincash:.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.steps.0"
+  },
+  "40716d09e823": {
+    "source": "Scan the preview with your wallet to check the address.",
+    "text": "Scanne die Vorschau mit deiner Wallet, um die Adresse zu prüfen.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.steps.2"
+  },
+  "8647e5886900": {
+    "source": "Amounts are in BCH with up to 8 decimals.",
+    "text": "Beträge sind in BCH mit bis zu 8 Nachkommastellen angegeben.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.payload.notes.0"
+  },
+  "d1551669ce87": {
+    "source": "Legacy addresses starting with 1 or 3 are accepted too, but CashAddr avoids mixing them up with Bitcoin addresses.",
+    "text": "Legacy-Adressen, die mit 1 oder 3 beginnen, werden ebenfalls akzeptiert. Mit CashAddr verwechselst du sie aber nicht mit Bitcoin-Adressen.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.payload.notes.1"
+  },
+  "bbce6b218252": {
+    "source": "Is this the same as a Bitcoin code?",
+    "text": "Ist das dasselbe wie ein Bitcoin-Code?",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.faqs.0.question"
+  },
+  "f2dda2e72286": {
+    "source": "No. Bitcoin Cash is a separate coin with its own wallets. For bitcoin, use the Bitcoin generator.",
+    "text": "Nein. Bitcoin Cash ist eine eigene Währung mit eigenen Wallets. Für Bitcoin nutzt du den Bitcoin-Generator.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.faqs.0.answer"
+  },
+  "be4b0c384393": {
+    "source": "Solana",
+    "text": "Solana",
+    "status": "machine",
+    "context": "qrTypes.types.solana.name"
+  },
+  "51f7bdf5aaa1": {
+    "source": "Receive SOL with a Solana Pay request.",
+    "text": "Empfange SOL mit einer Solana-Pay-Anfrage.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.summary"
+  },
+  "a3b47984a6df": {
+    "source": "Create a Solana Pay QR code for SOL payments to your wallet, with an optional amount, label and message. Solana Pay transfer request format. Free.",
+    "text": "Erstelle einen Solana-Pay-QR-Code für SOL-Zahlungen an deine Wallet, mit optionalem Betrag, Label und optionaler Nachricht. Im Anfrageformat für Solana-Pay-Überweisungen. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.metaDescription"
+  },
+  "df85b6d18511": {
+    "source": "A Solana QR code holds a Solana Pay transfer request: your wallet address and, if you like, an amount in SOL, a label and a message. Wallets that support Solana Pay fill in the payment.",
+    "text": "Ein Solana-QR-Code enthält eine Solana-Pay-Überweisungsanfrage: deine Wallet-Adresse und, wenn du möchtest, einen Betrag in SOL, ein Label und eine Nachricht. Wallets, die Solana Pay unterstützen, füllen die Zahlung automatisch aus.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.intro.0"
+  },
+  "38e780b1df46": {
+    "source": "QRdx writes the solana: URI from the Solana Pay specification, in your browser.",
+    "text": "QRdx schreibt den solana:-URI nach der Solana-Pay-Spezifikation, direkt in deinem Browser.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.intro.1"
+  },
+  "6f71b4ebcc81": {
+    "source": "Paste your Solana wallet address.",
+    "text": "Füge deine Solana-Wallet-Adresse ein.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.steps.0"
+  },
+  "cdcf66a5f861": {
+    "source": "Optionally add an amount in SOL, a label and a message.",
+    "text": "Füge optional einen Betrag in SOL, ein Label und eine Nachricht hinzu.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.steps.1"
+  },
+  "6c3a5e889ac4": {
+    "source": "Scan the preview with a Solana Pay wallet to check it.",
+    "text": "Scanne die Vorschau mit einer Solana-Pay-Wallet, um sie zu prüfen.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.steps.2"
+  },
+  "74b80bb969ce": {
+    "source": "Amounts are in SOL with up to 9 decimals.",
+    "text": "Beträge sind in SOL mit bis zu 9 Nachkommastellen angegeben.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.payload.notes.0"
+  },
+  "c260bf4dabce": {
+    "source": "This code requests SOL. Token payments (USDC and others) need the token's mint address, which this generator doesn't add.",
+    "text": "Dieser Code fordert SOL an. Für Token-Zahlungen (USDC und andere) braucht es die Mint-Adresse des Tokens, die dieser Generator nicht hinzufügt.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.payload.notes.1"
+  },
+  "8695dd801284": {
+    "source": "Which wallets read Solana Pay codes?",
+    "text": "Welche Wallets lesen Solana-Pay-Codes?",
+    "status": "machine",
+    "context": "qrTypes.types.solana.faqs.0.question"
+  },
+  "5514ccde5914": {
+    "source": "Most mobile Solana wallets scan them. Test with the wallets your customers use.",
+    "text": "Die meisten mobilen Solana-Wallets scannen sie. Teste mit den Wallets, die deine Kunden nutzen.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.faqs.0.answer"
+  },
+  "089fe32a5314": {
+    "source": "Monero",
+    "text": "Monero",
+    "status": "machine",
+    "context": "qrTypes.types.monero.name"
+  },
+  "aa106b399d07": {
+    "source": "Receive Monero with an optional amount.",
+    "text": "Monero empfangen, optional mit Betrag.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.summary"
+  },
+  "b2f0a77751f8": {
+    "source": "Make a Monero QR code (monero: URI) with your address and an optional amount, recipient name and description. Made in your browser. Free.",
+    "text": "Erstelle einen Monero-QR-Code (monero:-URI) mit deiner Adresse und optional einem Betrag, Empfängernamen und einer Beschreibung. Im Browser erstellt. Kostenlos.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.metaDescription"
+  },
+  "6b02906436f6": {
+    "source": "A Monero QR code holds a payment request: your address and, if you like, an amount in XMR, your name and a description.",
+    "text": "Ein Monero-QR-Code enthält eine Zahlungsanforderung: deine Adresse und, wenn du möchtest, einen Betrag in XMR, deinen Namen und eine Beschreibung.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.intro.0"
+  },
+  "f906df3d2391": {
+    "source": "QRdx writes the monero: URI that Monero wallets read, in your browser. Monero addresses are 95 characters long, so the code is denser than most; print it a little larger.",
+    "text": "QRdx schreibt in deinem Browser die monero:-URI, die Monero-Wallets lesen. Monero-Adressen sind 95 Zeichen lang, daher ist der Code dichter als die meisten anderen; drucke ihn etwas größer.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.intro.1"
+  },
+  "6fb65559e607": {
+    "source": "Paste a receiving address or subaddress from your Monero wallet.",
+    "text": "Füge eine Empfangsadresse oder Subadresse aus deiner Monero-Wallet ein.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.steps.0"
+  },
+  "743c90204a91": {
+    "source": "Optionally add an amount, a recipient name and a description.",
+    "text": "Füge optional einen Betrag, einen Empfängernamen und eine Beschreibung hinzu.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.steps.1"
+  },
+  "5a69fbe63fa1": {
+    "source": "Amounts are in XMR with up to 12 decimals.",
+    "text": "Beträge werden in XMR mit bis zu 12 Dezimalstellen angegeben.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.payload.notes.0"
+  },
+  "70d2260bc49d": {
+    "source": "Standard addresses start with 4, subaddresses with 8; integrated addresses are 106 characters.",
+    "text": "Standardadressen beginnen mit 4, Subadressen mit 8; integrierte Adressen sind 106 Zeichen lang.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.payload.notes.1"
+  },
+  "b190b66a6533": {
+    "source": "Should I use a subaddress?",
+    "text": "Sollte ich eine Subadresse nutzen?",
+    "status": "machine",
+    "context": "qrTypes.types.monero.faqs.0.question"
+  },
+  "923b0bd41bbb": {
+    "source": "Many wallets suggest a new subaddress for each code you publish, so payments to different codes aren't linked.",
+    "text": "Viele Wallets schlagen für jeden veröffentlichten Code eine neue Subadresse vor, damit Zahlungen an verschiedene Codes nicht miteinander verknüpft sind.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.faqs.0.answer"
   },
   "d96545f726d0": {
     "source": "Food and drink",
@@ -17921,6 +19907,252 @@
     "status": "machine",
     "context": "pageCodes.type-calcom-4.label"
   },
+  "f0268cb9100a": {
+    "source": "Rent",
+    "text": "Miete",
+    "status": "machine",
+    "context": "pageCodes.type-sepa-3.label"
+  },
+  "750fdff086b0": {
+    "source": "Club fees",
+    "text": "Vereinsbeitrag",
+    "status": "machine",
+    "context": "pageCodes.type-sepa-4.label"
+  },
+  "3bcea7291aff": {
+    "source": "Hawker stall",
+    "text": "Imbissstand",
+    "status": "machine",
+    "context": "pageCodes.type-paynow-1.label"
+  },
+  "01ad1851b87a": {
+    "source": "Street food",
+    "text": "Streetfood",
+    "status": "machine",
+    "context": "pageCodes.type-promptpay-1.label"
+  },
+  "56919f62ef37": {
+    "source": "Massage shop",
+    "text": "Massagesalon",
+    "status": "machine",
+    "context": "pageCodes.type-promptpay-2.label"
+  },
+  "74d98742de67": {
+    "source": "Temple fund",
+    "text": "Tempelspende",
+    "status": "machine",
+    "context": "pageCodes.type-promptpay-3.label"
+  },
+  "7e1ebb6fd276": {
+    "source": "Coffee cart",
+    "text": "Kaffeewagen",
+    "status": "machine",
+    "context": "pageCodes.type-vietqr-1.label"
+  },
+  "9faeb3bd423e": {
+    "source": "Bake sale",
+    "text": "Kuchenverkauf",
+    "status": "machine",
+    "context": "pageCodes.type-cashapp-3.label"
+  },
+  "f411a9424dbb": {
+    "source": "Dues",
+    "text": "Beiträge",
+    "status": "machine",
+    "context": "pageCodes.type-cashapp-4.label"
+  },
+  "f90b83514334": {
+    "source": "Pay me back",
+    "text": "Geld zurück",
+    "status": "machine",
+    "context": "pageCodes.type-revolut-1.label"
+  },
+  "30893eb0c176": {
+    "source": "Shared trip",
+    "text": "Gemeinsame Reise",
+    "status": "machine",
+    "context": "pageCodes.type-revolut-2.label"
+  },
+  "3f07c2140075": {
+    "source": "Freelance",
+    "text": "Freelance",
+    "status": "machine",
+    "context": "pageCodes.type-revolut-4.label"
+  },
+  "28c7d3f8b75d": {
+    "source": "Group chat",
+    "text": "Gruppenchat",
+    "status": "machine",
+    "context": "pageCodes.type-telegram-2.label"
+  },
+  "1c1ecdd8f5a2": {
+    "source": "Event updates",
+    "text": "Event-News",
+    "status": "machine",
+    "context": "pageCodes.type-telegram-4.label"
+  },
+  "4db740773a74": {
+    "source": "Message me",
+    "text": "Schreib mir",
+    "status": "machine",
+    "context": "pageCodes.type-signal-1.label"
+  },
+  "0a108318f3d6": {
+    "source": "Tips line",
+    "text": "Hinweisgeber",
+    "status": "machine",
+    "context": "pageCodes.type-signal-2.label"
+  },
+  "2b5c3d26721a": {
+    "source": "Contact",
+    "text": "Kontakt",
+    "status": "machine",
+    "context": "pageCodes.on-business-cards-1.label"
+  },
+  "059f4256fc03": {
+    "source": "Join the server",
+    "text": "Server beitreten",
+    "status": "machine",
+    "context": "pageCodes.type-discord-1.label"
+  },
+  "6923180337c3": {
+    "source": "Game night",
+    "text": "Spieleabend",
+    "status": "machine",
+    "context": "pageCodes.type-discord-2.label"
+  },
+  "c1f872819746": {
+    "source": "Add friend",
+    "text": "Freund hinzufügen",
+    "status": "machine",
+    "context": "pageCodes.type-line-1.label"
+  },
+  "1212ea9e2094": {
+    "source": "Restaurant",
+    "text": "Restaurant",
+    "status": "machine",
+    "context": "templates.menu.variants.restaurant.name"
+  },
+  "1f13b99c482b": {
+    "source": "Talk slides",
+    "text": "Vortragsfolien",
+    "status": "machine",
+    "context": "pageCodes.type-bluesky-2.label"
+  },
+  "c12d357bb4a7": {
+    "source": "Newsroom",
+    "text": "Newsroom",
+    "status": "machine",
+    "context": "pageCodes.type-bluesky-3.label"
+  },
+  "d696a35bdd18": {
+    "source": "Profile",
+    "text": "Profil",
+    "status": "machine",
+    "context": "pageCodes.type-bluesky-4.label"
+  },
+  "68be45f197ab": {
+    "source": "Watch live",
+    "text": "Live ansehen",
+    "status": "machine",
+    "context": "pageCodes.type-twitch-1.label"
+  },
+  "f6ef8695b788": {
+    "source": "Stream night",
+    "text": "Stream-Abend",
+    "status": "machine",
+    "context": "pageCodes.type-twitch-2.label"
+  },
+  "4126ff87d834": {
+    "source": "Merch table",
+    "text": "Merch-Stand",
+    "status": "machine",
+    "context": "pageCodes.type-twitch-3.label"
+  },
+  "9ad978043f0b": {
+    "source": "New track",
+    "text": "Neuer Track",
+    "status": "machine",
+    "context": "pageCodes.type-soundcloud-1.label"
+  },
+  "bac2c020240c": {
+    "source": "DJ set",
+    "text": "DJ-Set",
+    "status": "machine",
+    "context": "pageCodes.type-soundcloud-2.label"
+  },
+  "b7dce7dbd738": {
+    "source": "Demo tape",
+    "text": "Demotape",
+    "status": "machine",
+    "context": "pageCodes.type-soundcloud-3.label"
+  },
+  "7960e1811469": {
+    "source": "Join the call",
+    "text": "Anruf beitreten",
+    "status": "machine",
+    "context": "pageCodes.type-zoom-1.label"
+  },
+  "4f3a9bd00397": {
+    "source": "Class",
+    "text": "Kurs",
+    "status": "machine",
+    "context": "pageCodes.type-zoom-2.label"
+  },
+  "83584124b578": {
+    "source": "Webinar",
+    "text": "Webinar",
+    "status": "machine",
+    "context": "templates.event.variants.webinar.name"
+  },
+  "bacd84b002a2": {
+    "source": "Stand-up",
+    "text": "Stand-up",
+    "status": "machine",
+    "context": "pageCodes.type-google-meet-1.label"
+  },
+  "bec05d7b19dd": {
+    "source": "Tutoring",
+    "text": "Nachhilfe",
+    "status": "machine",
+    "context": "pageCodes.type-google-meet-3.label"
+  },
+  "60925ffded06": {
+    "source": "Room sign",
+    "text": "Raumschild",
+    "status": "machine",
+    "context": "pageCodes.type-google-meet-4.label"
+  },
+  "5f1e315df824": {
+    "source": "Event parking",
+    "text": "Event-Parkplatz",
+    "status": "machine",
+    "context": "pageCodes.type-waze-2.label"
+  },
+  "49d2c2d23895": {
+    "source": "Delivery hub",
+    "text": "Lieferhub",
+    "status": "machine",
+    "context": "pageCodes.type-waze-4.label"
+  },
+  "22ddee488cda": {
+    "source": "Stall",
+    "text": "Marktstand",
+    "status": "machine",
+    "context": "pageCodes.type-dogecoin-4.label"
+  },
+  "0d5f2e74a9f6": {
+    "source": "Cafe",
+    "text": "Café",
+    "status": "machine",
+    "context": "pageCodes.type-bitcoincash-2.label"
+  },
+  "1b999f771518": {
+    "source": "Merch",
+    "text": "Merch",
+    "status": "machine",
+    "context": "pageCodes.on-tickets-4.label"
+  },
   "0432f20a0f65": {
     "source": "Table menu",
     "text": "Tischkarte",
@@ -18551,12 +20783,6 @@
     "status": "machine",
     "context": "pageCodes.for-transportation-3.label"
   },
-  "2b5c3d26721a": {
-    "source": "Contact",
-    "text": "Kontakt",
-    "status": "machine",
-    "context": "pageCodes.on-business-cards-1.label"
-  },
   "1853eb2e9e5e": {
     "source": "Portfolio",
     "text": "Portfolio",
@@ -18844,12 +21070,6 @@
     "text": "Event-Infos",
     "status": "machine",
     "context": "pageCodes.on-tickets-3.label"
-  },
-  "1b999f771518": {
-    "source": "Merch",
-    "text": "Merch",
-    "status": "machine",
-    "context": "pageCodes.on-tickets-4.label"
   },
   "0fdf485f5bfd": {
     "source": "Agenda",
@@ -19577,12 +21797,6 @@
     "status": "machine",
     "context": "templates.menu.variants.cafe.description"
   },
-  "1212ea9e2094": {
-    "source": "Restaurant",
-    "text": "Restaurant",
-    "status": "machine",
-    "context": "templates.menu.variants.restaurant.name"
-  },
   "a02380b78e87": {
     "source": "Dark and elegant, a printed-menu look with bookings",
     "text": "Dunkel und elegant, im Look einer gedruckten Karte mit Reservierung",
@@ -19696,12 +21910,6 @@
     "text": "Tickets, Agenda und ein klares Raster",
     "status": "machine",
     "context": "templates.event.variants.conference.description"
-  },
-  "83584124b578": {
-    "source": "Webinar",
-    "text": "Webinar",
-    "status": "machine",
-    "context": "templates.event.variants.webinar.name"
   },
   "24468758d549": {
     "source": "Online event with a join link and agenda",
@@ -25030,6 +27238,18 @@
     "text": "Ein geo:-Standort aus Breiten- und Längengrad.",
     "status": "machine",
     "context": "mcp.tools.13.description"
+  },
+  "7b20ff0c7661": {
+    "source": "Bank payment",
+    "text": "Banküberweisung",
+    "status": "machine",
+    "context": "mcp.tools.14.title"
+  },
+  "d56984fa2345": {
+    "source": "A Pix, SEPA transfer, PayNow, PromptPay or VietQR payment code, checked like the playground's forms.",
+    "text": "Ein Zahlungscode für Pix, SEPA-Überweisung, PayNow, PromptPay oder VietQR, geprüft wie die Formulare im Playground.",
+    "status": "machine",
+    "context": "mcp.tools.14.description"
   },
   "1385eac80167": {
     "source": "Do I need an account or an API key?",

@@ -1173,7 +1173,7 @@
       },
       "payments": {
         "name": "Zahlungen",
-        "detail": "UPI-, Bitcoin-, Ethereum-, PayPal-, Venmo- und SEPA-Codes (EPC), immer mit einem Bestätigungsschritt."
+        "detail": "UPI-, Pix-, PayNow-, PromptPay-, VietQR- und SEPA-Codes (EPC), PayPal, Venmo und Krypto-Wallets, immer mit einem Bestätigungsschritt."
       },
       "products": {
         "name": "Produktcodes",
@@ -1324,7 +1324,12 @@
       "copyLink": "Link kopieren",
       "copyUsername": "Nutzernamen kopieren",
       "copyIban": "IBAN kopieren",
+      "copyPixKey": "Pix-Schlüssel kopieren",
+      "copyNumber": "Nummer kopieren",
+      "copyAccount": "Konto kopieren",
+      "copyMerchant": "Händler kopieren",
       "epcNote": "Banking-Apps im Euroraum können diesen Code direkt scannen. Du kannst die IBAN auch in eine neue Überweisung kopieren.",
+      "bankAppNote": "Bezahle, indem du den Code mit einer Banking-App scannst, die {name} unterstützt.",
       "upiNote": "Öffnet auf Handys mit einer UPI-App (Google Pay, PhonePe, Paytm, BHIM …) diese App.",
       "restyle": "Im Playground neu gestalten",
       "name": "Name",
@@ -1346,7 +1351,6 @@
       "copyCoordinates": "Koordinaten kopieren",
       "number": "Nummer",
       "call": "Anrufen",
-      "copyNumber": "Nummer kopieren",
       "to": "An",
       "message": "Nachricht",
       "writeText": "Nachricht senden",

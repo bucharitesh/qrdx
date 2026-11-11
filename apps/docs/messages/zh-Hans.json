@@ -1266,7 +1266,7 @@
       },
       "payments": {
         "name": "支付",
-        "detail": "支持 UPI、Bitcoin、Ethereum、PayPal、Venmo 和 SEPA (EPC) 二维码，始终有确认步骤。"
+        "detail": "支持 UPI、Pix、PayNow、PromptPay、VietQR 和 SEPA (EPC) 二维码，以及 PayPal、Venmo 和加密货币钱包，并且始终会有确认步骤。"
       },
       "products": {
         "name": "商品码",
@@ -1417,7 +1417,12 @@
       "copyLink": "复制链接",
       "copyUsername": "复制用户名",
       "copyIban": "复制 IBAN",
+      "copyPixKey": "复制 Pix 密钥",
+      "copyNumber": "复制号码",
+      "copyAccount": "复制账户",
+      "copyMerchant": "复制商户",
       "epcNote": "欧元区的银行应用可以直接扫描此二维码。你也可以把 IBAN 复制到新的转账中。",
+      "bankAppNote": "请使用支持 {name} 的银行应用扫描该二维码进行支付。",
       "upiNote": "在装有 UPI 应用（Google Pay、PhonePe、Paytm、BHIM……）的手机上，会打开相应应用。",
       "restyle": "在 Playground 中重新设计样式",
       "name": "姓名",
@@ -1439,7 +1444,6 @@
       "copyCoordinates": "复制坐标",
       "number": "号码",
       "call": "拨打",
-      "copyNumber": "复制号码",
       "to": "收件人",
       "message": "短信内容",
       "writeText": "编写短信",

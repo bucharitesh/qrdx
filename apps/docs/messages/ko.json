@@ -1173,7 +1173,7 @@
       },
       "payments": {
         "name": "결제",
-        "detail": "UPI, Bitcoin, Ethereum, PayPal, Venmo, SEPA(EPC) 코드를 지원하며, 항상 확인 단계를 거쳐요."
+        "detail": "UPI, Pix, PayNow, PromptPay, VietQR, SEPA(EPC) 코드와 PayPal, Venmo, 암호화폐 지갑을 지원하며, 항상 확인 단계를 거쳐요."
       },
       "products": {
         "name": "제품 코드",
@@ -1324,7 +1324,12 @@
       "copyLink": "링크 복사",
       "copyUsername": "사용자 이름 복사",
       "copyIban": "IBAN 복사",
+      "copyPixKey": "Pix 키 복사",
+      "copyNumber": "번호 복사",
+      "copyAccount": "계좌 복사",
+      "copyMerchant": "가맹점 복사",
       "epcNote": "유로 지역의 뱅킹 앱에서 이 코드를 바로 스캔할 수 있어요. IBAN을 복사해 새 이체에 붙여넣을 수도 있어요.",
+      "bankAppNote": "{name}을(를) 지원하는 은행 앱으로 코드를 스캔해서 결제하세요.",
       "upiNote": "UPI 앱(Google Pay, PhonePe, Paytm, BHIM…)이 있는 휴대폰에서 해당 앱이 열려요.",
       "restyle": "Playground에서 스타일 다시 만들기",
       "name": "이름",
@@ -1346,7 +1351,6 @@
       "copyCoordinates": "좌표 복사",
       "number": "번호",
       "call": "전화 걸기",
-      "copyNumber": "번호 복사",
       "to": "받는 사람",
       "message": "메시지",
       "writeText": "문자 쓰기",

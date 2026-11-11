@@ -17,9 +17,9 @@
     "status": "machine",
     "context": "qrTypes.groups.contact.title"
   },
-  "5d66dbd5936f": {
-    "source": "Save a contact, start a call, text, email or WhatsApp chat in one scan.",
-    "text": "한 번의 스캔으로 연락처 저장, 전화, 문자, 이메일, WhatsApp 채팅을 시작해요.",
+  "1771803787ab": {
+    "source": "Save a contact, call, text or email, or open a chat in WhatsApp, Telegram, Signal or LINE.",
+    "text": "연락처 저장, 전화, 문자, 이메일을 보내거나 WhatsApp, Telegram, Signal, LINE에서 채팅을 열 수 있어요.",
     "status": "machine",
     "context": "qrTypes.groups.contact.description"
   },
@@ -29,9 +29,9 @@
     "status": "machine",
     "context": "qrTypes.groups.social.title"
   },
-  "ed283660be99": {
-    "source": "Send people to a profile, channel, community or playlist.",
-    "text": "프로필, 채널, 커뮤니티, 플레이리스트로 안내해요.",
+  "c5bddd3ef7b6": {
+    "source": "Send people to a profile, channel, Discord server or playlist.",
+    "text": "프로필, 채널, Discord 서버, 플레이리스트로 사람들을 안내해 보세요.",
     "status": "machine",
     "context": "qrTypes.groups.social.description"
   },
@@ -41,9 +41,9 @@
     "status": "machine",
     "context": "qrTypes.groups.payments.title"
   },
-  "998321187b6c": {
-    "source": "Payment requests for UPI, PayPal, Venmo, Bitcoin and Ethereum.",
-    "text": "UPI, PayPal, Venmo, Bitcoin, Ethereum 결제 요청을 만들어요.",
+  "ef99c34580c4": {
+    "source": "Bank payment codes (UPI, Pix, SEPA, PayNow, PromptPay, VietQR), payment links and crypto wallets.",
+    "text": "은행 결제 코드(UPI, Pix, SEPA, PayNow, PromptPay, VietQR), 결제 링크, 암호화폐 지갑을 만들 수 있어요.",
     "status": "machine",
     "context": "qrTypes.groups.payments.description"
   },
@@ -53,9 +53,9 @@
     "status": "machine",
     "context": "qrTypes.groups.business.title"
   },
-  "e0f2e577a1a3": {
-    "source": "Reviews, directions, bookings and attendance check-ins.",
-    "text": "리뷰, 길 안내, 예약, 참석 체크인을 위한 코드예요.",
+  "40ae6347e760": {
+    "source": "Reviews, directions, bookings, meetings and attendance check-ins.",
+    "text": "리뷰, 길 안내, 예약, 회의, 출석 체크인을 위한 코드예요.",
     "status": "machine",
     "context": "qrTypes.groups.business.description"
   },
@@ -3766,6 +3766,1992 @@
     "text": "네, Cal.com에서 설정해요. 이벤트 유형마다 소요 시간, 예약 가능 시간, 버퍼 시간, 예약 한도를 따로 정할 수 있고, QR 코드는 페이지를 열기만 합니다.",
     "status": "machine",
     "context": "qrTypes.types.calcom.faqs.3.answer"
+  },
+  "fa7d3d951464": {
+    "source": "Pix",
+    "text": "Pix",
+    "status": "machine",
+    "context": "qrTypes.types.pix.name"
+  },
+  "167d96bf1f00": {
+    "source": "Get paid by Pix from any Brazilian bank app.",
+    "text": "브라질 어느 은행 앱에서든 Pix로 결제를 받으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.summary"
+  },
+  "1893119c2a87": {
+    "source": "Make a static Pix QR code (BR Code) for your Pix key, with an optional amount and message. Built to the Banco Central rules, in your browser. Free.",
+    "text": "내 Pix 키로 정적 Pix QR 코드(BR Code)를 만드세요. 금액과 메시지는 선택 사항이에요. Banco Central 규정에 맞춰 브라우저에서 만들어지며 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.metaDescription"
+  },
+  "f19cccb611d1": {
+    "source": "A Pix QR code lets anyone in Brazil pay you from their bank app: they scan, check the name and amount, and confirm. It works with every kind of Pix key: CPF, CNPJ, phone number, email or a random key.",
+    "text": "Pix QR 코드가 있으면 브라질의 누구나 은행 앱으로 결제할 수 있어요. 스캔한 뒤 이름과 금액을 확인하고 승인하면 됩니다. CPF, CNPJ, 전화번호, 이메일, 무작위 키 등 모든 종류의 Pix 키에서 사용할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.intro.0"
+  },
+  "66a45d33d88c": {
+    "source": "QRdx makes a static BR Code, the format the Banco Central do Brasil defines for Pix. Static codes can be paid many times, so one printed code works at a counter, on an invoice or on a tip jar. Leave the amount empty to let each payer type it, or set one for a fixed price. The same text also works as Pix copia e cola.",
+    "text": "QRdx는 Banco Central do Brasil이 Pix용으로 정한 형식인 정적 BR Code를 만들어요. 정적 코드는 여러 번 결제할 수 있어서 코드 하나를 인쇄해 두면 계산대, 청구서, 팁 통에서 모두 쓸 수 있습니다. 금액을 비워 두면 결제하는 사람이 직접 입력하고, 금액을 지정하면 고정 가격이 돼요. 같은 텍스트는 Pix copia e cola로도 사용할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.intro.1"
+  },
+  "730938a998b2": {
+    "source": "Enter your Pix key exactly as it is registered at your bank. Phone keys start with +55.",
+    "text": "은행에 등록된 그대로 Pix 키를 입력하세요. 전화번호 키는 +55로 시작해요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.steps.0"
+  },
+  "5a3394a05037": {
+    "source": "Add the receiver name and city as they should appear to the payer (up to 25 and 15 characters).",
+    "text": "결제하는 사람에게 보일 수취인 이름과 도시를 입력하세요(각각 최대 25자, 15자).",
+    "status": "machine",
+    "context": "qrTypes.types.pix.steps.1"
+  },
+  "430d45bd1305": {
+    "source": "Optionally set an amount, a message and a transaction ID to match payments in your statement.",
+    "text": "원하면 금액, 메시지, 거래 ID를 설정하세요. 거래 내역에서 결제를 구분하는 데 도움이 돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.steps.2"
+  },
+  "1397b2363cba": {
+    "source": "Scan the preview with your own bank app to check the details, then download the code.",
+    "text": "내 은행 앱으로 미리보기를 스캔해 내용을 확인한 다음 코드를 다운로드하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.steps.3"
+  },
+  "40153bff7804": {
+    "source": "The code is a string of data objects, each an ID, a two-digit length and a value, ending with a CRC16-CCITT checksum that bank apps verify.",
+    "text": "코드는 데이터 객체의 나열이에요. 각 객체는 ID, 두 자리 길이, 값으로 이루어지며 끝에는 은행 앱이 검증하는 CRC16-CCITT 체크섬이 붙어요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.payload.notes.0"
+  },
+  "3a9b27e8f2ad": {
+    "source": "Names, cities and messages are written without accents (São Paulo becomes Sao Paulo), as the format only takes plain letters.",
+    "text": "이 형식은 일반 문자만 받기 때문에 이름, 도시, 메시지는 악센트 없이 작성돼요(São Paulo는 Sao Paulo가 됩니다).",
+    "status": "machine",
+    "context": "qrTypes.types.pix.payload.notes.1"
+  },
+  "9eaea8e1d1fb": {
+    "source": "Without a transaction ID the code uses ***, the value the rules give for codes that aren't tied to one charge.",
+    "text": "거래 ID가 없으면 코드에는 ***가 들어가요. 규정에서 특정 청구에 묶이지 않은 코드에 쓰도록 정한 값이에요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.payload.notes.2"
+  },
+  "1099c866765f": {
+    "source": "The key and the message share one data object of 99 characters, so a long email key leaves less room for the message.",
+    "text": "키와 메시지는 99자짜리 데이터 객체 하나를 함께 사용해서, 이메일 키가 길면 메시지에 쓸 공간이 줄어들어요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.payload.notes.3"
+  },
+  "080f40f67d68": {
+    "source": "Can people pay the same Pix code more than once?",
+    "text": "같은 Pix 코드로 여러 번 결제할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.0.question"
+  },
+  "99df84de197a": {
+    "source": "Yes. A static Pix code can be paid any number of times, which suits shops, stalls and donations. Use a transaction ID if you want to tell payments apart.",
+    "text": "네. 정적 Pix 코드는 횟수 제한 없이 결제할 수 있어서 가게, 노점, 기부에 잘 맞아요. 결제를 구분하고 싶다면 거래 ID를 사용하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.0.answer"
+  },
+  "e2bf6d00ccd9": {
+    "source": "Does QRdx see my payments?",
+    "text": "QRdx가 내 결제를 볼 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.1.question"
+  },
+  "49bb5e53cfd2": {
+    "source": "No. The code is made in your browser and payments go from the payer's bank to yours. QRdx never receives the key or the money.",
+    "text": "아니요. 코드는 브라우저에서 만들어지고 결제는 결제하는 사람의 은행에서 내 은행으로 바로 전달돼요. QRdx는 키나 돈을 전혀 받지 않습니다.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.1.answer"
+  },
+  "bace6d27fe43": {
+    "source": "Can I make a dynamic Pix charge with an expiry?",
+    "text": "만료 기한이 있는 동적 Pix 청구를 만들 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.2.question"
+  },
+  "95b08f6c4181": {
+    "source": "Not here. Dynamic Pix codes point to a charge your bank or payment provider hosts, so they come from that provider's API. QRdx makes static codes.",
+    "text": "여기서는 만들 수 없어요. 동적 Pix 코드는 은행이나 결제 서비스 제공업체가 호스팅하는 청구를 가리키므로 해당 제공업체의 API로 만들어요. QRdx는 정적 코드를 만듭니다.",
+    "status": "machine",
+    "context": "qrTypes.types.pix.faqs.2.answer"
+  },
+  "2a0d29312c06": {
+    "source": "SEPA Transfer",
+    "text": "SEPA 이체",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.name"
+  },
+  "5e2d5565bb6a": {
+    "source": "Fill in a euro bank transfer with IBAN, amount and reference.",
+    "text": "IBAN, 금액, 참조 번호가 입력된 유로 계좌 이체 양식을 만들어요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.summary"
+  },
+  "b742417a4028": {
+    "source": "Create a SEPA credit transfer QR code (EPC QR, also called GiroCode) with IBAN, amount and reference. Built to the EPC069-12 guidelines. Free.",
+    "text": "IBAN, 금액, 참조 번호가 담긴 SEPA 계좌 이체 QR 코드(EPC QR, GiroCode라고도 해요)를 만들어 보세요. EPC069-12 가이드라인에 맞춰 만들어요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.metaDescription"
+  },
+  "d9bd15f6fe08": {
+    "source": "A SEPA transfer QR code fills in a bank transfer for the person paying: your name, IBAN, the amount and the payment reference. They scan it with their banking app, check the details and confirm, so nobody retypes a 22-character IBAN from an invoice.",
+    "text": "SEPA 이체 QR 코드는 결제하는 사람의 이체 정보를 대신 채워 줍니다. 수취인 이름, IBAN, 금액, 결제 참조 번호가 들어 있어요. 결제하는 사람은 뱅킹 앱으로 스캔하고 내용을 확인한 뒤 승인하기만 하면 되므로, 청구서에 적힌 22자리 IBAN을 직접 다시 입력할 필요가 없습니다.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.intro.0"
+  },
+  "e3b15797a880": {
+    "source": "The format comes from the European Payments Council's guidelines, EPC069-12, and is often called a GiroCode. Banking apps in several euro countries read it, Germany and Austria especially. It suits invoices, rent, club fees and donation posters.",
+    "text": "이 형식은 유럽 결제 위원회(European Payments Council)의 가이드라인인 EPC069-12에서 나왔으며, GiroCode라고도 불러요. 여러 유로 사용 국가의 뱅킹 앱이 이 코드를 읽을 수 있고, 특히 독일과 오스트리아에서 많이 쓰입니다. 청구서, 월세, 동호회 회비, 기부 포스터에 잘 어울려요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.intro.1"
+  },
+  "dd25434a5973": {
+    "source": "Enter the beneficiary name and IBAN. QRdx checks the IBAN's length and check digits.",
+    "text": "수취인 이름과 IBAN을 입력하세요. QRdx가 IBAN의 길이와 체크 디지트를 확인해요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.steps.0"
+  },
+  "2ad6021b7318": {
+    "source": "Add the BIC only if your bank asks for it; inside the EEA it's optional.",
+    "text": "BIC는 은행에서 요구할 때만 추가하세요. EEA 안에서는 선택 사항이에요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.steps.1"
+  },
+  "4e5e693ccf34": {
+    "source": "Optionally set an amount in euros and a payment reference, or a structured RF creditor reference.",
+    "text": "원하면 유로 금액과 결제 참조 번호, 또는 구조화된 RF 채권자 참조 번호를 설정하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.steps.2"
+  },
+  "25ae805ba325": {
+    "source": "Switch the design to error correction level M if the form asks, then scan the preview with a banking app.",
+    "text": "양식에서 안내하면 디자인을 오류 정정 레벨 M으로 바꾼 뒤, 미리보기를 뱅킹 앱으로 스캔해 보세요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.steps.3"
+  },
+  "be10e33e1bbe": {
+    "source": "Each field is one line, in a fixed order. QRdx writes version 002 with UTF-8 text and leaves empty trailing lines out.",
+    "text": "각 필드는 한 줄씩 정해진 순서로 들어가요. QRdx는 UTF-8 텍스트로 버전 002를 작성하고, 끝부분의 빈 줄은 생략합니다.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.payload.notes.0"
+  },
+  "4d016f4f01a3": {
+    "source": "The whole code holds at most 331 bytes. Names are up to 70 characters and reference texts up to 140.",
+    "text": "코드 전체는 최대 331바이트까지 담을 수 있어요. 이름은 최대 70자, 참조 텍스트는 최대 140자입니다.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.payload.notes.1"
+  },
+  "0d3ab50df0a1": {
+    "source": "A transfer takes either a structured RF creditor reference or free reference text, never both. RF references are checked with their check digits.",
+    "text": "이체에는 구조화된 RF 채권자 참조 번호나 자유 형식의 참조 텍스트 중 하나만 넣을 수 있고, 둘을 함께 넣을 수는 없습니다. RF 참조 번호는 체크 디지트로 확인해요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.payload.notes.2"
+  },
+  "72f8e2aa3157": {
+    "source": "The guidelines ask for error correction level M, and the form offers to switch the design to it.",
+    "text": "가이드라인은 오류 정정 레벨 M을 요구하며, 양식에서 디자인을 해당 레벨로 바꾸도록 안내해요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.payload.notes.3"
+  },
+  "fd92f1ba44b1": {
+    "source": "Which banking apps read SEPA QR codes?",
+    "text": "어떤 뱅킹 앱이 SEPA QR 코드를 읽나요?",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.0.question"
+  },
+  "a082acf1a79c": {
+    "source": "Many apps in Germany and Austria, and a number in other euro countries, read EPC codes. Some apps call it GiroCode or photo transfer. Test with the apps your payers use.",
+    "text": "독일과 오스트리아의 많은 앱과 다른 유로 사용 국가의 일부 앱이 EPC 코드를 읽어요. 일부 앱에서는 GiroCode 또는 사진 이체라고 부릅니다. 결제하는 분들이 쓰는 앱으로 직접 테스트해 보세요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.0.answer"
+  },
+  "bd29bfc21066": {
+    "source": "Does the code pay automatically?",
+    "text": "코드가 자동으로 결제하나요?",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.1.question"
+  },
+  "4731d1c72463": {
+    "source": "No. It only fills in the transfer form. The payer checks the details and confirms in their banking app.",
+    "text": "아니요. 이체 양식만 채워 줍니다. 결제하는 사람이 뱅킹 앱에서 내용을 확인하고 승인해야 해요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.1.answer"
+  },
+  "7a268f30895b": {
+    "source": "Is my IBAN sent to QRdx?",
+    "text": "IBAN이 QRdx로 전송되나요?",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.2.question"
+  },
+  "73736cd952ed": {
+    "source": "No. The code is made in your browser, and the playground never puts bank details in a link.",
+    "text": "아니요. 코드는 브라우저에서 만들어지며, Playground는 은행 정보를 링크에 넣지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.sepa.faqs.2.answer"
+  },
+  "5c5af06729d3": {
+    "source": "PayNow",
+    "text": "PayNow",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.name"
+  },
+  "3fb99b5cd301": {
+    "source": "Get paid by PayNow to a mobile number or UEN.",
+    "text": "휴대폰 번호나 UEN으로 PayNow 결제를 받아요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.summary"
+  },
+  "82bfbb36f3ca": {
+    "source": "Make a PayNow QR code for a Singapore mobile number or company UEN, with an optional amount, reference and expiry date. SGQR format, free.",
+    "text": "싱가포르 휴대폰 번호나 회사 UEN으로 PayNow QR 코드를 만들어 보세요. 금액, 참조 번호, 만료일을 선택해서 넣을 수 있어요. SGQR 형식, 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.metaDescription"
+  },
+  "6ddc50878bd0": {
+    "source": "A PayNow QR code lets people in Singapore pay you from their banking app. It can pay a mobile number, for personal payments, or a business UEN, for shops and companies.",
+    "text": "PayNow QR 코드를 사용하면 싱가포르 사람들이 자신의 뱅킹 앱으로 바로 결제할 수 있어요. 개인 결제에는 휴대폰 번호를, 상점과 회사에는 사업자 UEN을 사용할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.intro.0"
+  },
+  "f835e55d1e60": {
+    "source": "QRdx builds the code in the SGQR format that Singapore banking apps scan. Leave the amount empty for a code anyone can pay any amount, or set one and choose whether the payer may change it. A reference shows up with the payment, and an expiry date makes the code stop working after a given day.",
+    "text": "QRdx는 싱가포르 뱅킹 앱이 스캔하는 SGQR 형식으로 코드를 만들어요. 금액을 비워 두면 누구나 원하는 금액을 보낼 수 있고, 금액을 정하면 결제하는 사람이 금액을 바꿀 수 있는지도 선택할 수 있어요. 참조 번호는 결제 내역에 함께 표시되고, 만료일을 정하면 해당 날짜 이후에는 코드가 작동하지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.intro.1"
+  },
+  "38b5f9777045": {
+    "source": "Choose whether the payment goes to a mobile number or a UEN, and enter it.",
+    "text": "결제를 받을 대상으로 휴대폰 번호와 UEN 중 하나를 선택하고 입력하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.steps.0"
+  },
+  "9adb4c229d2a": {
+    "source": "Optionally add the name payers should see, an amount and a reference such as an invoice number.",
+    "text": "결제하는 사람에게 보여줄 이름, 금액, 청구서 번호 같은 참조 번호를 필요에 따라 추가하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.steps.1"
+  },
+  "07f99efb5812": {
+    "source": "Set an expiry date if the code should only work for a while, for an invoice say.",
+    "text": "청구서처럼 코드를 일정 기간만 사용해야 한다면 만료일을 설정하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.steps.2"
+  },
+  "6e0bda346e3d": {
+    "source": "Scan the preview with your banking app to check the details, then download the code.",
+    "text": "뱅킹 앱으로 미리보기를 스캔해 정보를 확인한 다음 코드를 다운로드하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.steps.3"
+  },
+  "314b0c4ac2c3": {
+    "source": "Proxy type 0 is a mobile number (+65 and 8 digits) and 2 is a UEN.",
+    "text": "프록시 유형 0은 휴대폰 번호(+65와 8자리 숫자)이고, 2는 UEN이에요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.payload.notes.0"
+  },
+  "a3f5f131be8c": {
+    "source": "A code with an amount or an expiry date is marked dynamic (point of initiation 12); others are static (11).",
+    "text": "금액이나 만료일이 있는 코드는 동적(포인트 오브 이니시에이션 12)으로 표시되고, 그렇지 않은 코드는 정적(11)이에요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.payload.notes.1"
+  },
+  "6d6767b2c514": {
+    "source": "The checksum is CRC16-CCITT over the whole payload, as in every EMV payment code.",
+    "text": "체크섬은 모든 EMV 결제 코드와 마찬가지로 전체 페이로드에 대한 CRC16-CCITT예요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.payload.notes.2"
+  },
+  "31ef246d6b2f": {
+    "source": "Can I use PayNow with my personal mobile number?",
+    "text": "개인 휴대폰 번호로 PayNow를 사용할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.0.question"
+  },
+  "368882e06531": {
+    "source": "Yes, if your number is registered for PayNow with your bank. Payers see the name your bank registered.",
+    "text": "네, 해당 번호가 은행에 PayNow로 등록되어 있다면 가능해요. 결제하는 사람에게는 은행에 등록된 이름이 표시돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.0.answer"
+  },
+  "e2e787da3230": {
+    "source": "What does the expiry date do?",
+    "text": "만료일은 어떤 역할을 하나요?",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.1.question"
+  },
+  "556e62223f38": {
+    "source": "Banking apps refuse to pay the code after that day. Leave it empty for a code you print once and keep.",
+    "text": "해당 날짜 이후에는 뱅킹 앱에서 이 코드로 결제할 수 없어요. 한 번 인쇄해 계속 사용할 코드라면 비워 두세요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.1.answer"
+  },
+  "119fbf96eb25": {
+    "source": "No. The money moves between the two banks through PayNow. QRdx only draws the code, in your browser.",
+    "text": "아니요. 돈은 PayNow를 통해 두 은행 사이에서 이동해요. QRdx는 브라우저에서 코드를 그리기만 해요.",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.faqs.2.answer"
+  },
+  "a29179a6b7b9": {
+    "source": "PromptPay",
+    "text": "PromptPay",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.name"
+  },
+  "f9585e5bef7b": {
+    "source": "Get paid by PromptPay to a phone number or ID.",
+    "text": "전화번호나 ID로 PromptPay 결제를 받아요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.summary"
+  },
+  "d78b78e6aab0": {
+    "source": "Create a PromptPay QR code for a Thai mobile number, national ID, tax ID or e-wallet ID, with an optional amount. Thai QR standard, free.",
+    "text": "태국 휴대폰 번호, 주민등록번호, 세금 ID, 전자지갑 ID로 PromptPay QR 코드를 만드세요. 금액은 선택 사항이에요. 태국 QR 표준을 따르며 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.metaDescription"
+  },
+  "f34dbc2e308c": {
+    "source": "A PromptPay QR code lets anyone with a Thai banking app pay you by scanning. It pays the mobile number, national ID, tax ID or e-wallet ID linked to your PromptPay account.",
+    "text": "PromptPay QR 코드를 사용하면 태국 은행 앱을 쓰는 누구나 스캔만으로 결제할 수 있어요. PromptPay 계정에 연결된 휴대폰 번호, 주민등록번호, 세금 ID 또는 전자지갑 ID로 결제가 들어와요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.intro.0"
+  },
+  "5a79fc0fe3c5": {
+    "source": "QRdx makes the code to the Thai QR Code Payment Standard. Without an amount, payers type what they owe, which suits a stall or a shop counter. With an amount, the code is marked dynamic, as the standard asks for a code made for one payment.",
+    "text": "QRdx는 태국 QR 코드 결제 표준(Thai QR Code Payment Standard)에 맞춰 코드를 만들어요. 금액이 없으면 결제하는 사람이 낼 금액을 직접 입력하므로 노점이나 가게 계산대에 알맞아요. 금액이 있으면 한 번의 결제용 코드에 대한 표준 요구에 따라 코드가 동적으로 표시돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.intro.1"
+  },
+  "b4c7b14a926f": {
+    "source": "Choose mobile number, national or tax ID, or e-wallet ID.",
+    "text": "휴대폰 번호, 주민등록번호/세금 ID, 전자지갑 ID 중에서 선택하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.steps.0"
+  },
+  "58af1a2fc856": {
+    "source": "Enter the number linked to your PromptPay account.",
+    "text": "PromptPay 계정에 연결된 번호를 입력하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.steps.1"
+  },
+  "e2e15b312975": {
+    "source": "Optionally set an amount in baht.",
+    "text": "필요하면 바트 단위로 금액을 설정하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.steps.2"
+  },
+  "c3df02e38e3f": {
+    "source": "Scan the preview with your banking app to check the name, then download the code.",
+    "text": "미리보기를 은행 앱으로 스캔해 이름을 확인한 다음 코드를 다운로드하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.steps.3"
+  },
+  "84c98d15a9a7": {
+    "source": "Mobile numbers are written as 0066 and the number without its leading 0, 13 digits in all. National and tax IDs are 13 digits, e-wallet IDs 15.",
+    "text": "휴대폰 번호는 0066 뒤에 맨 앞의 0을 뺀 번호를 붙여 총 13자리로 표기해요. 주민등록번호와 세금 ID는 13자리, 전자지갑 ID는 15자리예요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.payload.notes.0"
+  },
+  "b05389da592e": {
+    "source": "Point of initiation 11 means a reusable code; 12, used when there's an amount, means a code for one payment.",
+    "text": "Point of initiation 11은 재사용할 수 있는 코드를 뜻하고, 금액이 있을 때 쓰는 12는 한 번의 결제용 코드를 뜻해요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.payload.notes.1"
+  },
+  "e64f71291372": {
+    "source": "The code ends with a CRC16-CCITT checksum that banking apps check before they pay.",
+    "text": "코드 끝에는 CRC16-CCITT 체크섬이 붙으며, 은행 앱이 결제 전에 이를 확인해요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.payload.notes.2"
+  },
+  "d7de81b21306": {
+    "source": "Which number should I use?",
+    "text": "어떤 번호를 써야 하나요?",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.0.question"
+  },
+  "c70d2350f459": {
+    "source": "The one you registered for PromptPay at your bank. Most people use their mobile number; businesses often use their tax ID.",
+    "text": "은행에서 PromptPay용으로 등록한 번호예요. 대부분은 휴대폰 번호를 쓰고, 사업자는 세금 ID를 쓰는 경우가 많아요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.0.answer"
+  },
+  "4508abffd5f1": {
+    "source": "Can foreign visitors pay with it?",
+    "text": "외국인 방문객도 결제할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.1.question"
+  },
+  "2888b1e92aef": {
+    "source": "Only with an app that pays Thai QR codes, such as a Thai banking app. Some foreign wallets support Thai QR through partner networks; check before you rely on it.",
+    "text": "태국 은행 앱처럼 태국 QR 코드를 결제할 수 있는 앱이어야만 가능해요. 일부 해외 전자지갑은 제휴 네트워크를 통해 태국 QR을 지원하니, 의존하기 전에 먼저 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.1.answer"
+  },
+  "4f415a66a11c": {
+    "source": "Is my ID number stored by QRdx?",
+    "text": "QRdx가 내 ID 번호를 저장하나요?",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.2.question"
+  },
+  "135da77d4575": {
+    "source": "No. The code is made in your browser and the playground never puts payment details in a link.",
+    "text": "아니요. 코드는 브라우저에서 만들어지고, Playground는 결제 정보를 링크에 넣지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.faqs.2.answer"
+  },
+  "d3f03ab05542": {
+    "source": "VietQR",
+    "text": "VietQR",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.name"
+  },
+  "810e974513d0": {
+    "source": "Get a bank transfer in Vietnam with one scan.",
+    "text": "스캔 한 번으로 베트남 은행 송금을 받아요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.summary"
+  },
+  "a02aab66a06d": {
+    "source": "Make a VietQR code for a Vietnamese bank account or card, with an optional amount and message. NAPAS format, works with VietQR banking apps. Free.",
+    "text": "베트남 은행 계좌나 카드용 VietQR 코드를 만들어 보세요. 금액과 메시지는 선택 사항이에요. NAPAS 형식이며 VietQR 뱅킹 앱에서 사용할 수 있어요. 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.metaDescription"
+  },
+  "d5e30416fd14": {
+    "source": "A VietQR code fills in a bank transfer in Vietnamese banking apps: the bank, your account or card number and, if you like, the amount and a message. The payer scans, checks the name their bank shows and confirms.",
+    "text": "VietQR 코드는 베트남 뱅킹 앱의 송금 정보를 자동으로 채워 줘요. 은행, 계좌번호 또는 카드번호, 그리고 원하면 금액과 메시지까지요. 결제하는 사람은 스캔한 뒤 은행 앱에 표시되는 이름을 확인하고 송금을 확정해요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.intro.0"
+  },
+  "2a1895f26510": {
+    "source": "QRdx builds the code to the NAPAS VietQR specification. Pick your bank from the list (it maps each bank to the 6-digit number the code needs), enter the account or card, and the code is ready for a shop counter, an invoice or a tip jar.",
+    "text": "QRdx는 NAPAS VietQR 사양에 맞춰 코드를 만들어요. 목록에서 은행을 고르고(코드에 필요한 6자리 번호는 은행별로 자동 매핑돼요) 계좌나 카드를 입력하면, 매장 계산대나 청구서, 팁 통에 쓸 코드가 완성돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.intro.1"
+  },
+  "47e1d1c3dc5e": {
+    "source": "Choose your bank from the list.",
+    "text": "목록에서 은행을 선택해요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.steps.0"
+  },
+  "19f82b884462": {
+    "source": "Enter your account number, or switch to card and enter the card number.",
+    "text": "계좌번호를 입력하거나, 카드로 전환해 카드번호를 입력해요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.steps.1"
+  },
+  "f526c8fc3511": {
+    "source": "Optionally add an amount in dong and a short message, without accents.",
+    "text": "원하면 금액(동)과 짧은 메시지를 악센트 없이 입력해요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.steps.2"
+  },
+  "0db4b4cf14cd": {
+    "source": "Scan the preview with your banking app, then download the code.",
+    "text": "뱅킹 앱으로 미리보기를 스캔한 뒤 코드를 다운로드해요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.steps.3"
+  },
+  "47d5635bbd9a": {
+    "source": "QRIBFTTA pays an account and QRIBFTTC a card.",
+    "text": "QRIBFTTA는 계좌로, QRIBFTTC는 카드로 결제해요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.payload.notes.0"
+  },
+  "723a6cc3b3fa": {
+    "source": "Amounts are whole dong. Messages are up to 25 characters, and Vietnamese accents are removed as banks expect.",
+    "text": "금액은 1동 단위의 정수예요. 메시지는 최대 25자이며, 은행 요구에 맞춰 베트남어 악센트는 제거돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.payload.notes.1"
+  },
+  "d1ef2ddb6b4e": {
+    "source": "The bank list comes from the public VietQR bank directory.",
+    "text": "은행 목록은 공개 VietQR 은행 디렉터리에서 가져와요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.payload.notes.2"
+  },
+  "1562c44f8ba0": {
+    "source": "Is my bank on the list?",
+    "text": "내 은행이 목록에 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.0.question"
+  },
+  "61f9ca75ea86": {
+    "source": "The list has every bank the VietQR directory marks as taking transfers. If yours is missing, it may not accept VietQR transfers yet.",
+    "text": "VietQR 디렉터리에서 송금 가능으로 표시한 모든 은행이 목록에 있어요. 찾는 은행이 없다면 아직 VietQR 송금을 지원하지 않을 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.0.answer"
+  },
+  "a7574edb8201": {
+    "source": "Can people pay more than once?",
+    "text": "여러 번 결제할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.1.question"
+  },
+  "d84dfb1141a7": {
+    "source": "Yes. A code without an amount works for any number of transfers. With an amount, it's marked for one payment, though banks may still accept it again.",
+    "text": "네. 금액이 없는 코드는 횟수 제한 없이 송금에 쓸 수 있어요. 금액이 있으면 1회 결제용으로 표시되지만, 은행에 따라 다시 받아들일 수도 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.1.answer"
+  },
+  "9f1b1b147cad": {
+    "source": "Is my account number sent to QRdx?",
+    "text": "내 계좌번호가 QRdx로 전송되나요?",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.faqs.2.question"
+  },
+  "2105f7da1289": {
+    "source": "Cash App",
+    "text": "Cash App",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.name"
+  },
+  "a838de2cb259": {
+    "source": "Open your $Cashtag so people can pay you.",
+    "text": "$Cashtag 페이지를 열어 결제를 받아요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.summary"
+  },
+  "03d0019a515e": {
+    "source": "Create a Cash App QR code that opens your $Cashtag page, so people can pay you in a few taps. For tip jars, stalls and splitting bills. Free.",
+    "text": "$Cashtag 페이지를 여는 Cash App QR 코드를 만들어 보세요. 몇 번만 탭하면 결제를 받을 수 있어요. 팁 통, 노점, 더치페이에 알맞아요. 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.metaDescription"
+  },
+  "a608467f8147": {
+    "source": "A Cash App QR code opens your $Cashtag page, where people send you money in Cash App. It saves them from spelling your $Cashtag right from a sign.",
+    "text": "Cash App QR 코드는 $Cashtag 페이지를 열어, Cash App에서 바로 송금받을 수 있게 해요. 표지판에 적힌 $Cashtag를 정확히 입력하느라 애쓸 필요가 없어요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.intro.0"
+  },
+  "45adb612cf8a": {
+    "source": "Type your $Cashtag and QRdx builds the cash.app link. The payer picks the amount in the app, so one printed code works for tips, a market stall or club fees.",
+    "text": "$Cashtag를 입력하면 QRdx가 cash.app 링크를 만들어요. 금액은 결제하는 사람이 앱에서 정하므로, 인쇄한 코드 하나로 팁, 시장 노점, 동호회 회비에 모두 쓸 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.intro.1"
+  },
+  "b40b1b88da2a": {
+    "source": "Enter your $Cashtag, with or without the $.",
+    "text": "$Cashtag를 입력해요. $는 있어도 없어도 돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.steps.0"
+  },
+  "ae34dd758668": {
+    "source": "Scan the preview to check it opens your page.",
+    "text": "미리보기를 스캔해 내 페이지가 열리는지 확인해요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.steps.1"
+  },
+  "f301138770db": {
+    "source": "$Cashtags are up to 20 letters and digits and must include a letter.",
+    "text": "$Cashtag는 글자와 숫자를 합쳐 최대 20자이며, 글자가 하나 이상 있어야 해요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.payload.notes.0"
+  },
+  "88ce23f062c8": {
+    "source": "The link opens Cash App when it's installed, or your cash.app page in the browser.",
+    "text": "Cash App이 설치되어 있으면 앱이 열리고, 없으면 브라우저에서 cash.app 페이지가 열려요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.payload.notes.1"
+  },
+  "db3d3b199975": {
+    "source": "Can I set an amount?",
+    "text": "금액을 정할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.faqs.0.question"
+  },
+  "e7734f2b61b4": {
+    "source": "No. The code opens your page and the payer enters the amount. For a fixed amount, send a request from Cash App instead.",
+    "text": "아니요. 코드는 내 페이지를 열고, 금액은 결제하는 사람이 입력해요. 고정 금액이 필요하면 Cash App에서 요청을 보내세요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.faqs.0.answer"
+  },
+  "3ac0ab3b7994": {
+    "source": "Can I change my $Cashtag later?",
+    "text": "$Cashtag를 나중에 바꿀 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.faqs.1.question"
+  },
+  "4136d2821f02": {
+    "source": "Cash App limits changes, and a new $Cashtag needs a new code. A dynamic QRdx code lets you change where the code points without reprinting.",
+    "text": "Cash App은 변경 횟수를 제한하며, 새 $Cashtag에는 새 코드가 필요해요. QRdx 동적 QR 코드를 쓰면 다시 인쇄하지 않고도 코드가 가리키는 곳을 바꿀 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.faqs.1.answer"
+  },
+  "dd53271a2e06": {
+    "source": "Revolut",
+    "text": "Revolut",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.name"
+  },
+  "c4b130848e4c": {
+    "source": "Open your revolut.me page so people can pay you.",
+    "text": "revolut.me 페이지를 열어 상대가 바로 송금할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.summary"
+  },
+  "215feac12664": {
+    "source": "Make a Revolut QR code that opens your revolut.me link, so friends and customers can pay you. Type your username and download. Free.",
+    "text": "revolut.me 링크를 여는 Revolut QR 코드를 만들어 보세요. 친구나 고객이 송금할 수 있어요. 사용자 이름을 입력하고 다운로드하면 끝. 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.metaDescription"
+  },
+  "2bd28c07313f": {
+    "source": "A Revolut QR code opens your revolut.me page, where people can send you money. It suits paying back a shared dinner, a trip kitty or small freelance invoices.",
+    "text": "Revolut QR 코드는 상대가 돈을 보낼 수 있는 revolut.me 페이지를 열어요. 함께 먹은 저녁 식사비 정산, 여행 공동 경비, 소액 프리랜서 청구서에 알맞아요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.intro.0"
+  },
+  "d5bcac8c8b4f": {
+    "source": "Type your Revolut username (your Revtag) and QRdx builds the revolut.me link. The payer chooses the amount.",
+    "text": "Revolut 사용자 이름(Revtag)을 입력하면 QRdx가 revolut.me 링크를 만들어요. 금액은 결제하는 사람이 직접 정해요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.intro.1"
+  },
+  "d3171ded9f56": {
+    "source": "Enter your Revolut username, with or without the @.",
+    "text": "Revolut 사용자 이름을 입력하세요. @는 있어도 없어도 돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.steps.0"
+  },
+  "154f0081472e": {
+    "source": "Scan the preview to check it opens your revolut.me page.",
+    "text": "미리보기를 스캔해 revolut.me 페이지가 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.steps.1"
+  },
+  "2422e338862f": {
+    "source": "Download the code.",
+    "text": "코드를 다운로드하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.steps.2"
+  },
+  "6bcfcc2616f9": {
+    "source": "Find your username in the Revolut app under your profile.",
+    "text": "사용자 이름은 Revolut 앱의 프로필에서 확인할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.payload.notes.0"
+  },
+  "6d1e1d764422": {
+    "source": "The link opens Revolut when it's installed, or revolut.me in the browser.",
+    "text": "링크를 열면 Revolut이 설치되어 있을 때는 앱이, 없을 때는 브라우저에서 revolut.me가 열려요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.payload.notes.1"
+  },
+  "327714a182b6": {
+    "source": "Do payers need Revolut?",
+    "text": "결제하는 사람도 Revolut이 필요한가요?",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.faqs.0.question"
+  },
+  "33de9ea4c5c0": {
+    "source": "Your revolut.me page tells them which ways to pay are open to them. People with Revolut pay in the app.",
+    "text": "revolut.me 페이지에서 이용할 수 있는 결제 방법을 안내해요. Revolut을 쓰는 사람은 앱에서 결제해요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.faqs.0.answer"
+  },
+  "0d7604828f17": {
+    "source": "Can the code include an amount?",
+    "text": "코드에 금액을 넣을 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.faqs.1.question"
+  },
+  "d662cbcd933b": {
+    "source": "Not this one. The payer picks the amount on your revolut.me page.",
+    "text": "이 코드에서는 넣을 수 없어요. 금액은 결제하는 사람이 revolut.me 페이지에서 직접 정해요.",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.faqs.1.answer"
+  },
+  "acdd1e734125": {
+    "source": "Telegram",
+    "text": "Telegram",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.name"
+  },
+  "0ca01009349b": {
+    "source": "Open a Telegram chat, channel or group.",
+    "text": "Telegram 채팅, 채널, 그룹을 열어요.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.summary"
+  },
+  "45a96ff4f80f": {
+    "source": "Create a Telegram QR code for a username, channel, group or phone number, using t.me links. For signs, posters and business cards. Free.",
+    "text": "t.me 링크로 사용자 이름, 채널, 그룹, 전화번호용 Telegram QR 코드를 만드세요. 간판, 포스터, 명함에 쓸 수 있어요. 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.metaDescription"
+  },
+  "b53bf36fb0b0": {
+    "source": "A Telegram QR code opens a chat, channel or group in Telegram. Businesses use it for support chats, creators for their channels and communities for their groups.",
+    "text": "Telegram QR 코드는 Telegram에서 채팅, 채널, 그룹을 열어 줍니다. 기업은 고객 지원 채팅에, 크리에이터는 채널에, 커뮤니티는 그룹에 활용합니다.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.intro.0"
+  },
+  "653a28b1b112": {
+    "source": "Enter a public username and QRdx builds the t.me link, or paste an invite link for a private group. You can also start a chat with a phone number, which opens only if that person lets people find them by number.",
+    "text": "공개 사용자 이름을 입력하면 QRdx가 t.me 링크를 만들어 줍니다. 비공개 그룹은 초대 링크를 붙여 넣으면 됩니다. 전화번호로 채팅을 시작할 수도 있지만, 상대방이 번호로 자신을 찾도록 허용한 경우에만 열립니다.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.intro.1"
+  },
+  "2a10017c453b": {
+    "source": "Choose whether the code opens a username, channel or group, or a chat with a phone number.",
+    "text": "코드가 사용자 이름, 채널, 그룹을 열지, 아니면 전화번호로 채팅을 열지 선택하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.steps.0"
+  },
+  "2e3827e6b9ab": {
+    "source": "Enter the username (5 to 32 letters, digits and underscores) or paste a t.me link.",
+    "text": "사용자 이름(영문자, 숫자, 밑줄 5~32자)을 입력하거나 t.me 링크를 붙여 넣으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.steps.1"
+  },
+  "f5f025ae51f4": {
+    "source": "Scan the preview to check the right chat opens.",
+    "text": "미리보기를 스캔해서 올바른 채팅이 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.steps.2"
+  },
+  "36963e026a45": {
+    "source": "t.me links open the Telegram app when it's installed, or a page that offers to open it.",
+    "text": "t.me 링크는 Telegram 앱이 설치되어 있으면 앱을 열고, 없으면 앱 열기를 안내하는 페이지를 보여 줍니다.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.payload.notes.0"
+  },
+  "e7ccc0faaea8": {
+    "source": "Phone numbers need the country code. Whether the chat opens depends on the person's privacy settings.",
+    "text": "전화번호에는 국가 번호가 필요합니다. 채팅이 열리는지는 상대방의 개인정보 설정에 따라 달라집니다.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.payload.notes.1"
+  },
+  "081560236365": {
+    "source": "Private group invite links (t.me/+…) are kept as pasted.",
+    "text": "비공개 그룹 초대 링크(t.me/+…)는 붙여 넣은 그대로 유지됩니다.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.payload.notes.2"
+  },
+  "9785ff1846e5": {
+    "source": "Can I link a private group?",
+    "text": "비공개 그룹도 연결할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.0.question"
+  },
+  "b7867258275f": {
+    "source": "Yes. Copy the group's invite link in Telegram and paste it. Anyone who scans the code can join, so revoke the link in Telegram if it spreads too far.",
+    "text": "네. Telegram에서 그룹의 초대 링크를 복사해 붙여 넣으세요. 코드를 스캔한 사람은 누구나 참여할 수 있으니, 링크가 너무 널리 퍼지면 Telegram에서 링크를 폐기하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.0.answer"
+  },
+  "f174d6fa0ffb": {
+    "source": "Why doesn't the phone number open a chat?",
+    "text": "전화번호로 채팅이 열리지 않는 이유는 무엇인가요?",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.1.question"
+  },
+  "8a0df715aaab": {
+    "source": "Telegram opens a chat by number only when that person allows it in Privacy and Security, under Phone Number. A username always works.",
+    "text": "Telegram은 상대방이 개인정보 및 보안의 전화번호 설정에서 허용한 경우에만 번호로 채팅을 엽니다. 사용자 이름은 항상 작동합니다.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.1.answer"
+  },
+  "3ee5e4faea31": {
+    "source": "Is this the QRdx Telegram bot?",
+    "text": "QRdx Telegram 봇과 같은 건가요?",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.2.question"
+  },
+  "959860f19e74": {
+    "source": "No. This code opens your own Telegram chat or channel. The QRdx bot is a separate integration that makes codes inside Telegram.",
+    "text": "아니요. 이 코드는 내 Telegram 채팅이나 채널을 엽니다. QRdx 봇은 Telegram 안에서 코드를 만드는 별도의 연동 기능입니다.",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.faqs.2.answer"
+  },
+  "1e9806e4227b": {
+    "source": "Signal",
+    "text": "Signal",
+    "status": "machine",
+    "context": "qrTypes.types.signal.name"
+  },
+  "cd978d8773f2": {
+    "source": "Start a Signal chat with a number or username link.",
+    "text": "전화번호나 사용자 이름 링크로 Signal 채팅을 시작해요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.summary"
+  },
+  "6e84c397b749": {
+    "source": "Make a Signal QR code that opens a chat with a phone number or your Signal username link. For cards, newsrooms and tip lines. Free.",
+    "text": "전화번호나 Signal 사용자 이름 링크로 채팅을 여는 Signal QR 코드를 만들어 보세요. 명함, 뉴스룸, 제보 창구에 쓰기 좋아요. 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.metaDescription"
+  },
+  "3408948e8e9f": {
+    "source": "A Signal QR code opens a chat in Signal, the private messaging app. Journalists use it for tip lines, organizers for group sign-ups, and people on business cards.",
+    "text": "Signal QR 코드는 개인정보 보호 메신저인 Signal에서 채팅을 열어 줍니다. 기자는 제보 창구에, 활동가는 그룹 가입에, 많은 사람은 명함에 사용해요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.intro.0"
+  },
+  "0f2c8c1e4533": {
+    "source": "With a phone number, QRdx builds a signal.me link. For a username or a group, copy the link from the Signal app and paste it: usernames can't be turned into links outside Signal.",
+    "text": "전화번호를 입력하면 QRdx가 signal.me 링크를 만들어 줍니다. 사용자 이름이나 그룹은 Signal 앱에서 링크를 복사해 붙여넣어 주세요. 사용자 이름은 Signal 밖에서 링크로 만들 수 없어요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.intro.1"
+  },
+  "cbe7248ddb2b": {
+    "source": "Choose a phone number, or a username or group link.",
+    "text": "전화번호 또는 사용자 이름이나 그룹 링크를 선택하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.steps.0"
+  },
+  "e985d8279f5f": {
+    "source": "Enter the number with its country code, or paste the link from Signal (Settings › Profile › Username › QR code or link).",
+    "text": "국가 번호를 포함해 번호를 입력하거나 Signal에서 복사한 링크를 붙여넣으세요 (설정 › 프로필 › 사용자 이름 › QR 코드 또는 링크).",
+    "status": "machine",
+    "context": "qrTypes.types.signal.steps.1"
+  },
+  "4f782f931e84": {
+    "source": "Scan the preview to check that Signal opens the chat.",
+    "text": "미리보기를 스캔해 Signal에서 채팅이 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.steps.2"
+  },
+  "7fd073b292d3": {
+    "source": "The number sits after the #, a part of the link browsers never send to a server.",
+    "text": "번호는 #뒤에 들어가요. 이 부분은 브라우저가 서버로 보내지 않는 링크의 일부예요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.payload.notes.0"
+  },
+  "e82a8f0ac43b": {
+    "source": "A number opens a chat only if its owner lets people find them by number in Signal's privacy settings.",
+    "text": "Signal 개인정보 설정에서 번호로 자신을 찾을 수 있게 허용한 경우에만 번호로 채팅이 열려요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.payload.notes.1"
+  },
+  "d0f301d73313": {
+    "source": "Username links (#eu/…) and group links (signal.group) are kept as pasted.",
+    "text": "사용자 이름 링크(#eu/…)와 그룹 링크(signal.group)는 붙여넣은 그대로 사용해요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.payload.notes.2"
+  },
+  "57ae595d541b": {
+    "source": "Should I share my number or a username?",
+    "text": "번호와 사용자 이름 중 무엇을 공유해야 할까요?",
+    "status": "machine",
+    "context": "qrTypes.types.signal.faqs.0.question"
+  },
+  "2c9d0cbf0f8d": {
+    "source": "A username link keeps your number private, and you can reset the link in Signal at any time, which stops the old code from working.",
+    "text": "사용자 이름 링크를 쓰면 번호를 비공개로 유지할 수 있어요. 또 Signal에서 링크를 언제든 재설정할 수 있고, 재설정하면 이전 코드는 작동하지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.faqs.0.answer"
+  },
+  "6806384b927a": {
+    "source": "Does it work without Signal installed?",
+    "text": "Signal이 설치되어 있지 않아도 되나요?",
+    "status": "machine",
+    "context": "qrTypes.types.signal.faqs.1.question"
+  },
+  "f15a560f6586": {
+    "source": "The link opens a signal.me page that offers to install Signal. The chat opens once the app is there.",
+    "text": "링크를 열면 Signal 설치를 안내하는 signal.me 페이지가 나타나요. 앱이 설치되면 채팅이 열려요.",
+    "status": "machine",
+    "context": "qrTypes.types.signal.faqs.1.answer"
+  },
+  "053bc65874ad": {
+    "source": "Discord",
+    "text": "Discord",
+    "status": "machine",
+    "context": "qrTypes.types.discord.name"
+  },
+  "3c77f3abcb47": {
+    "source": "Invite people to your Discord server.",
+    "text": "Discord 서버로 사람들을 초대하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.summary"
+  },
+  "27475c5904a9": {
+    "source": "Create a Discord QR code from a server invite link or code. For streams, events, posters and merch. Make the invite permanent first. Free.",
+    "text": "서버 초대 링크나 코드로 Discord QR 코드를 만들어 보세요. 스트림, 이벤트, 포스터, 굿즈에 쓰기 좋아요. 먼저 초대를 영구로 설정하세요. 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.metaDescription"
+  },
+  "145dc5ae940c": {
+    "source": "A Discord QR code opens an invite to your server, so people join from a poster, a stream overlay, a sticker or a game box.",
+    "text": "Discord QR 코드는 서버 초대를 열어 주기 때문에 포스터, 스트림 오버레이, 스티커, 게임 박스에서 바로 참여할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.intro.0"
+  },
+  "5d74e8b924f2": {
+    "source": "Paste an invite link (discord.gg or discord.com/invite) or just its code. Invites expire after 7 days by default, so set Expire after to Never when you create one for print.",
+    "text": "초대 링크(discord.gg 또는 discord.com/invite)나 코드만 붙여넣으세요. 초대는 기본적으로 7일 후 만료되므로, 인쇄용으로 만들 때는 만료 기한을 '안 함'으로 설정하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.intro.1"
+  },
+  "6311f94d5f0c": {
+    "source": "In Discord, open Invite People, choose Edit invite link and set Expire after to Never.",
+    "text": "Discord에서 초대하기를 열고 초대 링크 편집을 선택한 다음 만료 기한을 '안 함'으로 설정하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.steps.0"
+  },
+  "60aea856ff91": {
+    "source": "Copy the invite link and paste it here.",
+    "text": "초대 링크를 복사해 여기에 붙여넣으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.steps.1"
+  },
+  "48fa0e87f842": {
+    "source": "Scan the preview to check the invite opens.",
+    "text": "미리보기를 스캔해 초대가 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.steps.2"
+  },
+  "6d2d5fa1181d": {
+    "source": "QRdx writes every invite as a discord.gg link, the shortest form, which makes a less dense code.",
+    "text": "QRdx는 모든 초대를 가장 짧은 형태인 discord.gg 링크로 만들기 때문에 코드가 덜 복잡해져요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.payload.notes.0"
+  },
+  "0c11e72bcffb": {
+    "source": "Servers with a vanity URL can use it as the code.",
+    "text": "맞춤 URL이 있는 서버는 그 URL을 코드로 사용할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.payload.notes.1"
+  },
+  "eb08b60dc9c2": {
+    "source": "An expired or deleted invite stops working, and the code with it.",
+    "text": "만료되거나 삭제된 초대는 작동하지 않고, 코드도 함께 작동하지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.payload.notes.2"
+  },
+  "bc8bf06cfa13": {
+    "source": "Why did my Discord QR code stop working?",
+    "text": "Discord QR 코드가 왜 작동하지 않나요?",
+    "status": "machine",
+    "context": "qrTypes.types.discord.faqs.0.question"
+  },
+  "8225f9f59ed9": {
+    "source": "The invite probably expired or reached its use limit. Create one that never expires, then make a new code, or use a dynamic QRdx code you can repoint.",
+    "text": "초대가 만료되었거나 사용 한도에 도달했을 가능성이 커요. 만료되지 않는 초대를 만들어 새 코드를 만들거나, 다시 연결할 수 있는 QRdx 동적 QR 코드를 사용하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.faqs.0.answer"
+  },
+  "312dc6efac61": {
+    "source": "Is this the QRdx Discord bot?",
+    "text": "QRdx Discord 봇과 같은 건가요?",
+    "status": "machine",
+    "context": "qrTypes.types.discord.faqs.1.question"
+  },
+  "3097031bd3a7": {
+    "source": "No. This code opens an invite to your own server. The QRdx bot is a separate integration that makes codes inside Discord.",
+    "text": "아니요. 이 코드는 여러분의 서버로 가는 초대를 열어 줘요. QRdx 봇은 Discord 안에서 코드를 만드는 별도의 연동 기능이에요.",
+    "status": "machine",
+    "context": "qrTypes.types.discord.faqs.1.answer"
+  },
+  "81a0d84c9895": {
+    "source": "LINE",
+    "text": "LINE",
+    "status": "machine",
+    "context": "qrTypes.types.line.name"
+  },
+  "d021bee86eb5": {
+    "source": "Add you as a friend on LINE.",
+    "text": "LINE에서 나를 친구로 추가해요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.summary"
+  },
+  "b516843ad8bc": {
+    "source": "Make a LINE QR code that adds you or your official account as a friend, from a LINE ID or link. For shops, menus and cards. Free.",
+    "text": "LINE ID 또는 링크로 나 또는 공식 계정을 친구로 추가하는 LINE QR 코드를 만들어 보세요. 매장, 메뉴, 명함에 쓸 수 있어요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.line.metaDescription"
+  },
+  "33a71088a267": {
+    "source": "A LINE QR code opens LINE and offers to add you as a friend. Shops and restaurants in Japan, Thailand and Taiwan use it for their official accounts, and people put it on cards.",
+    "text": "LINE QR 코드를 스캔하면 LINE이 열리고 나를 친구로 추가할 수 있어요. 일본, 태국, 대만의 매장과 식당에서 공식 계정용으로 쓰고, 명함에도 넣어요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.intro.0"
+  },
+  "7504de0ce119": {
+    "source": "Enter your LINE ID, or an official account's ID starting with @. You can also paste a line.me or lin.ee link from the app.",
+    "text": "내 LINE ID를 입력하거나 @로 시작하는 공식 계정 ID를 입력하세요. 앱에서 복사한 line.me 또는 lin.ee 링크를 붙여 넣어도 돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.intro.1"
+  },
+  "b8c898579a8b": {
+    "source": "Enter your LINE ID. Official accounts start with @.",
+    "text": "LINE ID를 입력하세요. 공식 계정은 @로 시작해요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.steps.0"
+  },
+  "27cf13e38f45": {
+    "source": "For a personal ID, check that Allow others to add me by ID is on in LINE's privacy settings.",
+    "text": "개인 ID라면 LINE 개인정보 설정에서 'ID로 친구 추가 허용'이 켜져 있는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.steps.1"
+  },
+  "82952c7584c6": {
+    "source": "Scan the preview to check LINE opens your profile.",
+    "text": "미리보기를 스캔해서 LINE에서 내 프로필이 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.steps.2"
+  },
+  "bb3c9b290ebd": {
+    "source": "LINE IDs are letters, digits, dots, dashes and underscores.",
+    "text": "LINE ID에는 영문자, 숫자, 점, 대시, 밑줄을 쓸 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.payload.notes.0"
+  },
+  "3f86a96b55f9": {
+    "source": "Pasted line.me and lin.ee links are kept as they are.",
+    "text": "붙여 넣은 line.me와 lin.ee 링크는 그대로 유지돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.payload.notes.1"
+  },
+  "24994da8521b": {
+    "source": "Why does the code say the user can't be found?",
+    "text": "코드를 스캔하면 왜 사용자를 찾을 수 없다고 나오나요?",
+    "status": "machine",
+    "context": "qrTypes.types.line.faqs.0.question"
+  },
+  "5f998d01c57c": {
+    "source": "Personal IDs work only when the owner allows people to add them by ID. Turn it on in LINE under Settings › Privacy.",
+    "text": "개인 ID는 소유자가 ID로 친구 추가를 허용한 경우에만 작동해요. LINE의 설정 › 개인정보에서 켜 주세요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.faqs.0.answer"
+  },
+  "5fb4e017a8a4": {
+    "source": "Can I use the QR code LINE gives me?",
+    "text": "LINE에서 받은 QR 코드를 사용할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.line.faqs.1.question"
+  },
+  "ab7a38c80d0d": {
+    "source": "Yes. Copy the link behind it in LINE and paste it here to restyle it with your colors and logo.",
+    "text": "네. LINE에서 해당 QR 코드의 링크를 복사해 여기에 붙여 넣으면 원하는 색상과 로고로 새로 꾸밀 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.line.faqs.1.answer"
+  },
+  "4ed485c71401": {
+    "source": "Bluesky",
+    "text": "Bluesky",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.name"
+  },
+  "8c9b68c7ec8b": {
+    "source": "Open a Bluesky profile.",
+    "text": "Bluesky 프로필을 열어요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.summary"
+  },
+  "684c942db7f4": {
+    "source": "Create a Bluesky QR code for your handle, including custom domain handles. Opens your bsky.app profile. For talks, cards and posters. Free.",
+    "text": "사용자 지정 도메인 핸들을 포함해 내 핸들용 Bluesky QR 코드를 만들어 보세요. bsky.app 프로필이 열려요. 발표, 명함, 포스터에 쓸 수 있어요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.metaDescription"
+  },
+  "e5b8c0868e8a": {
+    "source": "A Bluesky QR code opens your profile so people can follow you from a slide, a badge or a poster.",
+    "text": "Bluesky QR 코드는 내 프로필을 열어 슬라이드, 배지, 포스터를 보는 사람이 바로 나를 팔로우할 수 있게 해요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.intro.0"
+  },
+  "dcdc83d12962": {
+    "source": "Type your handle, such as yourname.bsky.social or your own domain, and QRdx builds the bsky.app profile link. A bare name gets .bsky.social added.",
+    "text": "yourname.bsky.social 같은 핸들이나 내 도메인을 입력하면 QRdx가 bsky.app 프로필 링크를 만들어 줘요. 이름만 입력하면 .bsky.social이 붙어요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.intro.1"
+  },
+  "f78eabd59f9c": {
+    "source": "Enter your handle, with or without the @.",
+    "text": "핸들을 입력하세요. @는 있어도 없어도 돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.steps.0"
+  },
+  "7037796a9291": {
+    "source": "Scan the preview to check your profile opens.",
+    "text": "미리보기를 스캔해서 프로필이 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.steps.1"
+  },
+  "ee3e80d21139": {
+    "source": "Handles are domain names, so they're written in lower case.",
+    "text": "핸들은 도메인 이름이라서 소문자로 써요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.payload.notes.0"
+  },
+  "569528f0a99f": {
+    "source": "A profile link with a DID (did:plc:…) also works, and keeps working if you change your handle.",
+    "text": "DID(did:plc:…)가 들어간 프로필 링크도 사용할 수 있고, 핸들을 바꿔도 계속 작동해요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.payload.notes.1"
+  },
+  "617888c8f6d9": {
+    "source": "What happens if I change my handle?",
+    "text": "핸들을 바꾸면 어떻게 되나요?",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.faqs.0.question"
+  },
+  "c5233e2afee8": {
+    "source": "A code with the old handle stops finding you. Use your DID in the code, or a dynamic QRdx code you can repoint.",
+    "text": "이전 핸들로 만든 코드는 더 이상 나를 찾지 못해요. 코드에 DID를 쓰거나, 연결 대상을 바꿀 수 있는 QRdx 동적 QR 코드를 사용하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.faqs.0.answer"
+  },
+  "5d2855034ad3": {
+    "source": "Does it open the Bluesky app?",
+    "text": "Bluesky 앱이 열리나요?",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.faqs.1.question"
+  },
+  "30c43d633f06": {
+    "source": "bsky.app links open the app when it's installed, or the profile in the browser.",
+    "text": "bsky.app 링크는 앱이 설치되어 있으면 앱에서, 없으면 브라우저에서 프로필이 열려요.",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.faqs.1.answer"
+  },
+  "a53bdbbb43f0": {
+    "source": "Mastodon",
+    "text": "Mastodon",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.name"
+  },
+  "13556a44a159": {
+    "source": "Open a Mastodon profile on its server.",
+    "text": "서버에서 Mastodon 프로필을 열어요.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.summary"
+  },
+  "c41f2090b23f": {
+    "source": "Make a Mastodon QR code from your full handle, like @you@mastodon.social. Opens your profile on your server. For talks and cards. Free.",
+    "text": "@you@mastodon.social 같은 전체 핸들로 Mastodon QR 코드를 만드세요. 내 서버의 프로필이 열려요. 발표나 명함에 쓰기 좋아요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.metaDescription"
+  },
+  "670c8998ae03": {
+    "source": "A Mastodon QR code opens your profile on your server, where people can follow you from their own account, on any server.",
+    "text": "Mastodon QR 코드는 내 서버의 프로필을 열어 주며, 사람들은 어느 서버든 자신의 계정으로 나를 팔로우할 수 있습니다.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.intro.0"
+  },
+  "1bdac41cabcf": {
+    "source": "Enter your full handle with the server, such as @you@mastodon.social, or paste your profile link. QRdx builds the profile address from it.",
+    "text": "@you@mastodon.social처럼 서버가 포함된 전체 핸들을 입력하거나 프로필 링크를 붙여넣으세요. QRdx가 그 값으로 프로필 주소를 만들어 드립니다.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.intro.1"
+  },
+  "2be0da765aad": {
+    "source": "Enter your handle, server included.",
+    "text": "서버를 포함한 핸들을 입력하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.steps.0"
+  },
+  "b030c3cb4e23": {
+    "source": "A handle without its server can't be found, because the same name can exist on many servers.",
+    "text": "서버가 없는 핸들은 찾을 수 없습니다. 같은 이름이 여러 서버에 있을 수 있기 때문입니다.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.payload.notes.0"
+  },
+  "f579bb4be42b": {
+    "source": "Other fediverse servers that use /@username profile links work the same way.",
+    "text": "/@username 형태의 프로필 링크를 쓰는 다른 fediverse 서버도 같은 방식으로 작동합니다.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.payload.notes.1"
+  },
+  "08dc838545c1": {
+    "source": "How do people follow me from another server?",
+    "text": "다른 서버에서는 어떻게 저를 팔로우하나요?",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.faqs.0.question"
+  },
+  "ed127d9f96af": {
+    "source": "Your profile page has a Follow button that asks for their own server and sends them there to confirm.",
+    "text": "프로필 페이지의 팔로우 버튼을 누르면 본인 서버를 물어보고, 그곳으로 이동해 확인할 수 있습니다.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.faqs.0.answer"
+  },
+  "15d21a7f7800": {
+    "source": "What if I move to another server?",
+    "text": "다른 서버로 옮기면 어떻게 되나요?",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.faqs.1.question"
+  },
+  "73bf401773aa": {
+    "source": "Mastodon can redirect your old profile, but print a new code for the new server, or use a dynamic QRdx code you can repoint.",
+    "text": "Mastodon에서 이전 프로필을 리디렉션할 수 있지만, 새 서버용 코드를 다시 인쇄하거나 연결 대상을 바꿀 수 있는 QRdx 동적 QR 코드를 사용하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.faqs.1.answer"
+  },
+  "a731a58c4cf3": {
+    "source": "Twitch",
+    "text": "Twitch",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.name"
+  },
+  "02d4fcb3c104": {
+    "source": "Open a Twitch channel.",
+    "text": "Twitch 채널을 열어요.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.summary"
+  },
+  "5863b50dd4de": {
+    "source": "Create a Twitch QR code that opens your channel. For stream overlays, merch, posters and event badges. Type your username. Free.",
+    "text": "내 채널을 여는 Twitch QR 코드를 만드세요. 방송 오버레이, 굿즈, 포스터, 행사 배지에 쓰기 좋아요. 사용자 이름만 입력하세요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.metaDescription"
+  },
+  "9a649d9111c9": {
+    "source": "A Twitch QR code opens your channel so people can follow and watch live. Streamers put it on overlays, merch, posters and convention badges.",
+    "text": "Twitch QR 코드는 채널을 열어 주어 사람들이 팔로우하고 라이브를 볼 수 있게 합니다. 스트리머는 오버레이, 굿즈, 포스터, 컨벤션 배지에 이 코드를 넣습니다.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.intro.0"
+  },
+  "af4bc44148fd": {
+    "source": "Type your Twitch username, or paste your channel link, and QRdx builds the twitch.tv address.",
+    "text": "Twitch 사용자 이름을 입력하거나 채널 링크를 붙여넣으면 QRdx가 twitch.tv 주소를 만들어 드립니다.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.intro.1"
+  },
+  "f1d49d247c17": {
+    "source": "Enter your Twitch username.",
+    "text": "Twitch 사용자 이름을 입력하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.steps.0"
+  },
+  "7e924aec7452": {
+    "source": "Scan the preview to check your channel opens.",
+    "text": "미리보기를 스캔해 채널이 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.steps.1"
+  },
+  "43a212093ce6": {
+    "source": "Download the code, as SVG for merch and print.",
+    "text": "코드를 다운로드하세요. 굿즈와 인쇄용은 SVG를 추천해요.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.steps.2"
+  },
+  "4aebce86f0e3": {
+    "source": "Twitch usernames are 4 to 25 letters, digits and underscores.",
+    "text": "Twitch 사용자 이름은 영문자, 숫자, 밑줄로 이루어진 4~25자입니다.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.payload.notes.0"
+  },
+  "def18138bcf2": {
+    "source": "The link opens the Twitch app when it's installed.",
+    "text": "Twitch 앱이 설치되어 있으면 링크가 앱에서 열립니다.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.payload.notes.1"
+  },
+  "05437ce4608d": {
+    "source": "Can the code open a specific stream or clip?",
+    "text": "코드로 특정 방송이나 클립을 열 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.faqs.0.question"
+  },
+  "b88817b9e17f": {
+    "source": "This one opens your channel. For a clip or video, paste its link into the URL generator.",
+    "text": "이 코드는 내 채널을 엽니다. 클립이나 동영상은 링크를 URL 생성기에 붙여넣으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.faqs.0.answer"
+  },
+  "a21cc665c85a": {
+    "source": "Will a code on a stream overlay scan?",
+    "text": "방송 오버레이에 넣은 코드도 스캔되나요?",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.faqs.1.question"
+  },
+  "eeaf46c0896e": {
+    "source": "Yes, if it's big enough on screen. Test it from a phone at viewing distance before you go live.",
+    "text": "네, 화면에서 충분히 크다면 가능합니다. 방송을 시작하기 전에 시청 거리에서 휴대폰으로 테스트해 보세요.",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.faqs.1.answer"
+  },
+  "8506b11e2d83": {
+    "source": "SoundCloud",
+    "text": "SoundCloud",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.name"
+  },
+  "2bada9b2aa22": {
+    "source": "Play a SoundCloud profile, track or playlist.",
+    "text": "SoundCloud 프로필, 트랙, 플레이리스트를 재생해요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.summary"
+  },
+  "32a2026b4b36": {
+    "source": "Make a SoundCloud QR code for your profile, a track or a playlist. For flyers, merch, demo CDs and gig posters. Free, no signup.",
+    "text": "프로필, 트랙, 플레이리스트용 SoundCloud QR 코드를 만드세요. 전단지, 굿즈, 데모 CD, 공연 포스터에 쓸 수 있어요. 무료, 가입 필요 없음.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.metaDescription"
+  },
+  "df66b6af6501": {
+    "source": "A SoundCloud QR code opens your profile, a track or a playlist, so people can listen from a gig poster, a flyer or a merch tag.",
+    "text": "SoundCloud QR 코드는 프로필, 트랙 또는 플레이리스트를 열어 줘서, 사람들이 공연 포스터, 전단지, 굿즈 태그에서 바로 들을 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.intro.0"
+  },
+  "2868babcfe58": {
+    "source": "Type your profile name and QRdx builds the link, or paste a track or playlist link to open it directly.",
+    "text": "프로필 이름을 입력하면 QRdx가 링크를 만들어 줘요. 트랙이나 플레이리스트 링크를 붙여넣으면 해당 페이지가 바로 열려요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.intro.1"
+  },
+  "7a1489f81f4f": {
+    "source": "Enter your SoundCloud profile name, or paste a track or playlist link.",
+    "text": "SoundCloud 프로필 이름을 입력하거나 트랙 또는 플레이리스트 링크를 붙여넣으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.steps.0"
+  },
+  "cafaee51af85": {
+    "source": "Scan the preview to check it opens and plays.",
+    "text": "미리보기를 스캔해서 열리고 재생되는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.steps.1"
+  },
+  "016e9641a7b2": {
+    "source": "Profile names are 3 to 25 letters, digits, underscores and dashes.",
+    "text": "프로필 이름은 영문자, 숫자, 밑줄, 대시를 합쳐 3자에서 25자까지 쓸 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.payload.notes.0"
+  },
+  "72773034536d": {
+    "source": "Pasted soundcloud.com and on.soundcloud.com links are kept as they are.",
+    "text": "붙여넣은 soundcloud.com 및 on.soundcloud.com 링크는 그대로 유지돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.payload.notes.1"
+  },
+  "5e74c3b7cc88": {
+    "source": "Can I link a private track?",
+    "text": "비공개 트랙도 연결할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.faqs.0.question"
+  },
+  "9a4274cd8e41": {
+    "source": "Yes, with its secret link. Anyone who scans the code can listen, so share it only where you mean to.",
+    "text": "네, 비공개 링크를 쓰면 가능해요. 코드를 스캔한 사람은 누구나 들을 수 있으니 공유할 곳을 신중히 정하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.faqs.0.answer"
+  },
+  "128e08abc64f": {
+    "source": "Does it open the SoundCloud app?",
+    "text": "SoundCloud 앱이 열리나요?",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.faqs.1.question"
+  },
+  "c6435a2cc24c": {
+    "source": "SoundCloud links open the app when it's installed, or the page in the browser.",
+    "text": "SoundCloud 링크는 앱이 설치되어 있으면 앱이 열리고, 없으면 브라우저에서 페이지가 열려요.",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.faqs.1.answer"
+  },
+  "509c517ede79": {
+    "source": "Zoom",
+    "text": "Zoom",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.name"
+  },
+  "7f0489e32909": {
+    "source": "Join a Zoom meeting with one scan.",
+    "text": "한 번의 스캔으로 Zoom 회의에 참여하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.summary"
+  },
+  "4be9ea48eb5a": {
+    "source": "Create a Zoom QR code from a meeting ID or invite link. People join from slides, room signs and printed agendas. Keep the passcode. Free.",
+    "text": "회의 ID 또는 초대 링크로 Zoom QR 코드를 만드세요. 슬라이드, 회의실 안내판, 인쇄된 안건지에서 바로 참여할 수 있어요. 암호는 그대로 유지돼요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.metaDescription"
+  },
+  "f5c14cedc08e": {
+    "source": "A Zoom QR code opens a meeting in Zoom, so people join from a slide, a room sign or a printed agenda without typing an 11-digit ID.",
+    "text": "Zoom QR 코드는 Zoom에서 회의를 열어 줘서, 11자리 ID를 입력하지 않고도 슬라이드, 회의실 안내판, 인쇄된 안건지에서 바로 참여할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.intro.0"
+  },
+  "31460335551f": {
+    "source": "Paste the meeting's invite link to keep its passcode, or type just the meeting ID, and Zoom asks for the passcode when people join.",
+    "text": "회의 초대 링크를 붙여넣으면 암호가 유지되고, 회의 ID만 입력하면 참여할 때 Zoom이 암호를 물어봐요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.intro.1"
+  },
+  "a3671ea51626": {
+    "source": "Copy the invite link in Zoom (Copy invitation, or the link in the calendar event).",
+    "text": "Zoom에서 초대 링크를 복사하세요(초대 복사 또는 캘린더 일정의 링크).",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.steps.0"
+  },
+  "d9ba6821ce9b": {
+    "source": "Paste it here, or type the meeting ID.",
+    "text": "여기에 붙여넣거나 회의 ID를 입력하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.steps.1"
+  },
+  "40b407098e5d": {
+    "source": "Scan the preview to check the meeting opens.",
+    "text": "미리보기를 스캔해서 회의가 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.steps.2"
+  },
+  "691fc7d13447": {
+    "source": "An invite link's pwd value is an encoded passcode Zoom generates. QRdx keeps it as pasted; it can't build one from the passcode.",
+    "text": "초대 링크의 pwd 값은 Zoom이 생성한 암호화된 암호예요. QRdx는 붙여넣은 그대로 유지하며, 암호로 이 값을 만들 수는 없어요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.payload.notes.0"
+  },
+  "83bca807261f": {
+    "source": "Personal meeting links (zoom.us/my/…) and webinar links work too.",
+    "text": "개인 회의 링크(zoom.us/my/…)와 웨비나 링크도 사용할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.payload.notes.1"
+  },
+  "935f1f42fe64": {
+    "source": "Can I use one code for a recurring meeting?",
+    "text": "반복 회의에 코드 하나를 계속 쓸 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.faqs.0.question"
+  },
+  "fe15c591d4e7": {
+    "source": "Yes. Recurring meetings and personal meeting rooms keep their ID, so the code keeps working.",
+    "text": "네. 반복 회의와 개인 회의실은 ID가 그대로라서 코드도 계속 작동해요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.faqs.0.answer"
+  },
+  "e0b46dbe696f": {
+    "source": "Can strangers join with the code?",
+    "text": "모르는 사람도 코드로 참여할 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.faqs.1.question"
+  },
+  "d869f1cebb9a": {
+    "source": "Anyone who scans it can try. Turn on the waiting room in Zoom if the meeting is private.",
+    "text": "코드를 스캔한 사람은 누구나 참여를 시도할 수 있어요. 비공개 회의라면 Zoom에서 대기실을 켜세요.",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.faqs.1.answer"
+  },
+  "78aeb390abbc": {
+    "source": "Google Meet",
+    "text": "Google Meet",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.name"
+  },
+  "97f878659f17": {
+    "source": "Join a Google Meet call with one scan.",
+    "text": "스캔 한 번으로 Google Meet 통화에 참여하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.summary"
+  },
+  "15bb3995429d": {
+    "source": "Make a Google Meet QR code from a meeting code or link. People join from room signs, slides and handouts. Free, no signup.",
+    "text": "회의 코드나 링크로 Google Meet QR 코드를 만드세요. 회의실 표지판, 슬라이드, 배부 자료에서 바로 참여할 수 있어요. 무료, 가입 필요 없음.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.metaDescription"
+  },
+  "47163746af2c": {
+    "source": "A Google Meet QR code opens a call in Meet, so people join from a meeting room sign, a slide or a class handout.",
+    "text": "Google Meet QR 코드는 Meet에서 통화를 열어 줘요. 그래서 회의실 표지판, 슬라이드, 수업 배부 자료에서 바로 참여할 수 있습니다.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.intro.0"
+  },
+  "61c28b9faf9d": {
+    "source": "Paste the meeting link or type its code (three letters, four, then three, like abc-defg-hij), and QRdx builds the meet.google.com link.",
+    "text": "회의 링크를 붙여 넣거나 코드(abc-defg-hij처럼 3글자, 4글자, 3글자)를 입력하면 QRdx가 meet.google.com 링크를 만들어 드려요.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.intro.1"
+  },
+  "5681e96f7c5c": {
+    "source": "Copy the meeting link from Google Calendar or Meet.",
+    "text": "Google Calendar나 Meet에서 회의 링크를 복사하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.steps.0"
+  },
+  "0f67b76c4011": {
+    "source": "Paste it here, or type the code.",
+    "text": "여기에 붙여 넣거나 코드를 입력하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.steps.1"
+  },
+  "4e3b717cbd40": {
+    "source": "Scan the preview to check the call opens.",
+    "text": "미리보기를 스캔해 통화가 열리는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.steps.2"
+  },
+  "4ac7593e07fc": {
+    "source": "Meeting codes are 10 letters; QRdx adds the dashes if you leave them out.",
+    "text": "회의 코드는 10글자예요. 대시를 빼고 입력해도 QRdx가 넣어 줍니다.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.payload.notes.0"
+  },
+  "bfb8a9d3ba4f": {
+    "source": "Whether people join right away or wait to be let in depends on the meeting's settings in Google.",
+    "text": "바로 참여할지, 입장 허락을 기다릴지는 Google의 회의 설정에 따라 달라요.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.payload.notes.1"
+  },
+  "157c3a3e0810": {
+    "source": "Does a Meet code expire?",
+    "text": "Meet 코드는 만료되나요?",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.faqs.0.question"
+  },
+  "1eb18a80d9c2": {
+    "source": "Codes from calendar events and recurring meetings last as long as the meeting. Instant meetings can expire when they end, so make the code from a scheduled one.",
+    "text": "캘린더 일정과 반복 회의의 코드는 회의가 있는 동안 유지돼요. 즉석 회의는 끝나면 만료될 수 있으니 예약된 회의로 코드를 만드세요.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.faqs.0.answer"
+  },
+  "2cb830dc1f1d": {
+    "source": "Do people need a Google account?",
+    "text": "Google 계정이 꼭 필요한가요?",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.faqs.1.question"
+  },
+  "b06624ed0a9b": {
+    "source": "That depends on the host's Workspace settings. Many meetings let guests ask to join without signing in.",
+    "text": "호스트의 Workspace 설정에 따라 달라요. 많은 회의에서 게스트가 로그인 없이 참여를 요청할 수 있습니다.",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.faqs.1.answer"
+  },
+  "302415affc9a": {
+    "source": "Waze",
+    "text": "Waze",
+    "status": "machine",
+    "context": "qrTypes.types.waze.name"
+  },
+  "6df35d8f9921": {
+    "source": "Open directions to a place in Waze.",
+    "text": "Waze에서 장소까지의 길 안내를 열어요.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.summary"
+  },
+  "0a02793245ba": {
+    "source": "Create a Waze QR code that starts directions to an address or coordinates. For shop windows, event signs and delivery notes. Free.",
+    "text": "주소나 좌표로 길 안내를 시작하는 Waze QR 코드를 만드세요. 가게 유리창, 행사 표지판, 배송 안내문에 쓰기 좋아요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.metaDescription"
+  },
+  "9ee2f547ac44": {
+    "source": "A Waze QR code opens directions in Waze to your shop, venue, parking entrance or loading dock. It suits places that are easy to miss in a maps search.",
+    "text": "Waze QR 코드는 가게, 행사장, 주차장 입구, 하역장까지 Waze에서 길 안내를 열어 줘요. 지도 검색에서 놓치기 쉬운 장소에 알맞습니다.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.intro.0"
+  },
+  "55ea4ae84543": {
+    "source": "Enter an address or coordinates. With directions on, Waze starts navigating when the code is scanned; without, it shows the place first.",
+    "text": "주소나 좌표를 입력하세요. 길 안내를 켜면 코드를 스캔할 때 Waze가 바로 안내를 시작하고, 끄면 먼저 장소를 보여 줘요.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.intro.1"
+  },
+  "d2bae5e6db1b": {
+    "source": "Enter the address, or coordinates as latitude, longitude for an exact spot.",
+    "text": "주소를 입력하세요. 정확한 지점은 위도, 경도 형식의 좌표로 입력할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.steps.0"
+  },
+  "cef53ba3cf07": {
+    "source": "Choose whether directions start right away.",
+    "text": "길 안내를 바로 시작할지 선택하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.steps.1"
+  },
+  "d1ad8de5c312": {
+    "source": "Scan the preview to check Waze finds the place.",
+    "text": "미리보기를 스캔해 Waze가 장소를 찾는지 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.steps.2"
+  },
+  "1476b419b16a": {
+    "source": "Coordinates point at the exact spot, which is best for gates and car park entrances. An address is searched in Waze.",
+    "text": "좌표는 정확한 지점을 가리키므로 출입문이나 주차장 입구에 가장 좋아요. 주소는 Waze에서 검색됩니다.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.payload.notes.0"
+  },
+  "d1d9b04e0961": {
+    "source": "The link opens Waze when it's installed, or waze.com in the browser.",
+    "text": "링크는 Waze가 설치되어 있으면 Waze를 열고, 없으면 브라우저에서 waze.com을 열어요.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.payload.notes.1"
+  },
+  "7500c3b45bbf": {
+    "source": "Waze or Google Maps?",
+    "text": "Waze와 Google Maps 중 무엇이 좋을까요?",
+    "status": "machine",
+    "context": "qrTypes.types.waze.faqs.0.question"
+  },
+  "7ad4828e1f55": {
+    "source": "Waze suits drivers. For walkers or a general audience, the Location generator opens Google Maps.",
+    "text": "Waze는 운전자에게 알맞아요. 도보 이용자나 일반 대상이라면 위치 생성기가 Google Maps를 열어 줍니다.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.faqs.0.answer"
+  },
+  "f0a8433544ea": {
+    "source": "How do I get coordinates?",
+    "text": "좌표는 어떻게 알아내나요?",
+    "status": "machine",
+    "context": "qrTypes.types.waze.faqs.1.question"
+  },
+  "0129ff7bf19d": {
+    "source": "In Google Maps or Waze, press and hold the spot and copy the numbers shown.",
+    "text": "Google Maps나 Waze에서 해당 지점을 길게 누르고 표시되는 숫자를 복사하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.waze.faqs.1.answer"
+  },
+  "eaa4e0ba3c89": {
+    "source": "Litecoin",
+    "text": "Litecoin",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.name"
+  },
+  "7f6af520aa46": {
+    "source": "Receive Litecoin with an optional amount.",
+    "text": "원하는 금액으로 Litecoin을 받아요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.summary"
+  },
+  "586a906afa44": {
+    "source": "Make a Litecoin QR code (litecoin: URI) with your wallet address and an optional amount, label and message. Made in your browser. Free.",
+    "text": "지갑 주소와 선택 금액, 라벨, 메시지를 담은 Litecoin QR 코드(litecoin: URI)를 만드세요. 브라우저에서 만들어져요. 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.metaDescription"
+  },
+  "7773b6f03e52": {
+    "source": "A Litecoin QR code holds a payment request: your wallet address and, if you like, an amount in LTC and a note. Wallets fill in the payment when they scan it.",
+    "text": "Litecoin QR 코드에는 결제 요청이 담겨 있어요. 지갑 주소와 함께, 원하면 LTC 금액과 메모도 넣을 수 있어요. 지갑이 코드를 스캔하면 결제 정보가 자동으로 채워져요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.intro.0"
+  },
+  "6a76071cb1a1": {
+    "source": "QRdx writes the litecoin: URI in the same form as Bitcoin's BIP-21, which Litecoin wallets read. It's made in your browser, and the address never leaves it.",
+    "text": "QRdx는 Litecoin 지갑이 읽을 수 있도록 Bitcoin의 BIP-21과 같은 형식으로 litecoin: URI를 만들어요. 브라우저에서 만들어지며 주소는 밖으로 나가지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.intro.1"
+  },
+  "a46bfc066434": {
+    "source": "Copy a receiving address from your Litecoin wallet and paste it.",
+    "text": "Litecoin 지갑에서 받는 주소를 복사해 붙여넣으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.steps.0"
+  },
+  "8618cedc3f03": {
+    "source": "Optionally add an amount in LTC, a label and a message.",
+    "text": "원하면 LTC 금액, 라벨, 메시지를 추가하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.steps.1"
+  },
+  "ba5fd09e4266": {
+    "source": "Scan the preview with your wallet and check every character of the address.",
+    "text": "지갑으로 미리보기를 스캔하고 주소의 모든 문자를 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.steps.2"
+  },
+  "cb36ea235354": {
+    "source": "Amounts are in LTC with up to 8 decimals.",
+    "text": "금액은 LTC 단위이며 소수점 8자리까지 입력할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.payload.notes.0"
+  },
+  "3b04b1c7bc23": {
+    "source": "QRdx checks the address's shape (ltc1, L, M or 3) but not its checksum. Your wallet does that when it scans.",
+    "text": "QRdx는 주소의 형식(ltc1, L, M 또는 3으로 시작)은 확인하지만 체크섬은 확인하지 않아요. 체크섬은 지갑이 스캔할 때 확인해요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.payload.notes.1"
+  },
+  "c5ad3cd3bc68": {
+    "source": "Can a payment be reversed?",
+    "text": "결제를 되돌릴 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.faqs.0.question"
+  },
+  "cc4b2946d472": {
+    "source": "No. Crypto payments are final, so check the address before you print.",
+    "text": "아니요. 암호화폐 결제는 되돌릴 수 없으니 인쇄하기 전에 주소를 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.faqs.0.answer"
+  },
+  "ea65b9b7149a": {
+    "source": "Can I reuse the code?",
+    "text": "코드를 다시 써도 되나요?",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.faqs.1.question"
+  },
+  "4b803c9b9267": {
+    "source": "Yes. A code without an amount can be paid any number of times. Some wallets give you a new address for privacy; reuse is your choice.",
+    "text": "네. 금액이 없는 코드는 몇 번이든 결제할 수 있어요. 일부 지갑은 개인정보 보호를 위해 새 주소를 알려 주지만, 재사용 여부는 직접 정하면 돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.faqs.1.answer"
+  },
+  "bbc8f6fd09a9": {
+    "source": "Dogecoin",
+    "text": "Dogecoin",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.name"
+  },
+  "14f89759d816": {
+    "source": "Receive Dogecoin with an optional amount.",
+    "text": "원하는 금액으로 Dogecoin을 받아요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.summary"
+  },
+  "5922b8cd2928": {
+    "source": "Create a Dogecoin QR code (dogecoin: URI) with your wallet address and an optional amount. For tip jars and stalls. Free.",
+    "text": "지갑 주소와 선택 금액을 담은 Dogecoin QR 코드(dogecoin: URI)를 만드세요. 팁 통이나 가판대에 좋아요. 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.metaDescription"
+  },
+  "9bd08f5d861f": {
+    "source": "A Dogecoin QR code holds a payment request with your wallet address and, if you like, an amount in DOGE. It's popular for tip jars and small stalls.",
+    "text": "Dogecoin QR 코드에는 지갑 주소와 함께, 원하면 DOGE 금액이 담긴 결제 요청이 들어 있어요. 팁 통이나 작은 가판대에서 많이 쓰여요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.intro.0"
+  },
+  "d07e6e6e15f8": {
+    "source": "QRdx writes the dogecoin: URI that Dogecoin wallets read, in the browser, so the address stays with you.",
+    "text": "QRdx는 Dogecoin 지갑이 읽을 수 있는 dogecoin: URI를 브라우저에서 만들어서 주소가 내 기기에만 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.intro.1"
+  },
+  "a56799f027f1": {
+    "source": "Paste a receiving address from your Dogecoin wallet.",
+    "text": "Dogecoin 지갑에서 받는 주소를 붙여넣으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.steps.0"
+  },
+  "38cce5fe5dac": {
+    "source": "Optionally add an amount, a label and a message.",
+    "text": "원하면 금액, 라벨, 메시지를 추가하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.steps.1"
+  },
+  "08bbb4d3d341": {
+    "source": "Scan the preview with a wallet to check the address.",
+    "text": "지갑으로 미리보기를 스캔해 주소를 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.steps.2"
+  },
+  "94aeac6c47dd": {
+    "source": "Amounts are in DOGE with up to 8 decimals.",
+    "text": "금액은 DOGE 단위이며 소수점 8자리까지 입력할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.payload.notes.0"
+  },
+  "e7b6497c86e7": {
+    "source": "QRdx checks the address's shape (it starts with D, A or 9) but not its checksum.",
+    "text": "QRdx는 주소의 형식(D, A 또는 9로 시작)은 확인하지만 체크섬은 확인하지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.payload.notes.1"
+  },
+  "d7ffcea07d85": {
+    "source": "Can I take back a payment sent to the wrong address?",
+    "text": "잘못된 주소로 보낸 결제를 되찾을 수 있나요?",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.faqs.0.question"
+  },
+  "8a9851255d67": {
+    "source": "Bitcoin Cash",
+    "text": "비트코인 캐시",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.name"
+  },
+  "6dc9a0aa25cf": {
+    "source": "Receive Bitcoin Cash with an optional amount.",
+    "text": "선택 금액이 담긴 비트코인 캐시를 받아요.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.summary"
+  },
+  "a2ef5e3964e3": {
+    "source": "Make a Bitcoin Cash QR code (bitcoincash: URI) with your CashAddr address and an optional amount. Made in your browser. Free.",
+    "text": "CashAddr 주소와 선택 금액으로 비트코인 캐시 QR 코드(bitcoincash: URI)를 만드세요. 브라우저에서 만들어져요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.metaDescription"
+  },
+  "05b1ee8ea58b": {
+    "source": "A Bitcoin Cash QR code holds a payment request: your address and, if you like, an amount in BCH and a note.",
+    "text": "비트코인 캐시 QR 코드에는 결제 요청이 담겨요. 내 주소와 함께 원하면 BCH 금액과 메모도 넣을 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.intro.0"
+  },
+  "85d94e821770": {
+    "source": "QRdx writes the bitcoincash: URI with your CashAddr address (starting with q or p), which Bitcoin Cash wallets read.",
+    "text": "QRdx는 q 또는 p로 시작하는 CashAddr 주소로 bitcoincash: URI를 만들어요. 비트코인 캐시 지갑이 이를 읽어요.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.intro.1"
+  },
+  "87c72308cd34": {
+    "source": "Paste a receiving address from your Bitcoin Cash wallet, with or without bitcoincash:.",
+    "text": "비트코인 캐시 지갑의 수신 주소를 붙여넣으세요. bitcoincash:는 있어도 없어도 돼요.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.steps.0"
+  },
+  "40716d09e823": {
+    "source": "Scan the preview with your wallet to check the address.",
+    "text": "지갑으로 미리보기를 스캔해 주소를 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.steps.2"
+  },
+  "8647e5886900": {
+    "source": "Amounts are in BCH with up to 8 decimals.",
+    "text": "금액은 BCH 단위이며 소수점 8자리까지 입력할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.payload.notes.0"
+  },
+  "d1551669ce87": {
+    "source": "Legacy addresses starting with 1 or 3 are accepted too, but CashAddr avoids mixing them up with Bitcoin addresses.",
+    "text": "1 또는 3으로 시작하는 레거시 주소도 사용할 수 있지만, CashAddr를 쓰면 비트코인 주소와 헷갈리지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.payload.notes.1"
+  },
+  "bbce6b218252": {
+    "source": "Is this the same as a Bitcoin code?",
+    "text": "비트코인 코드와 같은 건가요?",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.faqs.0.question"
+  },
+  "f2dda2e72286": {
+    "source": "No. Bitcoin Cash is a separate coin with its own wallets. For bitcoin, use the Bitcoin generator.",
+    "text": "아니요. 비트코인 캐시는 별도의 코인이고 지갑도 따로 있어요. 비트코인은 비트코인 생성기를 이용하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.faqs.0.answer"
+  },
+  "be4b0c384393": {
+    "source": "Solana",
+    "text": "솔라나",
+    "status": "machine",
+    "context": "qrTypes.types.solana.name"
+  },
+  "51f7bdf5aaa1": {
+    "source": "Receive SOL with a Solana Pay request.",
+    "text": "Solana Pay 요청으로 SOL을 받아요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.summary"
+  },
+  "a3b47984a6df": {
+    "source": "Create a Solana Pay QR code for SOL payments to your wallet, with an optional amount, label and message. Solana Pay transfer request format. Free.",
+    "text": "내 지갑으로 SOL을 받는 Solana Pay QR 코드를 만드세요. 금액, 라벨, 메시지는 선택 사항이에요. Solana Pay 전송 요청 형식이에요. 무료.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.metaDescription"
+  },
+  "df85b6d18511": {
+    "source": "A Solana QR code holds a Solana Pay transfer request: your wallet address and, if you like, an amount in SOL, a label and a message. Wallets that support Solana Pay fill in the payment.",
+    "text": "솔라나 QR 코드에는 Solana Pay 전송 요청이 담겨요. 지갑 주소와 함께 원하면 SOL 금액, 라벨, 메시지도 넣을 수 있어요. Solana Pay를 지원하는 지갑이 결제 정보를 자동으로 채워 줘요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.intro.0"
+  },
+  "38e780b1df46": {
+    "source": "QRdx writes the solana: URI from the Solana Pay specification, in your browser.",
+    "text": "QRdx는 브라우저에서 Solana Pay 사양의 solana: URI를 만들어요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.intro.1"
+  },
+  "6f71b4ebcc81": {
+    "source": "Paste your Solana wallet address.",
+    "text": "솔라나 지갑 주소를 붙여넣으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.steps.0"
+  },
+  "cdcf66a5f861": {
+    "source": "Optionally add an amount in SOL, a label and a message.",
+    "text": "원하면 SOL 금액, 라벨, 메시지를 추가하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.steps.1"
+  },
+  "6c3a5e889ac4": {
+    "source": "Scan the preview with a Solana Pay wallet to check it.",
+    "text": "Solana Pay 지갑으로 미리보기를 스캔해 확인하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.steps.2"
+  },
+  "74b80bb969ce": {
+    "source": "Amounts are in SOL with up to 9 decimals.",
+    "text": "금액은 SOL 단위이며 소수점 9자리까지 입력할 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.payload.notes.0"
+  },
+  "c260bf4dabce": {
+    "source": "This code requests SOL. Token payments (USDC and others) need the token's mint address, which this generator doesn't add.",
+    "text": "이 코드는 SOL을 요청해요. 토큰 결제(USDC 등)에는 토큰의 민트 주소가 필요한데, 이 생성기는 추가하지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.payload.notes.1"
+  },
+  "8695dd801284": {
+    "source": "Which wallets read Solana Pay codes?",
+    "text": "어떤 지갑이 Solana Pay 코드를 읽나요?",
+    "status": "machine",
+    "context": "qrTypes.types.solana.faqs.0.question"
+  },
+  "5514ccde5914": {
+    "source": "Most mobile Solana wallets scan them. Test with the wallets your customers use.",
+    "text": "대부분의 모바일 솔라나 지갑이 스캔할 수 있어요. 고객이 쓰는 지갑으로 테스트해 보세요.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.faqs.0.answer"
+  },
+  "089fe32a5314": {
+    "source": "Monero",
+    "text": "Monero",
+    "status": "machine",
+    "context": "qrTypes.types.monero.name"
+  },
+  "aa106b399d07": {
+    "source": "Receive Monero with an optional amount.",
+    "text": "Monero를 받을 수 있어요. 금액은 선택이에요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.summary"
+  },
+  "b2f0a77751f8": {
+    "source": "Make a Monero QR code (monero: URI) with your address and an optional amount, recipient name and description. Made in your browser. Free.",
+    "text": "주소와 선택 항목인 금액, 수신자 이름, 설명을 담은 Monero QR 코드(monero: URI)를 만들어 보세요. 브라우저에서 만들어지며 무료예요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.metaDescription"
+  },
+  "6b02906436f6": {
+    "source": "A Monero QR code holds a payment request: your address and, if you like, an amount in XMR, your name and a description.",
+    "text": "Monero QR 코드에는 결제 요청이 담겨요. 내 주소와 함께 원하면 XMR 금액, 이름, 설명도 넣을 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.intro.0"
+  },
+  "f906df3d2391": {
+    "source": "QRdx writes the monero: URI that Monero wallets read, in your browser. Monero addresses are 95 characters long, so the code is denser than most; print it a little larger.",
+    "text": "QRdx는 Monero 지갑이 읽는 monero: URI를 브라우저에서 만들어 줘요. Monero 주소는 95자로 길어서 코드가 대부분의 코드보다 촘촘하니, 조금 더 크게 인쇄하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.intro.1"
+  },
+  "6fb65559e607": {
+    "source": "Paste a receiving address or subaddress from your Monero wallet.",
+    "text": "Monero 지갑에서 받는 주소나 서브주소를 붙여 넣으세요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.steps.0"
+  },
+  "743c90204a91": {
+    "source": "Optionally add an amount, a recipient name and a description.",
+    "text": "원하면 금액, 수신자 이름, 설명을 추가하세요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.steps.1"
+  },
+  "5a69fbe63fa1": {
+    "source": "Amounts are in XMR with up to 12 decimals.",
+    "text": "금액은 XMR 단위이며 소수점 아래 최대 12자리까지 쓸 수 있어요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.payload.notes.0"
+  },
+  "70d2260bc49d": {
+    "source": "Standard addresses start with 4, subaddresses with 8; integrated addresses are 106 characters.",
+    "text": "일반 주소는 4, 서브주소는 8로 시작하고, 통합 주소는 106자예요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.payload.notes.1"
+  },
+  "b190b66a6533": {
+    "source": "Should I use a subaddress?",
+    "text": "서브주소를 써야 할까요?",
+    "status": "machine",
+    "context": "qrTypes.types.monero.faqs.0.question"
+  },
+  "923b0bd41bbb": {
+    "source": "Many wallets suggest a new subaddress for each code you publish, so payments to different codes aren't linked.",
+    "text": "많은 지갑이 공개하는 코드마다 새 서브주소를 쓰라고 권해요. 그러면 서로 다른 코드로 들어온 결제가 연결되지 않아요.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.faqs.0.answer"
   },
   "d96545f726d0": {
     "source": "Food and drink",
@@ -17921,6 +19907,252 @@
     "status": "machine",
     "context": "pageCodes.type-calcom-4.label"
   },
+  "f0268cb9100a": {
+    "source": "Rent",
+    "text": "월세",
+    "status": "machine",
+    "context": "pageCodes.type-sepa-3.label"
+  },
+  "750fdff086b0": {
+    "source": "Club fees",
+    "text": "동호회 회비",
+    "status": "machine",
+    "context": "pageCodes.type-sepa-4.label"
+  },
+  "3bcea7291aff": {
+    "source": "Hawker stall",
+    "text": "호커 노점",
+    "status": "machine",
+    "context": "pageCodes.type-paynow-1.label"
+  },
+  "01ad1851b87a": {
+    "source": "Street food",
+    "text": "길거리 음식",
+    "status": "machine",
+    "context": "pageCodes.type-promptpay-1.label"
+  },
+  "56919f62ef37": {
+    "source": "Massage shop",
+    "text": "마사지숍",
+    "status": "machine",
+    "context": "pageCodes.type-promptpay-2.label"
+  },
+  "74d98742de67": {
+    "source": "Temple fund",
+    "text": "사찰 기금",
+    "status": "machine",
+    "context": "pageCodes.type-promptpay-3.label"
+  },
+  "7e1ebb6fd276": {
+    "source": "Coffee cart",
+    "text": "커피 카트",
+    "status": "machine",
+    "context": "pageCodes.type-vietqr-1.label"
+  },
+  "9faeb3bd423e": {
+    "source": "Bake sale",
+    "text": "베이크 세일",
+    "status": "machine",
+    "context": "pageCodes.type-cashapp-3.label"
+  },
+  "f411a9424dbb": {
+    "source": "Dues",
+    "text": "회비",
+    "status": "machine",
+    "context": "pageCodes.type-cashapp-4.label"
+  },
+  "f90b83514334": {
+    "source": "Pay me back",
+    "text": "돈 갚기",
+    "status": "machine",
+    "context": "pageCodes.type-revolut-1.label"
+  },
+  "30893eb0c176": {
+    "source": "Shared trip",
+    "text": "함께 간 여행",
+    "status": "machine",
+    "context": "pageCodes.type-revolut-2.label"
+  },
+  "3f07c2140075": {
+    "source": "Freelance",
+    "text": "프리랜서",
+    "status": "machine",
+    "context": "pageCodes.type-revolut-4.label"
+  },
+  "28c7d3f8b75d": {
+    "source": "Group chat",
+    "text": "그룹 채팅",
+    "status": "machine",
+    "context": "pageCodes.type-telegram-2.label"
+  },
+  "1c1ecdd8f5a2": {
+    "source": "Event updates",
+    "text": "행사 소식",
+    "status": "machine",
+    "context": "pageCodes.type-telegram-4.label"
+  },
+  "4db740773a74": {
+    "source": "Message me",
+    "text": "메시지 보내기",
+    "status": "machine",
+    "context": "pageCodes.type-signal-1.label"
+  },
+  "0a108318f3d6": {
+    "source": "Tips line",
+    "text": "제보 창구",
+    "status": "machine",
+    "context": "pageCodes.type-signal-2.label"
+  },
+  "2b5c3d26721a": {
+    "source": "Contact",
+    "text": "연락처",
+    "status": "machine",
+    "context": "pageCodes.on-business-cards-1.label"
+  },
+  "059f4256fc03": {
+    "source": "Join the server",
+    "text": "서버 참여하기",
+    "status": "machine",
+    "context": "pageCodes.type-discord-1.label"
+  },
+  "6923180337c3": {
+    "source": "Game night",
+    "text": "게임 나이트",
+    "status": "machine",
+    "context": "pageCodes.type-discord-2.label"
+  },
+  "c1f872819746": {
+    "source": "Add friend",
+    "text": "친구 추가",
+    "status": "machine",
+    "context": "pageCodes.type-line-1.label"
+  },
+  "1212ea9e2094": {
+    "source": "Restaurant",
+    "text": "레스토랑",
+    "status": "machine",
+    "context": "templates.menu.variants.restaurant.name"
+  },
+  "1f13b99c482b": {
+    "source": "Talk slides",
+    "text": "발표 슬라이드",
+    "status": "machine",
+    "context": "pageCodes.type-bluesky-2.label"
+  },
+  "c12d357bb4a7": {
+    "source": "Newsroom",
+    "text": "뉴스룸",
+    "status": "machine",
+    "context": "pageCodes.type-bluesky-3.label"
+  },
+  "d696a35bdd18": {
+    "source": "Profile",
+    "text": "프로필",
+    "status": "machine",
+    "context": "pageCodes.type-bluesky-4.label"
+  },
+  "68be45f197ab": {
+    "source": "Watch live",
+    "text": "라이브 보기",
+    "status": "machine",
+    "context": "pageCodes.type-twitch-1.label"
+  },
+  "f6ef8695b788": {
+    "source": "Stream night",
+    "text": "스트림 나이트",
+    "status": "machine",
+    "context": "pageCodes.type-twitch-2.label"
+  },
+  "4126ff87d834": {
+    "source": "Merch table",
+    "text": "굿즈 테이블",
+    "status": "machine",
+    "context": "pageCodes.type-twitch-3.label"
+  },
+  "9ad978043f0b": {
+    "source": "New track",
+    "text": "신곡",
+    "status": "machine",
+    "context": "pageCodes.type-soundcloud-1.label"
+  },
+  "bac2c020240c": {
+    "source": "DJ set",
+    "text": "DJ 셋",
+    "status": "machine",
+    "context": "pageCodes.type-soundcloud-2.label"
+  },
+  "b7dce7dbd738": {
+    "source": "Demo tape",
+    "text": "데모 테이프",
+    "status": "machine",
+    "context": "pageCodes.type-soundcloud-3.label"
+  },
+  "7960e1811469": {
+    "source": "Join the call",
+    "text": "통화 참여하기",
+    "status": "machine",
+    "context": "pageCodes.type-zoom-1.label"
+  },
+  "4f3a9bd00397": {
+    "source": "Class",
+    "text": "수업",
+    "status": "machine",
+    "context": "pageCodes.type-zoom-2.label"
+  },
+  "83584124b578": {
+    "source": "Webinar",
+    "text": "웨비나",
+    "status": "machine",
+    "context": "templates.event.variants.webinar.name"
+  },
+  "bacd84b002a2": {
+    "source": "Stand-up",
+    "text": "스탠드업",
+    "status": "machine",
+    "context": "pageCodes.type-google-meet-1.label"
+  },
+  "bec05d7b19dd": {
+    "source": "Tutoring",
+    "text": "과외 수업",
+    "status": "machine",
+    "context": "pageCodes.type-google-meet-3.label"
+  },
+  "60925ffded06": {
+    "source": "Room sign",
+    "text": "회의실 표지",
+    "status": "machine",
+    "context": "pageCodes.type-google-meet-4.label"
+  },
+  "5f1e315df824": {
+    "source": "Event parking",
+    "text": "행사 주차장",
+    "status": "machine",
+    "context": "pageCodes.type-waze-2.label"
+  },
+  "49d2c2d23895": {
+    "source": "Delivery hub",
+    "text": "배송 거점",
+    "status": "machine",
+    "context": "pageCodes.type-waze-4.label"
+  },
+  "22ddee488cda": {
+    "source": "Stall",
+    "text": "가판대",
+    "status": "machine",
+    "context": "pageCodes.type-dogecoin-4.label"
+  },
+  "0d5f2e74a9f6": {
+    "source": "Cafe",
+    "text": "카페",
+    "status": "machine",
+    "context": "pageCodes.type-bitcoincash-2.label"
+  },
+  "1b999f771518": {
+    "source": "Merch",
+    "text": "굿즈",
+    "status": "machine",
+    "context": "pageCodes.on-tickets-4.label"
+  },
   "0432f20a0f65": {
     "source": "Table menu",
     "text": "테이블 메뉴",
@@ -18551,12 +20783,6 @@
     "status": "machine",
     "context": "pageCodes.for-transportation-3.label"
   },
-  "2b5c3d26721a": {
-    "source": "Contact",
-    "text": "연락처",
-    "status": "machine",
-    "context": "pageCodes.on-business-cards-1.label"
-  },
   "1853eb2e9e5e": {
     "source": "Portfolio",
     "text": "포트폴리오",
@@ -18844,12 +21070,6 @@
     "text": "행사 안내",
     "status": "machine",
     "context": "pageCodes.on-tickets-3.label"
-  },
-  "1b999f771518": {
-    "source": "Merch",
-    "text": "굿즈",
-    "status": "machine",
-    "context": "pageCodes.on-tickets-4.label"
   },
   "0fdf485f5bfd": {
     "source": "Agenda",
@@ -19577,12 +21797,6 @@
     "status": "machine",
     "context": "templates.menu.variants.cafe.description"
   },
-  "1212ea9e2094": {
-    "source": "Restaurant",
-    "text": "레스토랑",
-    "status": "machine",
-    "context": "templates.menu.variants.restaurant.name"
-  },
   "a02380b78e87": {
     "source": "Dark and elegant, a printed-menu look with bookings",
     "text": "어둡고 우아한 인쇄 메뉴 느낌에 예약 기능까지",
@@ -19696,12 +21910,6 @@
     "text": "티켓, 일정, 깔끔한 그리드",
     "status": "machine",
     "context": "templates.event.variants.conference.description"
-  },
-  "83584124b578": {
-    "source": "Webinar",
-    "text": "웨비나",
-    "status": "machine",
-    "context": "templates.event.variants.webinar.name"
   },
   "24468758d549": {
     "source": "Online event with a join link and agenda",
@@ -25030,6 +27238,18 @@
     "text": "위도와 경도로 만든 geo: 위치예요.",
     "status": "machine",
     "context": "mcp.tools.13.description"
+  },
+  "7b20ff0c7661": {
+    "source": "Bank payment",
+    "text": "은행 결제",
+    "status": "machine",
+    "context": "mcp.tools.14.title"
+  },
+  "d56984fa2345": {
+    "source": "A Pix, SEPA transfer, PayNow, PromptPay or VietQR payment code, checked like the playground's forms.",
+    "text": "Pix, SEPA 이체, PayNow, PromptPay, VietQR 결제 코드를 만들어요. Playground의 양식과 같은 방식으로 검증해요.",
+    "status": "machine",
+    "context": "mcp.tools.14.description"
   },
   "1385eac80167": {
     "source": "Do I need an account or an API key?",

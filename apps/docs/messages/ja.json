@@ -1266,7 +1266,7 @@
       },
       "payments": {
         "name": "支払い",
-        "detail": "UPI、Bitcoin、Ethereum、PayPal、Venmo、SEPA（EPC）のコードに対応し、必ず確認の手順を挟みます。"
+        "detail": "UPI、Pix、PayNow、PromptPay、VietQR、SEPA（EPC）コード、PayPal、Venmo、暗号資産ウォレットに対応し、いずれも必ず確認ステップを挟みます。"
       },
       "products": {
         "name": "商品コード",
@@ -1417,7 +1417,12 @@
       "copyLink": "リンクをコピー",
       "copyUsername": "ユーザー名をコピー",
       "copyIban": "IBANをコピー",
+      "copyPixKey": "Pixキーをコピー",
+      "copyNumber": "番号をコピー",
+      "copyAccount": "口座をコピー",
+      "copyMerchant": "加盟店をコピー",
       "epcNote": "ユーロ圏の銀行アプリでは、このコードを直接スキャンできます。IBANをコピーして、新しい振込に貼り付けることもできます。",
+      "bankAppNote": "{name}に対応した銀行アプリでコードをスキャンして、お支払いください。",
       "upiNote": "UPIアプリ（Google Pay、PhonePe、Paytm、BHIMなど）が入っているスマートフォンで、そのアプリが開きます。",
       "restyle": "Playgroundでデザインを変更",
       "name": "名前",
@@ -1439,7 +1444,6 @@
       "copyCoordinates": "座標をコピー",
       "number": "番号",
       "call": "電話をかける",
-      "copyNumber": "番号をコピー",
       "to": "宛先",
       "message": "メッセージ",
       "writeText": "メッセージを作成",
