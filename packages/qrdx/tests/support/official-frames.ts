@@ -6,7 +6,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, test } from "vitest";
 import { getQRAsEPS } from "../../src/eps";
 import {
   drawFrameOnCanvas,
@@ -100,7 +100,7 @@ export function describeOfficialFrameChecks(frames: OfficialFrame[]) {
         frame,
       };
 
-      it("validates, with Latin-1 labels and no brand names", () => {
+      test("validates, with Latin-1 labels and no brand names", () => {
         const result = frameSpecSchema.safeParse(official.spec);
         expect(result.error?.issues ?? []).toEqual([]);
         const texts = official.spec.labels.map((label) => label.text);
@@ -113,7 +113,7 @@ export function describeOfficialFrameChecks(frames: OfficialFrame[]) {
         ).toBe(true);
       });
 
-      it("is monochrome by default (or seasonal) and follows the theme", () => {
+      test("is monochrome by default (or seasonal) and follows the theme", () => {
         const plain = getFrameLayout(256, frame);
         const colors = [
           ...plain.shapes.map((shape) => shape.fill),
@@ -135,7 +135,7 @@ export function describeOfficialFrameChecks(frames: OfficialFrame[]) {
         expect([...themedColors].some((color) => !isGrey(color))).toBe(true);
       });
 
-      it("keeps the code whole and the labels off it", () => {
+      test("keeps the code whole and the labels off it", () => {
         const layout = getFrameLayout(256, frame);
         expect(layout.qrSize).toBe(256);
         expect(layout.qrX + layout.qrSize).toBeLessThanOrEqual(
@@ -161,7 +161,7 @@ export function describeOfficialFrameChecks(frames: OfficialFrame[]) {
         );
       });
 
-      it("draws the same shapes and labels on a canvas", () => {
+      test("draws the same shapes and labels on a canvas", () => {
         const layout = getFrameLayout(256, frame);
         const { ctx, calls } = recordCanvas();
         const previous = (globalThis as Record<string, unknown>).Path2D;
@@ -186,7 +186,7 @@ export function describeOfficialFrameChecks(frames: OfficialFrame[]) {
         ).toEqual(frameLabels(layout).map((label) => label.text));
       });
 
-      it("prints the same artwork in PDF and EPS as in SVG", async () => {
+      test("prints the same artwork in PDF and EPS as in SVG", async () => {
         const layout = getFrameLayout(256, frame);
         const labels = frameLabels(layout);
         const eps = await getQRAsEPS(props, { sizeMm: 40 });
@@ -268,7 +268,7 @@ export function describeOfficialFrameDecoding(frames: OfficialFrame[]) {
     (_id, official) => {
       const frame: AnyQRFrame = { style: "custom", spec: official.spec };
 
-      it("decodes a link, Wi-Fi and a contact at phone distances", () => {
+      test("decodes a link, Wi-Fi and a contact at phone distances", () => {
         const failed: string[] = [];
         for (const [name, value] of PAYLOADS) {
           for (const px of PHONE_MODULE_SIZES) {
@@ -294,7 +294,7 @@ export function describeOfficialFrameDecoding(frames: OfficialFrame[]) {
       // below the phone-distance floor (4 px, tested above), where every
       // framed code, the built-in frames included, decodes at some widths
       // and not others depending on pixel phase. It must read at 320 px.
-      it("decodes at 160 and 320 px wide (the contact card at 320)", () => {
+      test("decodes at 160 and 320 px wide (the contact card at 320)", () => {
         const failed: string[] = [];
         for (const [name, value] of PAYLOADS) {
           for (const width of name === "vcard" ? [320] : [160, 320]) {
@@ -306,7 +306,7 @@ export function describeOfficialFrameDecoding(frames: OfficialFrame[]) {
         expect(failed).toEqual([]);
       });
 
-      it("scores Great", async () => {
+      test("scores Great", async () => {
         for (const value of [SAMPLE_PAYLOADS.link, SAMPLE_PAYLOADS.wifi]) {
           const props = propsFor(frame, value, 1024);
           const artwork = getFrameDimensions(1024, frame);
@@ -324,7 +324,7 @@ export function describeOfficialFrameDecoding(frames: OfficialFrame[]) {
         }
       });
 
-      it.skipIf(!ZBAR)("reads with zbar", async () => {
+      test.skipIf(!ZBAR)("reads with zbar", async () => {
         const failed: string[] = [];
         for (const [name, value] of PAYLOADS) {
           const props = propsFor(frame, value);
