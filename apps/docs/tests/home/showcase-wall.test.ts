@@ -39,6 +39,7 @@ import { getTemplate, listTemplates } from "@/lib/landing/templates";
 import { parsePlaygroundParams } from "@/lib/playground-links";
 import { decodeStyleParam as decodeWithLoaded } from "@/lib/playground-style";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import { CONTENT_CATEGORIES } from "@/types/qr-content";
 import type { ThemeCategory } from "@/types/theme";
 
 // Wall links are made on the server, with the whole catalogue
@@ -293,6 +294,21 @@ const SAMPLE_PATHS: Record<string, RegExp> = {
   "www.etsy.com": /^\/shop\/YourShopName$/,
   "cal.com": /^\/yourname\//,
   "drive.google.com": /sample-file-id/,
+  // Content types added 2026-11-11: the platform's own account or a
+  // placeholder.
+  "t.me": /^\/telegram$/,
+  "signal.me": /^\/$/,
+  "discord.gg": /^\/yourserver$/,
+  "line.me": /^\/ti\/p\/~yourname$/,
+  "bsky.app": /^\/profile\/bsky\.app$/,
+  "mastodon.social": /^\/@Mastodon$/,
+  "www.twitch.tv": /^\/twitch$/,
+  "soundcloud.com": /^\/soundcloud$/,
+  "zoom.us": /^\/j\/1234567890$/,
+  "meet.google.com": /^\/abc-defg-hij$/,
+  "waze.com": /^\/ul$/,
+  "cash.app": /^\/\$yourcashtag$/,
+  "revolut.me": /^\/yourname$/,
 };
 
 describe("the home wall", () => {
@@ -333,9 +349,14 @@ describe("the home wall", () => {
     }
   });
 
-  it("shows every content type", () => {
+  it("shows a content type from every section of the type picker", () => {
     const types = new Set(tiles.map((t) => t.contentType).filter(Boolean));
-    for (const type of QR_TYPE_SLUGS) expect(types, type).toContain(type);
+    for (const category of CONTENT_CATEGORIES) {
+      expect(
+        category.types.some((type) => types.has(type)),
+        category.id,
+      ).toBe(true);
+    }
   });
 
   it("shows every family somewhere", () => {
