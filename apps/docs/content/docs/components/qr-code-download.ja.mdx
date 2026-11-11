@@ -1,0 +1,50 @@
+---
+title: "QRコードのダウンロード"
+description: "QRコードをPNG、SVG、JPG、PDFのいずれかの形式で、選択したサイズでエクスポートしたり、画像としてコピーしたりできるダウンロードメニューです。"
+icon: Download
+---
+
+<ComponentLinks name="qr-code-download" />
+
+<ComponentPreview name="qr-code-download-demo" />
+
+## インストール [#installation]
+
+<InstallationTabs name="qr-code-download" />
+
+## 使い方 [#usage]
+
+```tsx
+import { QrCodeDownload } from "@/components/qr-code-download";
+```
+
+```tsx
+<QrCodeDownload value="https://qrdx.dev" />
+```
+
+メニューには、各形式が短い説明付きで表示されるほか、サイズの選択と「画像をコピー」が用意されています。「画像をコピー」を選ぶと、PNGがクリップボードにコピーされます。ファイルはブラウザー上で生成され、アップロードされることはありません。
+
+## 例 [#examples]
+
+### スタイルを反映したエクスポート [#styled-export]
+
+画面に表示しているものと同じスタイルオブジェクトを `qr` に渡すと、エクスポートされるすべてのファイルがプレビューと一致します。`formats`、`sizes`、`label`、`variant` で、メニューとそのボタンの見た目を調整できます。
+
+<ComponentPreview name="qr-code-download-styled" />
+
+### 形式 [#formats]
+
+| 形式 | 出力 |
+|--------|--------|
+| `png` | QRコードの背景を含む画像 |
+| `jpg` | 単色の背景を持つ画像 |
+| `svg` | 任意のサイズに拡大縮小できるベクター形式 |
+| `pdf` | 1ページのドキュメント。オプションの `jspdf` パッケージが必要です（`npm install jspdf`） |
+
+ラスター形式のサイズは50〜5000ピクセルの範囲で指定できます。`sizes` に1つだけ指定すると、サイズの選択が非表示になります。
+
+## APIリファレンス [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-download.tsx" type="{ [K in keyof QrCodeDownloadProps as K extends Exclude<keyof ComponentProps<'div'>, 'onError'> ? never : K]: QrCodeDownloadProps[K] }" />
+
+`className` などその他のpropsは、外側の `<div>` に渡されます。

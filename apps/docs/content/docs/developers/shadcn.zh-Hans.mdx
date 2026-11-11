@@ -1,0 +1,72 @@
+---
+title: "shadcn/ui 注册表"
+description: "面向 shadcn/ui 项目的八个二维码组件，基于 qrdx 库构建。一条命令即可安装，代码完全归你所有。"
+icon: Blocks
+---
+
+QRdx 发布了一个 [shadcn/ui](https://ui.shadcn.com) 注册表，其中的二维码组件基于 [`qrdx`](https://www.npmjs.com/package/qrdx) 库构建。shadcn CLI 会把源代码复制到你的项目中，因此代码归你所有，你可以随意修改。
+
+<NpmStatus package="qrdx" />
+
+<PackageManagerTabs command="npx shadcn@latest add https://qrdx.dev/r/qr-code.json" />
+
+每个组件都有独立的页面，提供实时预览、源代码、安装步骤、示例和 API 参考。
+
+[在 Playground 中试用](/playground?open=code&lang=shadcn)：在那里设计好二维码样式，然后复制为注册表中的 QR Code 组件。
+
+## 组件 [#components]
+
+<Cards>
+  <Card title="QR Code" href="/docs/components/qr-code" icon={<QrCode />}>
+    样式丰富且支持无障碍的二维码，带有下载按钮，支持颜色、渐变、图案、徽标和边框模板。
+  </Card>
+  <Card title="QR Code Card" href="/docs/components/qr-code-card" icon={<Frame />}>
+    一张卡片，二维码置于“Scan me”边框中，并包含标题、描述和操作区域。
+  </Card>
+  <Card title="QR Code Download" href="/docs/components/qr-code-download" icon={<Download />}>
+    一个菜单，可按所选尺寸导出 PNG、SVG、JPG 或 PDF，也可复制图片。
+  </Card>
+  <Card title="QR Code Share Dialog" href="/docs/components/qr-code-share-dialog" icon={<Webhook />}>
+    一个对话框，包含链接的二维码、复制按钮、PNG 下载和系统原生分享面板。
+  </Card>
+  <Card title="QR Code Generator" href="/docs/components/qr-code-generator" icon={<Sparkles />}>
+    一个文本输入框，带实时预览、样式预设和下载按钮。
+  </Card>
+  <Card title="QR Code Scanner" href="/docs/components/qr-code-scanner" icon={<Scan />}>
+    一个拖放区域，可在浏览器中从图片读取二维码。
+  </Card>
+  <Card title="Wi-Fi QR Code" href="/docs/components/wifi-qr-code" icon={<Globe />}>
+    一个可加入 Wi-Fi 网络的二维码，附带带转义的载荷构建器。
+  </Card>
+  <Card title="vCard QR Code" href="/docs/components/vcard-qr-code" icon={<Users />}>
+    一个可保存联系人名片的二维码，附带 vCard 3.0 构建器。
+  </Card>
+</Cards>
+
+## 会安装哪些内容 [#what-gets-installed]
+
+每个组件都是 `components/` 中的单个文件。CLI 还会安装 `qrdx`（部分组件用到图标时还会安装 `lucide-react`），并添加其所依赖的 shadcn/ui 组件，例如 `button`、`card`、`dialog`、`dropdown-menu` 或 `input`。
+
+完整索引位于 [`https://qrdx.dev/r/registry.json`](https://qrdx.dev/r/registry.json)。
+
+## 使用注册表命名空间 [#using-the-registry-namespace]
+
+若想用简短名称安装，请把该注册表添加到你的 `components.json`：
+
+```json
+{
+  "registries": {
+    "@qrdx": "https://qrdx.dev/r/{name}.json"
+  }
+}
+```
+
+然后按名称添加一个或多个组件：
+
+<PackageManagerTabs command="npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-download @qrdx/qr-code-share-dialog" />
+
+## 样式 [#styling]
+
+组件使用 Tailwind 类名和标准的 shadcn/ui 主题令牌（`bg-card`、`border`、`text-muted-foreground`、`ring-ring`），并使用你自己的 Button、Card、Dialog 和 Input，因此会跟随你的主题和深色模式。二维码默认保留浅色背景，因为浅色底块上的深色模块能被所有读码器扫描。
+
+下载 PDF 需要可选的 `jspdf` 包（`npm install jspdf`）。

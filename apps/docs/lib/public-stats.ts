@@ -2,6 +2,7 @@ import "server-only";
 
 import { randomBytes } from "node:crypto";
 import {
+  brandKit,
   codePublicStats,
   customDomain,
   database as db,
@@ -10,16 +11,25 @@ import {
 import cuid from "cuid";
 import { and, eq, isNull } from "drizzle-orm";
 import { unstable_cache } from "next/cache";
+import {
+  ClientBrandsUnavailableError,
+  findClientBrand,
+  listClientBrands,
+} from "@/lib/client-brands";
+import { normalizeAccent } from "@/lib/client-brands-shared";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
-import { getPlanForScope, getPlanLimits } from "@/lib/plans";
+import { cheapestPlanWith, getPlanForScope, getPlanLimits } from "@/lib/plans";
+import { PLAN_NAMES } from "@/lib/pricing";
 import {
   PUBLIC_STATS_RANGES,
   type PublicStats,
   type PublicStatsRange,
   type PublicStatsShare,
   publicStatsPath,
+  publicStatsUrlOn,
+  type StatsBranding,
 } from "@/lib/public-stats-shared";
 import { getScanAnalytics } from "@/lib/scans";
 import { type ActiveScope, isInScope } from "@/lib/scope";
@@ -36,6 +46,7 @@ export type {
   PublicStats,
   PublicStatsRange,
   PublicStatsShare,
+  StatsBranding,
 } from "@/lib/public-stats-shared";
 
 import { can } from "@/lib/permissions";
@@ -102,10 +113,20 @@ async function findCode(scope: ActiveScope, codeId: string) {
   return row;
 }
 
+// The columns from manual-sql/0016 only: sharing keeps working before the
+// agency columns (brand_kit_id, domain_id) exist.
+const shareColumns = {
+  id: codePublicStats.id,
+  qrCodeId: codePublicStats.qrCodeId,
+  token: codePublicStats.token,
+  createdBy: codePublicStats.createdBy,
+  createdAt: codePublicStats.createdAt,
+};
+
 async function findShare(codeId: string) {
   const [row] = await guarded(() =>
     db
-      .select()
+      .select(shareColumns)
       .from(codePublicStats)
       .where(eq(codePublicStats.qrCodeId, codeId))
       .limit(1),
@@ -113,14 +134,89 @@ async function findShare(codeId: string) {
   return row ?? null;
 }
 
-function toShare(
+// ─── Client branding (agency tools, manual-sql/2026-11-11-agency.sql) ───────
+
+interface ShareExtras {
+  brandKitId: string | null;
+  domainId: string | null;
+}
+
+/**
+ * A share's brand and domain, looked up on their own so that a database
+ * without the agency columns yet still shares plain pages: null then.
+ */
+async function findShareExtras(
+  where: { codeId: string } | { token: string },
+): Promise<ShareExtras | null> {
+  try {
+    const [row] = await db
+      .select({
+        brandKitId: codePublicStats.brandKitId,
+        domainId: codePublicStats.domainId,
+      })
+      .from(codePublicStats)
+      .where(
+        "codeId" in where
+          ? eq(codePublicStats.qrCodeId, where.codeId)
+          : eq(codePublicStats.token, where.token),
+      )
+      .limit(1);
+    return row
+      ? { brandKitId: row.brandKitId ?? null, domainId: row.domainId ?? null }
+      : null;
+  } catch (error) {
+    if (isMissingSchemaError(error)) return null;
+    throw error;
+  }
+}
+
+/** The workspace's verified custom domains. */
+async function verifiedDomains(organizationId: string) {
+  return db
+    .select({ id: customDomain.id, hostname: customDomain.hostname })
+    .from(customDomain)
+    .where(
+      and(
+        eq(customDomain.organizationId, organizationId),
+        eq(customDomain.verified, true),
+      ),
+    )
+    .orderBy(customDomain.hostname)
+    .limit(100);
+}
+
+/**
+ * The host a share's link is on: its custom domain while that's verified,
+ * in the code's workspace, and the plan serves branded pages there
+ * (Business); otherwise QRdx's own (null).
+ */
+async function shareHost(
+  scope: Pick<ActiveScope, "userId" | "organizationId">,
+  codeId: string,
+): Promise<string | null> {
+  const extras = await findShareExtras({ codeId });
+  if (!extras?.domainId) return null;
+  const limits = getPlanLimits(await getPlanForScope(scope));
+  if (!limits.clientReportsWhiteLabel) return null;
+  const domain = (await verifiedDomains(scope.organizationId)).find(
+    (row) => row.id === extras.domainId,
+  );
+  return domain?.hostname ?? null;
+}
+
+async function toShare(
   scope: ActiveScope,
-  row: { token: string; createdAt: Date } | null,
-): PublicStatsShare {
+  row: { token: string; createdAt: Date; qrCodeId?: string } | null,
+): Promise<PublicStatsShare> {
+  const host = row?.qrCodeId ? await shareHost(scope, row.qrCodeId) : null;
   return {
     available: true,
     canManage: canSharePublicStats(scope),
-    url: row ? publicStatsUrl(row.token) : null,
+    url: row
+      ? host
+        ? publicStatsUrlOn(host, row.token)
+        : publicStatsUrl(row.token)
+      : null,
     since: row ? row.createdAt.toISOString() : null,
   };
 }
@@ -136,7 +232,7 @@ export async function getPublicStatsShare(
 ): Promise<PublicStatsShare> {
   await findCode(scope, codeId);
   try {
-    return toShare(scope, await findShare(codeId));
+    return await toShare(scope, await findShare(codeId));
   } catch (error) {
     if (error instanceof PublicStatsUnavailableError) {
       return {
@@ -188,7 +284,7 @@ export async function resetPublicStats(
         createdAt: new Date(),
       })
       .where(eq(codePublicStats.qrCodeId, codeId))
-      .returning(),
+      .returning(shareColumns),
   );
   if (!row) return enablePublicStats(scope, codeId);
   return toShare(scope, row);
@@ -205,6 +301,133 @@ export async function disablePublicStats(
     db.delete(codePublicStats).where(eq(codePublicStats.qrCodeId, codeId)),
   );
   return toShare(scope, null);
+}
+
+// ─── Client branding of a share (agency tools) ──────────────────────────────
+
+const planName = (allows: Parameters<typeof cheapestPlanWith>[0]) => {
+  const plan = cheapestPlanWith(allows);
+  return plan ? PLAN_NAMES[plan] : null;
+};
+
+const UNAVAILABLE_BRANDING: StatsBranding = {
+  available: false,
+  canManage: false,
+  allowed: false,
+  whiteLabel: false,
+  brandingPlan: null,
+  whiteLabelPlan: null,
+  brandId: null,
+  brands: [],
+  domainId: null,
+  domains: [],
+};
+
+/** The code's page branding and the choices the share dialog offers. */
+export async function getStatsBranding(
+  scope: ActiveScope,
+  codeId: string,
+): Promise<StatsBranding> {
+  await findCode(scope, codeId);
+  const limits = getPlanLimits(await getPlanForScope(scope));
+  let extras: ShareExtras | null;
+  let brands: Awaited<ReturnType<typeof listClientBrands>>;
+  try {
+    [extras, brands] = await Promise.all([
+      findShareExtras({ codeId }),
+      limits.clientReports
+        ? listClientBrands(scope.organizationId)
+        : Promise.resolve([]),
+    ]);
+  } catch (error) {
+    if (error instanceof ClientBrandsUnavailableError) {
+      return UNAVAILABLE_BRANDING;
+    }
+    throw error;
+  }
+  if (extras === null && (await findShare(codeId).catch(() => null))) {
+    // Shared, but the agency columns aren't there yet.
+    return UNAVAILABLE_BRANDING;
+  }
+  return {
+    available: true,
+    canManage: canSharePublicStats(scope),
+    allowed: limits.clientReports,
+    whiteLabel: limits.clientReportsWhiteLabel,
+    brandingPlan: planName((l) => l.clientReports),
+    whiteLabelPlan: planName((l) => l.clientReportsWhiteLabel),
+    brandId: extras?.brandKitId ?? null,
+    brands,
+    domainId: extras?.domainId ?? null,
+    domains: limits.clientReportsWhiteLabel
+      ? await verifiedDomains(scope.organizationId)
+      : [],
+  };
+}
+
+/**
+ * Sets the brand (null: plain) and the custom domain (null: QRdx's host) of
+ * a shared page. A brand needs Pro or Business, a domain needs Business;
+ * both must belong to the code's workspace. Sharing must be on.
+ */
+export async function setStatsBranding(
+  scope: ActiveScope,
+  codeId: string,
+  input: { brandId: string | null; domainId: string | null },
+): Promise<{ share: PublicStatsShare; branding: StatsBranding }> {
+  assertCanShare(scope);
+  await findCode(scope, codeId);
+  const limits = getPlanLimits(await getPlanForScope(scope));
+  if (input.brandId) {
+    if (!limits.clientReports) {
+      throw new HttpError(
+        402,
+        "PLAN_REQUIRED",
+        `Client branding is part of ${planName((l) => l.clientReports) ?? "a paid plan"}.`,
+      );
+    }
+    if (!(await findClientBrand(scope.organizationId, input.brandId))) {
+      throw new HttpError(404, "NOT_FOUND", "Client brand not found.");
+    }
+  }
+  if (input.domainId) {
+    if (!limits.clientReportsWhiteLabel) {
+      throw new HttpError(
+        402,
+        "PLAN_REQUIRED",
+        `Stats links on your own domain are part of ${planName((l) => l.clientReportsWhiteLabel) ?? "a paid plan"}.`,
+      );
+    }
+    const domains = await verifiedDomains(scope.organizationId);
+    if (!domains.some((domain) => domain.id === input.domainId)) {
+      throw new HttpError(
+        404,
+        "NOT_FOUND",
+        "That domain isn't a verified domain of this workspace.",
+      );
+    }
+  }
+  if (!(await findShare(codeId))) {
+    throw new HttpError(
+      409,
+      "CONFLICT",
+      "Turn the analytics page on first, then brand it.",
+    );
+  }
+  try {
+    await db
+      .update(codePublicStats)
+      .set({ brandKitId: input.brandId, domainId: input.domainId })
+      .where(eq(codePublicStats.qrCodeId, codeId));
+  } catch (error) {
+    if (isMissingSchemaError(error)) throw new ClientBrandsUnavailableError();
+    throw error;
+  }
+  const [share, branding] = await Promise.all([
+    getPublicStatsShare(scope, codeId),
+    getStatsBranding(scope, codeId),
+  ]);
+  return { share, branding };
 }
 
 // ─── The public page ─────────────────────────────────────────────────────────
@@ -239,6 +462,14 @@ const cachedAnalytics = unstable_cache(
 export async function loadPublicStats(
   token: string,
   range: PublicStatsRange,
+  options: {
+    /**
+     * The verified custom domain the request came through (proxy.ts), or
+     * null on QRdx's own host. A custom domain only serves the shares
+     * assigned to it, on a plan with white-label pages (Business).
+     */
+    customDomainId?: string | null;
+  } = {},
 ): Promise<PublicStats | null> {
   if (!TOKEN_PATTERN.test(token)) return null;
   let row:
@@ -285,13 +516,34 @@ export async function loadPublicStats(
   // A code an admin switched off (abuse review) isn't shown either.
   if (!row?.isActive) return null;
 
-  // Never further back than the workspace's plan keeps scans.
-  const retention = getPlanLimits(
+  const limits = getPlanLimits(
     await getPlanForScope({
       userId: row.userId,
       organizationId: row.organizationId,
     }),
-  ).analyticsRetentionDays;
+  );
+  // Client branding (agency tools): looked up only where it can show.
+  const extras =
+    limits.clientReports || options.customDomainId
+      ? await findShareExtras({ token })
+      : null;
+  if (
+    options.customDomainId &&
+    !(
+      limits.clientReportsWhiteLabel &&
+      extras?.domainId === options.customDomainId
+    )
+  ) {
+    return null;
+  }
+  const brand =
+    limits.clientReports && extras?.brandKitId && row.organizationId
+      ? await loadBrand(row.organizationId, extras.brandKitId)
+      : null;
+  const hideQrdx = Boolean(brand && limits.clientReportsWhiteLabel);
+
+  // Never further back than the workspace's plan keeps scans.
+  const retention = limits.analyticsRetentionDays;
   const ranges = PUBLIC_STATS_RANGES.filter(
     (key) => RANGE_DAYS[key] <= retention,
   );
@@ -324,7 +576,45 @@ export async function loadPublicStats(
     range: chosen,
     ranges,
     analytics,
+    brand,
+    hideQrdx,
+    // On a page without QRdx marks, a qrdx.dev short link would be one.
+    hideShortLink: hideQrdx && !(row.hostname && row.verified),
   };
+}
+
+/** A client brand of the workspace for a public page; null if gone. */
+async function loadBrand(
+  organizationId: string,
+  brandKitId: string,
+): Promise<PublicStats["brand"]> {
+  try {
+    const [row] = await db
+      .select({
+        name: brandKit.name,
+        logo: brandKit.logo,
+        colors: brandKit.colors,
+      })
+      .from(brandKit)
+      .where(
+        and(
+          eq(brandKit.id, brandKitId),
+          eq(brandKit.organizationId, organizationId),
+          eq(brandKit.purpose, "client"),
+        ),
+      )
+      .limit(1);
+    if (!row) return null;
+    const colors = (row.colors ?? {}) as { accent?: unknown };
+    return {
+      name: row.name,
+      logo: row.logo,
+      accent: normalizeAccent(colors.accent),
+    };
+  } catch (error) {
+    if (isMissingSchemaError(error)) return null;
+    throw error;
+  }
 }
 
 const RANGE_DAYS: Record<PublicStatsRange, number> = {

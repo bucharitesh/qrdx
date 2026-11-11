@@ -1,0 +1,94 @@
+---
+title: "Rastreamento e conversões"
+description: "Adicione seus pixels de análise e remarketing às páginas hospedadas, veja quando e como as pessoas fazem a leitura e atribua vendas e cadastros às leituras de QR code."
+icon: Target
+---
+
+Todo [QR code dinâmico](/docs/dynamic-qr-codes) registra leituras sem cookies. Além disso, você pode carregar seus próprios pixels nas páginas hospedadas (Pro) e atribuir conversões, como compras, à leitura que trouxe o visitante (Business). Os dois recursos são configurados na página do código no [painel](/dashboard?to=codes), na aba **Settings**.
+
+## Análises em todo código [#analytics-on-every-code]
+
+Além das leituras ao longo do tempo, países, cidades, dispositivos, sistemas operacionais, navegadores e origens de referência, a página de cada código mostra:
+
+- **Quando as pessoas fazem a leitura:** leituras por hora do dia e por dia da semana, em UTC ou no seu próprio fuso horário.
+- **Idiomas:** o idioma preferido do navegador de cada visitante ("Unknown" quando o navegador não envia nenhum, e para leituras de antes de os idiomas serem registrados).
+- **Divisões A/B:** leituras por variante para cada [regra de divisão A/B](/docs/smart-routing#ab-tests).
+- **Atividade da página** (páginas hospedadas): visualizações, visitantes únicos, toques e os links e botões mais tocados.
+- **Conversões**, quando o código tiver alguma.
+
+[Painel → Analytics](/dashboard?to=analytics) soma todos os códigos do workspace: totais, leituras ao longo do tempo, principais códigos, países, dispositivos, idiomas, horários de leitura e uma comparação de até 4 códigos lado a lado.
+
+Bots e pré-visualizações de links não são contabilizados, e um visitante conta uma vez por dia como "único". Endereços IP nunca são armazenados.
+
+## Pixels de rastreamento em páginas hospedadas (Pro) [#tracking-pixels-on-hosted-pages-pro]
+
+Para códigos que abrem uma página hospedada, o painel **Tracking pixels** carrega suas próprias tags nessa página:
+
+| Provedor | Formato do ID |
+| --- | --- |
+| Google Analytics 4 | `G-XXXXXXXXXX` |
+| Google Tag Manager | `GTM-XXXXXXX` |
+| Pixel da Meta (Facebook) | 6 a 20 dígitos |
+| Pixel do TikTok | 10 a 30 letras e dígitos |
+| LinkedIn Insight Tag | ID de parceiro, 3 a 12 dígitos |
+
+Os pixels só são carregados quando você os configura; o QRdx não adiciona nenhum script de terceiros próprio às páginas hospedadas.
+
+O Google Tag Manager só é carregado quando a página abre em um dos seus [domínios personalizados](/docs/custom-domains). Um contêiner pode executar qualquer script, por isso ele nunca roda em qrdx.dev, onde os visitantes podem estar logados no QRdx.
+
+**Consentimento.** Os pixels nunca são carregados antes de o visitante concordar:
+
+- **Onde exigido** (padrão): visitantes da UE/EEE, do Reino Unido e da Suíça, e visitantes de localização desconhecida, veem um aviso curto com o nome dos seus provedores e escolhem **Accept** ou **Decline**. A escolha fica salva para aquela página, e **Cookie settings** permite mudá-la. Nos outros lugares os pixels são carregados na hora, exceto em navegadores que enviam o sinal Global Privacy Control.
+- **Para todos os visitantes:** todos veem o aviso primeiro.
+
+Você continua responsável pela sua própria política de privacidade e pelo uso dos dados que seus pixels coletam.
+
+Códigos que abrem o seu próprio site levam direto para lá, então adicione seus pixels ao seu site.
+
+## Rastreamento de conversões (Business) [#conversion-tracking-business]
+
+O rastreamento de conversões mostra quais leituras levaram a uma venda, um cadastro ou qualquer outra meta, com a receita.
+
+1. Em um código que abre o seu site, ative **Conversion tracking**. A partir daí, cada leitura abre a sua URL com um parâmetro `qrdx_sid` assinado adicionado, por exemplo `https://shop.example/?qrdx_sid=…`.
+2. Adicione o snippet às páginas em que as pessoas chegam e à página em que elas convertem:
+
+```html
+<script async src="https://qrdx.dev/conversions.js"></script>
+<script>
+  window.qrdx = window.qrdx || function () {
+    (window.qrdx.q = window.qrdx.q || []).push(arguments);
+  };
+  // Where the conversion happens, e.g. your order confirmation page:
+  qrdx("conversion", { name: "purchase", value: 49.99, currency: "USD", id: "ORDER-1234" });
+</script>
+```
+
+O script guarda o `qrdx_sid` em um cookie próprio no seu domínio por 30 dias (adicione `data-storage="session"` à tag do script para mantê-lo só durante a sessão do navegador) e o remove da barra de endereço. As conversões só são enviadas para visitantes que chegaram por uma leitura, então os outros visitantes nunca são rastreados.
+
+| Campo | Significado |
+| --- | --- |
+| `name` | O que aconteceu, por exemplo `purchase` ou `signup` (padrão `conversion`) |
+| `value` | Valor, com até 2 casas decimais (opcional) |
+| `currency` | Código ISO 4217 como `USD`; o padrão é `USD` quando há um valor |
+| `id` | O ID do seu pedido ou evento: enviar o mesmo ID duas vezes o registra uma vez só |
+| `metadata` | Até 20 pares extras de chave/valor (opcional) |
+
+### Pelo seu servidor [#from-your-server]
+
+Para informar conversões pelo seu backend (mais confiável que o navegador), guarde o `qrdx_sid` junto com o pedido e chame a API com uma [chave de API](/docs/developers/api-keys) ou um [token de acesso OAuth](/docs/developers/rest-api#get-an-access-token) que tenha o escopo `codes:write`:
+
+```bash
+curl -X POST https://api.qrdx.dev/v1/conversions \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sid": "<qrdx_sid>", "name": "purchase", "value": 49.99, "currency": "USD", "id": "ORDER-1234"}'
+```
+
+Com um token, você também pode enviar `"code": "<code id>"` no lugar de `sid` quando a leitura não for conhecida. A API responde `201` para uma nova conversão e `200` com `"duplicate": true` quando o `id` já tinha sido registrado.
+
+### Limites [#limits]
+
+- Uma leitura pode ser atribuída por 30 dias depois de acontecer.
+- O `qrdx_sid` é assinado, então não dá para adivinhá-lo nem alterá-lo para apontar para outro código.
+- Os envios pelo navegador exigem que o rastreamento de conversões esteja ativado no código, e cada leitura pode informar um número limitado de conversões por hora.
+- As conversões deixam de ser registradas se o workspace sair do Business; as existentes continuam nas suas análises, e desativar o rastreamento é sempre possível.

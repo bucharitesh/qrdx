@@ -1,0 +1,110 @@
+---
+title: "落地页"
+description: "无需网站，用区块为二维码搭建移动端页面。链接列表、商家页面、vCard Plus、产品页面等，共 {facts.hostedPageTypes} 种页面类型。"
+icon: PanelsTopLeft
+---
+
+托管落地页是由 QRdx 为你提供的移动端页面，地址为 `https://qrdx.dev/p/<slug>`（也可使用你的[自定义域名](/docs/custom-domains)）。每个页面都附带一个[动态二维码](/docs/dynamic-qr-codes)，因此二维码印刷之后，你仍可继续编辑页面，并查看每一次扫描。
+
+## 创建页面 [#create-a-page]
+
+1. 打开[控制台 → 页面与表单](/dashboard?to=pages)并点击 **New page**；或者在二维码列表中点击 **New code**，然后选择一种页面类型，而不是 **Website link**。
+2. 从 {facts.hostedPageTypes} 种[页面类型](#page-types)中选择一种，并从它的模板库中选择一个模板。
+3. 点击 **Create page**。编辑器会打开，并载入模板的区块；二维码已准备就绪，可在 **QR code** 中下载。
+
+已经印刷了指向网站的二维码？打开它并点击 **Change type**，即可在保留同一个短链接的情况下将其改为页面。参见[更改已印刷二维码打开的内容](/docs/help/dynamic-codes/change-the-type)。
+
+模板中预置了示例名称、价格、数字和照片，方便你了解页面的整体效果。在你首次发布之前，编辑器会提醒你将它们替换为自己的内容。
+
+## 页面类型 [#page-types]
+
+每种页面类型都只是一个起点：任何区块都可以添加到任何页面，由某一类型创建的页面也可以做成另一种类型的样子。
+
+| 页面类型 | 适用场景 | 初始内容 |
+| --- | --- | --- |
+| **Link list** | 简介链接、创作者、播客 | 个人资料头部、链接、社交图标 |
+| **Social media** | 一个二维码汇集所有主页 | 个人资料头部，每个社交网络一行并显示你的账号 |
+| **Business** | 商店、美容美发店、办公室 | 营业时间、地址与地图、联系方式、行动号召 |
+| **vCard Plus** | 电子名片 | 带有 **Save contact** 的联系人名片 |
+| **Menu** | 咖啡馆、餐厅、酒吧 | 菜单、Wi-Fi、营业时间（[更多](/docs/forms-and-pages#menu)） |
+| **Coupon** | 折扣与赠品 | 带条形码和 **Redeem** 的优惠券（[更多](/docs/forms-and-pages#coupon)） |
+| **Event** | 派对、会议、网络研讨会、婚礼 | 带有添加到日历功能的活动（[更多](/docs/forms-and-pages#event)） |
+| **App download** | 一个二维码对应所有应用商店 | 应用下载（[更多](/docs/forms-and-pages#app-download)） |
+| **Feedback & forms** | 评价、NPS 调查、报名 | 表单和评价链接（[更多](/docs/forms-and-pages#forms)） |
+| **Product** | 包装、标签、吊牌 | 成分、过敏原、营养成分、认证、保养说明、GS1 Digital Link（[更多](/docs/product-pages)） |
+| **Appointments** | 美容美发店、诊所、家教 | 服务与价格、预约申请表单、营业时间 |
+| **Payments & tips** | 打赏罐、捐款、发票 | 付款链接和可复制的银行信息 |
+| **Property listing** | 出售或出租的房源、开放看房 | 价格与概况、照片、经纪人、看房申请或签到表单 |
+| **Pet ID tag** | 项圈标签、寻宠海报 | 拨号按钮、宠物信息、“已找到”表单 |
+| **Medical ID** | 标签、腕带、过敏卡 | 紧急联系人、病史、过敏信息、用药情况 |
+| **PDF** | 宣传册、手册、文档库 | 供阅读或下载的 PDF，或多个文件 |
+| **Images** | 图库与作品集 | 照片图库 |
+| **MP3 / Audio** | 音乐、播客、语音留言 | 音频播放器 |
+| **Video** | 产品视频、短片 | 视频 |
+| **Playlist** | 混音歌单、语音导览、有声书 | 连续播放的多个音轨 |
+| **Custom page** | 其他任何用途 | 空白页面或公告 |
+
+如果未设置文件上传，则围绕上传功能构建的类型（PDF、Images、MP3 / Audio、Video 和 Playlist）不会出现在选择器中。
+
+**Appointments** 会把预约申请发送到页面的[回复](/docs/forms-and-pages#responses)和通知中，也可以链接到你的预约工具。它不会显示实时的空闲时段日历：每个申请都需要你自己确认。
+
+**Payments & tips** 从不代收付款。每个按钮都会打开对应支付应用（PayPal、Venmo、Cash App、Revolut、Wise）自己的页面，银行信息、UPI ID 和钱包地址则提供复制按钮。
+
+**Pet ID tag** 和 **Medical ID** 页面任何人扫描二维码都可以查看。请只添加对找到宠物的人、或在紧急情况下帮助你的人有用的信息。
+
+## 编辑与发布 [#edit-and-publish]
+
+编辑器有三个标签页和一个实时手机预览。在预览中点按某个区块，即可跳转到它的设置。
+
+- **Blocks**：用 **Add block** 添加区块，通过拖动（或使用箭头按钮）调整顺序，可隐藏区块而不删除它，也可复制或移除。每个区块都有自己的表单；存在的问题（例如链接缺少 `https://`）会在区块上标出，必须在发布前修复。
+- **Design**：使用你的[已保存二维码主题](/dashboard?to=themes)之一的颜色，让页面与印刷的二维码保持一致；也可以选择预设配色，或自行设置每种颜色。你还可以选择字体、圆角半径、纯色、渐变或图片背景，以及可选的徽标。**Match colors** 会根据你的背景色和强调色生成易读的文字和卡片颜色，文字对比度偏低时会出现警告。
+- **Settings**：分享预览的描述和图片、是否允许搜索引擎收录该页面（默认关闭），以及 Business 上的自定义 CSS。
+
+点击 **Publish**（或按 <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>S</kbd>）即可让你的更改上线。在你发布之前，访问者看到的内容不会有任何变化；未发布的修改保存在你的浏览器中，因此关闭标签页后仍可恢复。每次发布都会存为一个版本。如果你在编辑时有团队成员发布了同一个页面，QRdx 会要求你重新加载，而不是覆盖他们的更改。
+
+## 核心区块 [#core-blocks]
+
+| 区块 | 显示内容 |
+| --- | --- |
+| Profile header | 照片或徽标、名称、简介，以及可选的封面图片 |
+| Text | 一个标题和一段文字（保留换行） |
+| Button | 一个行动号召：网页链接、电子邮件地址或电话号码 |
+| Link list | 一组链接按钮，带有 Instagram、YouTube、WhatsApp 等网站图标 |
+| Social icons | 以圆形图标、按钮或带有各账号名称的列表形式显示的主页 |
+| Image | 一张照片或横幅，可选择添加链接 |
+| Video | YouTube、Vimeo 或 Loom 视频。只有访问者点按播放后，才会从视频网站加载 |
+| Contact card | 姓名、职位、电话、电子邮件、网站、地址、快捷操作（拨号、WhatsApp、电子邮件、导航）、**Save contact** 和 **Share** |
+| Address & map | 你的地址，附带 Google 地图和 Apple 地图导航，还可选择嵌入地图 |
+| Opening hours | 每天的营业时间（包括分段营业和跨午夜营业），并按你的时区显示 **Open now** 标记 |
+| Details | 以列表或方块网格形式显示的标签和值（卧室数、品种、血型、净重） |
+| Product details | 认证、成分、过敏原、营养成分表、点按展开的分区，以及 GTIN（[更多](/docs/product-pages)） |
+| Payment links | PayPal、Venmo、Cash App、Revolut、Wise、UPI、银行转账和加密货币钱包。按钮会打开对应的应用；详细信息提供复制按钮。页面从不代收付款。 |
+| Divider, Spacer | 布局辅助工具 |
+
+### vCard Plus 与 Save contact [#vcard-plus-and-save-contact]
+
+**Save contact** 会下载一个 vCard 3.0 文件（`.vcf`），手机可用通讯录应用打开。文件包含姓名、公司、职位、电话、电子邮件、网站、地址、简介、页面的社交主页和照片。上传到 QRdx 存储空间的照片会嵌入文件；链接自其他网站的照片则以链接形式包含（QRdx 绝不会从其他网站下载图片）。**Share** 会打开手机的分享面板，在电脑上则会复制页面链接。
+
+## 套餐 [#plans]
+
+| | 免费版 | Pro | Business |
+| --- | --- | --- | --- |
+| 托管页面 | 3 | 不限 | 不限 |
+| “Made with QRdx”页脚 | 显示 | 移除 | 移除 |
+| 白标（使用您的 logo 作为浏览器图标，不显示 QRdx 品牌） | — | — | ✓ |
+| 自定义 CSS | — | — | ✓ |
+
+限制只会阻止您创建新页面。您已有的页面在所有套餐下都会继续正常运行，降级后也是如此；从 Business 降级时，自定义 CSS 只是不再生效。每个页面还会占用您套餐中的一个动态二维码额度。参见[套餐与限制](/docs/plans-and-limits)。
+
+### 自定义 CSS（Business） [#custom-css-business]
+
+在 **设置 → 自定义 CSS** 中编写纯 CSS。规则只在您的页面内生效：每个选择器都限定在页面内容范围内，每个区块都可以用 `.lp-block-<type>` 来定位，例如 `.lp-block-links a` 或 `.lp-block-contact h1`。出于安全考虑，CSS 不能加载文件（`url()`、`@import`、`@font-face`），不能使用反斜杠转义，并且只支持 `@media`、`@supports`、`@container` 和 `@keyframes` 这几种 at-rule。
+
+## 访客体验 [#what-visitors-get]
+
+- 页面由服务器渲染，加载快，专为手机设计，不含 QRdx 的分析脚本或聊天脚本。只有您自己在二维码中添加了跟踪像素，它们才会加载。
+- 默认对搜索引擎隐藏，除非您开启 **在搜索引擎中显示**。
+- 在聊天应用和社交网络中提供分享预览（标题、描述、图片）。受密码保护的二维码绝不会在预览中泄露页面详情。
+- 每个页面上都有一个小小的 **举报滥用** 链接，白标页面也不例外。
+
+[二维码控制](/docs/code-controls)中的密码保护、开始和结束日期、扫描次数限制以及暂停功能，同样适用于该页面及其 **保存联系人** 文件，即使有人直接打开页面链接也是如此。

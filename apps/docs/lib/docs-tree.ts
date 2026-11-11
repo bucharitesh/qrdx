@@ -36,3 +36,20 @@ export function filterPageTree(
     });
   return { ...root, children: visit(root.children) };
 }
+
+/**
+ * The sidebar with each link to a page outside the docs (meta.json items
+ * like `[Changelog](/changelogs)`) passed through `map`: in another
+ * language, the link opens that page's translation where one exists.
+ */
+export function mapLinkNodes(root: Root, map: (url: string) => string): Root {
+  const visit = (nodes: Node[]): Node[] =>
+    nodes.map((node): Node => {
+      if (node.type === "page") {
+        return node.$ref ? node : { ...node, url: map(node.url) };
+      }
+      if (node.type !== "folder") return node;
+      return { ...node, children: visit(node.children) };
+    });
+  return { ...root, children: visit(root.children) };
+}

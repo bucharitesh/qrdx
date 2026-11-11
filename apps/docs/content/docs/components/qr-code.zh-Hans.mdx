@@ -1,0 +1,83 @@
+---
+title: "二维码"
+description: "带下载按钮、样式丰富且支持无障碍访问的二维码。颜色、渐变、图案、Logo 和边框模板均来自 qrdx 库。"
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## 安装 [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## 用法 [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+二维码以带有无障碍名称的 SVG 渲染，因此在任何尺寸下都保持清晰，屏幕阅读器也会读出它所链接的内容。
+
+## 示例 [#examples]
+
+### 尺寸 [#sizes]
+
+`size` 设置屏幕上显示的宽度和高度，单位为像素。下载使用 `downloadSize`，因此页面上较小的二维码仍可导出适合印刷的文件。
+
+<ComponentPreview name="qr-code-sizes" />
+
+### 颜色 [#colors]
+
+`fgColor` 和 `bgColor` 接受任何 CSS 颜色。`eyeColor` 和 `dotColor` 分别为三个角上的定位点着色。请让模块颜色比背景更深，以便所有扫描器都能读取二维码。
+
+<ComponentPreview name="qr-code-colors" />
+
+### 渐变 [#gradients]
+
+传入 qrdx 渐变来代替颜色：带 `angle` 的 `linear`，或者 `radial`。渐变会保留在 PNG、SVG 和 PDF 下载文件中。
+
+<ComponentPreview name="qr-code-gradient" />
+
+### 图案 [#patterns]
+
+`bodyPattern` 设置数据模块的形状，`cornerEyePattern` 设置角上的外框，`cornerEyeDotPattern` 设置其内部的圆点。所有形状请参阅[图案](/docs/features/patterns)。
+
+<ComponentPreview name="qr-code-patterns" />
+
+### Logo [#logo]
+
+`logo` 会在中心放置一张图片，并清除其后方的模块。请使用纠错等级 `H`，这样二维码被部分遮挡后仍可扫描。使用 data URL 可在下载文件中保留 Logo；远程图片则需要 CORS 标头。
+
+<ComponentPreview name="qr-code-logo" />
+
+### 边框模板 [#frame-templates]
+
+`templateId` 会在二维码周围绘制 qrdx [模板](/docs/features/templates)。可搭配 `caption`，在边框下方添加行动号召文字。
+
+<ComponentPreview name="qr-code-template" />
+
+### 下载格式 [#download-formats]
+
+`downloadFormats` 用于选择按钮：`png`、`jpg`、`svg` 和 `pdf`。导出 PDF 需要可选的 `jspdf` 包（`npm install jspdf`）。传入 `[]` 可隐藏这些按钮。
+
+<ComponentPreview name="qr-code-downloads" />
+
+如需一个同时包含格式和尺寸的菜单，请使用[二维码下载](/docs/components/qr-code-download)。
+
+### 深色模式 [#dark-mode]
+
+默认的白色背景是深色主题中最稳妥的选择：浅色底块上的深色模块可被所有读码器扫描。如果想跟随主题，请设置 `fgColor="currentColor"` 并使用透明背景。这样二维码在深色模式下会反色，手机相机可以读取，但部分较旧的扫描器无法读取。
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## API 参考 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+其他任何属性（例如 `className`）都会传递给外层的 `<figure>`。

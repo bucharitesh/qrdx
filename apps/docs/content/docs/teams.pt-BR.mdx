@@ -1,0 +1,89 @@
+---
+title: "Workspaces e equipes"
+description: "Cada pessoa tem o próprio workspace. Crie mais no Pro ou no Business, convide pessoas por e-mail ou por um link de entrada e escolha os papéis de proprietário, admin, membro, cobrança ou leitor."
+icon: Users
+---
+
+Tudo o que você cria no QRdx pertence a um workspace: QR codes dinâmicos e [páginas hospedadas](/docs/landing-pages), [arquivos](/docs/files), [domínios personalizados](/docs/custom-domains), pastas e tags, respostas de formulários, [webhooks](/docs/webhooks) e chaves de API. Os temas salvos são seus, e proprietários e admins podem compartilhar cópias com o workspace para que todos os membros criem designs com as mesmas cores. Toda página do painel tem o workspace na URL (`/dashboard/<workspace>/…`). Para trocar de workspace, use o seletor de workspace na parte de baixo da barra lateral (no celular, no menu); você continua na mesma seção, como Códigos ou Configurações → Domínios, do workspace que escolher.
+
+## Seu próprio workspace [#your-own-workspace]
+
+Toda conta tem um workspace próprio, criado automaticamente, com você como proprietário. Ele usa o seu plano. Você pode renomeá-lo e mudar a URL, mas não pode sair dele nem excluí-lo: ele é removido quando você [exclui sua conta](/docs/help/account-and-billing/delete-your-account). No Pro ou no Business, você pode convidar pessoas para ele, ou mantê-lo só para você e criar um workspace separado para cada equipe ou cliente.
+
+## Criar outro workspace [#create-another-workspace]
+
+Para criar mais workspaces, é preciso ter o Pro ou o Business. Qualquer pessoa pode entrar em um workspace para o qual foi convidada, inclusive quem está no plano Grátis.
+
+1. Abra o seletor de workspace e clique em **Criar workspace**.
+2. Informe um **Nome do workspace** e uma **URL do workspace** (de 3 a 48 letras minúsculas, números e hífens). O QRdx verifica enquanto você digita se a URL está livre; algumas palavras, como `codes` e `settings`, são reservadas.
+3. Clique em **Criar workspace**. Ele abre com você como proprietário.
+
+## Convidar pessoas [#invite-people]
+
+Proprietários e admins convidam pessoas em [Configurações → Equipe](/dashboard?to=settings/team):
+
+1. Informe o e-mail da pessoa e escolha um papel: **Admin**, **Membro** ou **Leitor**. Proprietários também podem convidar alguém como **Cobrança**.
+2. O QRdx envia um convite por e-mail. Todo convite também tem um link que você pode copiar e enviar por conta própria.
+3. A pessoa abre o link, entra com o e-mail convidado e clica em **Aceitar convite**. Em seguida, o workspace é aberto para ela.
+
+Convidar alguém como admin pede que você [confirme que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) antes, a menos que você já tenha feito isso nesse navegador nos últimos 10 minutos.
+
+Os convites expiram após 48 horas e só funcionam para o e-mail ao qual foram enviados, então um link encaminhado não pode ser usado por outra pessoa. Convites pendentes ocupam uma vaga até serem aceitos, por isso revogue os que você não precisa mais.
+
+## Link de entrada [#join-link]
+
+Um link de entrada é um único link para a equipe toda: qualquer pessoa conectada que o abrir entra no workspace, enquanto houver vagas livres. Proprietários e admins o gerenciam em [Configurações → Equipe](/dashboard?to=settings/team), no Pro e no Business:
+
+1. Escolha o papel que as pessoas recebem ao entrar (**Membro** por padrão; nunca proprietário, e só proprietários podem criar um link de **Cobrança**) e clique em **Criar link de entrada**. Um link que adiciona pessoas como admins pede que você [confirme que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) antes.
+2. Copie o link e compartilhe. Por segurança, ele aparece só uma vez; o QRdx guarda uma impressão digital dele, não o link.
+3. Perdeu o link, ou ele foi parar onde não devia? Clique em **Redefinir link**: o antigo para de funcionar e você recebe um novo. **Desativar** o desliga de vez.
+
+Quem não está conectado entra primeiro e volta ao link. Quem já é membro recebe um aviso disso. Quando as vagas acabam, a entrada fica bloqueada até que uma vaga seja liberada.
+
+## Papéis [#roles]
+
+| | Leitor | Cobrança | Membro | Admin | Proprietário |
+| --- | --- | --- | --- | --- | --- |
+| Ver códigos, páginas e análises | Sim | Sim | Sim | Sim | Sim |
+| Criar e editar códigos e páginas, enviar arquivos | Não | Não | Sim | Sim | Sim |
+| Excluir códigos, arquivos e respostas de formulários | Não | Não | Os próprios | Qualquer um | Qualquer um |
+| Criar chaves de API | Não | Não | Sim | Sim | Sim |
+| Compartilhar temas salvos com o workspace | Não | Não | Não | Sim | Sim |
+| Convidar e remover pessoas, mudar papéis | Não | Não | Não | Sim | Sim |
+| Renomear o workspace, mudar a URL e o logo | Não | Não | Não | Sim | Sim |
+| Adicionar, verificar e remover domínios personalizados | Não | Não | Não | Sim | Sim |
+| Gerenciar endpoints de webhook e ver segredos de assinatura | Não | Não | Não | Sim | Sim |
+| Fazer upgrade do plano do workspace | Não | Sim | Não | Não | Sim |
+| Criar e alterar apps OAuth | Não | Não | Não | Não | Sim |
+| Tornar alguém proprietário ou membro de cobrança | Não | Não | Não | Não | Sim |
+| Excluir o workspace | Não | Não | Não | Não | Sim |
+
+Leitores e membros de cobrança só visualizam: não podem criar, editar nem excluir nada no workspace, e uma chave de API não pode fazer mais do que o papel de quem a criou. Os membros podem ver os endpoints de webhook e seus logs de entrega, e usar os domínios verificados do workspace nos próprios códigos. As [configurações de notificação](/docs/notifications) são pessoais: cada membro escolhe os próprios alertas para cada workspace.
+
+## Planos e vagas [#plans-and-seats]
+
+Um workspace usa o melhor plano entre seus proprietários e membros de cobrança, então basta um deles estar no Business para o workspace inteiro ter os limites do Business, e os membros não precisam de assinatura própria. É para isso que serve o papel **Cobrança**: alguém que paga pelo workspace sem gerenciá-lo. Limites como QR codes dinâmicos, páginas, armazenamento e respostas de formulários são contados por workspace. Veja [Planos e limites](/docs/plans-and-limits).
+
+As vagas são os membros, incluindo o proprietário, mais os convites pendentes: 1 (só você) quando os proprietários e membros de cobrança estão no Grátis, até 3 no Pro e sem limite no Business. Se o plano deles mudar, os membros atuais continuam e todo código segue funcionando; só são bloqueados novos convites e novos itens acima do limite.
+
+## Renomear, sair ou excluir um workspace [#rename-leave-or-delete-a-workspace]
+
+Essas opções ficam em [Configurações → Geral](/dashboard?to=settings) do workspace.
+
+- **Renomear:** proprietários e admins mudam o nome e a URL. Os links para a URL antiga deixam de funcionar; os códigos impressos não mudam.
+- **Logo:** proprietários e admins enviam um logo (quando o armazenamento de arquivos está configurado no servidor) ou usam a URL de uma imagem https. Ele aparece no seletor de workspace; sem logo, o seletor mostra a primeira letra do nome.
+- **Sair:** clique em **Sair do workspace** na zona de perigo. O último proprietário não pode sair: torne outro membro proprietário primeiro, ou exclua o workspace. Ninguém pode sair do próprio workspace.
+- **Remover um membro:** em [Configurações → Equipe](/dashboard?to=settings/team). Os códigos e as páginas que a pessoa criou continuam no workspace. Ninguém pode ser removido do próprio workspace. Remover alguém, assim como mudar o papel, pede que você [confirme que é você](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) antes.
+- **Excluir um workspace:** só proprietários, e nunca o workspace próprio de alguém. Você confirma digitando a URL do workspace, e o QRdx pede que você confirme que é você. Nada deixa de funcionar: códigos, páginas, arquivos, domínios e outros itens passam para o workspace próprio de quem os criou. As chaves de API do workspace são excluídas junto com ele.
+
+## Mover um código para outro workspace [#move-a-code-to-another-workspace]
+
+No menu **⋯** do código, na página Códigos, escolha **Mover para workspace...** e selecione um workspace em que você possa criar códigos. O link curto continua o mesmo, então os códigos impressos continuam funcionando, e as leituras e o histórico de versões vão junto. A pasta e as tags ficam para trás, porque pertencem ao workspace antigo.
+
+- Membros podem mover os códigos que criaram; proprietários e admins, qualquer código.
+- O plano do outro workspace precisa ter espaço para mais um código ativo. Códigos arquivados não contam.
+- Um código cujo link está em um domínio personalizado não pode ser movido, porque o domínio pertence ao workspace antigo e o link impresso deixaria de funcionar. Códigos que abrem uma página hospedada ficam com a página.
+
+## Acesso pela API [#api-access]
+
+As requisições à [REST API](/docs/developers/rest-api) feitas com um token de acesso OAuth atuam no workspace próprio do dono do token. Uma [chave de API](/docs/developers/api-keys) atua no workspace em que foi criada, com o seu papel nele. As requisições feitas de uma sessão de navegador conectada atuam no último workspace aberto nessa sessão.

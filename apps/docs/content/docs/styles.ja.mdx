@@ -1,0 +1,59 @@
+---
+title: "シェイプ、アイ、フレーム"
+description: "すべてのボディパターン、アイフレーム、アイセンター、行動喚起フレームを、qrdx レンダラーでリアルタイムに描画し、ブラウザー上でデコードして確認できます。"
+icon: Grid3x3
+---
+
+import { QrCatalog } from "@/components/docs/qr-catalog";
+
+以下のスタイルはすべて、ダウンロードする画像と同じレンダラーで描画しています。オプション名と、コピーして使える API の値も併記しています。各タイルは、このブラウザー上で [jsQR](https://github.com/cozmo/jsQR) を使って1つずつデコードしているため、**Scans** バッジは約束ではなく、実際の結果です。
+
+これらはすべてパッケージ内（`packages/qrdx/tests/catalog-*.test.ts`）でもテストしています。各値は、スマートフォンのカメラを想定したモデル（コントラストの低下と、モジュールの4分の1ほどのぼかし）で、1モジュールあたり4、6、9ピクセルのサイズでデコードしています。ほかのすべてのボディ、アイ、センターとの組み合わせ、エラー訂正レベル L、M、Q、H、148 px と 1024 px、暗い背景に明るいコード、ブランドカラー、中央ロゴ付きの条件でも確認しました。ZXing やシャープなレンダリングでも検証しています。相性のよくない組み合わせがいくつかあります。[避けるべき組み合わせ](#pairs-to-avoid)をご覧ください。
+
+## ボディパターン [#body-patterns]
+
+データモジュールの形です（`bodyPattern`）。つながるスタイル（`liquid`、`classy`）は、隣り合うモジュールを1つの輪郭に結合します。`random-dots` と `mosaic` はモジュールごとに形が変わりますが、結果は決まっており、同じ値なら常に同じコードを描画します。
+
+<QrCatalog kind="body" />
+
+## アイフレーム [#eye-frames]
+
+3つの角にあるマーカーの外側のリングです（`cornerEyePattern`）。`leaf`、`leaf-reverse`、`drop`、`petal` は、各アイをコードの角に向けて回転させます。各タイルでは、アイとそのおすすめのセンターを組み合わせています。
+
+<QrCatalog kind="eye" />
+
+## アイセンター [#eye-centers]
+
+各角のマーカーの中心にある塗りつぶし部分です（`cornerEyeDotPattern`）。四角いアイの内側に表示しています。
+
+<QrCatalog kind="dot" />
+
+## フレーム [#frames]
+
+行動喚起フレームはコードの周囲に描画されるため、コードとクワイエットゾーンが隠れることはなく、ダウンロードする画像はフレームに合わせて大きくなります。すべてのフレームで `text`（最大24文字）、`color`、`textColor`、`fontScale`（0.5〜1.5）を指定できます。`banner-top-bottom`、`circle`、`menu-card` では `secondaryText` も表示されます。`gradient-border` は `color` から `secondaryColor` へのグラデーションになります。
+
+<QrCatalog kind="frame" />
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
+/>;
+```
+
+## 避けるべき組み合わせ [#pairs-to-avoid]
+
+単体ではスキャンできる形でも、組み合わせるとデコードテストに失敗するものがいくつかあります。Playground ではこれらを同時に選べないようにしており、スキャンスコアも警告を表示します（`style-pair`）。
+
+- `diamond` ボディと `square` アイ、`pacman` と `rounded`、`small-square` と `square` または `rounded` のアイ（近距離で読み取れません）。
+
+`circle` アイは、テストしている両方のデコーダー（jsQR と ZXing）で読み取れますが、一部のスキャナーアプリでは読み取れないため**注意**としています。これらの組み合わせは、パッケージに `WEAK_BODY_EYES` として含まれており、`getStylePairRisk(props)` はスタイルに対する警告を返します。
+
+## 廃止されたシェイプ [#retired-shapes]
+
+`curly` アイと、`diamond`、`star`、`banner` のセンターは、安定してスキャンできないため削除しました。多くの Android スキャナーが使う ZXing では、スマートフォンでの一般的な距離だと curly アイと diamond、star のセンターを読み取れず、jsQR ではシャープなレンダリングのどれでも banner センターを読み取れません。これらで保存したコードはこれまでどおり読み込め、描画も変わらず、Image API も既存のリンク向けには引き続き描画します。ただし、ピッカー、プリセット、AI テーマのいずれにも表示されず、名前は非推奨の値としてのみ残してあります（`RETIRED_CORNER_EYE_PATTERNS`、`RETIRED_CORNER_EYE_DOT_PATTERNS`）。

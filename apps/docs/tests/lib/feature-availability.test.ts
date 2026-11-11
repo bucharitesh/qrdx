@@ -113,6 +113,7 @@ const NEEDS: Record<FeatureId, string[]> = {
     "TELEGRAM_BOT_USERNAME",
   ],
   affiliates: ["POLAR_WEBHOOK_SECRET"],
+  invoiceRequests: ["RESEND_API_KEY", "EMAIL_FROM"],
 };
 
 const vercelProd = { onVercel: true, production: true };

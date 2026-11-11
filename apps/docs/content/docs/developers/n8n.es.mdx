@@ -1,0 +1,77 @@
+---
+title: "n8n"
+description: "Crea códigos QR, gestiona códigos dinámicos, consulta escaneos e inicia flujos de trabajo de n8n a partir de eventos de QRdx con los nodos de la comunidad de QRdx para n8n."
+icon: Blocks
+---
+
+El paquete `@qrdx/n8n-nodes-qrdx` añade dos nodos a [n8n](https://n8n.io):
+
+- **QRdx** genera imágenes de códigos QR, crea y edita [códigos dinámicos](/docs/dynamic-qr-codes), y consulta sus escaneos y tus temas guardados. Un agente de IA de n8n puede usarlo como herramienta.
+- **QRdx Trigger** inicia un flujo de trabajo cuando se escanean, se crean o se modifican tus códigos, o cuando alguien envía un formulario en una [página alojada](/docs/forms-and-pages).
+
+El paquete está en npm como [`@qrdx/n8n-nodes-qrdx`](https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx) y se instala en un n8n autoalojado. n8n Cloud solo ejecuta los nodos de la comunidad que n8n ha verificado, y este todavía no está verificado.
+
+Para recibir eventos sin instalar nada, usa en su lugar un [nodo Webhook](#without-the-package).
+
+## Instalación [#install]
+
+En n8n, abre **Settings → Community Nodes**, haz clic en **Install**, escribe `@qrdx/n8n-nodes-qrdx`, acepta el aviso sobre los nodos de la comunidad y haz clic en **Install**. Después busca **QRdx** en el panel de nodos.
+
+Si tu n8n oculta esa página, o lo gestionas desde la línea de comandos, instala el paquete en la carpeta `nodes` de la carpeta de usuario de n8n y reinicia n8n:
+
+```bash
+mkdir -p ~/.n8n/nodes
+cd ~/.n8n/nodes
+npm install @qrdx/n8n-nodes-qrdx
+```
+
+Si n8n se ejecuta en Docker, ejecuta los mismos comandos dentro del contenedor (`docker exec -it n8n sh`) o configúralos en tu imagen.
+
+## Conecta tu espacio de trabajo [#connect-your-workspace]
+
+Crea una [clave de API](/docs/developers/api-keys) en [Settings → API keys & apps](/dashboard?to=settings/developers) y luego añade en n8n una credencial **QRdx API** con la clave. Deja **Base URL** como `https://api.qrdx.dev/v1` a menos que [autoalojes](/docs/self-hosting) QRdx; en ese caso usa tu dirección seguida de `/api/v1`.
+
+n8n prueba la credencial leyendo tu perfil, lo que requiere el permiso Profile, así que lo más sencillo es una clave con acceso completo. Una clave actúa sobre el espacio de trabajo en el que se creó. Generar imágenes QR no requiere ninguna credencial.
+
+## El nodo QRdx [#the-qrdx-node]
+
+| Recurso | Operaciones |
+| --- | --- |
+| QR Image | Generar una imagen PNG, WebP, SVG o EPS. Sin clave de API, sin cuenta |
+| Code | Create, Get, Get Many, Update (incluye archivar y restaurar), Delete |
+| Scan | Get Many (escaneos individuales, del más reciente al más antiguo), Get Summary (totales, recuentos diarios y principales países, ciudades, dispositivos, navegadores y referentes) |
+| Theme | Get, Get Many |
+
+**Generate** coloca la imagen en un campo binario que puedes adjuntar a un correo o subir a cualquier sitio. Puedes definir su tamaño, colores, formas del cuerpo, de los ojos y de los puntos de los ojos, la corrección de errores, el margen, un [marco](/docs/features/frames) con su etiqueta y un icono de logo. La salida también incluye `url`: un enlace a la misma imagen desde la [Image API](/docs/developers/image-api), listo para una etiqueta `<img>`.
+
+Las operaciones de códigos y escaneos llaman a la [REST API](/docs/developers/rest-api) con tu clave y cuentan para la cuota diaria de API del espacio de trabajo. **Get Many** recorre las páginas de resultados por ti. Los errores conservan el mensaje propio de QRdx; por ejemplo, un back-half personalizado requiere Pro o Business, y el nodo muestra el [error](/docs/developers/errors) que QRdx devuelve en Gratis.
+
+## El nodo QRdx Trigger [#the-qrdx-trigger-node]
+
+Elige los eventos y luego activa el flujo de trabajo. El nodo se suscribe mediante la [REST Hooks API](/docs/webhooks#zapier-make-and-n8n-rest-hooks) y cancela la suscripción cuando desactivas el flujo de trabajo. La suscripción aparece en Settings → Webhooks mientras está activa.
+
+| Evento | Cuándo |
+| --- | --- |
+| Scans | Se escanean códigos. Las entregas se agrupan: una por minuto con hasta 100 escaneos y el recuento exacto |
+| Scan Milestones | El primer escaneo de un código, y luego 10, 100, 500, 1.000 escaneos y más |
+| New Codes | Se crea un código dinámico |
+| Code Changes | Cambia el destino, el título, el diseño o el dominio de un código |
+| Form Submissions | Alguien envía un formulario en una página alojada |
+
+El nodo comprueba el `X-QRdx-Signature` de cada entrega con el secreto de firma que QRdx devolvió al suscribirse, y responde `401` a todo lo que no coincida. Activa **Output One Item per Scan** para recibir un lote de Scans como elementos separados, e **Include Test Events** para ejecutar el flujo de trabajo cuando hagas clic en **Send test** en Settings → Webhooks. Los payloads son los descritos en [Webhooks](/docs/webhooks#payloads).
+
+El trigger necesita:
+
+- el plan Business, ya que los [webhooks](/docs/webhooks) forman parte de él
+- una clave de API con el permiso Manage codes
+- n8n en una dirección pública `https://`, porque QRdx no entrega a `localhost` ni a redes privadas. Detrás de un proxy, define `WEBHOOK_URL` en n8n. Esto también se aplica a la URL de prueba que n8n usa mientras haces clic en **Listen for test event**
+
+## Sin el paquete [#without-the-package]
+
+QRdx puede entregar eventos directamente a un nodo **Webhook** de n8n, tanto en n8n Cloud como en un n8n autoalojado:
+
+1. Añade un nodo Webhook, establece su método HTTP en `POST` y copia su URL de producción.
+2. Activa el flujo de trabajo. La URL de producción solo responde mientras el flujo de trabajo está activo.
+3. En [Settings → Webhooks](/dashboard?to=settings/webhooks), haz clic en **Add endpoint**, pega la URL y elige los eventos.
+
+Cada evento inicia el flujo de trabajo con el payload JSON. Para comprobar las firmas, lee `X-QRdx-Signature` en un nodo Code y [verifícala](/docs/webhooks#verify-signatures) con el secreto de firma del endpoint.

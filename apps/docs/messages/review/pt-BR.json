@@ -1750,5 +1750,241 @@
   "pricing.faq.items.billing.answer": {
     "source": "66ec3bb6a34f",
     "status": "machine"
+  },
+  "docs.meta.titleSuffix": {
+    "source": "fe4691e307c7",
+    "status": "machine"
+  },
+  "docs.breadcrumb.home": {
+    "source": "3a78695388b3",
+    "status": "machine"
+  },
+  "docs.breadcrumb.docs": {
+    "source": "7af023c43013",
+    "status": "machine"
+  },
+  "docs.untranslated.title": {
+    "source": "c8dbd7a8cabe",
+    "status": "machine"
+  },
+  "docs.untranslated.body": {
+    "source": "adc86b84c4ea",
+    "status": "machine"
+  },
+  "docs.client.actions.copyMarkdown": {
+    "source": "47ffe39e7556",
+    "status": "machine"
+  },
+  "docs.client.actions.open": {
+    "source": "ed077f3d8125",
+    "status": "machine"
+  },
+  "docs.client.actions.openIn": {
+    "source": "f30fd61ae722",
+    "status": "machine"
+  },
+  "docs.client.actions.askPrompt": {
+    "source": "619e3673b5ff",
+    "status": "machine"
+  },
+  "docs.client.search.jumpTo": {
+    "source": "af52001d68d3",
+    "status": "machine"
+  },
+  "docs.client.language.label": {
+    "source": "f6b558b05684",
+    "status": "machine"
+  },
+  "docs.client.language.note": {
+    "source": "03ef886d4fb4",
+    "status": "machine"
+  },
+  "docs.help.search": {
+    "source": "b706ef91638d",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.title": {
+    "source": "834c08cbe8b2",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.body": {
+    "source": "fafd93b01e8e",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.widget": {
+    "source": "8732a1194302",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.github": {
+    "source": "d20c2ea01cb2",
+    "status": "machine"
+  },
+  "docs.help.stillStuck.contact": {
+    "source": "53a6bccefa78",
+    "status": "machine"
+  },
+  "docs.notFound.title": {
+    "source": "fc2df991dde0",
+    "status": "machine"
+  },
+  "docs.notFound.body": {
+    "source": "fb5d44895901",
+    "status": "machine"
+  },
+  "docs.notFound.places.gettingStarted.title": {
+    "source": "831d0f72d242",
+    "status": "machine"
+  },
+  "docs.notFound.places.gettingStarted.description": {
+    "source": "49a20b634f66",
+    "status": "machine"
+  },
+  "docs.notFound.places.dynamic.title": {
+    "source": "6089067b0798",
+    "status": "machine"
+  },
+  "docs.notFound.places.dynamic.description": {
+    "source": "1fe60eeb86d0",
+    "status": "machine"
+  },
+  "docs.notFound.places.restApi.title": {
+    "source": "41a52587276c",
+    "status": "machine"
+  },
+  "docs.notFound.places.restApi.description": {
+    "source": "1cc1f70ae2bc",
+    "status": "machine"
+  },
+  "docs.notFound.places.components.title": {
+    "source": "a150ce221602",
+    "status": "machine"
+  },
+  "docs.notFound.places.components.description": {
+    "source": "c02a102cb413",
+    "status": "machine"
+  },
+  "docs.ui.search": {
+    "source": "49c266baaaa7",
+    "status": "machine"
+  },
+  "docs.ui.searchPlaceholder": {
+    "source": "49c266baaaa7",
+    "status": "machine"
+  },
+  "docs.ui.openSearch": {
+    "source": "9c3451e933c5",
+    "status": "machine"
+  },
+  "docs.ui.closeSearch": {
+    "source": "713e7816521d",
+    "status": "machine"
+  },
+  "docs.ui.noResults": {
+    "source": "7d7e36058609",
+    "status": "machine"
+  },
+  "docs.ui.searchFailed": {
+    "source": "01ee45e5e189",
+    "status": "machine"
+  },
+  "docs.ui.onThisPage": {
+    "source": "b5658fc8edda",
+    "status": "machine"
+  },
+  "docs.ui.noHeadings": {
+    "source": "877e7e5d5975",
+    "status": "machine"
+  },
+  "docs.ui.tableOfContents": {
+    "source": "a9360e0212a4",
+    "status": "machine"
+  },
+  "docs.ui.lastUpdated": {
+    "source": "103e2a9f3f94",
+    "status": "machine"
+  },
+  "docs.ui.previousPage": {
+    "source": "a163aaa22cf7",
+    "status": "machine"
+  },
+  "docs.ui.nextPage": {
+    "source": "6ead5dfdc11e",
+    "status": "machine"
+  },
+  "docs.ui.copyCode": {
+    "source": "8195c1caa503",
+    "status": "machine"
+  },
+  "docs.ui.copiedCode": {
+    "source": "75a5d50a9fe9",
+    "status": "machine"
+  },
+  "docs.ui.copyAnchor": {
+    "source": "6999a51263ff",
+    "status": "machine"
+  },
+  "docs.ui.copiedAnchor": {
+    "source": "2576ae8fb339",
+    "status": "machine"
+  },
+  "docs.ui.copyLink": {
+    "source": "724e78a3254c",
+    "status": "machine"
+  },
+  "docs.ui.copiedLink": {
+    "source": "b9173920bbf8",
+    "status": "machine"
+  },
+  "docs.ui.toggleMenu": {
+    "source": "f2fca5f98405",
+    "status": "machine"
+  },
+  "docs.ui.toggleTheme": {
+    "source": "de148bf17210",
+    "status": "machine"
+  },
+  "docs.ui.themeLight": {
+    "source": "dbcd5e7bb7a0",
+    "status": "machine"
+  },
+  "docs.ui.themeDark": {
+    "source": "60acc53f13a5",
+    "status": "machine"
+  },
+  "docs.ui.themeSystem": {
+    "source": "6725e7bbcd28",
+    "status": "machine"
+  },
+  "docs.ui.openSidebar": {
+    "source": "ef84dd64b90f",
+    "status": "machine"
+  },
+  "docs.ui.closeSidebar": {
+    "source": "8896c14d09e7",
+    "status": "machine"
+  },
+  "docs.ui.collapseSidebar": {
+    "source": "9da0bf42ad07",
+    "status": "machine"
+  },
+  "docs.ui.typeTableProp": {
+    "source": "57d968860fab",
+    "status": "machine"
+  },
+  "docs.ui.typeTableType": {
+    "source": "baaddf70fb5d",
+    "status": "machine"
+  },
+  "docs.ui.typeTableDefault": {
+    "source": "21b111cbfe6e",
+    "status": "machine"
+  },
+  "docs.ui.typeTableParameters": {
+    "source": "e68b36b17cbd",
+    "status": "machine"
+  },
+  "docs.ui.typeTableReturns": {
+    "source": "16dcaa923f16",
+    "status": "machine"
   }
 }

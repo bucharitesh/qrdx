@@ -1,0 +1,418 @@
+---
+title: "Referência da API da biblioteca"
+description: "Todos os componentes, funções e tipos exportados pela biblioteca React qrdx. Para os endpoints HTTP, veja a REST API."
+icon: Code
+---
+
+Referência completa de todos os componentes, funções e tipos do `qrdx`.
+
+<NpmStatus package="qrdx" />
+
+## Componentes [#components]
+
+### QRCode [#qrcode]
+
+Componente principal para renderizar QR codes.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#000000"
+  bgColor="#ffffff"
+/>
+```
+
+#### Props [#props]
+
+| Prop | Tipo | Padrão | Descrição |
+|------|------|--------|-----------|
+| `value` | `string` | **obrigatório** | URL ou texto a codificar |
+| `size` | `number` | `128` | Tamanho em pixels |
+| `scale` | `number` | `1` | Multiplicador de escala |
+| `fgColor` | `ColorConfig` | `#000000` | Cor do QR code |
+| `bgColor` | `ColorConfig` | `#ffffff` | Cor do fundo |
+| `eyeColor` | `ColorConfig` | `fgColor` | Cor dos marcadores de canto |
+| `dotColor` | `ColorConfig` | `fgColor` | Cor do ponto dentro de cada olho de canto |
+| `bodyPattern` | `BodyPattern` | `'circle'` | Padrão dos pontos de dados |
+| `cornerEyePattern` | `CornerEyePattern` | `'gear'` | Padrão dos marcadores de canto |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Padrão do ponto do canto |
+| `hideLogo` | `boolean` | `false` | Oculta o logo. Nenhum logo é desenhado a menos que `logo` esteja definido |
+| `logo` | `string` | — | URL do logo |
+| `templateId` | `string` | `'default'` | ID do template |
+| `customTemplate` | `TemplateDefinition` | — | Template personalizado |
+| `level` | `ErrorLevel` | `'Q'` | Correção de erro |
+| `autoLevel` | `boolean` | `false` | Eleva `level` para H quando o logo cobre mais de 7% do código (`AUTO_LEVEL_LOGO_COVERAGE`) |
+| `margin` | `number` | `0` | Margem em módulos |
+| `imageSettings` | `ImageSettings` | — | Configurações do logo |
+| `eyeColors` | `EyeColors` | — | Cores `outer` / `inner` por olho para `topLeft`, `topRight` e `bottomLeft`; cada uma substitui `eyeColor` / `dotColor` |
+| `moduleScale` | `number` | `1` | Tamanho do módulo de dados, de 0.5 a 1. Cada padrão para no menor tamanho que ainda permite a leitura (`MODULE_SCALE_FLOOR`) |
+| `frame` | `QRFrame` | — | Moldura de call to action; veja [Molduras e impressão](/docs/features/frames) |
+| `art` | `QRArt` | — | Mistura um logo ou foto nos módulos (Logo QR, Image QR); veja [Art QR](/docs/features/art-qr) |
+| `frameLabelMarkers` | `boolean` | `false` | Para editores: marca cada `<text>` de rótulo da moldura com `data-qrdx-frame-label` (`"text"`, `"secondaryText"` ou o id do rótulo de uma especificação). Downloads e exportações nunca o incluem |
+
+Todos os {facts.bodyPatterns} padrões de corpo, {facts.eyeShapes} olhos, {facts.eyeCentres} centros de olho e {facts.frameStyles} estilos de moldura aparecem ao vivo em [Formas, olhos e molduras](/docs/styles).
+
+### QRCodeCanvas [#qrcodecanvas]
+
+Renderização baseada em canvas.
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor="#000000"
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+Renderização baseada em SVG.
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## Funções de download [#download-functions]
+
+### downloadQRCode [#downloadqrcode]
+
+Baixe QR codes em vários formatos.
+
+```tsx
+downloadQRCode(
+  qrProps: QRProps,
+  options: {
+    format: 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+    size: { width: number; height: number };
+    filename?: string;
+    quality?: number; // WebP only: 0 to 1 for lossy; lossless when left out
+  }
+): Promise<void>
+```
+
+### getQRCodeDataUrl [#getqrcodedataurl]
+
+Obtenha como data URL.
+
+```tsx
+getQRCodeDataUrl(
+  qrProps: QRProps,
+  format: DownloadFormat,
+  size: DownloadSize,
+  options?: { quality?: number } // WebP only
+): Promise<string>
+```
+
+### getQRAsWebP [#getqraswebp]
+
+O código como um `Blob` WebP, sem perdas a menos que `quality` seja definido. Onde o navegador não consegue codificar WebP (Safari), o codificador sem perdas embutido do qrdx faz isso. `canvasToWebP(canvas, options)` faz o mesmo para qualquer canvas, e `encodeWebPLossless(rgba, width, height)` codifica pixels RGBA sem DOM.
+
+```tsx
+getQRAsWebP(
+  qrProps: QRProps,
+  options?: { quality?: number }
+): Promise<Blob>
+```
+
+### copyQRCodeToClipboard [#copyqrcodetoclipboard]
+
+Copie para a área de transferência.
+
+```tsx
+copyQRCodeToClipboard(
+  qrProps: QRProps,
+  size?: DownloadSize
+): Promise<void>
+```
+
+### getSVGString [#getsvgstring]
+
+Obtenha a marcação SVG.
+
+```tsx
+getSVGString(qrProps: QRProps): Promise<string>
+```
+
+## Funções de impressão e leitura [#print-and-scan-functions]
+
+Estas funções estão documentadas com exemplos nas páginas dos respectivos recursos.
+
+| Função | O que faz | Docs |
+|--------|-----------|------|
+| `getQRAsSVG(props)` | Marcação SVG de um código, incluindo a moldura | [Molduras](/docs/features/frames) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | PDF vetorial em tamanho físico exato, com sangria, marcas de corte e CMYK (requer `jspdf`) | [Exportação pronta para impressão](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | SVG pronto para impressão em tamanho físico exato | [Exportação pronta para impressão](/docs/features/frames#print-ready-export) |
+| `getQRAsEPS`, `downloadPrintEPS` | EPS vetorial para gráficas e ferramentas de design | [Downloads](/docs/features/downloads) |
+| `getScanScore(props)` | Estima a confiabilidade da leitura de um design | [Vai ler?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | Pontua uma imagem de QR code que você já tem (somente no navegador) | [Vai ler?](/docs/features/frames#will-it-scan) |
+| `scanQRPixels(pixels, expected)` | Verifica se pixels RGBA brutos decodificam para `expected`, inclusive quando desfocados e reduzidos; roda no Node | — |
+| `getStylePairRisk(...)` | Avisa sobre combinações de olho e padrão que alguns leitores não reconhecem | [Padrões](/docs/features/patterns) |
+
+## Funções de detecção [#detection-functions]
+
+### handleImageLoad [#handleimageload]
+
+Detecte QR codes em imagens.
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,
+  returnFullData?: boolean
+): Promise<string | any>
+```
+
+### downloadImageWithBoundingBox [#downloadimagewithboundingbox]
+
+Depure com caixas delimitadoras.
+
+```tsx
+downloadImageWithBoundingBox(
+  imgElement: HTMLImageElement,
+  boundingBox: { x: number; y: number }[],
+  filename: string
+): void
+```
+
+## Funções de template [#template-functions]
+
+### getTemplate [#gettemplate]
+
+Obtenha um template específico.
+
+```tsx
+getTemplate(templateId: string): TemplateDefinition | undefined
+```
+
+### getAllTemplates [#getalltemplates]
+
+Obtenha todos os templates.
+
+```tsx
+getAllTemplates(): TemplateDefinition[]
+```
+
+### getTemplateIds [#gettemplateids]
+
+Obtenha os IDs dos templates.
+
+```tsx
+getTemplateIds(): string[]
+```
+
+## Funções utilitárias [#utility-functions]
+
+### Cor e contraste [#color--contrast]
+
+```tsx
+getSolidColor(colorConfig: ColorConfig, fallback?: string): string
+getContrastRatio(color1: string, color2: string): number
+getContrastLevel(ratio: number): ContrastLevel
+getLuminance(r: number, g: number, b: number): number
+hexToRgb(hex: string): { r: number; g: number; b: number }
+```
+
+### Validação [#validation]
+
+```tsx
+validateSize(width: number, height: number): {
+  isValid: boolean;
+  error?: string;
+}
+```
+
+### Detecção de recursos [#feature-detection]
+
+```tsx
+SUPPORTS_PATH2D: boolean
+```
+
+## Tipos [#types]
+
+### Tipos principais [#core-types]
+
+```tsx
+type QRProps = {
+  value: string;
+  size?: number;
+  level?: ErrorLevel;
+  bgColor?: ColorConfig;
+  fgColor?: ColorConfig;
+  margin?: number;
+  imageSettings?: ImageSettings;
+  // ...
+};
+
+type ColorConfig =
+  | string
+  | { type: 'solid'; color: string }
+  | LinearGradient
+  | RadialGradient;
+
+type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
+```
+
+### Tipos de padrão [#pattern-types]
+
+```tsx
+// The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
+// FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+
+type BodyPattern =
+  | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
+  | 'pacman' | 'rounded' | 'small-square' | 'vertical-line'
+  | 'horizontal-line' | 'liquid' | 'liquid-horizontal' | 'liquid-vertical'
+  | 'classy' | 'classy-rounded' | 'leaf' | 'plus' | 'hexagon' | 'star'
+  | 'heart' | 'random-dots' | 'mosaic' | 'octagon';
+
+type CornerEyePattern =
+  | 'square' | 'rounded' | 'gear' | 'circle' | 'diya' | 'extra-rounded'
+  | 'message' | 'pointy' | 'leaf' | 'drop' | 'octagon' | 'bevel'
+  | 'squircle' | 'cushion' | 'shield' | 'petal' | 'leaf-reverse';
+
+type CornerEyeDotPattern =
+  | 'square' | 'rounded' | 'circle' | 'message' | 'message-reverse'
+  | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'leaf' | 'drop' | 'plus'
+  | 'cross-rounded' | 'hexagon' | 'octagon' | 'flower' | 'heart'
+  | 'squircle' | 'dots' | 'extra-rounded' | 'leaf-reverse' | 'drop-reverse';
+
+// Retired (deprecated) values still render for saved designs but are not
+// offered: RETIRED_CORNER_EYE_PATTERNS, RETIRED_CORNER_EYE_DOT_PATTERNS.
+
+type EyeColors = {
+  topLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+  topRight?: { outer?: ColorConfig; inner?: ColorConfig };
+  bottomLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+};
+
+type QRFrame = {
+  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
+  text?: string; // up to 24 characters, default "Scan me"
+  color?: string;
+  textColor?: string;
+  secondaryText?: string; // banner-top-bottom, circle, menu-card
+  secondaryColor?: string; // gradient-border end color
+  fontScale?: number; // 0.5 to 1.5
+};
+```
+
+### Tipos de download [#download-types]
+
+```tsx
+type DownloadFormat = 'png' | 'jpg' | 'webp' | 'svg' | 'pdf' | 'eps';
+
+type DownloadSize = {
+  width: number;
+  height: number;
+};
+
+const PRESET_SIZES: Record<string, DownloadSize> = {
+  small: { width: 200, height: 200 },
+  medium: { width: 400, height: 400 },
+  large: { width: 800, height: 800 },
+  xlarge: { width: 1200, height: 1200 },
+  '2xl': { width: 1600, height: 1600 },
+  '3xl': { width: 2000, height: 2000 },
+};
+```
+
+### Tipos de gradiente [#gradient-types]
+
+```tsx
+type LinearGradient = {
+  type: 'linear';
+  stops: GradientStop[];
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+};
+
+type RadialGradient = {
+  type: 'radial';
+  stops: GradientStop[];
+  cx: number;
+  cy: number;
+  r: number;
+};
+
+type GradientStop = {
+  offset: number;
+  color: string;
+};
+```
+
+### Configurações de imagem [#image-settings]
+
+```tsx
+type ImageSettings = {
+  src: string;
+  height: number;
+  width: number;
+  excavate?: boolean;
+  x?: number;
+  y?: number;
+  /** Extra clear space around the logo when excavating, in pixels */
+  padding?: number;
+  opacity?: number;
+};
+```
+
+## Níveis de correção de erro [#error-correction-levels]
+
+```tsx
+const ERROR_LEVELS = {
+  L: 'Low (~7%)',
+  M: 'Medium (~15%)',
+  Q: 'Quartile (~25%)',
+  H: 'High (~30%)',
+} as const;
+```
+
+## Tratamento de erros [#error-handling]
+
+Envolva as funções assíncronas em try-catch:
+
+```tsx
+try {
+  await downloadQRCode(props, options);
+} catch (error) {
+  console.error('Failed:', error);
+}
+```
+
+Erros comuns:
+- URLs de imagem inválidas
+- Falhas de rede
+- Parâmetros de tamanho inválidos
+- Contexto do canvas indisponível
+
+## Suporte a navegadores [#browser-support]
+
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
+
+## Suporte no servidor [#server-support]
+
+Funciona em ambientes Node.js:
+- Next.js
+- Remix
+- Express.js
+- Outros frameworks Node.js
+
+Alguns recursos exigem APIs do navegador:
+- Operações de canvas
+- Clipboard API
+- File API

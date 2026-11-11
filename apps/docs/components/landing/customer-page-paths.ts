@@ -8,9 +8,11 @@
  * - template demos (/templates/<type>/<id>), which must look like a published
  *   page and record nothing (the /templates gallery itself is a normal page);
  * - public analytics pages (/stats/<token>), shared by a code's owner: the
- *   token in the path is the page's only key.
+ *   token in the path is the page's only key;
+ * - client portals (/portal/<workspace>, agency tools): a workspace's
+ *   white-label view for its clients.
  */
-const UNTRACKED_PATHS = ["/p", "/q", "/ended", "/scan", "/stats"];
+const UNTRACKED_PATHS = ["/p", "/q", "/ended", "/scan", "/stats", "/portal"];
 const TEMPLATE_DEMO_PATH = /^\/templates\/[^/]+\/[^/]+\/?$/;
 
 export function isUntrackedPath(pathname: string | null): boolean {

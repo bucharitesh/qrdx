@@ -1191,6 +1191,9 @@ export interface BrandKitColors {
   [key: string]: any;
 }
 
+/** brand_kit.purpose (agency tools); NULL is an older QR design kit. */
+export const BRAND_KIT_PURPOSES = ["client", "portal"] as const;
+
 export const customDomain = pgTable(
   "custom_domain",
   {
@@ -1370,6 +1373,12 @@ export const brandKit = pgTable(
     // Patterns and template (body, corner eye, eye dot, template id)
     style: json("style").$type<ThemeStyles>(),
     isDefault: boolean("is_default").notNull().default(false),
+    // Agency tools (manual-sql/2026-11-11-agency.sql): what the kit is for.
+    // NULL: an older QR design kit (merged into saved themes, unused);
+    // "client": a client's name, logo and accent (colors.accent) for shared
+    // stats pages; "portal": the workspace's client-portal branding, one per
+    // workspace (apps/docs/lib/client-brands.ts).
+    purpose: text("purpose", { enum: BRAND_KIT_PURPOSES }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -1792,10 +1801,72 @@ export const codePublicStats = pgTable(
     createdBy: text("created_by"),
     // When the current link was made (a reset makes a new one)
     createdAt: timestamp("created_at").notNull().defaultNow(),
+    // Agency tools (manual-sql/2026-11-11-agency.sql). The client brand the
+    // page shows (a brand_kit with purpose "client"; Pro and Business), and
+    // the verified custom domain the link is served on (Business). NULL: the
+    // page looks as before and lives on QRdx's own host.
+    brandKitId: text("brand_kit_id").references(() => brandKit.id, {
+      onDelete: "set null",
+    }),
+    domainId: text("domain_id").references(() => customDomain.id, {
+      onDelete: "set null",
+    }),
   },
   (table) => [
     uniqueIndex("code_public_stats_qr_code_id_unique").on(table.qrCodeId),
     uniqueIndex("code_public_stats_token_unique").on(table.token),
+  ]
+);
+
+// ─── Client portal (apps/docs/lib/portal, agency tools) ─────────────────────
+// People outside a workspace (an agency's clients) invited to a read-only
+// view of some of its folders at /portal/<workspace-slug>. They are never
+// workspace members: nothing in the dashboard or the API knows them. A row
+// is matched to a signed-in person by user_id once claimed, before that by
+// their verified email. manual-sql/2026-11-11-agency.sql creates both tables.
+export const portalClient = pgTable(
+  "portal_client",
+  {
+    id: text("id").primaryKey(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    // Stored lowercase
+    email: text("email").notNull(),
+    name: text("name"),
+    // Set the first time they open the portal signed in with that email
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    // User id; no FK so the client stays when the inviter leaves the team
+    invitedBy: text("invited_by"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    acceptedAt: timestamp("accepted_at"),
+    lastSeenAt: timestamp("last_seen_at"),
+  },
+  (table) => [
+    uniqueIndex("portal_client_organization_id_email_unique").on(
+      table.organizationId,
+      table.email
+    ),
+    index("portal_client_user_id_idx").on(table.userId),
+  ]
+);
+
+/** The folders a portal client may see (exactly these, not their subfolders). */
+export const portalClientFolder = pgTable(
+  "portal_client_folder",
+  {
+    clientId: text("client_id")
+      .notNull()
+      .references(() => portalClient.id, { onDelete: "cascade" }),
+    folderId: text("folder_id")
+      .notNull()
+      .references(() => folder.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.clientId, table.folderId] }),
+    index("portal_client_folder_folder_id_idx").on(table.folderId),
   ]
 );
 

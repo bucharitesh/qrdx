@@ -1,0 +1,110 @@
+---
+title: "開発者向け"
+description: "キー不要の画像URLから REST API、Webhook、MCP、CLI まで、QRdx で開発するためのあらゆる方法を紹介します。"
+icon: Terminal
+---
+
+作るものに合った方法を選んでください。最初の3つはアカウントもキーも不要です。
+
+## キー不要 [#no-key-needed]
+
+<Cards>
+  <Card
+    icon={<ImageDown />}
+    href="/docs/developers/image-api"
+    title="QRコード画像API"
+    description="URLからQRコード画像を取得できます。Markdown、HTML、メールにそのまま貼り付けられます。"
+  />
+  <Card
+    icon={<Bot />}
+    href="/docs/developers/mcp"
+    title="MCPサーバー"
+    description="Claude、Cursor、VS Code などのAIツールからスタイル付きQRコードを作成できます。"
+  />
+  <Card
+    icon={<Terminal />}
+    href="/docs/developers/cli"
+    title="CLI"
+    description="ターミナルやCIから、SVG、PNG、WebP、EPS形式のQRコードを作成できます。"
+  />
+</Cards>
+
+## アカウントを使う場合 [#with-an-account]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/developers/quickstart"
+    title="クイックスタート"
+    description="2分足らずで最初のAPIリクエストを送り、続けてAPIキーの作成と動的QRコードの作成まで進めます。"
+  />
+  <Card
+    icon={<LockKeyhole />}
+    href="/docs/developers/api-keys"
+    title="APIキー"
+    description="サーバーやスクリプト用の qrdx_ キーを作成します。キーは1つのワークスペースに限定されます。"
+  />
+  <Card
+    icon={<Code />}
+    href="/docs/developers/rest-api"
+    title="REST APIとOAuth"
+    description="HTTPで動的QRコードの作成と編集、スキャンの取得、コンバージョンの報告ができます。"
+  />
+  <Card
+    icon={<FileCode />}
+    href="/docs/developers/api"
+    title="APIリファレンス"
+    description="すべてのエンドポイントを掲載しています。curl、JavaScript、Pythonのサンプルと、試せるパネルもあります。"
+  />
+  <Card
+    icon={<Webhook />}
+    href="/docs/webhooks"
+    title="Webhook"
+    description="スキャン、コードの変更、フォーム回答について署名付きイベントを受け取れます。Zapier、Make、n8n と連携できます。"
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/n8n"
+    title="n8n"
+    description="n8n 用の QRdx ノードです。QR画像、動的QRコード、スキャン、QRdxイベントのトリガーを利用できます。"
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/build-an-integration"
+    title="連携を構築する"
+    description="OAuth 2.0 と PKCE を使って、ユーザーが自分の QRdx アカウントをあなたのアプリに接続できるようにします。"
+  />
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/developers/errors"
+    title="エラー"
+    description="APIが返すすべてのエラーについて、その意味と対処方法を説明します。"
+  />
+</Cards>
+
+## 自分のコードで使う [#in-your-own-code]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/getting-started"
+    title="Reactライブラリ"
+    description="qrdx パッケージで、スタイル付きQRコードを描画してエクスポートできます。"
+  />
+  <Card
+    icon={<Server />}
+    href="/docs/self-hosting"
+    title="セルフホスティング"
+    description="動的QRコードを含むアプリ全体を、自分のサーバーで動かせます。"
+  />
+</Cards>
+
+## ベースURLと認証 [#base-url-and-authentication]
+
+REST API は `https://api.qrdx.dev/v1` で提供されています。同じルートは `https://qrdx.dev/api/v1` でも利用できます。
+
+リクエストの認証には、`Authorization: Bearer` ヘッダーに [APIキー](/docs/developers/api-keys) を指定します。ほかの QRdx ユーザーに代わって動作するアプリは、代わりに [OAuth 2.0 アクセストークン](/docs/developers/rest-api#get-an-access-token) を送ります。[クイックスタート](/docs/developers/quickstart#create-an-api-key) では、キーの作成と最初のリクエストを行います。
+
+## 最新情報を確認する [#stay-up-to-date]
+
+ライブラリ、CLI、APIの変更は[変更履歴](/changelogs)に掲載しています。ソースコードは [GitHub](https://github.com/bucharitesh/qrdx) で公開しています。

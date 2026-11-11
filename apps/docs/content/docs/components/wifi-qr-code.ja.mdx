@@ -1,0 +1,49 @@
+---
+title: "Wi-Fi QRコード"
+description: "スキャンするとWi-Fiネットワークに接続できるQRコードです。型付きでエスケープ処理を行うペイロードビルダーを備えています。"
+icon: Globe
+---
+
+<ComponentLinks name="wifi-qr-code" />
+
+<ComponentPreview name="wifi-qr-code-demo" />
+
+## インストール [#installation]
+
+<InstallationTabs name="wifi-qr-code" />
+
+## 使い方 [#usage]
+
+```tsx
+import { WifiQrCode } from "@/components/wifi-qr-code";
+```
+
+```tsx
+<WifiQrCode ssid="Cafe Guest" password="espresso-2024" />
+```
+
+iOSとAndroidのカメラは、コードをスキャンするとネットワークへの接続を案内します。アプリは不要です。
+
+## 例 [#examples]
+
+### バリエーション [#variants]
+
+`showPassword` は、パスワードを手入力するゲスト向けにパスワードを表示します。オープンネットワークには `encryption="nopass"` を、ネットワーク名を公開しないネットワークには `hidden` を使用してください。
+
+<ComponentPreview name="wifi-qr-code-variants" />
+
+### ペイロードビルダー [#payload-builder]
+
+`buildWifiPayload` は、コードにエンコードされる `WIFI:` テキストを返します。名前とパスワードに含まれる `\`、`;`、`,`、`:`、`"` をエスケープします。手書きのペイロードはここで壊れやすくなります。任意のQRレンダラーと組み合わせて使えるほか、デバッグ用にペイロードを出力する用途にも使えます。
+
+<ComponentPreview name="wifi-qr-code-payload" />
+
+## APIリファレンス [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/wifi-qr-code.tsx" type="{ [K in keyof WifiQrCodeProps as K extends Exclude<keyof ComponentProps<'figure'>, 'hidden'> ? never : K]: WifiQrCodeProps[K] }" />
+
+`className` などその他のプロパティは、外側の `<figure>` にそのまま渡されます。
+
+### buildWifiPayload [#buildwifipayload]
+
+`buildWifiPayload(network: WifiNetwork): string` は、コンポーネントと同じネットワークのフィールド `ssid`、`password`、`encryption`、`hidden` を受け取ります。

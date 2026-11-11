@@ -1,0 +1,41 @@
+---
+title: "Verifique um design com a pontuação de leitura"
+description: "A pontuação de leitura testa seu design como a câmera de um celular o enxerga e mostra o que você precisa corrigir."
+---
+
+Todo design no Playground recebe uma **Pontuação de leitura** de 0 a 100. Ela aparece abaixo da prévia, por exemplo "Pontuação de leitura 92 · Ótimo".
+
+## O que a pontuação significa [#what-the-score-means]
+
+- **Ótimo** (85 ou mais): pronto para imprimir.
+- **OK** (65 a 84): deve ser lido, mas confira os avisos.
+- **Arriscado** (abaixo de 65): corrija as verificações marcadas com um X.
+- **Falha**: o código não foi decodificado no teste, ou o contraste está baixo demais. Não imprima.
+
+## Veja o que corrigir [#see-what-to-fix]
+
+Clique na pontuação. O painel **Vai ser lido?** lista todas as verificações, com as que falharam primeiro.
+
+A pontuação verifica:
+
+- **Decodificação**: o código é lido em tamanhos pequenos, com um desfoque parecido com o de uma câmera.
+- **Contraste**: o código e o fundo devem ter uma diferença de 4,5:1 ou mais.
+- **Escuro sobre claro**: códigos escuros em fundos claros são lidos em mais apps.
+- **Tamanho do logo**: um logo não pode cobrir mais do que a correção de erros consegue reconstruir.
+- **Formato dos olhos**: olhos circulares e ondulados falham em alguns apps de leitura.
+- **Espaço livre**: a borda vazia ao redor do código. Quatro módulos é o ideal.
+
+## Correções rápidas [#quick-fixes]
+
+- Contraste baixo: deixe o código mais escuro ou o fundo mais claro. Veja [Escolha cores que são lidas](/docs/help/designing/colors-and-contrast).
+- Logo cobre demais: defina **Correção de erros** como **Alta**. Veja [Adicione um logo](/docs/help/designing/logos).
+- Olhos: troque para olhos quadrados, arredondados ou de engrenagem.
+- Espaço livre: defina **Margem** como **Padrão** ou **Grande**.
+
+## Verifique um código impresso [#check-a-printed-code]
+
+A pontuação testa o design na tela. Para testar um código que você já imprimiu, tire uma foto e solte no [verificador de leitura](/tools/scan-checker). A imagem nunca sai do seu dispositivo.
+
+## Veja também [#related]
+
+- [Um código não é lido](/docs/help/troubleshooting/wont-scan)

@@ -1,0 +1,64 @@
+---
+title: "二维码生成器"
+description: "带有实时二维码预览、样式预设和下载按钮的文本输入组件。"
+icon: Sparkles
+---
+
+<ComponentLinks name="qr-code-generator" />
+
+<ComponentPreview name="qr-code-generator-demo" />
+
+## 安装 [#installation]
+
+<InstallationTabs name="qr-code-generator" />
+
+## 用法 [#usage]
+
+```tsx
+import { QrCodeGenerator } from "@/components/qr-code-generator";
+```
+
+```tsx
+<QrCodeGenerator defaultValue="https://example.com" />
+```
+
+预览会随着输入实时更新。每个预设按钮都会显示该样式的小型示例，下载时使用所选预设，尺寸为 1024 像素。
+
+## 示例 [#examples]
+
+### 自定义预设 [#custom-presets]
+
+用你自己的预设替换内置预设。一个预设包含 `id`、`name` 和 `style`，其中 `style` 可使用任意 qrdx 选项，包括渐变、徽标和纠错 `level`。
+
+<ComponentPreview name="qr-code-generator-presets" />
+
+内置预设以 `QR_CODE_PRESETS` 导出，因此你可以在其基础上扩展：
+
+```tsx
+import { QR_CODE_PRESETS, QrCodeGenerator } from "@/components/qr-code-generator";
+
+<QrCodeGenerator
+  presets={[
+    ...QR_CODE_PRESETS,
+    { id: "brand", name: "Brand", style: { fgColor: "#155DFC" } },
+  ]}
+/>
+```
+
+### 保存结果 [#saving-the-result]
+
+每次变化时，`onChange` 都会返回文本和所选预设，例如可用于保存用户的选择：
+
+```tsx
+<QrCodeGenerator
+  onChange={({ value, preset }) => saveDraft({ value, style: preset.style })}
+/>
+```
+
+## API 参考 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" type="{ [K in keyof QrCodeGeneratorProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeGeneratorProps[K] }" />
+
+### QrCodePreset [#qrcodepreset]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-generator.tsx" name="QrCodePreset" />

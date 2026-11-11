@@ -1,0 +1,66 @@
+---
+title: "Roteamento inteligente"
+description: "Envie cada leitura de um QR code dinâmico para uma URL diferente por dispositivo, país, área, idioma, horário ou número de leituras, faça testes A/B e adicione parâmetros UTM."
+icon: Split
+---
+
+Um [QR code dinâmico](/docs/dynamic-qr-codes) normalmente envia todas as leituras para um único destino. Com o roteamento inteligente, um mesmo código impresso pode abrir a App Store em iPhones e o Google Play no Android, uma página em espanhol para visitantes que falam espanhol ou uma oferta diferente fora do horário comercial. Você configura isso no painel **Roteamento inteligente**, na página do código no [painel](/dashboard?to=codes) (abra um código e depois a aba **Configurações**).
+
+O roteamento inteligente e os parâmetros UTM fazem parte dos planos Pro e Business. Eles valem para códigos que abrem um link de site; as [páginas hospedadas](/docs/landing-pages) não redirecionam, então não têm roteamento.
+
+## Como as regras funcionam [#how-rules-work]
+
+- Um código tem até 20 **regras**. Cada regra tem condições ("quando") e uma ação ("então").
+- As regras são verificadas **de cima para baixo** a cada leitura. A **primeira regra cujas condições são todas atendidas** decide para onde a leitura vai. Use as setas para reordenar as regras.
+- Quando nenhuma regra corresponde, a leitura vai para o destino principal do código.
+- Uma regra sem condições corresponde a todas as leituras, então as regras abaixo dela nunca são executadas.
+- **Desative** uma regra para mantê-la sem usá-la.
+- As alterações valem a partir da próxima leitura; você nunca precisa reimprimir o código.
+
+Se uma regra não puder ser avaliada por algum motivo, a leitura ainda vai para o destino principal: o roteamento nunca impede o funcionamento de um código.
+
+## Condições [#conditions]
+
+Cada condição pode ser invertida com **não é** (por exemplo, "país não é US").
+
+| Condição | Corresponde quando | Observações |
+| --- | --- | --- |
+| Dispositivo | Quem lê usa celular, tablet, computador ou outro dispositivo | Obtido do user agent do navegador |
+| Sistema operacional | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS, … | iPhone e iPad contam como iOS |
+| País | A leitura vem de um dos países listados | Códigos de 2 letras como `US, CA, GB` |
+| Região | A leitura vem de uma das regiões listadas | Códigos como `US-CA, US-NY` (país + subdivisão) |
+| Idioma | O idioma preferido do navegador do visitante é um dos listados | `es` corresponde a todas as variantes de espanhol (`es-MX`, `es-ES`); `pt-BR` apenas ao português do Brasil |
+| Horário do dia | A leitura acontece nos dias da semana escolhidos entre dois horários, em um fuso horário que você define | Uma janela como 22:00–02:00 passa da meia-noite e pertence ao dia em que começa |
+| Intervalo de datas | A leitura acontece entre duas datas | Deixe um dos lados vazio para "até" ou "a partir de"; as datas usam o fuso horário do seu navegador |
+| Número de leituras | É uma das primeiras N leituras, ou qualquer leitura depois de N | Conta as leituras registradas (bots não são contados), então é aproximado quando muitas pessoas leem ao mesmo tempo |
+| Área | Quem lê está dentro de um raio (de 100 m a 500 km) de um ponto | Usa a localização compartilhada por quem lê quando a [localização precisa](/docs/precise-location) está ativada; caso contrário, a localização aproximada do endereço IP |
+
+País, região e a localização por IP usada nas áreas vêm do endereço IP de quem lê, que o QRdx nunca armazena. Quando uma localização é desconhecida, as condições de localização não correspondem (e as condições "não é" correspondem). [Localização precisa e geofencing](/docs/precise-location) explica as áreas, inclusive como fazer um código funcionar somente dentro de uma.
+
+## Links inteligentes de app [#smart-app-links]
+
+Escolha **Adicionar regra → Link inteligente de app** para criar duas regras de uma vez: iOS vai para o link da App Store e Android para o link do Google Play. Todos os outros (computadores, outros celulares) vão para o destino principal, por exemplo seu site.
+
+## Testes A/B [#ab-tests]
+
+Defina a ação de uma regra como **Dividir entre URLs (A/B)** e adicione de 2 a 5 variantes, cada uma com uma URL e um peso. Uma divisão de 70 e 30 envia cerca de 70% dos visitantes para a primeira URL.
+
+- A atribuição é **fixa**: um visitante que lê de novo no mesmo dia recebe a mesma variante. Ela se baseia em um hash anônimo diário do visitante, nunca em cookie.
+- As análises do código mostram as **leituras por variante** desde a última vez que as variantes ou os pesos da divisão mudaram. Cada leitura guarda a variante que foi exibida. As leituras registradas antes de o QRdx guardar variantes são reprocessadas com suas regras atuais e o card é marcado como estimativa.
+- Uma divisão também pode ter condições, por exemplo "teste A/B só para visitantes na Alemanha".
+
+## Teste suas regras [#test-your-rules]
+
+**Teste suas regras**, na parte de baixo do painel, mostra para onde uma leitura iria, para qualquer dispositivo, sistema operacional, país, região, idioma, data e horário, número da leitura e visitante, usando suas alterações ainda não salvas. Ele lista qual regra correspondeu e por que as outras não, e mostra a URL final, incluindo os parâmetros UTM.
+
+## Parâmetros UTM [#utm-parameters]
+
+O painel **Parâmetros UTM** adiciona `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` e até 10 parâmetros seus à URL que cada leitura abre, para que as ferramentas de análise consigam distinguir o tráfego do QR.
+
+- Os parâmetros são adicionados depois do roteamento, a qualquer URL para a qual a leitura vá.
+- Um parâmetro que a URL já tem nunca é substituído, e o restante da URL é mantido exatamente como você o digitou.
+- Nomes que começam com `qrdx_` são reservados para o [rastreamento de conversões](/docs/tracking-and-conversions).
+
+## Planos e downgrades [#plans-and-downgrades]
+
+As regras e os parâmetros UTM salvos no Pro continuam funcionando se você fizer downgrade: os limites só impedem a criação de novos itens. Sem o Pro, você ainda pode desativar e excluir regras ou remover parâmetros UTM; para alterá-los, é preciso ter o Pro de novo.

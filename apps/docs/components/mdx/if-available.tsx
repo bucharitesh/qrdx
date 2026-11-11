@@ -21,19 +21,23 @@ const slugify = (text: string) =>
  * Docs content for a feature, page or integration this deployment may not
  * offer (lib/feature-availability-rules.ts): rendered only where it works.
  * A section heading goes in `title`, so the table of contents never links a
- * hidden section (such a section isn't listed in it either).
+ * hidden section (such a section isn't listed in it either). Translations
+ * keep the English anchor in `id`, so links to `#section` still land.
  */
 export function IfAvailable({
   feature,
   path,
   integration,
   title,
+  id,
   children,
 }: {
   feature?: FeatureId;
   path?: string;
   integration?: string;
   title?: string;
+  /** The heading's anchor, when it isn't the slug of `title`. */
+  id?: string;
   children: ReactNode;
 }) {
   const shown =
@@ -43,7 +47,7 @@ export function IfAvailable({
   if (!shown) return null;
   return (
     <>
-      {title && H2 && <H2 id={slugify(title)}>{title}</H2>}
+      {title && H2 && <H2 id={id ?? slugify(title)}>{title}</H2>}
       {children}
     </>
   );

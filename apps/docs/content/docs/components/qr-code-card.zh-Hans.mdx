@@ -1,0 +1,60 @@
+---
+title: "二维码卡片"
+description: "一张卡片，包含置于“Scan me”边框中的二维码、标题、描述，并预留了操作区域。"
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## 安装 [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## 用法 [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+作为子元素传入的任何内容都会渲染在卡片页脚中，例如复制按钮或[下载菜单](/docs/components/qr-code-download)。
+
+## 示例 [#examples]
+
+### 边框 [#frames]
+
+`frame` 可将行动号召放在二维码下方（`"bottom"`）或上方（`"top"`），也可以不显示边框（`"none"`）。`cta` 用于修改文字标签，`frameClassName` 用于重新设置边框样式，例如使用你的品牌色。
+
+<ComponentPreview name="qr-code-card-frames" />
+
+边框默认使用主题的 `foreground` 和 `background` 颜色，因此在浅色和深色模式下都清晰易读。二维码本身保持浅色背景，所有扫描器都能识别。
+
+### 设置二维码样式 [#styling-the-code]
+
+`qr` 接受任何 qrdx 样式选项：`fgColor`、`bgColor`、渐变、`bodyPattern`、定位角图案、`logo` 和 `templateId`。
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## API 参考 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+其他任何属性（例如 `className`）都会传递给 [Card](https://ui.shadcn.com/docs/components/card)。

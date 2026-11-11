@@ -1,0 +1,49 @@
+---
+title: "Cambia lo que abre un código impreso"
+description: "Convierte un código con enlace a un sitio web en una página alojada, o una página de nuevo en un enlace. El código impreso sigue funcionando."
+---
+
+Un código dinámico abre un enlace a un sitio web o una página alojada, y puedes cambiar entre ambos después de imprimirlo. El enlace corto no cambia, así que cada copia impresa abrirá la nueva página o el nuevo enlace en su próximo escaneo, y los escaneos se siguen contando en el mismo código.
+
+## Convierte un enlace a un sitio web en una página [#turn-a-website-link-into-a-page]
+
+1. Abre el código desde **Códigos** y haz clic en **Cambiar tipo**.
+2. Elige un tipo de página y después una plantilla.
+3. Haz clic en **Continuar al editor** y crea la página.
+4. Haz clic en **Publicar**.
+
+Los escaneos siguen yendo al enlace anterior hasta que publiques. Si sales del editor sin publicar, no cambia nada. Tus cambios sin publicar se quedan en este navegador.
+
+## Convierte una página de nuevo en un enlace [#turn-a-page-back-into-a-link]
+
+1. Abre el código y haz clic en **Cambiar tipo**.
+2. Elige **Enlace a sitio web**, introduce la dirección y haz clic en **Cambiar a enlace a sitio web**.
+
+La página permanece en **Páginas**. Para recuperarla, abre **Cambiar tipo** otra vez y elígela en **Volver a la anterior**.
+
+## Cambia a otro tipo de página [#switch-to-another-page-type]
+
+Elige un tipo en **Otro tipo de página**. La nueva página parte de la plantilla que elijas y toma de la anterior lo que encaje: el nombre de la página, los ajustes y el logotipo, además de los bloques que la plantilla también tenga, como el encabezado, los enlaces o los datos de contacto. El cuadro de diálogo enumera lo que no encaja. Eso se queda en la página anterior, que se conserva en **Páginas**.
+
+## Qué se mantiene igual [#what-stays-the-same]
+
+El enlace corto, el historial de escaneos, la carpeta, las etiquetas, las notas, el diseño del QR, la contraseña, la programación y el límite de escaneos no cambian.
+
+Algunos ajustes solo funcionan con un tipo:
+
+- El enrutamiento inteligente, las pruebas A/B, los parámetros UTM y el seguimiento de conversiones se aplican solo a enlaces a sitios web.
+- Los píxeles de seguimiento se cargan solo en páginas alojadas.
+
+Se conservan al cambiar y vuelven a funcionar si regresas al tipo anterior. La pestaña **Ajustes** del código indica cuáles están guardados pero no se usan.
+
+## Planes [#plans]
+
+Una página nueva cuenta para las páginas alojadas de tu plan, como cualquier página que crees. Una página que el código deja de abrir sigue contando hasta que la elimines desde **Páginas**. Volver a una página que ya tienes no suma al recuento. Consulta [Planes y límites](/docs/plans-and-limits).
+
+## Deshacer un cambio [#undo-a-switch]
+
+Cada cambio guarda los ajustes anteriores del código en **Historial de versiones**. Restaurar una versión anterior devuelve el tipo al que tenía, siempre que la página que abría siga existiendo.
+
+## Desde la API [#from-the-api]
+
+Envía `kind` con `PATCH /v1/codes/{id}`. Consulta [Actualizar un código](/docs/developers/api/update-code).

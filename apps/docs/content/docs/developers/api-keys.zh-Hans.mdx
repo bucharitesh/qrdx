@@ -1,0 +1,61 @@
+---
+title: "API 密钥"
+description: "在“设置 → API 密钥和应用”中创建 qrdx_ API 密钥,并用它调用 REST API。涵盖权限范围、工作区与角色、有效期、最近使用和撤销。"
+icon: LockKeyhole
+---
+
+API 密钥让你自己的服务器、脚本和 CI 任务无需 OAuth 流程即可调用 [REST API](/docs/developers/rest-api)。将它放在 `Authorization` 请求头中发送:
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+凡是接受 OAuth 访问令牌的端点,都可以在同一个请求头中使用密钥;[Image API](/docs/developers/image-api) 则两者都不需要。如果你的产品要代表其他 QRdx 用户操作,请改用 [OAuth 应用](/docs/developers/build-an-integration),这样每个人都需要自行授权。
+
+## 创建密钥 [#create-a-key]
+
+1. 在密钥所属的工作区中打开[设置 → API 密钥和应用](/dashboard?to=settings/developers&new=1)。该链接会打开你上次使用的工作区;如需切换,请使用工作区切换器选择其他工作区。
+2. 选择 **创建密钥**。按密钥的运行位置为它命名,选择访问权限,也可以按需设置到期时间。密钥无需你在场即可工作,因此 QRdx 会先要求你[确认是你本人](/docs/help/privacy-and-security/two-step-verification#confirm-its-you),除非你在该浏览器中 10 分钟内已确认过。
+3. 复制密钥。密钥只显示一次:QRdx 仅保存它的哈希值,因此无法再次显示。同一对话框中还会显示一条 curl 请求,其中已填入该密钥和本站的 API 地址,可直接粘贴使用。
+
+密钥由 `qrdx_` 加 40 个字母和数字组成。列表中只显示它的开头部分,例如 `qrdx_7KpQ2m…`,方便你区分不同的密钥。
+
+## 访问权限 [#access]
+
+密钥使用与 OAuth 应用相同的权限范围。创建密钥时,从三个选项中选择一个:
+
+| 访问权限 | 权限范围 | 允许的操作 |
+| --- | --- | --- |
+| 完全访问 | `profile:read`、`themes:read`、`codes:read`、`codes:write` | API 能做的一切 |
+| 只读 | `profile:read`、`themes:read`、`codes:read` | 读取二维码、扫描分析、主题和个人资料 |
+| 自定义 | 由你选择 | 这些权限范围所允许的操作([权限范围列表](/docs/developers/rest-api#get-an-access-token)) |
+
+`codes:write` 同时包含 `codes:read` 允许的所有操作。密钥的权限范围之后无法更改,如需调整请创建新密钥。超出密钥权限范围的请求会收到 `403 INSUFFICIENT_SCOPE`,错误信息中会指出所需的权限范围。
+
+## 工作区与角色 [#workspaces-and-roles]
+
+密钥属于你创建它时打开的工作区,并以你的身份在该工作区中操作:
+
+- 密钥可操作该工作区的二维码、扫描、钩子和主题,并遵循该工作区的套餐和[每日配额](/docs/developers/rest-api#rate-limits)。
+- 它能做你在该工作区中能做的事,每次请求时按你当时的[角色](/docs/teams)判断。在你自己的工作区中,你是所有者。如果你的角色变化,密钥的权限也随之变化;如果你离开该工作区,密钥会失效;删除工作区时,其中的密钥也会一并删除。
+
+工作区的每位成员都可以创建密钥。所有者和管理员可以看到工作区中的所有密钥并撤销其中任何一个;成员只能查看和撤销自己的密钥。`GET /v1/me` 返回创建该密钥的人的个人资料。
+
+## 有效期、最近使用和撤销 [#revoke]
+
+- **有效期。** 密钥可以永不过期,也可以在 30 天、90 天或 1 年后过期。过期的密钥会收到 `401 INVALID_TOKEN`,并保留在列表中,标记为 **已过期**,直到你将其撤销。
+- **最近使用。** 列表会显示每个密钥最近一次通过请求认证的日期。
+- **撤销。** 选择密钥旁边的 **撤销**。此后使用该密钥的请求会收到 `401 INVALID_TOKEN`。撤销后无法恢复。
+
+每个人在每个工作区中最多可有 25 个有效密钥。已撤销和已过期的密钥不计入。
+
+## 保管好密钥 [#keep-keys-safe]
+
+- 把密钥放在服务器上:存入环境变量或密钥管理器。切勿将其放入网页、移动应用、提示词或代码仓库。
+- 每个运行位置使用一个密钥,这样撤销其中一个不会影响其他的。
+- 只做报表的脚本使用只读密钥,短期任务使用会过期的密钥。
+- 如果密钥泄露,请撤销它并创建新密钥。`qrdx_` 前缀便于在代码和日志中搜索密钥。
+
+## 自托管 [#self-hosting]
+
+[自托管](/docs/self-hosting)实例的数据库中需要有 `api_key` 表,更新后执行常规的架构同步即可创建它(使用 Docker 时是 `migrate` 服务,否则运行 `bun run db:push`;参见[更新](/docs/self-hosting))。在此之前,“设置 → API 密钥和应用”会提示 API 密钥不可用,API 也会以 `401` 拒绝密钥。其 API 位于自有域名的 `/api/v1` 下,这也是新建密钥对话框中填入的地址。
