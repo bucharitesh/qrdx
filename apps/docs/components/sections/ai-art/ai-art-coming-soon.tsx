@@ -49,7 +49,10 @@ export function AIArtComingSoon() {
         </div>
       </div>
 
-      <ul aria-label={t("styles")} className="relative flex min-h-7 flex-wrap gap-2">
+      <ul
+        aria-label={t("styles")}
+        className="relative flex min-h-7 flex-wrap gap-2"
+      >
         {samples.map((preset) => (
           <li key={preset.id}>
             <Badge
