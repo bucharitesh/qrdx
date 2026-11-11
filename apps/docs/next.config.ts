@@ -118,6 +118,20 @@ let nextConfig: NextConfig = {
     // Two root layouts (app/[lang] and app/(app)): URLs that match no route
     // get app/global-not-found.tsx.
     globalNotFound: true,
+    // Vercel builds on 2 cores and 8 GB, and Turbopack's compile ran out of
+    // memory once the docs had 5 languages (2026-11-11). Measured locally,
+    // these two cut the compiler's peak by about a third:
+    // - the build cache: writing it makes Turbopack track every task's
+    //   dependencies, and Vercel never restores it ("build cache was too
+    //   large"), so it costs memory and buys nothing there;
+    // - source maps: nothing reads them in production (they aren't uploaded
+    //   anywhere, and the server only applies them when Node runs with
+    //   source maps on, which this app doesn't). `next dev` and local builds
+    //   keep both.
+    ...(process.env.VERCEL === "1" && {
+      turbopackFileSystemCacheForBuild: false,
+      turbopackSourceMaps: false,
+    }),
   },
   // Server code reads QRDX_HOME_NUMBERS as its build-time value
   // (lib/home-numbers/flag.ts). While it's off, the bundler drops the home
