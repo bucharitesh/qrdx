@@ -18563,6 +18563,12 @@
     "status": "machine",
     "context": "pageCodes.on-business-cards-2.label"
   },
+  "14a6d239da60": {
+    "source": "2-for-1",
+    "text": "买一送一 2-for-1",
+    "status": "machine",
+    "context": "pageCodes.on-flyers-1.label"
+  },
   "30556a7a38a5": {
     "source": "Programme",
     "text": "节目单",
@@ -25739,9 +25745,9 @@
     "status": "machine",
     "context": "aiArt.faqs.9.question"
   },
-  "828fb382c058": {
-    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 39 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
-    "text": "使用的是 OpenAI 的 GPT Image 2，通过 Vercel AI Gateway 调用，提供 39 种风格预设。QRdx 先在服务器上绘制一个普通的黑白二维码，模型将它重绘为你描述的场景，再由 QRdx 自带的扫描检测确认结果可以被解码，并且只在必要时才加强二维码。",
+  "81399be3dc7a": {
+    "source": "OpenAI's GPT Image 2, through Vercel AI Gateway, with 171 style presets. QRdx draws a plain black-and-white QR code on the server, the model repaints it as your scene, and QRdx's own scan check makes sure the result decodes, strengthening the code only as much as it needs.",
+    "text": "OpenAI 的 GPT Image 2，通过 Vercel AI Gateway 提供，内置 171 种风格预设。QRdx 会在服务器上绘制一个普通的黑白二维码，由模型将其重绘为你所要的场景，再由 QRdx 自带的扫描检测确认结果可以被解码，并且只在必要时才增强二维码。",
     "status": "machine",
     "context": "aiArt.faqs.9.answer"
   },
