@@ -82,6 +82,7 @@ const COPY_ATTRIBUTES = new Set([
   "buttonLabel",
   "caption",
   "summary",
+  "note",
 ]);
 /** Object literal fields that hold copy (inside components only). */
 const COPY_FIELDS = new Set([

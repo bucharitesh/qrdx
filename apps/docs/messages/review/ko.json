@@ -8443,6 +8443,486 @@
     "source": "83489b301d96",
     "status": "machine"
   },
+  "editor.contentForms.cryptoForms.scanningOpensAWalletWith": {
+    "source": "079d96d0a913",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTelegramOrT": {
+    "source": "d09a803b7b84",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensAChatIn": {
+    "source": "95059d63cd24",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheInviteIn": {
+    "source": "3aa7f393a01e",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensLineToAdd": {
+    "source": "57e78bbdb8be",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheProfileOn": {
+    "source": "c06e93836689",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheProfileOn2": {
+    "source": "d0994e490c52",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheChannelOn": {
+    "source": "6150219b39b9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensSoundcloud": {
+    "source": "3f244f4ea7a4",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheMeetingIn": {
+    "source": "49d033feac5a",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheCallIn": {
+    "source": "d68e42271fed",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensWazeOrWaze": {
+    "source": "38b86953b6f9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensYourCashApp": {
+    "source": "655b40813b2a",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensYourRevolutMe": {
+    "source": "9311caa35d4d",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.usernameChannelOrGroup": {
+    "source": "f21280ff19a7",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.usernameOrATMe": {
+    "source": "9946446d9f6b",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aPublicUsernameOrPaste": {
+    "source": "f0c722e98aca",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.phoneNumber": {
+    "source": "306f1bb20677",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.withTheCountryCodeIt": {
+    "source": "df2972864eef",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.open": {
+    "source": "ed077f3d8125",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aUsernameChannelOrGroup": {
+    "source": "0c2bdce608e8",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aChatWithAPhone": {
+    "source": "2e2dca9de1bc",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.withTheCountryCode": {
+    "source": "ec3710b81e18",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.usernameOrGroupLink": {
+    "source": "fdc382d2eb7e",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.usernamesCantBeTurnedInto": {
+    "source": "ae81d07f2f41",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aUsernameOrGroupLink": {
+    "source": "952c35bd1f5e",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.inviteLinkOrCode": {
+    "source": "0526669d8182",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.discordGgAbc123": {
+    "source": "ff528ef9a03b",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.invitesExpireAfter7Days": {
+    "source": "3fffcc6869e5",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.lineId": {
+    "source": "4a5f5e5b9ded",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourLineIdOrOfficial": {
+    "source": "409b20d855db",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.officialAccountsStartWithYou": {
+    "source": "8d30e915ccae",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.handle": {
+    "source": "fa04ae3d5198",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aCustomDomainHandleWorks": {
+    "source": "261bce98e841",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.youMastodonSocial": {
+    "source": "b28d2150b83b",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourFullHandleServerIncluded": {
+    "source": "1df103c85ce5",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.twitchUsername": {
+    "source": "dbc7734c4de8",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourchannel": {
+    "source": "a9d1b858c0d9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.profileNameOrLink": {
+    "source": "21e84003127f",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yournameOrATrackLink": {
+    "source": "1608ad0ecc1a",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.pasteATrackOrPlaylist": {
+    "source": "7f5c0d249313",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.meetingIdOrInviteLink": {
+    "source": "cce3f1ddc271",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.pasteTheInviteLinkTo": {
+    "source": "b2c4e2eb17c9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.meetingCodeOrLink": {
+    "source": "aa8ea9359c4f",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.abcDefgHij": {
+    "source": "fbc346f7fdf4",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.addressOrCoordinates": {
+    "source": "15b6d0fe989c",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.pikePlaceMarketSeattleOr": {
+    "source": "ddf59524b7ba",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.startDirectionsRightAway": {
+    "source": "21fa9c259feb",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.cashtag": {
+    "source": "548ead8bc820",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourcashtag": {
+    "source": "6da0d05b77c2",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.revolutUsername": {
+    "source": "099e0d173d8c",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourname": {
+    "source": "90d48ef59ea9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourRevtagAsInRevolut": {
+    "source": "f0a8964345f6",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.theEpcGuidelinesAskFor": {
+    "source": "30b1bdd7ea33",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.useLevelM": {
+    "source": "48284992731a",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningOpensThePayersBank": {
+    "source": "6641cd33d7ed",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningFillsInAEuro": {
+    "source": "c7d8de980ef1",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningOpensPaynowInAny": {
+    "source": "9374c0a0e999",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningOpensAPromptpayTransfer": {
+    "source": "6ab8dfeddfa0",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningOpensATransferIn": {
+    "source": "444259b213a8",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1gxuvm9": {
+    "source": "4d5e4c9cde53",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k166v0c5": {
+    "source": "d485aa669f02",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1yiqnlw": {
+    "source": "5b0baced219a",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k6ynt77": {
+    "source": "69083b7fe01a",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k6umxxr": {
+    "source": "14f6e90c19f1",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k144ewn1": {
+    "source": "b59dd1c1c16e",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k142k4ma": {
+    "source": "fc33f73246f4",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1tyryef": {
+    "source": "7deb57b123ab",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kc0qpqq": {
+    "source": "893050feed01",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k175bjom": {
+    "source": "7e280711764d",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1cam7ic": {
+    "source": "2f77668a9dfb",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1x302fo": {
+    "source": "7f51a9fea1ad",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1ysrm3g": {
+    "source": "be8c62270423",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1lj6rfz": {
+    "source": "ee6812d2a6a7",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1iiuca1": {
+    "source": "f841ff2db34f",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k16irq05": {
+    "source": "7e345c3ba789",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1p6l5b9": {
+    "source": "d81cfa4b0fd0",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k8mfsk5": {
+    "source": "f9f9b6e83c04",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1xwl2j6": {
+    "source": "f43cc75965b7",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k19b4i3s": {
+    "source": "cca7c457de7c",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1nk11j3": {
+    "source": "a4624d383d26",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kl0fvir": {
+    "source": "92e59410be41",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kh5cvh0": {
+    "source": "c8d1e8ad9359",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kuuj6iu": {
+    "source": "2b5a33062b70",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k391cj4": {
+    "source": "187e80ba4d8a",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1ebmfz4": {
+    "source": "9e67dc155680",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1edxmpf": {
+    "source": "8d28f8465445",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k4el6o6": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1xb7fm6": {
+    "source": "7c40a2f42721",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.khgxhnp": {
+    "source": "81e26101cddd",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k7ookpt": {
+    "source": "bcf8937924f8",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1c7vrcq": {
+    "source": "71bf90935fc2",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1gasst3": {
+    "source": "be7dd84648f8",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1jee0pv": {
+    "source": "f6725f3af08a",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k4p9tvj": {
+    "source": "fba4e115d625",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1ly5lrh": {
+    "source": "72cc607b1ea0",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1o1f07v": {
+    "source": "55656cc5e356",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1hezgmh": {
+    "source": "994a693fdbdc",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1ybz3bn": {
+    "source": "c7fe78cc2b02",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1y8bu9t": {
+    "source": "3e076fa17d55",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1fdra2f": {
+    "source": "d46b89eee26e",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k192q8xj": {
+    "source": "676c471bc8dc",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k15nzl7f": {
+    "source": "d65a164d69aa",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.klce4ed": {
+    "source": "f7573b7f5db0",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kcdfio8": {
+    "source": "816fca150c81",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kvoy7pr": {
+    "source": "fdc5bd9c975e",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k179drfx": {
+    "source": "7e34fed62a64",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kxyipuq": {
+    "source": "8ae4367452d2",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1pt9yc": {
+    "source": "5c498d0d2aff",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kke7891": {
+    "source": "bbfb500d2e37",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k10mfi45": {
+    "source": "fe7023d0846f",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k19wsrr1": {
+    "source": "50357352cbdc",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k43xjmr": {
+    "source": "fb1f8c8516c3",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1l4nd21": {
+    "source": "8914127e0ca5",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k5h39gc": {
+    "source": "14b6cfc74a3b",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kicvyhv": {
+    "source": "232f5dc34c93",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1827q8t": {
+    "source": "0e66373f45dc",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1c3pxvv": {
+    "source": "e6c386e0a680",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.ksjj37t": {
+    "source": "526e0087cc3f",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kb8wbld": {
+    "source": "28591dd9143e",
+    "status": "machine"
+  },
   "editor.contentTypeModal.current": {
     "source": "e0d1b68224bf",
     "status": "machine"

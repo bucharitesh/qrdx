@@ -1,4 +1,724 @@
 {
+  "e7a241debad5": {
+    "source": "URL",
+    "text": "URL",
+    "status": "machine",
+    "context": "qrTypes.types.url.name"
+  },
+  "4473afd14cb9": {
+    "source": "Open any website or web page",
+    "text": "Abre cualquier sitio o página web",
+    "status": "machine",
+    "context": "contentTypes.list.url.description"
+  },
+  "7b5cb3c7f705": {
+    "source": "Plain Text",
+    "text": "Texto simple",
+    "status": "machine",
+    "context": "qrTypes.types.text.name"
+  },
+  "b4e85fdf01c5": {
+    "source": "Show a short note or message",
+    "text": "Muestra una nota o mensaje corto",
+    "status": "machine",
+    "context": "contentTypes.list.text.description"
+  },
+  "969ccbd3cf63": {
+    "source": "Email",
+    "text": "Email",
+    "status": "machine",
+    "context": "qrTypes.types.email.name"
+  },
+  "41c3b7d764f3": {
+    "source": "Draft an email with a subject and body",
+    "text": "Redacta un correo con asunto y cuerpo",
+    "status": "machine",
+    "context": "contentTypes.list.email.description"
+  },
+  "63dceb8800b2": {
+    "source": "Phone",
+    "text": "Teléfono",
+    "status": "machine",
+    "context": "contentTypes.list.phone.label"
+  },
+  "bbf50884e10f": {
+    "source": "Call a number with one tap",
+    "text": "Llama a un número con un toque",
+    "status": "machine",
+    "context": "contentTypes.list.phone.description"
+  },
+  "40b601a10ca5": {
+    "source": "SMS",
+    "text": "SMS",
+    "status": "machine",
+    "context": "qrTypes.types.sms.name"
+  },
+  "8129c6e42c2a": {
+    "source": "Open a pre-filled text message",
+    "text": "Abre un mensaje de texto prellenado",
+    "status": "machine",
+    "context": "contentTypes.list.sms.description"
+  },
+  "6a40edf1fc87": {
+    "source": "WhatsApp",
+    "text": "WhatsApp",
+    "status": "machine",
+    "context": "qrTypes.types.whatsapp.name"
+  },
+  "cc39c085735c": {
+    "source": "Start a WhatsApp chat with a message",
+    "text": "Inicia un chat de WhatsApp con un mensaje",
+    "status": "machine",
+    "context": "contentTypes.list.whatsapp.description"
+  },
+  "10df5f541da7": {
+    "source": "WiFi",
+    "text": "Wi-Fi",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.label"
+  },
+  "0c3e491ad9b7": {
+    "source": "Join a Wi-Fi network without typing",
+    "text": "Conéctate a una red Wi-Fi sin escribir",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.description"
+  },
+  "2b5c3d26721a": {
+    "source": "Contact",
+    "text": "Contacto",
+    "status": "machine",
+    "context": "pageCodes.on-business-cards-1.label"
+  },
+  "5ee17deb4ffb": {
+    "source": "Save your contact card to a phone",
+    "text": "Guarda tu tarjeta de contacto en un teléfono",
+    "status": "machine",
+    "context": "contentTypes.list.vcard.description"
+  },
+  "15b61974b270": {
+    "source": "Location",
+    "text": "Ubicación",
+    "status": "machine",
+    "context": "contentTypes.list.maps.label"
+  },
+  "63bd51938ca9": {
+    "source": "Open a place or directions in Maps",
+    "text": "Abre un lugar o indicaciones en Maps",
+    "status": "machine",
+    "context": "contentTypes.list.maps.description"
+  },
+  "d41f5b4977ee": {
+    "source": "Facebook",
+    "text": "Facebook",
+    "status": "machine",
+    "context": "qrTypes.types.facebook.name"
+  },
+  "8a06e5f8ef9d": {
+    "source": "Open a Facebook page or profile",
+    "text": "Abre una página o perfil de Facebook",
+    "status": "machine",
+    "context": "contentTypes.list.facebook.description"
+  },
+  "bad57ef7837c": {
+    "source": "Instagram",
+    "text": "Instagram",
+    "status": "machine",
+    "context": "qrTypes.types.instagram.name"
+  },
+  "7af66c4bc9d9": {
+    "source": "Open an Instagram profile",
+    "text": "Abre un perfil de Instagram",
+    "status": "machine",
+    "context": "contentTypes.list.instagram.description"
+  },
+  "eb0050f72303": {
+    "source": "Reddit",
+    "text": "Reddit",
+    "status": "machine",
+    "context": "qrTypes.types.reddit.name"
+  },
+  "73d9e832dc15": {
+    "source": "Open a subreddit or Reddit profile",
+    "text": "Abre un subreddit o perfil de Reddit",
+    "status": "machine",
+    "context": "contentTypes.list.reddit.description"
+  },
+  "1bb6fcfbf136": {
+    "source": "TikTok",
+    "text": "TikTok",
+    "status": "machine",
+    "context": "qrTypes.types.tiktok.name"
+  },
+  "cd29fe404136": {
+    "source": "Open a TikTok profile",
+    "text": "Abre un perfil de TikTok",
+    "status": "machine",
+    "context": "contentTypes.list.tiktok.description"
+  },
+  "3a409cda219d": {
+    "source": "Twitter / X",
+    "text": "Twitter / X",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.label"
+  },
+  "65e335f23f7f": {
+    "source": "Open an X (Twitter) profile",
+    "text": "Abre un perfil de X (Twitter)",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.description"
+  },
+  "dd84425b72da": {
+    "source": "LinkedIn",
+    "text": "LinkedIn",
+    "status": "machine",
+    "context": "qrTypes.types.linkedin.name"
+  },
+  "a95b9305d767": {
+    "source": "Open a LinkedIn profile or company page",
+    "text": "Abre un perfil o página de empresa de LinkedIn",
+    "status": "machine",
+    "context": "contentTypes.list.linkedin.description"
+  },
+  "fb7accfff8c6": {
+    "source": "YouTube",
+    "text": "YouTube",
+    "status": "machine",
+    "context": "qrTypes.types.youtube.name"
+  },
+  "81dfe5941ed0": {
+    "source": "Open a YouTube channel or video",
+    "text": "Abre un canal o video de YouTube",
+    "status": "machine",
+    "context": "contentTypes.list.youtube.description"
+  },
+  "78dfd4d79bda": {
+    "source": "Pinterest",
+    "text": "Pinterest",
+    "status": "machine",
+    "context": "qrTypes.types.pinterest.name"
+  },
+  "dfd9caf97fa7": {
+    "source": "Open a Pinterest profile",
+    "text": "Abre un perfil de Pinterest",
+    "status": "machine",
+    "context": "contentTypes.list.pinterest.description"
+  },
+  "4eb2ce09b54c": {
+    "source": "Snapchat",
+    "text": "Snapchat",
+    "status": "machine",
+    "context": "qrTypes.types.snapchat.name"
+  },
+  "b5ce116c6f18": {
+    "source": "Add you as a friend on Snapchat",
+    "text": "Te añade como amigo en Snapchat",
+    "status": "machine",
+    "context": "contentTypes.list.snapchat.description"
+  },
+  "3e42e385075b": {
+    "source": "Threads",
+    "text": "Threads",
+    "status": "machine",
+    "context": "qrTypes.types.threads.name"
+  },
+  "0a672d38b9af": {
+    "source": "Open a Threads profile",
+    "text": "Abre un perfil de Threads",
+    "status": "machine",
+    "context": "contentTypes.list.threads.description"
+  },
+  "9c26139ca220": {
+    "source": "UPI Payment",
+    "text": "Pago UPI",
+    "status": "machine",
+    "context": "contentTypes.list.upi.label"
+  },
+  "16def4a4f56e": {
+    "source": "Get paid from any UPI app in India",
+    "text": "Cobra desde cualquier app UPI en India",
+    "status": "machine",
+    "context": "contentTypes.list.upi.description"
+  },
+  "ab8a4f6bb84d": {
+    "source": "PayPal",
+    "text": "PayPal",
+    "status": "machine",
+    "context": "qrTypes.types.paypal.name"
+  },
+  "edbafd65d55b": {
+    "source": "Get paid with a PayPal.me link",
+    "text": "Cobra con un enlace de PayPal.me",
+    "status": "machine",
+    "context": "contentTypes.list.paypal.description"
+  },
+  "338c536466d8": {
+    "source": "Google Review",
+    "text": "Reseña de Google",
+    "status": "machine",
+    "context": "qrTypes.types.google-review.name"
+  },
+  "436c48b655f2": {
+    "source": "Ask customers for a Google review",
+    "text": "Pide reseñas de Google a tus clientes",
+    "status": "machine",
+    "context": "contentTypes.list.google-review.description"
+  },
+  "a1593ecc5a13": {
+    "source": "Venmo",
+    "text": "Venmo",
+    "status": "machine",
+    "context": "qrTypes.types.venmo.name"
+  },
+  "4b6f2fb13a28": {
+    "source": "Request money on Venmo",
+    "text": "Solicita dinero en Venmo",
+    "status": "machine",
+    "context": "contentTypes.list.venmo.description"
+  },
+  "7005c0064bda": {
+    "source": "Spotify",
+    "text": "Spotify",
+    "status": "machine",
+    "context": "qrTypes.types.spotify.name"
+  },
+  "c6a63235a8dc": {
+    "source": "Play a song, album, playlist or podcast",
+    "text": "Reproduce una canción, álbum, lista o podcast",
+    "status": "machine",
+    "context": "contentTypes.list.spotify.description"
+  },
+  "b4056df6691f": {
+    "source": "Bitcoin",
+    "text": "Bitcoin",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.name"
+  },
+  "e67cd215efb8": {
+    "source": "Receive Bitcoin to your wallet",
+    "text": "Recibe Bitcoin en tu monedero",
+    "status": "machine",
+    "context": "contentTypes.list.bitcoin.description"
+  },
+  "a13bebeb57e1": {
+    "source": "Ethereum",
+    "text": "Ethereum",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.name"
+  },
+  "6c0ebe263a4f": {
+    "source": "Receive ETH to your wallet",
+    "text": "Recibe ETH en tu monedero",
+    "status": "machine",
+    "context": "contentTypes.list.ethereum.description"
+  },
+  "d9bc2c875a30": {
+    "source": "Etsy",
+    "text": "Etsy",
+    "status": "machine",
+    "context": "qrTypes.types.etsy.name"
+  },
+  "bb8ed82e85a8": {
+    "source": "Open your Etsy shop",
+    "text": "Abre tu tienda de Etsy",
+    "status": "machine",
+    "context": "contentTypes.list.etsy.description"
+  },
+  "34af43e8f247": {
+    "source": "Dub",
+    "text": "Dub",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.label"
+  },
+  "a5a865ee3833": {
+    "source": "Use a Dub short link with its analytics",
+    "text": "Usa un enlace corto de Dub con sus analíticas",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.description"
+  },
+  "915ef4bad59a": {
+    "source": "Google Drive",
+    "text": "Google Drive",
+    "status": "machine",
+    "context": "qrTypes.types.google-drive.name"
+  },
+  "e61168c0f91d": {
+    "source": "Share a Drive file or folder",
+    "text": "Comparte un archivo o carpeta de Drive",
+    "status": "machine",
+    "context": "contentTypes.list.google-drive.description"
+  },
+  "4cecc708584f": {
+    "source": "Attendance",
+    "text": "Asistencia",
+    "status": "machine",
+    "context": "qrTypes.types.attendance.name"
+  },
+  "67f5f288d26a": {
+    "source": "Check people in with a Google Form",
+    "text": "Registra asistentes con un Google Form",
+    "status": "machine",
+    "context": "contentTypes.list.attendance.description"
+  },
+  "49d2dc07acd9": {
+    "source": "Amazon",
+    "text": "Amazon",
+    "status": "machine",
+    "context": "qrTypes.types.amazon.name"
+  },
+  "d3d1f53cf2cc": {
+    "source": "Open an Amazon product page",
+    "text": "Abre la página de un producto de Amazon",
+    "status": "machine",
+    "context": "contentTypes.list.amazon.description"
+  },
+  "820763ae11ab": {
+    "source": "Flipkart",
+    "text": "Flipkart",
+    "status": "machine",
+    "context": "qrTypes.types.flipkart.name"
+  },
+  "e7ec6e993e01": {
+    "source": "Open a Flipkart product page",
+    "text": "Abre la página de un producto de Flipkart",
+    "status": "machine",
+    "context": "contentTypes.list.flipkart.description"
+  },
+  "68e3373a7f76": {
+    "source": "Cal.com",
+    "text": "Cal.com",
+    "status": "machine",
+    "context": "qrTypes.types.calcom.name"
+  },
+  "69b2a1089f85": {
+    "source": "Let people book a meeting with you",
+    "text": "Permite que te reserven una reunión",
+    "status": "machine",
+    "context": "contentTypes.list.calcom.description"
+  },
+  "fa7d3d951464": {
+    "source": "Pix",
+    "text": "Pix",
+    "status": "machine",
+    "context": "qrTypes.types.pix.name"
+  },
+  "7b46ff8a9488": {
+    "source": "Get paid by Pix from any Brazilian bank",
+    "text": "Cobra con Pix desde cualquier banco de Brasil",
+    "status": "machine",
+    "context": "contentTypes.list.pix.description"
+  },
+  "2810ba148058": {
+    "source": "SEPA transfer",
+    "text": "Transferencia SEPA",
+    "status": "machine",
+    "context": "contentTypes.list.sepa.label"
+  },
+  "ede69d3649f9": {
+    "source": "Fill in a euro bank transfer (EPC)",
+    "text": "Rellena una transferencia bancaria en euros (EPC)",
+    "status": "machine",
+    "context": "contentTypes.list.sepa.description"
+  },
+  "5c5af06729d3": {
+    "source": "PayNow",
+    "text": "PayNow",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.name"
+  },
+  "ce2ba3ad6a51": {
+    "source": "Get paid by PayNow in Singapore",
+    "text": "Cobra con PayNow en Singapur",
+    "status": "machine",
+    "context": "contentTypes.list.paynow.description"
+  },
+  "a29179a6b7b9": {
+    "source": "PromptPay",
+    "text": "PromptPay",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.name"
+  },
+  "8bc2d937b480": {
+    "source": "Get paid by PromptPay in Thailand",
+    "text": "Cobra con PromptPay en Tailandia",
+    "status": "machine",
+    "context": "contentTypes.list.promptpay.description"
+  },
+  "d3f03ab05542": {
+    "source": "VietQR",
+    "text": "VietQR",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.name"
+  },
+  "95b3d658ac81": {
+    "source": "Get a bank transfer in Vietnam",
+    "text": "Recibe una transferencia en Vietnam",
+    "status": "machine",
+    "context": "contentTypes.list.vietqr.description"
+  },
+  "2105f7da1289": {
+    "source": "Cash App",
+    "text": "Cash App",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.name"
+  },
+  "5c2bdc3e7601": {
+    "source": "Get paid to your $Cashtag",
+    "text": "Cobra en tu $Cashtag",
+    "status": "machine",
+    "context": "contentTypes.list.cashapp.description"
+  },
+  "dd53271a2e06": {
+    "source": "Revolut",
+    "text": "Revolut",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.name"
+  },
+  "5a94648461c3": {
+    "source": "Get paid with a revolut.me link",
+    "text": "Cobra con un enlace de revolut.me",
+    "status": "machine",
+    "context": "contentTypes.list.revolut.description"
+  },
+  "acdd1e734125": {
+    "source": "Telegram",
+    "text": "Telegram",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.name"
+  },
+  "31d202640cdc": {
+    "source": "Open a Telegram chat, channel or group",
+    "text": "Abre un chat, canal o grupo de Telegram",
+    "status": "machine",
+    "context": "contentTypes.list.telegram.description"
+  },
+  "1e9806e4227b": {
+    "source": "Signal",
+    "text": "Signal",
+    "status": "machine",
+    "context": "qrTypes.types.signal.name"
+  },
+  "bd7c9436de24": {
+    "source": "Start a Signal chat",
+    "text": "Inicia un chat de Signal",
+    "status": "machine",
+    "context": "contentTypes.list.signal.description"
+  },
+  "053bc65874ad": {
+    "source": "Discord",
+    "text": "Discord",
+    "status": "machine",
+    "context": "qrTypes.types.discord.name"
+  },
+  "b78506790d9a": {
+    "source": "Invite people to your Discord server",
+    "text": "Invita a personas a tu servidor de Discord",
+    "status": "machine",
+    "context": "contentTypes.list.discord.description"
+  },
+  "81a0d84c9895": {
+    "source": "LINE",
+    "text": "LINE",
+    "status": "machine",
+    "context": "qrTypes.types.line.name"
+  },
+  "29209cbe493e": {
+    "source": "Add you as a friend on LINE",
+    "text": "Te añade como amigo en LINE",
+    "status": "machine",
+    "context": "contentTypes.list.line.description"
+  },
+  "4ed485c71401": {
+    "source": "Bluesky",
+    "text": "Bluesky",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.name"
+  },
+  "6de0af21d365": {
+    "source": "Open a Bluesky profile",
+    "text": "Abre un perfil de Bluesky",
+    "status": "machine",
+    "context": "contentTypes.list.bluesky.description"
+  },
+  "a53bdbbb43f0": {
+    "source": "Mastodon",
+    "text": "Mastodon",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.name"
+  },
+  "eda359459199": {
+    "source": "Open a Mastodon or fediverse profile",
+    "text": "Abre un perfil de Mastodon o del fediverso",
+    "status": "machine",
+    "context": "contentTypes.list.mastodon.description"
+  },
+  "a731a58c4cf3": {
+    "source": "Twitch",
+    "text": "Twitch",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.name"
+  },
+  "dd82e14a5114": {
+    "source": "Open a Twitch channel",
+    "text": "Abre un canal de Twitch",
+    "status": "machine",
+    "context": "contentTypes.list.twitch.description"
+  },
+  "8506b11e2d83": {
+    "source": "SoundCloud",
+    "text": "SoundCloud",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.name"
+  },
+  "e51e2f69221b": {
+    "source": "Play a SoundCloud profile or track",
+    "text": "Reproduce un perfil o tema de SoundCloud",
+    "status": "machine",
+    "context": "contentTypes.list.soundcloud.description"
+  },
+  "509c517ede79": {
+    "source": "Zoom",
+    "text": "Zoom",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.name"
+  },
+  "0632cec7498a": {
+    "source": "Join a Zoom meeting",
+    "text": "Únete a una reunión de Zoom",
+    "status": "machine",
+    "context": "contentTypes.list.zoom.description"
+  },
+  "78aeb390abbc": {
+    "source": "Google Meet",
+    "text": "Google Meet",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.name"
+  },
+  "8370d59ec070": {
+    "source": "Join a Google Meet call",
+    "text": "Únete a una llamada de Google Meet",
+    "status": "machine",
+    "context": "contentTypes.list.google-meet.description"
+  },
+  "302415affc9a": {
+    "source": "Waze",
+    "text": "Waze",
+    "status": "machine",
+    "context": "qrTypes.types.waze.name"
+  },
+  "8bc07b3a7635": {
+    "source": "Get directions in Waze",
+    "text": "Obtén indicaciones en Waze",
+    "status": "machine",
+    "context": "contentTypes.list.waze.description"
+  },
+  "eaa4e0ba3c89": {
+    "source": "Litecoin",
+    "text": "Litecoin",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.name"
+  },
+  "449a6e9adfab": {
+    "source": "Receive Litecoin to your wallet",
+    "text": "Recibe Litecoin en tu monedero",
+    "status": "machine",
+    "context": "contentTypes.list.litecoin.description"
+  },
+  "bbc8f6fd09a9": {
+    "source": "Dogecoin",
+    "text": "Dogecoin",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.name"
+  },
+  "89da96767f06": {
+    "source": "Receive Dogecoin to your wallet",
+    "text": "Recibe Dogecoin en tu monedero",
+    "status": "machine",
+    "context": "contentTypes.list.dogecoin.description"
+  },
+  "8a9851255d67": {
+    "source": "Bitcoin Cash",
+    "text": "Bitcoin Cash",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.name"
+  },
+  "5dc3583c4af4": {
+    "source": "Receive Bitcoin Cash to your wallet",
+    "text": "Recibe Bitcoin Cash en tu monedero",
+    "status": "machine",
+    "context": "contentTypes.list.bitcoincash.description"
+  },
+  "be4b0c384393": {
+    "source": "Solana",
+    "text": "Solana",
+    "status": "machine",
+    "context": "qrTypes.types.solana.name"
+  },
+  "5ac584ff8360": {
+    "source": "Receive SOL with Solana Pay",
+    "text": "Recibe SOL con Solana Pay",
+    "status": "machine",
+    "context": "contentTypes.list.solana.description"
+  },
+  "089fe32a5314": {
+    "source": "Monero",
+    "text": "Monero",
+    "status": "machine",
+    "context": "qrTypes.types.monero.name"
+  },
+  "4e9dcf898cac": {
+    "source": "Receive Monero to your wallet",
+    "text": "Recibe Monero en tu monedero",
+    "status": "machine",
+    "context": "contentTypes.list.monero.description"
+  },
+  "76327dec9ae3": {
+    "source": "Popular",
+    "text": "Populares",
+    "status": "machine",
+    "context": "contentTypes.groups.popular.label"
+  },
+  "b307203708c8": {
+    "source": "Links & files",
+    "text": "Enlaces y archivos",
+    "status": "machine",
+    "context": "contentTypes.groups.links.label"
+  },
+  "9c4e1630ebb0": {
+    "source": "Contact & connect",
+    "text": "Contacto y conexión",
+    "status": "machine",
+    "context": "contentTypes.groups.connect.label"
+  },
+  "7a781ff80909": {
+    "source": "Social & media",
+    "text": "Redes y multimedia",
+    "status": "machine",
+    "context": "contentTypes.groups.social.label"
+  },
+  "76f68a75f01e": {
+    "source": "Business",
+    "text": "Negocio",
+    "status": "machine",
+    "context": "templates.business.label"
+  },
+  "632e1c583941": {
+    "source": "Payments",
+    "text": "Pagos",
+    "status": "machine",
+    "context": "qrTypes.groups.payments.title"
+  },
+  "df12b8f89b61": {
+    "source": "Crypto",
+    "text": "Cripto",
+    "status": "machine",
+    "context": "contentTypes.groups.crypto.label"
+  },
+  "b5b68f9d45ff": {
+    "source": "Shopping",
+    "text": "Compras",
+    "status": "machine",
+    "context": "qrTypes.groups.shopping.title"
+  },
   "fdb6d28cdb57": {
     "source": "Links, text and Wi-Fi",
     "text": "Enlaces, texto y Wi-Fi",
@@ -35,12 +755,6 @@
     "status": "machine",
     "context": "qrTypes.groups.social.description"
   },
-  "632e1c583941": {
-    "source": "Payments",
-    "text": "Pagos",
-    "status": "machine",
-    "context": "qrTypes.groups.payments.title"
-  },
   "ef99c34580c4": {
     "source": "Bank payment codes (UPI, Pix, SEPA, PayNow, PromptPay, VietQR), payment links and crypto wallets.",
     "text": "Códigos de pago bancario (UPI, Pix, SEPA, PayNow, PromptPay, VietQR), enlaces de pago y monederos de criptomonedas.",
@@ -59,23 +773,11 @@
     "status": "machine",
     "context": "qrTypes.groups.business.description"
   },
-  "b5b68f9d45ff": {
-    "source": "Shopping",
-    "text": "Compras",
-    "status": "machine",
-    "context": "qrTypes.groups.shopping.title"
-  },
   "6353f123b53f": {
     "source": "Link packaging and displays to your marketplace listings.",
     "text": "Enlaza empaques y exhibidores con tus anuncios en marketplaces.",
     "status": "machine",
     "context": "qrTypes.groups.shopping.description"
-  },
-  "e7a241debad5": {
-    "source": "URL",
-    "text": "URL",
-    "status": "machine",
-    "context": "qrTypes.types.url.name"
   },
   "105b06fbb4a6": {
     "source": "Open any web page with one scan.",
@@ -197,12 +899,6 @@
     "status": "machine",
     "context": "qrTypes.types.url.faqs.3.answer"
   },
-  "7b5cb3c7f705": {
-    "source": "Plain Text",
-    "text": "Texto simple",
-    "status": "machine",
-    "context": "qrTypes.types.text.name"
-  },
   "a7ece258bfcb": {
     "source": "Show a short message, code or note.",
     "text": "Muestra un mensaje, código o nota breve.",
@@ -316,12 +1012,6 @@
     "text": "No. Los códigos QR guardan caracteres simples, así que no es posible usar negritas, colores ni palabras clicables. Los saltos de línea se conservan.",
     "status": "machine",
     "context": "qrTypes.types.text.faqs.3.answer"
-  },
-  "969ccbd3cf63": {
-    "source": "Email",
-    "text": "Email",
-    "status": "machine",
-    "context": "qrTypes.types.email.name"
   },
   "8052ac0d3ad9": {
     "source": "Open a pre-addressed email draft.",
@@ -527,12 +1217,6 @@
     "status": "machine",
     "context": "qrTypes.types.phone.faqs.2.answer"
   },
-  "40b601a10ca5": {
-    "source": "SMS",
-    "text": "SMS",
-    "status": "machine",
-    "context": "qrTypes.types.sms.name"
-  },
   "a56aed99a80a": {
     "source": "Open a text message with number and text filled in.",
     "text": "Abre un mensaje de texto con el número y el texto ya escritos.",
@@ -640,12 +1324,6 @@
     "text": "No. Un código contiene un único número de destino. Los servicios de suscripción por texto usan un solo número o código corto más una palabra clave, lo que funciona bien con este formato.",
     "status": "machine",
     "context": "qrTypes.types.sms.faqs.3.answer"
-  },
-  "6a40edf1fc87": {
-    "source": "WhatsApp",
-    "text": "WhatsApp",
-    "status": "machine",
-    "context": "qrTypes.types.whatsapp.name"
   },
   "9c4e03b15bbf": {
     "source": "Start a WhatsApp chat with a prefilled message.",
@@ -1109,12 +1787,6 @@
     "status": "machine",
     "context": "qrTypes.types.maps.faqs.2.answer"
   },
-  "d41f5b4977ee": {
-    "source": "Facebook",
-    "text": "Facebook",
-    "status": "machine",
-    "context": "qrTypes.types.facebook.name"
-  },
   "10bbdd01f9a4": {
     "source": "Open a Facebook page, profile, group or event.",
     "text": "Abre una página, perfil, grupo o evento de Facebook.",
@@ -1222,12 +1894,6 @@
     "text": "Sí. Un enlace de Messenger (m.me/yourpage) abre un chat con tu página. Ponlo en el generador de URL, ya que este formulario está pensado para direcciones de facebook.com.",
     "status": "machine",
     "context": "qrTypes.types.facebook.faqs.3.answer"
-  },
-  "bad57ef7837c": {
-    "source": "Instagram",
-    "text": "Instagram",
-    "status": "machine",
-    "context": "qrTypes.types.instagram.name"
   },
   "58d5e99ebceb": {
     "source": "Open your Instagram profile from your username.",
@@ -1343,12 +2009,6 @@
     "status": "machine",
     "context": "qrTypes.types.instagram.faqs.3.answer"
   },
-  "eb0050f72303": {
-    "source": "Reddit",
-    "text": "Reddit",
-    "status": "machine",
-    "context": "qrTypes.types.reddit.name"
-  },
   "c6beeec318b3": {
     "source": "Open a subreddit or Reddit profile.",
     "text": "Abre un subreddit o un perfil de Reddit.",
@@ -1462,12 +2122,6 @@
     "text": "No para leer comunidades y perfiles públicos. Votar, comentar y unirse a un subreddit requieren iniciar sesión, y Reddit puede sugerir abrir su app.",
     "status": "machine",
     "context": "qrTypes.types.reddit.faqs.3.answer"
-  },
-  "1bb6fcfbf136": {
-    "source": "TikTok",
-    "text": "TikTok",
-    "status": "machine",
-    "context": "qrTypes.types.tiktok.name"
   },
   "0e2d79409138": {
     "source": "Open your TikTok profile from your username.",
@@ -1685,12 +2339,6 @@
     "status": "machine",
     "context": "qrTypes.types.twitter.faqs.3.answer"
   },
-  "dd84425b72da": {
-    "source": "LinkedIn",
-    "text": "LinkedIn",
-    "status": "machine",
-    "context": "qrTypes.types.linkedin.name"
-  },
   "6243bd392432": {
     "source": "Open a LinkedIn profile or company page.",
     "text": "Abre un perfil o una página de empresa de LinkedIn.",
@@ -1805,12 +2453,6 @@
     "status": "machine",
     "context": "qrTypes.types.linkedin.faqs.3.answer"
   },
-  "fb7accfff8c6": {
-    "source": "YouTube",
-    "text": "YouTube",
-    "status": "machine",
-    "context": "qrTypes.types.youtube.name"
-  },
   "04272a435967": {
     "source": "Open a YouTube video or channel.",
     "text": "Abre un vídeo o canal de YouTube.",
@@ -1919,12 +2561,6 @@
     "status": "machine",
     "context": "qrTypes.types.youtube.faqs.2.answer"
   },
-  "78dfd4d79bda": {
-    "source": "Pinterest",
-    "text": "Pinterest",
-    "status": "machine",
-    "context": "qrTypes.types.pinterest.name"
-  },
   "601675ff528c": {
     "source": "Open your Pinterest profile and boards.",
     "text": "Abre tu perfil y tus tableros de Pinterest.",
@@ -2026,12 +2662,6 @@
     "text": "El nombre de usuario forma parte del enlace, así que el código deja de apuntar a tu perfil. Genera un código nuevo después de cambiarlo.",
     "status": "machine",
     "context": "qrTypes.types.pinterest.faqs.3.answer"
-  },
-  "4eb2ce09b54c": {
-    "source": "Snapchat",
-    "text": "Snapchat",
-    "status": "machine",
-    "context": "qrTypes.types.snapchat.name"
   },
   "e9264ab1a836": {
     "source": "Open your Snapchat add-friend page.",
@@ -2141,12 +2771,6 @@
     "status": "machine",
     "context": "qrTypes.types.snapchat.faqs.3.answer"
   },
-  "3e42e385075b": {
-    "source": "Threads",
-    "text": "Threads",
-    "status": "machine",
-    "context": "qrTypes.types.threads.name"
-  },
   "cc0fd7606fef": {
     "source": "Open your Threads profile from your username.",
     "text": "Abre tu perfil de Threads a partir de tu nombre de usuario.",
@@ -2242,12 +2866,6 @@
     "text": "No. Los perfiles públicos se pueden ver en el navegador. Para seguir y responder hay que iniciar sesión en Threads.",
     "status": "machine",
     "context": "qrTypes.types.threads.faqs.3.answer"
-  },
-  "7005c0064bda": {
-    "source": "Spotify",
-    "text": "Spotify",
-    "status": "machine",
-    "context": "qrTypes.types.spotify.name"
   },
   "ab0947715268": {
     "source": "Open a song, album, playlist or podcast.",
@@ -2477,12 +3095,6 @@
     "status": "machine",
     "context": "qrTypes.types.upi.faqs.3.answer"
   },
-  "ab8a4f6bb84d": {
-    "source": "PayPal",
-    "text": "PayPal",
-    "status": "machine",
-    "context": "qrTypes.types.paypal.name"
-  },
   "f501c665340c": {
     "source": "Open your PayPal.Me or payment link.",
     "text": "Abre tu PayPal.Me o enlace de pago.",
@@ -2579,12 +3191,6 @@
     "status": "machine",
     "context": "qrTypes.types.paypal.faqs.2.answer"
   },
-  "338c536466d8": {
-    "source": "Google Review",
-    "text": "Reseña de Google",
-    "status": "machine",
-    "context": "qrTypes.types.google-review.name"
-  },
   "86e19ada7f13": {
     "source": "Open your Google 'write a review' box.",
     "text": "Abre tu cuadro de Google para escribir una reseña.",
@@ -2680,12 +3286,6 @@
     "text": "Sí. Cualquier negocio que aparezca en Google Maps tiene un Place ID, incluidos los que ocultan su dirección.",
     "status": "machine",
     "context": "qrTypes.types.google-review.faqs.2.answer"
-  },
-  "a1593ecc5a13": {
-    "source": "Venmo",
-    "text": "Venmo",
-    "status": "machine",
-    "context": "qrTypes.types.venmo.name"
   },
   "ee0c3706af9d": {
     "source": "Request a Venmo payment with amount and note.",
@@ -2795,12 +3395,6 @@
     "status": "machine",
     "context": "qrTypes.types.venmo.faqs.3.answer"
   },
-  "b4056df6691f": {
-    "source": "Bitcoin",
-    "text": "Bitcoin",
-    "status": "machine",
-    "context": "qrTypes.types.bitcoin.name"
-  },
   "031b38f58024": {
     "source": "Share a BIP21 Bitcoin payment request.",
     "text": "Comparte una solicitud de pago de Bitcoin BIP21.",
@@ -2896,12 +3490,6 @@
     "text": "No. Los importes de BIP21 siempre van en BTC. Conviértelo al cambio actual o deja el importe vacío para que lo introduzca quien envía.",
     "status": "machine",
     "context": "qrTypes.types.bitcoin.faqs.2.answer"
-  },
-  "a13bebeb57e1": {
-    "source": "Ethereum",
-    "text": "Ethereum",
-    "status": "machine",
-    "context": "qrTypes.types.ethereum.name"
   },
   "80cfbcc768ef": {
     "source": "Share an EIP-681 Ethereum payment request.",
@@ -3004,12 +3592,6 @@
     "text": "Sí. El código contiene solo tu dirección pública. Nunca codifiques una clave privada ni una frase de recuperación.",
     "status": "machine",
     "context": "qrTypes.types.ethereum.faqs.2.answer"
-  },
-  "d9bc2c875a30": {
-    "source": "Etsy",
-    "text": "Etsy",
-    "status": "machine",
-    "context": "qrTypes.types.etsy.name"
   },
   "9870d299fb0b": {
     "source": "Open your Etsy shop or a listing.",
@@ -3233,12 +3815,6 @@
     "status": "machine",
     "context": "qrTypes.types.dubsh.faqs.3.answer"
   },
-  "915ef4bad59a": {
-    "source": "Google Drive",
-    "text": "Google Drive",
-    "status": "machine",
-    "context": "qrTypes.types.google-drive.name"
-  },
   "591b9ce48553": {
     "source": "Open a Drive file, folder, Doc or Sheet.",
     "text": "Abre un archivo, carpeta, Doc o Sheet de Drive.",
@@ -3328,12 +3904,6 @@
     "text": "No en esta página; pegar un enlace no conecta nada. Solo si conectas Google Drive en el editor completo, QRdx puede mostrar una lista de archivos para que elijas uno.",
     "status": "machine",
     "context": "qrTypes.types.google-drive.faqs.2.answer"
-  },
-  "4cecc708584f": {
-    "source": "Attendance",
-    "text": "Asistencia",
-    "status": "machine",
-    "context": "qrTypes.types.attendance.name"
   },
   "565e389b904b": {
     "source": "Check people in with a Google Form.",
@@ -3436,12 +4006,6 @@
     "text": "Sí, si mantienes el mismo formulario. Usa las marcas de tiempo o añade una pregunta de fecha, y desactiva 'Accepting responses' entre sesiones.",
     "status": "machine",
     "context": "qrTypes.types.attendance.faqs.2.answer"
-  },
-  "49d2dc07acd9": {
-    "source": "Amazon",
-    "text": "Amazon",
-    "status": "machine",
-    "context": "qrTypes.types.amazon.name"
   },
   "297b1a57d8ed": {
     "source": "Open an Amazon product or store page.",
@@ -3551,12 +4115,6 @@
     "status": "machine",
     "context": "qrTypes.types.amazon.faqs.3.answer"
   },
-  "820763ae11ab": {
-    "source": "Flipkart",
-    "text": "Flipkart",
-    "status": "machine",
-    "context": "qrTypes.types.flipkart.name"
-  },
   "db87e3a0956b": {
     "source": "Open a Flipkart product or seller page.",
     "text": "Abre la página de un producto o vendedor de Flipkart.",
@@ -3659,12 +4217,6 @@
     "status": "machine",
     "context": "qrTypes.types.flipkart.faqs.3.answer"
   },
-  "68e3373a7f76": {
-    "source": "Cal.com",
-    "text": "Cal.com",
-    "status": "machine",
-    "context": "qrTypes.types.calcom.name"
-  },
   "78080ca9138f": {
     "source": "Open your Cal.com booking page.",
     "text": "Abre tu página de reservas de Cal.com.",
@@ -3766,12 +4318,6 @@
     "text": "Sí, en Cal.com. Cada tipo de evento tiene su propia duración, disponibilidad, tiempos de margen y límites de reserva; el código QR solo abre la página.",
     "status": "machine",
     "context": "qrTypes.types.calcom.faqs.3.answer"
-  },
-  "fa7d3d951464": {
-    "source": "Pix",
-    "text": "Pix",
-    "status": "machine",
-    "context": "qrTypes.types.pix.name"
   },
   "167d96bf1f00": {
     "source": "Get paid by Pix from any Brazilian bank app.",
@@ -3995,12 +4541,6 @@
     "status": "machine",
     "context": "qrTypes.types.sepa.faqs.2.answer"
   },
-  "5c5af06729d3": {
-    "source": "PayNow",
-    "text": "PayNow",
-    "status": "machine",
-    "context": "qrTypes.types.paynow.name"
-  },
   "3fb99b5cd301": {
     "source": "Get paid by PayNow to a mobile number or UEN.",
     "text": "Cobra con PayNow a un número de móvil o a un UEN.",
@@ -4096,12 +4636,6 @@
     "text": "No. El dinero se mueve entre los dos bancos a través de PayNow. QRdx solo dibuja el código, en tu navegador.",
     "status": "machine",
     "context": "qrTypes.types.paynow.faqs.2.answer"
-  },
-  "a29179a6b7b9": {
-    "source": "PromptPay",
-    "text": "PromptPay",
-    "status": "machine",
-    "context": "qrTypes.types.promptpay.name"
   },
   "f9585e5bef7b": {
     "source": "Get paid by PromptPay to a phone number or ID.",
@@ -4205,12 +4739,6 @@
     "status": "machine",
     "context": "qrTypes.types.promptpay.faqs.2.answer"
   },
-  "d3f03ab05542": {
-    "source": "VietQR",
-    "text": "VietQR",
-    "status": "machine",
-    "context": "qrTypes.types.vietqr.name"
-  },
   "810e974513d0": {
     "source": "Get a bank transfer in Vietnam with one scan.",
     "text": "Recibe una transferencia bancaria en Vietnam con un solo escaneo.",
@@ -4307,12 +4835,6 @@
     "status": "machine",
     "context": "qrTypes.types.vietqr.faqs.2.question"
   },
-  "2105f7da1289": {
-    "source": "Cash App",
-    "text": "Cash App",
-    "status": "machine",
-    "context": "qrTypes.types.cashapp.name"
-  },
   "a838de2cb259": {
     "source": "Open your $Cashtag so people can pay you.",
     "text": "Abre tu $Cashtag para que puedan pagarte.",
@@ -4384,12 +4906,6 @@
     "text": "Cash App limita los cambios y un nuevo $Cashtag necesita un código nuevo. Un código QR dinámico de QRdx te permite cambiar el destino del código sin volver a imprimirlo.",
     "status": "machine",
     "context": "qrTypes.types.cashapp.faqs.1.answer"
-  },
-  "dd53271a2e06": {
-    "source": "Revolut",
-    "text": "Revolut",
-    "status": "machine",
-    "context": "qrTypes.types.revolut.name"
   },
   "c4b130848e4c": {
     "source": "Open your revolut.me page so people can pay you.",
@@ -4468,12 +4984,6 @@
     "text": "Este no. Quien paga elige el importe en tu página revolut.me.",
     "status": "machine",
     "context": "qrTypes.types.revolut.faqs.1.answer"
-  },
-  "acdd1e734125": {
-    "source": "Telegram",
-    "text": "Telegram",
-    "status": "machine",
-    "context": "qrTypes.types.telegram.name"
   },
   "0ca01009349b": {
     "source": "Open a Telegram chat, channel or group.",
@@ -4571,12 +5081,6 @@
     "status": "machine",
     "context": "qrTypes.types.telegram.faqs.2.answer"
   },
-  "1e9806e4227b": {
-    "source": "Signal",
-    "text": "Signal",
-    "status": "machine",
-    "context": "qrTypes.types.signal.name"
-  },
   "cd978d8773f2": {
     "source": "Start a Signal chat with a number or username link.",
     "text": "Inicia un chat de Signal con un número o un enlace de nombre de usuario.",
@@ -4660,12 +5164,6 @@
     "text": "El enlace abre una página de signal.me que ofrece instalar Signal. El chat se abre cuando la aplicación está instalada.",
     "status": "machine",
     "context": "qrTypes.types.signal.faqs.1.answer"
-  },
-  "053bc65874ad": {
-    "source": "Discord",
-    "text": "Discord",
-    "status": "machine",
-    "context": "qrTypes.types.discord.name"
   },
   "3c77f3abcb47": {
     "source": "Invite people to your Discord server.",
@@ -4751,12 +5249,6 @@
     "status": "machine",
     "context": "qrTypes.types.discord.faqs.1.answer"
   },
-  "81a0d84c9895": {
-    "source": "LINE",
-    "text": "LINE",
-    "status": "machine",
-    "context": "qrTypes.types.line.name"
-  },
   "d021bee86eb5": {
     "source": "Add you as a friend on LINE.",
     "text": "Te añade como amigo en LINE.",
@@ -4835,12 +5327,6 @@
     "status": "machine",
     "context": "qrTypes.types.line.faqs.1.answer"
   },
-  "4ed485c71401": {
-    "source": "Bluesky",
-    "text": "Bluesky",
-    "status": "machine",
-    "context": "qrTypes.types.bluesky.name"
-  },
   "8c9b68c7ec8b": {
     "source": "Open a Bluesky profile.",
     "text": "Abre un perfil de Bluesky.",
@@ -4913,12 +5399,6 @@
     "status": "machine",
     "context": "qrTypes.types.bluesky.faqs.1.answer"
   },
-  "a53bdbbb43f0": {
-    "source": "Mastodon",
-    "text": "Mastodon",
-    "status": "machine",
-    "context": "qrTypes.types.mastodon.name"
-  },
   "13556a44a159": {
     "source": "Open a Mastodon profile on its server.",
     "text": "Abre un perfil de Mastodon en su servidor.",
@@ -4984,12 +5464,6 @@
     "text": "Mastodon puede redirigir tu perfil anterior, pero imprime un código nuevo para el nuevo servidor, o usa un código QR dinámico de QRdx que puedas redirigir.",
     "status": "machine",
     "context": "qrTypes.types.mastodon.faqs.1.answer"
-  },
-  "a731a58c4cf3": {
-    "source": "Twitch",
-    "text": "Twitch",
-    "status": "machine",
-    "context": "qrTypes.types.twitch.name"
   },
   "02d4fcb3c104": {
     "source": "Open a Twitch channel.",
@@ -5069,12 +5543,6 @@
     "status": "machine",
     "context": "qrTypes.types.twitch.faqs.1.answer"
   },
-  "8506b11e2d83": {
-    "source": "SoundCloud",
-    "text": "SoundCloud",
-    "status": "machine",
-    "context": "qrTypes.types.soundcloud.name"
-  },
   "2bada9b2aa22": {
     "source": "Play a SoundCloud profile, track or playlist.",
     "text": "Reproduce un perfil, una pista o una lista de SoundCloud.",
@@ -5146,12 +5614,6 @@
     "text": "Los enlaces de SoundCloud abren la app si está instalada, o la página en el navegador.",
     "status": "machine",
     "context": "qrTypes.types.soundcloud.faqs.1.answer"
-  },
-  "509c517ede79": {
-    "source": "Zoom",
-    "text": "Zoom",
-    "status": "machine",
-    "context": "qrTypes.types.zoom.name"
   },
   "7f0489e32909": {
     "source": "Join a Zoom meeting with one scan.",
@@ -5231,12 +5693,6 @@
     "status": "machine",
     "context": "qrTypes.types.zoom.faqs.1.answer"
   },
-  "78aeb390abbc": {
-    "source": "Google Meet",
-    "text": "Google Meet",
-    "status": "machine",
-    "context": "qrTypes.types.google-meet.name"
-  },
   "97f878659f17": {
     "source": "Join a Google Meet call with one scan.",
     "text": "Únete a una llamada de Google Meet con un escaneo.",
@@ -5314,12 +5770,6 @@
     "text": "Depende de la configuración de Workspace del anfitrión. En muchas reuniones, los invitados pueden pedir unirse sin iniciar sesión.",
     "status": "machine",
     "context": "qrTypes.types.google-meet.faqs.1.answer"
-  },
-  "302415affc9a": {
-    "source": "Waze",
-    "text": "Waze",
-    "status": "machine",
-    "context": "qrTypes.types.waze.name"
   },
   "6df35d8f9921": {
     "source": "Open directions to a place in Waze.",
@@ -5399,12 +5849,6 @@
     "status": "machine",
     "context": "qrTypes.types.waze.faqs.1.answer"
   },
-  "eaa4e0ba3c89": {
-    "source": "Litecoin",
-    "text": "Litecoin",
-    "status": "machine",
-    "context": "qrTypes.types.litecoin.name"
-  },
   "7f6af520aa46": {
     "source": "Receive Litecoin with an optional amount.",
     "text": "Recibe Litecoin con un importe opcional.",
@@ -5483,12 +5927,6 @@
     "status": "machine",
     "context": "qrTypes.types.litecoin.faqs.1.answer"
   },
-  "bbc8f6fd09a9": {
-    "source": "Dogecoin",
-    "text": "Dogecoin",
-    "status": "machine",
-    "context": "qrTypes.types.dogecoin.name"
-  },
   "14f89759d816": {
     "source": "Receive Dogecoin with an optional amount.",
     "text": "Recibe Dogecoin con un importe opcional.",
@@ -5549,12 +5987,6 @@
     "status": "machine",
     "context": "qrTypes.types.dogecoin.faqs.0.question"
   },
-  "8a9851255d67": {
-    "source": "Bitcoin Cash",
-    "text": "Bitcoin Cash",
-    "status": "machine",
-    "context": "qrTypes.types.bitcoincash.name"
-  },
   "6dc9a0aa25cf": {
     "source": "Receive Bitcoin Cash with an optional amount.",
     "text": "Recibe Bitcoin Cash con un importe opcional.",
@@ -5614,12 +6046,6 @@
     "text": "No. Bitcoin Cash es una moneda distinta, con sus propias billeteras. Para bitcoin, usa el generador de Bitcoin.",
     "status": "machine",
     "context": "qrTypes.types.bitcoincash.faqs.0.answer"
-  },
-  "be4b0c384393": {
-    "source": "Solana",
-    "text": "Solana",
-    "status": "machine",
-    "context": "qrTypes.types.solana.name"
   },
   "51f7bdf5aaa1": {
     "source": "Receive SOL with a Solana Pay request.",
@@ -5686,12 +6112,6 @@
     "text": "La mayoría de las billeteras móviles de Solana los escanean. Haz la prueba con las billeteras que usan tus clientes.",
     "status": "machine",
     "context": "qrTypes.types.solana.faqs.0.answer"
-  },
-  "089fe32a5314": {
-    "source": "Monero",
-    "text": "Monero",
-    "status": "machine",
-    "context": "qrTypes.types.monero.name"
   },
   "aa106b399d07": {
     "source": "Receive Monero with an optional amount.",
@@ -20003,12 +20423,6 @@
     "status": "machine",
     "context": "pageCodes.type-signal-2.label"
   },
-  "2b5c3d26721a": {
-    "source": "Contact",
-    "text": "Contacto",
-    "status": "machine",
-    "context": "pageCodes.on-business-cards-1.label"
-  },
   "059f4256fc03": {
     "source": "Join the server",
     "text": "Únete al servidor",
@@ -21670,12 +22084,6 @@
     "text": "Botones llamativos en dos columnas, y nada más",
     "status": "machine",
     "context": "templates.social.variants.grid.description"
-  },
-  "76f68a75f01e": {
-    "source": "Business",
-    "text": "Negocio",
-    "status": "machine",
-    "context": "templates.business.label"
   },
   "3e5a6bd6151f": {
     "source": "Hours, location, contact details and a call to action",
@@ -27982,287 +28390,5 @@
     "text": "QRdx no guarda tu prompt, tu imagen de referencia ni las imágenes generadas; solo cuenta tus créditos. El prompt, la imagen del código QR y cualquier imagen de referencia se envían a través de Vercel AI Gateway a GPT Image 2 de OpenAI para crear la ilustración, y el resultado vuelve directamente a tu navegador, así que descarga las que quieras conservar.",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
-  },
-  "4473afd14cb9": {
-    "source": "Open any website or web page",
-    "text": "Abre cualquier sitio o página web",
-    "status": "machine",
-    "context": "contentTypes.list.url.description"
-  },
-  "b4e85fdf01c5": {
-    "source": "Show a short note or message",
-    "text": "Muestra una nota o mensaje corto",
-    "status": "machine",
-    "context": "contentTypes.list.text.description"
-  },
-  "41c3b7d764f3": {
-    "source": "Draft an email with a subject and body",
-    "text": "Redacta un correo con asunto y cuerpo",
-    "status": "machine",
-    "context": "contentTypes.list.email.description"
-  },
-  "63dceb8800b2": {
-    "source": "Phone",
-    "text": "Teléfono",
-    "status": "machine",
-    "context": "contentTypes.list.phone.label"
-  },
-  "bbf50884e10f": {
-    "source": "Call a number with one tap",
-    "text": "Llama a un número con un toque",
-    "status": "machine",
-    "context": "contentTypes.list.phone.description"
-  },
-  "8129c6e42c2a": {
-    "source": "Open a pre-filled text message",
-    "text": "Abre un mensaje de texto prellenado",
-    "status": "machine",
-    "context": "contentTypes.list.sms.description"
-  },
-  "cc39c085735c": {
-    "source": "Start a WhatsApp chat with a message",
-    "text": "Inicia un chat de WhatsApp con un mensaje",
-    "status": "machine",
-    "context": "contentTypes.list.whatsapp.description"
-  },
-  "10df5f541da7": {
-    "source": "WiFi",
-    "text": "Wi-Fi",
-    "status": "machine",
-    "context": "contentTypes.list.wifi.label"
-  },
-  "0c3e491ad9b7": {
-    "source": "Join a Wi-Fi network without typing",
-    "text": "Conéctate a una red Wi-Fi sin escribir",
-    "status": "machine",
-    "context": "contentTypes.list.wifi.description"
-  },
-  "5ee17deb4ffb": {
-    "source": "Save your contact card to a phone",
-    "text": "Guarda tu tarjeta de contacto en un teléfono",
-    "status": "machine",
-    "context": "contentTypes.list.vcard.description"
-  },
-  "15b61974b270": {
-    "source": "Location",
-    "text": "Ubicación",
-    "status": "machine",
-    "context": "contentTypes.list.maps.label"
-  },
-  "63bd51938ca9": {
-    "source": "Open a place or directions in Maps",
-    "text": "Abre un lugar o indicaciones en Maps",
-    "status": "machine",
-    "context": "contentTypes.list.maps.description"
-  },
-  "8a06e5f8ef9d": {
-    "source": "Open a Facebook page or profile",
-    "text": "Abre una página o perfil de Facebook",
-    "status": "machine",
-    "context": "contentTypes.list.facebook.description"
-  },
-  "7af66c4bc9d9": {
-    "source": "Open an Instagram profile",
-    "text": "Abre un perfil de Instagram",
-    "status": "machine",
-    "context": "contentTypes.list.instagram.description"
-  },
-  "73d9e832dc15": {
-    "source": "Open a subreddit or Reddit profile",
-    "text": "Abre un subreddit o perfil de Reddit",
-    "status": "machine",
-    "context": "contentTypes.list.reddit.description"
-  },
-  "cd29fe404136": {
-    "source": "Open a TikTok profile",
-    "text": "Abre un perfil de TikTok",
-    "status": "machine",
-    "context": "contentTypes.list.tiktok.description"
-  },
-  "3a409cda219d": {
-    "source": "Twitter / X",
-    "text": "Twitter / X",
-    "status": "machine",
-    "context": "contentTypes.list.twitter.label"
-  },
-  "65e335f23f7f": {
-    "source": "Open an X (Twitter) profile",
-    "text": "Abre un perfil de X (Twitter)",
-    "status": "machine",
-    "context": "contentTypes.list.twitter.description"
-  },
-  "a95b9305d767": {
-    "source": "Open a LinkedIn profile or company page",
-    "text": "Abre un perfil o página de empresa de LinkedIn",
-    "status": "machine",
-    "context": "contentTypes.list.linkedin.description"
-  },
-  "81dfe5941ed0": {
-    "source": "Open a YouTube channel or video",
-    "text": "Abre un canal o video de YouTube",
-    "status": "machine",
-    "context": "contentTypes.list.youtube.description"
-  },
-  "dfd9caf97fa7": {
-    "source": "Open a Pinterest profile",
-    "text": "Abre un perfil de Pinterest",
-    "status": "machine",
-    "context": "contentTypes.list.pinterest.description"
-  },
-  "b5ce116c6f18": {
-    "source": "Add you as a friend on Snapchat",
-    "text": "Te añade como amigo en Snapchat",
-    "status": "machine",
-    "context": "contentTypes.list.snapchat.description"
-  },
-  "0a672d38b9af": {
-    "source": "Open a Threads profile",
-    "text": "Abre un perfil de Threads",
-    "status": "machine",
-    "context": "contentTypes.list.threads.description"
-  },
-  "9c26139ca220": {
-    "source": "UPI Payment",
-    "text": "Pago UPI",
-    "status": "machine",
-    "context": "contentTypes.list.upi.label"
-  },
-  "16def4a4f56e": {
-    "source": "Get paid from any UPI app in India",
-    "text": "Cobra desde cualquier app UPI en India",
-    "status": "machine",
-    "context": "contentTypes.list.upi.description"
-  },
-  "edbafd65d55b": {
-    "source": "Get paid with a PayPal.me link",
-    "text": "Cobra con un enlace de PayPal.me",
-    "status": "machine",
-    "context": "contentTypes.list.paypal.description"
-  },
-  "436c48b655f2": {
-    "source": "Ask customers for a Google review",
-    "text": "Pide reseñas de Google a tus clientes",
-    "status": "machine",
-    "context": "contentTypes.list.google-review.description"
-  },
-  "4b6f2fb13a28": {
-    "source": "Request money on Venmo",
-    "text": "Solicita dinero en Venmo",
-    "status": "machine",
-    "context": "contentTypes.list.venmo.description"
-  },
-  "c6a63235a8dc": {
-    "source": "Play a song, album, playlist or podcast",
-    "text": "Reproduce una canción, álbum, lista o podcast",
-    "status": "machine",
-    "context": "contentTypes.list.spotify.description"
-  },
-  "e67cd215efb8": {
-    "source": "Receive Bitcoin to your wallet",
-    "text": "Recibe Bitcoin en tu monedero",
-    "status": "machine",
-    "context": "contentTypes.list.bitcoin.description"
-  },
-  "6c0ebe263a4f": {
-    "source": "Receive ETH to your wallet",
-    "text": "Recibe ETH en tu monedero",
-    "status": "machine",
-    "context": "contentTypes.list.ethereum.description"
-  },
-  "bb8ed82e85a8": {
-    "source": "Open your Etsy shop",
-    "text": "Abre tu tienda de Etsy",
-    "status": "machine",
-    "context": "contentTypes.list.etsy.description"
-  },
-  "34af43e8f247": {
-    "source": "Dub",
-    "text": "Dub",
-    "status": "machine",
-    "context": "contentTypes.list.dubsh.label"
-  },
-  "a5a865ee3833": {
-    "source": "Use a Dub short link with its analytics",
-    "text": "Usa un enlace corto de Dub con sus analíticas",
-    "status": "machine",
-    "context": "contentTypes.list.dubsh.description"
-  },
-  "e61168c0f91d": {
-    "source": "Share a Drive file or folder",
-    "text": "Comparte un archivo o carpeta de Drive",
-    "status": "machine",
-    "context": "contentTypes.list.google-drive.description"
-  },
-  "67f5f288d26a": {
-    "source": "Check people in with a Google Form",
-    "text": "Registra asistentes con un Google Form",
-    "status": "machine",
-    "context": "contentTypes.list.attendance.description"
-  },
-  "d3d1f53cf2cc": {
-    "source": "Open an Amazon product page",
-    "text": "Abre la página de un producto de Amazon",
-    "status": "machine",
-    "context": "contentTypes.list.amazon.description"
-  },
-  "e7ec6e993e01": {
-    "source": "Open a Flipkart product page",
-    "text": "Abre la página de un producto de Flipkart",
-    "status": "machine",
-    "context": "contentTypes.list.flipkart.description"
-  },
-  "69b2a1089f85": {
-    "source": "Let people book a meeting with you",
-    "text": "Permite que te reserven una reunión",
-    "status": "machine",
-    "context": "contentTypes.list.calcom.description"
-  },
-  "76327dec9ae3": {
-    "source": "Popular",
-    "text": "Populares",
-    "status": "machine",
-    "context": "contentTypes.groups.popular.label"
-  },
-  "b307203708c8": {
-    "source": "Links & files",
-    "text": "Enlaces y archivos",
-    "status": "machine",
-    "context": "contentTypes.groups.links.label"
-  },
-  "9c4e1630ebb0": {
-    "source": "Contact & connect",
-    "text": "Contacto y conexión",
-    "status": "machine",
-    "context": "contentTypes.groups.connect.label"
-  },
-  "7a781ff80909": {
-    "source": "Social & media",
-    "text": "Redes y multimedia",
-    "status": "machine",
-    "context": "contentTypes.groups.social.label"
-  },
-  "5d66dbd5936f": {
-    "source": "Save a contact, start a call, text, email or WhatsApp chat in one scan.",
-    "text": "Guarda un contacto, inicia una llamada, envía un SMS, un correo o abre un chat de WhatsApp con un solo escaneo.",
-    "status": "machine",
-    "context": "qrTypes.groups.contact.description"
-  },
-  "ed283660be99": {
-    "source": "Send people to a profile, channel, community or playlist.",
-    "text": "Lleva a las personas a un perfil, canal, comunidad o lista de reproducción.",
-    "status": "machine",
-    "context": "qrTypes.groups.social.description"
-  },
-  "998321187b6c": {
-    "source": "Payment requests for UPI, PayPal, Venmo, Bitcoin and Ethereum.",
-    "text": "Solicitudes de pago para UPI, PayPal, Venmo, Bitcoin y Ethereum.",
-    "status": "machine",
-    "context": "qrTypes.groups.payments.description"
-  },
-  "e0f2e577a1a3": {
-    "source": "Reviews, directions, bookings and attendance check-ins.",
-    "text": "Reseñas, indicaciones, reservas y registros de asistencia.",
-    "status": "machine",
-    "context": "qrTypes.groups.business.description"
   }
 }

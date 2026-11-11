@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // Forms for the bank payment QR standards: Pix, SEPA (EPC), PayNow,
 // PromptPay and VietQR. What people type here stays in this browser: the
@@ -61,10 +62,11 @@ const PIX_FIELDS: FormField[] = [
 ];
 
 export function PixForm() {
+  const t = useTranslations("editor.contentForms.paymentForms");
   return (
     <SchemaForm
       fields={PIX_FIELDS}
-      note="Scanning opens the payer's bank app with a Pix payment filled in. Pix copia e cola uses the same text."
+      note={t("scanningOpensThePayersBank")}
       schema={pixSchema}
       type="pix"
     />
@@ -115,6 +117,7 @@ const SEPA_FIELDS: FormField[] = [
 
 /** EPC069-12 asks for level M; offers it when the design uses another. */
 function EpcLevelNotice() {
+  const t = useTranslations("editor.contentForms.paymentForms");
   const level = useQREditorStore((state) => state.themeState.styles.level);
   if ((level ?? "L") === EPC_ERROR_CORRECTION) return null;
   const switchToLevelM = () => {
@@ -127,8 +130,7 @@ function EpcLevelNotice() {
   return (
     <div className="bg-muted/40 flex items-center justify-between gap-3 rounded-lg border px-3 py-2">
       <p className="text-muted-foreground text-[11px] leading-relaxed text-pretty">
-        The EPC guidelines ask for error correction level M. This design uses{" "}
-        {level ?? "L"}.
+        {t("theEpcGuidelinesAskFor")} {level ?? "L"}.
       </p>
       <Button
         className="h-7 shrink-0 px-2.5 text-xs"
@@ -137,17 +139,18 @@ function EpcLevelNotice() {
         type="button"
         variant="outline"
       >
-        Use level M
+        {t("useLevelM")}
       </Button>
     </div>
   );
 }
 
 export function SepaForm() {
+  const t = useTranslations("editor.contentForms.paymentForms");
   return (
     <SchemaForm
       fields={SEPA_FIELDS}
-      note="Scanning fills in a euro transfer in banking apps that read EPC codes (often called GiroCode)."
+      note={t("scanningFillsInAEuro")}
       schema={sepaSchema}
       type="sepa"
     >
@@ -218,10 +221,11 @@ const PAYNOW_FIELDS: FormField[] = [
 ];
 
 export function PayNowForm() {
+  const t = useTranslations("editor.contentForms.paymentForms");
   return (
     <SchemaForm
       fields={PAYNOW_FIELDS}
-      note="Scanning opens PayNow in any Singapore banking app, with these details filled in."
+      note={t("scanningOpensPaynowInAny")}
       schema={paynowSchema}
       type="paynow"
     />
@@ -277,10 +281,11 @@ const PROMPTPAY_FIELDS: FormField[] = [
 ];
 
 export function PromptPayForm() {
+  const t = useTranslations("editor.contentForms.paymentForms");
   return (
     <SchemaForm
       fields={PROMPTPAY_FIELDS}
-      note="Scanning opens a PromptPay transfer in any Thai banking app."
+      note={t("scanningOpensAPromptpayTransfer")}
       schema={promptpaySchema}
       type="promptpay"
     />
@@ -345,10 +350,11 @@ const VIETQR_FIELDS: FormField[] = [
 ];
 
 export function VietQrForm() {
+  const t = useTranslations("editor.contentForms.paymentForms");
   return (
     <SchemaForm
       fields={VIETQR_FIELDS}
-      note="Scanning opens a transfer in Vietnamese banking apps that read VietQR."
+      note={t("scanningOpensATransferIn")}
       schema={vietqrSchema}
       type="vietqr"
     />
