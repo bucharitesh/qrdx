@@ -4,7 +4,7 @@
 // tests/api/dub-integration.test.ts and lib/migrate/migrate.test.ts.
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
-import { ProviderStep } from "@/app/dashboard/codes/_components/import-provider-step";
+import { ProviderStep } from "@/app/(app)/dashboard/codes/_components/import-provider-step";
 import type { JobSummary, ProviderStatus } from "@/lib/migrate/types";
 
 const status = (id: ProviderStatus["id"]): ProviderStatus => ({

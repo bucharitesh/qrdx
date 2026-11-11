@@ -26,12 +26,12 @@ vi.mock("next/navigation", async (importOriginal) => ({
   },
 }));
 
-import DiscordImage from "@/app/(home)/discord/opengraph-image";
-import DiscordPage from "@/app/(home)/discord/page";
-import IntegrationDetailPage from "@/app/(home)/integrations/[slug]/page";
-import PluginsPage from "@/app/(home)/plugins/page";
-import SlackPage from "@/app/(home)/slack/page";
-import TelegramPage from "@/app/(home)/telegram/page";
+import DiscordImage from "@/app/(app)/(home)/discord/opengraph-image";
+import DiscordPage from "@/app/(app)/(home)/discord/page";
+import IntegrationDetailPage from "@/app/(app)/(home)/integrations/[slug]/page";
+import PluginsPage from "@/app/(app)/(home)/plugins/page";
+import SlackPage from "@/app/(app)/(home)/slack/page";
+import TelegramPage from "@/app/(app)/(home)/telegram/page";
 import { isPathAvailable } from "@/lib/feature-availability";
 
 const hrefs = (markup: string) =>

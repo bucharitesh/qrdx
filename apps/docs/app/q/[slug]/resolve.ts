@@ -2,7 +2,7 @@ import { database as db, landingPage, qrCode } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { after, type NextRequest } from "next/server";
-import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
+import { CUSTOM_DOMAIN_HEADER } from "@/app/(app)/dashboard/domains/_lib/hostname";
 // NFC taps: `?nfc` on the short link marks the scan as a tap (lib/nfc/links.ts).
 import { scanSourceOf } from "@/lib/nfc/links";
 import { type RedirectCode, redirectCodeColumns } from "@/lib/redirect/code";

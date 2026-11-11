@@ -7,6 +7,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { QRCode } from "qrdx";
 import { useState } from "react";
 import { ScanScoreBadge } from "@/components/editor/scan-score";
@@ -24,17 +25,22 @@ import {
   type HeroStyleKey as StyleKey,
 } from "./hero-looks";
 
-const styleOptions = (Object.keys(STYLES) as StyleKey[]).map((value) => ({
-  value,
-  label: STYLES[value].label,
-}));
-const frameOptions = (Object.keys(FRAMES) as FrameKey[]).map((value) => ({
-  value,
-  label: FRAMES[value].label,
-}));
+const STYLE_KEYS = Object.keys(STYLES) as StyleKey[];
+const FRAME_KEYS = Object.keys(FRAMES) as FrameKey[];
 
 /** Hero mini-editor: the real qrdx renderer and scan score, live as you type. */
 export function HeroEditor() {
+  const t = useTranslations("home.editor");
+  const styleOptions = STYLE_KEYS.map((key) => ({
+    value: key,
+    label: t(`styles.${key}`),
+  }));
+  // The banner's label is the text it prints ("Scan me"), which the code
+  // itself carries in English.
+  const frameOptions = FRAME_KEYS.map((key) => ({
+    value: key,
+    label: key === "banner" ? FRAMES.banner.label : t(`frames.${key}`),
+  }));
   const [value, setValue] = useState("https://qrdx.dev");
   const [styleKey, setStyleKey] = useState<StyleKey>("rounded");
   const [frameKey, setFrameKey] = useState<FrameKey>("banner");
@@ -47,14 +53,12 @@ export function HeroEditor() {
       <div className="order-last flex flex-col gap-5 border-t p-5 md:order-first md:border-t-0 md:border-r md:p-8">
         <div className="flex flex-col gap-1">
           <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
-            Try it with your link
+            {t("eyebrow")}
           </p>
-          <p className="text-sm text-muted-foreground">
-            Same renderer as the playground, live as you type.
-          </p>
+          <p className="text-sm text-muted-foreground">{t("description")}</p>
         </div>
         <div className="flex flex-col gap-2">
-          <Label htmlFor="hero-qr-value">Your link or text</Label>
+          <Label htmlFor="hero-qr-value">{t("valueLabel")}</Label>
           <Input
             id="hero-qr-value"
             value={value}
@@ -66,9 +70,9 @@ export function HeroEditor() {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium">Style</span>
+          <span className="text-sm font-medium">{t("style")}</span>
           <SegmentedControl
-            label="Style"
+            label={t("style")}
             options={styleOptions}
             value={styleKey}
             onChange={setStyleKey}
@@ -76,9 +80,9 @@ export function HeroEditor() {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <span className="text-sm font-medium">Frame</span>
+          <span className="text-sm font-medium">{t("frame")}</span>
           <SegmentedControl
-            label="Frame"
+            label={t("frame")}
             options={frameOptions}
             value={frameKey}
             onChange={setFrameKey}
@@ -86,15 +90,16 @@ export function HeroEditor() {
           />
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          The full playground adds {PRODUCT_FACTS.bodyPatterns} body patterns,{" "}
-          {PRODUCT_FACTS.eyeShapes} eye shapes, {PRODUCT_FACTS.eyeCentres} eye
-          centers, any colors and gradients, logos, templates and PNG, SVG, PDF
-          or EPS downloads.
+          {t("more", {
+            bodyPatterns: PRODUCT_FACTS.bodyPatterns,
+            eyeShapes: PRODUCT_FACTS.eyeShapes,
+            eyeCentres: PRODUCT_FACTS.eyeCentres,
+          })}
         </p>
         <Button asChild className="w-fit">
           {/* The look and the link carry over; other text is typed again. */}
           <Link href={heroPlaygroundHref(styleKey, frameKey, trimmed)}>
-            Customize in the playground
+            {t("customize")}
             <ArrowRight className="size-4" />
           </Link>
         </Button>
@@ -120,7 +125,7 @@ export function HeroEditor() {
                 EASE_CLASS,
               )}
               role="img"
-              aria-label={`QR code for ${trimmed}`}
+              aria-label={t("qrLabel", { value: trimmed })}
             >
               <QRCode
                 value={trimmed}
@@ -139,7 +144,7 @@ export function HeroEditor() {
             </div>
           ) : (
             <p className="px-6 text-center text-sm text-muted-foreground">
-              Type a link to see your QR code.
+              {t("empty")}
             </p>
           )}
         </div>

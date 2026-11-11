@@ -2,6 +2,7 @@ import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { BrowserFrame } from "@/components/mockups/browser-frame";
 import { LoopVideo } from "@/components/mockups/loop-video";
@@ -44,48 +45,20 @@ function Eyebrow({ children }: { children: ReactNode }) {
 
 interface CardFeature {
   demo: LiveDemoName;
-  eyebrow: string;
-  title: string;
-  description: string;
+  /** Its copy: messages (home.features.<key>). */
+  key: "scanScore" | "printSize" | "dynamic" | "analytics";
   href: string;
-  linkText: string;
 }
 
 // Two print features, then two dynamic-code features: each pair shares a row.
 const cards: CardFeature[] = [
-  {
-    demo: "scan-score",
-    eyebrow: "Scan score",
-    title: "Know it scans before you print",
-    description:
-      "Every design is decoded in your browser at three sizes, with camera blur. Lighten the ink to see the score react.",
-    href: "/tools/scan-checker",
-    linkText: "Check a printed code",
-  },
-  {
-    demo: "print-size",
-    eyebrow: "Print size",
-    title: "Print it big enough",
-    description:
-      "The minimum size depends on how far away people scan from and how much the code holds.",
-    href: "/tools/print-size",
-    linkText: "Print size calculator",
-  },
-  {
-    demo: "dynamic",
-    eyebrow: "Dynamic codes",
-    title: "Change the link after printing",
-    description: `A dynamic code opens a short link you can point somewhere new at any time. Free accounts get ${FREE.dynamicCodes}.`,
-    href: "/docs/dynamic-qr-codes",
-    linkText: "About dynamic codes",
-  },
+  { demo: "scan-score", key: "scanScore", href: "/tools/scan-checker" },
+  { demo: "print-size", key: "printSize", href: "/tools/print-size" },
+  { demo: "dynamic", key: "dynamic", href: "/docs/dynamic-qr-codes" },
   {
     demo: "analytics",
-    eyebrow: "Analytics",
-    title: "See every scan",
-    description: `Scans over time, countries, devices, browsers and referrers for every dynamic code. Free accounts keep ${FREE.analyticsRetentionDays} days.`,
+    key: "analytics",
     href: "/docs/help/dynamic-codes/scans",
-    linkText: "How scan analytics work",
   },
 ];
 
@@ -127,33 +100,40 @@ function Row({
 }
 
 export function FeatureRowsSection() {
+  const t = useTranslations("home.features");
+  // Counts come from code (lib/plans, lib/product-facts), never the catalog.
+  const cardValues = {
+    count: FREE.dynamicCodes,
+    days: FREE.analyticsRetentionDays,
+  };
   return (
     <section
       id="features"
       aria-labelledby="features-heading"
       className="flex w-full flex-col items-center"
     >
-      <SectionHeader eyebrow="Features" pattern="topo">
+      <SectionHeader eyebrow={t("eyebrow")} pattern="topo">
         <h2
           id="features-heading"
           className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance"
         >
-          Everything around the QR code
+          {t("title")}
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          Design it, check it scans, print it the right size and keep it up to
-          date. Try each one right here.
+          {t("description")}
         </p>
       </SectionHeader>
 
       <div className="w-full divide-y divide-border">
         <Row
-          eyebrow="Design"
-          title="Design every detail"
-          description={`${PRODUCT_FACTS.bodyPatterns} body patterns, ${PRODUCT_FACTS.eyeShapes} eye shapes and ${PRODUCT_FACTS.frames} frames, in solid colors or gradients. The playground and the qrdx React library draw with this same renderer.`}
-          link={
-            <MoreLink href={playgroundHref()}>Open the playground</MoreLink>
-          }
+          eyebrow={t("design.eyebrow")}
+          title={t("design.title")}
+          description={t("design.description", {
+            bodyPatterns: PRODUCT_FACTS.bodyPatterns,
+            eyeShapes: PRODUCT_FACTS.eyeShapes,
+            frames: PRODUCT_FACTS.frames,
+          })}
+          link={<MoreLink href={playgroundHref()}>{t("design.link")}</MoreLink>}
           visual={
             <Card className="gap-0 overflow-hidden py-0">
               {/* The demo mounts as it nears the viewport, so the skeleton
@@ -183,15 +163,17 @@ export function FeatureRowsSection() {
                     />
                   </div>
                   <div className="flex flex-1 flex-col gap-1.5 px-5 pt-5 pb-5 md:px-6 md:pb-6">
-                    <Eyebrow>{card.eyebrow}</Eyebrow>
+                    <Eyebrow>{t(`${card.key}.eyebrow`)}</Eyebrow>
                     <h3 className="text-lg font-medium tracking-tight text-foreground">
-                      {card.title}
+                      {t(`${card.key}.title`)}
                     </h3>
                     <p className="text-sm text-muted-foreground text-pretty leading-relaxed">
-                      {card.description}
+                      {t(`${card.key}.description`, cardValues)}
                     </p>
                     <div className="mt-auto pt-3">
-                      <MoreLink href={card.href}>{card.linkText}</MoreLink>
+                      <MoreLink href={card.href}>
+                        {t(`${card.key}.link`)}
+                      </MoreLink>
                     </div>
                   </div>
                 </Card>
@@ -202,10 +184,10 @@ export function FeatureRowsSection() {
 
         <Row
           reverse
-          eyebrow="Bulk"
-          title="Hundreds of codes from one CSV"
-          description={`Map the columns, pick a style and download up to ${MAX_BULK_ROWS.toLocaleString("en-US")} codes as PNG or SVG, zipped. The file never leaves your browser.`}
-          link={<MoreLink href="/tools/bulk">Open the bulk generator</MoreLink>}
+          eyebrow={t("bulk.eyebrow")}
+          title={t("bulk.title")}
+          description={t("bulk.description", { max: MAX_BULK_ROWS })}
+          link={<MoreLink href="/tools/bulk">{t("bulk.link")}</MoreLink>}
           visual={
             <BrowserFrame url="qrdx.dev/tools/bulk">
               <LoopVideo {...loopVideos.bulk} />
@@ -214,10 +196,12 @@ export function FeatureRowsSection() {
         />
 
         <Row
-          eyebrow="Developers"
-          title="Built for developers"
-          description="Render codes with the qrdx React library, get images from a URL with the image API, or let Claude, Cursor and VS Code make them through the MCP server. You can also self-host the whole app."
-          link={<MoreLink href="/docs/developers">Developer docs</MoreLink>}
+          eyebrow={t("developers.eyebrow")}
+          title={t("developers.title")}
+          description={t("developers.description")}
+          link={
+            <MoreLink href="/docs/developers">{t("developers.link")}</MoreLink>
+          }
           visual={<McpTerminal mcpUrl={MCP_URL} />}
         />
       </div>

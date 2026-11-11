@@ -1,9 +1,17 @@
 // Pricing-page copy derived from the plan limits (lib/plans.ts is the single
-// source of truth). Pure and client-safe: the server page passes the limits in.
+// source of truth), in any language: the words come from the catalog
+// (messages/<locale>.json, "pricing"), the numbers from the limits. Every
+// builder takes the copy last and defaults to English, which the agent
+// Markdown (lib/agents) and the tests use. Server-side: it loads the
+// English catalog. Client components import ./savings or
+// ./upgrade-highlights instead.
 
+import { createTranslator } from "next-intl";
 import { AUDIT_RETENTION_DAYS } from "@/ee/audit-log/limits";
 import { listNames } from "@/lib/availability-copy";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
+import type { Locale } from "@/lib/i18n/config";
+import type { Messages } from "@/lib/i18n/messages";
 import type { PlanLimits } from "@/lib/plans";
 import {
   formatPrice,
@@ -12,6 +20,10 @@ import {
   PRICING,
   type PricingCurrency,
 } from "@/lib/pricing";
+import en from "@/messages/en.json";
+
+export { maxYearlySavingsPercent, yearlySavingsPercent } from "./savings";
+export { buildUpgradeHighlights } from "./upgrade-highlights";
 
 export type PlanLimitsByPlan = Record<Plan, PlanLimits>;
 
@@ -28,6 +40,30 @@ export interface ComparisonGroup {
   rows: ComparisonRow[];
 }
 
+/** The catalog's "pricing" namespace in one language. */
+export interface PricingCopy {
+  locale: Locale;
+  t: ReturnType<typeof createTranslator<Messages, "pricing">>;
+}
+
+/** Copy for `locale` from a loaded catalog (getMessages() on the server). */
+export function pricingCopy(locale: Locale, messages: Messages): PricingCopy {
+  return {
+    locale,
+    t: createTranslator({ locale, messages, namespace: "pricing" }),
+  };
+}
+
+let english: PricingCopy | undefined;
+/** The English copy: the default for every builder here. */
+export const englishPricingCopy = (): PricingCopy => {
+  english ??= pricingCopy("en", en);
+  return english;
+};
+const englishCopy = englishPricingCopy;
+
+const isEnglish = (copy: PricingCopy) => copy.locale === "en";
+
 // Only built features are sold: planned limits in lib/plans.ts (folder
 // permissions) stay off the pricing page until they ship. The audit log
 // shipped (ee/audit-log), so it's listed on Business where it's available.
@@ -35,57 +71,50 @@ export interface ComparisonGroup {
 const MB = 1024 * 1024;
 const GB = 1024 * MB;
 
-export function formatCount(value: number): string {
-  return Number.isFinite(value) ? value.toLocaleString("en-US") : "Unlimited";
+/** "1,000" (in the page's number format), or "Unlimited". */
+export function formatCount(value: number, copy = englishCopy()): string {
+  if (!Number.isFinite(value)) return copy.t("values.unlimited");
+  return new Intl.NumberFormat(isEnglish(copy) ? "en-US" : copy.locale).format(
+    value,
+  );
 }
 
-export function formatBytes(bytes: number): string {
-  if (!Number.isFinite(bytes)) return "Unlimited";
-  if (bytes >= GB) return `${formatCount(bytes / GB)} GB`;
-  return `${formatCount(Math.round(bytes / MB))} MB`;
-}
-
-export function formatDays(days: number): string {
-  if (!Number.isFinite(days)) return "Unlimited";
-  if (days % 365 === 0) {
-    const years = days / 365;
-    return `${years} year${years === 1 ? "" : "s"}`;
+export function formatBytes(bytes: number, copy = englishCopy()): string {
+  if (!Number.isFinite(bytes)) return copy.t("values.unlimited");
+  if (bytes >= GB) {
+    return copy.t("values.gigabytes", { count: formatCount(bytes / GB, copy) });
   }
-  return `${formatCount(days)} days`;
+  return copy.t("values.megabytes", {
+    count: formatCount(Math.round(bytes / MB), copy),
+  });
 }
 
-/** Whole-percent saving of the yearly price over 12 monthly payments. */
-export function yearlySavingsPercent(
-  plan: PaidPlan,
-  currency: PricingCurrency,
-): number {
-  const monthly = PRICING[plan].month.amounts[currency];
-  const yearly = PRICING[plan].year.amounts[currency];
-  return Math.round((1 - yearly / (monthly * 12)) * 100);
+export function formatDays(days: number, copy = englishCopy()): string {
+  if (!Number.isFinite(days)) return copy.t("values.unlimited");
+  if (days % 365 === 0) return copy.t("values.years", { count: days / 365 });
+  return copy.t("values.days", { count: days });
 }
 
-/** Largest yearly saving across paid plans, for the billing toggle. */
-export function maxYearlySavingsPercent(currency: PricingCurrency): number {
-  return Math.max(
-    yearlySavingsPercent("pro", currency),
-    yearlySavingsPercent("business", currency),
+/** "a, b and c": the English list style as before, Intl's elsewhere. */
+function joinList(items: string[], copy: PricingCopy): string {
+  if (isEnglish(copy)) return listNames(items, "and");
+  return new Intl.ListFormat(copy.locale, { type: "conjunction" }).format(
+    items,
   );
 }
 
 const PLANS: readonly Plan[] = ["free", "pro", "business"];
 
-function row(
-  feature: string,
-  value: (limits: PlanLimits, plan: Plan) => CellValue,
-  hint?: string,
-): (limits: PlanLimitsByPlan) => ComparisonRow {
-  return (limits) => ({
-    feature,
-    ...(hint && { hint }),
-    values: Object.fromEntries(
-      PLANS.map((plan) => [plan, value(limits[plan], plan)]),
-    ) as Record<Plan, CellValue>,
-  });
+type RowKey = keyof Messages["pricing"]["comparison"]["rows"];
+type RowId = Exclude<RowKey, `${string}Hint`>;
+type HintId = Extract<RowKey, `${string}Hint`>;
+
+interface RowSpec {
+  id: RowId;
+  hint?: HintId;
+  value: (limits: PlanLimits, plan: Plan, copy: PricingCopy) => CellValue;
+  /** Left out where this deployment can't offer the feature. */
+  feature?: keyof PricingOptions;
 }
 
 /** A plan flag: true when the plan includes every key. */
@@ -94,145 +123,182 @@ function flag(...keys: (keyof PlanLimits)[]) {
     keys.every((key) => Boolean(limits[key]));
 }
 
-function landingPages(limits: PlanLimits): string {
-  const count = formatCount(limits.landingPages);
-  if (limits.landingPageBadge) return `${count}, with "Made with QRdx" footer`;
-  if (limits.whiteLabel && limits.customCss) {
-    return `${count}, white-label + custom CSS`;
+function landingPages(limits: PlanLimits, _: Plan, copy: PricingCopy): string {
+  const count = formatCount(limits.landingPages, copy);
+  if (limits.landingPageBadge) {
+    return copy.t("comparison.cells.pagesWithBadge", { count });
   }
-  if (limits.whiteLabel) return `${count}, white-label`;
-  return `${count}, no footer`;
+  if (limits.whiteLabel && limits.customCss) {
+    return copy.t("comparison.cells.pagesWhiteLabelCss", { count });
+  }
+  if (limits.whiteLabel) {
+    return copy.t("comparison.cells.pagesWhiteLabel", { count });
+  }
+  return copy.t("comparison.cells.pagesNoFooter", { count });
 }
 
 // Every scan is kept at full detail for the whole history: nothing rolls raw
 // scans up into daily totals yet, so the copy must not promise that.
-function analyticsHistory(limits: PlanLimits): string {
-  return formatDays(limits.analyticsRetentionDays);
+function analyticsHistory(
+  limits: PlanLimits,
+  _: Plan,
+  copy: PricingCopy,
+): string {
+  return formatDays(limits.analyticsRetentionDays, copy);
 }
 
-function teamMembers(limits: PlanLimits): string {
-  if (!limits.teams) return "1 (no teams)";
-  return formatCount(limits.teamMembers);
+function teamMembers(limits: PlanLimits, _: Plan, copy: PricingCopy): string {
+  if (!limits.teams) return copy.t("comparison.cells.noTeams");
+  return formatCount(limits.teamMembers, copy);
 }
 
-// Dropped where AI art isn't available (PricingOptions.aiArt).
-const AI_ART_ROW = "AI art images per month";
-const AI_THEMES_ROW = "AI theme generations";
-const CUSTOM_DOMAINS_ROW = "Custom domains";
-const FILE_STORAGE_ROW = "File storage";
-const SSO_ROW = "Single sign-on";
-const AUDIT_LOG_ROW = "Audit log";
-const EMAIL_ALERTS_ROW = "Email digests and alerts";
+const unlimited = (_: PlanLimits, __: Plan, copy: PricingCopy) =>
+  copy.t("values.unlimited");
+
+/** Hint for the pixels row: product names, never translated. */
 const PIXELS_HINT = "GA4, Meta, GTM, TikTok";
 // Tag Manager only loads on custom domains (components/landing/pixels.tsx).
 const PIXELS_HINT_WITHOUT_GTM = "GA4, Meta, TikTok, LinkedIn";
 
 const GROUPS: {
-  title: string;
-  rows: ((limits: PlanLimitsByPlan) => ComparisonRow)[];
+  title: keyof Messages["pricing"]["comparison"]["groups"];
+  rows: RowSpec[];
 }[] = [
   {
-    title: "QR codes and pages",
+    title: "codes",
     rows: [
-      row("Static QR codes", () => "Unlimited", "No account needed"),
-      row("Dynamic QR codes", (l) => formatCount(l.dynamicCodes)),
-      row("Scans", () => "Unlimited", "Never paused, no ads"),
-      row("Hosted landing pages", landingPages),
-      row("Saved themes", (l) =>
-        l.teamThemes
-          ? `${formatCount(l.savedThemes)}, shared with your team`
-          : formatCount(l.savedThemes),
-      ),
-      row(AI_THEMES_ROW, (_, plan) =>
-        plan === "free"
-          ? `${AI_REQUEST_FREE_TIER_LIMIT} in total`
-          : "Unlimited",
-      ),
-      row(AI_ART_ROW, (l) =>
-        l.aiArtPooled
-          ? `${formatCount(l.aiArtPerMonth)}, pooled per team`
-          : formatCount(l.aiArtPerMonth),
-      ),
+      { id: "staticCodes", hint: "staticCodesHint", value: unlimited },
+      {
+        id: "dynamicCodes",
+        value: (l, _, copy) => formatCount(l.dynamicCodes, copy),
+      },
+      { id: "scans", hint: "scansHint", value: unlimited },
+      { id: "landingPages", value: landingPages },
+      {
+        id: "savedThemes",
+        value: (l, _, copy) =>
+          l.teamThemes
+            ? copy.t("comparison.cells.themesShared", {
+                count: formatCount(l.savedThemes, copy),
+              })
+            : formatCount(l.savedThemes, copy),
+      },
+      {
+        id: "aiThemes",
+        feature: "aiThemes",
+        value: (_, plan, copy) =>
+          plan === "free"
+            ? copy.t("comparison.cells.aiThemesTotal", {
+                count: formatCount(AI_REQUEST_FREE_TIER_LIMIT, copy),
+              })
+            : copy.t("values.unlimited"),
+      },
+      {
+        id: "aiArt",
+        feature: "aiArt",
+        value: (l, _, copy) =>
+          l.aiArtPooled
+            ? copy.t("comparison.cells.aiArtPooled", {
+                count: formatCount(l.aiArtPerMonth, copy),
+              })
+            : formatCount(l.aiArtPerMonth, copy),
+      },
     ],
   },
   {
-    title: "Analytics and link controls",
+    title: "analytics",
     rows: [
-      row("Analytics history", analyticsHistory),
-      row(
-        "Smart routing, A/B tests and UTM tags",
-        flag("routing"),
-        "Send scans by device, country, time or language",
-      ),
-      row(
-        "Precise scan location and geofencing",
-        flag("preciseLocation"),
-        "Opt-in per code; scanners choose whether to share",
-      ),
-      row("Password, schedule, expiry and scan limits", flag("linkControls")),
-      row("Retargeting pixels", flag("pixels"), PIXELS_HINT),
-      row("Conversion tracking", flag("conversions")),
+      { id: "analyticsHistory", value: analyticsHistory },
+      { id: "routing", hint: "routingHint", value: flag("routing") },
+      {
+        id: "preciseLocation",
+        hint: "preciseLocationHint",
+        value: flag("preciseLocation"),
+      },
+      { id: "linkControls", value: flag("linkControls") },
+      { id: "pixels", value: flag("pixels") },
+      { id: "conversions", value: flag("conversions") },
     ],
   },
   {
-    title: "Brand and team",
+    title: "brand",
     rows: [
-      row(CUSTOM_DOMAINS_ROW, (l) =>
-        l.customDomains > 0 ? formatCount(l.customDomains) : false,
-      ),
-      row(
-        "Custom back-halves",
-        flag("customSlugs"),
-        "Choose the link, like qrdx.dev/q/spring-menu",
-      ),
-      row("Team members", teamMembers),
-      row(
-        SSO_ROW,
-        flag("sso"),
-        "SAML or OIDC, with your company's identity provider",
-      ),
-      row(
-        AUDIT_LOG_ROW,
-        flag("auditLog"),
-        `Who changed what in the workspace, kept ${AUDIT_RETENTION_DAYS} days, with CSV export`,
-      ),
+      {
+        id: "customDomains",
+        feature: "customDomains",
+        value: (l, _, copy) =>
+          l.customDomains > 0 ? formatCount(l.customDomains, copy) : false,
+      },
+      {
+        id: "customSlugs",
+        hint: "customSlugsHint",
+        value: flag("customSlugs"),
+      },
+      { id: "teamMembers", value: teamMembers },
+      { id: "sso", hint: "ssoHint", feature: "sso", value: flag("sso") },
+      {
+        id: "auditLog",
+        hint: "auditLogHint",
+        feature: "auditLog",
+        value: flag("auditLog"),
+      },
     ],
   },
   {
-    title: "Files and forms",
+    title: "files",
     rows: [
-      row(
-        FILE_STORAGE_ROW,
-        (l) =>
-          `${formatBytes(l.storageBytes)} (${formatBytes(l.maxFileBytes)} per file)`,
-      ),
-      row("Form responses per month", (l) =>
-        formatCount(l.formResponsesPerMonth),
-      ),
+      {
+        id: "fileStorage",
+        feature: "fileStorage",
+        value: (l, _, copy) =>
+          copy.t("comparison.cells.storage", {
+            size: formatBytes(l.storageBytes, copy),
+            perFile: formatBytes(l.maxFileBytes, copy),
+          }),
+      },
+      {
+        id: "formResponses",
+        value: (l, _, copy) => formatCount(l.formResponsesPerMonth, copy),
+      },
     ],
   },
   {
-    title: "Automation and API",
+    title: "automation",
     rows: [
-      row(EMAIL_ALERTS_ROW, flag("emailAlerts")),
-      row("Webhooks, Zapier and Slack", flag("webhooks")),
-      row("API requests per day", (l) =>
-        l.bulkApi
-          ? `${formatCount(l.apiRequestsPerDay)} + bulk creation`
-          : formatCount(l.apiRequestsPerDay),
-      ),
+      {
+        id: "emailAlerts",
+        feature: "emailAlerts",
+        value: flag("emailAlerts"),
+      },
+      { id: "webhooks", value: flag("webhooks") },
+      {
+        id: "apiRequests",
+        value: (l, _, copy) =>
+          l.bulkApi
+            ? copy.t("comparison.cells.apiBulk", {
+                count: formatCount(l.apiRequestsPerDay, copy),
+              })
+            : formatCount(l.apiRequestsPerDay, copy),
+      },
     ],
   },
 ];
 
 /** The price row for the comparison table, in one display currency. */
-export function priceRow(currency: PricingCurrency): ComparisonRow {
+export function priceRow(
+  currency: PricingCurrency,
+  copy = englishCopy(),
+): ComparisonRow {
+  const price = (amount: number) => formatPrice(amount, currency, copy.locale);
   const paid = (plan: PaidPlan) =>
-    `${formatPrice(PRICING[plan].month.amounts[currency], currency)}/mo or ${formatPrice(PRICING[plan].year.amounts[currency], currency)}/yr`;
+    copy.t("comparison.cells.pricePaid", {
+      monthly: price(PRICING[plan].month.amounts[currency]),
+      yearly: price(PRICING[plan].year.amounts[currency]),
+    });
   return {
-    feature: "Price",
+    feature: copy.t("comparison.rows.price"),
     values: {
-      free: formatPrice(0, currency),
+      free: price(0),
       pro: paid("pro"),
       business: paid("business"),
     },
@@ -261,151 +327,177 @@ export interface PricingOptions {
   auditLog?: boolean;
 }
 
-const ROW_FEATURE: Record<string, keyof PricingOptions> = {
-  [AI_ART_ROW]: "aiArt",
-  [AI_THEMES_ROW]: "aiThemes",
-  [CUSTOM_DOMAINS_ROW]: "customDomains",
-  [FILE_STORAGE_ROW]: "fileStorage",
-  [EMAIL_ALERTS_ROW]: "emailAlerts",
-  [SSO_ROW]: "sso",
-  [AUDIT_LOG_ROW]: "auditLog",
-};
-
 const offered = (options: PricingOptions, feature?: keyof PricingOptions) =>
   !feature || options[feature] !== false;
+
+function rowHint(
+  spec: RowSpec,
+  options: PricingOptions,
+  copy: PricingCopy,
+): string | undefined {
+  if (spec.id === "pixels") {
+    return offered(options, "customDomains")
+      ? PIXELS_HINT
+      : PIXELS_HINT_WITHOUT_GTM;
+  }
+  if (!spec.hint) return undefined;
+  return spec.hint === "auditLogHint"
+    ? copy.t("comparison.rows.auditLogHint", { days: AUDIT_RETENTION_DAYS })
+    : copy.t(`comparison.rows.${spec.hint}`);
+}
 
 export function buildComparison(
   limits: PlanLimitsByPlan,
   currency: PricingCurrency,
   options: PricingOptions = {},
+  copy = englishCopy(),
 ): ComparisonGroup[] {
   return [
-    { title: "Price", rows: [priceRow(currency)] },
+    {
+      title: copy.t("comparison.groups.price"),
+      rows: [priceRow(currency, copy)],
+    },
     ...GROUPS.map((group) => ({
-      title: group.title,
+      title: copy.t(`comparison.groups.${group.title}`),
       rows: group.rows
-        .map((build) => build(limits))
-        .filter((row) => offered(options, ROW_FEATURE[row.feature]))
-        .map((row) =>
-          row.hint === PIXELS_HINT && !offered(options, "customDomains")
-            ? { ...row, hint: PIXELS_HINT_WITHOUT_GTM }
-            : row,
-        ),
+        .filter((spec) => offered(options, spec.feature))
+        .map((spec) => {
+          const hint = rowHint(spec, options, copy);
+          return {
+            feature: copy.t(`comparison.rows.${spec.id}`),
+            ...(hint && { hint }),
+            values: Object.fromEntries(
+              PLANS.map((plan) => [plan, spec.value(limits[plan], plan, copy)]),
+            ) as Record<Plan, CellValue>,
+          };
+        }),
     })),
   ].filter((group) => group.rows.length > 0);
 }
 
 /** "5 GB storage, 1,000 form responses a month", without storage when off. */
-function storageAndForms(limits: PlanLimits, fileStorage: boolean): string {
-  const forms = `${formatCount(limits.formResponsesPerMonth)} form responses a month`;
+function storageAndForms(
+  limits: PlanLimits,
+  fileStorage: boolean,
+  copy: PricingCopy,
+): string {
+  const count = formatCount(limits.formResponsesPerMonth, copy);
   return fileStorage
-    ? `${formatBytes(limits.storageBytes)} storage, ${forms}`
-    : `${forms.charAt(0).toUpperCase()}${forms.slice(1)}`;
+    ? copy.t("highlights.storageAndForms", {
+        size: formatBytes(limits.storageBytes, copy),
+        count,
+      })
+    : copy.t("highlights.forms", { count });
 }
 
 /** What paid plans add, in a list: "unlimited dynamic codes, …, and teams". */
-function paidExtras(options: PricingOptions, analytics: string): string {
-  return listNames(
+function paidExtras(
+  options: PricingOptions,
+  analytics: "longerAnalytics" | "analyticsHistory",
+  copy: PricingCopy,
+): string {
+  return joinList(
     [
-      "unlimited dynamic codes",
-      analytics,
-      ...(offered(options, "customDomains") ? ["custom domains"] : []),
-      "teams",
+      copy.t("extras.unlimitedDynamic"),
+      copy.t(`extras.${analytics}`),
+      ...(offered(options, "customDomains")
+        ? [copy.t("extras.customDomains")]
+        : []),
+      copy.t("extras.teams"),
     ],
-    "and",
+    copy,
   );
 }
 
 /** The pricing page's intro line, under its title. */
-export function buildPricingIntro(options: PricingOptions = {}): string {
-  return `Static QR codes are free forever. Paid plans add ${paidExtras(options, "longer analytics")}.`;
+export function buildPricingIntro(
+  options: PricingOptions = {},
+  copy = englishCopy(),
+): string {
+  return copy.t("header.intro", {
+    extras: paidExtras(options, "longerAnalytics", copy),
+  });
 }
 
 /** The pricing page's meta description (and its JSON-LD). */
-export function buildPricingDescription(options: PricingOptions = {}): string {
+export function buildPricingDescription(
+  options: PricingOptions = {},
+  copy = englishCopy(),
+): string {
   const usd = (plan: PaidPlan) =>
-    formatPrice(PRICING[plan].month.amounts.USD, "USD");
-  return `Static QR codes are free forever. Pro (${usd("pro")}/mo) and Business (${usd("business")}/mo) add ${paidExtras(options, "analytics history")}. Codes keep working if you cancel.`;
-}
-
-/**
- * The upgrade dialog's headline features (components/get-pro-dialog.tsx, a
- * client component that can't read lib/plans); the pricing page lists every
- * limit.
- */
-export function buildUpgradeHighlights(
-  options: Pick<PricingOptions, "customDomains"> = {},
-): Record<PaidPlan, string[]> {
-  const domains = offered(options, "customDomains");
-  return {
-    pro: [
-      "Unlimited dynamic codes and landing pages",
-      "3 years of analytics history",
-      domains ? "5 custom domains and teams of up to 3" : "Teams of up to 3",
-      "Unlimited saved themes, shared with your team",
-      "Smart routing, A/B tests, UTM tags and pixels",
-    ],
-    business: [
-      "Everything in Pro",
-      "White-label pages with custom CSS",
-      domains
-        ? "25 custom domains and unlimited team members"
-        : "Unlimited team members",
-      "Conversion tracking and webhooks",
-    ],
-  };
+    formatPrice(PRICING[plan].month.amounts.USD, "USD", copy.locale);
+  return copy.t("meta.description", {
+    pro: usd("pro"),
+    business: usd("business"),
+    extras: paidExtras(options, "analyticsHistory", copy),
+  });
 }
 
 /** Short feature lists for the plan cards. */
 export function buildHighlights(
   limits: PlanLimitsByPlan,
   options: PricingOptions = {},
+  copy = englishCopy(),
 ): Record<Plan, string[]> {
   const { free, pro, business } = limits;
+  const { t } = copy;
+  const count = (value: number) => formatCount(value, copy);
   const aiArt = offered(options, "aiArt");
   const domains = offered(options, "customDomains");
   const storage = offered(options, "fileStorage");
   return {
     free: [
-      "Unlimited static QR codes, no account needed",
-      `${formatCount(free.dynamicCodes)} dynamic QR codes with scan analytics`,
-      "Unlimited scans, never paused, no ads",
-      `${formatCount(free.landingPages)} hosted landing pages`,
-      `${formatDays(free.analyticsRetentionDays)} of analytics history`,
-      ...(storage ? [`${formatBytes(free.storageBytes)} of file storage`] : []),
+      t("highlights.unlimitedStatic"),
+      t("highlights.dynamicWithAnalytics", { count: count(free.dynamicCodes) }),
+      t("highlights.unlimitedScans"),
+      t("highlights.landingPages", { count: count(free.landingPages) }),
+      t("highlights.historyOf", {
+        duration: formatDays(free.analyticsRetentionDays, copy),
+      }),
+      ...(storage
+        ? [
+            t("highlights.fileStorage", {
+              size: formatBytes(free.storageBytes, copy),
+            }),
+          ]
+        : []),
     ],
     pro: [
-      "Unlimited dynamic codes and landing pages",
-      `${formatDays(pro.analyticsRetentionDays)} of analytics history`,
-      ...(domains ? [`${formatCount(pro.customDomains)} custom domains`] : []),
-      `Teams of up to ${formatCount(pro.teamMembers)} people`,
-      pro.teamThemes
-        ? "Unlimited saved themes, shared with your team"
-        : "Unlimited saved themes",
-      "Smart routing, A/B tests, UTM tags and pixels",
-      "Passwords, schedules, expiry and scan limits",
-      storageAndForms(pro, storage),
+      t("highlights.unlimitedDynamic"),
+      t("highlights.historyOf", {
+        duration: formatDays(pro.analyticsRetentionDays, copy),
+      }),
+      ...(domains
+        ? [t("highlights.customDomains", { count: count(pro.customDomains) })]
+        : []),
+      t("highlights.teams", { count: count(pro.teamMembers) }),
+      pro.teamThemes ? t("highlights.themesShared") : t("highlights.themes"),
+      t("highlights.routing"),
+      t("highlights.linkControls"),
+      storageAndForms(pro, storage, copy),
     ],
     business: [
-      "White-label pages with custom CSS",
-      `${formatDays(business.analyticsRetentionDays)} analytics history`,
+      t("highlights.whiteLabel"),
+      t("highlights.history", {
+        duration: formatDays(business.analyticsRetentionDays, copy),
+      }),
       ...(domains
-        ? [`${formatCount(business.customDomains)} custom domains`]
-        : []),
-      "Unlimited team members",
-      ...(business.sso && offered(options, "sso")
-        ? ["Single sign-on (SAML and OIDC)"]
-        : []),
-      ...(business.auditLog && offered(options, "auditLog")
-        ? ["Audit log with CSV export"]
-        : []),
-      "Conversion tracking",
-      "Webhooks, Zapier and Slack",
-      storageAndForms(business, storage),
-      ...(aiArt
         ? [
-            `${formatCount(business.aiArtPerMonth)} AI art images a month, pooled per team`,
+            t("highlights.customDomains", {
+              count: count(business.customDomains),
+            }),
           ]
+        : []),
+      t("highlights.unlimitedTeam"),
+      ...(business.sso && offered(options, "sso") ? [t("highlights.sso")] : []),
+      ...(business.auditLog && offered(options, "auditLog")
+        ? [t("highlights.auditLog")]
+        : []),
+      t("highlights.conversions"),
+      t("highlights.webhooks"),
+      storageAndForms(business, storage, copy),
+      ...(aiArt
+        ? [t("highlights.aiArt", { count: count(business.aiArtPerMonth) })]
         : []),
     ],
   };

@@ -3,6 +3,8 @@
 // no JavaScript. Search engines find those pages through these links. The
 // examples themselves open the playground through a separate link, and no
 // link sits inside another.
+import { NextIntlClientProvider } from "next-intl";
+import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { GallerySection } from "@/components/sections/home/gallery-section";
@@ -14,6 +16,15 @@ import { generatorPath } from "@/lib/landing/generator-paths";
 import { HOME_WALL, wallPlacements } from "@/lib/landing/showcase-wall";
 import { parsePlaygroundParams } from "@/lib/playground-links";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import en from "@/messages/en.json";
+
+/** The sections translate their copy; the English catalog is enough here. */
+const render = (node: ReactNode) =>
+  renderToStaticMarkup(
+    <NextIntlClientProvider locale="en" messages={en}>
+      {node}
+    </NextIntlClientProvider>,
+  );
 
 /** Every <a href> in `html`, decoded (React escapes & as &amp;). */
 function hrefs(html: string): string[] {
@@ -42,8 +53,8 @@ const wallTypes = [
 ];
 
 describe("home page links (server-rendered, no JavaScript)", () => {
-  const gallery = renderToStaticMarkup(<GallerySection />);
-  const cases = renderToStaticMarkup(<UseCasesSection />);
+  const gallery = render(<GallerySection />);
+  const cases = render(<UseCasesSection />);
   const links = hrefs(gallery + cases);
 
   it("the wall shows content types", () => {
@@ -70,8 +81,8 @@ describe("home page links (server-rendered, no JavaScript)", () => {
 
   it("links each use case's generator page beside its playground link", () => {
     for (const useCase of useCases) {
-      expect(links, useCase.title).toContain(useCase.href);
-      if (useCase.about) expect(links, useCase.title).toContain(useCase.about);
+      expect(links, useCase.key).toContain(useCase.href);
+      if (useCase.about) expect(links, useCase.key).toContain(useCase.about);
     }
     expect(useCases.filter((item) => item.about).length).toBe(6);
   });

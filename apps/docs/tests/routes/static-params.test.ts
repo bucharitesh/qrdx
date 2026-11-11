@@ -8,15 +8,15 @@ import { join, relative } from "node:path";
 import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
 import { loader } from "fumadocs-core/source";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import * as integrationImage from "@/app/(home)/integrations/[slug]/opengraph-image";
-import * as integrationPage from "@/app/(home)/integrations/[slug]/page";
-import * as typeImage from "@/app/(home)/qr-code-generator/[type]/opengraph-image";
-import * as typePage from "@/app/(home)/qr-code-generator/[type]/page";
-import * as industryImage from "@/app/(home)/qr-codes-for/[slug]/opengraph-image";
-import * as industryPage from "@/app/(home)/qr-codes-for/[slug]/page";
-import * as placementImage from "@/app/(home)/qr-codes-on/[slug]/opengraph-image";
-import * as placementPage from "@/app/(home)/qr-codes-on/[slug]/page";
-import * as templateTypePage from "@/app/templates/[type]/page";
+import * as integrationImage from "@/app/(app)/(home)/integrations/[slug]/opengraph-image";
+import * as integrationPage from "@/app/(app)/(home)/integrations/[slug]/page";
+import * as typeImage from "@/app/(app)/(home)/qr-code-generator/[type]/opengraph-image";
+import * as typePage from "@/app/(app)/(home)/qr-code-generator/[type]/page";
+import * as industryImage from "@/app/(app)/(home)/qr-codes-for/[slug]/opengraph-image";
+import * as industryPage from "@/app/(app)/(home)/qr-codes-for/[slug]/page";
+import * as placementImage from "@/app/(app)/(home)/qr-codes-on/[slug]/opengraph-image";
+import * as placementPage from "@/app/(app)/(home)/qr-codes-on/[slug]/page";
+import * as templateTypePage from "@/app/(app)/templates/[type]/page";
 import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { industries, placements } from "@/lib/seo-content";
@@ -127,21 +127,23 @@ describe("buildTimeParams", () => {
 describe("routes with a fixed param list", () => {
   it("are all found, the generator, topic, blog, docs and catalogue routes among them", () => {
     for (const file of [
-      "(home)/qr-code-generator/[type]/page.tsx",
-      "(home)/qr-codes-for/[slug]/page.tsx",
-      "(home)/qr-codes-on/[slug]/page.tsx",
-      "(home)/blog/[slug]/page.tsx",
-      "(home)/compare/[slug]/page.tsx",
-      "(home)/integrations/[slug]/page.tsx",
-      "(home)/legal/[[...slug]]/page.tsx",
-      "(docs)/docs/[[...slug]]/page.tsx",
+      "(app)/(home)/qr-code-generator/[type]/page.tsx",
+      "(app)/(home)/qr-codes-for/[slug]/page.tsx",
+      "(app)/(home)/qr-codes-on/[slug]/page.tsx",
+      "(app)/(home)/blog/[slug]/page.tsx",
+      "(app)/(home)/compare/[slug]/page.tsx",
+      "(app)/(home)/integrations/[slug]/page.tsx",
+      "(app)/(home)/legal/[[...slug]]/page.tsx",
+      "(app)/(docs)/docs/[[...slug]]/page.tsx",
       "llms.mdx/[[...slug]]/route.ts",
       "og/docs/[...slug]/route.tsx",
-      "templates/[type]/page.tsx",
-      "templates/[type]/[template]/page.tsx",
-      "(home)/blog/category/[slug]/opengraph-image.tsx",
-      "(home)/community/[type]/opengraph-image.tsx",
+      "(app)/templates/[type]/page.tsx",
+      "(app)/templates/[type]/[template]/page.tsx",
+      "(app)/(home)/blog/category/[slug]/opengraph-image.tsx",
+      "(app)/(home)/community/[type]/opengraph-image.tsx",
       "og/legal/[...slug]/route.tsx",
+      "[lang]/layout.tsx",
+      "[lang]/(home)/pricing/opengraph-image.tsx",
     ]) {
       expect(ROUTES).toContain(file);
     }

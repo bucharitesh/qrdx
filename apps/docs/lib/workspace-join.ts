@@ -11,7 +11,7 @@ import {
   workspaceJoinLink,
 } from "@repo/database";
 import { and, count, eq, gt, ne } from "drizzle-orm";
-import { isTeamMember } from "@/app/dashboard/team/_lib/queries";
+import { isTeamMember } from "@/app/(app)/dashboard/team/_lib/queries";
 // Joining through addMember is recorded by packages/auth/workspace-audit.ts.
 import "@/ee/audit-log/auth-changes";
 import { isMissingSchemaError } from "@/lib/community/tables";

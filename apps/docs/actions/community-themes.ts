@@ -19,7 +19,7 @@ import { and, asc, count, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { findThemeById } from "@/app/dashboard/themes/_lib/queries";
+import { findThemeById } from "@/app/(app)/dashboard/themes/_lib/queries";
 import { publicStyleFromSaved } from "@/lib/community/public-style-server";
 import { PublishError, publishSavedTheme } from "@/lib/community/publish";
 import { themePublishAccess } from "@/lib/community/publish-access";

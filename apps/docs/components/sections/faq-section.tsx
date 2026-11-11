@@ -5,40 +5,71 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@repo/design-system/components/ui/accordion";
+import { useLocale, useTranslations } from "next-intl";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { SectionHeader } from "@/components/sections/section-header";
-import { siteConfig } from "@/config/site";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import { fillFacts } from "@/lib/product-facts";
+import type { Locale } from "@/lib/i18n/config";
+import type { Messages } from "@/lib/i18n/messages";
+import { formatPrice, PRICING } from "@/lib/pricing";
+import { PRODUCT_FACTS } from "@/lib/product-facts";
 
-type FaqItem = (typeof siteConfig.faqSection.faQitems)[number];
+type FaqKey = keyof Messages["home"]["faq"]["items"];
 
-/**
- * Answers only mention features this deployment can offer. `{facts.…}` counts
- * are filled in here, so config/site.tsx (also in client bundles) doesn't
- * import the engine catalogue.
- */
-function answerOf(item: FaqItem, customDomains: boolean): string {
-  return fillFacts(
-    (!customDomains && "answerWithoutCustomDomains" in item
-      ? item.answerWithoutCustomDomains
-      : undefined) ?? item.answer,
-  );
+const FAQ_KEYS: readonly FaqKey[] = [
+  "free",
+  "signup",
+  "dynamic",
+  "guarantee",
+  "compare",
+  "logo",
+  "openSource",
+  "api",
+  "paidPlans",
+];
+
+function faqValues(locale: Locale) {
+  const usd = (plan: "pro" | "business", interval: "month" | "year") =>
+    formatPrice(PRICING[plan][interval].amounts.USD, "USD", locale);
+  return {
+    bodyPatterns: PRODUCT_FACTS.bodyPatterns,
+    eyeShapes: PRODUCT_FACTS.eyeShapes,
+    eyeCentres: PRODUCT_FACTS.eyeCentres,
+    proMonthly: usd("pro", "month"),
+    proYearly: usd("pro", "year"),
+    businessMonthly: usd("business", "month"),
+    businessYearly: usd("business", "year"),
+    // Where custom domains can't be added (lib/feature-availability-rules.ts).
+    customDomains: isFeatureAvailable("customDomains")
+      ? ("yes" as const)
+      : ("no" as const),
+  };
 }
 
+/**
+ * Answers only mention features this deployment can offer (custom domains
+ * in the paid-plans answer). Counts and prices come from code
+ * (lib/product-facts, lib/pricing), in the page's number format.
+ */
 export function FAQSection() {
-  const { faqSection } = siteConfig;
-  const customDomains = isFeatureAvailable("customDomains");
+  const t = useTranslations("home.faq");
+  const values = faqValues(useLocale());
+
+  const items = FAQ_KEYS.map((key) => ({
+    key,
+    question: t(`items.${key}.question`),
+    answer: t(`items.${key}.answer`, values),
+  }));
 
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: faqSection.faQitems.map((item) => ({
+    mainEntity: items.map((item) => ({
       "@type": "Question",
       name: item.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: answerOf(item, customDomains),
+        text: item.answer,
       },
     })),
   };
@@ -53,12 +84,12 @@ export function FAQSection() {
         // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <SectionHeader eyebrow="FAQ" pattern="halo">
+      <SectionHeader eyebrow={t("eyebrow")} pattern="halo">
         <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
-          {faqSection.title}
+          {t("title")}
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          {faqSection.description}
+          {t("description")}
         </p>
       </SectionHeader>
 
@@ -66,7 +97,7 @@ export function FAQSection() {
         <div className="hidden flex-col gap-4 md:flex">
           <HairlineFigure figure="Question" className="aspect-[5/4] w-full" />
           <p className="text-sm text-muted-foreground text-pretty leading-relaxed">
-            Something else?{" "}
+            {t("somethingElse")}{" "}
             <a
               href="mailto:support@qrdx.dev"
               className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
@@ -76,9 +107,9 @@ export function FAQSection() {
           </p>
         </div>
         <Accordion type="single" collapsible className="w-full border-t">
-          {faqSection.faQitems.map((faq, index) => (
+          {items.map((faq, index) => (
             <AccordionItem
-              key={index}
+              key={faq.key}
               value={index.toString()}
               className="last:border-b"
             >
@@ -87,7 +118,7 @@ export function FAQSection() {
               </AccordionTrigger>
               <AccordionContent className="pb-5 text-muted-foreground">
                 <p className="max-w-prose leading-relaxed text-pretty">
-                  {answerOf(faq, customDomains)}
+                  {faq.answer}
                 </p>
               </AccordionContent>
             </AccordionItem>

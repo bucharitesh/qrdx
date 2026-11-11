@@ -11,10 +11,11 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Setting4, ShieldTick } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useLayoutEffect, useRef } from "react";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { setConsentBannerInset } from "./banner-inset";
-import { ACTION_LABELS, PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
+import { PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
 import {
   CONSENT_EARLY_TAP_ATTRIBUTE,
   EARLY_BANNER_ACTIONS,
@@ -30,6 +31,7 @@ import {
  * like /playground). Once c15t has resolved the policy, its state decides.
  */
 export function CookieBanner() {
+  const t = useTranslations("consent");
   const mounted = useMounted();
   const ready = useHasConsentPolicy();
   const { banner, dialog, performBannerAction } = useHeadlessConsentUI();
@@ -101,20 +103,19 @@ export function CookieBanner() {
               id="cookie-banner-title"
               className="text-sm font-semibold leading-snug"
             >
-              Cookies on QRdx
+              {t("banner.title")}
             </h2>
             <p
               id="cookie-banner-description"
               className="text-pretty text-sm text-muted-foreground"
             >
-              We count visits without cookies; PostHog and the feedback widget
-              wait for your OK.{" "}
+              {t("banner.description")}{" "}
               <Link
                 href={PRIVACY_POLICY_URL}
                 className={TEXT_LINK}
                 prefetch={false}
               >
-                Privacy policy
+                {t("banner.privacyPolicy")}
               </Link>
             </p>
           </div>
@@ -135,7 +136,7 @@ export function CookieBanner() {
               }
             >
               {action === "customize" && <Setting4 aria-hidden="true" />}
-              {ACTION_LABELS[action]}
+              {t(`actions.${action}`)}
             </Button>
           ))}
         </CardFooter>

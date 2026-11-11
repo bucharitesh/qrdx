@@ -1,13 +1,31 @@
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: decorative badge icon */
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { AsciiField, Aurora, Backdrop } from "@/components/fx";
 import { HeroEditor } from "@/components/sections/home/hero-editor";
 import { HeroScene } from "@/components/sections/home/hero-scene";
-import { siteConfig } from "@/config/site";
+import { playgroundHref } from "@/lib/playground-links";
+
+function BadgeIcon() {
+  return (
+    <svg
+      aria-hidden="true"
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="dark:fill-white fill-[#364153]"
+    >
+      <path d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm9.5 0h2v2h-2V9zm0 3h2v2h-2v-2zm-2-3h2v2h-2V9zm0 3h2v2h-2v-2z" />
+    </svg>
+  );
+}
 
 export function HeroSection() {
-  const { hero } = siteConfig;
+  const t = useTranslations("home.hero");
 
   return (
     <section id="hero" className="relative w-full">
@@ -21,34 +39,37 @@ export function HeroSection() {
           />
         </Backdrop>
         <div className="relative mx-auto flex w-full max-w-[50rem] flex-col items-center gap-7 px-10 text-center md:gap-8">
-          <p className="flex h-8 items-center gap-2 rounded-full border bg-background/80 px-3 text-sm text-muted-foreground backdrop-blur">
-            {hero.badgeIcon}
-            {hero.badge}
+          <p className="flex min-h-8 items-center gap-2 rounded-full border bg-background/80 px-3 py-1 text-balance text-sm text-muted-foreground backdrop-blur">
+            <BadgeIcon />
+            {t("badge")}
           </p>
           <div className="flex flex-col items-center gap-5">
             <h1 className="text-balance text-4xl font-semibold tracking-tighter text-foreground md:text-5xl xl:text-6xl">
-              {hero.title}
+              {t("title")}
             </h1>
             <p className="max-w-2xl text-balance text-base leading-relaxed text-muted-foreground md:text-lg">
-              {hero.description}
+              {t("description")}
             </p>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             <Button asChild>
-              <Link href={hero.cta.primary.href}>
-                {hero.cta.primary.text}
+              <Link href={playgroundHref()}>
+                {t("primary")}
                 <ArrowRight className="size-4" />
               </Link>
             </Button>
             <Button asChild variant="outline">
               {/* Only the primary CTA prefetches: the docs bundle is large. */}
-              <Link href={hero.cta.secondary.href} prefetch={false}>
-                {hero.cta.secondary.text}
+              <Link href="/docs" prefetch={false}>
+                {t("secondary")}
               </Link>
             </Button>
           </div>
         </div>
-        <HeroScene className="relative left-1/2 mt-6 w-[120%] max-w-none -translate-x-1/2 sm:w-full sm:max-w-6xl sm:px-2 md:mt-4" />
+        <HeroScene
+          className="relative left-1/2 mt-6 w-[120%] max-w-none -translate-x-1/2 sm:w-full sm:max-w-6xl sm:px-2 md:mt-4"
+          label={t("sceneLabel")}
+        />
         <div className="relative mx-auto mt-4 w-full max-w-5xl px-10 md:mt-6">
           <HeroEditor />
         </div>

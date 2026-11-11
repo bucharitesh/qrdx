@@ -37,7 +37,7 @@ export const accountTemplateStore: TemplateStore = {
     const [{ getPlan, getPlanLimits }, { countThemesInScope }] =
       await Promise.all([
         import("@/lib/plans"),
-        import("@/app/dashboard/themes/_lib/queries"),
+        import("@/app/(app)/dashboard/themes/_lib/queries"),
       ]);
     const limit = getPlanLimits(await getPlan(userId)).savedThemes;
     if (!Number.isFinite(limit)) return { allowed: true };

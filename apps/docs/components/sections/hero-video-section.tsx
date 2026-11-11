@@ -1,4 +1,5 @@
 import { ExportSquare } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { BrowserFrame } from "@/components/mockups/browser-frame";
 import { LoopVideo } from "@/components/mockups/loop-video";
 import { Reveal } from "@/components/mockups/reveal";
@@ -6,29 +7,26 @@ import { loopVideos } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
 import { BrandLogo } from "@/lib/brand-logos/brand-logo";
 
-const STEPS = [
-  { title: "Paste a link", text: "Or pick Wi-Fi, vCard, UPI and more." },
-  { title: "Style it", text: "Patterns, colors, logo and a frame." },
-  { title: "Download", text: "PNG, SVG, PDF and more. No account." },
-];
+const STEPS = ["paste", "style", "download"] as const;
 
 /** Short playground loop on the homepage, with a link to the full intro video. */
 export function HeroVideoSection() {
+  const t = useTranslations("home.video");
   return (
     <section
       id="video"
       aria-labelledby="video-heading"
       className="flex w-full flex-col items-center"
     >
-      <SectionHeader eyebrow="Demo" pattern="noise">
+      <SectionHeader eyebrow={t("eyebrow")} pattern="noise">
         <h2
           id="video-heading"
           className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance"
         >
-          See QRdx in action
+          {t("title")}
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          Paste a link, style it and download. No account needed.
+          {t("description")}
         </p>
       </SectionHeader>
       <Reveal className="flex w-full flex-col items-center gap-8 px-10 py-12 md:py-16">
@@ -38,14 +36,18 @@ export function HeroVideoSection() {
         <ol className="grid w-full max-w-5xl gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-3">
           {STEPS.map((step, index) => (
             <li
-              key={step.title}
+              key={step}
               className="flex flex-col gap-1 bg-background p-4 md:p-5"
             >
               <span className="font-mono text-xs text-muted-foreground">
                 0{index + 1}
               </span>
-              <span className="font-medium text-foreground">{step.title}</span>
-              <span className="text-sm text-muted-foreground">{step.text}</span>
+              <span className="font-medium text-foreground">
+                {t(`steps.${step}.title`)}
+              </span>
+              <span className="text-sm text-muted-foreground">
+                {t(`steps.${step}.text`)}
+              </span>
             </li>
           ))}
         </ol>
@@ -61,7 +63,7 @@ export function HeroVideoSection() {
             inset={2}
             className="size-4"
           />
-          Watch the full introduction on YouTube
+          {t("youtube")}
           <ExportSquare className="size-3.5 transition-transform duration-200 group-hover:-translate-y-px group-hover:translate-x-px" />
         </a>
       </Reveal>

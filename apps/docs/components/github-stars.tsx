@@ -9,6 +9,7 @@ import {
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useLayoutEffect, useState } from "react";
 import { siteConfig } from "@/config/site";
 import { formatCompactNumber } from "@/utils/format";
@@ -106,6 +107,7 @@ export function GithubStars({
   /** Show the count at every width (default: icon-only below `sm`). */
   full?: boolean;
 }) {
+  const t = useTranslations("nav.github");
   const { data: stars = 0, isPending } = useStars();
   const label = stars > 0 ? formatCompactNumber(stars) : null;
 
@@ -132,8 +134,8 @@ export function GithubStars({
             rel="noopener noreferrer"
             aria-label={
               label
-                ? `Star QRdx on GitHub (${label} stars)`
-                : "Star QRdx on GitHub"
+                ? t("starOnGithubCount", { count: label })
+                : t("starOnGithub")
             }
           >
             {/* The sweep is CSS only (github-stars.module.css): none with reduced motion. */}
@@ -159,13 +161,13 @@ export function GithubStars({
               ) : label ? (
                 <Odometer value={label} />
               ) : (
-                <span aria-hidden>Star</span>
+                <span aria-hidden>{t("star")}</span>
               )}
             </span>
           </a>
         </Button>
       </TooltipTrigger>
-      <TooltipContent>Star QRdx on GitHub</TooltipContent>
+      <TooltipContent>{t("starOnGithub")}</TooltipContent>
     </Tooltip>
   );
 }

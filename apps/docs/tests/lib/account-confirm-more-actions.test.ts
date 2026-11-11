@@ -1,5 +1,5 @@
 // More actions ask "Confirm it's you" (lib/account/confirmation.ts): linking
-// and unlinking Google or GitHub (app/settings/account/_lib/actions.ts),
+// and unlinking Google or GitHub (app/(app)/settings/account/_lib/actions.ts),
 // deleting a workspace, changing someone's role, removing someone and
 // inviting an admin (actions/organizations.ts), join links that add admins
 // (actions/workspace-join.ts), and Better Auth's own endpoints for the same
@@ -215,7 +215,7 @@ vi.mock("@repo/auth/server", async () => {
 const gate = await import("@repo/auth/confirm-gate");
 const rules = await import("@repo/auth/confirm-sign-in-rules");
 const confirmation = await import("@/lib/account/confirmation-server");
-const account = await import("@/app/settings/account/_lib/actions");
+const account = await import("@/app/(app)/settings/account/_lib/actions");
 const teams = await import("@/actions/organizations");
 const join = await import("@/actions/workspace-join");
 

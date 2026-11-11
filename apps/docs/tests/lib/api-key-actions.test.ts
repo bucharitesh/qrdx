@@ -58,11 +58,13 @@ vi.mock("@/lib/api-keys/service", async () => {
 });
 
 const { createApiKeyAction, revokeApiKeyAction } = await import(
-  "@/app/settings/developers/_lib/api-key-actions"
+  "@/app/(app)/settings/developers/_lib/api-key-actions"
 );
 const { ApiKeysUnavailableError } = await import("@/lib/api-keys/service");
 const { HttpError } = await import("@/lib/error-response");
-const { requestOrigin } = await import("@/app/settings/developers/_lib/origin");
+const { requestOrigin } = await import(
+  "@/app/(app)/settings/developers/_lib/origin"
+);
 
 const input = { name: "CI", scopes: ["codes:write"], expiresInDays: null };
 

@@ -11,14 +11,14 @@ import {
   listFolders,
   listTags,
   type TagRow,
-} from "@/app/dashboard/codes/_lib/organize";
-import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
+} from "@/app/(app)/dashboard/codes/_lib/organize";
+import type { FolderRow } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import {
   type DomainOptions,
   getDomainOptions,
-} from "@/app/dashboard/domains/_lib/domains";
-import { listVisibleThemes } from "@/app/dashboard/themes/_lib/queries";
-import type { SavedTheme } from "@/app/dashboard/themes/_lib/theme";
+} from "@/app/(app)/dashboard/domains/_lib/domains";
+import { listVisibleThemes } from "@/app/(app)/dashboard/themes/_lib/queries";
+import type { SavedTheme } from "@/app/(app)/dashboard/themes/_lib/theme";
 import { getActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";

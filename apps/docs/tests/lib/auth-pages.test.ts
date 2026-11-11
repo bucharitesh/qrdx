@@ -1,12 +1,12 @@
 // /sign-in (where to go next, the signed-out notice) and /sign-out (only the
 // app's own menu signs out on arrival). Pure functions; no auth server.
 import { describe, expect, it } from "vitest";
-import { readSignInParams } from "@/app/(auth)/sign-in/_lib/params";
+import { readSignInParams } from "@/app/(app)/(auth)/sign-in/_lib/params";
 import {
   isFreshSignOutIntent,
   SIGN_OUT_INTENT_TTL_MS,
   SIGNED_OUT_PATH,
-} from "@/app/(auth)/sign-out/_lib/intent";
+} from "@/app/(app)/(auth)/sign-out/_lib/intent";
 
 describe("readSignInParams", () => {
   it("keeps a same-site next and defaults to the dashboard", () => {

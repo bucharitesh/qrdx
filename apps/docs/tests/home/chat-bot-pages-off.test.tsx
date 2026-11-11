@@ -15,14 +15,14 @@ vi.mock("next/navigation", async (importOriginal) => ({
   },
 }));
 
-import DiscordImage from "@/app/(home)/discord/opengraph-image";
-import DiscordPage from "@/app/(home)/discord/page";
-import IntegrationDetailPage from "@/app/(home)/integrations/[slug]/page";
-import PluginsPage from "@/app/(home)/plugins/page";
-import SlackImage from "@/app/(home)/slack/opengraph-image";
-import SlackPage from "@/app/(home)/slack/page";
-import TelegramImage from "@/app/(home)/telegram/opengraph-image";
-import TelegramPage from "@/app/(home)/telegram/page";
+import DiscordImage from "@/app/(app)/(home)/discord/opengraph-image";
+import DiscordPage from "@/app/(app)/(home)/discord/page";
+import IntegrationDetailPage from "@/app/(app)/(home)/integrations/[slug]/page";
+import PluginsPage from "@/app/(app)/(home)/plugins/page";
+import SlackImage from "@/app/(app)/(home)/slack/opengraph-image";
+import SlackPage from "@/app/(app)/(home)/slack/page";
+import TelegramImage from "@/app/(app)/(home)/telegram/opengraph-image";
+import TelegramPage from "@/app/(app)/(home)/telegram/page";
 import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { siteConfig } from "@/config/site";
 import {

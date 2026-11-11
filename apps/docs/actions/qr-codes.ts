@@ -22,7 +22,7 @@ import {
   updateCode,
   updateCodeFields,
   type updateCodeSchema,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { HttpError } from "@/lib/error-response";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";

@@ -155,13 +155,13 @@ export const databaseThemeStore: ThemeStore = {
   },
   async teamThemesPlanName() {
     const { teamThemesPlanName } = await import(
-      "@/app/dashboard/themes/_lib/queries"
+      "@/app/(app)/dashboard/themes/_lib/queries"
     );
     return teamThemesPlanName();
   },
   async count(target) {
     const { countThemesInScope } = await import(
-      "@/app/dashboard/themes/_lib/queries"
+      "@/app/(app)/dashboard/themes/_lib/queries"
     );
     return countThemesInScope(target);
   },

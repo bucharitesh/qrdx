@@ -12,11 +12,11 @@ import {
 import cuid from "cuid";
 import { eq, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
-import { getPageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
+import { getPageUsage } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import {
   canManageTeamThemes,
   countThemesInScope,
-} from "@/app/dashboard/themes/_lib/queries";
+} from "@/app/(app)/dashboard/themes/_lib/queries";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { can } from "@/lib/permissions";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";

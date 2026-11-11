@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { BULK_KEYS } from "@/app/dashboard/_lib/list-keys";
+import { BULK_KEYS } from "@/app/(app)/dashboard/_lib/list-keys";
 import {
   BULK_OWNED,
   ROW_KEYS,
@@ -7,7 +7,7 @@ import {
   type RowKeyContext,
   type RowKeyEvent,
   resolveRowShortcut,
-} from "@/app/dashboard/codes/_lib/row-shortcuts";
+} from "@/app/(app)/dashboard/codes/_lib/row-shortcuts";
 
 const ALL = Object.keys(ROW_KEYS) as RowAction[];
 

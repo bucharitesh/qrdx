@@ -4,6 +4,7 @@ import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { DEFAULT_NEXT_PATH } from "@/lib/safe-redirect";
 
 /** One grid cell for both labels; the hidden one still holds its width. */
@@ -26,6 +27,7 @@ export function HeaderAccountLink({
   /** Called before leaving (e.g. to close a drawer). */
   onNavigate?: () => void;
 }) {
+  const t = useTranslations("nav.account");
   const { data: session, isPending } = authClient.useSession();
   const signedIn = Boolean(session?.user);
 
@@ -45,14 +47,16 @@ export function HeaderAccountLink({
           <span className={cn(LABEL, signedIn && "invisible")}>
             {compact ? (
               <>
-                <span className="sm:hidden">Playground</span>
-                <span className="hidden sm:inline">Try the Playground</span>
+                <span className="sm:hidden">{t("playground")}</span>
+                <span className="hidden sm:inline">{t("tryPlayground")}</span>
               </>
             ) : (
-              "Try the Playground"
+              t("tryPlayground")
             )}
           </span>
-          <span className={cn(LABEL, !signedIn && "invisible")}>Dashboard</span>
+          <span className={cn(LABEL, !signedIn && "invisible")}>
+            {t("dashboard")}
+          </span>
         </span>
       </Link>
     </Button>

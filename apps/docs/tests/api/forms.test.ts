@@ -97,7 +97,7 @@ vi.mock("@/lib/shared", () => ({ logError: () => {} }));
 
 const forms = await import("@/app/api/forms/[pageId]/route");
 const exportRoute = await import(
-  "@/app/dashboard/[workspace]/pages/[id]/responses/export/route"
+  "@/app/(app)/dashboard/[workspace]/pages/[id]/responses/export/route"
 );
 
 const ORIGIN = "http://localhost:3000";

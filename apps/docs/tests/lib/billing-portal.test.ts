@@ -8,7 +8,7 @@ import {
   type PortalFailure,
   resolvePortalRedirect,
   SIGNED_OUT_PATH,
-} from "@/app/settings/portal/_lib/portal";
+} from "@/app/(app)/settings/portal/_lib/portal";
 
 const PORTAL_URL = "https://polar.sh/qrdx/portal?customer_session_token=abc";
 const RETURN_URL = "http://localhost:3000/settings/usage";

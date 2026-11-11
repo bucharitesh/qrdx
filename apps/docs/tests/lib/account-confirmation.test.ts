@@ -351,10 +351,10 @@ vi.mock("@repo/auth/server", async () => {
 const server = await import("@/lib/account/confirmation-server");
 const manage = await import("@/lib/account/two-factor-manage");
 const passkeyActions = await import(
-  "@/app/settings/account/_lib/passkey-actions"
+  "@/app/(app)/settings/account/_lib/passkey-actions"
 );
 const emailActions = await import(
-  "@/app/settings/account/_lib/email-change-actions"
+  "@/app/(app)/settings/account/_lib/email-change-actions"
 );
 const { deleteAccount } = await import("@/actions/account");
 const { loadTwoFactorMethods } = await import(

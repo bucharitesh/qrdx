@@ -8,10 +8,10 @@ import { join } from "node:path";
 import { OFFICIAL_FRAMES } from "qrdx";
 import { colorConfigSchema } from "qrdx/types";
 import { describe, expect, it } from "vitest";
+import { createCodeSchema } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { designQrInputSchema } from "@/app/api/mcp/design";
 import { codeStyleInputSchema } from "@/app/api/v1/codes/_lib/schemas";
 import { qrImageQuerySchema } from "@/app/api/v1/qr/_lib/query";
-import { createCodeSchema } from "@/app/dashboard/codes/_lib/qr-codes";
 import {
   CLI_TAB_ENABLED,
   CODE_TABS,

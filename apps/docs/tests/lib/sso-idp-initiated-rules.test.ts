@@ -10,7 +10,7 @@ import {
   samlIdpInitiatedProblem,
 } from "@repo/auth/sso-rules";
 import { describe, expect, it } from "vitest";
-import { signInErrorMessage } from "@/app/(auth)/sign-in/_lib/error-message";
+import { signInErrorMessage } from "@/app/(app)/(auth)/sign-in/_lib/error-message";
 import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { createTestIdp } from "../support/saml-idp";
 

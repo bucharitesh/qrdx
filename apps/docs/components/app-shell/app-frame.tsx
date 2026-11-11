@@ -2,7 +2,7 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
-import type { Meter } from "@/app/settings/usage/_lib/meters";
+import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { AppSidebar } from "./app-sidebar";
 import { AppTopBar } from "./app-topbar";
 import type { ShellData } from "./shell-data";

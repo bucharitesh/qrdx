@@ -24,7 +24,7 @@ import {
   useMemo,
   useRef,
 } from "react";
-import type { Meter } from "@/app/settings/usage/_lib/meters";
+import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
 import { OrgSwitcher } from "@/components/org-switcher";
 import { useCan } from "@/components/workspace-provider";

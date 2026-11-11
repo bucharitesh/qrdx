@@ -1,4 +1,4 @@
-// Plan limits in the app (app/settings/usage/_lib/meters.ts, limit-copy.ts,
+// Plan limits in the app (app/(app)/settings/usage/_lib/meters.ts, limit-copy.ts,
 // components/limits/limit-request.ts): the 90% boundary, what an unlimited
 // or pooled count shows, which plan lifts a cap, the words on each card and
 // when the UI blocks. Pure; the real PLAN_LIMITS, no database.
@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import {
   type LimitContext,
   limitCopy,
-} from "@/app/settings/usage/_lib/limit-copy";
+} from "@/app/(app)/settings/usage/_lib/limit-copy";
 import {
   aiArtNote,
   attentionMeters,
@@ -24,7 +24,7 @@ import {
   splitUnlimited,
   upgradeAction,
   upgradeTo,
-} from "@/app/settings/usage/_lib/meters";
+} from "@/app/(app)/settings/usage/_lib/meters";
 import {
   limitRequestMeter,
   limitResponse,

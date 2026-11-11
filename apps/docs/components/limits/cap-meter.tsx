@@ -2,7 +2,7 @@
 
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { cn } from "@repo/design-system/lib/utils";
-import { limitCopy } from "@/app/settings/usage/_lib/limit-copy";
+import { limitCopy } from "@/app/(app)/settings/usage/_lib/limit-copy";
 import {
   type Meter,
   type MeterId,
@@ -10,7 +10,7 @@ import {
   meterPercent,
   meterValue,
   upgradeTo,
-} from "@/app/settings/usage/_lib/meters";
+} from "@/app/(app)/settings/usage/_lib/meters";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { usePlanLimits } from "./plan-limits-provider";
 import { UpgradeButton } from "./upgrade-button";

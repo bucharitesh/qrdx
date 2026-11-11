@@ -6,7 +6,7 @@
 import type {
   QrCodeListItem,
   QrCodeView,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 
 export type OptimisticPatch = Partial<
   Pick<QrCodeListItem, "title" | "destinationUrl" | "style" | "folderId">

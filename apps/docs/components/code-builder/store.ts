@@ -6,7 +6,7 @@ import { create } from "zustand";
 import type {
   QrCodeListItem,
   QrCodeView,
-} from "@/app/dashboard/codes/_lib/qr-codes";
+} from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import type { QRStyle } from "@/types/theme";
 import type { OptimisticEntry } from "./optimistic";
 import type { BuilderFields } from "./types";

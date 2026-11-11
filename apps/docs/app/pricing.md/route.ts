@@ -1,4 +1,4 @@
-import { siteConfig } from "@/config/site";
+import { pricingFaqs } from "@/components/sections/pricing/pricing-faqs";
 import { pricingOptions } from "@/lib/agents/llms-content";
 import { pricingMarkdown } from "@/lib/agents/markdown-pages";
 import { baseUrl } from "@/lib/metadata";
@@ -14,7 +14,7 @@ export function GET() {
       origin: baseUrl,
       limits: PLAN_LIMITS,
       offered: pricingOptions(),
-      faqs: siteConfig.pricing.faq,
+      faqs: pricingFaqs(),
     }),
     { headers: { "Content-Type": "text/markdown; charset=utf-8" } },
   );

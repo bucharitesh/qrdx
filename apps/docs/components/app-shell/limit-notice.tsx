@@ -14,7 +14,7 @@ import {
   meterLevel,
   meterPercent,
   meterValue,
-} from "@/app/settings/usage/_lib/meters";
+} from "@/app/(app)/settings/usage/_lib/meters";
 import type { Plan } from "@/lib/pricing";
 
 /**

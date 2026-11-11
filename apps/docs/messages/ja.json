@@ -1,0 +1,684 @@
+{
+  "meta": {
+    "siteTitle": "無料QRコード作成・動的QRコード対応 | QRdx",
+    "siteDescription": "ロゴ・色・パターンを使えるQRコードを、登録もウォーターマークもなしで無制限に無料作成できます。内容を編集できる動的QRコード、ホスト型ページ、スキャン解析にも対応。オープンソースです。",
+    "ogImageAlt": "QRdx:動的QRコード、ホスト型ページ、スキャン解析に対応した無料のQRコード作成ツール"
+  },
+  "nav": {
+    "main": "メイン",
+    "menu": "メニュー",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる",
+    "entries": {
+      "product": "製品",
+      "tools": "ツール",
+      "developers": "開発者向け",
+      "resources": "リソース",
+      "pricing": "料金"
+    },
+    "items": {
+      "playground": {
+        "name": "Playground",
+        "description": "パターン、色、ロゴ、フレームでQRコードをデザインしてダウンロードできます。登録は不要です。"
+      },
+      "dynamicCodes": {
+        "name": "動的QRコード",
+        "description": "印刷後もリンクを変更でき、スキャン数を集計できます"
+      },
+      "aiThemes": {
+        "name": "AIテーマ",
+        "description": "スタイルを言葉で伝えると、AIがテーマをデザインします"
+      },
+      "aiArt": {
+        "name": "AI QRアート",
+        "description": "リンクを、スキャンできるAIアートに変えられます"
+      },
+      "communityThemes": {
+        "name": "コミュニティテーマ",
+        "description": "他のユーザーが共有したデザインを探して再利用できます"
+      },
+      "pageTemplates": {
+        "name": "ページテンプレート",
+        "description": "すべてのホスト型ページテンプレートのライブデモ"
+      },
+      "generators": {
+        "name": "QRコードジェネレーター",
+        "description": "Wi-Fi、vCard、WhatsApp、UPI、決済など、種類ごとのジェネレーターを用意しています。"
+      },
+      "bulk": {
+        "name": "一括ジェネレーター",
+        "description": "CSVから最大{max, number}個のスタイル付きコードを作成"
+      },
+      "scanner": {
+        "name": "QRコードスキャナー",
+        "description": "安全なリンクプレビュー付きでコードをスキャン"
+      },
+      "scanChecker": {
+        "name": "スキャンチェッカー",
+        "description": "QRコードのスキャンしやすさをテストします"
+      },
+      "printSize": {
+        "name": "印刷サイズ計算ツール",
+        "description": "スキャン距離に合わせた最小サイズを調べられます"
+      },
+      "barcode": {
+        "name": "バーコードジェネレーター",
+        "description": "EAN、UPC、Code 128などに対応し、チェックディジットも付きます"
+      },
+      "allTools": {
+        "name": "すべてのツール",
+        "description": "無料のQRコードツールをまとめて確認できます"
+      },
+      "docs": {
+        "name": "ドキュメント",
+        "description": "qrdx React ライブラリ、動的QRコード、API、セルフホストのガイドです。"
+      },
+      "mcp": {
+        "name": "MCPサーバー",
+        "description": "Claude、ChatGPT、CursorからQRコードを作成できます"
+      },
+      "imageApi": {
+        "name": "Image API",
+        "description": "APIキー不要で、URLからQRコード画像を取得できます"
+      },
+      "shadcn": {
+        "name": "shadcn/ui registry",
+        "description": "1つのコマンドでQRコードのコンポーネントを追加できます"
+      },
+      "plugins": {
+        "name": "プラグイン",
+        "description": "Chrome、Figma、Raycast、Canva向けのQRdx"
+      },
+      "github": {
+        "name": "GitHub",
+        "description": "ソースコード、issue、リリース"
+      },
+      "help": {
+        "name": "ヘルプセンター",
+        "description": "コード、お支払い、チーム、トラブル解決の回答集です"
+      },
+      "blog": {
+        "name": "ブログ",
+        "description": "QRコードのガイドとニュース"
+      },
+      "compare": {
+        "name": "比較",
+        "description": "他のジェネレーターやライブラリとQRdxを比較できます"
+      },
+      "changelog": {
+        "name": "更新履歴",
+        "description": "QRdxの最新情報"
+      },
+      "integrations": {
+        "name": "連携",
+        "description": "Zapier、Make、Discord、分析ピクセルなど"
+      },
+      "support": {
+        "name": "サポートに問い合わせる",
+        "description": "メール、サポートウィジェット、GitHubから"
+      }
+    },
+    "account": {
+      "tryPlayground": "Playgroundを試す",
+      "playground": "Playground",
+      "dashboard": "ダッシュボード"
+    },
+    "github": {
+      "star": "スター",
+      "starOnGithub": "GitHubでQRdxにスターを付ける",
+      "starOnGithubCount": "GitHubでQRdxにスターを付ける（{count}スター）"
+    }
+  },
+  "footer": {
+    "description": "無料のオープンソースQRコードジェネレーター。カスタムパターン、グラデーション、ロゴ、フレームに対応し、PNG、JPG、SVG、PDF、EPSでダウンロードできます。登録は不要です。さらに、動的QRコード、ホスト型ページ、スキャン解析も利用できます。",
+    "starOnGithub": "GitHubでスターする",
+    "navLabel": "フッター",
+    "scanIt": "さあ、スキャンしてみて",
+    "copyright": "© {year} QRdx。AGPL-3.0のオープンソースです。",
+    "columns": {
+      "product": "製品",
+      "tools": "ツール",
+      "developers": "開発者向け",
+      "resources": "リソース",
+      "compare": "比較"
+    },
+    "links": {
+      "playground": "Playground",
+      "dynamicCodes": "動的QRコード",
+      "aiThemes": "AIテーマ",
+      "communityThemes": "コミュニティテーマ",
+      "pageTemplates": "ページテンプレート",
+      "pricing": "料金",
+      "guarantee": "Never-Hostage保証",
+      "slackBot": "Slackボット",
+      "telegramBot": "Telegramボット",
+      "discordBot": "Discordボット",
+      "generators": "QRコードジェネレーター",
+      "bulk": "一括ジェネレーター",
+      "scanChecker": "スキャンチェッカー",
+      "printSize": "印刷サイズ計算ツール",
+      "barcode": "バーコードジェネレーター",
+      "scanner": "QRコードスキャナー",
+      "allTools": "すべてのツール",
+      "docs": "ドキュメント",
+      "apiReference": "APIリファレンス",
+      "imageApi": "Image API",
+      "mcp": "MCPサーバー",
+      "shadcn": "shadcn/uiレジストリ",
+      "plugins": "プラグイン",
+      "selfHosting": "セルフホスティング",
+      "github": "GitHub",
+      "help": "ヘルプセンター",
+      "blog": "ブログ",
+      "changelog": "変更履歴",
+      "integrations": "連携",
+      "industries": "業種別QRコード",
+      "placements": "設置場所別QRコード",
+      "affiliates": "アフィリエイトプログラム",
+      "contact": "お問い合わせ",
+      "legal": "法的情報",
+      "privacy": "プライバシーポリシー",
+      "terms": "利用規約",
+      "subprocessors": "サブプロセッサー",
+      "reportAbuse": "不正利用の報告",
+      "acceptableUse": "利用ポリシー",
+      "cookies": "Cookieポリシー",
+      "dpa": "データ処理契約(DPA)",
+      "aiFeatures": "AI機能",
+      "refunds": "返金",
+      "affiliateTerms": "アフィリエイト規約",
+      "security": "セキュリティ",
+      "allComparisons": "比較一覧"
+    }
+  },
+  "localeSwitcher": {
+    "label": "言語",
+    "englishOnly": "このページは英語のみです。他の言語を選ぶと、その言語のホームページが開きます。"
+  },
+  "cta": {
+    "title": "次のQRコードを数秒で作成できます。",
+    "subtext": "ずっと無料。登録不要、透かしなし。",
+    "button": "無料でQRコードを作成する"
+  },
+  "consent": {
+    "banner": {
+      "title": "QRdxのCookie",
+      "description": "訪問数はCookieを使わずに集計しています。PostHogとフィードバックウィジェットは、同意をいただくまで動作しません。",
+      "privacyPolicy": "プライバシーポリシー"
+    },
+    "actions": {
+      "accept": "すべて許可",
+      "reject": "すべて拒否",
+      "customize": "カスタマイズ",
+      "save": "選択を保存",
+      "dismiss": "OK"
+    },
+    "dialog": {
+      "title": "Cookie設定",
+      "description": "QRdxが使用できる任意のツールを選択してください。任意のツールは、許可するまで読み込まれません。この設定はいつでも変更できます。",
+      "details": "詳細は<link>プライバシーポリシー</link>をご覧ください。",
+      "alwaysOn": "常に有効",
+      "usedBy": "使用元：{tools}"
+    },
+    "categories": {
+      "necessary": {
+        "title": "必須",
+        "description": "ログイン状態の維持、フォームのスパム対策、テーマやこの選択などの設定の記憶に使用します。"
+      },
+      "functionality": {
+        "title": "機能",
+        "description": "フィードバック／サポートウィジェットを表示します。"
+      },
+      "measurement": {
+        "title": "分析",
+        "description": "どのページや機能が使われているかを計測し、改善に役立てます。Cookieを使わない訪問数の集計（Umami）は、この設定がなくても動作します。"
+      }
+    },
+    "settingsButton": "Cookie設定"
+  },
+  "home": {
+    "hero": {
+      "badge": "無料のオープンソース（AGPL-3.0）",
+      "title": "無料のQRコードジェネレーター。動的QRコードもずっと使えます",
+      "description": "パターン、グラデーション、ロゴ、フレームでブランドに合わせたQRコードをデザインし、登録もウォーターマークもなしでPNG、SVG、PDF、EPSをダウンロードできます。ログインすると、印刷後も編集できる動的QRコード、ホスト型ページ、スキャン解析をご利用いただけます。",
+      "primary": "Playgroundを試す",
+      "secondary": "ドキュメントを読む",
+      "sceneLabel": "QRdxの流れを描いたアニメーション。スタジオの画面でQRコードをデザインしてスタイルを整え、プリンターがカードに印刷し、ロボットアームがカードをコンベヤーに載せ、ゲートに取り付けたスマートフォンが通過するカードを1枚ずつスキャンし、スキャンのデータが解析パネルに届いて新しいバーが加わり、大きな動的QRカードが再印刷なしでリンク先を切り替えます"
+    },
+    "editor": {
+      "eyebrow": "お持ちのリンクで試す",
+      "description": "Playgroundと同じレンダラーで、入力に合わせてリアルタイムに表示されます。",
+      "valueLabel": "リンクまたはテキスト",
+      "style": "スタイル",
+      "frame": "フレーム",
+      "styles": {
+        "classic": "クラシック",
+        "rounded": "丸み",
+        "dots": "ドット",
+        "gradient": "グラデーション"
+      },
+      "frames": {
+        "none": "フレームなし",
+        "border": "枠線"
+      },
+      "more": "Playgroundのフル機能では、ボディパターン{bodyPatterns, number}種類、アイシェイプ{eyeShapes, number}種類、アイセンター{eyeCentres, number}種類、自由な色とグラデーション、ロゴ、テンプレート、PNG、SVG、PDF、EPSのダウンロードをご利用いただけます。",
+      "customize": "Playgroundでカスタマイズ",
+      "qrLabel": "{value}のQRコード",
+      "empty": "リンクを入力するとQRコードが表示されます。"
+    },
+    "gallery": {
+      "title": "QRdxで作成",
+      "description": "サンプル内容の本物のQRdxコードです。どれでもスキャンできます。開いて自分用に作り替えることもできます。",
+      "seeAll": "すべて見る",
+      "showMore": "もっと見る"
+    },
+    "useCases": {
+      "eyebrow": "活用例",
+      "title": "あらゆる用途にQRコードを",
+      "description": "カフェのテーブルからバス停まで、用途に合ったコードから始められます。",
+      "items": {
+        "menus": {
+          "title": "メニューとテーブル",
+          "description": "テーブルPOPやカウンターカードをオンラインメニューにリンクします。",
+          "linkText": "URL QRコード",
+          "cardLabel": "メニューとテーブル：Playgroundで始める"
+        },
+        "businessCards": {
+          "title": "名刺",
+          "description": "1回のスキャンで、名前・電話番号・メールアドレスをスマートフォンに保存できます。",
+          "linkText": "vCard QRコード",
+          "cardLabel": "名刺：Playgroundで始める"
+        },
+        "wifi": {
+          "title": "ゲスト用Wi-Fi",
+          "description": "パスワードを入力しなくても、ゲストがネットワークに接続できます。",
+          "linkText": "Wi-Fi QRコード",
+          "cardLabel": "ゲスト用Wi-Fi：Playgroundで始める"
+        },
+        "payments": {
+          "title": "決済",
+          "description": "屋台、店舗のカウンター、配達先でUPI決済を受け付けられます。",
+          "linkText": "UPI QRコード",
+          "cardLabel": "決済：Playgroundで始める"
+        },
+        "packaging": {
+          "title": "パッケージとラベル",
+          "description": "CSVから、すべての製品や資産用のコードをまとめたZIPを作成できます。",
+          "linkText": "一括生成ツール",
+          "cardLabel": "パッケージとラベル：一括生成ツールを開く"
+        },
+        "events": {
+          "title": "イベントとチェックイン",
+          "description": "Google Formを使って、入口で参加者のチェックインができます。",
+          "linkText": "出席確認QRコード",
+          "cardLabel": "イベントとチェックイン：Playgroundで始める"
+        },
+        "shelves": {
+          "title": "棚とディスプレイ",
+          "description": "棚のタグから、商品ページへお客様を案内できます。",
+          "linkText": "Amazon QRコード",
+          "cardLabel": "棚とディスプレイ：Playgroundで始める"
+        },
+        "posters": {
+          "title": "ポスターと看板",
+          "description": "通りの向こうからでもスキャンできる大きさで印刷しましょう。",
+          "linkText": "印刷サイズ計算ツール",
+          "cardLabel": "ポスターと看板：印刷サイズ計算ツールを開く"
+        }
+      }
+    },
+    "features": {
+      "eyebrow": "機能",
+      "title": "QRコードに必要なすべてを、ひとつに",
+      "description": "デザインし、スキャンできるか確認し、適切なサイズで印刷し、最新の状態に保てます。それぞれをこのページですぐに試せます。",
+      "design": {
+        "eyebrow": "デザイン",
+        "title": "細部までデザイン",
+        "description": "ボディパターン{bodyPatterns, number}種類、アイシェイプ{eyeShapes, number}種類、フレーム{frames, number}種類を、単色でもグラデーションでも使えます。Playgroundとqrdx Reactライブラリは、この同じレンダラーで描画します。",
+        "link": "Playgroundを開く"
+      },
+      "scanScore": {
+        "eyebrow": "スキャンスコア",
+        "title": "印刷前にスキャンできるか確認",
+        "description": "すべてのデザインを、カメラのぼかしを加えた3つのサイズでブラウザ上でデコードします。インクを薄くして、スコアの変化を確かめてみてください。",
+        "link": "印刷したコードを確認"
+      },
+      "printSize": {
+        "eyebrow": "印刷サイズ",
+        "title": "十分な大きさで印刷",
+        "description": "最小サイズは、どのくらい離れた距離からスキャンするかと、コードに含まれる情報量によって決まります。",
+        "link": "印刷サイズ計算ツール"
+      },
+      "dynamic": {
+        "eyebrow": "動的コード",
+        "title": "印刷後もリンクを変更できます",
+        "description": "動的QRコードは短縮リンクを開き、そのリンク先はいつでも新しい場所に変更できます。フリープランのアカウントでは{count, number}個まで使えます。",
+        "link": "動的QRコードについて"
+      },
+      "analytics": {
+        "eyebrow": "アナリティクス",
+        "title": "すべてのスキャンを確認",
+        "description": "動的QRコードごとに、時間ごとのスキャン数、国、デバイス、ブラウザ、参照元を確認できます。フリープランのアカウントでは{days, number}日間保存されます。",
+        "link": "スキャン分析の仕組み"
+      },
+      "bulk": {
+        "eyebrow": "一括作成",
+        "title": "1つのCSVから数百のコードを作成",
+        "description": "列を割り当ててスタイルを選ぶと、最大{max, number}個のコードをPNGまたはSVGでZIPにまとめてダウンロードできます。ファイルがブラウザの外に出ることはありません。",
+        "link": "一括生成ツールを開く"
+      },
+      "developers": {
+        "eyebrow": "開発者向け",
+        "title": "開発者のために設計",
+        "description": "qrdx Reactライブラリでコードを描画したり、Image APIでURLから画像を取得したり、Claude、Cursor、VS CodeからMCP server経由で作成したりできます。アプリ全体をセルフホストすることも可能です。",
+        "link": "開発者向けドキュメント"
+      }
+    },
+    "video": {
+      "eyebrow": "デモ",
+      "title": "QRdxの使い方を見る",
+      "description": "リンクを貼り付けて、デザインを整え、ダウンロードするだけ。アカウントは不要です。",
+      "steps": {
+        "paste": {
+          "title": "リンクを貼り付け",
+          "text": "Wi-Fi、vCard、UPIなども選べます。"
+        },
+        "style": {
+          "title": "デザイン",
+          "text": "パターン、色、ロゴ、フレームを設定できます。"
+        },
+        "download": {
+          "title": "ダウンロード",
+          "text": "PNG、SVG、PDFなどに対応。アカウントは不要です。"
+        }
+      },
+      "youtube": "YouTubeで紹介動画をすべて見る"
+    },
+    "faq": {
+      "eyebrow": "FAQ",
+      "title": "よくあるご質問",
+      "description": "QRdxについて知っておきたいことをまとめました。その他のご質問は support@qrdx.dev までお問い合わせください",
+      "somethingElse": "ほかにご質問は?",
+      "items": {
+        "free": {
+          "question": "QRdxは本当に無料ですか?隠れた制限はありますか?",
+          "answer": "はい。静的QRコードの作成、カスタマイズ、ダウンロードは無料で、アカウントも不要です。コードは無制限で、すべてのデザインオプション({bodyPatterns, number}種類のボディパターン、{eyeShapes, number}種類のコーナーアイ形状、{eyeCentres, number}種類のアイセンター、グラデーション、ロゴ、フレーム、Logo QRやImage QRのアート)が使え、PNG、JPG、SVG、PDF、EPS形式でダウンロードできます。透かしも広告もありません。静的QRコードは内容をコード自体に保存するため、有効期限がなく、スキャン数の上限もありません。無料アカウントでは、動的QRコード10個、ホスト型ページ3つ、90日間のスキャン分析、保存テーマ10個、AIテーマ生成5回が加わります。Pro({proMonthly}/月または{proYearly}/年)とBusiness({businessMonthly}/月または{businessYearly}/年)では、これらの上限が引き上がります。"
+        },
+        "signup": {
+          "question": "登録やアカウント作成は必要ですか?",
+          "answer": "静的QRコードなら不要です。Playgroundを開いてURLや内容を入力し、デザインを整えれば、登録なしでダウンロードできます。印刷後も編集できる動的QRコード、ホスト型ページ、スキャン分析、保存テーマ、コミュニティへの公開、AIテーマ生成をお使いの場合は、GitHubまたはGoogleでサインインしてください。"
+        },
+        "dynamic": {
+          "question": "QRdxは動的QRコードとスキャン分析に対応していますか?",
+          "answer": "はい。動的QRコードは短縮リンクをエンコードするため、印刷後でもリンク先を変更でき、スキャンのたびに国、デバイス、ブラウザの分析が記録されます。コードからはWebサイトやモバイル向けのホスト型ページ(リンク集、メニュー、vCard、クーポン、イベント、フォーム、PDF、ギャラリー、音声、動画)を開けます。ProとBusinessでは、デバイス、国、言語、時間帯によるスマートルーティング、A/Bテスト、UTMタグ、パスワード、有効期限、スキャン数の上限設定も使えます。無料アカウントでは、有効な動的QRコードを10個まで作成でき、履歴は90日間保存されます。ProとBusinessは無制限で、履歴の保存期間も長くなります。"
+        },
+        "guarantee": {
+          "question": "支払いを止めると、QRコードは使えなくなりますか?",
+          "answer": "いいえ。Never-Hostage保証により、ダウングレード、支払いの失敗、解約の後でも、どのプランでもすべての動的QRコードはリダイレクトを続けます。スキャンは無制限で停止されることはなく、広告を表示したり、スキャンした方をQRdxのページへ誘導したりすることもありません。プランの上限で制限されるのは、新しいものを作成することだけです。静的QRコードはQRdxにまったく依存しません。"
+        },
+        "compare": {
+          "question": "QRdxはQR Tiger、QR Code Monkey、Flowcodeとどう違いますか?",
+          "answer": "QR TIGERとFlowcodeは動的QRのプラットフォームです。コードは各社のサービスを経由してリダイレクトされるため、編集やスキャンの追跡ができ、料金はコード数に応じて上がります。QR TIGERの無料プランには、スキャン500回までの動的QRコードが3個含まれ、Flowcodeの無料プランでは2個まで作成できます。QR Code Monkeyは、QRdxと同じく無料の静的QRコードを作成できます。QRdxは両方に対応しています。細かなデザイン設定ができる無制限の無料静的QRコードに加え、すべてのプランでスキャン無制限の動的QRコードが使え、有料プランは月額{proMonthly}から、セルフホストできるオープンソースのコードも公開しています。比較ページでは、各ツールのほうが適している場面も含めて詳しく紹介しています。"
+        },
+        "logo": {
+          "question": "QRコードに無料でロゴを追加できますか?",
+          "answer": "はい。ロゴの重ね合わせは無料プランに含まれています。画像(背景が透明なPNGが最適です)をアップロードすると、QRdxが中央に配置し、下のモジュールを空けます。QRコードにはReed-Solomon誤り訂正(ISO/IEC 18004)が使われています。QRdxの初期設定はレベルQで、コードのおよそ25%を復元できるため、中央にロゴを置いてもスキャンできます。印刷前に、何台かのスマートフォンでテストしてください。"
+        },
+        "openSource": {
+          "question": "QRdxはオープンソースですか?",
+          "answer": "はい。QRdxはGNU AGPL-3.0(またはそれ以降)のオープンソースで、GitHubで公開開発されています。コードの確認、Issueの登録、コントリビュート、動的QRコードやホスト型ページを含む独自インスタンスのセルフホストが可能です。QRライブラリはReactアプリ向けに、qrdxとしてnpmで公開されています。AGPLはコピーレフトライセンスのため、クローズドソースのソフトウェアに組み込む前に、プロジェクトに適しているかご確認ください。"
+        },
+        "api": {
+          "question": "開発者はAPIでQRコードを生成できますか?",
+          "answer": "はい。Image APIを使うと、APIキーなしで任意のURLをSVG、PNG、EPS形式のQRコードに変換できます。REST APIでは、ワークスペースのAPIキーまたはOAuthを使って、動的QRコードの作成と編集、スキャン数の取得ができます。そのほか、Claude、Cursor、VS Code向けのMCP server、コマンドラインツール(@qrdx/cli)、shadcn/uiコンポーネント、qrdx Reactライブラリもあります。"
+        },
+        "paidPlans": {
+          "question": "ProやBusinessでは何が使えますか?",
+          "answer": "Pro(月額{proMonthly}/年額{proYearly})では、動的QRコードとホスト型ページが無制限になるほか、3年分の分析、{customDomains, select, yes {カスタムドメイン5つ、} other {}}最大3人までのチーム、スマートルーティング、A/Bテスト、UTMタグ、ピクセル、メールアラートと週次ダイジェスト、パスワードや有効期限などのリンク管理が利用できます。Business(月額{businessMonthly}/年額{businessYearly})では、カスタムCSSを使えるホワイトラベルページ、無制限の分析履歴、{customDomains, select, yes {カスタムドメイン25個、} other {}}無制限のチームメンバー、コンバージョン計測、Webhook、SlackやDiscordへのアラートが加わります。静的QRコードの作成、カスタマイズ、ダウンロードは引き続き無料です。"
+        }
+      }
+    }
+  },
+  "pricing": {
+    "meta": {
+      "title": "料金：フリー、Pro、Businessプラン",
+      "description": "静的QRコードはずっと無料です。Pro（月額{pro}）とBusiness（月額{business}）では{extras}が加わります。解約してもコードは使い続けられます。"
+    },
+    "plans": {
+      "free": "フリー"
+    },
+    "header": {
+      "eyebrow": "料金",
+      "title": "シンプルな料金。コードが人質にならない仕組み。",
+      "intro": "静的QRコードはずっと無料です。有料プランでは{extras}が加わります。"
+    },
+    "extras": {
+      "unlimitedDynamic": "無制限の動的QRコード",
+      "longerAnalytics": "より長い期間の分析",
+      "analyticsHistory": "分析履歴",
+      "customDomains": "カスタムドメイン",
+      "teams": "チーム"
+    },
+    "billing": {
+      "legend": "請求期間",
+      "month": "月払い",
+      "year": "年払い",
+      "saveUpTo": "最大{percent, number}%お得",
+      "save": "{percent, number}%お得"
+    },
+    "currency": {
+      "inr": "インド向けの₹表示価格です。",
+      "usd": "US$表示の価格です。",
+      "showInr": "インドの方はこちら：₹で表示",
+      "showUsd": "US$で価格を表示"
+    },
+    "price": {
+      "forever": "ずっと無料",
+      "noCard": "クレジットカード不要",
+      "perMonth": "/月",
+      "perYear": "/年",
+      "aboutMonthly": "月あたり約{price}（年払い）",
+      "billedMonthly": "月払い、いつでも解約できます"
+    },
+    "tiers": {
+      "free": {
+        "tagline": "個人利用やQRdxのお試しに",
+        "cta": "無料で始める"
+      },
+      "pro": {
+        "tagline": "クリエイター、お店、小規模ビジネス向け",
+        "cta": "Proにアップグレード"
+      },
+      "business": {
+        "tagline": "チーム、代理店、ブランド向け",
+        "cta": "Businessにアップグレード"
+      }
+    },
+    "cards": {
+      "popular": "人気",
+      "leadPro": "フリーのすべての機能に加えて:",
+      "leadBusiness": "Proのすべての機能に加えて:",
+      "goToDashboard": "ダッシュボードへ",
+      "comingSoon": "近日公開",
+      "notAvailable": "{plan}はまだ購入できません。",
+      "manage": "サブスクリプションを管理",
+      "current": "現在ご利用中のプランです。",
+      "switchTo": "{plan}に切り替え",
+      "portalNote": "プランの変更は請求ポータルで行います。",
+      "redirecting": "移動中…",
+      "openPortal": "ポータルを開く"
+    },
+    "selfHost": {
+      "title": "セルフホスト",
+      "description": "オープンソースのアプリを、ご自身のサーバーとPostgresデータベースで運用できます。プランの上限は1つのファイルにまとまっており、インスタンスに合わせて変更できます。",
+      "guide": "セルフホストガイド"
+    },
+    "footnote": "決済はマーチャント・オブ・レコードであるPolarが処理します。現地の税金がチェックアウト時に加算される場合があります。インドのお客様への請求は₹、それ以外の国のお客様への請求はUS$です。",
+    "values": {
+      "unlimited": "無制限",
+      "days": "{count, plural, other {#日}}",
+      "years": "{count, plural, other {#年}}",
+      "megabytes": "{count} MB",
+      "gigabytes": "{count} GB",
+      "included": "含まれる",
+      "notIncluded": "含まれない"
+    },
+    "highlights": {
+      "unlimitedStatic": "静的QRコードは無制限、アカウント登録は不要です",
+      "dynamicWithAnalytics": "スキャン分析付きの動的QRコード{count}個",
+      "unlimitedScans": "スキャンは無制限、停止なし、広告なし",
+      "landingPages": "ホスト型ランディングページ{count}件",
+      "historyOf": "{duration}分の分析履歴",
+      "history": "{duration}の分析履歴",
+      "fileStorage": "{size}のファイルストレージ",
+      "unlimitedDynamic": "動的QRコードとランディングページが無制限",
+      "customDomains": "カスタムドメイン{count}件",
+      "teams": "最大{count}人までのチーム",
+      "themesShared": "保存できるテーマは無制限で、チームと共有できます",
+      "themes": "保存できるテーマは無制限",
+      "routing": "スマートルーティング、A/Bテスト、UTMタグ、ピクセル",
+      "linkControls": "パスワード、スケジュール、有効期限、スキャン数の上限",
+      "storageAndForms": "{size}のストレージ、フォーム回答は月{count}件",
+      "forms": "フォーム回答は月{count}件",
+      "whiteLabel": "カスタムCSS対応のホワイトラベルページ",
+      "unlimitedTeam": "チームメンバーは無制限",
+      "sso": "シングルサインオン(SAMLとOIDC)",
+      "auditLog": "CSVエクスポート対応の監査ログ",
+      "conversions": "コンバージョン計測",
+      "webhooks": "Webhook、Zapier、Slack",
+      "aiArt": "AIアート画像は月{count}枚、チーム単位で共有"
+    },
+    "comparison": {
+      "title": "プランを比較",
+      "description": "すべての上限を並べて比較できます。スキャンはどのプランでも無制限です。",
+      "scrollHint": "横にスクロールして全プランをご覧ください。",
+      "caption": "QRdxプランの比較",
+      "feature": "機能",
+      "groups": {
+        "price": "料金",
+        "codes": "QRコードとページ",
+        "analytics": "分析とリンク設定",
+        "brand": "ブランドとチーム",
+        "files": "ファイルとフォーム",
+        "automation": "自動化とAPI"
+      },
+      "rows": {
+        "price": "料金",
+        "staticCodes": "静的QRコード",
+        "staticCodesHint": "アカウント不要",
+        "dynamicCodes": "動的QRコード",
+        "scans": "スキャン数",
+        "scansHint": "停止なし、広告なし",
+        "landingPages": "ホスト型ランディングページ",
+        "savedThemes": "保存できるテーマ",
+        "aiThemes": "AIテーマ生成",
+        "aiArt": "月あたりのAIアート画像数",
+        "analyticsHistory": "分析履歴",
+        "routing": "スマートルーティング、A/Bテスト、UTMタグ",
+        "routingHint": "デバイス、国、時間、言語に応じてスキャンの転送先を振り分けられます",
+        "preciseLocation": "スキャン位置の正確な把握とジオフェンシング",
+        "preciseLocationHint": "コードごとにオプトイン方式で、位置情報を共有するかどうかはスキャンする人が選べます",
+        "linkControls": "パスワード、スケジュール、有効期限、スキャン数の上限",
+        "pixels": "リターゲティングピクセル",
+        "conversions": "コンバージョン計測",
+        "customDomains": "カスタムドメイン",
+        "customSlugs": "カスタムスラッグ",
+        "customSlugsHint": "qrdx.dev/q/spring-menu のようにリンクを自由に決められます",
+        "teamMembers": "チームメンバー",
+        "sso": "シングルサインオン",
+        "ssoHint": "SAMLまたはOIDCで、御社のIDプロバイダーと連携できます",
+        "auditLog": "監査ログ",
+        "auditLogHint": "ワークスペースで誰が何を変更したかを{days, number}日間保存し、CSVでエクスポートできます",
+        "fileStorage": "ファイルストレージ",
+        "formResponses": "月あたりのフォーム回答数",
+        "emailAlerts": "メールダイジェストとアラート",
+        "webhooks": "Webhook、Zapier、Slack",
+        "apiRequests": "1日あたりのAPIリクエスト数"
+      },
+      "cells": {
+        "pricePaid": "月額{monthly}または年額{yearly}",
+        "pagesWithBadge": "{count}、フッターに「Made with QRdx」を表示",
+        "pagesWhiteLabelCss": "{count}、ホワイトラベル＋カスタムCSS",
+        "pagesWhiteLabel": "{count}、ホワイトラベル",
+        "pagesNoFooter": "{count}、フッターなし",
+        "themesShared": "{count}、チームで共有",
+        "aiThemesTotal": "合計{count}",
+        "aiArtPooled": "{count}、チームで共有枠",
+        "noTeams": "1（チームなし）",
+        "storage": "{size}（1ファイル{perFile}）",
+        "apiBulk": "{count}＋一括作成"
+      }
+    },
+    "guarantee": {
+      "eyebrow": "フリーを含むすべてのプランで",
+      "title": "Never-Hostage保証",
+      "description": "印刷したコードは、サブスクリプションが終わっても使い続けられます。プランがどうなっても、印刷したコードは動き続けます。",
+      "link": "保証の全文を読む",
+      "promises": {
+        "static": {
+          "title": "静的コードは永久に無料",
+          "body": "静的QRコードは、アカウントなしで作成、スタイル設定、ダウンロードができます。内容はコードに直接保存され、期限切れになることも、当社のサーバーを経由することもありません。"
+        },
+        "redirecting": {
+          "title": "動的コードは転送を継続",
+          "body": "動的コードはどのプランでも動作し続けます。ダウングレード、支払いの失敗、解約のあとも同様です。"
+        },
+        "noAds": {
+          "title": "停止なし、広告なし",
+          "body": "請求を理由にコードを停止したり、広告や中間ページを表示したり、スキャンした人をQRdxのページ経由にしたりすることは一切ありません。"
+        },
+        "limits": {
+          "title": "上限で止まるのは新規作成のみ",
+          "body": "上限を超えると、それ以上の作成ができなくなります。既存のコードとページは動作し続け、コードのリンク先も変更できます。"
+        },
+        "export": {
+          "title": "すべてエクスポート可能",
+          "body": "どのプランでも、コードをSVGまたはPNGでダウンロードし、スキャンデータをCSVでエクスポートし、REST API経由でコードを取得できます。"
+        },
+        "notice": {
+          "title": "12か月前の通知",
+          "body": "万が一QRdxを終了する場合は、少なくとも12か月前に通知し、オープンソースのアプリを自分で運用するための手順を文書で提供します。"
+        }
+      }
+    },
+    "faq": {
+      "title": "料金に関するご質問",
+      "description": "お支払い、上限、支払いをやめた場合のコードの扱いについてご案内します。",
+      "somethingElse": "ほかのご質問は <link>{email}</link> までメールでお問い合わせください",
+      "items": {
+        "cancel": {
+          "question": "解約するとどうなりますか？",
+          "answer": "何も壊れることはありません。プランはお支払い済みの期間の終了まで有効で、その後アカウントはフリーに移行します。動的QRコードはすべて転送を続け、スキャンもすべてカウントされます。これがNever-Hostage保証です。フリーではフリーの上限を超えて作成することはできず、アナリティクスには直近90日間が表示されます。"
+        },
+        "paymentFails": {
+          "question": "支払いに失敗するとどうなりますか？",
+          "answer": "作成済みのコードはそのまま使えます。サブスクリプションが失効した場合は、解約した場合と同じようにアカウントはフリープランの上限に従います。請求を理由にコードを停止したり、広告を表示したり、スキャンした方をQRdxのページに誘導したりすることは一切ありません。"
+        },
+        "scans": {
+          "question": "スキャン数に上限はありますか？",
+          "answer": "ありません。スキャンはどのプランでも無制限で、アクセス数を理由にコードを停止することもありません。スキャン数の上限は、ご自身でコードに設定した場合のみです（Pro と Business）。"
+        },
+        "rupees": {
+          "question": "なぜ価格が₹で表示されるのですか？",
+          "answer": "インドからのアクセスでは、価格がインドルピーで表示されます。Pro は月額 {proMonthly}、または年額 {proYearly}、Business は月額 {businessMonthly}、または年額 {businessYearly} です。決済では、どの通貨で閲覧していても、インドのお客様には₹、それ以外の方にはUS$で請求されます。表示通貨を変更するには、プランの上にあるスイッチをご利用ください。"
+        },
+        "switchPlans": {
+          "question": "あとからプランや請求期間を変更できますか？",
+          "answer": "はい。設定の「サブスクリプションを管理」を開くと、Polarの請求ポータルでプランの変更や解約ができます。より小さいプランに変更しても、既存のコード、ページ、ドメインが無効になることはありません。"
+        },
+        "teams": {
+          "question": "各プランでチームはどのように使えますか？",
+          "answer": "フリーのアカウントではチームを作成できません。Pro のチームはオーナーを含めて最大3人、Business のチームはメンバー数に制限がありません。チームの上限は、オーナーの中で最も上位のプランに従い、そのプランが変更されても既存のメンバーはそのまま残ります。"
+        },
+        "selfHost": {
+          "question": "セルフホストもできますか？",
+          "answer": "はい。QRdxはAGPL-3.0のオープンソースです。セルフホスティングガイドに従い、ご自身のPostgresデータベースで実行できます。プランの上限は1つのファイルで定義されており、ご自身のインスタンス向けに変更できます。"
+        },
+        "billing": {
+          "question": "請求と税金は誰が処理しますか？",
+          "answer": "お支払いはPolar（polar.sh）が処理します。Polarはマーチャント・オブ・レコードとして、売上税、VAT、GSTを取り扱います。QRdxがカード情報を目にすることはありません。"
+        }
+      }
+    }
+  }
+}

@@ -89,14 +89,28 @@ export function currencyForCountry(
   return country?.trim().toUpperCase() === "IN" ? "INR" : "USD";
 }
 
-/** "$5", "₹1,499" (no decimals for whole amounts). */
-export function formatPrice(amount: number, currency: PricingCurrency): string {
-  return new Intl.NumberFormat(currency === "INR" ? "en-IN" : "en-US", {
-    style: "currency",
-    currency,
-    minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
+/**
+ * "$5", "₹1,499" (no decimals for whole amounts). Translated pages pass their
+ * locale: the language picks the format, never the currency (lib/region
+ * does), so Spanish shows "5 US$" (a bare "$" reads as pesos) and rupees
+ * always show "₹".
+ */
+export function formatPrice(
+  amount: number,
+  currency: PricingCurrency,
+  locale?: string,
+): string {
+  const english = !locale || locale === "en";
+  return new Intl.NumberFormat(
+    english ? (currency === "INR" ? "en-IN" : "en-US") : locale,
+    {
+      style: "currency",
+      currency,
+      currencyDisplay: currency === "INR" ? "narrowSymbol" : "symbol",
+      minimumFractionDigits: Number.isInteger(amount) ? 0 : 2,
+      maximumFractionDigits: 2,
+    },
+  ).format(amount);
 }
 
 /** Paid plan a Polar product id belongs to, or null for other products. */

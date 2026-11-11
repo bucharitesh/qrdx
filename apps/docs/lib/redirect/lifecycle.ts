@@ -11,7 +11,7 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { compare } from "bcryptjs";
 import cuid from "cuid";
 import { cookies, headers } from "next/headers";
-import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
+import { CUSTOM_DOMAIN_HEADER } from "@/app/(app)/dashboard/domains/_lib/hostname";
 import { getClientIp } from "@/lib/request-guards";
 import { slugWhere } from "@/lib/slug-claims";
 import type { Awaitable, RedirectCode } from "./code";
