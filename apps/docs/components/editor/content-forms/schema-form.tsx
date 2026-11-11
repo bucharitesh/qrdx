@@ -12,8 +12,10 @@ import {
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { z } from "zod";
+import { englishKey } from "@/lib/i18n/english-key";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import { encodeQRContent } from "@/utils/qr-content-encoder";
@@ -100,6 +102,24 @@ function initialValues(
  * isn't, the preview goes back to its sample, so a half-typed payment or
  * address is never drawn or downloaded.
  */
+/**
+ * The fields' copy in the page's language: field schemas live in data
+ * (payment-forms.tsx, crypto-forms.tsx), so their English is looked up in
+ * editor.contentForms.schemaForm.fields by its englishKey. Copy without a
+ * translation, and anything that isn't a string, shows as written.
+ */
+function useFieldCopy() {
+  const t = useTranslations("editor.contentForms.schemaForm.fields");
+  return React.useCallback(
+    <T,>(text: T): T => {
+      if (typeof text !== "string") return text;
+      const key = englishKey(text) as Parameters<typeof t>[0];
+      return (t.has(key) ? t(key) : text) as T;
+    },
+    [t],
+  );
+}
+
 export function SchemaForm({
   type,
   schema,
@@ -109,6 +129,7 @@ export function SchemaForm({
   children,
 }: SchemaFormProps) {
   const id = React.useId();
+  const copy = useFieldCopy();
   const stored = useQREditorStore((state) => state.contentConfigs[type]);
   const setValue = useQREditorStore((state) => state.setValue);
   const setContentConfig = useQREditorStore((state) => state.setContentConfig);
@@ -217,7 +238,7 @@ export function SchemaForm({
       {modes && (
         <div className="space-y-2">
           <Label className="text-xs" htmlFor={`${id}-mode`}>
-            {modes.label}
+            {copy(modes.label)}
           </Label>
           <Select onValueChange={changeMode} value={mode}>
             <SelectTrigger className="w-full" id={`${id}-mode`}>
@@ -226,7 +247,7 @@ export function SchemaForm({
             <SelectContent>
               {modes.options.map((option) => (
                 <SelectItem key={option.value} value={option.value}>
-                  {option.label}
+                  {copy(option.label)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -245,7 +266,7 @@ export function SchemaForm({
             <div className="space-y-1.5" key={field.name}>
               <div className="hover:bg-muted/50 flex items-center justify-between gap-3 rounded-lg border px-3 py-2 transition-colors">
                 <Label className="cursor-pointer text-xs" htmlFor={fieldId}>
-                  {field.label}
+                  {copy(field.label)}
                 </Label>
                 <Switch
                   aria-describedby={describedBy}
@@ -259,7 +280,7 @@ export function SchemaForm({
                   className="text-muted-foreground text-[11px]"
                   id={`${fieldId}-help`}
                 >
-                  {field.hint}
+                  {copy(field.hint)}
                 </p>
               )}
             </div>
@@ -269,7 +290,7 @@ export function SchemaForm({
         return (
           <div className="space-y-2" key={field.name}>
             <Label className="text-xs" htmlFor={fieldId}>
-              {field.label}
+              {copy(field.label)}
               {field.required ? " *" : ""}
             </Label>
             {field.kind === "select" ? (
@@ -283,12 +304,12 @@ export function SchemaForm({
                   className="w-full"
                   id={fieldId}
                 >
-                  <SelectValue placeholder={field.placeholder} />
+                  <SelectValue placeholder={copy(field.placeholder)} />
                 </SelectTrigger>
                 <SelectContent className="max-h-72">
                   {field.options?.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                      {copy(option.label)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -300,7 +321,7 @@ export function SchemaForm({
                 className="resize-none"
                 id={fieldId}
                 onChange={(event) => update(field, event.target.value)}
-                placeholder={field.placeholder}
+                placeholder={copy(field.placeholder)}
                 rows={3}
                 value={typeof value === "string" ? value : ""}
               />
@@ -315,7 +336,7 @@ export function SchemaForm({
                 id={fieldId}
                 inputMode={field.inputMode}
                 onChange={(event) => update(field, event.target.value)}
-                placeholder={field.placeholder}
+                placeholder={copy(field.placeholder)}
                 spellCheck={false}
                 type={field.kind === "date" ? "date" : "text"}
                 value={typeof value === "string" ? value : ""}
@@ -333,7 +354,7 @@ export function SchemaForm({
                 className="text-muted-foreground text-[11px] text-pretty"
                 id={`${fieldId}-help`}
               >
-                {field.hint}
+                {copy(field.hint)}
               </p>
             ) : null}
           </div>

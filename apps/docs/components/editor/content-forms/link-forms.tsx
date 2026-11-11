@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // Forms for the types whose code is a link built from a handle, code or
 // number: messaging apps, social profiles, meetings, Waze and payment links.
@@ -21,41 +22,42 @@ import {
 import { SchemaForm } from "./schema-form";
 
 export function TelegramForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "username",
-          label: "Username, channel or group",
+          label: t("usernameChannelOrGroup"),
           required: true,
-          placeholder: "@username or a t.me link",
-          hint: "A public username, or paste an invite link (t.me/+…) for a private group.",
+          placeholder: t("usernameOrATMe"),
+          hint: t("aPublicUsernameOrPaste"),
         },
         {
           name: "phoneNumber",
-          label: "Phone number",
+          label: t("phoneNumber"),
           required: true,
           placeholder: "+1 202 555 0142",
           inputMode: "tel",
-          hint: "With the country code. It opens a chat if that person's privacy settings allow it.",
+          hint: t("withTheCountryCodeIt"),
         },
       ]}
       modes={{
-        label: "Open",
+        label: t("open"),
         options: [
           {
             value: "username",
-            label: "A username, channel or group",
+            label: t("aUsernameChannelOrGroup"),
             fields: ["username"],
           },
           {
             value: "phone",
-            label: "A chat with a phone number",
+            label: t("aChatWithAPhone"),
             fields: ["phoneNumber"],
           },
         ],
       }}
-      note="Scanning opens Telegram, or t.me in the browser when the app isn't installed."
+      note={t("scanningOpensTelegramOrT")}
       schema={telegramSchema}
       type="telegram"
     />
@@ -63,42 +65,43 @@ export function TelegramForm() {
 }
 
 export function SignalForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "phoneNumber",
-          label: "Phone number",
+          label: t("phoneNumber"),
           required: true,
           placeholder: "+1 202 555 0142",
           inputMode: "tel",
-          hint: "With the country code.",
+          hint: t("withTheCountryCode"),
         },
         {
           name: "link",
-          label: "Username or group link",
+          label: t("usernameOrGroupLink"),
           required: true,
           placeholder: "https://signal.me/#eu/…",
-          hint: "Usernames can't be turned into links outside Signal. Copy yours in Signal: Settings › Profile › Username › QR code or link. For a group, copy its link in the group's settings.",
+          hint: t("usernamesCantBeTurnedInto"),
           mono: true,
         },
       ]}
       modes={{
-        label: "Open",
+        label: t("open"),
         options: [
           {
             value: "phone",
-            label: "A chat with a phone number",
+            label: t("aChatWithAPhone"),
             fields: ["phoneNumber"],
           },
           {
             value: "link",
-            label: "A username or group link",
+            label: t("aUsernameOrGroupLink"),
             fields: ["link"],
           },
         ],
       }}
-      note="Scanning opens a chat in Signal."
+      note={t("scanningOpensAChatIn")}
       schema={signalSchema}
       type="signal"
     />
@@ -106,18 +109,19 @@ export function SignalForm() {
 }
 
 export function DiscordForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "invite",
-          label: "Invite link or code",
+          label: t("inviteLinkOrCode"),
           required: true,
-          placeholder: "discord.gg/abc123",
-          hint: "Invites expire after 7 days unless you set Expire after to Never when you create the invite.",
+          placeholder: t("discordGgAbc123"),
+          hint: t("invitesExpireAfter7Days"),
         },
       ]}
-      note="Scanning opens the invite in Discord, or in the browser without the app."
+      note={t("scanningOpensTheInviteIn")}
       schema={discordSchema}
       type="discord"
     />
@@ -125,18 +129,19 @@ export function DiscordForm() {
 }
 
 export function LineForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "username",
-          label: "LINE ID",
+          label: t("lineId"),
           required: true,
-          placeholder: "your-line-id or @official",
-          hint: "Official accounts start with @. You can also paste a line.me link.",
+          placeholder: t("yourLineIdOrOfficial"),
+          hint: t("officialAccountsStartWithYou"),
         },
       ]}
-      note="Scanning opens LINE to add you as a friend."
+      note={t("scanningOpensLineToAdd")}
       schema={lineSchema}
       type="line"
     />
@@ -144,18 +149,19 @@ export function LineForm() {
 }
 
 export function BlueskyForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "handle",
-          label: "Handle",
+          label: t("handle"),
           required: true,
           placeholder: "yourname.bsky.social",
-          hint: "A custom domain handle works too.",
+          hint: t("aCustomDomainHandleWorks"),
         },
       ]}
-      note="Scanning opens the profile on Bluesky."
+      note={t("scanningOpensTheProfileOn")}
       schema={blueskySchema}
       type="bluesky"
     />
@@ -163,18 +169,19 @@ export function BlueskyForm() {
 }
 
 export function MastodonForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "handle",
-          label: "Handle",
+          label: t("handle"),
           required: true,
-          placeholder: "@you@mastodon.social",
-          hint: "Your full handle, server included, or your profile link.",
+          placeholder: t("youMastodonSocial"),
+          hint: t("yourFullHandleServerIncluded"),
         },
       ]}
-      note="Scanning opens the profile on its server."
+      note={t("scanningOpensTheProfileOn2")}
       schema={mastodonSchema}
       type="mastodon"
     />
@@ -182,17 +189,18 @@ export function MastodonForm() {
 }
 
 export function TwitchForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "username",
-          label: "Twitch username",
+          label: t("twitchUsername"),
           required: true,
-          placeholder: "yourchannel",
+          placeholder: t("yourchannel"),
         },
       ]}
-      note="Scanning opens the channel on Twitch."
+      note={t("scanningOpensTheChannelOn")}
       schema={twitchSchema}
       type="twitch"
     />
@@ -200,18 +208,19 @@ export function TwitchForm() {
 }
 
 export function SoundCloudForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "username",
-          label: "Profile name or link",
+          label: t("profileNameOrLink"),
           required: true,
-          placeholder: "yourname, or a track link",
-          hint: "Paste a track or playlist link to open it directly.",
+          placeholder: t("yournameOrATrackLink"),
+          hint: t("pasteATrackOrPlaylist"),
         },
       ]}
-      note="Scanning opens SoundCloud."
+      note={t("scanningOpensSoundcloud")}
       schema={soundcloudSchema}
       type="soundcloud"
     />
@@ -219,18 +228,19 @@ export function SoundCloudForm() {
 }
 
 export function ZoomForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "meeting",
-          label: "Meeting ID or invite link",
+          label: t("meetingIdOrInviteLink"),
           required: true,
           placeholder: "123 4567 8901",
-          hint: "Paste the invite link to keep its passcode. With just the ID, Zoom asks for the passcode.",
+          hint: t("pasteTheInviteLinkTo"),
         },
       ]}
-      note="Scanning opens the meeting in Zoom."
+      note={t("scanningOpensTheMeetingIn")}
       schema={zoomSchema}
       type="zoom"
     />
@@ -238,17 +248,18 @@ export function ZoomForm() {
 }
 
 export function GoogleMeetForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "meeting",
-          label: "Meeting code or link",
+          label: t("meetingCodeOrLink"),
           required: true,
-          placeholder: "abc-defg-hij",
+          placeholder: t("abcDefgHij"),
         },
       ]}
-      note="Scanning opens the call in Google Meet."
+      note={t("scanningOpensTheCallIn")}
       schema={googleMeetSchema}
       type="google-meet"
     />
@@ -256,23 +267,24 @@ export function GoogleMeetForm() {
 }
 
 export function WazeForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "location",
-          label: "Address or coordinates",
+          label: t("addressOrCoordinates"),
           required: true,
-          placeholder: "Pike Place Market, Seattle, or 47.6097, -122.3422",
+          placeholder: t("pikePlaceMarketSeattleOr"),
         },
         {
           name: "navigate",
-          label: "Start directions right away",
+          label: t("startDirectionsRightAway"),
           kind: "switch",
           initial: true,
         },
       ]}
-      note="Scanning opens Waze, or waze.com when the app isn't installed."
+      note={t("scanningOpensWazeOrWaze")}
       schema={wazeSchema}
       type="waze"
     />
@@ -280,17 +292,18 @@ export function WazeForm() {
 }
 
 export function CashAppForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "username",
-          label: "$Cashtag",
+          label: t("cashtag"),
           required: true,
-          placeholder: "$yourcashtag",
+          placeholder: t("yourcashtag"),
         },
       ]}
-      note="Scanning opens your Cash App profile, where people can pay you."
+      note={t("scanningOpensYourCashApp")}
       schema={cashappSchema}
       type="cashapp"
     />
@@ -298,18 +311,19 @@ export function CashAppForm() {
 }
 
 export function RevolutForm() {
+  const t = useTranslations("editor.contentForms.linkForms");
   return (
     <SchemaForm
       fields={[
         {
           name: "username",
-          label: "Revolut username",
+          label: t("revolutUsername"),
           required: true,
-          placeholder: "@yourname",
-          hint: "Your Revtag, as in revolut.me/yourname.",
+          placeholder: t("yourname"),
+          hint: t("yourRevtagAsInRevolut"),
         },
       ]}
-      note="Scanning opens your revolut.me page, where people can pay you."
+      note={t("scanningOpensYourRevolutMe")}
       schema={revolutSchema}
       type="revolut"
     />
