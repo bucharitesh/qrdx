@@ -187,10 +187,20 @@ export function shapeMismatch(
   if (a.tags.join() !== b.tags.join()) {
     return `tags <${a.tags.join(", ")}> became <${b.tags.join(", ")}>`;
   }
-  // Every number the English states appears in the translation: nothing
-  // dropped or invented in a figure (honest copy).
-  const theirs = new Set(b.text.match(/\d+/g) ?? []);
-  for (const number of a.text.match(/\d+/g) ?? []) {
+  return numberMismatch(a.text, b.text);
+}
+
+/**
+ * Every number the English states appears in the translation: nothing
+ * dropped or invented in a figure (honest copy). For plain text (no ICU),
+ * such as lib/i18n/content.ts strings.
+ */
+export function numberMismatch(
+  source: string,
+  translation: string,
+): string | null {
+  const theirs = new Set(translation.match(/\d+/g) ?? []);
+  for (const number of source.match(/\d+/g) ?? []) {
     if (!theirs.has(number)) return `the number ${number} is missing`;
   }
   return null;
