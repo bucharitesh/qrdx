@@ -16,10 +16,12 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { createCheckout } from "@/actions/checkout";
+import { useAvailability } from "@/components/availability-provider";
 import { AsciiField, RadialHalo } from "@/components/fx";
 import { LocaleLink } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { useSlidingPill } from "@/components/mockups/sliding-pill";
+import { InvoiceRequestDialog } from "@/components/sections/pricing/invoice-request-dialog";
 import { maxYearlySavingsPercent } from "@/components/sections/pricing/savings";
 import { siteConfig } from "@/config/site";
 import { track } from "@/lib/analytics";
@@ -266,6 +268,9 @@ export function PricingSection({
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const isSignedIn = Boolean(session?.user) || currentPlan !== null;
+  // Agency tools: Business yearly can be paid by invoice where QRdx offers it.
+  const invoices = useAvailability().has("invoiceRequests");
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
 
   const startCheckout = (plan: PaidPlan, billing: BillingInterval) => {
     setPendingPlan(plan);
@@ -335,6 +340,23 @@ export function PricingSection({
         caption: t("cards.current"),
       };
     }
+    // Agency tools: anyone not on Business yet can ask to pay a year by invoice.
+    const invoiceLink =
+      plan === "business" && interval === "year" && invoices ? (
+        <button
+          className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded-sm text-xs underline-offset-4 transition-colors hover:underline focus-visible:ring-2 focus-visible:outline-none"
+          onClick={() => {
+            if (!isSignedIn) {
+              openAuthDialog("signin");
+              return;
+            }
+            setInvoiceOpen(true);
+          }}
+          type="button"
+        >
+          {t("invoice.open")}
+        </button>
+      ) : undefined;
     if (currentPlan && currentPlan !== "free") {
       return {
         button: (
@@ -344,7 +366,14 @@ export function PricingSection({
             </a>
           </Button>
         ),
-        caption: t("cards.portalNote"),
+        caption: invoiceLink ? (
+          <div className="flex flex-col items-center gap-1">
+            <span>{t("cards.portalNote")}</span>
+            {invoiceLink}
+          </div>
+        ) : (
+          t("cards.portalNote")
+        ),
       };
     }
     const busy = isPending && pendingPlan === plan;
@@ -366,14 +395,14 @@ export function PricingSection({
           )}
         </Button>
       ),
-      caption: undefined,
+      caption: invoiceLink,
     };
   };
 
   const cards: {
     plan: Plan;
     lead?: string;
-    action: { button: React.ReactNode; caption?: string };
+    action: { button: React.ReactNode; caption?: React.ReactNode };
   }[] = [
     {
       plan: "free",
@@ -471,9 +500,9 @@ export function PricingSection({
               <div className="flex flex-col gap-2">
                 {action.button}
                 {action.caption && (
-                  <p className="text-center text-xs text-muted-foreground">
+                  <div className="text-center text-xs text-muted-foreground">
                     {action.caption}
-                  </p>
+                  </div>
                 )}
               </div>
               <hr className="border-border" />
@@ -482,6 +511,15 @@ export function PricingSection({
           );
         })}
       </div>
+
+      {invoices && isSignedIn && (
+        <InvoiceRequestDialog
+          email={session?.user?.email ?? ""}
+          onOpenChange={setInvoiceOpen}
+          open={invoiceOpen}
+          planName={PLAN_NAMES.business}
+        />
+      )}
 
       <div className="mt-4 w-full max-w-[74rem] px-10">
         <Card className="gap-4 bg-muted/40 p-5 shadow-none md:flex-row md:items-center md:justify-between dark:bg-card">
