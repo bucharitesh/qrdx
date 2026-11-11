@@ -217,13 +217,11 @@ describe("docs in other languages", () => {
     (locale) => {
       const tree = localized.getPageTree(locale);
       const prefix = docsUrl([], locale);
-      const urls = new Set(
-        localized.getPages(locale).map((page) => page.url),
-      );
+      const urls = new Set(localized.getPages(locale).map((page) => page.url));
       // Untranslated pages fall back to English, so nothing is missing.
-      expect(
-        new Set([...urls].map((url) => englishDocsPath(url))),
-      ).toEqual(pageUrls);
+      expect(new Set([...urls].map((url) => englishDocsPath(url)))).toEqual(
+        pageUrls,
+      );
       // The same tree as English once its URLs lose the prefix.
       const english = (nodes: Node[]): Node[] =>
         nodes.map((node): Node => {
