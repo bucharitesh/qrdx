@@ -24,8 +24,14 @@ export function CommunityTabs({
   showCollections = true,
   showTemplates = false,
   showKits = false,
+  wide = false,
 }: {
   active: CommunityTab;
+  /**
+   * Rail to rail, lined up with the galleries' sidebar (the galleries);
+   * otherwise centred like the overview's rows.
+   */
+  wide?: boolean;
   showCollections?: boolean;
   /** Shown once a page template is published (or on its own page) */
   showTemplates?: boolean;
@@ -34,7 +40,12 @@ export function CommunityTabs({
 }) {
   return (
     <nav aria-label="Community" className="border-b">
-      <div className="mx-auto flex max-w-6xl gap-1 overflow-x-auto px-4 sm:px-6">
+      <div
+        className={cn(
+          "no-scrollbar flex gap-1 overflow-x-auto",
+          wide ? "mx-6 px-1 sm:px-3" : "mx-auto max-w-6xl px-4 sm:px-6",
+        )}
+      >
         {TABS.filter(
           (tab) =>
             (showCollections || tab.id !== "collections") &&

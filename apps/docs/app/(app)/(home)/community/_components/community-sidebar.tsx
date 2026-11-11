@@ -1,9 +1,11 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
-import { Separator } from "@repo/design-system/components/ui/separator";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
-import { cn } from "@repo/design-system/lib/utils";
+import {
+  SidebarButton,
+  SidebarSection,
+} from "@/components/community/browse-sidebar";
 import { useCommunityTagCounts } from "@/lib/hooks/themes/use-community-themes";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import type { CommunityFilterOption } from "@/types/community";
@@ -16,9 +18,9 @@ interface CommunitySidebarProps {
 }
 
 const filterItems = [
-  { value: "all" as const, label: "All Themes" },
-  { value: "mine" as const, label: "My Themes" },
-  { value: "liked" as const, label: "Liked Themes" },
+  { value: "all" as const, label: "All themes" },
+  { value: "mine" as const, label: "My themes" },
+  { value: "liked" as const, label: "Liked themes" },
 ];
 
 export function CommunitySidebarContent({
@@ -39,65 +41,40 @@ export function CommunitySidebarContent({
   };
 
   return (
-    <nav className="space-y-1">
+    <>
       {filterItems.map((item) => (
-        <button
-          type="button"
+        <SidebarButton
+          active={filter === item.value}
           key={item.value}
           onClick={() => handleFilterClick(item.value)}
-          className={cn(
-            "flex w-full items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-            filter === item.value
-              ? "bg-foreground/10 text-foreground"
-              : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground",
-          )}
+          strong
         >
           {item.label}
-        </button>
+        </SidebarButton>
       ))}
 
-      <Separator className="my-3!" />
-      <div className="px-3 py-1">
-        <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider">
-          Tags
-        </span>
-      </div>
-
       {isLoadingTags ? (
-        <div className="space-y-1 px-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-7 w-full rounded-lg" />
-          ))}
-        </div>
+        <SidebarSection title="Tags">
+          <div className="space-y-1 px-3">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton className="h-7 w-full rounded-lg" key={i} />
+            ))}
+          </div>
+        </SidebarSection>
       ) : tagCounts.length > 0 ? (
-        <div className="space-y-0.5">
+        <SidebarSection title="Tags">
           {tagCounts.map(({ tag, count }) => (
-            <button
-              type="button"
+            <SidebarButton
+              active={selectedTags.includes(tag)}
+              count={count}
               key={tag}
               onClick={() => onTagToggle(tag)}
-              className={cn(
-                "flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-sm transition-colors",
-                selectedTags.includes(tag)
-                  ? "bg-foreground/10 text-foreground font-medium"
-                  : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground",
-              )}
             >
-              <span>{tag}</span>
-              <span
-                className={cn(
-                  "text-xs tabular-nums",
-                  selectedTags.includes(tag)
-                    ? "text-foreground/70"
-                    : "text-muted-foreground/60",
-                )}
-              >
-                {count}
-              </span>
-            </button>
+              {tag}
+            </SidebarButton>
           ))}
-        </div>
+        </SidebarSection>
       ) : null}
-    </nav>
+    </>
   );
 }

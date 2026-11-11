@@ -1,8 +1,6 @@
-import { auth } from "@repo/auth/server";
 import { Info, Tick } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cache } from "react";
@@ -28,19 +26,11 @@ import {
   TYPE_SEGMENTS,
   typeFromSegment,
 } from "@/lib/community/types";
+import { viewerId } from "@/lib/community/viewer";
 import { getTemplate } from "@/lib/landing/templates";
 import { createMetadata } from "@/lib/metadata";
 import { contentTypeLabel } from "@/lib/qr-design/content";
 import type { ContentType } from "@/types/qr-content";
-
-async function viewerId(): Promise<string | null> {
-  try {
-    const session = await auth.api.getSession({ headers: await headers() });
-    return session?.user?.id ?? null;
-  } catch {
-    return null;
-  }
-}
 
 const loadItem = cache(async (segment: string, slug: string) => {
   const type = typeFromSegment(segment);
