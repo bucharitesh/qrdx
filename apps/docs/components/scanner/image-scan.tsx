@@ -8,6 +8,7 @@ import {
   ClipboardImport as ClipboardPaste,
   GalleryExport as ImageUp,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { type DetectedCode, detectCodesInImage } from "./detector";
@@ -20,54 +21,56 @@ export function ImageScan({
 }: {
   onDetect: (codes: DetectedCode[]) => void;
 }) {
+  const t = useTranslations("scanner.image");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const busyRef = useRef(false);
   const onDetectRef = useRef(onDetect);
   onDetectRef.current = onDetect;
 
-  const scanFiles = useCallback(async (files: Blob[]) => {
-    const images = files.filter((file) => file.type.startsWith("image/"));
-    if (images.length === 0) {
-      setMessage("That isn't an image. Use a PNG, JPG, WebP or GIF.");
-      return;
-    }
-    if (busyRef.current) return;
-    busyRef.current = true;
-    setBusy(true);
-    setMessage(null);
-    const found: DetectedCode[] = [];
-    let unreadable = 0;
-    let empty = 0;
-    for (const image of images.slice(0, MAX_FILES)) {
-      if (image.size > MAX_IMAGE_BYTES) {
-        unreadable++;
-        continue;
+  const scanFiles = useCallback(
+    async (files: Blob[]) => {
+      const images = files.filter((file) => file.type.startsWith("image/"));
+      if (images.length === 0) {
+        setMessage(t("notImage"));
+        return;
       }
-      try {
-        const codes = await detectCodesInImage(image);
-        if (codes.length === 0) empty++;
-        found.push(...codes);
-      } catch (error) {
-        console.error("Image scan failed:", error);
-        unreadable++;
+      if (busyRef.current) return;
+      busyRef.current = true;
+      setBusy(true);
+      setMessage(null);
+      const found: DetectedCode[] = [];
+      let unreadable = 0;
+      let empty = 0;
+      for (const image of images.slice(0, MAX_FILES)) {
+        if (image.size > MAX_IMAGE_BYTES) {
+          unreadable++;
+          continue;
+        }
+        try {
+          const codes = await detectCodesInImage(image);
+          if (codes.length === 0) empty++;
+          found.push(...codes);
+        } catch (error) {
+          console.error("Image scan failed:", error);
+          unreadable++;
+        }
       }
-    }
-    busyRef.current = false;
-    setBusy(false);
-    if (found.length > 0) onDetectRef.current(found);
-    const notes = [
-      images.length > MAX_FILES &&
-        `Only the first ${MAX_FILES} images were scanned.`,
-      empty > 0 &&
-        (images.length === 1
-          ? "No code found in this image. Try a sharper, closer picture with the whole code in view."
-          : `No code found in ${empty} of the images.`),
-      unreadable > 0 &&
-        `${unreadable === 1 ? "One image" : `${unreadable} images`} couldn't be read (too large over 20 MB, or not a supported format).`,
-    ].filter(Boolean);
-    setMessage(notes.length > 0 ? notes.join(" ") : null);
-  }, []);
+      busyRef.current = false;
+      setBusy(false);
+      if (found.length > 0) onDetectRef.current(found);
+      const notes = [
+        images.length > MAX_FILES && t("firstOnly", { count: MAX_FILES }),
+        empty > 0 &&
+          (images.length === 1
+            ? t("noCode")
+            : t("noCodeSome", { count: empty })),
+        unreadable > 0 && t("unreadable", { count: unreadable }),
+      ].filter(Boolean);
+      setMessage(notes.length > 0 ? notes.join(" ") : null);
+    },
+    [t],
+  );
 
   useEffect(() => {
     const onPaste = (event: ClipboardEvent) => {
@@ -94,10 +97,10 @@ export function ImageScan({
       if (blobs.length > 0) {
         await scanFiles(blobs);
       } else {
-        toast.error("No image on the clipboard");
+        toast.error(t("noClipboardImage"));
       }
     } catch {
-      toast.error("Clipboard access was blocked. Press Ctrl+V or ⌘V instead.");
+      toast.error(t("clipboardBlocked"));
     }
   };
 
@@ -119,10 +122,7 @@ export function ImageScan({
           isDragActive ? "border-foreground/30 bg-muted/50" : "border-border",
         )}
       >
-        <input
-          {...getInputProps()}
-          aria-label="Images with QR codes or barcodes"
-        />
+        <input {...getInputProps()} aria-label={t("inputLabel")} />
         {busy ? (
           <LoaderCircle
             aria-hidden
@@ -132,19 +132,13 @@ export function ImageScan({
           <ImageUp aria-hidden className="text-muted-foreground size-8" />
         )}
         <div className="space-y-1">
-          <p className="font-medium">
-            {busy
-              ? "Reading codes…"
-              : "Drop images here, choose files or paste"}
-          </p>
-          <p className="text-muted-foreground text-sm">
-            Screenshots and photos work, with several codes per image.
-          </p>
+          <p className="font-medium">{busy ? t("reading") : t("drop")}</p>
+          <p className="text-muted-foreground text-sm">{t("dropHelp")}</p>
         </div>
         <div className="flex flex-wrap justify-center gap-2">
           <Button disabled={busy} onClick={open} type="button">
             <ImageUp className="size-4" />
-            Choose images
+            {t("choose")}
           </Button>
           <Button
             disabled={busy}
@@ -153,7 +147,7 @@ export function ImageScan({
             variant="outline"
           >
             <ClipboardPaste className="size-4" />
-            Paste image
+            {t("paste")}
           </Button>
         </div>
       </div>

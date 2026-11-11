@@ -3,6 +3,7 @@
 import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight2 as ChevronRight } from "iconsax-reactjs";
+import { useLocale, useTranslations } from "next-intl";
 import { toCsv } from "./csv";
 import { formatLabel } from "./detector";
 import { downloadText } from "./download";
@@ -14,6 +15,7 @@ function kindOf(entry: HistoryEntry): ScanKind {
   return entry.kind in KIND_LABELS ? (entry.kind as ScanKind) : "text";
 }
 
+/** The CSV keeps English column values, so a file reads the same in any language. */
 export function exportEntries(entries: HistoryEntry[], name: string): void {
   const csv = toCsv(
     [...entries]
@@ -38,6 +40,8 @@ export function EntryList({
   onOpen: (entry: HistoryEntry) => void;
   onRemove?: (entry: HistoryEntry) => void;
 }) {
+  const t = useTranslations("scanner");
+  const locale = useLocale();
   return (
     <ul className="divide-border flex flex-col divide-y rounded-xl border">
       {entries.map((entry) => {
@@ -60,8 +64,8 @@ export function EntryList({
                   {summary || entry.value}
                 </span>
                 <span className="text-muted-foreground block text-xs">
-                  {KIND_LABELS[kind]} · {formatLabel(entry.format)} ·{" "}
-                  {new Date(entry.scannedAt).toLocaleString(undefined, {
+                  {t(`kinds.${kind}`)} · {formatLabel(entry.format)} ·{" "}
+                  {new Date(entry.scannedAt).toLocaleString(locale, {
                     dateStyle: "medium",
                     timeStyle: "short",
                   })}
@@ -74,7 +78,9 @@ export function EntryList({
             </button>
             {onRemove && (
               <Button
-                aria-label={`Remove ${summary || "scan"} from history`}
+                aria-label={
+                  summary ? t("main.remove", { summary }) : t("main.removeScan")
+                }
                 onClick={() => onRemove(entry)}
                 size="icon-sm"
                 type="button"

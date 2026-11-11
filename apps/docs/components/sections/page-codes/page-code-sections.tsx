@@ -1,3 +1,6 @@
+import { getTranslations } from "next-intl/server";
+import { PAGE_CODE_RULES, QR_TYPE_RULES } from "@/lib/i18n/content-rules";
+import { localized } from "@/lib/i18n/content-server";
 import {
   GENERATOR_HUB_TYPES,
   INDUSTRY_CODES,
@@ -17,24 +20,30 @@ import {
 import type { ContentType } from "@/types/qr-content";
 import { CodeTiles } from "./code-tiles";
 
-/** One line under every row of samples, so no one mistakes them for real. */
-const SAMPLE_NOTE =
-  "Samples in built-in themes. Each one scans, and none leads to a real account.";
-/** Under every row whose codes open the playground. */
-const START_NOTE = "Pick one to start from it in the playground.";
+// Under every row of samples, pageCodes.sampleNote says they're samples, so
+// no one mistakes them for real; pageCodes.startNote, under rows whose codes
+// open the playground, says so. Tile labels are translated content
+// (lib/i18n/content-sources.ts).
+
+/** Codes with their labels in the page's language. */
+const localCodes = (codes: PageCode[]) => localized(codes, PAGE_CODE_RULES);
 
 const first = (codes: PageCode[] | undefined): PageCode | undefined =>
   codes?.[0];
 
 /** /qr-code-generator/<type>: four designs of the type, under the generator. */
-export function TypeCodesSection({
+export async function TypeCodesSection({
   type,
   name,
 }: {
   type: ContentType;
+  /** The type's name in the page's language. */
   name: string;
 }) {
-  const codes = TYPE_CODES[type];
+  const [t, codes] = await Promise.all([
+    getTranslations("pageCodes"),
+    localCodes(TYPE_CODES[type]),
+  ]);
   return (
     <section
       aria-labelledby="designs"
@@ -42,15 +51,15 @@ export function TypeCodesSection({
     >
       <div className="flex flex-col gap-1.5">
         <h2 id="designs" className="text-2xl font-semibold tracking-tight">
-          {name} QR code designs
+          {t("typeDesigns", { name })}
         </h2>
         <p className="text-sm text-muted-foreground text-pretty">
-          {SAMPLE_NOTE} {START_NOTE}
+          {t("sampleNote")} {t("startNote")}
         </p>
       </div>
       <CodeTiles
         items={codes.map((code) => ({ code }))}
-        label={`${name} QR code designs`}
+        label={t("typeDesigns", { name })}
         heading
         className="grid-cols-2 md:grid-cols-4"
       />
@@ -69,36 +78,42 @@ export function topicCodes(
 }
 
 /** /qr-codes-for and /qr-codes-on pages: four codes for the topic, in the hero. */
-export function TopicCodeStrip({
+export async function TopicCodeStrip({
   topic,
   collection,
 }: {
+  /** In the page's language. */
   topic: Pick<SeoTopic, "slug" | "noun">;
   collection: Pick<SeoCollection, "id">;
 }) {
-  const codes = topicCodes(topic, collection);
-  if (!codes) return null;
+  const source = topicCodes(topic, collection);
+  if (!source) return null;
+  const [t, codes] = await Promise.all([
+    getTranslations("pageCodes"),
+    localCodes(source),
+  ]);
   return (
     <div className="flex w-full max-w-3xl flex-col items-center gap-3 pt-4">
       <CodeTiles
         items={codes.map((code) => ({ code }))}
-        label={`Sample QR codes for ${topic.noun}`}
+        label={t("topicSamples", { noun: topic.noun })}
         className="grid-cols-2 sm:grid-cols-4"
       />
       <p className="text-xs text-muted-foreground text-center text-balance">
-        {SAMPLE_NOTE} {START_NOTE}
+        {t("sampleNote")} {t("startNote")}
       </p>
     </div>
   );
 }
 
-function HubStrip({
+async function HubStrip({
   items,
   label,
 }: {
   items: { code: PageCode; label: string }[];
   label: string;
 }) {
+  const t = await getTranslations("pageCodes");
   return (
     <div className="flex w-full flex-col items-center gap-3 pt-4">
       <CodeTiles
@@ -108,7 +123,7 @@ function HubStrip({
         className="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
       />
       <p className="text-xs text-muted-foreground text-center text-balance">
-        {SAMPLE_NOTE} {START_NOTE}
+        {t("sampleNote")} {t("startNote")}
       </p>
     </div>
   );
@@ -118,45 +133,63 @@ function HubStrip({
  * /qr-code-generator: one code per group, each opening the playground with
  * its design and type (the cards below link every type's page).
  */
-export function GeneratorHubStrip() {
-  const items = GENERATOR_HUB_TYPES.flatMap((type) => {
+export async function GeneratorHubStrip() {
+  const source = GENERATOR_HUB_TYPES.flatMap((type) => {
     const code = first(TYPE_CODES[type]);
     const content = getQrType(type);
     return code && content ? [{ code, label: content.name }] : [];
   });
-  return <HubStrip items={items} label="Sample codes from the generators" />;
+  const [t, items] = await Promise.all([
+    getTranslations("pageCodes"),
+    // The label is the type's name (translated QR type content).
+    localized(source, { skip: [...(QR_TYPE_RULES.skip ?? []), "code"] }),
+  ]);
+  return <HubStrip items={items} label={t("generatorSamples")} />;
 }
 
 /**
  * /qr-codes-for and /qr-codes-on: one code per group, each opening the
  * playground with its design and type (the cards below link every page).
  */
-export function TopicHubStrip({ collection }: { collection: SeoCollection }) {
+export async function TopicHubStrip({
+  collection,
+}: {
+  collection: SeoCollection;
+}) {
   const placements = collection.id === "placements";
   const slugs = placements ? PLACEMENT_HUB_SLUGS : INDUSTRY_HUB_SLUGS;
   const codes = placements ? PLACEMENT_CODES : INDUSTRY_CODES;
-  const items = slugs.flatMap((slug) => {
+  const source = slugs.flatMap((slug) => {
     const code = first(codes[slug]);
     const topic = collection.get(slug);
-    return code && topic ? [{ code, label: code.label }] : [];
+    return code && topic ? [code] : [];
   });
+  const [t, local] = await Promise.all([
+    getTranslations("pageCodes"),
+    localCodes(source),
+  ]);
   return (
     <HubStrip
-      items={items}
-      label={`Sample codes from ${collection.hubName.toLowerCase()}`}
+      items={local.map((code) => ({ code, label: code.label }))}
+      label={t(placements ? "placementSamples" : "industrySamples")}
     />
   );
 }
 
 /** /tools/print-size: codes for common placements, each opening its sizing table. */
-export function PrintSizePlacements() {
-  const items = PRINT_SIZE_SLUGS.flatMap((slug) => {
+export async function PrintSizePlacements() {
+  const source = PRINT_SIZE_SLUGS.flatMap((slug) => {
     const code = first(PLACEMENT_CODES[slug]);
     const topic = placements.get(slug);
     return code && topic
       ? [{ code, label: topic.name, href: `${placements.path(slug)}#sizing` }]
       : [];
   });
+  const [t, items] = await Promise.all([
+    getTranslations("pageCodes"),
+    // The label is the placement's name (translated SEO content).
+    localized(source, { skip: ["code"] }),
+  ]);
   return (
     <section
       aria-labelledby="sizes-by-placement"
@@ -167,16 +200,15 @@ export function PrintSizePlacements() {
           id="sizes-by-placement"
           className="text-2xl font-medium tracking-tighter"
         >
-          Sizes by placement
+          {t("sizesTitle")}
         </h2>
         <p className="text-sm text-muted-foreground text-pretty">
-          Each placement guide has a sizing table for the distances people scan
-          from. {SAMPLE_NOTE}
+          {t("sizesDescription")} {t("sampleNote")}
         </p>
       </div>
       <CodeTiles
         items={items}
-        label="Placement guides with sizing tables"
+        label={t("sizesLabel")}
         heading
         className="grid-cols-2 md:grid-cols-4"
       />

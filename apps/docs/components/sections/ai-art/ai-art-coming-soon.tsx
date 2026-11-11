@@ -5,8 +5,9 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { MagicStar } from "iconsax-reactjs";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { AsciiField } from "@/components/fx";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { ART_PLAYGROUND_HREF } from "./config";
 import { useAIArtPresets } from "./load-presets";
 import { AI_ART_PRESET_COUNT, aiArtPresetPreview } from "./preset-meta";
@@ -16,6 +17,7 @@ import { AI_ART_PRESET_COUNT, aiArtPresetPreview } from "./preset-meta";
  * self-hosting setup lives in the docs.
  */
 export function AIArtComingSoon() {
+  const t = useTranslations("aiArt.comingSoon");
   // A few featured styles, once the catalogue has loaded (it isn't bundled).
   const { catalogue } = useAIArtPresets();
   const samples = (catalogue?.AI_ART_FEATURED_PRESET_IDS ?? [])
@@ -35,24 +37,19 @@ export function AIArtComingSoon() {
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="text-lg font-semibold tracking-tight">
-              AI-painted QR art
+              {t("title")}
             </h2>
             <Badge className="text-muted-foreground" variant="outline">
-              Coming soon
+              {t("badge")}
             </Badge>
           </div>
           <p className="max-w-xl text-sm text-pretty text-muted-foreground">
-            Describe a scene or pick one of {AI_ART_PRESET_COUNT} styles, and an
-            image model paints it around your QR code. Every result gets a scan
-            check before you download it.
+            {t("description", { count: AI_ART_PRESET_COUNT })}
           </p>
         </div>
       </div>
 
-      <ul
-        aria-label="A few of the styles"
-        className="relative flex min-h-7 flex-wrap gap-2"
-      >
+      <ul aria-label={t("styles")} className="relative flex min-h-7 flex-wrap gap-2">
         {samples.map((preset) => (
           <li key={preset.id}>
             <Badge
@@ -77,11 +74,11 @@ export function AIArtComingSoon() {
         <Button asChild variant="outline">
           <Link href={ART_PLAYGROUND_HREF}>
             <MagicStar aria-hidden />
-            Make Logo QR or Image QR now
+            {t("makeNow")}
           </Link>
         </Button>
         <Button asChild variant="ghost">
-          <Link href="/ai">Generate a theme with AI</Link>
+          <Link href="/ai">{t("theme")}</Link>
         </Button>
       </div>
     </Card>

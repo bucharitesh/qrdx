@@ -9,8 +9,9 @@ import {
   type IntegrationCatalogEntry,
 } from "@repo/integrations/src/catalog";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { SpotlightCard } from "@/components/fx";
+import { useContentText } from "@/components/i18n/content-text";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { PRESSABLE } from "@/components/mockups/motion";
 import { NeedsSetupBadge } from "@/components/needs-setup";
 import { IntegrationLogo } from "./integration-logo";
@@ -28,6 +29,8 @@ export function IntegrationCard({
   className,
   needsSetup,
 }: IntegrationCardProps) {
+  // Catalog copy in the page's language (lib/i18n/content-sources.ts).
+  const tc = useContentText();
   return (
     <Link
       href={`/integrations/${entry.slug}`}
@@ -50,7 +53,7 @@ export function IntegrationCard({
               variant="outline"
               className="font-normal text-muted-foreground"
             >
-              {CATALOG_KIND_LABELS[entry.kind]}
+              {tc(CATALOG_KIND_LABELS[entry.kind])}
             </Badge>
           )}
         </div>
@@ -59,11 +62,13 @@ export function IntegrationCard({
             {entry.name}
           </h3>
           <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground text-pretty">
-            {entry.tagline}
+            {tc(entry.tagline)}
           </p>
         </div>
         <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
-          <span>{getCategoryLabel(entry.categories[0] ?? "developers")}</span>
+          <span>
+            {tc(getCategoryLabel(entry.categories[0] ?? "developers"))}
+          </span>
           <ArrowRight
             aria-hidden
             className="size-4 transition-[transform,color] duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"

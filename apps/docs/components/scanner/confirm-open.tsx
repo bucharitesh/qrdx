@@ -12,6 +12,7 @@ import {
   AlertDialogTrigger,
 } from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 
 export interface OpenConfirmation {
@@ -34,6 +35,7 @@ export function OpenButton({
   disabled?: boolean;
   variant?: "default" | "outline" | "destructive";
 }) {
+  const t = useTranslations("scanner.main");
   const open = () => {
     if (/^https?:/i.test(href)) {
       window.open(href, "_blank", "noopener,noreferrer");
@@ -72,7 +74,7 @@ export function OpenButton({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
           <AlertDialogAction onClick={open}>{confirm.action}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

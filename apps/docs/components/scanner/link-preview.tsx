@@ -15,6 +15,7 @@ import {
   Warning2 as TriangleAlert,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { OpenButton, type OpenConfirmation } from "./confirm-open";
 import {
@@ -28,39 +29,31 @@ import { CopyButton } from "./ui";
 type State =
   | { phase: "checking" }
   | { phase: "done"; result: LinkCheckResult }
-  | { phase: "error"; message: string };
+  /** `offline`, or the error's own message (from the check API). */
+  | { phase: "error"; message: string | null };
 
+/** Each verdict's title and body are in the catalog: scanner.link.verdicts.<verdict>. */
 const VERDICTS: Record<
   LinkVerdict,
-  { title: string; body: string; icon: typeof ShieldCheck; tone: string }
+  { icon: typeof ShieldCheck; tone: string }
 > = {
   verified: {
-    title: "Verified QRdx code",
-    body: "A real, active QR code made with QRdx, with no open abuse reports. Its owner chose where it goes.",
     icon: ShieldCheck,
     tone: "border-emerald-500/30 bg-emerald-500/10 text-emerald-900 dark:text-emerald-100",
   },
   ok: {
-    title: "No warnings found",
-    body: "Nothing we check for turned up. Still look at the address before you sign in or pay.",
     icon: ShieldCheck,
     tone: "border-border bg-muted/40",
   },
   caution: {
-    title: "Be careful",
-    body: "Some things about this link deserve a second look before you open it.",
     icon: TriangleAlert,
     tone: "border-amber-500/40 bg-amber-500/10 text-amber-950 dark:text-amber-100",
   },
   danger: {
-    title: "Don't open this link",
-    body: "This link shows strong signs of phishing, malware or a disguised address.",
     icon: ShieldAlert,
     tone: "border-red-500/40 bg-red-500/10 text-red-950 dark:text-red-100",
   },
   unknown: {
-    title: "Couldn't check this link",
-    body: "Check the address carefully before you open it.",
     icon: CircleHelp,
     tone: "border-border bg-muted/40",
   },
@@ -126,27 +119,21 @@ export function Address({
 
 function openConfirmation(
   state: State,
+  t: ReturnType<typeof useTranslations<"scanner.link">>,
   extra?: OpenConfirmation | null,
 ): OpenConfirmation | null {
   if (state.phase === "done" && state.result.verdict === "danger") {
     return {
-      title: "Open a dangerous link?",
-      description: (
-        <p>
-          This link was flagged as dangerous. Only continue if you know exactly
-          where it goes, and never enter passwords or payment details there.
-        </p>
-      ),
-      action: "Open anyway",
+      title: t("dangerTitle"),
+      description: <p>{t("dangerBody")}</p>,
+      action: t("openAnyway"),
     };
   }
   if (state.phase === "error") {
     return {
-      title: "Open without a safety check?",
-      description: (
-        <p>We couldn't check this link. Read the address carefully first.</p>
-      ),
-      action: "Open link",
+      title: t("uncheckedTitle"),
+      description: <p>{t("uncheckedBody")}</p>,
+      action: t("open"),
     };
   }
   return extra ?? null;
@@ -155,13 +142,15 @@ function openConfirmation(
 export function LinkPreview({
   url,
   confirm,
-  openLabel = "Open link",
+  openLabel,
 }: {
   url: string;
   /** Extra confirmation before opening (payment links). */
   confirm?: OpenConfirmation;
+  /** "Open link" by default. */
   openLabel?: string;
 }) {
+  const t = useTranslations("scanner.link");
   const [state, setState] = useState<State>({ phase: "checking" });
   const [attempt, setAttempt] = useState(0);
 
@@ -176,20 +165,19 @@ export function LinkPreview({
         setState({
           phase: "error",
           message:
-            error instanceof Error && navigator.onLine
-              ? error.message
-              : "You seem to be offline, so the link couldn't be checked.",
+            error instanceof Error && navigator.onLine ? error.message : null,
         });
       });
     return () => controller.abort();
   }, [url, attempt]);
 
-  const verdict =
+  const verdictKey: LinkVerdict | null =
     state.phase === "done"
-      ? VERDICTS[state.result.verdict]
+      ? state.result.verdict
       : state.phase === "error"
-        ? VERDICTS.unknown
+        ? "unknown"
         : null;
+  const verdict = verdictKey ? VERDICTS[verdictKey] : null;
   const result = state.phase === "done" ? state.result : null;
   const redirects = result ? result.hops.length - 1 : 0;
   const reportHref = `/report-abuse?url=${encodeURIComponent(url)}`;
@@ -215,14 +203,14 @@ export function LinkPreview({
         )}
         <div className="min-w-0 space-y-1">
           <p className="font-medium">
-            {verdict ? verdict.title : "Checking where this link goes…"}
+            {verdictKey ? t(`verdicts.${verdictKey}.title`) : t("checking")}
           </p>
           <p className="opacity-80">
             {state.phase === "error"
-              ? `${state.message} ${VERDICTS.unknown.body}`
-              : verdict
-                ? verdict.body
-                : "Following redirects and checking the address. Nothing opens until you choose."}
+              ? `${state.message ?? t("offline")} ${t("verdicts.unknown.body")}`
+              : verdictKey
+                ? t(`verdicts.${verdictKey}.body`)
+                : t("checkingBody")}
           </p>
         </div>
       </div>
@@ -230,15 +218,13 @@ export function LinkPreview({
       {result &&
         result.qrdx?.status === "password" &&
         result.finalUrl === null && (
-          <p className="text-muted-foreground text-sm">
-            The destination is hidden until you enter the code's password.
-          </p>
+          <p className="text-muted-foreground text-sm">{t("passwordHidden")}</p>
         )}
 
       {result?.finalUrl && result.finalUrl !== result.url && (
         <div className="space-y-1">
           <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-            Ends up at
+            {t("endsUpAt")}
           </p>
           <Address url={result.finalUrl} />
         </div>
@@ -261,8 +247,9 @@ export function LinkPreview({
       {result && redirects > 0 && (
         <details className="text-sm">
           <summary className="text-muted-foreground cursor-pointer">
-            {redirects === 1 ? "1 redirect" : `${redirects} redirects`}
-            {result.complete ? "" : " (not followed to the end)"}
+            {t(result.complete ? "redirects" : "redirectsIncomplete", {
+              count: redirects,
+            })}
           </summary>
           <ol className="mt-2 flex list-decimal flex-col gap-1 pl-5">
             {result.hops.map((hop) => (
@@ -280,25 +267,25 @@ export function LinkPreview({
       {result && (
         <p className="text-muted-foreground text-xs">
           {result.webRisk === "clean" || result.webRisk === "threat"
-            ? "Checked with Google Web Risk and QRdx's own checks."
+            ? t("checkedWebRisk")
             : result.webRisk === "unavailable"
-              ? "Google Web Risk couldn't be reached; QRdx's own checks ran."
-              : "Checked with QRdx's own checks."}{" "}
-          No check catches everything.
+              ? t("webRiskUnavailable")
+              : t("checkedOwn")}{" "}
+          {t("noCheckCatchesAll")}
         </p>
       )}
 
       <div className="flex flex-wrap gap-2">
         <OpenButton
-          confirm={openConfirmation(state, confirm)}
+          confirm={openConfirmation(state, t, confirm)}
           disabled={state.phase === "checking"}
           href={url}
           variant={result?.verdict === "danger" ? "destructive" : "default"}
         >
           <ExternalLink className="size-3.5" />
-          {openLabel}
+          {openLabel ?? t("open")}
         </OpenButton>
-        <CopyButton label="Copy link" value={url} />
+        <CopyButton label={t("copy")} value={url} />
         {state.phase === "error" && (
           <button
             className="text-muted-foreground inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline"
@@ -306,7 +293,7 @@ export function LinkPreview({
             type="button"
           >
             <RotateCw className="size-3.5" />
-            Try again
+            {t("retry")}
           </button>
         )}
         <Link
@@ -314,7 +301,7 @@ export function LinkPreview({
           href={reportHref}
         >
           <Flag className="size-3.5" />
-          Report this code
+          {t("report")}
         </Link>
       </div>
     </div>
