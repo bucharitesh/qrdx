@@ -8,6 +8,7 @@ import {
 } from "@repo/design-system/components/ui/tooltip";
 import { Warning2 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { use } from "react";
 import {
   type Meter,
@@ -37,6 +38,7 @@ export function LimitNoticeView({
   collapsed?: boolean;
   onNavigate?: () => void;
 }) {
+  const t = useTranslations("app.shell.limitNotice");
   const top = meters[0];
   if (!top) return null;
   const status = meterLevel(top) === "full" ? "Limit reached" : "Almost full";
@@ -50,7 +52,7 @@ export function LimitNoticeView({
       <Tooltip>
         <TooltipTrigger asChild>
           <Link
-            aria-label={`${line}. ${status}${more}. Plan & usage`}
+            aria-label={t("lineStatusMorePlanUsage", { line, status, more })}
             className="text-primary hover:bg-foreground/[0.05] focus-visible:ring-ring/50 flex size-9 items-center justify-center rounded-md outline-none transition-colors focus-visible:ring-[3px]"
             href={usageHref}
             onClick={onNavigate}
@@ -79,7 +81,7 @@ export function LimitNoticeView({
         </span>
       </span>
       <Progress
-        aria-label={`${top.label} used`}
+        aria-label={t("labelUsed", { label: top.label })}
         className="mt-2 h-1"
         value={meterPercent(top)}
       />

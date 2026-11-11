@@ -13,6 +13,7 @@ import {
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import type { ShortLink } from "@repo/integrations";
 import { Copy, DocumentCloud, ExportSquare, Warning2 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
 import {
   CloudPickerDialog,
@@ -64,12 +65,13 @@ function Section({
 }
 
 function AccountLine({ metadata }: { metadata?: Record<string, unknown> }) {
+  const t = useTranslations("app.settings.integrations.connectedAccountPanel");
   const name = readText(metadata, "name") ?? readText(metadata, "login");
   const email = readText(metadata, "email");
   if (!(name || email)) return null;
   return (
     <p className="text-sm">
-      <span className="text-muted-foreground">Account: </span>
+      <span className="text-muted-foreground">{t("account")} </span>
       <span className="font-medium">{name ?? email}</span>
       {name && email && (
         <span className="text-muted-foreground"> · {email}</span>
@@ -83,6 +85,7 @@ function ShortLinkSettings({
   name,
   metadata,
 }: Omit<ConnectedAccountPanelProps, "kind" | "logo">) {
+  const t = useTranslations("app.settings.integrations.connectedAccountPanel");
   const selectId = useId();
   const [domains, setDomains] = useState<DomainsResponse | null>(null);
   const [links, setLinks] = useState<ShortLink[] | null>(null);
@@ -113,7 +116,7 @@ function ShortLinkSettings({
     );
     setSaving(false);
     if (result.ok) {
-      toast.success("Default domain saved");
+      toast.success(t("defaultDomainSaved"));
     } else {
       setDomainId(previous);
       toast.error(result.error);
@@ -122,8 +125,8 @@ function ShortLinkSettings({
 
   return (
     <Section
-      description={`New links from the QR editor are created in your ${name} account on this domain. You can still pick another one per link.`}
-      title={`Your ${name} account`}
+      description={t("newLinksFromTheQr", { name })}
+      title={t("yourNameAccount", { name })}
     >
       <AccountLine metadata={metadata} />
       {error && (
@@ -133,46 +136,45 @@ function ShortLinkSettings({
       )}
       <div className="space-y-2">
         <label className="font-medium text-sm" htmlFor={selectId}>
-          Default domain
+          {t("defaultDomain")}
         </label>
         {domains === null && !error ? (
           <Skeleton className="h-9 w-full max-w-sm rounded-full" />
         ) : domains && domains.domains.length > 0 ? (
           <Select disabled={saving} onValueChange={saveDomain} value={domainId}>
             <SelectTrigger className="w-full max-w-sm" id={selectId}>
-              <SelectValue placeholder="Pick a domain" />
+              <SelectValue placeholder={t("pickADomain")} />
             </SelectTrigger>
             <SelectContent>
               {domains.domains.map((domain) => (
                 <SelectItem key={domain.id} value={domain.id}>
                   {domain.hostname}
-                  {domain.branded ? "" : ` (${name} default)`}
+                  {domain.branded ? "" : t("nameDefault", { name })}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         ) : (
           <p className="text-muted-foreground text-sm">
-            No domains yet. Add one in {name}, then reload this page.
+            {t("noDomainsYetAddOne", { name })}
           </p>
         )}
       </div>
       {domains?.groups && domains.groups.length > 0 && (
         <p className="text-sm">
           <span className="text-muted-foreground">
-            {domains.groups.length === 1 ? "Group: " : "Groups: "}
+            {domains.groups.length === 1 ? t("group") : t("groups")}
           </span>
           {domains.groups.map((group) => group.name).join(", ")}
           {domains.groups.length > 1 && (
             <span className="text-muted-foreground">
-              {" "}
-              (links go to your default group)
+              {t("linksGoToYourDefault")}
             </span>
           )}
         </p>
       )}
       <div className="space-y-2">
-        <p className="font-medium text-sm">Recent links</p>
+        <p className="font-medium text-sm">{t("recentLinks")}</p>
         {links === null ? (
           <div className="space-y-2">
             <Skeleton className="h-10 w-full" />
@@ -180,8 +182,7 @@ function ShortLinkSettings({
           </div>
         ) : links.length === 0 ? (
           <p className="text-muted-foreground text-sm">
-            No links yet. Create one from the QR editor: choose the URL type,
-            then Use a link from… → {name}.
+            {t("noLinksYetCreateOne", { name })}
           </p>
         ) : (
           <ul className="divide-y rounded-lg border">
@@ -208,6 +209,7 @@ function FilePickerSettings({
   logo,
   metadata,
 }: Omit<ConnectedAccountPanelProps, "kind">) {
+  const t = useTranslations("app.settings.integrations.connectedAccountPanel");
   const [open, setOpen] = useState(false);
   const [picked, setPicked] = useState<PickedLink | null>(null);
 
@@ -215,9 +217,9 @@ function FilePickerSettings({
     try {
       await navigator.clipboard.writeText(text);
       emitSound("copy");
-      toast.success("Link copied");
+      toast.success(t("linkCopied"));
     } catch {
-      toast.error("Couldn't copy. Select the link and copy it instead.");
+      toast.error(t("couldntCopySelectTheLink"));
     }
   };
 
@@ -225,16 +227,16 @@ function FilePickerSettings({
     <Section
       description={
         slug === "notion"
-          ? "In the QR editor, choose the URL type, then Use a link from… → Notion. Only pages you shared with QRdx appear: add more in Notion from a page's ••• → Connections, or reconnect and pick them."
-          : `In the QR editor, choose the URL type, then Use a link from… → ${name}. Page blocks with a file (PDF, audio, video, downloads) also get From ${name}.`
+          ? t("inTheQrEditorChoose")
+          : t("inTheQrEditorChoose2", { name, name2: name })
       }
-      title={`Your ${name} account`}
+      title={t("yourNameAccount", { name })}
     >
       <AccountLine metadata={metadata} />
       <div className="flex flex-wrap items-center gap-2">
         <Button onClick={() => setOpen(true)} size="sm" variant="outline">
           <DocumentCloud aria-hidden className="size-4" />
-          Try the picker
+          {t("tryThePicker")}
         </Button>
       </div>
       {picked && (
@@ -245,13 +247,13 @@ function FilePickerSettings({
             </p>
             <Badge variant="outline">
               {picked.access === "public"
-                ? "Anyone with the link"
+                ? t("anyoneWithTheLink")
                 : picked.access === "organization"
-                  ? "Your organization"
-                  : "Restricted"}
+                  ? t("yourOrganization")
+                  : t("restricted")}
             </Badge>
             <Button
-              aria-label="Copy link"
+              aria-label={t("copyLink")}
               onClick={() => copy(picked.url)}
               size="icon-sm"
               variant="ghost"
@@ -259,7 +261,7 @@ function FilePickerSettings({
               <Copy aria-hidden className="size-4" />
             </Button>
             <Button
-              aria-label="Open link"
+              aria-label={t("openLink")}
               asChild
               size="icon-sm"
               variant="ghost"

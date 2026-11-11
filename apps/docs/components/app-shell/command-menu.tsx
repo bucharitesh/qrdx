@@ -29,8 +29,10 @@ import {
   UserAdd,
 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { useContentText } from "@/components/i18n/content-text";
 import {
   useWorkspace,
   useWorkspaceHref,
@@ -137,6 +139,8 @@ function HitItems({
  * page or docs article. Workspace results come from the active workspace.
  */
 export function CommandMenu() {
+  const tc = useContentText();
+  const t = useTranslations("app.shell.commandMenu");
   const router = useRouter();
   const create = useCreate();
   const { showsPath } = useAvailability();
@@ -228,49 +232,49 @@ export function CommandMenu() {
   const actions: Action[] = [
     {
       id: "new-code",
-      label: "New dynamic QR code",
+      label: t("newDynamicQrCode"),
       icon: Add,
       keywords: ["create", "short link"],
       run: startCreate("code"),
     },
     {
       id: "new-page",
-      label: "New landing page",
+      label: t("newLandingPage"),
       icon: DocumentText1,
       keywords: ["create", "page", "menu", "vcard", "links"],
       run: startCreate("page"),
     },
     {
       id: "new-form",
-      label: "New form",
+      label: t("newForm"),
       icon: TaskSquare,
       keywords: ["create", "survey", "feedback", "responses"],
       run: startCreate("form"),
     },
     {
       id: "import",
-      label: "Import codes from a CSV file",
+      label: t("importCodesFromACsv"),
       icon: DocumentUpload,
       keywords: ["bulk", "upload", "spreadsheet"],
       run: () => go(href("/codes/import")),
     },
     {
       id: "invite",
-      label: "Invite a teammate",
+      label: t("inviteATeammate"),
       icon: UserAdd,
       keywords: ["team", "members", "workspace"],
       run: () => go(href("/settings/team")),
     },
     {
       id: "domain",
-      label: "Connect a domain",
+      label: t("connectADomain"),
       icon: Link21,
       keywords: ["custom domain", "dns", "branded"],
       run: () => go(href("/settings/domains")),
     },
     {
       id: "editor",
-      label: "Open the editor",
+      label: t("openTheEditor"),
       icon: Brush2,
       keywords: ["playground", "design", "static", "download"],
       run: () => go("/playground"),
@@ -287,20 +291,20 @@ export function CommandMenu() {
       {/* Compact field from lg; an icon button below. Both open the palette. */}
       <button
         aria-keyshortcuts="Meta+K Control+K"
-        aria-label="Search or jump to"
+        aria-label={t("searchOrJumpTo2")}
         className="text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] focus-visible:ring-ring/50 hidden h-8 w-60 items-center gap-2 rounded-md border px-2.5 text-[13px] outline-none transition-colors focus-visible:ring-[3px] lg:flex"
         onClick={() => setOpen(true)}
         type="button"
       >
         <SearchNormal1 aria-hidden className="size-3.5 shrink-0" />
-        <span className="flex-1 truncate text-left">Search or jump to…</span>
+        <span className="flex-1 truncate text-left">{t("searchOrJumpTo")}</span>
         <kbd className="text-muted-foreground/70 font-sans text-[11px]">
           {shortcut}
         </kbd>
       </button>
       <Button
         aria-keyshortcuts="Meta+K Control+K"
-        aria-label="Search or jump to"
+        aria-label={t("searchOrJumpTo2")}
         className="size-8 lg:hidden"
         onClick={() => setOpen(true)}
         size="icon"
@@ -311,10 +315,8 @@ export function CommandMenu() {
 
       <Dialog onOpenChange={onOpenChange} open={open}>
         <DialogHeader className="sr-only">
-          <DialogTitle>Search or jump to</DialogTitle>
-          <DialogDescription>
-            Find a page, a code or a docs article, or start something new.
-          </DialogDescription>
+          <DialogTitle>{t("searchOrJumpTo2")}</DialogTitle>
+          <DialogDescription>{t("findAPageACode")}</DialogDescription>
         </DialogHeader>
         <DialogContent
           className="top-[20%] translate-y-0 overflow-hidden p-0 sm:max-w-xl"
@@ -326,12 +328,14 @@ export function CommandMenu() {
           >
             <CommandInput
               onValueChange={setQuery}
-              placeholder="Search codes, pages, settings and docs…"
+              placeholder={t("searchCodesPagesSettingsAnd")}
               value={query}
             />
             <CommandList className="max-h-[min(60vh,420px)]">
               <CommandEmpty>
-                {term.length >= 2 && !showHits ? "Searching…" : "No results."}
+                {term.length >= 2 && !showHits
+                  ? t("searching")
+                  : t("noResults")}
               </CommandEmpty>
 
               {showHits && hits.error && (
@@ -343,25 +347,25 @@ export function CommandMenu() {
                 </p>
               )}
               {showHits && hits.codes.length > 0 && (
-                <CommandGroup forceMount heading="Codes">
+                <CommandGroup forceMount heading={t("codes")}>
                   <HitItems hits={hits.codes} onOpen={go} />
                 </CommandGroup>
               )}
               {showHits && hits.pages.length > 0 && (
-                <CommandGroup forceMount heading="Landing pages">
+                <CommandGroup forceMount heading={t("landingPages")}>
                   <HitItems hits={hits.pages} onOpen={go} />
                 </CommandGroup>
               )}
 
-              <CommandGroup heading="Create">
+              <CommandGroup heading={t("create")}>
                 {actions.map((action) => (
                   <CommandItem
                     key={action.id}
                     keywords={action.keywords}
                     onSelect={action.run}
-                    value={action.label}
+                    value={tc(action.label)}
                   >
-                    <Row icon={action.icon}>{action.label}</Row>
+                    <Row icon={action.icon}>{tc(action.label)}</Row>
                   </CommandItem>
                 ))}
               </CommandGroup>
@@ -373,7 +377,11 @@ export function CommandMenu() {
                 if (items.length === 0) return null;
                 return (
                   <CommandGroup
-                    heading={group.label ? `Go to · ${group.label}` : "Go to"}
+                    heading={
+                      group.label
+                        ? t("goToLabel", { label: tc(group.label) })
+                        : t("goTo")
+                    }
                     key={group.id}
                   >
                     {items.map((item) => (
@@ -381,9 +389,9 @@ export function CommandMenu() {
                         key={item.href}
                         keywords={item.keywords}
                         onSelect={() => go(item.href)}
-                        value={item.label}
+                        value={tc(item.label)}
                       >
-                        <Row icon={item.icon}>{item.label}</Row>
+                        <Row icon={item.icon}>{tc(item.label)}</Row>
                       </CommandItem>
                     ))}
                   </CommandGroup>
@@ -393,7 +401,7 @@ export function CommandMenu() {
               {showHits && hits.docs.length > 0 && (
                 <>
                   <CommandSeparator />
-                  <CommandGroup forceMount heading="Docs">
+                  <CommandGroup forceMount heading={t("docs")}>
                     {hits.docs.map((doc) => (
                       <CommandItem
                         forceMount
@@ -408,7 +416,7 @@ export function CommandMenu() {
                 </>
               )}
 
-              <CommandGroup heading="Help">
+              <CommandGroup heading={t("help")}>
                 {HELP_LINKS.map((link) => (
                   <CommandItem
                     key={link.id}

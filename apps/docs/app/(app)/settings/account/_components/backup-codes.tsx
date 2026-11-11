@@ -5,15 +5,21 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Copy, DocumentDownload } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useId } from "react";
 import { backupCodesText } from "@/lib/auth/two-factor";
+import type { Translator } from "@/lib/i18n/translator";
 
-export async function copyText(text: string, what: string) {
+export async function copyText(
+  text: string,
+  what: string,
+  t: Translator<"app.settings.account.backupCodes">,
+) {
   try {
     await navigator.clipboard.writeText(text);
-    toast.success(`${what} copied`);
+    toast.success(t("whatCopied", { what }));
   } catch {
-    toast.error("Couldn't copy. Select the text and copy it instead.");
+    toast.error(t("couldntCopySelectTheText"));
   }
 }
 
@@ -41,19 +47,17 @@ export function BackupCodesList({
   saved: boolean;
   onSavedChange: (saved: boolean) => void;
 }) {
+  const t = useTranslations("app.settings.account.backupCodes");
   const id = useId();
   if (codes.length === 0) {
     return (
-      <p className="text-sm text-pretty">
-        Your backup codes couldn't be shown. Choose New codes in Settings to
-        make a fresh set.
-      </p>
+      <p className="text-sm text-pretty">{t("yourBackupCodesCouldntBe")}</p>
     );
   }
   return (
     <div className="space-y-4">
       <ul
-        aria-label="Backup codes"
+        aria-label={t("backupCodes")}
         className="bg-muted/40 grid grid-cols-2 gap-x-6 gap-y-2 rounded-lg border px-5 py-4 font-mono text-sm"
       >
         {codes.map((code) => (
@@ -67,12 +71,12 @@ export function BackupCodesList({
       <div className="grid grid-cols-2 gap-2">
         <Button
           className="h-10 sm:h-9"
-          onClick={() => copyText(codes.join("\n"), "Backup codes")}
+          onClick={() => copyText(codes.join("\n"), "Backup codes", t)}
           type="button"
           variant="outline"
         >
           <Copy className="size-4" />
-          Copy
+          {t("copy")}
         </Button>
         <Button
           className="h-10 sm:h-9"
@@ -86,7 +90,7 @@ export function BackupCodesList({
           variant="outline"
         >
           <DocumentDownload className="size-4" />
-          Download
+          {t("download")}
         </Button>
       </div>
       <div className="flex items-center gap-2">
@@ -100,7 +104,7 @@ export function BackupCodesList({
           className="-my-3 min-h-10 py-3 text-sm font-normal"
           htmlFor={`${id}-saved`}
         >
-          I've saved my backup codes
+          {t("iveSavedMyBackupCodes")}
         </Label>
       </div>
     </div>

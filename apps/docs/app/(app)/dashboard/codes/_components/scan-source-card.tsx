@@ -7,6 +7,8 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import type { ReactNode } from "react";
+import { use } from "react";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { SCAN_SOURCE_LABELS } from "@/lib/nfc/links";
 import type { ScanSourceCounts } from "@/lib/scans";
 import { formatNumber } from "./format";
@@ -34,19 +36,23 @@ export function ScanSourceCard({
   action?: ReactNode;
   className?: string;
 }) {
+  const t = use(getAppTranslations("app.dashboard.codes.scanSourceCard"));
   const total = sources.qr + sources.nfc;
   return (
     <Card className={cn("gap-3 py-4", className)}>
       <CardHeader className="flex flex-row items-start justify-between gap-3 px-4">
         <div className="min-w-0 space-y-1">
-          <CardTitle className="text-sm">QR scans and NFC taps</CardTitle>
+          <CardTitle className="text-sm">{t("qrScansAndNfcTaps")}</CardTitle>
           {description && <CardDescription>{description}</CardDescription>}
         </div>
         {action}
       </CardHeader>
       <CardContent className="space-y-3 px-4">
         <div
-          aria-label={`${formatNumber(sources.qr)} QR scans, ${formatNumber(sources.nfc)} NFC taps`}
+          aria-label={t("qrQrScansNfcNfc", {
+            qr: formatNumber(sources.qr),
+            nfc: formatNumber(sources.nfc),
+          })}
           className="bg-muted flex h-2 gap-0.5 overflow-hidden rounded-full"
           role="img"
         >

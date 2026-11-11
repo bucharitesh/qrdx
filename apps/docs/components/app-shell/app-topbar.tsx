@@ -3,9 +3,11 @@
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
 import bar from "@/components/header-bar.module.css";
+import { useContentText } from "@/components/i18n/content-text";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { workspaceHref } from "@/lib/workspace-paths";
@@ -18,6 +20,8 @@ import type { ShellData } from "./shell-data";
 
 /** "Dashboard / Codes" or "Settings / Plan & usage", from the current path. */
 function Breadcrumb({ slug }: { slug: string | null }) {
+  const tc = useContentText();
+  const t = useTranslations("app.shell.appTopbar");
   const pathname = usePathname();
   const inSettings = isSettingsPath(pathname);
   const home = slug ? workspaceHref(slug) : "/dashboard";
@@ -26,19 +30,19 @@ function Breadcrumb({ slug }: { slug: string | null }) {
   // A page this server doesn't offer (it's left out of the sidebar too).
   const item = found && showsPath(found.href) ? found : undefined;
   const area = inSettings
-    ? { label: "Settings", href: slug ? settingsHome(slug) : "/settings" }
-    : { label: "Dashboard", href: home };
+    ? { label: t("settings"), href: slug ? settingsHome(slug) : "/settings" }
+    : { label: t("dashboard"), href: home };
   const page = item && item.href !== home ? item : null;
 
   return (
-    <nav aria-label="Breadcrumb" className="min-w-0">
+    <nav aria-label={t("breadcrumb")} className="min-w-0">
       <ol className="flex min-w-0 items-center gap-1.5 text-sm">
         <li className="hidden shrink-0 sm:block">
           <Link
             className="text-muted-foreground hover:text-foreground rounded-sm transition-colors"
             href={area.href}
           >
-            {area.label}
+            {tc(area.label)}
           </Link>
         </li>
         {page && (
@@ -55,12 +59,12 @@ function Breadcrumb({ slug }: { slug: string | null }) {
                 className="block truncate font-medium"
                 href={page.href}
               >
-                {page.label}
+                {tc(page.label)}
               </Link>
             </li>
           </>
         )}
-        {!page && <li className="font-medium sm:hidden">{area.label}</li>}
+        {!page && <li className="font-medium sm:hidden">{tc(area.label)}</li>}
       </ol>
     </nav>
   );
@@ -78,6 +82,7 @@ export function AppTopBar({
   shell: ShellData | null;
   limitWarnings?: Promise<Meter[]> | null;
 }) {
+  const t = useTranslations("app.shell.appTopbar");
   const slug = shell?.workspace.slug ?? null;
   return (
     // z-40: backdrop-blur makes the bar its own stacking context, so its
@@ -92,7 +97,7 @@ export function AppTopBar({
       <div className="flex h-12 items-center gap-2 px-3 md:gap-3 md:px-4">
         <MobileNav limitWarnings={limitWarnings} shell={shell} />
         <Link
-          aria-label="QRdx dashboard"
+          aria-label={t("qrdxDashboard")}
           className="flex shrink-0 items-center rounded-md p-1"
           href={slug ? workspaceHref(slug) : "/dashboard"}
         >

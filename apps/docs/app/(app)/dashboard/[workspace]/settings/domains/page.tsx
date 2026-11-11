@@ -21,6 +21,7 @@ import { HairlineFigure } from "@/components/mockups/hairline";
 import { getDomainConnectOffers } from "@/lib/domain-connect/offers";
 import { parseConnectReturn } from "@/lib/domain-connect/return";
 import { isFeatureAvailable } from "@/lib/feature-availability";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { isOwnWorkspaceScope } from "@/lib/own-workspace";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -38,6 +39,7 @@ export default async function DomainsPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const t = await getAppTranslations("app.dashboard.settings.domains.page");
   const scope = await requireDashboardScope();
   const { mode, plan, limit, domains, canManage } =
     await getDomainsOverview(scope);
@@ -46,17 +48,17 @@ export default async function DomainsPage({
 
   const header = (
     <PageHeader
-      description="Serve your dynamic QR codes from a domain you own, like go.yourbrand.com/aB3dE5f."
+      description={t("serveYourDynamicQrCodes")}
       title={
         <>
-          Custom domains{" "}
+          {t("customDomains")}
           <InfoHint align="start" id="custom-domains" side="bottom" />
         </>
       }
     >
       {mode !== "disabled" && limit > 0 && (
         <Badge variant="outline">
-          {domains.length} / {limit} domains
+          {t("lengthLimitDomains", { length: domains.length, limit })}
         </Badge>
       )}
       <Badge variant={plan !== "free" ? "default" : "secondary"}>
@@ -74,16 +76,12 @@ export default async function DomainsPage({
             <EmptyMedia variant="icon">
               <ServerCog />
             </EmptyMedia>
-            <EmptyTitle>Custom domains aren't available right now</EmptyTitle>
-            <EmptyDescription>
-              You can't connect a new domain at the moment. Your existing codes
-              and short links keep working. Self-hosting? The docs cover the
-              setup.
-            </EmptyDescription>
+            <EmptyTitle>{t("customDomainsArentAvailableRight")}</EmptyTitle>
+            <EmptyDescription>{t("youCantConnectANew")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button asChild variant="outline">
-              <Link href={DOCS_HREF}>How custom domains work</Link>
+              <Link href={DOCS_HREF}>{t("howCustomDomainsWork")}</Link>
             </Button>
           </EmptyContent>
         </Empty>
@@ -101,19 +99,18 @@ export default async function DomainsPage({
               className="mx-auto mb-2 h-28 w-40"
               figure="Domain"
             />
-            <EmptyTitle>Use your own domain for QR codes</EmptyTitle>
+            <EmptyTitle>{t("useYourOwnDomainFor")}</EmptyTitle>
             <EmptyDescription>
-              With Pro, your dynamic codes can open short links on your own
-              domain instead of {new URL(SHORT_LINK_BASE).host}, so people see
-              your brand before they scan. Up to {proLimit} domains, with the
-              same scan analytics.
+              {t("withProYourDynamicCodes", {
+                host: new URL(SHORT_LINK_BASE).host,
+                proLimit,
+              })}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             {isTeam ? (
               <p className="text-muted-foreground text-sm">
-                Team features follow the plan of the team's owners. A team owner
-                on Pro or Business unlocks custom domains for the team.
+                {t("teamFeaturesFollowThePlan")}
               </p>
             ) : (
               <UpgradeButton />
@@ -122,7 +119,7 @@ export default async function DomainsPage({
               className="text-muted-foreground text-xs underline"
               href={DOCS_HREF}
             >
-              How custom domains work
+              {t("howCustomDomainsWork")}
             </Link>
           </EmptyContent>
         </Empty>
@@ -149,10 +146,9 @@ export default async function DomainsPage({
         <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
           <p className="text-sm">
             {isTeam
-              ? "This team's plan no longer includes custom domains."
-              : "Your plan no longer includes custom domains."}{" "}
-            Verified domains keep working for the codes that use them. Adding or
-            verifying domains needs Pro.
+              ? t("thisTeamsPlanNoLonger")
+              : t("yourPlanNoLongerIncludes")}{" "}
+            {t("verifiedDomainsKeepWorkingFor")}
           </p>
           {!isTeam && <UpgradeButton size="sm" />}
         </div>
@@ -160,12 +156,13 @@ export default async function DomainsPage({
 
       {mode === "manual" && (
         <p className="text-muted-foreground rounded-lg border p-4 text-sm">
-          Self-hosted mode: point each domain at this server yourself (DNS and
-          your reverse proxy), then prove you own it with the TXT record shown
-          below.{" "}
-          <Link className="underline" href={DOCS_HREF}>
-            Setup guide
-          </Link>
+          {t.rich("selfHostedModePointEach", {
+            link: (chunks) => (
+              <Link className="underline" href={DOCS_HREF}>
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
       )}
 

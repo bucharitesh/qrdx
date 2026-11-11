@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // Selecting rows in a dashboard list (codes, pages) with the mouse and the
 // keyboard: checkboxes with shift-click ranges, X, Shift+Space, Cmd/Ctrl+A,
@@ -292,6 +293,7 @@ export function SelectionStatus({
   /** Singular and plural, e.g. ["code", "codes"] */
   noun: [string, string];
 }) {
+  const t = useTranslations("app.dashboard.listSelection");
   const [touched, setTouched] = useState(false);
   useEffect(() => {
     if (count > 0) setTouched(true);
@@ -301,7 +303,7 @@ export function SelectionStatus({
       {count > 0
         ? `${count} ${count === 1 ? noun[0] : noun[1]} selected`
         : touched
-          ? "Selection cleared"
+          ? t("selectionCleared")
           : ""}
     </p>
   );
@@ -323,37 +325,38 @@ export interface ShortcutRow {
 
 /** The list's keys, from the bulk toolbar. */
 export function ListShortcuts({ actions }: { actions: ShortcutRow[] }) {
+  const t = useTranslations("app.dashboard.listSelection");
   const mod = useModKey();
   const sections: { title: string; rows: ShortcutRow[] }[] = [
     {
-      title: "Select",
+      title: t("select"),
       rows: [
-        { label: "Select or unselect a row", keys: ["X"] },
-        { label: "Select a range", keys: ["Shift", "Click"] },
-        { label: "Range from the focused row", keys: ["Shift", "Space"] },
-        { label: "Select all on this page", keys: [mod, "A"] },
-        { label: "Clear the selection", keys: ["Esc"] },
+        { label: t("selectOrUnselectARow"), keys: ["X"] },
+        { label: t("selectARange"), keys: ["Shift", "Click"] },
+        { label: t("rangeFromTheFocusedRow"), keys: ["Shift", "Space"] },
+        { label: t("selectAllOnThisPage"), keys: [mod, "A"] },
+        { label: t("clearTheSelection"), keys: ["Esc"] },
       ],
     },
     {
-      title: "Move",
+      title: t("move"),
       rows: [
-        { label: "Next or previous row", keys: ["J", "K"] },
-        { label: "Extend the selection", keys: ["Shift", "↓", "↑"] },
+        { label: t("nextOrPreviousRow"), keys: ["J", "K"] },
+        { label: t("extendTheSelection"), keys: ["Shift", "↓", "↑"] },
       ],
     },
     ...(actions.length > 0
-      ? [{ title: "With a selection", rows: actions }]
+      ? [{ title: t("withASelection"), rows: actions }]
       : []),
   ];
   return (
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          aria-label="Keyboard shortcuts"
+          aria-label={t("keyboardShortcuts")}
           className="max-sm:hidden"
           size="icon-sm"
-          title="Keyboard shortcuts"
+          title={t("keyboardShortcuts")}
           variant="ghost"
         >
           <Keyboard />

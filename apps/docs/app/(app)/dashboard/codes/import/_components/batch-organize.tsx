@@ -18,6 +18,7 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { ArrowDown2 as ChevronDown } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { useFolders } from "@/app/(app)/dashboard/codes/_components/folder-dialogs";
 import { TagDot } from "@/app/(app)/dashboard/codes/_components/tag-chip";
@@ -48,6 +49,7 @@ export function BatchOrganize({
   onChange: (value: BatchTargets) => void;
   disabled?: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.import.batchOrganize");
   const [folders] = useFolders(true);
   const [tags] = useTags(true);
   const nodes = useMemo(
@@ -63,7 +65,7 @@ export function BatchOrganize({
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <div className="space-y-1.5">
-        <Label htmlFor="import-folder">Folder for every code</Label>
+        <Label htmlFor="import-folder">{t("folderForEveryCode")}</Label>
         <Select
           disabled={disabled || folders === null}
           onValueChange={(id) => {
@@ -79,7 +81,9 @@ export function BatchOrganize({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={FROM_FILE}>Only the file's folders</SelectItem>
+            <SelectItem value={FROM_FILE}>
+              {t("onlyTheFilesFolders")}
+            </SelectItem>
             {nodes.map((node) => (
               <SelectItem key={node.id} value={node.id}>
                 <span style={{ paddingLeft: `${node.depth * 0.75}rem` }}>
@@ -90,11 +94,11 @@ export function BatchOrganize({
           </SelectContent>
         </Select>
         <p className="text-muted-foreground text-xs">
-          Rows with a folder in the file keep theirs.
+          {t("rowsWithAFolderIn")}
         </p>
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="import-tags">Tags for every code</Label>
+        <Label htmlFor="import-tags">{t("tagsForEveryCode")}</Label>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
@@ -109,12 +113,12 @@ export function BatchOrganize({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-64">
             <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-              Added to the file's tags, up to {MAX_TAGS_PER_CODE} per code
+              {t("addedToTheFilesTags", { MAX_TAGS_PER_CODE })}
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             {(tags ?? []).length === 0 ? (
               <p className="text-muted-foreground px-2 py-1.5 text-sm">
-                No tags yet. Tags named in the file are created.
+                {t("noTagsYetTagsNamed")}
               </p>
             ) : (
               (tags ?? []).map((tag) => (
@@ -142,9 +146,7 @@ export function BatchOrganize({
             )}
           </DropdownMenuContent>
         </DropdownMenu>
-        <p className="text-muted-foreground text-xs">
-          Tags in the file are added too.
-        </p>
+        <p className="text-muted-foreground text-xs">{t("tagsInTheFileAre")}</p>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@repo/design-system/components/ui/input";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { CopyButton } from "@/components/copy-button";
 import { invitePath } from "../_lib/team";
@@ -16,11 +17,12 @@ export function useInviteUrl(invitationId: string): string {
 }
 
 export function InviteLinkField({ invitationId }: { invitationId: string }) {
+  const t = useTranslations("app.dashboard.team.inviteLink");
   const url = useInviteUrl(invitationId);
   return (
     <div className="flex items-center gap-2">
       <Input
-        aria-label="Invite link"
+        aria-label={t("inviteLink")}
         className="font-mono text-xs"
         onFocus={(event) => event.currentTarget.select()}
         readOnly
@@ -28,7 +30,7 @@ export function InviteLinkField({ invitationId }: { invitationId: string }) {
       />
       <CopyButton
         className="size-9"
-        successMessage={{ title: "Invite link copied" }}
+        successMessage={{ title: t("inviteLinkCopied") }}
         textToCopy={url}
       />
     </div>
@@ -40,12 +42,13 @@ export function CopyInviteLinkButton({
 }: {
   invitationId: string;
 }) {
+  const t = useTranslations("app.dashboard.team.inviteLink");
   const url = useInviteUrl(invitationId);
   return (
     <CopyButton
-      aria-label="Copy invite link"
+      aria-label={t("copyInviteLink")}
       className="size-8"
-      successMessage={{ title: "Invite link copied" }}
+      successMessage={{ title: t("inviteLinkCopied") }}
       textToCopy={url}
     />
   );

@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // Folder and tags for the code, in the form, built on the organize actions
 // and tag chips.
@@ -52,23 +53,24 @@ export function FolderField({
   onChange: (folderId: string | null) => void;
   disabled?: boolean;
 }) {
+  const t = useTranslations("codeBuilder.builderOrganize");
   const flat = useMemo(
     () => flattenFolderTree(buildFolderTree(folders ?? [])),
     [folders],
   );
   return (
     <div className="min-w-0 space-y-1.5">
-      <Label htmlFor="code-builder-folder">Folder</Label>
+      <Label htmlFor="code-builder-folder">{t("folder")}</Label>
       <Select
         disabled={disabled || folders === null}
         onValueChange={(next) => onChange(next === NO_FOLDER ? null : next)}
         value={value ?? NO_FOLDER}
       >
         <SelectTrigger className="w-full" id="code-builder-folder">
-          <SelectValue placeholder="No folder" />
+          <SelectValue placeholder={t("noFolder")} />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value={NO_FOLDER}>No folder</SelectItem>
+          <SelectItem value={NO_FOLDER}>{t("noFolder")}</SelectItem>
           {flat.map((folder) => (
             <SelectItem key={folder.id} value={folder.id}>
               <span style={{ paddingLeft: `${folder.depth * 0.75}rem` }}>
@@ -101,6 +103,7 @@ export function TagsField({
   /** Under the field (the builder's suggested tags) */
   children?: ReactNode;
 }) {
+  const t = useTranslations("codeBuilder.builderOrganize");
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [isCreating, startCreating] = useTransition();
@@ -135,7 +138,7 @@ export function TagsField({
         onChange([...value, result.data.id]);
         setQuery("");
       } catch {
-        toast.error("Couldn't create the tag. Try again.");
+        toast.error(t("couldntCreateTheTagTry"));
       }
     });
   };
@@ -143,7 +146,7 @@ export function TagsField({
   return (
     <div className="min-w-0 space-y-1.5">
       <div className="flex items-center justify-between gap-2">
-        <Label htmlFor="code-builder-tags">Tags</Label>
+        <Label htmlFor="code-builder-tags">{t("tags")}</Label>
         {action}
       </div>
       <Popover onOpenChange={setOpen} open={open}>
@@ -155,7 +158,7 @@ export function TagsField({
             type="button"
           >
             {selected.length === 0 ? (
-              <span className="text-muted-foreground px-1">Add tags</span>
+              <span className="text-muted-foreground px-1">{t("addTags")}</span>
             ) : (
               selected.map((tag) => (
                 <span
@@ -174,12 +177,12 @@ export function TagsField({
             <CommandInput
               maxLength={MAX_TAG_NAME}
               onValueChange={setQuery}
-              placeholder="Find or create a tag"
+              placeholder={t("findOrCreateATag")}
               value={query}
             />
             <CommandList>
               <CommandEmpty>
-                {name ? "No tag with that name." : "No tags yet."}
+                {name ? t("noTagWithThatName") : t("noTagsYet")}
               </CommandEmpty>
               {(tags ?? []).length > 0 && (
                 <CommandGroup>
@@ -210,7 +213,7 @@ export function TagsField({
                     value={`create ${name}`}
                   >
                     <Add aria-hidden className="size-4" />
-                    Create “{name}”
+                    {t("createName", { name })}
                   </CommandItem>
                 </CommandGroup>
               )}
@@ -218,7 +221,7 @@ export function TagsField({
           </Command>
           {full && (
             <p className="text-muted-foreground border-t px-3 py-2 text-xs">
-              A code can have up to {MAX_TAGS_PER_CODE} tags.
+              {t("aCodeCanHaveUp", { MAX_TAGS_PER_CODE })}
             </p>
           )}
         </PopoverContent>

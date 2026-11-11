@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Add as Plus } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import type { CodeUsage } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { openCodeBuilder } from "@/components/code-builder/store";
@@ -14,12 +15,13 @@ const isAtLimit = (usage: CodeUsage) =>
   usage.limit !== null && usage.used >= usage.limit;
 
 export function UsageMeter({ usage }: { usage: CodeUsage }) {
+  const t = useTranslations("app.dashboard.codes.usage");
   if (usage.limit === null) {
     return (
       <p className="text-muted-foreground text-sm">
-        {formatNumber(usage.used)} active dynamic{" "}
-        {usage.used === 1 ? "code" : "codes"} · {PLAN_NAMES[usage.plan]} plan,
-        unlimited codes
+        {formatNumber(usage.used)} {t("activeDynamic")}{" "}
+        {usage.used === 1 ? t("code") : t("codes")} · {PLAN_NAMES[usage.plan]}{" "}
+        {t("planUnlimitedCodes")}
       </p>
     );
   }

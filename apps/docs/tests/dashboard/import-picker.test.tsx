@@ -2,10 +2,11 @@
 // own integration, since 2026-11-05), while an earlier Dub import still shows
 // in Recent imports so its undo stays reachable. The API side is covered in
 // tests/api/dub-integration.test.ts and lib/migrate/migrate.test.ts.
-import { renderToStaticMarkup } from "react-dom/server";
+
 import { describe, expect, it } from "vitest";
 import { ProviderStep } from "@/app/(app)/dashboard/codes/_components/import-provider-step";
 import type { JobSummary, ProviderStatus } from "@/lib/migrate/types";
+import { renderIntl } from "../support/intl";
 
 const status = (id: ProviderStatus["id"]): ProviderStatus => ({
   id,
@@ -32,7 +33,7 @@ const DUB_JOB: JobSummary = {
 };
 
 function render(statuses: ProviderStatus[] | null, jobs: JobSummary[] = []) {
-  const html = renderToStaticMarkup(
+  const html = renderIntl(
     <ProviderStep
       jobs={jobs}
       onOpenJob={() => {}}

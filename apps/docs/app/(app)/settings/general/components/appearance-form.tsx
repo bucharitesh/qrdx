@@ -10,6 +10,7 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { DarkTheme } from "./dark-theme";
@@ -19,25 +20,20 @@ import { SystemTheme } from "./system-theme";
 const themes = [
   {
     id: "light",
-    name: "Light",
-    description: "Light theme for daytime use",
     icon: LightTheme,
   },
   {
     id: "dark",
-    name: "Dark",
-    description: "Dark theme for nighttime use",
     icon: DarkTheme,
   },
   {
     id: "system",
-    name: "System",
-    description: "Sync with your system settings",
     icon: SystemTheme,
   },
 ] as const;
 
 export function AppearanceForm() {
+  const t = useTranslations("app.settings.general.appearanceForm");
   const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -50,9 +46,9 @@ export function AppearanceForm() {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Appearance</CardTitle>
+          <CardTitle>{t("appearance")}</CardTitle>
           <CardDescription>
-            Customize how the interface looks and feels
+            {t("customizeHowTheInterfaceLooks")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -66,10 +62,12 @@ export function AppearanceForm() {
                   <div className="h-full w-full animate-pulse bg-muted" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <Label className="font-medium">{themeOption.name}</Label>
+                  <Label className="font-medium">
+                    {t(`themes.${themeOption.id}.name`)}
+                  </Label>
                 </div>
                 <p className="hidden text-xs text-muted-foreground sm:block">
-                  {themeOption.description}
+                  {t(`themes.${themeOption.id}.description`)}
                 </p>
               </div>
             ))}
@@ -82,10 +80,8 @@ export function AppearanceForm() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Appearance</CardTitle>
-        <CardDescription>
-          Customize how the interface looks and feels
-        </CardDescription>
+        <CardTitle>{t("appearance")}</CardTitle>
+        <CardDescription>{t("customizeHowTheInterfaceLooks")}</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -126,10 +122,10 @@ export function AppearanceForm() {
                         isSelected && "text-primary",
                       )}
                     >
-                      {themeOption.name}
+                      {t(`themes.${themeOption.id}.name`)}
                     </Label>
                     <p className="hidden text-xs text-muted-foreground sm:block">
-                      {themeOption.description}
+                      {t(`themes.${themeOption.id}.description`)}
                     </p>
                   </div>
                 </button>

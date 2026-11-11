@@ -12,6 +12,7 @@ import {
   opensBusinessCard,
 } from "@/app/(app)/dashboard/codes/_lib/nfc";
 import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { requestWorkspaceSlug } from "@/lib/scope";
 
 /**
@@ -23,6 +24,7 @@ export async function NfcCard({
 }: {
   code: Pick<QrCodeView, "id" | "kind" | "pageId">;
 }) {
+  const t = await getAppTranslations("app.dashboard.codes.nfcCard");
   const [slug, businessCard] = await Promise.all([
     requestWorkspaceSlug(),
     opensBusinessCard(code),
@@ -32,18 +34,16 @@ export async function NfcCard({
       <CardHeader className="flex flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 space-y-1">
           <CardTitle className="text-base">
-            {businessCard ? "NFC business card" : "NFC"}
+            {businessCard ? t("nfcBusinessCard") : "NFC"}
           </CardTitle>
           <CardDescription>
-            {businessCard
-              ? "Put this card on an NFC card or sticker. A tap opens it, counted apart from scans."
-              : "Write this code's link to an NFC tag. A tap opens it, counted apart from scans."}
+            {businessCard ? t("putThisCardOnAn") : t("writeThisCodesLinkTo")}
           </CardDescription>
         </div>
         <Button asChild className="shrink-0" size="sm" variant="outline">
           <Link href={nfcPageHref(slug, code.id)}>
             <Airdrop />
-            {businessCard ? "Put this card on NFC" : "Use with NFC"}
+            {businessCard ? t("putThisCardOnNfc") : t("useWithNfc")}
           </Link>
         </Button>
       </CardHeader>

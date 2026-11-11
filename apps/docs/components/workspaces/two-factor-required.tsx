@@ -8,9 +8,11 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
+import { use } from "react";
 import bar from "@/components/header-bar.module.css";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { workspaceHref } from "@/lib/workspace-paths";
 import { TurnOnTwoFactorLink } from "./two-factor-required-link";
 import { WorkspaceAvatar } from "./workspace-avatar";
@@ -37,12 +39,13 @@ export function TwoFactorRequiredScreen({
   /** A workspace they can open, if they have one */
   other: WorkspaceRef | null;
 }) {
+  const t = use(getAppTranslations("app.workspaces.twoFactorRequired"));
   return (
     <div className="flex min-h-svh flex-col">
       <header className={cn(bar.bar, bar.surface, "relative z-40 border-b")}>
         <div className="flex h-12 items-center gap-2 px-3 md:px-4">
           <Link
-            aria-label="QRdx dashboard"
+            aria-label={t("qrdxDashboard")}
             className="flex shrink-0 items-center rounded-md p-1"
             href="/dashboard"
           >
@@ -64,25 +67,26 @@ export function TwoFactorRequiredScreen({
               />
             </div>
             <CardTitle className="text-xl text-balance">
-              {workspace.name} requires two-step verification
+              {t("nameRequiresTwoStepVerification", { name: workspace.name })}
             </CardTitle>
             <CardDescription className="text-pretty">
-              Turn on two-step verification for your account to open this
-              workspace. Your other workspaces work as usual.
+              {t("turnOnTwoStepVerification")}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col items-center gap-3 text-center">
             <TurnOnTwoFactorLink />
             {other && (
               <Button asChild className="w-full" variant="outline">
-                <Link href={workspaceHref(other.slug)}>Open {other.name}</Link>
+                <Link href={workspaceHref(other.slug)}>
+                  {t("openName", { name: other.name })}
+                </Link>
               </Button>
             )}
             <Link
               className="text-muted-foreground hover:text-foreground py-2 text-sm underline decoration-foreground/30 underline-offset-4 transition-colors"
               href={HELP_HREF}
             >
-              Why am I seeing this?
+              {t("whyAmISeeingThis")}
             </Link>
           </CardContent>
         </Card>

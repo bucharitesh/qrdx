@@ -20,6 +20,7 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Refresh2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { CopyButton } from "@/app/(app)/dashboard/webhooks/_components/event-checkboxes";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -40,6 +41,7 @@ export function AppCredentials({
   secretRotatedAt: Date | null;
   canManage: boolean;
 }) {
+  const t = useTranslations("app.settings.developers.appCredentials");
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
   const [confirming, setConfirming] = useState(false);
@@ -66,27 +68,24 @@ export function AppCredentials({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Credentials</CardTitle>
-        <CardDescription>
-          Send both with every token request. The client ID is public; the
-          secret belongs on your server only.
-        </CardDescription>
+        <CardTitle>{t("credentials")}</CardTitle>
+        <CardDescription>{t("sendBothWithEveryToken")}</CardDescription>
       </CardHeader>
       <CardContent className="divide-y">
         <div className="flex flex-wrap items-center justify-between gap-3 pb-4">
           <div className="min-w-0 space-y-1">
-            <p className="text-sm font-medium">Client ID</p>
+            <p className="text-sm font-medium">{t("clientId")}</p>
             <code className="text-muted-foreground block font-mono text-xs break-all">
               {clientId}
             </code>
           </div>
-          <CopyButton label="Copy client ID" value={clientId} />
+          <CopyButton label={t("copyClientId")} value={clientId} />
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
           <div className="min-w-0 space-y-1">
-            <p className="text-sm font-medium">Client secret</p>
+            <p className="text-sm font-medium">{t("clientSecret")}</p>
             <p className="text-muted-foreground text-xs">
-              Hidden. {secretRotatedAt ? "Regenerated" : "Created"}{" "}
+              {t("hidden")} {secretRotatedAt ? t("regenerated") : t("created")}{" "}
               {formatDate(secretRotatedAt ?? createdAt)}.
             </p>
           </div>
@@ -98,7 +97,7 @@ export function AppCredentials({
               variant="outline"
             >
               <Refresh2 />
-              Regenerate secret
+              {t("regenerateSecret")}
             </Button>
           )}
         </div>
@@ -107,17 +106,19 @@ export function AppCredentials({
       <AlertDialog onOpenChange={setConfirming} open={confirming}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Regenerate the client secret?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("regenerateTheClientSecret")}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              The current secret stops working right away, so token requests
-              fail until your server uses the new one. People who already
-              authorized your app stay connected.
+              {t("theCurrentSecretStopsWorking")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={pending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button disabled={pending} onClick={regenerate}>
-              {pending ? "Regenerating…" : "Regenerate secret"}
+              {pending ? t("regenerating") : t("regenerateSecret")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -126,7 +127,7 @@ export function AppCredentials({
       <ClientSecretDialog
         credentials={secret ? { clientId, clientSecret: secret } : null}
         onClose={() => setSecret(null)}
-        title="New client secret"
+        title={t("newClientSecret")}
       />
     </Card>
   );

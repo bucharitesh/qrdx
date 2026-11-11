@@ -31,6 +31,7 @@ import {
   getBarcodeUsage,
   listBarcodes,
 } from "@/lib/barcodes/service";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can } from "@/lib/permissions";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { workspaceHref } from "@/lib/workspace-paths";
@@ -54,6 +55,7 @@ export default async function BarcodesPage({
   params: Promise<{ workspace: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const t = await getAppTranslations("app.dashboard.barcodes.page");
   const [{ workspace: slug }, scope] = await Promise.all([
     params,
     requireDashboardScope(),
@@ -105,10 +107,12 @@ export default async function BarcodesPage({
       />
       <p className="text-muted-foreground text-sm">
         {usage.limit === null
-          ? `${formatNumber(usage.used)} saved`
-          : `${formatNumber(usage.used)} of ${formatNumber(usage.limit)} saved`}{" "}
-        · {PLAN_NAMES[usage.plan]} plan. Barcodes are static: they never expire
-        and work on every plan.
+          ? t("usedSaved", { used: formatNumber(usage.used) })
+          : t("usedOfLimitSaved", {
+              used: formatNumber(usage.used),
+              limit: formatNumber(usage.limit),
+            })}{" "}
+        · {PLAN_NAMES[usage.plan]} {t("planBarcodesAreStaticThey")}
       </p>
 
       {brandNew ? (
@@ -117,11 +121,13 @@ export default async function BarcodesPage({
             <span className="bg-muted/50 text-muted-foreground mx-auto mb-2 grid size-12 place-items-center rounded-full border">
               <Barcode aria-hidden className="size-6" />
             </span>
-            <EmptyTitle>No barcodes yet</EmptyTitle>
+            <EmptyTitle>{t("noBarcodesYet")}</EmptyTitle>
             <EmptyDescription>
               {canWrite
-                ? `Save ${BARCODE_FORMATS.length} kinds of barcode here, from EAN-13 and UPC-A to Code 128 and Data Matrix, to edit and download again. The bars hold the data, so nothing expires.`
-                : "When someone in this workspace saves one, it shows up here."}
+                ? t("saveLengthKindsOfBarcode", {
+                    length: BARCODE_FORMATS.length,
+                  })
+                : t("whenSomeoneInThisWorkspace")}
             </EmptyDescription>
           </EmptyHeader>
           {canWrite && (
@@ -130,11 +136,13 @@ export default async function BarcodesPage({
                 <Button asChild>
                   <Link href={`${basePath}/new`}>
                     <Add aria-hidden />
-                    New barcode
+                    {t("newBarcode")}
                   </Link>
                 </Button>
                 <Button asChild variant="outline">
-                  <Link href="/barcode-generator">Open the free generator</Link>
+                  <Link href="/barcode-generator">
+                    {t("openTheFreeGenerator")}
+                  </Link>
                 </Button>
               </div>
             </EmptyContent>
@@ -149,24 +157,23 @@ export default async function BarcodesPage({
           />
           {effective.status === "trash" && (
             <p className="text-muted-foreground text-xs">
-              Barcodes in the trash don't count toward your plan. Restore them,
-              or delete them for good.
+              {t("barcodesInTheTrashDont")}
             </p>
           )}
           {cards.length === 0 ? (
             <div className="text-muted-foreground space-y-2 rounded-xl border py-10 text-center text-sm">
               <p>
                 {effective.status === "trash"
-                  ? "The trash is empty."
+                  ? t("theTrashIsEmpty")
                   : effective.q
-                    ? `No barcodes match "${effective.q}".`
+                    ? t("noBarcodesMatchQ", { q: effective.q })
                     : isUnfiltered(effective)
-                      ? "No barcodes here yet."
-                      : "No barcodes match these filters."}
+                      ? t("noBarcodesHereYet")
+                      : t("noBarcodesMatchTheseFilters")}
               </p>
               {!isUnfiltered(effective) && (
                 <Link className="underline" href={basePath}>
-                  Show all barcodes
+                  {t("showAllBarcodes")}
                 </Link>
               )}
             </div>
@@ -182,7 +189,11 @@ export default async function BarcodesPage({
           {pageCount > 1 && (
             <div className="flex items-center justify-between gap-2 text-sm">
               <span className="text-muted-foreground">
-                Page {page} of {pageCount} · {formatNumber(total)} barcodes
+                {t("pagePageOfPagecountTotal", {
+                  page,
+                  pageCount,
+                  total: formatNumber(total),
+                })}
               </span>
               <div className="flex gap-2">
                 <Button
@@ -192,9 +203,9 @@ export default async function BarcodesPage({
                   variant="outline"
                 >
                   {page > 1 ? (
-                    <Link href={href({ page: page - 1 })}>Previous</Link>
+                    <Link href={href({ page: page - 1 })}>{t("previous")}</Link>
                   ) : (
-                    "Previous"
+                    t("previous")
                   )}
                 </Button>
                 <Button
@@ -204,9 +215,9 @@ export default async function BarcodesPage({
                   variant="outline"
                 >
                   {page < pageCount ? (
-                    <Link href={href({ page: page + 1 })}>Next</Link>
+                    <Link href={href({ page: page + 1 })}>{t("next")}</Link>
                   ) : (
-                    "Next"
+                    t("next")
                   )}
                 </Button>
               </div>

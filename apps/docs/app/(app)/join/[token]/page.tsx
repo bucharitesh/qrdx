@@ -16,6 +16,7 @@ import type { ReactNode } from "react";
 import { isTeamMember } from "@/app/(app)/dashboard/team/_lib/queries";
 import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
 import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";
 import { getClientIp } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
@@ -86,13 +87,14 @@ export default async function JoinPage({
 }: {
   params: Promise<{ token: string }>;
 }) {
+  const t = await getAppTranslations("app.join.page");
   const { token } = await params;
   const valid = JOIN_TOKEN_PATTERN.test(token);
   if (!valid) {
     return (
       <JoinCard
-        description="Check that you copied the whole link, or ask the workspace for a new one."
-        title="This join link isn't complete"
+        description={t("checkThatYouCopiedThe")}
+        title={t("thisJoinLinkIsntComplete")}
       >
         {dashboardButton}
       </JoinCard>
@@ -109,8 +111,8 @@ export default async function JoinPage({
   if (!success) {
     return (
       <JoinCard
-        description="Wait a minute, then reload this page."
-        title="Too many requests"
+        description={t("waitAMinuteThenReload")}
+        title={t("tooManyRequests")}
       />
     );
   }
@@ -126,10 +128,10 @@ export default async function JoinPage({
       <JoinCard
         description={
           error instanceof JoinLinksUnavailableError
-            ? "Join links aren't set up on this server yet. Ask the workspace to invite you by email instead."
-            : "Something went wrong. Reload the page to try again."
+            ? t("joinLinksArentSetUp")
+            : t("somethingWentWrongReloadThe")
         }
-        title="This join link can't be used right now"
+        title={t("thisJoinLinkCantBe")}
       >
         {dashboardButton}
       </JoinCard>
@@ -139,8 +141,8 @@ export default async function JoinPage({
   if (!target) {
     return (
       <JoinCard
-        description="It was reset or turned off. Ask the workspace for a new link, or for an invitation by email."
-        title="This join link doesn't work anymore"
+        description={t("itWasResetOrTurned")}
+        title={t("thisJoinLinkDoesntWork")}
       >
         {dashboardButton}
       </JoinCard>
@@ -154,12 +156,14 @@ export default async function JoinPage({
   if (await isTeamMember(target.organizationId, session.user.id)) {
     return (
       <JoinCard
-        description={`You're already a member of ${target.name}.`}
+        description={t("youreAlreadyAMemberOf", { name: target.name })}
         icon={avatar}
-        title="You're already in"
+        title={t("youreAlreadyIn")}
       >
         <Button asChild>
-          <Link href={workspaceHref(target.slug)}>Open {target.name}</Link>
+          <Link href={workspaceHref(target.slug)}>
+            {t("openName", { name: target.name })}
+          </Link>
         </Button>
       </JoinCard>
     );
@@ -167,18 +171,16 @@ export default async function JoinPage({
 
   return (
     <JoinCard
-      description={
-        <>
-          You're signed in as{" "}
-          <span className="text-foreground font-medium">
-            {session.user.email}
-          </span>
-          . You'll join as {inviteRolePhrase(target.role)}:{" "}
-          {WORKSPACE_ROLE_DESCRIPTIONS[target.role].toLowerCase()}.
-        </>
-      }
+      description={t.rich("youreSignedInAsEmail", {
+        email: session.user.email,
+        value: inviteRolePhrase(target.role),
+        value2: WORKSPACE_ROLE_DESCRIPTIONS[target.role].toLowerCase(),
+        span: (chunks) => (
+          <span className="text-foreground font-medium">{chunks}</span>
+        ),
+      })}
       icon={avatar}
-      title={`Join ${target.name}`}
+      title={t("joinName", { name: target.name })}
     >
       <div className="w-full">
         <JoinButton name={target.name} token={token} />

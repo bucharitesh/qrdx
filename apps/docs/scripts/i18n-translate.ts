@@ -187,6 +187,12 @@ const SURFACES: Record<string, string> = {
     "the community gallery of shared themes, frames and page templates: publish dialogs, likes and tabs",
   aiArt:
     "the AI QR art page and studio: generating artistic QR codes, scan checks on the results and monthly image credits",
+  codeBuilder:
+    "the dynamic QR code builder over the editor: making a code dynamic, its short link, folder, tags, drafts and hosted pages",
+  app: "the signed-in QRdx app (dashboard and settings): dynamic QR codes, hosted pages and forms, analytics, files, themes, team, domains, webhooks, API keys, integrations, billing and account security; mostly buttons, labels, table headings, empty states, dialogs, toasts and errors",
+  auth: "signing in to QRdx (email code, Google, GitHub, passkeys, two-step verification) and the 'Confirm it's you' dialog before sensitive changes",
+  emails:
+    "emails QRdx sends: sign-in and confirmation codes (keep them short and clear, never ask for the code), scan and form alerts with their subject lines, footers",
 };
 
 /** Short strings (labels, buttons) get a length budget. */

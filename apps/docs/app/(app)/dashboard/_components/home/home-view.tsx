@@ -6,7 +6,9 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import Link from "next/link";
+import { use } from "react";
 import { PageHeader } from "@/components/app-shell/page-header";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { workspaceHref } from "@/lib/workspace-paths";
 import type { HomeData } from "./home-data";
@@ -46,14 +48,18 @@ const STATUS_LABELS = {
 
 /** The app's front page: setup, the numbers that matter, the newest codes. */
 export function HomeView({ data, slug }: { data: HomeData; slug: string }) {
+  const t = use(getAppTranslations("app.dashboard.home.homeView"));
   const workspace = data.teamName ?? "Workspace";
   const href = (path: string) => workspaceHref(slug, path);
 
   return (
     <div className="space-y-6">
       <PageHeader
-        description={`${workspace} · ${PLAN_NAMES[data.plan]} plan`}
-        title="Home"
+        description={t("workspaceValuePlan", {
+          workspace,
+          value: PLAN_NAMES[data.plan],
+        })}
+        title={t("home")}
       >
         <NewCodeButton />
       </PageHeader>
@@ -63,7 +69,7 @@ export function HomeView({ data, slug }: { data: HomeData; slug: string }) {
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <Stat
           href={href("/codes")}
-          label="Dynamic QR codes"
+          label={t("dynamicQrCodes")}
           value={
             data.codes.limit === null
               ? number(data.codes.used)
@@ -72,33 +78,32 @@ export function HomeView({ data, slug }: { data: HomeData; slug: string }) {
         />
         <Stat
           href={href("/analytics")}
-          label="Scans, all time"
+          label={t("scansAllTime")}
           value={number(data.totalScans)}
         />
         <Stat
           href={href("/pages")}
-          label="Landing pages"
+          label={t("landingPages")}
           value={number(data.pages)}
         />
       </div>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between gap-4">
-          <CardTitle className="text-base">Recent codes</CardTitle>
+          <CardTitle className="text-base">{t("recentCodes")}</CardTitle>
           {data.recent.length > 0 && (
             <Link
               className="text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline"
               href={href("/codes")}
             >
-              View all
+              {t("viewAll")}
             </Link>
           )}
         </CardHeader>
         <CardContent className="pt-0">
           {data.recent.length === 0 ? (
             <p className="text-muted-foreground text-sm">
-              No dynamic codes yet. They're QR codes you can re-point after
-              printing, with scan analytics.
+              {t("noDynamicCodesYetTheyre")}
             </p>
           ) : (
             <ul className="-mx-2 divide-y">
@@ -126,7 +131,7 @@ export function HomeView({ data, slug }: { data: HomeData; slug: string }) {
                       {status && <Badge variant="outline">{status}</Badge>}
                       <div className="text-muted-foreground shrink-0 text-sm">
                         {number(code.scans)}{" "}
-                        {code.scans === 1 ? "scan" : "scans"}
+                        {code.scans === 1 ? t("scan") : t("scans")}
                       </div>
                     </Link>
                   </li>

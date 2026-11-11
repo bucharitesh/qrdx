@@ -4,6 +4,7 @@ import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { Export as Upload } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type ComponentProps, type ReactNode, useRef, useState } from "react";
 import { acceptAttribute, type FileKind, type FileView } from "../types";
 import { uploadFile } from "../upload-client";
@@ -28,6 +29,7 @@ export function useFileUploads({
   kinds: readonly FileKind[];
   replaceId?: string;
 }) {
+  const t = useTranslations("editor.connections.uploadButton");
   const [current, setCurrent] = useState<UploadProgressState | null>(null);
 
   async function upload(files: File[]): Promise<FileView[]> {
@@ -48,7 +50,7 @@ export function useFileUploads({
           }),
         );
       } catch (error) {
-        toast.error((error as Error).message || "Upload failed.");
+        toast.error((error as Error).message || t("uploadFailed"));
       }
     }
     setCurrent(null);
@@ -91,6 +93,7 @@ export function UploadButton({
   onUploaded: (files: FileView[]) => void;
   children?: ReactNode;
 } & Omit<ComponentProps<typeof Button>, "onClick" | "children">) {
+  const t = useTranslations("editor.connections.uploadButton");
   const inputRef = useRef<HTMLInputElement>(null);
   const { upload, current, busy } = useFileUploads({ kinds, replaceId });
 
@@ -121,7 +124,7 @@ export function UploadButton({
         {...buttonProps}
       >
         <Upload />
-        {busy ? "Uploading…" : children}
+        {busy ? t("uploading") : children}
       </Button>
       <UploadProgress state={current} />
     </div>

@@ -13,6 +13,7 @@ import {
 } from "@repo/design-system/components/ui/select";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Suspense, useId, useState, useTransition } from "react";
 import {
   type CodeMarketingSettings,
@@ -102,13 +103,14 @@ const fromDraft = (draft: Draft) => ({
 });
 
 function Snippet({ code, label }: { code: string; label: string }) {
+  const t = useTranslations("app.dashboard.codes.pixelsPanel");
   return (
     <div className="relative">
       <pre className="bg-muted max-h-64 overflow-auto rounded-md p-3 pr-10 font-mono text-xs leading-relaxed">
         {code}
       </pre>
       <CopyButton
-        aria-label={`Copy ${label.toLowerCase()}`}
+        aria-label={t("copyLabel", { label: label.toLowerCase() })}
         className="absolute top-2 right-2"
         textToCopy={code}
       />
@@ -127,6 +129,7 @@ function ConversionsSection({
   setDraft: (patch: Partial<Draft>) => void;
   plan: PaidPlan | null;
 }) {
+  const t = useTranslations("app.dashboard.codes.pixelsPanel");
   const id = useId();
   const locked = !settings.features.conversions;
   const browserSnippet = `<script async src="${settings.origin}/conversions.js"></script>
@@ -147,12 +150,15 @@ function ConversionsSection({
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="space-y-1">
           <p className="text-sm font-medium">
-            Conversion tracking{plan && ` (${PLAN_NAMES[plan]})`}
+            {t("conversionTracking")}
+            {plan && ` (${PLAN_NAMES[plan]})`}
           </p>
           <p className="text-muted-foreground text-sm">
-            Adds a signed <code className="font-mono text-xs">qrdx_sid</code> to
-            the URL each scan opens. Your site reports sales or sign-ups with
-            it, and QRdx attributes them to the scan (up to 30 days later).
+            {t.rich("addsASignedQrdxSid", {
+              code: (chunks) => (
+                <code className="font-mono text-xs">{chunks}</code>
+              ),
+            })}
           </p>
         </div>
         <Label
@@ -165,28 +171,30 @@ function ConversionsSection({
             id={`${id}-on`}
             onCheckedChange={(conversions) => setDraft({ conversions })}
           />
-          {draft.conversions ? "On" : "Off"}
+          {draft.conversions ? t("on") : t("off")}
         </Label>
       </div>
       {locked && plan && !settings.pixels?.conversions && (
         <PlanLock plan={plan}>
-          Conversion tracking and revenue attribution are part of{" "}
-          {PLAN_NAMES[plan]}.
+          {t("conversionTrackingAndRevenueAttribution", {
+            value: PLAN_NAMES[plan],
+          })}
         </PlanLock>
       )}
       {draft.conversions && (
         <div className="space-y-3">
           <p className="text-muted-foreground text-xs">
-            1. Add this to the pages people land on and where they convert. It
-            remembers <code className="font-mono">qrdx_sid</code> in a
-            first-party cookie for 30 days.
+            {t.rich("n1AddThisToThe", {
+              code: (chunks) => <code className="font-mono">{chunks}</code>,
+            })}
           </p>
-          <Snippet code={browserSnippet} label="Browser snippet" />
+          <Snippet code={browserSnippet} label={t("browserSnippet")} />
           <p className="text-muted-foreground text-xs">
-            2. Or report from your server with an API token (scope{" "}
-            <code className="font-mono">codes:write</code>):
+            {t.rich("n2OrReportFromYour", {
+              code: (chunks) => <code className="font-mono">{chunks}</code>,
+            })}
           </p>
-          <Snippet code={serverSnippet} label="Server example" />
+          <Snippet code={serverSnippet} label={t("serverExample")} />
         </div>
       )}
     </div>
@@ -200,6 +208,7 @@ function PixelsEditor({
   initial: CodeMarketingSettings;
   plans: PixelPlans;
 }) {
+  const t = useTranslations("app.dashboard.codes.pixelsPanel");
   const id = useId();
   const [settings, setSettings] = useState(initial);
   const [draft, setDraftState] = useState(() => toDraft(initial.pixels));
@@ -232,7 +241,7 @@ function PixelsEditor({
       if (result.success) {
         setSettings(result.data);
         setDraftState(toDraft(result.data.pixels));
-        toast.success("Tracking settings saved");
+        toast.success(t("trackingSettingsSaved"));
       } else {
         setError(result.error.message);
       }
@@ -245,22 +254,29 @@ function PixelsEditor({
       description={
         <>
           {isPage
-            ? "Load your own analytics and retargeting pixels on this code's hosted page. Visitors are asked for consent first where the law requires it."
-            : "This code opens your website directly, so add your pixels there. Here you can turn on conversion tracking to attribute sales to scans."}{" "}
+            ? t("loadYourOwnAnalyticsAnd")
+            : t("thisCodeOpensYourWebsite")}{" "}
           <Link className="underline" href="/docs/tracking-and-conversions">
-            Learn more
+            {t("learnMore")}
           </Link>
         </>
       }
-      title={isPage ? "Tracking pixels" : "Conversion tracking"}
+      title={isPage ? t("trackingPixels") : t("conversionTracking")}
     >
       {isPage && (
         <>
           {locked && plans.pixels && (
             <PlanLock plan={plans.pixels}>
               {PROVIDERS.some((provider) => settings.pixels?.[provider.key])
-                ? `Your plan doesn't include tracking pixels. The saved ones keep loading; you can remove them, and adding new ones needs ${PLAN_NAMES[plans.pixels]}.`
-                : `Tracking pixels (${providers.map((provider) => PROVIDER_NAMES[provider.key]).join(", ")}) are part of ${PLAN_NAMES[plans.pixels]}.`}
+                ? t("yourPlanDoesntIncludeTracking", {
+                    value: PLAN_NAMES[plans.pixels],
+                  })
+                : t("trackingPixelsValueArePart", {
+                    value: providers
+                      .map((provider) => PROVIDER_NAMES[provider.key])
+                      .join(", "),
+                    value2: PLAN_NAMES[plans.pixels],
+                  })}
             </PlanLock>
           )}
           <div className="grid gap-3 sm:grid-cols-2">
@@ -292,7 +308,7 @@ function PixelsEditor({
             ))}
           </div>
           <div className="space-y-1">
-            <Label htmlFor={`${id}-consent`}>Cookie consent banner</Label>
+            <Label htmlFor={`${id}-consent`}>{t("cookieConsentBanner")}</Label>
             <Select
               onValueChange={(consent) =>
                 setDraft({ consent: consent as Draft["consent"] })
@@ -304,14 +320,13 @@ function PixelsEditor({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="auto">
-                  Where required (EU, EEA, UK, Switzerland, unknown location)
+                  {t("whereRequiredEuEeaUk")}
                 </SelectItem>
-                <SelectItem value="always">For every visitor</SelectItem>
+                <SelectItem value="always">{t("forEveryVisitor")}</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-muted-foreground text-xs">
-              Pixels never load before a visitor accepts the banner. Elsewhere
-              (setting "Where required") they load right away.
+              {t("pixelsNeverLoadBeforeA")}
             </p>
           </div>
         </>
@@ -336,7 +351,7 @@ function PixelsEditor({
             type="button"
             variant="ghost"
           >
-            Discard
+            {t("discard")}
           </Button>
         )}
         <Button
@@ -345,7 +360,7 @@ function PixelsEditor({
           size="sm"
           type="button"
         >
-          {isPending ? "Saving…" : "Save"}
+          {isPending ? t("saving") : t("save")}
         </Button>
       </div>
     </PanelCard>
@@ -366,9 +381,10 @@ export function PixelsPanel({
   settings: MarketingSettingsPromise;
   plans: PixelPlans;
 }) {
+  const t = useTranslations("app.dashboard.codes.pixelsPanel");
   return (
     <Suspense fallback={<PanelFallback />}>
-      <MarketingSettingsGate settings={settings} title="Tracking">
+      <MarketingSettingsGate settings={settings} title={t("tracking")}>
         {(data) => <PixelsEditor initial={data} plans={plans} />}
       </MarketingSettingsGate>
     </Suspense>

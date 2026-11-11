@@ -14,6 +14,7 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { createWorkspace } from "@/actions/organizations";
 import { useRefreshTeams } from "@/components/org-switcher";
@@ -32,6 +33,7 @@ export function CreateWorkspaceDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const t = useTranslations("app.workspaces.createWorkspaceDialog");
   const router = useRouter();
   const refresh = useRefreshTeams();
   const openGetProDialog = useGetProDialogStore((s) => s.openGetProDialog);
@@ -60,7 +62,7 @@ export function CreateWorkspaceDialog({
         }
         return;
       }
-      toast.success(`Created ${name.trim()}`);
+      toast.success(t("createdName", { name: name.trim() }));
       close();
       refresh();
       router.push(workspaceHref(result.data.slug));
@@ -75,13 +77,11 @@ export function CreateWorkspaceDialog({
       <DialogContent>
         <form className="space-y-4" onSubmit={submit}>
           <DialogHeader>
-            <DialogTitle>Create a workspace</DialogTitle>
-            <DialogDescription>
-              Its own codes, pages, themes and members. Invite people after.
-            </DialogDescription>
+            <DialogTitle>{t("createAWorkspace")}</DialogTitle>
+            <DialogDescription>{t("itsOwnCodesPagesThemes")}</DialogDescription>
           </DialogHeader>
           <div className="space-y-1.5">
-            <Label htmlFor="workspace-name">Workspace name</Label>
+            <Label htmlFor="workspace-name">{t("workspaceName")}</Label>
             <Input
               autoFocus
               id="workspace-name"
@@ -93,7 +93,7 @@ export function CreateWorkspaceDialog({
                   setSlug(slugifyWorkspaceName(event.target.value));
                 }
               }}
-              placeholder="Acme Marketing"
+              placeholder={t("acmeMarketing")}
               required
               value={name}
             />
@@ -113,7 +113,7 @@ export function CreateWorkspaceDialog({
               disabled={isPending || status.state === "blocked"}
               type="submit"
             >
-              {isPending ? "Creating..." : "Create workspace"}
+              {isPending ? t("creating") : t("createWorkspace")}
             </Button>
           </DialogFooter>
         </form>

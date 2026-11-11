@@ -45,6 +45,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import {
   duplicateQrCode,
@@ -112,6 +113,7 @@ export function CodeActionsMenu({
   /** Rows are selected: M, T, A and ⌫ act on the selection, not this row */
   bulkKeys?: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.codeActionsMenu");
   const workspaceSlug = useWorkspaceSlug();
   const router = useRouter();
   const openInPlayground = useOpenInPlayground();
@@ -132,17 +134,15 @@ export function CodeActionsMenu({
   const toggleArchived = () =>
     run(() => setQrCodesArchived({ ids, archived: !archived }), {
       success: archived ? "Code restored" : "Code archived",
-      description: archived
-        ? "Scans redirect again."
-        : "Scans show a 'no longer active' page until you restore it.",
+      description: archived ? t("scansRedirectAgain") : t("scansShowANoLonger"),
     });
 
   const togglePaused = () =>
     run(() => setQrCodesPaused({ ids, paused: !paused }), {
       success: paused ? "Code resumed" : "Code paused",
       description: paused
-        ? "Scans redirect again."
-        : "Scans go to your fallback URL, or a neutral 'paused' page.",
+        ? t("scansRedirectAgain")
+        : t("scansGoToYourFallback"),
     });
 
   const toggleFavorite = () =>
@@ -165,14 +165,11 @@ export function CodeActionsMenu({
     const result = await run(() => trashQrCodes({ ids }), {
       refresh: !afterDelete,
       success: ({ updated }) => (updated > 0 ? "Moved to trash" : null),
-      description:
-        "Scans show a 'no longer active' page. Restore it from the trash any time.",
+      description: t("scansShowANoLonger2"),
       undo: () => restoreQrCodes({ ids }),
     });
     if (result && result.updated === 0) {
-      toast.error(
-        "Only team owners and admins can delete codes created by others.",
-      );
+      toast.error(t("onlyTeamOwnersAndAdmins"));
       return;
     }
     if (result && afterDelete) router.push(afterDelete);
@@ -181,9 +178,7 @@ export function CodeActionsMenu({
   const restore = () =>
     run(() => restoreQrCodes({ ids }), {
       success: "Code restored",
-      description: archived
-        ? "It's back in Archived."
-        : "Scans redirect again.",
+      description: archived ? t("itsBackInArchived") : t("scansRedirectAgain"),
     });
 
   const purge = async () => {
@@ -191,24 +186,22 @@ export function CodeActionsMenu({
       success: ({ updated }) => (updated > 0 ? "Code deleted forever" : null),
     });
     if (result && result.updated === 0) {
-      toast.error(
-        "Only team owners and admins can delete codes created by others.",
-      );
+      toast.error(t("onlyTeamOwnersAndAdmins"));
     }
     if (result) setDialog(null);
   };
 
   const download = (format: CodeImageFormat) => {
     downloadCodeQr(code, format).catch(() =>
-      toast.error("Download failed. Please try again."),
+      toast.error(t("downloadFailedPleaseTryAgain")),
     );
   };
 
   const copyLink = () => {
     navigator.clipboard
       .writeText(code.shortLink)
-      .then(() => toast.success("Short link copied"))
-      .catch(() => toast.error("Couldn't copy the short link"));
+      .then(() => toast.success(t("shortLinkCopied")))
+      .catch(() => toast.error(t("couldntCopyTheShortLink")));
   };
 
   const listItem = isListItem(code) ? code : null;
@@ -279,7 +272,7 @@ export function CodeActionsMenu({
   const trigger = (
     <DropdownMenuTrigger asChild>
       <Button
-        aria-label="Code actions"
+        aria-label={t("codeActions")}
         disabled={isPending}
         size="icon-sm"
         variant="ghost"
@@ -296,13 +289,13 @@ export function CodeActionsMenu({
           {trigger}
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuItem onSelect={restore}>
-              <RotateCcw /> Restore
+              <RotateCcw /> {t("restore")}
             </DropdownMenuItem>
             <DropdownMenuItem
               onSelect={() => setDialog("purge")}
               variant="destructive"
             >
-              <Trash2 /> Delete forever
+              <Trash2 /> {t("deleteForever")}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -312,20 +305,21 @@ export function CodeActionsMenu({
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Delete this code forever?</AlertDialogTitle>
+              <AlertDialogTitle>{t("deleteThisCodeForever")}</AlertDialogTitle>
               <AlertDialogDescription>
-                Its scan and version history are deleted, and printed copies
-                show a "QR code not found" page. This can't be undone.
+                {t("itsScanAndVersionHistory")}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+              <AlertDialogCancel disabled={isPending}>
+                {t("cancel")}
+              </AlertDialogCancel>
               <Button
                 disabled={isPending}
                 onClick={purge}
                 variant="destructive"
               >
-                Delete forever
+                {t("deleteForever")}
               </Button>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -344,25 +338,24 @@ export function CodeActionsMenu({
           onKeyDown={onMenuKeyDown}
         >
           <DropdownMenuItem onSelect={copyLink}>
-            <Link21 /> Copy short link
-            {keyHint("copy")}
+            <Link21 /> {t("copyShortLinkValue")} {keyHint("copy")}
           </DropdownMenuItem>
           {showAnalyticsLink && (
             <DropdownMenuItem asChild>
               <Link href={codeTabHref(workspaceSlug, code.id, "analytics")}>
-                <ChartNoAxesCombined /> View analytics
+                <ChartNoAxesCombined /> {t("viewAnalytics")}
               </Link>
             </DropdownMenuItem>
           )}
           <DropdownMenuSeparator />
           <DropdownMenuItem onSelect={() => download("png")}>
-            <Download /> Download PNG
+            <Download /> {t("downloadPng")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("webp")}>
-            <GalleryImport /> Download WebP
+            <GalleryImport /> {t("downloadWebp")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("svg")}>
-            <DocumentDownload /> Download SVG
+            <DocumentDownload /> {t("downloadSvg")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -379,38 +372,36 @@ export function CodeActionsMenu({
           onKeyDown={onMenuKeyDown}
         >
           <DropdownMenuItem onSelect={handlers.edit}>
-            <Pencil /> Edit link
-            {keyHint("edit")}
+            <Pencil /> {t("editLinkValue")} {keyHint("edit")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={copyLink}>
-            <Link21 /> Copy short link
-            {keyHint("copy")}
+            <Link21 /> {t("copyShortLinkValue")} {keyHint("copy")}
           </DropdownMenuItem>
           {showAnalyticsLink && (
             <>
               <DropdownMenuItem asChild>
                 <Link href={codeTabHref(workspaceSlug, code.id, "analytics")}>
-                  <ChartNoAxesCombined /> View analytics
+                  <ChartNoAxesCombined /> {t("viewAnalytics")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={codeTabHref(workspaceSlug, code.id, "settings")}>
-                  <Setting2 /> Code settings
+                  <Setting2 /> {t("codeSettings")}
                 </Link>
               </DropdownMenuItem>
             </>
           )}
           <DropdownMenuItem onSelect={() => openInPlayground(code)}>
-            <Palette /> Edit design in playground
+            <Palette /> {t("editDesignInPlayground")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("png")}>
-            <Download /> Download PNG
+            <Download /> {t("downloadPng")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("webp")}>
-            <GalleryImport /> Download WebP
+            <GalleryImport /> {t("downloadWebp")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("svg")}>
-            <DocumentDownload /> Download SVG
+            <DocumentDownload /> {t("downloadSvg")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           {listItem && (
@@ -418,30 +409,27 @@ export function CodeActionsMenu({
               <DropdownMenuItem onSelect={toggleFavorite}>
                 {listItem.isFavorite ? (
                   <>
-                    <StarOff /> Remove from favorites
+                    <StarOff /> {t("removeFromFavorites")}
                   </>
                 ) : (
                   <>
-                    <Star /> Add to favorites
+                    <Star /> {t("addToFavorites")}
                   </>
                 )}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDialog("move")}>
-                <FolderInput /> Move to folder...
-                {keyHint("move")}
+                <FolderInput /> {t("moveToFolderValue")} {keyHint("move")}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDialog("tags")}>
-                <Tags /> Tags...
-                {keyHint("tags")}
+                <Tags /> {t("tagsValue")} {keyHint("tags")}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDialog("notes")}>
-                <NotebookPen /> Notes...
+                <NotebookPen /> {t("notes")}
               </DropdownMenuItem>
             </>
           )}
           <DropdownMenuItem onSelect={duplicate}>
-            <Copy /> Duplicate
-            {keyHint("duplicate")}
+            <Copy /> {t("duplicateValue")} {keyHint("duplicate")}
           </DropdownMenuItem>
           {/* ── Moving and sharing a code ─────────────────────────────────
               Other lanes add their items here, in this one menu (the cards,
@@ -450,22 +438,22 @@ export function CodeActionsMenu({
               (feat/code-features). Use an icon not used elsewhere in this
               menu, and a key from row-shortcuts.ts only if it's free. */}
           <DropdownMenuItem onSelect={() => setDialog("workspace")}>
-            <Buildings2 /> Move to workspace...
+            <Buildings2 /> {t("moveToWorkspace")}
           </DropdownMenuItem>
           {/* Public, read-only analytics page (share-stats-dialog.tsx) */}
           <DropdownMenuItem onSelect={() => setDialog("share")}>
-            <Share /> Share analytics...
+            <Share /> {t("shareAnalytics")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           {listItem && (
             <DropdownMenuItem onSelect={togglePaused}>
               {paused ? (
                 <>
-                  <Play /> Resume
+                  <Play /> {t("resume")}
                 </>
               ) : (
                 <>
-                  <Pause /> Pause
+                  <Pause /> {t("pause")}
                 </>
               )}
             </DropdownMenuItem>
@@ -473,18 +461,17 @@ export function CodeActionsMenu({
           <DropdownMenuItem onSelect={toggleArchived}>
             {archived ? (
               <>
-                <ArchiveRestore /> Unarchive
+                <ArchiveRestore /> {t("unarchive")}
               </>
             ) : (
               <>
-                <Archive /> Archive
+                <Archive /> {t("archive")}
               </>
             )}
             {keyHint("archive")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={trash} variant="destructive">
-            <Trash2 /> Move to trash
-            {keyHint("trash")}
+            <Trash2 /> {t("moveToTrashValue")} {keyHint("trash")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

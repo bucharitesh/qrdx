@@ -1,12 +1,15 @@
 import type { IconProps as LucideProps } from "iconsax-reactjs";
+import { use } from "react";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 
 export const SystemTheme = (props: LucideProps) => {
+  const t = use(getAppTranslations("app.settings.general.systemTheme"));
   return (
     <svg
       viewBox="0 0 177 140"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      aria-label="System theme"
+      aria-label={t("systemTheme")}
       {...props}
     >
       <g clipPath="url(#clip0_77_39)">

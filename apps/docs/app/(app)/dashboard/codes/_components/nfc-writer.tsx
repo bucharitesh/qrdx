@@ -13,6 +13,7 @@ import {
   Refresh,
   TickCircle,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useId, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import {
@@ -100,6 +101,7 @@ function Status({
  * rendered where the browser supports it (see useWebNfcSupport).
  */
 export function NfcWriter({ url, canLock }: { url: string; canLock: boolean }) {
+  const t = useTranslations("app.dashboard.codes.nfcWriter");
   const [state, setState] = useState<WriterState>({ step: "ready" });
   const [understood, setUnderstood] = useState(false);
   const controller = useRef<AbortController | null>(null);
@@ -161,12 +163,11 @@ export function NfcWriter({ url, canLock }: { url: string; canLock: boolean }) {
     case "ready":
       return (
         <div className="space-y-4">
-          <Status icon={Mobile} title="Ready to write">
-            Tap Write to NFC tag, then hold the tag flat against the back of
-            your phone.
+          <Status icon={Mobile} title={t("readyToWrite")}>
+            {t("tapWriteToNfcTag")}
           </Status>
           <Button className="w-full sm:w-auto" onClick={write}>
-            Write to NFC tag
+            {t("writeToNfcTag")}
           </Button>
         </div>
       );
@@ -178,19 +179,19 @@ export function NfcWriter({ url, canLock }: { url: string; canLock: boolean }) {
             spinning
             title={
               state.step === "writing"
-                ? "Hold the tag near the phone"
-                : "Hold the same tag near the phone"
+                ? t("holdTheTagNearThe")
+                : t("holdTheSameTagNear")
             }
           >
-            Keep it still against the back of the phone, near the camera, until
-            this says {state.step === "writing" ? "written" : "locked"}.
+            {t("keepItStillAgainstThe")}{" "}
+            {state.step === "writing" ? t("written2") : t("locked2")}.
           </Status>
           <Button
             className="w-full sm:w-auto"
             onClick={cancel}
             variant="outline"
           >
-            Cancel
+            {t("cancel")}
           </Button>
         </div>
       );
@@ -209,8 +210,8 @@ export function NfcWriter({ url, canLock }: { url: string; canLock: boolean }) {
           >
             <Refresh />
             {NEEDS_ANOTHER_TAG.has(state.failure)
-              ? "Try another tag"
-              : "Try again"}
+              ? t("tryAnotherTag")
+              : t("tryAgain")}
           </Button>
         </div>
       );
@@ -218,44 +219,39 @@ export function NfcWriter({ url, canLock }: { url: string; canLock: boolean }) {
     case "locked":
       return (
         <div className="space-y-4">
-          <Status icon={Lock} title="Locked">
-            This tag is read-only now. It still opens the code's link, and you
-            can change where that leads in QRdx any time.
+          <Status icon={Lock} title={t("locked")}>
+            {t("thisTagIsReadOnly")}
           </Status>
           <Button
             className="w-full sm:w-auto"
             onClick={write}
             variant="outline"
           >
-            Write another tag
+            {t("writeAnotherTag")}
           </Button>
         </div>
       );
     case "written":
       return (
         <div className="space-y-5">
-          <Status icon={TickCircle} title="Written">
-            Test it: tap the tag against your phone. It should open the link and
-            count as an NFC tap.
+          <Status icon={TickCircle} title={t("written")}>
+            {t("testItTapTheTag")}
           </Status>
           <Button
             className="w-full sm:w-auto"
             onClick={write}
             variant="outline"
           >
-            Write another tag
+            {t("writeAnotherTag")}
           </Button>
           {canLock && (
             <div className="space-y-3 border-t pt-4">
               <div className="space-y-1">
                 <p className="text-sm font-medium">
-                  Lock the tag (optional, permanent)
+                  {t("lockTheTagOptionalPermanent")}
                 </p>
                 <p className="text-muted-foreground text-sm">
-                  A locked tag can never be changed or erased again, by anyone,
-                  including you. Lock it only if it will sit somewhere people
-                  could rewrite it. The link on it keeps following the code, so
-                  you can still change where it leads.
+                  {t("aLockedTagCanNever")}
                 </p>
               </div>
               <div className="flex items-start gap-2">
@@ -265,7 +261,7 @@ export function NfcWriter({ url, canLock }: { url: string; canLock: boolean }) {
                   onCheckedChange={(value) => setUnderstood(value === true)}
                 />
                 <Label className="text-sm leading-snug" htmlFor={confirmId}>
-                  I understand this tag can never be rewritten
+                  {t("iUnderstandThisTagCan")}
                 </Label>
               </div>
               <Button
@@ -275,7 +271,7 @@ export function NfcWriter({ url, canLock }: { url: string; canLock: boolean }) {
                 variant="destructive"
               >
                 <Lock />
-                Lock this tag
+                {t("lockThisTag")}
               </Button>
             </div>
           )}

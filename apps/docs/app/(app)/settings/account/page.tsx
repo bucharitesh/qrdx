@@ -22,6 +22,7 @@ import {
 } from "@/lib/account/sign-in-methods";
 import { getMyCommunityProfile } from "@/lib/community/profiles";
 import { CommunityUnavailableError } from "@/lib/community/store";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { signInPath } from "@/lib/safe-redirect";
 import { scanGeo } from "@/lib/scans";
 import { isStorageConfigured } from "@/lib/storage/r2";
@@ -79,6 +80,7 @@ export default async function AccountPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const t = await getAppTranslations("app.settings.account.page");
   const requestHeaders = await headers();
   const session = await auth.api.getSession({ headers: requestHeaders });
   if (!session) redirect(signInPath("/settings/account"));
@@ -135,8 +137,8 @@ export default async function AccountPage({
     <ConfirmIdentityProvider>
       <div className="space-y-6">
         <SettingsHeader
-          description="Your profile, how you sign in, where you're signed in, and your data."
-          title="Profile & security"
+          description={t("yourProfileHowYouSign")}
+          title={t("profileSecurity")}
         />
 
         <ProfileSection

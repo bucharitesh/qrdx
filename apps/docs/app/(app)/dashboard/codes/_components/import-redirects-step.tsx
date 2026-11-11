@@ -5,6 +5,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { ArrowLeft, ArrowRight3, RotateLeft, Warning2 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useState } from "react";
 import {
   MigrateApiError,
@@ -46,6 +47,7 @@ export function RedirectsStep({
   provider: ApiProviderId;
   onBack: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.importRedirectsStep");
   const { name, redirectLimits } = API_PROVIDERS[provider];
   // Dub imports have ended: no new changes (the dry run is empty), undo only.
   const retired = isRetiredProvider(provider);
@@ -133,7 +135,7 @@ export function RedirectsStep({
         <>
           <Button disabled={busy} onClick={onBack} size="sm" variant="ghost">
             <ArrowLeft />
-            Summary
+            {t("summary")}
           </Button>
           <div className="flex items-center gap-2">
             {live > 0 && (
@@ -143,7 +145,7 @@ export function RedirectsStep({
                 variant="outline"
               >
                 <RotateLeft />
-                Undo {plural(live, "link")}
+                {t("undoValue", { value: plural(live, "link") })}
               </Button>
             )}
             {pending > 0 && !retired && (
@@ -154,7 +156,7 @@ export function RedirectsStep({
                 {busy && run?.mode === "apply" && (
                   <Spinner className="animate-spin" />
                 )}
-                Update {plural(pending, "link")} in {name}
+                {t("update")} {plural(pending, "link")} {t("in")} {name}
               </Button>
             )}
           </div>
@@ -164,25 +166,18 @@ export function RedirectsStep({
       <div className="space-y-4">
         {retired ? (
           <Note icon={<Info />}>
-            <p className="font-medium">Imports from {name} have ended.</p>
-            <p>
-              QRdx no longer changes {name} links. Undo puts the original
-              destinations back in your {name} account (they're saved with this
-              import). The QRdx codes stay.
+            <p className="font-medium">
+              {t("importsFromNameHaveEnded", { name })}
             </p>
+            <p>{t("qrdxNoLongerChangesName", { name, name2: name })}</p>
           </Note>
         ) : (
           <>
             <Note icon={<Warning2 />} tone="warning">
               <p className="font-medium">
-                This changes links in your {name} account.
+                {t("thisChangesLinksInYour", { name })}
               </p>
-              <p>
-                Each old link will open its new QRdx code, which sends visitors
-                to the same destination, so printed codes keep working and their
-                scans show in QRdx. {name} still sees a click first. Undo puts
-                the original destinations back (they're saved with this import).
-              </p>
+              <p>{t("eachOldLinkWillOpen", { name })}</p>
             </Note>
             <Note icon={<Info />}>
               <p>{redirectLimits}</p>
@@ -196,18 +191,18 @@ export function RedirectsStep({
               <span className="font-medium">
                 {run.finished
                   ? run.mode === "undo"
-                    ? `${plural(run.done, "link")} restored`
-                    : `${plural(run.done, "link")} now open QRdx`
+                    ? t("valueRestored", { value: plural(run.done, "link") })
+                    : t("valueNowOpenQrdx", { value: plural(run.done, "link") })
                   : run.mode === "undo"
-                    ? "Restoring original destinations…"
-                    : `Updating links in ${name}…`}
+                    ? t("restoringOriginalDestinations")
+                    : t("updatingLinksInName", { name })}
               </span>
               <span className="text-muted-foreground tabular-nums">
                 {run.done} / {run.total}
               </span>
             </div>
             <Progress
-              aria-label="Update progress"
+              aria-label={t("updateProgress")}
               value={run.total ? Math.round((run.done / run.total) * 100) : 100}
             />
             {run.stopped && (
@@ -235,15 +230,19 @@ export function RedirectsStep({
 
         {plan === null && !error ? (
           <div className="text-muted-foreground flex items-center gap-2 py-6 text-sm">
-            <Spinner className="size-4 animate-spin" /> Listing the changes…
+            <Spinner className="size-4 animate-spin" /> {t("listingTheChanges")}
           </div>
         ) : pending > 0 ? (
           <div className="space-y-2">
             <h3 className="text-sm font-semibold">
-              Dry run{" "}
-              <span className="text-muted-foreground font-normal">
-                · {plural(pending, "link")} would change
-              </span>
+              {t.rich("dryRunValueWouldChange", {
+                value: plural(pending, "link"),
+                span: (chunks) => (
+                  <span className="text-muted-foreground font-normal">
+                    {chunks}
+                  </span>
+                ),
+              })}
             </h3>
             <ul className="max-h-64 divide-y overflow-y-auto rounded-xl border text-xs">
               {plan?.slice(0, 300).map((item) => (
@@ -274,8 +273,7 @@ export function RedirectsStep({
                 disabled={busy}
                 onCheckedChange={(value) => setAgreed(value === true)}
               />
-              I understand these {name} links will point to QRdx until I undo
-              it.
+              {t("iUnderstandTheseNameLinks", { name })}
             </label>
           </div>
         ) : (
@@ -284,8 +282,8 @@ export function RedirectsStep({
               {live > 0
                 ? `${plural(live, "old link")} already point${live === 1 ? "s" : ""} to QRdx.`
                 : retired
-                  ? `Every old ${name} link has its original destination.`
-                  : "No links to change."}
+                  ? t("everyOldNameLinkHas", { name })
+                  : t("noLinksToChange")}
             </p>
           )
         )}

@@ -11,6 +11,7 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { CopyButton } from "./event-checkboxes";
 
 /** Shows a signing secret (after create, reveal or rotate). */
@@ -25,6 +26,7 @@ export function SecretDialog({
   description: string;
   onClose: () => void;
 }) {
+  const t = useTranslations("app.dashboard.webhooks.secretDialog");
   return (
     <Dialog onOpenChange={(open) => !open && onClose()} open={secret !== null}>
       <DialogContent className="sm:max-w-lg">
@@ -34,24 +36,29 @@ export function SecretDialog({
         </DialogHeader>
         <div className="flex items-center gap-2">
           <Input
-            aria-label="Signing secret"
+            aria-label={t("signingSecret")}
             className="font-mono text-xs"
             onFocus={(event) => event.currentTarget.select()}
             readOnly
             value={secret ?? ""}
           />
-          <CopyButton label="Copy signing secret" value={secret ?? ""} />
+          <CopyButton label={t("copySigningSecret")} value={secret ?? ""} />
         </div>
         <p className="text-muted-foreground text-xs">
-          Every request carries an{" "}
-          <code className="font-mono">X-QRdx-Signature</code> header: an
-          HMAC-SHA256 of the timestamp and raw body made with this secret.{" "}
-          <Link className="underline" href="/docs/webhooks#verify-signatures">
-            How to verify it
-          </Link>
+          {t.rich("everyRequestCarriesAnX", {
+            code: (chunks) => <code className="font-mono">{chunks}</code>,
+            link: (chunks) => (
+              <Link
+                className="underline"
+                href="/docs/webhooks#verify-signatures"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
         <DialogFooter>
-          <Button onClick={onClose}>Done</Button>
+          <Button onClick={onClose}>{t("done")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

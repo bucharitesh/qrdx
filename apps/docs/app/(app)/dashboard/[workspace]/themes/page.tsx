@@ -14,6 +14,7 @@ import {
   listVisibleThemes,
   teamThemesPlanName,
 } from "@/app/(app)/dashboard/themes/_lib/queries";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can } from "@/lib/permissions";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { playgroundHref } from "@/lib/playground-links";
@@ -25,6 +26,7 @@ export const metadata: Metadata = {
 };
 
 export default async function ThemesPage() {
+  const t = await getAppTranslations("app.dashboard.themes.page");
   const scope = await requireDashboardScope();
   // In your own workspace, its themes are yours; elsewhere the workspace's
   // shared themes are listed above yours.
@@ -47,15 +49,15 @@ export default async function ThemesPage() {
       <PageHeader
         description={
           team
-            ? `Your saved designs and the ones shared with ${team.name}. New codes here start from its default.`
-            : "Saved QR designs: colors, patterns and logo. New codes start from your default theme."
+            ? t("yourSavedDesignsAndThe", { name: team.name })
+            : t("savedQrDesignsColorsPatterns")
         }
-        title="Themes"
+        title={t("themes")}
       >
         <Badge variant="outline">
           {limited
-            ? `${personalThemes.length} / ${limit} saved`
-            : `${personalThemes.length} saved`}
+            ? t("lengthLimitSaved", { length: personalThemes.length, limit })
+            : t("lengthSaved", { length: personalThemes.length })}
         </Badge>
         <Badge variant={personalPlan === "free" ? "secondary" : "default"}>
           {PLAN_NAMES[personalPlan]}
@@ -63,7 +65,7 @@ export default async function ThemesPage() {
         <Button asChild size="sm">
           <Link href={playgroundHref({ tab: "design" })}>
             <Plus className="size-4" />
-            New theme
+            {t("newTheme")}
           </Link>
         </Button>
       </PageHeader>
@@ -71,8 +73,10 @@ export default async function ThemesPage() {
       {limited && atLimit && (
         <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
           <p className="text-sm">
-            The {PLAN_NAMES[personalPlan]} plan includes {limit} saved themes.
-            Upgrade to Pro for unlimited themes. Existing themes stay editable.
+            {t("theValuePlanIncludesLimit", {
+              value: PLAN_NAMES[personalPlan],
+              limit,
+            })}
           </p>
           <UpgradeButton size="sm" />
         </div>

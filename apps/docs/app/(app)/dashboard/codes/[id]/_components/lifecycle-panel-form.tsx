@@ -20,12 +20,14 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Lock, ShieldCross as ShieldAlert } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useState, useTransition } from "react";
 import {
   type CodeLifecycleView,
   setCodePaused,
   updateCodeLifecycle,
 } from "@/actions/code-lifecycle";
+import type { Translator } from "@/lib/i18n/translator";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
@@ -72,10 +74,13 @@ function When({ iso }: { iso: string }) {
   return <time dateTime={iso}>{text}</time>;
 }
 
-function statusSummary(view: CodeLifecycleView) {
+function statusSummary(
+  view: CodeLifecycleView,
+  t: Translator<"app.dashboard.codes.lifecyclePanelForm">,
+) {
   switch (view.status) {
     case "paused":
-      return "Paused: scans go to your fallback URL or a neutral page.";
+      return t("pausedScansGoToYour");
     case "not-started":
       return view.startsAt ? (
         <>
@@ -90,11 +95,13 @@ function statusSummary(view: CodeLifecycleView) {
         </>
       ) : null;
     case "scan-limit":
-      return `Reached its limit of ${view.scanLimit?.toLocaleString("en-US")} scans.`;
+      return t("reachedItsLimitOfValue", {
+        value: view.scanLimit?.toLocaleString("en-US") ?? "",
+      });
     default:
       return view.hasPassword
-        ? "Live and password protected."
-        : "Live: every scan goes through.";
+        ? t("liveAndPasswordProtected")
+        : t("liveEveryScanGoesThrough");
   }
 }
 
@@ -106,6 +113,7 @@ export function LifecyclePanelForm({
   /** The cheapest plan with password, dates and scan limits (lib/plans.ts) */
   plan: PaidPlan | null;
 }) {
+  const t = useTranslations("app.dashboard.codes.lifecyclePanelForm");
   const router = useRouter();
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
   const upgrade = () => openUpgradeDialog(plan ?? "pro");
@@ -194,8 +202,8 @@ export function LifecyclePanelForm({
       apply(result.data);
       toast.success(
         result.data.heldForReview
-          ? "Saved. The code is held for review because of its fallback URL."
-          : "Settings saved",
+          ? t("savedTheCodeIsHeld")
+          : t("settingsSaved"),
       );
     });
   };
@@ -208,7 +216,7 @@ export function LifecyclePanelForm({
         return;
       }
       apply(result.data);
-      toast.success(paused ? "Code paused" : "Code resumed");
+      toast.success(paused ? t("codePaused") : t("codeResumed"));
     });
   };
 
@@ -218,16 +226,16 @@ export function LifecyclePanelForm({
     <Card className="gap-4 py-4">
       <CardHeader className="px-4">
         <div className="flex flex-wrap items-center gap-2">
-          <CardTitle>Access &amp; schedule</CardTitle>
+          <CardTitle>{t("accessSchedule")}</CardTitle>
           <Badge variant={badge.variant}>{badge.label}</Badge>
           {view.hasPassword && (
             <Badge variant="outline">
               <Lock />
-              Password
+              {t("password")}
             </Badge>
           )}
         </div>
-        <CardDescription>{statusSummary(view)}</CardDescription>
+        <CardDescription>{statusSummary(view, t)}</CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6 px-4">
@@ -235,22 +243,21 @@ export function LifecyclePanelForm({
           <Alert variant="destructive">
             <ShieldAlert />
             <AlertTitle>
-              {view.heldForReview ? "Held for review" : "Turned off by QRdx"}
+              {view.heldForReview ? t("heldForReview") : t("turnedOffByQrdx")}
             </AlertTitle>
             <AlertDescription>
               {view.heldForReview
-                ? "Our automated checks flagged a link on this code (for example a URL shortener, an IP address or a lookalike domain), so it stays off until a reviewer approves it, usually within a day. Nothing else is needed from you."
-                : "This code was switched off after an abuse review and doesn't redirect. Contact support@qrdx.dev if you think this is a mistake."}
+                ? t("ourAutomatedChecksFlaggedA")
+                : t("thisCodeWasSwitchedOff")}
             </AlertDescription>
           </Alert>
         )}
 
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
-            <Label htmlFor="lifecycle-paused">Pause code</Label>
+            <Label htmlFor="lifecycle-paused">{t("pauseCode")}</Label>
             <p className="text-muted-foreground text-sm">
-              While paused, scans go to your fallback URL, or to a neutral "this
-              campaign is paused" page. Available on every plan.
+              {t("whilePausedScansGoTo")}
             </p>
           </div>
           <Switch
@@ -264,20 +271,19 @@ export function LifecyclePanelForm({
         {locked && (
           <div className="bg-muted/50 flex flex-col gap-3 rounded-lg border p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
             <p>
-              Passwords, start and end dates, scan limits and fallback URLs are
-              part of {plan ? PLAN_NAMES[plan] : "a paid plan"}.
-              {hasProSettings &&
-                " Your current settings keep working, and you can remove them any time."}
+              {t("passwordsStartAndEndDates")}{" "}
+              {plan ? PLAN_NAMES[plan] : t("aPaidPlan")}.
+              {hasProSettings && t("yourCurrentSettingsKeepWorking")}
             </p>
             <Button onClick={upgrade} size="sm" type="button">
-              Upgrade
+              {t("upgrade")}
             </Button>
           </div>
         )}
 
         <form className="space-y-6" onSubmit={onSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="lifecycle-password">Password</Label>
+            <Label htmlFor="lifecycle-password">{t("password")}</Label>
             {view.hasPassword && !removePassword ? (
               <div className="flex flex-col gap-2 sm:flex-row">
                 <Input
@@ -286,7 +292,7 @@ export function LifecyclePanelForm({
                   id="lifecycle-password"
                   maxLength={64}
                   onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Enter a new password to change it"
+                  placeholder={t("enterANewPasswordTo")}
                   type="password"
                   value={password}
                 />
@@ -298,7 +304,7 @@ export function LifecyclePanelForm({
                   type="button"
                   variant="outline"
                 >
-                  Remove password
+                  {t("removePassword")}
                 </Button>
               </div>
             ) : (
@@ -310,16 +316,15 @@ export function LifecyclePanelForm({
                 onChange={(event) => setPassword(event.target.value)}
                 placeholder={
                   removePassword
-                    ? "The password will be removed when you save"
-                    : "No password"
+                    ? t("thePasswordWillBeRemoved")
+                    : t("noPassword")
                 }
                 type="password"
                 value={password}
               />
             )}
             <p className="text-muted-foreground text-xs">
-              Visitors type it once; that browser stays unlocked for 6 hours. At
-              least 4 characters.
+              {t("visitorsTypeItOnceThat")}
             </p>
           </div>
 
@@ -346,7 +351,7 @@ export function LifecyclePanelForm({
                       type="button"
                       variant="outline"
                     >
-                      Clear
+                      {t("clear")}
                     </Button>
                   )}
                 </div>
@@ -354,13 +359,12 @@ export function LifecyclePanelForm({
             ))}
           </div>
           <p className="text-muted-foreground -mt-4 text-xs">
-            Before the start, scans show a "not active yet" page; after the end,
-            they go to the fallback URL.
-            {timeZone && ` Times are in your time zone (${timeZone}).`}
+            {t("beforeTheStartScansShow")}
+            {timeZone && t("timesAreInYourTime", { timeZone })}
           </p>
 
           <div className="space-y-2">
-            <Label htmlFor="lifecycle-scan-limit">Scan limit</Label>
+            <Label htmlFor="lifecycle-scan-limit">{t("scanLimit")}</Label>
             <div className="flex gap-2">
               <Input
                 disabled={locked}
@@ -368,7 +372,7 @@ export function LifecyclePanelForm({
                 inputMode="numeric"
                 min={1}
                 onChange={(event) => setScanLimit(event.target.value)}
-                placeholder="No limit"
+                placeholder={t("noLimit")}
                 type="number"
                 value={scanLimit}
               />
@@ -378,18 +382,19 @@ export function LifecyclePanelForm({
                   type="button"
                   variant="outline"
                 >
-                  Clear
+                  {t("clear")}
                 </Button>
               )}
             </div>
             <p className="text-muted-foreground text-xs">
-              Counts scans the way your analytics do (bots excluded). This code
-              has {view.scanCount.toLocaleString("en-US")} so far.
+              {t("countsScansTheWayYour", {
+                value: view.scanCount.toLocaleString("en-US"),
+              })}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="lifecycle-fallback">Fallback URL</Label>
+            <Label htmlFor="lifecycle-fallback">{t("fallbackUrl")}</Label>
             <div className="flex gap-2">
               <Input
                 disabled={locked}
@@ -407,20 +412,18 @@ export function LifecyclePanelForm({
                   type="button"
                   variant="outline"
                 >
-                  Clear
+                  {t("clear")}
                 </Button>
               )}
             </div>
             <p className="text-muted-foreground text-xs">
-              Where scans go while the code is paused, after it ends or once it
-              reaches its scan limit. Without one, visitors see a neutral page,
-              never an ad or a QRdx page.
+              {t("whereScansGoWhileThe")}
             </p>
           </div>
 
           <div className="flex justify-end">
             <Button disabled={!hasChanges || isSaving} type="submit">
-              {isSaving ? "Saving…" : "Save changes"}
+              {isSaving ? t("saving") : t("saveChanges")}
             </Button>
           </div>
         </form>

@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown, ArrowUp, ExportSquare } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import {
   formatDate,
@@ -54,6 +55,7 @@ export function PreciseLocationsTable({
 }: {
   rows: PreciseLocationRow[];
 }) {
+  const t = useTranslations("app.dashboard.codes.preciseLocationsTable");
   const [sort, setSort] = useState<{ key: SortKey; desc: boolean }>({
     key: "count",
     desc: true,
@@ -79,12 +81,12 @@ export function PreciseLocationsTable({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <caption className="sr-only">
-            Precise scan locations, rounded to about 100 m
+            {t("preciseScanLocationsRoundedTo")}
           </caption>
           <thead>
             <tr className="text-muted-foreground border-b text-xs">
               <th className="py-2 pr-3 text-left font-medium" scope="col">
-                Location
+                {t("location")}
               </th>
               {COLUMNS.map((column) => {
                 const active = sort.key === column.key;
@@ -132,7 +134,7 @@ export function PreciseLocationsTable({
                   >
                     {formatLatLng(row, 3)}
                     <ExportSquare
-                      aria-label="Open in OpenStreetMap"
+                      aria-label={t("openInOpenstreetmap")}
                       className="text-muted-foreground size-3"
                     />
                   </a>
@@ -160,7 +162,9 @@ export function PreciseLocationsTable({
           type="button"
           variant="ghost"
         >
-          {all ? "Show fewer" : `Show all ${formatNumber(rows.length)}`}
+          {all
+            ? t("showFewer")
+            : t("showAllLength", { length: formatNumber(rows.length) })}
         </Button>
       )}
     </div>

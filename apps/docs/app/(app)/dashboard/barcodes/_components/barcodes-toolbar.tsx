@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The Barcodes list's toolbar: Filter by format, Trash, and live search,
 // like the codes and pages lists. Filters live in the URL.
@@ -35,6 +36,7 @@ export function BarcodesToolbar({
   filters: BarcodesFilters;
   trashCount: number;
 }) {
+  const t = useTranslations("app.dashboard.barcodes.barcodesToolbar");
   const router = useRouter();
   const [, startTransition] = useTransition();
   const go = (patch: Partial<BarcodesFilters>, replace = false) =>
@@ -53,7 +55,7 @@ export function BarcodesToolbar({
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <Filter aria-hidden />
-                Filter
+                {t("filter")}
                 {filters.format && (
                   <span className="bg-foreground text-background rounded-full px-1.5 text-[11px] leading-4 font-medium">
                     1
@@ -63,7 +65,7 @@ export function BarcodesToolbar({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="w-56">
               <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-                Barcode type
+                {t("barcodeType")}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuRadioGroup
@@ -73,7 +75,7 @@ export function BarcodesToolbar({
                 value={filters.format ?? "any"}
               >
                 <DropdownMenuRadioItem value="any">
-                  Every type
+                  {t("everyType")}
                 </DropdownMenuRadioItem>
                 {BARCODE_FORMATS.map((format) => (
                   <DropdownMenuRadioItem key={format.id} value={format.id}>
@@ -89,7 +91,7 @@ export function BarcodesToolbar({
             variant={inTrash ? "secondary" : "outline"}
           >
             <Trash aria-hidden />
-            Trash
+            {t("trash")}
             {trashCount > 0 && (
               <span className="text-muted-foreground tabular-nums">
                 {formatNumber(trashCount)}
@@ -99,9 +101,9 @@ export function BarcodesToolbar({
         </div>
         <ListSearch
           className="flex-1 sm:ml-auto sm:max-w-sm"
-          label="Search barcodes"
+          label={t("searchBarcodes")}
           onSearch={(q) => go({ q }, true)}
-          placeholder="Search titles and values"
+          placeholder={t("searchTitlesAndValues")}
           value={filters.q}
         />
       </div>
@@ -115,7 +117,7 @@ export function BarcodesToolbar({
           >
             {getBarcodeFormat(filters.format).label}
             <X aria-hidden />
-            <span className="sr-only">Remove filter</span>
+            <span className="sr-only">{t("removeFilter")}</span>
           </Button>
         </div>
       )}

@@ -12,6 +12,7 @@ import {
 } from "@repo/integrations/src/catalog";
 import { ArrowRight, SearchNormal1 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { NoLongerAvailableBadge } from "@/components/needs-setup";
 import {
@@ -109,6 +110,7 @@ export function IntegrationsClient({
   integrations,
   hiddenSlugs = [],
 }: IntegrationsClientProps) {
+  const t = useTranslations("app.settings.integrations.integrationsClient");
   const inWorkspace = useWorkspaceHref();
   const [search, setSearch] = useState("");
 
@@ -161,8 +163,8 @@ export function IntegrationsClient({
         />
         <Input
           type="search"
-          placeholder="Search integrations"
-          aria-label="Search integrations"
+          placeholder={t("searchIntegrations")}
+          aria-label={t("searchIntegrations")}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-10"
@@ -172,7 +174,7 @@ export function IntegrationsClient({
       {connected.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-sm font-medium text-muted-foreground">
-            Connected ({connected.length})
+            {t("connectedLength", { length: connected.length })}
           </h2>
           <Card className="gap-0 overflow-hidden p-0 shadow-xs dark:shadow-none">
             {connected.map((integration) => (
@@ -194,7 +196,7 @@ export function IntegrationsClient({
                   </span>
                   <p className="truncate text-muted-foreground text-xs">
                     {integration.noLongerAvailable
-                      ? "Open to disconnect it."
+                      ? t("openToDisconnectIt")
                       : integration.capabilities
                           .map((capability) =>
                             getCapabilityLabel(capability.kind),
@@ -215,7 +217,7 @@ export function IntegrationsClient({
       {connectable.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-sm font-medium text-muted-foreground">
-            Connect an account
+            {t("connectAnAccount")}
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
             {connectable.map((integration) => (
@@ -238,13 +240,13 @@ export function IntegrationsClient({
         <section className="space-y-3">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-sm font-medium text-muted-foreground">
-              Built into QRdx
+              {t("builtIntoQrdx")}
             </h2>
             <Link
               href="/integrations"
               className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
             >
-              All integrations
+              {t("allIntegrations")}
               <ArrowRight aria-hidden className="size-3.5" />
             </Link>
           </div>
@@ -291,10 +293,10 @@ export function IntegrationsClient({
       {nothing && (
         <Card className="items-center gap-3 px-6 py-10 text-center shadow-xs dark:shadow-none">
           <p className="text-sm text-muted-foreground">
-            No integrations match &ldquo;{search.trim()}&rdquo;.
+            {t("noIntegrationsMatchSearch", { search: search.trim() })}
           </p>
           <Button variant="outline" size="sm" onClick={() => setSearch("")}>
-            Clear search
+            {t("clearSearch")}
           </Button>
         </Card>
       )}

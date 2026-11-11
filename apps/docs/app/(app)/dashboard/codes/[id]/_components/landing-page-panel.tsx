@@ -13,6 +13,7 @@ import {
   requireDashboardScope,
   scopeWhere,
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { getTemplate } from "@/lib/landing/templates";
 import { can } from "@/lib/permissions";
 import { requestWorkspaceSlug } from "@/lib/scope";
@@ -21,6 +22,7 @@ import { workspaceLink } from "@/lib/workspace-paths";
 
 /** For codes that open a hosted page (kind 'page'): what it shows + edit link. */
 export async function LandingPagePanel({ codeId }: { codeId: string }) {
+  const t = await getAppTranslations("app.dashboard.codes.landingPagePanel");
   const [scope, slug] = await Promise.all([
     requireDashboardScope(),
     requestWorkspaceSlug(),
@@ -43,11 +45,8 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
     return (
       <Card className="gap-2 py-4">
         <CardHeader className="px-4">
-          <CardTitle className="text-base">Hosted page</CardTitle>
-          <CardDescription>
-            The page this code opened was deleted, so scans show "not found".
-            Use Change type to point it at a website link or a new page.
-          </CardDescription>
+          <CardTitle className="text-base">{t("hostedPage")}</CardTitle>
+          <CardDescription>{t("thePageThisCodeOpened")}</CardDescription>
         </CardHeader>
       </Card>
     );
@@ -58,12 +57,13 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
     <Card className="gap-3 py-4">
       <CardHeader className="flex flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 space-y-1">
-          <CardTitle className="text-base">Hosted page</CardTitle>
+          <CardTitle className="text-base">{t("hostedPage")}</CardTitle>
           <CardDescription className="sm:truncate">
-            Scans open {row.title ? `"${row.title}"` : "your page"} ({label}).{" "}
+            {t("scansOpen")} {row.title ? `"${row.title}"` : t("yourPage")} (
+            {label}).{" "}
             {can(scope.role, "content.write")
-              ? "Edit it anytime; the printed code stays the same."
-              : "The printed code always opens its latest version."}
+              ? t("editItAnytimeThePrinted")
+              : t("thePrintedCodeAlwaysOpens")}
           </CardDescription>
         </div>
         <div className="flex shrink-0 gap-2">
@@ -74,7 +74,7 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
               target="_blank"
             >
               <ExternalLink />
-              View
+              {t("view")}
             </a>
           </Button>
           <Button asChild size="sm">
@@ -85,7 +85,7 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
               )}
             >
               <Pencil />
-              {can(scope.role, "content.write") ? "Edit page" : "Open page"}
+              {can(scope.role, "content.write") ? t("editPage") : t("openPage")}
             </Link>
           </Button>
         </div>

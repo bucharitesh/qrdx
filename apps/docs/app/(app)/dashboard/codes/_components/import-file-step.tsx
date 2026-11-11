@@ -18,6 +18,7 @@ import {
   TableDocument,
   Warning2,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import Papa from "papaparse";
 import { useCallback, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -59,6 +60,7 @@ export function FileStep({
   onBack: () => void;
   onContinue: (links: SourceLink[]) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.importFileStep");
   const info = FILE_PROVIDERS[provider];
   const [file, setFile] = useState<ParsedFile | null>(null);
   const [mapping, setMapping] = useState<FileMapping | null>(null);
@@ -153,13 +155,14 @@ export function FileStep({
         <>
           <Button onClick={onBack} size="sm" variant="ghost">
             <ArrowLeft />
-            All providers
+            {t("allProviders")}
           </Button>
           <Button
             disabled={!file || missingDestination || links.length === 0}
             onClick={() => onContinue(links)}
           >
-            Preview {links.length > 0 ? plural(links.length, "row") : "import"}
+            {t("preview")}{" "}
+            {links.length > 0 ? plural(links.length, "row") : t("import")}
             <ArrowRight />
           </Button>
         </>
@@ -169,9 +172,9 @@ export function FileStep({
         <div className="space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-semibold">
-              Get the file from{" "}
+              {t("getTheFileFrom")}{" "}
               {info.name === FILE_PROVIDERS.csv.name
-                ? "your provider"
+                ? t("yourProvider")
                 : info.name}
             </h3>
             <Select
@@ -184,7 +187,10 @@ export function FileStep({
               }}
               value={provider}
             >
-              <SelectTrigger aria-label="Provider" className="h-8 w-56 text-xs">
+              <SelectTrigger
+                aria-label={t("provider")}
+                className="h-8 w-56 text-xs"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -212,7 +218,7 @@ export function FileStep({
         >
           <input
             {...getInputProps()}
-            aria-label="Export file"
+            aria-label={t("exportFile")}
             data-testid="migrate-file"
           />
           <span className="grid size-9 place-items-center rounded-lg border bg-background">
@@ -234,17 +240,20 @@ export function FileStep({
               <span className="text-muted-foreground">
                 {" "}
                 · {plural(file.rows.length, "row")}
-                {file.truncated ? ` (first ${MAX_JOB_LINKS})` : ""}
+                {file.truncated ? t("firstMaxJobLinks", { MAX_JOB_LINKS }) : ""}
               </span>
             </p>
           ) : (
             <p className="text-sm">
-              Drop the CSV here{" "}
-              <span className="text-muted-foreground">(up to 2 MB)</span>
+              {t.rich("dropTheCsvHereUp", {
+                span: (chunks) => (
+                  <span className="text-muted-foreground">{chunks}</span>
+                ),
+              })}
             </p>
           )}
           <Button onClick={open} size="sm" type="button" variant="outline">
-            {file ? "Choose another file" : "Choose file"}
+            {file ? t("chooseAnotherFile") : t("chooseFile")}
           </Button>
         </div>
 
@@ -257,10 +266,12 @@ export function FileStep({
         {file && mapping && (
           <div className="space-y-3">
             <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <h3 className="text-sm font-semibold">Match the columns</h3>
+              <h3 className="text-sm font-semibold">{t("matchTheColumns")}</h3>
               {detected && detected !== "csv" && (
                 <span className="text-muted-foreground text-xs">
-                  Looks like a {FILE_PROVIDERS[detected].name} export
+                  {t("looksLikeANameExport", {
+                    name: FILE_PROVIDERS[detected].name,
+                  })}
                 </span>
               )}
             </div>
@@ -270,7 +281,10 @@ export function FileStep({
                   <Label className="text-xs" htmlFor={`map-${field}`}>
                     {FILE_FIELD_LABELS[field]}
                     {field === "destination" && (
-                      <span className="text-muted-foreground"> (required)</span>
+                      <span className="text-muted-foreground">
+                        {" "}
+                        {t("required")}
+                      </span>
                     )}
                   </Label>
                   <Select
@@ -281,7 +295,7 @@ export function FileStep({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value={NONE}>Not in the file</SelectItem>
+                      <SelectItem value={NONE}>{t("notInTheFile")}</SelectItem>
                       {file.headers.map((header, index) => (
                         <SelectItem key={index} value={String(index)}>
                           {header}
@@ -299,15 +313,11 @@ export function FileStep({
             </div>
             {missingDestination ? (
               <Note icon={<Warning2 />} tone="warning">
-                <p>Pick the column with each code's destination URL.</p>
+                <p>{t("pickTheColumnWithEach")}</p>
               </Note>
             ) : (
               <Note icon={<Info />}>
-                <p>
-                  The old short link (or code ID) is what makes a re-upload of
-                  the same file skip codes it already imported, and it goes into
-                  the mapping of old to new links.
-                </p>
+                <p>{t("theOldShortLinkOr")}</p>
               </Note>
             )}
           </div>

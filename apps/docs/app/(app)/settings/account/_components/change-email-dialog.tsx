@@ -19,6 +19,7 @@ import {
   InputOTPSlot,
 } from "@repo/design-system/components/ui/input-otp";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { DialogCloseButton } from "@/components/confirm-identity/dialog-close-button";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -58,6 +59,7 @@ export function ChangeEmailDialog({
   onOpenChange: (open: boolean) => void;
   currentEmail: string;
 }) {
+  const t = useTranslations("app.settings.account.changeEmailDialog");
   const id = useId();
   const router = useRouter();
   const { refetch } = authClient.useSession();
@@ -161,8 +163,8 @@ export function ChangeEmailDialog({
         if (!result.ok && result.reason !== "code-dead") setCode("");
         return;
       }
-      toast.success(`Your email is now ${sentTo}`, {
-        description: `We sent a note about the change to ${currentEmail}.`,
+      toast.success(t("yourEmailIsNowSentto", { sentTo }), {
+        description: t("weSentANoteAbout", { currentEmail }),
       });
       track("email_changed");
       onOpenChange(false);
@@ -219,11 +221,11 @@ export function ChangeEmailDialog({
       >
         <DialogCloseButton disabled={busy} />
         <DialogHeader>
-          <DialogTitle>Change your email</DialogTitle>
+          <DialogTitle>{t("changeYourEmail")}</DialogTitle>
           <DialogDescription className="text-pretty">
             {sentTo
-              ? `Enter the 6-digit code we sent to ${sentTo}. It expires in 5 minutes.`
-              : `Sign-in codes and team invitations will go to the new address. ${currentEmail} keeps working until you confirm.`}
+              ? t("enterThe6DigitCode", { sentTo })
+              : t("signInCodesAndTeam", { currentEmail })}
           </DialogDescription>
         </DialogHeader>
 
@@ -232,7 +234,7 @@ export function ChangeEmailDialog({
             <div className="space-y-3">
               <InputOTP
                 aria-describedby={`${id}-error ${id}-status`}
-                aria-label="Code from the new address"
+                aria-label={t("codeFromTheNewAddress")}
                 autoFocus
                 disabled={codeDead || confirming}
                 maxLength={CODE_LENGTH}
@@ -263,7 +265,7 @@ export function ChangeEmailDialog({
                   onClick={editEmail}
                   type="button"
                 >
-                  Use a different email
+                  {t("useADifferentEmail")}
                 </button>
                 <button
                   className={`${TEXT_ACTION} tabular-nums`}
@@ -272,10 +274,10 @@ export function ChangeEmailDialog({
                   type="button"
                 >
                   {sending
-                    ? "Sending…"
+                    ? t("sending")
                     : secondsLeft > 0
-                      ? `Resend in ${secondsLeft}s`
-                      : "Resend code"}
+                      ? t("resendInSecondsleftS", { secondsLeft })
+                      : t("resendCode")}
                 </button>
               </div>
             </div>
@@ -284,8 +286,7 @@ export function ChangeEmailDialog({
               className="text-muted-foreground text-xs text-pretty"
               id={`${id}-status`}
             >
-              {notice ??
-                "No code? Check spam. An address that already has its own QRdx account can't be used."}
+              {notice ?? t("noCodeCheckSpamAn")}
             </p>
             <DialogFooter>
               <Button
@@ -294,14 +295,14 @@ export function ChangeEmailDialog({
                 type="button"
                 variant="outline"
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 disabled={busy || codeDead || code.length !== CODE_LENGTH}
                 type="submit"
               >
                 {confirming && <Spinner className="animate-spin" />}
-                Change email
+                {t("changeEmail")}
               </Button>
             </DialogFooter>
           </form>
@@ -309,7 +310,7 @@ export function ChangeEmailDialog({
           <form className="space-y-4" noValidate onSubmit={onEmailSubmit}>
             <div className="space-y-2">
               <label className="text-sm font-medium" htmlFor={`${id}-email`}>
-                New email
+                {t("newEmail")}
               </label>
               <Input
                 aria-describedby={error ? `${id}-error` : undefined}
@@ -325,7 +326,7 @@ export function ChangeEmailDialog({
                   setNewEmail(event.target.value);
                   setError(null);
                 }}
-                placeholder="you@example.com"
+                placeholder={t("youExampleCom")}
                 spellCheck={false}
                 type="email"
                 value={newEmail}
@@ -339,11 +340,11 @@ export function ChangeEmailDialog({
                 type="button"
                 variant="outline"
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button disabled={sending || !newEmail.trim()} type="submit">
                 {sending && <Spinner className="animate-spin" />}
-                Send code
+                {t("sendCode")}
               </Button>
             </DialogFooter>
           </form>

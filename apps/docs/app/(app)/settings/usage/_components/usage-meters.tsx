@@ -1,7 +1,9 @@
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { cn } from "@repo/design-system/lib/utils";
+import { use } from "react";
 import { UpgradeButton } from "@/components/limits/upgrade-button";
 import { formatBytes } from "@/lib/files/types";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { type LimitContext, limitCopy } from "../_lib/limit-copy";
 import {
@@ -25,15 +27,18 @@ function MeterRow({
   meter: MeterResult;
   context: UsageContext;
 }) {
+  const t = use(getAppTranslations("app.settings.usage.usageMeters"));
   if ("failed" in meter) {
     return (
       <li className="space-y-1 py-4">
         <div className="flex items-baseline justify-between gap-4">
           <span className="text-sm font-medium">{meter.label}</span>
-          <span className="text-muted-foreground text-sm">Couldn't load</span>
+          <span className="text-muted-foreground text-sm">
+            {t("couldntLoad")}
+          </span>
         </div>
         <p className="text-muted-foreground text-xs">
-          Refresh to try again. Your plan and limits are unchanged.
+          {t("refreshToTryAgainYour")}
         </p>
       </li>
     );
@@ -65,7 +70,7 @@ function MeterRow({
       </div>
       {capped && (
         <Progress
-          aria-label={`${meter.label} used`}
+          aria-label={t("labelUsed", { label: meter.label })}
           className={cn(
             "h-1.5",
             !copy &&
@@ -103,10 +108,11 @@ const unlimitedCount = (meter: Meter) =>
 
 /** What the plan doesn't cap: counts only, no bars. */
 function UnlimitedRow({ meters, plan }: { meters: Meter[]; plan: Plan }) {
+  const t = use(getAppTranslations("app.settings.usage.usageMeters"));
   return (
     <li className="space-y-2 py-4">
       <span className="text-sm font-medium">
-        Unlimited on {PLAN_NAMES[plan]}
+        {t("unlimitedOnValue", { value: PLAN_NAMES[plan] })}
       </span>
       <ul className="grid gap-x-8 gap-y-1.5 sm:grid-cols-2">
         {meters.map((meter) => (

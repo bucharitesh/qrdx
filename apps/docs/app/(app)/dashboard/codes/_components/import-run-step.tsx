@@ -13,9 +13,11 @@ import {
   Warning2,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
+import type { Translator } from "@/lib/i18n/translator";
 import {
   MigrateApiError,
   type MigrateClient,
@@ -33,11 +35,15 @@ import type { JobItem, JobSummary } from "@/lib/migrate/types";
 import { soundEvent } from "@/lib/sound";
 import { Note, plural, Stat, StepLayout, saveText } from "./import-shared";
 
-function reasonsOf(items: JobItem[], status: JobItem["status"]) {
+function reasonsOf(
+  items: JobItem[],
+  status: JobItem["status"],
+  t: Translator<"app.dashboard.codes.importRunStep">,
+) {
   const counts = new Map<string, number>();
   for (const item of items) {
     if (item.status !== status) continue;
-    const reason = item.reason ?? "Other";
+    const reason = item.reason ?? t("other");
     counts.set(reason, (counts.get(reason) ?? 0) + 1);
   }
   return [...counts].sort((a, b) => b[1] - a[1]);
@@ -56,6 +62,7 @@ export function RunStep({
   onClose: () => void;
   onBack: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.importRunStep");
   const inWorkspace = useWorkspaceHref();
   const [job, setJob] = useState<JobSummary | null>(null);
   const [items, setItems] = useState<JobItem[]>([]);
@@ -164,7 +171,8 @@ export function RunStep({
         <div className="text-muted-foreground flex items-center justify-center gap-2 py-16 text-sm">
           {error ?? (
             <>
-              <Spinner className="size-4 animate-spin" /> Loading the import…
+              <Spinner className="size-4 animate-spin" />{" "}
+              {t("loadingTheImport")}
             </>
           )}
         </div>
@@ -217,14 +225,14 @@ export function RunStep({
         footer={
           <>
             <span className="text-muted-foreground text-xs">
-              Closing is safe: open Import later to continue.
+              {t("closingIsSafeOpenImport")}
             </span>
             {running ? (
               <Button onClick={pause} variant="outline">
-                Pause
+                {t("pause")}
               </Button>
             ) : (
-              <Button onClick={run}>Continue import</Button>
+              <Button onClick={run}>{t("continueImport")}</Button>
             )}
           </>
         }
@@ -232,17 +240,19 @@ export function RunStep({
         <div className="mx-auto max-w-md space-y-4 py-10">
           <div className="flex items-baseline justify-between text-sm">
             <span className="font-medium">
-              {running ? `Importing from ${name}…` : "Import paused"}
+              {running ? t("importingFromName", { name }) : t("importPaused")}
             </span>
             <span className="text-muted-foreground tabular-nums">
               {job.processed} / {job.total}
             </span>
           </div>
-          <Progress aria-label="Import progress" value={percent} />
+          <Progress aria-label={t("importProgress")} value={percent} />
           <p className="text-muted-foreground text-xs">
             {waiting !== null
-              ? `Waiting ${waiting}s for the rate limit, then continuing…`
-              : `${plural(job.created, "code")} created so far, in batches of 50. Each link is imported once, even if you retry.`}
+              ? t("waitingWaitingSForThe", { waiting })
+              : t("valueCreatedSoFarIn", {
+                  value: plural(job.created, "code"),
+                })}
           </p>
           {error && (
             <Note icon={<Warning2 />} tone="warning">
@@ -254,8 +264,8 @@ export function RunStep({
     );
   }
 
-  const skipped = reasonsOf(items, "skipped");
-  const failed = reasonsOf(items, "failed");
+  const skipped = reasonsOf(items, "skipped", t);
+  const failed = reasonsOf(items, "failed", t);
   const searchHref = inWorkspace(
     `/codes?q=${encodeURIComponent(`Imported from ${name}`)}`,
   );
@@ -266,24 +276,24 @@ export function RunStep({
         <>
           <Button onClick={onBack} size="sm" variant="ghost">
             <ArrowLeft />
-            All providers
+            {t("allProviders")}
           </Button>
           <div className="flex items-center gap-2">
             <Button asChild variant="outline">
               <Link href={searchHref} onClick={onClose}>
-                View imported codes
+                {t("viewImportedCodes")}
               </Link>
             </Button>
-            <Button onClick={onClose}>Done</Button>
+            <Button onClick={onClose}>{t("done")}</Button>
           </div>
         </>
       }
     >
       <div className="space-y-5">
         <div className="grid grid-cols-3 gap-2">
-          <Stat label="Created" value={job.created} />
-          <Stat label="Skipped" muted value={job.skipped} />
-          <Stat label="Failed" muted value={job.failed} />
+          <Stat label={t("created")} value={job.created} />
+          <Stat label={t("skipped")} muted value={job.skipped} />
+          <Stat label={t("failed")} muted value={job.failed} />
         </div>
 
         {(skipped.length > 0 || failed.length > 0) && (
@@ -291,7 +301,7 @@ export function RunStep({
             {failed.map(([reason, count]) => (
               <li className="flex gap-2" key={`f-${reason}`}>
                 <span className="text-destructive tabular-nums">{count}</span>
-                <span>failed: {reason}</span>
+                <span>{t("failedReason", { reason })}</span>
               </li>
             ))}
             {skipped.map(([reason, count]) => (
@@ -300,7 +310,7 @@ export function RunStep({
                 key={`s-${reason}`}
               >
                 <span className="tabular-nums">{count}</span>
-                <span>skipped: {reason}</span>
+                <span>{t("skippedReason", { reason })}</span>
               </li>
             ))}
           </ul>
@@ -316,11 +326,11 @@ export function RunStep({
           <div className="flex flex-wrap gap-2">
             <Button onClick={copyAll} size="sm" variant="outline">
               <Copy />
-              Copy all new links
+              {t("copyAllNewLinks")}
             </Button>
             <Button onClick={download} size="sm" variant="outline">
               <DocumentDownload />
-              Download mapping CSV
+              {t("downloadMappingCsv")}
             </Button>
           </div>
         )}
@@ -335,12 +345,11 @@ export function RunStep({
                 {`${plural(job.redirected, `old ${name} link`)} ${job.redirected === 1 ? "points" : "point"} to QRdx`}
               </h3>
               <p className="text-muted-foreground text-xs">
-                Imports from {name} have ended. Undo puts the original
-                destinations back in your {name} account.
+                {t("importsFromNameHaveEnded", { name, name2: name })}
               </p>
             </div>
             <Button onClick={onRedirects} size="sm" variant="outline">
-              Review undo
+              {t("reviewUndo")}
               <ArrowRight />
             </Button>
           </div>
@@ -355,16 +364,14 @@ export function RunStep({
               </span>
               <div className="min-w-0 flex-1">
                 <h3 className="text-sm font-semibold">
-                  Keep my printed codes working
+                  {t("keepMyPrintedCodesWorking")}
                 </h3>
                 <p className="text-muted-foreground text-xs">
-                  Optional. Point each old {name} link at its new QRdx code, so
-                  codes already printed keep working and their scans show up in
-                  QRdx. You'll see every change first, and can undo it.
+                  {t("optionalPointEachOldName", { name })}
                 </p>
               </div>
               <Button onClick={onRedirects} size="sm" variant="outline">
-                {job.redirected > 0 ? "Manage" : "Review changes"}
+                {job.redirected > 0 ? t("manage") : t("reviewChanges")}
                 <ArrowRight />
               </Button>
             </div>
@@ -373,11 +380,11 @@ export function RunStep({
         {file && withLinks.length > 0 && (
           <div className="space-y-2 rounded-xl border p-4">
             <h3 className="text-sm font-semibold">
-              Point your old codes at QRdx
+              {t("pointYourOldCodesAt")}
             </h3>
             <p className="text-muted-foreground text-xs">
-              {name === "CSV" ? "Your old provider's" : `${name}'s`} codes live
-              on its own domain, so QRdx can't change them. For each old code:
+              {name === "CSV" ? t("yourOldProviders") : `${name}'s`}{" "}
+              {t("codesLiveOnItsOwn")}
             </p>
             <ol className="list-decimal space-y-1 pl-5 text-sm">
               {file.repointSteps.map((step) => (
@@ -397,12 +404,19 @@ export function RunStep({
             </span>
             <div className="min-w-0 flex-1">
               <h3 className="text-sm font-semibold">
-                Back-halves on {job.backHalfDomain}
+                {t("backHalvesOnBackhalfdomain", {
+                  backHalfDomain: job.backHalfDomain,
+                })}
               </h3>
               <p className="text-muted-foreground text-xs">
                 {job.domainAttachedAt || attach.state === "done"
-                  ? `The codes are on ${job.backHalfDomain}. Old links on it work again as soon as its DNS points to QRdx and it's verified on the Domains page.`
-                  : `After ${job.backHalfDomain} points to QRdx and is verified on the Domains page, attach the codes so ${job.backHalfDomain}/<back-half> opens them.`}
+                  ? t("theCodesAreOnBackhalfdomain", {
+                      backHalfDomain: job.backHalfDomain,
+                    })
+                  : t("afterBackhalfdomainPointsToQrdx", {
+                      backHalfDomain: job.backHalfDomain,
+                      backHalfDomain2: job.backHalfDomain,
+                    })}
               </p>
               {attach.state === "error" && (
                 <p className="text-destructive mt-1 text-xs">
@@ -420,18 +434,14 @@ export function RunStep({
                 {attach.state === "busy" && (
                   <Spinner className="animate-spin" />
                 )}
-                Attach codes
+                {t("attachCodes")}
               </Button>
             )}
           </div>
         )}
 
         <Note icon={<Info />}>
-          <p>
-            Notes on each code say where it came from, its old link and its
-            original creation date. Re-running this import skips everything
-            already imported.
-          </p>
+          <p>{t("notesOnEachCodeSay")}</p>
         </Note>
       </div>
     </StepLayout>

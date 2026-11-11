@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { signInPath } from "@/lib/safe-redirect";
@@ -24,6 +25,7 @@ export function TwoFactorPage({
   next: string;
   pending: boolean;
 }) {
+  const t = useTranslations("app.signIn.twoFactor.twoFactorPage");
   const router = useRouter();
   const [step, setStep] = useState<SecondStep | null>(null);
 
@@ -36,13 +38,11 @@ export function TwoFactorPage({
             {pending
               ? step
                 ? SECOND_STEP_TITLES[step]
-                : "Two-step verification"
-              : "Sign in again"}
+                : t("twoStepVerification")
+              : t("signInAgain")}
           </h1>
           <p className="text-muted-foreground text-sm text-pretty">
-            {pending
-              ? "Your account asks for a second step when you sign in."
-              : "This sign-in timed out or was already finished."}
+            {pending ? t("yourAccountAsksForA") : t("thisSignInTimedOut")}
           </p>
         </div>
         <div className="px-6 pb-6">
@@ -55,7 +55,7 @@ export function TwoFactorPage({
             />
           ) : (
             <Button asChild className="w-full max-sm:h-10" variant="outline">
-              <Link href={signInPath(next)}>Sign in again</Link>
+              <Link href={signInPath(next)}>{t("signInAgain")}</Link>
             </Button>
           )}
         </div>
@@ -64,7 +64,7 @@ export function TwoFactorPage({
         className="text-muted-foreground hover:text-foreground inline-flex min-h-10 items-center rounded-sm px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         href="/"
       >
-        Back to QRdx
+        {t("backToQrdx")}
       </Link>
     </main>
   );

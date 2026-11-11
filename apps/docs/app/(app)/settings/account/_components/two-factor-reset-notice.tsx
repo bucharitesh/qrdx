@@ -5,6 +5,7 @@ import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ShieldCross } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import { cancelSupportTwoFactorReset } from "../_lib/two-factor-reset-actions";
@@ -20,6 +21,7 @@ export function TwoFactorResetNotice({
   /** "November 16, 2026" */
   dueDate: string;
 }) {
+  const t = useTranslations("app.settings.account.twoFactorResetNotice");
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
   const [busy, setBusy] = useState(false);
@@ -36,7 +38,7 @@ export function TwoFactorResetNotice({
         toast.error(result.error);
         return;
       }
-      toast.success("Cancelled. Two-step verification stays on.");
+      toast.success(t("cancelledTwoStepVerificationStays"));
       router.refresh();
     } finally {
       setBusy(false);
@@ -54,12 +56,10 @@ export function TwoFactorResetNotice({
         </span>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium text-pretty">
-            Support will turn this off on {dueDate}
+            {t("supportWillTurnThisOff", { dueDate })}
           </p>
           <p className="text-muted-foreground mt-0.5 text-xs text-pretty">
-            Someone asked QRdx support to turn off two-step verification for
-            your account. If that wasn't you, cancel it. If it was, there's
-            nothing to do.
+            {t("someoneAskedQrdxSupportTo")}
           </p>
         </div>
       </div>
@@ -72,7 +72,7 @@ export function TwoFactorResetNotice({
           variant="outline"
         >
           {busy && <Spinner className="animate-spin" />}
-          Cancel
+          {t("cancel")}
         </Button>
       </div>
     </div>

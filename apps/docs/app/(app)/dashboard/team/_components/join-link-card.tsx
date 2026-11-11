@@ -17,6 +17,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Copy, Link21, Refresh } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import {
   disableWorkspaceJoinLink,
@@ -50,6 +51,7 @@ export function JoinLinkCard({
   link: JoinLinkView | null;
   currentRole: WorkspaceRole;
 }) {
+  const t = useTranslations("app.dashboard.team.joinLinkCard");
   const router = useRouter();
   // A link that adds admins asks "Confirm it's you" first (the server
   // decides).
@@ -99,7 +101,7 @@ export function JoinLinkCard({
         createdAt: new Date().toISOString(),
         createdByName: null,
       });
-      toast.success(link ? "Join link reset" : "Join link created");
+      toast.success(link ? t("joinLinkReset") : t("joinLinkCreated"));
       return true;
     });
 
@@ -122,7 +124,9 @@ export function JoinLinkCard({
         return false;
       }
       setLink({ ...current, role: next });
-      toast.success(`The link now adds people as ${inviteRolePhrase(next)}`);
+      toast.success(
+        t("theLinkNowAddsPeople", { value: inviteRolePhrase(next) }),
+      );
       return true;
     });
   };
@@ -137,7 +141,7 @@ export function JoinLinkCard({
       }
       setFresh(null);
       setLink(null);
-      toast.success("Join link turned off");
+      toast.success(t("joinLinkTurnedOff"));
       return true;
     });
 
@@ -145,15 +149,15 @@ export function JoinLinkCard({
     if (!url) return;
     navigator.clipboard
       .writeText(url)
-      .then(() => toast.success("Join link copied"))
-      .catch(() => toast.error("Couldn't copy the link"));
+      .then(() => toast.success(t("joinLinkCopied")))
+      .catch(() => toast.error(t("couldntCopyTheLink")));
   };
 
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
         <div className="space-y-1.5 sm:w-40">
-          <Label htmlFor="join-role">Joins as</Label>
+          <Label htmlFor="join-role">{t("joinsAs")}</Label>
           <RoleSelect
             className="w-full"
             disabled={isPending || !canChange}
@@ -172,14 +176,14 @@ export function JoinLinkCard({
                 variant="outline"
               >
                 <Refresh aria-hidden />
-                Reset link
+                {t("resetLink")}
               </Button>
               <Button
                 disabled={isPending}
                 onClick={() => setConfirm("off")}
                 variant="ghost"
               >
-                Turn off
+                {t("turnOff")}
               </Button>
             </>
           ) : (
@@ -189,7 +193,7 @@ export function JoinLinkCard({
               ) : (
                 <Link21 aria-hidden />
               )}
-              Create join link
+              {t("createJoinLink")}
             </Button>
           )}
         </div>
@@ -197,22 +201,22 @@ export function JoinLinkCard({
 
       {link && !url && (
         <p className="text-muted-foreground text-sm text-pretty">
-          On since {formatUtcDate(link.createdAt)}
-          {link.createdByName ? `, made by ${link.createdByName}` : ""}. For
-          safety the link is shown only when it's made. Lost it? Reset it to get
-          a new one (the old one stops working).
+          {t("onSince")} {formatUtcDate(link.createdAt)}
+          {link.createdByName
+            ? t("madeByCreatedbyname", { createdByName: link.createdByName })
+            : ""}
+          {t("forSafetyTheLinkIs")}
         </p>
       )}
 
       {url && (
         <div className="bg-muted/40 space-y-2 rounded-lg border p-3">
           <p className="text-sm text-pretty">
-            Copy it now: it's shown only once. Anyone signed in who opens it
-            joins as {inviteRolePhrase(role)}.
+            {t("copyItNowItsShown", { value: inviteRolePhrase(role) })}
           </p>
           <div className="flex gap-2">
             <Input
-              aria-label="Join link"
+              aria-label={t("joinLink")}
               className="font-mono text-xs"
               onFocus={(event) => event.currentTarget.select()}
               readOnly
@@ -220,7 +224,7 @@ export function JoinLinkCard({
             />
             <Button onClick={copy} size="icon" variant="outline">
               <Copy aria-hidden />
-              <span className="sr-only">Copy join link</span>
+              <span className="sr-only">{t("copyJoinLink")}</span>
             </Button>
           </div>
         </div>
@@ -234,17 +238,19 @@ export function JoinLinkCard({
           <AlertDialogHeader>
             <AlertDialogTitle>
               {confirm === "reset"
-                ? "Reset the join link?"
-                : "Turn off the join link?"}
+                ? t("resetTheJoinLink")
+                : t("turnOffTheJoinLink")}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {confirm === "reset"
-                ? "The current link stops working right away. You get a new one to share."
-                : "The link stops working right away. People who already joined stay members."}
+                ? t("theCurrentLinkStopsWorking")
+                : t("theLinkStopsWorkingRight")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               disabled={isPending}
               onClick={(event) => {
@@ -253,7 +259,7 @@ export function JoinLinkCard({
                 else void turnOff();
               }}
             >
-              {confirm === "reset" ? "Reset link" : "Turn off"}
+              {confirm === "reset" ? t("resetLink") : t("turnOff")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
