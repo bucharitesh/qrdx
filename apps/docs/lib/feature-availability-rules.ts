@@ -39,6 +39,8 @@ export const FEATURE_IDS = [
   "discordBot",
   "telegramBot",
   "affiliates",
+  // Agency tools: "Pay by invoice" requests for Business yearly
+  "invoiceRequests",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -252,6 +254,20 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "/settings/affiliate",
       "/docs/help/account-and-billing/affiliate-program",
     ],
+  },
+  invoiceRequests: {
+    // Paying Business yearly by invoice (lib/invoice-requests.ts). Polar's
+    // checkout takes cards and wallets only, so a request is emailed to
+    // QRdx, who arranges the invoice by hand: QRdx's own sales, so only
+    // where QRdx itself runs (like the affiliate program), with email set up.
+    name: "Pay by invoice requests (qrdx.dev, with email)",
+    requires: () => ["RESEND_API_KEY", "EMAIL_FROM"],
+    usable: (ctx) =>
+      isQrdxDeployment({
+        appUrl: ctx.env.NEXT_PUBLIC_APP_URL,
+        productionUrl: ctx.env.VERCEL_PROJECT_PRODUCTION_URL,
+      }),
+    paths: ["/docs/help/account-and-billing/pay-by-invoice"],
   },
 };
 
