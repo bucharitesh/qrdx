@@ -1,0 +1,106 @@
+---
+title: "Arquivos"
+description: "Envie PDFs, imagens, áudio e vídeo para suas páginas hospedadas e configure o armazenamento de arquivos quando você faz self-hosting."
+icon: FolderOpen
+---
+
+As páginas hospedadas podem exibir arquivos que você envia para o QRdx: um cardápio ou folheto em PDF, uma galeria de fotos, músicas ou um podcast, ou um vídeo. Os arquivos enviados ficam em **Painel → Arquivos**, pertencem ao workspace em que você os enviou, e cada um tem um link estável que continua funcionando quando você substitui o arquivo.
+
+## O que você pode enviar [#what-you-can-upload]
+
+| Tipo | Formatos |
+| --- | --- |
+| PDF | PDF |
+| Imagens | JPEG, PNG, WebP, GIF, AVIF |
+| Áudio | MP3, M4A, AAC, Ogg, WAV |
+| Vídeo | MP4, WebM, MOV |
+
+MP4 com vídeo H.264 toca em todos os navegadores. Arquivos MOV de celulares geralmente tocam também, mas converta para MP4 se algum navegador não conseguir reproduzir. SVG, HTML, arquivos compactados e documentos de escritório não podem ser enviados, para que nada servido pelo armazenamento possa executar código no navegador de um visitante.
+
+Todo envio é verificado antes de ser usado: o tamanho precisa bater com o que foi informado, e os primeiros bytes precisam ser mesmo de um arquivo daquele tipo (uma página HTML renomeada para `.pdf` é rejeitada). Os envios rejeitados são apagados do armazenamento e aparecem como **Bloqueado**.
+
+## Limites por plano [#limits-per-plan]
+
+| Plano | Armazenamento por workspace | Maior arquivo |
+| --- | --- | --- |
+| Grátis | 50 MB | 10 MB |
+| Pro | 5 GB | 100 MB |
+| Business | 50 GB | 250 MB |
+
+Um workspace usa o melhor plano entre seus proprietários. Os limites só impedem novos envios: depois de um downgrade, ou quando um workspace ultrapassa o armazenamento, todos os arquivos que você já enviou continuam sendo servidos em todas as páginas que os usam. Apague os arquivos de que não precisa mais (ou faça upgrade) para enviar novos.
+
+## Use arquivos em uma página [#use-files-on-a-page]
+
+Cinco blocos exibem arquivos. Cada um pode usar um arquivo enviado ou um link para um arquivo hospedado em outro lugar:
+
+- **PDF** mostra o documento na própria página em tablets e computadores, com os botões **Abrir PDF** (visualizador em tela cheia no celular) e **Baixar**.
+- **Galeria** mostra fotos em uma grade de 1 a 3 colunas. Ao tocar em uma foto, ela abre em tela cheia; deslize ou use as setas do teclado para navegar.
+- **Áudio** toca faixas com capa e playlist; quando uma termina, a próxima começa. Um botão de download é opcional.
+- **Arquivo de vídeo** reproduz um MP4 ou WebM que você envia, podendo ficar mudo e em loop como um GIF. Para YouTube, Vimeo ou Loom, use o bloco **Vídeo**: ele incorpora o vídeo sem carregar nada do YouTube até alguém tocar em reproduzir.
+- **Downloads** lista arquivos que as pessoas podem salvar, cada um com seu próprio rótulo.
+
+Os tipos de página **PDF**, **Imagens**, **MP3 / Áudio** e **Vídeo** em **Novo código** já começam com esses blocos no lugar.
+
+Em um bloco, escolha **Enviar** para adicionar um arquivo do seu dispositivo, **Dos seus arquivos** para reutilizar um que você já enviou, ou cole um link.
+
+## Substitua ou apague um arquivo [#replace-or-delete-a-file]
+
+Abra **Painel → Arquivos** e use o menu ao lado de um arquivo:
+
+- **Copiar link** copia o link do próprio arquivo (`https://qrdx.dev/api/files/<id>`). Você também pode usá-lo como destino de um QR code dinâmico.
+- **Substituir arquivo** envia um novo conteúdo para o mesmo link, por exemplo o cardápio da próxima temporada. As páginas e os códigos que usam o arquivo mostram a nova versão em até um minuto. Um arquivo só pode ser substituído por outro do mesmo tipo (um PDF por um PDF).
+- **Apagar** remove o arquivo de vez. Se páginas ou códigos ainda o usam, o QRdx lista todos antes; depois de apagar, essas páginas mostram "Arquivo indisponível" no lugar do arquivo.
+
+Membros podem substituir e apagar os arquivos que enviaram; proprietários e administradores podem gerenciar todos os arquivos do workspace.
+
+## Arquivos denunciados [#reported-files]
+
+Toda página hospedada tem um link **Denunciar abuso**. Se um arquivo violar as regras ou se o detentor dos direitos autorais pedir a remoção, o QRdx pode bloqueá-lo. Um arquivo bloqueado deixa de ser servido em todas as páginas e pelo link do QRdx em até um minuto (as páginas mostram "Arquivo indisponível"), e cópias idênticas dele (até 25 MB) não podem ser enviadas de novo.
+
+## Configure o armazenamento (self-hosting) [#set-up-storage-self-hosting]
+
+O envio de arquivos usa o [Cloudflare R2](https://developers.cloudflare.com/r2/). Sem ele, a página Arquivos mostra "Armazenamento não configurado neste servidor", a API de envio responde `503`, e os blocos ainda podem usar links para arquivos hospedados em outro lugar.
+
+1. No painel da Cloudflare, abra **R2** e crie um bucket, por exemplo `qrdx-files`.
+2. Em **R2 → Manage API tokens**, crie um token com **Object Read & Write** nesse bucket.
+3. Defina estas variáveis de ambiente e reinicie:
+
+   ```bash
+   R2_ACCOUNT_ID=your-cloudflare-account-id
+   R2_ACCESS_KEY_ID=token-access-key-id
+   R2_SECRET_ACCESS_KEY=token-secret-access-key
+   R2_BUCKET=qrdx-files
+   # Optional: serve files from a public bucket URL or custom domain
+   R2_PUBLIC_BASE_URL=https://files.example.com
+   ```
+
+4. Adicione uma política de CORS ao bucket (**Settings → CORS policy**). Os navegadores enviam direto para o R2, então o bucket precisa aceitar requisições `PUT` com um cabeçalho `Content-Type` vindas da origem do seu app:
+
+   ```json
+   [
+     {
+       "AllowedOrigins": ["https://qrdx.example.com", "http://localhost:3000"],
+       "AllowedMethods": ["PUT", "GET", "HEAD"],
+       "AllowedHeaders": ["Content-Type"],
+       "ExposeHeaders": ["ETag"],
+       "MaxAgeSeconds": 3600
+     }
+   ]
+   ```
+
+   Troque `https://qrdx.example.com` pela origem que as pessoas usam para abrir o seu painel (esquema e host, sem barra no final). Mantenha `http://localhost:3000` apenas se você envia arquivos a partir de um servidor de desenvolvimento local.
+
+### Arquivos públicos ou links presigned [#public-files-or-presigned-links]
+
+Os visitantes sempre abrem os arquivos por `/api/files/<id>`, que redireciona para o objeto armazenado:
+
+- Com `R2_PUBLIC_BASE_URL` definida (um domínio personalizado conectado ao bucket, ou a URL `r2.dev` dele, que a Cloudflare limita por taxa e recomenda só para testes), o redirecionamento vai para a URL pública. As chaves dos objetos contêm um id aleatório, então os arquivos não podem ser listados nem adivinhados.
+- Sem ela, o bucket continua privado e cada redirecionamento é um link presigned que expira após uma hora.
+
+Em ambos os casos, um arquivo substituído, apagado ou bloqueado deixa de ser servido pelo link do QRdx em até um minuto. Um arquivo bloqueado também sai da URL pública na hora: o objeto dele é movido para uma chave `quarantine/` com uma parte aleatória (mantido para que um administrador possa restaurá-lo), e o link do QRdx responde `410 Gone`.
+
+Os navegadores enviam para uma chave `staging/`. Depois que o envio é verificado, o QRdx copia exatamente a versão verificada para a chave própria do arquivo, assim um link de envio ainda válido não consegue substituir um arquivo já verificado.
+
+<Callout type="info">
+  Um envio que nunca termina deixa de contar no armazenamento após duas horas e é limpo na próxima vez que alguém enviar um arquivo para esse workspace. Adicione ao bucket uma regra de ciclo de vida de objetos (**Settings → Object lifecycle rules**) que apague objetos com o prefixo `staging/` após um dia, para que as sobras de envios abandonados também desapareçam.
+</Callout>

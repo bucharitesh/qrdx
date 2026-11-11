@@ -1,0 +1,174 @@
+---
+title: "从 Bitly、Rebrandly 等服务迁移"
+description: "将您的短链接和动态二维码导入 QRdx，保持已印刷的二维码继续有效，并保留您的自定义后缀。"
+icon: Download
+---
+
+QRdx 可以一次性导入其他服务商的链接和动态码。打开 [控制台 → 二维码](/dashboard?to=codes)，点击 **导入**。每次导入都包含相同的三个步骤：选择要导入的内容、预览、导入。
+
+- **已连接的账户：** Bitly、Rebrandly 和 Short.io。QRdx 通过服务商的 API 列出您的链接。
+- **导出文件：** QR Code Generator PRO、Uniqode (Beaconstac)、Flowcode、QR TIGER、ME-QR、TinyURL、Hovercode、Scanova，或任何包含目标网址的 CSV。
+
+导入过程本身不会更改您旧账户中的任何内容。
+
+## 导入会创建什么 [#what-an-import-creates]
+
+每个链接或二维码都会成为一个[动态二维码](/docs/dynamic-qr-codes)，包含：
+
+- 其目标地址和标题；
+- 其标签（可选），以及一个文件夹，例如“Imported from Bitly”（您可以重命名或关闭它）；
+- 备注，例如 `Imported from Bitly bit.ly/3AbCdEf on 2026-11-01.`，以及该链接的原始创建日期。QRdx 会为新二维码设置它自己的创建日期。
+
+预览会显示将创建多少个二维码、哪些标签是新的，以及哪些会被跳过：
+
+- **已导入：** 之前（任何一次更早的导入）已导入过的链接始终会被跳过，因此重复运行导入不会产生重复项。
+- **目标相同：** 目标地址已有 QRdx 二维码的链接默认会被跳过。勾选该选项即可仍然导入它们。
+- **无法导入：** 目标地址缺失或无效的链接，以及已经指向 QRdx 短链接的链接。
+
+导入以每批 50 个的方式运行，并显示进度条。关闭对话框是安全的：再次打开 **导入**，导入会在 **最近的导入** 中继续。摘要会列出已创建、已跳过和失败的二维码及原因。
+
+<Callout type="info">
+套餐限制与任何新二维码相同。免费版包含 10 个有效的动态二维码；如果导入所需数量更多，预览会告诉您能容纳多少个，并提供导入前几个或升级的选项。Pro 和 Business 没有限制。
+</Callout>
+
+## 从已连接的账户导入 [#from-a-connected-account]
+
+1. 点击 **导入** 并选择服务商。如果尚未连接，直接在此处连接（登录，或粘贴 API 密钥或令牌）。令牌会加密存储，您可以在“设置 → 集成”中断开连接。
+2. 搜索、按域名或标签筛选，然后选择链接。**选择所有匹配的链接** 每次导入最多可选 1,000 个链接；其余的请再次运行导入。
+3. 检查预览并点击 **导入**。
+
+| 服务商 | 连接方式 | 列出链接 | 保持已印刷的二维码有效 |
+|---|---|---|---|
+| Bitly | 登录，或使用通用访问令牌 | 是 | 仅限 Bitly 付费套餐：Core 每月 5 次链接重定向，Growth 20 次，Premium 110 次 |
+| Rebrandly | API 密钥 | 是 | 在 Rebrandly 每月的目标地址修改额度内：Essentials 10 次，Professional 50 次，Growth 150 次（免费版没有） |
+| Short.io | API 密钥 | 是，每次一个域名 | 是，所有套餐均可 |
+
+套餐限制由各服务商自行规定，并会随时间变化。请查看其定价页面。
+
+## 保持已印刷的二维码有效 [#keep-printed-codes-working]
+
+您用其他服务商印刷的二维码，编码的是该服务商的短链接。通过已连接账户导入后，摘要中会提供 **保持我已印刷的二维码有效**：
+
+1. **试运行** 会列出每个旧链接以及它将指向的 QRdx 链接。此时不会有任何更改。
+2. 确认后，QRdx 会把每个旧链接的目标地址改为对应的新 QRdx 二维码。访问者仍会到达同一个页面，并且现在每次扫描都会显示在 QRdx 分析中。旧服务商仍会先记录一次点击。
+3. **撤销** 会恢复原始目标地址，这些地址已由 QRdx 在导入时保存。
+
+如果服务商拒绝（例如 Bitly 套餐已没有剩余的链接重定向次数），QRdx 会停止、说明原因，并保持其余链接不变。因目标地址已有 QRdx 二维码而被跳过的链接，会指向那个已有的二维码。<IfAvailable feature="customDomains"> 后缀会随您自己的域名一起迁移的链接（见下文）不会被更改：DNS 切换后，它们就是 QRdx 链接。</IfAvailable>
+
+## 保留原有后缀 [#keep-the-original-back-halves]
+
+在 Pro 和 Business 上，请在导入预览中勾选 **保留原有后缀**。这样，只要 QRdx 能保留，每个二维码就会使用其旧后缀而不是随机后缀，因此 `bit.ly/spring-menu` 会变成 `qrdx.dev/q/spring-menu`：
+
+- 当后缀由 3 到 64 个字母、数字、`-` 或 `_` 组成（见[自定义后缀](/docs/dynamic-qr-codes#custom-back-halves))、不是保留词，并且在 `qrdx.dev` 上尚未被任何 QRdx 二维码使用时，该后缀会被保留<IfAvailable feature="customDomains">（在您自己的域名上，则只需不被您在该域名下的二维码使用）</IfAvailable>。
+- 否则，该二维码会得到一个自动生成的后缀，预览会显示这一变更及原因，例如 `spring-menu → Ab3xK9q · Another QRdx code already uses this back-half on qrdx.dev`。导入时使用的正是预览中显示的后缀。
+- 后缀区分大小写，与 Bitly 和 Short.io 相同。
+
+<Callout type="warn">
+在您确认无误之前，请保持服务商处于已连接状态：撤销需要该连接。旧账户也必须保持有效，其链接才能继续重定向。
+</Callout>
+
+<IfAvailable feature="customDomains" id="your-own-domain-go-yourbrand-com" title="您自己的域名（go.yourbrand.com）">
+
+如果您的链接使用您自己的域名，您可以把该域名迁移到 QRdx 并保留后缀，这样 `go.yourbrand.com/spring-menu` 在 DNS 切换后仍然有效。
+
+1. 先在 [设置 → 域名](/dashboard?to=settings/domains) 中添加该域名。它暂时可以不验证：此时后缀会保留在该域名本身上，只需在您自己的二维码之间唯一，并且只有 `api`、`p` 和 `q` 是保留词。
+2. 在导入预览中，勾选 **保留原有后缀**，并在 **链接位于** 下选择该域名。预览会显示哪些后缀会被保留。
+3. 导入。这些二维码会放在该域名下，并立即占用各自的后缀。
+4. 将该域名的 DNS 指向 QRdx 并完成验证（见[自定义域名](/docs/custom-domains)）。请在业务低峰期进行：DNS 一旦迁移，该域名上的链接就会在旧服务商处停止工作，并在验证通过后开始在 QRdx 上工作。
+
+如果导入时该域名尚未添加到 QRdx，其后缀会改为保留在 `qrdx.dev` 上（在那里它们必须在整个 QRdx 范围内未被占用）。添加并验证该域名后，点击导入摘要中的 **关联二维码**，即可把这些二维码移到该域名上。
+
+</IfAvailable>
+
+无法保留的后缀会得到一个自动生成的后缀；这些链接需要重新印刷，或在旧服务商处设置重定向。自定义后缀属于 Pro 和 Business。
+
+## 从导出文件导入 [#from-an-export-file]
+
+1. 获取文件（步骤见下文）。QRdx 读取 CSV；如果是 Excel 文件，请先另存或下载为 CSV。
+2. 点击 **Import**，选择服务商并上传文件。QRdx 会尽可能识别服务商的列，你也可以修改映射。只有目标地址是必填项；有了旧短链接（或二维码 ID），重新上传时就能跳过已导入的二维码。
+3. 预览并导入，然后使用 **Copy all new links** 或 **Download mapping CSV**（旧链接 → 新的 QRdx 链接）。
+
+这些服务商的二维码使用服务商自己的域名，因此 QRdx 无法更改。要让已印刷的二维码继续有效，请在旧服务商处打开每个旧的动态二维码，把它的目标地址设置为映射中对应的新 QRdx 链接。旧账号必须保持有效，这些二维码才能继续跳转；在取消旧账号之前，请先用 QRdx 二维码重新印刷。
+
+### QR Code Generator PRO [#qr-code-generator-pro]
+
+该服务商没有公开说明的二维码列表导出功能。请为每个二维码制作一份电子表格，包含 **Name**、**Short URL** 和 **Destination URL**。要重新指向：打开二维码 → **Details** → **Edit**，替换 URL 并保存。如果二维码很多，可使用它的批量更新功能，一次最多可通过 CSV 提交 500 个二维码的新 URL。
+
+### Uniqode (Beaconstac) [#uniqode-beaconstac]
+
+**QR Codes → Dynamic**，全选，**⋯ → Export**，按组织或文件夹导出。导出文件中的列（QR Code Name、QR Code URL、Destination URL、Labels 等）都能被识别。要重新指向：打开二维码 → **Edit** → 新 URL → **Next** → **Save**。
+
+### Flowcode [#flowcode]
+
+该服务商没有公开说明的二维码列表导出功能。你可以复用批量创建时的表格（Flowcode Name、Flowcode Scan URL），或者列出 Name、Scan URL 和 Destination。要重新指向：**Assets** → 该二维码 → **Overview** → **Destination** → **Save**。
+
+### QR TIGER [#qr-tiger]
+
+**My Account** → 选择一个分类（例如 URL）→ **Download QR List**，每个分类下载一次。要重新指向：**My Account → Dashboard → URL** → 对应的活动 → **Edit** → **Save**。
+
+### ME-QR [#me-qr]
+
+该服务商不支持导出。请为每个二维码列出 Name、QR link 和 Destination URL。要重新指向：在 ME-QR 的二维码列表中编辑该二维码。
+
+### TinyURL [#tinyurl]
+
+TinyURL 在其付费套餐中提供 CSV 导出。请将链接导出为 CSV，或者列出 Alias 和 Long URL。修改 TinyURL 的目标地址需要付费的 TinyURL 套餐。
+
+### Hovercode、Scanova 及其他服务商 [#hovercode-scanova-and-others]
+
+从服务商处将二维码导出为 CSV（Hovercode 在其 Business 套餐中提供 CSV 导出；Scanova 会通过邮件发送下载链接），然后检查列映射。任何包含目标地址列的 CSV 都可以通过 **Another provider (CSV)** 导入。
+
+静态二维码（来自 goQR.me、QR Code Monkey、Adobe Express 及类似工具）直接编码了目标地址本身，因此无需原工具也能继续使用。只有当你希望为新印刷品创建可编辑、可追踪的二维码时，才需要从 CSV 导入它们的目标地址。
+
+## 从二维码库迁移 [#from-a-qr-code-library]
+
+二维码库生成的是静态二维码，因此无需迁移：已印刷的二维码仍然有效。要在应用中切换渲染方式，请安装 `qrdx` 并替换组件。
+
+### 从 qrcode.react 迁移 [#from-qrcode-react]
+
+```tsx
+// Before
+import { QRCodeSVG } from "qrcode.react";
+
+<QRCodeSVG value="https://example.com" size={256} fgColor="#111827" />;
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  fgColor="#111827"
+  bodyPattern="rounded"
+/>;
+```
+
+`value`、`size`、`level`、`fgColor`、`bgColor`、`marginSize`（对应 `margin`）和 `imageSettings` 都可直接沿用；qrdx 还新增了图案、渐变和模板。请参阅 [API 参考](/docs/api-reference)。
+
+### 从 qr-code-styling 迁移 [#from-qr-code-styling]
+
+```tsx
+// Before
+import QRCodeStyling from "qr-code-styling";
+
+const qr = new QRCodeStyling({
+  data: "https://example.com",
+  width: 256,
+  dotsOptions: { type: "rounded", color: "#111827" },
+  image: "/logo.png",
+});
+qr.append(ref.current);
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  fgColor="#111827"
+  imageSettings={{ src: "/logo.png", width: 64, height: 64, excavate: true }}
+/>;
+```
+
+qrdx 是 React 组件，因此无需挂载实例：像渲染其他元素一样渲染它即可。下载功能使用 [API 参考](/docs/api-reference)中的辅助函数。

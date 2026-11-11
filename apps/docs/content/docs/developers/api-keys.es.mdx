@@ -1,0 +1,61 @@
+---
+title: "Claves de API"
+description: "Crea una clave de API qrdx_ en Ajustes → Claves de API y apps y úsala para llamar a la REST API. Alcances, espacios de trabajo y roles, caducidad, último uso y revocación."
+icon: LockKeyhole
+---
+
+Una clave de API permite que tus propios servidores, scripts y tareas de CI llamen a la [REST API](/docs/developers/rest-api) sin un flujo de OAuth. Envíala en la cabecera `Authorization`:
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+Todos los endpoints que aceptan un token de acceso de OAuth aceptan una clave en la misma cabecera, y la [Image API](/docs/developers/image-api) no necesita ninguno de los dos. Cuando tu producto actúe en nombre de otros usuarios de QRdx, usa en su lugar una [app de OAuth](/docs/developers/build-an-integration), para que cada persona la apruebe.
+
+## Crear una clave [#create-a-key]
+
+1. Abre [Ajustes → Claves de API y apps](/dashboard?to=settings/developers&new=1) en el espacio de trabajo para el que es la clave. El enlace abre el último espacio de trabajo que usaste; elige otro en el selector de espacios de trabajo.
+2. Elige **Crear clave**. Ponle un nombre según el lugar donde se ejecutará, elige su acceso y, si quieres, cuándo caduca. Una clave funciona sin ti, así que QRdx te pide [confirmar que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) antes, salvo que ya lo hayas hecho en ese navegador en los últimos 10 minutos.
+3. Copia la clave. Se muestra una sola vez: QRdx guarda solo un hash de ella, por lo que no se puede volver a mostrar. El mismo cuadro de diálogo muestra una petición curl con la clave y la dirección de la API de este sitio ya rellenadas, lista para pegar.
+
+Una clave es `qrdx_` seguido de 40 letras y dígitos. Las listas muestran solo el principio, como `qrdx_7KpQ2m…`, para que puedas distinguir las claves.
+
+## Acceso [#access]
+
+Las claves usan los mismos alcances que las apps de OAuth. Elige una de las tres opciones al crear la clave:
+
+| Acceso | Alcances | Permite |
+| --- | --- | --- |
+| Acceso total | `profile:read`, `themes:read`, `codes:read`, `codes:write` | Todo lo que hace la API |
+| Solo lectura | `profile:read`, `themes:read`, `codes:read` | Leer códigos, analíticas de escaneo, temas y el perfil |
+| Personalizado | Los que elijas | Lo que permitan esos alcances ([la lista de alcances](/docs/developers/rest-api#get-an-access-token)) |
+
+`codes:write` también permite todo lo que permite `codes:read`. Los alcances de una clave no se pueden cambiar después; crea una clave nueva en su lugar. Una petición fuera de los alcances de la clave recibe `403 INSUFFICIENT_SCOPE`, y el mensaje indica el alcance que necesitaba.
+
+## Espacios de trabajo y roles [#workspaces-and-roles]
+
+Una clave pertenece al espacio de trabajo que estaba abierto cuando la creaste y actúa en él como tú:
+
+- La clave trabaja con los códigos, escaneos, hooks y temas de ese espacio de trabajo, según el plan del espacio y su [cuota diaria](/docs/developers/rest-api#rate-limits).
+- Puede hacer lo que tú puedes hacer en el espacio de trabajo, según tu [rol](/docs/teams) en el momento de cada petición. En tu propio espacio de trabajo eres el propietario. Si tu rol cambia, los permisos de la clave cambian con él; si sales del espacio de trabajo, la clave deja de funcionar, y al eliminar un espacio de trabajo se eliminan sus claves.
+
+Todos los miembros de un espacio de trabajo pueden crear claves. Los propietarios y administradores ven todas las claves del espacio de trabajo y pueden revocar cualquiera; los miembros ven y revocan solo las suyas. `GET /v1/me` devuelve el perfil de la persona que creó la clave.
+
+## Caducidad, último uso y revocación [#revoke]
+
+- **Caducidad.** Una clave nunca caduca, o caduca a los 30 días, 90 días o 1 año. Una clave caducada recibe `401 INVALID_TOKEN` y permanece en la lista, marcada como **Caducada**, hasta que la revocas.
+- **Último uso.** La lista muestra la fecha en que cada clave autenticó una petición por última vez.
+- **Revocación.** Elige **Revocar** junto a una clave. A partir de ese momento, las peticiones con ella reciben `401 INVALID_TOKEN`. La revocación no se puede deshacer.
+
+Cada persona puede tener hasta 25 claves activas en cada espacio de trabajo. Las claves revocadas y caducadas no cuentan.
+
+## Mantén tus claves seguras [#keep-keys-safe]
+
+- Guarda la clave en un servidor: en una variable de entorno o en un gestor de secretos. Nunca la pongas en una página web, una app móvil, un prompt ni un repositorio.
+- Usa una clave por cada lugar donde se ejecute, para poder revocar una sin romper las demás.
+- Da a los scripts que solo generan informes una clave de solo lectura, y da a las tareas de corta duración una clave que caduque.
+- Si una clave se filtra, revócala y crea una nueva. El prefijo `qrdx_` facilita buscar claves en el código y en los registros.
+
+## Autoalojamiento [#self-hosting]
+
+Una instancia [autoalojada](/docs/self-hosting) necesita la tabla `api_key` en su base de datos, que crea la sincronización de esquema habitual tras una actualización (el servicio `migrate` con Docker, `bun run db:push` en otros casos; consulta [actualización](/docs/self-hosting)). Hasta que la tenga, Ajustes → Claves de API y apps indica que las claves de API no están disponibles y la API rechaza las claves con `401`. Su API está en `/api/v1` en su propio dominio, que es la dirección que rellena el cuadro de diálogo de nueva clave.

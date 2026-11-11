@@ -1,0 +1,183 @@
+---
+title: "クイックスタート"
+description: "キーなしで、2分足らずで最初のQRdx APIリクエストを送ります。その後、APIキーを作成し、最初の動的QRコードを作ります。"
+icon: Rocket
+---
+
+QRdx APIは2つの部分に分かれています。画像の生成には何も必要ありません。アカウントもキーも不要です。動的QRコード、スキャン、Webhookはワークスペースに属するため、APIキーが必要です。
+
+## 1. QRコードを作る（キー不要） [#1-make-a-qr-code-no-key]
+
+次を実行してください。qrdx.devを開くQRコードのPNGが保存されます。
+
+<Tabs groupId="language" persist items={["curl", "JavaScript", "Python"]}>
+  <Tab value="curl">
+    ```bash
+    curl "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png" -o qr.png
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    // Node 18 or later (save as qr.mjs)
+    import { writeFile } from "node:fs/promises";
+
+    const url = new URL("https://api.qrdx.dev/v1/qr");
+    url.searchParams.set("data", "https://qrdx.dev");
+    url.searchParams.set("format", "png");
+
+    const response = await fetch(url);
+    await writeFile("qr.png", Buffer.from(await response.arrayBuffer()));
+    ```
+  </Tab>
+  <Tab value="Python">
+    ```python
+    # pip install requests
+    import requests
+
+    response = requests.get(
+        "https://api.qrdx.dev/v1/qr",
+        params={"data": "https://qrdx.dev", "format": "png"},
+    )
+    response.raise_for_status()
+    open("qr.png", "wb").write(response.content)
+    ```
+  </Tab>
+</Tabs>
+
+これで実際に動作するAPI呼び出しになります。URL自体が画像なので、`<img>`タグにそのまま指定しても動作します。
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&fg=111111&body=circle" alt="QR code for qrdx.dev" />
+```
+
+色、形、サイズ、フォーマットはクエリパラメータで変更できます。ブラウザーで試す場合は、[QRコード画像のレンダリング](/docs/developers/api/get-qr-image)ページの **Try it** パネルから、リクエストを送信して画像を確認できます。画像はクォータに含まれません。上限はIPアドレスごとに1分あたり300リクエストです。
+
+## 2. APIキーを作成する [#create-an-api-key]
+
+これ以外のAPIはすべてワークスペースに対して動作します。動的QRコードの作成、リンク先の変更、スキャンの取得などです。これらのリクエストでは、`Authorization`ヘッダーにAPIキーを指定します。
+
+1. [設定 → APIキーとアプリ](/dashboard?to=settings/developers&new=1)を開きます（必要に応じて先にサインインしてください）。**キーを作成**フォームが開きます。
+2. **フルアクセス**のまま、**キーを作成**を選びます。
+3. キーをコピーします。キーは一度しか表示されません。ダイアログには、動的QRコードを作成するcurlリクエストも、あなたのキーが入った状態で表示されます。こちらを貼り付けて使うこともできます。
+
+次の手順のために、キーを環境変数に設定します。
+
+```bash
+export QRDX_API_KEY=qrdx_...
+```
+
+キーは、作成時に開いていたワークスペースであなた自身として動作し、そのキーを使ったリクエストはそのワークスペースの1日のクォータ（フリーでは1,000リクエスト）に計上されます。スコープ、チーム、有効期限、無効化については[APIキー](/docs/developers/api-keys)をご覧ください。
+
+## 3. 動的QRコードを作成する [#3-create-a-dynamic-code]
+
+動的QRコードは、印刷した後でも別の場所へ向け直せる短縮リンクです。
+
+<Tabs groupId="language" persist items={["curl", "JavaScript", "Python"]}>
+  <Tab value="curl">
+    ```bash
+    curl -X POST https://api.qrdx.dev/v1/codes \
+      -H "Authorization: Bearer $QRDX_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"destinationUrl": "https://example.com", "title": "My first code"}'
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    const response = await fetch("https://api.qrdx.dev/v1/codes", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.QRDX_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        destinationUrl: "https://example.com",
+        title: "My first code",
+      }),
+    });
+    const { data: code } = await response.json();
+    console.log(code.shortLink);
+    ```
+  </Tab>
+  <Tab value="Python">
+    ```python
+    import os
+    import requests
+
+    response = requests.post(
+        "https://api.qrdx.dev/v1/codes",
+        headers={"Authorization": f"Bearer {os.environ['QRDX_API_KEY']}"},
+        json={"destinationUrl": "https://example.com", "title": "My first code"},
+    )
+    response.raise_for_status()
+    code = response.json()["data"]
+    print(code["shortLink"])
+    ```
+  </Tab>
+</Tabs>
+
+レスポンスは `201 Created` で、新しいコードが返ります。
+
+```json
+{
+  "data": {
+    "id": "cm5code0spring0menu00001",
+    "slug": "aB3dE5f",
+    "shortLink": "https://qrdx.dev/q/aB3dE5f",
+    "destinationUrl": "https://example.com/",
+    "title": "My first code",
+    "status": "active",
+    "scanCount": 0
+  }
+}
+```
+
+（一部を省略しています。すべてのフィールドは[コードの作成](/docs/developers/api/create-codes)で確認できます。）QRコードは `shortLink` をエンコードします。手順1の画像APIで `https://api.qrdx.dev/v1/qr?data=https://qrdx.dev/q/aB3dE5f` のようにレンダリングし、印刷してください。
+
+## 4. 別の場所へ向け直す [#4-point-it-somewhere-else]
+
+リンク先はいつでも変更できます。印刷済みのコードもそのまま使えます。
+
+```bash
+curl -X PATCH https://api.qrdx.dev/v1/codes/$CODE_ID \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/new-page"}'
+```
+
+コードを一度スキャンしてから、`GET /v1/codes/$CODE_ID/scans` で分析データを取得します（[スキャン分析の取得](/docs/developers/api/get-code-scans)）。
+
+## 問題が発生したとき [#when-something-goes-wrong]
+
+すべてのエラーは、固定の `code` と、対処方法を示すメッセージを含むJSONで返ります。
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Missing API key. Send an API key as \"Authorization: Bearer <key>\"; create one at https://qrdx.dev/dashboard?to=settings/developers. OAuth access tokens go in the same header.",
+  "status": 401,
+  "docs": "https://qrdx.dev/docs/developers/api-keys"
+}
+```
+
+すべてのコードと対処方法は[エラーページ](/docs/developers/errors)に一覧があります。
+
+## 他のユーザーのために操作する [#get-an-access-token]
+
+APIキーはあなた自身として動作します。自社のプロダクトが他のユーザーのためにQRdxを呼び出す場合は、代わりにOAuthアプリを登録してください。各ユーザーが一度承認すると、サーバーはそのユーザーのアカウント用のアクセストークンを取得できます。トークンは同じ `Authorization: Bearer` ヘッダーで送信します。上記のリクエストは、キーの代わりにトークンを使ってもそのまま動作します。詳しくは[REST APIとOAuth](/docs/developers/rest-api#get-an-access-token)と[連携の構築](/docs/developers/build-an-integration)をご覧ください。
+
+## 次のステップ [#next-steps]
+
+<Cards>
+  <Card title="APIリファレンス" href="/docs/developers/api">
+    すべてのエンドポイントを、curl、JavaScript、Pythonのサンプルと Try it パネルとともに紹介します。
+  </Card>
+  <Card title="エラー" href="/docs/developers/errors">
+    すべてのエラーコードの意味と対処方法を紹介します。
+  </Card>
+  <Card title="Webhook" href="/docs/webhooks">
+    スキャンや新しいコードをサーバーにプッシュ通知します（Business）。
+  </Card>
+  <Card title="レート制限" href="/docs/developers/rest-api#rate-limits">
+    プランごとの1日のクォータと `X-RateLimit-*` ヘッダーについて説明します。
+  </Card>
+</Cards>

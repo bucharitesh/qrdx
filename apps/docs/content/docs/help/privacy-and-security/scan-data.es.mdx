@@ -1,0 +1,45 @@
+---
+title: "Qué registra QRdx cuando alguien escanea"
+description: "Los datos que registra el escaneo de un código dinámico, lo que nunca almacena y cuánto tiempo se conservan."
+---
+
+Solo los códigos dinámicos registran escaneos. Un código estático contiene tu contenido directamente y nunca pasa por QRdx.
+
+## Qué registra un escaneo [#what-a-scan-records]
+
+- País, región y ciudad, calculados a partir de la red.
+- Tipo de dispositivo, sistema operativo y navegador.
+- El sitio de referencia, si lo hay.
+- El idioma del navegador.
+- Qué versión vio el visitante, si hay una prueba A/B en curso.
+- Un hash diario con sal de la dirección de red y el navegador, de modo que cada visitante cuente una sola vez al día.
+- Su ubicación, redondeada a unos 100 m, solo si el propietario del código activó la [ubicación precisa](/docs/precise-location) y la persona que escanea lo permitió en su navegador. No se almacena nada si la rechaza.
+
+## Qué nunca almacena [#what-it-never-stores]
+
+QRdx nunca almacena la dirección IP de quien escanea. El hash anterior no se puede revertir para obtenerla y cambia cada día.
+
+Los bots y las vistas previas de enlaces no se registran.
+
+## Cuánto tiempo se conservan los escaneos [#how-long-scans-are-kept]
+
+Los escaneos se conservan mientras exista el código. Tu plan decide hasta cuándo puedes ver el historial: 90 días en Gratis, 3 años en Pro e ilimitado en Business.
+
+Al eliminar un código, sus escaneos se eliminan de forma permanente.
+
+## Cookies para quienes escanean [#cookies-for-people-who-scan]
+
+Las páginas que ven quienes escanean, como los enlaces cortos y las páginas para móvil, no muestran un banner de cookies ni cargan las analíticas de QRdx ni el widget de soporte.
+
+QRdx establece allí dos cookies. Una recuerda durante 6 horas la contraseña correcta de un código. La otra vincula una página alojada con el escaneo que la abrió durante 15 minutos, solo cuando el código solicita la ubicación precisa, para que la ubicación que comparte quien escanea se añada a ese escaneo. Los propietarios de las páginas pueden añadir sus propios píxeles de analítica en los planes de pago.
+
+## El escáner de códigos QR [#the-qr-code-scanner]
+
+El [escáner de QRdx](/scan) guarda tu historial de escaneos únicamente en tu dispositivo.
+
+## Más detalles [#more-detail]
+
+- [Política de privacidad](/legal/privacy-policy)
+- [Política de cookies](/legal/cookie-policy)
+- [Subencargados del tratamiento](/legal/subprocessors)
+- [Acuerdo de procesamiento de datos](/legal/dpa)

@@ -1,0 +1,89 @@
+---
+title: "Espacios de trabajo y equipos"
+description: "Cada persona tiene su propio espacio de trabajo. Crea más con Pro o Business, invita a personas por correo electrónico o con un enlace de acceso, y elige los roles de propietario, administrador, miembro, facturación o lector."
+icon: Users
+---
+
+Todo lo que creas en QRdx pertenece a un espacio de trabajo: códigos dinámicos y [páginas alojadas](/docs/landing-pages), [archivos](/docs/files), [dominios personalizados](/docs/custom-domains), carpetas y etiquetas, respuestas de formularios, [webhooks](/docs/webhooks) y claves de API. Los temas guardados son tuyos, y los propietarios y administradores pueden compartir copias con un espacio de trabajo para que todos los miembros diseñen con los mismos colores. Todas las páginas del panel llevan el espacio de trabajo en su URL (`/dashboard/<workspace>/…`). Cambia de espacio de trabajo con el selector de espacios de trabajo que está al final de la barra lateral (en un móvil, en el menú); permaneces en la misma sección, como Códigos o Ajustes → Dominios, del espacio de trabajo que elijas.
+
+## Tu propio espacio de trabajo [#your-own-workspace]
+
+Cada cuenta tiene un espacio de trabajo propio, creado automáticamente, en el que eres el propietario. Usa tu plan. Puedes cambiarle el nombre y la URL, pero no puedes salir de él ni eliminarlo: desaparece cuando [eliminas tu cuenta](/docs/help/account-and-billing/delete-your-account). Con Pro o Business puedes invitar a personas a él, o reservarlo para ti y crear un espacio de trabajo aparte para cada equipo o cliente.
+
+## Crear otro espacio de trabajo [#create-another-workspace]
+
+Crear más espacios de trabajo requiere Pro o Business. Cualquiera puede unirse a un espacio de trabajo al que lo inviten, incluidas las personas con el plan Gratis.
+
+1. Abre el selector de espacios de trabajo y haz clic en **Crear espacio de trabajo**.
+2. Introduce un **Nombre del espacio de trabajo** y una **URL del espacio de trabajo** (de 3 a 48 letras minúsculas, números y guiones). QRdx comprueba mientras escribes si la URL está libre; algunas palabras, como `codes` y `settings`, están reservadas.
+3. Haz clic en **Crear espacio de trabajo**. Se abre contigo como propietario.
+
+## Invitar a personas [#invite-people]
+
+Los propietarios y administradores invitan a personas desde [Ajustes → Equipo](/dashboard?to=settings/team):
+
+1. Introduce el correo electrónico de la persona y elige un rol: **Administrador**, **Miembro** o **Lector**. Los propietarios también pueden invitar a alguien como **Facturación**.
+2. QRdx les envía una invitación por correo electrónico. Cada invitación también tiene un enlace que puedes copiar y enviar tú mismo.
+3. La persona abre el enlace, inicia sesión con el correo electrónico invitado y hace clic en **Aceptar invitación**. Después se abre el espacio de trabajo.
+
+Para invitar a alguien como administrador, primero tienes que [confirmar que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), salvo que ya lo hayas hecho en ese navegador en los últimos 10 minutos.
+
+Las invitaciones caducan a las 48 horas y solo funcionan con el correo electrónico al que se enviaron, así que otra persona no puede usar un enlace reenviado. Las invitaciones pendientes ocupan una plaza hasta que se aceptan, así que revoca las que ya no necesites.
+
+## Enlace de acceso [#join-link]
+
+Un enlace de acceso es un único enlace para todo el equipo: cualquier persona con sesión iniciada que lo abra se une al espacio de trabajo, mientras queden plazas libres. Los propietarios y administradores lo gestionan en [Ajustes → Equipo](/dashboard?to=settings/team), con Pro y Business:
+
+1. Elige el rol que recibirán las personas al unirse (**Miembro** por defecto; nunca propietario, y solo los propietarios pueden crear un enlace de **Facturación**) y haz clic en **Crear enlace de acceso**. Un enlace que añade personas como administradores requiere que primero [confirmes que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+2. Copia el enlace y compártelo. Por seguridad solo se muestra una vez; QRdx guarda una huella del enlace, no el enlace en sí.
+3. ¿Lo perdiste o llegó a donde no debía? Haz clic en **Restablecer enlace**: el anterior deja de funcionar y obtienes uno nuevo. **Desactivar** lo detiene definitivamente.
+
+Las personas que no han iniciado sesión lo hacen primero y vuelven al enlace. Si alguien ya es miembro, se le avisa. Cuando se agotan las plazas, nadie más puede unirse hasta que haya una libre.
+
+## Roles [#roles]
+
+| | Lector | Facturación | Miembro | Administrador | Propietario |
+| --- | --- | --- | --- | --- | --- |
+| Ver códigos, páginas y analíticas | Sí | Sí | Sí | Sí | Sí |
+| Crear y editar códigos y páginas, subir archivos | No | No | Sí | Sí | Sí |
+| Eliminar códigos, archivos y respuestas de formularios | No | No | Los propios | Cualquiera | Cualquiera |
+| Crear claves de API | No | No | Sí | Sí | Sí |
+| Compartir temas guardados con el espacio de trabajo | No | No | No | Sí | Sí |
+| Invitar y eliminar personas, cambiar roles | No | No | No | Sí | Sí |
+| Cambiar el nombre, la URL y el logotipo del espacio de trabajo | No | No | No | Sí | Sí |
+| Añadir, verificar y eliminar dominios personalizados | No | No | No | Sí | Sí |
+| Gestionar endpoints de webhooks y ver los secretos de firma | No | No | No | Sí | Sí |
+| Mejorar el plan del espacio de trabajo | No | Sí | No | No | Sí |
+| Crear y modificar apps OAuth | No | No | No | No | Sí |
+| Nombrar a alguien propietario o miembro de facturación | No | No | No | No | Sí |
+| Eliminar el espacio de trabajo | No | No | No | No | Sí |
+
+Los lectores y los miembros de facturación solo pueden leer: no pueden crear, editar ni eliminar nada en el espacio de trabajo, y una clave de API no puede hacer más que el rol de quien la creó. Los miembros pueden ver los endpoints de webhooks y sus registros de entrega, y usar los dominios verificados del espacio de trabajo para sus códigos. Los [ajustes de notificaciones](/docs/notifications) son personales: cada miembro elige sus propias alertas para cada espacio de trabajo.
+
+## Planes y plazas [#plans-and-seats]
+
+Un espacio de trabajo usa el mejor plan entre sus propietarios y miembros de facturación, así que si uno de ellos tiene Business, todo el espacio de trabajo obtiene los límites de Business y los miembros no necesitan su propia suscripción. Para eso sirve el rol **Facturación**: para quien paga por el espacio de trabajo sin gestionarlo. Los límites, como códigos dinámicos, páginas, almacenamiento y respuestas de formularios, se cuentan por espacio de trabajo. Consulta [Planes y límites](/docs/plans-and-limits).
+
+Las plazas son los miembros, incluido el propietario, más las invitaciones pendientes: 1 (solo tú) cuando los propietarios y miembros de facturación tienen Gratis, hasta 3 con Pro y sin límite con Business. Si cambia su plan, los miembros actuales se quedan y todos los códigos siguen funcionando; solo se bloquean las nuevas invitaciones y las cosas nuevas que superen el límite.
+
+## Cambiar el nombre, salir o eliminar un espacio de trabajo [#rename-leave-or-delete-a-workspace]
+
+Estas opciones están en [Ajustes → General](/dashboard?to=settings) del espacio de trabajo.
+
+- **Cambiar el nombre:** los propietarios y administradores cambian el nombre y la URL. Los enlaces a la URL anterior dejan de funcionar; los códigos impresos no cambian.
+- **Logotipo:** los propietarios y administradores suben un logotipo (cuando el almacenamiento de archivos está configurado en el servidor) o usan una URL de imagen https. Aparece en el selector de espacios de trabajo; sin él, el selector muestra la primera letra del nombre.
+- **Salir:** haz clic en **Salir del espacio de trabajo** en la zona de peligro. El último propietario no puede salir: antes nombra propietario a otro miembro o elimina el espacio de trabajo. Nadie puede salir de su propio espacio de trabajo.
+- **Eliminar a un miembro:** en [Ajustes → Equipo](/dashboard?to=settings/team). Los códigos y páginas que creó se quedan en el espacio de trabajo. Nadie puede ser eliminado de su propio espacio de trabajo. Eliminar a alguien, igual que cambiar su rol, requiere que primero [confirmes que eres tú](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+- **Eliminar un espacio de trabajo:** solo los propietarios, y nunca el espacio de trabajo propio de alguien. Para confirmar, escribes la URL del espacio de trabajo, y QRdx te pide que confirmes que eres tú. Nada deja de funcionar: los códigos, páginas, archivos, dominios y otros elementos pasan al espacio de trabajo propio de quien los creó. Las claves de API del espacio de trabajo se eliminan con él.
+
+## Mover un código a otro espacio de trabajo [#move-a-code-to-another-workspace]
+
+En el menú **⋯** del código en la página Códigos, elige **Mover a espacio de trabajo...** y selecciona un espacio de trabajo donde puedas crear códigos. El enlace corto sigue siendo el mismo, así que los códigos impresos siguen funcionando, y sus escaneos y su historial de versiones se mueven con él. Su carpeta y sus etiquetas se quedan atrás, porque pertenecen al espacio de trabajo anterior.
+
+- Los miembros pueden mover los códigos que crearon; los propietarios y administradores, cualquier código.
+- El plan del otro espacio de trabajo debe tener capacidad para otro código activo. Los códigos archivados no cuentan.
+- Un código cuyo enlace está en un dominio personalizado no se puede mover, porque el dominio pertenece al espacio de trabajo anterior y su enlace impreso dejaría de funcionar. Los códigos que abren una página alojada se quedan con su página.
+
+## Acceso por API [#api-access]
+
+Las solicitudes a la [REST API](/docs/developers/rest-api) hechas con un token de acceso OAuth actúan en el espacio de trabajo propio del propietario del token. Una [clave de API](/docs/developers/api-keys) actúa en el espacio de trabajo donde se creó, con tu rol en él. Las solicitudes hechas desde una sesión de navegador con sesión iniciada actúan en el último espacio de trabajo abierto en esa sesión.

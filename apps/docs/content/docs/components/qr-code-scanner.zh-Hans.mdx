@@ -1,0 +1,41 @@
+---
+title: "二维码扫描器"
+description: "一个拖放区域，可在浏览器中从图片里读取二维码，并提供复制和打开链接的操作。"
+icon: Scan
+---
+
+<ComponentLinks name="qr-code-scanner" />
+
+<ComponentPreview name="qr-code-scanner-demo" />
+
+## 安装 [#installation]
+
+<InstallationTabs name="qr-code-scanner" />
+
+## 用法 [#usage]
+
+```tsx
+import { QrCodeScanner } from "@/components/qr-code-scanner";
+```
+
+```tsx
+<QrCodeScanner onResult={(value) => console.log(value)} />
+```
+
+用户可以拖入图片，也可以点击选择图片。解码在浏览器中通过 qrdx 的[检测辅助函数](/docs/qr-detection)完成，因此图片不会离开设备。它读取的是图片文件，而不是实时摄像头画面。
+
+识别结果会连同复制按钮一起显示；如果结果是 `http` 或 `https` 网址，还会显示“打开链接”按钮。
+
+## 示例 [#examples]
+
+### 校验结果 [#checking-a-result]
+
+`onResult` 会接收解码后的文本，因此你可以据此执行操作，例如为门票办理签到。`label` 用于更改拖放区域中的标题。请下载上方的示例二维码并拖入，即可看到一张有效的门票。
+
+<ComponentPreview name="qr-code-scanner-tickets" />
+
+## API 参考 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-scanner.tsx" type="{ [K in keyof QrCodeScannerProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeScannerProps[K] }" />
+
+其他任何属性（例如 `className`）都会传递给外层的 `<div>`。

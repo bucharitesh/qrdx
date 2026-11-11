@@ -1,0 +1,49 @@
+---
+title: "Wi-Fi 二维码"
+description: "扫描后即可加入 Wi-Fi 网络的二维码，附带类型完备、自动转义的载荷构建器。"
+icon: Globe
+---
+
+<ComponentLinks name="wifi-qr-code" />
+
+<ComponentPreview name="wifi-qr-code-demo" />
+
+## 安装 [#installation]
+
+<InstallationTabs name="wifi-qr-code" />
+
+## 用法 [#usage]
+
+```tsx
+import { WifiQrCode } from "@/components/wifi-qr-code";
+```
+
+```tsx
+<WifiQrCode ssid="Cafe Guest" password="espresso-2024" />
+```
+
+iOS 和 Android 的相机在扫描该二维码时，会提示加入网络，无需安装任何应用。
+
+## 示例 [#examples]
+
+### 变体 [#variants]
+
+`showPassword` 会把密码打印出来，方便访客手动输入。开放网络请使用 `encryption="nopass"`，不广播网络名称的网络请使用 `hidden`。
+
+<ComponentPreview name="wifi-qr-code-variants" />
+
+### 载荷构建器 [#payload-builder]
+
+`buildWifiPayload` 返回二维码所编码的 `WIFI:` 文本。它会对名称和密码中的 `\`、`;`、`,`、`:` 和 `"` 进行转义，而手写载荷通常正是在这些字符上出错。它可以搭配任何二维码渲染器使用，也可以用来打印载荷以便调试。
+
+<ComponentPreview name="wifi-qr-code-payload" />
+
+## API 参考 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/wifi-qr-code.tsx" type="{ [K in keyof WifiQrCodeProps as K extends Exclude<keyof ComponentProps<'figure'>, 'hidden'> ? never : K]: WifiQrCodeProps[K] }" />
+
+其他任何属性（例如 `className`）都会传递给外层的 `<figure>`。
+
+### buildWifiPayload [#buildwifipayload]
+
+`buildWifiPayload(network: WifiNetwork): string` 接收与该组件相同的网络字段：`ssid`、`password`、`encryption` 和 `hidden`。

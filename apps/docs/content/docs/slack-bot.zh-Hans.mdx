@@ -1,0 +1,107 @@
+---
+title: "Slack 机器人"
+description: "通过 /qr、提及机器人、私信或消息快捷操作，在 Slack 中生成并设计二维码；关联 QRdx 账号后，还可以生成可追踪的二维码。"
+icon: Bot
+---
+
+QRdx 提供一款 Slack 应用，可以直接在 Slack 中生成二维码。只要所在的 Slack 工作区安装了这个机器人，任何人都可以用链接或任意文本生成二维码。关联了 QRdx 账号的用户还可以生成可追踪的（动态）二维码，这类二维码会统计扫描次数，之后还可以改为指向其他地址。
+
+<IfAvailable feature="slackBot" id="add-the-bot-to-slack" title="将机器人添加到 Slack">
+
+1. 在 QRdx 中打开[设置 → 集成 → Slack](/settings/integrations/slack)，点击 **Add the bot to Slack**。任何 QRdx 账号都可以操作，不限套餐。
+2. 选择 Slack 工作区并授权。机器人会请求读取它的斜杠命令、对它的提及和发给它的私信，并请求发送消息。
+3. 授权后会返回设置页面，页面上列出你已添加机器人的 Slack 工作区。
+
+同一个 Slack 应用还会向频道发送[提醒](/docs/notifications#slack-and-discord)。添加机器人不会开启提醒，开启提醒也不会添加机器人。
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="make-a-qr-code" title="生成二维码">
+
+| 位置 | 操作 | 二维码出现的位置 |
+| --- | --- | --- |
+| 任意频道 | `/qr` 后接链接或文本 | 频道中 |
+| 机器人所在的频道 | 提及机器人并附上链接或文本 | 消息的讨论串中 |
+| 机器人的私信 | 发送链接或文本 | 私信中 |
+| 任意消息 | **More actions** → **Make a QR code** | 该消息的讨论串中 |
+
+每次回复都是一张二维码图片，图片下方是内容，另有三个按钮和下文介绍的样式菜单。三个按钮分别是 **Download PNG**（1024 像素）、**Download SVG** 和 **Open in editor**，在编辑器中可以进一步调整设计。如果内容是链接，编辑器会打开并填入该链接；如果是文本，编辑器会以空白状态打开，因为文本不会放进链接里。
+
+快捷操作会用消息中的第一个网址生成二维码；消息中没有网址时，则使用整条消息的文本。如果机器人不在该频道，只有你能看到这个二维码，并会有一条提示，说明需要把应用添加到该频道。
+
+单独输入 `/qr` 或 `/qr help` 会显示可用命令。内容过长、无法生成二维码时，只有你会看到一段简短的说明，而不是图片。
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="style-your-code" title="设计二维码样式">
+
+每个二维码下方有四个菜单：**Look**、**Color**、**Frame** 和 **Logo**。选择后，二维码会在原处更新，并附上新的下载链接。每次选择都基于二维码当前的样子。只有生成二维码的人可以重新设计样式。其他人选择时，Slack 会向他们显示一条仅自己可见的提示，二维码保持不变。
+
+可选的外观是编辑器内置设计中在小尺寸下依然易读的一部分，**Plain** 会恢复为白底黑码。选择颜色后，整个二维码会变成该颜色，底色为白色。边框会添加“Scan me”标签，Logo 则是编辑器中的快捷图标。
+
+生成二维码时，也可以在链接或文本后面添加选项来设置样式，选项名称与 [QRdx CLI](/docs/developers/cli) 相同：
+
+```text
+/qr qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+第一个选项之前的所有内容都是二维码的内容。系统会先应用外观，再在其基础上应用其他选项，因此 `--look royal --fg 0051ff` 会保留 Royal 的形状，并改为蓝色。这些选项在提及和私信中同样可用。如果选项或取值有误，机器人会私下告知你，并列出可用的取值。
+
+| 选项 | 作用 | 取值 |
+| --- | --- | --- |
+| `--look` | 整体设计，来自编辑器的某个预设 | `plain`、`classic`、`modern`、`royal`、`folio`、`caffeine`、`retro`、`bordeaux`、`blossom` |
+| `--fg`（或 `--color`） | 码点颜色；未单独设置时，角上的定位眼也使用该颜色 | 十六进制颜色（如 `0051ff`），或 `black`、`blue`、`green`、`red`、`purple`、`orange` |
+| `--bg` | 背景 | 与 `--fg` 相同 |
+| `--eye-color` | 三个角上的定位眼 | 与 `--fg` 相同 |
+| `--dot-color` | 定位眼的中心 | 与 `--fg` 相同 |
+| `--body` | 码点的形状 | 编辑器中 {facts.bodyPatterns} 种码点形状中的任意一种，如 `rounded`、`circle` 或 `classy` |
+| `--eye` | 角上定位眼的形状 | {facts.eyeShapes} 种定位眼形状中的任意一种，如 `square`、`rounded` 或 `gear` |
+| `--dot` | 定位眼中心的形状 | {facts.eyeCentres} 种中心形状中的任意一种，如 `square`、`rounded` 或 `circle` |
+| `--frame` | 二维码周围的边框 | `none`，或 {facts.frameStyles} 种内置边框中的任意一种，如 `banner-bottom`、`banner-top`、`speech-bubble` 或 `polaroid` |
+| `--frame-text` | 边框的标签，最多 24 个字符 | 任意文本，含空格时需加引号。未设置 `--frame` 时，文本会显示在二维码下方的横幅上 |
+| `--template` | 装饰性边框 | `Arrow`、`StandardBox`、`SquareBorder`、`StrikedBox` 或 `Halloween` |
+| `--logo` | 中间的图标 | `link`、`wifi`、`location`、`phone`、`email`、`whatsapp`、`instagram`、`file`、`calendar` 或 `none` |
+
+带样式的二维码发布之前，QRdx 会用与编辑器相同的扫描评分对其进行检查。如果某个设计不便手机识读，QRdx 会自动调整（更深的颜色、更简单的形状或更高的纠错级别），并在二维码下方说明。如果这样仍然不够（通常是因为内容太长），你会得到一个白底黑码的二维码，并附有说明。通过 `/qr` 生成的带样式二维码，会在你发送命令后稍等片刻才出现，因为需要先完成检查。
+
+**Open in editor** 会用相同的设计打开编辑器，包括颜色、形状、边框和装饰边框。Logo 图标不会随链接带入，请在编辑器中重新选择。
+
+通过快捷操作生成、仅你可见的二维码没有这些菜单，可追踪的二维码则保持默认的简洁设计。
+
+</IfAvailable>
+
+<IfAvailable feature="slackBot" id="tracked-codes" title="可追踪的二维码">
+
+普通二维码直接包含链接本身。可追踪的二维码包含一个短链接（`https://qrdx.dev/q/<slug>`），它会重定向到你的链接，因此 QRdx 可以统计其扫描次数，你也可以更改它的跳转目标。要在 Slack 中生成这类二维码，需要先关联一次你的 QRdx 账号：
+
+1. 运行 `/qr link`。一个仅你可见的按钮会打开 QRdx，该按钮有效期为 10 分钟。
+2. 如有提示，请先登录 QRdx。然后点击 **Sign in with Slack**，并使用运行 `/qr link` 的同一个 Slack 账号登录。Slack 只会告诉 QRdx 你的 Slack 用户和工作区，QRdx 会核对两者是否一致。如果你以其他身份登录 Slack，则不会建立任何关联。
+3. 选择用于存放可追踪二维码的 QRdx 工作区，然后点击 **Confirm**。QRdx 会先要求你[确认是本人操作](/docs/help/privacy-and-security/two-step-verification#confirm-its-you)，因为这个关联会允许该 Slack 账号在你的工作区中生成二维码。
+4. 回到 Slack 后，机器人会给你发一条私信，写明你关联的 QRdx 账号和工作区。如果这不是你本人关联的，请运行 `/qr unlink`。
+5. 运行 `/qr track`，后接以 `https://` 或 `http://` 开头的链接。你也可以提及机器人，并附上 `track` 和链接。
+
+二维码会连同它的短链接和所属 QRdx 工作区的名称一起出现在频道中。**Open in QRdx** 按钮会通向控制台中的这个二维码，它出现在另一条仅你可见的消息里。二维码会以链接所属网站的名称加上“from Slack”命名，你可以像查找其他二维码一样，在该工作区的二维码列表中找到它。
+
+可追踪二维码遵循与在控制台中生成的二维码相同的规则：你的角色必须有权创建二维码；要求两步验证的工作区需要你的账号已开启两步验证；同时适用你所在套餐对活跃动态二维码数量的限制。达到上限时，机器人会提示，并附上套餐页面的链接。每次都会进行这些检查，因此退出工作区或失去访问权限后，该关联在那里就不再生效。
+
+每个 Slack 账号在每个 Slack 工作区中只有一个关联。当你对已关联的 Slack 账号运行 `/qr link` 时，页面会说明它关联到哪个 QRdx 工作区，以及该工作区是否属于另一个 QRdx 账号。此时按钮会显示为 **Replace the link**，在你点击之前不会有任何变化。`/qr unlink` 可以移除关联，在[设置 → 集成 → Slack](/settings/integrations/slack)的 **Linked Slack accounts** 下点击 **Unlink** 也可以。
+
+QRdx 工作区的所有者和管理员可以在[设置 → API 密钥与应用](/dashboard?to=settings/developers)中看到关联到该工作区的所有 Slack 账号，包括 Slack 工作区、Slack 用户 ID、它所代表的成员以及关联时间。在那里点击 **Revoke** 即可移除关联。如果工作区启用了[审计日志](/docs/help/teams/audit-log)，通过 `/qr track` 生成的二维码会显示成员姓名并标注“via Slack”，同时附有 Slack 用户 ID 和工作区 ID，撤销关联也会被记录。
+
+</IfAvailable>
+
+## 机器人保留哪些数据 [#what-the-bot-keeps]
+
+只有在有人运行 `/qr`、提及机器人、直接给机器人发消息，或对某条消息使用快捷操作时，机器人才会读取该消息。它从不存储消息文本。二维码图片来自 QRdx 的 [Image API](/docs/developers/image-api)，由 Slack 通过消息中的链接加载，因此不会上传任何内容。
+
+对于每个 Slack 工作区，QRdx 会保存其 ID 和名称、机器人的 Slack 用户 ID、机器人的令牌（已加密），以及是哪个 QRdx 账户添加的它。对于每个已关联的 Slack 账户，QRdx 会保存 Slack 用户 ID、你的 QRdx 账户以及你选择的工作区。使用 Slack 登录来完成关联不会增加这些数据：QRdx 会比对 Slack 用户和工作区，然后丢弃登录信息。<IfAvailable feature="slackBot"> 你已关联的 Slack 账户包含在你的[数据导出](/docs/help/account-and-billing/export-your-data)中。</IfAvailable>
+
+<IfAvailable feature="slackBot" id="remove-the-bot" title="移除机器人">
+
+在 Slack 中打开该应用的页面，选择 **Remove App**（或请 Slack 管理员操作）。随后 QRdx 会删除该 Slack 工作区的机器人令牌，以及在该工作区建立的所有 Slack 账户关联。已创建的二维码会保留在 QRdx 中，带跟踪的二维码仍可继续使用。
+
+</IfAvailable>
+
+## 自托管 [#self-hosting]
+
+该机器人与“Add to Slack”提醒使用同一个 Slack 应用，只是需要再加上它的签名密钥。请设置 `SLACK_CLIENT_ID`、`SLACK_CLIENT_SECRET` 和 `SLACK_SIGNING_SECRET`，在生产环境中还要设置 `INTEGRATION_ENCRYPTION_KEY`，它用于加密机器人令牌。如果缺少这些设置，机器人的页面和端点就不存在。仓库中的 `plugins/slack/manifest.json` 是该应用的清单文件，`plugins/slack/README.md` 会逐步说明如何用它创建应用。该清单包含 `openid` 用户权限范围和重定向 URL `/api/integrations/slack/link/callback`，当有人关联自己的账户时，Sign in with Slack 需要用到它们。

@@ -1,0 +1,52 @@
+---
+title: "Código QR de vCard"
+description: "Un código QR que guarda una tarjeta de contacto al escanearse, con un constructor de vCard 3.0 tipado."
+icon: Users
+---
+
+<ComponentLinks name="vcard-qr-code" />
+
+<ComponentPreview name="vcard-qr-code-demo" />
+
+## Instalación [#installation]
+
+<InstallationTabs name="vcard-qr-code" />
+
+## Uso [#usage]
+
+```tsx
+import { VCardQrCode } from "@/components/vcard-qr-code";
+```
+
+```tsx
+<VCardQrCode
+  contact={{
+    firstName: "Ada",
+    lastName: "Lovelace",
+    organization: "Analytical Engines",
+    email: "ada@example.com",
+  }}
+/>
+```
+
+Las cámaras de los teléfonos ofrecen guardar el contacto cuando escanean el código. Los campos vacíos se omiten, lo que mantiene el código pequeño y rápido de escanear.
+
+## Ejemplos [#examples]
+
+### Constructor de vCard [#vcard-builder]
+
+`buildVCard` devuelve el texto vCard 3.0 que codifica el código, con las comas, los puntos y coma, las barras invertidas y los saltos de línea escapados. Úsalo con cualquier renderizador de QR, o para ofrecer el mismo contacto como descarga `.vcf`.
+
+<ComponentPreview name="vcard-qr-code-payload" />
+
+Las tarjetas de contacto contienen más texto que un enlace, así que el componente usa el nivel de corrección de errores `M` para mantener los módulos grandes. Añade solo los campos que la gente necesite y consulta qué tamaño debe tener al imprimirlo con la [calculadora de tamaño de impresión](/tools/print-size).
+
+## Referencia de la API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" type="{ [K in keyof VCardQrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: VCardQrCodeProps[K] }" />
+
+Cualquier otra prop, como `className`, se pasa al `<figure>` que lo envuelve.
+
+### VCardContact [#vcardcontact]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" name="VCardContact" />

@@ -1,0 +1,53 @@
+---
+title: "QRコード共有ダイアログ"
+description: "リンク用のQRコード、コピーボタン、PNGダウンロード、ネイティブの共有シートを備えた共有ダイアログです。"
+icon: Webhook
+---
+
+<ComponentLinks name="qr-code-share-dialog" />
+
+<ComponentPreview name="qr-code-share-dialog-demo" />
+
+## インストール [#installation]
+
+<InstallationTabs name="qr-code-share-dialog" />
+
+## 使い方 [#usage]
+
+```tsx
+import { QrCodeShareDialog } from "@/components/qr-code-share-dialog";
+```
+
+```tsx
+<QrCodeShareDialog url="https://example.com/invite/abc123" />
+```
+
+ダイアログには、QRコード、コピーボタン付きの読み取り専用フィールドに入ったリンク、PNGダウンロードが表示されます。共有シートに対応しているデバイス（ほとんどのスマートフォン）では、「共有…」ボタンで共有シートを開けます。
+
+## 例 [#examples]
+
+### カスタムトリガー [#custom-trigger]
+
+ツールバーのアイコンボタンなど、独自のトリガーを children として渡します。`title`、`description`、`qr` でダイアログをカスタマイズできます。
+
+<ComponentPreview name="qr-code-share-dialog-trigger" />
+
+### 制御モード [#controlled]
+
+このダイアログは [Dialog](https://ui.shadcn.com/docs/components/dialog) の props を受け取るため、コードから開くことができます。
+
+```tsx
+const [open, setOpen] = useState(false);
+
+<QrCodeShareDialog
+  url="https://example.com"
+  open={open}
+  onOpenChange={setOpen}
+/>
+```
+
+## APIリファレンス [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-share-dialog.tsx" type="{ [K in keyof QrCodeShareDialogProps as K extends Exclude<keyof ComponentProps<typeof Dialog>, 'children'> ? never : K]: QrCodeShareDialogProps[K] }" />
+
+`open`、`defaultOpen`、`onOpenChange`、`modal` は Dialog にそのまま渡されます。

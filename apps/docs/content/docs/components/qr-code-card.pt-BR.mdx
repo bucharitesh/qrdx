@@ -1,0 +1,60 @@
+---
+title: "QR Code Card"
+description: "Um card com um QR code dentro de uma moldura \"Scan me\", um título, uma descrição e espaço para ações."
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## Instalação [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## Uso [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+Tudo o que você passar como children é renderizado no rodapé do card, como um botão de copiar ou um [menu de download](/docs/components/qr-code-download).
+
+## Exemplos [#examples]
+
+### Molduras [#frames]
+
+`frame` coloca a chamada para ação abaixo do código (`"bottom"`), acima dele (`"top"`) ou deixa a moldura de fora (`"none"`). `cta` muda o texto, e `frameClassName` altera o estilo da moldura, por exemplo com a cor da sua marca.
+
+<ComponentPreview name="qr-code-card-frames" />
+
+Por padrão, a moldura usa as cores `foreground` e `background` do seu tema, então continua legível nos modos claro e escuro. O código em si mantém um fundo claro, que qualquer leitor consegue ler.
+
+### Estilizando o código [#styling-the-code]
+
+`qr` aceita qualquer opção de estilo do qrdx: `fgColor`, `bgColor`, gradientes, `bodyPattern`, padrões de canto, `logo` e `templateId`.
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## Referência da API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+Qualquer outra prop, como `className`, é repassada para o [Card](https://ui.shadcn.com/docs/components/card).

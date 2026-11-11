@@ -680,5 +680,98 @@
         }
       }
     }
+  },
+  "docs": {
+    "meta": {
+      "titleSuffix": "QRdx 文档"
+    },
+    "breadcrumb": {
+      "home": "首页",
+      "docs": "文档"
+    },
+    "untranslated": {
+      "title": "此页面暂未翻译",
+      "body": "你正在阅读英文版。"
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "复制 Markdown",
+        "open": "打开",
+        "openIn": "在 {app} 中打开",
+        "askPrompt": "请阅读 {url}，我想就其内容提问。"
+      },
+      "search": {
+        "jumpTo": "跳转到<page>{name}</page>"
+      },
+      "language": {
+        "label": "文档语言",
+        "note": "文档提供以下语言版本。其他语言将显示英文文档。"
+      }
+    },
+    "help": {
+      "search": "搜索帮助和文档",
+      "stillStuck": {
+        "title": "仍未解决？",
+        "body": "请告诉我们你想做什么，以及发生了什么。如果问题与某个二维码有关，请附上该二维码的短链接。",
+        "widget": "允许“功能性”Cookie 后，可使用 qrdx.dev 上的支持小组件。",
+        "github": "在 GitHub 上报告错误",
+        "contact": "所有联系我们的方式"
+      }
+    },
+    "notFound": {
+      "title": "文档中没有这个页面",
+      "body": "它可能已被移动或重命名。你可以搜索文档，或从以下页面开始。",
+      "places": {
+        "gettingStarted": {
+          "title": "快速入门",
+          "description": "设计并下载你的第一个二维码。"
+        },
+        "dynamic": {
+          "title": "动态二维码",
+          "description": "印刷之后仍可更改的短链接。"
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "在你自己的应用中创建和管理二维码。"
+        },
+        "components": {
+          "title": "组件",
+          "description": "用于二维码的 React 和 shadcn/ui 组件。"
+        }
+      }
+    },
+    "ui": {
+      "search": "搜索",
+      "searchPlaceholder": "搜索",
+      "openSearch": "打开搜索",
+      "closeSearch": "关闭搜索",
+      "noResults": "未找到结果",
+      "searchFailed": "搜索失败",
+      "onThisPage": "本页内容",
+      "noHeadings": "没有标题",
+      "tableOfContents": "目录",
+      "lastUpdated": "最后更新于",
+      "previousPage": "上一页",
+      "nextPage": "下一页",
+      "copyCode": "复制文本",
+      "copiedCode": "已复制文本",
+      "copyAnchor": "复制锚点链接",
+      "copiedAnchor": "已复制锚点链接",
+      "copyLink": "复制链接",
+      "copiedLink": "已复制链接",
+      "toggleMenu": "切换菜单",
+      "toggleTheme": "切换主题",
+      "themeLight": "浅色",
+      "themeDark": "深色",
+      "themeSystem": "跟随系统",
+      "openSidebar": "打开侧边栏",
+      "closeSidebar": "关闭侧边栏",
+      "collapseSidebar": "收起侧边栏",
+      "typeTableProp": "属性",
+      "typeTableType": "类型",
+      "typeTableDefault": "默认值",
+      "typeTableParameters": "参数",
+      "typeTableReturns": "返回值"
+    }
   }
 }

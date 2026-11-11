@@ -1,0 +1,45 @@
+---
+title: "二维码打开了错误的页面"
+description: "二维码为什么会打开旧链接或意外的链接，以及如何查明它实际包含的内容。"
+---
+
+## 首先，查看二维码里存了什么 [#first-see-what-the-code-holds]
+
+给印出来的二维码拍一张照片，然后上传到[扫描检测工具](/tools/scan-checker)。它会准确显示二维码包含的内容。
+
+- 如果显示的是你的网站地址，说明这是**静态**二维码。
+- 如果显示的是类似 `qrdx.dev/q/…` 的短链接，说明这是**动态**二维码。
+
+## 静态二维码 [#a-static-code]
+
+静态二维码把链接直接存储在码中，印刷后无法更改。
+
+如果在二维码变为动态之前就下载了它，就会出现这种情况。要解决此问题，请印刷动态版本。参见[创建动态二维码](/docs/help/dynamic-codes/create)。
+
+## 动态二维码 [#a-dynamic-code]
+
+在 **Codes** 中打开该二维码，逐项检查以下内容。
+
+### 新的目标地址没有保存 [#the-new-destination-wasnt-saved]
+
+在 Playground 中，仅修改地址是不够的：请点击 **Point it to the new address**。在控制台中，请使用 **Edit link** 和 **Save changes**。参见[更改二维码的指向](/docs/help/dynamic-codes/change-the-link)。
+
+### 匹配了智能路由规则 [#a-smart-routing-rule-matched]
+
+规则可以把部分扫描引导到其他地方，例如按设备或国家/地区。系统采用第一条匹配的规则。打开 **Smart routing**，然后点击 **Test your rules**。
+
+### 正在进行 A/B 测试 [#an-ab-test-is-running]
+
+每位访问者当天只会看到其中一个版本。其他人看到的页面可能不同。
+
+### 二维码已暂停或已结束 [#the-code-is-paused-or-ended]
+
+已暂停或已结束的二维码会打开其 **Fallback URL**（如果你设置了的话）。请检查 **Access & schedule**。
+
+### 添加了 UTM 参数 [#utm-parameters-were-added]
+
+如果你设置了 UTM 参数，扫描时打开的链接会附带 `utm_` 标签。这是正常现象，页面本身是相同的。
+
+## 仍然看到旧页面？ [#still-seeing-the-old-page]
+
+QRdx 不会缓存重定向，因此下一次扫描就会使用新的目标地址。如果手机显示的是页面本身的旧版本，请在浏览器中重新加载该页面。

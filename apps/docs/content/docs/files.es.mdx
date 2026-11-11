@@ -1,0 +1,106 @@
+---
+title: "Archivos"
+description: "Sube PDF, imágenes, audio y vídeo para tus páginas alojadas, y configura el almacenamiento de archivos cuando alojes QRdx por tu cuenta."
+icon: FolderOpen
+---
+
+Las páginas alojadas pueden mostrar archivos que subes a QRdx: un menú o folleto en PDF, una galería de fotos, música o un pódcast, o un vídeo. Los archivos subidos están en **Panel → Archivos**, pertenecen al espacio de trabajo en el que los subes, y cada uno tiene un enlace estable que sigue funcionando cuando reemplazas el archivo.
+
+## Qué puedes subir [#what-you-can-upload]
+
+| Tipo | Formatos |
+| --- | --- |
+| PDF | PDF |
+| Imágenes | JPEG, PNG, WebP, GIF, AVIF |
+| Audio | MP3, M4A, AAC, Ogg, WAV |
+| Vídeo | MP4, WebM, MOV |
+
+El MP4 con vídeo H.264 se reproduce en todos los navegadores. Los archivos MOV de los teléfonos normalmente también se reproducen, pero conviértelos a MP4 si algún navegador no puede reproducirlos. No se pueden subir SVG, HTML, archivos comprimidos ni documentos de ofimática, para que nada servido desde el almacenamiento pueda ejecutar código en el navegador de un visitante.
+
+Cada subida se comprueba antes de usarse: su tamaño debe coincidir con el anunciado, y sus primeros bytes deben corresponder realmente a un archivo de su tipo (una página HTML renombrada a `.pdf` se rechaza). Las subidas rechazadas se eliminan del almacenamiento y aparecen como **Bloqueado**.
+
+## Límites por plan [#limits-per-plan]
+
+| Plan | Almacenamiento por espacio de trabajo | Archivo más grande |
+| --- | --- | --- |
+| Gratis | 50 MB | 10 MB |
+| Pro | 5 GB | 100 MB |
+| Business | 50 GB | 250 MB |
+
+Un espacio de trabajo usa el mejor plan entre sus propietarios. Los límites solo impiden nuevas subidas: tras bajar de plan, o cuando un espacio de trabajo supera su almacenamiento, todos los archivos que ya subiste siguen sirviéndose en todas las páginas que los usan. Elimina los archivos que ya no necesites (o mejora tu plan) para subir otros nuevos.
+
+## Usar archivos en una página [#use-files-on-a-page]
+
+Cinco bloques muestran archivos. Cada uno puede usar un archivo subido o un enlace a un archivo alojado en otro sitio:
+
+- **PDF** muestra el documento integrado en tablets y ordenadores, con los botones **Abrir PDF** (visor a pantalla completa en teléfonos) y **Descargar**.
+- **Galería** muestra las fotos en una cuadrícula de 1 a 3 columnas. Al tocar una foto se abre a pantalla completa; desliza o usa las teclas de flecha para navegar.
+- **Audio** reproduce pistas con carátula y lista de reproducción; cuando una termina, empieza la siguiente. El botón de descarga es opcional.
+- **Archivo de vídeo** reproduce un MP4 o WebM que subes, opcionalmente sin sonido y en bucle como un GIF. Para YouTube, Vimeo o Loom, usa en su lugar el bloque **Vídeo**: incrusta el vídeo sin cargar nada de YouTube hasta que alguien pulsa reproducir.
+- **Descargas** muestra una lista de archivos que las personas pueden guardar, cada uno con su propia etiqueta.
+
+Los tipos de página **PDF**, **Imágenes**, **MP3 / Audio** y **Vídeo** en **Nuevo código** te dan un punto de partida con estos bloques ya colocados.
+
+En un bloque, elige **Subir** para añadir un archivo desde tu dispositivo, **Desde tus archivos** para reutilizar uno que subiste antes, o pega un enlace.
+
+## Reemplazar o eliminar un archivo [#replace-or-delete-a-file]
+
+Abre **Panel → Archivos** y usa el menú junto a un archivo:
+
+- **Copiar enlace** copia el enlace propio del archivo (`https://qrdx.dev/api/files/<id>`). También puedes usarlo como destino de un código QR dinámico.
+- **Reemplazar archivo** sube contenido nuevo detrás del mismo enlace, por ejemplo el menú de la próxima temporada. Las páginas y los códigos que usan el archivo muestran la nueva versión en menos de un minuto. Un archivo solo se puede reemplazar por otro del mismo tipo (un PDF por un PDF).
+- **Eliminar** borra el archivo definitivamente. Si hay páginas o códigos que aún lo usan, QRdx los enumera primero; tras eliminarlo, esas páginas muestran "Archivo no disponible" donde estaba el archivo.
+
+Los miembros pueden reemplazar y eliminar los archivos que subieron; los propietarios y administradores pueden gestionar todos los archivos del espacio de trabajo.
+
+## Archivos denunciados [#reported-files]
+
+Cada página alojada tiene un enlace **Denunciar abuso**. Si un archivo infringe las normas o el titular de los derechos de autor pide que se retire, QRdx puede bloquearlo. Un archivo bloqueado deja de servirse en todas las páginas y a través de su enlace de QRdx en menos de un minuto (las páginas muestran "Archivo no disponible"), y no se pueden volver a subir copias idénticas (de hasta 25 MB).
+
+## Configurar el almacenamiento (alojamiento propio) [#set-up-storage-self-hosting]
+
+La subida de archivos usa [Cloudflare R2](https://developers.cloudflare.com/r2/). Sin él, la página Archivos dice "Almacenamiento no configurado en este servidor", la API de subida responde `503`, y los bloques aún pueden usar enlaces a archivos alojados en otro sitio.
+
+1. En el panel de Cloudflare, abre **R2** y crea un bucket, por ejemplo `qrdx-files`.
+2. En **R2 → Manage API tokens**, crea un token con **Object Read & Write** sobre ese bucket.
+3. Define estas variables de entorno y reinicia:
+
+   ```bash
+   R2_ACCOUNT_ID=your-cloudflare-account-id
+   R2_ACCESS_KEY_ID=token-access-key-id
+   R2_SECRET_ACCESS_KEY=token-secret-access-key
+   R2_BUCKET=qrdx-files
+   # Optional: serve files from a public bucket URL or custom domain
+   R2_PUBLIC_BASE_URL=https://files.example.com
+   ```
+
+4. Añade una política CORS al bucket (**Settings → CORS policy**). Los navegadores suben directamente a R2, así que el bucket debe aceptar solicitudes `PUT` con un encabezado `Content-Type` desde el origen de tu aplicación:
+
+   ```json
+   [
+     {
+       "AllowedOrigins": ["https://qrdx.example.com", "http://localhost:3000"],
+       "AllowedMethods": ["PUT", "GET", "HEAD"],
+       "AllowedHeaders": ["Content-Type"],
+       "ExposeHeaders": ["ETag"],
+       "MaxAgeSeconds": 3600
+     }
+   ]
+   ```
+
+   Sustituye `https://qrdx.example.com` por el origen que la gente usa para abrir tu panel (esquema y host, sin barra final). Conserva `http://localhost:3000` solo si subes archivos desde un servidor de desarrollo local.
+
+### Archivos públicos o enlaces prefirmados [#public-files-or-presigned-links]
+
+Los visitantes siempre abren los archivos a través de `/api/files/<id>`, que redirige al objeto almacenado:
+
+- Con `R2_PUBLIC_BASE_URL` definida (un dominio personalizado conectado al bucket, o su URL `r2.dev`, que Cloudflare limita en frecuencia y recomienda solo para pruebas), redirige a la URL pública. Las claves de los objetos contienen un id aleatorio, así que los archivos no se pueden listar ni adivinar.
+- Sin ella, el bucket sigue siendo privado y cada redirección es un enlace prefirmado que caduca al cabo de una hora.
+
+En ambos casos, un archivo reemplazado, eliminado o bloqueado deja de servirse a través de su enlace de QRdx en menos de un minuto. Un archivo bloqueado también deja su URL pública de inmediato: su objeto pasa a una clave `quarantine/` con una parte aleatoria (se conserva para que un administrador pueda restaurarlo), y su enlace de QRdx responde `410 Gone`.
+
+Los navegadores suben a una clave `staging/`. Una vez comprobada la subida, QRdx copia exactamente la versión comprobada a la clave propia del archivo, de modo que un enlace de subida que siga siendo válido no puede reemplazar un archivo ya comprobado.
+
+<Callout type="info">
+  Una subida que nunca termina deja de contar para el almacenamiento después de dos horas y se limpia la próxima vez que alguien sube un archivo a ese espacio de trabajo. Añade al bucket una regla de ciclo de vida de objetos (**Settings → Object lifecycle rules**) que elimine los objetos con el prefijo `staging/` después de un día, para que también desaparezcan los restos de subidas abandonadas.
+</Callout>

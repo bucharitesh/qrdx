@@ -1,0 +1,60 @@
+---
+title: "QR Code Card"
+description: "「Scan me」フレーム付きのQRコード、タイトル、説明文、アクション用のスペースを備えたカードです。"
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## インストール [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## 使い方 [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+children として渡した要素はカードのフッターに表示されます。コピーボタンや[ダウンロードメニュー](/docs/components/qr-code-download)などを置けます。
+
+## 例 [#examples]
+
+### フレーム [#frames]
+
+`frame` は、コールトゥアクションをコードの下(`"bottom"`)や上(`"top"`)に配置するか、フレームを表示しない(`"none"`)かを指定します。`cta` でラベルを変更でき、`frameClassName` でフレームのスタイルを変更できます。たとえばブランドカラーを適用できます。
+
+<ComponentPreview name="qr-code-card-frames" />
+
+フレームには、デフォルトでテーマの `foreground` と `background` の色が使われるため、ライトモードでもダークモードでも読みやすい状態を保てます。コード自体は明るい背景のままなので、どのスキャナーでも読み取れます。
+
+### コードのスタイル設定 [#styling-the-code]
+
+`qr` には、qrdx のあらゆるスタイルオプションを指定できます。`fgColor`、`bgColor`、グラデーション、`bodyPattern`、コーナーパターン、`logo`、`templateId` が使えます。
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## APIリファレンス [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+`className` などその他のプロパティは、[Card](https://ui.shadcn.com/docs/components/card)に渡されます。

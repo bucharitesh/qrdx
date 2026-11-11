@@ -1,0 +1,59 @@
+---
+title: "Formas, ojos y marcos"
+description: "Todos los patrones de cuerpo, marcos de ojo, centros de ojo y marcos de llamada a la acción, dibujados en vivo por el renderizador de qrdx y decodificados en tu navegador."
+icon: Grid3x3
+---
+
+import { QrCatalog } from "@/components/docs/qr-catalog";
+
+Cada estilo que aparece a continuación está dibujado por el mismo renderizador que tus descargas, con el nombre de su opción y el valor de la API para copiar. Cada tile se decodifica con [jsQR](https://github.com/cozmo/jsQR) aquí mismo, en tu navegador, uno a la vez, así que la insignia **Escanea** es un resultado en vivo y no una promesa.
+
+Todos ellos también se prueban en el paquete (`packages/qrdx/tests/catalog-*.test.ts`): cada valor se decodifica con un modelo de cámara de teléfono (pérdida de contraste y desenfoque de un cuarto de módulo) a 4, 6 y 9 píxeles por módulo, junto a cada uno de los demás cuerpos, ojos y centros, con corrección de errores L, M, Q y H, a 148 px y 1024 px, en claro sobre oscuro, con colores de marca y con un logo en el centro; además se comprobaron con ZXing y en renders nítidos. Algunas combinaciones son débiles juntas; consulta [Combinaciones que debes evitar](#pairs-to-avoid).
+
+## Patrones de cuerpo [#body-patterns]
+
+La forma de los módulos de datos (`bodyPattern`). Los estilos conectados (`liquid`, `classy`) fusionan los módulos vecinos en un solo contorno. `random-dots` y `mosaic` varían por módulo, pero son deterministas: el mismo valor siempre dibuja el mismo código.
+
+<QrCatalog kind="body" />
+
+## Marcos de ojo [#eye-frames]
+
+El anillo exterior de los tres marcadores de las esquinas (`cornerEyePattern`). `leaf`, `leaf-reverse`, `drop` y `petal` giran cada ojo para que mire hacia la esquina del código. Cada tile combina el ojo con su centro recomendado.
+
+<QrCatalog kind="eye" />
+
+## Centros de ojo [#eye-centers]
+
+El centro sólido de cada marcador de esquina (`cornerEyeDotPattern`), mostrado dentro de ojos cuadrados.
+
+<QrCatalog kind="dot" />
+
+## Marcos [#frames]
+
+Los marcos de llamada a la acción se dibujan alrededor del código, de modo que el código y su zona de silencio nunca quedan tapados y la imagen descargada crece para ajustarse. Todos los marcos admiten `text` (hasta 24 caracteres), `color`, `textColor` y `fontScale` (de 0.5 a 1.5). `banner-top-bottom`, `circle` y `menu-card` también muestran `secondaryText`; `gradient-border` va de `color` a `secondaryColor`.
+
+<QrCatalog kind="frame" />
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
+/>;
+```
+
+## Combinaciones que debes evitar [#pairs-to-avoid]
+
+Algunas combinaciones de formas que se escanean bien por separado fallan juntas en nuestras pruebas de decodificación. El Playground no te deja elegirlas a la vez, y la puntuación de escaneo avisa de ellas (`style-pair`):
+
+- cuerpos `diamond` junto a ojos `square`, `pacman` junto a `rounded`, y `small-square` junto a ojos `square` o `rounded` (fallan de cerca).
+
+Los ojos `circle` se leen en los dos decodificadores que probamos (jsQR y ZXing), pero están marcados como **precaución**: algunas apps de escáner no los detectan. Las combinaciones vienen en el paquete como `WEAK_BODY_EYES`, y `getStylePairRisk(props)` devuelve la advertencia para un estilo.
+
+## Formas retiradas [#retired-shapes]
+
+Los ojos `curly` y los centros `diamond`, `star` y `banner` se retiraron porque no se escanean de forma fiable: ZXing (el decodificador de la mayoría de los escáneres de Android) no detecta los ojos curly ni los centros diamond y star a distancias de teléfono, y jsQR no detecta los centros banner en ningún render nítido. Los códigos guardados con ellos se siguen cargando y se dibujan exactamente como antes, y la Image API sigue dibujándolos para los enlaces existentes, pero ningún selector, preajuste ni tema de IA los ofrece, y sus nombres se conservan solo como valores obsoletos (`RETIRED_CORNER_EYE_PATTERNS`, `RETIRED_CORNER_EYE_DOT_PATTERNS`).

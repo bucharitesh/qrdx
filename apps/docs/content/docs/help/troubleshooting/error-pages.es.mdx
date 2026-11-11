@@ -1,0 +1,47 @@
+---
+title: "Un escaneo muestra una página de error"
+description: "Qué significa cada página de error de un código QR, desde \"QR code not found\" hasta \"This campaign has ended\", y cómo solucionarla."
+---
+
+Cuando un código dinámico no puede abrir su destino, quien lo escanea ve una página breve. Esto es lo que significa cada una.
+
+## "QR code not found" [#qr-code-not-found]
+
+Es una página 404: el enlace corto no pertenece a ningún código.
+
+- El código se **eliminó para siempre**.
+- La **parte final** o el **dominio** del código se cambió después de imprimirlo.
+- Se eliminó la cuenta propietaria.
+- El enlace se escribió a mano con un error. Los enlaces cortos distinguen entre mayúsculas y minúsculas.
+
+Un código eliminado no se puede recuperar. Si cambiaste la parte final, vuelve a cambiarla con **Edit link**.
+
+## "This QR code is no longer active" [#this-qr-code-is-no-longer-active]
+
+El código está **archivado** o en la **papelera**. Elige **Unarchive** o **Restore** en **Codes**. Consulta [Archivar, eliminar y restaurar códigos](/docs/help/dynamic-codes/archive-and-delete).
+
+QRdx también desactiva los códigos que enlazan a sitios dañinos.
+
+## "This campaign is paused", "hasn't started yet" or "has ended" [#this-campaign-is-paused-hasnt-started-yet-or-has-ended]
+
+Estos mensajes provienen de los ajustes del propio código: una pausa, una fecha de inicio o de fin, o un límite de escaneos. Cámbialos en **Access & schedule**. Consulta [Pausar, programar o limitar un código](/docs/help/dynamic-codes/pause-schedule-limit).
+
+## "This QR code is password protected" [#this-qr-code-is-password-protected]
+
+El código tiene una contraseña. Introdúcela y haz clic en **Continue**. Consulta [Proteger un código con contraseña](/docs/help/dynamic-codes/password).
+
+## "Too many requests" [#too-many-requests]
+
+Una red abrió muchos códigos QR en pocos segundos. Espera un momento y vuelve a escanear.
+
+## "This domain isn't connected yet" [#this-domain-isnt-connected-yet]
+
+El código usa un dominio personalizado cuya configuración de DNS no está terminada. Revisa el dominio en la página **Domains** de tu panel.
+
+## "This page could not be found" en una página [#this-page-could-not-be-found-on-a-page]
+
+Una página móvil en `/p/…` muestra este mensaje cuando la página se eliminó o la dirección se escribió mal.
+
+## "This form isn't accepting responses right now" [#this-form-isnt-accepting-responses-right-now]
+
+El espacio de trabajo alcanzó su límite mensual de respuestas de formularios. Consulta [Recopilar respuestas con un formulario](/docs/help/pages-and-forms/forms#monthly-limits).

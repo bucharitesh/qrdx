@@ -1,0 +1,180 @@
+---
+title: "Utilidades"
+description: "Funciones auxiliares de color, contraste, validación de tamaño y detección de funciones que exporta qrdx."
+icon: Wrench
+---
+
+Funciones auxiliares para colores, contraste y procesamiento de códigos QR.
+
+## Utilidades de color [#color-utilities]
+
+### getSolidColor [#getsolidcolor]
+
+Extrae el color sólido de cualquier configuración de color:
+
+```tsx
+import { getSolidColor } from 'qrdx';
+
+const color = getSolidColor({
+  type: 'linear',
+  stops: [
+    { offset: 0, color: '#ff6b6b' },
+    { offset: 1, color: '#4ecdc4' }
+  ],
+  x1: 0, y1: 0, x2: 1, y2: 1
+});
+// Returns: "#ff6b6b"
+```
+
+### hexToRgb [#hextorgb]
+
+Convierte de hexadecimal a RGB:
+
+```tsx
+import { hexToRgb } from 'qrdx';
+
+const rgb = hexToRgb('#ff6b6b');
+// Returns: { r: 255, g: 107, b: 107 }
+```
+
+## Comprobación de contraste [#contrast-checking]
+
+### getContrastRatio [#getcontrastratio]
+
+Calcula la relación de contraste WCAG:
+
+```tsx
+import { getContrastRatio } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+```
+
+### getContrastLevel [#getcontrastlevel]
+
+Obtiene la valoración del contraste:
+
+```tsx
+import { getContrastLevel } from 'qrdx';
+
+const level = getContrastLevel(4.5);
+// Returns: { level: 'AA', warning: false, message: 'Good contrast' }
+```
+
+**Pautas de contraste:**
+- **`AAA` (7,0 o más)** — Contraste excelente
+- **`AA` (4,5 – 7,0)** — Buen contraste
+- **`AA Large` (3,0 – 4,5)** — Contraste bajo, `warning: true`, puede ser difícil de escanear
+- **`Fail` (menos de 3,0)** — No recomendado, `warning: true`
+
+### getLuminance [#getluminance]
+
+Calcula la luminancia relativa:
+
+```tsx
+import { getLuminance } from 'qrdx';
+
+const luminance = getLuminance(255, 255, 255);
+// Returns: 1.0 (white)
+```
+
+## Validación [#validation]
+
+### validateSize [#validatesize]
+
+Valida las dimensiones de descarga:
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Valid size");
+} else {
+  console.error(validation.error);
+}
+```
+
+## Detección de funciones [#feature-detection]
+
+### SUPPORTS_PATH2D [#supports_path2d]
+
+Comprueba si hay compatibilidad con Path2D:
+
+```tsx
+import { SUPPORTS_PATH2D } from 'qrdx';
+
+if (SUPPORTS_PATH2D) {
+  // Use optimized rendering
+} else {
+  // Use fallback
+}
+```
+
+## Ejemplo: comprobador de contraste [#example-contrast-checker]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+import { useState } from 'react';
+
+export default function ContrastChecker() {
+  const [fgColor, setFgColor] = useState('#000000');
+  const [bgColor, setBgColor] = useState('#ffffff');
+
+  const ratio = getContrastRatio(fgColor, bgColor);
+  const level = getContrastLevel(ratio);
+
+  return (
+    <div>
+      <input
+        type="color"
+        value={fgColor}
+        onChange={(e) => setFgColor(e.target.value)}
+      />
+      <input
+        type="color"
+        value={bgColor}
+        onChange={(e) => setBgColor(e.target.value)}
+      />
+      <p>Ratio: {ratio.toFixed(2)}:1</p>
+      <p>Level: {level.level}</p>
+      <p>{level.message}</p>
+    </div>
+  );
+}
+```
+
+## Ejemplo: calculadora de tamaño [#example-size-calculator]
+
+```tsx
+import { validateSize } from 'qrdx';
+import { useState } from 'react';
+
+export default function SizeCalculator() {
+  const [width, setWidth] = useState(512);
+  const [height, setHeight] = useState(512);
+
+  const validation = validateSize(width, height);
+
+  return (
+    <div>
+      <input
+        type="number"
+        value={width}
+        onChange={(e) => setWidth(Number(e.target.value))}
+      />
+      <input
+        type="number"
+        value={height}
+        onChange={(e) => setHeight(Number(e.target.value))}
+      />
+      <p>{validation.isValid ? 'Valid' : validation.error}</p>
+    </div>
+  );
+}
+```
+
+## Siguientes pasos [#next-steps]
+
+- [Uso](/docs/usage) — Aplica las utilidades a los códigos QR
+- [Referencia de la API](/docs/api-reference) — Referencia completa de utilidades

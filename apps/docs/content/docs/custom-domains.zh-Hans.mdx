@@ -1,0 +1,93 @@
+---
+title: "自定义域名"
+description: "使用您自己的域名来提供动态二维码的短链接。"
+icon: Globe
+---
+
+默认情况下，[动态二维码](/docs/dynamic-qr-codes)编码的是类似 `https://qrdx.dev/q/aB3dE5f` 的短链接。使用自定义域名后，二维码编码的则是 `https://go.yourbrand.com/aB3dE5f`，这样用户在扫描之前就能看到您的品牌。跳转、编辑和扫描分析的工作方式保持不变。
+
+自定义域名属于 Pro（每个工作区最多 5 个）和 Business（最多 25 个）的功能。
+
+## 连接域名 [#connect-a-domain]
+
+1. 打开[设置 → 域名](/dashboard?to=settings/domains)，输入域名，例如 `go.yourbrand.com`。建议使用子域名，这样您的主网站不受影响。
+2. 在您的 DNS 服务商（购买域名的地方、Cloudflare 等）处，添加该域名对应显示的 DNS 记录：
+   - 子域名使用 `CNAME` 记录，
+   - 根域名（`yourbrand.com`）使用 `A` 记录，
+   - 需要确认所有权时，还会显示一条 `TXT` 记录。
+
+   请从控制台复制准确的值。大多数服务商的记录名称只需填写域名之前的部分（`go`，根域名则填 `@`）。
+3. 点击**验证**。DNS 变更通常几分钟内生效，但最长可能需要 48 小时，如果暂时找不到记录，请稍后再试。
+
+验证通过后，创建或编辑动态二维码时，该域名会出现在**短链接域名**选择器中。已验证的域名在您移除之前会一直保持已验证状态，您也可以随时点击**检查 DNS** 重新读取记录。
+
+<Callout type="info">
+  如果域名在 3 天内未通过验证，其他账户可以添加该域名，因此任何人都无法长期占用自己并不拥有的域名。
+</Callout>
+
+<IfAvailable feature="domainConnect" id="one-click-dns-setup" title="一键设置 DNS">
+
+部分 DNS 服务商支持 [Domain Connect](https://www.domainconnect.org)，这是一项开放标准，允许服务代您添加记录。如果您的服务商支持该标准并提供 QRdx 的设置模板，等待 DNS 的域名旁会显示一个以服务商命名的 **使用 … 设置** 按钮。
+
+1. 点击该按钮。您的 DNS 服务商页面会打开，并列出 QRdx 所需的记录。
+2. 如有提示，请在该页面登录，并批准更改。在您批准之前不会有任何改动。
+3. 您会回到“域名”页面，页面会立即检查 DNS，并在接下来的半分钟内再次检查。
+
+该按钮只会对 `go.yourbrand.com` 这类子域名显示，并且仅当您的服务商能够准确添加所示记录时才会出现。否则，请按上文所述，自行添加表格中的记录。
+
+</IfAvailable>
+
+## 用于二维码 [#use-it-for-codes]
+
+- **新建二维码：**在点击**创建二维码**之前，在**短链接域名**中选择该域名。
+- **已有二维码：**在**编辑链接**中选择该域名并保存，然后重新下载二维码，因为编码的链接已经改变。
+
+每个二维码在其默认的 `https://qrdx.dev/q/<slug>` 链接上也始终有效，因此在把二维码迁移到您的域名之前印刷的二维码不会失效。把二维码从一个自定义域名迁移到另一个自定义域名（或迁回默认链接）时，使用旧自定义域名链接印刷的二维码会失效；保存之前，对话框会向您发出警告。
+
+### 自定义后半部分 [#your-own-back-halves]
+
+在 Pro 和 Business 中，您可以在自己的域名上为二维码选择[后半部分](/docs/dynamic-qr-codes#custom-back-halves)，例如 `go.yourbrand.com/spring-menu`。它只需在该域名下唯一即可，因此其他 QRdx 客户使用 `spring-menu` 并不影响您，该域名下仅保留 `api`、`p` 和 `q`。在您的域名上选定的后半部分归该域名所有，没有对应的 `qrdx.dev/q/` 链接。把这样的二维码迁移到另一个域名时，如果后半部分在新域名下未被占用，则会保留；迁回默认链接时，如果在 `qrdx.dev` 下未被占用则保留，否则二维码会获得一个新生成的后半部分。
+
+在您的域名上：
+
+- `https://go.yourbrand.com/<slug>` 会为使用该域名的二维码执行跳转。使用其他域名或仅使用默认链接的二维码，在这里会显示“未找到”页面。
+- `https://go.yourbrand.com/` 会显示一个简短页面，说明该域名托管二维码链接。
+- `https://go.yourbrand.com/01/<GTIN>`（[GS1 Digital Link](/docs/product-pages#gs1-digital-link)）会打开具有该 GTIN 且其二维码使用此域名的产品页面。
+- 其他所有路径都返回“未找到”。该域名绝不会提供 QRdx 的其余内容。
+
+变更（新验证或移除的域名）最多需要一分钟才能传达到所有服务器。
+
+## 工作区与角色 [#workspaces-and-roles]
+
+域名属于添加它的工作区。所有者和管理员可以添加、验证和移除域名；每位成员都可以在自己的二维码中使用工作区的已验证域名。
+
+## 套餐与移除域名 [#plans-and-removing-domains]
+
+- 降级不会破坏任何内容：已验证的域名会继续为使用它们的二维码提供服务。没有 Pro 或 Business 时，您无法添加或验证域名，也无法把更多二维码迁移到域名上，但仍可编辑这些二维码并移除域名。
+- 移除域名会让其二维码切换回默认的 `qrdx.dev/q/<slug>` 链接。在该域名上选定的后半部分，如果在 `qrdx.dev` 下未被占用，则会迁移过去；其余的会获得新生成的后半部分。使用自定义域名链接印刷的二维码将停止工作，因此对话框会先显示有多少个二维码使用该域名。
+
+## REST API [#rest-api]
+
+[二维码 API](/docs/dynamic-qr-codes#rest-api)在 `POST /v1/codes` 和 `PATCH /v1/codes/{id}` 上接受 `domainId`（同一工作区中已验证域名的 id）。在 `PATCH` 中发送 `"domainId": null` 可切换回默认链接。把二维码迁移到域名上需要 Pro，否则会返回 `402 PLAN_REQUIRED`。
+
+响应中的每个二维码都包含：
+
+| 字段 | 说明 |
+| --- | --- |
+| `shortLink` | 要编码的链接：验证通过后位于自定义域名上 |
+| `defaultShortLink` | `https://qrdx.dev/q/<slug>`，始终有效；对于在自定义域名上选定的后半部分，则为 `null` |
+| `domain` | `{ "id", "hostname", "verified" }`，或 `null` |
+
+## 自托管 [#self-hosting]
+
+域名的连接方式取决于您的部署环境：
+
+- **在 Vercel 上：**设置 `VERCEL_API_TOKEN`（有权访问该项目的令牌）、`VERCEL_PROJECT_ID`，如果是团队项目，还需设置 `VERCEL_TEAM_ID`。之后域名会通过 Vercel Domains API 添加到项目中，该 API 同时负责签发 TLS 证书。如果没有这些变量，“域名”页面会说明自定义域名尚未设置，因为 Vercel 只会路由已添加到项目中的域名。
+- **其他任何环境**（Docker、Node.js）：不要设置这些变量。域名需要手动验证：
+  1. 使用 `CNAME`（指向您应用的主机名）或 `A` 记录（您服务器的 IP）把域名指向您的服务器。
+  2. 让您的反向代理接受该域名，为其提供 HTTPS 服务（例如使用 Caddy 的按需 TLS 或 certbot 证书），并把原始的 `Host` 请求头转发给应用。在 nginx 中是 `proxy_set_header Host $host;`；Caddy 默认就会这样做。
+  3. 在“域名”页面添加该域名，创建页面所示的 `TXT` 记录（`_qrdx-challenge.<your-domain>`，值为 `qrdx-verify=<token>`），然后点击**验证**。应用会通过 DNS 查询来检查该记录。
+
+**一键设置 DNS**（可选）使用 [Domain Connect](https://www.domainconnect.org)。它需要您自己的模板（须被您想支持的每个 DNS 服务商接受），以及用于签署设置链接的 RSA 密钥：设置 `DOMAIN_CONNECT_PROVIDER_ID`、`DOMAIN_CONNECT_SERVICE_ID` 和 `DOMAIN_CONNECT_PRIVATE_KEY`（PEM），并把公钥以 `TXT` 记录的形式发布在 `_dck1.<provider id>`。QRdx 自己的模板（仓库中的 `domain-connect/`）只适用于 qrdx.dev，因为服务商会用其密钥校验签名。在发布的公钥匹配之前，不会显示按钮，应用会在日志中记录原因。
+
+应用通过 `Host` 请求头识别自定义域名。对您自己的应用 URL、`NEXT_PUBLIC_SHORT_LINK_BASE_URL`、`localhost` 和 `*.vercel.app` 的请求，始终被视为主应用。

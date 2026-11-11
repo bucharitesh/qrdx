@@ -1,0 +1,49 @@
+---
+title: "Mude o que um código impresso abre"
+description: "Transforme um código de link de site em uma página hospedada, ou uma página de volta em um link. O código impresso continua funcionando."
+---
+
+Um QR code dinâmico abre um link de site ou uma página hospedada, e você pode alternar entre os dois depois de imprimir. O link curto não muda, então cada cópia impressa abre a nova página ou o novo link na próxima leitura, e as leituras continuam sendo contadas no mesmo código.
+
+## Transforme um link de site em uma página [#turn-a-website-link-into-a-page]
+
+1. Abra o código em **Codes** e clique em **Change type**.
+2. Escolha um tipo de página e depois um modelo.
+3. Clique em **Continue to editor** e monte a página.
+4. Clique em **Publish**.
+
+As leituras continuam indo para o link antigo até você publicar. Se você sair do editor sem publicar, nada muda. Suas edições não publicadas ficam neste navegador.
+
+## Transforme uma página de volta em um link [#turn-a-page-back-into-a-link]
+
+1. Abra o código e clique em **Change type**.
+2. Escolha **Website link**, digite o endereço e clique em **Switch to website link**.
+
+A página continua em **Pages**. Para trazê-la de volta, abra **Change type** de novo e escolha a página em **Switch back**.
+
+## Mude para outro tipo de página [#switch-to-another-page-type]
+
+Escolha um tipo em **Another page type**. A nova página começa a partir do modelo que você escolher e aproveita da página antiga o que for compatível: o nome da página, as configurações e o logo, além dos blocos que o modelo também tiver, como o cabeçalho, os links ou os dados de contato. A caixa de diálogo lista o que não é compatível. Isso fica na página antiga, que é mantida em **Pages**.
+
+## O que continua igual [#what-stays-the-same]
+
+O link curto, o histórico de leituras, a pasta, as tags, as anotações, o design do QR, a senha, o agendamento e o limite de leituras não mudam.
+
+Algumas configurações só funcionam com um dos tipos:
+
+- Roteamento inteligente, testes A/B, parâmetros UTM e rastreamento de conversões valem apenas para links de site.
+- Pixels de rastreamento são carregados apenas em páginas hospedadas.
+
+Elas são mantidas quando você troca de tipo e voltam a funcionar se você voltar. A aba **Settings** do código indica quais estão salvas, mas não estão em uso.
+
+## Planos [#plans]
+
+Uma nova página conta para o limite de páginas hospedadas do seu plano, como qualquer página que você cria. Uma página que o código deixou de abrir continua contando até você excluí-la em **Pages**. Voltar para uma página que você já tem não aumenta a contagem. Veja [Planos e limites](/docs/plans-and-limits).
+
+## Desfaça uma troca [#undo-a-switch]
+
+Cada troca salva as configurações anteriores do código em **Version history**. Restaurar uma versão anterior volta o tipo, desde que a página que ele abria ainda exista.
+
+## Pela API [#from-the-api]
+
+Envie `kind` com `PATCH /v1/codes/{id}`. Veja [Atualizar um código](/docs/developers/api/update-code).

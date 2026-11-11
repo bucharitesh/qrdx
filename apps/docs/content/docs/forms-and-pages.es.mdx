@@ -1,0 +1,127 @@
+---
+title: "Menús, cupones, eventos y formularios"
+description: "Tipos de página alojada para restaurantes, ofertas, eventos y descargas de apps, además de formularios que recogen opiniones en una bandeja de respuestas."
+icon: ClipboardList
+---
+
+Un código QR dinámico puede abrir una página alojada en lugar de un sitio web. Además de las listas de enlaces, las páginas de empresa y las vCards, QRdx ofrece cinco tipos de página para trabajos de impresión habituales. Cada uno parte de una plantilla que puedes modificar bloque a bloque en el editor de páginas, con vista previa en vivo en un teléfono.
+
+| Tipo de página | Pensada para | Bloques con los que empieza |
+| --- | --- | --- |
+| **Menú** | Cafeterías, restaurantes, bares | Menú, Wi-Fi, horario de apertura, mapa |
+| **Cupón** | Descuentos y regalos | Cupón con código de barras y botón Canjear |
+| **Evento** | Fiestas, conferencias, webinars | Evento con opción de añadir al calendario |
+| **Descarga de app** | Un solo código para todas las tiendas de apps | Descarga de app |
+| **Opiniones y formularios** | Reseñas, encuestas NPS, registros | Formulario, enlaces de reseña |
+
+Cada uno de los bloques siguientes también se puede añadir a cualquier otra página.
+
+## Menú [#menu]
+
+El bloque **Menú** muestra secciones (Entrantes, Principales, ...) con sus platos. Cada plato puede tener una descripción, un precio, una nota tras el precio ("por copa", "Precio de mercado"), una foto, una etiqueta corta ("Recomendación del chef") y:
+
+- **Etiquetas dietéticas:** vegetariano, vegano, sin gluten, sin lácteos, halal, kosher, picante, ecológico.
+- **Alérgenos:** los 14 alérgenos que los negocios de alimentación deben declarar en la UE y el Reino Unido (gluten, crustáceos, huevos, pescado, cacahuetes, soja, leche, frutos secos de cáscara, apio, mostaza, sésamo, sulfitos, altramuces, moluscos), que se muestran como "Contiene: …".
+- **Agotado:** el plato sigue en el menú, atenuado y marcado como agotado.
+
+Todos los precios de un menú usan la moneda que elijas. Con dos o más secciones, aparecen atajos en la parte superior para saltar a cada sección. Un menú admite hasta 30 secciones y 300 platos.
+
+El bloque **Wi-Fi** muestra el nombre de tu red y la contraseña con botones para copiar. Los teléfonos no pueden conectarse a una red desde una página web, así que los clientes copian la contraseña y la pegan en los ajustes de Wi-Fi. Cualquiera que abra la página puede ver la contraseña.
+
+## Cupón [#coupon]
+
+El bloque **Cupón** muestra un titular, el código con un botón para copiarlo y, de forma opcional, un código de barras que tu caja puede escanear:
+
+- **Code 128** codifica hasta 48 letras, dígitos y símbolos (sin acentos ni emojis).
+- **EAN-13** admite 12 dígitos (QRdx añade el dígito de control) o los 13. Los números que empiezan por 20–29 están reservados para uso interno en tienda, lo que encaja con los códigos de cupón.
+
+Por defecto, el código de barras codifica el código del cupón; indica un **Valor del código de barras** para codificar otra cosa, como el número de tu punto de venta.
+
+**Válido desde** y **Válido hasta** son días naturales. Un cupón cuenta como iniciado cuando su primer día ya ha comenzado en cualquier parte del mundo, y como caducado solo cuando su último día ha terminado en todas partes, de modo que nadie ve "caducado" antes de tiempo por su zona horaria. Los cupones caducados siguen visibles, marcados como caducados.
+
+Activa el **Botón de canje** para contar los canjes: el visitante muestra la pantalla a tu personal y pulsa **Canjear ahora**. Entonces la página muestra "Canjeado" con la hora en ese teléfono, y el recuento aparece en la pantalla de [Respuestas](#responses) de la página. No impide que el mismo código se muestre en otro teléfono, así que considéralo un contador, no un cerrojo.
+
+## Evento [#event]
+
+El bloque **Evento** muestra la fecha y la hora, el lugar y la dirección (con un enlace **Abrir en Mapas**), un enlace en línea, el organizador y un botón como **Conseguir entradas**. Las horas se introducen en la zona horaria del evento y se muestran a los visitantes en esa zona horaria, por ejemplo "7:00 – 10:00 PM GMT+1". Se admiten eventos de todo el día y de varios días; sin hora de finalización, un evento dura una hora.
+
+**Añadir al calendario** ofrece Google Calendar, Apple Calendar (un archivo `.ics`), Outlook.com y Yahoo Calendar. La descarga del `.ics` se sirve desde la dirección de tu página, por lo que también funciona en un [dominio personalizado](/docs/custom-domains); en la vista previa del editor está desactivada hasta que se publique la página. Cuando el evento termina, el bloque lo indica y oculta el botón del calendario.
+
+## Descarga de app [#app-download]
+
+El bloque **Descarga de app** admite tu enlace de App Store (`apps.apple.com`), tu enlace de Google Play (`play.google.com`) y un sitio web. La tienda del visitante aparece primero: los usuarios de iPhone y iPad ven arriba el botón de App Store, los de Android Google Play y los demás tu sitio web. Los otros enlaces quedan debajo, para que nadie se quede atascado.
+
+## Formularios [#forms]
+
+El bloque **Formulario** recoge respuestas. Las preguntas pueden ser:
+
+| Tipo | El visitante responde con |
+| --- | --- |
+| Texto | Una respuesta corta o larga (tú defines la longitud máxima) |
+| Correo electrónico | Una dirección de correo electrónico |
+| Teléfono | Un número de teléfono |
+| Valoración con estrellas | Estrellas, de 3 a 10 (tú eliges; 5 por defecto) |
+| NPS | Una puntuación de 0 a 10 a "qué probabilidad hay de que nos recomiendes" |
+| Opción | Una opción, o varias cuando **Permitir varias respuestas** está activado |
+| Casilla | Una marca, por ejemplo el consentimiento para ser contactado |
+
+Marca las preguntas como **Obligatoria** para hacerlas obligatorias. Los visitantes ven los errores junto a la pregunta y un mensaje de agradecimiento que tú escribes para después del envío. Pide solo lo que necesites e indica cómo usarás los datos de contacto.
+
+La protección contra spam está integrada: un campo oculto que solo rellenan los bots y límites a la frecuencia con la que un mismo dispositivo puede enviar un formulario. Cuando el servidor tiene claves de [Cloudflare Turnstile](#cloudflare-turnstile), los formularios también ejecutan la comprobación invisible de Turnstile.
+
+### Enlaces de reseña [#review-links]
+
+El bloque **Enlaces de reseña** muestra botones como "Déjanos tu reseña en Google" (y Tripadvisor, Yelp, Facebook, Trustpilot o cualquier otro sitio). Se muestra a todos los visitantes, sin importar lo que hayan respondido en un formulario. Los sitios de reseñas, Google incluido, no permiten mostrar enlaces de reseña solo a quienes te han valorado bien, por lo que QRdx nunca los oculta en función de una valoración.
+
+En Google Business Profile, elige **Pedir reseñas** para copiar tu enlace de reseña.
+
+## Respuestas [#responses]
+
+Abre una página en **Panel → Páginas y formularios** y elige **Respuestas** (o ve a `/dashboard/<workspace>/pages/<page id>/responses`). Las respuestas se listan de la más reciente a la más antigua, 25 por pantalla, con la hora (UTC), el código que escaneó el visitante y todas las respuestas. Las direcciones de correo y los números de teléfono son enlaces.
+
+- **Varios formularios en una página:** las pestañas filtran por formulario.
+- **Exportar CSV:** una fila por respuesta y una columna por pregunta. Las columnas siguen las preguntas actuales y después las preguntas que eliminaste y que aún tienen respuestas. Cambiar el nombre de una pregunta mantiene su columna.
+- **Eliminar:** selecciona respuestas, o usa el botón de la papelera en una. Eliminar no se puede deshacer. Los miembros pueden eliminar respuestas de las páginas que crearon; los propietarios y administradores, de cualquier página del espacio de trabajo.
+
+Las respuestas pertenecen a la página. Si eliminas la página, se eliminan sus respuestas.
+
+### Límites mensuales [#monthly-limits]
+
+| Plan | Respuestas al mes |
+| --- | --- |
+| Gratis | 50 |
+| Pro | 1.000 |
+| Business | 10.000 |
+
+El límite cuenta las respuestas recibidas por todas las páginas del espacio de trabajo, por mes natural (UTC), y se reinicia el día 1. La pantalla de Respuestas muestra cuántas has usado.
+
+Cuando se alcanza el límite, los formularios muestran "Este formulario no acepta respuestas en este momento" y conservan lo que el visitante escribió. Las respuestas que ya tienes nunca se eliminan ni se ocultan, en ningún plan, ni siquiera después de bajar de plan.
+
+## Reglas de acceso [#access-rules]
+
+Los formularios y los archivos de calendario siguen los [controles del código](/docs/code-controls) de la página: mientras un código está en pausa, programado para más adelante, caducado o ha superado su límite de escaneos, su formulario deja de aceptar respuestas y el archivo `.ics` no se sirve. En una página protegida con contraseña funcionan una vez que el visitante ha introducido la contraseña.
+
+## Notificaciones y webhooks [#notifications-and-webhooks]
+
+Cada respuesta envía un evento `form.submitted` con las respuestas. Úsalo para [notificaciones por correo o por Slack/Discord](/docs/notifications) y [webhooks](/docs/webhooks) (Zapier, Make, tu propio servidor).
+
+## Privacidad [#privacy]
+
+Las respuestas se almacenan con la página en tu espacio de trabajo. QRdx no guarda las direcciones IP de los visitantes junto con las respuestas: cada respuesta conserva solo un hash con sal de la dirección IP y del navegador para ese día, que no se puede convertir de nuevo en ninguno de los dos.
+
+## Autoalojamiento [#self-hosting]
+
+### Cloudflare Turnstile [#cloudflare-turnstile]
+
+Define ambas variables para proteger los formularios con [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/):
+
+```bash
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
+TURNSTILE_SECRET_KEY=0x4AAAAAAA...
+```
+
+Si solo defines una de ellas, Turnstile permanece desactivado. El script de Turnstile se carga cuando un visitante toca un formulario por primera vez, no con la página, y se ejecuta de forma invisible salvo que Cloudflare necesite que el visitante haga clic. Si no se puede contactar con Cloudflare, las respuestas se siguen aceptando para que nunca pierdas comentarios; el resto de las protecciones contra spam siguen activas.
+
+### Dominios personalizados [#custom-domains]
+
+En un [dominio personalizado](/docs/custom-domains) verificado, el endpoint de formularios (`/api/forms/...`) y los archivos de calendario (`/api/calendar/...`) se sirven junto a tus páginas, por lo que los formularios y la opción de añadir al calendario funcionan allí sin configuración adicional.

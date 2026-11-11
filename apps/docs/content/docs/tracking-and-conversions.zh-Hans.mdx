@@ -1,0 +1,94 @@
+---
+title: "追踪与转化"
+description: "将你的分析和再营销像素添加到托管页面，了解人们何时、以何种方式扫描，并把销售和注册归因到二维码扫描。"
+icon: Target
+---
+
+每个[动态二维码](/docs/dynamic-qr-codes)都会在不使用 Cookie 的情况下记录扫描。此外，你还可以在托管页面上加载自己的像素（Pro），并把购买等转化归因到带来该访客的那次扫描（Business）。两者都在[控制台](/dashboard?to=codes)中该二维码页面的 **Settings** 标签页里设置。
+
+## 每个二维码的分析 [#analytics-on-every-code]
+
+除了扫描量趋势、国家、城市、设备、操作系统、浏览器和来源之外，每个二维码的页面还会显示：
+
+- **扫描时间：** 按一天中的小时和按星期几统计的扫描量，可使用 UTC 或你自己的时区。
+- **语言：** 每位访客的浏览器首选语言（浏览器未发送语言信息时，以及在开始记录语言之前的扫描，显示为“Unknown”）。
+- **A/B 分流：** 每条 [A/B 分流规则](/docs/smart-routing#ab-tests)下各个变体的扫描量。
+- **页面活动**（托管页面）：页面浏览量、独立访客数、点击次数，以及点击最多的链接和按钮。
+- **转化**（当该二维码有转化数据时）。
+
+[控制台 → Analytics](/dashboard?to=analytics) 会汇总工作区内所有二维码的数据：总量、扫描量趋势、热门二维码、国家、设备、语言、扫描时间，以及最多 4 个二维码的并排对比。
+
+机器人和链接预览不会被计入，“独立访客”按每位访客每天计一次。IP 地址从不存储。
+
+## 托管页面上的追踪像素（Pro） [#tracking-pixels-on-hosted-pages-pro]
+
+对于打开托管页面的二维码，**Tracking pixels** 面板会在该页面上加载你自己的标签：
+
+| 服务商 | ID 格式 |
+| --- | --- |
+| Google Analytics 4 | `G-XXXXXXXXXX` |
+| Google Tag Manager | `GTM-XXXXXXX` |
+| Meta (Facebook) 像素 | 6–20 位数字 |
+| TikTok 像素 | 10–30 位字母和数字 |
+| LinkedIn Insight Tag | 合作伙伴 ID，3–12 位数字 |
+
+像素只会在你设置之后才会加载；QRdx 自己不会向托管页面添加任何第三方脚本。
+
+Google Tag Manager 仅在页面通过你的[自定义域名](/docs/custom-domains)打开时才会加载。容器可以运行任意脚本，因此它绝不会在 qrdx.dev 上运行，因为访客可能已在该域名上登录 QRdx。
+
+**同意。** 在访客同意之前，像素绝不会加载：
+
+- **按需要时**（默认）：欧盟/欧洲经济区、英国和瑞士的访客，以及位置未知的访客，会看到一个列出你所用服务商的简短横幅，并选择 **Accept** 或 **Decline**。该选择会针对该页面保存，访客可通过 **Cookie settings** 更改。在其他地区，像素会立即加载，但发送 Global Privacy Control 信号的浏览器除外。
+- **对每位访客：** 所有人都会先看到横幅。
+
+你仍需自行负责你的隐私政策，以及你对像素所收集数据的使用方式。
+
+直接打开你自己网站的二维码会直接跳转到该网站，因此请把像素添加到你的网站上。
+
+## 转化追踪（Business） [#conversion-tracking-business]
+
+转化追踪会告诉你哪些扫描带来了销售、注册或其他目标，并给出收入数据。
+
+1. 在打开你网站的二维码上，开启 **Conversion tracking**。此后每次扫描都会打开你的 URL，并附加一个带签名的 `qrdx_sid` 参数，例如 `https://shop.example/?qrdx_sid=…`。
+2. 把代码片段添加到访客的落地页，以及他们完成转化的页面：
+
+```html
+<script async src="https://qrdx.dev/conversions.js"></script>
+<script>
+  window.qrdx = window.qrdx || function () {
+    (window.qrdx.q = window.qrdx.q || []).push(arguments);
+  };
+  // Where the conversion happens, e.g. your order confirmation page:
+  qrdx("conversion", { name: "purchase", value: 49.99, currency: "USD", id: "ORDER-1234" });
+</script>
+```
+
+脚本会在你域名下的第一方 Cookie 中将 `qrdx_sid` 保存 30 天（在 script 标签上添加 `data-storage="session"` 则只在浏览器会话期间保存），并将其从地址栏中移除。只有通过扫描到达的访客才会发送转化，因此其他访客绝不会被追踪。
+
+| 字段 | 含义 |
+| --- | --- |
+| `name` | 发生了什么，例如 `purchase` 或 `signup`（默认为 `conversion`） |
+| `value` | 金额，最多 2 位小数（可选） |
+| `currency` | ISO 4217 代码，如 `USD`；提供金额时默认为 `USD` |
+| `id` | 你的订单或事件 ID：同一个 ID 发送两次只会记录一次 |
+| `metadata` | 最多 20 个额外的键值对（可选） |
+
+### 从你的服务器 [#from-your-server]
+
+若要从后端上报转化（比浏览器更可靠），请把 `qrdx_sid` 与订单一起保存，并使用 [API 密钥](/docs/developers/api-keys)或具有 `codes:write` 权限范围的 [OAuth 访问令牌](/docs/developers/rest-api#get-an-access-token)调用 API：
+
+```bash
+curl -X POST https://api.qrdx.dev/v1/conversions \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sid": "<qrdx_sid>", "name": "purchase", "value": 49.99, "currency": "USD", "id": "ORDER-1234"}'
+```
+
+使用令牌时，如果不知道对应的扫描，你也可以发送 `"code": "<code id>"` 来代替 `sid`。对于新的转化，API 返回 `201`；如果该 `id` 已被记录，则返回 `200` 并带有 `"duplicate": true`。
+
+### 限制 [#limits]
+
+- 扫描发生后的 30 天内可以被归因。
+- `qrdx_sid` 带有签名，因此无法被猜出，也无法被篡改后指向其他二维码。
+- 浏览器上报要求该二维码已开启转化追踪，并且每次扫描每小时可上报的转化数量有限。
+- 如果工作区离开 Business，转化将不再被记录；已有的转化仍保留在你的分析中，并且你随时可以关闭追踪。
