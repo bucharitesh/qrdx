@@ -21,6 +21,7 @@
     "format": "ultracite fix",
     "i18n:check": "tsx scripts/i18n-check.ts",
     "i18n:translate": "tsx scripts/i18n-translate.ts",
+    "i18n:docs": "tsx scripts/i18n-translate-docs.ts",
     "i18n:split": "node scripts/i18n-split-roots.mjs"
   },
   "dependencies": {
