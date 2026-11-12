@@ -184,6 +184,7 @@
       "pageTemplates": "Seitenvorlagen",
       "pricing": "Preise",
       "guarantee": "Never-Hostage-Garantie",
+      "enterprise": "Enterprise",
       "slackBot": "Slack-Bot",
       "telegramBot": "Telegram-Bot",
       "discordBot": "Discord-Bot",
@@ -227,6 +228,7 @@
       "refunds": "Erstattungen",
       "affiliateTerms": "Partnerbedingungen",
       "security": "Sicherheit",
+      "securityPolicy": "Sicherheitsrichtlinie",
       "allComparisons": "Alle Vergleiche"
     }
   },
@@ -748,6 +750,21 @@
       "close": "Schließen",
       "signIn": "Melde dich an, um eine Rechnung anzufordern",
       "signInNote": "Wir stellen die Rechnung für den Workspace deines Kontos aus, also melde dich zuerst an."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Für Unternehmen, die einen Vertrag und eine Sicherheitsprüfung brauchen",
+      "price": "Individuell",
+      "priceNote": "Jahresvertrag, Zahlung per Rechnung",
+      "cta": "Kontakt aufnehmen",
+      "lead": "Alles aus Business, plus:",
+      "adds": {
+        "contract": "Ein Jahresvertrag, Zahlung per Rechnung",
+        "replies": "Antwort innerhalb von {hours, plural, one {# Geschäftsstunde} other {# Geschäftsstunden}}, wenn Codes nicht mehr funktionieren",
+        "review": "Antworten für deine Sicherheitsprüfung",
+        "selfHost": "SSO und Audit-Log auf deinem eigenen Server"
+      },
+      "security": "Sicherheit bei QRdx"
     }
   },
   "docs": {
@@ -2029,6 +2046,316 @@
     "exceptionTitle": "Die eine Ausnahme: Missbrauch",
     "exception": "Wir deaktivieren einen QR-Code nur, wenn er gegen unsere <terms>Nutzungsbedingungen</terms> verstößt, zum Beispiel durch einen Link auf Phishing oder Malware. Das ist eine Sicherheitsentscheidung nach einer Meldung oder Prüfung, nie eine Entscheidung wegen der Abrechnung. Jeder kann <report>einen QR-Code melden</report>.",
     "questions": "Fragen zur Garantie? Schreib uns an <mail>{email}</mail>. Zuletzt aktualisiert am <time>{date, date, long}</time>."
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise: SSO, Audit-Log, Verträge und Reaktionszeiten",
+    "metaDescription": "QRdx für größere Teams: Single Sign-on, ein Audit-Log mit CSV-Export, Rollen, eigene Domains und ein Kundenportal, mit Jahresvertrag, schriftlichen Reaktionszeiten und Zahlung auf Rechnung.",
+    "crumb": "Enterprise",
+    "title": "QRdx für Enterprise-Teams",
+    "intro1": "Für Unternehmen, die QR-Codes auf Verpackungen, Schildern und in Kampagnen für viele Teams, Marken oder Kunden einsetzen und vor dem Rollout Single Sign-on, einen Prüfpfad und einen Vertrag brauchen.",
+    "intro2": "Enterprise ist der Business-Tarif mit einem Vertrag drumherum: schriftliche Reaktionszeiten, Zahlung auf Rechnung und Antworten für deine Sicherheitsprüfung.",
+    "contactCta": "Kontakt aufnehmen",
+    "securityCta": "So gehen wir mit Sicherheit um",
+    "whoTitle": "Für wen es ist",
+    "who": {
+      "brands": {
+        "title": "Marken und Händler",
+        "body": "Codes auf Verpackungen, Speisekarten und Schildern an vielen Orten, betreut von mehreren Teams, die jeweils eigenen Zugriff brauchen."
+      },
+      "agencies": {
+        "title": "Agenturen",
+        "body": "Ein Workspace pro Kunde, ein schreibgeschütztes Portal für jeden Kunden und Statistikseiten im Branding des Kunden."
+      },
+      "security": {
+        "title": "IT- und Security-Teams",
+        "body": "Ein Anbieter, der Personen über deinen Identity-Provider anmeldet, protokolliert, wer was geändert hat, und deinen Sicherheitsfragebogen beantwortet."
+      }
+    },
+    "featuresTitle": "Das bekommst du",
+    "featuresIntro": "Alles aus dem Business-Tarif. Jeder Punkt funktioniert heute schon auf qrdx.dev.",
+    "features": {
+      "sso": {
+        "title": "Single Sign-on",
+        "body": "OIDC oder SAML 2.0 für deine E-Mail-Domain, per DNS-Eintrag bestätigt. Schreibst du es vor, ist dein Identity-Provider der einzige Zugang für diese Domain."
+      },
+      "auditLog": {
+        "title": "Audit-Log",
+        "body": "Wer wann welchen Code, welche Seite, welches Mitglied, welche Domain, welchen API-Schlüssel oder welche Einstellung geändert hat. Du kannst filtern, bis zu {rows, number} Zeilen als CSV exportieren und {days, number} Tage Verlauf behalten."
+      },
+      "roles": {
+        "title": "Rollen und Zwei-Faktor-Bestätigung",
+        "body": "Inhaber, Admins, Mitglieder, Abrechnungsmitglieder und Betrachter mit Lesezugriff. Workspaces können von allen Mitgliedern eine Zwei-Faktor-Bestätigung verlangen."
+      },
+      "seats": {
+        "title": "Workspaces und Plätze",
+        "body": "Unbegrenzt viele Mitglieder, mit einem eigenen Workspace für jedes Team, jede Marke oder jeden Kunden und eigenen Rollen in jedem."
+      },
+      "domains": {
+        "title": "Eigene Domains",
+        "body": "Kurzlinks und gehostete Seiten auf bis zu {count, number} deiner eigenen Domains."
+      },
+      "clients": {
+        "title": "Kundenportal und Statistiken im Branding",
+        "body": "Ein schreibgeschütztes Portal, in dem Kunden die Ordner sehen, die du mit ihnen teilst, und Statistikseiten im Branding des Kunden ohne das QRdx-Zeichen."
+      },
+      "api": {
+        "title": "API und Massenerstellung",
+        "body": "{requests, number} API-Anfragen pro Tag, bis zu {batch, number} Codes in einem API-Aufruf und CSV-Importe mit bis zu {importRows, number} Zeilen."
+      },
+      "export": {
+        "title": "Deine Daten, exportierbar",
+        "body": "Lade alles aus deinem Konto als ZIP herunter und exportiere Scans, Formularantworten und das Audit-Log als CSV."
+      }
+    },
+    "contractTitle": "Was der Vertrag dazugibt",
+    "contractIntro": "Zusätzlich zum Business-Plan:",
+    "contract": {
+      "replies": {
+        "title": "Schriftliche Antwortzeiten",
+        "body": "Innerhalb von {outage, plural, one {# Arbeitsstunde} other {# Arbeitsstunden}}, wenn deine Codes oder gehosteten Seiten nicht mehr funktionieren, und innerhalb von {other, plural, one {# Arbeitstag} other {# Arbeitstagen}} bei allem anderen."
+      },
+      "invoice": {
+        "title": "Ein Jahresvertrag, Zahlung per Rechnung",
+        "body": "Zahle per Banküberweisung statt mit Karte, mit den Firmendaten, der Steuernummer und der Bestellnummer auf der Rechnung."
+      },
+      "review": {
+        "title": "Antworten für dein Security-Review",
+        "body": "Wir füllen deinen Sicherheitsfragebogen aus und schicken dir eine unterschriebene Kopie des Auftragsverarbeitungsvertrags."
+      },
+      "selfHost": {
+        "title": "Single Sign-on und Audit-Log beim Self-Hosting",
+        "body": "QRdx ist Open Source, aber Single Sign-on und das Audit-Log stehen unter der kommerziellen QRdx-Lizenz. Mit einer Enterprise-Vereinbarung betreibst du sie mit einem Lizenzschlüssel auf deinem eigenen Server."
+      }
+    },
+    "limitsNote": "Auf qrdx.dev gelten für Enterprise-Workspaces die Limits des Business-Plans. Wenn du von etwas mehr brauchst, schreib es ins Formular.",
+    "repliesTitle": "Antwortzeiten",
+    "replies": {
+      "when": "Wann",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "Deine Codes oder gehosteten Seiten funktionieren nicht mehr",
+      "other": "Alles andere",
+      "hours": "Innerhalb von {count, plural, one {# Arbeitsstunde} other {# Arbeitsstunden}}",
+      "days": "Innerhalb von {count, plural, one {# Arbeitstag} other {# Arbeitstagen}}"
+    },
+    "repliesNote": "Arbeitszeiten sind Montag bis Freitag, indische Zeit. Das sind Antwortzeiten: QRdx bietet keine Verfügbarkeitsgarantie.",
+    "buyTitle": "So kaufst du",
+    "buy": {
+      "ask": {
+        "title": "Sag uns, was du brauchst",
+        "body": "Nutze das Formular unten oder schreib an {email}. Nenne uns deine Teamgröße und alles, was dein Security-Review verlangt."
+      },
+      "quote": {
+        "title": "Antworten und ein Preis",
+        "body": "Wir antworten per E-Mail mit Antworten auf deine Fragen und einem Jahrespreis."
+      },
+      "sign": {
+        "title": "Unterschreiben und per Rechnung zahlen",
+        "body": "Sobald der Vertrag unterschrieben ist, stellen wir deinen Workspace auf den Business-Plan um und schicken die Rechnung."
+      }
+    },
+    "formTitle": "Sprich mit uns",
+    "formIntro": "Erzähl uns von deinem Team und davon, was du brauchst. Wir antworten dir per E-Mail.",
+    "form": {
+      "name": "Name",
+      "email": "Geschäftliche E-Mail",
+      "company": "Firma",
+      "teamSize": "Teamgröße",
+      "teamSizePlaceholder": "Größe auswählen",
+      "sizes": {
+        "1-10": "1 bis 10 Personen",
+        "11-50": "11 bis 50 Personen",
+        "51-200": "51 bis 200 Personen",
+        "201-1000": "201 bis 1.000 Personen",
+        "1000+": "Mehr als 1.000 Personen"
+      },
+      "need": "Was brauchst du?",
+      "needPlaceholder": "Zum Beispiel: Single Sign-on für 300 Personen, eine jährliche Rechnung, unser Sicherheitsfragebogen",
+      "submit": "Senden",
+      "sending": "Wird gesendet…",
+      "sentTitle": "Nachricht gesendet",
+      "sent": "Danke. Wir antworten dir an {email}.",
+      "privacy": "Wir verwenden diese Angaben nur, um dir zu antworten. Mehr dazu in unserer <privacy>Datenschutzerklärung</privacy>.",
+      "errors": {
+        "name": "Gib deinen Namen ein.",
+        "email": "Gib eine gültige geschäftliche E-Mail-Adresse ein.",
+        "company": "Gib den Namen deiner Firma ein.",
+        "teamSize": "Wähle deine Teamgröße aus.",
+        "need": "Sag uns, was du brauchst.",
+        "rateLimited": "Du hast schon einige Nachrichten gesendet. Wir antworten dir darauf, oder schreib an {email}.",
+        "check": "Bitte schließe die Prüfung über dem Button ab und sende erneut.",
+        "notSent": "Wir konnten deine Nachricht nicht senden. Schreib stattdessen an {email}.",
+        "unavailable": "Dieses Formular ist hier nicht verfügbar. Schreib stattdessen an {email}.",
+        "unknown": "Etwas ist schiefgelaufen. Schreib stattdessen an {email}."
+      }
+    },
+    "orEmail": "Lieber per E-Mail? Schreib an <mail>{email}</mail>.",
+    "relatedTitle": "Mehr erfahren",
+    "related": {
+      "security": "Sicherheit bei QRdx",
+      "dpa": "Auftragsverarbeitungsvertrag",
+      "subprocessors": "Unterauftragsverarbeiter",
+      "pricing": "Preise"
+    }
+  },
+  "security": {
+    "metaTitle": "Sicherheit bei QRdx: Anmeldung, Datenspeicherung und Meldung von Problemen",
+    "metaDescription": "So schützt QRdx Konten und Daten: HTTPS mit HSTS, eine Content Security Policy, Passkeys und Zwei-Schritt-Verifizierung, Single Sign-on, ein Audit-Log, Link-Prüfungen, der Speicherort der Daten und die Meldung von Sicherheitslücken.",
+    "crumb": "Sicherheit",
+    "title": "Sicherheit bei QRdx",
+    "intro1": "Was QRdx tut, um dein Konto, deine Codes und die Daten deiner Besucher zu schützen. Jeder Punkt beschreibt etwas, das heute auf qrdx.dev läuft, und der Code ist Open Source, du kannst es also selbst prüfen.",
+    "intro2": "QRdx hat weder eine SOC-2- oder HIPAA-Zertifizierung noch eine andere Sicherheitszertifizierung und verspricht auch keine.",
+    "reportCta": "Sicherheitslücke melden",
+    "enterpriseCta": "Sicherheitsprüfung? Schreib uns",
+    "sections": {
+      "transport": {
+        "title": "Verbindungen und Browser",
+        "items": {
+          "https": {
+            "title": "Überall HTTPS",
+            "body": "Jede Seite und jeder API-Aufruf wird über HTTPS ausgeliefert, und Browser erhalten die Anweisung, qrdx.dev zwei Jahre lang weiter über HTTPS aufzurufen (HSTS)."
+          },
+          "csp": {
+            "title": "Content Security Policy",
+            "body": "Die eigenen Seiten von QRdx begrenzen, welche Skripte, Frames und Verbindungen sie laden dürfen. Seiten, die die Daten deines Kontos zeigen, bekommen bei jeder Anfrage eine neue Nonce, sodass ein eingeschleustes Skript dort nicht ausgeführt wird."
+          },
+          "framing": {
+            "title": "Kein Einbetten durch andere Seiten",
+            "body": "Die eigenen Seiten von QRdx lassen sich nicht in einem Frame einer anderen Website anzeigen, und der Bildschirm, auf dem du eine App freigibst, lässt sich gar nicht einbetten. Außerdem werden Browser angewiesen, Dateitypen nicht zu erraten."
+          }
+        }
+      },
+      "signIn": {
+        "title": "Anmeldung",
+        "items": {
+          "passwords": {
+            "title": "Keine Passwörter",
+            "body": "Du meldest dich mit Google, GitHub oder einem einmaligen Code per E-Mail an{passkeys, select, yes {, oder mit einem Passkey} other {}}. QRdx speichert keine Passwörter, die geleakt werden könnten."
+          },
+          "twoFactor": {
+            "title": "Zwei-Schritt-Verifizierung",
+            "body": "Ein zweiter Schritt mit einer Authenticator-App{passkeys, select, yes { oder einem Passkey} other {}}, dazu Backup-Codes für den Fall, dass du sie nicht nutzen kannst. Workspaces im Business-Plan können sie von jedem Mitglied verlangen."
+          },
+          "confirm": {
+            "title": "Bestätige, dass du es bist",
+            "body": "Bei Sicherheitsänderungen, neuen API-Schlüsseln und Webhooks, Rollenänderungen und dem Löschen eines Workspace musst du bestätigen, dass du es bist, auch wenn du angemeldet bist. Eine Bestätigung gilt 10 Minuten."
+          },
+          "alerts": {
+            "title": "Hinweise zu neuen Anmeldungen",
+            "body": "Wir schicken dir eine E-Mail, wenn sich ein Browser oder Gerät zum ersten Mal in deinem Konto anmeldet und wenn sich deine Einstellungen zur Zwei-Schritt-Verifizierung ändern."
+          },
+          "sessions": {
+            "title": "Anmeldungen mit Ablauf",
+            "body": "Eine Anmeldung gilt höchstens 30 Tage, bei Nichtnutzung kürzer. Wird sie aus einem neuen Land und mit einem neuen Browser verwendet, musst du bestätigen, dass du es bist, und du kannst alle anderen Geräte auf einmal abmelden."
+          }
+        }
+      },
+      "workspaces": {
+        "title": "Workspaces und Teams",
+        "items": {
+          "sso": {
+            "title": "Single Sign-on",
+            "body": "OIDC oder SAML 2.0 im Business-Plan, für eine E-Mail-Domain, die du per DNS-Eintrag nachweist. SAML-Antworten müssen mit SHA-256 oder stärker signiert sein. Verlangt ein Workspace es, sind für diese Domain alle anderen Zugänge gesperrt, und Sitzungen dauern höchstens 24 Stunden."
+          },
+          "roles": {
+            "title": "Rollen",
+            "body": "Inhaber, Admin, Mitglied, Abrechnung und Betrachter. Nur Inhaber und Admins verwalten Personen, Domains und Einstellungen, und Mitglieder mit Abrechnungsrolle sowie Betrachter können keine Codes ändern."
+          },
+          "auditLog": {
+            "title": "Audit-Log",
+            "body": "Bei Business sehen Inhaber und Admins, wer welchen Code, welche Seite, welches Mitglied, welche Domain, welchen API-Schlüssel oder welche Einstellung geändert hat, und können das Protokoll als CSV exportieren. Einträge werden {days, number} Tage aufbewahrt."
+          },
+          "staff": {
+            "title": "Mitarbeiterzugriff",
+            "body": "Nur Konten von QRdx-Mitarbeitenden können die Admin-Tools öffnen, und jede Aktion dort wird in einem Audit-Log aufgezeichnet."
+          }
+        }
+      },
+      "secrets": {
+        "title": "Schlüssel und Secrets",
+        "items": {
+          "hashed": {
+            "title": "Gehashte Schlüssel und Tokens",
+            "body": "API-Schlüssel und OAuth-Zugriffstokens werden nur als SHA-256-Hashes gespeichert, sodass eine Kopie der Datenbank sie nicht preisgibt. Passwörter geschützter Codes werden ebenfalls als Hashes gespeichert."
+          },
+          "encrypted": {
+            "title": "Verschlüsselte Integrations-Tokens",
+            "body": "Tokens für die Tools, die du verbindest, zum Beispiel Google Drive oder Slack, werden mit AES-256-GCM verschlüsselt."
+          },
+          "webhooks": {
+            "title": "Signierte Webhooks",
+            "body": "Jeder Webhook-Endpunkt hat sein eigenes Secret, und jede Payload wird damit signiert, damit dein Server prüfen kann, dass sie von QRdx kommt."
+          }
+        }
+      },
+      "abuse": {
+        "title": "Missbrauch und Link-Sicherheit",
+        "items": {
+          "linkChecks": {
+            "title": "Link-Prüfungen",
+            "body": "Wird das Ziel eines dynamischen QR-Codes festgelegt, prüft QRdx es anhand der Listen von Google Web Risk mit Malware- und Phishing-Seiten und lehnt markierte Ziele ab. Ein Ziel, das nicht rechtzeitig geprüft werden konnte, wird erneut geprüft, und sein Code wird deaktiviert, falls es markiert ist."
+          },
+          "rateLimits": {
+            "title": "Ratenbegrenzung",
+            "body": "Die API, der MCP-Server, Formulare und andere öffentliche Endpunkte sind pro Schlüssel, Konto oder IP-Adresse ratenbegrenzt."
+          },
+          "bots": {
+            "title": "Bot-Prüfung bei Formularen",
+            "body": "Öffentliche Formulare nutzen Cloudflare Turnstile und versteckte Felder, die nur Bots ausfüllen."
+          },
+          "reports": {
+            "title": "Schädliche Codes melden",
+            "body": "Jeder kann einen <report>QR-Code melden</report>, der zu Phishing, Malware oder Betrug führt. Codes, die gegen die Regeln verstoßen, werden deaktiviert."
+          }
+        }
+      },
+      "storage": {
+        "title": "Wo Daten gespeichert werden",
+        "items": {
+          "hosting": {
+            "title": "Hosting",
+            "body": "Die App läuft auf Vercel. Die Serverfunktionen laufen in Washington, D.C., in den USA, hinter dem globalen Edge-Netzwerk von Vercel."
+          },
+          "database": {
+            "title": "Datenbank",
+            "body": "Konten, Codes, Scans und Formularantworten liegen in einer Neon-Postgres-Datenbank in AWS US East (N. Virginia). Neon <neon>verschlüsselt ruhende Daten</neon> mit AES-256 und speichert verschlüsselte Backups."
+          },
+          "files": {
+            "title": "Hochgeladene Dateien",
+            "body": "Dateien, die du hochlädst, werden in Cloudflare R2 in der Region Asien-Pazifik gespeichert."
+          },
+          "scans": {
+            "title": "Scan-Daten",
+            "body": "IP-Adressen von Scannenden werden nie gespeichert. Eindeutige Besucher werden mit einem Hash gezählt, der sich täglich ändert."
+          }
+        }
+      },
+      "yourData": {
+        "title": "Deine Daten und der Papierkram",
+        "items": {
+          "export": {
+            "title": "Export",
+            "body": "Lade in den Einstellungen alles, was QRdx zu deinem Konto speichert, als ZIP herunter und exportiere Scans, Formularantworten und das Audit-Log als CSV."
+          },
+          "delete": {
+            "title": "Löschung",
+            "body": "Du kannst Codes, Seiten, Dateien und Formularantworten jederzeit löschen, ebenso dein ganzes Konto. Gelöschte Daten können noch kurze Zeit im Wiederherstellungsverlauf des Datenbankanbieters bleiben."
+          },
+          "dpa": {
+            "title": "Auftragsverarbeitungsvertrag",
+            "body": "Der <dpa>DPA</dpa> ist für alle Kundinnen und Kunden Teil der Nutzungsbedingungen und enthält die Standardvertragsklauseln. Frag nach einer unterzeichneten Kopie, wenn du eine brauchst."
+          },
+          "subprocessors": {
+            "title": "Unterauftragnehmer",
+            "body": "Die <list>Liste der Unterauftragnehmer</list> nennt jeden Dienst, der für QRdx personenbezogene Daten verarbeitet, was er tut und wo. Wir aktualisieren sie mindestens 30 Tage, bevor ein neuer Dienst startet."
+          }
+        }
+      }
+    },
+    "reportTitle": "Sicherheitslücke melden",
+    "report": "Schreib eine E-Mail an <mail>{email}</mail> mit einem Betreff, der mit [security] beginnt, und poste die Meldung bitte nicht in einem öffentlichen GitHub-Issue. Unsere <policy>Sicherheitsrichtlinie</policy> regelt Umfang und Safe Harbor, und <txt>security.txt</txt> enthält dieselben Kontaktdaten.",
+    "reviewTitle": "Du führst eine Sicherheitsprüfung durch?",
+    "review": "Schick uns deinen Fragebogen. <enterprise>Enterprise</enterprise>-Verträge enthalten Antworten für deine Prüfung und einen unterzeichneten DPA."
   },
   "templates": {
     "metaTitle": "Landingpage-Vorlagen für QR-Codes mit Live-Demos",
