@@ -5,6 +5,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import {
   People as Community,
   Card as CreditCard,
+  TrendUp as Growth,
   Health as HeartPulse,
   Element3 as LayoutDashboard,
   ColorSwatch as Palette,
@@ -21,6 +22,7 @@ import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/growth", label: "Growth", icon: Growth },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/themes", label: "Themes", icon: Palette },
   { href: "/admin/community", label: "Community", icon: Community },
