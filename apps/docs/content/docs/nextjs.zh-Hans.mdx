@@ -1,0 +1,158 @@
+---
+title: "Next.js 中的二维码"
+description: "使用 qrdx 在 Next.js App Router 中渲染二维码：在 Server Component 中无需客户端 JavaScript，在 Client Component 中响应实时输入，支持添加 logo，也可下载为 SVG。"
+icon: Code
+---
+
+`qrdx` 在 App Router 的两端都能使用。`QRCodeSVG` 和 `QRCode` 不使用仅限客户端的 hook，因此 Server Component 可以直接把二维码渲染到页面的 HTML 中，无需为它发送任何 JavaScript。只有在值需要在浏览器中变化，或需要下载文件时，才需要使用 Client Component。
+
+<NpmStatus package="qrdx" />
+
+## 安装 [#install]
+
+```package-install
+qrdx@latest
+```
+
+`react` 和 `react-dom` 18 或更高版本是对等依赖（peer dependencies），因此会使用你应用自身的版本。
+
+## 在 Server Component 中 [#in-a-server-component]
+
+```tsx title="app/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default function Page() {
+  return (
+    <QRCodeSVG
+      value="https://example.com"
+      size={256}
+      margin={4}
+      role="img"
+      aria-label="QR code for example.com"
+    />
+  );
+}
+```
+
+SVG 是服务器所发送 HTML 的一部分。它在任何 JavaScript 加载之前就能显示；静态页面会在构建时渲染一次；屏幕阅读器可以读取 `aria-label`。
+
+`margin` 是二维码周围的静区，单位为模块。`QRCodeSVG` 默认为 `0`，适合放在自带内边距的卡片中的二维码。二维码标准要求 4 个模块，在复杂或深色背景上这是更稳妥的选择。
+
+### 来自路由参数或数据 [#from-route-params-or-data]
+
+```tsx title="app/tickets/[id]/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default async function TicketPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const url = `https://example.com/check-in/${encodeURIComponent(id)}`;
+  return <QRCodeSVG value={url} size={200} margin={4} level="H" />;
+}
+```
+
+Next.js 将 `params` 作为 promise 传入，因此页面是 `async` 的。来自用户或数据库的任何内容，在放入 URL 之前都要先编码。纠错等级 `H` 最多允许二维码有 30% 的损坏，这对会被折叠或刮擦的证件牌很有帮助。
+
+## 在 Client Component 中 [#in-a-client-component]
+
+当值来自输入框时，请在 Client Component 中渲染二维码：
+
+```tsx title="components/live-qr-code.tsx"
+"use client";
+
+import { QRCodeSVG } from "qrdx";
+import { useState } from "react";
+
+export function LiveQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div>
+      <input
+        aria-label="Text or link to encode"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QRCodeSVG value={value} size={200} margin={4} /> : null}
+    </div>
+  );
+}
+```
+
+`QRCodeCanvas` 同样是客户端组件（自带 `"use client"`），但它只能绘制普通的方形模块。需要带样式的二维码时，请使用 `QRCodeSVG`。
+
+## 添加 logo [#with-a-logo]
+
+```tsx title="components/logo-qr-code.tsx"
+import { QRCode } from "qrdx";
+
+export function LogoQrCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      margin={4}
+      level="H"
+      logo="/logo.png"
+    />
+  );
+}
+```
+
+- **纠错等级 H。** logo 的宽度约为二维码宽度的四分之一，并且会清除其后方的模块，因此二维码要依靠纠错才能被扫描。如果 logo 过大、超出二维码的修复能力，`QRCode` 还会将其缩小。
+- **logo 的来源。** `logo` 可以接收应用内的路径、URL 或 data URL，页面中展示了这三种方式。用于下载时，data URL 最稳妥，因为远程图片需要 CORS 头才能被复制到文件中。
+- **检查效果。** 在几部手机上试试这个二维码，或者将截图上传到[扫描检测工具](/tools/scan-checker)。
+
+`logoOptions` 用于设置 logo 的大小、留白、位置和裁剪；详见 [Logo](/docs/features/logos)。
+
+## 下载为 SVG [#download-as-svg]
+
+```tsx title="components/download-svg-button.tsx"
+"use client";
+
+import { downloadQRCode } from "qrdx";
+
+export function DownloadSvgButton({ value }: { value: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        downloadQRCode(
+          { value, level: "Q", margin: 4 },
+          {
+            format: "svg",
+            size: { width: 1024, height: 1024 },
+            filename: "qr-code.svg",
+          },
+        )
+      }
+    >
+      Download SVG
+    </button>
+  );
+}
+```
+
+`downloadQRCode` 需要浏览器的 DOM，因此该按钮是 Client Component。Server Component 页面仍然可以渲染它，并将值作为 prop 传入。如需其他文件格式，请将 `format` 设置为 `png`、`jpg`、`webp`、`eps` 或 `pdf`（PDF 需要可选的 `jspdf` 包）。全部选项请参阅[下载](/docs/features/downloads)。
+
+## 需要图片 URL 时 [#when-you-need-an-image-url]
+
+电子邮件、Open Graph 图片、Markdown 文件，以及其他无法运行 React 的地方，需要的是图片 URL 而不是组件。[免费二维码 API](/qr-code-api) 无需密钥即可返回图片 URL：
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://example.com&format=png" width="256" height="256" alt="QR code for example.com" />
+```
+
+## 现成组件 [#ready-made-components]
+
+[shadcn/ui 注册表](/docs/developers/shadcn)可将组件安装到你的项目中：[带下载按钮的二维码](/docs/components/qr-code)、卡片、分享对话框、生成器、扫描器，以及 Wi-Fi 和联系人二维码。
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code.json
+```
+
+## 其他 React 二维码库 [#other-react-qr-code-libraries]
+
+如果你只需要普通的黑白二维码，`qrcode.react` 体积更小，历史也更久；`qrdx` 则增加了形状、渐变、边框、logo、PNG/SVG/PDF/EPS 导出以及扫描评分。与 [qrcode.react](/compare/qrcode-react) 和 [qr-code-styling](/compare/qr-code-styling) 的对比详细说明了这些差异。

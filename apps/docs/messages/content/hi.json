@@ -1907,9 +1907,9 @@
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.question"
   },
-  "82ec64b16a5d": {
-    "source": "No, the details are inside the code. To have one code that always shows your current details, host your contact page online and point a URL code, or a dynamic code from your dashboard, at it.",
-    "text": "नहीं, डिटेल कोड के अंदर ही होती है। अगर आप चाहते हैं कि एक ही कोड हमेशा आपकी मौजूदा डिटेल दिखाए, तो अपना कॉन्टैक्ट पेज ऑनलाइन होस्ट करें और उस पर URL कोड या अपने डैशबोर्ड से डायनेमिक QR कोड पॉइंट करें।",
+  "fa26bd23187e": {
+    "source": "No, the details are inside the code. For one code that always shows your current details, make a digital business card instead: a hosted contact page with your photo and a Save contact button that you can edit after printing.",
+    "text": "नहीं, जानकारी कोड के अंदर ही होती है। ऐसा कोड चाहिए जो हमेशा आपकी मौजूदा जानकारी दिखाए, तो इसकी जगह डिजिटल बिज़नेस कार्ड बनाएँ: यह एक होस्टेड पेज होता है जिसमें आपकी फ़ोटो और Save contact बटन होता है, और प्रिंट करने के बाद भी आप इसे एडिट कर सकते हैं।",
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.answer"
   },
@@ -3719,6 +3719,24 @@
     "status": "machine",
     "context": "qrTypes.types.bitcoin.faqs.2.answer"
   },
+  "0e3f9ed231ab": {
+    "source": "Lightning, testnet and address checks",
+    "text": "Lightning, testnet और एड्रेस की जाँच",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.title"
+  },
+  "da2ccbd9fdc4": {
+    "source": "This is an on-chain request: the wallet pays your address on the Bitcoin blockchain. Lightning-only wallets can't pay it, and this generator doesn't add a lightning= invoice to the URI, so for Lightning payments share an invoice or Lightning address from your wallet instead.",
+    "text": "यह एक on-chain रिक्वेस्ट है: वॉलेट Bitcoin ब्लॉकचेन पर आपके एड्रेस पर पेमेंट करता है। सिर्फ़ Lightning वाले वॉलेट इससे पेमेंट नहीं कर सकते, और यह जनरेटर URI में lightning= इनवॉइस नहीं जोड़ता। इसलिए Lightning पेमेंट के लिए अपने वॉलेट से इनवॉइस या Lightning एड्रेस शेयर करें।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.0"
+  },
+  "e3130a29c7fc": {
+    "source": "The generator checks the address's length (26 to 62 characters), not its checksum, and it can't tell mainnet from testnet: a testnet address (starting with tb1, m, n or 2) makes a code no ordinary wallet can pay. Scan the preview with the wallet that will pay before you print.",
+    "text": "जनरेटर एड्रेस की लंबाई (26 से 62 अक्षर) जाँचता है, चेकसम नहीं, और वह mainnet और testnet में फ़र्क़ नहीं कर सकता: testnet एड्रेस (जो tb1, m, n या 2 से शुरू होता है) से ऐसा कोड बनता है जिससे कोई आम वॉलेट पेमेंट नहीं कर सकता। प्रिंट करने से पहले प्रीव्यू को उसी वॉलेट से स्कैन करें जिससे पेमेंट होगा।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.1"
+  },
   "80cfbcc768ef": {
     "source": "Share an EIP-681 Ethereum payment request.",
     "text": "EIP-681 Ethereum पेमेंट रिक्वेस्ट शेयर करें।",
@@ -3820,6 +3838,24 @@
     "text": "हाँ। कोड में सिर्फ़ आपका पब्लिक एड्रेस होता है। प्राइवेट की या रिकवरी फ़्रेज़ को कभी एन्कोड न करें।",
     "status": "machine",
     "context": "qrTypes.types.ethereum.faqs.2.answer"
+  },
+  "d434b3350c1d": {
+    "source": "Address checks and ENS names",
+    "text": "एड्रेस की जाँच और ENS नाम",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.title"
+  },
+  "65464924c87e": {
+    "source": "The generator checks that the address is 0x followed by 40 hexadecimal characters. It doesn't check the mixed-case EIP-55 checksum; wallets check that when they scan, so paste the address exactly as your wallet shows it rather than typing it.",
+    "text": "जनरेटर यह जाँचता है कि एड्रेस 0x से शुरू होकर उसके बाद 40 हेक्साडेसिमल अक्षर हैं। यह mixed-case EIP-55 चेकसम नहीं जाँचता; स्कैन करते समय वॉलेट उसे जाँचते हैं। इसलिए एड्रेस टाइप करने के बजाय उसे वैसे ही पेस्ट करें जैसा आपका वॉलेट दिखाता है।",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.0"
+  },
+  "4a379c763eb7": {
+    "source": "ENS names such as name.eth aren't accepted. EIP-681 allows them, but the payer's wallet would have to look the name up; a 0x address works in every wallet that reads the code.",
+    "text": "name.eth जैसे ENS नाम स्वीकार नहीं किए जाते। EIP-681 में इनकी अनुमति है, लेकिन भुगतान करने वाले के वॉलेट को वह नाम खोजना पड़ेगा; 0x एड्रेस हर उस वॉलेट में काम करता है जो कोड पढ़ता है।",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.1"
   },
   "9870d299fb0b": {
     "source": "Open your Etsy shop or a listing.",
@@ -6155,6 +6191,24 @@
     "status": "machine",
     "context": "qrTypes.types.litecoin.faqs.1.answer"
   },
+  "45f14f3c95d2": {
+    "source": "Which Litecoin addresses work",
+    "text": "कौन-से Litecoin एड्रेस काम करते हैं",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.title"
+  },
+  "efdeb7ecb4b1": {
+    "source": "Addresses starting with L (legacy), M (P2SH), 3 (older P2SH) and ltc1 (SegWit) are accepted. M and 3 are the same kind of address: Litecoin moved P2SH addresses from 3 to M so they aren't mistaken for Bitcoin addresses, and some older wallets still show 3.",
+    "text": "L (legacy), M (P2SH), 3 (पुराना P2SH) और ltc1 (SegWit) से शुरू होने वाले एड्रेस स्वीकार किए जाते हैं। M और 3 एक ही तरह के एड्रेस हैं: Litecoin ने P2SH एड्रेस को 3 से M पर शिफ्ट किया ताकि उन्हें Bitcoin एड्रेस न समझ लिया जाए, और कुछ पुराने वॉलेट अब भी 3 दिखाते हैं।",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.0"
+  },
+  "a17e84343f7d": {
+    "source": "MWEB addresses (starting with ltcmweb1), used for Litecoin's private payments, aren't accepted here. Use one of your wallet's regular receiving addresses for a printed code.",
+    "text": "MWEB एड्रेस (जो ltcmweb1 से शुरू होते हैं), जो Litecoin के प्राइवेट पेमेंट के लिए होते हैं, यहाँ स्वीकार नहीं किए जाते। प्रिंट किए जाने वाले कोड के लिए अपने वॉलेट का कोई सामान्य रिसीविंग एड्रेस इस्तेमाल करें।",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.1"
+  },
   "14f89759d816": {
     "source": "Receive Dogecoin with an optional amount.",
     "text": "वैकल्पिक राशि के साथ Dogecoin पाएँ।",
@@ -6215,6 +6269,24 @@
     "status": "machine",
     "context": "qrTypes.types.dogecoin.faqs.0.question"
   },
+  "7c952bf9c5da": {
+    "source": "Which Dogecoin addresses work",
+    "text": "कौन-से Dogecoin एड्रेस काम करते हैं",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.title"
+  },
+  "6bc808ddaa41": {
+    "source": "Standard Dogecoin addresses start with D, and multisig (P2SH) addresses with A or 9; the generator accepts these. Testnet addresses, which start with n or 2, are rejected, so a test address can't end up on a printed sign by mistake.",
+    "text": "सामान्य Dogecoin एड्रेस D से शुरू होते हैं और multisig (P2SH) एड्रेस A या 9 से; जनरेटर इन्हें स्वीकार करता है। Testnet एड्रेस, जो n या 2 से शुरू होते हैं, अस्वीकार कर दिए जाते हैं, ताकि कोई टेस्ट एड्रेस गलती से प्रिंट किए गए साइन पर न पहुँच जाए।",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.0"
+  },
+  "0abee7330fc7": {
+    "source": "For a tip jar, leave the amount empty: each person types what they want to give, and one printed code takes any number of payments.",
+    "text": "टिप जार के लिए राशि खाली छोड़ दें: हर व्यक्ति अपनी मर्ज़ी की राशि डालता है, और एक प्रिंट किया हुआ कोड कितने भी पेमेंट ले सकता है।",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.1"
+  },
   "6dc9a0aa25cf": {
     "source": "Receive Bitcoin Cash with an optional amount.",
     "text": "वैकल्पिक राशि के साथ Bitcoin Cash पाएँ।",
@@ -6274,6 +6346,30 @@
     "text": "नहीं। Bitcoin Cash एक अलग कॉइन है, जिसके अपने वॉलेट हैं। Bitcoin के लिए Bitcoin जनरेटर इस्तेमाल करें।",
     "status": "machine",
     "context": "qrTypes.types.bitcoincash.faqs.0.answer"
+  },
+  "c6afea0f4f57": {
+    "source": "CashAddr, legacy and token addresses",
+    "text": "CashAddr, legacy और टोकन एड्रेस",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.title"
+  },
+  "5d69e08209a0": {
+    "source": "Paste the address with or without its bitcoincash: prefix. The generator removes a pasted prefix and writes it once, as the start of the URI.",
+    "text": "एड्रेस को bitcoincash: प्रिफ़िक्स के साथ या उसके बिना पेस्ट करें। जनरेटर पेस्ट किया गया प्रिफ़िक्स हटा देता है और उसे URI की शुरुआत में सिर्फ़ एक बार लिखता है।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.0"
+  },
+  "7f8cdb8747e0": {
+    "source": "Token-aware addresses (starting with z or r), used for CashTokens, aren't accepted. Use your wallet's regular q address for BCH payments.",
+    "text": "टोकन-अवेयर एड्रेस (जो z या r से शुरू होते हैं), जो CashTokens के लिए इस्तेमाल होते हैं, स्वीकार नहीं किए जाते। BCH पेमेंट के लिए अपने वॉलेट का सामान्य q एड्रेस इस्तेमाल करें।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.1"
+  },
+  "e24a42112f28": {
+    "source": "Legacy addresses starting with 1 or 3 look exactly like Bitcoin addresses, which makes it easy to send coins from the wrong network. Prefer CashAddr on anything you print.",
+    "text": "1 या 3 से शुरू होने वाले Legacy एड्रेस बिल्कुल Bitcoin एड्रेस जैसे दिखते हैं, जिससे गलत नेटवर्क पर कॉइन भेज देना आसान हो जाता है। जो भी प्रिंट करें, उस पर CashAddr को चुनें।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.2"
   },
   "51f7bdf5aaa1": {
     "source": "Receive SOL with a Solana Pay request.",
@@ -6341,6 +6437,24 @@
     "status": "machine",
     "context": "qrTypes.types.solana.faqs.0.answer"
   },
+  "43fcb61a7db3": {
+    "source": "What this Solana Pay code includes",
+    "text": "इस Solana Pay कोड में क्या शामिल है",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.title"
+  },
+  "36ed60b12391": {
+    "source": "It's a Solana Pay transfer request: the recipient, an amount in SOL, a label and a message. Solana Pay also defines spl-token for token payments and reference for matching a payment to an order; this generator adds neither, so use your point-of-sale tool when you need them.",
+    "text": "यह एक Solana Pay ट्रांसफ़र रिक्वेस्ट है: पाने वाला, SOL में राशि, एक लेबल और एक मैसेज। Solana Pay टोकन पेमेंट के लिए spl-token और पेमेंट को ऑर्डर से मिलाने के लिए reference भी तय करता है; यह जनरेटर इनमें से कुछ नहीं जोड़ता, इसलिए ज़रूरत पड़ने पर अपना point-of-sale टूल इस्तेमाल करें।",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.0"
+  },
+  "9502d073de90": {
+    "source": "Solana Pay transaction requests, where the code holds a link to your server and the server builds the transaction, aren't made here either.",
+    "text": "Solana Pay ट्रांज़ैक्शन रिक्वेस्ट, जिनमें कोड आपके सर्वर का लिंक रखता है और सर्वर ट्रांज़ैक्शन बनाता है, वे भी यहाँ नहीं बनाई जातीं।",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.1"
+  },
   "aa106b399d07": {
     "source": "Receive Monero with an optional amount.",
     "text": "वैकल्पिक अमाउंट के साथ Monero पाएं।",
@@ -6400,6 +6514,354 @@
     "text": "कई वॉलेट आपके हर पब्लिश किए गए कोड के लिए नया subaddress सुझाते हैं, ताकि अलग-अलग कोड पर आए पेमेंट आपस में जुड़े न दिखें।",
     "status": "machine",
     "context": "qrTypes.types.monero.faqs.0.answer"
+  },
+  "e21057f62697": {
+    "source": "Standard address, subaddress or integrated address",
+    "text": "स्टैंडर्ड एड्रेस, सबएड्रेस या इंटीग्रेटेड एड्रेस",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.title"
+  },
+  "320538ad2b97": {
+    "source": "Standard addresses start with 4 and are 95 characters long, subaddresses start with 8, and integrated addresses start with 4 and are 106 characters because they carry a payment ID. The generator accepts all three.",
+    "text": "स्टैंडर्ड एड्रेस 4 से शुरू होते हैं और 95 अक्षर लंबे होते हैं, सबएड्रेस 8 से शुरू होते हैं, और इंटीग्रेटेड एड्रेस 4 से शुरू होकर 106 अक्षर के होते हैं क्योंकि उनमें पेमेंट ID होती है। जनरेटर तीनों को स्वीकार करता है।",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.0"
+  },
+  "4e1f370290a4": {
+    "source": "Separate payment IDs are deprecated in Monero, so the generator doesn't add one. Use a subaddress for each customer or code, or the integrated address an exchange or shop gives you.",
+    "text": "Monero में अलग से पेमेंट ID अब पुरानी पड़ चुकी है, इसलिए जनरेटर उसे नहीं जोड़ता। हर ग्राहक या कोड के लिए एक सबएड्रेस इस्तेमाल करें, या वह इंटीग्रेटेड एड्रेस जो आपको एक्सचेंज या दुकान देती है।",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.1"
+  },
+  "1d393b0081b6": {
+    "source": "PDF",
+    "text": "PDF",
+    "status": "machine",
+    "context": "templates.pdf.label"
+  },
+  "5646a9f7a51e": {
+    "source": "Free PDF QR Code Generator",
+    "text": "फ़्री PDF QR कोड जनरेटर",
+    "status": "machine",
+    "context": "hostedTypes.pdf.title"
+  },
+  "aca040b7ba32": {
+    "source": "Upload a PDF to a hosted page and replace it any time.",
+    "text": "PDF को होस्टेड पेज पर अपलोड करें और जब चाहें बदलें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.summary"
+  },
+  "124c8c2b6cd3": {
+    "source": "Upload your PDF",
+    "text": "अपनी PDF अपलोड करें",
+    "status": "machine",
+    "context": "hostedTypes.pdf.cta"
+  },
+  "9dcba3ce451a": {
+    "source": "Turn a PDF into a QR code: upload it to a free QRdx page that people read or download on their phone. Replace the file later, same code. 10 MB on Free.",
+    "text": "PDF को QR कोड बनाएँ: उसे फ़्री QRdx पेज पर अपलोड करें, जिसे लोग फ़ोन पर पढ़ या डाउनलोड कर सकते हैं। फ़ाइल बाद में बदलें, कोड वही रहेगा। Free प्लान में 10 MB।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.metaDescription"
+  },
+  "68e7e7ec5658": {
+    "source": "A PDF QR code opens your document on the phone that scans it: a menu, a brochure, a manual or a price list. You upload the PDF to a page QRdx hosts for you, and the code points to that page through a short link.",
+    "text": "PDF QR कोड स्कैन करने वाले फ़ोन पर आपका डॉक्यूमेंट खुल जाता है: मेन्यू, ब्रोशर, मैनुअल या प्राइस लिस्ट। आप PDF को उस पेज पर अपलोड करते हैं जिसे QRdx आपके लिए होस्ट करता है, और कोड एक छोटे लिंक से उसी पेज पर ले जाता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.0"
+  },
+  "9302dac9d8cf": {
+    "source": "Because the code holds the link, not the file, you can replace the PDF after printing, for next season's menu or a corrected manual, and every printed code opens the new version. It needs a free QRdx account.",
+    "text": "कोड में फ़ाइल नहीं, लिंक होता है, इसलिए प्रिंट के बाद भी आप PDF बदल सकते हैं, जैसे अगले सीज़न के मेन्यू या सुधारे हुए मैनुअल के लिए, और छपा हुआ हर कोड नया वर्ज़न खोलेगा। इसके लिए एक फ़्री QRdx अकाउंट चाहिए।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.1"
+  },
+  "c1c38d9f6192": {
+    "source": "Sign in or create a free account, then start a PDF page: the button above opens it with the PDF type picked.",
+    "text": "साइन इन करें या फ़्री अकाउंट बनाएँ, फिर PDF पेज शुरू करें: ऊपर का बटन PDF टाइप चुनकर उसे खोल देता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.0"
+  },
+  "8ee1eee065fb": {
+    "source": "Upload your PDF, or paste a link to one that's already online, and choose whether people can download it.",
+    "text": "अपनी PDF अपलोड करें, या पहले से ऑनलाइन किसी PDF का लिंक पेस्ट करें, और चुनें कि लोग उसे डाउनलोड कर सकें या नहीं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.1"
+  },
+  "bcca1e09802d": {
+    "source": "Add a title and any buttons you want, such as a link to your website, then publish.",
+    "text": "एक टाइटल और अपनी पसंद के बटन जोड़ें, जैसे आपकी वेबसाइट का लिंक, फिर पब्लिश करें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.2"
+  },
+  "68671f93a178": {
+    "source": "Download the page's QR code, print it and scan it once to check.",
+    "text": "पेज का QR कोड डाउनलोड करें, प्रिंट करें और जाँचने के लिए एक बार स्कैन करें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.3"
+  },
+  "d26cfd2a55d4": {
+    "source": "Reads in the browser",
+    "text": "ब्राउज़र में ही पढ़ें",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.title"
+  },
+  "0fa7186b2959": {
+    "source": "On tablets and computers the PDF shows on the page; on phones, Open PDF shows it full screen. Nobody installs an app.",
+    "text": "टैबलेट और कंप्यूटर पर PDF पेज पर ही दिखती है; फ़ोन पर Open PDF उसे फ़ुल स्क्रीन में दिखाता है। कोई ऐप इंस्टॉल नहीं करनी पड़ती।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.description"
+  },
+  "0a07381242b6": {
+    "source": "Download and more files",
+    "text": "डाउनलोड और ज़्यादा फ़ाइलें",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.title"
+  },
+  "52cdbbfe01d6": {
+    "source": "A Download button saves a copy, and a Downloads block lists more files with their own labels, such as the menu in a second language.",
+    "text": "Download बटन एक कॉपी सेव करता है, और Downloads ब्लॉक में और फ़ाइलें अपने-अपने लेबल के साथ दिखती हैं, जैसे दूसरी भाषा में मेन्यू।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.description"
+  },
+  "f6d11e1fc833": {
+    "source": "Your page around it",
+    "text": "आपका अपना पेज",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.title"
+  },
+  "168565d4c819": {
+    "source": "A title, your colors and logo, and buttons to your website or booking page, from the same blocks as every QRdx page.",
+    "text": "एक टाइटल, आपके रंग और लोगो, और आपकी वेबसाइट या बुकिंग पेज के बटन, हर QRdx पेज जैसे ही ब्लॉक से।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.description"
+  },
+  "e71d2dbd4008": {
+    "source": "Fast and private",
+    "text": "तेज़ और प्राइवेट",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.title"
+  },
+  "6be93be79318": {
+    "source": "Server-rendered for phones, with no QRdx analytics or chat scripts, and hidden from search engines unless you turn that on.",
+    "text": "फ़ोन के लिए सर्वर पर तैयार किया गया, QRdx के कोई एनालिटिक्स या चैट स्क्रिप्ट नहीं, और जब तक आप चालू न करें, सर्च इंजन से छिपा रहता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.description"
+  },
+  "0cd53dc2571c": {
+    "source": "Replace the file behind the same link: in Dashboard → Files, choose Replace file next to the PDF and upload the new one. Pages and codes that use it show the new version within a minute. A PDF can only be replaced by a PDF.",
+    "text": "उसी लिंक के पीछे फ़ाइल बदलें: Dashboard → Files में PDF के बगल में Replace file चुनें और नई फ़ाइल अपलोड करें। इसका उपयोग करने वाले पेज और कोड एक मिनट के अंदर नया वर्ज़न दिखाते हैं। PDF को सिर्फ़ PDF से ही बदला जा सकता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.0"
+  },
+  "cd4e0788ed1c": {
+    "source": "Change the page itself (its title, buttons and colors) and publish; the printed code stays the same. Every scan is counted without cookies, so you can see when the code is used.",
+    "text": "पेज में बदलाव करें (उसका टाइटल, बटन और रंग) और पब्लिश करें; छपा हुआ कोड वही रहता है। हर स्कैन बिना कुकी के गिना जाता है, इसलिए आप देख सकते हैं कि कोड कब इस्तेमाल हुआ।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.1"
+  },
+  "0455df8d3256": {
+    "source": "A PDF page, or a code that links to a PDF?",
+    "text": "PDF पेज, या PDF के लिंक वाला कोड?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.title"
+  },
+  "1739b16060cf": {
+    "source": "Static code to a PDF link",
+    "text": "PDF लिंक वाला स्टैटिक कोड",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticLabel"
+  },
+  "d34aa4eb51bf": {
+    "source": "No account: put the link of a PDF that's already online, in Google Drive or on your website, into a free static code.",
+    "text": "अकाउंट नहीं चाहिए: Google Drive या आपकी वेबसाइट पर पहले से ऑनलाइन PDF का लिंक फ़्री स्टैटिक QR कोड में डाल दें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.0"
+  },
+  "19bcc450ed9b": {
+    "source": "The link is written into the code, so printed codes stop working if the file is moved or its sharing is turned off.",
+    "text": "लिंक कोड में ही लिखा होता है, इसलिए फ़ाइल हटाने या उसकी शेयरिंग बंद करने पर छपे हुए कोड काम करना बंद कर देते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.1"
+  },
+  "15211d2c9803": {
+    "source": "No scan counts, and nothing around the PDF.",
+    "text": "स्कैन की गिनती नहीं, और PDF के आसपास कुछ नहीं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.2"
+  },
+  "0a9ee38a3b41": {
+    "source": "Hosted PDF page",
+    "text": "होस्टेड PDF पेज",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedLabel"
+  },
+  "ffc08a5fa958": {
+    "source": "A free QRdx account, and QRdx stores the file.",
+    "text": "एक फ़्री QRdx अकाउंट, और फ़ाइल QRdx स्टोर करता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.0"
+  },
+  "28ddde3d608a": {
+    "source": "Replace the PDF or edit the page any time; printed codes keep working.",
+    "text": "जब चाहें PDF बदलें या पेज एडिट करें; छपे हुए कोड काम करते रहते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.1"
+  },
+  "2d7dc4880d53": {
+    "source": "Scans counted without cookies, with your title, colors and buttons around the document.",
+    "text": "स्कैन बिना कुकी के गिने जाते हैं, और डॉक्यूमेंट के आसपास आपका टाइटल, रंग और बटन होते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.2"
+  },
+  "de93e29b3216": {
+    "source": "Is the PDF QR code free?",
+    "text": "क्या PDF QR कोड फ़्री है?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.question"
+  },
+  "d56cd3681383": {
+    "source": "Yes, with a free QRdx account. The Free plan includes 3 hosted pages, and each uses one of its 10 dynamic codes. Free pages show a small \"Made with QRdx\" footer; Pro removes it and the page limit.",
+    "text": "हाँ, फ़्री QRdx अकाउंट के साथ। फ़्री प्लान में 3 होस्टेड पेज मिलते हैं, और हर पेज आपके 10 डायनेमिक QR कोड में से एक इस्तेमाल करता है। फ़्री पेजों पर नीचे छोटा सा \"Made with QRdx\" फ़ूटर दिखता है; Pro में यह फ़ूटर और पेज की सीमा नहीं रहती।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.answer"
+  },
+  "3e34fc33860d": {
+    "source": "How big can the PDF be?",
+    "text": "PDF कितनी बड़ी हो सकती है?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.question"
+  },
+  "e84b5c8be653": {
+    "source": "Up to 10 MB per file on Free, with 50 MB of storage per workspace. Pro takes files up to 100 MB and Business up to 250 MB. Big PDFs open slowly on phones, so compress scans and large images before uploading.",
+    "text": "फ़्री में हर फ़ाइल 10 MB तक, और हर वर्कस्पेस में 50 MB स्टोरेज। Pro में 100 MB तक और Business में 250 MB तक की फ़ाइलें चलती हैं। बड़ी PDF फ़ोन पर धीरे खुलती हैं, इसलिए अपलोड से पहले स्कैन और बड़ी इमेज को कंप्रेस कर लें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.answer"
+  },
+  "571a5f50e535": {
+    "source": "Can I change the PDF after printing?",
+    "text": "क्या प्रिंट होने के बाद PDF बदली जा सकती है?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.question"
+  },
+  "726178f806ff": {
+    "source": "Yes. Replace the file in Dashboard → Files and every code and page that uses it shows the new PDF within a minute. The printed code never changes.",
+    "text": "हाँ। Dashboard → Files में फ़ाइल Replace file करें, और उसे इस्तेमाल करने वाला हर कोड और पेज एक मिनट के अंदर नई PDF दिखाने लगता है। प्रिंट किया हुआ कोड कभी नहीं बदलता।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.answer"
+  },
+  "53045bd4aa84": {
+    "source": "What happens to my code if I stop paying?",
+    "text": "अगर मैं पेमेंट बंद कर दूँ तो मेरे कोड का क्या होगा?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.question"
+  },
+  "1678c79cd195": {
+    "source": "It keeps working. Under the Never-Hostage Guarantee, codes and pages you already have keep working after a downgrade, a failed payment or a cancellation, and scans are never paused. Plan limits only stop you from creating new ones.",
+    "text": "वह चलता रहता है। Never-Hostage गारंटी के तहत, डाउनग्रेड, पेमेंट फ़ेल होने या कैंसिल करने के बाद भी आपके मौजूदा कोड और पेज चलते रहते हैं, और स्कैन कभी रोके नहीं जाते। प्लान की सीमाएँ सिर्फ़ नए कोड या पेज बनाने से रोकती हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.answer"
+  },
+  "57d4c3ee4908": {
+    "source": "Do people need an app to open it?",
+    "text": "क्या इसे खोलने के लिए ऐप चाहिए?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.question"
+  },
+  "6f23c8630c62": {
+    "source": "No. The phone's camera opens the page in the browser, where the PDF can be read, opened full screen or downloaded.",
+    "text": "नहीं। फ़ोन का कैमरा पेज को ब्राउज़र में खोल देता है, जहाँ PDF पढ़ी जा सकती है, फ़ुल स्क्रीन में खोली जा सकती है या डाउनलोड की जा सकती है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.answer"
+  },
+  "eaa9553b681a": {
+    "source": "Can search engines find my PDF?",
+    "text": "क्या सर्च इंजन मेरी PDF ढूँढ सकते हैं?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.question"
+  },
+  "28e17f0f94fd": {
+    "source": "Not unless you want them to. Hosted pages are hidden from search engines until you turn on Show in search engines in the page's settings.",
+    "text": "नहीं, जब तक आप न चाहें। होस्टेड पेज सर्च इंजन से छिपे रहते हैं, जब तक आप पेज की सेटिंग में Show in search engines चालू नहीं करते।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.answer"
+  },
+  "6b515aae04de": {
+    "source": "Can I make a PDF QR code without an account?",
+    "text": "क्या बिना अकाउंट के PDF QR कोड बन सकता है?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.question"
+  },
+  "00ecbc0a89cd": {
+    "source": "Only for a PDF that's already online: paste its link into the URL or Google Drive generator for a free static code. QRdx only stores the file for you with an account.",
+    "text": "सिर्फ़ ऐसी PDF के लिए जो पहले से ऑनलाइन है: उसका लिंक URL या Google Drive जनरेटर में पेस्ट करके फ़्री स्टैटिक QR कोड बनाएँ। QRdx आपकी फ़ाइल सिर्फ़ अकाउंट होने पर ही स्टोर करता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.answer"
+  },
+  "f6865e9400c3": {
+    "source": "Digital Business Card",
+    "text": "डिजिटल बिज़नेस कार्ड",
+    "status": "machine",
+    "context": "hostedTypes.business-card.name"
+  },
+  "12ee83e8add8": {
+    "source": "Digital Business Card QR Code Generator",
+    "text": "डिजिटल बिज़नेस कार्ड QR कोड जनरेटर",
+    "status": "machine",
+    "context": "hostedTypes.business-card.title"
+  },
+  "1f0f3c1a23f2": {
+    "source": "A contact page with your photo, buttons and Save contact.",
+    "text": "आपकी फ़ोटो, बटन और Save contact वाला एक कॉन्टैक्ट पेज।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.summary"
+  },
+  "82b6ad72913a": {
+    "source": "Create your card",
+    "text": "अपना कार्ड बनाएँ",
+    "status": "machine",
+    "context": "hostedTypes.business-card.cta"
+  },
+  "2a42d8281c80": {
+    "source": "Make a digital business card with a QR code: your photo, contact buttons and Save contact. Edit it without reprinting. Free account, 3 pages included.",
+    "text": "QR कोड के साथ डिजिटल बिज़नेस कार्ड बनाएँ: आपकी फ़ोटो, कॉन्टैक्ट बटन और Save contact। दोबारा प्रिंट किए बिना बदलाव करें। फ़्री अकाउंट, 3 पेज शामिल।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.metaDescription"
+  },
+  "eb688e530a71": {
+    "source": "A digital business card QR code opens a contact page that QRdx hosts for you: your photo, name and job title, buttons to call, email, message or get directions, your links, and a Save contact button that adds you to the phone's contacts.",
+    "text": "डिजिटल बिज़नेस कार्ड QR कोड एक कॉन्टैक्ट पेज खोलता है, जिसे QRdx आपके लिए होस्ट करता है: आपकी फ़ोटो, नाम और जॉब टाइटल, कॉल, ईमेल, मैसेज या रास्ता पाने के बटन, आपके लिंक, और एक Save contact बटन जो आपको फ़ोन के कॉन्टैक्ट्स में जोड़ देता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.0"
+  },
+  "790252dae1e8": {
+    "source": "The code holds a short link, so you can change your number, title or photo after the cards are printed and every card shows the new details. It needs a free QRdx account. For a code that holds the contact itself, with no account, use the vCard QR code generator.",
+    "text": "कोड में एक छोटा लिंक होता है, इसलिए कार्ड प्रिंट होने के बाद भी आप अपना नंबर, टाइटल या फ़ोटो बदल सकते हैं और हर कार्ड नई जानकारी दिखाता है। इसके लिए फ़्री QRdx अकाउंट चाहिए। अगर आपको ऐसा कोड चाहिए जिसमें कॉन्टैक्ट खुद हो और अकाउंट न लगे, तो vCard QR कोड जनरेटर इस्तेमाल करें।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.1"
+  },
+  "5fe139b11347": {
+    "source": "Sign in or create a free account, then start a vCard Plus page: the button above opens it with that type picked.",
+    "text": "साइन इन करें या फ़्री अकाउंट बनाएँ, फिर vCard Plus पेज शुरू करें: ऊपर का बटन उसी टाइप को चुनकर इसे खोलता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.0"
+  },
+  "464922fa84f5": {
+    "source": "Pick a template (Classic, Midnight, Minimal or Real estate agent) and fill in your details, photo and links.",
+    "text": "एक टेम्पलेट चुनें (Classic, Midnight, Minimal या Real estate agent) और अपनी जानकारी, फ़ोटो और लिंक भरें।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.1"
+  },
+  "e05e48c28335": {
+    "source": "Publish the page, then download its QR code for your business card, email signature or badge.",
+    "text": "पेज पब्लिश करें, फिर उसका QR कोड अपने बिज़नेस कार्ड, ईमेल सिग्नेचर या बैज के लिए डाउनलोड करें।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.2"
+  },
+  "595b4e2fc678": {
+    "source": "Scan it once and tap Save contact to check what lands in your contacts.",
+    "text": "इसे एक बार स्कैन करें और Save contact दबाकर देखें कि आपके कॉन्टैक्ट्स में क्या जुड़ता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.3"
   },
   "d96545f726d0": {
     "source": "Food and drink",
@@ -16007,35 +16469,11 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.noun"
   },
-  "0d6bfccc8412": {
-    "source": "QR code menus",
-    "text": "QR कोड मेन्यू",
-    "status": "machine",
-    "context": "placements.0.in-store.items.menus.title"
-  },
-  "6d942ed73962": {
-    "source": "QR Code Menus: Digital Menus You Can Edit Anytime",
-    "text": "QR कोड मेन्यू: डिजिटल मेन्यू जिसे कभी भी बदलें",
-    "status": "machine",
-    "context": "placements.0.in-store.items.menus.seoTitle"
-  },
-  "fae1e9f4d921": {
-    "source": "Create a QR code menu you can update without reprinting: hosted menu pages with prices, photos, allergens and sold-out items, plus table sizes and tips.",
-    "text": "ऐसा QR कोड मेन्यू बनाएँ जिसे दोबारा प्रिंट किए बिना अपडेट कर सकें: कीमत, फ़ोटो, एलर्जन और सोल्ड-आउट आइटम वाले होस्टेड मेन्यू पेज, साथ में टेबल साइज़ और टिप्स।",
-    "status": "machine",
-    "context": "placements.0.in-store.items.menus.metaDescription"
-  },
   "3a6fa4a447ed": {
     "source": "Hosted menus with prices, allergens and sold-out items, edited live.",
     "text": "कीमत, एलर्जन और सोल्ड-आउट आइटम वाले होस्टेड मेन्यू, जो लाइव एडिट होते हैं।",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.summary"
-  },
-  "803094d083d9": {
-    "source": "A QR code menu is only as good as what it opens. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm. A hosted menu page behind a dynamic code can do both: edit an item from your phone and every table sees it on the next scan.",
-    "text": "QR कोड मेन्यू उतना ही अच्छा है जितना वह पेज जो उससे खुलता है। PDF से जुड़ा स्टैटिक QR कोड पहले दिन ठीक दिखता है, लेकिन फ़ाइल का नाम बदलते ही टूट जाता है और यह भी नहीं बता सकता कि रात 8 बजे तक सैल्मन खत्म हो गई। डायनेमिक QR कोड के पीछे का होस्टेड पेज दोनों काम कर सकता है: फ़ोन से कोई आइटम बदलें और अगले स्कैन पर हर टेबल को वह दिख जाएगा।",
-    "status": "machine",
-    "context": "placements.0.in-store.items.menus.intro.0"
   },
   "6c401c693e0b": {
     "source": "Guests scan menus at the table, often in low light, sometimes with a weak signal. A good QR menu loads in a second, reads well on a small screen and keeps allergen information clear.",
@@ -22937,12 +23375,6 @@
     "status": "machine",
     "context": "templates.medical.variants.allergy-card.description"
   },
-  "1d393b0081b6": {
-    "source": "PDF",
-    "text": "PDF",
-    "status": "machine",
-    "context": "templates.pdf.label"
-  },
   "a9400aaa15f9": {
     "source": "A menu, brochure or manual people can read and download",
     "text": "मेन्यू, ब्रोशर या मैनुअल, जिसे लोग पढ़ सकें और डाउनलोड कर सकें",
@@ -27880,12 +28312,6 @@
     "text": "Pix, SEPA ट्रांसफ़र, PayNow, PromptPay या VietQR पेमेंट कोड, जिसकी जाँच Playground के फ़ॉर्म की तरह होती है।",
     "status": "machine",
     "context": "mcp.tools.14.description"
-  },
-  "1385eac80167": {
-    "source": "Do I need an account or an API key?",
-    "text": "क्या मुझे अकाउंट या API key चाहिए?",
-    "status": "machine",
-    "context": "mcp.faqs.0.question"
   },
   "f538f592cdab": {
     "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",

@@ -1,7 +1,7 @@
 {
   "$schema": "../../../.source/json-schema/docs.meta.json",
   "title": "Biblioteca React",
-  "description": "Componentes qrdx e o registro shadcn",
+  "description": "Componentes do qrdx e o registro do shadcn",
   "icon": "Code",
   "root": true,
   "pages": [
