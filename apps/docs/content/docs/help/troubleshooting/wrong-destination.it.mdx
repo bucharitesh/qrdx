@@ -1,0 +1,45 @@
+---
+title: "Un QR code apre la pagina sbagliata"
+description: "Perché un QR code apre un link vecchio o inatteso e come scoprire cosa contiene davvero."
+---
+
+## Per prima cosa, guarda cosa contiene il codice [#first-see-what-the-code-holds]
+
+Fai una foto al codice stampato e caricala nel [controllo scansione](/tools/scan-checker). Mostra esattamente cosa contiene il codice.
+
+- Se mostra l'indirizzo del tuo sito, il codice è **statico**.
+- Se mostra un link breve come `qrdx.dev/q/…`, il codice è **dinamico**.
+
+## Un codice statico [#a-static-code]
+
+Un codice statico memorizza il link all'interno del codice. Non può essere modificato dopo la stampa.
+
+Succede quando un codice viene scaricato prima di essere reso dinamico. Per risolvere, stampa la versione dinamica. Vedi [Crea un QR code dinamico](/docs/help/dynamic-codes/create).
+
+## Un codice dinamico [#a-dynamic-code]
+
+Apri il codice in **Codici** e controlla ciascuno di questi punti.
+
+### La nuova destinazione non è stata salvata [#the-new-destination-wasnt-saved]
+
+Nel Playground cambiare l'indirizzo non basta: fai clic su **Punta al nuovo indirizzo**. Nella dashboard usa **Modifica link** e **Salva modifiche**. Vedi [Cambiare la destinazione di un codice](/docs/help/dynamic-codes/change-the-link).
+
+### Si è attivata una regola di instradamento intelligente [#a-smart-routing-rule-matched]
+
+Le regole possono inviare alcune scansioni altrove, ad esempio in base al dispositivo o al paese. Vince la prima regola corrispondente. Apri **Instradamento intelligente** e fai clic su **Testa le tue regole**.
+
+### Un test A/B è in corso [#an-ab-test-is-running]
+
+Ogni visitatore vede una versione per tutto il giorno. Un'altra persona potrebbe vedere una pagina diversa.
+
+### Il codice è in pausa o terminato [#the-code-is-paused-or-ended]
+
+Un codice in pausa o terminato apre il suo **URL di riserva**, se ne hai impostato uno. Controlla **Accesso e pianificazione**.
+
+### Sono stati aggiunti parametri UTM [#utm-parameters-were-added]
+
+Se hai impostato parametri UTM, le scansioni aprono il tuo link con i tag `utm_` aggiunti. È previsto e la pagina è la stessa.
+
+## Vedi ancora la pagina vecchia? [#still-seeing-the-old-page]
+
+QRdx non mette in cache i reindirizzamenti, quindi la scansione successiva usa la nuova destinazione. Se il tuo telefono mostra una versione vecchia della pagina stessa, ricaricala nel browser.

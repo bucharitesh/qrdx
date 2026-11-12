@@ -1,0 +1,49 @@
+---
+title: "Cambia ciò che apre un codice stampato"
+description: "Trasforma un codice con link a un sito web in una pagina ospitata, o una pagina di nuovo in un link. Il codice stampato continua a funzionare."
+---
+
+Un QR code dinamico apre un link a un sito web oppure una pagina ospitata, e puoi passare dall'uno all'altra anche dopo la stampa. Il link breve non cambia, quindi ogni copia stampata apre la nuova pagina o il nuovo link alla scansione successiva, e le scansioni continuano a essere conteggiate sullo stesso codice.
+
+## Trasforma un link a un sito web in una pagina [#turn-a-website-link-into-a-page]
+
+1. Apri il codice da **Codes** e clicca su **Change type**.
+2. Scegli un tipo di pagina, poi un template.
+3. Clicca su **Continue to editor** e crea la pagina.
+4. Clicca su **Publish**.
+
+Le scansioni continuano ad andare al vecchio link finché non pubblichi. Se esci dall'editor senza pubblicare, non cambia nulla. Le modifiche non pubblicate restano in questo browser.
+
+## Trasforma una pagina di nuovo in un link [#turn-a-page-back-into-a-link]
+
+1. Apri il codice e clicca su **Change type**.
+2. Scegli **Website link**, inserisci l'indirizzo e clicca su **Switch to website link**.
+
+La pagina resta in **Pages**. Per recuperarla, apri di nuovo **Change type** e selezionala sotto **Switch back**.
+
+## Passa a un altro tipo di pagina [#switch-to-another-page-type]
+
+Scegli un tipo sotto **Another page type**. La nuova pagina parte dal template che scegli e riprende dalla vecchia ciò che è compatibile: nome della pagina, impostazioni e logo, più i blocchi presenti anche nel template, come l'intestazione, i link o i dati di contatto. La finestra elenca ciò che non è compatibile. Resta nella vecchia pagina, che viene conservata in **Pages**.
+
+## Cosa resta invariato [#what-stays-the-same]
+
+Il link breve, la cronologia delle scansioni, la cartella, i tag, le note, il design del QR, la password, la pianificazione e il limite di scansioni non cambiano.
+
+Alcune impostazioni funzionano solo con un tipo:
+
+- Smart routing, A/B test, parametri UTM e tracciamento delle conversioni valgono solo per i link a siti web.
+- I pixel di tracciamento si caricano solo nelle pagine ospitate.
+
+Vengono conservate quando cambi tipo e tornano a funzionare se torni indietro. La scheda **Settings** del codice indica quelle salvate ma non in uso.
+
+## Piani [#plans]
+
+Una nuova pagina viene conteggiata tra le pagine ospitate del tuo piano, come qualsiasi pagina che crei. Una pagina che il codice non apre più viene comunque conteggiata finché non la elimini da **Pages**. Tornare a una pagina che hai già non aumenta il conteggio. Vedi [Piani e limiti](/docs/plans-and-limits).
+
+## Annulla un cambio [#undo-a-switch]
+
+Ogni cambio salva le impostazioni precedenti del codice in **Version history**. Ripristinare una versione precedente riporta indietro il tipo, purché la pagina che apriva esista ancora.
+
+## Dall'API [#from-the-api]
+
+Invia `kind` con `PATCH /v1/codes/{id}`. Vedi [Aggiorna un codice](/docs/developers/api/update-code).
