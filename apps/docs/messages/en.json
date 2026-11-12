@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "More frame options"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Edit eyes",
+          "options": "Eye options",
+          "random": "Random eyes",
+          "more": "More eye options"
+        },
+        "dots": {
+          "edit": "Edit dots",
+          "options": "Dot options",
+          "random": "Random dots",
+          "more": "More dot options"
+        },
+        "logo": {
+          "edit": "Edit logo",
+          "options": "Logo options",
+          "random": "Random logo",
+          "more": "More logo options"
+        },
+        "background": {
+          "edit": "Edit background",
+          "options": "Background options",
+          "random": "Random background",
+          "more": "More background options"
+        },
+        "frame": {
+          "edit": "Edit frame",
+          "options": "Frame options",
+          "random": "Random frame",
+          "more": "More frame options"
+        }
+      },
+      "items": {
+        "outerShape": "Outer shape",
+        "centerShape": "Center shape",
+        "eyeColor": "Eye color",
+        "centerColor": "Center color",
+        "pattern": "Pattern",
+        "dotColor": "Dot color",
+        "dotSize": "Dot size",
+        "logo": "Logo",
+        "quickIcons": "Quick icons",
+        "logoSize": "Logo size",
+        "hideLogo": "Hide logo",
+        "backgroundColor": "Background color",
+        "padding": "Padding",
+        "frameStyle": "Frame style",
+        "frameColor": "Frame color"
+      },
+      "random": "Random",
+      "moreOptions": "More options",
+      "sheet": {
+        "changesShowOnTheCode": "Changes show on the code as you make them. Done keeps them.",
+        "done": "Done"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Pick a solid color, a gradient or a swatch for {label}."
     },
