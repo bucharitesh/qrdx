@@ -48,7 +48,7 @@ const content = git([
   .split("\n")
   .filter((file) => file.endsWith(".mdx") && !translationLocale(file));
 
-const files = [
+const listed = [
   QR_TYPES_SOURCE,
   HOSTED_TYPES_SOURCE,
   ...Object.values(PAGE_SOURCES).flat(),
@@ -59,7 +59,9 @@ const files = [
   ...content,
 ];
 
-const dates = gitLastModified([...new Set(files)], app);
+// A file can hold the copy of more than one page.
+const files = [...new Set(listed)];
+const dates = gitLastModified(files, app);
 const sorted = Object.fromEntries(
   [...dates]
     .map(([file, date]) => [file, date.toISOString()] as const)
