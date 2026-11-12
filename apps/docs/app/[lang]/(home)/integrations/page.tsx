@@ -34,15 +34,30 @@ function listedIntegrations() {
   );
 }
 
+/** Named in the search title, in this order of preference, when listed. */
+const TITLE_INTEGRATIONS = ["zapier", "slack", "make", "n8n"];
+
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await requireLocale();
   const t = await getTranslations({ locale, namespace: "integrations" });
   const listed = listedIntegrations();
   const names = listed.slice(0, 8).map((entry) => entry.name);
+  // The search title names two well-known integrations this deployment
+  // lists, then counts the rest.
+  const [first, second] = TITLE_INTEGRATIONS.flatMap(
+    (slug) => listed.find((entry) => entry.slug === slug) ?? [],
+  );
   return localizedMetadata({
     locale,
     path: "/integrations",
-    title: t("metaTitle"),
+    title:
+      first && second
+        ? t("searchTitle", {
+            first: first.name,
+            second: second.name,
+            count: listed.length - 2,
+          })
+        : t("metaTitle"),
     description: t("metaDescription", {
       names: names.join(", "),
       count: listed.length,
