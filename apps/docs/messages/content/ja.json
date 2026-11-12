@@ -1907,9 +1907,9 @@
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.question"
   },
-  "82ec64b16a5d": {
-    "source": "No, the details are inside the code. To have one code that always shows your current details, host your contact page online and point a URL code, or a dynamic code from your dashboard, at it.",
-    "text": "いいえ、情報はコードの中に入っています。常に最新の情報を表示する1つのコードにしたい場合は、連絡先ページをオンラインで公開し、そのページへURLコードか、ダッシュボードの動的QRコードを向けてください。",
+  "fa26bd23187e": {
+    "source": "No, the details are inside the code. For one code that always shows your current details, make a digital business card instead: a hosted contact page with your photo and a Save contact button that you can edit after printing.",
+    "text": "いいえ、情報はコードの中に入っています。常に最新の情報を表示する1つのコードが必要な場合は、代わりにデジタル名刺を作成してください。写真と「連絡先を保存」ボタンを備えたホスト型の連絡先ページで、印刷後も編集できます。",
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.answer"
   },
@@ -3719,6 +3719,24 @@
     "status": "machine",
     "context": "qrTypes.types.bitcoin.faqs.2.answer"
   },
+  "0e3f9ed231ab": {
+    "source": "Lightning, testnet and address checks",
+    "text": "Lightning、テストネット、アドレスの確認",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.title"
+  },
+  "da2ccbd9fdc4": {
+    "source": "This is an on-chain request: the wallet pays your address on the Bitcoin blockchain. Lightning-only wallets can't pay it, and this generator doesn't add a lightning= invoice to the URI, so for Lightning payments share an invoice or Lightning address from your wallet instead.",
+    "text": "これはオンチェーンの支払いリクエストです。ウォレットはBitcoinブロックチェーン上のあなたのアドレスに支払います。Lightning専用のウォレットでは支払えず、このジェネレーターはURIにlightning=のインボイスを追加しません。Lightningで支払いを受ける場合は、代わりにウォレットのインボイスまたはLightningアドレスを共有してください。",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.0"
+  },
+  "e3130a29c7fc": {
+    "source": "The generator checks the address's length (26 to 62 characters), not its checksum, and it can't tell mainnet from testnet: a testnet address (starting with tb1, m, n or 2) makes a code no ordinary wallet can pay. Scan the preview with the wallet that will pay before you print.",
+    "text": "ジェネレーターが確認するのはアドレスの長さ（26～62文字）で、チェックサムは確認しません。また、メインネットとテストネットの区別もできません。テストネットのアドレス（tb1、m、n、2で始まるもの）では、通常のウォレットでは支払えないコードになります。印刷する前に、支払いに使うウォレットでプレビューをスキャンしてください。",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.1"
+  },
   "80cfbcc768ef": {
     "source": "Share an EIP-681 Ethereum payment request.",
     "text": "EIP-681形式のEthereum支払いリクエストを共有します。",
@@ -3820,6 +3838,24 @@
     "text": "はい。コードに含まれるのは公開アドレスだけです。秘密鍵やリカバリーフレーズは、決してエンコードしないでください。",
     "status": "machine",
     "context": "qrTypes.types.ethereum.faqs.2.answer"
+  },
+  "d434b3350c1d": {
+    "source": "Address checks and ENS names",
+    "text": "アドレスの確認とENS名",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.title"
+  },
+  "65464924c87e": {
+    "source": "The generator checks that the address is 0x followed by 40 hexadecimal characters. It doesn't check the mixed-case EIP-55 checksum; wallets check that when they scan, so paste the address exactly as your wallet shows it rather than typing it.",
+    "text": "ジェネレーターは、アドレスが0xに続く40桁の16進数であることを確認します。大文字と小文字が混在するEIP-55のチェックサムは確認しません。チェックサムはウォレットがスキャン時に確認するため、アドレスは入力せず、ウォレットに表示されたとおりに貼り付けてください。",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.0"
+  },
+  "4a379c763eb7": {
+    "source": "ENS names such as name.eth aren't accepted. EIP-681 allows them, but the payer's wallet would have to look the name up; a 0x address works in every wallet that reads the code.",
+    "text": "name.ethのようなENS名は使用できません。EIP-681では使用できますが、支払う側のウォレットが名前を照会する必要があります。0xアドレスなら、コードを読み取れるどのウォレットでも使えます。",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.1"
   },
   "9870d299fb0b": {
     "source": "Open your Etsy shop or a listing.",
@@ -6155,6 +6191,24 @@
     "status": "machine",
     "context": "qrTypes.types.litecoin.faqs.1.answer"
   },
+  "45f14f3c95d2": {
+    "source": "Which Litecoin addresses work",
+    "text": "使用できるLitecoinアドレス",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.title"
+  },
+  "efdeb7ecb4b1": {
+    "source": "Addresses starting with L (legacy), M (P2SH), 3 (older P2SH) and ltc1 (SegWit) are accepted. M and 3 are the same kind of address: Litecoin moved P2SH addresses from 3 to M so they aren't mistaken for Bitcoin addresses, and some older wallets still show 3.",
+    "text": "L（レガシー）、M（P2SH）、3（旧P2SH）、ltc1（SegWit）で始まるアドレスに対応しています。Mと3は同じ種類のアドレスです。LitecoinはP2SHアドレスをBitcoinアドレスと間違えないように3からMへ変更しましたが、古いウォレットの中には今も3で表示するものがあります。",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.0"
+  },
+  "a17e84343f7d": {
+    "source": "MWEB addresses (starting with ltcmweb1), used for Litecoin's private payments, aren't accepted here. Use one of your wallet's regular receiving addresses for a printed code.",
+    "text": "Litecoinのプライベート決済に使われるMWEBアドレス（ltcmweb1で始まるもの）は、ここでは使用できません。印刷するコードには、ウォレットの通常の受け取り用アドレスを使ってください。",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.1"
+  },
   "14f89759d816": {
     "source": "Receive Dogecoin with an optional amount.",
     "text": "金額を任意で指定してDogecoinを受け取れます。",
@@ -6215,6 +6269,24 @@
     "status": "machine",
     "context": "qrTypes.types.dogecoin.faqs.0.question"
   },
+  "7c952bf9c5da": {
+    "source": "Which Dogecoin addresses work",
+    "text": "使用できるDogecoinアドレス",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.title"
+  },
+  "6bc808ddaa41": {
+    "source": "Standard Dogecoin addresses start with D, and multisig (P2SH) addresses with A or 9; the generator accepts these. Testnet addresses, which start with n or 2, are rejected, so a test address can't end up on a printed sign by mistake.",
+    "text": "通常のDogecoinアドレスはDで始まり、マルチシグ（P2SH）アドレスはAまたは9で始まります。ジェネレーターはこれらに対応しています。nまたは2で始まるテストネットのアドレスは拒否されるため、テスト用アドレスが誤って印刷物に載ることはありません。",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.0"
+  },
+  "0abee7330fc7": {
+    "source": "For a tip jar, leave the amount empty: each person types what they want to give, and one printed code takes any number of payments.",
+    "text": "チップ箱として使う場合は、金額を空にしてください。送る金額は各自が入力でき、印刷した1つのコードで何件でも支払いを受け取れます。",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.1"
+  },
   "6dc9a0aa25cf": {
     "source": "Receive Bitcoin Cash with an optional amount.",
     "text": "任意の金額を指定してBitcoin Cashを受け取れます。",
@@ -6274,6 +6346,30 @@
     "text": "いいえ。Bitcoin Cashは別のコインで、専用のウォレットがあります。Bitcoinの場合は、Bitcoinジェネレーターをご利用ください。",
     "status": "machine",
     "context": "qrTypes.types.bitcoincash.faqs.0.answer"
+  },
+  "c6afea0f4f57": {
+    "source": "CashAddr, legacy and token addresses",
+    "text": "CashAddr、レガシー、トークン対応アドレス",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.title"
+  },
+  "5d69e08209a0": {
+    "source": "Paste the address with or without its bitcoincash: prefix. The generator removes a pasted prefix and writes it once, as the start of the URI.",
+    "text": "アドレスはbitcoincash:のプレフィックスの有無にかかわらず貼り付けられます。ジェネレーターは貼り付けられたプレフィックスを取り除き、URIの先頭に1回だけ付けます。",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.0"
+  },
+  "7f8cdb8747e0": {
+    "source": "Token-aware addresses (starting with z or r), used for CashTokens, aren't accepted. Use your wallet's regular q address for BCH payments.",
+    "text": "CashTokensに使われるトークン対応アドレス（zまたはrで始まるもの）は使用できません。BCHの支払いには、ウォレットの通常のqアドレスを使ってください。",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.1"
+  },
+  "e24a42112f28": {
+    "source": "Legacy addresses starting with 1 or 3 look exactly like Bitcoin addresses, which makes it easy to send coins from the wrong network. Prefer CashAddr on anything you print.",
+    "text": "1または3で始まるレガシーアドレスはBitcoinアドレスとまったく同じに見えるため、誤ったネットワークにコインを送ってしまいやすくなります。印刷するものにはCashAddrをおすすめします。",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.2"
   },
   "51f7bdf5aaa1": {
     "source": "Receive SOL with a Solana Pay request.",
@@ -6341,6 +6437,24 @@
     "status": "machine",
     "context": "qrTypes.types.solana.faqs.0.answer"
   },
+  "43fcb61a7db3": {
+    "source": "What this Solana Pay code includes",
+    "text": "このSolana Payコードに含まれる内容",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.title"
+  },
+  "36ed60b12391": {
+    "source": "It's a Solana Pay transfer request: the recipient, an amount in SOL, a label and a message. Solana Pay also defines spl-token for token payments and reference for matching a payment to an order; this generator adds neither, so use your point-of-sale tool when you need them.",
+    "text": "これはSolana Payの送金リクエストで、受取人、SOL建ての金額、ラベル、メッセージが含まれます。Solana Payには、トークン決済用のspl-tokenや、支払いを注文と照合するためのreferenceも定められていますが、このジェネレーターはどちらも追加しません。必要な場合はPOSツールをお使いください。",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.0"
+  },
+  "9502d073de90": {
+    "source": "Solana Pay transaction requests, where the code holds a link to your server and the server builds the transaction, aren't made here either.",
+    "text": "コードにサーバーへのリンクを持たせ、サーバーがトランザクションを作成するSolana Payのトランザクションリクエストも、ここでは作成できません。",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.1"
+  },
   "aa106b399d07": {
     "source": "Receive Monero with an optional amount.",
     "text": "金額を指定して Monero を受け取れます。",
@@ -6400,6 +6514,540 @@
     "text": "多くのウォレットでは、公開するコードごとに新しいサブアドレスを使うことを勧めています。コードが違えば、それぞれへの支払いが関連付けられません。",
     "status": "machine",
     "context": "qrTypes.types.monero.faqs.0.answer"
+  },
+  "e21057f62697": {
+    "source": "Standard address, subaddress or integrated address",
+    "text": "標準アドレス、サブアドレス、統合アドレス",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.title"
+  },
+  "320538ad2b97": {
+    "source": "Standard addresses start with 4 and are 95 characters long, subaddresses start with 8, and integrated addresses start with 4 and are 106 characters because they carry a payment ID. The generator accepts all three.",
+    "text": "標準アドレスは4で始まる95文字、サブアドレスは8で始まり、統合アドレスは4で始まる106文字です。統合アドレスには支払いIDが含まれるためです。ジェネレーターは3種類すべてに対応しています。",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.0"
+  },
+  "4e1f370290a4": {
+    "source": "Separate payment IDs are deprecated in Monero, so the generator doesn't add one. Use a subaddress for each customer or code, or the integrated address an exchange or shop gives you.",
+    "text": "単独の支払いIDはMoneroでは非推奨のため、ジェネレーターは追加しません。顧客ごと、またはコードごとにサブアドレスを使うか、取引所や店舗から提供された統合アドレスを使ってください。",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.1"
+  },
+  "1d393b0081b6": {
+    "source": "PDF",
+    "text": "PDF",
+    "status": "machine",
+    "context": "templates.pdf.label"
+  },
+  "5646a9f7a51e": {
+    "source": "Free PDF QR Code Generator",
+    "text": "無料のPDF QRコードジェネレーター",
+    "status": "machine",
+    "context": "hostedTypes.pdf.title"
+  },
+  "aca040b7ba32": {
+    "source": "Upload a PDF to a hosted page and replace it any time.",
+    "text": "PDFをホスト型ページにアップロードして、いつでも差し替えられます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.summary"
+  },
+  "124c8c2b6cd3": {
+    "source": "Upload your PDF",
+    "text": "PDFをアップロード",
+    "status": "machine",
+    "context": "hostedTypes.pdf.cta"
+  },
+  "9dcba3ce451a": {
+    "source": "Turn a PDF into a QR code: upload it to a free QRdx page that people read or download on their phone. Replace the file later, same code. 10 MB on Free.",
+    "text": "PDFをQRコードにします。無料のQRdxページにアップロードすると、スマートフォンで閲覧やダウンロードができます。ファイルは後から差し替えても、コードはそのままです。フリープランは10 MBまで。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.metaDescription"
+  },
+  "68e7e7ec5658": {
+    "source": "A PDF QR code opens your document on the phone that scans it: a menu, a brochure, a manual or a price list. You upload the PDF to a page QRdx hosts for you, and the code points to that page through a short link.",
+    "text": "PDFのQRコードは、スキャンしたスマートフォンでドキュメントを開きます。メニュー、パンフレット、取扱説明書、価格表などに使えます。PDFをQRdxがホストするページにアップロードすると、コードは短縮リンクを通じてそのページを指します。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.0"
+  },
+  "9302dac9d8cf": {
+    "source": "Because the code holds the link, not the file, you can replace the PDF after printing, for next season's menu or a corrected manual, and every printed code opens the new version. It needs a free QRdx account.",
+    "text": "コードが持っているのはファイルではなくリンクなので、印刷後でもPDFを差し替えられます。来シーズンのメニューや修正版の説明書にしても、印刷済みのコードはすべて新しいバージョンを開きます。無料のQRdxアカウントが必要です。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.1"
+  },
+  "c1c38d9f6192": {
+    "source": "Sign in or create a free account, then start a PDF page: the button above opens it with the PDF type picked.",
+    "text": "サインインするか無料アカウントを作成し、PDFページを開始します。上のボタンからPDFタイプを選んだ状態で開けます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.0"
+  },
+  "8ee1eee065fb": {
+    "source": "Upload your PDF, or paste a link to one that's already online, and choose whether people can download it.",
+    "text": "PDFをアップロードするか、すでにオンラインにあるPDFのリンクを貼り付けて、ダウンロードを許可するかどうかを選びます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.1"
+  },
+  "bcca1e09802d": {
+    "source": "Add a title and any buttons you want, such as a link to your website, then publish.",
+    "text": "タイトルと、ウェブサイトへのリンクなど必要なボタンを追加して、公開します。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.2"
+  },
+  "68671f93a178": {
+    "source": "Download the page's QR code, print it and scan it once to check.",
+    "text": "ページのQRコードをダウンロードして印刷し、一度スキャンして確認します。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.3"
+  },
+  "d26cfd2a55d4": {
+    "source": "Reads in the browser",
+    "text": "ブラウザーで閲覧",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.title"
+  },
+  "0fa7186b2959": {
+    "source": "On tablets and computers the PDF shows on the page; on phones, Open PDF shows it full screen. Nobody installs an app.",
+    "text": "タブレットやパソコンではページ上にPDFが表示され、スマートフォンではOpen PDFで全画面表示になります。アプリのインストールは不要です。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.description"
+  },
+  "0a07381242b6": {
+    "source": "Download and more files",
+    "text": "ダウンロードと複数ファイル",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.title"
+  },
+  "52cdbbfe01d6": {
+    "source": "A Download button saves a copy, and a Downloads block lists more files with their own labels, such as the menu in a second language.",
+    "text": "Downloadボタンでコピーを保存でき、Downloadsブロックには、第2言語のメニューなど、ほかのファイルをそれぞれのラベル付きで一覧表示できます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.description"
+  },
+  "f6d11e1fc833": {
+    "source": "Your page around it",
+    "text": "PDFを包むあなたのページ",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.title"
+  },
+  "168565d4c819": {
+    "source": "A title, your colors and logo, and buttons to your website or booking page, from the same blocks as every QRdx page.",
+    "text": "タイトル、色やロゴ、ウェブサイトや予約ページへのボタンを、すべてのQRdxページと同じブロックで設定できます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.description"
+  },
+  "e71d2dbd4008": {
+    "source": "Fast and private",
+    "text": "高速でプライベート",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.title"
+  },
+  "6be93be79318": {
+    "source": "Server-rendered for phones, with no QRdx analytics or chat scripts, and hidden from search engines unless you turn that on.",
+    "text": "スマートフォン向けにサーバーでレンダリングされ、QRdxの分析やチャットのスクリプトは入っていません。オンにしない限り検索エンジンには表示されません。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.description"
+  },
+  "0cd53dc2571c": {
+    "source": "Replace the file behind the same link: in Dashboard → Files, choose Replace file next to the PDF and upload the new one. Pages and codes that use it show the new version within a minute. A PDF can only be replaced by a PDF.",
+    "text": "同じリンクのままファイルを差し替えます。Dashboard → Filesで、PDFの横にあるReplace fileを選び、新しいファイルをアップロードしてください。そのファイルを使うページとコードには、1分以内に新しいバージョンが表示されます。PDFはPDFでのみ差し替えられます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.0"
+  },
+  "cd4e0788ed1c": {
+    "source": "Change the page itself (its title, buttons and colors) and publish; the printed code stays the same. Every scan is counted without cookies, so you can see when the code is used.",
+    "text": "ページ自体（タイトル、ボタン、色）を変更して公開できます。印刷したコードは変わりません。スキャンはすべてCookieなしでカウントされるので、コードがいつ使われたかを確認できます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.1"
+  },
+  "0455df8d3256": {
+    "source": "A PDF page, or a code that links to a PDF?",
+    "text": "PDFページか、PDFへリンクするコードか",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.title"
+  },
+  "1739b16060cf": {
+    "source": "Static code to a PDF link",
+    "text": "PDFリンクの静的QRコード",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticLabel"
+  },
+  "d34aa4eb51bf": {
+    "source": "No account: put the link of a PDF that's already online, in Google Drive or on your website, into a free static code.",
+    "text": "アカウント不要：Google Driveやご自身のウェブサイトなど、すでにオンラインにあるPDFのリンクを、無料の静的QRコードに入れます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.0"
+  },
+  "19bcc450ed9b": {
+    "source": "The link is written into the code, so printed codes stop working if the file is moved or its sharing is turned off.",
+    "text": "リンクはコードに書き込まれるため、ファイルを移動したり共有をオフにしたりすると、印刷したコードは使えなくなります。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.1"
+  },
+  "15211d2c9803": {
+    "source": "No scan counts, and nothing around the PDF.",
+    "text": "スキャン数のカウントはなく、PDFの周りに表示するものもありません。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.2"
+  },
+  "0a9ee38a3b41": {
+    "source": "Hosted PDF page",
+    "text": "ホスト型PDFページ",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedLabel"
+  },
+  "ffc08a5fa958": {
+    "source": "A free QRdx account, and QRdx stores the file.",
+    "text": "無料のQRdxアカウントが必要で、ファイルはQRdxが保管します。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.0"
+  },
+  "28ddde3d608a": {
+    "source": "Replace the PDF or edit the page any time; printed codes keep working.",
+    "text": "PDFの差し替えもページの編集もいつでもでき、印刷済みのコードはそのまま使えます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.1"
+  },
+  "2d7dc4880d53": {
+    "source": "Scans counted without cookies, with your title, colors and buttons around the document.",
+    "text": "スキャンはCookieなしでカウントされ、ドキュメントの周りにタイトル、色、ボタンを表示できます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.2"
+  },
+  "de93e29b3216": {
+    "source": "Is the PDF QR code free?",
+    "text": "PDFのQRコードは無料ですか？",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.question"
+  },
+  "d56cd3681383": {
+    "source": "Yes, with a free QRdx account. The Free plan includes 3 hosted pages, and each uses one of its 10 dynamic codes. Free pages show a small \"Made with QRdx\" footer; Pro removes it and the page limit.",
+    "text": "はい、無料のQRdxアカウントがあればご利用いただけます。フリープランにはホスト型ページが3つ含まれ、それぞれ動的QRコード10個のうち1つを使用します。フリープランのページには小さな「Made with QRdx」のフッターが表示されます。Proではフッターもページ数の上限もなくなります。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.answer"
+  },
+  "3e34fc33860d": {
+    "source": "How big can the PDF be?",
+    "text": "PDFは何MBまで使えますか？",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.question"
+  },
+  "e84b5c8be653": {
+    "source": "Up to 10 MB per file on Free, with 50 MB of storage per workspace. Pro takes files up to 100 MB and Business up to 250 MB. Big PDFs open slowly on phones, so compress scans and large images before uploading.",
+    "text": "フリープランでは1ファイルあたり最大10 MBで、ワークスペースごとのストレージは50 MBです。Proは最大100 MB、Businessは最大250 MBのファイルに対応します。サイズの大きいPDFはスマートフォンでの表示が遅くなるため、スキャンした書類や大きな画像は圧縮してからアップロードしてください。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.answer"
+  },
+  "571a5f50e535": {
+    "source": "Can I change the PDF after printing?",
+    "text": "印刷した後でもPDFを変更できますか？",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.question"
+  },
+  "726178f806ff": {
+    "source": "Yes. Replace the file in Dashboard → Files and every code and page that uses it shows the new PDF within a minute. The printed code never changes.",
+    "text": "はい。Dashboard → Filesでファイルを置き換えると、そのファイルを使用しているすべてのコードとページに、1分以内に新しいPDFが表示されます。印刷したコードは変わりません。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.answer"
+  },
+  "53045bd4aa84": {
+    "source": "What happens to my code if I stop paying?",
+    "text": "支払いを止めるとコードはどうなりますか？",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.question"
+  },
+  "1678c79cd195": {
+    "source": "It keeps working. Under the Never-Hostage Guarantee, codes and pages you already have keep working after a downgrade, a failed payment or a cancellation, and scans are never paused. Plan limits only stop you from creating new ones.",
+    "text": "そのまま使い続けられます。Never-Hostage保証により、すでにお持ちのコードとページは、ダウングレード、支払いの失敗、解約の後も動作し続け、スキャンが停止されることもありません。プランの上限で制限されるのは、新しく作成することだけです。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.answer"
+  },
+  "57d4c3ee4908": {
+    "source": "Do people need an app to open it?",
+    "text": "開くのにアプリは必要ですか？",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.question"
+  },
+  "6f23c8630c62": {
+    "source": "No. The phone's camera opens the page in the browser, where the PDF can be read, opened full screen or downloaded.",
+    "text": "いいえ。スマートフォンのカメラでブラウザーにページが開き、そこでPDFを読んだり、全画面で開いたり、ダウンロードしたりできます。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.answer"
+  },
+  "eaa9553b681a": {
+    "source": "Can search engines find my PDF?",
+    "text": "検索エンジンにPDFが見つかることはありますか？",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.question"
+  },
+  "28e17f0f94fd": {
+    "source": "Not unless you want them to. Hosted pages are hidden from search engines until you turn on Show in search engines in the page's settings.",
+    "text": "ご希望にならない限り見つかりません。ホスト型ページは、ページの設定で「Show in search engines」をオンにするまで、検索エンジンには表示されません。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.answer"
+  },
+  "6b515aae04de": {
+    "source": "Can I make a PDF QR code without an account?",
+    "text": "アカウントなしでPDFのQRコードを作れますか？",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.question"
+  },
+  "00ecbc0a89cd": {
+    "source": "Only for a PDF that's already online: paste its link into the URL or Google Drive generator for a free static code. QRdx only stores the file for you with an account.",
+    "text": "すでにオンラインにあるPDFに限り可能です。そのリンクをURLまたはGoogle Driveのジェネレーターに貼り付けると、無料の静的QRコードを作成できます。QRdxがファイルを保管できるのは、アカウントをお持ちの場合のみです。",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.answer"
+  },
+  "f6865e9400c3": {
+    "source": "Digital Business Card",
+    "text": "デジタル名刺",
+    "status": "machine",
+    "context": "hostedTypes.business-card.name"
+  },
+  "12ee83e8add8": {
+    "source": "Digital Business Card QR Code Generator",
+    "text": "デジタル名刺QRコードジェネレーター",
+    "status": "machine",
+    "context": "hostedTypes.business-card.title"
+  },
+  "1f0f3c1a23f2": {
+    "source": "A contact page with your photo, buttons and Save contact.",
+    "text": "写真、ボタン、Save contactを備えた連絡先ページです。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.summary"
+  },
+  "82b6ad72913a": {
+    "source": "Create your card",
+    "text": "名刺を作成",
+    "status": "machine",
+    "context": "hostedTypes.business-card.cta"
+  },
+  "2a42d8281c80": {
+    "source": "Make a digital business card with a QR code: your photo, contact buttons and Save contact. Edit it without reprinting. Free account, 3 pages included.",
+    "text": "QRコードでデジタル名刺を作成できます。写真、連絡用ボタン、Save contactを備え、再印刷せずに編集できます。無料アカウントで、ページ3つが含まれます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.metaDescription"
+  },
+  "eb688e530a71": {
+    "source": "A digital business card QR code opens a contact page that QRdx hosts for you: your photo, name and job title, buttons to call, email, message or get directions, your links, and a Save contact button that adds you to the phone's contacts.",
+    "text": "デジタル名刺のQRコードを読み取ると、QRdxがホストする連絡先ページが開きます。写真、名前、役職、電話、メール、メッセージ、道案内のボタン、リンク集、そして電話の連絡先に追加できるSave contactボタンを掲載できます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.0"
+  },
+  "790252dae1e8": {
+    "source": "The code holds a short link, so you can change your number, title or photo after the cards are printed and every card shows the new details. It needs a free QRdx account. For a code that holds the contact itself, with no account, use the vCard QR code generator.",
+    "text": "コードに含まれるのは短いリンクだけなので、名刺を印刷した後でも電話番号、役職、写真を変更でき、すべての名刺に新しい情報が表示されます。無料のQRdxアカウントが必要です。アカウントなしで連絡先そのものを含むコードが必要な場合は、vCard QRコードジェネレーターをご利用ください。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.1"
+  },
+  "5fe139b11347": {
+    "source": "Sign in or create a free account, then start a vCard Plus page: the button above opens it with that type picked.",
+    "text": "ログインするか無料アカウントを作成し、vCard Plusページを作成します。上のボタンから、そのタイプを選択した状態で開けます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.0"
+  },
+  "464922fa84f5": {
+    "source": "Pick a template (Classic, Midnight, Minimal or Real estate agent) and fill in your details, photo and links.",
+    "text": "テンプレート（Classic、Midnight、Minimal、Real estate agent）を選び、詳細情報、写真、リンクを入力します。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.1"
+  },
+  "e05e48c28335": {
+    "source": "Publish the page, then download its QR code for your business card, email signature or badge.",
+    "text": "ページを公開し、そのQRコードをダウンロードして、名刺、メールの署名、バッジに使用します。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.2"
+  },
+  "595b4e2fc678": {
+    "source": "Scan it once and tap Save contact to check what lands in your contacts.",
+    "text": "一度スキャンしてSave contactをタップし、連絡先に何が保存されるかを確認しましょう。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.3"
+  },
+  "d24f121f4a4e": {
+    "source": "Save contact",
+    "text": "Save contact",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.0.title"
+  },
+  "608136076759": {
+    "source": "Downloads a vCard 3.0 file that phones open in their contacts app, with your name, company, job title, phones, emails, website, address, bio, social profiles and photo.",
+    "text": "スマートフォンの連絡先アプリで開けるvCard 3.0ファイルをダウンロードします。氏名、会社名、役職、電話番号、メールアドレス、ウェブサイト、住所、自己紹介、SNSプロフィール、写真を含められます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.0.description"
+  },
+  "1810407f5ab7": {
+    "source": "Quick actions",
+    "text": "クイックアクション",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.1.title"
+  },
+  "85abf5242b39": {
+    "source": "Call, WhatsApp, email and directions buttons, so people can reach you before they save anything.",
+    "text": "電話、WhatsApp、メール、経路案内のボタンがあり、連絡先を保存する前でもすぐに連絡してもらえます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.1.description"
+  },
+  "29887a5ff984": {
+    "source": "Share",
+    "text": "共有",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.2.title"
+  },
+  "d221039f4b04": {
+    "source": "Opens the phone's share sheet, so the person you met can pass your card on.",
+    "text": "スマートフォンの共有シートを開くので、会った相手があなたの名刺をほかの人に渡せます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.2.description"
+  },
+  "1c127a69878c": {
+    "source": "Scan counts",
+    "text": "スキャン数",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.3.title"
+  },
+  "194261d84c60": {
+    "source": "The code counts scans without cookies, so you can see how many people opened your card and when.",
+    "text": "コードはCookieを使わずにスキャンを数えるので、何人がいつ名刺を開いたかを確認できます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.3.description"
+  },
+  "249966c88166": {
+    "source": "Change anything on the page and publish: a new number, a new job title, a new photo. Every printed card opens the new version, and each publish is kept as a version.",
+    "text": "ページの内容を変更して公開するだけです。新しい電話番号、新しい役職、新しい写真も反映できます。印刷済みの名刺はすべて新しいバージョンを開き、公開のたびにバージョンとして保存されます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.editing.0"
+  },
+  "4dfefacaed50": {
+    "source": "The same page can go on an NFC card: its code has Put this card on NFC, which writes the page's link to a blank NFC card from Chrome on Android, and taps are counted apart from scans.",
+    "text": "同じページをNFCカードにも使えます。そのコードにはPut this card on NFCがあり、Android版Chromeからページのリンクを空のNFCカードに書き込めます。タップはスキャンとは別に数えられます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.editing.1"
+  },
+  "423579ba01f0": {
+    "source": "vCard QR code or digital business card?",
+    "text": "vCard QRコードとデジタル名刺、どちらがよいですか？",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.title"
+  },
+  "e0dc2994a6c6": {
+    "source": "vCard QR code (static)",
+    "text": "vCard QRコード（静的）",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticLabel"
+  },
+  "42fb4ce76f4a": {
+    "source": "No account, free for good: the contact details are written into the code itself.",
+    "text": "アカウントは不要で、ずっと無料です。連絡先の情報はコード自体に書き込まれます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.0"
+  },
+  "78bcbb374194": {
+    "source": "Works offline: the phone offers to save the contact without opening a page.",
+    "text": "オフラインでも使えます。ページを開かずに、スマートフォンが連絡先の保存を提案します。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.1"
+  },
+  "3a78bfa8904e": {
+    "source": "Can't change after printing, has no photo, and every extra field makes the code denser.",
+    "text": "印刷後は変更できず、写真も入れられません。項目を増やすほどコードも細かくなります。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.2"
+  },
+  "0ccfb0cf39a1": {
+    "source": "Digital business card (hosted page)",
+    "text": "デジタル名刺（ホスト型ページ）",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedLabel"
+  },
+  "d3cca0966e18": {
+    "source": "A free QRdx account; the code opens a page QRdx hosts.",
+    "text": "無料のQRdxアカウントが必要です。コードはQRdxがホストするページを開きます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.0"
+  },
+  "fac813a8a0c4": {
+    "source": "Edit your details, photo and links any time; printed cards keep working.",
+    "text": "情報、写真、リンクはいつでも編集できます。印刷済みの名刺もそのまま使えます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.1"
+  },
+  "3ae0e38d142c": {
+    "source": "Photo, buttons, links and Save contact, plus scan counts.",
+    "text": "写真、ボタン、リンク、Save contactに加え、スキャン数も確認できます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.2"
+  },
+  "cc88ae6eae83": {
+    "source": "Is the digital business card free?",
+    "text": "デジタル名刺は無料ですか？",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.0.question"
+  },
+  "4593d31a7707": {
+    "source": "What does Save contact add to the phone?",
+    "text": "「Save contact」を押すと、スマートフォンには何が追加されますか？",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.1.question"
+  },
+  "e92f1e3af269": {
+    "source": "A vCard 3.0 contact with your name, company, job title, phones, emails, website, address, bio, the page's social profiles and your photo. Photos uploaded to QRdx are embedded in the file; photos linked from other sites are included as a link.",
+    "text": "vCard 3.0形式の連絡先が追加されます。氏名、会社名、役職、電話番号、メールアドレス、ウェブサイト、住所、自己紹介、ページに載せたSNSのプロフィール、写真が含まれます。QRdxにアップロードした写真はファイルに埋め込まれ、他のサイトからリンクした写真はリンクとして含まれます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.1.answer"
+  },
+  "433aa551a2c4": {
+    "source": "Can I change my details after printing?",
+    "text": "印刷後に自分の情報を変更できますか？",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.2.question"
+  },
+  "d00e42301a68": {
+    "source": "Yes. Edit the page and publish; the printed code keeps opening it, now with your new details.",
+    "text": "はい、できます。ページを編集して公開すれば、印刷済みのコードから同じページが開き、新しい情報が表示されます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.2.answer"
+  },
+  "d6db733919c0": {
+    "source": "What happens to my card if I stop paying?",
+    "text": "支払いをやめると、名刺はどうなりますか？",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.3.question"
+  },
+  "0531738b4156": {
+    "source": "Should I use a vCard QR code instead?",
+    "text": "代わりにvCardのQRコードを使うべきですか？",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.4.question"
+  },
+  "118510355202": {
+    "source": "If your details won't change and you don't need a photo or links, yes: a static vCard code needs no account and works offline. If you want to edit the card later or see scans, use the hosted card.",
+    "text": "情報が変わらず、写真やリンクも必要ない場合は、そのほうが適しています。静的なvCardコードはアカウントが不要で、オフラインでも使えます。あとから名刺を編集したい場合やスキャンを確認したい場合は、ホスト型の名刺をご利用ください。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.4.answer"
+  },
+  "1593c67c99af": {
+    "source": "Do people need an app?",
+    "text": "相手にアプリは必要ですか？",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.5.question"
+  },
+  "ab7a6ee88b76": {
+    "source": "No. The phone's camera opens the card in the browser, and Save contact hands the file to the built-in contacts app.",
+    "text": "いいえ、不要です。スマートフォンのカメラで名刺がブラウザで開き、「Save contact」を押すと、標準の連絡先アプリにファイルが渡されます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.5.answer"
+  },
+  "0619dd1a299c": {
+    "source": "Can I put it on an NFC business card?",
+    "text": "NFC名刺にも使えますか？",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.6.question"
+  },
+  "01ebed374f9c": {
+    "source": "Yes. QRdx doesn't sell cards: buy blank NFC cards and write the page's link to them from the code's NFC page in Chrome on Android. Editing the page updates every card you've handed out.",
+    "text": "はい、使えます。QRdxは名刺を販売していません。白紙のNFCカードを用意し、Android版Chromeでコードのhttps NFCページから、ページのリンクを書き込んでください。ページを編集すれば、すでに配った名刺すべてに反映されます。",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.6.answer"
   },
   "d96545f726d0": {
     "source": "Food and drink",
@@ -16007,21 +16655,21 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.noun"
   },
-  "0d6bfccc8412": {
-    "source": "QR code menus",
-    "text": "QRコードメニュー",
+  "9f74ff6bd071": {
+    "source": "Menu QR code generator",
+    "text": "メニューQRコード作成",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.title"
   },
-  "6d942ed73962": {
-    "source": "QR Code Menus: Digital Menus You Can Edit Anytime",
-    "text": "QRコードメニュー：いつでも編集できるデジタルメニュー",
+  "28cae6ae47d7": {
+    "source": "Menu QR Code Generator: Digital Menus You Can Edit",
+    "text": "メニューQRコードジェネレーター：編集できるデジタルメニュー",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.seoTitle"
   },
-  "fae1e9f4d921": {
-    "source": "Create a QR code menu you can update without reprinting: hosted menu pages with prices, photos, allergens and sold-out items, plus table sizes and tips.",
-    "text": "再印刷なしで更新できるQRコードメニューを作成できます。価格、写真、アレルゲン、売り切れ表示に対応したホスト型ページに加え、テーブルでのサイズや印刷のコツも紹介します。",
+  "0e1c07b7ee6a": {
+    "source": "Make a menu QR code you can update without reprinting: a hosted menu page with prices, photos, allergens and sold-out items, plus table sizes and tips.",
+    "text": "再印刷せずに更新できるメニューQRコードを作成できます。価格、写真、アレルゲン、売り切れ表示に対応したホスト型ページに加え、テーブル用のサイズや印刷のコツもご紹介します。",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.metaDescription"
   },
@@ -16031,9 +16679,9 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.summary"
   },
-  "803094d083d9": {
-    "source": "A QR code menu is only as good as what it opens. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm. A hosted menu page behind a dynamic code can do both: edit an item from your phone and every table sees it on the next scan.",
-    "text": "QRコードメニューの良し悪しは、開いた先の内容で決まります。PDFにリンクした静的QRコードは、初日は問題なく見えても、ファイル名が変わるとリンク切れになり、サーモンが午後8時に売り切れたことも表示できません。動的QRコードの先にあるホスト型ページなら、どちらも可能です。スマートフォンから品目を編集すれば、次のスキャンですべてのテーブルに反映されます。",
+  "5ddc4cc908fb": {
+    "source": "A QR code menu is only as good as what it opens. Build a menu page on QRdx, with sections, prices, photos, allergen tags and sold-out flags, and print its code: edit an item from your phone and every table sees it on the next scan. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm.",
+    "text": "QRコードメニューの価値は、開いた先のページで決まります。QRdxでセクション、価格、写真、アレルゲンタグ、売り切れ表示を備えたメニューページを作り、そのコードを印刷してください。スマートフォンから商品を編集すれば、次のスキャンからすべてのテーブルに反映されます。PDFにリンクする静的QRコードは、初日は問題なく見えても、ファイル名が変わるとリンク切れになり、午後8時にサーモンが売り切れたことも表示できません。",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.intro.0"
   },
@@ -16198,6 +16846,66 @@
     "text": "いいえ。スマートフォンのカメラでブラウザにメニューが開きます。お客様は何もインストールする必要がなく、アカウントも不要です。",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.faqs.2.answer"
+  },
+  "a2c83df426e4": {
+    "source": "Is the menu QR code generator free?",
+    "text": "メニューQRコードジェネレーターは無料ですか？",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.faqs.3.question"
+  },
+  "7ac8b96e14c2": {
+    "source": "Yes, with a free QRdx account: a menu page is one of the hosted pages the Free plan includes. Pro removes the page limit and the small \"Made with QRdx\" footer. If you cancel a paid plan, the menu and its code keep working.",
+    "text": "はい、QRdxの無料アカウントでご利用いただけます。メニューページは、フリープランに含まれるホスト型ページの1つです。Proではページ数の上限と、小さな「Made with QRdx」フッターがなくなります。有料プランを解約しても、メニューとそのコードは引き続き動作します。",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.faqs.3.answer"
+  },
+  "04687442a9e4": {
+    "source": "Build a menu page",
+    "text": "メニューページを作成",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.startPage.label"
+  },
+  "6d549515191d": {
+    "source": "QR codes for restaurant menus: a practical guide",
+    "text": "飲食店メニューのQRコード実践ガイド",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.0.title"
+  },
+  "c4566c93d0ec": {
+    "source": "Where to put the code, how big to print it, Wi-Fi, accessibility and allergens.",
+    "text": "コードの置き場所、印刷サイズ、Wi-Fi、アクセシビリティ、アレルゲンについて解説します。",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.0.description"
+  },
+  "457447ccdac3": {
+    "source": "Print size calculator",
+    "text": "印刷サイズ計算ツール",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.1.title"
+  },
+  "72d879c56dcf": {
+    "source": "The smallest code that scans from across the table or the counter.",
+    "text": "テーブルの向かい側やカウンター越しでもスキャンできる、最小のコードサイズがわかります。",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.1.description"
+  },
+  "810bb7432f7a": {
+    "source": "PDF QR code generator",
+    "text": "PDF QRコードジェネレーター",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.2.title"
+  },
+  "fc6b9d7d104a": {
+    "source": "Already have a designed PDF menu? Host it and replace the file each season.",
+    "text": "デザイン済みのPDFメニューをお持ちですか？ホストして、季節ごとにファイルを差し替えましょう。",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.2.description"
+  },
+  "d7761143e88e": {
+    "source": "Menus, guest Wi-Fi, review requests and table ordering in one place.",
+    "text": "メニュー、ゲスト用Wi-Fi、レビュー依頼、テーブル注文をひとつにまとめられます。",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.3.description"
   },
   "f568f32aa7bb": {
     "source": "Table tents",
@@ -22217,6 +22925,1218 @@
     "status": "machine",
     "context": "barcodes.faqs.9.answer"
   },
+  "e553f8d3db33": {
+    "source": "Free EAN-13 Barcode Generator",
+    "text": "無料EAN-13バーコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.title"
+  },
+  "185de8851663": {
+    "source": "Make an EAN-13 barcode for retail products. Type 12 digits and the check digit is added, or 13 to have it checked. SVG, PDF, EPS and PNG. Free, no signup.",
+    "text": "小売商品向けのEAN-13バーコードを作成できます。12桁を入力するとチェックディジットが追加され、13桁を入力すると検証されます。SVG、PDF、EPS、PNGに対応。無料、登録不要です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.metaDescription"
+  },
+  "33b789598cde": {
+    "source": "EAN-13 is the barcode on retail products almost everywhere outside the US and Canada. Type the 12 digits of your number and the generator adds the check digit, or type all 13 and it checks yours, then download the barcode as a vector for print or a PNG for screens.",
+    "text": "EAN-13は、米国とカナダ以外のほぼすべての地域で小売商品に付けられているバーコードです。番号の12桁を入力するとチェックディジットが追加され、13桁すべてを入力すると入力した番号が検証されます。バーコードは、印刷用のベクターデータでも、画面用のPNGでもダウンロードできます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.intro"
+  },
+  "69b749864ad4": {
+    "source": "Products sold in shops and online marketplaces. The 13 digits are a GTIN-13: a GS1 company prefix, an item number and a check digit. The first digits show which GS1 organization issued the prefix, not where the product was made.",
+    "text": "店舗やオンラインマーケットプレイスで販売される商品に使われます。13桁はGTIN-13で、GS1事業者コード、商品番号、チェックディジットで構成されます。先頭の数桁は、そのコードを発行したGS1組織を示すもので、商品の製造地を示すものではありません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.usedFor.0"
+  },
+  "74faacaf6528": {
+    "source": "Books and magazines use it too: an ISBN starting with 978 or 979 is printed as an EAN-13, and 977 marks an ISSN for periodicals. Numbers starting with 2 are kept for in-store use, such as weighed items priced at the counter.",
+    "text": "書籍や雑誌でも使われます。978または979で始まるISBNはEAN-13として印刷され、977は定期刊行物のISSNを示します。2で始まる番号は、計り売り商品をレジで値付けする場合など、店舗内での利用のために確保されています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.usedFor.1"
+  },
+  "b99b98cddd37": {
+    "source": "Do I need GS1 numbers for EAN-13?",
+    "text": "EAN-13にGS1の番号は必要ですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.title"
+  },
+  "e1bbafd4f2b0": {
+    "source": "For anything sold through a retailer, yes. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "小売店を通じて販売するものであれば、必要です。GTINは購入するのではなくライセンスを受けるもので、GS1(またはお住まいの国のGS1組織)に加入して事業者コードを取得し、それをもとに商品に番号を付けます。大手小売店やマーケットプレイスはGTINをGS1のレジストリと照合するため、他社のコードから転売された番号は拒否されることがあります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.paragraphs.0"
+  },
+  "a6ea3696d866": {
+    "source": "This generator draws any valid 13-digit number, but it doesn't issue or register numbers. For your own stock, shelves or assets, use Code 128 instead: it needs no registration.",
+    "text": "このジェネレーターは有効な13桁の番号であれば描画できますが、番号の発行や登録は行いません。自社の在庫、棚、資産の管理には、登録が不要なCode 128をお使いください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.paragraphs.1"
+  },
+  "26bacbda8d57": {
+    "source": "Spaces and dashes are ignored, and only digits are allowed. Twelve digits get the check digit added; thirteen have the last one checked, and a wrong check digit shows an error instead of a barcode.",
+    "text": "スペースとダッシュは無視され、使えるのは数字のみです。12桁を入力するとチェックディジットが追加されます。13桁の場合は最後の桁が検証され、チェックディジットが誤っているとバーコードではなくエラーが表示されます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.rules.0"
+  },
+  "368c54283308": {
+    "source": "The check digit weighs the digits 3, 1, 3, 1… starting from the right of the 12-digit body, adds them up and picks the digit that brings the sum to the next multiple of 10.",
+    "text": "チェックディジットは、12桁の本体の右端から順に3、1、3、1…の重みを掛けて合計し、その合計が次の10の倍数になる数字を選んで求めます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.rules.1"
+  },
+  "cca5925a2331": {
+    "source": "At 100% an EAN-13 is 37.29 mm wide (quiet zones included) by 25.93 mm high, with a 0.33 mm module. GS1 allows 80% to 200% for retail.",
+    "text": "100%のEAN-13は、クワイエットゾーンを含めて幅37.29 mm、高さ25.93 mm、モジュール幅は0.33 mmです。GS1は小売用として80%から200%までを認めています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.0"
+  },
+  "dedb3231c770": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%. Scale them within the 80% to 200% range and keep the proportions: shortening the bars makes the barcode harder to scan at checkouts.",
+    "text": "ベクターのダウンロードデータはモジュール幅0.353 mm、約107%です。縦横の比率を保ったまま80%から200%の範囲で拡大縮小してください。バーを短くすると、レジでスキャンしにくくなります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.1"
+  },
+  "88896bfdc73b": {
+    "source": "Leave 11 modules of blank space on the left and 7 on the right. The generator starts with 11 on both sides.",
+    "text": "左側に11モジュール、右側に7モジュールの余白を空けてください。このジェネレーターでは、初期設定で両側に11モジュールの余白が設定されています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.2"
+  },
+  "5d176e6bd05b": {
+    "source": "Can I make up an EAN-13 number?",
+    "text": "EAN-13の番号を自分で作ってもよいですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.0.question"
+  },
+  "8f7b0093a5f3": {
+    "source": "It will scan, but a store's system won't recognize it and may already use that number for another product. Retail EAN-13 numbers come from a GS1 company prefix. Numbers starting with 2 are the exception: they're meant for use inside one store or company.",
+    "text": "スキャンはできますが、店舗のシステムでは認識されず、その番号がすでに別の商品に使われている可能性もあります。小売用のEAN-13番号は、GS1事業者コードから付与されます。例外は2で始まる番号で、1つの店舗または企業内での利用を想定したものです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.0.answer"
+  },
+  "20c86e42f5bd": {
+    "source": "What's the difference between EAN-13 and UPC-A?",
+    "text": "EAN-13とUPC-Aの違いは何ですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.1.question"
+  },
+  "b9808d9ee114": {
+    "source": "A UPC-A is a 12-digit number that equals an EAN-13 starting with 0, and checkout scanners read both. US and Canadian retailers often ask for UPC-A; elsewhere EAN-13 is the norm.",
+    "text": "UPC-Aは12桁の番号で、0で始まるEAN-13と同じ番号になり、レジのスキャナーはどちらも読み取れます。米国やカナダの小売店ではUPC-Aを求められることが多く、それ以外の地域ではEAN-13が一般的です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.1.answer"
+  },
+  "388645787977": {
+    "source": "Can I make an ISBN barcode?",
+    "text": "ISBNのバーコードは作成できますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.2.question"
+  },
+  "e2522c6c9cf0": {
+    "source": "Yes: an ISBN-13 is an EAN-13. Enter the 13 digits without dashes. The 5-digit price add-on some book trades print beside it isn't drawn here.",
+    "text": "はい。ISBN-13はEAN-13です。ダッシュなしの13桁を入力してください。書籍の取引で隣に印刷されることがある5桁の価格アドオンは、ここでは描画されません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.2.answer"
+  },
+  "118b647519e1": {
+    "source": "Why does my 13-digit number show an error?",
+    "text": "13桁の番号を入力するとエラーになるのはなぜですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.3.question"
+  },
+  "c3754e77000e": {
+    "source": "Its last digit isn't the check digit the other 12 produce, which usually means a typo. The error says what the check digit should be. Enter only the first 12 digits to have it worked out.",
+    "text": "最後の桁が、先頭の12桁から求められるチェックディジットと一致していません。多くの場合は入力ミスです。エラーには、チェックディジットとして正しい数字が表示されます。先頭の12桁だけを入力すると、チェックディジットが自動で計算されます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.3.answer"
+  },
+  "21a397c19c56": {
+    "source": "Free UPC-A Barcode Generator",
+    "text": "無料UPC-Aバーコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.title"
+  },
+  "ae5abf4dcf1f": {
+    "source": "Make a UPC-A barcode for products sold in the US and Canada. Type 11 digits and the check digit is added, or 12 to have it checked. SVG, PDF, EPS and PNG.",
+    "text": "米国とカナダで販売する商品向けのUPC-Aバーコードを作成できます。11桁を入力するとチェックディジットが付加され、12桁を入力するとチェックされます。SVG、PDF、EPS、PNGに対応しています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.metaDescription"
+  },
+  "fbecbf739065": {
+    "source": "UPC-A is the 12-digit retail barcode of the US and Canada. Type the first 11 digits and the generator adds the check digit, or type all 12 to have it checked, then download a vector for your packaging or a PNG for an online listing.",
+    "text": "UPC-Aは、米国とカナダで使われる12桁の小売用バーコードです。最初の11桁を入力するとチェックディジットが付加され、12桁すべてを入力するとチェックされます。パッケージ用のベクターデータも、オンラインの商品ページ用のPNGもダウンロードできます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.intro"
+  },
+  "fd8224969dd4": {
+    "source": "Products sold in US and Canadian stores and on marketplaces that ask for a UPC. The number is a GTIN-12: a GS1 company prefix, an item number and a check digit.",
+    "text": "米国とカナダの店舗や、UPCを求めるマーケットプレイスで販売される商品に使われます。この番号はGTIN-12で、GS1事業者コード、アイテム番号、チェックディジットで構成されます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.usedFor.0"
+  },
+  "b6ca2ff0c836": {
+    "source": "The first digit says what kind of number it is: 2 is kept for weighed items priced in the store, and 3 for medicines that carry a US National Drug Code. Since 2005, checkout systems in the US and Canada read EAN-13 too, but many retailers still ask for UPC-A.",
+    "text": "最初の桁は番号の種類を表します。2は店頭で価格を決める計り売り商品用、3は米国のNational Drug Codeを持つ医薬品用に確保されています。2005年以降、米国とカナダのレジシステムはEAN-13も読み取れますが、UPC-Aを求める小売業者は今でも多くあります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.usedFor.1"
+  },
+  "57f54586c885": {
+    "source": "Do I need GS1 numbers for UPC-A?",
+    "text": "UPC-AにGS1の番号は必要ですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.title"
+  },
+  "73dfd53c9783": {
+    "source": "For retail, yes. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected. In the US, that's GS1 US.",
+    "text": "小売用途では必要です。GTINは買い取るものではなく、使用許諾を受けるものです。GS1(またはお住まいの国のGS1機関)に加入して事業者コードを取得し、それをもとに商品に番号を付けます。大手小売業者やマーケットプレイスはGTINをGS1のレジストリと照合するため、他社のコードから転売された番号は拒否されることがあります。米国ではGS1 USが該当します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.paragraphs.0"
+  },
+  "5998b23e332c": {
+    "source": "This generator draws any valid number; it doesn't issue or register them.",
+    "text": "このジェネレーターは有効な番号であれば何でも描画しますが、番号の発行や登録は行いません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.paragraphs.1"
+  },
+  "913a860f547e": {
+    "source": "Digits only; spaces and dashes are ignored. Eleven digits get the check digit added, twelve have it checked.",
+    "text": "使えるのは数字のみで、スペースとハイフンは無視されます。11桁の場合はチェックディジットが付加され、12桁の場合はチェックされます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.rules.0"
+  },
+  "f7ed2e5b7a9e": {
+    "source": "The check digit triples the digits in odd positions (1st, 3rd, 5th… of the 11), adds the rest and picks the digit that brings the total to the next multiple of 10. It's the same rule as EAN-13, so a UPC-A with a 0 in front is a valid EAN-13.",
+    "text": "チェックディジットは、奇数番目(11桁のうち1、3、5番目…)の数字を3倍し、残りの数字を加え、合計が次の10の倍数になる数字を選びます。EAN-13と同じ規則のため、先頭に0を付けたUPC-Aは有効なEAN-13になります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.rules.1"
+  },
+  "a387137f90a2": {
+    "source": "At 100% a UPC-A is 37.29 mm wide with its quiet zones and a 0.33 mm module; GS1 allows 80% to 200%.",
+    "text": "倍率100%のUPC-Aは、クワイエットゾーンを含めて幅37.29 mm、モジュール幅は0.33 mmです。GS1では80%から200%まで認められています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.0"
+  },
+  "afd7ee6d261b": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%. Keep the proportions when you scale, and don't shorten the bars to fit a small pack: use UPC-E if the product qualifies.",
+    "text": "ベクターデータのダウンロードでは0.353 mmのモジュールを使用しており、約107%に相当します。拡大縮小するときは縦横の比率を保ってください。小さなパッケージに収めるためにバーを短くしないでください。商品が条件を満たす場合はUPC-Eを使いましょう。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.1"
+  },
+  "218648ca162b": {
+    "source": "Keep at least 9 modules clear on each side. The generator starts with 11.",
+    "text": "両側に少なくとも9モジュール分の余白を確保してください。ジェネレーターの初期値は11です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.2"
+  },
+  "f2ed9151ccbe": {
+    "source": "Is a UPC the same as a GTIN?",
+    "text": "UPCとGTINは同じものですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.0.question"
+  },
+  "c3f6c27abc9d": {
+    "source": "The number in a UPC-A barcode is a GTIN-12. Written with two leading zeros it's the GTIN-14 that some product feeds ask for.",
+    "text": "UPC-AバーコードのGTINはGTIN-12です。先頭に0を2つ付けると、一部の商品フィードで求められるGTIN-14になります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.0.answer"
+  },
+  "1b029891466b": {
+    "source": "My scanner reads 13 digits from a UPC-A. Is that wrong?",
+    "text": "スキャナーでUPC-Aを読み取ると13桁になります。間違いですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.1.question"
+  },
+  "4d4fecc241c9": {
+    "source": "No. Many readers report a UPC-A as the 13-digit EAN with a 0 in front. The scan check on this page accepts both.",
+    "text": "いいえ。多くのリーダーは、UPC-Aを先頭に0を付けた13桁のEANとして報告します。このページのスキャンチェックはどちらも受け付けます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.1.answer"
+  },
+  "10663e747849": {
+    "source": "Can I turn my UPC-A into a smaller UPC-E?",
+    "text": "UPC-Aをより小さなUPC-Eにできますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.2.question"
+  },
+  "e5b2ab58a715": {
+    "source": "Only if the number has zeros in the right places. Open the UPC-E generator and enter the 12-digit UPC-A: it tells you whether yours can be shortened.",
+    "text": "番号の適切な位置に0がある場合のみ可能です。UPC-Eジェネレーターを開いて12桁のUPC-Aを入力すると、短縮できるかどうかが表示されます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.2.answer"
+  },
+  "a14ac0f7f2da": {
+    "source": "Free Code 128 Barcode Generator",
+    "text": "無料のCode 128バーコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.title"
+  },
+  "464d967dc9c2": {
+    "source": "Make a Code 128 barcode for labels, asset tags and tickets: letters, digits and symbols, up to 80 characters. Scan-checked in the browser. SVG, PDF, PNG.",
+    "text": "ラベル、資産タグ、チケット向けのCode 128バーコードを作成できます。英字、数字、記号を最大80文字まで使えます。ブラウザー上でスキャン確認済み。SVG、PDF、PNGに対応しています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.metaDescription"
+  },
+  "e52568761a92": {
+    "source": "Code 128 is the general-purpose barcode: letters, digits, spaces and keyboard symbols in a compact row of bars. Type your text, check that it scans and download it for labels, asset tags, tickets or stock bins. It needs no registration.",
+    "text": "Code 128は汎用バーコードです。英字、数字、スペース、キーボードの記号を、コンパクトなバーの列にまとめられます。テキストを入力し、スキャンできることを確認して、ラベル、資産タグ、チケット、在庫棚用にダウンロードしてください。登録は不要です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.intro"
+  },
+  "0b875fca4969": {
+    "source": "Inventory and stock labels, asset tags, library and lab samples, tickets, internal shipping labels and order numbers: anything that needs a barcode but isn't a product sold in shops.",
+    "text": "在庫ラベルや棚卸ラベル、資産タグ、図書館や研究室のサンプル、チケット、社内の配送ラベル、注文番号など、店頭で販売する商品ではないものにバーコードが必要な場面で使われます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.usedFor.0"
+  },
+  "846a7db7a028": {
+    "source": "It's the barcode most warehouse and point-of-sale scanners read out of the box, and the base of GS1-128, which adds Application Identifiers for supply chain data.",
+    "text": "多くの倉庫用スキャナーやPOSスキャナーが、初期設定のまま読み取れるバーコードです。サプライチェーンのデータ用にApplication Identifiersを加えたGS1-128の基盤にもなっています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.usedFor.1"
+  },
+  "760439f56898": {
+    "source": "Do I need to register a Code 128 barcode?",
+    "text": "Code 128バーコードは登録が必要ですか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.title"
+  },
+  "dfd2214d62c1": {
+    "source": "No. Code 128 holds whatever text you choose, so there's no number to license. Use your own SKUs, serial numbers or IDs.",
+    "text": "いいえ。Code 128には任意のテキストを入れられるため、ライセンスが必要な番号はありません。自社のSKU、シリアル番号、IDをそのままお使いください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.paragraphs.0"
+  },
+  "0ec6d58266bf": {
+    "source": "If a retailer or logistics partner asks for GS1 data (a GTIN, SSCC, batch or expiry date), use GS1-128 instead: it's Code 128 with GS1's structure.",
+    "text": "小売業者や物流パートナーからGS1データ（GTIN、SSCC、ロット、有効期限）を求められた場合は、代わりにGS1-128をお使いください。GS1の構造を持つCode 128です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.paragraphs.1"
+  },
+  "e561312bcaee": {
+    "source": "Up to 80 characters of plain ASCII: letters, digits, spaces and the symbols on a US keyboard. Accented letters, emoji and control characters can't be encoded here.",
+    "text": "プレーンなASCII文字を最大80文字まで使えます。英字、数字、スペース、US配列キーボードにある記号が対象です。アクセント付き文字、絵文字、制御文字はここではエンコードできません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.rules.0"
+  },
+  "782292cc1d92": {
+    "source": "Code 128 adds its own check character (a sum modulo 103) and three code sets: set C packs two digits into each character, so long runs of digits make shorter barcodes. The encoder picks the code sets for you, and readers don't print the check character.",
+    "text": "Code 128には独自のチェック文字（103を法とする合計）と3つのコードセットがあります。コードセットCは1文字に2桁の数字を詰め込むため、数字が長く続くとバーコードは短くなります。エンコーダーが自動でコードセットを選び、リーダーはチェック文字を出力しません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.rules.1"
+  },
+  "7429e56ee897": {
+    "source": "Each Code 128 character is 11 modules wide, plus start, check and stop characters and 10 modules of quiet zone each side. With the downloads' 0.353 mm module, ABCDEFGHIJ is 58.2 mm wide and 1234567890 is 38.8 mm: the digits pair up.",
+    "text": "Code 128の1文字は幅11モジュールです。これにスタート文字、チェック文字、ストップ文字、そして両側各10モジュールのクワイエットゾーンが加わります。ダウンロードの0.353 mmモジュールでは、ABCDEFGHIJの幅は58.2 mm、1234567890は38.8 mmです。数字は2桁ずつまとめられます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.0"
+  },
+  "58c654d2b792": {
+    "source": "A common rule for handheld scanners is bars at least 15% of the barcode's length, or 6.35 mm (a quarter inch), whichever is more. The default bar height is 15 mm.",
+    "text": "ハンドヘルドスキャナーでは、バーの高さをバーコードの長さの15%以上、または6.35 mm（4分の1インチ）のどちらか大きい方にするのが一般的な目安です。バーの高さの初期値は15 mmです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.1"
+  },
+  "b165f84fd1ba": {
+    "source": "There's no fixed size: shrink the module for small labels, but test with the scanners that will read it, especially on thermal label printers.",
+    "text": "決まったサイズはありません。小さなラベルにはモジュールを縮小できますが、特にサーマルラベルプリンターでは、実際に読み取るスキャナーでテストしてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.2"
+  },
+  "0dede9a6603e": {
+    "source": "Can Code 128 hold lowercase letters?",
+    "text": "Code 128で小文字は使えますか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.0.question"
+  },
+  "4a77b24587b5": {
+    "source": "Yes. Unlike Code 39, it encodes upper and lower case, digits and symbols.",
+    "text": "はい。Code 39と違い、大文字、小文字、数字、記号をエンコードできます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.0.answer"
+  },
+  "b54f48ff7572": {
+    "source": "Why is my barcode so long?",
+    "text": "バーコードが長いのはなぜですか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.1.question"
+  },
+  "d10883e237e0": {
+    "source": "Long text makes long barcodes: each letter adds 11 modules. Shorten the text, use digits where you can (they pair up), or use a 2D code such as Data Matrix, which holds far more in a small square.",
+    "text": "テキストが長いとバーコードも長くなります。1文字ごとに11モジュール増えるためです。テキストを短くするか、可能な限り数字を使う（2桁ずつまとめられます）か、小さな正方形に多くのデータを入れられるData Matrixなどの2Dコードをお使いください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.1.answer"
+  },
+  "c49509a2641c": {
+    "source": "Is Code 128 the same as GS1-128?",
+    "text": "Code 128とGS1-128は同じものですか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.2.question"
+  },
+  "b98f8aeb01e3": {
+    "source": "GS1-128 is Code 128 with a special first character (FNC1) and GS1 Application Identifiers. A plain Code 128 with GS1-looking text isn't a GS1-128, and GS1 systems won't treat it as one.",
+    "text": "GS1-128は、先頭に特別な文字（FNC1）を置き、GS1 Application Identifiersを使うCode 128です。GS1形式に見えるテキストを入れただけの通常のCode 128はGS1-128ではなく、GS1のシステムもGS1-128として扱いません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.2.answer"
+  },
+  "142797b9804d": {
+    "source": "Free ITF-14 Barcode Generator for Cartons",
+    "text": "カートン用の無料ITF-14バーコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.title"
+  },
+  "3543c3bc68be": {
+    "source": "Make an ITF-14 barcode for shipping cartons: 13 digits get the check digit, 14 are checked. Bearer bars included. SVG, PDF and EPS for print. Free.",
+    "text": "出荷用カートンのITF-14バーコードを作成できます。13桁を入力するとチェックデジットを追加し、14桁の場合は検証します。ベアラバー付き。印刷用にSVG、PDF、EPSで出力できます。無料。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.metaDescription"
+  },
+  "7eb62a8e4cb5": {
+    "source": "ITF-14 is the barcode printed on corrugated cartons that hold retail products. It carries the 14-digit GTIN of the case. Type 13 digits and the check digit is added, or all 14 to have it checked, and download a vector with its bearer bars for your carton artwork.",
+    "text": "ITF-14は、小売商品を入れる段ボールカートンに印刷されるバーコードです。ケースの14桁のGTINを表します。13桁を入力するとチェックデジットが追加され、14桁すべてを入力すると検証されます。ベアラバー付きのベクターデータをダウンロードして、カートンのデザインに使えます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.intro"
+  },
+  "51bb0e6ae783": {
+    "source": "Outer cases and shipping cartons scanned in warehouses and distribution centers, not at the checkout. The thick frame around the bars (bearer bars) evens out printing pressure on rough board and stops a scanner reading only part of the barcode.",
+    "text": "チェックアウトではなく、倉庫や物流センターでスキャンされる外装ケースや出荷用カートンに使います。バーを囲む太い枠(ベアラバー)は、粗い板紙への印刷圧を均一にし、スキャナーがバーコードの一部だけを読み取ることを防ぎます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.usedFor.0"
+  },
+  "f7eb05998dd2": {
+    "source": "The first digit is the indicator, 1 to 8, which tells packaging levels apart (a case of 6, a case of 24). The next 12 digits are the GTIN of the item inside without its check digit, and a new check digit closes the number.",
+    "text": "先頭の桁はインジケーターで、1から8の数字です。包装単位(6個入りケース、24個入りケースなど)を区別します。続く12桁は、中に入っている商品のチェックデジットを除いたGTINで、最後に新しいチェックデジットが付きます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.usedFor.1"
+  },
+  "71a2765e870b": {
+    "source": "Where does an ITF-14 number come from?",
+    "text": "ITF-14の番号はどこから得られますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.title"
+  },
+  "671dd15961a5": {
+    "source": "From the GTIN of the product inside. Take its 12-digit body (an EAN-13 without the check digit, or a UPC-A with a 0 in front), put an indicator digit before it and let the generator add the new check digit.",
+    "text": "中に入っている商品のGTINから作ります。チェックデジットを除いた12桁の本体部分(チェックデジットなしのEAN-13、または先頭に0を付けたUPC-A)の前にインジケーター桁を置くと、ジェネレーターが新しいチェックデジットを追加します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.paragraphs.0"
+  },
+  "2e1eafaa208c": {
+    "source": "So you need GS1 numbers for the product itself first. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "そのため、まず商品自体のGS1番号が必要です。GTINは買い切りではなくライセンスです。GS1(またはお住まいの国のGS1組織)に加入して事業者コードを取得し、そこから商品に番号を付けます。大手小売業者やマーケットプレイスはGTINをGS1のレジストリと照合するため、他社のプレフィックスから転売された番号は拒否されることがあります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.paragraphs.1"
+  },
+  "4e12069ff3d8": {
+    "source": "Digits only; spaces and dashes are ignored. Thirteen digits get the check digit added, fourteen have it checked.",
+    "text": "数字のみ使用できます。スペースとハイフンは無視されます。13桁の場合はチェックデジットを追加し、14桁の場合は検証します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.rules.0"
+  },
+  "03fce9c1f85f": {
+    "source": "The check digit uses the same 3, 1, 3, 1… weights from the right as EAN-13, over 13 digits.",
+    "text": "チェックデジットは、13桁に対してEAN-13と同じく右から3、1、3、1…の重みを使って計算します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.rules.1"
+  },
+  "65163656744f": {
+    "source": "GS1 sizes ITF-14 for cartons: a module of 0.495 mm to 1.016 mm (1.016 mm is 100%) and bars at least 32 mm high, with 10 modules of quiet zone each side.",
+    "text": "GS1はカートン向けのITF-14サイズを定めています。モジュール幅は0.495 mm〜1.016 mm(1.016 mmが100%)、バーの高さは32 mm以上、左右にそれぞれ10モジュール分のクワイエットゾーンが必要です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.0"
+  },
+  "56f224fc7349": {
+    "source": "The downloads use a 0.353 mm module and 25 mm bars, smaller than GS1's minimum for cartons. Enlarge the file to 141% in your artwork: the module becomes 0.495 mm and the bars 35 mm.",
+    "text": "ダウンロードされるファイルは、モジュール幅0.353 mm、バーの高さ25 mmで、GS1がカートン向けに定める最小サイズより小さくなっています。デザイン上でファイルを141%に拡大してください。モジュール幅は0.495 mm、バーの高さは35 mmになります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.1"
+  },
+  "18d61468335b": {
+    "source": "Printed straight onto brown board, bigger is safer: check the size with your packaging printer.",
+    "text": "茶色の板紙に直接印刷する場合は、大きいほうが安全です。サイズは包装の印刷会社にご確認ください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.2"
+  },
+  "9f48e9c4bf5a": {
+    "source": "Can I put an ITF-14 on a retail product?",
+    "text": "小売商品にITF-14を付けてもよいですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.0.question"
+  },
+  "348adc0c77f2": {
+    "source": "No, it's for cases and cartons. The consumer unit inside carries its own EAN-13 or UPC-A for the checkout.",
+    "text": "いいえ、ITF-14はケースやカートン用です。中の消費者向け単位には、チェックアウト用にそれぞれのEAN-13またはUPC-Aが付きます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.0.answer"
+  },
+  "d6b83fbe2489": {
+    "source": "What indicator digit should I use?",
+    "text": "インジケーター桁には何を使えばよいですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.1.question"
+  },
+  "f5809ecb63eb": {
+    "source": "Any of 1 to 8, chosen by you, one per packaging configuration: for example 1 for a case of 6 and 2 for a case of 24. 9 is kept for items with variable quantity.",
+    "text": "1から8のいずれかを、包装形態ごとに1つずつ自由に選べます。たとえば、6個入りケースには1、24個入りケースには2を使います。9は数量が可変の商品用に予約されています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.1.answer"
+  },
+  "1e761a972faa": {
+    "source": "Can I turn the bearer bars off?",
+    "text": "ベアラバーをオフにできますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.2.question"
+  },
+  "fbfdafeb533b": {
+    "source": "Not here: the generator always draws the full frame, which GS1 recommends when ITF-14 is printed directly onto corrugated board.",
+    "text": "ここではできません。ジェネレーターは常に枠全体を描画します。GS1は、ITF-14を段ボールに直接印刷する場合にこれを推奨しています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.2.answer"
+  },
+  "6431528d484d": {
+    "source": "Free GS1-128 Barcode Generator (SSCC, Batch, Expiry)",
+    "text": "無料のGS1-128バーコードジェネレーター(SSCC、ロット、有効期限)",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.title"
+  },
+  "b3ab040765c0": {
+    "source": "Make GS1-128 barcodes for logistics labels: GTIN, SSCC, batch, expiry and weight in one barcode. Check digits and dates checked. SVG, PDF and EPS. Free.",
+    "text": "物流ラベル向けのGS1-128バーコードを作成できます。GTIN、SSCC、ロット、有効期限、重量を1つのバーコードにまとめられます。チェックデジットと日付も確認します。SVG、PDF、EPSに対応。無料です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.metaDescription"
+  },
+  "bd497ead49fb": {
+    "source": "GS1-128 puts several pieces of supply chain data into one barcode, each marked by an Application Identifier (AI) in brackets: (01) for the GTIN, (17) for the expiry date, (10) for the batch, (00) for a pallet's SSCC. Type the AIs and values; check digits are added or checked for you.",
+    "text": "GS1-128は、複数のサプライチェーンデータを1つのバーコードにまとめます。各データは括弧で囲んだアプリケーション識別子(AI)で区別します。GTINは(01)、有効期限は(17)、ロットは(10)、パレットのSSCCは(00)です。AIと値を入力してください。チェックデジットは自動で追加または確認されます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.intro"
+  },
+  "fcfd83fcb2ae": {
+    "source": "Logistics labels on cases and pallets, and labels on fresh food, meat and medical supplies where a batch, an expiry date or a weight must travel with the GTIN.",
+    "text": "ケースやパレットの物流ラベルのほか、ロット、有効期限、重量をGTINと一緒に伝える必要がある生鮮食品、精肉、医療用品のラベルに使われます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.usedFor.0"
+  },
+  "8bf770848b73": {
+    "source": "The GS1 logistic label carries the pallet's SSCC, AI (00), as a GS1-128. Retail and logistics partners usually specify which AIs they want on it.",
+    "text": "GS1物流ラベルでは、パレットのSSCC(AI (00))をGS1-128として表示します。小売や物流の取引先が、載せるAIを指定するのが一般的です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.usedFor.1"
+  },
+  "da8517c880c4": {
+    "source": "Do I need GS1 numbers for GS1-128?",
+    "text": "GS1-128にはGS1の番号が必要ですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.title"
+  },
+  "10a672f37fdb": {
+    "source": "For the GTIN in (01) and the SSCC in (00), yes: both are built from a GS1 company prefix. Batch numbers, dates and weights are your own data.",
+    "text": "(01)のGTINと(00)のSSCCには必要です。どちらもGS1事業者コードから作られます。ロット番号、日付、重量は自社のデータです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.paragraphs.0"
+  },
+  "8ffb1e1b55d9": {
+    "source": "A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "GTINは購入するものではなく、使用許諾を受けるものです。GS1(または各国のGS1機関)に加入して事業者コードを取得し、そこから商品に番号を付けます。大手小売店やマーケットプレイスはGTINをGS1のレジストリで照合するため、他社のコードから転売された番号は拒否されることがあります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.paragraphs.1"
+  },
+  "3b87dfbd5a2b": {
+    "source": "Write each AI in brackets followed by its value: (01)09501101530003(17)261231(10)AB-123. The brackets aren't encoded; they show where each field starts.",
+    "text": "各AIを括弧で囲み、その後ろに値を続けて入力します。例:(01)09501101530003(17)261231(10)AB-123。括弧はエンコードされず、各フィールドの開始位置を示すためのものです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.0"
+  },
+  "4d101be4f43b": {
+    "source": "GTINs in (01) and (02) and SSCCs in (00) get their check digit added when you leave it off, or checked when you don't. The encoder also checks every value against GS1's rules: an unknown AI or an impossible date such as month 13 is refused.",
+    "text": "(01)と(02)のGTIN、(00)のSSCCは、チェックデジットを省略すると自動で追加され、入力すると確認されます。エンコーダーはすべての値をGS1の規則でも確認し、未知のAIや13月のようにあり得ない日付は受け付けません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.1"
+  },
+  "31543a972a0e": {
+    "source": "A GS1-128 holds up to 48 characters of AIs and data. Put variable-length fields such as (10) batch last, so no separator is needed after them.",
+    "text": "GS1-128には、AIとデータを合わせて最大48文字まで入れられます。(10)ロットのような可変長フィールドは最後に置くと、後ろに区切りが不要になります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.2"
+  },
+  "94ad896b62ca": {
+    "source": "On GS1 logistic labels, GS1 asks for a module of 0.495 mm to 0.94 mm (0.495 mm is the target), bars at least 31.75 mm high and a barcode no longer than 165 mm with its quiet zones.",
+    "text": "GS1物流ラベルでは、モジュール幅は0.495 mm〜0.94 mm(目標は0.495 mm)、バーの高さは31.75 mm以上、クワイエットゾーンを含めたバーコードの長さは165 mm以内とGS1が定めています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.0"
+  },
+  "bb6b724ba287": {
+    "source": "The downloads use a 0.353 mm module and 15 mm bars, which suits small item labels. For a pallet or case label, set the bar height to 23 mm and enlarge the file to 141%: the module becomes 0.495 mm and the bars 32.4 mm. The example is then 142 mm long.",
+    "text": "ダウンロードされるファイルは、モジュール幅0.353 mm、バーの高さ15 mmで、小さな商品ラベルに適しています。パレットやケースのラベルには、バーの高さを23 mmにしてファイルを141%に拡大してください。モジュール幅は0.495 mm、バーの高さは32.4 mmになります。この例では長さが142 mmになります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.1"
+  },
+  "53953bee2634": {
+    "source": "Long data makes long barcodes: if it won't fit in 165 mm, split it over two GS1-128 barcodes, as GS1 logistic labels do.",
+    "text": "データが長いとバーコードも長くなります。165 mmに収まらない場合は、GS1物流ラベルと同様に、2つのGS1-128バーコードに分けてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.2"
+  },
+  "6659ea2f7d27": {
+    "source": "What do (17) and (15) dates look like?",
+    "text": "(17)と(15)の日付はどのような形式ですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.0.question"
+  },
+  "c5adec7ec0b7": {
+    "source": "Six digits, YYMMDD: (17)261231 is an expiry of 31 December 2026. A day of 00 means the end of that month.",
+    "text": "YYMMDDの6桁です。(17)261231は、2026年12月31日が有効期限という意味です。日が00の場合は、その月の末日を表します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.0.answer"
+  },
+  "a824a925ac2e": {
+    "source": "Can I add a serial number?",
+    "text": "シリアル番号は追加できますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.1.question"
+  },
+  "a22bba2c340b": {
+    "source": "Yes, with AI (21), up to 20 characters. Put it last, or after other fixed-length fields, to keep the barcode short.",
+    "text": "はい、AI (21)で最大20文字まで追加できます。バーコードを短くするには、最後か、他の固定長フィールドの後ろに置いてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.1.answer"
+  },
+  "1b796f6907df": {
+    "source": "Why does my scanner show no brackets?",
+    "text": "スキャナーに括弧が表示されないのはなぜですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.2.question"
+  },
+  "e2f222913d2e": {
+    "source": "The brackets are only for people. Readers report the data with a symbology identifier (]C1) or none, and separate variable-length fields with an invisible GS character. The scan check here accepts all of these forms.",
+    "text": "括弧は人が読むためのものです。リーダーはデータをシンボル識別子(]C1)付きか識別子なしで出力し、可変長フィールドの区切りには見えないGS文字を使います。ここのスキャン確認は、これらすべての形式に対応しています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.2.answer"
+  },
+  "54cdec66ca5a": {
+    "source": "Free Data Matrix Code Generator",
+    "text": "無料のData Matrixコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.title"
+  },
+  "33a7d883dd0b": {
+    "source": "Make a Data Matrix code for part marking, small labels and serial numbers. Any text up to 1,000 characters, scan-checked in your browser. SVG, PDF and PNG.",
+    "text": "部品マーキング、小さなラベル、シリアル番号向けのData Matrixコードを作成できます。最大1,000文字までの任意のテキストに対応し、ブラウザ上でスキャン確認もできます。SVG、PDF、PNG形式です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.metaDescription"
+  },
+  "0bd28fd6ac6c": {
+    "source": "Data Matrix is a small square 2D code that holds a lot of data in very little space. Type any text, up to 1,000 characters here, check that it scans and download it for parts, electronics, small labels and lab samples.",
+    "text": "Data Matrixは、ごく小さなスペースに多くのデータを収められる正方形の2Dコードです。最大1,000文字までの任意のテキストを入力し、スキャンできることを確認してから、部品、電子機器、小さなラベル、検査サンプル用にダウンロードできます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.intro"
+  },
+  "bbd731b691ab": {
+    "source": "Marking parts and electronics, sometimes etched straight onto metal, because a Data Matrix stays readable when part of it is damaged. Also small labels, lab tubes, documents and mail.",
+    "text": "部品や電子機器へのマーキングに使われ、金属に直接刻印されることもあります。Data Matrixは一部が損傷しても読み取れるためです。小さなラベル、検査用チューブ、書類、郵便物にも使われます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.usedFor.0"
+  },
+  "c34156dbe396": {
+    "source": "Readers need a camera (an image-based scanner or a phone app), not a laser scanner. Many warehouse scanners read it, but some phone camera apps only read QR codes.",
+    "text": "読み取りにはカメラ(画像式スキャナーまたはスマートフォンアプリ)が必要で、レーザースキャナーでは読み取れません。多くの倉庫用スキャナーは読み取れますが、スマートフォンのカメラアプリの中にはQRコードしか読み取れないものもあります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.usedFor.1"
+  },
+  "5a4a713e53d3": {
+    "source": "Plain Data Matrix or GS1 DataMatrix?",
+    "text": "通常のData Matrixと GS1 DataMatrixの違い",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.title"
+  },
+  "203ad7dd545c": {
+    "source": "This page makes plain Data Matrix (ECC 200): it holds whatever text you type, with no registration.",
+    "text": "このページで作成するのは通常のData Matrix(ECC 200)です。入力した任意のテキストを格納でき、登録は不要です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.paragraphs.0"
+  },
+  "5a4cc58b06df": {
+    "source": "GS1 DataMatrix, required on some medicines and regulated packaging, adds a special first character and GS1 Application Identifiers. It isn't offered here; use GS1-128 if you need GS1 data in a barcode from this generator.",
+    "text": "GS1 DataMatrixは、一部の医薬品や規制対象の包装で必須とされ、先頭に特別な文字とGS1 Application Identifiersが加わります。ここでは提供していません。このジェネレーターのバーコードでGS1データが必要な場合は、GS1-128をご利用ください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.paragraphs.1"
+  },
+  "084247522b6a": {
+    "source": "Any text, up to 1,000 characters here. The code grows in steps as you add text, from 10 × 10 cells upwards; this generator draws the square form.",
+    "text": "任意のテキストを、ここでは最大1,000文字まで入力できます。テキストを追加するとコードは段階的に大きくなり、10 × 10セルから始まります。このジェネレーターでは正方形のコードを描画します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.rules.0"
+  },
+  "df3a5ab10444": {
+    "source": "The largest square Data Matrix (144 × 144 cells) holds 3,116 digits, 2,335 letters and digits, or 1,556 bytes. Digits pack most tightly.",
+    "text": "最大の正方形Data Matrix(144 × 144セル)には、数字なら3,116桁、英数字なら2,335文字、バイトなら1,556バイトを格納できます。数字が最も効率よく詰め込まれます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.rules.1"
+  },
+  "3924066c6435": {
+    "source": "The vector downloads draw each cell 0.71 mm square, so SN-0042-7781 comes out 12.7 mm across with its margin. Scale it down in your layout for small labels.",
+    "text": "ベクター形式のダウンロードでは、各セルが1辺0.71 mmの正方形で描画されるため、SN-0042-7781は余白を含めて幅12.7 mmになります。小さなラベルに使う場合は、レイアウト上で縮小してください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.0"
+  },
+  "34d7c225b2e8": {
+    "source": "The smallest cell a scanner reads depends on the scanner and the print, so test at the size you'll use.",
+    "text": "スキャナーが読み取れる最小のセルサイズは、スキャナーや印刷の状態によって異なります。実際に使うサイズでテストしてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.1"
+  },
+  "cdba82f03c20": {
+    "source": "Data Matrix needs only a 1-cell margin; the generator starts with 2.",
+    "text": "Data Matrixに必要な余白は1セル分だけですが、このジェネレーターでは初期値を2セル分にしています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.2"
+  },
+  "043e570a3b23": {
+    "source": "Can a phone read a Data Matrix?",
+    "text": "スマートフォンでData Matrixを読み取れますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.0.question"
+  },
+  "a96a7b1effbb": {
+    "source": "Many barcode scanner apps can. Some phone camera apps only open QR codes, so if people scan with their phones, a QR code is the safer choice.",
+    "text": "多くのバーコードスキャナーアプリで読み取れます。ただし、スマートフォンのカメラアプリの中にはQRコードしか開けないものもあるため、スマートフォンでスキャンしてもらう場合はQRコードのほうが確実です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.0.answer"
+  },
+  "0074eaa0269b": {
+    "source": "Data Matrix or QR code?",
+    "text": "Data Matrixと QRコードの違い",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.1.question"
+  },
+  "691a2294de01": {
+    "source": "For links people scan with a phone, QR. For small parts and industrial labels read by scanners, Data Matrix: it's more compact for short serial numbers and is the norm in electronics and part marking.",
+    "text": "スマートフォンでスキャンしてもらうリンクにはQRコードが向いています。スキャナーで読み取る小さな部品や産業用ラベルにはData Matrixが向いています。短いシリアル番号ならよりコンパクトにでき、電子機器や部品マーキングでは標準的に使われています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.1.answer"
+  },
+  "606b842e0bf1": {
+    "source": "Does it have error correction?",
+    "text": "誤り訂正機能はありますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.2.question"
+  },
+  "dc815e534921": {
+    "source": "Yes. ECC 200 Data Matrix always includes Reed–Solomon error correction, so a scuffed or partly covered code can still be read.",
+    "text": "はい。ECC 200のData Matrixには常にReed–Solomon誤り訂正が含まれているため、擦れたり一部が隠れたりしたコードでも読み取れる場合があります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.2.answer"
+  },
+  "9c37c845e0b6": {
+    "source": "Free EAN-8 Barcode Generator",
+    "text": "無料のEAN-8バーコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.title"
+  },
+  "22d56fe4901b": {
+    "source": "Make an EAN-8 barcode for packs too small for an EAN-13. Type 7 digits and the check digit is added, or 8 to have it checked. SVG, PDF, EPS and PNG.",
+    "text": "EAN-13では大きすぎる小さなパッケージ向けに、EAN-8バーコードを作成できます。7桁を入力するとチェックデジットが追加され、8桁を入力すると検証されます。SVG、PDF、EPS、PNGに対応しています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.metaDescription"
+  },
+  "dfef763e539b": {
+    "source": "EAN-8 is the short retail barcode for packs too small to fit an EAN-13, such as a lipstick or a pack of gum. Type 7 digits and the check digit is added, or all 8 to have it checked.",
+    "text": "EAN-8は、口紅やガムのパッケージなど、EAN-13が収まらない小さな商品向けの短い小売用バーコードです。7桁を入力するとチェックデジットが追加され、8桁すべてを入力すると検証されます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.intro"
+  },
+  "a0be1a284394": {
+    "source": "Small retail items where an EAN-13 would cover too much of the pack. Checkout scanners read it like any EAN.",
+    "text": "EAN-13ではパッケージの多くを占めてしまう小さな小売商品に使われます。レジのスキャナーでは、他のEANと同じように読み取れます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.usedFor.0"
+  },
+  "852edb3101a6": {
+    "source": "EAN-8 numbers starting with 0 or 2 are kept for use inside a store or company, like EAN-13 numbers starting with 2.",
+    "text": "0または2で始まるEAN-8の番号は、EAN-13の2で始まる番号と同様に、店舗内や社内での利用のために確保されています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.usedFor.1"
+  },
+  "a56cca56e15d": {
+    "source": "Where do EAN-8 numbers come from?",
+    "text": "EAN-8の番号はどこで取得できますか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.title"
+  },
+  "022aabdb2cf3": {
+    "source": "From GS1, one at a time: GS1 organizations issue EAN-8 numbers (GTIN-8) individually, only for products that are too small for an EAN-13. You can't shorten an EAN-13 into one.",
+    "text": "GS1から1つずつ発行されます。EAN-8の番号（GTIN-8）は、EAN-13では大きすぎる商品に限り、GS1の各国組織が個別に発行します。EAN-13を短縮してEAN-8にすることはできません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.paragraphs.0"
+  },
+  "18362e5c5ba2": {
+    "source": "Ask your GS1 organization whether your product qualifies; often a smaller EAN-13 at 80% fits.",
+    "text": "商品が対象になるかどうかは、お住まいの国のGS1組織にご確認ください。80%に縮小したEAN-13で収まることも多くあります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.paragraphs.1"
+  },
+  "5f6754508a7a": {
+    "source": "Digits only. Seven digits get the check digit added, eight have it checked.",
+    "text": "数字のみ使えます。7桁ならチェックデジットが追加され、8桁なら検証されます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.rules.0"
+  },
+  "1fc4802286be": {
+    "source": "The check digit weighs the 7 digits 3, 1, 3… from the right, as in every GS1 number.",
+    "text": "チェックデジットは、すべてのGS1番号と同様に、右から7桁にそれぞれ3、1、3…の重みを掛けて計算します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.rules.1"
+  },
+  "7543d202719e": {
+    "source": "At 100% an EAN-8 is 26.73 mm wide with its quiet zones, with a 0.33 mm module; GS1 allows 80% to 200%.",
+    "text": "100%のEAN-8は、クワイエットゾーンを含めて幅26.73 mm、モジュール幅は0.33 mmです。GS1では80%から200%までが認められています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.sizing.0"
+  },
+  "ef03a8fd06a1": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%, with 7 modules of quiet zone each side, the minimum.",
+    "text": "ベクター形式のダウンロードでは、モジュール幅0.353 mm（約107%）を使用し、クワイエットゾーンは最小の左右各7モジュールです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.sizing.1"
+  },
+  "6436dfdfcff8": {
+    "source": "Can I use an EAN-8 instead of an EAN-13 to save space?",
+    "text": "省スペースのために、EAN-13の代わりにEAN-8を使えますか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.0.question"
+  },
+  "489cb7578ef3": {
+    "source": "Only with an EAN-8 number from GS1. Check first whether an EAN-13 at 80% fits your pack: it's only 29.83 mm wide.",
+    "text": "GS1から発行されたEAN-8の番号がある場合に限ります。まず、80%のEAN-13がパッケージに収まるかご確認ください。幅は29.83 mmしかありません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.0.answer"
+  },
+  "90586fd9db16": {
+    "source": "Is EAN-8 the same as UPC-E?",
+    "text": "EAN-8とUPC-Eは同じですか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.1.question"
+  },
+  "97c04b6e9b42": {
+    "source": "No. Both are short retail barcodes, but a UPC-E is a shortened UPC-A number, while an EAN-8 is a separate 8-digit number issued by GS1.",
+    "text": "いいえ。どちらも短い小売用バーコードですが、UPC-EはUPC-Aの番号を短縮したものです。一方、EAN-8はGS1が発行する独立した8桁の番号です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.1.answer"
+  },
+  "762d7b6e125a": {
+    "source": "Free UPC-E Barcode Generator",
+    "text": "無料のUPC-Eバーコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.title"
+  },
+  "8a7652037d23": {
+    "source": "Make a UPC-E barcode, the short UPC for small packs. Enter 6 to 8 digits, or a 12-digit UPC-A and see whether it can be shortened. SVG, PDF and PNG. Free.",
+    "text": "小さなパッケージ向けの短縮版UPC、UPC-Eバーコードを作成できます。6〜8桁の数字、または12桁のUPC-Aを入力すると、短縮できるかどうかも確認できます。SVG、PDF、PNGに対応。無料です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.metaDescription"
+  },
+  "87d0f6288170": {
+    "source": "UPC-E is a UPC-A number with its zeros squeezed out, for packs too small for a full UPC-A. Enter the 6 to 8 digits of a UPC-E, or paste a 12-digit UPC-A and the generator tells you whether it can be shortened.",
+    "text": "UPC-Eは、UPC-Aの番号からゼロを省いたもので、UPC-Aをそのまま印刷するには小さすぎるパッケージ向けです。UPC-Eの6〜8桁を入力するか、12桁のUPC-Aを貼り付けると、短縮できるかどうかをジェネレーターがお知らせします。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.intro"
+  },
+  "643f84ea2269": {
+    "source": "Small products sold in the US and Canada: cans, candy bars, cosmetics. Its bars take 51 modules, against 95 for a UPC-A.",
+    "text": "米国とカナダで販売される小さな商品に使われます。缶、キャンディーバー、化粧品などです。バーの幅はUPC-Aの95モジュールに対し、51モジュールです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.usedFor.0"
+  },
+  "c1dead3e7b71": {
+    "source": "Scanners expand it back to the full UPC-A, so stores see the same number either way.",
+    "text": "スキャナーはUPC-Eを完全なUPC-Aに展開して読み取るため、店舗ではどちらの形式でも同じ番号として扱われます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.usedFor.1"
+  },
+  "1ea76911ccb3": {
+    "source": "Can my UPC-A be shortened?",
+    "text": "UPC-Aは短縮できますか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.title"
+  },
+  "c4aeb8b7a592": {
+    "source": "Only some can. The number must start with 0 or 1 and have zeros in the right places: a manufacturer number ending in 000, 100 or 200 with an item number of 00000 to 00999, ending in 00 with 00000 to 00099, ending in 0 with 00000 to 00009, or any manufacturer number with an item number of 00005 to 00009.",
+    "text": "短縮できるのは一部の番号だけです。番号は0または1で始まり、ゼロが所定の位置に並んでいる必要があります。具体的には、メーカー番号が000、100、200で終わり、商品番号が00000〜00999の場合、メーカー番号が00で終わり、商品番号が00000〜00099の場合、メーカー番号が0で終わり、商品番号が00000〜00009の場合、またはメーカー番号を問わず商品番号が00005〜00009の場合です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.paragraphs.0"
+  },
+  "1b23a37b71ba": {
+    "source": "The number itself comes from GS1, as for any UPC-A; GS1 US can tell you whether a UPC-E fits your prefix.",
+    "text": "番号そのものは、他のUPC-Aと同様にGS1が発行します。お持ちのプレフィックスでUPC-Eが使えるかどうかは、GS1 USに確認できます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.paragraphs.1"
+  },
+  "98b0464b7c1a": {
+    "source": "Enter 6 digits (number system 0 is assumed), 7 (number system and six digits; the check digit is added) or 8 (with the check digit, which is checked), or an 11- or 12-digit UPC-A to shorten.",
+    "text": "6桁（数字体系0とみなします）、7桁（数字体系と6桁の数字。チェックデジットは自動で追加されます）、8桁（チェックデジット付き。チェックデジットは検証されます）のいずれか、または短縮したい11桁か12桁のUPC-Aを入力してください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.rules.0"
+  },
+  "cdc343ec0d94": {
+    "source": "The check digit is the check digit of the expanded UPC-A, so the generator expands the number first.",
+    "text": "チェックデジットは展開後のUPC-Aのチェックデジットと同じものです。そのため、ジェネレーターはまず番号を展開します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.rules.1"
+  },
+  "69f10216a359": {
+    "source": "UPC-E follows UPC-A's sizes: a 0.33 mm module at 100%, from 80% to 200%. Keep 9 modules clear on each side.",
+    "text": "UPC-EのサイズはUPC-Aに準じます。100%でモジュール幅は0.33 mm、80%から200%の範囲で使えます。左右にはそれぞれ9モジュール分の余白を確保してください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.sizing.0"
+  },
+  "1394ad5843db": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%.",
+    "text": "ベクター形式のダウンロードでは、モジュール幅0.353 mm（約107%）を使用します。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.sizing.1"
+  },
+  "47c23bea0aca": {
+    "source": "Why does my scanner show 12 digits?",
+    "text": "スキャナーに12桁と表示されるのはなぜですか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.0.question"
+  },
+  "e592565cff00": {
+    "source": "Many readers expand a UPC-E to its UPC-A, and some to the 13-digit EAN. The scan check on this page accepts all of them.",
+    "text": "多くのリーダーはUPC-EをUPC-Aに展開し、13桁のEANに展開するものもあります。このページのスキャン確認では、そのいずれも受け付けます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.0.answer"
+  },
+  "d59cd4e61915": {
+    "source": "My UPC-A can't be shortened. What now?",
+    "text": "UPC-Aを短縮できません。どうすればよいですか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.1.question"
+  },
+  "11c7ae3bc6ce": {
+    "source": "Print the UPC-A, at down to 80% if space is tight, or ask GS1 US for a number that has a UPC-E form.",
+    "text": "スペースが限られている場合は80%まで縮小してUPC-Aを印刷するか、UPC-Eの形式を持つ番号についてGS1 USに問い合わせてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.1.answer"
+  },
+  "28ee7033b2fd": {
+    "source": "Free Code 39 Barcode Generator",
+    "text": "無料のCode 39バーコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.title"
+  },
+  "39b46a51e75b": {
+    "source": "Make a Code 39 barcode with capital letters, digits and - . $ / + %, up to 40 characters, for systems that require it. Scan-checked. SVG, PDF, PNG. Free.",
+    "text": "大文字、数字、- . $ / + % を使った最大40文字のCode 39バーコードを作成できます。必要とするシステム向けです。スキャン確認済み。SVG、PDF、PNGに対応。無料。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.metaDescription"
+  },
+  "44b7033192cf": {
+    "source": "Code 39 is an older barcode for capital letters, digits and a few symbols. Nearly every scanner reads it, and some industries and older systems still require it. Type up to 40 characters, check that it scans and download it.",
+    "text": "Code 39は、大文字、数字、いくつかの記号に対応した従来型のバーコードです。ほぼすべてのスキャナーで読み取れるため、今でも必須とする業界や古いシステムがあります。最大40文字を入力し、スキャンできることを確認してダウンロードしてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.intro"
+  },
+  "f71a84ce9db6": {
+    "source": "Labels in systems that specify it: older automotive and defence labels (LOGMARS), ID badges and legacy inventory systems.",
+    "text": "Code 39を指定しているシステムのラベルに使われます。たとえば、従来の自動車や防衛関連のラベル(LOGMARS)、IDバッジ、旧来の在庫管理システムなどです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.usedFor.0"
+  },
+  "cb6d805d782a": {
+    "source": "If nothing requires Code 39, use Code 128: it holds lowercase letters and makes a shorter barcode for the same text.",
+    "text": "Code 39が必須でない場合は、Code 128をお使いください。小文字も扱え、同じテキストでもバーコードが短くなります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.usedFor.1"
+  },
+  "2e29fdb0b25b": {
+    "source": "Do I need to register a Code 39 barcode?",
+    "text": "Code 39バーコードは登録が必要ですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.numbers.title"
+  },
+  "9bc3f82cafab": {
+    "source": "No. Code 39 carries your own text: serial numbers, part numbers, IDs. There's nothing to license.",
+    "text": "いいえ。Code 39には、シリアル番号、部品番号、IDなど、お客様自身のテキストを入れます。ライセンスは必要ありません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.numbers.paragraphs.0"
+  },
+  "a7b97ec1605c": {
+    "source": "Capital letters A to Z, digits, spaces and - . $ / + %, up to 40 characters. Lowercase letters show an error: use capitals, or Code 128 for mixed case.",
+    "text": "大文字のA～Z、数字、スペース、- . $ / + % を最大40文字まで使えます。小文字を入力するとエラーになります。大文字を使うか、大文字と小文字が混在する場合はCode 128をお使いください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.rules.0"
+  },
+  "ae028fa56f8d": {
+    "source": "Each code is wrapped in start and stop asterisks, which aren't typed or decoded. This generator adds no optional check character, which suits most systems; if yours requires a modulo 43 check, add it to your text yourself.",
+    "text": "各コードの前後には開始と終了のアスタリスクが付きます。入力や読み取り結果には含まれません。このジェネレーターは任意のチェック文字を追加しません。ほとんどのシステムではこれで問題ありません。モジュロ43のチェックが必要な場合は、ご自身でテキストに追加してください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.rules.1"
+  },
+  "c2e9c6b8fe20": {
+    "source": "Each Code 39 character is 13 to 16 modules wide, against Code 128's 11, so the same text makes a wider barcode: ABCDEFGHIJ is 74.4 mm in the downloads, 58.2 mm as Code 128.",
+    "text": "Code 39の1文字の幅は13～16モジュールで、Code 128の11モジュールより広くなります。そのため、同じテキストでもバーコードは幅広になります。ABCDEFGHIJ はダウンロードで74.4 mm、Code 128では58.2 mmです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.sizing.0"
+  },
+  "2fa22b103664": {
+    "source": "Keep 10 modules of blank space each side, and make the bars at least 15% of the length, or 6.35 mm, so they're easy to sweep.",
+    "text": "左右に10モジュール分の余白を確保し、バーの高さは長さの15%以上、または6.35 mm以上にして、読み取りやすくしてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.sizing.1"
+  },
+  "d3267025816c": {
+    "source": "Can Code 39 do lowercase?",
+    "text": "Code 39で小文字は使えますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.0.question"
+  },
+  "edc164ff5baf": {
+    "source": "Only in an extended mode (Full ASCII) that pairs characters, which this generator doesn't offer. Use Code 128 for lowercase.",
+    "text": "文字を組み合わせる拡張モード(Full ASCII)でのみ可能ですが、このジェネレーターでは対応していません。小文字にはCode 128をお使いください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.0.answer"
+  },
+  "349ac715ad13": {
+    "source": "Should I type the asterisks?",
+    "text": "アスタリスクは入力しますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.1.question"
+  },
+  "1eff6819a466": {
+    "source": "No. The start and stop characters are added for you, and the asterisk can't be part of the text.",
+    "text": "いいえ。開始文字と終了文字は自動で追加されます。また、アスタリスクはテキストに含められません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.1.answer"
+  },
+  "d3ff2381a9b5": {
+    "source": "Free PDF417 Barcode Generator",
+    "text": "無料のPDF417バーコードジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.title"
+  },
+  "c59ac66e5fad": {
+    "source": "Make a PDF417 barcode, the stacked 2D code on IDs and boarding passes. Any text up to 1,000 characters, scan-checked in your browser. SVG, PDF and PNG.",
+    "text": "IDカードや搭乗券に使われる積層型2Dコード、PDF417バーコードを作成できます。最大1,000文字の任意のテキストに対応し、ブラウザー上でスキャン確認ができます。SVG、PDF、PNGに対応。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.metaDescription"
+  },
+  "1c50b7e7e107": {
+    "source": "PDF417 is a stacked 2D barcode: rows of small barcodes on top of each other, holding up to about a kilobyte of text. Type your text, check that it scans and download it.",
+    "text": "PDF417は積層型の2Dバーコードで、小さなバーコードの行を何段にも重ね、約1キロバイトまでのテキストを保持できます。テキストを入力し、スキャンできることを確認してダウンロードしてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.intro"
+  },
+  "8d9b782b44c7": {
+    "source": "Driver's licenses and ID cards (US and Canadian licenses carry one on the back), paper boarding passes, shipping documents and forms that carry their data with them.",
+    "text": "運転免許証やIDカード(米国やカナダの免許証では裏面に付いています)、紙の搭乗券、配送書類、データを一緒に持たせる帳票などに使われます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.usedFor.0"
+  },
+  "36975970999d": {
+    "source": "Its wide, short shape fits along the edge of a card or a label, where a square code wouldn't.",
+    "text": "横長で高さが低い形状のため、正方形のコードでは収まらないカードやラベルの端に配置できます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.usedFor.1"
+  },
+  "3255440c1e86": {
+    "source": "Do I need to register a PDF417 barcode?",
+    "text": "PDF417バーコードは登録が必要ですか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.numbers.title"
+  },
+  "58e171f7d6ee": {
+    "source": "No. It holds whatever text you type. Formats such as driver's license data follow their own standards for what goes inside; this generator encodes your text as given.",
+    "text": "いいえ。入力したテキストをそのまま保持します。運転免許証データなどの形式では、中に入れる内容が独自の規格で定められています。このジェネレーターは、入力されたテキストをそのままエンコードします。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.numbers.paragraphs.0"
+  },
+  "356c0ea4f70f": {
+    "source": "Any text, up to 1,000 characters here. A PDF417 has 3 to 90 rows of 1 to 30 data columns and can hold up to 1,850 letters and digits, 2,710 digits or 1,108 bytes.",
+    "text": "任意のテキストを、ここでは最大1,000文字まで使えます。PDF417は3～90行、1～30のデータ列で構成され、英数字は最大1,850文字、数字は2,710桁、バイトは1,108バイトまで保持できます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.rules.0"
+  },
+  "3a03ca95b0f1": {
+    "source": "Error correction is built in, so part of the code can be damaged and still read.",
+    "text": "誤り訂正機能が組み込まれているため、コードの一部が損傷しても読み取れます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.rules.1"
+  },
+  "42004b462490": {
+    "source": "The vector downloads use a 0.353 mm module: the sample text comes out 43.7 × 8.8 mm. Longer text adds rows and columns.",
+    "text": "ベクター形式のダウンロードでは0.353 mmのモジュールを使用します。サンプルテキストでは43.7 × 8.8 mmになります。テキストが長くなると、行と列が増えます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.sizing.0"
+  },
+  "b7915a1b54ea": {
+    "source": "Keep at least 2 modules of blank space around it; the generator starts there.",
+    "text": "周囲に2モジュール以上の余白を確保してください。ジェネレーターは、その余白を付けた状態から始まります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.sizing.1"
+  },
+  "5ddaa2e50aa2": {
+    "source": "Can phones read PDF417?",
+    "text": "スマートフォンでPDF417は読み取れますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.0.question"
+  },
+  "fac7c836707d": {
+    "source": "Many barcode scanner apps can, but the built-in camera apps often don't. It's mostly read by dedicated scanners, such as ID and boarding pass readers.",
+    "text": "対応しているバーコードスキャナーアプリは多くありますが、標準のカメラアプリでは読み取れないことがよくあります。主に、IDや搭乗券の読み取り機などの専用スキャナーで読み取られます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.0.answer"
+  },
+  "d7d62c8d60b8": {
+    "source": "Can I make a driver's license barcode?",
+    "text": "運転免許証のバーコードは作成できますか?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.1.question"
+  },
+  "8abdd2acf2fd": {
+    "source": "Only an issuing authority makes real ones. This generator encodes text you type as a PDF417; it doesn't format license data.",
+    "text": "本物を作成できるのは発行機関のみです。このジェネレーターは、入力したテキストをPDF417としてエンコードするだけで、免許証のデータ形式には対応していません。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.1.answer"
+  },
+  "ac2e3a678b70": {
+    "source": "Free Aztec Code Generator",
+    "text": "無料のAztec Codeジェネレーター",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.title"
+  },
+  "4da66deb316c": {
+    "source": "Make an Aztec code, the 2D code on rail tickets and mobile boarding passes. No quiet zone needed. Any text up to 1,000 characters. SVG, PDF and PNG. Free.",
+    "text": "鉄道チケットやモバイル搭乗券に使われる2DコードのAztec Codeを作成できます。クワイエットゾーンは不要です。最大1,000文字までの任意のテキストに対応し、SVG、PDF、PNGで保存できます。無料です。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.metaDescription"
+  },
+  "7b652e0b6d1c": {
+    "source": "Aztec is a square 2D code that scanners find from the bullseye in its center, so it needs no blank margin around it. Type any text, check that it scans and download it.",
+    "text": "Aztecは正方形の2Dコードで、中央のブルズアイ（二重の同心円状のパターン）をスキャナーが検出するため、周囲に余白を設ける必要がありません。任意のテキストを入力し、スキャンできることを確認してからダウンロードしてください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.intro"
+  },
+  "17b787f04a30": {
+    "source": "Transport tickets, both printed at home and shown on phone screens: many European rail operators use it (the UIC 918-3 ticket standard specifies Aztec), and airlines use it on mobile boarding passes.",
+    "text": "交通チケットに使われます。自宅で印刷したものもスマートフォンの画面に表示したものも対象です。ヨーロッパの多くの鉄道事業者が採用しており（UIC 918-3チケット規格がAztecを規定しています）、航空会社もモバイル搭乗券に使っています。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.usedFor.0"
+  },
+  "156a1333cec2": {
+    "source": "Because it needs no quiet zone, it fits on tickets and screens where space around the code is tight.",
+    "text": "クワイエットゾーンが不要なため、コードの周囲に余裕がないチケットや画面にも収まります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.usedFor.1"
+  },
+  "58e7bffd2604": {
+    "source": "Do I need to register an Aztec code?",
+    "text": "Aztec Codeは登録が必要ですか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.numbers.title"
+  },
+  "680651dada5e": {
+    "source": "No. It holds whatever text you type. Ticketing standards define their own data inside; this generator encodes your text as given.",
+    "text": "いいえ。入力したテキストをそのまま格納できます。チケット関連の規格では内部のデータが独自に定められていますが、このジェネレーターは入力されたテキストをそのままエンコードします。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.numbers.paragraphs.0"
+  },
+  "de7e5ed9bda0": {
+    "source": "Any text, up to 1,000 characters here. Aztec codes range from 15 × 15 cells (compact) to 151 × 151, holding up to 3,832 digits, 3,067 letters or 1,914 bytes.",
+    "text": "任意のテキストで、ここでは最大1,000文字です。Aztec Codeは15 × 15セル（コンパクト）から151 × 151セルまであり、最大3,832桁の数字、3,067文字の英字、または1,914バイトを格納できます。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.rules.0"
+  },
+  "a4f94f3031ce": {
+    "source": "Error correction is built in, so a smudged or partly covered code can still be read.",
+    "text": "誤り訂正機能が組み込まれているため、汚れたり一部が隠れたりしたコードでも読み取れる場合があります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.rules.1"
+  },
+  "208dba1de876": {
+    "source": "The vector downloads draw each cell 0.71 mm square: the sample text comes out 19 mm across with a 2-cell margin. Scale it to suit your ticket or screen.",
+    "text": "ベクター形式のダウンロードでは、各セルを0.71 mm角で描画します。サンプルのテキストでは、2セル分の余白を含めて幅19 mmになります。チケットや画面に合わせて拡大縮小してください。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.sizing.0"
+  },
+  "e462f87b44ca": {
+    "source": "No quiet zone is required, but a little white space helps scanners on busy designs.",
+    "text": "クワイエットゾーンは必須ではありませんが、デザインが複雑な場合は、少し余白があるとスキャナーが読み取りやすくなります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.sizing.1"
+  },
+  "6b27c5af0a95": {
+    "source": "Aztec or QR code?",
+    "text": "AztecとQRコードの違いは？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.0.question"
+  },
+  "20998072733a": {
+    "source": "For links people scan with a phone camera, QR. Aztec is for ticketing and transport systems that ask for it.",
+    "text": "スマートフォンのカメラでスキャンするリンクにはQRコードが向いています。Aztecは、Aztecを指定する発券システムや交通システム向けです。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.0.answer"
+  },
+  "7900c82f28ce": {
+    "source": "Can phones read Aztec codes?",
+    "text": "スマートフォンでAztec Codeを読み取れますか？",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.1.question"
+  },
+  "34563aee60ca": {
+    "source": "Many scanner apps and ticket gates can. Some built-in camera apps only open QR codes.",
+    "text": "多くのスキャナーアプリや改札機で読み取れます。標準搭載のカメラアプリの中には、QRコードしか開けないものもあります。",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.1.answer"
+  },
+  "d5d3113ff518": {
+    "source": "Batch or lot number",
+    "text": "バッチ番号またはロット番号",
+    "status": "machine",
+    "context": "barcodeFormats.ais.10"
+  },
+  "440af27caf28": {
+    "source": "Production date (YYMMDD)",
+    "text": "製造日（YYMMDD）",
+    "status": "machine",
+    "context": "barcodeFormats.ais.11"
+  },
+  "c548a1a3adfb": {
+    "source": "Best before date (YYMMDD)",
+    "text": "賞味期限（YYMMDD）",
+    "status": "machine",
+    "context": "barcodeFormats.ais.15"
+  },
+  "a933be6e7b3b": {
+    "source": "Expiry date (YYMMDD)",
+    "text": "有効期限（YYMMDD）",
+    "status": "machine",
+    "context": "barcodeFormats.ais.17"
+  },
+  "f2307baf1c85": {
+    "source": "Serial number",
+    "text": "シリアル番号",
+    "status": "machine",
+    "context": "barcodeFormats.ais.21"
+  },
+  "742a68e45e4a": {
+    "source": "SSCC: the pallet or shipment",
+    "text": "SSCC：パレットまたは出荷単位",
+    "status": "machine",
+    "context": "barcodeFormats.ais.00"
+  },
+  "07aa7c4b2614": {
+    "source": "GTIN of the product or case",
+    "text": "商品またはケースのGTIN",
+    "status": "machine",
+    "context": "barcodeFormats.ais.01"
+  },
+  "1877aad81cac": {
+    "source": "GTIN of the items inside a logistic unit",
+    "text": "物流単位に含まれる商品のGTIN",
+    "status": "machine",
+    "context": "barcodeFormats.ais.02"
+  },
   "bae62bc38cdf": {
     "source": "Link list",
     "text": "リンク集",
@@ -22936,12 +24856,6 @@
     "text": "外食のとき、お店のスタッフに見せられます",
     "status": "machine",
     "context": "templates.medical.variants.allergy-card.description"
-  },
-  "1d393b0081b6": {
-    "source": "PDF",
-    "text": "PDF",
-    "status": "machine",
-    "context": "templates.pdf.label"
   },
   "a9400aaa15f9": {
     "source": "A menu, brochure or manual people can read and download",
@@ -25085,6 +26999,12 @@
     "status": "machine",
     "context": "integrations.entries.google-analytics.description.1"
   },
+  "7494a179ac39": {
+    "source": "QRdx sends GA4's standard page view from the hosted page and nothing else. Visits arrive with the page's own address, on qrdx.dev or your custom domain, so filter by hostname or page path to tell them apart from visits to your site. Expect fewer visits than scans: GA4 only sees visitors who accepted the banner where it's shown, and content blockers often stop its script.",
+    "text": "QRdxは、ホスト型ページからGA4の標準のページビューだけを送信します。訪問データにはそのページ自身のアドレスが付いて届きます。アドレスはqrdx.devか、お客様のカスタムドメインです。そのため、ホスト名またはページパスで絞り込めば、ご自身のサイトへの訪問と見分けられます。訪問数はスキャン数より少なくなる点にご注意ください。GA4が把握できるのは、バナーが表示される場合にそれを承諾した訪問者だけで、コンテンツブロッカーによってスクリプトが止められることも多いためです。",
+    "status": "machine",
+    "context": "integrations.entries.google-analytics.description.2"
+  },
   "cb4aead1a976": {
     "source": "Open your codes",
     "text": "コード一覧を開く",
@@ -25187,6 +27107,12 @@
     "status": "machine",
     "context": "integrations.entries.google-tag-manager.description.1"
   },
+  "7ab236a31186": {
+    "source": "Tag Manager loads only when the page opens on one of your custom domains, never on qrdx.dev: a container can run any script, and qrdx.dev is where people sign in to QRdx. QRdx pushes only the container's start event to the data layer, so trigger your tags on page views or clicks.",
+    "text": "Tag Managerが読み込まれるのは、ページがお客様のカスタムドメインのいずれかで開かれたときだけで、qrdx.devでは読み込まれません。コンテナは任意のスクリプトを実行できるうえ、qrdx.devはQRdxにサインインする場所だからです。QRdxがデータレイヤーに送るのはコンテナの開始イベントだけなので、タグのトリガーにはページビューやクリックを使ってください。",
+    "status": "machine",
+    "context": "integrations.entries.google-tag-manager.description.2"
+  },
   "b2a2822792e6": {
     "source": "Paste your container ID",
     "text": "コンテナIDを貼り付ける",
@@ -25222,6 +27148,12 @@
     "text": "ホスト型ページを開く動的QRコードに、ピクセルID（6〜20桁）を貼り付けてください。同意が必要な地域では、訪問者が同意した後にのみタグが読み込まれます。",
     "status": "machine",
     "context": "integrations.entries.meta-pixel.description.1"
+  },
+  "163f2c4c0763": {
+    "source": "QRdx starts the pixel and sends one PageView, with no other standard events, so build retargeting audiences from PageView on the page's URL. If you've set an allow list in the pixel's traffic permissions, add the hosted page's domain (qrdx.dev or your custom domain), or Meta ignores its events.",
+    "text": "QRdxはピクセルを起動し、PageViewを1件送信します。ほかの標準イベントは送信しません。そのため、リターゲティングオーディエンスは、ページのURLに対するPageViewから作成してください。ピクセルのトラフィック権限で許可リストを設定している場合は、ホスト型ページのドメイン（qrdx.devまたはカスタムドメイン）を追加してください。追加しないと、Metaはそのイベントを無視します。",
+    "status": "machine",
+    "context": "integrations.entries.meta-pixel.description.2"
   },
   "c6052142b8ab": {
     "source": "Paste your pixel ID",
@@ -25259,6 +27191,12 @@
     "status": "machine",
     "context": "integrations.entries.tiktok-pixel.description.1"
   },
+  "3af69b222205": {
+    "source": "QRdx loads the pixel and sends a page view, nothing else. Paste the pixel ID shown in TikTok Events Manager, a string of capital letters and digits, not your ad account number, and build a website visitors audience from the page's URL.",
+    "text": "QRdxはピクセルを読み込み、ページビューを送信します。それ以外は送信しません。TikTok Events Managerに表示されるピクセルIDを貼り付けてください。広告アカウント番号ではなく、大文字の英字と数字からなる文字列です。そのうえで、ページのURLからウェブサイト訪問者のオーディエンスを作成します。",
+    "status": "machine",
+    "context": "integrations.entries.tiktok-pixel.description.2"
+  },
   "e90c3d22437b": {
     "source": "In the Tracking pixels panel, enter it in the TikTok Pixel field.",
     "text": "「トラッキングピクセル」パネルの TikTok Pixel 欄に入力してください。",
@@ -25288,6 +27226,12 @@
     "text": "ホスト型ページを開く動的QRコードに、パートナーID（3〜12桁）を貼り付けてください。同意が必要な地域では、訪問者が同意した後にのみタグが読み込まれます。",
     "status": "machine",
     "context": "integrations.entries.linkedin-insight-tag.description.1"
+  },
+  "862b72603506": {
+    "source": "The Insight Tag records a page view when the page loads. Paste only the partner ID from Campaign Manager, not the tag's script. LinkedIn only serves ads to a matched audience of at least 300 members, so the scans of one code at a small event may not be enough to retarget on their own.",
+    "text": "Insight Tagは、ページの読み込み時にページビューを記録します。貼り付けるのはCampaign Managerのパートナー IDだけで、タグのスクリプトは貼り付けないでください。LinkedInが広告を配信するのは、一致したメンバーが300人以上のオーディエンスに限られます。そのため、小規模なイベントで1つのコードをスキャンしただけでは、それだけでリターゲティングするには足りない場合があります。",
+    "status": "machine",
+    "context": "integrations.entries.linkedin-insight-tag.description.2"
   },
   "f6b7f5b122cf": {
     "source": "Paste your partner ID",
@@ -27881,11 +29825,35 @@
     "status": "machine",
     "context": "mcp.tools.14.description"
   },
-  "1385eac80167": {
-    "source": "Do I need an account or an API key?",
-    "text": "アカウントやAPIキーは必要ですか？",
+  "f963ece25fc7": {
+    "source": "Can Claude make a QR code?",
+    "text": "ClaudeでQRコードを作れますか？",
     "status": "machine",
     "context": "mcp.faqs.0.question"
+  },
+  "e405a7b49b69": {
+    "source": "Yes, with the QRdx MCP server connected. A language model can't work out a QR code's pattern in its head, so a code it draws on its own rarely scans. Connected to QRdx, Claude calls a tool that renders a real, standard code and shows it in the chat. Add the server URL as a custom connector in Claude, or run the claude mcp add command in Claude Code; ChatGPT, Cursor and VS Code connect the same way.",
+    "text": "はい、QRdx MCPサーバーに接続すれば作れます。言語モデルはQRコードのパターンを頭の中で計算できないため、自力で描いたコードはスキャンできないことがほとんどです。QRdxに接続すると、Claudeは標準規格に沿った本物のコードを生成するツールを呼び出し、チャット内に表示します。ClaudeではサーバーURLをカスタムコネクタとして追加し、Claude Codeではclaude mcp addコマンドを実行してください。ChatGPT、Cursor、VS Codeも同じ方法で接続できます。",
+    "status": "machine",
+    "context": "mcp.faqs.0.answer"
+  },
+  "5e42c847e755": {
+    "source": "Is the QRdx MCP server free?",
+    "text": "QRdx MCPサーバーは無料ですか？",
+    "status": "machine",
+    "context": "mcp.faqs.1.question"
+  },
+  "4f4d4e882c64": {
+    "source": "Yes. It's free and open source, and designing, rendering and checking codes needs no account. The codes it makes are static, so they never expire and have no scan limits.",
+    "text": "はい、無料のオープンソースで、コードのデザイン、生成、チェックにアカウントは不要です。作成されるコードは静的QRコードのため、有効期限もスキャン数の上限もありません。",
+    "status": "machine",
+    "context": "mcp.faqs.1.answer"
+  },
+  "770c0287a6f5": {
+    "source": "Does it need an API key?",
+    "text": "APIキーは必要ですか？",
+    "status": "machine",
+    "context": "mcp.faqs.2.question"
   },
   "f538f592cdab": {
     "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
@@ -27964,6 +29932,18 @@
     "text": "リクエストはIPアドレスごとに1分あたり120回まで、design_qr は20回までに制限されています。APIキーを使った呼び出しは、ワークスペースの1日のAPIクォータにも含まれます。データが非常に長いとQRコードに収まらない場合があり、その際はツールがエラーを返し、より低い誤り訂正レベルを提案します。",
     "status": "machine",
     "context": "mcp.faqs.6.answer"
+  },
+  "af62099de2cc": {
+    "source": "Is it in the MCP Registry?",
+    "text": "MCP Registryに登録されていますか？",
+    "status": "machine",
+    "context": "mcp.faqs.9.question"
+  },
+  "0a96e97f871b": {
+    "source": "Yes. The hosted server is listed in the official MCP Registry as io.github.bucharitesh/qrdx, so apps and directories that read the registry can find it there.",
+    "text": "はい。ホスト型サーバーは公式のMCP Registryにio.github.bucharitesh/qrdxとして登録されているため、レジストリを参照するアプリやディレクトリから見つけることができます。",
+    "status": "machine",
+    "context": "mcp.faqs.9.answer"
   },
   "1e72db2bad7f": {
     "source": "Can I run it myself?",
@@ -28612,5 +30592,41 @@
     "text": "QRdxは、プロンプト、参照画像、生成された画像を保存せず、クレジットの消費数だけを記録します。プロンプト、QRコード画像、参照画像は、アートワークを作成するためにVercel AI Gateway経由でOpenAIのGPT Image 2に送信され、結果はそのままブラウザに返されます。残したい画像はダウンロードしてください。",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
+  },
+  "82ec64b16a5d": {
+    "source": "No, the details are inside the code. To have one code that always shows your current details, host your contact page online and point a URL code, or a dynamic code from your dashboard, at it.",
+    "text": "いいえ、情報はコードの中に入っています。常に最新の情報を表示する1つのコードにしたい場合は、連絡先ページをオンラインで公開し、そのページへURLコードか、ダッシュボードの動的QRコードを向けてください。",
+    "status": "machine",
+    "context": "qrTypes.types.vcard.faqs.3.answer"
+  },
+  "0d6bfccc8412": {
+    "source": "QR code menus",
+    "text": "QRコードメニュー",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.title"
+  },
+  "6d942ed73962": {
+    "source": "QR Code Menus: Digital Menus You Can Edit Anytime",
+    "text": "QRコードメニュー：いつでも編集できるデジタルメニュー",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.seoTitle"
+  },
+  "fae1e9f4d921": {
+    "source": "Create a QR code menu you can update without reprinting: hosted menu pages with prices, photos, allergens and sold-out items, plus table sizes and tips.",
+    "text": "再印刷なしで更新できるQRコードメニューを作成できます。価格、写真、アレルゲン、売り切れ表示に対応したホスト型ページに加え、テーブルでのサイズや印刷のコツも紹介します。",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.metaDescription"
+  },
+  "803094d083d9": {
+    "source": "A QR code menu is only as good as what it opens. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm. A hosted menu page behind a dynamic code can do both: edit an item from your phone and every table sees it on the next scan.",
+    "text": "QRコードメニューの良し悪しは、開いた先の内容で決まります。PDFにリンクした静的QRコードは、初日は問題なく見えても、ファイル名が変わるとリンク切れになり、サーモンが午後8時に売り切れたことも表示できません。動的QRコードの先にあるホスト型ページなら、どちらも可能です。スマートフォンから品目を編集すれば、次のスキャンですべてのテーブルに反映されます。",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.intro.0"
+  },
+  "1385eac80167": {
+    "source": "Do I need an account or an API key?",
+    "text": "アカウントやAPIキーは必要ですか？",
+    "status": "machine",
+    "context": "mcp.faqs.0.question"
   }
 }

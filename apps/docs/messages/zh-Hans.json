@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteTitle": "免费二维码生成器与动态二维码 | QRdx",
-    "siteDescription": "无限制免费生成二维码，支持添加标志、颜色和图案，无需注册，无水印。还提供可编辑的动态二维码、托管页面和扫描分析。开源。",
+    "siteTitle": "QRdx：支持 Logo 和动态码的免费二维码生成器",
+    "siteDescription": "免费开源的二维码生成器：可无限生成带 Logo、颜色和边框的二维码，无需注册，无水印。另有动态二维码和扫描分析。",
     "ogImageAlt": "QRdx：免费二维码生成器，提供动态二维码、托管页面和扫描分析"
   },
   "nav": {
@@ -76,6 +76,14 @@
       "mcp": {
         "name": "MCP 服务器",
         "description": "在 Claude、ChatGPT 或 Cursor 中生成二维码"
+      },
+      "qrCodeApi": {
+        "name": "免费二维码 API",
+        "description": "一个 URL 即可生成二维码图片，无需密钥或注册"
+      },
+      "nextjs": {
+        "name": "Next.js 指南",
+        "description": "在服务端组件和客户端组件中使用二维码"
       },
       "imageApi": {
         "name": "Image API",
@@ -184,10 +192,15 @@
       "scanChecker": "扫描检测",
       "printSize": "打印尺寸计算器",
       "barcode": "条形码生成器",
+      "pdfQr": "PDF 二维码",
+      "businessCard": "电子名片",
+      "menuQr": "菜单二维码",
       "scanner": "二维码扫描器",
       "allTools": "全部工具",
       "docs": "文档",
       "apiReference": "API 参考",
+      "qrCodeApi": "免费二维码 API",
+      "nextjs": "Next.js 指南",
       "imageApi": "Image API",
       "mcp": "MCP 服务器",
       "shadcn": "shadcn/ui 注册表",
@@ -867,7 +880,11 @@
       "bulkTitle": "需要上百个二维码？使用批量生成器",
       "bulkDescription": "上传 CSV 文件，即可将所有二维码以 PNG、WebP 或 SVG 格式打包成一个 ZIP 文件下载，全程在浏览器中生成。",
       "printTitle": "要打印二维码？先确认尺寸",
-      "printDescription": "根据扫描距离和二维码包含的数据量，计算最小打印尺寸。"
+      "printDescription": "根据扫描距离和二维码包含的数据量，计算最小打印尺寸。",
+      "hostedTitle": "打开可编辑页面的二维码",
+      "hostedDescription": "这些二维码会打开由 QRdx 为你托管的移动端页面，印刷之后仍可修改内容并查看扫描情况。需要注册免费账户。",
+      "menuTitle": "菜单二维码生成器",
+      "menuDescription": "包含价格、照片、过敏原和售罄标记的菜单页面，用手机即可编辑。"
     },
     "type": {
       "title": "免费{name}二维码生成器",
@@ -879,7 +896,28 @@
       "faqTitle": "{name}二维码常见问题",
       "related": "相关二维码生成器",
       "allTypes": "全部 {count, number} 种类型",
-      "relatedCard": "{name}二维码"
+      "relatedCard": "{name}二维码",
+      "hostedCard": "{name}二维码（托管页面）"
+    },
+    "hosted": {
+      "demo": "查看示例页面",
+      "accountNote": "需要免费的 QRdx 账户。免费版包含 {pages, number} 个托管页面。",
+      "featuresTitle": "扫描后用户看到的内容",
+      "editTitle": "印刷后也能修改",
+      "guarantee": "无论你的套餐发生什么变化，二维码都能继续使用，这就是 <link>Never-Hostage 保障</link>。",
+      "plansTitle": "各套餐的限制",
+      "plansCaption": "免费版、Pro 和 Business 套餐的{name}页面限制",
+      "colLimit": "限制",
+      "rowPages": "托管页面",
+      "rowDynamic": "动态二维码",
+      "rowFile": "单个文件上限",
+      "rowStorage": "文件存储",
+      "rowBadge": "“Made with QRdx”页脚",
+      "unlimited": "不限",
+      "badgeShown": "显示",
+      "badgeRemoved": "已移除",
+      "plansNote": "每个页面会占用套餐中的一个动态二维码名额。限制只会阻止你创建新页面。<pricing>查看价格</pricing>或<docs>阅读文档</docs>。",
+      "staticLink": "打开{name}二维码生成器"
     }
   },
   "typeGenerator": {
@@ -957,6 +995,8 @@
       "dynamicLink": "创建动态二维码",
       "badgePage": "托管页面 · 可编辑，可追踪",
       "pageLink": "查看在线模板",
+      "pageGeneratorLink": "了解工作原理",
+      "guidesTitle": "指南与工具",
       "typesTitle": "该用哪种二维码",
       "typesDescription": "静态二维码免费且无需账号，但印刷后无法更改。动态二维码和托管页面可随时编辑，统计每一次扫描，并且在所有套餐中都能持续使用，即使您取消订阅也一样。",
       "sizingTitle": "打印多大合适",
@@ -1018,12 +1058,20 @@
       }
     },
     "bulk": {
-      "metaTitle": "免费 CSV 二维码批量生成器",
-      "metaDescription": "通过 CSV 文件最多生成 {rows, number} 个二维码,并以 PNG 或 SVG 格式打包下载。支持自定义样式和文件名,全程在浏览器中运行。",
+      "metaTitle": "免费 CSV 批量二维码生成器：自定义样式，支持 SVG，无需上传",
+      "metaDescription": "将 CSV 转换为最多 {rows, number} 个自定义样式的二维码，并以 ZIP 压缩包下载 PNG、WebP 或 SVG 文件。在浏览器中运行：无需上传、无需注册、无水印。附示例 CSV。",
       "crumb": "批量生成器",
       "title": "二维码批量生成器",
-      "intro1": "一次把电子表格变成成百上千个二维码:商品标签、活动门票、资产标签、桌号或个性化邮寄资料都适用。上传 CSV 文件,匹配列,选择样式,即可将所有二维码以 PNG、WebP 或 SVG 格式打包下载。",
-      "intro2": "所有操作都在浏览器中完成。CSV 文件不会被上传,无需注册,没有水印,也不按二维码数量收费。",
+      "intro1": "一次性把 CSV 文件变成数千个二维码，样式随你设定，并以 ZIP 压缩包下载 PNG、WebP 或 SVG 文件。每行对应一个二维码，文件名取自某一列：适用于产品标签、活动门票、资产标签、桌号或邮寄物料。",
+      "intro2": "全部在浏览器中运行，CSV 不会被上传，也无需注册，没有水印，不按二维码数量收费。不确定格式怎么写？可以从示例 CSV 开始。",
+      "facts": {
+        "rows": "每个文件最多 {rows, number} 行",
+        "styled": "你的颜色、形状和 logo",
+        "svg": "适合印刷的 SVG",
+        "browser": "在浏览器中运行"
+      },
+      "cliLink": "CLI 中的 qrdx batch",
+      "apiLink": "免费二维码 API",
       "toolLabel": "二维码批量生成器",
       "howTitle": "使用方法",
       "steps": {
@@ -1052,10 +1100,14 @@
         "howManyAnswer": "每个文件最多 {rows, number} 行；如需更多，可拆分 CSV，或使用 CLI 的 qrdx batch 命令，该命令没有数量限制。在笔记本电脑上，一个 512 px 的 PNG 大约需要 20 毫秒，因此完整的 {rows, number} 行需要几分钟。更大的 PNG 耗时更长，文件也更大，所以除非有需要，请选择 512 px。",
         "rowQuestion": "每行可以包含什么内容？",
         "rowAnswer": "只要不超过二维码的容量上限，任何文本都可以：链接、纯文本，或 WIFI:...、mailto:...、tel:...、BEGIN:VCARD 等格式的内容。内容会与单元格中的文字完全一致地进行编码。",
+        "excelQuestion": "可以使用 Excel 或 Google Sheets 文件吗？",
+        "excelAnswer": "请先另存为 CSV。在 Excel 中，依次选择“文件”“另存为”“CSV UTF-8”；在 Google Sheets 中，依次选择“文件”“下载”“逗号分隔值”。分隔符可以使用逗号或分号，第一行可以是列名。",
         "staticQuestion": "生成的二维码是静态的还是动态的？",
         "staticAnswer": "静态。每个二维码直接包含对应行的内容，可离线使用，永不过期，但印刷后无法修改。如需可编辑且带扫描统计的二维码，请在 QRdx 控制台中创建动态二维码。",
         "namesQuestion": "文件名重复或无效时会怎样？",
-        "namesAnswer": "文件名中不允许的字符会替换为连字符，重复的名称会加上数字后缀（menu.png、menu-2.png），因此不会覆盖任何文件。"
+        "namesAnswer": "文件名中不允许的字符会替换为连字符，重复的名称会加上数字后缀（menu.png、menu-2.png），因此不会覆盖任何文件。",
+        "codeQuestion": "可以通过代码批量生成二维码吗？",
+        "codeAnswer": "可以。QRdx CLI 的 qrdx batch 命令会为 CSV 文件的每一行生成一个二维码，不限行数；免费二维码 API 则会为你构造的任意 URL 返回一张图片，无需密钥。"
       },
       "generator": {
         "errorTooMuch": "数据量过大，一个二维码放不下",
@@ -1540,11 +1592,48 @@
     "whichTitle": "我该用哪种条形码？",
     "whichDescription": "在商店销售？请使用零售商要求的类型：EAN-13 几乎通用，UPC-A 用于美国和加拿大，两者都带有 GS1 分配的 GTIN。向他们发货？纸箱用 ITF-14，物流标签用 GS1-128。给自己的物品贴标？用 Code 128。",
     "linear": "一维码",
+    "formatCard": "{name} 条形码生成器",
     "printingEyebrow": "打印",
     "tipsTitle": "让条形码顺利扫描的小贴士",
     "tipsDescription": "条形码是静态的：号码或文字就在条纹里，因此可离线使用，永不过期，也没有扫描统计。需要让人用手机扫描的链接？请使用<generators>二维码生成器</generators>。要读取条形码，请打开<scanner>扫描器</scanner>。",
     "credits": "条形码由 <bwip>bwip-js</bwip>（MIT 许可证）绘制，扫描检查使用编译为 WebAssembly 的 <zxing>ZXing</zxing>，首次运行时会从 jsDelivr CDN 下载。",
     "faqTitle": "条形码生成器常见问题"
+  },
+  "barcodeFormat": {
+    "toolLabel": "{name} 条形码生成器",
+    "usedTitle": "{name} 条形码的应用场景",
+    "rulesTitle": "{name} 的输入内容与校验位",
+    "rulesTitleText": "{name} 可以编码什么",
+    "takesLabel": "输入要求",
+    "exampleLabel": "示例",
+    "checkTitle": "{body} 的校验位计算过程",
+    "checkTitleUpce": "UPC-E {upce} 即 UPC-A {upca}：其校验位的计算过程",
+    "checkCaption": "{body} 的每位数字及其权重和乘积",
+    "checkDigits": "数字",
+    "checkWeights": "权重",
+    "checkProducts": "乘积",
+    "checkSum": "乘积之和为 {sum, number, ::group-off}。{check, plural, =0 {这已经是 10 的倍数，所以校验位为 0。} other {加上 # 后得到 {next, number, ::group-off}，即下一个 10 的倍数，所以校验位为 #。}}",
+    "sizeTitle": "{name} 条形码尺寸",
+    "sizeCaption": "{name} 示例在生成器默认设置下的尺寸",
+    "sizeDownload": "示例（SVG、PDF 或 EPS）",
+    "sizeMm": "{width, number} × {height, number} 毫米",
+    "sizeModule": "模块（最窄的条）",
+    "sizeCell": "单元格",
+    "sizeModuleValue": "{size, number} 毫米",
+    "sizeBarHeight": "条高",
+    "sizeQuietZone": "空白区",
+    "quietModules": "{min, plural, =0 {无最低要求} other {至少 # 个模块}}，两侧各留；生成器默认从 {start, number} 开始",
+    "quietCells": "{min, plural, =0 {无最低要求} other {至少 # 个单元格}}，四周均留；生成器默认从 {start, number} 开始",
+    "apiTitle": "{name} 条形码 API",
+    "apiDescription": "同一个条形码就是一个图片 URL，无需 API 密钥：可放进 img 标签、标签模板或商品数据源。它会像本页一样校验输入的值，每个 IP 地址每分钟允许 300 次请求。<docs>条形码 API 文档</docs>列出了所有选项。",
+    "apiSvg": "SVG 图片",
+    "apiPng": "PNG，每模块 3 像素",
+    "apiHtml": "在网页中使用",
+    "faqTitle": "{name} 条形码常见问题",
+    "otherTitle": "其他条形码类型",
+    "allFormats": "全部 {count, number} 种条形码类型",
+    "otherCard": "{name} 条形码生成器",
+    "qrNote": "条形码是静态的：数据就在条纹中，因此可离线使用，且永不过期。如果是供人用手机摄像头扫描的链接，请使用<generators>二维码生成器</generators>。"
   },
   "barcodeTool": {
     "pickColor": "选择{label}",
@@ -1676,6 +1765,7 @@
   },
   "integrations": {
     "metaTitle": "集成",
+    "searchTitle": "二维码集成：{first}、{second}等 {count, number} 项",
     "metaDescription": "将 QRdx 连接到 {names} 等工具：共 {count, number} 个集成，附详细设置步骤。",
     "hero": {
       "eyebrow": "集成",
@@ -1830,9 +1920,15 @@
     "howEyebrow": "使用方式",
     "howTitle": "三步设置，之后只管提问",
     "howDescription": "你的助手会替你调用 QRdx 工具，你无需接触任何 API。",
+    "setupEyebrow": "设置",
+    "setupTitle": "将 QRdx 添加到你的应用",
+    "setupDescription": "Claude 和 ChatGPT 将服务器 URL 作为自定义连接器使用。Claude Code、Cursor 和 VS Code 只需一条命令或几行配置。只能运行本地服务器的应用可通过 mcp-remote 连接。",
+    "setupUrl": "服务器 URL",
     "toolsEyebrow": "工具",
     "toolsTitle": "你的助手可以调用什么",
     "toolsDescription": "共 {count, number} 个工具。除 save_template 和 save_barcode 外，其余均为只读，无需密钥：它们可以渲染图片、格式化文本并读取公开社区内容。完整参数请见 <link>MCP 服务器文档</link>。",
+    "toolNoKey": "无需密钥",
+    "toolNeedsKey": "需要 API 密钥",
     "faqTitle": "MCP 服务器常见问题",
     "connect": {
       "copyFailed": "复制失败，请选中文本后手动复制。",
@@ -1932,6 +2028,149 @@
           }
         }
       }
+    }
+  },
+  "qrCodeApi": {
+    "metaTitle": "免费二维码 API：无需密钥，支持 SVG、PNG 和 Logo",
+    "metaDescription": "免费的二维码 API，无需密钥，无需注册。一个 URL 即可返回 SVG、PNG、WebP 或 EPS 格式的二维码，可自定义颜色、形状并添加 Logo。每分钟 {perMinute, number} 次请求，缓存一年。",
+    "crumb": "二维码 API",
+    "title": "免费二维码 API",
+    "intro1": "只要能放 URL 的地方，就能放二维码。向 api.qrdx.dev 发送一个 GET 请求，即可直接返回图片：无需账号，无需 API 密钥，无需 SDK。颜色、形状、纠错等级和 Logo 都写在查询字符串里。",
+    "intro2": "它使用与 QRdx Playground 相同的开源引擎绘制。相同的查询始终返回相同的字节，因此响应会缓存一年，放在 README、邮件或网页中的图片在首次请求之后都由缓存提供。",
+    "facts": {
+      "noKey": "无需密钥或注册",
+      "rateLimit": "每个 IP 每分钟 {perMinute, number} 次请求",
+      "formats": "SVG、PNG、WebP 和 EPS",
+      "openSource": "开源"
+    },
+    "docs": "Image API 文档",
+    "restDocs": "动态二维码的 REST API",
+    "builderEyebrow": "立即试用",
+    "builderTitle": "生成二维码 URL",
+    "builderDescription": "在左侧随意调整，预览即为实时 API 的结果。满意后，可复制 URL、HTML 或 curl 命令。",
+    "builder": {
+      "label": "二维码 API URL 生成器",
+      "data": "文本或 URL",
+      "format": "格式",
+      "size": "尺寸",
+      "sizePixels": "{size, number} px",
+      "sizePoints": "宽 {size, number} pt",
+      "fg": "二维码颜色",
+      "bg": "背景色",
+      "pickColor": "选择{label}",
+      "body": "模块形状",
+      "level": "纠错等级",
+      "logo": "Logo 图标",
+      "logoNone": "无",
+      "logoNote": "添加 Logo 后，如有需要，二维码会自动切换到纠错等级 H，确保仍可扫描。",
+      "previewAlt": "{value} 的二维码",
+      "epsPreview": "EPS 是印刷文件，所以预览显示的是同一个二维码的 SVG 版本。",
+      "empty": "输入要编码的文字或链接。",
+      "tooLong": "超过了 API 的上限 {max, number} 个字符。",
+      "loadFailed": "预览未能加载。如果你连续多次修改，请等待一分钟：API 每分钟允许 {perMinute, number} 次请求。",
+      "url": "图片 URL",
+      "html": "HTML",
+      "markdown": "Markdown",
+      "curl": "curl",
+      "open": "打开图片"
+    },
+    "examplesEyebrow": "示例",
+    "examplesTitle": "URL 就是图片",
+    "examplesDescription": "把它粘贴到 Markdown、img 标签或邮件模板中，也可以用 curl 下载文件。数据中含有和号、井号、加号或空格时，请用 encodeURIComponent（或你所用语言中的对应方法）进行编码。",
+    "examples": {
+      "markdown": "Markdown",
+      "html": "HTML",
+      "curl": "终端",
+      "js": "JavaScript"
+    },
+    "paramsEyebrow": "参考",
+    "paramsTitle": "参数",
+    "paramsDescription": "所有参数都放在查询字符串中。渐变、自定义边框和各个定位点的颜色放在 style 中，即 JSON 格式的编辑器设计；<link>Image API 文档</link>涵盖了每个字段。",
+    "paramsHeader": {
+      "name": "参数",
+      "default": "默认值",
+      "description": "作用"
+    },
+    "paramsRequired": "必填",
+    "paramsNone": "无",
+    "params": {
+      "data": "要编码的文字或 URL，最多 {max, number} 个字符。",
+      "size": "宽度和高度，单位为像素，范围 {min, number} 到 {max, number}。EPS 则表示以点为单位的宽度。",
+      "format": "svg、png、webp（无损）或 eps（矢量，适合印刷）。",
+      "colors": "二维码和背景颜色，使用十六进制，不带 #（155dfc）。bg=00000000 可使背景透明。",
+      "shapes": "模块、角上的定位点以及其中圆点的形状：共 {count, number} 种模块形状。",
+      "level": "纠错级别：L（7%）、M（15%）、Q（25%）或 H（30%）的二维码内容受损后仍可扫描。",
+      "margin": "二维码周围的空白区（静区），以模块为单位，范围为 0 到 {max, number}。",
+      "logoIcon": "放在中央的徽标：可以是 wifi、link、phone 等快捷图标，也可以按 Simple Icons 的 slug 选用 {brands} 个品牌徽标中的任意一个。",
+      "frame": "行动号召边框，例如 banner-bottom，并以 frameText 作为其标签文字。",
+      "style": "编辑器的完整设计，以 JSON 表示：渐变、自定义边框、各定位点颜色和徽标布局。"
+    },
+    "limitsEyebrow": "生产环境",
+    "limitsTitle": "限制、缓存与隐私",
+    "limits": {
+      "rateTitle": "每个 IP 每分钟 {perMinute, number} 次请求",
+      "rateBody": "超出限制时会返回 429 和 Retry-After 响应头。相同的 URL 由缓存直接提供，因此重复显示同一张图片很少会触及限制。",
+      "cacheTitle": "缓存一年",
+      "cacheBody": "相同的查询，相同的字节。响应附带 Cache-Control: public, max-age=31536000, immutable，浏览器和 CDN 都会保留。社区作品的渲染结果缓存 5 分钟，因为该作品可能会变化。",
+      "corsTitle": "可在任何网站使用",
+      "corsBody": "响应允许所有来源（Access-Control-Allow-Origin: *），因此浏览器端代码既能显示图片，也能获取图片。",
+      "privateTitle": "不要把机密放进 URL",
+      "privateBody": "数据是 URL 的一部分，因此可能出现在服务器日志、浏览器历史记录和缓存中。公开 README 里的 Wi-Fi 密码就是公开的。",
+      "scanTitle": "你要什么，它就画什么",
+      "scanBody": "Image API 不会检查设计能否扫描。请保持较强的对比度，并用手机测试；MCP 服务器的 design_qr 工具会为你检查并修复样式。",
+      "selfHostTitle": "自行托管",
+      "selfHostBody": "该 API 是开源 QRdx 应用的一部分，因此你自己的实例会在你的域名下通过 /api/v1/qr 提供服务。"
+    },
+    "restEyebrow": "静态或动态",
+    "restTitle": "什么时候该改用 REST API",
+    "restDescription": "Image API 生成的是静态二维码：数据就在二维码里，所以永不过期，但印刷后无法更改。如果需要日后可以改指向别处、并带有扫描分析的二维码，请使用 REST API，搭配免费的 API 密钥。",
+    "imageCard": {
+      "title": "Image API",
+      "noKey": "无需密钥或账号",
+      "static": "静态二维码：数据就在图片里",
+      "formats": "SVG、PNG、WebP 和 EPS",
+      "limit": "每个 IP 每分钟 {perMinute, number} 次请求"
+    },
+    "restCard": {
+      "title": "REST API",
+      "key": "免费账号的工作区 API 密钥",
+      "dynamic": "印刷后仍可编辑的动态二维码",
+      "analytics": "扫描分析、文件夹、标签和 Webhook",
+      "free": "免费版包含 {count, number} 个动态二维码，扫描次数不限"
+    },
+    "restLink": "REST API 文档",
+    "quickstartLink": "API 快速入门",
+    "moreTitle": "更多通过代码生成二维码的方式",
+    "more": {
+      "googleChartTitle": "替换 Google Chart 二维码 API",
+      "googleChartBody": "将 chl、chs 和 chld 映射到此 API，只需一条命令即可更改旧的图片 URL。",
+      "mcpTitle": "MCP 服务器",
+      "mcpBody": "让 Claude、ChatGPT 或 Cursor 为你设计并生成二维码，无需密钥。",
+      "barcodeTitle": "条形码 API",
+      "barcodeBody": "支持 EAN-13、UPC-A、Code 128、Data Matrix 等，自带校验位，通过 URL 即可生成。",
+      "cliTitle": "CLI",
+      "cliBody": "在终端或 CI 中生成样式化二维码，并为 CSV 文件的每一行生成一个二维码。",
+      "reactTitle": "React 库",
+      "reactBody": "在 React 和 Next.js 中渲染样式化二维码，服务端或客户端均可。"
+    },
+    "faqTitle": "二维码 API 常见问题",
+    "faq": {
+      "freeQuestion": "是否有无需 API 密钥的免费二维码 API？",
+      "freeAnswer": "有。GET https://api.qrdx.dev/v1/qr?data=… 会返回二维码图片，无需密钥、账号或注册。每个 IP 地址每分钟允许 {perMinute, number} 次请求，相同的 URL 会缓存一年。",
+      "logoQuestion": "二维码 API 可以添加 Logo 吗？",
+      "logoAnswer": "可以。logoIcon 可在中心放置快捷图标（Wi-Fi、链接、电话、电子邮件等），或 Simple Icons 中 {brands} 个品牌标志中的任意一个，无需密钥。当 Logo 需要时，二维码会切换为 H 级纠错，因此仍可扫描。",
+      "formatsQuestion": "它会返回哪些图片格式？",
+      "formatsAnswer": "默认返回 SVG，也可以通过 format=png、webp 或 eps 获得 PNG、无损 WebP 和矢量 EPS。尺寸范围为 {min, number} 到 {max, number} 像素。",
+      "expireQuestion": "二维码会过期吗？",
+      "expireAnswer": "不会。Image API 生成的是静态二维码：你编码的内容就在二维码里，只要其中的链接或文本有效，二维码就能使用。不会过期，也不会统计扫描次数。",
+      "dynamicQuestion": "打印之后还能更改二维码指向的地址吗？",
+      "dynamicAnswer": "Image API 无法做到。你需要动态二维码，可在 QRdx 控制台创建，或使用 REST API 和免费 API 密钥创建。免费版包含 {count, number} 个动态二维码，扫描次数不限。",
+      "googleQuestion": "它可以替代 Google Chart 二维码 API 吗？",
+      "googleAnswer": "可以。修改主机和路径，把 chl 改为 data，把 chs 改为 size（二维码是正方形，所以只需一个数字），并根据 chld 设置 level 和 margin。它不认识的参数，例如 cht 和 choe，会被忽略。完整的对应关系见迁移指南。",
+      "limitQuestion": "超出速率限制会怎样？",
+      "limitAnswer": "你会收到 429 响应，其中的 Retry-After 标头会说明何时可以重试。相同的 URL 会缓存一年，因此访问量大的页面上显示的图片通常来自缓存。",
+      "aiQuestion": "AI 助手可以使用吗？",
+      "aiAnswer": "可以。QRdx MCP 服务器的 generate_qr_code 工具会返回这些图片 URL，没有 MCP 的助手也可以自行把该 URL 写成 Markdown 图片。"
     }
   },
   "ai": {

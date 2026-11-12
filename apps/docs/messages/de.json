@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteTitle": "Kostenloser QR-Code-Generator & dynamische QR-Codes | QRdx",
-    "siteDescription": "Unbegrenzt kostenlose QR-Codes mit Logos, Farben und Mustern, ohne Anmeldung und ohne Wasserzeichen. Dazu bearbeitbare dynamische Codes, gehostete Seiten und Scan-Statistiken. Open Source.",
+    "siteTitle": "QRdx: Kostenloser QR-Code-Generator mit Logos und dynamischen Codes",
+    "siteDescription": "Kostenloser Open-Source-QR-Code-Generator: unbegrenzt viele Codes mit Logos, Farben und Rahmen, ohne Anmeldung und ohne Wasserzeichen. Dazu dynamische Codes und Scan-Analysen.",
     "ogImageAlt": "QRdx: kostenloser QR-Code-Generator mit dynamischen QR-Codes, gehosteten Seiten und Scan-Statistiken"
   },
   "nav": {
@@ -76,6 +76,14 @@
       "mcp": {
         "name": "MCP-Server",
         "description": "QR-Codes aus Claude, ChatGPT oder Cursor erstellen"
+      },
+      "qrCodeApi": {
+        "name": "Kostenlose QR-Code-API",
+        "description": "Ein QR-Code-Bild aus einer URL, ohne Key und Anmeldung"
+      },
+      "nextjs": {
+        "name": "Next.js-Anleitung",
+        "description": "QR-Codes in Server und Client Components"
       },
       "imageApi": {
         "name": "Image API",
@@ -184,10 +192,15 @@
       "scanChecker": "Scan-Checker",
       "printSize": "Druckgrößen-Rechner",
       "barcode": "Barcode-Generator",
+      "pdfQr": "PDF-QR-Code",
+      "businessCard": "Digitale Visitenkarte",
+      "menuQr": "Speisekarten-QR-Code",
       "scanner": "QR-Code-Scanner",
       "allTools": "Alle Tools",
       "docs": "Dokumentation",
       "apiReference": "API-Referenz",
+      "qrCodeApi": "Kostenlose QR-Code-API",
+      "nextjs": "Next.js-Anleitung",
       "imageApi": "Image API",
       "mcp": "MCP-Server",
       "shadcn": "shadcn/ui-Registry",
@@ -774,7 +787,11 @@
       "bulkTitle": "Du brauchst hunderte Codes? Nutze den Bulk-Generator",
       "bulkDescription": "Lade eine CSV hoch und lade alle Codes als PNG, WebP oder SVG in einer ZIP-Datei herunter, komplett in deinem Browser erzeugt.",
       "printTitle": "Du druckst deinen Code? Prüfe die Größe",
-      "printDescription": "Berechne die minimale Druckgröße anhand der Scan-Entfernung und der Datenmenge im Code."
+      "printDescription": "Berechne die minimale Druckgröße anhand der Scan-Entfernung und der Datenmenge im Code.",
+      "hostedTitle": "Codes, die eine bearbeitbare Seite öffnen",
+      "hostedDescription": "Diese Codes öffnen eine mobile Seite, die QRdx für dich hostet. So kannst du sie nach dem Druck ändern und Scans sehen. Du brauchst dafür ein kostenloses Konto.",
+      "menuTitle": "QR-Code-Generator für Speisekarten",
+      "menuDescription": "Eine Speisekartenseite mit Preisen, Fotos, Allergenen und ausverkauften Gerichten, bearbeitbar vom Handy aus."
     },
     "type": {
       "title": "Kostenloser {name}-QR-Code-Generator",
@@ -786,7 +803,28 @@
       "faqTitle": "FAQ zum {name}-QR-Code",
       "related": "Ähnliche QR-Code-Generatoren",
       "allTypes": "Alle {count, number} Typen",
-      "relatedCard": "{name}-QR-Code"
+      "relatedCard": "{name}-QR-Code",
+      "hostedCard": "{name}-QR-Code (gehostete Seite)"
+    },
+    "hosted": {
+      "demo": "Demoseite ansehen",
+      "accountNote": "Du brauchst ein kostenloses QRdx-Konto. Der Plan Kostenlos enthält {pages, number} gehostete Seiten.",
+      "featuresTitle": "Das sehen Leute beim Scannen",
+      "editTitle": "Nach dem Druck noch änderbar",
+      "guarantee": "Dein Code funktioniert weiter, egal was mit deinem Plan passiert: Das ist die <link>Never-Hostage-Garantie</link>.",
+      "plansTitle": "Limits je Plan",
+      "plansCaption": "Seitenlimits für {name} in den Plänen Kostenlos, Pro und Business",
+      "colLimit": "Limit",
+      "rowPages": "Gehostete Seiten",
+      "rowDynamic": "Dynamische Codes",
+      "rowFile": "Größte Datei",
+      "rowStorage": "Dateispeicher",
+      "rowBadge": "Footer „Made with QRdx“",
+      "unlimited": "Unbegrenzt",
+      "badgeShown": "Angezeigt",
+      "badgeRemoved": "Entfernt",
+      "plansNote": "Jede Seite belegt einen der dynamischen Codes deines Plans. Die Limits verhindern nur, dass du neue Seiten erstellst. <pricing>Preise ansehen</pricing> oder <docs>Doku lesen</docs>.",
+      "staticLink": "{name}-QR-Code-Generator öffnen"
     }
   },
   "typeGenerator": {
@@ -864,6 +902,8 @@
       "dynamicLink": "Dynamischen Code erstellen",
       "badgePage": "Gehostete Seite · editierbar, mit Tracking",
       "pageLink": "Live-Vorlagen ansehen",
+      "pageGeneratorLink": "So funktioniert’s",
+      "guidesTitle": "Guides und Tools",
       "typesTitle": "Welchen QR-Code du nutzt",
       "typesDescription": "Statische Codes sind kostenlos und brauchen kein Konto, lassen sich nach dem Druck aber nicht mehr ändern. Dynamische Codes und gehostete Seiten kannst du jederzeit bearbeiten, sie zählen jeden Scan und funktionieren in jedem Plan weiter, auch wenn du kündigst.",
       "sizingTitle": "Wie groß drucken",
@@ -925,12 +965,20 @@
       }
     },
     "bulk": {
-      "metaTitle": "Kostenloser Bulk-QR-Code-Generator aus CSV",
-      "metaDescription": "Erzeuge bis zu {rows, number} QR-Codes aus einer CSV-Datei und lade sie als PNG oder SVG gezippt herunter. Eigene Stile und Dateinamen. Läuft komplett in deinem Browser.",
+      "metaTitle": "Kostenloser Bulk-QR-Code-Generator aus CSV: gestaltet, SVG, ohne Upload",
+      "metaDescription": "Wandle eine CSV in bis zu {rows, number} gestaltete QR-Codes um und lade sie als PNG, WebP oder SVG in einer ZIP herunter. Läuft in deinem Browser: ohne Upload, ohne Anmeldung, ohne Wasserzeichen. Beispiel-CSV inklusive.",
       "crumb": "Bulk-Generator",
       "title": "Bulk-QR-Code-Generator",
-      "intro1": "Mach aus einer Tabelle in einem Rutsch Hunderte oder Tausende QR-Codes: Produktetiketten, Eventtickets, Inventaretiketten, Tischnummern oder personalisierte Mailings. Lade eine CSV hoch, ordne die Spalten zu, wähle einen Stil und lade jeden Code als PNG, WebP oder SVG herunter, gezippt.",
-      "intro2": "Alles passiert in deinem Browser. Die CSV wird nie hochgeladen, und es gibt weder Registrierung noch Wasserzeichen noch Kosten pro Code.",
+      "intro1": "Wandle eine CSV-Datei in einem Rutsch in Tausende QR-Codes um, gestaltet nach deinen Vorstellungen und als PNG, WebP oder SVG in einer ZIP heruntergeladen. Eine Zeile pro Code, mit Dateinamen aus einer Spalte: für Produktetiketten, Event-Tickets, Inventaretiketten, Tischnummern oder Mailings.",
+      "intro2": "Alles läuft in deinem Browser, die CSV wird also nie hochgeladen, und es gibt weder Anmeldung noch Wasserzeichen noch Kosten pro Code. Unsicher beim Aufbau? Starte mit der Beispiel-CSV.",
+      "facts": {
+        "rows": "Bis zu {rows, number} Zeilen pro Datei",
+        "styled": "Deine Farben, Formen und dein Logo",
+        "svg": "SVG für den Druck",
+        "browser": "Läuft in deinem Browser"
+      },
+      "cliLink": "qrdx batch in der CLI",
+      "apiLink": "Kostenlose QR-Code-API",
       "toolLabel": "Bulk-QR-Code-Generator",
       "howTitle": "So funktioniert's",
       "steps": {
@@ -959,10 +1007,14 @@
         "howManyAnswer": "Bis zu {rows, number} Zeilen pro Datei. Für mehr teilst du die CSV auf oder nutzt den Befehl qrdx batch der CLI, der keine Begrenzung hat. Ein PNG mit 512 px braucht auf einem Laptop etwa 20 ms, also dauern die vollen {rows, number} ein paar Minuten. Größere PNGs brauchen länger und ergeben größere Dateien, wähle daher 512 px, sofern du nicht mehr brauchst.",
         "rowQuestion": "Was darf jede Zeile enthalten?",
         "rowAnswer": "Beliebigen Text bis zur Grenze des QR-Codes: Links, normalen Text oder Payloads wie WIFI:..., mailto:..., tel:... und BEGIN:VCARD. Der Inhalt wird genau so codiert, wie er in der Zelle steht.",
+        "excelQuestion": "Kann ich eine Excel- oder Google-Sheets-Datei verwenden?",
+        "excelAnswer": "Speichere sie zuerst als CSV. In Excel wählst du Datei, Speichern unter, CSV UTF-8; in Google Sheets Datei, Herunterladen, Kommagetrennte Werte. Kommas und Semikolons funktionieren beide als Trennzeichen, und die erste Zeile kann Spaltennamen enthalten.",
         "staticQuestion": "Sind die erzeugten Codes statisch oder dynamisch?",
         "staticAnswer": "Statisch. Jeder Code enthält den Inhalt seiner Zeile direkt, funktioniert offline, läuft nie ab und lässt sich nach dem Drucken nicht mehr ändern. Für bearbeitbare Codes mit Scan-Statistiken erstellst du dynamische QR-Codes in deinem QRdx-Dashboard.",
         "namesQuestion": "Was passiert bei doppelten oder ungültigen Dateinamen?",
-        "namesAnswer": "Zeichen, die in Dateinamen nicht erlaubt sind, werden durch einen Bindestrich ersetzt. Doppelte Namen erhalten eine angehängte Nummer (menu.png, menu-2.png), damit keine Datei überschrieben wird."
+        "namesAnswer": "Zeichen, die in Dateinamen nicht erlaubt sind, werden durch einen Bindestrich ersetzt. Doppelte Namen erhalten eine angehängte Nummer (menu.png, menu-2.png), damit keine Datei überschrieben wird.",
+        "codeQuestion": "Kann ich QR-Codes in großer Menge auch per Code erstellen?",
+        "codeAnswer": "Ja. Der Befehl qrdx batch der QRdx CLI erstellt für jede Zeile einer CSV-Datei einen Code, ohne Zeilenlimit, und die kostenlose QR-Code-API liefert ohne Schlüssel ein Bild für jede URL, die du zusammenbaust."
       },
       "generator": {
         "errorTooMuch": "Zu viele Daten für einen QR-Code",
@@ -1447,11 +1499,48 @@
     "whichTitle": "Welchen Barcode soll ich nehmen?",
     "whichDescription": "Du verkaufst im Laden? Nimm den Typ, den deine Händler verlangen: EAN-13 fast überall, UPC-A in den USA und Kanada, beide mit einer GTIN von GS1. Du lieferst an sie? ITF-14 auf Kartons, GS1-128 auf Logistiketiketten. Du beschriftest deine eigenen Sachen? Code 128.",
     "linear": "Linear",
+    "formatCard": "{name}-Barcode-Generator",
     "printingEyebrow": "Drucken",
     "tipsTitle": "Tipps für Barcodes, die scannen",
     "tipsDescription": "Barcodes sind statisch: Die Nummer oder der Text steckt in den Balken, daher funktionieren sie offline, laufen nie ab und haben keine Scan-Statistiken. Brauchst du einen Link, den man mit dem Handy scannen kann? Nutze die <generators>QR-Code-Generatoren</generators>. Um einen Barcode zu lesen, öffne den <scanner>Scanner</scanner>.",
     "credits": "Barcodes werden von <bwip>bwip-js</bwip> (MIT-Lizenz) gezeichnet. Die Scan-Prüfung nutzt <zxing>ZXing</zxing>, kompiliert zu WebAssembly und beim ersten Start vom jsDelivr-CDN geladen.",
     "faqTitle": "FAQ zum Barcode-Generator"
+  },
+  "barcodeFormat": {
+    "toolLabel": "{name}-Barcode-Generator",
+    "usedTitle": "Wo {name}-Barcodes zum Einsatz kommen",
+    "rulesTitle": "{name}: Eingabe und Prüfziffer",
+    "rulesTitleText": "Was {name} speichern kann",
+    "takesLabel": "Was nötig ist",
+    "exampleLabel": "Beispiel",
+    "checkTitle": "Die Prüfziffer von {body}, Schritt für Schritt berechnet",
+    "checkTitleUpce": "UPC-E {upce} ist UPC-A {upca}: ihre Prüfziffer, Schritt für Schritt berechnet",
+    "checkCaption": "Jede Ziffer von {body} mit Gewicht und Produkt",
+    "checkDigits": "Ziffer",
+    "checkWeights": "Gewicht",
+    "checkProducts": "Produkt",
+    "checkSum": "Die Produkte ergeben zusammen {sum, number, ::group-off}. {check, plural, =0 {Das ist bereits ein Vielfaches von 10, also ist die Prüfziffer 0.} other {Mit # kommst du auf {next, number, ::group-off}, das nächste Vielfache von 10, also ist die Prüfziffer #.}}",
+    "sizeTitle": "Größe des {name}-Barcodes",
+    "sizeCaption": "Größen des {name}-Beispiels mit den Standardeinstellungen des Generators",
+    "sizeDownload": "Beispiel als SVG, PDF oder EPS",
+    "sizeMm": "{width, number} × {height, number} mm",
+    "sizeModule": "Modul (schmalster Balken)",
+    "sizeCell": "Zelle",
+    "sizeModuleValue": "{size, number} mm",
+    "sizeBarHeight": "Balkenhöhe",
+    "sizeQuietZone": "Ruhezone",
+    "quietModules": "{min, plural, =0 {Nicht erforderlich} one {Mindestens # Modul} other {Mindestens # Module}} auf jeder Seite; der Generator beginnt mit {start, number}",
+    "quietCells": "{min, plural, =0 {Nicht erforderlich} one {Mindestens # Zelle} other {Mindestens # Zellen}} rundherum; der Generator beginnt mit {start, number}",
+    "apiTitle": "{name}-Barcode-API",
+    "apiDescription": "Derselbe Barcode ist eine Bild-URL, ganz ohne API-Schlüssel: Setze sie in ein img-Tag, eine Etikettenvorlage oder einen Produktfeed ein. Sie prüft den Wert so wie diese Seite und erlaubt 300 Anfragen pro Minute und IP-Adresse. Die <docs>Doku zur Barcode-API</docs> listet alle Optionen auf.",
+    "apiSvg": "SVG-Bild",
+    "apiPng": "PNG, 3 Pixel pro Modul",
+    "apiHtml": "In einer Webseite",
+    "faqTitle": "FAQ zum {name}-Barcode",
+    "otherTitle": "Weitere Barcode-Typen",
+    "allFormats": "Alle {count, number} Barcode-Typen",
+    "otherCard": "{name}-Barcode-Generator",
+    "qrNote": "Barcodes sind statisch: Die Daten stecken in den Balken, deshalb funktionieren sie offline und laufen nie ab. Für einen Link, den Leute mit der Handykamera scannen, nutze einen der <generators>QR-Code-Generatoren</generators>."
   },
   "barcodeTool": {
     "pickColor": "{label} auswählen",
@@ -1583,6 +1672,7 @@
   },
   "integrations": {
     "metaTitle": "Integrationen",
+    "searchTitle": "QR-Code-Integrationen: {first}, {second} und {count, number} weitere",
     "metaDescription": "Verbinde QRdx mit {names} und mehr: {count, number} Integrationen mit genauen Einrichtungsschritten.",
     "hero": {
       "eyebrow": "Integrationen",
@@ -1737,9 +1827,15 @@
     "howEyebrow": "So funktioniert's",
     "howTitle": "Drei Schritte, dann einfach fragen",
     "howDescription": "Dein Assistent ruft die QRdx-Tools für dich auf. Mit einer API hast du nie zu tun.",
+    "setupEyebrow": "Einrichten",
+    "setupTitle": "QRdx in deine App einbinden",
+    "setupDescription": "Claude und ChatGPT nehmen die Server-URL als benutzerdefinierten Connector. Claude Code, Cursor und VS Code brauchen nur einen Befehl oder ein paar Zeilen Konfiguration. Apps, die nur lokale Server unterstützen, verbinden sich über mcp-remote.",
+    "setupUrl": "Server-URL",
     "toolsEyebrow": "Tools",
     "toolsTitle": "Das kann dein Assistent aufrufen",
     "toolsDescription": "{count, number} Tools. Alle außer save_template und save_barcode sind schreibgeschützt und brauchen keinen Schlüssel: Sie rendern Bilder, formatieren Text und lesen die öffentliche Community. Alle Parameter findest du in der <link>MCP-Server-Doku</link>.",
+    "toolNoKey": "Ohne Key",
+    "toolNeedsKey": "API-Key erforderlich",
     "faqTitle": "FAQ zum MCP-Server",
     "connect": {
       "copyFailed": "Kopieren hat nicht geklappt. Markiere den Text und kopiere ihn manuell.",
@@ -1839,6 +1935,149 @@
           }
         }
       }
+    }
+  },
+  "qrCodeApi": {
+    "metaTitle": "Kostenlose QR-Code-API: ohne Key, mit SVG, PNG und Logos",
+    "metaDescription": "Eine kostenlose QR-Code-API ohne Key und ohne Anmeldung. Eine URL liefert einen QR-Code als SVG, PNG, WebP oder EPS, mit deinen Farben, Formen und einem Logo. {perMinute, number} Anfragen pro Minute, ein Jahr lang gecacht.",
+    "crumb": "QR-Code-API",
+    "title": "Kostenlose QR-Code-API",
+    "intro1": "Setz einen QR-Code überall hin, wo eine URL stehen kann. Eine GET-Anfrage an api.qrdx.dev liefert das Bild direkt: ohne Konto, ohne API-Key, ohne SDK. Farben, Formen, Fehlerkorrektur und ein Logo kommen in den Query-String.",
+    "intro2": "Er zeichnet mit derselben Open-Source-Engine wie der QRdx Playground. Dieselbe Abfrage liefert immer dieselben Bytes, daher werden Antworten ein Jahr lang gecacht, und ein Bild in einer README, einer E-Mail oder auf einer Webseite kommt nach der ersten Anfrage aus dem Cache.",
+    "facts": {
+      "noKey": "Ohne Key oder Anmeldung",
+      "rateLimit": "{perMinute, number} Anfragen pro Minute und IP",
+      "formats": "SVG, PNG, WebP und EPS",
+      "openSource": "Open Source"
+    },
+    "docs": "Image API Doku",
+    "restDocs": "REST API für dynamische Codes",
+    "builderEyebrow": "Ausprobieren",
+    "builderTitle": "QR-Code-URL erstellen",
+    "builderDescription": "Ändere links alles Mögliche; die Vorschau ist die Live-API. Kopiere die URL, das HTML oder den curl-Befehl, sobald es passt.",
+    "builder": {
+      "label": "URL-Builder für die QR-Code-API",
+      "data": "Text oder URL",
+      "format": "Format",
+      "size": "Größe",
+      "sizePixels": "{size, number} px",
+      "sizePoints": "{size, number} pt breit",
+      "fg": "Codefarbe",
+      "bg": "Hintergrund",
+      "pickColor": "{label} wählen",
+      "body": "Modulform",
+      "level": "Fehlerkorrektur",
+      "logo": "Logo-Icon",
+      "logoNone": "Keins",
+      "logoNote": "Mit Logo wechselt der Code zur Fehlerkorrektur H, wenn das Logo es erfordert, damit er weiterhin scannbar bleibt.",
+      "previewAlt": "QR-Code für {value}",
+      "epsPreview": "EPS ist eine Druckdatei, deshalb zeigt die Vorschau denselben Code als SVG.",
+      "empty": "Gib den Text oder Link ein, der codiert werden soll.",
+      "tooLong": "Das ist länger als {max, number} Zeichen, das Limit der API.",
+      "loadFailed": "Die Vorschau wurde nicht geladen. Falls du sie oft hintereinander geändert hast, warte eine Minute: Die API erlaubt {perMinute, number} Anfragen pro Minute.",
+      "url": "Bild-URL",
+      "html": "HTML",
+      "markdown": "Markdown",
+      "curl": "curl",
+      "open": "Bild öffnen"
+    },
+    "examplesEyebrow": "Beispiele",
+    "examplesTitle": "Die URL ist das Bild",
+    "examplesDescription": "Füge sie in Markdown, ein img-Tag oder eine E-Mail-Vorlage ein oder lade mit curl eine Datei herunter. Codiere die Daten mit encodeURIComponent (oder dem Pendant deiner Sprache), wenn sie ein Und-Zeichen, eine Raute, ein Pluszeichen oder Leerzeichen enthalten.",
+    "examples": {
+      "markdown": "Markdown",
+      "html": "HTML",
+      "curl": "Terminal",
+      "js": "JavaScript"
+    },
+    "paramsEyebrow": "Referenz",
+    "paramsTitle": "Parameter",
+    "paramsDescription": "Alles steht im Query-String. Verläufe, eigene Rahmen und Farben pro Eye stehen in style, dem Design des Editors als JSON; die <link>Dokumentation zur Image API</link> deckt jedes Feld ab.",
+    "paramsHeader": {
+      "name": "Parameter",
+      "default": "Standard",
+      "description": "Was er bewirkt"
+    },
+    "paramsRequired": "erforderlich",
+    "paramsNone": "keiner",
+    "params": {
+      "data": "Der Text oder die URL, die codiert werden soll, bis zu {max, number} Zeichen.",
+      "size": "Breite und Höhe in Pixeln, {min, number} bis {max, number}. Bei EPS ist es die Breite in Punkten.",
+      "format": "svg, png, webp (verlustfrei) oder eps (Vektor, für den Druck).",
+      "colors": "Code- und Hintergrundfarbe als Hex, ohne das # (155dfc). Mit bg=00000000 wird der Hintergrund transparent.",
+      "shapes": "Formen der Module, der Eckaugen und der Punkte darin: insgesamt {count, number} Modulformen.",
+      "level": "Fehlerkorrektur: L (7 %), M (15 %), Q (25 %) oder H (30 %) des Codes dürfen beschädigt sein, und er lässt sich trotzdem scannen.",
+      "margin": "Die Ruhezone um den Code, in Modulen, von 0 bis {max, number}.",
+      "logoIcon": "Ein Logo in der Mitte: ein schnelles Icon wie wifi, link oder phone, oder eines von {brands} Markenlogos per Simple-Icons-Slug.",
+      "frame": "Ein Call-to-Action-Rahmen wie banner-bottom, mit frameText als Beschriftung.",
+      "style": "Das komplette Design des Editors als JSON: Verläufe, eigene Rahmen, Farben pro Eye und Logo-Layout."
+    },
+    "limitsEyebrow": "Im Livebetrieb",
+    "limitsTitle": "Limits, Caching und Datenschutz",
+    "limits": {
+      "rateTitle": "{perMinute, number} Anfragen pro Minute und IP",
+      "rateBody": "Bei Überschreitung des Limits bekommst du ein 429 mit einem Retry-After-Header. Identische URLs kommen aus dem Cache, deshalb erreicht das erneute Anzeigen desselben Bildes das Limit selten.",
+      "cacheTitle": "Ein Jahr im Cache",
+      "cacheBody": "Gleiche Anfrage, gleiche Bytes. Antworten werden mit Cache-Control: public, max-age=31536000, immutable gesendet, sodass Browser und CDNs sie behalten. Das Rendern eines Community-Elements wird 5 Minuten gecacht, da sich das Element ändern kann.",
+      "corsTitle": "Funktioniert auf jeder Website",
+      "corsBody": "Antworten erlauben jeden Origin (Access-Control-Allow-Origin: *), sodass Browser-Code das Bild abrufen und nicht nur anzeigen kann.",
+      "privateTitle": "Keine Geheimnisse in der URL",
+      "privateBody": "Die Daten sind Teil der URL und können daher in Server-Logs, im Browserverlauf und in Caches landen. Ein Wi-Fi-Passwort in einer öffentlichen README ist öffentlich.",
+      "scanTitle": "Zeichnet, was du anforderst",
+      "scanBody": "Die Image API prüft nicht, ob sich ein Design scannen lässt. Achte auf starken Kontrast und teste mit einem Handy; das Tool design_qr des MCP-Servers prüft und repariert einen Style für dich.",
+      "selfHostTitle": "Selbst hosten",
+      "selfHostBody": "Die API ist Teil der Open-Source-App QRdx, daher liefert deine eigene Instanz sie unter /api/v1/qr auf deiner Domain aus."
+    },
+    "restEyebrow": "Statisch oder dynamisch",
+    "restTitle": "Wann du stattdessen die REST API brauchst",
+    "restDescription": "Die Image API erzeugt statische Codes: Die Daten stecken im Code, er läuft also nie ab, lässt sich nach dem Druck aber nicht mehr ändern. Für Codes, die du später auf ein anderes Ziel umleiten kannst, mit Scan-Analysen, nutze die REST API mit einem kostenlosen API-Schlüssel.",
+    "imageCard": {
+      "title": "Image API",
+      "noKey": "Kein Schlüssel, kein Konto",
+      "static": "Statische Codes: Die Daten stecken im Bild",
+      "formats": "SVG, PNG, WebP und EPS",
+      "limit": "{perMinute, number} Anfragen pro Minute und IP"
+    },
+    "restCard": {
+      "title": "REST API",
+      "key": "Ein Workspace-API-Schlüssel aus einem kostenlosen Konto",
+      "dynamic": "Dynamische Codes, die du nach dem Druck bearbeiten kannst",
+      "analytics": "Scan-Analysen, Ordner, Tags und Webhooks",
+      "free": "{count, number} dynamische QR-Codes im kostenlosen Tarif, mit unbegrenzten Scans"
+    },
+    "restLink": "REST API Doku",
+    "quickstartLink": "API-Schnellstart",
+    "moreTitle": "Weitere Möglichkeiten, QR-Codes per Code zu erzeugen",
+    "more": {
+      "googleChartTitle": "Google Chart QR API ersetzen",
+      "googleChartBody": "Ordne chl, chs und chld dieser API zu und ändere alte Bild-URLs mit einem Befehl.",
+      "mcpTitle": "MCP",
+      "mcpBody": "Lass Claude, ChatGPT oder Cursor Codes für dich gestalten und rendern, ohne Schlüssel.",
+      "barcodeTitle": "Barcode API",
+      "barcodeBody": "EAN-13, UPC-A, Code 128, Data Matrix und mehr, mit Prüfziffern, per URL.",
+      "cliTitle": "CLI",
+      "cliBody": "Gestaltete Codes im Terminal oder in CI, und ein Code pro Zeile einer CSV-Datei.",
+      "reactTitle": "React-Bibliothek",
+      "reactBody": "Gestaltete Codes in React und Next.js rendern, auf dem Server oder im Client."
+    },
+    "faqTitle": "FAQ zur QR-Code-API",
+    "faq": {
+      "freeQuestion": "Gibt es eine kostenlose QR-Code-API ohne API-Schlüssel?",
+      "freeAnswer": "Ja. GET https://api.qrdx.dev/v1/qr?data=… liefert ein QR-Code-Bild ohne Schlüssel, Konto oder Registrierung. Erlaubt sind {perMinute, number} Anfragen pro Minute und IP-Adresse, und identische URLs werden ein Jahr lang zwischengespeichert.",
+      "logoQuestion": "Kann die QR-Code-API ein Logo hinzufügen?",
+      "logoAnswer": "Ja. logoIcon setzt ein schnelles Icon (Wi-Fi, Link, Telefon, E-Mail und mehr) oder eines von {brands} Markenlogos von Simple Icons in die Mitte, ohne Schlüssel. Der Code wechselt zur Fehlerkorrektur H, wenn das Logo sie braucht, damit er weiterhin scannbar bleibt.",
+      "formatsQuestion": "Welche Bildformate liefert sie zurück?",
+      "formatsAnswer": "Standardmäßig SVG, oder PNG, verlustfreies WebP und Vektor-EPS mit format=png, webp oder eps. Die Größen reichen von {min, number} bis {max, number} Pixel.",
+      "expireQuestion": "Laufen die QR-Codes ab?",
+      "expireAnswer": "Nein. Die Image API erzeugt statische Codes: Was du kodierst, steckt im Code selbst, er funktioniert also so lange wie der Link oder Text darin. Nichts läuft ab und nichts zählt Scans.",
+      "dynamicQuestion": "Kann ich nach dem Druck ändern, wohin ein Code führt?",
+      "dynamicAnswer": "Nicht mit der Image API. Dafür brauchst du einen dynamischen QR-Code, erstellt im QRdx-Dashboard oder mit der REST API und einem kostenlosen API-Schlüssel. Der kostenlose Tarif enthält {count, number} dynamische Codes mit unbegrenzten Scans.",
+      "googleQuestion": "Kann sie die Google Chart QR-Code-API ersetzen?",
+      "googleAnswer": "Ja. Ändere Host und Pfad, benenne chl in data und chs in size um (QR-Codes sind quadratisch, also nur eine Zahl) und setze level und margin aus chld. Parameter, die sie nicht kennt, wie cht und choe, werden ignoriert. Die Migrationsanleitung enthält die vollständige Zuordnung.",
+      "limitQuestion": "Was passiert, wenn ich das Limit überschreite?",
+      "limitAnswer": "Du erhältst eine 429-Antwort mit einem Retry-After-Header, der angibt, wann du es erneut versuchen kannst. Identische URLs werden ein Jahr lang zwischengespeichert, daher wird ein Bild auf einer stark besuchten Seite meist aus dem Cache geliefert.",
+      "aiQuestion": "Kann ein KI-Assistent sie nutzen?",
+      "aiAnswer": "Ja. Das Tool generate_qr_code des QRdx MCP-Servers gibt diese Bild-URLs zurück, und ein Assistent ohne MCP kann die URL selbst als Markdown-Bild schreiben."
     }
   },
   "ai": {

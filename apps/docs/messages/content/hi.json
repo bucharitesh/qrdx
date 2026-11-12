@@ -1907,9 +1907,9 @@
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.question"
   },
-  "82ec64b16a5d": {
-    "source": "No, the details are inside the code. To have one code that always shows your current details, host your contact page online and point a URL code, or a dynamic code from your dashboard, at it.",
-    "text": "नहीं, डिटेल कोड के अंदर ही होती है। अगर आप चाहते हैं कि एक ही कोड हमेशा आपकी मौजूदा डिटेल दिखाए, तो अपना कॉन्टैक्ट पेज ऑनलाइन होस्ट करें और उस पर URL कोड या अपने डैशबोर्ड से डायनेमिक QR कोड पॉइंट करें।",
+  "fa26bd23187e": {
+    "source": "No, the details are inside the code. For one code that always shows your current details, make a digital business card instead: a hosted contact page with your photo and a Save contact button that you can edit after printing.",
+    "text": "नहीं, जानकारी कोड के अंदर ही होती है। ऐसा कोड चाहिए जो हमेशा आपकी मौजूदा जानकारी दिखाए, तो इसके बजाय डिजिटल बिज़नेस कार्ड बनाएँ: आपकी फ़ोटो और Save contact बटन वाला एक होस्टेड पेज, जिसे प्रिंट करने के बाद भी एडिट किया जा सकता है।",
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.answer"
   },
@@ -3719,6 +3719,24 @@
     "status": "machine",
     "context": "qrTypes.types.bitcoin.faqs.2.answer"
   },
+  "0e3f9ed231ab": {
+    "source": "Lightning, testnet and address checks",
+    "text": "Lightning, testnet और एड्रेस की जाँच",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.title"
+  },
+  "da2ccbd9fdc4": {
+    "source": "This is an on-chain request: the wallet pays your address on the Bitcoin blockchain. Lightning-only wallets can't pay it, and this generator doesn't add a lightning= invoice to the URI, so for Lightning payments share an invoice or Lightning address from your wallet instead.",
+    "text": "यह एक on-chain रिक्वेस्ट है: वॉलेट आपके एड्रेस पर Bitcoin ब्लॉकचेन पर पेमेंट करता है। सिर्फ़ Lightning वाले वॉलेट इससे पेमेंट नहीं कर सकते, और यह जनरेटर URI में lightning= इनवॉइस नहीं जोड़ता, इसलिए Lightning पेमेंट के लिए अपने वॉलेट से इनवॉइस या Lightning एड्रेस शेयर करें।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.0"
+  },
+  "e3130a29c7fc": {
+    "source": "The generator checks the address's length (26 to 62 characters), not its checksum, and it can't tell mainnet from testnet: a testnet address (starting with tb1, m, n or 2) makes a code no ordinary wallet can pay. Scan the preview with the wallet that will pay before you print.",
+    "text": "जनरेटर एड्रेस की लंबाई (26 से 62 अक्षर) जाँचता है, उसका चेकसम नहीं, और वह mainnet और testnet में फ़र्क़ नहीं कर सकता: testnet एड्रेस (जो tb1, m, n या 2 से शुरू होता है) से ऐसा कोड बनता है जिससे कोई आम वॉलेट पेमेंट नहीं कर सकता। प्रिंट करने से पहले प्रीव्यू को उसी वॉलेट से स्कैन करें जिससे पेमेंट होगा।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.1"
+  },
   "80cfbcc768ef": {
     "source": "Share an EIP-681 Ethereum payment request.",
     "text": "EIP-681 Ethereum पेमेंट रिक्वेस्ट शेयर करें।",
@@ -3820,6 +3838,24 @@
     "text": "हाँ। कोड में सिर्फ़ आपका पब्लिक एड्रेस होता है। प्राइवेट की या रिकवरी फ़्रेज़ को कभी एन्कोड न करें।",
     "status": "machine",
     "context": "qrTypes.types.ethereum.faqs.2.answer"
+  },
+  "d434b3350c1d": {
+    "source": "Address checks and ENS names",
+    "text": "एड्रेस की जाँच और ENS नाम",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.title"
+  },
+  "65464924c87e": {
+    "source": "The generator checks that the address is 0x followed by 40 hexadecimal characters. It doesn't check the mixed-case EIP-55 checksum; wallets check that when they scan, so paste the address exactly as your wallet shows it rather than typing it.",
+    "text": "जनरेटर जाँचता है कि एड्रेस 0x और उसके बाद 40 हेक्साडेसिमल अक्षरों का है। यह mixed-case EIP-55 चेकसम की जाँच नहीं करता; वॉलेट स्कैन करते समय उसे जाँचते हैं, इसलिए एड्रेस टाइप करने के बजाय ठीक वैसे ही पेस्ट करें जैसा आपका वॉलेट दिखाता है।",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.0"
+  },
+  "4a379c763eb7": {
+    "source": "ENS names such as name.eth aren't accepted. EIP-681 allows them, but the payer's wallet would have to look the name up; a 0x address works in every wallet that reads the code.",
+    "text": "name.eth जैसे ENS नाम स्वीकार नहीं किए जाते। EIP-681 इनकी अनुमति देता है, पर पेमेंट करने वाले के वॉलेट को वह नाम खोजना पड़ेगा; 0x एड्रेस हर उस वॉलेट में काम करता है जो कोड पढ़ता है।",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.1"
   },
   "9870d299fb0b": {
     "source": "Open your Etsy shop or a listing.",
@@ -6155,6 +6191,24 @@
     "status": "machine",
     "context": "qrTypes.types.litecoin.faqs.1.answer"
   },
+  "45f14f3c95d2": {
+    "source": "Which Litecoin addresses work",
+    "text": "कौन-से Litecoin एड्रेस काम करते हैं",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.title"
+  },
+  "efdeb7ecb4b1": {
+    "source": "Addresses starting with L (legacy), M (P2SH), 3 (older P2SH) and ltc1 (SegWit) are accepted. M and 3 are the same kind of address: Litecoin moved P2SH addresses from 3 to M so they aren't mistaken for Bitcoin addresses, and some older wallets still show 3.",
+    "text": "L (legacy), M (P2SH), 3 (पुराना P2SH) और ltc1 (SegWit) से शुरू होने वाले एड्रेस स्वीकार किए जाते हैं। M और 3 एक ही तरह के एड्रेस हैं: Litecoin ने P2SH एड्रेस 3 से M पर इसलिए किए ताकि उन्हें Bitcoin एड्रेस न समझ लिया जाए, और कुछ पुराने वॉलेट अब भी 3 दिखाते हैं।",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.0"
+  },
+  "a17e84343f7d": {
+    "source": "MWEB addresses (starting with ltcmweb1), used for Litecoin's private payments, aren't accepted here. Use one of your wallet's regular receiving addresses for a printed code.",
+    "text": "MWEB एड्रेस (जो ltcmweb1 से शुरू होते हैं), जो Litecoin के प्राइवेट पेमेंट के लिए इस्तेमाल होते हैं, यहाँ स्वीकार नहीं किए जाते। प्रिंट किए गए कोड के लिए अपने वॉलेट का कोई सामान्य रिसीविंग एड्रेस इस्तेमाल करें।",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.1"
+  },
   "14f89759d816": {
     "source": "Receive Dogecoin with an optional amount.",
     "text": "वैकल्पिक राशि के साथ Dogecoin पाएँ।",
@@ -6215,6 +6269,24 @@
     "status": "machine",
     "context": "qrTypes.types.dogecoin.faqs.0.question"
   },
+  "7c952bf9c5da": {
+    "source": "Which Dogecoin addresses work",
+    "text": "कौन-से Dogecoin एड्रेस काम करते हैं",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.title"
+  },
+  "6bc808ddaa41": {
+    "source": "Standard Dogecoin addresses start with D, and multisig (P2SH) addresses with A or 9; the generator accepts these. Testnet addresses, which start with n or 2, are rejected, so a test address can't end up on a printed sign by mistake.",
+    "text": "सामान्य Dogecoin एड्रेस D से शुरू होते हैं, और multisig (P2SH) एड्रेस A या 9 से; जनरेटर इन्हें स्वीकार करता है। Testnet एड्रेस, जो n या 2 से शुरू होते हैं, अस्वीकार कर दिए जाते हैं, ताकि कोई टेस्ट एड्रेस गलती से प्रिंट किए गए साइन पर न पहुँच जाए।",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.0"
+  },
+  "0abee7330fc7": {
+    "source": "For a tip jar, leave the amount empty: each person types what they want to give, and one printed code takes any number of payments.",
+    "text": "टिप जार के लिए अमाउंट खाली छोड़ें: हर व्यक्ति अपनी मर्ज़ी की रकम खुद डालता है, और एक प्रिंट किया हुआ कोड कितने भी पेमेंट ले सकता है।",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.1"
+  },
   "6dc9a0aa25cf": {
     "source": "Receive Bitcoin Cash with an optional amount.",
     "text": "वैकल्पिक राशि के साथ Bitcoin Cash पाएँ।",
@@ -6274,6 +6346,30 @@
     "text": "नहीं। Bitcoin Cash एक अलग कॉइन है, जिसके अपने वॉलेट हैं। Bitcoin के लिए Bitcoin जनरेटर इस्तेमाल करें।",
     "status": "machine",
     "context": "qrTypes.types.bitcoincash.faqs.0.answer"
+  },
+  "c6afea0f4f57": {
+    "source": "CashAddr, legacy and token addresses",
+    "text": "CashAddr, legacy और टोकन एड्रेस",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.title"
+  },
+  "5d69e08209a0": {
+    "source": "Paste the address with or without its bitcoincash: prefix. The generator removes a pasted prefix and writes it once, as the start of the URI.",
+    "text": "एड्रेस को bitcoincash: प्रीफ़िक्स के साथ या उसके बिना पेस्ट करें। जनरेटर पेस्ट किया गया प्रीफ़िक्स हटाकर उसे URI की शुरुआत में सिर्फ़ एक बार लिखता है।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.0"
+  },
+  "7f8cdb8747e0": {
+    "source": "Token-aware addresses (starting with z or r), used for CashTokens, aren't accepted. Use your wallet's regular q address for BCH payments.",
+    "text": "टोकन-अवेयर एड्रेस (जो z या r से शुरू होते हैं), जो CashTokens के लिए इस्तेमाल होते हैं, स्वीकार नहीं किए जाते। BCH पेमेंट के लिए अपने वॉलेट का सामान्य q एड्रेस इस्तेमाल करें।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.1"
+  },
+  "e24a42112f28": {
+    "source": "Legacy addresses starting with 1 or 3 look exactly like Bitcoin addresses, which makes it easy to send coins from the wrong network. Prefer CashAddr on anything you print.",
+    "text": "1 या 3 से शुरू होने वाले Legacy एड्रेस बिल्कुल Bitcoin एड्रेस जैसे दिखते हैं, इसलिए गलत नेटवर्क पर कॉइन भेज देना आसान हो जाता है। जो भी प्रिंट करें, उसमें CashAddr को प्राथमिकता दें।",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.2"
   },
   "51f7bdf5aaa1": {
     "source": "Receive SOL with a Solana Pay request.",
@@ -6341,6 +6437,24 @@
     "status": "machine",
     "context": "qrTypes.types.solana.faqs.0.answer"
   },
+  "43fcb61a7db3": {
+    "source": "What this Solana Pay code includes",
+    "text": "इस Solana Pay कोड में क्या शामिल है",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.title"
+  },
+  "36ed60b12391": {
+    "source": "It's a Solana Pay transfer request: the recipient, an amount in SOL, a label and a message. Solana Pay also defines spl-token for token payments and reference for matching a payment to an order; this generator adds neither, so use your point-of-sale tool when you need them.",
+    "text": "यह एक Solana Pay ट्रांसफ़र रिक्वेस्ट है: पाने वाला, SOL में अमाउंट, एक लेबल और एक मैसेज। Solana Pay टोकन पेमेंट के लिए spl-token और पेमेंट को ऑर्डर से मिलाने के लिए reference भी तय करता है; यह जनरेटर इनमें से कुछ नहीं जोड़ता, इसलिए इनकी ज़रूरत हो तो अपना पॉइंट-ऑफ़-सेल टूल इस्तेमाल करें।",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.0"
+  },
+  "9502d073de90": {
+    "source": "Solana Pay transaction requests, where the code holds a link to your server and the server builds the transaction, aren't made here either.",
+    "text": "Solana Pay ट्रांज़ैक्शन रिक्वेस्ट, जिनमें कोड में आपके सर्वर का लिंक होता है और सर्वर ट्रांज़ैक्शन बनाता है, वे भी यहाँ नहीं बनाई जातीं।",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.1"
+  },
   "aa106b399d07": {
     "source": "Receive Monero with an optional amount.",
     "text": "वैकल्पिक अमाउंट के साथ Monero पाएं।",
@@ -6400,6 +6514,540 @@
     "text": "कई वॉलेट आपके हर पब्लिश किए गए कोड के लिए नया subaddress सुझाते हैं, ताकि अलग-अलग कोड पर आए पेमेंट आपस में जुड़े न दिखें।",
     "status": "machine",
     "context": "qrTypes.types.monero.faqs.0.answer"
+  },
+  "e21057f62697": {
+    "source": "Standard address, subaddress or integrated address",
+    "text": "स्टैंडर्ड एड्रेस, सबएड्रेस या इंटीग्रेटेड एड्रेस",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.title"
+  },
+  "320538ad2b97": {
+    "source": "Standard addresses start with 4 and are 95 characters long, subaddresses start with 8, and integrated addresses start with 4 and are 106 characters because they carry a payment ID. The generator accepts all three.",
+    "text": "स्टैंडर्ड एड्रेस 4 से शुरू होते हैं और 95 अक्षरों के होते हैं, सबएड्रेस 8 से शुरू होते हैं, और इंटीग्रेटेड एड्रेस 4 से शुरू होकर 106 अक्षरों के होते हैं क्योंकि उनमें पेमेंट ID होती है। जनरेटर तीनों स्वीकार करता है।",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.0"
+  },
+  "4e1f370290a4": {
+    "source": "Separate payment IDs are deprecated in Monero, so the generator doesn't add one. Use a subaddress for each customer or code, or the integrated address an exchange or shop gives you.",
+    "text": "Monero में अलग से पेमेंट ID अब पुरानी मानी जाती है, इसलिए जनरेटर उसे नहीं जोड़ता। हर ग्राहक या कोड के लिए एक सबएड्रेस इस्तेमाल करें, या वह इंटीग्रेटेड एड्रेस जो आपको एक्सचेंज या दुकान देती है।",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.1"
+  },
+  "1d393b0081b6": {
+    "source": "PDF",
+    "text": "PDF",
+    "status": "machine",
+    "context": "templates.pdf.label"
+  },
+  "5646a9f7a51e": {
+    "source": "Free PDF QR Code Generator",
+    "text": "फ़्री PDF QR कोड जनरेटर",
+    "status": "machine",
+    "context": "hostedTypes.pdf.title"
+  },
+  "aca040b7ba32": {
+    "source": "Upload a PDF to a hosted page and replace it any time.",
+    "text": "PDF को होस्टेड पेज पर अपलोड करें और जब चाहें बदलें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.summary"
+  },
+  "124c8c2b6cd3": {
+    "source": "Upload your PDF",
+    "text": "अपनी PDF अपलोड करें",
+    "status": "machine",
+    "context": "hostedTypes.pdf.cta"
+  },
+  "9dcba3ce451a": {
+    "source": "Turn a PDF into a QR code: upload it to a free QRdx page that people read or download on their phone. Replace the file later, same code. 10 MB on Free.",
+    "text": "PDF को QR कोड बनाएँ: उसे फ़्री QRdx पेज पर अपलोड करें, जिसे लोग अपने फ़ोन पर पढ़ या डाउनलोड कर सकते हैं। फ़ाइल बाद में बदलें, कोड वही रहेगा। Free प्लान में 10 MB।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.metaDescription"
+  },
+  "68e7e7ec5658": {
+    "source": "A PDF QR code opens your document on the phone that scans it: a menu, a brochure, a manual or a price list. You upload the PDF to a page QRdx hosts for you, and the code points to that page through a short link.",
+    "text": "PDF QR कोड स्कैन करने वाले फ़ोन पर आपका डॉक्यूमेंट खुल जाता है: जैसे मेन्यू, ब्रोशर, मैनुअल या प्राइस लिस्ट। आप PDF को QRdx के होस्ट किए पेज पर अपलोड करते हैं, और कोड एक छोटे लिंक से उसी पेज पर ले जाता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.0"
+  },
+  "9302dac9d8cf": {
+    "source": "Because the code holds the link, not the file, you can replace the PDF after printing, for next season's menu or a corrected manual, and every printed code opens the new version. It needs a free QRdx account.",
+    "text": "कोड में फ़ाइल नहीं, लिंक होता है, इसलिए प्रिंट के बाद भी आप PDF बदल सकते हैं, जैसे अगले सीज़न के मेन्यू या सुधारे हुए मैनुअल के लिए, और हर प्रिंट किया हुआ कोड नया वर्शन खोलेगा। इसके लिए एक फ़्री QRdx अकाउंट चाहिए।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.1"
+  },
+  "c1c38d9f6192": {
+    "source": "Sign in or create a free account, then start a PDF page: the button above opens it with the PDF type picked.",
+    "text": "साइन इन करें या फ़्री अकाउंट बनाएँ, फिर PDF पेज शुरू करें: ऊपर का बटन PDF टाइप चुनकर उसे खोल देता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.0"
+  },
+  "8ee1eee065fb": {
+    "source": "Upload your PDF, or paste a link to one that's already online, and choose whether people can download it.",
+    "text": "अपनी PDF अपलोड करें, या पहले से ऑनलाइन किसी PDF का लिंक पेस्ट करें, और चुनें कि लोग उसे डाउनलोड कर सकें या नहीं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.1"
+  },
+  "bcca1e09802d": {
+    "source": "Add a title and any buttons you want, such as a link to your website, then publish.",
+    "text": "एक टाइटल और अपनी पसंद के बटन जोड़ें, जैसे आपकी वेबसाइट का लिंक, फिर पब्लिश करें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.2"
+  },
+  "68671f93a178": {
+    "source": "Download the page's QR code, print it and scan it once to check.",
+    "text": "पेज का QR कोड डाउनलोड करें, प्रिंट करें और जाँचने के लिए एक बार स्कैन करें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.3"
+  },
+  "d26cfd2a55d4": {
+    "source": "Reads in the browser",
+    "text": "ब्राउज़र में ही खुलती है",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.title"
+  },
+  "0fa7186b2959": {
+    "source": "On tablets and computers the PDF shows on the page; on phones, Open PDF shows it full screen. Nobody installs an app.",
+    "text": "टैबलेट और कंप्यूटर पर PDF पेज पर ही दिखती है; फ़ोन पर Open PDF उसे फ़ुल स्क्रीन में दिखाता है। किसी को app इंस्टॉल नहीं करना पड़ता।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.description"
+  },
+  "0a07381242b6": {
+    "source": "Download and more files",
+    "text": "डाउनलोड और ज़्यादा फ़ाइलें",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.title"
+  },
+  "52cdbbfe01d6": {
+    "source": "A Download button saves a copy, and a Downloads block lists more files with their own labels, such as the menu in a second language.",
+    "text": "Download बटन एक कॉपी सेव करता है, और Downloads ब्लॉक में और फ़ाइलें अपने-अपने लेबल के साथ दिखती हैं, जैसे दूसरी भाषा में मेन्यू।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.description"
+  },
+  "f6d11e1fc833": {
+    "source": "Your page around it",
+    "text": "उसके आसपास आपका पेज",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.title"
+  },
+  "168565d4c819": {
+    "source": "A title, your colors and logo, and buttons to your website or booking page, from the same blocks as every QRdx page.",
+    "text": "एक टाइटल, आपके रंग और लोगो, और आपकी वेबसाइट या बुकिंग पेज के बटन, उन्हीं ब्लॉक से जो हर QRdx पेज में होते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.description"
+  },
+  "e71d2dbd4008": {
+    "source": "Fast and private",
+    "text": "तेज़ और प्राइवेट",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.title"
+  },
+  "6be93be79318": {
+    "source": "Server-rendered for phones, with no QRdx analytics or chat scripts, and hidden from search engines unless you turn that on.",
+    "text": "फ़ोन के लिए सर्वर पर तैयार किया गया, QRdx के कोई एनालिटिक्स या चैट स्क्रिप्ट नहीं, और सर्च इंजन से छिपा रहता है जब तक आप उसे चालू न करें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.description"
+  },
+  "0cd53dc2571c": {
+    "source": "Replace the file behind the same link: in Dashboard → Files, choose Replace file next to the PDF and upload the new one. Pages and codes that use it show the new version within a minute. A PDF can only be replaced by a PDF.",
+    "text": "उसी लिंक के पीछे की फ़ाइल बदलें: Dashboard → Files में PDF के पास Replace file चुनें और नई फ़ाइल अपलोड करें। इसका इस्तेमाल करने वाले पेज और कोड एक मिनट के अंदर नया वर्शन दिखाते हैं। PDF की जगह सिर्फ़ PDF ही लग सकती है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.0"
+  },
+  "cd4e0788ed1c": {
+    "source": "Change the page itself (its title, buttons and colors) and publish; the printed code stays the same. Every scan is counted without cookies, so you can see when the code is used.",
+    "text": "पेज में बदलाव करें (उसका टाइटल, बटन और रंग) और पब्लिश करें; प्रिंट किया हुआ कोड वही रहता है। हर स्कैन बिना कुकीज़ के गिना जाता है, इसलिए आप देख सकते हैं कि कोड कब इस्तेमाल हुआ।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.1"
+  },
+  "0455df8d3256": {
+    "source": "A PDF page, or a code that links to a PDF?",
+    "text": "PDF पेज, या PDF के लिंक वाला कोड?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.title"
+  },
+  "1739b16060cf": {
+    "source": "Static code to a PDF link",
+    "text": "PDF लिंक वाला स्टैटिक कोड",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticLabel"
+  },
+  "d34aa4eb51bf": {
+    "source": "No account: put the link of a PDF that's already online, in Google Drive or on your website, into a free static code.",
+    "text": "अकाउंट नहीं चाहिए: Google Drive या अपनी वेबसाइट पर पहले से ऑनलाइन PDF का लिंक फ़्री स्टैटिक QR कोड में डाल दें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.0"
+  },
+  "19bcc450ed9b": {
+    "source": "The link is written into the code, so printed codes stop working if the file is moved or its sharing is turned off.",
+    "text": "लिंक कोड में ही लिखा होता है, इसलिए फ़ाइल हटाने या उसकी शेयरिंग बंद करने पर प्रिंट किए कोड काम करना बंद कर देते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.1"
+  },
+  "15211d2c9803": {
+    "source": "No scan counts, and nothing around the PDF.",
+    "text": "स्कैन की गिनती नहीं, और PDF के आसपास कुछ नहीं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.2"
+  },
+  "0a9ee38a3b41": {
+    "source": "Hosted PDF page",
+    "text": "होस्टेड PDF पेज",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedLabel"
+  },
+  "ffc08a5fa958": {
+    "source": "A free QRdx account, and QRdx stores the file.",
+    "text": "एक फ़्री QRdx अकाउंट, और फ़ाइल QRdx स्टोर करता है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.0"
+  },
+  "28ddde3d608a": {
+    "source": "Replace the PDF or edit the page any time; printed codes keep working.",
+    "text": "PDF बदलें या पेज एडिट करें, जब चाहें; प्रिंट किए कोड चलते रहते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.1"
+  },
+  "2d7dc4880d53": {
+    "source": "Scans counted without cookies, with your title, colors and buttons around the document.",
+    "text": "स्कैन बिना कुकीज़ के गिने जाते हैं, और डॉक्यूमेंट के आसपास आपका टाइटल, रंग और बटन होते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.2"
+  },
+  "de93e29b3216": {
+    "source": "Is the PDF QR code free?",
+    "text": "क्या PDF QR कोड फ़्री है?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.question"
+  },
+  "d56cd3681383": {
+    "source": "Yes, with a free QRdx account. The Free plan includes 3 hosted pages, and each uses one of its 10 dynamic codes. Free pages show a small \"Made with QRdx\" footer; Pro removes it and the page limit.",
+    "text": "हाँ, फ़्री QRdx अकाउंट के साथ। फ़्री प्लान में 3 होस्टेड पेज मिलते हैं, और हर पेज आपके 10 डायनेमिक QR कोड में से एक इस्तेमाल करता है। फ़्री पेज पर नीचे छोटा सा \"Made with QRdx\" फ़ुटर दिखता है; Pro में यह फ़ुटर और पेज की सीमा हट जाती है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.answer"
+  },
+  "3e34fc33860d": {
+    "source": "How big can the PDF be?",
+    "text": "PDF कितनी बड़ी हो सकती है?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.question"
+  },
+  "e84b5c8be653": {
+    "source": "Up to 10 MB per file on Free, with 50 MB of storage per workspace. Pro takes files up to 100 MB and Business up to 250 MB. Big PDFs open slowly on phones, so compress scans and large images before uploading.",
+    "text": "फ़्री में हर फ़ाइल 10 MB तक, और हर वर्कस्पेस में 50 MB स्टोरेज। Pro में 100 MB तक और Business में 250 MB तक की फ़ाइलें चलती हैं। बड़ी PDF फ़ोन पर धीरे खुलती हैं, इसलिए अपलोड करने से पहले स्कैन और बड़ी इमेज को कंप्रेस कर लें।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.answer"
+  },
+  "571a5f50e535": {
+    "source": "Can I change the PDF after printing?",
+    "text": "क्या प्रिंट करने के बाद PDF बदल सकता हूँ?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.question"
+  },
+  "726178f806ff": {
+    "source": "Yes. Replace the file in Dashboard → Files and every code and page that uses it shows the new PDF within a minute. The printed code never changes.",
+    "text": "हाँ। Dashboard → Files में फ़ाइल Replace file करें, और उसे इस्तेमाल करने वाला हर कोड और पेज एक मिनट के अंदर नई PDF दिखाने लगता है। प्रिंट किया हुआ कोड कभी नहीं बदलता।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.answer"
+  },
+  "53045bd4aa84": {
+    "source": "What happens to my code if I stop paying?",
+    "text": "अगर मैं पेमेंट करना बंद कर दूँ तो मेरे कोड का क्या होगा?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.question"
+  },
+  "1678c79cd195": {
+    "source": "It keeps working. Under the Never-Hostage Guarantee, codes and pages you already have keep working after a downgrade, a failed payment or a cancellation, and scans are never paused. Plan limits only stop you from creating new ones.",
+    "text": "वह चलता रहता है। Never-Hostage गारंटी के तहत, आपके मौजूदा कोड और पेज डाउनग्रेड, फ़ेल हुए पेमेंट या कैंसलेशन के बाद भी चलते रहते हैं, और स्कैन कभी रोके नहीं जाते। प्लान की सीमाएँ सिर्फ़ नए कोड या पेज बनाने से रोकती हैं।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.answer"
+  },
+  "57d4c3ee4908": {
+    "source": "Do people need an app to open it?",
+    "text": "क्या इसे खोलने के लिए ऐप चाहिए?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.question"
+  },
+  "6f23c8630c62": {
+    "source": "No. The phone's camera opens the page in the browser, where the PDF can be read, opened full screen or downloaded.",
+    "text": "नहीं। फ़ोन का कैमरा पेज को ब्राउज़र में खोल देता है, जहाँ PDF पढ़ी जा सकती है, फ़ुल स्क्रीन में खोली जा सकती है या डाउनलोड की जा सकती है।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.answer"
+  },
+  "eaa9553b681a": {
+    "source": "Can search engines find my PDF?",
+    "text": "क्या सर्च इंजन मेरी PDF ढूँढ सकते हैं?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.question"
+  },
+  "28e17f0f94fd": {
+    "source": "Not unless you want them to. Hosted pages are hidden from search engines until you turn on Show in search engines in the page's settings.",
+    "text": "नहीं, जब तक आप खुद न चाहें। होस्टेड पेज सर्च इंजन से छिपे रहते हैं, जब तक आप पेज की सेटिंग में Show in search engines चालू नहीं करते।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.answer"
+  },
+  "6b515aae04de": {
+    "source": "Can I make a PDF QR code without an account?",
+    "text": "क्या मैं बिना अकाउंट के PDF QR कोड बना सकता हूँ?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.question"
+  },
+  "00ecbc0a89cd": {
+    "source": "Only for a PDF that's already online: paste its link into the URL or Google Drive generator for a free static code. QRdx only stores the file for you with an account.",
+    "text": "सिर्फ़ ऐसी PDF के लिए जो पहले से ऑनलाइन है: उसका लिंक URL या Google Drive जनरेटर में पेस्ट करें और फ़्री स्टैटिक QR कोड पाएँ। QRdx फ़ाइल आपके लिए तभी स्टोर करता है जब आपके पास अकाउंट हो।",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.answer"
+  },
+  "f6865e9400c3": {
+    "source": "Digital Business Card",
+    "text": "डिजिटल बिज़नेस कार्ड",
+    "status": "machine",
+    "context": "hostedTypes.business-card.name"
+  },
+  "12ee83e8add8": {
+    "source": "Digital Business Card QR Code Generator",
+    "text": "डिजिटल बिज़नेस कार्ड QR कोड जनरेटर",
+    "status": "machine",
+    "context": "hostedTypes.business-card.title"
+  },
+  "1f0f3c1a23f2": {
+    "source": "A contact page with your photo, buttons and Save contact.",
+    "text": "आपकी फ़ोटो, बटन और Save contact वाला एक कॉन्टैक्ट पेज।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.summary"
+  },
+  "82b6ad72913a": {
+    "source": "Create your card",
+    "text": "अपना कार्ड बनाएँ",
+    "status": "machine",
+    "context": "hostedTypes.business-card.cta"
+  },
+  "2a42d8281c80": {
+    "source": "Make a digital business card with a QR code: your photo, contact buttons and Save contact. Edit it without reprinting. Free account, 3 pages included.",
+    "text": "QR कोड के साथ डिजिटल बिज़नेस कार्ड बनाएँ: आपकी फ़ोटो, कॉन्टैक्ट बटन और Save contact। दोबारा प्रिंट किए बिना बदलाव करें। फ़्री अकाउंट, 3 पेज शामिल।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.metaDescription"
+  },
+  "eb688e530a71": {
+    "source": "A digital business card QR code opens a contact page that QRdx hosts for you: your photo, name and job title, buttons to call, email, message or get directions, your links, and a Save contact button that adds you to the phone's contacts.",
+    "text": "डिजिटल बिज़नेस कार्ड QR कोड एक कॉन्टैक्ट पेज खोलता है जिसे QRdx आपके लिए होस्ट करता है: आपकी फ़ोटो, नाम और जॉब टाइटल, कॉल, ईमेल, मैसेज या रास्ता पाने के बटन, आपके लिंक, और एक Save contact बटन जो आपको फ़ोन के कॉन्टैक्ट में जोड़ देता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.0"
+  },
+  "790252dae1e8": {
+    "source": "The code holds a short link, so you can change your number, title or photo after the cards are printed and every card shows the new details. It needs a free QRdx account. For a code that holds the contact itself, with no account, use the vCard QR code generator.",
+    "text": "कोड में एक छोटा लिंक होता है, इसलिए कार्ड छपने के बाद भी आप अपना नंबर, टाइटल या फ़ोटो बदल सकते हैं और हर कार्ड नई जानकारी दिखाता है। इसके लिए फ़्री QRdx अकाउंट चाहिए। अगर आपको ऐसा कोड चाहिए जिसमें कॉन्टैक्ट खुद मौजूद हो और अकाउंट की ज़रूरत न हो, तो vCard QR कोड जनरेटर इस्तेमाल करें।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.1"
+  },
+  "5fe139b11347": {
+    "source": "Sign in or create a free account, then start a vCard Plus page: the button above opens it with that type picked.",
+    "text": "साइन इन करें या फ़्री अकाउंट बनाएँ, फिर vCard Plus पेज शुरू करें: ऊपर का बटन उसी टाइप के साथ इसे खोल देता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.0"
+  },
+  "464922fa84f5": {
+    "source": "Pick a template (Classic, Midnight, Minimal or Real estate agent) and fill in your details, photo and links.",
+    "text": "एक टेम्पलेट चुनें (Classic, Midnight, Minimal या Real estate agent) और अपनी जानकारी, फ़ोटो और लिंक भरें।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.1"
+  },
+  "e05e48c28335": {
+    "source": "Publish the page, then download its QR code for your business card, email signature or badge.",
+    "text": "पेज पब्लिश करें, फिर उसका QR कोड अपने बिज़नेस कार्ड, ईमेल सिग्नेचर या बैज के लिए डाउनलोड करें।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.2"
+  },
+  "595b4e2fc678": {
+    "source": "Scan it once and tap Save contact to check what lands in your contacts.",
+    "text": "एक बार स्कैन करें और Save contact दबाकर देखें कि आपके कॉन्टैक्ट में क्या सेव होता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.3"
+  },
+  "d24f121f4a4e": {
+    "source": "Save contact",
+    "text": "Save contact",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.0.title"
+  },
+  "608136076759": {
+    "source": "Downloads a vCard 3.0 file that phones open in their contacts app, with your name, company, job title, phones, emails, website, address, bio, social profiles and photo.",
+    "text": "vCard 3.0 फ़ाइल डाउनलोड करता है, जिसे फ़ोन अपने कॉन्टैक्ट ऐप में खोलता है। इसमें आपका नाम, कंपनी, जॉब टाइटल, फ़ोन नंबर, ईमेल, वेबसाइट, पता, बायो, सोशल प्रोफ़ाइल और फ़ोटो होते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.0.description"
+  },
+  "1810407f5ab7": {
+    "source": "Quick actions",
+    "text": "क्विक एक्शन",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.1.title"
+  },
+  "85abf5242b39": {
+    "source": "Call, WhatsApp, email and directions buttons, so people can reach you before they save anything.",
+    "text": "कॉल, WhatsApp, ईमेल और दिशा-निर्देश के बटन, ताकि लोग कुछ भी सेव करने से पहले आपसे संपर्क कर सकें।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.1.description"
+  },
+  "29887a5ff984": {
+    "source": "Share",
+    "text": "शेयर",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.2.title"
+  },
+  "d221039f4b04": {
+    "source": "Opens the phone's share sheet, so the person you met can pass your card on.",
+    "text": "फ़ोन की शेयर शीट खोलता है, ताकि जिससे आप मिले हैं वह आपका कार्ड आगे भेज सके।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.2.description"
+  },
+  "1c127a69878c": {
+    "source": "Scan counts",
+    "text": "स्कैन की गिनती",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.3.title"
+  },
+  "194261d84c60": {
+    "source": "The code counts scans without cookies, so you can see how many people opened your card and when.",
+    "text": "कोड बिना कुकी के स्कैन गिनता है, इसलिए आप देख सकते हैं कि कितने लोगों ने आपका कार्ड कब खोला।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.3.description"
+  },
+  "249966c88166": {
+    "source": "Change anything on the page and publish: a new number, a new job title, a new photo. Every printed card opens the new version, and each publish is kept as a version.",
+    "text": "पेज पर कुछ भी बदलें और पब्लिश करें: नया नंबर, नया जॉब टाइटल, नई फ़ोटो। हर छपा हुआ कार्ड नया वर्शन खोलता है, और हर पब्लिश एक वर्शन के रूप में सेव रहता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.editing.0"
+  },
+  "4dfefacaed50": {
+    "source": "The same page can go on an NFC card: its code has Put this card on NFC, which writes the page's link to a blank NFC card from Chrome on Android, and taps are counted apart from scans.",
+    "text": "यही पेज NFC कार्ड पर भी लग सकता है: इसके कोड में Put this card on NFC है, जो Android पर Chrome से पेज का लिंक खाली NFC कार्ड पर लिख देता है, और टैप की गिनती स्कैन से अलग होती है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.editing.1"
+  },
+  "423579ba01f0": {
+    "source": "vCard QR code or digital business card?",
+    "text": "vCard QR कोड या डिजिटल बिज़नेस कार्ड?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.title"
+  },
+  "e0dc2994a6c6": {
+    "source": "vCard QR code (static)",
+    "text": "vCard QR कोड (स्टैटिक)",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticLabel"
+  },
+  "42fb4ce76f4a": {
+    "source": "No account, free for good: the contact details are written into the code itself.",
+    "text": "अकाउंट की ज़रूरत नहीं, हमेशा फ़्री: संपर्क की जानकारी कोड में ही लिखी होती है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.0"
+  },
+  "78bcbb374194": {
+    "source": "Works offline: the phone offers to save the contact without opening a page.",
+    "text": "ऑफ़लाइन भी चलता है: फ़ोन बिना कोई पेज खोले कॉन्टैक्ट सेव करने का विकल्प देता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.1"
+  },
+  "3a78bfa8904e": {
+    "source": "Can't change after printing, has no photo, and every extra field makes the code denser.",
+    "text": "छपने के बाद बदला नहीं जा सकता, फ़ोटो नहीं होती, और हर अतिरिक्त फ़ील्ड से कोड और घना हो जाता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.2"
+  },
+  "0ccfb0cf39a1": {
+    "source": "Digital business card (hosted page)",
+    "text": "डिजिटल बिज़नेस कार्ड (होस्टेड पेज)",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedLabel"
+  },
+  "d3cca0966e18": {
+    "source": "A free QRdx account; the code opens a page QRdx hosts.",
+    "text": "एक फ़्री QRdx अकाउंट; कोड QRdx द्वारा होस्ट किया गया पेज खोलता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.0"
+  },
+  "fac813a8a0c4": {
+    "source": "Edit your details, photo and links any time; printed cards keep working.",
+    "text": "अपनी जानकारी, फ़ोटो और लिंक कभी भी बदलें; छपे हुए कार्ड चलते रहते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.1"
+  },
+  "3ae0e38d142c": {
+    "source": "Photo, buttons, links and Save contact, plus scan counts.",
+    "text": "फ़ोटो, बटन, लिंक और Save contact, साथ में स्कैन की गिनती।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.2"
+  },
+  "cc88ae6eae83": {
+    "source": "Is the digital business card free?",
+    "text": "क्या डिजिटल बिज़नेस कार्ड फ़्री है?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.0.question"
+  },
+  "4593d31a7707": {
+    "source": "What does Save contact add to the phone?",
+    "text": "Save contact फ़ोन में क्या-क्या जोड़ता है?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.1.question"
+  },
+  "e92f1e3af269": {
+    "source": "A vCard 3.0 contact with your name, company, job title, phones, emails, website, address, bio, the page's social profiles and your photo. Photos uploaded to QRdx are embedded in the file; photos linked from other sites are included as a link.",
+    "text": "एक vCard 3.0 कॉन्टैक्ट, जिसमें आपका नाम, कंपनी, जॉब टाइटल, फ़ोन नंबर, ईमेल, वेबसाइट, पता, बायो, पेज की सोशल प्रोफ़ाइल और आपकी फ़ोटो होती है। QRdx पर अपलोड की गई फ़ोटो फ़ाइल में ही एम्बेड होती हैं, और दूसरी साइटों से लिंक की गई फ़ोटो लिंक के रूप में जुड़ती हैं।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.1.answer"
+  },
+  "433aa551a2c4": {
+    "source": "Can I change my details after printing?",
+    "text": "क्या प्रिंट करने के बाद मैं अपनी जानकारी बदल सकता/सकती हूँ?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.2.question"
+  },
+  "d00e42301a68": {
+    "source": "Yes. Edit the page and publish; the printed code keeps opening it, now with your new details.",
+    "text": "हाँ। पेज को एडिट करके पब्लिश करें; प्रिंट किया हुआ कोड वही पेज खोलता रहेगा, अब आपकी नई जानकारी के साथ।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.2.answer"
+  },
+  "d6db733919c0": {
+    "source": "What happens to my card if I stop paying?",
+    "text": "अगर मैं पेमेंट करना बंद कर दूँ तो मेरे कार्ड का क्या होगा?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.3.question"
+  },
+  "0531738b4156": {
+    "source": "Should I use a vCard QR code instead?",
+    "text": "क्या मुझे इसकी जगह vCard QR कोड इस्तेमाल करना चाहिए?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.4.question"
+  },
+  "118510355202": {
+    "source": "If your details won't change and you don't need a photo or links, yes: a static vCard code needs no account and works offline. If you want to edit the card later or see scans, use the hosted card.",
+    "text": "अगर आपकी जानकारी नहीं बदलेगी और आपको फ़ोटो या लिंक नहीं चाहिए, तो हाँ: स्टैटिक QR कोड वाला vCard कोड बिना अकाउंट के बनता है और ऑफ़लाइन भी चलता है। अगर आप कार्ड को बाद में एडिट करना चाहते हैं या स्कैन देखना चाहते हैं, तो होस्टेड कार्ड इस्तेमाल करें।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.4.answer"
+  },
+  "1593c67c99af": {
+    "source": "Do people need an app?",
+    "text": "क्या लोगों को app चाहिए?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.5.question"
+  },
+  "ab7a6ee88b76": {
+    "source": "No. The phone's camera opens the card in the browser, and Save contact hands the file to the built-in contacts app.",
+    "text": "नहीं। फ़ोन का कैमरा कार्ड को ब्राउज़र में खोल देता है, और Save contact फ़ाइल को फ़ोन के बिल्ट-इन कॉन्टैक्ट्स app को दे देता है।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.5.answer"
+  },
+  "0619dd1a299c": {
+    "source": "Can I put it on an NFC business card?",
+    "text": "क्या मैं इसे NFC बिज़नेस कार्ड पर लगा सकता/सकती हूँ?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.6.question"
+  },
+  "01ebed374f9c": {
+    "source": "Yes. QRdx doesn't sell cards: buy blank NFC cards and write the page's link to them from the code's NFC page in Chrome on Android. Editing the page updates every card you've handed out.",
+    "text": "हाँ। QRdx कार्ड नहीं बेचता: खाली NFC कार्ड खरीदें और Android पर Chrome में कोड के NFC पेज से उन पर पेज का लिंक लिखें। पेज एडिट करने पर आपके बाँटे हुए सभी कार्ड अपडेट हो जाते हैं।",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.6.answer"
   },
   "d96545f726d0": {
     "source": "Food and drink",
@@ -16007,21 +16655,21 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.noun"
   },
-  "0d6bfccc8412": {
-    "source": "QR code menus",
-    "text": "QR कोड मेन्यू",
+  "9f74ff6bd071": {
+    "source": "Menu QR code generator",
+    "text": "मेन्यू QR कोड जनरेटर",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.title"
   },
-  "6d942ed73962": {
-    "source": "QR Code Menus: Digital Menus You Can Edit Anytime",
-    "text": "QR कोड मेन्यू: डिजिटल मेन्यू जिसे कभी भी बदलें",
+  "28cae6ae47d7": {
+    "source": "Menu QR Code Generator: Digital Menus You Can Edit",
+    "text": "मेन्यू QR कोड जनरेटर: डिजिटल मेन्यू, जिसे आप एडिट कर सकें",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.seoTitle"
   },
-  "fae1e9f4d921": {
-    "source": "Create a QR code menu you can update without reprinting: hosted menu pages with prices, photos, allergens and sold-out items, plus table sizes and tips.",
-    "text": "ऐसा QR कोड मेन्यू बनाएँ जिसे दोबारा प्रिंट किए बिना अपडेट कर सकें: कीमत, फ़ोटो, एलर्जन और सोल्ड-आउट आइटम वाले होस्टेड मेन्यू पेज, साथ में टेबल साइज़ और टिप्स।",
+  "0e1c07b7ee6a": {
+    "source": "Make a menu QR code you can update without reprinting: a hosted menu page with prices, photos, allergens and sold-out items, plus table sizes and tips.",
+    "text": "ऐसा मेन्यू QR कोड बनाएँ जिसे दोबारा प्रिंट किए बिना अपडेट कर सकें: कीमतों, फ़ोटो, एलर्जन और सोल्ड-आउट आइटम वाला होस्टेड मेन्यू पेज, साथ में टेबल के साइज़ और टिप्स।",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.metaDescription"
   },
@@ -16031,9 +16679,9 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.summary"
   },
-  "803094d083d9": {
-    "source": "A QR code menu is only as good as what it opens. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm. A hosted menu page behind a dynamic code can do both: edit an item from your phone and every table sees it on the next scan.",
-    "text": "QR कोड मेन्यू उतना ही अच्छा है जितना वह पेज जो उससे खुलता है। PDF से जुड़ा स्टैटिक QR कोड पहले दिन ठीक दिखता है, लेकिन फ़ाइल का नाम बदलते ही टूट जाता है और यह भी नहीं बता सकता कि रात 8 बजे तक सैल्मन खत्म हो गई। डायनेमिक QR कोड के पीछे का होस्टेड पेज दोनों काम कर सकता है: फ़ोन से कोई आइटम बदलें और अगले स्कैन पर हर टेबल को वह दिख जाएगा।",
+  "5ddc4cc908fb": {
+    "source": "A QR code menu is only as good as what it opens. Build a menu page on QRdx, with sections, prices, photos, allergen tags and sold-out flags, and print its code: edit an item from your phone and every table sees it on the next scan. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm.",
+    "text": "QR कोड मेन्यू उतना ही अच्छा होता है जितना वह पेज, जो उससे खुलता है। QRdx पर सेक्शन, कीमतों, फ़ोटो, एलर्जन टैग और सोल्ड-आउट फ़्लैग वाला मेन्यू पेज बनाएँ और उसका कोड प्रिंट करें: अपने फ़ोन से कोई आइटम एडिट करें और अगले स्कैन पर हर टेबल को वही दिखेगा। PDF से जुड़ा स्टैटिक QR कोड पहले दिन तो ठीक लगता है, लेकिन फ़ाइल का नाम बदलते ही काम करना बंद कर देता है और यह भी नहीं दिखा सकता कि रात 8 बजे सैल्मन खत्म हो गई।",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.intro.0"
   },
@@ -16198,6 +16846,66 @@
     "text": "नहीं। फ़ोन का कैमरा मेन्यू को ब्राउज़र में खोल देता है। मेहमानों को कुछ इंस्टॉल नहीं करना पड़ता और अकाउंट की भी ज़रूरत नहीं होती।",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.faqs.2.answer"
+  },
+  "a2c83df426e4": {
+    "source": "Is the menu QR code generator free?",
+    "text": "क्या मेन्यू QR कोड जनरेटर फ़्री है?",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.faqs.3.question"
+  },
+  "7ac8b96e14c2": {
+    "source": "Yes, with a free QRdx account: a menu page is one of the hosted pages the Free plan includes. Pro removes the page limit and the small \"Made with QRdx\" footer. If you cancel a paid plan, the menu and its code keep working.",
+    "text": "हाँ, QRdx के फ़्री अकाउंट के साथ: मेन्यू पेज उन होस्टेड पेज में से एक है जो फ़्री प्लान में शामिल हैं। Pro में पेज की सीमा और छोटा \"Made with QRdx\" फ़ुटर हट जाता है। अगर आप पेड प्लान रद्द करते हैं, तो भी मेन्यू और उसका कोड चलते रहते हैं।",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.faqs.3.answer"
+  },
+  "04687442a9e4": {
+    "source": "Build a menu page",
+    "text": "मेन्यू पेज बनाएँ",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.startPage.label"
+  },
+  "6d549515191d": {
+    "source": "QR codes for restaurant menus: a practical guide",
+    "text": "रेस्टोरेंट मेन्यू के लिए QR कोड: एक व्यावहारिक गाइड",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.0.title"
+  },
+  "c4566c93d0ec": {
+    "source": "Where to put the code, how big to print it, Wi-Fi, accessibility and allergens.",
+    "text": "कोड कहाँ लगाएँ, कितने बड़े साइज़ में प्रिंट करें, Wi-Fi, एक्सेसिबिलिटी और एलर्जन।",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.0.description"
+  },
+  "457447ccdac3": {
+    "source": "Print size calculator",
+    "text": "प्रिंट साइज़ कैलकुलेटर",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.1.title"
+  },
+  "72d879c56dcf": {
+    "source": "The smallest code that scans from across the table or the counter.",
+    "text": "सबसे छोटा कोड, जो टेबल के उस पार या काउंटर से भी स्कैन हो जाए।",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.1.description"
+  },
+  "810bb7432f7a": {
+    "source": "PDF QR code generator",
+    "text": "PDF QR कोड जनरेटर",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.2.title"
+  },
+  "fc6b9d7d104a": {
+    "source": "Already have a designed PDF menu? Host it and replace the file each season.",
+    "text": "क्या आपके पास पहले से डिज़ाइन किया हुआ PDF मेन्यू है? उसे होस्ट करें और हर सीज़न में फ़ाइल बदल दें।",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.2.description"
+  },
+  "d7761143e88e": {
+    "source": "Menus, guest Wi-Fi, review requests and table ordering in one place.",
+    "text": "मेन्यू, गेस्ट Wi-Fi, रिव्यू रिक्वेस्ट और टेबल ऑर्डरिंग, सब एक ही जगह।",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.3.description"
   },
   "f568f32aa7bb": {
     "source": "Table tents",
@@ -22217,6 +22925,1218 @@
     "status": "machine",
     "context": "barcodes.faqs.9.answer"
   },
+  "e553f8d3db33": {
+    "source": "Free EAN-13 Barcode Generator",
+    "text": "फ़्री EAN-13 बारकोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.title"
+  },
+  "185de8851663": {
+    "source": "Make an EAN-13 barcode for retail products. Type 12 digits and the check digit is added, or 13 to have it checked. SVG, PDF, EPS and PNG. Free, no signup.",
+    "text": "रिटेल प्रोडक्ट के लिए EAN-13 बारकोड बनाएं। 12 अंक डालें तो चेक डिजिट जुड़ जाता है, या 13 डालें तो उसकी जांच होती है। SVG, PDF, EPS और PNG। फ़्री, साइनअप की ज़रूरत नहीं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.metaDescription"
+  },
+  "33b789598cde": {
+    "source": "EAN-13 is the barcode on retail products almost everywhere outside the US and Canada. Type the 12 digits of your number and the generator adds the check digit, or type all 13 and it checks yours, then download the barcode as a vector for print or a PNG for screens.",
+    "text": "EAN-13 अमेरिका और कनाडा को छोड़कर लगभग हर जगह रिटेल प्रोडक्ट पर लगा बारकोड है। अपने नंबर के 12 अंक डालें और जनरेटर चेक डिजिट जोड़ देगा, या पूरे 13 अंक डालें और वह आपके नंबर की जांच करेगा। फिर बारकोड को प्रिंट के लिए वेक्टर में या स्क्रीन के लिए PNG में डाउनलोड करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.intro"
+  },
+  "69b749864ad4": {
+    "source": "Products sold in shops and online marketplaces. The 13 digits are a GTIN-13: a GS1 company prefix, an item number and a check digit. The first digits show which GS1 organization issued the prefix, not where the product was made.",
+    "text": "दुकानों और ऑनलाइन मार्केटप्लेस में बिकने वाले प्रोडक्ट। ये 13 अंक एक GTIN-13 होते हैं: GS1 कंपनी प्रीफ़िक्स, आइटम नंबर और एक चेक डिजिट। शुरुआती अंक बताते हैं कि प्रीफ़िक्स किस GS1 संगठन ने जारी किया, यह नहीं कि प्रोडक्ट कहां बना।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.usedFor.0"
+  },
+  "74faacaf6528": {
+    "source": "Books and magazines use it too: an ISBN starting with 978 or 979 is printed as an EAN-13, and 977 marks an ISSN for periodicals. Numbers starting with 2 are kept for in-store use, such as weighed items priced at the counter.",
+    "text": "किताबों और पत्रिकाओं में भी यही इस्तेमाल होता है: 978 या 979 से शुरू होने वाला ISBN EAN-13 के रूप में छपता है, और 977 पत्र-पत्रिकाओं के ISSN को दर्शाता है। 2 से शुरू होने वाले नंबर स्टोर के अंदर के इस्तेमाल के लिए रखे गए हैं, जैसे काउंटर पर तौलकर दाम तय होने वाली चीज़ें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.usedFor.1"
+  },
+  "b99b98cddd37": {
+    "source": "Do I need GS1 numbers for EAN-13?",
+    "text": "क्या EAN-13 के लिए मुझे GS1 नंबर चाहिए?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.title"
+  },
+  "e1bbafd4f2b0": {
+    "source": "For anything sold through a retailer, yes. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "रिटेलर के ज़रिए बिकने वाली किसी भी चीज़ के लिए, हां। GTIN का लाइसेंस मिलता है, उसे सीधे खरीदा नहीं जाता: आप GS1 (या अपने देश के GS1 संगठन) से जुड़ते हैं, कंपनी प्रीफ़िक्स लेते हैं और उसी से अपने प्रोडक्ट नंबर बनाते हैं। बड़े रिटेलर और मार्केटप्लेस GTIN को GS1 की रजिस्ट्री से मिलाकर जांचते हैं, इसलिए किसी और के प्रीफ़िक्स से दोबारा बेचे गए नंबर रिजेक्ट हो सकते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.paragraphs.0"
+  },
+  "a6ea3696d866": {
+    "source": "This generator draws any valid 13-digit number, but it doesn't issue or register numbers. For your own stock, shelves or assets, use Code 128 instead: it needs no registration.",
+    "text": "यह जनरेटर कोई भी वैध 13 अंकों का नंबर बना देता है, लेकिन नंबर जारी या रजिस्टर नहीं करता। अपने स्टॉक, शेल्फ़ या एसेट के लिए Code 128 इस्तेमाल करें: इसके लिए किसी रजिस्ट्रेशन की ज़रूरत नहीं है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.paragraphs.1"
+  },
+  "26bacbda8d57": {
+    "source": "Spaces and dashes are ignored, and only digits are allowed. Twelve digits get the check digit added; thirteen have the last one checked, and a wrong check digit shows an error instead of a barcode.",
+    "text": "स्पेस और डैश को नज़रअंदाज़ किया जाता है, और सिर्फ़ अंक ही मान्य हैं। बारह अंकों पर चेक डिजिट जोड़ा जाता है; तेरह अंकों में आखिरी अंक की जांच होती है, और चेक डिजिट गलत हो तो बारकोड की जगह एरर दिखता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.rules.0"
+  },
+  "368c54283308": {
+    "source": "The check digit weighs the digits 3, 1, 3, 1… starting from the right of the 12-digit body, adds them up and picks the digit that brings the sum to the next multiple of 10.",
+    "text": "चेक डिजिट 12 अंकों वाले हिस्से के दाईं ओर से शुरू करके अंकों को 3, 1, 3, 1… से गुणा करता है, उन्हें जोड़ता है और वह अंक चुनता है जो जोड़ को अगले 10 के गुणज तक पहुंचा दे।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.rules.1"
+  },
+  "cca5925a2331": {
+    "source": "At 100% an EAN-13 is 37.29 mm wide (quiet zones included) by 25.93 mm high, with a 0.33 mm module. GS1 allows 80% to 200% for retail.",
+    "text": "100% पर EAN-13 की चौड़ाई 37.29 mm (क्वाइट ज़ोन समेत) और ऊंचाई 25.93 mm होती है, और मॉड्यूल 0.33 mm का होता है। GS1 रिटेल के लिए 80% से 200% तक की अनुमति देता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.0"
+  },
+  "dedb3231c770": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%. Scale them within the 80% to 200% range and keep the proportions: shortening the bars makes the barcode harder to scan at checkouts.",
+    "text": "वेक्टर डाउनलोड में 0.353 mm का मॉड्यूल इस्तेमाल होता है, यानी लगभग 107%। इन्हें 80% से 200% की सीमा में ही स्केल करें और अनुपात बनाए रखें: बार छोटे करने से चेकआउट पर बारकोड स्कैन करना मुश्किल हो जाता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.1"
+  },
+  "88896bfdc73b": {
+    "source": "Leave 11 modules of blank space on the left and 7 on the right. The generator starts with 11 on both sides.",
+    "text": "बाईं ओर 11 मॉड्यूल और दाईं ओर 7 मॉड्यूल की खाली जगह छोड़ें। जनरेटर दोनों तरफ़ 11 से शुरू करता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.2"
+  },
+  "5d176e6bd05b": {
+    "source": "Can I make up an EAN-13 number?",
+    "text": "क्या मैं अपना EAN-13 नंबर खुद बना सकता हूं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.0.question"
+  },
+  "8f7b0093a5f3": {
+    "source": "It will scan, but a store's system won't recognize it and may already use that number for another product. Retail EAN-13 numbers come from a GS1 company prefix. Numbers starting with 2 are the exception: they're meant for use inside one store or company.",
+    "text": "वह स्कैन तो होगा, लेकिन स्टोर का सिस्टम उसे पहचानेगा नहीं, और हो सकता है वह नंबर पहले से किसी दूसरे प्रोडक्ट के लिए इस्तेमाल हो रहा हो। रिटेल EAN-13 नंबर GS1 कंपनी प्रीफ़िक्स से आते हैं। 2 से शुरू होने वाले नंबर अपवाद हैं: वे किसी एक स्टोर या कंपनी के अंदर इस्तेमाल के लिए हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.0.answer"
+  },
+  "20c86e42f5bd": {
+    "source": "What's the difference between EAN-13 and UPC-A?",
+    "text": "EAN-13 और UPC-A में क्या अंतर है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.1.question"
+  },
+  "b9808d9ee114": {
+    "source": "A UPC-A is a 12-digit number that equals an EAN-13 starting with 0, and checkout scanners read both. US and Canadian retailers often ask for UPC-A; elsewhere EAN-13 is the norm.",
+    "text": "UPC-A 12 अंकों का नंबर है जो 0 से शुरू होने वाले EAN-13 के बराबर होता है, और चेकआउट स्कैनर दोनों पढ़ लेते हैं। अमेरिका और कनाडा के रिटेलर अक्सर UPC-A मांगते हैं; बाकी जगह EAN-13 ही चलता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.1.answer"
+  },
+  "388645787977": {
+    "source": "Can I make an ISBN barcode?",
+    "text": "क्या मैं ISBN बारकोड बना सकता हूं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.2.question"
+  },
+  "e2522c6c9cf0": {
+    "source": "Yes: an ISBN-13 is an EAN-13. Enter the 13 digits without dashes. The 5-digit price add-on some book trades print beside it isn't drawn here.",
+    "text": "हां: ISBN-13 एक EAN-13 ही होता है। 13 अंक बिना डैश के डालें। किताबों के कारोबार में उसके पास छपने वाला 5 अंकों का प्राइस ऐड-ऑन यहां नहीं बनता।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.2.answer"
+  },
+  "118b647519e1": {
+    "source": "Why does my 13-digit number show an error?",
+    "text": "मेरे 13 अंकों के नंबर पर एरर क्यों दिख रहा है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.3.question"
+  },
+  "c3754e77000e": {
+    "source": "Its last digit isn't the check digit the other 12 produce, which usually means a typo. The error says what the check digit should be. Enter only the first 12 digits to have it worked out.",
+    "text": "उसका आखिरी अंक वह चेक डिजिट नहीं है जो बाकी 12 अंकों से बनता है, जिसका मतलब आमतौर पर टाइपिंग की गलती होती है। एरर में बताया जाता है कि चेक डिजिट क्या होना चाहिए। चेक डिजिट अपने आप निकलवाने के लिए सिर्फ़ पहले 12 अंक डालें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.3.answer"
+  },
+  "21a397c19c56": {
+    "source": "Free UPC-A Barcode Generator",
+    "text": "फ़्री UPC-A बारकोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.title"
+  },
+  "ae5abf4dcf1f": {
+    "source": "Make a UPC-A barcode for products sold in the US and Canada. Type 11 digits and the check digit is added, or 12 to have it checked. SVG, PDF, EPS and PNG.",
+    "text": "अमेरिका और कनाडा में बिकने वाले प्रोडक्ट के लिए UPC-A बारकोड बनाएं। 11 अंक डालें तो चेक डिजिट जुड़ जाएगा, या 12 अंक डालें तो वह जाँचा जाएगा। SVG, PDF, EPS और PNG।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.metaDescription"
+  },
+  "fbecbf739065": {
+    "source": "UPC-A is the 12-digit retail barcode of the US and Canada. Type the first 11 digits and the generator adds the check digit, or type all 12 to have it checked, then download a vector for your packaging or a PNG for an online listing.",
+    "text": "UPC-A अमेरिका और कनाडा का 12 अंकों वाला रिटेल बारकोड है। शुरू के 11 अंक डालें तो जनरेटर चेक डिजिट जोड़ देगा, या सभी 12 अंक डालें तो वह जाँच लेगा। फिर अपनी पैकेजिंग के लिए वेक्टर या ऑनलाइन लिस्टिंग के लिए PNG डाउनलोड करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.intro"
+  },
+  "fd8224969dd4": {
+    "source": "Products sold in US and Canadian stores and on marketplaces that ask for a UPC. The number is a GTIN-12: a GS1 company prefix, an item number and a check digit.",
+    "text": "अमेरिका और कनाडा के स्टोर में और उन मार्केटप्लेस पर बिकने वाले प्रोडक्ट, जहाँ UPC मांगा जाता है। यह नंबर GTIN-12 होता है: GS1 कंपनी प्रीफ़िक्स, आइटम नंबर और एक चेक डिजिट।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.usedFor.0"
+  },
+  "b6ca2ff0c836": {
+    "source": "The first digit says what kind of number it is: 2 is kept for weighed items priced in the store, and 3 for medicines that carry a US National Drug Code. Since 2005, checkout systems in the US and Canada read EAN-13 too, but many retailers still ask for UPC-A.",
+    "text": "पहला अंक बताता है कि यह किस तरह का नंबर है: 2 स्टोर में तौलकर दाम तय होने वाली चीज़ों के लिए रखा गया है, और 3 उन दवाओं के लिए जिन पर अमेरिकी National Drug Code होता है। 2005 से अमेरिका और कनाडा के चेकआउट सिस्टम EAN-13 भी पढ़ते हैं, लेकिन कई रिटेलर अब भी UPC-A मांगते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.usedFor.1"
+  },
+  "57f54586c885": {
+    "source": "Do I need GS1 numbers for UPC-A?",
+    "text": "क्या UPC-A के लिए मुझे GS1 नंबर चाहिए?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.title"
+  },
+  "73dfd53c9783": {
+    "source": "For retail, yes. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected. In the US, that's GS1 US.",
+    "text": "रिटेल के लिए, हाँ। GTIN का लाइसेंस मिलता है, उसे पूरी तरह खरीदा नहीं जाता: आप GS1 (या अपने देश के GS1 संगठन) से जुड़ते हैं, कंपनी प्रीफ़िक्स लेते हैं और उसी से अपने प्रोडक्ट को नंबर देते हैं। बड़े रिटेलर और मार्केटप्लेस GTIN को GS1 की रजिस्ट्री से मिलाकर देखते हैं, इसलिए किसी और के प्रीफ़िक्स से दोबारा बेचे गए नंबर रिजेक्ट हो सकते हैं। अमेरिका में यह GS1 US है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.paragraphs.0"
+  },
+  "5998b23e332c": {
+    "source": "This generator draws any valid number; it doesn't issue or register them.",
+    "text": "यह जनरेटर किसी भी वैध नंबर का बारकोड बना देता है; यह नंबर जारी या रजिस्टर नहीं करता।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.paragraphs.1"
+  },
+  "913a860f547e": {
+    "source": "Digits only; spaces and dashes are ignored. Eleven digits get the check digit added, twelve have it checked.",
+    "text": "सिर्फ़ अंक डालें; स्पेस और डैश नज़रअंदाज़ किए जाते हैं। ग्यारह अंकों पर चेक डिजिट जोड़ा जाता है, बारह अंकों पर वह जाँचा जाता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.rules.0"
+  },
+  "f7ed2e5b7a9e": {
+    "source": "The check digit triples the digits in odd positions (1st, 3rd, 5th… of the 11), adds the rest and picks the digit that brings the total to the next multiple of 10. It's the same rule as EAN-13, so a UPC-A with a 0 in front is a valid EAN-13.",
+    "text": "चेक डिजिट में विषम स्थानों के अंकों (11 में से 1ला, 3रा, 5वाँ…) को तीन गुना किया जाता है, बाकी अंक जोड़े जाते हैं और वह अंक चुना जाता है जिससे कुल योग अगले 10 के गुणज तक पहुँचे। यह EAN-13 वाला ही नियम है, इसलिए आगे 0 लगा हुआ UPC-A एक वैध EAN-13 होता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.rules.1"
+  },
+  "a387137f90a2": {
+    "source": "At 100% a UPC-A is 37.29 mm wide with its quiet zones and a 0.33 mm module; GS1 allows 80% to 200%.",
+    "text": "100% पर UPC-A क्वाइट ज़ोन और 0.33 mm मॉड्यूल के साथ 37.29 mm चौड़ा होता है; GS1 80% से 200% तक की अनुमति देता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.0"
+  },
+  "afd7ee6d261b": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%. Keep the proportions when you scale, and don't shorten the bars to fit a small pack: use UPC-E if the product qualifies.",
+    "text": "वेक्टर डाउनलोड में 0.353 mm का मॉड्यूल इस्तेमाल होता है, यानी करीब 107%। साइज़ बदलते समय अनुपात बनाए रखें, और छोटे पैक में फिट करने के लिए बार की ऊँचाई कम न करें: अगर प्रोडक्ट योग्य है तो UPC-E इस्तेमाल करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.1"
+  },
+  "218648ca162b": {
+    "source": "Keep at least 9 modules clear on each side. The generator starts with 11.",
+    "text": "दोनों तरफ़ कम से कम 9 मॉड्यूल जगह खाली रखें। जनरेटर 11 से शुरू होता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.2"
+  },
+  "f2ed9151ccbe": {
+    "source": "Is a UPC the same as a GTIN?",
+    "text": "क्या UPC और GTIN एक ही हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.0.question"
+  },
+  "c3f6c27abc9d": {
+    "source": "The number in a UPC-A barcode is a GTIN-12. Written with two leading zeros it's the GTIN-14 that some product feeds ask for.",
+    "text": "UPC-A बारकोड में मौजूद नंबर GTIN-12 होता है। आगे दो शून्य लगाने पर यह GTIN-14 बन जाता है, जो कुछ प्रोडक्ट फ़ीड में मांगा जाता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.0.answer"
+  },
+  "1b029891466b": {
+    "source": "My scanner reads 13 digits from a UPC-A. Is that wrong?",
+    "text": "मेरा स्कैनर UPC-A से 13 अंक पढ़ता है। क्या यह गलत है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.1.question"
+  },
+  "4d4fecc241c9": {
+    "source": "No. Many readers report a UPC-A as the 13-digit EAN with a 0 in front. The scan check on this page accepts both.",
+    "text": "नहीं। कई रीडर UPC-A को आगे 0 लगे 13 अंकों वाले EAN के रूप में दिखाते हैं। इस पेज का स्कैन चेक दोनों को स्वीकार करता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.1.answer"
+  },
+  "10663e747849": {
+    "source": "Can I turn my UPC-A into a smaller UPC-E?",
+    "text": "क्या मैं अपने UPC-A को छोटे UPC-E में बदल सकता हूँ?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.2.question"
+  },
+  "e5b2ab58a715": {
+    "source": "Only if the number has zeros in the right places. Open the UPC-E generator and enter the 12-digit UPC-A: it tells you whether yours can be shortened.",
+    "text": "तभी, जब नंबर में सही जगहों पर शून्य हों। UPC-E जनरेटर खोलें और 12 अंकों का UPC-A डालें: वह बता देगा कि आपका नंबर छोटा किया जा सकता है या नहीं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.2.answer"
+  },
+  "a14ac0f7f2da": {
+    "source": "Free Code 128 Barcode Generator",
+    "text": "फ़्री Code 128 बारकोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.title"
+  },
+  "464d967dc9c2": {
+    "source": "Make a Code 128 barcode for labels, asset tags and tickets: letters, digits and symbols, up to 80 characters. Scan-checked in the browser. SVG, PDF, PNG.",
+    "text": "लेबल, एसेट टैग और टिकट के लिए Code 128 बारकोड बनाएं: अक्षर, अंक और चिह्न, 80 अक्षरों तक। ब्राउज़र में स्कैन की जाँच। SVG, PDF, PNG।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.metaDescription"
+  },
+  "e52568761a92": {
+    "source": "Code 128 is the general-purpose barcode: letters, digits, spaces and keyboard symbols in a compact row of bars. Type your text, check that it scans and download it for labels, asset tags, tickets or stock bins. It needs no registration.",
+    "text": "Code 128 आम इस्तेमाल का बारकोड है: अक्षर, अंक, स्पेस और कीबोर्ड के चिह्न, सब बार की एक छोटी-सी पंक्ति में। अपना टेक्स्ट लिखें, जाँचें कि वह स्कैन होता है और लेबल, एसेट टैग, टिकट या स्टॉक बिन के लिए डाउनलोड करें। इसके लिए रजिस्ट्रेशन की ज़रूरत नहीं है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.intro"
+  },
+  "0b875fca4969": {
+    "source": "Inventory and stock labels, asset tags, library and lab samples, tickets, internal shipping labels and order numbers: anything that needs a barcode but isn't a product sold in shops.",
+    "text": "इन्वेंटरी और स्टॉक लेबल, एसेट टैग, लाइब्रेरी और लैब के सैंपल, टिकट, अंदरूनी शिपिंग लेबल और ऑर्डर नंबर: हर वह चीज़ जिसे बारकोड चाहिए, लेकिन जो दुकानों में बिकने वाला प्रोडक्ट नहीं है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.usedFor.0"
+  },
+  "846a7db7a028": {
+    "source": "It's the barcode most warehouse and point-of-sale scanners read out of the box, and the base of GS1-128, which adds Application Identifiers for supply chain data.",
+    "text": "ज़्यादातर वेयरहाउस और पॉइंट-ऑफ़-सेल स्कैनर इसे बिना किसी सेटिंग के पढ़ लेते हैं। GS1-128 भी इसी पर बना है, जो सप्लाई चेन डेटा के लिए Application Identifiers जोड़ता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.usedFor.1"
+  },
+  "760439f56898": {
+    "source": "Do I need to register a Code 128 barcode?",
+    "text": "क्या Code 128 बारकोड रजिस्टर कराना ज़रूरी है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.title"
+  },
+  "dfd2214d62c1": {
+    "source": "No. Code 128 holds whatever text you choose, so there's no number to license. Use your own SKUs, serial numbers or IDs.",
+    "text": "नहीं। Code 128 में आप जो भी टेक्स्ट चुनें, वह आ सकता है, इसलिए किसी नंबर का लाइसेंस नहीं लेना पड़ता। अपने SKU, सीरियल नंबर या ID इस्तेमाल करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.paragraphs.0"
+  },
+  "0ec6d58266bf": {
+    "source": "If a retailer or logistics partner asks for GS1 data (a GTIN, SSCC, batch or expiry date), use GS1-128 instead: it's Code 128 with GS1's structure.",
+    "text": "अगर कोई रिटेलर या लॉजिस्टिक्स पार्टनर GS1 डेटा (GTIN, SSCC, बैच या एक्सपायरी डेट) माँगे, तो इसके बजाय GS1-128 इस्तेमाल करें: यह GS1 की बनावट वाला Code 128 है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.paragraphs.1"
+  },
+  "e561312bcaee": {
+    "source": "Up to 80 characters of plain ASCII: letters, digits, spaces and the symbols on a US keyboard. Accented letters, emoji and control characters can't be encoded here.",
+    "text": "सादे ASCII के 80 अक्षरों तक: अक्षर, अंक, स्पेस और US कीबोर्ड के चिह्न। मात्रा वाले अक्षर, इमोजी और कंट्रोल कैरेक्टर यहाँ एन्कोड नहीं हो सकते।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.rules.0"
+  },
+  "782292cc1d92": {
+    "source": "Code 128 adds its own check character (a sum modulo 103) and three code sets: set C packs two digits into each character, so long runs of digits make shorter barcodes. The encoder picks the code sets for you, and readers don't print the check character.",
+    "text": "Code 128 अपना चेक कैरेक्टर (103 का मॉड्यूलो योग) खुद जोड़ता है और इसमें तीन कोड सेट हैं: सेट C हर कैरेक्टर में दो अंक भर देता है, इसलिए अंकों की लंबी कतार से छोटा बारकोड बनता है। एन्कोडर आपके लिए कोड सेट चुन लेता है, और रीडर चेक कैरेक्टर को प्रिंट नहीं करते।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.rules.1"
+  },
+  "7429e56ee897": {
+    "source": "Each Code 128 character is 11 modules wide, plus start, check and stop characters and 10 modules of quiet zone each side. With the downloads' 0.353 mm module, ABCDEFGHIJ is 58.2 mm wide and 1234567890 is 38.8 mm: the digits pair up.",
+    "text": "Code 128 का हर कैरेक्टर 11 मॉड्यूल चौड़ा होता है, साथ में स्टार्ट, चेक और स्टॉप कैरेक्टर और दोनों तरफ़ 10 मॉड्यूल का क्वाइट ज़ोन। डाउनलोड के 0.353 mm मॉड्यूल के साथ ABCDEFGHIJ 58.2 mm चौड़ा होता है और 1234567890 38.8 mm: अंक जोड़ी में बँध जाते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.0"
+  },
+  "58c654d2b792": {
+    "source": "A common rule for handheld scanners is bars at least 15% of the barcode's length, or 6.35 mm (a quarter inch), whichever is more. The default bar height is 15 mm.",
+    "text": "हैंडहेल्ड स्कैनर के लिए आम नियम है कि बार की ऊँचाई बारकोड की लंबाई की कम से कम 15% या 6.35 mm (चौथाई इंच) हो, जो भी ज़्यादा हो। बार की डिफ़ॉल्ट ऊँचाई 15 mm है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.1"
+  },
+  "b165f84fd1ba": {
+    "source": "There's no fixed size: shrink the module for small labels, but test with the scanners that will read it, especially on thermal label printers.",
+    "text": "कोई तय साइज़ नहीं है: छोटे लेबल के लिए मॉड्यूल छोटा करें, पर उन स्कैनरों से टेस्ट ज़रूर करें जो इसे पढ़ेंगे, खासकर थर्मल लेबल प्रिंटर पर।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.2"
+  },
+  "0dede9a6603e": {
+    "source": "Can Code 128 hold lowercase letters?",
+    "text": "क्या Code 128 में छोटे अक्षर आ सकते हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.0.question"
+  },
+  "4a77b24587b5": {
+    "source": "Yes. Unlike Code 39, it encodes upper and lower case, digits and symbols.",
+    "text": "हाँ। Code 39 के उलट, यह अपर और लोअर केस, अंक और चिह्न, सब एन्कोड करता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.0.answer"
+  },
+  "b54f48ff7572": {
+    "source": "Why is my barcode so long?",
+    "text": "मेरा बारकोड इतना लंबा क्यों है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.1.question"
+  },
+  "d10883e237e0": {
+    "source": "Long text makes long barcodes: each letter adds 11 modules. Shorten the text, use digits where you can (they pair up), or use a 2D code such as Data Matrix, which holds far more in a small square.",
+    "text": "लंबे टेक्स्ट से लंबा बारकोड बनता है: हर अक्षर 11 मॉड्यूल जोड़ता है। टेक्स्ट छोटा करें, जहाँ हो सके अंक इस्तेमाल करें (वे जोड़ी में बँधते हैं), या Data Matrix जैसा 2D कोड लें, जो छोटे चौकोर में कहीं ज़्यादा डेटा रख सकता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.1.answer"
+  },
+  "c49509a2641c": {
+    "source": "Is Code 128 the same as GS1-128?",
+    "text": "क्या Code 128 और GS1-128 एक ही हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.2.question"
+  },
+  "b98f8aeb01e3": {
+    "source": "GS1-128 is Code 128 with a special first character (FNC1) and GS1 Application Identifiers. A plain Code 128 with GS1-looking text isn't a GS1-128, and GS1 systems won't treat it as one.",
+    "text": "GS1-128 एक खास पहले कैरेक्टर (FNC1) और GS1 Application Identifiers वाला Code 128 है। GS1 जैसे दिखने वाले टेक्स्ट का सादा Code 128 GS1-128 नहीं होता, और GS1 सिस्टम उसे GS1-128 नहीं मानेंगे।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.2.answer"
+  },
+  "142797b9804d": {
+    "source": "Free ITF-14 Barcode Generator for Cartons",
+    "text": "कार्टन के लिए फ़्री ITF-14 बारकोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.title"
+  },
+  "3543c3bc68be": {
+    "source": "Make an ITF-14 barcode for shipping cartons: 13 digits get the check digit, 14 are checked. Bearer bars included. SVG, PDF and EPS for print. Free.",
+    "text": "शिपिंग कार्टन के लिए ITF-14 बारकोड बनाएं: 13 अंक डालने पर चेक डिजिट जुड़ जाता है, 14 अंकों की जाँच होती है। बेयरर बार शामिल। प्रिंट के लिए SVG, PDF और EPS। फ़्री।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.metaDescription"
+  },
+  "7eb62a8e4cb5": {
+    "source": "ITF-14 is the barcode printed on corrugated cartons that hold retail products. It carries the 14-digit GTIN of the case. Type 13 digits and the check digit is added, or all 14 to have it checked, and download a vector with its bearer bars for your carton artwork.",
+    "text": "ITF-14 वह बारकोड है जो रिटेल प्रोडक्ट वाले नालीदार कार्टन पर छपता है। इसमें केस का 14 अंकों का GTIN होता है। 13 अंक डालें तो चेक डिजिट जुड़ जाता है, या 14 अंक डालें तो उनकी जाँच होती है। फिर अपने कार्टन आर्टवर्क के लिए बेयरर बार वाला वेक्टर डाउनलोड करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.intro"
+  },
+  "51bb0e6ae783": {
+    "source": "Outer cases and shipping cartons scanned in warehouses and distribution centers, not at the checkout. The thick frame around the bars (bearer bars) evens out printing pressure on rough board and stops a scanner reading only part of the barcode.",
+    "text": "आउटर केस और शिपिंग कार्टन, जिन्हें गोदामों और डिस्ट्रीब्यूशन सेंटर में स्कैन किया जाता है, चेकआउट पर नहीं। बार के चारों ओर की मोटी फ़्रेम (बेयरर बार) खुरदुरे बोर्ड पर प्रिंटिंग का दबाव बराबर रखती है और स्कैनर को बारकोड का सिर्फ़ एक हिस्सा पढ़ने से रोकती है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.usedFor.0"
+  },
+  "f7eb05998dd2": {
+    "source": "The first digit is the indicator, 1 to 8, which tells packaging levels apart (a case of 6, a case of 24). The next 12 digits are the GTIN of the item inside without its check digit, and a new check digit closes the number.",
+    "text": "पहला अंक इंडिकेटर होता है, 1 से 8 तक, जो पैकेजिंग के स्तर अलग बताता है (6 का केस, 24 का केस)। अगले 12 अंक अंदर वाले आइटम के GTIN होते हैं, उसके चेक डिजिट के बिना, और नया चेक डिजिट नंबर को पूरा करता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.usedFor.1"
+  },
+  "71a2765e870b": {
+    "source": "Where does an ITF-14 number come from?",
+    "text": "ITF-14 नंबर कहाँ से आता है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.title"
+  },
+  "671dd15961a5": {
+    "source": "From the GTIN of the product inside. Take its 12-digit body (an EAN-13 without the check digit, or a UPC-A with a 0 in front), put an indicator digit before it and let the generator add the new check digit.",
+    "text": "अंदर के प्रोडक्ट के GTIN से। उसके 12 अंकों वाला हिस्सा लें (चेक डिजिट के बिना EAN-13, या आगे 0 लगा हुआ UPC-A), उसके पहले एक इंडिकेटर अंक लगाएं और नया चेक डिजिट जनरेटर को जोड़ने दें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.paragraphs.0"
+  },
+  "2e1eafaa208c": {
+    "source": "So you need GS1 numbers for the product itself first. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "इसलिए सबसे पहले आपको प्रोडक्ट के लिए ही GS1 नंबर चाहिए। GTIN का लाइसेंस मिलता है, उसे सीधे खरीदा नहीं जाता: आप GS1 (या अपने देश के GS1 संगठन) के सदस्य बनते हैं, कंपनी प्रीफ़िक्स लेते हैं और उसी से अपने प्रोडक्ट को नंबर देते हैं। बड़े रिटेलर और मार्केटप्लेस GTIN को GS1 की रजिस्ट्री से मिलाकर जाँचते हैं, इसलिए किसी और के प्रीफ़िक्स से दोबारा बेचे गए नंबर रिजेक्ट हो सकते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.paragraphs.1"
+  },
+  "4e12069ff3d8": {
+    "source": "Digits only; spaces and dashes are ignored. Thirteen digits get the check digit added, fourteen have it checked.",
+    "text": "सिर्फ़ अंक; स्पेस और डैश नज़रअंदाज़ किए जाते हैं। तेरह अंकों पर चेक डिजिट जोड़ा जाता है, चौदह अंकों की जाँच की जाती है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.rules.0"
+  },
+  "03fce9c1f85f": {
+    "source": "The check digit uses the same 3, 1, 3, 1… weights from the right as EAN-13, over 13 digits.",
+    "text": "चेक डिजिट में EAN-13 की तरह दाईं ओर से 3, 1, 3, 1… वेट लगते हैं, 13 अंकों पर।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.rules.1"
+  },
+  "65163656744f": {
+    "source": "GS1 sizes ITF-14 for cartons: a module of 0.495 mm to 1.016 mm (1.016 mm is 100%) and bars at least 32 mm high, with 10 modules of quiet zone each side.",
+    "text": "GS1 कार्टन के लिए ITF-14 का साइज़ तय करता है: 0.495 mm से 1.016 mm का मॉड्यूल (1.016 mm यानी 100%) और कम से कम 32 mm ऊँचे बार, दोनों तरफ़ 10 मॉड्यूल का क्वाइट ज़ोन।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.0"
+  },
+  "56f224fc7349": {
+    "source": "The downloads use a 0.353 mm module and 25 mm bars, smaller than GS1's minimum for cartons. Enlarge the file to 141% in your artwork: the module becomes 0.495 mm and the bars 35 mm.",
+    "text": "डाउनलोड में 0.353 mm का मॉड्यूल और 25 mm के बार होते हैं, जो कार्टन के लिए GS1 के न्यूनतम साइज़ से छोटे हैं। अपने आर्टवर्क में फ़ाइल को 141% तक बड़ा करें: मॉड्यूल 0.495 mm और बार 35 mm हो जाएंगे।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.1"
+  },
+  "18d61468335b": {
+    "source": "Printed straight onto brown board, bigger is safer: check the size with your packaging printer.",
+    "text": "सीधे भूरे बोर्ड पर प्रिंट करने पर बड़ा साइज़ ज़्यादा सुरक्षित है: साइज़ अपने पैकेजिंग प्रिंटर से जाँच लें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.2"
+  },
+  "9f48e9c4bf5a": {
+    "source": "Can I put an ITF-14 on a retail product?",
+    "text": "क्या मैं रिटेल प्रोडक्ट पर ITF-14 लगा सकता हूँ?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.0.question"
+  },
+  "348adc0c77f2": {
+    "source": "No, it's for cases and cartons. The consumer unit inside carries its own EAN-13 or UPC-A for the checkout.",
+    "text": "नहीं, यह केस और कार्टन के लिए है। अंदर की कंज्यूमर यूनिट पर चेकआउट के लिए अपना EAN-13 या UPC-A होता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.0.answer"
+  },
+  "d6b83fbe2489": {
+    "source": "What indicator digit should I use?",
+    "text": "मुझे कौन सा इंडिकेटर अंक इस्तेमाल करना चाहिए?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.1.question"
+  },
+  "f5809ecb63eb": {
+    "source": "Any of 1 to 8, chosen by you, one per packaging configuration: for example 1 for a case of 6 and 2 for a case of 24. 9 is kept for items with variable quantity.",
+    "text": "1 से 8 में से कोई भी, जो आप चुनते हैं, हर पैकेजिंग कॉन्फ़िगरेशन के लिए एक: जैसे 6 के केस के लिए 1 और 24 के केस के लिए 2। 9 बदलती मात्रा वाले आइटम के लिए रखा गया है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.1.answer"
+  },
+  "1e761a972faa": {
+    "source": "Can I turn the bearer bars off?",
+    "text": "क्या मैं बेयरर बार बंद कर सकता हूँ?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.2.question"
+  },
+  "fbfdafeb533b": {
+    "source": "Not here: the generator always draws the full frame, which GS1 recommends when ITF-14 is printed directly onto corrugated board.",
+    "text": "यहाँ नहीं: जनरेटर हमेशा पूरी फ़्रेम बनाता है, जिसकी सिफ़ारिश GS1 तब करता है जब ITF-14 सीधे नालीदार बोर्ड पर छपता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.2.answer"
+  },
+  "6431528d484d": {
+    "source": "Free GS1-128 Barcode Generator (SSCC, Batch, Expiry)",
+    "text": "फ़्री GS1-128 बारकोड जनरेटर (SSCC, बैच, एक्सपायरी)",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.title"
+  },
+  "b3ab040765c0": {
+    "source": "Make GS1-128 barcodes for logistics labels: GTIN, SSCC, batch, expiry and weight in one barcode. Check digits and dates checked. SVG, PDF and EPS. Free.",
+    "text": "लॉजिस्टिक्स लेबल के लिए GS1-128 बारकोड बनाएँ: GTIN, SSCC, बैच, एक्सपायरी और वज़न एक ही बारकोड में। चेक डिजिट और तारीखें जाँची जाती हैं। SVG, PDF और EPS। फ़्री।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.metaDescription"
+  },
+  "bd497ead49fb": {
+    "source": "GS1-128 puts several pieces of supply chain data into one barcode, each marked by an Application Identifier (AI) in brackets: (01) for the GTIN, (17) for the expiry date, (10) for the batch, (00) for a pallet's SSCC. Type the AIs and values; check digits are added or checked for you.",
+    "text": "GS1-128 सप्लाई चेन के कई डेटा एक ही बारकोड में रखता है, और हर डेटा को ब्रैकेट में लिखे Application Identifier (AI) से पहचाना जाता है: GTIN के लिए (01), एक्सपायरी तारीख़ के लिए (17), बैच के लिए (10), पैलेट के SSCC के लिए (00)। AI और वैल्यू टाइप करें; चेक डिजिट आपके लिए जोड़े या जाँचे जाते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.intro"
+  },
+  "fcfd83fcb2ae": {
+    "source": "Logistics labels on cases and pallets, and labels on fresh food, meat and medical supplies where a batch, an expiry date or a weight must travel with the GTIN.",
+    "text": "केस और पैलेट पर लगने वाले लॉजिस्टिक्स लेबल, और ताज़े खाने, मीट और मेडिकल सामान के लेबल, जहाँ GTIN के साथ बैच, एक्सपायरी तारीख़ या वज़न भी होना ज़रूरी है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.usedFor.0"
+  },
+  "8bf770848b73": {
+    "source": "The GS1 logistic label carries the pallet's SSCC, AI (00), as a GS1-128. Retail and logistics partners usually specify which AIs they want on it.",
+    "text": "GS1 लॉजिस्टिक लेबल पर पैलेट का SSCC, AI (00), GS1-128 के रूप में होता है। रिटेल और लॉजिस्टिक्स पार्टनर आमतौर पर बताते हैं कि उन्हें इस पर कौन-से AI चाहिए।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.usedFor.1"
+  },
+  "da8517c880c4": {
+    "source": "Do I need GS1 numbers for GS1-128?",
+    "text": "क्या GS1-128 के लिए मुझे GS1 नंबर चाहिए?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.title"
+  },
+  "10a672f37fdb": {
+    "source": "For the GTIN in (01) and the SSCC in (00), yes: both are built from a GS1 company prefix. Batch numbers, dates and weights are your own data.",
+    "text": "(01) में GTIN और (00) में SSCC के लिए हाँ: दोनों GS1 कंपनी प्रीफ़िक्स से बनते हैं। बैच नंबर, तारीखें और वज़न आपका अपना डेटा हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.paragraphs.0"
+  },
+  "8ffb1e1b55d9": {
+    "source": "A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "GTIN का लाइसेंस मिलता है, उसे पूरी तरह ख़रीदा नहीं जाता: आप GS1 (या अपने देश के GS1 संगठन) के सदस्य बनते हैं, कंपनी प्रीफ़िक्स लेते हैं और उसी से अपने प्रोडक्ट को नंबर देते हैं। बड़े रिटेलर और मार्केटप्लेस GTIN को GS1 की रजिस्ट्री से मिलाकर देखते हैं, इसलिए किसी और के प्रीफ़िक्स से दोबारा बेचे गए नंबर रिजेक्ट हो सकते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.paragraphs.1"
+  },
+  "3b87dfbd5a2b": {
+    "source": "Write each AI in brackets followed by its value: (01)09501101530003(17)261231(10)AB-123. The brackets aren't encoded; they show where each field starts.",
+    "text": "हर AI को ब्रैकेट में लिखें और उसके बाद उसकी वैल्यू: (01)09501101530003(17)261231(10)AB-123। ब्रैकेट एनकोड नहीं होते; वे बस दिखाते हैं कि हर फ़ील्ड कहाँ से शुरू होती है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.0"
+  },
+  "4d101be4f43b": {
+    "source": "GTINs in (01) and (02) and SSCCs in (00) get their check digit added when you leave it off, or checked when you don't. The encoder also checks every value against GS1's rules: an unknown AI or an impossible date such as month 13 is refused.",
+    "text": "(01) और (02) में GTIN और (00) में SSCC का चेक डिजिट आप न लिखें तो जोड़ दिया जाता है, और लिखें तो जाँचा जाता है। एनकोडर हर वैल्यू को GS1 के नियमों से भी जाँचता है: अनजान AI या महीना 13 जैसी असंभव तारीख़ मंज़ूर नहीं की जाती।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.1"
+  },
+  "31543a972a0e": {
+    "source": "A GS1-128 holds up to 48 characters of AIs and data. Put variable-length fields such as (10) batch last, so no separator is needed after them.",
+    "text": "एक GS1-128 में AI और डेटा मिलाकर 48 अक्षर तक आ सकते हैं। (10) बैच जैसी बदलती लंबाई वाली फ़ील्ड सबसे आख़िर में रखें, ताकि उनके बाद सेपरेटर की ज़रूरत न पड़े।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.2"
+  },
+  "94ad896b62ca": {
+    "source": "On GS1 logistic labels, GS1 asks for a module of 0.495 mm to 0.94 mm (0.495 mm is the target), bars at least 31.75 mm high and a barcode no longer than 165 mm with its quiet zones.",
+    "text": "GS1 लॉजिस्टिक लेबल पर GS1 0.495 mm से 0.94 mm का मॉड्यूल (0.495 mm लक्ष्य है), कम से कम 31.75 mm ऊँचे बार, और क्वाइट ज़ोन समेत 165 mm से लंबा न हो ऐसा बारकोड माँगता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.0"
+  },
+  "bb6b724ba287": {
+    "source": "The downloads use a 0.353 mm module and 15 mm bars, which suits small item labels. For a pallet or case label, set the bar height to 23 mm and enlarge the file to 141%: the module becomes 0.495 mm and the bars 32.4 mm. The example is then 142 mm long.",
+    "text": "डाउनलोड में 0.353 mm का मॉड्यूल और 15 mm के बार होते हैं, जो छोटे आइटम लेबल के लिए ठीक हैं। पैलेट या केस लेबल के लिए बार की ऊँचाई 23 mm करें और फ़ाइल को 141% तक बड़ा करें: मॉड्यूल 0.495 mm और बार 32.4 mm हो जाएँगे। तब यह उदाहरण 142 mm लंबा होगा।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.1"
+  },
+  "53953bee2634": {
+    "source": "Long data makes long barcodes: if it won't fit in 165 mm, split it over two GS1-128 barcodes, as GS1 logistic labels do.",
+    "text": "लंबा डेटा यानी लंबा बारकोड: अगर वह 165 mm में नहीं समाता, तो उसे दो GS1-128 बारकोड में बाँट दें, जैसा GS1 लॉजिस्टिक लेबल करते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.2"
+  },
+  "6659ea2f7d27": {
+    "source": "What do (17) and (15) dates look like?",
+    "text": "(17) और (15) की तारीखें कैसी दिखती हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.0.question"
+  },
+  "c5adec7ec0b7": {
+    "source": "Six digits, YYMMDD: (17)261231 is an expiry of 31 December 2026. A day of 00 means the end of that month.",
+    "text": "छह अंक, YYMMDD: (17)261231 का मतलब है 31 दिसंबर 2026 की एक्सपायरी। दिन 00 हो तो उसका मतलब उस महीने का अंत है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.0.answer"
+  },
+  "a824a925ac2e": {
+    "source": "Can I add a serial number?",
+    "text": "क्या मैं सीरियल नंबर जोड़ सकता हूँ?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.1.question"
+  },
+  "a22bba2c340b": {
+    "source": "Yes, with AI (21), up to 20 characters. Put it last, or after other fixed-length fields, to keep the barcode short.",
+    "text": "हाँ, AI (21) से, 20 अक्षर तक। बारकोड छोटा रखने के लिए इसे आख़िर में, या दूसरी फ़िक्स्ड-लंबाई वाली फ़ील्ड के बाद रखें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.1.answer"
+  },
+  "1b796f6907df": {
+    "source": "Why does my scanner show no brackets?",
+    "text": "मेरा स्कैनर ब्रैकेट क्यों नहीं दिखाता?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.2.question"
+  },
+  "e2f222913d2e": {
+    "source": "The brackets are only for people. Readers report the data with a symbology identifier (]C1) or none, and separate variable-length fields with an invisible GS character. The scan check here accepts all of these forms.",
+    "text": "ब्रैकेट सिर्फ़ लोगों के पढ़ने के लिए हैं। रीडर डेटा सिंबोलॉजी आइडेंटिफ़ायर (]C1) के साथ या उसके बिना देते हैं, और बदलती लंबाई वाली फ़ील्ड को एक अदृश्य GS कैरेक्टर से अलग करते हैं। यहाँ का स्कैन चेक इन सभी रूपों को मान लेता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.2.answer"
+  },
+  "54cdec66ca5a": {
+    "source": "Free Data Matrix Code Generator",
+    "text": "मुफ़्त Data Matrix कोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.title"
+  },
+  "33a7d883dd0b": {
+    "source": "Make a Data Matrix code for part marking, small labels and serial numbers. Any text up to 1,000 characters, scan-checked in your browser. SVG, PDF and PNG.",
+    "text": "पार्ट मार्किंग, छोटे लेबल और सीरियल नंबर के लिए Data Matrix कोड बनाएँ। 1,000 अक्षरों तक कोई भी टेक्स्ट, ब्राउज़र में ही स्कैन की जाँच। SVG, PDF और PNG।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.metaDescription"
+  },
+  "0bd28fd6ac6c": {
+    "source": "Data Matrix is a small square 2D code that holds a lot of data in very little space. Type any text, up to 1,000 characters here, check that it scans and download it for parts, electronics, small labels and lab samples.",
+    "text": "Data Matrix एक छोटा चौकोर 2D कोड है, जो बहुत कम जगह में काफ़ी डेटा रख सकता है। यहाँ 1,000 अक्षरों तक कोई भी टेक्स्ट लिखें, जाँचें कि वह स्कैन होता है और उसे पार्ट्स, इलेक्ट्रॉनिक्स, छोटे लेबल और लैब सैंपल के लिए डाउनलोड करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.intro"
+  },
+  "bbd731b691ab": {
+    "source": "Marking parts and electronics, sometimes etched straight onto metal, because a Data Matrix stays readable when part of it is damaged. Also small labels, lab tubes, documents and mail.",
+    "text": "पार्ट्स और इलेक्ट्रॉनिक्स पर मार्किंग, कभी-कभी सीधे धातु पर उकेरकर, क्योंकि Data Matrix का कुछ हिस्सा खराब होने पर भी वह पढ़ा जा सकता है। साथ ही छोटे लेबल, लैब ट्यूब, दस्तावेज़ और डाक में भी।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.usedFor.0"
+  },
+  "c34156dbe396": {
+    "source": "Readers need a camera (an image-based scanner or a phone app), not a laser scanner. Many warehouse scanners read it, but some phone camera apps only read QR codes.",
+    "text": "रीडर में कैमरा चाहिए (इमेज-बेस्ड स्कैनर या फ़ोन ऐप), लेज़र स्कैनर से यह नहीं पढ़ा जाता। कई वेयरहाउस स्कैनर इसे पढ़ लेते हैं, लेकिन कुछ फ़ोन कैमरा ऐप सिर्फ़ QR कोड पढ़ते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.usedFor.1"
+  },
+  "5a4a713e53d3": {
+    "source": "Plain Data Matrix or GS1 DataMatrix?",
+    "text": "सादा Data Matrix या GS1 DataMatrix?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.title"
+  },
+  "203ad7dd545c": {
+    "source": "This page makes plain Data Matrix (ECC 200): it holds whatever text you type, with no registration.",
+    "text": "यह पेज सादा Data Matrix (ECC 200) बनाता है: आप जो भी टेक्स्ट लिखें, यह उसे रख लेता है, किसी रजिस्ट्रेशन की ज़रूरत नहीं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.paragraphs.0"
+  },
+  "5a4cc58b06df": {
+    "source": "GS1 DataMatrix, required on some medicines and regulated packaging, adds a special first character and GS1 Application Identifiers. It isn't offered here; use GS1-128 if you need GS1 data in a barcode from this generator.",
+    "text": "GS1 DataMatrix कुछ दवाओं और नियंत्रित पैकेजिंग पर ज़रूरी होता है। इसमें एक खास पहला कैरेक्टर और GS1 Application Identifiers जुड़ते हैं। यह यहाँ उपलब्ध नहीं है; इस जनरेटर के किसी बारकोड में GS1 डेटा चाहिए तो GS1-128 इस्तेमाल करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.paragraphs.1"
+  },
+  "084247522b6a": {
+    "source": "Any text, up to 1,000 characters here. The code grows in steps as you add text, from 10 × 10 cells upwards; this generator draws the square form.",
+    "text": "कोई भी टेक्स्ट, यहाँ 1,000 अक्षरों तक। टेक्स्ट जोड़ने पर कोड चरणों में बड़ा होता है, 10 × 10 सेल से शुरू होकर; यह जनरेटर चौकोर रूप बनाता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.rules.0"
+  },
+  "df3a5ab10444": {
+    "source": "The largest square Data Matrix (144 × 144 cells) holds 3,116 digits, 2,335 letters and digits, or 1,556 bytes. Digits pack most tightly.",
+    "text": "सबसे बड़ा चौकोर Data Matrix (144 × 144 सेल) 3,116 अंक, 2,335 अक्षर और अंक, या 1,556 बाइट रख सकता है। अंक सबसे कम जगह लेते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.rules.1"
+  },
+  "3924066c6435": {
+    "source": "The vector downloads draw each cell 0.71 mm square, so SN-0042-7781 comes out 12.7 mm across with its margin. Scale it down in your layout for small labels.",
+    "text": "वेक्टर डाउनलोड में हर सेल 0.71 mm का चौकोर बनता है, इसलिए SN-0042-7781 मार्जिन समेत 12.7 mm चौड़ा आता है। छोटे लेबल के लिए अपने लेआउट में इसे छोटा कर लें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.0"
+  },
+  "34d7c225b2e8": {
+    "source": "The smallest cell a scanner reads depends on the scanner and the print, so test at the size you'll use.",
+    "text": "स्कैनर जितना छोटा सेल पढ़ सकता है, वह स्कैनर और प्रिंट पर निर्भर करता है, इसलिए जिस साइज़ में इस्तेमाल करेंगे उसी में टेस्ट करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.1"
+  },
+  "cdba82f03c20": {
+    "source": "Data Matrix needs only a 1-cell margin; the generator starts with 2.",
+    "text": "Data Matrix को सिर्फ़ 1 सेल का मार्जिन चाहिए; जनरेटर 2 से शुरू करता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.2"
+  },
+  "043e570a3b23": {
+    "source": "Can a phone read a Data Matrix?",
+    "text": "क्या फ़ोन Data Matrix पढ़ सकता है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.0.question"
+  },
+  "a96a7b1effbb": {
+    "source": "Many barcode scanner apps can. Some phone camera apps only open QR codes, so if people scan with their phones, a QR code is the safer choice.",
+    "text": "कई बारकोड स्कैनर ऐप पढ़ सकते हैं। कुछ फ़ोन कैमरा ऐप सिर्फ़ QR कोड खोलते हैं, इसलिए अगर लोग फ़ोन से स्कैन करते हैं तो QR कोड ज़्यादा सुरक्षित विकल्प है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.0.answer"
+  },
+  "0074eaa0269b": {
+    "source": "Data Matrix or QR code?",
+    "text": "Data Matrix या QR कोड?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.1.question"
+  },
+  "691a2294de01": {
+    "source": "For links people scan with a phone, QR. For small parts and industrial labels read by scanners, Data Matrix: it's more compact for short serial numbers and is the norm in electronics and part marking.",
+    "text": "फ़ोन से स्कैन होने वाले लिंक के लिए QR। स्कैनर से पढ़े जाने वाले छोटे पार्ट्स और इंडस्ट्रियल लेबल के लिए Data Matrix: छोटे सीरियल नंबर के लिए यह ज़्यादा कॉम्पैक्ट है और इलेक्ट्रॉनिक्स व पार्ट मार्किंग में आम है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.1.answer"
+  },
+  "606b842e0bf1": {
+    "source": "Does it have error correction?",
+    "text": "क्या इसमें एरर करेक्शन है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.2.question"
+  },
+  "dc815e534921": {
+    "source": "Yes. ECC 200 Data Matrix always includes Reed–Solomon error correction, so a scuffed or partly covered code can still be read.",
+    "text": "हाँ। ECC 200 Data Matrix में हमेशा Reed–Solomon एरर करेक्शन होता है, इसलिए घिसा हुआ या आंशिक रूप से ढका कोड भी पढ़ा जा सकता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.2.answer"
+  },
+  "9c37c845e0b6": {
+    "source": "Free EAN-8 Barcode Generator",
+    "text": "फ़्री EAN-8 बारकोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.title"
+  },
+  "22d56fe4901b": {
+    "source": "Make an EAN-8 barcode for packs too small for an EAN-13. Type 7 digits and the check digit is added, or 8 to have it checked. SVG, PDF, EPS and PNG.",
+    "text": "EAN-13 के लिए बहुत छोटे पैक के लिए EAN-8 बारकोड बनाएँ। 7 अंक डालें तो चेक डिजिट जुड़ जाता है, या 8 अंक डालें तो उसकी जाँच होती है। SVG, PDF, EPS और PNG।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.metaDescription"
+  },
+  "dfef763e539b": {
+    "source": "EAN-8 is the short retail barcode for packs too small to fit an EAN-13, such as a lipstick or a pack of gum. Type 7 digits and the check digit is added, or all 8 to have it checked.",
+    "text": "EAN-8 छोटा रिटेल बारकोड है, जो उन पैक के लिए है जिन पर EAN-13 नहीं आ सकता, जैसे लिपस्टिक या च्युइंग गम का पैक। 7 अंक डालें तो चेक डिजिट जुड़ जाता है, या सभी 8 डालें तो उसकी जाँच होती है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.intro"
+  },
+  "a0be1a284394": {
+    "source": "Small retail items where an EAN-13 would cover too much of the pack. Checkout scanners read it like any EAN.",
+    "text": "छोटे रिटेल सामान, जहाँ EAN-13 पैक का बहुत बड़ा हिस्सा घेर लेगा। चेकआउट स्कैनर इसे किसी भी EAN की तरह पढ़ते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.usedFor.0"
+  },
+  "852edb3101a6": {
+    "source": "EAN-8 numbers starting with 0 or 2 are kept for use inside a store or company, like EAN-13 numbers starting with 2.",
+    "text": "0 या 2 से शुरू होने वाले EAN-8 नंबर स्टोर या कंपनी के भीतर इस्तेमाल के लिए रखे गए हैं, ठीक 2 से शुरू होने वाले EAN-13 नंबरों की तरह।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.usedFor.1"
+  },
+  "a56cca56e15d": {
+    "source": "Where do EAN-8 numbers come from?",
+    "text": "EAN-8 नंबर कहाँ से मिलते हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.title"
+  },
+  "022aabdb2cf3": {
+    "source": "From GS1, one at a time: GS1 organizations issue EAN-8 numbers (GTIN-8) individually, only for products that are too small for an EAN-13. You can't shorten an EAN-13 into one.",
+    "text": "GS1 से, एक-एक करके: GS1 संगठन EAN-8 नंबर (GTIN-8) अलग-अलग जारी करते हैं, सिर्फ़ उन प्रोडक्ट के लिए जो EAN-13 के लिए बहुत छोटे हैं। आप किसी EAN-13 को छोटा करके EAN-8 नहीं बना सकते।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.paragraphs.0"
+  },
+  "18362e5c5ba2": {
+    "source": "Ask your GS1 organization whether your product qualifies; often a smaller EAN-13 at 80% fits.",
+    "text": "अपने GS1 संगठन से पूछें कि आपका प्रोडक्ट इसके लिए योग्य है या नहीं; अक्सर 80% पर छोटा EAN-13 भी फ़िट हो जाता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.paragraphs.1"
+  },
+  "5f6754508a7a": {
+    "source": "Digits only. Seven digits get the check digit added, eight have it checked.",
+    "text": "सिर्फ़ अंक। सात अंकों पर चेक डिजिट जुड़ता है, आठ अंकों पर उसकी जाँच होती है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.rules.0"
+  },
+  "1fc4802286be": {
+    "source": "The check digit weighs the 7 digits 3, 1, 3… from the right, as in every GS1 number.",
+    "text": "चेक डिजिट दाईं ओर से 7 अंकों को 3, 1, 3… से गुणा करके निकाला जाता है, जैसा हर GS1 नंबर में होता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.rules.1"
+  },
+  "7543d202719e": {
+    "source": "At 100% an EAN-8 is 26.73 mm wide with its quiet zones, with a 0.33 mm module; GS1 allows 80% to 200%.",
+    "text": "100% पर EAN-8 क्वाइट ज़ोन समेत 26.73 mm चौड़ा होता है, जिसमें मॉड्यूल 0.33 mm का है; GS1 80% से 200% तक की अनुमति देता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.sizing.0"
+  },
+  "ef03a8fd06a1": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%, with 7 modules of quiet zone each side, the minimum.",
+    "text": "वेक्टर डाउनलोड में 0.353 mm का मॉड्यूल इस्तेमाल होता है, यानी लगभग 107%, और दोनों तरफ़ 7 मॉड्यूल का क्वाइट ज़ोन होता है, जो न्यूनतम है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.sizing.1"
+  },
+  "6436dfdfcff8": {
+    "source": "Can I use an EAN-8 instead of an EAN-13 to save space?",
+    "text": "क्या जगह बचाने के लिए मैं EAN-13 की जगह EAN-8 इस्तेमाल कर सकता हूँ?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.0.question"
+  },
+  "489cb7578ef3": {
+    "source": "Only with an EAN-8 number from GS1. Check first whether an EAN-13 at 80% fits your pack: it's only 29.83 mm wide.",
+    "text": "सिर्फ़ तभी, जब आपके पास GS1 से मिला EAN-8 नंबर हो। पहले देखें कि 80% पर EAN-13 आपके पैक पर फ़िट होता है या नहीं: वह सिर्फ़ 29.83 mm चौड़ा है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.0.answer"
+  },
+  "90586fd9db16": {
+    "source": "Is EAN-8 the same as UPC-E?",
+    "text": "क्या EAN-8 और UPC-E एक ही हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.1.question"
+  },
+  "97c04b6e9b42": {
+    "source": "No. Both are short retail barcodes, but a UPC-E is a shortened UPC-A number, while an EAN-8 is a separate 8-digit number issued by GS1.",
+    "text": "नहीं। दोनों छोटे रिटेल बारकोड हैं, लेकिन UPC-E छोटा किया हुआ UPC-A नंबर है, जबकि EAN-8 GS1 द्वारा जारी किया गया अलग 8 अंकों का नंबर है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.1.answer"
+  },
+  "762d7b6e125a": {
+    "source": "Free UPC-E Barcode Generator",
+    "text": "फ़्री UPC-E बारकोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.title"
+  },
+  "8a7652037d23": {
+    "source": "Make a UPC-E barcode, the short UPC for small packs. Enter 6 to 8 digits, or a 12-digit UPC-A and see whether it can be shortened. SVG, PDF and PNG. Free.",
+    "text": "UPC-E बारकोड बनाएं, छोटे पैक के लिए छोटा UPC। 6 से 8 अंक डालें, या 12 अंकों का UPC-A डालकर देखें कि उसे छोटा किया जा सकता है या नहीं। SVG, PDF और PNG। फ़्री।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.metaDescription"
+  },
+  "87d0f6288170": {
+    "source": "UPC-E is a UPC-A number with its zeros squeezed out, for packs too small for a full UPC-A. Enter the 6 to 8 digits of a UPC-E, or paste a 12-digit UPC-A and the generator tells you whether it can be shortened.",
+    "text": "UPC-E एक UPC-A नंबर है जिसके ज़ीरो हटा दिए गए हैं, उन पैक के लिए जो पूरे UPC-A के हिसाब से बहुत छोटे हैं। UPC-E के 6 से 8 अंक डालें, या 12 अंकों का UPC-A पेस्ट करें, और जनरेटर बताएगा कि उसे छोटा किया जा सकता है या नहीं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.intro"
+  },
+  "643f84ea2269": {
+    "source": "Small products sold in the US and Canada: cans, candy bars, cosmetics. Its bars take 51 modules, against 95 for a UPC-A.",
+    "text": "अमेरिका और कनाडा में बिकने वाले छोटे प्रोडक्ट: कैन, कैंडी बार, कॉस्मेटिक्स। इसके बार 51 मॉड्यूल लेते हैं, जबकि UPC-A के 95 होते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.usedFor.0"
+  },
+  "c1dead3e7b71": {
+    "source": "Scanners expand it back to the full UPC-A, so stores see the same number either way.",
+    "text": "स्कैनर इसे वापस पूरे UPC-A में बदल लेते हैं, इसलिए स्टोर को दोनों तरह से वही नंबर दिखता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.usedFor.1"
+  },
+  "1ea76911ccb3": {
+    "source": "Can my UPC-A be shortened?",
+    "text": "क्या मेरा UPC-A छोटा किया जा सकता है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.title"
+  },
+  "c4aeb8b7a592": {
+    "source": "Only some can. The number must start with 0 or 1 and have zeros in the right places: a manufacturer number ending in 000, 100 or 200 with an item number of 00000 to 00999, ending in 00 with 00000 to 00099, ending in 0 with 00000 to 00009, or any manufacturer number with an item number of 00005 to 00009.",
+    "text": "सिर्फ़ कुछ को किया जा सकता है। नंबर 0 या 1 से शुरू होना चाहिए और ज़ीरो सही जगहों पर होने चाहिए: 000, 100 या 200 पर खत्म होने वाला मैन्युफैक्चरर नंबर और 00000 से 00999 तक का आइटम नंबर, 00 पर खत्म होने वाला और 00000 से 00099 तक, 0 पर खत्म होने वाला और 00000 से 00009 तक, या कोई भी मैन्युफैक्चरर नंबर जिसके साथ आइटम नंबर 00005 से 00009 हो।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.paragraphs.0"
+  },
+  "1b23a37b71ba": {
+    "source": "The number itself comes from GS1, as for any UPC-A; GS1 US can tell you whether a UPC-E fits your prefix.",
+    "text": "नंबर खुद GS1 से मिलता है, जैसा किसी भी UPC-A के लिए होता है; GS1 US बता सकता है कि आपके प्रीफ़िक्स के लिए UPC-E बन सकता है या नहीं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.paragraphs.1"
+  },
+  "98b0464b7c1a": {
+    "source": "Enter 6 digits (number system 0 is assumed), 7 (number system and six digits; the check digit is added) or 8 (with the check digit, which is checked), or an 11- or 12-digit UPC-A to shorten.",
+    "text": "6 अंक डालें (नंबर सिस्टम 0 मान लिया जाता है), 7 अंक (नंबर सिस्टम और छह अंक; चेक डिजिट जोड़ दिया जाता है) या 8 अंक (चेक डिजिट के साथ, जिसकी जाँच होती है), या छोटा करने के लिए 11 या 12 अंकों का UPC-A डालें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.rules.0"
+  },
+  "cdc343ec0d94": {
+    "source": "The check digit is the check digit of the expanded UPC-A, so the generator expands the number first.",
+    "text": "चेक डिजिट वही है जो फैलाए गए UPC-A का चेक डिजिट होता है, इसलिए जनरेटर पहले नंबर को फैलाता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.rules.1"
+  },
+  "69f10216a359": {
+    "source": "UPC-E follows UPC-A's sizes: a 0.33 mm module at 100%, from 80% to 200%. Keep 9 modules clear on each side.",
+    "text": "UPC-E, UPC-A के साइज़ ही मानता है: 100% पर 0.33 mm का मॉड्यूल, 80% से 200% तक। दोनों तरफ़ 9 मॉड्यूल खाली रखें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.sizing.0"
+  },
+  "1394ad5843db": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%.",
+    "text": "वेक्टर डाउनलोड में 0.353 mm का मॉड्यूल इस्तेमाल होता है, यानी लगभग 107%।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.sizing.1"
+  },
+  "47c23bea0aca": {
+    "source": "Why does my scanner show 12 digits?",
+    "text": "मेरा स्कैनर 12 अंक क्यों दिखा रहा है?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.0.question"
+  },
+  "e592565cff00": {
+    "source": "Many readers expand a UPC-E to its UPC-A, and some to the 13-digit EAN. The scan check on this page accepts all of them.",
+    "text": "कई रीडर UPC-E को उसके UPC-A में फैला देते हैं, और कुछ 13 अंकों के EAN में। इस पेज की स्कैन जाँच इन सभी को मान लेती है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.0.answer"
+  },
+  "d59cd4e61915": {
+    "source": "My UPC-A can't be shortened. What now?",
+    "text": "मेरा UPC-A छोटा नहीं किया जा सकता। अब क्या करें?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.1.question"
+  },
+  "11c7ae3bc6ce": {
+    "source": "Print the UPC-A, at down to 80% if space is tight, or ask GS1 US for a number that has a UPC-E form.",
+    "text": "UPC-A ही प्रिंट करें, जगह कम हो तो 80% तक छोटा करके, या GS1 US से ऐसा नंबर माँगें जिसका UPC-E रूप हो।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.1.answer"
+  },
+  "28ee7033b2fd": {
+    "source": "Free Code 39 Barcode Generator",
+    "text": "फ़्री Code 39 बारकोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.title"
+  },
+  "39b46a51e75b": {
+    "source": "Make a Code 39 barcode with capital letters, digits and - . $ / + %, up to 40 characters, for systems that require it. Scan-checked. SVG, PDF, PNG. Free.",
+    "text": "कैपिटल अक्षरों, अंकों और - . $ / + % के साथ Code 39 बारकोड बनाएँ, 40 अक्षरों तक, उन सिस्टम के लिए जिन्हें इसकी ज़रूरत है। स्कैन-चेक किया हुआ। SVG, PDF, PNG। फ़्री।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.metaDescription"
+  },
+  "44b7033192cf": {
+    "source": "Code 39 is an older barcode for capital letters, digits and a few symbols. Nearly every scanner reads it, and some industries and older systems still require it. Type up to 40 characters, check that it scans and download it.",
+    "text": "Code 39 कैपिटल अक्षरों, अंकों और कुछ सिंबल के लिए एक पुराना बारकोड है। लगभग हर स्कैनर इसे पढ़ लेता है, और कुछ इंडस्ट्री और पुराने सिस्टम में यह आज भी ज़रूरी है। 40 अक्षरों तक टाइप करें, जाँचें कि यह स्कैन होता है और डाउनलोड करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.intro"
+  },
+  "f71a84ce9db6": {
+    "source": "Labels in systems that specify it: older automotive and defence labels (LOGMARS), ID badges and legacy inventory systems.",
+    "text": "उन सिस्टम के लेबल जो इसे तय करते हैं: पुराने ऑटोमोटिव और डिफ़ेंस लेबल (LOGMARS), ID बैज और पुराने इन्वेंटरी सिस्टम।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.usedFor.0"
+  },
+  "cb6d805d782a": {
+    "source": "If nothing requires Code 39, use Code 128: it holds lowercase letters and makes a shorter barcode for the same text.",
+    "text": "अगर कहीं Code 39 की ज़रूरत नहीं है, तो Code 128 इस्तेमाल करें: इसमें छोटे अक्षर (lowercase) आ सकते हैं और उसी टेक्स्ट के लिए बारकोड छोटा बनता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.usedFor.1"
+  },
+  "2e29fdb0b25b": {
+    "source": "Do I need to register a Code 39 barcode?",
+    "text": "क्या मुझे Code 39 बारकोड रजिस्टर करना होगा?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.numbers.title"
+  },
+  "9bc3f82cafab": {
+    "source": "No. Code 39 carries your own text: serial numbers, part numbers, IDs. There's nothing to license.",
+    "text": "नहीं। Code 39 आपका अपना टेक्स्ट रखता है: सीरियल नंबर, पार्ट नंबर, ID। इसके लिए किसी लाइसेंस की ज़रूरत नहीं है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.numbers.paragraphs.0"
+  },
+  "a7b97ec1605c": {
+    "source": "Capital letters A to Z, digits, spaces and - . $ / + %, up to 40 characters. Lowercase letters show an error: use capitals, or Code 128 for mixed case.",
+    "text": "कैपिटल अक्षर A से Z, अंक, स्पेस और - . $ / + %, 40 अक्षरों तक। छोटे अक्षर (lowercase) डालने पर एरर दिखता है: कैपिटल अक्षर इस्तेमाल करें, या मिले-जुले अक्षरों के लिए Code 128।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.rules.0"
+  },
+  "ae028fa56f8d": {
+    "source": "Each code is wrapped in start and stop asterisks, which aren't typed or decoded. This generator adds no optional check character, which suits most systems; if yours requires a modulo 43 check, add it to your text yourself.",
+    "text": "हर कोड की शुरुआत और अंत में स्टार्ट और स्टॉप तारे (*) होते हैं, जिन्हें टाइप नहीं करना पड़ता और जो डीकोड में नहीं आते। यह जनरेटर कोई वैकल्पिक चेक कैरेक्टर नहीं जोड़ता, जो ज़्यादातर सिस्टम के लिए ठीक है; अगर आपके सिस्टम को modulo 43 चेक चाहिए, तो उसे अपने टेक्स्ट में खुद जोड़ें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.rules.1"
+  },
+  "c2e9c6b8fe20": {
+    "source": "Each Code 39 character is 13 to 16 modules wide, against Code 128's 11, so the same text makes a wider barcode: ABCDEFGHIJ is 74.4 mm in the downloads, 58.2 mm as Code 128.",
+    "text": "Code 39 का हर कैरेक्टर 13 से 16 मॉड्यूल चौड़ा होता है, जबकि Code 128 का 11, इसलिए एक ही टेक्स्ट से ज़्यादा चौड़ा बारकोड बनता है: डाउनलोड में ABCDEFGHIJ 74.4 mm का है, Code 128 में 58.2 mm का।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.sizing.0"
+  },
+  "2fa22b103664": {
+    "source": "Keep 10 modules of blank space each side, and make the bars at least 15% of the length, or 6.35 mm, so they're easy to sweep.",
+    "text": "दोनों तरफ़ 10 मॉड्यूल की खाली जगह छोड़ें, और बार की ऊँचाई लंबाई की कम से कम 15% या 6.35 mm रखें, ताकि उन पर स्कैन करना आसान रहे।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.sizing.1"
+  },
+  "d3267025816c": {
+    "source": "Can Code 39 do lowercase?",
+    "text": "क्या Code 39 में छोटे अक्षर चलते हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.0.question"
+  },
+  "edc164ff5baf": {
+    "source": "Only in an extended mode (Full ASCII) that pairs characters, which this generator doesn't offer. Use Code 128 for lowercase.",
+    "text": "सिर्फ़ एक्सटेंडेड मोड (Full ASCII) में, जो अक्षरों को जोड़ों में रखता है, और यह जनरेटर उसे नहीं देता। छोटे अक्षरों के लिए Code 128 इस्तेमाल करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.0.answer"
+  },
+  "349ac715ad13": {
+    "source": "Should I type the asterisks?",
+    "text": "क्या मुझे तारे (*) टाइप करने होंगे?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.1.question"
+  },
+  "1eff6819a466": {
+    "source": "No. The start and stop characters are added for you, and the asterisk can't be part of the text.",
+    "text": "नहीं। स्टार्ट और स्टॉप कैरेक्टर आपके लिए अपने-आप जुड़ जाते हैं, और तारा (*) टेक्स्ट का हिस्सा नहीं हो सकता।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.1.answer"
+  },
+  "d3ff2381a9b5": {
+    "source": "Free PDF417 Barcode Generator",
+    "text": "फ़्री PDF417 बारकोड जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.title"
+  },
+  "c59ac66e5fad": {
+    "source": "Make a PDF417 barcode, the stacked 2D code on IDs and boarding passes. Any text up to 1,000 characters, scan-checked in your browser. SVG, PDF and PNG.",
+    "text": "PDF417 बारकोड बनाएँ, यह स्टैक्ड 2D कोड ID और बोर्डिंग पास पर होता है। 1,000 अक्षरों तक कोई भी टेक्स्ट, ब्राउज़र में स्कैन-चेक किया हुआ। SVG, PDF और PNG।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.metaDescription"
+  },
+  "1c50b7e7e107": {
+    "source": "PDF417 is a stacked 2D barcode: rows of small barcodes on top of each other, holding up to about a kilobyte of text. Type your text, check that it scans and download it.",
+    "text": "PDF417 एक स्टैक्ड 2D बारकोड है: छोटे बारकोड की कतारें एक के ऊपर एक, जिसमें लगभग एक किलोबाइट तक टेक्स्ट आ सकता है। अपना टेक्स्ट टाइप करें, जाँचें कि यह स्कैन होता है और डाउनलोड करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.intro"
+  },
+  "8d9b782b44c7": {
+    "source": "Driver's licenses and ID cards (US and Canadian licenses carry one on the back), paper boarding passes, shipping documents and forms that carry their data with them.",
+    "text": "ड्राइविंग लाइसेंस और ID कार्ड (US और कनाडा के लाइसेंस के पीछे यह होता है), पेपर बोर्डिंग पास, शिपिंग दस्तावेज़ और ऐसे फ़ॉर्म जो अपना डेटा साथ रखते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.usedFor.0"
+  },
+  "36975970999d": {
+    "source": "Its wide, short shape fits along the edge of a card or a label, where a square code wouldn't.",
+    "text": "इसका चौड़ा और छोटा आकार कार्ड या लेबल के किनारे में फ़िट हो जाता है, जहाँ चौकोर कोड नहीं लग पाता।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.usedFor.1"
+  },
+  "3255440c1e86": {
+    "source": "Do I need to register a PDF417 barcode?",
+    "text": "क्या मुझे PDF417 बारकोड रजिस्टर करना होगा?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.numbers.title"
+  },
+  "58e171f7d6ee": {
+    "source": "No. It holds whatever text you type. Formats such as driver's license data follow their own standards for what goes inside; this generator encodes your text as given.",
+    "text": "नहीं। इसमें वही टेक्स्ट रहता है जो आप टाइप करते हैं। ड्राइविंग लाइसेंस डेटा जैसे फ़ॉर्मैट में अंदर क्या जाएगा, इसके अपने स्टैंडर्ड होते हैं; यह जनरेटर आपका टेक्स्ट जैसा है वैसा ही एन्कोड करता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.numbers.paragraphs.0"
+  },
+  "356c0ea4f70f": {
+    "source": "Any text, up to 1,000 characters here. A PDF417 has 3 to 90 rows of 1 to 30 data columns and can hold up to 1,850 letters and digits, 2,710 digits or 1,108 bytes.",
+    "text": "कोई भी टेक्स्ट, यहाँ 1,000 अक्षरों तक। PDF417 में 3 से 90 पंक्तियाँ और 1 से 30 डेटा कॉलम होते हैं और इसमें 1,850 अक्षर और अंक, 2,710 अंक या 1,108 बाइट तक आ सकते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.rules.0"
+  },
+  "3a03ca95b0f1": {
+    "source": "Error correction is built in, so part of the code can be damaged and still read.",
+    "text": "एरर करेक्शन इसमें पहले से है, इसलिए कोड का कुछ हिस्सा खराब होने पर भी वह पढ़ा जा सकता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.rules.1"
+  },
+  "42004b462490": {
+    "source": "The vector downloads use a 0.353 mm module: the sample text comes out 43.7 × 8.8 mm. Longer text adds rows and columns.",
+    "text": "वेक्टर डाउनलोड में 0.353 mm का मॉड्यूल इस्तेमाल होता है: सैंपल टेक्स्ट 43.7 × 8.8 mm का बनता है। लंबा टेक्स्ट होने पर पंक्तियाँ और कॉलम बढ़ते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.sizing.0"
+  },
+  "b7915a1b54ea": {
+    "source": "Keep at least 2 modules of blank space around it; the generator starts there.",
+    "text": "इसके चारों ओर कम से कम 2 मॉड्यूल की खाली जगह रखें; जनरेटर वहीं से शुरू करता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.sizing.1"
+  },
+  "5ddaa2e50aa2": {
+    "source": "Can phones read PDF417?",
+    "text": "क्या फ़ोन PDF417 पढ़ सकते हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.0.question"
+  },
+  "fac7c836707d": {
+    "source": "Many barcode scanner apps can, but the built-in camera apps often don't. It's mostly read by dedicated scanners, such as ID and boarding pass readers.",
+    "text": "कई बारकोड स्कैनर ऐप पढ़ सकते हैं, पर फ़ोन के बिल्ट-इन कैमरा ऐप अक्सर नहीं पढ़ते। इसे ज़्यादातर खास स्कैनर पढ़ते हैं, जैसे ID और बोर्डिंग पास रीडर।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.0.answer"
+  },
+  "d7d62c8d60b8": {
+    "source": "Can I make a driver's license barcode?",
+    "text": "क्या मैं ड्राइविंग लाइसेंस का बारकोड बना सकता हूँ?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.1.question"
+  },
+  "8abdd2acf2fd": {
+    "source": "Only an issuing authority makes real ones. This generator encodes text you type as a PDF417; it doesn't format license data.",
+    "text": "असली बारकोड सिर्फ़ जारी करने वाला अधिकारी ही बनाता है। यह जनरेटर आपका टाइप किया टेक्स्ट PDF417 के रूप में एन्कोड करता है; यह लाइसेंस डेटा को फ़ॉर्मैट नहीं करता।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.1.answer"
+  },
+  "ac2e3a678b70": {
+    "source": "Free Aztec Code Generator",
+    "text": "फ़्री Aztec Code जनरेटर",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.title"
+  },
+  "4da66deb316c": {
+    "source": "Make an Aztec code, the 2D code on rail tickets and mobile boarding passes. No quiet zone needed. Any text up to 1,000 characters. SVG, PDF and PNG. Free.",
+    "text": "Aztec कोड बनाएँ, रेल टिकट और मोबाइल बोर्डिंग पास पर दिखने वाला 2D कोड। आसपास खाली जगह (quiet zone) की ज़रूरत नहीं। 1,000 अक्षरों तक कोई भी टेक्स्ट। SVG, PDF और PNG। फ़्री।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.metaDescription"
+  },
+  "7b652e0b6d1c": {
+    "source": "Aztec is a square 2D code that scanners find from the bullseye in its center, so it needs no blank margin around it. Type any text, check that it scans and download it.",
+    "text": "Aztec एक चौकोर 2D कोड है, जिसे स्कैनर बीच में बने बुल्सआई से पहचान लेते हैं, इसलिए इसके चारों ओर खाली मार्जिन नहीं चाहिए। कोई भी टेक्स्ट लिखें, जाँच लें कि वह स्कैन होता है और डाउनलोड करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.intro"
+  },
+  "17b787f04a30": {
+    "source": "Transport tickets, both printed at home and shown on phone screens: many European rail operators use it (the UIC 918-3 ticket standard specifies Aztec), and airlines use it on mobile boarding passes.",
+    "text": "ट्रांसपोर्ट टिकट, चाहे घर पर प्रिंट किए हों या फ़ोन की स्क्रीन पर दिखाए गए हों: कई यूरोपीय रेल ऑपरेटर इसका इस्तेमाल करते हैं (UIC 918-3 टिकट स्टैंडर्ड में Aztec बताया गया है), और एयरलाइंस इसे मोबाइल बोर्डिंग पास पर इस्तेमाल करती हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.usedFor.0"
+  },
+  "156a1333cec2": {
+    "source": "Because it needs no quiet zone, it fits on tickets and screens where space around the code is tight.",
+    "text": "इसे quiet zone की ज़रूरत नहीं होती, इसलिए यह उन टिकटों और स्क्रीन पर फ़िट हो जाता है जहाँ कोड के आसपास जगह कम होती है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.usedFor.1"
+  },
+  "58e7bffd2604": {
+    "source": "Do I need to register an Aztec code?",
+    "text": "क्या मुझे Aztec कोड रजिस्टर कराना होगा?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.numbers.title"
+  },
+  "680651dada5e": {
+    "source": "No. It holds whatever text you type. Ticketing standards define their own data inside; this generator encodes your text as given.",
+    "text": "नहीं। इसमें वही टेक्स्ट रहता है जो आप लिखते हैं। टिकटिंग स्टैंडर्ड अंदर का डेटा अपने हिसाब से तय करते हैं; यह जनरेटर आपका टेक्स्ट जैसा है वैसा ही एन्कोड करता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.numbers.paragraphs.0"
+  },
+  "de7e5ed9bda0": {
+    "source": "Any text, up to 1,000 characters here. Aztec codes range from 15 × 15 cells (compact) to 151 × 151, holding up to 3,832 digits, 3,067 letters or 1,914 bytes.",
+    "text": "कोई भी टेक्स्ट, यहाँ 1,000 अक्षरों तक। Aztec कोड 15 × 15 सेल (कॉम्पैक्ट) से लेकर 151 × 151 तक होते हैं, और इनमें 3,832 अंक, 3,067 अक्षर या 1,914 बाइट तक आ सकते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.rules.0"
+  },
+  "a4f94f3031ce": {
+    "source": "Error correction is built in, so a smudged or partly covered code can still be read.",
+    "text": "एरर करेक्शन पहले से शामिल है, इसलिए धुँधला या आंशिक रूप से ढका हुआ कोड भी पढ़ा जा सकता है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.rules.1"
+  },
+  "208dba1de876": {
+    "source": "The vector downloads draw each cell 0.71 mm square: the sample text comes out 19 mm across with a 2-cell margin. Scale it to suit your ticket or screen.",
+    "text": "वेक्टर डाउनलोड में हर सेल 0.71 mm का चौकोर बनता है: सैंपल टेक्स्ट 2 सेल के मार्जिन के साथ 19 mm चौड़ा आता है। इसे अपने टिकट या स्क्रीन के हिसाब से बड़ा-छोटा करें।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.sizing.0"
+  },
+  "e462f87b44ca": {
+    "source": "No quiet zone is required, but a little white space helps scanners on busy designs.",
+    "text": "quiet zone ज़रूरी नहीं है, लेकिन भरे-भरे डिज़ाइन में थोड़ी खाली जगह स्कैनर की मदद करती है।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.sizing.1"
+  },
+  "6b27c5af0a95": {
+    "source": "Aztec or QR code?",
+    "text": "Aztec या QR कोड?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.0.question"
+  },
+  "20998072733a": {
+    "source": "For links people scan with a phone camera, QR. Aztec is for ticketing and transport systems that ask for it.",
+    "text": "जिन लिंक को लोग फ़ोन कैमरे से स्कैन करते हैं, उनके लिए QR। Aztec उन टिकटिंग और ट्रांसपोर्ट सिस्टम के लिए है जो इसे माँगते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.0.answer"
+  },
+  "7900c82f28ce": {
+    "source": "Can phones read Aztec codes?",
+    "text": "क्या फ़ोन Aztec कोड पढ़ सकते हैं?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.1.question"
+  },
+  "34563aee60ca": {
+    "source": "Many scanner apps and ticket gates can. Some built-in camera apps only open QR codes.",
+    "text": "कई स्कैनर ऐप और टिकट गेट पढ़ सकते हैं। कुछ बिल्ट-इन कैमरा ऐप सिर्फ़ QR कोड खोलते हैं।",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.1.answer"
+  },
+  "d5d3113ff518": {
+    "source": "Batch or lot number",
+    "text": "बैच या लॉट नंबर",
+    "status": "machine",
+    "context": "barcodeFormats.ais.10"
+  },
+  "440af27caf28": {
+    "source": "Production date (YYMMDD)",
+    "text": "प्रोडक्शन की तारीख (YYMMDD)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.11"
+  },
+  "c548a1a3adfb": {
+    "source": "Best before date (YYMMDD)",
+    "text": "इससे पहले इस्तेमाल करें (YYMMDD)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.15"
+  },
+  "a933be6e7b3b": {
+    "source": "Expiry date (YYMMDD)",
+    "text": "एक्सपायरी की तारीख (YYMMDD)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.17"
+  },
+  "f2307baf1c85": {
+    "source": "Serial number",
+    "text": "सीरियल नंबर",
+    "status": "machine",
+    "context": "barcodeFormats.ais.21"
+  },
+  "742a68e45e4a": {
+    "source": "SSCC: the pallet or shipment",
+    "text": "SSCC: पैलेट या शिपमेंट",
+    "status": "machine",
+    "context": "barcodeFormats.ais.00"
+  },
+  "07aa7c4b2614": {
+    "source": "GTIN of the product or case",
+    "text": "प्रोडक्ट या केस का GTIN",
+    "status": "machine",
+    "context": "barcodeFormats.ais.01"
+  },
+  "1877aad81cac": {
+    "source": "GTIN of the items inside a logistic unit",
+    "text": "लॉजिस्टिक यूनिट के अंदर मौजूद आइटम का GTIN",
+    "status": "machine",
+    "context": "barcodeFormats.ais.02"
+  },
   "bae62bc38cdf": {
     "source": "Link list",
     "text": "लिंक सूची",
@@ -22936,12 +24856,6 @@
     "text": "बाहर खाते समय रेस्टोरेंट स्टाफ़ को दिखाएँ",
     "status": "machine",
     "context": "templates.medical.variants.allergy-card.description"
-  },
-  "1d393b0081b6": {
-    "source": "PDF",
-    "text": "PDF",
-    "status": "machine",
-    "context": "templates.pdf.label"
   },
   "a9400aaa15f9": {
     "source": "A menu, brochure or manual people can read and download",
@@ -25085,6 +26999,12 @@
     "status": "machine",
     "context": "integrations.entries.google-analytics.description.1"
   },
+  "7494a179ac39": {
+    "source": "QRdx sends GA4's standard page view from the hosted page and nothing else. Visits arrive with the page's own address, on qrdx.dev or your custom domain, so filter by hostname or page path to tell them apart from visits to your site. Expect fewer visits than scans: GA4 only sees visitors who accepted the banner where it's shown, and content blockers often stop its script.",
+    "text": "QRdx होस्टेड पेज से GA4 का स्टैंडर्ड page view भेजता है, और कुछ नहीं। विज़िट पेज के अपने पते के साथ आती हैं, यानी qrdx.dev या आपके कस्टम डोमेन के साथ, इसलिए उन्हें अपनी साइट की विज़िट से अलग करने के लिए hostname या page path से फ़िल्टर करें। स्कैन से कम विज़िट दिखें तो चौंकिए मत: GA4 सिर्फ़ उन्हीं विज़िटर को देखता है जिन्होंने बैनर स्वीकार किया हो (जहाँ बैनर दिखता है), और कंटेंट ब्लॉकर अक्सर उसकी स्क्रिप्ट रोक देते हैं।",
+    "status": "machine",
+    "context": "integrations.entries.google-analytics.description.2"
+  },
   "cb4aead1a976": {
     "source": "Open your codes",
     "text": "अपने कोड खोलें",
@@ -25187,6 +27107,12 @@
     "status": "machine",
     "context": "integrations.entries.google-tag-manager.description.1"
   },
+  "7ab236a31186": {
+    "source": "Tag Manager loads only when the page opens on one of your custom domains, never on qrdx.dev: a container can run any script, and qrdx.dev is where people sign in to QRdx. QRdx pushes only the container's start event to the data layer, so trigger your tags on page views or clicks.",
+    "text": "Tag Manager तभी लोड होता है जब पेज आपके किसी कस्टम डोमेन पर खुले, qrdx.dev पर कभी नहीं: कंटेनर कोई भी स्क्रिप्ट चला सकता है, और qrdx.dev वह जगह है जहाँ लोग QRdx में साइन इन करते हैं। QRdx डेटा लेयर में सिर्फ़ कंटेनर का start event भेजता है, इसलिए अपने टैग page view या क्लिक पर ट्रिगर करें।",
+    "status": "machine",
+    "context": "integrations.entries.google-tag-manager.description.2"
+  },
   "b2a2822792e6": {
     "source": "Paste your container ID",
     "text": "अपनी container ID पेस्ट करें",
@@ -25222,6 +27148,12 @@
     "text": "ऐसे डायनेमिक कोड पर, जो होस्टेड पेज खोलता है, अपनी पिक्सल ID (6–20 अंक) पेस्ट करें। जहाँ सहमति ज़रूरी है, वहाँ टैग तभी लोड होता है जब विज़िटर सहमत होता है।",
     "status": "machine",
     "context": "integrations.entries.meta-pixel.description.1"
+  },
+  "163f2c4c0763": {
+    "source": "QRdx starts the pixel and sends one PageView, with no other standard events, so build retargeting audiences from PageView on the page's URL. If you've set an allow list in the pixel's traffic permissions, add the hosted page's domain (qrdx.dev or your custom domain), or Meta ignores its events.",
+    "text": "QRdx पिक्सel शुरू करता है और एक PageView भेजता है, कोई और स्टैंडर्ड इवेंट नहीं, इसलिए पेज के URL पर PageView से रीटारगेटिंग ऑडियंस बनाएँ। अगर आपने पिक्सel की ट्रैफ़िक अनुमतियों में allow list सेट की है, तो होस्टेड पेज का डोमेन (qrdx.dev या आपका कस्टम डोमेन) जोड़ें, वरना Meta उसके इवेंट अनदेखे कर देता है।",
+    "status": "machine",
+    "context": "integrations.entries.meta-pixel.description.2"
   },
   "c6052142b8ab": {
     "source": "Paste your pixel ID",
@@ -25259,6 +27191,12 @@
     "status": "machine",
     "context": "integrations.entries.tiktok-pixel.description.1"
   },
+  "3af69b222205": {
+    "source": "QRdx loads the pixel and sends a page view, nothing else. Paste the pixel ID shown in TikTok Events Manager, a string of capital letters and digits, not your ad account number, and build a website visitors audience from the page's URL.",
+    "text": "QRdx पिक्सel लोड करता है और एक page view भेजता है, और कुछ नहीं। TikTok Events Manager में दिखने वाली पिक्सel ID पेस्ट करें, जो बड़े अक्षरों और अंकों की एक स्ट्रिंग होती है, आपका ad account नंबर नहीं, और पेज के URL से website visitors ऑडियंस बनाएँ।",
+    "status": "machine",
+    "context": "integrations.entries.tiktok-pixel.description.2"
+  },
   "e90c3d22437b": {
     "source": "In the Tracking pixels panel, enter it in the TikTok Pixel field.",
     "text": "Tracking pixels पैनल में इसे TikTok Pixel फ़ील्ड में डालें।",
@@ -25288,6 +27226,12 @@
     "text": "ऐसे डायनेमिक कोड पर, जो होस्टेड पेज खोलता है, अपनी पार्टनर ID (3–12 अंक) पेस्ट करें। जहाँ सहमति ज़रूरी है, वहाँ टैग तभी लोड होता है जब विज़िटर सहमत होता है।",
     "status": "machine",
     "context": "integrations.entries.linkedin-insight-tag.description.1"
+  },
+  "862b72603506": {
+    "source": "The Insight Tag records a page view when the page loads. Paste only the partner ID from Campaign Manager, not the tag's script. LinkedIn only serves ads to a matched audience of at least 300 members, so the scans of one code at a small event may not be enough to retarget on their own.",
+    "text": "पेज लोड होने पर Insight Tag एक page view दर्ज करता है। Campaign Manager से सिर्फ़ partner ID पेस्ट करें, टैग की स्क्रिप्ट नहीं। LinkedIn विज्ञापन सिर्फ़ कम से कम 300 सदस्यों वाली मैच की गई ऑडियंस को दिखाता है, इसलिए किसी छोटे इवेंट में एक कोड के स्कैन अकेले रीटारगेटिंग के लिए काफ़ी नहीं हो सकते।",
+    "status": "machine",
+    "context": "integrations.entries.linkedin-insight-tag.description.2"
   },
   "f6b7f5b122cf": {
     "source": "Paste your partner ID",
@@ -27881,11 +29825,35 @@
     "status": "machine",
     "context": "mcp.tools.14.description"
   },
-  "1385eac80167": {
-    "source": "Do I need an account or an API key?",
-    "text": "क्या मुझे अकाउंट या API key चाहिए?",
+  "f963ece25fc7": {
+    "source": "Can Claude make a QR code?",
+    "text": "क्या Claude QR कोड बना सकता है?",
     "status": "machine",
     "context": "mcp.faqs.0.question"
+  },
+  "e405a7b49b69": {
+    "source": "Yes, with the QRdx MCP server connected. A language model can't work out a QR code's pattern in its head, so a code it draws on its own rarely scans. Connected to QRdx, Claude calls a tool that renders a real, standard code and shows it in the chat. Add the server URL as a custom connector in Claude, or run the claude mcp add command in Claude Code; ChatGPT, Cursor and VS Code connect the same way.",
+    "text": "हाँ, अगर QRdx MCP server कनेक्ट हो। कोई language model अपने दिमाग़ में QR कोड का पैटर्न नहीं निकाल सकता, इसलिए वह खुद जो कोड बनाता है वह शायद ही कभी स्कैन होता है। QRdx से कनेक्ट होने पर Claude एक टूल को कॉल करता है, जो असली, स्टैंडर्ड कोड बनाकर चैट में दिखा देता है। Claude में server URL को custom connector के रूप में जोड़ें, या Claude Code में claude mcp add कमांड चलाएँ; ChatGPT, Cursor और VS Code भी इसी तरह कनेक्ट होते हैं।",
+    "status": "machine",
+    "context": "mcp.faqs.0.answer"
+  },
+  "5e42c847e755": {
+    "source": "Is the QRdx MCP server free?",
+    "text": "क्या QRdx MCP server फ़्री है?",
+    "status": "machine",
+    "context": "mcp.faqs.1.question"
+  },
+  "4f4d4e882c64": {
+    "source": "Yes. It's free and open source, and designing, rendering and checking codes needs no account. The codes it makes are static, so they never expire and have no scan limits.",
+    "text": "हाँ। यह फ़्री और ओपन सोर्स है, और कोड डिज़ाइन करने, रेंडर करने और जाँचने के लिए अकाउंट की ज़रूरत नहीं है। इससे बनने वाले कोड स्टैटिक QR कोड होते हैं, इसलिए वे कभी एक्सपायर नहीं होते और उन पर स्कैन की कोई सीमा नहीं होती।",
+    "status": "machine",
+    "context": "mcp.faqs.1.answer"
+  },
+  "770c0287a6f5": {
+    "source": "Does it need an API key?",
+    "text": "क्या इसके लिए API key चाहिए?",
+    "status": "machine",
+    "context": "mcp.faqs.2.question"
   },
   "f538f592cdab": {
     "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
@@ -27964,6 +29932,18 @@
     "text": "रिक्वेस्ट प्रति IP एड्रेस 120 प्रति मिनट तक सीमित हैं, और design_qr की 20 तक। API key वाली कॉल वर्कस्पेस के रोज़ाना API कोटा में भी गिनी जाती हैं। बहुत लंबा डेटा QR कोड में फ़िट नहीं हो सकता; तब टूल एरर लौटाता है और कम error correction लेवल सुझाता है।",
     "status": "machine",
     "context": "mcp.faqs.6.answer"
+  },
+  "af62099de2cc": {
+    "source": "Is it in the MCP Registry?",
+    "text": "क्या यह MCP Registry में है?",
+    "status": "machine",
+    "context": "mcp.faqs.9.question"
+  },
+  "0a96e97f871b": {
+    "source": "Yes. The hosted server is listed in the official MCP Registry as io.github.bucharitesh/qrdx, so apps and directories that read the registry can find it there.",
+    "text": "हाँ। होस्टेड server आधिकारिक MCP Registry में io.github.bucharitesh/qrdx नाम से लिस्टेड है, इसलिए registry पढ़ने वाले ऐप और डायरेक्टरी इसे वहाँ ढूँढ सकते हैं।",
+    "status": "machine",
+    "context": "mcp.faqs.9.answer"
   },
   "1e72db2bad7f": {
     "source": "Can I run it myself?",
@@ -28612,5 +30592,41 @@
     "text": "QRdx आपका प्रॉम्प्ट, रेफ़रेंस इमेज या बनाई गई इमेज सेव नहीं करता; वह सिर्फ़ आपके क्रेडिट गिनता है। आर्टवर्क बनाने के लिए प्रॉम्प्ट, QR कोड इमेज और कोई भी रेफ़रेंस इमेज Vercel AI Gateway के ज़रिए OpenAI के GPT Image 2 को भेजी जाती हैं, और नतीजा सीधे आपके ब्राउज़र में लौट आता है, इसलिए जो इमेज रखनी हों उन्हें डाउनलोड कर लें।",
     "status": "machine",
     "context": "aiArt.faqs.10.answer"
+  },
+  "82ec64b16a5d": {
+    "source": "No, the details are inside the code. To have one code that always shows your current details, host your contact page online and point a URL code, or a dynamic code from your dashboard, at it.",
+    "text": "नहीं, डिटेल कोड के अंदर ही होती है। अगर आप चाहते हैं कि एक ही कोड हमेशा आपकी मौजूदा डिटेल दिखाए, तो अपना कॉन्टैक्ट पेज ऑनलाइन होस्ट करें और उस पर URL कोड या अपने डैशबोर्ड से डायनेमिक QR कोड पॉइंट करें।",
+    "status": "machine",
+    "context": "qrTypes.types.vcard.faqs.3.answer"
+  },
+  "0d6bfccc8412": {
+    "source": "QR code menus",
+    "text": "QR कोड मेन्यू",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.title"
+  },
+  "6d942ed73962": {
+    "source": "QR Code Menus: Digital Menus You Can Edit Anytime",
+    "text": "QR कोड मेन्यू: डिजिटल मेन्यू जिसे कभी भी बदलें",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.seoTitle"
+  },
+  "fae1e9f4d921": {
+    "source": "Create a QR code menu you can update without reprinting: hosted menu pages with prices, photos, allergens and sold-out items, plus table sizes and tips.",
+    "text": "ऐसा QR कोड मेन्यू बनाएँ जिसे दोबारा प्रिंट किए बिना अपडेट कर सकें: कीमत, फ़ोटो, एलर्जन और सोल्ड-आउट आइटम वाले होस्टेड मेन्यू पेज, साथ में टेबल साइज़ और टिप्स।",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.metaDescription"
+  },
+  "803094d083d9": {
+    "source": "A QR code menu is only as good as what it opens. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm. A hosted menu page behind a dynamic code can do both: edit an item from your phone and every table sees it on the next scan.",
+    "text": "QR कोड मेन्यू उतना ही अच्छा है जितना वह पेज जो उससे खुलता है। PDF से जुड़ा स्टैटिक QR कोड पहले दिन ठीक दिखता है, लेकिन फ़ाइल का नाम बदलते ही टूट जाता है और यह भी नहीं बता सकता कि रात 8 बजे तक सैल्मन खत्म हो गई। डायनेमिक QR कोड के पीछे का होस्टेड पेज दोनों काम कर सकता है: फ़ोन से कोई आइटम बदलें और अगले स्कैन पर हर टेबल को वह दिख जाएगा।",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.intro.0"
+  },
+  "1385eac80167": {
+    "source": "Do I need an account or an API key?",
+    "text": "क्या मुझे अकाउंट या API key चाहिए?",
+    "status": "machine",
+    "context": "mcp.faqs.0.question"
   }
 }

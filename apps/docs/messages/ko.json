@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteTitle": "무료 QR 코드 생성기 & 동적 QR 코드 | QRdx",
-    "siteDescription": "로고, 색상, 패턴을 넣은 QR 코드를 가입이나 워터마크 없이 무제한으로 무료 제작하세요. 수정 가능한 동적 QR 코드, 호스팅 페이지, 스캔 분석도 지원합니다. 오픈 소스입니다.",
+    "siteTitle": "QRdx: 로고와 동적 QR 코드를 지원하는 무료 QR 코드 생성기",
+    "siteDescription": "무료 오픈소스 QR 코드 생성기: 로고, 색상, 프레임을 적용한 코드를 무제한으로 만들 수 있고 가입이나 워터마크가 없어요. 동적 QR 코드와 스캔 분석도 제공해요.",
     "ogImageAlt": "QRdx: 동적 QR 코드, 호스팅 페이지, 스캔 분석을 제공하는 무료 QR 코드 생성기"
   },
   "nav": {
@@ -76,6 +76,14 @@
       "mcp": {
         "name": "MCP 서버",
         "description": "Claude, ChatGPT, Cursor에서 QR 코드를 만들어요"
+      },
+      "qrCodeApi": {
+        "name": "무료 QR 코드 API",
+        "description": "키나 가입 없이 URL 하나로 QR 코드 이미지 생성"
+      },
+      "nextjs": {
+        "name": "Next.js 가이드",
+        "description": "서버 및 클라이언트 컴포넌트에서 QR 코드 사용"
       },
       "imageApi": {
         "name": "Image API",
@@ -184,10 +192,15 @@
       "scanChecker": "스캔 검사기",
       "printSize": "인쇄 크기 계산기",
       "barcode": "바코드 생성기",
+      "pdfQr": "PDF QR 코드",
+      "businessCard": "디지털 명함",
+      "menuQr": "메뉴 QR 코드",
       "scanner": "QR 코드 스캐너",
       "allTools": "모든 도구",
       "docs": "문서",
       "apiReference": "API 레퍼런스",
+      "qrCodeApi": "무료 QR 코드 API",
+      "nextjs": "Next.js 가이드",
       "imageApi": "Image API",
       "mcp": "MCP 서버",
       "shadcn": "shadcn/ui 레지스트리",
@@ -774,7 +787,11 @@
       "bulkTitle": "수백 개의 코드가 필요하세요? 대량 생성기를 사용해 보세요",
       "bulkDescription": "CSV를 업로드하면 모든 코드를 PNG, WebP 또는 SVG로 만들어 ZIP 파일 하나로 내려받을 수 있습니다. 모든 작업은 브라우저에서만 처리돼요.",
       "printTitle": "코드를 인쇄하나요? 크기를 확인하세요",
-      "printDescription": "스캔 거리와 코드에 담긴 데이터 양을 바탕으로 최소 인쇄 크기를 계산해 보세요."
+      "printDescription": "스캔 거리와 코드에 담긴 데이터 양을 바탕으로 최소 인쇄 크기를 계산해 보세요.",
+      "hostedTitle": "편집할 수 있는 페이지를 여는 코드",
+      "hostedDescription": "이 코드는 QRdx가 대신 호스팅하는 모바일 페이지를 열어요. 그래서 인쇄한 뒤에도 내용을 바꿀 수 있고 스캔 현황도 확인할 수 있어요. 무료 계정이 필요해요.",
+      "menuTitle": "메뉴 QR 코드 생성기",
+      "menuDescription": "가격, 사진, 알레르기 유발 성분, 품절 표시까지 담은 메뉴 페이지를 휴대폰에서 편집해요."
     },
     "type": {
       "title": "무료 {name} QR 코드 생성기",
@@ -786,7 +803,28 @@
       "faqTitle": "{name} QR 코드 FAQ",
       "related": "관련 QR 코드 생성기",
       "allTypes": "{count, number}가지 유형 모두 보기",
-      "relatedCard": "{name} QR 코드"
+      "relatedCard": "{name} QR 코드",
+      "hostedCard": "{name} QR 코드 (호스팅 페이지)"
+    },
+    "hosted": {
+      "demo": "데모 페이지 보기",
+      "accountNote": "무료 QRdx 계정이 필요해요. 무료 플랜에는 호스팅 페이지 {pages, number}개가 포함돼요.",
+      "featuresTitle": "스캔하면 보이는 화면",
+      "editTitle": "인쇄한 뒤에도 수정하세요",
+      "guarantee": "플랜이 어떻게 되더라도 코드는 계속 작동해요. 이것이 바로 <link>Never-Hostage 보장</link>이에요.",
+      "plansTitle": "플랜별 한도",
+      "plansCaption": "무료, Pro, Business 플랜의 {name} 페이지 한도",
+      "colLimit": "한도",
+      "rowPages": "호스팅 페이지",
+      "rowDynamic": "동적 QR 코드",
+      "rowFile": "최대 파일 크기",
+      "rowStorage": "파일 저장 공간",
+      "rowBadge": "\"Made with QRdx\" 푸터",
+      "unlimited": "무제한",
+      "badgeShown": "표시됨",
+      "badgeRemoved": "제거됨",
+      "plansNote": "각 페이지는 플랜의 동적 QR 코드를 하나씩 사용해요. 한도는 새 페이지를 만드는 것만 막아요. <pricing>요금 보기</pricing> 또는 <docs>문서 읽기</docs>.",
+      "staticLink": "{name} QR 코드 생성기 열기"
     }
   },
   "typeGenerator": {
@@ -864,6 +902,8 @@
       "dynamicLink": "동적 코드 만들기",
       "badgePage": "호스팅 페이지 · 수정 가능, 추적",
       "pageLink": "라이브 템플릿 보기",
+      "pageGeneratorLink": "사용 방법 보기",
+      "guidesTitle": "가이드 및 도구",
       "typesTitle": "어떤 QR 코드를 쓸까요",
       "typesDescription": "정적 QR 코드는 무료이고 계정이 필요 없지만 인쇄한 뒤에는 바꿀 수 없습니다. 동적 QR 코드와 호스팅 페이지는 언제든 수정할 수 있고, 모든 스캔을 집계하며, 구독을 취소해도 모든 플랜에서 계속 작동합니다.",
       "sizingTitle": "인쇄 크기 가이드",
@@ -925,12 +965,20 @@
       }
     },
     "bulk": {
-      "metaTitle": "CSV로 만드는 무료 QR 코드 대량 생성기",
-      "metaDescription": "CSV 파일로 QR 코드를 최대 {rows, number}개 생성하고 PNG 또는 SVG로 압축해 다운로드해요. 스타일과 파일 이름을 지정할 수 있어요. 모두 브라우저에서 실행돼요.",
+      "metaTitle": "CSV로 만드는 무료 대량 QR 코드 생성기: 스타일 적용, SVG 지원, 업로드 없음",
+      "metaDescription": "CSV를 최대 {rows, number}개의 스타일이 적용된 QR 코드로 바꾸고 PNG, WebP, SVG 형식으로 ZIP에 담아 다운로드하세요. 브라우저에서 실행되므로 업로드, 가입, 워터마크가 없습니다. 샘플 CSV가 포함되어 있습니다.",
       "crumb": "대량 생성기",
       "title": "QR 코드 대량 생성기",
-      "intro1": "스프레드시트 하나로 수백, 수천 개의 QR 코드를 한 번에 만들어요: 제품 라벨, 행사 티켓, 자산 태그, 테이블 번호, 맞춤형 우편물까지. CSV를 업로드하고 열을 지정한 다음 스타일을 고르면, 모든 코드를 PNG, WebP 또는 SVG로 압축해 다운로드할 수 있어요.",
-      "intro2": "모든 작업은 브라우저에서 이루어져요. CSV는 업로드되지 않고, 가입이나 워터마크, 코드당 요금도 없어요.",
+      "intro1": "CSV 파일 하나로 수천 개의 QR 코드를 한 번에 만들고, 원하는 스타일을 적용해 PNG, WebP, SVG 형식으로 ZIP에 담아 다운로드하세요. 한 행이 코드 하나가 되며, 파일 이름은 열에서 가져올 수 있습니다. 제품 라벨, 행사 티켓, 자산 태그, 테이블 번호, 우편물에 활용할 수 있습니다.",
+      "intro2": "모든 작업이 브라우저에서 실행되므로 CSV는 업로드되지 않으며, 가입, 워터마크, 코드당 요금도 없습니다. 형식이 헷갈리시나요? 샘플 CSV로 시작해 보세요.",
+      "facts": {
+        "rows": "파일당 최대 {rows, number}행",
+        "styled": "내 색상, 모양, 로고",
+        "svg": "인쇄용 SVG",
+        "browser": "브라우저에서 실행"
+      },
+      "cliLink": "CLI의 qrdx batch",
+      "apiLink": "무료 QR 코드 API",
       "toolLabel": "QR 코드 대량 생성기",
       "howTitle": "사용 방법",
       "steps": {
@@ -959,10 +1007,14 @@
         "howManyAnswer": "파일당 최대 {rows, number}행까지 가능해요. 더 많이 필요하면 CSV를 나누거나, 제한이 없는 CLI의 qrdx batch 명령을 사용하세요. 512 px PNG 하나를 만드는 데 노트북에서 약 20 ms가 걸리므로, {rows, number}행 전체는 몇 분 정도 걸려요. PNG가 클수록 시간이 더 걸리고 파일도 커지므로, 더 큰 크기가 필요하지 않다면 512 px를 선택하세요.",
         "rowQuestion": "각 행에 무엇을 넣을 수 있나요?",
         "rowAnswer": "QR 코드 용량 한도 내의 모든 텍스트를 넣을 수 있어요. 링크, 일반 텍스트, 또는 WIFI:..., mailto:..., tel:..., BEGIN:VCARD 같은 페이로드도 가능해요. 내용은 셀에 적힌 그대로 인코딩돼요.",
+        "excelQuestion": "Excel이나 Google Sheets 파일도 사용할 수 있나요?",
+        "excelAnswer": "먼저 CSV로 저장해 주세요. Excel에서는 파일, 다른 이름으로 저장, CSV UTF-8을 선택하고, Google Sheets에서는 파일, 다운로드, 쉼표로 구분된 값을 선택하면 됩니다. 구분자는 쉼표와 세미콜론 모두 사용할 수 있으며, 첫 번째 행에는 열 이름을 넣을 수 있습니다.",
         "staticQuestion": "생성된 코드는 정적인가요, 동적인가요?",
         "staticAnswer": "정적 QR 코드예요. 각 코드에 해당 행의 내용이 그대로 담기고, 오프라인에서도 작동하며, 만료되지 않지만 인쇄한 뒤에는 수정할 수 없어요. 수정 가능하고 스캔 통계를 볼 수 있는 코드가 필요하다면 QRdx 대시보드에서 동적 QR 코드를 만드세요.",
         "namesQuestion": "중복되거나 올바르지 않은 파일 이름은 어떻게 처리되나요?",
-        "namesAnswer": "파일 이름에 쓸 수 없는 문자는 하이픈으로 바뀌고, 중복된 이름에는 숫자 접미사(menu.png, menu-2.png)가 붙어서 덮어쓰이는 파일이 없어요."
+        "namesAnswer": "파일 이름에 쓸 수 없는 문자는 하이픈으로 바뀌고, 중복된 이름에는 숫자 접미사(menu.png, menu-2.png)가 붙어서 덮어쓰이는 파일이 없어요.",
+        "codeQuestion": "코드로 대량 QR 코드를 만들 수도 있나요?",
+        "codeAnswer": "네. QRdx CLI의 qrdx batch 명령은 CSV 파일의 모든 행에 대해 코드를 만들며 행 수 제한이 없습니다. 무료 QR 코드 API는 직접 만든 URL에 대한 이미지를 키 없이 반환합니다."
       },
       "generator": {
         "errorTooMuch": "QR 코드 하나에 담기에는 데이터가 너무 많아요",
@@ -1447,11 +1499,48 @@
     "whichTitle": "어떤 바코드를 써야 할까요?",
     "whichDescription": "매장에서 판매하시나요? 소매업체가 요구하는 유형을 쓰세요. 대부분의 지역에서는 EAN-13, 미국과 캐나다에서는 UPC-A이며, 둘 다 GS1의 GTIN을 담아요. 소매업체로 배송하시나요? 카톤에는 ITF-14, 물류 라벨에는 GS1-128을 쓰세요. 자체 물품에 라벨을 붙이시나요? Code 128을 쓰세요.",
     "linear": "1차원",
+    "formatCard": "{name} 바코드 생성기",
     "printingEyebrow": "인쇄",
     "tipsTitle": "잘 스캔되는 바코드를 위한 팁",
     "tipsDescription": "바코드는 정적이에요. 번호나 텍스트가 막대 안에 담겨 있어서 오프라인에서도 작동하고, 만료되지 않으며, 스캔 통계도 없어요. 휴대폰으로 스캔할 수 있는 링크가 필요하신가요? <generators>QR 코드 생성기</generators>를 이용하세요. 바코드를 읽으려면 <scanner>스캐너</scanner>를 여세요.",
     "credits": "바코드는 <bwip>bwip-js</bwip>(MIT 라이선스)로 그려지고, 스캔 검사에는 WebAssembly로 컴파일된 <zxing>ZXing</zxing>을 사용해요. ZXing은 처음 실행할 때 jsDelivr CDN에서 다운로드돼요.",
     "faqTitle": "바코드 생성기 FAQ"
+  },
+  "barcodeFormat": {
+    "toolLabel": "{name} 바코드 생성기",
+    "usedTitle": "{name} 바코드가 쓰이는 곳",
+    "rulesTitle": "{name} 입력값과 체크 디지트",
+    "rulesTitleText": "{name}에 담을 수 있는 내용",
+    "takesLabel": "필요한 조건",
+    "exampleLabel": "예시",
+    "checkTitle": "{body}의 체크 디지트 계산 과정",
+    "checkTitleUpce": "UPC-E {upce}는 UPC-A {upca}입니다: 체크 디지트 계산 과정",
+    "checkCaption": "{body}의 각 숫자와 가중치, 곱한 값",
+    "checkDigits": "숫자",
+    "checkWeights": "가중치",
+    "checkProducts": "곱",
+    "checkSum": "곱한 값의 합은 {sum, number, ::group-off}입니다. {check, plural, =0 {이미 10의 배수이므로 체크 디지트는 0입니다.} other {여기에 #을(를) 더하면 10의 배수인 {next, number, ::group-off}이 되므로 체크 디지트는 #입니다.}}",
+    "sizeTitle": "{name} 바코드 크기",
+    "sizeCaption": "생성기 기본 설정에서 {name} 예시의 크기",
+    "sizeDownload": "SVG, PDF, EPS 예시",
+    "sizeMm": "{width, number} × {height, number} mm",
+    "sizeModule": "모듈(가장 좁은 막대)",
+    "sizeCell": "셀",
+    "sizeModuleValue": "{size, number} mm",
+    "sizeBarHeight": "막대 높이",
+    "sizeQuietZone": "여백",
+    "quietModules": "양쪽에 {min, plural, =0 {필요 없음} other {최소 # 모듈}}, 생성기는 {start, number}에서 시작해요",
+    "quietCells": "사방에 {min, plural, =0 {필요 없음} other {최소 # 셀}}, 생성기는 {start, number}에서 시작해요",
+    "apiTitle": "{name} 바코드 API",
+    "apiDescription": "같은 바코드를 이미지 URL로 쓸 수 있으며 API 키는 필요하지 않아요. img 태그, 라벨 템플릿, 상품 피드에 넣어 보세요. 이 페이지와 같은 방식으로 값을 검사하고, IP 주소당 분당 300회 요청을 허용해요. 모든 옵션은 <docs>바코드 API 문서</docs>에서 확인할 수 있어요.",
+    "apiSvg": "SVG 이미지",
+    "apiPng": "PNG, 모듈당 3픽셀",
+    "apiHtml": "웹 페이지에서",
+    "faqTitle": "{name} 바코드 FAQ",
+    "otherTitle": "다른 바코드 유형",
+    "allFormats": "바코드 유형 {count, number}개 전체 보기",
+    "otherCard": "{name} 바코드 생성기",
+    "qrNote": "바코드는 정적이에요. 데이터가 막대 안에 담겨 있어서 오프라인에서도 작동하고 만료되지 않아요. 휴대폰 카메라로 스캔하는 링크가 필요하다면 <generators>QR 코드 생성기</generators> 중 하나를 사용하세요."
   },
   "barcodeTool": {
     "pickColor": "{label} 선택",
@@ -1583,6 +1672,7 @@
   },
   "integrations": {
     "metaTitle": "연동",
+    "searchTitle": "QR 코드 연동: {first}, {second} 외 {count, number}개",
     "metaDescription": "QRdx를 {names} 등과 연결하세요. 정확한 설정 단계를 갖춘 {count, number}개의 연동을 제공해요.",
     "hero": {
       "eyebrow": "연동",
@@ -1737,9 +1827,15 @@
     "howEyebrow": "사용 방법",
     "howTitle": "세 단계만 거치면 바로 요청할 수 있어요",
     "howDescription": "어시스턴트가 대신 QRdx 도구를 호출해요. API를 직접 다룰 일은 없어요.",
+    "setupEyebrow": "설정",
+    "setupTitle": "앱에 QRdx 추가하기",
+    "setupDescription": "Claude와 ChatGPT는 서버 URL을 커스텀 커넥터로 받아요. Claude Code, Cursor, VS Code는 명령어 한 줄 또는 몇 줄의 설정으로 연결할 수 있어요. 로컬 서버만 실행하는 앱은 mcp-remote를 통해 연결해요.",
+    "setupUrl": "서버 URL",
     "toolsEyebrow": "도구",
     "toolsTitle": "어시스턴트가 호출할 수 있는 도구",
     "toolsDescription": "도구 {count, number}개. save_template과 save_barcode를 제외한 모든 도구는 읽기 전용이며 키가 필요 없어요. 이미지를 렌더링하고, 텍스트를 포맷하고, 공개 커뮤니티를 읽어요. 전체 매개변수는 <link>MCP 서버 문서</link>에서 확인하세요.",
+    "toolNoKey": "키 불필요",
+    "toolNeedsKey": "API 키 필요",
     "faqTitle": "MCP 서버 FAQ",
     "connect": {
       "copyFailed": "복사하지 못했어요. 텍스트를 선택해서 직접 복사해 주세요.",
@@ -1839,6 +1935,149 @@
           }
         }
       }
+    }
+  },
+  "qrCodeApi": {
+    "metaTitle": "무료 QR 코드 API: 키 없이 SVG, PNG, 로고까지",
+    "metaDescription": "키나 가입이 필요 없는 무료 QR 코드 API예요. URL 하나로 원하는 색상, 모양, 로고를 적용한 QR 코드를 SVG, PNG, WebP, EPS로 받을 수 있어요. 분당 {perMinute, number}회 요청할 수 있고, 1년 동안 캐시돼요.",
+    "crumb": "QR 코드 API",
+    "title": "무료 QR 코드 API",
+    "intro1": "URL을 넣을 수 있는 곳이라면 어디에든 QR 코드를 넣어 보세요. api.qrdx.dev에 GET 요청을 한 번 보내면 이미지가 바로 반환돼요. 계정도, API 키도, SDK도 필요 없어요. 색상, 모양, 오류 보정, 로고는 쿼리 문자열에 담으면 돼요.",
+    "intro2": "QRdx Playground와 같은 오픈 소스 엔진으로 QR 코드를 그려요. 같은 쿼리는 항상 같은 바이트를 반환하므로 응답을 1년 동안 캐시하고, README, 이메일, 웹 페이지에 넣은 이미지는 첫 요청 이후 캐시에서 제공돼요.",
+    "facts": {
+      "noKey": "키·가입 불필요",
+      "rateLimit": "IP당 분당 {perMinute, number}회 요청",
+      "formats": "SVG, PNG, WebP, EPS",
+      "openSource": "오픈 소스"
+    },
+    "docs": "Image API 문서",
+    "restDocs": "동적 코드용 REST API",
+    "builderEyebrow": "직접 해보기",
+    "builderTitle": "QR 코드 URL 만들기",
+    "builderDescription": "왼쪽에서 원하는 항목을 바꿔 보세요. 미리보기는 실제 API로 만들어져요. 마음에 들면 URL, HTML, curl 명령어를 복사하세요.",
+    "builder": {
+      "label": "QR 코드 API URL 빌더",
+      "data": "텍스트 또는 URL",
+      "format": "형식",
+      "size": "크기",
+      "sizePixels": "{size, number}px",
+      "sizePoints": "너비 {size, number}pt",
+      "fg": "코드 색상",
+      "bg": "배경",
+      "pickColor": "{label} 선택",
+      "body": "모듈 모양",
+      "level": "오류 보정",
+      "logo": "로고 아이콘",
+      "logoNone": "없음",
+      "logoNote": "로고를 넣을 때 필요하면 오류 보정이 H로 바뀌어, 코드가 계속 스캔돼요.",
+      "previewAlt": "{value}의 QR 코드",
+      "epsPreview": "EPS는 인쇄용 파일이라 미리보기에는 SVG로 같은 코드를 보여줘요.",
+      "empty": "인코딩할 텍스트나 링크를 입력하세요.",
+      "tooLong": "API 제한인 {max, number}자를 넘었어요.",
+      "loadFailed": "미리보기를 불러오지 못했어요. 연달아 여러 번 바꾸셨다면 1분 정도 기다려 주세요. API는 분당 {perMinute, number}회 요청을 허용해요.",
+      "url": "이미지 URL",
+      "html": "HTML",
+      "markdown": "Markdown",
+      "curl": "curl",
+      "open": "이미지 열기"
+    },
+    "examplesEyebrow": "예시",
+    "examplesTitle": "URL이 곧 이미지예요",
+    "examplesDescription": "Markdown, img 태그, 이메일 템플릿에 붙여 넣거나 curl로 파일을 내려받으세요. 데이터에 앰퍼샌드, 해시, 플러스 기호나 공백이 있으면 encodeURIComponent(또는 사용하는 언어의 동일한 함수)로 인코딩하세요.",
+    "examples": {
+      "markdown": "Markdown",
+      "html": "HTML",
+      "curl": "터미널",
+      "js": "JavaScript"
+    },
+    "paramsEyebrow": "레퍼런스",
+    "paramsTitle": "파라미터",
+    "paramsDescription": "모든 값은 쿼리 문자열에 넣어요. 그라디언트, 커스텀 프레임, 눈 모양별 색상은 편집기의 디자인을 JSON으로 만든 style에 넣어요. 모든 필드는 <link>Image API 문서</link>에서 확인하세요.",
+    "paramsHeader": {
+      "name": "파라미터",
+      "default": "기본값",
+      "description": "기능"
+    },
+    "paramsRequired": "필수",
+    "paramsNone": "없음",
+    "params": {
+      "data": "인코딩할 텍스트나 URL이에요. 최대 {max, number}자까지 가능해요.",
+      "size": "가로와 세로 크기이며 단위는 픽셀로, {min, number}부터 {max, number}까지예요. EPS는 포인트 단위의 너비예요.",
+      "format": "svg, png, webp(무손실) 또는 eps(벡터, 인쇄용)예요.",
+      "colors": "코드와 배경 색상을 #을 뺀 hex 값으로 지정해요(155dfc). bg=00000000이면 배경이 투명해져요.",
+      "shapes": "모듈, 모서리 눈, 그 안의 점의 모양이에요. 모듈 모양은 모두 {count, number}가지예요.",
+      "level": "오류 정정 수준이에요. L(7%), M(15%), Q(25%), H(30%)만큼 코드가 손상되어도 스캔할 수 있어요.",
+      "margin": "코드 주변의 여백(콰이어트 존)이에요. 모듈 단위이며 0부터 {max, number}까지 지정할 수 있어요.",
+      "logoIcon": "중앙에 넣는 로고예요. wifi, link, phone 같은 간단한 아이콘이나 Simple Icons 슬러그로 지정하는 {brands}개의 브랜드 로고 중 하나를 쓸 수 있어요.",
+      "frame": "banner-bottom 같은 행동 유도 프레임이에요. 라벨은 frameText로 지정해요.",
+      "style": "에디터의 전체 디자인을 JSON으로 담아요. 그라데이션, 맞춤 프레임, 눈 모양별 색상, 로고 배치가 포함돼요."
+    },
+    "limitsEyebrow": "실서비스 운영",
+    "limitsTitle": "제한, 캐싱, 개인정보 보호",
+    "limits": {
+      "rateTitle": "IP당 분당 {perMinute, number}회 요청",
+      "rateBody": "제한을 넘으면 Retry-After 헤더와 함께 429 응답을 받아요. 동일한 URL은 캐시에서 제공되므로 같은 이미지를 다시 보여줄 때는 제한에 거의 걸리지 않아요.",
+      "cacheTitle": "1년간 캐시",
+      "cacheBody": "같은 쿼리에는 같은 바이트가 돌아와요. 응답은 Cache-Control: public, max-age=31536000, immutable 헤더와 함께 전송되어 브라우저와 CDN이 보관해요. 커뮤니티 항목 렌더링은 항목이 바뀔 수 있으므로 5분간 캐시돼요.",
+      "corsTitle": "어떤 웹사이트에서든 사용 가능",
+      "corsBody": "응답이 모든 오리진을 허용하므로(Access-Control-Allow-Origin: *) 브라우저 코드에서 이미지를 표시하는 것은 물론 가져올 수도 있어요.",
+      "privateTitle": "URL에 비밀 정보를 넣지 마세요",
+      "privateBody": "데이터가 URL에 포함되므로 서버 로그, 브라우저 기록, 캐시에 남을 수 있어요. 공개 README에 적은 Wi-Fi 비밀번호는 공개된 것과 같아요.",
+      "scanTitle": "요청한 대로 그려요",
+      "scanBody": "Image API는 디자인이 스캔되는지 확인하지 않아요. 대비를 충분히 유지하고 휴대폰으로 테스트하세요. MCP 서버의 design_qr 도구는 스타일을 확인하고 대신 고쳐 줘요.",
+      "selfHostTitle": "직접 호스팅",
+      "selfHostBody": "이 API는 오픈 소스 QRdx 앱의 일부라서, 직접 운영하는 인스턴스에서 내 도메인의 /api/v1/qr로 제공할 수 있어요."
+    },
+    "restEyebrow": "정적 또는 동적",
+    "restTitle": "대신 REST API가 필요한 경우",
+    "restDescription": "Image API는 정적 QR 코드를 만들어요. 데이터가 코드 안에 들어 있어 만료되지 않지만 인쇄한 뒤에는 바꿀 수 없어요. 나중에 다른 곳으로 연결을 바꿀 수 있고 스캔 분석도 제공하는 코드가 필요하면 무료 API 키로 REST API를 사용하세요.",
+    "imageCard": {
+      "title": "Image API",
+      "noKey": "키나 계정이 필요 없어요",
+      "static": "정적 QR 코드: 데이터가 이미지 안에 있어요",
+      "formats": "SVG, PNG, WebP, EPS",
+      "limit": "IP당 분당 {perMinute, number}회 요청"
+    },
+    "restCard": {
+      "title": "REST API",
+      "key": "무료 계정의 워크스페이스 API 키",
+      "dynamic": "인쇄한 뒤에도 수정할 수 있는 동적 QR 코드",
+      "analytics": "스캔 분석, 폴더, 태그, 웹훅",
+      "free": "무료 플랜에서 동적 QR 코드 {count, number}개, 스캔은 무제한"
+    },
+    "restLink": "REST API 문서",
+    "quickstartLink": "API 빠른 시작",
+    "moreTitle": "코드로 QR 코드를 만드는 다른 방법",
+    "more": {
+      "googleChartTitle": "Google Chart QR API 대체하기",
+      "googleChartBody": "chl, chs, chld를 이 API에 맞게 변환하고, 기존 이미지 URL도 명령어 한 번으로 바꿀 수 있어요.",
+      "mcpTitle": "MCP 서버",
+      "mcpBody": "Claude, ChatGPT, Cursor가 키 없이 코드를 디자인하고 만들어 줘요.",
+      "barcodeTitle": "바코드 API",
+      "barcodeBody": "EAN-13, UPC-A, Code 128, Data Matrix 등을 체크 디지트와 함께 URL만으로 만들 수 있어요.",
+      "cliTitle": "CLI",
+      "cliBody": "터미널이나 CI에서 스타일을 입힌 코드를 만들고, CSV 파일의 행마다 코드를 하나씩 만들어요.",
+      "reactTitle": "React 라이브러리",
+      "reactBody": "서버든 클라이언트든 React와 Next.js에서 스타일을 입힌 코드를 렌더링해요."
+    },
+    "faqTitle": "QR 코드 API FAQ",
+    "faq": {
+      "freeQuestion": "API 키 없이 쓸 수 있는 무료 QR 코드 API가 있나요?",
+      "freeAnswer": "네. GET https://api.qrdx.dev/v1/qr?data=… 는 키, 계정, 가입 없이 QR 코드 이미지를 반환합니다. IP 주소당 분당 {perMinute, number}회 요청할 수 있고, 동일한 URL은 1년 동안 캐시됩니다.",
+      "logoQuestion": "QR 코드 API로 로고를 추가할 수 있나요?",
+      "logoAnswer": "네. logoIcon을 사용하면 빠른 아이콘(Wi-Fi, 링크, 전화, 이메일 등)이나 Simple Icons의 브랜드 로고 {brands}개 중 하나를 키 없이 가운데에 넣을 수 있습니다. 로고에 필요하면 코드가 오류 정정 수준 H로 바뀌어 계속 스캔됩니다.",
+      "formatsQuestion": "어떤 이미지 형식을 반환하나요?",
+      "formatsAnswer": "기본은 SVG이고, format=png, webp, eps를 지정하면 PNG, 무손실 WebP, 벡터 EPS로 받을 수 있습니다. 크기는 {min, number}픽셀에서 {max, number}픽셀까지입니다.",
+      "expireQuestion": "QR 코드에 만료일이 있나요?",
+      "expireAnswer": "아니요. 이미지 API는 정적 QR 코드를 만듭니다. 인코딩한 내용이 코드 안에 들어 있어서, 담긴 링크나 텍스트가 유효한 동안은 계속 작동합니다. 만료되는 것도, 스캔 수를 세는 것도 없습니다.",
+      "dynamicQuestion": "인쇄한 뒤에 코드가 가리키는 곳을 바꿀 수 있나요?",
+      "dynamicAnswer": "이미지 API로는 할 수 없습니다. 그렇게 하려면 QRdx 대시보드나 REST API와 무료 API 키로 만든 동적 QR 코드가 필요합니다. 무료 플랜에는 동적 QR 코드 {count, number}개가 포함되며 스캔은 무제한입니다.",
+      "googleQuestion": "Google Chart QR 코드 API를 대체할 수 있나요?",
+      "googleAnswer": "네. 호스트와 경로를 바꾸고, chl은 data로, chs는 size로 이름을 바꾸세요(QR 코드는 정사각형이라 숫자는 하나입니다). 그리고 chld로 level과 margin을 설정하세요. cht, choe처럼 지원하지 않는 매개변수는 무시됩니다. 전체 매핑은 마이그레이션 가이드에서 확인할 수 있습니다.",
+      "limitQuestion": "요청 제한을 넘으면 어떻게 되나요?",
+      "limitAnswer": "429 응답과 함께 다시 시도할 시점을 알려 주는 Retry-After 헤더를 받게 됩니다. 동일한 URL은 1년 동안 캐시되므로, 트래픽이 많은 페이지에 표시되는 이미지는 대개 캐시에서 제공됩니다.",
+      "aiQuestion": "AI 어시스턴트도 사용할 수 있나요?",
+      "aiAnswer": "네, 가능해요. QRdx MCP 서버의 generate_qr_code 도구가 이러한 이미지 URL을 반환하며, MCP를 사용하지 않는 어시스턴트도 URL을 직접 Markdown 이미지로 작성할 수 있어요."
     }
   },
   "ai": {

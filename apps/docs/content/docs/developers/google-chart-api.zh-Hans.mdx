@@ -1,0 +1,72 @@
+---
+title: "替换 Google Chart 二维码 API"
+description: "chart.googleapis.com 的二维码现在会返回 404。将 chl、chs 和 chld 对应到免费的 QRdx Image API，并用一条命令更新旧 URL。"
+icon: Wrench
+---
+
+Google 已于 2012 年 4 月弃用 Image Charts，其中包括 `chart.googleapis.com/chart?cht=qr` 提供的二维码。该端点现在返回 `404`（我们在 2026 年 11 月 13 日核实过），因此使用它的旧 `<img>` 标签、邮件和电子表格都会显示为破损图片。
+
+QRdx 的 [Image API](/docs/developers/image-api) 用法相同：一个返回图片的 `GET` URL，无需账号或密钥。只需更换主机名，并重命名三个参数。
+
+## 迁移前后对比 [#before-and-after]
+
+```txt
+https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https%3A%2F%2Fexample.com&chld=M|2
+https://api.qrdx.dev/v1/qr?format=png&size=300&data=https%3A%2F%2Fexample.com&level=M&margin=2
+```
+
+两者都会生成 `https://example.com` 的 300 × 300 PNG，纠错等级为 M，边距为 2 个模块。
+
+## 参数对照 [#parameter-mapping]
+
+| Google Chart | QRdx | 说明 |
+| --- | --- | --- |
+| `cht=qr` | 不需要 | 该端点只生成二维码。保留也会被忽略。 |
+| `chl=<data>` | `data=<data>` | URL 编码方式相同，最多 2048 个字符。 |
+| `chs=<width>x<height>` | `size=<width>` | 只需一个数字，因为二维码是正方形：范围为 `64` 到 `2048` 像素。 |
+| `chld=<level>\|<margin>` | `level=<level>&margin=<margin>` | 字母相同，即 `L`、`M`、`Q` 和 `H`。边距以模块为单位，范围为 `0` 到 `16`。 |
+| `choe=UTF-8` | 不需要 | QRdx 始终以 UTF-8 编码文本，这也是 Google 的默认值。不支持 Shift_JIS 或 ISO-8859-1。保留也会被忽略。 |
+| 始终为 PNG | `format=png` | 除非你指定 `png`、`webp` 或 `eps`，否则 QRdx 返回 SVG。邮件中请继续使用 PNG，因为许多邮件客户端不显示 SVG。 |
+
+有两个默认值不同。未指定 `chld` 时，Google 使用纠错等级 `L`；QRdx 使用 `Q`，抗损坏能力更强，但二维码更密集。如果需要旧的外观，请添加 `level=L`。两者默认的边距都是 4 个模块。
+
+## 用一条命令迁移 [#migrate-with-one-command]
+
+这条命令会重写你指定文件中的所有 Google Chart 二维码 URL，包括较旧的 `chart.apis.google.com` 主机名。它会更改主机名和路径，重命名 `chl`、`chs` 和 `chld`，并添加 `format=png`，使图片仍为 PNG。macOS 和大多数 Linux 发行版都自带 Perl。
+
+```bash
+perl -pi -e 's{https?://chart\.(?:googleapis|apis\.google)\.com/chart\?([^\s"\x27<>)]*)}{my $q = $1; $q =~ s/(^|[&;])chl=/${1}data=/; $q =~ s/(^|[&;])chs=(\d+)x\d+/${1}size=$2/; $q =~ s/(^|[&;])chld=([LMQH])(?:\||%7C)(\d+)/${1}level=$2&margin=$3/i; $q =~ s/(^|[&;])chld=([LMQH])/${1}level=$2/i; "https://api.qrdx.dev/v1/qr?format=png&$q"}ge' index.html
+```
+
+请在便于审查改动的环境中运行，例如 git 检出目录，并检查 diff。要查找仍在使用旧 API 的文件：
+
+```bash
+grep -rlE "chart\.(googleapis|apis\.google)\.com/chart" .
+```
+
+如果 `chs` 小于 64 像素（如 `50x50`）或大于 2048，QRdx 会返回 `400`，请手动修改这些尺寸。
+
+## 代码示例 [#in-code]
+
+```js
+// Before
+const src = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(link)}`;
+
+// After
+const src = `https://api.qrdx.dev/v1/qr?format=png&size=200&data=${encodeURIComponent(link)}`;
+```
+
+在 Google Sheets 中：
+
+```txt
+=IMAGE("https://api.qrdx.dev/v1/qr?format=png&size=150&data="&ENCODEURL(A2))
+```
+
+Sheets 通过 Google 自己的服务器加载图片，因此包含数百个二维码的表格可能会触及下文所述的单 IP 限制。如果列表很大，请使用[批量生成器](/tools/bulk)或 [CLI](/docs/developers/cli) 的 `qrdx batch` 一次性生成文件。
+
+## 其他须知 [#what-else-to-know]
+
+- **速率限制：**每个 IP 地址每分钟 {facts.imageApiPerMinute} 次请求。超出后会返回 `429`，并带有 `Retry-After` 标头。
+- **缓存：**相同的 URL 始终返回相同的字节，因此响应会缓存一年（`Cache-Control: public, max-age=31536000, immutable`）。
+- **更多选项：**颜色（`fg`、`bg`）、模块和定位点形状、Logo 图标（`logoIcon`）以及边框。可在 [URL 构建器](/qr-code-api)中试用，或阅读[参数说明](/docs/developers/image-api#parameters)。
+- **自托管：**[自托管](/docs/self-hosting)的 QRdx 会在你自己的域名下通过 `/api/v1/qr` 提供相同的 API。

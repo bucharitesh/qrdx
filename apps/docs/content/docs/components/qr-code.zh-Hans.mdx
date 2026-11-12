@@ -1,5 +1,5 @@
 ---
-title: "二维码"
+title: "QR Code"
 description: "带下载按钮、样式丰富且支持无障碍访问的二维码。颜色、渐变、图案、Logo 和边框模板均来自 qrdx 库。"
 icon: QrCode
 ---
@@ -22,25 +22,25 @@ import { QrCode } from "@/components/qr-code";
 <QrCode value="https://qrdx.dev" />
 ```
 
-二维码以带有无障碍名称的 SVG 渲染，因此在任何尺寸下都保持清晰，屏幕阅读器也会读出它所链接的内容。
+二维码以 SVG 渲染并带有无障碍名称，因此在任何尺寸下都保持清晰，屏幕阅读器也会读出它所链接的内容。
 
 ## 示例 [#examples]
 
 ### 尺寸 [#sizes]
 
-`size` 设置屏幕上显示的宽度和高度，单位为像素。下载使用 `downloadSize`，因此页面上较小的二维码仍可导出适合印刷的文件。
+`size` 设置屏幕上显示的宽度和高度，单位为像素。下载时使用 `downloadSize`，因此页面上的小二维码同样可以导出可直接印刷的文件。
 
 <ComponentPreview name="qr-code-sizes" />
 
 ### 颜色 [#colors]
 
-`fgColor` 和 `bgColor` 接受任何 CSS 颜色。`eyeColor` 和 `dotColor` 分别为三个角上的定位点着色。请让模块颜色比背景更深，以便所有扫描器都能读取二维码。
+`fgColor` 和 `bgColor` 接受任何 CSS 颜色。`eyeColor` 和 `dotColor` 可分别为三个角上的定位眼着色。请保持模块颜色比背景更深，以便所有扫描器都能识别二维码。
 
 <ComponentPreview name="qr-code-colors" />
 
 ### 渐变 [#gradients]
 
-传入 qrdx 渐变来代替颜色：带 `angle` 的 `linear`，或者 `radial`。渐变会保留在 PNG、SVG 和 PDF 下载文件中。
+传入 qrdx 渐变来代替颜色：可以是带 `angle` 的 `linear`，也可以是 `radial`。渐变会保留在 PNG、SVG 和 PDF 下载文件中。
 
 <ComponentPreview name="qr-code-gradient" />
 
@@ -52,32 +52,130 @@ import { QrCode } from "@/components/qr-code";
 
 ### Logo [#logo]
 
-`logo` 会在中心放置一张图片，并清除其后方的模块。请使用纠错等级 `H`，这样二维码被部分遮挡后仍可扫描。使用 data URL 可在下载文件中保留 Logo；远程图片则需要 CORS 标头。
+`logo` 会在中心放置一张图片，并清除其后方的模块。请使用纠错级别 `H`，这样即使部分区域被遮挡，二维码仍可扫描。使用 data URL 可让 Logo 保留在下载文件中；远程图片则需要 CORS 头。
 
 <ComponentPreview name="qr-code-logo" />
 
 ### 边框模板 [#frame-templates]
 
-`templateId` 会在二维码周围绘制 qrdx [模板](/docs/features/templates)。可搭配 `caption`，在边框下方添加行动号召文字。
+`templateId` 会在二维码周围绘制 qrdx [模板](/docs/features/templates)。可搭配 `caption`，在边框下方添加行动号召文案。
 
 <ComponentPreview name="qr-code-template" />
 
 ### 下载格式 [#download-formats]
 
-`downloadFormats` 用于选择按钮：`png`、`jpg`、`svg` 和 `pdf`。导出 PDF 需要可选的 `jspdf` 包（`npm install jspdf`）。传入 `[]` 可隐藏这些按钮。
+`downloadFormats` 用于选择按钮：`png`、`jpg`、`svg` 和 `pdf`。PDF 导出需要可选的 `jspdf` 包（`npm install jspdf`）。传入 `[]` 可隐藏这些按钮。
 
 <ComponentPreview name="qr-code-downloads" />
 
-如需一个同时包含格式和尺寸的菜单，请使用[二维码下载](/docs/components/qr-code-download)。
+如需一个同时包含格式和尺寸的菜单，请使用 [QR Code Download](/docs/components/qr-code-download)。
 
 ### 深色模式 [#dark-mode]
 
-默认的白色背景是深色主题中最稳妥的选择：浅色底块上的深色模块可被所有读码器扫描。如果想跟随主题，请设置 `fgColor="currentColor"` 并使用透明背景。这样二维码在深色模式下会反色，手机相机可以读取，但部分较旧的扫描器无法读取。
+默认的白色背景是深色主题下最稳妥的选择：浅色底块上的深色模块可被所有读取器识别。如果想跟随主题，请设置 `fgColor="currentColor"` 并使用透明背景。这样二维码在深色模式下会反色，手机相机可以读取，但部分较旧的扫描器无法识别。
 
 <ComponentPreview name="qr-code-dark-mode" />
+
+## 在 Next.js 页面中 [#in-a-nextjs-page]
+
+`QrCode` 是客户端组件（由于有下载按钮，其文件以 `"use client"` 开头），因此服务端组件页面可以导入它，并以 props 传入服务端数据：
+
+```tsx title="app/menu/page.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export default function MenuPage() {
+  return (
+    <QrCode
+      value="https://example.com/menu"
+      caption="Scan to see the menu"
+      filename="menu-qr"
+    />
+  );
+}
+```
+
+二维码本身仍在服务端渲染，所以在按钮可交互之前，它就已经存在于页面的 HTML 中。关于在 App Router 中渲染二维码的更多内容，请参阅 [Next.js 中的二维码](/docs/nextjs)。
+
+## 任意内容，不只是链接 [#any-content-not-only-links]
+
+`value` 会按你传入的内容原样编码，因此任何二维码载荷都可以使用：Wi-Fi 网络、联系人名片、`mailto:`、`tel:` 或纯文本。请设置 `label`，让屏幕阅读器读出二维码的用途，而不是原始载荷（Wi-Fi 的载荷包含密码）。
+
+```tsx title="components/guest-wifi.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function GuestWifi() {
+  return (
+    <QrCode
+      value="WIFI:T:WPA;S:Cafe Guest;P:sunshine123;;"
+      label="QR code to join the Cafe Guest Wi-Fi"
+      caption="Cafe Guest Wi-Fi"
+    />
+  );
+}
+```
+
+如需通过表单构建载荷，请使用 [Wi-Fi QR Code](/docs/components/wifi-qr-code) 或 [vCard QR Code](/docs/components/vcard-qr-code)，它们会为你转义特殊字符。
+
+## 来自输入框的值 [#a-value-from-an-input]
+
+```tsx title="components/link-qr-code.tsx"
+"use client";
+
+import { useState } from "react";
+import { QrCode } from "@/components/qr-code";
+
+export function LinkQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div className="grid justify-items-center gap-4">
+      <input
+        aria-label="Link"
+        className="w-full rounded-md border px-3 py-2"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QrCode value={value} downloadFormats={[]} /> : null}
+    </div>
+  );
+}
+```
+
+`downloadFormats={[]}` 会在用户仍在输入时隐藏按钮；等值确定后再显示它们。
+
+## 可直接印刷的下载 [#print-ready-downloads]
+
+```tsx title="components/table-code.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function TableCode() {
+  return (
+    <QrCode
+      value="https://example.com/order?table=12"
+      level="H"
+      margin={4}
+      downloadFormats={["svg", "png", "pdf"]}
+      downloadSize={2048}
+      filename="table-12"
+    />
+  );
+}
+```
+
+- **SVG** 可缩放到任意大小而不模糊，是提供给印刷店或设计工具的最佳文件。
+- 使用 `downloadSize={2048}` 的 **PNG** 在 300 像素每英寸下，最宽约 17 厘米（6.8 英寸）仍可清晰印刷。`downloadSize` 的取值范围为 50 到 5000 像素。
+- **PDF** 需要可选的 `jspdf` 包（`npm install jspdf`）。
+- `filename` 用于为文件命名，不含扩展名：`table-12.svg`、`table-12.png`。
+
+## 确保可以扫描 [#make-sure-it-scans]
+
+- **对比度。** 浅色背景上的深色模块可被所有读取器识别。深色背景上的浅色二维码在大多数手机相机上可用，但在部分较旧的扫描器上不行。
+- **静区。** `margin` 默认为 2 个模块。当二维码放在照片、图案或深色页面上时，请使用 4。
+- **Logo。** 使用 `logo` 时请搭配 `level="H"`，这样二维码在 Logo 遮挡部分模块后仍可识别。
+- **印刷尺寸。** 从约 25 厘米处扫描短链接，二维码需要约 2.5 厘米宽；其他距离可用[印刷尺寸计算器](/tools/print-size)计算。
+- **测试。** 用几部手机扫描成品二维码，或将图片上传到[扫描检查器](/tools/scan-checker)。
 
 ## API 参考 [#api-reference]
 
 <auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
-其他任何属性（例如 `className`）都会传递给外层的 `<figure>`。
+其他任何 prop（例如 `className`）都会传递给外层的 `<figure>`。

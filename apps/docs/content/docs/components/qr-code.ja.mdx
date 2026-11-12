@@ -1,6 +1,6 @@
 ---
 title: "QRコード"
-description: "スタイル付きでアクセシビリティに配慮したQRコードコンポーネントです。ダウンロードボタンも備えています。色、グラデーション、パターン、ロゴ、フレームテンプレートには qrdx ライブラリを使用します。"
+description: "スタイル付きでアクセシブルなQRコードコンポーネントです。ダウンロードボタンを備えています。色、グラデーション、パターン、ロゴ、フレームテンプレートには qrdx ライブラリを使用しています。"
 icon: QrCode
 ---
 
@@ -22,62 +22,160 @@ import { QrCode } from "@/components/qr-code";
 <QrCode value="https://qrdx.dev" />
 ```
 
-QRコードはアクセシブルな名前を持つSVGとして描画されます。そのため、どんなサイズでも鮮明に表示され、スクリーンリーダーがリンク先を読み上げます。
+コードはアクセシブルな名前を持つSVGとして描画されます。そのため、どのサイズでも鮮明に表示され、スクリーンリーダーはリンク先を読み上げます。
 
 ## 例 [#examples]
 
 ### サイズ [#sizes]
 
-`size` は画面上の幅と高さをピクセルで指定します。ダウンロードには `downloadSize` が使われるため、ページ上で小さく表示しても、印刷に適したファイルを書き出せます。
+`size` は画面上の幅と高さをピクセル単位で指定します。ダウンロードには `downloadSize` が使われるため、ページ上では小さなコードでも、印刷に適したファイルを書き出せます。
 
 <ComponentPreview name="qr-code-sizes" />
 
 ### 色 [#colors]
 
-`fgColor` と `bgColor` には任意のCSSカラーを指定できます。`eyeColor` と `dotColor` では、3つのコーナーアイの色を個別に指定します。どのスキャナーでも読み取れるように、モジュールは背景よりも暗い色にしてください。
+`fgColor` と `bgColor` には任意のCSSカラーを指定できます。`eyeColor` と `dotColor` は、3つの角のアイをそれぞれ別の色にします。どのスキャナーでも読み取れるよう、モジュールは背景より暗い色にしてください。
 
 <ComponentPreview name="qr-code-colors" />
 
 ### グラデーション [#gradients]
 
-色の代わりに qrdx のグラデーションを渡せます。`angle` を指定した `linear` か、`radial` を使用します。グラデーションは PNG、SVG、PDF のダウンロードにも反映されます。
+色の代わりに qrdx のグラデーションを渡せます。`angle` を指定した `linear`、または `radial` を使用します。グラデーションは PNG、SVG、PDF のダウンロードにも反映されます。
 
 <ComponentPreview name="qr-code-gradient" />
 
 ### パターン [#patterns]
 
-`bodyPattern` はデータモジュールの形、`cornerEyePattern` はコーナーの枠、`cornerEyeDotPattern` は枠の内側のドットの形を決めます。すべての形については [パターン](/docs/features/patterns) をご覧ください。
+`bodyPattern` はデータモジュールの形、`cornerEyePattern` は角のフレームの形、`cornerEyeDotPattern` はその内側のドットの形を指定します。すべての形については[パターン](/docs/features/patterns)をご覧ください。
 
 <ComponentPreview name="qr-code-patterns" />
 
 ### ロゴ [#logo]
 
-`logo` は中央に画像を配置し、その背後のモジュールを取り除きます。一部が隠れてもスキャンできるように、誤り訂正レベルは `H` を使用してください。ロゴをダウンロードにも含めるにはデータURLを使います。外部の画像を使う場合は、CORSヘッダーが必要です。
+`logo` は中央に画像を配置し、その背後のモジュールを消去します。一部が隠れてもスキャンできるように、誤り訂正レベルは `H` を使用してください。データURLを使うとダウンロードしたファイルにもロゴが含まれます。外部の画像を使う場合は CORS ヘッダーが必要です。
 
 <ComponentPreview name="qr-code-logo" />
 
 ### フレームテンプレート [#frame-templates]
 
-`templateId` を指定すると、QRコードの周囲に qrdx の[テンプレート](/docs/features/templates)が描画されます。`caption` と組み合わせると、フレームの下に行動を促す文言を表示できます。
+`templateId` は、コードの周囲に qrdx の[テンプレート](/docs/features/templates)を描画します。`caption` と組み合わせると、フレームの下に行動を促す文言を表示できます。
 
 <ComponentPreview name="qr-code-template" />
 
 ### ダウンロード形式 [#download-formats]
 
-`downloadFormats` でボタンを指定します。指定できるのは `png`、`jpg`、`svg`、`pdf` です。PDF の書き出しには、オプションの `jspdf` パッケージ(`npm install jspdf`)が必要です。ボタンを非表示にするには `[]` を渡します。
+`downloadFormats` で表示するボタンを選びます。指定できるのは `png`、`jpg`、`svg`、`pdf` です。PDF の書き出しには、オプションの `jspdf` パッケージ(`npm install jspdf`)が必要です。ボタンを非表示にするには `[]` を渡します。
 
 <ComponentPreview name="qr-code-downloads" />
 
-形式とサイズを1つのメニューにまとめたい場合は、[QR Code Download](/docs/components/qr-code-download) を使用してください。
+形式とサイズを1つのメニューにまとめたい場合は、[QRコードダウンロード](/docs/components/qr-code-download)を使用してください。
 
 ### ダークモード [#dark-mode]
 
-ダークテーマでも、既定の白い背景が最も安全です。明るい下地に暗いモジュールを置けば、どのリーダーでもスキャンできます。代わりにテーマに合わせたい場合は、`fgColor="currentColor"` を指定し、背景を透明にします。この場合、ダークモードではQRコードが反転します。スマートフォンのカメラは読み取れますが、一部の古いスキャナーでは読み取れません。
+ダークテーマでは、デフォルトの白い背景が最も安全です。明るいタイルの上に暗いモジュールを置けば、どのリーダーでもスキャンできます。代わりにテーマに合わせたい場合は、`fgColor="currentColor"` を設定し、背景を透明にします。ダークモードではコードが反転し、スマートフォンのカメラでは読み取れますが、一部の古いスキャナーでは読み取れません。
 
 <ComponentPreview name="qr-code-dark-mode" />
+
+## Next.js のページで使う [#in-a-nextjs-page]
+
+`QrCode` はクライアントコンポーネントです(ダウンロードボタンがあるため、ファイルの先頭に `"use client"` があります)。そのためサーバーコンポーネントのページからインポートし、サーバーのデータをpropsとして渡せます。
+
+```tsx title="app/menu/page.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export default function MenuPage() {
+  return (
+    <QrCode
+      value="https://example.com/menu"
+      caption="Scan to see the menu"
+      filename="menu-qr"
+    />
+  );
+}
+```
+
+コード自体は引き続きサーバー上で描画されるため、ボタンが操作可能になる前からページのHTMLに含まれています。App Router でのコードの描画について詳しくは、[Next.js での QRコード](/docs/nextjs)をご覧ください。
+
+## リンク以外のあらゆる内容 [#any-content-not-only-links]
+
+`value` は渡した内容のままエンコードされるため、Wi-Fi ネットワーク、連絡先カード、`mailto:`、`tel:`、プレーンテキストなど、あらゆるQRペイロードを使えます。`label` を設定すると、スクリーンリーダーが生のペイロード(Wi-Fi の場合はパスワードを含みます)ではなく、コードの用途を読み上げます。
+
+```tsx title="components/guest-wifi.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function GuestWifi() {
+  return (
+    <QrCode
+      value="WIFI:T:WPA;S:Cafe Guest;P:sunshine123;;"
+      label="QR code to join the Cafe Guest Wi-Fi"
+      caption="Cafe Guest Wi-Fi"
+    />
+  );
+}
+```
+
+フォームからペイロードを組み立てるには、特殊文字を自動でエスケープする [Wi-Fi QRコード](/docs/components/wifi-qr-code)または [vCard QRコード](/docs/components/vcard-qr-code)を使用してください。
+
+## 入力欄の値を使う [#a-value-from-an-input]
+
+```tsx title="components/link-qr-code.tsx"
+"use client";
+
+import { useState } from "react";
+import { QrCode } from "@/components/qr-code";
+
+export function LinkQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div className="grid justify-items-center gap-4">
+      <input
+        aria-label="Link"
+        className="w-full rounded-md border px-3 py-2"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QrCode value={value} downloadFormats={[]} /> : null}
+    </div>
+  );
+}
+```
+
+`downloadFormats={[]}` は、入力の途中でボタンを非表示にします。値が確定してから表示してください。
+
+## 印刷に適したダウンロード [#print-ready-downloads]
+
+```tsx title="components/table-code.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function TableCode() {
+  return (
+    <QrCode
+      value="https://example.com/order?table=12"
+      level="H"
+      margin={4}
+      downloadFormats={["svg", "png", "pdf"]}
+      downloadSize={2048}
+      filename="table-12"
+    />
+  );
+}
+```
+
+- **SVG** はぼやけることなく任意のサイズに拡大できるため、印刷業者やデザインツールに渡すファイルとして最適です。
+- `downloadSize={2048}` の **PNG** は、300 ppi で幅約 17 cm(6.8 インチ)までくっきり印刷できます。`downloadSize` には 50 から 5000 ピクセルを指定できます。
+- **PDF** には、オプションの `jspdf` パッケージ(`npm install jspdf`)が必要です。
+- `filename` は拡張子を除いたファイル名を指定します。例: `table-12.svg`、`table-12.png`。
+
+## 確実にスキャンできるようにする [#make-sure-it-scans]
+
+- **コントラスト。** 明るい背景に暗いモジュールの組み合わせは、どのリーダーでもスキャンできます。暗い背景に明るいコードの組み合わせは、ほとんどのスマートフォンのカメラでは機能しますが、一部の古いスキャナーでは機能しません。
+- **クワイエットゾーン。** `margin` のデフォルトは 2 モジュールです。コードを写真、模様、暗いページの上に置く場合は 4 にしてください。
+- **ロゴ。** `logo` を使うときは `level="H"` を指定し、ロゴで隠れるモジュールがあってもコードが読み取れるようにします。
+- **印刷サイズ。** 約 25 cm の距離から短いリンクをスキャンするには、幅約 2.5 cm のコードが必要です。他の距離については[印刷サイズ計算ツール](/tools/print-size)で求められます。
+- **テストする。** 完成したコードを複数のスマートフォンでスキャンするか、画像を[スキャンチェッカー](/tools/scan-checker)にアップロードして確認してください。
 
 ## APIリファレンス [#api-reference]
 
 <auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
-`className` などその他のプロパティは、外側の `<figure>` に渡されます。
+`className` などその他のpropは、外側の `<figure>` に渡されます。

@@ -1,20 +1,20 @@
 ---
 title: "MCP 服务器"
-description: "通过 QRdx MCP 服务器，让 Claude、Cursor、VS Code 等 AI 工具生成带样式的二维码。"
+description: "通过 QRdx MCP 服务器，让 Claude、Cursor、VS Code 等 AI 工具生成各种样式的二维码。"
 icon: Bot
 ---
 
-QRdx 提供一个公开的 [Model Context Protocol](https://modelcontextprotocol.io) 服务器，地址为：
+QRdx 提供一个公共的 [Model Context Protocol](https://modelcontextprotocol.io) 服务器，地址如下：
 
 ```txt
 https://mcp.qrdx.dev/mcp
 ```
 
-所有客户端都使用这个 URL。同一服务器也可通过 `https://qrdx.dev/api/mcp` 访问，[连接页面](/mcp)会显示 qrdx.dev、预览部署和本地开发环境下的公开 URL。
+所有客户端都使用这个 URL。同一服务器也可通过 `https://qrdx.dev/api/mcp` 访问。[连接页面](/mcp)会显示 qrdx.dev、预览部署以及本地开发环境下的公共 URL。
 
-它使用 Streamable HTTP 传输，不保存会话状态。你的 AI 助手可以调用它来为任意内容类型设计二维码并获得经过检测的扫描评分、渲染二维码、列出可用样式、查找社区边框和主题，以及为 Wi-Fi、联系人、电子邮件、短信和地图位置构建格式正确的载荷。这些功能都不需要账号或 API 密钥。如果在连接中使用 QRdx API 密钥，还可以把设计保存到你的主题，并使用你上传的 Logo（参见[使用 API 密钥](#use-an-api-key)）。
+服务器采用 Streamable HTTP 传输，不保存会话状态。你的 AI 助手可以调用它，为任意内容类型设计二维码并给出经过校验的扫描评分，渲染二维码，列出可用样式，查找社区边框和主题，并为 Wi-Fi、联系人、电子邮件、短信和地图位置生成格式正确的数据。这些功能都不需要账号或 API 密钥。如果在连接中使用 QRdx API 密钥，还可以把设计保存到你的主题，并使用你上传的 Logo（参见[使用 API 密钥](#use-an-api-key)）。
 
-[在 Playground 中试用](/playground?open=code&lang=mcp)：在那里设计好样式，然后将其复制为 `design_qr` 参数交给你的助手。
+[在 Playground 中试用](/playground?open=code&lang=mcp)：先在那里设计好样式，再将其复制为 `design_qr` 参数交给你的助手。
 
 ## 设置 [#setup]
 
@@ -25,7 +25,7 @@ https://mcp.qrdx.dev/mcp
     ```
   </Tab>
   <Tab value="Cursor">
-    将服务器添加到 `~/.cursor/mcp.json`（适用于所有项目）或 `.cursor/mcp.json`（仅适用于一个项目）：
+    将服务器添加到 `~/.cursor/mcp.json`（适用于所有项目）或 `.cursor/mcp.json`（仅适用于单个项目）：
 
     ```json
     {
@@ -52,7 +52,7 @@ https://mcp.qrdx.dev/mcp
     ```
   </Tab>
   <Tab value="Other clients">
-    支持远程（Streamable HTTP）服务器的客户端只需要填写 URL `https://mcp.qrdx.dev/mcp`。对于只能运行本地 stdio 服务器的客户端，可以使用 [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) 进行桥接：
+    支持远程（Streamable HTTP）服务器的客户端只需填写 URL `https://mcp.qrdx.dev/mcp`。对于只能运行本地 stdio 服务器的客户端，可以通过 [`mcp-remote`](https://www.npmjs.com/package/mcp-remote) 进行桥接：
 
     ```json
     {
@@ -69,36 +69,37 @@ https://mcp.qrdx.dev/mcp
 
 然后直接说出你的需求，例如：
 
-- “为 https://example.com 生成一个二维码，使用我们的品牌蓝 #155dfc，模块为圆角。”
+- “为 https://example.com 生成一个二维码，使用品牌蓝 #155dfc，模块为圆角。”
 - “为网络 Office Guest 创建一个 Wi-Fi 二维码，密码是 correct-horse-battery。”
-- “为 Ada Lovelace 生成一个联系人二维码，邮箱 ada@example.com，并把它添加到 README 中。”
+- “为 Ada Lovelace（ada@example.com）生成一个联系人二维码，并添加到 README 中。”
 - “设计一个 Cafe Guest 的 Wi-Fi 二维码，使用暖棕色调和 Free Wi-Fi 边框，并告诉我它的扫描评分。”
-- “查找适合餐厅菜单的社区边框，并用它为 https://example.com/menu 生成二维码。”
+- “为餐厅菜单查找一个社区边框，并用它为 https://example.com/menu 生成二维码。”
 
 ## 工具 [#tools]
 
 | 工具 | 功能 |
 |------|------|
-| `design_qr` | 为任意内容类型设计二维码，样式由你的助手选定，也可以从内置主题或社区项目开始。它会检查扫描评分，并修复样式直至达到“极佳”。返回评分、所做的改动、样式 JSON、Playground 链接、PNG 和 SVG。 |
+| `design_qr` | 为任意内容类型设计二维码，样式由你的助手选定，也可以从内置主题或社区项目出发；检查扫描评分，并修复样式直到评分达到“优秀”。返回评分、所做的改动、样式 JSON、Playground 链接、PNG 以及 SVG。 |
 | `list_options` | 列出 `design_qr` 接受的所有取值：内容类型及其字段、颜色和渐变、形状、边框样式（含 QRdx 官方边框的 id）、边框、Logo 图标和品牌 Logo、内置主题、纠错级别以及限制。 |
-| `generate_qr_code` | 使用编辑器的样式渲染二维码。返回 PNG 图片和公开的 [Image API](/docs/developers/image-api) URL（SVG、PNG、无损 WebP 和矢量 EPS），可直接用于 Markdown、HTML 或印刷，也可按需返回 SVG 标记。 |
-| `list_qr_styles` | 列出码点图案、定位点外框和定位点内点形状、边框模板、边框样式、Logo 图标、纠错级别、默认值以及限制。 |
-| `search_community` | 按关键词、类型或标签查找已发布的[社区](/community)边框样式、主题和合集。 |
+| `generate_qr_code` | 使用编辑器的样式渲染二维码。返回 PNG 图片和公开的 [Image API](/docs/developers/image-api) URL（SVG、PNG、无损 WebP 和矢量 EPS），可直接用于 Markdown、HTML 或印刷；按需还可返回 SVG 标记。 |
+| `list_qr_styles` | 列出码点图案、定位点外框和内点形状、边框模板、边框样式、Logo 图标、纠错级别、默认值以及限制。 |
+| `search_community` | 按关键词、类型或标签查找已发布的[社区](/community)边框、主题和合集。 |
 | `get_community_item` | 获取单个社区项目及其应用的样式，可直接用于 `design_qr` 或 `generate_qr_code`。 |
-| `save_template` | 将设计作为主题保存到你的工作区。需要 [API 密钥](#use-an-api-key)。 |
-| `generate_barcode` | 在校验取值（校验位、长度、字符）后，绘制 EAN-13、UPC-A、UPC-E、EAN-8、ITF-14、GS1-128、Code 128、Code 39、Data Matrix、PDF417 或 Aztec 条码。返回 PNG 和公开的[条码 API](/docs/developers/barcode-api) URL。 |
+| `save_template` | 将设计保存为你工作区中的主题。需要 [API 密钥](#use-an-api-key)。 |
+| `generate_barcode` | 校验取值（校验位、长度、字符）后，绘制 EAN-13、UPC-A、UPC-E、EAN-8、ITF-14、GS1-128、Code 128、Code 39、Data Matrix、PDF417 或 Aztec 条码。返回 PNG 和公开的[条码 API](/docs/developers/barcode-api) URL。 |
 | `save_barcode` | 将条码保存到你工作区的“条码”中。需要 [API 密钥](#use-an-api-key)。 |
-| `qr_payload_wifi` | 生成 `WIFI:` 网络载荷（WPA、WEP 或开放网络，可选隐藏），并对特殊字符进行转义。 |
-| `qr_payload_vcard` | 生成 vCard 3.0 联系人（RFC 2426）：姓名、组织、职位、电话、电子邮件、网站、地址和备注。 |
+| `qr_payload_wifi` | 生成 `WIFI:` 网络内容（WPA、WEP 或开放网络，可选隐藏），并对特殊字符进行转义。 |
+| `qr_payload_vcard` | 生成 vCard 3.0 联系人（RFC 2426）：姓名、组织、职务、电话、电子邮件、网站、地址和备注。 |
 | `qr_payload_email` | 生成 `mailto:` 链接（RFC 6068），可选抄送、密送、主题和正文。 |
-| `qr_payload_sms` | 生成带可选消息的 `sms:` 链接（RFC 5724），或较旧的 `SMSTO:` 形式。 |
+| `qr_payload_sms` | 生成 `sms:` 链接（RFC 5724），可附带消息，也可使用较早的 `SMSTO:` 形式。 |
 | `qr_payload_geo` | 根据纬度和经度生成 `geo:` 位置（RFC 5870）。 |
+| `qr_payload_payment` | 生成银行支付码：Pix BR Code、SEPA 转账（EPC069-12），或 PayNow、PromptPay、VietQR 码（EMV，含 CRC）。字段检查方式与 Playground 的表单一致。 |
 
-载荷工具返回纯字符串。随后你的助手会把它作为 `data` 传给 `generate_qr_code`。
+内容类工具返回纯字符串。随后你的助手将其作为 `data` 传给 `generate_qr_code`。
 
 ### design_qr [#design_qr]
 
-`design_qr` 接受以类型及其字段表示的内容（类型和校验与编辑器的内容表单相同，可用 `list_options` 查看），以及可选的样式：
+`design_qr` 以类型及其字段的形式接收内容（类型和校验规则与编辑器的内容表单相同，可用 `list_options` 查看），以及可选的样式：
 
 ```json
 {
@@ -113,61 +114,61 @@ https://mcp.qrdx.dev/mcp
 }
 ```
 
-你省略的选项会使用默认值（定位点跟随码点颜色、方形形状、边距 4、纠错级别 Q、无边框样式）。随后 QRdx 会对该设计运行编辑器的扫描检查：渲染二维码，通过手机摄像头模型在 96、160 和 320 px 下进行解码，并检查对比度、静区、定位点形状和形状搭配。如果低于“极佳”（85），它会修复样式，最多三次，并尽量少改动（保持色相的更深颜色、更安全的定位点形状、为较长内容降低纠错级别）。如果这样仍然不够，则回退为经典的黑底白码，并保留你的边框样式。结果中会说明改动了什么以及原因。
+未指定的选项会使用默认值（定位点颜色跟随码点颜色、方形、边距 4、纠错级别 Q、无边框样式）。随后 QRdx 会对设计运行编辑器的扫描检查：渲染二维码，通过手机摄像头模型在 96、160 和 320 px 下解码，并检查对比度、静区、定位点形状和形状搭配。若低于“优秀”（85），它会修复样式，最多三次，并尽量少改动（保持色相的更深颜色、更稳妥的定位点形状、针对长内容降低纠错级别）。如果仍然不够，则退回到带有你所选边框样式的经典黑底白码。结果会说明改动了什么以及原因。
 
-`design_qr` 在 QRdx 一侧不运行任何 AI 模型：样式由你的助手选定，QRdx 负责验证、检查和修复。无效的内容（例如不足 8 个字符的 WPA 密码、格式错误的电子邮件地址）会被拒绝并说明原因。`design_qr` 有自己的限制：每个 IP 地址每分钟 20 次调用。
+`design_qr` 在 QRdx 一侧不运行任何 AI 模型：样式由你的助手选定，QRdx 负责验证、检查和修复。无效的内容（例如少于 8 个字符的 WPA 密码、格式错误的电子邮件地址）会被拒绝，并给出原因。`design_qr` 有自己的限制：每个 IP 地址每分钟 20 次调用。
 
-更多输入：
+更多输入项：
 
-- **`preset`**：按 id 从内置主题开始（可用 `list_options` 查看）。你设置的样式选项优先于它。
-- **`community_item`**：按 id 从社区边框样式或主题开始，例如 `frame:wifi-card`。边框样式项会套在经典二维码上；你的样式选项会改变其下的二维码。
-- **官方边框样式**：QRdx 的官方边框样式同样是社区项目。`list_options` 按分组（节日、季节和用途）列出它们的 id，因此 `frame:diwali-diya` 或 `frame:menu-cutlery` 都可以用作 `community_item`。
-- **自定义边框样式**：`style.frame` 可以是 `{ "style": "custom", "spec": … }`，其中 spec 为边框样式规格，例如来自 `get_community_item` 的社区边框样式。它按原样绘制并评分；修复只会改动二维码，不会改动边框样式。
-- **`style.logo`**：快捷 Logo 图标（`wifi`、`location`、`phone`、`email`、`link`、`file`、`calendar`、`whatsapp` 或 `instagram`），或按 [Simple Icons](https://simpleicons.org) slug 指定的品牌 Logo（`spotify`、`paypal:white`）。`list_options` 会列出常用的品牌 slug。
-- **引擎选项**：`style.eyeColors`（每个定位点的 `#RRGGBB` 颜色）、`moduleScale`（码点大小，`0.5` 到 `1`）、`shape`（`circle` 表示圆形二维码）、`autoLevel` 和 `logoOptions`（Logo 的大小、留白、位置、裁剪和底板）。它们按给定值绘制并评分；修复不会改动它们。
+- **`preset`**：按 id 从内置主题出发（可用 `list_options` 查看）。你设置的样式选项优先于它。
+- **`community_item`**：按 id 从社区边框或主题出发，例如 `frame:wifi-card`。边框项目放在经典二维码上；你的样式选项会改变其下的二维码。
+- **官方边框**：QRdx 的官方边框同样是社区项目。`list_options` 按分组（节日、季节和用途）列出它们的 id，因此 `frame:diwali-diya` 或 `frame:menu-cutlery` 都可以用作 `community_item`。
+- **自定义边框**：`style.frame` 可以是 `{ "style": "custom", "spec": … }`，其中 spec 为边框规格，例如通过 `get_community_item` 获得的社区边框规格。它会按原样绘制和评分；修复只会改变二维码，不会改变边框。
+- **`style.logo`**：快捷 Logo 图标（`wifi`、`location`、`phone`、`email`、`link`、`file`、`calendar`、`whatsapp` 或 `instagram`），或按 [Simple Icons](https://simpleicons.org) 的 slug 指定品牌 Logo（`spotify`、`paypal:white`）。`list_options` 列出常用的品牌 slug。
+- **引擎选项**：`style.eyeColors`（每个定位点的 `#RRGGBB` 颜色）、`moduleScale`（码点大小，`0.5` 到 `1`）、`shape`（`circle` 表示圆形二维码）、`autoLevel` 和 `logoOptions`（Logo 的大小、留白、位置、裁剪和底板）。它们会按给定值绘制和评分；修复不会改变它们。
 
 <IfAvailable feature="fileStorage">
 `logo_file_id` 会改为绘制你上传到 QRdx 的 Logo，需要 [API 密钥](#use-an-api-key)。
 </IfAvailable>
 
-与编辑器一样，Logo 按其覆盖的模块数评分，因此修复时可能会把纠错级别提高到 H，或移除 Logo。编辑器默认显示的 QRdx 标记不会在这里绘制。
+与编辑器一样，Logo 按其覆盖的模块数评分，因此修复时可能会将纠错级别提高到 H，或移除 Logo。编辑器默认显示的 QRdx 标志在这里不会绘制。
 
-结果中的 `qrdxStyle` 是以编辑器样式 JSON 表示的设计。你可以把它传给 `save_template`，也可以作为 `style` 传给 `generate_qr_code` 以不同尺寸渲染同一设计，或传给 Image API 的 [`style`](/docs/developers/image-api#style)。`playground_url` 会在 [Playground](/playground) 中打开该设计：它只携带样式，绝不包含 Logo 或内容，`playgroundLeftOut` 会说明省略了哪些内容。
+结果中的 `qrdxStyle` 是以编辑器样式 JSON 表示的设计。可将它传给 `save_template`；也可作为 `style` 传给 `generate_qr_code`，以另一种尺寸渲染同一设计；还可传给 Image API 的 [`style`](/docs/developers/image-api#style)。`playground_url` 会在 [Playground](/playground) 中打开该设计：它只携带样式，绝不包含 Logo 或内容，`playgroundLeftOut` 会说明省略了哪些内容。
 
 ### generate_qr_code 的输入 [#generate_qr_code-inputs]
 
-输入与 [Image API 参数](/docs/developers/image-api#parameters)一致：`data`（必填）、`size`、`fg`、`bg`、`eyeColor`、`dotColor`、`body`、`eye`、`dot`、`level`、`margin`、`template`、`frame`、`frameText`、`logoIcon`、`logoFileId`、`item`（社区项目 id）和 `style`（编辑器的样式 JSON：渐变、自定义边框样式等，格式与 `design_qr` 返回的相同）。扁平选项优先于 `style`，`style` 优先于 `item`。将 `include_svg` 设为 `true`，还可以以文本形式获得 SVG 标记，例如用于保存 `.svg` 文件。该选项默认关闭，因为标记通常有 50 到 150 KB，会占满对话。
+输入项与 [Image API 参数](/docs/developers/image-api#parameters)一致：`data`（必填）、`size`、`fg`、`bg`、`eyeColor`、`dotColor`、`body`、`eye`、`dot`、`level`、`margin`、`template`、`frame`、`frameText`、`logoIcon`、`logoFileId`、`item`（社区项目 id）和 `style`（编辑器的样式 JSON：渐变、自定义边框等，与 `design_qr` 返回的一致）。单独设置的选项优先于 `style`，`style` 优先于 `item`。将 `include_svg` 设为 `true`，还可以以文本形式获得 SVG 标记，例如用于保存 `.svg` 文件。它默认关闭，因为标记通常有 50 到 150 KB，会占满对话。
 
-`generate_qr_code` 不检查扫描评分；如需检查，请使用 `design_qr`。带有你上传 Logo 的二维码没有公开的图片 URL，因为 Image API 只会为带有你的密钥的请求绘制该 Logo。
+`generate_qr_code` 不检查扫描评分；如需检查，请使用 `design_qr`。带有你上传的 Logo 的二维码没有公开的图片 URL，因为 Image API 只会为携带你的密钥的请求绘制该 Logo。
 
 ### 二维码卡片 [#qr-card]
 
-在支持 [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) 的应用中，`design_qr` 和 `generate_qr_code` 还会在聊天中显示二维码卡片。卡片包含二维码、其编码内容（Wi-Fi 二维码显示网络名称，绝不显示密码）、尺寸、纠错级别或扫描评分，以及一个 **在编辑器中打开** 按钮。编辑器链接与 `playground_url` 一样，只携带样式。
+在支持 [MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview) 的应用中，`design_qr` 和 `generate_qr_code` 还会在聊天中显示一张二维码卡片。卡片包含二维码、其编码的内容（Wi-Fi 二维码显示网络名称，绝不显示密码）、尺寸以及纠错级别或扫描评分，还有一个 **在编辑器中打开** 按钮。编辑器链接与 `playground_url` 一样，只携带样式。
 
-PNG 和 SVG 按钮取决于应用的权限。如果应用可以从卡片保存文件，它们就会保存文件。否则它们会在浏览器中打开 Image API 的 URL，因此 `design_qr` 的卡片只在能够保存文件的应用中显示它们：其内容绝不会出现在图片 URL 中。应用可能会在打开链接前请你确认。
+PNG 和 SVG 按钮取决于应用的权限。如果应用能从卡片保存文件，按钮会直接保存；否则会在浏览器中打开 Image API 的 URL，因此 `design_qr` 的卡片只在能保存文件的应用中显示这两个按钮：它的内容绝不会放进图片 URL。应用可能会在打开链接前要求你确认。
 
-不支持 MCP Apps 的应用会像以前一样得到相同的文本和图片。面向客户端开发者：
+不支持 MCP Apps 的应用仍获得与以前相同的文本和图片。面向客户端开发者：
 
 - 卡片是资源 `ui://qrdx/qr-card`（`text/html;profile=mcp-app`），由 `resources/list` 列出。两个工具都通过 `_meta.ui.resourceUri` 指向它。
-- 其数据位于工具结果的 `_meta` 中，在 `dev.qrdx/qr-card` 之下，供卡片使用，而不是供模型使用。这些工具不返回 `structuredContent`。
-- 卡片是单个 HTML 文件，样式和脚本均为内联。它唯一加载的内容是来自 Image API 的二维码图片（`https://api.qrdx.dev`，自托管时为你自己的域名），其内容安全策略（`_meta.ui.csp.resourceDomains`）只允许该主机。
+- 卡片的数据位于工具结果的 `_meta` 中，键为 `dev.qrdx/qr-card`，仅供卡片使用，不提供给模型。这些工具不返回 `structuredContent`。
+- 卡片是单个 HTML 文件，样式和脚本均为内联。它唯一加载的是来自 Image API 的二维码图片（`https://api.qrdx.dev`，自托管时为你自己的域名），其内容安全策略（`_meta.ui.csp.resourceDomains`）只允许该主机。
 
-如果你在卡片功能出现之前就已连接 QRdx，请移除连接器后重新添加，或刷新其工具，以便应用获取新的工具元数据。
+如果你在卡片功能推出之前就连接了 QRdx，请移除连接器后重新添加，或刷新其工具，以便应用获取新的工具元数据。
 
 ### 社区 [#community]
 
-`search_community` 按关键词（`q`）、`type` 和 `tag` 查找已发布的[社区](/community)边框样式、主题和合集，均以 CC0 免费提供。`get_community_item` 返回单个项目及其应用的样式；将其 id 作为 `community_item` 传给 `design_qr`，或作为 `item` 传给 `generate_qr_code`。相同的数据也可通过 REST API 的 [`/v1/community/items`](/docs/developers/api/list-community-items) 获取。
+`search_community` 按关键词（`q`）、`type` 和 `tag` 查找已发布的[社区](/community)边框、主题和合集，均以 CC0 免费提供。`get_community_item` 返回单个项目及其应用的样式；将其 id 作为 `community_item` 传给 `design_qr`，或作为 `item` 传给 `generate_qr_code`。同样的数据也可通过 REST API 的 [`/v1/community/items`](/docs/developers/api/list-community-items) 获取。
 
-项目文本由社区成员撰写。名称、描述、用户名、标签和边框文字标签返回时会被缩短为一行，且不含链接、电子邮件或标记，每条结果都会提示应将它们视为数据，而不是指令。
+项目文本由社区成员撰写。名称、描述、用户名、标签和边框标签返回时会被截短、合并为一行，并去除链接、电子邮件和标记，且每个结果都会提示将它们视为数据，而不是指令。
 
 ## 使用 API 密钥 [#use-an-api-key]
 
-部分工具需要在连接中携带 QRdx [API 密钥](/docs/developers/api-keys),以 `Authorization: Bearer qrdx_…` 的形式发送:
+部分工具需要在连接中携带 QRdx [API 密钥](/docs/developers/api-keys),并以 `Authorization: Bearer qrdx_…` 的形式发送:
 
-- **`save_template`** 会将设计保存为主题,主题会列在控制台的“主题”下,并可在编辑器中使用。它需要具有 `codes:write` 权限的密钥,**完全访问**密钥具备该权限。属于你自己工作区的密钥会保存到你的主题;团队密钥则在其创建者是所有者或管理员、且套餐包含团队主题时,保存到团队的共享主题。保存的数量计入套餐的已保存主题上限(参见[套餐与限制](/docs/plans-and-limits));超出上限时,该工具会返回 API 的 `LIMIT_REACHED` 错误(`402`)。未提供密钥时,它会返回 `401` 错误,并说明如何添加密钥。
-- **`save_barcode`** 会将条形码(格式、值、可选的标题和绘制选项)保存到该密钥所属的工作区,并列在控制台的“条形码”下。它需要具有 `codes:write` 权限的密钥。所有套餐都可以保存条形码,免费版最多 1,000 个;超出上限时会返回 `LIMIT_REACHED`(`402`)。
+- **`save_template`** 会把设计保存为主题,主题会列在控制台的“主题”下,并可在编辑器中使用。它需要具有 `codes:write` 权限的密钥,**完全访问**密钥具备该权限。你自己工作区的密钥会保存到你的主题;团队密钥在其创建者是所有者或管理员、且当前套餐包含团队主题时,会保存到团队的共享主题。保存会计入套餐的已保存主题上限(参见[套餐与限额](/docs/plans-and-limits));超出上限时,该工具会返回 API 的 `LIMIT_REACHED` 错误(`402`)。未提供密钥时,它会返回 `401` 错误,并说明如何添加密钥。
+- **`save_barcode`** 会把条形码(格式、值、可选的标题和绘制选项)保存到该密钥所在的工作区,并列在控制台的“条形码”下。它需要具有 `codes:write` 权限的密钥。所有套餐都可以保存条形码,免费版最多 1,000 个;超出上限时会返回 `LIMIT_REACHED`(`402`)。
 <IfAvailable feature="fileStorage">
-- **你上传的 Logo**,在[控制台 → 文件](/docs/files)中,通过文件 ID 使用(`design_qr` 中为 `logo_file_id`,`generate_qr_code` 中为 `logoFileId`):PNG 或 JPEG,最大 1 MB。密钥必须属于拥有该文件的工作区。
+- **你上传的 Logo**,在[控制台 → 文件](/docs/files)中,通过文件 ID 引用(`design_qr` 中为 `logo_file_id`,`generate_qr_code` 中为 `logoFileId`):PNG 或 JPEG,最大 1 MB。密钥必须属于拥有该文件的工作区。
 </IfAvailable>
 
 <Tabs items={["Claude Code", "Cursor", "VS Code"]}>
@@ -208,15 +209,15 @@ PNG 和 SVG 按钮取决于应用的权限。如果应用可以从卡片保存�
 
 ## 隐私与限制 [#privacy-and-limits]
 
-- 这些工具用于渲染图像、检查设计、格式化文本以及读取公开社区内容。只有 `save_template` 和 `save_barcode` 会写入数据:即你要求它们保存的主题或条形码,写入 API 密钥所属的工作区。服务器不会保存你生成的二维码。
-- `generate_qr_code` 和 `generate_barcode` 返回的图像 URL 包含编码的数据。如果数据属于隐私信息,例如 Wi-Fi 密码,请不要分享这些 URL。
+- 这些工具用于渲染图片、检查设计、格式化文本和读取公开社区内容。只有 `save_template` 和 `save_barcode` 会写入数据:即你要求它们保存的主题或条形码,写入 API 密钥所在的工作区。服务器不会保存你生成的二维码。
+- `generate_qr_code` 和 `generate_barcode` 返回的图片 URL 中包含已编码的数据。如果数据是私密的(例如 Wi-Fi 密码),请不要分享这些 URL。
 - 请求限制为每个 IP 地址每分钟 120 次,`design_qr` 为 20 次。使用密钥时,`save_template` 还限制为每位用户每分钟 30 次。
 
 ## 自托管与本地开发 [#self-hosting-and-local-development]
 
-MCP 服务器是 QRdx Web 应用的一部分,因此每个实例都在 `/api/mcp` 提供该服务:
+MCP 服务器是 QRdx Web 应用的一部分,因此每个实例都会在 `/api/mcp` 提供该服务:
 
-- **自托管。** 当 `NEXT_PUBLIC_APP_URL` 是你自己的域名时,连接页面、代码片段和安装链接都会使用 `https://<your-domain>/api/mcp`。
-- **本地开发。** `bun run dev` 会在 `http://localhost:3000/api/mcp` 提供该服务。连接页面仍显示公开 URL,并将本地 URL 作为提示给出,这样你可以让客户端指向自己的机器,在服务器的更改发布之前进行测试。
+- **自托管。** 当 `NEXT_PUBLIC_APP_URL` 是你自己的域名时,连接页面、代码片段和安装链接会使用 `https://<your-domain>/api/mcp`。
+- **本地开发。** `bun run dev` 会在 `http://localhost:3000/api/mcp` 提供该服务。连接页面仍会显示公开的 URL,并把本地地址作为提示给出,这样你可以让客户端指向自己的机器,在服务器更改上线之前测试这些更改。
 
-在浏览器中打开 `/api/mcp` 会重定向到连接页面。MCP 客户端从不请求 HTML,因此它们仍能正常访问服务器。
+在浏览器中打开 `/api/mcp` 会重定向到连接页面。MCP 客户端从不请求 HTML,因此它们照常访问服务器。
