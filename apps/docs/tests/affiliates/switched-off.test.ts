@@ -54,10 +54,7 @@ vi.mock("next/server", async (importOriginal) => ({
   },
 }));
 
-import {
-  recordNewUser,
-  registerNewUserRecorder,
-} from "@repo/auth/referral";
+import { recordNewUser, registerNewUserRecorder } from "@repo/auth/referral";
 import { REFERRAL_HEADER } from "@repo/auth/referral-keys";
 import { GET as referralLink } from "@/app/r/[code]/route";
 import { recordSignUpReferral } from "@/lib/affiliates/attribution-hook";
