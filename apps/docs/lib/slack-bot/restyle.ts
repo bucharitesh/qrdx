@@ -1,5 +1,6 @@
 import "server-only";
 
+import { recordUsage } from "@/lib/analytics/usage";
 import {
   applyChoice,
   PICKERS,
@@ -104,6 +105,7 @@ export async function handleStyleAction(
   const responseUrl = payload.response_url;
   if (!(action && isId(teamId) && isId(user))) return;
   if (!isSlackResponseUrl(responseUrl)) return;
+  recordUsage("slack", "command", "restyle");
 
   const reply = async (message: SlackMessage, replace = false) => {
     const posted = await postToResponseUrl(responseUrl, {
@@ -151,5 +153,6 @@ export async function handleStyleAction(
     await reply(plain ?? tooLongForSlack(), Boolean(plain));
   } catch (error) {
     logError(error as Error, { action: "slack-bot.restyle" });
+    recordUsage("slack", "error", "restyle");
   }
 }

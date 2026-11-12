@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { unknownEndpointError } from "@/lib/api-errors";
 import { handleError } from "@/lib/error-response";
 
@@ -15,8 +16,11 @@ async function notFound(req: NextRequest, { params }: Context) {
   return handleError(unknownEndpointError(req.method, path.slice(0, 200)));
 }
 
-export const GET = notFound;
-export const POST = notFound;
-export const PUT = notFound;
-export const PATCH = notFound;
-export const DELETE = notFound;
+// Counted with the API's requests (lib/analytics/usage.ts), as "unknown".
+const counted = withApiUsage("unknown", notFound);
+
+export const GET = counted;
+export const POST = counted;
+export const PUT = counted;
+export const PATCH = counted;
+export const DELETE = counted;

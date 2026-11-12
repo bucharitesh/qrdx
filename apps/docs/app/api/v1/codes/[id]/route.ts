@@ -9,6 +9,7 @@ import {
   setCodeArchived,
   updateCode,
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
@@ -29,7 +30,7 @@ async function codeId({ params }: Context): Promise<string> {
   return parseWithSchema(codeIdSchema, (await params).id);
 }
 
-export const GET = withApiQuotaHeaders(
+const handleGET = withApiQuotaHeaders(
   async (req: NextRequest, context: Context) => {
     try {
       const scope = await resolveApiScope(req, "read");
@@ -49,7 +50,7 @@ export const GET = withApiQuotaHeaders(
  * toggles redirects; `kind` switches between a website link and a hosted
  * page (code-kind.ts), before the other fields apply.
  */
-export const PATCH = withApiQuotaHeaders(
+const handlePATCH = withApiQuotaHeaders(
   async (req: NextRequest, context: Context) => {
     try {
       const scope = await resolveApiScope(req, "write");
@@ -100,7 +101,7 @@ export const PATCH = withApiQuotaHeaders(
   },
 );
 
-export const DELETE = withApiQuotaHeaders(
+const handleDELETE = withApiQuotaHeaders(
   async (req: NextRequest, context: Context) => {
     try {
       const scope = await resolveApiScope(req, "write");
@@ -114,3 +115,8 @@ export const DELETE = withApiQuotaHeaders(
     }
   },
 );
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("codes", handleGET);
+export const PATCH = withApiUsage("codes", handlePATCH);
+export const DELETE = withApiUsage("codes", handleDELETE);

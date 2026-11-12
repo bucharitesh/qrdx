@@ -37,6 +37,7 @@ import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { defaultThemeState } from "@/config/qr";
 import { track } from "@/lib/analytics";
+import { useTrackEditorOpened } from "@/lib/analytics/react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQRThemes } from "@/lib/hooks/use-themes";
@@ -158,6 +159,7 @@ function downloadSampleCsv() {
 
 export function BulkGenerator() {
   const t = useTranslations("tools.bulk.generator");
+  useTrackEditorOpened("bulk_tool");
   const locale = useLocale();
   const n = (value: number) => value.toLocaleString(locale);
   /** A row's or the run's error for people (and errors.csv). */

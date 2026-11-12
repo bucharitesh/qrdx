@@ -249,7 +249,7 @@ describe("save_template", () => {
     expect(JSON.parse(result.content[1]?.text ?? "{}")).toMatchObject({
       id: "theme_1",
       where: "own",
-      editorUrl: `${ORIGIN}/playground/theme_1`,
+      editorUrl: `${ORIGIN}/playground/theme_1?ref=mcp`,
     });
     expect(state.themes[0]).toMatchObject({
       userId: "u_alice",

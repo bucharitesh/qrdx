@@ -6,6 +6,7 @@ import {
   listCodes,
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { getDefaultThemeStyle } from "@/app/(app)/dashboard/themes/_lib/queries";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { formatCount } from "@/lib/bulk-limits";
 import { HttpError, handleError } from "@/lib/error-response";
@@ -35,7 +36,7 @@ const SCREEN_BUDGET_MS = 20_000;
 /** What a response can carry (the platform's limit is 4.5 MB). */
 const MAX_RESPONSE_BYTES = 4 * 1024 * 1024;
 
-export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
+const handleGET = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "read");
     const query = parseWithSchema(
@@ -77,7 +78,7 @@ function parseBatch(raw: unknown[]) {
   );
 }
 
-export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
+const handlePOST = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "write");
     assertJson(req);
@@ -126,6 +127,7 @@ export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
     const { codes, created } = await createCodesBatch(scope, inputs, {
       idempotencyKey: headers["Idempotency-Key"] ?? null,
       screenBudgetMs: isBatch ? SCREEN_BUDGET_MS : undefined,
+      via: "api",
     });
     const serialize = minimal ? serializeMinimalCode : serializeCode;
 
@@ -145,3 +147,7 @@ export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
     return handleError(error, { route: "POST /api/v1/codes" });
   }
 });
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("codes", handleGET);
+export const POST = withApiUsage("codes", handlePOST);

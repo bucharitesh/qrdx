@@ -7,6 +7,7 @@ import {
   CHAT_QR_PNG_SIZE,
   type ChatQrLinks,
   chatQrCaption,
+  withBotRef,
 } from "@/lib/chat-bots/qr-reply";
 import {
   CHAT_FLAGS,
@@ -24,7 +25,7 @@ import {
 } from "@/lib/chat-bots/styles";
 import { signPhotoLink } from "@/lib/chat-bots/telegram/photo-link";
 import { baseUrl } from "@/lib/metadata";
-import { playgroundHref } from "@/lib/playground-links";
+import { playgroundHref, withHandoffRef } from "@/lib/playground-links";
 
 // What the QRdx Telegram bot reads from an update and what it sends back, as
 // Bot API method payloads (https://core.telegram.org/bots/api). Pure: the
@@ -219,6 +220,10 @@ const replyTo = (messageId: number) => ({
   allow_sending_without_reply: true,
 });
 
+/** The editor link, tagged ref=telegram-bot (lib/analytics/handoff-tags.ts). */
+const editorLink = (links: ChatQrLinks) =>
+  withBotRef(links, "telegram-bot").editor;
+
 /** The URL buttons under a code: download it, or open the editor. */
 function qrKeyboard(links: ChatQrLinks) {
   return {
@@ -227,7 +232,7 @@ function qrKeyboard(links: ChatQrLinks) {
         { text: "Download PNG", url: links.png },
         { text: "Download SVG", url: links.svg },
       ],
-      [{ text: "Open in editor", url: links.editor }],
+      [{ text: "Open in editor", url: editorLink(links) }],
     ],
   };
 }
@@ -332,7 +337,7 @@ export function chatKeyboard(
       inline_keyboard: [
         [png, { text: "Download SVG", url: links.svg }],
         [
-          { text: "Open in editor", url: links.editor },
+          { text: "Open in editor", url: editorLink(links) },
           button("Style", { kind: "menu", userId }),
         ],
       ],
@@ -399,7 +404,10 @@ export function helpText(
     "QRdx doesn't save the codes you make. What you send goes into the image link, and like any link it can end up in logs and caches, so don't make codes of passwords or other secrets.",
     "",
     "For everything else, open the editor:",
-    new URL(playgroundHref({}), origin).toString(),
+    new URL(
+      withHandoffRef(playgroundHref({}), "telegram-bot"),
+      origin,
+    ).toString(),
   ].join("\n");
 }
 

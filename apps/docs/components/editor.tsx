@@ -10,7 +10,10 @@ import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { cn } from "@repo/design-system/lib/utils";
 import { useTranslations } from "next-intl";
 import React, { use, useEffect } from "react";
-import { useTrackQrGenerated } from "@/lib/analytics/react";
+import {
+  useTrackEditorOpened,
+  useTrackQrGenerated,
+} from "@/lib/analytics/react";
 import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { usePlaygroundParams } from "@/lib/hooks/use-playground-params";
@@ -101,6 +104,7 @@ function TrackQrGenerated() {
 
 const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   const t = useTranslations("editor.editor");
+  useTrackEditorOpened("playground");
   const isMobile = useIsMobile();
   const communityOpen = useCommunitySheetStore((state) => state.open);
   const isMounted = useMounted();

@@ -1,5 +1,6 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { CommunityItemError } from "@/lib/community/api";
 import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import { handleError } from "@/lib/error-response";
@@ -270,7 +271,7 @@ async function styled(req: NextRequest, query: Query) {
   });
 }
 
-export async function GET(req: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
     await enforceRateLimits([
       { limiter: ipRateLimiter, key: `qr-image:ip:${getClientIp(req)}` },
@@ -304,3 +305,6 @@ export async function GET(req: NextRequest) {
 export function OPTIONS() {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("qr", handleGET);

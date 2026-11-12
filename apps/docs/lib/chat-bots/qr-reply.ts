@@ -2,8 +2,13 @@ import "server-only";
 
 import { parse as parseDomain } from "tldts";
 import { imageApiUrl } from "@/lib/agents/hosts";
+import type { ChatBotRef } from "@/lib/analytics/handoff-tags";
 import { baseUrl } from "@/lib/metadata";
-import { parseLinkUrl, playgroundHref } from "@/lib/playground-links";
+import {
+  parseLinkUrl,
+  playgroundHref,
+  withHandoffRef,
+} from "@/lib/playground-links";
 import {
   QR_DATA_MAX_LENGTH,
   QR_DEFAULTS,
@@ -115,6 +120,15 @@ export function chatQrLinks(
       origin,
     ).toString(),
   };
+}
+
+/**
+ * The links with the editor's tagged by the bot that sent them (ref=slack-bot,
+ * ...), so a visit and a sign-up from a reply count for that bot
+ * (lib/analytics/handoff-tags.ts). The image links stay as they are.
+ */
+export function withBotRef(links: ChatQrLinks, ref: ChatBotRef): ChatQrLinks {
+  return { ...links, editor: withHandoffRef(links.editor, ref) };
 }
 
 /** Content shortened for a caption, alt text or notification preview. */

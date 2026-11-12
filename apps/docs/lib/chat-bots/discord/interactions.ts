@@ -5,6 +5,7 @@ import {
   chatQrCaption,
   firstWebAddress,
   readChatQrInput,
+  withBotRef,
 } from "@/lib/chat-bots/qr-reply";
 import {
   applyChoice,
@@ -255,7 +256,7 @@ function codeMessage(
     flags,
   }: { maker?: string | null; note?: string | null; flags?: number },
 ): MessageData | null {
-  const links = chatDesignLinks(data, design);
+  const links = withBotRef(chatDesignLinks(data, design), "discord-bot");
   if (links.png.length > EMBED_URL_MAX) return null;
   const buttons = [
     linkButton("Download PNG", links.png),
@@ -283,7 +284,10 @@ function codeMessage(
 /** The "too long to show" note, with the editor button when it fits. */
 function tooLongToShow(data: string, design: ChatDesign | null): MessageData {
   return noticeData(NOTICES.tooLongToShow, [
-    linkButton("Open in editor", chatDesignLinks(data, design).editor),
+    linkButton(
+      "Open in editor",
+      withBotRef(chatDesignLinks(data, design), "discord-bot").editor,
+    ),
   ]);
 }
 
@@ -414,6 +418,28 @@ function restylePlan(interaction: DiscordInteraction): DiscordPlan {
         : (codeMessage(current.data, null, { maker }) ??
           tooLongToShow(current.data, null)),
   };
+}
+
+/**
+ * What an interaction asks for, as a usage key (usage_daily): "qr" (/qr),
+ * "message" (Make QR code), "restyle" (a style menu pick) or "help". Never
+ * the content.
+ */
+export function interactionUsageKey(
+  interaction: DiscordInteraction,
+): "qr" | "message" | "restyle" | "help" {
+  if (interaction.type === INTERACTION_TYPE.messageComponent) return "restyle";
+  const data = interaction.data;
+  if (data?.type === COMMAND_TYPE.chatInput && data.name === QR_COMMAND.name) {
+    return "qr";
+  }
+  if (
+    data?.type === COMMAND_TYPE.message &&
+    data.name === MESSAGE_COMMAND.name
+  ) {
+    return "message";
+  }
+  return "help";
 }
 
 /**

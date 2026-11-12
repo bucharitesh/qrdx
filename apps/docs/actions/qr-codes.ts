@@ -135,15 +135,28 @@ const updateSchema = updateCodeFields
 const archiveSchema = z.object({ id: codeIdSchema, archived: z.boolean() });
 const idOnlySchema = z.object({ id: codeIdSchema });
 
+/** Where the signed-in app makes a code from (qr_code.created_via). */
+const createdFromSchema = z
+  .object({ via: z.enum(["dashboard", "playground"]).optional() })
+  .optional()
+  .catch(undefined);
+
+/**
+ * Creates a code. `from.via` says which surface asked (the playground's
+ * Dynamic toggle and builder say "playground"); anything else counts as the
+ * dashboard.
+ */
 export async function createQrCode(
   input: z.input<typeof createCodeSchema>,
+  from?: { via?: "dashboard" | "playground" },
 ): Promise<QrCodeActionResult<QrCodeView>> {
   return run(
     "createQrCode",
     async (scope) => {
       const data = parse(createCodeSchema, input);
+      const via = createdFromSchema.parse(from)?.via ?? "dashboard";
       await enforceCreateRateLimit(scope.userId);
-      const [code] = await createCodes(scope, [data]);
+      const [code] = await createCodes(scope, [data], { via });
       return code;
     },
     { revalidate: true },

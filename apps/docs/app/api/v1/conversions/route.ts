@@ -5,6 +5,7 @@ import cuid from "cuid";
 import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { resolveApiScope } from "@/app/api/v1/codes/_lib/api";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { HttpError, handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
@@ -67,7 +68,7 @@ export function OPTIONS() {
   return withCors(new Response(null, { status: 204 }));
 }
 
-export const POST = withApiQuotaHeaders(async (request: NextRequest) => {
+const handlePOST = withApiQuotaHeaders(async (request: NextRequest) => {
   try {
     const isServer = request.headers
       .get("authorization")
@@ -188,3 +189,6 @@ export const POST = withApiQuotaHeaders(async (request: NextRequest) => {
     return withCors(handleError(error, { route: "api/v1/conversions" }));
   }
 });
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const POST = withApiUsage("conversions", handlePOST);

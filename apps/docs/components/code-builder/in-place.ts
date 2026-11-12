@@ -10,6 +10,7 @@ import {
   loadCodeIntoEditor,
   useDynamicLinkStore,
 } from "@/components/editor/dynamic-link-toggle";
+import { markProgrammaticQrContent } from "@/lib/analytics/react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { UrlContent } from "@/types/qr-content";
 import type { QRStyle } from "@/types/theme";
@@ -84,6 +85,8 @@ export function syncSavedCode(
   const editor = useQREditorStore.getState();
   editor.setContentType("url");
   editor.setContentConfig("url", { type: "url", url: code.destinationUrl });
+  // QRdx put it there: not a code the visitor generated (qr_generated).
+  markProgrammaticQrContent(code.shortLink);
   editor.setValue(code.shortLink);
   if (style) {
     const { themeState } = useQREditorStore.getState();

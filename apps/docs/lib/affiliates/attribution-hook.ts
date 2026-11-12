@@ -1,35 +1,41 @@
 import "server-only";
 
-import {
-  type NewUserSignUp,
-  registerNewUserReferralRecorder,
-} from "@repo/auth/referral";
+import type { NewUserSignUp } from "@repo/auth/referral";
 import { after } from "next/server";
 import { isFeatureAvailable } from "@/lib/feature-availability";
-import { attributeNewUser, referralCandidatesFrom } from "./attribution";
+import {
+  type AttributionResult,
+  attributeNewUser,
+  referralCandidatesFrom,
+} from "./attribution";
 
-// Importing this module hands packages/auth the app's recorder for
-// referrals at sign-up (packages/auth/referral.ts). Accounts are only created
-// by the /api/auth route (email codes, Google and GitHub callbacks, single
-// sign-on), which imports it. Registering twice is harmless: it's one slot
-// on globalThis.
+// The affiliate side of the new-user recorder (lib/analytics/sign-up-hook.ts,
+// which packages/auth/referral.ts calls when an account is created).
 
 /**
- * Reads the codes now (the request's headers don't outlive it) and records
- * the referral after the response, so the sign-up never waits on it. Does
- * nothing at all while the program is off (a self-hosted copy).
+ * Reads the sign-up's codes now (the request's headers don't outlive it) and
+ * returns the task that records the referral, to run after the response.
+ * Null where there's nothing to do: no code, or the program is off (a
+ * self-hosted copy), which then makes no lookup at all.
  */
-export function recordSignUpReferral(signUp: NewUserSignUp): void {
-  if (!isFeatureAvailable("affiliates")) return;
+export function signUpReferralTask(
+  signUp: NewUserSignUp,
+): (() => Promise<AttributionResult>) | null {
+  if (!isFeatureAvailable("affiliates")) return null;
   const candidates = referralCandidatesFrom(signUp);
-  if (candidates.length === 0) return;
-  const task = async () => {
-    await attributeNewUser({
+  if (candidates.length === 0) return null;
+  return () =>
+    attributeNewUser({
       userId: signUp.userId,
       email: signUp.email,
       candidates,
     });
-  };
+}
+
+/** The referral alone, after the response (the sign-up never waits on it). */
+export function recordSignUpReferral(signUp: NewUserSignUp): void {
+  const task = signUpReferralTask(signUp);
+  if (!task) return;
   try {
     after(task);
   } catch {
@@ -37,5 +43,3 @@ export function recordSignUpReferral(signUp: NewUserSignUp): void {
     void task();
   }
 }
-
-registerNewUserReferralRecorder(recordSignUpReferral);

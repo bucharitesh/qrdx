@@ -1109,14 +1109,18 @@ export async function duplicateCode(
     }
   }
 
-  const [copy] = await createCodes(scope, [
-    {
-      destinationUrl: source.destinationUrl,
-      title: copyTitle(source.title, source.destinationUrl),
-      style: source.style,
-      domainId,
-    },
-  ]);
+  const [copy] = await createCodes(
+    scope,
+    [
+      {
+        destinationUrl: source.destinationUrl,
+        title: copyTitle(source.title, source.destinationUrl),
+        style: source.style,
+        domainId,
+      },
+    ],
+    { via: "duplicate" },
+  );
   if (!copy) throw new HttpError(503, "UNAVAILABLE", "Please try again.");
 
   const [tagRows] = await Promise.all([
