@@ -1,4 +1,5 @@
 import type { ContentType } from "@/types/qr-content";
+import type { HostedTypeSlug } from "./qr-types-content-hosted";
 
 /**
  * Copy for the /qr-code-generator/[type] pages. One entry per content type the
@@ -37,6 +38,10 @@ export interface QrTypeContent {
   };
   faqs: QrTypeFaq[];
   related: ContentType[];
+  /** The hosted page that does the same job and can change after printing */
+  hosted?: HostedTypeSlug;
+  /** A section specific to this type: compatibility, gotchas, edge cases */
+  details?: { title: string; paragraphs: string[] };
 }
 
 export const QR_TYPE_GROUPS: {
@@ -473,10 +478,11 @@ export const QR_TYPES: QrTypeContent[] = [
       {
         question: "Can I update the contact after printing?",
         answer:
-          "No, the details are inside the code. To have one code that always shows your current details, host your contact page online and point a URL code, or a dynamic code from your dashboard, at it.",
+          "No, the details are inside the code. For one code that always shows your current details, make a digital business card instead: a hosted contact page with your photo and a Save contact button that you can edit after printing.",
       },
     ],
     related: ["linkedin", "phone", "email", "whatsapp", "url"],
+    hosted: "business-card",
   },
   {
     type: "maps",
@@ -1496,6 +1502,7 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["url", "attendance", "dubsh", "text"],
+    hosted: "pdf",
   },
   {
     type: "attendance",

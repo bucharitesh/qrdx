@@ -867,7 +867,11 @@
       "bulkTitle": "Need hundreds of codes? Use the bulk generator",
       "bulkDescription": "Upload a CSV and download every code as PNG, WebP or SVG in one ZIP file, generated entirely in your browser.",
       "printTitle": "Printing your code? Check the size",
-      "printDescription": "Work out the minimum printed size from the scanning distance and how much data the code holds."
+      "printDescription": "Work out the minimum printed size from the scanning distance and how much data the code holds.",
+      "hostedTitle": "Codes that open a page you can edit",
+      "hostedDescription": "These codes open a mobile page QRdx hosts for you, so you can change it after printing and see scans. They need a free account.",
+      "menuTitle": "Menu QR code generator",
+      "menuDescription": "A menu page with prices, photos, allergens and sold-out items, edited from your phone."
     },
     "type": {
       "title": "Free {name} QR Code Generator",
@@ -879,7 +883,28 @@
       "faqTitle": "{name} QR code FAQ",
       "related": "Related QR code generators",
       "allTypes": "All {count, number} types",
-      "relatedCard": "{name} QR code"
+      "relatedCard": "{name} QR code",
+      "hostedCard": "{name} QR code (hosted page)"
+    },
+    "hosted": {
+      "demo": "See a demo page",
+      "accountNote": "Needs a free QRdx account. The Free plan includes {pages, number} hosted pages.",
+      "featuresTitle": "What people see when they scan",
+      "editTitle": "Change it after printing",
+      "guarantee": "Your code keeps working whatever happens to your plan: that's the <link>Never-Hostage Guarantee</link>.",
+      "plansTitle": "Limits on each plan",
+      "plansCaption": "{name} page limits on the Free, Pro and Business plans",
+      "colLimit": "Limit",
+      "rowPages": "Hosted pages",
+      "rowDynamic": "Dynamic codes",
+      "rowFile": "Largest file",
+      "rowStorage": "File storage",
+      "rowBadge": "\"Made with QRdx\" footer",
+      "unlimited": "Unlimited",
+      "badgeShown": "Shown",
+      "badgeRemoved": "Removed",
+      "plansNote": "Each page uses one of the plan's dynamic codes. Limits only stop you from creating new pages. <pricing>See pricing</pricing> or <docs>read the docs</docs>.",
+      "staticLink": "Open the {name} QR code generator"
     }
   },
   "typeGenerator": {
@@ -957,6 +982,8 @@
       "dynamicLink": "Create a dynamic code",
       "badgePage": "Hosted page · editable, tracked",
       "pageLink": "See live templates",
+      "pageGeneratorLink": "See how it works",
+      "guidesTitle": "Guides and tools",
       "typesTitle": "Which QR code to use",
       "typesDescription": "Static codes are free and need no account, but can't be changed after printing. Dynamic codes and hosted pages can be edited at any time, count every scan, and keep working on every plan, even if you cancel.",
       "sizingTitle": "How big to print it",

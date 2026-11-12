@@ -35,6 +35,7 @@ import { LOCALE_SEGMENTS, type Locale } from "@/lib/i18n/config";
 import { docsI18n, docsUrl, translationLocale } from "@/lib/i18n/docs";
 import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import { HOSTED_TYPE_SLUGS } from "@/lib/qr-types-content-hosted";
 import { industries, placements } from "@/lib/seo-content";
 import { buildTimeParams } from "@/lib/static-params";
 
@@ -43,6 +44,9 @@ const inLocales = <T extends Record<string, string>>(list: T[]) =>
   LOCALE_SEGMENTS.flatMap((lang) => list.map((entry) => ({ ...entry, lang })));
 
 const APP = join(import.meta.dirname, "../../app");
+
+/** Static content types, then the codes that open a hosted page (PDF, business card). */
+const TYPE_SLUGS = [...QR_TYPE_SLUGS, ...HOSTED_TYPE_SLUGS];
 
 /**
  * Routes that list their params some other way, each fixed in its own PR:
@@ -76,16 +80,8 @@ interface ParamsRoute {
 }
 
 const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
-  [
-    "/qr-code-generator/[type]",
-    typePage,
-    QR_TYPE_SLUGS.map((type) => ({ type })),
-  ],
-  [
-    "its OG image",
-    typeImage,
-    inLocales(QR_TYPE_SLUGS.map((type) => ({ type }))),
-  ],
+  ["/qr-code-generator/[type]", typePage, TYPE_SLUGS.map((type) => ({ type }))],
+  ["its OG image", typeImage, inLocales(TYPE_SLUGS.map((type) => ({ type })))],
   [
     "/qr-codes-for/[slug]",
     industryPage,
