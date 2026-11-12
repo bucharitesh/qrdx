@@ -126,6 +126,7 @@ export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
     const { codes, created } = await createCodesBatch(scope, inputs, {
       idempotencyKey: headers["Idempotency-Key"] ?? null,
       screenBudgetMs: isBatch ? SCREEN_BUDGET_MS : undefined,
+      via: "api",
     });
     const serialize = minimal ? serializeMinimalCode : serializeCode;
 

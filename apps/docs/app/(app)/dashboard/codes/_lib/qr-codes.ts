@@ -1,6 +1,12 @@
 import "server-only";
 
-import { database as db, qrCode, qrCodeTag, tag } from "@repo/database";
+import {
+  type CodeCreatedVia,
+  database as db,
+  qrCode,
+  qrCodeTag,
+  tag,
+} from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
 import {
@@ -880,6 +886,12 @@ export interface CreateCodesOptions {
    * rest get the offline checks only (lib/safety/destinations.ts).
    */
   screenBudgetMs?: number;
+  /**
+   * Where the codes are being made (qr_code.created_via): every caller says
+   * (the dashboard, the playground, the API, Slack, an import, ...), for the
+   * admin's growth numbers. Left out, the column stays NULL.
+   */
+  via?: CodeCreatedVia;
 }
 
 export interface CreatedCodes {
@@ -908,7 +920,7 @@ export async function createCodes(
 export async function createCodesBatch(
   scope: ActiveScope,
   inputs: (CreateCodeInput & { pageId?: string })[],
-  { idempotencyKey = null, screenBudgetMs }: CreateCodesOptions = {},
+  { idempotencyKey = null, screenBudgetMs, via }: CreateCodesOptions = {},
 ): Promise<CreatedCodes> {
   assertCan(scope, "content.write");
   if (inputs.length === 0) return { codes: [], created: 0 };
@@ -1086,6 +1098,7 @@ export async function createCodesBatch(
         style: input.style ?? defaultStyle,
         domainId: input.domainId ?? null,
         ...(input.pageId && { kind: "page" as const, pageId: input.pageId }),
+        ...(via && { createdVia: via }),
         createdAt: now,
         updatedAt: now,
       };
