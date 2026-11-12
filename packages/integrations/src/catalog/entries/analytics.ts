@@ -14,6 +14,11 @@ interface PixelSpec {
   logo: CatalogLogo;
   website: string;
   use: string;
+  /**
+   * What's specific to this provider on hosted pages: what QRdx loads and
+   * sends (apps/docs components/landing/pixels.tsx) and the setup gotcha.
+   */
+  detail: string;
   keywords: string[];
 }
 
@@ -44,6 +49,8 @@ const PIXELS: PixelSpec[] = [
     logo: { type: "image", src: "/integrations/google-analytics.svg" },
     website: "https://marketingplatform.google.com/about/analytics/",
     use: "See visits from your QR codes' hosted pages in your own Google Analytics property, next to the rest of your site.",
+    detail:
+      "QRdx sends GA4's standard page view from the hosted page and nothing else. Visits arrive with the page's own address, on qrdx.dev or your custom domain, so filter by hostname or page path to tell them apart from visits to your site. Expect fewer visits than scans: GA4 only sees visitors who accepted the banner where it's shown, and content blockers often stop its script.",
     keywords: ["ga4", "google", "gtag", "analytics", "pixel", "tracking"],
   },
   {
@@ -55,6 +62,8 @@ const PIXELS: PixelSpec[] = [
     logo: { type: "image", src: "/integrations/google-tag-manager.svg" },
     website: "https://tagmanager.google.com",
     use: "Load your Tag Manager container on hosted pages and manage every tag from Google Tag Manager.",
+    detail:
+      "Tag Manager loads only when the page opens on one of your custom domains, never on qrdx.dev: a container can run any script, and qrdx.dev is where people sign in to QRdx. QRdx pushes only the container's start event to the data layer, so trigger your tags on page views or clicks.",
     keywords: ["gtm", "google", "tags", "container", "pixel", "tracking"],
   },
   {
@@ -66,6 +75,8 @@ const PIXELS: PixelSpec[] = [
     logo: { type: "image", src: "/integrations/meta.svg" },
     website: "https://www.facebook.com/business/tools/meta-pixel",
     use: "Build Facebook and Instagram retargeting audiences from the people who scan your codes.",
+    detail:
+      "QRdx starts the pixel and sends one PageView, with no other standard events, so build retargeting audiences from PageView on the page's URL. If you've set an allow list in the pixel's traffic permissions, add the hosted page's domain (qrdx.dev or your custom domain), or Meta ignores its events.",
     keywords: ["facebook", "instagram", "meta", "retargeting", "pixel", "ads"],
   },
   {
@@ -77,6 +88,8 @@ const PIXELS: PixelSpec[] = [
     logo: { type: "image", src: "/integrations/tiktok.svg" },
     website: "https://ads.tiktok.com",
     use: "Retarget the people who scan your codes with TikTok ads.",
+    detail:
+      "QRdx loads the pixel and sends a page view, nothing else. Paste the pixel ID shown in TikTok Events Manager, a string of capital letters and digits, not your ad account number, and build a website visitors audience from the page's URL.",
     keywords: ["tiktok", "retargeting", "pixel", "ads"],
   },
   {
@@ -88,6 +101,8 @@ const PIXELS: PixelSpec[] = [
     logo: { type: "image", src: "/integrations/linkedin.svg" },
     website: "https://business.linkedin.com/marketing-solutions/insight-tag",
     use: "Measure and retarget B2B audiences from event booths, brochures and other print.",
+    detail:
+      "The Insight Tag records a page view when the page loads. Paste only the partner ID from Campaign Manager, not the tag's script. LinkedIn only serves ads to a matched audience of at least 300 members, so the scans of one code at a small event may not be enough to retarget on their own.",
     keywords: ["linkedin", "b2b", "insight", "retargeting", "pixel", "ads"],
   },
 ];
@@ -99,6 +114,7 @@ export const analytics: IntegrationCatalogEntry[] = PIXELS.map((pixel) => ({
   description: [
     pixel.use,
     `Paste your ${pixel.idName} (${pixel.idFormat}) on a dynamic code that opens a hosted page. The tag only loads after the visitor agrees where consent is required.`,
+    pixel.detail,
   ],
   kind: "native",
   surface: "integrations",

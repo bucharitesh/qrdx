@@ -1,5 +1,6 @@
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
+import { BARCODE_FORMAT_PAGES } from "@/app/[lang]/(home)/barcode-generator/[format]/content";
 import { CHAT_BOTS } from "@/components/sections/chat-bots/bots";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
@@ -11,6 +12,10 @@ import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import {
+  HOSTED_TYPE_SLUGS,
+  hostedTypePath,
+} from "@/lib/qr-types-content-hosted";
 import { industries, placements } from "@/lib/seo-content";
 import {
   gitLastModified,
@@ -18,6 +23,7 @@ import {
   trustedLastModified,
 } from "@/lib/seo-dates";
 import {
+  HOSTED_TYPES_SOURCE,
   PAGE_SOURCES,
   QR_TYPES_SOURCE,
   seoGroupSource,
@@ -65,6 +71,7 @@ function entries(): Entry[] {
   );
   const fileDates = gitLastModified([
     QR_TYPES_SOURCE,
+    HOSTED_TYPES_SOURCE,
     ...groupFiles,
     ...Object.values(PAGE_SOURCES).flat(),
   ]);
@@ -280,6 +287,18 @@ function entries(): Entry[] {
           priority: 0.7,
         }) satisfies Entry,
     ),
+    // Codes that open a hosted page; the PDF one needs file storage.
+    ...HOSTED_TYPE_SLUGS.filter((slug) =>
+      isPathAvailable(hostedTypePath(slug)),
+    ).map(
+      (slug) =>
+        ({
+          url: url(hostedTypePath(slug)),
+          lastModified: fileDates.get(HOSTED_TYPES_SOURCE),
+          changeFrequency: "monthly",
+          priority: 0.7,
+        }) satisfies Entry,
+    ),
     ...collections.flatMap((collection) => [
       {
         url: url(collection.basePath),
@@ -329,6 +348,15 @@ function entries(): Entry[] {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    ...BARCODE_FORMAT_PAGES.map(
+      (page) =>
+        ({
+          url: url(`/barcode-generator/${page.slug}`),
+          lastModified: pageDate("/barcode-generator/[format]"),
+          changeFrequency: "monthly",
+          priority: 0.6,
+        }) satisfies Entry,
+    ),
     {
       url: url("/scan"),
       lastModified: pageDate("/scan"),

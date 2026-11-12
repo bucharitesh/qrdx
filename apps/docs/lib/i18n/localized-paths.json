@@ -10,6 +10,7 @@
     "/tools/scan-checker",
     "/scan",
     "/barcode-generator",
+    "/barcode-generator/[format]",
     "/qr-code-generator",
     "/qr-code-generator/[type]",
     "/qr-codes-for",

@@ -130,6 +130,9 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
       "R2_SECRET_ACCESS_KEY",
       "R2_BUCKET",
     ],
+    // The PDF QR code page sells uploading a PDF; the page builder hides the
+    // upload page types without storage.
+    paths: ["/qr-code-generator/pdf"],
   },
   email: {
     name: "Email (Resend)",

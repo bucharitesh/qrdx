@@ -20,6 +20,9 @@ vi.mock(
 );
 
 import * as templateTypePage from "@/app/(app)/templates/[type]/page";
+import { BARCODE_FORMAT_PAGES } from "@/app/[lang]/(home)/barcode-generator/[format]/content";
+import * as barcodeImage from "@/app/[lang]/(home)/barcode-generator/[format]/opengraph-image";
+import * as barcodePage from "@/app/[lang]/(home)/barcode-generator/[format]/page";
 import * as integrationImage from "@/app/[lang]/(home)/integrations/[slug]/opengraph-image";
 import * as integrationPage from "@/app/[lang]/(home)/integrations/[slug]/page";
 import * as typeImage from "@/app/[lang]/(home)/qr-code-generator/[type]/opengraph-image";
@@ -32,6 +35,7 @@ import { LOCALE_SEGMENTS, type Locale } from "@/lib/i18n/config";
 import { docsI18n, docsUrl, translationLocale } from "@/lib/i18n/docs";
 import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import { HOSTED_TYPE_SLUGS } from "@/lib/qr-types-content-hosted";
 import { industries, placements } from "@/lib/seo-content";
 import { buildTimeParams } from "@/lib/static-params";
 
@@ -40,6 +44,9 @@ const inLocales = <T extends Record<string, string>>(list: T[]) =>
   LOCALE_SEGMENTS.flatMap((lang) => list.map((entry) => ({ ...entry, lang })));
 
 const APP = join(import.meta.dirname, "../../app");
+
+/** Static content types, then the codes that open a hosted page (PDF, business card). */
+const TYPE_SLUGS = [...QR_TYPE_SLUGS, ...HOSTED_TYPE_SLUGS];
 
 /**
  * Routes that list their params some other way, each fixed in its own PR:
@@ -73,16 +80,8 @@ interface ParamsRoute {
 }
 
 const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
-  [
-    "/qr-code-generator/[type]",
-    typePage,
-    QR_TYPE_SLUGS.map((type) => ({ type })),
-  ],
-  [
-    "its OG image",
-    typeImage,
-    inLocales(QR_TYPE_SLUGS.map((type) => ({ type }))),
-  ],
+  ["/qr-code-generator/[type]", typePage, TYPE_SLUGS.map((type) => ({ type }))],
+  ["its OG image", typeImage, inLocales(TYPE_SLUGS.map((type) => ({ type })))],
   [
     "/qr-codes-for/[slug]",
     industryPage,
@@ -112,6 +111,16 @@ const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
     "its OG image",
     integrationImage,
     inLocales(getIntegrationCatalog().map((entry) => ({ slug: entry.slug }))),
+  ],
+  [
+    "/barcode-generator/[format]",
+    barcodePage,
+    BARCODE_FORMAT_PAGES.map((page) => ({ format: page.slug })),
+  ],
+  [
+    "its OG image",
+    barcodeImage,
+    inLocales(BARCODE_FORMAT_PAGES.map((page) => ({ format: page.slug }))),
   ],
   [
     "/templates/[type]",
@@ -149,6 +158,7 @@ describe("routes with a fixed param list", () => {
   it("are all found, the generator, topic, blog, docs and catalogue routes among them", () => {
     for (const file of [
       "[lang]/(home)/qr-code-generator/[type]/page.tsx",
+      "[lang]/(home)/barcode-generator/[format]/page.tsx",
       "[lang]/(home)/qr-codes-for/[slug]/page.tsx",
       "[lang]/(home)/qr-codes-on/[slug]/page.tsx",
       "(app)/(home)/blog/[slug]/page.tsx",
@@ -196,7 +206,7 @@ describe("routes with a fixed param list", () => {
 
   it("answer 404 for a param that isn't in the list", async () => {
     const params = (value: string) =>
-      Promise.resolve({ type: value, slug: value });
+      Promise.resolve({ type: value, slug: value, format: value });
     for (const value of ["not-a-type", "constructor", "__proto__"]) {
       for (const render of [
         () => typePage.default({ params: params(value) } as never),
@@ -210,6 +220,8 @@ describe("routes with a fixed param list", () => {
         () => integrationPage.default({ params: params(value) } as never),
         () => integrationImage.default({ params: params(value) } as never),
         () => templateTypePage.default({ params: params(value) } as never),
+        () => barcodePage.default({ params: params(value) } as never),
+        () => barcodePage.generateMetadata({ params: params(value) } as never),
       ]) {
         expect(await notFoundDigest(render), value).toMatch(/;404$/);
       }

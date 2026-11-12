@@ -43,10 +43,18 @@ export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
     "app/[lang]/(home)/barcode-generator/page.tsx",
     "lib/barcode/formats.ts",
   ],
+  // Every /barcode-generator/<format> page.
+  "/barcode-generator/[format]": [
+    "app/[lang]/(home)/barcode-generator/[format]/content.ts",
+    "lib/barcode/formats.ts",
+  ],
 };
 
 /** Every /qr-code-generator/<type> page's copy lives in one file. */
 export const QR_TYPES_SOURCE = "lib/qr-types-content.ts";
+
+/** /qr-code-generator/pdf and /business-card, which open hosted pages. */
+export const HOSTED_TYPES_SOURCE = "lib/qr-types-content-hosted.ts";
 
 /** An industry or placement group's copy: lib/seo-content/<collection>/<group id>.ts */
 export function seoGroupSource(

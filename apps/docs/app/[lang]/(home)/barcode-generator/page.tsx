@@ -7,12 +7,14 @@ import { LocaleLink } from "@/components/i18n/locale-link";
 import {
   CardGrid,
   cardClass,
+  interactiveCardClass,
   SectionHeading,
   textLinkClass,
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { PublicBarcodeGenerator } from "@/components/sections/tools/save-barcode";
+import { SpotlightLink } from "@/components/sections/tools/spotlight-link";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { BARCODE_FILES } from "@/lib/barcode/files";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
@@ -24,6 +26,7 @@ import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
 
+import { barcodeFormatPath } from "./[format]/content";
 import { BARCODE_FAQS, BARCODE_TIPS, BARCODE_USES } from "./content";
 
 const FORMAT_COUNT = PRODUCT_FACTS.barcodeFormats;
@@ -112,12 +115,17 @@ export default async function BarcodeGeneratorPage() {
         />
         <CardGrid count={BARCODE_FORMATS.length}>
           {BARCODE_FORMATS.map((format) => (
-            <div
+            <SpotlightLink
               key={format.id}
-              className={cn(cardClass, "flex min-w-0 flex-col gap-1.5 p-4")}
+              href={barcodeFormatPath(format.id)}
+              className={cn(
+                cardClass,
+                interactiveCardClass,
+                "flex min-w-0 flex-col gap-1.5 p-4",
+              )}
             >
               <h3 className="flex items-baseline justify-between gap-2 text-sm font-medium text-foreground">
-                {format.label}
+                {t("formatCard", { name: format.label })}
                 <span className="text-xs font-normal text-muted-foreground">
                   {format.kind === "linear" ? t("linear") : "2D"}
                 </span>
@@ -125,7 +133,7 @@ export default async function BarcodeGeneratorPage() {
               <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
                 {uses[format.id]}
               </p>
-            </div>
+            </SpotlightLink>
           ))}
         </CardGrid>
       </section>
