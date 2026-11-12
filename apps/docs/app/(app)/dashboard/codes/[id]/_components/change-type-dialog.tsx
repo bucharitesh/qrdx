@@ -388,9 +388,10 @@ export function ChangeTypeDialog({
               </p>
               {carry && carry.left.length > 0 && (
                 <p>
-                  {t("notInThisTemplate")} {listLabels(carry.left)}.{" "}
-                  {carry.left.length === 1 ? t("itStays") : t("theyStay")}{" "}
-                  {t("onYourCurrentPage")}
+                  {t("notInThisTemplateStays", {
+                    list: listLabels(carry.left),
+                    count: carry.left.length,
+                  })}
                 </p>
               )}
               <p className="text-muted-foreground">

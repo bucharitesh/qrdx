@@ -1,11 +1,11 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { renderToStaticMarkup } from "react-dom/server";
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { LandingRender } from "@/components/landing/render";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import { buildDemoContent, listTemplateDemos } from "@/lib/landing/demo";
 import type { LandingTheme } from "@/types/landing";
+import { renderIntl } from "../support/intl";
 
 // Customers' published pages live in the shared database as JSON and must
 // render exactly as they did before the template redesign added opt-in theme
@@ -220,7 +220,7 @@ function render(theme: LandingTheme): string {
     { mode: "read" },
   );
   if (!parsed.success) throw parsed.error;
-  return renderToStaticMarkup(
+  return renderIntl(
     <LandingRender
       content={parsed.data}
       context={{
@@ -322,7 +322,7 @@ describe("published landing pages render as before", () => {
 describe("previews add no headings to the page around them", () => {
   it("draws every heading as a div in thumbnails, and keeps them live", () => {
     const thumb = (content: ReturnType<typeof buildDemoContent>) =>
-      renderToStaticMarkup(
+      renderIntl(
         <LandingRender
           content={content}
           context={{
@@ -350,7 +350,7 @@ describe("templates render with the opt-in options", () => {
   it("renders every template demo", () => {
     for (const { template, variant } of listTemplateDemos()) {
       const content = buildDemoContent(template.type, variant.id);
-      const html = renderToStaticMarkup(
+      const html = renderIntl(
         <LandingRender
           content={content}
           context={{

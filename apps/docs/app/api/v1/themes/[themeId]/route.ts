@@ -2,12 +2,13 @@ import { database as db, qrPreset } from "@repo/database";
 import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { requireApiToken } from "@/app/api/v1/codes/_lib/api";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { oauthCompatibleError } from "@/lib/api-errors";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { HttpError } from "@/lib/error-response";
 import { themesWhere } from "../_lib/scope";
 
-export const GET = withApiQuotaHeaders(
+const handleGET = withApiQuotaHeaders(
   async (
     req: NextRequest,
     { params }: { params: Promise<{ themeId: string }> },
@@ -39,3 +40,6 @@ export const GET = withApiQuotaHeaders(
     return Response.json({ data: theme });
   },
 );
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("themes", handleGET);

@@ -9,24 +9,36 @@ import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArchiveAdd } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { saveBarcode } from "@/actions/barcodes";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import {
   BarcodeGenerator,
   type CurrentBarcode,
 } from "@/components/sections/tools/barcode-generator";
 import { track } from "@/lib/analytics";
+import { type BarcodeFormatId, getBarcodeFormat } from "@/lib/barcode/formats";
 import { styleChanges } from "@/lib/barcode/style";
 import { soundEvent } from "@/lib/sound/emit";
 import { workspaceHref } from "@/lib/workspace-paths";
 import { useAuthStore } from "@/store/auth-store";
 
-/** The public generator, with "Save to dashboard" under its downloads. */
-export function PublicBarcodeGenerator() {
+/**
+ * The public generator, with "Save to dashboard" under its downloads. A
+ * format's own page (/barcode-generator/<format>) starts on that format and
+ * its example.
+ */
+export function PublicBarcodeGenerator({
+  format,
+}: {
+  format?: BarcodeFormatId;
+} = {}) {
   return (
     <BarcodeGenerator
+      initial={
+        format ? { format, value: getBarcodeFormat(format).example } : undefined
+      }
       renderActions={(current) => <SaveBarcode current={current} />}
     />
   );

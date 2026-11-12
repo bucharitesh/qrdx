@@ -1,7 +1,6 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { useRouter } from "next/navigation";
 import {
   type ComponentProps,
   type MouseEvent,
@@ -9,6 +8,7 @@ import {
   useState,
 } from "react";
 import { AuthDialog } from "@/app/(app)/(auth)/components/auth-dialog";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import { templateStartPath } from "@/lib/landing/demo-paths";
 
 /**

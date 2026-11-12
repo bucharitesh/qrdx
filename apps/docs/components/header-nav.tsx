@@ -9,7 +9,6 @@ import {
   NavigationMenuTrigger,
 } from "@repo/design-system/components/ui/navigation-menu";
 import { cn } from "@repo/design-system/lib/utils";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -20,7 +19,10 @@ import {
   useState,
 } from "react";
 import { useAvailability } from "@/components/availability-provider";
-import { useLocalizeHref } from "@/components/i18n/locale-link";
+import {
+  LocaleLink as Link,
+  useLocalizeHref,
+} from "@/components/i18n/locale-link";
 import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
 import {
   type NavEntryConfig,
@@ -162,6 +164,25 @@ const anchorStyle = (anchor: PanelAnchor | undefined) =>
     "--nav-max": `${anchor.max}px`,
   } as CSSProperties);
 
+/**
+ * A closed dropdown's links, as plain anchors in the server HTML. Radix only
+ * mounts a panel once it opens, so without these the page's first HTML has
+ * no link to anything inside Product, Tools, Developers or Resources and
+ * crawlers can't follow them. `hidden` keeps them out of view, out of the tab
+ * order and out of the accessibility tree; the open panel is what people use.
+ */
+function MenuLinks({ items }: { items: HeaderNavItem[] }) {
+  return (
+    <ul hidden>
+      {items.map((item) => (
+        <li key={item.href}>
+          <a href={item.href}>{item.name}</a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 interface MenuState {
   /** The open entry's id as a string, or "" when closed. */
   value: string;
@@ -300,6 +321,7 @@ export function HeaderNav({ className }: { className?: string }) {
               <NavigationMenuContent>
                 <NavPanel items={entry.items} pathname={pathname} />
               </NavigationMenuContent>
+              <MenuLinks items={entry.items} />
             </NavigationMenuItem>
           );
         })}

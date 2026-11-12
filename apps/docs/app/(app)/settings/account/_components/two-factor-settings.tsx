@@ -117,13 +117,12 @@ function statusDetails(
   if (!methods.on) {
     return ready ? t("yourPasskeyIsReadyTo") : t("addAPasskeyOrAn");
   }
-  const ways = [
-    ...(methods.passkeys > 0 ? [t("yourPasskey")] : []),
-    ...(methods.authenticatorApp ? [t("aCodeFromYourAuthenticator")] : []),
-  ];
-  return ways.length > 0
-    ? t("afterYouSignInQrdx3", { value: ways.join(" or ") })
-    : t("afterYouSignInQrdx2");
+  if (methods.passkeys > 0 && methods.authenticatorApp) {
+    return t("afterYouSignInPasskeyOrApp");
+  }
+  if (methods.passkeys > 0) return t("afterYouSignInPasskey");
+  if (methods.authenticatorApp) return t("afterYouSignInApp");
+  return t("afterYouSignInQrdx2");
 }
 
 type Confirming =

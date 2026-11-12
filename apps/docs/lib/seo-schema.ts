@@ -4,8 +4,9 @@
 // on Business, must not carry QRdx's identity.
 //
 // Facts only. No ratings or reviews until real ones exist on G2 or
-// Capterra, and `sameAs` lists only profiles that exist today: add the Chrome
-// Web Store, Product Hunt, AlternativeTo or Wikidata URLs once they're live.
+// Capterra, and `sameAs` lists only profiles that exist today: add Product
+// Hunt, AlternativeTo or Wikidata URLs once they're live.
+import { CHROME_WEB_STORE_URL } from "@repo/integrations/src/catalog/entries/plugins";
 import { baseUrl, siteName } from "@/lib/metadata";
 
 const url = (path: string): string => new URL(path, baseUrl).toString();
@@ -18,8 +19,15 @@ export const founderSchema = {
   "@id": url("/#founder"),
   name: "Ritesh Bucha",
   url: url("/blog/authors/ritesh-bucha"),
-  sameAs: ["https://github.com/bucharitesh", "https://x.com/bucharitesh"],
+  sameAs: ["https://github.com/bucharitesh", "https://x.com/bucha_ritesh"],
 };
+
+/**
+ * Other names for the site, on the home page's WebSite node. "QRDX" is also
+ * a blockchain and a Japanese QR product, so the domain and what QRdx does
+ * tell them apart.
+ */
+export const webSiteAlternateNames = ["QRdx QR code generator", "qrdx.dev"];
 
 export const organizationSchema = {
   "@context": "https://schema.org",
@@ -45,6 +53,10 @@ export const organizationSchema = {
     "https://github.com/bucharitesh/qrdx",
     "https://www.npmjs.com/package/qrdx",
     "https://www.npmjs.com/package/@qrdx/cli",
+    CHROME_WEB_STORE_URL,
+    // The official MCP Registry's record and Glama's page for the MCP server.
+    "https://registry.modelcontextprotocol.io/v0/servers/io.github.bucharitesh%2Fqrdx/versions/latest",
+    "https://glama.ai/mcp/connectors/io.github.bucharitesh/qrdx",
   ],
   contactPoint: {
     "@type": "ContactPoint",

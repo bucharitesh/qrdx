@@ -99,18 +99,13 @@ export function AppDangerZone({
       router.refresh();
     });
 
-  const people =
-    app.userCount === 1
-      ? "1 person"
-      : `${app.userCount.toLocaleString("en")} people`;
-
   return (
     <Card>
       <CardHeader>
         <CardTitle>{t("status")}</CardTitle>
         <CardDescription>
           {app.userCount > 0
-            ? `${people} currently ${app.userCount === 1 ? "has" : "have"} access through this app.`
+            ? t("peopleHaveAccess", { count: app.userCount })
             : t("nobodyHasAuthorizedThisApp")}
         </CardDescription>
       </CardHeader>
@@ -154,8 +149,9 @@ export function AppDangerZone({
               {t("deleteName", { name: app.name })}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              {t("itsClientIdAndSecret")}
-              {app.userCount > 0 ? t("disconnectingPeople", { people }) : ""}.
+              {app.userCount > 0
+                ? t("deleteAppDisconnecting", { count: app.userCount })
+                : t("deleteAppNoUsers")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

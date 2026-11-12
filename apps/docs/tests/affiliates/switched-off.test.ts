@@ -54,10 +54,7 @@ vi.mock("next/server", async (importOriginal) => ({
   },
 }));
 
-import {
-  recordNewUserReferral,
-  registerNewUserReferralRecorder,
-} from "@repo/auth/referral";
+import { recordNewUser, registerNewUserRecorder } from "@repo/auth/referral";
 import { REFERRAL_HEADER } from "@repo/auth/referral-keys";
 import { GET as referralLink } from "@/app/r/[code]/route";
 import { recordSignUpReferral } from "@/lib/affiliates/attribution-hook";
@@ -106,8 +103,8 @@ describe("on a self-hosted copy (its own domain, Polar set)", () => {
   });
 
   it("attributes nothing in the user-create hook", async () => {
-    registerNewUserReferralRecorder(recordSignUpReferral);
-    recordNewUserReferral(
+    registerNewUserRecorder(recordSignUpReferral);
+    recordNewUser(
       { id: "user_new", email: "new@example.com" },
       { headers: new Headers({ [REFERRAL_HEADER]: "ana-diaz-4k2p" }) },
     );

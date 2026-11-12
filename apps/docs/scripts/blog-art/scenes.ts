@@ -332,6 +332,27 @@ function menuCover() {
   ].join("");
 }
 
+// A chat asks for a code; the assistant's tool call puts a real one on the stand.
+function chatCover() {
+  const cam = camera(240, 144, 1.1);
+  const chat = (w: number, h: number) =>
+    `${path(rr(4, 4, w - 8, h - 8, 3), "scr")}${path(rr(w - 58, 11, 46, 13, 6.5), "s2")}${line(w - 52, w - 20, 17.5, "tx2")}${path(rr(10, 30, 52, 22, 6.5), "s")}${text(15, 39, "design_qr", "mono-a")}${line(15, 46, 46)}${path(rr(10, h - 18, w - 20, 8, 4), "ghost")}`;
+  return [
+    plinth(cam, -78, -78, 78, 78),
+    pipe(cam, [
+      [-30, 28, 2],
+      [-30, -4, 2],
+      [14, -4, 2],
+    ]),
+    panelRight(cam, [-60, -24, 0], 92, 72, chat(92, 72), { t: 5 }),
+    slab(cam, -68, -30, -46, 74, 0, 4, 3),
+    glow(cam, [40, -30, 44], 58, 50),
+    signLeft(cam, [16, -26, 0], 56, 72),
+    sparkle(...cam.p(78, -28, 88), 6),
+    sparkle(...cam.p(86, -20, 74), 3.5),
+  ].join("");
+}
+
 // --- Existing posts: covers ------------------------------------------------------
 
 // A code lying flat, its finder patterns marked, a sampling grid above it.
@@ -894,6 +915,7 @@ export const SCENES: Record<BlogArtId, () => string> = {
   sizeCover,
   apiCover,
   menuCover,
+  chatCover,
   understandingCover,
   expireCover,
   bestFreeCover,

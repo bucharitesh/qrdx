@@ -3,6 +3,7 @@ import {
   CalendarTick as CalendarClock,
   TicketDiscount as TicketPercent,
 } from "iconsax-reactjs";
+import { useLocale, useTranslations } from "next-intl";
 import {
   buttonClass,
   buttonShapeClass,
@@ -15,14 +16,45 @@ import { Barcode } from "./coupon-barcode";
 import { CopyButton } from "./coupon-copy";
 import { CouponEditor } from "./coupon-editor";
 import { CouponRedeem } from "./coupon-redeem";
-import { type CouponProps, couponSchema, couponStatus } from "./coupon-schema";
+import {
+  type CouponProps,
+  type CouponStatus,
+  couponSchema,
+  couponStatus,
+  formatDay,
+} from "./coupon-schema";
+
+type CouponT = ReturnType<typeof useTranslations<"scanPages.hosted.coupon">>;
+
+/** couponStatus's label, in the page's language. */
+function validityLabel(
+  { validFrom, validUntil }: CouponProps,
+  { state }: CouponStatus,
+  t: CouponT,
+  locale: string,
+): string | null {
+  const day = (date: string) => formatDay(date, locale);
+  if (state === "expired" && validUntil) {
+    return t("expiredOn", { date: day(validUntil) });
+  }
+  if (validFrom && validUntil) {
+    return t("validRange", { from: day(validFrom), until: day(validUntil) });
+  }
+  if (state === "upcoming" && validFrom) {
+    return t("validFrom", { date: day(validFrom) });
+  }
+  return validUntil ? t("validUntil", { date: day(validUntil) }) : null;
+}
 
 export function CouponBlock({
   id,
   props,
   context,
 }: BlockRenderProps<CouponProps>) {
+  const t = useTranslations("scanPages.hosted.coupon");
+  const locale = useLocale();
   const status = couponStatus(props);
+  const label = status.label && validityLabel(props, status, t, locale);
   const titleId = `${id}-title`;
   const inactive = status.state !== "valid";
 
@@ -34,7 +66,7 @@ export function CouponBlock({
       <div className="space-y-1 bg-(--lp-primary) px-5 py-4 text-(--lp-primary-fg)">
         <p className="flex items-center gap-1.5 text-xs font-medium tracking-wider uppercase opacity-80">
           <TicketPercent aria-hidden="true" className="size-3.5" />
-          Coupon
+          {t("coupon")}
         </p>
         <LpHeading
           as="h2"
@@ -59,10 +91,14 @@ export function CouponBlock({
               inactive && "opacity-60",
             )}
           >
-            <span className="sr-only">Code: </span>
+            <span className="sr-only">{t("code")} </span>
             {props.code}
           </p>
-          <CopyButton label="Copy coupon code" value={props.code} />
+          <CopyButton
+            label={t("copyCode")}
+            text={{ copy: t("copy"), copied: t("copied") }}
+            value={props.code}
+          />
         </div>
 
         {props.barcode !== "none" && (
@@ -75,7 +111,7 @@ export function CouponBlock({
           </div>
         )}
 
-        {status.label && (
+        {label && (
           <p
             className={cn(
               "flex items-center justify-center gap-1.5 text-sm",
@@ -83,7 +119,7 @@ export function CouponBlock({
             )}
           >
             <CalendarClock aria-hidden="true" className="size-4 shrink-0" />
-            {status.label}
+            {label}
           </p>
         )}
 
@@ -94,11 +130,20 @@ export function CouponBlock({
             pageId={context.pageId}
             qrCodeId={context.qrCodeId}
             shapeClassName={buttonShapeClass(context.theme)}
+            text={{
+              redeemed: t.raw("redeemed") as string,
+              instructions: t.rich("instructions", {
+                strong: (chunks) => <strong>{chunks}</strong>,
+              }),
+              cancel: t("cancel"),
+              redeemNow: t("redeemNow"),
+              redeem: t("redeem"),
+            }}
             unavailable={
               status.state === "expired"
-                ? "This coupon has expired."
+                ? t("expired")
                 : status.state === "upcoming"
-                  ? "This coupon can't be redeemed yet."
+                  ? t("notYet")
                   : undefined
             }
           />
@@ -116,7 +161,7 @@ export function CouponBlock({
         {props.terms && (
           <details className="text-sm">
             <summary className="cursor-pointer font-medium select-none">
-              Terms and conditions
+              {t("terms")}
             </summary>
             <p className={cn(mutedTextClass, "mt-2 whitespace-pre-line")}>
               {props.terms}

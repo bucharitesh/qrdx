@@ -18,6 +18,7 @@ export function VideoFilePlayer({
   aspect,
   autoplay,
   blockId,
+  unavailableLabel,
 }: {
   src: string;
   poster: string | null;
@@ -25,6 +26,8 @@ export function VideoFilePlayer({
   aspect: keyof typeof ASPECTS;
   autoplay: boolean;
   blockId: string;
+  /** "Video unavailable", translated by the block */
+  unavailableLabel: string;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [failed, setFailed] = useState(false);
@@ -40,7 +43,7 @@ export function VideoFilePlayer({
     }
   }, []);
 
-  if (failed) return <UnavailableNotice label="Video unavailable" />;
+  if (failed) return <UnavailableNotice label={unavailableLabel} />;
   return (
     <video
       aria-label={title}

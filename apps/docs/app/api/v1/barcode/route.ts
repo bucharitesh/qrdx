@@ -1,5 +1,6 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { barcodeFileStem, parseBarcodeFileType } from "@/lib/barcode/files";
 import {
   type BarcodeIssue,
@@ -129,7 +130,7 @@ const limit = (req: Request) =>
     { limiter: ipRateLimiter, key: `barcode-image:ip:${getClientIp(req)}` },
   ]);
 
-export async function GET(req: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
     await limit(req);
     const parsed = barcodeImageQuerySchema.safeParse(
@@ -148,7 +149,7 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function POST(req: NextRequest) {
+async function handlePOST(req: NextRequest) {
   try {
     await limit(req);
     const type = req.headers.get("content-type") ?? "";
@@ -183,3 +184,7 @@ export async function POST(req: NextRequest) {
 export function OPTIONS() {
   return new Response(null, { status: 204, headers: CORS_HEADERS });
 }
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("barcode", handleGET);
+export const POST = withApiUsage("barcode", handlePOST);

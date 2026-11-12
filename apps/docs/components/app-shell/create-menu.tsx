@@ -17,8 +17,8 @@ import {
   ScanBarcode,
   TaskSquare,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { useCreate } from "./create-actions";
 

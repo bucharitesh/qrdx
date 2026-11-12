@@ -2,8 +2,10 @@
 // Run: cd apps/docs && npx tsx --test lib/files/blocks.test.tsx
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { NextIntlClientProvider } from "next-intl";
 import React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import en from "@/messages/en.json";
 import "./blocks";
 import {
   type BlockRenderContext,
@@ -39,8 +41,11 @@ function render(
   assert.ok(definition, `${type} is registered`);
   const parsed = definition.schema.parse(props);
   const { Render } = definition;
+  // Blocks translate QRdx's own words (scanPages.hosted): English here.
   return renderToStaticMarkup(
-    <Render context={context(mode)} id="b1" props={parsed} />,
+    <NextIntlClientProvider locale="en" messages={en} timeZone="UTC">
+      <Render context={context(mode)} id="b1" props={parsed} />
+    </NextIntlClientProvider>,
   );
 }
 

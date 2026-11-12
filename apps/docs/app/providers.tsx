@@ -11,6 +11,7 @@ import { ConsentManager } from "@/components/consent/consent-manager";
 import { useCspNonce } from "@/components/csp-nonce";
 import { GetProDialogWrapper } from "@/components/get-pro-dialog-wrapper";
 import { NotOnCustomerPages } from "@/components/landing/not-on-customer-pages";
+import { LandingCapture } from "@/components/landing-capture";
 import { NavigationHistory } from "@/components/navigation-history";
 import { ReferralCapture } from "@/components/referral-capture";
 import { SoundProvider } from "@/components/sound/sound-provider";
@@ -46,6 +47,10 @@ export function Provider({
               {/* An affiliate link's code, in this tab's memory only, for a sign-up in the same visit. */}
               <NotOnCustomerPages>
                 <ReferralCapture />
+              </NotOnCustomerPages>
+              {/* How this tab's visit started (referring host, campaign tags, first page), in memory only, for a sign-up in the same visit. */}
+              <NotOnCustomerPages>
+                <LandingCapture />
               </NotOnCustomerPages>
               {/* Cookie banner + consent-gated PostHog/Featurebase. Never on customer pages (/p, /q gates, /ended; only owner-set pixels load there) or the no-tracking scanner (/scan). */}
               <NotOnCustomerPages>

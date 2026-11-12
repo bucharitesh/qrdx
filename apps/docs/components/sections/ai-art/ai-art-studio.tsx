@@ -19,6 +19,7 @@ import { useRef, useState } from "react";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { LocaleLink } from "@/components/i18n/locale-link";
 import { ART_MODEL_LABEL, ART_SUPPORTS_SEED } from "@/lib/ai/art-models";
+import { useTrackEditorOpened } from "@/lib/analytics/react";
 import { playgroundHref } from "@/lib/playground-links";
 import { AIArtComingSoon } from "./ai-art-coming-soon";
 import { AIArtPresetGallery } from "./ai-art-preset-gallery";
@@ -62,6 +63,7 @@ interface AIArtStudioProps {
 
 export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const t = useTranslations("aiArt.aiArtStudio");
+  useTrackEditorOpened("ai_art");
   const [store] = useState(() => createAIArtRunStore(configured));
   const art = useAIArtRun({ store });
   const [text, setText] = useState("");

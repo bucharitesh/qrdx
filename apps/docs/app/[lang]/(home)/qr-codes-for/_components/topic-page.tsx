@@ -1,6 +1,13 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowRight, QuoteDown, Routing2 } from "iconsax-reactjs";
+import {
+  ArrowRight,
+  Book1,
+  DocumentText,
+  QuoteDown,
+  Routing2,
+  Ruler,
+} from "iconsax-reactjs";
 import { getLocale, getTranslations } from "next-intl/server";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { LocaleLink } from "@/components/i18n/locale-link";
@@ -30,10 +37,13 @@ import {
   QR_TYPE_ICONS,
   topicIcon,
 } from "@/components/sections/tools/topic-icons";
+import { isPathAvailable } from "@/lib/feature-availability";
 import { QR_TYPE_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
+import { gallerySectionPath } from "@/lib/landing/demo-paths";
 import { playgroundHref } from "@/lib/playground-links";
 import { getQrType, type QrTypeContent } from "@/lib/qr-types-content";
+import { HOSTED_QR_TYPES, hostedTypePath } from "@/lib/qr-types-content-hosted";
 import type {
   PageTypeId,
   Recommendation,
@@ -43,6 +53,19 @@ import type {
 import { localizedPageTypes } from "@/lib/seo-content/localized";
 import type { SeoPageType } from "@/lib/seo-content/page-types";
 import { SAMPLE_SHORT_LINK, sizingRows } from "@/lib/seo-content/sizing";
+import { dashboardEntry } from "@/lib/workspace-paths";
+
+/**
+ * The page that sells each hosted page type on its own, where there is one:
+ * the PDF and business card generators, and the menus placement for menu
+ * pages. A recommendation of that type links there.
+ */
+const PAGE_GENERATORS: Partial<Record<PageTypeId, string>> = {
+  ...Object.fromEntries(
+    HOSTED_QR_TYPES.map((type) => [type.page, hostedTypePath(type.slug)]),
+  ),
+  menu: "/qr-codes-on/menus",
+};
 
 interface TopicPageProps {
   /** As this deployment renders it, in the page's language (lib/seo-content/localized.ts). */
@@ -58,6 +81,9 @@ interface Lookups {
   t: Translate;
   qrType: (type: string) => QrTypeContent | undefined;
   pageTypes: Record<PageTypeId, SeoPageType>;
+  /** This topic's path, so a recommendation never links to its own page */
+  path: string;
+  startPage?: SeoTopic["startPage"];
 }
 
 interface RecommendationView {
@@ -72,7 +98,7 @@ interface RecommendationView {
 
 function viewRecommendation(
   item: Recommendation,
-  { t, qrType, pageTypes }: Lookups,
+  { t, qrType, pageTypes, path, startPage }: Lookups,
 ): RecommendationView | null {
   switch (item.kind) {
     case "static": {
@@ -100,14 +126,29 @@ function viewRecommendation(
       };
     case "page": {
       const page = pageTypes[item.page];
-      return {
+      const generator = PAGE_GENERATORS[item.page];
+      const view = {
         badge: t("badgePage"),
         title: page.name,
         description: page.description,
         why: item.why,
-        href: `/templates#${item.page}`,
-        linkText: t("pageLink"),
         icon: PAGE_TYPE_ICONS[item.page],
+      };
+      // The topic that starts this page type: straight to the page builder.
+      if (startPage?.page === item.page) {
+        return {
+          ...view,
+          href: dashboardEntry("pages", { new: item.page }),
+          linkText: startPage.label,
+        };
+      }
+      if (generator && generator !== path && isPathAvailable(generator)) {
+        return { ...view, href: generator, linkText: t("pageGeneratorLink") };
+      }
+      return {
+        ...view,
+        href: gallerySectionPath(item.page),
+        linkText: t("pageLink"),
       };
     }
   }
@@ -125,8 +166,17 @@ export async function TopicPage({ topic, collection, other }: TopicPageProps) {
     localizedPageTypes(locale),
   ]);
   const byType = new Map(types.map((type) => [type.type as string, type]));
-  const lookups: Lookups = { t, qrType: (type) => byType.get(type), pageTypes };
   const path = collection.path(topic.slug);
+  const lookups: Lookups = {
+    t,
+    qrType: (type) => byType.get(type),
+    pageTypes,
+    path,
+    startPage: topic.startPage,
+  };
+  const guides = (topic.guides ?? []).filter((guide) =>
+    isPathAvailable(guide.href),
+  );
   const recommendations = topic.recommended
     .map((item) => viewRecommendation(item, lookups))
     .filter((item) => item !== null);
@@ -155,19 +205,42 @@ export async function TopicPage({ topic, collection, other }: TopicPageProps) {
         intro={topic.intro}
       >
         <div className="flex flex-wrap items-center justify-center gap-2.5">
-          <Button asChild>
-            <LocaleLink
-              href={
-                firstCode ? codePlaygroundHref(firstCode) : playgroundHref()
-              }
-            >
-              {common("designFree")}
-              <ArrowRight className="size-4" />
-            </LocaleLink>
-          </Button>
-          <Button variant="outline" asChild>
-            <SignInLink href="/dashboard">{common("createDynamic")}</SignInLink>
-          </Button>
+          {topic.startPage ? (
+            <>
+              <Button asChild>
+                <SignInLink
+                  href={dashboardEntry("pages", { new: topic.startPage.page })}
+                  rel="nofollow"
+                >
+                  {topic.startPage.label}
+                  <ArrowRight className="size-4" />
+                </SignInLink>
+              </Button>
+              <Button variant="outline" asChild>
+                <LocaleLink href={gallerySectionPath(topic.startPage.page)}>
+                  {t("pageLink")}
+                </LocaleLink>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button asChild>
+                <LocaleLink
+                  href={
+                    firstCode ? codePlaygroundHref(firstCode) : playgroundHref()
+                  }
+                >
+                  {common("designFree")}
+                  <ArrowRight className="size-4" />
+                </LocaleLink>
+              </Button>
+              <Button variant="outline" asChild>
+                <SignInLink href="/dashboard">
+                  {common("createDynamic")}
+                </SignInLink>
+              </Button>
+            </>
+          )}
         </div>
         <TopicCodeStrip topic={topic} collection={collection} />
       </ToolHero>
@@ -359,6 +432,28 @@ export async function TopicPage({ topic, collection, other }: TopicPageProps) {
         </div>
       </section>
 
+      {guides.length > 0 && (
+        <section
+          aria-labelledby="guides"
+          className="w-full px-10 py-10 flex flex-col gap-5"
+        >
+          <h2 id="guides" className="text-2xl font-medium tracking-tighter">
+            {t("guidesTitle")}
+          </h2>
+          <CardGrid count={guides.length} max={2}>
+            {guides.map((guide) => (
+              <LinkCard
+                key={guide.href}
+                href={guide.href}
+                icon={guideIcon(guide.href)}
+                title={guide.title}
+                description={guide.description}
+              />
+            ))}
+          </CardGrid>
+        </section>
+      )}
+
       <FaqList title={collection.faqTitle(topic)} faqs={topic.faqs} />
 
       <section
@@ -402,6 +497,13 @@ export async function TopicPage({ topic, collection, other }: TopicPageProps) {
       </section>
     </main>
   );
+}
+
+/** Blog posts get a book, tools a ruler, other pages a document. */
+function guideIcon(href: string): CardIcon {
+  if (href.startsWith("/blog/")) return Book1;
+  if (href.startsWith("/tools/")) return Ruler;
+  return DocumentText;
 }
 
 function RelatedLinks({

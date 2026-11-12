@@ -147,9 +147,10 @@ function DeleteAccountDialog({
 
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor={`${id}-confirm`}>
-              {t("type")}{" "}
-              <span className="font-mono">{DELETE_CONFIRMATION}</span>{" "}
-              {t("toConfirm")}
+              {t.rich("typeToConfirm", {
+                word: DELETE_CONFIRMATION,
+                code: (chunks) => <span className="font-mono">{chunks}</span>,
+              })}
             </label>
             <Input
               autoCapitalize="off"

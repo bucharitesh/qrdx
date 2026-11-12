@@ -1,7 +1,10 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { OAUTH_REFERRAL_KEY } from "@repo/auth/referral-keys";
+import {
+  OAUTH_LANDING_KEY,
+  OAUTH_REFERRAL_KEY,
+} from "@repo/auth/referral-keys";
 import { toast } from "@repo/design-system";
 import {
   GithubLogo,
@@ -11,14 +14,15 @@ import {
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { SsoSignIn } from "@/ee/sso/sso-sign-in";
 import { pendingReferralCode } from "@/lib/affiliates/referral-client";
+import { signUpLanding } from "@/lib/analytics/landing";
 import { socialSignInErrorPath } from "../sign-in/_lib/error-message";
 import { EmailCodeSignIn } from "./email-code-sign-in";
 import { PasskeySignIn } from "./passkey-sign-in";
@@ -105,18 +109,22 @@ export function SignInPanel({
     setLoading(true);
     try {
       const next = callbackURL();
-      // An affiliate link's code rides the OAuth state to the new account
-      // (packages/auth/referral.ts); it only counts if this makes one.
+      // An affiliate link's code and how this visit started ride the OAuth
+      // state to the new account (packages/auth/referral.ts); they only
+      // count if this makes one.
       const referral = affiliates ? pendingReferralCode() : null;
+      const landing = signUpLanding();
+      const additionalData = {
+        ...(referral ? { [OAUTH_REFERRAL_KEY]: referral } : {}),
+        ...(landing ? { [OAUTH_LANDING_KEY]: landing } : {}),
+      };
       const { error } = await authClient.signIn.social({
         provider,
         callbackURL: next,
         // A refusal (an unverified address, say) comes back to /sign-in,
         // which says why (sign-in/_lib/error-message.ts).
         errorCallbackURL: socialSignInErrorPath(next, provider),
-        ...(referral
-          ? { additionalData: { [OAUTH_REFERRAL_KEY]: referral } }
-          : {}),
+        ...(referral || landing ? { additionalData } : {}),
       });
       // e.g. the provider is not configured on this server
       if (error) throw error;
@@ -175,26 +183,24 @@ export function SignInPanel({
                   : t("createYourQrdxAccount")}
         </Title>
         <Description className="text-muted-foreground text-sm text-pretty">
-          {twoFactor ? (
-            t("yourAccountAsksForA")
-          ) : codeSentTo ? (
-            <>
-              {t("codeSentTo")}
-              <span className="font-medium break-all text-foreground">
-                {codeSentTo}
-              </span>
-            </>
-          ) : ssoOfferFor ? (
-            ssoOfferRequired ? (
-              t("yourCompanyRequiresSingleSign")
-            ) : (
-              t("yourCompanySignsInWith")
-            )
-          ) : isSignIn ? (
-            t("pickUpWhereYouLeft")
-          ) : (
-            t("freeToStartNoCard")
-          )}
+          {twoFactor
+            ? t("yourAccountAsksForA")
+            : codeSentTo
+              ? t.rich("codeSentTo", {
+                  email: codeSentTo,
+                  strong: (chunks) => (
+                    <span className="font-medium break-all text-foreground">
+                      {chunks}
+                    </span>
+                  ),
+                })
+              : ssoOfferFor
+                ? ssoOfferRequired
+                  ? t("yourCompanyRequiresSingleSign")
+                  : t("yourCompanySignsInWith")
+                : isSignIn
+                  ? t("pickUpWhereYouLeft")
+                  : t("freeToStartNoCard")}
         </Description>
       </div>
 

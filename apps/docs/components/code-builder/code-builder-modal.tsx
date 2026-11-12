@@ -46,8 +46,6 @@ import {
   Link2,
   MagicStar,
 } from "iconsax-reactjs";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import type { ScanScoreResult } from "qrdx";
 import {
   type FormEvent,
@@ -84,6 +82,10 @@ import { useAvailability } from "@/components/availability-provider";
 import { CopyButton } from "@/components/copy-button";
 import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import { InfoHint } from "@/components/help/info-hint";
+import {
+  LocaleLink as Link,
+  useLocaleRouter as useRouter,
+} from "@/components/i18n/locale-link";
 import {
   useWorkspaceHref,
   useWorkspaceSlug,
@@ -129,7 +131,12 @@ import { fullEditorDestination, openInFullEditor } from "./full-editor";
 import { bindCreatedCode, syncSavedCode } from "./in-place";
 import { previewLink } from "./links";
 import { listItemFromView } from "./optimistic";
-import { builderServices, type LoadedCode, loadCodeForEdit } from "./services";
+import {
+  builderServices,
+  type LoadedCode,
+  loadCodeForEdit,
+  playgroundBuilderServices,
+} from "./services";
 import {
   escapeAction,
   resolveBuilderShortcut,
@@ -680,7 +687,10 @@ export default function CodeBuilderModal({
         applyResult(result, { optimisticKey });
         return;
       }
-      const result = await submitCreate(fields, builderServices);
+      const result = await submitCreate(
+        fields,
+        fromPlayground ? playgroundBuilderServices : builderServices,
+      );
       applyResult(result, { optimisticKey, thenOpen });
     });
   };

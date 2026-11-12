@@ -1,7 +1,7 @@
 {
   "$schema": "../../../.source/json-schema/docs.meta.json",
   "title": "开发者",
-  "description": "REST API、Webhook、MCP 与 CLI",
+  "description": "REST API、Webhook、MCP 和 CLI",
   "icon": "Terminal",
   "root": true,
   "pages": [
@@ -16,6 +16,7 @@
     "build-an-integration",
     "---工具---",
     "image-api",
+    "google-chart-api",
     "barcode-api",
     "mcp",
     "ai-agents",

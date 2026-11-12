@@ -195,9 +195,8 @@ function formAlert(
     url,
     email: (unsubscribe, intl) => ({
       subject: intl.t("formSubmission.subject", {
-        page: data.page.title?.trim()
-          ? `“${data.page.title.trim()}”`
-          : intl.t("formSubmission.yourPage"),
+        hasTitle: data.page.title?.trim() ? "yes" : "no",
+        title: data.page.title?.trim() ?? "",
       }),
       react: (
         <FormSubmissionEmail

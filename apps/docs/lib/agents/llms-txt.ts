@@ -108,6 +108,10 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     "- Static QR codes are free and need no account. The content is in the code itself, so they never expire and have no scan limits.",
     `- Dynamic QR codes: scans are unlimited on every plan and never paused. Under the [Never-Hostage Guarantee](${abs("/guarantee")}), every code keeps redirecting after a downgrade, a failed payment or a cancellation.`,
     `- For AI agents: connect the MCP server at \`${mcpUrl}\` (Streamable HTTP, no key), or build image URLs like \`${api}/qr?data=…\` (no key). The REST API at \`${api}\` takes a workspace API key (\`Authorization: Bearer qrdx_…\`, created in Settings; see ${abs("/docs/developers/api-keys")}) or an OAuth 2.0 access token. Its OpenAPI 3.1 document is at ${abs(OPENAPI_PATH)}.`,
+    `- Free QR code API, no key: \`GET ${api}/qr?data=…\` returns an SVG, PNG, WebP or EPS QR code with no account or signup, at up to ${PRODUCT_FACTS.imageApiPerMinute} requests a minute per IP address; identical URLs are cached for a year. URL builder: ${abs("/qr-code-api")}.`,
+    `- Can Claude or ChatGPT make a QR code that scans? Yes, with the QRdx MCP server at \`${mcpUrl}\`: free, no key, and the codes it renders are standard QR codes (a chat model drawing one itself rarely scans).`,
+    `- What's free: unlimited static QR codes with no account. A free account adds ${input.limits.free.dynamicCodes} dynamic codes and ${input.limits.free.landingPages} hosted pages, with unlimited scans.`,
+    "- When to choose something else: QRdx has no SOC 2 or HIPAA certification, so teams that need that paperwork may prefer Uniqode. It isn't a general link shortener for links shared online (it integrates with Dub for that), and Bitly suits teams whose links already live there. Placing a code inside a larger design is simplest in Canva. Native CRM or CDP integrations point to Flowcode, a sales-led Enterprise contract to Scanova, and a native scanner app to QR TIGER. For a dependency-free React component with a long track record, qrcode.react is more mature: the qrdx library is pre-1.0 and React-first.",
     `- Markdown versions: add \`.md\` to any docs URL (for example ${abs("/docs/developers/mcp.md")}); ${abs("/pricing.md")} and ${abs("/mcp.md")} are Markdown too, and ${abs("/llms-full.txt")} has every docs page in one file.`,
   ].join("\n");
 
@@ -336,6 +340,12 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
       title: "AI Catalog",
       url: "/.well-known/ai-catalog.json",
       description: `Discovery document that points to the MCP Server Card at \`${mcpUrl}/server-card\``,
+    },
+    {
+      title: "Free QR code API",
+      url: "/qr-code-api",
+      description:
+        "Live URL builder for the keyless image API, with copy-ready HTML, Markdown and curl, its limits and caching",
     },
     {
       title: "QR code image API",

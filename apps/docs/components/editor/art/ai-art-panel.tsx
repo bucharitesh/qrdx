@@ -30,10 +30,10 @@ import {
   InfoCircle,
   Link21,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { AIArtPresetGallery } from "@/components/sections/ai-art/ai-art-preset-gallery";
 import { lockedSeedFor } from "@/components/sections/ai-art/ai-art-run";
 import {

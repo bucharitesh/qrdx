@@ -15,7 +15,7 @@ import { useAvailability } from "@/components/availability-provider";
 import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
 import { EGG_QR } from "@/components/fx/qr-matrix";
 import { QrMosaic } from "@/components/fx/qr-mosaic";
-import { LocaleLink } from "@/components/i18n/locale-link";
+import { LocaleLink, useLocalizeHref } from "@/components/i18n/locale-link";
 import { LocaleSwitcher } from "@/components/i18n/locale-switcher";
 import { type FooterLinkConfig, siteConfig } from "@/config/site";
 import { QrdxLogo } from "../qrdx-logo";
@@ -88,6 +88,8 @@ export function FooterSection() {
   const currentYear = new Date().getFullYear();
   // No links to pages for features this deployment can't offer.
   const { showsPath } = useAvailability();
+  // The official site's home in this page's language (qrdx.dev/hi).
+  const localizeHref = useLocalizeHref();
 
   return (
     <footer id="footer" className="w-full">
@@ -179,7 +181,7 @@ export function FooterSection() {
         <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
           <LocaleSwitcher />
           <a
-            href="https://qrdx.dev"
+            href={`https://qrdx.dev${localizeHref("/") === "/" ? "" : localizeHref("/")}`}
             className="w-fit font-mono text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
             qrdx.dev

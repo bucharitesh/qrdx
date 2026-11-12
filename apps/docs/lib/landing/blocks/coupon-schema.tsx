@@ -72,8 +72,9 @@ export const couponSchema = z
 
 export type CouponProps = z.output<typeof couponSchema>;
 
-const formatDay = (date: string) =>
-  new Intl.DateTimeFormat("en-US", {
+/** "Nov 14, 2026" in `locale` (the scanner's on /p). */
+export const formatDay = (date: string, locale = "en-US") =>
+  new Intl.DateTimeFormat(locale, {
     timeZone: "UTC",
     month: "short",
     day: "numeric",

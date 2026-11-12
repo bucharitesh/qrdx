@@ -1,5 +1,6 @@
 import "server-only";
 
+import { recordUsage } from "@/lib/analytics/usage";
 import { firstWebAddress } from "@/lib/chat-bots/qr-reply";
 import { logError } from "@/lib/shared";
 import {
@@ -228,6 +229,7 @@ export async function handleShortcut(
   const channel = payload.channel?.id;
   const responseUrl = payload.response_url;
   if (!(isId(teamId) && isId(user) && isSlackResponseUrl(responseUrl))) return;
+  recordUsage("slack", "command", "shortcut");
   const enterpriseId = payload.enterprise?.id ?? payload.team?.enterprise_id;
   const team: SlackTeamRef = {
     teamId,

@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { getCommunityItem, UNTRUSTED_NOTICE } from "@/lib/community/api";
 import { HttpError, handleError } from "@/lib/error-response";
 import { ValidationError } from "@/types/errors";
@@ -13,7 +14,7 @@ import { communityItemIdSchema } from "../../_lib/schemas";
 type Context = { params: Promise<{ id: string }> };
 
 // One published community item, with the style it applies.
-export async function GET(req: NextRequest, { params }: Context) {
+async function handleGET(req: NextRequest, { params }: Context) {
   try {
     await limitCommunityReads(req);
     const parsed = communityItemIdSchema.safeParse((await params).id);
@@ -40,3 +41,6 @@ export async function GET(req: NextRequest, { params }: Context) {
 export function OPTIONS() {
   return new Response(null, { status: 204, headers: COMMUNITY_CORS });
 }
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("community", handleGET);

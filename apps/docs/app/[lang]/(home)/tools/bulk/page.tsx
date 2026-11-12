@@ -1,6 +1,8 @@
+import { ArrowRight2, TickCircle } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ClientMessages } from "@/components/i18n/client-messages";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { BrowserFrame } from "@/components/mockups/browser-frame";
 import { LoopVideo } from "@/components/mockups/loop-video";
 import { loopVideos } from "@/components/mockups/visuals";
@@ -26,7 +28,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const STEPS = ["prepare", "map", "style", "download"] as const;
-const FAQS = ["upload", "howMany", "row", "static", "names"] as const;
+const FAQS = [
+  "upload",
+  "howMany",
+  "row",
+  "excel",
+  "static",
+  "names",
+  "code",
+] as const;
 
 export default async function BulkPage() {
   const locale = await requireLocale();
@@ -52,7 +62,38 @@ export default async function BulkPage() {
         ]}
         title={t("title")}
         intro={[t("intro1"), t("intro2")]}
-      />
+      >
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+          <ul className="contents">
+            {[
+              t("facts.rows", { rows }),
+              t("facts.styled"),
+              t("facts.svg"),
+              t("facts.browser"),
+            ].map((fact) => (
+              <li key={fact} className="inline-flex items-center gap-1.5">
+                <TickCircle aria-hidden className="size-3.5" />
+                {fact}
+              </li>
+            ))}
+          </ul>
+          {(
+            [
+              ["/docs/developers/cli#many-codes-from-a-csv", t("cliLink")],
+              ["/qr-code-api", t("apiLink")],
+            ] as const
+          ).map(([href, label]) => (
+            <Link
+              key={href}
+              href={href}
+              className="inline-flex items-center gap-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline"
+            >
+              {label}
+              <ArrowRight2 aria-hidden className="size-3.5" />
+            </Link>
+          ))}
+        </div>
+      </ToolHero>
 
       <section aria-label={t("toolLabel")} className="w-full px-10 py-10">
         <ClientMessages

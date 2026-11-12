@@ -9,7 +9,14 @@ import { CONTENT_CATEGORIES, CONTENT_TYPES_METADATA } from "@/types/qr-content";
 import type { ContentRules } from "./content";
 
 /** lib/qr-types-content.ts: the payload format and example are what the code encodes. */
-export const QR_TYPE_RULES: ContentRules = { skip: ["format", "example"] };
+export const QR_TYPE_RULES: ContentRules = {
+  skip: ["format", "example", "hosted"],
+};
+
+/** lib/qr-types-content-hosted: the demo template and static type are ids. */
+export const HOSTED_TYPE_RULES: ContentRules = {
+  skip: ["demo", "staticType"],
+};
 
 /** lib/landing/page-codes: only the tile label is copy; frames carry the drawn call to action. */
 export const PAGE_CODE_RULES: ContentRules = {

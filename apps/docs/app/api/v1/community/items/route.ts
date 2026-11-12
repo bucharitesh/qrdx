@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { searchCommunity, UNTRUSTED_NOTICE } from "@/lib/community/api";
 import { handleError } from "@/lib/error-response";
 import { parseWithSchema } from "@/lib/request-guards";
@@ -12,7 +13,7 @@ import { communityItemsQuerySchema } from "../_lib/schemas";
 
 // Public, read-only: published community frames, themes and collections.
 // No key, no quota; cached and limited per IP (../_lib/http.ts).
-export async function GET(req: NextRequest) {
+async function handleGET(req: NextRequest) {
   try {
     await limitCommunityReads(req);
     const query = parseWithSchema(
@@ -38,3 +39,6 @@ export async function GET(req: NextRequest) {
 export function OPTIONS() {
   return new Response(null, { status: 204, headers: COMMUNITY_CORS });
 }
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("community", handleGET);

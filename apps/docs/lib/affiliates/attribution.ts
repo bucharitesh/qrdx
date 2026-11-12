@@ -4,6 +4,7 @@ import { REFERRAL_HEADER } from "@repo/auth/referral-keys";
 import { affiliate, affiliateReferral, database as db } from "@repo/database";
 import cuid from "cuid";
 import { eq, or } from "drizzle-orm";
+import { isHandoffTag } from "@/lib/analytics/handoff-tags";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { logError } from "@/lib/log-error";
 import { noteMissingTables } from "./missing-table";
@@ -51,7 +52,9 @@ export type AttributionResult =
 /**
  * The codes a sign-up carried, in the order they're tried: the header an
  * email-code sign-up sends, then the OAuth state of a Google or GitHub one.
- * Malformed codes are dropped; repeats are tried once.
+ * Malformed codes are dropped; repeats are tried once. QRdx's own `ref`
+ * tags (a plugin's or bot's link, lib/analytics/handoff-tags.ts) are never
+ * referral codes, whoever holds one.
  */
 export function referralCandidatesFrom(source: {
   headers?: Pick<Headers, "get"> | null;
@@ -61,7 +64,11 @@ export function referralCandidatesFrom(source: {
   const found: ReferralCandidate[] = [];
   const add = (value: unknown, via: AttributionVia) => {
     const code = parseReferralCode(value);
-    if (code && !found.some((candidate) => candidate.code === code)) {
+    if (
+      code &&
+      !isHandoffTag(code) &&
+      !found.some((candidate) => candidate.code === code)
+    ) {
       found.push({ code, via });
     }
   };

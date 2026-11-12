@@ -4,6 +4,7 @@ import {
   resolveApiCaller,
   resolveApiScope,
 } from "@/app/api/v1/codes/_lib/api";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { deleteEndpoint, getEndpoint } from "@/lib/events/endpoints";
@@ -12,7 +13,7 @@ import { canSeeHookUrls, hookIdSchema, serializeHook } from "../_lib/hooks";
 
 type Context = { params: Promise<{ id: string }> };
 
-export const GET = withApiQuotaHeaders(
+const handleGET = withApiQuotaHeaders(
   async (req: NextRequest, { params }: Context) => {
     try {
       const caller = await resolveApiCaller(req, "read");
@@ -32,7 +33,7 @@ export const GET = withApiQuotaHeaders(
 );
 
 /** REST Hooks unsubscribe (Zapier calls this when a Zap is turned off). */
-export const DELETE = withApiQuotaHeaders(
+const handleDELETE = withApiQuotaHeaders(
   async (req: NextRequest, { params }: Context) => {
     try {
       const scope = await resolveApiScope(req, "write");
@@ -44,3 +45,7 @@ export const DELETE = withApiQuotaHeaders(
     }
   },
 );
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("hooks", handleGET);
+export const DELETE = withApiUsage("hooks", handleDELETE);

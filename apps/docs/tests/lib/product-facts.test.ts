@@ -86,6 +86,9 @@ describe("PRODUCT_FACTS", () => {
       importRows: MAX_IMPORT_ROWS.toLocaleString("en-US"),
       bulkToolRows: MAX_BULK_TOOL_ROWS.toLocaleString("en-US"),
       newPaidAccountHourlyCodes: "2,000",
+      imageApiPerMinute: 300,
+      mcpPerMinute: 120,
+      designQrPerMinute: 20,
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(

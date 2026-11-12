@@ -9,6 +9,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative } from "node:path";
 import { loader, type VirtualFile } from "fumadocs-core/source";
 import { describe, expect, it } from "vitest";
+import { createMetadata } from "@/lib/metadata";
 import {
   brandedTitle,
   MAX_DESCRIPTION,
@@ -149,6 +150,24 @@ describe("Organization schema", () => {
       ...organizationSchema.founder.sameAs,
     ]) {
       expect(url).toMatch(/^https:\/\//);
+    }
+  });
+
+  it("names the founder's X account by its real handle", () => {
+    expect(organizationSchema.founder.sameAs).toContain(
+      "https://x.com/bucha_ritesh",
+    );
+    expect(createMetadata({}).twitter).toMatchObject({
+      creator: "@bucha_ritesh",
+    });
+    // The GitHub username is bucharitesh; x.com/bucharitesh doesn't exist.
+    for (const file of [
+      "lib/root-metadata.ts",
+      "content/blog-authors/ritesh-bucha.mdx",
+    ]) {
+      expect(readFileSync(join(APP, file), "utf8")).not.toMatch(
+        /@bucharitesh\b|x\.com\/bucharitesh|twitter: bucharitesh/,
+      );
     }
   });
 

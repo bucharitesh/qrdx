@@ -13,10 +13,10 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useState } from "react";
 import { publishCommunityDesign } from "@/actions/community";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { TagSelector } from "@/components/tag-selector";
 import type { CommunityDraft } from "@/lib/community/draft";
 import {

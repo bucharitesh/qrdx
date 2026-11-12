@@ -1,8 +1,8 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import Link from "next/link";
 import type { ComponentProps, MouseEvent } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { useAuthStore } from "@/store/auth-store";
 
 /**

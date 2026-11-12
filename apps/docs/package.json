@@ -23,7 +23,8 @@
     "i18n:extract": "tsx scripts/i18n-extract.ts",
     "i18n:translate": "tsx scripts/i18n-translate.ts",
     "i18n:docs": "tsx scripts/i18n-translate-docs.ts",
-    "i18n:split": "node scripts/i18n-split-roots.mjs"
+    "i18n:split": "node scripts/i18n-split-roots.mjs",
+    "seo:dates": "tsx scripts/seo-dates.ts"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.163",

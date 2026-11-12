@@ -1,6 +1,7 @@
 // The affiliate program's rules as pure functions: no database, no request.
 // The server code (./server.ts) and the tests use these, so the maths is
 // tested once and can't drift between the webhook, the cron and the pages.
+import { QRDX_HANDOFF_TAGS } from "@/lib/analytics/handoff-tags";
 import { RESERVED_SLUGS } from "@/lib/short-links";
 import {
   AFFILIATE_COMMISSION_BPS,
@@ -278,11 +279,13 @@ export function parseReferralCode(value: unknown): string | null {
 
 /**
  * Words a chosen code can't be: QRdx's own paths and names (the short-link
- * reserved list, lib/short-links.ts) and words that would pass for QRdx or
- * its staff.
+ * reserved list, lib/short-links.ts), the `ref` tags QRdx's own links carry
+ * (lib/analytics/handoff-tags.ts: plugins, bots, MCP, CLI, the 404 page),
+ * and words that would pass for QRdx or its staff.
  */
 export const RESERVED_REFERRAL_CODES: ReadonlySet<string> = new Set([
   ...RESERVED_SLUGS,
+  ...QRDX_HANDOFF_TAGS,
   "affiliate",
   "affiliates",
   "partner",

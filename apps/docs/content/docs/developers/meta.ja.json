@@ -16,12 +16,13 @@
     "build-an-integration",
     "---ツール---",
     "image-api",
+    "google-chart-api",
     "barcode-api",
     "mcp",
     "ai-agents",
     "cli",
     "n8n",
     "---その他---",
-    "[変更履歴](/changelogs)"
+    "[更新履歴](/changelogs)"
   ]
 }

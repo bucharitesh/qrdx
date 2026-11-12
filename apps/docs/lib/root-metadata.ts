@@ -39,7 +39,7 @@ export function rootMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      creator: "@bucharitesh",
+      creator: "@bucha_ritesh",
     },
     icons: {
       icon: [

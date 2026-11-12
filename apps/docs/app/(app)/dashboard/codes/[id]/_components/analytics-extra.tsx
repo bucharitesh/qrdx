@@ -102,9 +102,13 @@ export function TimeCard({
           <div className="space-y-1">
             <CardTitle>{t("whenPeopleScan")}</CardTitle>
             <CardDescription>
-              {t("last")} {days} {t("days")} {time.timeZone}
-              {total > 0 &&
-                t("busiestHourValue00", { value: HOURS[busiestHour] })}
+              {total > 0
+                ? t("lastDaysBusiest", {
+                    days,
+                    timeZone: time.timeZone,
+                    hour: HOURS[busiestHour],
+                  })
+                : t("lastDays", { days, timeZone: time.timeZone })}
             </CardDescription>
           </div>
           {switcher}

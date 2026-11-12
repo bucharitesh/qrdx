@@ -1907,9 +1907,9 @@
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.question"
   },
-  "82ec64b16a5d": {
-    "source": "No, the details are inside the code. To have one code that always shows your current details, host your contact page online and point a URL code, or a dynamic code from your dashboard, at it.",
-    "text": "Tidak, datanya ada di dalam kode. Agar satu kode selalu menampilkan data terbaru Anda, hosting halaman kontak Anda secara online lalu arahkan kode URL, atau kode QR dinamis dari dasbor Anda, ke halaman tersebut.",
+  "fa26bd23187e": {
+    "source": "No, the details are inside the code. For one code that always shows your current details, make a digital business card instead: a hosted contact page with your photo and a Save contact button that you can edit after printing.",
+    "text": "Tidak, detailnya tersimpan di dalam kode. Untuk satu kode yang selalu menampilkan detail Anda terbaru, buat kartu nama digital: halaman kontak yang di-hosting dengan foto Anda dan tombol Simpan kontak, yang bisa Anda ubah setelah dicetak.",
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.answer"
   },
@@ -3719,6 +3719,24 @@
     "status": "machine",
     "context": "qrTypes.types.bitcoin.faqs.2.answer"
   },
+  "0e3f9ed231ab": {
+    "source": "Lightning, testnet and address checks",
+    "text": "Lightning, testnet, dan pengecekan alamat",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.title"
+  },
+  "da2ccbd9fdc4": {
+    "source": "This is an on-chain request: the wallet pays your address on the Bitcoin blockchain. Lightning-only wallets can't pay it, and this generator doesn't add a lightning= invoice to the URI, so for Lightning payments share an invoice or Lightning address from your wallet instead.",
+    "text": "Ini adalah permintaan on-chain: dompet membayar ke alamat Anda di blockchain Bitcoin. Dompet yang hanya mendukung Lightning tidak dapat membayarnya, dan generator ini tidak menambahkan invoice lightning= ke URI, jadi untuk pembayaran Lightning, bagikan invoice atau alamat Lightning dari dompet Anda.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.0"
+  },
+  "e3130a29c7fc": {
+    "source": "The generator checks the address's length (26 to 62 characters), not its checksum, and it can't tell mainnet from testnet: a testnet address (starting with tb1, m, n or 2) makes a code no ordinary wallet can pay. Scan the preview with the wallet that will pay before you print.",
+    "text": "Generator memeriksa panjang alamat (26 hingga 62 karakter), bukan checksum-nya, dan tidak dapat membedakan mainnet dari testnet: alamat testnet (diawali tb1, m, n, atau 2) menghasilkan kode yang tidak bisa dibayar oleh dompet biasa. Pindai pratinjau dengan dompet yang akan digunakan untuk membayar sebelum Anda mencetak.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.1"
+  },
   "80cfbcc768ef": {
     "source": "Share an EIP-681 Ethereum payment request.",
     "text": "Bagikan permintaan pembayaran Ethereum EIP-681.",
@@ -3820,6 +3838,24 @@
     "text": "Ya. Kode ini hanya berisi alamat publik Anda. Jangan pernah menyandikan kunci privat atau frasa pemulihan.",
     "status": "machine",
     "context": "qrTypes.types.ethereum.faqs.2.answer"
+  },
+  "d434b3350c1d": {
+    "source": "Address checks and ENS names",
+    "text": "Pengecekan alamat dan nama ENS",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.title"
+  },
+  "65464924c87e": {
+    "source": "The generator checks that the address is 0x followed by 40 hexadecimal characters. It doesn't check the mixed-case EIP-55 checksum; wallets check that when they scan, so paste the address exactly as your wallet shows it rather than typing it.",
+    "text": "Generator memeriksa bahwa alamat diawali 0x diikuti 40 karakter heksadesimal. Checksum EIP-55 dengan huruf besar-kecil campuran tidak diperiksa; dompet akan memeriksanya saat pemindaian, jadi tempel alamat persis seperti yang ditampilkan dompet Anda, jangan mengetiknya.",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.0"
+  },
+  "4a379c763eb7": {
+    "source": "ENS names such as name.eth aren't accepted. EIP-681 allows them, but the payer's wallet would have to look the name up; a 0x address works in every wallet that reads the code.",
+    "text": "Nama ENS seperti name.eth tidak diterima. EIP-681 memperbolehkannya, tetapi dompet pembayar harus mencari nama tersebut terlebih dahulu; alamat 0x berfungsi di setiap dompet yang membaca kode ini.",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.1"
   },
   "9870d299fb0b": {
     "source": "Open your Etsy shop or a listing.",
@@ -6155,6 +6191,24 @@
     "status": "machine",
     "context": "qrTypes.types.litecoin.faqs.1.answer"
   },
+  "45f14f3c95d2": {
+    "source": "Which Litecoin addresses work",
+    "text": "Alamat Litecoin yang didukung",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.title"
+  },
+  "efdeb7ecb4b1": {
+    "source": "Addresses starting with L (legacy), M (P2SH), 3 (older P2SH) and ltc1 (SegWit) are accepted. M and 3 are the same kind of address: Litecoin moved P2SH addresses from 3 to M so they aren't mistaken for Bitcoin addresses, and some older wallets still show 3.",
+    "text": "Alamat yang diawali L (legacy), M (P2SH), 3 (P2SH lama), dan ltc1 (SegWit) diterima. M dan 3 adalah jenis alamat yang sama: Litecoin memindahkan alamat P2SH dari 3 ke M agar tidak tertukar dengan alamat Bitcoin, dan beberapa dompet lama masih menampilkan 3.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.0"
+  },
+  "a17e84343f7d": {
+    "source": "MWEB addresses (starting with ltcmweb1), used for Litecoin's private payments, aren't accepted here. Use one of your wallet's regular receiving addresses for a printed code.",
+    "text": "Alamat MWEB (diawali ltcmweb1), yang digunakan untuk pembayaran privat Litecoin, tidak diterima di sini. Gunakan salah satu alamat penerima biasa dari dompet Anda untuk kode yang dicetak.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.1"
+  },
   "14f89759d816": {
     "source": "Receive Dogecoin with an optional amount.",
     "text": "Terima Dogecoin dengan jumlah opsional.",
@@ -6215,6 +6269,24 @@
     "status": "machine",
     "context": "qrTypes.types.dogecoin.faqs.0.question"
   },
+  "7c952bf9c5da": {
+    "source": "Which Dogecoin addresses work",
+    "text": "Alamat Dogecoin yang didukung",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.title"
+  },
+  "6bc808ddaa41": {
+    "source": "Standard Dogecoin addresses start with D, and multisig (P2SH) addresses with A or 9; the generator accepts these. Testnet addresses, which start with n or 2, are rejected, so a test address can't end up on a printed sign by mistake.",
+    "text": "Alamat Dogecoin standar diawali D, dan alamat multisig (P2SH) diawali A atau 9; generator menerima keduanya. Alamat testnet, yang diawali n atau 2, ditolak, sehingga alamat uji coba tidak sampai tercetak pada papan secara tidak sengaja.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.0"
+  },
+  "0abee7330fc7": {
+    "source": "For a tip jar, leave the amount empty: each person types what they want to give, and one printed code takes any number of payments.",
+    "text": "Untuk kotak tip, kosongkan jumlahnya: setiap orang mengetik sendiri jumlah yang ingin diberikan, dan satu kode cetak dapat menerima pembayaran sebanyak apa pun.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.1"
+  },
   "6dc9a0aa25cf": {
     "source": "Receive Bitcoin Cash with an optional amount.",
     "text": "Terima Bitcoin Cash dengan jumlah opsional.",
@@ -6274,6 +6346,30 @@
     "text": "Tidak. Bitcoin Cash adalah koin tersendiri dengan dompetnya sendiri. Untuk bitcoin, gunakan generator Bitcoin.",
     "status": "machine",
     "context": "qrTypes.types.bitcoincash.faqs.0.answer"
+  },
+  "c6afea0f4f57": {
+    "source": "CashAddr, legacy and token addresses",
+    "text": "Alamat CashAddr, legacy, dan token",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.title"
+  },
+  "5d69e08209a0": {
+    "source": "Paste the address with or without its bitcoincash: prefix. The generator removes a pasted prefix and writes it once, as the start of the URI.",
+    "text": "Tempel alamat dengan atau tanpa awalan bitcoincash:. Generator menghapus awalan yang ikut tertempel dan menuliskannya satu kali, sebagai awal URI.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.0"
+  },
+  "7f8cdb8747e0": {
+    "source": "Token-aware addresses (starting with z or r), used for CashTokens, aren't accepted. Use your wallet's regular q address for BCH payments.",
+    "text": "Alamat yang mendukung token (diawali z atau r), yang digunakan untuk CashTokens, tidak diterima. Gunakan alamat q biasa dari dompet Anda untuk pembayaran BCH.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.1"
+  },
+  "e24a42112f28": {
+    "source": "Legacy addresses starting with 1 or 3 look exactly like Bitcoin addresses, which makes it easy to send coins from the wrong network. Prefer CashAddr on anything you print.",
+    "text": "Alamat legacy yang diawali 1 atau 3 terlihat persis seperti alamat Bitcoin, sehingga koin mudah terkirim ke jaringan yang salah. Pilih CashAddr untuk semua yang Anda cetak.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.2"
   },
   "51f7bdf5aaa1": {
     "source": "Receive SOL with a Solana Pay request.",
@@ -6341,6 +6437,24 @@
     "status": "machine",
     "context": "qrTypes.types.solana.faqs.0.answer"
   },
+  "43fcb61a7db3": {
+    "source": "What this Solana Pay code includes",
+    "text": "Isi kode Solana Pay ini",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.title"
+  },
+  "36ed60b12391": {
+    "source": "It's a Solana Pay transfer request: the recipient, an amount in SOL, a label and a message. Solana Pay also defines spl-token for token payments and reference for matching a payment to an order; this generator adds neither, so use your point-of-sale tool when you need them.",
+    "text": "Ini adalah permintaan transfer Solana Pay: penerima, jumlah dalam SOL, label, dan pesan. Solana Pay juga mendefinisikan spl-token untuk pembayaran token dan reference untuk mencocokkan pembayaran dengan pesanan; generator ini tidak menambahkan keduanya, jadi gunakan alat point-of-sale Anda bila membutuhkannya.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.0"
+  },
+  "9502d073de90": {
+    "source": "Solana Pay transaction requests, where the code holds a link to your server and the server builds the transaction, aren't made here either.",
+    "text": "Permintaan transaksi Solana Pay, yaitu kode berisi tautan ke server Anda dan server yang membuat transaksinya, juga tidak dibuat di sini.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.1"
+  },
   "aa106b399d07": {
     "source": "Receive Monero with an optional amount.",
     "text": "Terima Monero dengan jumlah opsional.",
@@ -6400,6 +6514,540 @@
     "text": "Banyak dompet menyarankan subalamat baru untuk setiap kode yang Anda publikasikan, sehingga pembayaran ke kode yang berbeda tidak saling terhubung.",
     "status": "machine",
     "context": "qrTypes.types.monero.faqs.0.answer"
+  },
+  "e21057f62697": {
+    "source": "Standard address, subaddress or integrated address",
+    "text": "Alamat standar, subaddress, atau alamat terintegrasi",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.title"
+  },
+  "320538ad2b97": {
+    "source": "Standard addresses start with 4 and are 95 characters long, subaddresses start with 8, and integrated addresses start with 4 and are 106 characters because they carry a payment ID. The generator accepts all three.",
+    "text": "Alamat standar diawali 4 dan panjangnya 95 karakter, subaddress diawali 8, dan alamat terintegrasi diawali 4 dengan panjang 106 karakter karena membawa ID pembayaran. Generator menerima ketiganya.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.0"
+  },
+  "4e1f370290a4": {
+    "source": "Separate payment IDs are deprecated in Monero, so the generator doesn't add one. Use a subaddress for each customer or code, or the integrated address an exchange or shop gives you.",
+    "text": "ID pembayaran terpisah sudah tidak digunakan lagi di Monero, sehingga generator tidak menambahkannya. Gunakan satu subaddress untuk setiap pelanggan atau kode, atau alamat terintegrasi yang diberikan oleh bursa atau toko.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.1"
+  },
+  "1d393b0081b6": {
+    "source": "PDF",
+    "text": "PDF",
+    "status": "machine",
+    "context": "templates.pdf.label"
+  },
+  "5646a9f7a51e": {
+    "source": "Free PDF QR Code Generator",
+    "text": "Pembuat Kode QR PDF Gratis",
+    "status": "machine",
+    "context": "hostedTypes.pdf.title"
+  },
+  "aca040b7ba32": {
+    "source": "Upload a PDF to a hosted page and replace it any time.",
+    "text": "Unggah PDF ke halaman yang di-hosting dan ganti kapan saja.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.summary"
+  },
+  "124c8c2b6cd3": {
+    "source": "Upload your PDF",
+    "text": "Unggah PDF Anda",
+    "status": "machine",
+    "context": "hostedTypes.pdf.cta"
+  },
+  "9dcba3ce451a": {
+    "source": "Turn a PDF into a QR code: upload it to a free QRdx page that people read or download on their phone. Replace the file later, same code. 10 MB on Free.",
+    "text": "Ubah PDF menjadi kode QR: unggah ke halaman QRdx gratis yang dapat dibaca atau diunduh orang di ponselnya. Ganti file nanti, kodenya tetap sama. 10 MB di paket Gratis.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.metaDescription"
+  },
+  "68e7e7ec5658": {
+    "source": "A PDF QR code opens your document on the phone that scans it: a menu, a brochure, a manual or a price list. You upload the PDF to a page QRdx hosts for you, and the code points to that page through a short link.",
+    "text": "Kode QR PDF membuka dokumen Anda di ponsel yang memindainya: menu, brosur, buku panduan, atau daftar harga. Anda mengunggah PDF ke halaman yang di-hosting oleh QRdx untuk Anda, dan kode tersebut mengarah ke halaman itu melalui tautan pendek.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.0"
+  },
+  "9302dac9d8cf": {
+    "source": "Because the code holds the link, not the file, you can replace the PDF after printing, for next season's menu or a corrected manual, and every printed code opens the new version. It needs a free QRdx account.",
+    "text": "Karena kode menyimpan tautan, bukan file-nya, Anda dapat mengganti PDF setelah dicetak, misalnya untuk menu musim berikutnya atau buku panduan yang sudah dikoreksi, dan setiap kode yang telah dicetak akan membuka versi barunya. Diperlukan akun QRdx gratis.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.1"
+  },
+  "c1c38d9f6192": {
+    "source": "Sign in or create a free account, then start a PDF page: the button above opens it with the PDF type picked.",
+    "text": "Masuk atau buat akun gratis, lalu mulai halaman PDF: tombol di atas membukanya dengan jenis PDF yang sudah dipilih.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.0"
+  },
+  "8ee1eee065fb": {
+    "source": "Upload your PDF, or paste a link to one that's already online, and choose whether people can download it.",
+    "text": "Unggah PDF Anda, atau tempel tautan ke PDF yang sudah ada secara online, lalu pilih apakah orang boleh mengunduhnya.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.1"
+  },
+  "bcca1e09802d": {
+    "source": "Add a title and any buttons you want, such as a link to your website, then publish.",
+    "text": "Tambahkan judul dan tombol apa pun yang Anda inginkan, seperti tautan ke situs web Anda, lalu publikasikan.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.2"
+  },
+  "68671f93a178": {
+    "source": "Download the page's QR code, print it and scan it once to check.",
+    "text": "Unduh kode QR halaman tersebut, cetak, dan lakukan pemindaian sekali untuk memeriksanya.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.3"
+  },
+  "d26cfd2a55d4": {
+    "source": "Reads in the browser",
+    "text": "Dibaca di browser",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.title"
+  },
+  "0fa7186b2959": {
+    "source": "On tablets and computers the PDF shows on the page; on phones, Open PDF shows it full screen. Nobody installs an app.",
+    "text": "Di tablet dan komputer, PDF tampil langsung di halaman; di ponsel, Open PDF menampilkannya layar penuh. Tidak perlu memasang aplikasi.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.description"
+  },
+  "0a07381242b6": {
+    "source": "Download and more files",
+    "text": "Unduhan dan file lainnya",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.title"
+  },
+  "52cdbbfe01d6": {
+    "source": "A Download button saves a copy, and a Downloads block lists more files with their own labels, such as the menu in a second language.",
+    "text": "Tombol Download menyimpan salinan, dan blok Downloads mencantumkan file lain dengan label masing-masing, seperti menu dalam bahasa kedua.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.description"
+  },
+  "f6d11e1fc833": {
+    "source": "Your page around it",
+    "text": "Halaman Anda sendiri",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.title"
+  },
+  "168565d4c819": {
+    "source": "A title, your colors and logo, and buttons to your website or booking page, from the same blocks as every QRdx page.",
+    "text": "Judul, warna dan logo Anda, serta tombol ke situs web atau halaman reservasi Anda, dari blok yang sama seperti setiap halaman QRdx.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.description"
+  },
+  "e71d2dbd4008": {
+    "source": "Fast and private",
+    "text": "Cepat dan privat",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.title"
+  },
+  "6be93be79318": {
+    "source": "Server-rendered for phones, with no QRdx analytics or chat scripts, and hidden from search engines unless you turn that on.",
+    "text": "Dirender di server untuk ponsel, tanpa skrip analitik atau obrolan QRdx, dan disembunyikan dari mesin pencari kecuali Anda mengaktifkannya.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.description"
+  },
+  "0cd53dc2571c": {
+    "source": "Replace the file behind the same link: in Dashboard → Files, choose Replace file next to the PDF and upload the new one. Pages and codes that use it show the new version within a minute. A PDF can only be replaced by a PDF.",
+    "text": "Ganti file di balik tautan yang sama: di Dashboard → Files, pilih Replace file di samping PDF lalu unggah yang baru. Halaman dan kode yang menggunakannya akan menampilkan versi baru dalam waktu satu menit. PDF hanya dapat diganti dengan PDF.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.0"
+  },
+  "cd4e0788ed1c": {
+    "source": "Change the page itself (its title, buttons and colors) and publish; the printed code stays the same. Every scan is counted without cookies, so you can see when the code is used.",
+    "text": "Ubah halamannya sendiri (judul, tombol, dan warnanya) lalu publikasikan; kode yang dicetak tetap sama. Setiap pemindaian dihitung tanpa cookie, sehingga Anda dapat melihat kapan kode digunakan.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.1"
+  },
+  "0455df8d3256": {
+    "source": "A PDF page, or a code that links to a PDF?",
+    "text": "Halaman PDF, atau kode yang menaut ke PDF?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.title"
+  },
+  "1739b16060cf": {
+    "source": "Static code to a PDF link",
+    "text": "Kode statis ke tautan PDF",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticLabel"
+  },
+  "d34aa4eb51bf": {
+    "source": "No account: put the link of a PDF that's already online, in Google Drive or on your website, into a free static code.",
+    "text": "Tanpa akun: masukkan tautan PDF yang sudah ada secara online, di Google Drive atau di situs web Anda, ke kode QR statis gratis.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.0"
+  },
+  "19bcc450ed9b": {
+    "source": "The link is written into the code, so printed codes stop working if the file is moved or its sharing is turned off.",
+    "text": "Tautan ditulis langsung ke dalam kode, sehingga kode yang sudah dicetak berhenti berfungsi jika file dipindahkan atau pembagiannya dimatikan.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.1"
+  },
+  "15211d2c9803": {
+    "source": "No scan counts, and nothing around the PDF.",
+    "text": "Tidak ada hitungan pemindaian, dan tidak ada apa pun di sekitar PDF.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.2"
+  },
+  "0a9ee38a3b41": {
+    "source": "Hosted PDF page",
+    "text": "Halaman PDF yang di-hosting",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedLabel"
+  },
+  "ffc08a5fa958": {
+    "source": "A free QRdx account, and QRdx stores the file.",
+    "text": "Akun QRdx gratis, dan QRdx menyimpan file-nya.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.0"
+  },
+  "28ddde3d608a": {
+    "source": "Replace the PDF or edit the page any time; printed codes keep working.",
+    "text": "Ganti PDF atau edit halaman kapan saja; kode yang sudah dicetak tetap berfungsi.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.1"
+  },
+  "2d7dc4880d53": {
+    "source": "Scans counted without cookies, with your title, colors and buttons around the document.",
+    "text": "Pemindaian dihitung tanpa cookie, dengan judul, warna, dan tombol Anda di sekitar dokumen.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.2"
+  },
+  "de93e29b3216": {
+    "source": "Is the PDF QR code free?",
+    "text": "Apakah kode QR PDF gratis?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.question"
+  },
+  "d56cd3681383": {
+    "source": "Yes, with a free QRdx account. The Free plan includes 3 hosted pages, and each uses one of its 10 dynamic codes. Free pages show a small \"Made with QRdx\" footer; Pro removes it and the page limit.",
+    "text": "Ya, dengan akun QRdx gratis. Paket Gratis mencakup 3 halaman yang di-hosting, dan masing-masing memakai satu dari 10 kode dinamis. Halaman gratis menampilkan footer kecil \"Made with QRdx\"; Pro menghapusnya beserta batas halaman.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.answer"
+  },
+  "3e34fc33860d": {
+    "source": "How big can the PDF be?",
+    "text": "Seberapa besar ukuran PDF-nya?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.question"
+  },
+  "e84b5c8be653": {
+    "source": "Up to 10 MB per file on Free, with 50 MB of storage per workspace. Pro takes files up to 100 MB and Business up to 250 MB. Big PDFs open slowly on phones, so compress scans and large images before uploading.",
+    "text": "Hingga 10 MB per file di paket Gratis, dengan penyimpanan 50 MB per workspace. Pro menerima file hingga 100 MB dan Business hingga 250 MB. PDF berukuran besar terbuka lambat di ponsel, jadi kompres hasil pindaian dan gambar besar sebelum mengunggah.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.answer"
+  },
+  "571a5f50e535": {
+    "source": "Can I change the PDF after printing?",
+    "text": "Bisakah saya mengganti PDF setelah dicetak?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.question"
+  },
+  "726178f806ff": {
+    "source": "Yes. Replace the file in Dashboard → Files and every code and page that uses it shows the new PDF within a minute. The printed code never changes.",
+    "text": "Bisa. Ganti file di Dashboard → Files dan setiap kode serta halaman yang memakainya akan menampilkan PDF baru dalam waktu satu menit. Kode yang sudah dicetak tidak pernah berubah.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.answer"
+  },
+  "53045bd4aa84": {
+    "source": "What happens to my code if I stop paying?",
+    "text": "Apa yang terjadi pada kode saya jika saya berhenti membayar?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.question"
+  },
+  "1678c79cd195": {
+    "source": "It keeps working. Under the Never-Hostage Guarantee, codes and pages you already have keep working after a downgrade, a failed payment or a cancellation, and scans are never paused. Plan limits only stop you from creating new ones.",
+    "text": "Kode tetap berfungsi. Di bawah Jaminan Never-Hostage, kode dan halaman yang sudah Anda miliki tetap berfungsi setelah penurunan paket, pembayaran gagal, atau pembatalan, dan pemindaian tidak pernah dihentikan. Batas paket hanya mencegah Anda membuat yang baru.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.answer"
+  },
+  "57d4c3ee4908": {
+    "source": "Do people need an app to open it?",
+    "text": "Apakah orang perlu aplikasi untuk membukanya?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.question"
+  },
+  "6f23c8630c62": {
+    "source": "No. The phone's camera opens the page in the browser, where the PDF can be read, opened full screen or downloaded.",
+    "text": "Tidak. Kamera ponsel membuka halaman di browser, tempat PDF dapat dibaca, dibuka layar penuh, atau diunduh.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.answer"
+  },
+  "eaa9553b681a": {
+    "source": "Can search engines find my PDF?",
+    "text": "Apakah PDF saya bisa ditemukan mesin pencari?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.question"
+  },
+  "28e17f0f94fd": {
+    "source": "Not unless you want them to. Hosted pages are hidden from search engines until you turn on Show in search engines in the page's settings.",
+    "text": "Tidak, kecuali Anda menginginkannya. Halaman yang di-hosting disembunyikan dari mesin pencari sampai Anda mengaktifkan Show in search engines di pengaturan halaman.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.answer"
+  },
+  "6b515aae04de": {
+    "source": "Can I make a PDF QR code without an account?",
+    "text": "Bisakah saya membuat kode QR PDF tanpa akun?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.question"
+  },
+  "00ecbc0a89cd": {
+    "source": "Only for a PDF that's already online: paste its link into the URL or Google Drive generator for a free static code. QRdx only stores the file for you with an account.",
+    "text": "Hanya untuk PDF yang sudah ada di internet: tempel tautannya ke generator URL atau Google Drive untuk mendapatkan kode statis gratis. QRdx hanya menyimpan file untuk Anda jika memiliki akun.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.answer"
+  },
+  "f6865e9400c3": {
+    "source": "Digital Business Card",
+    "text": "Kartu Nama Digital",
+    "status": "machine",
+    "context": "hostedTypes.business-card.name"
+  },
+  "12ee83e8add8": {
+    "source": "Digital Business Card QR Code Generator",
+    "text": "Generator Kode QR Kartu Nama Digital",
+    "status": "machine",
+    "context": "hostedTypes.business-card.title"
+  },
+  "1f0f3c1a23f2": {
+    "source": "A contact page with your photo, buttons and Save contact.",
+    "text": "Halaman kontak dengan foto Anda, tombol, dan Save contact.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.summary"
+  },
+  "82b6ad72913a": {
+    "source": "Create your card",
+    "text": "Buat kartu Anda",
+    "status": "machine",
+    "context": "hostedTypes.business-card.cta"
+  },
+  "2a42d8281c80": {
+    "source": "Make a digital business card with a QR code: your photo, contact buttons and Save contact. Edit it without reprinting. Free account, 3 pages included.",
+    "text": "Buat kartu nama digital dengan kode QR: foto Anda, tombol kontak, dan Save contact. Ubah tanpa mencetak ulang. Akun gratis, termasuk 3 halaman.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.metaDescription"
+  },
+  "eb688e530a71": {
+    "source": "A digital business card QR code opens a contact page that QRdx hosts for you: your photo, name and job title, buttons to call, email, message or get directions, your links, and a Save contact button that adds you to the phone's contacts.",
+    "text": "Kode QR kartu nama digital membuka halaman kontak yang di-hosting oleh QRdx untuk Anda: foto, nama, dan jabatan Anda, tombol untuk menelepon, mengirim email, mengirim pesan, atau mendapatkan petunjuk arah, tautan Anda, serta tombol Save contact yang menambahkan Anda ke kontak ponsel.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.0"
+  },
+  "790252dae1e8": {
+    "source": "The code holds a short link, so you can change your number, title or photo after the cards are printed and every card shows the new details. It needs a free QRdx account. For a code that holds the contact itself, with no account, use the vCard QR code generator.",
+    "text": "Kode ini berisi tautan pendek, sehingga Anda dapat mengubah nomor, jabatan, atau foto setelah kartu dicetak dan setiap kartu menampilkan detail terbaru. Diperlukan akun QRdx gratis. Untuk kode yang berisi kontak itu sendiri, tanpa akun, gunakan generator kode QR vCard.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.1"
+  },
+  "5fe139b11347": {
+    "source": "Sign in or create a free account, then start a vCard Plus page: the button above opens it with that type picked.",
+    "text": "Masuk atau buat akun gratis, lalu mulai halaman vCard Plus: tombol di atas membukanya dengan tipe tersebut sudah dipilih.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.0"
+  },
+  "464922fa84f5": {
+    "source": "Pick a template (Classic, Midnight, Minimal or Real estate agent) and fill in your details, photo and links.",
+    "text": "Pilih templat (Classic, Midnight, Minimal, atau Real estate agent) dan isi detail, foto, dan tautan Anda.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.1"
+  },
+  "e05e48c28335": {
+    "source": "Publish the page, then download its QR code for your business card, email signature or badge.",
+    "text": "Publikasikan halaman, lalu unduh kode QR-nya untuk kartu nama, tanda tangan email, atau tanda pengenal Anda.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.2"
+  },
+  "595b4e2fc678": {
+    "source": "Scan it once and tap Save contact to check what lands in your contacts.",
+    "text": "Lakukan pemindaian sekali dan ketuk Save contact untuk memeriksa apa yang masuk ke kontak Anda.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.3"
+  },
+  "d24f121f4a4e": {
+    "source": "Save contact",
+    "text": "Save contact",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.0.title"
+  },
+  "608136076759": {
+    "source": "Downloads a vCard 3.0 file that phones open in their contacts app, with your name, company, job title, phones, emails, website, address, bio, social profiles and photo.",
+    "text": "Mengunduh file vCard 3.0 yang dibuka ponsel di aplikasi kontaknya, berisi nama, perusahaan, jabatan, nomor telepon, email, situs web, alamat, bio, profil media sosial, dan foto Anda.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.0.description"
+  },
+  "1810407f5ab7": {
+    "source": "Quick actions",
+    "text": "Aksi cepat",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.1.title"
+  },
+  "85abf5242b39": {
+    "source": "Call, WhatsApp, email and directions buttons, so people can reach you before they save anything.",
+    "text": "Tombol telepon, WhatsApp, email, dan petunjuk arah, sehingga orang bisa menghubungi Anda sebelum menyimpan apa pun.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.1.description"
+  },
+  "29887a5ff984": {
+    "source": "Share",
+    "text": "Bagikan",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.2.title"
+  },
+  "d221039f4b04": {
+    "source": "Opens the phone's share sheet, so the person you met can pass your card on.",
+    "text": "Membuka menu bagikan di ponsel, sehingga orang yang Anda temui bisa meneruskan kartu Anda.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.2.description"
+  },
+  "1c127a69878c": {
+    "source": "Scan counts",
+    "text": "Jumlah pemindaian",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.3.title"
+  },
+  "194261d84c60": {
+    "source": "The code counts scans without cookies, so you can see how many people opened your card and when.",
+    "text": "Kode ini menghitung pemindaian tanpa cookie, sehingga Anda bisa melihat berapa banyak orang yang membuka kartu Anda dan kapan.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.3.description"
+  },
+  "249966c88166": {
+    "source": "Change anything on the page and publish: a new number, a new job title, a new photo. Every printed card opens the new version, and each publish is kept as a version.",
+    "text": "Ubah apa pun di halaman lalu publikasikan: nomor baru, jabatan baru, foto baru. Setiap kartu cetak akan membuka versi terbarunya, dan setiap publikasi disimpan sebagai versi.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.editing.0"
+  },
+  "4dfefacaed50": {
+    "source": "The same page can go on an NFC card: its code has Put this card on NFC, which writes the page's link to a blank NFC card from Chrome on Android, and taps are counted apart from scans.",
+    "text": "Halaman yang sama bisa dipakai di kartu NFC: kodenya memiliki opsi Put this card on NFC, yang menulis tautan halaman ke kartu NFC kosong dari Chrome di Android, dan ketukan dihitung terpisah dari pemindaian.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.editing.1"
+  },
+  "423579ba01f0": {
+    "source": "vCard QR code or digital business card?",
+    "text": "Kode QR vCard atau kartu nama digital?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.title"
+  },
+  "e0dc2994a6c6": {
+    "source": "vCard QR code (static)",
+    "text": "Kode QR vCard (statis)",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticLabel"
+  },
+  "42fb4ce76f4a": {
+    "source": "No account, free for good: the contact details are written into the code itself.",
+    "text": "Tanpa akun, gratis selamanya: detail kontak ditulis langsung di dalam kodenya.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.0"
+  },
+  "78bcbb374194": {
+    "source": "Works offline: the phone offers to save the contact without opening a page.",
+    "text": "Berfungsi secara offline: ponsel menawarkan untuk menyimpan kontak tanpa membuka halaman.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.1"
+  },
+  "3a78bfa8904e": {
+    "source": "Can't change after printing, has no photo, and every extra field makes the code denser.",
+    "text": "Tidak bisa diubah setelah dicetak, tidak memiliki foto, dan setiap kolom tambahan membuat kode semakin padat.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.2"
+  },
+  "0ccfb0cf39a1": {
+    "source": "Digital business card (hosted page)",
+    "text": "Kartu nama digital (halaman yang di-hosting)",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedLabel"
+  },
+  "d3cca0966e18": {
+    "source": "A free QRdx account; the code opens a page QRdx hosts.",
+    "text": "Akun QRdx gratis; kodenya membuka halaman yang di-hosting oleh QRdx.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.0"
+  },
+  "fac813a8a0c4": {
+    "source": "Edit your details, photo and links any time; printed cards keep working.",
+    "text": "Ubah detail, foto, dan tautan Anda kapan saja; kartu yang sudah dicetak tetap berfungsi.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.1"
+  },
+  "3ae0e38d142c": {
+    "source": "Photo, buttons, links and Save contact, plus scan counts.",
+    "text": "Foto, tombol, tautan, dan Save contact, serta jumlah pemindaian.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.2"
+  },
+  "cc88ae6eae83": {
+    "source": "Is the digital business card free?",
+    "text": "Apakah kartu nama digital ini gratis?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.0.question"
+  },
+  "4593d31a7707": {
+    "source": "What does Save contact add to the phone?",
+    "text": "Apa yang ditambahkan Save contact ke ponsel?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.1.question"
+  },
+  "e92f1e3af269": {
+    "source": "A vCard 3.0 contact with your name, company, job title, phones, emails, website, address, bio, the page's social profiles and your photo. Photos uploaded to QRdx are embedded in the file; photos linked from other sites are included as a link.",
+    "text": "Kontak vCard 3.0 berisi nama, perusahaan, jabatan, nomor telepon, email, situs web, alamat, bio, profil media sosial dari halaman tersebut, dan foto Anda. Foto yang diunggah ke QRdx disematkan di dalam file, sedangkan foto yang ditautkan dari situs lain disertakan sebagai tautan.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.1.answer"
+  },
+  "433aa551a2c4": {
+    "source": "Can I change my details after printing?",
+    "text": "Bisakah saya mengubah data saya setelah dicetak?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.2.question"
+  },
+  "d00e42301a68": {
+    "source": "Yes. Edit the page and publish; the printed code keeps opening it, now with your new details.",
+    "text": "Bisa. Edit halamannya lalu publikasikan; kode yang sudah dicetak tetap membukanya, kini dengan data terbaru Anda.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.2.answer"
+  },
+  "d6db733919c0": {
+    "source": "What happens to my card if I stop paying?",
+    "text": "Apa yang terjadi pada kartu saya jika saya berhenti membayar?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.3.question"
+  },
+  "0531738b4156": {
+    "source": "Should I use a vCard QR code instead?",
+    "text": "Apakah sebaiknya saya memakai kode QR vCard saja?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.4.question"
+  },
+  "118510355202": {
+    "source": "If your details won't change and you don't need a photo or links, yes: a static vCard code needs no account and works offline. If you want to edit the card later or see scans, use the hosted card.",
+    "text": "Jika data Anda tidak akan berubah dan Anda tidak memerlukan foto atau tautan, ya: kode vCard statis tidak memerlukan akun dan berfungsi secara offline. Jika Anda ingin mengedit kartu nanti atau melihat pemindaian, gunakan kartu yang di-hosting.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.4.answer"
+  },
+  "1593c67c99af": {
+    "source": "Do people need an app?",
+    "text": "Apakah orang perlu aplikasi?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.5.question"
+  },
+  "ab7a6ee88b76": {
+    "source": "No. The phone's camera opens the card in the browser, and Save contact hands the file to the built-in contacts app.",
+    "text": "Tidak. Kamera ponsel membuka kartu di browser, dan Save contact meneruskan file ke aplikasi kontak bawaan.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.5.answer"
+  },
+  "0619dd1a299c": {
+    "source": "Can I put it on an NFC business card?",
+    "text": "Bisakah dipasang di kartu nama NFC?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.6.question"
+  },
+  "01ebed374f9c": {
+    "source": "Yes. QRdx doesn't sell cards: buy blank NFC cards and write the page's link to them from the code's NFC page in Chrome on Android. Editing the page updates every card you've handed out.",
+    "text": "Bisa. QRdx tidak menjual kartu: beli kartu NFC kosong lalu tulis tautan halamannya ke kartu tersebut dari halaman NFC pada kode di Chrome untuk Android. Mengedit halaman akan memperbarui setiap kartu yang sudah Anda bagikan.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.6.answer"
   },
   "d96545f726d0": {
     "source": "Food and drink",
@@ -16007,21 +16655,21 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.noun"
   },
-  "0d6bfccc8412": {
-    "source": "QR code menus",
-    "text": "Menu kode QR",
+  "9f74ff6bd071": {
+    "source": "Menu QR code generator",
+    "text": "Generator kode QR menu",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.title"
   },
-  "6d942ed73962": {
-    "source": "QR Code Menus: Digital Menus You Can Edit Anytime",
-    "text": "Menu Kode QR: Menu Digital yang Bisa Diedit Kapan Saja",
+  "28cae6ae47d7": {
+    "source": "Menu QR Code Generator: Digital Menus You Can Edit",
+    "text": "Generator Kode QR Menu: Menu Digital yang Bisa Diedit",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.seoTitle"
   },
-  "fae1e9f4d921": {
-    "source": "Create a QR code menu you can update without reprinting: hosted menu pages with prices, photos, allergens and sold-out items, plus table sizes and tips.",
-    "text": "Buat menu kode QR yang bisa diperbarui tanpa mencetak ulang: halaman menu yang di-hosting dengan harga, foto, alergen, dan item habis, plus ukuran untuk meja dan tips.",
+  "0e1c07b7ee6a": {
+    "source": "Make a menu QR code you can update without reprinting: a hosted menu page with prices, photos, allergens and sold-out items, plus table sizes and tips.",
+    "text": "Buat kode QR menu yang bisa diperbarui tanpa cetak ulang: halaman menu yang di-hosting dengan harga, foto, alergen, dan item yang habis, plus ukuran untuk meja dan tips.",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.metaDescription"
   },
@@ -16031,9 +16679,9 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.summary"
   },
-  "803094d083d9": {
-    "source": "A QR code menu is only as good as what it opens. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm. A hosted menu page behind a dynamic code can do both: edit an item from your phone and every table sees it on the next scan.",
-    "text": "Menu kode QR hanya sebaik apa yang dibukanya. Kode statis yang tertaut ke PDF terlihat baik-baik saja di hari pertama, lalu rusak saat nama file diubah dan tidak bisa menunjukkan bahwa salmon sudah habis terjual pukul 8 malam. Halaman menu yang di-hosting di balik kode QR dinamis bisa melakukan keduanya: ubah satu item dari ponsel Anda, dan setiap meja akan melihatnya pada pemindaian berikutnya.",
+  "5ddc4cc908fb": {
+    "source": "A QR code menu is only as good as what it opens. Build a menu page on QRdx, with sections, prices, photos, allergen tags and sold-out flags, and print its code: edit an item from your phone and every table sees it on the next scan. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm.",
+    "text": "Menu kode QR hanya sebaik apa yang dibukanya. Buat halaman menu di QRdx, lengkap dengan bagian, harga, foto, label alergen, dan penanda stok habis, lalu cetak kodenya: ubah item dari ponsel Anda dan setiap meja langsung melihatnya pada pemindaian berikutnya. Kode QR statis yang menautkan ke PDF memang tampak baik di hari pertama, tetapi akan rusak saat nama file diganti dan tidak bisa menunjukkan bahwa salmon habis terjual pukul 8 malam.",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.intro.0"
   },
@@ -16198,6 +16846,66 @@
     "text": "Tidak. Kamera ponsel membuka menu di browser. Tamu tidak perlu menginstal apa pun dan tidak perlu akun.",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.faqs.2.answer"
+  },
+  "a2c83df426e4": {
+    "source": "Is the menu QR code generator free?",
+    "text": "Apakah generator kode QR menu ini gratis?",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.faqs.3.question"
+  },
+  "7ac8b96e14c2": {
+    "source": "Yes, with a free QRdx account: a menu page is one of the hosted pages the Free plan includes. Pro removes the page limit and the small \"Made with QRdx\" footer. If you cancel a paid plan, the menu and its code keep working.",
+    "text": "Ya, dengan akun QRdx gratis: halaman menu adalah salah satu halaman yang di-hosting yang termasuk dalam paket Gratis. Pro menghapus batas jumlah halaman dan footer kecil \"Made with QRdx\". Jika Anda membatalkan paket berbayar, menu dan kodenya tetap berfungsi.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.faqs.3.answer"
+  },
+  "04687442a9e4": {
+    "source": "Build a menu page",
+    "text": "Buat halaman menu",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.startPage.label"
+  },
+  "6d549515191d": {
+    "source": "QR codes for restaurant menus: a practical guide",
+    "text": "Kode QR untuk menu restoran: panduan praktis",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.0.title"
+  },
+  "c4566c93d0ec": {
+    "source": "Where to put the code, how big to print it, Wi-Fi, accessibility and allergens.",
+    "text": "Di mana menaruh kode, seberapa besar mencetaknya, Wi-Fi, aksesibilitas, dan alergen.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.0.description"
+  },
+  "457447ccdac3": {
+    "source": "Print size calculator",
+    "text": "Kalkulator ukuran cetak",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.1.title"
+  },
+  "72d879c56dcf": {
+    "source": "The smallest code that scans from across the table or the counter.",
+    "text": "Kode terkecil yang masih bisa dipindai dari seberang meja atau konter.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.1.description"
+  },
+  "810bb7432f7a": {
+    "source": "PDF QR code generator",
+    "text": "Generator kode QR PDF",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.2.title"
+  },
+  "fc6b9d7d104a": {
+    "source": "Already have a designed PDF menu? Host it and replace the file each season.",
+    "text": "Sudah punya menu PDF yang didesain? Hosting file itu dan ganti setiap musim.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.2.description"
+  },
+  "d7761143e88e": {
+    "source": "Menus, guest Wi-Fi, review requests and table ordering in one place.",
+    "text": "Menu, Wi-Fi tamu, permintaan ulasan, dan pemesanan di meja dalam satu tempat.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.3.description"
   },
   "f568f32aa7bb": {
     "source": "Table tents",
@@ -22217,6 +22925,1218 @@
     "status": "machine",
     "context": "barcodes.faqs.9.answer"
   },
+  "e553f8d3db33": {
+    "source": "Free EAN-13 Barcode Generator",
+    "text": "Pembuat Barcode EAN-13 Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.title"
+  },
+  "185de8851663": {
+    "source": "Make an EAN-13 barcode for retail products. Type 12 digits and the check digit is added, or 13 to have it checked. SVG, PDF, EPS and PNG. Free, no signup.",
+    "text": "Buat barcode EAN-13 untuk produk ritel. Ketik 12 digit dan digit pemeriksa akan ditambahkan, atau 13 digit untuk diperiksa. SVG, PDF, EPS, dan PNG. Gratis, tanpa daftar.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.metaDescription"
+  },
+  "33b789598cde": {
+    "source": "EAN-13 is the barcode on retail products almost everywhere outside the US and Canada. Type the 12 digits of your number and the generator adds the check digit, or type all 13 and it checks yours, then download the barcode as a vector for print or a PNG for screens.",
+    "text": "EAN-13 adalah barcode pada produk ritel di hampir semua negara di luar AS dan Kanada. Ketik 12 digit nomor Anda dan generator akan menambahkan digit pemeriksa, atau ketik ke-13 digit dan generator akan memeriksanya. Lalu unduh barcode sebagai vektor untuk cetak atau PNG untuk layar.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.intro"
+  },
+  "69b749864ad4": {
+    "source": "Products sold in shops and online marketplaces. The 13 digits are a GTIN-13: a GS1 company prefix, an item number and a check digit. The first digits show which GS1 organization issued the prefix, not where the product was made.",
+    "text": "Produk yang dijual di toko dan marketplace online. Ke-13 digit tersebut adalah GTIN-13: prefiks perusahaan GS1, nomor item, dan digit pemeriksa. Digit pertama menunjukkan organisasi GS1 mana yang menerbitkan prefiks, bukan tempat produk dibuat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.usedFor.0"
+  },
+  "74faacaf6528": {
+    "source": "Books and magazines use it too: an ISBN starting with 978 or 979 is printed as an EAN-13, and 977 marks an ISSN for periodicals. Numbers starting with 2 are kept for in-store use, such as weighed items priced at the counter.",
+    "text": "Buku dan majalah juga memakainya: ISBN yang diawali 978 atau 979 dicetak sebagai EAN-13, dan 977 menandai ISSN untuk terbitan berkala. Nomor yang diawali 2 dicadangkan untuk penggunaan di dalam toko, misalnya barang timbangan yang dihargai di kasir.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.usedFor.1"
+  },
+  "b99b98cddd37": {
+    "source": "Do I need GS1 numbers for EAN-13?",
+    "text": "Apakah saya memerlukan nomor GS1 untuk EAN-13?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.title"
+  },
+  "e1bbafd4f2b0": {
+    "source": "For anything sold through a retailer, yes. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "Untuk apa pun yang dijual lewat peritel, ya. GTIN dilisensikan, bukan dibeli putus: Anda bergabung dengan GS1 (atau organisasi GS1 di negara Anda), mendapatkan prefiks perusahaan, lalu memberi nomor produk Anda dari prefiks itu. Peritel besar dan marketplace memeriksa GTIN terhadap registri GS1, sehingga nomor yang dijual kembali dari prefiks milik orang lain bisa ditolak.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.paragraphs.0"
+  },
+  "a6ea3696d866": {
+    "source": "This generator draws any valid 13-digit number, but it doesn't issue or register numbers. For your own stock, shelves or assets, use Code 128 instead: it needs no registration.",
+    "text": "Generator ini menggambar nomor 13 digit yang valid, tetapi tidak menerbitkan atau mendaftarkan nomor. Untuk stok, rak, atau aset Anda sendiri, gunakan Code 128: tidak perlu pendaftaran.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.paragraphs.1"
+  },
+  "26bacbda8d57": {
+    "source": "Spaces and dashes are ignored, and only digits are allowed. Twelve digits get the check digit added; thirteen have the last one checked, and a wrong check digit shows an error instead of a barcode.",
+    "text": "Spasi dan tanda hubung diabaikan, dan hanya digit yang diizinkan. Dua belas digit akan ditambahkan digit pemeriksa; pada tiga belas digit, digit terakhir diperiksa, dan digit pemeriksa yang salah akan menampilkan pesan kesalahan, bukan barcode.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.rules.0"
+  },
+  "368c54283308": {
+    "source": "The check digit weighs the digits 3, 1, 3, 1… starting from the right of the 12-digit body, adds them up and picks the digit that brings the sum to the next multiple of 10.",
+    "text": "Digit pemeriksa memberi bobot 3, 1, 3, 1… pada digit-digit mulai dari kanan 12 digit utama, menjumlahkannya, lalu memilih digit yang membuat jumlahnya mencapai kelipatan 10 berikutnya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.rules.1"
+  },
+  "cca5925a2331": {
+    "source": "At 100% an EAN-13 is 37.29 mm wide (quiet zones included) by 25.93 mm high, with a 0.33 mm module. GS1 allows 80% to 200% for retail.",
+    "text": "Pada 100%, EAN-13 memiliki lebar 37.29 mm (termasuk zona hening) dan tinggi 25.93 mm, dengan modul 0.33 mm. GS1 mengizinkan 80% hingga 200% untuk ritel.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.0"
+  },
+  "dedb3231c770": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%. Scale them within the 80% to 200% range and keep the proportions: shortening the bars makes the barcode harder to scan at checkouts.",
+    "text": "Unduhan vektor memakai modul 0.353 mm, sekitar 107%. Skalakan dalam rentang 80% hingga 200% dan pertahankan proporsinya: memendekkan batang membuat barcode lebih sulit dipindai di kasir.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.1"
+  },
+  "88896bfdc73b": {
+    "source": "Leave 11 modules of blank space on the left and 7 on the right. The generator starts with 11 on both sides.",
+    "text": "Sisakan ruang kosong 11 modul di sisi kiri dan 7 di sisi kanan. Generator memulai dengan 11 di kedua sisi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.2"
+  },
+  "5d176e6bd05b": {
+    "source": "Can I make up an EAN-13 number?",
+    "text": "Bolehkah saya membuat nomor EAN-13 sendiri?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.0.question"
+  },
+  "8f7b0093a5f3": {
+    "source": "It will scan, but a store's system won't recognize it and may already use that number for another product. Retail EAN-13 numbers come from a GS1 company prefix. Numbers starting with 2 are the exception: they're meant for use inside one store or company.",
+    "text": "Nomor itu akan terpindai, tetapi sistem toko tidak akan mengenalinya dan mungkin nomor itu sudah dipakai untuk produk lain. Nomor EAN-13 ritel berasal dari prefiks perusahaan GS1. Nomor yang diawali 2 adalah pengecualian: nomor itu ditujukan untuk penggunaan di dalam satu toko atau perusahaan.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.0.answer"
+  },
+  "20c86e42f5bd": {
+    "source": "What's the difference between EAN-13 and UPC-A?",
+    "text": "Apa perbedaan antara EAN-13 dan UPC-A?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.1.question"
+  },
+  "b9808d9ee114": {
+    "source": "A UPC-A is a 12-digit number that equals an EAN-13 starting with 0, and checkout scanners read both. US and Canadian retailers often ask for UPC-A; elsewhere EAN-13 is the norm.",
+    "text": "UPC-A adalah nomor 12 digit yang setara dengan EAN-13 yang diawali 0, dan pemindai kasir membaca keduanya. Peritel di AS dan Kanada sering meminta UPC-A; di tempat lain EAN-13 adalah standarnya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.1.answer"
+  },
+  "388645787977": {
+    "source": "Can I make an ISBN barcode?",
+    "text": "Bisakah saya membuat barcode ISBN?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.2.question"
+  },
+  "e2522c6c9cf0": {
+    "source": "Yes: an ISBN-13 is an EAN-13. Enter the 13 digits without dashes. The 5-digit price add-on some book trades print beside it isn't drawn here.",
+    "text": "Bisa: ISBN-13 adalah EAN-13. Masukkan 13 digit tanpa tanda hubung. Tambahan harga 5 digit yang dicetak di sebelahnya oleh sebagian pedagang buku tidak digambar di sini.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.2.answer"
+  },
+  "118b647519e1": {
+    "source": "Why does my 13-digit number show an error?",
+    "text": "Mengapa nomor 13 digit saya menampilkan kesalahan?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.3.question"
+  },
+  "c3754e77000e": {
+    "source": "Its last digit isn't the check digit the other 12 produce, which usually means a typo. The error says what the check digit should be. Enter only the first 12 digits to have it worked out.",
+    "text": "Digit terakhirnya bukan digit pemeriksa yang dihasilkan oleh 12 digit lainnya, yang biasanya berarti ada salah ketik. Pesan kesalahan menyebutkan digit pemeriksa yang seharusnya. Masukkan hanya 12 digit pertama agar digit pemeriksa dihitung otomatis.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.3.answer"
+  },
+  "21a397c19c56": {
+    "source": "Free UPC-A Barcode Generator",
+    "text": "Generator Barcode UPC-A Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.title"
+  },
+  "ae5abf4dcf1f": {
+    "source": "Make a UPC-A barcode for products sold in the US and Canada. Type 11 digits and the check digit is added, or 12 to have it checked. SVG, PDF, EPS and PNG.",
+    "text": "Buat barcode UPC-A untuk produk yang dijual di AS dan Kanada. Ketik 11 digit dan digit pemeriksa akan ditambahkan, atau 12 digit untuk diperiksa. SVG, PDF, EPS, dan PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.metaDescription"
+  },
+  "fbecbf739065": {
+    "source": "UPC-A is the 12-digit retail barcode of the US and Canada. Type the first 11 digits and the generator adds the check digit, or type all 12 to have it checked, then download a vector for your packaging or a PNG for an online listing.",
+    "text": "UPC-A adalah barcode ritel 12 digit di AS dan Kanada. Ketik 11 digit pertama dan generator akan menambahkan digit pemeriksa, atau ketik semua 12 digit untuk diperiksa, lalu unduh vektor untuk kemasan Anda atau PNG untuk listing online.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.intro"
+  },
+  "fd8224969dd4": {
+    "source": "Products sold in US and Canadian stores and on marketplaces that ask for a UPC. The number is a GTIN-12: a GS1 company prefix, an item number and a check digit.",
+    "text": "Produk yang dijual di toko-toko AS dan Kanada serta di marketplace yang meminta UPC. Nomornya adalah GTIN-12: prefiks perusahaan GS1, nomor item, dan digit pemeriksa.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.usedFor.0"
+  },
+  "b6ca2ff0c836": {
+    "source": "The first digit says what kind of number it is: 2 is kept for weighed items priced in the store, and 3 for medicines that carry a US National Drug Code. Since 2005, checkout systems in the US and Canada read EAN-13 too, but many retailers still ask for UPC-A.",
+    "text": "Digit pertama menunjukkan jenis nomornya: 2 dicadangkan untuk barang timbangan yang harganya ditentukan di toko, dan 3 untuk obat-obatan yang memiliki US National Drug Code. Sejak 2005, sistem kasir di AS dan Kanada juga membaca EAN-13, tetapi banyak pengecer masih meminta UPC-A.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.usedFor.1"
+  },
+  "57f54586c885": {
+    "source": "Do I need GS1 numbers for UPC-A?",
+    "text": "Apakah saya memerlukan nomor GS1 untuk UPC-A?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.title"
+  },
+  "73dfd53c9783": {
+    "source": "For retail, yes. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected. In the US, that's GS1 US.",
+    "text": "Untuk ritel, ya. GTIN dilisensikan, bukan dibeli putus: Anda bergabung dengan GS1 (atau organisasi GS1 di negara Anda), mendapatkan prefiks perusahaan, lalu memberi nomor pada produk Anda dari prefiks tersebut. Pengecer besar dan marketplace memeriksa GTIN terhadap registri GS1, sehingga nomor yang dijual kembali dari prefiks orang lain dapat ditolak. Di AS, itu adalah GS1 US.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.paragraphs.0"
+  },
+  "5998b23e332c": {
+    "source": "This generator draws any valid number; it doesn't issue or register them.",
+    "text": "Generator ini menggambar nomor valid apa pun; generator ini tidak menerbitkan atau mendaftarkannya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.paragraphs.1"
+  },
+  "913a860f547e": {
+    "source": "Digits only; spaces and dashes are ignored. Eleven digits get the check digit added, twelve have it checked.",
+    "text": "Hanya angka; spasi dan tanda hubung diabaikan. Sebelas digit akan ditambahkan digit pemeriksa, dua belas digit akan diperiksa.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.rules.0"
+  },
+  "f7ed2e5b7a9e": {
+    "source": "The check digit triples the digits in odd positions (1st, 3rd, 5th… of the 11), adds the rest and picks the digit that brings the total to the next multiple of 10. It's the same rule as EAN-13, so a UPC-A with a 0 in front is a valid EAN-13.",
+    "text": "Digit pemeriksa mengalikan tiga digit pada posisi ganjil (ke-1, ke-3, ke-5… dari 11 digit), menjumlahkannya dengan sisanya, lalu memilih digit yang membuat totalnya mencapai kelipatan 10 berikutnya. Aturannya sama dengan EAN-13, jadi UPC-A dengan angka 0 di depan adalah EAN-13 yang valid.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.rules.1"
+  },
+  "a387137f90a2": {
+    "source": "At 100% a UPC-A is 37.29 mm wide with its quiet zones and a 0.33 mm module; GS1 allows 80% to 200%.",
+    "text": "Pada 100%, lebar UPC-A adalah 37.29 mm termasuk quiet zone dan modul 0.33 mm; GS1 mengizinkan 80% hingga 200%.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.0"
+  },
+  "afd7ee6d261b": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%. Keep the proportions when you scale, and don't shorten the bars to fit a small pack: use UPC-E if the product qualifies.",
+    "text": "Unduhan vektor menggunakan modul 0.353 mm, sekitar 107%. Pertahankan proporsi saat Anda mengubah ukuran, dan jangan memendekkan batang agar muat di kemasan kecil: gunakan UPC-E jika produk memenuhi syarat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.1"
+  },
+  "218648ca162b": {
+    "source": "Keep at least 9 modules clear on each side. The generator starts with 11.",
+    "text": "Sisakan ruang kosong minimal 9 modul di setiap sisi. Generator memulai dengan 11.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.2"
+  },
+  "f2ed9151ccbe": {
+    "source": "Is a UPC the same as a GTIN?",
+    "text": "Apakah UPC sama dengan GTIN?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.0.question"
+  },
+  "c3f6c27abc9d": {
+    "source": "The number in a UPC-A barcode is a GTIN-12. Written with two leading zeros it's the GTIN-14 that some product feeds ask for.",
+    "text": "Nomor dalam barcode UPC-A adalah GTIN-12. Jika ditulis dengan dua angka nol di depan, nomor itu menjadi GTIN-14 yang diminta oleh beberapa feed produk.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.0.answer"
+  },
+  "1b029891466b": {
+    "source": "My scanner reads 13 digits from a UPC-A. Is that wrong?",
+    "text": "Pemindai saya membaca 13 digit dari UPC-A. Apakah itu salah?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.1.question"
+  },
+  "4d4fecc241c9": {
+    "source": "No. Many readers report a UPC-A as the 13-digit EAN with a 0 in front. The scan check on this page accepts both.",
+    "text": "Tidak. Banyak pembaca melaporkan UPC-A sebagai EAN 13 digit dengan angka 0 di depan. Pemeriksaan pemindaian di halaman ini menerima keduanya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.1.answer"
+  },
+  "10663e747849": {
+    "source": "Can I turn my UPC-A into a smaller UPC-E?",
+    "text": "Bisakah saya mengubah UPC-A saya menjadi UPC-E yang lebih kecil?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.2.question"
+  },
+  "e5b2ab58a715": {
+    "source": "Only if the number has zeros in the right places. Open the UPC-E generator and enter the 12-digit UPC-A: it tells you whether yours can be shortened.",
+    "text": "Hanya jika nomor tersebut memiliki angka nol di posisi yang tepat. Buka generator UPC-E dan masukkan UPC-A 12 digit: generator akan memberi tahu apakah nomor Anda bisa dipersingkat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.2.answer"
+  },
+  "a14ac0f7f2da": {
+    "source": "Free Code 128 Barcode Generator",
+    "text": "Pembuat Barcode Code 128 Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.title"
+  },
+  "464d967dc9c2": {
+    "source": "Make a Code 128 barcode for labels, asset tags and tickets: letters, digits and symbols, up to 80 characters. Scan-checked in the browser. SVG, PDF, PNG.",
+    "text": "Buat barcode Code 128 untuk label, label aset, dan tiket: huruf, angka, dan simbol hingga 80 karakter. Pemindaian diperiksa di browser. SVG, PDF, PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.metaDescription"
+  },
+  "e52568761a92": {
+    "source": "Code 128 is the general-purpose barcode: letters, digits, spaces and keyboard symbols in a compact row of bars. Type your text, check that it scans and download it for labels, asset tags, tickets or stock bins. It needs no registration.",
+    "text": "Code 128 adalah barcode serbaguna: huruf, angka, spasi, dan simbol keyboard dalam satu baris batang yang ringkas. Ketik teks Anda, pastikan barcode dapat dipindai, lalu unduh untuk label, label aset, tiket, atau rak stok. Tanpa perlu registrasi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.intro"
+  },
+  "0b875fca4969": {
+    "source": "Inventory and stock labels, asset tags, library and lab samples, tickets, internal shipping labels and order numbers: anything that needs a barcode but isn't a product sold in shops.",
+    "text": "Label inventaris dan stok, label aset, sampel perpustakaan dan laboratorium, tiket, label pengiriman internal, dan nomor pesanan: apa pun yang membutuhkan barcode tetapi bukan produk yang dijual di toko.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.usedFor.0"
+  },
+  "846a7db7a028": {
+    "source": "It's the barcode most warehouse and point-of-sale scanners read out of the box, and the base of GS1-128, which adds Application Identifiers for supply chain data.",
+    "text": "Ini adalah barcode yang langsung dapat dibaca oleh sebagian besar pemindai gudang dan kasir, sekaligus dasar dari GS1-128, yang menambahkan Application Identifiers untuk data rantai pasok.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.usedFor.1"
+  },
+  "760439f56898": {
+    "source": "Do I need to register a Code 128 barcode?",
+    "text": "Apakah saya perlu mendaftarkan barcode Code 128?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.title"
+  },
+  "dfd2214d62c1": {
+    "source": "No. Code 128 holds whatever text you choose, so there's no number to license. Use your own SKUs, serial numbers or IDs.",
+    "text": "Tidak. Code 128 dapat memuat teks apa pun yang Anda pilih, jadi tidak ada nomor yang perlu dilisensikan. Gunakan SKU, nomor seri, atau ID Anda sendiri.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.paragraphs.0"
+  },
+  "0ec6d58266bf": {
+    "source": "If a retailer or logistics partner asks for GS1 data (a GTIN, SSCC, batch or expiry date), use GS1-128 instead: it's Code 128 with GS1's structure.",
+    "text": "Jika pengecer atau mitra logistik meminta data GS1 (GTIN, SSCC, nomor batch, atau tanggal kedaluwarsa), gunakan GS1-128: ini adalah Code 128 dengan struktur GS1.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.paragraphs.1"
+  },
+  "e561312bcaee": {
+    "source": "Up to 80 characters of plain ASCII: letters, digits, spaces and the symbols on a US keyboard. Accented letters, emoji and control characters can't be encoded here.",
+    "text": "Hingga 80 karakter ASCII biasa: huruf, angka, spasi, dan simbol pada keyboard AS. Huruf beraksen, emoji, dan karakter kontrol tidak dapat dikodekan di sini.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.rules.0"
+  },
+  "782292cc1d92": {
+    "source": "Code 128 adds its own check character (a sum modulo 103) and three code sets: set C packs two digits into each character, so long runs of digits make shorter barcodes. The encoder picks the code sets for you, and readers don't print the check character.",
+    "text": "Code 128 menambahkan karakter pemeriksa sendiri (jumlah modulo 103) dan tiga set kode: set C memuat dua angka dalam setiap karakter, sehingga deretan angka yang panjang menghasilkan barcode yang lebih pendek. Encoder memilihkan set kode untuk Anda, dan pembaca tidak mencetak karakter pemeriksa.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.rules.1"
+  },
+  "7429e56ee897": {
+    "source": "Each Code 128 character is 11 modules wide, plus start, check and stop characters and 10 modules of quiet zone each side. With the downloads' 0.353 mm module, ABCDEFGHIJ is 58.2 mm wide and 1234567890 is 38.8 mm: the digits pair up.",
+    "text": "Setiap karakter Code 128 selebar 11 modul, ditambah karakter awal, pemeriksa, dan akhir, serta zona tenang 10 modul di setiap sisi. Dengan modul 0.353 mm pada hasil unduhan, ABCDEFGHIJ selebar 58.2 mm dan 1234567890 selebar 38.8 mm: angka-angkanya berpasangan.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.0"
+  },
+  "58c654d2b792": {
+    "source": "A common rule for handheld scanners is bars at least 15% of the barcode's length, or 6.35 mm (a quarter inch), whichever is more. The default bar height is 15 mm.",
+    "text": "Aturan umum untuk pemindai genggam adalah tinggi batang minimal 15% dari panjang barcode, atau 6.35 mm (seperempat inci), mana pun yang lebih besar. Tinggi batang bawaan adalah 15 mm.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.1"
+  },
+  "b165f84fd1ba": {
+    "source": "There's no fixed size: shrink the module for small labels, but test with the scanners that will read it, especially on thermal label printers.",
+    "text": "Tidak ada ukuran baku: perkecil modul untuk label kecil, tetapi uji dengan pemindai yang akan membacanya, terutama pada printer label termal.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.2"
+  },
+  "0dede9a6603e": {
+    "source": "Can Code 128 hold lowercase letters?",
+    "text": "Apakah Code 128 dapat memuat huruf kecil?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.0.question"
+  },
+  "4a77b24587b5": {
+    "source": "Yes. Unlike Code 39, it encodes upper and lower case, digits and symbols.",
+    "text": "Ya. Berbeda dengan Code 39, Code 128 mengodekan huruf besar dan kecil, angka, serta simbol.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.0.answer"
+  },
+  "b54f48ff7572": {
+    "source": "Why is my barcode so long?",
+    "text": "Mengapa barcode saya panjang sekali?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.1.question"
+  },
+  "d10883e237e0": {
+    "source": "Long text makes long barcodes: each letter adds 11 modules. Shorten the text, use digits where you can (they pair up), or use a 2D code such as Data Matrix, which holds far more in a small square.",
+    "text": "Teks yang panjang menghasilkan barcode yang panjang: setiap huruf menambah 11 modul. Persingkat teks, gunakan angka bila memungkinkan (angka berpasangan), atau gunakan kode 2D seperti Data Matrix, yang memuat jauh lebih banyak data dalam persegi kecil.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.1.answer"
+  },
+  "c49509a2641c": {
+    "source": "Is Code 128 the same as GS1-128?",
+    "text": "Apakah Code 128 sama dengan GS1-128?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.2.question"
+  },
+  "b98f8aeb01e3": {
+    "source": "GS1-128 is Code 128 with a special first character (FNC1) and GS1 Application Identifiers. A plain Code 128 with GS1-looking text isn't a GS1-128, and GS1 systems won't treat it as one.",
+    "text": "GS1-128 adalah Code 128 dengan karakter pertama khusus (FNC1) dan GS1 Application Identifiers. Code 128 biasa dengan teks yang menyerupai format GS1 bukanlah GS1-128, dan sistem GS1 tidak akan memperlakukannya demikian.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.2.answer"
+  },
+  "142797b9804d": {
+    "source": "Free ITF-14 Barcode Generator for Cartons",
+    "text": "Generator Barcode ITF-14 Gratis untuk Karton",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.title"
+  },
+  "3543c3bc68be": {
+    "source": "Make an ITF-14 barcode for shipping cartons: 13 digits get the check digit, 14 are checked. Bearer bars included. SVG, PDF and EPS for print. Free.",
+    "text": "Buat barcode ITF-14 untuk karton pengiriman: 13 digit ditambahkan digit pemeriksa, 14 digit diperiksa. Sudah termasuk bearer bar. SVG, PDF, dan EPS untuk cetak. Gratis.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.metaDescription"
+  },
+  "7eb62a8e4cb5": {
+    "source": "ITF-14 is the barcode printed on corrugated cartons that hold retail products. It carries the 14-digit GTIN of the case. Type 13 digits and the check digit is added, or all 14 to have it checked, and download a vector with its bearer bars for your carton artwork.",
+    "text": "ITF-14 adalah barcode yang dicetak pada karton bergelombang berisi produk ritel. Barcode ini membawa GTIN 14 digit dari kemasan karton tersebut. Ketik 13 digit dan digit pemeriksa akan ditambahkan, atau ketik 14 digit untuk diperiksa, lalu unduh vektor beserta bearer bar-nya untuk desain karton Anda.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.intro"
+  },
+  "51bb0e6ae783": {
+    "source": "Outer cases and shipping cartons scanned in warehouses and distribution centers, not at the checkout. The thick frame around the bars (bearer bars) evens out printing pressure on rough board and stops a scanner reading only part of the barcode.",
+    "text": "Karton luar dan karton pengiriman yang dipindai di gudang dan pusat distribusi, bukan di kasir. Bingkai tebal di sekeliling garis barcode (bearer bar) meratakan tekanan cetak pada papan yang kasar dan mencegah pemindai hanya membaca sebagian barcode.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.usedFor.0"
+  },
+  "f7eb05998dd2": {
+    "source": "The first digit is the indicator, 1 to 8, which tells packaging levels apart (a case of 6, a case of 24). The next 12 digits are the GTIN of the item inside without its check digit, and a new check digit closes the number.",
+    "text": "Digit pertama adalah indikator, 1 sampai 8, yang membedakan tingkat kemasan (karton isi 6, karton isi 24). 12 digit berikutnya adalah GTIN barang di dalamnya tanpa digit pemeriksanya, dan digit pemeriksa baru menutup nomor tersebut.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.usedFor.1"
+  },
+  "71a2765e870b": {
+    "source": "Where does an ITF-14 number come from?",
+    "text": "Dari mana asal nomor ITF-14?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.title"
+  },
+  "671dd15961a5": {
+    "source": "From the GTIN of the product inside. Take its 12-digit body (an EAN-13 without the check digit, or a UPC-A with a 0 in front), put an indicator digit before it and let the generator add the new check digit.",
+    "text": "Dari GTIN produk di dalamnya. Ambil 12 digit badannya (EAN-13 tanpa digit pemeriksa, atau UPC-A dengan angka 0 di depan), letakkan satu digit indikator di depannya, lalu biarkan generator menambahkan digit pemeriksa yang baru.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.paragraphs.0"
+  },
+  "2e1eafaa208c": {
+    "source": "So you need GS1 numbers for the product itself first. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "Jadi Anda perlu nomor GS1 untuk produknya terlebih dahulu. GTIN dilisensikan, bukan dibeli putus: Anda bergabung dengan GS1 (atau organisasi GS1 di negara Anda), mendapatkan prefiks perusahaan, lalu menomori produk Anda dari prefiks itu. Pengecer besar dan marketplace memeriksa GTIN terhadap registri GS1, sehingga nomor yang dijual ulang dari prefiks orang lain bisa ditolak.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.paragraphs.1"
+  },
+  "4e12069ff3d8": {
+    "source": "Digits only; spaces and dashes are ignored. Thirteen digits get the check digit added, fourteen have it checked.",
+    "text": "Hanya digit; spasi dan tanda hubung diabaikan. Tiga belas digit ditambahkan digit pemeriksa, empat belas digit diperiksa.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.rules.0"
+  },
+  "03fce9c1f85f": {
+    "source": "The check digit uses the same 3, 1, 3, 1… weights from the right as EAN-13, over 13 digits.",
+    "text": "Digit pemeriksa memakai bobot 3, 1, 3, 1… dari kanan yang sama seperti EAN-13, atas 13 digit.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.rules.1"
+  },
+  "65163656744f": {
+    "source": "GS1 sizes ITF-14 for cartons: a module of 0.495 mm to 1.016 mm (1.016 mm is 100%) and bars at least 32 mm high, with 10 modules of quiet zone each side.",
+    "text": "GS1 menetapkan ukuran ITF-14 untuk karton: modul 0,495 mm hingga 1,016 mm (1,016 mm adalah 100%) dan tinggi garis minimal 32 mm, dengan zona hening 10 modul di setiap sisi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.0"
+  },
+  "56f224fc7349": {
+    "source": "The downloads use a 0.353 mm module and 25 mm bars, smaller than GS1's minimum for cartons. Enlarge the file to 141% in your artwork: the module becomes 0.495 mm and the bars 35 mm.",
+    "text": "Unduhan memakai modul 0,353 mm dan garis setinggi 25 mm, lebih kecil dari ukuran minimum GS1 untuk karton. Perbesar file hingga 141% pada desain Anda: modul menjadi 0,495 mm dan garis menjadi 35 mm.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.1"
+  },
+  "18d61468335b": {
+    "source": "Printed straight onto brown board, bigger is safer: check the size with your packaging printer.",
+    "text": "Jika dicetak langsung pada papan cokelat, lebih besar lebih aman: periksa ukurannya dengan percetakan kemasan Anda.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.2"
+  },
+  "9f48e9c4bf5a": {
+    "source": "Can I put an ITF-14 on a retail product?",
+    "text": "Bisakah saya memasang ITF-14 pada produk ritel?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.0.question"
+  },
+  "348adc0c77f2": {
+    "source": "No, it's for cases and cartons. The consumer unit inside carries its own EAN-13 or UPC-A for the checkout.",
+    "text": "Tidak, ITF-14 untuk karton dan kemasan luar. Unit konsumen di dalamnya membawa EAN-13 atau UPC-A sendiri untuk kasir.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.0.answer"
+  },
+  "d6b83fbe2489": {
+    "source": "What indicator digit should I use?",
+    "text": "Digit indikator apa yang harus saya pakai?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.1.question"
+  },
+  "f5809ecb63eb": {
+    "source": "Any of 1 to 8, chosen by you, one per packaging configuration: for example 1 for a case of 6 and 2 for a case of 24. 9 is kept for items with variable quantity.",
+    "text": "Salah satu dari 1 sampai 8, Anda yang memilih, satu untuk setiap konfigurasi kemasan: misalnya 1 untuk karton isi 6 dan 2 untuk karton isi 24. Angka 9 disediakan untuk barang dengan jumlah yang bervariasi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.1.answer"
+  },
+  "1e761a972faa": {
+    "source": "Can I turn the bearer bars off?",
+    "text": "Bisakah bearer bar dimatikan?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.2.question"
+  },
+  "fbfdafeb533b": {
+    "source": "Not here: the generator always draws the full frame, which GS1 recommends when ITF-14 is printed directly onto corrugated board.",
+    "text": "Tidak di sini: generator selalu menggambar bingkai penuh, yang direkomendasikan GS1 saat ITF-14 dicetak langsung pada papan bergelombang.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.2.answer"
+  },
+  "6431528d484d": {
+    "source": "Free GS1-128 Barcode Generator (SSCC, Batch, Expiry)",
+    "text": "Generator Barcode GS1-128 Gratis (SSCC, Batch, Kedaluwarsa)",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.title"
+  },
+  "b3ab040765c0": {
+    "source": "Make GS1-128 barcodes for logistics labels: GTIN, SSCC, batch, expiry and weight in one barcode. Check digits and dates checked. SVG, PDF and EPS. Free.",
+    "text": "Buat barcode GS1-128 untuk label logistik: GTIN, SSCC, batch, tanggal kedaluwarsa, dan berat dalam satu barcode. Digit pemeriksa dan tanggal diperiksa. SVG, PDF, dan EPS. Gratis.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.metaDescription"
+  },
+  "bd497ead49fb": {
+    "source": "GS1-128 puts several pieces of supply chain data into one barcode, each marked by an Application Identifier (AI) in brackets: (01) for the GTIN, (17) for the expiry date, (10) for the batch, (00) for a pallet's SSCC. Type the AIs and values; check digits are added or checked for you.",
+    "text": "GS1-128 menyatukan beberapa data rantai pasok dalam satu barcode, masing-masing ditandai dengan Application Identifier (AI) dalam tanda kurung: (01) untuk GTIN, (17) untuk tanggal kedaluwarsa, (10) untuk batch, (00) untuk SSCC pada palet. Ketikkan AI dan nilainya; digit pemeriksa ditambahkan atau diperiksa untuk Anda.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.intro"
+  },
+  "fcfd83fcb2ae": {
+    "source": "Logistics labels on cases and pallets, and labels on fresh food, meat and medical supplies where a batch, an expiry date or a weight must travel with the GTIN.",
+    "text": "Label logistik pada karton dan palet, serta label pada makanan segar, daging, dan perlengkapan medis yang memerlukan batch, tanggal kedaluwarsa, atau berat untuk menyertai GTIN.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.usedFor.0"
+  },
+  "8bf770848b73": {
+    "source": "The GS1 logistic label carries the pallet's SSCC, AI (00), as a GS1-128. Retail and logistics partners usually specify which AIs they want on it.",
+    "text": "Label logistik GS1 memuat SSCC palet, AI (00), sebagai GS1-128. Mitra ritel dan logistik biasanya menentukan AI mana yang mereka inginkan di dalamnya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.usedFor.1"
+  },
+  "da8517c880c4": {
+    "source": "Do I need GS1 numbers for GS1-128?",
+    "text": "Apakah saya memerlukan nomor GS1 untuk GS1-128?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.title"
+  },
+  "10a672f37fdb": {
+    "source": "For the GTIN in (01) and the SSCC in (00), yes: both are built from a GS1 company prefix. Batch numbers, dates and weights are your own data.",
+    "text": "Untuk GTIN pada (01) dan SSCC pada (00), ya: keduanya dibuat dari company prefix GS1. Nomor batch, tanggal, dan berat adalah data Anda sendiri.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.paragraphs.0"
+  },
+  "8ffb1e1b55d9": {
+    "source": "A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "GTIN dilisensikan, bukan dibeli putus: Anda bergabung dengan GS1 (atau organisasi GS1 di negara Anda), mendapatkan company prefix, lalu memberi nomor pada produk Anda dari prefix tersebut. Peritel besar dan marketplace memeriksa GTIN terhadap registri GS1, sehingga nomor yang dijual kembali dari prefix milik orang lain bisa ditolak.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.paragraphs.1"
+  },
+  "3b87dfbd5a2b": {
+    "source": "Write each AI in brackets followed by its value: (01)09501101530003(17)261231(10)AB-123. The brackets aren't encoded; they show where each field starts.",
+    "text": "Tulis setiap AI dalam tanda kurung diikuti nilainya: (01)09501101530003(17)261231(10)AB-123. Tanda kurung tidak dikodekan; tanda ini hanya menunjukkan awal setiap bidang.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.0"
+  },
+  "4d101be4f43b": {
+    "source": "GTINs in (01) and (02) and SSCCs in (00) get their check digit added when you leave it off, or checked when you don't. The encoder also checks every value against GS1's rules: an unknown AI or an impossible date such as month 13 is refused.",
+    "text": "GTIN pada (01) dan (02) serta SSCC pada (00) akan ditambahkan digit pemeriksanya jika Anda tidak menuliskannya, atau diperiksa jika Anda menuliskannya. Encoder juga memeriksa setiap nilai sesuai aturan GS1: AI yang tidak dikenal atau tanggal yang mustahil, seperti bulan 13, akan ditolak.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.1"
+  },
+  "31543a972a0e": {
+    "source": "A GS1-128 holds up to 48 characters of AIs and data. Put variable-length fields such as (10) batch last, so no separator is needed after them.",
+    "text": "Satu GS1-128 memuat hingga 48 karakter AI dan data. Letakkan bidang dengan panjang variabel seperti (10) batch di bagian akhir, agar tidak perlu pemisah setelahnya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.2"
+  },
+  "94ad896b62ca": {
+    "source": "On GS1 logistic labels, GS1 asks for a module of 0.495 mm to 0.94 mm (0.495 mm is the target), bars at least 31.75 mm high and a barcode no longer than 165 mm with its quiet zones.",
+    "text": "Pada label logistik GS1, GS1 mensyaratkan modul 0,495 mm hingga 0,94 mm (0,495 mm adalah targetnya), tinggi batang minimal 31,75 mm, dan panjang barcode tidak lebih dari 165 mm termasuk zona tenangnya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.0"
+  },
+  "bb6b724ba287": {
+    "source": "The downloads use a 0.353 mm module and 15 mm bars, which suits small item labels. For a pallet or case label, set the bar height to 23 mm and enlarge the file to 141%: the module becomes 0.495 mm and the bars 32.4 mm. The example is then 142 mm long.",
+    "text": "Unduhan menggunakan modul 0,353 mm dan batang 15 mm, yang cocok untuk label barang kecil. Untuk label palet atau karton, atur tinggi batang ke 23 mm dan perbesar file hingga 141%: modulnya menjadi 0,495 mm dan batangnya 32,4 mm. Contohnya kemudian sepanjang 142 mm.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.1"
+  },
+  "53953bee2634": {
+    "source": "Long data makes long barcodes: if it won't fit in 165 mm, split it over two GS1-128 barcodes, as GS1 logistic labels do.",
+    "text": "Data yang panjang menghasilkan barcode yang panjang: jika tidak muat dalam 165 mm, bagi menjadi dua barcode GS1-128, seperti pada label logistik GS1.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.2"
+  },
+  "6659ea2f7d27": {
+    "source": "What do (17) and (15) dates look like?",
+    "text": "Seperti apa tanggal (17) dan (15)?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.0.question"
+  },
+  "c5adec7ec0b7": {
+    "source": "Six digits, YYMMDD: (17)261231 is an expiry of 31 December 2026. A day of 00 means the end of that month.",
+    "text": "Enam digit, YYMMDD: (17)261231 adalah tanggal kedaluwarsa 31 Desember 2026. Hari 00 berarti akhir bulan tersebut.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.0.answer"
+  },
+  "a824a925ac2e": {
+    "source": "Can I add a serial number?",
+    "text": "Bisakah saya menambahkan nomor seri?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.1.question"
+  },
+  "a22bba2c340b": {
+    "source": "Yes, with AI (21), up to 20 characters. Put it last, or after other fixed-length fields, to keep the barcode short.",
+    "text": "Bisa, dengan AI (21), hingga 20 karakter. Letakkan di bagian akhir, atau setelah bidang berpanjang tetap lainnya, agar barcode tetap pendek.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.1.answer"
+  },
+  "1b796f6907df": {
+    "source": "Why does my scanner show no brackets?",
+    "text": "Mengapa pemindai saya tidak menampilkan tanda kurung?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.2.question"
+  },
+  "e2f222913d2e": {
+    "source": "The brackets are only for people. Readers report the data with a symbology identifier (]C1) or none, and separate variable-length fields with an invisible GS character. The scan check here accepts all of these forms.",
+    "text": "Tanda kurung hanya untuk manusia. Pembaca melaporkan data dengan pengenal simbologi (]C1) atau tanpa pengenal, dan memisahkan bidang berpanjang variabel dengan karakter GS yang tak terlihat. Pemeriksaan pemindaian di sini menerima semua bentuk tersebut.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.2.answer"
+  },
+  "54cdec66ca5a": {
+    "source": "Free Data Matrix Code Generator",
+    "text": "Generator Kode Data Matrix Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.title"
+  },
+  "33a7d883dd0b": {
+    "source": "Make a Data Matrix code for part marking, small labels and serial numbers. Any text up to 1,000 characters, scan-checked in your browser. SVG, PDF and PNG.",
+    "text": "Buat kode Data Matrix untuk penandaan komponen, label kecil, dan nomor seri. Teks apa pun hingga 1.000 karakter, dicek pemindaiannya di browser Anda. SVG, PDF, dan PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.metaDescription"
+  },
+  "0bd28fd6ac6c": {
+    "source": "Data Matrix is a small square 2D code that holds a lot of data in very little space. Type any text, up to 1,000 characters here, check that it scans and download it for parts, electronics, small labels and lab samples.",
+    "text": "Data Matrix adalah kode 2D berbentuk persegi kecil yang memuat banyak data dalam ruang yang sangat sedikit. Ketik teks apa pun, hingga 1.000 karakter di sini, pastikan kode dapat dipindai, lalu unduh untuk komponen, elektronik, label kecil, dan sampel laboratorium.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.intro"
+  },
+  "bbd731b691ab": {
+    "source": "Marking parts and electronics, sometimes etched straight onto metal, because a Data Matrix stays readable when part of it is damaged. Also small labels, lab tubes, documents and mail.",
+    "text": "Menandai komponen dan elektronik, kadang diukir langsung pada logam, karena Data Matrix tetap terbaca meskipun sebagian rusak. Juga untuk label kecil, tabung laboratorium, dokumen, dan surat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.usedFor.0"
+  },
+  "c34156dbe396": {
+    "source": "Readers need a camera (an image-based scanner or a phone app), not a laser scanner. Many warehouse scanners read it, but some phone camera apps only read QR codes.",
+    "text": "Pembaca memerlukan kamera (pemindai berbasis gambar atau aplikasi di ponsel), bukan pemindai laser. Banyak pemindai gudang dapat membacanya, tetapi beberapa aplikasi kamera ponsel hanya membaca kode QR.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.usedFor.1"
+  },
+  "5a4a713e53d3": {
+    "source": "Plain Data Matrix or GS1 DataMatrix?",
+    "text": "Data Matrix biasa atau GS1 DataMatrix?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.title"
+  },
+  "203ad7dd545c": {
+    "source": "This page makes plain Data Matrix (ECC 200): it holds whatever text you type, with no registration.",
+    "text": "Halaman ini membuat Data Matrix biasa (ECC 200): memuat teks apa pun yang Anda ketik, tanpa pendaftaran.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.paragraphs.0"
+  },
+  "5a4cc58b06df": {
+    "source": "GS1 DataMatrix, required on some medicines and regulated packaging, adds a special first character and GS1 Application Identifiers. It isn't offered here; use GS1-128 if you need GS1 data in a barcode from this generator.",
+    "text": "GS1 DataMatrix, yang diwajibkan pada sebagian obat dan kemasan yang diatur regulasi, menambahkan karakter pertama khusus dan GS1 Application Identifiers. Jenis ini tidak tersedia di sini; gunakan GS1-128 jika Anda memerlukan data GS1 dalam barcode dari generator ini.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.paragraphs.1"
+  },
+  "084247522b6a": {
+    "source": "Any text, up to 1,000 characters here. The code grows in steps as you add text, from 10 × 10 cells upwards; this generator draws the square form.",
+    "text": "Teks apa pun, hingga 1.000 karakter di sini. Kode membesar bertahap seiring teks yang Anda tambahkan, mulai dari 10 × 10 sel ke atas; generator ini menggambar bentuk persegi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.rules.0"
+  },
+  "df3a5ab10444": {
+    "source": "The largest square Data Matrix (144 × 144 cells) holds 3,116 digits, 2,335 letters and digits, or 1,556 bytes. Digits pack most tightly.",
+    "text": "Data Matrix persegi terbesar (144 × 144 sel) memuat 3.116 digit, 2.335 huruf dan digit, atau 1.556 byte. Digit dapat dikemas paling padat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.rules.1"
+  },
+  "3924066c6435": {
+    "source": "The vector downloads draw each cell 0.71 mm square, so SN-0042-7781 comes out 12.7 mm across with its margin. Scale it down in your layout for small labels.",
+    "text": "Unduhan vektor menggambar setiap sel berukuran persegi 0,71 mm, sehingga SN-0042-7781 berukuran lebar 12,7 mm beserta marginnya. Perkecil di tata letak Anda untuk label kecil.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.0"
+  },
+  "34d7c225b2e8": {
+    "source": "The smallest cell a scanner reads depends on the scanner and the print, so test at the size you'll use.",
+    "text": "Sel terkecil yang dapat dibaca pemindai bergantung pada pemindai dan hasil cetaknya, jadi uji pada ukuran yang akan Anda gunakan.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.1"
+  },
+  "cdba82f03c20": {
+    "source": "Data Matrix needs only a 1-cell margin; the generator starts with 2.",
+    "text": "Data Matrix hanya memerlukan margin 1 sel; generator ini memulai dengan 2.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.2"
+  },
+  "043e570a3b23": {
+    "source": "Can a phone read a Data Matrix?",
+    "text": "Apakah ponsel dapat membaca Data Matrix?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.0.question"
+  },
+  "a96a7b1effbb": {
+    "source": "Many barcode scanner apps can. Some phone camera apps only open QR codes, so if people scan with their phones, a QR code is the safer choice.",
+    "text": "Banyak aplikasi pemindai barcode bisa. Beberapa aplikasi kamera ponsel hanya membuka kode QR, jadi jika orang memindai dengan ponsel, kode QR adalah pilihan yang lebih aman.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.0.answer"
+  },
+  "0074eaa0269b": {
+    "source": "Data Matrix or QR code?",
+    "text": "Data Matrix atau kode QR?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.1.question"
+  },
+  "691a2294de01": {
+    "source": "For links people scan with a phone, QR. For small parts and industrial labels read by scanners, Data Matrix: it's more compact for short serial numbers and is the norm in electronics and part marking.",
+    "text": "Untuk tautan yang dipindai orang dengan ponsel, pilih QR. Untuk komponen kecil dan label industri yang dibaca pemindai, pilih Data Matrix: lebih ringkas untuk nomor seri pendek dan menjadi standar di bidang elektronik dan penandaan komponen.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.1.answer"
+  },
+  "606b842e0bf1": {
+    "source": "Does it have error correction?",
+    "text": "Apakah ada koreksi kesalahan?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.2.question"
+  },
+  "dc815e534921": {
+    "source": "Yes. ECC 200 Data Matrix always includes Reed–Solomon error correction, so a scuffed or partly covered code can still be read.",
+    "text": "Ya. Data Matrix ECC 200 selalu menyertakan koreksi kesalahan Reed–Solomon, sehingga kode yang tergores atau sebagian tertutup masih dapat dibaca.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.2.answer"
+  },
+  "9c37c845e0b6": {
+    "source": "Free EAN-8 Barcode Generator",
+    "text": "Pembuat Barcode EAN-8 Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.title"
+  },
+  "22d56fe4901b": {
+    "source": "Make an EAN-8 barcode for packs too small for an EAN-13. Type 7 digits and the check digit is added, or 8 to have it checked. SVG, PDF, EPS and PNG.",
+    "text": "Buat barcode EAN-8 untuk kemasan yang terlalu kecil untuk EAN-13. Ketik 7 digit dan digit pemeriksa ditambahkan, atau 8 digit untuk diperiksa. SVG, PDF, EPS, dan PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.metaDescription"
+  },
+  "dfef763e539b": {
+    "source": "EAN-8 is the short retail barcode for packs too small to fit an EAN-13, such as a lipstick or a pack of gum. Type 7 digits and the check digit is added, or all 8 to have it checked.",
+    "text": "EAN-8 adalah barcode ritel pendek untuk kemasan yang terlalu kecil untuk EAN-13, seperti lipstik atau sebungkus permen karet. Ketik 7 digit dan digit pemeriksa ditambahkan, atau ketik 8 digit untuk diperiksa.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.intro"
+  },
+  "a0be1a284394": {
+    "source": "Small retail items where an EAN-13 would cover too much of the pack. Checkout scanners read it like any EAN.",
+    "text": "Barang ritel kecil yang kemasannya akan tertutup terlalu banyak oleh EAN-13. Pemindai kasir membacanya seperti EAN lainnya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.usedFor.0"
+  },
+  "852edb3101a6": {
+    "source": "EAN-8 numbers starting with 0 or 2 are kept for use inside a store or company, like EAN-13 numbers starting with 2.",
+    "text": "Nomor EAN-8 yang diawali 0 atau 2 dicadangkan untuk penggunaan di dalam toko atau perusahaan, seperti nomor EAN-13 yang diawali 2.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.usedFor.1"
+  },
+  "a56cca56e15d": {
+    "source": "Where do EAN-8 numbers come from?",
+    "text": "Dari mana nomor EAN-8 berasal?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.title"
+  },
+  "022aabdb2cf3": {
+    "source": "From GS1, one at a time: GS1 organizations issue EAN-8 numbers (GTIN-8) individually, only for products that are too small for an EAN-13. You can't shorten an EAN-13 into one.",
+    "text": "Dari GS1, satu per satu: organisasi GS1 menerbitkan nomor EAN-8 (GTIN-8) secara individual, hanya untuk produk yang terlalu kecil untuk EAN-13. Anda tidak dapat memperpendek EAN-13 menjadi EAN-8.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.paragraphs.0"
+  },
+  "18362e5c5ba2": {
+    "source": "Ask your GS1 organization whether your product qualifies; often a smaller EAN-13 at 80% fits.",
+    "text": "Tanyakan kepada organisasi GS1 Anda apakah produk Anda memenuhi syarat; sering kali EAN-13 yang lebih kecil pada 80% sudah muat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.paragraphs.1"
+  },
+  "5f6754508a7a": {
+    "source": "Digits only. Seven digits get the check digit added, eight have it checked.",
+    "text": "Hanya angka. Tujuh digit akan ditambahkan digit pemeriksa, delapan digit akan diperiksa.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.rules.0"
+  },
+  "1fc4802286be": {
+    "source": "The check digit weighs the 7 digits 3, 1, 3… from the right, as in every GS1 number.",
+    "text": "Digit pemeriksa membobot 7 digit dengan 3, 1, 3… dari kanan, seperti pada setiap nomor GS1.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.rules.1"
+  },
+  "7543d202719e": {
+    "source": "At 100% an EAN-8 is 26.73 mm wide with its quiet zones, with a 0.33 mm module; GS1 allows 80% to 200%.",
+    "text": "Pada 100%, lebar EAN-8 adalah 26.73 mm termasuk zona tenang, dengan modul 0.33 mm; GS1 mengizinkan 80% hingga 200%.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.sizing.0"
+  },
+  "ef03a8fd06a1": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%, with 7 modules of quiet zone each side, the minimum.",
+    "text": "Unduhan vektor menggunakan modul 0.353 mm, sekitar 107%, dengan zona tenang 7 modul di setiap sisi, yaitu batas minimum.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.sizing.1"
+  },
+  "6436dfdfcff8": {
+    "source": "Can I use an EAN-8 instead of an EAN-13 to save space?",
+    "text": "Bisakah saya memakai EAN-8 sebagai pengganti EAN-13 untuk menghemat ruang?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.0.question"
+  },
+  "489cb7578ef3": {
+    "source": "Only with an EAN-8 number from GS1. Check first whether an EAN-13 at 80% fits your pack: it's only 29.83 mm wide.",
+    "text": "Hanya jika Anda memiliki nomor EAN-8 dari GS1. Periksa dulu apakah EAN-13 pada 80% muat di kemasan Anda: lebarnya hanya 29.83 mm.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.0.answer"
+  },
+  "90586fd9db16": {
+    "source": "Is EAN-8 the same as UPC-E?",
+    "text": "Apakah EAN-8 sama dengan UPC-E?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.1.question"
+  },
+  "97c04b6e9b42": {
+    "source": "No. Both are short retail barcodes, but a UPC-E is a shortened UPC-A number, while an EAN-8 is a separate 8-digit number issued by GS1.",
+    "text": "Tidak. Keduanya barcode ritel pendek, tetapi UPC-E adalah nomor UPC-A yang dipersingkat, sedangkan EAN-8 adalah nomor 8 digit tersendiri yang diterbitkan oleh GS1.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.1.answer"
+  },
+  "762d7b6e125a": {
+    "source": "Free UPC-E Barcode Generator",
+    "text": "Generator Barcode UPC-E Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.title"
+  },
+  "8a7652037d23": {
+    "source": "Make a UPC-E barcode, the short UPC for small packs. Enter 6 to 8 digits, or a 12-digit UPC-A and see whether it can be shortened. SVG, PDF and PNG. Free.",
+    "text": "Buat barcode UPC-E, UPC singkat untuk kemasan kecil. Masukkan 6 hingga 8 digit, atau UPC-A 12 digit dan lihat apakah bisa dipersingkat. SVG, PDF, dan PNG. Gratis.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.metaDescription"
+  },
+  "87d0f6288170": {
+    "source": "UPC-E is a UPC-A number with its zeros squeezed out, for packs too small for a full UPC-A. Enter the 6 to 8 digits of a UPC-E, or paste a 12-digit UPC-A and the generator tells you whether it can be shortened.",
+    "text": "UPC-E adalah nomor UPC-A yang angka nolnya dihilangkan, untuk kemasan yang terlalu kecil bagi UPC-A penuh. Masukkan 6 hingga 8 digit UPC-E, atau tempel UPC-A 12 digit dan generator akan memberi tahu Anda apakah nomor itu bisa dipersingkat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.intro"
+  },
+  "643f84ea2269": {
+    "source": "Small products sold in the US and Canada: cans, candy bars, cosmetics. Its bars take 51 modules, against 95 for a UPC-A.",
+    "text": "Produk kecil yang dijual di AS dan Kanada: kaleng, cokelat batangan, kosmetik. Batangnya memakai 51 modul, dibandingkan 95 pada UPC-A.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.usedFor.0"
+  },
+  "c1dead3e7b71": {
+    "source": "Scanners expand it back to the full UPC-A, so stores see the same number either way.",
+    "text": "Pemindai mengembalikannya ke UPC-A penuh, sehingga toko melihat nomor yang sama dalam kedua bentuk.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.usedFor.1"
+  },
+  "1ea76911ccb3": {
+    "source": "Can my UPC-A be shortened?",
+    "text": "Apakah UPC-A saya bisa dipersingkat?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.title"
+  },
+  "c4aeb8b7a592": {
+    "source": "Only some can. The number must start with 0 or 1 and have zeros in the right places: a manufacturer number ending in 000, 100 or 200 with an item number of 00000 to 00999, ending in 00 with 00000 to 00099, ending in 0 with 00000 to 00009, or any manufacturer number with an item number of 00005 to 00009.",
+    "text": "Hanya sebagian yang bisa. Nomor harus diawali 0 atau 1 dan memiliki angka nol di posisi yang tepat: nomor produsen berakhiran 000, 100, atau 200 dengan nomor item 00000 hingga 00999, berakhiran 00 dengan 00000 hingga 00099, berakhiran 0 dengan 00000 hingga 00009, atau nomor produsen apa pun dengan nomor item 00005 hingga 00009.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.paragraphs.0"
+  },
+  "1b23a37b71ba": {
+    "source": "The number itself comes from GS1, as for any UPC-A; GS1 US can tell you whether a UPC-E fits your prefix.",
+    "text": "Nomornya sendiri berasal dari GS1, seperti UPC-A pada umumnya; GS1 US dapat memberi tahu Anda apakah UPC-E cocok untuk prefiks Anda.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.paragraphs.1"
+  },
+  "98b0464b7c1a": {
+    "source": "Enter 6 digits (number system 0 is assumed), 7 (number system and six digits; the check digit is added) or 8 (with the check digit, which is checked), or an 11- or 12-digit UPC-A to shorten.",
+    "text": "Masukkan 6 digit (sistem angka 0 dianggap sebagai default), 7 (sistem angka dan enam digit; digit pemeriksa ditambahkan) atau 8 (dengan digit pemeriksa, yang akan diperiksa), atau UPC-A 11 atau 12 digit untuk dipersingkat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.rules.0"
+  },
+  "cdc343ec0d94": {
+    "source": "The check digit is the check digit of the expanded UPC-A, so the generator expands the number first.",
+    "text": "Digit pemeriksa adalah digit pemeriksa dari UPC-A yang telah diperluas, sehingga generator memperluas nomor itu terlebih dahulu.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.rules.1"
+  },
+  "69f10216a359": {
+    "source": "UPC-E follows UPC-A's sizes: a 0.33 mm module at 100%, from 80% to 200%. Keep 9 modules clear on each side.",
+    "text": "UPC-E mengikuti ukuran UPC-A: modul 0,33 mm pada 100%, dari 80% hingga 200%. Sisakan ruang kosong sebesar 9 modul di setiap sisi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.sizing.0"
+  },
+  "1394ad5843db": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%.",
+    "text": "Unduhan vektor memakai modul 0,353 mm, sekitar 107%.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.sizing.1"
+  },
+  "47c23bea0aca": {
+    "source": "Why does my scanner show 12 digits?",
+    "text": "Mengapa pemindai saya menampilkan 12 digit?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.0.question"
+  },
+  "e592565cff00": {
+    "source": "Many readers expand a UPC-E to its UPC-A, and some to the 13-digit EAN. The scan check on this page accepts all of them.",
+    "text": "Banyak pembaca memperluas UPC-E menjadi UPC-A, dan sebagian menjadi EAN 13 digit. Pemeriksaan pemindaian di halaman ini menerima semuanya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.0.answer"
+  },
+  "d59cd4e61915": {
+    "source": "My UPC-A can't be shortened. What now?",
+    "text": "UPC-A saya tidak bisa dipersingkat. Apa yang harus dilakukan?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.1.question"
+  },
+  "11c7ae3bc6ce": {
+    "source": "Print the UPC-A, at down to 80% if space is tight, or ask GS1 US for a number that has a UPC-E form.",
+    "text": "Cetak UPC-A tersebut, hingga serendah 80% jika ruang terbatas, atau minta GS1 US memberikan nomor yang memiliki bentuk UPC-E.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.1.answer"
+  },
+  "28ee7033b2fd": {
+    "source": "Free Code 39 Barcode Generator",
+    "text": "Generator Barcode Code 39 Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.title"
+  },
+  "39b46a51e75b": {
+    "source": "Make a Code 39 barcode with capital letters, digits and - . $ / + %, up to 40 characters, for systems that require it. Scan-checked. SVG, PDF, PNG. Free.",
+    "text": "Buat barcode Code 39 dengan huruf kapital, angka, dan - . $ / + %, hingga 40 karakter, untuk sistem yang mewajibkannya. Sudah diperiksa pemindaian. SVG, PDF, PNG. Gratis.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.metaDescription"
+  },
+  "44b7033192cf": {
+    "source": "Code 39 is an older barcode for capital letters, digits and a few symbols. Nearly every scanner reads it, and some industries and older systems still require it. Type up to 40 characters, check that it scans and download it.",
+    "text": "Code 39 adalah barcode lama untuk huruf kapital, angka, dan beberapa simbol. Hampir semua pemindai dapat membacanya, dan beberapa industri serta sistem lama masih mewajibkannya. Ketik hingga 40 karakter, periksa apakah bisa dipindai, lalu unduh.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.intro"
+  },
+  "f71a84ce9db6": {
+    "source": "Labels in systems that specify it: older automotive and defence labels (LOGMARS), ID badges and legacy inventory systems.",
+    "text": "Label pada sistem yang menetapkannya: label otomotif dan pertahanan lama (LOGMARS), kartu identitas, dan sistem inventaris lama.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.usedFor.0"
+  },
+  "cb6d805d782a": {
+    "source": "If nothing requires Code 39, use Code 128: it holds lowercase letters and makes a shorter barcode for the same text.",
+    "text": "Jika tidak ada yang mewajibkan Code 39, gunakan Code 128: dapat memuat huruf kecil dan menghasilkan barcode yang lebih pendek untuk teks yang sama.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.usedFor.1"
+  },
+  "2e29fdb0b25b": {
+    "source": "Do I need to register a Code 39 barcode?",
+    "text": "Apakah saya perlu mendaftarkan barcode Code 39?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.numbers.title"
+  },
+  "9bc3f82cafab": {
+    "source": "No. Code 39 carries your own text: serial numbers, part numbers, IDs. There's nothing to license.",
+    "text": "Tidak. Code 39 membawa teks Anda sendiri: nomor seri, nomor komponen, ID. Tidak ada lisensi yang perlu diurus.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.numbers.paragraphs.0"
+  },
+  "a7b97ec1605c": {
+    "source": "Capital letters A to Z, digits, spaces and - . $ / + %, up to 40 characters. Lowercase letters show an error: use capitals, or Code 128 for mixed case.",
+    "text": "Huruf kapital A sampai Z, angka, spasi, dan - . $ / + %, hingga 40 karakter. Huruf kecil akan menampilkan kesalahan: gunakan huruf kapital, atau Code 128 untuk campuran huruf besar dan kecil.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.rules.0"
+  },
+  "ae028fa56f8d": {
+    "source": "Each code is wrapped in start and stop asterisks, which aren't typed or decoded. This generator adds no optional check character, which suits most systems; if yours requires a modulo 43 check, add it to your text yourself.",
+    "text": "Setiap kode diapit tanda bintang awal dan akhir, yang tidak diketik maupun didekode. Generator ini tidak menambahkan karakter pemeriksa opsional, yang cocok untuk sebagian besar sistem; jika sistem Anda memerlukan pemeriksaan modulo 43, tambahkan sendiri ke teks Anda.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.rules.1"
+  },
+  "c2e9c6b8fe20": {
+    "source": "Each Code 39 character is 13 to 16 modules wide, against Code 128's 11, so the same text makes a wider barcode: ABCDEFGHIJ is 74.4 mm in the downloads, 58.2 mm as Code 128.",
+    "text": "Setiap karakter Code 39 selebar 13 sampai 16 modul, sedangkan Code 128 selebar 11, sehingga teks yang sama menghasilkan barcode yang lebih lebar: ABCDEFGHIJ berukuran 74.4 mm pada unduhan, dan 58.2 mm sebagai Code 128.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.sizing.0"
+  },
+  "2fa22b103664": {
+    "source": "Keep 10 modules of blank space each side, and make the bars at least 15% of the length, or 6.35 mm, so they're easy to sweep.",
+    "text": "Sisakan ruang kosong 10 modul di setiap sisi, dan buat batang setidaknya 15% dari panjang atau 6.35 mm agar mudah disapu pemindai.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.sizing.1"
+  },
+  "d3267025816c": {
+    "source": "Can Code 39 do lowercase?",
+    "text": "Apakah Code 39 bisa huruf kecil?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.0.question"
+  },
+  "edc164ff5baf": {
+    "source": "Only in an extended mode (Full ASCII) that pairs characters, which this generator doesn't offer. Use Code 128 for lowercase.",
+    "text": "Hanya dalam mode perluasan (Full ASCII) yang memasangkan karakter, yang tidak tersedia di generator ini. Gunakan Code 128 untuk huruf kecil.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.0.answer"
+  },
+  "349ac715ad13": {
+    "source": "Should I type the asterisks?",
+    "text": "Haruskah saya mengetik tanda bintang?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.1.question"
+  },
+  "1eff6819a466": {
+    "source": "No. The start and stop characters are added for you, and the asterisk can't be part of the text.",
+    "text": "Tidak. Karakter awal dan akhir ditambahkan untuk Anda, dan tanda bintang tidak boleh menjadi bagian dari teks.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.1.answer"
+  },
+  "d3ff2381a9b5": {
+    "source": "Free PDF417 Barcode Generator",
+    "text": "Generator Barcode PDF417 Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.title"
+  },
+  "c59ac66e5fad": {
+    "source": "Make a PDF417 barcode, the stacked 2D code on IDs and boarding passes. Any text up to 1,000 characters, scan-checked in your browser. SVG, PDF and PNG.",
+    "text": "Buat barcode PDF417, kode 2D bertumpuk pada kartu identitas dan boarding pass. Teks apa pun hingga 1,000 karakter, diperiksa pemindaiannya di browser Anda. SVG, PDF, dan PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.metaDescription"
+  },
+  "1c50b7e7e107": {
+    "source": "PDF417 is a stacked 2D barcode: rows of small barcodes on top of each other, holding up to about a kilobyte of text. Type your text, check that it scans and download it.",
+    "text": "PDF417 adalah barcode 2D bertumpuk: deretan barcode kecil yang ditumpuk, dengan kapasitas teks hingga sekitar satu kilobyte. Ketik teks Anda, periksa apakah bisa dipindai, lalu unduh.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.intro"
+  },
+  "8d9b782b44c7": {
+    "source": "Driver's licenses and ID cards (US and Canadian licenses carry one on the back), paper boarding passes, shipping documents and forms that carry their data with them.",
+    "text": "SIM dan kartu identitas (SIM Amerika Serikat dan Kanada memuatnya di bagian belakang), boarding pass kertas, dokumen pengiriman, dan formulir yang membawa datanya sendiri.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.usedFor.0"
+  },
+  "36975970999d": {
+    "source": "Its wide, short shape fits along the edge of a card or a label, where a square code wouldn't.",
+    "text": "Bentuknya yang lebar dan pendek pas di tepi kartu atau label, tempat kode persegi tidak muat.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.usedFor.1"
+  },
+  "3255440c1e86": {
+    "source": "Do I need to register a PDF417 barcode?",
+    "text": "Apakah saya perlu mendaftarkan barcode PDF417?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.numbers.title"
+  },
+  "58e171f7d6ee": {
+    "source": "No. It holds whatever text you type. Formats such as driver's license data follow their own standards for what goes inside; this generator encodes your text as given.",
+    "text": "Tidak. Barcode ini memuat teks apa pun yang Anda ketik. Format seperti data SIM mengikuti standarnya sendiri untuk isinya; generator ini mengodekan teks Anda apa adanya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.numbers.paragraphs.0"
+  },
+  "356c0ea4f70f": {
+    "source": "Any text, up to 1,000 characters here. A PDF417 has 3 to 90 rows of 1 to 30 data columns and can hold up to 1,850 letters and digits, 2,710 digits or 1,108 bytes.",
+    "text": "Teks apa pun, hingga 1,000 karakter di sini. PDF417 memiliki 3 sampai 90 baris dengan 1 sampai 30 kolom data dan dapat memuat hingga 1,850 huruf dan angka, 2,710 angka, atau 1,108 byte.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.rules.0"
+  },
+  "3a03ca95b0f1": {
+    "source": "Error correction is built in, so part of the code can be damaged and still read.",
+    "text": "Koreksi kesalahan sudah tersedia, sehingga sebagian kode dapat rusak dan tetap terbaca.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.rules.1"
+  },
+  "42004b462490": {
+    "source": "The vector downloads use a 0.353 mm module: the sample text comes out 43.7 × 8.8 mm. Longer text adds rows and columns.",
+    "text": "Unduhan vektor menggunakan modul 0.353 mm: teks contoh berukuran 43.7 × 8.8 mm. Teks yang lebih panjang menambah baris dan kolom.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.sizing.0"
+  },
+  "b7915a1b54ea": {
+    "source": "Keep at least 2 modules of blank space around it; the generator starts there.",
+    "text": "Sisakan ruang kosong minimal 2 modul di sekelilingnya; generator ini memulainya dari sana.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.sizing.1"
+  },
+  "5ddaa2e50aa2": {
+    "source": "Can phones read PDF417?",
+    "text": "Apakah ponsel bisa membaca PDF417?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.0.question"
+  },
+  "fac7c836707d": {
+    "source": "Many barcode scanner apps can, but the built-in camera apps often don't. It's mostly read by dedicated scanners, such as ID and boarding pass readers.",
+    "text": "Banyak aplikasi pemindai barcode bisa, tetapi aplikasi kamera bawaan sering kali tidak. Barcode ini terutama dibaca oleh pemindai khusus, seperti pembaca kartu identitas dan boarding pass.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.0.answer"
+  },
+  "d7d62c8d60b8": {
+    "source": "Can I make a driver's license barcode?",
+    "text": "Bisakah saya membuat barcode SIM?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.1.question"
+  },
+  "8abdd2acf2fd": {
+    "source": "Only an issuing authority makes real ones. This generator encodes text you type as a PDF417; it doesn't format license data.",
+    "text": "Hanya otoritas penerbit yang membuat barcode asli. Generator ini mengodekan teks yang Anda ketik sebagai PDF417; generator ini tidak memformat data SIM.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.1.answer"
+  },
+  "ac2e3a678b70": {
+    "source": "Free Aztec Code Generator",
+    "text": "Generator Kode Aztec Gratis",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.title"
+  },
+  "4da66deb316c": {
+    "source": "Make an Aztec code, the 2D code on rail tickets and mobile boarding passes. No quiet zone needed. Any text up to 1,000 characters. SVG, PDF and PNG. Free.",
+    "text": "Buat kode Aztec, kode 2D pada tiket kereta dan boarding pass seluler. Tanpa quiet zone. Teks apa saja hingga 1.000 karakter. SVG, PDF, dan PNG. Gratis.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.metaDescription"
+  },
+  "7b652e0b6d1c": {
+    "source": "Aztec is a square 2D code that scanners find from the bullseye in its center, so it needs no blank margin around it. Type any text, check that it scans and download it.",
+    "text": "Aztec adalah kode 2D persegi yang ditemukan pemindai lewat bullseye di bagian tengahnya, sehingga tidak memerlukan margin kosong di sekelilingnya. Ketik teks apa saja, pastikan kode bisa dipindai, lalu unduh.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.intro"
+  },
+  "17b787f04a30": {
+    "source": "Transport tickets, both printed at home and shown on phone screens: many European rail operators use it (the UIC 918-3 ticket standard specifies Aztec), and airlines use it on mobile boarding passes.",
+    "text": "Tiket transportasi, baik yang dicetak di rumah maupun yang ditampilkan di layar ponsel: banyak operator kereta api Eropa menggunakannya (standar tiket UIC 918-3 menetapkan Aztec), dan maskapai penerbangan memakainya pada boarding pass seluler.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.usedFor.0"
+  },
+  "156a1333cec2": {
+    "source": "Because it needs no quiet zone, it fits on tickets and screens where space around the code is tight.",
+    "text": "Karena tidak memerlukan quiet zone, kode ini muat pada tiket dan layar yang ruang di sekitar kodenya terbatas.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.usedFor.1"
+  },
+  "58e7bffd2604": {
+    "source": "Do I need to register an Aztec code?",
+    "text": "Apakah saya perlu mendaftarkan kode Aztec?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.numbers.title"
+  },
+  "680651dada5e": {
+    "source": "No. It holds whatever text you type. Ticketing standards define their own data inside; this generator encodes your text as given.",
+    "text": "Tidak. Kode ini menyimpan teks apa pun yang Anda ketik. Standar tiket menentukan data mereka sendiri di dalamnya; generator ini mengenkode teks Anda apa adanya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.numbers.paragraphs.0"
+  },
+  "de7e5ed9bda0": {
+    "source": "Any text, up to 1,000 characters here. Aztec codes range from 15 × 15 cells (compact) to 151 × 151, holding up to 3,832 digits, 3,067 letters or 1,914 bytes.",
+    "text": "Teks apa saja, hingga 1.000 karakter di sini. Kode Aztec berukuran mulai dari 15 × 15 sel (compact) hingga 151 × 151, dengan kapasitas hingga 3.832 digit, 3.067 huruf, atau 1.914 byte.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.rules.0"
+  },
+  "a4f94f3031ce": {
+    "source": "Error correction is built in, so a smudged or partly covered code can still be read.",
+    "text": "Koreksi kesalahan sudah tersedia, sehingga kode yang tercoreng atau sebagian tertutup tetap dapat dibaca.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.rules.1"
+  },
+  "208dba1de876": {
+    "source": "The vector downloads draw each cell 0.71 mm square: the sample text comes out 19 mm across with a 2-cell margin. Scale it to suit your ticket or screen.",
+    "text": "Unduhan vektor menggambar setiap sel berukuran persegi 0,71 mm: teks contoh menghasilkan lebar 19 mm dengan margin 2 sel. Ubah skalanya sesuai tiket atau layar Anda.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.sizing.0"
+  },
+  "e462f87b44ca": {
+    "source": "No quiet zone is required, but a little white space helps scanners on busy designs.",
+    "text": "Quiet zone tidak diwajibkan, tetapi sedikit ruang putih membantu pemindai pada desain yang ramai.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.sizing.1"
+  },
+  "6b27c5af0a95": {
+    "source": "Aztec or QR code?",
+    "text": "Aztec atau kode QR?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.0.question"
+  },
+  "20998072733a": {
+    "source": "For links people scan with a phone camera, QR. Aztec is for ticketing and transport systems that ask for it.",
+    "text": "Untuk tautan yang dipindai dengan kamera ponsel, pilih QR. Aztec digunakan untuk sistem tiket dan transportasi yang memintanya.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.0.answer"
+  },
+  "7900c82f28ce": {
+    "source": "Can phones read Aztec codes?",
+    "text": "Apakah ponsel bisa membaca kode Aztec?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.1.question"
+  },
+  "34563aee60ca": {
+    "source": "Many scanner apps and ticket gates can. Some built-in camera apps only open QR codes.",
+    "text": "Banyak aplikasi pemindai dan gerbang tiket yang bisa. Sebagian aplikasi kamera bawaan hanya membuka kode QR.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.1.answer"
+  },
+  "d5d3113ff518": {
+    "source": "Batch or lot number",
+    "text": "Nomor batch atau lot",
+    "status": "machine",
+    "context": "barcodeFormats.ais.10"
+  },
+  "440af27caf28": {
+    "source": "Production date (YYMMDD)",
+    "text": "Tanggal produksi (YYMMDD)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.11"
+  },
+  "c548a1a3adfb": {
+    "source": "Best before date (YYMMDD)",
+    "text": "Tanggal sebaiknya digunakan sebelum (YYMMDD)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.15"
+  },
+  "a933be6e7b3b": {
+    "source": "Expiry date (YYMMDD)",
+    "text": "Tanggal kedaluwarsa (YYMMDD)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.17"
+  },
+  "f2307baf1c85": {
+    "source": "Serial number",
+    "text": "Nomor seri",
+    "status": "machine",
+    "context": "barcodeFormats.ais.21"
+  },
+  "742a68e45e4a": {
+    "source": "SSCC: the pallet or shipment",
+    "text": "SSCC: palet atau pengiriman",
+    "status": "machine",
+    "context": "barcodeFormats.ais.00"
+  },
+  "07aa7c4b2614": {
+    "source": "GTIN of the product or case",
+    "text": "GTIN produk atau karton",
+    "status": "machine",
+    "context": "barcodeFormats.ais.01"
+  },
+  "1877aad81cac": {
+    "source": "GTIN of the items inside a logistic unit",
+    "text": "GTIN item di dalam unit logistik",
+    "status": "machine",
+    "context": "barcodeFormats.ais.02"
+  },
   "bae62bc38cdf": {
     "source": "Link list",
     "text": "Daftar tautan",
@@ -22936,12 +24856,6 @@
     "text": "Tunjukkan kepada staf restoran saat Anda makan di luar",
     "status": "machine",
     "context": "templates.medical.variants.allergy-card.description"
-  },
-  "1d393b0081b6": {
-    "source": "PDF",
-    "text": "PDF",
-    "status": "machine",
-    "context": "templates.pdf.label"
   },
   "a9400aaa15f9": {
     "source": "A menu, brochure or manual people can read and download",
@@ -25085,6 +26999,12 @@
     "status": "machine",
     "context": "integrations.entries.google-analytics.description.1"
   },
+  "7494a179ac39": {
+    "source": "QRdx sends GA4's standard page view from the hosted page and nothing else. Visits arrive with the page's own address, on qrdx.dev or your custom domain, so filter by hostname or page path to tell them apart from visits to your site. Expect fewer visits than scans: GA4 only sees visitors who accepted the banner where it's shown, and content blockers often stop its script.",
+    "text": "QRdx hanya mengirim tampilan halaman standar GA4 dari halaman yang di-hosting, tidak ada yang lain. Kunjungan masuk dengan alamat halaman itu sendiri, di qrdx.dev atau domain khusus Anda, jadi filter berdasarkan hostname atau jalur halaman untuk membedakannya dari kunjungan ke situs Anda. Harap perkirakan jumlah kunjungan lebih sedikit daripada pemindaian: GA4 hanya melihat pengunjung yang menerima banner di tempat banner itu ditampilkan, dan pemblokir konten sering menghentikan skripnya.",
+    "status": "machine",
+    "context": "integrations.entries.google-analytics.description.2"
+  },
   "cb4aead1a976": {
     "source": "Open your codes",
     "text": "Buka kode Anda",
@@ -25187,6 +27107,12 @@
     "status": "machine",
     "context": "integrations.entries.google-tag-manager.description.1"
   },
+  "7ab236a31186": {
+    "source": "Tag Manager loads only when the page opens on one of your custom domains, never on qrdx.dev: a container can run any script, and qrdx.dev is where people sign in to QRdx. QRdx pushes only the container's start event to the data layer, so trigger your tags on page views or clicks.",
+    "text": "Tag Manager hanya dimuat saat halaman dibuka di salah satu domain khusus Anda, tidak pernah di qrdx.dev: sebuah container dapat menjalankan skrip apa pun, dan qrdx.dev adalah tempat orang masuk ke QRdx. QRdx hanya mendorong event awal container ke data layer, jadi picu tag Anda pada tampilan halaman atau klik.",
+    "status": "machine",
+    "context": "integrations.entries.google-tag-manager.description.2"
+  },
   "b2a2822792e6": {
     "source": "Paste your container ID",
     "text": "Tempel ID kontainer Anda",
@@ -25222,6 +27148,12 @@
     "text": "Tempel ID piksel Anda (6–20 digit) pada kode QR dinamis yang membuka halaman yang di-hosting. Tag hanya dimuat setelah pengunjung menyetujui di wilayah yang mewajibkan persetujuan.",
     "status": "machine",
     "context": "integrations.entries.meta-pixel.description.1"
+  },
+  "163f2c4c0763": {
+    "source": "QRdx starts the pixel and sends one PageView, with no other standard events, so build retargeting audiences from PageView on the page's URL. If you've set an allow list in the pixel's traffic permissions, add the hosted page's domain (qrdx.dev or your custom domain), or Meta ignores its events.",
+    "text": "QRdx memulai piksel dan mengirim satu PageView, tanpa event standar lainnya, jadi buat audiens retargeting dari PageView pada URL halaman tersebut. Jika Anda menetapkan daftar yang diizinkan di izin lalu lintas piksel, tambahkan domain halaman yang di-hosting (qrdx.dev atau domain khusus Anda), atau Meta akan mengabaikan event-nya.",
+    "status": "machine",
+    "context": "integrations.entries.meta-pixel.description.2"
   },
   "c6052142b8ab": {
     "source": "Paste your pixel ID",
@@ -25259,6 +27191,12 @@
     "status": "machine",
     "context": "integrations.entries.tiktok-pixel.description.1"
   },
+  "3af69b222205": {
+    "source": "QRdx loads the pixel and sends a page view, nothing else. Paste the pixel ID shown in TikTok Events Manager, a string of capital letters and digits, not your ad account number, and build a website visitors audience from the page's URL.",
+    "text": "QRdx memuat piksel dan mengirim tampilan halaman, tidak ada yang lain. Tempel ID piksel yang ditampilkan di TikTok Events Manager, berupa rangkaian huruf kapital dan angka, bukan nomor akun iklan Anda, lalu buat audiens pengunjung situs web dari URL halaman tersebut.",
+    "status": "machine",
+    "context": "integrations.entries.tiktok-pixel.description.2"
+  },
   "e90c3d22437b": {
     "source": "In the Tracking pixels panel, enter it in the TikTok Pixel field.",
     "text": "Di panel Tracking pixels, masukkan ID tersebut pada kolom TikTok Pixel.",
@@ -25288,6 +27226,12 @@
     "text": "Tempel ID partner Anda (3–12 digit) pada kode QR dinamis yang membuka halaman yang di-hosting. Tag hanya dimuat setelah pengunjung menyetujui di wilayah yang mewajibkan persetujuan.",
     "status": "machine",
     "context": "integrations.entries.linkedin-insight-tag.description.1"
+  },
+  "862b72603506": {
+    "source": "The Insight Tag records a page view when the page loads. Paste only the partner ID from Campaign Manager, not the tag's script. LinkedIn only serves ads to a matched audience of at least 300 members, so the scans of one code at a small event may not be enough to retarget on their own.",
+    "text": "Insight Tag mencatat tampilan halaman saat halaman dimuat. Tempel hanya ID partner dari Campaign Manager, bukan skrip tag-nya. LinkedIn hanya menayangkan iklan ke audiens yang cocok dengan minimal 300 anggota, jadi pemindaian satu kode di acara kecil mungkin belum cukup untuk retargeting dengan sendirinya.",
+    "status": "machine",
+    "context": "integrations.entries.linkedin-insight-tag.description.2"
   },
   "f6b7f5b122cf": {
     "source": "Paste your partner ID",
@@ -27881,11 +29825,35 @@
     "status": "machine",
     "context": "mcp.tools.14.description"
   },
-  "1385eac80167": {
-    "source": "Do I need an account or an API key?",
-    "text": "Apakah saya memerlukan akun atau kunci API?",
+  "f963ece25fc7": {
+    "source": "Can Claude make a QR code?",
+    "text": "Bisakah Claude membuat kode QR?",
     "status": "machine",
     "context": "mcp.faqs.0.question"
+  },
+  "e405a7b49b69": {
+    "source": "Yes, with the QRdx MCP server connected. A language model can't work out a QR code's pattern in its head, so a code it draws on its own rarely scans. Connected to QRdx, Claude calls a tool that renders a real, standard code and shows it in the chat. Add the server URL as a custom connector in Claude, or run the claude mcp add command in Claude Code; ChatGPT, Cursor and VS Code connect the same way.",
+    "text": "Bisa, selama server MCP QRdx terhubung. Model bahasa tidak dapat menghitung pola kode QR di dalam kepalanya, sehingga kode yang digambarnya sendiri jarang bisa dipindai. Saat terhubung ke QRdx, Claude memanggil sebuah tool yang merender kode standar yang sungguhan dan menampilkannya di chat. Tambahkan URL server sebagai konektor kustom di Claude, atau jalankan perintah claude mcp add di Claude Code; ChatGPT, Cursor, dan VS Code terhubung dengan cara yang sama.",
+    "status": "machine",
+    "context": "mcp.faqs.0.answer"
+  },
+  "5e42c847e755": {
+    "source": "Is the QRdx MCP server free?",
+    "text": "Apakah server MCP QRdx gratis?",
+    "status": "machine",
+    "context": "mcp.faqs.1.question"
+  },
+  "4f4d4e882c64": {
+    "source": "Yes. It's free and open source, and designing, rendering and checking codes needs no account. The codes it makes are static, so they never expire and have no scan limits.",
+    "text": "Ya. Server ini gratis dan open source, dan untuk merancang, merender, serta memeriksa kode tidak diperlukan akun. Kode yang dibuatnya adalah kode QR statis, sehingga tidak pernah kedaluwarsa dan tidak ada batas pemindaian.",
+    "status": "machine",
+    "context": "mcp.faqs.1.answer"
+  },
+  "770c0287a6f5": {
+    "source": "Does it need an API key?",
+    "text": "Apakah perlu kunci API?",
+    "status": "machine",
+    "context": "mcp.faqs.2.question"
   },
   "f538f592cdab": {
     "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
@@ -27964,6 +29932,18 @@
     "text": "Permintaan dibatasi 120 per menit per alamat IP, dan design_qr dibatasi 20. Panggilan dengan kunci API juga dihitung dalam kuota API harian workspace. Data yang sangat panjang mungkin tidak muat dalam kode QR; alat kemudian mengembalikan galat yang menyarankan tingkat koreksi kesalahan yang lebih rendah.",
     "status": "machine",
     "context": "mcp.faqs.6.answer"
+  },
+  "af62099de2cc": {
+    "source": "Is it in the MCP Registry?",
+    "text": "Apakah ada di MCP Registry?",
+    "status": "machine",
+    "context": "mcp.faqs.9.question"
+  },
+  "0a96e97f871b": {
+    "source": "Yes. The hosted server is listed in the official MCP Registry as io.github.bucharitesh/qrdx, so apps and directories that read the registry can find it there.",
+    "text": "Ya. Server yang di-hosting ini terdaftar di MCP Registry resmi sebagai io.github.bucharitesh/qrdx, sehingga aplikasi dan direktori yang membaca registry tersebut dapat menemukannya di sana.",
+    "status": "machine",
+    "context": "mcp.faqs.9.answer"
   },
   "1e72db2bad7f": {
     "source": "Can I run it myself?",

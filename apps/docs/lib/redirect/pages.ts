@@ -1,3 +1,4 @@
+import { ENGLISH_SCAN_PAGES, type ScanPagesIntl } from "@/lib/i18n/scan-pages";
 import { baseUrl } from "@/lib/metadata";
 import type { EndedReason } from "./lifecycle";
 
@@ -5,31 +6,13 @@ import type { EndedReason } from "./lifecycle";
 // Deliberately neutral — no QRdx logo or upsell, just the owner's campaign
 // status and a small "Report abuse" link.
 
-const ENDED_PAGES: Record<
-  EndedReason,
-  { status: number; title: string; message: string }
-> = {
-  "not-started": {
-    status: 403,
-    title: "This campaign hasn't started yet",
-    message: "Please scan this code again later.",
-  },
-  expired: {
-    status: 410,
-    title: "This campaign has ended",
-    message: "The page behind this QR code is no longer available.",
-  },
-  "scan-limit": {
-    status: 410,
-    title: "This campaign has ended",
-    message: "The page behind this QR code is no longer available.",
-  },
-  paused: {
-    status: 410,
-    title: "This campaign is paused",
-    message: "The page behind this QR code isn't available right now.",
-  },
-};
+/** Each reason's HTTP status and its copy in messages/*.json → scanPages.ended. */
+const ENDED_PAGES = {
+  "not-started": { status: 403, key: "notStarted" },
+  expired: { status: 410, key: "expired" },
+  "scan-limit": { status: 410, key: "expired" },
+  paused: { status: 410, key: "paused" },
+} as const satisfies Record<EndedReason, { status: number; key: string }>;
 
 export const escapeHtml = (value: string) =>
   value.replace(
@@ -62,20 +45,25 @@ button{font:inherit;font-size:16px;font-weight:600;color:var(--card);background:
 .error{color:var(--danger);font-size:14px}
 footer a{color:var(--muted);font-size:12px}`;
 
-/** Self-contained HTML (no scripts, no external assets). `body` is trusted HTML. */
+/**
+ * Self-contained HTML (no scripts, no external assets). `body` is trusted
+ * HTML; `intl` is the scanner's language (lib/i18n/scan-pages.ts).
+ */
 export function neutralPage({
   status,
   title,
   body,
   slug,
+  intl = ENGLISH_SCAN_PAGES,
 }: {
   status: number;
   title: string;
   body: string;
   slug?: string;
+  intl?: ScanPagesIntl;
 }): Response {
   const html = `<!doctype html>
-<html lang="en">
+<html lang="${intl.locale}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -90,7 +78,7 @@ ${STYLES}
 <h1>${escapeHtml(title)}</h1>
 ${body}
 </main>
-<footer><a href="${escapeHtml(reportAbuseUrl(slug))}" rel="nofollow">Report abuse</a></footer>
+<footer><a href="${escapeHtml(reportAbuseUrl(slug))}" rel="nofollow">${escapeHtml(intl.t("reportAbuse"))}</a></footer>
 </body>
 </html>`;
 
@@ -99,6 +87,9 @@ ${body}
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
+      // The language follows Accept-Language (never cached anyway).
+      "Content-Language": intl.locale,
+      Vary: "Accept-Language",
       "X-Robots-Tag": "noindex",
       "Content-Security-Policy":
         "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'",
@@ -108,12 +99,17 @@ ${body}
 }
 
 /** Status page for an ended code without a fallback URL. */
-export function endedPage(reason: EndedReason, slug?: string): Response {
-  const { status, title, message } = ENDED_PAGES[reason];
+export function endedPage(
+  reason: EndedReason,
+  slug?: string,
+  intl: ScanPagesIntl = ENGLISH_SCAN_PAGES,
+): Response {
+  const { status, key } = ENDED_PAGES[reason];
   return neutralPage({
     status,
-    title,
-    body: `<p>${escapeHtml(message)}</p>`,
+    title: intl.t(`ended.${key}.title`),
+    body: `<p>${escapeHtml(intl.t(`ended.${key}.message`))}</p>`,
     slug,
+    intl,
   });
 }

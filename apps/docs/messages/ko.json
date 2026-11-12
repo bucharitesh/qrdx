@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteTitle": "무료 QR 코드 생성기 & 동적 QR 코드 | QRdx",
-    "siteDescription": "로고, 색상, 패턴을 넣은 QR 코드를 가입이나 워터마크 없이 무제한으로 무료 제작하세요. 수정 가능한 동적 QR 코드, 호스팅 페이지, 스캔 분석도 지원합니다. 오픈 소스입니다.",
+    "siteTitle": "QRdx: 로고와 동적 QR 코드를 지원하는 무료 QR 코드 생성기",
+    "siteDescription": "무료 오픈 소스 QR 코드 생성기예요. 로고, 색상, 프레임을 적용한 코드를 무제한으로 만들 수 있고, 가입이나 워터마크도 없어요. 동적 QR 코드와 스캔 분석도 제공해요.",
     "ogImageAlt": "QRdx: 동적 QR 코드, 호스팅 페이지, 스캔 분석을 제공하는 무료 QR 코드 생성기"
   },
   "nav": {
@@ -76,6 +76,14 @@
       "mcp": {
         "name": "MCP 서버",
         "description": "Claude, ChatGPT, Cursor에서 QR 코드를 만들어요"
+      },
+      "qrCodeApi": {
+        "name": "무료 QR 코드 API",
+        "description": "키나 가입 없이 URL 하나로 QR 코드 이미지를 만들어요"
+      },
+      "nextjs": {
+        "name": "Next.js 가이드",
+        "description": "서버 및 클라이언트 컴포넌트에서 QR 코드 사용하기"
       },
       "imageApi": {
         "name": "Image API",
@@ -184,10 +192,15 @@
       "scanChecker": "스캔 검사기",
       "printSize": "인쇄 크기 계산기",
       "barcode": "바코드 생성기",
+      "pdfQr": "PDF QR 코드",
+      "businessCard": "디지털 명함",
+      "menuQr": "메뉴 QR 코드",
       "scanner": "QR 코드 스캐너",
       "allTools": "모든 도구",
       "docs": "문서",
       "apiReference": "API 레퍼런스",
+      "qrCodeApi": "무료 QR 코드 API",
+      "nextjs": "Next.js 가이드",
       "imageApi": "Image API",
       "mcp": "MCP 서버",
       "shadcn": "shadcn/ui 레지스트리",
@@ -774,7 +787,11 @@
       "bulkTitle": "수백 개의 코드가 필요하세요? 대량 생성기를 사용해 보세요",
       "bulkDescription": "CSV를 업로드하면 모든 코드를 PNG, WebP 또는 SVG로 만들어 ZIP 파일 하나로 내려받을 수 있습니다. 모든 작업은 브라우저에서만 처리돼요.",
       "printTitle": "코드를 인쇄하나요? 크기를 확인하세요",
-      "printDescription": "스캔 거리와 코드에 담긴 데이터 양을 바탕으로 최소 인쇄 크기를 계산해 보세요."
+      "printDescription": "스캔 거리와 코드에 담긴 데이터 양을 바탕으로 최소 인쇄 크기를 계산해 보세요.",
+      "hostedTitle": "수정할 수 있는 페이지를 여는 코드",
+      "hostedDescription": "이 코드는 QRdx가 호스팅하는 모바일 페이지를 열어요. 그래서 인쇄한 뒤에도 내용을 바꿀 수 있고 스캔 수도 확인할 수 있어요. 무료 계정이 필요해요.",
+      "menuTitle": "메뉴 QR 코드 생성기",
+      "menuDescription": "가격, 사진, 알레르기 유발 성분, 품절 표시를 담은 메뉴 페이지를 휴대폰에서 수정할 수 있어요."
     },
     "type": {
       "title": "무료 {name} QR 코드 생성기",
@@ -786,7 +803,28 @@
       "faqTitle": "{name} QR 코드 FAQ",
       "related": "관련 QR 코드 생성기",
       "allTypes": "{count, number}가지 유형 모두 보기",
-      "relatedCard": "{name} QR 코드"
+      "relatedCard": "{name} QR 코드",
+      "hostedCard": "{name} QR 코드 (호스팅 페이지)"
+    },
+    "hosted": {
+      "demo": "데모 페이지 보기",
+      "accountNote": "무료 QRdx 계정이 필요해요. 무료 플랜에는 호스팅 페이지 {pages, number}개가 포함돼요.",
+      "featuresTitle": "스캔하면 보이는 화면",
+      "editTitle": "인쇄 후에도 수정하세요",
+      "guarantee": "요금제에 어떤 변화가 생겨도 코드는 계속 작동해요. 이것이 <link>Never-Hostage 보장</link>이에요.",
+      "plansTitle": "플랜별 한도",
+      "plansCaption": "무료, Pro, Business 플랜의 {name} 페이지 한도",
+      "colLimit": "한도",
+      "rowPages": "호스팅 페이지",
+      "rowDynamic": "동적 QR 코드",
+      "rowFile": "최대 파일 크기",
+      "rowStorage": "파일 저장 공간",
+      "rowBadge": "\"Made with QRdx\" 푸터",
+      "unlimited": "무제한",
+      "badgeShown": "표시됨",
+      "badgeRemoved": "제거됨",
+      "plansNote": "각 페이지는 플랜의 동적 QR 코드를 하나씩 사용해요. 한도는 새 페이지를 만드는 것만 제한해요. <pricing>요금제 보기</pricing> 또는 <docs>문서 읽기</docs>.",
+      "staticLink": "{name} QR 코드 생성기 열기"
     }
   },
   "typeGenerator": {
@@ -864,6 +902,8 @@
       "dynamicLink": "동적 코드 만들기",
       "badgePage": "호스팅 페이지 · 수정 가능, 추적",
       "pageLink": "라이브 템플릿 보기",
+      "pageGeneratorLink": "작동 방식 보기",
+      "guidesTitle": "가이드와 도구",
       "typesTitle": "어떤 QR 코드를 쓸까요",
       "typesDescription": "정적 QR 코드는 무료이고 계정이 필요 없지만 인쇄한 뒤에는 바꿀 수 없습니다. 동적 QR 코드와 호스팅 페이지는 언제든 수정할 수 있고, 모든 스캔을 집계하며, 구독을 취소해도 모든 플랜에서 계속 작동합니다.",
       "sizingTitle": "인쇄 크기 가이드",
@@ -925,12 +965,20 @@
       }
     },
     "bulk": {
-      "metaTitle": "CSV로 만드는 무료 QR 코드 대량 생성기",
-      "metaDescription": "CSV 파일로 QR 코드를 최대 {rows, number}개 생성하고 PNG 또는 SVG로 압축해 다운로드해요. 스타일과 파일 이름을 지정할 수 있어요. 모두 브라우저에서 실행돼요.",
+      "metaTitle": "CSV로 만드는 무료 대량 QR 코드 생성기: 스타일 적용, SVG, 업로드 없음",
+      "metaDescription": "CSV 파일 하나로 스타일이 적용된 QR 코드를 최대 {rows, number}개까지 만들고 PNG, WebP, SVG 형식으로 ZIP에 담아 내려받으세요. 브라우저에서 실행되어 업로드, 가입, 워터마크가 없어요. 샘플 CSV도 있어요.",
       "crumb": "대량 생성기",
       "title": "QR 코드 대량 생성기",
-      "intro1": "스프레드시트 하나로 수백, 수천 개의 QR 코드를 한 번에 만들어요: 제품 라벨, 행사 티켓, 자산 태그, 테이블 번호, 맞춤형 우편물까지. CSV를 업로드하고 열을 지정한 다음 스타일을 고르면, 모든 코드를 PNG, WebP 또는 SVG로 압축해 다운로드할 수 있어요.",
-      "intro2": "모든 작업은 브라우저에서 이루어져요. CSV는 업로드되지 않고, 가입이나 워터마크, 코드당 요금도 없어요.",
+      "intro1": "CSV 파일 하나로 수천 개의 QR 코드를 한 번에 만들어 보세요. 원하는 스타일을 적용해 PNG, WebP, SVG 형식으로 ZIP에 담아 내려받을 수 있습니다. 한 행이 코드 하나이고, 파일 이름은 열에서 가져옵니다. 제품 라벨, 행사 티켓, 자산 태그, 테이블 번호, 우편물에 활용해 보세요.",
+      "intro2": "모든 작업이 브라우저에서 실행되므로 CSV는 업로드되지 않으며, 가입, 워터마크, 코드당 요금도 없습니다. 형식이 헷갈린다면 샘플 CSV로 시작해 보세요.",
+      "facts": {
+        "rows": "파일당 최대 {rows, number}행",
+        "styled": "내 색상, 모양, 로고 적용",
+        "svg": "인쇄용 SVG",
+        "browser": "브라우저에서 실행"
+      },
+      "cliLink": "CLI의 qrdx batch",
+      "apiLink": "무료 QR 코드 API",
       "toolLabel": "QR 코드 대량 생성기",
       "howTitle": "사용 방법",
       "steps": {
@@ -959,10 +1007,14 @@
         "howManyAnswer": "파일당 최대 {rows, number}행까지 가능해요. 더 많이 필요하면 CSV를 나누거나, 제한이 없는 CLI의 qrdx batch 명령을 사용하세요. 512 px PNG 하나를 만드는 데 노트북에서 약 20 ms가 걸리므로, {rows, number}행 전체는 몇 분 정도 걸려요. PNG가 클수록 시간이 더 걸리고 파일도 커지므로, 더 큰 크기가 필요하지 않다면 512 px를 선택하세요.",
         "rowQuestion": "각 행에 무엇을 넣을 수 있나요?",
         "rowAnswer": "QR 코드 용량 한도 내의 모든 텍스트를 넣을 수 있어요. 링크, 일반 텍스트, 또는 WIFI:..., mailto:..., tel:..., BEGIN:VCARD 같은 페이로드도 가능해요. 내용은 셀에 적힌 그대로 인코딩돼요.",
+        "excelQuestion": "Excel이나 Google Sheets 파일도 쓸 수 있나요?",
+        "excelAnswer": "먼저 CSV로 저장해 주세요. Excel에서는 파일, 다른 이름으로 저장, CSV UTF-8을 선택하고, Google Sheets에서는 파일, 다운로드, 쉼표로 구분된 값을 선택하세요. 구분자는 쉼표와 세미콜론 모두 사용할 수 있으며, 첫 번째 행에 열 이름을 넣을 수 있어요.",
         "staticQuestion": "생성된 코드는 정적인가요, 동적인가요?",
         "staticAnswer": "정적 QR 코드예요. 각 코드에 해당 행의 내용이 그대로 담기고, 오프라인에서도 작동하며, 만료되지 않지만 인쇄한 뒤에는 수정할 수 없어요. 수정 가능하고 스캔 통계를 볼 수 있는 코드가 필요하다면 QRdx 대시보드에서 동적 QR 코드를 만드세요.",
         "namesQuestion": "중복되거나 올바르지 않은 파일 이름은 어떻게 처리되나요?",
-        "namesAnswer": "파일 이름에 쓸 수 없는 문자는 하이픈으로 바뀌고, 중복된 이름에는 숫자 접미사(menu.png, menu-2.png)가 붙어서 덮어쓰이는 파일이 없어요."
+        "namesAnswer": "파일 이름에 쓸 수 없는 문자는 하이픈으로 바뀌고, 중복된 이름에는 숫자 접미사(menu.png, menu-2.png)가 붙어서 덮어쓰이는 파일이 없어요.",
+        "codeQuestion": "코드로 대량 QR 코드를 만들 수도 있나요?",
+        "codeAnswer": "네. QRdx CLI의 qrdx batch 명령은 CSV 파일의 모든 행마다 코드를 만들며 행 수 제한이 없습니다. 무료 QR 코드 API는 직접 만든 URL마다 이미지를 반환하며 키가 필요 없습니다."
       },
       "generator": {
         "errorTooMuch": "QR 코드 하나에 담기에는 데이터가 너무 많아요",
@@ -1435,6 +1487,280 @@
       "report": "이 코드 신고"
     }
   },
+  "scanPages": {
+    "reportAbuse": "악용 신고",
+    "privacy": "개인정보",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "QRdx로 나만의 QR 코드를 만들어 보세요",
+      "inactive": {
+        "title": "이 QR 코드는 더 이상 사용할 수 없어요",
+        "message": "이 코드는 꺼져 있어서 더 이상 연결되는 곳이 없습니다."
+      },
+      "notFound": {
+        "title": "QR 코드를 찾을 수 없어요",
+        "message": "이 링크는 QR 코드로 연결되지 않습니다. 소유자가 삭제했거나 링크가 잘못 입력되었을 수 있습니다."
+      },
+      "rateLimited": {
+        "title": "요청이 너무 많아요",
+        "message": "이 네트워크에서 짧은 시간 안에 많은 QR 코드를 열었습니다. 몇 초 후에 다시 시도해 주세요."
+      },
+      "invalidGs1": {
+        "title": "유효하지 않은 제품 링크예요",
+        "message": "제품 번호(GTIN) 또는 배치 정보를 읽을 수 없습니다. 링크를 확인하거나 포장에 있는 코드를 다시 스캔해 주세요."
+      },
+      "unavailable": {
+        "title": "문제가 발생했어요",
+        "message": "지금은 이 QR 코드를 열 수 없습니다. 잠시 후 다시 스캔해 주세요."
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "이 캠페인은 아직 시작되지 않았어요",
+        "message": "나중에 이 코드를 다시 스캔해 주세요."
+      },
+      "expired": {
+        "title": "이 캠페인은 종료되었어요",
+        "message": "이 QR 코드에 연결된 페이지는 더 이상 이용할 수 없습니다."
+      },
+      "paused": {
+        "title": "이 캠페인은 일시 중지되었어요",
+        "message": "이 QR 코드에 연결된 페이지는 지금 이용할 수 없습니다."
+      }
+    },
+    "password": {
+      "title": "이 QR 코드는 비밀번호로 보호되어 있어요",
+      "intro": "계속하려면 전달받은 비밀번호를 입력해 주세요.",
+      "label": "비밀번호",
+      "submit": "계속",
+      "missing": "비밀번호를 입력해 주세요.",
+      "wrong": "비밀번호가 맞지 않습니다. 다시 시도해 주세요.",
+      "tooManyAttempts": "시도 횟수가 너무 많습니다. 몇 분 후에 다시 시도해 주세요."
+    },
+    "location": {
+      "title": "위치를 공유할까요?",
+      "body": "이 QR 코드의 소유자가 대략 어디에서 스캔되는지 확인하고자 합니다. 먼저 브라우저에서 사용자에게 허용 여부를 묻고, 위치는 약 100 m 단위로 반올림됩니다.",
+      "allow": "허용",
+      "skip": "건너뛰기",
+      "continueTo": "어느 쪽이든 {host}(으)로 이동해요.",
+      "waiting": "브라우저를 기다리는 중…",
+      "opening": "감사합니다. 페이지를 여는 중…",
+      "locating": "위치를 가져오는 중…"
+    },
+    "hosted": {
+      "notFoundTitle": "페이지를 찾을 수 없어요",
+      "notFoundMessage": "이 링크는 페이지로 연결되지 않아요. 소유자가 삭제했거나 링크가 잘못 입력되었을 수 있어요.",
+      "passwordProtected": "비밀번호로 보호됨",
+      "madeWithQrdx": "QRdx로 제작",
+      "share": "공유",
+      "linkCopied": "링크 복사됨",
+      "copyThisLink": "이 링크 복사",
+      "details": "상세 정보",
+      "links": "링크",
+      "socialProfiles": "소셜 프로필",
+      "mapOf": "{place} 지도",
+      "hours": {
+        "openingHours": "영업시간",
+        "openUntil": "영업 중 · {time}까지",
+        "closedOpens": "영업 종료 · {day} {time}에 시작",
+        "closed": "영업 종료"
+      },
+      "contact": {
+        "contact": "연락처",
+        "call": "전화",
+        "email": "이메일",
+        "website": "웹사이트",
+        "directions": "길찾기",
+        "address": "주소",
+        "saveContact": "연락처 저장",
+        "phoneTypes": {
+          "mobile": "휴대전화",
+          "work": "직장",
+          "home": "집",
+          "fax": "팩스",
+          "other": "전화"
+        },
+        "emailTypes": {
+          "work": "회사",
+          "home": "개인",
+          "other": "이메일"
+        }
+      },
+      "event": {
+        "ended": "이 이벤트는 종료되었어요.",
+        "allDay": "종일",
+        "openInMaps": "지도에서 열기",
+        "joinOnline": "온라인 참여",
+        "hostedBy": "주최: <organizer></organizer>",
+        "addToCalendar": "캘린더에 추가"
+      },
+      "coupon": {
+        "coupon": "쿠폰",
+        "code": "코드:",
+        "copyCode": "쿠폰 코드 복사",
+        "copy": "복사",
+        "copied": "복사됨",
+        "expired": "이 쿠폰은 만료되었어요.",
+        "notYet": "이 쿠폰은 아직 사용할 수 없어요.",
+        "terms": "이용 약관",
+        "expiredOn": "{date}에 만료됨",
+        "validRange": "유효 기간 {from} – {until}",
+        "validFrom": "{date}부터 사용 가능",
+        "validUntil": "{date}까지 사용 가능",
+        "redeemed": "{time} 사용됨",
+        "instructions": "직원에게 이 화면을 보여준 다음 <strong>지금 사용하기</strong>를 눌러 주세요.",
+        "cancel": "취소",
+        "redeemNow": "지금 사용하기",
+        "redeem": "쿠폰 사용하기"
+      },
+      "wifi": {
+        "network": "네트워크",
+        "networkHidden": "네트워크(숨김)",
+        "password": "비밀번호",
+        "noPassword": "없음, 바로 연결하세요",
+        "copyNetwork": "네트워크 이름 복사",
+        "copyPassword": "비밀번호 복사"
+      },
+      "payment": {
+        "types": {
+          "bank": "계좌 이체",
+          "other": "기타"
+        },
+        "actions": {
+          "pay": "결제",
+          "donate": "기부",
+          "tip": "팁 주기"
+        },
+        "actionsWith": {
+          "pay": "{method}로 결제",
+          "donate": "{method}로 기부",
+          "tip": "{method}로 팁 주기"
+        },
+        "copyLine": "{label} 복사"
+      },
+      "files": {
+        "downloads": "다운로드",
+        "fileNumber": "파일 {number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "이미지",
+          "audio": "오디오",
+          "video": "동영상",
+          "file": "파일"
+        },
+        "opensInNewTab": "{kind} · 새 탭에서 열려요",
+        "open": "열기",
+        "download": "다운로드",
+        "pdfDocument": "PDF 문서",
+        "openPdf": "PDF 열기"
+      },
+      "media": {
+        "download": "{title} 다운로드",
+        "play": "{title} 재생",
+        "trackUnavailable": "이 트랙은 사용할 수 없어요.",
+        "playlist": "플레이리스트",
+        "unavailable": "사용할 수 없음",
+        "video": "동영상",
+        "videoUnavailable": "동영상을 사용할 수 없어요",
+        "providerVideo": "{provider} 동영상",
+        "playVideo": "동영상 재생",
+        "playVideoTitle": "동영상 재생: {title}",
+        "playsFrom": "{provider}에서 재생돼요"
+      },
+      "gallery": {
+        "openPhoto": "사진 {total}장 중 {number}번째 열기",
+        "openPhotoAlt": "사진 {total}장 중 {number}번째 열기: {alt}",
+        "photoOf": "사진 {total}장 중 {number}번째",
+        "viewer": "사진 뷰어",
+        "close": "닫기",
+        "previous": "이전 사진",
+        "next": "다음 사진",
+        "imageUnavailable": "이미지를 사용할 수 없어요"
+      },
+      "apps": {
+        "getTheApp": "앱 받기",
+        "appStore": "App Store에서 다운로드",
+        "googlePlay": "Google Play에서 받기",
+        "openInBrowser": "브라우저에서 열기"
+      },
+      "menu": {
+        "menu": "메뉴",
+        "sections": "메뉴 섹션",
+        "soldOut": "품절",
+        "dietary": "식이 정보",
+        "aboutDish": "이 요리 소개",
+        "contains": "<label>포함:</label> {list}",
+        "diet": {
+          "vegetarian": "채식",
+          "vegan": "비건",
+          "gluten-free": "글루텐 프리",
+          "dairy-free": "유제품 무첨가",
+          "halal": "할랄",
+          "kosher": "코셔",
+          "spicy": "매운맛",
+          "organic": "유기농"
+        },
+        "allergens": {
+          "gluten": "글루텐",
+          "crustaceans": "갑각류",
+          "eggs": "달걀",
+          "fish": "생선",
+          "peanuts": "땅콩",
+          "soy": "대두",
+          "milk": "우유",
+          "nuts": "견과류",
+          "celery": "셀러리",
+          "mustard": "겨자",
+          "sesame": "참깨",
+          "sulphites": "아황산염",
+          "lupin": "루핀",
+          "molluscs": "연체동물"
+        }
+      },
+      "product": {
+        "details": "제품 상세 정보",
+        "certifications": "인증",
+        "ingredients": "성분",
+        "allergens": "알레르기 유발 성분",
+        "nutrition": "영양 정보",
+        "nutritionPer": "영양 정보, {basis}"
+      },
+      "reviews": {
+        "reviews": "리뷰",
+        "leaveReview": "리뷰 남기기",
+        "reviewUsOn": "{platform}에 리뷰 남기기"
+      },
+      "form": {
+        "form": "양식",
+        "send": "보내기",
+        "thanks": "감사합니다. 응답이 전송되었습니다.",
+        "starsOf": "별 {max}개 중 {score}개",
+        "sending": "보내는 중…",
+        "answerOne": "보내기 전에 한 개 이상의 질문에 답해 주세요.",
+        "preview": "미리보기입니다. 응답은 게시된 페이지에서 수집됩니다.",
+        "securityCheck": "위의 보안 확인을 완료한 뒤 다시 보내 주세요.",
+        "tooMany": "이 기기에서 응답이 너무 많이 전송되었습니다. 1분 뒤에 다시 시도해 주세요.",
+        "couldntSend": "응답을 보내지 못했습니다. 다시 시도해 주세요.",
+        "offline": "오프라인 상태인 것 같습니다. 답변은 그대로 남아 있으니 잠시 후 다시 시도해 주세요.",
+        "demo": "데모: 아무것도 전송되지 않아요",
+        "honeypot": "이 입력란은 비워 두세요",
+        "closed": "이 양식은 지금 응답을 받지 않습니다. 나중에 다시 시도해 주세요.",
+        "errors": {
+          "required": "필수 입력 항목이에요",
+          "consentRequired": "계속하려면 이 상자를 체크해 주세요",
+          "enterText": "텍스트를 입력하세요",
+          "tooLong": "{max}자 이내로 입력해 주세요",
+          "email": "올바른 이메일 주소를 입력하세요",
+          "phone": "올바른 전화번호를 입력하세요",
+          "stars": "별 1~{max}개를 선택하세요",
+          "nps": "0에서 10 사이의 점수를 선택해 주세요.",
+          "choices": "옵션 중에서 선택하세요",
+          "choice": "옵션 중 하나를 선택하세요",
+          "invalid": "올바르지 않은 값이에요"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "무료 바코드 생성기: EAN-13, UPC, Code 128",
     "metaDescription": "EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix 등 {count, number}가지 바코드 유형을 만들어 보세요. 체크 디지트는 자동으로 계산해 드려요. PNG, JPG, SVG, PDF, EPS를 지원합니다. 무료이며 가입이 필요 없어요.",
@@ -1447,11 +1773,48 @@
     "whichTitle": "어떤 바코드를 써야 할까요?",
     "whichDescription": "매장에서 판매하시나요? 소매업체가 요구하는 유형을 쓰세요. 대부분의 지역에서는 EAN-13, 미국과 캐나다에서는 UPC-A이며, 둘 다 GS1의 GTIN을 담아요. 소매업체로 배송하시나요? 카톤에는 ITF-14, 물류 라벨에는 GS1-128을 쓰세요. 자체 물품에 라벨을 붙이시나요? Code 128을 쓰세요.",
     "linear": "1차원",
+    "formatCard": "{name} 바코드 생성기",
     "printingEyebrow": "인쇄",
     "tipsTitle": "잘 스캔되는 바코드를 위한 팁",
     "tipsDescription": "바코드는 정적이에요. 번호나 텍스트가 막대 안에 담겨 있어서 오프라인에서도 작동하고, 만료되지 않으며, 스캔 통계도 없어요. 휴대폰으로 스캔할 수 있는 링크가 필요하신가요? <generators>QR 코드 생성기</generators>를 이용하세요. 바코드를 읽으려면 <scanner>스캐너</scanner>를 여세요.",
     "credits": "바코드는 <bwip>bwip-js</bwip>(MIT 라이선스)로 그려지고, 스캔 검사에는 WebAssembly로 컴파일된 <zxing>ZXing</zxing>을 사용해요. ZXing은 처음 실행할 때 jsDelivr CDN에서 다운로드돼요.",
     "faqTitle": "바코드 생성기 FAQ"
+  },
+  "barcodeFormat": {
+    "toolLabel": "{name} 바코드 생성기",
+    "usedTitle": "{name} 바코드가 쓰이는 곳",
+    "rulesTitle": "{name} 입력값과 체크 디지트",
+    "rulesTitleText": "{name}에 담을 수 있는 내용",
+    "takesLabel": "필요한 조건",
+    "exampleLabel": "예시",
+    "checkTitle": "{body}의 체크 디지트 계산 과정",
+    "checkTitleUpce": "UPC-E {upce}는 UPC-A {upca}입니다. 체크 디지트 계산 과정",
+    "checkCaption": "{body}의 각 숫자와 가중치, 곱셈 결과",
+    "checkDigits": "숫자",
+    "checkWeights": "가중치",
+    "checkProducts": "곱",
+    "checkSum": "곱을 모두 더하면 {sum, number, ::group-off}입니다. {check, plural, =0 {이미 10의 배수이므로 체크 디지트는 0입니다.} other {#을(를) 더하면 다음 10의 배수인 {next, number, ::group-off}이 되므로 체크 디지트는 #입니다.}}",
+    "sizeTitle": "{name} 바코드 크기",
+    "sizeCaption": "생성기 기본 설정에서 {name} 예시의 크기",
+    "sizeDownload": "SVG, PDF, EPS 예시 받기",
+    "sizeMm": "{width, number} × {height, number} mm",
+    "sizeModule": "모듈(가장 좁은 막대)",
+    "sizeCell": "셀",
+    "sizeModuleValue": "{size, number} mm",
+    "sizeBarHeight": "막대 높이",
+    "sizeQuietZone": "여백 영역",
+    "quietModules": "양쪽에 {min, plural, =0 {필요 없음} other {최소 # 모듈}}, 생성기 기본값은 {start, number}입니다",
+    "quietCells": "사방에 {min, plural, =0 {필요 없음} other {최소 # 셀}}, 생성기 기본값은 {start, number}입니다",
+    "apiTitle": "{name} 바코드 API",
+    "apiDescription": "같은 바코드를 API 키 없이 이미지 URL로 쓸 수 있어요. img 태그, 라벨 템플릿, 상품 피드에 넣으면 됩니다. 이 페이지와 같은 방식으로 값을 검사하며, IP 주소당 분당 300회 요청까지 허용합니다. 모든 옵션은 <docs>바코드 API 문서</docs>에서 확인하세요.",
+    "apiSvg": "SVG 이미지",
+    "apiPng": "PNG, 모듈당 3픽셀",
+    "apiHtml": "웹 페이지에서",
+    "faqTitle": "{name} 바코드 FAQ",
+    "otherTitle": "다른 바코드 유형",
+    "allFormats": "바코드 유형 {count, number}개 모두 보기",
+    "otherCard": "{name} 바코드 생성기",
+    "qrNote": "바코드는 정적이에요. 데이터가 막대에 담겨 있어서 오프라인에서도 작동하고 만료되지 않아요. 휴대폰 카메라로 스캔하는 링크가 필요하다면 <generators>QR 코드 생성기</generators> 중 하나를 사용하세요."
   },
   "barcodeTool": {
     "pickColor": "{label} 선택",
@@ -1583,6 +1946,7 @@
   },
   "integrations": {
     "metaTitle": "연동",
+    "searchTitle": "QR 코드 연동: {first}, {second} 외 {count, number}개",
     "metaDescription": "QRdx를 {names} 등과 연결하세요. 정확한 설정 단계를 갖춘 {count, number}개의 연동을 제공해요.",
     "hero": {
       "eyebrow": "연동",
@@ -1737,9 +2101,15 @@
     "howEyebrow": "사용 방법",
     "howTitle": "세 단계만 거치면 바로 요청할 수 있어요",
     "howDescription": "어시스턴트가 대신 QRdx 도구를 호출해요. API를 직접 다룰 일은 없어요.",
+    "setupEyebrow": "설정",
+    "setupTitle": "QRdx를 앱에 추가하세요",
+    "setupDescription": "Claude와 ChatGPT는 서버 URL을 커스텀 커넥터로 받아요. Claude Code, Cursor, VS Code는 명령어 한 줄 또는 몇 줄의 설정으로 연결해요. 로컬 서버만 실행하는 앱은 mcp-remote로 연결해요.",
+    "setupUrl": "서버 URL",
     "toolsEyebrow": "도구",
     "toolsTitle": "어시스턴트가 호출할 수 있는 도구",
     "toolsDescription": "도구 {count, number}개. save_template과 save_barcode를 제외한 모든 도구는 읽기 전용이며 키가 필요 없어요. 이미지를 렌더링하고, 텍스트를 포맷하고, 공개 커뮤니티를 읽어요. 전체 매개변수는 <link>MCP 서버 문서</link>에서 확인하세요.",
+    "toolNoKey": "키 불필요",
+    "toolNeedsKey": "API 키 필요",
     "faqTitle": "MCP 서버 FAQ",
     "connect": {
       "copyFailed": "복사하지 못했어요. 텍스트를 선택해서 직접 복사해 주세요.",
@@ -1839,6 +2209,149 @@
           }
         }
       }
+    }
+  },
+  "qrCodeApi": {
+    "metaTitle": "무료 QR 코드 API: 키 없이 SVG, PNG, 로고까지",
+    "metaDescription": "키나 가입이 필요 없는 무료 QR 코드 API예요. URL 하나로 원하는 색상, 모양, 로고를 적용한 QR 코드를 SVG, PNG, WebP, EPS로 받을 수 있어요. 분당 {perMinute, number}회 요청할 수 있고, 1년 동안 캐시돼요.",
+    "crumb": "QR 코드 API",
+    "title": "무료 QR 코드 API",
+    "intro1": "URL을 넣을 수 있는 곳이면 어디든 QR 코드를 넣어 보세요. api.qrdx.dev로 GET 요청을 한 번 보내면 이미지가 바로 반환돼요. 계정도, API 키도, SDK도 필요 없어요. 색상, 모양, 오류 정정, 로고는 쿼리 문자열에 넣으면 돼요.",
+    "intro2": "QRdx Playground와 같은 오픈 소스 엔진으로 QR 코드를 그려요. 같은 쿼리는 항상 같은 바이트를 반환하므로 응답은 1년 동안 캐시되고, README, 이메일, 웹 페이지에 넣은 이미지는 첫 요청 이후 캐시에서 제공돼요.",
+    "facts": {
+      "noKey": "키·가입 불필요",
+      "rateLimit": "IP당 분당 {perMinute, number}회 요청",
+      "formats": "SVG, PNG, WebP, EPS",
+      "openSource": "오픈 소스"
+    },
+    "docs": "Image API 문서",
+    "restDocs": "동적 코드용 REST API",
+    "builderEyebrow": "직접 해보기",
+    "builderTitle": "QR 코드 URL 만들기",
+    "builderDescription": "왼쪽에서 원하는 항목을 바꿔 보세요. 미리보기는 실제 API 결과예요. 마음에 들면 URL, HTML 또는 curl 명령을 복사하세요.",
+    "builder": {
+      "label": "QR 코드 API URL 빌더",
+      "data": "텍스트 또는 URL",
+      "format": "형식",
+      "size": "크기",
+      "sizePixels": "{size, number}px",
+      "sizePoints": "너비 {size, number}pt",
+      "fg": "코드 색상",
+      "bg": "배경",
+      "pickColor": "{label} 선택",
+      "body": "모듈 모양",
+      "level": "오류 정정",
+      "logo": "로고 아이콘",
+      "logoNone": "없음",
+      "logoNote": "로고를 넣으면 로고에 필요할 때 오류 정정 수준이 H로 바뀌어 스캔이 잘 돼요.",
+      "previewAlt": "{value}의 QR 코드",
+      "epsPreview": "EPS는 인쇄용 파일이라 미리보기에는 SVG와 같은 코드가 표시돼요.",
+      "empty": "인코딩할 텍스트나 링크를 입력하세요.",
+      "tooLong": "API 제한인 {max, number}자를 넘었어요.",
+      "loadFailed": "미리보기를 불러오지 못했어요. 여러 번 연달아 바꿨다면 1분 정도 기다려 주세요. API는 1분에 {perMinute, number}번까지 요청할 수 있어요.",
+      "url": "이미지 URL",
+      "html": "HTML",
+      "markdown": "Markdown",
+      "curl": "curl",
+      "open": "이미지 열기"
+    },
+    "examplesEyebrow": "예시",
+    "examplesTitle": "URL이 곧 이미지예요",
+    "examplesDescription": "Markdown, img 태그, 이메일 템플릿에 붙여 넣거나 curl로 파일을 내려받으세요. 데이터에 앰퍼샌드, 해시, 더하기 기호나 공백이 있으면 encodeURIComponent(또는 사용하는 언어의 같은 기능)로 인코딩하세요.",
+    "examples": {
+      "markdown": "Markdown",
+      "html": "HTML",
+      "curl": "터미널",
+      "js": "JavaScript"
+    },
+    "paramsEyebrow": "레퍼런스",
+    "paramsTitle": "파라미터",
+    "paramsDescription": "모든 값은 쿼리 문자열에 넣어요. 그라디언트, 커스텀 프레임, 눈 모양별 색상은 에디터의 디자인을 JSON으로 담은 style에 넣어요. 모든 필드는 <link>image API 문서</link>에서 확인하세요.",
+    "paramsHeader": {
+      "name": "파라미터",
+      "default": "기본값",
+      "description": "기능"
+    },
+    "paramsRequired": "필수",
+    "paramsNone": "없음",
+    "params": {
+      "data": "인코딩할 텍스트나 URL이에요. 최대 {max, number}자까지 가능해요.",
+      "size": "가로와 세로 크기이며 단위는 픽셀로, {min, number}부터 {max, number}까지예요. EPS는 포인트 단위의 너비예요.",
+      "format": "svg, png, webp(무손실) 또는 eps(벡터, 인쇄용).",
+      "colors": "코드 색상과 배경 색상을 #을 뺀 hex 값으로 지정해요(155dfc). bg=00000000이면 배경이 투명해져요.",
+      "shapes": "모듈, 모서리 눈, 그 안의 점의 모양이에요. 모듈 모양은 모두 {count, number}가지예요.",
+      "level": "오류 정정 수준: L(7%), M(15%), Q(25%), H(30%)만큼 코드가 손상되어도 스캔할 수 있어요.",
+      "margin": "코드 주변의 여백(콰이어트 존)으로, 단위는 모듈이며 0부터 {max, number}까지 설정할 수 있어요.",
+      "logoIcon": "중앙에 넣는 로고예요. wifi, link, phone 같은 빠른 아이콘이나 Simple Icons 슬러그로 지정하는 {brands}개의 브랜드 로고 중 하나를 쓸 수 있어요.",
+      "frame": "banner-bottom 같은 행동 유도 프레임이며, frameText가 라벨이 돼요.",
+      "style": "그라디언트, 커스텀 프레임, 눈 모양별 색상, 로고 레이아웃까지 에디터의 전체 디자인을 JSON으로 지정해요."
+    },
+    "limitsEyebrow": "운영 환경에서",
+    "limitsTitle": "제한, 캐싱, 개인정보 보호",
+    "limits": {
+      "rateTitle": "IP당 분당 {perMinute, number}회 요청",
+      "rateBody": "제한을 넘으면 Retry-After 헤더와 함께 429 응답을 받아요. 동일한 URL은 캐시에서 제공되므로 같은 이미지를 다시 보여줄 때는 제한에 걸리는 경우가 드물어요.",
+      "cacheTitle": "1년간 캐시돼요",
+      "cacheBody": "같은 쿼리는 같은 바이트를 반환해요. 응답은 Cache-Control: public, max-age=31536000, immutable 헤더와 함께 전송되어 브라우저와 CDN이 보관해요. 커뮤니티 아이템 렌더링은 아이템이 바뀔 수 있으므로 5분간 캐시돼요.",
+      "corsTitle": "어떤 웹사이트에서도 작동해요",
+      "corsBody": "응답이 모든 출처를 허용하므로(Access-Control-Allow-Origin: *) 브라우저 코드에서 이미지를 표시할 수 있을 뿐 아니라 가져올 수도 있어요.",
+      "privateTitle": "URL에 비밀 정보를 넣지 마세요",
+      "privateBody": "데이터는 URL의 일부이므로 서버 로그, 브라우저 기록, 캐시에 남을 수 있어요. 공개 README에 적은 Wi-Fi 비밀번호는 공개된 정보예요.",
+      "scanTitle": "요청한 그대로 그려요",
+      "scanBody": "Image API는 디자인이 스캔되는지 확인하지 않아요. 대비를 충분히 유지하고 휴대폰으로 테스트하세요. MCP 서버의 design_qr 도구는 스타일을 확인하고 대신 수정해 줘요.",
+      "selfHostTitle": "직접 호스팅",
+      "selfHostBody": "이 API는 오픈 소스 QRdx 앱의 일부이므로 직접 운영하는 인스턴스에서도 내 도메인의 /api/v1/qr 경로로 제공돼요."
+    },
+    "restEyebrow": "정적 또는 동적",
+    "restTitle": "대신 REST API가 필요할 때",
+    "restDescription": "Image API는 정적 QR 코드를 만들어요. 데이터가 코드 안에 들어 있어서 만료되지 않지만 인쇄한 뒤에는 바꿀 수 없어요. 나중에 다른 곳으로 연결을 바꿀 수 있고 스캔 분석도 제공하는 코드가 필요하다면 무료 API 키와 함께 REST API를 사용하세요.",
+    "imageCard": {
+      "title": "Image API",
+      "noKey": "키나 계정이 필요 없어요",
+      "static": "정적 코드: 데이터가 이미지에 들어 있어요",
+      "formats": "SVG, PNG, WebP, EPS",
+      "limit": "IP당 분당 {perMinute, number}회 요청"
+    },
+    "restCard": {
+      "title": "REST API",
+      "key": "무료 계정의 워크스페이스 API 키",
+      "dynamic": "인쇄 후에도 수정할 수 있는 동적 QR 코드",
+      "analytics": "스캔 분석, 폴더, 태그, 웹훅",
+      "free": "무료 플랜에서 동적 QR 코드 {count, number}개를 제공하고, 스캔은 무제한이에요"
+    },
+    "restLink": "REST API 문서",
+    "quickstartLink": "API 빠른 시작",
+    "moreTitle": "코드로 QR 코드를 만드는 다른 방법",
+    "more": {
+      "googleChartTitle": "Google Chart QR API 대체하기",
+      "googleChartBody": "chl, chs, chld를 이 API에 맞게 변환하고, 기존 이미지 URL을 명령어 하나로 바꿀 수 있어요.",
+      "mcpTitle": "MCP 서버",
+      "mcpBody": "Claude, ChatGPT, Cursor가 키 없이 코드를 디자인하고 생성하게 할 수 있어요.",
+      "barcodeTitle": "바코드 API",
+      "barcodeBody": "EAN-13, UPC-A, Code 128, Data Matrix 등을 체크 디지트와 함께 URL로 만들 수 있어요.",
+      "cliTitle": "CLI",
+      "cliBody": "터미널이나 CI에서 스타일을 입힌 코드를 만들고, CSV 파일의 행마다 코드를 하나씩 만들 수 있어요.",
+      "reactTitle": "React 라이브러리",
+      "reactBody": "React와 Next.js에서 서버나 클라이언트 어디서든 스타일을 입힌 코드를 렌더링해요."
+    },
+    "faqTitle": "QR 코드 API 자주 묻는 질문",
+    "faq": {
+      "freeQuestion": "API 키 없이 쓸 수 있는 무료 QR 코드 API가 있나요?",
+      "freeAnswer": "네. GET https://api.qrdx.dev/v1/qr?data=… 는 키, 계정, 가입 없이 QR 코드 이미지를 반환해요. IP 주소당 분당 {perMinute, number}회 요청할 수 있고, 동일한 URL은 1년간 캐시돼요.",
+      "logoQuestion": "QR 코드 API로 로고를 넣을 수 있나요?",
+      "logoAnswer": "네. logoIcon을 사용하면 키 없이 간편 아이콘(Wi-Fi, 링크, 전화, 이메일 등)이나 Simple Icons의 브랜드 로고 {brands}개 중 하나를 가운데에 넣을 수 있어요. 로고에 필요하면 오류 정정 수준이 H로 바뀌어서 스캔도 문제없이 돼요.",
+      "formatsQuestion": "어떤 이미지 형식으로 반환하나요?",
+      "formatsAnswer": "기본은 SVG이고, format=png, webp, eps를 지정하면 PNG, 무손실 WebP, 벡터 EPS로 받을 수 있어요. 크기는 {min, number}픽셀부터 {max, number}픽셀까지 지원해요.",
+      "expireQuestion": "QR 코드는 만료되나요?",
+      "expireAnswer": "아니요. 이미지 API는 정적 QR 코드를 만들어요. 인코딩한 내용이 코드 안에 들어 있어서, 그 안의 링크나 텍스트가 유효한 동안 계속 작동해요. 만료되는 것도 없고 스캔 횟수를 세지도 않아요.",
+      "dynamicQuestion": "인쇄한 뒤에도 코드가 가리키는 곳을 바꿀 수 있나요?",
+      "dynamicAnswer": "이미지 API로는 안 돼요. 그러려면 QRdx 대시보드나 REST API와 무료 API 키로 만든 동적 QR 코드가 필요해요. 무료 플랜에는 동적 QR 코드 {count, number}개가 포함되고, 스캔은 무제한이에요.",
+      "googleQuestion": "Google Chart QR 코드 API를 대체할 수 있나요?",
+      "googleAnswer": "네. 호스트와 경로를 바꾸고, chl은 data로, chs는 size로 이름을 바꾸세요(QR 코드는 정사각형이라 숫자 하나만 써요). 그리고 chld에서 level과 margin을 설정하세요. cht, choe처럼 지원하지 않는 매개변수는 무시돼요. 전체 매핑은 마이그레이션 가이드에 있어요.",
+      "limitQuestion": "요청 제한을 넘으면 어떻게 되나요?",
+      "limitAnswer": "429 응답과 함께 다시 시도할 시점을 알려주는 Retry-After 헤더를 받게 돼요. 동일한 URL은 1년간 캐시되기 때문에, 방문자가 많은 페이지에 표시되는 이미지는 대개 캐시에서 제공돼요.",
+      "aiQuestion": "AI 어시스턴트도 사용할 수 있나요?",
+      "aiAnswer": "네. QRdx MCP 서버의 generate_qr_code 도구가 이 이미지 URL을 반환하며, MCP를 사용하지 않는 어시스턴트도 URL을 직접 Markdown 이미지로 작성할 수 있어요."
     }
   },
   "ai": {
@@ -4117,8 +4630,7 @@
         "dangerZoneSection": {
           "deleteYourAccount": "계정을 삭제할까요?",
           "thisCantBeUndoneIf": "이 작업은 되돌릴 수 없어요. 데이터 사본이 필요하다면 먼저 다운로드하세요.",
-          "type": "입력:",
-          "toConfirm": "를 입력해 확인하세요",
+          "typeToConfirm": "확인하려면 <code>{word}</code>을(를) 입력하세요",
           "cancel": "취소",
           "deleteAccount": "계정 삭제",
           "deleteAccount2": "계정 삭제…",
@@ -4242,10 +4754,10 @@
           "removedName": "{name} 삭제됨",
           "yourPasskeyIsReadyTo": "패스키를 두 번째 인증 단계로 사용할 수 있어요.",
           "addAPasskeyOrAn": "패스키 또는 인증 앱을 추가하면 2단계 인증을 켤 수 있어요.",
-          "yourPasskey": "패스키",
-          "aCodeFromYourAuthenticator": "인증 앱의 코드",
-          "afterYouSignInQrdx2": "로그인하면 QRdx에서 백업 코드를 요청해요.",
-          "afterYouSignInQrdx3": "로그인하면 QRdx에서 {value}을(를) 요청해요. 백업 코드도 사용할 수 있어요."
+          "afterYouSignInPasskeyOrApp": "로그인하면 QRdx가 패스키 또는 인증 앱의 코드를 요청해요. 백업 코드도 사용할 수 있어요.",
+          "afterYouSignInPasskey": "로그인하면 QRdx가 패스키를 요청해요. 백업 코드도 사용할 수 있어요.",
+          "afterYouSignInApp": "로그인하면 QRdx가 인증 앱의 코드를 요청해요. 백업 코드도 사용할 수 있어요.",
+          "afterYouSignInQrdx2": "로그인하면 QRdx에서 백업 코드를 요청해요."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "{length, number}단계 중 {stepNumber, number}단계",
@@ -4287,7 +4799,7 @@
         },
         "workspaceTwoFactorNotice": {
           "twoStepVerificationIsOn": "2단계 인증이 켜져 있어서 이제 <span>{name}</span>을(를) 열 수 있어요.",
-          "requiresTwoStepVerificationTurn": "2단계 인증이 필요해요. <link>아래</link>에서 켠 다음 여기서 다시 돌아오세요.",
+          "requiresTwoStepVerificationTurn": "<span>{name}</span>에서는 2단계 인증이 필요해요. <link>아래</link>에서 2단계 인증을 켠 다음 여기로 돌아오세요.",
           "backToName": "{name}(으)로 돌아가기"
         },
         "page": {
@@ -4393,7 +4905,8 @@
           "itsShownOnlyThisOnce": "한 번만 표시돼요. 서버에 보관하고, 브라우저나 앱에는 절대 두지 마세요.",
           "done": "완료",
           "apiKeys": "API 키",
-          "callTheRestApiFrom": "서버와 스크립트에서 REST API를 호출하세요. 키는 다음 워크스페이스에서",
+          "keysActAsYou": "서버와 스크립트에서 REST API를 호출하세요. 키는 <strong>{workspace}</strong>에서 회원님으로 동작해요.",
+          "keysActAsYouWithRole": "서버와 스크립트에서 REST API를 호출하세요. 키는 <strong>{workspace}</strong>에서 회원님의 역할 권한으로 회원님처럼 동작해요.",
           "createKey": "키 만들기",
           "apiKeysArentAvailableOn": "이 배포 환경에서는 아직 API 키를 사용할 수 없어요.",
           "noApiKeysYet": "아직 API 키가 없어요",
@@ -4405,7 +4918,6 @@
           "cancel": "취소",
           "revokeKey": "키 해지",
           "apiKey": "API 키",
-          "withYourRoleThere": ", 내 역할 그대로 동작해요.",
           "forWorkspacenameItCanDo": "{workspaceName}용이에요. 키는 범위 안에서 내 역할이 허용하는 작업을 할 수 있어요.",
           "forYourOwnWorkspaceWithin": "내 워크스페이스용이에요. 선택한 범위 안에서 사용할 수 있어요.",
           "keyRevoked": "키를 폐기했어요"
@@ -4480,10 +4992,11 @@
           "deleteApp": "앱 삭제",
           "revokesEveryTokenItIssued": "발급한 모든 토큰을 해지해요. 되돌릴 수 없어요.",
           "deleteName": "{name}을(를) 삭제할까요?",
-          "itsClientIdAndSecret": "클라이언트 ID와 시크릿이 작동하지 않게 되고, 이 앱이 발급한 모든 액세스 토큰과 리프레시 토큰이 폐기돼요",
+          "deleteAppNoUsers": "클라이언트 ID와 시크릿이 더 이상 작동하지 않고, 발급된 모든 액세스 토큰과 갱신 토큰이 취소돼요.",
+          "deleteAppDisconnecting": "클라이언트 ID와 시크릿이 더 이상 작동하지 않고, 발급된 모든 액세스 토큰과 갱신 토큰이 취소되어 {count, plural, other {#명}}의 연결이 끊겨요.",
+          "peopleHaveAccess": "현재 {count, plural, other {#명}}이 이 앱을 통해 액세스할 수 있어요.",
           "cancel": "취소",
           "nobodyHasAuthorizedThisApp": "아직 이 앱을 승인한 사람이 없어요.",
-          "disconnectingPeople": ", {people} 연결 해제",
           "deleting": "삭제 중…",
           "appSaved": "앱을 저장했어요",
           "appResumed": "앱을 재개했어요",
@@ -4534,14 +5047,13 @@
           "peopleWhoLinkedASlack": "<code>/qr link</code>로 Slack 계정을 연결한 사용자는 Slack에서 여기에 표시된 멤버로서 <span>{workspaceName}</span>의 추적 코드를 만들 수 있습니다. <link>Slack 봇</link>",
           "slackLinksArentAvailableOn": "이 배포 환경에서는 아직 Slack 연결을 사용할 수 없습니다.",
           "noSlackAccountIsLinked": "이 워크스페이스에 연결된 Slack 계정이 없습니다.",
-          "as": "멤버",
-          "linked": "· 연결됨",
+          "linkedAs": "{member} 계정 · {date}에 연결됨",
+          "linkedAsInWorkspace": "{member} 계정 · {date}에 연결됨 · Slack 워크스페이스 {teamId}",
           "revoke": "해제",
           "revokeTheSlackLinkOf": "{slackUserId}의 Slack 연결을 해제할까요?",
           "qrTrackFromThatSlack": "해당 Slack 계정에서 <code>/qr track</code>을 실행해도 더 이상 {workspaceName}에 코드가 만들어지지 않습니다. 이미 만든 코드는 그대로 유지됩니다. 여전히 멤버라면 <code2>/qr link</code2>로 다시 연결할 수 있습니다.",
           "cancel": "취소",
           "revokeLink": "연결 해제",
-          "slackWorkspaceTeamid": " · Slack 워크스페이스 {teamId}",
           "slackLinkRevoked": "Slack 연결을 해제했어요",
           "aFormerMember": "이전 멤버"
         },
@@ -4645,9 +5157,8 @@
           "integrations": "연동",
           "disconnect": "연결 해제",
           "nameIsNoLongerAvailable": "{name}은(는) 더 이상 QRdx에서 사용할 수 없어요",
-          "nothingInQrdxUsesThis": "QRdx에서 이 연결을 사용하는 곳이 더 이상 없어요",
-          "disconnectToDeleteItWhere": ". 연결을 해제하면 삭제돼요. 연동 서비스에서",
-          "supportsItQrdxsAccessIs": "지원하는 경우 QRdx의 접근 권한도 함께 취소돼요.",
+          "unusedConnection": "QRdx에서 이 연결을 사용하는 항목이 더 이상 없어요. 연결을 해제하면 삭제돼요. {name}에서 지원하는 경우 QRdx의 액세스 권한도 그쪽에서 취소돼요.",
+          "unusedConnectionSince": "QRdx에서 이 연결을 사용하는 항목이 더 이상 없어요. {date}에 연결했어요. 연결을 해제하면 삭제돼요. {name}에서 지원하는 경우 QRdx의 액세스 권한도 그쪽에서 취소돼요.",
           "reconnect": "다시 연결",
           "builtBy": "제작:",
           "website": "웹사이트",
@@ -4656,7 +5167,6 @@
           "whereThisIntegrationShowsUp": "QRdx에서 이 연동이 표시되는 위치예요.",
           "features": "기능",
           "howToConnect": "연결 방법",
-          "youConnectedItOnUndefined": ". {undefined}에 연결했어요",
           "enable": "사용",
           "needsSetup": "설정 필요",
           "youCanAlsoDeleteThe": "{name}에서 키를 삭제할 수도 있어요.",
@@ -4712,8 +5222,7 @@
           "addedValue": "{value} 추가됨",
           "linkedSlackAccounts": "연결된 Slack 계정",
           "noSlackAccountIsLinked": "연결된 Slack 계정이 없어요. Slack에서 <code>/qr link</code>를 실행해 연결하세요.",
-          "trackedCodesGoTo": "추적 코드 전송 위치",
-          "linked": ". 연결됨",
+          "trackedCodesLine": "추적 코드는 {workspace}(으)로 전송돼요. {date}에 연결됨.",
           "unlink": "연결 해제",
           "yourQrdxWorkspace": "내 QRdx 워크스페이스",
           "slackAccountUnlinked": "Slack 계정 연결을 해제했어요",
@@ -4780,17 +5289,15 @@
           "postAbout": "게시할 내용",
           "cancel": "취소",
           "removeThisWebhook": "이 웹훅을 제거할까요?",
-          "qrdxStopsPostingTo": "QRdx가 게시를 중단하는 대상:",
-          "theWebhookItselfStaysIn": ". 웹훅 자체는 다음에 그대로 남아요:",
-          "untilYouDeleteItThere": "직접 삭제하기 전까지는 그대로예요.",
+          "removeWebhookDescription": "QRdx가 {chat}에 더 이상 게시하지 않아요. 웹훅 자체는 {channel}에서 직접 삭제할 때까지 남아 있어요.",
           "remove": "제거",
           "everyAlertEmailHasAn": "모든 알림 이메일에는 수신 거부 링크가 있어요. 팀 초대와 기타 계정 이메일은 항상 발송돼요. 이벤트를 직접 사용하는 시스템에서 받고 싶으신가요? <link>웹훅 사용하기</link>.",
           "sendATestMessage": "테스트 메시지 보내기",
           "editEvents": "이벤트 편집",
           "removeWebhook": "웹훅 제거",
-          "arePartOfProAnd": "Pro 및 Business에 포함돼요",
-          "arePartOfBusiness": "Business에 포함돼요",
-          "thisWorkspaceFollowsThePlan": " 이 워크스페이스는 소유자의 플랜을 따라요.",
+          "emailAlertsArePro": "이메일 알림과 주간 요약은 Pro와 Business에 포함돼요.",
+          "chatAlertsAreBusiness": "Slack과 Discord 알림은 Business에 포함돼요.",
+          "thisWorkspaceFollowsThePlan": "이 워크스페이스는 소유자의 플랜을 따라요.",
           "alertsAboutThisWorkspacesCodes": "이 워크스페이스의 코드와 페이지에 대한 알림이에요. 본인만 받으며, 멤버마다 각자 설정해요.",
           "alertsAboutTheCodesAnd": "내 워크스페이스의 코드와 페이지에 대한 알림이에요.",
           "addAValueWebhook": "{value} 웹훅 추가",
@@ -4865,7 +5372,7 @@
           "allBarcodes": "모든 바코드",
           "labelUpdatedUpdatedat": "{label} · {updatedAt} 업데이트",
           "youHaveViewOnlyAccess": "보기 전용 권한이에요. 이 바코드를 다운로드할 수는 있지만 변경할 수는 없어요.",
-          "planBarcodesAreStaticThey": "플랜이에요. 바코드는 정적이라 만료되지 않으며 모든 플랜에서 사용할 수 있어요.",
+          "planBarcodesAreStaticThey": "{plan} 플랜이에요. 바코드는 정적이라 만료되지 않으며 모든 플랜에서 사용할 수 있어요.",
           "noBarcodesYet": "아직 바코드가 없어요",
           "newBarcode": "새 바코드",
           "openTheFreeGenerator": "무료 생성기 열기",
@@ -5005,16 +5512,15 @@
             "theImportGoesOnBy": "이 페이지를 열어 두면 그때 가져오기가 자동으로 이어져요. 아니면 {resumeAfter} 이후에 직접 다시 시작할 수 있어요. 이미 만든 코드는 다시 만들어지지 않아요.",
             "theImportStopped": "가져오기가 중단되었어요",
             "seePlans": "요금제 보기",
-            "of": "/",
-            "rowsSent": "행 전송됨",
-            "created": "생성됨",
+            "rowsSentOf": "{total}개 중 {sent}개 행 전송됨",
+            "createdCount": "{created}개 생성됨",
+            "createdWithProblems": "{created}개 생성됨 · {rowErrors}개 문제 있음",
             "valueCouldntBeSent": "{value}을(를) 보내지 못했어요",
             "retryThemNothingIsMade": "다시 시도해 보세요. 중복으로 만들어지지 않아요.",
             "pause": "일시중지",
             "resume": "다시 시작",
             "leavingThisPagePausesThe": "이 페이지를 벗어나면 가져오기가 일시중지돼요. 다시 돌아와서 이어 가세요.",
             "importProgress": "가져오기 진행률",
-            "rowerrorsWithProblems": " · 문제 있음 {rowErrors}",
             "tryingAgainInSecondsS": "{seconds, number}초 후 다시 시도해요",
             "waitingSecondsSForThe": "생성 한도 때문에 {seconds, number}초 기다리는 중이에요",
             "importing": "가져오는 중",
@@ -5045,15 +5551,13 @@
           },
           "importWizard": {
             "loading": "불러오는 중...",
-            "onThe": "현재",
-            "planYouCanImportOne": "플랜에서는 코드를 한 번에 하나씩만 가져올 수 있어요.",
+            "oneCodeAtATime": "{plan} 플랜에서는 코드를 한 번에 하나씩 가져올 수 있어요.",
             "upgrade": "업그레이드",
             "n1ChooseACsvFile": "1. CSV 파일 선택",
             "sampleCsv": "샘플 CSV",
             "dropACsvFileHere": "CSV 파일을 여기에 놓거나 클릭해서 선택하세요",
-            "firstRowColumnNamesColumns": "첫 행: 열 이름. 열: destination(필수), title, folder(하위 폴더는 \"Parent / Child\" 형식 사용), tags(; 또는 |로 구분), slug(선택 사항인 사용자 지정 뒷부분",
-            "n3To64LettersDigits": ": 영문자, 숫자, - 또는 _ 3~64자). 최대",
-            "rowsAnd": "행, 그리고",
+            "csvColumns": "첫 번째 행: 열 이름. 열: destination(필수), title, folder(하위 폴더는 \"Parent / Child\" 형식 사용), tags(; 또는 |로 구분), slug(선택 사항, 사용자 지정 back-half: 영문자, 숫자, - 또는 _ 3~64자). 최대 {rows}행, {size}MB까지 가능해요.",
+            "csvColumnsSlugOnPlans": "첫 번째 행: 열 이름. 열: destination(필수), title, folder(하위 폴더는 \"Parent / Child\" 형식 사용), tags(; 또는 |로 구분), slug({slugPlans}에서 선택 사항, 사용자 지정 back-half: 영문자, 숫자, - 또는 _ 3~64자). 최대 {rows}행, {size}MB까지 가능해요.",
             "thisFileHasMoreThan": "이 파일은 {MAX_IMPORT_ROWS}행을 넘어요. 처음 {MAX_IMPORT_ROWS2}행만 표시하고 가져와요.",
             "n2MatchTheColumns": "2. 열 매칭",
             "notInThisFile": "이 파일에 없음",
@@ -5076,19 +5580,18 @@
             "removeFile": "파일 삭제",
             "bulkImportIsAValue": "일괄 가져오기는 {value} 기능이에요",
             "bulkImportIsntOnYour": "현재 요금제에서는 일괄 가져오기를 쓸 수 없어요",
-            "bulkplansImportUpToMax": " {bulkPlans} 요금제에서는 파일당 최대 {MAX_IMPORT_ROWS}개의 코드를 가져올 수 있어요.",
-            "onSlugplans": " {slugPlans} 요금제",
-            "newFoldersValue": "새 폴더: {value}. ",
+            "bulkplansImportUpToMax": "{bulkPlans}에서는 파일당 최대 {MAX_IMPORT_ROWS}개의 코드를 가져올 수 있어요.",
+            "newFoldersValue": "새 폴더: {value}",
             "newTagsValue": "새 태그: {value}.",
             "auto": "자동",
-            "rowsWithProblemsAreSkipped": "문제가 있는 행은 건너뛰어요. ",
+            "rowsWithProblemsAreSkipped": "문제가 있는 행은 건너뛰어요.",
             "sentImportChunkSizeAt": "한 번에 {IMPORT_CHUNK_SIZE}개씩 보내며, 일시 중지했다가 다시 시작할 수 있어요."
           }
         },
         "analyticsExtra": {
           "whenPeopleScan": "스캔이 많은 시간대",
-          "last": "최근",
-          "days": "일,",
+          "lastDays": "최근 {days, number}일, {timeZone}",
+          "lastDaysBusiest": "최근 {days, number}일, {timeZone} · 가장 붐비는 시간 {hour}:00",
           "hourOfDay": "시간대",
           "dayOfWeek": "요일",
           "aBSplit": "A/B 분할",
@@ -5107,7 +5610,6 @@
           "taps": "탭 수",
           "mostTapped": "가장 많이 탭한 항목",
           "conversionTypes": "전환 유형",
-          "busiestHourValue00": " · 가장 붐비는 시간 {value}:00",
           "sinceValue": " {value} 이후",
           "languageAndScanCountRules": " (언어 및 스캔 횟수 규칙은 다시 재현할 수 없어서, 해당 규칙으로 다른 곳에 연결된 스캔이 포함될 수 있어요)",
           "unknown": "알 수 없음"
@@ -5137,7 +5639,8 @@
           "everyScan": "모든 스캔",
           "daysDaysOfScanHistory": "{days, number}일간의 스캔 기록",
           "valueKeepsValue2": "{value}은(는) {value2}을(를) 유지해요",
-          "valueAndValue2": "{value} 및 {value2}."
+          "valueAndValue2": "{value} 및 {value2}.",
+          "yearsOfScanHistory": "{years, plural, one {스캔 기록 #년} other {스캔 기록 #년}}"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "저장된 상태로 유지되며, 다시 전환하면 다시 작동해요.",
@@ -5146,8 +5649,7 @@
           "link": "링크",
           "switchBack": "다시 전환",
           "usedLimitPagesValue": "페이지 {used, number} / {limit, number}개 ({value})",
-          "notInThisTemplate": "이 템플릿에 없는 항목:",
-          "onYourCurrentPage": "현재 페이지에 있어요.",
+          "notInThisTemplateStays": "이 템플릿에 없음: {list}. 현재 페이지에 {count, plural, one {그대로 남아요} other {그대로 남아요}}.",
           "valueStaysInPagesSo": "{value}은(는) Pages에 그대로 남아 있어서 다시 전환할 수 있어요. 새 페이지를 게시할 때까지는 스캔하면 계속 이 페이지가 열려요.",
           "youEditThePageNext": "다음으로 페이지를 편집해요. 게시할 때까지는 스캔하면 계속 {opensNow}(으)로 이동해요.",
           "continueToEditor": "편집기로 계속",
@@ -5162,8 +5664,6 @@
           "hostedPage": "호스팅 페이지",
           "comesAlongThePageName": "함께 이동: 페이지 이름, 설정, 로고, 그리고 {value}.",
           "comesAlongThePageName2": "함께 이동: 페이지 이름, 설정, 로고.",
-          "itStays": "그대로 유지",
-          "theyStay": "그대로 유지",
           "valueStaysInPagesSo2": "{value}은(는) Pages에 그대로 남아 있어서 나중에 다시 전환할 수 있어요. 삭제하기 전까지는 호스팅 페이지 사용량에 포함돼요.",
           "scansGoStraightToThis": "스캔하면 이 주소로 바로 연결돼요.",
           "switching": "전환 중...",
@@ -5182,14 +5682,13 @@
         },
         "historyPanel": {
           "labelChanged": "{label} 변경됨",
-          "passwordTurned": "비밀번호 변경됨",
+          "passwordTurnedOn": "비밀번호 켜짐",
+          "passwordTurnedOff": "비밀번호 꺼짐",
           "versionHistory": "버전 기록",
           "eachEditToTheType": "유형, 대상, 제목, 디자인, 도메인, 일정, 라우팅 또는 픽셀을 수정할 때마다 이전 설정이 여기에 저장돼요. 버전을 복원하면 현재 설정이 먼저 저장되므로 되돌릴 수 있어요.",
           "noChangesYetWhenYou": "아직 변경 내역이 없어요. 이 코드를 수정하면 이전 설정이 여기에 표시돼요.",
-          "changedOnChangewhen": "{changeWhen}에 변경됨",
+          "actorChangedOn": "<strong>{actor}</strong> <muted>{changeWhen}에 변경</muted>",
           "showingTheLatestShownOf": "전체 {total, number}개 버전 중 최근 {SHOWN, number}개를 표시하고 있어요. 코드당 최대 100개까지 보관돼요.",
-          "on": "켜짐",
-          "off": "꺼짐",
           "valueUtc": "{value} UTC"
         },
         "historyRestoreButton": {
@@ -5203,16 +5702,15 @@
           "restoreVersion": "버전 복원"
         },
         "inactiveSettingsNotice": {
-          "againIfYouSwitchBack": "유형 변경으로 다시 전환하면 다시 작동해요.",
-          "itWorks": "작동해요",
-          "theyWork": "작동해요"
+          "savedFromLink": "{count, plural, one {{names}은(는) 이 코드가 웹사이트 링크였을 때 저장된 설정이에요. 호스팅 페이지에서는 사용하지 않아요. 유형 변경으로 다시 전환하면 다시 작동해요.} other {{names}은(는) 이 코드가 웹사이트 링크였을 때 저장된 설정이에요. 호스팅 페이지에서는 사용하지 않아요. 유형 변경으로 다시 전환하면 다시 작동해요.}}",
+          "savedFromPage": "{count, plural, one {{names}은(는) 이 코드가 호스팅 페이지를 열었을 때 저장된 설정이에요. 웹사이트 링크에서는 불러오지 않아요. 유형 변경으로 다시 전환하면 다시 작동해요.} other {{names}은(는) 이 코드가 호스팅 페이지를 열었을 때 저장된 설정이에요. 웹사이트 링크에서는 불러오지 않아요. 유형 변경으로 다시 전환하면 다시 작동해요.}}"
         },
         "landingPagePanel": {
           "hostedPage": "호스팅 페이지",
           "thePageThisCodeOpened": "이 코드가 열던 페이지가 삭제되어 스캔하면 \"찾을 수 없음\"이 표시돼요. 유형 변경을 사용해 웹사이트 링크나 새 페이지로 연결하세요.",
-          "scansOpen": "스캔 시 열리는 곳",
+          "scansOpenTitle": "스캔하면 “{title}”({label})이 열려요.",
+          "scansOpenYourPage": "스캔하면 내 페이지({label})가 열려요.",
           "view": "보기",
-          "yourPage": "내 페이지",
           "editItAnytimeThePrinted": "언제든 수정할 수 있으며, 인쇄된 코드는 그대로 유지돼요.",
           "thePrintedCodeAlwaysOpens": "인쇄된 코드는 항상 최신 버전을 열어요.",
           "editPage": "페이지 편집",
@@ -5223,7 +5721,8 @@
           "password": "비밀번호",
           "pauseCode": "코드 일시중지",
           "whilePausedScansGoTo": "일시중지된 동안에는 스캔하면 대체 URL 또는 \"이 캠페인은 일시중지되었습니다\"라는 기본 페이지로 연결돼요. 모든 플랜에서 사용할 수 있어요.",
-          "passwordsStartAndEndDates": "비밀번호, 시작일과 종료일, 스캔 제한, 대체 URL은 다음에 포함돼요:",
+          "lifecycleOnPlan": "비밀번호, 시작일과 종료일, 스캔 제한, 대체 URL은 {plan}에 포함돼 있어요.",
+          "lifecycleOnPaidPlan": "비밀번호, 시작일과 종료일, 스캔 제한, 대체 URL은 유료 플랜에 포함돼 있어요.",
           "upgrade": "업그레이드",
           "removePassword": "비밀번호 삭제",
           "visitorsTypeItOnceThat": "방문자가 한 번 입력하면 해당 브라우저는 6시간 동안 잠금 해제 상태로 유지돼요. 4자 이상이어야 해요.",
@@ -5241,8 +5740,7 @@
           "turnedOffByQrdx": "QRdx에서 해제함",
           "ourAutomatedChecksFlaggedA": "자동 점검에서 이 코드의 링크(예: URL 단축 서비스, IP 주소, 유사 도메인)가 의심스러운 것으로 표시되어, 검토자가 승인할 때까지 꺼져 있어요. 보통 하루 안에 승인돼요. 별도로 하실 일은 없어요.",
           "thisCodeWasSwitchedOff": "이 코드는 악용 검토 후 꺼졌으며 리디렉션되지 않아요. 잘못되었다고 생각하시면 support@qrdx.dev로 문의해 주세요.",
-          "aPaidPlan": "유료 플랜",
-          "yourCurrentSettingsKeepWorking": " 현재 설정은 계속 작동하며, 언제든지 삭제할 수 있어요.",
+          "yourCurrentSettingsKeepWorking": "현재 설정은 계속 작동하며, 언제든 삭제할 수 있어요.",
           "timesAreInYourTime": " 시간은 사용자의 시간대({timeZone})로 표시돼요.",
           "saving": "저장 중…",
           "saveChanges": "변경 사항 저장",
@@ -5672,14 +6170,13 @@
           "deleteFolder": "폴더 삭제",
           "current": "현재",
           "move": "이동",
-          "toFolder": "폴더로",
+          "moveCodesToFolder": "{count, plural, one {코드를 폴더로 이동} other {코드 #개를 폴더로 이동}}",
           "linksAndPrintedCodesDont": "링크와 인쇄된 코드는 바뀌지 않아요.",
           "loadingFolders": "폴더 불러오는 중...",
           "newFolder": "새 폴더",
           "springCampaign": "봄 캠페인",
           "save": "저장",
           "createFolder": "폴더 만들기",
-          "code": "코드",
           "itsCodesAndSubfoldersMoved": "폴더 안의 코드와 하위 폴더를 {target}(으)로 이동했어요."
         },
         "importDialog": {
@@ -5703,7 +6200,8 @@
         "importFileStep": {
           "allProviders": "모든 제공업체",
           "preview": "미리보기",
-          "getTheFileFrom": "파일 가져올 곳",
+          "getTheFileFrom": "{provider}에서 파일 가져오기",
+          "getTheFileFromYourProvider": "제공업체에서 파일 가져오기",
           "dropTheCsvHereUp": "CSV를 여기에 끌어다 놓으세요 <span>(최대 2 MB)</span>",
           "matchTheColumns": "열 매칭",
           "looksLikeANameExport": "{name} 내보내기 파일 같아요",
@@ -5714,7 +6212,6 @@
           "provider": "제공업체",
           "exportFile": "내보내기 파일",
           "import": "가져오기",
-          "yourProvider": "내 제공업체",
           "firstMaxJobLinks": " (처음 {MAX_JOB_LINKS, number}개)",
           "chooseAnotherFile": "다른 파일 선택",
           "chooseFile": "파일 선택"
@@ -5760,10 +6257,7 @@
         "importPreviewStep": {
           "back": "뒤로",
           "upgrade": "업그레이드",
-          "yourPlanHasRoomFor": "현재 요금제에서 사용할 수 있는 개수:",
-          "and": ", 그리고",
-          "readyToImportImportThe": "가져올 준비가 되었어요. 처음",
-          "nowOrUpgradeForUnlimited": "지금 가져오거나, 무제한 동적 코드를 쓰려면 업그레이드하세요. 코드를 보관 처리해도 슬롯이 비워져요.",
+          "planRoomNote": "현재 플랜에서 활성 코드를 {remaining, plural, one {#개 더} other {#개 더}} 만들 수 있고, {wanted, plural, one {링크 #개를} other {링크 #개를}} 가져올 준비가 되었어요. 지금은 처음 {creates, number}개를 가져오거나, 업그레이드해서 동적 코드를 무제한으로 사용할 수 있어요. 코드를 보관 처리해도 자리가 생겨요.",
           "putTheNewCodesIn": "새 코드를 폴더에 넣기",
           "carryOverTags": "태그 유지",
           "nameNew": "{name} · 신규",
@@ -5773,7 +6267,13 @@
           "eachCodeKeepsItsOld": "각 코드는 기존 뒷부분을 쓸 수 있으면 그대로 유지해요. 그래서 bit.ly/spring-menu는 qrdx.dev/q/spring-menu가 돼요. 나머지는 아래에 표시된 자동 생성 값을 받아요.",
           "linksOn": "링크 도메인",
           "noneOfMyDomains": "내 도메인 없음",
-          "valueKept": "{value} 유지됨",
+          "backHalvesKept": "<strong>백하프 {kept, plural, one {#개} other {#개}} 유지</strong>.",
+          "backHalvesKeptConflicts": "<strong>백하프 {kept, plural, one {#개} other {#개}} 유지</strong>, {conflicts, number}개는 자동 생성된 값으로 대체돼요(아래 목록 참고).",
+          "domainStatus": {
+            "verified": "{domain}은(는) QRdx에서 인증되었어요. 코드가 바로 이 도메인에 적용돼요.",
+            "pending": "{domain}은(는) QRdx에 추가되었지만 아직 인증되지 않았어요. 코드는 지금 이 도메인에 적용되며, DNS를 QRdx로 옮기고 인증하면 해당 도메인에서 열려요.",
+            "missing": "{domain}은(는) 아직 QRdx에 없어서 백하프는 qrdx.dev에 유지돼요. 도메인에 그대로 유지하려면 먼저 도메인 페이지에서 추가해 주세요."
+          },
           "openDomains": "도메인 열기",
           "withoutItEveryCodeGets": "없으면 모든 코드에 자동 생성된 뒷부분이 사용돼요.",
           "needsALook": "확인 필요",
@@ -5789,11 +6289,8 @@
           "nothingToImport": "가져올 항목 없음",
           "importTheFirstValue": "처음 {value}개 가져오기",
           "importValue": "{value}개 가져오기",
-          "is": "이에요",
-          "are": "이에요",
-          "keepTheirsOnThatDomain": "해당 도메인에서 기존 값을 유지하므로, DNS가 QRdx로 이전되면 인쇄된 코드가 다시 작동해요.",
+          "keepTheirsOnThatDomain": "백하프는 선택한 도메인에 유지되므로, 도메인의 DNS를 QRdx로 옮기면 인쇄된 코드가 다시 작동해요.",
           "everyBackHalfIsKept": "모든 뒷부분은 qrdx.dev에서 유지돼요.",
-          "conflictsWithAGeneratedOne": ", 생성된 코드와 충돌 {conflicts, number}개 (아래에 표시)",
           "keepingBackHalvesIsPart": "백하프 유지는 {slugPlans}에 포함돼요.",
           "yourPlanDoesntKeepBack": "현재 플랜은 백하프를 유지하지 않아요.",
           "random": "무작위",
@@ -6030,8 +6527,8 @@
           "name": "이름",
           "cancel": "취소",
           "deleteTagName": "\"{name}\" 태그를 삭제할까요?",
-          "theTagIsRemovedFrom": "태그가 다음에서 제거돼요:",
-          "theCodesThemselvesAreNot": ". QR 코드 자체는 변경되지 않아요.",
+          "deleteTagCount": "{count, plural, one {코드 #개} other {코드 #개}}에서 태그가 삭제돼요. 코드 자체는 변경되지 않아요.",
+          "deleteTagCodes": "해당 코드에서 태그가 삭제돼요. 코드 자체는 변경되지 않아요.",
           "deleteTag": "태그 삭제",
           "upToMaxTagsPer": "코드당 최대 {MAX_TAGS_PER_CODE, number}개의 태그를 사용할 수 있어요.",
           "loadingTags": "태그를 불러오는 중...",
@@ -6042,15 +6539,11 @@
           "print": "인쇄",
           "editTag": "태그 편집",
           "createTag": "태그 만들기",
-          "itsCodes": "해당 코드",
           "tags": "태그",
           "tagsForValue": "{value}의 태그"
         },
         "usage": {
-          "activeDynamic": "활성 동적",
-          "planUnlimitedCodes": "플랜, 코드 무제한",
-          "code": "코드",
-          "codes": "코드",
+          "unlimitedUsage": "{count, plural, one {활성 동적 코드 #개} other {활성 동적 코드 #개}} · {plan} 플랜, 무제한 코드",
           "archivedNote": "보관된 코드는 집계되지 않아요. 기존 코드는 모든 요금제에서 계속 작동해요.",
           "newCode": "새 코드"
         }
@@ -6065,11 +6558,11 @@
         },
         "filesManager": {
           "storage": "저장 공간",
-          "of": "/",
-          "used": "사용 중 ·",
-          "maxPerFileOn": "파일당 최대 용량:",
-          "youreOverYourPlansStorage": "플랜의 저장 공간을 초과했어요. 기존 파일은 계속 작동해요. 필요 없는 파일을 삭제하세요",
-          "toUploadNewOnes": "새 파일을 업로드할 수 있어요.",
+          "storageUsed": "사용한 저장 공간",
+          "storageUsage": "{quota} 중 {used} 사용 · {plan}에서 파일당 최대 {maxFile}",
+          "storageUsageUnlimited": "무제한 중 {used} 사용 · {plan}에서 파일당 최대 {maxFile}",
+          "overStorage": "플랜의 저장 용량을 초과했어요. 기존 파일은 계속 작동해요. 새 파일을 업로드하려면 필요 없는 파일을 삭제하거나 업그레이드해 주세요.",
+          "overStorageTeam": "플랜의 저장 용량을 초과했어요. 기존 파일은 계속 작동해요. 새 파일을 업로드하려면 필요 없는 파일을 삭제해 주세요.",
           "dropFilesHereOrChoose": "파일을 여기에 놓거나 선택하세요",
           "valueUpToMaxfilebytesEach": "{value} · 파일당 최대 {maxFileBytes}",
           "noFilesYet": "아직 파일이 없어요",
@@ -6086,11 +6579,8 @@
           "toKeepTheLinkWorking": "새 콘텐츠로 링크를 계속 사용하려면 대신 파일 교체를 이용하세요.",
           "theFileAndItsLink": "파일과 해당 링크가 영구적으로 삭제됩니다.",
           "cancel": "취소",
-          "storageUsed": "사용한 저장 공간",
           "uploadFiles": "파일 업로드",
           "actionsForFilename": "{filename} 작업",
-          "unlimited": "무제한",
-          "orUpgrade": " 또는 업그레이드",
           "uploading": "업로드 중…",
           "chooseFiles": "파일 선택",
           "uploadAMenuPdfPhotos": "메뉴 PDF, 사진, 음악 또는 동영상을 업로드한 다음 PDF, 갤러리, 오디오, 동영상 파일 또는 다운로드 블록으로 호스팅 페이지에 추가하세요.",
@@ -6196,7 +6686,7 @@
           }
         },
         "pageListControls": {
-          "planUnlimitedPages": "플랜, 페이지 무제한",
+          "unlimitedPagesUsage": "{count, plural, one {# 페이지} other {# 페이지}} · {plan} 플랜, 페이지 무제한",
           "viewLivePage": "라이브 페이지 보기",
           "copyShortLink": "짧은 링크 복사",
           "qrCodeAnalytics": "QR 코드 및 분석",
@@ -6207,8 +6697,6 @@
           "deleteThisPage": "이 페이지를 삭제할까요?",
           "cancel": "취소",
           "moreActions": "더 많은 작업",
-          "page": "페이지",
-          "pages": "페이지",
           "thisCantBeUndone": "이 작업은 되돌릴 수 없어요.",
           "deleting": "삭제하는 중...",
           "pageDeleted": "페이지를 삭제했어요",
@@ -6299,8 +6787,9 @@
             "valueExpiresExpiresat": "{value} · 만료: {expiresAt}",
             "viewInvitation": "초대 보기",
             "members": "멤버",
-            "member": "멤버",
-            "seatsFollowThePlanOf": ". 시트는 워크스페이스 소유자와 결제 담당 멤버의 플랜을 따릅니다.",
+            "membersOfSeats": "{count, plural, one {멤버 #명} other {멤버 #명}} / {seats, number}석",
+            "membersCount": "{count, plural, one {멤버 #명} other {멤버 #명}}",
+            "seatsFollowThePlanOf": "좌석 수는 워크스페이스 소유자와 결제 담당 멤버의 플랜을 따릅니다.",
             "invitePeople": "사람 초대",
             "inviteLinksExpireAfter48": "초대 링크는 48시간 후에 만료되며, 초대받은 이메일 주소에서만 사용할 수 있습니다.",
             "pendingInvitations": "대기 중인 초대",
@@ -6310,7 +6799,6 @@
             "joinLinksArentSetUp": "이 서버에는 아직 참여 링크가 설정되어 있지 않습니다. 지금은 이메일로 초대해 주세요.",
             "whoCanWorkInName": "{name}에서 작업할 수 있는 사람과 그들이 할 수 있는 일입니다.",
             "team": "팀",
-            "ofSeats": " / {seats, number}",
             "membersArePartOfPro": "멤버 기능은 {pro} 및 {business}에 포함되어 있습니다.",
             "askAWorkspaceOwnerOr": "멤버를 추가하려면 워크스페이스 소유자나 결제 담당 멤버에게 업그레이드를 요청하세요."
           }
@@ -6407,9 +6895,7 @@
           "noThemesMatchSearch": "\"{search}\"에 해당하는 테마가 없어요.",
           "existingSharedThemesKeepWorking": "기존 공유 테마는 계속 사용할 수 있어요. 새 테마를 추가하려면 {planName} 플랜이 필요해요.",
           "shareThemesWithThisWorkspace": "이 워크스페이스와 테마 공유",
-          "sharedThemesArePartOf": "공유 테마는",
-          "planEveryoneIn": "플랜에 포함돼요. 워크스페이스",
-          "canPickThemInThe": "의 모든 구성원이 에디터에서 테마를 선택할 수 있고, 기본 테마는 새 코드에 적용돼요.",
+          "sharedThemesPlan": "공유 테마는 {plan} 플랜에 포함돼요. {workspace}의 모든 멤버가 에디터에서 테마를 선택할 수 있고, 기본 테마는 새 코드에 적용돼요.",
           "upgrade": "업그레이드",
           "noSavedThemesYet": "저장된 테마가 아직 없어요",
           "designAQrCodeIn": "Playground에서 QR 코드를 디자인한 뒤 저장을 눌러 색상, 패턴, 로고를 여기에 보관하세요. 하나를 기본으로 설정하면 새 코드가 그 테마로 시작해요.",
@@ -6425,7 +6911,7 @@
           "yourThemes": "내 테마",
           "noSharedThemesYetUse": "공유 테마가 아직 없어요. 아래 내 테마 중 하나에서 \"이 워크스페이스로 복사\"를 사용하세요.",
           "noSharedThemesYetOwners": "공유 테마가 아직 없어요. 소유자와 관리자가 여기서 테마를 공유할 수 있어요.",
-          "askAWorkspaceOwnerTo": " 워크스페이스 소유자에게 업그레이드를 요청하세요."
+          "askAWorkspaceOwnerTo": "워크스페이스 소유자에게 업그레이드를 요청하세요."
         }
       },
       "home": {
@@ -6537,8 +7023,7 @@
           "deleteWorkspace": "워크스페이스 삭제",
           "deleteTeamname": "{teamName}을(를) 삭제할까요?",
           "thisRemovesTheWorkspaceIts": "워크스페이스와 멤버, 대기 중인 초대가 삭제돼요. 동적 QR 코드는 계속 리디렉션돼요. 각 코드, 페이지, 테마, 도메인은 만든 멤버의 개인 워크스페이스로 이동해요.",
-          "type": "확인하려면",
-          "toConfirm": "입력해 주세요",
+          "typeToConfirm": "확인하려면 <code>{word}</code>를 입력하세요",
           "deleting": "삭제 중...",
           "youLeftTeamname": "{teamName}에서 나갔어요",
           "deletedTeamname": "{teamName} 삭제됨"
@@ -6550,9 +7035,8 @@
           "teammateCompanyCom": "teammate@company.com",
           "creatingLink": "링크 만드는 중...",
           "createInviteLink": "초대 링크 만들기",
-          "weEmailedTheInvitationTo": "초대장을 이메일로 보냈어요: ",
-          "sendThisLinkTo": "이 링크를 보내 주세요: ",
-          "youCanAlsoShareThis": ". 이 링크를 공유해도 돼요."
+          "invitationEmailed": "<strong>{email}</strong>으로 초대 이메일을 보냈어요. 이 링크를 직접 공유할 수도 있어요.",
+          "sendThisLink": "이 링크를 <strong>{email}</strong>에게 보내세요."
         },
         "inviteLink": {
           "inviteLink": "초대 링크",
@@ -6564,20 +7048,20 @@
           "resetLink": "링크 재설정",
           "turnOff": "끄기",
           "createJoinLink": "가입 링크 만들기",
-          "onSince": "켠 날짜",
-          "forSafetyTheLinkIs": ". 안전을 위해 링크는 만들 때만 표시돼요. 분실했다면 재설정해서 새 링크를 받으세요(기존 링크는 더 이상 작동하지 않아요).",
-          "copyItNowItsShown": "지금 복사하세요. 한 번만 표시돼요. 로그인한 사람이 이 링크를 열면 {value} 역할로 가입해요.",
+          "onSince": "{date}부터 켜짐",
+          "onSinceBy": "{date}부터 켜짐, {name} 님이 만듦",
+          "forSafetyTheLinkIs": "보안을 위해 링크는 만들 때만 표시돼요. 잃어버렸나요? 초기화하면 새 링크를 받을 수 있어요(이전 링크는 더 이상 작동하지 않아요).",
+          "copyItNowItsShown": "지금 복사하세요. 한 번만 표시돼요. 로그인한 사람이 이 링크를 열면 {role, select, owner {소유자} admin {관리자} member {멤버} billing {결제 관리자} other {뷰어}}로 참여해요.",
           "copyJoinLink": "가입 링크 복사",
           "cancel": "취소",
           "joinLink": "가입 링크",
-          "madeByCreatedbyname": ", 만든 사람: {createdByName}",
           "resetTheJoinLink": "가입 링크를 재설정할까요?",
           "turnOffTheJoinLink": "가입 링크를 끌까요?",
           "theCurrentLinkStopsWorking": "현재 링크는 즉시 작동하지 않아요. 공유할 새 링크를 받게 돼요.",
           "theLinkStopsWorkingRight": "링크는 즉시 작동하지 않아요. 이미 가입한 사람은 계속 멤버로 남아요.",
           "joinLinkReset": "가입 링크를 재설정했어요",
           "joinLinkCreated": "가입 링크를 만들었어요",
-          "theLinkNowAddsPeople": "이제 이 링크로 {value} 역할로 추가돼요",
+          "theLinkNowAddsPeople": "이제 이 링크로 {role, select, owner {소유자} admin {관리자} member {멤버} billing {결제 관리자} other {뷰어}}로 추가돼요",
           "joinLinkTurnedOff": "가입 링크를 껐어요",
           "joinLinkCopied": "가입 링크를 복사했어요",
           "couldntCopyTheLink": "링크를 복사하지 못했어요"
@@ -6846,8 +7330,8 @@
         "signInToContinue": "로그인하고 계속하기",
         "goToDashboard": "대시보드로 이동",
         "thisInvitationWasSentTo": "이 초대장은 <span>{value}</span>(으)로 전송되었지만, 현재 <span2>{email}</span2> 계정으로 로그인되어 있어요. 초대받은 주소로 로그인해서 수락해 주세요.",
-        "invitedYouToJoin": "님이 초대했어요:",
-        "as": "역할:",
+        "personInvitedYou": "<strong>{inviter}</strong> 님이 {role, select, owner {소유자} admin {관리자} member {멤버} billing {결제 관리자} other {뷰어}}로 <strong>{team}</strong>에 참여하도록 초대했어요.",
+        "adminInvitedYou": "팀 관리자가 {role, select, owner {소유자} admin {관리자} member {멤버} billing {결제 관리자} other {뷰어}}로 <strong>{team}</strong>에 참여하도록 초대했어요.",
         "teamMembersShareTheTeams": "팀 멤버는 팀의 동적 QR 코드와 테마를 함께 사용해요. 만료일: {expiresAt}.",
         "signInWithTheEmail": "초대장이 전송된 이메일 주소로 로그인해 주세요.",
         "youveBeenInvitedToA": "팀에 초대되었어요",
@@ -6861,7 +7345,6 @@
         "invitationsAreValidFor48": "초대장은 48시간 동안 유효해요. 팀 소유자나 관리자에게 새 링크를 요청해 주세요.",
         "invitationExpired": "초대장이 만료되었어요",
         "joinTeamname": "{teamName} 참여하기",
-        "aTeamAdmin": "팀 관리자",
         "anotherAddress": "다른 주소"
       },
       "inviteActions": {
@@ -6903,7 +7386,7 @@
       },
       "page": {
         "openName": "{name} 열기",
-        "youreSignedInAsEmail": "<span>{email}</span> 계정으로 로그인했어요. {value}({value2}) 권한으로 참여하게 돼요.",
+        "youreSignedInAsEmail": "<span>{email}</span> 계정으로 로그인했어요. {role, select, owner {소유자} admin {관리자} member {멤버} billing {결제 관리자} other {뷰어}}로 참여하며, 할 수 있는 일은 다음과 같아요. {role, select, owner {결제, 소유자, 워크스페이스 삭제를 포함한 모든 것} admin {사람, 설정, 도메인, 모든 사용자의 코드 관리} member {코드와 페이지 만들기, 워크스페이스 코드 편집} billing {플랜과 결제 관리, 그 외는 읽기 전용} other {코드, 페이지, 분석 보기(변경 불가)}}",
         "checkThatYouCopiedThe": "링크를 전체 복사했는지 확인하거나 워크스페이스에 새 링크를 요청하세요.",
         "thisJoinLinkIsntComplete": "이 참여 링크가 완전하지 않아요",
         "waitAMinuteThenReload": "잠시 기다린 후 이 페이지를 새로고침하세요.",
@@ -6931,7 +7414,7 @@
           "theAppThatSentYou": "이곳으로 안내한 앱에서 잘못된 요청을 보냈어요: <span>{description}</span>. 앱으로 돌아가 다시 시도하거나 앱 개발자에게 문의하세요.",
           "appnameWillBeAbleTo": "{appName}이(가) 할 수 있는 작업",
           "nameWantsToAccessYour": "{name}이(가) 내 QRdx 계정에 접근하려고 해요",
-          "builtBy": "개발:",
+          "builtByName": "제작: <strong>{name}</strong>",
           "unverifiedApp": "확인되지 않은 앱이에요.",
           "qrdxHasntReviewedNameOnly": "QRdx가 {name}을(를) 검토하지 않았어요. {builtBy}을(를) 신뢰하는 경우에만 계속하세요.",
           "switch": "전환",
@@ -6991,12 +7474,11 @@
       "body": "동적 QR 코드가 방금 {count, number}회 스캔을 넘었어요. 사람들이 어디서 언제 스캔하는지, 어떤 기기를 쓰는지 확인해 보세요."
     },
     "formSubmission": {
-      "yourPage": "내 페이지",
+      "subject": "{hasTitle, select, yes {“{title}”에 새 양식 응답이 도착했어요} other {내 페이지에 새 양식 응답이 도착했어요}}",
+      "preview": "{hasTitle, select, yes {“{title}”에 새 양식 응답이 도착했어요} other {내 페이지에 새 양식 응답이 도착했어요}}",
+      "heading": "{hasTitle, select, yes {“{title}”에 새 응답이 도착했어요} other {내 페이지에 새 응답이 도착했어요}}",
       "answer": "답변",
-      "subject": "{page}에 새 양식 응답이 있어요",
-      "preview": "{page}에 새 양식 응답이 있어요",
       "reason": "{workspace}의 양식 제출 알림이 켜져 있어서 이 메일을 받으셨어요.",
-      "heading": "{page}의 새 응답",
       "submitted": "{when}에 제출되었습니다. 답변은 방문자가 입력한 그대로 표시됩니다.",
       "more": "{count, plural, other {답변 #개가 대시보드에 더 있어요.}}",
       "viewAll": "모든 응답 보기"
@@ -7047,7 +7529,7 @@
       "lastUsed": "마지막 사용"
     },
     "signInPanel": {
-      "codeSentTo": "코드를 보낸 주소",
+      "codeSentTo": "<strong>{email}</strong>로 코드를 보냈어요",
       "lastUsed": "마지막 사용",
       "or": "또는",
       "newToQrdxGoogleGithub": "QRdx가 처음이신가요? Google, GitHub 또는 이메일 코드로 무료 계정을 만들 수 있어요.",
@@ -7096,11 +7578,47 @@
       "wellEmailA6Digit": "<span>{maskedEmail}</span>(으)로 6자리 코드를 이메일로 보내 드릴게요.",
       "sendCode": "코드 보내기",
       "signInWithValueAgain": "{value}(으)로 다시 로그인하세요. 이 페이지로 돌아오면 변경을 한 번 더 진행해 주세요.",
-      "continueWith": "다음으로 계속",
+      "continueWith": "{method}(으)로 계속하기",
       "signOut": "로그아웃",
       "confirmItsYou": "본인 확인",
-      "beforeYou": "본인 확인이 필요해요: ",
-      "weNeedToCheckIts": " 전에 본인 확인이 필요해요.",
+      "beforeYouAction": {
+        "change-email": "이메일을 변경하기 전에 본인인지 확인해야 합니다.",
+        "delete-account": "계정을 삭제하기 전에 본인인지 확인해야 합니다.",
+        "turn-on-two-factor": "2단계 인증을 켜기 전에 본인인지 확인해야 합니다.",
+        "turn-off-two-factor": "2단계 인증을 끄기 전에 본인인지 확인해야 합니다.",
+        "add-passkey": "패스키를 추가하기 전에 본인인지 확인해야 합니다.",
+        "rename-passkey": "패스키 이름을 변경하기 전에 본인인지 확인해야 합니다.",
+        "remove-passkey": "패스키를 삭제하기 전에 본인인지 확인해야 합니다.",
+        "backup-codes": "새 백업 코드를 만들기 전에 본인인지 확인해야 합니다.",
+        "add-authenticator": "인증 앱을 설정하기 전에 본인인지 확인해야 합니다.",
+        "remove-authenticator": "인증 앱을 제거하기 전에 본인인지 확인해야 합니다.",
+        "sso": "싱글 사인온을 변경하기 전에 본인인지 확인해야 합니다.",
+        "support-change": "다른 사람을 대신해 이 변경을 하기 전에 본인인지 확인해야 합니다.",
+        "link-sign-in": "로그인 방법을 연결하기 전에 본인인지 확인해야 합니다.",
+        "unlink-sign-in": "로그인 방법 연결을 해제하기 전에 본인인지 확인해야 합니다.",
+        "create-api-key": "API 키를 만들기 전에 본인인지 확인해야 합니다.",
+        "create-oauth-app": "OAuth 앱을 만들기 전에 본인인지 확인해야 합니다.",
+        "new-client-secret": "새 클라이언트 시크릿을 만들기 전에 본인인지 확인해야 합니다.",
+        "delete-workspace": "이 워크스페이스를 삭제하기 전에 본인인지 확인해야 합니다.",
+        "change-member-role": "멤버의 역할을 변경하기 전에 본인인지 확인해야 합니다.",
+        "remove-member": "이 워크스페이스에서 멤버를 제거하기 전에 본인인지 확인해야 합니다.",
+        "invite-admin": "관리자를 초대하기 전에 본인인지 확인해야 합니다.",
+        "admin-join-link": "참여 링크로 관리자를 추가할 수 있게 하기 전에 본인인지 확인해야 합니다.",
+        "require-two-factor": "2단계 인증을 필수로 설정하기 전에 본인인지 확인해야 합니다.",
+        "stop-requiring-two-factor": "2단계 인증 필수 설정을 해제하기 전에 본인인지 확인해야 합니다.",
+        "continue-session": "계속하기 전에 본인인지 확인해야 합니다.",
+        "cancel-two-factor-reset": "지원팀의 해제 요청을 취소하기 전에 본인인지 확인해야 합니다.",
+        "authorize-app": "이 앱이 내 계정을 사용하도록 허용하기 전에 본인인지 확인해야 합니다.",
+        "reveal-webhook-secret": "서명 시크릿을 표시하기 전에 본인인지 확인해야 합니다.",
+        "rotate-webhook-secret": "새 서명 시크릿을 만들기 전에 본인이 맞는지 확인해야 해요.",
+        "create-webhook": "웹훅을 추가하기 전에 본인이 맞는지 확인해야 해요.",
+        "change-webhook-url": "웹훅을 새 주소로 보내기 전에 본인이 맞는지 확인해야 해요.",
+        "add-notification-webhook": "새 주소로 알림을 보내기 전에 본인이 맞는지 확인해야 해요.",
+        "add-slack-channel": "Slack 채널을 추가하기 전에 본인이 맞는지 확인해야 해요.",
+        "connect-data-out": "스캔 데이터나 양식 응답을 다른 도구로 보내기 전에 본인이 맞는지 확인해야 해요.",
+        "link-slack-account": "Slack 계정이 내 이름으로 코드를 만들 수 있게 허용하기 전에 본인이 맞는지 확인해야 해요.",
+        "set-payout-email": "제휴 수익금을 받는 곳을 변경하기 전에 본인이 맞는지 확인해야 해요."
+      },
       "weCheckItsYouBefore": "계정 보안을 변경하기 전에 본인 확인을 해요. 확인은 {CONFIRMATION_MINUTES, number}분 동안 유지되므로 연달아 변경하면 한 번만 물어봐요.",
       "useAnotherMethod": "다른 방법 사용",
       "back": "뒤로",

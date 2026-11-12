@@ -10,7 +10,7 @@ import { Switch } from "@repo/design-system/components/ui/switch";
 import { ArrowRight, Import as Download } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { downloadQRCode, QRCode } from "qrdx";
-import { type ComponentType, useEffect, useState } from "react";
+import { type ComponentType, useEffect, useMemo, useState } from "react";
 import { CopyButton } from "@/components/copy-button";
 import { AmazonForm } from "@/components/editor/content-forms/amazon-form";
 import { AttendanceForm } from "@/components/editor/content-forms/attendance-form";
@@ -75,14 +75,19 @@ import { YouTubeForm } from "@/components/editor/content-forms/youtube-form";
 import { InfoHint } from "@/components/help/info-hint";
 import { LocaleLink } from "@/components/i18n/locale-link";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { ServerSnapshot } from "@/components/server-snapshot";
 import { track } from "@/lib/analytics";
-import { useTrackQrGenerated } from "@/lib/analytics/react";
+import {
+  useTrackEditorOpened,
+  useTrackQrGenerated,
+} from "@/lib/analytics/react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { playgroundHref } from "@/lib/playground-links";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
 import { dubshSchema, googleDriveSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
+import type { QRStyle } from "@/types/editor";
 import {
   CONTENT_TYPES_METADATA,
   type ContentType,
@@ -242,77 +247,38 @@ const IMAGE_FORMAT_LABELS: Record<ImageFormat, string> = {
 const labelFor = (type: ContentType) =>
   CONTENT_TYPES_METADATA.find((meta) => meta.type === type)?.label ?? type;
 
-export function TypeGenerator({ type }: { type: ContentType }) {
+const ignore = () => undefined;
+
+interface GeneratorPanelProps {
+  /** The page's type. */
+  type: ContentType;
+  /** The form shown: smart paste in the URL and text forms can switch it. */
+  activeType: ContentType;
+  payload: string;
+  styles: QRStyle;
+  quietZone: boolean;
+  onQuietZoneChange: (quietZone: boolean) => void;
+  downloading: ImageFormat | null;
+  onDownload: (format: ImageFormat) => void;
+  /** Back to the page's own type after smart paste switched it. */
+  onBack: () => void;
+}
+
+/** The form, the preview and the downloads: live, or the server snapshot. */
+function GeneratorPanel({
+  type,
+  activeType,
+  payload,
+  styles,
+  quietZone,
+  onQuietZoneChange,
+  downloading,
+  onDownload,
+  onBack,
+}: GeneratorPanelProps) {
   const t = useTranslations("typeGenerator");
-  const [ready, setReady] = useState(false);
-  const [quietZone, setQuietZone] = useState(true);
-  const [downloading, setDownloading] = useState<ImageFormat | null>(null);
-
-  const [activeType, setActiveType] = useState<ContentType>(type);
-
-  const config = useQREditorStore((state) => state.contentConfigs[activeType]);
-  const value = useQREditorStore((state) => state.value);
-  const styles = useQREditorStore((state) => state.themeState.styles);
-
-  // The editor store is persisted in this browser, so starting here hands the
-  // same content to /playground when the visitor opens the full editor.
-  useEffect(() => {
-    if (!LINK_ONLY.has(type)) {
-      useQREditorStore.getState().setContentType(type);
-    }
-    setActiveType(type);
-    setReady(true);
-
-    // Smart paste in the URL and text forms can switch the content type.
-    let reverting = false;
-    return useQREditorStore.subscribe((state, prev) => {
-      if (reverting || state.contentType === prev.contentType) return;
-      setActiveType(state.contentType);
-      if (LINK_ONLY.has(state.contentType)) {
-        reverting = true;
-        useQREditorStore.setState({ contentType: prev.contentType });
-        reverting = false;
-      }
-    });
-  }, [type]);
-
-  useTrackQrGenerated(
-    "type_tool",
-    activeType,
-    activeType === "url" ? value : toPayload(activeType, config),
-  );
-
-  if (!ready) return <GeneratorSkeleton />;
-
-  // URL codes can be bound to a dynamic short link, which lives in `value`.
-  const payload =
-    activeType === "url" ? value.trim() : toPayload(activeType, config);
   const Form = FORMS[activeType];
   const switched = activeType !== type;
-
-  const handleDownload = async (format: ImageFormat) => {
-    if (!payload) return;
-    setDownloading(format);
-    try {
-      await downloadQRCode(buildQrProps(payload, styles, { quietZone }), {
-        format,
-        size: { width: 1024, height: 1024 },
-        filename: `${activeType}-qr-code.${format}`,
-      });
-      soundEvent("download");
-      track("qr_downloaded", {
-        format,
-        source: "type_tool",
-        content_type: activeType,
-      });
-    } catch (error) {
-      toast.error(t("downloadFailed"), {
-        description: error instanceof Error ? error.message : undefined,
-      });
-    } finally {
-      setDownloading(null);
-    }
-  };
 
   return (
     <div className="grid gap-6 md:grid-cols-[1fr_minmax(0,20rem)]">
@@ -328,16 +294,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
                 {t("about", { type: labelFor(activeType) })}
               </LocaleLink>
             </span>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={() => {
-                setActiveType(type);
-                if (!LINK_ONLY.has(type)) {
-                  useQREditorStore.getState().setContentType(type);
-                }
-              }}
-            >
+            <Button size="sm" variant="outline" onClick={onBack}>
               {t("back", { type: labelFor(type) })}
             </Button>
           </div>
@@ -390,7 +347,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
           <Switch
             id="quiet-zone"
             checked={quietZone}
-            onCheckedChange={setQuietZone}
+            onCheckedChange={onQuietZoneChange}
           />
         </div>
 
@@ -399,7 +356,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
             <Button
               key={format}
               disabled={!payload || downloading !== null}
-              onClick={() => handleDownload(format)}
+              onClick={() => onDownload(format)}
               variant={format === "png" ? "default" : "outline"}
             >
               {downloading === format ? (
@@ -453,5 +410,130 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         </p>
       </div>
     </div>
+  );
+}
+
+/**
+ * The generator as the server renders it: the type's empty form and preview
+ * in the default style. The browser keeps that markup without hydrating it
+ * (ServerSnapshot) until the live generator mounts with this browser's
+ * saved content: hydrating the forms from the server's defaults would write
+ * those over the saved content.
+ */
+function GeneratorSnapshot({ type }: { type: ContentType }) {
+  const styles = useQREditorStore((state) => state.themeState.styles);
+  return (
+    <GeneratorPanel
+      activeType={type}
+      downloading={null}
+      onBack={ignore}
+      onDownload={ignore}
+      onQuietZoneChange={ignore}
+      payload=""
+      quietZone
+      styles={styles}
+      type={type}
+    />
+  );
+}
+
+export function TypeGenerator({ type }: { type: ContentType }) {
+  const t = useTranslations("typeGenerator");
+  const [ready, setReady] = useState(false);
+  const [quietZone, setQuietZone] = useState(true);
+  const [downloading, setDownloading] = useState<ImageFormat | null>(null);
+
+  const [activeType, setActiveType] = useState<ContentType>(type);
+
+  const config = useQREditorStore((state) => state.contentConfigs[activeType]);
+  const value = useQREditorStore((state) => state.value);
+  const styles = useQREditorStore((state) => state.themeState.styles);
+
+  // Memoized: the browser must not give the kept markup new props.
+  const snapshot = useMemo(
+    () => (
+      <ServerSnapshot fallback={<GeneratorSkeleton />}>
+        <GeneratorSnapshot type={type} />
+      </ServerSnapshot>
+    ),
+    [type],
+  );
+
+  // The editor store is persisted in this browser, so starting here hands the
+  // same content to /playground when the visitor opens the full editor.
+  useEffect(() => {
+    if (!LINK_ONLY.has(type)) {
+      useQREditorStore.getState().setContentType(type);
+    }
+    setActiveType(type);
+    setReady(true);
+
+    // Smart paste in the URL and text forms can switch the content type.
+    let reverting = false;
+    return useQREditorStore.subscribe((state, prev) => {
+      if (reverting || state.contentType === prev.contentType) return;
+      setActiveType(state.contentType);
+      if (LINK_ONLY.has(state.contentType)) {
+        reverting = true;
+        useQREditorStore.setState({ contentType: prev.contentType });
+        reverting = false;
+      }
+    });
+  }, [type]);
+
+  useTrackEditorOpened("type_tool");
+  useTrackQrGenerated(
+    "type_tool",
+    activeType,
+    activeType === "url" ? value : toPayload(activeType, config),
+  );
+
+  if (!ready) return snapshot;
+
+  // URL codes can be bound to a dynamic short link, which lives in `value`.
+  const payload =
+    activeType === "url" ? value.trim() : toPayload(activeType, config);
+
+  const handleDownload = async (format: ImageFormat) => {
+    if (!payload) return;
+    setDownloading(format);
+    try {
+      await downloadQRCode(buildQrProps(payload, styles, { quietZone }), {
+        format,
+        size: { width: 1024, height: 1024 },
+        filename: `${activeType}-qr-code.${format}`,
+      });
+      soundEvent("download");
+      track("qr_downloaded", {
+        format,
+        source: "type_tool",
+        content_type: activeType,
+      });
+    } catch (error) {
+      toast.error(t("downloadFailed"), {
+        description: error instanceof Error ? error.message : undefined,
+      });
+    } finally {
+      setDownloading(null);
+    }
+  };
+
+  return (
+    <GeneratorPanel
+      activeType={activeType}
+      downloading={downloading}
+      onBack={() => {
+        setActiveType(type);
+        if (!LINK_ONLY.has(type)) {
+          useQREditorStore.getState().setContentType(type);
+        }
+      }}
+      onDownload={handleDownload}
+      onQuietZoneChange={setQuietZone}
+      payload={payload}
+      quietZone={quietZone}
+      styles={styles}
+      type={type}
+    />
   );
 }

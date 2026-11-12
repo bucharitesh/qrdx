@@ -47,7 +47,6 @@ import {
 import {
   CONFIRM_RETURN_FAILED,
   CONFIRM_RETURNED,
-  CONFIRMATION_ACTIONS,
   CONFIRMATION_CODE_MINUTES,
   CONFIRMATION_MESSAGES,
   CONFIRMATION_MINUTES,
@@ -576,7 +575,6 @@ export function ConfirmIdentityDialog({
     </p>
   );
   const others = methods.filter((entry) => entry !== method);
-  const action = request ? CONFIRMATION_ACTIONS[request.action] : "";
   const reason = request ? CONFIRMATION_REASONS[request.action] : undefined;
 
   let body: ReactNode;
@@ -814,7 +812,9 @@ export function ConfirmIdentityDialog({
           ) : (
             <Icon className="size-4" />
           )}
-          {t("continueWith")} {method === "sso" ? "SSO" : SIGN_IN_NAMES[method]}
+          {t("continueWith", {
+            method: method === "sso" ? "SSO" : SIGN_IN_NAMES[method],
+          })}
         </Button>
       </div>
     );
@@ -853,8 +853,7 @@ export function ConfirmIdentityDialog({
         <DialogHeader>
           <DialogTitle>{t("confirmItsYou")}</DialogTitle>
           <DialogDescription className="text-pretty">
-            {t("beforeYou")} {action}
-            {t("weNeedToCheckIts")}
+            {request ? t(`beforeYouAction.${request.action}`) : ""}
           </DialogDescription>
         </DialogHeader>
 

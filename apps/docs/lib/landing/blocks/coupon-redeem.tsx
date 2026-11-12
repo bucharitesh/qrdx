@@ -2,8 +2,9 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { TickCircle as CircleCheck } from "iconsax-reactjs";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { buttonClass, mutedTextClass } from "@/components/landing/block-kit";
+import { fillText } from "@/components/landing/fill-text";
 import { COUPON_REDEEM_EVENT } from "./coupon-schema";
 
 /** Same-origin beacon to the landing events endpoint (custom domains too). */
@@ -57,6 +58,7 @@ export function CouponRedeem({
   live,
   unavailable,
   shapeClassName,
+  text,
 }: {
   blockId: string;
   pageId: string | null;
@@ -67,6 +69,14 @@ export function CouponRedeem({
   unavailable?: string;
   /** buttonShapeClass(theme) */
   shapeClassName?: string;
+  /** The words, translated by the block ("Redeemed {time}" is a template) */
+  text: {
+    redeemed: string;
+    instructions: ReactNode;
+    cancel: string;
+    redeemNow: string;
+    redeem: string;
+  };
 }) {
   const storageKey = `qrdx:coupon:${pageId ?? "preview"}:${blockId}`;
   const [redeemedAt, setRedeemedAt] = useState<string | null>(null);
@@ -88,7 +98,7 @@ export function CouponRedeem({
           aria-hidden="true"
           className="size-4 text-(--lp-primary)"
         />
-        Redeemed {formatTime(redeemedAt)}
+        {fillText(text.redeemed, { time: formatTime(redeemedAt) })}
       </output>
     );
   }
@@ -121,23 +131,21 @@ export function CouponRedeem({
   if (confirming) {
     return (
       <div className="space-y-3">
-        <p className="text-center text-sm">
-          Show this screen to staff, then tap <strong>Redeem now</strong>.
-        </p>
+        <p className="text-center text-sm">{text.instructions}</p>
         <div className="grid grid-cols-2 gap-2">
           <button
             className={buttonClass("soft", shapeClassName)}
             onClick={() => setConfirming(false)}
             type="button"
           >
-            Cancel
+            {text.cancel}
           </button>
           <button
             className={buttonClass("filled", shapeClassName)}
             onClick={redeem}
             type="button"
           >
-            Redeem now
+            {text.redeemNow}
           </button>
         </div>
       </div>
@@ -150,7 +158,7 @@ export function CouponRedeem({
       onClick={() => setConfirming(true)}
       type="button"
     >
-      Redeem coupon
+      {text.redeem}
     </button>
   );
 }

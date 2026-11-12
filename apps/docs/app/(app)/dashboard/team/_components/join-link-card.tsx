@@ -25,7 +25,6 @@ import {
   setWorkspaceJoinLinkRole,
 } from "@/actions/workspace-join";
 import { useConfirmation } from "@/components/confirm-identity/provider";
-import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
 import {
   assignableRoles,
   JOINABLE_ROLES,
@@ -124,9 +123,7 @@ export function JoinLinkCard({
         return false;
       }
       setLink({ ...current, role: next });
-      toast.success(
-        t("theLinkNowAddsPeople", { value: inviteRolePhrase(next) }),
-      );
+      toast.success(t("theLinkNowAddsPeople", { role: next }));
       return true;
     });
   };
@@ -201,10 +198,12 @@ export function JoinLinkCard({
 
       {link && !url && (
         <p className="text-muted-foreground text-sm text-pretty">
-          {t("onSince")} {formatUtcDate(link.createdAt)}
           {link.createdByName
-            ? t("madeByCreatedbyname", { createdByName: link.createdByName })
-            : ""}
+            ? t("onSinceBy", {
+                date: formatUtcDate(link.createdAt),
+                name: link.createdByName,
+              })
+            : t("onSince", { date: formatUtcDate(link.createdAt) })}{" "}
           {t("forSafetyTheLinkIs")}
         </p>
       )}
@@ -212,7 +211,7 @@ export function JoinLinkCard({
       {url && (
         <div className="bg-muted/40 space-y-2 rounded-lg border p-3">
           <p className="text-sm text-pretty">
-            {t("copyItNowItsShown", { value: inviteRolePhrase(role) })}
+            {t("copyItNowItsShown", { role })}
           </p>
           <div className="flex gap-2">
             <Input

@@ -1,7 +1,6 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: decorative badge icon */
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { AsciiField, Aurora, Backdrop } from "@/components/fx";
 import { LocaleLink } from "@/components/i18n/locale-link";
@@ -61,9 +60,9 @@ export function HeroSection() {
             </Button>
             <Button asChild variant="outline">
               {/* Only the primary CTA prefetches: the docs bundle is large. */}
-              <Link href="/docs" prefetch={false}>
+              <LocaleLink href="/docs" prefetch={false}>
                 {t("secondary")}
-              </Link>
+              </LocaleLink>
             </Button>
           </div>
         </div>

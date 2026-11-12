@@ -8,9 +8,9 @@ import {
 } from "@repo/design-system/components/ui/popover";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import type * as React from "react";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { HINTS, type Hint, type HintId } from "@/lib/help/hints";
 
 // The visuals (and the qrdx renderer they use) load the first time a card opens.

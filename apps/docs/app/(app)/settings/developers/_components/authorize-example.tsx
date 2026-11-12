@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { Snippet } from "./snippet";
 
 /** The authorize URL and token request for this app, ready to adapt. */

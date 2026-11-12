@@ -101,3 +101,22 @@ export function openStatus(
   }
   return { open: false, opensAt: null };
 }
+
+/** Weekday names in `locale`, Monday-first like WEEKDAYS ("long" or "short"). */
+export function weekdayNames(
+  locale: string,
+  width: "long" | "short" = "long",
+): string[] {
+  try {
+    const format = new Intl.DateTimeFormat(locale, {
+      weekday: width,
+      timeZone: "UTC",
+    });
+    // 2024-01-01 was a Monday.
+    return WEEKDAYS.map((_, index) =>
+      format.format(new Date(Date.UTC(2024, 0, 1 + index))),
+    );
+  } catch {
+    return WEEKDAYS.map((day) => (width === "short" ? day.slice(0, 3) : day));
+  }
+}

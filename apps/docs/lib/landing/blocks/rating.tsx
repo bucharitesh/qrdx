@@ -1,5 +1,6 @@
 import { Star } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   buttonClass,
@@ -59,17 +60,12 @@ export const reviewLinksSchema = z.object({
 
 export type ReviewLinksProps = z.output<typeof reviewLinksSchema>;
 
-export const reviewLabel = (link: ReviewLinksProps["links"][number]) =>
-  link.label ||
-  (link.platform === "other"
-    ? "Leave a review"
-    : `Review us on ${REVIEW_PLATFORM_NAMES[link.platform]}`);
-
 export function ReviewLinksBlock({
   id,
   props,
   context,
 }: BlockRenderProps<ReviewLinksProps>) {
+  const t = useTranslations("scanPages.hosted.reviews");
   const links = props.links.filter((link) => link.url);
   if (links.length === 0) {
     // Hidden on the live page until a review link is added.
@@ -88,7 +84,7 @@ export function ReviewLinksBlock({
   return (
     <section
       aria-labelledby={props.title ? titleId : undefined}
-      aria-label={props.title ? undefined : "Reviews"}
+      aria-label={props.title ? undefined : t("reviews")}
       className={cn(surfaceClass, "space-y-4 p-5 text-center")}
     >
       <div aria-hidden="true" className="flex justify-center gap-1">
@@ -129,7 +125,12 @@ export function ReviewLinksBlock({
             key={link.id}
             {...linkProps(link.url, id, link.platform)}
           >
-            {reviewLabel(link)}
+            {link.label ||
+              (link.platform === "other"
+                ? t("leaveReview")
+                : t("reviewUsOn", {
+                    platform: REVIEW_PLATFORM_NAMES[link.platform],
+                  }))}
           </a>
         ))}
       </div>

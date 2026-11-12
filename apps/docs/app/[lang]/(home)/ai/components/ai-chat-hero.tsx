@@ -1,9 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { AIBotBadge } from "@/components/editor/ai/ai-bot-badge";
 import { AIWorkingGlow } from "@/components/editor/ai/ai-working-glow";
-import { useLocalizeHref } from "@/components/i18n/locale-link";
+import {
+  useLocalizeHref,
+  useLocaleRouter as useRouter,
+} from "@/components/i18n/locale-link";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 import { useGuards } from "@/lib/hooks/use-gaurds";

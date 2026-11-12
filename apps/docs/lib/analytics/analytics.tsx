@@ -41,7 +41,9 @@ function UmamiScript() {
       // its API (nothing was ever sent).
       id="umami-loader"
       src={config.scriptUrl}
-      strategy="lazyOnload"
+      // Right after hydration, not when the browser is idle: a visitor who
+      // leaves quickly still counts (the script is under 3 KB).
+      strategy="afterInteractive"
       data-website-id={config.websiteId}
       data-domains={analyticsHostname()}
       data-auto-track="false"

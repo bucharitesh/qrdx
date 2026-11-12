@@ -2,9 +2,9 @@
 
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { cn } from "@repo/design-system/lib/utils";
-import Link from "next/link";
 import { GetProCTA } from "@/components/get-pro-cta";
 import { GithubStars } from "@/components/github-stars";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import bar from "./header-bar.module.css";
 import { HeaderMobileMenu } from "./header-mobile-nav";

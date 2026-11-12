@@ -25,6 +25,14 @@ export type QrSource =
   | "bulk_tool"
   | "ai_art";
 
+/** The editors whose opening starts the funnel (editor_opened). */
+export type EditorSurface =
+  | "playground"
+  | "type_tool"
+  | "barcode"
+  | "ai_art"
+  | "bulk_tool";
+
 type NoProps = Record<string, never>;
 
 export interface AnalyticsEvents {
@@ -36,6 +44,12 @@ export interface AnalyticsEvents {
   email_changed: NoProps;
 
   // QR codes
+  /**
+   * An editor opened, once per mount: which one, and where the visit came
+   * from (lib/analytics/funnel.ts editorOpenSource: a `ref` tag, "direct",
+   * "external" or a site section). Never an address.
+   */
+  editor_opened: { surface: EditorSurface; source: string };
   qr_generated: { content_type: string; source: QrSource; count?: number };
   qr_downloaded: { format: string; source: QrSource; content_type?: string };
   qr_copied: { format: "svg"; source: QrSource };
@@ -45,6 +59,14 @@ export interface AnalyticsEvents {
    */
   barcode_downloaded: {
     format: "png" | "jpg" | "webp" | "avif" | "svg" | "pdf" | "eps";
+    symbology: string;
+    source?: "generator" | "dashboard";
+  };
+  /**
+   * A barcode drawn from a value or symbology other than the page's own,
+   * once per symbology per visit: the symbology id, never the data.
+   */
+  barcode_generated: {
     symbology: string;
     source?: "generator" | "dashboard";
   };

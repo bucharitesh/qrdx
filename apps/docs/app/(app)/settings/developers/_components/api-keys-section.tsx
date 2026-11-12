@@ -188,9 +188,12 @@ export function ApiKeysSection({
             {t("apiKeys")}
           </h2>
           <p className="text-muted-foreground text-sm">
-            {t("callTheRestApiFrom")}{" "}
-            <span className="text-foreground font-medium">{workspaceName}</span>
-            {isTeam ? t("withYourRoleThere") : "."}
+            {t.rich(isTeam ? "keysActAsYouWithRole" : "keysActAsYou", {
+              workspace: workspaceName,
+              strong: (chunks) => (
+                <span className="text-foreground font-medium">{chunks}</span>
+              ),
+            })}
           </p>
         </div>
         {state.available && keys.length > 0 && (

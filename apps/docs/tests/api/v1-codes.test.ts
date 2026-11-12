@@ -27,6 +27,10 @@ vi.mock(
   "@repo/database",
   async () => (await import("../support/fake-db")).repoDatabase,
 );
+vi.mock(
+  "@repo/database/schema",
+  async () => (await import("../support/fake-db")).repoDatabase,
+);
 vi.mock("@repo/auth/server", () => ({
   auth: {
     api: {
@@ -41,6 +45,8 @@ vi.mock("@repo/auth/server", () => ({
   },
 }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
+// The server actions revalidate the dashboard, which needs a request.
+vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => {
     throw new Error(`redirect ${to}`);
@@ -535,8 +541,30 @@ describe("POST /v1/codes", () => {
     expect(fakeDb.find("qrCode", { id: data.id })).toMatchObject({
       userId: "u_alice",
       organizationId: ownWorkspaceId("u_alice"),
+      createdVia: "api",
     });
     expect(state.emitted).toEqual([{ event: "code.created", ids: [data.id] }]);
+  });
+
+  it("records where the app's codes were made: the dashboard or the playground", async () => {
+    state.session = { userId: "u_alice", organizationId: null };
+    const qrCodes = await import("@/actions/qr-codes");
+    const made = async (
+      destinationUrl: string,
+      from?: Parameters<typeof qrCodes.createQrCode>[1],
+    ) => {
+      const result = await qrCodes.createQrCode({ destinationUrl }, from);
+      if (!result.success) throw new Error(result.error.message);
+      return fakeDb.find("qrCode", { id: result.data.id })?.createdVia;
+    };
+    expect(await made("https://example.com/a")).toBe("dashboard");
+    expect(await made("https://example.com/b", { via: "playground" })).toBe(
+      "playground",
+    );
+    // A browser can't claim another surface.
+    expect(await made("https://example.com/c", { via: "api" } as never)).toBe(
+      "dashboard",
+    );
   });
 
   const INVALID_DESTINATIONS: [string, string][] = [

@@ -16,7 +16,6 @@ import {
   PasswordCheck,
   Routing2,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   createContext,
@@ -50,6 +49,7 @@ import {
   RoutingPanel,
 } from "@/app/(app)/dashboard/codes/[id]/_components/routing-panel";
 import { UtmPanel } from "@/app/(app)/dashboard/codes/[id]/_components/utm-panel";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { PLAN_NAMES } from "@/lib/pricing";
 
 /** One icon per option; none repeats in the grid. */

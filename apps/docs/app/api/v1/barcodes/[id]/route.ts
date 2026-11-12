@@ -5,6 +5,7 @@ import {
   NO_STORE,
   resolveApiScope,
 } from "@/app/api/v1/codes/_lib/api";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { barcodeIdSchema, updateBarcodeSchema } from "@/lib/barcodes/schema";
 import {
@@ -23,7 +24,7 @@ async function barcodeId({ params }: Context): Promise<string> {
   return parseWithSchema(barcodeIdSchema, (await params).id);
 }
 
-export const GET = withApiQuotaHeaders(
+const handleGET = withApiQuotaHeaders(
   async (req: NextRequest, context: Context) => {
     try {
       const scope = await resolveApiScope(req, "read");
@@ -41,7 +42,7 @@ export const GET = withApiQuotaHeaders(
 );
 
 /** Title, format, value, options and folder; options replace the saved ones. */
-export const PATCH = withApiQuotaHeaders(
+const handlePATCH = withApiQuotaHeaders(
   async (req: NextRequest, context: Context) => {
     try {
       const scope = await resolveApiScope(req, "write");
@@ -66,7 +67,7 @@ export const PATCH = withApiQuotaHeaders(
  * Moves the barcode to the trash, where the dashboard can restore it;
  * `?permanent=true` deletes it for good (in the trash or not).
  */
-export const DELETE = withApiQuotaHeaders(
+const handleDELETE = withApiQuotaHeaders(
   async (req: NextRequest, context: Context) => {
     try {
       const scope = await resolveApiScope(req, "write");
@@ -99,3 +100,8 @@ export const DELETE = withApiQuotaHeaders(
     }
   },
 );
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("barcodes", handleGET);
+export const PATCH = withApiUsage("barcodes", handlePATCH);
+export const DELETE = withApiUsage("barcodes", handleDELETE);

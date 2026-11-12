@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NpmLagNotice } from "@/components/mdx/npm-status";
+import { CompareAlternatives } from "@/components/sections/compare/compare-alternatives";
 import { CompareFeatures } from "@/components/sections/compare/compare-features";
 import { CompareGuide } from "@/components/sections/compare/compare-guide";
 import { CompareHero } from "@/components/sections/compare/compare-hero";
 import { CompareMigrate } from "@/components/sections/compare/compare-migrate";
 import { CompareOthers } from "@/components/sections/compare/compare-others";
 import { CompareTable } from "@/components/sections/compare/compare-table";
+import { FaqList } from "@/components/sections/tools/faq-list";
 import { createMetadata } from "@/lib/metadata";
 import { getLatestVersion, getNpmLag } from "@/lib/npm-version";
 import { brandedTitle } from "@/lib/seo-overrides";
@@ -34,6 +36,8 @@ export default async function ComparePage({ params }: PageProps) {
     competitorPlan,
     tableRows,
     featureHighlights,
+    alternatives,
+    faqs,
     body: Mdx,
   } = page.data;
 
@@ -53,7 +57,18 @@ export default async function ComparePage({ params }: PageProps) {
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-center divide-y divide-border">
-      <CompareHero competitor={competitor} slug={slug} tagline={tagline} />
+      <CompareHero
+        alternativesLabel={alternatives?.heading}
+        competitor={competitor}
+        slug={slug}
+        tagline={tagline}
+      />
+      {alternatives && (
+        <CompareAlternatives
+          alternatives={alternatives}
+          competitor={competitor}
+        />
+      )}
       <CompareTable
         competitor={competitor}
         competitorPlan={competitorPlan}
@@ -66,6 +81,9 @@ export default async function ComparePage({ params }: PageProps) {
       <CompareGuide competitor={competitor}>
         <Mdx components={getMDXComponents()} />
       </CompareGuide>
+      {faqs && faqs.length > 0 && (
+        <FaqList faqs={faqs} title={`${competitor} QR code questions`} />
+      )}
       <CompareMigrate competitor={competitor} slug={slug} />
       <CompareOthers currentSlug={slug} />
     </main>
