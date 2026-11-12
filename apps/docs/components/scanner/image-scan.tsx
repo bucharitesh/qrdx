@@ -16,15 +16,24 @@ import { type DetectedCode, detectCodesInImage } from "./detector";
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 const MAX_FILES = 20;
 
+/** Images shared to the installed app (components/scanner/shared-images.ts). */
+export interface IncomingImages {
+  files: File[];
+  id: number;
+}
+
 export function ImageScan({
+  incoming,
   onDetect,
 }: {
+  incoming?: IncomingImages | null;
   onDetect: (codes: DetectedCode[]) => void;
 }) {
   const t = useTranslations("scanner.image");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const busyRef = useRef(false);
+  const incomingRef = useRef<number | null>(null);
   const onDetectRef = useRef(onDetect);
   onDetectRef.current = onDetect;
 
@@ -71,6 +80,16 @@ export function ImageScan({
     },
     [t],
   );
+
+  useEffect(() => {
+    if (!incoming || incomingRef.current === incoming.id) return;
+    incomingRef.current = incoming.id;
+    if (incoming.files.length === 0) {
+      setMessage(t("shareMissing"));
+      return;
+    }
+    scanFiles(incoming.files);
+  }, [incoming, scanFiles, t]);
 
   useEffect(() => {
     const onPaste = (event: ClipboardEvent) => {
