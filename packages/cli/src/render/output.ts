@@ -1,7 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { QRProps } from "qrdx";
-import { getFrameDimensions, QRCodeSVG, svgToEPS } from "qrdx";
+import { getFrameDimensions, getQRAsPNG, QRCodeSVG, svgToEPS } from "qrdx";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -146,13 +146,23 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
     return;
   }
 
+  if (format === "png") {
+    // One server PNG path with the library: the engine rasterizes its own
+    // SVG (an optional @resvg/resvg-js or sharp peer, loaded on demand).
+    writeFileSync(
+      outputPath,
+      await getQRAsPNG(qrProps, { size: qrProps.size ?? 512 })
+    );
+    return;
+  }
+
   let sharp: SharpFactory;
   try {
     const mod = await import("sharp");
     sharp = (mod as { default: SharpFactory }).default;
   } catch {
     throw new Error(
-      `${format === "webp" ? "WebP" : "PNG"} output needs the sharp package (native binaries). It is optional and may not have installed; use SVG or reinstall: https://sharp.pixelplumbing.com/install`
+      "WebP output needs the sharp package (native binaries). It is optional and may not have installed; use SVG or reinstall: https://sharp.pixelplumbing.com/install"
     );
   }
   const svgBuffer = Buffer.from(svgString, "utf-8");
