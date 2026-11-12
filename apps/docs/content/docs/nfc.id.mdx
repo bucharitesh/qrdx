@@ -1,0 +1,72 @@
+---
+title: "Tag NFC dan kartu nama"
+description: "Tulis tautan kode QR dinamis ke tag atau kartu NFC, hitung ketukan secara terpisah dari pemindaian QR, dan pasang halaman vCard Plus pada kartu nama NFC."
+icon: Nfc
+---
+
+[Kode QR dinamis](/docs/dynamic-qr-codes) apa pun juga bisa dipasang pada tag NFC. Anda menulis tautan NFC milik kode tersebut ke tag, stiker, atau kartu, lalu ponsel yang menyentuhnya akan membuka tujuan yang sama dengan kode QR. Ketukan muncul di analitik kode bersama pemindaian QR, dan dihitung secara terpisah. Fitur ini tersedia di semua paket.
+
+QRdx tidak menjual, mencetak, atau mengirim tag maupun kartu. Beli tag kosong dari pemasok NFC mana pun, lalu tulis sendiri dari halaman kode.
+
+## Tautan NFC [#the-nfc-link]
+
+Tautan NFC sebuah kode adalah tautan pendeknya dengan `?nfc` di bagian akhir, misalnya `https://qrdx.dev/q/aB3dE5f?nfc`, atau `https://go.example.com/menu?nfc` pada [domain kustom](/docs/custom-domains). Tautan ini melewati pengalihan yang sama dengan tautan pendek, sehingga perutean cerdas, kata sandi, jadwal, dan batas pemindaian juga berlaku untuk ketukan. Akhiran `?nfc` hanya memberi tahu analitik bahwa kunjungan tersebut adalah ketukan. Kode QR tetap memakai tautannya sendiri, dan kode yang sudah Anda cetak berfungsi persis seperti sebelumnya.
+
+Untuk menemukannya, buka kode di [dasbor](/dashboard?to=codes) lalu pilih **Use with NFC** di tab Overview. [REST API](/docs/developers/rest-api) mengembalikannya sebagai `nfcLink` pada setiap kode.
+
+## Menulis tag di Android [#write-a-tag-on-android]
+
+Chrome di Android dapat menulis tag langsung dari halaman NFC milik kode:
+
+1. Aktifkan NFC di pengaturan ponsel.
+2. Buka kode di Chrome, pilih **Use with NFC**, lalu ketuk **Write to NFC tag**.
+3. Tempelkan tag rata pada bagian belakang ponsel sampai halaman menampilkan **Written**.
+4. Ketukkan tag ke ponsel untuk mengujinya. Tag seharusnya membuka tautan.
+
+Menulis dari halaman web memerlukan Web NFC, yang hanya tersedia di Chrome pada Android. Di komputer, halaman NFC menampilkan kode QR sebagai gantinya: pindai dengan ponsel Android, masuk, lalu tulis tag di sana.
+
+### Mengunci tag [#locking-a-tag]
+
+Setelah tag ditulis, halaman menawarkan untuk mengunci tag jika browser mendukungnya. Tag yang terkunci tidak akan pernah bisa diubah atau dihapus lagi oleh siapa pun, termasuk Anda, jadi kunci hanya tag yang berada di tempat yang memungkinkan orang asing menulis ulang, seperti stiker di meja kafe. Tag menyimpan tautan kode, bukan tujuannya, sehingga Anda tetap bisa mengubah tujuan tag yang terkunci dari QRdx.
+
+## Menulis tag di iPhone [#write-a-tag-on-iphone]
+
+Safari tidak dapat menulis tag NFC, jadi gunakan aplikasi penulis NFC apa pun dari App Store:
+
+1. Salin tautan NFC dari halaman NFC milik kode.
+2. Di aplikasi, tambahkan rekaman URL (beberapa aplikasi menyebutnya Link atau URI) dan tempel tautannya.
+3. Pilih Write dan tempelkan bagian atas iPhone ke tag sampai aplikasi menyatakan selesai.
+
+Penulisan memerlukan iPhone 7 atau lebih baru dengan iOS 13 atau lebih baru.
+
+## Tag yang perlu dibeli [#which-tags-to-buy]
+
+Cari chip NTAG213, NTAG215, atau NTAG216. Chip ini tersedia dalam bentuk stiker, kartu, gantungan kunci, dan gelang.
+
+| Chip | Memori |
+| --- | --- |
+| NTAG213 | 144 byte |
+| NTAG215 | 504 byte |
+| NTAG216 | 888 byte |
+
+Tautan NFC di qrdx.dev memakai sekitar 30 byte, sehingga ketiganya muat. Tautan pada domain kustom yang panjang atau dengan bagian belakang yang panjang memerlukan lebih banyak; halaman NFC menunjukkan berapa byte yang Anda butuhkan dan chip mana yang cukup.
+
+Ponsel Android dengan NFC aktif, serta iPhone XS atau lebih baru, membuka tautan tag begitu menyentuh ponsel, tanpa aplikasi.
+
+## Kartu nama NFC [#nfc-business-cards]
+
+[Halaman vCard Plus](/docs/landing-pages) adalah halaman kontak dengan tombol **Save contact**, dan cocok dijadikan kartu nama NFC. Untuk kode yang membuka halaman seperti itu, tab Overview menampilkan **Put this card on NFC**, dan editor halaman memiliki tombol **Put on NFC**. Keduanya membuka halaman NFC yang sama dengan panduan untuk kartu.
+
+1. Beli kartu nama NFC kosong, atau stiker NFC untuk kartu yang sudah Anda miliki.
+2. Cetak juga kode QR dari kode tersebut pada kartu. Ponsel tanpa NFC, atau dengan NFC nonaktif, akan memindainya.
+3. Tulis tautan NFC ke setiap kartu dari halaman NFC milik kode.
+
+Karena setiap kartu menyimpan tautan kode, mengedit halaman vCard Plus di QRdx akan memperbarui semua kartu yang sudah Anda bagikan.
+
+## Ketukan di analitik [#taps-in-analytics]
+
+Tab Analytics sebuah kode menampilkan **QR scans and NFC taps** untuk rentang tanggal yang Anda pilih, dan total di atasnya menghitung keduanya. Halaman Analytics ruang kerja dan halaman analitik yang dibagikan menampilkan pemisahan yang sama.
+
+Ekspor CSV memiliki kolom `source` berisi `qr` atau `nfc` untuk setiap pemindaian. Di REST API, [analitik pemindaian](/docs/developers/api/get-code-scans) menyertakan `sources` dengan kedua jumlah dan `source` pada setiap pemindaian yang tercantum, dan [webhook](/docs/webhooks) untuk `scan.created` juga membawa `source`.
+
+Pemindaian sebelum tautan NFC ada dihitung sebagai pemindaian QR. Ketukan mengikuti aturan yang sama dengan pemindaian: bot dan pratinjau tautan tidak dihitung.

@@ -1,0 +1,81 @@
+---
+title: "Paket dan batas"
+description: "Apa saja yang termasuk dalam paket Gratis, Pro, dan Business, bagaimana batas berlaku untuk setiap workspace, dan apa yang terjadi saat Anda downgrade atau berhenti berlangganan."
+icon: Gauge
+---
+
+QRdx memiliki tiga paket. Kode QR statis dari Playground dan library `qrdx` gratis dan tanpa batas di semua paket, tanpa akun. Bandingkan harga di [halaman harga](/pricing).
+
+| | Gratis | Pro | Business |
+| --- | --- | --- | --- |
+| Harga (US$) | $0 | $5/bulan atau $48/tahun | $15/bulan atau $144/tahun |
+| Harga (India) | ₹0 | ₹199/bulan atau ₹1,499/tahun | ₹599/bulan atau ₹4,999/tahun |
+
+Pengunjung dari India melihat harga dalam rupee. Pembayaran ditangani oleh [Polar](https://polar.sh), yang menagih pelanggan di India dalam ₹ dan pelanggan lainnya dalam US$, serta menambahkan pajak lokal jika berlaku.
+
+<IfAvailable feature="invoiceRequests">
+
+Satu tahun paket Business juga dapat dibayar melalui transfer bank: lihat [bayar dengan faktur](/docs/help/account-and-billing/pay-by-invoice).
+
+</IfAvailable>
+
+## Batas [#limits]
+
+| | Gratis | Pro | Business |
+| --- | --- | --- | --- |
+| Kode QR dinamis | 10 | Tanpa batas | Tanpa batas |
+| Pemindaian | Tanpa batas | Tanpa batas | Tanpa batas |
+| Halaman landing yang di-hosting | 3, dengan footer "Made with QRdx" | Tanpa batas, tanpa footer | Tanpa batas, white-label, CSS kustom |
+| Riwayat analitik | 90 hari | 3 tahun | Tanpa batas |
+| Domain kustom | Tidak ada | 5 | 25 |
+| Back-half kustom (`qrdx.dev/q/spring-menu`) | Tidak | Ya | Ya |
+| Anggota per workspace | 1 (hanya Anda) | 3 | Tanpa batas |
+| Workspace tambahan | Tidak | Ya | Ya |
+| Smart routing, uji A/B, tag UTM | Tidak | Ya | Ya |
+| Kata sandi, jadwal, kedaluwarsa, batas pemindaian | Tidak | Ya | Ya |
+| Piksel retargeting | Tidak | Ya | Ya |
+| Pelacakan konversi | Tidak | Tidak | Ya |
+| Ringkasan dan peringatan email | Tidak | Ya | Ya |
+| Webhook, Zapier, dan Slack | Tidak | Tidak | Ya |
+| Aplikasi OAuth ([membangun integrasi](/docs/developers/build-an-integration)) | 1 | 5 | 25 |
+| Penyimpanan file (file terbesar) | 50 MB (10 MB) | 5 GB (100 MB) | 50 GB (250 MB) |
+| Respons formulir per bulan | 50 | 1,000 | 10,000 |
+| Permintaan API per hari | 1,000 | 10,000, plus pembuatan massal | 100,000, plus pembuatan massal |
+| Gambar seni AI per bulan | 3 | 30 | 150, dibagi per workspace |
+| Pembuatan tema AI | 5 secara total | Tanpa batas | Tanpa batas |
+| Tema tersimpan | 10 | Tanpa batas, dapat dibagikan ke workspace | Tanpa batas, dapat dibagikan ke workspace |
+| [Barcode](/docs/developers/barcode-api#saved-barcodes) tersimpan | 1,000 | 10,000 | 100,000 |
+| [Halaman statistik berbrand klien](/docs/client-reports) | Tidak | Ya, dengan "Made with QRdx" kecil | Ya, white-label, dapat memakai domain kustom Anda |
+| [Portal klien](/docs/client-portal) | Tidak | Tidak | Ya |
+
+Hanya kode dinamis yang aktif yang dihitung dalam batas kode: kode yang diarsipkan tidak dihitung. Pemindaian tidak pernah dihitung dalam batas apa pun, dan tidak ada paket yang menjeda kode karena lalu lintas. Satu-satunya batas pemindaian adalah yang Anda tetapkan sendiri pada kode.
+
+Kuota API berlaku per workspace dan direset pada pukul 00:00 UTC. Setiap permintaan yang dihitung mengembalikan `X-RateLimit-Limit`, `X-RateLimit-Remaining`, dan `X-RateLimit-Reset` agar Anda dapat memantaunya. Lihat [REST API](/docs/developers/rest-api) untuk batas per menit.
+
+## Workspace [#workspaces]
+
+Batas berlaku untuk setiap [workspace](/docs/teams) secara terpisah, dan sebuah workspace memakai paket terbaik di antara pemilik dan [anggota penagihan](/docs/teams#roles)-nya. Setiap orang mendapat workspace sendiri yang dibuat otomatis dengan mereka sebagai pemiliknya, sehingga memakai paket mereka. Di workspace lain, satu pemilik dengan Business memberi semua orang di dalamnya batas Business; anggota tidak perlu langganan sendiri.
+
+Membuat workspace tambahan memerlukan Pro atau Business. Workspace yang pemilik dan anggota penagihannya menggunakan paket Gratis memiliki 1 kursi (hanya Anda), dengan Pro hingga 3, dan dengan Business tanpa batas. Kursi mencakup anggota, termasuk pemilik, ditambah undangan yang tertunda, jadi cabut undangan yang tidak lagi Anda perlukan untuk membebaskan kursinya. Jika paket pemilik berubah, anggota saat ini tetap ada; hanya undangan baru yang diblokir.
+
+## Melebihi batas, downgrade, dan berhenti berlangganan [#going-over-a-limit-downgrading-and-cancelling]
+
+<Callout type="info">
+  Batas hanya menghentikan pembuatan hal baru. Kode yang ada tetap dialihkan di setiap paket, termasuk setelah downgrade, pembayaran gagal, atau pembatalan. Itulah [Jaminan Never-Hostage](/guarantee).
+</Callout>
+
+- **Melebihi batas:** Anda tidak dapat membuat lebih banyak sampai berada di bawah batas. Anda tetap dapat mengedit, mengarsipkan, dan mengekspor apa yang Anda miliki.
+- **Melebihi kuota API harian:** panggilan API mendapat `429` hingga pukul 00:00 UTC. Kode Anda tetap dialihkan dan situs web tetap berfungsi.
+- **Downgrade:** kode, halaman landing, dan domain kustom terverifikasi tetap berfungsi. Analitik menampilkan riwayat yang disertakan paket baru Anda.
+- **Berhenti berlangganan:** paket Anda tetap aktif hingga akhir periode yang telah Anda bayar, lalu akun Anda pindah ke Gratis.
+- **Pembayaran gagal:** setelah langganan berakhir, hasilnya sama dengan berhenti berlangganan. Tidak ada yang dijeda.
+
+Kode yang berakhir karena alasan yang Anda pilih, seperti tanggal kedaluwarsa, jeda, atau batas pemindaian, mengarahkan pemindai ke URL cadangan Anda atau ke halaman netral "This campaign has ended", tidak pernah ke halaman QRdx.
+
+## Penagihan [#billing]
+
+Upgrade dari [halaman harga](/pricing). Untuk mengganti paket, beralih antara bulanan dan tahunan, memperbarui kartu, atau berhenti berlangganan, buka **Manage subscription** di pengaturan Anda, yang akan membawa Anda ke portal penagihan Polar. Satu langganan mencakup akun Anda, jadi selama Anda memilikinya, perubahan paket dilakukan melalui portal, bukan checkout baru.
+
+## Self-hosting [#self-hosting]
+
+Instans [self-hosted](/docs/self-hosting) menggunakan paket yang sama. Batas didefinisikan dalam satu file, `apps/docs/lib/plans.ts`, yang dapat Anda ubah untuk instans Anda. Tanpa Polar yang dikonfigurasi, upgrade tidak tersedia dan setiap akun menggunakan batas Gratis.

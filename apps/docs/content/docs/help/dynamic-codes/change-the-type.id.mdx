@@ -1,0 +1,49 @@
+---
+title: "Ubah apa yang dibuka oleh kode cetak"
+description: "Ubah kode tautan situs web menjadi halaman yang di-hosting, atau kembalikan halaman menjadi tautan. Kode yang sudah dicetak tetap berfungsi."
+---
+
+Kode dinamis membuka tautan situs web atau halaman yang di-hosting, dan Anda dapat beralih di antara keduanya setelah dicetak. Tautan pendeknya tidak berubah, sehingga setiap salinan cetak akan membuka halaman atau tautan baru pada pemindaian berikutnya, dan pemindaian tetap dihitung pada kode yang sama.
+
+## Ubah tautan situs web menjadi halaman [#turn-a-website-link-into-a-page]
+
+1. Buka kode dari **Codes** lalu klik **Change type**.
+2. Pilih jenis halaman, lalu pilih templat.
+3. Klik **Continue to editor** lalu buat halamannya.
+4. Klik **Publish**.
+
+Pemindaian tetap diarahkan ke tautan lama sampai Anda memublikasikan halaman. Jika Anda keluar dari editor tanpa memublikasikan, tidak ada yang berubah. Perubahan Anda yang belum dipublikasikan tetap tersimpan di browser ini.
+
+## Kembalikan halaman menjadi tautan [#turn-a-page-back-into-a-link]
+
+1. Buka kode lalu klik **Change type**.
+2. Pilih **Website link**, masukkan alamatnya, lalu klik **Switch to website link**.
+
+Halaman tetap berada di **Pages**. Untuk memakainya kembali, buka **Change type** sekali lagi lalu pilih halaman tersebut di bawah **Switch back**.
+
+## Beralih ke jenis halaman lain [#switch-to-another-page-type]
+
+Pilih jenis di bawah **Another page type**. Halaman baru dimulai dari templat yang Anda pilih dan membawa bagian yang cocok dari halaman lama: nama halaman, pengaturan, dan logo, serta blok apa pun yang juga dimiliki templat, seperti header, tautan, atau detail kontak. Dialog akan mencantumkan hal yang tidak cocok. Hal tersebut tetap berada di halaman lama, yang disimpan di **Pages**.
+
+## Yang tetap sama [#what-stays-the-same]
+
+Tautan pendek, riwayat pemindaian, folder, tag, catatan, desain QR, kata sandi, jadwal, dan batas pemindaian tidak berubah.
+
+Beberapa pengaturan hanya berfungsi dengan satu jenis:
+
+- Smart routing, A/B tests, parameter UTM, dan pelacakan konversi hanya berlaku untuk tautan situs web.
+- Piksel pelacakan hanya dimuat di halaman yang di-hosting.
+
+Pengaturan ini tetap tersimpan saat Anda beralih dan berfungsi lagi jika Anda beralih kembali. Tab **Settings** pada kode menyebutkan pengaturan yang tersimpan tetapi tidak sedang digunakan.
+
+## Paket [#plans]
+
+Halaman baru dihitung dalam jumlah halaman yang di-hosting pada paket Anda, seperti halaman lain yang Anda buat. Halaman yang tidak lagi dibuka oleh kode tetap dihitung sampai Anda menghapusnya dari **Pages**. Beralih kembali ke halaman yang sudah Anda miliki tidak menambah hitungan. Lihat [Paket dan batas](/docs/plans-and-limits).
+
+## Batalkan peralihan [#undo-a-switch]
+
+Setiap peralihan menyimpan pengaturan kode sebelumnya di **Version history**. Memulihkan versi sebelumnya akan mengembalikan jenisnya, selama halaman yang dibuka sebelumnya masih ada.
+
+## Dari API [#from-the-api]
+
+Kirim `kind` dengan `PATCH /v1/codes/{id}`. Lihat [Perbarui kode](/docs/developers/api/update-code).

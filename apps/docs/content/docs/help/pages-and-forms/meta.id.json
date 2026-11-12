@@ -1,0 +1,6 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Halaman dan formulir",
+  "icon": "PanelsTopLeft",
+  "pages": ["create-a-page", "forms"]
+}

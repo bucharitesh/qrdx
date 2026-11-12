@@ -1,0 +1,93 @@
+---
+title: "Domain kustom"
+description: "Sajikan tautan pendek kode QR dinamis Anda dari domain milik Anda sendiri."
+icon: Globe
+---
+
+Secara default, [kode QR dinamis](/docs/dynamic-qr-codes) menyandikan tautan pendek seperti `https://qrdx.dev/q/aB3dE5f`. Dengan domain kustom, kode tersebut menyandikan `https://go.yourbrand.com/aB3dE5f`, sehingga orang melihat merek Anda sebelum melakukan pemindaian. Pengalihan, penyuntingan, dan analitik pemindaian bekerja dengan cara yang sama.
+
+Domain kustom tersedia di Pro (hingga 5 per workspace) dan Business (hingga 25).
+
+## Hubungkan domain [#connect-a-domain]
+
+1. Buka [Pengaturan → Domain](/dashboard?to=settings/domains) lalu masukkan domainnya, misalnya `go.yourbrand.com`. Subdomain adalah pilihan terbaik karena situs web utama Anda tetap berada di tempatnya.
+2. Tambahkan rekaman DNS yang ditampilkan untuk domain tersebut di penyedia DNS Anda (tempat Anda membeli domain, Cloudflare, ...):
+   - subdomain memerlukan rekaman `CNAME`,
+   - domain root (`yourbrand.com`) memerlukan rekaman `A`,
+   - rekaman `TXT` juga ditampilkan bila kepemilikan perlu dikonfirmasi.
+
+   Salin nilai persisnya dari dasbor. Sebagian besar penyedia hanya meminta bagian sebelum domain Anda sebagai nama (`go`, atau `@` untuk root).
+3. Klik **Verifikasi**. Perubahan DNS biasanya muncul dalam hitungan menit, tetapi bisa memakan waktu hingga 48 jam, jadi coba lagi nanti jika rekaman belum ditemukan.
+
+Setelah terverifikasi, domain muncul di pemilih **Domain tautan pendek** saat Anda membuat atau mengedit kode dinamis. Domain yang terverifikasi tetap terverifikasi sampai Anda menghapusnya, dan **Periksa DNS** membaca ulang rekaman kapan saja.
+
+<Callout type="info">
+  Domain yang tidak diverifikasi dalam 3 hari dapat ditambahkan oleh akun lain, sehingga tidak ada yang bisa menahan domain yang tidak mereka kendalikan.
+</Callout>
+
+<IfAvailable feature="domainConnect" id="one-click-dns-setup" title="Penyiapan DNS satu klik">
+
+Beberapa penyedia DNS mendukung [Domain Connect](https://www.domainconnect.org), standar terbuka yang memungkinkan sebuah layanan menambahkan rekamannya untuk Anda. Jika penyedia Anda mendukungnya dan menawarkan penyiapan QRdx, domain yang menunggu DNS menampilkan tombol **Siapkan dengan …** yang menggunakan nama penyedia Anda.
+
+1. Klik tombol tersebut. Penyedia DNS Anda terbuka dan mencantumkan rekaman yang dibutuhkan QRdx.
+2. Masuk di sana jika diminta, lalu setujui perubahan. Tidak ada yang berubah sebelum Anda menyetujuinya.
+3. Anda kembali ke halaman Domain, yang langsung memeriksa DNS dan memeriksanya lagi selama setengah menit berikutnya.
+
+Tombol ini hanya muncul untuk subdomain seperti `go.yourbrand.com`, dan hanya bila penyedia Anda dapat menambahkan persis rekaman yang ditampilkan. Jika tidak, tambahkan sendiri rekaman dari tabel seperti dijelaskan di atas.
+
+</IfAvailable>
+
+## Gunakan untuk kode [#use-it-for-codes]
+
+- **Kode baru:** pilih domain di **Domain tautan pendek** sebelum Anda mengklik **Buat kode**.
+- **Kode yang sudah ada:** pilih domain di **Edit tautan**, simpan, lalu unduh kembali kode QR-nya karena tautan yang disandikan berubah.
+
+Setiap kode juga tetap berfungsi pada tautan default `https://qrdx.dev/q/<slug>`, sehingga kode QR yang Anda cetak sebelum memindahkan kode ke domain Anda tidak akan rusak. Memindahkan kode dari satu domain kustom ke domain kustom lain (atau kembali ke default) akan merusak kode QR yang dicetak dengan tautan domain kustom lama; dialog memperingatkan Anda sebelum Anda menyimpan.
+
+### Back-half milik Anda [#your-own-back-halves]
+
+Di Pro dan Business, Anda dapat memilih [back-half](/docs/dynamic-qr-codes#custom-back-halves) kode pada domain Anda, seperti `go.yourbrand.com/spring-menu`. Back-half hanya perlu unik di domain tersebut, jadi pelanggan QRdx lain yang memakai `spring-menu` tidak menjadi masalah, dan hanya `api`, `p`, dan `q` yang dicadangkan di sana. Back-half yang dipilih di domain Anda menjadi milik domain itu dan tidak memiliki tautan `qrdx.dev/q/`. Memindahkan kode seperti itu ke domain lain akan mempertahankan back-half jika masih tersedia di sana; memindahkannya kembali ke tautan default mempertahankannya jika masih tersedia di `qrdx.dev`, jika tidak kode mendapat back-half baru yang dibuat otomatis.
+
+Di domain Anda:
+
+- `https://go.yourbrand.com/<slug>` mengalihkan untuk kode yang memakai domain tersebut. Kode di domain lain, atau hanya di tautan default, menampilkan halaman "tidak ditemukan" di sana.
+- `https://go.yourbrand.com/` menampilkan halaman kecil yang menyatakan bahwa domain ini menaungi tautan kode QR.
+- `https://go.yourbrand.com/01/<GTIN>` ([GS1 Digital Link](/docs/product-pages#gs1-digital-link)) membuka halaman produk dengan GTIN tersebut yang kodenya memakai domain ini.
+- Setiap path lain mengembalikan "tidak ditemukan". Domain ini tidak pernah menyajikan bagian QRdx lainnya.
+
+Perubahan (domain yang baru diverifikasi atau dihapus) memerlukan waktu hingga satu menit untuk sampai ke setiap server.
+
+## Workspace dan peran [#workspaces-and-roles]
+
+Domain menjadi milik workspace tempat domain itu ditambahkan. Pemilik dan admin dapat menambah, memverifikasi, dan menghapusnya; setiap anggota dapat menggunakan domain terverifikasi milik workspace untuk kode mereka.
+
+## Paket dan penghapusan domain [#plans-and-removing-domains]
+
+- Menurunkan paket tidak pernah merusak apa pun: domain yang terverifikasi tetap melayani kode yang memakainya. Tanpa Pro atau Business, Anda tidak dapat menambah atau memverifikasi domain maupun memindahkan lebih banyak kode ke domain, tetapi Anda masih dapat mengedit kode tersebut dan menghapus domain.
+- Menghapus domain mengembalikan kodenya ke tautan default `qrdx.dev/q/<slug>`. Back-half yang dipilih di domain dipindahkan ke `qrdx.dev` jika masih tersedia di sana; sisanya mendapat back-half baru yang dibuat otomatis. Kode QR yang dicetak dengan tautan domain kustom berhenti berfungsi, jadi dialog lebih dulu menampilkan berapa banyak kode yang memakai domain tersebut.
+
+## REST API [#rest-api]
+
+[API kode](/docs/dynamic-qr-codes#rest-api) menerima `domainId` (id domain terverifikasi di workspace yang sama) pada `POST /v1/codes` dan `PATCH /v1/codes/{id}`. Kirim `"domainId": null` dalam `PATCH` untuk beralih kembali ke tautan default. Memindahkan kode ke domain memerlukan Pro dan jika tidak akan mengembalikan `402 PLAN_REQUIRED`.
+
+Setiap kode dalam respons menyertakan:
+
+| Bidang | Deskripsi |
+| --- | --- |
+| `shortLink` | Tautan yang disandikan: pada domain kustom setelah terverifikasi |
+| `defaultShortLink` | `https://qrdx.dev/q/<slug>`, yang selalu berfungsi; `null` untuk back-half yang dipilih di domain kustom |
+| `domain` | `{ "id", "hostname", "verified" }`, atau `null` |
+
+## Hosting mandiri [#self-hosting]
+
+Cara domain dihubungkan bergantung pada deployment Anda:
+
+- **Di Vercel:** atur `VERCEL_API_TOKEN` (token dengan akses ke proyek), `VERCEL_PROJECT_ID` dan, untuk proyek tim, `VERCEL_TEAM_ID`. Domain kemudian ditambahkan ke proyek melalui Vercel Domains API, yang juga menerbitkan sertifikat TLS. Tanpa variabel ini, halaman Domain menjelaskan bahwa domain kustom belum disiapkan, karena Vercel hanya merutekan domain yang telah ditambahkan ke proyek.
+- **Di tempat lain** (Docker, Node.js): biarkan variabel tersebut tidak diatur. Domain diverifikasi secara manual:
+  1. Arahkan domain ke server Anda dengan rekaman `CNAME` (ke nama host aplikasi Anda) atau rekaman `A` (IP server Anda).
+  2. Atur reverse proxy Anda agar menerima domain tersebut, menyajikan HTTPS untuknya (misalnya dengan TLS on-demand Caddy atau sertifikat certbot), dan meneruskan header `Host` asli ke aplikasi. Dengan nginx, itu `proxy_set_header Host $host;`; Caddy melakukannya secara default.
+  3. Tambahkan domain di halaman Domain, buat rekaman `TXT` yang ditampilkan (`_qrdx-challenge.<your-domain>` dengan nilai `qrdx-verify=<token>`), lalu klik **Verifikasi**. Aplikasi memeriksa rekaman tersebut dengan pencarian DNS.
+
+**Penyiapan DNS satu klik** (opsional) menggunakan [Domain Connect](https://www.domainconnect.org). Fitur ini memerlukan templat milik Anda sendiri, yang diterima oleh setiap penyedia DNS yang ingin Anda dukung, dan kunci RSA yang menandatangani tautan penyiapan: atur `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID` dan `DOMAIN_CONNECT_PRIVATE_KEY` (PEM), lalu publikasikan kunci publik sebagai rekaman `TXT` di `_dck1.<provider id>`. Templat QRdx sendiri (`domain-connect/` di repositori) hanya berfungsi untuk qrdx.dev, karena penyedia memeriksa tanda tangan terhadap kuncinya. Sampai kunci yang dipublikasikan cocok, tidak ada tombol yang ditampilkan dan aplikasi mencatat alasannya di log.
+
+Aplikasi mengenali domain kustom dari header `Host`. Permintaan untuk URL aplikasi Anda sendiri, `NEXT_PUBLIC_SHORT_LINK_BASE_URL`, `localhost`, dan `*.vercel.app` selalu diperlakukan sebagai aplikasi utama.

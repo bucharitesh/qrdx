@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Tim",
+  "icon": "Users",
+  "pages": [
+    "create-and-invite",
+    "roles",
+    "seats",
+    "require-two-step-verification",
+    "single-sign-on",
+    "audit-log"
+  ]
+}

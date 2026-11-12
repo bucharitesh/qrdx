@@ -1,0 +1,89 @@
+---
+title: "Workspace dan tim"
+description: "Setiap orang memiliki workspace sendiri. Buat lebih banyak di Pro atau Business, undang orang lewat email atau tautan bergabung, lalu pilih peran owner, admin, member, billing, atau viewer."
+icon: Users
+---
+
+Semua yang Anda buat di QRdx dimiliki oleh sebuah workspace: kode dinamis dan [halaman yang di-hosting](/docs/landing-pages), [file](/docs/files), [domain kustom](/docs/custom-domains), folder dan tag, respons formulir, [webhook](/docs/webhooks), serta kunci API. Tema yang tersimpan adalah milik Anda, dan owner serta admin dapat membagikan salinannya ke workspace sehingga setiap member mendesain dengan warna yang sama. Setiap halaman dasbor memuat workspace di URL-nya (`/dashboard/<workspace>/…`). Berpindah workspace dengan pengalih workspace di bagian bawah bilah samping (di ponsel, ada di menu); Anda tetap berada di bagian yang sama, seperti Kode atau Pengaturan → Domain, pada workspace yang Anda pilih.
+
+## Workspace Anda sendiri [#your-own-workspace]
+
+Setiap akun memiliki workspace sendiri yang dibuat secara otomatis, dengan Anda sebagai owner-nya. Workspace ini memakai paket Anda. Anda dapat mengganti nama dan mengubah URL-nya, tetapi tidak dapat keluar atau menghapusnya: workspace ini hilang saat Anda [menghapus akun](/docs/help/account-and-billing/delete-your-account). Di Pro atau Business, Anda dapat mengundang orang ke dalamnya, atau menggunakannya sendiri dan membuat workspace terpisah untuk setiap tim atau klien.
+
+## Buat workspace lain [#create-another-workspace]
+
+Membuat workspace tambahan memerlukan Pro atau Business. Siapa pun dapat bergabung ke workspace yang mengundangnya, termasuk pengguna paket Gratis.
+
+1. Buka pengalih workspace lalu klik **Create workspace**.
+2. Masukkan **Workspace name** dan **Workspace URL** (3 sampai 48 huruf kecil, angka, dan tanda hubung). QRdx memeriksa saat Anda mengetik apakah URL tersebut masih tersedia; beberapa kata, seperti `codes` dan `settings`, dicadangkan.
+3. Klik **Create workspace**. Workspace terbuka dengan Anda sebagai owner-nya.
+
+## Undang orang [#invite-people]
+
+Owner dan admin mengundang orang dari [Pengaturan → Tim](/dashboard?to=settings/team):
+
+1. Masukkan alamat email orang tersebut dan pilih peran: **Admin**, **Member**, atau **Viewer**. Owner juga dapat mengundang seseorang sebagai **Billing**.
+2. QRdx mengirim undangan lewat email. Setiap undangan juga memiliki tautan yang dapat Anda salin dan kirim sendiri.
+3. Mereka membuka tautan, masuk dengan alamat email yang diundang, lalu klik **Accept invitation**. Workspace kemudian terbuka untuk mereka.
+
+Mengundang seseorang sebagai admin akan meminta Anda [mengonfirmasi bahwa ini Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) terlebih dahulu, kecuali Anda sudah melakukannya di browser tersebut dalam 10 menit terakhir.
+
+Undangan kedaluwarsa setelah 48 jam dan hanya berlaku untuk alamat email tujuannya, sehingga tautan yang diteruskan tidak dapat dipakai orang lain. Undangan yang tertunda memakai satu kursi hingga diterima, jadi cabut undangan yang tidak Anda perlukan lagi.
+
+## Tautan bergabung [#join-link]
+
+Tautan bergabung adalah satu tautan untuk seluruh tim: siapa pun yang sudah masuk dan membukanya akan bergabung ke workspace, selama masih ada kursi kosong. Owner dan admin mengelolanya di [Pengaturan → Tim](/dashboard?to=settings/team), di Pro dan Business:
+
+1. Pilih peran yang diterima orang saat bergabung (**Member** secara default; tidak pernah owner, dan hanya owner yang dapat membuat tautan **Billing**) lalu klik **Create join link**. Tautan yang menambahkan orang sebagai admin akan meminta Anda [mengonfirmasi bahwa ini Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) terlebih dahulu.
+2. Salin tautan dan bagikan. Demi keamanan, tautan hanya ditampilkan sekali; QRdx menyimpan sidik jarinya, bukan tautannya.
+3. Hilang, atau tersebar ke tempat yang salah? Klik **Reset link**: tautan lama berhenti berfungsi dan Anda mendapat yang baru. **Turn off** menonaktifkannya secara permanen.
+
+Orang yang belum masuk akan masuk terlebih dahulu lalu kembali ke tautan. Orang yang sudah menjadi member akan diberi tahu. Jika kursi sudah penuh, proses bergabung berhenti hingga ada kursi kosong.
+
+## Peran [#roles]
+
+| | Viewer | Billing | Member | Admin | Owner |
+| --- | --- | --- | --- | --- | --- |
+| Melihat kode, halaman, dan analitik | Ya | Ya | Ya | Ya | Ya |
+| Membuat dan mengedit kode dan halaman, mengunggah file | Tidak | Tidak | Ya | Ya | Ya |
+| Menghapus kode, file, dan respons formulir | Tidak | Tidak | Milik sendiri | Semua | Semua |
+| Membuat kunci API | Tidak | Tidak | Ya | Ya | Ya |
+| Membagikan tema tersimpan ke workspace | Tidak | Tidak | Tidak | Ya | Ya |
+| Mengundang dan menghapus orang, mengubah peran | Tidak | Tidak | Tidak | Ya | Ya |
+| Mengganti nama workspace, mengubah URL dan logonya | Tidak | Tidak | Tidak | Ya | Ya |
+| Menambah, memverifikasi, dan menghapus domain kustom | Tidak | Tidak | Tidak | Ya | Ya |
+| Mengelola endpoint webhook dan melihat rahasia penandatanganan | Tidak | Tidak | Tidak | Ya | Ya |
+| Meng-upgrade paket workspace | Tidak | Ya | Tidak | Tidak | Ya |
+| Membuat dan mengubah aplikasi OAuth | Tidak | Tidak | Tidak | Tidak | Ya |
+| Menjadikan seseorang owner atau member billing | Tidak | Tidak | Tidak | Tidak | Ya |
+| Menghapus workspace | Tidak | Tidak | Tidak | Tidak | Ya |
+
+Viewer dan member billing hanya dapat membaca: mereka tidak dapat membuat, mengedit, atau menghapus apa pun di workspace, dan kunci API tidak dapat melakukan lebih dari peran pembuatnya. Member dapat melihat endpoint webhook beserta log pengirimannya, dan menggunakan domain terverifikasi milik workspace untuk kode mereka. [Pengaturan notifikasi](/docs/notifications) bersifat pribadi: setiap member memilih sendiri peringatannya untuk setiap workspace.
+
+## Paket dan kursi [#plans-and-seats]
+
+Sebuah workspace memakai paket terbaik di antara owner dan member billing-nya, jadi satu orang di antara mereka yang memakai Business memberi seluruh workspace batas Business dan member tidak perlu langganan sendiri. Itulah fungsi peran **Billing**: untuk orang yang membayar workspace tanpa mengelolanya. Batas seperti kode dinamis, halaman, penyimpanan, dan respons formulir dihitung per workspace. Lihat [Paket dan batas](/docs/plans-and-limits).
+
+Kursi adalah member, termasuk owner, ditambah undangan yang tertunda: 1 (hanya Anda) jika owner dan member billing memakai paket Gratis, hingga 3 di Pro, dan tanpa batas di Business. Jika paket mereka berubah, member saat ini tetap ada dan setiap kode tetap berfungsi; hanya undangan baru dan hal baru yang melebihi batas yang diblokir.
+
+## Ganti nama, keluar, atau hapus workspace [#rename-leave-or-delete-a-workspace]
+
+Semua ini ada di [Pengaturan → Umum](/dashboard?to=settings) milik workspace.
+
+- **Ganti nama:** owner dan admin mengubah nama dan URL. Tautan ke URL lama berhenti berfungsi; kode yang sudah dicetak tidak berubah.
+- **Logo:** owner dan admin mengunggah logo (jika penyimpanan file sudah disiapkan di server) atau memakai URL gambar https. Logo tampil di pengalih workspace; tanpa logo, pengalih menampilkan huruf pertama dari nama.
+- **Keluar:** klik **Leave workspace** di zona berbahaya. Owner terakhir tidak dapat keluar: jadikan member lain sebagai owner terlebih dahulu, atau hapus workspace. Tidak seorang pun dapat keluar dari workspace miliknya sendiri.
+- **Hapus member:** di [Pengaturan → Tim](/dashboard?to=settings/team). Kode dan halaman yang mereka buat tetap berada di workspace. Tidak seorang pun dapat dihapus dari workspace miliknya sendiri. Menghapus seseorang, seperti mengubah perannya, akan meminta Anda [mengonfirmasi bahwa ini Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) terlebih dahulu.
+- **Hapus workspace:** hanya untuk owner, dan tidak pernah untuk workspace milik pribadi seseorang. Anda mengonfirmasi dengan mengetik URL workspace, dan QRdx meminta Anda mengonfirmasi bahwa ini Anda. Tidak ada yang berhenti berfungsi: kode, halaman, file, domain, dan item lain dipindahkan ke workspace milik pribadi pembuatnya. Kunci API workspace ikut dihapus.
+
+## Pindahkan kode ke workspace lain [#move-a-code-to-another-workspace]
+
+Di menu **⋯** kode pada halaman Kode, pilih **Move to workspace...** lalu pilih workspace tempat Anda dapat membuat kode. Tautan pendeknya tetap sama, sehingga kode yang sudah dicetak tetap berfungsi, dan pemindaian serta riwayat versinya ikut berpindah. Folder dan tag-nya tertinggal, karena keduanya milik workspace lama.
+
+- Member dapat memindahkan kode yang mereka buat; owner dan admin dapat memindahkan kode apa pun.
+- Paket workspace tujuan harus memiliki ruang untuk satu kode aktif lagi. Kode yang diarsipkan tidak dihitung.
+- Kode yang tautannya memakai domain kustom tidak dapat dipindahkan, karena domain tersebut milik workspace lama dan tautan cetaknya akan berhenti berfungsi. Kode yang membuka halaman yang di-hosting tetap bersama halamannya.
+
+## Akses API [#api-access]
+
+Permintaan [REST API](/docs/developers/rest-api) yang dibuat dengan token akses OAuth bekerja pada workspace milik pemilik token. [Kunci API](/docs/developers/api-keys) bekerja pada workspace tempat kunci itu dibuat, dengan peran Anda di sana. Permintaan dari sesi browser yang sudah masuk bekerja pada workspace yang terakhir dibuka dalam sesi tersebut.

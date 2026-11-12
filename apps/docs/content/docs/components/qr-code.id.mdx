@@ -1,0 +1,83 @@
+---
+title: "QR Code"
+description: "Kode QR bergaya yang aksesibel dengan tombol unduh. Warna, gradien, pola, logo, dan templat bingkai berasal dari pustaka qrdx."
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## Instalasi [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## Penggunaan [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+Kode ditampilkan sebagai SVG dengan nama yang aksesibel, sehingga tetap tajam pada ukuran berapa pun dan pembaca layar menyebutkan tujuan tautannya.
+
+## Contoh [#examples]
+
+### Ukuran [#sizes]
+
+`size` menentukan lebar dan tinggi di layar dalam piksel. Unduhan menggunakan `downloadSize`, sehingga kode kecil di halaman tetap menghasilkan berkas siap cetak.
+
+<ComponentPreview name="qr-code-sizes" />
+
+### Warna [#colors]
+
+`fgColor` dan `bgColor` menerima warna CSS apa pun. `eyeColor` dan `dotColor` mewarnai tiga mata sudut secara terpisah. Jaga agar modul lebih gelap daripada latar belakang agar semua pemindai dapat membaca kodenya.
+
+<ComponentPreview name="qr-code-colors" />
+
+### Gradien [#gradients]
+
+Berikan gradien qrdx sebagai pengganti warna: `linear` dengan `angle`, atau `radial`. Gradien ikut terbawa ke unduhan PNG, SVG, dan PDF.
+
+<ComponentPreview name="qr-code-gradient" />
+
+### Pola [#patterns]
+
+`bodyPattern` membentuk modul data, `cornerEyePattern` membentuk bingkai sudut, dan `cornerEyeDotPattern` membentuk titik di dalamnya. Lihat [pola](/docs/features/patterns) untuk semua bentuk.
+
+<ComponentPreview name="qr-code-patterns" />
+
+### Logo [#logo]
+
+`logo` menempatkan gambar di tengah dan mengosongkan modul di belakangnya. Gunakan tingkat koreksi kesalahan `H` agar kode tetap dapat dipindai meski sebagian tertutup. Data URL menjaga logo tetap ada di unduhan; gambar jarak jauh memerlukan header CORS.
+
+<ComponentPreview name="qr-code-logo" />
+
+### Templat bingkai [#frame-templates]
+
+`templateId` menggambar [templat](/docs/features/templates) qrdx di sekeliling kode. Padukan dengan `caption` untuk ajakan bertindak di bawah bingkai.
+
+<ComponentPreview name="qr-code-template" />
+
+### Format unduhan [#download-formats]
+
+`downloadFormats` memilih tombol yang ditampilkan: `png`, `jpg`, `svg`, dan `pdf`. Ekspor PDF memerlukan paket opsional `jspdf` (`npm install jspdf`). Berikan `[]` untuk menyembunyikan tombol.
+
+<ComponentPreview name="qr-code-downloads" />
+
+Untuk satu menu dengan format dan ukuran, gunakan [QR Code Download](/docs/components/qr-code-download).
+
+### Mode gelap [#dark-mode]
+
+Latar belakang putih bawaan adalah pilihan paling aman di tema gelap: modul gelap pada ubin terang dapat dipindai oleh semua pembaca. Untuk mengikuti tema, atur `fgColor="currentColor"` dan latar belakang transparan. Kode kemudian terbalik di mode gelap, yang dapat dibaca kamera ponsel tetapi tidak oleh sebagian pemindai lama.
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## Referensi API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+Prop lain apa pun, seperti `className`, diteruskan ke `<figure>` pembungkus.
