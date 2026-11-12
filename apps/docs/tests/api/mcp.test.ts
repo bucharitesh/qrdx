@@ -116,6 +116,25 @@ describe("MCP over Streamable HTTP", () => {
     }
   });
 
+  it("the /mcp page lists exactly the registered tools, with the ones that need a key", async () => {
+    const { MCP_TOOLS } = await import("@/app/[lang]/(home)/mcp/content");
+    const { message } = await rpc("tools/list");
+    const tools = message?.result.tools as {
+      name: string;
+      annotations?: { readOnlyHint?: boolean };
+    }[];
+    expect(MCP_TOOLS.map((tool) => tool.name).sort()).toEqual(
+      tools.map((tool) => tool.name).sort(),
+    );
+    for (const tool of tools) {
+      const listed = MCP_TOOLS.find((item) => item.name === tool.name);
+      // The tools that write (the save ones) are the ones that need a key.
+      expect(Boolean(listed?.needsKey), tool.name).toBe(
+        tool.annotations?.readOnlyHint === false,
+      );
+    }
+  });
+
   it("generate_qr_code returns image URLs and a scannable SVG", async () => {
     const { message } = await call("generate_qr_code", {
       data: "https://qrdx.dev/?from=mcp",
