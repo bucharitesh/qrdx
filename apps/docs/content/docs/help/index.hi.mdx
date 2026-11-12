@@ -1,0 +1,88 @@
+---
+title: "सहायता केंद्र"
+description: "QR कोड बनाने, डायनेमिक QR कोड, पेज, बिलिंग और आपके अकाउंट से जुड़े सवालों के जवाब। कोड लिखने की ज़रूरत नहीं।"
+icon: LifeBuoy
+---
+
+import { HelpSearch, StillStuck } from "@/components/docs/help-home";
+
+<HelpSearch />
+
+## आम सवाल [#common-questions]
+
+- [अपना पहला QR कोड बनाएँ](/docs/help/getting-started/first-qr-code)
+- [स्टैटिक या डायनेमिक, आपको कौन सा चाहिए?](/docs/help/getting-started/static-vs-dynamic)
+- [कोड जिस लिंक पर जाता है उसे बदलें](/docs/help/dynamic-codes/change-the-link)
+- [कोड स्कैन नहीं हो रहा](/docs/help/troubleshooting/wont-scan)
+- [QR कोड डाउनलोड और प्रिंट करें](/docs/help/getting-started/download-and-print)
+- [पेमेंट बंद करने पर आपके कोड का क्या होता है](/docs/help/account-and-billing/never-hostage)
+- [अपनी सब्सक्रिप्शन रद्द करें](/docs/help/account-and-billing/cancel)
+- [स्कैन करने पर एरर पेज दिखता है](/docs/help/troubleshooting/error-pages)
+
+## विषय के अनुसार देखें [#browse-by-topic]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/help/getting-started/first-qr-code"
+    title="शुरू करें"
+    description="अपना पहला कोड बनाएँ, डाउनलोड करें और प्रिंट करें। स्टैटिक या डायनेमिक।"
+  />
+  <Card
+    icon={<Palette />}
+    href="/docs/help/designing/colors-and-contrast"
+    title="डिज़ाइन"
+    description="रंग, लोगो, फ़्रेम और आर्ट, और ऐसे कोड जो हमेशा स्कैन हों।"
+  />
+  <Card
+    icon={<QrCode />}
+    href="/docs/help/dynamic-codes/create"
+    title="डायनेमिक कोड"
+    description="लिंक बदलें, स्कैन देखें, कोड को पॉज़ करें, सुरक्षित करें और रूट करें।"
+  />
+  <Card
+    icon={<PanelsTopLeft />}
+    href="/docs/help/pages-and-forms/create-a-page"
+    title="पेज और फ़ॉर्म"
+    description="मोबाइल पेज और फ़ॉर्म, जिन्हें QRdx होस्ट करता है।"
+  />
+  <Card
+    icon={<CreditCard />}
+    href="/docs/help/account-and-billing/plans"
+    title="अकाउंट और बिलिंग"
+    description="प्लान, इनवॉइस, रद्द करना, आपका डेटा और आपका अकाउंट।"
+  />
+  <Card
+    icon={<Users />}
+    href="/docs/help/teams/create-and-invite"
+    title="वर्कस्पेस और टीमें"
+    description="वर्कस्पेस बनाएँ, लोगों को आमंत्रित करें, रोल और सीट।"
+  />
+  <IfAvailable path="/docs/help/domains/custom-domains">
+    <Card
+      icon={<Globe />}
+      href="/docs/help/domains/custom-domains"
+      title="डोमेन"
+      description="आपके अपने डोमेन पर शॉर्ट लिंक।"
+    />
+  </IfAvailable>
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/help/troubleshooting/wont-scan"
+    title="समस्या समाधान"
+    description="स्कैन न होने वाले कोड, गलत पेज, एरर पेज और ईमेल न मिलना।"
+  />
+  <Card
+    icon={<ShieldCheck />}
+    href="/docs/help/privacy-and-security/scan-data"
+    title="प्राइवेसी और सुरक्षा"
+    description="स्कैन में क्या रिकॉर्ड होता है, अकाउंट की सुरक्षा और दुरुपयोग की रिपोर्ट।"
+  />
+</Cards>
+
+## और जानकारी [#more]
+
+- [नया क्या है और आगे क्या आ रहा है](/docs/help/whats-new), और पूरा [changelog](/changelogs)।
+- कुछ बना रहे हैं? [Developers](/docs/developers) टैब में REST API, webhooks, MCP और CLI हैं।
+
+<StillStuck />

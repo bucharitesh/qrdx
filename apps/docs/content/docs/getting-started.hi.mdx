@@ -1,0 +1,58 @@
+---
+title: "React लाइब्रेरी इंस्टॉल करें"
+description: "qrdx React लाइब्रेरी इंस्टॉल करें और कुछ ही लाइनों में अपना पहला QR कोड बनाएँ।"
+icon: Rocket
+---
+
+`qrdx` इंस्टॉल करें और कुछ ही मिनटों में अपना पहला QR कोड बनाएँ।
+
+<NpmStatus package="qrdx" />
+
+## पैकेज इंस्टॉल करें [#install-the-package]
+
+```package-install
+qrdx@latest
+```
+
+`react` और `react-dom` (18 या नया वर्शन) peer dependencies हैं, इसलिए `qrdx` वही वर्शन इस्तेमाल करता है जो आपके app में पहले से हैं। PDF export वैकल्पिक है: `jspdf` तभी इंस्टॉल करें जब आपको इसकी ज़रूरत हो।
+
+## क्विक स्टार्ट [#quick-start]
+
+अपना पहला QR कोड बनाएँ:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function App() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+    />
+  );
+}
+```
+
+बस इतना ही। अब आपके पास एक काम करता हुआ QR कोड है।
+
+पहले डिज़ाइन करना चाहते हैं? [Playground में आज़माएँ](/playground?open=code&lang=react): वहाँ QR कोड को स्टाइल करें, फिर उसे React component के रूप में कॉपी करें।
+
+## अगले कदम [#next-steps]
+
+<Cards>
+  <Card
+    href="/docs/usage"
+    title="इस्तेमाल सीखें"
+    description="रंग, पैटर्न और बहुत कुछ कस्टमाइज़ करें"
+  />
+  <Card
+    href="/docs/features/templates"
+    title="टेम्पलेट इस्तेमाल करें"
+    description="पहले से बने स्टाइल तुरंत लागू करें"
+  />
+  <Card
+    href="/docs/api-reference"
+    title="API रेफ़रेंस"
+    description="सभी props की पूरी जानकारी"
+  />
+</Cards>

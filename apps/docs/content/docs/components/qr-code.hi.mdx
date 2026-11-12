@@ -1,0 +1,83 @@
+---
+title: "QR Code"
+description: "डाउनलोड बटन वाला एक स्टाइल्ड और एक्सेसिबल QR code। रंग, ग्रेडिएंट, पैटर्न, लोगो और फ़्रेम टेम्पलेट qrdx लाइब्रेरी से आते हैं।"
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## इंस्टॉलेशन [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## इस्तेमाल [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+कोड एक एक्सेसिबल नाम के साथ SVG के रूप में रेंडर होता है, इसलिए यह किसी भी साइज़ पर साफ़ रहता है और स्क्रीन रीडर बताते हैं कि यह किस लिंक पर ले जाता है।
+
+## उदाहरण [#examples]
+
+### साइज़ [#sizes]
+
+`size` स्क्रीन पर चौड़ाई और ऊँचाई पिक्सेल में तय करता है। डाउनलोड में `downloadSize` इस्तेमाल होता है, इसलिए पेज पर छोटा कोड भी प्रिंट के लिए तैयार फ़ाइल एक्सपोर्ट करता है।
+
+<ComponentPreview name="qr-code-sizes" />
+
+### रंग [#colors]
+
+`fgColor` और `bgColor` कोई भी CSS color ले सकते हैं। `eyeColor` और `dotColor` तीनों कोने की आँखों को अलग से रंगते हैं। मॉड्यूल को बैकग्राउंड से गहरा रखें ताकि हर स्कैनर कोड पढ़ सके।
+
+<ComponentPreview name="qr-code-colors" />
+
+### ग्रेडिएंट [#gradients]
+
+रंग की जगह qrdx ग्रेडिएंट दें: `angle` के साथ `linear`, या `radial`। ग्रेडिएंट PNG, SVG और PDF डाउनलोड में भी शामिल रहते हैं।
+
+<ComponentPreview name="qr-code-gradient" />
+
+### पैटर्न [#patterns]
+
+`bodyPattern` डेटा मॉड्यूल का आकार तय करता है, `cornerEyePattern` कोने के फ़्रेम का और `cornerEyeDotPattern` उनके अंदर के डॉट्स का। सभी आकार देखने के लिए [पैटर्न](/docs/features/patterns) देखें।
+
+<ComponentPreview name="qr-code-patterns" />
+
+### लोगो [#logo]
+
+`logo` बीच में एक इमेज लगाता है और उसके पीछे के मॉड्यूल हटा देता है। एरर करेक्शन लेवल `H` इस्तेमाल करें ताकि कोड का कुछ हिस्सा ढका होने पर भी स्कैन हो सके। डेटा URL लोगो को डाउनलोड में बनाए रखता है; रिमोट इमेज के लिए CORS हेडर चाहिए।
+
+<ComponentPreview name="qr-code-logo" />
+
+### फ़्रेम टेम्पलेट [#frame-templates]
+
+`templateId` कोड के चारों ओर qrdx [टेम्पलेट](/docs/features/templates) बनाता है। फ़्रेम के नीचे कॉल टू एक्शन के लिए इसे `caption` के साथ इस्तेमाल करें।
+
+<ComponentPreview name="qr-code-template" />
+
+### डाउनलोड फ़ॉर्मैट [#download-formats]
+
+`downloadFormats` बटन चुनता है: `png`, `jpg`, `svg` और `pdf`। PDF एक्सपोर्ट के लिए वैकल्पिक `jspdf` पैकेज चाहिए (`npm install jspdf`)। बटन छिपाने के लिए `[]` दें।
+
+<ComponentPreview name="qr-code-downloads" />
+
+फ़ॉर्मैट और साइज़ वाले एक ही मेन्यू के लिए [QR Code Download](/docs/components/qr-code-download) इस्तेमाल करें।
+
+### डार्क मोड [#dark-mode]
+
+डार्क थीम में डिफ़ॉल्ट सफ़ेद बैकग्राउंड सबसे सुरक्षित विकल्प है: हल्की टाइल पर गहरे मॉड्यूल हर रीडर से स्कैन होते हैं। इसके बजाय थीम के साथ चलने के लिए `fgColor="currentColor"` और पारदर्शी बैकग्राउंड सेट करें। तब डार्क मोड में कोड उलट जाता है, जिसे फ़ोन कैमरे पढ़ लेते हैं, लेकिन कुछ पुराने स्कैनर नहीं पढ़ पाते।
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## API रेफ़रेंस [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+कोई भी अन्य prop, जैसे `className`, रैपिंग `<figure>` को पास किया जाता है।
