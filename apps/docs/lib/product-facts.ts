@@ -52,6 +52,11 @@ import {
 } from "./bulk-limits";
 import { TRANSLATED_LOCALES } from "./i18n/config";
 import { PAGE_TYPE_IDS } from "./landing/page-type-ids";
+import {
+  DESIGN_QR_REQUESTS_PER_MINUTE,
+  MCP_REQUESTS_PER_MINUTE,
+  QR_IMAGE_REQUESTS_PER_MINUTE,
+} from "./public-api-limits";
 
 export const PRODUCT_FACTS = {
   /** Shapes for the data modules (`bodyPattern`). */
@@ -115,6 +120,13 @@ export const PRODUCT_FACTS = {
   bulkToolRows: formatCount(MAX_BULK_TOOL_ROWS),
   /** Codes an hour a new account may create in a paid workspace. */
   newPaidAccountHourlyCodes: formatCount(NEW_PAID_ACCOUNT_CODES_PER_HOUR),
+  // Keyless endpoints' per-IP limits (lib/public-api-limits.ts).
+  /** Image API (GET /v1/qr) requests a minute per IP address. */
+  imageApiPerMinute: QR_IMAGE_REQUESTS_PER_MINUTE,
+  /** MCP server requests a minute per IP address. */
+  mcpPerMinute: MCP_REQUESTS_PER_MINUTE,
+  /** design_qr calls a minute per IP address. */
+  designQrPerMinute: DESIGN_QR_REQUESTS_PER_MINUTE,
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;
