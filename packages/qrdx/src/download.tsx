@@ -3,11 +3,6 @@ import { DEFAULT_SIZE } from "./constants";
 import { epsToDataUrl, getQRAsEPS } from "./eps";
 import { getFrameDimensions } from "./frame";
 import { getQRAsCanvas, getQRAsSVGDataUri } from "./index";
-import {
-  loadLogoForRasterizer,
-  type RasterLogo,
-  rasterizeSvgToPng,
-} from "./rasterize";
 import { blobToDataUrl, canvasToWebP, type WebPOptions } from "./webp";
 
 /**
@@ -180,42 +175,6 @@ export async function getQRAsWebP(
   } finally {
     canvas.remove();
   }
-}
-
-export interface QRAsPNGOptions {
-  /** Pixel size of the code; defaults to the props' own size (128). */
-  size?: number;
-}
-
-/**
- * The code as PNG bytes (plus its frame, if any), without a browser: the SVG
- * the library renders is rasterized by an optional peer dependency —
- * `@resvg/resvg-js`, which draws the SVG (logos included) the way browsers
- * do, or `sharp` — loaded only when this is called. A logo is embedded as a
- * data URL first: a data URL is kept, an http(s) URL is fetched and a local
- * path is read from disk (Node). A logo that can't be loaded is left out,
- * like in the browser.
- */
-export async function getQRAsPNG(
-  qrProps: QRProps,
-  options: QRAsPNGOptions = {}
-): Promise<Uint8Array> {
-  const size = options.size ?? qrProps.size ?? DEFAULT_SIZE;
-  const propsWithSize = withQRSize(qrProps, size);
-
-  const src = propsWithSize.imageSettings?.src;
-  const logo: RasterLogo | null = src ? await loadLogoForRasterizer(src) : null;
-  const propsWithLogo =
-    logo && propsWithSize.imageSettings && logo.dataUrl !== src
-      ? {
-          ...propsWithSize,
-          imageSettings: { ...propsWithSize.imageSettings, src: logo.dataUrl },
-        }
-      : propsWithSize;
-
-  const svgDataUri = await getQRAsSVGDataUri(propsWithLogo);
-  const svg = decodeURIComponent(svgDataUri.replace("data:image/svg+xml,", ""));
-  return await rasterizeSvgToPng(svg, logo);
 }
 
 // One CSS pixel = one PostScript point (72 per inch).

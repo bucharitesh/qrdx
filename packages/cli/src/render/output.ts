@@ -1,7 +1,8 @@
 import { writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { QRProps } from "qrdx";
-import { getFrameDimensions, getQRAsPNG, QRCodeSVG, svgToEPS } from "qrdx";
+import { QRCodeSVG, svgToEPS } from "qrdx";
+import { getQRAsPNG } from "qrdx/node";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -22,11 +23,6 @@ export interface OutputOptions extends QRProps {
 }
 
 type SharpFactory = typeof import("sharp").default;
-type SharpImage = ReturnType<SharpFactory>;
-
-/** PNG, or lossless WebP (same pixels, transparency kept). */
-const encodeRaster = (image: SharpImage, format: "png" | "webp") =>
-  format === "webp" ? image.webp({ lossless: true }) : image.png();
 
 export function buildSVGString(props: QRProps & { size?: number }): string {
   const element = createElement(QRCodeSVG as React.ComponentType<QRProps>, {
@@ -98,38 +94,6 @@ async function buildEPSString(props: QRProps & { size?: number }) {
   return await svgToEPS(buildSVGString(epsProps));
 }
 
-/**
- * Finds the logo's pixel box in the rendered output. The <image> is swapped for
- * a lone visible rect, so the box comes out right even inside template transforms.
- */
-async function findLogoBox(sharp: SharpFactory, svgString: string) {
-  const imageTag = svgString.match(/<image\b[^>]*?(?:\/>|><\/image>)/)?.[0];
-  if (!imageTag) {
-    return null;
-  }
-  const markerTag = imageTag
-    .replace(/^<image\b/, '<rect class="qrdx-logo-box"')
-    .replace(/\shref="[^"]*"/, "")
-    .replace(/(?:\/>|><\/image>)$/, ' fill="#000"/>');
-  const markerSvg = svgString
-    .replace(imageTag, markerTag)
-    .replace(
-      /<svg\b[^>]*>/,
-      (open) =>
-        `${open}<style>*{visibility:hidden}.qrdx-logo-box{visibility:visible}</style>`
-    );
-  const { info } = await sharp(Buffer.from(markerSvg, "utf-8"))
-    .png()
-    .trim()
-    .toBuffer({ resolveWithObject: true });
-  return {
-    left: -(info.trimOffsetLeft ?? 0),
-    top: -(info.trimOffsetTop ?? 0),
-    width: info.width,
-    height: info.height,
-  };
-}
-
 export async function saveOutput(options: OutputOptions): Promise<void> {
   const { outputPath, format, ...qrProps } = options;
 
@@ -146,16 +110,21 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
     return;
   }
 
+  // One raster path with the library for both raster formats: the engine
+  // rasterizes its own SVG (an optional @resvg/resvg-js or sharp peer,
+  // loaded on demand). The CLI loads external logos — the person running it
+  // picked the path or URL.
+  const pngBytes = await getQRAsPNG(qrProps, {
+    size: qrProps.size ?? 512,
+    loadExternalLogos: true,
+  });
+
   if (format === "png") {
-    // One server PNG path with the library: the engine rasterizes its own
-    // SVG (an optional @resvg/resvg-js or sharp peer, loaded on demand).
-    writeFileSync(
-      outputPath,
-      await getQRAsPNG(qrProps, { size: qrProps.size ?? 512 })
-    );
+    writeFileSync(outputPath, pngBytes);
     return;
   }
 
+  // WebP lossless: the PNG's pixels in a smaller file.
   let sharp: SharpFactory;
   try {
     const mod = await import("sharp");
@@ -165,30 +134,7 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
       "WebP output needs the sharp package (native binaries). It is optional and may not have installed; use SVG or reinstall: https://sharp.pixelplumbing.com/install"
     );
   }
-  const svgBuffer = Buffer.from(svgString, "utf-8");
-  const size = qrProps.size ?? 512;
-  // A frame makes the output larger than (and not as square as) the code.
-  const { width, height } = getFrameDimensions(size, qrProps.frame);
-  const qrImage = sharp(svgBuffer).resize(
-    Math.round(width),
-    Math.round(height)
-  );
-
-  // sharp's bundled SVG renderer skips embedded <image> elements, so the logo
-  // is composited onto the rendered QR code instead.
-  const logoSrc = qrProps.imageSettings?.src;
-  const box = logoSrc ? await findLogoBox(sharp, svgString) : null;
-  if (!(logoSrc && box)) {
-    await encodeRaster(qrImage, format).toFile(outputPath);
-    return;
-  }
-
-  const logo = await sharp(await loadLogo(logoSrc))
-    .resize(box.width, box.height, { fit: "fill" })
-    .png()
-    .toBuffer();
-  const composited = sharp(await qrImage.png().toBuffer()).composite([
-    { input: logo, left: box.left, top: box.top },
-  ]);
-  await encodeRaster(composited, format).toFile(outputPath);
+  await sharp(Buffer.from(pngBytes))
+    .webp({ lossless: true })
+    .toFile(outputPath);
 }

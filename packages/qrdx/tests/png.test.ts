@@ -1,15 +1,23 @@
 /** biome-ignore-all lint/style/noMagicNumbers: sample points and tolerances */
-// PNG export in plain Node (getQRAsPNG): the bytes decode as a PNG, are the
-// size the browser's canvas would draw, and scan back to the encoded value —
-// with and without a logo. Colours are sampled for a few styles (gradient,
-// frames, shapes). No DOM is involved; the rasterizer is the optional peer
-// dependency the export loads on demand.
+// PNG export in plain Node (getQRAsPNG, from the Node-only entry): the bytes
+// decode as a PNG, are the size the browser's canvas would draw, and scan
+// back to the encoded value — with and without a logo. Colours are sampled
+// for a few styles (gradient, frames, shapes). No DOM is involved; the
+// rasterizer is the optional peer dependency the export loads on demand.
 
-import { existsSync, readFileSync } from "node:fs";
+import {
+  existsSync,
+  mkdtempSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "vitest";
-import { getQRAsPNG } from "../src/download";
 import { getFrameDimensions } from "../src/frame";
+import { getQRAsPNG } from "../src/node";
 import { loadLogoForRasterizer } from "../src/rasterize";
 import { decodePng } from "../src/utils/png";
 import type { QRProps } from "../types";
@@ -177,9 +185,39 @@ describe("getQRAsPNG in Node", () => {
 
   it("reads a local path in Node and sniffs its type", async () => {
     const logo = await loadLogoForRasterizer(
-      fileURLToPath(new URL("./fixtures/art/dog.png", import.meta.url))
+      fileURLToPath(new URL("./fixtures/art/dog.png", import.meta.url)),
+      true
     );
     expect(logo?.dataUrl.startsWith("data:image/png;base64,")).toBe(true);
+  });
+
+  it("leaves http(s) URLs and local paths alone by default", async () => {
+    const path = fileURLToPath(
+      new URL("./fixtures/art/dog.png", import.meta.url)
+    );
+    expect(
+      await loadLogoForRasterizer("https://example.com/logo.png")
+    ).toBeNull();
+    expect(await loadLogoForRasterizer(path)).toBeNull();
+    // A data URL never needs the opt-in: the caller already holds it.
+    expect(
+      await loadLogoForRasterizer(
+        `data:image/png;base64,${base64Of(
+          await toPng(createImage(2, 2, "#ff0000"))
+        )}`
+      )
+    ).not.toBeNull();
+  });
+
+  it("gives up on a local file over the 1 MB cap", async () => {
+    const dir = mkdtempSync(join(tmpdir(), "qrdx-logo-"));
+    try {
+      const big = join(dir, "big.png");
+      writeFileSync(big, Buffer.alloc(1024 * 1024 + 1, 0x89));
+      expect(await loadLogoForRasterizer(big, true)).toBeNull();
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 
   it("gives up on a data URL it cannot decode", async () => {
@@ -187,15 +225,28 @@ describe("getQRAsPNG in Node", () => {
   });
 });
 
-const dist = new URL("../dist/index.mjs", import.meta.url);
+const mainEntry = new URL("../dist/index.mjs", import.meta.url);
+const nodeEntry = new URL("../dist/node.mjs", import.meta.url);
 
-describe("browser bundle", () => {
+describe("bundles", () => {
   // The engine is built before the tests in CI and before pushing; without a
-  // dist this check simply has nothing to say.
-  it.skipIf(!existsSync(dist))(
-    "keeps the rasterizers out of the static imports",
+  // dist these checks simply have nothing to say.
+  it.skipIf(!existsSync(mainEntry))(
+    "the browser entry never mentions the rasterizers",
     () => {
-      const esm = readFileSync(dist, "utf8");
+      // Bundlers follow dynamic imports as well as static ones, so the
+      // native rasterizers may not appear anywhere in the main entry —
+      // that is what they live in the Node-only entry (qrdx/node) for.
+      const esm = readFileSync(mainEntry, "utf8");
+      expect(esm).not.toMatch(/@resvg\/resvg-js/);
+      expect(esm).not.toMatch(/["']sharp["']/);
+    }
+  );
+
+  it.skipIf(!existsSync(nodeEntry))(
+    "the node entry loads the rasterizers dynamically",
+    () => {
+      const esm = readFileSync(nodeEntry, "utf8");
       expect(esm).toMatch(/import\(\s*['"]@resvg\/resvg-js['"]\s*\)/);
       expect(esm).toMatch(/import\(\s*['"]sharp['"]\s*\)/);
       expect(esm).not.toMatch(/from\s*['"](@resvg\/resvg-js|sharp)['"]/);

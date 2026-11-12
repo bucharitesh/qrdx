@@ -90,6 +90,15 @@ export default defineConfig([
     // tree-shaking pass would strip it, so rely on esbuild's tree-shaking here.
     treeshake: false,
   },
+  // ── Node-only PNG entry (qrdx/node) ─────────────────────────────────────
+  // The native rasterizers live here alone, so the main entry never
+  // mentions them and browser bundlers never see an import() to follow.
+  {
+    ...shared,
+    entry: { node: "src/node.ts" },
+    format: ["cjs", "esm"],
+    treeshake: true,
+  },
   // ── qrdx/types (schemas + helpers, no React) ────────────────────────────
   {
     ...shared,
