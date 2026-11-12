@@ -3924,7 +3924,35 @@
     "status": "machine"
   },
   "scan.faq.installAnswer": {
-    "source": "cbe2ebaa90bb",
+    "source": "091b8ebef4c4",
+    "status": "machine"
+  },
+  "scan.faq.shareQuestion": {
+    "source": "e0dfa04b1b8d",
+    "status": "machine"
+  },
+  "scan.faq.shareAnswer": {
+    "source": "7922050c6e51",
+    "status": "machine"
+  },
+  "scan.app.name": {
+    "source": "9771ae5e5dbc",
+    "status": "machine"
+  },
+  "scan.app.shortName": {
+    "source": "9771ae5e5dbc",
+    "status": "machine"
+  },
+  "scan.app.description": {
+    "source": "36ecf2381124",
+    "status": "machine"
+  },
+  "scan.app.cameraShortcut": {
+    "source": "2164cf918656",
+    "status": "machine"
+  },
+  "scan.app.imageShortcut": {
+    "source": "2425b41a216a",
     "status": "machine"
   },
   "scanner.kinds.url": {
@@ -4217,6 +4245,10 @@
   },
   "scanner.image.paste": {
     "source": "aad0d55385fb",
+    "status": "machine"
+  },
+  "scanner.image.shareMissing": {
+    "source": "79ab2d2790b5",
     "status": "machine"
   },
   "scanner.result.starts": {
@@ -4593,6 +4625,50 @@
   },
   "scanner.link.report": {
     "source": "f5bd5f711903",
+    "status": "machine"
+  },
+  "scanner.install.install": {
+    "source": "ac5837f30e8d",
+    "status": "machine"
+  },
+  "scanner.install.iosButton": {
+    "source": "e1090dd0b826",
+    "status": "machine"
+  },
+  "scanner.install.iosTitle": {
+    "source": "397f839608e9",
+    "status": "machine"
+  },
+  "scanner.install.iosShare": {
+    "source": "b0ab5866ee41",
+    "status": "machine"
+  },
+  "scanner.install.iosAdd": {
+    "source": "4a8932f85906",
+    "status": "machine"
+  },
+  "scanner.install.iosConfirm": {
+    "source": "5196510c934e",
+    "status": "machine"
+  },
+  "scanner.install.macButton": {
+    "source": "75abc35bff7b",
+    "status": "machine"
+  },
+  "scanner.install.macTitle": {
+    "source": "9e48e2d8be90",
+    "status": "machine"
+  },
+  "scanner.install.macAdd": {
+    "source": "aedceba1a68e",
+    "status": "machine"
+  },
+  "scanner.install.macConfirm": {
+    "source": "483b253f63b3",
+    "status": "machine"
+  },
+  "scanner.install.after": {
+    "source": "3ee48cb78ef2",
     "status": "machine"
   },
   "scanPages.reportAbuse": {

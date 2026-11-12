@@ -1289,7 +1289,16 @@
       "browsersQuestion": "Quali browser sono supportati?",
       "browsersAnswer": "Qualsiasi browser moderno con accesso alla fotocamera: Chrome, Edge, Safari e Firefox su telefoni e computer. I browser con un lettore di codici a barre integrato (Chrome su Android e macOS) lo usano direttamente; gli altri scaricano un decodificatore open source (ZXing, compilato in WebAssembly, circa 1 MB dalla CDN jsDelivr) la prima volta che scansioni. La fotocamera richiede una pagina https e il tuo permesso.",
       "installQuestion": "Posso installare lo scanner come app?",
-      "installAnswer": "Sì. Usa l'opzione Installa o Aggiungi a schermata Home del browser su questa pagina per avere un'icona dello scanner che si apre direttamente sulla fotocamera."
+      "installAnswer": "Sì. In Chrome, Edge o Samsung Internet, tocca Installa app sotto lo scanner oppure usa l’opzione Installa del browser. Su iPhone e iPad, tocca Aggiungi alla schermata Home sotto lo scanner per vedere i passaggi. L’app si apre direttamente sullo scanner in una finestra tutta sua, funziona offline dopo che hai fatto una scansione con essa e conserva la cronologia sul tuo dispositivo.",
+      "shareQuestion": "Posso scansionare un QR code da uno screenshot?",
+      "shareAnswer": "Sì. Passa a Immagine e scegli, trascina o incolla lo screenshot. Su Android, una volta installato lo scanner, puoi anche condividere uno screenshot o una foto con QRdx Scanner da qualsiasi app: si apre e legge il codice sul tuo dispositivo. Le immagini condivise non vengono caricate né conservate."
+    },
+    "app": {
+      "name": "QRdx Scanner",
+      "shortName": "QRdx Scanner",
+      "description": "Scansiona QR code e codici a barre con la fotocamera o da uno screenshot. Le immagini vengono lette sul tuo dispositivo e i link vengono controllati prima di aprirsi.",
+      "cameraShortcut": "Scansiona con la fotocamera",
+      "imageShortcut": "Scansiona da immagine"
     }
   },
   "scanner": {
@@ -1374,7 +1383,8 @@
       "drop": "Trascina qui le immagini, scegli i file o incolla",
       "dropHelp": "Vanno bene screenshot e foto, anche con più codici per immagine.",
       "choose": "Scegli immagini",
-      "paste": "Incolla immagine"
+      "paste": "Incolla immagine",
+      "shareMissing": "L’immagine condivisa non è arrivata. Scegli­la qui."
     },
     "result": {
       "starts": "Inizio",
@@ -1485,6 +1495,19 @@
       "copy": "Copia link",
       "retry": "Riprova",
       "report": "Segnala questo codice"
+    },
+    "install": {
+      "install": "Installa l’app",
+      "iosButton": "Aggiungi alla schermata Home",
+      "iosTitle": "Aggiungi lo scanner alla schermata Home",
+      "iosShare": "Tocca Condividi. In Safari su iPhone si trova nel menu accanto all’indirizzo.",
+      "iosAdd": "Scorri verso l’alto e scegli Aggiungi alla schermata Home.",
+      "iosConfirm": "Lascia attivo Apri come app web, poi tocca Aggiungi.",
+      "macButton": "Aggiungi al Dock",
+      "macTitle": "Aggiungi lo scanner al Dock",
+      "macAdd": "Nella barra dei menu scegli File, poi Aggiungi al Dock.",
+      "macConfirm": "Fai clic su Aggiungi.",
+      "after": "Si apre direttamente sullo scanner in una finestra tutta sua e funziona offline dopo che con esso hai eseguito la scansione di un codice."
     }
   },
   "scanPages": {
