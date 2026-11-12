@@ -1,0 +1,158 @@
+---
+title: "Next.js में QR कोड"
+description: "qrdx के साथ Next.js App Router में QR कोड रेंडर करें: Server Components में बिना क्लाइंट JavaScript के, लाइव इनपुट के लिए Client Components में, लोगो के साथ, और SVG डाउनलोड के रूप में।"
+icon: Code
+---
+
+`qrdx` App Router के दोनों तरफ़ काम करता है। `QRCodeSVG` और `QRCode` कोई client-only hook इस्तेमाल नहीं करते, इसलिए Server Component कोड को सीधे पेज के HTML में रेंडर कर सकता है, और इसके लिए कोई JavaScript नहीं भेजना पड़ता। Client Component की ज़रूरत सिर्फ़ तब होती है जब वैल्यू ब्राउज़र में बदलती है, या फ़ाइल डाउनलोड करनी हो।
+
+<NpmStatus package="qrdx" />
+
+## इंस्टॉल करें [#install]
+
+```package-install
+qrdx@latest
+```
+
+`react` और `react-dom` 18 या उससे नए peer dependencies हैं, इसलिए आपके app के अपने वर्शन ही इस्तेमाल होते हैं।
+
+## Server Component में [#in-a-server-component]
+
+```tsx title="app/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default function Page() {
+  return (
+    <QRCodeSVG
+      value="https://example.com"
+      size={256}
+      margin={4}
+      role="img"
+      aria-label="QR code for example.com"
+    />
+  );
+}
+```
+
+SVG उस HTML का हिस्सा है जो सर्वर भेजता है। यह कोई भी JavaScript लोड होने से पहले दिखता है, स्टैटिक पेज इसे बिल्ड के समय एक बार रेंडर करता है, और स्क्रीन रीडर को `aria-label` मिलता है।
+
+`margin` कोड के चारों ओर की quiet zone है, modules में। `QRCodeSVG` में इसका डिफ़ॉल्ट `0` है, जो अपनी padding वाले कार्ड के अंदर रखे कोड के लिए ठीक है। QR स्टैंडर्ड 4 modules माँगता है, और भीड़-भाड़ वाली या गहरी बैकग्राउंड पर यही सुरक्षित चुनाव है।
+
+### Route params या डेटा से [#from-route-params-or-data]
+
+```tsx title="app/tickets/[id]/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default async function TicketPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const url = `https://example.com/check-in/${encodeURIComponent(id)}`;
+  return <QRCodeSVG value={url} size={200} margin={4} level="H" />;
+}
+```
+
+Next.js `params` को promise के रूप में देता है, इसलिए पेज `async` है। यूज़र या डेटाबेस से आने वाली किसी भी चीज़ को URL में डालने से पहले encode करें। लेवल `H` कोड के 30% तक हिस्से के खराब होने को सह लेता है, जो मुड़ने या खुरचने वाले बैज पर काम आता है।
+
+## Client Component में [#in-a-client-component]
+
+जब वैल्यू किसी इनपुट से आती है, तो कोड को Client Component में रेंडर करें:
+
+```tsx title="components/live-qr-code.tsx"
+"use client";
+
+import { QRCodeSVG } from "qrdx";
+import { useState } from "react";
+
+export function LiveQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div>
+      <input
+        aria-label="Text or link to encode"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QRCodeSVG value={value} size={200} margin={4} /> : null}
+    </div>
+  );
+}
+```
+
+`QRCodeCanvas` भी एक client component है (यह `"use client"` के साथ आता है), लेकिन यह सिर्फ़ सादे चौकोर modules बनाता है। स्टाइल वाले कोड के लिए `QRCodeSVG` इस्तेमाल करें।
+
+## लोगो के साथ [#with-a-logo]
+
+```tsx title="components/logo-qr-code.tsx"
+import { QRCode } from "qrdx";
+
+export function LogoQrCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      margin={4}
+      level="H"
+      logo="/logo.png"
+    />
+  );
+}
+```
+
+- **Error correction H।** लोगो कोड की चौड़ाई के लगभग एक चौथाई आकार में बनता है और उसके पीछे के modules को साफ़ कर देता है, इसलिए कोड को स्कैन होने के लिए error correction पर निर्भर रहना पड़ता है। अगर लोगो इतना बड़ा हो कि कोड उसे ठीक न कर सके, तो `QRCode` उसे छोटा भी कर देता है।
+- **लोगो कहाँ से आता है।** `logo` में आपके app का पाथ, URL या data URL दिया जा सकता है। पेज तीनों दिखाता है। डाउनलोड के लिए data URL सबसे सुरक्षित है, क्योंकि रिमोट इमेज को फ़ाइल में कॉपी करने से पहले CORS headers चाहिए होते हैं।
+- **जाँच लें।** कोड को कुछ फ़ोन पर आज़माएँ, या स्क्रीनशॉट [स्कैन चेकर](/tools/scan-checker) पर अपलोड करें।
+
+`logoOptions` लोगो का आकार, खाली जगह, पोज़िशन और क्रॉप तय करता है; देखें [लोगो](/docs/features/logos)।
+
+## SVG के रूप में डाउनलोड करें [#download-as-svg]
+
+```tsx title="components/download-svg-button.tsx"
+"use client";
+
+import { downloadQRCode } from "qrdx";
+
+export function DownloadSvgButton({ value }: { value: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        downloadQRCode(
+          { value, level: "Q", margin: 4 },
+          {
+            format: "svg",
+            size: { width: 1024, height: 1024 },
+            filename: "qr-code.svg",
+          },
+        )
+      }
+    >
+      Download SVG
+    </button>
+  );
+}
+```
+
+`downloadQRCode` को ब्राउज़र के DOM की ज़रूरत होती है, इसलिए बटन एक Client Component है। Server Component पेज फिर भी इसे रेंडर कर सकता है और वैल्यू को prop के रूप में पास कर सकता है। दूसरी फ़ाइलों के लिए `format` को `png`, `jpg`, `webp`, `eps` या `pdf` पर सेट करें (PDF के लिए वैकल्पिक `jspdf` पैकेज चाहिए)। सभी विकल्पों के लिए [डाउनलोड](/docs/features/downloads) देखें।
+
+## जब आपको इमेज URL चाहिए [#when-you-need-an-image-url]
+
+ईमेल, Open Graph इमेज, Markdown फ़ाइलें और दूसरी जगहें जो React नहीं चला सकतीं, उन्हें कंपोनेंट की जगह इमेज URL चाहिए। [फ़्री QR कोड API](/qr-code-api) बिना key के एक देता है:
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://example.com&format=png" width="256" height="256" alt="QR code for example.com" />
+```
+
+## तैयार कंपोनेंट [#ready-made-components]
+
+[shadcn/ui registry](/docs/developers/shadcn) कंपोनेंट को सीधे आपके प्रोजेक्ट में इंस्टॉल करता है: [डाउनलोड बटन वाला QR कोड](/docs/components/qr-code), एक कार्ड, एक शेयर डायलॉग, एक जनरेटर, एक स्कैनर, और Wi-Fi व कॉन्टैक्ट कोड।
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code.json
+```
+
+## दूसरी React QR कोड लाइब्रेरी [#other-react-qr-code-libraries]
+
+अगर आपको सिर्फ़ सादा ब्लैक-एंड-व्हाइट कोड चाहिए, तो `qrcode.react` छोटा है और ज़्यादा पुराना है; `qrdx` में आकार, ग्रेडिएंट, फ़्रेम, लोगो, PNG/SVG/PDF/EPS एक्सपोर्ट और स्कैन स्कोर जुड़ जाते हैं। [qrcode.react](/compare/qrcode-react) और [qr-code-styling](/compare/qr-code-styling) की तुलनाएँ अंतर समझाती हैं।

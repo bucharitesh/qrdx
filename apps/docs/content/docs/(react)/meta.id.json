@@ -1,13 +1,14 @@
 {
   "$schema": "../../../.source/json-schema/docs.meta.json",
   "title": "Pustaka React",
-  "description": "Komponen qrdx dan registry shadcn",
+  "description": "Komponen qrdx dan registri shadcn",
   "icon": "Code",
   "root": true,
   "pages": [
     "---Mulai---",
     "../getting-started",
     "../usage",
+    "../nextjs",
     "---Gaya dan ekspor---",
     "../styles",
     "...../features",
