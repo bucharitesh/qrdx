@@ -28,9 +28,9 @@ vi.mock("next/server", async (importOriginal) => ({
 }));
 
 import {
-  noteSignUpReferral,
-  recordNewUserReferral,
-  registerNewUserReferralRecorder,
+  noteSignUpState,
+  recordNewUser,
+  registerNewUserRecorder,
 } from "@repo/auth/referral";
 import { OAUTH_REFERRAL_KEY, REFERRAL_HEADER } from "@repo/auth/referral-keys";
 import {
@@ -239,8 +239,8 @@ describe("attributing a new account", () => {
 
 describe("the bridge from Better Auth's user hooks", () => {
   it("hands the new account and its request to the app, which records the referral", async () => {
-    registerNewUserReferralRecorder(recordSignUpReferral);
-    recordNewUserReferral(NEW_USER, {
+    registerNewUserRecorder(recordSignUpReferral);
+    recordNewUser(NEW_USER, {
       headers: headers({ [REFERRAL_HEADER]: "ana-diaz-4k2p" }),
     });
     await vi.waitFor(() => expect(referrals()).toHaveLength(1));
@@ -249,26 +249,30 @@ describe("the bridge from Better Auth's user hooks", () => {
 
   it("keeps a Google or GitHub sign-up's code from the before hook for the after hook", async () => {
     const seen: unknown[] = [];
-    registerNewUserReferralRecorder((signUp) => seen.push(signUp));
+    registerNewUserRecorder((signUp) => seen.push(signUp));
     const ctx = { headers: headers({}) };
     // Outside an OAuth callback there's no state: nothing is kept.
-    await noteSignUpReferral(ctx);
-    recordNewUserReferral(NEW_USER, ctx);
+    await noteSignUpState(ctx);
+    recordNewUser(NEW_USER, ctx);
     expect(seen).toEqual([
-      expect.objectContaining({ userId: NEW_USER.id, oauthReferralCode: null }),
+      expect.objectContaining({
+        userId: NEW_USER.id,
+        oauthReferralCode: null,
+        oauthLanding: null,
+      }),
     ]);
     expect(OAUTH_REFERRAL_KEY).toBe("referralCode");
   });
 
   it("never throws, even when the app's recorder does", () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
-    registerNewUserReferralRecorder(() => {
+    registerNewUserRecorder(() => {
       throw new Error("boom");
     });
-    expect(() => recordNewUserReferral(NEW_USER, null)).not.toThrow();
+    expect(() => recordNewUser(NEW_USER, null)).not.toThrow();
     expect(error).toHaveBeenCalled();
     error.mockRestore();
-    registerNewUserReferralRecorder(recordSignUpReferral);
+    registerNewUserRecorder(recordSignUpReferral);
   });
 
   // A0: with the program off, the user-create hook does nothing at all.
@@ -280,8 +284,8 @@ describe("the bridge from Better Auth's user hooks", () => {
     };
     const select = vi.spyOn(database, "select");
     const insert = vi.spyOn(database, "insert");
-    registerNewUserReferralRecorder(recordSignUpReferral);
-    recordNewUserReferral(NEW_USER, {
+    registerNewUserRecorder(recordSignUpReferral);
+    recordNewUser(NEW_USER, {
       headers: headers({ [REFERRAL_HEADER]: "ana-diaz-4k2p" }),
     });
     await new Promise((resolve) => setTimeout(resolve, 20));
@@ -293,8 +297,8 @@ describe("the bridge from Better Auth's user hooks", () => {
   });
 
   it("records nothing when the sign-up carried no code", () => {
-    registerNewUserReferralRecorder(recordSignUpReferral);
-    recordNewUserReferral(NEW_USER, { headers: headers({}) });
+    registerNewUserRecorder(recordSignUpReferral);
+    recordNewUser(NEW_USER, { headers: headers({}) });
     expect(referrals()).toEqual([]);
   });
 });

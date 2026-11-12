@@ -17,7 +17,8 @@ const URL_LIKE =
 const PHONE_LIKE = /^\+?[\d\s().-]{7,}$/;
 const MAX_STRING = 64;
 
-function safeString(value: string): string | null {
+/** A short string with no email, URL or phone number in it, else null. */
+export function safeString(value: string): string | null {
   const trimmed = value.trim();
   if (!trimmed || trimmed.length > MAX_STRING) return null;
   if (EMAIL_LIKE.test(trimmed) || URL_LIKE.test(trimmed)) return null;
