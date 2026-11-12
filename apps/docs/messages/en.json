@@ -1018,12 +1018,20 @@
       }
     },
     "bulk": {
-      "metaTitle": "Free Bulk QR Code Generator from CSV",
-      "metaDescription": "Generate up to {rows, number} QR codes from a CSV file and download them as PNG or SVG, zipped. Custom styles and file names. Runs entirely in your browser.",
+      "metaTitle": "Free Bulk QR Code Generator from CSV: Styled, SVG, No Upload",
+      "metaDescription": "Turn a CSV into up to {rows, number} styled QR codes and download them as PNG, WebP or SVG in a ZIP. Runs in your browser: no upload, no signup, no watermark. Sample CSV included.",
       "crumb": "Bulk generator",
       "title": "Bulk QR code generator",
-      "intro1": "Turn a spreadsheet into hundreds or thousands of QR codes in one go: product labels, event tickets, asset tags, table numbers or personalised mailers. Upload a CSV, map the columns, choose a style and download every code as PNG, WebP or SVG, zipped.",
-      "intro2": "Everything happens in your browser. The CSV is never uploaded and there is no sign-up, watermark or per-code charge.",
+      "intro1": "Turn a CSV file into thousands of QR codes in one go, styled the way you want and downloaded as PNG, WebP or SVG in a ZIP. One row per code, with file names from a column: product labels, event tickets, asset tags, table numbers or mailers.",
+      "intro2": "It all runs in your browser, so the CSV is never uploaded, and there's no sign-up, watermark or per-code charge. Not sure about the layout? Start from the sample CSV.",
+      "facts": {
+        "rows": "Up to {rows, number} rows per file",
+        "styled": "Your colors, shapes and logo",
+        "svg": "SVG for print",
+        "browser": "Runs in your browser"
+      },
+      "cliLink": "qrdx batch in the CLI",
+      "apiLink": "Free QR code API",
       "toolLabel": "Bulk QR code generator",
       "howTitle": "How it works",
       "steps": {
@@ -1052,10 +1060,14 @@
         "howManyAnswer": "Up to {rows, number} rows per file; for more, split the CSV, or use the qrdx batch command of the CLI, which has no limit. A 512 px PNG takes about 20 ms on a laptop, so the full {rows, number} take a few minutes. Bigger PNGs take longer and make bigger files, so choose 512 px unless you need more.",
         "rowQuestion": "What can each row contain?",
         "rowAnswer": "Any text up to the QR code limit: links, plain text, or payloads such as WIFI:..., mailto:..., tel:... and BEGIN:VCARD. The content is encoded exactly as it appears in the cell.",
+        "excelQuestion": "Can I use an Excel or Google Sheets file?",
+        "excelAnswer": "Save it as CSV first. In Excel, choose File, Save As, CSV UTF-8; in Google Sheets, File, Download, Comma-separated values. Commas and semicolons both work as separators, and the first row can hold column names.",
         "staticQuestion": "Are the generated codes static or dynamic?",
         "staticAnswer": "Static. Each code contains its row's content directly, works offline, never expires and can't be edited after printing. For editable codes with scan statistics, create dynamic codes from your QRdx dashboard.",
         "namesQuestion": "What happens with duplicate or invalid file names?",
-        "namesAnswer": "Characters that aren't allowed in file names are replaced with a hyphen, and duplicate names get a number suffix (menu.png, menu-2.png) so no file is overwritten."
+        "namesAnswer": "Characters that aren't allowed in file names are replaced with a hyphen, and duplicate names get a number suffix (menu.png, menu-2.png) so no file is overwritten.",
+        "codeQuestion": "Can I make bulk QR codes from code instead?",
+        "codeAnswer": "Yes. The qrdx batch command of the QRdx CLI makes a code for every row of a CSV file, with no row limit, and the free QR code API returns an image for any URL you build, with no key."
       },
       "generator": {
         "errorTooMuch": "Too much data for one QR code",
