@@ -737,6 +737,99 @@
       "signInNote": "हम इनवॉइस आपके अकाउंट के वर्कस्पेस के लिए भेजते हैं, इसलिए पहले साइन इन करें।"
     }
   },
+  "docs": {
+    "meta": {
+      "titleSuffix": "QRdx डॉक्स"
+    },
+    "breadcrumb": {
+      "home": "होम",
+      "docs": "डॉक्स"
+    },
+    "untranslated": {
+      "title": "यह पेज अभी अनुवादित नहीं है",
+      "body": "आप अंग्रेज़ी वर्शन पढ़ रहे हैं।"
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Markdown कॉपी करें",
+        "open": "खोलें",
+        "openIn": "{app} में खोलें",
+        "askPrompt": "{url} पढ़ें, मुझे इसके बारे में सवाल पूछने हैं।"
+      },
+      "search": {
+        "jumpTo": "<page>{name}</page> पर जाएँ"
+      },
+      "language": {
+        "label": "डॉक्स की भाषा",
+        "note": "डॉक्स इन भाषाओं में उपलब्ध हैं। बाकी भाषाओं में अंग्रेज़ी डॉक्स दिखते हैं।"
+      }
+    },
+    "help": {
+      "search": "हेल्प और डॉक्स खोजें",
+      "stillStuck": {
+        "title": "अब भी अटके हैं?",
+        "body": "बताइए कि आप क्या करने की कोशिश कर रहे थे और क्या हुआ। अगर मामला किसी कोड का है, तो उसका शॉर्ट लिंक भी भेजें।",
+        "widget": "qrdx.dev पर सपोर्ट विजेट, Functionality कुकीज़ की अनुमति देने के बाद।",
+        "github": "GitHub पर बग रिपोर्ट करें",
+        "contact": "हमसे संपर्क करने के सभी तरीके"
+      }
+    },
+    "notFound": {
+      "title": "यह पेज डॉक्स में नहीं है",
+      "body": "हो सकता है यह पेज हटा दिया गया हो या इसका नाम बदल गया हो। डॉक्स में खोजें, या इनमें से किसी से शुरू करें।",
+      "places": {
+        "gettingStarted": {
+          "title": "शुरू करें",
+          "description": "अपना पहला कोड डिज़ाइन करें और डाउनलोड करें।"
+        },
+        "dynamic": {
+          "title": "डायनेमिक QR कोड",
+          "description": "ऐसे शॉर्ट लिंक जिन्हें प्रिंट के बाद भी बदल सकते हैं।"
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "अपने ही app से कोड बनाएँ और मैनेज करें।"
+        },
+        "components": {
+          "title": "कॉम्पोनेंट",
+          "description": "QR कोड के लिए React और shadcn/ui कॉम्पोनेंट।"
+        }
+      }
+    },
+    "ui": {
+      "search": "खोजें",
+      "searchPlaceholder": "खोजें",
+      "openSearch": "सर्च खोलें",
+      "closeSearch": "सर्च बंद करें",
+      "noResults": "कोई नतीजा नहीं मिला",
+      "searchFailed": "सर्च नहीं हो सका",
+      "onThisPage": "इस पेज पर",
+      "noHeadings": "कोई हेडिंग नहीं",
+      "tableOfContents": "विषय-सूची",
+      "lastUpdated": "आख़िरी अपडेट:",
+      "previousPage": "पिछला पेज",
+      "nextPage": "अगला पेज",
+      "copyCode": "टेक्स्ट कॉपी करें",
+      "copiedCode": "टेक्स्ट कॉपी हुआ",
+      "copyAnchor": "एंकर लिंक कॉपी करें",
+      "copiedAnchor": "एंकर लिंक कॉपी हुआ",
+      "copyLink": "लिंक कॉपी करें",
+      "copiedLink": "लिंक कॉपी हुआ",
+      "toggleMenu": "मेन्यू खोलें/बंद करें",
+      "toggleTheme": "थीम बदलें",
+      "themeLight": "लाइट",
+      "themeDark": "डार्क",
+      "themeSystem": "सिस्टम",
+      "openSidebar": "साइडबार खोलें",
+      "closeSidebar": "साइडबार बंद करें",
+      "collapseSidebar": "साइडबार समेटें",
+      "typeTableProp": "प्रॉप",
+      "typeTableType": "टाइप",
+      "typeTableDefault": "डिफ़ॉल्ट",
+      "typeTableParameters": "पैरामीटर",
+      "typeTableReturns": "रिटर्न"
+    }
+  },
   "common": {
     "breadcrumb": "ब्रेडक्रंब",
     "home": "होम",

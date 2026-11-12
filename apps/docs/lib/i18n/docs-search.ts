@@ -1,9 +1,10 @@
 // Docs search per language (app/api/search): one index per language with
 // docs, each with a tokenizer that suits it. English keeps the tokenizer it
-// always had. Japanese and Chinese don't separate words with spaces, so
-// their text is split into words with Intl.Segmenter (ICU's dictionaries),
-// the same way at indexing and at query time. A new docs language without
-// an entry here gets fumadocs' multilingual tokenizer.
+// always had; the languages zbsearch knows use its own (Hindi is "indian").
+// Japanese and Chinese don't separate words with spaces, so their text is
+// split into words with Intl.Segmenter (ICU's dictionaries), the same way at
+// indexing and at query time; Korean goes the same way. A new docs language
+// without an entry here gets fumadocs' multilingual tokenizer.
 import type { Locale } from "./config";
 
 /** zbsearch's tokenizer interface (components.tokenizer). */
@@ -44,7 +45,13 @@ export function docsSearchLanguages(): Partial<Record<Locale, SearchLanguage>> {
     en: "english",
     es: "spanish",
     "pt-BR": "portuguese",
+    fr: "french",
+    de: "german",
+    it: "italian",
     ja: { tokenizer: segmenterTokenizer("ja") },
+    ko: { tokenizer: segmenterTokenizer("ko") },
     "zh-Hans": { tokenizer: segmenterTokenizer("zh-Hans") },
+    id: "indonesian",
+    hi: "indian",
   };
 }

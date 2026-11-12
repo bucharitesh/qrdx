@@ -737,6 +737,99 @@
       "signInNote": "Kami mengirim faktur untuk workspace akun Anda, jadi masuk terlebih dahulu."
     }
   },
+  "docs": {
+    "meta": {
+      "titleSuffix": "Dokumen QRdx"
+    },
+    "breadcrumb": {
+      "home": "Beranda",
+      "docs": "Dokumen"
+    },
+    "untranslated": {
+      "title": "Halaman ini belum diterjemahkan",
+      "body": "Anda sedang membaca versi bahasa Inggris."
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Salin Markdown",
+        "open": "Buka",
+        "openIn": "Buka di {app}",
+        "askPrompt": "Baca {url}, saya ingin mengajukan pertanyaan tentang isinya."
+      },
+      "search": {
+        "jumpTo": "Langsung ke <page>{name}</page>"
+      },
+      "language": {
+        "label": "Bahasa dokumen",
+        "note": "Dokumen tersedia dalam bahasa-bahasa ini. Bahasa lainnya akan membaca dokumen berbahasa Inggris."
+      }
+    },
+    "help": {
+      "search": "Cari bantuan dan dokumen",
+      "stillStuck": {
+        "title": "Masih kesulitan?",
+        "body": "Ceritakan apa yang ingin Anda lakukan dan apa yang terjadi. Sertakan tautan pendek kode tersebut jika terkait dengan sebuah kode.",
+        "widget": "Widget dukungan di qrdx.dev, setelah Anda mengizinkan cookie Fungsionalitas.",
+        "github": "Laporkan bug di GitHub",
+        "contact": "Semua cara menghubungi kami"
+      }
+    },
+    "notFound": {
+      "title": "Halaman ini tidak ada di dokumen",
+      "body": "Halaman ini mungkin telah dipindahkan atau diganti namanya. Cari di dokumen, atau mulai dari salah satu berikut.",
+      "places": {
+        "gettingStarted": {
+          "title": "Memulai",
+          "description": "Desain dan unduh kode pertama Anda."
+        },
+        "dynamic": {
+          "title": "Kode QR dinamis",
+          "description": "Tautan pendek yang bisa diubah setelah dicetak."
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "Buat dan kelola kode dari aplikasi Anda sendiri."
+        },
+        "components": {
+          "title": "Komponen",
+          "description": "Komponen React dan shadcn/ui untuk kode QR."
+        }
+      }
+    },
+    "ui": {
+      "search": "Cari",
+      "searchPlaceholder": "Cari",
+      "openSearch": "Buka Pencarian",
+      "closeSearch": "Tutup Pencarian",
+      "noResults": "Tidak ada hasil",
+      "searchFailed": "Pencarian gagal",
+      "onThisPage": "Di halaman ini",
+      "noHeadings": "Tanpa Judul",
+      "tableOfContents": "Daftar Isi",
+      "lastUpdated": "Terakhir diperbarui pada",
+      "previousPage": "Halaman Sebelumnya",
+      "nextPage": "Halaman Berikutnya",
+      "copyCode": "Salin Teks",
+      "copiedCode": "Teks Disalin",
+      "copyAnchor": "Salin Tautan Anchor",
+      "copiedAnchor": "Tautan Anchor Disalin",
+      "copyLink": "Salin Tautan",
+      "copiedLink": "Tautan Disalin",
+      "toggleMenu": "Buka/Tutup Menu",
+      "toggleTheme": "Ganti Tema",
+      "themeLight": "Terang",
+      "themeDark": "Gelap",
+      "themeSystem": "Sistem",
+      "openSidebar": "Buka Sidebar",
+      "closeSidebar": "Tutup Sidebar",
+      "collapseSidebar": "Ciutkan Sidebar",
+      "typeTableProp": "Prop",
+      "typeTableType": "Tipe",
+      "typeTableDefault": "Default",
+      "typeTableParameters": "Parameter",
+      "typeTableReturns": "Nilai Kembali"
+    }
+  },
   "common": {
     "breadcrumb": "Breadcrumb",
     "home": "Beranda",
