@@ -4,11 +4,11 @@ import { getTranslations } from "next-intl/server";
 import { AsciiField } from "@/components/fx";
 import { CompareCard } from "@/components/sections/compare/compare-card";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { compareSource } from "@/lib/content-source";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
 import { baseUrl } from "@/lib/metadata";
-import { compareSource } from "@/lib/source";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await requireLocale();

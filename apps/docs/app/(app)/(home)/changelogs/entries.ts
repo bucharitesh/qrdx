@@ -1,4 +1,4 @@
-import { changelogSource } from "@/lib/source";
+import { changelogSource } from "@/lib/content-source";
 
 /** "0.1.0" > "0.0.6", for entries released on the same day. */
 function compareVersions(a = "0", b = "0"): number {

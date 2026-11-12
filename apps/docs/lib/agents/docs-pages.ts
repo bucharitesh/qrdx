@@ -1,15 +1,15 @@
 import "server-only";
 
 import type { Node } from "fumadocs-core/page-tree";
+import { type DocsIndexPage, docsIndex } from "@/lib/docs-index";
 import { filterPageTree } from "@/lib/docs-tree";
 import { isPathAvailable } from "@/lib/feature-availability";
-import { type Page, source } from "@/lib/source";
 
 /** A docs tab (Help, Guides, Developers, …) and its pages, in sidebar order. */
 export interface DocsSection {
   /** The tab's title; "" for pages outside every tab, like /docs itself. */
   title: string;
-  pages: Page[];
+  pages: DocsIndexPage[];
 }
 
 const nodeName = (node: { name: unknown }) =>
@@ -21,16 +21,17 @@ const nodeName = (node: { name: unknown }) =>
  * docs do. Pages no sidebar lists come last, in their own group.
  */
 export function docsSections(): DocsSection[] {
+  const source = docsIndex();
   const tree = filterPageTree(source.pageTree, isPathAvailable);
   const byUrl = new Map(source.getPages().map((page) => [page.url, page]));
   const seen = new Set<string>();
-  const take = (url: string | undefined, into: Page[]) => {
+  const take = (url: string | undefined, into: DocsIndexPage[]) => {
     const page = url ? byUrl.get(url) : undefined;
     if (!page || seen.has(page.url)) return;
     seen.add(page.url);
     into.push(page);
   };
-  const walk = (nodes: Node[], into: Page[]) => {
+  const walk = (nodes: Node[], into: DocsIndexPage[]) => {
     for (const node of nodes) {
       if (node.type === "page") take(node.url, into);
       else if (node.type === "folder") {

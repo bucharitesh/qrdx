@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { isCategorySlug, SLUG_TO_CATEGORY } from "@/lib/blog-constants";
-import { blogCategoriesSource } from "@/lib/source";
+import { blogCategoriesSource } from "@/lib/content-source";
 import { buildTimeParams } from "@/lib/static-params";
 import { getPublishedPosts } from "../../_lib/posts";
 
