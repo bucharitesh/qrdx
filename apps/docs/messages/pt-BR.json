@@ -511,7 +511,9 @@
       "inr": "Preços em ₹ para a Índia.",
       "usd": "Preços em US$.",
       "showInr": "Na Índia? Veja os preços em ₹",
-      "showUsd": "Ver preços em US$"
+      "showUsd": "Ver preços em US$",
+      "eur": "Preços em € para a UE e o EEE.",
+      "showEur": "Na UE ou no EEE? Veja os preços em €"
     },
     "price": {
       "forever": "para sempre",
@@ -555,6 +557,13 @@
       "guide": "Guia de auto-hospedagem"
     },
     "footnote": "A Polar cuida do pagamento como merchant of record; impostos locais podem ser adicionados no checkout. Clientes na Índia são cobrados em ₹, e os demais em US$.",
+    "footnoteEur": "A Polar cuida do checkout como merchant of record; impostos locais podem ser adicionados no checkout. Clientes na Índia pagam em ₹, clientes na UE e no EEE em € e todos os outros em US$.",
+    "offers": {
+      "moneyBack": "Garantia de reembolso de {days, number} dias no seu primeiro pagamento.",
+      "moneyBackLink": "Como funcionam os reembolsos",
+      "nonprofit": "É uma organização sem fins lucrativos ou de caridade? {percent, number}% de desconto no Pro e no Business.",
+      "nonprofitLink": "Peça um código"
+    },
     "values": {
       "unlimited": "Ilimitado",
       "days": "{count, plural, one {# dia} other {# dias}}",
@@ -702,6 +711,10 @@
           "question": "O que acontece se eu cancelar?",
           "answer": "Nada quebra. Seu plano continua ativo até o fim do período que você pagou, e depois sua conta passa para o Grátis. Todo QR code dinâmico continua redirecionando e toda leitura continua sendo contada: essa é a nossa Garantia Never-Hostage. No Grátis, você não pode criar além do que os limites do plano Grátis permitem, e as análises mostram os últimos 90 dias."
         },
+        "refund": {
+          "question": "Posso pedir meu dinheiro de volta?",
+          "answer": "Sim. Seu primeiro pagamento do Pro ou do Business, mensal ou anual, vem com garantia de reembolso de {days, number} dias: envie um e-mail para support@qrdx.dev usando o e-mail da sua conta em até {days, number} dias após pagar e devolvemos o valor total, sem perguntas. Vale uma vez por cliente. Depois disso, seus códigos continuam funcionando no plano Grátis."
+        },
         "paymentFails": {
           "question": "O que acontece se um pagamento falhar?",
           "answer": "Seus códigos continuam funcionando. Se a assinatura vencer, sua conta passa a seguir os limites do plano Grátis, exatamente como se você tivesse cancelado. Nunca pausamos códigos, exibimos anúncios nem enviamos quem lê seus códigos para uma página do QRdx por causa de cobrança."
@@ -714,6 +727,10 @@
           "question": "Por que vejo os preços em ₹?",
           "answer": "Visitantes da Índia veem os preços em rupias indianas: o Pro custa {proMonthly} por mês ou {proYearly} por ano, e o Business {businessMonthly} por mês ou {businessYearly} por ano. No checkout, clientes da Índia pagam em ₹ e todos os outros em US$, seja qual for a moeda em que você navegou. Use o seletor acima dos planos para mudar a moeda exibida."
         },
+        "currencies": {
+          "question": "Por que vejo preços em ₹ ou €?",
+          "answer": "Os preços aparecem na moeda do país onde você está. Na Índia, o Pro custa {proMonthly} por mês ou {proYearly} por ano e o Business {businessMonthly} por mês ou {businessYearly} por ano. Na UE e no EEE, o Pro custa {proMonthlyEur} por mês ou {proYearlyEur} por ano e o Business {businessMonthlyEur} por mês ou {businessYearlyEur} por ano. Em todos os outros lugares, é em US$. O checkout cobra na moeda do seu país, não importa em qual moeda você navegou. Use o seletor acima dos planos para mudar a moeda exibida."
+        },
         "switchPlans": {
           "question": "Posso trocar de plano ou de período de cobrança depois?",
           "answer": "Pode. Abra Gerenciar assinatura nas suas configurações para alterar ou cancelar seu plano no portal de cobrança da Polar. Mudar para um plano menor nunca desativa códigos, páginas ou domínios que já existem."
@@ -725,6 +742,10 @@
         "selfHost": {
           "question": "Posso hospedar por conta própria?",
           "answer": "Pode. O QRdx é open source sob a AGPL-3.0. Rode com seu próprio banco de dados Postgres seguindo o guia de hospedagem própria; os limites dos planos ficam definidos em um único arquivo que você pode alterar na sua instância."
+        },
+        "nonprofit": {
+          "question": "Vocês têm desconto para organizações sem fins lucrativos?",
+          "answer": "Sim. Organizações sem fins lucrativos e de caridade registradas têm {percent, number}% de desconto no Pro ou no Business, mensal ou anual. Conte sobre sua organização pelo link para organizações sem fins lucrativos abaixo dos planos. Geralmente respondemos em poucos dias, com um código de desconto para usar no checkout."
         },
         "billing": {
           "question": "Quem cuida da cobrança e dos impostos?",
@@ -750,6 +771,23 @@
       "close": "Fechar",
       "signIn": "Entre para pedir uma fatura",
       "signInNote": "Enviamos a fatura para o workspace da sua conta, então entre primeiro."
+    },
+    "nonprofit": {
+      "title": "Desconto para ONGs",
+      "description": "Organizações sem fins lucrativos e de caridade registradas têm {percent, number}% de desconto no Pro ou no Business, mensal ou anual. Conte sobre sua organização e enviaremos por e-mail um código de desconto para usar no checkout.",
+      "organization": "Nome da organização",
+      "country": "País",
+      "registration": "Número de registro ou link",
+      "registrationHint": "Seu número em um registro de organizações de caridade ou sem fins lucrativos, ou um link para o seu cadastro em um registro público.",
+      "contactEmail": "E-mail de contato",
+      "plan": "Plano",
+      "reply": "Geralmente respondemos em poucos dias. Nada é cobrado até você fazer o checkout.",
+      "submit": "Enviar pedido",
+      "sending": "Enviando…",
+      "sentTitle": "Pedido enviado",
+      "sent": "Vamos responder para {email}, geralmente em poucos dias. Se a sua organização se qualificar, a resposta traz um código de desconto para usar no checkout.",
+      "close": "Fechar",
+      "failed": "Algo deu errado. Envie um e-mail para {email}."
     },
     "enterprise": {
       "name": "Enterprise",
@@ -2043,6 +2081,9 @@
         "outcome": "Você recebe um aviso com pelo menos 12 meses de antecedência, tempo para exportar tudo e um caminho documentado para rodar o app de código aberto no seu próprio servidor."
       }
     },
+    "moneyBackTitle": "Garantia de reembolso",
+    "moneyBack": "O primeiro pagamento do plano Pro ou Business, mensal ou anual, tem garantia de reembolso de {days, number} dias. Se o plano não for o ideal para você, envie um e-mail para <mail>{email}</mail> até {days, number} dias após o pagamento e devolvemos o valor integral, sem perguntas. A garantia vale uma vez por cliente, e depois disso seus códigos continuam funcionando no plano Grátis.",
+    "moneyBackLink": "Leia a política de reembolso",
     "exceptionTitle": "A única exceção: abuso",
     "exception": "Só desativamos um código quando ele viola nossos <terms>termos de serviço</terms>, por exemplo ao apontar para phishing ou malware. É uma decisão de segurança, tomada após uma denúncia ou uma análise, nunca por motivo de cobrança. Qualquer pessoa pode <report>denunciar um código</report>.",
     "questions": "Dúvidas sobre a garantia? Escreva para <mail>{email}</mail>. Última atualização em <time>{date, date, long}</time>."

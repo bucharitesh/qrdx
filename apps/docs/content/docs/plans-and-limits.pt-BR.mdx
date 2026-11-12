@@ -4,18 +4,24 @@ description: "O que os planos Grátis, Pro e Business incluem, como os limites s
 icon: Gauge
 ---
 
-O QRdx tem três planos. Os QR codes estáticos do Playground e da biblioteca `qrdx` são grátis e ilimitados em todos eles, sem precisar de conta. Compare os preços na [página de preços](/pricing).
+O QRdx tem três planos. QR codes estáticos do Playground e da biblioteca `qrdx` são grátis e ilimitados em todos eles, sem precisar de conta. Compare os preços na [página de preços](/pricing).
 
 | | Grátis | Pro | Business |
 | --- | --- | --- | --- |
 | Preço (US$) | $0 | $5/mês ou $48/ano | $15/mês ou $144/ano |
 | Preço (Índia) | ₹0 | ₹199/mês ou ₹1,499/ano | ₹599/mês ou ₹4,999/ano |
 
-Visitantes da Índia veem os preços em rúpias. O checkout é feito pela [Polar](https://polar.sh), que cobra clientes da Índia em ₹ e todos os outros em US$, e acrescenta os impostos locais quando se aplicam.
+<IfAvailable feature="eurPrices">
+
+Na UE e no EEE, o Pro custa €5/mês ou €48/ano e o Business €15/mês ou €144/ano.
+
+</IfAvailable>
+
+Visitantes da Índia veem os preços em rupias. O checkout é feito pela [Polar](https://polar.sh), que cobra na moeda do país em que você está e adiciona os impostos locais quando se aplicam. O seu primeiro pagamento de um plano pago tem garantia de reembolso de {facts.moneyBackDays} dias: veja [Reembolsos e cancelamentos](/legal/refunds).
 
 <IfAvailable feature="invoiceRequests">
 
-Um ano do Business também pode ser pago por transferência bancária: veja [pagar por fatura](/docs/help/account-and-billing/pay-by-invoice).
+Um ano de Business também pode ser pago por transferência bancária: veja [pagar por fatura](/docs/help/account-and-billing/pay-by-invoice).
 
 </IfAvailable>
 
@@ -41,41 +47,41 @@ Um ano do Business também pode ser pago por transferência bancária: veja [pag
 | Armazenamento de arquivos (maior arquivo) | 50 MB (10 MB) | 5 GB (100 MB) | 50 GB (250 MB) |
 | Respostas de formulário por mês | 50 | 1.000 | 10.000 |
 | Requisições de API por dia | 1.000 | 10.000, mais criação em lote | 100.000, mais criação em lote |
-| Imagens de arte com IA por mês | 3 | 30 | 150, compartilhadas por workspace |
+| Imagens de arte com IA por mês | 3 | 30 | 150, compartilhadas no workspace |
 | Gerações de tema com IA | 5 no total | Ilimitadas | Ilimitadas |
 | Temas salvos | 10 | Ilimitados, podem ser compartilhados com um workspace | Ilimitados, podem ser compartilhados com um workspace |
 | [Códigos de barras](/docs/developers/barcode-api#saved-barcodes) salvos | 1.000 | 10.000 | 100.000 |
 | [Páginas de estatísticas com a marca do cliente](/docs/client-reports) | Não | Sim, com um pequeno "Made with QRdx" | Sim, white-label, podem usar seu domínio personalizado |
 | [Portal do cliente](/docs/client-portal) | Não | Não | Sim |
 
-Só os QR codes dinâmicos ativos contam para o limite de códigos: os arquivados não contam. As leituras nunca contam para nada, e nenhum plano pausa um código por causa de tráfego. Os únicos limites de leitura são os que você mesmo define em um código.
+Só os códigos dinâmicos ativos contam para o limite de códigos: os arquivados não contam. As leituras nunca contam para nada, e nenhum plano pausa um código por causa de tráfego. Os únicos limites de leitura são os que você mesmo define em um código.
 
 A cota da API é por workspace e é zerada às 00:00 UTC. Cada requisição que conta retorna `X-RateLimit-Limit`, `X-RateLimit-Remaining` e `X-RateLimit-Reset` para você acompanhar. Veja a [REST API](/docs/developers/rest-api) para os limites por minuto.
 
 ## Workspaces [#workspaces]
 
-Os limites se aplicam a cada [workspace](/docs/teams) separadamente, e um workspace usa o melhor plano entre seus proprietários e [membros de cobrança](/docs/teams#roles). Todo mundo tem um workspace próprio, criado automaticamente com a pessoa como proprietária, então ele usa o plano dela. Em qualquer outro workspace, um proprietário no Business dá limites do Business a todos que estão nele; os membros não precisam de assinatura própria.
+Os limites se aplicam a cada [workspace](/docs/teams) separadamente, e um workspace usa o melhor plano entre seus proprietários e [membros de cobrança](/docs/teams#roles). Todo mundo tem um workspace próprio, criado automaticamente com a pessoa como proprietária, então ele usa o plano dela. Em qualquer outro workspace, um proprietário no Business dá os limites do Business a todos que estão nele; os membros não precisam de assinatura própria.
 
-Criar mais workspaces exige Pro ou Business. Um workspace cujos proprietários e membros de cobrança estão no Grátis tem 1 vaga (só você), no Pro até 3 e no Business sem limite. As vagas são os membros, proprietário incluído, mais os convites pendentes, então revogue um convite que você não precisa mais para liberar a vaga. Se o plano dos proprietários mudar, os membros atuais permanecem; só novos convites são bloqueados.
+Criar mais workspaces exige Pro ou Business. Um workspace cujos proprietários e membros de cobrança estão no Grátis tem 1 vaga (só você), no Pro até 3 e no Business sem limite. As vagas são os membros, proprietário incluído, mais os convites pendentes, então revogue um convite de que não precisa mais para liberar a vaga. Se o plano dos proprietários mudar, os membros atuais continuam; só novos convites são bloqueados.
 
-## Ao passar de um limite, fazer downgrade e cancelar [#going-over-a-limit-downgrading-and-cancelling]
+## Ultrapassar um limite, downgrade e cancelamento [#going-over-a-limit-downgrading-and-cancelling]
 
 <Callout type="info">
-  Os limites só impedem coisas novas. Os códigos existentes continuam redirecionando em todos os planos, inclusive após um downgrade, um pagamento que falhou ou um cancelamento. Essa é a [Garantia Never-Hostage](/guarantee).
+  Os limites só impedem coisas novas. Os códigos existentes continuam redirecionando em qualquer plano, inclusive depois de um downgrade, de um pagamento que falhou ou de um cancelamento. Essa é a [Garantia Never-Hostage](/guarantee).
 </Callout>
 
 - **Acima de um limite:** você não pode criar mais até ficar abaixo dele. Ainda pode editar, arquivar e exportar o que já tem.
 - **Acima da cota diária da API:** as chamadas à API recebem `429` até as 00:00 UTC. Seus códigos continuam redirecionando e o site continua funcionando.
-- **Downgrade:** códigos, landing pages e domínios personalizados verificados continuam funcionando. As análises mostram o histórico que seu novo plano inclui.
-- **Cancelamento:** seu plano continua ativo até o fim do período que você pagou, depois sua conta passa para o Grátis.
-- **Pagamento que falhou:** quando a assinatura expira, é igual a cancelar. Nada é pausado.
+- **Downgrade:** códigos, landing pages e domínios personalizados verificados continuam funcionando. As análises mostram o histórico que o seu novo plano inclui.
+- **Cancelamento:** seu plano continua ativo até o fim do período que você pagou, e depois sua conta passa para o Grátis.
+- **Pagamento que falhou:** quando a assinatura vence, é o mesmo que cancelar. Nada é pausado.
 
-Os códigos que terminam por um motivo que você escolheu, como uma data de expiração, uma pausa ou um limite de leitura, enviam quem lê para a sua URL de fallback ou para uma página neutra "This campaign has ended", nunca para uma página do QRdx.
+Códigos que terminam por um motivo que você escolheu, como uma data de expiração, uma pausa ou um limite de leitura, enviam quem lê para a sua URL de fallback ou para uma página neutra "This campaign has ended", nunca para uma página do QRdx.
 
 ## Cobrança [#billing]
 
-Faça o upgrade pela [página de preços](/pricing). Para trocar de plano, alternar entre mensal e anual, atualizar seu cartão ou cancelar, abra **Manage subscription** nas suas configurações, que leva ao portal de cobrança da Polar. Uma assinatura cobre sua conta, então, enquanto você tiver uma, as mudanças de plano passam pelo portal em vez de um novo checkout.
+Faça o upgrade pela [página de preços](/pricing). Para mudar de plano, alternar entre mensal e anual, atualizar seu cartão ou cancelar, abra **Manage subscription** nas suas configurações, que leva ao portal de cobrança da Polar. Uma assinatura cobre a sua conta, então, enquanto você tiver uma, as mudanças de plano passam pelo portal em vez de um novo checkout.
 
 ## Auto-hospedagem [#self-hosting]
 
-Uma instância [auto-hospedada](/docs/self-hosting) usa os mesmos planos. Os limites são definidos em um único arquivo, `apps/docs/lib/plans.ts`, que você pode alterar para a sua instância. Sem a Polar configurada, os upgrades ficam indisponíveis e todas as contas usam os limites do plano Grátis.
+Uma instância [auto-hospedada](/docs/self-hosting) usa os mesmos planos. Os limites são definidos em um único arquivo, `apps/docs/lib/plans.ts`, que você pode alterar na sua instância. Sem a Polar configurada, os upgrades ficam indisponíveis e toda conta usa os limites do plano Grátis.

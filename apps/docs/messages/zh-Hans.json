@@ -511,7 +511,9 @@
       "inr": "价格以印度卢比（₹）显示。",
       "usd": "价格以美元（US$）显示。",
       "showInr": "在印度？查看 ₹ 价格",
-      "showUsd": "显示 US$ 价格"
+      "showUsd": "显示 US$ 价格",
+      "eur": "欧盟和欧洲经济区的价格以 € 显示。",
+      "showEur": "在欧盟或欧洲经济区？查看 € 价格"
     },
     "price": {
       "forever": "永久",
@@ -555,6 +557,13 @@
       "guide": "自托管指南"
     },
     "footnote": "Polar 作为商户代理（merchant of record）处理结账；结账时可能会加收当地税费。印度的客户以 ₹ 计费，其他客户以 US$ 计费。",
+    "footnoteEur": "Polar 作为商户代理（merchant of record）处理结账；结账时可能会加收当地税费。印度的客户以 ₹ 计费，欧盟和欧洲经济区的客户以 € 计费，其他所有客户以 US$ 计费。",
+    "offers": {
+      "moneyBack": "首次付款享 {days, number} 天退款保证。",
+      "moneyBackLink": "退款如何运作",
+      "nonprofit": "非营利组织或慈善机构？Pro 和 Business 可享 {percent, number}% 折扣。",
+      "nonprofitLink": "申请折扣码"
+    },
     "values": {
       "unlimited": "不限",
       "days": "{count, plural, one {# 天} other {# 天}}",
@@ -702,6 +711,10 @@
           "question": "取消订阅会怎样？",
           "answer": "不会有任何影响。你的套餐会保持有效，直到已付费周期结束，之后账号将转为免费版。所有动态二维码继续跳转，每次扫描仍会计数：这就是我们的 Never-Hostage 保障。在免费版中，你无法创建超出免费版限额的内容，分析数据只显示最近 90 天。"
         },
+        "refund": {
+          "question": "可以退款吗？",
+          "answer": "可以。你首次购买 Pro 或 Business 的付款，无论按月还是按年，都享有 {days, number} 天退款保证：在付款后 {days, number} 天内，用账户邮箱向 support@qrdx.dev 发送邮件，我们会全额退款，不问原因。每位客户限一次。退款后，你的二维码仍可在免费版上继续使用。"
+        },
         "paymentFails": {
           "question": "付款失败会怎么样？",
           "answer": "您的二维码会继续正常使用。如果订阅失效，您的账户将按免费版的限制执行，与您主动取消订阅时完全一样。我们绝不会因为账单问题而暂停二维码、展示广告，或把扫描者引导到 QRdx 的页面。"
@@ -714,6 +727,10 @@
           "question": "为什么我看到的价格是 ₹？",
           "answer": "来自印度的访客会看到以印度卢比显示的价格：Pro 为每月 {proMonthly} 或每年 {proYearly}，Business 为每月 {businessMonthly} 或每年 {businessYearly}。结账时，印度的客户以 ₹ 付款，其他地区的客户以美元（US$）付款，与您浏览时使用的货币无关。您可以使用套餐上方的开关切换显示货币。"
         },
+        "currencies": {
+          "question": "为什么我看到的价格是 ₹ 或 €？",
+          "answer": "价格会以你所在国家或地区的货币显示。在印度，Pro 为每月 {proMonthly} 或每年 {proYearly}，Business 为每月 {businessMonthly} 或每年 {businessYearly}。在欧盟和欧洲经济区，Pro 为每月 {proMonthlyEur} 或每年 {proYearlyEur}，Business 为每月 {businessMonthlyEur} 或每年 {businessYearlyEur}。其他地区均为 US$。无论你浏览时使用哪种货币，结账时都按你所在国家或地区的货币收费。可使用套餐上方的开关切换显示货币。"
+        },
         "switchPlans": {
           "question": "之后可以更换套餐或计费周期吗？",
           "answer": "可以。在设置中打开“管理订阅”，即可在 Polar 账单门户中更改或取消您的套餐。降级到较低的套餐不会停用已有的二维码、页面或域名。"
@@ -725,6 +742,10 @@
         "selfHost": {
           "question": "可以自行托管吗？",
           "answer": "可以。QRdx 以 AGPL-3.0 协议开源。按照自托管指南，搭配您自己的 Postgres 数据库即可运行；套餐限制集中定义在一个文件中，您可以为自己的实例修改。"
+        },
+        "nonprofit": {
+          "question": "非营利组织有折扣吗？",
+          "answer": "有。已注册的非营利组织和慈善机构购买 Pro 或 Business，无论按月还是按年，都可享 {percent, number}% 折扣。请通过套餐下方的非营利链接向我们介绍你的组织。我们通常会在几天内回复，并附上可在结账时输入的折扣码。"
         },
         "billing": {
           "question": "谁负责账单和税务？",
@@ -750,6 +771,23 @@
       "close": "关闭",
       "signIn": "登录后申请发票",
       "signInNote": "发票会开给你账户的工作区，请先登录。"
+    },
+    "nonprofit": {
+      "title": "非营利组织折扣",
+      "description": "已注册的非营利组织和慈善机构购买 Pro 或 Business，无论按月还是按年，都可享 {percent, number}% 折扣。请向我们介绍你的组织，我们会通过邮件发送可在结账时输入的折扣码。",
+      "organization": "组织名称",
+      "country": "国家或地区",
+      "registration": "注册编号或链接",
+      "registrationHint": "你在慈善机构或非营利组织登记册中的编号，或你在公开登记册中的条目链接。",
+      "contactEmail": "联系邮箱",
+      "plan": "套餐",
+      "reply": "我们通常会在几天内回复。结账前不会扣费。",
+      "submit": "发送申请",
+      "sending": "发送中…",
+      "sentTitle": "申请已发送",
+      "sent": "我们会回复到 {email}，通常在几天内。如果你的组织符合条件，回复中会附上可在结账时输入的折扣码。",
+      "close": "关闭",
+      "failed": "出错了。请改为发送邮件至 {email}。"
     },
     "enterprise": {
       "name": "Enterprise",
@@ -2043,6 +2081,9 @@
         "outcome": "我们至少会提前 12 个月通知您，留出时间导出全部内容，并提供有文档说明的方法，让您在自己的服务器上运行这款开源应用。"
       }
     },
+    "moneyBackTitle": "退款保障",
+    "moneyBack": "您首次支付 Pro 或 Business 套餐的费用（无论按月还是按年）均享有 {days, number} 天退款保障。如果该套餐不适合您，请在付款后 {days, number} 天内发送邮件至 <mail>{email}</mail>，我们将全额退款，无需任何理由。每位客户仅限一次，退款后您的二维码仍可在免费版上继续使用。",
+    "moneyBackLink": "查看退款政策",
     "exceptionTitle": "唯一的例外：滥用",
     "exception": "只有当二维码违反我们的<terms>服务条款</terms>时，我们才会停用它，例如指向钓鱼网站或恶意软件。这是在收到举报或经过审核后做出的安全决定，与账单无关。任何人都可以<report>举报二维码</report>。",
     "questions": "对这项保障有疑问？请发送邮件至 <mail>{email}</mail>。最后更新于 <time>{date, date, long}</time>。"
