@@ -1,0 +1,152 @@
+---
+title: "QR 감지"
+description: "브라우저에서 이미지 속 QR 코드를 읽고 디코딩합니다."
+icon: Scan
+---
+
+업로드한 이미지에서 QR 코드를 읽고 디코딩합니다.
+
+## 기본 감지 [#basic-detection]
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function detectQR(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const img = new Image();
+      img.onload = async () => {
+        try {
+          const result = await handleImageLoad(img, 400, false);
+          if (result === "NO_QR") {
+            resolve("No QR code found");
+          } else {
+            resolve(result);
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+```
+
+## React 컴포넌트 [#react-component]
+
+```tsx
+import { useState } from 'react';
+import { handleImageLoad } from 'qrdx';
+
+export default function QRDetector() {
+  const [result, setResult] = useState('');
+
+  const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const qrData = await detectQR(file);
+      setResult(qrData);
+    } catch (error) {
+      setResult(`Error: ${error.message}`);
+    }
+  };
+
+  return (
+    <div>
+      <input type="file" accept="image/*" onChange={handleFile} />
+      {result && <p>{result}</p>}
+    </div>
+  );
+}
+```
+
+## 감지 매개변수 [#detection-parameters]
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,
+  size: number,              // Processing size (recommended: 400)
+  returnFullData?: boolean   // Return full data or just text
+)
+```
+
+### 크기 매개변수 [#size-parameter]
+
+- **200-400** — 더 빠르며, 선명한 이미지에 적합합니다
+- **600+** — 작거나 손상된 QR 코드에 더 적합합니다
+- **권장값** — 대부분의 경우 400
+
+## 전체 데이터 응답 [#full-data-response]
+
+전체 감지 정보를 가져옵니다.
+
+```tsx
+const fullData = await handleImageLoad(img, 400, true);
+// Returns:
+// {
+//   data: "https://example.com",
+//   binaryData: Uint8ClampedArray,
+//   location: { topLeftCorner, topRightCorner, ... },
+//   chunks: [...]
+// }
+```
+
+## 디버그 시각화 [#debug-visualization]
+
+바운딩 박스가 표시된 이미지를 다운로드합니다.
+
+```tsx
+import { downloadImageWithBoundingBox } from 'qrdx';
+
+const fullData = await handleImageLoad(img, 400, true);
+if (fullData?.location) {
+  const boundingBox = [
+    fullData.location.topLeftCorner,
+    fullData.location.topRightCorner,
+    fullData.location.bottomRightCorner,
+    fullData.location.bottomLeftCorner,
+  ];
+  downloadImageWithBoundingBox(img, boundingBox, "debug.png");
+}
+```
+
+## 오류 처리 [#error-handling]
+
+```tsx
+try {
+  const result = await handleImageLoad(img, 400, false);
+  if (result === "NO_QR") {
+    console.log("No QR code found");
+  } else {
+    console.log("QR data:", result);
+  }
+} catch (error) {
+  console.error("Detection failed:", error);
+}
+```
+
+## 사용 시기 [#when-to-use]
+
+- 업로드된 QR 코드 이미지를 처리할 때
+- 스크린샷에서 데이터를 추출할 때
+- QR 코드 스캐너를 만들 때
+- QR 코드 내용을 검증할 때
+- QR 코드 문제를 디버그할 때
+
+## 브라우저 요구 사항 [#browser-requirements]
+
+- FileReader API
+- HTMLCanvasElement
+- ImageData 및 getImageData
+- ES6+ 기능
+
+## 다음 단계 [#next-steps]
+
+- [유틸리티](/docs/utilities) — 감지 유틸리티
+- [다운로드](/docs/features/downloads) — 감지된 데이터 내보내기
+- [API 레퍼런스](/docs/api-reference) — 전체 감지 API

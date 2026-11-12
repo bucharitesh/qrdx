@@ -1,0 +1,141 @@
+---
+title: "템플릿"
+description: "미리 디자인된 프레임 템플릿을 QR 코드에 적용하거나 직접 만든 템플릿을 등록하세요."
+icon: LayoutTemplate
+---
+
+전문적인 QR 코드 스타일을 즉시 적용해 보세요.
+
+## 템플릿이란? [#what-are-templates]
+
+템플릿은 색상, 패턴, 시각 스타일을 바로 쓸 수 있는 하나의 패키지로 묶은 것입니다.
+
+## 사용 가능한 템플릿 [#available-templates]
+
+### Default [#default]
+클래식한 흑백 스타일입니다.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode value="https://example.com" templateId="default" size={256} />
+```
+
+### Arrow [#arrow]
+모던한 기하학적 디자인입니다.
+
+```tsx
+<QRCode value="https://example.com" templateId="Arrow" size={256} />
+```
+
+### Standard Box [#standard-box]
+깔끔하고 구조적인 디자인입니다.
+
+```tsx
+<QRCode value="https://example.com" templateId="StandardBox" size={256} />
+```
+
+### Square Border [#square-border]
+모서리가 뚜렷한 테두리 디자인입니다.
+
+```tsx
+<QRCode value="https://example.com" templateId="SquareBorder" size={256} />
+```
+
+### Striked Box [#striked-box]
+대각선 요소가 들어간 역동적인 디자인입니다.
+
+```tsx
+<QRCode value="https://example.com" templateId="StrikedBox" size={256} />
+```
+
+### Halloween [#halloween]
+시즌 한정 할로윈 테마입니다.
+
+```tsx
+<QRCode value="https://example.com" templateId="Halloween" size={256} />
+```
+
+## 템플릿 사용자 지정 [#customize-templates]
+
+템플릿 기본값을 덮어쓸 수 있습니다.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  fgColor="#your-brand-color"
+  hideLogo={false}
+  logo="/your-logo.png"
+  size={512}
+/>
+```
+
+## 템플릿 레지스트리 [#template-registry]
+
+### 모든 템플릿 가져오기 [#get-all-templates]
+
+```tsx
+import { getAllTemplates } from 'qrdx';
+
+const templates = getAllTemplates();
+```
+
+### 템플릿 ID 가져오기 [#get-template-ids]
+
+```tsx
+import { getTemplateIds } from 'qrdx';
+
+const ids = getTemplateIds();
+// Returns: ['default', 'Arrow', 'StandardBox', ...]
+```
+
+## 사용자 지정 템플릿 [#custom-templates]
+
+나만의 템플릿을 만들 수 있습니다.
+
+```tsx
+const brandTemplate = {
+  id: 'brand-template',
+  name: 'Brand Template',
+  colors: {
+    fgColor: '#1a56db',
+    bgColor: '#ffffff',
+    eyeColor: '#0d47a1',
+    dotColor: '#3b82f6'
+  },
+  bodyPattern: 'rounded',
+  cornerEyePattern: 'rounded',
+  cornerEyeDotPattern: 'rounded'
+};
+
+<QRCode
+  value="https://example.com"
+  customTemplate={brandTemplate}
+  size={256}
+/>
+```
+
+## 템플릿을 사용하면 좋은 경우 [#when-to-use-templates]
+
+- **브랜드 일관성** — 모든 QR 코드의 스타일을 통일합니다
+- **빠른 설정** — 전문적인 결과물을 빠르게 얻습니다
+- **시즌 캠페인** — 테마 템플릿을 활용합니다
+- **일괄 생성** — 일관된 스타일을 적용합니다
+
+## 템플릿 선택 가이드 [#template-selection-guide]
+
+| 템플릿 | 추천 용도 | 분위기 |
+|----------|----------|------|
+| Default | 비즈니스 | 중립적 |
+| Arrow | 기술, 모던 | 역동적 |
+| Standard Box | 기업 | 전문적 |
+| Square Border | 공식적인 용도 | 구조적 |
+| Striked Box | 마케팅 | 활기찬 |
+| Halloween | 시즌 | 재미있는 |
+
+## 다음 단계 [#next-steps]
+
+- [패턴](/docs/features/patterns) — 패턴 상세 사용자 지정
+- [색상 및 그라데이션](/docs/features/colors-gradients) — 고급 색상 설정
+- [로고](/docs/features/logos) — 템플릿에 로고 추가

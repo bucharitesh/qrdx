@@ -1,0 +1,223 @@
+---
+title: "MCP 서버"
+description: "QRdx MCP 서버로 Claude, Cursor, VS Code 등 AI 도구에서 스타일이 적용된 QR 코드를 생성하세요."
+icon: Bot
+---
+
+QRdx는 다음 주소에서 공개 [Model Context Protocol](https://modelcontextprotocol.io) 서버를 운영합니다.
+
+```txt
+https://mcp.qrdx.dev/mcp
+```
+
+모든 클라이언트에서 이 URL을 사용하세요. 같은 서버가 `https://qrdx.dev/api/mcp`에서도 응답하며, [연결 페이지](/mcp)에서 qrdx.dev, 미리보기 배포, 로컬 개발 환경에서 사용하는 공개 URL을 확인할 수 있습니다.
+
+이 서버는 Streamable HTTP 전송 방식을 사용하며 세션 상태를 유지하지 않습니다. AI 어시스턴트는 이 서버를 호출해 모든 콘텐츠 유형에 대해 스캔 점수를 확인한 QR 코드를 디자인하고, QR 코드를 렌더링하고, 사용할 수 있는 스타일을 나열하고, 커뮤니티 프레임과 테마를 찾고, Wi-Fi, 연락처, 이메일, SMS, 지도 위치에 맞는 형식의 페이로드를 만들 수 있습니다. 이 중 어떤 것도 계정이나 API 키가 필요하지 않습니다. 연결에 QRdx API 키를 사용하면 디자인을 내 테마에 저장하고 업로드한 로고를 사용할 수도 있습니다([API 키 사용하기](#use-an-api-key) 참고).
+
+[Playground에서 사용해 보기](/playground?open=code&lang=mcp): 그곳에서 코드를 스타일링한 다음 어시스턴트에 전달할 `design_qr` 인수로 복사하세요.
+
+## 설정 [#setup]
+
+<Tabs items={["Claude Code", "Cursor", "VS Code", "Other clients"]}>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
+    ```
+  </Tab>
+  <Tab value="Cursor">
+    `~/.cursor/mcp.json`(모든 프로젝트) 또는 `.cursor/mcp.json`(프로젝트 하나)에 서버를 추가하세요.
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    워크스페이스의 `.vscode/mcp.json`에 서버를 추가하세요.
+
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Other clients">
+    원격(Streamable HTTP) 서버를 지원하는 클라이언트는 URL `https://mcp.qrdx.dev/mcp`만 있으면 됩니다. 로컬 stdio 서버만 실행하는 클라이언트는 [`mcp-remote`](https://www.npmjs.com/package/mcp-remote)로 연결하세요.
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote", "https://mcp.qrdx.dev/mcp"]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+그런 다음 필요한 내용을 요청하세요. 예를 들면 다음과 같습니다.
+
+- "https://example.com용 QR 코드를 브랜드 파란색 #155dfc에 둥근 모듈로 만들어 줘."
+- "네트워크 이름 Office Guest, 비밀번호 correct-horse-battery로 Wi-Fi QR 코드를 만들어 줘."
+- "Ada Lovelace, ada@example.com의 연락처 QR 코드를 생성해서 README에 추가해 줘."
+- "Cafe Guest용 Wi-Fi QR 코드를 따뜻한 갈색 계열에 Free Wi-Fi 프레임으로 디자인하고 스캔 점수를 알려 줘."
+- "레스토랑 메뉴에 어울리는 커뮤니티 프레임을 찾아서 https://example.com/menu에 사용해 줘."
+
+## 도구 [#tools]
+
+| 도구 | 기능 |
+|------|------|
+| `design_qr` | 어시스턴트가 고른 스타일, 기본 제공 테마 또는 커뮤니티 항목에서 시작한 스타일로 모든 콘텐츠 유형의 코드를 디자인하고, 스캔 점수를 확인한 뒤 점수가 Great가 될 때까지 스타일을 보정해요. 점수, 변경한 내용, 스타일 JSON, Playground 링크, PNG, SVG를 반환해요. |
+| `list_options` | `design_qr`가 받는 모든 값을 나열해요. 콘텐츠 유형과 필드, 색상과 그라디언트, 모양, 프레임(QRdx 공식 프레임의 ID 포함), 테두리, 로고 아이콘과 브랜드 로고, 기본 제공 테마, 오류 정정 수준, 제한 사항이 포함돼요. |
+| `generate_qr_code` | 에디터의 스타일로 QR 코드를 렌더링해요. PNG 이미지와, Markdown, HTML, 인쇄에 바로 쓸 수 있는 공개 [Image API](/docs/developers/image-api) URL(SVG, PNG, 무손실 WebP, 벡터 EPS)을 반환하고, 요청하면 SVG 마크업도 반환해요. |
+| `list_qr_styles` | 본체 패턴, 코너 눈과 눈 점 모양, 테두리 템플릿, 프레임, 로고 아이콘, 오류 정정 수준, 기본값, 제한 사항을 나열해요. |
+| `search_community` | 게시된 [커뮤니티](/community) 프레임, 테마, 컬렉션을 단어, 유형, 태그로 찾아요. |
+| `get_community_item` | 커뮤니티 항목 하나와 그 항목이 적용하는 스타일을 반환해요. `design_qr` 또는 `generate_qr_code`에 바로 사용할 수 있어요. |
+| `save_template` | 디자인을 워크스페이스의 테마로 저장해요. [API 키](#use-an-api-key)가 필요해요. |
+| `generate_barcode` | 값(체크 디지트, 길이, 문자)을 확인한 뒤 EAN-13, UPC-A, UPC-E, EAN-8, ITF-14, GS1-128, Code 128, Code 39, Data Matrix, PDF417 또는 Aztec 바코드를 그려요. PNG와 공개 [바코드 API](/docs/developers/barcode-api) URL을 반환해요. |
+| `save_barcode` | 바코드를 워크스페이스의 바코드에 저장해요. [API 키](#use-an-api-key)가 필요해요. |
+| `qr_payload_wifi` | 특수 문자를 이스케이프 처리한 `WIFI:` 네트워크 페이로드(WPA, WEP 또는 개방형, 숨김 설정 선택 가능)를 만들어요. |
+| `qr_payload_vcard` | vCard 3.0 연락처(RFC 2426)를 만들어요. 이름, 조직, 직함, 전화번호, 이메일, 웹사이트, 주소, 메모를 지원해요. |
+| `qr_payload_email` | 참조(cc), 숨은 참조(bcc), 제목, 본문을 선택적으로 넣을 수 있는 `mailto:` 링크(RFC 6068)를 만들어요. |
+| `qr_payload_sms` | 메시지를 선택적으로 넣을 수 있는 `sms:` 링크(RFC 5724)나 이전 형식인 `SMSTO:`를 만들어요. |
+| `qr_payload_geo` | 위도와 경도로 `geo:` 위치(RFC 5870)를 만들어요. |
+| `qr_payload_payment` | 은행 결제 코드를 만들어요. Pix BR Code, SEPA 계좌 이체(EPC069-12), PayNow, PromptPay, VietQR 코드(EMV, CRC 포함)를 지원해요. Playground의 양식처럼 필드를 확인해요. |
+
+페이로드 도구는 일반 문자열을 반환해요. 이후 어시스턴트가 이 문자열을 `data`로 `generate_qr_code`에 전달해요.
+
+### design_qr [#design_qr]
+
+`design_qr`는 콘텐츠를 유형과 필드로 받아요. 유형과 검사는 에디터의 콘텐츠 양식과 같고(`list_options`에서 확인할 수 있어요), 스타일은 선택 사항이에요.
+
+```json
+{
+  "content": { "type": "wifi", "ssid": "Cafe Guest", "password": "sunshine123", "encryption": "WPA" },
+  "style": {
+    "bgColor": "#FFF7ED",
+    "fgColor": "#9A3412",
+    "bodyPattern": "rounded",
+    "cornerEyePattern": "rounded",
+    "frame": { "style": "banner-bottom", "text": "Free Wi-Fi" }
+  }
+}
+```
+
+생략한 옵션에는 기본값이 적용돼요(눈은 점 색상을 따르고, 모양은 사각형, 여백 4, 오류 정정 Q, 프레임 없음). 그다음 QRdx가 디자인에 에디터의 스캔 검사를 실행해요. 코드를 렌더링하고, 휴대폰 카메라 모델로 96, 160, 320 px에서 디코딩하며, 대비, 여백 영역, 눈 모양, 모양 조합을 확인해요. 점수가 Great(85) 미만이면 스타일을 최대 세 번까지 보정하며, 변경은 최소한으로 해요(색조를 유지하면서 더 어두운 색상, 더 안전한 눈 모양, 긴 콘텐츠일 때 더 낮은 오류 정정). 그래도 부족하면 프레임은 유지한 채 흰 바탕에 검은색인 기본 코드로 되돌려요. 결과에는 무엇을 왜 바꿨는지 함께 나와요.
+
+`design_qr`는 QRdx 쪽에서 AI 모델을 실행하지 않아요. 스타일은 어시스턴트가 고르고, QRdx는 이를 검증, 확인, 보정해요. 유효하지 않은 콘텐츠(8자 미만의 WPA 비밀번호, 형식이 잘못된 이메일 주소)는 이유와 함께 거부돼요. `design_qr`에는 IP 주소당 분당 20회 호출이라는 별도 제한이 있어요.
+
+추가 입력:
+
+- **`preset`**: ID로 기본 제공 테마에서 시작해요(`list_options`에서 확인할 수 있어요). 직접 설정한 스타일 옵션이 우선해요.
+- **`community_item`**: `frame:wifi-card`처럼 ID로 커뮤니티 프레임 또는 테마에서 시작해요. 프레임 항목은 기본 코드 위에 놓이며, 스타일 옵션은 그 아래의 코드를 바꿔요.
+- **공식 프레임**: QRdx 공식 프레임도 커뮤니티 항목이에요. `list_options`가 그룹별(휴일, 계절, 용도)로 ID를 나열하므로 `frame:diwali-diya`나 `frame:menu-cutlery`를 `community_item`으로 사용할 수 있어요.
+- **사용자 지정 프레임**: `style.frame`은 `get_community_item`에서 가져온 커뮤니티 프레임의 사양 같은 프레임 사양과 함께 `{ "style": "custom", "spec": … }`로 지정할 수 있어요. 그대로 그려지고 점수가 매겨지며, 보정은 코드만 바꾸고 프레임은 바꾸지 않아요.
+- **`style.logo`**: 빠른 로고 아이콘(`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` 또는 `instagram`) 또는 [Simple Icons](https://simpleicons.org) 슬러그로 지정하는 브랜드 로고(`spotify`, `paypal:white`)예요. `list_options`가 인기 브랜드 슬러그를 나열해요.
+- **엔진 옵션**: `style.eyeColors`(눈별 `#RRGGBB` 색상), `moduleScale`(점 크기, `0.5`~`1`), `shape`(둥근 코드는 `circle`), `autoLevel`, `logoOptions`(로고의 크기, 여백, 위치, 자르기, 플레이트)가 있어요. 지정한 그대로 그려지고 점수가 매겨지며, 보정은 이 옵션을 바꾸지 않아요.
+
+<IfAvailable feature="fileStorage">
+`logo_file_id`는 [API 키](#use-an-api-key)를 사용해 QRdx에 업로드한 로고를 대신 그려요.
+</IfAvailable>
+
+로고는 에디터와 마찬가지로 가리는 모듈 수로 점수가 매겨지므로, 보정 과정에서 오류 정정이 H로 올라가거나 로고가 제거될 수 있어요. 에디터가 기본으로 보여 주는 QRdx 마크는 여기서는 그려지지 않아요.
+
+결과의 `qrdxStyle`은 에디터의 스타일 JSON 형식으로 된 디자인이에요. 이를 `save_template`에 전달하거나, 같은 디자인을 다른 크기로 렌더링하려면 `style`로 `generate_qr_code`에 전달하거나, Image API의 [`style`](/docs/developers/image-api#style)에 전달할 수 있어요. `playground_url`은 [Playground](/playground)에서 디자인을 열어요. 스타일만 담고 로고나 콘텐츠는 담지 않으며, 제외된 내용은 `playgroundLeftOut`에 나와요.
+
+### generate_qr_code 입력 [#generate_qr_code-inputs]
+
+입력은 [Image API 매개변수](/docs/developers/image-api#parameters)와 같아요. `data`(필수), `size`, `fg`, `bg`, `eyeColor`, `dotColor`, `body`, `eye`, `dot`, `level`, `margin`, `template`, `frame`, `frameText`, `logoIcon`, `logoFileId`, `item`(커뮤니티 항목 ID), `style`(`design_qr`가 반환하는 것과 같은 에디터의 스타일 JSON으로, 그라디언트, 사용자 지정 프레임 등을 포함해요)이 있어요. 개별 옵션은 `style`보다 우선하고, `style`은 `item`보다 우선해요. `include_svg`를 `true`로 설정하면 `.svg` 파일로 저장하는 등의 용도로 SVG 마크업을 텍스트로도 받을 수 있어요. 마크업은 종종 50~150 KB여서 대화를 가득 채울 수 있으므로 기본값은 꺼짐이에요.
+
+`generate_qr_code`는 스캔 점수를 확인하지 않아요. 확인이 필요하면 `design_qr`를 사용하세요. 업로드한 로고가 들어간 코드에는 공개 이미지 URL이 없어요. Image API는 사용자의 키가 있는 요청에서만 해당 로고를 그리기 때문이에요.
+
+### QR 카드 [#qr-card]
+
+[MCP Apps](https://modelcontextprotocol.io/extensions/apps/overview)를 지원하는 앱에서는 `design_qr`와 `generate_qr_code`가 채팅에 QR 카드도 표시해요. 카드에는 코드, 코드에 담긴 내용(Wi-Fi 코드는 네트워크 이름만 표시하고 비밀번호는 절대 표시하지 않아요), 크기와 오류 정정 또는 스캔 점수, **에디터에서 열기** 버튼이 있어요. 에디터 링크는 `playground_url`처럼 스타일만 담고 있어요.
+
+PNG와 SVG 버튼은 앱이 허용하는 범위에 따라 달라요. 앱이 카드에서 파일을 저장할 수 있다면 버튼이 파일을 저장해요. 그렇지 않으면 브라우저에서 Image API URL을 열어요. 그래서 `design_qr`의 카드는 파일을 저장할 수 있는 앱에서만 이 버튼을 표시해요. 콘텐츠는 절대 이미지 URL에 들어가지 않기 때문이에요. 앱에 따라 링크를 열기 전에 확인을 요청할 수 있어요.
+
+MCP Apps가 없는 앱은 이전과 같은 텍스트와 이미지를 받아요. 클라이언트 개발자를 위한 안내:
+
+- 카드는 `resources/list`에 나열되는 리소스 `ui://qrdx/qr-card`(`text/html;profile=mcp-app`)예요. 두 도구 모두 `_meta.ui.resourceUri`로 이 리소스를 가리켜요.
+- 카드의 데이터는 도구 결과의 `_meta` 안 `dev.qrdx/qr-card` 아래에 담기며, 모델이 아닌 카드를 위한 데이터예요. 도구는 `structuredContent`를 반환하지 않아요.
+- 카드는 스타일과 스크립트가 인라인으로 들어 있는 단일 HTML 파일이에요. 카드가 불러오는 것은 Image API(`https://api.qrdx.dev`, 직접 호스팅하는 경우에는 사용자의 도메인)에서 가져오는 코드 이미지뿐이며, 콘텐츠 보안 정책(`_meta.ui.csp.resourceDomains`)은 해당 호스트만 허용해요.
+
+카드가 생기기 전에 QRdx를 연결했다면 커넥터를 제거한 뒤 다시 추가하거나 도구를 새로 고쳐서 앱이 새 도구 메타데이터를 가져오게 하세요.
+
+### 커뮤니티 [#community]
+
+`search_community`는 게시된 [커뮤니티](/community) 프레임, 테마, 컬렉션(CC0 라이선스로 무료)을 단어(`q`), `type`, `tag`로 찾아요. `get_community_item`은 항목 하나와 그 항목이 적용하는 스타일을 반환해요. 항목의 ID를 `community_item`으로 `design_qr`에 전달하거나 `item`으로 `generate_qr_code`에 전달하세요. 같은 데이터는 REST API의 [`/v1/community/items`](/docs/developers/api/list-community-items)에서도 확인할 수 있어요.
+
+항목의 텍스트는 커뮤니티 구성원이 작성해요. 이름, 설명, 핸들, 태그, 프레임 레이블은 짧게, 한 줄로, 링크, 이메일, 마크업 없이 반환되며, 모든 결과에는 이를 지시가 아닌 데이터로 취급하라는 안내가 포함돼요.
+
+## API 키 사용하기 [#use-an-api-key]
+
+일부 도구는 연결 시 QRdx [API 키](/docs/developers/api-keys)가 필요하며, `Authorization: Bearer qrdx_…` 형태로 전송합니다.
+
+- **`save_template`**은 디자인을 테마로 저장합니다. 저장한 테마는 대시보드의 테마에 표시되고 에디터에서도 사용할 수 있습니다. `codes:write` 권한이 있는 키가 필요하며, **전체 액세스** 키에는 이 권한이 있습니다. 본인 워크스페이스의 키로 저장하면 내 테마에 저장되고, 팀 키로 저장하면 키를 만든 사람이 소유자 또는 관리자이고 플랜에 팀 테마가 포함된 경우 팀 공유 테마에 저장됩니다. 저장한 테마는 플랜의 저장 테마 한도에 포함됩니다([요금제와 한도](/docs/plans-and-limits) 참고). 한도를 넘으면 도구가 API의 `LIMIT_REACHED` 오류(`402`)를 반환합니다. 키가 없으면 키를 추가하는 방법을 안내하는 `401` 오류를 반환합니다.
+- **`save_barcode`**는 바코드(형식, 값, 선택 사항인 제목과 그리기 옵션)를 키의 워크스페이스에 저장하며, 대시보드의 바코드에 표시됩니다. `codes:write` 권한이 있는 키가 필요합니다. 모든 플랜에서 바코드를 저장할 수 있으며, 무료는 최대 1,000개까지 저장할 수 있습니다. 한도를 넘으면 `LIMIT_REACHED`(`402`)를 반환합니다.
+<IfAvailable feature="fileStorage">
+- [대시보드 → 파일](/docs/files)에 **업로드한 로고**는 파일 ID로 지정합니다(`design_qr`에서는 `logo_file_id`, `generate_qr_code`에서는 `logoFileId`). 최대 1 MB의 PNG 또는 JPEG만 사용할 수 있습니다. 키는 해당 파일을 소유한 워크스페이스에 속해야 합니다.
+</IfAvailable>
+
+<Tabs items={["Claude Code", "Cursor", "VS Code"]}>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp \
+      --header "Authorization: Bearer $QRDX_API_KEY"
+    ```
+  </Tab>
+  <Tab value="Cursor">
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp",
+          "headers": { "Authorization": "Bearer qrdx_…" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp",
+          "headers": { "Authorization": "Bearer qrdx_…" }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+키는 공유되거나 커밋되는 설정 파일에 넣지 마세요. 키로 호출하면 워크스페이스의 일일 [API 할당량](/docs/plans-and-limits)에 포함되며, 그 밖의 도구는 키가 있든 없든 똑같이 동작합니다.
+
+## 개인정보 보호와 한도 [#privacy-and-limits]
+
+- 이 도구들은 이미지를 렌더링하고, 디자인을 검사하고, 텍스트를 포맷하고, 공개 커뮤니티를 읽습니다. 데이터를 쓰는 도구는 `save_template`과 `save_barcode`뿐이며, 요청한 테마나 바코드를 API 키의 워크스페이스에 저장합니다. 서버는 생성한 코드를 저장하지 않습니다.
+- `generate_qr_code`와 `generate_barcode`가 반환하는 이미지 URL에는 인코딩된 데이터가 들어 있습니다. Wi-Fi 비밀번호처럼 비공개 데이터라면 URL을 공유하지 마세요.
+- 요청은 IP 주소당 분당 120회로 제한되며, `design_qr`는 20회입니다. 키를 사용할 때 `save_template`은 사용자당 분당 30회로도 제한됩니다.
+
+## 셀프 호스팅과 로컬 개발 [#self-hosting-and-local-development]
+
+MCP 서버는 QRdx 웹 앱의 일부이므로 모든 인스턴스가 `/api/mcp`에서 서버를 제공합니다.
+
+- **셀프 호스팅.** `NEXT_PUBLIC_APP_URL`이 직접 운영하는 도메인이면 연결 페이지, 스니펫, 설치 링크에 `https://<your-domain>/api/mcp`가 사용됩니다.
+- **로컬 개발.** `bun run dev`를 실행하면 `http://localhost:3000/api/mcp`에서 서버를 제공합니다. 연결 페이지에는 계속 공개 URL이 표시되고 로컬 URL은 힌트로 안내되므로, 서버 변경 사항이 배포되기 전에 클라이언트가 내 컴퓨터를 가리키도록 설정해 테스트할 수 있습니다.
+
+브라우저에서 `/api/mcp`를 열면 연결 페이지로 리디렉션됩니다. MCP 클라이언트는 HTML을 요청하지 않으므로 평소처럼 서버에 연결됩니다.

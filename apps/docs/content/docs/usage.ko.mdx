@@ -1,0 +1,152 @@
+---
+title: "기본 사용법"
+description: "QRCode 컴포넌트로 QR 코드를 렌더링한 다음 색상, 패턴, 로고, 템플릿, 오류 수정 수준을 변경해 보세요."
+icon: FileCode
+---
+
+필요에 맞게 QR 코드를 만들고 꾸며 보세요.
+
+<NpmStatus package="qrdx" />
+
+## 기본 QR 코드 [#basic-qr-code]
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  size={256}
+/>
+```
+
+## 색상 사용자 지정 [#customize-colors]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#1a56db"
+  bgColor="#ffffff"
+  eyeColor="#0d47a1"
+  dotColor="#3b82f6"
+/>
+```
+
+## 패턴 추가 [#add-patterns]
+
+{facts.bodyPatterns}가지 본체 패턴, {facts.eyeShapes}가지 모서리 눈 패턴, {facts.eyeCentres}가지 모서리 눈 점 패턴 중에서 선택할 수 있어요:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  cornerEyePattern="circle"
+/>
+```
+
+본체 패턴은 {facts.bodyPatterns}가지이며, `square`, `rounded`, `circle`부터 서로 이어지는 `liquid`, `classy` 스타일, 재미있는 `star`, `heart` 점까지 있습니다. 전체 목록과 모서리 눈, 눈 점 옵션은 [패턴](/docs/features/patterns)에서, 모든 스타일은 [모양, 눈, 프레임](/docs/styles)에서 확인하세요.
+
+## 로고 추가 [#add-a-logo]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+  level="Q"
+/>
+```
+
+로고를 추가할 때는 더 높은 오류 수정 수준(`Q` 또는 `H`)을 사용하세요.
+
+## 템플릿 사용 [#use-templates]
+
+```tsx
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  size={256}
+/>
+```
+
+사용 가능한 템플릿: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+
+## 오류 수정 [#error-correction]
+
+사용 목적에 맞게 선택하세요:
+
+- **L (낮음)** — 약 7% 수정, 깨끗한 환경
+- **M (중간)** — 약 15% 수정, 일반 용도
+- **Q (사분위)** — 약 25% 수정, 로고 사용 시
+- **H (높음)** — 약 30% 수정, 최대 복원력
+
+```tsx
+<QRCode
+  value="https://example.com"
+  level="Q"
+/>
+```
+
+## 컴포넌트 변형 [#component-variants]
+
+### QRCodeCanvas [#qrcodecanvas]
+
+그라데이션을 활용한 고급 사용자 지정에 적합합니다:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+### QRCodeSVG [#qrcodesvg]
+
+확대해도 선명한 벡터 그래픽에 적합합니다:
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+/>
+```
+
+## 모범 사례 [#best-practices]
+
+### 크기 가이드라인 [#size-guidelines]
+
+- **128px** — 스캔을 위한 최소 크기
+- **256-512px** — 웹에 권장
+- **1024px 이상** — 고품질 인쇄용
+
+### 오류 수정 [#error-correction-1]
+
+- 로고를 추가할 때는 `Q` 또는 `H`를 사용하세요
+- 일반적인 애플리케이션에는 `M`을 사용하세요
+- `L`은 깨끗한 환경에서만 사용하세요
+
+### 성능 [#performance]
+
+- 가능하면 그라데이션보다 단색을 사용하세요
+- 더 나은 성능을 위해 단순한 패턴을 선택하세요
+- 가능하면 서버 측에서 QR 코드를 캐시하세요
+
+## 다음 단계 [#next-steps]
+
+- [색상 및 그라데이션](/docs/features/colors-gradients) — 고급 색상 옵션
+- [템플릿](/docs/features/templates) — 미리 만들어진 스타일
+- [다운로드](/docs/features/downloads) — 내보내기 옵션

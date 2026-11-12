@@ -1,0 +1,83 @@
+---
+title: "QR Code"
+description: "다운로드 버튼이 있는 스타일링된 접근성 지원 QR 코드입니다. 색상, 그라디언트, 패턴, 로고, 프레임 템플릿은 qrdx 라이브러리에서 제공합니다."
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## 설치 [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## 사용법 [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+코드는 접근 가능한 이름이 있는 SVG로 렌더링됩니다. 그래서 어떤 크기에서도 선명하고, 스크린 리더가 연결된 대상을 읽어 줍니다.
+
+## 예시 [#examples]
+
+### 크기 [#sizes]
+
+`size`는 화면에 표시되는 너비와 높이를 픽셀 단위로 지정합니다. 다운로드에는 `downloadSize`가 사용되므로, 페이지에서는 작은 코드라도 인쇄용 파일로 내보낼 수 있습니다.
+
+<ComponentPreview name="qr-code-sizes" />
+
+### 색상 [#colors]
+
+`fgColor`와 `bgColor`에는 CSS 색상을 자유롭게 사용할 수 있습니다. `eyeColor`와 `dotColor`는 모서리 눈 세 개의 색상을 따로 지정합니다. 모든 스캐너가 코드를 읽을 수 있도록 모듈은 배경보다 어둡게 유지하세요.
+
+<ComponentPreview name="qr-code-colors" />
+
+### 그라디언트 [#gradients]
+
+색상 대신 qrdx 그라디언트를 전달하세요. `angle`을 지정한 `linear` 또는 `radial`을 사용할 수 있습니다. 그라디언트는 PNG, SVG, PDF 다운로드에도 그대로 적용됩니다.
+
+<ComponentPreview name="qr-code-gradient" />
+
+### 패턴 [#patterns]
+
+`bodyPattern`은 데이터 모듈의 모양을, `cornerEyePattern`은 모서리 프레임의 모양을, `cornerEyeDotPattern`은 그 안쪽 점의 모양을 정합니다. 사용할 수 있는 모든 모양은 [패턴](/docs/features/patterns)에서 확인하세요.
+
+<ComponentPreview name="qr-code-patterns" />
+
+### 로고 [#logo]
+
+`logo`는 중앙에 이미지를 배치하고 그 뒤의 모듈을 비웁니다. 일부가 가려져도 코드가 스캔되도록 오류 정정 레벨 `H`를 사용하세요. 데이터 URL을 쓰면 다운로드에도 로고가 유지되며, 원격 이미지는 CORS 헤더가 필요합니다.
+
+<ComponentPreview name="qr-code-logo" />
+
+### 프레임 템플릿 [#frame-templates]
+
+`templateId`는 코드 주위에 qrdx [템플릿](/docs/features/templates)을 그립니다. `caption`과 함께 사용하면 프레임 아래에 행동 유도 문구를 넣을 수 있습니다.
+
+<ComponentPreview name="qr-code-template" />
+
+### 다운로드 형식 [#download-formats]
+
+`downloadFormats`는 표시할 버튼을 정합니다. `png`, `jpg`, `svg`, `pdf`를 사용할 수 있습니다. PDF 내보내기에는 선택 패키지인 `jspdf`(`npm install jspdf`)가 필요합니다. 버튼을 숨기려면 `[]`를 전달하세요.
+
+<ComponentPreview name="qr-code-downloads" />
+
+형식과 크기를 한 메뉴에서 고르게 하려면 [QR Code Download](/docs/components/qr-code-download)를 사용하세요.
+
+### 다크 모드 [#dark-mode]
+
+기본 흰색 배경은 다크 테마에서 가장 안전한 선택입니다. 밝은 타일 위의 어두운 모듈은 모든 리더에서 스캔됩니다. 대신 테마를 따르게 하려면 `fgColor="currentColor"`와 투명 배경을 설정하세요. 이 경우 다크 모드에서 코드가 반전되며, 휴대폰 카메라는 읽을 수 있지만 일부 오래된 스캐너는 읽지 못합니다.
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## API 레퍼런스 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+`className`과 같은 다른 prop은 감싸고 있는 `<figure>`에 전달됩니다.

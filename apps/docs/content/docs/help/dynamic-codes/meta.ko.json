@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "동적 코드",
+  "icon": "QrCode",
+  "pages": [
+    "create",
+    "change-the-link",
+    "change-the-type",
+    "scans",
+    "pause-schedule-limit",
+    "password",
+    "routing",
+    "archive-and-delete",
+    "import"
+  ]
+}
