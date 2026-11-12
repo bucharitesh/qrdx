@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "Altre opzioni cornice"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Modifica occhi",
+          "options": "Opzioni occhi",
+          "random": "Occhi casuali",
+          "more": "Altre opzioni occhi"
+        },
+        "dots": {
+          "edit": "Modifica punti",
+          "options": "Opzioni punti",
+          "random": "Punti casuali",
+          "more": "Altre opzioni punti"
+        },
+        "logo": {
+          "edit": "Modifica logo",
+          "options": "Opzioni logo",
+          "random": "Logo casuale",
+          "more": "Altre opzioni logo"
+        },
+        "background": {
+          "edit": "Modifica sfondo",
+          "options": "Opzioni sfondo",
+          "random": "Sfondo casuale",
+          "more": "Altre opzioni sfondo"
+        },
+        "frame": {
+          "edit": "Modifica cornice",
+          "options": "Opzioni cornice",
+          "random": "Cornice casuale",
+          "more": "Altre opzioni cornice"
+        }
+      },
+      "items": {
+        "outerShape": "Forma esterna",
+        "centerShape": "Forma centrale",
+        "eyeColor": "Colore occhi",
+        "centerColor": "Colore centro",
+        "pattern": "Motivo",
+        "dotColor": "Colore punti",
+        "dotSize": "Dimensione punti",
+        "logo": "Logo",
+        "quickIcons": "Icone rapide",
+        "logoSize": "Dimensione logo",
+        "hideLogo": "Nascondi logo",
+        "backgroundColor": "Colore sfondo",
+        "padding": "Margine",
+        "frameStyle": "Stile cornice",
+        "frameColor": "Colore cornice"
+      },
+      "random": "Casuale",
+      "moreOptions": "Altre opzioni",
+      "sheet": {
+        "changesShowOnTheCode": "Le modifiche si vedono sul codice mentre le fai. Con Fine le mantieni.",
+        "done": "Fine"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Scegli un colore pieno, un gradiente o un campione per {label}."
     },

@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "Mais opções da moldura"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Editar olhos",
+          "options": "Opções dos olhos",
+          "random": "Olhos aleatórios",
+          "more": "Mais opções dos olhos"
+        },
+        "dots": {
+          "edit": "Editar pontos",
+          "options": "Opções dos pontos",
+          "random": "Pontos aleatórios",
+          "more": "Mais opções dos pontos"
+        },
+        "logo": {
+          "edit": "Editar logo",
+          "options": "Opções do logo",
+          "random": "Logo aleatório",
+          "more": "Mais opções do logo"
+        },
+        "background": {
+          "edit": "Editar fundo",
+          "options": "Opções do fundo",
+          "random": "Fundo aleatório",
+          "more": "Mais opções do fundo"
+        },
+        "frame": {
+          "edit": "Editar moldura",
+          "options": "Opções da moldura",
+          "random": "Moldura aleatória",
+          "more": "Mais opções da moldura"
+        }
+      },
+      "items": {
+        "outerShape": "Forma externa",
+        "centerShape": "Forma central",
+        "eyeColor": "Cor do olho",
+        "centerColor": "Cor do centro",
+        "pattern": "Padrão",
+        "dotColor": "Cor do ponto",
+        "dotSize": "Tamanho do ponto",
+        "logo": "Logo",
+        "quickIcons": "Ícones rápidos",
+        "logoSize": "Tamanho do logo",
+        "hideLogo": "Ocultar logo",
+        "backgroundColor": "Cor do fundo",
+        "padding": "Margem interna",
+        "frameStyle": "Estilo da moldura",
+        "frameColor": "Cor da moldura"
+      },
+      "random": "Aleatório",
+      "moreOptions": "Mais opções",
+      "sheet": {
+        "changesShowOnTheCode": "As alterações aparecem no código conforme você faz. Concluir as mantém.",
+        "done": "Concluir"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Escolha uma cor sólida, um gradiente ou uma amostra para {label}."
     },

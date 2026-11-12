@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "프레임 옵션 더 보기"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "눈 편집",
+          "options": "눈 옵션",
+          "random": "눈 무작위",
+          "more": "눈 옵션 더 보기"
+        },
+        "dots": {
+          "edit": "점 편집",
+          "options": "점 옵션",
+          "random": "점 무작위",
+          "more": "점 옵션 더 보기"
+        },
+        "logo": {
+          "edit": "로고 편집",
+          "options": "로고 옵션",
+          "random": "로고 무작위",
+          "more": "로고 옵션 더 보기"
+        },
+        "background": {
+          "edit": "배경 편집",
+          "options": "배경 옵션",
+          "random": "배경 무작위",
+          "more": "배경 옵션 더 보기"
+        },
+        "frame": {
+          "edit": "프레임 편집",
+          "options": "프레임 옵션",
+          "random": "프레임 무작위",
+          "more": "프레임 옵션 더 보기"
+        }
+      },
+      "items": {
+        "outerShape": "바깥 모양",
+        "centerShape": "중앙 모양",
+        "eyeColor": "눈 색상",
+        "centerColor": "중앙 색상",
+        "pattern": "패턴",
+        "dotColor": "점 색상",
+        "dotSize": "점 크기",
+        "logo": "로고",
+        "quickIcons": "빠른 아이콘",
+        "logoSize": "로고 크기",
+        "hideLogo": "로고 숨기기",
+        "backgroundColor": "배경 색상",
+        "padding": "여백",
+        "frameStyle": "프레임 스타일",
+        "frameColor": "프레임 색상"
+      },
+      "random": "무작위",
+      "moreOptions": "옵션 더 보기",
+      "sheet": {
+        "changesShowOnTheCode": "변경 사항은 적용하는 즉시 코드에 표시돼요. 완료를 누르면 그대로 유지돼요.",
+        "done": "완료"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "{label}에 사용할 단색, 그라데이션 또는 견본을 선택하세요."
     },

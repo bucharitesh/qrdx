@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "Más opciones del marco"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Editar ojos",
+          "options": "Opciones de ojos",
+          "random": "Ojos aleatorios",
+          "more": "Más opciones de ojos"
+        },
+        "dots": {
+          "edit": "Editar puntos",
+          "options": "Opciones de puntos",
+          "random": "Puntos aleatorios",
+          "more": "Más opciones de puntos"
+        },
+        "logo": {
+          "edit": "Editar logo",
+          "options": "Opciones de logo",
+          "random": "Logo aleatorio",
+          "more": "Más opciones de logo"
+        },
+        "background": {
+          "edit": "Editar fondo",
+          "options": "Opciones de fondo",
+          "random": "Fondo aleatorio",
+          "more": "Más opciones de fondo"
+        },
+        "frame": {
+          "edit": "Editar marco",
+          "options": "Opciones de marco",
+          "random": "Marco aleatorio",
+          "more": "Más opciones de marco"
+        }
+      },
+      "items": {
+        "outerShape": "Forma exterior",
+        "centerShape": "Forma del centro",
+        "eyeColor": "Color del ojo",
+        "centerColor": "Color del centro",
+        "pattern": "Patrón",
+        "dotColor": "Color de puntos",
+        "dotSize": "Tamaño de punto",
+        "logo": "Logo",
+        "quickIcons": "Iconos rápidos",
+        "logoSize": "Tamaño del logo",
+        "hideLogo": "Ocultar logo",
+        "backgroundColor": "Color de fondo",
+        "padding": "Margen",
+        "frameStyle": "Estilo de marco",
+        "frameColor": "Color del marco"
+      },
+      "random": "Aleatorio",
+      "moreOptions": "Más opciones",
+      "sheet": {
+        "changesShowOnTheCode": "Los cambios se ven en el código a medida que los haces. Listo los conserva.",
+        "done": "Listo"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Elige un color sólido, un degradado o una muestra para {label}."
     },

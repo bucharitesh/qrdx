@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "その他のフレーム設定"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "目を編集",
+          "options": "目のオプション",
+          "random": "目をランダム",
+          "more": "目のその他の設定"
+        },
+        "dots": {
+          "edit": "ドットを編集",
+          "options": "ドットのオプション",
+          "random": "ドットをランダム",
+          "more": "ドットのその他の設定"
+        },
+        "logo": {
+          "edit": "ロゴを編集",
+          "options": "ロゴのオプション",
+          "random": "ロゴをランダム",
+          "more": "ロゴのその他の設定"
+        },
+        "background": {
+          "edit": "背景を編集",
+          "options": "背景のオプション",
+          "random": "背景をランダム",
+          "more": "背景のその他の設定"
+        },
+        "frame": {
+          "edit": "フレームを編集",
+          "options": "フレームのオプション",
+          "random": "フレームをランダム",
+          "more": "フレームのその他の設定"
+        }
+      },
+      "items": {
+        "outerShape": "外側の形",
+        "centerShape": "中心の形",
+        "eyeColor": "目の色",
+        "centerColor": "中心の色",
+        "pattern": "パターン",
+        "dotColor": "ドットの色",
+        "dotSize": "ドットのサイズ",
+        "logo": "ロゴ",
+        "quickIcons": "クイックアイコン",
+        "logoSize": "ロゴのサイズ",
+        "hideLogo": "ロゴを非表示",
+        "backgroundColor": "背景色",
+        "padding": "余白",
+        "frameStyle": "フレームのスタイル",
+        "frameColor": "フレームの色"
+      },
+      "random": "ランダム",
+      "moreOptions": "その他の設定",
+      "sheet": {
+        "changesShowOnTheCode": "変更は操作するとすぐにコードへ反映されます。「完了」を押すと変更が保持されます。",
+        "done": "完了"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "{label}の単色、グラデーション、またはスウォッチを選択します。"
     },
