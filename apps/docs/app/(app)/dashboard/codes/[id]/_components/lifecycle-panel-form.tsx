@@ -19,7 +19,6 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Lock, ShieldCross as ShieldAlert } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useState, useTransition } from "react";
 import {
@@ -27,6 +26,7 @@ import {
   setCodePaused,
   updateCodeLifecycle,
 } from "@/actions/code-lifecycle";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import type { Translator } from "@/lib/i18n/translator";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -271,9 +271,10 @@ export function LifecyclePanelForm({
         {locked && (
           <div className="bg-muted/50 flex flex-col gap-3 rounded-lg border p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
             <p>
-              {t("passwordsStartAndEndDates")}{" "}
-              {plan ? PLAN_NAMES[plan] : t("aPaidPlan")}.
-              {hasProSettings && t("yourCurrentSettingsKeepWorking")}
+              {plan
+                ? t("lifecycleOnPlan", { plan: PLAN_NAMES[plan] })
+                : t("lifecycleOnPaidPlan")}
+              {hasProSettings && ` ${t("yourCurrentSettingsKeepWorking")}`}
             </p>
             <Button onClick={upgrade} size="sm" type="button">
               {t("upgrade")}

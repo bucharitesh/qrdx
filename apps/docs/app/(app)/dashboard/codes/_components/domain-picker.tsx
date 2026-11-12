@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { getCustomDomainOptions } from "@/actions/custom-domains";
@@ -16,6 +15,7 @@ import type {
   DomainOptions,
   DomainRef,
 } from "@/app/(app)/dashboard/domains/_lib/domains";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useKnownCodeOptionPlans } from "./code-options";

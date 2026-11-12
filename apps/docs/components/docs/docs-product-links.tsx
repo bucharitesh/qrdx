@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { isPathAvailable } from "@/lib/feature-availability";
 import type { Locale } from "@/lib/i18n/config";
 import { localizeHref } from "@/lib/i18n/paths";

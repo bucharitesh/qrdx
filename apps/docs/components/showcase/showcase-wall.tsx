@@ -1,6 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
-import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { PresetLink } from "@/components/playground/preset-link";
 import {

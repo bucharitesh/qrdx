@@ -18,10 +18,10 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { Printer } from "iconsax-reactjs";
-import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
 import { InfoHint } from "@/components/help/info-hint";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import {
   formatPrintDistance,
   parsePrintDistance,

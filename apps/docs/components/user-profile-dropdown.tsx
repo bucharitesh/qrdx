@@ -23,12 +23,15 @@ import {
   SecuritySafe,
   Setting2,
 } from "iconsax-reactjs";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { markSignOutIntent } from "@/app/(app)/(auth)/sign-out/_lib/intent";
 import { hasAdminRole } from "@/components/app-shell/nav-config";
-import { useLocalizeHref } from "@/components/i18n/locale-link";
+import {
+  LocaleLink as Link,
+  useLocalizeHref,
+  useLocaleRouter as useRouter,
+} from "@/components/i18n/locale-link";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 import { splitLocale } from "@/lib/i18n/paths";
 import { playgroundHref } from "@/lib/playground-links";

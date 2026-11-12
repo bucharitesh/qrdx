@@ -14,7 +14,6 @@ import {
   CloseCircle as CircleX,
   ScanBarcode,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   getQRData,
@@ -25,6 +24,7 @@ import {
 } from "qrdx";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { InfoHint } from "@/components/help/info-hint";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";

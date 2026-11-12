@@ -9,7 +9,6 @@ import {
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
 import { ArrowRight, Copy, Flash, Setting4 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   useCallback,
@@ -32,6 +31,7 @@ import {
 } from "@/components/code-builder/in-place";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { track } from "@/lib/analytics";
 import { markProgrammaticQrContent } from "@/lib/analytics/react";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";

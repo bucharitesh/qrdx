@@ -32,11 +32,14 @@ async function writeClipboard(value: string): Promise<boolean> {
 export function CopyButton({
   value,
   label,
+  text,
   className,
 }: {
   value: string;
   /** Accessible name, e.g. "Copy code" */
   label: string;
+  /** The button's words, translated by the block */
+  text: { copy: string; copied: string };
   className?: string;
 }) {
   const [copied, setCopied] = useState(false);
@@ -49,7 +52,7 @@ export function CopyButton({
 
   return (
     <button
-      aria-label={copied ? "Copied" : label}
+      aria-label={copied ? text.copied : label}
       className={cn(
         "inline-flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-(--lp-radius) border border-(--lp-fg)/15 px-3 text-sm font-medium transition-colors hover:bg-(--lp-fg)/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--lp-primary)",
         className,
@@ -62,7 +65,7 @@ export function CopyButton({
       ) : (
         <Copy aria-hidden="true" className="size-4" />
       )}
-      <span aria-live="polite">{copied ? "Copied" : "Copy"}</span>
+      <span aria-live="polite">{copied ? text.copied : text.copy}</span>
     </button>
   );
 }

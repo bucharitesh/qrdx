@@ -4,6 +4,7 @@ import {
   ExportSquare as ExternalLink,
   Document as FileIcon,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   itemIdSchema,
@@ -15,7 +16,7 @@ import {
 import { BlockHeading, PreviewPlaceholder } from "@/lib/files/block-ui";
 import { FileKindIcon } from "@/lib/files/components/file-kind-icon";
 import { fileSourceSchema, sourceName, sourceUrl } from "@/lib/files/source";
-import { FILE_KIND_LABELS, FILE_KINDS } from "@/lib/files/types";
+import { FILE_KINDS } from "@/lib/files/types";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { FileDownloadEditor } from "./file-download-editor";
 
@@ -43,6 +44,7 @@ function FileDownloadBlock({
   props,
   context,
 }: BlockRenderProps<FileDownloadBlockProps>) {
+  const t = useTranslations("scanPages.hosted.files");
   const files = props.files.flatMap((item) => {
     const href =
       item.source.type === "file"
@@ -58,7 +60,7 @@ function FileDownloadBlock({
     ) : null;
   }
   return (
-    <section aria-label={props.title || "Downloads"} className="space-y-3">
+    <section aria-label={props.title || t("downloads")} className="space-y-3">
       <BlockHeading
         description={props.description}
         preview={context.thumbnail}
@@ -67,7 +69,9 @@ function FileDownloadBlock({
       <ul className="space-y-2">
         {files.map((item, index) => {
           const name =
-            item.label || sourceName(item.source) || `File ${index + 1}`;
+            item.label ||
+            sourceName(item.source) ||
+            t("fileNumber", { number: String(index + 1) });
           const external = item.source.type === "url";
           return (
             <li key={item.id}>
@@ -94,8 +98,11 @@ function FileDownloadBlock({
                     {name}
                   </span>
                   <span className={cn("block text-xs", mutedTextClass)}>
-                    {item.kind ? FILE_KIND_LABELS[item.kind] : "File"}
-                    {external ? " · opens in a new tab" : ""}
+                    {external
+                      ? t("opensInNewTab", {
+                          kind: t(`kinds.${item.kind ?? "file"}`),
+                        })
+                      : t(`kinds.${item.kind ?? "file"}`)}
                   </span>
                 </span>
                 {external ? (
@@ -107,7 +114,7 @@ function FileDownloadBlock({
                   <Download aria-hidden="true" className="size-5 shrink-0" />
                 )}
                 <span className="sr-only">
-                  {external ? "Open" : "Download"}
+                  {external ? t("open") : t("download")}
                 </span>
               </a>
             </li>

@@ -34,12 +34,12 @@ import {
   Setting2 as Settings,
   Shuffle,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
 import { track } from "@/lib/analytics";
 import { useMounted } from "@/lib/hooks/use-mounted";

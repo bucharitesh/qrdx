@@ -164,9 +164,12 @@ function DeleteTeamDialog({
         </AlertDialogHeader>
         <div className="space-y-1.5">
           <Label htmlFor="confirm-team-slug">
-            {t("type")}{" "}
-            <span className="font-mono font-semibold">{teamSlug}</span>{" "}
-            {t("toConfirm")}
+            {t.rich("typeToConfirm", {
+              word: teamSlug,
+              code: (chunks) => (
+                <span className="font-mono font-semibold">{chunks}</span>
+              ),
+            })}
           </Label>
           <Input
             autoComplete="off"

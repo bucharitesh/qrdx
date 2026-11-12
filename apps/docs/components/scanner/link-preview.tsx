@@ -14,9 +14,9 @@ import {
   ShieldTick as ShieldCheck,
   Warning2 as TriangleAlert,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { OpenButton, type OpenConfirmation } from "./confirm-open";
 import {
   checkLink,

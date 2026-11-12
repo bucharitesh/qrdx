@@ -3,10 +3,10 @@
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { TickCircle } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { PublishDesignDialog } from "@/components/community/publish-design-dialog";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { communityDraft } from "@/lib/community/draft";
 import { COMMUNITY_LICENSE_NAME } from "@/lib/community/licence";
 import { useChatContext } from "@/lib/hooks/use-chat-context";

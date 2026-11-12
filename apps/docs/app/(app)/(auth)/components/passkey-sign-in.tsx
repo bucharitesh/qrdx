@@ -5,10 +5,10 @@ import { Spinner } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { FingerScan } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import { signInFailureMessage } from "@/lib/account/passkeys";
 import { browserHasPasskeys, passkeysWorkOn } from "@/lib/passkeys";
 

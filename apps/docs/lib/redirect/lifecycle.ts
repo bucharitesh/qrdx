@@ -12,6 +12,7 @@ import { compare } from "bcryptjs";
 import cuid from "cuid";
 import { cookies, headers } from "next/headers";
 import { CUSTOM_DOMAIN_HEADER } from "@/app/(app)/dashboard/domains/_lib/hostname";
+import { type ScanPagesIntl, scanPagesIntlFor } from "@/lib/i18n/scan-pages";
 import { getClientIp } from "@/lib/request-guards";
 import { slugWhere } from "@/lib/slug-claims";
 import type { Awaitable, RedirectCode } from "./code";
@@ -223,24 +224,29 @@ async function isUnlockRateLimited(code: LifecycleCode, request: Request) {
   }
 }
 
+type GateError = "missing" | "wrong" | "tooManyAttempts";
+
 function gatePage(
   code: LifecycleCode,
-  { status = 200, error }: { status?: number; error?: string } = {},
+  intl: ScanPagesIntl,
+  { status = 200, error }: { status?: number; error?: GateError } = {},
 ): Response {
+  const { t } = intl;
   const errorHtml = error
-    ? `<p class="error" id="password-error" role="alert">${escapeHtml(error)}</p>`
+    ? `<p class="error" id="password-error" role="alert">${escapeHtml(t(`password.${error}`))}</p>`
     : "";
   const describedBy = error ? ' aria-describedby="password-error"' : "";
   return neutralPage({
     status,
-    title: "This QR code is password protected",
+    title: t("password.title"),
     slug: code.slug,
-    body: `<p>Enter the password you were given to continue.</p>
+    intl,
+    body: `<p>${escapeHtml(t("password.intro"))}</p>
 <form method="post">
-<label for="password">Password</label>
+<label for="password">${escapeHtml(t("password.label"))}</label>
 <input id="password" name="password" type="password" autocomplete="current-password" maxlength="${MAX_PASSWORD_LENGTH}" required autofocus${describedBy}>
 ${errorHtml}
-<button type="submit">Continue</button>
+<button type="submit">${escapeHtml(t("password.submit"))}</button>
 </form>`,
   });
 }
@@ -310,28 +316,24 @@ export async function gateResponse(
   request: Request,
   _reason: "password",
 ): Promise<Response> {
+  // The form speaks the scanner's language (Accept-Language).
+  const intl = await scanPagesIntlFor(request);
   if (request.method !== "POST" || !code.passwordHash) {
-    return gatePage(code);
+    return gatePage(code, intl);
   }
   if (await isUnlockRateLimited(code, request)) {
-    return gatePage(code, {
-      status: 429,
-      error: "Too many attempts. Please wait a few minutes and try again.",
-    });
+    return gatePage(code, intl, { status: 429, error: "tooManyAttempts" });
   }
 
   const password = await readPassword(request);
   if (!password) {
-    return gatePage(code, { status: 400, error: "Enter the password." });
+    return gatePage(code, intl, { status: 400, error: "missing" });
   }
   const correct =
     password.length <= MAX_PASSWORD_LENGTH &&
     (await compare(password, code.passwordHash));
   if (!correct) {
-    return gatePage(code, {
-      status: 401,
-      error: "That password isn't right. Please try again.",
-    });
+    return gatePage(code, intl, { status: 401, error: "wrong" });
   }
 
   const cookie = [

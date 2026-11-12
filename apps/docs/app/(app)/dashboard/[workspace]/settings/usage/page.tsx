@@ -13,7 +13,6 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Card as CreditCard, Warning2 } from "iconsax-reactjs";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { SettingsHeader } from "@/app/(app)/settings/components/settings-header";
 import { UsageMeters } from "@/app/(app)/settings/usage/_components/usage-meters";
@@ -22,6 +21,7 @@ import {
   upgradeAction,
 } from "@/app/(app)/settings/usage/_lib/meters";
 import { getPlanUsage } from "@/app/(app)/settings/usage/_lib/plan-usage";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { PLAN_NAMES } from "@/lib/pricing";
 

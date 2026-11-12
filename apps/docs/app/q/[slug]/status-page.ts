@@ -1,4 +1,7 @@
+import { localizePath } from "@/lib/i18n/paths";
+import { ENGLISH_SCAN_PAGES, type ScanPagesIntl } from "@/lib/i18n/scan-pages";
 import { baseUrl } from "@/lib/metadata";
+import { escapeHtml } from "@/lib/redirect/pages";
 
 export type StatusPageKind =
   | "inactive"
@@ -7,56 +10,42 @@ export type StatusPageKind =
   | "unavailable"
   | "invalid-gs1";
 
-const PAGES: Record<
-  StatusPageKind,
-  { status: number; title: string; message: string }
-> = {
-  inactive: {
-    status: 410,
-    title: "This QR code is no longer active",
-    message: "This code has been turned off and no longer leads anywhere.",
-  },
-  "not-found": {
-    status: 404,
-    title: "QR code not found",
-    message:
-      "This link doesn't lead to a QR code. Its owner may have removed it, or the link was mistyped.",
-  },
-  "rate-limited": {
-    status: 429,
-    title: "Too many requests",
-    message:
-      "This network opened a lot of QR codes in a short time. Please try again in a few seconds.",
-  },
-  "invalid-gs1": {
-    status: 400,
-    title: "This product link isn't valid",
-    message:
-      "Its product number (GTIN) or batch details can't be read. Check the link, or scan the code on the pack again.",
-  },
-  unavailable: {
-    status: 503,
-    title: "Something went wrong",
-    message:
-      "We couldn't open this QR code right now. Please scan it again in a moment.",
-  },
-};
+/** Each page's HTTP status and its copy in messages/*.json → scanPages.status. */
+const PAGES = {
+  inactive: { status: 410, key: "inactive" },
+  "not-found": { status: 404, key: "notFound" },
+  "rate-limited": { status: 429, key: "rateLimited" },
+  "invalid-gs1": { status: 400, key: "invalidGs1" },
+  unavailable: { status: 503, key: "unavailable" },
+} as const satisfies Record<StatusPageKind, { status: number; key: string }>;
 
-/** Tiny self-contained HTML page (no scripts) for codes that cannot redirect. */
+/**
+ * Tiny self-contained HTML page (no scripts) for codes that cannot redirect,
+ * in the scanner's language (lib/i18n/scan-pages.ts). `message` replaces
+ * the standard explanation; it's English (the GS1 parser's), so other
+ * languages keep their translated one.
+ */
 export function statusPage(
   kind: StatusPageKind,
-  { message: detail }: { message?: string } = {},
+  {
+    message: detail,
+    intl = ENGLISH_SCAN_PAGES,
+  }: { message?: string; intl?: ScanPagesIntl } = {},
 ): Response {
-  const { status, title } = PAGES[kind];
-  const message = detail ?? PAGES[kind].message;
+  const { status, key } = PAGES[kind];
+  const { t, locale } = intl;
+  const title = escapeHtml(t(`status.${key}.title`));
+  const message = escapeHtml(
+    detail && locale === "en" ? detail : t(`status.${key}.message`),
+  );
   const origin = baseUrl.origin;
   const html = `<!doctype html>
-<html lang="en">
+<html lang="${locale}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<title>${title} | QRdx</title>
+<title>${escapeHtml(t("status.titleSuffix", { title: t(`status.${key}.title`) }))}</title>
 <style>
 :root{color-scheme:light dark;--bg:#fafafa;--fg:#0a0a0a;--muted:#737373;--card:#fff;--border:#e5e5e5}
 @media (prefers-color-scheme:dark){:root{--bg:#0a0a0a;--fg:#fafafa;--muted:#a3a3a3;--card:#171717;--border:#262626}}
@@ -74,7 +63,7 @@ a{display:inline-block;margin-top:28px;color:var(--fg);font-size:14px;font-weigh
 <img src="${origin}/favicon.svg" alt="QRdx">
 <h1>${title}</h1>
 <p>${message}</p>
-<a href="${origin}/">Make your own QR code with QRdx</a>
+<a href="${origin}${localizePath("/", locale)}">${escapeHtml(t("status.makeYourOwn"))}</a>
 </main>
 </body>
 </html>`;
@@ -84,6 +73,9 @@ a{display:inline-block;margin-top:28px;color:var(--fg);font-size:14px;font-weigh
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
+      // The language follows Accept-Language (never cached anyway).
+      "Content-Language": locale,
+      Vary: "Accept-Language",
       "X-Robots-Tag": "noindex",
       ...(status === 429 && { "Retry-After": "10" }),
       "Content-Security-Policy": `default-src 'none'; img-src ${origin}; style-src 'unsafe-inline'`,

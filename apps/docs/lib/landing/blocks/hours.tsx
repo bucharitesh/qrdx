@@ -1,10 +1,15 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Clock } from "iconsax-reactjs";
+import { useLocale, useTranslations } from "next-intl";
 import { z } from "zod";
 import { lineText, mutedTextClass } from "@/components/landing/block-kit";
 import { LpHeading } from "@/components/landing/heading";
 import { OpenNowBadge } from "@/components/landing/open-now-badge";
-import { isValidTimeZone, WEEKDAYS } from "@/components/landing/opening-hours";
+import {
+  isValidTimeZone,
+  WEEKDAYS,
+  weekdayNames,
+} from "@/components/landing/opening-hours";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { HoursEditor } from "./hours-editor";
 
@@ -53,9 +58,12 @@ export const hoursSchema = z.object({
 export type HoursProps = z.output<typeof hoursSchema>;
 
 function HoursBlock({ props, context }: BlockRenderProps<HoursProps>) {
+  const t = useTranslations("scanPages.hosted.hours");
+  const locale = useLocale();
+  const days = weekdayNames(locale);
   return (
     <section
-      aria-label={props.title || "Opening hours"}
+      aria-label={props.title || t("openingHours")}
       className="space-y-3 rounded-(--lp-radius) bg-(--lp-muted) p-4"
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -70,7 +78,16 @@ function HoursBlock({ props, context }: BlockRenderProps<HoursProps>) {
           </LpHeading>
         )}
         {props.timezone && (
-          <OpenNowBadge timeZone={props.timezone} week={props.days} />
+          <OpenNowBadge
+            locale={locale}
+            text={{
+              openUntil: t.raw("openUntil") as string,
+              closedOpens: t.raw("closedOpens") as string,
+              closed: t("closed"),
+            }}
+            timeZone={props.timezone}
+            week={props.days}
+          />
         )}
       </div>
       <table className="w-full text-[15px]">
@@ -83,7 +100,7 @@ function HoursBlock({ props, context }: BlockRenderProps<HoursProps>) {
                 key={day}
               >
                 <th className="py-1.5 pr-4 text-left font-normal" scope="row">
-                  {day}
+                  {days[index] ?? day}
                 </th>
                 <td
                   className={cn(
@@ -92,7 +109,7 @@ function HoursBlock({ props, context }: BlockRenderProps<HoursProps>) {
                   )}
                 >
                   {ranges.length === 0
-                    ? "Closed"
+                    ? t("closed")
                     : ranges
                         .map((range) => `${range.open}–${range.close}`)
                         .join(", ")}

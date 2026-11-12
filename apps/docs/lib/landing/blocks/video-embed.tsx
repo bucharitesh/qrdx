@@ -1,4 +1,5 @@
 import { VideoSquare as Clapperboard } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import { lineText } from "@/components/landing/block-kit";
 import {
@@ -29,6 +30,7 @@ const ASPECTS = {
 } as const;
 
 function VideoEmbedBlock({ id, props }: BlockRenderProps<VideoEmbedProps>) {
+  const t = useTranslations("scanPages.hosted.media");
   const video = parseVideoUrl(props.url);
   if (!video) return null;
   return (
@@ -37,6 +39,12 @@ function VideoEmbedBlock({ id, props }: BlockRenderProps<VideoEmbedProps>) {
       blockId={id}
       embedUrl={videoEmbedUrl(video)}
       providerLabel={VIDEO_PROVIDER_LABELS[video.provider]}
+      text={{
+        providerVideo: t.raw("providerVideo") as string,
+        playVideo: t("playVideo"),
+        playVideoTitle: t.raw("playVideoTitle") as string,
+        playsFrom: t.raw("playsFrom") as string,
+      }}
       title={props.title}
     />
   );

@@ -3,8 +3,8 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Diamonds } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { track } from "@/lib/analytics";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 

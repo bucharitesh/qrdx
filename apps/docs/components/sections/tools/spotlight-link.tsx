@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import type { ComponentProps } from "react";
 import { useSignInGate } from "@/components/auth/sign-in-link";
 import { SpotlightCard } from "@/components/fx";
-import { useLocalizeHref } from "@/components/i18n/locale-link";
+import {
+  LocaleLink as Link,
+  useLocalizeHref,
+} from "@/components/i18n/locale-link";
 
 type SpotlightLinkProps = Omit<ComponentProps<typeof Link>, "as"> & {
   /** The target needs an account: signed-out visitors sign in first. */

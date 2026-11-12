@@ -1907,9 +1907,9 @@
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.question"
   },
-  "82ec64b16a5d": {
-    "source": "No, the details are inside the code. To have one code that always shows your current details, host your contact page online and point a URL code, or a dynamic code from your dashboard, at it.",
-    "text": "No, i dati sono dentro il codice. Per avere un unico codice che mostri sempre i tuoi dati aggiornati, ospita online la tua pagina di contatto e fai puntare a essa un codice URL, oppure un QR code dinamico dalla tua dashboard.",
+  "fa26bd23187e": {
+    "source": "No, the details are inside the code. For one code that always shows your current details, make a digital business card instead: a hosted contact page with your photo and a Save contact button that you can edit after printing.",
+    "text": "No, i dati sono dentro il codice. Per avere un unico codice che mostri sempre i tuoi dati aggiornati, crea invece un biglietto da visita digitale: una pagina contatto ospitata con la tua foto e un pulsante Salva contatto, che puoi modificare anche dopo la stampa.",
     "status": "machine",
     "context": "qrTypes.types.vcard.faqs.3.answer"
   },
@@ -3719,6 +3719,24 @@
     "status": "machine",
     "context": "qrTypes.types.bitcoin.faqs.2.answer"
   },
+  "0e3f9ed231ab": {
+    "source": "Lightning, testnet and address checks",
+    "text": "Lightning, testnet e controlli sull'indirizzo",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.title"
+  },
+  "da2ccbd9fdc4": {
+    "source": "This is an on-chain request: the wallet pays your address on the Bitcoin blockchain. Lightning-only wallets can't pay it, and this generator doesn't add a lightning= invoice to the URI, so for Lightning payments share an invoice or Lightning address from your wallet instead.",
+    "text": "Questa è una richiesta on-chain: il wallet paga il tuo indirizzo sulla blockchain di Bitcoin. I wallet solo Lightning non possono pagarla e questo generatore non aggiunge un'invoice lightning= all'URI, quindi per i pagamenti Lightning condividi invece un'invoice o un indirizzo Lightning dal tuo wallet.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.0"
+  },
+  "e3130a29c7fc": {
+    "source": "The generator checks the address's length (26 to 62 characters), not its checksum, and it can't tell mainnet from testnet: a testnet address (starting with tb1, m, n or 2) makes a code no ordinary wallet can pay. Scan the preview with the wallet that will pay before you print.",
+    "text": "Il generatore controlla la lunghezza dell'indirizzo (da 26 a 62 caratteri), non il checksum, e non distingue la mainnet dalla testnet: un indirizzo testnet (che inizia con tb1, m, n o 2) crea un codice che nessun wallet normale può pagare. Prima di stampare, fai la scansione dell'anteprima con il wallet che effettuerà il pagamento.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.details.paragraphs.1"
+  },
   "80cfbcc768ef": {
     "source": "Share an EIP-681 Ethereum payment request.",
     "text": "Condividi una richiesta di pagamento Ethereum EIP-681.",
@@ -3820,6 +3838,24 @@
     "text": "Sì. Il codice contiene solo il tuo indirizzo pubblico. Non codificare mai una chiave privata o una frase di recupero.",
     "status": "machine",
     "context": "qrTypes.types.ethereum.faqs.2.answer"
+  },
+  "d434b3350c1d": {
+    "source": "Address checks and ENS names",
+    "text": "Controlli sull'indirizzo e nomi ENS",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.title"
+  },
+  "65464924c87e": {
+    "source": "The generator checks that the address is 0x followed by 40 hexadecimal characters. It doesn't check the mixed-case EIP-55 checksum; wallets check that when they scan, so paste the address exactly as your wallet shows it rather than typing it.",
+    "text": "Il generatore controlla che l'indirizzo sia 0x seguito da 40 caratteri esadecimali. Non controlla il checksum EIP-55 con maiuscole e minuscole: ci pensano i wallet durante la scansione, quindi incolla l'indirizzo esattamente come lo mostra il tuo wallet invece di digitarlo.",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.0"
+  },
+  "4a379c763eb7": {
+    "source": "ENS names such as name.eth aren't accepted. EIP-681 allows them, but the payer's wallet would have to look the name up; a 0x address works in every wallet that reads the code.",
+    "text": "I nomi ENS come name.eth non sono accettati. EIP-681 li consente, ma il wallet di chi paga dovrebbe risolvere il nome; un indirizzo 0x funziona in qualsiasi wallet che legge il codice.",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.details.paragraphs.1"
   },
   "9870d299fb0b": {
     "source": "Open your Etsy shop or a listing.",
@@ -6155,6 +6191,24 @@
     "status": "machine",
     "context": "qrTypes.types.litecoin.faqs.1.answer"
   },
+  "45f14f3c95d2": {
+    "source": "Which Litecoin addresses work",
+    "text": "Quali indirizzi Litecoin funzionano",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.title"
+  },
+  "efdeb7ecb4b1": {
+    "source": "Addresses starting with L (legacy), M (P2SH), 3 (older P2SH) and ltc1 (SegWit) are accepted. M and 3 are the same kind of address: Litecoin moved P2SH addresses from 3 to M so they aren't mistaken for Bitcoin addresses, and some older wallets still show 3.",
+    "text": "Sono accettati gli indirizzi che iniziano con L (legacy), M (P2SH), 3 (P2SH meno recenti) e ltc1 (SegWit). M e 3 sono lo stesso tipo di indirizzo: Litecoin ha spostato gli indirizzi P2SH da 3 a M per non confonderli con quelli di Bitcoin, e alcuni wallet meno recenti mostrano ancora il 3.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.0"
+  },
+  "a17e84343f7d": {
+    "source": "MWEB addresses (starting with ltcmweb1), used for Litecoin's private payments, aren't accepted here. Use one of your wallet's regular receiving addresses for a printed code.",
+    "text": "Gli indirizzi MWEB (che iniziano con ltcmweb1), usati per i pagamenti privati di Litecoin, qui non sono accettati. Per un codice stampato usa uno dei normali indirizzi di ricezione del tuo wallet.",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.details.paragraphs.1"
+  },
   "14f89759d816": {
     "source": "Receive Dogecoin with an optional amount.",
     "text": "Ricevi Dogecoin con un importo facoltativo.",
@@ -6215,6 +6269,24 @@
     "status": "machine",
     "context": "qrTypes.types.dogecoin.faqs.0.question"
   },
+  "7c952bf9c5da": {
+    "source": "Which Dogecoin addresses work",
+    "text": "Quali indirizzi Dogecoin funzionano",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.title"
+  },
+  "6bc808ddaa41": {
+    "source": "Standard Dogecoin addresses start with D, and multisig (P2SH) addresses with A or 9; the generator accepts these. Testnet addresses, which start with n or 2, are rejected, so a test address can't end up on a printed sign by mistake.",
+    "text": "Gli indirizzi Dogecoin standard iniziano con D e quelli multisig (P2SH) con A o 9; il generatore li accetta. Gli indirizzi testnet, che iniziano con n o 2, vengono rifiutati, così un indirizzo di prova non finisce per errore su un cartello stampato.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.0"
+  },
+  "0abee7330fc7": {
+    "source": "For a tip jar, leave the amount empty: each person types what they want to give, and one printed code takes any number of payments.",
+    "text": "Per un barattolo delle mance lascia vuoto l'importo: ognuno digita quanto vuole dare e un solo codice stampato accetta qualsiasi numero di pagamenti.",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.details.paragraphs.1"
+  },
   "6dc9a0aa25cf": {
     "source": "Receive Bitcoin Cash with an optional amount.",
     "text": "Ricevi Bitcoin Cash con un importo facoltativo.",
@@ -6274,6 +6346,30 @@
     "text": "No. Bitcoin Cash è una moneta separata, con i suoi wallet. Per bitcoin usa il generatore Bitcoin.",
     "status": "machine",
     "context": "qrTypes.types.bitcoincash.faqs.0.answer"
+  },
+  "c6afea0f4f57": {
+    "source": "CashAddr, legacy and token addresses",
+    "text": "Indirizzi CashAddr, legacy e con token",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.title"
+  },
+  "5d69e08209a0": {
+    "source": "Paste the address with or without its bitcoincash: prefix. The generator removes a pasted prefix and writes it once, as the start of the URI.",
+    "text": "Incolla l'indirizzo con o senza il prefisso bitcoincash:. Il generatore rimuove il prefisso incollato e lo scrive una sola volta, all'inizio dell'URI.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.0"
+  },
+  "7f8cdb8747e0": {
+    "source": "Token-aware addresses (starting with z or r), used for CashTokens, aren't accepted. Use your wallet's regular q address for BCH payments.",
+    "text": "Gli indirizzi con supporto ai token (che iniziano con z o r), usati per i CashTokens, non sono accettati. Per i pagamenti in BCH usa il normale indirizzo q del tuo wallet.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.1"
+  },
+  "e24a42112f28": {
+    "source": "Legacy addresses starting with 1 or 3 look exactly like Bitcoin addresses, which makes it easy to send coins from the wrong network. Prefer CashAddr on anything you print.",
+    "text": "Gli indirizzi legacy che iniziano con 1 o 3 sono identici a quelli di Bitcoin, quindi è facile inviare monete sulla rete sbagliata. Per tutto ciò che stampi preferisci CashAddr.",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.details.paragraphs.2"
   },
   "51f7bdf5aaa1": {
     "source": "Receive SOL with a Solana Pay request.",
@@ -6341,6 +6437,24 @@
     "status": "machine",
     "context": "qrTypes.types.solana.faqs.0.answer"
   },
+  "43fcb61a7db3": {
+    "source": "What this Solana Pay code includes",
+    "text": "Cosa include questo codice Solana Pay",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.title"
+  },
+  "36ed60b12391": {
+    "source": "It's a Solana Pay transfer request: the recipient, an amount in SOL, a label and a message. Solana Pay also defines spl-token for token payments and reference for matching a payment to an order; this generator adds neither, so use your point-of-sale tool when you need them.",
+    "text": "È una richiesta di trasferimento Solana Pay: il destinatario, un importo in SOL, un'etichetta e un messaggio. Solana Pay definisce anche spl-token per i pagamenti con token e reference per associare un pagamento a un ordine; questo generatore non aggiunge nessuno dei due, quindi se ti servono usa il tuo strumento per il punto vendita.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.0"
+  },
+  "9502d073de90": {
+    "source": "Solana Pay transaction requests, where the code holds a link to your server and the server builds the transaction, aren't made here either.",
+    "text": "Nemmeno le richieste di transazione Solana Pay, in cui il codice contiene un link al tuo server e il server costruisce la transazione, si creano qui.",
+    "status": "machine",
+    "context": "qrTypes.types.solana.details.paragraphs.1"
+  },
   "aa106b399d07": {
     "source": "Receive Monero with an optional amount.",
     "text": "Ricevi Monero con un importo facoltativo.",
@@ -6400,6 +6514,540 @@
     "text": "Molti wallet consigliano un nuovo sottoindirizzo per ogni codice che pubblichi, così i pagamenti a codici diversi non risultano collegati.",
     "status": "machine",
     "context": "qrTypes.types.monero.faqs.0.answer"
+  },
+  "e21057f62697": {
+    "source": "Standard address, subaddress or integrated address",
+    "text": "Indirizzo standard, sottoindirizzo o indirizzo integrato",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.title"
+  },
+  "320538ad2b97": {
+    "source": "Standard addresses start with 4 and are 95 characters long, subaddresses start with 8, and integrated addresses start with 4 and are 106 characters because they carry a payment ID. The generator accepts all three.",
+    "text": "Gli indirizzi standard iniziano con 4 e sono lunghi 95 caratteri, i sottoindirizzi iniziano con 8 e gli indirizzi integrati iniziano con 4 e sono lunghi 106 caratteri perché contengono un ID di pagamento. Il generatore li accetta tutti e tre.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.0"
+  },
+  "4e1f370290a4": {
+    "source": "Separate payment IDs are deprecated in Monero, so the generator doesn't add one. Use a subaddress for each customer or code, or the integrated address an exchange or shop gives you.",
+    "text": "Gli ID di pagamento separati sono deprecati in Monero, quindi il generatore non ne aggiunge. Usa un sottoindirizzo per ogni cliente o codice, oppure l'indirizzo integrato che ti dà un exchange o un negozio.",
+    "status": "machine",
+    "context": "qrTypes.types.monero.details.paragraphs.1"
+  },
+  "1d393b0081b6": {
+    "source": "PDF",
+    "text": "PDF",
+    "status": "machine",
+    "context": "templates.pdf.label"
+  },
+  "5646a9f7a51e": {
+    "source": "Free PDF QR Code Generator",
+    "text": "Generatore di QR code PDF gratuito",
+    "status": "machine",
+    "context": "hostedTypes.pdf.title"
+  },
+  "aca040b7ba32": {
+    "source": "Upload a PDF to a hosted page and replace it any time.",
+    "text": "Carica un PDF su una pagina ospitata e sostituiscilo quando vuoi.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.summary"
+  },
+  "124c8c2b6cd3": {
+    "source": "Upload your PDF",
+    "text": "Carica il tuo PDF",
+    "status": "machine",
+    "context": "hostedTypes.pdf.cta"
+  },
+  "9dcba3ce451a": {
+    "source": "Turn a PDF into a QR code: upload it to a free QRdx page that people read or download on their phone. Replace the file later, same code. 10 MB on Free.",
+    "text": "Trasforma un PDF in un QR code: caricalo su una pagina QRdx gratuita che le persone leggono o scaricano dal telefono. Sostituisci il file in seguito, con lo stesso codice. 10 MB con il piano Free.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.metaDescription"
+  },
+  "68e7e7ec5658": {
+    "source": "A PDF QR code opens your document on the phone that scans it: a menu, a brochure, a manual or a price list. You upload the PDF to a page QRdx hosts for you, and the code points to that page through a short link.",
+    "text": "Un QR code PDF apre il tuo documento sul telefono che lo inquadra: un menu, una brochure, un manuale o un listino prezzi. Carichi il PDF su una pagina che QRdx ospita per te, e il codice rimanda a quella pagina tramite un link breve.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.0"
+  },
+  "9302dac9d8cf": {
+    "source": "Because the code holds the link, not the file, you can replace the PDF after printing, for next season's menu or a corrected manual, and every printed code opens the new version. It needs a free QRdx account.",
+    "text": "Poiché il codice contiene il link e non il file, puoi sostituire il PDF dopo la stampa, per il menu della prossima stagione o per un manuale corretto, e ogni codice stampato apre la nuova versione. Serve un account QRdx gratuito.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.intro.1"
+  },
+  "c1c38d9f6192": {
+    "source": "Sign in or create a free account, then start a PDF page: the button above opens it with the PDF type picked.",
+    "text": "Accedi o crea un account gratuito, poi avvia una pagina PDF: il pulsante qui sopra la apre con il tipo PDF già selezionato.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.0"
+  },
+  "8ee1eee065fb": {
+    "source": "Upload your PDF, or paste a link to one that's already online, and choose whether people can download it.",
+    "text": "Carica il tuo PDF, oppure incolla il link a uno già online, e scegli se le persone possono scaricarlo.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.1"
+  },
+  "bcca1e09802d": {
+    "source": "Add a title and any buttons you want, such as a link to your website, then publish.",
+    "text": "Aggiungi un titolo e i pulsanti che vuoi, per esempio un link al tuo sito web, poi pubblica.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.2"
+  },
+  "68671f93a178": {
+    "source": "Download the page's QR code, print it and scan it once to check.",
+    "text": "Scarica il QR code della pagina, stampalo ed effettua una scansione per controllare.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.steps.3"
+  },
+  "d26cfd2a55d4": {
+    "source": "Reads in the browser",
+    "text": "Si legge nel browser",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.title"
+  },
+  "0fa7186b2959": {
+    "source": "On tablets and computers the PDF shows on the page; on phones, Open PDF shows it full screen. Nobody installs an app.",
+    "text": "Su tablet e computer il PDF compare nella pagina; sul telefono, Open PDF lo mostra a schermo intero. Nessuno deve installare un'app.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.0.description"
+  },
+  "0a07381242b6": {
+    "source": "Download and more files",
+    "text": "Download e altri file",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.title"
+  },
+  "52cdbbfe01d6": {
+    "source": "A Download button saves a copy, and a Downloads block lists more files with their own labels, such as the menu in a second language.",
+    "text": "Un pulsante Download salva una copia, e un blocco Downloads elenca altri file con etichette proprie, come il menu in una seconda lingua.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.1.description"
+  },
+  "f6d11e1fc833": {
+    "source": "Your page around it",
+    "text": "La tua pagina intorno al PDF",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.title"
+  },
+  "168565d4c819": {
+    "source": "A title, your colors and logo, and buttons to your website or booking page, from the same blocks as every QRdx page.",
+    "text": "Un titolo, i tuoi colori e il tuo logo, e pulsanti verso il tuo sito web o la pagina di prenotazione, con gli stessi blocchi di ogni pagina QRdx.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.2.description"
+  },
+  "e71d2dbd4008": {
+    "source": "Fast and private",
+    "text": "Veloce e privata",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.title"
+  },
+  "6be93be79318": {
+    "source": "Server-rendered for phones, with no QRdx analytics or chat scripts, and hidden from search engines unless you turn that on.",
+    "text": "Generata lato server per i telefoni, senza analytics o script di chat di QRdx, e nascosta ai motori di ricerca a meno che tu non lo attivi.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.features.3.description"
+  },
+  "0cd53dc2571c": {
+    "source": "Replace the file behind the same link: in Dashboard → Files, choose Replace file next to the PDF and upload the new one. Pages and codes that use it show the new version within a minute. A PDF can only be replaced by a PDF.",
+    "text": "Sostituisci il file dietro lo stesso link: in Dashboard → Files, scegli Replace file accanto al PDF e carica quello nuovo. Le pagine e i codici che lo usano mostrano la nuova versione entro un minuto. Un PDF può essere sostituito solo da un PDF.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.0"
+  },
+  "cd4e0788ed1c": {
+    "source": "Change the page itself (its title, buttons and colors) and publish; the printed code stays the same. Every scan is counted without cookies, so you can see when the code is used.",
+    "text": "Modifica la pagina stessa (titolo, pulsanti e colori) e pubblica; il codice stampato resta lo stesso. Ogni scansione viene conteggiata senza cookie, così puoi vedere quando il codice viene usato.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.editing.1"
+  },
+  "0455df8d3256": {
+    "source": "A PDF page, or a code that links to a PDF?",
+    "text": "Una pagina PDF o un codice che rimanda a un PDF?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.title"
+  },
+  "1739b16060cf": {
+    "source": "Static code to a PDF link",
+    "text": "QR code statico verso un link PDF",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticLabel"
+  },
+  "d34aa4eb51bf": {
+    "source": "No account: put the link of a PDF that's already online, in Google Drive or on your website, into a free static code.",
+    "text": "Nessun account: inserisci il link di un PDF già online, su Google Drive o sul tuo sito web, in un QR code statico gratuito.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.0"
+  },
+  "19bcc450ed9b": {
+    "source": "The link is written into the code, so printed codes stop working if the file is moved or its sharing is turned off.",
+    "text": "Il link è scritto nel codice, quindi i codici stampati smettono di funzionare se il file viene spostato o se ne viene disattivata la condivisione.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.1"
+  },
+  "15211d2c9803": {
+    "source": "No scan counts, and nothing around the PDF.",
+    "text": "Nessun conteggio delle scansioni e nulla intorno al PDF.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.staticPoints.2"
+  },
+  "0a9ee38a3b41": {
+    "source": "Hosted PDF page",
+    "text": "Pagina PDF ospitata",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedLabel"
+  },
+  "ffc08a5fa958": {
+    "source": "A free QRdx account, and QRdx stores the file.",
+    "text": "Un account QRdx gratuito, e QRdx conserva il file.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.0"
+  },
+  "28ddde3d608a": {
+    "source": "Replace the PDF or edit the page any time; printed codes keep working.",
+    "text": "Sostituisci il PDF o modifica la pagina quando vuoi; i codici stampati continuano a funzionare.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.1"
+  },
+  "2d7dc4880d53": {
+    "source": "Scans counted without cookies, with your title, colors and buttons around the document.",
+    "text": "Scansioni conteggiate senza cookie, con il tuo titolo, i tuoi colori e i tuoi pulsanti intorno al documento.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.compare.hostedPoints.2"
+  },
+  "de93e29b3216": {
+    "source": "Is the PDF QR code free?",
+    "text": "Il QR code per PDF è gratuito?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.question"
+  },
+  "d56cd3681383": {
+    "source": "Yes, with a free QRdx account. The Free plan includes 3 hosted pages, and each uses one of its 10 dynamic codes. Free pages show a small \"Made with QRdx\" footer; Pro removes it and the page limit.",
+    "text": "Sì, con un account QRdx gratuito. Il piano Gratuito include 3 pagine ospitate e ognuna usa uno dei suoi 10 codici dinamici. Le pagine Gratuito mostrano un piccolo footer \"Made with QRdx\"; Pro lo rimuove insieme al limite di pagine.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.0.answer"
+  },
+  "3e34fc33860d": {
+    "source": "How big can the PDF be?",
+    "text": "Quanto può pesare il PDF?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.question"
+  },
+  "e84b5c8be653": {
+    "source": "Up to 10 MB per file on Free, with 50 MB of storage per workspace. Pro takes files up to 100 MB and Business up to 250 MB. Big PDFs open slowly on phones, so compress scans and large images before uploading.",
+    "text": "Fino a 10 MB per file con Gratuito, con 50 MB di spazio per workspace. Pro accetta file fino a 100 MB e Business fino a 250 MB. I PDF grandi si aprono lentamente sugli smartphone, quindi comprimi le scansioni e le immagini grandi prima di caricarli.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.1.answer"
+  },
+  "571a5f50e535": {
+    "source": "Can I change the PDF after printing?",
+    "text": "Posso cambiare il PDF dopo la stampa?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.question"
+  },
+  "726178f806ff": {
+    "source": "Yes. Replace the file in Dashboard → Files and every code and page that uses it shows the new PDF within a minute. The printed code never changes.",
+    "text": "Sì. Sostituisci il file in Dashboard → Files e ogni codice e pagina che lo usa mostrerà il nuovo PDF entro un minuto. Il codice stampato non cambia mai.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.2.answer"
+  },
+  "53045bd4aa84": {
+    "source": "What happens to my code if I stop paying?",
+    "text": "Cosa succede al mio codice se smetto di pagare?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.question"
+  },
+  "1678c79cd195": {
+    "source": "It keeps working. Under the Never-Hostage Guarantee, codes and pages you already have keep working after a downgrade, a failed payment or a cancellation, and scans are never paused. Plan limits only stop you from creating new ones.",
+    "text": "Continua a funzionare. Con la Garanzia Never-Hostage, i codici e le pagine che hai già continuano a funzionare dopo un downgrade, un pagamento non riuscito o una disdetta, e le scansioni non vengono mai sospese. I limiti del piano ti impediscono solo di crearne di nuovi.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.3.answer"
+  },
+  "57d4c3ee4908": {
+    "source": "Do people need an app to open it?",
+    "text": "Serve un'app per aprirlo?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.question"
+  },
+  "6f23c8630c62": {
+    "source": "No. The phone's camera opens the page in the browser, where the PDF can be read, opened full screen or downloaded.",
+    "text": "No. La fotocamera dello smartphone apre la pagina nel browser, dove il PDF si può leggere, aprire a schermo intero o scaricare.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.4.answer"
+  },
+  "eaa9553b681a": {
+    "source": "Can search engines find my PDF?",
+    "text": "I motori di ricerca possono trovare il mio PDF?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.question"
+  },
+  "28e17f0f94fd": {
+    "source": "Not unless you want them to. Hosted pages are hidden from search engines until you turn on Show in search engines in the page's settings.",
+    "text": "No, a meno che tu non lo voglia. Le pagine ospitate sono nascoste ai motori di ricerca finché non attivi Show in search engines nelle impostazioni della pagina.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.5.answer"
+  },
+  "6b515aae04de": {
+    "source": "Can I make a PDF QR code without an account?",
+    "text": "Posso creare un QR code per PDF senza account?",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.question"
+  },
+  "00ecbc0a89cd": {
+    "source": "Only for a PDF that's already online: paste its link into the URL or Google Drive generator for a free static code. QRdx only stores the file for you with an account.",
+    "text": "Solo per un PDF già online: incolla il suo link nel generatore URL o Google Drive per ottenere un QR code statico gratuito. QRdx archivia il file per te solo con un account.",
+    "status": "machine",
+    "context": "hostedTypes.pdf.faqs.6.answer"
+  },
+  "f6865e9400c3": {
+    "source": "Digital Business Card",
+    "text": "Biglietto da visita digitale",
+    "status": "machine",
+    "context": "hostedTypes.business-card.name"
+  },
+  "12ee83e8add8": {
+    "source": "Digital Business Card QR Code Generator",
+    "text": "Generatore di QR code per biglietto da visita digitale",
+    "status": "machine",
+    "context": "hostedTypes.business-card.title"
+  },
+  "1f0f3c1a23f2": {
+    "source": "A contact page with your photo, buttons and Save contact.",
+    "text": "Una pagina di contatto con la tua foto, i pulsanti e Save contact.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.summary"
+  },
+  "82b6ad72913a": {
+    "source": "Create your card",
+    "text": "Crea il tuo biglietto",
+    "status": "machine",
+    "context": "hostedTypes.business-card.cta"
+  },
+  "2a42d8281c80": {
+    "source": "Make a digital business card with a QR code: your photo, contact buttons and Save contact. Edit it without reprinting. Free account, 3 pages included.",
+    "text": "Crea un biglietto da visita digitale con un QR code: la tua foto, i pulsanti di contatto e Save contact. Modificalo senza ristampare. Account gratuito, 3 pagine incluse.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.metaDescription"
+  },
+  "eb688e530a71": {
+    "source": "A digital business card QR code opens a contact page that QRdx hosts for you: your photo, name and job title, buttons to call, email, message or get directions, your links, and a Save contact button that adds you to the phone's contacts.",
+    "text": "Il QR code di un biglietto da visita digitale apre una pagina di contatto che QRdx ospita per te: la tua foto, il nome e il ruolo, i pulsanti per chiamare, scrivere un'email, mandare un messaggio o avere le indicazioni stradali, i tuoi link e un pulsante Save contact che ti aggiunge ai contatti del telefono.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.0"
+  },
+  "790252dae1e8": {
+    "source": "The code holds a short link, so you can change your number, title or photo after the cards are printed and every card shows the new details. It needs a free QRdx account. For a code that holds the contact itself, with no account, use the vCard QR code generator.",
+    "text": "Il codice contiene un link breve, quindi puoi cambiare numero, ruolo o foto dopo aver stampato i biglietti e ogni biglietto mostrerà i nuovi dati. Serve un account QRdx gratuito. Per un codice che contiene direttamente il contatto, senza account, usa il generatore di QR code vCard.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.intro.1"
+  },
+  "5fe139b11347": {
+    "source": "Sign in or create a free account, then start a vCard Plus page: the button above opens it with that type picked.",
+    "text": "Accedi o crea un account gratuito, poi avvia una pagina vCard Plus: il pulsante qui sopra la apre con quel tipo già selezionato.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.0"
+  },
+  "464922fa84f5": {
+    "source": "Pick a template (Classic, Midnight, Minimal or Real estate agent) and fill in your details, photo and links.",
+    "text": "Scegli un template (Classic, Midnight, Minimal o Real estate agent) e inserisci i tuoi dati, la foto e i link.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.1"
+  },
+  "e05e48c28335": {
+    "source": "Publish the page, then download its QR code for your business card, email signature or badge.",
+    "text": "Pubblica la pagina, poi scarica il suo QR code per il tuo biglietto da visita, la firma email o il badge.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.2"
+  },
+  "595b4e2fc678": {
+    "source": "Scan it once and tap Save contact to check what lands in your contacts.",
+    "text": "Fai una scansione e tocca Save contact per controllare cosa arriva nei tuoi contatti.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.steps.3"
+  },
+  "d24f121f4a4e": {
+    "source": "Save contact",
+    "text": "Save contact",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.0.title"
+  },
+  "608136076759": {
+    "source": "Downloads a vCard 3.0 file that phones open in their contacts app, with your name, company, job title, phones, emails, website, address, bio, social profiles and photo.",
+    "text": "Scarica un file vCard 3.0 che i telefoni aprono nella app dei contatti, con nome, azienda, ruolo, telefoni, email, sito web, indirizzo, bio, profili social e foto.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.0.description"
+  },
+  "1810407f5ab7": {
+    "source": "Quick actions",
+    "text": "Azioni rapide",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.1.title"
+  },
+  "85abf5242b39": {
+    "source": "Call, WhatsApp, email and directions buttons, so people can reach you before they save anything.",
+    "text": "Pulsanti per chiamare, scrivere su WhatsApp, inviare un'email e ottenere le indicazioni stradali, così le persone possono contattarti prima ancora di salvare qualcosa.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.1.description"
+  },
+  "29887a5ff984": {
+    "source": "Share",
+    "text": "Condividi",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.2.title"
+  },
+  "d221039f4b04": {
+    "source": "Opens the phone's share sheet, so the person you met can pass your card on.",
+    "text": "Apre il menu di condivisione del telefono, così la persona che hai conosciuto può passare il tuo biglietto ad altri.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.2.description"
+  },
+  "1c127a69878c": {
+    "source": "Scan counts",
+    "text": "Conteggio scansioni",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.3.title"
+  },
+  "194261d84c60": {
+    "source": "The code counts scans without cookies, so you can see how many people opened your card and when.",
+    "text": "Il codice conta le scansioni senza cookie, così puoi vedere quante persone hanno aperto il tuo biglietto e quando.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.features.3.description"
+  },
+  "249966c88166": {
+    "source": "Change anything on the page and publish: a new number, a new job title, a new photo. Every printed card opens the new version, and each publish is kept as a version.",
+    "text": "Cambia qualsiasi cosa nella pagina e pubblica: un nuovo numero, un nuovo ruolo, una nuova foto. Ogni biglietto stampato apre la nuova versione e ogni pubblicazione viene conservata come versione.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.editing.0"
+  },
+  "4dfefacaed50": {
+    "source": "The same page can go on an NFC card: its code has Put this card on NFC, which writes the page's link to a blank NFC card from Chrome on Android, and taps are counted apart from scans.",
+    "text": "La stessa pagina può andare su un biglietto NFC: il suo codice ha Put this card on NFC, che scrive il link della pagina su un biglietto NFC vuoto da Chrome su Android, e i tocchi vengono contati a parte rispetto alle scansioni.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.editing.1"
+  },
+  "423579ba01f0": {
+    "source": "vCard QR code or digital business card?",
+    "text": "QR code vCard o biglietto da visita digitale?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.title"
+  },
+  "e0dc2994a6c6": {
+    "source": "vCard QR code (static)",
+    "text": "QR code vCard (statico)",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticLabel"
+  },
+  "42fb4ce76f4a": {
+    "source": "No account, free for good: the contact details are written into the code itself.",
+    "text": "Nessun account, gratuito per sempre: i dati di contatto sono scritti nel codice stesso.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.0"
+  },
+  "78bcbb374194": {
+    "source": "Works offline: the phone offers to save the contact without opening a page.",
+    "text": "Funziona offline: il telefono propone di salvare il contatto senza aprire una pagina.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.1"
+  },
+  "3a78bfa8904e": {
+    "source": "Can't change after printing, has no photo, and every extra field makes the code denser.",
+    "text": "Non si può cambiare dopo la stampa, non ha foto e ogni campo in più rende il codice più denso.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.staticPoints.2"
+  },
+  "0ccfb0cf39a1": {
+    "source": "Digital business card (hosted page)",
+    "text": "Biglietto da visita digitale (pagina ospitata)",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedLabel"
+  },
+  "d3cca0966e18": {
+    "source": "A free QRdx account; the code opens a page QRdx hosts.",
+    "text": "Serve un account QRdx gratuito; il codice apre una pagina ospitata da QRdx.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.0"
+  },
+  "fac813a8a0c4": {
+    "source": "Edit your details, photo and links any time; printed cards keep working.",
+    "text": "Modifica dati, foto e link quando vuoi; i biglietti stampati continuano a funzionare.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.1"
+  },
+  "3ae0e38d142c": {
+    "source": "Photo, buttons, links and Save contact, plus scan counts.",
+    "text": "Foto, pulsanti, link e Save contact, più il conteggio delle scansioni.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.compare.hostedPoints.2"
+  },
+  "cc88ae6eae83": {
+    "source": "Is the digital business card free?",
+    "text": "Il biglietto da visita digitale è gratuito?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.0.question"
+  },
+  "4593d31a7707": {
+    "source": "What does Save contact add to the phone?",
+    "text": "Cosa aggiunge Save contact al telefono?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.1.question"
+  },
+  "e92f1e3af269": {
+    "source": "A vCard 3.0 contact with your name, company, job title, phones, emails, website, address, bio, the page's social profiles and your photo. Photos uploaded to QRdx are embedded in the file; photos linked from other sites are included as a link.",
+    "text": "Un contatto vCard 3.0 con nome, azienda, ruolo, telefoni, email, sito web, indirizzo, bio, profili social della pagina e la tua foto. Le foto caricate su QRdx sono incorporate nel file; quelle collegate da altri siti sono incluse come link.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.1.answer"
+  },
+  "433aa551a2c4": {
+    "source": "Can I change my details after printing?",
+    "text": "Posso cambiare i miei dati dopo la stampa?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.2.question"
+  },
+  "d00e42301a68": {
+    "source": "Yes. Edit the page and publish; the printed code keeps opening it, now with your new details.",
+    "text": "Sì. Modifica la pagina e pubblica: il codice stampato continua ad aprirla, ora con i tuoi nuovi dati.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.2.answer"
+  },
+  "d6db733919c0": {
+    "source": "What happens to my card if I stop paying?",
+    "text": "Cosa succede al mio biglietto se smetto di pagare?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.3.question"
+  },
+  "0531738b4156": {
+    "source": "Should I use a vCard QR code instead?",
+    "text": "Dovrei usare invece un QR code vCard?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.4.question"
+  },
+  "118510355202": {
+    "source": "If your details won't change and you don't need a photo or links, yes: a static vCard code needs no account and works offline. If you want to edit the card later or see scans, use the hosted card.",
+    "text": "Se i tuoi dati non cambieranno e non ti servono foto o link, sì: un codice vCard statico non richiede un account e funziona offline. Se vuoi modificare il biglietto più avanti o vedere le scansioni, usa il biglietto ospitato.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.4.answer"
+  },
+  "1593c67c99af": {
+    "source": "Do people need an app?",
+    "text": "Serve un'app per aprirlo?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.5.question"
+  },
+  "ab7a6ee88b76": {
+    "source": "No. The phone's camera opens the card in the browser, and Save contact hands the file to the built-in contacts app.",
+    "text": "No. La fotocamera del telefono apre il biglietto nel browser e Save contact passa il file all'app Contatti integrata.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.5.answer"
+  },
+  "0619dd1a299c": {
+    "source": "Can I put it on an NFC business card?",
+    "text": "Posso usarlo su un biglietto da visita NFC?",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.6.question"
+  },
+  "01ebed374f9c": {
+    "source": "Yes. QRdx doesn't sell cards: buy blank NFC cards and write the page's link to them from the code's NFC page in Chrome on Android. Editing the page updates every card you've handed out.",
+    "text": "Sì. QRdx non vende biglietti: compra biglietti NFC vuoti e scrivi su di essi il link della pagina dalla pagina NFC del codice, in Chrome su Android. Modificare la pagina aggiorna tutti i biglietti che hai già consegnato.",
+    "status": "machine",
+    "context": "hostedTypes.business-card.faqs.6.answer"
   },
   "d96545f726d0": {
     "source": "Food and drink",
@@ -16007,21 +16655,21 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.noun"
   },
-  "0d6bfccc8412": {
-    "source": "QR code menus",
-    "text": "Menu con QR code",
+  "9f74ff6bd071": {
+    "source": "Menu QR code generator",
+    "text": "Generatore di QR code per menu",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.title"
   },
-  "6d942ed73962": {
-    "source": "QR Code Menus: Digital Menus You Can Edit Anytime",
-    "text": "Menu con QR code: menu digitali modificabili in qualsiasi momento",
+  "28cae6ae47d7": {
+    "source": "Menu QR Code Generator: Digital Menus You Can Edit",
+    "text": "Generatore di QR code per menu: menu digitali che puoi modificare",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.seoTitle"
   },
-  "fae1e9f4d921": {
-    "source": "Create a QR code menu you can update without reprinting: hosted menu pages with prices, photos, allergens and sold-out items, plus table sizes and tips.",
-    "text": "Crea un menu con QR code che puoi aggiornare senza ristampare: pagine menu ospitate con prezzi, foto, allergeni e piatti esauriti, più dimensioni per i tavoli e consigli.",
+  "0e1c07b7ee6a": {
+    "source": "Make a menu QR code you can update without reprinting: a hosted menu page with prices, photos, allergens and sold-out items, plus table sizes and tips.",
+    "text": "Crea un QR code per il menu che puoi aggiornare senza ristampare: una pagina ospitata con prezzi, foto, allergeni e piatti esauriti, più dimensioni per i tavoli e consigli.",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.metaDescription"
   },
@@ -16031,9 +16679,9 @@
     "status": "machine",
     "context": "placements.0.in-store.items.menus.summary"
   },
-  "803094d083d9": {
-    "source": "A QR code menu is only as good as what it opens. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm. A hosted menu page behind a dynamic code can do both: edit an item from your phone and every table sees it on the next scan.",
-    "text": "Un menu con QR code vale quanto ciò che apre. Un QR code statico che rimanda a un PDF va bene il primo giorno, poi smette di funzionare quando il file viene rinominato e non può mostrare che il salmone è finito alle 8 di sera. Una pagina del menu ospitata dietro un QR code dinamico può fare entrambe le cose: modifichi un piatto dal telefono e ogni tavolo lo vede alla scansione successiva.",
+  "5ddc4cc908fb": {
+    "source": "A QR code menu is only as good as what it opens. Build a menu page on QRdx, with sections, prices, photos, allergen tags and sold-out flags, and print its code: edit an item from your phone and every table sees it on the next scan. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm.",
+    "text": "Un menu con QR code vale quanto ciò che apre. Crea una pagina menu su QRdx, con sezioni, prezzi, foto, tag degli allergeni e indicatori di esaurito, e stampa il suo codice: modifichi un piatto dal telefono e ogni tavolo lo vede alla scansione successiva. Un QR code statico che porta a un PDF sembra andare bene il primo giorno, poi smette di funzionare quando il file viene rinominato e non può mostrare che il salmone è finito alle 8 di sera.",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.intro.0"
   },
@@ -16198,6 +16846,66 @@
     "text": "No. La fotocamera del telefono apre il menu nel browser. Gli ospiti non installano nulla e non hanno bisogno di un account.",
     "status": "machine",
     "context": "placements.0.in-store.items.menus.faqs.2.answer"
+  },
+  "a2c83df426e4": {
+    "source": "Is the menu QR code generator free?",
+    "text": "Il generatore di QR code per menu è gratuito?",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.faqs.3.question"
+  },
+  "7ac8b96e14c2": {
+    "source": "Yes, with a free QRdx account: a menu page is one of the hosted pages the Free plan includes. Pro removes the page limit and the small \"Made with QRdx\" footer. If you cancel a paid plan, the menu and its code keep working.",
+    "text": "Sì, con un account QRdx gratuito: la pagina menu è una delle pagine ospitate incluse nel piano Gratuito. Pro elimina il limite di pagine e il piccolo piè di pagina \"Made with QRdx\". Se annulli un piano a pagamento, il menu e il suo codice continuano a funzionare.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.faqs.3.answer"
+  },
+  "04687442a9e4": {
+    "source": "Build a menu page",
+    "text": "Crea una pagina menu",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.startPage.label"
+  },
+  "6d549515191d": {
+    "source": "QR codes for restaurant menus: a practical guide",
+    "text": "QR code per i menu dei ristoranti: una guida pratica",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.0.title"
+  },
+  "c4566c93d0ec": {
+    "source": "Where to put the code, how big to print it, Wi-Fi, accessibility and allergens.",
+    "text": "Dove mettere il codice, quanto grande stamparlo, Wi-Fi, accessibilità e allergeni.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.0.description"
+  },
+  "457447ccdac3": {
+    "source": "Print size calculator",
+    "text": "Calcolatore dimensioni di stampa",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.1.title"
+  },
+  "72d879c56dcf": {
+    "source": "The smallest code that scans from across the table or the counter.",
+    "text": "Il codice più piccolo che si scansiona da un lato all'altro del tavolo o del bancone.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.1.description"
+  },
+  "810bb7432f7a": {
+    "source": "PDF QR code generator",
+    "text": "Generatore di QR code per PDF",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.2.title"
+  },
+  "fc6b9d7d104a": {
+    "source": "Already have a designed PDF menu? Host it and replace the file each season.",
+    "text": "Hai già un menu in PDF già impaginato? Ospitalo e sostituisci il file a ogni stagione.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.2.description"
+  },
+  "d7761143e88e": {
+    "source": "Menus, guest Wi-Fi, review requests and table ordering in one place.",
+    "text": "Menu, Wi-Fi per gli ospiti, richieste di recensioni e ordinazioni al tavolo in un unico posto.",
+    "status": "machine",
+    "context": "placements.0.in-store.items.menus.guides.3.description"
   },
   "f568f32aa7bb": {
     "source": "Table tents",
@@ -22217,6 +22925,1218 @@
     "status": "machine",
     "context": "barcodes.faqs.9.answer"
   },
+  "e553f8d3db33": {
+    "source": "Free EAN-13 Barcode Generator",
+    "text": "Generatore di codici a barre EAN-13 gratuito",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.title"
+  },
+  "185de8851663": {
+    "source": "Make an EAN-13 barcode for retail products. Type 12 digits and the check digit is added, or 13 to have it checked. SVG, PDF, EPS and PNG. Free, no signup.",
+    "text": "Crea un codice a barre EAN-13 per i prodotti di vendita al dettaglio. Scrivi 12 cifre e la cifra di controllo viene aggiunta, oppure 13 per farla verificare. SVG, PDF, EPS e PNG. Gratuito, senza registrazione.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.metaDescription"
+  },
+  "33b789598cde": {
+    "source": "EAN-13 is the barcode on retail products almost everywhere outside the US and Canada. Type the 12 digits of your number and the generator adds the check digit, or type all 13 and it checks yours, then download the barcode as a vector for print or a PNG for screens.",
+    "text": "EAN-13 è il codice a barre presente sui prodotti di vendita al dettaglio quasi ovunque fuori da USA e Canada. Scrivi le 12 cifre del tuo numero e il generatore aggiunge la cifra di controllo, oppure scrivile tutte e 13 e verifica la tua. Poi scarica il codice a barre come vettoriale per la stampa o come PNG per gli schermi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.intro"
+  },
+  "69b749864ad4": {
+    "source": "Products sold in shops and online marketplaces. The 13 digits are a GTIN-13: a GS1 company prefix, an item number and a check digit. The first digits show which GS1 organization issued the prefix, not where the product was made.",
+    "text": "Prodotti venduti nei negozi e nei marketplace online. Le 13 cifre sono un GTIN-13: un prefisso aziendale GS1, un numero articolo e una cifra di controllo. Le prime cifre indicano quale organizzazione GS1 ha rilasciato il prefisso, non dove è stato prodotto il prodotto.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.usedFor.0"
+  },
+  "74faacaf6528": {
+    "source": "Books and magazines use it too: an ISBN starting with 978 or 979 is printed as an EAN-13, and 977 marks an ISSN for periodicals. Numbers starting with 2 are kept for in-store use, such as weighed items priced at the counter.",
+    "text": "Lo usano anche libri e riviste: un ISBN che inizia con 978 o 979 viene stampato come EAN-13, mentre 977 indica un ISSN per i periodici. I numeri che iniziano con 2 sono riservati all'uso interno al negozio, ad esempio per gli articoli venduti a peso e prezzati al banco.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.usedFor.1"
+  },
+  "b99b98cddd37": {
+    "source": "Do I need GS1 numbers for EAN-13?",
+    "text": "Mi servono i numeri GS1 per EAN-13?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.title"
+  },
+  "e1bbafd4f2b0": {
+    "source": "For anything sold through a retailer, yes. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "Per qualsiasi prodotto venduto tramite un rivenditore, sì. Un GTIN si ottiene in licenza, non si compra una volta per tutte: ti iscrivi a GS1 (o all'organizzazione GS1 del tuo paese), ricevi un prefisso aziendale e numeri i tuoi prodotti a partire da quello. I grandi rivenditori e i marketplace controllano i GTIN nel registro di GS1, quindi i numeri rivenduti dal prefisso di qualcun altro possono essere rifiutati.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.paragraphs.0"
+  },
+  "a6ea3696d866": {
+    "source": "This generator draws any valid 13-digit number, but it doesn't issue or register numbers. For your own stock, shelves or assets, use Code 128 instead: it needs no registration.",
+    "text": "Questo generatore disegna qualsiasi numero valido di 13 cifre, ma non rilascia né registra numeri. Per le tue scorte, i tuoi scaffali o i tuoi beni, usa invece Code 128: non richiede alcuna registrazione.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.numbers.paragraphs.1"
+  },
+  "26bacbda8d57": {
+    "source": "Spaces and dashes are ignored, and only digits are allowed. Twelve digits get the check digit added; thirteen have the last one checked, and a wrong check digit shows an error instead of a barcode.",
+    "text": "Spazi e trattini vengono ignorati e sono ammesse solo cifre. A dodici cifre viene aggiunta la cifra di controllo; con tredici viene verificata l'ultima, e una cifra di controllo errata mostra un errore invece del codice a barre.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.rules.0"
+  },
+  "368c54283308": {
+    "source": "The check digit weighs the digits 3, 1, 3, 1… starting from the right of the 12-digit body, adds them up and picks the digit that brings the sum to the next multiple of 10.",
+    "text": "La cifra di controllo assegna un peso 3, 1, 3, 1… alle cifre, partendo da destra nel corpo di 12 cifre, le somma e sceglie la cifra che porta la somma al multiplo di 10 successivo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.rules.1"
+  },
+  "cca5925a2331": {
+    "source": "At 100% an EAN-13 is 37.29 mm wide (quiet zones included) by 25.93 mm high, with a 0.33 mm module. GS1 allows 80% to 200% for retail.",
+    "text": "Al 100% un EAN-13 è largo 37.29 mm (zone di silenzio incluse) e alto 25.93 mm, con un modulo di 0.33 mm. GS1 ammette dall'80% al 200% per la vendita al dettaglio.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.0"
+  },
+  "dedb3231c770": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%. Scale them within the 80% to 200% range and keep the proportions: shortening the bars makes the barcode harder to scan at checkouts.",
+    "text": "I download vettoriali usano un modulo di 0.353 mm, circa il 107%. Ridimensionali nell'intervallo dall'80% al 200% e mantieni le proporzioni: accorciare le barre rende il codice a barre più difficile da leggere alle casse.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.1"
+  },
+  "88896bfdc73b": {
+    "source": "Leave 11 modules of blank space on the left and 7 on the right. The generator starts with 11 on both sides.",
+    "text": "Lascia 11 moduli di spazio bianco a sinistra e 7 a destra. Il generatore parte con 11 su entrambi i lati.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.sizing.2"
+  },
+  "5d176e6bd05b": {
+    "source": "Can I make up an EAN-13 number?",
+    "text": "Posso inventare un numero EAN-13?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.0.question"
+  },
+  "8f7b0093a5f3": {
+    "source": "It will scan, but a store's system won't recognize it and may already use that number for another product. Retail EAN-13 numbers come from a GS1 company prefix. Numbers starting with 2 are the exception: they're meant for use inside one store or company.",
+    "text": "Verrà letto, ma il sistema di un negozio non lo riconoscerà e potrebbe già usare quel numero per un altro prodotto. I numeri EAN-13 per la vendita al dettaglio derivano da un prefisso aziendale GS1. Fanno eccezione i numeri che iniziano con 2: sono pensati per l'uso all'interno di un solo negozio o di una sola azienda.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.0.answer"
+  },
+  "20c86e42f5bd": {
+    "source": "What's the difference between EAN-13 and UPC-A?",
+    "text": "Qual è la differenza tra EAN-13 e UPC-A?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.1.question"
+  },
+  "b9808d9ee114": {
+    "source": "A UPC-A is a 12-digit number that equals an EAN-13 starting with 0, and checkout scanners read both. US and Canadian retailers often ask for UPC-A; elsewhere EAN-13 is the norm.",
+    "text": "Un UPC-A è un numero di 12 cifre equivalente a un EAN-13 che inizia con 0, e gli scanner delle casse leggono entrambi. I rivenditori di USA e Canada chiedono spesso UPC-A; altrove la norma è EAN-13.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.1.answer"
+  },
+  "388645787977": {
+    "source": "Can I make an ISBN barcode?",
+    "text": "Posso creare un codice a barre ISBN?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.2.question"
+  },
+  "e2522c6c9cf0": {
+    "source": "Yes: an ISBN-13 is an EAN-13. Enter the 13 digits without dashes. The 5-digit price add-on some book trades print beside it isn't drawn here.",
+    "text": "Sì: un ISBN-13 è un EAN-13. Inserisci le 13 cifre senza trattini. Il supplemento prezzo di 5 cifre che alcuni editori stampano accanto non viene disegnato qui.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.2.answer"
+  },
+  "118b647519e1": {
+    "source": "Why does my 13-digit number show an error?",
+    "text": "Perché il mio numero di 13 cifre mostra un errore?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.3.question"
+  },
+  "c3754e77000e": {
+    "source": "Its last digit isn't the check digit the other 12 produce, which usually means a typo. The error says what the check digit should be. Enter only the first 12 digits to have it worked out.",
+    "text": "La sua ultima cifra non è la cifra di controllo prodotta dalle altre 12, il che di solito indica un errore di battitura. L'errore indica quale dovrebbe essere la cifra di controllo. Inserisci solo le prime 12 cifre per farla calcolare.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-13.faqs.3.answer"
+  },
+  "21a397c19c56": {
+    "source": "Free UPC-A Barcode Generator",
+    "text": "Generatore gratuito di codici a barre UPC-A",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.title"
+  },
+  "ae5abf4dcf1f": {
+    "source": "Make a UPC-A barcode for products sold in the US and Canada. Type 11 digits and the check digit is added, or 12 to have it checked. SVG, PDF, EPS and PNG.",
+    "text": "Crea un codice a barre UPC-A per i prodotti venduti negli USA e in Canada. Scrivi 11 cifre e aggiungiamo la cifra di controllo, oppure 12 per farla verificare. SVG, PDF, EPS e PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.metaDescription"
+  },
+  "fbecbf739065": {
+    "source": "UPC-A is the 12-digit retail barcode of the US and Canada. Type the first 11 digits and the generator adds the check digit, or type all 12 to have it checked, then download a vector for your packaging or a PNG for an online listing.",
+    "text": "UPC-A è il codice a barre retail di 12 cifre di USA e Canada. Scrivi le prime 11 cifre e il generatore aggiunge la cifra di controllo, oppure scrivile tutte e 12 per farla verificare, poi scarica un vettoriale per il tuo packaging o un PNG per un annuncio online.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.intro"
+  },
+  "fd8224969dd4": {
+    "source": "Products sold in US and Canadian stores and on marketplaces that ask for a UPC. The number is a GTIN-12: a GS1 company prefix, an item number and a check digit.",
+    "text": "Prodotti venduti nei negozi di USA e Canada e sui marketplace che richiedono un UPC. Il numero è un GTIN-12: un prefisso aziendale GS1, un numero articolo e una cifra di controllo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.usedFor.0"
+  },
+  "b6ca2ff0c836": {
+    "source": "The first digit says what kind of number it is: 2 is kept for weighed items priced in the store, and 3 for medicines that carry a US National Drug Code. Since 2005, checkout systems in the US and Canada read EAN-13 too, but many retailers still ask for UPC-A.",
+    "text": "La prima cifra indica che tipo di numero è: il 2 è riservato agli articoli a peso con prezzo definito in negozio, il 3 ai medicinali che hanno un National Drug Code statunitense. Dal 2005 le casse di USA e Canada leggono anche l'EAN-13, ma molti rivenditori chiedono ancora UPC-A.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.usedFor.1"
+  },
+  "57f54586c885": {
+    "source": "Do I need GS1 numbers for UPC-A?",
+    "text": "Mi servono i numeri GS1 per UPC-A?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.title"
+  },
+  "73dfd53c9783": {
+    "source": "For retail, yes. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected. In the US, that's GS1 US.",
+    "text": "Per la vendita al dettaglio, sì. Un GTIN si ottiene in licenza, non si compra una volta per tutte: ti iscrivi a GS1 (o all'organizzazione GS1 del tuo paese), ricevi un prefisso aziendale e numeri i tuoi prodotti a partire da quello. I grandi rivenditori e i marketplace verificano i GTIN nel registro di GS1, quindi i numeri rivenduti da un prefisso altrui possono essere rifiutati. Negli USA, si tratta di GS1 US.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.paragraphs.0"
+  },
+  "5998b23e332c": {
+    "source": "This generator draws any valid number; it doesn't issue or register them.",
+    "text": "Questo generatore disegna qualsiasi numero valido; non li emette né li registra.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.numbers.paragraphs.1"
+  },
+  "913a860f547e": {
+    "source": "Digits only; spaces and dashes are ignored. Eleven digits get the check digit added, twelve have it checked.",
+    "text": "Solo cifre; spazi e trattini vengono ignorati. Con undici cifre aggiungiamo la cifra di controllo, con dodici la verifichiamo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.rules.0"
+  },
+  "f7ed2e5b7a9e": {
+    "source": "The check digit triples the digits in odd positions (1st, 3rd, 5th… of the 11), adds the rest and picks the digit that brings the total to the next multiple of 10. It's the same rule as EAN-13, so a UPC-A with a 0 in front is a valid EAN-13.",
+    "text": "La cifra di controllo triplica le cifre in posizione dispari (1ª, 3ª, 5ª… delle 11), somma le altre e sceglie la cifra che porta il totale al multiplo di 10 successivo. È la stessa regola dell'EAN-13, quindi un UPC-A con uno 0 davanti è un EAN-13 valido.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.rules.1"
+  },
+  "a387137f90a2": {
+    "source": "At 100% a UPC-A is 37.29 mm wide with its quiet zones and a 0.33 mm module; GS1 allows 80% to 200%.",
+    "text": "Al 100% un UPC-A è largo 37,29 mm con le zone di silenzio e un modulo da 0,33 mm; GS1 consente dall'80% al 200%.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.0"
+  },
+  "afd7ee6d261b": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%. Keep the proportions when you scale, and don't shorten the bars to fit a small pack: use UPC-E if the product qualifies.",
+    "text": "I download vettoriali usano un modulo da 0,353 mm, circa il 107%. Mantieni le proporzioni quando scali e non accorciare le barre per adattarle a una confezione piccola: usa UPC-E se il prodotto è idoneo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.1"
+  },
+  "218648ca162b": {
+    "source": "Keep at least 9 modules clear on each side. The generator starts with 11.",
+    "text": "Lascia libero almeno 9 moduli per lato. Il generatore parte da 11.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.sizing.2"
+  },
+  "f2ed9151ccbe": {
+    "source": "Is a UPC the same as a GTIN?",
+    "text": "UPC è la stessa cosa di GTIN?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.0.question"
+  },
+  "c3f6c27abc9d": {
+    "source": "The number in a UPC-A barcode is a GTIN-12. Written with two leading zeros it's the GTIN-14 that some product feeds ask for.",
+    "text": "Il numero di un codice a barre UPC-A è un GTIN-12. Scritto con due zeri iniziali è il GTIN-14 richiesto da alcuni feed di prodotti.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.0.answer"
+  },
+  "1b029891466b": {
+    "source": "My scanner reads 13 digits from a UPC-A. Is that wrong?",
+    "text": "Il mio lettore legge 13 cifre da un UPC-A. È sbagliato?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.1.question"
+  },
+  "4d4fecc241c9": {
+    "source": "No. Many readers report a UPC-A as the 13-digit EAN with a 0 in front. The scan check on this page accepts both.",
+    "text": "No. Molti lettori riportano un UPC-A come EAN a 13 cifre con uno 0 davanti. Il controllo della scansione in questa pagina accetta entrambi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.1.answer"
+  },
+  "10663e747849": {
+    "source": "Can I turn my UPC-A into a smaller UPC-E?",
+    "text": "Posso trasformare il mio UPC-A in un UPC-E più piccolo?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.2.question"
+  },
+  "e5b2ab58a715": {
+    "source": "Only if the number has zeros in the right places. Open the UPC-E generator and enter the 12-digit UPC-A: it tells you whether yours can be shortened.",
+    "text": "Solo se il numero ha gli zeri al posto giusto. Apri il generatore UPC-E e inserisci l'UPC-A di 12 cifre: ti dice se il tuo può essere accorciato.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-a.faqs.2.answer"
+  },
+  "a14ac0f7f2da": {
+    "source": "Free Code 128 Barcode Generator",
+    "text": "Generatore gratuito di codici a barre Code 128",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.title"
+  },
+  "464d967dc9c2": {
+    "source": "Make a Code 128 barcode for labels, asset tags and tickets: letters, digits and symbols, up to 80 characters. Scan-checked in the browser. SVG, PDF, PNG.",
+    "text": "Crea un codice a barre Code 128 per etichette, cartellini di inventario e biglietti: lettere, cifre e simboli, fino a 80 caratteri. Leggibilità verificata nel browser. SVG, PDF, PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.metaDescription"
+  },
+  "e52568761a92": {
+    "source": "Code 128 is the general-purpose barcode: letters, digits, spaces and keyboard symbols in a compact row of bars. Type your text, check that it scans and download it for labels, asset tags, tickets or stock bins. It needs no registration.",
+    "text": "Code 128 è il codice a barre general purpose: lettere, cifre, spazi e simboli della tastiera in una fila compatta di barre. Scrivi il testo, verifica che si legga e scaricalo per etichette, cartellini di inventario, biglietti o contenitori di magazzino. Non richiede registrazione.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.intro"
+  },
+  "0b875fca4969": {
+    "source": "Inventory and stock labels, asset tags, library and lab samples, tickets, internal shipping labels and order numbers: anything that needs a barcode but isn't a product sold in shops.",
+    "text": "Etichette di inventario e magazzino, cartellini per i beni, campioni di biblioteca e laboratorio, biglietti, etichette di spedizione interne e numeri d'ordine: tutto ciò che richiede un codice a barre ma non è un prodotto venduto nei negozi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.usedFor.0"
+  },
+  "846a7db7a028": {
+    "source": "It's the barcode most warehouse and point-of-sale scanners read out of the box, and the base of GS1-128, which adds Application Identifiers for supply chain data.",
+    "text": "È il codice a barre che la maggior parte degli scanner di magazzino e di cassa legge senza configurazioni, ed è la base di GS1-128, che aggiunge gli Application Identifier per i dati della supply chain.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.usedFor.1"
+  },
+  "760439f56898": {
+    "source": "Do I need to register a Code 128 barcode?",
+    "text": "Devo registrare un codice a barre Code 128?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.title"
+  },
+  "dfd2214d62c1": {
+    "source": "No. Code 128 holds whatever text you choose, so there's no number to license. Use your own SKUs, serial numbers or IDs.",
+    "text": "No. Code 128 contiene qualsiasi testo tu scelga, quindi non c'è nessun numero da avere in licenza. Usa i tuoi SKU, numeri di serie o ID.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.paragraphs.0"
+  },
+  "0ec6d58266bf": {
+    "source": "If a retailer or logistics partner asks for GS1 data (a GTIN, SSCC, batch or expiry date), use GS1-128 instead: it's Code 128 with GS1's structure.",
+    "text": "Se un rivenditore o un partner logistico ti chiede dati GS1 (un GTIN, un SSCC, un lotto o una data di scadenza), usa invece GS1-128: è Code 128 con la struttura di GS1.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.numbers.paragraphs.1"
+  },
+  "e561312bcaee": {
+    "source": "Up to 80 characters of plain ASCII: letters, digits, spaces and the symbols on a US keyboard. Accented letters, emoji and control characters can't be encoded here.",
+    "text": "Fino a 80 caratteri ASCII semplici: lettere, cifre, spazi e i simboli di una tastiera US. Lettere accentate, emoji e caratteri di controllo qui non possono essere codificati.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.rules.0"
+  },
+  "782292cc1d92": {
+    "source": "Code 128 adds its own check character (a sum modulo 103) and three code sets: set C packs two digits into each character, so long runs of digits make shorter barcodes. The encoder picks the code sets for you, and readers don't print the check character.",
+    "text": "Code 128 aggiunge un proprio carattere di controllo (una somma modulo 103) e tre set di codice: il set C inserisce due cifre in ogni carattere, quindi lunghe sequenze di cifre producono codici a barre più corti. L'encoder sceglie i set di codice per te e i lettori non stampano il carattere di controllo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.rules.1"
+  },
+  "7429e56ee897": {
+    "source": "Each Code 128 character is 11 modules wide, plus start, check and stop characters and 10 modules of quiet zone each side. With the downloads' 0.353 mm module, ABCDEFGHIJ is 58.2 mm wide and 1234567890 is 38.8 mm: the digits pair up.",
+    "text": "Ogni carattere Code 128 è largo 11 moduli, più i caratteri di start, di controllo e di stop e 10 moduli di zona di rispetto per lato. Con il modulo da 0.353 mm dei download, ABCDEFGHIJ è largo 58.2 mm e 1234567890 è largo 38.8 mm: le cifre si accoppiano.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.0"
+  },
+  "58c654d2b792": {
+    "source": "A common rule for handheld scanners is bars at least 15% of the barcode's length, or 6.35 mm (a quarter inch), whichever is more. The default bar height is 15 mm.",
+    "text": "Una regola comune per gli scanner portatili è avere barre alte almeno il 15% della lunghezza del codice a barre, oppure 6.35 mm (un quarto di pollice), a seconda di quale valore è maggiore. L'altezza predefinita delle barre è 15 mm.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.1"
+  },
+  "b165f84fd1ba": {
+    "source": "There's no fixed size: shrink the module for small labels, but test with the scanners that will read it, especially on thermal label printers.",
+    "text": "Non esiste una dimensione fissa: riduci il modulo per le etichette piccole, ma prova con gli scanner che lo leggeranno, soprattutto con le stampanti termiche per etichette.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.sizing.2"
+  },
+  "0dede9a6603e": {
+    "source": "Can Code 128 hold lowercase letters?",
+    "text": "Code 128 può contenere lettere minuscole?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.0.question"
+  },
+  "4a77b24587b5": {
+    "source": "Yes. Unlike Code 39, it encodes upper and lower case, digits and symbols.",
+    "text": "Sì. A differenza di Code 39, codifica maiuscole e minuscole, cifre e simboli.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.0.answer"
+  },
+  "b54f48ff7572": {
+    "source": "Why is my barcode so long?",
+    "text": "Perché il mio codice a barre è così lungo?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.1.question"
+  },
+  "d10883e237e0": {
+    "source": "Long text makes long barcodes: each letter adds 11 modules. Shorten the text, use digits where you can (they pair up), or use a 2D code such as Data Matrix, which holds far more in a small square.",
+    "text": "Un testo lungo produce codici a barre lunghi: ogni lettera aggiunge 11 moduli. Accorcia il testo, usa le cifre dove puoi (si accoppiano) oppure usa un codice 2D come Data Matrix, che contiene molto di più in un piccolo quadrato.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.1.answer"
+  },
+  "c49509a2641c": {
+    "source": "Is Code 128 the same as GS1-128?",
+    "text": "Code 128 è la stessa cosa di GS1-128?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.2.question"
+  },
+  "b98f8aeb01e3": {
+    "source": "GS1-128 is Code 128 with a special first character (FNC1) and GS1 Application Identifiers. A plain Code 128 with GS1-looking text isn't a GS1-128, and GS1 systems won't treat it as one.",
+    "text": "GS1-128 è Code 128 con un primo carattere speciale (FNC1) e gli Application Identifier GS1. Un semplice Code 128 con un testo che sembra GS1 non è un GS1-128 e i sistemi GS1 non lo tratteranno come tale.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-128.faqs.2.answer"
+  },
+  "142797b9804d": {
+    "source": "Free ITF-14 Barcode Generator for Cartons",
+    "text": "Generatore gratuito di codici a barre ITF-14 per cartoni",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.title"
+  },
+  "3543c3bc68be": {
+    "source": "Make an ITF-14 barcode for shipping cartons: 13 digits get the check digit, 14 are checked. Bearer bars included. SVG, PDF and EPS for print. Free.",
+    "text": "Crea un codice a barre ITF-14 per cartoni di spedizione: con 13 cifre aggiungiamo la cifra di controllo, con 14 la verifichiamo. Bearer bar incluse. SVG, PDF ed EPS per la stampa. Gratuito.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.metaDescription"
+  },
+  "7eb62a8e4cb5": {
+    "source": "ITF-14 is the barcode printed on corrugated cartons that hold retail products. It carries the 14-digit GTIN of the case. Type 13 digits and the check digit is added, or all 14 to have it checked, and download a vector with its bearer bars for your carton artwork.",
+    "text": "ITF-14 è il codice a barre stampato sui cartoni ondulati che contengono prodotti al dettaglio. Riporta il GTIN di 14 cifre della confezione multipla. Digita 13 cifre per aggiungere la cifra di controllo, oppure tutte le 14 per verificarla, e scarica un vettoriale con le bearer bar per la grafica del tuo cartone.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.intro"
+  },
+  "51bb0e6ae783": {
+    "source": "Outer cases and shipping cartons scanned in warehouses and distribution centers, not at the checkout. The thick frame around the bars (bearer bars) evens out printing pressure on rough board and stops a scanner reading only part of the barcode.",
+    "text": "Imballi esterni e cartoni di spedizione letti con lo scanner nei magazzini e nei centri di distribuzione, non alla cassa. La cornice spessa attorno alle barre (bearer bar) uniforma la pressione di stampa sul cartone ruvido e impedisce allo scanner di leggere solo una parte del codice a barre.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.usedFor.0"
+  },
+  "f7eb05998dd2": {
+    "source": "The first digit is the indicator, 1 to 8, which tells packaging levels apart (a case of 6, a case of 24). The next 12 digits are the GTIN of the item inside without its check digit, and a new check digit closes the number.",
+    "text": "La prima cifra è l'indicatore, da 1 a 8, che distingue i livelli di confezionamento (una scatola da 6, una da 24). Le 12 cifre successive sono il GTIN dell'articolo contenuto senza la sua cifra di controllo, e una nuova cifra di controllo chiude il numero.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.usedFor.1"
+  },
+  "71a2765e870b": {
+    "source": "Where does an ITF-14 number come from?",
+    "text": "Da dove viene un numero ITF-14?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.title"
+  },
+  "671dd15961a5": {
+    "source": "From the GTIN of the product inside. Take its 12-digit body (an EAN-13 without the check digit, or a UPC-A with a 0 in front), put an indicator digit before it and let the generator add the new check digit.",
+    "text": "Dal GTIN del prodotto contenuto. Prendi le sue 12 cifre iniziali (un EAN-13 senza cifra di controllo, o un UPC-A con uno 0 davanti), metti una cifra indicatore prima e lascia che il generatore aggiunga la nuova cifra di controllo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.paragraphs.0"
+  },
+  "2e1eafaa208c": {
+    "source": "So you need GS1 numbers for the product itself first. A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "Quindi ti servono prima i numeri GS1 per il prodotto stesso. Un GTIN si ottiene in licenza, non si compra una volta per tutte: ti iscrivi a GS1 (o all'organizzazione GS1 del tuo paese), ottieni un prefisso aziendale e numeri i tuoi prodotti a partire da quello. I grandi rivenditori e i marketplace controllano i GTIN nel registro di GS1, quindi i numeri rivenduti da un prefisso altrui possono essere rifiutati.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.numbers.paragraphs.1"
+  },
+  "4e12069ff3d8": {
+    "source": "Digits only; spaces and dashes are ignored. Thirteen digits get the check digit added, fourteen have it checked.",
+    "text": "Solo cifre; spazi e trattini vengono ignorati. Con tredici cifre viene aggiunta la cifra di controllo, con quattordici viene verificata.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.rules.0"
+  },
+  "03fce9c1f85f": {
+    "source": "The check digit uses the same 3, 1, 3, 1… weights from the right as EAN-13, over 13 digits.",
+    "text": "La cifra di controllo usa gli stessi pesi 3, 1, 3, 1… da destra dell'EAN-13, calcolati su 13 cifre.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.rules.1"
+  },
+  "65163656744f": {
+    "source": "GS1 sizes ITF-14 for cartons: a module of 0.495 mm to 1.016 mm (1.016 mm is 100%) and bars at least 32 mm high, with 10 modules of quiet zone each side.",
+    "text": "GS1 definisce le dimensioni dell'ITF-14 per i cartoni: un modulo da 0.495 mm a 1.016 mm (1.016 mm corrisponde al 100%) e barre alte almeno 32 mm, con 10 moduli di zona di rispetto per lato.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.0"
+  },
+  "56f224fc7349": {
+    "source": "The downloads use a 0.353 mm module and 25 mm bars, smaller than GS1's minimum for cartons. Enlarge the file to 141% in your artwork: the module becomes 0.495 mm and the bars 35 mm.",
+    "text": "I download usano un modulo da 0.353 mm e barre da 25 mm, meno del minimo GS1 per i cartoni. Ingrandisci il file al 141% nella tua grafica: il modulo diventa 0.495 mm e le barre 35 mm.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.1"
+  },
+  "18d61468335b": {
+    "source": "Printed straight onto brown board, bigger is safer: check the size with your packaging printer.",
+    "text": "Se stampi direttamente su cartone marrone, meglio abbondare con le dimensioni: verifica la misura con il tuo stampatore di imballaggi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.sizing.2"
+  },
+  "9f48e9c4bf5a": {
+    "source": "Can I put an ITF-14 on a retail product?",
+    "text": "Posso mettere un ITF-14 su un prodotto al dettaglio?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.0.question"
+  },
+  "348adc0c77f2": {
+    "source": "No, it's for cases and cartons. The consumer unit inside carries its own EAN-13 or UPC-A for the checkout.",
+    "text": "No, è pensato per scatole e cartoni. L'unità di vendita al consumatore all'interno ha il proprio EAN-13 o UPC-A per la cassa.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.0.answer"
+  },
+  "d6b83fbe2489": {
+    "source": "What indicator digit should I use?",
+    "text": "Quale cifra indicatore devo usare?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.1.question"
+  },
+  "f5809ecb63eb": {
+    "source": "Any of 1 to 8, chosen by you, one per packaging configuration: for example 1 for a case of 6 and 2 for a case of 24. 9 is kept for items with variable quantity.",
+    "text": "Una qualsiasi da 1 a 8, scelta da te, una per ogni configurazione di confezionamento: per esempio 1 per una scatola da 6 e 2 per una da 24. Il 9 è riservato agli articoli a quantità variabile.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.1.answer"
+  },
+  "1e761a972faa": {
+    "source": "Can I turn the bearer bars off?",
+    "text": "Posso disattivare le bearer bar?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.2.question"
+  },
+  "fbfdafeb533b": {
+    "source": "Not here: the generator always draws the full frame, which GS1 recommends when ITF-14 is printed directly onto corrugated board.",
+    "text": "Qui no: il generatore disegna sempre la cornice completa, che GS1 raccomanda quando l'ITF-14 è stampato direttamente su cartone ondulato.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.itf-14.faqs.2.answer"
+  },
+  "6431528d484d": {
+    "source": "Free GS1-128 Barcode Generator (SSCC, Batch, Expiry)",
+    "text": "Generatore gratuito di codici a barre GS1-128 (SSCC, lotto, scadenza)",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.title"
+  },
+  "b3ab040765c0": {
+    "source": "Make GS1-128 barcodes for logistics labels: GTIN, SSCC, batch, expiry and weight in one barcode. Check digits and dates checked. SVG, PDF and EPS. Free.",
+    "text": "Crea codici a barre GS1-128 per le etichette logistiche: GTIN, SSCC, lotto, scadenza e peso in un solo codice a barre. Cifre di controllo e date verificate. SVG, PDF ed EPS. Gratuito.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.metaDescription"
+  },
+  "bd497ead49fb": {
+    "source": "GS1-128 puts several pieces of supply chain data into one barcode, each marked by an Application Identifier (AI) in brackets: (01) for the GTIN, (17) for the expiry date, (10) for the batch, (00) for a pallet's SSCC. Type the AIs and values; check digits are added or checked for you.",
+    "text": "GS1-128 riunisce in un unico codice a barre diversi dati della supply chain, ciascuno indicato da un Application Identifier (AI) tra parentesi: (01) per il GTIN, (17) per la data di scadenza, (10) per il lotto, (00) per l'SSCC di un pallet. Scrivi gli AI e i valori; le cifre di controllo vengono aggiunte o verificate al posto tuo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.intro"
+  },
+  "fcfd83fcb2ae": {
+    "source": "Logistics labels on cases and pallets, and labels on fresh food, meat and medical supplies where a batch, an expiry date or a weight must travel with the GTIN.",
+    "text": "Etichette logistiche su colli e pallet, ed etichette su alimenti freschi, carne e forniture mediche in cui un lotto, una data di scadenza o un peso devono viaggiare insieme al GTIN.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.usedFor.0"
+  },
+  "8bf770848b73": {
+    "source": "The GS1 logistic label carries the pallet's SSCC, AI (00), as a GS1-128. Retail and logistics partners usually specify which AIs they want on it.",
+    "text": "L'etichetta logistica GS1 riporta l'SSCC del pallet, AI (00), come GS1-128. Di solito i partner del retail e della logistica specificano quali AI vogliono su di essa.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.usedFor.1"
+  },
+  "da8517c880c4": {
+    "source": "Do I need GS1 numbers for GS1-128?",
+    "text": "Servono numeri GS1 per il GS1-128?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.title"
+  },
+  "10a672f37fdb": {
+    "source": "For the GTIN in (01) and the SSCC in (00), yes: both are built from a GS1 company prefix. Batch numbers, dates and weights are your own data.",
+    "text": "Per il GTIN in (01) e l'SSCC in (00) sì: entrambi si costruiscono a partire da un prefisso aziendale GS1. Numeri di lotto, date e pesi sono invece dati tuoi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.paragraphs.0"
+  },
+  "8ffb1e1b55d9": {
+    "source": "A GTIN is licensed, not bought outright: you join GS1 (or the GS1 organization in your country), get a company prefix and number your products from it. Large retailers and marketplaces check GTINs against GS1's registry, so numbers resold from someone else's prefix can be rejected.",
+    "text": "Un GTIN si ottiene in licenza, non si compra una volta per tutte: ti iscrivi a GS1 (o all'organizzazione GS1 del tuo paese), ricevi un prefisso aziendale e numeri i tuoi prodotti a partire da quello. I grandi rivenditori e i marketplace controllano i GTIN nel registro di GS1, quindi i numeri rivenduti a partire dal prefisso di qualcun altro possono essere rifiutati.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.numbers.paragraphs.1"
+  },
+  "3b87dfbd5a2b": {
+    "source": "Write each AI in brackets followed by its value: (01)09501101530003(17)261231(10)AB-123. The brackets aren't encoded; they show where each field starts.",
+    "text": "Scrivi ogni AI tra parentesi seguito dal suo valore: (01)09501101530003(17)261231(10)AB-123. Le parentesi non vengono codificate: indicano dove inizia ogni campo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.0"
+  },
+  "4d101be4f43b": {
+    "source": "GTINs in (01) and (02) and SSCCs in (00) get their check digit added when you leave it off, or checked when you don't. The encoder also checks every value against GS1's rules: an unknown AI or an impossible date such as month 13 is refused.",
+    "text": "Ai GTIN in (01) e (02) e agli SSCC in (00) viene aggiunta la cifra di controllo se la ometti, oppure viene verificata se la inserisci. L'encoder controlla anche ogni valore secondo le regole GS1: un AI sconosciuto o una data impossibile, come il mese 13, viene rifiutato.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.1"
+  },
+  "31543a972a0e": {
+    "source": "A GS1-128 holds up to 48 characters of AIs and data. Put variable-length fields such as (10) batch last, so no separator is needed after them.",
+    "text": "Un GS1-128 contiene fino a 48 caratteri di AI e dati. Metti per ultimi i campi a lunghezza variabile, come il lotto (10), così non serve alcun separatore dopo di essi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.rules.2"
+  },
+  "94ad896b62ca": {
+    "source": "On GS1 logistic labels, GS1 asks for a module of 0.495 mm to 0.94 mm (0.495 mm is the target), bars at least 31.75 mm high and a barcode no longer than 165 mm with its quiet zones.",
+    "text": "Sulle etichette logistiche GS1, GS1 richiede un modulo da 0,495 mm a 0,94 mm (0,495 mm è il valore di riferimento), barre alte almeno 31,75 mm e un codice a barre lungo al massimo 165 mm comprese le zone di quiete.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.0"
+  },
+  "bb6b724ba287": {
+    "source": "The downloads use a 0.353 mm module and 15 mm bars, which suits small item labels. For a pallet or case label, set the bar height to 23 mm and enlarge the file to 141%: the module becomes 0.495 mm and the bars 32.4 mm. The example is then 142 mm long.",
+    "text": "I download usano un modulo da 0.353 mm e barre da 15 mm, adatti alle piccole etichette dei prodotti. Per un'etichetta di pallet o collo, imposta l'altezza delle barre a 23 mm e ingrandisci il file al 141%: il modulo diventa 0.495 mm e le barre 32.4 mm. L'esempio è allora lungo 142 mm.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.1"
+  },
+  "53953bee2634": {
+    "source": "Long data makes long barcodes: if it won't fit in 165 mm, split it over two GS1-128 barcodes, as GS1 logistic labels do.",
+    "text": "Dati lunghi producono codici a barre lunghi: se non stanno in 165 mm, dividili su due codici a barre GS1-128, come fanno le etichette logistiche GS1.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.sizing.2"
+  },
+  "6659ea2f7d27": {
+    "source": "What do (17) and (15) dates look like?",
+    "text": "Che aspetto hanno le date (17) e (15)?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.0.question"
+  },
+  "c5adec7ec0b7": {
+    "source": "Six digits, YYMMDD: (17)261231 is an expiry of 31 December 2026. A day of 00 means the end of that month.",
+    "text": "Sei cifre, AAMMGG: (17)261231 è una scadenza al 31 dicembre 2026. Un giorno 00 indica la fine di quel mese.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.0.answer"
+  },
+  "a824a925ac2e": {
+    "source": "Can I add a serial number?",
+    "text": "Posso aggiungere un numero di serie?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.1.question"
+  },
+  "a22bba2c340b": {
+    "source": "Yes, with AI (21), up to 20 characters. Put it last, or after other fixed-length fields, to keep the barcode short.",
+    "text": "Sì, con l'AI (21), fino a 20 caratteri. Mettilo per ultimo, o dopo altri campi a lunghezza fissa, per mantenere corto il codice a barre.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.1.answer"
+  },
+  "1b796f6907df": {
+    "source": "Why does my scanner show no brackets?",
+    "text": "Perché il mio scanner non mostra le parentesi?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.2.question"
+  },
+  "e2f222913d2e": {
+    "source": "The brackets are only for people. Readers report the data with a symbology identifier (]C1) or none, and separate variable-length fields with an invisible GS character. The scan check here accepts all of these forms.",
+    "text": "Le parentesi sono solo per le persone. I lettori restituiscono i dati con un identificatore di simbologia (]C1) oppure senza, e separano i campi a lunghezza variabile con un carattere GS invisibile. Il controllo della scansione qui accetta tutte queste forme.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.gs1-128.faqs.2.answer"
+  },
+  "54cdec66ca5a": {
+    "source": "Free Data Matrix Code Generator",
+    "text": "Generatore gratuito di codici Data Matrix",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.title"
+  },
+  "33a7d883dd0b": {
+    "source": "Make a Data Matrix code for part marking, small labels and serial numbers. Any text up to 1,000 characters, scan-checked in your browser. SVG, PDF and PNG.",
+    "text": "Crea un codice Data Matrix per la marcatura di componenti, etichette piccole e numeri di serie. Qualsiasi testo fino a 1.000 caratteri, con verifica della scansione nel browser. SVG, PDF e PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.metaDescription"
+  },
+  "0bd28fd6ac6c": {
+    "source": "Data Matrix is a small square 2D code that holds a lot of data in very little space. Type any text, up to 1,000 characters here, check that it scans and download it for parts, electronics, small labels and lab samples.",
+    "text": "Data Matrix è un piccolo codice 2D quadrato che contiene molti dati in pochissimo spazio. Scrivi qualsiasi testo, fino a 1.000 caratteri, controlla che la scansione funzioni e scaricalo per componenti, elettronica, etichette piccole e campioni di laboratorio.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.intro"
+  },
+  "bbd731b691ab": {
+    "source": "Marking parts and electronics, sometimes etched straight onto metal, because a Data Matrix stays readable when part of it is damaged. Also small labels, lab tubes, documents and mail.",
+    "text": "Marcatura di componenti ed elettronica, a volte incisa direttamente sul metallo, perché un Data Matrix resta leggibile anche se una parte è danneggiata. Anche per etichette piccole, provette da laboratorio, documenti e posta.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.usedFor.0"
+  },
+  "c34156dbe396": {
+    "source": "Readers need a camera (an image-based scanner or a phone app), not a laser scanner. Many warehouse scanners read it, but some phone camera apps only read QR codes.",
+    "text": "I lettori richiedono una fotocamera (uno scanner a immagine o un'app per smartphone), non uno scanner laser. Molti scanner da magazzino lo leggono, ma alcune app della fotocamera dei telefoni leggono solo i QR code.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.usedFor.1"
+  },
+  "5a4a713e53d3": {
+    "source": "Plain Data Matrix or GS1 DataMatrix?",
+    "text": "Data Matrix semplice o GS1 DataMatrix?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.title"
+  },
+  "203ad7dd545c": {
+    "source": "This page makes plain Data Matrix (ECC 200): it holds whatever text you type, with no registration.",
+    "text": "Questa pagina crea il Data Matrix semplice (ECC 200): contiene qualsiasi testo tu scriva, senza bisogno di registrazione.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.paragraphs.0"
+  },
+  "5a4cc58b06df": {
+    "source": "GS1 DataMatrix, required on some medicines and regulated packaging, adds a special first character and GS1 Application Identifiers. It isn't offered here; use GS1-128 if you need GS1 data in a barcode from this generator.",
+    "text": "GS1 DataMatrix, obbligatorio su alcuni medicinali e imballaggi regolamentati, aggiunge un primo carattere speciale e gli Application Identifier GS1. Qui non è disponibile; se ti servono dati GS1 in un codice a barre di questo generatore, usa GS1-128.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.numbers.paragraphs.1"
+  },
+  "084247522b6a": {
+    "source": "Any text, up to 1,000 characters here. The code grows in steps as you add text, from 10 × 10 cells upwards; this generator draws the square form.",
+    "text": "Qualsiasi testo, fino a 1.000 caratteri qui. Il codice cresce a gradini man mano che aggiungi testo, da 10 × 10 celle in su; questo generatore disegna la forma quadrata.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.rules.0"
+  },
+  "df3a5ab10444": {
+    "source": "The largest square Data Matrix (144 × 144 cells) holds 3,116 digits, 2,335 letters and digits, or 1,556 bytes. Digits pack most tightly.",
+    "text": "Il Data Matrix quadrato più grande (144 × 144 celle) contiene 3.116 cifre, 2.335 lettere e cifre oppure 1.556 byte. Le cifre sono quelle che occupano meno spazio.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.rules.1"
+  },
+  "3924066c6435": {
+    "source": "The vector downloads draw each cell 0.71 mm square, so SN-0042-7781 comes out 12.7 mm across with its margin. Scale it down in your layout for small labels.",
+    "text": "I download vettoriali disegnano ogni cella di 0,71 mm di lato, quindi SN-0042-7781 risulta largo 12,7 mm con il suo margine. Riducilo nel tuo layout per le etichette piccole.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.0"
+  },
+  "34d7c225b2e8": {
+    "source": "The smallest cell a scanner reads depends on the scanner and the print, so test at the size you'll use.",
+    "text": "La cella più piccola che uno scanner riesce a leggere dipende dallo scanner e dalla stampa, quindi prova alla dimensione che userai.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.1"
+  },
+  "cdba82f03c20": {
+    "source": "Data Matrix needs only a 1-cell margin; the generator starts with 2.",
+    "text": "Il Data Matrix richiede solo un margine di 1 cella; il generatore parte con 2.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.sizing.2"
+  },
+  "043e570a3b23": {
+    "source": "Can a phone read a Data Matrix?",
+    "text": "Un telefono può leggere un Data Matrix?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.0.question"
+  },
+  "a96a7b1effbb": {
+    "source": "Many barcode scanner apps can. Some phone camera apps only open QR codes, so if people scan with their phones, a QR code is the safer choice.",
+    "text": "Molte app per la lettura di codici a barre ci riescono. Alcune app della fotocamera dei telefoni aprono solo i QR code, quindi se le persone fanno la scansione con lo smartphone, il QR code è la scelta più sicura.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.0.answer"
+  },
+  "0074eaa0269b": {
+    "source": "Data Matrix or QR code?",
+    "text": "Data Matrix o QR code?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.1.question"
+  },
+  "691a2294de01": {
+    "source": "For links people scan with a phone, QR. For small parts and industrial labels read by scanners, Data Matrix: it's more compact for short serial numbers and is the norm in electronics and part marking.",
+    "text": "Per i link che le persone inquadrano con lo smartphone, il QR. Per componenti piccoli ed etichette industriali letti da scanner, il Data Matrix: è più compatto per numeri di serie brevi ed è la norma nell'elettronica e nella marcatura dei componenti.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.1.answer"
+  },
+  "606b842e0bf1": {
+    "source": "Does it have error correction?",
+    "text": "Ha la correzione degli errori?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.2.question"
+  },
+  "dc815e534921": {
+    "source": "Yes. ECC 200 Data Matrix always includes Reed–Solomon error correction, so a scuffed or partly covered code can still be read.",
+    "text": "Sì. Il Data Matrix ECC 200 include sempre la correzione degli errori Reed-Solomon, quindi un codice graffiato o parzialmente coperto può comunque essere letto.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.data-matrix.faqs.2.answer"
+  },
+  "9c37c845e0b6": {
+    "source": "Free EAN-8 Barcode Generator",
+    "text": "Generatore di codici a barre EAN-8 gratuito",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.title"
+  },
+  "22d56fe4901b": {
+    "source": "Make an EAN-8 barcode for packs too small for an EAN-13. Type 7 digits and the check digit is added, or 8 to have it checked. SVG, PDF, EPS and PNG.",
+    "text": "Crea un codice a barre EAN-8 per confezioni troppo piccole per un EAN-13. Scrivi 7 cifre e la cifra di controllo viene aggiunta, oppure 8 per farla verificare. SVG, PDF, EPS e PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.metaDescription"
+  },
+  "dfef763e539b": {
+    "source": "EAN-8 is the short retail barcode for packs too small to fit an EAN-13, such as a lipstick or a pack of gum. Type 7 digits and the check digit is added, or all 8 to have it checked.",
+    "text": "EAN-8 è il codice a barre retail corto per confezioni troppo piccole per un EAN-13, come un rossetto o un pacchetto di gomme da masticare. Scrivi 7 cifre e la cifra di controllo viene aggiunta, oppure tutte e 8 per farla verificare.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.intro"
+  },
+  "a0be1a284394": {
+    "source": "Small retail items where an EAN-13 would cover too much of the pack. Checkout scanners read it like any EAN.",
+    "text": "Piccoli articoli di vendita al dettaglio in cui un EAN-13 coprirebbe troppo spazio della confezione. Gli scanner di cassa lo leggono come qualsiasi EAN.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.usedFor.0"
+  },
+  "852edb3101a6": {
+    "source": "EAN-8 numbers starting with 0 or 2 are kept for use inside a store or company, like EAN-13 numbers starting with 2.",
+    "text": "I numeri EAN-8 che iniziano con 0 o 2 sono riservati all'uso interno a un negozio o a un'azienda, come i numeri EAN-13 che iniziano con 2.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.usedFor.1"
+  },
+  "a56cca56e15d": {
+    "source": "Where do EAN-8 numbers come from?",
+    "text": "Da dove arrivano i numeri EAN-8?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.title"
+  },
+  "022aabdb2cf3": {
+    "source": "From GS1, one at a time: GS1 organizations issue EAN-8 numbers (GTIN-8) individually, only for products that are too small for an EAN-13. You can't shorten an EAN-13 into one.",
+    "text": "Da GS1, uno alla volta: le organizzazioni GS1 assegnano i numeri EAN-8 (GTIN-8) singolarmente, solo per prodotti troppo piccoli per un EAN-13. Non puoi ottenerne uno accorciando un EAN-13.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.paragraphs.0"
+  },
+  "18362e5c5ba2": {
+    "source": "Ask your GS1 organization whether your product qualifies; often a smaller EAN-13 at 80% fits.",
+    "text": "Chiedi alla tua organizzazione GS1 se il tuo prodotto ne ha diritto; spesso basta un EAN-13 più piccolo all'80%.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.numbers.paragraphs.1"
+  },
+  "5f6754508a7a": {
+    "source": "Digits only. Seven digits get the check digit added, eight have it checked.",
+    "text": "Solo cifre. Con sette cifre viene aggiunta la cifra di controllo, con otto viene verificata.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.rules.0"
+  },
+  "1fc4802286be": {
+    "source": "The check digit weighs the 7 digits 3, 1, 3… from the right, as in every GS1 number.",
+    "text": "La cifra di controllo pesa le 7 cifre con 3, 1, 3… da destra, come in ogni numero GS1.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.rules.1"
+  },
+  "7543d202719e": {
+    "source": "At 100% an EAN-8 is 26.73 mm wide with its quiet zones, with a 0.33 mm module; GS1 allows 80% to 200%.",
+    "text": "Al 100% un EAN-8 è largo 26.73 mm con le zone di quiete, con un modulo di 0.33 mm; GS1 consente dall'80% al 200%.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.sizing.0"
+  },
+  "ef03a8fd06a1": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%, with 7 modules of quiet zone each side, the minimum.",
+    "text": "I download vettoriali usano un modulo di 0.353 mm, circa il 107%, con 7 moduli di zona di quiete per lato, il minimo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.sizing.1"
+  },
+  "6436dfdfcff8": {
+    "source": "Can I use an EAN-8 instead of an EAN-13 to save space?",
+    "text": "Posso usare un EAN-8 al posto di un EAN-13 per risparmiare spazio?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.0.question"
+  },
+  "489cb7578ef3": {
+    "source": "Only with an EAN-8 number from GS1. Check first whether an EAN-13 at 80% fits your pack: it's only 29.83 mm wide.",
+    "text": "Solo con un numero EAN-8 di GS1. Controlla prima se un EAN-13 all'80% sta sulla tua confezione: è largo solo 29.83 mm.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.0.answer"
+  },
+  "90586fd9db16": {
+    "source": "Is EAN-8 the same as UPC-E?",
+    "text": "EAN-8 e UPC-E sono uguali?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.1.question"
+  },
+  "97c04b6e9b42": {
+    "source": "No. Both are short retail barcodes, but a UPC-E is a shortened UPC-A number, while an EAN-8 is a separate 8-digit number issued by GS1.",
+    "text": "No. Sono entrambi codici a barre retail corti, ma un UPC-E è un numero UPC-A accorciato, mentre un EAN-8 è un numero separato di 8 cifre assegnato da GS1.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.ean-8.faqs.1.answer"
+  },
+  "762d7b6e125a": {
+    "source": "Free UPC-E Barcode Generator",
+    "text": "Generatore di codici a barre UPC-E gratuito",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.title"
+  },
+  "8a7652037d23": {
+    "source": "Make a UPC-E barcode, the short UPC for small packs. Enter 6 to 8 digits, or a 12-digit UPC-A and see whether it can be shortened. SVG, PDF and PNG. Free.",
+    "text": "Crea un codice a barre UPC-E, l'UPC corto per le confezioni piccole. Inserisci da 6 a 8 cifre, oppure un UPC-A di 12 cifre e scopri se si può accorciare. SVG, PDF e PNG. Gratuito.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.metaDescription"
+  },
+  "87d0f6288170": {
+    "source": "UPC-E is a UPC-A number with its zeros squeezed out, for packs too small for a full UPC-A. Enter the 6 to 8 digits of a UPC-E, or paste a 12-digit UPC-A and the generator tells you whether it can be shortened.",
+    "text": "UPC-E è un numero UPC-A a cui sono stati tolti gli zeri, pensato per le confezioni troppo piccole per un UPC-A completo. Inserisci le 6-8 cifre di un UPC-E, oppure incolla un UPC-A di 12 cifre e il generatore ti dice se si può accorciare.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.intro"
+  },
+  "643f84ea2269": {
+    "source": "Small products sold in the US and Canada: cans, candy bars, cosmetics. Its bars take 51 modules, against 95 for a UPC-A.",
+    "text": "Prodotti piccoli venduti negli Stati Uniti e in Canada: lattine, barrette di cioccolato, cosmetici. Le sue barre occupano 51 moduli, contro i 95 di un UPC-A.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.usedFor.0"
+  },
+  "c1dead3e7b71": {
+    "source": "Scanners expand it back to the full UPC-A, so stores see the same number either way.",
+    "text": "Gli scanner lo espandono di nuovo nell'UPC-A completo, quindi i negozi vedono lo stesso numero in entrambi i casi.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.usedFor.1"
+  },
+  "1ea76911ccb3": {
+    "source": "Can my UPC-A be shortened?",
+    "text": "Il mio UPC-A si può accorciare?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.title"
+  },
+  "c4aeb8b7a592": {
+    "source": "Only some can. The number must start with 0 or 1 and have zeros in the right places: a manufacturer number ending in 000, 100 or 200 with an item number of 00000 to 00999, ending in 00 with 00000 to 00099, ending in 0 with 00000 to 00009, or any manufacturer number with an item number of 00005 to 00009.",
+    "text": "Solo alcuni. Il numero deve iniziare con 0 o 1 e avere gli zeri nei punti giusti: un numero del produttore che finisce con 000, 100 o 200 con un numero articolo da 00000 a 00999, che finisce con 00 con un numero articolo da 00000 a 00099, che finisce con 0 con un numero articolo da 00000 a 00009, oppure qualsiasi numero del produttore con un numero articolo da 00005 a 00009.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.paragraphs.0"
+  },
+  "1b23a37b71ba": {
+    "source": "The number itself comes from GS1, as for any UPC-A; GS1 US can tell you whether a UPC-E fits your prefix.",
+    "text": "Il numero in sé viene da GS1, come per qualsiasi UPC-A; GS1 US può dirti se un UPC-E è adatto al tuo prefisso.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.numbers.paragraphs.1"
+  },
+  "98b0464b7c1a": {
+    "source": "Enter 6 digits (number system 0 is assumed), 7 (number system and six digits; the check digit is added) or 8 (with the check digit, which is checked), or an 11- or 12-digit UPC-A to shorten.",
+    "text": "Inserisci 6 cifre (si presume il sistema numerico 0), 7 (sistema numerico e sei cifre; la cifra di controllo viene aggiunta) oppure 8 (con la cifra di controllo, che viene verificata), oppure un UPC-A di 11 o 12 cifre da accorciare.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.rules.0"
+  },
+  "cdc343ec0d94": {
+    "source": "The check digit is the check digit of the expanded UPC-A, so the generator expands the number first.",
+    "text": "La cifra di controllo è quella dell'UPC-A espanso, quindi il generatore espande prima il numero.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.rules.1"
+  },
+  "69f10216a359": {
+    "source": "UPC-E follows UPC-A's sizes: a 0.33 mm module at 100%, from 80% to 200%. Keep 9 modules clear on each side.",
+    "text": "UPC-E segue le dimensioni dell'UPC-A: un modulo da 0.33 mm al 100%, dall'80% al 200%. Lascia 9 moduli liberi su ogni lato.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.sizing.0"
+  },
+  "1394ad5843db": {
+    "source": "The vector downloads use a 0.353 mm module, about 107%.",
+    "text": "I download vettoriali usano un modulo da 0.353 mm, circa il 107%.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.sizing.1"
+  },
+  "47c23bea0aca": {
+    "source": "Why does my scanner show 12 digits?",
+    "text": "Perché il mio scanner mostra 12 cifre?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.0.question"
+  },
+  "e592565cff00": {
+    "source": "Many readers expand a UPC-E to its UPC-A, and some to the 13-digit EAN. The scan check on this page accepts all of them.",
+    "text": "Molti lettori espandono un UPC-E nel suo UPC-A, e alcuni nell'EAN a 13 cifre. Il controllo della scansione in questa pagina li accetta tutti.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.0.answer"
+  },
+  "d59cd4e61915": {
+    "source": "My UPC-A can't be shortened. What now?",
+    "text": "Il mio UPC-A non si può accorciare. E adesso?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.1.question"
+  },
+  "11c7ae3bc6ce": {
+    "source": "Print the UPC-A, at down to 80% if space is tight, or ask GS1 US for a number that has a UPC-E form.",
+    "text": "Stampa l'UPC-A, fino all'80% se lo spazio è poco, oppure chiedi a GS1 US un numero che abbia una forma UPC-E.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.upc-e.faqs.1.answer"
+  },
+  "28ee7033b2fd": {
+    "source": "Free Code 39 Barcode Generator",
+    "text": "Generatore gratuito di codici a barre Code 39",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.title"
+  },
+  "39b46a51e75b": {
+    "source": "Make a Code 39 barcode with capital letters, digits and - . $ / + %, up to 40 characters, for systems that require it. Scan-checked. SVG, PDF, PNG. Free.",
+    "text": "Crea un codice a barre Code 39 con lettere maiuscole, cifre e - . $ / + %, fino a 40 caratteri, per i sistemi che lo richiedono. Con verifica della scansione. SVG, PDF, PNG. Gratis.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.metaDescription"
+  },
+  "44b7033192cf": {
+    "source": "Code 39 is an older barcode for capital letters, digits and a few symbols. Nearly every scanner reads it, and some industries and older systems still require it. Type up to 40 characters, check that it scans and download it.",
+    "text": "Code 39 è un codice a barre datato per lettere maiuscole, cifre e qualche simbolo. Quasi tutti gli scanner lo leggono e alcuni settori e sistemi più vecchi lo richiedono ancora. Scrivi fino a 40 caratteri, verifica che si legga e scaricalo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.intro"
+  },
+  "f71a84ce9db6": {
+    "source": "Labels in systems that specify it: older automotive and defence labels (LOGMARS), ID badges and legacy inventory systems.",
+    "text": "Etichette nei sistemi che lo prevedono: vecchie etichette per il settore automobilistico e della difesa (LOGMARS), badge di identificazione e sistemi di inventario obsoleti.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.usedFor.0"
+  },
+  "cb6d805d782a": {
+    "source": "If nothing requires Code 39, use Code 128: it holds lowercase letters and makes a shorter barcode for the same text.",
+    "text": "Se nulla richiede Code 39, usa Code 128: supporta le lettere minuscole e crea un codice a barre più corto per lo stesso testo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.usedFor.1"
+  },
+  "2e29fdb0b25b": {
+    "source": "Do I need to register a Code 39 barcode?",
+    "text": "Devo registrare un codice a barre Code 39?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.numbers.title"
+  },
+  "9bc3f82cafab": {
+    "source": "No. Code 39 carries your own text: serial numbers, part numbers, IDs. There's nothing to license.",
+    "text": "No. Code 39 contiene il tuo testo: numeri di serie, codici articolo, ID. Non c'è nulla da avere in licenza.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.numbers.paragraphs.0"
+  },
+  "a7b97ec1605c": {
+    "source": "Capital letters A to Z, digits, spaces and - . $ / + %, up to 40 characters. Lowercase letters show an error: use capitals, or Code 128 for mixed case.",
+    "text": "Lettere maiuscole dalla A alla Z, cifre, spazi e - . $ / + %, fino a 40 caratteri. Le lettere minuscole mostrano un errore: usa le maiuscole, oppure Code 128 per un testo con maiuscole e minuscole.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.rules.0"
+  },
+  "ae028fa56f8d": {
+    "source": "Each code is wrapped in start and stop asterisks, which aren't typed or decoded. This generator adds no optional check character, which suits most systems; if yours requires a modulo 43 check, add it to your text yourself.",
+    "text": "Ogni codice è racchiuso tra asterischi di inizio e fine, che non si digitano e non vengono decodificati. Questo generatore non aggiunge alcun carattere di controllo facoltativo, adatto alla maggior parte dei sistemi; se il tuo richiede un controllo modulo 43, aggiungilo tu al testo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.rules.1"
+  },
+  "c2e9c6b8fe20": {
+    "source": "Each Code 39 character is 13 to 16 modules wide, against Code 128's 11, so the same text makes a wider barcode: ABCDEFGHIJ is 74.4 mm in the downloads, 58.2 mm as Code 128.",
+    "text": "Ogni carattere Code 39 è largo da 13 a 16 moduli, contro gli 11 di Code 128, quindi lo stesso testo produce un codice a barre più largo: ABCDEFGHIJ misura 74.4 mm nei file scaricati, 58.2 mm in Code 128.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.sizing.0"
+  },
+  "2fa22b103664": {
+    "source": "Keep 10 modules of blank space each side, and make the bars at least 15% of the length, or 6.35 mm, so they're easy to sweep.",
+    "text": "Lascia 10 moduli di spazio vuoto per lato e fai le barre alte almeno il 15% della lunghezza, o 6.35 mm, così si leggono facilmente passando lo scanner.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.sizing.1"
+  },
+  "d3267025816c": {
+    "source": "Can Code 39 do lowercase?",
+    "text": "Code 39 supporta le minuscole?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.0.question"
+  },
+  "edc164ff5baf": {
+    "source": "Only in an extended mode (Full ASCII) that pairs characters, which this generator doesn't offer. Use Code 128 for lowercase.",
+    "text": "Solo in una modalità estesa (Full ASCII) che abbina i caratteri, non disponibile in questo generatore. Per le minuscole usa Code 128.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.0.answer"
+  },
+  "349ac715ad13": {
+    "source": "Should I type the asterisks?",
+    "text": "Devo scrivere gli asterischi?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.1.question"
+  },
+  "1eff6819a466": {
+    "source": "No. The start and stop characters are added for you, and the asterisk can't be part of the text.",
+    "text": "No. I caratteri di inizio e fine vengono aggiunti per te e l'asterisco non può far parte del testo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.code-39.faqs.1.answer"
+  },
+  "d3ff2381a9b5": {
+    "source": "Free PDF417 Barcode Generator",
+    "text": "Generatore gratuito di codici a barre PDF417",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.title"
+  },
+  "c59ac66e5fad": {
+    "source": "Make a PDF417 barcode, the stacked 2D code on IDs and boarding passes. Any text up to 1,000 characters, scan-checked in your browser. SVG, PDF and PNG.",
+    "text": "Crea un codice a barre PDF417, il codice 2D impilato di documenti d'identità e carte d'imbarco. Qualsiasi testo fino a 1,000 caratteri, con verifica della scansione nel browser. SVG, PDF e PNG.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.metaDescription"
+  },
+  "1c50b7e7e107": {
+    "source": "PDF417 is a stacked 2D barcode: rows of small barcodes on top of each other, holding up to about a kilobyte of text. Type your text, check that it scans and download it.",
+    "text": "PDF417 è un codice a barre 2D impilato: file di piccoli codici a barre una sopra l'altra, che contengono fino a circa un kilobyte di testo. Scrivi il testo, verifica che si legga e scaricalo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.intro"
+  },
+  "8d9b782b44c7": {
+    "source": "Driver's licenses and ID cards (US and Canadian licenses carry one on the back), paper boarding passes, shipping documents and forms that carry their data with them.",
+    "text": "Patenti di guida e carte d'identità (le patenti statunitensi e canadesi ne hanno uno sul retro), carte d'imbarco cartacee, documenti di spedizione e moduli che portano con sé i propri dati.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.usedFor.0"
+  },
+  "36975970999d": {
+    "source": "Its wide, short shape fits along the edge of a card or a label, where a square code wouldn't.",
+    "text": "La sua forma larga e bassa si adatta al bordo di una tessera o di un'etichetta, dove un codice quadrato non starebbe.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.usedFor.1"
+  },
+  "3255440c1e86": {
+    "source": "Do I need to register a PDF417 barcode?",
+    "text": "Devo registrare un codice a barre PDF417?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.numbers.title"
+  },
+  "58e171f7d6ee": {
+    "source": "No. It holds whatever text you type. Formats such as driver's license data follow their own standards for what goes inside; this generator encodes your text as given.",
+    "text": "No. Contiene qualsiasi testo tu scriva. Formati come i dati della patente di guida seguono standard propri per ciò che contengono; questo generatore codifica il testo così com'è.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.numbers.paragraphs.0"
+  },
+  "356c0ea4f70f": {
+    "source": "Any text, up to 1,000 characters here. A PDF417 has 3 to 90 rows of 1 to 30 data columns and can hold up to 1,850 letters and digits, 2,710 digits or 1,108 bytes.",
+    "text": "Qualsiasi testo, fino a 1,000 caratteri qui. Un PDF417 ha da 3 a 90 righe di 1-30 colonne di dati e può contenere fino a 1,850 lettere e cifre, 2,710 cifre o 1,108 byte.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.rules.0"
+  },
+  "3a03ca95b0f1": {
+    "source": "Error correction is built in, so part of the code can be damaged and still read.",
+    "text": "La correzione degli errori è integrata, quindi una parte del codice può essere danneggiata e il codice si legge comunque.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.rules.1"
+  },
+  "42004b462490": {
+    "source": "The vector downloads use a 0.353 mm module: the sample text comes out 43.7 × 8.8 mm. Longer text adds rows and columns.",
+    "text": "I file vettoriali usano un modulo di 0.353 mm: il testo di esempio risulta di 43.7 × 8.8 mm. Un testo più lungo aggiunge righe e colonne.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.sizing.0"
+  },
+  "b7915a1b54ea": {
+    "source": "Keep at least 2 modules of blank space around it; the generator starts there.",
+    "text": "Lascia almeno 2 moduli di spazio vuoto intorno al codice; il generatore parte da questa misura.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.sizing.1"
+  },
+  "5ddaa2e50aa2": {
+    "source": "Can phones read PDF417?",
+    "text": "Gli smartphone leggono il PDF417?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.0.question"
+  },
+  "fac7c836707d": {
+    "source": "Many barcode scanner apps can, but the built-in camera apps often don't. It's mostly read by dedicated scanners, such as ID and boarding pass readers.",
+    "text": "Molte app per leggere codici a barre ci riescono, ma le app fotocamera integrate spesso no. Viene letto soprattutto da scanner dedicati, come i lettori di documenti d'identità e carte d'imbarco.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.0.answer"
+  },
+  "d7d62c8d60b8": {
+    "source": "Can I make a driver's license barcode?",
+    "text": "Posso creare il codice a barre di una patente?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.1.question"
+  },
+  "8abdd2acf2fd": {
+    "source": "Only an issuing authority makes real ones. This generator encodes text you type as a PDF417; it doesn't format license data.",
+    "text": "Solo un'autorità emittente crea quelli veri. Questo generatore codifica come PDF417 il testo che scrivi; non formatta i dati della patente.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.pdf417.faqs.1.answer"
+  },
+  "ac2e3a678b70": {
+    "source": "Free Aztec Code Generator",
+    "text": "Generatore di Aztec Code gratuito",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.title"
+  },
+  "4da66deb316c": {
+    "source": "Make an Aztec code, the 2D code on rail tickets and mobile boarding passes. No quiet zone needed. Any text up to 1,000 characters. SVG, PDF and PNG. Free.",
+    "text": "Crea un codice Aztec, il codice 2D dei biglietti ferroviari e delle carte d'imbarco su cellulare. Non serve la quiet zone. Qualsiasi testo fino a 1.000 caratteri. SVG, PDF e PNG. Gratuito.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.metaDescription"
+  },
+  "7b652e0b6d1c": {
+    "source": "Aztec is a square 2D code that scanners find from the bullseye in its center, so it needs no blank margin around it. Type any text, check that it scans and download it.",
+    "text": "Aztec è un codice 2D quadrato che gli scanner individuano dal bersaglio al centro, quindi non ha bisogno di un margine bianco intorno. Scrivi un testo qualsiasi, verifica che venga letto e scaricalo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.intro"
+  },
+  "17b787f04a30": {
+    "source": "Transport tickets, both printed at home and shown on phone screens: many European rail operators use it (the UIC 918-3 ticket standard specifies Aztec), and airlines use it on mobile boarding passes.",
+    "text": "Biglietti di trasporto, sia stampati a casa sia mostrati sullo schermo del telefono: molti operatori ferroviari europei lo usano (lo standard di biglietteria UIC 918-3 prevede Aztec) e le compagnie aeree lo usano sulle carte d'imbarco su cellulare.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.usedFor.0"
+  },
+  "156a1333cec2": {
+    "source": "Because it needs no quiet zone, it fits on tickets and screens where space around the code is tight.",
+    "text": "Poiché non richiede una quiet zone, trova posto su biglietti e schermi dove lo spazio intorno al codice è poco.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.usedFor.1"
+  },
+  "58e7bffd2604": {
+    "source": "Do I need to register an Aztec code?",
+    "text": "Devo registrare un codice Aztec?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.numbers.title"
+  },
+  "680651dada5e": {
+    "source": "No. It holds whatever text you type. Ticketing standards define their own data inside; this generator encodes your text as given.",
+    "text": "No. Contiene il testo che scrivi. Gli standard di biglietteria definiscono al loro interno i propri dati; questo generatore codifica il tuo testo così com'è.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.numbers.paragraphs.0"
+  },
+  "de7e5ed9bda0": {
+    "source": "Any text, up to 1,000 characters here. Aztec codes range from 15 × 15 cells (compact) to 151 × 151, holding up to 3,832 digits, 3,067 letters or 1,914 bytes.",
+    "text": "Qualsiasi testo, fino a 1.000 caratteri qui. I codici Aztec vanno da 15 × 15 celle (compatto) a 151 × 151, e contengono fino a 3.832 cifre, 3.067 lettere o 1.914 byte.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.rules.0"
+  },
+  "a4f94f3031ce": {
+    "source": "Error correction is built in, so a smudged or partly covered code can still be read.",
+    "text": "La correzione degli errori è integrata, quindi un codice sbavato o parzialmente coperto può comunque essere letto.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.rules.1"
+  },
+  "208dba1de876": {
+    "source": "The vector downloads draw each cell 0.71 mm square: the sample text comes out 19 mm across with a 2-cell margin. Scale it to suit your ticket or screen.",
+    "text": "I download vettoriali disegnano ogni cella di 0,71 mm per lato: il testo di esempio risulta largo 19 mm con un margine di 2 celle. Ridimensionalo in base al tuo biglietto o schermo.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.sizing.0"
+  },
+  "e462f87b44ca": {
+    "source": "No quiet zone is required, but a little white space helps scanners on busy designs.",
+    "text": "Non è richiesta una quiet zone, ma un po' di spazio bianco aiuta gli scanner quando il design è affollato.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.sizing.1"
+  },
+  "6b27c5af0a95": {
+    "source": "Aztec or QR code?",
+    "text": "Aztec o QR code?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.0.question"
+  },
+  "20998072733a": {
+    "source": "For links people scan with a phone camera, QR. Aztec is for ticketing and transport systems that ask for it.",
+    "text": "Per i link che le persone inquadrano con la fotocamera del telefono, QR. Aztec è per i sistemi di biglietteria e trasporto che lo richiedono.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.0.answer"
+  },
+  "7900c82f28ce": {
+    "source": "Can phones read Aztec codes?",
+    "text": "I telefoni leggono i codici Aztec?",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.1.question"
+  },
+  "34563aee60ca": {
+    "source": "Many scanner apps and ticket gates can. Some built-in camera apps only open QR codes.",
+    "text": "Molte app di scansione e molti tornelli per biglietti ci riescono. Alcune app fotocamera integrate aprono solo i QR code.",
+    "status": "machine",
+    "context": "barcodeFormats.pages.aztec.faqs.1.answer"
+  },
+  "d5d3113ff518": {
+    "source": "Batch or lot number",
+    "text": "Numero di lotto",
+    "status": "machine",
+    "context": "barcodeFormats.ais.10"
+  },
+  "440af27caf28": {
+    "source": "Production date (YYMMDD)",
+    "text": "Data di produzione (AAMMGG)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.11"
+  },
+  "c548a1a3adfb": {
+    "source": "Best before date (YYMMDD)",
+    "text": "Da consumarsi preferibilmente entro (AAMMGG)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.15"
+  },
+  "a933be6e7b3b": {
+    "source": "Expiry date (YYMMDD)",
+    "text": "Data di scadenza (AAMMGG)",
+    "status": "machine",
+    "context": "barcodeFormats.ais.17"
+  },
+  "f2307baf1c85": {
+    "source": "Serial number",
+    "text": "Numero di serie",
+    "status": "machine",
+    "context": "barcodeFormats.ais.21"
+  },
+  "742a68e45e4a": {
+    "source": "SSCC: the pallet or shipment",
+    "text": "SSCC: il pallet o la spedizione",
+    "status": "machine",
+    "context": "barcodeFormats.ais.00"
+  },
+  "07aa7c4b2614": {
+    "source": "GTIN of the product or case",
+    "text": "GTIN del prodotto o del collo",
+    "status": "machine",
+    "context": "barcodeFormats.ais.01"
+  },
+  "1877aad81cac": {
+    "source": "GTIN of the items inside a logistic unit",
+    "text": "GTIN degli articoli contenuti in un'unità logistica",
+    "status": "machine",
+    "context": "barcodeFormats.ais.02"
+  },
   "bae62bc38cdf": {
     "source": "Link list",
     "text": "Elenco link",
@@ -22936,12 +24856,6 @@
     "text": "Mostrala al personale del ristorante quando mangi fuori",
     "status": "machine",
     "context": "templates.medical.variants.allergy-card.description"
-  },
-  "1d393b0081b6": {
-    "source": "PDF",
-    "text": "PDF",
-    "status": "machine",
-    "context": "templates.pdf.label"
   },
   "a9400aaa15f9": {
     "source": "A menu, brochure or manual people can read and download",
@@ -25085,6 +26999,12 @@
     "status": "machine",
     "context": "integrations.entries.google-analytics.description.1"
   },
+  "7494a179ac39": {
+    "source": "QRdx sends GA4's standard page view from the hosted page and nothing else. Visits arrive with the page's own address, on qrdx.dev or your custom domain, so filter by hostname or page path to tell them apart from visits to your site. Expect fewer visits than scans: GA4 only sees visitors who accepted the banner where it's shown, and content blockers often stop its script.",
+    "text": "QRdx invia a GA4 la visualizzazione di pagina standard dalla pagina ospitata e nient'altro. Le visite arrivano con l'indirizzo della pagina stessa, su qrdx.dev o sul tuo dominio personalizzato, quindi filtra per hostname o per percorso della pagina per distinguerle dalle visite al tuo sito. Aspettati meno visite che scansioni: GA4 vede solo i visitatori che hanno accettato il banner dove viene mostrato, e i blocchi dei contenuti spesso fermano il suo script.",
+    "status": "machine",
+    "context": "integrations.entries.google-analytics.description.2"
+  },
   "cb4aead1a976": {
     "source": "Open your codes",
     "text": "Apri i tuoi QR code",
@@ -25187,6 +27107,12 @@
     "status": "machine",
     "context": "integrations.entries.google-tag-manager.description.1"
   },
+  "7ab236a31186": {
+    "source": "Tag Manager loads only when the page opens on one of your custom domains, never on qrdx.dev: a container can run any script, and qrdx.dev is where people sign in to QRdx. QRdx pushes only the container's start event to the data layer, so trigger your tags on page views or clicks.",
+    "text": "Tag Manager si carica solo quando la pagina si apre su uno dei tuoi domini personalizzati, mai su qrdx.dev: un container può eseguire qualsiasi script, e qrdx.dev è il posto in cui le persone accedono a QRdx. QRdx invia al data layer solo l'evento di avvio del container, quindi attiva i tuoi tag sulle visualizzazioni di pagina o sui clic.",
+    "status": "machine",
+    "context": "integrations.entries.google-tag-manager.description.2"
+  },
   "b2a2822792e6": {
     "source": "Paste your container ID",
     "text": "Incolla il tuo ID container",
@@ -25222,6 +27148,12 @@
     "text": "Incolla il tuo ID pixel (6–20 cifre) su un QR code dinamico che apre una pagina ospitata. Il tag si carica solo dopo il consenso del visitatore, dove il consenso è richiesto.",
     "status": "machine",
     "context": "integrations.entries.meta-pixel.description.1"
+  },
+  "163f2c4c0763": {
+    "source": "QRdx starts the pixel and sends one PageView, with no other standard events, so build retargeting audiences from PageView on the page's URL. If you've set an allow list in the pixel's traffic permissions, add the hosted page's domain (qrdx.dev or your custom domain), or Meta ignores its events.",
+    "text": "QRdx avvia il pixel e invia un solo PageView, senza altri eventi standard, quindi crea i pubblici di retargeting a partire da PageView sull'URL della pagina. Se hai impostato un elenco di elementi consentiti nelle autorizzazioni di traffico del pixel, aggiungi il dominio della pagina ospitata (qrdx.dev o il tuo dominio personalizzato), altrimenti Meta ignora i suoi eventi.",
+    "status": "machine",
+    "context": "integrations.entries.meta-pixel.description.2"
   },
   "c6052142b8ab": {
     "source": "Paste your pixel ID",
@@ -25259,6 +27191,12 @@
     "status": "machine",
     "context": "integrations.entries.tiktok-pixel.description.1"
   },
+  "3af69b222205": {
+    "source": "QRdx loads the pixel and sends a page view, nothing else. Paste the pixel ID shown in TikTok Events Manager, a string of capital letters and digits, not your ad account number, and build a website visitors audience from the page's URL.",
+    "text": "QRdx carica il pixel e invia una visualizzazione di pagina, nient'altro. Incolla l'ID del pixel che vedi in TikTok Events Manager, una stringa di lettere maiuscole e cifre, non il numero del tuo account pubblicitario, e crea un pubblico di visitatori del sito web a partire dall'URL della pagina.",
+    "status": "machine",
+    "context": "integrations.entries.tiktok-pixel.description.2"
+  },
   "e90c3d22437b": {
     "source": "In the Tracking pixels panel, enter it in the TikTok Pixel field.",
     "text": "Nel pannello Tracking pixels, inseriscilo nel campo TikTok Pixel.",
@@ -25288,6 +27226,12 @@
     "text": "Incolla il tuo ID partner (3–12 cifre) su un QR code dinamico che apre una pagina ospitata. Il tag si carica solo dopo il consenso del visitatore, dove il consenso è richiesto.",
     "status": "machine",
     "context": "integrations.entries.linkedin-insight-tag.description.1"
+  },
+  "862b72603506": {
+    "source": "The Insight Tag records a page view when the page loads. Paste only the partner ID from Campaign Manager, not the tag's script. LinkedIn only serves ads to a matched audience of at least 300 members, so the scans of one code at a small event may not be enough to retarget on their own.",
+    "text": "L'Insight Tag registra una visualizzazione di pagina quando la pagina si carica. Incolla solo l'ID partner di Campaign Manager, non lo script del tag. LinkedIn mostra annunci solo a un pubblico corrispondente di almeno 300 membri, quindi le scansioni di un solo codice a un piccolo evento potrebbero non bastare da sole per il retargeting.",
+    "status": "machine",
+    "context": "integrations.entries.linkedin-insight-tag.description.2"
   },
   "f6b7f5b122cf": {
     "source": "Paste your partner ID",
@@ -27881,11 +29825,35 @@
     "status": "machine",
     "context": "mcp.tools.14.description"
   },
-  "1385eac80167": {
-    "source": "Do I need an account or an API key?",
-    "text": "Mi serve un account o una chiave API?",
+  "f963ece25fc7": {
+    "source": "Can Claude make a QR code?",
+    "text": "Claude può creare un QR code?",
     "status": "machine",
     "context": "mcp.faqs.0.question"
+  },
+  "e405a7b49b69": {
+    "source": "Yes, with the QRdx MCP server connected. A language model can't work out a QR code's pattern in its head, so a code it draws on its own rarely scans. Connected to QRdx, Claude calls a tool that renders a real, standard code and shows it in the chat. Add the server URL as a custom connector in Claude, or run the claude mcp add command in Claude Code; ChatGPT, Cursor and VS Code connect the same way.",
+    "text": "Sì, con il server MCP di QRdx collegato. Un modello linguistico non riesce a calcolare a mente il pattern di un QR code, quindi un codice disegnato da solo raramente si scansiona. Collegato a QRdx, Claude richiama uno strumento che genera un codice vero e standard e lo mostra nella chat. Aggiungi l'URL del server come connettore personalizzato in Claude, oppure esegui il comando claude mcp add in Claude Code; ChatGPT, Cursor e VS Code si collegano allo stesso modo.",
+    "status": "machine",
+    "context": "mcp.faqs.0.answer"
+  },
+  "5e42c847e755": {
+    "source": "Is the QRdx MCP server free?",
+    "text": "Il server MCP di QRdx è gratuito?",
+    "status": "machine",
+    "context": "mcp.faqs.1.question"
+  },
+  "4f4d4e882c64": {
+    "source": "Yes. It's free and open source, and designing, rendering and checking codes needs no account. The codes it makes are static, so they never expire and have no scan limits.",
+    "text": "Sì. È gratuito e open source, e per progettare, generare e verificare i codici non serve alcun account. I codici che crea sono statici, quindi non scadono mai e non hanno limiti di scansione.",
+    "status": "machine",
+    "context": "mcp.faqs.1.answer"
+  },
+  "770c0287a6f5": {
+    "source": "Does it need an API key?",
+    "text": "Serve una chiave API?",
+    "status": "machine",
+    "context": "mcp.faqs.2.question"
   },
   "f538f592cdab": {
     "source": "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
@@ -27964,6 +29932,18 @@
     "text": "Le richieste sono limitate a 120 al minuto per indirizzo IP, e design_qr a 20. Le chiamate con una chiave API contano anche per la quota API giornaliera del workspace. Dati molto lunghi potrebbero non entrare in un QR code; in quel caso lo strumento restituisce un errore che suggerisce un livello di correzione degli errori più basso.",
     "status": "machine",
     "context": "mcp.faqs.6.answer"
+  },
+  "af62099de2cc": {
+    "source": "Is it in the MCP Registry?",
+    "text": "È nel registro MCP Registry?",
+    "status": "machine",
+    "context": "mcp.faqs.9.question"
+  },
+  "0a96e97f871b": {
+    "source": "Yes. The hosted server is listed in the official MCP Registry as io.github.bucharitesh/qrdx, so apps and directories that read the registry can find it there.",
+    "text": "Sì. Il server ospitato è elencato nel registro ufficiale MCP Registry come io.github.bucharitesh/qrdx, quindi le app e le directory che leggono il registro possono trovarlo lì.",
+    "status": "machine",
+    "context": "mcp.faqs.9.answer"
   },
   "1e72db2bad7f": {
     "source": "Can I run it myself?",

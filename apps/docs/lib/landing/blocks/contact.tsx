@@ -8,6 +8,7 @@ import {
   Call as Phone,
   UserAdd as UserPlus,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import { buildVCard, vcardFilename } from "@/app/api/vcard/[slug]/vcard";
 import {
@@ -36,19 +37,6 @@ import { ContactEditor } from "./contact-editor";
 
 export const PHONE_TYPES = ["mobile", "work", "home", "fax", "other"] as const;
 export const EMAIL_TYPES = ["work", "home", "other"] as const;
-
-export const PHONE_TYPE_LABELS: Record<(typeof PHONE_TYPES)[number], string> = {
-  mobile: "Mobile",
-  work: "Work",
-  home: "Home",
-  fax: "Fax",
-  other: "Phone",
-};
-export const EMAIL_TYPE_LABELS: Record<(typeof EMAIL_TYPES)[number], string> = {
-  work: "Work",
-  home: "Personal",
-  other: "Email",
-};
 
 export const contactSchema = z.object({
   photo: imageSchema.optional(),
@@ -164,6 +152,7 @@ function DetailRow({
 }
 
 function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
+  const t = useTranslations("scanPages.hosted");
   const name = [props.firstName, props.lastName].filter(Boolean).join(" ");
   const role = [props.jobTitle, props.company].filter(Boolean).join(" · ");
   const addressLines = formatAddress(props.address);
@@ -190,7 +179,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
       : "#");
 
   return (
-    <section aria-label={name || "Contact"} className="space-y-5">
+    <section aria-label={name || t("contact.contact")} className="space-y-5">
       {props.cover && (
         <div className="relative -mx-5 [.lp-block:first-child>section>&]:-mt-10">
           <img
@@ -248,7 +237,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               blockId={id}
               href={telHref(phone.number)}
               icon={Phone}
-              label="Call"
+              label={t("contact.call")}
               target="call"
             />
           )}
@@ -266,7 +255,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               blockId={id}
               href={mailHref(email.address)}
               icon={Mail}
-              label="Email"
+              label={t("contact.email")}
               target="email"
             />
           )}
@@ -275,7 +264,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               blockId={id}
               href={props.website}
               icon={Globe}
-              label="Website"
+              label={t("contact.website")}
               target="website"
             />
           )}
@@ -284,7 +273,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               blockId={id}
               href={maps.google}
               icon={MapPin}
-              label="Directions"
+              label={t("contact.directions")}
               target="directions"
             />
           )}
@@ -303,14 +292,19 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               rel="nofollow"
             >
               <UserPlus aria-hidden="true" className="size-4" />
-              Save contact
+              {t("contact.saveContact")}
             </a>
           )}
           {props.showShare && (
             <ShareButton
               blockId={id}
               shapeClassName={buttonShapeClass(context.theme)}
-              title={name || props.company || "Contact"}
+              text={{
+                share: t("share"),
+                linkCopied: t("linkCopied"),
+                copyThisLink: t("copyThisLink"),
+              }}
+              title={name || props.company || t("contact.contact")}
             />
           )}
         </div>
@@ -327,7 +321,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               href={telHref(item.number)}
               icon={Phone}
               key={item.id}
-              label={PHONE_TYPE_LABELS[item.type]}
+              label={t(`contact.phoneTypes.${item.type}`)}
               target={`phone:${item.id}`}
               value={item.number}
             />
@@ -338,7 +332,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               href={mailHref(item.address)}
               icon={Mail}
               key={item.id}
-              label={EMAIL_TYPE_LABELS[item.type]}
+              label={t(`contact.emailTypes.${item.type}`)}
               target={`email:${item.id}`}
               value={item.address}
             />
@@ -348,7 +342,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               blockId={id}
               href={props.website}
               icon={Globe}
-              label="Website"
+              label={t("contact.website")}
               target="website"
               value={props.website
                 .replace(/^https?:\/\/(www\.)?/, "")
@@ -360,7 +354,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               blockId={id}
               href={maps.google}
               icon={MapPin}
-              label="Address"
+              label={t("contact.address")}
               target="address"
               value={addressLines.join("\n")}
             />

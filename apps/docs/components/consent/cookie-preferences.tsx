@@ -20,9 +20,9 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Chart2, type Icon, Lock1, MessageQuestion } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useLayoutEffect, useRef } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
 import { OPEN_COOKIE_SETTINGS_EVENT } from "./open-cookie-settings";
 

@@ -16,7 +16,12 @@ import {
   useState,
 } from "react";
 import { buttonClass, mutedTextClass } from "@/components/landing/block-kit";
-import { type FormField, validateAnswers } from "./form-fields";
+import { fillText } from "@/components/landing/fill-text";
+import {
+  type FormErrorText,
+  type FormField,
+  validateAnswers,
+} from "./form-fields";
 
 // Visitor-facing form of a form block. Posts same-origin to
 // /api/forms/<pageId> (so it works on custom domains), with a Cloudflare
@@ -207,7 +212,10 @@ function FieldInput({
   error,
   onChange,
   disabled,
+  starsOf,
 }: {
+  /** "{score} of {max} stars" */
+  starsOf: string;
   field: FormField;
   value: unknown;
   error?: string;
@@ -301,7 +309,7 @@ function FieldInput({
                     variant={score <= current ? "Bold" : "Linear"}
                   />
                   <span className="sr-only">
-                    {score} of {field.max} stars
+                    {fillText(starsOf, { score, max: field.max })}
                   </span>
                 </label>
               );
@@ -430,6 +438,23 @@ function FieldInput({
   }
 }
 
+/** QRdx's words in the form, translated by the block ("{…}" templates). */
+export interface FormClientText {
+  errors: FormErrorText;
+  /** "{score} of {max} stars" */
+  starsOf: string;
+  sending: string;
+  answerOne: string;
+  preview: string;
+  securityCheck: string;
+  tooMany: string;
+  couldntSend: string;
+  offline: string;
+  demo: string;
+  honeypot: string;
+  closed: string;
+}
+
 export function FormClient({
   blockId,
   fields,
@@ -440,7 +465,9 @@ export function FormClient({
   live,
   demo = false,
   shapeClassName,
+  text,
 }: {
+  text: FormClientText;
   blockId: string;
   fields: FormField[];
   submitLabel: string;
@@ -499,7 +526,7 @@ export function FormClient({
   const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (status.kind === "submitting" || status.kind === "closed") return;
-    const result = validateAnswers(fields, values);
+    const result = validateAnswers(fields, values, text.errors);
     if (!result.success) {
       setErrors(result.errors);
       focusFirstError(result.errors);
@@ -509,7 +536,7 @@ export function FormClient({
     if (result.answers.length === 0) {
       setStatus({
         kind: "notice",
-        message: "Answer at least one question before sending.",
+        message: text.answerOne,
       });
       return;
     }
@@ -520,8 +547,7 @@ export function FormClient({
     if (!live || !endpoint) {
       setStatus({
         kind: "notice",
-        message:
-          "This is a preview. Responses are collected on the published page.",
+        message: text.preview,
       });
       return;
     }
@@ -531,7 +557,7 @@ export function FormClient({
     if (turnstile.enabled && !token) {
       setStatus({
         kind: "notice",
-        message: "Please complete the security check above, then send again.",
+        message: text.securityCheck,
       });
       return;
     }
@@ -569,16 +595,14 @@ export function FormClient({
           kind: "notice",
           message:
             response.status === 429
-              ? "Too many responses from this device. Please wait a minute and try again."
-              : (response.status === 400 && data?.message) ||
-                "Your response couldn't be sent. Please try again.",
+              ? text.tooMany
+              : (response.status === 400 && data?.message) || text.couldntSend,
         });
       }
     } catch {
       setStatus({
         kind: "notice",
-        message:
-          "You seem to be offline. Your answers are still here; try again in a moment.",
+        message: text.offline,
       });
     }
   };
@@ -594,9 +618,7 @@ export function FormClient({
           {successMessage}
         </span>
         {demo && (
-          <span className={cn(mutedTextClass, "text-sm")}>
-            Demo: nothing is sent.
-          </span>
+          <span className={cn(mutedTextClass, "text-sm")}>{text.demo}</span>
         )}
       </output>
     );
@@ -618,6 +640,7 @@ export function FormClient({
           error={errors[field.id]}
           field={field}
           key={field.id}
+          starsOf={text.starsOf}
           onChange={(value) => {
             setValues((current) => ({ ...current, [field.id]: value }));
             if (errors[field.id]) {
@@ -635,7 +658,7 @@ export function FormClient({
         className="absolute -left-[9999px] h-px w-px overflow-hidden"
       >
         <label>
-          Leave this field empty
+          {text.honeypot}
           <input
             autoComplete="off"
             data-1p-ignore=""
@@ -653,8 +676,7 @@ export function FormClient({
       <output aria-live="polite" className="block empty:hidden">
         {closed && (
           <span className="block rounded-(--lp-radius) border border-(--lp-fg)/15 px-4 py-3 text-sm">
-            This form isn't accepting responses right now. Please try again
-            later.
+            {text.closed}
           </span>
         )}
         {status.kind === "notice" && (
@@ -670,7 +692,7 @@ export function FormClient({
         disabled={status.kind === "submitting" || closed}
         type="submit"
       >
-        {status.kind === "submitting" ? "Sending…" : submitLabel}
+        {status.kind === "submitting" ? text.sending : submitLabel}
       </button>
     </form>
   );
