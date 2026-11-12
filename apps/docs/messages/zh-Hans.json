@@ -1528,6 +1528,280 @@
       "report": "举报此二维码"
     }
   },
+  "scanPages": {
+    "reportAbuse": "举报滥用",
+    "privacy": "隐私",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "用 QRdx 制作你自己的二维码",
+      "inactive": {
+        "title": "此二维码已失效",
+        "message": "此二维码已被关闭，不再指向任何内容。"
+      },
+      "notFound": {
+        "title": "未找到该二维码",
+        "message": "此链接未指向任何二维码。可能是所有者已将其删除，或链接输入有误。"
+      },
+      "rateLimited": {
+        "title": "请求过于频繁",
+        "message": "此网络在短时间内打开了大量二维码。请几秒钟后再试。"
+      },
+      "invalidGs1": {
+        "title": "此产品链接无效",
+        "message": "无法读取其产品编号（GTIN）或批次信息。请检查链接，或重新扫描包装上的二维码。"
+      },
+      "unavailable": {
+        "title": "出了点问题",
+        "message": "我们暂时无法打开此二维码。请稍后重新扫描。"
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "此活动尚未开始",
+        "message": "请稍后再扫描此二维码。"
+      },
+      "expired": {
+        "title": "此活动已结束",
+        "message": "此二维码对应的页面已不可用。"
+      },
+      "paused": {
+        "title": "此活动已暂停",
+        "message": "此二维码对应的页面暂时不可用。"
+      }
+    },
+    "password": {
+      "title": "此二维码已设置密码保护",
+      "intro": "请输入你获得的密码以继续。",
+      "label": "密码",
+      "submit": "继续",
+      "missing": "请输入密码。",
+      "wrong": "密码不正确，请重试。",
+      "tooManyAttempts": "尝试次数过多。请等待几分钟后再试。"
+    },
+    "location": {
+      "title": "是否分享你的位置？",
+      "body": "此二维码的所有者希望大致了解它在哪里被扫描。浏览器会先征求你的同意，位置信息会被模糊处理到约 100 米。",
+      "allow": "允许",
+      "skip": "跳过",
+      "continueTo": "无论如何，您都将继续前往 {host}。",
+      "waiting": "正在等待浏览器响应…",
+      "opening": "谢谢，正在打开页面…",
+      "locating": "正在获取您的位置…"
+    },
+    "hosted": {
+      "notFoundTitle": "页面不存在",
+      "notFoundMessage": "此链接没有指向任何页面。可能是所有者已将其删除，或链接输入有误。",
+      "passwordProtected": "受密码保护",
+      "madeWithQrdx": "由 QRdx 制作",
+      "share": "分享",
+      "linkCopied": "链接已复制",
+      "copyThisLink": "复制此链接",
+      "details": "详情",
+      "links": "链接",
+      "socialProfiles": "社交媒体账号",
+      "mapOf": "{place}的地图",
+      "hours": {
+        "openingHours": "营业时间",
+        "openUntil": "营业中 · 至 {time}",
+        "closedOpens": "已打烊 · {day} {time} 营业",
+        "closed": "已打烊"
+      },
+      "contact": {
+        "contact": "联系方式",
+        "call": "致电",
+        "email": "电子邮件",
+        "website": "网站",
+        "directions": "路线",
+        "address": "地址",
+        "saveContact": "保存联系人",
+        "phoneTypes": {
+          "mobile": "手机",
+          "work": "工作",
+          "home": "住宅",
+          "fax": "传真",
+          "other": "电话"
+        },
+        "emailTypes": {
+          "work": "工作",
+          "home": "个人",
+          "other": "邮箱"
+        }
+      },
+      "event": {
+        "ended": "此活动已结束。",
+        "allDay": "全天",
+        "openInMaps": "在地图中打开",
+        "joinOnline": "在线参加",
+        "hostedBy": "主办方：<organizer></organizer>",
+        "addToCalendar": "添加到日历"
+      },
+      "coupon": {
+        "coupon": "优惠券",
+        "code": "优惠码：",
+        "copyCode": "复制优惠码",
+        "copy": "复制",
+        "copied": "已复制",
+        "expired": "此优惠券已过期。",
+        "notYet": "此优惠券暂时无法兑换。",
+        "terms": "条款与条件",
+        "expiredOn": "已于 {date} 过期",
+        "validRange": "有效期：{from} – {until}",
+        "validFrom": "{date} 起有效",
+        "validUntil": "有效期至 {date}",
+        "redeemed": "{time}已兑换",
+        "instructions": "请向工作人员出示此屏幕，然后点按<strong>立即兑换</strong>。",
+        "cancel": "取消",
+        "redeemNow": "立即兑换",
+        "redeem": "兑换优惠券"
+      },
+      "wifi": {
+        "network": "网络",
+        "networkHidden": "网络（隐藏）",
+        "password": "密码",
+        "noPassword": "无需密码，直接连接",
+        "copyNetwork": "复制网络名称",
+        "copyPassword": "复制密码"
+      },
+      "payment": {
+        "types": {
+          "bank": "银行转账",
+          "other": "其他"
+        },
+        "actions": {
+          "pay": "支付",
+          "donate": "捐赠",
+          "tip": "打赏"
+        },
+        "actionsWith": {
+          "pay": "使用{method}支付",
+          "donate": "使用{method}捐赠",
+          "tip": "使用{method}打赏"
+        },
+        "copyLine": "复制{label}"
+      },
+      "files": {
+        "downloads": "下载",
+        "fileNumber": "文件 {number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "图片",
+          "audio": "音频",
+          "video": "视频",
+          "file": "文件"
+        },
+        "opensInNewTab": "{kind} · 在新标签页中打开",
+        "open": "打开",
+        "download": "下载",
+        "pdfDocument": "PDF 文档",
+        "openPdf": "打开 PDF"
+      },
+      "media": {
+        "download": "下载{title}",
+        "play": "播放{title}",
+        "trackUnavailable": "此曲目暂不可用。",
+        "playlist": "播放列表",
+        "unavailable": "不可用",
+        "video": "视频",
+        "videoUnavailable": "视频不可用",
+        "providerVideo": "{provider} 视频",
+        "playVideo": "播放视频",
+        "playVideoTitle": "播放视频：{title}",
+        "playsFrom": "在 {provider} 播放"
+      },
+      "gallery": {
+        "openPhoto": "打开第 {number} 张照片，共 {total} 张",
+        "openPhotoAlt": "打开第 {number} 张照片，共 {total} 张：{alt}",
+        "photoOf": "第 {number} 张照片，共 {total} 张",
+        "viewer": "照片查看器",
+        "close": "关闭",
+        "previous": "上一张照片",
+        "next": "下一张照片",
+        "imageUnavailable": "图片不可用"
+      },
+      "apps": {
+        "getTheApp": "获取应用",
+        "appStore": "在 App Store 下载",
+        "googlePlay": "在 Google Play 获取",
+        "openInBrowser": "在浏览器中打开"
+      },
+      "menu": {
+        "menu": "菜单",
+        "sections": "菜单分类",
+        "soldOut": "已售罄",
+        "dietary": "饮食信息",
+        "aboutDish": "关于这道菜",
+        "contains": "<label>含有：</label>{list}",
+        "diet": {
+          "vegetarian": "素食",
+          "vegan": "纯素",
+          "gluten-free": "无麸质",
+          "dairy-free": "无乳制品",
+          "halal": "清真",
+          "kosher": "符合犹太洁食标准",
+          "spicy": "辛辣",
+          "organic": "有机"
+        },
+        "allergens": {
+          "gluten": "麸质",
+          "crustaceans": "甲壳类",
+          "eggs": "蛋类",
+          "fish": "鱼类",
+          "peanuts": "花生",
+          "soy": "大豆",
+          "milk": "牛奶",
+          "nuts": "树坚果",
+          "celery": "芹菜",
+          "mustard": "芥末",
+          "sesame": "芝麻",
+          "sulphites": "亚硫酸盐",
+          "lupin": "羽扇豆",
+          "molluscs": "软体动物"
+        }
+      },
+      "product": {
+        "details": "产品详情",
+        "certifications": "认证",
+        "ingredients": "配料",
+        "allergens": "过敏原",
+        "nutrition": "营养成分",
+        "nutritionPer": "营养成分，{basis}"
+      },
+      "reviews": {
+        "reviews": "评价",
+        "leaveReview": "写评价",
+        "reviewUsOn": "在 {platform} 上评价我们"
+      },
+      "form": {
+        "form": "表单",
+        "send": "提交",
+        "thanks": "谢谢！您的回复已提交。",
+        "starsOf": "{score} 星（满分 {max} 星）",
+        "sending": "正在提交…",
+        "answerOne": "提交前请至少回答一个问题。",
+        "preview": "这是预览。回复将在已发布的页面中收集。",
+        "securityCheck": "请先完成上方的安全验证，然后再次提交。",
+        "tooMany": "此设备提交的回复过多。请等待一分钟后再试。",
+        "couldntSend": "您的回复未能提交。请重试。",
+        "offline": "您似乎已断开网络。您填写的内容仍然保留，请稍后再试。",
+        "demo": "演示：不会发送任何内容。",
+        "honeypot": "请将此字段留空",
+        "closed": "此表单目前不接受回复。请稍后再试。",
+        "errors": {
+          "required": "此项为必填",
+          "consentRequired": "请勾选此框以继续",
+          "enterText": "请输入文字",
+          "tooLong": "请不要超过 {max} 个字符",
+          "email": "请输入有效的电子邮箱地址",
+          "phone": "请输入有效的电话号码",
+          "stars": "请选择 1 到 {max} 星",
+          "nps": "请选择 0 到 10 的评分",
+          "choices": "请从选项中选择",
+          "choice": "请选择其中一个选项",
+          "invalid": "无效的值"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "免费条形码生成器：EAN-13、UPC、Code 128",
     "metaDescription": "可生成 EAN-13、UPC-A、Code 128、GS1-128、ITF-14、Data Matrix 等 {count, number} 种条形码，校验位自动计算。支持 PNG、JPG、SVG、PDF 和 EPS。免费使用，无需注册。",

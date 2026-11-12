@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Wifi } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   lineText,
@@ -32,11 +33,13 @@ function Row({
   label,
   value,
   copyLabel,
+  copyText,
   mono,
 }: {
   label: string;
   value: string;
   copyLabel: string;
+  copyText: { copy: string; copied: string };
   mono?: boolean;
 }) {
   return (
@@ -47,12 +50,14 @@ function Row({
           {value}
         </dd>
       </div>
-      <CopyButton label={copyLabel} value={value} />
+      <CopyButton label={copyLabel} text={copyText} value={value} />
     </div>
   );
 }
 
 export function WifiBlock({ id, props, context }: BlockRenderProps<WifiProps>) {
+  const t = useTranslations("scanPages.hosted");
+  const copyText = { copy: t("coupon.copy"), copied: t("coupon.copied") };
   const titleId = `${id}-title`;
   return (
     <section
@@ -74,19 +79,23 @@ export function WifiBlock({ id, props, context }: BlockRenderProps<WifiProps>) {
       </div>
       <dl className="space-y-3">
         <Row
-          copyLabel="Copy network name"
-          label={props.hidden ? "Network (hidden)" : "Network"}
+          copyLabel={t("wifi.copyNetwork")}
+          copyText={copyText}
+          label={props.hidden ? t("wifi.networkHidden") : t("wifi.network")}
           value={props.ssid}
         />
         {props.security === "nopass" ? (
           <div>
-            <dt className={cn(mutedTextClass, "text-xs")}>Password</dt>
-            <dd className="font-medium">None, just connect</dd>
+            <dt className={cn(mutedTextClass, "text-xs")}>
+              {t("wifi.password")}
+            </dt>
+            <dd className="font-medium">{t("wifi.noPassword")}</dd>
           </div>
         ) : (
           <Row
-            copyLabel="Copy password"
-            label="Password"
+            copyLabel={t("wifi.copyPassword")}
+            copyText={copyText}
+            label={t("wifi.password")}
             mono
             value={props.password}
           />

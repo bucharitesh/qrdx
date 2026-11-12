@@ -4,6 +4,7 @@ import {
   ExportSquare as ExternalLink,
   DocumentText as FileText,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   buttonClass,
@@ -37,6 +38,7 @@ export const pdfBlockSchema = z.object({
 export type PdfBlockProps = z.output<typeof pdfBlockSchema>;
 
 function PdfBlock({ id, props, context }: BlockRenderProps<PdfBlockProps>) {
+  const t = useTranslations("scanPages.hosted.files");
   const src = sourceUrl(props.source, context);
   if (!src) {
     return context.mode === "preview" ? (
@@ -68,7 +70,7 @@ function PdfBlock({ id, props, context }: BlockRenderProps<PdfBlockProps>) {
         </span>
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-sm">{name}</p>
-          <p className={cn("text-xs", mutedTextClass)}>PDF document</p>
+          <p className={cn("text-xs", mutedTextClass)}>{t("pdfDocument")}</p>
         </div>
       </div>
       <div className={cn("grid gap-2", props.allowDownload && "grid-cols-2")}>
@@ -81,7 +83,7 @@ function PdfBlock({ id, props, context }: BlockRenderProps<PdfBlockProps>) {
           target="_blank"
         >
           <ExternalLink aria-hidden="true" className="size-4" />
-          {props.openLabel || "Open PDF"}
+          {props.openLabel || t("openPdf")}
         </a>
         {props.allowDownload && (
           <a
@@ -93,7 +95,7 @@ function PdfBlock({ id, props, context }: BlockRenderProps<PdfBlockProps>) {
             rel="noopener noreferrer"
           >
             <Download aria-hidden="true" className="size-4" />
-            Download
+            {t("download")}
           </a>
         )}
       </div>

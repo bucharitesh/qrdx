@@ -1,4 +1,5 @@
 import { VideoHorizontal as Film } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import { lineText, longText } from "@/components/landing/block-kit";
 import { BlockHeading, PreviewPlaceholder } from "@/lib/files/block-ui";
@@ -26,6 +27,7 @@ function VideoFileBlock({
   props,
   context,
 }: BlockRenderProps<VideoFileBlockProps>) {
+  const t = useTranslations("scanPages.hosted.media");
   const src = sourceUrl(props.source, context);
   if (!src) {
     return context.mode === "preview" ? (
@@ -47,7 +49,8 @@ function VideoFileBlock({
         blockId={id}
         poster={sourceUrl(props.poster, context)}
         src={src}
-        title={props.title || "Video"}
+        title={props.title || t("video")}
+        unavailableLabel={t("videoUnavailable")}
       />
     </section>
   );

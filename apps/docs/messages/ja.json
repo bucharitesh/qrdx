@@ -1528,6 +1528,280 @@
       "report": "このコードを報告"
     }
   },
+  "scanPages": {
+    "reportAbuse": "不正利用を報告",
+    "privacy": "プライバシー",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "QRdxで自分のQRコードを作成",
+      "inactive": {
+        "title": "このQRコードは現在無効です",
+        "message": "このコードはオフになっており、どこにも移動しません。"
+      },
+      "notFound": {
+        "title": "QRコードが見つかりません",
+        "message": "このリンクにはQRコードが関連付けられていません。所有者が削除したか、リンクが誤って入力された可能性があります。"
+      },
+      "rateLimited": {
+        "title": "リクエストが多すぎます",
+        "message": "このネットワークから短時間に多数のQRコードが開かれました。数秒後にもう一度お試しください。"
+      },
+      "invalidGs1": {
+        "title": "この商品リンクは無効です",
+        "message": "商品番号(GTIN)またはロット情報を読み取れません。リンクをご確認いただくか、パッケージのコードをもう一度スキャンしてください。"
+      },
+      "unavailable": {
+        "title": "問題が発生しました",
+        "message": "現在このQRコードを開けませんでした。しばらくしてからもう一度スキャンしてください。"
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "このキャンペーンはまだ始まっていません",
+        "message": "後ほどもう一度このコードをスキャンしてください。"
+      },
+      "expired": {
+        "title": "このキャンペーンは終了しました",
+        "message": "このQRコードのページは現在ご利用いただけません。"
+      },
+      "paused": {
+        "title": "このキャンペーンは一時停止中です",
+        "message": "このQRコードのページは現在ご利用いただけません。"
+      }
+    },
+    "password": {
+      "title": "このQRコードはパスワードで保護されています",
+      "intro": "続けるには、お知らせしたパスワードを入力してください。",
+      "label": "パスワード",
+      "submit": "続ける",
+      "missing": "パスワードを入力してください。",
+      "wrong": "パスワードが正しくありません。もう一度お試しください。",
+      "tooManyAttempts": "試行回数が多すぎます。数分待ってからもう一度お試しください。"
+    },
+    "location": {
+      "title": "位置情報を共有しますか?",
+      "body": "このQRコードの所有者は、おおよそどこでスキャンされたかを確認したいと考えています。まずブラウザーが許可を求め、位置情報は約100 mに丸められます。",
+      "allow": "許可する",
+      "skip": "スキップ",
+      "continueTo": "どちらを選んでも、{host} に移動します。",
+      "waiting": "ブラウザーの応答を待っています…",
+      "opening": "ありがとうございます。ページを開いています…",
+      "locating": "位置情報を取得しています…"
+    },
+    "hosted": {
+      "notFoundTitle": "ページが見つかりません",
+      "notFoundMessage": "このリンクの先にはページがありません。所有者が削除したか、リンクが誤って入力された可能性があります。",
+      "passwordProtected": "パスワード保護あり",
+      "madeWithQrdx": "QRdxで作成",
+      "share": "共有",
+      "linkCopied": "リンクをコピーしました",
+      "copyThisLink": "このリンクをコピー",
+      "details": "詳細",
+      "links": "リンク",
+      "socialProfiles": "SNSプロフィール",
+      "mapOf": "{place}の地図",
+      "hours": {
+        "openingHours": "営業時間",
+        "openUntil": "営業中 · {time}まで",
+        "closedOpens": "営業時間外 · {day} {time}に開店",
+        "closed": "営業時間外"
+      },
+      "contact": {
+        "contact": "連絡先",
+        "call": "電話",
+        "email": "メール",
+        "website": "ウェブサイト",
+        "directions": "経路",
+        "address": "住所",
+        "saveContact": "連絡先を保存",
+        "phoneTypes": {
+          "mobile": "携帯",
+          "work": "勤務先",
+          "home": "自宅",
+          "fax": "FAX",
+          "other": "電話"
+        },
+        "emailTypes": {
+          "work": "仕事",
+          "home": "個人",
+          "other": "メール"
+        }
+      },
+      "event": {
+        "ended": "このイベントは終了しました。",
+        "allDay": "終日",
+        "openInMaps": "地図で開く",
+        "joinOnline": "オンラインで参加",
+        "hostedBy": "主催：<organizer></organizer>",
+        "addToCalendar": "カレンダーに追加"
+      },
+      "coupon": {
+        "coupon": "クーポン",
+        "code": "コード：",
+        "copyCode": "クーポンコードをコピー",
+        "copy": "コピー",
+        "copied": "コピーしました",
+        "expired": "このクーポンは有効期限が切れています。",
+        "notYet": "このクーポンはまだ利用できません。",
+        "terms": "利用規約",
+        "expiredOn": "{date}に期限切れ",
+        "validRange": "有効期間：{from}～{until}",
+        "validFrom": "{date}から有効",
+        "validUntil": "{date}まで有効",
+        "redeemed": "{time}に利用済み",
+        "instructions": "この画面をスタッフに見せてから、<strong>今すぐ利用する</strong>をタップしてください。",
+        "cancel": "キャンセル",
+        "redeemNow": "今すぐ利用する",
+        "redeem": "クーポンを利用する"
+      },
+      "wifi": {
+        "network": "ネットワーク",
+        "networkHidden": "ネットワーク（非公開）",
+        "password": "パスワード",
+        "noPassword": "なし、そのまま接続",
+        "copyNetwork": "ネットワーク名をコピー",
+        "copyPassword": "パスワードをコピー"
+      },
+      "payment": {
+        "types": {
+          "bank": "銀行振込",
+          "other": "その他"
+        },
+        "actions": {
+          "pay": "支払う",
+          "donate": "寄付する",
+          "tip": "チップを贈る"
+        },
+        "actionsWith": {
+          "pay": "{method}で支払う",
+          "donate": "{method}で寄付する",
+          "tip": "{method}でチップを贈る"
+        },
+        "copyLine": "{label}をコピー"
+      },
+      "files": {
+        "downloads": "ダウンロード",
+        "fileNumber": "ファイル{number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "画像",
+          "audio": "音声",
+          "video": "動画",
+          "file": "ファイル"
+        },
+        "opensInNewTab": "{kind}・新しいタブで開きます",
+        "open": "開く",
+        "download": "ダウンロード",
+        "pdfDocument": "PDFドキュメント",
+        "openPdf": "PDFを開く"
+      },
+      "media": {
+        "download": "{title}をダウンロード",
+        "play": "{title}を再生",
+        "trackUnavailable": "このトラックは利用できません。",
+        "playlist": "プレイリスト",
+        "unavailable": "利用不可",
+        "video": "動画",
+        "videoUnavailable": "動画は利用できません",
+        "providerVideo": "{provider}の動画",
+        "playVideo": "動画を再生",
+        "playVideoTitle": "動画を再生：{title}",
+        "playsFrom": "{provider}から再生します"
+      },
+      "gallery": {
+        "openPhoto": "{total}枚中{number}枚目の写真を開く",
+        "openPhotoAlt": "{total}枚中{number}枚目の写真を開く：{alt}",
+        "photoOf": "{total}枚中{number}枚目の写真",
+        "viewer": "写真ビューア",
+        "close": "閉じる",
+        "previous": "前の写真",
+        "next": "次の写真",
+        "imageUnavailable": "画像は利用できません"
+      },
+      "apps": {
+        "getTheApp": "アプリを入手",
+        "appStore": "App Storeでダウンロード",
+        "googlePlay": "Google Playで手に入れよう",
+        "openInBrowser": "ブラウザーで開く"
+      },
+      "menu": {
+        "menu": "メニュー",
+        "sections": "メニューのセクション",
+        "soldOut": "売り切れ",
+        "dietary": "食事に関する情報",
+        "aboutDish": "この料理について",
+        "contains": "<label>含有：</label> {list}",
+        "diet": {
+          "vegetarian": "ベジタリアン",
+          "vegan": "ヴィーガン",
+          "gluten-free": "グルテンフリー",
+          "dairy-free": "乳製品不使用",
+          "halal": "ハラール",
+          "kosher": "コーシャ",
+          "spicy": "辛い",
+          "organic": "オーガニック"
+        },
+        "allergens": {
+          "gluten": "グルテン",
+          "crustaceans": "甲殻類",
+          "eggs": "卵",
+          "fish": "魚",
+          "peanuts": "落花生",
+          "soy": "大豆",
+          "milk": "乳",
+          "nuts": "木の実類",
+          "celery": "セロリ",
+          "mustard": "マスタード",
+          "sesame": "ごま",
+          "sulphites": "亜硫酸塩",
+          "lupin": "ルピナス",
+          "molluscs": "軟体動物"
+        }
+      },
+      "product": {
+        "details": "商品詳細",
+        "certifications": "認証",
+        "ingredients": "原材料",
+        "allergens": "アレルゲン",
+        "nutrition": "栄養成分",
+        "nutritionPer": "栄養成分（{basis}）"
+      },
+      "reviews": {
+        "reviews": "レビュー",
+        "leaveReview": "レビューを書く",
+        "reviewUsOn": "{platform}でレビューする"
+      },
+      "form": {
+        "form": "フォーム",
+        "send": "送信",
+        "thanks": "ありがとうございます。回答を送信しました。",
+        "starsOf": "星{max}つ中{score}つ",
+        "sending": "送信中…",
+        "answerOne": "送信する前に、1つ以上の質問に回答してください。",
+        "preview": "これはプレビューです。回答は公開されたページで収集されます。",
+        "securityCheck": "上のセキュリティチェックを完了してから、もう一度送信してください。",
+        "tooMany": "このデバイスからの回答が多すぎます。1分ほど待ってから、もう一度お試しください。",
+        "couldntSend": "回答を送信できませんでした。もう一度お試しください。",
+        "offline": "オフラインのようです。回答はそのまま残っています。しばらくしてからもう一度お試しください。",
+        "demo": "デモ：何も送信されません。",
+        "honeypot": "この欄は空のままにしてください",
+        "closed": "このフォームは現在回答を受け付けていません。後でもう一度お試しください。",
+        "errors": {
+          "required": "この項目は必須です",
+          "consentRequired": "続けるにはチェックを入れてください",
+          "enterText": "テキストを入力してください",
+          "tooLong": "{max}文字以内で入力してください",
+          "email": "有効なメールアドレスを入力してください",
+          "phone": "有効な電話番号を入力してください",
+          "stars": "星を1～{max}から選んでください",
+          "nps": "0から10までのスコアを選んでください",
+          "choices": "選択肢から選んでください",
+          "choice": "選択肢のいずれかを選んでください",
+          "invalid": "無効な値です"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "無料バーコードジェネレーター：EAN-13、UPC、Code 128",
     "metaDescription": "EAN-13、UPC-A、Code 128、GS1-128、ITF-14、Data Matrixなど、{count, number}種類のバーコードを作成できます。チェックデジットは自動で計算されます。PNG、JPG、SVG、PDF、EPSに対応。無料で、登録は不要です。",

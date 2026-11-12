@@ -1435,6 +1435,280 @@
       "report": "इस कोड की रिपोर्ट करें"
     }
   },
+  "scanPages": {
+    "reportAbuse": "दुरुपयोग की रिपोर्ट करें",
+    "privacy": "प्राइवेसी",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "QRdx से अपना QR कोड बनाएं",
+      "inactive": {
+        "title": "यह QR कोड अब चालू नहीं है",
+        "message": "यह कोड बंद कर दिया गया है और अब कहीं नहीं ले जाता।"
+      },
+      "notFound": {
+        "title": "QR कोड नहीं मिला",
+        "message": "यह लिंक किसी QR कोड तक नहीं ले जाता। हो सकता है इसके मालिक ने इसे हटा दिया हो, या लिंक गलत टाइप हुआ हो।"
+      },
+      "rateLimited": {
+        "title": "बहुत ज़्यादा रिक्वेस्ट",
+        "message": "इस नेटवर्क से थोड़े समय में बहुत सारे QR कोड खोले गए। कृपया कुछ सेकंड बाद फिर कोशिश करें।"
+      },
+      "invalidGs1": {
+        "title": "यह प्रोडक्ट लिंक मान्य नहीं है",
+        "message": "इसका प्रोडक्ट नंबर (GTIN) या बैच की जानकारी पढ़ी नहीं जा सकती। लिंक जांचें, या पैक पर लगा कोड फिर से स्कैन करें।"
+      },
+      "unavailable": {
+        "title": "कुछ गड़बड़ हो गई",
+        "message": "हम अभी यह QR कोड नहीं खोल सके। कृपया थोड़ी देर बाद इसे फिर से स्कैन करें।"
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "यह कैंपेन अभी शुरू नहीं हुआ है",
+        "message": "कृपया यह कोड बाद में फिर से स्कैन करें।"
+      },
+      "expired": {
+        "title": "यह कैंपेन खत्म हो चुका है",
+        "message": "इस QR कोड के पीछे का पेज अब उपलब्ध नहीं है।"
+      },
+      "paused": {
+        "title": "यह कैंपेन रोका गया है",
+        "message": "इस QR कोड के पीछे का पेज अभी उपलब्ध नहीं है।"
+      }
+    },
+    "password": {
+      "title": "यह QR कोड पासवर्ड से सुरक्षित है",
+      "intro": "आगे बढ़ने के लिए आपको दिया गया पासवर्ड डालें।",
+      "label": "पासवर्ड",
+      "submit": "आगे बढ़ें",
+      "missing": "पासवर्ड डालें।",
+      "wrong": "यह पासवर्ड सही नहीं है। कृपया फिर से कोशिश करें।",
+      "tooManyAttempts": "बहुत ज़्यादा कोशिशें हो गईं। कृपया कुछ मिनट रुककर फिर कोशिश करें।"
+    },
+    "location": {
+      "title": "अपनी लोकेशन शेयर करें?",
+      "body": "इस QR कोड के मालिक यह मोटे तौर पर देखना चाहते हैं कि इसे कहां स्कैन किया गया। आपका ब्राउज़र पहले आपसे पूछता है, और लोकेशन लगभग 100 m तक राउंड कर दी जाती है।",
+      "allow": "अनुमति दें",
+      "skip": "छोड़ें",
+      "continueTo": "दोनों ही स्थितियों में आप {host} पर पहुँचेंगे।",
+      "waiting": "आपके ब्राउज़र का इंतज़ार है…",
+      "opening": "धन्यवाद। पेज खुल रहा है…",
+      "locating": "आपकी लोकेशन ली जा रही है…"
+    },
+    "hosted": {
+      "notFoundTitle": "पेज नहीं मिला",
+      "notFoundMessage": "यह लिंक किसी पेज तक नहीं ले जाता। हो सकता है इसके मालिक ने पेज हटा दिया हो, या लिंक गलत टाइप हुआ हो।",
+      "passwordProtected": "पासवर्ड से सुरक्षित",
+      "madeWithQrdx": "QRdx से बनाया गया",
+      "share": "शेयर करें",
+      "linkCopied": "लिंक कॉपी हुआ",
+      "copyThisLink": "यह लिंक कॉपी करें",
+      "details": "विवरण",
+      "links": "लिंक",
+      "socialProfiles": "सोशल प्रोफ़ाइल",
+      "mapOf": "{place} का मैप",
+      "hours": {
+        "openingHours": "खुलने का समय",
+        "openUntil": "अभी खुला है · {time} तक",
+        "closedOpens": "बंद · {day} {time} को खुलेगा",
+        "closed": "बंद"
+      },
+      "contact": {
+        "contact": "संपर्क",
+        "call": "कॉल करें",
+        "email": "ईमेल",
+        "website": "वेबसाइट",
+        "directions": "रास्ता देखें",
+        "address": "पता",
+        "saveContact": "संपर्क सेव करें",
+        "phoneTypes": {
+          "mobile": "मोबाइल",
+          "work": "ऑफ़िस",
+          "home": "घर",
+          "fax": "फ़ैक्स",
+          "other": "फ़ोन"
+        },
+        "emailTypes": {
+          "work": "ऑफ़िस",
+          "home": "निजी",
+          "other": "ईमेल"
+        }
+      },
+      "event": {
+        "ended": "यह इवेंट खत्म हो चुका है।",
+        "allDay": "पूरे दिन",
+        "openInMaps": "Maps में खोलें",
+        "joinOnline": "ऑनलाइन जुड़ें",
+        "hostedBy": "आयोजक: <organizer></organizer>",
+        "addToCalendar": "कैलेंडर में जोड़ें"
+      },
+      "coupon": {
+        "coupon": "कूपन",
+        "code": "कोड:",
+        "copyCode": "कूपन कोड कॉपी करें",
+        "copy": "कॉपी करें",
+        "copied": "कॉपी हो गया",
+        "expired": "इस कूपन की वैधता खत्म हो चुकी है।",
+        "notYet": "यह कूपन अभी रिडीम नहीं किया जा सकता।",
+        "terms": "नियम और शर्तें",
+        "expiredOn": "{date} को समाप्त हुआ",
+        "validRange": "वैध: {from} – {until}",
+        "validFrom": "{date} से मान्य",
+        "validUntil": "{date} तक मान्य",
+        "redeemed": "{time} रिडीम किया गया",
+        "instructions": "यह स्क्रीन स्टाफ को दिखाएँ, फिर <strong>अभी रिडीम करें</strong> पर टैप करें।",
+        "cancel": "रद्द करें",
+        "redeemNow": "अभी रिडीम करें",
+        "redeem": "कूपन रिडीम करें"
+      },
+      "wifi": {
+        "network": "नेटवर्क",
+        "networkHidden": "नेटवर्क (छिपा हुआ)",
+        "password": "पासवर्ड",
+        "noPassword": "कुछ नहीं, बस कनेक्ट करें",
+        "copyNetwork": "नेटवर्क का नाम कॉपी करें",
+        "copyPassword": "पासवर्ड कॉपी करें"
+      },
+      "payment": {
+        "types": {
+          "bank": "बैंक ट्रांसफ़र",
+          "other": "अन्य"
+        },
+        "actions": {
+          "pay": "पे करें",
+          "donate": "दान करें",
+          "tip": "टिप दें"
+        },
+        "actionsWith": {
+          "pay": "{method} से पे करें",
+          "donate": "{method} से दान करें",
+          "tip": "{method} से टिप दें"
+        },
+        "copyLine": "{label} कॉपी करें"
+      },
+      "files": {
+        "downloads": "डाउनलोड",
+        "fileNumber": "फ़ाइल {number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "इमेज",
+          "audio": "ऑडियो",
+          "video": "वीडियो",
+          "file": "फ़ाइल"
+        },
+        "opensInNewTab": "{kind} · नए टैब में खुलता है",
+        "open": "खोलें",
+        "download": "डाउनलोड करें",
+        "pdfDocument": "PDF दस्तावेज़",
+        "openPdf": "PDF खोलें"
+      },
+      "media": {
+        "download": "{title} डाउनलोड करें",
+        "play": "{title} चलाएँ",
+        "trackUnavailable": "यह ट्रैक उपलब्ध नहीं है।",
+        "playlist": "प्लेलिस्ट",
+        "unavailable": "उपलब्ध नहीं",
+        "video": "वीडियो",
+        "videoUnavailable": "वीडियो उपलब्ध नहीं है",
+        "providerVideo": "{provider} वीडियो",
+        "playVideo": "वीडियो चलाएँ",
+        "playVideoTitle": "वीडियो चलाएँ: {title}",
+        "playsFrom": "{provider} से चलेगा"
+      },
+      "gallery": {
+        "openPhoto": "{total} में से फ़ोटो {number} खोलें",
+        "openPhotoAlt": "{total} में से फ़ोटो {number} खोलें: {alt}",
+        "photoOf": "{total} में से फ़ोटो {number}",
+        "viewer": "फ़ोटो व्यूअर",
+        "close": "बंद करें",
+        "previous": "पिछली फ़ोटो",
+        "next": "अगली फ़ोटो",
+        "imageUnavailable": "इमेज उपलब्ध नहीं है"
+      },
+      "apps": {
+        "getTheApp": "ऐप पाएँ",
+        "appStore": "App Store से डाउनलोड करें",
+        "googlePlay": "Google Play पर पाएँ",
+        "openInBrowser": "अपने ब्राउज़र में खोलें"
+      },
+      "menu": {
+        "menu": "मेन्यू",
+        "sections": "मेन्यू सेक्शन",
+        "soldOut": "खत्म हो गया",
+        "dietary": "खान-पान की जानकारी",
+        "aboutDish": "इस डिश के बारे में",
+        "contains": "<label>इसमें है:</label> {list}",
+        "diet": {
+          "vegetarian": "शाकाहारी",
+          "vegan": "वीगन",
+          "gluten-free": "ग्लूटन-फ़्री",
+          "dairy-free": "डेयरी-फ़्री",
+          "halal": "हलाल",
+          "kosher": "कोशर",
+          "spicy": "तीखा",
+          "organic": "ऑर्गेनिक"
+        },
+        "allergens": {
+          "gluten": "ग्लूटन",
+          "crustaceans": "क्रस्टेशियन",
+          "eggs": "अंडे",
+          "fish": "मछली",
+          "peanuts": "मूँगफली",
+          "soy": "सोया",
+          "milk": "दूध",
+          "nuts": "ट्री नट्स",
+          "celery": "अजवाइन",
+          "mustard": "सरसों",
+          "sesame": "तिल",
+          "sulphites": "सल्फ़ाइट",
+          "lupin": "ल्यूपिन",
+          "molluscs": "मोलस्क"
+        }
+      },
+      "product": {
+        "details": "प्रोडक्ट की जानकारी",
+        "certifications": "सर्टिफ़िकेशन",
+        "ingredients": "सामग्री",
+        "allergens": "एलर्जी कारक",
+        "nutrition": "पोषण",
+        "nutritionPer": "पोषण, {basis}"
+      },
+      "reviews": {
+        "reviews": "रिव्यू",
+        "leaveReview": "रिव्यू दें",
+        "reviewUsOn": "{platform} पर रिव्यू दें"
+      },
+      "form": {
+        "form": "फ़ॉर्म",
+        "send": "भेजें",
+        "thanks": "धन्यवाद! आपका जवाब भेज दिया गया है।",
+        "starsOf": "{max} में से {score} स्टार",
+        "sending": "भेजा जा रहा है…",
+        "answerOne": "भेजने से पहले कम से कम एक सवाल का जवाब दें।",
+        "preview": "यह एक प्रीव्यू है। जवाब पब्लिश किए गए पेज पर इकट्ठा किए जाते हैं।",
+        "securityCheck": "कृपया ऊपर दिया गया सिक्योरिटी चेक पूरा करें, फिर दोबारा भेजें।",
+        "tooMany": "इस डिवाइस से बहुत ज़्यादा जवाब आ चुके हैं। कृपया एक मिनट रुककर दोबारा कोशिश करें।",
+        "couldntSend": "आपका जवाब नहीं भेजा जा सका। कृपया दोबारा कोशिश करें।",
+        "offline": "लगता है आप ऑफ़लाइन हैं। आपके जवाब यहीं मौजूद हैं; थोड़ी देर बाद फिर कोशिश करें।",
+        "demo": "डेमो: कुछ भी नहीं भेजा जाता।",
+        "honeypot": "इस फ़ील्ड को खाली छोड़ें",
+        "closed": "यह फ़ॉर्म अभी जवाब स्वीकार नहीं कर रहा है। कृपया बाद में दोबारा कोशिश करें।",
+        "errors": {
+          "required": "यह फ़ील्ड ज़रूरी है",
+          "consentRequired": "आगे बढ़ने के लिए इस बॉक्स पर टिक करें",
+          "enterText": "टेक्स्ट लिखें",
+          "tooLong": "{max} अक्षरों से कम रखें",
+          "email": "सही ईमेल पता लिखें",
+          "phone": "सही फ़ोन नंबर लिखें",
+          "stars": "1 से {max} स्टार चुनें",
+          "nps": "0 से 10 के बीच एक स्कोर चुनें",
+          "choices": "विकल्पों में से चुनें",
+          "choice": "विकल्पों में से कोई एक चुनें",
+          "invalid": "अमान्य मान"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "फ़्री बारकोड जनरेटर: EAN-13, UPC, Code 128",
     "metaDescription": "EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix और बहुत कुछ बनाएँ: {count, number} बारकोड टाइप, चेक डिजिट अपने-आप निकल जाता है। PNG, JPG, SVG, PDF और EPS। फ़्री, साइनअप की ज़रूरत नहीं।",

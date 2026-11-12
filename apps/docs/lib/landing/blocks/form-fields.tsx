@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { fillText } from "@/components/landing/fill-text";
 
 // Form block fields: the definitions stored in block props, the validation of
 // a visitor's answers (shared by the form UI and POST /api/forms/<pageId>),
@@ -99,28 +100,61 @@ const isBlank = (value: unknown) =>
 
 export type FormAnswerValue = string | number | boolean | string[];
 
+/**
+ * The error messages, as templates ("{max}"). English by default; hosted
+ * pages pass them in the scanner's language (scanPages.hosted.form.errors).
+ */
+export interface FormErrorText {
+  required: string;
+  consentRequired: string;
+  enterText: string;
+  /** "Keep it under {max} characters" */
+  tooLong: string;
+  email: string;
+  phone: string;
+  /** "Choose 1 to {max} stars" */
+  stars: string;
+  nps: string;
+  choices: string;
+  choice: string;
+  invalid: string;
+}
+
+export const ENGLISH_FORM_ERRORS: FormErrorText = {
+  required: "This field is required",
+  consentRequired: "Please tick this box to continue",
+  enterText: "Enter text",
+  tooLong: "Keep it under {max} characters",
+  email: "Enter a valid email address",
+  phone: "Enter a valid phone number",
+  stars: "Choose 1 to {max} stars",
+  nps: "Choose a score from 0 to 10",
+  choices: "Choose from the options",
+  choice: "Choose one of the options",
+  invalid: "Invalid value",
+};
+
 /** One field's answer, or an error message. Blank optional fields give `undefined`. */
 export function validateAnswer(
   field: FormField,
   raw: unknown,
+  text: FormErrorText = ENGLISH_FORM_ERRORS,
 ): { value: FormAnswerValue | undefined } | { error: string } {
   if (isBlank(raw)) {
     return field.required
       ? {
           error:
-            field.type === "consent"
-              ? "Please tick this box to continue"
-              : "This field is required",
+            field.type === "consent" ? text.consentRequired : text.required,
         }
       : { value: undefined };
   }
 
   switch (field.type) {
     case "text": {
-      if (typeof raw !== "string") return { error: "Enter text" };
+      if (typeof raw !== "string") return { error: text.enterText };
       const value = raw.trim();
       return value.length > field.maxLength
-        ? { error: `Keep it under ${field.maxLength} characters` }
+        ? { error: fillText(text.tooLong, { max: field.maxLength }) }
         : { value };
     }
     case "email": {
@@ -129,25 +163,25 @@ export function validateAnswer(
       );
       return result.success
         ? { value: result.data.toLowerCase() }
-        : { error: "Enter a valid email address" };
+        : { error: text.email };
     }
     case "phone": {
       const value = typeof raw === "string" ? raw.trim() : "";
       return PHONE.test(value) && /\d{5}/.test(value.replace(/\D/g, ""))
         ? { value }
-        : { error: "Enter a valid phone number" };
+        : { error: text.phone };
     }
     case "stars": {
       const value = Number(raw);
       return Number.isInteger(value) && value >= 1 && value <= field.max
         ? { value }
-        : { error: `Choose 1 to ${field.max} stars` };
+        : { error: fillText(text.stars, { max: field.max }) };
     }
     case "nps": {
       const value = Number(raw);
       return Number.isInteger(value) && value >= 0 && value <= 10
         ? { value }
-        : { error: "Choose a score from 0 to 10" };
+        : { error: text.nps };
     }
     case "choice": {
       if (field.multiple) {
@@ -155,19 +189,19 @@ export function validateAnswer(
           !Array.isArray(raw) ||
           raw.some((item) => typeof item !== "string")
         ) {
-          return { error: "Choose from the options" };
+          return { error: text.choices };
         }
         const picked = field.options.filter((option) => raw.includes(option));
         return picked.length === new Set(raw).size
           ? { value: picked }
-          : { error: "Choose from the options" };
+          : { error: text.choices };
       }
       return typeof raw === "string" && field.options.includes(raw)
         ? { value: raw }
-        : { error: "Choose one of the options" };
+        : { error: text.choice };
     }
     case "consent":
-      return raw === true ? { value: true } : { error: "Invalid value" };
+      return raw === true ? { value: true } : { error: text.invalid };
   }
 }
 
@@ -211,11 +245,12 @@ export type AnswersResult =
 export function validateAnswers(
   fields: FormField[],
   input: Record<string, unknown>,
+  text: FormErrorText = ENGLISH_FORM_ERRORS,
 ): AnswersResult {
   const answers: FormAnswer[] = [];
   const errors: Record<string, string> = {};
   for (const field of fields) {
-    const result = validateAnswer(field, input[field.id]);
+    const result = validateAnswer(field, input[field.id], text);
     if ("error" in result) {
       errors[field.id] = result.error;
     } else if (result.value !== undefined) {

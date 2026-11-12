@@ -1,14 +1,16 @@
 import { Tick } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2, Box } from "iconsax-reactjs";
+import { useLocale, useTranslations } from "next-intl";
 import { mutedTextClass, surfaceClass } from "@/components/landing/block-kit";
 import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
-import { ALLERGEN_LABELS } from "./menu-schema";
 import { ProductEditor } from "./product-editor";
 import { formatGtin, type ProductProps, productSchema } from "./product-schema";
 
 function ProductBlock({ id, props, context }: BlockRenderProps<ProductProps>) {
+  const t = useTranslations("scanPages.hosted");
+  const locale = useLocale();
   const nutrition = props.nutrition.rows.filter((row) => row.value);
   const hasContent =
     props.certifications.length > 0 ||
@@ -27,7 +29,7 @@ function ProductBlock({ id, props, context }: BlockRenderProps<ProductProps>) {
 
   return (
     <section
-      aria-label={props.title ? undefined : "Product details"}
+      aria-label={props.title ? undefined : t("product.details")}
       aria-labelledby={props.title ? titleId : undefined}
       className="space-y-4"
     >
@@ -43,7 +45,10 @@ function ProductBlock({ id, props, context }: BlockRenderProps<ProductProps>) {
       )}
 
       {props.certifications.length > 0 && (
-        <ul aria-label="Certifications" className="flex flex-wrap gap-2">
+        <ul
+          aria-label={t("product.certifications")}
+          className="flex flex-wrap gap-2"
+        >
           {props.certifications.map((item) => (
             <li
               className="inline-flex items-center gap-1.5 rounded-full bg-(--lp-muted) px-3 py-1.5 text-sm font-medium"
@@ -65,7 +70,9 @@ function ProductBlock({ id, props, context }: BlockRenderProps<ProductProps>) {
             className={subHeading}
             preview={context.thumbnail}
           >
-            {props.ingredients ? "Ingredients" : "Allergens"}
+            {props.ingredients
+              ? t("product.ingredients")
+              : t("product.allergens")}
           </LpHeading>
           {props.ingredients && (
             <p className="text-[15px] leading-relaxed whitespace-pre-line break-words">
@@ -74,10 +81,19 @@ function ProductBlock({ id, props, context }: BlockRenderProps<ProductProps>) {
           )}
           {props.allergens.length > 0 && (
             <p className="text-sm">
-              <span className="font-semibold">Contains:</span>{" "}
-              {props.allergens
-                .map((allergen) => ALLERGEN_LABELS[allergen])
-                .join(", ")}
+              {t.rich("menu.contains", {
+                label: (chunks) => (
+                  <span className="font-semibold">{chunks}</span>
+                ),
+                list: new Intl.ListFormat(locale, {
+                  style: "short",
+                  type: "unit",
+                }).format(
+                  props.allergens.map((allergen) =>
+                    t(`menu.allergens.${allergen}`),
+                  ),
+                ),
+              })}
             </p>
           )}
           {props.allergenNote && (
@@ -96,7 +112,7 @@ function ProductBlock({ id, props, context }: BlockRenderProps<ProductProps>) {
               className={subHeading}
               preview={context.thumbnail}
             >
-              Nutrition
+              {t("product.nutrition")}
             </LpHeading>
             {props.nutrition.basis && (
               <p className={cn(mutedTextClass, "text-right text-sm")}>
@@ -106,8 +122,9 @@ function ProductBlock({ id, props, context }: BlockRenderProps<ProductProps>) {
           </div>
           <table className="w-full border-collapse text-[15px]">
             <caption className="sr-only">
-              Nutrition
-              {props.nutrition.basis ? `, ${props.nutrition.basis}` : ""}
+              {props.nutrition.basis
+                ? t("product.nutritionPer", { basis: props.nutrition.basis })
+                : t("product.nutrition")}
             </caption>
             <tbody>
               {nutrition.map((row) => (

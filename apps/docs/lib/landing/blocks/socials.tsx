@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight2, Hashtag as AtSign } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   itemIdSchema,
@@ -33,8 +34,9 @@ export type SocialsProps = z.output<typeof socialsSchema>;
 export type SocialItem = SocialsProps["items"][number];
 
 function SocialsList({ id, props }: BlockRenderProps<SocialsProps>) {
+  const t = useTranslations("scanPages.hosted");
   return (
-    <ul aria-label="Social profiles" className="space-y-2">
+    <ul aria-label={t("socialProfiles")} className="space-y-2">
       {props.items.map((item) => {
         const network = getSocialNetwork(item.network);
         const Icon = network.icon;
@@ -69,13 +71,14 @@ function SocialsList({ id, props }: BlockRenderProps<SocialsProps>) {
 }
 
 function SocialsBlock(blockProps: BlockRenderProps<SocialsProps>) {
+  const t = useTranslations("scanPages.hosted");
   const { id, props } = blockProps;
   if (props.items.length === 0) return null;
   if (props.style === "list") return <SocialsList {...blockProps} />;
   const buttons = props.style === "buttons";
   return (
     <ul
-      aria-label="Social profiles"
+      aria-label={t("socialProfiles")}
       className={cn(
         buttons
           ? "grid grid-cols-2 gap-2"

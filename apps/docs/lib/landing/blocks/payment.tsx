@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Bank, ExportSquare, Mobile, Moneys, Wallet } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { ComponentType } from "react";
 import {
   buttonClass,
@@ -15,7 +16,6 @@ import { CopyButton } from "./coupon-copy";
 import { PaymentEditor } from "./payment-editor";
 import {
   detailLines,
-  PAYMENT_ACTION_LABELS,
   PAYMENT_TYPE_LABELS,
   type PaymentProps,
   type PaymentType,
@@ -42,6 +42,7 @@ const PAYMENT_ICONS: Record<
 };
 
 function PaymentBlock({ id, props, context }: BlockRenderProps<PaymentProps>) {
+  const t = useTranslations("scanPages.hosted");
   if (props.methods.length === 0) return null;
   const titleId = `${id}-title`;
   return (
@@ -63,13 +64,17 @@ function PaymentBlock({ id, props, context }: BlockRenderProps<PaymentProps>) {
       <ul className="space-y-2">
         {props.methods.map((method) => {
           const Icon = PAYMENT_ICONS[method.type];
-          const name = method.label || PAYMENT_TYPE_LABELS[method.type];
+          // Brand names stay as they are; "Bank transfer" and "Other" are QRdx's.
+          const name =
+            method.label ||
+            (method.type === "bank" || method.type === "other"
+              ? t(`payment.types.${method.type}`)
+              : PAYMENT_TYPE_LABELS[method.type]);
           const lines = detailLines(method.details);
-          const verb = PAYMENT_ACTION_LABELS[props.action];
           const action =
             method.type === "other" && !method.label
-              ? verb
-              : `${verb} with ${name}`;
+              ? t(`payment.actions.${props.action}`)
+              : t(`payment.actionsWith.${props.action}`, { method: name });
           return (
             <li className={cn(surfaceClass, "space-y-3 p-4")} key={method.id}>
               <div className="flex items-center gap-3">
@@ -104,7 +109,13 @@ function PaymentBlock({ id, props, context }: BlockRenderProps<PaymentProps>) {
                         </dd>
                       </div>
                       <CopyButton
-                        label={`Copy ${line.label || name}`}
+                        label={t("payment.copyLine", {
+                          label: line.label || name,
+                        })}
+                        text={{
+                          copy: t("coupon.copy"),
+                          copied: t("coupon.copied"),
+                        }}
                         value={line.value}
                       />
                     </div>
