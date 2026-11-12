@@ -200,6 +200,26 @@ export function PartToolbar({
             >
               {item.content}
             </MenuPopover>
+          ) : item.kind === "segment" ? (
+            // biome-ignore lint/a11y/useSemanticElements: a two-way switch of toggle buttons
+            <div
+              aria-label={item.label}
+              className="bg-muted/60 flex items-center rounded-full p-0.5"
+              key={item.id}
+              role="group"
+            >
+              {item.options.map((option) => (
+                <button
+                  aria-pressed={item.value === option.id}
+                  className="aria-pressed:bg-background aria-pressed:text-foreground text-muted-foreground focus-visible:ring-ring/50 h-6 rounded-full px-2 text-xs font-medium outline-none focus-visible:ring-[3px] aria-pressed:shadow-xs"
+                  key={option.id}
+                  onClick={() => item.onChange(option.id)}
+                  type="button"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
           ) : (
             <ToolbarButton
               key={item.id}

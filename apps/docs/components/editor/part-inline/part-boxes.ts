@@ -4,7 +4,13 @@
 // to the overlay root, in CSS px. Browser only.
 import { QR_EYE_ATTRIBUTE, QR_PART_ATTRIBUTE, type QRPart } from "qrdx";
 import { type Box, measureArtwork } from "../frame-inline/preview-labels";
-import { type MeasuredParts, NO_PARTS, unionBox } from "./part-targets";
+import {
+  intersectBox,
+  type MeasuredParts,
+  NO_PARTS,
+  symbolBox,
+  unionBox,
+} from "./part-targets";
 
 const EYES = ["top-left", "top-right", "bottom-left"] as const;
 
@@ -36,12 +42,19 @@ export function measureParts(
     if (eye) byEye.set(eye, [...(byEye.get(eye) ?? []), box]);
   }
   if (byPart.size === 0) return NO_PARTS;
+  const eyes = EYES.flatMap((eye) => {
+    const box = unionBox(byEye.get(eye) ?? []);
+    return box ? [box] : [];
+  });
+  const found = eyes.length === EYES.length ? eyes : [];
+  const symbol = symbolBox(found);
+  const body = unionBox(byPart.get("body") ?? []);
   return {
-    eyes: EYES.flatMap((eye) => {
-      const box = unionBox(byEye.get(eye) ?? []);
-      return box ? [box] : [];
-    }),
-    dots: unionBox(byPart.get("body") ?? []),
+    eyes: found,
+    symbol,
+    // A shaped code's ring is drawn with the dots: the dots stop at the
+    // symbol, and the ring around it is the background's
+    dots: body && symbol ? intersectBox(body, symbol) : body,
     logo: unionBox(byPart.get("logo") ?? []),
     background: unionBox(byPart.get("background") ?? []),
     artwork: measureArtwork(svg, root),
@@ -56,6 +69,7 @@ export function partsKey(parts: MeasuredParts): string {
       : null;
   return JSON.stringify([
     parts.eyes.map(round),
+    round(parts.symbol),
     round(parts.dots),
     round(parts.logo),
     round(parts.background),

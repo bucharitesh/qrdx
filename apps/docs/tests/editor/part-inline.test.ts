@@ -361,6 +361,7 @@ const box = (left: number, top: number, size: number): Box => ({
 /** A 300px code at (100, 100) inside a framed artwork. */
 const MEASURED: MeasuredParts = {
   eyes: [box(100, 100, 60), box(340, 100, 60), box(100, 340, 60)],
+  symbol: box(100, 100, 300),
   dots: box(100, 100, 300),
   logo: box(220, 220, 60),
   background: box(100, 100, 300),

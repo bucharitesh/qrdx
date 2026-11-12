@@ -11,6 +11,8 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2, Setting4, Shuffle } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useId, useState } from "react";
+import { useHideFeaturebaseLauncher } from "@/lib/featurebase-launcher";
+import { insideInlineEditor } from "../frame-inline/inline-toolbar";
 import type { PartItem } from "./part-controls";
 import type { PartId } from "./part-targets";
 
@@ -39,6 +41,8 @@ export function PartSheet({
   onMoreOptions: () => void;
 }) {
   const t = useTranslations("editor.partInline");
+  // Featurebase's launcher would sit over Done
+  useHideFeaturebaseLauncher();
   const baseId = useId();
   const first = items.find((item) => item.kind === "menu")?.id ?? null;
   const [open, setOpen] = useState<string | null>(first);
@@ -60,6 +64,13 @@ export function PartSheet({
           event.preventDefault();
           onCancel();
         }}
+        // The preview's handles (moving the logo, the padding) belong to
+        // this edit: using them keeps the sheet open
+        onInteractOutside={(event) => {
+          if (insideInlineEditor(event.target as Element | null, "part")) {
+            event.preventDefault();
+          }
+        }}
         onOpenAutoFocus={(event) => {
           // Keep the keyboard down; the sheet itself takes focus
           event.preventDefault();
@@ -79,6 +90,29 @@ export function PartSheet({
 
         <div className="@container min-h-0 flex-1 space-y-2 overflow-y-auto overscroll-contain px-4 pb-3">
           {items.map((item) => {
+            if (item.kind === "segment") {
+              return (
+                // biome-ignore lint/a11y/useSemanticElements: a two-way switch of toggle buttons
+                <div
+                  aria-label={item.label}
+                  className="bg-muted/60 grid grid-cols-2 gap-1 rounded-md p-1"
+                  key={item.id}
+                  role="group"
+                >
+                  {item.options.map((option) => (
+                    <button
+                      aria-pressed={item.value === option.id}
+                      className="aria-pressed:bg-background aria-pressed:text-foreground text-muted-foreground focus-visible:ring-ring/50 h-8 rounded-[5px] text-xs font-medium outline-none focus-visible:ring-[3px] aria-pressed:shadow-xs"
+                      key={option.id}
+                      onClick={() => item.onChange(option.id)}
+                      type="button"
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              );
+            }
             if (item.kind === "toggle") {
               return (
                 <button
