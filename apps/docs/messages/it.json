@@ -4881,7 +4881,8 @@
           "afterYouSignInPasskeyOrApp": "Dopo l’accesso, QRdx ti chiede la tua passkey o un codice dalla tua app di autenticazione. Va bene anche un codice di backup.",
           "afterYouSignInPasskey": "Dopo l’accesso, QRdx ti chiede la tua passkey. Va bene anche un codice di backup.",
           "afterYouSignInApp": "Dopo l’accesso, QRdx ti chiede un codice dalla tua app di autenticazione. Va bene anche un codice di backup.",
-          "afterYouSignInQrdx2": "Dopo l’accesso, QRdx ti chiede un codice di backup."
+          "afterYouSignInQrdx2": "Dopo l’accesso, QRdx ti chiede un codice di backup.",
+          "passkeySpotlight": "Ora una passkey può essere il tuo secondo passaggio, al posto del codice di un'app di autenticazione."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Passaggio {stepNumber, number} di {length, number}",
@@ -7506,7 +7507,19 @@
         "new": "Novità",
         "whatsNew": "Novità",
         "newFeaturesAndFixesIn": "Nuove funzionalità e correzioni in QRdx.",
-        "seeAllUpdates": "Vedi tutti gli aggiornamenti"
+        "seeAllUpdates": "Vedi tutti gli aggiornamenti",
+        "newFeatures": "Novità",
+        "dismissTitle": "Chiudi {title}",
+        "previousUpdate": "Aggiornamento precedente",
+        "nextUpdate": "Aggiornamento successivo",
+        "positionOfTotal": "{position, number} di {total, number}",
+        "readOnTheChangelog": "Leggi nel changelog",
+        "tryIt": "Provalo",
+        "close": "Chiudi"
+      },
+      "spotlight": {
+        "new": "Novità",
+        "gotIt": "Ho capito"
       }
     },
     "workspaces": {

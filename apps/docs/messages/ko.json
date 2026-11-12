@@ -4881,7 +4881,8 @@
           "afterYouSignInPasskeyOrApp": "로그인하면 QRdx가 패스키 또는 인증 앱의 코드를 요청해요. 백업 코드도 사용할 수 있어요.",
           "afterYouSignInPasskey": "로그인하면 QRdx가 패스키를 요청해요. 백업 코드도 사용할 수 있어요.",
           "afterYouSignInApp": "로그인하면 QRdx가 인증 앱의 코드를 요청해요. 백업 코드도 사용할 수 있어요.",
-          "afterYouSignInQrdx2": "로그인하면 QRdx에서 백업 코드를 요청해요."
+          "afterYouSignInQrdx2": "로그인하면 QRdx에서 백업 코드를 요청해요.",
+          "passkeySpotlight": "이제 인증 앱 코드 대신 패스키를 두 번째 인증 단계로 사용할 수 있어요."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "{length, number}단계 중 {stepNumber, number}단계",
@@ -7506,7 +7507,19 @@
         "new": "신규",
         "whatsNew": "새로운 소식",
         "newFeaturesAndFixesIn": "QRdx의 새로운 기능과 수정 사항이에요.",
-        "seeAllUpdates": "모든 업데이트 보기"
+        "seeAllUpdates": "모든 업데이트 보기",
+        "newFeatures": "새로운 기능",
+        "dismissTitle": "{title} 닫기",
+        "previousUpdate": "이전 업데이트",
+        "nextUpdate": "다음 업데이트",
+        "positionOfTotal": "{total, number}개 중 {position, number}번째",
+        "readOnTheChangelog": "변경 내역에서 읽어보기",
+        "tryIt": "사용해 보기",
+        "close": "닫기"
+      },
+      "spotlight": {
+        "new": "신규",
+        "gotIt": "확인했어요"
       }
     },
     "workspaces": {

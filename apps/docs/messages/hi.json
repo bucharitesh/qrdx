@@ -4881,7 +4881,8 @@
           "afterYouSignInPasskeyOrApp": "साइन इन करने के बाद QRdx आपसे आपकी passkey या आपके authenticator app का कोड माँगता है। बैकअप कोड भी चलता है।",
           "afterYouSignInPasskey": "साइन इन करने के बाद QRdx आपसे आपकी passkey माँगता है। बैकअप कोड भी चलता है।",
           "afterYouSignInApp": "साइन इन करने के बाद QRdx आपसे आपके authenticator app का कोड माँगता है। बैकअप कोड भी चलता है।",
-          "afterYouSignInQrdx2": "साइन इन करने के बाद QRdx बैकअप कोड मांगता है।"
+          "afterYouSignInQrdx2": "साइन इन करने के बाद QRdx बैकअप कोड मांगता है।",
+          "passkeySpotlight": "अब आप authenticator कोड की जगह passkey को अपना दूसरा स्टेप बना सकते हैं।"
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "स्टेप {stepNumber, number} / {length, number}",
@@ -7506,7 +7507,19 @@
         "new": "नया",
         "whatsNew": "नया क्या है",
         "newFeaturesAndFixesIn": "QRdx के नए फ़ीचर और फ़िक्स।",
-        "seeAllUpdates": "सभी अपडेट देखें"
+        "seeAllUpdates": "सभी अपडेट देखें",
+        "newFeatures": "नए फ़ीचर",
+        "dismissTitle": "{title} बंद करें",
+        "previousUpdate": "पिछला अपडेट",
+        "nextUpdate": "अगला अपडेट",
+        "positionOfTotal": "{total, number} में से {position, number}",
+        "readOnTheChangelog": "चेंजलॉग में पढ़ें",
+        "tryIt": "आज़माएँ",
+        "close": "बंद करें"
+      },
+      "spotlight": {
+        "new": "नया",
+        "gotIt": "समझ गया"
       }
     },
     "workspaces": {

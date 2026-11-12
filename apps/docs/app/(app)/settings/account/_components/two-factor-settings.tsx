@@ -37,6 +37,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { FeatureSpotlight } from "@/components/app-shell/feature-spotlight";
 import { ensureConfirmed } from "@/components/confirm-identity/actions";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import type { ConfirmationAction } from "@/lib/account/confirmation";
@@ -350,27 +351,37 @@ export function TwoFactorSettings({
         <div className="scroll-mt-24" id="passkeys">
           <MethodRow
             actions={
-              <Button
-                className={TAP_SM}
-                disabled={!passkeysUsable || opening !== null}
-                onClick={() =>
-                  openSetup(
-                    "passkey",
-                    methods.on ? "add-passkey" : "turn-on-two-factor",
-                    "passkey",
-                  )
-                }
-                size="sm"
-                title={
-                  supported === false
-                    ? PASSKEY_MESSAGES.notSupported
-                    : undefined
-                }
-                variant="outline"
+              <FeatureSpotlight
+                description={t("passkeySpotlight")}
+                // Shown to people without a passkey, where adding one works.
+                enabled={passkeysUsable && passkeys.length === 0}
+                id="passkey-second-step"
+                side="left"
               >
-                {opening === "passkey" && <Spinner className="animate-spin" />}
-                {t("addPasskey")}
-              </Button>
+                <Button
+                  className={TAP_SM}
+                  disabled={!passkeysUsable || opening !== null}
+                  onClick={() =>
+                    openSetup(
+                      "passkey",
+                      methods.on ? "add-passkey" : "turn-on-two-factor",
+                      "passkey",
+                    )
+                  }
+                  size="sm"
+                  title={
+                    supported === false
+                      ? PASSKEY_MESSAGES.notSupported
+                      : undefined
+                  }
+                  variant="outline"
+                >
+                  {opening === "passkey" && (
+                    <Spinner className="animate-spin" />
+                  )}
+                  {t("addPasskey")}
+                </Button>
+              </FeatureSpotlight>
             }
             details={
               supported === false

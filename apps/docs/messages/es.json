@@ -4881,7 +4881,8 @@
           "afterYouSignInPasskeyOrApp": "Después de iniciar sesión, QRdx te pedirá tu llave de acceso o un código de tu app de autenticación. Un código de respaldo también funciona.",
           "afterYouSignInPasskey": "Después de iniciar sesión, QRdx te pedirá tu llave de acceso. Un código de respaldo también funciona.",
           "afterYouSignInApp": "Después de iniciar sesión, QRdx te pedirá un código de tu app de autenticación. Un código de respaldo también funciona.",
-          "afterYouSignInQrdx2": "Después de iniciar sesión, QRdx te pedirá un código de respaldo."
+          "afterYouSignInQrdx2": "Después de iniciar sesión, QRdx te pedirá un código de respaldo.",
+          "passkeySpotlight": "Ahora una llave de acceso puede ser tu segundo paso, en lugar de un código de autenticación."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Paso {stepNumber, number} de {length, number}",
@@ -7506,7 +7507,19 @@
         "new": "Nuevo",
         "whatsNew": "Novedades",
         "newFeaturesAndFixesIn": "Nuevas funciones y correcciones en QRdx.",
-        "seeAllUpdates": "Ver todas las novedades"
+        "seeAllUpdates": "Ver todas las novedades",
+        "newFeatures": "Novedades",
+        "dismissTitle": "Descartar {title}",
+        "previousUpdate": "Novedad anterior",
+        "nextUpdate": "Siguiente novedad",
+        "positionOfTotal": "{position, number} de {total, number}",
+        "readOnTheChangelog": "Leer en el changelog",
+        "tryIt": "Pruébalo",
+        "close": "Cerrar"
+      },
+      "spotlight": {
+        "new": "Nuevo",
+        "gotIt": "Entendido"
       }
     },
     "workspaces": {

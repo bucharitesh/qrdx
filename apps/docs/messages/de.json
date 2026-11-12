@@ -4881,7 +4881,8 @@
           "afterYouSignInPasskeyOrApp": "Nach der Anmeldung fragt QRdx nach deinem Passkey oder einem Code aus deiner Authenticator-App. Ein Backup-Code funktioniert ebenfalls.",
           "afterYouSignInPasskey": "Nach der Anmeldung fragt QRdx nach deinem Passkey. Ein Backup-Code funktioniert ebenfalls.",
           "afterYouSignInApp": "Nach der Anmeldung fragt QRdx nach einem Code aus deiner Authenticator-App. Ein Backup-Code funktioniert ebenfalls.",
-          "afterYouSignInQrdx2": "Nach der Anmeldung fragt QRdx nach einem Backup-Code."
+          "afterYouSignInQrdx2": "Nach der Anmeldung fragt QRdx nach einem Backup-Code.",
+          "passkeySpotlight": "Ein Passkey kann jetzt dein zweiter Schritt sein, statt eines Authenticator-Codes."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Schritt {stepNumber, number} von {length, number}",
@@ -7506,7 +7507,19 @@
         "new": "Neu",
         "whatsNew": "Neuigkeiten",
         "newFeaturesAndFixesIn": "Neue Funktionen und Fixes in QRdx.",
-        "seeAllUpdates": "Alle Updates ansehen"
+        "seeAllUpdates": "Alle Updates ansehen",
+        "newFeatures": "Neue Funktionen",
+        "dismissTitle": "{title} schließen",
+        "previousUpdate": "Vorheriges Update",
+        "nextUpdate": "Nächstes Update",
+        "positionOfTotal": "{position, number} von {total, number}",
+        "readOnTheChangelog": "Im Changelog lesen",
+        "tryIt": "Ausprobieren",
+        "close": "Schließen"
+      },
+      "spotlight": {
+        "new": "Neu",
+        "gotIt": "Verstanden"
       }
     },
     "workspaces": {
