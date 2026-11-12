@@ -91,20 +91,16 @@ const dateFormat = new Intl.DateTimeFormat("en-US", {
   year: "numeric",
 });
 
-const plural = (count: number, word: string) =>
-  `${count} ${word}${count === 1 ? "" : "s"}`;
-
 function usageLabel(
   file: FileRow,
   t: Translator<"app.dashboard.files.filesManager">,
 ): string {
-  const parts = [
-    file.pages.length > 0 && plural(file.pages.length, "page"),
-    file.codeCount > 0 && plural(file.codeCount, "code"),
-  ].filter(Boolean);
-  return parts.length > 0
-    ? t("usedByValue", { value: parts.join(" · ") })
-    : t("notUsedYet");
+  const pages = file.pages.length;
+  const codes = file.codeCount;
+  if (pages > 0 && codes > 0) return t("usedByPagesAndCodes", { pages, codes });
+  if (pages > 0) return t("usedByPages", { pages });
+  if (codes > 0) return t("usedByCodes", { codes });
+  return t("notUsedYet");
 }
 
 function UsageCard({
