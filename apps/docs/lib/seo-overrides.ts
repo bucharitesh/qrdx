@@ -23,6 +23,13 @@ export interface SeoOverride {
 const component = (name: string) => `${name} React component for shadcn/ui`;
 
 export const SEO_OVERRIDES: Readonly<Record<string, SeoOverride>> = {
+  // The sidebar calls it "QRdx docs"; searchers want to know what's inside.
+  "/docs": {
+    title: "QRdx Docs: QR Code Guides, API, CLI and React Library",
+    description:
+      "Guides to every QRdx feature: static and dynamic QR codes, hosted pages, scan analytics, the REST API, the MCP server, the CLI and the React library.",
+  },
+
   // These share the home page's head terms ("QR code generator", "Wi-Fi QR
   // code", "vCard QR code"); developers search for the component.
   "/docs/components/qr-code": { title: component("QrCode") },

@@ -118,6 +118,39 @@ export const compare = defineDocs({
             description: z.string(),
           }),
         ),
+        /**
+         * "<competitor> alternatives", shown under the hero. QRdx's own row
+         * comes from lib/plans.ts and lib/pricing.ts, so it isn't listed;
+         * every tool here has a comparison page of its own.
+         */
+        alternatives: z
+          .object({
+            heading: z.string(),
+            intro: z.string(),
+            qrdxBestFor: z.string(),
+            tools: z
+              .array(
+                z.object({
+                  name: z.string(),
+                  /** Its comparison page, /compare/<slug> */
+                  slug: z.string(),
+                  bestFor: z.string(),
+                  freeTier: z.string(),
+                  paidFrom: z.string(),
+                  /** The vendor page the free tier and price came from */
+                  source: z.url(),
+                  /** ISO date that page was checked */
+                  lastVerified: z.string(),
+                }),
+              )
+              .min(3)
+              .max(5),
+          })
+          .optional(),
+        /** Questions answered on the page, with FAQPage markup */
+        faqs: z
+          .array(z.object({ question: z.string(), answer: z.string() }))
+          .optional(),
       })
       .transform(fillFactsDeep),
   },

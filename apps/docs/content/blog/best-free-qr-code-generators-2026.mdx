@@ -2,7 +2,7 @@
 title: "Best Free QR Code Generators in 2026: No Signup, No Watermarks, Unlimited"
 description: "Seven free QR code generators ranked on six tests, from signup and watermarks to scan limits and analytics, and which really offer unlimited free codes."
 date: "2026-03-23"
-updated: "2026-10-31"
+updated: "2026-11-13"
 author: ["ritesh-bucha"]
 category: Education
 tags: ["free qr code generator", "qr code generator comparison", "no signup", "no watermark"]
@@ -44,9 +44,9 @@ We scored each generator's free tier against those six criteria, using what you 
 | **QRdx** | ✅ (static) | ✅ | ✅ (dynamic codes, free account) | ✅ | ✅ (app AGPL-3.0, library MIT) |
 | QRKIT | ✅ (static) | ✅ | ❌ | ✅ | ❌ |
 | QR Code Monkey | ✅ (static) | ✅ | ❌ | ✅ | ❌ |
-| QR-Verse | ✅ | ❌ (account) | ✅ | ✅ | ❌ |
-| QR Tiger | ❌ (3 codes) | ✅ | ❌ (paid) | ❌ (paid) | ❌ |
-| Flowcode | ❌ (2 codes) | ✅ | ❌ (limited) | ❌ | ❌ |
+| QR-Verse | ✅ (static) | ❌ (account) | ✅ (1 dynamic code, 60 days) | ❌ (Pro) | ❌ |
+| QR Tiger | ✅ (static) | ✅ | ✅ (3 dynamic codes, 500 scans each) | Not listed | ❌ |
+| Flowcode | ❌ (2 codes) | ✅ | ✅ (up to 500 scans) | ❌ | ❌ |
 | Canva | ✅ (static) | ❌ (account) | ❌ | ❌ | ❌ |
 
 ## 1. QRdx: best overall free QR code generator
@@ -55,9 +55,9 @@ qrdx.dev covers more of the six criteria than anything else on this list: unlimi
 
 **What's free:**
 - Unlimited QR codes in the playground, with no account
-- PNG, SVG or JPG downloads with no watermark
+- PNG, JPG, WebP, SVG, PDF and EPS downloads with no watermark
 - Full customization: {facts.bodyPatterns} body patterns, {facts.eyeShapes} corner eyes and {facts.eyeCentres} eye centers, linear and radial gradients, logo overlay
-- Click analytics through the optional Dub.sh integration: encode a Dub short link and track its clicks in Dub (requires a QRdx account and a Dub account)
+- Scan analytics built in: a free account adds 10 dynamic codes with unlimited scans and 90 days of history
 - Open source on GitHub (the app is AGPL-3.0, the `qrdx` library is MIT from 0.0.47), so you can read the code or run your own instance
 
 **Who it's for:** designers who want full creative control, businesses that need branded QR codes, and developers who want an embeddable TypeScript React component (`npm install qrdx`) instead of a SaaS dashboard.
@@ -87,19 +87,18 @@ qrcode-monkey.com has been around since 2012 and generates high-resolution stati
 
 **What's missing:** dynamic QR codes need a paid plan. There are no analytics and no developer API, and it's closed-source SaaS.
 
-## 4. QR-Verse: best SaaS alternative for non-developers
+## 4. QR-Verse: cheap Pro plan with AI art
 
-qr-verse.com is a newer entrant with unlimited dynamic QR codes and full analytics. It needs an account but sets no hard limits on the free tier.
+qr-verse.com is a freemium service with dynamic codes, scan analytics and AI QR art. Its free plan is a starting point: unlimited static codes, but only 1 dynamic code, 60 days of analytics, PNG-only downloads and no logo upload. Pro costs €3.99 a month billed annually (€4.99 monthly) and adds unlimited dynamic codes, logos, SVG and WebP, AI art and API access.
 
 **What's good:**
-- Unlimited dynamic QR codes
-- Full scan analytics (location, device, count)
-- 20+ QR types
-- AI art QR code generation
+- A low price for unlimited dynamic codes on Pro
+- 27 QR types
+- AI art QR codes: 3 a day in its mobile app on the free plan, and on the web with Pro
 
-**What's missing:** you need an account, so there's no anonymous generation. There's no open-source code and no developer npm package or API.
+**What's missing:** on the free plan, logos, SVG and a second dynamic code. Its API is a Pro feature, and the code isn't open source. For tools that do more for free, see our [QR-Verse alternatives](/compare/qr-verse).
 
-## 5. QR Tiger: avoid the free tier
+## 5. QR Tiger: a small free tier for dynamic codes
 
 <Figure
   src="/blog/best-free-qr-code-generators-2026/scan-limits.svg"
@@ -109,21 +108,21 @@ qr-verse.com is a newer entrant with unlimited dynamic QR codes and full analyti
   caption="Scan caps and expiring codes are the hidden cost of many free tiers: a printed code can stop working."
 />
 
-qrcode-tiger.com is one of the most heavily marketed QR code generators, but its free tier is barely usable:
+qrcode-tiger.com is one of the most heavily marketed QR code generators. Its free tier is generous with static codes and small for dynamic ones:
 
-- Only 3 QR codes on the free tier
-- 500 scans per code (then the QR stops working unless you upgrade)
-- Ads shown on the QR page redirect
+- Unlimited static codes, but only 3 dynamic codes
+- Each dynamic code is capped at 500 scans
+- Paid plans start at US$7 for 12 dynamic codes
 
-Against QR Tiger's free tier, QRdx has more codes, no scan limits and free logo support. QR Tiger's paid plans add dynamic codes and scan analytics; QRdx includes both on a free account, for up to 10 dynamic codes.
+Against QR Tiger's free tier, QRdx has more dynamic codes (10 on a free account) and doesn't cap their scans.
 
 ## 6. Flowcode: very limited free tier
 
-flowcode.com limits the free tier to 2 QR codes with 500 total scans before you have to upgrade. It suits enterprise marketing teams better than individual users.
+flowcode.com limits the free tier to 2 Flowcodes, with analytics for up to 500 scans. Paid plans start at $25 a month billed annually. It suits marketing teams running campaigns better than individual users.
 
 ## 7. Canva QR Code Generator
 
-Canva makes basic static QR codes inside its design tool. It needs an account, and the QR feature only produces standard square codes with no pattern customization or analytics. It's useful if you're already designing in Canva and need a plain QR code, but it isn't a standalone QR code tool.
+Canva makes QR codes inside its design tool, and you need an account. Its static codes only take colors and a margin. Its dynamic codes add patterns and a link you can change, but on Canva Free and Pro they carry the Canva logo, and scan insights need a Business, Enterprise or Nonprofit plan. It's useful if you're already designing in Canva, but it isn't a standalone QR code tool. Our [Canva QR code alternatives](/compare/canva-qr) page covers the options.
 
 ## How to choose
 
@@ -141,7 +140,7 @@ Canva makes basic static QR codes inside its design tool. It needs an account, a
 
 **You just need a plain QR code fast:** use QR Code Monkey or QRKIT. Both are fast and free and need no account.
 
-**You need scan analytics on a free tier:** use QR-Verse, which includes unlimited dynamic codes with scan analytics, or a free QRdx account, which includes scan analytics on up to 10 dynamic codes.
+**You need scan analytics on a free tier:** use a free QRdx account, which tracks scans on up to 10 dynamic codes with 90 days of history. QR Tiger's free plan tracks 3 dynamic codes (500 scans each), and QR-Verse's tracks 1 for 60 days.
 
 [Try QRdx free →](/playground)
 

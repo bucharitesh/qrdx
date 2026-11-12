@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteTitle": "Free QR Code Generator & Dynamic QR Codes | QRdx",
-    "siteDescription": "Unlimited free QR codes with logos, colors and patterns, no signup or watermark. Plus editable dynamic codes, hosted pages and scan analytics. Open source.",
+    "siteTitle": "QRdx: Free QR Code Generator with Logos and Dynamic Codes",
+    "siteDescription": "Free, open-source QR code generator: unlimited codes with logos, colors and frames, no signup or watermark. Plus dynamic codes and scan analytics.",
     "ogImageAlt": "QRdx: free QR code generator with dynamic QR codes, hosted pages and scan analytics"
   },
   "nav": {
@@ -1676,6 +1676,7 @@
   },
   "integrations": {
     "metaTitle": "Integrations",
+    "searchTitle": "QR Code Integrations: {first}, {second} and {count, number} More",
     "metaDescription": "Connect QRdx to {names} and more: {count, number} integrations with exact setup steps.",
     "hero": {
       "eyebrow": "Integrations",
