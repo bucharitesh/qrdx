@@ -1,0 +1,53 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.bucharitesh/qrdx",
+  "title": "QRdx",
+  "description": "QR codes and barcodes that scan: styled designs with a scan check, plus Wi-Fi and payment codes.",
+  "version": "1.2.0",
+  "websiteUrl": "https://qrdx.dev/mcp",
+  "repository": {
+    "url": "https://github.com/bucharitesh/qrdx",
+    "source": "github",
+    "id": "1086422295",
+    "subfolder": "apps/docs/app/api/mcp"
+  },
+  "icons": [
+    {
+      "src": "https://qrdx.dev/web-app-manifest-512x512.png",
+      "mimeType": "image/png",
+      "sizes": ["512x512"]
+    },
+    {
+      "src": "https://qrdx.dev/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": ["any"]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://mcp.qrdx.dev/mcp",
+      "headers": [
+        {
+          "name": "Authorization",
+          "description": "Optional. A QRdx API key as Bearer qrdx_…, only to save themes and barcodes to your workspace or use a logo you uploaded. Every other tool works without it.",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ],
+  "_meta": {
+    "io.modelcontextprotocol.registry/publisher-provided": {
+      "summary": "Design QR codes from any MCP client. design_qr checks the content and style, scores how well the code scans, adjusts the style until the score is Great, and returns SVG, PNG and a link to edit it in the playground. Payload tools build Wi-Fi, contact, email, SMS, location and bank-payment codes (Pix, SEPA, PayNow, PromptPay, VietQR). generate_barcode checks and renders EAN-13, UPC-A, UPC-E, EAN-8, Code 128, Code 39, ITF-14, GS1-128, Data Matrix, PDF417 and Aztec. With a QRdx API key it can also save themes and barcodes to your workspace.",
+      "tags": [
+        "qr-code",
+        "barcode",
+        "design",
+        "image-generation",
+        "developer-tools"
+      ],
+      "docs": "https://qrdx.dev/docs/developers/mcp"
+    }
+  }
+}
