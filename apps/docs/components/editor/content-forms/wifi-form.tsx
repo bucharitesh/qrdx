@@ -29,6 +29,12 @@ export function WifiForm() {
     hidden: storedConfig?.hidden || false,
   });
 
+  const encryptionLabels: Record<WifiContent["encryption"], string> = {
+    WPA: t("wpaWpa2"),
+    WEP: "WEP",
+    nopass: t("noPassword"),
+  };
+
   React.useEffect(() => {
     const config: WifiContent = { type: "wifi", ...wifiData };
     const encoded = encodeWifi(config);
@@ -62,12 +68,13 @@ export function WifiForm() {
           }
         >
           <SelectTrigger id="wifi-encryption">
-            <SelectValue />
+            {/* The label as children, so it's in the server HTML too */}
+            <SelectValue>{encryptionLabels[wifiData.encryption]}</SelectValue>
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="WPA">{t("wpaWpa2")}</SelectItem>
-            <SelectItem value="WEP">WEP</SelectItem>
-            <SelectItem value="nopass">{t("noPassword")}</SelectItem>
+            <SelectItem value="WPA">{encryptionLabels.WPA}</SelectItem>
+            <SelectItem value="WEP">{encryptionLabels.WEP}</SelectItem>
+            <SelectItem value="nopass">{encryptionLabels.nopass}</SelectItem>
           </SelectContent>
         </Select>
       </div>
