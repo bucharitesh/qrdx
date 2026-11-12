@@ -207,6 +207,12 @@ function entries(): Entry[] {
       priority: 0.7,
     },
     {
+      url: url("/qr-code-api"),
+      lastModified: pageDate("/qr-code-api"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
       url: url("/plugins"),
       lastModified: pageDate("/plugins"),
       changeFrequency: "monthly",

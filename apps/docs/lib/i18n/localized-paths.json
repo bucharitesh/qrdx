@@ -21,6 +21,7 @@
     "/integrations/[slug]",
     "/plugins",
     "/mcp",
+    "/qr-code-api",
     "/ai",
     "/ai/art",
     "/compare",
