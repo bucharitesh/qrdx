@@ -51,7 +51,7 @@ import {
 } from "./passkey";
 import { passkeyRelyingParty } from "./passkey-rp";
 import { hasEntitledSubscription, workspacePlanTier } from "./plan";
-import { noteSignUpReferral, recordNewUserReferral } from "./referral";
+import { noteSignUpState, recordNewUser } from "./referral";
 import { sessionLifetime } from "./session-lifetime";
 import { sessionOriginGuard } from "./session-origin";
 import { signInChallenge } from "./sign-in-challenge";
@@ -229,8 +229,9 @@ export const auth = betterAuth({
           // Signing in again to confirm it's you never makes an account
           // (./confirm-sign-in.ts).
           if (!(await allowUserCreation(ctx))) throw confirmSignInRefused();
-          // A referral code a Google or GitHub sign-up carried (./referral.ts).
-          await noteSignUpReferral(ctx);
+          // What a Google or GitHub sign-up carried: a referral code, how
+          // the visit started (./referral.ts).
+          await noteSignUpState(ctx);
           if (user.name?.trim()) return;
           const name = user.email.split("@")[0] || user.email;
           return { data: { ...user, name } };
@@ -245,9 +246,10 @@ export const auth = betterAuth({
           }
           // The site's language at sign-up becomes the app's (./sign-up-locale.ts).
           await saveSignUpLocale(user.id, ctx);
-          // An affiliate referral the sign-up carried, for the app to check
-          // and record (./referral.ts). Never throws, never waits.
-          recordNewUserReferral(user, ctx);
+          // An affiliate referral and how the visit started, as the sign-up
+          // carried them, for the app to check and record (./referral.ts).
+          // Never throws, never waits.
+          recordNewUser(user, ctx);
         },
       },
     },

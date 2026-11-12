@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { REFERRAL_HEADER } from "@repo/auth/referral-keys";
+import { LANDING_HEADER, REFERRAL_HEADER } from "@repo/auth/referral-keys";
 import { SSO_REQUIRED_ERROR as SSO_REQUIRED } from "@repo/auth/sso-required-rules";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
@@ -22,6 +22,7 @@ import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { type SsoSignInOffer, ssoSignInOffer } from "@/ee/sso/sign-in-offer";
 import { SsoOffer } from "@/ee/sso/sso-offer";
 import { pendingReferralCode } from "@/lib/affiliates/referral-client";
+import { encodeLandingHeader, signUpLanding } from "@/lib/analytics/landing";
 import type { Translator } from "@/lib/i18n/translator";
 import type { SecondStep } from "./second-step";
 import { TwoFactorChallenge } from "./two-factor-challenge";
@@ -278,15 +279,19 @@ export function EmailCodeSignIn({
     setError(null);
     setNotice(null);
     try {
-      // An affiliate link's code goes along in a header; it only counts if
-      // this sign-in creates the account (packages/auth/referral.ts).
+      // An affiliate link's code and how this visit started go along in
+      // headers; they only count if this sign-in creates the account
+      // (packages/auth/referral.ts).
       const referral = affiliates ? pendingReferralCode() : null;
+      const landing = signUpLanding();
+      const headers: Record<string, string> = {
+        ...(referral ? { [REFERRAL_HEADER]: referral } : {}),
+        ...(landing ? { [LANDING_HEADER]: encodeLandingHeader(landing) } : {}),
+      };
       const { data, error } = await authClient.signIn.emailOtp({
         email: sentTo,
         otp,
-        ...(referral
-          ? { fetchOptions: { headers: { [REFERRAL_HEADER]: referral } } }
-          : {}),
+        ...(referral || landing ? { fetchOptions: { headers } } : {}),
       });
       if (error) {
         setCode("");
