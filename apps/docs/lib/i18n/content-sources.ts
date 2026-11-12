@@ -20,6 +20,10 @@ import {
   VECTOR_STEPS as ART_VECTOR_STEPS,
 } from "@/app/[lang]/(home)/ai/art/content";
 import {
+  BARCODE_FORMAT_PAGES,
+  GS1_AI_NAMES,
+} from "@/app/[lang]/(home)/barcode-generator/[format]/content";
+import {
   BARCODE_FAQS,
   BARCODE_TIPS,
   BARCODE_USES,
@@ -142,6 +146,12 @@ export const CONTENT_SOURCES: readonly ContentSource[] = [
       faqs: BARCODE_FAQS,
     }),
     rules: BARCODE_CONTENT_RULES,
+  },
+  {
+    namespace: "barcodeFormats",
+    surface:
+      "one barcode generator page per barcode type (/barcode-generator/<type>): the title, where that barcode is used, whether it needs GS1 numbers, how its input and check digit work, print sizes, names of GS1 Application Identifiers and an FAQ. Barcode names (EAN-13, Code 128), GS1 terms (GTIN, SSCC), sample values and measurements stay exactly as written",
+    data: () => ({ pages: BARCODE_FORMAT_PAGES, ais: GS1_AI_NAMES }),
   },
   {
     namespace: "templates",

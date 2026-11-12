@@ -39,6 +39,11 @@ export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
     "app/[lang]/(home)/barcode-generator/page.tsx",
     "lib/barcode/formats.ts",
   ],
+  // Every /barcode-generator/<format> page.
+  "/barcode-generator/[format]": [
+    "app/[lang]/(home)/barcode-generator/[format]/content.ts",
+    "lib/barcode/formats.ts",
+  ],
 };
 
 /** Every /qr-code-generator/<type> page's copy lives in one file. */
