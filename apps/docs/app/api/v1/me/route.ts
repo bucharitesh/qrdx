@@ -2,10 +2,11 @@ import { database as db, user as userTable } from "@repo/database";
 import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { requireApiToken } from "@/app/api/v1/codes/_lib/api";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { invalidTokenError, oauthCompatibleError } from "@/lib/api-errors";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 
-export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
+const handleGET = withApiQuotaHeaders(async (req: NextRequest) => {
   const auth = await requireApiToken(req, "profile:read");
   if (auth.error) return auth.error;
 
@@ -27,3 +28,6 @@ export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
 
   return Response.json({ data: profile });
 });
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("me", handleGET);

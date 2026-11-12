@@ -1,10 +1,11 @@
 import { database as db, qrPreset } from "@repo/database";
 import type { NextRequest } from "next/server";
 import { requireApiToken } from "@/app/api/v1/codes/_lib/api";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { themesWhere } from "./_lib/scope";
 
-export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
+const handleGET = withApiQuotaHeaders(async (req: NextRequest) => {
   const auth = await requireApiToken(req, "themes:read");
   if (auth.error) return auth.error;
 
@@ -21,3 +22,6 @@ export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
 
   return Response.json({ data: themes });
 });
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("themes", handleGET);

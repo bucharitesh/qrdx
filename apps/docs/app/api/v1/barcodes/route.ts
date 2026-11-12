@@ -5,6 +5,7 @@ import {
   NO_STORE,
   resolveApiScope,
 } from "@/app/api/v1/codes/_lib/api";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import {
   createBarcodeSchema,
@@ -18,7 +19,7 @@ import { serializeBarcode } from "./_lib/serialize";
 // Saved barcodes of the workspace the key acts on. Same credentials, scopes
 // (codes:read, codes:write), per-minute limits and daily quota as /v1/codes.
 
-export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
+const handleGET = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "read");
     const query = parseWithSchema(
@@ -38,7 +39,7 @@ export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
   }
 });
 
-export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
+const handlePOST = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "write");
     assertJson(req);
@@ -55,3 +56,7 @@ export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
     return handleError(error, { route: "POST /api/v1/barcodes" });
   }
 });
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("barcodes", handleGET);
+export const POST = withApiUsage("barcodes", handlePOST);
