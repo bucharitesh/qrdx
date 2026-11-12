@@ -59,8 +59,9 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
         <div className="min-w-0 space-y-1">
           <CardTitle className="text-base">{t("hostedPage")}</CardTitle>
           <CardDescription className="sm:truncate">
-            {t("scansOpen")} {row.title ? `"${row.title}"` : t("yourPage")} (
-            {label}).{" "}
+            {row.title
+              ? t("scansOpenTitle", { title: row.title, label })
+              : t("scansOpenYourPage", { label })}{" "}
             {can(scope.role, "content.write")
               ? t("editItAnytimeThePrinted")
               : t("thePrintedCodeAlwaysOpens")}

@@ -9,7 +9,6 @@ import { openCodeBuilder } from "@/components/code-builder/store";
 import { CapMeter } from "@/components/limits/cap-meter";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { PLAN_NAMES } from "@/lib/pricing";
-import { formatNumber } from "./format";
 
 const isAtLimit = (usage: CodeUsage) =>
   usage.limit !== null && usage.used >= usage.limit;
@@ -19,9 +18,10 @@ export function UsageMeter({ usage }: { usage: CodeUsage }) {
   if (usage.limit === null) {
     return (
       <p className="text-muted-foreground text-sm">
-        {formatNumber(usage.used)} {t("activeDynamic")}{" "}
-        {usage.used === 1 ? t("code") : t("codes")} · {PLAN_NAMES[usage.plan]}{" "}
-        {t("planUnlimitedCodes")}
+        {t("unlimitedUsage", {
+          count: usage.used,
+          plan: PLAN_NAMES[usage.plan],
+        })}
       </p>
     );
   }

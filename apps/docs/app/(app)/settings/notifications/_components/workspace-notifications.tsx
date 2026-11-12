@@ -232,11 +232,11 @@ export function WorkspaceNotifications({
     });
   };
 
-  const lockedNote = (plan: "pro" | "business", what: string) => (
+  const lockedNote = (plan: "pro" | "business", note: string) => (
     <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-3">
       <p className="text-muted-foreground text-sm">
-        {what} {plan === "pro" ? t("arePartOfProAnd") : t("arePartOfBusiness")}.
-        {isTeam ? t("thisWorkspaceFollowsThePlan") : ""}
+        {note}
+        {isTeam ? ` ${t("thisWorkspaceFollowsThePlan")}` : ""}
       </p>
       {!isTeam && <UpgradePlanButton plan={plan} size="sm" />}
     </div>
@@ -268,8 +268,7 @@ export function WorkspaceNotifications({
               {t("emailToEmail", { email })}
             </h3>
           </div>
-          {!workspace.emailAlerts &&
-            lockedNote("pro", "Email alerts and the weekly digest")}
+          {!workspace.emailAlerts && lockedNote("pro", t("emailAlertsArePro"))}
           <ul className="divide-y">
             {NOTIFICATION_EVENTS.map((event) => {
               const on = emailEvents.includes(event);
@@ -345,7 +344,7 @@ export function WorkspaceNotifications({
             )}
           </div>
           {!workspace.chat &&
-            lockedNote("business", "Slack and Discord alerts")}
+            lockedNote("business", t("chatAlertsAreBusiness"))}
           {workspace.chats.length === 0 ? (
             workspace.chat && (
               <p className="text-muted-foreground text-sm">
@@ -499,10 +498,12 @@ export function WorkspaceNotifications({
           <AlertDialogHeader>
             <AlertDialogTitle>{t("removeThisWebhook")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t("qrdxStopsPostingTo")} {removing?.label}
-              {t("theWebhookItselfStaysIn")}{" "}
-              {removing ? NOTIFICATION_CHANNEL_LABELS[removing.channel] : ""}{" "}
-              {t("untilYouDeleteItThere")}
+              {t("removeWebhookDescription", {
+                chat: removing?.label ?? "",
+                channel: removing
+                  ? NOTIFICATION_CHANNEL_LABELS[removing.channel]
+                  : "",
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

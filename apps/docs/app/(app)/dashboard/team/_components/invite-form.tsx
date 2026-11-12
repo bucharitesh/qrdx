@@ -101,11 +101,10 @@ export function InviteForm({ currentRole }: { currentRole: WorkspaceRole }) {
       {created && (
         <div className="bg-muted/40 space-y-2 rounded-lg border p-3">
           <p className="text-sm">
-            {created.emailed
-              ? t("weEmailedTheInvitationTo")
-              : t("sendThisLinkTo")}
-            <span className="font-medium">{created.email}</span>
-            {created.emailed ? t("youCanAlsoShareThis") : "."}{" "}
+            {t.rich(created.emailed ? "invitationEmailed" : "sendThisLink", {
+              email: created.email,
+              strong: (chunks) => <span className="font-medium">{chunks}</span>,
+            })}{" "}
             {t("theyNeedToSignIn")}
           </p>
           <InviteLinkField invitationId={created.id} />

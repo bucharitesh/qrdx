@@ -183,26 +183,24 @@ export function SignInPanel({
                   : t("createYourQrdxAccount")}
         </Title>
         <Description className="text-muted-foreground text-sm text-pretty">
-          {twoFactor ? (
-            t("yourAccountAsksForA")
-          ) : codeSentTo ? (
-            <>
-              {t("codeSentTo")}
-              <span className="font-medium break-all text-foreground">
-                {codeSentTo}
-              </span>
-            </>
-          ) : ssoOfferFor ? (
-            ssoOfferRequired ? (
-              t("yourCompanyRequiresSingleSign")
-            ) : (
-              t("yourCompanySignsInWith")
-            )
-          ) : isSignIn ? (
-            t("pickUpWhereYouLeft")
-          ) : (
-            t("freeToStartNoCard")
-          )}
+          {twoFactor
+            ? t("yourAccountAsksForA")
+            : codeSentTo
+              ? t.rich("codeSentTo", {
+                  email: codeSentTo,
+                  strong: (chunks) => (
+                    <span className="font-medium break-all text-foreground">
+                      {chunks}
+                    </span>
+                  ),
+                })
+              : ssoOfferFor
+                ? ssoOfferRequired
+                  ? t("yourCompanyRequiresSingleSign")
+                  : t("yourCompanySignsInWith")
+                : isSignIn
+                  ? t("pickUpWhereYouLeft")
+                  : t("freeToStartNoCard")}
         </Description>
       </div>
 

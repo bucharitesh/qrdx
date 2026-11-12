@@ -281,9 +281,7 @@ export function MoveToFolderDialog({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              {t("move")}{" "}
-              {ids.length === 1 ? t("code") : plural(ids.length, "code")}{" "}
-              {t("toFolder")}
+              {t("moveCodesToFolder", { count: ids.length })}
             </DialogTitle>
             <DialogDescription>
               {t("linksAndPrintedCodesDont")}

@@ -215,9 +215,9 @@ export function DeleteTagDialog({
             {t("deleteTagName", { name: tag?.name ?? "" })}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            {t("theTagIsRemovedFrom")}{" "}
-            {tag ? plural(tag.codeCount, "code") : t("itsCodes")}
-            {t("theCodesThemselvesAreNot")}
+            {tag
+              ? t("deleteTagCount", { count: tag.codeCount })
+              : t("deleteTagCodes")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

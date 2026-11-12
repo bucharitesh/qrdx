@@ -162,7 +162,12 @@ export function OAuthConsent({
           {t("nameWantsToAccessYour", { name: app.name })}
         </h1>
         <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
-          {t("builtBy")} <span className="text-foreground">{app.builtBy}</span>
+          {t.rich("builtByName", {
+            name: app.builtBy,
+            strong: (chunks) => (
+              <span className="text-foreground">{chunks}</span>
+            ),
+          })}
           {app.websiteUrl && (
             <>
               {" · "}

@@ -26,9 +26,11 @@ export function FormSubmissionEmail({
   intl = ENGLISH_EMAIL,
 }: FormSubmissionEmailProps) {
   const { t } = intl;
-  const page = pageTitle?.trim()
-    ? `“${pageTitle.trim()}”`
-    : t("formSubmission.yourPage");
+  // The page's title (quoted the language's way), or "your page".
+  const page = {
+    hasTitle: pageTitle?.trim() ? "yes" : "no",
+    title: pageTitle?.trim() ?? "",
+  };
   const shown = fields.slice(0, MAX_FIELDS).map((field) => ({
     label: field.label || t("formSubmission.answer"),
     value:
@@ -39,11 +41,11 @@ export function FormSubmissionEmail({
   return (
     <EmailLayout
       intl={intl}
-      preview={t("formSubmission.preview", { page })}
+      preview={t("formSubmission.preview", page)}
       reason={t("formSubmission.reason", { workspace: workspaceName })}
       unsubscribeUrl={unsubscribeUrl}
     >
-      <EmailHeading>{t("formSubmission.heading", { page })}</EmailHeading>
+      <EmailHeading>{t("formSubmission.heading", page)}</EmailHeading>
       <EmailText>
         {t("formSubmission.submitted", {
           when: formatEmailDateTime(submittedAt, intl.locale),

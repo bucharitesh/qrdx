@@ -271,9 +271,10 @@ export function LifecyclePanelForm({
         {locked && (
           <div className="bg-muted/50 flex flex-col gap-3 rounded-lg border p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
             <p>
-              {t("passwordsStartAndEndDates")}{" "}
-              {plan ? PLAN_NAMES[plan] : t("aPaidPlan")}.
-              {hasProSettings && t("yourCurrentSettingsKeepWorking")}
+              {plan
+                ? t("lifecycleOnPlan", { plan: PLAN_NAMES[plan] })
+                : t("lifecycleOnPaidPlan")}
+              {hasProSettings && ` ${t("yourCurrentSettingsKeepWorking")}`}
             </p>
             <Button onClick={upgrade} size="sm" type="button">
               {t("upgrade")}

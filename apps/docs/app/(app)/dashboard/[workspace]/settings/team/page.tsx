@@ -177,9 +177,9 @@ export default async function TeamPage() {
               </Badge>
             </div>
             <CardDescription>
-              {members.length} {t("member")}
-              {members.length === 1 ? "" : "s"}
-              {Number.isFinite(seats) ? t("ofSeats", { seats }) : ""}
+              {Number.isFinite(seats)
+                ? t("membersOfSeats", { count: members.length, seats })
+                : t("membersCount", { count: members.length })}{" "}
               {t("seatsFollowThePlanOf")}
             </CardDescription>
           </CardHeader>

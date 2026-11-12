@@ -427,12 +427,12 @@ export function ImportWizard({
           </AlertTitle>
           <AlertDescription>
             <p>
-              {t("onThe")} {PLAN_NAMES[plan]} {t("planYouCanImportOne")}
+              {t("oneCodeAtATime", { plan: PLAN_NAMES[plan] })}
               {bulkPlans.length > 0 &&
-                t("bulkplansImportUpToMax", {
+                ` ${t("bulkplansImportUpToMax", {
                   bulkPlans: formatPlanList(bulkPlans),
                   MAX_IMPORT_ROWS: formatCount(MAX_IMPORT_ROWS),
-                })}
+                })}`}
             </p>
             <Button className="mt-2" onClick={openGetProDialog} size="sm">
               {t("upgrade")}
@@ -480,11 +480,16 @@ export function ImportWizard({
             <Upload className="text-muted-foreground size-6" />
             <p className="text-sm font-medium">{t("dropACsvFileHere")}</p>
             <p className="text-muted-foreground max-w-md text-xs">
-              {t("firstRowColumnNamesColumns")}
-              {slugPlans.length > 0 &&
-                t("onSlugplans", { slugPlans: formatPlanList(slugPlans) })}
-              {t("n3To64LettersDigits")} {formatCount(MAX_IMPORT_ROWS)}{" "}
-              {t("rowsAnd")} {MAX_IMPORT_FILE_BYTES / 1024 / 1024} MB.
+              {slugPlans.length > 0
+                ? t("csvColumnsSlugOnPlans", {
+                    slugPlans: formatPlanList(slugPlans),
+                    rows: formatCount(MAX_IMPORT_ROWS),
+                    size: String(MAX_IMPORT_FILE_BYTES / 1024 / 1024),
+                  })
+                : t("csvColumns", {
+                    rows: formatCount(MAX_IMPORT_ROWS),
+                    size: String(MAX_IMPORT_FILE_BYTES / 1024 / 1024),
+                  })}
             </p>
           </div>
         )}
@@ -608,6 +613,9 @@ export function ImportWizard({
                   t("newFoldersValue", {
                     value: preview.newFolders.join(", "),
                   })}
+                {preview.newFolders.length > 0 &&
+                  preview.newTags.length > 0 &&
+                  " "}
                 {preview.newTags.length > 0 &&
                   t("newTagsValue", { value: preview.newTags.join(", ") })}
               </p>
@@ -703,7 +711,7 @@ export function ImportWizard({
             </Button>
             <span className="text-muted-foreground text-sm">
               {errorsByLine.size > 0 && validRows.length > 0
-                ? t("rowsWithProblemsAreSkipped")
+                ? `${t("rowsWithProblemsAreSkipped")} `
                 : ""}
               {validRows.length > IMPORT_CHUNK_SIZE &&
                 t("sentImportChunkSizeAt", {

@@ -111,8 +111,9 @@ export default async function BarcodesPage({
           : t("usedOfLimitSaved", {
               used: formatNumber(usage.used),
               limit: formatNumber(usage.limit),
-            })}{" "}
-        · {PLAN_NAMES[usage.plan]} {t("planBarcodesAreStaticThey")}
+            })}
+        {" · "}
+        {t("planBarcodesAreStaticThey", { plan: PLAN_NAMES[usage.plan] })}
       </p>
 
       {brandNew ? (
