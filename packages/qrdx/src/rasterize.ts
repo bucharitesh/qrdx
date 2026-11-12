@@ -17,7 +17,44 @@ export interface RasterLogo {
   dataUrl: string;
 }
 
+/** Largest logo the rasterizer loads (the cap apps/docs/lib/qr-api/logo.ts uses). */
+const LOGO_MAX_BYTES = 1024 * 1024;
+
 const LOGO_FETCH_TIMEOUT_MS = 10_000;
+
+/** Reads the response body, giving up once it passes the size cap. */
+async function readBodyCapped(
+  response: Response,
+  maxBytes: number
+): Promise<Uint8Array | null> {
+  if (!response.body) {
+    return null;
+  }
+  const reader = response.body.getReader();
+  const chunks: Uint8Array[] = [];
+  let received = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) {
+      break;
+    }
+    received += value.byteLength;
+    if (received > maxBytes) {
+      await reader.cancel().catch(() => {
+        // Already over the cap; losing this read is fine.
+      });
+      return null;
+    }
+    chunks.push(value);
+  }
+  const bytes = new Uint8Array(received);
+  let offset = 0;
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return bytes;
+}
 
 const base64ToBytes = (base64: string) =>
   Uint8Array.from(atob(base64), (char) => char.charCodeAt(0));
@@ -68,14 +105,18 @@ function sniffImageMime(bytes: Uint8Array): string | null {
 }
 
 /**
- * Loads a logo the way a Node export needs it: a data URL is decoded, an
- * http(s) URL is fetched, and anything else is read from disk when Node's
- * fs is available. Returns null when it can't be loaded or isn't an image
- * the rasterizers draw — the logo is left out then, the same thing the
- * browser path does when an <img> fails to load.
+ * Loads a logo the way a Node export needs it: a data URL is decoded; an
+ * http(s) URL is fetched and anything else is read from disk — but only when
+ * the caller opts in with `loadExternal`, since a library function that runs
+ * on servers must not become a way to fetch internal URLs or read files
+ * (a data URL, which the caller already holds, needs no opt-in). Fetches are
+ * capped at 1 MB and refuse redirects. Returns null when it can't be loaded
+ * or isn't an image the rasterizers draw — the logo is left out then, the
+ * same thing the browser path does when an <img> fails to load.
  */
 export async function loadLogoForRasterizer(
-  src: string
+  src: string,
+  loadExternal = false
 ): Promise<RasterLogo | null> {
   if (src.startsWith("data:")) {
     const comma = src.indexOf(",");
@@ -94,16 +135,27 @@ export async function loadLogoForRasterizer(
     }
   }
 
+  if (!loadExternal) {
+    return null;
+  }
+
   let bytes: Uint8Array;
   if (/^https?:\/\//i.test(src)) {
     try {
+      // redirect: "error" keeps a URL a caller sent from being walked
+      // somewhere else by a redirect.
       const response = await fetch(src, {
+        redirect: "error",
         signal: AbortSignal.timeout(LOGO_FETCH_TIMEOUT_MS),
       });
       if (!response.ok) {
         return null;
       }
-      bytes = new Uint8Array(await response.arrayBuffer());
+      const body = await readBodyCapped(response, LOGO_MAX_BYTES);
+      if (!body) {
+        return null;
+      }
+      bytes = body;
     } catch {
       return null;
     }
@@ -113,6 +165,10 @@ export async function loadLogoForRasterizer(
     try {
       const specifier = ["node:fs", "promises"].join("/");
       const fs = (await import(specifier)) as typeof import("node:fs/promises");
+      const stats = await fs.stat(src);
+      if (stats.size > LOGO_MAX_BYTES) {
+        return null;
+      }
       bytes = new Uint8Array(await fs.readFile(src));
     } catch {
       return null;

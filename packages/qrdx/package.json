@@ -43,6 +43,16 @@
         "default": "./dist/index.js"
       }
     },
+    "./node": {
+      "import": {
+        "types": "./dist/src/node.d.ts",
+        "default": "./dist/node.mjs"
+      },
+      "require": {
+        "types": "./dist/src/node.d.ts",
+        "default": "./dist/node.js"
+      }
+    },
     "./types": {
       "import": {
         "types": "./dist/types/index.d.ts",
