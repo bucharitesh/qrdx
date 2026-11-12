@@ -156,7 +156,7 @@ export async function makeDynamic(
 ): Promise<MakeDynamicOutcome> {
   const { style, trimmed } = styleForCode(input.styles);
   const result = await safely(() =>
-    create({ destinationUrl: input.destination, style }),
+    create({ destinationUrl: input.destination, style }, { via: "playground" }),
   );
   if (!result.success) {
     if (result.error.code === "LIMIT_REACHED") {

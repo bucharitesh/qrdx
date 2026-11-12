@@ -288,10 +288,13 @@ describe("one-click Dynamic (the toggle)", () => {
       styles: MY_STYLE,
       userId: "u_alice",
     });
-    expect(actions.createQrCode).toHaveBeenCalledWith({
-      destinationUrl: "https://example.com/menu",
-      style: MY_STYLE,
-    });
+    expect(actions.createQrCode).toHaveBeenCalledWith(
+      {
+        destinationUrl: "https://example.com/menu",
+        style: MY_STYLE,
+      },
+      { via: "playground" },
+    );
     expect(outcome).toEqual({
       kind: "linked",
       trimmed: false,

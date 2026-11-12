@@ -129,7 +129,12 @@ import { fullEditorDestination, openInFullEditor } from "./full-editor";
 import { bindCreatedCode, syncSavedCode } from "./in-place";
 import { previewLink } from "./links";
 import { listItemFromView } from "./optimistic";
-import { builderServices, type LoadedCode, loadCodeForEdit } from "./services";
+import {
+  builderServices,
+  type LoadedCode,
+  loadCodeForEdit,
+  playgroundBuilderServices,
+} from "./services";
 import {
   escapeAction,
   resolveBuilderShortcut,
@@ -680,7 +685,10 @@ export default function CodeBuilderModal({
         applyResult(result, { optimisticKey });
         return;
       }
-      const result = await submitCreate(fields, builderServices);
+      const result = await submitCreate(
+        fields,
+        fromPlayground ? playgroundBuilderServices : builderServices,
+      );
       applyResult(result, { optimisticKey, thenOpen });
     });
   };
