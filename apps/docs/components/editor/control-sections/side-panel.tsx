@@ -81,6 +81,20 @@ export function offsetBeyond(
   return Math.max(0, inset) + clearance;
 }
 
+/**
+ * Content that already floats beside the code (the preview's part menus):
+ * shape catalogs inside it expand in place, like in a side panel.
+ */
+export function InsideSidePanel({ children }: { children: ReactNode }) {
+  const { side } = useContext(SidePanelContext);
+  const value = useMemo(() => ({ inside: true, side }), [side]);
+  return (
+    <SidePanelContext.Provider value={value}>
+      {children}
+    </SidePanelContext.Provider>
+  );
+}
+
 /** Inside a side panel already: nested catalogs expand in place. */
 export function useInsideSidePanel(): boolean {
   return useContext(SidePanelContext).inside;

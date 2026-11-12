@@ -28,6 +28,7 @@ import {
 } from "./frame-text-fields";
 import { FrameTextSheet } from "./frame-text-sheet";
 import { InlineFrameEditor } from "./inline-frame-editor";
+import { insideInlineEditor } from "./inline-toolbar";
 import {
   type Box,
   measureArtwork,
@@ -297,8 +298,9 @@ export function FrameTextOverlay({
   useEffect(() => {
     if (!session || session.sheet) return;
     const onPointerDown = (event: PointerEvent) => {
-      const target = event.target as Element | null;
-      if (target?.closest?.("[data-frame-inline]")) return;
+      if (insideInlineEditor(event.target as Element | null, "frame")) {
+        return;
+      }
       commit(false);
     };
     document.addEventListener("pointerdown", onPointerDown, true);
