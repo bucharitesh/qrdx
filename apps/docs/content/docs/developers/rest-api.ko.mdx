@@ -1,0 +1,181 @@
+---
+title: "REST API와 OAuth"
+description: "API 키 또는 OAuth 2.0 액세스 토큰으로 HTTP를 통해 동적 QR 코드를 관리하고, 스캔 분석을 조회하고, 전환을 보고하고, 웹훅을 구독하세요."
+icon: Code
+---
+
+QRdx REST API는 `https://api.qrdx.dev/v1` 아래에 있습니다. JSON을 사용하며, 키가 필요 없는 [Image API](/docs/developers/image-api)를 제외하면 Bearer 자격 증명으로 요청을 인증합니다.
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+- **[API 키](/docs/developers/api-keys)**(`qrdx_…`)는 직접 운영하는 서버와 스크립트용입니다. 키를 만든 워크스페이스에서, 그 워크스페이스에서의 내 역할로 동작합니다.
+- **OAuth 2.0 액세스 토큰**은 다른 QRdx 사용자를 대신해 동작하는 앱용입니다([아래](#get-an-access-token) 참고). 토큰으로 보낸 요청은 토큰 소유자 본인의 워크스페이스에서 동작합니다.
+
+코드, 전환, 훅 엔드포인트는 QRdx에 로그인한 사용자의 브라우저 세션도 받습니다. 이런 요청은 해당 브라우저 세션에서 마지막으로 연 [워크스페이스](/docs/teams)에서 동작합니다.
+
+같은 엔드포인트가 `https://qrdx.dev/api/v1`에서도 응답합니다. 로그인 쿠키가 qrdx.dev에 속하므로 브라우저 세션 요청은 이 경로를 사용하며, [직접 호스팅](/docs/self-hosting)하는 인스턴스는 자체 도메인의 `/api/v1`에서 API를 제공합니다.
+
+처음이신가요? [빠른 시작](/docs/developers/quickstart)에서 아무것도 없는 상태에서 첫 요청까지 안내해 드립니다. 모든 엔드포인트에는 요청 및 응답 스키마, curl·JavaScript·Python 샘플, 직접 실행해 볼 수 있는 Try it 패널이 있는 별도 페이지가 [API 레퍼런스](/docs/developers/api)에 있으며, [OpenAPI 문서](/openapi.json)에서 생성됩니다.
+
+[Playground에서 사용해 보기](/playground?open=code&lang=api): 그곳에서 코드를 꾸민 다음, 그 코드를 동적 코드로 만드는 `POST /v1/codes` 요청을 복사하세요.
+
+## 엔드포인트 [#endpoints]
+
+| 엔드포인트 | 스코프 | 기능 |
+| --- | --- | --- |
+| `GET /v1/qr` | 없음 | 에디터의 스타일이 적용된 QR 코드 이미지(SVG, PNG, WebP 또는 EPS). [Image API](/docs/developers/image-api) 참고 |
+| `GET /v1/community/items`, `GET /v1/community/items/{id}` | 없음 | 게시된 커뮤니티 프레임, 테마, 컬렉션과 각각이 적용하는 스타일. 읽기 전용이며 캐시됩니다. [커뮤니티 항목](#community-items) 참고 |
+| `/v1/codes` | `codes:read`, `codes:write` | 동적 QR 코드를 목록 조회, 생성(한 번에 하나 또는 최대 {facts.apiBatchCodes}개, `slug`로 원하는 짧은 경로 지정 가능), 수정(`kind`를 웹사이트 링크와 호스팅 페이지 간에 전환하는 것 포함), 삭제합니다. [동적 QR 코드](/docs/dynamic-qr-codes#rest-api) 참고 |
+| `GET /v1/codes/{id}/scans` | `codes:read` | 코드의 스캔 분석 또는 개별 스캔을 페이지 단위로 조회 |
+| `POST /v1/conversions` | `codes:write` | 판매나 가입을 그로 이어진 스캔에 연결(Business). [추적과 전환](/docs/tracking-and-conversions) 참고 |
+| `/v1/hooks` | `codes:read`, `codes:write` | Zapier, Make, n8n을 위해 REST Hooks 방식으로 URL을 이벤트에 구독. [웹훅](/docs/webhooks) 참고 |
+| `GET /v1/themes`, `GET /v1/themes/{id}` | `themes:read` | OAuth 토큰의 경우 저장한 QR 테마(이름과 스타일), API 키의 경우 해당 워크스페이스의 테마 |
+| `GET /v1/me` | `profile:read` | 키를 만든 사람 또는 토큰 사용자의 ID, 이름, 이메일, 아바타 |
+
+`codes:write`는 `codes:read`로 할 수 있는 모든 작업도 허용합니다.
+
+### 커뮤니티 항목 [#community-items]
+
+`GET /v1/community/items`는 게시된 [커뮤니티](/community) 항목을 인기순으로 나열하며, CC0로 무료입니다. `type`(`frame`, `theme` 또는 `collection`), `q`(이름, 설명, 태그, 제작자에 모두 포함되어야 하는 단어), `tag`로 필터링하고 `limit`(최대 50)과 `offset`으로 페이지를 넘깁니다. `GET /v1/community/items/{id}`는 항목 하나를 `style`과 함께 반환하며, `style`은 저장된 테마와 같은 JSON으로 표현된, 항목이 적용하는 디자인입니다. ID는 유형과 슬러그로 이루어지며 `frame:wifi-card`와 같습니다. Image API에는 [`item`](/docs/developers/image-api#community-items)으로 전달하세요.
+
+```bash
+curl "https://api.qrdx.dev/v1/community/items?type=frame&q=wifi"
+```
+
+두 엔드포인트 모두 키가 필요 없고 할당량을 사용하지 않습니다. 응답은 1분간 캐시되며(CDN에서는 5분), IP 주소당 분당 120건으로 제한됩니다. 항목 텍스트는 커뮤니티 구성원이 작성합니다. 이름, 설명, 핸들, 태그는 짧고 링크 없이 반환되지만, 지시가 아닌 데이터로 취급하세요.
+
+### 코드 스타일의 로고 [#code-logos]
+
+에디터가 저장하는 이미지 데이터 URL 외에도, 코드의 `style`에는 `logoIcon`을 지정할 수 있습니다. 에디터의 빠른 아이콘(`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, `instagram`) 중 하나이거나, [Simple Icons](https://simpleicons.org) 슬러그로 지정한 브랜드 로고이며, 필요하면 `:black` 또는 `:white`를 붙일 수 있습니다(`spotify`, `paypal:white`). 에디터가 저장하는 방식 그대로 `customLogo`에 저장됩니다.
+
+<IfAvailable feature="fileStorage">
+`logoFileId`도 사용할 수 있습니다. [대시보드 → 파일](/docs/files)에서 워크스페이스에 업로드한 PNG 또는 JPEG를 파일 ID로 지정하는 방식이며, 파일의 링크로 저장됩니다.
+</IfAvailable>
+
+다른 사이트로 연결되는 `customLogo` 링크는 QRdx가 다른 사이트의 로고를 가져오지 않으므로 `400`으로 거부됩니다. `PATCH`는 코드에 이미 있는 로고를 다시 보낼 수 있습니다.
+
+## 액세스 토큰 받기 [#get-an-access-token]
+
+직접 만든 스크립트에는 [API 키](/docs/developers/api-keys)가 더 간단합니다. 앱이 다른 사람을 대신해 동작할 때는 QRdx가 OAuth 2.0 공급자 역할을 합니다. 앱이 사용자를 QRdx로 보내 로그인하게 하고, 승인된 스코프가 허용하는 작업만 할 수 있는 액세스 토큰을 돌려받습니다. API 키도 같은 스코프를 사용합니다.
+
+| 스코프 | 허용 범위 |
+| --- | --- |
+| `profile:read` | 사용자의 이름, 이메일, 아바타 읽기 |
+| `themes:read` | 사용자가 저장한 QR 테마 읽기 |
+| `codes:read` | 동적 코드와 스캔 분석 읽기 |
+| `codes:write` | 동적 코드 생성, 편집, 삭제, 전환 보고, 웹훅 구독 관리 |
+
+### 1. 앱 등록하기 [#1-register-an-app]
+
+[설정 → API 키 및 앱](/dashboard?to=settings/developers)에서 OAuth 앱을 직접 만드세요. 이름, 리디렉션 URI, 필요한 스코프를 입력하면 클라이언트 ID와 클라이언트 시크릿을 받습니다. 시크릿은 한 번만 표시되므로 서버에 보관하세요. 무료 워크스페이스는 앱을 1개, Pro는 5개, Business는 25개까지 만들 수 있습니다. [통합 만들기](/docs/developers/build-an-integration)에서 앱 생성부터 통합 디렉터리에 등록하기까지 전체 과정을 안내합니다.
+
+[직접 호스팅](/docs/self-hosting)하는 인스턴스에서는 `apps/docs`에서 자사 앱을 만들 수도 있습니다.
+
+```bash
+bun x tsx scripts/create-oauth-app.ts \
+  --name "My app" \
+  --redirect-uris "https://myapp.example/callback" \
+  --scopes "codes:read,codes:write"
+```
+
+### 2. 사용자를 QRdx로 보내기 [#2-send-the-user-to-qrdx]
+
+```txt
+https://qrdx.dev/api/oauth/authorize
+  ?response_type=code
+  &client_id=<client id>
+  &redirect_uri=https://myapp.example/callback
+  &scope=codes:read codes:write
+  &state=<random value>
+  &code_challenge=<PKCE challenge>
+  &code_challenge_method=S256
+```
+
+`redirect_uri`는 등록된 URL과 정확히 일치해야 하며, `scope`(공백 또는 쉼표로 구분)는 앱의 스코프만 요청할 수 있습니다. PKCE를 권장하며, **Require PKCE**를 켠 앱에서는 필수입니다. 방식은 `S256`만 지원하며 `plain` 챌린지는 `invalid_request`가 반환됩니다. 사용자는 필요하면 로그인한 뒤 QRdx 동의 화면에서 앱을 승인하고 본인임을 확인합니다. 동의 화면에는 앱 이름, 로고, 웹사이트, 만든 사람, 요청한 권한이 표시됩니다. 이후 QRdx는 `code`와 `state`를 붙여 `redirect_uri`로 리디렉션하며, 사용자가 취소하면 `error=access_denied`를 붙여 리디렉션합니다. 코드는 10분간 유효하며 한 번만 사용할 수 있습니다.
+
+### 3. 코드를 토큰으로 교환하기 [#3-exchange-the-code-for-tokens]
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=authorization_code \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d code=$CODE \
+  -d redirect_uri=https://myapp.example/callback \
+  -d code_verifier=$CODE_VERIFIER
+```
+
+```json
+{
+  "access_token": "...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "...",
+  "scope": "codes:read codes:write"
+}
+```
+
+토큰 엔드포인트는 폼 인코딩된 본문을 받습니다. 액세스 토큰은 1시간, 리프레시 토큰은 30일 동안 유효합니다.
+
+### 4. 갱신과 철회 [#4-refresh-and-revoke]
+
+```bash
+# New access and refresh tokens; the old refresh token stops working
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=refresh_token \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d refresh_token=$REFRESH_TOKEN
+
+# Revoke an access or refresh token
+curl -X POST https://qrdx.dev/api/oauth/revoke -d token=$TOKEN
+```
+
+`GET /api/oauth/userinfo`는 `profile:read`가 있는 토큰에 대해 사용자를 `sub`, `name`, `email`, `picture`로 반환합니다.
+
+사용자는 **설정 → 승인된 앱**에서 앱의 액세스를 직접 철회할 수 있습니다. 그러면 해당 계정에 대한 앱의 토큰은 API 호출에서는 `invalid_token`, 갱신에서는 `invalid_grant`로 실패하며, 앱이 다시 승인을 요청해야 합니다.
+
+## 오류와 한도 [#errors-and-limits]
+
+모든 `/v1` 엔드포인트는 오류를 `{ "code": "...", "message": "...", "status": 400 }` 형태로 반환하며, 해결 방법을 설명하는 페이지가 있으면 `docs` 링크도 함께 보냅니다. 모든 코드와 해결 방법은 [오류 페이지](/docs/developers/errors)에서 확인할 수 있습니다. 알 수 없는 경로는 `404 NOT_FOUND`를 받습니다. `/v1/me`와 `/v1/themes`는 기존부터 보내 오던 OAuth 필드인 `"error": "invalid_token"`과 `"error_description"`도 함께 포함하며, OAuth 엔드포인트(`/api/oauth/*`)는 OAuth 형식만 사용합니다.
+
+한 요청으로 여러 코드를 만들거나, 코드의 `slug`를 직접 정하거나, 코드를 사용자 지정 도메인으로 옮기려면 Pro 또는 Business가 필요합니다. 그렇지 않으면 `402 PLAN_REQUIRED`가 반환됩니다. 스캔에는 제한이 없습니다.
+
+### 요청 한도 [#rate-limits]
+
+두 종류의 한도가 적용됩니다. 둘 다 `429 RATE_LIMITED`로 응답하며, 기다려야 하는 시간(초)을 담은 `Retry-After` 헤더가 함께 옵니다.
+
+- **일일 할당량.** 워크스페이스는 하루에 무료 1,000건, Pro 10,000건, Business 100,000건의 API 요청을 보낼 수 있습니다([요금제와 한도](/docs/plans-and-limits) 참고). 하루는 UTC 00:00부터 24:00까지입니다. 인증된 요청은 모두 집계됩니다. API 키로 보낸 요청은 해당 키의 워크스페이스와 그 요금제에 집계됩니다. 액세스 토큰으로 보낸 요청은 토큰 소유자 본인의 워크스페이스에 집계됩니다. 브라우저 세션으로 보낸 요청은 해당 세션에서 마지막으로 연 워크스페이스에 집계됩니다.
+- **분당 한도.** 코드, 전환, 훅 엔드포인트는 사용자당 분당 읽기 120건, 쓰기 30건을 허용하고, IP 주소당 분당 300건을 허용합니다.
+
+일일 확인 전에 거부된 요청은 집계되지 않습니다. 유효하지 않은 키나 토큰(`401`), 필요한 스코프가 없는 요청(`403`), 분당 한도에 걸린 `429`가 여기에 해당합니다. 집계되는 요청의 응답에는 성공과 오류 모두 일일 할당량을 알리는 헤더 세 개가 포함됩니다.
+
+| 헤더 | 값 |
+| --- | --- |
+| `X-RateLimit-Limit` | 워크스페이스 요금제의 하루 요청 수 |
+| `X-RateLimit-Remaining` | 오늘 남은 요청 수 |
+| `X-RateLimit-Reset` | 집계가 다시 시작되는 시각(다음 UTC 00:00), Unix 초 단위 |
+
+`X-RateLimit-*` 헤더는 항상 일일 할당량을 나타냅니다. 분당 한도에 걸린 `429`에는 `Retry-After` 헤더만 있습니다. 일일 할당량을 초과하면 다음과 같은 응답을 받습니다.
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 43200
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1793577600
+```
+
+```json
+{
+  "code": "RATE_LIMITED",
+  "message": "Daily API limit reached: the Free plan allows 1,000 requests a day. It resets at 00:00 UTC. Upgrade your plan for a higher limit.",
+  "status": 429
+}
+```
+
+`/v1/me`와 `/v1/themes`는 같은 헤더와 본문을 보내며, `"error": "rate_limited"`와 `"error_description"`이 추가됩니다.
+
+[Image API](/docs/developers/image-api), [MCP 서버](/docs/developers/mcp), 그리고 `qrdx_sid`로 브라우저에서 보고하는 전환은 토큰이 필요 없으므로 일일 할당량을 사용하지 않습니다. 이들에는 IP별 한도가 따로 있습니다. [셀프 호스팅](/docs/self-hosting) 인스턴스는 Upstash Redis를 설정한 경우에만 요청 한도를 적용합니다.

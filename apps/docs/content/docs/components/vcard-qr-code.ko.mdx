@@ -1,0 +1,52 @@
+---
+title: "vCard QR 코드"
+description: "스캔하면 연락처 카드를 저장하는 QR 코드이며, 타입이 지정된 vCard 3.0 빌더를 제공합니다."
+icon: Users
+---
+
+<ComponentLinks name="vcard-qr-code" />
+
+<ComponentPreview name="vcard-qr-code-demo" />
+
+## 설치 [#installation]
+
+<InstallationTabs name="vcard-qr-code" />
+
+## 사용법 [#usage]
+
+```tsx
+import { VCardQrCode } from "@/components/vcard-qr-code";
+```
+
+```tsx
+<VCardQrCode
+  contact={{
+    firstName: "Ada",
+    lastName: "Lovelace",
+    organization: "Analytical Engines",
+    email: "ada@example.com",
+  }}
+/>
+```
+
+휴대폰 카메라로 코드를 스캔하면 연락처를 저장할 수 있도록 안내합니다. 비어 있는 필드는 제외되므로 코드가 작게 유지되고 더 빠르게 스캔됩니다.
+
+## 예제 [#examples]
+
+### vCard 빌더 [#vcard-builder]
+
+`buildVCard`는 코드에 인코딩되는 vCard 3.0 텍스트를 반환하며, 쉼표, 세미콜론, 백슬래시, 줄바꿈은 이스케이프 처리됩니다. 어떤 QR 렌더러와도 함께 사용할 수 있고, 같은 연락처를 `.vcf` 다운로드로 제공할 때도 사용할 수 있습니다.
+
+<ComponentPreview name="vcard-qr-code-payload" />
+
+연락처 카드는 링크보다 많은 텍스트를 담기 때문에, 이 컴포넌트는 모듈 크기를 크게 유지하기 위해 오류 정정 레벨 `M`을 사용합니다. 사람들에게 필요한 필드만 추가하고, 인쇄 크기는 [인쇄 크기 계산기](/tools/print-size)로 확인하세요.
+
+## API 레퍼런스 [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" type="{ [K in keyof VCardQrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: VCardQrCodeProps[K] }" />
+
+`className` 같은 다른 prop은 모두 감싸고 있는 `<figure>`로 전달됩니다.
+
+### VCardContact [#vcardcontact]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" name="VCardContact" />

@@ -1,0 +1,183 @@
+---
+title: "빠른 시작"
+description: "키 없이 2분 안에 첫 QRdx API 요청을 보내 보세요. 그다음 API 키를 만들고 첫 동적 QR 코드를 만들어 봅니다."
+icon: Rocket
+---
+
+QRdx API는 두 부분으로 나뉩니다. 이미지는 아무것도 필요하지 않습니다. 계정도, 키도 필요 없습니다. 동적 QR 코드, 스캔, 웹훅은 워크스페이스에 속하므로 API 키가 필요합니다.
+
+## 1. QR 코드 만들기 (키 없음) [#1-make-a-qr-code-no-key]
+
+아래 명령을 실행하세요. qrdx.dev를 여는 QR 코드의 PNG를 저장합니다.
+
+<Tabs groupId="language" persist items={["curl", "JavaScript", "Python"]}>
+  <Tab value="curl">
+    ```bash
+    curl "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png" -o qr.png
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    // Node 18 or later (save as qr.mjs)
+    import { writeFile } from "node:fs/promises";
+
+    const url = new URL("https://api.qrdx.dev/v1/qr");
+    url.searchParams.set("data", "https://qrdx.dev");
+    url.searchParams.set("format", "png");
+
+    const response = await fetch(url);
+    await writeFile("qr.png", Buffer.from(await response.arrayBuffer()));
+    ```
+  </Tab>
+  <Tab value="Python">
+    ```python
+    # pip install requests
+    import requests
+
+    response = requests.get(
+        "https://api.qrdx.dev/v1/qr",
+        params={"data": "https://qrdx.dev", "format": "png"},
+    )
+    response.raise_for_status()
+    open("qr.png", "wb").write(response.content)
+    ```
+  </Tab>
+</Tabs>
+
+이것으로 API 호출이 완성되었습니다. URL 자체가 이미지이므로 `<img>` 태그에서 바로 사용할 수도 있습니다.
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&fg=111111&body=circle" alt="QR code for qrdx.dev" />
+```
+
+색상, 모양, 크기, 형식은 쿼리 매개변수로 바꿀 수 있습니다. 브라우저에서 직접 해 보려면 [QR 코드 이미지 렌더링](/docs/developers/api/get-qr-image) 페이지를 이용하세요. **Try it** 패널이 요청을 보내고 이미지를 보여 줍니다. 이미지는 어떤 할당량에도 포함되지 않으며, 제한은 IP 주소당 분당 300회 요청입니다.
+
+## 2. API 키 만들기 [#create-an-api-key]
+
+그 밖의 모든 API 기능은 워크스페이스를 대상으로 동작합니다. 동적 QR 코드 만들기, 연결 대상 변경, 스캔 조회가 여기에 해당합니다. 이런 요청에는 `Authorization` 헤더에 API 키를 담아야 합니다.
+
+1. [설정 → API 키 및 앱](/dashboard?to=settings/developers&new=1)을 엽니다. 필요하면 먼저 로그인하세요. **Create key** 양식이 열립니다.
+2. **Full access**를 그대로 두고 **Create key**를 선택합니다.
+3. 키를 복사합니다. 키는 한 번만 표시됩니다. 대화상자에는 내 키가 채워진, 동적 QR 코드를 만드는 curl 요청도 함께 표시되므로 원하면 그대로 붙여넣어 사용할 수 있습니다.
+
+다음 단계를 위해 키를 환경 변수로 내보냅니다.
+
+```bash
+export QRDX_API_KEY=qrdx_...
+```
+
+이 키는 키를 만들 때 열려 있던 워크스페이스에서 나로서 동작하며, 키로 보낸 요청은 해당 워크스페이스의 일일 할당량에 포함됩니다(무료는 1,000회 요청). 스코프, 팀, 만료, 폐기는 [API 키](/docs/developers/api-keys)에서 다룹니다.
+
+## 3. 동적 QR 코드 만들기 [#3-create-a-dynamic-code]
+
+동적 QR 코드는 인쇄한 뒤에도 다른 곳으로 연결을 바꿀 수 있는 짧은 링크입니다.
+
+<Tabs groupId="language" persist items={["curl", "JavaScript", "Python"]}>
+  <Tab value="curl">
+    ```bash
+    curl -X POST https://api.qrdx.dev/v1/codes \
+      -H "Authorization: Bearer $QRDX_API_KEY" \
+      -H "Content-Type: application/json" \
+      -d '{"destinationUrl": "https://example.com", "title": "My first code"}'
+    ```
+  </Tab>
+  <Tab value="JavaScript">
+    ```js
+    const response = await fetch("https://api.qrdx.dev/v1/codes", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.QRDX_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        destinationUrl: "https://example.com",
+        title: "My first code",
+      }),
+    });
+    const { data: code } = await response.json();
+    console.log(code.shortLink);
+    ```
+  </Tab>
+  <Tab value="Python">
+    ```python
+    import os
+    import requests
+
+    response = requests.post(
+        "https://api.qrdx.dev/v1/codes",
+        headers={"Authorization": f"Bearer {os.environ['QRDX_API_KEY']}"},
+        json={"destinationUrl": "https://example.com", "title": "My first code"},
+    )
+    response.raise_for_status()
+    code = response.json()["data"]
+    print(code["shortLink"])
+    ```
+  </Tab>
+</Tabs>
+
+응답은 새 QR 코드와 함께 `201 Created`로 돌아옵니다.
+
+```json
+{
+  "data": {
+    "id": "cm5code0spring0menu00001",
+    "slug": "aB3dE5f",
+    "shortLink": "https://qrdx.dev/q/aB3dE5f",
+    "destinationUrl": "https://example.com/",
+    "title": "My first code",
+    "status": "active",
+    "scanCount": 0
+  }
+}
+```
+
+(일부만 표시했습니다. 모든 필드는 [코드 만들기](/docs/developers/api/create-codes)에서 확인할 수 있습니다.) QR 코드에는 `shortLink`가 인코딩됩니다. 1단계의 Image API로 `https://api.qrdx.dev/v1/qr?data=https://qrdx.dev/q/aB3dE5f`를 렌더링하여 인쇄하세요.
+
+## 4. 다른 곳으로 연결 바꾸기 [#4-point-it-somewhere-else]
+
+연결 대상은 언제든 바꿀 수 있으며, 인쇄한 QR 코드는 계속 작동합니다.
+
+```bash
+curl -X PATCH https://api.qrdx.dev/v1/codes/$CODE_ID \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/new-page"}'
+```
+
+QR 코드를 한 번 스캔한 다음 `GET /v1/codes/$CODE_ID/scans`로 분석 데이터를 확인하세요([스캔 분석 가져오기](/docs/developers/api/get-code-scans)).
+
+## 문제가 생겼을 때 [#when-something-goes-wrong]
+
+모든 오류는 고정된 `code`와 해야 할 일을 알려 주는 메시지가 담긴 JSON으로 반환됩니다.
+
+```json
+{
+  "code": "UNAUTHORIZED",
+  "message": "Missing API key. Send an API key as \"Authorization: Bearer <key>\"; create one at https://qrdx.dev/dashboard?to=settings/developers. OAuth access tokens go in the same header.",
+  "status": 401,
+  "docs": "https://qrdx.dev/docs/developers/api-keys"
+}
+```
+
+[오류 페이지](/docs/developers/errors)에서 모든 코드와 해결 방법을 확인할 수 있습니다.
+
+## 다른 사용자를 대신해 동작하기 [#get-an-access-token]
+
+API 키는 나로서 동작합니다. 제품에서 다른 사용자를 대신해 QRdx를 호출한다면 OAuth 앱을 등록하세요. 각 사용자가 한 번 승인하면 서버가 해당 사용자 계정의 액세스 토큰을 받으며, 같은 `Authorization: Bearer` 헤더로 보냅니다. 위의 모든 요청은 키 대신 토큰을 넣어도 그대로 작동합니다. [REST API와 OAuth](/docs/developers/rest-api#get-an-access-token) 및 [통합 만들기](/docs/developers/build-an-integration)를 참고하세요.
+
+## 다음 단계 [#next-steps]
+
+<Cards>
+  <Card title="API 레퍼런스" href="/docs/developers/api">
+    curl, JavaScript, Python 예제와 Try it 패널이 포함된 모든 엔드포인트입니다.
+  </Card>
+  <Card title="오류" href="/docs/developers/errors">
+    모든 오류 코드의 의미와 해결 방법입니다.
+  </Card>
+  <Card title="웹훅" href="/docs/webhooks">
+    스캔과 새 QR 코드를 서버로 전달받으세요(Business).
+  </Card>
+  <Card title="속도 제한" href="/docs/developers/rest-api#rate-limits">
+    플랜별 일일 할당량과 `X-RateLimit-*` 헤더입니다.
+  </Card>
+</Cards>

@@ -1,0 +1,77 @@
+---
+title: "n8n"
+description: "n8n용 QRdx 커뮤니티 노드로 QR 코드를 만들고, 동적 QR 코드를 관리하고, 스캔을 조회하고, QRdx 이벤트로 n8n 워크플로를 시작하세요."
+icon: Blocks
+---
+
+`@qrdx/n8n-nodes-qrdx` 패키지는 [n8n](https://n8n.io)에 노드 두 개를 추가합니다.
+
+- **QRdx**는 QR 코드 이미지를 만들고, [동적 코드](/docs/dynamic-qr-codes)를 생성하고 수정하며, 코드의 스캔 기록과 저장한 테마를 조회합니다. n8n AI Agent가 도구로 사용할 수 있습니다.
+- **QRdx Trigger**는 코드가 스캔되거나 생성되거나 변경될 때, 또는 누군가 [호스팅 페이지](/docs/forms-and-pages)에서 양식을 제출할 때 워크플로를 시작합니다.
+
+이 패키지는 npm에 [`@qrdx/n8n-nodes-qrdx`](https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx)로 올라와 있으며, 직접 호스팅하는 n8n에 설치할 수 있습니다. n8n Cloud는 n8n이 검증한 커뮤니티 노드만 실행하는데, 이 노드는 아직 검증되지 않았습니다.
+
+아무것도 설치하지 않고 이벤트를 받으려면 [Webhook 노드](#without-the-package)를 대신 사용하세요.
+
+## 설치 [#install]
+
+n8n에서 **Settings → Community Nodes**를 열고 **Install**을 클릭한 다음 `@qrdx/n8n-nodes-qrdx`를 입력합니다. 커뮤니티 노드에 대한 안내를 수락하고 **Install**을 클릭하세요. 그런 다음 노드 패널에서 **QRdx**를 검색합니다.
+
+n8n에서 해당 페이지가 숨겨져 있거나 명령줄로 관리한다면, n8n 사용자 폴더의 `nodes` 폴더에 패키지를 설치하고 n8n을 다시 시작하세요.
+
+```bash
+mkdir -p ~/.n8n/nodes
+cd ~/.n8n/nodes
+npm install @qrdx/n8n-nodes-qrdx
+```
+
+n8n을 Docker로 실행한다면 컨테이너 안에서(`docker exec -it n8n sh`) 같은 명령을 실행하거나 이미지에 설정해 두세요.
+
+## 워크스페이스 연결 [#connect-your-workspace]
+
+[설정 → API 키 및 앱](/dashboard?to=settings/developers)에서 [API 키](/docs/developers/api-keys)를 만든 다음, n8n에서 해당 키로 **QRdx API** 자격 증명을 추가하세요. QRdx를 [직접 호스팅](/docs/self-hosting)하는 경우가 아니라면 **Base URL**은 `https://api.qrdx.dev/v1`로 그대로 두세요. 직접 호스팅한다면 사용하는 주소 뒤에 `/api/v1`을 붙여 입력합니다.
+
+n8n은 프로필을 읽어 자격 증명을 테스트하는데, 이때 Profile 권한 범위가 필요하므로 전체 권한이 있는 키를 쓰는 것이 가장 간단합니다. 키는 생성된 워크스페이스에서 동작합니다. QR 이미지 생성에는 자격 증명이 전혀 필요하지 않습니다.
+
+## QRdx 노드 [#the-qrdx-node]
+
+| 리소스 | 작업 |
+| --- | --- |
+| QR Image | PNG, WebP, SVG 또는 EPS 이미지 생성. API 키와 계정이 필요 없음 |
+| Code | Create, Get, Get Many, Update(보관 및 복원 포함), Delete |
+| Scan | Get Many(개별 스캔, 최신순), Get Summary(총계, 일별 횟수, 상위 국가·도시·기기·브라우저·유입 경로) |
+| Theme | Get, Get Many |
+
+**Generate**는 이미지를 바이너리 필드에 담아 주므로 이메일에 첨부하거나 어디든 업로드할 수 있습니다. 크기, 색상, 본체 모양, 눈과 눈 점 모양, 오류 정정, 여백, 라벨이 있는 [프레임](/docs/features/frames), 로고 아이콘을 설정할 수 있습니다. 출력에는 `url`도 포함되는데, [Image API](/docs/developers/image-api)의 같은 이미지로 연결되는 링크로 `<img>` 태그에 바로 쓸 수 있습니다.
+
+코드와 스캔 작업은 사용자의 키로 [REST API](/docs/developers/rest-api)를 호출하며 워크스페이스의 일일 API 할당량에 포함됩니다. **Get Many**는 결과를 페이지별로 자동으로 가져옵니다. 오류는 QRdx의 메시지를 그대로 보여 줍니다. 예를 들어 사용자 지정 back-half에는 Pro 또는 Business가 필요하며, 무료에서는 QRdx가 반환하는 [오류](/docs/developers/errors)가 노드에 표시됩니다.
+
+## QRdx Trigger 노드 [#the-qrdx-trigger-node]
+
+이벤트를 고른 다음 워크플로를 활성화하세요. 노드는 [REST Hooks API](/docs/webhooks#zapier-make-and-n8n-rest-hooks)로 구독하고, 워크플로를 비활성화하면 구독을 해제합니다. 구독은 활성 상태인 동안 Settings → Webhooks에 표시됩니다.
+
+| 이벤트 | 시점 |
+| --- | --- |
+| Scans | 코드가 스캔될 때. 전달은 묶음으로 이루어지며, 1분에 한 번 최대 100개의 스캔과 정확한 개수가 전달됩니다 |
+| Scan Milestones | 코드의 첫 스캔, 그리고 10, 100, 500, 1,000회 이후 스캔 |
+| New Codes | 동적 QR 코드가 생성될 때 |
+| Code Changes | 코드의 대상, 제목, 디자인 또는 도메인이 변경될 때 |
+| Form Submissions | 누군가 호스팅 페이지에서 양식을 제출할 때 |
+
+노드는 구독할 때 QRdx가 반환한 서명 비밀 키로 각 전달의 `X-QRdx-Signature`를 확인하고, 일치하지 않는 요청에는 `401`로 응답합니다. **Output One Item per Scan**을 켜면 Scans 묶음을 개별 항목으로 받을 수 있고, **Include Test Events**를 켜면 Settings → Webhooks에서 **Send test**를 클릭할 때 워크플로가 실행됩니다. 페이로드는 [웹훅](/docs/webhooks#payloads)에 설명된 것과 같습니다.
+
+트리거를 사용하려면 다음이 필요합니다.
+
+- Business 플랜: [웹훅](/docs/webhooks)이 이 플랜에 포함되어 있습니다
+- Manage codes 권한 범위가 있는 API 키
+- 공개 `https://` 주소의 n8n: QRdx는 `localhost`나 사설 네트워크로는 전달하지 않습니다. 프록시 뒤에 있다면 n8n의 `WEBHOOK_URL`을 설정하세요. **Listen for test event**를 클릭하는 동안 n8n이 사용하는 테스트 URL에도 마찬가지로 적용됩니다
+
+## 패키지 없이 사용하기 [#without-the-package]
+
+n8n Cloud든 직접 호스팅하는 n8n이든, QRdx는 n8n **Webhook** 노드로 이벤트를 직접 전달할 수 있습니다.
+
+1. Webhook 노드를 추가하고 HTTP 메서드를 `POST`로 설정한 다음 프로덕션 URL을 복사합니다.
+2. 워크플로를 활성화합니다. 프로덕션 URL은 워크플로가 활성화된 동안에만 응답합니다.
+3. [설정 → 웹훅](/dashboard?to=settings/webhooks)에서 **엔드포인트 추가**를 클릭하고 URL을 붙여넣은 다음 이벤트를 고릅니다.
+
+각 이벤트는 JSON 페이로드와 함께 워크플로를 시작합니다. 서명을 확인하려면 Code 노드에서 `X-QRdx-Signature`를 읽고 엔드포인트의 서명 비밀 키로 [검증](/docs/webhooks#verify-signatures)하세요.
