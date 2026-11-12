@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "Opsi bingkai lainnya"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Edit mata",
+          "options": "Opsi mata",
+          "random": "Mata acak",
+          "more": "Opsi mata lainnya"
+        },
+        "dots": {
+          "edit": "Edit titik",
+          "options": "Opsi titik",
+          "random": "Titik acak",
+          "more": "Opsi titik lainnya"
+        },
+        "logo": {
+          "edit": "Edit logo",
+          "options": "Opsi logo",
+          "random": "Logo acak",
+          "more": "Opsi logo lainnya"
+        },
+        "background": {
+          "edit": "Edit latar",
+          "options": "Opsi latar",
+          "random": "Latar acak",
+          "more": "Opsi latar lainnya"
+        },
+        "frame": {
+          "edit": "Edit bingkai",
+          "options": "Opsi bingkai",
+          "random": "Bingkai acak",
+          "more": "Opsi bingkai lainnya"
+        }
+      },
+      "items": {
+        "outerShape": "Bentuk luar",
+        "centerShape": "Bentuk tengah",
+        "eyeColor": "Warna mata",
+        "centerColor": "Warna tengah",
+        "pattern": "Pola",
+        "dotColor": "Warna titik",
+        "dotSize": "Ukuran titik",
+        "logo": "Logo",
+        "quickIcons": "Ikon cepat",
+        "logoSize": "Ukuran logo",
+        "hideLogo": "Sembunyikan logo",
+        "backgroundColor": "Warna latar",
+        "padding": "Padding",
+        "frameStyle": "Gaya bingkai",
+        "frameColor": "Warna bingkai"
+      },
+      "random": "Acak",
+      "moreOptions": "Opsi lainnya",
+      "sheet": {
+        "changesShowOnTheCode": "Perubahan langsung tampil pada kode saat Anda membuatnya. Selesai akan menyimpannya.",
+        "done": "Selesai"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Pilih warna solid, gradien, atau sampel warna untuk {label}."
     },

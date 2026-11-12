@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "Weitere Rahmenoptionen"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Augen bearbeiten",
+          "options": "Augen-Optionen",
+          "random": "Zufällige Augen",
+          "more": "Mehr Augen-Optionen"
+        },
+        "dots": {
+          "edit": "Punkte bearbeiten",
+          "options": "Punkt-Optionen",
+          "random": "Zufällige Punkte",
+          "more": "Mehr Punkt-Optionen"
+        },
+        "logo": {
+          "edit": "Logo bearbeiten",
+          "options": "Logo-Optionen",
+          "random": "Zufälliges Logo",
+          "more": "Mehr Logo-Optionen"
+        },
+        "background": {
+          "edit": "Hintergrund bearbeiten",
+          "options": "Hintergrund-Optionen",
+          "random": "Zufälliger Hintergrund",
+          "more": "Mehr Hintergrund-Optionen"
+        },
+        "frame": {
+          "edit": "Rahmen bearbeiten",
+          "options": "Rahmen-Optionen",
+          "random": "Zufälliger Rahmen",
+          "more": "Mehr Rahmen-Optionen"
+        }
+      },
+      "items": {
+        "outerShape": "Äußere Form",
+        "centerShape": "Innere Form",
+        "eyeColor": "Augenfarbe",
+        "centerColor": "Innenfarbe",
+        "pattern": "Muster",
+        "dotColor": "Punktfarbe",
+        "dotSize": "Punktgröße",
+        "logo": "Logo",
+        "quickIcons": "Schnellsymbole",
+        "logoSize": "Logogröße",
+        "hideLogo": "Logo ausblenden",
+        "backgroundColor": "Hintergrundfarbe",
+        "padding": "Abstand",
+        "frameStyle": "Rahmenstil",
+        "frameColor": "Rahmenfarbe"
+      },
+      "random": "Zufall",
+      "moreOptions": "Mehr Optionen",
+      "sheet": {
+        "changesShowOnTheCode": "Änderungen siehst du sofort auf dem Code. Mit „Fertig“ übernimmst du sie.",
+        "done": "Fertig"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Wähle für {label} eine einfarbige Farbe, einen Verlauf oder ein Farbfeld."
     },

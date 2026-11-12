@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "Plus d’options de cadre"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "Éditer les yeux",
+          "options": "Options des yeux",
+          "random": "Yeux aléatoires",
+          "more": "Autres options des yeux"
+        },
+        "dots": {
+          "edit": "Éditer les points",
+          "options": "Options des points",
+          "random": "Points aléatoires",
+          "more": "Autres options de points"
+        },
+        "logo": {
+          "edit": "Éditer le logo",
+          "options": "Options du logo",
+          "random": "Logo aléatoire",
+          "more": "Autres options du logo"
+        },
+        "background": {
+          "edit": "Éditer l’arrière-plan",
+          "options": "Options d’arrière-plan",
+          "random": "Arrière-plan aléatoire",
+          "more": "Autres options d’arrière-plan"
+        },
+        "frame": {
+          "edit": "Éditer le cadre",
+          "options": "Options du cadre",
+          "random": "Cadre aléatoire",
+          "more": "Autres options du cadre"
+        }
+      },
+      "items": {
+        "outerShape": "Forme extérieure",
+        "centerShape": "Forme centrale",
+        "eyeColor": "Couleur des yeux",
+        "centerColor": "Couleur du centre",
+        "pattern": "Motif",
+        "dotColor": "Couleur des points",
+        "dotSize": "Taille des points",
+        "logo": "Logo",
+        "quickIcons": "Icônes rapides",
+        "logoSize": "Taille du logo",
+        "hideLogo": "Masquer le logo",
+        "backgroundColor": "Couleur d’arrière-plan",
+        "padding": "Marge",
+        "frameStyle": "Style de cadre",
+        "frameColor": "Couleur du cadre"
+      },
+      "random": "Aléatoire",
+      "moreOptions": "Plus d’options",
+      "sheet": {
+        "changesShowOnTheCode": "Les modifications s’affichent sur le code au fur et à mesure. « Terminé » les conserve.",
+        "done": "Terminé"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "Choisissez une couleur unie, un dégradé ou un échantillon pour {label}."
     },

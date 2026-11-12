@@ -12123,6 +12123,162 @@
     "source": "84853fb7f0ef",
     "status": "machine"
   },
+  "editor.partInline.parts.eyes.edit": {
+    "source": "691e8fbf5f47",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.options": {
+    "source": "27bbc0a2ebf6",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.random": {
+    "source": "28d8de9fd9e9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.eyes.more": {
+    "source": "2cfe63824ded",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.edit": {
+    "source": "0c5f54d7380b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.options": {
+    "source": "109fc933304c",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.random": {
+    "source": "e07c46fdfdc3",
+    "status": "machine"
+  },
+  "editor.partInline.parts.dots.more": {
+    "source": "fdb192df70c2",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.edit": {
+    "source": "134a1450f00b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.options": {
+    "source": "7d59ee50382b",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.random": {
+    "source": "b430f59a36c2",
+    "status": "machine"
+  },
+  "editor.partInline.parts.logo.more": {
+    "source": "530b7838757e",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.edit": {
+    "source": "75dbca49b6f4",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.options": {
+    "source": "21e8489c64d9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.random": {
+    "source": "c1eed655ecfe",
+    "status": "machine"
+  },
+  "editor.partInline.parts.background.more": {
+    "source": "d738160c6b99",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.edit": {
+    "source": "83af8e9e4bf6",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.options": {
+    "source": "83f066591c5a",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.random": {
+    "source": "0e26e0660dd9",
+    "status": "machine"
+  },
+  "editor.partInline.parts.frame.more": {
+    "source": "84853fb7f0ef",
+    "status": "machine"
+  },
+  "editor.partInline.items.outerShape": {
+    "source": "f215b634a3aa",
+    "status": "machine"
+  },
+  "editor.partInline.items.centerShape": {
+    "source": "5aefcf3ebc59",
+    "status": "machine"
+  },
+  "editor.partInline.items.eyeColor": {
+    "source": "2816702f68ad",
+    "status": "machine"
+  },
+  "editor.partInline.items.centerColor": {
+    "source": "99df89fac615",
+    "status": "machine"
+  },
+  "editor.partInline.items.pattern": {
+    "source": "4288ade73ff9",
+    "status": "machine"
+  },
+  "editor.partInline.items.dotColor": {
+    "source": "f762f73563fb",
+    "status": "machine"
+  },
+  "editor.partInline.items.dotSize": {
+    "source": "97c5bc43ff30",
+    "status": "machine"
+  },
+  "editor.partInline.items.logo": {
+    "source": "d707dc2f1936",
+    "status": "machine"
+  },
+  "editor.partInline.items.quickIcons": {
+    "source": "4f438e913206",
+    "status": "machine"
+  },
+  "editor.partInline.items.logoSize": {
+    "source": "1483ec4e73dc",
+    "status": "machine"
+  },
+  "editor.partInline.items.hideLogo": {
+    "source": "4b2d07b23ba4",
+    "status": "machine"
+  },
+  "editor.partInline.items.backgroundColor": {
+    "source": "3e314dafdf7c",
+    "status": "machine"
+  },
+  "editor.partInline.items.padding": {
+    "source": "ee0d7af0bffd",
+    "status": "machine"
+  },
+  "editor.partInline.items.frameStyle": {
+    "source": "84b161a43043",
+    "status": "machine"
+  },
+  "editor.partInline.items.frameColor": {
+    "source": "2d7228cc6b77",
+    "status": "machine"
+  },
+  "editor.partInline.random": {
+    "source": "67bc484430fe",
+    "status": "machine"
+  },
+  "editor.partInline.moreOptions": {
+    "source": "bc79cdffbaa8",
+    "status": "machine"
+  },
+  "editor.partInline.sheet.changesShowOnTheCode": {
+    "source": "83ba360b3742",
+    "status": "machine"
+  },
+  "editor.partInline.sheet.done": {
+    "source": "11a6767d5674",
+    "status": "machine"
+  },
   "editor.gradientPicker.pickASolidColorA": {
     "source": "af7f9357f50f",
     "status": "machine"

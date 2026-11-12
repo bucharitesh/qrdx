@@ -3979,6 +3979,63 @@
         "moreFrameOptions": "更多边框选项"
       }
     },
+    "partInline": {
+      "parts": {
+        "eyes": {
+          "edit": "编辑定位点",
+          "options": "定位点选项",
+          "random": "随机定位点",
+          "more": "更多定位点选项"
+        },
+        "dots": {
+          "edit": "编辑圆点",
+          "options": "圆点选项",
+          "random": "随机圆点",
+          "more": "更多圆点选项"
+        },
+        "logo": {
+          "edit": "编辑标志",
+          "options": "标志选项",
+          "random": "随机标志",
+          "more": "更多标志选项"
+        },
+        "background": {
+          "edit": "编辑背景",
+          "options": "背景选项",
+          "random": "随机背景",
+          "more": "更多背景选项"
+        },
+        "frame": {
+          "edit": "编辑边框",
+          "options": "边框选项",
+          "random": "随机边框",
+          "more": "更多边框选项"
+        }
+      },
+      "items": {
+        "outerShape": "外框形状",
+        "centerShape": "中心形状",
+        "eyeColor": "定位点颜色",
+        "centerColor": "中心颜色",
+        "pattern": "图案",
+        "dotColor": "圆点颜色",
+        "dotSize": "圆点大小",
+        "logo": "标志",
+        "quickIcons": "快捷图标",
+        "logoSize": "标志大小",
+        "hideLogo": "隐藏标志",
+        "backgroundColor": "背景颜色",
+        "padding": "内边距",
+        "frameStyle": "边框样式",
+        "frameColor": "边框颜色"
+      },
+      "random": "随机",
+      "moreOptions": "更多选项",
+      "sheet": {
+        "changesShowOnTheCode": "你所做的更改会实时显示在二维码上。点击“完成”即可保留。",
+        "done": "完成"
+      }
+    },
     "gradientPicker": {
       "pickASolidColorA": "为{label}选择纯色、渐变或色板。"
     },
