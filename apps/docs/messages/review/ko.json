@@ -5523,6 +5523,118 @@
     "source": "b01adf6a8917",
     "status": "machine"
   },
+  "barcodeTool.issues.enterDigits": {
+    "source": "b78dd409e68b",
+    "status": "machine"
+  },
+  "barcodeTool.issues.digitsOnly": {
+    "source": "325ff8f299bb",
+    "status": "machine"
+  },
+  "barcodeTool.issues.checkDigitAdded": {
+    "source": "ccfa50d356e7",
+    "status": "machine"
+  },
+  "barcodeTool.issues.wrongCheckDigit": {
+    "source": "9075f84b67b8",
+    "status": "machine"
+  },
+  "barcodeTool.issues.wrongLength": {
+    "source": "a4f780c32d38",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceEnter": {
+    "source": "f14e6e8cfe6e",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceSystem": {
+    "source": "99e1439025df",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceNoForm": {
+    "source": "f43319da0a3e",
+    "status": "machine"
+  },
+  "barcodeTool.issues.shortenedFromUpca": {
+    "source": "dfc7efdbeb69",
+    "status": "machine"
+  },
+  "barcodeTool.issues.numberSystemAssumed": {
+    "source": "ca5d5a60741b",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceLength": {
+    "source": "b7b7aee5f5bf",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceStart": {
+    "source": "ca04130ba9ec",
+    "status": "machine"
+  },
+  "barcodeTool.issues.enterText": {
+    "source": "3108f54898db",
+    "status": "machine"
+  },
+  "barcodeTool.issues.tooLong": {
+    "source": "4fd5de26b64f",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code128Chars": {
+    "source": "bb5d1c6fd7e4",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code39Chars": {
+    "source": "737c3742b459",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code39Lowercase": {
+    "source": "96f655f4da3d",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Enter": {
+    "source": "389cb8feffc5",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Start": {
+    "source": "a34425448eba",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Brackets": {
+    "source": "59e0cd9a7acf",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1BadAi": {
+    "source": "2162274691d7",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1NoValue": {
+    "source": "7b205247617c",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1BadChars": {
+    "source": "fbd675c12d24",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Ai": {
+    "source": "43dae09c4787",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1TooLong": {
+    "source": "94da50fa92a1",
+    "status": "machine"
+  },
+  "barcodeTool.issues.unknownFormat": {
+    "source": "b9fdff27e6d6",
+    "status": "machine"
+  },
+  "barcodeTool.issues.space": {
+    "source": "3f49dbbfe051",
+    "status": "machine"
+  },
+  "barcodeTool.issues.lineBreak": {
+    "source": "6f8b6cb4c0b9",
+    "status": "machine"
+  },
   "guarantee.metaTitle": {
     "source": "c2a9f926960a",
     "status": "machine"
@@ -17383,14 +17495,6 @@
     "source": "acdcb46e3120",
     "status": "machine"
   },
-  "app.dashboard.codes.import.importWizard.tooManyTags": {
-    "source": "6b09b762c848",
-    "status": "machine"
-  },
-  "app.dashboard.codes.import.importWizard.duplicateBackHalf": {
-    "source": "9c025e4cba8d",
-    "status": "machine"
-  },
   "app.dashboard.codes.import.importWizard.problemsCsv": {
     "source": "f68ae9590a0f",
     "status": "machine"
@@ -17469,6 +17573,138 @@
   },
   "app.dashboard.codes.import.importWizard.sentImportChunkSizeAt": {
     "source": "b60dae388e20",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationMissing": {
+    "source": "64f0a746a104",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationTooLong": {
+    "source": "ce855a7160c8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationNotUrl": {
+    "source": "4530d06f07af",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationProtocol": {
+    "source": "1394b1f3f212",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationCredentials": {
+    "source": "79aabc6e9e9d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationShortLink": {
+    "source": "62e50bc97e78",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationRejected": {
+    "source": "37a5e503ef7b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.titleTooLong": {
+    "source": "3c70db19b4aa",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.folderDepth": {
+    "source": "f5c2357551f7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.folderNameTooLong": {
+    "source": "590790f5e08c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tooManyTags": {
+    "source": "bf00efeb8b5c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tooManyTagsWithBatch": {
+    "source": "725d366fca17",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tagNameTooLong": {
+    "source": "2c7c06c76d81",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugReserved": {
+    "source": "8f0d3ffb1a93",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugLength": {
+    "source": "f29949aefc0c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugCharacters": {
+    "source": "9fb1ceb55c69",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugDash": {
+    "source": "ab0b7cc67220",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugDuplicate": {
+    "source": "9c025e4cba8d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugTaken": {
+    "source": "083c20591c73",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugNotOnPlan": {
+    "source": "9d85ff1a215b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.imported": {
+    "source": "e47fafe0a1c6",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.duplicate": {
+    "source": "a49d96278233",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.selectedTwice": {
+    "source": "5c81723218b1",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.qrdx": {
+    "source": "4fc8041cb0e8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.limit": {
+    "source": "36e65c9a671a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.providerEnded": {
+    "source": "e5436c9e7070",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfShape": {
+    "source": "d3320d4e1b42",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedDomain": {
+    "source": "8afec599747a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedShared": {
+    "source": "5f806b1dc721",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedSharedAddDomain": {
+    "source": "49fef8fa9273",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfTakenDomain": {
+    "source": "8590bfcb6296",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfTakenShared": {
+    "source": "e2879838811c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfRepeated": {
+    "source": "4e57f7ef6c78",
     "status": "machine"
   },
   "app.dashboard.codes.analyticsExtra.whenPeopleScan": {
