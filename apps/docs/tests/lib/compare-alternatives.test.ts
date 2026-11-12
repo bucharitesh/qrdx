@@ -7,7 +7,9 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@/lib/source", () => ({ compareSource: { getPage: () => null } }));
+vi.mock("@/lib/content-source", () => ({
+  compareSource: { getPage: () => null },
+}));
 
 const { qrdxAlternative } = await import(
   "@/components/sections/compare/compare-alternatives"
