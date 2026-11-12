@@ -16,13 +16,14 @@ import {
   type QRCustomFrame,
 } from "qrdx/types";
 import { z } from "zod";
+import { MCP_REF } from "@/lib/analytics/handoff-tags";
 import { brandLogoOptions } from "@/lib/brand-logos/options";
 import { communityItemStyle } from "@/lib/community/api";
 import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
 import { presetLogoIcon } from "@/lib/community/public-style";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
-import { playgroundHref } from "@/lib/playground-links";
+import { playgroundHref, withHandoffRef } from "@/lib/playground-links";
 import { encodeStyleParam, type OmittedPart } from "@/lib/playground-style";
 import { readLogoDataUrl } from "@/lib/qr-api/logo";
 import {
@@ -349,10 +350,15 @@ export function playgroundLink(
     officialFrames: OFFICIAL_FRAME_RESOLVER,
   });
   if (!encoded) return { url: null, leftOut: [] };
-  const href = playgroundHref({
-    style: encoded.value,
-    ...(preset ? { preset } : {}),
-  });
+  // Tagged ref=mcp, so a visit (and a sign-up) from it counts for the MCP
+  // server (lib/analytics/handoff-tags.ts).
+  const href = withHandoffRef(
+    playgroundHref({
+      style: encoded.value,
+      ...(preset ? { preset } : {}),
+    }),
+    MCP_REF,
+  );
   return {
     url: new URL(href, baseUrl).toString(),
     leftOut: encoded.omitted,

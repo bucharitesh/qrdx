@@ -11,6 +11,7 @@ import {
   apiKeyRequiredError,
   optionalApiKeyCaller,
 } from "@/app/api/v1/codes/_lib/api";
+import { MCP_REF } from "@/lib/analytics/handoff-tags";
 import { brandLogoOptions } from "@/lib/brand-logos/options";
 import {
   COMMUNITY_PAGE_MAX,
@@ -22,7 +23,7 @@ import {
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanLimits } from "@/lib/plans";
-import { playgroundHref } from "@/lib/playground-links";
+import { playgroundHref, withHandoffRef } from "@/lib/playground-links";
 import {
   BASE_STYLE,
   type FlatStyle,
@@ -738,7 +739,7 @@ export function registerQrTools(server: McpServer) {
           databaseThemeStore,
         );
         const editorUrl = new URL(
-          playgroundHref({ themeId: saved.id }),
+          withHandoffRef(playgroundHref({ themeId: saved.id }), MCP_REF),
           baseUrl,
         ).toString();
         return {

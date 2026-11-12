@@ -16,7 +16,7 @@ export class QrdxApi implements ICredentialType {
     dark: "file:../icons/qrdx.dark.svg",
   };
 
-  documentationUrl = "https://qrdx.dev/docs/developers/api-keys";
+  documentationUrl = "https://qrdx.dev/docs/developers/api-keys?ref=n8n";
 
   properties: INodeProperties[] = [
     {

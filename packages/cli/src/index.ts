@@ -102,7 +102,7 @@ ${BOLD}Generate Options:${RESET}
   --dot               Corner dot pattern, e.g.:
                         ${DIM}square, rounded, circle, leaf, drop, squircle,${RESET}
                         ${DIM}octagon, flower, heart, plus, dots${RESET}
-                        ${DIM}All options: https://qrdx.dev/docs/styles${RESET}
+                        ${DIM}All options: https://qrdx.dev/docs/styles?ref=cli${RESET}
   --fg                Foreground color — hex or JSON gradient  ${DIM}(default: #000000)${RESET}
   --bg                Background color — hex or JSON gradient  ${DIM}(default: #ffffff)${RESET}
   --eye-color         Corner eye color — hex or JSON gradient  ${DIM}(default: matches --fg)${RESET}
@@ -116,7 +116,7 @@ ${BOLD}Generate Options:${RESET}
   --frame             Call-to-action frame (adds space around the code), e.g.:
                         ${DIM}none, banner-bottom, banner-top, rounded-border,${RESET}
                         ${DIM}speech-bubble, polaroid, phone, ticket, sticker${RESET}
-                        ${DIM}All frames: https://qrdx.dev/docs/styles${RESET}
+                        ${DIM}All frames: https://qrdx.dev/docs/styles?ref=cli${RESET}
   --frame-text        Frame label, up to 24 characters  ${DIM}(default: Scan me; "" hides it)${RESET}
   --frame-color       Frame color — hex  ${DIM}(default: #000000)${RESET}
   --frame-text-color  Frame label color — hex  ${DIM}(default: white on banners)${RESET}
@@ -158,7 +158,7 @@ ${BOLD}Examples:${RESET}
   ${DIM}$${RESET} qrdx batch products.csv -o codes --format png --size 1024 --body circle
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}' -o gradient.svg
 
-  Visit ${TEXT}https://qrdx.dev${RESET} for more.
+  Visit ${TEXT}https://qrdx.dev/?ref=cli${RESET} for more.
 `);
 }
 
