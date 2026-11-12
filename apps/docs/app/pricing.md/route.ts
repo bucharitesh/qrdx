@@ -1,6 +1,7 @@
 import { pricingFaqs } from "@/components/sections/pricing/pricing-faqs";
 import { pricingOptions } from "@/lib/agents/llms-content";
 import { pricingMarkdown } from "@/lib/agents/markdown-pages";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { baseUrl } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 
@@ -14,7 +15,9 @@ export function GET() {
       origin: baseUrl,
       limits: PLAN_LIMITS,
       offered: pricingOptions(),
-      faqs: pricingFaqs(),
+      faqs: pricingFaqs(undefined, {
+        nonprofit: isFeatureAvailable("nonprofitDiscounts"),
+      }),
     }),
     { headers: { "Content-Type": "text/markdown; charset=utf-8" } },
   );

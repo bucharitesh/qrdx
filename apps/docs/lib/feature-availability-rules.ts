@@ -15,6 +15,7 @@
 import { EE_LICENSE_ENV } from "@repo/auth/ee-license";
 import { passkeyRelyingParty } from "@repo/auth/passkey-rp";
 import { isQrdxDeployment } from "@/lib/mcp-clients";
+import { isFlagOn } from "@/lib/pricing";
 import {
   WORKSPACE_PATTERN_PREFIX,
   workspacePattern,
@@ -43,6 +44,9 @@ export const FEATURE_IDS = [
   "invoiceRequests",
   // Enterprise pages: the contact form on /enterprise
   "enterpriseRequests",
+  // Pricing: euro prices for the EU and EEA, and non-profit discount requests
+  "eurPrices",
+  "nonprofitDiscounts",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -287,6 +291,27 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
         appUrl: ctx.env.NEXT_PUBLIC_APP_URL,
         productionUrl: ctx.env.VERCEL_PROJECT_PRODUCTION_URL,
       }),
+  },
+  eurPrices: {
+    // Euro prices for the EU and EEA (lib/pricing.ts EUR_PRICES). Polar
+    // can't be asked from here, so a flag says the EUR prices exist: set it
+    // only after every product has one, or checkout fails for those visitors.
+    name: "Euro prices (EUR prices on every Polar product)",
+    requires: () => ["NEXT_PUBLIC_QRDX_EUR_PRICES"],
+    usable: (ctx) => isFlagOn(ctx.env.NEXT_PUBLIC_QRDX_EUR_PRICES),
+  },
+  nonprofitDiscounts: {
+    // Non-profit discount requests (lib/nonprofit-requests.tsx): emailed to
+    // QRdx, who replies with a Polar discount code. QRdx's own offer, so
+    // only where QRdx itself runs, with email set up (like invoice requests).
+    name: "Non-profit discount requests (qrdx.dev, with email)",
+    requires: () => ["RESEND_API_KEY", "EMAIL_FROM"],
+    usable: (ctx) =>
+      isQrdxDeployment({
+        appUrl: ctx.env.NEXT_PUBLIC_APP_URL,
+        productionUrl: ctx.env.VERCEL_PROJECT_PRODUCTION_URL,
+      }),
+    paths: ["/docs/help/account-and-billing/nonprofit-discount"],
   },
 };
 
