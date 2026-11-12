@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
 import { resolveAuthors } from "@/lib/blog-authors";
-import { blogSource } from "@/lib/source";
+import { blogSource } from "@/lib/content-source";
 import { buildTimeParams } from "@/lib/static-params";
 import { getPostSlug, getPublishedPosts } from "../_lib/posts";
 

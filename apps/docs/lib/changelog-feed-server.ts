@@ -10,7 +10,7 @@ import {
   toDay,
   WHATS_NEW_LIMIT,
 } from "@/lib/changelog-feed";
-import { changelogSource } from "@/lib/source";
+import { changelogSource } from "@/lib/content-source";
 
 /**
  * Every changelog entry, newest first, for the app's "What's new" panel.

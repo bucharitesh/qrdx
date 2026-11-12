@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
 import { BrandOgImage, loadOgFonts, ogSize } from "@/app/og/brand";
-import { getPageImage, source } from "@/lib/source";
+import { docsIndex, getPageImage } from "@/lib/docs-index";
 import { buildTimeParams } from "@/lib/static-params";
 
 export const revalidate = false;
@@ -11,7 +11,7 @@ export async function GET(
   { params }: RouteContext<"/og/docs/[...slug]">,
 ) {
   const { slug } = await params;
-  const page = source.getPage(slug.slice(0, -1));
+  const page = docsIndex().getPage(slug.slice(0, -1));
   if (!page) {
     notFound();
   }
@@ -29,9 +29,11 @@ export async function GET(
 // Unknown pages answer notFound() above (lib/static-params.ts).
 export function generateStaticParams() {
   return buildTimeParams(() =>
-    source.getPages().map((page) => ({
-      lang: page.locale,
-      slug: getPageImage(page).segments,
-    })),
+    docsIndex()
+      .getPages()
+      .map((page) => ({
+        lang: page.locale,
+        slug: getPageImage(page).segments,
+      })),
   );
 }

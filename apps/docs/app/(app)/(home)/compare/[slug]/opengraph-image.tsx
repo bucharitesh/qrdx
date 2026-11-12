@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
-import { compareSource } from "@/lib/source";
+import { compareSource } from "@/lib/content-source";
 import { buildTimeParams } from "@/lib/static-params";
 
 export const alt = "QRdx compared with another QR code tool";

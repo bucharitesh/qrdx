@@ -1,4 +1,5 @@
 import { cleanLlmMarkdown } from "@/lib/agents/llm-markdown";
+import type { DocsIndexPage as Page } from "@/lib/docs-index";
 import {
   isFeatureAvailable,
   isPathAvailable,
@@ -6,7 +7,6 @@ import {
 import type { FeatureId } from "@/lib/feature-availability-rules";
 import { isIntegrationVisible } from "@/lib/integration-availability";
 import { baseUrl } from "@/lib/metadata";
-import type { Page } from "@/lib/source";
 import { owner, repo } from "./github";
 
 /** "developers" → "Developers"; nested docs keep their section as context. */
