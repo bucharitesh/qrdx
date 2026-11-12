@@ -1,0 +1,140 @@
+name: Notify search engines
+
+# After each production deploy, tells IndexNow (Bing, Yandex, Seznam and the
+# other IndexNow engines) and, when the BING_WEBMASTER_API_KEY secret is set,
+# the Bing Webmaster API which sitemap URLs changed
+# (scripts/notify-search-engines.mjs). A search engine error never fails
+# the run, and nothing here gates a merge or a deploy.
+#
+# Pull requests that change the script or this workflow run its read-only
+# --check: the IndexNow key file, the Bing key, the site's verification in
+# Bing Webmaster Tools and today's quota. It fails when Bing rejects the key
+# or the site, so a broken setup shows before merging.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - scripts/notify-search-engines.mjs
+      - .github/workflows/notify-search-engines.yml
+  workflow_dispatch:
+    inputs:
+      scope:
+        description: "Which URLs to send (check: read-only setup check)"
+        type: choice
+        options:
+          - important
+          - all
+          - urls
+          - check
+        default: important
+      urls:
+        description: "With scope urls: paths or URLs, separated by spaces or new lines"
+        required: false
+
+permissions:
+  contents: read
+  deployments: read
+
+jobs:
+  check:
+    if: github.event_name == 'pull_request'
+    name: Check search engine setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts/notify-search-engines.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Pull requests from forks get no secrets: the Bing part then says
+      # "not set" and passes.
+      - name: Check IndexNow and Bing
+        env:
+          BING_WEBMASTER_API_KEY: ${{ secrets.BING_WEBMASTER_API_KEY }}
+        run: node scripts/notify-search-engines.mjs --check
+
+  notify:
+    if: github.event_name != 'pull_request'
+    name: Notify search engines
+    runs-on: ubuntu-latest
+    # Polls for the deploy for up to 30 minutes.
+    timeout-minutes: 45
+    # Informational: a failure here never marks main red.
+    continue-on-error: true
+    concurrency:
+      group: notify-search-engines
+      cancel-in-progress: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: scripts/notify-search-engines.mjs
+          sparse-checkout-cone-mode: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Before Vercel finishes building this commit (about 10 minutes), the
+      # live sitemap is the previous deploy's: the baseline for what changed.
+      - name: Save the live sitemap
+        if: github.event_name == 'push'
+        run: node scripts/notify-search-engines.mjs --snapshot "$RUNNER_TEMP/sitemap-before.xml"
+
+      # Vercel records a GitHub deployment for the commit, environment
+      # Production, once the deploy is ready.
+      - name: Wait for the production deploy
+        id: deploy
+        if: github.event_name == 'push'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          deadline=$((SECONDS + 1800))
+          while [ "$SECONDS" -lt "$deadline" ]; do
+            id="$(gh api "repos/$GITHUB_REPOSITORY/deployments?sha=$GITHUB_SHA&environment=Production" --jq '.[0].id // empty' || true)"
+            if [ -n "$id" ]; then
+              state="$(gh api "repos/$GITHUB_REPOSITORY/deployments/$id/statuses" --jq '.[0].state // empty' || true)"
+              case "$state" in
+                success)
+                  echo "Production serves $GITHUB_SHA."
+                  # A moment for the domain to point at the new deploy.
+                  sleep 30
+                  exit 0
+                  ;;
+                failure | error)
+                  echo "::warning::The production deploy of $GITHUB_SHA ended in '$state'; not notifying."
+                  echo "skip=true" >> "$GITHUB_OUTPUT"
+                  exit 0
+                  ;;
+              esac
+            fi
+            sleep 30
+          done
+          echo "::warning::No finished production deploy of $GITHUB_SHA after 30 minutes; sending what the live sitemap shows."
+
+      - name: Notify search engines
+        if: steps.deploy.outputs.skip != 'true'
+        env:
+          BING_WEBMASTER_API_KEY: ${{ secrets.BING_WEBMASTER_API_KEY }}
+          SCOPE: ${{ inputs.scope }}
+          URLS: ${{ inputs.urls }}
+        run: |
+          set -f
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            node scripts/notify-search-engines.mjs --changed-since "$RUNNER_TEMP/sitemap-before.xml"
+          elif [ "$SCOPE" = "urls" ]; then
+            printf '%s\n' $URLS > "$RUNNER_TEMP/urls.txt"
+            node scripts/notify-search-engines.mjs --urls "$RUNNER_TEMP/urls.txt"
+          else
+            node scripts/notify-search-engines.mjs "--$SCOPE"
+          fi
