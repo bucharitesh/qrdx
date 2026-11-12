@@ -1,0 +1,110 @@
+---
+title: "Développeurs"
+description: "Toutes les façons de développer avec QRdx, de l'URL d'image sans clé à la REST API, aux webhooks, à MCP et à la CLI."
+icon: Terminal
+---
+
+Choisissez l'interface qui correspond à ce que vous développez. Les trois premières ne nécessitent ni compte ni clé.
+
+## Aucune clé requise [#no-key-needed]
+
+<Cards>
+  <Card
+    icon={<ImageDown />}
+    href="/docs/developers/image-api"
+    title="API d'image de QR code"
+    description="Une image de QR code à partir d'une URL. Collez-la dans du Markdown, du HTML ou un e-mail."
+  />
+  <Card
+    icon={<Bot />}
+    href="/docs/developers/mcp"
+    title="Serveur MCP"
+    description="Permettez à Claude, Cursor, VS Code et à d'autres outils d'IA de créer des QR codes stylisés."
+  />
+  <Card
+    icon={<Terminal />}
+    href="/docs/developers/cli"
+    title="CLI"
+    description="Des QR codes SVG, PNG, WebP ou EPS depuis votre terminal ou votre CI."
+  />
+</Cards>
+
+## Avec un compte [#with-an-account]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/developers/quickstart"
+    title="Démarrage rapide"
+    description="Votre première requête API en moins de deux minutes, puis une clé API et un QR code dynamique."
+  />
+  <Card
+    icon={<LockKeyhole />}
+    href="/docs/developers/api-keys"
+    title="Clés API"
+    description="Créez une clé qrdx_ pour vos serveurs et vos scripts, limitée à un espace de travail."
+  />
+  <Card
+    icon={<Code />}
+    href="/docs/developers/rest-api"
+    title="REST API et OAuth"
+    description="Créez et modifiez des QR codes dynamiques, consultez les scans et signalez les conversions via HTTP."
+  />
+  <Card
+    icon={<FileCode />}
+    href="/docs/developers/api"
+    title="Référence de l'API"
+    description="Chaque endpoint, avec des exemples en curl, JavaScript et Python, et un panneau Try it."
+  />
+  <Card
+    icon={<Webhook />}
+    href="/docs/webhooks"
+    title="Webhooks"
+    description="Des événements signés pour les scans, les modifications de QR codes et les réponses aux formulaires. Compatible avec Zapier, Make et n8n."
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/n8n"
+    title="n8n"
+    description="Des nœuds QRdx pour n8n : images de QR code, QR codes dynamiques, scans et un déclencheur pour les événements QRdx."
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/build-an-integration"
+    title="Créer une intégration"
+    description="Permettez aux utilisateurs de connecter leur compte QRdx à votre application avec OAuth 2.0 et PKCE."
+  />
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/developers/errors"
+    title="Erreurs"
+    description="Toutes les erreurs renvoyées par l'API, leur signification et comment les corriger."
+  />
+</Cards>
+
+## Dans votre propre code [#in-your-own-code]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/getting-started"
+    title="Bibliothèque React"
+    description="Affichez et exportez des QR codes stylisés avec le package qrdx."
+  />
+  <Card
+    icon={<Server />}
+    href="/docs/self-hosting"
+    title="Auto-hébergement"
+    description="Exécutez toute l'application, QR codes dynamiques compris, sur vos propres serveurs."
+  />
+</Cards>
+
+## URL de base et authentification [#base-url-and-authentication]
+
+La REST API se trouve à l'adresse `https://api.qrdx.dev/v1`. Les mêmes routes répondent aussi à l'adresse `https://qrdx.dev/api/v1`.
+
+Les requêtes s'authentifient avec une [clé API](/docs/developers/api-keys) dans l'en-tête `Authorization: Bearer`. Les applications qui agissent pour d'autres utilisateurs de QRdx y envoient à la place un [jeton d'accès OAuth 2.0](/docs/developers/rest-api#get-an-access-token). Le [démarrage rapide](/docs/developers/quickstart#create-an-api-key) crée une clé et effectue une première requête.
+
+## Restez à jour [#stay-up-to-date]
+
+Les modifications de la bibliothèque, de la CLI et de l'API figurent dans le [journal des modifications](/changelogs). Le code source est sur [GitHub](https://github.com/bucharitesh/qrdx).

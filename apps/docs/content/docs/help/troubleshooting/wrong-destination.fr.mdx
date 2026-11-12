@@ -1,0 +1,45 @@
+---
+title: "Un code ouvre la mauvaise page"
+description: "Pourquoi un QR code ouvre un ancien lien ou un lien inattendu, et comment savoir ce qu'il contient réellement."
+---
+
+## Commencez par voir ce que contient le code [#first-see-what-the-code-holds]
+
+Prenez en photo le code imprimé et déposez-la dans le [vérificateur de scan](/tools/scan-checker). Il affiche exactement ce que le code contient.
+
+- S'il affiche l'adresse de votre site web, le code est **statique**.
+- S'il affiche un lien court comme `qrdx.dev/q/…`, le code est **dynamique**.
+
+## Un code statique [#a-static-code]
+
+Un code statique enregistre le lien à l'intérieur du code. Il ne peut pas être modifié après l'impression.
+
+Cela arrive lorsqu'un code est téléchargé avant d'avoir été rendu dynamique. Pour corriger le problème, imprimez la version dynamique. Consultez [Créer un QR code dynamique](/docs/help/dynamic-codes/create).
+
+## Un code dynamique [#a-dynamic-code]
+
+Ouvrez le code dans **Codes** et vérifiez chacun des points suivants.
+
+### La nouvelle destination n'a pas été enregistrée [#the-new-destination-wasnt-saved]
+
+Dans le Playground, modifier l'adresse ne suffit pas : cliquez sur **Point it to the new address**. Dans le tableau de bord, utilisez **Edit link** puis **Save changes**. Consultez [Changer la destination d'un code](/docs/help/dynamic-codes/change-the-link).
+
+### Une règle de routage intelligent s'est appliquée [#a-smart-routing-rule-matched]
+
+Des règles peuvent envoyer certains scans ailleurs, par exemple selon l'appareil ou le pays. La première règle correspondante l'emporte. Ouvrez **Smart routing** et cliquez sur **Test your rules**.
+
+### Un test A/B est en cours [#an-ab-test-is-running]
+
+Chaque visiteur voit une seule version pendant la journée. Une autre personne peut voir une page différente.
+
+### Le code est en pause ou terminé [#the-code-is-paused-or-ended]
+
+Un code en pause ou terminé ouvre son **Fallback URL**, si vous en avez défini un. Vérifiez **Access & schedule**.
+
+### Des paramètres UTM ont été ajoutés [#utm-parameters-were-added]
+
+Si vous avez défini des paramètres UTM, les scans ouvrent votre lien avec des balises `utm_` ajoutées. C'est normal, et la page est la même.
+
+## Vous voyez toujours l'ancienne page ? [#still-seeing-the-old-page]
+
+QRdx ne met pas les redirections en cache, donc le scan suivant utilise la nouvelle destination. Si votre téléphone affiche une ancienne version de la page elle-même, rechargez-la dans le navigateur.

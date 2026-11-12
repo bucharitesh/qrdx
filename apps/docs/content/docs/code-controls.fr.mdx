@@ -1,0 +1,65 @@
+---
+title: "Contrôles du code"
+description: "Mettez en pause un QR code dynamique, protégez-le par mot de passe, planifiez-le, limitez ses scans et choisissez où envoyer les visiteurs une fois le code terminé."
+icon: LockKeyhole
+---
+
+Chaque [QR code dynamique](/docs/dynamic-qr-codes) dispose d'un panneau **Accès et planification** sur sa page dans le [tableau de bord](/dashboard?to=codes) (ouvrez un code, puis son onglet **Paramètres**). Les modifications s'appliquent dès le scan suivant ; vous n'avez jamais besoin de réimprimer le code.
+
+| Contrôle | Ce que voient les personnes qui scannent | Offre |
+| --- | --- | --- |
+| Pause | Votre URL de repli, ou une page neutre « cette campagne est en pause » | Toutes les offres |
+| Mot de passe | Un écran de mot de passe ; le bon mot de passe ouvre le code | Pro et Business |
+| Début | Avant le début : une page « n'a pas encore commencé » | Pro et Business |
+| Fin | Après la fin : votre URL de repli, ou une page neutre « la campagne est terminée » | Pro et Business |
+| Limite de scans | Une fois la limite atteinte : votre URL de repli, ou la page « terminée » | Pro et Business |
+| URL de repli | Où sont envoyés les visiteurs des codes en pause, terminés ou ayant atteint leur limite | Pro et Business |
+
+## Pause [#pause]
+
+Activez **Mettre le code en pause** pour arrêter un code temporairement, par exemple entre deux événements, et désactivez cette option pour le réactiver. Pendant la pause, les scans mènent à votre URL de repli si vous en avez défini une, sinon à une page simple indiquant que la campagne est en pause. La pause est gratuite sur toutes les offres.
+
+## Mot de passe [#password]
+
+Définissez un mot de passe (au moins 4 caractères) : toute personne qui scanne le code voit d'abord un écran de mot de passe. Après avoir saisi le bon mot de passe, ce navigateur reste déverrouillé pendant 6 heures, sur le lien court comme sur la page hébergée qu'il ouvre. Modifier ou supprimer le mot de passe verrouille de nouveau tous les navigateurs qui avaient déverrouillé l'ancien.
+
+Les mots de passe sont stockés sous forme de hachages bcrypt ; QRdx ne peut pas vous afficher un mot de passe par la suite, seulement le remplacer. Les tentatives erronées répétées d'un même visiteur sont ralenties.
+
+## Dates de début et de fin [#start-and-end-dates]
+
+- **Début :** jusqu'à cette date, les scans affichent « Cette campagne n'a pas encore commencé. Veuillez scanner à nouveau ce code plus tard. »
+- **Fin :** à partir de cette date, les scans mènent à votre URL de repli, ou affichent « Cette campagne est terminée ».
+
+Les dates sont saisies dans votre fuseau horaire et stockées sous forme d'instants exacts : un code se termine donc au même instant partout. La fin doit être postérieure au début.
+
+## Limite de scans [#scan-limit]
+
+La limite compte les scans de la même manière que vos statistiques : les robots, les aperçus de liens et les scans répétés rapidement depuis un même appareil ne sont pas comptés. Une fois la limite atteinte, les scans suivants mènent à votre URL de repli ou à la page « terminée ». Augmentez ou supprimez la limite pour rouvrir le code.
+
+## URL de repli [#fallback-url]
+
+L'adresse vers laquelle sont envoyés les visiteurs des codes en pause, expirés ou ayant atteint leur limite, comme votre page d'accueil ou la campagne suivante. Sans URL de repli, les visiteurs voient une petite page neutre. Cette page n'affiche jamais de publicité, de promotion QRdx ni d'invitation à s'inscrire, seulement l'état de la campagne et un lien « Signaler un abus ».
+
+L'URL de repli est soumise aux mêmes contrôles de sécurité que la destination d'un code.
+
+## Offres et rétrogradations [#plans-and-downgrades]
+
+- La pause fonctionne sur toutes les offres.
+- Définir ou modifier un mot de passe, des dates, une limite de scans ou une URL de repli nécessite Pro ou Business.
+- **Une rétrogradation ne termine ni ne verrouille jamais un code.** Les contrôles définis sous Pro continuent de fonctionner exactement comme configurés, et vous pouvez en supprimer n'importe lequel sur toutes les offres.
+
+## Contrôles de sécurité des liens [#safety-checks-on-links]
+
+QRdx vérifie chaque destination et chaque URL de repli lors de l'enregistrement :
+
+- les liens répertoriés par [Google Web Risk](https://cloud.google.com/web-risk) comme logiciels malveillants, hameçonnage ou logiciels indésirables sont rejetés (lorsque le serveur dispose d'une clé Web Risk). Si Web Risk ne répond pas à temps, ce qui peut arriver lors d'un traitement par lot volumineux, le code est créé et son lien est vérifié de nouveau peu après ; si Web Risk le répertorie alors, le code est désactivé et un examinateur l'examine ;
+- les liens `javascript:`, `data:` et autres liens non web sont rejetés ;
+- pendant les 7 premiers jours d'un compte, les codes qui pointent vers des raccourcisseurs d'URL, des adresses IP brutes ou des domaines trompeurs (homoglyphes) sont enregistrés désactivés et **mis en attente d'examen**. Le panneau l'indique ; rien d'autre n'est requis de votre part, et un examinateur active le code une fois la vérification terminée. Les nouveaux comptes peuvent aussi créer jusqu'à 30 codes dynamiques par heure, ou {facts.newPaidAccountHourlyCodes} dans un espace de travail sur une offre payante. Au-delà, l'erreur indique dans combien de minutes vous pourrez en créer d'autres, et un import depuis le tableau de bord est suspendu jusque-là.
+
+Toute personne peut signaler un code sur [qrdx.dev/report-abuse](/report-abuse). Les codes désactivés après examen cessent de fonctionner pour tout le monde et leur propriétaire ne peut pas les réactiver.
+
+## Auto-hébergement [#self-hosting]
+
+- `WEB_RISK_API_KEY` : une clé d'API Google Cloud avec l'API Web Risk activée. Sans elle, les liens sont uniquement vérifiés par les règles hors ligne décrites ci-dessus.
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` et `TURNSTILE_SECRET_KEY` : Cloudflare Turnstile sur le formulaire public de signalement (facultatif).
+- Les cookies de déverrouillage sont signés avec `BETTER_AUTH_SECRET`.

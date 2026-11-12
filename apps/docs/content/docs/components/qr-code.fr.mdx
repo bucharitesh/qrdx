@@ -1,0 +1,83 @@
+---
+title: "QR Code"
+description: "Un QR code stylisé et accessible avec des boutons de téléchargement. Les couleurs, dégradés, motifs, logos et modèles de cadre proviennent de la bibliothèque qrdx."
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## Installation [#installation]
+
+<InstallationTabs name="qr-code" />
+
+## Utilisation [#usage]
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+Le code est rendu en SVG avec un nom accessible : il reste net à toutes les tailles, et les lecteurs d'écran annoncent la destination du lien.
+
+## Exemples [#examples]
+
+### Tailles [#sizes]
+
+`size` définit la largeur et la hauteur affichées à l'écran, en pixels. Les téléchargements utilisent `downloadSize` : un petit code sur la page exporte donc tout de même un fichier prêt pour l'impression.
+
+<ComponentPreview name="qr-code-sizes" />
+
+### Couleurs [#colors]
+
+`fgColor` et `bgColor` acceptent n'importe quelle couleur CSS. `eyeColor` et `dotColor` colorent séparément les trois yeux des coins. Gardez les modules plus foncés que l'arrière-plan pour que tous les scanners puissent lire le code.
+
+<ComponentPreview name="qr-code-colors" />
+
+### Dégradés [#gradients]
+
+Passez un dégradé qrdx à la place d'une couleur : `linear` avec un `angle`, ou `radial`. Les dégradés sont conservés dans les téléchargements PNG, SVG et PDF.
+
+<ComponentPreview name="qr-code-gradient" />
+
+### Motifs [#patterns]
+
+`bodyPattern` donne leur forme aux modules de données, `cornerEyePattern` aux cadres des coins et `cornerEyeDotPattern` aux points qu'ils contiennent. Consultez les [motifs](/docs/features/patterns) pour voir toutes les formes.
+
+<ComponentPreview name="qr-code-patterns" />
+
+### Logo [#logo]
+
+`logo` place une image au centre et dégage les modules situés derrière. Utilisez le niveau de correction d'erreur `H` pour que le code reste lisible même partiellement couvert. Une URL de données conserve le logo dans les téléchargements ; une image distante nécessite des en-têtes CORS.
+
+<ComponentPreview name="qr-code-logo" />
+
+### Modèles de cadre [#frame-templates]
+
+`templateId` dessine un [modèle](/docs/features/templates) qrdx autour du code. Associez-le à `caption` pour ajouter un appel à l'action sous le cadre.
+
+<ComponentPreview name="qr-code-template" />
+
+### Formats de téléchargement [#download-formats]
+
+`downloadFormats` choisit les boutons : `png`, `jpg`, `svg` et `pdf`. L'export PDF nécessite le package optionnel `jspdf` (`npm install jspdf`). Passez `[]` pour masquer les boutons.
+
+<ComponentPreview name="qr-code-downloads" />
+
+Pour un menu unique regroupant formats et tailles, utilisez [QR Code Download](/docs/components/qr-code-download).
+
+### Mode sombre [#dark-mode]
+
+Le fond blanc par défaut est le choix le plus sûr dans les thèmes sombres : des modules foncés sur une tuile claire sont lus par tous les lecteurs. Pour suivre le thème à la place, définissez `fgColor="currentColor"` et un arrière-plan transparent. Le code est alors inversé en mode sombre, ce que les caméras des téléphones lisent, mais pas certains anciens scanners.
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## Référence de l'API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+Toute autre prop, comme `className`, est transmise à l'élément `<figure>` englobant.

@@ -1,0 +1,41 @@
+---
+title: "Vérifier un design avec le score de scan"
+description: "Le score de scan teste votre design comme le voit l'appareil photo d'un téléphone et vous indique ce qu'il faut corriger."
+---
+
+Chaque design du Playground reçoit un **Score de scan** de 0 à 100. Il s'affiche sous l'aperçu, par exemple « Score de scan 92 · Excellent ».
+
+## Ce que signifie le score [#what-the-score-means]
+
+- **Excellent** (85 ou plus) : prêt à imprimer.
+- **Correct** (65 à 84) : il devrait se scanner, mais vérifiez les avertissements.
+- **Risqué** (moins de 65) : corrigez les contrôles marqués d'une croix.
+- **Échec** : le code n'a pas été décodé lors du test, ou le contraste est beaucoup trop faible. Ne l'imprimez pas.
+
+## Voir ce qu'il faut corriger [#see-what-to-fix]
+
+Cliquez sur le score. Le panneau **Va-t-il se scanner ?** liste tous les contrôles, ceux qui ont échoué en premier.
+
+Le score vérifie :
+
+- **Décodage** : le code est lu à petite taille avec un flou semblable à celui d'un appareil photo.
+- **Contraste** : le code et l'arrière-plan doivent présenter un rapport d'au moins 4.5:1.
+- **Foncé sur clair** : les codes foncés sur fond clair se scannent dans davantage d'applications.
+- **Taille du logo** : un logo ne doit pas couvrir plus que ce que la correction d'erreur peut reconstituer.
+- **Forme des yeux** : les yeux en cercle et en courbes échouent dans certaines applications de scan.
+- **Zone de silence** : la bordure vide autour du code. Quatre modules, c'est idéal.
+
+## Corrections rapides [#quick-fixes]
+
+- Contraste faible : assombrissez le code ou éclaircissez l'arrière-plan. Consultez [Choisir des couleurs qui se scannent](/docs/help/designing/colors-and-contrast).
+- Le logo couvre trop : réglez **Correction d'erreur** sur **Élevée**. Consultez [Ajouter un logo](/docs/help/designing/logos).
+- Yeux : passez à des yeux carrés, arrondis ou en engrenage.
+- Zone de silence : réglez **Marge** sur **Standard** ou **Grande**.
+
+## Vérifier un code imprimé [#check-a-printed-code]
+
+Le score teste le design à l'écran. Pour tester un code déjà imprimé, prenez-le en photo et déposez l'image dans le [vérificateur de scan](/tools/scan-checker). L'image ne quitte jamais votre appareil.
+
+## Voir aussi [#related]
+
+- [Un code ne se scanne pas](/docs/help/troubleshooting/wont-scan)

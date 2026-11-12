@@ -1,0 +1,60 @@
+---
+title: "QR Code Card"
+description: "Une carte avec un QR code dans un cadre « Scan me », un titre, une description et de la place pour des actions."
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## Installation [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## Utilisation [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+Tout ce que vous passez en enfants s'affiche dans le pied de la carte, par exemple un bouton de copie ou un [menu de téléchargement](/docs/components/qr-code-download).
+
+## Exemples [#examples]
+
+### Cadres [#frames]
+
+`frame` place l'appel à l'action sous le code (`"bottom"`), au-dessus (`"top"`) ou supprime le cadre (`"none"`). `cta` modifie le libellé, et `frameClassName` change le style du cadre, par exemple avec la couleur de votre marque.
+
+<ComponentPreview name="qr-code-card-frames" />
+
+Par défaut, le cadre utilise les couleurs `foreground` et `background` de votre thème, ce qui le garde lisible en mode clair comme en mode sombre. Le code lui-même conserve un fond clair, que tous les lecteurs savent lire.
+
+### Personnaliser le code [#styling-the-code]
+
+`qr` accepte toutes les options de style de qrdx : `fgColor`, `bgColor`, les dégradés, `bodyPattern`, les motifs de coins, `logo` et `templateId`.
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## Référence de l'API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+Toute autre prop, comme `className`, est transmise à la [Card](https://ui.shadcn.com/docs/components/card).
