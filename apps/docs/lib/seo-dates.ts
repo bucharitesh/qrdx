@@ -10,11 +10,20 @@
 // last few commits shows the date of the oldest commit there (the "shallow
 // boundary"). That is why every docs, compare and blog URL in the production
 // sitemap carried the deploy date. Dates that match a boundary commit are
-// dropped, so those URLs have no lastmod instead of a wrong one. Setting
-// VERCEL_DEEP_CLONE=true on the Vercel project gives builds the full history.
+// dropped. Setting VERCEL_DEEP_CLONE=true on the Vercel project gives builds
+// the full history.
+//
+// Without it, a dropped date falls back to lib/seo-file-dates.json: each
+// source file's last change, read from the full history by
+// `bun run --filter docs seo:dates` (scripts/seo-dates.ts) and checked in.
+// The newer of the build's date and the recorded one wins, so a change the
+// shallow clone can see still counts. A file changed after the last refresh,
+// and outside the clone's history, keeps its older recorded date: a real
+// date, just not the latest one.
 import { execFileSync } from "node:child_process";
 import { readFileSync, realpathSync } from "node:fs";
 import path from "node:path";
+import recordedFileDates from "@/lib/seo-file-dates.json";
 
 /** Newest date per file from `git log --format=commit:%aI --name-only`. */
 export function parseGitLog(stdout: string): Map<string, Date> {
@@ -189,4 +198,46 @@ export function gitLastModified(
     if (trusted) result.set(file, trusted);
   }
   return result;
+}
+
+/** File (relative to apps/docs) → ISO date of its last commit. */
+export type RecordedDates = Readonly<Record<string, string>>;
+
+const RECORDED: RecordedDates = recordedFileDates;
+
+/**
+ * A source file's last change: the newer of the build's own git date (pass
+ * only a trusted one) and the date recorded in lib/seo-file-dates.json.
+ */
+export function sourceDate(
+  file: string,
+  gitDate: Date | undefined,
+  recorded: RecordedDates = RECORDED,
+): Date | undefined {
+  return latestDate([gitDate, recorded[file]]);
+}
+
+/** gitLastModified() with the recorded dates filling in what it can't date. */
+export function fileLastModified(
+  files: readonly string[],
+  cwd: string = process.cwd(),
+): ReadonlyMap<string, Date> {
+  const git = gitLastModified(files, cwd);
+  const result = new Map<string, Date>();
+  for (const file of files) {
+    const date = sourceDate(file, git.get(file));
+    if (date) result.set(file, date);
+  }
+  return result;
+}
+
+/**
+ * An MDX page's date: fumadocs' `lastModified` (a git date) when it can be
+ * trusted, else the recorded date of `file` (relative to apps/docs).
+ */
+export function contentLastModified(
+  file: string,
+  lastModified: Date | string | undefined,
+): Date | undefined {
+  return sourceDate(file, trustedLastModified(lastModified));
 }
