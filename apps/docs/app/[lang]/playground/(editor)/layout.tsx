@@ -1,6 +1,9 @@
 import { getLocale, getTranslations } from "next-intl/server";
+import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
 import { localizeHref } from "@/lib/i18n/paths";
+import { baseUrl } from "@/lib/metadata";
 import { PRODUCT_FACTS } from "@/lib/product-facts";
+import { organizationId } from "@/lib/seo-schema";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
 
 const LINKS = [
@@ -51,6 +54,51 @@ async function PlaygroundIntro() {
   );
 }
 
+/**
+ * The designer as a free web app, and its place in the site, as
+ * /barcode-generator describes itself. Facts match the intro above.
+ */
+async function PlaygroundSchema() {
+  const [common, t, locale] = await Promise.all([
+    getTranslations("common"),
+    getTranslations("playground"),
+    getLocale(),
+  ]);
+  const path = localizeHref("/playground", locale);
+  const { bodyPatterns, eyeShapes, frames } = PRODUCT_FACTS;
+  return (
+    <>
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "WebApplication",
+          name: "QRdx QR code designer",
+          url: new URL(path, baseUrl).toString(),
+          applicationCategory: "DesignApplication",
+          operatingSystem: "Any (web browser)",
+          isAccessibleForFree: true,
+          offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+          provider: { "@id": organizationId },
+          featureList: [
+            `${CONTENT_TYPES_METADATA.length} content types, including links, Wi-Fi networks, contact cards and payments`,
+            `${bodyPatterns} dot patterns and ${eyeShapes} corner-eye shapes`,
+            "Solid or gradient colors and a center logo",
+            `${frames} call-to-action frames`,
+            "Scan score before you print",
+            "PNG, JPG, WebP, SVG, PDF and EPS downloads",
+          ],
+        }}
+      />
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: common("home"), path: localizeHref("/", locale) },
+          { name: t("heading"), path },
+        ])}
+      />
+    </>
+  );
+}
+
 /** /playground only; shared theme links ([...qrId]) canonicalize here. */
 export default function EditorLayout({
   children,
@@ -59,6 +107,7 @@ export default function EditorLayout({
 }) {
   return (
     <>
+      <PlaygroundSchema />
       {children}
       <PlaygroundIntro />
     </>
