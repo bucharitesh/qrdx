@@ -47,6 +47,7 @@ import {
   useState,
 } from "react";
 import { useContentText } from "@/components/i18n/content-text";
+import { useBarcodeIssueText } from "@/components/sections/tools/barcode-issue-text";
 import { track } from "@/lib/analytics";
 import {
   useTrackBarcodeGenerated,
@@ -310,6 +311,7 @@ export function BarcodeGenerator({
 }: BarcodeGeneratorProps = {}) {
   const t = useTranslations("barcodeTool");
   const tc = useContentText();
+  const issueText = useBarcodeIssueText();
   const start = useRef({
     format: initial?.format ?? DEFAULT_BARCODE_FORMAT,
     value:
@@ -541,7 +543,7 @@ export function BarcodeGenerator({
     ? drawn && "error" in drawn
       ? drawn.error
       : null
-    : checked.error;
+    : issueText(checked.issue);
   const quietZoneLow = quietZone < format.quietZone.min;
   const mm = (units: number, digits = 1) =>
     ((units * 25.4) / 72).toLocaleString("en-US", {
@@ -623,8 +625,10 @@ export function BarcodeGenerator({
               <p className="text-xs text-destructive" role="alert">
                 {error}
               </p>
-            ) : checked.ok && checked.note ? (
-              <p className="text-xs text-foreground">{checked.note}</p>
+            ) : checked.ok && checked.notes ? (
+              <p className="text-xs text-foreground">
+                {checked.notes.map(issueText).join(" ")}
+              </p>
             ) : null}
             <p className="text-xs text-muted-foreground">
               {tc(format.inputHint)}

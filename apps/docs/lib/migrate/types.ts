@@ -8,6 +8,7 @@ import {
   FILE_PROVIDER_IDS,
   type ProviderId,
 } from "./providers";
+import type { MigrateReason } from "./reasons";
 
 /** Links per import job (one dialog run); larger accounts import in passes. */
 export const MAX_JOB_LINKS = 1000;
@@ -212,6 +213,8 @@ export interface PlannedItem {
   status: PlanStatus;
   /** Why the link is skipped or invalid, in plain words */
   reason: string | null;
+  /** The same as a code, when it has one (./reasons.ts) */
+  reasonCode?: MigrateReason;
   /** Existing code (already imported, or with the same destination) */
   existing: CodeRef | null;
   backHalf: BackHalfPlan | null;
@@ -278,6 +281,8 @@ export interface JobItem {
   slugTarget?: BackHalfTarget;
   status: JobItemStatus;
   reason?: string;
+  /** `reason` as a code the import screens translate (./reasons.ts) */
+  reasonCode?: MigrateReason;
   codeId?: string;
   newLink?: string;
   /** Created, but notes/folder/tags/slug not applied yet (crash recovery) */

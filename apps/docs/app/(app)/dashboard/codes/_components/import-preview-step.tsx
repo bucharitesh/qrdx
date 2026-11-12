@@ -46,6 +46,7 @@ import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { formatPlanList } from "../_lib/code-options";
 import { useKnownCodeOptionPlans } from "./code-options";
 import { Note, Stat, StepLayout } from "./import-shared";
+import { useMigrateReasonText } from "./migrate-reason-text";
 
 const STATUS_TEXT: Record<PlannedItem["status"], string> = {
   create: "New code",
@@ -81,6 +82,7 @@ export function PreviewStep({
   onStarted: (job: JobSummary) => void;
 }) {
   const t = useTranslations("app.dashboard.codes.importPreviewStep");
+  const reasonText = useMigrateReasonText();
   const inWorkspace = useWorkspaceHref();
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
@@ -498,13 +500,13 @@ export function PreviewStep({
                           </code>
                         </div>
                         {item.reason && (
-                          <p className="truncate">{item.reason}</p>
+                          <p className="truncate">{reasonText(item)}</p>
                         )}
                       </div>
                     ) : (
                       <div className="text-muted-foreground truncate text-xs">
                         {link.shortLink ? displayLink(link.shortLink) : link.id}
-                        {item.reason ? ` · ${item.reason}` : ""}
+                        {item.reason ? ` · ${reasonText(item)}` : ""}
                         {item.existing
                           ? ` · ${displayLink(item.existing.shortLink)}`
                           : ""}
