@@ -1,13 +1,14 @@
 {
   "$schema": "../../../.source/json-schema/docs.meta.json",
   "title": "Libreria React",
-  "description": "Componenti qrdx e registry shadcn",
+  "description": "Componenti qrdx e registro shadcn",
   "icon": "Code",
   "root": true,
   "pages": [
-    "---Primi passi---",
+    "---Per iniziare---",
     "../getting-started",
     "../usage",
+    "../nextjs",
     "---Stile ed esportazione---",
     "../styles",
     "...../features",

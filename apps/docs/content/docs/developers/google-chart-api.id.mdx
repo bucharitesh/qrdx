@@ -1,0 +1,72 @@
+---
+title: "Ganti API kode QR Google Chart"
+description: "Kode QR dari chart.googleapis.com kini mengembalikan 404. Petakan chl, chs, dan chld ke Image API QRdx yang gratis, lalu perbarui URL lama dengan satu perintah."
+icon: Wrench
+---
+
+Google menghentikan Image Charts pada April 2012, termasuk kode QR di `chart.googleapis.com/chart?cht=qr`. Endpoint tersebut kini menjawab `404` (kami memeriksanya pada 13 November 2026), sehingga tag `<img>`, email, dan spreadsheet lama yang memakainya menampilkan gambar rusak.
+
+[Image API](/docs/developers/image-api) QRdx bekerja dengan cara yang sama: URL `GET` yang mengembalikan gambar, tanpa akun atau kunci. Ganti host dan ubah nama tiga parameter.
+
+## Sebelum dan sesudah [#before-and-after]
+
+```txt
+https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https%3A%2F%2Fexample.com&chld=M|2
+https://api.qrdx.dev/v1/qr?format=png&size=300&data=https%3A%2F%2Fexample.com&level=M&margin=2
+```
+
+Keduanya menggambar PNG 300 × 300 dari `https://example.com` dengan koreksi kesalahan M dan margin 2 modul.
+
+## Pemetaan parameter [#parameter-mapping]
+
+| Google Chart | QRdx | Catatan |
+| --- | --- | --- |
+| `cht=qr` | tidak diperlukan | Endpoint ini hanya menggambar kode QR. Jika dibiarkan, parameter ini diabaikan. |
+| `chl=<data>` | `data=<data>` | Di-encode URL dengan cara yang sama, hingga 2048 karakter. |
+| `chs=<width>x<height>` | `size=<width>` | Satu angka, karena kode QR berbentuk persegi: `64` hingga `2048` piksel. |
+| `chld=<level>\|<margin>` | `level=<level>&margin=<margin>` | Huruf yang sama, yaitu `L`, `M`, `Q`, dan `H`. Margin dalam satuan modul, `0` hingga `16`. |
+| `choe=UTF-8` | tidak diperlukan | QRdx selalu meng-encode teks sebagai UTF-8, yang merupakan bawaan Google. Tidak ada opsi Shift_JIS atau ISO-8859-1. Jika dibiarkan, parameter ini diabaikan. |
+| selalu PNG | `format=png` | QRdx mengembalikan SVG kecuali Anda meminta `png`, `webp`, atau `eps`. Tetap gunakan PNG untuk email, karena banyak klien email tidak menampilkan SVG. |
+
+Ada dua nilai bawaan yang berbeda. Tanpa `chld`, Google memakai koreksi kesalahan `L`; QRdx memakai `Q`, yang tahan terhadap lebih banyak kerusakan tetapi menghasilkan kode yang lebih padat. Tambahkan `level=L` jika Anda menginginkan tampilan lama. Keduanya memakai margin bawaan 4 modul.
+
+## Migrasi dengan satu perintah [#migrate-with-one-command]
+
+Perintah ini menulis ulang setiap URL kode QR Google Chart di file yang Anda sebutkan, termasuk host lama `chart.apis.google.com`. Perintah ini mengubah host dan path, mengganti nama `chl`, `chs`, dan `chld`, serta menambahkan `format=png` agar gambar tetap berformat PNG. Perl sudah tersedia di macOS dan sebagian besar distribusi Linux.
+
+```bash
+perl -pi -e 's{https?://chart\.(?:googleapis|apis\.google)\.com/chart\?([^\s"\x27<>)]*)}{my $q = $1; $q =~ s/(^|[&;])chl=/${1}data=/; $q =~ s/(^|[&;])chs=(\d+)x\d+/${1}size=$2/; $q =~ s/(^|[&;])chld=([LMQH])(?:\||%7C)(\d+)/${1}level=$2&margin=$3/i; $q =~ s/(^|[&;])chld=([LMQH])/${1}level=$2/i; "https://api.qrdx.dev/v1/qr?format=png&$q"}ge' index.html
+```
+
+Jalankan di tempat yang memungkinkan Anda meninjau perubahan, seperti checkout git, lalu periksa diff-nya. Untuk menemukan file yang masih memakai API lama:
+
+```bash
+grep -rlE "chart\.(googleapis|apis\.google)\.com/chart" .
+```
+
+Nilai `chs` di bawah 64 piksel (`50x50`) atau di atas 2048 akan mendapat `400` dari QRdx, jadi ubah ukuran tersebut secara manual.
+
+## Dalam kode [#in-code]
+
+```js
+// Before
+const src = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(link)}`;
+
+// After
+const src = `https://api.qrdx.dev/v1/qr?format=png&size=200&data=${encodeURIComponent(link)}`;
+```
+
+Di Google Sheets:
+
+```txt
+=IMAGE("https://api.qrdx.dev/v1/qr?format=png&size=150&data="&ENCODEURL(A2))
+```
+
+Sheets memuat gambar melalui server Google sendiri, sehingga sheet dengan ratusan kode bisa terkena batas per IP di bawah ini. Untuk daftar yang besar, buat file sekali saja dengan [generator massal](/tools/bulk) atau `qrdx batch` dari [CLI](/docs/developers/cli).
+
+## Hal lain yang perlu diketahui [#what-else-to-know]
+
+- **Batas laju:** {facts.imageApiPerMinute} permintaan per menit untuk setiap alamat IP. Jika terlampaui, Anda mendapat `429` dengan header `Retry-After`.
+- **Caching:** URL yang sama selalu mengembalikan byte yang sama, sehingga respons di-cache selama satu tahun (`Cache-Control: public, max-age=31536000, immutable`).
+- **Opsi lainnya:** warna (`fg`, `bg`), bentuk modul dan mata, ikon logo (`logoIcon`), dan bingkai. Cobalah di [URL builder](/qr-code-api), atau baca [parameter](/docs/developers/image-api#parameters).
+- **Self-hosting:** QRdx yang [di-host sendiri](/docs/self-hosting) menyajikan API yang sama di `/api/v1/qr` pada domain Anda sendiri.

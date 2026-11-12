@@ -1,0 +1,158 @@
+---
+title: "Kode QR di Next.js"
+description: "Render kode QR di Next.js App Router dengan qrdx, di Server Component tanpa JavaScript klien, di Client Component untuk input langsung, dengan logo, dan sebagai unduhan SVG."
+icon: Code
+---
+
+`qrdx` bekerja di kedua sisi App Router. `QRCodeSVG` dan `QRCode` tidak menggunakan hook khusus klien, sehingga Server Component dapat me-render kode langsung ke dalam HTML halaman tanpa mengirim JavaScript apa pun untuknya. Anda hanya memerlukan Client Component saat nilainya berubah di browser, atau untuk mengunduh file.
+
+<NpmStatus package="qrdx" />
+
+## Instalasi [#install]
+
+```package-install
+qrdx@latest
+```
+
+`react` dan `react-dom` versi 18 atau lebih baru adalah peer dependency, sehingga versi milik aplikasi Anda yang digunakan.
+
+## Di Server Component [#in-a-server-component]
+
+```tsx title="app/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default function Page() {
+  return (
+    <QRCodeSVG
+      value="https://example.com"
+      size={256}
+      margin={4}
+      role="img"
+      aria-label="QR code for example.com"
+    />
+  );
+}
+```
+
+SVG menjadi bagian dari HTML yang dikirim server. SVG tampil sebelum JavaScript apa pun dimuat, halaman statis me-render-nya sekali saat build, dan pembaca layar mendapatkan `aria-label`.
+
+`margin` adalah zona tenang di sekeliling kode, dalam satuan modul. `QRCodeSVG` secara default bernilai `0`, yang cocok untuk kode di dalam kartu dengan padding sendiri. Standar QR meminta 4 modul, dan itu pilihan aman pada latar belakang yang ramai atau gelap.
+
+### Dari parameter rute atau data [#from-route-params-or-data]
+
+```tsx title="app/tickets/[id]/page.tsx"
+import { QRCodeSVG } from "qrdx";
+
+export default async function TicketPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const url = `https://example.com/check-in/${encodeURIComponent(id)}`;
+  return <QRCodeSVG value={url} size={200} margin={4} level="H" />;
+}
+```
+
+Next.js meneruskan `params` sebagai promise, sehingga halamannya `async`. Lakukan encoding pada apa pun yang berasal dari pengguna atau basis data sebelum dimasukkan ke URL. Level `H` memungkinkan hingga 30% kode rusak, yang membantu pada lencana yang terlipat atau tergores.
+
+## Di Client Component [#in-a-client-component]
+
+Saat nilai berasal dari input, render kode di Client Component:
+
+```tsx title="components/live-qr-code.tsx"
+"use client";
+
+import { QRCodeSVG } from "qrdx";
+import { useState } from "react";
+
+export function LiveQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div>
+      <input
+        aria-label="Text or link to encode"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QRCodeSVG value={value} size={200} margin={4} /> : null}
+    </div>
+  );
+}
+```
+
+`QRCodeCanvas` juga merupakan komponen klien (disertai `"use client"`), tetapi hanya menggambar modul persegi biasa. Gunakan `QRCodeSVG` untuk kode bergaya.
+
+## Dengan logo [#with-a-logo]
+
+```tsx title="components/logo-qr-code.tsx"
+import { QRCode } from "qrdx";
+
+export function LogoQrCode() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      margin={4}
+      level="H"
+      logo="/logo.png"
+    />
+  );
+}
+```
+
+- **Koreksi kesalahan H.** Logo digambar sekitar seperempat lebar kode dan mengosongkan modul di belakangnya, sehingga kode mengandalkan koreksi kesalahan agar dapat dipindai. `QRCode` juga memperkecil logo yang terlalu besar untuk diperbaiki oleh kode.
+- **Sumber logo.** `logo` menerima path di aplikasi Anda, URL, atau data URL. Halaman menampilkan ketiganya. Untuk unduhan, data URL paling aman, karena gambar jarak jauh memerlukan header CORS sebelum dapat disalin ke dalam file.
+- **Periksa.** Coba kode di beberapa ponsel, atau unggah tangkapan layar ke [pemeriksa pemindaian](/tools/scan-checker).
+
+`logoOptions` mengatur ukuran, ruang kosong, posisi, dan pemotongan logo; lihat [Logo](/docs/features/logos).
+
+## Unduh sebagai SVG [#download-as-svg]
+
+```tsx title="components/download-svg-button.tsx"
+"use client";
+
+import { downloadQRCode } from "qrdx";
+
+export function DownloadSvgButton({ value }: { value: string }) {
+  return (
+    <button
+      type="button"
+      onClick={() =>
+        downloadQRCode(
+          { value, level: "Q", margin: 4 },
+          {
+            format: "svg",
+            size: { width: 1024, height: 1024 },
+            filename: "qr-code.svg",
+          },
+        )
+      }
+    >
+      Download SVG
+    </button>
+  );
+}
+```
+
+`downloadQRCode` memerlukan DOM browser, sehingga tombolnya adalah Client Component. Halaman Server Component tetap dapat me-render-nya dan meneruskan nilainya sebagai prop. Untuk file lain, atur `format` ke `png`, `jpg`, `webp`, `eps`, atau `pdf` (PDF memerlukan paket opsional `jspdf`). Lihat [Unduhan](/docs/features/downloads) untuk semua opsi.
+
+## Saat Anda memerlukan URL gambar [#when-you-need-an-image-url]
+
+Email, gambar Open Graph, file Markdown, dan tempat lain yang tidak dapat menjalankan React memerlukan URL gambar, bukan komponen. [API kode QR gratis](/qr-code-api) mengembalikannya tanpa kunci:
+
+```html
+<img src="https://api.qrdx.dev/v1/qr?data=https://example.com&format=png" width="256" height="256" alt="QR code for example.com" />
+```
+
+## Komponen siap pakai [#ready-made-components]
+
+[Registry shadcn/ui](/docs/developers/shadcn) memasang komponen ke proyek Anda: [kode QR dengan tombol unduh](/docs/components/qr-code), kartu, dialog berbagi, generator, pemindai, serta kode Wi-Fi dan kontak.
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code.json
+```
+
+## Pustaka kode QR React lainnya [#other-react-qr-code-libraries]
+
+Jika Anda hanya memerlukan kode hitam-putih biasa, `qrcode.react` lebih kecil dan sudah lebih lama ada; `qrdx` menambahkan bentuk, gradien, bingkai, logo, ekspor PNG/SVG/PDF/EPS, dan skor pemindaian. Perbandingan dengan [qrcode.react](/compare/qrcode-react) dan [qr-code-styling](/compare/qr-code-styling) membahas perbedaannya.
