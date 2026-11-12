@@ -8,6 +8,7 @@ import {
 } from "@repo/design-system/components/ui/resizable";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import React, { use, useEffect } from "react";
 import { useTrackQrGenerated } from "@/lib/analytics/react";
 import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
@@ -42,6 +43,7 @@ const SAMPLE_QR_SRC = "/images/editor/sample-qr.svg";
  * shown until hydration.
  */
 function EditorShell() {
+  const t = useTranslations("editor.editor");
   return (
     <div
       aria-busy="true"
@@ -69,7 +71,7 @@ function EditorShell() {
           />
         </div>
       </div>
-      <span className="sr-only">Loading the editor…</span>
+      <span className="sr-only">{t("loadingTheEditor")}</span>
     </div>
   );
 }
@@ -98,6 +100,7 @@ function TrackQrGenerated() {
 }
 
 const Editor: React.FC<EditorProps> = ({ themePromise }) => {
+  const t = useTranslations("editor.editor");
   const isMobile = useIsMobile();
   const communityOpen = useCommunitySheetStore((state) => state.open);
   const isMounted = useMounted();
@@ -139,7 +142,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   if (initialQRPreset && !initialQRPreset.style) {
     return (
       <div className="text-destructive flex h-full items-center justify-center">
-        Fetched QR preset data is invalid.
+        {t("fetchedQrPresetDataIs")}
       </div>
     );
   }

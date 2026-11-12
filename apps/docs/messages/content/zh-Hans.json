@@ -1,4 +1,724 @@
 {
+  "e7a241debad5": {
+    "source": "URL",
+    "text": "网址",
+    "status": "machine",
+    "context": "qrTypes.types.url.name"
+  },
+  "4473afd14cb9": {
+    "source": "Open any website or web page",
+    "text": "打开任意网站或网页",
+    "status": "machine",
+    "context": "contentTypes.list.url.description"
+  },
+  "7b5cb3c7f705": {
+    "source": "Plain Text",
+    "text": "纯文本",
+    "status": "machine",
+    "context": "qrTypes.types.text.name"
+  },
+  "b4e85fdf01c5": {
+    "source": "Show a short note or message",
+    "text": "显示一段简短的备注或消息",
+    "status": "machine",
+    "context": "contentTypes.list.text.description"
+  },
+  "969ccbd3cf63": {
+    "source": "Email",
+    "text": "电子邮件",
+    "status": "machine",
+    "context": "qrTypes.types.email.name"
+  },
+  "41c3b7d764f3": {
+    "source": "Draft an email with a subject and body",
+    "text": "撰写带有主题和正文的电子邮件",
+    "status": "machine",
+    "context": "contentTypes.list.email.description"
+  },
+  "63dceb8800b2": {
+    "source": "Phone",
+    "text": "电话",
+    "status": "machine",
+    "context": "contentTypes.list.phone.label"
+  },
+  "bbf50884e10f": {
+    "source": "Call a number with one tap",
+    "text": "轻点一下即可拨打号码",
+    "status": "machine",
+    "context": "contentTypes.list.phone.description"
+  },
+  "40b601a10ca5": {
+    "source": "SMS",
+    "text": "短信",
+    "status": "machine",
+    "context": "qrTypes.types.sms.name"
+  },
+  "8129c6e42c2a": {
+    "source": "Open a pre-filled text message",
+    "text": "打开预先填好内容的短信",
+    "status": "machine",
+    "context": "contentTypes.list.sms.description"
+  },
+  "6a40edf1fc87": {
+    "source": "WhatsApp",
+    "text": "WhatsApp",
+    "status": "machine",
+    "context": "qrTypes.types.whatsapp.name"
+  },
+  "cc39c085735c": {
+    "source": "Start a WhatsApp chat with a message",
+    "text": "发起带有消息的 WhatsApp 聊天",
+    "status": "machine",
+    "context": "contentTypes.list.whatsapp.description"
+  },
+  "10df5f541da7": {
+    "source": "WiFi",
+    "text": "Wi-Fi",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.label"
+  },
+  "0c3e491ad9b7": {
+    "source": "Join a Wi-Fi network without typing",
+    "text": "无需输入即可加入 Wi-Fi 网络",
+    "status": "machine",
+    "context": "contentTypes.list.wifi.description"
+  },
+  "2b5c3d26721a": {
+    "source": "Contact",
+    "text": "联系方式",
+    "status": "machine",
+    "context": "pageCodes.on-business-cards-1.label"
+  },
+  "5ee17deb4ffb": {
+    "source": "Save your contact card to a phone",
+    "text": "将你的名片保存到手机",
+    "status": "machine",
+    "context": "contentTypes.list.vcard.description"
+  },
+  "15b61974b270": {
+    "source": "Location",
+    "text": "位置",
+    "status": "machine",
+    "context": "contentTypes.list.maps.label"
+  },
+  "63bd51938ca9": {
+    "source": "Open a place or directions in Maps",
+    "text": "在地图中打开地点或路线",
+    "status": "machine",
+    "context": "contentTypes.list.maps.description"
+  },
+  "d41f5b4977ee": {
+    "source": "Facebook",
+    "text": "Facebook",
+    "status": "machine",
+    "context": "qrTypes.types.facebook.name"
+  },
+  "8a06e5f8ef9d": {
+    "source": "Open a Facebook page or profile",
+    "text": "打开 Facebook 主页或个人资料",
+    "status": "machine",
+    "context": "contentTypes.list.facebook.description"
+  },
+  "bad57ef7837c": {
+    "source": "Instagram",
+    "text": "Instagram",
+    "status": "machine",
+    "context": "qrTypes.types.instagram.name"
+  },
+  "7af66c4bc9d9": {
+    "source": "Open an Instagram profile",
+    "text": "打开 Instagram 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.instagram.description"
+  },
+  "eb0050f72303": {
+    "source": "Reddit",
+    "text": "Reddit",
+    "status": "machine",
+    "context": "qrTypes.types.reddit.name"
+  },
+  "73d9e832dc15": {
+    "source": "Open a subreddit or Reddit profile",
+    "text": "打开 subreddit 或 Reddit 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.reddit.description"
+  },
+  "1bb6fcfbf136": {
+    "source": "TikTok",
+    "text": "TikTok",
+    "status": "machine",
+    "context": "qrTypes.types.tiktok.name"
+  },
+  "cd29fe404136": {
+    "source": "Open a TikTok profile",
+    "text": "打开 TikTok 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.tiktok.description"
+  },
+  "3a409cda219d": {
+    "source": "Twitter / X",
+    "text": "Twitter / X",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.label"
+  },
+  "65e335f23f7f": {
+    "source": "Open an X (Twitter) profile",
+    "text": "打开 X（Twitter）个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.twitter.description"
+  },
+  "dd84425b72da": {
+    "source": "LinkedIn",
+    "text": "LinkedIn",
+    "status": "machine",
+    "context": "qrTypes.types.linkedin.name"
+  },
+  "a95b9305d767": {
+    "source": "Open a LinkedIn profile or company page",
+    "text": "打开 LinkedIn 个人主页或公司主页",
+    "status": "machine",
+    "context": "contentTypes.list.linkedin.description"
+  },
+  "fb7accfff8c6": {
+    "source": "YouTube",
+    "text": "YouTube",
+    "status": "machine",
+    "context": "qrTypes.types.youtube.name"
+  },
+  "81dfe5941ed0": {
+    "source": "Open a YouTube channel or video",
+    "text": "打开 YouTube 频道或视频",
+    "status": "machine",
+    "context": "contentTypes.list.youtube.description"
+  },
+  "78dfd4d79bda": {
+    "source": "Pinterest",
+    "text": "Pinterest",
+    "status": "machine",
+    "context": "qrTypes.types.pinterest.name"
+  },
+  "dfd9caf97fa7": {
+    "source": "Open a Pinterest profile",
+    "text": "打开 Pinterest 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.pinterest.description"
+  },
+  "4eb2ce09b54c": {
+    "source": "Snapchat",
+    "text": "Snapchat",
+    "status": "machine",
+    "context": "qrTypes.types.snapchat.name"
+  },
+  "b5ce116c6f18": {
+    "source": "Add you as a friend on Snapchat",
+    "text": "在 Snapchat 上添加你为好友",
+    "status": "machine",
+    "context": "contentTypes.list.snapchat.description"
+  },
+  "3e42e385075b": {
+    "source": "Threads",
+    "text": "Threads",
+    "status": "machine",
+    "context": "qrTypes.types.threads.name"
+  },
+  "0a672d38b9af": {
+    "source": "Open a Threads profile",
+    "text": "打开 Threads 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.threads.description"
+  },
+  "9c26139ca220": {
+    "source": "UPI Payment",
+    "text": "UPI 支付",
+    "status": "machine",
+    "context": "contentTypes.list.upi.label"
+  },
+  "16def4a4f56e": {
+    "source": "Get paid from any UPI app in India",
+    "text": "通过印度任意 UPI 应用收款",
+    "status": "machine",
+    "context": "contentTypes.list.upi.description"
+  },
+  "ab8a4f6bb84d": {
+    "source": "PayPal",
+    "text": "PayPal",
+    "status": "machine",
+    "context": "qrTypes.types.paypal.name"
+  },
+  "edbafd65d55b": {
+    "source": "Get paid with a PayPal.me link",
+    "text": "通过 PayPal.me 链接收款",
+    "status": "machine",
+    "context": "contentTypes.list.paypal.description"
+  },
+  "338c536466d8": {
+    "source": "Google Review",
+    "text": "Google 评价",
+    "status": "machine",
+    "context": "qrTypes.types.google-review.name"
+  },
+  "436c48b655f2": {
+    "source": "Ask customers for a Google review",
+    "text": "邀请顾客留下 Google 评价",
+    "status": "machine",
+    "context": "contentTypes.list.google-review.description"
+  },
+  "a1593ecc5a13": {
+    "source": "Venmo",
+    "text": "Venmo",
+    "status": "machine",
+    "context": "qrTypes.types.venmo.name"
+  },
+  "4b6f2fb13a28": {
+    "source": "Request money on Venmo",
+    "text": "在 Venmo 上请求付款",
+    "status": "machine",
+    "context": "contentTypes.list.venmo.description"
+  },
+  "7005c0064bda": {
+    "source": "Spotify",
+    "text": "Spotify",
+    "status": "machine",
+    "context": "qrTypes.types.spotify.name"
+  },
+  "c6a63235a8dc": {
+    "source": "Play a song, album, playlist or podcast",
+    "text": "播放歌曲、专辑、播放列表或播客",
+    "status": "machine",
+    "context": "contentTypes.list.spotify.description"
+  },
+  "b4056df6691f": {
+    "source": "Bitcoin",
+    "text": "比特币",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoin.name"
+  },
+  "e67cd215efb8": {
+    "source": "Receive Bitcoin to your wallet",
+    "text": "将比特币收入你的钱包",
+    "status": "machine",
+    "context": "contentTypes.list.bitcoin.description"
+  },
+  "a13bebeb57e1": {
+    "source": "Ethereum",
+    "text": "以太坊",
+    "status": "machine",
+    "context": "qrTypes.types.ethereum.name"
+  },
+  "6c0ebe263a4f": {
+    "source": "Receive ETH to your wallet",
+    "text": "向你的钱包接收 ETH",
+    "status": "machine",
+    "context": "contentTypes.list.ethereum.description"
+  },
+  "d9bc2c875a30": {
+    "source": "Etsy",
+    "text": "Etsy",
+    "status": "machine",
+    "context": "qrTypes.types.etsy.name"
+  },
+  "bb8ed82e85a8": {
+    "source": "Open your Etsy shop",
+    "text": "打开你的 Etsy 店铺",
+    "status": "machine",
+    "context": "contentTypes.list.etsy.description"
+  },
+  "34af43e8f247": {
+    "source": "Dub",
+    "text": "Dub",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.label"
+  },
+  "a5a865ee3833": {
+    "source": "Use a Dub short link with its analytics",
+    "text": "使用 Dub 短链接及其数据分析",
+    "status": "machine",
+    "context": "contentTypes.list.dubsh.description"
+  },
+  "915ef4bad59a": {
+    "source": "Google Drive",
+    "text": "Google Drive",
+    "status": "machine",
+    "context": "qrTypes.types.google-drive.name"
+  },
+  "e61168c0f91d": {
+    "source": "Share a Drive file or folder",
+    "text": "分享 Drive 文件或文件夹",
+    "status": "machine",
+    "context": "contentTypes.list.google-drive.description"
+  },
+  "4cecc708584f": {
+    "source": "Attendance",
+    "text": "考勤签到",
+    "status": "machine",
+    "context": "qrTypes.types.attendance.name"
+  },
+  "67f5f288d26a": {
+    "source": "Check people in with a Google Form",
+    "text": "通过 Google Form 为人员签到",
+    "status": "machine",
+    "context": "contentTypes.list.attendance.description"
+  },
+  "49d2dc07acd9": {
+    "source": "Amazon",
+    "text": "Amazon",
+    "status": "machine",
+    "context": "qrTypes.types.amazon.name"
+  },
+  "d3d1f53cf2cc": {
+    "source": "Open an Amazon product page",
+    "text": "打开 Amazon 商品页面",
+    "status": "machine",
+    "context": "contentTypes.list.amazon.description"
+  },
+  "820763ae11ab": {
+    "source": "Flipkart",
+    "text": "Flipkart",
+    "status": "machine",
+    "context": "qrTypes.types.flipkart.name"
+  },
+  "e7ec6e993e01": {
+    "source": "Open a Flipkart product page",
+    "text": "打开 Flipkart 商品页面",
+    "status": "machine",
+    "context": "contentTypes.list.flipkart.description"
+  },
+  "68e3373a7f76": {
+    "source": "Cal.com",
+    "text": "Cal.com",
+    "status": "machine",
+    "context": "qrTypes.types.calcom.name"
+  },
+  "69b2a1089f85": {
+    "source": "Let people book a meeting with you",
+    "text": "让他人预约与你的会议",
+    "status": "machine",
+    "context": "contentTypes.list.calcom.description"
+  },
+  "fa7d3d951464": {
+    "source": "Pix",
+    "text": "Pix",
+    "status": "machine",
+    "context": "qrTypes.types.pix.name"
+  },
+  "7b46ff8a9488": {
+    "source": "Get paid by Pix from any Brazilian bank",
+    "text": "通过任意巴西银行的 Pix 收款",
+    "status": "machine",
+    "context": "contentTypes.list.pix.description"
+  },
+  "2810ba148058": {
+    "source": "SEPA transfer",
+    "text": "SEPA 转账",
+    "status": "machine",
+    "context": "contentTypes.list.sepa.label"
+  },
+  "ede69d3649f9": {
+    "source": "Fill in a euro bank transfer (EPC)",
+    "text": "填写欧元银行转账信息（EPC）",
+    "status": "machine",
+    "context": "contentTypes.list.sepa.description"
+  },
+  "5c5af06729d3": {
+    "source": "PayNow",
+    "text": "PayNow",
+    "status": "machine",
+    "context": "qrTypes.types.paynow.name"
+  },
+  "ce2ba3ad6a51": {
+    "source": "Get paid by PayNow in Singapore",
+    "text": "在新加坡通过 PayNow 收款",
+    "status": "machine",
+    "context": "contentTypes.list.paynow.description"
+  },
+  "a29179a6b7b9": {
+    "source": "PromptPay",
+    "text": "PromptPay",
+    "status": "machine",
+    "context": "qrTypes.types.promptpay.name"
+  },
+  "8bc2d937b480": {
+    "source": "Get paid by PromptPay in Thailand",
+    "text": "在泰国通过 PromptPay 收款",
+    "status": "machine",
+    "context": "contentTypes.list.promptpay.description"
+  },
+  "d3f03ab05542": {
+    "source": "VietQR",
+    "text": "VietQR",
+    "status": "machine",
+    "context": "qrTypes.types.vietqr.name"
+  },
+  "95b3d658ac81": {
+    "source": "Get a bank transfer in Vietnam",
+    "text": "在越南收取银行转账",
+    "status": "machine",
+    "context": "contentTypes.list.vietqr.description"
+  },
+  "2105f7da1289": {
+    "source": "Cash App",
+    "text": "Cash App",
+    "status": "machine",
+    "context": "qrTypes.types.cashapp.name"
+  },
+  "5c2bdc3e7601": {
+    "source": "Get paid to your $Cashtag",
+    "text": "收款至你的 $Cashtag",
+    "status": "machine",
+    "context": "contentTypes.list.cashapp.description"
+  },
+  "dd53271a2e06": {
+    "source": "Revolut",
+    "text": "Revolut",
+    "status": "machine",
+    "context": "qrTypes.types.revolut.name"
+  },
+  "5a94648461c3": {
+    "source": "Get paid with a revolut.me link",
+    "text": "通过 revolut.me 链接收款",
+    "status": "machine",
+    "context": "contentTypes.list.revolut.description"
+  },
+  "acdd1e734125": {
+    "source": "Telegram",
+    "text": "Telegram",
+    "status": "machine",
+    "context": "qrTypes.types.telegram.name"
+  },
+  "31d202640cdc": {
+    "source": "Open a Telegram chat, channel or group",
+    "text": "打开 Telegram 聊天、频道或群组",
+    "status": "machine",
+    "context": "contentTypes.list.telegram.description"
+  },
+  "1e9806e4227b": {
+    "source": "Signal",
+    "text": "Signal",
+    "status": "machine",
+    "context": "qrTypes.types.signal.name"
+  },
+  "bd7c9436de24": {
+    "source": "Start a Signal chat",
+    "text": "发起 Signal 聊天",
+    "status": "machine",
+    "context": "contentTypes.list.signal.description"
+  },
+  "053bc65874ad": {
+    "source": "Discord",
+    "text": "Discord",
+    "status": "machine",
+    "context": "qrTypes.types.discord.name"
+  },
+  "b78506790d9a": {
+    "source": "Invite people to your Discord server",
+    "text": "邀请他人加入你的 Discord 服务器",
+    "status": "machine",
+    "context": "contentTypes.list.discord.description"
+  },
+  "81a0d84c9895": {
+    "source": "LINE",
+    "text": "LINE",
+    "status": "machine",
+    "context": "qrTypes.types.line.name"
+  },
+  "29209cbe493e": {
+    "source": "Add you as a friend on LINE",
+    "text": "在 LINE 上添加你为好友",
+    "status": "machine",
+    "context": "contentTypes.list.line.description"
+  },
+  "4ed485c71401": {
+    "source": "Bluesky",
+    "text": "Bluesky",
+    "status": "machine",
+    "context": "qrTypes.types.bluesky.name"
+  },
+  "6de0af21d365": {
+    "source": "Open a Bluesky profile",
+    "text": "打开 Bluesky 个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.bluesky.description"
+  },
+  "a53bdbbb43f0": {
+    "source": "Mastodon",
+    "text": "Mastodon",
+    "status": "machine",
+    "context": "qrTypes.types.mastodon.name"
+  },
+  "eda359459199": {
+    "source": "Open a Mastodon or fediverse profile",
+    "text": "打开 Mastodon 或联邦宇宙个人主页",
+    "status": "machine",
+    "context": "contentTypes.list.mastodon.description"
+  },
+  "a731a58c4cf3": {
+    "source": "Twitch",
+    "text": "Twitch",
+    "status": "machine",
+    "context": "qrTypes.types.twitch.name"
+  },
+  "dd82e14a5114": {
+    "source": "Open a Twitch channel",
+    "text": "打开 Twitch 频道",
+    "status": "machine",
+    "context": "contentTypes.list.twitch.description"
+  },
+  "8506b11e2d83": {
+    "source": "SoundCloud",
+    "text": "SoundCloud",
+    "status": "machine",
+    "context": "qrTypes.types.soundcloud.name"
+  },
+  "e51e2f69221b": {
+    "source": "Play a SoundCloud profile or track",
+    "text": "播放 SoundCloud 个人主页或曲目",
+    "status": "machine",
+    "context": "contentTypes.list.soundcloud.description"
+  },
+  "509c517ede79": {
+    "source": "Zoom",
+    "text": "Zoom",
+    "status": "machine",
+    "context": "qrTypes.types.zoom.name"
+  },
+  "0632cec7498a": {
+    "source": "Join a Zoom meeting",
+    "text": "加入 Zoom 会议",
+    "status": "machine",
+    "context": "contentTypes.list.zoom.description"
+  },
+  "78aeb390abbc": {
+    "source": "Google Meet",
+    "text": "Google Meet",
+    "status": "machine",
+    "context": "qrTypes.types.google-meet.name"
+  },
+  "8370d59ec070": {
+    "source": "Join a Google Meet call",
+    "text": "加入 Google Meet 通话",
+    "status": "machine",
+    "context": "contentTypes.list.google-meet.description"
+  },
+  "302415affc9a": {
+    "source": "Waze",
+    "text": "Waze",
+    "status": "machine",
+    "context": "qrTypes.types.waze.name"
+  },
+  "8bc07b3a7635": {
+    "source": "Get directions in Waze",
+    "text": "在 Waze 中获取路线",
+    "status": "machine",
+    "context": "contentTypes.list.waze.description"
+  },
+  "eaa4e0ba3c89": {
+    "source": "Litecoin",
+    "text": "莱特币",
+    "status": "machine",
+    "context": "qrTypes.types.litecoin.name"
+  },
+  "449a6e9adfab": {
+    "source": "Receive Litecoin to your wallet",
+    "text": "将 Litecoin 收到你的钱包",
+    "status": "machine",
+    "context": "contentTypes.list.litecoin.description"
+  },
+  "bbc8f6fd09a9": {
+    "source": "Dogecoin",
+    "text": "狗狗币",
+    "status": "machine",
+    "context": "qrTypes.types.dogecoin.name"
+  },
+  "89da96767f06": {
+    "source": "Receive Dogecoin to your wallet",
+    "text": "将 Dogecoin 收到你的钱包",
+    "status": "machine",
+    "context": "contentTypes.list.dogecoin.description"
+  },
+  "8a9851255d67": {
+    "source": "Bitcoin Cash",
+    "text": "比特币现金",
+    "status": "machine",
+    "context": "qrTypes.types.bitcoincash.name"
+  },
+  "5dc3583c4af4": {
+    "source": "Receive Bitcoin Cash to your wallet",
+    "text": "将 Bitcoin Cash 收到你的钱包",
+    "status": "machine",
+    "context": "contentTypes.list.bitcoincash.description"
+  },
+  "be4b0c384393": {
+    "source": "Solana",
+    "text": "Solana",
+    "status": "machine",
+    "context": "qrTypes.types.solana.name"
+  },
+  "5ac584ff8360": {
+    "source": "Receive SOL with Solana Pay",
+    "text": "通过 Solana Pay 收取 SOL",
+    "status": "machine",
+    "context": "contentTypes.list.solana.description"
+  },
+  "089fe32a5314": {
+    "source": "Monero",
+    "text": "Monero",
+    "status": "machine",
+    "context": "qrTypes.types.monero.name"
+  },
+  "4e9dcf898cac": {
+    "source": "Receive Monero to your wallet",
+    "text": "将 Monero 收到你的钱包",
+    "status": "machine",
+    "context": "contentTypes.list.monero.description"
+  },
+  "76327dec9ae3": {
+    "source": "Popular",
+    "text": "热门",
+    "status": "machine",
+    "context": "contentTypes.groups.popular.label"
+  },
+  "b307203708c8": {
+    "source": "Links & files",
+    "text": "链接与文件",
+    "status": "machine",
+    "context": "contentTypes.groups.links.label"
+  },
+  "9c4e1630ebb0": {
+    "source": "Contact & connect",
+    "text": "联系与互动",
+    "status": "machine",
+    "context": "contentTypes.groups.connect.label"
+  },
+  "7a781ff80909": {
+    "source": "Social & media",
+    "text": "社交与媒体",
+    "status": "machine",
+    "context": "contentTypes.groups.social.label"
+  },
+  "76f68a75f01e": {
+    "source": "Business",
+    "text": "商家",
+    "status": "machine",
+    "context": "templates.business.label"
+  },
+  "632e1c583941": {
+    "source": "Payments",
+    "text": "支付",
+    "status": "machine",
+    "context": "qrTypes.groups.payments.title"
+  },
+  "df12b8f89b61": {
+    "source": "Crypto",
+    "text": "加密货币",
+    "status": "machine",
+    "context": "contentTypes.groups.crypto.label"
+  },
+  "b5b68f9d45ff": {
+    "source": "Shopping",
+    "text": "购物",
+    "status": "machine",
+    "context": "qrTypes.groups.shopping.title"
+  },
   "fdb6d28cdb57": {
     "source": "Links, text and Wi-Fi",
     "text": "链接、文本和 Wi-Fi",
@@ -35,12 +755,6 @@
     "status": "machine",
     "context": "qrTypes.groups.social.description"
   },
-  "632e1c583941": {
-    "source": "Payments",
-    "text": "支付",
-    "status": "machine",
-    "context": "qrTypes.groups.payments.title"
-  },
   "ef99c34580c4": {
     "source": "Bank payment codes (UPI, Pix, SEPA, PayNow, PromptPay, VietQR), payment links and crypto wallets.",
     "text": "银行收款码（UPI、Pix、SEPA、PayNow、PromptPay、VietQR）、支付链接和加密货币钱包。",
@@ -59,23 +773,11 @@
     "status": "machine",
     "context": "qrTypes.groups.business.description"
   },
-  "b5b68f9d45ff": {
-    "source": "Shopping",
-    "text": "购物",
-    "status": "machine",
-    "context": "qrTypes.groups.shopping.title"
-  },
   "6353f123b53f": {
     "source": "Link packaging and displays to your marketplace listings.",
     "text": "将包装和展示物料链接到你的商品页面。",
     "status": "machine",
     "context": "qrTypes.groups.shopping.description"
-  },
-  "e7a241debad5": {
-    "source": "URL",
-    "text": "网址",
-    "status": "machine",
-    "context": "qrTypes.types.url.name"
   },
   "105b06fbb4a6": {
     "source": "Open any web page with one scan.",
@@ -197,12 +899,6 @@
     "status": "machine",
     "context": "qrTypes.types.url.faqs.3.answer"
   },
-  "7b5cb3c7f705": {
-    "source": "Plain Text",
-    "text": "纯文本",
-    "status": "machine",
-    "context": "qrTypes.types.text.name"
-  },
   "a7ece258bfcb": {
     "source": "Show a short message, code or note.",
     "text": "显示一段简短的消息、代码或备注。",
@@ -316,12 +1012,6 @@
     "text": "不可以。二维码只存储纯字符，因此无法使用粗体、颜色或可点击的文字。换行会被保留。",
     "status": "machine",
     "context": "qrTypes.types.text.faqs.3.answer"
-  },
-  "969ccbd3cf63": {
-    "source": "Email",
-    "text": "电子邮件",
-    "status": "machine",
-    "context": "qrTypes.types.email.name"
   },
   "8052ac0d3ad9": {
     "source": "Open a pre-addressed email draft.",
@@ -527,12 +1217,6 @@
     "status": "machine",
     "context": "qrTypes.types.phone.faqs.2.answer"
   },
-  "40b601a10ca5": {
-    "source": "SMS",
-    "text": "短信",
-    "status": "machine",
-    "context": "qrTypes.types.sms.name"
-  },
   "a56aed99a80a": {
     "source": "Open a text message with number and text filled in.",
     "text": "打开短信,并自动填好号码和内容。",
@@ -640,12 +1324,6 @@
     "text": "不能。一个二维码只能包含一个目标号码。回复关键词加入的服务通常使用单个号码或短号码加一个关键词,与这种格式配合得很好。",
     "status": "machine",
     "context": "qrTypes.types.sms.faqs.3.answer"
-  },
-  "6a40edf1fc87": {
-    "source": "WhatsApp",
-    "text": "WhatsApp",
-    "status": "machine",
-    "context": "qrTypes.types.whatsapp.name"
   },
   "9c4e03b15bbf": {
     "source": "Start a WhatsApp chat with a prefilled message.",
@@ -1109,12 +1787,6 @@
     "status": "machine",
     "context": "qrTypes.types.maps.faqs.2.answer"
   },
-  "d41f5b4977ee": {
-    "source": "Facebook",
-    "text": "Facebook",
-    "status": "machine",
-    "context": "qrTypes.types.facebook.name"
-  },
   "10bbdd01f9a4": {
     "source": "Open a Facebook page, profile, group or event.",
     "text": "打开 Facebook 主页、个人主页、群组或活动。",
@@ -1222,12 +1894,6 @@
     "text": "可以。Messenger 链接（m.me/yourpage）会打开与你主页的聊天。请把它放进 URL 生成器中，因为此表单仅适用于 facebook.com 地址。",
     "status": "machine",
     "context": "qrTypes.types.facebook.faqs.3.answer"
-  },
-  "bad57ef7837c": {
-    "source": "Instagram",
-    "text": "Instagram",
-    "status": "machine",
-    "context": "qrTypes.types.instagram.name"
   },
   "58d5e99ebceb": {
     "source": "Open your Instagram profile from your username.",
@@ -1343,12 +2009,6 @@
     "status": "machine",
     "context": "qrTypes.types.instagram.faqs.3.answer"
   },
-  "eb0050f72303": {
-    "source": "Reddit",
-    "text": "Reddit",
-    "status": "machine",
-    "context": "qrTypes.types.reddit.name"
-  },
   "c6beeec318b3": {
     "source": "Open a subreddit or Reddit profile.",
     "text": "打开子版块或 Reddit 个人主页。",
@@ -1462,12 +2122,6 @@
     "text": "浏览公开的社区和主页不需要账号。投票、评论和加入子版块则需要登录，Reddit 也可能会建议打开它的应用。",
     "status": "machine",
     "context": "qrTypes.types.reddit.faqs.3.answer"
-  },
-  "1bb6fcfbf136": {
-    "source": "TikTok",
-    "text": "TikTok",
-    "status": "machine",
-    "context": "qrTypes.types.tiktok.name"
   },
   "0e2d79409138": {
     "source": "Open your TikTok profile from your username.",
@@ -1685,12 +2339,6 @@
     "status": "machine",
     "context": "qrTypes.types.twitter.faqs.3.answer"
   },
-  "dd84425b72da": {
-    "source": "LinkedIn",
-    "text": "LinkedIn",
-    "status": "machine",
-    "context": "qrTypes.types.linkedin.name"
-  },
   "6243bd392432": {
     "source": "Open a LinkedIn profile or company page.",
     "text": "打开 LinkedIn 个人主页或公司主页。",
@@ -1805,12 +2453,6 @@
     "status": "machine",
     "context": "qrTypes.types.linkedin.faqs.3.answer"
   },
-  "fb7accfff8c6": {
-    "source": "YouTube",
-    "text": "YouTube",
-    "status": "machine",
-    "context": "qrTypes.types.youtube.name"
-  },
   "04272a435967": {
     "source": "Open a YouTube video or channel.",
     "text": "打开 YouTube 视频或频道。",
@@ -1919,12 +2561,6 @@
     "status": "machine",
     "context": "qrTypes.types.youtube.faqs.2.answer"
   },
-  "78dfd4d79bda": {
-    "source": "Pinterest",
-    "text": "Pinterest",
-    "status": "machine",
-    "context": "qrTypes.types.pinterest.name"
-  },
   "601675ff528c": {
     "source": "Open your Pinterest profile and boards.",
     "text": "打开你的 Pinterest 主页和画板。",
@@ -2026,12 +2662,6 @@
     "text": "用户名是链接的一部分，所以更改后二维码将不再指向你的主页。更改用户名后，请重新生成二维码。",
     "status": "machine",
     "context": "qrTypes.types.pinterest.faqs.3.answer"
-  },
-  "4eb2ce09b54c": {
-    "source": "Snapchat",
-    "text": "Snapchat",
-    "status": "machine",
-    "context": "qrTypes.types.snapchat.name"
   },
   "e9264ab1a836": {
     "source": "Open your Snapchat add-friend page.",
@@ -2141,12 +2771,6 @@
     "status": "machine",
     "context": "qrTypes.types.snapchat.faqs.3.answer"
   },
-  "3e42e385075b": {
-    "source": "Threads",
-    "text": "Threads",
-    "status": "machine",
-    "context": "qrTypes.types.threads.name"
-  },
   "cc0fd7606fef": {
     "source": "Open your Threads profile from your username.",
     "text": "通过用户名打开你的 Threads 主页。",
@@ -2242,12 +2866,6 @@
     "text": "不需要。公开主页可以在浏览器中查看。关注和回复则需要登录 Threads。",
     "status": "machine",
     "context": "qrTypes.types.threads.faqs.3.answer"
-  },
-  "7005c0064bda": {
-    "source": "Spotify",
-    "text": "Spotify",
-    "status": "machine",
-    "context": "qrTypes.types.spotify.name"
   },
   "ab0947715268": {
     "source": "Open a song, album, playlist or podcast.",
@@ -2477,12 +3095,6 @@
     "status": "machine",
     "context": "qrTypes.types.upi.faqs.3.answer"
   },
-  "ab8a4f6bb84d": {
-    "source": "PayPal",
-    "text": "PayPal",
-    "status": "machine",
-    "context": "qrTypes.types.paypal.name"
-  },
   "f501c665340c": {
     "source": "Open your PayPal.Me or payment link.",
     "text": "打开你的 PayPal.Me 或付款链接。",
@@ -2579,12 +3191,6 @@
     "status": "machine",
     "context": "qrTypes.types.paypal.faqs.2.answer"
   },
-  "338c536466d8": {
-    "source": "Google Review",
-    "text": "Google 评价",
-    "status": "machine",
-    "context": "qrTypes.types.google-review.name"
-  },
   "86e19ada7f13": {
     "source": "Open your Google 'write a review' box.",
     "text": "直接打开 Google 的“撰写评价”窗口。",
@@ -2680,12 +3286,6 @@
     "text": "可以。只要商家列在 Google 地图上，就有 Place ID，包括隐藏了地址的商家。",
     "status": "machine",
     "context": "qrTypes.types.google-review.faqs.2.answer"
-  },
-  "a1593ecc5a13": {
-    "source": "Venmo",
-    "text": "Venmo",
-    "status": "machine",
-    "context": "qrTypes.types.venmo.name"
   },
   "ee0c3706af9d": {
     "source": "Request a Venmo payment with amount and note.",
@@ -2795,12 +3395,6 @@
     "status": "machine",
     "context": "qrTypes.types.venmo.faqs.3.answer"
   },
-  "b4056df6691f": {
-    "source": "Bitcoin",
-    "text": "比特币",
-    "status": "machine",
-    "context": "qrTypes.types.bitcoin.name"
-  },
   "031b38f58024": {
     "source": "Share a BIP21 Bitcoin payment request.",
     "text": "分享 BIP21 比特币收款请求。",
@@ -2896,12 +3490,6 @@
     "text": "不可以。BIP21 的金额始终以 BTC 为单位。请按当前汇率换算，或者留空金额，由付款方自行输入。",
     "status": "machine",
     "context": "qrTypes.types.bitcoin.faqs.2.answer"
-  },
-  "a13bebeb57e1": {
-    "source": "Ethereum",
-    "text": "以太坊",
-    "status": "machine",
-    "context": "qrTypes.types.ethereum.name"
   },
   "80cfbcc768ef": {
     "source": "Share an EIP-681 Ethereum payment request.",
@@ -3004,12 +3592,6 @@
     "text": "安全。二维码中只包含你的公开地址。切勿将私钥或助记词编码进去。",
     "status": "machine",
     "context": "qrTypes.types.ethereum.faqs.2.answer"
-  },
-  "d9bc2c875a30": {
-    "source": "Etsy",
-    "text": "Etsy",
-    "status": "machine",
-    "context": "qrTypes.types.etsy.name"
   },
   "9870d299fb0b": {
     "source": "Open your Etsy shop or a listing.",
@@ -3233,12 +3815,6 @@
     "status": "machine",
     "context": "qrTypes.types.dubsh.faqs.3.answer"
   },
-  "915ef4bad59a": {
-    "source": "Google Drive",
-    "text": "Google Drive",
-    "status": "machine",
-    "context": "qrTypes.types.google-drive.name"
-  },
   "591b9ce48553": {
     "source": "Open a Drive file, folder, Doc or Sheet.",
     "text": "打开 Drive 中的文件、文件夹、文档或表格。",
@@ -3328,12 +3904,6 @@
     "text": "在此页面不会；粘贴链接不会连接任何内容。只有在完整编辑器中连接 Google Drive 后，QRdx 才能列出文件供你选择。",
     "status": "machine",
     "context": "qrTypes.types.google-drive.faqs.2.answer"
-  },
-  "4cecc708584f": {
-    "source": "Attendance",
-    "text": "考勤签到",
-    "status": "machine",
-    "context": "qrTypes.types.attendance.name"
   },
   "565e389b904b": {
     "source": "Check people in with a Google Form.",
@@ -3436,12 +4006,6 @@
     "text": "可以，只要继续使用同一个表单。你可以通过时间戳区分场次，或添加一个日期问题，并在两场活动之间关闭“接受回复”。",
     "status": "machine",
     "context": "qrTypes.types.attendance.faqs.2.answer"
-  },
-  "49d2dc07acd9": {
-    "source": "Amazon",
-    "text": "Amazon",
-    "status": "machine",
-    "context": "qrTypes.types.amazon.name"
   },
   "297b1a57d8ed": {
     "source": "Open an Amazon product or store page.",
@@ -3551,12 +4115,6 @@
     "status": "machine",
     "context": "qrTypes.types.amazon.faqs.3.answer"
   },
-  "820763ae11ab": {
-    "source": "Flipkart",
-    "text": "Flipkart",
-    "status": "machine",
-    "context": "qrTypes.types.flipkart.name"
-  },
   "db87e3a0956b": {
     "source": "Open a Flipkart product or seller page.",
     "text": "打开 Flipkart 商品页或卖家页面。",
@@ -3659,12 +4217,6 @@
     "status": "machine",
     "context": "qrTypes.types.flipkart.faqs.3.answer"
   },
-  "68e3373a7f76": {
-    "source": "Cal.com",
-    "text": "Cal.com",
-    "status": "machine",
-    "context": "qrTypes.types.calcom.name"
-  },
   "78080ca9138f": {
     "source": "Open your Cal.com booking page.",
     "text": "打开你的 Cal.com 预约页面。",
@@ -3766,12 +4318,6 @@
     "text": "可以，在 Cal.com 中设置。每种活动类型都有各自的时长、可预约时间、缓冲时间和预约限制；二维码只负责打开页面。",
     "status": "machine",
     "context": "qrTypes.types.calcom.faqs.3.answer"
-  },
-  "fa7d3d951464": {
-    "source": "Pix",
-    "text": "Pix",
-    "status": "machine",
-    "context": "qrTypes.types.pix.name"
   },
   "167d96bf1f00": {
     "source": "Get paid by Pix from any Brazilian bank app.",
@@ -3995,12 +4541,6 @@
     "status": "machine",
     "context": "qrTypes.types.sepa.faqs.2.answer"
   },
-  "5c5af06729d3": {
-    "source": "PayNow",
-    "text": "PayNow",
-    "status": "machine",
-    "context": "qrTypes.types.paynow.name"
-  },
   "3fb99b5cd301": {
     "source": "Get paid by PayNow to a mobile number or UEN.",
     "text": "通过 PayNow 向手机号码或 UEN 收款。",
@@ -4096,12 +4636,6 @@
     "text": "不会。款项通过 PayNow 在两家银行之间流转。QRdx 只是在你的浏览器中生成二维码。",
     "status": "machine",
     "context": "qrTypes.types.paynow.faqs.2.answer"
-  },
-  "a29179a6b7b9": {
-    "source": "PromptPay",
-    "text": "PromptPay",
-    "status": "machine",
-    "context": "qrTypes.types.promptpay.name"
   },
   "f9585e5bef7b": {
     "source": "Get paid by PromptPay to a phone number or ID.",
@@ -4205,12 +4739,6 @@
     "status": "machine",
     "context": "qrTypes.types.promptpay.faqs.2.answer"
   },
-  "d3f03ab05542": {
-    "source": "VietQR",
-    "text": "VietQR",
-    "status": "machine",
-    "context": "qrTypes.types.vietqr.name"
-  },
   "810e974513d0": {
     "source": "Get a bank transfer in Vietnam with one scan.",
     "text": "扫一下，即可收到越南银行转账。",
@@ -4307,12 +4835,6 @@
     "status": "machine",
     "context": "qrTypes.types.vietqr.faqs.2.question"
   },
-  "2105f7da1289": {
-    "source": "Cash App",
-    "text": "Cash App",
-    "status": "machine",
-    "context": "qrTypes.types.cashapp.name"
-  },
   "a838de2cb259": {
     "source": "Open your $Cashtag so people can pay you.",
     "text": "打开你的 $Cashtag，方便别人向你付款。",
@@ -4384,12 +4906,6 @@
     "text": "Cash App 对更改有限制，而且新的 $Cashtag 需要新的二维码。使用 QRdx 动态二维码，可以更改二维码指向的位置，无需重新印刷。",
     "status": "machine",
     "context": "qrTypes.types.cashapp.faqs.1.answer"
-  },
-  "dd53271a2e06": {
-    "source": "Revolut",
-    "text": "Revolut",
-    "status": "machine",
-    "context": "qrTypes.types.revolut.name"
   },
   "c4b130848e4c": {
     "source": "Open your revolut.me page so people can pay you.",
@@ -4468,12 +4984,6 @@
     "text": "这种不行。付款金额由付款人在你的 revolut.me 页面上选择。",
     "status": "machine",
     "context": "qrTypes.types.revolut.faqs.1.answer"
-  },
-  "acdd1e734125": {
-    "source": "Telegram",
-    "text": "Telegram",
-    "status": "machine",
-    "context": "qrTypes.types.telegram.name"
   },
   "0ca01009349b": {
     "source": "Open a Telegram chat, channel or group.",
@@ -4571,12 +5081,6 @@
     "status": "machine",
     "context": "qrTypes.types.telegram.faqs.2.answer"
   },
-  "1e9806e4227b": {
-    "source": "Signal",
-    "text": "Signal",
-    "status": "machine",
-    "context": "qrTypes.types.signal.name"
-  },
   "cd978d8773f2": {
     "source": "Start a Signal chat with a number or username link.",
     "text": "通过号码或用户名链接发起 Signal 聊天。",
@@ -4660,12 +5164,6 @@
     "text": "链接会打开一个 signal.me 页面，提示安装 Signal。安装应用后即可打开聊天。",
     "status": "machine",
     "context": "qrTypes.types.signal.faqs.1.answer"
-  },
-  "053bc65874ad": {
-    "source": "Discord",
-    "text": "Discord",
-    "status": "machine",
-    "context": "qrTypes.types.discord.name"
   },
   "3c77f3abcb47": {
     "source": "Invite people to your Discord server.",
@@ -4751,12 +5249,6 @@
     "status": "machine",
     "context": "qrTypes.types.discord.faqs.1.answer"
   },
-  "81a0d84c9895": {
-    "source": "LINE",
-    "text": "LINE",
-    "status": "machine",
-    "context": "qrTypes.types.line.name"
-  },
   "d021bee86eb5": {
     "source": "Add you as a friend on LINE.",
     "text": "在 LINE 上添加你为好友。",
@@ -4835,12 +5327,6 @@
     "status": "machine",
     "context": "qrTypes.types.line.faqs.1.answer"
   },
-  "4ed485c71401": {
-    "source": "Bluesky",
-    "text": "Bluesky",
-    "status": "machine",
-    "context": "qrTypes.types.bluesky.name"
-  },
   "8c9b68c7ec8b": {
     "source": "Open a Bluesky profile.",
     "text": "打开 Bluesky 个人主页。",
@@ -4913,12 +5399,6 @@
     "status": "machine",
     "context": "qrTypes.types.bluesky.faqs.1.answer"
   },
-  "a53bdbbb43f0": {
-    "source": "Mastodon",
-    "text": "Mastodon",
-    "status": "machine",
-    "context": "qrTypes.types.mastodon.name"
-  },
   "13556a44a159": {
     "source": "Open a Mastodon profile on its server.",
     "text": "在所属服务器上打开 Mastodon 个人主页。",
@@ -4984,12 +5464,6 @@
     "text": "Mastodon 可以重定向你的旧主页，但请为新服务器重新印制二维码，或者使用可重新指向的 QRdx 动态二维码。",
     "status": "machine",
     "context": "qrTypes.types.mastodon.faqs.1.answer"
-  },
-  "a731a58c4cf3": {
-    "source": "Twitch",
-    "text": "Twitch",
-    "status": "machine",
-    "context": "qrTypes.types.twitch.name"
   },
   "02d4fcb3c104": {
     "source": "Open a Twitch channel.",
@@ -5069,12 +5543,6 @@
     "status": "machine",
     "context": "qrTypes.types.twitch.faqs.1.answer"
   },
-  "8506b11e2d83": {
-    "source": "SoundCloud",
-    "text": "SoundCloud",
-    "status": "machine",
-    "context": "qrTypes.types.soundcloud.name"
-  },
   "2bada9b2aa22": {
     "source": "Play a SoundCloud profile, track or playlist.",
     "text": "播放 SoundCloud 主页、单曲或歌单。",
@@ -5146,12 +5614,6 @@
     "text": "如果已安装 SoundCloud 应用，链接会在应用中打开；否则会在浏览器中打开页面。",
     "status": "machine",
     "context": "qrTypes.types.soundcloud.faqs.1.answer"
-  },
-  "509c517ede79": {
-    "source": "Zoom",
-    "text": "Zoom",
-    "status": "machine",
-    "context": "qrTypes.types.zoom.name"
   },
   "7f0489e32909": {
     "source": "Join a Zoom meeting with one scan.",
@@ -5231,12 +5693,6 @@
     "status": "machine",
     "context": "qrTypes.types.zoom.faqs.1.answer"
   },
-  "78aeb390abbc": {
-    "source": "Google Meet",
-    "text": "Google Meet",
-    "status": "machine",
-    "context": "qrTypes.types.google-meet.name"
-  },
   "97f878659f17": {
     "source": "Join a Google Meet call with one scan.",
     "text": "扫描一下，即可加入 Google Meet 会议。",
@@ -5314,12 +5770,6 @@
     "text": "这取决于主持人的 Workspace 设置。许多会议允许访客无需登录即可申请加入。",
     "status": "machine",
     "context": "qrTypes.types.google-meet.faqs.1.answer"
-  },
-  "302415affc9a": {
-    "source": "Waze",
-    "text": "Waze",
-    "status": "machine",
-    "context": "qrTypes.types.waze.name"
   },
   "6df35d8f9921": {
     "source": "Open directions to a place in Waze.",
@@ -5399,12 +5849,6 @@
     "status": "machine",
     "context": "qrTypes.types.waze.faqs.1.answer"
   },
-  "eaa4e0ba3c89": {
-    "source": "Litecoin",
-    "text": "莱特币",
-    "status": "machine",
-    "context": "qrTypes.types.litecoin.name"
-  },
   "7f6af520aa46": {
     "source": "Receive Litecoin with an optional amount.",
     "text": "接收莱特币，可附带金额。",
@@ -5483,12 +5927,6 @@
     "status": "machine",
     "context": "qrTypes.types.litecoin.faqs.1.answer"
   },
-  "bbc8f6fd09a9": {
-    "source": "Dogecoin",
-    "text": "狗狗币",
-    "status": "machine",
-    "context": "qrTypes.types.dogecoin.name"
-  },
   "14f89759d816": {
     "source": "Receive Dogecoin with an optional amount.",
     "text": "接收狗狗币，可附带金额。",
@@ -5549,12 +5987,6 @@
     "status": "machine",
     "context": "qrTypes.types.dogecoin.faqs.0.question"
   },
-  "8a9851255d67": {
-    "source": "Bitcoin Cash",
-    "text": "比特币现金",
-    "status": "machine",
-    "context": "qrTypes.types.bitcoincash.name"
-  },
   "6dc9a0aa25cf": {
     "source": "Receive Bitcoin Cash with an optional amount.",
     "text": "接收比特币现金，可选填金额。",
@@ -5614,12 +6046,6 @@
     "text": "不一样。比特币现金是另一种币，有自己的钱包。要生成比特币二维码，请使用比特币生成器。",
     "status": "machine",
     "context": "qrTypes.types.bitcoincash.faqs.0.answer"
-  },
-  "be4b0c384393": {
-    "source": "Solana",
-    "text": "Solana",
-    "status": "machine",
-    "context": "qrTypes.types.solana.name"
   },
   "51f7bdf5aaa1": {
     "source": "Receive SOL with a Solana Pay request.",
@@ -5686,12 +6112,6 @@
     "text": "大多数移动端 Solana 钱包都可以扫描。请用你的客户使用的钱包测试。",
     "status": "machine",
     "context": "qrTypes.types.solana.faqs.0.answer"
-  },
-  "089fe32a5314": {
-    "source": "Monero",
-    "text": "Monero",
-    "status": "machine",
-    "context": "qrTypes.types.monero.name"
   },
   "aa106b399d07": {
     "source": "Receive Monero with an optional amount.",
@@ -20003,12 +20423,6 @@
     "status": "machine",
     "context": "pageCodes.type-signal-2.label"
   },
-  "2b5c3d26721a": {
-    "source": "Contact",
-    "text": "联系方式",
-    "status": "machine",
-    "context": "pageCodes.on-business-cards-1.label"
-  },
   "059f4256fc03": {
     "source": "Join the server",
     "text": "加入服务器",
@@ -21670,12 +22084,6 @@
     "text": "醒目的两列按钮，仅此而已",
     "status": "machine",
     "context": "templates.social.variants.grid.description"
-  },
-  "76f68a75f01e": {
-    "source": "Business",
-    "text": "商家",
-    "status": "machine",
-    "context": "templates.business.label"
   },
   "3e5a6bd6151f": {
     "source": "Hours, location, contact details and a call to action",

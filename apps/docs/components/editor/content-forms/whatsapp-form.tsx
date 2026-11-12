@@ -3,6 +3,7 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { WhatsAppContent } from "@/types/qr-content";
@@ -10,6 +11,7 @@ import { encodeWhatsApp } from "@/utils/qr-content-encoder";
 import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function WhatsAppForm() {
+  const t = useTranslations("editor.contentForms.whatsappForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -43,7 +45,7 @@ export function WhatsAppForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="whatsapp-phone">
-          Phone number *
+          {t("phoneNumber")}
         </Label>
         <Input
           id="whatsapp-phone"
@@ -55,17 +57,17 @@ export function WhatsAppForm() {
           }
         />
         <p className="text-muted-foreground text-[11px]">
-          Include country code without spaces or symbols
+          {t("includeCountryCodeWithoutSpaces")}
         </p>
       </div>
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="whatsapp-message">
-          Message
+          {t("message")}
         </Label>
         <Textarea
           id="whatsapp-message"
-          placeholder="Pre-filled WhatsApp message"
+          placeholder={t("preFilledWhatsappMessage")}
           value={whatsappData.message}
           onChange={(e) =>
             setWhatsappData({ ...whatsappData, message: e.target.value })
@@ -76,7 +78,7 @@ export function WhatsAppForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open a WhatsApp chat with this number
+        {t("scanningWillOpenAWhatsapp")}
       </p>
     </div>
   );

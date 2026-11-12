@@ -15,6 +15,7 @@ import {
   Folder2 as Folder,
   SearchNormal1 as Search,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api-fetch";
@@ -36,6 +37,7 @@ function getDriveUrl(file: DriveFile): string {
 }
 
 export function GoogleDriveForm() {
+  const t = useTranslations("editor.contentForms.googleDriveForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
   const {
     files,
@@ -115,7 +117,7 @@ export function GoogleDriveForm() {
       throw new Error("Google Drive did not return an authorization URL");
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to connect Google Drive",
+        err instanceof Error ? err.message : t("failedToConnectGoogleDrive"),
       );
       setIsConnecting(false);
     }
@@ -136,7 +138,7 @@ export function GoogleDriveForm() {
       {!isConnected && canConnect && (
         <Alert>
           <AlertDescription className="space-y-3">
-            <p>Connect Google Drive to pick a file, or paste a link below.</p>
+            <p>{t("connectGoogleDriveToPick")}</p>
             <Button
               disabled={isConnecting}
               onClick={handleConnect}
@@ -146,7 +148,7 @@ export function GoogleDriveForm() {
               {isConnecting && (
                 <Loader2 className="mr-2 size-3.5 animate-spin" />
               )}
-              Connect Google Drive
+              {t("connectGoogleDrive")}
             </Button>
           </AlertDescription>
         </Alert>
@@ -154,7 +156,7 @@ export function GoogleDriveForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="google-drive-url">
-          Google Drive URL *
+          {t("googleDriveUrl")}
         </Label>
         <Input
           className={errors.url ? "border-destructive" : ""}
@@ -173,7 +175,7 @@ export function GoogleDriveForm() {
           <p className="text-destructive text-[11px]">{errors.url}</p>
         ) : (
           <p className="text-muted-foreground text-[11px]">
-            Scanning will open the selected Google Drive file or folder.
+            {t("scanningWillOpenTheSelected")}
           </p>
         )}
       </div>
@@ -191,7 +193,7 @@ export function GoogleDriveForm() {
                     search(searchTerm);
                   }
                 }}
-                placeholder="Search Drive files and folders"
+                placeholder={t("searchDriveFilesAndFolders")}
                 value={searchTerm}
               />
             </div>
@@ -201,7 +203,7 @@ export function GoogleDriveForm() {
               type="button"
               variant="outline"
             >
-              Search
+              {t("search")}
             </Button>
           </div>
 
@@ -246,7 +248,7 @@ export function GoogleDriveForm() {
               type="button"
               variant="outline"
             >
-              Load more
+              {t("loadMore")}
             </Button>
           )}
         </div>

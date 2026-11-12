@@ -17,6 +17,7 @@ import { TypeGenerator } from "@/components/sections/tools/type-generator";
 import { QR_TYPE_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
+import { CONTENT_FORM_NAMESPACES } from "@/lib/i18n/playground";
 import { requireLocale } from "@/lib/i18n/server";
 import { getQrType, QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { buildTimeParams } from "@/lib/static-params";
@@ -86,7 +87,9 @@ export default async function QrTypePage({ params }: PageProps) {
         aria-label={t("type.generatorLabel", { name })}
         className="w-full px-10 py-10"
       >
-        <ClientMessages namespaces={["typeGenerator"]}>
+        <ClientMessages
+          namespaces={["typeGenerator", ...CONTENT_FORM_NAMESPACES]}
+        >
           <TypeGenerator key={content.type} type={content.type} />
         </ClientMessages>
       </section>

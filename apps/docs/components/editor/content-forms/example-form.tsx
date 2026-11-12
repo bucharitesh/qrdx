@@ -2,6 +2,7 @@
 
 import { Info } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
@@ -21,6 +22,7 @@ interface ExampleFormProps {
  * with made-up data. While the example is untouched it is labelled as one.
  */
 export function ExampleForm({ type, Form }: ExampleFormProps) {
+  const t = useTranslations("editor.contentForms.exampleForm");
   const config = useQREditorStore((state) => state.contentConfigs[type]);
   const setContentConfig = useQREditorStore((state) => state.setContentConfig);
   const setValue = useQREditorStore((state) => state.setValue);
@@ -47,7 +49,7 @@ export function ExampleForm({ type, Form }: ExampleFormProps) {
             <>
               <span className="text-muted-foreground inline-flex items-center gap-1.5">
                 <Info className="size-3.5 shrink-0" />
-                Example data. Replace it with your own.
+                {t("exampleDataReplaceItWith")}
               </span>
               <Button
                 className="text-muted-foreground hover:text-foreground h-7 px-2 text-xs"
@@ -59,7 +61,7 @@ export function ExampleForm({ type, Form }: ExampleFormProps) {
                 type="button"
                 variant="ghost"
               >
-                Clear
+                {t("clear")}
               </Button>
             </>
           ) : (
@@ -72,7 +74,7 @@ export function ExampleForm({ type, Form }: ExampleFormProps) {
               type="button"
               variant="ghost"
             >
-              Try an example
+              {t("tryAnExample")}
             </Button>
           )}
         </div>

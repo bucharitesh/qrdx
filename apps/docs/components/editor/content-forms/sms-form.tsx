@@ -3,12 +3,14 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { SmsContent } from "@/types/qr-content";
 import { encodeSms } from "@/utils/qr-content-encoder";
 
 export function SmsForm() {
+  const t = useTranslations("editor.contentForms.smsForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -29,7 +31,7 @@ export function SmsForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="sms-phone">
-          Phone number *
+          {t("phoneNumber")}
         </Label>
         <Input
           id="sms-phone"
@@ -44,11 +46,11 @@ export function SmsForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="sms-message">
-          Message
+          {t("message")}
         </Label>
         <Textarea
           id="sms-message"
-          placeholder="Pre-filled SMS message"
+          placeholder={t("preFilledSmsMessage")}
           value={smsData.message}
           onChange={(e) => setSmsData({ ...smsData, message: e.target.value })}
           rows={4}
@@ -57,7 +59,7 @@ export function SmsForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open a text message to this number
+        {t("scanningWillOpenAText")}
       </p>
     </div>
   );

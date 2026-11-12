@@ -3,6 +3,7 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { EmailFormData } from "@/lib/validations/qr-content";
 import { emailSchema } from "@/lib/validations/qr-content";
@@ -11,6 +12,7 @@ import type { EmailContent } from "@/types/qr-content";
 import { encodeEmail } from "@/utils/qr-content-encoder";
 
 export function EmailForm() {
+  const t = useTranslations("editor.contentForms.emailForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -46,12 +48,12 @@ export function EmailForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="email-recipient">
-          Recipient email *
+          {t("recipientEmail")}
         </Label>
         <Input
           id="email-recipient"
           type="email"
-          placeholder="contact@example.com"
+          placeholder={t("contactExampleCom")}
           value={emailData.recipient}
           onChange={(e) =>
             setEmailData({ ...emailData, recipient: e.target.value })
@@ -65,12 +67,12 @@ export function EmailForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="email-subject">
-          Subject
+          {t("subject")}
         </Label>
         <Input
           id="email-subject"
           type="text"
-          placeholder="Email subject"
+          placeholder={t("emailSubject")}
           value={emailData.subject}
           onChange={(e) =>
             setEmailData({ ...emailData, subject: e.target.value })
@@ -80,11 +82,11 @@ export function EmailForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="email-body">
-          Message
+          {t("message")}
         </Label>
         <Textarea
           id="email-body"
-          placeholder="Email message"
+          placeholder={t("emailMessage")}
           value={emailData.body}
           onChange={(e) => setEmailData({ ...emailData, body: e.target.value })}
           rows={4}
@@ -93,7 +95,7 @@ export function EmailForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open an email draft to this address
+        {t("scanningWillOpenAnEmail")}
       </p>
     </div>
   );

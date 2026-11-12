@@ -4,6 +4,7 @@ import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { AsciiField, Aurora, Backdrop } from "@/components/fx";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { HeroEditor } from "@/components/sections/home/hero-editor";
 import { HeroScene } from "@/components/sections/home/hero-scene";
 import { playgroundHref } from "@/lib/playground-links";
@@ -53,10 +54,10 @@ export function HeroSection() {
           </div>
           <div className="flex flex-wrap items-center justify-center gap-2.5">
             <Button asChild>
-              <Link href={playgroundHref()}>
+              <LocaleLink href={playgroundHref()}>
                 {t("primary")}
                 <ArrowRight className="size-4" />
-              </Link>
+              </LocaleLink>
             </Button>
             <Button asChild variant="outline">
               {/* Only the primary CTA prefetches: the docs bundle is large. */}

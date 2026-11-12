@@ -10,6 +10,7 @@ import {
   RotateRight,
   TickCircle,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   type ReactNode,
   useEffect,
@@ -87,6 +88,7 @@ export function RequestContentCard({
   part: PartOf<"tool-request_content">;
   superseded: boolean;
 }) {
+  const t = useTranslations("editor.ai.imageParts");
   const { addToolOutput, status, isRestored } = useChatContext();
   const busy = status === "submitted" || status === "streaming";
   const fresh = !isRestored(part.toolCallId);
@@ -120,13 +122,13 @@ export function RequestContentCard({
           <span className="inline-flex items-center gap-1.5 text-xs">
             <TickCircle className="size-3.5" />
             {output.added && output.type
-              ? `Added: ${contentLabel(output.type)}`
-              : "No content added"}
+              ? t("addedValue", { value: contentLabel(output.type) })
+              : t("noContentAdded")}
           </span>
         ) : pending ? (
           <>
             <span className={muted}>
-              {filled ? "Your editor has content now." : "No content yet."}
+              {filled ? t("yourEditorHasContentNow") : t("noContentYet")}
             </span>
             <div className="flex gap-1.5">
               {filled && (
@@ -137,27 +139,27 @@ export function RequestContentCard({
                   size="sm"
                   variant="ghost"
                 >
-                  Use it
+                  {t("useIt")}
                 </Button>
               )}
               <Button className="h-8" disabled={busy} onClick={show} size="sm">
-                Add content
+                {t("addContent")}
               </Button>
             </div>
           </>
         ) : (
-          <span className={muted}>Not added</span>
+          <span className={muted}>{t("notAdded")}</span>
         )
       }
     >
       <p className="flex items-start gap-2 text-sm leading-snug">
         <Link21 className="text-muted-foreground mt-0.5 size-4 shrink-0" />
         <span>
-          What should the code open?
+          {t("whatShouldTheCodeOpen")}
           <span className="text-muted-foreground block text-xs">
             {reason
-              ? `Add a link or choose a type ${reason}.`
-              : "Add a link or choose a type, then the design continues."}
+              ? t("addALinkOrChoose", { reason })
+              : t("addALinkOrChoose2")}
           </span>
         </span>
       </p>
@@ -211,14 +213,6 @@ function placementBase(design: DesignRecord | undefined) {
   };
 }
 
-const PLACE_LABEL: Record<ImagePlacement, string> = {
-  logo: "Use as the logo",
-  logo_qr: "Use as Logo QR",
-  image_qr: "Use as Image QR",
-  background: "Use as the background",
-  dots: "Use in the dots",
-};
-
 export function UseImageCard({
   part,
   superseded,
@@ -226,6 +220,7 @@ export function UseImageCard({
   part: PartOf<"tool-use_image">;
   superseded: boolean;
 }) {
+  const t = useTranslations("editor.ai.imageParts");
   const chat = useChatContext();
   const { addToolOutput, status, applied, undoApplied, redoApplied } = chat;
   const busy = status === "submitted" || status === "streaming";
@@ -347,7 +342,7 @@ export function UseImageCard({
           output?.applied ? (
             outcome === "undone" ? (
               <>
-                <span className={muted}>Undone</span>
+                <span className={muted}>{t("undone")}</span>
                 <Button
                   className="h-7 gap-1.5 shadow-none"
                   onClick={() => redoApplied(part.toolCallId)}
@@ -355,14 +350,14 @@ export function UseImageCard({
                   variant="ghost"
                 >
                   <RotateRight className="size-3.5" />
-                  Apply again
+                  {t("applyAgain")}
                 </Button>
               </>
             ) : (
               <>
                 <span className="inline-flex items-center gap-1.5 text-xs">
                   <TickCircle className="size-3.5" />
-                  Applied
+                  {t("applied")}
                 </span>
                 {outcome === "applied" && (
                   <Button
@@ -372,17 +367,15 @@ export function UseImageCard({
                     variant="ghost"
                   >
                     <RotateLeft className="size-3.5" />
-                    Undo
+                    {t("undo")}
                   </Button>
                 )}
               </>
             )
           ) : output?.as === "ai_art" && output.note ? (
-            <span className={muted}>Opened AI art in the Art tab</span>
+            <span className={muted}>{t("openedAiArtInThe")}</span>
           ) : (
-            <span className={muted}>
-              Not applied. Your editor is unchanged.
-            </span>
+            <span className={muted}>{t("notAppliedYourEditorIs")}</span>
           )
         }
       >
@@ -395,7 +388,7 @@ export function UseImageCard({
             )}
             {output && output.as !== input.as && (
               <span className={`${muted} block`}>
-                Placed as {IMAGE_USE_LABELS[output.as]}
+                {t("placedAsValue", { value: IMAGE_USE_LABELS[output.as] })}
               </span>
             )}
           </span>
@@ -433,7 +426,7 @@ export function UseImageCard({
       footer={
         prepared && result && great ? (
           <>
-            <span className={muted}>Apply to your editor?</span>
+            <span className={muted}>{t("applyToYourEditor")}</span>
             <div className="flex gap-1.5">
               <Button
                 className="h-8"
@@ -458,7 +451,7 @@ export function UseImageCard({
                 }}
                 size="sm"
               >
-                Apply
+                {t("apply")}
               </Button>
               <Button
                 className="h-8 shadow-none"
@@ -475,13 +468,13 @@ export function UseImageCard({
                 size="sm"
                 variant="ghost"
               >
-                Reject
+                {t("reject")}
               </Button>
             </div>
           </>
         ) : prepared && result ? (
           <>
-            <span className={muted}>Not Great yet. Try another way above.</span>
+            <span className={muted}>{t("notGreatYetTryAnother")}</span>
             <Button
               className="h-8 shadow-none"
               disabled={busy}
@@ -498,14 +491,14 @@ export function UseImageCard({
               size="sm"
               variant="ghost"
             >
-              Keep my code
+              {t("keepMyCode")}
             </Button>
           </>
         ) : run.stage === "content" ? (
           <>
-            <span className={muted}>Add what the code opens first.</span>
+            <span className={muted}>{t("addWhatTheCodeOpens")}</span>
             <Button className="h-8" disabled={busy} onClick={show} size="sm">
-              Add content
+              {t("addContent")}
             </Button>
           </>
         ) : run.stage === "error" ? (
@@ -513,7 +506,7 @@ export function UseImageCard({
         ) : (
           <span className={`${muted} inline-flex items-center gap-1.5`}>
             <Spinner className="size-3.5" />
-            Placing your picture…
+            {t("placingYourPicture")}
           </span>
         )
       }
@@ -537,28 +530,31 @@ export function UseImageCard({
           <div className="space-y-1">
             <p className="text-sm font-medium leading-snug">{title}</p>
             <p className={muted}>
-              As {IMAGE_USE_LABELS[placement]}, with no AI credits
+              {t("asValueWithNoAi", { value: IMAGE_USE_LABELS[placement] })}
             </p>
             {result && <ScoreLabel grade={result.grade} score={result.score} />}
           </div>
           {run.stage === "working" && (
-            <ul aria-label="Steps" className="space-y-0.5">
+            <ul aria-label={t("steps")} className="space-y-0.5">
               <StepLine status={run.attempts.length ? "done" : "running"}>
                 {run.attempts.length
-                  ? "Placed your picture"
-                  : "Placing your picture…"}
+                  ? t("placedYourPicture")
+                  : t("placingYourPicture")}
               </StepLine>
               {run.attempts.map((attempt, index) => (
                 <StepLine key={`${index}-${attempt.score}`} status="done">
-                  {index > 0 ? "Repaired, then checked" : "Checked"} scan score:{" "}
-                  {attempt.score}
+                  {index > 0
+                    ? t("repairedThenCheckedScore", { score: attempt.score })
+                    : t("checkedScore", { score: attempt.score })}
                 </StepLine>
               ))}
             </ul>
           )}
           {prepared && result && prepared.content && (
             <p className="text-xs">
-              Replaces the content with {prepared.content.summary}
+              {t("replacesTheContentWithSummary", {
+                summary: prepared.content.summary,
+              })}
             </p>
           )}
           {result && great && <Changes changes={result.changes} />}
@@ -589,6 +585,7 @@ function NotGreat({
   onTry: (use: ImagePlacement) => void;
   busy: boolean;
 }) {
+  const t = useTranslations("editor.ai.imageParts");
   const why = result.failed.slice(0, 2);
   return (
     <div className="space-y-2">
@@ -612,7 +609,7 @@ function NotGreat({
             size="sm"
             variant="outline"
           >
-            {PLACE_LABEL[other]}
+            {t(`place.${other}`)}
           </Button>
         ))}
       </div>
@@ -632,6 +629,7 @@ function AIArtHandOff({
   onDone: () => void;
   onUseImageQr: () => void;
 }) {
+  const t = useTranslations("editor.ai.imageParts");
   const { messages, status } = useChatContext();
   const busy = status === "submitted" || status === "streaming";
   const configured = useArtSessionStore((state) => state.configured);
@@ -666,10 +664,7 @@ function AIArtHandOff({
       footer={
         available ? (
           <>
-            <span className={muted}>
-              {problem ??
-                "You start it in the Art tab. It uses AI art credits."}
-            </span>
+            <span className={muted}>{problem ?? t("youStartItInThe")}</span>
             <Button
               className="h-8"
               disabled={busy || opening}
@@ -677,21 +672,19 @@ function AIArtHandOff({
               size="sm"
             >
               {opening && <Spinner className="size-3.5" />}
-              Open AI art
+              {t("openAiArt")}
             </Button>
           </>
         ) : (
           <>
-            <span className={muted}>
-              AI art isn't on here. Image QR uses your picture with no AI.
-            </span>
+            <span className={muted}>{t("aiArtIsntOnHere")}</span>
             <Button
               className="h-8"
               disabled={busy}
               onClick={onUseImageQr}
               size="sm"
             >
-              Use as Image QR
+              {t("useAsImageQr")}
             </Button>
           </>
         )
@@ -701,10 +694,7 @@ function AIArtHandOff({
         <MagicStar className="text-muted-foreground mt-0.5 size-4 shrink-0" />
         <span>
           <span className="block font-medium">{title}</span>
-          <span className={`${muted} block`}>
-            AI paints a new scene into your code, with your picture as the
-            reference.
-          </span>
+          <span className={`${muted} block`}>{t("aiPaintsANewScene")}</span>
         </span>
       </p>
     </Card>

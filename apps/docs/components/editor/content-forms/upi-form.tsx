@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { UPIFormData } from "@/lib/validations/qr-content";
 import { upiSchema } from "@/lib/validations/qr-content";
@@ -10,6 +11,7 @@ import type { UPIContent } from "@/types/qr-content";
 import { encodeUPI } from "@/utils/qr-content-encoder";
 
 export function UPIForm() {
+  const t = useTranslations("editor.contentForms.upiForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -46,12 +48,12 @@ export function UPIForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="upi-id">
-          UPI ID *
+          {t("upiId")}
         </Label>
         <Input
           id="upi-id"
           type="text"
-          placeholder="username@bankname"
+          placeholder={t("usernameBankname")}
           value={upiData.upiId}
           onChange={(e) => setUpiData({ ...upiData, upiId: e.target.value })}
           className={errors.upiId ? "border-destructive" : ""}
@@ -63,12 +65,12 @@ export function UPIForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="upi-name">
-          Payee name
+          {t("payeeName")}
         </Label>
         <Input
           id="upi-name"
           type="text"
-          placeholder="Your name"
+          placeholder={t("yourName")}
           value={upiData.name}
           onChange={(e) => setUpiData({ ...upiData, name: e.target.value })}
         />
@@ -76,7 +78,7 @@ export function UPIForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="upi-amount">
-          Amount (₹)
+          {t("amount")}
         </Label>
         <Input
           id="upi-amount"
@@ -93,19 +95,19 @@ export function UPIForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="upi-note">
-          Note
+          {t("note")}
         </Label>
         <Input
           id="upi-note"
           type="text"
-          placeholder="Payment for..."
+          placeholder={t("paymentFor")}
           value={upiData.note}
           onChange={(e) => setUpiData({ ...upiData, note: e.target.value })}
         />
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open a UPI app with these payment details
+        {t("scanningWillOpenAUpi")}
       </p>
     </div>
   );

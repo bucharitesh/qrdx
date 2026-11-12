@@ -3,6 +3,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Edit2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface EditButtonProps extends React.ComponentProps<typeof Button> {
@@ -15,6 +16,7 @@ export function EditButton({
   className,
   ...props
 }: EditButtonProps) {
+  const t = useTranslations("editor.actionBar.editButton");
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isEditing = pathname.includes(themeId);
@@ -23,7 +25,7 @@ export function EditButton({
   const href = `/playground/${themeId}?${searchParams}`;
 
   return (
-    <TooltipWrapper label="Edit theme" asChild>
+    <TooltipWrapper label={t("editTheme")} asChild>
       <Link href={href}>
         <Button
           variant="ghost"
@@ -33,7 +35,7 @@ export function EditButton({
           {...props}
         >
           <Edit2 className="size-4" />
-          <span className="hidden text-sm md:block">Edit</span>
+          <span className="hidden text-sm md:block">{t("edit")}</span>
         </Button>
       </Link>
     </TooltipWrapper>

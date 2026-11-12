@@ -5,25 +5,23 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Magicpen } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { removeLogoBackground } from "qrdx";
 import { LOGO_SHAPES, type LogoOptions, type LogoShape } from "qrdx/types";
 import { useEffect, useState } from "react";
 import type { QRStyle } from "@/types/theme";
 import { FrameColorField } from "./frame-fields";
 
-export const LOGO_SHAPE_NAMES: Record<LogoShape, string> = {
-  square: "Square",
-  rounded: "Rounded",
-  circle: "Circle",
-};
+export function useLogoShapeNames(): Record<LogoShape, string> {
+  const t = useTranslations("editor.controlSections.logoCropControls");
+  return {
+    square: t("shapes.square"),
+    rounded: t("shapes.rounded"),
+    circle: t("shapes.circle"),
+  };
+}
 
 const PLATE_DEFAULT = "#ffffff";
-
-const PLATE_NOUNS: Record<LogoShape, string> = {
-  square: "square",
-  rounded: "rounded square",
-  circle: "circle",
-};
 
 /** Uploaded raster logos (a solid background is a raster thing). */
 const RASTER_LOGO = /^data:image\/(?:png|jpe?g|webp)[;,]/i;
@@ -73,6 +71,8 @@ export function LogoCropControls({
   setOptions,
   onChange,
 }: LogoCropControlsProps) {
+  const logoShapeNames = useLogoShapeNames();
+  const t = useTranslations("editor.controlSections.logoCropControls");
   const shape = style.logoOptions?.shape ?? "square";
   const plate = style.logoOptions?.plate;
   const cleanup = useBackgroundCleanup(style.customLogo);
@@ -84,8 +84,11 @@ export function LogoCropControls({
   return (
     <>
       <div className="space-y-2.5">
-        <span className="text-muted-foreground text-sm">Shape</span>
-        <fieldset aria-label="Logo shape" className="flex flex-wrap gap-1.5">
+        <span className="text-muted-foreground text-sm">{t("shape")}</span>
+        <fieldset
+          aria-label={t("logoShape")}
+          className="flex flex-wrap gap-1.5"
+        >
           {LOGO_SHAPES.map((id) => (
             <Button
               aria-pressed={shape === id}
@@ -97,7 +100,7 @@ export function LogoCropControls({
               type="button"
               variant={shape === id ? "secondary" : "outline"}
             >
-              {LOGO_SHAPE_NAMES[id]}
+              {logoShapeNames[id]}
             </Button>
           ))}
         </fieldset>
@@ -107,10 +110,10 @@ export function LogoCropControls({
         <div className="flex items-center justify-between gap-3">
           <div className="space-y-0.5">
             <Label className="cursor-pointer text-sm" htmlFor="logo-plate">
-              Plate behind the logo
+              {t("plateBehindTheLogo")}
             </Label>
             <p className="text-muted-foreground text-xs">
-              A solid {PLATE_NOUNS[shape]} the logo sits on.
+              {t("aSolidValueTheLogo", { value: t(`plateNouns.${shape}`) })}
             </p>
           </div>
           <Switch
@@ -124,7 +127,7 @@ export function LogoCropControls({
         {plate && (
           <FrameColorField
             id="logo-plate-color"
-            label="Plate color"
+            label={t("plateColor")}
             onChange={(color) => setOptions({ plate: color })}
             value={plate}
           />
@@ -135,10 +138,10 @@ export function LogoCropControls({
         <div className="flex items-center justify-between gap-3">
           <p className="text-muted-foreground text-xs text-pretty">
             {removed === style.customLogo
-              ? "Background removed. Undo brings it back."
+              ? t("backgroundRemovedUndoBringsIt")
               : cleanup.status === "none"
-                ? "Your logo has no solid background to remove."
-                : "Remove the solid background around your logo."}
+                ? t("yourLogoHasNoSolid")
+                : t("removeTheSolidBackgroundAround")}
           </p>
           {removed !== style.customLogo && cleanup.status !== "none" && (
             <Button
@@ -147,14 +150,14 @@ export function LogoCropControls({
                 if (cleanup.status !== "ready") return;
                 setRemoved(cleanup.cleaned);
                 onChange({ customLogo: cleanup.cleaned });
-                toast.success("Background removed");
+                toast.success(t("backgroundRemoved"));
               }}
               size="sm"
               type="button"
               variant="outline"
             >
               <Magicpen />
-              Remove background
+              {t("removeBackground")}
             </Button>
           )}
         </div>

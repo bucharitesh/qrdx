@@ -2,6 +2,7 @@ import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Share } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface ShareButtonProps extends React.ComponentProps<typeof Button> {
@@ -19,8 +20,9 @@ export function ShareButton({
   variant = "ghost",
   ...props
 }: ShareButtonProps) {
+  const t = useTranslations("editor.actionBar.shareButton");
   return (
-    <TooltipWrapper label="Share design" kbd="X" asChild>
+    <TooltipWrapper label={t("shareDesign")} kbd="X" asChild>
       <Button
         variant={variant}
         size="sm"
@@ -34,7 +36,9 @@ export function ShareButton({
         ) : (
           <Share className="size-4" />
         )}
-        <span className={cn("text-sm", !labelled && "sr-only")}>Share</span>
+        <span className={cn("text-sm", !labelled && "sr-only")}>
+          {t("share")}
+        </span>
       </Button>
     </TooltipWrapper>
   );

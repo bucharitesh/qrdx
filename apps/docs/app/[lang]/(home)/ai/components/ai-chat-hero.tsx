@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { AIBotBadge } from "@/components/editor/ai/ai-bot-badge";
 import { AIWorkingGlow } from "@/components/editor/ai/ai-working-glow";
+import { useLocalizeHref } from "@/components/i18n/locale-link";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 import { useGuards } from "@/lib/hooks/use-gaurds";
@@ -20,6 +21,7 @@ export function AIChatHero() {
     useAIQRGenerationCore();
   const { checkValidSession, checkValidSubscription } = useGuards();
   const router = useRouter();
+  const localize = useLocalizeHref();
 
   const { setChatSuggestionsOpen } = usePreferencesStore();
 
@@ -32,7 +34,7 @@ export function AIChatHero() {
     setChatSuggestionsOpen(true);
 
     generateQRCore(promptData);
-    router.push(playgroundHref({ tab: "ai" }));
+    router.push(localize(playgroundHref({ tab: "ai" })));
   };
 
   usePostLoginAction("AI_GENERATE_FROM_PAGE", ({ promptData }) => {

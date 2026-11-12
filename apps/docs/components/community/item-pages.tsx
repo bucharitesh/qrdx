@@ -1,9 +1,11 @@
 // Long community lists (the official frame library alone is hundreds of
 // frames) are shown a page at a time, so a page never draws every design.
 // A server component: the links keep the page's other parameters.
+
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 /** Items per page of a community list. */
 export const ITEMS_PER_PAGE = 48;
@@ -36,12 +38,13 @@ export function ItemPages({
   /** The link to a page */
   href: (page: number) => string;
 }) {
+  const t = useTranslations("community.itemPages");
   if (pages <= 1) return null;
   const link =
     "inline-flex items-center gap-1 rounded-full border px-3 py-1 text-sm transition-colors";
   return (
     <nav
-      aria-label="Pages"
+      aria-label={t("pages")}
       className="flex items-center justify-center gap-3 pt-2"
     >
       {page > 1 ? (
@@ -51,15 +54,15 @@ export function ItemPages({
           rel="prev"
         >
           <ArrowLeft2 aria-hidden className="size-3.5" />
-          Previous
+          {t("previous")}
         </Link>
       ) : (
         <span aria-hidden className={cn(link, "invisible")}>
-          Previous
+          {t("previous")}
         </span>
       )}
       <span className="text-muted-foreground text-sm tabular-nums">
-        Page {page} of {pages}
+        {t("pagePageOfPages", { page, pages })}
       </span>
       {page < pages ? (
         <Link
@@ -67,12 +70,12 @@ export function ItemPages({
           href={href(page + 1)}
           rel="next"
         >
-          Next
+          {t("next")}
           <ArrowRight2 aria-hidden className="size-3.5" />
         </Link>
       ) : (
         <span aria-hidden className={cn(link, "invisible")}>
-          Next
+          {t("next")}
         </span>
       )}
     </nav>

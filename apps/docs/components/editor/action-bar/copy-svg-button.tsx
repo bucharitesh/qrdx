@@ -4,6 +4,7 @@ import { toast } from "@repo/design-system";
 import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Copy } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { getQRData, getSVGString } from "qrdx";
 import { useState } from "react";
 import { emitSound } from "@/components/editor/sound";
@@ -14,6 +15,7 @@ import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { useQREditorStore } from "@/store/editor-store";
 
 export function CopySVGButton() {
+  const t = useTranslations("editor.actionBar.copySvgButton");
   const { themeState, value } = useQREditorStore();
   const [copied, setCopied] = useState(false);
 
@@ -46,16 +48,16 @@ export function CopySVGButton() {
       setCopied(true);
       emitSound("copy");
       track("qr_copied", { format: "svg", source: "playground" });
-      toast.success("SVG copied to clipboard");
+      toast.success(t("svgCopiedToClipboard"));
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
       console.error("Error copying SVG:", error);
-      toast.error("Failed to copy SVG");
+      toast.error(t("failedToCopySvg"));
     }
   };
 
   return (
-    <TooltipWrapper label="Copy SVG" kbd="C" asChild>
+    <TooltipWrapper label={t("copySvg")} kbd="C" asChild>
       <Button
         disabled={!value.trim()}
         onClick={handleCopySVG}
@@ -65,12 +67,16 @@ export function CopySVGButton() {
         {copied ? (
           <>
             <Check className="size-4" />
-            <span className="hidden text-sm md:block sr-only">Copied</span>
+            <span className="hidden text-sm md:block sr-only">
+              {t("copied")}
+            </span>
           </>
         ) : (
           <>
             <Copy className="size-4" />
-            <span className="hidden text-sm md:block sr-only">Copy SVG</span>
+            <span className="hidden text-sm md:block sr-only">
+              {t("copySvg")}
+            </span>
           </>
         )}
       </Button>

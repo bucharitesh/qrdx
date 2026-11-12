@@ -1,6 +1,7 @@
 "use client";
 
 import { Slider } from "@repo/design-system/components/ui/slider";
+import { useTranslations } from "next-intl";
 import { MODULE_SCALE_FLOOR } from "qrdx";
 import ControlSection from "@/components/editor/control-section";
 import type { QRStyle } from "@/types/theme";
@@ -25,6 +26,7 @@ export function DotSizeSection({
   onChange,
   expanded,
 }: DotSizeSectionProps) {
+  const t = useTranslations("editor.controlSections.dotSizeSection");
   const pattern = style.bodyPattern ?? "circle";
   const floor = Math.round((MODULE_SCALE_FLOOR[pattern] ?? 1) * 100);
   const value = Math.max(floor, Math.round((style.moduleScale ?? 1) * 100));
@@ -35,15 +37,15 @@ export function DotSizeSection({
       expanded={expanded}
       section="dot-size"
       summary={`${value}%`}
-      title="Dot size"
+      title={t("dotSize")}
     >
       <div className="space-y-2.5">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-muted-foreground">Size of each dot</span>
+          <span className="text-muted-foreground">{t("sizeOfEachDot")}</span>
           <span className="tabular-nums">{value}%</span>
         </div>
         <Slider
-          aria-label="Dot size"
+          aria-label={t("dotSize")}
           disabled={fixed}
           max={100}
           min={fixed ? 99 : floor}
@@ -57,8 +59,11 @@ export function DotSizeSection({
       </div>
       <p className="text-muted-foreground text-xs text-pretty">
         {fixed
-          ? `${patternName(pattern)} dots keep their full size: smaller ones stop scanning.`
-          : `Smaller dots give a lighter look. ${patternName(pattern)} dots go down to ${floor}%, the smallest size that still scans.`}
+          ? t("valueDotsKeepTheirFull", { value: patternName(pattern) })
+          : t("smallerDotsGiveALighter", {
+              value: patternName(pattern),
+              floor,
+            })}
       </p>
     </ControlSection>
   );

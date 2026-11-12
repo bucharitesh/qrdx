@@ -36,6 +36,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
@@ -44,6 +45,7 @@ import { track } from "@/lib/analytics";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { shuffleNext } from "@/lib/hooks/use-theme-shuffle";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
+import { splitLocale } from "@/lib/i18n/paths";
 import { soundEvent } from "@/lib/sound/emit";
 import { isShuffleId } from "@/lib/themes/shuffle";
 import { dashboardEntry } from "@/lib/workspace-paths";
@@ -101,6 +103,7 @@ const isThemeNew = (preset: ThemePreset) => {
 };
 
 const ThemeControls = () => {
+  const t = useTranslations("editor.qrPresetSelect");
   // A new theme from the generator's palettes and shape rules, not a preset.
   const randomize = useCallback(() => {
     shuffleNext();
@@ -111,11 +114,11 @@ const ThemeControls = () => {
     <div className="flex gap-1">
       <ThemeToggle variant="ghost" size="icon" className="size-6 p-1" />
 
-      <TooltipWrapper label="Shuffle a new theme" kbd="T" asChild>
+      <TooltipWrapper label={t("shuffleANewTheme")} kbd="T" asChild>
         <Button
           variant="ghost"
           size="sm"
-          aria-label="Shuffle a new theme"
+          aria-label={t("shuffleANewTheme")}
           className="size-6 p-1"
           onClick={randomize}
         >
@@ -136,6 +139,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
   className,
   ...props
 }) => {
+  const t = useTranslations("editor.qrPresetSelect");
   const { settings } = useUserSettings();
   const showKbd = settings?.keyboardShortcuts ?? true;
 
@@ -145,7 +149,9 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          aria-label={direction === "prev" ? "Previous theme" : "Next theme"}
+          aria-label={
+            direction === "prev" ? t("previousTheme") : t("nextTheme")
+          }
           className={cn("aspect-square h-full shrink-0", className)}
           onClick={onClick}
           {...props}
@@ -160,7 +166,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
       <TooltipContent>
         <div className="flex items-center gap-2">
           <span className="text-xs">
-            {direction === "prev" ? "Previous theme" : "Next theme"}
+            {direction === "prev" ? t("previousTheme") : t("nextTheme")}
           </span>
           {showKbd && <Kbd>{direction === "prev" ? "<" : ">"}</Kbd>}
         </div>
@@ -236,6 +242,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   className,
   ...props
 }) => {
+  const t = useTranslations("editor.qrPresetSelect");
   const themeState = useQREditorStore((store) => store.themeState);
   const applyThemePreset = useQREditorStore((store) => store.applyThemePreset);
   const hasUnsavedChanges = useQREditorStore(
@@ -253,7 +260,9 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   const isMounted = useMounted();
   // The editor mounts the community sheet (components/editor.tsx); the /ai
   // page's picker has no editor, so its link still goes to /community.
-  const inEditor = usePathname()?.startsWith("/playground") ?? false;
+  const inEditor = splitLocale(usePathname() ?? "/").path.startsWith(
+    "/playground",
+  );
   const openCommunitySheet = useCommunitySheetStore((store) => store.setOpen);
 
   useSavedThemes();
@@ -327,13 +336,13 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
       (name) => presets[name]?.scope !== "team",
     );
     return [
-      { heading: "Shared themes", names: team },
+      { heading: t("sharedThemes"), names: team },
       {
-        heading: team.length > 0 ? "Your themes" : "Saved themes",
+        heading: team.length > 0 ? t("yourThemes") : t("savedThemes"),
         names: personal,
       },
     ].filter((group) => group.names.length > 0);
-  }, [filteredSavedThemes, presets]);
+  }, [filteredSavedThemes, presets, t]);
 
   const filteredDefaultThemes = useMemo(() => {
     return filteredPresets.filter(
@@ -386,7 +395,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                     getPresetLabel(currentPreset)) ||
                     presets[currentPresetName || "default"]?.label ||
                     currentPresetName ||
-                    "default"}
+                    t("default2")}
                   {isMounted && hasUnsavedChanges() && "*"}
                 </span>
               </div>
@@ -399,7 +408,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 <div className="flex w-full items-center border-b px-3 py-1">
                   <SearchNormal1 className="size-4 shrink-0 opacity-50" />
                   <Input
-                    placeholder="Search themes..."
+                    placeholder={t("searchThemes")}
                     className="border-0 shadow-none bg-transparent! focus-visible:ring-0 focus-visible:ring-offset-0"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
@@ -408,7 +417,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
               </div>
               <div className="flex items-center justify-between px-3 py-2">
                 <div className="text-muted-foreground text-sm">
-                  {filteredPresets.length} theme
+                  {filteredPresets.length} {t("theme")}
                   {filteredPresets.length !== 1 ? "s" : ""}
                 </div>
                 <div className="flex items-center gap-1">
@@ -422,14 +431,14 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                     variant="ghost"
                   >
                     <Element3 className="size-3.5" />
-                    Browse all
+                    {t("browseAll")}
                   </Button>
                   <ThemeControls />
                 </div>
               </div>
               <Separator />
               <CommandList className="max-h-[500px]">
-                <CommandEmpty>No themes found.</CommandEmpty>
+                <CommandEmpty>{t("noThemesFound")}</CommandEmpty>
 
                 {/* Saved Themes Groups */}
                 {savedThemeGroups.map((group, groupIndex) => (
@@ -447,7 +456,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                               size="sm"
                               className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 p-0 text-xs"
                             >
-                              <span>Manage</span>
+                              <span>{t("manage")}</span>
                               <Settings className="size-3.5!" />
                             </Button>
                           </Link>
@@ -480,7 +489,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                               variant="outline"
                               className="rounded-full text-xs"
                             >
-                              Default
+                              {t("default")}
                             </Badge>
                           ) : (
                             presets[presetName] &&
@@ -489,7 +498,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                                 variant="secondary"
                                 className="rounded-full text-xs"
                               >
-                                New
+                                {t("new")}
                               </Badge>
                             )
                           )}
@@ -508,10 +517,10 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                     <div className="text-muted-foreground flex items-center gap-1.5 px-3 py-2 text-xs font-medium">
                       <div className="bg-muted flex items-center gap-1 rounded-md border px-2 py-0.5">
                         <Heart className="fill-muted-foreground size-3" />
-                        <span>Save</span>
+                        <span>{t("save")}</span>
                       </div>
                       <span className="text-muted-foreground">
-                        a theme to find it here.
+                        {t("aThemeToFindIt")}
                       </span>
                     </div>
                     <Separator />
@@ -520,7 +529,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
 
                 {/* Default Theme Group */}
                 {filteredDefaultThemes.length > 0 && (
-                  <CommandGroup heading="Built-in Themes">
+                  <CommandGroup heading={t("builtInThemes")}>
                     {filteredDefaultThemes.map((presetName, index) => (
                       <CommandItem
                         key={`${presetName}-${index}`}
@@ -547,7 +556,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                                 variant="secondary"
                                 className="rounded-full text-xs"
                               >
-                                New
+                                {t("new")}
                               </Badge>
                             )}
                         </div>
@@ -571,7 +580,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                       }}
                       type="button"
                     >
-                      Discover more themes →
+                      {t("discoverMoreThemes")}
                     </Button>
                   ) : (
                     <Button
@@ -580,7 +589,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                       size="sm"
                       className="text-muted-foreground hover:text-foreground w-full justify-center text-xs"
                     >
-                      <Link href="/community">Discover more themes →</Link>
+                      <Link href="/community">{t("discoverMoreThemes")}</Link>
                     </Button>
                   )}
                 </div>

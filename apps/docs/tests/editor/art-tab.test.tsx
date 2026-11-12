@@ -5,9 +5,9 @@
 // real browser in e2e/playground.e2e.ts ("art tab links").
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ReactNode } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { StateCreator, StoreApi } from "zustand/vanilla";
+import { renderIntl } from "../support/intl";
 
 // The editor store persists to window.localStorage, which Node doesn't have.
 vi.hoisted(() => {
@@ -133,7 +133,7 @@ const RUN: AIArtRun = {
 };
 
 function render(node: ReactNode, unavailable: FeatureId[] = []) {
-  return renderToStaticMarkup(
+  return renderIntl(
     <QueryClientProvider client={new QueryClient()}>
       <AvailabilityProvider
         value={{ unavailable, hiddenPaths: [], hiddenIntegrations: [] }}

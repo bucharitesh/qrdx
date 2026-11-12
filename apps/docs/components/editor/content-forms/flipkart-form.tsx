@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { FlipkartFormData } from "@/lib/validations/qr-content";
 import { flipkartSchema } from "@/lib/validations/qr-content";
@@ -10,6 +11,7 @@ import type { FlipkartContent } from "@/types/qr-content";
 import { encodeFlipkart } from "@/utils/qr-content-encoder";
 
 export function FlipkartForm() {
+  const t = useTranslations("editor.contentForms.flipkartForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -45,7 +47,7 @@ export function FlipkartForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="flipkart-product-url">
-          Flipkart product URL *
+          {t("flipkartProductUrl")}
         </Label>
         <Input
           id="flipkart-product-url"
@@ -61,7 +63,7 @@ export function FlipkartForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Flipkart product or store
+        {t("scanningWillOpenYourFlipkart")}
       </p>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { RefreshLeftSquare } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   type ColorConfig,
   EYE_POSITIONS,
@@ -15,12 +16,6 @@ import {
   QR_IMAGE_KINDS,
 } from "@/components/editor/gradient-picker";
 import type { QRStyle } from "@/types/theme";
-
-export const EYE_POSITION_NAMES: Record<EyePosition, string> = {
-  topLeft: "Top left",
-  topRight: "Top right",
-  bottomLeft: "Bottom left",
-};
 
 /** True when at least one eye has its own color. */
 export function hasEyeColors(style: Partial<QRStyle>): boolean {
@@ -47,6 +42,7 @@ export function EyeColorsSection({
   onChange,
   expanded,
 }: EyeColorsSectionProps) {
+  const t = useTranslations("editor.controlSections.eyeColorsSection");
   const custom = hasEyeColors(style);
 
   const setEye = (
@@ -89,31 +85,30 @@ export function EyeColorsSection({
             })}
           </span>
         ) : (
-          "Same for all"
+          t("sameForAll")
         )
       }
-      title="Eye colors"
+      title={t("eyeColors")}
     >
       <p className="text-muted-foreground text-xs text-pretty">
-        Give each corner eye its own frame and center color. Eyes you leave
-        alone use the Eyes and Dots colors.
+        {t("giveEachCornerEyeIts")}
       </p>
       {EYE_POSITIONS.map((position) => (
         <fieldset className="space-y-2" key={position}>
           <legend className="text-muted-foreground mb-2 text-xs font-medium">
-            {EYE_POSITION_NAMES[position]}
+            {t(`positions.${position}`)}
           </legend>
           <div className="grid grid-cols-2 gap-2">
             <GradientPicker
               kinds={QR_IMAGE_KINDS}
-              label="Frame"
+              label={t("frame")}
               name={`eyeColors.${position}.outer`}
               onChange={(color) => setEye(position, "outer", color)}
               value={outer(position)}
             />
             <GradientPicker
               kinds={QR_IMAGE_KINDS}
-              label="Center"
+              label={t("center")}
               name={`eyeColors.${position}.inner`}
               onChange={(color) => setEye(position, "inner", color)}
               value={inner(position)}
@@ -129,7 +124,7 @@ export function EyeColorsSection({
           variant="outline"
         >
           <RefreshLeftSquare />
-          Use the same colors for all eyes
+          {t("useTheSameColorsFor")}
         </Button>
       )}
     </ControlSection>

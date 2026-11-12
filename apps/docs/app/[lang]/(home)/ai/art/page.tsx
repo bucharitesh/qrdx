@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { AsciiField } from "@/components/fx";
 import { ClientMessages } from "@/components/i18n/client-messages";
-import { LocaleLink as Link } from "@/components/i18n/locale-link";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { AIArtComingSoon } from "@/components/sections/ai-art/ai-art-coming-soon";
 import { AIArtFAQ } from "@/components/sections/ai-art/ai-art-faq";
 import { AIArtStudio } from "@/components/sections/ai-art/ai-art-studio";
@@ -15,6 +15,7 @@ import { isArtConfigured } from "@/lib/ai/art";
 import { ART_MODEL_LABEL, ART_MODEL_NAME } from "@/lib/ai/art-models";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
+import { AI_ART_STUDIO_NAMESPACES } from "@/lib/i18n/playground";
 import { requireLocale } from "@/lib/i18n/server";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { ALLOWANCES, STEPS, VECTOR_STEPS } from "./content";
@@ -111,10 +112,10 @@ function VectorArtSection({
           </div>
           {!lead && (
             <Button asChild className="w-fit" variant="outline">
-              <Link href={ART_PLAYGROUND_HREF}>
+              <LocaleLink href={ART_PLAYGROUND_HREF}>
                 {t("openArt")}
                 <ArrowRight aria-hidden />
-              </Link>
+              </LocaleLink>
             </Button>
           )}
         </div>
@@ -184,10 +185,10 @@ export default async function AIArtPage() {
               </p>
               <div className="mt-3 flex flex-wrap justify-center gap-2">
                 <Button asChild>
-                  <Link href={ART_PLAYGROUND_HREF}>
+                  <LocaleLink href={ART_PLAYGROUND_HREF}>
                     {t("make")}
                     <ArrowRight aria-hidden />
-                  </Link>
+                  </LocaleLink>
                 </Button>
                 <Button asChild variant="outline">
                   <a href="#vector-art">{t("examples")}</a>
@@ -202,7 +203,9 @@ export default async function AIArtPage() {
         <>
           <section className="w-full px-10 py-12 md:px-12 md:py-16">
             <div className="mx-auto max-w-5xl">
-              <AIArtStudio allowances={ALLOWANCES} configured />
+              <ClientMessages namespaces={AI_ART_STUDIO_NAMESPACES}>
+                <AIArtStudio allowances={ALLOWANCES} configured />
+              </ClientMessages>
             </div>
           </section>
           <ClientMessages namespaces={["aiArt.vector"]}>

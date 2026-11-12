@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { AIChatFormBody } from "@/components/editor/ai/ai-chat-form-body";
 import { AISendButton } from "@/components/editor/ai/ai-send-button";
 import { AlertBanner } from "@/components/editor/ai/alert-banner";
@@ -25,6 +26,7 @@ export function AIChatForm({
   isGeneratingTheme: boolean;
   onCancelThemeGeneration: () => void;
 }) {
+  const t = useTranslations("ai.chat.aiChatForm");
   const {
     editorContentDraft,
     handleContentChange,
@@ -175,7 +177,7 @@ export function AIChatForm({
                 isInitializing
               }
               generating={isGeneratingTheme}
-              label="Generate"
+              label={t("generate")}
               onClick={handleGenerate}
               onStop={onCancelThemeGeneration}
             />

@@ -4,6 +4,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { LimitCopy } from "@/app/(app)/settings/usage/_lib/limit-copy";
 import {
   type Meter,
@@ -38,6 +39,7 @@ export function LimitCard({
   onDismiss?: () => void;
   className?: string;
 }) {
+  const t = useTranslations("limits.limitCard");
   const upgrade = copy.upgrade;
   return (
     <div className={cn("space-y-3", className)}>
@@ -48,7 +50,7 @@ export function LimitCard({
         </p>
       </div>
       <Progress
-        aria-label={`${meter.label} used`}
+        aria-label={t("labelUsed", { label: meter.label })}
         className="h-1.5"
         value={meterPercent(meter)}
       />
@@ -73,7 +75,7 @@ export function LimitCard({
           {usageHref && (
             <Button asChild size="sm" variant={upgrade ? "ghost" : "outline"}>
               <Link href={usageHref} onClick={onNavigate}>
-                Plan & usage
+                {t("planUsage")}
               </Link>
             </Button>
           )}
@@ -85,7 +87,7 @@ export function LimitCard({
               type="button"
               variant="ghost"
             >
-              Not now
+              {t("notNow")}
             </Button>
           )}
         </div>

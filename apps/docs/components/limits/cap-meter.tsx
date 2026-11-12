@@ -2,6 +2,7 @@
 
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { limitCopy } from "@/app/(app)/settings/usage/_lib/limit-copy";
 import {
   type Meter,
@@ -38,6 +39,7 @@ export function CapMeter({
   /** For the upgrade click's analytics */
   source: string;
 }) {
+  const t = useTranslations("limits.capMeter");
   const limits = usePlanLimits();
   const meter: Meter = {
     id: meterId,
@@ -79,7 +81,7 @@ export function CapMeter({
           </span>
         </div>
         <Progress
-          aria-label={`${meter.label} used`}
+          aria-label={t("labelUsed", { label: meter.label })}
           className={cn(
             "h-1.5",
             !copy &&

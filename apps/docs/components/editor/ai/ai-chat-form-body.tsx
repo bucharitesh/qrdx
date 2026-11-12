@@ -5,6 +5,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import type { JSONContent } from "@tiptap/react";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { AI_PROMPT_CHARACTER_LIMIT } from "@/lib/constants";
 import { DragAndDropImageUploader } from "./drag-and-drop-image-uploader";
@@ -55,6 +56,7 @@ export function AIChatFormBody({
   isStreamingContent = false,
   placeholders,
 }: AIChatFormBodyProps) {
+  const t = useTranslations("editor.ai.aiChatFormBody");
   return (
     <>
       {isUserDragging && (
@@ -85,7 +87,7 @@ export function AIChatFormBody({
         </div>
       )}
       <div>
-        <label className="sr-only">Chat Input</label>
+        <label className="sr-only">{t("chatInput")}</label>
         <div
           className="relative isolate min-h-[50px] overflow-hidden"
           aria-disabled={disabled}

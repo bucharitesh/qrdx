@@ -25,12 +25,23 @@
 //   --record         no AI: record the UI strings already in the catalog
 //                    (after translating by hand), so i18n:check can tell
 //                    when the English changes later
+//   --max-cost <usd> stop sending requests once this run has spent that
+//                    much (the gateway's reported cost per response, or
+//                    tokens × the model's list price when it reports none)
 //
 // Translating needs AI_GATEWAY_API_KEY in the environment: your own Vercel
 // AI Gateway key (QRdx's isn't shared). I18N_MODEL picks another gateway
-// model. The token count is printed at the end.
+// model. Before the first request the script prints a budget plan (requests
+// and an estimated cost per catalog and language); at the end, the tokens
+// and the spend. I18N_LEDGER=<file> appends each run's spend to that file.
 import "./i18n-env";
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import {
+  appendFileSync,
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
 import path from "node:path";
 import { createGateway, generateText, Output } from "ai";
 import { z } from "zod";
@@ -60,6 +71,10 @@ const MODELS = process.env.I18N_MODEL
   ? [process.env.I18N_MODEL]
   : ["anthropic/claude-sonnet-5.5", "anthropic/claude-haiku-5.5"];
 const CHUNK = 30;
+/** Short UI labels: more per request, so the instructions are sent less often. */
+const CHUNK_SHORT = 80;
+/** A string this short (characters) counts as a label for CHUNK_SHORT. */
+const SHORT = 60;
 /** Characters of English per request, so long FAQ answers share a request with few others. */
 const CHUNK_CHARS = 7000;
 
@@ -94,6 +109,13 @@ const FORCE = flag("--force");
 const RECORD = flag("--record");
 const PRUNE = flag("--prune");
 const CONCURRENCY = Math.max(1, Number(values("--concurrency")[0] ?? 3) || 3);
+const MAX_COST = values("--max-cost")[0]
+  ? Number(values("--max-cost")[0])
+  : undefined;
+if (MAX_COST !== undefined && !(MAX_COST > 0)) {
+  console.error("--max-cost takes an amount in US dollars, like 20.");
+  process.exit(1);
+}
 
 /** A catalog or review file; a new locale starts from none. */
 const readJson = <T>(file: string): T =>
@@ -154,6 +176,17 @@ const SURFACES: Record<string, string> = {
   mcp: "the MCP server page: connect QRdx to AI assistants",
   ai: "the AI QR code theme designer and the AI QR art page",
   compare: "the pages comparing QRdx with other QR code tools",
+  // i18n-play lane (the playground and the signed-in app), kept in one block.
+  editor:
+    "the QR code editor (the playground): content forms for each code type, design controls (colors, dot patterns, corner eyes, logo, frames), the download, share and code dialogs, the AI theme chat and the AI art panel; mostly short labels, buttons, tooltips and toasts",
+  playground:
+    "the playground page around the editor: its title, loading text and a description for screen readers",
+  limits:
+    "notices about plan limits (codes, scans, AI uses) and upgrade buttons",
+  community:
+    "the community gallery of shared themes, frames and page templates: publish dialogs, likes and tabs",
+  aiArt:
+    "the AI QR art page and studio: generating artistic QR codes, scan checks on the results and monthly image credits",
 };
 
 /** Short strings (labels, buttons) get a length budget. */
@@ -202,10 +235,16 @@ interface Item {
   note?: string;
 }
 
+/**
+ * The strings to translate. Each gets a short id to answer with (the key
+ * path is context only), which keeps the answer, the part that costs most,
+ * small.
+ */
 function userPrompt(surface: string, items: Item[]): string {
-  const lines = items.map(({ key, english: message, context, note }) => {
+  const lines = items.map(({ key, english: message, context, note }, index) => {
     const limit = budget(message);
     return JSON.stringify({
+      id: String(index + 1),
       key,
       ...(context && { context }),
       english: message,
@@ -215,18 +254,67 @@ function userPrompt(surface: string, items: Item[]): string {
   });
   return [
     `Surface: ${surface}.`,
-    "Strings (one JSON object per line; maxLength is a soft budget in characters for short labels):",
+    "Strings (one JSON object per line; maxLength is a soft budget in characters for short labels). Answer with each string's id:",
     ...lines,
   ].join("\n");
 }
 
 const schema = z.object({
-  translations: z.array(z.object({ key: z.string(), text: z.string() })),
+  translations: z.array(z.object({ id: z.string(), text: z.string() })),
 });
 
 let gateway: ReturnType<typeof createGateway> | undefined;
 let model = "";
-const usage = { input: 0, output: 0, requests: 0, errors: 0 };
+/** US dollars per token, from the gateway's model list. */
+let price = { input: 0, output: 0 };
+const usage = {
+  input: 0,
+  output: 0,
+  requests: 0,
+  errors: 0,
+  /** US dollars spent this run. */
+  cost: 0,
+  /** Responses whose cost the gateway reported (the rest are estimated). */
+  reported: 0,
+  /** Requests not sent because of --max-cost. */
+  skipped: 0,
+};
+
+/** A request's cost: the gateway's figure, or tokens × the list price. */
+function costOf(
+  metadata: unknown,
+  input: number,
+  output: number,
+): { cost: number; reported: boolean } {
+  const gatewayCost = (metadata as { gateway?: { cost?: unknown } } | undefined)
+    ?.gateway?.cost;
+  const reported = Number(gatewayCost);
+  if (gatewayCost !== undefined && Number.isFinite(reported)) {
+    return { cost: reported, reported: true };
+  }
+  return { cost: input * price.input + output * price.output, reported: false };
+}
+
+/** Rough tokens for text: about 3.5 characters each. */
+const tokens = (text: string) => Math.ceil(text.length / 3.5);
+
+/** What a request should cost before it's sent (for the plan and the cap). */
+function estimate(locale: TranslatedLocale, job: Job, plain: boolean): number {
+  const input = tokens(
+    systemPrompt(locale, plain) + userPrompt(job.surface, job.items),
+  );
+  // Translations run longer than English in most of these languages, and
+  // non-Latin scripts take more tokens per character.
+  const factor = ["ja", "ko", "zh-Hans", "hi"].includes(locale) ? 2 : 1.4;
+  const output = job.items.reduce(
+    (sum, item) => sum + 12 + Math.ceil(tokens(item.english) * factor),
+    20,
+  );
+  return input * price.input + output * price.output;
+}
+
+const overBudget = (next: number) =>
+  MAX_COST !== undefined && usage.cost + next > MAX_COST;
 
 async function setup() {
   const apiKey = process.env.AI_GATEWAY_API_KEY;
@@ -242,7 +330,14 @@ async function setup() {
   const { models } = await gateway.getAvailableModels();
   const ids = new Set(models.map((entry) => entry.id));
   model = MODELS.find((id) => ids.has(id)) ?? (MODELS.at(-1) as string);
-  console.log(`model: ${model}`);
+  const pricing = models.find((entry) => entry.id === model)?.pricing;
+  price = {
+    input: Number(pricing?.input ?? 0),
+    output: Number(pricing?.output ?? 0),
+  };
+  console.log(
+    `model: ${model} (US$${(price.input * 1e6).toFixed(2)} in, US$${(price.output * 1e6).toFixed(2)} out per million tokens)`,
+  );
 }
 
 async function request(
@@ -260,13 +355,18 @@ async function request(
     // Anthropic only, as in lib/ai/models.ts (the subprocessors page names it).
     providerOptions: { gateway: { only: ["anthropic"] } },
   });
+  const input = result.usage.inputTokens ?? 0;
+  const output = result.usage.outputTokens ?? 0;
+  const spent = costOf(result.providerMetadata, input, output);
   usage.requests++;
-  usage.input += result.usage.inputTokens ?? 0;
-  usage.output += result.usage.outputTokens ?? 0;
-  const keys = new Set(items.map((item) => item.key));
+  usage.input += input;
+  usage.output += output;
+  usage.cost += spent.cost;
+  if (spent.reported) usage.reported++;
   const out = new Map<string, string>();
-  for (const { key, text } of result.output.translations) {
-    if (keys.has(key)) out.set(key, text);
+  for (const { id, text } of result.output.translations) {
+    const item = items[Number(id) - 1];
+    if (item) out.set(item.key, text);
   }
   return out;
 }
@@ -308,10 +408,13 @@ function chunk(items: Item[]): Item[][] {
   const out: Item[][] = [];
   let current: Item[] = [];
   let chars = 0;
+  const limit = (batch: Item[]) =>
+    batch.every((entry) => entry.english.length <= SHORT) ? CHUNK_SHORT : CHUNK;
   for (const item of items) {
     if (
       current.length > 0 &&
-      (current.length >= CHUNK || chars + item.english.length > CHUNK_CHARS)
+      (current.length >= limit([...current, item]) ||
+        chars + item.english.length > CHUNK_CHARS)
     ) {
       out.push(current);
       current = [];
@@ -343,6 +446,14 @@ async function translateJobs(
     for (;;) {
       const job = queue.shift();
       if (!job) return;
+      if (overBudget(estimate(locale, job, plain))) {
+        usage.skipped += 1 + queue.length;
+        queue.length = 0;
+        console.warn(
+          `${locale}: stopping at the --max-cost cap (US$${usage.cost.toFixed(2)} spent)`,
+        );
+        return;
+      }
       const first = await attempt(locale, job.surface, job.items, plain);
       const retry: Item[] = [];
       for (const item of job.items) {
@@ -350,7 +461,8 @@ async function translateJobs(
         if (reason) retry.push({ ...item, note: reason });
         else accept(item, first.get(item.key) as string);
       }
-      if (retry.length > 0) {
+      const retryJob = { ...job, items: retry };
+      if (retry.length > 0 && !overBudget(estimate(locale, retryJob, plain))) {
         const second = await attempt(locale, job.surface, retry, plain);
         for (const item of retry) {
           const reason = problem(item, second.get(item.key));
@@ -403,7 +515,18 @@ function record(locale: TranslatedLocale) {
   console.log(`${locale}: recorded ${added} string(s)`);
 }
 
-async function runUi(locale: TranslatedLocale): Promise<string[]> {
+/** One catalog's work in one language, planned before anything is sent. */
+interface Run {
+  locale: TranslatedLocale;
+  catalog: "ui" | "content";
+  jobs: Job[];
+  plain: boolean;
+  problem: (item: Item, text: string | undefined) => string | null;
+  accept: (item: Item, text: string) => void;
+  save: () => void;
+}
+
+function planUi(locale: TranslatedLocale): Run | null {
   const catalog = flatten(readJson<Catalog>(`${locale}.json`));
   const review = readJson<ReviewFile>(`review/${locale}.json`);
 
@@ -422,7 +545,7 @@ async function runUi(locale: TranslatedLocale): Promise<string[]> {
   console.log(
     `${locale}: ${todo.length} of ${source.size} UI strings to translate`,
   );
-  if (DRY || todo.length === 0) return [];
+  if (todo.length === 0) return null;
 
   // Requests stay within one surface (the top-level namespace), in catalog
   // order, so neighbouring strings give each other context.
@@ -441,23 +564,24 @@ async function runUi(locale: TranslatedLocale): Promise<string[]> {
     })),
   );
 
-  return translateJobs(
+  return {
     locale,
+    catalog: "ui",
     jobs,
-    false,
-    (item, text) => {
+    plain: false,
+    problem: (item, text) => {
       if (text === undefined || text.trim() === "") return "no translation";
       return shapeMismatch(item.english, text);
     },
-    (item, text) => {
+    accept: (item, text) => {
       catalog.set(item.key, text);
       review[item.key] = {
         source: sourceHash(item.english),
         status: "machine",
       };
     },
-    () => saveUi(locale, catalog, review),
-  );
+    save: () => saveUi(locale, catalog, review),
+  };
 }
 
 // ---- Content (TypeScript copy) ------------------------------------------
@@ -483,7 +607,7 @@ function saveContent(
   writeJson(contentFile(locale), ordered);
 }
 
-async function runContent(locale: TranslatedLocale): Promise<string[]> {
+function planContent(locale: TranslatedLocale): Run | null {
   const strings = contentEnglish();
   const memory = readJson<TranslationMemory>(contentFile(locale));
   const todo = strings.filter(({ english: text, context }) => {
@@ -497,9 +621,9 @@ async function runContent(locale: TranslatedLocale): Promise<string[]> {
   console.log(
     `${locale}: ${todo.length} of ${strings.length} content strings to translate`,
   );
-  if (DRY || todo.length === 0) {
+  if (todo.length === 0) {
     if (!DRY && PRUNE) saveContent(locale, memory, strings);
-    return [];
+    return null;
   }
 
   // Requests stay within one page (the first two path segments), in source
@@ -534,15 +658,16 @@ async function runContent(locale: TranslatedLocale): Promise<string[]> {
     for (const part of chunk(items)) jobs.push({ surface, items: part });
   }
 
-  return translateJobs(
+  return {
     locale,
+    catalog: "content",
     jobs,
-    true,
-    (item, text) => {
+    plain: true,
+    problem: (item, text) => {
       if (text === undefined || text.trim() === "") return "no translation";
       return numberMismatch(item.english, text);
     },
-    (item, text) => {
+    accept: (item, text) => {
       memory[item.key] = {
         source: item.english,
         text,
@@ -550,7 +675,51 @@ async function runContent(locale: TranslatedLocale): Promise<string[]> {
         context: item.context ?? "",
       };
     },
-    () => saveContent(locale, memory, strings),
+    save: () => saveContent(locale, memory, strings),
+  };
+}
+
+const usd = (amount: number) => `US$${amount.toFixed(2)}`;
+
+/** The budget plan: requests and estimated cost per catalog and language. */
+function printPlan(runs: Run[]) {
+  let total = 0;
+  let requests = 0;
+  for (const run of runs) {
+    const cost = run.jobs.reduce(
+      (sum, job) => sum + estimate(run.locale, job, run.plain),
+      0,
+    );
+    const strings = run.jobs.reduce((sum, job) => sum + job.items.length, 0);
+    total += cost;
+    requests += run.jobs.length;
+    console.log(
+      `  ${run.locale} ${run.catalog}: ${strings} strings in ${run.jobs.length} requests, about ${usd(cost)}`,
+    );
+  }
+  console.log(
+    `plan: ${requests} requests, about ${usd(total)} before retries${MAX_COST === undefined ? "" : `; cap ${usd(MAX_COST)}`}`,
+  );
+}
+
+/** I18N_LEDGER: one JSON line per run, for adding up a project's spend. */
+function recordSpend() {
+  const ledger = process.env.I18N_LEDGER;
+  if (!ledger || usage.requests === 0) return;
+  appendFileSync(
+    ledger,
+    `${JSON.stringify({
+      at: new Date().toISOString(),
+      model,
+      locales,
+      only: only ?? "both",
+      keys: keyPrefixes,
+      requests: usage.requests,
+      inputTokens: usage.input,
+      outputTokens: usage.output,
+      cost: Number(usage.cost.toFixed(4)),
+      reported: usage.reported,
+    })}\n`,
   );
 }
 
@@ -560,21 +729,37 @@ async function main() {
     return;
   }
   if (!DRY) await setup();
-  const failed: string[] = [];
+  const runs: Run[] = [];
   for (const locale of locales) {
-    if (only !== "content") {
-      for (const line of await runUi(locale)) failed.push(`${locale}: ${line}`);
-    }
-    if (only !== "ui") {
-      for (const line of await runContent(locale)) {
-        failed.push(`${locale}: ${line}`);
-      }
-    }
+    const ui = only === "content" ? null : planUi(locale);
+    const content = only === "ui" ? null : planContent(locale);
+    if (ui) runs.push(ui);
+    if (content) runs.push(content);
+  }
+  if (DRY || runs.length === 0) return;
+  printPlan(runs);
+  const failed: string[] = [];
+  for (const run of runs) {
+    const lines = await translateJobs(
+      run.locale,
+      run.jobs,
+      run.plain,
+      run.problem,
+      run.accept,
+      run.save,
+    );
+    for (const line of lines) failed.push(`${run.locale}: ${line}`);
   }
   for (const line of failed) console.warn(`kept English for ${line}`);
+  recordSpend();
   console.log(
-    `\n${usage.requests} requests (${usage.errors} errors), ${usage.input.toLocaleString("en-US")} input + ${usage.output.toLocaleString("en-US")} output tokens (${model || "none"})`,
+    `\n${usage.requests} requests (${usage.errors} errors), ${usage.input.toLocaleString("en-US")} input + ${usage.output.toLocaleString("en-US")} output tokens (${model || "none"}), ${usd(usage.cost)} (${usage.reported} of ${usage.requests} costs reported by the gateway)`,
   );
+  if (usage.skipped > 0) {
+    console.warn(
+      `${usage.skipped} request(s) not sent: --max-cost ${usd(MAX_COST ?? 0)} reached. Run again with a higher cap to finish.`,
+    );
+  }
 }
 
 main().catch((error) => {

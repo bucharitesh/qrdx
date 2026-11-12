@@ -1,5 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight2 as ChevronRight } from "iconsax-reactjs";
+import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 import type { ThemePreset } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
@@ -15,19 +16,20 @@ const getDefaultThemePresets = async () => {
 };
 
 export async function CommunityThemes() {
+  const t = await getTranslations("ai.chat.communityThemes");
   const themePresetsPromise = getDefaultThemePresets();
 
   return (
     <>
       <div className="flex flex-col gap-1">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold">From the Community</h2>
+          <h2 className="font-semibold">{t("fromTheCommunity")}</h2>
           <Button variant="link" className="h-fit gap-1 p-0 [&>svg]:size-3">
-            View All <ChevronRight />
+            {t("viewAll")} <ChevronRight />
           </Button>
         </div>
         <p className="text-muted-foreground text-sm">
-          Explore the themes the community is creating with tweakcn.
+          {t("exploreTheThemesTheCommunity")}
         </p>
       </div>
 

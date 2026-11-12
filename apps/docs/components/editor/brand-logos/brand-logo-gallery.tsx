@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The "Brand logos" gallery: every Simple Icons brand as a QR logo. Loaded
 // only when someone opens it (next/dynamic in logo-controls.tsx), and it
@@ -111,6 +112,7 @@ export function BrandLogoGallery({
   hasPlate,
   onPick,
 }: BrandLogoGalleryProps) {
+  const t = useTranslations("editor.brandLogos.brandLogoGallery");
   const [index, setIndex] = React.useState<BrandIndex | null>(null);
   const [failed, setFailed] = React.useState(false);
   const [query, setQuery] = React.useState("");
@@ -206,12 +208,14 @@ export function BrandLogoGallery({
           <div className="flex items-start gap-3 px-4 pt-1 pb-3 sm:px-5 sm:pt-4">
             <div className="min-w-0 flex-1">
               <ResponsiveDialogTitle className="text-base">
-                Brand logos
+                {t("brandLogos")}
               </ResponsiveDialogTitle>
               <ResponsiveDialogDescription className="mt-1 text-xs">
                 {index
-                  ? `${index.brands.length.toLocaleString("en-US")} brands from Simple Icons. Each mark belongs to its owner.`
-                  : "Brands from Simple Icons. Each mark belongs to its owner."}
+                  ? t("valueBrandsFromSimpleIcons", {
+                      value: index.brands.length.toLocaleString("en-US"),
+                    })
+                  : t("brandsFromSimpleIconsEach")}
               </ResponsiveDialogDescription>
             </div>
             <DialogCloseButton className="-mt-1 -mr-1 hidden sm:inline-flex" />
@@ -221,17 +225,17 @@ export function BrandLogoGallery({
             <div className="relative">
               <SearchNormal1 className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
               <Input
-                aria-label="Search brands"
+                aria-label={t("searchBrands")}
                 className="h-10 pl-9"
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search: Spotify, PayPal, Google Maps…"
+                placeholder={t("searchSpotifyPaypalGoogleMaps")}
                 type="search"
                 value={query}
               />
             </div>
             <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
               <fieldset
-                aria-label="Logo color"
+                aria-label={t("logoColor")}
                 className="flex flex-wrap gap-1.5"
               >
                 {BRAND_LOGO_COLORS.map((id) => (
@@ -252,7 +256,7 @@ export function BrandLogoGallery({
                   className="text-muted-foreground cursor-pointer text-sm font-normal"
                   htmlFor="brand-logo-plate"
                 >
-                  {color === "white" ? "Plate (needed for white)" : "Plate"}
+                  {color === "white" ? t("plateNeededForWhite") : t("plate")}
                 </Label>
                 <Switch
                   checked={plate || color === "white"}
@@ -268,7 +272,7 @@ export function BrandLogoGallery({
             {failed ? (
               <div className="flex flex-col items-center gap-3 py-16 text-center">
                 <p className="text-muted-foreground text-sm">
-                  The brand logos didn't load.
+                  {t("theBrandLogosDidntLoad")}
                 </p>
                 <Button
                   onClick={load}
@@ -276,7 +280,7 @@ export function BrandLogoGallery({
                   type="button"
                   variant="outline"
                 >
-                  Try again
+                  {t("tryAgain")}
                 </Button>
               </div>
             ) : !index ? (
@@ -291,15 +295,16 @@ export function BrandLogoGallery({
             ) : results ? (
               results.length === 0 ? (
                 <p className="text-muted-foreground py-16 text-center text-sm text-pretty">
-                  No brand matches “{query.trim()}”. Some brands asked Simple
-                  Icons to remove their marks, so they aren't here.
+                  {t("noBrandMatchesQuerySome", { query: query.trim() })}
                 </p>
               ) : (
-                <section aria-label="Results" className="space-y-3">
+                <section aria-label={t("results")} className="space-y-3">
                   <h3 className="text-muted-foreground text-xs font-medium">
                     {results.length === 1
-                      ? "1 brand"
-                      : `${results.length.toLocaleString("en-US")} brands`}
+                      ? t("n1Brand")
+                      : t("valueBrands", {
+                          value: results.length.toLocaleString("en-US"),
+                        })}
                   </h3>
                   <BrandGrid>{results.slice(0, shown).map(tile)}</BrandGrid>
                   {results.length > shown && (
@@ -332,7 +337,7 @@ export function BrandLogoGallery({
                     className="text-muted-foreground text-xs font-medium"
                     id="brand-group-all"
                   >
-                    All brands, A to Z
+                    {t("allBrandsAToZ")}
                   </h3>
                   <BrandGrid>
                     {index.brands.slice(0, shown).map(tile)}
@@ -346,8 +351,7 @@ export function BrandLogoGallery({
           </div>
 
           <p className="text-muted-foreground border-t px-4 py-2.5 text-[11px] text-pretty sm:px-5">
-            Logos from Simple Icons (CC0). Brand marks are trademarks of their
-            owners; use one to point people to that brand.
+            {t("logosFromSimpleIconsCc0")}
           </p>
         </div>
       </ResponsiveDialogContent>
@@ -364,10 +368,11 @@ function BrandGrid({ children }: { children: React.ReactNode }) {
 }
 
 function ShowMore({ onClick }: { onClick: () => void }) {
+  const t = useTranslations("editor.brandLogos.brandLogoGallery");
   return (
     <div className="flex justify-center pt-1">
       <Button onClick={onClick} size="sm" type="button" variant="outline">
-        Show more
+        {t("showMore")}
       </Button>
     </div>
   );
@@ -391,12 +396,13 @@ function BrandTile({
   busy: boolean;
   onPick: () => void;
 }) {
+  const t = useTranslations("editor.brandLogos.brandLogoGallery");
   const withPlate = plate || brandNeedsPlate(entry.hex, color);
   const background = withPlate ? brandPlateColor(entry.hex, color) : "#ffffff";
   return (
     <button
       aria-busy={busy}
-      aria-label={`${entry.title} logo`}
+      aria-label={t("titleLogo", { title: entry.title })}
       aria-pressed={selected}
       className={cn(
         "group bg-card relative flex min-w-0 flex-col items-center gap-1.5 rounded-lg border p-1.5 pb-1 transition-[background-color,border-color,transform] outline-none active:scale-[0.97] hover:border-foreground/20 hover:bg-accent/40 focus-visible:border-foreground/30 focus-visible:ring-ring/40 focus-visible:ring-[3px]",

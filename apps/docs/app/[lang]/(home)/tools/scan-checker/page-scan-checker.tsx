@@ -2,8 +2,8 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Brush } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { ScanChecker } from "@/components/sections/tools/scan-checker";
 import { parseLinkUrl, playgroundHref } from "@/lib/playground-links";
 
@@ -21,10 +21,10 @@ export function PageScanChecker() {
         if (!url) return null;
         return (
           <Button asChild size="sm" variant="outline">
-            <Link href={playgroundHref({ url })}>
+            <LocaleLink href={playgroundHref({ url })}>
               <Brush className="size-3.5" />
               {t("restyle")}
-            </Link>
+            </LocaleLink>
           </Button>
         );
       }}

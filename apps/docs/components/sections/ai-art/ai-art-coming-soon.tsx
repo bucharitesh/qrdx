@@ -7,7 +7,7 @@ import { Card } from "@repo/design-system/components/ui/card";
 import { MagicStar } from "iconsax-reactjs";
 import { useTranslations } from "next-intl";
 import { AsciiField } from "@/components/fx";
-import { LocaleLink as Link } from "@/components/i18n/locale-link";
+import { LocaleLink as Link, LocaleLink } from "@/components/i18n/locale-link";
 import { ART_PLAYGROUND_HREF } from "./config";
 import { useAIArtPresets } from "./load-presets";
 import { AI_ART_PRESET_COUNT, aiArtPresetPreview } from "./preset-meta";
@@ -75,10 +75,10 @@ export function AIArtComingSoon() {
 
       <div className="relative flex flex-wrap gap-2">
         <Button asChild variant="outline">
-          <Link href={ART_PLAYGROUND_HREF}>
+          <LocaleLink href={ART_PLAYGROUND_HREF}>
             <MagicStar aria-hidden />
             {t("makeNow")}
-          </Link>
+          </LocaleLink>
         </Button>
         <Button asChild variant="ghost">
           <Link href="/ai">{t("theme")}</Link>

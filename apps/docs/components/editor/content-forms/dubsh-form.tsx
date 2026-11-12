@@ -30,6 +30,7 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowSwapVertical, ExportSquare, InfoCircle } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { toast } from "sonner";
 import {
@@ -79,6 +80,7 @@ function getCreatePayload(formData: CreateLinkFormData) {
 }
 
 export function DubshForm() {
+  const t = useTranslations("editor.contentForms.dubshForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
   const { links, isLoading, isMutating, isConnected, error, createLink } =
     useDubIntegration();
@@ -150,7 +152,7 @@ export function DubshForm() {
 
       throw new Error("Dub did not return an authorization URL");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to connect Dub");
+      toast.error(err instanceof Error ? err.message : t("failedToConnectDub"));
       setIsConnecting(false);
     }
   };
@@ -171,10 +173,10 @@ export function DubshForm() {
         destinationUrl: link.url,
         qrCodeUrl: link.qrCode,
       });
-      toast.success("Dub link created");
+      toast.success(t("dubLinkCreated"));
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to create Dub link",
+        err instanceof Error ? err.message : t("failedToCreateDubLink"),
       );
     }
   };
@@ -188,7 +190,7 @@ export function DubshForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="dubsh-short-url">
-          Dub short link *
+          {t("dubShortLink")}
         </Label>
         <Input
           id="dubsh-short-url"
@@ -209,7 +211,7 @@ export function DubshForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Dub short link.
+        {t("scanningWillOpenYourDub")}
       </p>
     </div>
   );
@@ -228,9 +230,9 @@ export function DubshForm() {
             />
             <div className="min-w-0 flex-1 space-y-3">
               <div className="space-y-1">
-                <p className="text-sm font-medium">Connect Dub</p>
+                <p className="text-sm font-medium">{t("connectDub")}</p>
                 <p className="text-muted-foreground text-xs leading-relaxed">
-                  Connect Dub to create, pick and track Dub links here.
+                  {t("connectDubToCreatePick")}
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
@@ -243,7 +245,7 @@ export function DubshForm() {
                   {isConnecting && (
                     <Spinner className="mr-1.5 size-3.5 animate-spin" />
                   )}
-                  Connect Dub
+                  {t("connectDub")}
                 </Button>
                 <Button
                   type="button"
@@ -251,7 +253,7 @@ export function DubshForm() {
                   size="sm"
                   onClick={() => setMode("manual")}
                 >
-                  Enter manually
+                  {t("enterManually")}
                 </Button>
               </div>
             </div>
@@ -280,16 +282,16 @@ export function DubshForm() {
         onValueChange={(value) => setMode(value as DubFormMode)}
       >
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="create">Create new</TabsTrigger>
-          <TabsTrigger value="select">Select existing</TabsTrigger>
-          <TabsTrigger value="manual">Paste a link</TabsTrigger>
+          <TabsTrigger value="create">{t("createNew")}</TabsTrigger>
+          <TabsTrigger value="select">{t("selectExisting")}</TabsTrigger>
+          <TabsTrigger value="manual">{t("pasteALink")}</TabsTrigger>
         </TabsList>
 
         <TabsContent value="create" className="space-y-3">
           <form className="space-y-3" onSubmit={handleCreateLink}>
             <div className="space-y-2">
               <Label className="text-xs" htmlFor="dub-destination-url">
-                Destination URL *
+                {t("destinationUrl")}
               </Label>
               <Input
                 id="dub-destination-url"
@@ -308,7 +310,7 @@ export function DubshForm() {
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-2">
                 <Label className="text-xs" htmlFor="dub-domain">
-                  Domain
+                  {t("domain")}
                 </Label>
                 <Input
                   id="dub-domain"
@@ -324,11 +326,11 @@ export function DubshForm() {
               </div>
               <div className="space-y-2">
                 <Label className="text-xs" htmlFor="dub-key">
-                  Custom ending
+                  {t("customEnding")}
                 </Label>
                 <Input
                   id="dub-key"
-                  placeholder="campaign"
+                  placeholder={t("campaign")}
                   value={createData.key}
                   onChange={(event) =>
                     setCreateData((current) => ({
@@ -341,11 +343,11 @@ export function DubshForm() {
             </div>
             <div className="space-y-2">
               <Label className="text-xs" htmlFor="dub-title">
-                Title
+                {t("title")}
               </Label>
               <Input
                 id="dub-title"
-                placeholder="Spring campaign"
+                placeholder={t("springCampaign")}
                 value={createData.title}
                 onChange={(event) =>
                   setCreateData((current) => ({
@@ -357,11 +359,11 @@ export function DubshForm() {
             </div>
             <div className="space-y-2">
               <Label className="text-xs" htmlFor="dub-description">
-                Description
+                {t("description")}
               </Label>
               <Input
                 id="dub-description"
-                placeholder="Optional internal note"
+                placeholder={t("optionalInternalNote")}
                 value={createData.description}
                 onChange={(event) =>
                   setCreateData((current) => ({
@@ -379,7 +381,7 @@ export function DubshForm() {
               {isMutating && (
                 <Spinner className="mr-1.5 size-3.5 animate-spin" />
               )}
-              Create Dub link
+              {t("createDubLink")}
             </Button>
           </form>
         </TabsContent>
@@ -387,15 +389,15 @@ export function DubshForm() {
         <TabsContent value="select" className="space-y-3">
           {isLoading ? (
             <div className="space-y-2">
-              <Label className="text-xs">Dub short link *</Label>
+              <Label className="text-xs">{t("dubShortLink")}</Label>
               <Skeleton className="h-10 w-full" />
               <p className="text-muted-foreground text-[11px]">
-                Loading your Dub links…
+                {t("loadingYourDubLinks")}
               </p>
             </div>
           ) : (
             <div className="space-y-2">
-              <Label className="text-xs">Dub short link *</Label>
+              <Label className="text-xs">{t("dubShortLink")}</Label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -414,13 +416,13 @@ export function DubshForm() {
                         </span>
                         {selectedLink.clicks !== undefined && (
                           <span className="text-muted-foreground text-xs">
-                            ({selectedLink.clicks} clicks)
+                            {t("clicksClicks", { clicks: selectedLink.clicks })}
                           </span>
                         )}
                       </span>
                     ) : (
                       <span className="text-muted-foreground">
-                        Select a short link…
+                        {t("selectAShortLink")}
                       </span>
                     )}
                     <ArrowSwapVertical className="ml-2 size-4 shrink-0 opacity-50" />
@@ -428,9 +430,9 @@ export function DubshForm() {
                 </PopoverTrigger>
                 <PopoverContent className="w-[400px] p-0">
                   <Command>
-                    <CommandInput placeholder="Search links…" />
+                    <CommandInput placeholder={t("searchLinks")} />
                     <CommandList>
-                      <CommandEmpty>No links found.</CommandEmpty>
+                      <CommandEmpty>{t("noLinksFound")}</CommandEmpty>
                       <CommandGroup>
                         {links.map((link) => {
                           const fullUrl = buildShortUrl(link.domain, link.key);
@@ -493,7 +495,7 @@ export function DubshForm() {
               )}
               {!errors.shortUrl && selectedLink && (
                 <p className="text-muted-foreground text-[11px]">
-                  Scans go to {selectedLink.url}
+                  {t("scansGoToUrl", { url: selectedLink.url })}
                 </p>
               )}
             </div>
@@ -505,7 +507,7 @@ export function DubshForm() {
 
       {mode !== "manual" && (
         <p className="text-muted-foreground text-xs">
-          Scanning will open your Dub short link.
+          {t("scanningWillOpenYourDub")}
         </p>
       )}
     </div>

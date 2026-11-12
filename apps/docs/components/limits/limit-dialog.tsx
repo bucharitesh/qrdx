@@ -8,6 +8,7 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect } from "react";
 import { create } from "zustand";
 import { limitCopy } from "@/app/(app)/settings/usage/_lib/limit-copy";
@@ -77,6 +78,7 @@ export function useShowLimit() {
 
 /** The limit card in a dialog; the app shell renders one. */
 export function LimitDialogHost() {
+  const t = useTranslations("limits.limitDialog");
   const limits = usePlanLimits();
   const request = useLimitDialogStore((state) => state.request);
   const open = useLimitDialogStore((state) => state.open);
@@ -104,7 +106,7 @@ export function LimitDialogHost() {
     >
       <ResponsiveDialogContent className="gap-4 px-5 pb-6 sm:max-w-md sm:p-6">
         <ResponsiveDialogHeader className="text-left">
-          <ResponsiveDialogTitle>Limit reached</ResponsiveDialogTitle>
+          <ResponsiveDialogTitle>{t("limitReached")}</ResponsiveDialogTitle>
           <ResponsiveDialogDescription className="sr-only">
             {copy?.reason}
           </ResponsiveDialogDescription>

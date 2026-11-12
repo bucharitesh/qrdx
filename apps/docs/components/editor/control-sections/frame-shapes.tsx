@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { GalleryAdd, Trash } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   getQRShapePath,
   getQRSilhouetteFit,
@@ -30,20 +31,14 @@ import { CompactTile, OptionGrid } from "./option-tiles";
 export type FrameShapeId = "circle" | "heart" | "silhouette";
 
 /** Names in the picker. "Circle" is taken by the ring frame with curved text. */
-export const FRAME_SHAPE_NAMES: Record<FrameShapeId, string> = {
-  circle: "Dot circle",
-  heart: "Heart",
-  silhouette: "Silhouette",
-};
-
-const SHAPE_HELP: Record<FrameShapeId, string> = {
-  circle:
-    "The code sits in a circle of decorative dots, with a clear ring around it. Scanners read only the code in the middle, so the circle is a little bigger for the same scan distance.",
-  heart:
-    "The code sits in a heart of decorative dots, with a clear ring around it. Scanners read only the code in the middle, so print a heart larger than a square code for the same scan distance.",
-  silhouette:
-    "The code sits in the roomiest middle part of your shape, with a clear ring around it. Only the outline is kept, never the picture, and links, the community and snippets use a square code.",
-};
+export function useFrameShapeNames(): Record<FrameShapeId, string> {
+  const t = useTranslations("editor.controlSections.frameShapes");
+  return {
+    circle: t("names.circle"),
+    heart: t("names.heart"),
+    silhouette: t("names.silhouette"),
+  };
+}
 
 /** File names short enough to quote in a message. */
 const SHORT_NAME = 28;
@@ -142,6 +137,8 @@ export function FrameShapes({
   style: QRStyle;
   setStyle: (next: QRStyle) => void;
 }) {
+  const frameShapeNames = useFrameShapeNames();
+  const t = useTranslations("editor.controlSections.frameShapes");
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [picking, setPicking] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
@@ -230,7 +227,7 @@ export function FrameShapes({
     <div className="space-y-3">
       <input
         accept={SILHOUETTE_ACCEPT}
-        aria-label="Upload a silhouette"
+        aria-label={t("uploadASilhouette")}
         className="sr-only"
         onChange={upload}
         ref={fileInputRef}
@@ -239,18 +236,20 @@ export function FrameShapes({
       />
       <div>
         <div className="mb-2 flex items-baseline justify-between gap-3 text-xs">
-          <span className="text-muted-foreground font-medium">Shaped code</span>
+          <span className="text-muted-foreground font-medium">
+            {t("shapedCode")}
+          </span>
           {current && (
             <span className="text-foreground font-medium">
-              {FRAME_SHAPE_NAMES[current]}
+              {frameShapeNames[current]}
             </span>
           )}
         </div>
-        <OptionGrid columns={6} label="Shaped code">
-          {(Object.keys(FRAME_SHAPE_NAMES) as FrameShapeId[]).map((id) => (
+        <OptionGrid columns={6} label={t("shapedCode")}>
+          {(Object.keys(frameShapeNames) as FrameShapeId[]).map((id) => (
             <CompactTile
               key={id}
-              name={FRAME_SHAPE_NAMES[id]}
+              name={frameShapeNames[id]}
               onSelect={() => pick(id)}
               selected={current === id}
             >
@@ -271,8 +270,7 @@ export function FrameShapes({
           )}
           <div className="min-w-0 flex-1 space-y-2">
             <p className="text-muted-foreground text-xs text-pretty">
-              PNG, JPEG or SVG: a dark or solid shape on a light or clear
-              background.
+              {t("pngJpegOrSvgA")}
             </p>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -283,7 +281,11 @@ export function FrameShapes({
                 variant="outline"
               >
                 <GalleryAdd />
-                {busy ? "Tracing…" : silhouette ? "Replace" : "Upload a shape"}
+                {busy
+                  ? t("tracing")
+                  : silhouette
+                    ? t("replace")
+                    : t("uploadAShape")}
               </Button>
               {silhouette && (
                 <Button
@@ -293,7 +295,7 @@ export function FrameShapes({
                   variant="ghost"
                 >
                   <Trash />
-                  Remove
+                  {t("remove")}
                 </Button>
               )}
             </div>
@@ -308,7 +310,7 @@ export function FrameShapes({
       )}
       {current && (
         <p className="text-muted-foreground text-xs text-pretty">
-          {SHAPE_HELP[current]}
+          {t(`shapeHelp.${current}`)}
         </p>
       )}
     </div>

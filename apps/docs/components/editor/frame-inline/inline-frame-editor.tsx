@@ -13,6 +13,7 @@ import {
   Smallcaps,
   Text as TextIcon,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { FRAME_FONT_FAMILY } from "qrdx";
 import {
   type CSSProperties,
@@ -121,6 +122,7 @@ export function InlineFrameEditor({
   onCancel,
   onMoreOptions,
 }: InlineFrameEditorProps) {
+  const t = useTranslations("editor.frameInline.inlineFrameEditor");
   const inputRef = useRef<HTMLInputElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const counterId = useId();
@@ -195,7 +197,7 @@ export function InlineFrameEditor({
     >
       <input
         aria-describedby={showLeft ? counterId : undefined}
-        aria-label={`Frame text: ${target.name}`}
+        aria-label={t("frameTextName", { name: target.name })}
         autoComplete="off"
         className={cn(
           "pointer-events-auto absolute m-0 border-0 p-0 outline-none",
@@ -239,7 +241,7 @@ export function InlineFrameEditor({
       )}
 
       <div
-        aria-label="Frame text options"
+        aria-label={t("frameTextOptions")}
         aria-orientation="horizontal"
         className="bg-popover text-popover-foreground pointer-events-auto absolute flex items-center gap-0.5 rounded-full border p-1 shadow-md"
         onKeyDown={moveAlongToolbar}
@@ -252,7 +254,7 @@ export function InlineFrameEditor({
         }}
       >
         <MenuPopover
-          label="Text size"
+          label={t("textSize")}
           menu="size"
           onOpenChange={setMenu}
           side={menuSide}
@@ -274,7 +276,7 @@ export function InlineFrameEditor({
 
         {tweaks.textColor && (
           <MenuPopover
-            label="Text color"
+            label={t("textColor")}
             menu="text-color"
             onOpenChange={setMenu}
             side={menuSide}
@@ -287,7 +289,7 @@ export function InlineFrameEditor({
             }
           >
             <ColorEditor
-              label="Text color"
+              label={t("textColor")}
               onChange={(value) => onTweak({ kind: "textColor", value })}
               value={tweaks.textColor}
             />
@@ -297,7 +299,7 @@ export function InlineFrameEditor({
 
         {tweaks.frameColor && (
           <MenuPopover
-            label="Frame color"
+            label={t("frameColor")}
             menu="frame-color"
             onOpenChange={setMenu}
             side={menuSide}
@@ -310,7 +312,7 @@ export function InlineFrameEditor({
             }
           >
             <ColorEditor
-              label="Frame color"
+              label={t("frameColor")}
               onChange={(value) => onTweak({ kind: "frameColor", value })}
               value={tweaks.frameColor}
             />
@@ -321,7 +323,7 @@ export function InlineFrameEditor({
         {tweaks.icons.length > 0 && (
           <MenuPopover
             className="w-80"
-            label="Icon"
+            label={t("icon")}
             menu="icon"
             onOpenChange={setMenu}
             side={menuSide}
@@ -334,9 +336,9 @@ export function InlineFrameEditor({
 
         <Divider />
 
-        <TooltipWrapper label="More frame options" side="top">
+        <TooltipWrapper label={t("moreFrameOptions")} side="top">
           <button
-            aria-label="More frame options"
+            aria-label={t("moreFrameOptions")}
             className={menuButton}
             onClick={onMoreOptions}
             type="button"
@@ -350,7 +352,7 @@ export function InlineFrameEditor({
             className="text-muted-foreground px-2 text-xs tabular-nums"
             id={counterId}
           >
-            {left} left
+            {t("leftLeft", { left })}
           </span>
         )}
       </div>

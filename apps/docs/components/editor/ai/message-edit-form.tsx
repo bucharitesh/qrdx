@@ -7,6 +7,7 @@ import {
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import type { JSONContent } from "@tiptap/react";
+import { useTranslations } from "next-intl";
 import { useMemo, useReducer, useState } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -42,6 +43,7 @@ export function MessageEditForm({
   onEditCancel,
   disabled,
 }: MessageEditFormProps) {
+  const t = useTranslations("editor.ai.messageEditForm");
   const promptData = message.metadata?.promptData;
 
   const [editJsonContent, setEditJsonContent] = useState<JSONContent>(() => {
@@ -134,7 +136,7 @@ export function MessageEditForm({
         />
 
         <div className="flex items-center gap-2">
-          <TooltipWrapper label="Cancel edit" asChild>
+          <TooltipWrapper label={t("cancelEdit")} asChild>
             <Button
               variant="outline"
               size="sm"
@@ -145,7 +147,7 @@ export function MessageEditForm({
             </Button>
           </TooltipWrapper>
 
-          <TooltipWrapper label="Confirm edit" asChild>
+          <TooltipWrapper label={t("confirmEdit")} asChild>
             <Button
               variant="secondary"
               size="sm"

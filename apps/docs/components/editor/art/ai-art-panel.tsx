@@ -31,6 +31,7 @@ import {
   Link21,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
 import { AIArtPresetGallery } from "@/components/sections/ai-art/ai-art-preset-gallery";
@@ -82,6 +83,7 @@ interface AIArtPanelProps {
  * in and runs once you're back ("AI_ART_GENERATE").
  */
 export function AIArtPanel({ style }: AIArtPanelProps) {
+  const t = useTranslations("editor.art.aiArtPanel");
   const payload = useQREditorStore((state) => state.value);
   const contentType = useQREditorStore((state) => state.contentType);
   const { handleSetTab } = useControlsTabFromUrl();
@@ -173,7 +175,7 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
 
       <div className="space-y-2">
         <div className="flex items-baseline justify-between gap-2">
-          <Label htmlFor="art-ai-prompt">Style</Label>
+          <Label htmlFor="art-ai-prompt">{t("style")}</Label>
           <span className="text-muted-foreground text-xs tabular-nums">
             {draft.prompt.length}/{ART_PROMPT_MAX_LENGTH}
           </span>
@@ -191,7 +193,7 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
             const prompt = event.target.value;
             updateDraft({ prompt, ...(draft.presetId && { presetId: null }) });
           }}
-          placeholder="Describe a scene, e.g. a lighthouse on a rocky coast at sunset, oil painting"
+          placeholder={t("describeASceneEG")}
           rows={3}
           value={draft.prompt}
         />
@@ -199,16 +201,16 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
 
       <ArtSlider
         disabled={generating}
-        ends={["More artistic", "Clearer code"]}
+        ends={[t("moreArtistic"), t("clearerCode")]}
         id="art-ai-visibility"
-        label="QR visibility"
+        label={t("qrVisibility")}
         onChange={(visibility) => updateDraft({ visibility })}
         range={ART_QR_VISIBILITY}
         value={draft.visibility}
       />
 
       <div className="space-y-2">
-        <Label id="art-ai-variations">Variations</Label>
+        <Label id="art-ai-variations">{t("variations")}</Label>
         <ToggleGroup
           aria-labelledby="art-ai-variations"
           className="w-full"
@@ -231,8 +233,7 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
           ))}
         </ToggleGroup>
         <p className="text-muted-foreground text-xs">
-          Each variation is its own image and uses 1 credit. The best one to
-          scan is picked for you.
+          {t("eachVariationIsItsOwn")}
         </p>
       </div>
 
@@ -251,15 +252,15 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
           >
             {generating ? <Spinner /> : <Bot />}
             {generating
-              ? "Generating…"
+              ? t("generating")
               : !art.signedIn
-                ? "Sign in to generate"
-                : `Generate ${draft.variations > 1 ? `${draft.variations} variations` : "QR art"}`}
+                ? t("signInToGenerate")
+                : t("generateVariations", { count: draft.variations })}
           </Button>
           {generating && (
             <Button onClick={art.cancel} variant="outline">
               <Close />
-              Cancel
+              {t("cancel")}
             </Button>
           )}
         </div>
@@ -277,7 +278,7 @@ export function AIArtPanel({ style }: AIArtPanelProps) {
           variant="outline"
         >
           <GalleryIcon />
-          Show your {result.variants.length > 1 ? "results" : "result"}
+          {t("showResults", { count: result.variants.length })}
         </Button>
       )}
     </div>
@@ -298,13 +299,14 @@ function EncodesNote({
   issue: ReturnType<typeof artPayloadIssue>;
   onOpenContent: () => void;
 }) {
+  const t = useTranslations("editor.art.aiArtPanel");
   const box = "bg-muted/40 flex gap-2.5 rounded-lg border p-3 text-xs";
   if (issue === "empty") {
     return (
       <div className={cn(box, "flex-col")}>
         <p className="text-muted-foreground flex gap-2">
           <InfoCircle aria-hidden className="mt-px size-4 shrink-0" />
-          Add your content first: AI art paints the code you're editing.
+          {t("addYourContentFirstAi")}
         </p>
         <Button
           className="self-start"
@@ -313,7 +315,7 @@ function EncodesNote({
           variant="outline"
         >
           <Edit2 />
-          Add content
+          {t("addContent")}
         </Button>
       </div>
     );
@@ -322,9 +324,10 @@ function EncodesNote({
     return (
       <p className={cn(box, "text-muted-foreground")} role="status">
         <InfoCircle aria-hidden className="mt-px size-4 shrink-0" />
-        AI art fits up to {ART_TEXT_MAX_LENGTH} characters, and this code has{" "}
-        {payload.trim().length}. A shorter link, or a dynamic code's short link,
-        fits.
+        {t("aiArtFitsUpTo", {
+          ART_TEXT_MAX_LENGTH,
+          length: payload.trim().length,
+        })}
       </p>
     );
   }
@@ -333,11 +336,14 @@ function EncodesNote({
       <p className={cn(box, "text-muted-foreground")}>
         <Flash aria-hidden className="mt-px size-4 shrink-0" variant="Bold" />
         <span className="min-w-0 text-pretty">
-          Encodes your dynamic link{" "}
-          <span className="text-foreground font-medium break-all">
-            {displayLink(dynamicLink)}
-          </span>
-          , so you can change where it points after printing.
+          {t.rich("encodesYourDynamicLinkValue", {
+            value: displayLink(dynamicLink),
+            span: (chunks) => (
+              <span className="text-foreground font-medium break-all">
+                {chunks}
+              </span>
+            ),
+          })}
         </span>
       </p>
     );
@@ -349,17 +355,16 @@ function EncodesNote({
     <p className={cn(box, "text-muted-foreground")}>
       <Link21 aria-hidden className="mt-px size-4 shrink-0" />
       <span className="min-w-0 text-pretty">
-        {contentType === "url" ? (
-          <>
-            Encodes{" "}
-            <span className="text-foreground font-medium break-all">
-              {displayLink(payload.trim())}
-            </span>
-            , fixed once printed. Make it dynamic in Content to change it later.
-          </>
-        ) : (
-          <>Encodes your {label} details, fixed once printed.</>
-        )}
+        {contentType === "url"
+          ? t.rich("encodesValueFixedOncePrinted", {
+              value: displayLink(payload.trim()),
+              span: (chunks) => (
+                <span className="text-foreground font-medium break-all">
+                  {chunks}
+                </span>
+              ),
+            })
+          : t("encodesYourLabelDetailsFixed", { label })}
       </span>
     </p>
   );
@@ -416,6 +421,7 @@ function AdvancedOptions({
   style: QRStyle;
   disabled: boolean;
 }) {
+  const t = useTranslations("editor.art.aiArtPanel");
   const draft = useArtSessionStore((state) => state.draft);
   const updateDraft = useArtSessionStore((state) => state.updateDraft);
   const [open, setOpen] = useState(false);
@@ -435,8 +441,8 @@ function AdvancedOptions({
         referenceIsLogo: true,
       });
     } catch {
-      toast.error("Couldn't use your logo", {
-        description: "Upload it as a reference image instead.",
+      toast.error(t("couldntUseYourLogo"), {
+        description: t("uploadItAsAReference"),
       });
     } finally {
       setPreparing(false);
@@ -460,8 +466,8 @@ function AdvancedOptions({
           variant="ghost"
         >
           {ART_SUPPORTS_SEED
-            ? "Advanced: creativity, seed, reference"
-            : "Advanced: creativity, reference"}
+            ? t("advancedCreativitySeedReference")
+            : t("advancedCreativityReference")}
           <ArrowDown2
             className={cn(
               "size-3.5 transition-transform duration-200",
@@ -473,16 +479,16 @@ function AdvancedOptions({
       <CollapsibleContent className="space-y-5 pt-3">
         <ArtSlider
           disabled={disabled}
-          ends={["Follows your prompt", "Interprets freely"]}
+          ends={[t("followsYourPrompt"), t("interpretsFreely")]}
           id="art-ai-creativity"
-          label="Creativity"
+          label={t("creativity")}
           onChange={(creativity) => updateDraft({ creativity })}
           range={ART_CREATIVITY}
           value={draft.creativity}
         />
 
         <div className="space-y-2">
-          <Label htmlFor="art-ai-negative">Things to avoid</Label>
+          <Label htmlFor="art-ai-negative">{t("thingsToAvoid")}</Label>
           <Textarea
             disabled={disabled}
             id="art-ai-negative"
@@ -490,7 +496,7 @@ function AdvancedOptions({
             onChange={(event) =>
               updateDraft({ negativePrompt: event.target.value })
             }
-            placeholder="e.g. people, buildings, dark colors"
+            placeholder={t("eGPeopleBuildingsDark")}
             rows={2}
             value={draft.negativePrompt}
           />
@@ -499,13 +505,13 @@ function AdvancedOptions({
         {ART_SUPPORTS_SEED && (
           <div className="space-y-2">
             <div className="flex items-center justify-between gap-2">
-              <Label htmlFor="art-ai-seed">Seed</Label>
+              <Label htmlFor="art-ai-seed">{t("seed")}</Label>
               <div className="flex items-center gap-2">
                 <Label
                   className="text-muted-foreground text-xs"
                   htmlFor="art-ai-seed-lock"
                 >
-                  Lock seed
+                  {t("lockSeed")}
                 </Label>
                 <Switch
                   checked={draft.seedLocked}
@@ -522,21 +528,21 @@ function AdvancedOptions({
               onChange={(event) =>
                 updateDraft({ seed: event.target.value.replace(/[^\d]/g, "") })
               }
-              placeholder={draft.seedLocked ? "e.g. 42" : "Random each run"}
+              placeholder={draft.seedLocked ? "e.g. 42" : t("randomEachRun")}
               value={draft.seed}
             />
           </div>
         )}
 
         <div className="space-y-2">
-          <Label>Reference image</Label>
+          <Label>{t("referenceImage")}</Label>
           {logo && (
             <div className="flex items-center justify-between gap-3">
               <Label
                 className="cursor-pointer text-xs font-normal"
                 htmlFor="art-ai-logo"
               >
-                Use my logo as reference
+                {t("useMyLogoAsReference")}
               </Label>
               <Switch
                 checked={draft.referenceIsLogo && Boolean(draft.reference)}
@@ -548,7 +554,7 @@ function AdvancedOptions({
           )}
           <input
             accept={AI_ART_REFERENCE_TYPES.join(",")}
-            aria-label="Upload a reference image"
+            aria-label={t("uploadAReferenceImage")}
             className="sr-only"
             onChange={upload}
             ref={inputRef}
@@ -557,7 +563,7 @@ function AdvancedOptions({
           {draft.reference ? (
             <div className="flex items-center gap-3">
               <img
-                alt="Reference"
+                alt={t("reference")}
                 className="size-12 rounded border object-cover"
                 src={draft.reference}
               />
@@ -570,7 +576,7 @@ function AdvancedOptions({
                 variant="ghost"
               >
                 <Close />
-                Remove
+                {t("remove")}
               </Button>
             </div>
           ) : (
@@ -581,13 +587,11 @@ function AdvancedOptions({
               variant="outline"
             >
               {preparing ? <Spinner /> : <GalleryAdd />}
-              Upload reference
+              {t("uploadReference")}
             </Button>
           )}
           <p className="text-muted-foreground text-xs text-pretty">
-            Optional. Its colors and shapes carry over into the artwork. It's
-            resized in your browser and sent with your prompt through Vercel AI
-            Gateway to {ART_MODEL_LABEL}.
+            {t("optionalItsColorsAndShapes", { ART_MODEL_LABEL })}
           </p>
         </div>
       </CollapsibleContent>
@@ -604,33 +608,30 @@ function CreditsLine({
   signedIn: boolean;
   variations: number;
 }) {
+  const t = useTranslations("editor.art.aiArtPanel");
   const className = "text-muted-foreground text-xs text-pretty";
   if (!signedIn) {
     return (
       <p className={className}>
-        Sign in to generate. Every plan includes AI art images each month;{" "}
-        <Link
-          className="text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
-          href="/pricing"
-        >
-          see plans
-        </Link>
-        .
+        {t.rich("signInToGenerateEvery", {
+          link: (chunks) => (
+            <Link
+              className="text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+              href="/pricing"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </p>
     );
   }
   if (!credits) {
-    return (
-      <p className={className}>
-        Each image uses 1 AI art credit; failed images are refunded.
-      </p>
-    );
+    return <p className={className}>{t("eachImageUses1Ai")}</p>;
   }
   if (credits.remaining === null) {
     return (
-      <p className={className}>
-        Unlimited AI art on your plan. This run uses {variations}.
-      </p>
+      <p className={className}>{t("unlimitedAiArtOnYour", { variations })}</p>
     );
   }
   const resets = new Date(credits.resetsAt).toLocaleDateString(undefined, {
@@ -640,17 +641,24 @@ function CreditsLine({
   });
   return (
     <p className={className}>
-      <span className="text-foreground font-medium tabular-nums">
-        {credits.remaining} of {credits.limit}
-      </span>{" "}
-      AI art images left this month
-      {credits.pooled ? " (shared by your team)" : ""}, resets {resets}. This
-      run uses {variations}.
+      {t.rich("creditsLeft", {
+        remaining: credits.remaining,
+        limit: credits.limit ?? 0,
+        pooled: credits.pooled ? "yes" : "no",
+        resets,
+        variations,
+        count: (chunks) => (
+          <span className="text-foreground font-medium tabular-nums">
+            {chunks}
+          </span>
+        ),
+      })}
       {credits.remaining < variations && (
         <span className="text-amber-600 dark:text-amber-400">
           {" "}
-          Not enough left: pick fewer variations
-          {credits.plan === "business" ? "." : " or upgrade."}
+          {credits.plan === "business"
+            ? t("notEnoughLeft")
+            : t("notEnoughLeftOrUpgrade")}
         </span>
       )}
     </p>

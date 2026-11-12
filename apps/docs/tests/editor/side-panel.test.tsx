@@ -2,8 +2,9 @@
 // phones). The open/close/focus flow runs in a real browser in
 // e2e/playground.e2e.ts ("side panels"); these cover the keyboard rules and
 // the closed markup that flow relies on.
-import { renderToStaticMarkup } from "react-dom/server";
+
 import { describe, expect, it, test, vi } from "vitest";
+import { renderIntl } from "../support/intl";
 
 vi.mock("@/actions/qr-themes", () => ({ getThemes: vi.fn() }));
 vi.mock("@/actions/user-settings", () => ({ getUserSettings: vi.fn() }));
@@ -88,7 +89,7 @@ test("focuses search on open with a mouse, the panel itself on touch", () => {
 
 describe("closed markup", () => {
   it("the More tile opens a dialog panel and the catalog isn't rendered in place", () => {
-    const markup = renderToStaticMarkup(picker());
+    const markup = renderIntl(picker());
     expect(markup).toMatch(
       /<button[^>]*aria-expanded="false"[^>]*aria-haspopup="dialog"[^>]*aria-label="More dot shapes"/,
     );
@@ -96,7 +97,7 @@ describe("closed markup", () => {
   });
 
   it("a closed panel renders only its trigger", () => {
-    const markup = renderToStaticMarkup(
+    const markup = renderIntl(
       <SidePanel
         onOpenChange={() => {}}
         open={false}
@@ -112,7 +113,7 @@ describe("closed markup", () => {
   });
 
   it("a side-panel section renders its row, not its content, until opened", () => {
-    const markup = renderToStaticMarkup(
+    const markup = renderIntl(
       <ControlSection popover summary="Gear" title="Eyes">
         <p>Eye pickers</p>
       </ControlSection>,
@@ -123,7 +124,7 @@ describe("closed markup", () => {
   });
 
   it("an inline section still renders its content in place", () => {
-    const markup = renderToStaticMarkup(
+    const markup = renderIntl(
       <ControlSection summary="Circle" title="Dots">
         <p>Dot pickers</p>
       </ControlSection>,

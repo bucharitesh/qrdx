@@ -21,6 +21,7 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { Separator } from "@repo/design-system/components/ui/separator";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -49,13 +50,17 @@ export function QRSaveDialog({
   onSave,
   isSaving,
   initialThemeName = "",
-  title = "Save QR Code Theme",
-  description = "Save your QR code design as a theme to reuse later.",
-  ctaLabel = "Save Theme",
+  title: titleProp,
+  description: descriptionProp,
+  ctaLabel: ctaLabelProp,
   existingThemeName,
   onUpdateExisting,
   isUpdating = false,
 }: QRSaveDialogProps) {
+  const t = useTranslations("editor.qrSaveDialog");
+  const title = titleProp ?? t("defaultTitle");
+  const description = descriptionProp ?? t("defaultDescription");
+  const ctaLabel = ctaLabelProp ?? t("defaultCta");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -100,17 +105,17 @@ export function QRSaveDialog({
                 {isUpdating ? (
                   <>
                     <Loader2 className="mr-1 size-4 animate-spin" />
-                    Updating
+                    {t("updating")}
                   </>
                 ) : (
-                  <>Update &ldquo;{existingThemeName}&rdquo;</>
+                  t("updateExistingthemename", { existingThemeName })
                 )}
               </Button>
 
               <div className="flex items-center gap-3">
                 <Separator className="flex-1" />
                 <span className="text-muted-foreground text-xs">
-                  or save as a new theme
+                  {t("orSaveAsANew")}
                 </span>
                 <Separator className="flex-1" />
               </div>
@@ -124,9 +129,9 @@ export function QRSaveDialog({
                 name="themeName"
                 render={({ field }) => (
                   <FormItem className="grid">
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("name")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="My Awesome Theme" {...field} />
+                      <Input placeholder={t("myAwesomeTheme")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -142,7 +147,7 @@ export function QRSaveDialog({
             variant="ghost"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             size="sm"
@@ -158,10 +163,10 @@ export function QRSaveDialog({
             {isSaving || form.formState.isSubmitting ? (
               <>
                 <Loader2 className="mr-1 size-4 animate-spin" />
-                Saving
+                {t("saving")}
               </>
             ) : hasUpdateOption ? (
-              "Save as New"
+              t("saveAsNew")
             ) : (
               ctaLabel
             )}

@@ -7,6 +7,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { useQuery } from "@tanstack/react-query";
 import { Brush2, DocumentUpload, Global } from "iconsax-reactjs";
 import dynamic from "next/dynamic";
+import { useTranslations } from "next-intl";
 import {
   type AnyQRFrame,
   DEFAULT_FRAME_TEXT,
@@ -80,11 +81,11 @@ const CUSTOM_ID = "custom";
 const SHAPED_ID = "shaped";
 
 /** Name for the collapsed Frame header. */
-export function frameName(frame: AnyQRFrame | undefined) {
-  if (!frame || frame.style === "none") return "None";
+export function frameName(frame: AnyQRFrame | undefined, none: string) {
+  if (!frame || frame.style === "none") return none;
   if (frame.style === "custom") return customFrameName(frame);
   return (
-    BUILT_IN_OPTIONS.find((option) => option.id === frame.style)?.name ?? "None"
+    BUILT_IN_OPTIONS.find((option) => option.id === frame.style)?.name ?? none
   );
 }
 
@@ -124,6 +125,7 @@ function useSavedFrames() {
 }
 
 export function FrameControls() {
+  const t = useTranslations("editor.controlSections.frameControls");
   const { style, setStyle } = useEditableStyle();
   const { checkValidSession } = useSessionGuard();
   const frame: AnyQRFrame = style.frame ?? { style: "none" };
@@ -218,7 +220,7 @@ export function FrameControls() {
       <FramePicker
         active={active}
         choices={pickerChoices}
-        currentName={frameName(frame)}
+        currentName={frameName(frame, t("none"))}
         featured={FEATURED}
         onPick={pick}
         preview={(option) => (
@@ -271,7 +273,7 @@ export function FrameControls() {
             variant="outline"
           >
             <Brush2 aria-hidden className="size-4" />
-            Customise
+            {t("customise")}
           </Button>
         )}
         <Button
@@ -285,7 +287,7 @@ export function FrameControls() {
           variant="outline"
         >
           <DocumentUpload aria-hidden className="size-4" />
-          Import SVG
+          {t("importSvg")}
         </Button>
         {custom && (
           <Button
@@ -299,14 +301,13 @@ export function FrameControls() {
             variant="outline"
           >
             <Global aria-hidden className="size-4" />
-            Publish frame
+            {t("publishFrame")}
           </Button>
         )}
       </div>
 
       <p className="text-muted-foreground text-xs">
-        The frame is added around the code, so the downloaded image gets bigger
-        and the code itself stays scannable.
+        {t("theFrameIsAddedAround")}
       </p>
 
       {dialogs.import && (
@@ -340,6 +341,7 @@ function BuiltInFrameFields({
   frame: BuiltInFrame;
   onChange: (changes: Partial<BuiltInFrame>) => void;
 }) {
+  const t = useTranslations("editor.controlSections.frameControls");
   const active = frame.style !== "none";
   const isGradient = frame.style === "gradient-border";
   const frameColor =
@@ -359,7 +361,7 @@ function BuiltInFrameFields({
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <Label className="text-xs" htmlFor="frame-text">
-            Label
+            {t("label")}
           </Label>
           <span className="text-muted-foreground text-xs tabular-nums">
             {(frame.text ?? DEFAULT_FRAME_TEXT).length}/{FRAME_TEXT_MAX_LENGTH}
@@ -375,7 +377,7 @@ function BuiltInFrameFields({
             })
           }
           placeholder={
-            active ? "Leave empty for no label" : "Pick a frame first"
+            active ? t("leaveEmptyForNoLabel") : t("pickAFrameFirst")
           }
           value={frame.text ?? DEFAULT_FRAME_TEXT}
         />
@@ -386,21 +388,21 @@ function BuiltInFrameFields({
         <FrameColorField
           disabled={!active}
           id="frame-color"
-          label="Frame color"
+          label={t("frameColor")}
           onChange={(color) => onChange({ color })}
           value={frameColor}
         />
         <FrameColorField
           disabled={!active}
           id="frame-text-color"
-          label="Text color"
+          label={t("textColor")}
           onChange={(color) => onChange({ textColor: color })}
           value={textColor}
         />
         {isGradient && (
           <FrameColorField
             id="frame-end-color"
-            label="End color"
+            label={t("endColor")}
             onChange={(color) => onChange({ secondaryColor: color })}
             value={endColor}
           />
@@ -411,7 +413,7 @@ function BuiltInFrameFields({
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">
             <Label className="text-xs" htmlFor="frame-secondary-text">
-              Second line
+              {t("secondLine")}
             </Label>
             <span className="text-muted-foreground text-xs tabular-nums">
               {(frame.secondaryText ?? "").length}/{FRAME_TEXT_MAX_LENGTH}
@@ -428,7 +430,7 @@ function BuiltInFrameFields({
                 ),
               })
             }
-            placeholder="Optional, e.g. your website"
+            placeholder={t("optionalEGYourWebsite")}
             value={frame.secondaryText ?? ""}
           />
         </div>

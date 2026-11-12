@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 import { type ColorConfig, getColorString } from "qrdx";
 import * as React from "react";
@@ -16,7 +17,7 @@ import type { QRStyle } from "@/types/theme";
 import { ColorPresets } from "./color-presets";
 import { CustomizationSections } from "./customization-sections";
 import { FrameControls, frameName } from "./frame-controls";
-import { FRAME_SHAPE_NAMES, frameShapeOf } from "./frame-shapes";
+import { frameShapeOf, useFrameShapeNames } from "./frame-shapes";
 import { LogoControls } from "./logo-controls";
 import { PaddingControls } from "./padding-controls";
 import {
@@ -83,6 +84,8 @@ export function DesignControls({
   onChange,
   focus,
 }: DesignControlsProps) {
+  const frameShapeNames = useFrameShapeNames();
+  const t = useTranslations("editor.controlSections.designControls");
   const current = React.useMemo(
     () => ({ ...defaultThemeState.styles, ...styles }),
     [styles],
@@ -114,12 +117,12 @@ export function DesignControls({
   const shape = frameShapeOf(current);
   const frameSummary =
     frameStyle !== "none"
-      ? frameName(current.frame)
+      ? frameName(current.frame, t("none"))
       : shape
-        ? FRAME_SHAPE_NAMES[shape]
+        ? frameShapeNames[shape]
         : current.templateId && current.templateId !== "default"
-          ? "Border"
-          : "None";
+          ? t("border")
+          : t("none");
   const margin = current.margin ?? 0;
 
   return (
@@ -138,33 +141,33 @@ export function DesignControls({
             ]}
           />
         }
-        title="Colors"
+        title={t("colors")}
       >
         <div className="grid grid-cols-2 gap-2">
           <GradientPicker
             kinds={QR_IMAGE_KINDS}
-            label="Background"
+            label={t("background")}
             name="bgColor"
             onChange={(color) => updateStyle("bgColor", color)}
             value={current.bgColor}
           />
           <GradientPicker
             kinds={QR_IMAGE_KINDS}
-            label="Foreground"
+            label={t("foreground")}
             name="fgColor"
             onChange={(color) => updateStyle("fgColor", color)}
             value={current.fgColor}
           />
           <GradientPicker
             kinds={QR_IMAGE_KINDS}
-            label="Eyes"
+            label={t("eyes")}
             name="eyeColor"
             onChange={(color) => updateStyle("eyeColor", color)}
             value={current.eyeColor}
           />
           <GradientPicker
             kinds={QR_IMAGE_KINDS}
-            label="Dots"
+            label={t("dots")}
             name="dotColor"
             onChange={(color) => updateStyle("dotColor", color)}
             value={current.dotColor}
@@ -182,7 +185,7 @@ export function DesignControls({
         hint="dots"
         section="dots"
         summary={patternName(current.bodyPattern)}
-        title="Dots"
+        title={t("dots")}
       >
         <DotPatternControl />
       </ControlSection>
@@ -196,7 +199,7 @@ export function DesignControls({
           current.cornerEyePattern,
           current.cornerEyeDotPattern,
         )}
-        title="Eyes"
+        title={t("eyes")}
       >
         <EyeControls />
       </ControlSection>
@@ -231,7 +234,7 @@ export function DesignControls({
         popover
         section="frame"
         summary={frameSummary}
-        title="Frame"
+        title={t("frame")}
       >
         <BorderControl />
         <FrameControls />
@@ -242,7 +245,7 @@ export function DesignControls({
         hint="quiet-zone"
         section="padding"
         summary={`${margin} ${margin === 1 ? "module" : "modules"}`}
-        title="Padding"
+        title={t("padding")}
       >
         <PaddingControls
           onChange={(value) => updateStyle("margin", value)}
@@ -255,7 +258,7 @@ export function DesignControls({
         hint="error-correction"
         section="error-correction"
         summary={level ? `${level.name} · ${level.recovery}` : undefined}
-        title="Error correction"
+        title={t("errorCorrection")}
       >
         <ErrorLevelControl />
       </ControlSection>

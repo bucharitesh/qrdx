@@ -3,6 +3,7 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import {
   FRAME_ICONS,
   FRAME_TEXT_MAX_LENGTH,
@@ -32,6 +33,7 @@ export function CustomFrameFields({
   frame: QRCustomFrame;
   onChange: (frame: QRCustomFrame) => void;
 }) {
+  const t = useTranslations("editor.controlSections.customFrameFields");
   const { spec } = frame;
   const primary = labelOfSlot(spec, "primary");
   const secondary = labelOfSlot(spec, "secondary");
@@ -46,26 +48,26 @@ export function CustomFrameFields({
       {primary && (
         <FrameLabelField
           id="frame-text"
-          label="Label"
+          label={t("label")}
           max={primary.maxLength ?? FRAME_TEXT_MAX_LENGTH}
           onChange={(text) => update({ text })}
-          placeholder="Leave empty for no label"
+          placeholder={t("leaveEmptyForNoLabel")}
           value={frame.text ?? primary.text}
         />
       )}
       {secondary && (
         <FrameLabelField
           id="frame-secondary-text"
-          label="Second line"
+          label={t("secondLine")}
           max={secondary.maxLength ?? FRAME_TEXT_MAX_LENGTH}
           onChange={(secondaryText) => update({ secondaryText })}
-          placeholder="Leave empty to hide it"
+          placeholder={t("leaveEmptyToHideIt")}
           value={frame.secondaryText ?? secondary.text}
         />
       )}
       {!(primary || secondary) && (
         <p className="text-muted-foreground text-xs">
-          This frame has no labels to edit.
+          {t("thisFrameHasNoLabels")}
         </p>
       )}
 
@@ -74,7 +76,7 @@ export function CustomFrameFields({
           {tokens.has("frame") && (
             <FrameColorField
               id="frame-color"
-              label="Frame color"
+              label={t("frameColor")}
               onChange={(color) => update({ color })}
               value={colors.frame}
             />
@@ -82,7 +84,7 @@ export function CustomFrameFields({
           {tokens.has("text") && (
             <FrameColorField
               id="frame-text-color"
-              label="Text color"
+              label={t("textColor")}
               onChange={(textColor) => update({ textColor })}
               value={colors.text}
             />
@@ -90,7 +92,7 @@ export function CustomFrameFields({
           {tokens.has("accent") && (
             <FrameColorField
               id="frame-accent-color"
-              label="Accent color"
+              label={t("accentColor")}
               onChange={(secondaryColor) => update({ secondaryColor })}
               value={colors.accent}
             />
@@ -179,9 +181,10 @@ export function IconPicker({
   taken: FrameSpecIcon[];
   onPick: (icon: FrameSpecIcon) => void;
 }) {
+  const t = useTranslations("editor.controlSections.customFrameFields");
   return (
     <fieldset className="m-0 min-w-0 space-y-1.5 border-0 p-0">
-      <legend className="mb-1.5 text-xs font-medium">Icon</legend>
+      <legend className="mb-1.5 text-xs font-medium">{t("icon")}</legend>
       <div className="grid grid-cols-8 gap-1.5">
         {FRAME_ICONS.filter((icon) => !taken.includes(icon)).map((icon) => {
           const path = getFrameIconPath(icon);

@@ -14,6 +14,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { QRCustomFrame } from "qrdx";
 import { useEffect, useId, useState } from "react";
 import {
@@ -50,6 +51,7 @@ export function PublishFrameDialog({
   themeId?: string;
   defaultName?: string;
 }) {
+  const t = useTranslations("community.publishFrameDialog");
   const nameId = useId();
   const descriptionId = useId();
   const [name, setName] = useState(defaultName);
@@ -104,35 +106,32 @@ export function PublishFrameDialog({
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Tick aria-hidden className="size-5" />
-                Published
+                {t("published")}
               </DialogTitle>
               <DialogDescription>
-                {name.trim() || "Your frame"} is live in the community.
+                {t("valueIsLiveInThe", { value: name.trim() || "Your frame" })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button onClick={() => onOpenChange(false)} variant="outline">
-                Done
+                {t("done")}
               </Button>
               <Button asChild>
-                <Link href={published}>View it</Link>
+                <Link href={published}>{t("viewIt")}</Link>
               </Button>
             </DialogFooter>
           </>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Publish this frame</DialogTitle>
-              <DialogDescription>
-                Anyone can find it in the community and use it with their own
-                codes.
-              </DialogDescription>
+              <DialogTitle>{t("publishThisFrame")}</DialogTitle>
+              <DialogDescription>{t("anyoneCanFindItIn")}</DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor={nameId}>Name</Label>
+                  <Label htmlFor={nameId}>{t("name")}</Label>
                   <span className="text-muted-foreground text-xs tabular-nums">
                     {name.length}/{NAME_MAX_LENGTH}
                   </span>
@@ -142,13 +141,13 @@ export function PublishFrameDialog({
                   id={nameId}
                   maxLength={NAME_MAX_LENGTH}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="e.g. Café table card"
+                  placeholder={t("eGCaféTableCard")}
                   value={name}
                 />
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor={descriptionId}>Description</Label>
+                  <Label htmlFor={descriptionId}>{t("description")}</Label>
                   <span className="text-muted-foreground text-xs tabular-nums">
                     {description.length}/{DESCRIPTION_MAX_LENGTH}
                   </span>
@@ -158,7 +157,7 @@ export function PublishFrameDialog({
                   id={descriptionId}
                   maxLength={DESCRIPTION_MAX_LENGTH}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Optional: what it's for"
+                  placeholder={t("optionalWhatItsFor")}
                   rows={3}
                   value={description}
                 />
@@ -186,7 +185,7 @@ export function PublishFrameDialog({
                       className="underline underline-offset-2"
                       href={refusal.href}
                     >
-                      See it
+                      {t("seeIt")}
                     </Link>
                   )}
                 </p>
@@ -195,14 +194,14 @@ export function PublishFrameDialog({
 
             <DialogFooter>
               <Button onClick={() => onOpenChange(false)} variant="outline">
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 disabled={!(accepted && name.trim()) || pending}
                 onClick={submit}
               >
                 {pending && <Spinner className="size-4" />}
-                {pending ? "Checking and publishing" : "Publish"}
+                {pending ? t("checkingAndPublishing") : t("publish")}
               </Button>
             </DialogFooter>
           </>
