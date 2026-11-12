@@ -1,7 +1,7 @@
 "use client";
 
-import Link from "next/link";
 import { type ComponentProps, useEffect, useRef } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { previousPathname } from "@/lib/navigation-history";
 import type {
   AnalyticsEventName,

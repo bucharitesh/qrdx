@@ -298,15 +298,24 @@ export interface EventDisplay {
   iso: string;
 }
 
-/** How the event reads to visitors, in the event's own time zone. */
-export function formatEventDisplay(event: CalendarEvent): EventDisplay {
+/**
+ * How the event reads to visitors, in the event's own time zone and in
+ * `locale` (the scanner's language on /p; "All day" comes translated).
+ */
+export function formatEventDisplay(
+  event: CalendarEvent,
+  {
+    locale = "en-US",
+    allDay = "All day",
+  }: { locale?: string; allDay?: string } = {},
+): EventDisplay {
   const times = eventTimes(event);
   if (times.allDay) {
     const start = new Date(`${times.startDate}T12:00:00Z`);
     const last = new Date(
       new Date(`${times.endDateExclusive}T12:00:00Z`).getTime() - 24 * HOUR_MS,
     );
-    const fmt = new Intl.DateTimeFormat("en-US", {
+    const fmt = new Intl.DateTimeFormat(locale, {
       timeZone: "UTC",
       weekday: "short",
       month: "short",
@@ -318,22 +327,22 @@ export function formatEventDisplay(event: CalendarEvent): EventDisplay {
         last.getTime() > start.getTime()
           ? fmt.formatRange(start, last)
           : fmt.format(start),
-      time: "All day",
-      month: start.toLocaleString("en-US", { timeZone: "UTC", month: "short" }),
+      time: allDay,
+      month: start.toLocaleString(locale, { timeZone: "UTC", month: "short" }),
       day: String(start.getUTCDate()),
       iso: times.startDate,
     };
   }
 
   const { timeZone } = event;
-  const dateFmt = new Intl.DateTimeFormat("en-US", {
+  const dateFmt = new Intl.DateTimeFormat(locale, {
     timeZone,
     weekday: "short",
     month: "short",
     day: "numeric",
     year: "numeric",
   });
-  const timeFmt = new Intl.DateTimeFormat("en-US", {
+  const timeFmt = new Intl.DateTimeFormat(locale, {
     timeZone,
     hour: "numeric",
     minute: "2-digit",
@@ -347,8 +356,8 @@ export function formatEventDisplay(event: CalendarEvent): EventDisplay {
     time: sameDay
       ? timeFmt.formatRange(times.start, times.end)
       : `${timeFmt.format(times.start)} – ${timeFmt.format(times.end)}`,
-    month: times.start.toLocaleString("en-US", { timeZone, month: "short" }),
-    day: times.start.toLocaleString("en-US", { timeZone, day: "numeric" }),
+    month: times.start.toLocaleString(locale, { timeZone, month: "short" }),
+    day: times.start.toLocaleString(locale, { timeZone, day: "numeric" }),
     iso: times.start.toISOString(),
   };
 }

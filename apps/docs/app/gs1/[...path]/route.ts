@@ -6,6 +6,7 @@ import {
 import { resolveShortLink } from "@/app/q/[slug]/resolve";
 import { statusPage } from "@/app/q/[slug]/status-page";
 import { parseDigitalLinkPath } from "@/lib/gs1/digital-link";
+import { scanPagesIntlFor } from "@/lib/i18n/scan-pages";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -27,16 +28,20 @@ async function resolve(
 ): Promise<Response> {
   const domainId = request.headers.get(CUSTOM_DOMAIN_HEADER);
   if (!domainId || !isCustomDomainRequest(request.headers)) {
-    return statusPage("not-found");
+    return statusPage("not-found", { intl: await scanPagesIntlFor(request) });
   }
   const { path } = await params;
   const parsed = parseDigitalLinkPath(
     `/${path.map((part) => encodeURIComponent(part)).join("/")}`,
   );
-  if (!parsed) return statusPage("not-found");
+  if (!parsed) {
+    return statusPage("not-found", { intl: await scanPagesIntlFor(request) });
+  }
   if (!parsed.ok) {
+    // The parser explains in English; other languages get the general text.
     return statusPage("invalid-gs1", {
       message: `${parsed.message} Check the link, or scan the code on the pack again.`,
+      intl: await scanPagesIntlFor(request),
     });
   }
   return resolveShortLink(

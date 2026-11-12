@@ -20,11 +20,11 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useState, useTransition } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import {
   membersWithoutTwoFactor,
   TWO_FACTOR_SECTION_ID,

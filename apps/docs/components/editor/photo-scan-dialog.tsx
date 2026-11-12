@@ -8,10 +8,10 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { usePhotoScanDialogStore } from "@/components/editor/photo-scan-dialog-store";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { ScanChecker } from "@/components/sections/tools/scan-checker";
 import { useQREditorStore } from "@/store/editor-store";
 

@@ -121,8 +121,10 @@ export function PageUsageMeter({ usage }: { usage: PageUsage }) {
   if (usage.limit === null) {
     return (
       <p className="text-muted-foreground text-sm">
-        {usage.used} {usage.used === 1 ? t("page") : t("pages")} ·{" "}
-        {PLAN_NAMES[usage.plan]} {t("planUnlimitedPages")}
+        {t("unlimitedPagesUsage", {
+          count: usage.used,
+          plan: PLAN_NAMES[usage.plan],
+        })}
       </p>
     );
   }

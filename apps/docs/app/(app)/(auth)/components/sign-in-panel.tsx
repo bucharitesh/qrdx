@@ -14,10 +14,10 @@ import {
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { SsoSignIn } from "@/ee/sso/sso-sign-in";
@@ -183,26 +183,24 @@ export function SignInPanel({
                   : t("createYourQrdxAccount")}
         </Title>
         <Description className="text-muted-foreground text-sm text-pretty">
-          {twoFactor ? (
-            t("yourAccountAsksForA")
-          ) : codeSentTo ? (
-            <>
-              {t("codeSentTo")}
-              <span className="font-medium break-all text-foreground">
-                {codeSentTo}
-              </span>
-            </>
-          ) : ssoOfferFor ? (
-            ssoOfferRequired ? (
-              t("yourCompanyRequiresSingleSign")
-            ) : (
-              t("yourCompanySignsInWith")
-            )
-          ) : isSignIn ? (
-            t("pickUpWhereYouLeft")
-          ) : (
-            t("freeToStartNoCard")
-          )}
+          {twoFactor
+            ? t("yourAccountAsksForA")
+            : codeSentTo
+              ? t.rich("codeSentTo", {
+                  email: codeSentTo,
+                  strong: (chunks) => (
+                    <span className="font-medium break-all text-foreground">
+                      {chunks}
+                    </span>
+                  ),
+                })
+              : ssoOfferFor
+                ? ssoOfferRequired
+                  ? t("yourCompanyRequiresSingleSign")
+                  : t("yourCompanySignsInWith")
+                : isSignIn
+                  ? t("pickUpWhereYouLeft")
+                  : t("freeToStartNoCard")}
         </Description>
       </div>
 

@@ -7,14 +7,13 @@ import {
   Reserve as UtensilsCrossed,
   Forbidden as WheatOff,
 } from "iconsax-reactjs";
-import type { ComponentType } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import type { ComponentType, ReactNode } from "react";
 import { mutedTextClass, surfaceClass } from "@/components/landing/block-kit";
 import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { MenuEditor } from "./menu-editor";
 import {
-  ALLERGEN_LABELS,
-  DIET_LABELS,
   type DietTag,
   formatMenuPrice,
   type MenuItem,
@@ -37,7 +36,28 @@ const DIET_ICONS: Partial<
 const pillClass =
   "inline-flex items-center gap-1 rounded-full bg-(--lp-fg)/8 px-2 py-0.5 text-xs font-medium";
 
+/** "Contains: Gluten, Milk" in the page's language (allergens are QRdx's names). */
+function Allergens({ allergens }: { allergens: MenuItem["allergens"] }) {
+  const t = useTranslations("scanPages.hosted.menu");
+  const locale = useLocale();
+  const names = allergens.map((allergen) => t(`allergens.${allergen}`));
+  return (
+    <p className={cn(mutedTextClass, "text-xs")}>
+      {t.rich("contains", {
+        label: (chunks: ReactNode) => (
+          <span className="font-medium">{chunks}</span>
+        ),
+        list: new Intl.ListFormat(locale, {
+          style: "short",
+          type: "unit",
+        }).format(names),
+      })}
+    </p>
+  );
+}
+
 function MenuItemRow({ item, currency }: { item: MenuItem; currency: string }) {
+  const t = useTranslations("scanPages.hosted.menu");
   const price =
     item.price === null ? null : formatMenuPrice(item.price, currency);
   return (
@@ -88,7 +108,7 @@ function MenuItemRow({ item, currency }: { item: MenuItem; currency: string }) {
           <div className="flex flex-wrap gap-1.5">
             {item.soldOut && (
               <span className={cn(pillClass, "bg-(--lp-fg) text-(--lp-bg)")}>
-                Sold out
+                {t("soldOut")}
               </span>
             )}
             {item.badge && (
@@ -109,29 +129,19 @@ function MenuItemRow({ item, currency }: { item: MenuItem; currency: string }) {
           </p>
         )}
         {item.diet.length > 0 && (
-          <ul
-            aria-label="Dietary information"
-            className="flex flex-wrap gap-1.5"
-          >
+          <ul aria-label={t("dietary")} className="flex flex-wrap gap-1.5">
             {item.diet.map((tag) => {
               const Icon = DIET_ICONS[tag];
               return (
                 <li className={pillClass} key={tag}>
                   {Icon && <Icon aria-hidden="true" className="size-3" />}
-                  {DIET_LABELS[tag]}
+                  {t(`diet.${tag}`)}
                 </li>
               );
             })}
           </ul>
         )}
-        {item.allergens.length > 0 && (
-          <p className={cn(mutedTextClass, "text-xs")}>
-            <span className="font-medium">Contains:</span>{" "}
-            {item.allergens
-              .map((allergen) => ALLERGEN_LABELS[allergen])
-              .join(", ")}
-          </p>
-        )}
+        {item.allergens.length > 0 && <Allergens allergens={item.allergens} />}
       </div>
     </li>
   );
@@ -139,6 +149,7 @@ function MenuItemRow({ item, currency }: { item: MenuItem; currency: string }) {
 
 /** Badges, description, diet tags and allergens (classic style). */
 function ItemDetails({ item }: { item: MenuItem }) {
+  const t = useTranslations("scanPages.hosted.menu");
   return (
     <>
       {item.description && (
@@ -147,10 +158,10 @@ function ItemDetails({ item }: { item: MenuItem }) {
         </p>
       )}
       {(item.soldOut || item.badge || item.diet.length > 0) && (
-        <ul aria-label="About this dish" className="flex flex-wrap gap-1.5">
+        <ul aria-label={t("aboutDish")} className="flex flex-wrap gap-1.5">
           {item.soldOut && (
             <li className={cn(pillClass, "bg-(--lp-fg) text-(--lp-bg)")}>
-              Sold out
+              {t("soldOut")}
             </li>
           )}
           {item.badge && (
@@ -168,20 +179,13 @@ function ItemDetails({ item }: { item: MenuItem }) {
             return (
               <li className={pillClass} key={tag}>
                 {Icon && <Icon aria-hidden="true" className="size-3" />}
-                {DIET_LABELS[tag]}
+                {t(`diet.${tag}`)}
               </li>
             );
           })}
         </ul>
       )}
-      {item.allergens.length > 0 && (
-        <p className={cn(mutedTextClass, "text-xs")}>
-          <span className="font-medium">Contains:</span>{" "}
-          {item.allergens
-            .map((allergen) => ALLERGEN_LABELS[allergen])
-            .join(", ")}
-        </p>
-      )}
+      {item.allergens.length > 0 && <Allergens allergens={item.allergens} />}
     </>
   );
 }
@@ -249,6 +253,7 @@ function ClassicItemRow({
 }
 
 export function MenuBlock({ id, props, context }: BlockRenderProps<MenuProps>) {
+  const t = useTranslations("scanPages.hosted.menu");
   const sections = props.sections.filter(
     (section) => section.items.length > 0 || section.name,
   );
@@ -258,7 +263,10 @@ export function MenuBlock({ id, props, context }: BlockRenderProps<MenuProps>) {
   const classic = props.style === "classic";
 
   return (
-    <section aria-label={props.title || "Menu"} className="flex flex-col gap-5">
+    <section
+      aria-label={props.title || t("menu")}
+      className="flex flex-col gap-5"
+    >
       {props.title && (
         <LpHeading
           as="h2"
@@ -269,7 +277,7 @@ export function MenuBlock({ id, props, context }: BlockRenderProps<MenuProps>) {
         </LpHeading>
       )}
       {props.showNav && named.length > 1 && (
-        <nav aria-label="Menu sections">
+        <nav aria-label={t("sections")}>
           <ul className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none]">
             {named.map((section) => (
               <li className="shrink-0" key={section.id}>

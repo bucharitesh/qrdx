@@ -1,9 +1,9 @@
 import { auth } from "@repo/auth/server";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { isEmailConfigured } from "@/lib/email/send";
 import { listNotificationWorkspaces } from "@/lib/events/notification-settings";
 import { getAppTranslations } from "@/lib/i18n/app-locale";

@@ -5,15 +5,25 @@ import { Share as Share2 } from "iconsax-reactjs";
 import { useState } from "react";
 import { buttonClass } from "./block-kit";
 
+/** QRdx's words on the button, translated by the block that renders it. */
+export interface ShareButtonText {
+  share: string;
+  linkCopied: string;
+  copyThisLink: string;
+}
+
 /** Native share sheet where available, otherwise copies the page link. */
 export function ShareButton({
   title,
-  label = "Share",
+  label,
+  text,
   blockId,
   shapeClassName,
 }: {
   title: string;
+  /** The owner's label; defaults to text.share */
   label?: string;
+  text: ShareButtonText;
   blockId: string;
   /** buttonShapeClass(theme) */
   shapeClassName?: string;
@@ -35,7 +45,7 @@ export function ShareButton({
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      window.prompt("Copy this link", url);
+      window.prompt(text.copyThisLink, url);
     }
   };
 
@@ -53,7 +63,9 @@ export function ShareButton({
       ) : (
         <Share2 aria-hidden="true" className="size-4" />
       )}
-      <span aria-live="polite">{copied ? "Link copied" : label}</span>
+      <span aria-live="polite">
+        {copied ? text.linkCopied : (label ?? text.share)}
+      </span>
     </button>
   );
 }

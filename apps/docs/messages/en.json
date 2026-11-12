@@ -1580,6 +1580,280 @@
       "report": "Report this code"
     }
   },
+  "scanPages": {
+    "reportAbuse": "Report abuse",
+    "privacy": "Privacy",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "Make your own QR code with QRdx",
+      "inactive": {
+        "title": "This QR code is no longer active",
+        "message": "This code has been turned off and no longer leads anywhere."
+      },
+      "notFound": {
+        "title": "QR code not found",
+        "message": "This link doesn't lead to a QR code. Its owner may have removed it, or the link was mistyped."
+      },
+      "rateLimited": {
+        "title": "Too many requests",
+        "message": "This network opened a lot of QR codes in a short time. Please try again in a few seconds."
+      },
+      "invalidGs1": {
+        "title": "This product link isn't valid",
+        "message": "Its product number (GTIN) or batch details can't be read. Check the link, or scan the code on the pack again."
+      },
+      "unavailable": {
+        "title": "Something went wrong",
+        "message": "We couldn't open this QR code right now. Please scan it again in a moment."
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "This campaign hasn't started yet",
+        "message": "Please scan this code again later."
+      },
+      "expired": {
+        "title": "This campaign has ended",
+        "message": "The page behind this QR code is no longer available."
+      },
+      "paused": {
+        "title": "This campaign is paused",
+        "message": "The page behind this QR code isn't available right now."
+      }
+    },
+    "password": {
+      "title": "This QR code is password protected",
+      "intro": "Enter the password you were given to continue.",
+      "label": "Password",
+      "submit": "Continue",
+      "missing": "Enter the password.",
+      "wrong": "That password isn't right. Please try again.",
+      "tooManyAttempts": "Too many attempts. Please wait a few minutes and try again."
+    },
+    "location": {
+      "title": "Share your location?",
+      "body": "The owner of this QR code would like to see roughly where it's scanned. Your browser asks you first, and the location is rounded to about 100 m.",
+      "allow": "Allow",
+      "skip": "Skip",
+      "continueTo": "You'll continue to {host} either way.",
+      "waiting": "Waiting for your browser…",
+      "opening": "Thanks. Opening the page…",
+      "locating": "Getting your location…"
+    },
+    "hosted": {
+      "notFoundTitle": "Page not found",
+      "notFoundMessage": "This link doesn't lead to a page. Its owner may have removed it, or the link was mistyped.",
+      "passwordProtected": "Password protected",
+      "madeWithQrdx": "Made with QRdx",
+      "share": "Share",
+      "linkCopied": "Link copied",
+      "copyThisLink": "Copy this link",
+      "details": "Details",
+      "links": "Links",
+      "socialProfiles": "Social profiles",
+      "mapOf": "Map of {place}",
+      "hours": {
+        "openingHours": "Opening hours",
+        "openUntil": "Open now · until {time}",
+        "closedOpens": "Closed · opens {day} {time}",
+        "closed": "Closed"
+      },
+      "contact": {
+        "contact": "Contact",
+        "call": "Call",
+        "email": "Email",
+        "website": "Website",
+        "directions": "Directions",
+        "address": "Address",
+        "saveContact": "Save contact",
+        "phoneTypes": {
+          "mobile": "Mobile",
+          "work": "Work",
+          "home": "Home",
+          "fax": "Fax",
+          "other": "Phone"
+        },
+        "emailTypes": {
+          "work": "Work",
+          "home": "Personal",
+          "other": "Email"
+        }
+      },
+      "event": {
+        "ended": "This event has ended.",
+        "allDay": "All day",
+        "openInMaps": "Open in Maps",
+        "joinOnline": "Join online",
+        "hostedBy": "Hosted by <organizer></organizer>",
+        "addToCalendar": "Add to calendar"
+      },
+      "coupon": {
+        "coupon": "Coupon",
+        "code": "Code:",
+        "copyCode": "Copy coupon code",
+        "copy": "Copy",
+        "copied": "Copied",
+        "expired": "This coupon has expired.",
+        "notYet": "This coupon can't be redeemed yet.",
+        "terms": "Terms and conditions",
+        "expiredOn": "Expired on {date}",
+        "validRange": "Valid {from} – {until}",
+        "validFrom": "Valid from {date}",
+        "validUntil": "Valid until {date}",
+        "redeemed": "Redeemed {time}",
+        "instructions": "Show this screen to staff, then tap <strong>Redeem now</strong>.",
+        "cancel": "Cancel",
+        "redeemNow": "Redeem now",
+        "redeem": "Redeem coupon"
+      },
+      "wifi": {
+        "network": "Network",
+        "networkHidden": "Network (hidden)",
+        "password": "Password",
+        "noPassword": "None, just connect",
+        "copyNetwork": "Copy network name",
+        "copyPassword": "Copy password"
+      },
+      "payment": {
+        "types": {
+          "bank": "Bank transfer",
+          "other": "Other"
+        },
+        "actions": {
+          "pay": "Pay",
+          "donate": "Donate",
+          "tip": "Tip"
+        },
+        "actionsWith": {
+          "pay": "Pay with {method}",
+          "donate": "Donate with {method}",
+          "tip": "Tip with {method}"
+        },
+        "copyLine": "Copy {label}"
+      },
+      "files": {
+        "downloads": "Downloads",
+        "fileNumber": "File {number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "Image",
+          "audio": "Audio",
+          "video": "Video",
+          "file": "File"
+        },
+        "opensInNewTab": "{kind} · opens in a new tab",
+        "open": "Open",
+        "download": "Download",
+        "pdfDocument": "PDF document",
+        "openPdf": "Open PDF"
+      },
+      "media": {
+        "download": "Download {title}",
+        "play": "Play {title}",
+        "trackUnavailable": "This track is unavailable.",
+        "playlist": "Playlist",
+        "unavailable": "Unavailable",
+        "video": "Video",
+        "videoUnavailable": "Video unavailable",
+        "providerVideo": "{provider} video",
+        "playVideo": "Play video",
+        "playVideoTitle": "Play video: {title}",
+        "playsFrom": "Plays from {provider}"
+      },
+      "gallery": {
+        "openPhoto": "Open photo {number} of {total}",
+        "openPhotoAlt": "Open photo {number} of {total}: {alt}",
+        "photoOf": "Photo {number} of {total}",
+        "viewer": "Photo viewer",
+        "close": "Close",
+        "previous": "Previous photo",
+        "next": "Next photo",
+        "imageUnavailable": "Image unavailable"
+      },
+      "apps": {
+        "getTheApp": "Get the app",
+        "appStore": "Download on the App Store",
+        "googlePlay": "Get it on Google Play",
+        "openInBrowser": "Open in your browser"
+      },
+      "menu": {
+        "menu": "Menu",
+        "sections": "Menu sections",
+        "soldOut": "Sold out",
+        "dietary": "Dietary information",
+        "aboutDish": "About this dish",
+        "contains": "<label>Contains:</label> {list}",
+        "diet": {
+          "vegetarian": "Vegetarian",
+          "vegan": "Vegan",
+          "gluten-free": "Gluten-free",
+          "dairy-free": "Dairy-free",
+          "halal": "Halal",
+          "kosher": "Kosher",
+          "spicy": "Spicy",
+          "organic": "Organic"
+        },
+        "allergens": {
+          "gluten": "Gluten",
+          "crustaceans": "Crustaceans",
+          "eggs": "Eggs",
+          "fish": "Fish",
+          "peanuts": "Peanuts",
+          "soy": "Soy",
+          "milk": "Milk",
+          "nuts": "Tree nuts",
+          "celery": "Celery",
+          "mustard": "Mustard",
+          "sesame": "Sesame",
+          "sulphites": "Sulphites",
+          "lupin": "Lupin",
+          "molluscs": "Molluscs"
+        }
+      },
+      "product": {
+        "details": "Product details",
+        "certifications": "Certifications",
+        "ingredients": "Ingredients",
+        "allergens": "Allergens",
+        "nutrition": "Nutrition",
+        "nutritionPer": "Nutrition, {basis}"
+      },
+      "reviews": {
+        "reviews": "Reviews",
+        "leaveReview": "Leave a review",
+        "reviewUsOn": "Review us on {platform}"
+      },
+      "form": {
+        "form": "Form",
+        "send": "Send",
+        "thanks": "Thank you! Your response has been sent.",
+        "starsOf": "{score} of {max} stars",
+        "sending": "Sending…",
+        "answerOne": "Answer at least one question before sending.",
+        "preview": "This is a preview. Responses are collected on the published page.",
+        "securityCheck": "Please complete the security check above, then send again.",
+        "tooMany": "Too many responses from this device. Please wait a minute and try again.",
+        "couldntSend": "Your response couldn't be sent. Please try again.",
+        "offline": "You seem to be offline. Your answers are still here; try again in a moment.",
+        "demo": "Demo: nothing is sent.",
+        "honeypot": "Leave this field empty",
+        "closed": "This form isn't accepting responses right now. Please try again later.",
+        "errors": {
+          "required": "This field is required",
+          "consentRequired": "Please tick this box to continue",
+          "enterText": "Enter text",
+          "tooLong": "Keep it under {max} characters",
+          "email": "Enter a valid email address",
+          "phone": "Enter a valid phone number",
+          "stars": "Choose 1 to {max} stars",
+          "nps": "Choose a score from 0 to 10",
+          "choices": "Choose from the options",
+          "choice": "Choose one of the options",
+          "invalid": "Invalid value"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "Free Barcode Generator: EAN-13, UPC, Code 128",
     "metaDescription": "Make EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix and more: {count, number} barcode types with check digits worked out for you. PNG, JPG, SVG, PDF and EPS. Free, no signup.",
@@ -4449,8 +4723,7 @@
         "dangerZoneSection": {
           "deleteYourAccount": "Delete your account?",
           "thisCantBeUndoneIf": "This can't be undone. If you want a copy of your data, download it first.",
-          "type": "Type",
-          "toConfirm": "to confirm",
+          "typeToConfirm": "Type <code>{word}</code> to confirm",
           "cancel": "Cancel",
           "deleteAccount": "Delete account",
           "deleteAccount2": "Delete account…",
@@ -4574,10 +4847,10 @@
           "removedName": "Removed {name}",
           "yourPasskeyIsReadyTo": "Your passkey is ready to be your second step.",
           "addAPasskeyOrAn": "Add a passkey or an authenticator app to turn it on.",
-          "yourPasskey": "your passkey",
-          "aCodeFromYourAuthenticator": "a code from your authenticator app",
-          "afterYouSignInQrdx2": "After you sign in, QRdx asks for a backup code.",
-          "afterYouSignInQrdx3": "After you sign in, QRdx asks for {value}. A backup code works too."
+          "afterYouSignInPasskeyOrApp": "After you sign in, QRdx asks for your passkey or a code from your authenticator app. A backup code works too.",
+          "afterYouSignInPasskey": "After you sign in, QRdx asks for your passkey. A backup code works too.",
+          "afterYouSignInApp": "After you sign in, QRdx asks for a code from your authenticator app. A backup code works too.",
+          "afterYouSignInQrdx2": "After you sign in, QRdx asks for a backup code."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Step {stepNumber, number} of {length, number}",
@@ -4619,7 +4892,7 @@
         },
         "workspaceTwoFactorNotice": {
           "twoStepVerificationIsOn": "Two-step verification is on, so you can open <span>{name}</span> now.",
-          "requiresTwoStepVerificationTurn": "requires two-step verification. Turn it on <link>below</link>, then come back to it from here.",
+          "requiresTwoStepVerificationTurn": "<span>{name}</span> requires two-step verification. Turn it on <link>below</link>, then come back to it from here.",
           "backToName": "Back to {name}"
         },
         "page": {
@@ -4725,7 +4998,8 @@
           "itsShownOnlyThisOnce": "It's shown only this once. Keep it on your server, never in a browser or an app.",
           "done": "Done",
           "apiKeys": "API keys",
-          "callTheRestApiFrom": "Call the REST API from your servers and scripts. Keys act as you in",
+          "keysActAsYou": "Call the REST API from your servers and scripts. Keys act as you in <strong>{workspace}</strong>.",
+          "keysActAsYouWithRole": "Call the REST API from your servers and scripts. Keys act as you in <strong>{workspace}</strong>, with your role there.",
           "createKey": "Create key",
           "apiKeysArentAvailableOn": "API keys aren't available on this deployment yet.",
           "noApiKeysYet": "No API keys yet",
@@ -4737,7 +5011,6 @@
           "cancel": "Cancel",
           "revokeKey": "Revoke key",
           "apiKey": "API key",
-          "withYourRoleThere": ", with your role there.",
           "forWorkspacenameItCanDo": "For {workspaceName}. It can do what your role allows, within its scopes.",
           "forYourOwnWorkspaceWithin": "For your own workspace, within the scopes you choose.",
           "keyRevoked": "Key revoked"
@@ -4812,10 +5085,11 @@
           "deleteApp": "Delete app",
           "revokesEveryTokenItIssued": "Revokes every token it issued. This can't be undone.",
           "deleteName": "Delete {name}?",
-          "itsClientIdAndSecret": "Its client ID and secret stop working and every access and refresh token it issued is revoked",
+          "deleteAppNoUsers": "Its client ID and secret stop working and every access and refresh token it issued is revoked.",
+          "deleteAppDisconnecting": "Its client ID and secret stop working and every access and refresh token it issued is revoked, disconnecting {count, plural, one {# person} other {# people}}.",
+          "peopleHaveAccess": "{count, plural, one {# person currently has} other {# people currently have}} access through this app.",
           "cancel": "Cancel",
           "nobodyHasAuthorizedThisApp": "Nobody has authorized this app yet.",
-          "disconnectingPeople": ", disconnecting {people}",
           "deleting": "Deleting…",
           "appSaved": "App saved",
           "appResumed": "App resumed",
@@ -4866,14 +5140,13 @@
           "peopleWhoLinkedASlack": "People who linked a Slack account with <code>/qr link</code> make tracked codes in <span>{workspaceName}</span> from Slack, as the member named here. <link>Slack bot</link>",
           "slackLinksArentAvailableOn": "Slack links aren't available on this deployment yet.",
           "noSlackAccountIsLinked": "No Slack account is linked to this workspace.",
-          "as": "As",
-          "linked": "· Linked",
+          "linkedAs": "As {member} · Linked {date}",
+          "linkedAsInWorkspace": "As {member} · Linked {date} · Slack workspace {teamId}",
           "revoke": "Revoke",
           "revokeTheSlackLinkOf": "Revoke the Slack link of {slackUserId}?",
           "qrTrackFromThatSlack": "<code>/qr track</code> from that Slack account stops making codes in {workspaceName}. Codes it made stay. They can link again with <code2>/qr link</code2> if they're still a member.",
           "cancel": "Cancel",
           "revokeLink": "Revoke link",
-          "slackWorkspaceTeamid": " · Slack workspace {teamId}",
           "slackLinkRevoked": "Slack link revoked",
           "aFormerMember": "a former member"
         },
@@ -4977,9 +5250,8 @@
           "integrations": "Integrations",
           "disconnect": "Disconnect",
           "nameIsNoLongerAvailable": "{name} is no longer available in QRdx",
-          "nothingInQrdxUsesThis": "Nothing in QRdx uses this connection any more",
-          "disconnectToDeleteItWhere": ". Disconnect to delete it; where",
-          "supportsItQrdxsAccessIs": "supports it, QRdx's access is revoked there too.",
+          "unusedConnection": "Nothing in QRdx uses this connection any more. Disconnect to delete it; where {name} supports it, QRdx's access is revoked there too.",
+          "unusedConnectionSince": "Nothing in QRdx uses this connection any more. You connected it on {date}. Disconnect to delete it; where {name} supports it, QRdx's access is revoked there too.",
           "reconnect": "Reconnect",
           "builtBy": "Built by",
           "website": "Website",
@@ -4988,7 +5260,6 @@
           "whereThisIntegrationShowsUp": "Where this integration shows up in QRdx.",
           "features": "Features",
           "howToConnect": "How to connect",
-          "youConnectedItOnUndefined": ". You connected it on {undefined}",
           "enable": "Enable",
           "needsSetup": "Needs setup",
           "youCanAlsoDeleteThe": "You can also delete the key in {name}.",
@@ -5044,8 +5315,7 @@
           "addedValue": "Added {value}",
           "linkedSlackAccounts": "Linked Slack accounts",
           "noSlackAccountIsLinked": "No Slack account is linked to you. Run <code>/qr link</code> in Slack to link one.",
-          "trackedCodesGoTo": "Tracked codes go to",
-          "linked": ". Linked",
+          "trackedCodesLine": "Tracked codes go to {workspace}. Linked {date}.",
           "unlink": "Unlink",
           "yourQrdxWorkspace": "your QRdx workspace",
           "slackAccountUnlinked": "Slack account unlinked",
@@ -5112,17 +5382,15 @@
           "postAbout": "Post about",
           "cancel": "Cancel",
           "removeThisWebhook": "Remove this webhook?",
-          "qrdxStopsPostingTo": "QRdx stops posting to",
-          "theWebhookItselfStaysIn": ". The webhook itself stays in",
-          "untilYouDeleteItThere": "until you delete it there.",
+          "removeWebhookDescription": "QRdx stops posting to {chat}. The webhook itself stays in {channel} until you delete it there.",
           "remove": "Remove",
           "everyAlertEmailHasAn": "Every alert email has an unsubscribe link. Team invitations and other account emails are always sent. Want events in your own systems? <link>Use webhooks</link>.",
           "sendATestMessage": "Send a test message",
           "editEvents": "Edit events",
           "removeWebhook": "Remove webhook",
-          "arePartOfProAnd": "are part of Pro and Business",
-          "arePartOfBusiness": "are part of Business",
-          "thisWorkspaceFollowsThePlan": " This workspace follows the plan of its owners.",
+          "emailAlertsArePro": "Email alerts and the weekly digest are part of Pro and Business.",
+          "chatAlertsAreBusiness": "Slack and Discord alerts are part of Business.",
+          "thisWorkspaceFollowsThePlan": "This workspace follows the plan of its owners.",
           "alertsAboutThisWorkspacesCodes": "Alerts about this workspace's codes and pages. Only you get them; every member picks their own.",
           "alertsAboutTheCodesAnd": "Alerts about the codes and pages in your own workspace.",
           "addAValueWebhook": "Add a {value} webhook",
@@ -5197,7 +5465,7 @@
           "allBarcodes": "All barcodes",
           "labelUpdatedUpdatedat": "{label} · Updated {updatedAt}",
           "youHaveViewOnlyAccess": "You have view-only access: download this barcode, but it can't be changed.",
-          "planBarcodesAreStaticThey": "plan. Barcodes are static: they never expire and work on every plan.",
+          "planBarcodesAreStaticThey": "{plan} plan. Barcodes are static: they never expire and work on every plan.",
           "noBarcodesYet": "No barcodes yet",
           "newBarcode": "New barcode",
           "openTheFreeGenerator": "Open the free generator",
@@ -5337,16 +5605,15 @@
             "theImportGoesOnBy": "The import goes on by itself then if this page stays open, or resume it after {resumeAfter}. Codes it already made aren't made again.",
             "theImportStopped": "The import stopped",
             "seePlans": "See plans",
-            "of": "of",
-            "rowsSent": "rows sent",
-            "created": "created",
+            "rowsSentOf": "{sent} of {total} rows sent",
+            "createdCount": "{created} created",
+            "createdWithProblems": "{created} created · {rowErrors} with problems",
             "valueCouldntBeSent": "{value} couldn't be sent",
             "retryThemNothingIsMade": "Retry them; nothing is made twice.",
             "pause": "Pause",
             "resume": "Resume",
             "leavingThisPagePausesThe": "Leaving this page pauses the import; come back to resume it.",
             "importProgress": "Import progress",
-            "rowerrorsWithProblems": " · {rowErrors} with problems",
             "tryingAgainInSecondsS": "Trying again in {seconds, number} s",
             "waitingSecondsSForThe": "Waiting {seconds, number} s for the create limit",
             "importing": "Importing",
@@ -5377,15 +5644,13 @@
           },
           "importWizard": {
             "loading": "Loading...",
-            "onThe": "On the",
-            "planYouCanImportOne": "plan you can import one code at a time.",
+            "oneCodeAtATime": "On the {plan} plan you can import one code at a time.",
             "upgrade": "Upgrade",
             "n1ChooseACsvFile": "1. Choose a CSV file",
             "sampleCsv": "Sample CSV",
             "dropACsvFileHere": "Drop a CSV file here, or click to choose one",
-            "firstRowColumnNamesColumns": "First row: column names. Columns: destination (required), title, folder (use \"Parent / Child\" for subfolders), tags (separated by ; or |) and slug (optional custom back-half",
-            "n3To64LettersDigits": ": 3 to 64 letters, digits, - or _). Up to",
-            "rowsAnd": "rows and",
+            "csvColumns": "First row: column names. Columns: destination (required), title, folder (use \"Parent / Child\" for subfolders), tags (separated by ; or |) and slug (optional custom back-half: 3 to 64 letters, digits, - or _). Up to {rows} rows and {size} MB.",
+            "csvColumnsSlugOnPlans": "First row: column names. Columns: destination (required), title, folder (use \"Parent / Child\" for subfolders), tags (separated by ; or |) and slug (optional custom back-half on {slugPlans}: 3 to 64 letters, digits, - or _). Up to {rows} rows and {size} MB.",
             "thisFileHasMoreThan": "This file has more than {MAX_IMPORT_ROWS} rows. Only the first {MAX_IMPORT_ROWS2} are shown and imported.",
             "n2MatchTheColumns": "2. Match the columns",
             "notInThisFile": "Not in this file",
@@ -5408,19 +5673,18 @@
             "removeFile": "Remove file",
             "bulkImportIsAValue": "Bulk import is a {value} feature",
             "bulkImportIsntOnYour": "Bulk import isn't on your plan",
-            "bulkplansImportUpToMax": " {bulkPlans} import up to {MAX_IMPORT_ROWS} codes per file.",
-            "onSlugplans": " on {slugPlans}",
-            "newFoldersValue": "New folders: {value}. ",
+            "bulkplansImportUpToMax": "{bulkPlans} import up to {MAX_IMPORT_ROWS} codes per file.",
+            "newFoldersValue": "New folders: {value}.",
             "newTagsValue": "New tags: {value}.",
             "auto": "auto",
-            "rowsWithProblemsAreSkipped": "Rows with problems are skipped. ",
+            "rowsWithProblemsAreSkipped": "Rows with problems are skipped.",
             "sentImportChunkSizeAt": "Sent {IMPORT_CHUNK_SIZE} at a time; you can pause and resume."
           }
         },
         "analyticsExtra": {
           "whenPeopleScan": "When people scan",
-          "last": "Last",
-          "days": "days,",
+          "lastDays": "Last {days, number} days, {timeZone}",
+          "lastDaysBusiest": "Last {days, number} days, {timeZone} · busiest hour {hour}:00",
           "hourOfDay": "Hour of day",
           "dayOfWeek": "Day of week",
           "aBSplit": "A/B split",
@@ -5439,7 +5703,6 @@
           "taps": "Taps",
           "mostTapped": "Most tapped",
           "conversionTypes": "Conversion types",
-          "busiestHourValue00": " · busiest hour {value}:00",
           "sinceValue": " since {value}",
           "languageAndScanCountRules": " (language and scan-count rules can't be replayed, so these may include scans those rules sent elsewhere)",
           "unknown": "Unknown"
@@ -5469,7 +5732,8 @@
           "everyScan": "every scan",
           "daysDaysOfScanHistory": "{days, number} days of scan history",
           "valueKeepsValue2": "{value} keeps {value2}",
-          "valueAndValue2": "{value} and {value2}."
+          "valueAndValue2": "{value} and {value2}.",
+          "yearsOfScanHistory": "{years, plural, one {# year of scan history} other {# years of scan history}}"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "They stay saved and work again if you switch back.",
@@ -5478,8 +5742,7 @@
           "link": "Link",
           "switchBack": "Switch back",
           "usedLimitPagesValue": "{used, number} / {limit, number} pages ({value})",
-          "notInThisTemplate": "Not in this template:",
-          "onYourCurrentPage": "on your current page.",
+          "notInThisTemplateStays": "Not in this template: {list}. {count, plural, one {It stays} other {They stay}} on your current page.",
           "valueStaysInPagesSo": "{value} stays in Pages, so you can switch back. Scans keep opening it until you publish the new page.",
           "youEditThePageNext": "You edit the page next. Scans keep going to {opensNow} until you publish it.",
           "continueToEditor": "Continue to editor",
@@ -5494,8 +5757,6 @@
           "hostedPage": "Hosted page",
           "comesAlongThePageName": "Comes along: the page name, settings and logo, plus {value}.",
           "comesAlongThePageName2": "Comes along: the page name, settings and logo.",
-          "itStays": "It stays",
-          "theyStay": "They stay",
           "valueStaysInPagesSo2": "{value} stays in Pages, so you can switch back later. It counts toward your hosted pages until you delete it.",
           "scansGoStraightToThis": "Scans go straight to this address.",
           "switching": "Switching...",
@@ -5514,14 +5775,13 @@
         },
         "historyPanel": {
           "labelChanged": "{label} changed",
-          "passwordTurned": "Password turned",
+          "passwordTurnedOn": "Password turned on",
+          "passwordTurnedOff": "Password turned off",
           "versionHistory": "Version history",
           "eachEditToTheType": "Each edit to the type, destination, title, design, domain, schedule, routing or pixels saves the previous settings here. Restoring a version saves the current settings first, so it can be undone.",
           "noChangesYetWhenYou": "No changes yet. When you edit this code, its earlier settings show up here.",
-          "changedOnChangewhen": "changed on {changeWhen}",
+          "actorChangedOn": "<strong>{actor}</strong> <muted>changed on {changeWhen}</muted>",
           "showingTheLatestShownOf": "Showing the latest {SHOWN, number} of {total, number} versions. Up to 100 are kept per code.",
-          "on": "on",
-          "off": "off",
           "valueUtc": "{value} UTC"
         },
         "historyRestoreButton": {
@@ -5535,16 +5795,15 @@
           "restoreVersion": "Restore version"
         },
         "inactiveSettingsNotice": {
-          "againIfYouSwitchBack": "again if you switch back with Change type.",
-          "itWorks": "It works",
-          "theyWork": "They work"
+          "savedFromLink": "{count, plural, one {{names} is saved from when this code was a website link. Hosted pages don't use it. It works again if you switch back with Change type.} other {{names} are saved from when this code was a website link. Hosted pages don't use them. They work again if you switch back with Change type.}}",
+          "savedFromPage": "{count, plural, one {{names} is saved from when this code opened a hosted page. Website links don't load it. It works again if you switch back with Change type.} other {{names} are saved from when this code opened a hosted page. Website links don't load them. They work again if you switch back with Change type.}}"
         },
         "landingPagePanel": {
           "hostedPage": "Hosted page",
           "thePageThisCodeOpened": "The page this code opened was deleted, so scans show \"not found\". Use Change type to point it at a website link or a new page.",
-          "scansOpen": "Scans open",
+          "scansOpenTitle": "Scans open “{title}” ({label}).",
+          "scansOpenYourPage": "Scans open your page ({label}).",
           "view": "View",
-          "yourPage": "your page",
           "editItAnytimeThePrinted": "Edit it anytime; the printed code stays the same.",
           "thePrintedCodeAlwaysOpens": "The printed code always opens its latest version.",
           "editPage": "Edit page",
@@ -5555,7 +5814,8 @@
           "password": "Password",
           "pauseCode": "Pause code",
           "whilePausedScansGoTo": "While paused, scans go to your fallback URL, or to a neutral \"this campaign is paused\" page. Available on every plan.",
-          "passwordsStartAndEndDates": "Passwords, start and end dates, scan limits and fallback URLs are part of",
+          "lifecycleOnPlan": "Passwords, start and end dates, scan limits and fallback URLs are part of {plan}.",
+          "lifecycleOnPaidPlan": "Passwords, start and end dates, scan limits and fallback URLs are part of a paid plan.",
           "upgrade": "Upgrade",
           "removePassword": "Remove password",
           "visitorsTypeItOnceThat": "Visitors type it once; that browser stays unlocked for 6 hours. At least 4 characters.",
@@ -5573,8 +5833,7 @@
           "turnedOffByQrdx": "Turned off by QRdx",
           "ourAutomatedChecksFlaggedA": "Our automated checks flagged a link on this code (for example a URL shortener, an IP address or a lookalike domain), so it stays off until a reviewer approves it, usually within a day. Nothing else is needed from you.",
           "thisCodeWasSwitchedOff": "This code was switched off after an abuse review and doesn't redirect. Contact support@qrdx.dev if you think this is a mistake.",
-          "aPaidPlan": "a paid plan",
-          "yourCurrentSettingsKeepWorking": " Your current settings keep working, and you can remove them any time.",
+          "yourCurrentSettingsKeepWorking": "Your current settings keep working, and you can remove them any time.",
           "timesAreInYourTime": " Times are in your time zone ({timeZone}).",
           "saving": "Saving…",
           "saveChanges": "Save changes",
@@ -6004,14 +6263,13 @@
           "deleteFolder": "Delete folder",
           "current": "Current",
           "move": "Move",
-          "toFolder": "to folder",
+          "moveCodesToFolder": "{count, plural, one {Move code to folder} other {Move # codes to folder}}",
           "linksAndPrintedCodesDont": "Links and printed codes don't change.",
           "loadingFolders": "Loading folders...",
           "newFolder": "New folder",
           "springCampaign": "Spring campaign",
           "save": "Save",
           "createFolder": "Create folder",
-          "code": "code",
           "itsCodesAndSubfoldersMoved": "Its codes and subfolders moved to {target}."
         },
         "importDialog": {
@@ -6035,7 +6293,8 @@
         "importFileStep": {
           "allProviders": "All providers",
           "preview": "Preview",
-          "getTheFileFrom": "Get the file from",
+          "getTheFileFrom": "Get the file from {provider}",
+          "getTheFileFromYourProvider": "Get the file from your provider",
           "dropTheCsvHereUp": "Drop the CSV here <span>(up to 2 MB)</span>",
           "matchTheColumns": "Match the columns",
           "looksLikeANameExport": "Looks like a {name} export",
@@ -6046,7 +6305,6 @@
           "provider": "Provider",
           "exportFile": "Export file",
           "import": "import",
-          "yourProvider": "your provider",
           "firstMaxJobLinks": " (first {MAX_JOB_LINKS, number})",
           "chooseAnotherFile": "Choose another file",
           "chooseFile": "Choose file"
@@ -6092,10 +6350,7 @@
         "importPreviewStep": {
           "back": "Back",
           "upgrade": "Upgrade",
-          "yourPlanHasRoomFor": "Your plan has room for",
-          "and": ", and",
-          "readyToImportImportThe": "ready to import. Import the first",
-          "nowOrUpgradeForUnlimited": "now, or upgrade for unlimited dynamic codes. Archiving codes frees slots too.",
+          "planRoomNote": "Your plan has room for {remaining, plural, one {# more active code} other {# more active codes}}, and {wanted, plural, one {# link is} other {# links are}} ready to import. Import the first {creates, number} now, or upgrade for unlimited dynamic codes. Archiving codes frees slots too.",
           "putTheNewCodesIn": "Put the new codes in a folder",
           "carryOverTags": "Carry over tags",
           "nameNew": "{name} · new",
@@ -6105,7 +6360,13 @@
           "eachCodeKeepsItsOld": "Each code keeps its old back-half when it's free, so bit.ly/spring-menu becomes qrdx.dev/q/spring-menu. The others get a generated one, listed below.",
           "linksOn": "Links on",
           "noneOfMyDomains": "None of my domains",
-          "valueKept": "{value} kept",
+          "backHalvesKept": "<strong>{kept, plural, one {# back-half} other {# back-halves}} kept</strong>.",
+          "backHalvesKeptConflicts": "<strong>{kept, plural, one {# back-half} other {# back-halves}} kept</strong>, {conflicts, number} with a generated one (listed below).",
+          "domainStatus": {
+            "verified": "{domain} is verified in QRdx: the codes go on it right away.",
+            "pending": "{domain} is added in QRdx but not verified yet. The codes go on it now and open there once you move its DNS to QRdx and verify it.",
+            "missing": "{domain} isn't in QRdx yet, so its back-halves are kept on qrdx.dev. To keep them on the domain itself, add it on the Domains page first."
+          },
           "openDomains": "Open Domains",
           "withoutItEveryCodeGets": "Without it, every code gets a generated back-half.",
           "needsALook": "Needs a look",
@@ -6121,11 +6382,8 @@
           "nothingToImport": "Nothing to import",
           "importTheFirstValue": "Import the first {value}",
           "importValue": "Import {value}",
-          "is": "is",
-          "are": "are",
-          "keepTheirsOnThatDomain": "keep theirs on that domain, so printed codes work again after its DNS moves to QRdx.",
+          "keepTheirsOnThatDomain": "Back-halves stay on the domain you pick, so printed codes work again after its DNS moves to QRdx.",
           "everyBackHalfIsKept": "Every back-half is kept on qrdx.dev.",
-          "conflictsWithAGeneratedOne": ", {conflicts, number} with a generated one (listed below)",
           "keepingBackHalvesIsPart": "Keeping back-halves is part of {slugPlans}.",
           "yourPlanDoesntKeepBack": "Your plan doesn't keep back-halves.",
           "random": "random",
@@ -6362,8 +6620,8 @@
           "name": "Name",
           "cancel": "Cancel",
           "deleteTagName": "Delete tag \"{name}\"?",
-          "theTagIsRemovedFrom": "The tag is removed from",
-          "theCodesThemselvesAreNot": ". The codes themselves are not changed.",
+          "deleteTagCount": "The tag is removed from {count, plural, one {# code} other {# codes}}. The codes themselves are not changed.",
+          "deleteTagCodes": "The tag is removed from its codes. The codes themselves are not changed.",
           "deleteTag": "Delete tag",
           "upToMaxTagsPer": "Up to {MAX_TAGS_PER_CODE, number} tags per code.",
           "loadingTags": "Loading tags...",
@@ -6374,15 +6632,11 @@
           "print": "print",
           "editTag": "Edit tag",
           "createTag": "Create tag",
-          "itsCodes": "its codes",
           "tags": "Tags",
           "tagsForValue": "Tags for {value}"
         },
         "usage": {
-          "activeDynamic": "active dynamic",
-          "planUnlimitedCodes": "plan, unlimited codes",
-          "code": "code",
-          "codes": "codes",
+          "unlimitedUsage": "{count, plural, one {# active dynamic code} other {# active dynamic codes}} · {plan} plan, unlimited codes",
           "archivedNote": "Archived codes don't count. Existing codes keep working on every plan.",
           "newCode": "New code"
         }
@@ -6397,11 +6651,11 @@
         },
         "filesManager": {
           "storage": "Storage",
-          "of": "of",
-          "used": "used ·",
-          "maxPerFileOn": "max per file on",
-          "youreOverYourPlansStorage": "You're over your plan's storage. Existing files keep working; delete files you no longer need",
-          "toUploadNewOnes": "to upload new ones.",
+          "storageUsed": "Storage used",
+          "storageUsage": "{used} of {quota} used · {maxFile} max per file on {plan}",
+          "storageUsageUnlimited": "{used} of unlimited used · {maxFile} max per file on {plan}",
+          "overStorage": "You're over your plan's storage. Existing files keep working; delete files you no longer need or upgrade to upload new ones.",
+          "overStorageTeam": "You're over your plan's storage. Existing files keep working; delete files you no longer need to upload new ones.",
           "dropFilesHereOrChoose": "Drop files here or choose them",
           "valueUpToMaxfilebytesEach": "{value} · up to {maxFileBytes} each",
           "noFilesYet": "No files yet",
@@ -6418,11 +6672,8 @@
           "toKeepTheLinkWorking": "To keep the link working with new content, use Replace file instead.",
           "theFileAndItsLink": "The file and its link are removed for good.",
           "cancel": "Cancel",
-          "storageUsed": "Storage used",
           "uploadFiles": "Upload files",
           "actionsForFilename": "Actions for {filename}",
-          "unlimited": "unlimited",
-          "orUpgrade": " or upgrade",
           "uploading": "Uploading…",
           "chooseFiles": "Choose files",
           "uploadAMenuPdfPhotos": "Upload a menu PDF, photos, music or a video, then add it to a hosted page with the PDF, Gallery, Audio, Video file or Downloads block.",
@@ -6528,7 +6779,7 @@
           }
         },
         "pageListControls": {
-          "planUnlimitedPages": "plan, unlimited pages",
+          "unlimitedPagesUsage": "{count, plural, one {# page} other {# pages}} · {plan} plan, unlimited pages",
           "viewLivePage": "View live page",
           "copyShortLink": "Copy short link",
           "qrCodeAnalytics": "QR code & analytics",
@@ -6539,8 +6790,6 @@
           "deleteThisPage": "Delete this page?",
           "cancel": "Cancel",
           "moreActions": "More actions",
-          "page": "page",
-          "pages": "pages",
           "thisCantBeUndone": "This can't be undone.",
           "deleting": "Deleting...",
           "pageDeleted": "Page deleted",
@@ -6631,8 +6880,9 @@
             "valueExpiresExpiresat": "{value} · expires {expiresAt}",
             "viewInvitation": "View invitation",
             "members": "Members",
-            "member": "member",
-            "seatsFollowThePlanOf": ". Seats follow the plan of the workspace's owners and billing members.",
+            "membersOfSeats": "{count, plural, one {# member} other {# members}} of {seats, number}.",
+            "membersCount": "{count, plural, one {# member} other {# members}}.",
+            "seatsFollowThePlanOf": "Seats follow the plan of the workspace's owners and billing members.",
             "invitePeople": "Invite people",
             "inviteLinksExpireAfter48": "Invite links expire after 48 hours and only work for the invited email address.",
             "pendingInvitations": "Pending invitations",
@@ -6642,7 +6892,6 @@
             "joinLinksArentSetUp": "Join links aren't set up on this server yet. Invite people by email for now.",
             "whoCanWorkInName": "Who can work in {name}, and what they can do.",
             "team": "Team",
-            "ofSeats": " of {seats, number}",
             "membersArePartOfPro": "Members are part of {pro} and {business}.",
             "askAWorkspaceOwnerOr": "Ask a workspace owner or billing member to upgrade to add members."
           }
@@ -6739,9 +6988,7 @@
           "noThemesMatchSearch": "No themes match \"{search}\".",
           "existingSharedThemesKeepWorking": "Existing shared themes keep working. Adding new ones needs the {planName} plan.",
           "shareThemesWithThisWorkspace": "Share themes with this workspace",
-          "sharedThemesArePartOf": "Shared themes are part of the",
-          "planEveryoneIn": "plan: everyone in",
-          "canPickThemInThe": "can pick them in the editor, and its default applies to new codes.",
+          "sharedThemesPlan": "Shared themes are part of the {plan} plan: everyone in {workspace} can pick them in the editor, and its default applies to new codes.",
           "upgrade": "Upgrade",
           "noSavedThemesYet": "No saved themes yet",
           "designAQrCodeIn": "Design a QR code in the playground and click Save to keep its colors, patterns and logo here. Set one as default and new codes start from it.",
@@ -6757,7 +7004,7 @@
           "yourThemes": "Your themes",
           "noSharedThemesYetUse": "No shared themes yet. Use \"Copy to this workspace\" on one of your themes below.",
           "noSharedThemesYetOwners": "No shared themes yet. Owners and admins can share themes here.",
-          "askAWorkspaceOwnerTo": " Ask a workspace owner to upgrade."
+          "askAWorkspaceOwnerTo": "Ask a workspace owner to upgrade."
         }
       },
       "home": {
@@ -6869,8 +7116,7 @@
           "deleteWorkspace": "Delete workspace",
           "deleteTeamname": "Delete {teamName}?",
           "thisRemovesTheWorkspaceIts": "This removes the workspace, its members and pending invitations. Its dynamic QR codes keep redirecting: each code, page, theme and domain moves to the own workspace of the member who created it.",
-          "type": "Type",
-          "toConfirm": "to confirm",
+          "typeToConfirm": "Type <code>{word}</code> to confirm",
           "deleting": "Deleting...",
           "youLeftTeamname": "You left {teamName}",
           "deletedTeamname": "Deleted {teamName}"
@@ -6882,9 +7128,8 @@
           "teammateCompanyCom": "teammate@company.com",
           "creatingLink": "Creating link...",
           "createInviteLink": "Create invite link",
-          "weEmailedTheInvitationTo": "We emailed the invitation to ",
-          "sendThisLinkTo": "Send this link to ",
-          "youCanAlsoShareThis": ". You can also share this link."
+          "invitationEmailed": "We emailed the invitation to <strong>{email}</strong>. You can also share this link.",
+          "sendThisLink": "Send this link to <strong>{email}</strong>."
         },
         "inviteLink": {
           "inviteLink": "Invite link",
@@ -6896,20 +7141,20 @@
           "resetLink": "Reset link",
           "turnOff": "Turn off",
           "createJoinLink": "Create join link",
-          "onSince": "On since",
-          "forSafetyTheLinkIs": ". For safety the link is shown only when it's made. Lost it? Reset it to get a new one (the old one stops working).",
-          "copyItNowItsShown": "Copy it now: it's shown only once. Anyone signed in who opens it joins as {value}.",
+          "onSince": "On since {date}.",
+          "onSinceBy": "On since {date}, made by {name}.",
+          "forSafetyTheLinkIs": "For safety the link is shown only when it's made. Lost it? Reset it to get a new one (the old one stops working).",
+          "copyItNowItsShown": "Copy it now: it's shown only once. Anyone signed in who opens it joins as {role, select, owner {an owner} admin {an admin} member {a member} billing {a billing manager} other {a viewer}}.",
           "copyJoinLink": "Copy join link",
           "cancel": "Cancel",
           "joinLink": "Join link",
-          "madeByCreatedbyname": ", made by {createdByName}",
           "resetTheJoinLink": "Reset the join link?",
           "turnOffTheJoinLink": "Turn off the join link?",
           "theCurrentLinkStopsWorking": "The current link stops working right away. You get a new one to share.",
           "theLinkStopsWorkingRight": "The link stops working right away. People who already joined stay members.",
           "joinLinkReset": "Join link reset",
           "joinLinkCreated": "Join link created",
-          "theLinkNowAddsPeople": "The link now adds people as {value}",
+          "theLinkNowAddsPeople": "The link now adds people as {role, select, owner {an owner} admin {an admin} member {a member} billing {a billing manager} other {a viewer}}",
           "joinLinkTurnedOff": "Join link turned off",
           "joinLinkCopied": "Join link copied",
           "couldntCopyTheLink": "Couldn't copy the link"
@@ -7178,8 +7423,8 @@
         "signInToContinue": "Sign in to continue",
         "goToDashboard": "Go to dashboard",
         "thisInvitationWasSentTo": "This invitation was sent to <span>{value}</span>, but you're signed in as <span2>{email}</span2>. Sign in with the invited address to accept it.",
-        "invitedYouToJoin": "invited you to join",
-        "as": "as",
+        "personInvitedYou": "<strong>{inviter}</strong> invited you to join <strong>{team}</strong> as {role, select, owner {an owner} admin {an admin} member {a member} billing {a billing manager} other {a viewer}}.",
+        "adminInvitedYou": "A team admin invited you to join <strong>{team}</strong> as {role, select, owner {an owner} admin {an admin} member {a member} billing {a billing manager} other {a viewer}}.",
         "teamMembersShareTheTeams": "Team members share the team's dynamic QR codes and themes. Expires {expiresAt}.",
         "signInWithTheEmail": "Sign in with the email address the invitation was sent to.",
         "youveBeenInvitedToA": "You've been invited to a team",
@@ -7193,7 +7438,6 @@
         "invitationsAreValidFor48": "Invitations are valid for 48 hours. Ask a team owner or admin for a new link.",
         "invitationExpired": "Invitation expired",
         "joinTeamname": "Join {teamName}",
-        "aTeamAdmin": "A team admin",
         "anotherAddress": "another address"
       },
       "inviteActions": {
@@ -7235,7 +7479,7 @@
       },
       "page": {
         "openName": "Open {name}",
-        "youreSignedInAsEmail": "You're signed in as <span>{email}</span>. You'll join as {value}: {value2}.",
+        "youreSignedInAsEmail": "You're signed in as <span>{email}</span>. You'll join as {role, select, owner {an owner} admin {an admin} member {a member} billing {a billing manager} other {a viewer}}: {role, select, owner {everything, including billing, owners and deleting the workspace} admin {manage people, settings, domains and everyone's codes} member {create codes and pages, and edit the workspace's codes} billing {manage the plan and billing; read-only everywhere else} other {see codes, pages and analytics, without changing anything}}.",
         "checkThatYouCopiedThe": "Check that you copied the whole link, or ask the workspace for a new one.",
         "thisJoinLinkIsntComplete": "This join link isn't complete",
         "waitAMinuteThenReload": "Wait a minute, then reload this page.",
@@ -7263,7 +7507,7 @@
           "theAppThatSentYou": "The app that sent you here made an invalid request: <span>{description}</span>. Go back to the app and try again, or contact its developer.",
           "appnameWillBeAbleTo": "{appName} will be able to",
           "nameWantsToAccessYour": "{name} wants to access your QRdx account",
-          "builtBy": "Built by",
+          "builtByName": "Built by <strong>{name}</strong>",
           "unverifiedApp": "Unverified app.",
           "qrdxHasntReviewedNameOnly": "QRdx hasn't reviewed {name}. Only continue if you trust {builtBy}.",
           "switch": "Switch",
@@ -7323,12 +7567,11 @@
       "body": "Your dynamic QR code just passed {count, number} scans. See where and when people scan it, and which devices they use."
     },
     "formSubmission": {
-      "yourPage": "your page",
+      "subject": "{hasTitle, select, yes {New form response on “{title}”} other {New form response on your page}}",
+      "preview": "{hasTitle, select, yes {New form response on “{title}”} other {New form response on your page}}",
+      "heading": "{hasTitle, select, yes {New response on “{title}”} other {New response on your page}}",
       "answer": "Answer",
-      "subject": "New form response on {page}",
-      "preview": "New form response on {page}",
       "reason": "You get this because form submission alerts are on for {workspace}.",
-      "heading": "New response on {page}",
       "submitted": "Submitted {when}. Answers are shown as the visitor typed them.",
       "more": "{count, plural, one {# more answer is} other {# more answers are}} in the dashboard.",
       "viewAll": "View all responses"
@@ -7379,7 +7622,7 @@
       "lastUsed": "Last used"
     },
     "signInPanel": {
-      "codeSentTo": "Code sent to",
+      "codeSentTo": "Code sent to <strong>{email}</strong>",
       "lastUsed": "Last used",
       "or": "or",
       "newToQrdxGoogleGithub": "New to QRdx? Google, GitHub or an email code creates your free account.",
@@ -7428,11 +7671,47 @@
       "wellEmailA6Digit": "We'll email a 6-digit code to <span>{maskedEmail}</span>.",
       "sendCode": "Send code",
       "signInWithValueAgain": "Sign in with {value} again. You'll come back to this page, then make your change once more.",
-      "continueWith": "Continue with",
+      "continueWith": "Continue with {method}",
       "signOut": "Sign out",
       "confirmItsYou": "Confirm it's you",
-      "beforeYou": "Before you",
-      "weNeedToCheckIts": ", we need to check it's you.",
+      "beforeYouAction": {
+        "change-email": "Before you change your email, we need to check it's you.",
+        "delete-account": "Before you delete your account, we need to check it's you.",
+        "turn-on-two-factor": "Before you turn on two-step verification, we need to check it's you.",
+        "turn-off-two-factor": "Before you turn off two-step verification, we need to check it's you.",
+        "add-passkey": "Before you add a passkey, we need to check it's you.",
+        "rename-passkey": "Before you rename a passkey, we need to check it's you.",
+        "remove-passkey": "Before you remove a passkey, we need to check it's you.",
+        "backup-codes": "Before you make new backup codes, we need to check it's you.",
+        "add-authenticator": "Before you set up an authenticator app, we need to check it's you.",
+        "remove-authenticator": "Before you remove your authenticator app, we need to check it's you.",
+        "sso": "Before you change single sign-on, we need to check it's you.",
+        "support-change": "Before you make this change for someone, we need to check it's you.",
+        "link-sign-in": "Before you link a sign-in method, we need to check it's you.",
+        "unlink-sign-in": "Before you unlink a sign-in method, we need to check it's you.",
+        "create-api-key": "Before you create an API key, we need to check it's you.",
+        "create-oauth-app": "Before you create an OAuth app, we need to check it's you.",
+        "new-client-secret": "Before you make a new client secret, we need to check it's you.",
+        "delete-workspace": "Before you delete this workspace, we need to check it's you.",
+        "change-member-role": "Before you change someone's role, we need to check it's you.",
+        "remove-member": "Before you remove someone from this workspace, we need to check it's you.",
+        "invite-admin": "Before you invite an admin, we need to check it's you.",
+        "admin-join-link": "Before you let a join link add admins, we need to check it's you.",
+        "require-two-factor": "Before you require two-step verification, we need to check it's you.",
+        "stop-requiring-two-factor": "Before you stop requiring two-step verification, we need to check it's you.",
+        "continue-session": "Before you continue, we need to check it's you.",
+        "cancel-two-factor-reset": "Before you cancel support's turn-off, we need to check it's you.",
+        "authorize-app": "Before you let this app use your account, we need to check it's you.",
+        "reveal-webhook-secret": "Before you show a signing secret, we need to check it's you.",
+        "rotate-webhook-secret": "Before you make a new signing secret, we need to check it's you.",
+        "create-webhook": "Before you add a webhook, we need to check it's you.",
+        "change-webhook-url": "Before you send a webhook to a new address, we need to check it's you.",
+        "add-notification-webhook": "Before you send notifications to a new address, we need to check it's you.",
+        "add-slack-channel": "Before you add a Slack channel, we need to check it's you.",
+        "connect-data-out": "Before you send your scans or form answers to another tool, we need to check it's you.",
+        "link-slack-account": "Before you let a Slack account make codes as you, we need to check it's you.",
+        "set-payout-email": "Before you change where your affiliate payouts go, we need to check it's you."
+      },
       "weCheckItsYouBefore": "We check it's you before changes to your account's security. It lasts {CONFIRMATION_MINUTES, number} minutes, so a few changes in a row only ask once.",
       "useAnotherMethod": "Use another method",
       "back": "Back",

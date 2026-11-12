@@ -55,14 +55,6 @@ const STATUS_TEXT: Record<PlannedItem["status"], string> = {
   "over-limit": "Over limit",
 };
 
-const QRDX_DOMAIN_TEXT = {
-  verified: "is verified in QRdx: the codes go on it right away.",
-  pending:
-    "is added in QRdx but not verified yet. The codes go on it now and open there once you move its DNS to QRdx and verify it.",
-  missing:
-    "isn't in QRdx yet, so its back-halves are kept on qrdx.dev. To keep them on the domain itself, add it on the Domains page first.",
-} as const;
-
 /** Select value for "keep back-halves on qrdx.dev only". */
 const SHARED_ONLY = "__qrdx";
 
@@ -250,12 +242,11 @@ export function PreviewStep({
         {limited && preview && (
           <Note icon={<Warning2 />} tone="warning">
             <p>
-              {t("yourPlanHasRoomFor")}{" "}
-              {plural(preview.remaining ?? 0, "more active code")}
-              {t("and")} {plural(preview.wanted, "link")}{" "}
-              {preview.wanted === 1 ? t("is") : t("are")}{" "}
-              {t("readyToImportImportThe")} {creates}{" "}
-              {t("nowOrUpgradeForUnlimited")}
+              {t("planRoomNote", {
+                remaining: preview.remaining ?? 0,
+                wanted: preview.wanted,
+                creates,
+              })}
             </p>
           </Note>
         )}
@@ -418,28 +409,25 @@ export function PreviewStep({
                   {preview.backHalves.canUse ? (
                     <Note icon={<Info />}>
                       <p>
-                        <span className="text-foreground font-medium">
-                          {t("valueKept", {
-                            value: plural(
-                              preview.backHalves.kept,
-                              "back-half",
-                              "back-halves",
-                            ),
-                          })}
-                        </span>
-                        {preview.backHalves.conflicts > 0 &&
-                          t("conflictsWithAGeneratedOne", {
+                        {t.rich(
+                          preview.backHalves.conflicts > 0
+                            ? "backHalvesKeptConflicts"
+                            : "backHalvesKept",
+                          {
+                            kept: preview.backHalves.kept,
                             conflicts: preview.backHalves.conflicts,
-                          })}
-                        .
+                            strong: (chunks) => (
+                              <span className="text-foreground font-medium">
+                                {chunks}
+                              </span>
+                            ),
+                          },
+                        )}
                         {preview.backHalves.domain &&
-                          preview.backHalves.qrdx && (
-                            <>
-                              {" "}
-                              {preview.backHalves.domain}{" "}
-                              {QRDX_DOMAIN_TEXT[preview.backHalves.qrdx]}
-                            </>
-                          )}
+                          preview.backHalves.qrdx &&
+                          ` ${t(`domainStatus.${preview.backHalves.qrdx}`, {
+                            domain: preview.backHalves.domain,
+                          })}`}
                       </p>
                       {preview.backHalves.domain &&
                         preview.backHalves.qrdx !== "verified" &&

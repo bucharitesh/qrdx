@@ -1,8 +1,8 @@
 import "server-only";
 
 import { Callout } from "fumadocs-ui/components/callout";
-import Link from "next/link";
 import type { ReactNode } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import {
   compareVersions,
   getNpmLag,

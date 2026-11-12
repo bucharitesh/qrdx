@@ -5,7 +5,18 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Import as Download, Music, Pause } from "iconsax-reactjs";
 import { useEffect, useRef, useState } from "react";
 import { mutedTextClass, surfaceClass } from "@/components/landing/block-kit";
+import { fillText } from "@/components/landing/fill-text";
 import { UnavailableNotice } from "@/lib/files/block-ui";
+
+export interface AudioPlaylistText {
+  /** "Download {title}" */
+  download: string;
+  /** "Play {title}" */
+  play: string;
+  trackUnavailable: string;
+  playlist: string;
+  unavailable: string;
+}
 
 export interface PlaylistTrack {
   id: string;
@@ -26,12 +37,15 @@ export function AudioPlaylist({
   coverAlt,
   allowDownload,
   blockId,
+  text,
 }: {
   tracks: PlaylistTrack[];
   cover: string | null;
   coverAlt: string;
   allowDownload: boolean;
   blockId: string;
+  /** The words, translated by the block ("{title}" templates) */
+  text: AudioPlaylistText;
 }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [index, setIndex] = useState(0);
@@ -97,7 +111,7 @@ export function AudioPlaylist({
         </div>
         {allowDownload && !unavailable && (
           <a
-            aria-label={`Download ${current.title}`}
+            aria-label={fillText(text.download, { title: current.title })}
             className="flex size-11 shrink-0 items-center justify-center rounded-full hover:bg-(--lp-bg) focus-visible:outline-2 focus-visible:outline-(--lp-primary)"
             data-lp-block={blockId}
             data-lp-target="download"
@@ -110,10 +124,7 @@ export function AudioPlaylist({
       </div>
 
       {unavailable ? (
-        <UnavailableNotice
-          className="py-3"
-          label="This track is unavailable."
-        />
+        <UnavailableNotice className="py-3" label={text.trackUnavailable} />
       ) : (
         // biome-ignore lint/a11y/useMediaCaption: owners upload music and podcasts; no caption track to offer
         <audio
@@ -132,12 +143,14 @@ export function AudioPlaylist({
           ref={audioRef}
           src={current.src}
         >
-          <a href={current.src}>Play {current.title}</a>
+          <a href={current.src}>
+            {fillText(text.play, { title: current.title })}
+          </a>
         </audio>
       )}
 
       {tracks.length > 1 && (
-        <ol aria-label="Playlist" className="space-y-1">
+        <ol aria-label={text.playlist} className="space-y-1">
           {tracks.map((track, i) => {
             const active = i === index;
             return (
@@ -174,7 +187,7 @@ export function AudioPlaylist({
                   </span>
                   {failed.has(track.id) && (
                     <span className={cn("shrink-0 text-xs", mutedTextClass)}>
-                      Unavailable
+                      {text.unavailable}
                     </span>
                   )}
                 </button>

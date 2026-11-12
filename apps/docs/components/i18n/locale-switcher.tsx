@@ -13,24 +13,12 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2, Global } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import {
-  LOCALE_COOKIE,
-  LOCALE_COOKIE_MAX_AGE,
-  LOCALE_INFO,
-  LOCALES,
-  type Locale,
-} from "@/lib/i18n/config";
+import { LOCALE_INFO, LOCALES, type Locale } from "@/lib/i18n/config";
+import { rememberLocale } from "@/lib/i18n/locale-cookie";
 import { isLocalizedPath, localizePath, splitLocale } from "@/lib/i18n/paths";
 
-/** Remembers the choice for later (the signed-in app, phase 2). Never redirects. */
-export function remember(locale: Locale) {
-  try {
-    // biome-ignore lint/suspicious/noDocumentCookie: a display preference, read on the server later
-    document.cookie = `${LOCALE_COOKIE}=${locale}; path=/; max-age=${LOCALE_COOKIE_MAX_AGE}; samesite=lax`;
-  } catch {
-    // Blocked cookies: the link still opens the language.
-  }
-}
+/** Remembers the choice for the signed-in app (lib/i18n/locale-cookie.ts). Never redirects. */
+export const remember = (locale: Locale) => rememberLocale(locale);
 
 /**
  * The only way to change language (no detection, no banner): each language

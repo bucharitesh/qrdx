@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Mobile as Smartphone } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   buttonShapeClass,
@@ -27,6 +28,9 @@ import {
   PLAY_STORE_HOSTS,
 } from "./apps-platform";
 
+/** The web button's default label (QRdx's words until the owner edits it). */
+const WEB_LABEL = "Open in your browser";
+
 const storeUrl = (hosts: string[], message: string) =>
   landingUrlSchema
     .refine((url) => hostIn(url, hosts), message)
@@ -41,7 +45,7 @@ export const appsSchema = z
     appStoreUrl: storeUrl(APP_STORE_HOSTS, "Use your apps.apple.com link"),
     playStoreUrl: storeUrl(PLAY_STORE_HOSTS, "Use your play.google.com link"),
     webUrl: landingUrlSchema.or(z.literal("")).default(""),
-    webLabel: lineText(40).default("Open in your browser"),
+    webLabel: lineText(40).default(WEB_LABEL),
   })
   .refine(
     (apps) => Boolean(apps.appStoreUrl || apps.playStoreUrl || apps.webUrl),
@@ -50,27 +54,43 @@ export const appsSchema = z
 
 export type AppsProps = z.output<typeof appsSchema>;
 
-export function appLinks(props: AppsProps): AppLink[] {
+/** The store buttons' words; English unless the block passes translations. */
+export interface AppLinkLabels {
+  ios: string;
+  android: string;
+  web: string;
+}
+
+const ENGLISH_LABELS: AppLinkLabels = {
+  ios: "Download on the App Store",
+  android: "Get it on Google Play",
+  web: WEB_LABEL,
+};
+
+export function appLinks(
+  props: AppsProps,
+  labels: AppLinkLabels = ENGLISH_LABELS,
+): AppLink[] {
   const links: AppLink[] = [];
   if (props.appStoreUrl) {
-    links.push({
-      kind: "ios",
-      href: props.appStoreUrl,
-      label: "Download on the App Store",
-    });
+    links.push({ kind: "ios", href: props.appStoreUrl, label: labels.ios });
   }
   if (props.playStoreUrl) {
     links.push({
       kind: "android",
       href: props.playStoreUrl,
-      label: "Get it on Google Play",
+      label: labels.android,
     });
   }
   if (props.webUrl) {
     links.push({
       kind: "web",
       href: props.webUrl,
-      label: props.webLabel || "Open in your browser",
+      // The default label is QRdx's words; one the owner typed is theirs.
+      label:
+        props.webLabel && props.webLabel !== WEB_LABEL
+          ? props.webLabel
+          : labels.web,
     });
   }
   return links;
@@ -89,13 +109,18 @@ function serverPlatform(context: BlockRenderContext): AppPlatform | undefined {
 }
 
 export function AppsBlock({ id, props, context }: BlockRenderProps<AppsProps>) {
-  const links = appLinks(props);
+  const t = useTranslations("scanPages.hosted.apps");
+  const links = appLinks(props, {
+    ios: t("appStore"),
+    android: t("googlePlay"),
+    web: t("openInBrowser"),
+  });
   if (links.length === 0) return null;
   const titleId = `${id}-title`;
   return (
     <section
       aria-labelledby={props.name ? titleId : undefined}
-      aria-label={props.name ? undefined : "Get the app"}
+      aria-label={props.name ? undefined : t("getTheApp")}
       className={cn(surfaceClass, "space-y-4 p-5")}
     >
       {(props.icon || props.name || props.description) && (

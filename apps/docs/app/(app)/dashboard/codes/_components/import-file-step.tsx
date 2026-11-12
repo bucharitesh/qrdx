@@ -172,10 +172,9 @@ export function FileStep({
         <div className="space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-semibold">
-              {t("getTheFileFrom")}{" "}
               {info.name === FILE_PROVIDERS.csv.name
-                ? t("yourProvider")
-                : info.name}
+                ? t("getTheFileFromYourProvider")
+                : t("getTheFileFrom", { provider: info.name })}
             </h3>
             <Select
               onValueChange={(value) => {

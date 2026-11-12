@@ -18,7 +18,6 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Book1, Copy, Element3, InfoCircle } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useCodeDialogStore } from "@/components/editor/action-bar/code-dialog-store";
@@ -40,6 +39,7 @@ import {
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import type { CodeLang } from "@/lib/playground-links";
 import { useQREditorStore } from "@/store/editor-store";
 

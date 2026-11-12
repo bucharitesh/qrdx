@@ -1,5 +1,5 @@
-import Link from "next/link";
 import type { ComponentProps } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { playgroundHref } from "@/lib/playground-links";
 
 export type PresetLinkProps = Omit<ComponentProps<typeof Link>, "href"> & {

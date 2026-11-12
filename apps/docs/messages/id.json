@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteTitle": "Pembuat Kode QR Gratis & Kode QR Dinamis | QRdx",
-    "siteDescription": "Kode QR gratis tanpa batas dengan logo, warna, dan pola, tanpa pendaftaran atau watermark. Plus kode dinamis yang bisa diedit, halaman yang di-hosting, dan analitik pemindaian. Open source.",
+    "siteTitle": "QRdx: Pembuat Kode QR Gratis dengan Logo dan Kode Dinamis",
+    "siteDescription": "Pembuat kode QR gratis dan open-source: kode tanpa batas dengan logo, warna, dan bingkai, tanpa pendaftaran atau watermark. Plus kode dinamis dan analitik pemindaian.",
     "ogImageAlt": "QRdx: pembuat kode QR gratis dengan kode QR dinamis, halaman yang di-hosting, dan analitik pemindaian"
   },
   "nav": {
@@ -76,6 +76,14 @@
       "mcp": {
         "name": "Server MCP",
         "description": "Buat kode QR dari Claude, ChatGPT, atau Cursor"
+      },
+      "qrCodeApi": {
+        "name": "API kode QR gratis",
+        "description": "Gambar kode QR dari satu URL, tanpa kunci atau pendaftaran"
+      },
+      "nextjs": {
+        "name": "Panduan Next.js",
+        "description": "Kode QR di Server dan Client Components"
       },
       "imageApi": {
         "name": "Image API",
@@ -184,10 +192,15 @@
       "scanChecker": "Pemeriksa pemindaian",
       "printSize": "Kalkulator ukuran cetak",
       "barcode": "Generator barcode",
+      "pdfQr": "Kode QR PDF",
+      "businessCard": "Kartu nama digital",
+      "menuQr": "Kode QR menu",
       "scanner": "Pemindai kode QR",
       "allTools": "Semua alat",
       "docs": "Dokumentasi",
       "apiReference": "Referensi API",
+      "qrCodeApi": "API kode QR gratis",
+      "nextjs": "Panduan Next.js",
       "imageApi": "Image API",
       "mcp": "Server MCP",
       "shadcn": "Registry shadcn/ui",
@@ -774,7 +787,11 @@
       "bulkTitle": "Butuh ratusan kode? Gunakan generator massal",
       "bulkDescription": "Unggah file CSV dan unduh setiap kode sebagai PNG, WebP, atau SVG dalam satu file ZIP, semuanya dibuat sepenuhnya di browser Anda.",
       "printTitle": "Mau mencetak kode? Periksa ukurannya",
-      "printDescription": "Hitung ukuran cetak minimum berdasarkan jarak pemindaian dan jumlah data yang dimuat kode."
+      "printDescription": "Hitung ukuran cetak minimum berdasarkan jarak pemindaian dan jumlah data yang dimuat kode.",
+      "hostedTitle": "Kode yang membuka halaman yang bisa Anda ubah",
+      "hostedDescription": "Kode ini membuka halaman seluler yang di-hosting oleh QRdx untuk Anda, sehingga Anda bisa mengubahnya setelah dicetak dan melihat pemindaian. Kode ini memerlukan akun gratis.",
+      "menuTitle": "Generator kode QR menu",
+      "menuDescription": "Halaman menu dengan harga, foto, alergen, dan item yang habis, diedit dari ponsel Anda."
     },
     "type": {
       "title": "Generator Kode QR {name} Gratis",
@@ -786,7 +803,28 @@
       "faqTitle": "FAQ kode QR {name}",
       "related": "Generator kode QR terkait",
       "allTypes": "Semua {count, number} jenis",
-      "relatedCard": "Kode QR {name}"
+      "relatedCard": "Kode QR {name}",
+      "hostedCard": "Kode QR {name} (halaman yang di-hosting)"
+    },
+    "hosted": {
+      "demo": "Lihat halaman demo",
+      "accountNote": "Memerlukan akun QRdx gratis. Paket Gratis mencakup {pages, number} halaman yang di-hosting.",
+      "featuresTitle": "Yang dilihat orang saat memindai",
+      "editTitle": "Ubah setelah dicetak",
+      "guarantee": "Kode Anda tetap berfungsi apa pun yang terjadi pada paket Anda: itulah <link>Jaminan Never-Hostage</link>.",
+      "plansTitle": "Batas setiap paket",
+      "plansCaption": "Batas halaman {name} pada paket Gratis, Pro, dan Business",
+      "colLimit": "Batas",
+      "rowPages": "Halaman di-hosting",
+      "rowDynamic": "Kode dinamis",
+      "rowFile": "File terbesar",
+      "rowStorage": "Penyimpanan file",
+      "rowBadge": "Footer \"Made with QRdx\"",
+      "unlimited": "Tanpa batas",
+      "badgeShown": "Tampil",
+      "badgeRemoved": "Dihapus",
+      "plansNote": "Setiap halaman menggunakan salah satu kode dinamis dari paket. Batas hanya mencegah Anda membuat halaman baru. <pricing>Lihat harga</pricing> atau <docs>baca dokumentasi</docs>.",
+      "staticLink": "Buka generator kode QR {name}"
     }
   },
   "typeGenerator": {
@@ -864,6 +902,8 @@
       "dynamicLink": "Buat kode dinamis",
       "badgePage": "Halaman yang di-hosting · dapat diedit, terlacak",
       "pageLink": "Lihat templat langsung",
+      "pageGeneratorLink": "Lihat cara kerjanya",
+      "guidesTitle": "Panduan dan alat",
       "typesTitle": "Kode QR mana yang dipakai",
       "typesDescription": "Kode statis gratis dan tidak memerlukan akun, tetapi tidak dapat diubah setelah dicetak. Kode dinamis dan halaman yang di-hosting dapat diedit kapan saja, menghitung setiap pemindaian, dan tetap berfungsi di semua paket, bahkan jika Anda berhenti berlangganan.",
       "sizingTitle": "Seberapa besar dicetak",
@@ -925,12 +965,20 @@
       }
     },
     "bulk": {
-      "metaTitle": "Generator Kode QR Massal Gratis dari CSV",
-      "metaDescription": "Buat hingga {rows, number} kode QR dari file CSV dan unduh sebagai PNG atau SVG dalam file ZIP. Gaya dan nama file kustom. Berjalan sepenuhnya di browser Anda.",
+      "metaTitle": "Generator Kode QR Massal Gratis dari CSV: Bergaya, SVG, Tanpa Unggah",
+      "metaDescription": "Ubah CSV menjadi hingga {rows, number} kode QR bergaya dan unduh sebagai PNG, WebP, atau SVG dalam ZIP. Berjalan di browser Anda: tanpa unggah, tanpa pendaftaran, tanpa watermark. Contoh CSV tersedia.",
       "crumb": "Generator massal",
       "title": "Generator kode QR massal",
-      "intro1": "Ubah spreadsheet menjadi ratusan atau ribuan kode QR sekaligus: label produk, tiket acara, label aset, nomor meja, atau surat yang dipersonalisasi. Unggah CSV, petakan kolomnya, pilih gaya, lalu unduh setiap kode sebagai PNG, WebP, atau SVG dalam file ZIP.",
-      "intro2": "Semuanya berjalan di browser Anda. CSV tidak pernah diunggah, dan tanpa pendaftaran, tanda air, atau biaya per kode.",
+      "intro1": "Ubah file CSV menjadi ribuan kode QR sekaligus, dengan gaya sesuai keinginan Anda dan diunduh sebagai PNG, WebP, atau SVG dalam ZIP. Satu baris untuk satu kode, dengan nama file diambil dari sebuah kolom: label produk, tiket acara, label aset, nomor meja, atau surat kiriman.",
+      "intro2": "Semuanya berjalan di browser Anda, sehingga CSV tidak pernah diunggah, dan tanpa pendaftaran, watermark, atau biaya per kode. Belum yakin dengan tata letaknya? Mulai dari contoh CSV.",
+      "facts": {
+        "rows": "Hingga {rows, number} baris per file",
+        "styled": "Warna, bentuk, dan logo Anda",
+        "svg": "SVG untuk cetak",
+        "browser": "Berjalan di browser Anda"
+      },
+      "cliLink": "qrdx batch di CLI",
+      "apiLink": "API kode QR gratis",
       "toolLabel": "Generator kode QR massal",
       "howTitle": "Cara kerjanya",
       "steps": {
@@ -959,10 +1007,14 @@
         "howManyAnswer": "Hingga {rows, number} baris per file; untuk lebih banyak, pisahkan CSV, atau gunakan perintah qrdx batch dari CLI, yang tidak memiliki batas. PNG 512 px membutuhkan sekitar 20 ms di laptop, sehingga seluruh {rows, number} baris selesai dalam beberapa menit. PNG yang lebih besar membutuhkan waktu lebih lama dan menghasilkan file lebih besar, jadi pilih 512 px kecuali Anda membutuhkan lebih.",
         "rowQuestion": "Apa yang bisa diisi di setiap baris?",
         "rowAnswer": "Teks apa pun hingga batas kode QR: tautan, teks biasa, atau payload seperti WIFI:..., mailto:..., tel:... dan BEGIN:VCARD. Konten dikodekan persis seperti yang tertulis di sel.",
+        "excelQuestion": "Bisakah saya memakai file Excel atau Google Sheets?",
+        "excelAnswer": "Simpan dulu sebagai CSV. Di Excel, pilih File, Save As, CSV UTF-8; di Google Sheets, File, Download, Comma-separated values. Koma maupun titik koma dapat dipakai sebagai pemisah, dan baris pertama boleh berisi nama kolom.",
         "staticQuestion": "Apakah kode yang dihasilkan statis atau dinamis?",
         "staticAnswer": "Statis. Setiap kode berisi konten barisnya secara langsung, berfungsi secara offline, tidak pernah kedaluwarsa, dan tidak dapat diedit setelah dicetak. Untuk kode yang dapat diedit dengan statistik pemindaian, buat kode QR dinamis dari dasbor QRdx Anda.",
         "namesQuestion": "Apa yang terjadi jika nama file duplikat atau tidak valid?",
-        "namesAnswer": "Karakter yang tidak diizinkan dalam nama file diganti dengan tanda hubung, dan nama duplikat diberi akhiran angka (menu.png, menu-2.png) sehingga tidak ada file yang tertimpa."
+        "namesAnswer": "Karakter yang tidak diizinkan dalam nama file diganti dengan tanda hubung, dan nama duplikat diberi akhiran angka (menu.png, menu-2.png) sehingga tidak ada file yang tertimpa.",
+        "codeQuestion": "Bisakah saya membuat kode QR massal lewat kode program?",
+        "codeAnswer": "Bisa. Perintah qrdx batch pada QRdx CLI membuat kode untuk setiap baris file CSV, tanpa batas baris, dan API kode QR gratis mengembalikan gambar untuk URL apa pun yang Anda susun, tanpa kunci."
       },
       "generator": {
         "errorTooMuch": "Data terlalu banyak untuk satu kode QR",
@@ -1435,6 +1487,280 @@
       "report": "Laporkan kode ini"
     }
   },
+  "scanPages": {
+    "reportAbuse": "Laporkan penyalahgunaan",
+    "privacy": "Privasi",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "Buat kode QR Anda sendiri dengan QRdx",
+      "inactive": {
+        "title": "Kode QR ini sudah tidak aktif",
+        "message": "Kode ini telah dinonaktifkan dan tidak lagi mengarah ke mana pun."
+      },
+      "notFound": {
+        "title": "Kode QR tidak ditemukan",
+        "message": "Tautan ini tidak mengarah ke kode QR. Pemiliknya mungkin telah menghapusnya, atau tautannya salah ketik."
+      },
+      "rateLimited": {
+        "title": "Terlalu banyak permintaan",
+        "message": "Jaringan ini membuka banyak kode QR dalam waktu singkat. Silakan coba lagi dalam beberapa detik."
+      },
+      "invalidGs1": {
+        "title": "Tautan produk ini tidak valid",
+        "message": "Nomor produk (GTIN) atau detail batch-nya tidak dapat dibaca. Periksa tautannya, atau lakukan pemindaian ulang kode pada kemasan."
+      },
+      "unavailable": {
+        "title": "Terjadi kesalahan",
+        "message": "Kami tidak dapat membuka kode QR ini saat ini. Silakan pindai lagi sebentar lagi."
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "Kampanye ini belum dimulai",
+        "message": "Silakan pindai kode ini lagi nanti."
+      },
+      "expired": {
+        "title": "Kampanye ini telah berakhir",
+        "message": "Halaman di balik kode QR ini sudah tidak tersedia."
+      },
+      "paused": {
+        "title": "Kampanye ini dijeda",
+        "message": "Halaman di balik kode QR ini sedang tidak tersedia."
+      }
+    },
+    "password": {
+      "title": "Kode QR ini dilindungi kata sandi",
+      "intro": "Masukkan kata sandi yang diberikan kepada Anda untuk melanjutkan.",
+      "label": "Kata sandi",
+      "submit": "Lanjutkan",
+      "missing": "Masukkan kata sandi.",
+      "wrong": "Kata sandi tidak benar. Silakan coba lagi.",
+      "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu beberapa menit lalu coba lagi."
+    },
+    "location": {
+      "title": "Bagikan lokasi Anda?",
+      "body": "Pemilik kode QR ini ingin melihat perkiraan lokasi pemindaian. Browser Anda akan bertanya terlebih dahulu, dan lokasi dibulatkan hingga sekitar 100 m.",
+      "allow": "Izinkan",
+      "skip": "Lewati",
+      "continueTo": "Anda tetap akan diarahkan ke {host}.",
+      "waiting": "Menunggu browser Anda…",
+      "opening": "Terima kasih. Membuka halaman…",
+      "locating": "Mendapatkan lokasi Anda…"
+    },
+    "hosted": {
+      "notFoundTitle": "Halaman tidak ditemukan",
+      "notFoundMessage": "Tautan ini tidak mengarah ke halaman mana pun. Pemiliknya mungkin telah menghapusnya, atau tautannya salah ketik.",
+      "passwordProtected": "Dilindungi kata sandi",
+      "madeWithQrdx": "Dibuat dengan QRdx",
+      "share": "Bagikan",
+      "linkCopied": "Tautan disalin",
+      "copyThisLink": "Salin tautan ini",
+      "details": "Detail",
+      "links": "Tautan",
+      "socialProfiles": "Profil sosial",
+      "mapOf": "Peta {place}",
+      "hours": {
+        "openingHours": "Jam buka",
+        "openUntil": "Buka · hingga {time}",
+        "closedOpens": "Tutup · buka {day} {time}",
+        "closed": "Tutup"
+      },
+      "contact": {
+        "contact": "Kontak",
+        "call": "Telepon",
+        "email": "Email",
+        "website": "Situs web",
+        "directions": "Petunjuk arah",
+        "address": "Alamat",
+        "saveContact": "Simpan kontak",
+        "phoneTypes": {
+          "mobile": "Seluler",
+          "work": "Kantor",
+          "home": "Rumah",
+          "fax": "Faks",
+          "other": "Telepon"
+        },
+        "emailTypes": {
+          "work": "Kantor",
+          "home": "Pribadi",
+          "other": "Email"
+        }
+      },
+      "event": {
+        "ended": "Acara ini telah berakhir.",
+        "allDay": "Sepanjang hari",
+        "openInMaps": "Buka di Maps",
+        "joinOnline": "Gabung online",
+        "hostedBy": "Diselenggarakan oleh <organizer></organizer>",
+        "addToCalendar": "Tambah ke kalender"
+      },
+      "coupon": {
+        "coupon": "Kupon",
+        "code": "Kode:",
+        "copyCode": "Salin kode kupon",
+        "copy": "Salin",
+        "copied": "Tersalin",
+        "expired": "Kupon ini telah kedaluwarsa.",
+        "notYet": "Kupon ini belum dapat ditukarkan.",
+        "terms": "Syarat dan ketentuan",
+        "expiredOn": "Kedaluwarsa pada {date}",
+        "validRange": "Berlaku {from} – {until}",
+        "validFrom": "Berlaku mulai {date}",
+        "validUntil": "Berlaku hingga {date}",
+        "redeemed": "Ditukarkan {time}",
+        "instructions": "Tunjukkan layar ini kepada staf, lalu ketuk <strong>Tukarkan sekarang</strong>.",
+        "cancel": "Batal",
+        "redeemNow": "Tukarkan sekarang",
+        "redeem": "Tukarkan kupon"
+      },
+      "wifi": {
+        "network": "Jaringan",
+        "networkHidden": "Jaringan (tersembunyi)",
+        "password": "Kata sandi",
+        "noPassword": "Tidak ada, langsung sambung",
+        "copyNetwork": "Salin nama jaringan",
+        "copyPassword": "Salin kata sandi"
+      },
+      "payment": {
+        "types": {
+          "bank": "Transfer bank",
+          "other": "Lainnya"
+        },
+        "actions": {
+          "pay": "Bayar",
+          "donate": "Donasi",
+          "tip": "Tip"
+        },
+        "actionsWith": {
+          "pay": "Bayar dengan {method}",
+          "donate": "Donasi dengan {method}",
+          "tip": "Tip dengan {method}"
+        },
+        "copyLine": "Salin {label}"
+      },
+      "files": {
+        "downloads": "Unduhan",
+        "fileNumber": "File {number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "Gambar",
+          "audio": "Audio",
+          "video": "Video",
+          "file": "File"
+        },
+        "opensInNewTab": "{kind} · dibuka di tab baru",
+        "open": "Buka",
+        "download": "Unduh",
+        "pdfDocument": "Dokumen PDF",
+        "openPdf": "Buka PDF"
+      },
+      "media": {
+        "download": "Unduh {title}",
+        "play": "Putar {title}",
+        "trackUnavailable": "Lagu ini tidak tersedia.",
+        "playlist": "Playlist",
+        "unavailable": "Tidak tersedia",
+        "video": "Video",
+        "videoUnavailable": "Video tidak tersedia",
+        "providerVideo": "Video {provider}",
+        "playVideo": "Putar video",
+        "playVideoTitle": "Putar video: {title}",
+        "playsFrom": "Diputar dari {provider}"
+      },
+      "gallery": {
+        "openPhoto": "Buka foto {number} dari {total}",
+        "openPhotoAlt": "Buka foto {number} dari {total}: {alt}",
+        "photoOf": "Foto {number} dari {total}",
+        "viewer": "Penampil foto",
+        "close": "Tutup",
+        "previous": "Foto sebelumnya",
+        "next": "Foto berikutnya",
+        "imageUnavailable": "Gambar tidak tersedia"
+      },
+      "apps": {
+        "getTheApp": "Dapatkan aplikasi",
+        "appStore": "Unduh di App Store",
+        "googlePlay": "Dapatkan di Google Play",
+        "openInBrowser": "Buka di browser Anda"
+      },
+      "menu": {
+        "menu": "Menu",
+        "sections": "Bagian menu",
+        "soldOut": "Habis",
+        "dietary": "Informasi diet",
+        "aboutDish": "Tentang hidangan ini",
+        "contains": "<label>Mengandung:</label> {list}",
+        "diet": {
+          "vegetarian": "Vegetarian",
+          "vegan": "Vegan",
+          "gluten-free": "Bebas gluten",
+          "dairy-free": "Bebas susu",
+          "halal": "Halal",
+          "kosher": "Kosher",
+          "spicy": "Pedas",
+          "organic": "Organik"
+        },
+        "allergens": {
+          "gluten": "Gluten",
+          "crustaceans": "Krustasea",
+          "eggs": "Telur",
+          "fish": "Ikan",
+          "peanuts": "Kacang tanah",
+          "soy": "Kedelai",
+          "milk": "Susu",
+          "nuts": "Kacang pohon",
+          "celery": "Seledri",
+          "mustard": "Mustard",
+          "sesame": "Wijen",
+          "sulphites": "Sulfit",
+          "lupin": "Lupin",
+          "molluscs": "Moluska"
+        }
+      },
+      "product": {
+        "details": "Detail produk",
+        "certifications": "Sertifikasi",
+        "ingredients": "Bahan",
+        "allergens": "Alergen",
+        "nutrition": "Nutrisi",
+        "nutritionPer": "Nutrisi, {basis}"
+      },
+      "reviews": {
+        "reviews": "Ulasan",
+        "leaveReview": "Tulis ulasan",
+        "reviewUsOn": "Ulas kami di {platform}"
+      },
+      "form": {
+        "form": "Formulir",
+        "send": "Kirim",
+        "thanks": "Terima kasih! Jawaban Anda telah terkirim.",
+        "starsOf": "{score} dari {max} bintang",
+        "sending": "Mengirim…",
+        "answerOne": "Jawab setidaknya satu pertanyaan sebelum mengirim.",
+        "preview": "Ini adalah pratinjau. Jawaban dikumpulkan di halaman yang dipublikasikan.",
+        "securityCheck": "Harap selesaikan pemeriksaan keamanan di atas, lalu kirim lagi.",
+        "tooMany": "Terlalu banyak jawaban dari perangkat ini. Harap tunggu satu menit lalu coba lagi.",
+        "couldntSend": "Jawaban Anda tidak dapat dikirim. Silakan coba lagi.",
+        "offline": "Anda sepertinya sedang offline. Jawaban Anda masih tersimpan di sini; coba lagi sebentar lagi.",
+        "demo": "Demo: tidak ada yang dikirim.",
+        "honeypot": "Biarkan kolom ini kosong",
+        "closed": "Formulir ini sedang tidak menerima jawaban. Silakan coba lagi nanti.",
+        "errors": {
+          "required": "Kolom ini wajib diisi",
+          "consentRequired": "Centang kotak ini untuk melanjutkan",
+          "enterText": "Masukkan teks",
+          "tooLong": "Maksimal {max} karakter",
+          "email": "Masukkan alamat email yang valid",
+          "phone": "Masukkan nomor telepon yang valid",
+          "stars": "Pilih 1 sampai {max} bintang",
+          "nps": "Pilih skor dari 0 sampai 10",
+          "choices": "Pilih dari opsi yang tersedia",
+          "choice": "Pilih salah satu opsi",
+          "invalid": "Nilai tidak valid"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "Pembuat Barcode Gratis: EAN-13, UPC, Code 128",
     "metaDescription": "Buat EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix, dan lainnya: {count, number} jenis barcode dengan digit pemeriksa yang dihitung otomatis untuk Anda. PNG, JPG, SVG, PDF, dan EPS. Gratis, tanpa daftar.",
@@ -1447,11 +1773,48 @@
     "whichTitle": "Barcode mana yang harus saya pakai?",
     "whichDescription": "Menjual di toko? Gunakan jenis yang diminta peritel Anda: EAN-13 di hampir semua tempat, UPC-A di AS dan Kanada, keduanya membawa GTIN dari GS1. Mengirim barang ke mereka? ITF-14 untuk karton, GS1-128 untuk label logistik. Memberi label pada barang Anda sendiri? Code 128.",
     "linear": "Linear",
+    "formatCard": "Pembuat barcode {name}",
     "printingEyebrow": "Pencetakan",
     "tipsTitle": "Tips agar barcode terbaca",
     "tipsDescription": "Barcode bersifat statis: nomor atau teksnya ada di dalam garis-garisnya, sehingga berfungsi offline, tidak pernah kedaluwarsa, dan tidak memiliki statistik pemindaian. Butuh tautan yang bisa dipindai dengan ponsel? Gunakan <generators>pembuat kode QR</generators>. Untuk membaca barcode, buka <scanner>pemindai</scanner>.",
     "credits": "Barcode digambar oleh <bwip>bwip-js</bwip> (lisensi MIT), dan pemeriksaan pemindaian menggunakan <zxing>ZXing</zxing> yang dikompilasi ke WebAssembly, diunduh dari CDN jsDelivr saat pertama kali dijalankan.",
     "faqTitle": "FAQ pembuat barcode"
+  },
+  "barcodeFormat": {
+    "toolLabel": "Pembuat barcode {name}",
+    "usedTitle": "Penggunaan barcode {name}",
+    "rulesTitle": "Input {name} dan digit pemeriksa",
+    "rulesTitleText": "Isi yang dapat dimuat {name}",
+    "takesLabel": "Yang dibutuhkan",
+    "exampleLabel": "Contoh",
+    "checkTitle": "Digit pemeriksa {body}, beserta perhitungannya",
+    "checkTitleUpce": "UPC-E {upce} adalah UPC-A {upca}: perhitungan digit pemeriksanya",
+    "checkCaption": "Setiap digit {body} beserta bobot dan hasil kalinya",
+    "checkDigits": "Digit",
+    "checkWeights": "Bobot",
+    "checkProducts": "Hasil kali",
+    "checkSum": "Jumlah hasil kali adalah {sum, number, ::group-off}. {check, plural, =0 {Angka itu sudah kelipatan 10, sehingga digit pemeriksanya adalah 0.} other {Jika ditambah # menjadi {next, number, ::group-off}, yaitu kelipatan 10 berikutnya, sehingga digit pemeriksanya adalah #.}}",
+    "sizeTitle": "Ukuran barcode {name}",
+    "sizeCaption": "Ukuran contoh {name} pada pengaturan default pembuat barcode",
+    "sizeDownload": "Contoh dalam SVG, PDF, atau EPS",
+    "sizeMm": "{width, number} × {height, number} mm",
+    "sizeModule": "Modul (batang tersempit)",
+    "sizeCell": "Sel",
+    "sizeModuleValue": "{size, number} mm",
+    "sizeBarHeight": "Tinggi batang",
+    "sizeQuietZone": "Zona tenang",
+    "quietModules": "{min, plural, =0 {Tidak diwajibkan} other {Minimal # modul}} di setiap sisi; pembuat barcode memulai dengan {start, number}",
+    "quietCells": "{min, plural, =0 {Tidak diwajibkan} other {Minimal # sel}} di sekeliling; pembuat barcode memulai dengan {start, number}",
+    "apiTitle": "API barcode {name}",
+    "apiDescription": "Barcode yang sama tersedia sebagai URL gambar, tanpa kunci API: tempatkan di tag img, templat label, atau feed produk. API ini memeriksa nilai dengan cara yang sama seperti halaman ini, dan mengizinkan 300 permintaan per menit untuk setiap alamat IP. <docs>Dokumentasi API barcode</docs> mencantumkan semua opsi.",
+    "apiSvg": "Gambar SVG",
+    "apiPng": "PNG, 3 piksel per modul",
+    "apiHtml": "Di halaman web",
+    "faqTitle": "FAQ barcode {name}",
+    "otherTitle": "Jenis barcode lainnya",
+    "allFormats": "Semua {count, number} jenis barcode",
+    "otherCard": "Generator barcode {name}",
+    "qrNote": "Barcode bersifat statis: data berada di dalam garis-garisnya, sehingga dapat berfungsi secara offline dan tidak pernah kedaluwarsa. Untuk tautan yang dipindai orang dengan kamera ponsel, gunakan salah satu <generators>generator kode QR</generators>."
   },
   "barcodeTool": {
     "pickColor": "Pilih {label}",
@@ -1583,6 +1946,7 @@
   },
   "integrations": {
     "metaTitle": "Integrasi",
+    "searchTitle": "Integrasi Kode QR: {first}, {second}, dan {count, number} lainnya",
     "metaDescription": "Hubungkan QRdx ke {names} dan lainnya: {count, number} integrasi dengan langkah penyiapan yang tepat.",
     "hero": {
       "eyebrow": "Integrasi",
@@ -1737,9 +2101,15 @@
     "howEyebrow": "Cara kerja",
     "howTitle": "Tiga langkah, lalu tinggal bertanya",
     "howDescription": "Asisten Anda memanggil alat QRdx untuk Anda. Anda tidak perlu menyentuh API.",
+    "setupEyebrow": "Penyiapan",
+    "setupTitle": "Tambahkan QRdx ke aplikasi Anda",
+    "setupDescription": "Claude dan ChatGPT menerima URL server sebagai konektor kustom. Claude Code, Cursor, dan VS Code cukup memakai satu perintah atau beberapa baris konfigurasi. Aplikasi yang hanya menjalankan server lokal terhubung melalui mcp-remote.",
+    "setupUrl": "URL server",
     "toolsEyebrow": "Alat",
     "toolsTitle": "Yang dapat dipanggil asisten Anda",
     "toolsDescription": "{count, number} alat. Semuanya kecuali save_template dan save_barcode bersifat hanya-baca dan tidak memerlukan kunci: alat ini membuat gambar, memformat teks, dan membaca komunitas publik. Parameter lengkap ada di <link>dokumen server MCP</link>.",
+    "toolNoKey": "Tanpa kunci",
+    "toolNeedsKey": "Perlu kunci API",
     "faqTitle": "FAQ server MCP",
     "connect": {
       "copyFailed": "Tidak dapat menyalin. Pilih teksnya lalu salin secara manual.",
@@ -1839,6 +2209,149 @@
           }
         }
       }
+    }
+  },
+  "qrCodeApi": {
+    "metaTitle": "API Kode QR Gratis: Tanpa Kunci, SVG, PNG, dan Logo",
+    "metaDescription": "API kode QR gratis tanpa kunci atau pendaftaran. Satu URL mengembalikan kode QR sebagai SVG, PNG, WebP, atau EPS, lengkap dengan warna, bentuk, dan logo Anda. {perMinute, number} permintaan per menit, di-cache selama setahun.",
+    "crumb": "API kode QR",
+    "title": "API kode QR gratis",
+    "intro1": "Pasang kode QR di mana pun URL bisa digunakan. Satu permintaan GET ke api.qrdx.dev langsung mengembalikan gambarnya: tanpa akun, tanpa kunci API, tanpa SDK. Warna, bentuk, koreksi kesalahan, dan logo cukup ditulis di query string.",
+    "intro2": "Gambar dibuat dengan mesin open source yang sama seperti Playground QRdx. Query yang sama selalu menghasilkan byte yang sama, sehingga respons di-cache selama setahun dan gambar di README, email, atau halaman web disajikan dari cache setelah permintaan pertama.",
+    "facts": {
+      "noKey": "Tanpa kunci atau pendaftaran",
+      "rateLimit": "{perMinute, number} permintaan per menit untuk setiap IP",
+      "formats": "SVG, PNG, WebP, dan EPS",
+      "openSource": "Open source"
+    },
+    "docs": "Dokumentasi Image API",
+    "restDocs": "REST API untuk kode dinamis",
+    "builderEyebrow": "Coba",
+    "builderTitle": "Buat URL kode QR",
+    "builderDescription": "Ubah apa pun di sebelah kiri; pratinjaunya adalah API langsung. Salin URL, HTML, atau perintah curl saat hasilnya sudah sesuai.",
+    "builder": {
+      "label": "Pembuat URL API kode QR",
+      "data": "Teks atau URL",
+      "format": "Format",
+      "size": "Ukuran",
+      "sizePixels": "{size, number} px",
+      "sizePoints": "Lebar {size, number} pt",
+      "fg": "Warna kode",
+      "bg": "Latar belakang",
+      "pickColor": "Pilih {label}",
+      "body": "Bentuk modul",
+      "level": "Koreksi kesalahan",
+      "logo": "Ikon logo",
+      "logoNone": "Tidak ada",
+      "logoNote": "Jika memakai logo, kode beralih ke koreksi kesalahan H saat logo membutuhkannya, sehingga tetap bisa dipindai.",
+      "previewAlt": "Kode QR untuk {value}",
+      "epsPreview": "EPS adalah file untuk cetak, jadi pratinjau menampilkan kode yang sama dalam format SVG.",
+      "empty": "Ketik teks atau tautan yang ingin di-encode.",
+      "tooLong": "Teks ini lebih dari {max, number} karakter, batas yang berlaku di API.",
+      "loadFailed": "Pratinjau gagal dimuat. Jika Anda mengubahnya berkali-kali berturut-turut, tunggu semenit: API mengizinkan {perMinute, number} permintaan per menit.",
+      "url": "URL gambar",
+      "html": "HTML",
+      "markdown": "Markdown",
+      "curl": "curl",
+      "open": "Buka gambar"
+    },
+    "examplesEyebrow": "Contoh",
+    "examplesTitle": "URL adalah gambarnya",
+    "examplesDescription": "Tempelkan ke Markdown, tag img, atau templat email, atau unduh file dengan curl. Enkode data dengan encodeURIComponent (atau padanannya di bahasa pemrograman Anda) jika berisi tanda dan (&), tanda pagar (#), tanda plus (+), atau spasi.",
+    "examples": {
+      "markdown": "Markdown",
+      "html": "HTML",
+      "curl": "Terminal",
+      "js": "JavaScript"
+    },
+    "paramsEyebrow": "Referensi",
+    "paramsTitle": "Parameter",
+    "paramsDescription": "Semuanya masuk ke query string. Gradasi, bingkai kustom, dan warna per mata sudut masuk ke style, yaitu desain dari editor dalam format JSON; <link>dokumentasi Image API</link> membahas setiap kolomnya.",
+    "paramsHeader": {
+      "name": "Parameter",
+      "default": "Default",
+      "description": "Fungsinya"
+    },
+    "paramsRequired": "wajib",
+    "paramsNone": "tidak ada",
+    "params": {
+      "data": "Teks atau URL yang akan di-encode, maksimal {max, number} karakter.",
+      "size": "Lebar dan tinggi dalam piksel, {min, number} hingga {max, number}. Untuk EPS, ini adalah lebar dalam poin.",
+      "format": "svg, png, webp (lossless) atau eps (vektor, untuk cetak).",
+      "colors": "Warna kode dan latar belakang dalam format hex, tanpa # (155dfc). bg=00000000 membuat latar belakang transparan.",
+      "shapes": "Bentuk modul, mata di sudut, dan titik di dalamnya: total ada {count, number} bentuk modul.",
+      "level": "Koreksi kesalahan: L (7%), M (15%), Q (25%) atau H (30%) dari kode boleh rusak dan tetap bisa dipindai.",
+      "margin": "Zona tenang di sekitar kode, dalam modul, dari 0 hingga {max, number}.",
+      "logoIcon": "Logo di bagian tengah: ikon cepat seperti wifi, link atau phone, atau salah satu dari {brands} logo merek berdasarkan slug Simple Icons.",
+      "frame": "Bingkai ajakan bertindak seperti banner-bottom, dengan frameText sebagai labelnya.",
+      "style": "Seluruh desain editor dalam format JSON: gradasi, bingkai kustom, warna per mata, dan tata letak logo."
+    },
+    "limitsEyebrow": "Di produksi",
+    "limitsTitle": "Batas, cache, dan privasi",
+    "limits": {
+      "rateTitle": "{perMinute, number} permintaan per menit per IP",
+      "rateBody": "Jika melewati batas, Anda akan menerima respons 429 dengan header Retry-After. URL yang identik dilayani dari cache, sehingga menampilkan gambar yang sama berulang kali jarang mencapai batas.",
+      "cacheTitle": "Di-cache selama setahun",
+      "cacheBody": "Kueri sama, byte sama. Respons dikirim dengan Cache-Control: public, max-age=31536000, immutable, sehingga browser dan CDN menyimpannya. Hasil render item komunitas di-cache selama 5 menit, karena item tersebut bisa berubah.",
+      "corsTitle": "Berfungsi dari situs web mana pun",
+      "corsBody": "Respons mengizinkan semua origin (Access-Control-Allow-Origin: *), sehingga kode di browser dapat mengambil gambar sekaligus menampilkannya.",
+      "privateTitle": "Jangan taruh rahasia di URL",
+      "privateBody": "Data menjadi bagian dari URL, sehingga bisa tersimpan di log server, riwayat browser, dan cache. Kata sandi Wi-Fi di README publik berarti terbuka untuk umum.",
+      "scanTitle": "Menggambar sesuai permintaan Anda",
+      "scanBody": "Image API tidak memeriksa apakah suatu desain dapat dipindai. Jaga kontras tetap kuat dan uji dengan ponsel; alat design_qr milik server MCP akan memeriksa dan memperbaiki style untuk Anda.",
+      "selfHostTitle": "Hosting sendiri",
+      "selfHostBody": "API ini bagian dari aplikasi QRdx open source, sehingga instans Anda sendiri melayaninya di /api/v1/qr pada domain Anda."
+    },
+    "restEyebrow": "Statis atau dinamis",
+    "restTitle": "Saat Anda justru membutuhkan REST API",
+    "restDescription": "Image API membuat kode statis: datanya ada di dalam kode, sehingga tidak pernah kedaluwarsa tetapi tidak bisa diubah setelah dicetak. Untuk kode yang nanti bisa diarahkan ke tujuan lain, dengan analitik pemindaian, gunakan REST API dengan kunci API gratis.",
+    "imageCard": {
+      "title": "Image API",
+      "noKey": "Tanpa kunci atau akun",
+      "static": "Kode statis: data ada di dalam gambar",
+      "formats": "SVG, PNG, WebP, dan EPS",
+      "limit": "{perMinute, number} permintaan per menit per IP"
+    },
+    "restCard": {
+      "title": "REST API",
+      "key": "Kunci API workspace dari akun gratis",
+      "dynamic": "Kode dinamis yang bisa diedit setelah dicetak",
+      "analytics": "Analitik pemindaian, folder, tag, dan webhook",
+      "free": "{count, number} kode QR dinamis di paket Gratis, dengan pemindaian tanpa batas"
+    },
+    "restLink": "Dokumen REST API",
+    "quickstartLink": "Panduan cepat API",
+    "moreTitle": "Cara lain membuat kode QR dari kode program",
+    "more": {
+      "googleChartTitle": "Ganti Google Chart QR API",
+      "googleChartBody": "Petakan chl, chs, dan chld ke API ini lalu ubah URL gambar lama dengan satu perintah.",
+      "mcpTitle": "Server MCP",
+      "mcpBody": "Biarkan Claude, ChatGPT, atau Cursor merancang dan merender kode untuk Anda, tanpa kunci.",
+      "barcodeTitle": "Barcode API",
+      "barcodeBody": "EAN-13, UPC-A, Code 128, Data Matrix, dan lainnya, lengkap dengan digit pemeriksa, dari sebuah URL.",
+      "cliTitle": "CLI",
+      "cliBody": "Kode bergaya dari terminal atau CI, dan satu kode untuk setiap baris file CSV.",
+      "reactTitle": "Pustaka React",
+      "reactBody": "Render kode bergaya di React dan Next.js, di server maupun di klien."
+    },
+    "faqTitle": "FAQ API kode QR",
+    "faq": {
+      "freeQuestion": "Apakah ada API kode QR gratis tanpa kunci API?",
+      "freeAnswer": "Ya. GET https://api.qrdx.dev/v1/qr?data=… mengembalikan gambar kode QR tanpa kunci, akun, atau pendaftaran. API ini mengizinkan {perMinute, number} permintaan per menit untuk setiap alamat IP, dan URL yang identik disimpan di cache selama setahun.",
+      "logoQuestion": "Apakah API kode QR bisa menambahkan logo?",
+      "logoAnswer": "Ya. logoIcon menempatkan ikon cepat (Wi-Fi, tautan, telepon, email, dan lainnya) atau salah satu dari {brands} logo merek dari Simple Icons di bagian tengah, tanpa kunci. Kode beralih ke koreksi kesalahan H saat logo memerlukannya, sehingga tetap bisa dipindai.",
+      "formatsQuestion": "Format gambar apa yang dikembalikan?",
+      "formatsAnswer": "SVG secara default, atau PNG, WebP lossless, dan EPS vektor dengan format=png, webp, atau eps. Ukurannya mulai dari {min, number} hingga {max, number} piksel.",
+      "expireQuestion": "Apakah kode QR kedaluwarsa?",
+      "expireAnswer": "Tidak. Image API membuat kode statis: apa yang Anda enkode ada di dalam kode, sehingga kode berfungsi selama tautan atau teks di dalamnya masih berfungsi. Tidak ada yang kedaluwarsa dan tidak ada yang menghitung pemindaian.",
+      "dynamicQuestion": "Bisakah saya mengubah tujuan kode setelah dicetak?",
+      "dynamicAnswer": "Tidak dengan Image API. Untuk itu Anda memerlukan kode dinamis, yang dibuat di dasbor QRdx atau dengan REST API dan kunci API gratis. Paket Gratis mencakup {count, number} kode dinamis dengan pemindaian tanpa batas.",
+      "googleQuestion": "Bisakah API ini menggantikan Google Chart QR code API?",
+      "googleAnswer": "Ya. Ganti host dan path, ubah nama chl menjadi data dan chs menjadi size (kode QR berbentuk persegi, jadi cukup satu angka), lalu atur level dan margin dari chld. Parameter yang tidak dikenalnya, seperti cht dan choe, diabaikan. Panduan migrasi memuat pemetaan lengkapnya.",
+      "limitQuestion": "Apa yang terjadi jika saya melewati batas laju?",
+      "limitAnswer": "Anda akan menerima respons 429 dengan header Retry-After yang menyatakan kapan Anda bisa mencoba lagi. URL yang identik disimpan di cache selama setahun, sehingga gambar yang tampil di halaman yang ramai biasanya disajikan dari cache.",
+      "aiQuestion": "Bisakah asisten AI menggunakannya?",
+      "aiAnswer": "Ya. Alat generate_qr_code milik server MCP QRdx mengembalikan URL gambar ini, dan asisten tanpa MCP pun dapat menulis URL tersebut sendiri sebagai gambar Markdown."
     }
   },
   "ai": {
@@ -4117,8 +4630,7 @@
         "dangerZoneSection": {
           "deleteYourAccount": "Hapus akun Anda?",
           "thisCantBeUndoneIf": "Tindakan ini tidak dapat dibatalkan. Jika Anda ingin salinan data Anda, unduh terlebih dahulu.",
-          "type": "Ketik",
-          "toConfirm": "untuk konfirmasi",
+          "typeToConfirm": "Ketik <code>{word}</code> untuk mengonfirmasi",
           "cancel": "Batal",
           "deleteAccount": "Hapus akun",
           "deleteAccount2": "Hapus akun…",
@@ -4242,10 +4754,10 @@
           "removedName": "{name} dihapus",
           "yourPasskeyIsReadyTo": "Passkey Anda siap menjadi langkah kedua Anda.",
           "addAPasskeyOrAn": "Tambahkan passkey atau aplikasi autentikator untuk mengaktifkannya.",
-          "yourPasskey": "passkey Anda",
-          "aCodeFromYourAuthenticator": "kode dari aplikasi autentikator Anda",
-          "afterYouSignInQrdx2": "Setelah Anda masuk, QRdx meminta kode cadangan.",
-          "afterYouSignInQrdx3": "Setelah Anda masuk, QRdx meminta {value}. Kode cadangan juga dapat digunakan."
+          "afterYouSignInPasskeyOrApp": "Setelah Anda masuk, QRdx akan meminta passkey atau kode dari aplikasi autentikator Anda. Kode cadangan juga dapat digunakan.",
+          "afterYouSignInPasskey": "Setelah Anda masuk, QRdx akan meminta passkey Anda. Kode cadangan juga dapat digunakan.",
+          "afterYouSignInApp": "Setelah Anda masuk, QRdx akan meminta kode dari aplikasi autentikator Anda. Kode cadangan juga dapat digunakan.",
+          "afterYouSignInQrdx2": "Setelah Anda masuk, QRdx meminta kode cadangan."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Langkah {stepNumber, number} dari {length, number}",
@@ -4287,7 +4799,7 @@
         },
         "workspaceTwoFactorNotice": {
           "twoStepVerificationIsOn": "Verifikasi dua langkah sudah aktif, jadi Anda bisa membuka <span>{name}</span> sekarang.",
-          "requiresTwoStepVerificationTurn": "memerlukan verifikasi dua langkah. Aktifkan <link>di bawah</link>, lalu kembali ke sini dari halaman ini.",
+          "requiresTwoStepVerificationTurn": "<span>{name}</span> mewajibkan verifikasi dua langkah. Aktifkan <link>di bawah</link>, lalu kembali ke sini.",
           "backToName": "Kembali ke {name}"
         },
         "page": {
@@ -4393,7 +4905,8 @@
           "itsShownOnlyThisOnce": "Kunci ini hanya ditampilkan sekali ini. Simpan di server Anda, jangan di browser atau aplikasi.",
           "done": "Selesai",
           "apiKeys": "API key",
-          "callTheRestApiFrom": "Panggil REST API dari server dan skrip Anda. Kunci bertindak atas nama Anda di",
+          "keysActAsYou": "Panggil REST API dari server dan skrip Anda. Kunci bertindak atas nama Anda di <strong>{workspace}</strong>.",
+          "keysActAsYouWithRole": "Panggil REST API dari server dan skrip Anda. Kunci bertindak atas nama Anda di <strong>{workspace}</strong>, dengan peran Anda di sana.",
           "createKey": "Buat kunci",
           "apiKeysArentAvailableOn": "API key belum tersedia di deployment ini.",
           "noApiKeysYet": "Belum ada API key",
@@ -4405,7 +4918,6 @@
           "cancel": "Batal",
           "revokeKey": "Cabut kunci",
           "apiKey": "API key",
-          "withYourRoleThere": ", dengan peran Anda di sana.",
           "forWorkspacenameItCanDo": "Untuk {workspaceName}. Kunci ini dapat melakukan apa yang diizinkan peran Anda, sesuai cakupannya.",
           "forYourOwnWorkspaceWithin": "Untuk workspace Anda sendiri, sesuai cakupan yang Anda pilih.",
           "keyRevoked": "Kunci dicabut"
@@ -4480,10 +4992,11 @@
           "deleteApp": "Hapus aplikasi",
           "revokesEveryTokenItIssued": "Mencabut semua token yang diterbitkannya. Tindakan ini tidak dapat dibatalkan.",
           "deleteName": "Hapus {name}?",
-          "itsClientIdAndSecret": "Client ID dan secret-nya berhenti berfungsi, dan semua token akses dan token refresh yang pernah diterbitkan dicabut",
+          "deleteAppNoUsers": "ID klien dan rahasianya berhenti berfungsi, dan setiap token akses serta token refresh yang diterbitkannya dicabut.",
+          "deleteAppDisconnecting": "ID klien dan rahasianya berhenti berfungsi, dan setiap token akses serta token refresh yang diterbitkannya dicabut, sehingga {count, plural, other {# orang}} terputus.",
+          "peopleHaveAccess": "{count, plural, other {# orang saat ini memiliki}} akses melalui aplikasi ini.",
           "cancel": "Batal",
           "nobodyHasAuthorizedThisApp": "Belum ada yang mengotorisasi aplikasi ini.",
-          "disconnectingPeople": ", memutuskan koneksi {people}",
           "deleting": "Menghapus…",
           "appSaved": "Aplikasi disimpan",
           "appResumed": "Aplikasi dilanjutkan",
@@ -4534,14 +5047,13 @@
           "peopleWhoLinkedASlack": "Orang yang menautkan akun Slack dengan <code>/qr link</code> membuat kode terlacak di <span>{workspaceName}</span> dari Slack, sebagai anggota yang disebutkan di sini. <link>Bot Slack</link>",
           "slackLinksArentAvailableOn": "Tautan Slack belum tersedia di deployment ini.",
           "noSlackAccountIsLinked": "Tidak ada akun Slack yang ditautkan ke ruang kerja ini.",
-          "as": "Sebagai",
-          "linked": "· Tertaut",
+          "linkedAs": "Sebagai {member} · Ditautkan {date}",
+          "linkedAsInWorkspace": "Sebagai {member} · Ditautkan {date} · Workspace Slack {teamId}",
           "revoke": "Cabut",
           "revokeTheSlackLinkOf": "Cabut tautan Slack milik {slackUserId}?",
           "qrTrackFromThatSlack": "<code>/qr track</code> dari akun Slack tersebut tidak lagi membuat kode di {workspaceName}. Kode yang sudah dibuat tetap ada. Mereka dapat menautkan lagi dengan <code2>/qr link</code2> jika masih menjadi anggota.",
           "cancel": "Batal",
           "revokeLink": "Cabut tautan",
-          "slackWorkspaceTeamid": " · Ruang kerja Slack {teamId}",
           "slackLinkRevoked": "Tautan Slack dicabut",
           "aFormerMember": "mantan anggota"
         },
@@ -4645,9 +5157,8 @@
           "integrations": "Integrasi",
           "disconnect": "Putuskan",
           "nameIsNoLongerAvailable": "{name} tidak lagi tersedia di QRdx",
-          "nothingInQrdxUsesThis": "Tidak ada yang di QRdx menggunakan koneksi ini lagi",
-          "disconnectToDeleteItWhere": ". Putuskan untuk menghapusnya; jika",
-          "supportsItQrdxsAccessIs": "mendukungnya, akses QRdx di sana juga dicabut.",
+          "unusedConnection": "Tidak ada yang di QRdx menggunakan koneksi ini lagi. Putuskan untuk menghapusnya; jika {name} mendukungnya, akses QRdx di sana juga dicabut.",
+          "unusedConnectionSince": "Tidak ada yang di QRdx menggunakan koneksi ini lagi. Anda menghubungkannya pada {date}. Putuskan untuk menghapusnya; jika {name} mendukungnya, akses QRdx di sana juga dicabut.",
           "reconnect": "Hubungkan ulang",
           "builtBy": "Dibuat oleh",
           "website": "Situs web",
@@ -4656,7 +5167,6 @@
           "whereThisIntegrationShowsUp": "Tempat integrasi ini muncul di QRdx.",
           "features": "Fitur",
           "howToConnect": "Cara menghubungkan",
-          "youConnectedItOnUndefined": ". Anda menghubungkannya pada {undefined}",
           "enable": "Aktifkan",
           "needsSetup": "Perlu penyiapan",
           "youCanAlsoDeleteThe": "Anda juga dapat menghapus kunci di {name}.",
@@ -4712,8 +5222,7 @@
           "addedValue": "Ditambahkan {value}",
           "linkedSlackAccounts": "Akun Slack yang tertaut",
           "noSlackAccountIsLinked": "Belum ada akun Slack yang tertaut ke Anda. Jalankan <code>/qr link</code> di Slack untuk menautkannya.",
-          "trackedCodesGoTo": "Kode terlacak masuk ke",
-          "linked": ". Tertaut",
+          "trackedCodesLine": "Kode yang dilacak dikirim ke {workspace}. Ditautkan {date}.",
           "unlink": "Putuskan",
           "yourQrdxWorkspace": "workspace QRdx Anda",
           "slackAccountUnlinked": "Tautan akun Slack diputus",
@@ -4780,17 +5289,15 @@
           "postAbout": "Kirim tentang",
           "cancel": "Batal",
           "removeThisWebhook": "Hapus webhook ini?",
-          "qrdxStopsPostingTo": "QRdx berhenti mengirim ke",
-          "theWebhookItselfStaysIn": ". Webhook itu sendiri tetap ada di",
-          "untilYouDeleteItThere": "sampai Anda menghapusnya di sana.",
+          "removeWebhookDescription": "QRdx berhenti mengirim ke {chat}. Webhook-nya sendiri tetap ada di {channel} sampai Anda menghapusnya di sana.",
           "remove": "Hapus",
           "everyAlertEmailHasAn": "Setiap email peringatan memiliki tautan berhenti berlangganan. Undangan tim dan email akun lainnya selalu dikirim. Ingin peristiwa masuk ke sistem Anda sendiri? <link>Gunakan webhook</link>.",
           "sendATestMessage": "Kirim pesan uji coba",
           "editEvents": "Ubah peristiwa",
           "removeWebhook": "Hapus webhook",
-          "arePartOfProAnd": "tersedia di Pro dan Business",
-          "arePartOfBusiness": "tersedia di Business",
-          "thisWorkspaceFollowsThePlan": " Workspace ini mengikuti paket para pemiliknya.",
+          "emailAlertsArePro": "Peringatan email dan ringkasan mingguan termasuk dalam Pro dan Business.",
+          "chatAlertsAreBusiness": "Peringatan Slack dan Discord termasuk dalam Business.",
+          "thisWorkspaceFollowsThePlan": "Workspace ini mengikuti paket milik para pemiliknya.",
           "alertsAboutThisWorkspacesCodes": "Peringatan tentang kode dan halaman di workspace ini. Hanya Anda yang menerimanya; setiap anggota memilih sendiri.",
           "alertsAboutTheCodesAnd": "Peringatan tentang kode dan halaman di workspace Anda sendiri.",
           "addAValueWebhook": "Tambahkan webhook {value}",
@@ -4865,7 +5372,7 @@
           "allBarcodes": "Semua barcode",
           "labelUpdatedUpdatedat": "{label} · Diperbarui {updatedAt}",
           "youHaveViewOnlyAccess": "Anda hanya memiliki akses lihat: Anda dapat mengunduh barcode ini, tetapi tidak dapat mengubahnya.",
-          "planBarcodesAreStaticThey": "paket. Barcode bersifat statis: tidak pernah kedaluwarsa dan berfungsi di semua paket.",
+          "planBarcodesAreStaticThey": "Paket {plan}. Barcode bersifat statis: tidak pernah kedaluwarsa dan berfungsi di semua paket.",
           "noBarcodesYet": "Belum ada barcode",
           "newBarcode": "Barcode baru",
           "openTheFreeGenerator": "Buka generator gratis",
@@ -5005,16 +5512,15 @@
             "theImportGoesOnBy": "Setelah itu impor berlanjut dengan sendirinya jika halaman ini tetap terbuka, atau lanjutkan setelah {resumeAfter}. Kode yang sudah dibuat tidak akan dibuat lagi.",
             "theImportStopped": "Impor berhenti",
             "seePlans": "Lihat paket",
-            "of": "dari",
-            "rowsSent": "baris terkirim",
-            "created": "dibuat",
+            "rowsSentOf": "{sent} dari {total} baris terkirim",
+            "createdCount": "{created} dibuat",
+            "createdWithProblems": "{created} dibuat · {rowErrors} bermasalah",
             "valueCouldntBeSent": "{value} tidak dapat dikirim",
             "retryThemNothingIsMade": "Coba lagi; tidak ada yang dibuat dua kali.",
             "pause": "Jeda",
             "resume": "Lanjutkan",
             "leavingThisPagePausesThe": "Meninggalkan halaman ini akan menjeda impor; kembali lagi untuk melanjutkannya.",
             "importProgress": "Progres impor",
-            "rowerrorsWithProblems": " · {rowErrors} bermasalah",
             "tryingAgainInSecondsS": "Mencoba lagi dalam {seconds, number} dtk",
             "waitingSecondsSForThe": "Menunggu {seconds, number} dtk untuk batas pembuatan",
             "importing": "Mengimpor",
@@ -5045,15 +5551,13 @@
           },
           "importWizard": {
             "loading": "Memuat...",
-            "onThe": "Pada paket",
-            "planYouCanImportOne": "Anda hanya dapat mengimpor satu kode dalam satu waktu.",
+            "oneCodeAtATime": "Di paket {plan}, Anda dapat mengimpor satu kode sekali waktu.",
             "upgrade": "Upgrade",
             "n1ChooseACsvFile": "1. Pilih file CSV",
             "sampleCsv": "Contoh CSV",
             "dropACsvFileHere": "Letakkan file CSV di sini, atau klik untuk memilih",
-            "firstRowColumnNamesColumns": "Baris pertama: nama kolom. Kolom: destination (wajib), title, folder (gunakan \"Parent / Child\" untuk subfolder), tags (dipisahkan dengan ; atau |) dan slug (back-half kustom opsional",
-            "n3To64LettersDigits": ": 3 hingga 64 huruf, angka, - atau _). Hingga",
-            "rowsAnd": "baris dan",
+            "csvColumns": "Baris pertama: nama kolom. Kolom: destination (wajib), title, folder (gunakan \"Induk / Anak\" untuk subfolder), tags (dipisahkan dengan ; atau |) dan slug (back-half khusus, opsional: 3 hingga 64 huruf, angka, - atau _). Hingga {rows} baris dan {size} MB.",
+            "csvColumnsSlugOnPlans": "Baris pertama: nama kolom. Kolom: destination (wajib), title, folder (gunakan \"Induk / Anak\" untuk subfolder), tags (dipisahkan dengan ; atau |) dan slug (back-half khusus, opsional di {slugPlans}: 3 hingga 64 huruf, angka, - atau _). Hingga {rows} baris dan {size} MB.",
             "thisFileHasMoreThan": "File ini memiliki lebih dari {MAX_IMPORT_ROWS} baris. Hanya {MAX_IMPORT_ROWS2} baris pertama yang ditampilkan dan diimpor.",
             "n2MatchTheColumns": "2. Cocokkan kolom",
             "notInThisFile": "Tidak ada di file ini",
@@ -5076,19 +5580,18 @@
             "removeFile": "Hapus file",
             "bulkImportIsAValue": "Impor massal adalah fitur {value}",
             "bulkImportIsntOnYour": "Impor massal tidak tersedia di paket Anda",
-            "bulkplansImportUpToMax": " {bulkPlans} dapat mengimpor hingga {MAX_IMPORT_ROWS} kode per file.",
-            "onSlugplans": " di {slugPlans}",
-            "newFoldersValue": "Folder baru: {value}. ",
+            "bulkplansImportUpToMax": "{bulkPlans} dapat mengimpor hingga {MAX_IMPORT_ROWS} kode per file.",
+            "newFoldersValue": "Folder baru: {value}.",
             "newTagsValue": "Tag baru: {value}.",
             "auto": "otomatis",
-            "rowsWithProblemsAreSkipped": "Baris bermasalah akan dilewati. ",
+            "rowsWithProblemsAreSkipped": "Baris bermasalah dilewati.",
             "sentImportChunkSizeAt": "Dikirim {IMPORT_CHUNK_SIZE} sekaligus; Anda dapat menjeda dan melanjutkan."
           }
         },
         "analyticsExtra": {
           "whenPeopleScan": "Waktu pemindaian",
-          "last": "Terakhir",
-          "days": "hari,",
+          "lastDays": "{days, number} hari terakhir, {timeZone}",
+          "lastDaysBusiest": "{days, number} hari terakhir, {timeZone} · jam tersibuk {hour}:00",
           "hourOfDay": "Jam dalam sehari",
           "dayOfWeek": "Hari dalam minggu",
           "aBSplit": "Pembagian A/B",
@@ -5107,7 +5610,6 @@
           "taps": "Ketukan",
           "mostTapped": "Paling diketuk",
           "conversionTypes": "Jenis konversi",
-          "busiestHourValue00": " · jam tersibuk {value}:00",
           "sinceValue": " sejak {value}",
           "languageAndScanCountRules": " (aturan bahasa dan jumlah pemindaian tidak dapat diputar ulang, jadi angka ini mungkin mencakup pemindaian yang dialihkan ke tempat lain oleh aturan tersebut)",
           "unknown": "Tak dikenal"
@@ -5137,7 +5639,8 @@
           "everyScan": "setiap pemindaian",
           "daysDaysOfScanHistory": "Riwayat pemindaian {days, number} hari",
           "valueKeepsValue2": "{value} mempertahankan {value2}",
-          "valueAndValue2": "{value} dan {value2}."
+          "valueAndValue2": "{value} dan {value2}.",
+          "yearsOfScanHistory": "{years, plural, other {Riwayat pemindaian # tahun}}"
         },
         "changeTypeDialog": {
           "theyStaySavedAndWork": "Semuanya tetap tersimpan dan berfungsi lagi jika Anda beralih kembali.",
@@ -5146,8 +5649,7 @@
           "link": "Tautan",
           "switchBack": "Beralih kembali",
           "usedLimitPagesValue": "{used, number} / {limit, number} halaman ({value})",
-          "notInThisTemplate": "Tidak ada di templat ini:",
-          "onYourCurrentPage": "di halaman Anda saat ini.",
+          "notInThisTemplateStays": "Tidak ada di templat ini: {list}. {count, plural, other {Data tersebut tetap}} ada di halaman Anda saat ini.",
           "valueStaysInPagesSo": "{value} tetap ada di Pages, sehingga Anda bisa beralih kembali. Pemindaian tetap membuka halaman itu sampai Anda memublikasikan halaman baru.",
           "youEditThePageNext": "Anda akan mengedit halaman berikutnya. Pemindaian tetap menuju ke {opensNow} sampai Anda memublikasikannya.",
           "continueToEditor": "Lanjut ke editor",
@@ -5162,8 +5664,6 @@
           "hostedPage": "Halaman yang di-hosting",
           "comesAlongThePageName": "Ikut terbawa: nama halaman, pengaturan, dan logo, serta {value}.",
           "comesAlongThePageName2": "Ikut terbawa: nama halaman, pengaturan, dan logo.",
-          "itStays": "Tetap ada",
-          "theyStay": "Tetap ada",
           "valueStaysInPagesSo2": "{value} tetap ada di Pages, sehingga Anda bisa beralih kembali nanti. Halaman ini tetap dihitung dalam kuota halaman yang di-hosting hingga Anda menghapusnya.",
           "scansGoStraightToThis": "Pemindaian langsung menuju alamat ini.",
           "switching": "Mengalihkan...",
@@ -5182,14 +5682,13 @@
         },
         "historyPanel": {
           "labelChanged": "{label} diubah",
-          "passwordTurned": "Kata sandi diubah",
+          "passwordTurnedOn": "Kata sandi diaktifkan",
+          "passwordTurnedOff": "Kata sandi dinonaktifkan",
           "versionHistory": "Riwayat versi",
           "eachEditToTheType": "Setiap perubahan pada jenis, tujuan, judul, desain, domain, jadwal, perutean, atau piksel menyimpan pengaturan sebelumnya di sini. Memulihkan versi akan menyimpan pengaturan saat ini terlebih dahulu, sehingga dapat dibatalkan.",
           "noChangesYetWhenYou": "Belum ada perubahan. Saat Anda mengedit kode ini, pengaturan sebelumnya akan muncul di sini.",
-          "changedOnChangewhen": "diubah pada {changeWhen}",
+          "actorChangedOn": "<strong>{actor}</strong> <muted>mengubah pada {changeWhen}</muted>",
           "showingTheLatestShownOf": "Menampilkan {SHOWN, number} dari {total, number} versi terbaru. Hingga 100 versi disimpan per kode.",
-          "on": "aktif",
-          "off": "nonaktif",
           "valueUtc": "{value} UTC"
         },
         "historyRestoreButton": {
@@ -5203,16 +5702,15 @@
           "restoreVersion": "Pulihkan versi"
         },
         "inactiveSettingsNotice": {
-          "againIfYouSwitchBack": "lagi jika Anda beralih kembali dengan Ubah jenis.",
-          "itWorks": "Berfungsi",
-          "theyWork": "Berfungsi"
+          "savedFromLink": "{count, plural, other {{names} tersimpan dari saat kode ini masih berupa tautan situs web. Halaman yang di-hosting tidak menggunakannya. Pengaturan ini berfungsi lagi jika Anda beralih kembali dengan Ubah jenis.}}",
+          "savedFromPage": "{count, plural, other {{names} tersimpan dari saat kode ini membuka halaman yang di-hosting. Tautan situs web tidak memuatnya. Pengaturan ini berfungsi lagi jika Anda beralih kembali dengan Ubah jenis.}}"
         },
         "landingPagePanel": {
           "hostedPage": "Halaman yang di-hosting",
           "thePageThisCodeOpened": "Halaman yang dibuka oleh kode ini telah dihapus, sehingga pemindaian menampilkan \"tidak ditemukan\". Gunakan Ubah jenis untuk mengarahkannya ke tautan situs web atau halaman baru.",
-          "scansOpen": "Pemindaian membuka",
+          "scansOpenTitle": "Pemindaian membuka “{title}” ({label}).",
+          "scansOpenYourPage": "Pemindaian membuka halaman Anda ({label}).",
           "view": "Lihat",
-          "yourPage": "halaman Anda",
           "editItAnytimeThePrinted": "Edit kapan saja; kode yang sudah dicetak tetap sama.",
           "thePrintedCodeAlwaysOpens": "Kode yang dicetak selalu membuka versi terbarunya.",
           "editPage": "Edit halaman",
@@ -5223,7 +5721,8 @@
           "password": "Kata sandi",
           "pauseCode": "Jeda kode",
           "whilePausedScansGoTo": "Saat dijeda, pemindaian diarahkan ke URL cadangan Anda, atau ke halaman netral \"kampanye ini dijeda\". Tersedia di setiap paket.",
-          "passwordsStartAndEndDates": "Kata sandi, tanggal mulai dan berakhir, batas pemindaian, dan URL cadangan adalah bagian dari",
+          "lifecycleOnPlan": "Kata sandi, tanggal mulai dan berakhir, batas pemindaian, serta URL cadangan termasuk dalam {plan}.",
+          "lifecycleOnPaidPlan": "Kata sandi, tanggal mulai dan berakhir, batas pemindaian, serta URL cadangan termasuk dalam paket berbayar.",
           "upgrade": "Upgrade",
           "removePassword": "Hapus kata sandi",
           "visitorsTypeItOnceThat": "Pengunjung cukup mengetiknya sekali; browser tersebut tetap terbuka selama 6 jam. Minimal 4 karakter.",
@@ -5241,8 +5740,7 @@
           "turnedOffByQrdx": "Dinonaktifkan oleh QRdx",
           "ourAutomatedChecksFlaggedA": "Pemeriksaan otomatis kami menandai sebuah tautan pada kode ini (misalnya pemendek URL, alamat IP, atau domain tiruan), sehingga kode tetap nonaktif hingga disetujui oleh peninjau, biasanya dalam sehari. Anda tidak perlu melakukan apa pun.",
           "thisCodeWasSwitchedOff": "Kode ini dinonaktifkan setelah peninjauan penyalahgunaan dan tidak mengalihkan. Hubungi support@qrdx.dev jika Anda merasa ini keliru.",
-          "aPaidPlan": "paket berbayar",
-          "yourCurrentSettingsKeepWorking": " Pengaturan Anda saat ini tetap berfungsi, dan Anda dapat menghapusnya kapan saja.",
+          "yourCurrentSettingsKeepWorking": "Pengaturan Anda saat ini tetap berfungsi, dan Anda dapat menghapusnya kapan saja.",
           "timesAreInYourTime": " Waktu mengikuti zona waktu Anda ({timeZone}).",
           "saving": "Menyimpan…",
           "saveChanges": "Simpan perubahan",
@@ -5672,14 +6170,13 @@
           "deleteFolder": "Hapus folder",
           "current": "Saat ini",
           "move": "Pindahkan",
-          "toFolder": "ke folder",
+          "moveCodesToFolder": "{count, plural, one {Pindahkan kode ke folder} other {Pindahkan # kode ke folder}}",
           "linksAndPrintedCodesDont": "Tautan dan kode cetak tidak berubah.",
           "loadingFolders": "Memuat folder...",
           "newFolder": "Folder baru",
           "springCampaign": "Kampanye musim semi",
           "save": "Simpan",
           "createFolder": "Buat folder",
-          "code": "kode",
           "itsCodesAndSubfoldersMoved": "Kode dan subfolder di dalamnya dipindahkan ke {target}."
         },
         "importDialog": {
@@ -5703,7 +6200,8 @@
         "importFileStep": {
           "allProviders": "Semua penyedia",
           "preview": "Pratinjau",
-          "getTheFileFrom": "Ambil file dari",
+          "getTheFileFrom": "Dapatkan file dari {provider}",
+          "getTheFileFromYourProvider": "Dapatkan file dari penyedia Anda",
           "dropTheCsvHereUp": "Letakkan CSV di sini <span>(maks. 2 MB)</span>",
           "matchTheColumns": "Cocokkan kolom",
           "looksLikeANameExport": "Tampaknya ini ekspor {name}",
@@ -5714,7 +6212,6 @@
           "provider": "Penyedia",
           "exportFile": "File ekspor",
           "import": "impor",
-          "yourProvider": "penyedia Anda",
           "firstMaxJobLinks": " ({MAX_JOB_LINKS, number} pertama)",
           "chooseAnotherFile": "Pilih file lain",
           "chooseFile": "Pilih file"
@@ -5760,10 +6257,7 @@
         "importPreviewStep": {
           "back": "Kembali",
           "upgrade": "Upgrade",
-          "yourPlanHasRoomFor": "Paket Anda memiliki ruang untuk",
-          "and": ", dan",
-          "readyToImportImportThe": "siap diimpor. Impor sebanyak",
-          "nowOrUpgradeForUnlimited": "sekarang, atau upgrade untuk kode QR dinamis tanpa batas. Mengarsipkan kode juga membebaskan slot.",
+          "planRoomNote": "Paket Anda masih memiliki ruang untuk {remaining, plural, other {# kode aktif lagi}}, dan {wanted, plural, other {# tautan}} siap diimpor. Impor {creates, number} pertama sekarang, atau upgrade untuk kode dinamis tanpa batas. Mengarsipkan kode juga membebaskan slot.",
           "putTheNewCodesIn": "Masukkan kode baru ke dalam folder",
           "carryOverTags": "Bawa serta tag",
           "nameNew": "{name} · baru",
@@ -5773,7 +6267,13 @@
           "eachCodeKeepsItsOld": "Setiap kode mempertahankan back-half lamanya jika masih tersedia, sehingga bit.ly/spring-menu menjadi qrdx.dev/q/spring-menu. Kode lainnya mendapat back-half yang dibuat otomatis, tercantum di bawah.",
           "linksOn": "Tautan di",
           "noneOfMyDomains": "Tidak ada domain saya",
-          "valueKept": "{value} dipertahankan",
+          "backHalvesKept": "<strong>{kept, plural, other {# back-half}} dipertahankan</strong>.",
+          "backHalvesKeptConflicts": "<strong>{kept, plural, other {# back-half}} dipertahankan</strong>, {conflicts, number} dengan back-half yang dibuat otomatis (tercantum di bawah).",
+          "domainStatus": {
+            "verified": "{domain} sudah diverifikasi di QRdx: kode langsung dipasang di domain tersebut.",
+            "pending": "{domain} sudah ditambahkan di QRdx tetapi belum diverifikasi. Kode dipasang di domain tersebut sekarang dan akan terbuka di sana setelah Anda memindahkan DNS-nya ke QRdx dan memverifikasinya.",
+            "missing": "{domain} belum ada di QRdx, jadi back-half-nya disimpan di qrdx.dev. Agar tetap berada di domain itu sendiri, tambahkan dulu di halaman Domain."
+          },
           "openDomains": "Buka Domains",
           "withoutItEveryCodeGets": "Tanpa itu, setiap kode mendapat back-half yang dibuat otomatis.",
           "needsALook": "Perlu dicek",
@@ -5789,11 +6289,8 @@
           "nothingToImport": "Tidak ada yang diimpor",
           "importTheFirstValue": "Impor {value} pertama",
           "importValue": "Impor {value}",
-          "is": "adalah",
-          "are": "adalah",
-          "keepTheirsOnThatDomain": "mempertahankan miliknya di domain tersebut, sehingga kode yang sudah dicetak berfungsi lagi setelah DNS-nya dialihkan ke QRdx.",
+          "keepTheirsOnThatDomain": "Back-half tetap berada di domain yang Anda pilih, sehingga kode yang sudah dicetak berfungsi lagi setelah DNS-nya dipindahkan ke QRdx.",
           "everyBackHalfIsKept": "Semua back-half dipertahankan di qrdx.dev.",
-          "conflictsWithAGeneratedOne": ", {conflicts, number} bentrok dengan satu yang dibuat otomatis (tercantum di bawah)",
           "keepingBackHalvesIsPart": "Mempertahankan back-half termasuk dalam {slugPlans}.",
           "yourPlanDoesntKeepBack": "Paket Anda tidak mempertahankan back-half.",
           "random": "acak",
@@ -6030,8 +6527,8 @@
           "name": "Nama",
           "cancel": "Batal",
           "deleteTagName": "Hapus tag \"{name}\"?",
-          "theTagIsRemovedFrom": "Tag akan dihapus dari",
-          "theCodesThemselvesAreNot": ". Kode QR itu sendiri tidak berubah.",
+          "deleteTagCount": "Tag dihapus dari {count, plural, other {# kode}}. Kodenya sendiri tidak diubah.",
+          "deleteTagCodes": "Tag dihapus dari kode-kodenya. Kodenya sendiri tidak diubah.",
           "deleteTag": "Hapus tag",
           "upToMaxTagsPer": "Maksimal {MAX_TAGS_PER_CODE, number} tag per kode.",
           "loadingTags": "Memuat tag...",
@@ -6042,15 +6539,11 @@
           "print": "cetak",
           "editTag": "Edit tag",
           "createTag": "Buat tag",
-          "itsCodes": "kodenya",
           "tags": "Tag",
           "tagsForValue": "Tag untuk {value}"
         },
         "usage": {
-          "activeDynamic": "dinamis aktif",
-          "planUnlimitedCodes": "paket, kode tanpa batas",
-          "code": "kode",
-          "codes": "kode",
+          "unlimitedUsage": "{count, plural, other {# kode dinamis aktif}} · paket {plan}, kode tanpa batas",
           "archivedNote": "Kode yang diarsipkan tidak dihitung. Kode yang sudah ada tetap berfungsi di semua paket.",
           "newCode": "Kode baru"
         }
@@ -6065,11 +6558,11 @@
         },
         "filesManager": {
           "storage": "Penyimpanan",
-          "of": "dari",
-          "used": "terpakai ·",
-          "maxPerFileOn": "maks. per file di",
-          "youreOverYourPlansStorage": "Penyimpanan paket Anda sudah terlampaui. File yang ada tetap berfungsi; hapus file yang tidak lagi Anda perlukan",
-          "toUploadNewOnes": "untuk mengunggah file baru.",
+          "storageUsed": "Penyimpanan terpakai",
+          "storageUsage": "{used} dari {quota} terpakai · maks. {maxFile} per file di {plan}",
+          "storageUsageUnlimited": "{used} terpakai dari penyimpanan tanpa batas · maks. {maxFile} per file di {plan}",
+          "overStorage": "Penyimpanan paket Anda sudah terlampaui. File yang ada tetap berfungsi; hapus file yang tidak lagi Anda perlukan atau upgrade untuk mengunggah file baru.",
+          "overStorageTeam": "Penyimpanan paket Anda sudah terlampaui. File yang ada tetap berfungsi; hapus file yang tidak lagi Anda perlukan untuk mengunggah file baru.",
           "dropFilesHereOrChoose": "Letakkan file di sini atau pilih file",
           "valueUpToMaxfilebytesEach": "{value} · hingga {maxFileBytes} per file",
           "noFilesYet": "Belum ada file",
@@ -6086,11 +6579,8 @@
           "toKeepTheLinkWorking": "Agar tautan tetap berfungsi dengan konten baru, gunakan Ganti file.",
           "theFileAndItsLink": "File dan tautannya dihapus secara permanen.",
           "cancel": "Batal",
-          "storageUsed": "Penyimpanan terpakai",
           "uploadFiles": "Unggah file",
           "actionsForFilename": "Tindakan untuk {filename}",
-          "unlimited": "tanpa batas",
-          "orUpgrade": " atau upgrade",
           "uploading": "Mengunggah…",
           "chooseFiles": "Pilih file",
           "uploadAMenuPdfPhotos": "Unggah PDF menu, foto, musik, atau video, lalu tambahkan ke halaman yang di-hosting dengan blok PDF, Galeri, Audio, File video, atau Unduhan.",
@@ -6196,7 +6686,7 @@
           }
         },
         "pageListControls": {
-          "planUnlimitedPages": "paket, halaman tanpa batas",
+          "unlimitedPagesUsage": "{count, plural, one {# halaman} other {# halaman}} · paket {plan}, halaman tanpa batas",
           "viewLivePage": "Lihat halaman live",
           "copyShortLink": "Salin tautan pendek",
           "qrCodeAnalytics": "Kode QR & analitik",
@@ -6207,8 +6697,6 @@
           "deleteThisPage": "Hapus halaman ini?",
           "cancel": "Batal",
           "moreActions": "Tindakan lainnya",
-          "page": "halaman",
-          "pages": "halaman",
           "thisCantBeUndone": "Tindakan ini tidak dapat dibatalkan.",
           "deleting": "Menghapus...",
           "pageDeleted": "Halaman dihapus",
@@ -6299,8 +6787,9 @@
             "valueExpiresExpiresat": "{value} · kedaluwarsa {expiresAt}",
             "viewInvitation": "Lihat undangan",
             "members": "Anggota",
-            "member": "anggota",
-            "seatsFollowThePlanOf": ". Kursi mengikuti paket dari pemilik dan anggota penagihan workspace.",
+            "membersOfSeats": "{count, plural, one {# anggota} other {# anggota}} dari {seats, number}.",
+            "membersCount": "{count, plural, one {# anggota} other {# anggota}}.",
+            "seatsFollowThePlanOf": "Jumlah kursi mengikuti paket milik pemilik dan anggota penagihan di ruang kerja.",
             "invitePeople": "Undang orang",
             "inviteLinksExpireAfter48": "Tautan undangan kedaluwarsa setelah 48 jam dan hanya berfungsi untuk alamat email yang diundang.",
             "pendingInvitations": "Undangan tertunda",
@@ -6310,7 +6799,6 @@
             "joinLinksArentSetUp": "Tautan bergabung belum disiapkan di server ini. Untuk saat ini, undang orang lewat email.",
             "whoCanWorkInName": "Siapa saja yang dapat bekerja di {name}, dan apa yang dapat mereka lakukan.",
             "team": "Tim",
-            "ofSeats": " dari {seats, number}",
             "membersArePartOfPro": "Anggota tersedia di paket {pro} dan {business}.",
             "askAWorkspaceOwnerOr": "Minta pemilik workspace atau anggota penagihan untuk melakukan upgrade agar dapat menambah anggota."
           }
@@ -6407,9 +6895,7 @@
           "noThemesMatchSearch": "Tidak ada tema yang cocok dengan \"{search}\".",
           "existingSharedThemesKeepWorking": "Tema bersama yang sudah ada tetap berfungsi. Menambahkan yang baru memerlukan paket {planName}.",
           "shareThemesWithThisWorkspace": "Bagikan tema ke ruang kerja ini",
-          "sharedThemesArePartOf": "Tema bersama termasuk dalam paket",
-          "planEveryoneIn": ": semua orang di",
-          "canPickThemInThe": "dapat memilihnya di editor, dan tema bawaannya berlaku untuk kode baru.",
+          "sharedThemesPlan": "Tema bersama termasuk dalam paket {plan}: semua orang di {workspace} dapat memilihnya di editor, dan tema bawaannya berlaku untuk kode baru.",
           "upgrade": "Upgrade",
           "noSavedThemesYet": "Belum ada tema tersimpan",
           "designAQrCodeIn": "Rancang kode QR di Playground dan klik Simpan untuk menyimpan warna, pola, dan logonya di sini. Jadikan salah satu sebagai default dan kode baru akan dimulai darinya.",
@@ -6425,7 +6911,7 @@
           "yourThemes": "Tema Anda",
           "noSharedThemesYetUse": "Belum ada tema bersama. Gunakan \"Salin ke ruang kerja ini\" pada salah satu tema Anda di bawah.",
           "noSharedThemesYetOwners": "Belum ada tema bersama. Pemilik dan admin dapat membagikan tema di sini.",
-          "askAWorkspaceOwnerTo": " Minta pemilik ruang kerja untuk upgrade."
+          "askAWorkspaceOwnerTo": "Minta pemilik ruang kerja untuk upgrade."
         }
       },
       "home": {
@@ -6537,8 +7023,7 @@
           "deleteWorkspace": "Hapus workspace",
           "deleteTeamname": "Hapus {teamName}?",
           "thisRemovesTheWorkspaceIts": "Tindakan ini menghapus workspace, anggota, dan undangan yang tertunda. Kode QR dinamisnya tetap mengalihkan: setiap kode, halaman, tema, dan domain berpindah ke workspace pribadi anggota yang membuatnya.",
-          "type": "Ketik",
-          "toConfirm": "untuk mengonfirmasi",
+          "typeToConfirm": "Ketik <code>{word}</code> untuk mengonfirmasi",
           "deleting": "Menghapus...",
           "youLeftTeamname": "Anda keluar dari {teamName}",
           "deletedTeamname": "{teamName} dihapus"
@@ -6550,9 +7035,8 @@
           "teammateCompanyCom": "rekan@perusahaan.com",
           "creatingLink": "Membuat tautan...",
           "createInviteLink": "Buat tautan undangan",
-          "weEmailedTheInvitationTo": "Kami telah mengirim undangan ke ",
-          "sendThisLinkTo": "Kirim tautan ini ke ",
-          "youCanAlsoShareThis": ". Anda juga dapat membagikan tautan ini."
+          "invitationEmailed": "Kami telah mengirim undangan ke <strong>{email}</strong> lewat email. Anda juga dapat membagikan tautan ini.",
+          "sendThisLink": "Kirim tautan ini ke <strong>{email}</strong>."
         },
         "inviteLink": {
           "inviteLink": "Tautan undangan",
@@ -6564,20 +7048,20 @@
           "resetLink": "Reset tautan",
           "turnOff": "Matikan",
           "createJoinLink": "Buat tautan gabung",
-          "onSince": "Aktif sejak",
-          "forSafetyTheLinkIs": ". Demi keamanan, tautan hanya ditampilkan saat dibuat. Hilang? Reset untuk mendapatkan tautan baru (tautan lama berhenti berfungsi).",
-          "copyItNowItsShown": "Salin sekarang: hanya ditampilkan sekali. Siapa pun yang sudah masuk dan membukanya akan bergabung sebagai {value}.",
+          "onSince": "Aktif sejak {date}.",
+          "onSinceBy": "Aktif sejak {date}, dibuat oleh {name}.",
+          "forSafetyTheLinkIs": "Demi keamanan, tautan hanya ditampilkan saat dibuat. Hilang? Setel ulang untuk mendapatkan yang baru (tautan lama tidak berlaku lagi).",
+          "copyItNowItsShown": "Salin sekarang: tautan ini hanya ditampilkan sekali. Siapa pun yang sudah masuk dan membukanya akan bergabung sebagai {role, select, owner {pemilik} admin {admin} member {anggota} billing {pengelola penagihan} other {pengamat}}.",
           "copyJoinLink": "Salin tautan gabung",
           "cancel": "Batal",
           "joinLink": "Tautan gabung",
-          "madeByCreatedbyname": ", dibuat oleh {createdByName}",
           "resetTheJoinLink": "Reset tautan gabung?",
           "turnOffTheJoinLink": "Matikan tautan gabung?",
           "theCurrentLinkStopsWorking": "Tautan saat ini langsung berhenti berfungsi. Anda akan mendapat tautan baru untuk dibagikan.",
           "theLinkStopsWorkingRight": "Tautan langsung berhenti berfungsi. Orang yang sudah bergabung tetap menjadi anggota.",
           "joinLinkReset": "Tautan gabung direset",
           "joinLinkCreated": "Tautan gabung dibuat",
-          "theLinkNowAddsPeople": "Tautan kini menambahkan orang sebagai {value}",
+          "theLinkNowAddsPeople": "Tautan ini kini menambahkan orang sebagai {role, select, owner {pemilik} admin {admin} member {anggota} billing {pengelola penagihan} other {pengamat}}",
           "joinLinkTurnedOff": "Tautan gabung dimatikan",
           "joinLinkCopied": "Tautan gabung disalin",
           "couldntCopyTheLink": "Tidak dapat menyalin tautan"
@@ -6846,8 +7330,8 @@
         "signInToContinue": "Masuk untuk melanjutkan",
         "goToDashboard": "Buka dasbor",
         "thisInvitationWasSentTo": "Undangan ini dikirim ke <span>{value}</span>, tetapi Anda masuk sebagai <span2>{email}</span2>. Masuklah dengan alamat yang diundang untuk menerimanya.",
-        "invitedYouToJoin": "mengundang Anda bergabung",
-        "as": "sebagai",
+        "personInvitedYou": "<strong>{inviter}</strong> mengundang Anda bergabung dengan <strong>{team}</strong> sebagai {role, select, owner {pemilik} admin {admin} member {anggota} billing {pengelola penagihan} other {pengamat}}.",
+        "adminInvitedYou": "Admin tim mengundang Anda bergabung dengan <strong>{team}</strong> sebagai {role, select, owner {pemilik} admin {admin} member {anggota} billing {pengelola penagihan} other {pengamat}}.",
         "teamMembersShareTheTeams": "Anggota tim berbagi kode QR dinamis dan tema milik tim. Berlaku hingga {expiresAt}.",
         "signInWithTheEmail": "Masuk dengan alamat email tujuan undangan ini dikirim.",
         "youveBeenInvitedToA": "Anda diundang ke sebuah tim",
@@ -6861,7 +7345,6 @@
         "invitationsAreValidFor48": "Undangan berlaku selama 48 jam. Minta tautan baru kepada pemilik atau admin tim.",
         "invitationExpired": "Undangan kedaluwarsa",
         "joinTeamname": "Gabung ke {teamName}",
-        "aTeamAdmin": "Admin tim",
         "anotherAddress": "alamat lain"
       },
       "inviteActions": {
@@ -6903,7 +7386,7 @@
       },
       "page": {
         "openName": "Buka {name}",
-        "youreSignedInAsEmail": "Anda masuk sebagai <span>{email}</span>. Anda akan bergabung sebagai {value}: {value2}.",
+        "youreSignedInAsEmail": "Anda masuk sebagai <span>{email}</span>. Anda akan bergabung sebagai {role, select, owner {pemilik} admin {admin} member {anggota} billing {pengelola penagihan} other {pengamat}}: {role, select, owner {semuanya, termasuk penagihan, pemilik, dan penghapusan ruang kerja} admin {mengelola anggota, pengaturan, domain, dan kode semua orang} member {membuat kode dan halaman, serta mengedit kode milik ruang kerja} billing {mengelola paket dan penagihan; hanya-baca di bagian lainnya} other {melihat kode, halaman, dan analitik tanpa mengubah apa pun}}.",
         "checkThatYouCopiedThe": "Pastikan Anda menyalin seluruh tautan, atau minta tautan baru dari workspace.",
         "thisJoinLinkIsntComplete": "Tautan gabung ini tidak lengkap",
         "waitAMinuteThenReload": "Tunggu semenit, lalu muat ulang halaman ini.",
@@ -6931,7 +7414,7 @@
           "theAppThatSentYou": "Aplikasi yang mengarahkan Anda ke sini mengirim permintaan yang tidak valid: <span>{description}</span>. Kembali ke aplikasi tersebut dan coba lagi, atau hubungi pengembangnya.",
           "appnameWillBeAbleTo": "{appName} akan dapat",
           "nameWantsToAccessYour": "{name} ingin mengakses akun QRdx Anda",
-          "builtBy": "Dibuat oleh",
+          "builtByName": "Dibuat oleh <strong>{name}</strong>",
           "unverifiedApp": "Aplikasi belum terverifikasi.",
           "qrdxHasntReviewedNameOnly": "QRdx belum meninjau {name}. Lanjutkan hanya jika Anda memercayai {builtBy}.",
           "switch": "Ganti",
@@ -6991,12 +7474,11 @@
       "body": "Kode QR dinamis Anda baru saja melewati {count, number} pemindaian. Lihat di mana dan kapan orang memindainya, serta perangkat apa yang mereka gunakan."
     },
     "formSubmission": {
-      "yourPage": "halaman Anda",
+      "subject": "{hasTitle, select, yes {Respons formulir baru di “{title}”} other {Respons formulir baru di halaman Anda}}",
+      "preview": "{hasTitle, select, yes {Respons formulir baru di “{title}”} other {Respons formulir baru di halaman Anda}}",
+      "heading": "{hasTitle, select, yes {Respons baru di “{title}”} other {Respons baru di halaman Anda}}",
       "answer": "Jawaban",
-      "subject": "Respons formulir baru di {page}",
-      "preview": "Respons formulir baru di {page}",
       "reason": "Anda menerima email ini karena notifikasi pengiriman formulir aktif untuk {workspace}.",
-      "heading": "Respons baru di {page}",
       "submitted": "Dikirim {when}. Jawaban ditampilkan persis seperti yang diketik pengunjung.",
       "more": "{count, plural, other {# jawaban lainnya ada}} di dasbor.",
       "viewAll": "Lihat semua respons"
@@ -7047,7 +7529,7 @@
       "lastUsed": "Terakhir dipakai"
     },
     "signInPanel": {
-      "codeSentTo": "Kode dikirim ke",
+      "codeSentTo": "Kode dikirim ke <strong>{email}</strong>",
       "lastUsed": "Terakhir dipakai",
       "or": "atau",
       "newToQrdxGoogleGithub": "Baru di QRdx? Google, GitHub, atau kode email akan membuat akun gratis Anda.",
@@ -7096,11 +7578,47 @@
       "wellEmailA6Digit": "Kami akan mengirim kode 6 digit melalui email ke <span>{maskedEmail}</span>.",
       "sendCode": "Kirim kode",
       "signInWithValueAgain": "Masuk lagi dengan {value}. Anda akan kembali ke halaman ini, lalu ulangi perubahan Anda.",
-      "continueWith": "Lanjutkan dengan",
+      "continueWith": "Lanjutkan dengan {method}",
       "signOut": "Keluar",
       "confirmItsYou": "Konfirmasi identitas Anda",
-      "beforeYou": "Sebelum Anda",
-      "weNeedToCheckIts": ", kami perlu memastikan bahwa ini Anda.",
+      "beforeYouAction": {
+        "change-email": "Sebelum mengubah email Anda, kami perlu memastikan bahwa ini memang Anda.",
+        "delete-account": "Sebelum menghapus akun Anda, kami perlu memastikan bahwa ini memang Anda.",
+        "turn-on-two-factor": "Sebelum mengaktifkan verifikasi dua langkah, kami perlu memastikan bahwa ini memang Anda.",
+        "turn-off-two-factor": "Sebelum menonaktifkan verifikasi dua langkah, kami perlu memastikan bahwa ini memang Anda.",
+        "add-passkey": "Sebelum menambahkan passkey, kami perlu memastikan bahwa ini memang Anda.",
+        "rename-passkey": "Sebelum mengganti nama passkey, kami perlu memastikan bahwa ini memang Anda.",
+        "remove-passkey": "Sebelum menghapus passkey, kami perlu memastikan bahwa ini memang Anda.",
+        "backup-codes": "Sebelum membuat kode cadangan baru, kami perlu memastikan bahwa ini memang Anda.",
+        "add-authenticator": "Sebelum menyiapkan aplikasi autentikator, kami perlu memastikan bahwa ini memang Anda.",
+        "remove-authenticator": "Sebelum menghapus aplikasi autentikator Anda, kami perlu memastikan bahwa ini memang Anda.",
+        "sso": "Sebelum mengubah single sign-on, kami perlu memastikan bahwa ini memang Anda.",
+        "support-change": "Sebelum Anda membuat perubahan ini untuk orang lain, kami perlu memastikan bahwa ini memang Anda.",
+        "link-sign-in": "Sebelum menautkan metode masuk, kami perlu memastikan bahwa ini memang Anda.",
+        "unlink-sign-in": "Sebelum memutuskan tautan metode masuk, kami perlu memastikan bahwa ini memang Anda.",
+        "create-api-key": "Sebelum membuat kunci API, kami perlu memastikan bahwa ini memang Anda.",
+        "create-oauth-app": "Sebelum membuat aplikasi OAuth, kami perlu memastikan bahwa ini memang Anda.",
+        "new-client-secret": "Sebelum membuat client secret baru, kami perlu memastikan bahwa ini memang Anda.",
+        "delete-workspace": "Sebelum menghapus workspace ini, kami perlu memastikan bahwa ini memang Anda.",
+        "change-member-role": "Sebelum mengubah peran seseorang, kami perlu memastikan bahwa ini memang Anda.",
+        "remove-member": "Sebelum mengeluarkan seseorang dari workspace ini, kami perlu memastikan bahwa ini memang Anda.",
+        "invite-admin": "Sebelum mengundang admin, kami perlu memastikan bahwa ini memang Anda.",
+        "admin-join-link": "Sebelum mengizinkan tautan gabung menambahkan admin, kami perlu memastikan bahwa ini memang Anda.",
+        "require-two-factor": "Sebelum mewajibkan verifikasi dua langkah, kami perlu memastikan bahwa ini memang Anda.",
+        "stop-requiring-two-factor": "Sebelum berhenti mewajibkan verifikasi dua langkah, kami perlu memastikan bahwa ini memang Anda.",
+        "continue-session": "Sebelum melanjutkan, kami perlu memastikan bahwa ini memang Anda.",
+        "cancel-two-factor-reset": "Sebelum membatalkan penonaktifan oleh tim dukungan, kami perlu memastikan bahwa ini memang Anda.",
+        "authorize-app": "Sebelum mengizinkan aplikasi ini menggunakan akun Anda, kami perlu memastikan bahwa ini memang Anda.",
+        "reveal-webhook-secret": "Sebelum menampilkan signing secret, kami perlu memastikan bahwa ini memang Anda.",
+        "rotate-webhook-secret": "Sebelum Anda membuat secret penandatanganan baru, kami perlu memastikan bahwa ini memang Anda.",
+        "create-webhook": "Sebelum Anda menambahkan webhook, kami perlu memastikan bahwa ini memang Anda.",
+        "change-webhook-url": "Sebelum Anda mengirim webhook ke alamat baru, kami perlu memastikan bahwa ini memang Anda.",
+        "add-notification-webhook": "Sebelum Anda mengirim notifikasi ke alamat baru, kami perlu memastikan bahwa ini memang Anda.",
+        "add-slack-channel": "Sebelum Anda menambahkan kanal Slack, kami perlu memastikan bahwa ini memang Anda.",
+        "connect-data-out": "Sebelum Anda mengirim data pemindaian atau jawaban formulir ke alat lain, kami perlu memastikan bahwa ini memang Anda.",
+        "link-slack-account": "Sebelum Anda mengizinkan akun Slack membuat kode atas nama Anda, kami perlu memastikan bahwa ini memang Anda.",
+        "set-payout-email": "Sebelum Anda mengubah tujuan pembayaran afiliasi Anda, kami perlu memastikan bahwa ini memang Anda."
+      },
       "weCheckItsYouBefore": "Kami memastikan bahwa ini Anda sebelum ada perubahan pada keamanan akun Anda. Konfirmasi berlaku selama {CONFIRMATION_MINUTES, number} menit, jadi beberapa perubahan berturut-turut hanya meminta sekali.",
       "useAnotherMethod": "Gunakan metode lain",
       "back": "Kembali",

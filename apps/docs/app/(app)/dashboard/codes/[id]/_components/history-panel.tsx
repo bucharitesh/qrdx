@@ -55,7 +55,7 @@ function ChangeLine({ change }: { change: VersionChange }) {
   if (change.field === "hasPassword") {
     return (
       <li>
-        {t("passwordTurned")} {change.to === "On" ? t("on") : t("off")}
+        {change.to === "On" ? t("passwordTurnedOn") : t("passwordTurnedOff")}
       </li>
     );
   }
@@ -109,10 +109,18 @@ export async function HistoryPanel({ codeId }: { codeId: string }) {
                 >
                   <div className="min-w-0 space-y-1 text-sm">
                     <p>
-                      <span className="font-medium">{actor}</span>{" "}
-                      <span className="text-muted-foreground">
-                        {t("changedOnChangewhen", { changeWhen })}
-                      </span>
+                      {t.rich("actorChangedOn", {
+                        actor,
+                        changeWhen,
+                        strong: (chunks) => (
+                          <span className="font-medium">{chunks}</span>
+                        ),
+                        muted: (chunks) => (
+                          <span className="text-muted-foreground">
+                            {chunks}
+                          </span>
+                        ),
+                      })}
                     </p>
                     <ul className="space-y-0.5">
                       {entry.changes.map((change) => (

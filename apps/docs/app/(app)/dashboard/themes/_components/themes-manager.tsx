@@ -220,9 +220,11 @@ export function ThemesManager({
                     {t("shareThemesWithThisWorkspace")}
                   </p>
                   <p className="text-muted-foreground text-sm text-pretty">
-                    {t("sharedThemesArePartOf")} {team.planName}{" "}
-                    {t("planEveryoneIn")} {team.name} {t("canPickThemInThe")}
-                    {!team.canUpgrade && t("askAWorkspaceOwnerTo")}
+                    {t("sharedThemesPlan", {
+                      plan: team.planName,
+                      workspace: team.name,
+                    })}
+                    {!team.canUpgrade && ` ${t("askAWorkspaceOwnerTo")}`}
                   </p>
                 </div>
               </div>

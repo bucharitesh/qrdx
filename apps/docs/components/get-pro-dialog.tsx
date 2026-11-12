@@ -14,11 +14,11 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
 import { ShieldTick } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrdx";
 import { useAvailability } from "@/components/availability-provider";
 import { GridLines } from "@/components/fx";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { buildUpgradeHighlights } from "@/components/sections/pricing/upgrade-highlights";
 import { track } from "@/lib/analytics";
 import { easterEggUrl } from "@/lib/easter-eggs";

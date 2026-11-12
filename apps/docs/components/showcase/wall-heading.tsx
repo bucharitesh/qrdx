@@ -1,7 +1,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { type ReactNode, ViewTransition } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 
 // The "Made with QRdx" heading, shared by the home wall and the community

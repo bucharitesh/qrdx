@@ -12,7 +12,6 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { Book1, Driver } from "iconsax-reactjs";
-import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { createCheckout } from "@/actions/checkout";
@@ -541,10 +540,10 @@ export function PricingSection({
           </div>
           <div className="flex shrink-0 flex-wrap gap-2 pl-13 md:pl-0">
             <Button asChild size="sm" variant="outline">
-              <Link href="/docs/self-hosting">
+              <LocaleLink href="/docs/self-hosting">
                 <Book1 aria-hidden />
                 {t("selfHost.guide")}
-              </Link>
+              </LocaleLink>
             </Button>
             <Button asChild size="sm" variant="ghost">
               <a href={siteConfig.links.github} rel="noopener" target="_blank">

@@ -3,13 +3,13 @@
 import { toast } from "@repo/design-system";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Suspense, useId, useState, useTransition } from "react";
 import {
   type CodeMarketingSettings,
   saveCodePreciseLocation,
 } from "@/actions/code-marketing";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import {
   MarketingSettingsGate,

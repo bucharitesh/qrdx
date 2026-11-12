@@ -46,8 +46,6 @@ import {
   Link2,
   MagicStar,
 } from "iconsax-reactjs";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import type { ScanScoreResult } from "qrdx";
 import {
   type FormEvent,
@@ -84,6 +82,10 @@ import { useAvailability } from "@/components/availability-provider";
 import { CopyButton } from "@/components/copy-button";
 import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import { InfoHint } from "@/components/help/info-hint";
+import {
+  LocaleLink as Link,
+  useLocaleRouter as useRouter,
+} from "@/components/i18n/locale-link";
 import {
   useWorkspaceHref,
   useWorkspaceSlug,

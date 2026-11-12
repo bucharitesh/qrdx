@@ -15,9 +15,7 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { isTeamMember } from "@/app/(app)/dashboard/team/_lib/queries";
 import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
-import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
-import { WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";
 import { getClientIp } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
 import { logError } from "@/lib/shared";
@@ -173,8 +171,7 @@ export default async function JoinPage({
     <JoinCard
       description={t.rich("youreSignedInAsEmail", {
         email: session.user.email,
-        value: inviteRolePhrase(target.role),
-        value2: WORKSPACE_ROLE_DESCRIPTIONS[target.role].toLowerCase(),
+        role: target.role,
         span: (chunks) => (
           <span className="text-foreground font-medium">{chunks}</span>
         ),

@@ -20,7 +20,7 @@ import {
 import { ArrowLeft, Danger, Global, InfoCircle } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -110,6 +110,7 @@ export function IntegrationDetail({
   slackBot,
 }: IntegrationDetailProps) {
   const t = useTranslations("app.settings.integrations.integrationDetail");
+  const locale = useLocale();
   const router = useRouter();
   const searchParams = useSearchParams();
   const { withConfirmation } = useConfirmation();
@@ -300,18 +301,16 @@ export function IntegrationDetail({
               {t("nameIsNoLongerAvailable", { name })}
             </p>
             <p className="max-w-prose text-muted-foreground text-pretty">
-              {t("nothingInQrdxUsesThis")}
               {connectedAt
-                ? t("youConnectedItOnUndefined", {
-                    undefined: connectedAt.toLocaleDateString(undefined, {
+                ? t("unusedConnectionSince", {
+                    name,
+                    date: connectedAt.toLocaleDateString(locale, {
                       year: "numeric",
                       month: "short",
                       day: "numeric",
                     }),
                   })
-                : ""}
-              {t("disconnectToDeleteItWhere")} {name}{" "}
-              {t("supportsItQrdxsAccessIs")}
+                : t("unusedConnection", { name })}
             </p>
           </div>
         </div>

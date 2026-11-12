@@ -10,6 +10,11 @@ import { LandingPageFooter } from "@/components/landing/page-footer";
 import { Pixels } from "@/components/landing/pixels";
 import { PreciseLocationPrompt } from "@/components/landing/precise-location";
 import { LandingRender } from "@/components/landing/render";
+import { negotiateLocale } from "@/lib/i18n/accept-language";
+import type { Locale } from "@/lib/i18n/config";
+import { localizePath } from "@/lib/i18n/paths";
+import { requestAppLocale } from "@/lib/i18n/request-locale";
+import { scanPagesIntl } from "@/lib/i18n/scan-pages";
 import type { BlockRenderContext } from "@/lib/landing/blocks";
 import { baseUrl } from "@/lib/metadata";
 import { enforcePageLifecycle } from "@/lib/redirect/lifecycle";
@@ -18,10 +23,18 @@ import { loadPublicPage, pageSummary } from "../_lib/public-page";
 // Hosted landing pages (qr_code.kind = 'page'), reached via /q/<slug> or
 // directly. Customer pages: no QRdx analytics or chat widgets load here (see
 // components/landing/customer-page-paths.ts); pixels only when the owner set them.
+// The page is the owner's writing (<html lang> stays as it is); QRdx's own
+// words around and inside the blocks follow the scanner's Accept-Language,
+// per request (lib/i18n/scan-pages.ts). The page is dynamic and never cached.
 
 export const dynamic = "force-dynamic";
 
 type Props = { params: Promise<{ slug: string }> };
+
+/** The scanner's language, from Accept-Language (never stored or cached). */
+async function scannerLocale(): Promise<Locale> {
+  return negotiateLocale((await headers()).get("accept-language"));
+}
 
 async function load(slug: string) {
   const customDomainId = (await headers()).get(CUSTOM_DOMAIN_HEADER);
@@ -30,12 +43,19 @@ async function load(slug: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const page = await load((await params).slug);
-  if (!page) return { title: "Page not found", robots: { index: false } };
+  if (!page) {
+    const { t } = await scanPagesIntl(await scannerLocale());
+    return {
+      title: { absolute: t("hosted.notFoundTitle") },
+      robots: { index: false },
+    };
+  }
 
   // Never leak a password-protected page's details into its share preview.
   if (page.code.passwordHash) {
+    const { t } = await scanPagesIntl(await scannerLocale());
     return {
-      title: { absolute: "Password protected" },
+      title: { absolute: t("hosted.passwordProtected") },
       robots: { index: false, follow: false },
       openGraph: null,
       twitter: null,
@@ -75,6 +95,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function LandingPage({ params }: Props) {
+  // Before anything renders: the blocks' useTranslations (server
+  // components) and not-found.tsx read this request's locale from here.
+  const locale = await scannerLocale();
+  requestAppLocale().current = locale;
   const { slug } = await params;
   const page = await load(slug);
   if (!page) notFound();
@@ -100,7 +124,11 @@ export default async function LandingPage({ params }: Props) {
     `/report-abuse?slug=${encodeURIComponent(slug)}`,
     baseUrl,
   ).href;
-  const badgeHref = new URL("/?ref=made-with-qrdx", baseUrl).href;
+  // QRdx's home in the language the scanner reads ("/hi").
+  const badgeHref = new URL(
+    `${localizePath("/", locale)}?ref=made-with-qrdx`,
+    baseUrl,
+  ).href;
 
   return (
     <>

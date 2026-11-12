@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { NoteText } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { mutedTextClass, surfaceClass } from "@/components/landing/block-kit";
 import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
@@ -7,12 +8,13 @@ import { DetailsEditor } from "./details-editor";
 import { type DetailsProps, detailsSchema } from "./details-schema";
 
 function DetailsBlock({ id, props, context }: BlockRenderProps<DetailsProps>) {
+  const t = useTranslations("scanPages.hosted");
   const items = props.items.filter((item) => item.value);
   if (items.length === 0) return null;
   const titleId = `${id}-title`;
   return (
     <section
-      aria-label={props.title ? undefined : "Details"}
+      aria-label={props.title ? undefined : t("details")}
       aria-labelledby={props.title ? titleId : undefined}
       className="space-y-3"
     >

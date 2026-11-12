@@ -9,10 +9,10 @@ import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArchiveAdd } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { saveBarcode } from "@/actions/barcodes";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import {
   BarcodeGenerator,
   type CurrentBarcode,

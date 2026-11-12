@@ -26,11 +26,10 @@ export async function InactiveSettingsNotice({
   const names = listLabels(inactive.map((id) => CODE_OPTION_COPY[id].label));
   return (
     <p className="bg-muted rounded-md p-3 text-sm">
-      {kind === "page"
-        ? `${names} ${inactive.length === 1 ? "is" : "are"} saved from when this code was a website link. Hosted pages don't use ${inactive.length === 1 ? "it" : "them"}.`
-        : `${names} ${inactive.length === 1 ? "is" : "are"} saved from when this code opened a hosted page. Website links don't load ${inactive.length === 1 ? "it" : "them"}.`}{" "}
-      {inactive.length === 1 ? t("itWorks") : t("theyWork")}{" "}
-      {t("againIfYouSwitchBack")}
+      {t(kind === "page" ? "savedFromLink" : "savedFromPage", {
+        names,
+        count: inactive.length,
+      })}
     </p>
   );
 }

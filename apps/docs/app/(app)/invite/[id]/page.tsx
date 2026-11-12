@@ -17,7 +17,7 @@ import {
   isTeamMember,
 } from "@/app/(app)/dashboard/team/_lib/queries";
 import { formatUtcDateTime } from "@/app/(app)/dashboard/team/_lib/team";
-import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
+import { inviteRole } from "@/lib/email/templates/team-invite";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import type { Translator } from "@/lib/i18n/translator";
 import { InviteActions, SignOutButton } from "./invite-actions";
@@ -150,18 +150,15 @@ export default async function InvitePage({
 
   return (
     <InviteCard
-      description={
-        <>
-          {invitation.inviterName ? (
-            <span className="font-medium">{invitation.inviterName}</span>
-          ) : (
-            t("aTeamAdmin")
-          )}{" "}
-          {t("invitedYouToJoin")}{" "}
-          <span className="font-medium">{invitation.teamName}</span> {t("as")}{" "}
-          {inviteRolePhrase(invitation.role)}.
-        </>
-      }
+      description={t.rich(
+        invitation.inviterName ? "personInvitedYou" : "adminInvitedYou",
+        {
+          inviter: invitation.inviterName ?? "",
+          team: invitation.teamName,
+          role: inviteRole(invitation.role),
+          strong: (chunks) => <span className="font-medium">{chunks}</span>,
+        },
+      )}
       title={t("joinTeamname", { teamName: invitation.teamName })}
     >
       <p className="text-muted-foreground text-xs">

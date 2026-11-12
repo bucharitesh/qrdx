@@ -119,15 +119,20 @@ export function ImportProgress({
         <Progress aria-label={t("importProgress")} value={percent} />
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
           <p className="tabular-nums">
-            {formatCount(progress.sent)} {t("of")} {formatCount(progress.total)}{" "}
-            {t("rowsSent")}
+            {t("rowsSentOf", {
+              sent: formatCount(progress.sent),
+              total: formatCount(progress.total),
+            })}
             <span className="text-muted-foreground">
-              {" "}
-              · {formatCount(progress.created)} {t("created")}
-              {progress.rowErrors > 0 &&
-                t("rowerrorsWithProblems", {
-                  rowErrors: formatCount(progress.rowErrors),
-                })}
+              {" · "}
+              {progress.rowErrors > 0
+                ? t("createdWithProblems", {
+                    created: formatCount(progress.created),
+                    rowErrors: formatCount(progress.rowErrors),
+                  })
+                : t("createdCount", {
+                    created: formatCount(progress.created),
+                  })}
             </span>
           </p>
           <p className="text-muted-foreground flex items-center gap-1.5 text-xs">

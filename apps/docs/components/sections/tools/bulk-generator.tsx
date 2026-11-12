@@ -27,13 +27,13 @@ import {
   TableDocument as FileSpreadsheet,
   Export as Upload,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import Papa from "papaparse";
 import { getQRCodeDataUrl, QRCode } from "qrdx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { InfoHint } from "@/components/help/info-hint";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { defaultThemeState } from "@/config/qr";
 import { track } from "@/lib/analytics";

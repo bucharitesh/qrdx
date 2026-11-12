@@ -12,7 +12,6 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { Switch } from "@repo/design-system/components/ui/switch";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Suspense, useId, useState, useTransition } from "react";
 import {
@@ -21,6 +20,7 @@ import {
 } from "@/actions/code-marketing";
 import { useAvailability } from "@/components/availability-provider";
 import { CopyButton } from "@/components/copy-button";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import type { PixelConfig, PixelProvider } from "@/lib/redirect/routing";
 import {
