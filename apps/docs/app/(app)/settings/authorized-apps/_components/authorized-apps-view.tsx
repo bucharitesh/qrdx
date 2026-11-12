@@ -121,12 +121,15 @@ export function AuthorizedAppsView({ apps }: { apps: AuthorizedAppView[] }) {
                       : t("noApiPermissions")}
                   </p>
                   <p className="text-muted-foreground text-xs">
-                    {t("authorized")} {formatDate(app.authorizedAt)}
                     {formatDate(app.lastActiveAt) !==
-                      formatDate(app.authorizedAt) &&
-                      t("lastActiveLastactiveat", {
-                        lastActiveAt: formatDate(app.lastActiveAt),
-                      })}
+                    formatDate(app.authorizedAt)
+                      ? t("authorizedLastActive", {
+                          authorizedAt: formatDate(app.authorizedAt),
+                          lastActiveAt: formatDate(app.lastActiveAt),
+                        })
+                      : t("authorizedOn", {
+                          authorizedAt: formatDate(app.authorizedAt),
+                        })}
                   </p>
                 </div>
               </div>

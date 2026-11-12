@@ -86,7 +86,3 @@ export function useOrganizeAction() {
 
   return { run, isPending };
 }
-
-/** "1 code", "1,200 codes" */
-export const plural = (count: number, one: string, many = `${one}s`) =>
-  `${count.toLocaleString("en-US")} ${count === 1 ? one : many}`;

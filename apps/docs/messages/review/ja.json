@@ -5395,6 +5395,10 @@
     "source": "d3c7d623b5b1",
     "status": "machine"
   },
+  "scanPages.hosted.form.checkAnswer": {
+    "source": "9c0e8508c35d",
+    "status": "machine"
+  },
   "barcodeGenerator.metaTitle": {
     "source": "2fa06448fb2a",
     "status": "machine"
@@ -5753,6 +5757,118 @@
   },
   "barcodeTool.save.save": {
     "source": "b01adf6a8917",
+    "status": "machine"
+  },
+  "barcodeTool.issues.enterDigits": {
+    "source": "b78dd409e68b",
+    "status": "machine"
+  },
+  "barcodeTool.issues.digitsOnly": {
+    "source": "325ff8f299bb",
+    "status": "machine"
+  },
+  "barcodeTool.issues.checkDigitAdded": {
+    "source": "ccfa50d356e7",
+    "status": "machine"
+  },
+  "barcodeTool.issues.wrongCheckDigit": {
+    "source": "9075f84b67b8",
+    "status": "machine"
+  },
+  "barcodeTool.issues.wrongLength": {
+    "source": "a4f780c32d38",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceEnter": {
+    "source": "f14e6e8cfe6e",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceSystem": {
+    "source": "99e1439025df",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceNoForm": {
+    "source": "f43319da0a3e",
+    "status": "machine"
+  },
+  "barcodeTool.issues.shortenedFromUpca": {
+    "source": "dfc7efdbeb69",
+    "status": "machine"
+  },
+  "barcodeTool.issues.numberSystemAssumed": {
+    "source": "ca5d5a60741b",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceLength": {
+    "source": "b7b7aee5f5bf",
+    "status": "machine"
+  },
+  "barcodeTool.issues.upceStart": {
+    "source": "ca04130ba9ec",
+    "status": "machine"
+  },
+  "barcodeTool.issues.enterText": {
+    "source": "3108f54898db",
+    "status": "machine"
+  },
+  "barcodeTool.issues.tooLong": {
+    "source": "4fd5de26b64f",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code128Chars": {
+    "source": "bb5d1c6fd7e4",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code39Chars": {
+    "source": "737c3742b459",
+    "status": "machine"
+  },
+  "barcodeTool.issues.code39Lowercase": {
+    "source": "96f655f4da3d",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Enter": {
+    "source": "389cb8feffc5",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Start": {
+    "source": "a34425448eba",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Brackets": {
+    "source": "59e0cd9a7acf",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1BadAi": {
+    "source": "2162274691d7",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1NoValue": {
+    "source": "7b205247617c",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1BadChars": {
+    "source": "fbd675c12d24",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1Ai": {
+    "source": "43dae09c4787",
+    "status": "machine"
+  },
+  "barcodeTool.issues.gs1TooLong": {
+    "source": "94da50fa92a1",
+    "status": "machine"
+  },
+  "barcodeTool.issues.unknownFormat": {
+    "source": "b9fdff27e6d6",
+    "status": "machine"
+  },
+  "barcodeTool.issues.space": {
+    "source": "3f49dbbfe051",
+    "status": "machine"
+  },
+  "barcodeTool.issues.lineBreak": {
+    "source": "6f8b6cb4c0b9",
     "status": "machine"
   },
   "guarantee.metaTitle": {
@@ -14923,6 +15039,58 @@
     "source": "07877769c55c",
     "status": "machine"
   },
+  "app.settings.account.deletion.counts.codes": {
+    "source": "c31e993dfe0e",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.counts.pages": {
+    "source": "b307a9a56be0",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.counts.files": {
+    "source": "e60f4a210767",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.counts.domains": {
+    "source": "d79b94f4fb49",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.workspaceEmpty": {
+    "source": "6d15283591d6",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.workspaceWith": {
+    "source": "8ec611c811e6",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.workspaceWithCodes": {
+    "source": "63b8526586f8",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.teamPromote": {
+    "source": "271c9a55887f",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.teamStays": {
+    "source": "2d9e30d4be27",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.teamDeleted": {
+    "source": "716af2e4a826",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.subscriptionCancelled": {
+    "source": "264cadb9d717",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.signedOut": {
+    "source": "f211ac66ae60",
+    "status": "machine"
+  },
+  "app.settings.account.deletion.subscriptionBlocker": {
+    "source": "9cc87508accc",
+    "status": "machine"
+  },
   "app.settings.affiliate.affiliateClient.paypalEmail": {
     "source": "fffd7d911fea",
     "status": "machine"
@@ -15231,8 +15399,12 @@
     "source": "7071afd2cdad",
     "status": "machine"
   },
-  "app.settings.authorizedApps.authorizedAppsView.lastActiveLastactiveat": {
-    "source": "1581596cc5eb",
+  "app.settings.authorizedApps.authorizedAppsView.authorizedOn": {
+    "source": "aa2b90247e0b",
+    "status": "machine"
+  },
+  "app.settings.authorizedApps.authorizedAppsView.authorizedLastActive": {
+    "source": "6bac3532c5c9",
     "status": "machine"
   },
   "app.settings.authorizedApps.authorizedAppsView.revoking": {
@@ -17116,7 +17288,31 @@
     "status": "machine"
   },
   "app.dashboard.barcodes.barcodesList.deleteValueForGood": {
-    "source": "7f5b4c6b225f",
+    "source": "7cedf5015823",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.movedToTrash": {
+    "source": "7339b5942faf",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.movedToTrashSkipped": {
+    "source": "8e20574c7df8",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.restored": {
+    "source": "967462a921c6",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.movedToFolder": {
+    "source": "7aa6209a0a30",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.tookOutOfFolders": {
+    "source": "57f59296e7be",
+    "status": "machine"
+  },
+  "app.dashboard.barcodes.barcodesList.deletedForGood": {
+    "source": "8a60d24dc34b",
     "status": "machine"
   },
   "app.dashboard.barcodes.barcodesList.deleting": {
@@ -17288,7 +17484,27 @@
     "status": "machine"
   },
   "app.dashboard.codes.import.importProgress.valueCouldntBeSent": {
-    "source": "10aed6718835",
+    "source": "5dabef0784d0",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.retryValue": {
+    "source": "fafd32bac91b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.codesCount": {
+    "source": "c31e993dfe0e",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.codesIntoFolder": {
+    "source": "7c2148d27287",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.codesTagged": {
+    "source": "c0c9b2dc3bd8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importProgress.codesIntoFolderTagged": {
+    "source": "9633c3457bcb",
     "status": "machine"
   },
   "app.dashboard.codes.import.importProgress.retryThemNothingIsMade": {
@@ -17333,10 +17549,6 @@
   },
   "app.dashboard.codes.import.importProgress.retryAndContinue": {
     "source": "4b7489b3f95f",
-    "status": "machine"
-  },
-  "app.dashboard.codes.import.importProgress.retryValue": {
-    "source": "8daa3ac9b297",
     "status": "machine"
   },
   "app.dashboard.codes.import.importProgress.finishWithWhatsMade": {
@@ -17400,7 +17612,31 @@
     "status": "machine"
   },
   "app.dashboard.codes.import.importResults.createdValue": {
-    "source": "e5452822a939",
+    "source": "9bb42a8ae4b7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.zipParts": {
+    "source": "8e4fb1e6a3f5",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.imagesMissing": {
+    "source": "98fc02fb4247",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.zipFailed": {
+    "source": "4929736dbcf7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.rowsNotImported": {
+    "source": "3fe0aeb1ebb1",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.rowsNotSent": {
+    "source": "782e06bf32ca",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importResults.rowsSkipped": {
+    "source": "b879979a5a2e",
     "status": "machine"
   },
   "app.dashboard.codes.import.importResults.noCodesWereCreated": {
@@ -17468,7 +17704,31 @@
     "status": "machine"
   },
   "app.dashboard.codes.import.importWizard.valueWithProblems": {
-    "source": "ff8eebf0af42",
+    "source": "9ec7ab8e90d7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.importValue": {
+    "source": "057a80ec94c6",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.rowsAndColumns": {
+    "source": "6ca6ee345738",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.validRows": {
+    "source": "9f89e91e1438",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.needsHeaderAndRows": {
+    "source": "d030594523eb",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.columnNumber": {
+    "source": "e9a03bca31e4",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.importWizard.fileTooLarge": {
+    "source": "acdcb46e3120",
     "status": "machine"
   },
   "app.dashboard.codes.import.importWizard.problemsCsv": {
@@ -17515,10 +17775,6 @@
     "source": "d989893356ee",
     "status": "machine"
   },
-  "app.dashboard.codes.import.importWizard.importValue": {
-    "source": "4f1cd9b8cd14",
-    "status": "machine"
-  },
   "app.dashboard.codes.import.importWizard.removeFile": {
     "source": "fffa2e32da71",
     "status": "machine"
@@ -17553,6 +17809,138 @@
   },
   "app.dashboard.codes.import.importWizard.sentImportChunkSizeAt": {
     "source": "b60dae388e20",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationMissing": {
+    "source": "64f0a746a104",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationTooLong": {
+    "source": "ce855a7160c8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationNotUrl": {
+    "source": "4530d06f07af",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationProtocol": {
+    "source": "1394b1f3f212",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationCredentials": {
+    "source": "79aabc6e9e9d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationShortLink": {
+    "source": "62e50bc97e78",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.destinationRejected": {
+    "source": "37a5e503ef7b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.titleTooLong": {
+    "source": "3c70db19b4aa",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.folderDepth": {
+    "source": "f5c2357551f7",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.folderNameTooLong": {
+    "source": "590790f5e08c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tooManyTags": {
+    "source": "bf00efeb8b5c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tooManyTagsWithBatch": {
+    "source": "725d366fca17",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.tagNameTooLong": {
+    "source": "2c7c06c76d81",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugReserved": {
+    "source": "8f0d3ffb1a93",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugLength": {
+    "source": "f29949aefc0c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugCharacters": {
+    "source": "9fb1ceb55c69",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugDash": {
+    "source": "ab0b7cc67220",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugDuplicate": {
+    "source": "9c025e4cba8d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugTaken": {
+    "source": "083c20591c73",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.issues.slugNotOnPlan": {
+    "source": "9d85ff1a215b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.imported": {
+    "source": "e47fafe0a1c6",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.duplicate": {
+    "source": "a49d96278233",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.selectedTwice": {
+    "source": "5c81723218b1",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.qrdx": {
+    "source": "4fc8041cb0e8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.limit": {
+    "source": "36e65c9a671a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.providerEnded": {
+    "source": "e5436c9e7070",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfShape": {
+    "source": "d3320d4e1b42",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedDomain": {
+    "source": "8afec599747a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedShared": {
+    "source": "5f806b1dc721",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfReservedSharedAddDomain": {
+    "source": "49fef8fa9273",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfTakenDomain": {
+    "source": "8590bfcb6296",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfTakenShared": {
+    "source": "e2879838811c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.import.reasons.backHalfRepeated": {
+    "source": "4e57f7ef6c78",
     "status": "machine"
   },
   "app.dashboard.codes.analyticsExtra.whenPeopleScan": {
@@ -19043,6 +19431,34 @@
     "source": "82484d20f5c1",
     "status": "machine"
   },
+  "app.dashboard.codes.codeActionsMenu.removedFromFavorites": {
+    "source": "e8a659fd472c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.addedToFavorites": {
+    "source": "e7a9801e0944",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.copyCreated": {
+    "source": "00080b7c608c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.copyOpensSamePage": {
+    "source": "6ec13e1c344a",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.copyScansFromZero": {
+    "source": "6619e759c4b3",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.movedToTrash": {
+    "source": "a086066395cd",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codeActionsMenu.codeRestored": {
+    "source": "0724e33fc0c8",
+    "status": "machine"
+  },
   "app.dashboard.codes.codeOptions.on": {
     "source": "ad6fe5958276",
     "status": "machine"
@@ -19247,8 +19663,56 @@
     "source": "b250a454877d",
     "status": "machine"
   },
+  "app.dashboard.codes.codesList.preparingValue": {
+    "source": "031d27231122",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.downloadedValueAsValue2": {
+    "source": "776010b03482",
+    "status": "machine"
+  },
   "app.dashboard.codes.codesList.deleteValueForever": {
-    "source": "1aa38b8ab240",
+    "source": "d477ca1e4903",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.allSelectedOthersSkipped": {
+    "source": "7435a2fb7655",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.movedToTrash": {
+    "source": "be3aad105b26",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.deletedForever": {
+    "source": "84d92b8493fe",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.othersSkipped": {
+    "source": "0d59505a2ec3",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.trashScansNote": {
+    "source": "85317e302d09",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.restoredCodes": {
+    "source": "11cf95e790be",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.archivedCodes": {
+    "source": "8457c3999aa4",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.unarchivedCodes": {
+    "source": "9a1f5ebdda3c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.pausedCodes": {
+    "source": "efe0c790dc8d",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesList.resumedCodes": {
+    "source": "d7f781857d36",
     "status": "machine"
   },
   "app.dashboard.codes.codesList.theirScanAndVersionHistory": {
@@ -19311,24 +19775,12 @@
     "source": "0d8dba58eafb",
     "status": "machine"
   },
-  "app.dashboard.codes.codesList.allSelectedOthersSkipped": {
-    "source": "8ec3298516d7",
-    "status": "machine"
-  },
-  "app.dashboard.codes.codesList.preparingValue": {
-    "source": "2ccdf070c3b2",
-    "status": "machine"
-  },
   "app.dashboard.codes.codesList.renderingFinishedOfTotal": {
     "source": "acf871668d9b",
     "status": "machine"
   },
   "app.dashboard.codes.codesList.theQrCodesCouldntBe": {
     "source": "0b44d6ba1509",
-    "status": "machine"
-  },
-  "app.dashboard.codes.codesList.downloadedValueAsValue2": {
-    "source": "2a14e4144514",
     "status": "machine"
   },
   "app.dashboard.codes.codesList.downloadFailedPleaseTryAgain": {
@@ -19460,7 +19912,15 @@
     "status": "machine"
   },
   "app.dashboard.codes.codesToolbar.valueAndTheirScanHistory": {
-    "source": "012be164bfac",
+    "source": "3498793a05ec",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesToolbar.codeCount": {
+    "source": "c31e993dfe0e",
+    "status": "machine"
+  },
+  "app.dashboard.codes.codesToolbar.deletedForever": {
+    "source": "84d92b8493fe",
     "status": "machine"
   },
   "app.dashboard.codes.codesToolbar.cancel": {
@@ -19671,6 +20131,26 @@
     "source": "8b0bbad988f6",
     "status": "machine"
   },
+  "app.dashboard.codes.folderDialogs.movedToFolder": {
+    "source": "9da9c34245d2",
+    "status": "machine"
+  },
+  "app.dashboard.codes.folderDialogs.movedOutOfFolders": {
+    "source": "b06933076f29",
+    "status": "machine"
+  },
+  "app.dashboard.codes.folderDialogs.theTopLevel": {
+    "source": "fadfd18d60fa",
+    "status": "machine"
+  },
+  "app.dashboard.codes.folderDialogs.deletedFolder": {
+    "source": "0c82d7f9acbb",
+    "status": "machine"
+  },
+  "app.dashboard.codes.folderDialogs.folderRenamed": {
+    "source": "e2fc268e8030",
+    "status": "machine"
+  },
   "app.dashboard.codes.importDialog.import": {
     "source": "2cff9baabf56",
     "status": "machine"
@@ -19787,12 +20267,20 @@
     "source": "d9d979c63132",
     "status": "machine"
   },
-  "app.dashboard.codes.importFileStep.import": {
-    "source": "d942f6488657",
+  "app.dashboard.codes.importFileStep.previewRows": {
+    "source": "a838c49fd4f0",
     "status": "machine"
   },
-  "app.dashboard.codes.importFileStep.firstMaxJobLinks": {
-    "source": "dbc14328e6f2",
+  "app.dashboard.codes.importFileStep.previewImport": {
+    "source": "ab5c8e55ce2c",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importFileStep.rows": {
+    "source": "c1a8854d520b",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importFileStep.rowsFirst": {
+    "source": "71536403a24a",
     "status": "machine"
   },
   "app.dashboard.codes.importFileStep.chooseAnotherFile": {
@@ -19812,7 +20300,11 @@
     "status": "machine"
   },
   "app.dashboard.codes.importLinksStep.signInWith": {
-    "source": "11aaa14268df",
+    "source": "3a5ccde0e7d0",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importLinksStep.valueSelected": {
+    "source": "335260945450",
     "status": "machine"
   },
   "app.dashboard.codes.importLinksStep.afterSigningInYouCome": {
@@ -19837,10 +20329,6 @@
   },
   "app.dashboard.codes.importLinksStep.allProviders": {
     "source": "20e56db7dfc7",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importLinksStep.valueSelected": {
-    "source": "b0dc3e608e15",
     "status": "machine"
   },
   "app.dashboard.codes.importLinksStep.previewImport": {
@@ -20068,11 +20556,11 @@
     "status": "machine"
   },
   "app.dashboard.codes.importPreviewStep.importTheFirstValue": {
-    "source": "0ac7c1e5e095",
+    "source": "f0d470b9299d",
     "status": "machine"
   },
   "app.dashboard.codes.importPreviewStep.importValue": {
-    "source": "4f1cd9b8cd14",
+    "source": "057a80ec94c6",
     "status": "machine"
   },
   "app.dashboard.codes.importPreviewStep.keepTheirsOnThatDomain": {
@@ -20124,15 +20612,15 @@
     "status": "machine"
   },
   "app.dashboard.codes.importProviderStep.valueValue2Created": {
-    "source": "02b13c8d191c",
+    "source": "7519b1ccaab8",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importProviderStep.valuePointingToQrdx": {
+    "source": "d6d4fe1aecec",
     "status": "machine"
   },
   "app.dashboard.codes.importProviderStep.resumeProcessedTotal": {
     "source": "657ea13572aa",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importProviderStep.valuePointingToQrdx": {
-    "source": "a2665f63cd73",
     "status": "machine"
   },
   "app.dashboard.codes.importProviderStep.open": {
@@ -20168,15 +20656,27 @@
     "status": "machine"
   },
   "app.dashboard.codes.importRedirectsStep.undoValue": {
-    "source": "14e84bab06df",
+    "source": "a465798952e0",
     "status": "machine"
   },
-  "app.dashboard.codes.importRedirectsStep.update": {
-    "source": "c1c1009d3f37",
+  "app.dashboard.codes.importRedirectsStep.valueRestored": {
+    "source": "c0f88631c839",
     "status": "machine"
   },
-  "app.dashboard.codes.importRedirectsStep.in": {
-    "source": "582967534d0f",
+  "app.dashboard.codes.importRedirectsStep.valueNowOpenQrdx": {
+    "source": "6e34edd392c0",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRedirectsStep.dryRunValueWouldChange": {
+    "source": "650779540f22",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRedirectsStep.updateLinksIn": {
+    "source": "5e0f5123c042",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRedirectsStep.oldLinksAlreadyPoint": {
+    "source": "d1a25cb7bf81",
     "status": "machine"
   },
   "app.dashboard.codes.importRedirectsStep.importsFromNameHaveEnded": {
@@ -20199,24 +20699,12 @@
     "source": "d1b3b01b0e83",
     "status": "machine"
   },
-  "app.dashboard.codes.importRedirectsStep.dryRunValueWouldChange": {
-    "source": "074a9572fe38",
-    "status": "machine"
-  },
   "app.dashboard.codes.importRedirectsStep.iUnderstandTheseNameLinks": {
     "source": "db873883fef2",
     "status": "machine"
   },
   "app.dashboard.codes.importRedirectsStep.updateProgress": {
     "source": "e08dc19e0c25",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importRedirectsStep.valueRestored": {
-    "source": "5743364789a6",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importRedirectsStep.valueNowOpenQrdx": {
-    "source": "0be255f052a5",
     "status": "machine"
   },
   "app.dashboard.codes.importRedirectsStep.restoringOriginalDestinations": {
@@ -20299,8 +20787,16 @@
     "source": "e7df89e1e148",
     "status": "machine"
   },
-  "app.dashboard.codes.importRunStep.codesLiveOnItsOwn": {
-    "source": "1b7bb760c3b8",
+  "app.dashboard.codes.importRunStep.oldProviderCodesLiveOnItsDomain": {
+    "source": "7ddce2ff50f4",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRunStep.providerCodesLiveOnItsDomain": {
+    "source": "8a87ca7d3613",
+    "status": "machine"
+  },
+  "app.dashboard.codes.importRunStep.oldLinksPointToQrdx": {
+    "source": "ba50c63ac530",
     "status": "machine"
   },
   "app.dashboard.codes.importRunStep.backHalvesOnBackhalfdomain": {
@@ -20344,7 +20840,7 @@
     "status": "machine"
   },
   "app.dashboard.codes.importRunStep.valueCreatedSoFarIn": {
-    "source": "957b44ff4a0a",
+    "source": "b2faff104197",
     "status": "machine"
   },
   "app.dashboard.codes.importRunStep.manage": {
@@ -20353,10 +20849,6 @@
   },
   "app.dashboard.codes.importRunStep.reviewChanges": {
     "source": "6a47708f4e14",
-    "status": "machine"
-  },
-  "app.dashboard.codes.importRunStep.yourOldProviders": {
-    "source": "5d7f5c14b6fe",
     "status": "machine"
   },
   "app.dashboard.codes.importRunStep.theCodesAreOnBackhalfdomain": {
@@ -20376,7 +20868,7 @@
     "status": "machine"
   },
   "app.dashboard.codes.moveWorkspaceDialog.keepsItsShortLinkSo": {
-    "source": "3f840fb493ac",
+    "source": "d4e42f7e0d00",
     "status": "machine"
   },
   "app.dashboard.codes.moveWorkspaceDialog.loadingWorkspaces": {
@@ -20405,6 +20897,22 @@
   },
   "app.dashboard.codes.moveWorkspaceDialog.movedToName": {
     "source": "77f2ff74fb35",
+    "status": "machine"
+  },
+  "app.dashboard.codes.moveWorkspaceDialog.movedSameLink": {
+    "source": "2ec50fbad882",
+    "status": "machine"
+  },
+  "app.dashboard.codes.moveWorkspaceDialog.movedFolderStayed": {
+    "source": "4cab49d30455",
+    "status": "machine"
+  },
+  "app.dashboard.codes.moveWorkspaceDialog.movedTagsStayed": {
+    "source": "7a130f1a988e",
+    "status": "machine"
+  },
+  "app.dashboard.codes.moveWorkspaceDialog.movedFolderAndTagsStayed": {
+    "source": "4c5b7131cc37",
     "status": "machine"
   },
   "app.dashboard.codes.newCodeDialog.template": {
@@ -20547,12 +21055,12 @@
     "source": "d05020a2579e",
     "status": "machine"
   },
-  "app.dashboard.codes.nfcGuide.openThisPageInChrome": {
-    "source": "e778ed6b1235",
+  "app.dashboard.codes.nfcGuide.writeItTag": {
+    "source": "bf9bc052ca83",
     "status": "machine"
   },
-  "app.dashboard.codes.nfcGuide.againstTheBackOfThe": {
-    "source": "edc45f6d81e9",
+  "app.dashboard.codes.nfcGuide.writeItCard": {
+    "source": "b66e001f3d92",
     "status": "machine"
   },
   "app.dashboard.codes.nfcGuide.analyticsCountsTapsAndScans": {
@@ -20960,7 +21468,23 @@
     "status": "machine"
   },
   "app.dashboard.codes.tagDialogs.tagsForValue": {
-    "source": "3e3f5e2814dc",
+    "source": "c181f0273e61",
+    "status": "machine"
+  },
+  "app.dashboard.codes.tagDialogs.tagsSaved": {
+    "source": "c0eb2c23aa70",
+    "status": "machine"
+  },
+  "app.dashboard.codes.tagDialogs.updatedTagsOn": {
+    "source": "d158816191c2",
+    "status": "machine"
+  },
+  "app.dashboard.codes.tagDialogs.tagSaved": {
+    "source": "0c34758d4c31",
+    "status": "machine"
+  },
+  "app.dashboard.codes.tagDialogs.deletedTag": {
+    "source": "eb49e21dd402",
     "status": "machine"
   },
   "app.dashboard.codes.usage.unlimitedUsage": {
@@ -21159,8 +21683,16 @@
     "source": "9de87487a30e",
     "status": "machine"
   },
-  "app.dashboard.files.filesManager.usedByValue": {
-    "source": "6a773b011208",
+  "app.dashboard.files.filesManager.usedByPagesAndCodes": {
+    "source": "6363f17d29ec",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.usedByPages": {
+    "source": "f61dacc87f69",
+    "status": "machine"
+  },
+  "app.dashboard.files.filesManager.usedByCodes": {
+    "source": "003d3e4c0441",
     "status": "machine"
   },
   "app.dashboard.loading.loading": {
@@ -22003,12 +22535,12 @@
     "source": "a4b982a9e0bc",
     "status": "machine"
   },
-  "app.dashboard.themes.themeCard.qrCodesYouAlreadyMade": {
-    "source": "989bea1f155d",
-    "status": "machine"
-  },
   "app.dashboard.themes.themeCard.deleteTheme": {
     "source": "e29a2b87f4ff",
+    "status": "machine"
+  },
+  "app.dashboard.themes.themeCard.deleteThemeTeam": {
+    "source": "aef542896365",
     "status": "machine"
   },
   "app.dashboard.themes.themeCard.updateTheTagsForName": {
@@ -22047,12 +22579,8 @@
     "source": "d09b4dd6265a",
     "status": "machine"
   },
-  "app.dashboard.themes.themeCard.forEveryoneInThisWorkspace": {
-    "source": "3f9182983f27",
-    "status": "machine"
-  },
   "app.dashboard.themes.themeCard.itIsAlsoRemovedFrom": {
-    "source": "bfa261dd462b",
+    "source": "eb848f75a147",
     "status": "machine"
   },
   "app.dashboard.themes.themeCard.upgrade": {
@@ -22392,7 +22920,35 @@
     "status": "machine"
   },
   "app.dashboard.domains.domainsManager.shortLinksLookLikeHttps": {
-    "source": "4365f6963b2f",
+    "source": "8da12fa1c5bc",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.youveAddedValueTheMost": {
+    "source": "43b09b50a563",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.providerCanAddRecords": {
+    "source": "64d0e7db9aad",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.yourProviderCanAddRecords": {
+    "source": "5fda276cfce5",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.approveAtProvider": {
+    "source": "c8eecaa5587f",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.approveAtYourProvider": {
+    "source": "6f5513e10bb4",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.removeDomainInUse": {
+    "source": "c95c4d0e116b",
+    "status": "machine"
+  },
+  "app.dashboard.domains.domainsManager.removeDomainUnused": {
+    "source": "70d9b6598d6c",
     "status": "machine"
   },
   "app.dashboard.domains.domainsManager.addTheseRecordsAtYour": {
@@ -22449,10 +23005,6 @@
   },
   "app.dashboard.domains.domainsManager.addingDomainsNeedsProOr": {
     "source": "0261639a1687",
-    "status": "machine"
-  },
-  "app.dashboard.domains.domainsManager.youveAddedValueTheMost": {
-    "source": "e03b7f49b20a",
     "status": "machine"
   },
   "app.dashboard.domains.domainsManager.removing": {

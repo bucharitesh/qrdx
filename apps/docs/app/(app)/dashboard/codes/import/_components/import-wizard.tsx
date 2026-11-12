@@ -44,7 +44,6 @@ import {
   DomainPicker,
   useDomainOptions,
 } from "@/app/(app)/dashboard/codes/_components/domain-picker";
-import { plural } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
 import { formatPlanList } from "@/app/(app)/dashboard/codes/_lib/code-options";
 import { MAX_TAGS_PER_CODE } from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import type { ImportPreview } from "@/app/(app)/dashboard/codes/import/_lib/import";
@@ -74,6 +73,7 @@ import {
 } from "../_lib/csv";
 import { createImportJob } from "../_lib/job";
 import { BatchOrganize, type BatchTargets } from "./batch-organize";
+import { useImportIssueText } from "./import-issue-text";
 import { ImportProgress } from "./import-progress";
 import { ImportResults } from "./import-results";
 import { useImportRunner } from "./use-import-runner";
@@ -161,6 +161,7 @@ export function ImportWizard({
   storeKey: string;
 }) {
   const t = useTranslations("app.dashboard.codes.import.importWizard");
+  const issueText = useImportIssueText();
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
@@ -185,41 +186,43 @@ export function ImportWizard({
     },
   });
 
-  const onDrop = useCallback((accepted: File[]) => {
-    const picked = accepted[0];
-    if (!picked) return;
-    setParseError(null);
-    setPreview(null);
-    Papa.parse<string[]>(picked, {
-      skipEmptyLines: "greedy",
-      preview: MAX_IMPORT_ROWS + 2,
-      complete: (results) => {
-        const [header, ...body] = results.data;
-        if (!header || body.length === 0) {
-          setParseError(
-            "The file needs a header row and at least one row of codes.",
+  const onDrop = useCallback(
+    (accepted: File[]) => {
+      const picked = accepted[0];
+      if (!picked) return;
+      setParseError(null);
+      setPreview(null);
+      Papa.parse<string[]>(picked, {
+        skipEmptyLines: "greedy",
+        preview: MAX_IMPORT_ROWS + 2,
+        complete: (results) => {
+          const [header, ...body] = results.data;
+          if (!header || body.length === 0) {
+            setParseError(t("needsHeaderAndRows"));
+            setFile(null);
+            return;
+          }
+          const columns = header.map(
+            (name, index) =>
+              name.replace(/^﻿/, "").trim() ||
+              t("columnNumber", { number: String(index + 1) }),
           );
+          setFile({
+            name: picked.name,
+            columns,
+            rows: body.slice(0, MAX_IMPORT_ROWS),
+            truncated: body.length > MAX_IMPORT_ROWS,
+          });
+          setMapping(guessMapping(columns));
+        },
+        error: (error) => {
+          setParseError(error.message);
           setFile(null);
-          return;
-        }
-        const columns = header.map(
-          (name, index) =>
-            name.replace(/^﻿/, "").trim() || `Column ${index + 1}`,
-        );
-        setFile({
-          name: picked.name,
-          columns,
-          rows: body.slice(0, MAX_IMPORT_ROWS),
-          truncated: body.length > MAX_IMPORT_ROWS,
-        });
-        setMapping(guessMapping(columns));
-      },
-      error: (error) => {
-        setParseError(error.message);
-        setFile(null);
-      },
-    });
-  }, []);
+        },
+      });
+    },
+    [t],
+  );
 
   const { getRootProps, getInputProps, isDragActive, fileRejections } =
     useDropzone({
@@ -235,7 +238,7 @@ export function ImportWizard({
   const rejection = fileRejections[0]?.errors[0];
   const rejectionMessage =
     rejection?.code === "file-too-large"
-      ? `The file is larger than ${MAX_IMPORT_FILE_BYTES / 1024 / 1024} MB.`
+      ? t("fileTooLarge", { size: String(MAX_IMPORT_FILE_BYTES / 1024 / 1024) })
       : rejection?.message;
 
   const rows = useMemo<ImportRowInput[]>(
@@ -250,15 +253,19 @@ export function ImportWizard({
   const localErrors = useMemo(() => {
     const errors = new Map<number, string[]>();
     const normalized = rows.map((row) => {
-      const { errors: problems, normalized } = checkImportRow(row, {
+      const { issues, normalized } = checkImportRow(row, {
         onCustomDomain: Boolean(domainId),
       });
+      const problems = issues.map(issueText);
       if (
         normalized.tagNames.length + targets.tags.length >
         MAX_TAGS_PER_CODE
       ) {
         problems.push(
-          `Up to ${MAX_TAGS_PER_CODE} tags per code, counting the ones for every code`,
+          issueText({
+            code: "tooManyTagsWithBatch",
+            values: { max: MAX_TAGS_PER_CODE },
+          }),
         );
       }
       if (problems.length > 0) errors.set(row.line, problems);
@@ -267,11 +274,11 @@ export function ImportWizard({
     for (const line of duplicateSlugLines(normalized)) {
       errors.set(line, [
         ...(errors.get(line) ?? []),
-        "This back-half appears earlier in the file",
+        issueText({ code: "slugDuplicate" }),
       ]);
     }
     return errors;
-  }, [rows, domainId, targets.tags.length]);
+  }, [rows, domainId, targets.tags.length, issueText]);
 
   useEffect(() => {
     if (!destinationMapped || rows.length === 0) {
@@ -307,12 +314,14 @@ export function ImportWizard({
     if (!preview) return localErrors;
     const merged = new Map(localErrors);
     for (const item of preview.errors) {
+      // The server's problems in the person's language (codes), else as sent.
+      const messages = item.issues?.map(issueText) ?? item.messages;
       merged.set(item.line, [
-        ...new Set([...(merged.get(item.line) ?? []), ...item.messages]),
+        ...new Set([...(merged.get(item.line) ?? []), ...messages]),
       ]);
     }
     return merged;
-  }, [preview, localErrors]);
+  }, [preview, localErrors, issueText]);
   const validRows = rows.filter((row) => !errorsByLine.has(row.line));
   const blocked = preview
     ? importBlocked({
@@ -455,8 +464,10 @@ export function ImportWizard({
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-medium">{file.name}</p>
               <p className="text-muted-foreground text-xs">
-                {plural(rows.length, "row")} ·{" "}
-                {plural(file.columns.length, "column")}
+                {t("rowsAndColumns", {
+                  rows: rows.length,
+                  columns: file.columns.length,
+                })}
               </p>
             </div>
             <Button
@@ -585,14 +596,12 @@ export function ImportWizard({
             </h2>
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <Badge variant="secondary">
-                {plural(validRows.length, "valid row")}
+                {t("validRows", { count: validRows.length })}
               </Badge>
               {errorsByLine.size > 0 && (
                 <>
                   <Badge variant="destructive">
-                    {t("valueWithProblems", {
-                      value: plural(errorsByLine.size, "row"),
-                    })}
+                    {t("valueWithProblems", { count: errorsByLine.size })}
                   </Badge>
                   <Button onClick={downloadErrors} size="sm" variant="ghost">
                     <Download />
@@ -707,7 +716,7 @@ export function ImportWizard({
               }
               onClick={runImport}
             >
-              {t("importValue", { value: plural(validRows.length, "code") })}
+              {t("importValue", { count: validRows.length })}
             </Button>
             <span className="text-muted-foreground text-sm">
               {errorsByLine.size > 0 && validRows.length > 0
