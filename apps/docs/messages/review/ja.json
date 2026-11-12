@@ -12187,6 +12187,10 @@
     "source": "d738160c6b99",
     "status": "machine"
   },
+  "editor.partInline.parts.background.editShape": {
+    "source": "0f6d760059b8",
+    "status": "machine"
+  },
   "editor.partInline.parts.frame.edit": {
     "source": "83af8e9e4bf6",
     "status": "machine"
@@ -12263,6 +12267,58 @@
     "source": "2d7228cc6b77",
     "status": "machine"
   },
+  "editor.partInline.items.whichEyes": {
+    "source": "f01982f48c03",
+    "status": "machine"
+  },
+  "editor.partInline.items.allEyes": {
+    "source": "6dd43284a407",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEye": {
+    "source": "be88e7e92763",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEyesColor": {
+    "source": "3df8cea82992",
+    "status": "machine"
+  },
+  "editor.partInline.items.thisEyesCenterColor": {
+    "source": "b18eff2ab4f2",
+    "status": "machine"
+  },
+  "editor.partInline.items.shapesChangeAllThreeEyes": {
+    "source": "2ec9e6c3e0e7",
+    "status": "machine"
+  },
+  "editor.partInline.items.sameAsTheOthers": {
+    "source": "c20b8a1de631",
+    "status": "machine"
+  },
+  "editor.partInline.items.eyesWithTheirOwnColor": {
+    "source": "a4e225b42367",
+    "status": "machine"
+  },
+  "editor.partInline.items.logoShapeAndPlate": {
+    "source": "848f74c90181",
+    "status": "machine"
+  },
+  "editor.partInline.items.clearSpace": {
+    "source": "5921f132532e",
+    "status": "machine"
+  },
+  "editor.partInline.items.content": {
+    "source": "47bd29075f8b",
+    "status": "machine"
+  },
+  "editor.partInline.items.codeShape": {
+    "source": "6f591585fbae",
+    "status": "machine"
+  },
+  "editor.partInline.items.errorCorrection": {
+    "source": "c7bdad567af2",
+    "status": "machine"
+  },
   "editor.partInline.random": {
     "source": "67bc484430fe",
     "status": "machine"
@@ -12277,6 +12333,90 @@
   },
   "editor.partInline.sheet.done": {
     "source": "11a6767d5674",
+    "status": "machine"
+  },
+  "editor.partInline.content.link": {
+    "source": "a6a32dbc5618",
+    "status": "machine"
+  },
+  "editor.partInline.content.text": {
+    "source": "71988c4d8e08",
+    "status": "machine"
+  },
+  "editor.partInline.content.theCodeKeepsItsContent": {
+    "source": "e3eea635dbc5",
+    "status": "machine"
+  },
+  "editor.partInline.content.scansOpenHost": {
+    "source": "89d886d47495",
+    "status": "machine"
+  },
+  "editor.partInline.content.textHint": {
+    "source": "c910e35a6a23",
+    "status": "machine"
+  },
+  "editor.partInline.content.editedInTheContentTab": {
+    "source": "61df96171e51",
+    "status": "machine"
+  },
+  "editor.partInline.content.openTheContentTab": {
+    "source": "d63bfc89400f",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.codeShape": {
+    "source": "6f591585fbae",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.square": {
+    "source": "c11092bc0861",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.circle": {
+    "source": "b93d3bcecff5",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.names.heart": {
+    "source": "770af9d18037",
+    "status": "machine"
+  },
+  "editor.partInline.codeShape.aCircleOrHeartTakes": {
+    "source": "ac2030d88592",
+    "status": "machine"
+  },
+  "editor.partInline.errorCorrection.theLogoRaisesItToLevel": {
+    "source": "b84208d7c5bf",
+    "status": "machine"
+  },
+  "editor.partInline.handles.moveLogo": {
+    "source": "d27a74e88bfc",
+    "status": "machine"
+  },
+  "editor.partInline.handles.dragOrUseTheArrowKeys": {
+    "source": "56e4952aafe1",
+    "status": "machine"
+  },
+  "editor.partInline.handles.logoSize": {
+    "source": "1483ec4e73dc",
+    "status": "machine"
+  },
+  "editor.partInline.handles.percentOfTheCode": {
+    "source": "227aab7c91cd",
+    "status": "machine"
+  },
+  "editor.partInline.handles.padding": {
+    "source": "ee0d7af0bffd",
+    "status": "machine"
+  },
+  "editor.partInline.handles.modules": {
+    "source": "a11fcc63bcde",
+    "status": "machine"
+  },
+  "editor.partInline.handles.dragToChangeThePadding": {
+    "source": "36445054fae4",
+    "status": "machine"
+  },
+  "editor.partInline.drop.dropToUseAsLogo": {
+    "source": "18b3a562cd9e",
     "status": "machine"
   },
   "editor.gradientPicker.pickASolidColorA": {
@@ -13051,6 +13191,10 @@
     "source": "4353ae15ce2a",
     "status": "machine"
   },
+  "editor.keyboardShortcutsModal.categories.preview": {
+    "source": "324b134f57c7",
+    "status": "machine"
+  },
   "editor.keyboardShortcutsModal.categories.help": {
     "source": "b79cac926e0b",
     "status": "machine"
@@ -13129,6 +13273,22 @@
   },
   "editor.keyboardShortcutsModal.shortcuts.showThisShortcutsDialog": {
     "source": "ddefcf6aec3e",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.editAPartOfTheCode": {
+    "source": "cfddc2b2d6c6",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.randomLookForThatPart": {
+    "source": "70db48fdf358",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.hideTheFocusedLogo": {
+    "source": "1f1218678b8a",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.moveTheLogoWhileEditing": {
+    "source": "4e8217755d57",
     "status": "machine"
   },
   "editor.soundSwitch.sounds": {
