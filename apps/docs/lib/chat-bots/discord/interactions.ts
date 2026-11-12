@@ -5,6 +5,7 @@ import {
   chatQrCaption,
   firstWebAddress,
   readChatQrInput,
+  withBotRef,
 } from "@/lib/chat-bots/qr-reply";
 import {
   applyChoice,
@@ -255,7 +256,7 @@ function codeMessage(
     flags,
   }: { maker?: string | null; note?: string | null; flags?: number },
 ): MessageData | null {
-  const links = chatDesignLinks(data, design);
+  const links = withBotRef(chatDesignLinks(data, design), "discord-bot");
   if (links.png.length > EMBED_URL_MAX) return null;
   const buttons = [
     linkButton("Download PNG", links.png),
@@ -283,7 +284,10 @@ function codeMessage(
 /** The "too long to show" note, with the editor button when it fits. */
 function tooLongToShow(data: string, design: ChatDesign | null): MessageData {
   return noticeData(NOTICES.tooLongToShow, [
-    linkButton("Open in editor", chatDesignLinks(data, design).editor),
+    linkButton(
+      "Open in editor",
+      withBotRef(chatDesignLinks(data, design), "discord-bot").editor,
+    ),
   ]);
 }
 
