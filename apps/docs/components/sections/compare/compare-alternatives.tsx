@@ -5,10 +5,10 @@ import Link from "next/link";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
 import { JsonLd } from "@/components/sections/tools/json-ld";
+import { compareSource } from "@/lib/content-source";
 import { baseUrl } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { formatPrice, PRICING } from "@/lib/pricing";
-import { compareSource } from "@/lib/source";
 
 /** One tool in a page's `alternatives` frontmatter (source.config.ts). */
 export interface Alternative {
