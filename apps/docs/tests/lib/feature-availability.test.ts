@@ -114,6 +114,7 @@ const NEEDS: Record<FeatureId, string[]> = {
   ],
   affiliates: ["POLAR_WEBHOOK_SECRET"],
   invoiceRequests: ["RESEND_API_KEY", "EMAIL_FROM"],
+  enterpriseRequests: ["RESEND_API_KEY", "EMAIL_FROM"],
 };
 
 const vercelProd = { onVercel: true, production: true };

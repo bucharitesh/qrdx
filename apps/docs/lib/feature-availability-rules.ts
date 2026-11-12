@@ -41,6 +41,8 @@ export const FEATURE_IDS = [
   "affiliates",
   // Agency tools: "Pay by invoice" requests for Business yearly
   "invoiceRequests",
+  // Enterprise pages: the contact form on /enterprise
+  "enterpriseRequests",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -271,6 +273,20 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
         productionUrl: ctx.env.VERCEL_PROJECT_PRODUCTION_URL,
       }),
     paths: ["/docs/help/account-and-billing/pay-by-invoice"],
+  },
+  // ─── Enterprise pages (feat/enterprise-pages) ─────────────────────────────
+  enterpriseRequests: {
+    // The contact form on /enterprise (lib/enterprise-requests.tsx) emails
+    // QRdx's sales address, the same way pay-by-invoice requests go: QRdx's
+    // own sales, so only where QRdx itself runs, with email set up. The page
+    // stays everywhere and shows the plain address without it.
+    name: "Enterprise contact form (qrdx.dev, with email)",
+    requires: () => ["RESEND_API_KEY", "EMAIL_FROM"],
+    usable: (ctx) =>
+      isQrdxDeployment({
+        appUrl: ctx.env.NEXT_PUBLIC_APP_URL,
+        productionUrl: ctx.env.VERCEL_PROJECT_PRODUCTION_URL,
+      }),
   },
 };
 
