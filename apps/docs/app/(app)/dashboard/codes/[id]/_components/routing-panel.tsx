@@ -45,7 +45,6 @@ import {
   Add as Plus,
   Trash as Trash2,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import {
   type ReactNode,
@@ -65,6 +64,7 @@ import {
   testCodeRouting,
 } from "@/actions/code-marketing";
 import { InfoHint } from "@/components/help/info-hint";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import type { HintId } from "@/lib/help/hints";
 import type { Translator } from "@/lib/i18n/translator";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";

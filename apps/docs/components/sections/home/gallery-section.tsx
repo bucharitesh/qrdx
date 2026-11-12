@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { ShowcaseWall } from "@/components/showcase/showcase-wall";
 import {
   WALL_PATH,

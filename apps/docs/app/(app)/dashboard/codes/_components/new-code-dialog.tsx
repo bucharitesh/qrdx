@@ -22,7 +22,6 @@ import {
   Link2,
   Lock,
 } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
   type FormEvent,
@@ -39,6 +38,7 @@ import type { PageUsage } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { useAvailability } from "@/components/availability-provider";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { fitStyleForSave } from "@/components/code-builder/validation";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import { TemplatePreview } from "@/components/landing/template-preview";
 import { InlineLimit } from "@/components/limits/inline-limit";
 import { useShowLimit } from "@/components/limits/limit-dialog";

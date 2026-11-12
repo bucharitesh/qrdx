@@ -1,7 +1,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight, Book1, Home2 } from "iconsax-reactjs";
-import Link from "next/link";
 import { AsciiField } from "@/components/fx/ascii-field";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { NotFoundCode } from "@/components/not-found-code";
 import { TrackOnMount } from "@/lib/analytics/react";
 import { playgroundHref, withHandoffRef } from "@/lib/playground-links";

@@ -28,10 +28,10 @@ import {
   SearchNormal1 as Search,
   UserSquare,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { type FormEvent, useCallback, useEffect, useId, useState } from "react";
 import { emitSound } from "@/components/editor/sound";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { NeedsSetupBadge } from "@/components/needs-setup";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import { sourcesHint } from "@/lib/availability-copy";

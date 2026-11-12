@@ -19,7 +19,6 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Lock, ShieldCross as ShieldAlert } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useState, useTransition } from "react";
 import {
@@ -27,6 +26,7 @@ import {
   setCodePaused,
   updateCodeLifecycle,
 } from "@/actions/code-lifecycle";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import type { Translator } from "@/lib/i18n/translator";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";

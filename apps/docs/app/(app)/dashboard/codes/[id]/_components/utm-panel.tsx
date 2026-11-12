@@ -6,13 +6,13 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Add as Plus } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Suspense, useId, useState, useTransition } from "react";
 import {
   type CodeMarketingSettings,
   saveCodeUtm,
 } from "@/actions/code-marketing";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import type { UtmConfig } from "@/lib/redirect/routing";
 import {

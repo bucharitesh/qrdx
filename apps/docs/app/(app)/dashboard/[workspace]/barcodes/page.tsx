@@ -8,7 +8,6 @@ import {
 } from "@repo/design-system/components/ui/empty";
 import { Add, Barcode } from "iconsax-reactjs";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { getUserSettings } from "@/actions/user-settings";
 import { BarcodesHeader } from "@/app/(app)/dashboard/barcodes/_components/barcodes-header";
 import { BarcodesList } from "@/app/(app)/dashboard/barcodes/_components/barcodes-list";
@@ -25,6 +24,7 @@ import {
 import { formatNumber } from "@/app/(app)/dashboard/codes/_components/format";
 import { listFolders } from "@/app/(app)/dashboard/codes/_lib/organize";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { BARCODE_FORMATS } from "@/lib/barcode/formats";
 import {
   countBarcodeTrash,

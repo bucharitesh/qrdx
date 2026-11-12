@@ -14,10 +14,10 @@ import {
 } from "@repo/design-system/components/ui/input-otp";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Sms } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { useLocaleRouter as useRouter } from "@/components/i18n/locale-link";
 import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { type SsoSignInOffer, ssoSignInOffer } from "@/ee/sso/sign-in-offer";
 import { SsoOffer } from "@/ee/sso/sso-offer";

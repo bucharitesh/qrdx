@@ -1,8 +1,8 @@
 import { Card } from "@repo/design-system/components/ui/card";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { SpotlightCard } from "@/components/fx/spotlight-card";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { PRESSABLE } from "@/components/mockups/motion";
 import { Reveal } from "@/components/mockups/reveal";

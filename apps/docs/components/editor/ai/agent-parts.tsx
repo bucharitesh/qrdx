@@ -11,11 +11,11 @@ import {
   RotateRight,
   TickCircle,
 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { QRCodeSVG, type ScanGrade } from "qrdx";
 import { Fragment, type ReactNode, useMemo, useState } from "react";
 import { GRADE_COLORS, useGradeLabels } from "@/components/editor/scan-score";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import type {
   DesignLogo,
   DesignProgress,

@@ -10,8 +10,8 @@ import {
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { CopyButton } from "./event-checkboxes";
 
 /** Shows a signing secret (after create, reveal or rotate). */

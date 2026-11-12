@@ -9,10 +9,10 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { cn } from "@repo/design-system/lib/utils";
 import { ExportSquare, HamburgerMenu } from "iconsax-reactjs";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { useHeaderNavEntries } from "./header-nav";
 
 /**

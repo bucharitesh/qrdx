@@ -7,7 +7,6 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { Import as Download, Lock } from "iconsax-reactjs";
-import Link from "next/link";
 import {
   BreakdownCard,
   type BreakdownItem,
@@ -25,6 +24,7 @@ import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { AnalyticsExtra } from "@/app/(app)/dashboard/codes/[id]/_components/analytics-extra";
 import { PreciseLocationsCard } from "@/app/(app)/dashboard/codes/[id]/_components/precise-locations-card";
 import { SheetsExport } from "@/components/data-connections/sheets-export";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { getAppTranslations } from "@/lib/i18n/app-locale";
 import type { Translator } from "@/lib/i18n/translator";
 import { PLAN_LIMITS, PLANS } from "@/lib/plans";

@@ -11,9 +11,9 @@ import {
   type IntegrationCatalogEntry,
 } from "@repo/integrations/src/catalog";
 import { ArrowRight, SearchNormal1 } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
+import { LocaleLink as Link } from "@/components/i18n/locale-link";
 import { NoLongerAvailableBadge } from "@/components/needs-setup";
 import {
   IntegrationLogo,

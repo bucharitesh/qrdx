@@ -33,6 +33,7 @@ import {
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { InfoHint } from "@/components/help/info-hint";
 import { useContentText } from "@/components/i18n/content-text";
+import { useLocalizeHref } from "@/components/i18n/locale-link";
 import { offeredPageTypes } from "@/lib/landing/file-page-types";
 import type { BlockIcon } from "@/lib/landing/registry";
 import { soundEvent } from "@/lib/sound/emit";
@@ -284,6 +285,7 @@ export function ContentTypeModal({
   onOpenChange,
 }: ContentTypeModalProps) {
   const t = useTranslations("editor.contentTypeModal");
+  const localizeHref = useLocalizeHref();
   // Type names, descriptions and groups: lib/i18n/content-sources.ts.
   const tc = useContentText();
   const { data: session } = authClient.useSession();
@@ -736,7 +738,7 @@ export function ContentTypeModal({
                         {section.id === PAGES_SECTION && (
                           <a
                             className="text-muted-foreground hover:text-foreground mt-1 inline-block text-xs underline underline-offset-4"
-                            href="/templates"
+                            href={localizeHref("/templates")}
                             rel="noopener"
                             target="_blank"
                           >
