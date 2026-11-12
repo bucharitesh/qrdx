@@ -9,14 +9,18 @@ import {
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { cn } from "@repo/design-system/lib/utils";
 import { useTranslations } from "next-intl";
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
+import { defaultThemeState } from "@/config/qr";
 import {
   useTrackEditorOpened,
   useTrackQrGenerated,
 } from "@/lib/analytics/react";
 import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
 import { useMounted } from "@/lib/hooks/use-mounted";
-import { usePlaygroundParams } from "@/lib/hooks/use-playground-params";
+import {
+  SearchParamsListener,
+  usePlaygroundParams,
+} from "@/lib/hooks/use-playground-params";
 import { useQREditorStore } from "@/store/editor-store";
 import type { Theme, ThemeStyles } from "@/types/theme";
 import { PlaygroundCodeBuilder } from "./code-builder/playground-host";
@@ -24,9 +28,11 @@ import { ActionBar, MobileActionBar } from "./editor/action-bar";
 import { AIWorkingGlow } from "./editor/ai/ai-working-glow";
 import { CommunitySheet } from "./editor/community-sheet";
 import { useCommunitySheetStore } from "./editor/community-sheet-store";
+import { EditorSnapshot } from "./editor/editor-snapshot";
 import { PhotoScanDialog } from "./editor/photo-scan-dialog";
 import ThemeControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
+import { ServerSnapshot } from "./server-snapshot";
 
 // Exported so components/lazy-editor.tsx's inferred type can name it (TS4023).
 export interface EditorProps {
@@ -35,15 +41,16 @@ export interface EditorProps {
 
 /**
  * The sample code the preview shows until there's content: the default
- * style encoding https://qrdx.dev, drawn with qrdx's QRCodeSVG. An <img>, so
- * the server-rendered shell paints a real image early (the page's largest
- * paint) instead of waiting for the editor to hydrate.
+ * style encoding https://qrdx.dev, drawn with qrdx's QRCodeSVG. An <img> in
+ * the server snapshot and the loading shell, so the first HTML paints a real
+ * image early (the page's largest paint) instead of waiting for the editor.
  */
 const SAMPLE_QR_SRC = "/images/editor/sample-qr.svg";
 
 /**
  * Static placeholder in the editor's layout (toolbar, preview, controls),
- * shown until hydration.
+ * shown when the browser has to draw the editor before it's ready: a
+ * client-side navigation to the playground, which has no server snapshot.
  */
 function EditorShell() {
   const t = useTranslations("editor.editor");
@@ -113,6 +120,24 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   const setThemeState = useQREditorStore((state) => state.setThemeState);
 
   const initialQRPreset = themePromise ? use(themePromise) : null;
+  const sharedStyle = initialQRPreset?.style;
+  // The query string, reported after mount by SearchParamsListener below
+  const [searchKey, setSearchKey] = useState("");
+
+  // The first HTML's editor: the real controls in the default look (or the
+  // shared theme's), kept by the browser until the live editor replaces it.
+  // Memoized: the browser must not give the kept markup new props.
+  const snapshot = useMemo(
+    () => (
+      <ServerSnapshot fallback={<EditorShell />}>
+        <EditorSnapshot
+          sampleSrc={sharedStyle ? undefined : SAMPLE_QR_SRC}
+          styles={sharedStyle ?? defaultThemeState.styles}
+        />
+      </ServerSnapshot>
+    ),
+    [sharedStyle],
+  );
 
   const handleStyleChange = React.useCallback(
     (newStyles: Partial<ThemeStyles>) => {
@@ -141,6 +166,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   // mount (their forms read the store once).
   const { settled } = usePlaygroundParams({
     themePath: Boolean(initialQRPreset),
+    searchKey,
   });
 
   if (initialQRPreset && !initialQRPreset.style) {
@@ -153,17 +179,16 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
 
   // The editor store restores from localStorage on the client, so anything
   // rendered from it would differ from the server HTML (hydration errors and
-  // shifted Radix ids). Render a neutral shell until mounted, and until a
+  // shifted Radix ids). Keep the server snapshot until mounted, and until a
   // playground link's parameters are in the store.
-  if (!(isMounted && settled)) {
-    return <EditorShell />;
-  }
-
+  let editor: React.ReactNode;
   const styles = themeState.styles;
 
-  if (isMobile) {
+  if (!(isMounted && settled)) {
+    editor = snapshot;
+  } else if (isMobile) {
     // Preview stays visible on top; the controls sit in a sheet below it.
-    return (
+    editor = (
       <DialogActionsProvider>
         <div className="relative isolate flex flex-1 flex-col overflow-hidden">
           <ActionBar layout="mobile" />
@@ -184,52 +209,59 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
         <EditorOverlays />
       </DialogActionsProvider>
     );
-  }
-
-  // Desktop layout
-  return (
-    <DialogActionsProvider>
-      <div className="relative isolate flex flex-1 overflow-hidden">
-        <div className="size-full">
-          <ResizablePanelGroup direction="horizontal" className="isolate">
-            <ResizablePanel
-              defaultSize={30}
-              minSize={20}
-              maxSize={40}
-              className="z-1 min-w-[max(20%,22rem)]"
-            >
-              <div className="relative isolate flex h-full flex-1 flex-col">
-                <ThemeControlPanel
-                  styles={styles}
-                  onChange={handleStyleChange}
-                />
-              </div>
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel defaultSize={70}>
-              {/* Room for the docked community sheet (25rem), so the
-                  preview and toolbar stay in view beside it. */}
-              <div
-                className={cn(
-                  "flex h-full flex-col",
-                  communityOpen && "pr-[25rem]",
-                )}
+  } else {
+    // Desktop layout
+    editor = (
+      <DialogActionsProvider>
+        <div className="relative isolate flex flex-1 overflow-hidden">
+          <div className="size-full">
+            <ResizablePanelGroup direction="horizontal" className="isolate">
+              <ResizablePanel
+                defaultSize={30}
+                minSize={20}
+                maxSize={40}
+                className="z-1 min-w-[max(20%,22rem)]"
               >
-                <div className="flex min-h-0 flex-1 flex-col">
-                  <ActionBar />
-                  <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
-                    <QRPreviewPanel style={styles} />
-                    <AIWorkingGlow />
-                    <TrackQrGenerated />
+                <div className="relative isolate flex h-full flex-1 flex-col">
+                  <ThemeControlPanel
+                    styles={styles}
+                    onChange={handleStyleChange}
+                  />
+                </div>
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={70}>
+                {/* Room for the docked community sheet (25rem), so the
+                  preview and toolbar stay in view beside it. */}
+                <div
+                  className={cn(
+                    "flex h-full flex-col",
+                    communityOpen && "pr-[25rem]",
+                  )}
+                >
+                  <div className="flex min-h-0 flex-1 flex-col">
+                    <ActionBar />
+                    <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+                      <QRPreviewPanel style={styles} />
+                      <AIWorkingGlow />
+                      <TrackQrGenerated />
+                    </div>
                   </div>
                 </div>
-              </div>
-            </ResizablePanel>
-          </ResizablePanelGroup>
+              </ResizablePanel>
+            </ResizablePanelGroup>
+          </div>
         </div>
-      </div>
-      <EditorOverlays />
-    </DialogActionsProvider>
+        <EditorOverlays />
+      </DialogActionsProvider>
+    );
+  }
+
+  return (
+    <>
+      {editor}
+      {isMounted && <SearchParamsListener onChange={setSearchKey} />}
+    </>
   );
 };
 
