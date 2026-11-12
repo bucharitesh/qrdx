@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { lang } from "next/root-params";
 import { getTranslations } from "next-intl/server";
+import { RememberLocale } from "@/components/i18n/remember-locale";
 import { RootDocument } from "@/components/root-document";
 import {
   DEFAULT_LOCALE,
@@ -50,6 +51,8 @@ export default async function Layout({ children }: LayoutProps<"/[lang]">) {
       messages={["home.editor", "editor.scanScore", "editor.connections"]}
     >
       {children}
+      {/* Remembers a translated page's language for the app (after hydration). */}
+      <RememberLocale />
     </RootDocument>
   );
 }
