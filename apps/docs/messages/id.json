@@ -4881,7 +4881,8 @@
           "afterYouSignInPasskeyOrApp": "Setelah Anda masuk, QRdx akan meminta passkey atau kode dari aplikasi autentikator Anda. Kode cadangan juga dapat digunakan.",
           "afterYouSignInPasskey": "Setelah Anda masuk, QRdx akan meminta passkey Anda. Kode cadangan juga dapat digunakan.",
           "afterYouSignInApp": "Setelah Anda masuk, QRdx akan meminta kode dari aplikasi autentikator Anda. Kode cadangan juga dapat digunakan.",
-          "afterYouSignInQrdx2": "Setelah Anda masuk, QRdx meminta kode cadangan."
+          "afterYouSignInQrdx2": "Setelah Anda masuk, QRdx meminta kode cadangan.",
+          "passkeySpotlight": "Sekarang passkey dapat menjadi langkah kedua Anda, sebagai pengganti kode autentikator."
         },
         "twoFactorSetupDialog": {
           "stepStepnumberOfLength": "Langkah {stepNumber, number} dari {length, number}",
@@ -7506,7 +7507,19 @@
         "new": "Baru",
         "whatsNew": "Yang baru",
         "newFeaturesAndFixesIn": "Fitur baru dan perbaikan di QRdx.",
-        "seeAllUpdates": "Lihat semua pembaruan"
+        "seeAllUpdates": "Lihat semua pembaruan",
+        "newFeatures": "Fitur baru",
+        "dismissTitle": "Tutup {title}",
+        "previousUpdate": "Pembaruan sebelumnya",
+        "nextUpdate": "Pembaruan berikutnya",
+        "positionOfTotal": "{position, number} dari {total, number}",
+        "readOnTheChangelog": "Baca di changelog",
+        "tryIt": "Coba",
+        "close": "Tutup"
+      },
+      "spotlight": {
+        "new": "Baru",
+        "gotIt": "Mengerti"
       }
     },
     "workspaces": {
