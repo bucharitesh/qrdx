@@ -8,6 +8,11 @@ import manifest from "./media-manifest.json";
  */
 const files: Record<string, string> = manifest.files;
 
+/** Whether `path` is an uploaded media key (else it's a site path). */
+export function hasMedia(path: string): boolean {
+  return Object.hasOwn(files, path);
+}
+
 export function mediaUrl(path: string): string {
   const key = files[path];
   if (!key) {

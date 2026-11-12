@@ -12,10 +12,13 @@ import {
   ShieldTick,
 } from "iconsax-reactjs";
 import type { Metadata } from "next";
+import { ChangelogBody } from "@/components/changelog/changelog-body";
+import { ChangelogPicture } from "@/components/changelog/changelog-picture";
 import { AsciiField } from "@/components/fx";
 import { NpmLagNotice } from "@/components/mdx/npm-status";
 import { IconTile } from "@/components/sections/tools/cards";
 import { changelogAnchor } from "@/lib/changelog-feed";
+import { changelogPictureUrl } from "@/lib/changelog-feed-server";
 import { createMetadata } from "@/lib/metadata";
 import { getNpmLag, type NpmLag } from "@/lib/npm-version";
 import { changelogEntries } from "./entries";
@@ -59,18 +62,6 @@ function formatDate(date: string): string {
     timeZone: "UTC",
   });
 }
-
-const proseClass = cn(
-  "prose prose-neutral dark:prose-invert max-w-none min-w-0 text-[15px] leading-relaxed",
-  "prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground",
-  "prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-base first:prose-h3:mt-0 prose-h4:text-sm",
-  "prose-p:text-muted-foreground prose-p:text-pretty prose-li:text-muted-foreground prose-li:my-1 prose-li:marker:text-foreground/30 prose-ul:my-3",
-  "prose-strong:font-medium prose-strong:text-foreground",
-  "prose-a:font-medium prose-a:text-foreground prose-a:underline prose-a:decoration-foreground/30 prose-a:underline-offset-4 hover:prose-a:decoration-foreground",
-  "prose-code:rounded-md prose-code:border prose-code:bg-muted/50 prose-code:px-1.5 prose-code:py-0.5 prose-code:text-[0.85em] prose-code:font-normal prose-code:text-foreground prose-code:before:content-none prose-code:after:content-none",
-  "prose-pre:max-w-full prose-pre:overflow-x-auto prose-pre:rounded-xl prose-pre:border prose-pre:bg-muted/40 prose-pre:text-foreground [&_pre_code]:border-0 [&_pre_code]:bg-transparent [&_pre_code]:p-0",
-  "prose-hr:my-6 prose-hr:border-border",
-);
 
 const Page = async () => {
   const entries = changelogEntries();
@@ -116,7 +107,6 @@ const Page = async () => {
 
       <ol className="mx-auto w-full max-w-5xl px-10 py-10 md:py-16">
         {entries.map((entry, index) => {
-          const MDX = entry.data.body;
           const Icon = entryIcon(entry.data.tags);
           const isLast = index === entries.length - 1;
           const lags = npmLags.get(entry.url) ?? [];
@@ -160,6 +150,19 @@ const Page = async () => {
                   className="absolute top-2.5 -left-[4.5px] hidden size-2 rounded-full bg-foreground/40 ring-4 ring-background md:block"
                 />
                 <article className="min-w-0 overflow-hidden rounded-xl border bg-card p-5 shadow-sm sm:p-6 md:p-8">
+                  {entry.data.image && (
+                    <div className="relative -mx-5 -mt-5 mb-6 aspect-video overflow-hidden border-b bg-muted sm:-mx-6 sm:-mt-6 md:-mx-8 md:-mt-8 md:mb-8">
+                      <ChangelogPicture
+                        alt={entry.data.imageAlt ?? ""}
+                        darkSrc={
+                          entry.data.imageDark &&
+                          changelogPictureUrl(entry.data.imageDark)
+                        }
+                        sizes="(min-width: 1024px) 784px, 100vw"
+                        src={changelogPictureUrl(entry.data.image)}
+                      />
+                    </div>
+                  )}
                   <div className="flex items-start gap-3.5">
                     <IconTile icon={Icon} />
                     <div className="flex min-w-0 flex-col gap-1.5">
@@ -187,14 +190,7 @@ const Page = async () => {
                   )}
                   <div className="my-6 h-px bg-border" />
                   <NpmLagNotice lags={lags} />
-                  <div className={proseClass}>
-                    <MDX
-                      components={{
-                        h2: (props) => <h3 {...props} />,
-                        h3: (props) => <h4 {...props} />,
-                      }}
-                    />
-                  </div>
+                  <ChangelogBody entry={entry} />
                 </article>
               </div>
             </li>
