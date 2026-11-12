@@ -162,6 +162,25 @@ const anchorStyle = (anchor: PanelAnchor | undefined) =>
     "--nav-max": `${anchor.max}px`,
   } as CSSProperties);
 
+/**
+ * A closed dropdown's links, as plain anchors in the server HTML. Radix only
+ * mounts a panel once it opens, so without these the page's first HTML has
+ * no link to anything inside Product, Tools, Developers or Resources and
+ * crawlers can't follow them. `hidden` keeps them out of view, out of the tab
+ * order and out of the accessibility tree; the open panel is what people use.
+ */
+function MenuLinks({ items }: { items: HeaderNavItem[] }) {
+  return (
+    <ul hidden>
+      {items.map((item) => (
+        <li key={item.href}>
+          <a href={item.href}>{item.name}</a>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 interface MenuState {
   /** The open entry's id as a string, or "" when closed. */
   value: string;
@@ -300,6 +319,7 @@ export function HeaderNav({ className }: { className?: string }) {
               <NavigationMenuContent>
                 <NavPanel items={entry.items} pathname={pathname} />
               </NavigationMenuContent>
+              <MenuLinks items={entry.items} />
             </NavigationMenuItem>
           );
         })}

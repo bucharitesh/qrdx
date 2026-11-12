@@ -14,6 +14,7 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import { afterAll, beforeAll, describe, expect, it, test } from "vitest";
 import { industries, placements } from "@/lib/seo-content";
 import {
@@ -21,10 +22,15 @@ import {
   latestDate,
   parseGitLog,
   shallowBoundary,
+  sourceDate,
   trustedGitDate,
   withoutGitEnv,
 } from "@/lib/seo-dates";
+import recorded from "@/lib/seo-file-dates.json";
 import {
+  HOSTED_TYPES_SOURCE,
+  INTEGRATION_SOURCES,
+  integrationSource,
   PAGE_SOURCES,
   QR_TYPES_SOURCE,
   seoGroupSource,
@@ -83,10 +89,58 @@ describe("latestDate", () => {
   });
 });
 
+describe("sourceDate", () => {
+  const dates = { "a.ts": "2026-10-01T00:00:00.000Z" };
+
+  it("falls back to the recorded date when the build has no git date", () => {
+    expect(sourceDate("a.ts", undefined, dates)).toEqual(
+      new Date("2026-10-01T00:00:00.000Z"),
+    );
+  });
+
+  it("takes the build's git date when it's newer", () => {
+    const newer = new Date("2026-11-01T00:00:00.000Z");
+    expect(sourceDate("a.ts", newer, dates)).toEqual(newer);
+    expect(sourceDate("a.ts", new Date("2026-09-01"), dates)).toEqual(
+      new Date("2026-10-01T00:00:00.000Z"),
+    );
+  });
+
+  it("has no date for a file with neither", () => {
+    expect(sourceDate("b.ts", undefined, dates)).toBeUndefined();
+  });
+});
+
+describe("recorded file dates (lib/seo-file-dates.json)", () => {
+  const entries = Object.entries(recorded as Record<string, string>);
+
+  it("dates the sitemap's source files", () => {
+    expect(entries.length).toBeGreaterThan(100);
+    expect(recorded).toHaveProperty([QR_TYPES_SOURCE]);
+  });
+
+  it.each(entries)("%s has a real past date", (_file, date) => {
+    const time = Date.parse(date);
+    expect(Number.isNaN(time)).toBe(false);
+    expect(time).toBeLessThanOrEqual(Date.now());
+  });
+});
+
+describe("integration page sources", () => {
+  it("finds the catalog file for every integration", () => {
+    for (const entry of getCatalogBySurface("integrations")) {
+      expect(integrationSource(entry.slug), entry.slug).toBeDefined();
+    }
+    expect(integrationSource("no-such-integration")).toBeUndefined();
+  });
+});
+
 describe("sitemap source files", () => {
   it.each([
     QR_TYPES_SOURCE,
+    HOSTED_TYPES_SOURCE,
     ...Object.values(PAGE_SOURCES).flat(),
+    ...INTEGRATION_SOURCES,
     ...[industries, placements].flatMap((collection) =>
       collection.groups.map((group) => seoGroupSource(collection, group.id)),
     ),

@@ -82,7 +82,7 @@ export function createMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      creator: "@bucharitesh",
+      creator: "@bucha_ritesh",
       title,
       description,
       ...override.twitter,

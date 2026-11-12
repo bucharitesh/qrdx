@@ -18,12 +18,14 @@ import {
 } from "@/lib/qr-types-content-hosted";
 import { industries, placements } from "@/lib/seo-content";
 import {
-  gitLastModified,
+  contentLastModified,
+  fileLastModified,
   latestDate as latest,
-  trustedLastModified,
 } from "@/lib/seo-dates";
 import {
   HOSTED_TYPES_SOURCE,
+  INTEGRATION_SOURCES,
+  integrationSource,
   PAGE_SOURCES,
   QR_TYPES_SOURCE,
   seoGroupSource,
@@ -64,16 +66,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
 function entries(): Entry[] {
   const url = (path: string): string => new URL(path, baseUrl).toString();
 
-  // TypeScript-written pages: the git date of the file that holds the copy.
+  // TypeScript-written pages: the last change to the file that holds the
+  // copy (git, or the recorded date when the build's clone is shallow).
   const collections = [industries, placements];
   const groupFiles = collections.flatMap((collection) =>
     collection.groups.map((group) => seoGroupSource(collection, group.id)),
   );
-  const fileDates = gitLastModified([
+  const fileDates = fileLastModified([
     QR_TYPES_SOURCE,
     HOSTED_TYPES_SOURCE,
     ...groupFiles,
     ...Object.values(PAGE_SOURCES).flat(),
+    ...INTEGRATION_SOURCES,
   ]);
   const pageDate = (path: string) =>
     latest((PAGE_SOURCES[path] ?? []).map((file) => fileDates.get(file)));
@@ -96,7 +100,24 @@ function entries(): Entry[] {
   const compares = compareSource.getPages();
   // `lastVerified` is when the competitor facts were last checked.
   const compareDate = (p: (typeof compares)[number]) =>
-    latest([p.data.lastVerified, trustedLastModified(p.data.lastModified)]);
+    latest([
+      p.data.lastVerified,
+      contentLastModified(`content/compare/${p.path}`, p.data.lastModified),
+    ]);
+
+  // Third-party integrations only, and none that need setup here: AI
+  // assistants, developer tools and plugins redirect to their own pages.
+  const integrations = filterVisible(
+    getIntegrationAvailability(),
+    getCatalogBySurface("integrations"),
+    (integration) => integration.slug,
+  ).map((integration) => {
+    const file = integrationSource(integration.slug);
+    return {
+      slug: integration.slug,
+      lastModified: file ? fileDates.get(file) : undefined,
+    };
+  });
 
   const categories = Object.entries(SLUG_TO_CATEGORY).flatMap(
     ([slug, name]) => {
@@ -190,19 +211,15 @@ function entries(): Entry[] {
     },
     {
       url: url("/integrations"),
+      lastModified: latest(integrations.map((i) => i.lastModified)),
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    // Third-party integrations only, and none that need setup here: AI
-    // assistants, developer tools and plugins redirect to their own pages.
-    ...filterVisible(
-      getIntegrationAvailability(),
-      getCatalogBySurface("integrations"),
-      (integration) => integration.slug,
-    ).map(
+    ...integrations.map(
       (integration) =>
         ({
           url: url(`/integrations/${integration.slug}`),
+          lastModified: integration.lastModified,
           changeFrequency: "monthly",
           priority: 0.6,
         }) satisfies Entry,
@@ -250,7 +267,10 @@ function entries(): Entry[] {
       .filter((page) => isPathAvailable(page.url))
       .flatMap((page) =>
         docsSitemapEntries(page.slugs, docsPageLocales(page.slugs), {
-          lastModified: trustedLastModified(page.data.lastModified),
+          lastModified: contentLastModified(
+            `content/docs/${page.path}`,
+            page.data.lastModified,
+          ),
           changeFrequency: "weekly",
           priority: page.url === "/docs" ? 0.8 : 0.5,
         }),
@@ -386,13 +406,17 @@ function entries(): Entry[] {
         (page) =>
           ({
             url: url(page.url),
-            lastModified: trustedLastModified(page.data.lastModified),
+            lastModified: contentLastModified(
+              `content/legal/${page.path}`,
+              page.data.lastModified,
+            ),
             changeFrequency: "yearly",
             priority: 0.3,
           }) satisfies Entry,
       ),
     {
       url: url("/report-abuse"),
+      lastModified: pageDate("/report-abuse"),
       changeFrequency: "yearly",
       priority: 0.3,
     },
