@@ -271,7 +271,10 @@ async function createRows(
   }));
   for (let attempt = 0; ; attempt++) {
     try {
-      return await createCodes(scope, inputs, { idempotencyKey });
+      return await createCodes(scope, inputs, {
+        idempotencyKey,
+        via: "import",
+      });
     } catch (error) {
       const details =
         error instanceof HttpError &&

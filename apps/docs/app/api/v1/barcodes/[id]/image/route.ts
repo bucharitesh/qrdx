@@ -1,5 +1,6 @@
 import type { NextRequest } from "next/server";
 import { resolveApiScope } from "@/app/api/v1/codes/_lib/api";
+import { withApiUsage } from "@/lib/analytics/usage";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { barcodeFileStem, parseBarcodeFileType } from "@/lib/barcode/files";
 import { BarcodeRenderError, renderBarcodeFile } from "@/lib/barcode/server";
@@ -17,7 +18,7 @@ const SVG_CSP = "default-src 'none'; style-src 'unsafe-inline'; img-src data:";
  * A saved barcode as an image or vector file (`type`, default svg), drawn as
  * saved; `scale` overrides its raster scale. Private: needs the key.
  */
-export const GET = withApiQuotaHeaders(
+const handleGET = withApiQuotaHeaders(
   async (req: NextRequest, context: Context) => {
     try {
       const scope = await resolveApiScope(req, "read");
@@ -73,3 +74,6 @@ export const GET = withApiQuotaHeaders(
     }
   },
 );
+
+// Counted with the API's requests (lib/analytics/usage.ts).
+export const GET = withApiUsage("barcodes", handleGET);

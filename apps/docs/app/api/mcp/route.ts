@@ -3,13 +3,19 @@ import { createMcpHandler } from "mcp-handler";
 import { handleError } from "@/lib/error-response";
 import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { MCP_INSTRUCTIONS, MCP_SERVER_INFO, registerQrTools } from "./tools";
+import { countMcpSessions, countToolCalls } from "./usage";
 
 // Public, stateless MCP server (Streamable HTTP). Tools only render QR codes
-// and format payloads; nothing here reads or writes user data.
-const mcpHandler = createMcpHandler(registerQrTools, {
-  serverInfo: MCP_SERVER_INFO,
-  instructions: MCP_INSTRUCTIONS,
-});
+// and format payloads; nothing here reads or writes user data. Tool calls
+// and sessions are counted by name and client family only (./usage.ts).
+const mcpHandler = createMcpHandler(
+  (server) => registerQrTools(countToolCalls(server)),
+  {
+    serverInfo: MCP_SERVER_INFO,
+    instructions: MCP_INSTRUCTIONS,
+    onEvent: countMcpSessions,
+  },
+);
 
 const ipRateLimiter = createRateLimiter({
   limiter: slidingWindow(120, "60 s"),

@@ -33,6 +33,7 @@ import {
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { track } from "@/lib/analytics";
+import { markProgrammaticQrContent } from "@/lib/analytics/react";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { dashboardEntry } from "@/lib/workspace-paths";
 import { useAuthStore } from "@/store/auth-store";
@@ -84,6 +85,8 @@ export function loadCodeIntoEditor(
   if (code.style) {
     editor.setThemeState({ ...editor.themeState, styles: code.style });
   }
+  // QRdx put it there: not a code the visitor generated (qr_generated).
+  markProgrammaticQrContent(code.shortLink);
   editor.setValue(code.shortLink);
   useDynamicLinkStore.getState().link({
     id: code.id,
@@ -156,7 +159,7 @@ export async function makeDynamic(
 ): Promise<MakeDynamicOutcome> {
   const { style, trimmed } = styleForCode(input.styles);
   const result = await safely(() =>
-    create({ destinationUrl: input.destination, style }),
+    create({ destinationUrl: input.destination, style }, { via: "playground" }),
   );
   if (!result.success) {
     if (result.error.code === "LIMIT_REACHED") {
@@ -261,6 +264,7 @@ export function DynamicLinkToggle() {
   // The URL form rewrites the value as you type; put the short link back before paint.
   useLayoutEffect(() => {
     if (linked && value !== linked.shortLink) {
+      markProgrammaticQrContent(linked.shortLink);
       setValue(linked.shortLink);
     }
   }, [linked, value, setValue]);
@@ -305,6 +309,8 @@ export function DynamicLinkToggle() {
       }
 
       link(outcome.code);
+      // The short link isn't a code the visitor typed: no qr_generated.
+      markProgrammaticQrContent(outcome.code.shortLink);
       setValue(outcome.code.shortLink);
       emitSound("success");
       track("dynamic_code_created", { source: "playground" });

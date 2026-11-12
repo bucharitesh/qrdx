@@ -70,7 +70,11 @@ vi.mock("@repo/rate-limit", async () => {
 
 import { GET as open } from "@/app/api/integrations/telegram/open/route";
 import { POST } from "@/app/api/integrations/telegram/webhook/route";
-import { CHAT_QR_PNG_SIZE, chatQrLinks } from "@/lib/chat-bots/qr-reply";
+import {
+  CHAT_QR_PNG_SIZE,
+  chatQrLinks as plainLinks,
+  withBotRef,
+} from "@/lib/chat-bots/qr-reply";
 import { TELEGRAM_GLOBAL_PER_MINUTE } from "@/lib/chat-bots/telegram/bot";
 import { verifyPhotoLink } from "@/lib/chat-bots/telegram/photo-link";
 import {
@@ -84,6 +88,10 @@ import {
   TOO_LONG_TEXT,
 } from "@/lib/chat-bots/telegram/replies";
 import { decodeStyleParam } from "@/lib/playground-style";
+
+/** The bot's links: the editor's is tagged ref=telegram-bot. */
+const chatQrLinks = (data: string) =>
+  withBotRef(plainLinks(data), "telegram-bot");
 
 interface ApiCall {
   url: string;

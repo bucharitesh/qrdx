@@ -4,6 +4,7 @@ import {
   type ChatQrLinks,
   chatQrCaption,
   chatQrLinks,
+  withBotRef,
 } from "@/lib/chat-bots/qr-reply";
 import {
   CHAT_FLAGS,
@@ -172,7 +173,7 @@ export function qrMessage(
   origin: string | URL = baseUrl,
   { design = null, maker, note }: QrMessageOptions = {},
 ): SlackMessage | null {
-  const links = chatDesignLinks(data, design, origin);
+  const links = withBotRef(chatDesignLinks(data, design, origin), "slack-bot");
   if (!fitsSlack(links)) return null;
   const caption = chatQrCaption(data);
   return {
@@ -215,7 +216,7 @@ export function trackedMessage(
   code: { shortLink: string; destinationUrl: string; workspaceName: string },
   origin: string | URL = baseUrl,
 ): SlackMessage | null {
-  const links = chatQrLinks(code.shortLink, origin);
+  const links = withBotRef(chatQrLinks(code.shortLink, origin), "slack-bot");
   if (!fitsSlack(links)) return null;
   const destination = chatQrCaption(code.destinationUrl);
   return {

@@ -22,6 +22,12 @@ export const builderServices: BuilderServices = {
   setTags: setQrCodeTags,
 };
 
+/** The same over the playground: new codes are recorded as made there. */
+export const playgroundBuilderServices: BuilderServices = {
+  ...builderServices,
+  createCode: (input) => createQrCode(input, { via: "playground" }),
+};
+
 export interface LoadedCode {
   code: QrCodeView;
   /** Its folder and tags; null when they couldn't be looked up */

@@ -289,6 +289,7 @@ export const dbRepo: MigrateRepo = {
     const views = await createCodes(
       asScope(scope),
       inputs.map((input) => ({ ...input, style: null })),
+      { via: "migrate" },
     );
     return views.map((view) => ({
       id: view.id,

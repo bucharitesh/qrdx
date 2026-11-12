@@ -76,7 +76,10 @@ import { InfoHint } from "@/components/help/info-hint";
 import { LocaleLink } from "@/components/i18n/locale-link";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { track } from "@/lib/analytics";
-import { useTrackQrGenerated } from "@/lib/analytics/react";
+import {
+  useTrackEditorOpened,
+  useTrackQrGenerated,
+} from "@/lib/analytics/react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { playgroundHref } from "@/lib/playground-links";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
@@ -276,6 +279,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
     });
   }, [type]);
 
+  useTrackEditorOpened("type_tool");
   useTrackQrGenerated(
     "type_tool",
     activeType,

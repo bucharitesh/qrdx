@@ -429,15 +429,19 @@ export async function createPage(
 
   let codeId: string;
   try {
-    const [code] = await createCodes(scope, [
-      {
-        destinationUrl: pagePlaceholderUrl(),
-        title: input.title ?? template.label,
-        style: input.style ?? null,
-        domainId: null,
-        pageId,
-      },
-    ]);
+    const [code] = await createCodes(
+      scope,
+      [
+        {
+          destinationUrl: pagePlaceholderUrl(),
+          title: input.title ?? template.label,
+          style: input.style ?? null,
+          domainId: null,
+          pageId,
+        },
+      ],
+      { via: "page" },
+    );
     if (!code) throw new Error("Code creation returned nothing");
     codeId = code.id;
     // Show the page's own address as the code's destination.
@@ -613,15 +617,19 @@ export async function createCodeForPage(
   id: string,
 ): Promise<{ codeId: string }> {
   const row = await findPageRow(scope, id);
-  const [code] = await createCodes(scope, [
-    {
-      destinationUrl: pagePlaceholderUrl(),
-      title: row.title,
-      style: null,
-      domainId: null,
-      pageId: row.id,
-    },
-  ]);
+  const [code] = await createCodes(
+    scope,
+    [
+      {
+        destinationUrl: pagePlaceholderUrl(),
+        title: row.title,
+        style: null,
+        domainId: null,
+        pageId: row.id,
+      },
+    ],
+    { via: "page" },
+  );
   if (!code) throw new Error("Code creation returned nothing");
   await db
     .update(qrCode)

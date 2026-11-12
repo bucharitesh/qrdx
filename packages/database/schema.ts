@@ -3,6 +3,7 @@ import {
   type AnyPgColumn,
   bigint,
   boolean,
+  date,
   doublePrecision,
   index,
   integer,
@@ -1162,6 +1163,89 @@ export const affiliateRefundedOrder = pgTable("affiliate_refunded_order", {
   createdAt: timestamp("created_at").notNull(),
 });
 
+// ─── Growth analytics (manual-sql/2026-11-13-growth-analytics.sql) ───────────
+// apps/docs/lib/analytics: how an account found QRdx, where codes are made,
+// and daily API, MCP and chat bot usage counts.
+
+/** user_acquisition.channel, worked out on the server (lib/analytics/channel.ts). */
+export const ACQUISITION_CHANNELS = [
+  "affiliate",
+  "plugin",
+  "mcp",
+  "bot",
+  "developer",
+  "ai_assistant",
+  "search",
+  "social",
+  "campaign",
+  "referral",
+  "direct",
+] as const;
+export type AcquisitionChannel = (typeof ACQUISITION_CHANNELS)[number];
+
+// How the visit an account signed up in started: one row per account made
+// after this table, written once at sign-up. Host names, campaign tags and
+// paths only, sanitised on the server; never a full referring address.
+// Deleted with the account. No row: an older account ("unknown").
+export const userAcquisition = pgTable(
+  "user_acquisition",
+  {
+    userId: text("user_id")
+      .primaryKey()
+      .references(() => user.id, { onDelete: "cascade" }),
+    channel: text("channel", { enum: ACQUISITION_CHANNELS }).notNull(),
+    // External referrers only, host name only.
+    referrerHost: text("referrer_host"),
+    utmSource: text("utm_source"),
+    utmMedium: text("utm_medium"),
+    utmCampaign: text("utm_campaign"),
+    // A QRdx link's `ref` tag (lib/analytics/handoff-tags.ts) or another one.
+    refTag: text("ref_tag"),
+    // The first page of the sign-up visit, and where the sign-in panel opened.
+    landingPath: text("landing_path"),
+    signupPath: text("signup_path"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [index("user_acquisition_channel_idx").on(table.channel)]
+);
+
+/** usage_daily.channel and .metric (lib/analytics/usage.ts). */
+export const USAGE_CHANNELS = [
+  "api",
+  "mcp",
+  "slack",
+  "telegram",
+  "discord",
+] as const;
+export type UsageChannel = (typeof USAGE_CHANNELS)[number];
+export const USAGE_METRICS = [
+  "request",
+  "tool_call",
+  "command",
+  "session",
+  "error",
+] as const;
+export type UsageMetric = (typeof USAGE_METRICS)[number];
+
+// Counters per UTC day. `key` is a route group, tool or command name from a
+// fixed list in the code ("qr:keyed", "design_qr", "track"): never user
+// data, content or ids.
+export const usageDaily = pgTable(
+  "usage_daily",
+  {
+    day: date("day").notNull(),
+    channel: text("channel", { enum: USAGE_CHANNELS }).notNull(),
+    metric: text("metric", { enum: USAGE_METRICS }).notNull(),
+    key: text("key").notNull().default(""),
+    count: integer("count").notNull().default(0),
+  },
+  (table) => [
+    primaryKey({
+      columns: [table.day, table.channel, table.metric, table.key],
+    }),
+  ]
+);
+
 // ─── Platform: dynamic QR codes, scans, custom domains, brand kits ───────────
 // Rows are owned by user_id (the creator). When organization_id is set the row
 // belongs to that team; deleting the team hands it back to the creator.
@@ -1186,6 +1270,20 @@ export type ScanLocationSource = (typeof SCAN_LOCATION_SOURCES)[number];
 /** "redirect": /q/<slug> 302s to destination_url. "page": it opens the hosted page at /p/<slug>. */
 export const QR_CODE_KINDS = ["redirect", "page"] as const;
 export type QrCodeKind = (typeof QR_CODE_KINDS)[number];
+
+/** Where a code was made (qr_code.created_via, manual-sql/2026-11-13-growth-analytics.sql). */
+export const CODE_CREATED_VIA = [
+  "dashboard",
+  "playground",
+  "api",
+  "mcp",
+  "slack",
+  "import",
+  "page",
+  "duplicate",
+  "migrate",
+] as const;
+export type CodeCreatedVia = (typeof CODE_CREATED_VIA)[number];
 
 export const NOTIFICATION_CHANNELS = ["email", "slack", "discord"] as const;
 export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number];
@@ -1290,6 +1388,9 @@ export const qrCode = pgTable(
     // looks it up after the response and from the webhook worker, then
     // clears it. NULL = nothing pending (every older code).
     webRiskRecheckAt: timestamp("web_risk_recheck_at"),
+    // Where the code was made (CODE_CREATED_VIA): set by createCodesBatch's
+    // callers. NULL = made before manual-sql/2026-11-13-growth-analytics.sql.
+    createdVia: text("created_via", { enum: CODE_CREATED_VIA }),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()

@@ -127,9 +127,11 @@ export async function createTrackedCode(input: {
       },
     };
     await enforceCreateRateLimit(scope.userId);
-    const [code] = await createCodes(scope, [
-      { destinationUrl, title: trackedTitle(destinationUrl) },
-    ]);
+    const [code] = await createCodes(
+      scope,
+      [{ destinationUrl, title: trackedTitle(destinationUrl) }],
+      { via: "slack" },
+    );
     if (!code)
       return fail("failed", "QRdx couldn't make that code. Try again.");
     return {

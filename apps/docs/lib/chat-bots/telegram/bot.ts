@@ -2,6 +2,7 @@ import "server-only";
 
 import { createHash, timingSafeEqual } from "node:crypto";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
+import { recordUsage } from "@/lib/analytics/usage";
 import {
   applyChoice,
   chatDesignLinks,
@@ -278,10 +279,12 @@ export async function handleTelegramUpdate(
   const send = (call: TelegramCall) => callTelegram(config.token, call);
   try {
     if (update.callback_query) {
+      recordUsage("telegram", "command", "restyle");
       await handleStyleCallback(update.callback_query, send);
       return;
     }
     if (update.inline_query) {
+      recordUsage("telegram", "command", "inline");
       const query = update.inline_query;
       const input = readChatQrAsk(query.query);
       if (
@@ -314,6 +317,11 @@ export async function handleTelegramUpdate(
     const plan = planMessage(update.message, config.username);
     if (plan.kind === "ignore") return;
     const { chatId, messageId, userId, input } = plan;
+    recordUsage(
+      "telegram",
+      "command",
+      !input.ok && input.reason === "help" ? "help" : "qr",
+    );
     const notify = async (text: string) => {
       if (await allowed(noticeLimiter, `telegram-bot:notice:${userId}`)) {
         await send(textReply(chatId, messageId, text));
@@ -358,6 +366,7 @@ export async function handleTelegramUpdate(
     }
   } catch (error) {
     if (error instanceof TelegramApiError && error.errorCode === 403) return;
+    recordUsage("telegram", "error", "update");
     logError(error as Error, {
       route: "/api/integrations/telegram/webhook",
       ...(error instanceof TelegramApiError
