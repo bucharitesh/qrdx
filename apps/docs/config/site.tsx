@@ -9,6 +9,7 @@ import {
   Category,
   Clock,
   Code1,
+  DocumentCode,
   ElementPlus,
   Lifebuoy,
   Link21,
@@ -206,15 +207,21 @@ export const siteConfig = {
             icon: Book1,
             featured: true,
           },
+          // The image API's landing page; it links the API docs.
+          {
+            key: "qrCodeApi",
+            href: "/qr-code-api",
+            icon: Code1,
+          },
           {
             key: "mcp",
             href: "/mcp",
             icon: MessageProgramming,
           },
           {
-            key: "imageApi",
-            href: "/docs/developers/image-api",
-            icon: Code1,
+            key: "nextjs",
+            href: "/docs/nextjs",
+            icon: DocumentCode,
           },
           {
             key: "shadcn",
@@ -784,6 +791,9 @@ export const siteConfig = {
       key: "tools",
       links: [
         { id: 1, key: "generators", url: "/qr-code-generator" },
+        { id: 8, key: "pdfQr", url: "/qr-code-generator/pdf" },
+        { id: 9, key: "businessCard", url: "/qr-code-generator/business-card" },
+        { id: 10, key: "menuQr", url: "/qr-codes-on/menus" },
         { id: 2, key: "bulk", url: "/tools/bulk" },
         { id: 3, key: "scanChecker", url: "/tools/scan-checker" },
         { id: 4, key: "printSize", url: "/tools/print-size" },
@@ -794,15 +804,17 @@ export const siteConfig = {
     },
     {
       key: "developers",
+      // No GitHub link here: the footer's "Star on GitHub" links the repo.
       links: [
         { id: 1, key: "docs", url: "/docs" },
         { id: 8, key: "apiReference", url: "/docs/developers/api" },
+        { id: 9, key: "qrCodeApi", url: "/qr-code-api" },
         { id: 2, key: "imageApi", url: "/docs/developers/image-api" },
         { id: 3, key: "mcp", url: "/mcp" },
+        { id: 10, key: "nextjs", url: "/docs/nextjs" },
         { id: 4, key: "shadcn", url: "/docs/developers/shadcn" },
         { id: 7, key: "plugins", url: "/plugins" },
         { id: 5, key: "selfHosting", url: "/docs/self-hosting" },
-        { id: 6, key: "github", url: "https://github.com/bucharitesh/qrdx" },
       ],
     },
     {
