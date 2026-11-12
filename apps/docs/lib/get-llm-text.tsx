@@ -17,12 +17,18 @@ function sectionOf(page: Page): string | null {
 }
 
 /** The same test <IfAvailable> applies when it renders (components/mdx/if-available.tsx). */
-function isShown({ feature, path, integration }: Record<string, string>) {
-  return (
+function isShown({
+  feature,
+  path,
+  integration,
+  unavailable,
+}: Record<string, string>) {
+  const available =
     (!feature || isFeatureAvailable(feature as FeatureId)) &&
     (!path || isPathAvailable(path)) &&
-    (!integration || isIntegrationVisible(integration))
-  );
+    (!integration || isIntegrationVisible(integration));
+  // A bare `unavailable` attribute reads as "true" (lib/agents/llm-markdown.ts).
+  return unavailable === "true" ? !available : available;
 }
 
 /** The page's absolute URL. */

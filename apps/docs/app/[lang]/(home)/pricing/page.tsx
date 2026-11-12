@@ -61,6 +61,10 @@ const PRICING_CARD_NAMESPACES = [
   "pricing.invoice",
   // The Enterprise card (components/sections/pricing/enterprise-card.tsx)
   "pricing.enterprise",
+  // Euro prices, the money-back line and the non-profit discount form
+  "pricing.footnoteEur",
+  "pricing.offers",
+  "pricing.nonprofit",
 ];
 
 /** The pricing copy in this page's language. */
@@ -141,7 +145,11 @@ export default async function PricingPage({
       <ComparisonTable
         groups={buildComparison(PLAN_LIMITS, currency, OPTIONS, pricing)}
       />
-      <PricingFaq faqs={pricingFaqs(pricing)} />
+      <PricingFaq
+        faqs={pricingFaqs(pricing, {
+          nonprofit: isFeatureAvailable("nonprofitDiscounts"),
+        })}
+      />
     </main>
   );
 }

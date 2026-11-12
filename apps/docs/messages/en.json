@@ -511,7 +511,9 @@
       "inr": "Prices in ₹ for India.",
       "usd": "Prices in US$.",
       "showInr": "In India? See prices in ₹",
-      "showUsd": "Show prices in US$"
+      "showUsd": "Show prices in US$",
+      "eur": "Prices in € for the EU and EEA.",
+      "showEur": "In the EU or EEA? See prices in €"
     },
     "price": {
       "forever": "forever",
@@ -555,6 +557,13 @@
       "guide": "Self-hosting guide"
     },
     "footnote": "Polar handles checkout as merchant of record; local taxes may be added at checkout. Customers in India are charged in ₹, everyone else in US$.",
+    "footnoteEur": "Polar handles checkout as merchant of record; local taxes may be added at checkout. Customers in India are charged in ₹, customers in the EU and EEA in €, everyone else in US$.",
+    "offers": {
+      "moneyBack": "{days, number}-day money-back guarantee on your first payment.",
+      "moneyBackLink": "How refunds work",
+      "nonprofit": "Non-profit or charity? {percent, number}% off Pro and Business.",
+      "nonprofitLink": "Ask for a code"
+    },
     "values": {
       "unlimited": "Unlimited",
       "days": "{count, plural, one {# day} other {# days}}",
@@ -702,6 +711,10 @@
           "question": "What happens if I cancel?",
           "answer": "Nothing breaks. Your plan stays active until the end of the period you paid for, then your account moves to Free. Every dynamic code keeps redirecting and every scan is still counted: that's our Never-Hostage Guarantee. On Free you can't create more than the Free limits allow, and analytics show the last 90 days."
         },
+        "refund": {
+          "question": "Can I get my money back?",
+          "answer": "Yes. Your first payment for Pro or Business, monthly or yearly, comes with a {days, number}-day money-back guarantee: email support@qrdx.dev from your account's email address within {days, number} days of paying and we refund it in full, no questions asked. It's once per customer. Your codes keep working afterwards on the Free plan."
+        },
         "paymentFails": {
           "question": "What happens if a payment fails?",
           "answer": "Your codes keep working. If the subscription lapses, your account follows the Free limits, exactly as if you had cancelled. We never pause codes, show ads, or send your scanners to a QRdx page because of billing."
@@ -714,6 +727,10 @@
           "question": "Why do I see prices in ₹?",
           "answer": "Visitors from India see prices in Indian rupees: Pro is {proMonthly} a month or {proYearly} a year, Business {businessMonthly} a month or {businessYearly} a year. Checkout charges customers in India in ₹ and everyone else in US$, whichever currency you browsed in. Use the switch above the plans to change the display currency."
         },
+        "currencies": {
+          "question": "Why do I see prices in ₹ or €?",
+          "answer": "Prices show in the currency of the country you're in. In India, Pro is {proMonthly} a month or {proYearly} a year and Business {businessMonthly} a month or {businessYearly} a year. In the EU and EEA, Pro is {proMonthlyEur} a month or {proYearlyEur} a year and Business {businessMonthlyEur} a month or {businessYearlyEur} a year. Everywhere else it's US$. Checkout charges the currency of your country, whichever currency you browsed in. Use the switch above the plans to change the display currency."
+        },
         "switchPlans": {
           "question": "Can I switch plans or billing periods later?",
           "answer": "Yes. Open Manage subscription in your settings to change or cancel your plan in the Polar billing portal. Moving to a smaller plan never turns off existing codes, pages or domains."
@@ -725,6 +742,10 @@
         "selfHost": {
           "question": "Can I self-host instead?",
           "answer": "Yes. QRdx is open source under the AGPL-3.0. Run it with your own Postgres database by following the self-hosting guide; the plan limits are defined in one file that you can change for your instance."
+        },
+        "nonprofit": {
+          "question": "Do you have a discount for non-profits?",
+          "answer": "Yes. Registered non-profits and charities get {percent, number}% off Pro or Business, monthly or yearly. Tell us about your organization with the non-profit link under the plans. We usually reply within a few days, with a discount code to enter at checkout."
         },
         "billing": {
           "question": "Who handles billing and taxes?",
@@ -765,6 +786,23 @@
         "selfHost": "SSO and audit log on your own server"
       },
       "security": "Security at QRdx"
+    },
+    "nonprofit": {
+      "title": "Non-profit discount",
+      "description": "Registered non-profits and charities get {percent, number}% off Pro or Business, monthly or yearly. Tell us about your organization and we'll email you a discount code to enter at checkout.",
+      "organization": "Organization name",
+      "country": "Country",
+      "registration": "Registration number or link",
+      "registrationHint": "Your number in a charity or non-profit register, or a link to your entry in a public register.",
+      "contactEmail": "Contact email",
+      "plan": "Plan",
+      "reply": "We usually reply within a few days. Nothing is charged until you check out.",
+      "submit": "Send request",
+      "sending": "Sending…",
+      "sentTitle": "Request sent",
+      "sent": "We'll reply to {email}, usually within a few days. If your organization qualifies, the reply has a discount code to enter at checkout.",
+      "close": "Close",
+      "failed": "Something went wrong. Email {email} instead."
     }
   },
   "docs": {
@@ -2043,6 +2081,9 @@
         "outcome": "You get at least 12 months' notice, time to export everything, and a documented path to run the open-source app on your own server."
       }
     },
+    "moneyBackTitle": "Money-back guarantee",
+    "moneyBack": "Your first payment for Pro or Business, monthly or yearly, comes with a {days, number}-day money-back guarantee. If the plan isn't right for you, email <mail>{email}</mail> within {days, number} days of paying and we refund it in full, no questions asked. It's once per customer, and your codes keep working on the Free plan afterwards.",
+    "moneyBackLink": "Read the refund policy",
     "exceptionTitle": "The one exception: abuse",
     "exception": "We disable a code only when it breaks our <terms>terms of service</terms>, for example by pointing to phishing or malware. That's a safety decision made after a report or a review, never a billing one. Anyone can <report>report a code</report>.",
     "questions": "Questions about the guarantee? Email <mail>{email}</mail>. Last updated <time>{date, date, long}</time>."
