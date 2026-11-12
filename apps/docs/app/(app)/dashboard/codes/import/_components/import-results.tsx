@@ -42,6 +42,7 @@ import {
   jobProgress,
   resultRows,
 } from "../_lib/job";
+import { useImportIssueText } from "./import-issue-text";
 
 type ImageFormat = "png" | "svg";
 /** Images rendered at a time (each is a canvas draw). */
@@ -71,6 +72,7 @@ export function ImportResults({
   onReset: () => void;
 }) {
   const t = useTranslations("app.dashboard.codes.import.importResults");
+  const issueText = useImportIssueText();
   const progress = jobProgress(job);
   const failed = Object.values(job.results).filter((row) => !row.ok);
   const notes = Object.values(job.results).filter(
@@ -193,7 +195,7 @@ export function ImportResults({
               <span className="text-muted-foreground">
                 {t("lineLine", { line: result.line })}
               </span>{" "}
-              {result.message}
+              {result.issues?.map(issueText).join(". ") ?? result.message}
             </li>
           ))}
         </ul>

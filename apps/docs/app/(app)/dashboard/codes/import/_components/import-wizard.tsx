@@ -73,6 +73,7 @@ import {
 } from "../_lib/csv";
 import { createImportJob } from "../_lib/job";
 import { BatchOrganize, type BatchTargets } from "./batch-organize";
+import { useImportIssueText } from "./import-issue-text";
 import { ImportProgress } from "./import-progress";
 import { ImportResults } from "./import-results";
 import { useImportRunner } from "./use-import-runner";
@@ -160,6 +161,7 @@ export function ImportWizard({
   storeKey: string;
 }) {
   const t = useTranslations("app.dashboard.codes.import.importWizard");
+  const issueText = useImportIssueText();
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
@@ -251,23 +253,32 @@ export function ImportWizard({
   const localErrors = useMemo(() => {
     const errors = new Map<number, string[]>();
     const normalized = rows.map((row) => {
-      const { errors: problems, normalized } = checkImportRow(row, {
+      const { issues, normalized } = checkImportRow(row, {
         onCustomDomain: Boolean(domainId),
       });
+      const problems = issues.map(issueText);
       if (
         normalized.tagNames.length + targets.tags.length >
         MAX_TAGS_PER_CODE
       ) {
-        problems.push(t("tooManyTags", { max: String(MAX_TAGS_PER_CODE) }));
+        problems.push(
+          issueText({
+            code: "tooManyTagsWithBatch",
+            values: { max: MAX_TAGS_PER_CODE },
+          }),
+        );
       }
       if (problems.length > 0) errors.set(row.line, problems);
       return normalized;
     });
     for (const line of duplicateSlugLines(normalized)) {
-      errors.set(line, [...(errors.get(line) ?? []), t("duplicateBackHalf")]);
+      errors.set(line, [
+        ...(errors.get(line) ?? []),
+        issueText({ code: "slugDuplicate" }),
+      ]);
     }
     return errors;
-  }, [rows, domainId, targets.tags.length, t]);
+  }, [rows, domainId, targets.tags.length, issueText]);
 
   useEffect(() => {
     if (!destinationMapped || rows.length === 0) {
@@ -303,12 +314,14 @@ export function ImportWizard({
     if (!preview) return localErrors;
     const merged = new Map(localErrors);
     for (const item of preview.errors) {
+      // The server's problems in the person's language (codes), else as sent.
+      const messages = item.issues?.map(issueText) ?? item.messages;
       merged.set(item.line, [
-        ...new Set([...(merged.get(item.line) ?? []), ...item.messages]),
+        ...new Set([...(merged.get(item.line) ?? []), ...messages]),
       ]);
     }
     return merged;
-  }, [preview, localErrors]);
+  }, [preview, localErrors, issueText]);
   const validRows = rows.filter((row) => !errorsByLine.has(row.line));
   const blocked = preview
     ? importBlocked({

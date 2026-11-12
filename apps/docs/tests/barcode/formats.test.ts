@@ -3,6 +3,7 @@
 import { describe, expect, it } from "vitest";
 import {
   BARCODE_FORMATS,
+  barcodeIssueText,
   compressUpca,
   decodedMatches,
   expandUpce,
@@ -11,10 +12,12 @@ import {
   validateBarcodeInput,
 } from "@/lib/barcode/formats";
 
+/** The API's view of a success: value and English note (the codes are checked below). */
 const ok = (id: Parameters<typeof validateBarcodeInput>[0], raw: string) => {
   const result = validateBarcodeInput(id, raw);
   if (!result.ok) throw new Error(`${id} "${raw}": ${result.error}`);
-  return result;
+  const { notes: _codes, ...api } = result;
+  return api;
 };
 const error = (id: Parameters<typeof validateBarcodeInput>[0], raw: string) => {
   const result = validateBarcodeInput(id, raw);
@@ -236,5 +239,49 @@ describe("decodedMatches", () => {
     ).toBe(true);
     expect(decodedMatches("gs1-128", gs1, gs1)).toBe(true);
     expect(decodedMatches("code128", "ABC", "ABD")).toBe(false);
+  });
+});
+
+describe("issue codes (the generator translates by code)", () => {
+  it("every error carries a code whose English text is the error", () => {
+    for (const [id, raw] of [
+      ["ean13", ""],
+      ["ean13", "59012341234x"],
+      ["ean13", "5901234123450"],
+      ["ean13", "59012"],
+      ["upce", "123456789"],
+      ["upce", "2123456"],
+      ["code39", "abc"],
+      ["code128", "naïve"],
+      ["gs1-128", "01)09501101530003"],
+      ["gs1-128", "(01)0950"],
+      ["gs1-128", "(01)09501101530004"],
+    ] as const) {
+      const result = validateBarcodeInput(id, raw);
+      if (result.ok) throw new Error(`${id} "${raw}" was accepted`);
+      expect(barcodeIssueText(result.issue), `${id} ${raw}`).toBe(result.error);
+    }
+  });
+
+  it("nests an AI's own problem, and lists characters as they are", () => {
+    const wrong = validateBarcodeInput("gs1-128", "(01)09501101530004");
+    expect(!wrong.ok && wrong.issue).toMatchObject({
+      code: "gs1Ai",
+      values: { ai: "01" },
+      inner: { code: "wrongCheckDigit", values: { expected: 3, given: 4 } },
+    });
+    const chars = validateBarcodeInput("code39", "AB_C D\nE");
+    expect(!chars.ok && chars.issue).toMatchObject({
+      code: "code39Chars",
+      chars: ["_", "\n"],
+    });
+  });
+
+  it("gives notes as codes too", () => {
+    const result = validateBarcodeInput("upce", "123456");
+    expect(result.ok && result.notes?.map((note) => note.code)).toEqual([
+      "numberSystemAssumed",
+      "checkDigitAdded",
+    ]);
   });
 });
