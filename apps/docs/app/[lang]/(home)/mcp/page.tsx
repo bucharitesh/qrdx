@@ -8,6 +8,7 @@ import { ClientContent } from "@/components/i18n/client-content";
 import { ClientMessages } from "@/components/i18n/client-messages";
 import { LocaleLink as Link, LocaleLink } from "@/components/i18n/locale-link";
 import { McpTerminal } from "@/components/mockups/mcp-terminal";
+import { CodeSnippet } from "@/components/sections/integrations/code-snippet";
 import {
   IconTile,
   SectionHeading,
@@ -20,7 +21,13 @@ import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { localizeHref } from "@/lib/i18n/paths";
 import { requireLocale } from "@/lib/i18n/server";
-import { mcpLocalUrl, mcpMoreClients, mcpServerUrl } from "@/lib/mcp-clients";
+import {
+  claudeCodeCommand,
+  mcpConfigSnippets,
+  mcpLocalUrl,
+  mcpMoreClients,
+  mcpServerUrl,
+} from "@/lib/mcp-clients";
 import { baseUrl } from "@/lib/metadata";
 import { playgroundHref } from "@/lib/playground-links";
 import {
@@ -61,6 +68,15 @@ const CLIENT_CONTENT = {
 const MCP_URL = mcpServerUrl(baseUrl);
 /** Only in local dev: this instance's own endpoint, shown as a hint. */
 const LOCAL_MCP_URL = mcpLocalUrl(baseUrl);
+
+/** Setup for the most-used apps, in the page's HTML (the docs show the same). */
+const CONFIGS = mcpConfigSnippets(MCP_URL);
+const SETUP_SNIPPETS = [
+  { label: "Claude Code · Terminal", code: claudeCodeCommand(MCP_URL) },
+  { label: `Cursor · ${CONFIGS.cursor.file}`, code: CONFIGS.cursor.code },
+  { label: `VS Code · ${CONFIGS.vscode.file}`, code: CONFIGS.vscode.code },
+  { label: `mcp-remote · ${CONFIGS.bridge.file}`, code: CONFIGS.bridge.code },
+];
 
 export default async function McpPage() {
   const locale = await requireLocale();
@@ -188,6 +204,33 @@ export default async function McpPage() {
       </section>
 
       <section
+        aria-labelledby="setup"
+        className="flex w-full flex-col gap-8 px-10 py-12 md:py-16"
+      >
+        <SectionHeading
+          id="setup"
+          eyebrow={t("setupEyebrow")}
+          title={t("setupTitle")}
+          description={t("setupDescription")}
+        />
+        <ClientMessages namespaces={["codeSnippet"]}>
+          <div className="flex flex-col gap-4">
+            <CodeSnippet code={MCP_URL} label={t("setupUrl")} wrap />
+            <div className="grid gap-4 lg:grid-cols-2">
+              {SETUP_SNIPPETS.map((snippet) => (
+                <CodeSnippet
+                  key={snippet.label}
+                  code={snippet.code}
+                  label={snippet.label}
+                  wrap={!snippet.code.includes("\n")}
+                />
+              ))}
+            </div>
+          </div>
+        </ClientMessages>
+      </section>
+
+      <section
         aria-labelledby="tools"
         className="flex w-full flex-col gap-8 px-10 py-12 md:py-16"
       >
@@ -228,6 +271,16 @@ export default async function McpPage() {
                     <code className="rounded-full border bg-muted/40 px-2 py-0.5 font-mono text-xs text-muted-foreground">
                       {tool.name}
                     </code>
+                    <span
+                      className={cn(
+                        "rounded-full border px-2 py-0.5 text-xs",
+                        tool.needsKey
+                          ? "border-foreground/20 text-foreground"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {tool.needsKey ? t("toolNeedsKey") : t("toolNoKey")}
+                    </span>
                   </div>
                   <p
                     className={cn(

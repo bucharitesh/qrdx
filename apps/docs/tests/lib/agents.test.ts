@@ -180,6 +180,17 @@ describe("llms.txt", () => {
     );
   });
 
+  it("states the free API, the MCP answer and the free plan as quotable facts", () => {
+    expect(text).toContain(
+      `at up to ${PRODUCT_FACTS.imageApiPerMinute} requests a minute per IP address`,
+    );
+    expect(text).toContain(
+      `A free account adds ${PLAN_LIMITS.free.dynamicCodes} dynamic codes and ${PLAN_LIMITS.free.landingPages} hosted pages`,
+    );
+    expect(text).toContain("Can Claude or ChatGPT make a QR code that scans?");
+    expect(text).toContain("- When to choose something else:");
+  });
+
   it("leaves out what this deployment can't offer", () => {
     const limited = buildLlmsTxt(
       fixture({

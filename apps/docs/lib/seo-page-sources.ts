@@ -19,7 +19,11 @@ export const PAGE_SOURCES: Readonly<Record<string, readonly string[]>> = {
     "app/(app)/(home)/affiliates/page.tsx",
     "lib/affiliates/terms.ts",
   ],
-  "/mcp": ["app/[lang]/(home)/mcp/page.tsx"],
+  "/mcp": [
+    "app/[lang]/(home)/mcp/page.tsx",
+    "app/[lang]/(home)/mcp/content.ts",
+  ],
+  "/qr-code-api": ["app/[lang]/(home)/qr-code-api/page.tsx"],
   "/plugins": [
     "app/[lang]/(home)/plugins/page.tsx",
     "app/[lang]/(home)/plugins/plugin-data.ts",
