@@ -22,6 +22,7 @@ import {
   upgradeAction,
 } from "@/app/(app)/settings/usage/_lib/meters";
 import { getPlanUsage } from "@/app/(app)/settings/usage/_lib/plan-usage";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { PLAN_NAMES } from "@/lib/pricing";
 
 export const metadata: Metadata = {
@@ -34,6 +35,7 @@ export default async function UsagePage({
 }: {
   searchParams: Promise<{ billing?: string | string[] }>;
 }) {
+  const t = await getAppTranslations("app.dashboard.settings.usage.page");
   const scope = await requireDashboardScope();
   const usage = await getPlanUsage(scope);
 
@@ -68,18 +70,17 @@ export default async function UsagePage({
   return (
     <div className="space-y-6">
       <SettingsHeader
-        description={`Limits and billing for ${usage.workspace.name}.`}
-        title="Plan & usage"
+        description={t("limitsAndBillingForName", {
+          name: usage.workspace.name,
+        })}
+        title={t("planUsage")}
       />
 
       {portalUnavailable && (
         <Alert>
           <Warning2 aria-hidden />
-          <AlertTitle>Billing portal is unavailable right now</AlertTitle>
-          <AlertDescription>
-            Your plan is unchanged. Try again in a few minutes, or email
-            support@qrdx.dev if it keeps happening.
-          </AlertDescription>
+          <AlertTitle>{t("billingPortalIsUnavailableRight")}</AlertTitle>
+          <AlertDescription>{t("yourPlanIsUnchangedTry")}</AlertDescription>
         </Alert>
       )}
 
@@ -87,7 +88,7 @@ export default async function UsagePage({
         <CardHeader className="gap-4 sm:flex sm:flex-row sm:items-start sm:justify-between">
           <div className="space-y-1.5">
             <CardTitle className="flex items-center gap-2 text-lg">
-              {planName} plan
+              {t("plannamePlan", { planName })}
             </CardTitle>
             <CardDescription>{planLine}</CardDescription>
           </div>
@@ -100,7 +101,7 @@ export default async function UsagePage({
                 {/* A route handler that redirects to Polar, so no <Link>. */}
                 <a href="/settings/portal">
                   <CreditCard aria-hidden />
-                  Manage billing
+                  {t("manageBilling")}
                 </a>
               </Button>
             )}
@@ -112,22 +113,24 @@ export default async function UsagePage({
           </div>
         </CardHeader>
         <CardContent className="text-muted-foreground border-t pt-4 text-sm">
-          Limits only stop new things. Codes you already have keep working on
-          every plan.{" "}
-          <Link
-            className="text-foreground underline underline-offset-4"
-            href="/guarantee"
-          >
-            Our guarantee
-          </Link>
+          {t.rich("limitsOnlyStopNewThings", {
+            link: (chunks) => (
+              <Link
+                className="text-foreground underline underline-offset-4"
+                href="/guarantee"
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Usage</CardTitle>
+          <CardTitle>{t("usage")}</CardTitle>
           <CardDescription>
-            {`Counted for ${usage.workspace.name}.`}
+            {t("countedForName", { name: usage.workspace.name })}
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0">

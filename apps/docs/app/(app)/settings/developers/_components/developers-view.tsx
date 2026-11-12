@@ -2,9 +2,11 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Add } from "iconsax-reactjs";
 import Link from "next/link";
+import { use } from "react";
 import { UpgradePlanButton } from "@/app/(app)/dashboard/webhooks/_components/upgrade-plan-button";
 import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import type { OAuthAppsOverview } from "@/lib/oauth-apps/service";
 import { PLAN_NAMES } from "@/lib/pricing";
 import type { WorkspaceSlackLinksState } from "@/lib/slack-bot/admin";
@@ -24,6 +26,7 @@ function OAuthAppsSection({
   overview: OAuthAppsOverview;
   base: string;
 }) {
+  const t = use(getAppTranslations("app.settings.developers.developersView"));
   const { apps, limit, plan, canManage, isTeam } = overview;
   const atLimit = apps.length >= limit;
 
@@ -32,34 +35,37 @@ function OAuthAppsSection({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
           <h2 className="text-base font-semibold" id="oauth-apps-heading">
-            OAuth apps
+            {t("oauthApps")}
           </h2>
           <p className="text-muted-foreground text-sm">
-            Let other people connect their QRdx account to your product.{" "}
-            <Link
-              className="text-foreground underline underline-offset-4"
-              href={INTEGRATION_DOCS_HREF}
-            >
-              Guide
-            </Link>
+            {t.rich("letOtherPeopleConnectTheir", {
+              link: (chunks) => (
+                <Link
+                  className="text-foreground underline underline-offset-4"
+                  href={INTEGRATION_DOCS_HREF}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline">
-            {apps.length} / {limit} {limit === 1 ? "app" : "apps"}
+            {apps.length} / {limit} {limit === 1 ? t("app") : t("apps")}
           </Badge>
           <Badge variant="secondary">{PLAN_NAMES[plan]}</Badge>
           {canManage &&
             (atLimit ? (
               <Button disabled size="sm" variant="outline">
                 <Add />
-                New app
+                {t("newApp")}
               </Button>
             ) : (
               <Button asChild size="sm" variant="outline">
                 <Link href={`${base}/new`}>
                   <Add />
-                  New app
+                  {t("newApp")}
                 </Link>
               </Button>
             ))}
@@ -68,7 +74,7 @@ function OAuthAppsSection({
 
       {!canManage && (
         <p className="text-muted-foreground rounded-xl border p-4 text-sm">
-          Only team owners can create, edit or delete the team's OAuth apps.
+          {t("onlyTeamOwnersCanCreate")}
         </p>
       )}
 
@@ -90,7 +96,7 @@ function OAuthAppsSection({
 
       {apps.length === 0 ? (
         <p className="text-muted-foreground rounded-xl border p-4 text-sm">
-          No OAuth apps yet. You only need one to act for other QRdx users.
+          {t("noOauthAppsYetYou")}
         </p>
       ) : (
         <OAuthAppList apps={apps} base={base} />
@@ -122,15 +128,16 @@ export function DevelopersView({
   base: string;
   openCreate: boolean;
 }) {
+  const t = use(getAppTranslations("app.settings.developers.developersView"));
   return (
     <ConfirmIdentityProvider>
       <div className="space-y-10">
         <SettingsHeader
-          description="API keys and OAuth apps for the QRdx REST API."
-          title="API keys & apps"
+          description={t("apiKeysAndOauthApps")}
+          title={t("apiKeysApps")}
         >
           <Button asChild size="sm" variant="outline">
-            <Link href={QUICKSTART_HREF}>Docs</Link>
+            <Link href={QUICKSTART_HREF}>{t("docs")}</Link>
           </Button>
         </SettingsHeader>
 

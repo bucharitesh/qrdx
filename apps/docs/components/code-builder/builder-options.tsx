@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The option buttons in the builder's footer, on the code options' data:
 // each shows its plan, a lock when the workspace's plan doesn't include it,
@@ -42,9 +43,10 @@ export function BuilderOptionBar({
   /** Keyboard shortcuts are on (user settings) */
   showKeys: boolean;
 }) {
+  const t = useTranslations("codeBuilder.builderOptions");
   return (
     <ul
-      aria-label="Options"
+      aria-label={t("options")}
       // Scrolls sideways when the buttons don't fit; the right edge fades
       // so the cut-off button reads as "more", like the catalog's chips.
       className="flex min-w-0 gap-1.5 overflow-x-auto pr-6 [mask-image:linear-gradient(to_right,black_calc(100%-24px),transparent)] [scrollbar-width:none] max-md:-mx-4 max-md:px-4"
@@ -79,14 +81,14 @@ export function BuilderOptionBar({
                   {on && (
                     <>
                       <Tick className="size-3" />
-                      <span className="sr-only">(on)</span>
+                      <span className="sr-only">{t("on")}</span>
                     </>
                   )}
                   {locked && access?.requiredPlan && (
                     <span className="inline-flex items-center gap-0.5 rounded-full border px-1.5 text-[10px] leading-4 font-medium">
                       <Lock aria-hidden className="size-2.5" />
                       {PLAN_NAMES[access.requiredPlan]}
-                      <span className="sr-only">(not on your plan)</span>
+                      <span className="sr-only">{t("notOnYourPlan")}</span>
                     </span>
                   )}
                 </button>
@@ -116,11 +118,12 @@ export function BuilderOptionsOn({
   options: CodeOptionsState;
   onSelect: (id: CodeOptionId) => void;
 }) {
+  const t = useTranslations("codeBuilder.builderOptions");
   const on = codeOptionsFor(kind).filter((id) => options.status[id]);
   if (on.length === 0) return null;
   return (
     <div className="flex flex-wrap items-center gap-1.5 text-xs">
-      <span className="text-muted-foreground">On:</span>
+      <span className="text-muted-foreground">{t("on2")}</span>
       {on.map((id) => {
         const Icon = OPTION_ICONS[id];
         return (

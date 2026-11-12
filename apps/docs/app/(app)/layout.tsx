@@ -29,6 +29,8 @@ const SHARED_CLIENT_MESSAGES = [
 
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
-    <RootDocument messages={SHARED_CLIENT_MESSAGES}>{children}</RootDocument>
+    <RootDocument locale="en" messages={SHARED_CLIENT_MESSAGES}>
+      {children}
+    </RootDocument>
   );
 }

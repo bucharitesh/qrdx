@@ -10,6 +10,8 @@ import { FirstScanEmail } from "@/lib/email/templates/first-scan";
 import { FormSubmissionEmail } from "@/lib/email/templates/form-submission";
 import { codeLabel, formatCount } from "@/lib/email/templates/parts";
 import { ScanMilestoneEmail } from "@/lib/email/templates/scan-milestone";
+import type { EmailIntl } from "@/lib/i18n/email";
+import { emailIntlForAddress } from "@/lib/i18n/email-locale";
 import { baseUrl } from "@/lib/metadata";
 import { workspaceLink } from "@/lib/workspace-paths";
 import { workspaceSlug } from "@/lib/workspaces";
@@ -106,7 +108,11 @@ interface Alert {
   /** Chat message (plain text; links appended) */
   text: string;
   url: string;
-  email: (unsubscribe: string) => ReactElement;
+  /** The email, in the recipient's language (lib/i18n/email-locale.ts). */
+  email: (
+    unsubscribe: string,
+    intl: EmailIntl,
+  ) => { subject: string; react: ReactElement };
 }
 
 function joinParts(parts: (string | null | undefined)[], separator: string) {
@@ -127,17 +133,21 @@ function milestoneAlert(
       subject: `${label} got its first scan`,
       text: `${label} got its first scan${location ? ` (${location})` : ""}.`,
       url,
-      email: (unsubscribe) => (
-        <FirstScanEmail
-          analyticsUrl={url}
-          code={data.code}
-          device={device}
-          location={location}
-          scannedAt={data.scan.scanned_at}
-          unsubscribeUrl={unsubscribe}
-          workspaceName={workspace}
-        />
-      ),
+      email: (unsubscribe, intl) => ({
+        subject: intl.t("firstScan.subject", { code: label }),
+        react: (
+          <FirstScanEmail
+            analyticsUrl={url}
+            code={data.code}
+            device={device}
+            intl={intl}
+            location={location}
+            scannedAt={data.scan.scanned_at}
+            unsubscribeUrl={unsubscribe}
+            workspaceName={workspace}
+          />
+        ),
+      }),
     };
   }
   const count = formatCount(data.milestone);
@@ -145,15 +155,22 @@ function milestoneAlert(
     subject: `${label} reached ${count} scans`,
     text: `${label} reached ${count} scans.`,
     url,
-    email: (unsubscribe) => (
-      <ScanMilestoneEmail
-        analyticsUrl={url}
-        code={data.code}
-        milestone={data.milestone}
-        unsubscribeUrl={unsubscribe}
-        workspaceName={workspace}
-      />
-    ),
+    email: (unsubscribe, intl) => ({
+      subject: intl.t("scanMilestone.reached", {
+        code: label,
+        count: data.milestone,
+      }),
+      react: (
+        <ScanMilestoneEmail
+          analyticsUrl={url}
+          code={data.code}
+          intl={intl}
+          milestone={data.milestone}
+          unsubscribeUrl={unsubscribe}
+          workspaceName={workspace}
+        />
+      ),
+    }),
   };
 }
 
@@ -176,16 +193,24 @@ function formAlert(
     subject: `New form response on ${page}`,
     text: `New form response on ${page}${preview ? `\n${preview}` : ""}`,
     url,
-    email: (unsubscribe) => (
-      <FormSubmissionEmail
-        fields={data.fields}
-        pageTitle={data.page.title}
-        responsesUrl={url}
-        submittedAt={data.submitted_at}
-        unsubscribeUrl={unsubscribe}
-        workspaceName={workspace}
-      />
-    ),
+    email: (unsubscribe, intl) => ({
+      subject: intl.t("formSubmission.subject", {
+        page: data.page.title?.trim()
+          ? `“${data.page.title.trim()}”`
+          : intl.t("formSubmission.yourPage"),
+      }),
+      react: (
+        <FormSubmissionEmail
+          fields={data.fields}
+          intl={intl}
+          pageTitle={data.page.title}
+          responsesUrl={url}
+          submittedAt={data.submitted_at}
+          unsubscribeUrl={unsubscribe}
+          workspaceName={workspace}
+        />
+      ),
+    }),
   };
 }
 
@@ -209,22 +234,31 @@ function codeAlert(
       ? `${who} created ${label} → ${data.code.destination_url}`
       : `${who} changed ${label}${changes.length ? ` (${changes.join(", ")})` : ""}.`,
     url,
-    email: (unsubscribe) => (
-      <CodeActivityEmail
-        actorName={actorName}
-        changes={changes}
-        code={{
-          title: data.code.title,
-          slug: data.code.slug,
-          shortLink: data.code.short_link,
-          destination: data.code.destination_url,
-        }}
-        codeUrl={url}
-        kind={created ? "created" : "updated"}
-        unsubscribeUrl={unsubscribe}
-        workspaceName={workspace}
-      />
-    ),
+    email: (unsubscribe, intl) => ({
+      subject: intl.t(
+        created
+          ? "codeActivity.created.heading"
+          : "codeActivity.updated.heading",
+        { code: label },
+      ),
+      react: (
+        <CodeActivityEmail
+          actorName={actorName}
+          changes={changes}
+          code={{
+            title: data.code.title,
+            slug: data.code.slug,
+            shortLink: data.code.short_link,
+            destination: data.code.destination_url,
+          }}
+          codeUrl={url}
+          intl={intl}
+          kind={created ? "created" : "updated"}
+          unsubscribeUrl={unsubscribe}
+          workspaceName={workspace}
+        />
+      ),
+    }),
   };
 }
 
@@ -298,10 +332,15 @@ export async function notifyTargets<T extends AlertEvent>(
         if (!(await withinAlertLimit(target.id, envelope.type))) return;
         if (target.channel === "email") {
           const unsubscribe = unsubscribeUrl(target.id, envelope.type);
+          // The account with this address picks the language, else English.
+          const { subject, react } = alert.email(
+            unsubscribe,
+            await emailIntlForAddress(target.target),
+          );
           await sendEmail({
             to: target.target,
-            subject: alert.subject,
-            react: alert.email(unsubscribe),
+            subject,
+            react,
             unsubscribeUrl: unsubscribe,
             idempotencyKey: `${envelope.id}:${target.id}`,
             tags: [

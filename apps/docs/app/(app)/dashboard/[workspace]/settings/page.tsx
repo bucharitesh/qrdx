@@ -22,6 +22,7 @@ import { SettingsHeader } from "@/app/(app)/settings/components/settings-header"
 import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
 import { WorkspaceGeneralForm } from "@/components/workspaces/workspace-general-form";
 import { WorkspaceLogoField } from "@/components/workspaces/workspace-logo-field";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can, forbiddenMessage } from "@/lib/permissions";
 
 export const metadata: Metadata = {
@@ -31,6 +32,7 @@ export const metadata: Metadata = {
 
 /** The open workspace's name, URL and logo, and leaving or deleting it. */
 export default async function WorkspaceSettingsPage() {
+  const t = await getAppTranslations("app.dashboard.settings.page");
   const scope = await requireDashboardScope();
   const [team, members] = await Promise.all([
     getTeam(scope.organizationId),
@@ -47,18 +49,18 @@ export default async function WorkspaceSettingsPage() {
   return (
     <div className="space-y-6">
       <SettingsHeader
-        description="The workspace's name, logo and its address in the dashboard."
+        description={t("theWorkspacesNameLogoAnd")}
         title={
           <span className="flex min-w-0 items-center gap-3">
             <WorkspaceAvatar logo={team.logo} name={team.name} size="md" />
-            <span className="truncate">General</span>
+            <span className="truncate">{t("general")}</span>
           </span>
         }
       />
 
       <Card>
         <CardHeader>
-          <CardTitle>Workspace</CardTitle>
+          <CardTitle>{t("workspace")}</CardTitle>
           {!canEdit && (
             <CardDescription>
               {forbiddenMessage(scope.role, "workspace.update")}
@@ -81,15 +83,16 @@ export default async function WorkspaceSettingsPage() {
 
       <Card className="border-destructive/40">
         <CardHeader>
-          <CardTitle>Danger zone</CardTitle>
+          <CardTitle>{t("dangerZone")}</CardTitle>
           {ownWorkspace && (
             <CardDescription>
-              This is your own workspace, so it can't be left or deleted. It
-              goes when you{" "}
-              <Link className="underline" href="/settings/account">
-                delete your account
-              </Link>
-              .
+              {t.rich("thisIsYourOwnWorkspace", {
+                link: (chunks) => (
+                  <Link className="underline" href="/settings/account">
+                    {chunks}
+                  </Link>
+                ),
+              })}
             </CardDescription>
           )}
         </CardHeader>

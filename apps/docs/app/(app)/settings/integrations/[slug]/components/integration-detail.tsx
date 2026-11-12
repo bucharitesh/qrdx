@@ -20,6 +20,7 @@ import {
 import { ArrowLeft, Danger, Global, InfoCircle } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -108,6 +109,7 @@ export function IntegrationDetail({
   noLongerAvailable = false,
   slackBot,
 }: IntegrationDetailProps) {
+  const t = useTranslations("app.settings.integrations.integrationDetail");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { withConfirmation } = useConfirmation();
@@ -128,10 +130,10 @@ export function IntegrationDetail({
     const error = searchParams.get("error");
 
     if (success === `${slug}_connected`) {
-      toast.success(`${name} connected successfully!`);
+      toast.success(t("nameConnectedSuccessfully", { name }));
       router.replace(`/settings/integrations/${slug}`);
     } else if (success === "slack_bot_installed") {
-      toast.success("The QRdx bot is in your Slack workspace. Try /qr there.");
+      toast.success(t("theQrdxBotIsIn"));
       router.replace(`/settings/integrations/${slug}`);
     } else if (error) {
       const errorMessages: Record<string, string> = {
@@ -157,14 +159,14 @@ export function IntegrationDetail({
           "Add the bot to one Slack workspace at a time, not to a whole Enterprise Grid organization.",
         slack_bot_unavailable: "The QRdx bot isn't available yet.",
       };
-      toast.error(errorMessages[error] || `Failed to connect ${name}`);
+      toast.error(errorMessages[error] || t("failedToConnectName", { name }));
       router.replace(`/settings/integrations/${slug}`);
     }
-  }, [searchParams, slug, name, router]);
+  }, [searchParams, slug, name, router, t]);
 
   const handleConnect = async () => {
     if (!canOAuth) {
-      toast.error(`${name} isn't available right now. Please try again later.`);
+      toast.error(t("nameIsntAvailableRightNow", { name }));
       return;
     }
 
@@ -181,11 +183,11 @@ export function IntegrationDetail({
       } else if ("url" in result && result.url) {
         window.location.href = result.url;
       } else {
-        toast.error("Failed to initiate connection");
+        toast.error(t("failedToInitiateConnection"));
         setIsLoading(false);
       }
     } catch {
-      toast.error("Failed to connect integration");
+      toast.error(t("failedToConnectIntegration"));
       setIsLoading(false);
     }
   };
@@ -202,17 +204,17 @@ export function IntegrationDetail({
           : await disconnectIntegrationAction(slug);
       toast.success(
         result.revoked
-          ? `${name} disconnected and QRdx's access revoked`
-          : `${name} disconnected`,
+          ? t("nameDisconnectedAndQrdxsAccess", { name })
+          : t("nameDisconnected", { name }),
         apiKey && !canOAuth
-          ? { description: `You can also delete the key in ${name}.` }
+          ? { description: t("youCanAlsoDeleteThe", { name }) }
           : undefined,
       );
       // Once disconnected, a no-longer-available integration has no page.
       if (noLongerAvailable) router.push("/settings/integrations");
       else router.refresh();
     } catch {
-      toast.error("Failed to disconnect integration");
+      toast.error(t("failedToDisconnectIntegration"));
     } finally {
       setIsLoading(false);
     }
@@ -228,21 +230,21 @@ export function IntegrationDetail({
             className="gap-1 border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
           >
             <Tick className="size-3" />
-            Connected
+            {t("connected")}
           </Badge>
         );
       case "error":
         return (
           <Badge variant="destructive" className="gap-1.5">
             <Danger aria-hidden className="size-3" />
-            Error
+            {t("error")}
           </Badge>
         );
       case "disconnected":
         return (
           <Badge variant="secondary" className="gap-1.5">
             <InfoCircle aria-hidden className="size-3" />
-            Disconnected
+            {t("disconnected")}
           </Badge>
         );
       default:
@@ -256,7 +258,7 @@ export function IntegrationDetail({
       className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
     >
       <ArrowLeft aria-hidden className="size-3.5" />
-      Integrations
+      {t("integrations")}
     </Link>
   );
 
@@ -287,24 +289,29 @@ export function IntegrationDetail({
               variant="outline"
             >
               {isLoading && <Spinner className="size-3.5" />}
-              Disconnect
+              {t("disconnect")}
             </Button>
           </div>
 
           <Separator className="my-5" />
 
           <div className="space-y-1.5 text-sm">
-            <p className="font-medium">{name} is no longer available in QRdx</p>
+            <p className="font-medium">
+              {t("nameIsNoLongerAvailable", { name })}
+            </p>
             <p className="max-w-prose text-muted-foreground text-pretty">
-              Nothing in QRdx uses this connection any more
+              {t("nothingInQrdxUsesThis")}
               {connectedAt
-                ? `. You connected it on ${connectedAt.toLocaleDateString(
-                    undefined,
-                    { year: "numeric", month: "short", day: "numeric" },
-                  )}`
+                ? t("youConnectedItOnUndefined", {
+                    undefined: connectedAt.toLocaleDateString(undefined, {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    }),
+                  })
                 : ""}
-              . Disconnect to delete it; where {name} supports it, QRdx's access
-              is revoked there too.
+              {t("disconnectToDeleteItWhere")} {name}{" "}
+              {t("supportsItQrdxsAccessIs")}
             </p>
           </div>
         </div>
@@ -350,7 +357,7 @@ export function IntegrationDetail({
                     size="sm"
                   >
                     {isLoading && <Spinner className="size-3.5" />}
-                    Reconnect
+                    {t("reconnect")}
                   </Button>
                 )}
                 <Button
@@ -360,7 +367,7 @@ export function IntegrationDetail({
                   size="sm"
                 >
                   {isLoading && <Spinner className="size-3.5" />}
-                  Disconnect
+                  {t("disconnect")}
                 </Button>
               </>
             ) : isNoAccountIntegration(slug) ? null : canOAuth ||
@@ -371,7 +378,7 @@ export function IntegrationDetail({
                 size="sm"
               >
                 {isLoading && <Spinner className="size-3.5" />}
-                {canOAuth ? "Enable" : "Needs setup"}
+                {canOAuth ? t("enable") : t("needsSetup")}
               </Button>
             ) : null}
           </div>
@@ -384,7 +391,7 @@ export function IntegrationDetail({
           {developedBy && (
             <div className="flex flex-col gap-0.5">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Built by
+                {t("builtBy")}
               </span>
               <span className="font-medium">{developedBy}</span>
             </div>
@@ -392,7 +399,7 @@ export function IntegrationDetail({
           {website && (
             <div className="flex flex-col gap-0.5">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Website
+                {t("website")}
               </span>
               <a
                 href={website}
@@ -408,7 +415,7 @@ export function IntegrationDetail({
           {category.length > 0 && (
             <div className="flex flex-col gap-0.5">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Category
+                {t("category")}
               </span>
               <div className="flex flex-wrap gap-1">
                 {category.map((cat) => (
@@ -425,7 +432,7 @@ export function IntegrationDetail({
           {connectedAt && (
             <div className="flex flex-col gap-0.5">
               <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Connected
+                {t("connected")}
               </span>
               <span className="font-medium">
                 {connectedAt.toLocaleDateString(undefined, {
@@ -481,9 +488,9 @@ export function IntegrationDetail({
       {capabilities.length > 0 && (
         <div className="rounded-xl border bg-card p-6 space-y-4">
           <div>
-            <h2 className="text-base font-semibold">QRdx capabilities</h2>
+            <h2 className="text-base font-semibold">{t("qrdxCapabilities")}</h2>
             <p className="text-sm text-muted-foreground">
-              Where this integration shows up in QRdx.
+              {t("whereThisIntegrationShowsUp")}
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -507,7 +514,7 @@ export function IntegrationDetail({
       {/* Features */}
       {features.length > 0 && (
         <div className="rounded-xl border bg-card p-6 space-y-4">
-          <h2 className="text-base font-semibold">Features</h2>
+          <h2 className="text-base font-semibold">{t("features")}</h2>
           <ul className="space-y-2">
             {features.map((feature, idx) => (
               <li key={idx} className="flex items-start gap-2 text-sm">
@@ -522,7 +529,7 @@ export function IntegrationDetail({
       {/* How to install */}
       {!isNoAccountIntegration(slug) && (
         <div className="rounded-xl border bg-card p-6 space-y-4">
-          <h2 className="text-base font-semibold">How to connect</h2>
+          <h2 className="text-base font-semibold">{t("howToConnect")}</h2>
           <ol className="space-y-3">
             {(apiKey && !canOAuth
               ? [

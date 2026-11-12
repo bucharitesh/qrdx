@@ -31,6 +31,7 @@ import {
   Tag2 as Tags,
   Trash as Trash2,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useMemo, useRef, useState } from "react";
 import {
   purgeQrCodes,
@@ -101,6 +102,7 @@ export function CodesList({
   /** user.settings.keyboardShortcuts: row keys on */
   keyboardShortcuts: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.codesList");
   // Saves from the code builder show at once, before the refresh lands.
   const codes = useOptimisticCodeList(serverCodes);
   const { display } = useListDisplay();
@@ -148,7 +150,8 @@ export function CodesList({
           : "Scans show a 'no longer active' page until you restore them.",
       undo: () => restoreQrCodes({ ids }),
     });
-    if (result?.updated === 0) toast.error(`All selected ${OTHERS_SKIPPED}`);
+    if (result?.updated === 0)
+      toast.error(t("allSelectedOthersSkipped", { OTHERS_SKIPPED }));
     done(result);
   };
 
@@ -159,38 +162,44 @@ export function CodesList({
       description: ({ skipped }) =>
         skipped > 0 ? `${skipped} ${OTHERS_SKIPPED}` : null,
     });
-    if (result?.updated === 0) toast.error(`All selected ${OTHERS_SKIPPED}`);
+    if (result?.updated === 0)
+      toast.error(t("allSelectedOthersSkipped", { OTHERS_SKIPPED }));
     setDialog(null);
     done(result);
   };
 
   const zip = async (format: ZipFormat) => {
     setZipping(true);
-    const toastId = toast.loading(`Preparing ${plural(count, "QR code")}...`);
+    const toastId = toast.loading(
+      t("preparingValue", { value: plural(count, "QR code") }),
+    );
     try {
       const { saved, failed } = await downloadCodesZip(
         selectedCodes,
         format,
         (finished, total) =>
-          toast.loading(`Rendering ${finished} of ${total}...`, {
+          toast.loading(t("renderingFinishedOfTotal", { finished, total }), {
             id: toastId,
           }),
       );
       if (saved === 0) {
-        toast.error("The QR codes couldn't be rendered.", { id: toastId });
+        toast.error(t("theQrCodesCouldntBe"), { id: toastId });
       } else {
         toast.success(
-          `Downloaded ${plural(saved, "QR code")} as ${ZIP_FORMAT_LABELS[format]}`,
+          t("downloadedValueAsValue2", {
+            value: plural(saved, "QR code"),
+            value2: ZIP_FORMAT_LABELS[format],
+          }),
           {
             id: toastId,
             ...(failed > 0 && {
-              description: `${failed} couldn't be rendered.`,
+              description: t("failedCouldntBeRendered", { failed }),
             }),
           },
         );
       }
     } catch {
-      toast.error("Download failed. Please try again.", { id: toastId });
+      toast.error(t("downloadFailedPleaseTryAgain"), { id: toastId });
     } finally {
       setZipping(false);
     }
@@ -220,17 +229,17 @@ export function CodesList({
   // none while one runs. Delete forever opens its confirm dialog, like the
   // button.
   const bulk: Record<BulkAction, { label: string; run: () => void }> = {
-    tags: { label: "Tags", run: () => setDialog("tags") },
-    move: { label: "Move to folder", run: () => setDialog("move") },
+    tags: { label: t("tags"), run: () => setDialog("tags") },
+    move: { label: t("moveToFolder"), run: () => setDialog("move") },
     archive: {
-      label: status === "archived" ? "Unarchive" : "Archive",
+      label: status === "archived" ? t("unarchive") : t("archive"),
       run: () => void toggleArchived(),
     },
-    restore: { label: "Restore", run: () => void restore() },
+    restore: { label: t("restore"), run: () => void restore() },
     trash:
       status === "trash"
-        ? { label: "Delete forever", run: () => setDialog("purge") }
-        : { label: "Move to trash", run: () => void trash() },
+        ? { label: t("deleteForever"), run: () => setDialog("purge") }
+        : { label: t("moveToTrash"), run: () => void trash() },
   };
   keyActions.current = Object.fromEntries(
     offeredBulkActions("codes", { canWrite, busy, status }).map((action) => [
@@ -251,16 +260,16 @@ export function CodesList({
       <SelectionStatus count={count} noun={["code", "codes"]} />
       {count > 0 && (
         <div
-          aria-label="Bulk actions"
+          aria-label={t("bulkActions")}
           className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-2 z-10 flex flex-wrap items-center gap-1 rounded-lg border p-1.5 shadow-sm backdrop-blur"
           role="toolbar"
         >
           <span className="px-2 text-sm font-medium tabular-nums">
-            {count} selected
+            {t("countSelected", { count })}
           </span>
-          <TooltipWrapper kbd="Esc" label="Clear selection">
+          <TooltipWrapper kbd="Esc" label={t("clearSelection")}>
             <Button
-              aria-label="Clear selection"
+              aria-label={t("clearSelection")}
               onClick={clear}
               size="icon-sm"
               variant="ghost"
@@ -272,7 +281,7 @@ export function CodesList({
           {status === "trash" ? (
             canWrite && (
               <>
-                <TooltipWrapper kbd={hint("restore")} label="Restore">
+                <TooltipWrapper kbd={hint("restore")} label={t("restore")}>
                   <Button
                     disabled={busy}
                     onClick={restore}
@@ -280,10 +289,10 @@ export function CodesList({
                     variant="ghost"
                   >
                     <RotateCcw />
-                    Restore
+                    {t("restore")}
                   </Button>
                 </TooltipWrapper>
-                <TooltipWrapper kbd={hint("trash")} label="Delete forever">
+                <TooltipWrapper kbd={hint("trash")} label={t("deleteForever")}>
                   <Button
                     disabled={busy}
                     onClick={() => setDialog("purge")}
@@ -291,7 +300,7 @@ export function CodesList({
                     variant="ghost"
                   >
                     <Trash2 />
-                    Delete forever
+                    {t("deleteForever")}
                   </Button>
                 </TooltipWrapper>
               </>
@@ -300,7 +309,7 @@ export function CodesList({
             <>
               {canWrite && (
                 <>
-                  <TooltipWrapper kbd={hint("move")} label="Move to folder">
+                  <TooltipWrapper kbd={hint("move")} label={t("moveToFolder")}>
                     <Button
                       disabled={busy}
                       onClick={() => setDialog("move")}
@@ -308,10 +317,10 @@ export function CodesList({
                       variant="ghost"
                     >
                       <FolderInput />
-                      Move
+                      {t("move")}
                     </Button>
                   </TooltipWrapper>
-                  <TooltipWrapper kbd={hint("tags")} label="Tags">
+                  <TooltipWrapper kbd={hint("tags")} label={t("tags")}>
                     <Button
                       disabled={busy}
                       onClick={() => setDialog("tags")}
@@ -319,7 +328,7 @@ export function CodesList({
                       variant="ghost"
                     >
                       <Tags />
-                      Tag
+                      {t("tag")}
                     </Button>
                   </TooltipWrapper>
                 </>
@@ -328,18 +337,18 @@ export function CodesList({
                 <DropdownMenuTrigger asChild>
                   <Button disabled={busy} size="sm" variant="ghost">
                     <Download />
-                    Download
+                    {t("download")}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start">
                   <DropdownMenuItem onSelect={() => zip("png")}>
-                    PNG images (ZIP)
+                    {t("pngImagesZip")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => zip("webp")}>
-                    WebP images (ZIP)
+                    {t("webpImagesZip")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={() => zip("svg")}>
-                    SVG images (ZIP)
+                    {t("svgImagesZip")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -348,7 +357,7 @@ export function CodesList({
                   <DropdownMenuTrigger asChild>
                     <Button disabled={busy} size="sm" variant="ghost">
                       <MoreHorizontal />
-                      More
+                      {t("more")}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-52">
@@ -360,14 +369,14 @@ export function CodesList({
                             success: ({ updated }) =>
                               `${allPaused ? "Resumed" : "Paused"} ${plural(updated, "code")}`,
                             description: allPaused
-                              ? "Scans redirect again."
-                              : "Scans go to each code's fallback URL, or a neutral 'paused' page.",
+                              ? t("scansRedirectAgain")
+                              : t("scansGoToEachCodes"),
                           },
                         )
                       }
                     >
                       {allPaused ? <Play /> : <Pause />}
-                      {allPaused ? "Resume" : "Pause"}
+                      {allPaused ? t("resume") : t("pause")}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onSelect={() =>
@@ -384,12 +393,12 @@ export function CodesList({
                     >
                       <Star />
                       {allFavorite
-                        ? "Remove from favorites"
-                        : "Add to favorites"}
+                        ? t("removeFromFavorites")
+                        : t("addToFavorites")}
                     </DropdownMenuItem>
                     <DropdownMenuItem onSelect={toggleArchived}>
                       {status === "archived" ? <ArchiveRestore /> : <Archive />}
-                      {status === "archived" ? "Unarchive" : "Archive"}
+                      {status === "archived" ? t("unarchive") : t("archive")}
                       {keyboardShortcuts && (
                         <DropdownMenuShortcut>
                           {hint("archive")}
@@ -399,7 +408,7 @@ export function CodesList({
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onSelect={trash} variant="destructive">
                       <Trash2 />
-                      Move to trash
+                      {t("moveToTrash")}
                       {keyboardShortcuts && (
                         <DropdownMenuShortcut>
                           {hint("trash")}
@@ -464,17 +473,18 @@ export function CodesList({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Delete {plural(count, "code")} forever?
+              {t("deleteValueForever", { value: plural(count, "code") })}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Their scan and version history are deleted, and printed copies
-              show a "QR code not found" page. This can't be undone.
+              {t("theirScanAndVersionHistory")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button disabled={isPending} onClick={purge} variant="destructive">
-              Delete forever
+              {t("deleteForever")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

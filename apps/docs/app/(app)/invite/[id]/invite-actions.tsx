@@ -5,6 +5,7 @@ import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { acceptInvitation, rejectInvitation } from "@/actions/organizations";
 import { useRefreshTeams } from "@/components/org-switcher";
@@ -12,6 +13,7 @@ import { playgroundHref } from "@/lib/playground-links";
 import { workspaceHref } from "@/lib/workspace-paths";
 
 export function InviteActions({ invitationId }: { invitationId: string }) {
+  const t = useTranslations("app.invite.inviteActions");
   const router = useRouter();
   const refresh = useRefreshTeams();
   const [declined, setDeclined] = useState(false);
@@ -24,7 +26,7 @@ export function InviteActions({ invitationId }: { invitationId: string }) {
         toast.error(result.error);
         return;
       }
-      toast.success("You joined the workspace");
+      toast.success(t("youJoinedTheWorkspace"));
       // Accepting makes it the active workspace.
       refresh();
       router.push(
@@ -46,10 +48,10 @@ export function InviteActions({ invitationId }: { invitationId: string }) {
     return (
       <div className="space-y-3">
         <p className="text-muted-foreground text-sm">
-          You declined this invitation.
+          {t("youDeclinedThisInvitation")}
         </p>
         <Button asChild variant="outline">
-          <Link href={playgroundHref()}>Go to the playground</Link>
+          <Link href={playgroundHref()}>{t("goToThePlayground")}</Link>
         </Button>
       </div>
     );
@@ -58,7 +60,7 @@ export function InviteActions({ invitationId }: { invitationId: string }) {
   return (
     <div className="flex flex-col gap-2 sm:flex-row">
       <Button className="flex-1" disabled={isPending} onClick={accept}>
-        {isPending ? "Working..." : "Accept invitation"}
+        {isPending ? t("working") : t("acceptInvitation")}
       </Button>
       <Button
         className="flex-1"
@@ -66,13 +68,14 @@ export function InviteActions({ invitationId }: { invitationId: string }) {
         onClick={decline}
         variant="outline"
       >
-        Decline
+        {t("decline")}
       </Button>
     </div>
   );
 }
 
 export function SignOutButton() {
+  const t = useTranslations("app.invite.inviteActions");
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   return (
@@ -86,7 +89,7 @@ export function SignOutButton() {
       }
       variant="outline"
     >
-      Sign out
+      {t("signOut")}
     </Button>
   );
 }

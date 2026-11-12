@@ -4,6 +4,7 @@ import {
 } from "@repo/auth/workspace-two-factor";
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { workspaceSlugFromPath } from "@/lib/workspace-paths";
 import {
   TWO_FACTOR_SECTION_ID,
@@ -28,6 +29,9 @@ export async function WorkspaceTwoFactorNotice({
   next: string | undefined;
   userId: string;
 }) {
+  const t = await getAppTranslations(
+    "app.settings.account.workspaceTwoFactorNotice",
+  );
   const returnPath = workspaceReturnPath(next);
   const slug = returnPath ? workspaceSlugFromPath(returnPath) : null;
   if (!(returnPath && slug)) return null;
@@ -47,32 +51,35 @@ export async function WorkspaceTwoFactorNotice({
     >
       <p className="text-muted-foreground text-pretty">
         {on ? (
-          <>
-            Two-step verification is on, so you can open{" "}
-            <span className="text-foreground font-medium">
-              {workspace.name}
-            </span>{" "}
-            now.
-          </>
+          t.rich("twoStepVerificationIsOn", {
+            name: workspace.name,
+            span: (chunks) => (
+              <span className="text-foreground font-medium">{chunks}</span>
+            ),
+          })
         ) : (
           <>
             <span className="text-foreground font-medium">
               {workspace.name}
-            </span>{" "}
-            requires two-step verification. Turn it on{" "}
-            <Link
-              className="text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
-              href={`#${TWO_FACTOR_SECTION_ID}`}
-            >
-              below
-            </Link>
-            , then come back to it from here.
+            </span>
+            {t.rich("requiresTwoStepVerificationTurn", {
+              link: (chunks) => (
+                <Link
+                  className="text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+                  href={`#${TWO_FACTOR_SECTION_ID}`}
+                >
+                  {chunks}
+                </Link>
+              ),
+            })}
           </>
         )}
       </p>
       {on && (
         <Button asChild className="max-sm:h-10 sm:shrink-0" size="sm">
-          <Link href={returnPath}>Back to {workspace.name}</Link>
+          <Link href={returnPath}>
+            {t("backToName", { name: workspace.name })}
+          </Link>
         </Button>
       )}
     </div>

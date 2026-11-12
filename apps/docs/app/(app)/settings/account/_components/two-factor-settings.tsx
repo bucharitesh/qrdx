@@ -35,6 +35,7 @@ import {
   ShieldTick,
 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
 import { ensureConfirmed } from "@/components/confirm-identity/actions";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -46,6 +47,7 @@ import {
   type TwoFactorMethods,
 } from "@/lib/account/two-factor-methods";
 import { BACKUP_CODE_COUNT } from "@/lib/auth/two-factor";
+import type { Translator } from "@/lib/i18n/translator";
 import { browserHasPasskeys } from "@/lib/passkeys";
 import { removePasskey } from "../_lib/passkey-actions";
 import {
@@ -107,19 +109,21 @@ function MethodRow({
 }
 
 /** "After you sign in, QRdx asks for your passkey or …". */
-function statusDetails(methods: TwoFactorMethods, ready: boolean): string {
+function statusDetails(
+  methods: TwoFactorMethods,
+  ready: boolean,
+  t: Translator<"app.settings.account.twoFactorSettings">,
+): string {
   if (!methods.on) {
-    return ready
-      ? "Your passkey is ready to be your second step."
-      : "Add a passkey or an authenticator app to turn it on.";
+    return ready ? t("yourPasskeyIsReadyTo") : t("addAPasskeyOrAn");
   }
   const ways = [
-    ...(methods.passkeys > 0 ? ["your passkey"] : []),
-    ...(methods.authenticatorApp ? ["a code from your authenticator app"] : []),
+    ...(methods.passkeys > 0 ? [t("yourPasskey")] : []),
+    ...(methods.authenticatorApp ? [t("aCodeFromYourAuthenticator")] : []),
   ];
   return ways.length > 0
-    ? `After you sign in, QRdx asks for ${ways.join(" or ")}. A backup code works too.`
-    : "After you sign in, QRdx asks for a backup code.";
+    ? t("afterYouSignInQrdx3", { value: ways.join(" or ") })
+    : t("afterYouSignInQrdx2");
 }
 
 type Confirming =
@@ -143,6 +147,7 @@ export function TwoFactorSettings({
   /** Support's turn-off is waiting: the day it happens */
   resetDueDate?: string | null;
 }) {
+  const t = useTranslations("app.settings.account.twoFactorSettings");
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
   // Unknown until mounted; passkey buttons stay disabled until then.
@@ -206,7 +211,7 @@ export function TwoFactorSettings({
           toast.error(result.error);
           return;
         }
-        toast.success("Two-step verification is off");
+        toast.success(t("twoStepVerificationIsOff"));
       } else if (confirming.kind === "remove-app") {
         const result = await withConfirmation(
           () => removeAuthenticatorApp(),
@@ -219,8 +224,8 @@ export function TwoFactorSettings({
         }
         toast.success(
           result.turnedOff
-            ? "Authenticator app removed. Two-step verification is off."
-            : "Authenticator app removed",
+            ? t("authenticatorAppRemovedTwoStep")
+            : t("authenticatorAppRemoved"),
         );
       } else if (confirming.kind === "new-codes") {
         const result = await withConfirmation(
@@ -249,8 +254,8 @@ export function TwoFactorSettings({
         }
         toast.success(
           result.data.turnedOff
-            ? `Removed ${passkey.name}. Two-step verification is off.`
-            : `Removed ${passkey.name}`,
+            ? t("removedNameTwoStepVerification", { name: passkey.name })
+            : t("removedName", { name: passkey.name }),
         );
       }
       setConfirming(null);
@@ -267,13 +272,13 @@ export function TwoFactorSettings({
     { title: string; body: string; button: string; destructive: boolean }
   > = {
     "turn-off": {
-      title: "Turn off two-step verification?",
+      title: t("turnOffTwoStepVerification"),
       body: `Signing in will no longer ask for a second step, and your backup codes stop working.${methods.passkeys > 0 ? " Your passkeys stay, and still sign you in." : ""}`,
       button: "Turn off",
       destructive: true,
     },
     "remove-app": {
-      title: "Remove your authenticator app?",
+      title: t("removeYourAuthenticatorApp"),
       body: removalTurnsOff(methods, "authenticator")
         ? turnsOffNotice
         : "Signing in will ask for your passkey or a backup code instead. Delete QRdx from the app too.",
@@ -281,7 +286,7 @@ export function TwoFactorSettings({
       destructive: removalTurnsOff(methods, "authenticator"),
     },
     "new-codes": {
-      title: "Make new backup codes?",
+      title: t("makeNewBackupCodes"),
       body: "Your current backup codes stop working straight away.",
       button: "Make new codes",
       destructive: false,
@@ -289,8 +294,8 @@ export function TwoFactorSettings({
     "remove-passkey": {
       title:
         confirming?.kind === "remove-passkey"
-          ? `Remove ${confirming.passkey.name}?`
-          : "Remove passkey?",
+          ? t("removeName", { name: confirming.passkey.name })
+          : t("removePasskey"),
       body: removalTurnsOff(methods, "passkey")
         ? `It won't sign in to QRdx anymore. ${turnsOffNotice}`
         : "It won't sign in to QRdx anymore. Your device or password manager may still list it until you delete it there too.",
@@ -302,9 +307,9 @@ export function TwoFactorSettings({
 
   return (
     <SettingsSection
-      description="After you sign in, QRdx also asks for your passkey or a code from your authenticator app, so access to your email alone isn't enough."
+      description={t("afterYouSignInQrdx")}
       id="two-factor"
-      title="Two-step verification"
+      title={t("twoStepVerification")}
     >
       {resetDueDate && <TwoFactorResetNotice dueDate={resetDueDate} />}
 
@@ -317,7 +322,7 @@ export function TwoFactorSettings({
               size="sm"
               variant="outline"
             >
-              Turn off
+              {t("turnOff")}
             </Button>
           ) : (
             <Button
@@ -328,18 +333,18 @@ export function TwoFactorSettings({
               variant={ready ? "default" : "outline"}
             >
               {opening === "turn-on" && <Spinner className="animate-spin" />}
-              Turn on
+              {t("turnOn")}
             </Button>
           )
         }
         badge={
           <Badge variant={methods.on ? "secondary" : "outline"}>
-            {methods.on ? "On" : "Off"}
+            {methods.on ? t("on") : t("off")}
           </Badge>
         }
-        details={statusDetails(methods, ready)}
+        details={statusDetails(methods, ready, t)}
         icon={<ShieldTick aria-hidden className="size-4" />}
-        title="Two-step verification"
+        title={t("twoStepVerification")}
       />
 
       {passkeysHere && (
@@ -365,7 +370,7 @@ export function TwoFactorSettings({
                 variant="outline"
               >
                 {opening === "passkey" && <Spinner className="animate-spin" />}
-                Add passkey
+                {t("addPasskey")}
               </Button>
             }
             details={
@@ -374,11 +379,11 @@ export function TwoFactorSettings({
                 : "Sign in with your fingerprint, face or screen lock. Each one also works as your second step."
             }
             icon={<FingerScan aria-hidden className="size-4" />}
-            title="Passkeys"
+            title={t("passkeys")}
           />
           {passkeys.length === 0 ? (
             <p className="text-muted-foreground -mt-1 px-5 pb-4 text-xs sm:pr-6 sm:pl-[4.75rem]">
-              No passkeys yet.
+              {t("noPasskeysYet")}
             </p>
           ) : (
             <ul className="mx-5 mb-4 divide-y rounded-lg border sm:mr-6 sm:ml-[4.75rem]">
@@ -397,7 +402,7 @@ export function TwoFactorSettings({
                           {passkey.name}
                         </p>
                         <Badge variant="outline">
-                          {passkey.synced ? "Synced" : "Device-bound"}
+                          {passkey.synced ? t("synced") : t("deviceBound")}
                         </Badge>
                       </div>
                       {details.length > 0 && (
@@ -409,7 +414,9 @@ export function TwoFactorSettings({
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
-                          aria-label={`Options for ${passkey.name}`}
+                          aria-label={t("optionsForName", {
+                            name: passkey.name,
+                          })}
                           className="size-10 shrink-0 sm:size-8"
                           size="icon-sm"
                           variant="ghost"
@@ -419,14 +426,14 @@ export function TwoFactorSettings({
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onSelect={() => setRenaming(passkey)}>
-                          Rename
+                          {t("rename")}
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onSelect={() =>
                             setConfirming({ kind: "remove-passkey", passkey })
                           }
                         >
-                          Remove
+                          {t("remove")}
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -447,7 +454,7 @@ export function TwoFactorSettings({
               size="sm"
               variant="outline"
             >
-              Remove
+              {t("remove")}
             </Button>
           ) : (
             <Button
@@ -464,7 +471,7 @@ export function TwoFactorSettings({
               variant="outline"
             >
               {opening === "app" && <Spinner className="animate-spin" />}
-              Set up
+              {t("setUp")}
             </Button>
           )
         }
@@ -474,7 +481,7 @@ export function TwoFactorSettings({
             : "Use any authenticator app that shows 6-digit codes."
         }
         icon={<Mobile aria-hidden className="size-4" />}
-        title="Authenticator app"
+        title={t("authenticatorApp")}
       />
 
       {methods.on && (
@@ -486,7 +493,7 @@ export function TwoFactorSettings({
               size="sm"
               variant="outline"
             >
-              New codes
+              {t("newCodes")}
             </Button>
           }
           details={
@@ -495,7 +502,7 @@ export function TwoFactorSettings({
               : `${left} of ${BACKUP_CODE_COUNT} left. Each works once.${left <= 3 ? " Make new ones soon." : ""}`
           }
           icon={<DocumentText aria-hidden className="size-4" />}
-          title="Backup codes"
+          title={t("backupCodes")}
         />
       )}
 
@@ -526,7 +533,7 @@ export function TwoFactorSettings({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={busy}>{t("cancel")}</AlertDialogCancel>
             <Button
               disabled={busy}
               onClick={runConfirmed}
@@ -550,11 +557,9 @@ export function TwoFactorSettings({
       >
         <DialogContent className="sm:max-w-md" showCloseButton={false}>
           <DialogHeader>
-            <DialogTitle>Your new backup codes</DialogTitle>
+            <DialogTitle>{t("yourNewBackupCodes")}</DialogTitle>
             <DialogDescription className="text-pretty">
-              Each code works once, if you can't use your passkey or
-              authenticator app. Keep them somewhere safe, like a password
-              manager. They won't be shown again.
+              {t("eachCodeWorksOnceIf")}
             </DialogDescription>
           </DialogHeader>
           <BackupCodesList
@@ -573,7 +578,7 @@ export function TwoFactorSettings({
               }}
               type="button"
             >
-              Done
+              {t("done")}
             </Button>
           </DialogFooter>
         </DialogContent>

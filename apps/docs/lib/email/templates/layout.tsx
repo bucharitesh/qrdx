@@ -12,6 +12,7 @@ import {
   Section,
   Text,
 } from "react-email";
+import { type EmailIntl, ENGLISH_EMAIL } from "@/lib/i18n/email";
 import { baseUrl } from "@/lib/metadata";
 
 // Base layout for every QRdx email. Templates render
@@ -98,6 +99,8 @@ export interface EmailLayoutProps {
    * the footer only names the host that sends it.
    */
   sender?: { name: string };
+  /** The recipient's language (lib/i18n/email.ts); English by default. */
+  intl?: EmailIntl;
 }
 
 export function EmailLayout({
@@ -106,10 +109,12 @@ export function EmailLayout({
   reason,
   unsubscribeUrl,
   sender,
+  intl = ENGLISH_EMAIL,
 }: EmailLayoutProps) {
   const origin = baseUrl.origin;
+  const { t } = intl;
   return (
-    <Html lang="en">
+    <Html lang={intl.locale}>
       <Head />
       <Preview>{preview}</Preview>
       <Body style={styles.body}>
@@ -127,11 +132,24 @@ export function EmailLayout({
           <Section style={styles.footer}>
             {reason ? <Text style={styles.footerText}>{reason}</Text> : null}
             <Text style={styles.footerText}>
-              {sender ? "Sent for " : "QRdx · "}
-              {sender ? `${sender.name} by ` : null}
-              <Link href={origin} style={styles.footerLink}>
-                {baseUrl.host}
-              </Link>
+              {sender
+                ? t.rich("layout.sentFor", {
+                    name: sender.name,
+                    link: (chunks) => (
+                      <Link href={origin} style={styles.footerLink}>
+                        {chunks}
+                      </Link>
+                    ),
+                    host: baseUrl.host,
+                  })
+                : t.rich("layout.sentBy", {
+                    link: (chunks) => (
+                      <Link href={origin} style={styles.footerLink}>
+                        {chunks}
+                      </Link>
+                    ),
+                    host: baseUrl.host,
+                  })}
             </Text>
             {EMAIL_POSTAL_ADDRESS ? (
               <Text style={styles.footerText}>{EMAIL_POSTAL_ADDRESS}</Text>
@@ -139,7 +157,7 @@ export function EmailLayout({
             {unsubscribeUrl ? (
               <Text style={styles.footerText}>
                 <Link href={unsubscribeUrl} style={styles.footerLink}>
-                  Unsubscribe
+                  {t("layout.unsubscribe")}
                 </Link>
               </Text>
             ) : null}

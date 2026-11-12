@@ -1,3 +1,4 @@
+import { type EmailIntl, ENGLISH_EMAIL } from "@/lib/i18n/email";
 import { EmailButton, EmailHeading, EmailLayout, EmailText } from "./layout";
 import { codeLabel, DetailsTable, formatEmailDateTime } from "./parts";
 
@@ -11,6 +12,8 @@ export interface FirstScanEmailProps {
   analyticsUrl: string;
   workspaceName: string;
   unsubscribeUrl: string;
+  /** The recipient's language */
+  intl?: EmailIntl;
 }
 
 export function FirstScanEmail({
@@ -21,25 +24,28 @@ export function FirstScanEmail({
   analyticsUrl,
   workspaceName,
   unsubscribeUrl,
+  intl = ENGLISH_EMAIL,
 }: FirstScanEmailProps) {
+  const { t } = intl;
   const rows = [
-    { label: "When", value: formatEmailDateTime(scannedAt) },
-    ...(location ? [{ label: "Where", value: location }] : []),
-    ...(device ? [{ label: "Device", value: device }] : []),
+    {
+      label: t("firstScan.when"),
+      value: formatEmailDateTime(scannedAt, intl.locale),
+    },
+    ...(location ? [{ label: t("firstScan.where"), value: location }] : []),
+    ...(device ? [{ label: t("firstScan.device"), value: device }] : []),
   ];
   return (
     <EmailLayout
-      preview={`${codeLabel(code)} was scanned for the first time`}
-      reason={`You get this because scan milestone alerts are on for ${workspaceName}.`}
+      intl={intl}
+      preview={t("firstScan.preview", { code: codeLabel(code) })}
+      reason={t("alerts.milestoneReason", { workspace: workspaceName })}
       unsubscribeUrl={unsubscribeUrl}
     >
-      <EmailHeading>Your code got its first scan</EmailHeading>
-      <EmailText>
-        Someone just scanned {codeLabel(code)}. Your QR code is live and
-        working.
-      </EmailText>
+      <EmailHeading>{t("firstScan.heading")}</EmailHeading>
+      <EmailText>{t("firstScan.body", { code: codeLabel(code) })}</EmailText>
       <DetailsTable rows={rows} />
-      <EmailButton href={analyticsUrl}>View scan analytics</EmailButton>
+      <EmailButton href={analyticsUrl}>{t("alerts.viewAnalytics")}</EmailButton>
     </EmailLayout>
   );
 }

@@ -33,6 +33,7 @@ import {
   ExportSquare,
   FingerScan,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import {
   type FormEvent,
   type ReactNode,
@@ -233,6 +234,7 @@ export function ConfirmIdentityDialog({
   request: ConfirmationRequest | null;
   onDone: (confirmed: boolean) => void;
 }) {
+  const t = useTranslations("auth.confirmIdentityDialog");
   const id = useId();
   const open = request !== null;
   const [options, setOptions] = useState<ConfirmationOptions | null>(null);
@@ -588,13 +590,13 @@ export function ConfirmIdentityDialog({
     body = (
       <div className="text-muted-foreground flex items-center justify-center gap-2 py-6 text-sm">
         <Spinner className="size-4 animate-spin" />
-        Loading…
+        {t("loading")}
       </div>
     );
   } else if (choosing) {
     body = (
       <div className="space-y-2">
-        <p className="text-sm font-medium">Choose another way</p>
+        <p className="text-sm font-medium">{t("chooseAnotherWay")}</p>
         <div className="grid gap-2">
           {others.map((entry) => (
             <Button
@@ -617,11 +619,9 @@ export function ConfirmIdentityDialog({
           <FingerScan aria-hidden className="size-5" />
         </span>
         <div className="space-y-1">
-          <p className="text-sm font-medium">Use your passkey</p>
+          <p className="text-sm font-medium">{t("useYourPasskey")}</p>
           <p className="text-muted-foreground text-xs text-pretty">
-            {busy
-              ? "Follow the prompt from your browser or device."
-              : "Touch ID, Face ID, Windows Hello or a security key."}
+            {busy ? t("followThePromptFromYour") : t("touchIdFaceIdWindows")}
           </p>
         </div>
         <Button
@@ -631,7 +631,7 @@ export function ConfirmIdentityDialog({
           type="button"
         >
           {busy && <Spinner className="animate-spin" />}
-          Continue with passkey
+          {t("continueWithPasskey")}
         </Button>
         {errorLine}
       </div>
@@ -640,13 +640,13 @@ export function ConfirmIdentityDialog({
     body = (
       <div className="flex flex-col items-center gap-3">
         <p className="text-sm font-medium" id={`${id}-totp-label`}>
-          Enter the code from your authenticator app
+          {t("enterTheCodeFromYour")}
         </p>
         <SixDigits
           describedBy={errorId}
           disabled={busy}
           invalid={Boolean(error) && !code}
-          label="Code from your authenticator app"
+          label={t("codeFromYourAuthenticatorApp")}
           onChange={(value) => {
             setCode(value);
             if (value) setError(null);
@@ -658,7 +658,7 @@ export function ConfirmIdentityDialog({
           {busy ? (
             <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
               <Spinner className="size-3.5 animate-spin" />
-              Checking code…
+              {t("checkingCode")}
             </p>
           ) : (
             errorLine
@@ -671,7 +671,7 @@ export function ConfirmIdentityDialog({
       <form className="space-y-3" noValidate onSubmit={submitBackup}>
         <div className="space-y-2">
           <label className="text-sm font-medium" htmlFor={`${id}-backup`}>
-            Backup code
+            {t("backupCode")}
           </label>
           <Input
             aria-describedby={`${id}-backup-hint ${errorId}`}
@@ -687,7 +687,7 @@ export function ConfirmIdentityDialog({
               setBackupCode(event.target.value);
               setError(null);
             }}
-            placeholder="ABCDE-FGH23"
+            placeholder={t("abcdeFgh23")}
             spellCheck={false}
             value={backupCode}
           />
@@ -695,8 +695,7 @@ export function ConfirmIdentityDialog({
             className="text-muted-foreground text-xs text-pretty"
             id={`${id}-backup-hint`}
           >
-            One of the codes you saved when you turned on two-step verification.
-            Each works once.
+            {t("oneOfTheCodesYou")}
           </p>
         </div>
         {errorLine}
@@ -706,7 +705,7 @@ export function ConfirmIdentityDialog({
           type="submit"
         >
           {busy && <Spinner className="animate-spin" />}
-          Confirm
+          {t("confirm")}
         </Button>
       </form>
     );
@@ -714,17 +713,19 @@ export function ConfirmIdentityDialog({
     body = emailSent ? (
       <div className="flex flex-col items-center gap-3">
         <p className="text-muted-foreground text-center text-sm text-pretty">
-          Enter the code we sent to{" "}
-          <span className="text-foreground font-medium">
-            {options.maskedEmail}
-          </span>
-          . It expires in {CONFIRMATION_CODE_MINUTES} minutes.
+          {t.rich("enterTheCodeWeSent", {
+            maskedEmail: options.maskedEmail,
+            CONFIRMATION_CODE_MINUTES,
+            span: (chunks) => (
+              <span className="text-foreground font-medium">{chunks}</span>
+            ),
+          })}
         </p>
         <SixDigits
           describedBy={`${errorId} ${id}-email-status`}
           disabled={busy}
           invalid={Boolean(error) && !code}
-          label="Code from the email"
+          label={t("codeFromTheEmail")}
           onChange={(value) => {
             setCode(value);
             if (value) setError(null);
@@ -738,7 +739,7 @@ export function ConfirmIdentityDialog({
           id={`${id}-email-status`}
         >
           <p className="text-muted-foreground text-xs">
-            {notice ?? "Didn't get it? "}
+            {notice ?? t("didntGetIt")}
             {!notice && (
               <button
                 className={cn(
@@ -749,7 +750,9 @@ export function ConfirmIdentityDialog({
                 onClick={() => void sendCode(true)}
                 type="button"
               >
-                {secondsLeft > 0 ? `Resend in ${secondsLeft}s` : "Resend code"}
+                {secondsLeft > 0
+                  ? t("resendInSecondsleftS", { secondsLeft })
+                  : t("resendCode")}
               </button>
             )}
           </p>
@@ -772,11 +775,12 @@ export function ConfirmIdentityDialog({
     ) : (
       <div className="space-y-3">
         <p className="text-muted-foreground text-sm text-pretty">
-          We'll email a 6-digit code to{" "}
-          <span className="text-foreground font-medium">
-            {options.maskedEmail}
-          </span>
-          .
+          {t.rich("wellEmailA6Digit", {
+            maskedEmail: options.maskedEmail,
+            span: (chunks) => (
+              <span className="text-foreground font-medium">{chunks}</span>
+            ),
+          })}
         </p>
         {errorLine}
         <Button
@@ -786,7 +790,7 @@ export function ConfirmIdentityDialog({
           type="button"
         >
           {busy && <Spinner className="animate-spin" />}
-          Send code
+          {t("sendCode")}
         </Button>
       </div>
     );
@@ -795,8 +799,7 @@ export function ConfirmIdentityDialog({
     body = (
       <div className="space-y-3">
         <p className="text-muted-foreground text-sm text-pretty">
-          Sign in with {SIGN_IN_NAMES[method]} again. You'll come back to this
-          page, then make your change once more.
+          {t("signInWithValueAgain", { value: SIGN_IN_NAMES[method] })}
         </p>
         {errorLine}
         <Button
@@ -811,7 +814,7 @@ export function ConfirmIdentityDialog({
           ) : (
             <Icon className="size-4" />
           )}
-          Continue with {method === "sso" ? "SSO" : SIGN_IN_NAMES[method]}
+          {t("continueWith")} {method === "sso" ? "SSO" : SIGN_IN_NAMES[method]}
         </Button>
       </div>
     );
@@ -827,7 +830,7 @@ export function ConfirmIdentityDialog({
           type="button"
           variant="outline"
         >
-          Sign out
+          {t("signOut")}
         </Button>
       </div>
     );
@@ -848,9 +851,10 @@ export function ConfirmIdentityDialog({
       >
         <DialogCloseButton />
         <DialogHeader>
-          <DialogTitle>Confirm it's you</DialogTitle>
+          <DialogTitle>{t("confirmItsYou")}</DialogTitle>
           <DialogDescription className="text-pretty">
-            Before you {action}, we need to check it's you.
+            {t("beforeYou")} {action}
+            {t("weNeedToCheckIts")}
           </DialogDescription>
         </DialogHeader>
 
@@ -858,20 +862,14 @@ export function ConfirmIdentityDialog({
 
         <Collapsible className="group/why">
           <CollapsibleTrigger className="text-muted-foreground hover:text-foreground -my-2 flex min-h-10 items-center gap-1 rounded-sm text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:min-h-0 sm:my-0">
-            {reason ? "Why am I asked?" : "Why am I asked again?"}
+            {reason ? t("whyAmIAsked") : t("whyAmIAskedAgain")}
             <ArrowDown2
               aria-hidden
               className="size-3 transition-transform group-data-[state=open]/why:rotate-180 motion-reduce:transition-none"
             />
           </CollapsibleTrigger>
           <CollapsibleContent className="text-muted-foreground pt-2 text-xs text-pretty">
-            {reason ?? (
-              <>
-                We check it's you before changes to your account's security. It
-                lasts {CONFIRMATION_MINUTES} minutes, so a few changes in a row
-                only ask once.
-              </>
-            )}
+            {reason ?? t("weCheckItsYouBefore", { CONFIRMATION_MINUTES })}
           </CollapsibleContent>
         </Collapsible>
 
@@ -888,7 +886,7 @@ export function ConfirmIdentityDialog({
               type="button"
               variant="ghost"
             >
-              Use another method
+              {t("useAnotherMethod")}
             </Button>
           ) : choosing ? (
             <Button
@@ -897,7 +895,7 @@ export function ConfirmIdentityDialog({
               type="button"
               variant="ghost"
             >
-              Back
+              {t("back")}
             </Button>
           ) : (
             <span className="hidden sm:block" />
@@ -908,7 +906,7 @@ export function ConfirmIdentityDialog({
             type="button"
             variant="outline"
           >
-            Cancel
+            {t("cancel")}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -11,6 +11,7 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { HamburgerMenu as Menu } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useRef, useState } from "react";
 import type { Meter } from "@/app/(app)/settings/usage/_lib/meters";
 import { AppSidebar } from "./app-sidebar";
@@ -27,6 +28,7 @@ export function MobileNav({
   shell: ShellData | null;
   limitWarnings?: Promise<Meter[]> | null;
 }) {
+  const t = useTranslations("app.shell.mobileNav");
   const pathname = usePathname();
   // Tied to the paths it may show: the one it was opened on, plus an area
   // opened from it (it stays open to show that area slide in). Any other
@@ -41,7 +43,7 @@ export function MobileNav({
     >
       <SheetTrigger asChild>
         <Button
-          aria-label="Open navigation"
+          aria-label={t("openNavigation")}
           className="size-8 md:hidden"
           size="icon"
           variant="ghost"
@@ -64,8 +66,8 @@ export function MobileNav({
         side="left"
       >
         <SheetHeader className="sr-only">
-          <SheetTitle>Navigation</SheetTitle>
-          <SheetDescription>Dashboard and settings pages</SheetDescription>
+          <SheetTitle>{t("navigation")}</SheetTitle>
+          <SheetDescription>{t("dashboardAndSettingsPages")}</SheetDescription>
         </SheetHeader>
         <div className="contents" ref={bodyRef}>
           <AppSidebar

@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Add as Plus } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 import type { CodeUsage } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { openCodeBuilder } from "@/components/code-builder/store";
@@ -14,12 +15,13 @@ const isAtLimit = (usage: CodeUsage) =>
   usage.limit !== null && usage.used >= usage.limit;
 
 export function UsageMeter({ usage }: { usage: CodeUsage }) {
+  const t = useTranslations("app.dashboard.codes.usage");
   if (usage.limit === null) {
     return (
       <p className="text-muted-foreground text-sm">
-        {formatNumber(usage.used)} active dynamic{" "}
-        {usage.used === 1 ? "code" : "codes"} · {PLAN_NAMES[usage.plan]} plan,
-        unlimited codes
+        {formatNumber(usage.used)} {t("activeDynamic")}{" "}
+        {usage.used === 1 ? t("code") : t("codes")} · {PLAN_NAMES[usage.plan]}{" "}
+        {t("planUnlimitedCodes")}
       </p>
     );
   }
@@ -27,7 +29,7 @@ export function UsageMeter({ usage }: { usage: CodeUsage }) {
   return (
     <CapMeter
       meterId="dynamicCodes"
-      note="Archived codes don't count. Existing codes keep working on every plan."
+      note={t("archivedNote")}
       plan={usage.plan}
       source="codes_meter"
       used={usage.used}
@@ -38,9 +40,10 @@ export function UsageMeter({ usage }: { usage: CodeUsage }) {
 
 export function NewCodeButton({
   usage,
-  children = "New code",
+  children,
   ...props
 }: { usage: CodeUsage } & ComponentProps<typeof Button>) {
+  const t = useTranslations("app.dashboard.codes.usage");
   const showLimit = useShowLimit();
 
   const onClick = () => {
@@ -56,7 +59,7 @@ export function NewCodeButton({
   return (
     <Button onClick={onClick} {...props}>
       <Plus />
-      {children}
+      {children ?? t("newCode")}
     </Button>
   );
 }

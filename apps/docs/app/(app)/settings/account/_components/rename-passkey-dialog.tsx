@@ -14,6 +14,7 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useId, useState } from "react";
 import { DialogCloseButton } from "@/components/confirm-identity/dialog-close-button";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -31,6 +32,7 @@ export function RenamePasskeyDialog({
   passkey: PasskeyView | null;
   onClose: () => void;
 }) {
+  const t = useTranslations("app.settings.account.renamePasskeyDialog");
   const id = useId();
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
@@ -58,7 +60,7 @@ export function RenamePasskeyDialog({
         setError(result.error);
         return;
       }
-      toast.success("Passkey renamed");
+      toast.success(t("passkeyRenamed"));
       onClose();
       router.refresh();
     } finally {
@@ -79,14 +81,12 @@ export function RenamePasskeyDialog({
       >
         <DialogCloseButton disabled={saving} />
         <DialogHeader>
-          <DialogTitle>Rename passkey</DialogTitle>
-          <DialogDescription>
-            Only you see this name, here in your settings.
-          </DialogDescription>
+          <DialogTitle>{t("renamePasskey")}</DialogTitle>
+          <DialogDescription>{t("onlyYouSeeThisName")}</DialogDescription>
         </DialogHeader>
         <form className="space-y-4" onSubmit={onSubmit}>
           <div className="space-y-2">
-            <Label htmlFor={`${id}-name`}>Name</Label>
+            <Label htmlFor={`${id}-name`}>{t("name")}</Label>
             <Input
               aria-describedby={`${id}-error`}
               autoComplete="off"
@@ -115,11 +115,11 @@ export function RenamePasskeyDialog({
               type="button"
               variant="outline"
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button disabled={saving || !name.trim()} type="submit">
               {saving && <Spinner className="animate-spin" />}
-              Save
+              {t("save")}
             </Button>
           </DialogFooter>
         </form>

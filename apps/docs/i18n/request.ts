@@ -11,14 +11,18 @@ import {
   localeFromSegment,
 } from "@/lib/i18n/config";
 import { loadMessages } from "@/lib/i18n/messages";
+import { requestAppLocale } from "@/lib/i18n/request-locale";
 
 async function segmentLocale(): Promise<Locale> {
   try {
-    return localeFromSegment(await lang()) ?? DEFAULT_LOCALE;
+    const segment = localeFromSegment(await lang());
+    if (segment) return segment;
   } catch {
     // Route handlers and server actions have no root params.
-    return DEFAULT_LOCALE;
   }
+  // App pages (no [lang]): the person's language, once the app's layout or
+  // template has read it (lib/i18n/request-locale.ts); else English.
+  return requestAppLocale().current ?? DEFAULT_LOCALE;
 }
 
 export default getRequestConfig(async ({ locale: requested }) => {

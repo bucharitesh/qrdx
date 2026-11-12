@@ -40,6 +40,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import { useWorkspaceHref } from "@/components/workspace-provider";
@@ -64,8 +65,11 @@ export function LastDelivery({
 }: {
   delivery: WebhookEndpointView["lastDelivery"];
 }) {
+  const t = useTranslations("app.dashboard.webhooks.webhooksManager");
   if (!delivery) {
-    return <span className="text-muted-foreground">No deliveries yet</span>;
+    return (
+      <span className="text-muted-foreground">{t("noDeliveriesYet")}</span>
+    );
   }
   const Icon =
     delivery.status === "succeeded"
@@ -117,6 +121,7 @@ function EndpointCard({
   onSecret: () => void;
   onDelete: () => void;
 }) {
+  const t = useTranslations("app.dashboard.webhooks.webhooksManager");
   const inWorkspace = useWorkspaceHref();
   return (
     <Card className="gap-3 py-4">
@@ -127,7 +132,9 @@ function EndpointCard({
               <CardTitle className="font-mono text-sm break-all">
                 {endpoint.url}
               </CardTitle>
-              {!endpoint.active && <Badge variant="outline">Disabled</Badge>}
+              {!endpoint.active && (
+                <Badge variant="outline">{t("disabled")}</Badge>
+              )}
             </div>
             <div className="flex flex-wrap gap-1">
               {endpoint.events.map((event) => (
@@ -141,7 +148,7 @@ function EndpointCard({
             <div className="flex shrink-0 items-center gap-2">
               <Switch
                 aria-label={
-                  endpoint.active ? "Disable endpoint" : "Enable endpoint"
+                  endpoint.active ? t("disableEndpoint") : t("enableEndpoint")
                 }
                 checked={endpoint.active}
                 disabled={busy || (!allowed && !endpoint.active)}
@@ -150,7 +157,7 @@ function EndpointCard({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    aria-label="Endpoint actions"
+                    aria-label={t("endpointActions")}
                     disabled={busy}
                     size="icon-sm"
                     variant="ghost"
@@ -161,16 +168,16 @@ function EndpointCard({
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem disabled={!allowed} onSelect={onEdit}>
                     <Pencil />
-                    Edit
+                    {t("edit")}
                   </DropdownMenuItem>
                   <DropdownMenuItem onSelect={onSecret}>
                     <KeyRound />
-                    Signing secret
+                    {t("signingSecret")}
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onSelect={onDelete} variant="destructive">
                     <Trash2 />
-                    Delete
+                    {t("delete")}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -189,7 +196,7 @@ function EndpointCard({
               variant="outline"
             >
               <Send />
-              Send test
+              {t("sendTest")}
             </Button>
           )}
           <Button asChild size="sm" variant="outline">
@@ -199,7 +206,7 @@ function EndpointCard({
               )}
             >
               <ListTree />
-              Deliveries
+              {t("deliveries")}
             </Link>
           </Button>
         </div>
@@ -224,6 +231,7 @@ export function WebhooksManager({
   /** Your own workspace: upgrading unlocks webhooks */
   canUpgrade: boolean;
 }) {
+  const t = useTranslations("app.dashboard.webhooks.webhooksManager");
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
@@ -252,7 +260,7 @@ export function WebhooksManager({
     if (result.upgrade && canUpgrade) {
       toast.error(result.error, {
         action: {
-          label: "Upgrade",
+          label: t("upgrade"),
           onClick: () => openUpgradeDialog("business"),
         },
       });
@@ -276,7 +284,7 @@ export function WebhooksManager({
         );
         if (result === null) return;
         if (!result.ok) return setFormError(result.error);
-        toast.success("Endpoint saved");
+        toast.success(t("endpointSaved"));
         setDialog(null);
         router.refresh();
         return;
@@ -312,7 +320,7 @@ export function WebhooksManager({
   const toggle = (endpoint: WebhookEndpointView, active: boolean) =>
     withBusy(endpoint.id, async () =>
       handle(await updateWebhookEndpoint({ id: endpoint.id, active }), () =>
-        toast.success(active ? "Endpoint enabled" : "Endpoint disabled"),
+        toast.success(active ? t("endpointEnabled") : t("endpointDisabled")),
       ),
     );
 
@@ -321,9 +329,12 @@ export function WebhooksManager({
       handle(await sendWebhookTest({ id: endpoint.id }), (data) =>
         data.ok
           ? toast.success(
-              `Delivered: HTTP ${data.status} in ${data.durationMs} ms`,
+              t("deliveredHttpStatusInDurationms", {
+                status: data.status ?? 0,
+                durationMs: data.durationMs,
+              }),
             )
-          : toast.error(`Not delivered: ${data.error}`),
+          : toast.error(t("notDeliveredError", { error: data.error ?? "" })),
       ),
     );
 
@@ -346,7 +357,7 @@ export function WebhooksManager({
     withBusy(endpoint.id, async () =>
       handle(await deleteWebhookEndpoint({ id: endpoint.id }), () => {
         setDeleting(null);
-        toast.success("Endpoint deleted");
+        toast.success(t("endpointDeleted"));
       }),
     );
   };
@@ -356,8 +367,7 @@ export function WebhooksManager({
       {canManage && (
         <div className="flex flex-wrap items-center justify-between gap-3">
           <p className="text-muted-foreground text-sm">
-            Events from this workspace are signed with each endpoint's secret
-            and retried for about two days if your server is down.
+            {t("eventsFromThisWorkspaceAre")}
           </p>
           <Button
             disabled={!canAdd}
@@ -371,15 +381,14 @@ export function WebhooksManager({
             }}
           >
             <Plus />
-            Add endpoint
+            {t("addEndpoint")}
           </Button>
         </div>
       )}
 
       {endpoints.length === 0 ? (
         <p className="text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm">
-          No endpoints yet. Add one, or connect Zapier or Make with your API
-          token.
+          {t("noEndpointsYetAddOne")}
         </p>
       ) : (
         <div className="space-y-3">
@@ -420,12 +429,12 @@ export function WebhooksManager({
       <SecretDialog
         description={
           secret?.created
-            ? "Endpoint added. Use this secret to verify that requests come from QRdx. Owners and admins can show it again from the endpoint's menu."
-            : "Use this secret to verify that requests come from QRdx. Rotate it from the endpoint's deliveries page if it leaks."
+            ? t("endpointAddedUseThisSecret")
+            : t("useThisSecretToVerify")
         }
         onClose={() => setSecret(null)}
         secret={secret?.value ?? null}
-        title={secret?.created ? "Endpoint added" : "Signing secret"}
+        title={secret?.created ? t("endpointAdded") : t("signingSecret")}
       />
 
       <AlertDialog
@@ -434,20 +443,19 @@ export function WebhooksManager({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this endpoint?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteThisEndpoint")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {deleting?.url} stops receiving events right away and its delivery
-              log is deleted. Zaps or scenarios using it stop triggering.
+              {t("urlStopsReceivingEventsRight", { url: deleting?.url ?? "" })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
             <Button
               disabled={busyId === deleting?.id}
               onClick={confirmDelete}
               variant="destructive"
             >
-              Delete endpoint
+              {t("deleteEndpoint")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

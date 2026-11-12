@@ -21,6 +21,7 @@ import {
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { OAuthAppView } from "@/lib/oauth-apps/service";
@@ -40,6 +41,7 @@ export function EditOAuthApp({
   storageEnabled: boolean;
   canManage: boolean;
 }) {
+  const t = useTranslations("app.settings.developers.manageApp");
   const router = useRouter();
   return (
     <OAuthAppForm
@@ -49,7 +51,7 @@ export function EditOAuthApp({
       onSubmit={async (input) => {
         const result = await updateOAuthAppAction({ id: app.id, ...input });
         if (!result.ok) return result.error;
-        toast.success("App saved");
+        toast.success(t("appSaved"));
         router.refresh();
         return null;
       }}
@@ -67,6 +69,7 @@ export function AppDangerZone({
 }: {
   app: Pick<OAuthAppView, "id" | "name" | "active" | "userCount">;
 }) {
+  const t = useTranslations("app.settings.developers.manageApp");
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -79,7 +82,7 @@ export function AppDangerZone({
         toast.error(result.error);
         return;
       }
-      toast.success(active ? "App resumed" : "App paused");
+      toast.success(active ? t("appResumed") : t("appPaused"));
       router.refresh();
     });
 
@@ -91,7 +94,7 @@ export function AppDangerZone({
         return;
       }
       setConfirmDelete(false);
-      toast.success("App deleted");
+      toast.success(t("appDeleted"));
       router.push(inWorkspace("/settings/developers"));
       router.refresh();
     });
@@ -104,20 +107,19 @@ export function AppDangerZone({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Status</CardTitle>
+        <CardTitle>{t("status")}</CardTitle>
         <CardDescription>
           {app.userCount > 0
             ? `${people} currently ${app.userCount === 1 ? "has" : "have"} access through this app.`
-            : "Nobody has authorized this app yet."}
+            : t("nobodyHasAuthorizedThisApp")}
         </CardDescription>
       </CardHeader>
       <CardContent className="divide-y">
         <div className="flex items-start justify-between gap-4 pb-4">
           <div className="space-y-0.5">
-            <Label htmlFor="oauth-app-active">Active</Label>
+            <Label htmlFor="oauth-app-active">{t("active")}</Label>
             <p className="text-muted-foreground text-xs">
-              While paused, nobody can authorize the app and its tokens are
-              refused. Resume to restore them.
+              {t("whilePausedNobodyCanAuthorize")}
             </p>
           </div>
           <Switch
@@ -129,9 +131,9 @@ export function AppDangerZone({
         </div>
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
           <div className="space-y-0.5">
-            <p className="text-sm font-medium">Delete app</p>
+            <p className="text-sm font-medium">{t("deleteApp")}</p>
             <p className="text-muted-foreground text-xs">
-              Revokes every token it issued. This can't be undone.
+              {t("revokesEveryTokenItIssued")}
             </p>
           </div>
           <Button
@@ -140,7 +142,7 @@ export function AppDangerZone({
             size="sm"
             variant="destructive"
           >
-            Delete app
+            {t("deleteApp")}
           </Button>
         </div>
       </CardContent>
@@ -148,17 +150,20 @@ export function AppDangerZone({
       <AlertDialog onOpenChange={setConfirmDelete} open={confirmDelete}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {app.name}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("deleteName", { name: app.name })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Its client ID and secret stop working and every access and refresh
-              token it issued is revoked
-              {app.userCount > 0 ? `, disconnecting ${people}` : ""}.
+              {t("itsClientIdAndSecret")}
+              {app.userCount > 0 ? t("disconnectingPeople", { people }) : ""}.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={pending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button disabled={pending} onClick={remove} variant="destructive">
-              {pending ? "Deleting…" : "Delete app"}
+              {pending ? t("deleting") : t("deleteApp")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

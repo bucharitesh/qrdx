@@ -15,6 +15,7 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Devices, Mobile, Monitor } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import type { SessionDevice, SessionView } from "@/lib/account/sessions";
 import { revokeOtherSessions, revokeSession } from "../_lib/actions";
@@ -28,6 +29,7 @@ const DEVICE_ICONS: Record<SessionDevice, typeof Monitor> = {
 };
 
 export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
+  const t = useTranslations("app.settings.account.sessionsSection");
   const router = useRouter();
   const [ending, setEnding] = useState<string | null>(null);
   const [confirmAll, setConfirmAll] = useState(false);
@@ -42,7 +44,7 @@ export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
         toast.error(result.error);
         return;
       }
-      toast.success(`Signed out ${session.label}`);
+      toast.success(t("signedOutLabel", { label: session.label }));
       router.refresh();
     } finally {
       setEnding(null);
@@ -57,7 +59,7 @@ export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
         toast.error(result.error);
         return;
       }
-      toast.success("Signed out everywhere else");
+      toast.success(t("signedOutEverywhereElse"));
       setConfirmAll(false);
       router.refresh();
     } finally {
@@ -74,12 +76,12 @@ export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
           size="sm"
           variant="outline"
         >
-          Sign out everywhere else
+          {t("signOutEverywhereElse")}
         </Button>
       }
-      description="Browsers and devices signed in to your account. Sign out any you don't recognise."
+      description={t("browsersAndDevicesSignedIn")}
       id="sessions"
-      title="Sessions"
+      title={t("sessions")}
     >
       <ul className="divide-y">
         {sessions.map((session) => {
@@ -101,7 +103,7 @@ export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-sm font-medium">{session.label}</p>
                   {session.current && (
-                    <Badge variant="secondary">This device</Badge>
+                    <Badge variant="secondary">{t("thisDevice")}</Badge>
                   )}
                 </div>
                 <p className="text-muted-foreground mt-0.5 text-xs">
@@ -122,7 +124,7 @@ export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
                   {ending === session.id && (
                     <Spinner className="animate-spin" />
                   )}
-                  Sign out
+                  {t("signOut")}
                 </Button>
               )}
             </li>
@@ -138,19 +140,21 @@ export function SessionsSection({ sessions }: { sessions: SessionView[] }) {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Sign out everywhere else?</AlertDialogTitle>
+            <AlertDialogTitle>{t("signOutEverywhereElse2")}</AlertDialogTitle>
             <AlertDialogDescription>
               {others === 1
-                ? "The other session is signed out right away."
-                : `The other ${others} sessions are signed out right away.`}{" "}
-              This device stays signed in.
+                ? t("theOtherSessionIsSigned")
+                : t("theOtherOthersSessionsAre", { others })}{" "}
+              {t("thisDeviceStaysSignedIn")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={endingAll}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={endingAll}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button disabled={endingAll} onClick={endOthers} variant="outline">
               {endingAll && <Spinner className="animate-spin" />}
-              Sign out others
+              {t("signOutOthers")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

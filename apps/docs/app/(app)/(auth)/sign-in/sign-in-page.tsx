@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import { SignInPanel } from "../components/sign-in-panel";
 import { type SocialSignIn, signInErrorMessage } from "./_lib/error-message";
@@ -43,6 +44,7 @@ export function SignInPage({
   /** Google or GitHub; otherwise single sign-on. */
   via?: SocialSignIn | null;
 }) {
+  const t = useTranslations("app.signIn.signInPage");
   return (
     <main className="bg-background flex min-h-svh flex-col items-center justify-center gap-4 px-4 py-10">
       <div className="bg-card w-full max-w-sm overflow-hidden rounded-xl border shadow-sm">
@@ -64,7 +66,7 @@ export function SignInPage({
         className="text-muted-foreground hover:text-foreground inline-flex min-h-10 items-center rounded-sm px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         href="/"
       >
-        Back to QRdx
+        {t("backToQrdx")}
       </Link>
     </main>
   );

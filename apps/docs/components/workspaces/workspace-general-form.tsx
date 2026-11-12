@@ -5,6 +5,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { updateWorkspace } from "@/actions/organizations";
 import { useRefreshTeams } from "@/components/org-switcher";
@@ -24,6 +25,7 @@ export function WorkspaceGeneralForm({
   slug: string;
   canEdit: boolean;
 }) {
+  const t = useTranslations("app.workspaces.workspaceGeneralForm");
   const router = useRouter();
   const refresh = useRefreshTeams();
   const [name, setName] = useState(savedName);
@@ -43,7 +45,7 @@ export function WorkspaceGeneralForm({
         toast.error(result.error);
         return;
       }
-      toast.success("Workspace saved");
+      toast.success(t("workspaceSaved"));
       if (result.data.slug && result.data.slug !== savedSlug) {
         router.replace(workspaceHref(result.data.slug, "/settings"));
       }
@@ -54,7 +56,7 @@ export function WorkspaceGeneralForm({
   return (
     <form className="space-y-4" onSubmit={submit}>
       <div className="space-y-1.5">
-        <Label htmlFor="workspace-name">Workspace name</Label>
+        <Label htmlFor="workspace-name">{t("workspaceName")}</Label>
         <Input
           disabled={!canEdit}
           id="workspace-name"
@@ -82,7 +84,7 @@ export function WorkspaceGeneralForm({
           disabled={!changed || isPending || status.state === "blocked"}
           type="submit"
         >
-          {isPending ? "Saving..." : "Save"}
+          {isPending ? t("saving") : t("save")}
         </Button>
       )}
     </form>

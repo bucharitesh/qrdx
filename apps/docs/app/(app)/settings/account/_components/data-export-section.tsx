@@ -4,6 +4,7 @@ import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { DocumentDownload } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { SettingsRow, SettingsSection } from "./settings-section";
 
@@ -16,6 +17,7 @@ function filenameOf(response: Response): string {
 }
 
 export function DataExportSection() {
+  const t = useTranslations("app.settings.account.dataExportSection");
   const [preparing, setPreparing] = useState(false);
 
   const download = async () => {
@@ -30,9 +32,7 @@ export function DataExportSection() {
         const body = (await response.json().catch(() => null)) as {
           message?: string;
         } | null;
-        toast.error(
-          body?.message ?? "We couldn't prepare your data. Please try again.",
-        );
+        toast.error(body?.message ?? t("weCouldntPrepareYourData"));
         return;
       }
       const url = URL.createObjectURL(await response.blob());
@@ -43,10 +43,10 @@ export function DataExportSection() {
       anchor.click();
       anchor.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 60_000);
-      toast.success("Your data is downloading");
+      toast.success(t("yourDataIsDownloading"));
     } catch (error) {
       console.error("Data export failed:", error);
-      toast.error("The download was interrupted. Please try again.");
+      toast.error(t("theDownloadWasInterruptedPlease"));
     } finally {
       setPreparing(false);
     }
@@ -54,22 +54,17 @@ export function DataExportSection() {
 
   return (
     <SettingsSection
-      description="Take a copy of everything QRdx keeps about you, whenever you like."
+      description={t("takeACopyOfEverything")}
       id="data"
-      title="Your data"
+      title={t("yourData")}
     >
       <SettingsRow
-        description="Up to 3 downloads an hour. A big account can take a minute."
-        label="Download my data"
+        description={t("upTo3DownloadsAn")}
+        label={t("downloadMyData")}
       >
         <div className="space-y-3">
           <p className="text-muted-foreground text-sm text-pretty">
-            A ZIP of your profile, sign-in methods and sessions, codes and their
-            settings, scans, hosted pages and form responses, themes, folders,
-            tags, webhooks, apps, integrations, teams, subscription and any
-            affiliate program records, with a README that explains each file.
-            Secrets such as passwords, tokens and webhook keys are never
-            included.
+            {t("aZipOfYourProfile")}
           </p>
           <Button disabled={preparing} onClick={download} variant="outline">
             {preparing ? (
@@ -77,7 +72,7 @@ export function DataExportSection() {
             ) : (
               <DocumentDownload aria-hidden />
             )}
-            {preparing ? "Preparing your data…" : "Download my data"}
+            {preparing ? t("preparingYourData") : t("downloadMyData")}
           </Button>
         </div>
       </SettingsRow>

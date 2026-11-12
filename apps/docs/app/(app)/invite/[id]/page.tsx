@@ -18,12 +18,14 @@ import {
 } from "@/app/(app)/dashboard/team/_lib/queries";
 import { formatUtcDateTime } from "@/app/(app)/dashboard/team/_lib/team";
 import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
+import type { Translator } from "@/lib/i18n/translator";
 import { InviteActions, SignOutButton } from "./invite-actions";
 
 /** j***@example.com: enough to recognise the address without exposing it. */
-function maskEmail(email: string): string {
+function maskEmail(email: string, t: Translator<"app.invite.page">): string {
   const [local, domain] = email.split("@");
-  if (!domain) return "another address";
+  if (!domain) return t("anotherAddress");
   return `${local.charAt(0)}${"*".repeat(Math.max(2, local.length - 1))}@${domain}`;
 }
 
@@ -65,6 +67,7 @@ export default async function InvitePage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const t = await getAppTranslations("app.invite.page");
   const { id } = await params;
   const session = await auth.api.getSession({ headers: await headers() });
 
@@ -73,10 +76,10 @@ export default async function InvitePage({
   if (!session?.user) {
     return (
       <InviteCard
-        description="Sign in with the email address the invitation was sent to."
-        title="You've been invited to a team"
+        description={t("signInWithTheEmail")}
+        title={t("youveBeenInvitedToA")}
       >
-        <SignInButton className="w-full">Sign in to continue</SignInButton>
+        <SignInButton className="w-full">{t("signInToContinue")}</SignInButton>
       </InviteCard>
     );
   }
@@ -84,15 +87,15 @@ export default async function InvitePage({
   const invitation = id.length <= 128 ? await getInvitationDetails(id) : null;
   const goToDashboard = (
     <Button asChild variant="outline">
-      <Link href="/dashboard">Go to dashboard</Link>
+      <Link href="/dashboard">{t("goToDashboard")}</Link>
     </Button>
   );
 
   if (!invitation) {
     return (
       <InviteCard
-        description="Check that you copied the whole link, or ask for a new invitation."
-        title="Invitation not found"
+        description={t("checkThatYouCopiedThe")}
+        title={t("invitationNotFound")}
       >
         {goToDashboard}
       </InviteCard>
@@ -102,16 +105,13 @@ export default async function InvitePage({
   if (invitation.email.toLowerCase() !== session.user.email.toLowerCase()) {
     return (
       <InviteCard
-        description={
-          <>
-            This invitation was sent to{" "}
-            <span className="font-medium">{maskEmail(invitation.email)}</span>,
-            but you're signed in as{" "}
-            <span className="font-medium">{session.user.email}</span>. Sign in
-            with the invited address to accept it.
-          </>
-        }
-        title="Wrong account"
+        description={t.rich("thisInvitationWasSentTo", {
+          value: maskEmail(invitation.email, t),
+          email: session.user.email,
+          span: (chunks) => <span className="font-medium">{chunks}</span>,
+          span2: (chunks) => <span className="font-medium">{chunks}</span>,
+        })}
+        title={t("wrongAccount")}
       >
         <SignOutButton />
       </InviteCard>
@@ -126,11 +126,11 @@ export default async function InvitePage({
       <InviteCard
         description={
           alreadyMember
-            ? `You're already a member of ${invitation.teamName}. Switch to it from the workspace menu in your dashboard.`
+            ? t("youreAlreadyAMemberOf", { teamName: invitation.teamName })
             : (STATUS_MESSAGES[invitation.status] ??
-              "This invitation is no longer valid.")
+              t("thisInvitationIsNoLonger"))
         }
-        title={alreadyMember ? "Already joined" : "Invitation unavailable"}
+        title={alreadyMember ? t("alreadyJoined") : t("invitationUnavailable")}
       >
         {goToDashboard}
       </InviteCard>
@@ -140,8 +140,8 @@ export default async function InvitePage({
   if (invitation.expiresAt < new Date()) {
     return (
       <InviteCard
-        description="Invitations are valid for 48 hours. Ask a team owner or admin for a new link."
-        title="Invitation expired"
+        description={t("invitationsAreValidFor48")}
+        title={t("invitationExpired")}
       >
         {goToDashboard}
       </InviteCard>
@@ -155,18 +155,19 @@ export default async function InvitePage({
           {invitation.inviterName ? (
             <span className="font-medium">{invitation.inviterName}</span>
           ) : (
-            "A team admin"
+            t("aTeamAdmin")
           )}{" "}
-          invited you to join{" "}
-          <span className="font-medium">{invitation.teamName}</span> as{" "}
+          {t("invitedYouToJoin")}{" "}
+          <span className="font-medium">{invitation.teamName}</span> {t("as")}{" "}
           {inviteRolePhrase(invitation.role)}.
         </>
       }
-      title={`Join ${invitation.teamName}`}
+      title={t("joinTeamname", { teamName: invitation.teamName })}
     >
       <p className="text-muted-foreground text-xs">
-        Team members share the team's dynamic QR codes and themes. Expires{" "}
-        {formatUtcDateTime(invitation.expiresAt)}.
+        {t("teamMembersShareTheTeams", {
+          expiresAt: formatUtcDateTime(invitation.expiresAt),
+        })}
       </p>
       <div className="w-full">
         <InviteActions invitationId={invitation.id} />

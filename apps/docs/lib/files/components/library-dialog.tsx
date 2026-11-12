@@ -14,6 +14,7 @@ import {
 import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import { FolderOpen } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { workspaceRequestHeaders } from "@/components/workspace-provider";
 import {
@@ -37,6 +38,7 @@ export function LibraryButton({
   onSelect: (files: FileView[]) => void;
   disabled?: boolean;
 }) {
+  const t = useTranslations("editor.connections.libraryDialog");
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<FileView[] | null>(null);
   const [selected, setSelected] = useState<string[]>([]);
@@ -89,15 +91,14 @@ export function LibraryButton({
         variant="outline"
       >
         <FolderOpen />
-        From your files
+        {t("fromYourFiles")}
       </Button>
       <Dialog onOpenChange={setOpen} open={open}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Your {label}files</DialogTitle>
+            <DialogTitle>{t("yourLabelFiles", { label })}</DialogTitle>
             <DialogDescription>
-              Files uploaded to this workspace. Manage them in Dashboard →
-              Files.
+              {t("filesUploadedToThisWorkspace")}
             </DialogDescription>
           </DialogHeader>
           <div className="max-h-80 space-y-1 overflow-y-auto">
@@ -107,7 +108,7 @@ export function LibraryButton({
               </div>
             ) : files.length === 0 ? (
               <p className="py-8 text-center text-muted-foreground text-sm">
-                No {label}files yet. Upload one first.
+                {t("noLabelFilesYetUpload", { label })}
               </p>
             ) : (
               files.map((file) => {
@@ -161,7 +162,8 @@ export function LibraryButton({
                 }}
                 type="button"
               >
-                Add {selected.length > 0 ? selected.length : ""} selected
+                {t("add")} {selected.length > 0 ? selected.length : ""}{" "}
+                {t("selected")}
               </Button>
             </DialogFooter>
           )}

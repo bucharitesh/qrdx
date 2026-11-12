@@ -3,6 +3,7 @@
 import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { toast } from "sonner";
 import { unlinkSlackIdentityAction } from "../../slack-bot-actions";
@@ -40,6 +41,7 @@ export function SlackBotPanel({
   links,
   unavailable,
 }: SlackBotSettings) {
+  const t = useTranslations("app.settings.integrations.slackBotPanel");
   const router = useRouter();
   const [busy, setBusy] = useState<string | null>(null);
 
@@ -48,13 +50,13 @@ export function SlackBotPanel({
     try {
       const result = await unlinkSlackIdentityAction(id);
       if (result.ok) {
-        toast.success("Slack account unlinked");
+        toast.success(t("slackAccountUnlinked"));
         router.refresh();
       } else {
         toast.error(result.error);
       }
     } catch {
-      toast.error("Couldn't unlink. Try again.");
+      toast.error(t("couldntUnlinkTryAgain"));
     } finally {
       setBusy(null);
     }
@@ -64,18 +66,19 @@ export function SlackBotPanel({
     <div className="rounded-xl border bg-card p-6 space-y-5">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1">
-          <h2 className="text-base font-semibold">QRdx bot</h2>
+          <h2 className="text-base font-semibold">{t("qrdxBot")}</h2>
           <p className="max-w-prose text-sm text-muted-foreground text-pretty">
-            Everyone in the Slack workspace can make QR codes with{" "}
-            <code>/qr</code>, by mentioning the bot or in a direct message.
-            People who link their QRdx account with <code>/qr link</code> can
-            also make tracked codes with <code>/qr track</code>.
+            {t.rich("everyoneInTheSlackWorkspace", {
+              code: (chunks) => <code>{chunks}</code>,
+              code2: (chunks) => <code>{chunks}</code>,
+              code3: (chunks) => <code>{chunks}</code>,
+            })}
           </p>
         </div>
         {!unavailable && (
           <Button asChild size="sm">
             <a href="/api/integrations/slack/bot/install">
-              Add the bot to Slack
+              {t("addTheBotToSlack")}
             </a>
           </Button>
         )}
@@ -83,15 +86,15 @@ export function SlackBotPanel({
 
       {unavailable ? (
         <p className="text-sm text-muted-foreground">
-          The bot isn't available yet. Try again later.
+          {t("theBotIsntAvailableYet")}
         </p>
       ) : (
         <>
           <section className="space-y-2">
-            <h3 className="text-sm font-medium">Added by you</h3>
+            <h3 className="text-sm font-medium">{t("addedByYou")}</h3>
             {installs.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                You haven't added the bot to a Slack workspace.
+                {t("youHaventAddedTheBot")}
               </p>
             ) : (
               <ul className="divide-y rounded-lg border">
@@ -104,7 +107,7 @@ export function SlackBotPanel({
                       {install.teamName ?? install.teamId}
                     </span>
                     <span className="text-muted-foreground text-xs">
-                      Added {date(install.installedAt)}
+                      {t("addedValue", { value: date(install.installedAt) })}
                     </span>
                   </li>
                 ))}
@@ -113,11 +116,12 @@ export function SlackBotPanel({
           </section>
 
           <section className="space-y-2">
-            <h3 className="text-sm font-medium">Linked Slack accounts</h3>
+            <h3 className="text-sm font-medium">{t("linkedSlackAccounts")}</h3>
             {links.length === 0 ? (
               <p className="text-sm text-muted-foreground">
-                No Slack account is linked to you. Run <code>/qr link</code> in
-                Slack to link one.
+                {t.rich("noSlackAccountIsLinked", {
+                  code: (chunks) => <code>{chunks}</code>,
+                })}
               </p>
             ) : (
               <ul className="divide-y rounded-lg border">
@@ -135,9 +139,9 @@ export function SlackBotPanel({
                         </span>
                       </p>
                       <p className="text-muted-foreground text-xs">
-                        Tracked codes go to{" "}
-                        {link.workspaceName ?? "your QRdx workspace"}. Linked{" "}
-                        {date(link.linkedAt)}.
+                        {t("trackedCodesGoTo")}{" "}
+                        {link.workspaceName ?? t("yourQrdxWorkspace")}
+                        {t("linked")} {date(link.linkedAt)}.
                       </p>
                     </div>
                     <Button
@@ -147,7 +151,7 @@ export function SlackBotPanel({
                       variant="outline"
                     >
                       {busy === link.id && <Spinner className="size-3.5" />}
-                      Unlink
+                      {t("unlink")}
                     </Button>
                   </li>
                 ))}

@@ -13,6 +13,7 @@ import { ViewOnlyNotice } from "@/components/workspaces/view-only";
 import { getBarcodeFormat } from "@/lib/barcode/formats";
 import { barcodeLabel, getBarcode } from "@/lib/barcodes/service";
 import { HttpError } from "@/lib/error-response";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can } from "@/lib/permissions";
 import { workspaceHref } from "@/lib/workspace-paths";
 
@@ -27,6 +28,7 @@ export default async function BarcodePage({
 }: {
   params: Promise<{ workspace: string; id: string }>;
 }) {
+  const t = await getAppTranslations("app.dashboard.barcodes.page");
   const [scope, { workspace: slug, id }] = await Promise.all([
     requireDashboardScope(),
     params,
@@ -52,7 +54,7 @@ export default async function BarcodePage({
         <Button asChild className="-ml-2" size="sm" variant="ghost">
           <Link href={basePath}>
             <ArrowLeft />
-            All barcodes
+            {t("allBarcodes")}
           </Link>
         </Button>
         <div className="flex items-start gap-3">
@@ -61,8 +63,10 @@ export default async function BarcodePage({
               {barcodeLabel(saved)}
             </h1>
             <p className="text-muted-foreground text-sm">
-              {getBarcodeFormat(saved.format).label} · Updated{" "}
-              {formatDate(saved.updatedAt)}
+              {t("labelUpdatedUpdatedat", {
+                label: getBarcodeFormat(saved.format).label,
+                updatedAt: formatDate(saved.updatedAt),
+              })}
             </p>
           </div>
           {canWrite && (
@@ -74,10 +78,7 @@ export default async function BarcodePage({
           )}
         </div>
         {!canWrite && (
-          <ViewOnlyNotice>
-            You have view-only access: download this barcode, but it can't be
-            changed.
-          </ViewOnlyNotice>
+          <ViewOnlyNotice>{t("youHaveViewOnlyAccess")}</ViewOnlyNotice>
         )}
       </div>
       <BarcodeEditor

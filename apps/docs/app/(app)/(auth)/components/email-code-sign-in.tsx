@@ -15,12 +15,14 @@ import {
 import { Label } from "@repo/design-system/components/ui/label";
 import { Sms } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { type SsoSignInOffer, ssoSignInOffer } from "@/ee/sso/sign-in-offer";
 import { SsoOffer } from "@/ee/sso/sso-offer";
 import { pendingReferralCode } from "@/lib/affiliates/referral-client";
+import type { Translator } from "@/lib/i18n/translator";
 import type { SecondStep } from "./second-step";
 import { TwoFactorChallenge } from "./two-factor-challenge";
 
@@ -69,35 +71,38 @@ const TEXT_ACTION =
 
 type AuthError = { code?: string; status?: number } | null | undefined;
 
-function sendErrorMessage(error: NonNullable<AuthError>): string {
+function sendErrorMessage(
+  error: NonNullable<AuthError>,
+  t: Translator<"auth.emailCodeSignIn">,
+): string {
   if (error.status === 429) {
-    return "Too many codes requested. Wait a minute, then try again.";
+    return t("tooManyCodesRequestedWait");
   }
-  if (error.code === "INVALID_EMAIL") return "Enter a valid email address.";
-  return "We couldn't send a code right now. Try again, or use Google or GitHub.";
+  if (error.code === "INVALID_EMAIL") return t("enterAValidEmailAddress");
+  return t("weCouldntSendACode");
 }
 
 /** Message, and whether this code can no longer be used. */
-function verifyErrorMessage(error: NonNullable<AuthError>): [string, boolean] {
+function verifyErrorMessage(
+  error: NonNullable<AuthError>,
+  t: Translator<"auth.emailCodeSignIn">,
+): [string, boolean] {
   if (error.status === 429) {
-    return ["Too many tries. Wait a minute, then try again.", false];
+    return [t("tooManyTriesWaitA"), false];
   }
   switch (error.code) {
     case "INVALID_OTP":
-      return ["That code isn't right. Check the email and try again.", false];
+      return [t("thatCodeIsntRightCheck"), false];
     case "OTP_EXPIRED":
-      return ["That code has expired. Send a new one.", true];
+      return [t("thatCodeHasExpiredSend"), true];
     case "TOO_MANY_ATTEMPTS":
-      return ["Too many wrong tries. Send a new code.", true];
+      return [t("tooManyWrongTriesSend"), true];
     case "BANNED_USER":
-      return [
-        "This account is suspended. Contact support if you think that's a mistake.",
-        true,
-      ];
+      return [t("thisAccountIsSuspendedContact"), true];
     case SSO_REQUIRED:
       return [ssoSignInErrorMessage(SSO_REQUIRED), true];
     default:
-      return ["Something went wrong. Try again.", false];
+      return [t("somethingWentWrongTryAgain"), false];
   }
 }
 
@@ -145,6 +150,7 @@ export function EmailCodeSignIn({
   sso = null,
   onSsoOfferChange,
 }: EmailCodeSignInProps) {
+  const t = useTranslations("auth.emailCodeSignIn");
   const router = useRouter();
   const id = useId();
   const affiliates = useAvailability().has("affiliates");
@@ -214,7 +220,7 @@ export function EmailCodeSignIn({
         type: "sign-in",
       });
       if (error) {
-        setError(sendErrorMessage(error));
+        setError(sendErrorMessage(error, t));
         return;
       }
       const time = Date.now();
@@ -300,7 +306,7 @@ export function EmailCodeSignIn({
           setError("Too many wrong tries. Send a new code.");
           setCodeDead(true);
         } else {
-          const [message, dead] = verifyErrorMessage(error);
+          const [message, dead] = verifyErrorMessage(error, t);
           setError(message);
           if (dead) setCodeDead(true);
         }
@@ -359,7 +365,7 @@ export function EmailCodeSignIn({
       <div className="flex flex-col items-center gap-4 px-6 pb-6">
         <InputOTP
           aria-describedby={statusId}
-          aria-label="Sign-in code"
+          aria-label={t("signInCode")}
           autoFocus
           containerClassName="justify-center gap-3"
           disabled={codeDead}
@@ -397,10 +403,10 @@ export function EmailCodeSignIn({
           {verifying ? (
             <>
               <Spinner className="size-3.5" />
-              Checking code…
+              {t("checkingCode")}
             </>
           ) : (
-            (error ?? notice ?? "The code expires in 5 minutes.")
+            (error ?? notice ?? t("theCodeExpiresIn5"))
           )}
         </p>
 
@@ -411,7 +417,7 @@ export function EmailCodeSignIn({
             onClick={changeEmail}
             type="button"
           >
-            Use a different email
+            {t("useADifferentEmail")}
           </button>
           <button
             className={`${TEXT_ACTION} tabular-nums`}
@@ -420,10 +426,10 @@ export function EmailCodeSignIn({
             type="button"
           >
             {sending
-              ? "Sending…"
+              ? t("sending")
               : secondsLeft > 0
-                ? `Resend in ${secondsLeft}s`
-                : "Resend"}
+                ? t("resendInSecondsleftS", { secondsLeft })
+                : t("resend")}
           </button>
         </div>
       </div>
@@ -457,7 +463,7 @@ export function EmailCodeSignIn({
   return (
     <form className="grid gap-2 px-6" noValidate onSubmit={handleEmailSubmit}>
       <Label className="sr-only" htmlFor={`${id}-email`}>
-        Email address
+        {t("emailAddress")}
       </Label>
       <Input
         className="h-10 sm:h-9"
@@ -472,7 +478,7 @@ export function EmailCodeSignIn({
           setEmail(event.target.value);
           setError(null);
         }}
-        placeholder="you@example.com"
+        placeholder={t("youExampleCom")}
         ref={emailRef}
         spellCheck={false}
         type="email"
@@ -486,7 +492,7 @@ export function EmailCodeSignIn({
           variant="outline"
         >
           <Sms className="size-5" />
-          <span className="font-medium">Email me a code</span>
+          <span className="font-medium">{t("emailMeACode")}</span>
           {sending && <Spinner className="size-4" />}
         </Button>
         {lastUsed && (
@@ -494,7 +500,7 @@ export function EmailCodeSignIn({
             className="pointer-events-none absolute -top-2 right-3 px-1.5 py-0 text-[10px]"
             variant="secondary"
           >
-            Last used
+            {t("lastUsed")}
           </Badge>
         )}
       </div>

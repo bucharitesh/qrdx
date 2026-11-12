@@ -34,6 +34,7 @@ import {
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { getDomainOptions } from "@/app/(app)/dashboard/domains/_lib/domains";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can } from "@/lib/permissions";
 import { playgroundHref } from "@/lib/playground-links";
 import { getScanSparklines } from "@/lib/scans";
@@ -75,6 +76,7 @@ export async function CodesView({
   basePath: string;
   searchParams: Promise<SearchParams>;
 }) {
+  const t = await getAppTranslations("app.dashboard.codes.codesView");
   const scope = await requireDashboardScope();
   const filters = parseCodesFilters(await searchParams);
 
@@ -157,35 +159,37 @@ export async function CodesView({
                   className="mx-auto mb-2 h-28 w-40"
                   figure="CodeCard"
                 />
-                <EmptyTitle>No dynamic QR codes yet</EmptyTitle>
+                <EmptyTitle>{t("noDynamicQrCodesYet")}</EmptyTitle>
                 <EmptyDescription>
                   {canWrite
-                    ? "A dynamic code encodes a short link. Print it once and change the destination whenever you like, with scan analytics included."
-                    : "When someone in this workspace creates one, it shows up here with its scans."}
+                    ? t("aDynamicCodeEncodesA")
+                    : t("whenSomeoneInThisWorkspace")}
                 </EmptyDescription>
               </EmptyHeader>
               {canWrite && (
                 <EmptyContent>
                   <div className="flex flex-wrap justify-center gap-2">
                     <NewCodeButton usage={usage}>
-                      Create your first dynamic QR code
+                      {t("createYourFirstDynamicQr")}
                     </NewCodeButton>
                     <Button asChild variant="outline">
                       <Link href={`${basePath}/import`}>
                         <FileUp />
-                        Import from CSV
+                        {t("importFromCsv")}
                       </Link>
                     </Button>
                   </div>
                   <p className="text-muted-foreground text-xs">
-                    Or pick Dynamic for a URL code in the{" "}
-                    <Link
-                      className="underline"
-                      href={playgroundHref({ type: "url" })}
-                    >
-                      playground
-                    </Link>
-                    .
+                    {t.rich("orPickDynamicForA", {
+                      link: (chunks) => (
+                        <Link
+                          className="underline"
+                          href={playgroundHref({ type: "url" })}
+                        >
+                          {chunks}
+                        </Link>
+                      ),
+                    })}
                   </p>
                 </EmptyContent>
               )}
@@ -210,22 +214,22 @@ export async function CodesView({
                 <div className="text-muted-foreground space-y-2 rounded-xl border py-10 text-center text-sm">
                   <p>
                     {effective.status === "trash"
-                      ? "The trash is empty."
+                      ? t("theTrashIsEmpty")
                       : effective.q
-                        ? `No codes match "${effective.q}".`
+                        ? t("noCodesMatchQ", { q: effective.q })
                         : folder
-                          ? "This folder is empty. Use Move to folder on a code to add it."
+                          ? t("thisFolderIsEmptyUse")
                           : effective.status === "archived"
-                            ? "No archived codes."
+                            ? t("noArchivedCodes")
                             : isUnfiltered(effective)
                               ? canWrite
-                                ? "No active codes. Create one, or restore codes from Archived or the trash."
-                                : "No active codes."
-                              : "No codes match these filters."}
+                                ? t("noActiveCodesCreateOne")
+                                : t("noActiveCodes")
+                              : t("noCodesMatchTheseFilters")}
                   </p>
                   {!isUnfiltered(effective) && (
                     <Link className="underline" href={basePath}>
-                      Show all codes
+                      {t("showAllCodes")}
                     </Link>
                   )}
                 </div>
@@ -244,7 +248,11 @@ export async function CodesView({
               {pageCount > 1 && (
                 <div className="flex items-center justify-between gap-2 text-sm">
                   <span className="text-muted-foreground">
-                    Page {page} of {pageCount} · {formatNumber(total)} codes
+                    {t("pagePageOfPagecountTotal", {
+                      page,
+                      pageCount,
+                      total: formatNumber(total),
+                    })}
                   </span>
                   <div className="flex gap-2">
                     <Button
@@ -254,9 +262,11 @@ export async function CodesView({
                       variant="outline"
                     >
                       {page > 1 ? (
-                        <Link href={href({ page: page - 1 })}>Previous</Link>
+                        <Link href={href({ page: page - 1 })}>
+                          {t("previous")}
+                        </Link>
                       ) : (
-                        "Previous"
+                        t("previous")
                       )}
                     </Button>
                     <Button
@@ -266,9 +276,9 @@ export async function CodesView({
                       variant="outline"
                     >
                       {page < pageCount ? (
-                        <Link href={href({ page: page + 1 })}>Next</Link>
+                        <Link href={href({ page: page + 1 })}>{t("next")}</Link>
                       ) : (
-                        "Next"
+                        t("next")
                       )}
                     </Button>
                   </div>

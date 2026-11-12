@@ -11,6 +11,7 @@ import {
 } from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRotateLeft as History } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { restoreQrCodeVersion } from "@/actions/bulk-codes";
 import { useOrganizeAction } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
@@ -29,6 +30,7 @@ export function HistoryRestoreButton({
   /** Labels of the settings the restore changes back */
   undoes: string[];
 }) {
+  const t = useTranslations("app.dashboard.codes.historyRestoreButton");
   const [open, setOpen] = useState(false);
   const { run, isPending } = useOrganizeAction();
 
@@ -61,28 +63,29 @@ export function HistoryRestoreButton({
         variant="outline"
       >
         <History />
-        Restore
+        {t("restore")}
       </Button>
       <AlertDialog onOpenChange={setOpen} open={open}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Restore the version from {when}?
+              {t("restoreTheVersionFromWhen", { when })}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {undoes.length > 0 && (
-                <>This changes back: {undoes.join(", ")}. </>
+                <>{t("thisChangesBackValue", { value: undoes.join(", ") })} </>
               )}
-              Later edits to these settings are undone too. Your current
-              settings are saved in history first, so you can switch back.
+              {t("laterEditsToTheseSettings")}
               {undoes.includes(VERSION_FIELDS.domainId.label) &&
-                " The short link changes with the domain, so download the QR code again afterwards."}
+                t("theShortLinkChangesWith")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button disabled={isPending} onClick={restore}>
-              {isPending ? "Restoring..." : "Restore version"}
+              {isPending ? t("restoring") : t("restoreVersion")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

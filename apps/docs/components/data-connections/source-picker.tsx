@@ -29,6 +29,7 @@ import {
   UserSquare,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useCallback, useEffect, useId, useState } from "react";
 import { emitSound } from "@/components/editor/sound";
 import { NeedsSetupBadge } from "@/components/needs-setup";
@@ -95,6 +96,7 @@ export function SourcePickerDialog({
   onOpenChange,
   onPick,
 }: PickerDialogProps) {
+  const t = useTranslations("editor.connections.sourcePicker");
   const queryId = useId();
   const [items, setItems] = useState<SourceItem[]>([]);
   const [cursor, setCursor] = useState<string | undefined>();
@@ -168,7 +170,7 @@ export function SourcePickerDialog({
               logo={{ type: "image", src: source.logo }}
               size="sm"
             />
-            Pick from {source.name}
+            {t("pickFromName", { name: source.name })}
           </DialogTitle>
           <DialogDescription>{DESCRIPTIONS[source.slug]}</DialogDescription>
         </DialogHeader>
@@ -190,7 +192,7 @@ export function SourcePickerDialog({
                 type="submit"
                 variant="outline"
               >
-                Show
+                {t("show")}
               </Button>
             </div>
           </form>
@@ -203,16 +205,16 @@ export function SourcePickerDialog({
               className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
             />
             <Input
-              aria-label={`Search ${source.name}`}
+              aria-label={t("searchName", { name: source.name })}
               className="pr-9 pl-9"
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search"
+              placeholder={t("search")}
               type="search"
               value={search}
             />
             {search && (
               <button
-                aria-label="Clear search"
+                aria-label={t("clearSearch")}
                 className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 onClick={() => {
                   setSearch("");
@@ -244,14 +246,14 @@ export function SourcePickerDialog({
           ) : !ready ? (
             <p className="p-8 text-center text-muted-foreground text-sm text-pretty">
               {source.slug === "youtube"
-                ? "Enter your channel to see its latest videos."
-                : "Paste your profile link to see your public playlists."}
+                ? t("enterYourChannelToSee")
+                : t("pasteYourProfileLinkTo")}
             </p>
           ) : items.length === 0 && !error ? (
             <p className="p-8 text-center text-muted-foreground text-sm text-pretty">
               {activeSearch
-                ? `Nothing matches “${activeSearch}”.`
-                : `Nothing to pick in ${source.name} yet.`}
+                ? t("nothingMatchesActivesearch", { activeSearch })
+                : t("nothingToPickInName", { name: source.name })}
             </p>
           ) : (
             <ul className="flex flex-col p-1.5">
@@ -313,7 +315,7 @@ export function SourcePickerDialog({
                 variant="outline"
               >
                 {loading && <Loader2 className="size-3.5 animate-spin" />}
-                Load more
+                {t("loadMore")}
               </Button>
             </div>
           )}
@@ -342,6 +344,7 @@ export function AccountSourcePicker({
   onPick,
   label = "From your account",
 }: AccountSourcePickerProps) {
+  const t = useTranslations("editor.connections.sourcePicker");
   const state = useSources(contentType);
   const [open, setOpen] = useState<SourceStatusView | null>(null);
   if (!state) return null;
@@ -378,7 +381,7 @@ export function AccountSourcePicker({
         <p className="text-muted-foreground text-xs text-pretty">
           {hint}:{" "}
           <Link className={linkClass} href="/integrations?category=sources">
-            connect an account
+            {t("connectAnAccount")}
           </Link>
           .
         </p>
@@ -402,8 +405,8 @@ export function AccountSourcePicker({
           <UserSquare aria-hidden className="size-4" />
           {ready[0]?.needsQuery
             ? ready[0].slug === "youtube"
-              ? "From your channel"
-              : "From your playlists"
+              ? t("fromYourChannel")
+              : t("fromYourPlaylists")
             : `${label}: ${ready[0]?.name}`}
         </Button>
       ) : (
@@ -417,7 +420,7 @@ export function AccountSourcePicker({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-              Your accounts
+              {t("yourAccounts")}
             </DropdownMenuLabel>
             {ready.map((source) => (
               <DropdownMenuItem

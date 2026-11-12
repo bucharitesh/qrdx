@@ -16,6 +16,7 @@ import {
   Play,
   RefreshCircle as Retry,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { plural } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
 import { formatCount } from "@/lib/bulk-limits";
 import { type ImportJob, jobProgress } from "../_lib/job";
@@ -51,6 +52,7 @@ export function ImportProgress({
   onFinish: () => void;
   onUpgrade: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.import.importProgress");
   const progress = jobProgress(job);
   const running = job.status === "running";
   const percent = (progress.sent / Math.max(1, progress.total)) * 100;
@@ -76,23 +78,25 @@ export function ImportProgress({
       {interrupted && !running && (
         <Alert>
           <CircleAlert />
-          <AlertTitle>This import stopped when the page closed</AlertTitle>
-          <AlertDescription>
-            Resume to send the rest. Codes it already made aren't made again.
-          </AlertDescription>
+          <AlertTitle>{t("thisImportStoppedWhenThe")}</AlertTitle>
+          <AlertDescription>{t("resumeToSendTheRest")}</AlertDescription>
         </Alert>
       )}
 
       {job.stopped && job.resumeAfter && !running && (
         <Alert>
           <Clock />
-          <AlertTitle>Paused until {formatTime(job.resumeAfter)}</AlertTitle>
+          <AlertTitle>
+            {t("pausedUntilResumeafter", {
+              resumeAfter: formatTime(job.resumeAfter),
+            })}
+          </AlertTitle>
           <AlertDescription>
             <p>{job.stopped}</p>
             <p>
-              The import goes on by itself then if this page stays open, or
-              resume it after {formatTime(job.resumeAfter)}. Codes it already
-              made aren't made again.
+              {t("theImportGoesOnBy", {
+                resumeAfter: formatTime(job.resumeAfter),
+              })}
             </p>
           </AlertDescription>
         </Alert>
@@ -101,27 +105,29 @@ export function ImportProgress({
       {job.stopped && !job.resumeAfter && (
         <Alert variant="destructive">
           <CircleAlert />
-          <AlertTitle>The import stopped</AlertTitle>
+          <AlertTitle>{t("theImportStopped")}</AlertTitle>
           <AlertDescription>
             <p>{job.stopped}</p>
             <Button className="mt-2" onClick={onUpgrade} size="sm">
-              See plans
+              {t("seePlans")}
             </Button>
           </AlertDescription>
         </Alert>
       )}
 
       <div className="space-y-2">
-        <Progress aria-label="Import progress" value={percent} />
+        <Progress aria-label={t("importProgress")} value={percent} />
         <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 text-sm">
           <p className="tabular-nums">
-            {formatCount(progress.sent)} of {formatCount(progress.total)} rows
-            sent
+            {formatCount(progress.sent)} {t("of")} {formatCount(progress.total)}{" "}
+            {t("rowsSent")}
             <span className="text-muted-foreground">
               {" "}
-              · {formatCount(progress.created)} created
+              · {formatCount(progress.created)} {t("created")}
               {progress.rowErrors > 0 &&
-                ` · ${formatCount(progress.rowErrors)} with problems`}
+                t("rowerrorsWithProblems", {
+                  rowErrors: formatCount(progress.rowErrors),
+                })}
             </span>
           </p>
           <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
@@ -129,10 +135,10 @@ export function ImportProgress({
             {running
               ? waiting
                 ? waiting.reason === "retry"
-                  ? `Trying again in ${waiting.seconds} s`
-                  : `Waiting ${waiting.seconds} s for the create limit`
-                : "Importing"
-              : "Paused"}
+                  ? t("tryingAgainInSecondsS", { seconds: waiting.seconds })
+                  : t("waitingSecondsSForThe", { seconds: waiting.seconds })
+                : t("importing")
+              : t("paused")}
           </p>
         </div>
       </div>
@@ -141,11 +147,13 @@ export function ImportProgress({
         <Alert>
           <CircleAlert />
           <AlertTitle>
-            {plural(progress.failedRows, "row")} couldn't be sent
+            {t("valueCouldntBeSent", {
+              value: plural(progress.failedRows, "row"),
+            })}
           </AlertTitle>
           <AlertDescription>
-            {job.chunkErrors.find(Boolean) ?? "The request didn't go through."}{" "}
-            Retry them; nothing is made twice.
+            {job.chunkErrors.find(Boolean) ?? t("theRequestDidntGoThrough")}{" "}
+            {t("retryThemNothingIsMade")}
           </AlertDescription>
         </Alert>
       )}
@@ -154,7 +162,7 @@ export function ImportProgress({
         {running ? (
           <Button onClick={onPause} variant="outline">
             <Pause />
-            Pause
+            {t("pause")}
           </Button>
         ) : (
           <>
@@ -162,25 +170,27 @@ export function ImportProgress({
               <Button onClick={onRetryFailed}>
                 <Retry />
                 {progress.pendingChunks > 0
-                  ? "Retry and continue"
-                  : `Retry ${plural(progress.failedRows, "row")}`}
+                  ? t("retryAndContinue")
+                  : t("retryValue", {
+                      value: plural(progress.failedRows, "row"),
+                    })}
               </Button>
             ) : (
               progress.pendingChunks > 0 && (
                 <Button onClick={onResume}>
                   <Play />
-                  Resume
+                  {t("resume")}
                 </Button>
               )
             )}
             <Button onClick={onFinish} variant="ghost">
-              {progress.created > 0 ? "Finish with what's made" : "Stop"}
+              {progress.created > 0 ? t("finishWithWhatsMade") : t("stop")}
             </Button>
           </>
         )}
         {running && (
           <span className="text-muted-foreground text-xs">
-            Leaving this page pauses the import; come back to resume it.
+            {t("leavingThisPagePausesThe")}
           </span>
         )}
       </div>

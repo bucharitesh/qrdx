@@ -48,6 +48,8 @@ import { PLACEMENT_GROUPS } from "@/lib/seo-content/placements";
 import type { SeoGroup } from "@/lib/seo-content/types";
 import { type ContentRules, contentStrings } from "./content";
 import {
+  APP_NAV_CONTENT,
+  APP_NAV_RULES,
   BARCODE_CONTENT_RULES,
   EDITOR_CONTENT,
   EDITOR_CONTENT_RULES,
@@ -80,6 +82,14 @@ const withVariants = (groups: SeoGroup[]) => [
 ];
 
 export const CONTENT_SOURCES: readonly ContentSource[] = [
+  // i18n-play lane: the signed-in app's navigation (components/app-shell).
+  {
+    namespace: "appNav",
+    surface:
+      "the signed-in app's navigation: sidebar group headings and items (1 to 3 words, like menu items: 'Codes', 'Pages & forms', 'Plan & usage'), area titles and 'back to' links. Product names stay in English",
+    data: APP_NAV_CONTENT,
+    rules: APP_NAV_RULES,
+  },
   // i18n-play lane: the editor's type picker (components/editor/content-type-*).
   {
     namespace: "contentTypes",

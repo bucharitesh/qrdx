@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The barcode page's "…" menu: duplicate, move to trash.
 
@@ -26,6 +27,7 @@ export function BarcodeActions({
   basePath: string;
   canDelete: boolean;
 }) {
+  const t = useTranslations("app.dashboard.barcodes.barcodeActions");
   const router = useRouter();
   const [pending, startTransition] = useTransition();
 
@@ -37,7 +39,7 @@ export function BarcodeActions({
         toast.error(result.error.message);
         return;
       }
-      toast.success("Barcode duplicated");
+      toast.success(t("barcodeDuplicated"));
       router.push(`${basePath}/${encodeURIComponent(result.data.id)}`);
     });
 
@@ -47,14 +49,12 @@ export function BarcodeActions({
       if (!result.success || result.data.updated === 0) {
         soundEvent("error");
         toast.error(
-          result.success
-            ? "Only team owners and admins can delete barcodes created by others."
-            : result.error.message,
+          result.success ? t("onlyTeamOwnersAndAdmins") : result.error.message,
         );
         return;
       }
-      toast.success("Moved to the trash", {
-        description: "Restore it from Trash on the Barcodes page.",
+      toast.success(t("movedToTheTrash"), {
+        description: t("restoreItFromTrashOn"),
       });
       router.push(basePath);
     });
@@ -62,14 +62,14 @@ export function BarcodeActions({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button aria-label="More actions" size="icon" variant="outline">
+        <Button aria-label={t("moreActions")} size="icon" variant="outline">
           <More aria-hidden />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem disabled={pending} onSelect={duplicate}>
           <Copy aria-hidden />
-          Duplicate
+          {t("duplicate")}
         </DropdownMenuItem>
         {canDelete && (
           <>
@@ -80,7 +80,7 @@ export function BarcodeActions({
               onSelect={trash}
             >
               <Trash aria-hidden />
-              Move to trash
+              {t("moveToTrash")}
             </DropdownMenuItem>
           </>
         )}

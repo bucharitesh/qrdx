@@ -9,6 +9,7 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { getCustomDomainOptions } from "@/actions/custom-domains";
 import type {
@@ -60,6 +61,7 @@ export function DomainPicker({
   onChange: (domainId: string | null) => void;
   disabled?: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.domainPicker");
   const inWorkspace = useWorkspaceHref();
   // The cheapest plan with custom domains (lib/plans.ts), when the page knows.
   const domainPlan = useKnownCodeOptionPlans()?.upgrades.customDomains[0];
@@ -72,7 +74,7 @@ export function DomainPicker({
 
   return (
     <div className="space-y-1.5">
-      <Label htmlFor="code-domain">Short link domain</Label>
+      <Label htmlFor="code-domain">{t("shortLinkDomain")}</Label>
       <Select
         disabled={disabled}
         onValueChange={(next) => onChange(next === DEFAULT_VALUE ? null : next)}
@@ -83,7 +85,7 @@ export function DomainPicker({
         </SelectTrigger>
         <SelectContent>
           <SelectItem value={DEFAULT_VALUE}>
-            {options.defaultHost}/q/ (default)
+            {t("defaulthostQDefault", { defaultHost: options.defaultHost })}
           </SelectItem>
           {domains.map((domain) => (
             <SelectItem
@@ -100,18 +102,23 @@ export function DomainPicker({
         <p className="text-muted-foreground text-xs">
           {options.available &&
             (domainPlan
-              ? `Moving codes to a custom domain needs ${PLAN_NAMES[domainPlan]}. `
-              : "Your plan doesn't include custom domains. ")}
-          Codes keep the domain they already use.
+              ? t("movingCodesToACustom", { value: PLAN_NAMES[domainPlan] })
+              : t("yourPlanDoesntIncludeCustom"))}
+          {t("codesKeepTheDomainThey")}
         </p>
       )}
       {options.canUse && (
         <p className="text-muted-foreground text-xs">
-          Manage domains on the{" "}
-          <Link className="underline" href={inWorkspace("/settings/domains")}>
-            Domains
-          </Link>{" "}
-          page.
+          {t.rich("manageDomainsOnTheDomains", {
+            link: (chunks) => (
+              <Link
+                className="underline"
+                href={inWorkspace("/settings/domains")}
+              >
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
       )}
     </div>

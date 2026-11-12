@@ -1,3 +1,4 @@
+import { type EmailIntl, ENGLISH_EMAIL } from "@/lib/i18n/email";
 import { EmailDivider, EmailHeading, EmailLayout, EmailText } from "./layout";
 import { MutedText } from "./parts";
 import {
@@ -10,15 +11,21 @@ import {
 import { EmailCodeBox } from "./sign-in-code";
 
 export const EMAIL_CHANGE_CODE_SUBJECT = "Confirm your new email for QRdx";
+
+/** The code email's subject in the recipient's language. */
+export const emailChangeCodeSubject = (intl: EmailIntl = ENGLISH_EMAIL) =>
+  intl.t("emailChangeCode.subject");
 export const EMAIL_CHANGED_SUBJECT = "Your QRdx email was changed";
 
-const plural = (minutes: number) =>
+const _plural = (minutes: number) =>
   `${minutes} minute${minutes === 1 ? "" : "s"}`;
 
 export interface EmailChangeCodeEmailProps {
   /** The 6-digit code */
   code: string;
   expiresInMinutes?: number;
+  /** The recipient's language */
+  intl?: EmailIntl;
 }
 
 /**
@@ -28,27 +35,22 @@ export interface EmailChangeCodeEmailProps {
 export function EmailChangeCodeEmail({
   code,
   expiresInMinutes = 5,
+  intl = ENGLISH_EMAIL,
 }: EmailChangeCodeEmailProps) {
-  const expiry = plural(expiresInMinutes);
+  const { t } = intl;
   return (
     <EmailLayout
-      preview={`Enter this code to confirm your new email. It expires in ${expiry}.`}
-      reason="You got this email because someone asked to move a QRdx account to this address."
+      intl={intl}
+      preview={t("emailChangeCode.preview", { minutes: expiresInMinutes })}
+      reason={t("emailChangeCode.reason")}
     >
-      <EmailHeading>Confirm your new email</EmailHeading>
-      <EmailText>
-        Enter this code in QRdx to make this the email for your account:
-      </EmailText>
+      <EmailHeading>{t("emailChangeCode.heading")}</EmailHeading>
+      <EmailText>{t("emailChangeCode.enter")}</EmailText>
       <EmailCodeBox code={code} />
-      <EmailText>
-        The code expires in {expiry} and works once. Don't share it with anyone.
-      </EmailText>
-      <NeverAskForCode />
+      <EmailText>{t("codes.expires", { minutes: expiresInMinutes })}</EmailText>
+      <NeverAskForCode intl={intl} />
       <EmailDivider />
-      <MutedText>
-        If you didn't ask for this, ignore this email. Nothing changes without
-        the code.
-      </MutedText>
+      <MutedText>{t("emailChangeCode.ignore")}</MutedText>
     </EmailLayout>
   );
 }

@@ -10,6 +10,7 @@ import {
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { ImportWizard } from "@/app/(app)/dashboard/codes/import/_components/import-wizard";
 import { formatCount, MAX_IMPORT_ROWS } from "@/lib/bulk-limits";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { plansWith } from "@/lib/plans";
 import { workspaceHref } from "@/lib/workspace-paths";
 
@@ -23,6 +24,7 @@ export default async function ImportCodesPage({
 }: {
   params: Promise<{ workspace: string }>;
 }) {
+  const t = await getAppTranslations("app.dashboard.codes.import.page");
   const [scope, { workspace }] = await Promise.all([
     requireDashboardScope(),
     params,
@@ -35,12 +37,14 @@ export default async function ImportCodesPage({
       <Button asChild size="sm" variant="ghost">
         <Link href={codes}>
           <ArrowLeft />
-          All codes
+          {t("allCodes")}
         </Link>
       </Button>
       <PageHeader
-        description={`Create up to ${formatCount(MAX_IMPORT_ROWS)} dynamic codes from one CSV, filed into folders and tagged. Every row is checked before anything is created, and a long import can be paused and resumed.`}
-        title="Import codes from CSV"
+        description={t("createUpToMaxImport", {
+          MAX_IMPORT_ROWS: formatCount(MAX_IMPORT_ROWS),
+        })}
+        title={t("importCodesFromCsv")}
       />
       <UsageMeter usage={usage} />
       <ImportWizard

@@ -1,4 +1,5 @@
 import { Link, Section } from "react-email";
+import { type EmailIntl, ENGLISH_EMAIL } from "@/lib/i18n/email";
 import { baseUrl } from "@/lib/metadata";
 import { EmailButton, EmailText } from "./layout";
 import { DetailsTable } from "./parts";
@@ -75,12 +76,12 @@ export function ReviewSecurityButton() {
 }
 
 /** On every email that carries a code. */
-export function NeverAskForCode() {
-  return (
-    <EmailText>
-      QRdx will never ask for this code by phone, chat or email.
-    </EmailText>
-  );
+export function NeverAskForCode({
+  intl = ENGLISH_EMAIL,
+}: {
+  intl?: EmailIntl;
+}) {
+  return <EmailText>{intl.t("codes.neverAsk")}</EmailText>;
 }
 
 export function SupportLink() {

@@ -4,6 +4,7 @@
   "private": true,
   "exports": {
     "./server": "./server.ts",
+    "./sign-up-locale": "./sign-up-locale.ts",
     "./admin": "./admin.ts",
     "./admin-http": "./admin-http.ts",
     "./confirm-gate": "./confirm-gate.ts",

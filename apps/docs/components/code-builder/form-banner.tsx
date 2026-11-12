@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
+import { useTranslations } from "next-intl";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { needsUpgrade } from "./validation";
 
@@ -19,6 +20,7 @@ export function BuilderFormBanner({
   unlimitedCodesPlan: Plan | null | undefined;
   onUpgrade: (plan: Plan | null) => void;
 }) {
+  const t = useTranslations("codeBuilder.formBanner");
   if (!error) return null;
   const capPlan =
     error.code === "LIMIT_REACHED" && unlimitedCodesPlan
@@ -32,7 +34,9 @@ export function BuilderFormBanner({
       <p>{error.message}</p>
       {needsUpgrade(error.code) && (
         <Button onClick={() => onUpgrade(capPlan)} size="sm" type="button">
-          {capPlan ? `Upgrade to ${PLAN_NAMES[capPlan]}` : "Upgrade"}
+          {capPlan
+            ? t("upgradeToValue", { value: PLAN_NAMES[capPlan] })
+            : t("upgrade")}
         </Button>
       )}
     </div>

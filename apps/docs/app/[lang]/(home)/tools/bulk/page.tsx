@@ -55,7 +55,9 @@ export default async function BulkPage() {
       />
 
       <section aria-label={t("toolLabel")} className="w-full px-10 py-10">
-        <ClientMessages namespaces={["tools.bulk.generator"]}>
+        <ClientMessages
+          namespaces={["tools.bulk.generator", "editor.connections"]}
+        >
           <BulkGenerator />
         </ClientMessages>
       </section>

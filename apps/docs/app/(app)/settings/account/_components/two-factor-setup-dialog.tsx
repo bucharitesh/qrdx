@@ -27,6 +27,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Copy, FingerScan, Mobile } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { QRCode } from "qrdx";
 import { type FormEvent, useEffect, useId, useRef, useState } from "react";
 import { DialogCloseButton } from "@/components/confirm-identity/dialog-close-button";
@@ -48,6 +49,7 @@ import {
 } from "@/lib/account/passkeys";
 import type { TwoFactorResult } from "@/lib/account/two-factor-manage";
 import { groupSecret, TWO_FACTOR_MESSAGES } from "@/lib/auth/two-factor";
+import type { Translator } from "@/lib/i18n/translator";
 import {
   type AddedPasskey,
   addPasskey,
@@ -75,18 +77,19 @@ type PluginResult<T> =
 /** A server action's result in the shape the plugin's browser code expects. */
 function toPluginResult<T>(
   result: PasskeyActionResult<T> | null,
+  t: Translator<"app.settings.account.twoFactorSetupDialog">,
 ): PluginResult<T> {
   if (result === null) {
     return {
       data: null,
-      error: { code: "CONFIRMATION_CANCELLED", message: "", status: 400 },
+      error: { code: t("confirmationCancelled"), message: "", status: 400 },
     };
   }
   if (result.ok) return { data: (result as { data: T }).data, error: null };
   return {
     data: null,
     error: {
-      code: result.reason === "reauth" ? "SESSION_NOT_FRESH" : result.code,
+      code: result.reason === "reauth" ? t("sessionNotFresh") : result.code,
       message: result.error,
       status: 400,
     },
@@ -148,6 +151,7 @@ export function TwoFactorSetupDialog({
   email: string;
   onClose: () => void;
 }) {
+  const t = useTranslations("app.settings.account.twoFactorSetupDialog");
   const id = useId();
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
@@ -247,7 +251,7 @@ export function TwoFactorSetupDialog({
     const fromServer = <T,>(result: PasskeyActionResult<T> | null) => {
       if (result === null) cancelled = true;
       else if (!result.ok) serverMessage = result.error;
-      return toPluginResult(result);
+      return toPluginResult(result, t);
     };
     try {
       const { data, error: failure } = await addPasskeyWith(
@@ -279,9 +283,7 @@ export function TwoFactorSetupDialog({
       if (added.backupCodes) {
         showCodes(added.backupCodes, added.signedOutElsewhere !== false);
       } else if (added.turnOnFailed) {
-        toast.error(
-          "Passkey added, but two-step verification didn't turn on. Try Turn on again.",
-        );
+        toast.error(t("passkeyAddedButTwoStep"));
         finish();
       } else {
         finish("Passkey added");
@@ -418,41 +420,44 @@ export function TwoFactorSetupDialog({
         <DialogHeader>
           {steps.length > 1 && (
             <p className="text-muted-foreground text-xs font-medium tabular-nums">
-              Step {stepNumber} of {steps.length}
+              {t("stepStepnumberOfLength", {
+                stepNumber,
+                length: steps.length,
+              })}
             </p>
           )}
           <DialogTitle>
             {step === "choose"
-              ? "Turn on two-step verification"
+              ? t("turnOnTwoStepVerification")
               : step === "passkey"
-                ? "Add a passkey"
+                ? t("addAPasskey")
                 : step === "app"
-                  ? "Set up your authenticator app"
+                  ? t("setUpYourAuthenticatorApp")
                   : step === "existing-passkey"
-                    ? "Use your passkey"
-                    : "Save your backup codes"}
+                    ? t("useYourPasskey")
+                    : t("saveYourBackupCodes")}
           </DialogTitle>
           <DialogDescription className="text-pretty">
             {step === "choose"
-              ? "After you sign in, QRdx will also ask for this. Pick one now; you can add the other later. Turning it on signs out your other devices."
+              ? t("afterYouSignInQrdx")
               : step === "passkey"
                 ? turningOn
-                  ? "Name it so you can tell your passkeys apart. Your browser then asks where to save it. Adding it turns on two-step verification and signs out your other devices."
-                  : "Name it so you can tell your passkeys apart. Your browser then asks where to save it."
+                  ? t("nameItSoYouCan")
+                  : t("nameItSoYouCan2")
                 : step === "app"
                   ? turningOn && start === "app"
-                    ? "Scan this QR code with your authenticator app, then enter the 6-digit code it shows. This turns on two-step verification and signs out your other devices."
-                    : "Scan this QR code with your authenticator app, then enter the 6-digit code it shows."
+                    ? t("scanThisQrCodeWith")
+                    : t("scanThisQrCodeWith2")
                   : step === "existing-passkey"
-                    ? "Use one of your passkeys to turn on two-step verification. After you sign in, QRdx will ask for it. Your other devices will be signed out."
-                    : "Each code works once, if you can't use your passkey or authenticator app. Keep them somewhere safe, like a password manager. They won't be shown again."}
+                    ? t("useOneOfYourPasskeys")
+                    : t("eachCodeWorksOnceIf")}
           </DialogDescription>
         </DialogHeader>
 
         {step === "choose" && (
           <>
             <RadioGroup
-              aria-label="Method"
+              aria-label={t("method")}
               className="gap-2"
               onValueChange={(value) => setChoice(value as "passkey" | "app")}
               value={choice}
@@ -462,7 +467,7 @@ export function TwoFactorSetupDialog({
                   {
                     value: "passkey",
                     Icon: FingerScan,
-                    title: "Passkey",
+                    title: t("passkey"),
                     detail: passkeysUsable
                       ? "Touch ID, Face ID, Windows Hello or a security key."
                       : PASSKEY_MESSAGES.notSupported,
@@ -471,7 +476,7 @@ export function TwoFactorSetupDialog({
                   {
                     value: "app",
                     Icon: Mobile,
-                    title: "Authenticator app",
+                    title: t("authenticatorApp"),
                     detail: "An app that shows 6-digit codes.",
                     disabled: false,
                   },
@@ -495,7 +500,7 @@ export function TwoFactorSetupDialog({
                     <span className="flex flex-wrap items-center gap-2 text-sm font-medium">
                       {title}
                       {value === "passkey" && passkeysUsable && (
-                        <Badge variant="secondary">Recommended</Badge>
+                        <Badge variant="secondary">{t("recommended")}</Badge>
                       )}
                     </span>
                     <span className="text-muted-foreground block text-xs text-pretty">
@@ -508,7 +513,7 @@ export function TwoFactorSetupDialog({
             </RadioGroup>
             <DialogFooter>
               <Button onClick={onClose} type="button" variant="outline">
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 onClick={() =>
@@ -516,7 +521,7 @@ export function TwoFactorSetupDialog({
                 }
                 type="button"
               >
-                Continue
+                {t("continue")}
               </Button>
             </DialogFooter>
           </>
@@ -525,7 +530,7 @@ export function TwoFactorSetupDialog({
         {step === "passkey" && (
           <form className="space-y-4" onSubmit={addNewPasskey}>
             <div className="space-y-2">
-              <Label htmlFor={`${id}-name`}>Name</Label>
+              <Label htmlFor={`${id}-name`}>{t("name")}</Label>
               <Input
                 aria-describedby={`${id}-error`}
                 autoComplete="off"
@@ -542,7 +547,7 @@ export function TwoFactorSetupDialog({
             {busy && (
               <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
                 <Spinner className="size-3.5 animate-spin" />
-                Follow the prompt from your browser or device.
+                {t("followThePromptFromYour")}
               </p>
             )}
             {errorLine}
@@ -555,11 +560,11 @@ export function TwoFactorSetupDialog({
                 type="button"
                 variant="outline"
               >
-                {start === "choose" ? "Back" : "Cancel"}
+                {start === "choose" ? t("back") : t("cancel")}
               </Button>
               <Button disabled={busy} type="submit">
                 {busy && <Spinner className="animate-spin" />}
-                Continue
+                {t("continue")}
               </Button>
             </DialogFooter>
           </form>
@@ -581,16 +586,16 @@ export function TwoFactorSetupDialog({
                 </div>
                 <div className="w-full space-y-1.5">
                   <p className="text-muted-foreground text-xs">
-                    Can't scan it? Enter this key in the app instead.
+                    {t("cantScanItEnterThis")}
                   </p>
                   <div className="bg-muted/50 flex items-center gap-2 rounded-md border px-3 py-2">
                     <code className="min-w-0 flex-1 font-mono text-xs break-normal">
                       {groupSecret(setup.secret)}
                     </code>
                     <Button
-                      aria-label="Copy the key"
+                      aria-label={t("copyTheKey")}
                       className="size-10"
-                      onClick={() => copyText(setup.secret, "Key")}
+                      onClick={() => copyText(setup.secret, "Key", t)}
                       size="icon"
                       type="button"
                       variant="ghost"
@@ -601,7 +606,7 @@ export function TwoFactorSetupDialog({
                 </div>
                 <InputOTP
                   aria-describedby={`${id}-error`}
-                  aria-label="Code from your authenticator app"
+                  aria-label={t("codeFromYourAuthenticatorApp")}
                   autoComplete="one-time-code"
                   containerClassName="justify-center gap-3"
                   disabled={busy}
@@ -632,7 +637,7 @@ export function TwoFactorSetupDialog({
                   {busy ? (
                     <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
                       <Spinner className="size-3.5 animate-spin" />
-                      Checking code…
+                      {t("checkingCode")}
                     </p>
                   ) : (
                     errorLine
@@ -651,7 +656,7 @@ export function TwoFactorSetupDialog({
                       type="button"
                       variant="outline"
                     >
-                      Try again
+                      {t("tryAgain")}
                     </Button>
                   </>
                 )}
@@ -666,14 +671,14 @@ export function TwoFactorSetupDialog({
                 type="button"
                 variant="outline"
               >
-                {start === "choose" ? "Back" : "Cancel"}
+                {start === "choose" ? t("back") : t("cancel")}
               </Button>
               <Button
                 disabled={busy || !setup || code.length !== CODE_LENGTH}
                 onClick={() => void verifyApp(code)}
                 type="button"
               >
-                Verify
+                {t("verify")}
               </Button>
             </DialogFooter>
           </>
@@ -687,8 +692,8 @@ export function TwoFactorSetupDialog({
               </span>
               <p className="text-muted-foreground text-xs text-pretty">
                 {busy
-                  ? "Follow the prompt from your browser or device."
-                  : "Touch ID, Face ID, Windows Hello or a security key."}
+                  ? t("followThePromptFromYour")
+                  : t("touchIdFaceIdWindows")}
               </p>
               <Button
                 className="w-full"
@@ -697,7 +702,7 @@ export function TwoFactorSetupDialog({
                 type="button"
               >
                 {busy && <Spinner className="animate-spin" />}
-                Continue with passkey
+                {t("continueWithPasskey")}
               </Button>
               {errorLine}
             </div>
@@ -708,7 +713,7 @@ export function TwoFactorSetupDialog({
                 type="button"
                 variant="ghost"
               >
-                Use an authenticator app instead
+                {t("useAnAuthenticatorAppInstead")}
               </Button>
               <Button
                 disabled={busy}
@@ -716,7 +721,7 @@ export function TwoFactorSetupDialog({
                 type="button"
                 variant="outline"
               >
-                Cancel
+                {t("cancel")}
               </Button>
             </DialogFooter>
           </>
@@ -733,7 +738,7 @@ export function TwoFactorSetupDialog({
               )}
               role={signedOutElsewhere ? undefined : "alert"}
             >
-              Two-step verification is on.{" "}
+              {t("twoStepVerificationIsOn")}{" "}
               {signedOutElsewhere
                 ? SIGNED_OUT_ELSEWHERE
                 : NOT_SIGNED_OUT_ELSEWHERE}
@@ -756,7 +761,7 @@ export function TwoFactorSetupDialog({
                 }
                 type="button"
               >
-                Done
+                {t("done")}
               </Button>
             </DialogFooter>
           </>

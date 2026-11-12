@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The codes list as cards: what it opens first (icon, title, short link, destination), then tags, date, scans and
 // the code's menu.
@@ -28,15 +29,16 @@ import { TagChip } from "./tag-chip";
 import { useOrganizeAction } from "./use-organize-action";
 
 export function FavoriteButton({ code }: { code: QrCodeListItem }) {
+  const t = useTranslations("app.dashboard.codes.codesCards");
   const { run, isPending } = useOrganizeAction();
   // Read-only roles see the star, not a toggle (lib/permissions.ts).
   const canWrite = useCan("content.write");
   const label = code.isFavorite ? "Remove from favorites" : "Add to favorites";
   if (!canWrite) {
     return code.isFavorite ? (
-      <span className="p-0.5" title="Favorite">
+      <span className="p-0.5" title={t("favorite")}>
         <Star className="size-4 text-amber-400" variant="Bold" />
-        <span className="sr-only">Favorite</span>
+        <span className="sr-only">{t("favorite")}</span>
       </span>
     ) : null;
   }
@@ -85,6 +87,7 @@ export function DestinationIcon({
   code: Pick<QrCodeListItem, "kind" | "destinationUrl">;
   className?: string;
 }) {
+  const t = useTranslations("app.dashboard.codes.codesCards");
   const host = code.kind === "page" ? null : iconHost(code.destinationUrl);
   const [failed, setFailed] = useState(false);
   const tile = cn(
@@ -93,7 +96,7 @@ export function DestinationIcon({
   );
   if (code.kind === "page") {
     return (
-      <span className={tile} title="Hosted page">
+      <span className={tile} title={t("hostedPage")}>
         <Element2 aria-hidden className="size-4" />
       </span>
     );
@@ -133,14 +136,18 @@ export function ScansPill({
   values: number[];
   href: string;
 }) {
+  const t = useTranslations("app.dashboard.codes.codesCards");
   const recent = values.reduce((sum, value) => sum + value, 0);
   const label = `${formatNumber(code.scanCount)} ${code.scanCount === 1 ? "scan" : "scans"}`;
   return (
     <Link
-      aria-label={`${label}, ${formatNumber(recent)} in the last 7 days. Open analytics`}
+      aria-label={t("labelRecentInTheLast", {
+        label,
+        recent: formatNumber(recent),
+      })}
       className="hover:bg-muted focus-visible:ring-ring/50 inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium tabular-nums outline-none transition-colors focus-visible:ring-[3px]"
       href={href}
-      title="Scans, with the last 7 days"
+      title={t("scansWithTheLast7")}
     >
       <Chart aria-hidden className="text-muted-foreground size-3.5" />
       <span className="max-sm:hidden">{label}</span>
@@ -175,11 +182,12 @@ export function CodesCards({
   properties: CodeProperty[];
   keyboardShortcuts?: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.codesCards");
   const inWorkspace = useWorkspaceHref();
   const shows = (property: CodeProperty) => properties.includes(property);
 
   return (
-    <ul aria-label="Codes" className="space-y-2">
+    <ul aria-label={t("codes")} className="space-y-2">
       {codes.map((code) => {
         const href = inWorkspace(`/codes/${encodeURIComponent(code.id)}`);
         const inTrash = Boolean(code.deletedAt);
@@ -199,7 +207,7 @@ export function CodesCards({
             {...selection.rowProps(code.id)}
           >
             <Checkbox
-              aria-label={`Select ${title}`}
+              aria-label={t("selectTitle", { title })}
               className="max-sm:hidden"
               {...selection.checkboxProps(code.id)}
             />
@@ -234,7 +242,7 @@ export function CodesCards({
                       </span>
                       <CopyButton
                         className="size-6"
-                        successMessage={{ title: "Short link copied" }}
+                        successMessage={{ title: t("shortLinkCopied") }}
                         textToCopy={code.shortLink}
                       />
                     </span>
@@ -242,12 +250,12 @@ export function CodesCards({
                   {shows("destination") && (
                     <span className="flex min-w-0 flex-1 items-center gap-1 max-sm:hidden">
                       <ArrowRight
-                        aria-label="opens"
+                        aria-label={t("opens")}
                         className="size-3 shrink-0"
                       />
                       <span className="truncate">
                         {code.kind === "page"
-                          ? "Hosted page"
+                          ? t("hostedPage")
                           : displayUrl(code.destinationUrl)}
                       </span>
                     </span>
@@ -271,7 +279,7 @@ export function CodesCards({
             {shows("created") && (
               <span
                 className="text-muted-foreground hidden shrink-0 text-xs whitespace-nowrap md:inline"
-                title={inTrash ? "Moved to trash" : "Created"}
+                title={inTrash ? t("movedToTrash") : t("created")}
               >
                 {formatDate(inTrash ? code.deletedAt : code.createdAt)}
               </span>

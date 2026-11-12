@@ -49,6 +49,7 @@ import {
 } from "@/app/(app)/dashboard/pages/_lib/landing-pages";
 import { CopyButton } from "@/components/copy-button";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { getTemplate } from "@/lib/landing/templates";
 import { can } from "@/lib/permissions";
 import { requestWorkspaceSlug } from "@/lib/scope";
@@ -76,6 +77,7 @@ export default async function PagesPage({
     type?: string | string[];
   }>;
 }) {
+  const t = await getAppTranslations("app.dashboard.pages.page");
   const [scope, slug, cookieStore] = await Promise.all([
     requireDashboardScope(),
     requestWorkspaceSlug(),
@@ -158,11 +160,11 @@ export default async function PagesPage({
         <div className="flex items-center gap-3">
           <div className="flex min-w-0 flex-1 items-baseline gap-2">
             <h1 className="truncate text-2xl font-semibold tracking-tight">
-              All pages
+              {t("allPages")}
             </h1>
             <span className="text-muted-foreground hidden shrink-0 text-sm tabular-nums sm:inline">
               {formatNumber(allPages.length)}{" "}
-              {allPages.length === 1 ? "page" : "pages"}
+              {allPages.length === 1 ? t("page2") : t("pages2")}
             </span>
           </div>
           {canWrite && (
@@ -183,17 +185,17 @@ export default async function PagesPage({
                 className="mx-auto mb-2 aspect-square w-32"
                 figure="PageForm"
               />
-              <EmptyTitle>No pages yet</EmptyTitle>
+              <EmptyTitle>{t("noPagesYet")}</EmptyTitle>
               <EmptyDescription>
                 {canWrite
-                  ? "Build a mobile page from blocks, with no website needed. Each page gets a dynamic QR code, so you can keep editing it after printing."
-                  : "When someone in this workspace builds one, it shows up here."}
+                  ? t("buildAMobilePageFrom")
+                  : t("whenSomeoneInThisWorkspace")}
               </EmptyDescription>
             </EmptyHeader>
             {canWrite && (
               <EmptyContent>
                 <NewPageButton usage={usage}>
-                  Create your first page
+                  {t("createYourFirstPage")}
                 </NewPageButton>
               </EmptyContent>
             )}
@@ -203,7 +205,7 @@ export default async function PagesPage({
             <PagesToolbar filters={filters} types={types} />
             {rows.length === 0 ? (
               <p className="text-muted-foreground rounded-xl border py-10 text-center text-sm">
-                No pages match these filters.
+                {t("noPagesMatchTheseFilters")}
               </p>
             ) : (
               <PagesSelection
@@ -215,7 +217,7 @@ export default async function PagesPage({
                 }))}
               >
                 {display.view === "cards" ? (
-                  <ul aria-label="Pages" className="space-y-2">
+                  <ul aria-label={t("pages")} className="space-y-2">
                     {rows.map((row) => (
                       <PageRow
                         as="li"
@@ -242,8 +244,8 @@ export default async function PagesPage({
                             {row.code && row.code.status !== "active" && (
                               <Badge variant="outline">
                                 {row.code.status === "archived"
-                                  ? "Archived"
-                                  : "Disabled"}
+                                  ? t("archived")
+                                  : t("disabled")}
                               </Badge>
                             )}
                           </div>
@@ -255,12 +257,14 @@ export default async function PagesPage({
                                 </span>
                                 <CopyButton
                                   className="size-6"
-                                  successMessage={{ title: "Page link copied" }}
+                                  successMessage={{
+                                    title: t("pageLinkCopied"),
+                                  }}
                                   textToCopy={row.code.pageUrl}
                                 />
                               </span>
                             ) : (
-                              <span>No QR code links here yet</span>
+                              <span>{t("noQrCodeLinksHere")}</span>
                             )}
                             <span className="shrink-0 max-sm:hidden">
                               · {row.template?.label ?? row.page.type}
@@ -268,7 +272,9 @@ export default async function PagesPage({
                           </div>
                         </div>
                         <span className="text-muted-foreground hidden shrink-0 text-xs whitespace-nowrap md:inline">
-                          Updated {formatDate(row.page.updatedAt)}
+                          {t("updatedUpdatedat", {
+                            updatedAt: formatDate(row.page.updatedAt),
+                          })}
                         </span>
                         {row.isForm && (
                           <Button
@@ -279,13 +285,13 @@ export default async function PagesPage({
                           >
                             <Link href={`${row.href}/responses`}>
                               <MessageText aria-hidden />
-                              Responses
+                              {t("responses")}
                             </Link>
                           </Button>
                         )}
                         <span
                           className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium tabular-nums"
-                          title="All-time scans of this page's QR codes"
+                          title={t("allTimeScansOfThis")}
                         >
                           <Chart
                             aria-hidden
@@ -313,19 +319,21 @@ export default async function PagesPage({
                           <PageCheckboxCell header>
                             <PagesSelectAll />
                           </PageCheckboxCell>
-                          <TableHead>Page</TableHead>
+                          <TableHead>{t("page")}</TableHead>
                           <TableHead className="hidden sm:table-cell">
-                            Link
+                            {t("link")}
                           </TableHead>
                           <TableHead className="hidden md:table-cell">
-                            Type
+                            {t("type")}
                           </TableHead>
-                          <TableHead className="text-right">Scans</TableHead>
+                          <TableHead className="text-right">
+                            {t("scans")}
+                          </TableHead>
                           <TableHead className="hidden sm:table-cell">
-                            Updated
+                            {t("updated")}
                           </TableHead>
                           <TableHead>
-                            <span className="sr-only">Actions</span>
+                            <span className="sr-only">{t("actions")}</span>
                           </TableHead>
                         </TableRow>
                       </TableHeader>
@@ -355,7 +363,7 @@ export default async function PagesPage({
                               <span className="text-muted-foreground block max-w-[200px] truncate font-mono text-xs">
                                 {row.code
                                   ? row.code.pageUrl.replace(/^https?:\/\//, "")
-                                  : "No QR code yet"}
+                                  : t("noQrCodeYet")}
                               </span>
                             </TableCell>
                             <TableCell className="text-muted-foreground hidden md:table-cell">

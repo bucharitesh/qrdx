@@ -24,9 +24,11 @@ import {
   ArrowRotateRight as RotateCw,
 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import type { WebhookDeliveryView } from "@/lib/events/endpoints";
 import { MAX_DELIVERY_ATTEMPTS } from "@/lib/events/types";
+import type { Translator } from "@/lib/i18n/translator";
 import { CopyButton } from "../../_components/event-checkboxes";
 import { retryWebhookDelivery } from "../../_lib/actions";
 import { DELIVERY_STATUS_LABELS, formatDeliveryTime } from "../../_lib/format";
@@ -47,17 +49,22 @@ function StatusBadge({ status }: { status: WebhookDeliveryView["status"] }) {
   );
 }
 
-function detail(delivery: WebhookDeliveryView): string {
+function detail(
+  delivery: WebhookDeliveryView,
+  t: Translator<"app.dashboard.webhooks.deliveriesTable">,
+): string {
   if (delivery.status === "pending") {
     if (delivery.attempts === 0 && delivery.event === "scan.created") {
-      return "Collecting scans for this batch";
+      return t("collectingScansForThisBatch");
     }
     const next = delivery.nextAttemptAt
-      ? `next try ${formatDeliveryTime(delivery.nextAttemptAt)}`
+      ? t("nextTryNextattemptat", {
+          nextAttemptAt: formatDeliveryTime(delivery.nextAttemptAt),
+        })
       : "queued";
     return delivery.lastError ? `${delivery.lastError} · ${next}` : next;
   }
-  return delivery.lastError ?? "2xx response";
+  return delivery.lastError ?? t("n2xxResponse");
 }
 
 export function DeliveriesTable({
@@ -67,6 +74,7 @@ export function DeliveriesTable({
   deliveries: WebhookDeliveryView[];
   canRetry: boolean;
 }) {
+  const t = useTranslations("app.dashboard.webhooks.deliveriesTable");
   const router = useRouter();
   const [viewing, setViewing] = useState<WebhookDeliveryView | null>(null);
   const [retrying, setRetrying] = useState<string | null>(null);
@@ -83,10 +91,13 @@ export function DeliveriesTable({
       }
       if (result.data.ok) {
         toast.success(
-          `Delivered: HTTP ${result.data.status} in ${result.data.durationMs} ms`,
+          t("deliveredHttpStatusInDurationms", {
+            status: result.data.status ?? 0,
+            durationMs: result.data.durationMs,
+          }),
         );
       } else {
-        toast.error(`Not delivered: ${result.data.error}`);
+        toast.error(t("notDeliveredError", { error: result.data.error ?? "" }));
       }
       router.refresh();
     });
@@ -95,8 +106,7 @@ export function DeliveriesTable({
   if (deliveries.length === 0) {
     return (
       <p className="text-muted-foreground rounded-lg border border-dashed p-6 text-center text-sm">
-        No deliveries here yet. Use “Send test” on the Webhooks page to send a
-        signed ping.
+        {t("noDeliveriesHereYetUse")}
       </p>
     );
   }
@@ -109,13 +119,13 @@ export function DeliveriesTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Event</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead className="text-right">Attempts</TableHead>
-              <TableHead>Created</TableHead>
-              <TableHead className="min-w-56">Details</TableHead>
+              <TableHead>{t("event")}</TableHead>
+              <TableHead>{t("status")}</TableHead>
+              <TableHead className="text-right">{t("attempts")}</TableHead>
+              <TableHead>{t("created")}</TableHead>
+              <TableHead className="min-w-56">{t("details")}</TableHead>
               <TableHead className="text-right">
-                <span className="sr-only">Actions</span>
+                <span className="sr-only">{t("actions")}</span>
               </TableHead>
             </TableRow>
           </TableHeader>
@@ -135,12 +145,12 @@ export function DeliveriesTable({
                   {formatDeliveryTime(delivery.createdAt)}
                 </TableCell>
                 <TableCell className="text-muted-foreground max-w-80 truncate text-xs">
-                  <span title={detail(delivery)}>{detail(delivery)}</span>
+                  <span title={detail(delivery, t)}>{detail(delivery, t)}</span>
                 </TableCell>
                 <TableCell>
                   <div className="flex justify-end gap-1">
                     <Button
-                      aria-label="View payload"
+                      aria-label={t("viewPayload")}
                       onClick={() => setViewing(delivery)}
                       size="icon-sm"
                       variant="ghost"
@@ -151,16 +161,16 @@ export function DeliveriesTable({
                       <Button
                         aria-label={
                           delivery.status === "succeeded"
-                            ? "Send again"
-                            : "Retry now"
+                            ? t("sendAgain")
+                            : t("retryNow")
                         }
                         disabled={retrying === delivery.id}
                         onClick={() => retry(delivery)}
                         size="icon-sm"
                         title={
                           delivery.status === "succeeded"
-                            ? "Send again"
-                            : "Retry now"
+                            ? t("sendAgain")
+                            : t("retryNow")
                         }
                         variant="ghost"
                       >
@@ -181,10 +191,13 @@ export function DeliveriesTable({
       >
         <DialogContent className="sm:max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Payload</DialogTitle>
+            <DialogTitle>{t("payload")}</DialogTitle>
             <DialogDescription>
-              Delivery <code className="font-mono">{viewing?.id}</code> ·{" "}
-              {viewing?.event}. Sent as the raw request body.
+              {t.rich("deliveryIdEventSentAs", {
+                id: viewing?.id ?? "",
+                event: viewing?.event ?? "",
+                code: (chunks) => <code className="font-mono">{chunks}</code>,
+              })}
             </DialogDescription>
           </DialogHeader>
           <div className="relative">
@@ -193,7 +206,7 @@ export function DeliveriesTable({
             </pre>
             <CopyButton
               className="absolute top-2 right-2"
-              label="Copy payload"
+              label={t("copyPayload")}
               value={json}
             />
           </div>
