@@ -1,6 +1,6 @@
 ---
-title: "QR Code"
-description: "Un código QR con estilo y accesible, con botones de descarga. Los colores, degradados, patrones, logotipos y plantillas de marco provienen de la biblioteca qrdx."
+title: "Código QR"
+description: "Un código QR con estilo y accesible, con botones de descarga. Los colores, degradados, patrones, logos y plantillas de marco provienen de la biblioteca qrdx."
 icon: QrCode
 ---
 
@@ -22,7 +22,7 @@ import { QrCode } from "@/components/qr-code";
 <QrCode value="https://qrdx.dev" />
 ```
 
-El código se renderiza como un SVG con un nombre accesible, por lo que se ve nítido a cualquier tamaño y los lectores de pantalla anuncian a qué enlaza.
+El código se renderiza como un SVG con un nombre accesible, así que se ve nítido a cualquier tamaño y los lectores de pantalla anuncian a dónde enlaza.
 
 ## Ejemplos [#examples]
 
@@ -40,31 +40,31 @@ El código se renderiza como un SVG con un nombre accesible, por lo que se ve n�
 
 ### Degradados [#gradients]
 
-Pasa un degradado de qrdx en lugar de un color: `linear` con un `angle`, o `radial`. Los degradados se mantienen en las descargas en PNG, SVG y PDF.
+Pasa un degradado de qrdx en lugar de un color: `linear` con un `angle`, o `radial`. Los degradados se conservan en las descargas en PNG, SVG y PDF.
 
 <ComponentPreview name="qr-code-gradient" />
 
 ### Patrones [#patterns]
 
-`bodyPattern` da forma a los módulos de datos, `cornerEyePattern` a los marcos de las esquinas y `cornerEyeDotPattern` a los puntos de su interior. Consulta [patrones](/docs/features/patterns) para ver todas las formas.
+`bodyPattern` da forma a los módulos de datos, `cornerEyePattern` a los marcos de las esquinas y `cornerEyeDotPattern` a los puntos que hay dentro. Consulta [patrones](/docs/features/patterns) para ver todas las formas.
 
 <ComponentPreview name="qr-code-patterns" />
 
-### Logotipo [#logo]
+### Logo [#logo]
 
-`logo` coloca una imagen en el centro y despeja los módulos que quedan detrás. Usa el nivel de corrección de errores `H` para que el código se siga escaneando aunque esté parcialmente cubierto. Una URL de datos mantiene el logotipo en las descargas; una imagen remota necesita encabezados CORS.
+`logo` coloca una imagen en el centro y despeja los módulos que quedan detrás. Usa el nivel de corrección de errores `H` para que el código se siga escaneando aunque esté parcialmente cubierto. Una URL de datos conserva el logo en las descargas; una imagen remota necesita encabezados CORS.
 
 <ComponentPreview name="qr-code-logo" />
 
 ### Plantillas de marco [#frame-templates]
 
-`templateId` dibuja una [plantilla](/docs/features/templates) de qrdx alrededor del código. Combínalo con `caption` para añadir una llamada a la acción bajo el marco.
+`templateId` dibuja una [plantilla](/docs/features/templates) de qrdx alrededor del código. Combínalo con `caption` para añadir una llamada a la acción debajo del marco.
 
 <ComponentPreview name="qr-code-template" />
 
 ### Formatos de descarga [#download-formats]
 
-`downloadFormats` elige los botones: `png`, `jpg`, `svg` y `pdf`. La exportación a PDF requiere el paquete opcional `jspdf` (`npm install jspdf`). Pasa `[]` para ocultar los botones.
+`downloadFormats` elige los botones: `png`, `jpg`, `svg` y `pdf`. La exportación a PDF necesita el paquete opcional `jspdf` (`npm install jspdf`). Pasa `[]` para ocultar los botones.
 
 <ComponentPreview name="qr-code-downloads" />
 
@@ -72,12 +72,110 @@ Para un único menú con formatos y tamaños, usa [QR Code Download](/docs/compo
 
 ### Modo oscuro [#dark-mode]
 
-El fondo blanco predeterminado es la opción más segura en los temas oscuros: los módulos oscuros sobre un recuadro claro se escanean con todos los lectores. Para seguir el tema, establece `fgColor="currentColor"` y un fondo transparente. Entonces el código se invierte en modo oscuro, algo que las cámaras de los teléfonos leen, pero que algunos lectores antiguos no.
+El fondo blanco predeterminado es la opción más segura en temas oscuros: los módulos oscuros sobre una base clara se escanean con cualquier lector. Para seguir el tema, define `fgColor="currentColor"` y un fondo transparente. Entonces el código se invierte en modo oscuro, algo que las cámaras de los teléfonos leen pero que algunos escáneres antiguos no.
 
 <ComponentPreview name="qr-code-dark-mode" />
+
+## En una página de Next.js [#in-a-nextjs-page]
+
+`QrCode` es un Client Component (su archivo empieza con `"use client"` por los botones de descarga), así que una página Server Component puede importarlo y pasarle datos del servidor como props:
+
+```tsx title="app/menu/page.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export default function MenuPage() {
+  return (
+    <QrCode
+      value="https://example.com/menu"
+      caption="Scan to see the menu"
+      filename="menu-qr"
+    />
+  );
+}
+```
+
+El código en sí se sigue renderizando en el servidor, por lo que ya está en el HTML de la página antes de que los botones sean interactivos. Para saber más sobre cómo renderizar códigos en el App Router, consulta [Códigos QR en Next.js](/docs/nextjs).
+
+## Cualquier contenido, no solo enlaces [#any-content-not-only-links]
+
+`value` se codifica exactamente como lo pasas, así que sirve cualquier contenido QR: una red Wi-Fi, una tarjeta de contacto, `mailto:`, `tel:` o texto sin formato. Define `label` para que los lectores de pantalla anuncien lo que hace el código en lugar del contenido sin procesar, que en el caso de Wi-Fi incluye la contraseña.
+
+```tsx title="components/guest-wifi.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function GuestWifi() {
+  return (
+    <QrCode
+      value="WIFI:T:WPA;S:Cafe Guest;P:sunshine123;;"
+      label="QR code to join the Cafe Guest Wi-Fi"
+      caption="Cafe Guest Wi-Fi"
+    />
+  );
+}
+```
+
+Para construir el contenido desde un formulario, usa [Wi-Fi QR Code](/docs/components/wifi-qr-code) o [vCard QR Code](/docs/components/vcard-qr-code), que escapan los caracteres especiales por ti.
+
+## Un valor desde un campo de entrada [#a-value-from-an-input]
+
+```tsx title="components/link-qr-code.tsx"
+"use client";
+
+import { useState } from "react";
+import { QrCode } from "@/components/qr-code";
+
+export function LinkQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div className="grid justify-items-center gap-4">
+      <input
+        aria-label="Link"
+        className="w-full rounded-md border px-3 py-2"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QrCode value={value} downloadFormats={[]} /> : null}
+    </div>
+  );
+}
+```
+
+`downloadFormats={[]}` oculta los botones mientras alguien sigue escribiendo; muéstralos cuando el valor sea definitivo.
+
+## Descargas listas para imprimir [#print-ready-downloads]
+
+```tsx title="components/table-code.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function TableCode() {
+  return (
+    <QrCode
+      value="https://example.com/order?table=12"
+      level="H"
+      margin={4}
+      downloadFormats={["svg", "png", "pdf"]}
+      downloadSize={2048}
+      filename="table-12"
+    />
+  );
+}
+```
+
+- **SVG** se escala a cualquier tamaño sin perder nitidez, así que es el mejor archivo para una imprenta o una herramienta de diseño.
+- **PNG** con `downloadSize={2048}` se imprime con nitidez hasta unos 17 cm (6,8 pulgadas) de ancho a 300 píxeles por pulgada. `downloadSize` admite de 50 a 5000 píxeles.
+- **PDF** necesita el paquete opcional `jspdf` (`npm install jspdf`).
+- `filename` da nombre al archivo sin su extensión: `table-12.svg`, `table-12.png`.
+
+## Asegúrate de que se escanee [#make-sure-it-scans]
+
+- **Contraste.** Los módulos oscuros sobre un fondo claro se escanean con cualquier lector. Un código claro sobre un fondo oscuro funciona en la mayoría de las cámaras de teléfono, pero no en algunos escáneres antiguos.
+- **Zona de silencio.** `margin` es 2 módulos por defecto. Usa 4 cuando el código esté sobre una foto, un patrón o una página oscura.
+- **Logos.** Usa `level="H"` con un `logo`, para que el código resista los módulos que cubre el logo.
+- **Tamaño de impresión.** Un enlace corto escaneado desde unos 25 cm necesita un código de unos 2,5 cm de ancho; la [calculadora de tamaño de impresión](/tools/print-size) calcula el tamaño para otras distancias.
+- **Pruébalo.** Escanea el código terminado con varios teléfonos, o sube una imagen al [verificador de escaneo](/tools/scan-checker).
 
 ## Referencia de la API [#api-reference]
 
 <auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
 
-Cualquier otra prop, como `className`, se pasa al `<figure>` que envuelve el código.
+Cualquier otra prop, como `className`, se pasa al elemento `<figure>` que envuelve el código.

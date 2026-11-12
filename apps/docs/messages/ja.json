@@ -1,7 +1,7 @@
 {
   "meta": {
-    "siteTitle": "無料QRコード作成・動的QRコード対応 | QRdx",
-    "siteDescription": "ロゴ・色・パターンを使えるQRコードを、登録もウォーターマークもなしで無制限に無料作成できます。内容を編集できる動的QRコード、ホスト型ページ、スキャン解析にも対応。オープンソースです。",
+    "siteTitle": "QRdx：ロゴ入りQRコードと動的QRコードを作れる無料のQRコードジェネレーター",
+    "siteDescription": "無料のオープンソースQRコードジェネレーター。ロゴ、色、フレーム付きのコードを無制限に作成でき、登録もウォーターマークも不要です。動的QRコードとスキャン分析にも対応しています。",
     "ogImageAlt": "QRdx:動的QRコード、ホスト型ページ、スキャン解析に対応した無料のQRコード作成ツール"
   },
   "nav": {
@@ -867,7 +867,11 @@
       "bulkTitle": "何百ものコードが必要ですか？一括ジェネレーターをご利用ください",
       "bulkDescription": "CSVをアップロードすると、すべてのコードをPNG、WebP、SVGで1つのZIPファイルにまとめてダウンロードできます。生成はすべてブラウザー内で行われます。",
       "printTitle": "コードを印刷しますか？サイズを確認しましょう",
-      "printDescription": "スキャンする距離とコードに含まれるデータ量から、印刷時の最小サイズを算出できます。"
+      "printDescription": "スキャンする距離とコードに含まれるデータ量から、印刷時の最小サイズを算出できます。",
+      "hostedTitle": "編集できるページを開くコード",
+      "hostedDescription": "これらのコードは、QRdxがホストするモバイル向けページを開きます。印刷後にページを変更でき、スキャンも確認できます。無料アカウントが必要です。",
+      "menuTitle": "メニューQRコードジェネレーター",
+      "menuDescription": "価格、写真、アレルゲン、売り切れ商品を載せたメニューページです。スマートフォンから編集できます。"
     },
     "type": {
       "title": "無料の{name} QRコードジェネレーター",
@@ -879,7 +883,28 @@
       "faqTitle": "{name} QRコードのFAQ",
       "related": "関連するQRコードジェネレーター",
       "allTypes": "全{count, number}種類を見る",
-      "relatedCard": "{name} QRコード"
+      "relatedCard": "{name} QRコード",
+      "hostedCard": "{name}QRコード（ホスト型ページ）"
+    },
+    "hosted": {
+      "demo": "デモページを見る",
+      "accountNote": "無料のQRdxアカウントが必要です。フリープランにはホスト型ページが{pages, number}件含まれます。",
+      "featuresTitle": "スキャンしたときに表示される内容",
+      "editTitle": "印刷後も内容を変更できます",
+      "guarantee": "プランがどうなっても、コードは使い続けられます。これが<link>Never-Hostage保証</link>です。",
+      "plansTitle": "各プランの上限",
+      "plansCaption": "フリー、Pro、Businessプランにおける{name}ページの上限",
+      "colLimit": "上限",
+      "rowPages": "ホスト型ページ",
+      "rowDynamic": "動的QRコード",
+      "rowFile": "最大ファイルサイズ",
+      "rowStorage": "ファイル保存容量",
+      "rowBadge": "フッターの「Made with QRdx」",
+      "unlimited": "無制限",
+      "badgeShown": "表示",
+      "badgeRemoved": "非表示",
+      "plansNote": "各ページは、プランの動的QRコードを1つ使用します。上限によって止まるのは、新しいページの作成のみです。<pricing>料金を見る</pricing>か、<docs>ドキュメントを読む</docs>こともできます。",
+      "staticLink": "{name}QRコードジェネレーターを開く"
     }
   },
   "typeGenerator": {
@@ -957,6 +982,8 @@
       "dynamicLink": "動的コードを作成",
       "badgePage": "ホスト型ページ・編集可能・計測対応",
       "pageLink": "テンプレートを見る",
+      "pageGeneratorLink": "使い方を見る",
+      "guidesTitle": "ガイドとツール",
       "typesTitle": "どのQRコードを使うか",
       "typesDescription": "静的QRコードは無料でアカウントも不要ですが、印刷後に内容を変更できません。動的QRコードとホスト型ページはいつでも編集でき、スキャンをすべてカウントし、解約後もすべてのプランで使い続けられます。",
       "sizingTitle": "印刷サイズの目安",
@@ -1018,12 +1045,20 @@
       }
     },
     "bulk": {
-      "metaTitle": "CSVから作る無料のQRコード一括生成",
-      "metaDescription": "CSVファイルから最大{rows, number}個のQRコードを生成し、PNGまたはSVGでZIPにまとめてダウンロードできます。スタイルやファイル名もカスタマイズ可能。すべてブラウザー上で動作します。",
+      "metaTitle": "CSVから作れる無料の一括QRコード生成ツール：デザイン対応、SVG対応、アップロード不要",
+      "metaDescription": "CSVから最大{rows, number}個のデザイン付きQRコードを作成し、PNG、WebP、SVGでZIPにまとめてダウンロードできます。ブラウザー上で動作するので、アップロード、登録、透かしはありません。サンプルCSV付きです。",
       "crumb": "一括生成",
       "title": "QRコード一括生成",
-      "intro1": "スプレッドシートから、数百から数千のQRコードを一度に作成できます。商品ラベル、イベントのチケット、資産タグ、テーブル番号、パーソナライズしたDMなどにお使いください。CSVをアップロードして列を割り当て、スタイルを選ぶと、すべてのコードをPNG、WebP、SVGでZIPにまとめてダウンロードできます。",
-      "intro2": "すべてブラウザー上で処理されます。CSVはアップロードされず、サインアップや透かし、コードごとの課金もありません。",
+      "intro1": "CSVファイルから、好みのデザインのQRコードを一度に何千個でも作成し、PNG、WebP、SVGでZIPにまとめてダウンロードできます。1行が1つのコードに対応し、ファイル名は列から付けられます。商品ラベル、イベントチケット、資産タグ、テーブル番号、郵送物などにお使いください。",
+      "intro2": "すべてブラウザー上で動作するため、CSVがアップロードされることはなく、登録や透かし、コードごとの課金もありません。レイアウトがよくわからない場合は、サンプルCSVから始めてみてください。",
+      "facts": {
+        "rows": "1ファイルにつき最大{rows, number}行",
+        "styled": "お好みの色、形、ロゴ",
+        "svg": "印刷向けSVG",
+        "browser": "ブラウザー上で動作"
+      },
+      "cliLink": "CLIのqrdx batch",
+      "apiLink": "無料のQRコードAPI",
       "toolLabel": "QRコード一括生成",
       "howTitle": "使い方",
       "steps": {
@@ -1052,10 +1087,14 @@
         "howManyAnswer": "1ファイルにつき最大{rows, number}行です。それ以上の場合はCSVを分割するか、上限のないCLIのqrdx batchコマンドをご利用ください。512 pxのPNGはノートPCで1枚あたり約20 msなので、{rows, number}行すべてでも数分で完了します。PNGのサイズを大きくすると時間がかかり、ファイルも大きくなるため、特に必要がなければ512 pxをおすすめします。",
         "rowQuestion": "各行にはどのような内容を入れられますか？",
         "rowAnswer": "QRコードの上限までのテキストであれば何でも入力できます。リンクやプレーンテキストのほか、WIFI:...、mailto:...、tel:...、BEGIN:VCARD などのペイロードも使えます。内容はセルに入力されたとおりにエンコードされます。",
+        "excelQuestion": "ExcelやGoogleスプレッドシートのファイルは使えますか？",
+        "excelAnswer": "先にCSVとして保存してください。Excelでは［ファイル］→［名前を付けて保存］→［CSV UTF-8］を選び、Googleスプレッドシートでは［ファイル］→［ダウンロード］→［カンマ区切り形式］を選びます。区切り文字はカンマでもセミコロンでも使え、1行目には列名を入れられます。",
         "staticQuestion": "生成されるコードは静的ですか、動的ですか？",
         "staticAnswer": "静的です。各コードには行の内容がそのまま含まれ、オフラインでも動作し、有効期限はなく、印刷後に編集することはできません。編集可能でスキャン統計も確認できるコードが必要な場合は、QRdxのダッシュボードから動的QRコードを作成してください。",
         "namesQuestion": "ファイル名が重複している場合や無効な場合はどうなりますか？",
-        "namesAnswer": "ファイル名に使えない文字はハイフンに置き換えられ、重複した名前には番号が付きます（menu.png、menu-2.png）。そのため、上書きされるファイルはありません。"
+        "namesAnswer": "ファイル名に使えない文字はハイフンに置き換えられ、重複した名前には番号が付きます（menu.png、menu-2.png）。そのため、上書きされるファイルはありません。",
+        "codeQuestion": "コードから一括でQRコードを作成できますか？",
+        "codeAnswer": "はい。QRdx CLIのqrdx batchコマンドは、CSVファイルの各行に対してコードを作成します。行数の制限はありません。また、無料のQRコードAPIは、組み立てた任意のURLに対して画像を返します。キーは不要です。"
       },
       "generator": {
         "errorTooMuch": "1つのQRコードに収まらないデータ量です",
@@ -1814,11 +1853,48 @@
     "whichTitle": "どのバーコードを使えばよいですか？",
     "whichDescription": "店舗で販売する場合は、取引先が指定する種類を使います。ほとんどの地域ではEAN-13、米国とカナダではUPC-Aで、どちらもGS1発行のGTINを含みます。取引先へ出荷する場合は、カートンにITF-14、物流ラベルにGS1-128を使います。自社の物品にラベルを付ける場合は、Code 128がおすすめです。",
     "linear": "リニア",
+    "formatCard": "{name}バーコードジェネレーター",
     "printingEyebrow": "印刷",
     "tipsTitle": "確実にスキャンできるバーコードのコツ",
     "tipsDescription": "バーコードは静的なもので、数字や文字列はバーの中に含まれます。そのためオフラインでも使え、期限切れがなく、スキャン統計もありません。スマートフォンでスキャンできるリンクが必要な場合は、<generators>QRコードジェネレーター</generators>をご利用ください。バーコードを読み取るには、<scanner>スキャナー</scanner>を開いてください。",
     "credits": "バーコードは<bwip>bwip-js</bwip>（MITライセンス）で描画され、スキャン確認にはWebAssemblyにコンパイルされた<zxing>ZXing</zxing>を使用しています。初回実行時にjsDelivr CDNからダウンロードされます。",
     "faqTitle": "バーコードジェネレーターのFAQ"
+  },
+  "barcodeFormat": {
+    "toolLabel": "{name}バーコードジェネレーター",
+    "usedTitle": "{name}バーコードの使われ方",
+    "rulesTitle": "{name}の入力値とチェックデジット",
+    "rulesTitleText": "{name}に入れられるデータ",
+    "takesLabel": "必要な入力",
+    "exampleLabel": "例",
+    "checkTitle": "{body}のチェックデジットの計算",
+    "checkTitleUpce": "UPC-E {upce}はUPC-A {upca}です：チェックデジットの計算",
+    "checkCaption": "{body}の各桁と、その重みおよび積",
+    "checkDigits": "桁",
+    "checkWeights": "重み",
+    "checkProducts": "積",
+    "checkSum": "積の合計は{sum, number, ::group-off}です。{check, plural, =0 {これはすでに10の倍数なので、チェックデジットは0です。} other {#を足すと、次の10の倍数である{next, number, ::group-off}になるので、チェックデジットは#です。}}",
+    "sizeTitle": "{name}バーコードのサイズ",
+    "sizeCaption": "ジェネレーターの初期設定での{name}の例のサイズ",
+    "sizeDownload": "例をSVG、PDF、EPSで取得",
+    "sizeMm": "{width, number} × {height, number} mm",
+    "sizeModule": "モジュール（最も細いバー）",
+    "sizeCell": "セル",
+    "sizeModuleValue": "{size, number} mm",
+    "sizeBarHeight": "バーの高さ",
+    "sizeQuietZone": "クワイエットゾーン",
+    "quietModules": "各辺に{min, plural, =0 {不要} other {#モジュール以上}}。ジェネレーターの初期値は{start, number}です",
+    "quietCells": "四方に{min, plural, =0 {不要} other {#セル以上}}。ジェネレーターの初期値は{start, number}です",
+    "apiTitle": "{name}バーコードAPI",
+    "apiDescription": "同じバーコードを画像URLとして利用できます。APIキーは不要です。imgタグやラベルテンプレート、商品フィードに入れてお使いください。値はこのページと同じ方法で検証され、1つのIPアドレスにつき1分あたり300リクエストまで利用できます。すべてのオプションは<docs>バーコードAPIドキュメント</docs>をご覧ください。",
+    "apiSvg": "SVG画像",
+    "apiPng": "PNG（1モジュール3ピクセル）",
+    "apiHtml": "Webページ内",
+    "faqTitle": "{name}バーコードのFAQ",
+    "otherTitle": "その他のバーコードの種類",
+    "allFormats": "{count, number}種類のバーコードをすべて表示",
+    "otherCard": "{name}バーコードジェネレーター",
+    "qrNote": "バーコードは静的です。データはバーそのものに含まれているため、オフラインでも使え、有効期限もありません。スマートフォンのカメラでスキャンするリンクには、<generators>QRコードジェネレーター</generators>をご利用ください。"
   },
   "barcodeTool": {
     "pickColor": "{label}を選択",
@@ -1950,6 +2026,7 @@
   },
   "integrations": {
     "metaTitle": "連携",
+    "searchTitle": "QRコード連携：{first}、{second}ほか{count, number}件",
     "metaDescription": "QRdxを{names}などと連携できます。{count, number}件の連携を、正確な設定手順つきでご用意しています。",
     "hero": {
       "eyebrow": "連携",
@@ -2104,9 +2181,15 @@
     "howEyebrow": "しくみ",
     "howTitle": "3ステップで、あとは頼むだけ",
     "howDescription": "QRdxのツールはアシスタントが代わりに呼び出します。APIを直接操作する必要はありません。",
+    "setupEyebrow": "セットアップ",
+    "setupTitle": "QRdxをアプリに追加",
+    "setupDescription": "ClaudeとChatGPTでは、サーバーURLをカスタムコネクタとして追加します。Claude Code、Cursor、VS Codeでは、コマンド1つか数行の設定で追加できます。ローカルサーバーしか実行できないアプリは、mcp-remote経由で接続します。",
+    "setupUrl": "サーバーURL",
     "toolsEyebrow": "ツール",
     "toolsTitle": "アシスタントが呼び出せるツール",
     "toolsDescription": "{count, number}個のツールがあります。save_templateとsave_barcode以外は読み取り専用でキーは不要です。画像の生成、テキストの整形、公開コミュニティの閲覧ができます。詳しいパラメータは<link>MCPサーバーのドキュメント</link>をご覧ください。",
+    "toolNoKey": "キー不要",
+    "toolNeedsKey": "APIキーが必要",
     "faqTitle": "MCPサーバーのFAQ",
     "connect": {
       "copyFailed": "コピーできませんでした。テキストを選択して手動でコピーしてください。",
@@ -2206,6 +2289,149 @@
           }
         }
       }
+    }
+  },
+  "qrCodeApi": {
+    "metaTitle": "無料のQRコードAPI：キー不要、SVG・PNG・ロゴ対応",
+    "metaDescription": "キーも登録も不要の無料QRコードAPIです。URL 1つで、色や形、ロゴを指定したQRコードをSVG、PNG、WebP、EPSで取得できます。1分あたり{perMinute, number}リクエスト、キャッシュは1年間保持されます。",
+    "crumb": "QRコードAPI",
+    "title": "無料のQRコードAPI",
+    "intro1": "URLを置ける場所なら、どこにでもQRコードを配置できます。api.qrdx.devにGETリクエストを1回送るだけで画像そのものが返ります。アカウント、APIキー、SDKは不要です。色、形、誤り訂正レベル、ロゴはクエリ文字列で指定します。",
+    "intro2": "QRdx Playgroundと同じオープンソースのエンジンで描画します。同じクエリからは常に同じバイト列が返るため、レスポンスは1年間キャッシュされ、README、メール、Webページに置いた画像は、最初のリクエスト以降はキャッシュから配信されます。",
+    "facts": {
+      "noKey": "キー・登録不要",
+      "rateLimit": "IPごとに1分あたり{perMinute, number}リクエスト",
+      "formats": "SVG、PNG、WebP、EPS",
+      "openSource": "オープンソース"
+    },
+    "docs": "Image APIドキュメント",
+    "restDocs": "動的QRコード用REST API",
+    "builderEyebrow": "試してみる",
+    "builderTitle": "QRコードのURLを作成",
+    "builderDescription": "左側の項目を自由に変更してください。プレビューは実際のAPIの出力です。仕上がりに問題がなければ、URL、HTML、curlコマンドをコピーできます。",
+    "builder": {
+      "label": "QRコードAPIのURLビルダー",
+      "data": "テキストまたはURL",
+      "format": "形式",
+      "size": "サイズ",
+      "sizePixels": "{size, number} px",
+      "sizePoints": "幅 {size, number} pt",
+      "fg": "コードの色",
+      "bg": "背景",
+      "pickColor": "{label}を選択",
+      "body": "モジュールの形",
+      "level": "誤り訂正",
+      "logo": "ロゴアイコン",
+      "logoNone": "なし",
+      "logoNote": "ロゴを入れる場合、必要に応じて誤り訂正レベルHに切り替わるため、スキャンできる状態が保たれます。",
+      "previewAlt": "{value}のQRコード",
+      "epsPreview": "EPSは印刷用ファイルのため、プレビューにはSVGで同じコードを表示しています。",
+      "empty": "エンコードするテキストまたはリンクを入力してください。",
+      "tooLong": "APIの上限である{max, number}文字を超えています。",
+      "loadFailed": "プレビューを読み込めませんでした。続けて何度も変更した場合は、1分ほど待ってください。APIは1分あたり{perMinute, number}件のリクエストまで受け付けます。",
+      "url": "画像URL",
+      "html": "HTML",
+      "markdown": "Markdown",
+      "curl": "curl",
+      "open": "画像を開く"
+    },
+    "examplesEyebrow": "使用例",
+    "examplesTitle": "URLがそのまま画像になります",
+    "examplesDescription": "Markdown、imgタグ、メールテンプレートに貼り付けたり、curlでファイルをダウンロードしたりできます。データにアンパサンド、ハッシュ、プラス記号、スペースが含まれる場合は、encodeURIComponent(お使いの言語の同等の関数でも可)でエンコードしてください。",
+    "examples": {
+      "markdown": "Markdown",
+      "html": "HTML",
+      "curl": "ターミナル",
+      "js": "JavaScript"
+    },
+    "paramsEyebrow": "リファレンス",
+    "paramsTitle": "パラメータ",
+    "paramsDescription": "指定はすべてクエリ文字列で行います。グラデーション、カスタムフレーム、目ごとの色は、エディタのデザインをJSONにした style で指定します。すべてのフィールドは<link>Image APIのドキュメント</link>で確認できます。",
+    "paramsHeader": {
+      "name": "パラメータ",
+      "default": "既定値",
+      "description": "機能"
+    },
+    "paramsRequired": "必須",
+    "paramsNone": "なし",
+    "params": {
+      "data": "エンコードするテキストまたはURLです。最大{max, number}文字まで指定できます。",
+      "size": "幅と高さをピクセルで指定します({min, number}～{max, number})。EPSの場合は幅をポイントで指定します。",
+      "format": "svg、png、webp(可逆圧縮)、eps(ベクター形式、印刷用)から選べます。",
+      "colors": "コードと背景の色を、#を付けない16進数で指定します(155dfc)。bg=00000000 を指定すると背景が透明になります。",
+      "shapes": "モジュール、コーナーの目、その内側のドットの形です。モジュールの形は全部で{count, number}種類あります。",
+      "level": "誤り訂正レベルです。L(7%)、M(15%)、Q(25%)、H(30%)のうち、その割合までコードが汚れたり破損したりしてもスキャンできます。",
+      "margin": "コードの周囲の余白(クワイエットゾーン)です。モジュール単位で、0から{max, number}まで指定できます。",
+      "logoIcon": "中央に配置するロゴです。wifi、link、phoneなどのクイックアイコン、またはSimple Iconsのスラッグで指定する{brands}件のブランドロゴから選べます。",
+      "frame": "banner-bottomなどの行動喚起用フレームです。frameTextをそのラベルにします。",
+      "style": "エディタのデザイン全体をJSONで指定します。グラデーション、カスタムフレーム、目ごとの色、ロゴのレイアウトを含みます。"
+    },
+    "limitsEyebrow": "本番運用に向けて",
+    "limitsTitle": "制限、キャッシュ、プライバシー",
+    "limits": {
+      "rateTitle": "IPごとに1分あたり{perMinute, number}リクエスト",
+      "rateBody": "上限を超えると、Retry-Afterヘッダー付きの429が返されます。同じURLはキャッシュから配信されるため、同じ画像を再び表示しても上限に達することはほとんどありません。",
+      "cacheTitle": "1年間キャッシュ",
+      "cacheBody": "同じクエリなら、同じバイト列が返ります。レスポンスはCache-Control: public, max-age=31536000, immutableで送信されるため、ブラウザやCDNに保持されます。コミュニティアイテムのレンダリングは、アイテムが変更される可能性があるため5分間キャッシュされます。",
+      "corsTitle": "どのウェブサイトからでも利用可能",
+      "corsBody": "レスポンスはすべてのオリジンを許可する(Access-Control-Allow-Origin: *)ため、ブラウザ上のコードから画像を表示するだけでなく取得することもできます。",
+      "privateTitle": "機密情報はURLに含めないでください",
+      "privateBody": "データはURLの一部となるため、サーバーログ、ブラウザの履歴、キャッシュに残る可能性があります。公開READMEに書いたWi-Fiのパスワードは、公開されているのと同じです。",
+      "scanTitle": "指定どおりに描画します",
+      "scanBody": "Image APIは、デザインがスキャンできるかどうかを確認しません。コントラストをしっかり確保し、スマートフォンでテストしてください。MCPサーバーのdesign_qrツールなら、スタイルの確認と修正を行えます。",
+      "selfHostTitle": "セルフホストも可能",
+      "selfHostBody": "このAPIはオープンソースのQRdxアプリの一部なので、ご自身のインスタンスでも、お使いのドメインの/api/v1/qrで提供できます。"
+    },
+    "restEyebrow": "静的か動的か",
+    "restTitle": "代わりにREST APIが必要になるとき",
+    "restDescription": "Image APIで作成できるのは静的QRコードです。データはコード内に含まれるため、期限切れにはなりませんが、印刷後に変更することはできません。あとから転送先を変更でき、スキャン分析も使えるコードには、無料のAPIキーでREST APIをご利用ください。",
+    "imageCard": {
+      "title": "Image API",
+      "noKey": "キーもアカウントも不要",
+      "static": "静的コード:データは画像内に含まれます",
+      "formats": "SVG、PNG、WebP、EPS",
+      "limit": "IPごとに1分あたり{perMinute, number}リクエスト"
+    },
+    "restCard": {
+      "title": "REST API",
+      "key": "フリーアカウントで取得できるワークスペースのAPIキー",
+      "dynamic": "印刷後も編集できる動的コード",
+      "analytics": "スキャン分析、フォルダ、タグ、Webhook",
+      "free": "フリープランで動的QRコードを{count, number}個まで作成でき、スキャン数は無制限です"
+    },
+    "restLink": "REST APIドキュメント",
+    "quickstartLink": "APIクイックスタート",
+    "moreTitle": "コードからQRコードを作るその他の方法",
+    "more": {
+      "googleChartTitle": "Google Chart QR APIの代わりに使う",
+      "googleChartBody": "chl、chs、chldをこのAPIに対応させ、古い画像URLを1つのコマンドで変更できます。",
+      "mcpTitle": "MCPサーバー",
+      "mcpBody": "Claude、ChatGPT、Cursorにコードのデザインと生成を任せられます。キーは不要です。",
+      "barcodeTitle": "バーコードAPI",
+      "barcodeBody": "EAN-13、UPC-A、Code 128、Data Matrixなどに対応し、チェックディジット付きでURLから生成できます。",
+      "cliTitle": "CLI",
+      "cliBody": "ターミナルやCIからスタイル付きのコードを作成でき、CSVファイルの1行ごとにコードを生成できます。",
+      "reactTitle": "Reactライブラリ",
+      "reactBody": "ReactやNext.jsで、サーバー側でもクライアント側でもスタイル付きのコードを描画できます。"
+    },
+    "faqTitle": "QRコードAPIのよくある質問",
+    "faq": {
+      "freeQuestion": "APIキーなしで使える無料のQRコードAPIはありますか？",
+      "freeAnswer": "はい。GET https://api.qrdx.dev/v1/qr?data=… は、キーもアカウントも登録も不要でQRコード画像を返します。1つのIPアドレスにつき1分あたり{perMinute, number}回までリクエストでき、同一のURLは1年間キャッシュされます。",
+      "logoQuestion": "QRコードAPIでロゴを追加できますか？",
+      "logoAnswer": "はい。logoIconを使うと、クイックアイコン（Wi-Fi、リンク、電話、メールなど）や、Simple Iconsにある{brands}個のブランドロゴのいずれかを中央に配置できます。キーは不要です。ロゴの配置に必要な場合はエラー訂正レベルHに切り替わるため、スキャンできる状態が保たれます。",
+      "formatsQuestion": "どの画像形式で返されますか？",
+      "formatsAnswer": "デフォルトはSVGで、format=png、webp、epsを指定するとPNG、可逆圧縮のWebP、ベクターのEPSも選べます。サイズは{min, number}～{max, number}ピクセルです。",
+      "expireQuestion": "QRコードに有効期限はありますか？",
+      "expireAnswer": "いいえ。Image APIが作成するのは静的QRコードです。エンコードした内容がコード自体に含まれるため、中のリンクやテキストが有効な限り使えます。期限切れはなく、スキャン数のカウントも行われません。",
+      "dynamicQuestion": "印刷後にコードのリンク先を変更できますか？",
+      "dynamicAnswer": "Image APIではできません。その場合は、QRdxのダッシュボード、またはREST APIと無料のAPIキーで作成する動的QRコードが必要です。フリープランには、スキャン数無制限の動的QRコードが{count, number}個含まれています。",
+      "googleQuestion": "Google Chart QRコードAPIの代わりに使えますか？",
+      "googleAnswer": "はい。ホストとパスを変更し、chlをdata、chsをsizeに変更して（QRコードは正方形なので数値は1つです）、chldからlevelとmarginを設定してください。cht、choeなど対応していないパラメーターは無視されます。完全な対応表は移行ガイドに記載しています。",
+      "limitQuestion": "レート制限を超えるとどうなりますか？",
+      "limitAnswer": "429レスポンスが返され、Retry-Afterヘッダーで再試行できる時刻が示されます。同一のURLは1年間キャッシュされるため、アクセスの多いページに表示される画像は、通常キャッシュから配信されます。",
+      "aiQuestion": "AIアシスタントから使えますか？",
+      "aiAnswer": "はい。QRdx MCPサーバーのgenerate_qr_codeツールがこれらの画像URLを返します。MCPを使えないアシスタントでも、URLを自分でMarkdown形式の画像として書けます。"
     }
   },
   "ai": {
