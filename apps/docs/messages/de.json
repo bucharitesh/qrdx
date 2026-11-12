@@ -511,7 +511,9 @@
       "inr": "Preise in ₹ für Indien.",
       "usd": "Preise in US$.",
       "showInr": "In Indien? Preise in ₹ ansehen",
-      "showUsd": "Preise in US$ anzeigen"
+      "showUsd": "Preise in US$ anzeigen",
+      "eur": "Preise in € für die EU und den EWR.",
+      "showEur": "In der EU oder im EWR? Preise in € ansehen"
     },
     "price": {
       "forever": "für immer",
@@ -555,6 +557,13 @@
       "guide": "Self-Hosting-Anleitung"
     },
     "footnote": "Polar wickelt den Checkout als Merchant of Record ab; lokale Steuern können beim Checkout hinzukommen. Kunden in Indien zahlen in ₹, alle anderen in US$.",
+    "footnoteEur": "Polar wickelt den Checkout als Merchant of Record ab; lokale Steuern können beim Checkout hinzukommen. Kunden in Indien zahlen in ₹, Kunden in der EU und im EWR in €, alle anderen in US$.",
+    "offers": {
+      "moneyBack": "{days, number} Tage Geld-zurück-Garantie auf deine erste Zahlung.",
+      "moneyBackLink": "So funktionieren Erstattungen",
+      "nonprofit": "Non-Profit oder gemeinnützig? {percent, number} % Rabatt auf Pro und Business.",
+      "nonprofitLink": "Code anfragen"
+    },
     "values": {
       "unlimited": "Unbegrenzt",
       "days": "{count, plural, one {# Tag} other {# Tage}}",
@@ -702,6 +711,10 @@
           "question": "Was passiert, wenn ich kündige?",
           "answer": "Nichts geht kaputt. Dein Tarif bleibt bis zum Ende des bezahlten Zeitraums aktiv, danach wechselt dein Konto zu Kostenlos. Jeder dynamische QR-Code leitet weiter und jeder Scan wird weiterhin gezählt: Das ist unsere Never-Hostage-Garantie. In Kostenlos kannst du nicht mehr erstellen, als die Limits des Tarifs Kostenlos erlauben, und die Analysen zeigen die letzten 90 Tage."
         },
+        "refund": {
+          "question": "Bekomme ich mein Geld zurück?",
+          "answer": "Ja. Auf deine erste Zahlung für Pro oder Business, monatlich oder jährlich, gibt es eine Geld-zurück-Garantie von {days, number} Tagen: Schreib innerhalb von {days, number} Tagen nach der Zahlung von der E-Mail-Adresse deines Kontos an support@qrdx.dev, und wir erstatten sie dir vollständig, ohne Rückfragen. Das gilt einmal pro Kunde. Deine Codes funktionieren danach weiter im Tarif Kostenlos."
+        },
         "paymentFails": {
           "question": "Was passiert, wenn eine Zahlung fehlschlägt?",
           "answer": "Deine Codes funktionieren weiter. Wenn das Abo ausläuft, gelten für dein Konto die Limits des Tarifs Kostenlos, genau so, als hättest du gekündigt. Wegen der Abrechnung pausieren wir nie Codes, blenden keine Werbung ein und leiten deine Scanner nie auf eine QRdx-Seite um."
@@ -714,6 +727,10 @@
           "question": "Warum sehe ich Preise in ₹?",
           "answer": "Besucher aus Indien sehen die Preise in indischen Rupien: Pro kostet {proMonthly} im Monat oder {proYearly} im Jahr, Business {businessMonthly} im Monat oder {businessYearly} im Jahr. Beim Checkout werden Kunden in Indien in ₹ belastet, alle anderen in US$, unabhängig davon, in welcher Währung du die Preise gesehen hast. Mit dem Schalter über den Tarifen änderst du die angezeigte Währung."
         },
+        "currencies": {
+          "question": "Warum sehe ich Preise in ₹ oder €?",
+          "answer": "Die Preise werden in der Währung deines Landes angezeigt. In Indien kostet Pro {proMonthly} im Monat oder {proYearly} im Jahr und Business {businessMonthly} im Monat oder {businessYearly} im Jahr. In der EU und im EWR kostet Pro {proMonthlyEur} im Monat oder {proYearlyEur} im Jahr und Business {businessMonthlyEur} im Monat oder {businessYearlyEur} im Jahr. Überall sonst gilt US$. Beim Checkout wird die Währung deines Landes abgerechnet, egal in welcher Währung du gestöbert hast. Mit dem Schalter über den Tarifen änderst du die angezeigte Währung."
+        },
         "switchPlans": {
           "question": "Kann ich später den Tarif oder den Abrechnungszeitraum wechseln?",
           "answer": "Ja. Öffne in deinen Einstellungen „Abo verwalten“, um deinen Tarif im Polar-Abrechnungsportal zu ändern oder zu kündigen. Wenn du zu einem kleineren Tarif wechselst, werden bestehende Codes, Seiten oder Domains nie deaktiviert."
@@ -725,6 +742,10 @@
         "selfHost": {
           "question": "Kann ich QRdx selbst hosten?",
           "answer": "Ja. QRdx ist Open Source unter der AGPL-3.0. Betreibe es mit deiner eigenen Postgres-Datenbank, indem du der Self-Hosting-Anleitung folgst. Die Tarif-Limits sind in einer einzigen Datei definiert, die du für deine Instanz ändern kannst."
+        },
+        "nonprofit": {
+          "question": "Gibt es einen Rabatt für Non-Profit-Organisationen?",
+          "answer": "Ja. Eingetragene Non-Profit-Organisationen und gemeinnützige Einrichtungen bekommen {percent, number} % Rabatt auf Pro oder Business, monatlich oder jährlich. Erzähl uns über den Non-Profit-Link unter den Tarifen von deiner Organisation. Meist antworten wir innerhalb weniger Tage mit einem Rabattcode, den du beim Checkout eingibst."
         },
         "billing": {
           "question": "Wer kümmert sich um Abrechnung und Steuern?",
@@ -750,6 +771,23 @@
       "close": "Schließen",
       "signIn": "Melde dich an, um eine Rechnung anzufordern",
       "signInNote": "Wir stellen die Rechnung für den Workspace deines Kontos aus, also melde dich zuerst an."
+    },
+    "nonprofit": {
+      "title": "Non-Profit-Rabatt",
+      "description": "Eingetragene Non-Profit-Organisationen und gemeinnützige Einrichtungen bekommen {percent, number} % Rabatt auf Pro oder Business, monatlich oder jährlich. Erzähl uns von deiner Organisation, dann schicken wir dir per E-Mail einen Rabattcode für den Checkout.",
+      "organization": "Name der Organisation",
+      "country": "Land",
+      "registration": "Registernummer oder Link",
+      "registrationHint": "Deine Nummer in einem Register für gemeinnützige Organisationen oder ein Link zu deinem Eintrag in einem öffentlichen Register.",
+      "contactEmail": "Kontakt-E-Mail",
+      "plan": "Tarif",
+      "reply": "Meist antworten wir innerhalb weniger Tage. Bis zum Checkout wird nichts berechnet.",
+      "submit": "Anfrage senden",
+      "sending": "Wird gesendet…",
+      "sentTitle": "Anfrage gesendet",
+      "sent": "Wir antworten an {email}, meist innerhalb weniger Tage. Wenn deine Organisation infrage kommt, enthält die Antwort einen Rabattcode für den Checkout.",
+      "close": "Schließen",
+      "failed": "Etwas ist schiefgelaufen. Schreib stattdessen an {email}."
     },
     "enterprise": {
       "name": "Enterprise",
@@ -2043,6 +2081,9 @@
         "outcome": "Du erhältst mindestens 12 Monate Vorlaufzeit, Zeit, alles zu exportieren, und einen dokumentierten Weg, die Open-Source-App auf deinem eigenen Server zu betreiben."
       }
     },
+    "moneyBackTitle": "Geld-zurück-Garantie",
+    "moneyBack": "Auf deine erste Zahlung für Pro oder Business, monatlich oder jährlich, geben wir eine {days, number}-Tage-Geld-zurück-Garantie. Wenn der Tarif nicht zu dir passt, schreib innerhalb von {days, number} Tagen nach der Zahlung eine E-Mail an <mail>{email}</mail> und wir erstatten sie dir vollständig, ohne Rückfragen. Das gilt einmal pro Kunde, und danach laufen deine Codes im Tarif Kostenlos weiter.",
+    "moneyBackLink": "Rückerstattungsrichtlinie lesen",
     "exceptionTitle": "Die eine Ausnahme: Missbrauch",
     "exception": "Wir deaktivieren einen QR-Code nur, wenn er gegen unsere <terms>Nutzungsbedingungen</terms> verstößt, zum Beispiel durch einen Link auf Phishing oder Malware. Das ist eine Sicherheitsentscheidung nach einer Meldung oder Prüfung, nie eine Entscheidung wegen der Abrechnung. Jeder kann <report>einen QR-Code melden</report>.",
     "questions": "Fragen zur Garantie? Schreib uns an <mail>{email}</mail>. Zuletzt aktualisiert am <time>{date, date, long}</time>."

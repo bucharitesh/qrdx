@@ -163,6 +163,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 | 링크 안전성 (Google Web Risk) | `WEB_RISK_API_KEY` | 대상 주소를 오프라인 규칙으로만 검사해요. [코드 제어](/docs/code-controls)를 참고하세요 |
 | 폼 스팸 검사 (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | 폼은 내장된 허니팟과 요청 제한에 의존해요 |
 | 결제 (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | 업그레이드가 작동하지 않고(제품 ID가 없는 플랜은 "Coming soon"으로 표시돼요), 모든 계정이 무료 한도를 사용해요 |
+| 유로 가격 | `NEXT_PUBLIC_QRDX_EUR_PRICES=1`. 위의 모든 상품에 Polar에서 EUR 가격을 추가한 뒤에만 설정하세요 | EU 및 EEA 방문자에게도 US$ 가격이 표시되고 US$로 결제됩니다 |
 | 제휴 프로그램 | 없음: qrdx.dev에서만 운영돼요 | 꺼져 있어요. QRdx의 제휴 프로그램과 [약관](/legal/affiliate-terms)은 qrdx.dev를 위해 작성되었으므로, 자체 호스팅 사본에는 **/affiliates** 페이지, 신청, **Settings** → **Affiliate program**이 없고 추천 링크는 홈 페이지로 이동해요. |
 | Dub 단축 링크 | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Dub 연동을 연결할 수 없어요 |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | Google Drive 연동을 연결할 수 없어요 |
