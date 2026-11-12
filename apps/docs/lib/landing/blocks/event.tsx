@@ -6,6 +6,7 @@ import {
   Profile as UserRound,
   Video,
 } from "iconsax-reactjs";
+import { useLocale, useTranslations } from "next-intl";
 import type { ReactNode } from "react";
 import {
   buttonClass,
@@ -59,8 +60,10 @@ export function EventBlock({
   props,
   context,
 }: BlockRenderProps<EventProps>) {
+  const t = useTranslations("scanPages.hosted.event");
+  const locale = useLocale();
   const calendar = toCalendarEvent(props);
-  const display = formatEventDisplay(calendar);
+  const display = formatEventDisplay(calendar, { locale, allDay: t("allDay") });
   const over = isEventOver(calendar);
   const titleId = `${id}-title`;
   const place = [props.venue, props.address].filter(Boolean).join(", ");
@@ -93,7 +96,7 @@ export function EventBlock({
             <time dateTime={display.iso}>{display.date}</time>
           </p>
           <p className={cn(mutedTextClass, "text-sm")}>{display.time}</p>
-          {over && <p className="text-sm font-medium">This event has ended.</p>}
+          {over && <p className="text-sm font-medium">{t("ended")}</p>}
         </div>
       </div>
 
@@ -111,7 +114,7 @@ export function EventBlock({
               className={linkClass}
               {...linkProps(mapSearchUrl(place), id, "map")}
             >
-              Open in Maps
+              {t("openInMaps")}
             </a>
           </Detail>
         )}
@@ -121,26 +124,28 @@ export function EventBlock({
               className={linkClass}
               {...linkProps(props.onlineUrl, id, "online")}
             >
-              Join online
+              {t("joinOnline")}
             </a>
           </Detail>
         )}
         {(props.organizer || props.organizerEmail) && (
           <Detail icon={UserRound}>
             <p>
-              Hosted by{" "}
-              {props.organizerUrl ? (
-                <a
-                  className={linkClass}
-                  {...linkProps(props.organizerUrl, id, "organizer")}
-                >
-                  {props.organizer || props.organizerUrl}
-                </a>
-              ) : (
-                <span className="font-medium">
-                  {props.organizer || props.organizerEmail}
-                </span>
-              )}
+              {t.rich("hostedBy", {
+                organizer: () =>
+                  props.organizerUrl ? (
+                    <a
+                      className={linkClass}
+                      {...linkProps(props.organizerUrl, id, "organizer")}
+                    >
+                      {props.organizer || props.organizerUrl}
+                    </a>
+                  ) : (
+                    <span className="font-medium">
+                      {props.organizer || props.organizerEmail}
+                    </span>
+                  ),
+              })}
             </p>
             {props.organizerEmail && (
               <a className={linkClass} href={mailHref(props.organizerEmail)}>
@@ -166,7 +171,7 @@ export function EventBlock({
               )}
             >
               <CalendarPlus aria-hidden="true" className="size-4" />
-              Add to calendar
+              {t("addToCalendar")}
             </summary>
             <ul className="mt-2 grid gap-1 rounded-(--lp-radius) border border-(--lp-fg)/10 bg-(--lp-bg) p-1.5">
               <li>

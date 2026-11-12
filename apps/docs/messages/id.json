@@ -1435,6 +1435,280 @@
       "report": "Laporkan kode ini"
     }
   },
+  "scanPages": {
+    "reportAbuse": "Laporkan penyalahgunaan",
+    "privacy": "Privasi",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "Buat kode QR Anda sendiri dengan QRdx",
+      "inactive": {
+        "title": "Kode QR ini sudah tidak aktif",
+        "message": "Kode ini telah dinonaktifkan dan tidak lagi mengarah ke mana pun."
+      },
+      "notFound": {
+        "title": "Kode QR tidak ditemukan",
+        "message": "Tautan ini tidak mengarah ke kode QR. Pemiliknya mungkin telah menghapusnya, atau tautannya salah ketik."
+      },
+      "rateLimited": {
+        "title": "Terlalu banyak permintaan",
+        "message": "Jaringan ini membuka banyak kode QR dalam waktu singkat. Silakan coba lagi dalam beberapa detik."
+      },
+      "invalidGs1": {
+        "title": "Tautan produk ini tidak valid",
+        "message": "Nomor produk (GTIN) atau detail batch-nya tidak dapat dibaca. Periksa tautannya, atau lakukan pemindaian ulang kode pada kemasan."
+      },
+      "unavailable": {
+        "title": "Terjadi kesalahan",
+        "message": "Kami tidak dapat membuka kode QR ini saat ini. Silakan pindai lagi sebentar lagi."
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "Kampanye ini belum dimulai",
+        "message": "Silakan pindai kode ini lagi nanti."
+      },
+      "expired": {
+        "title": "Kampanye ini telah berakhir",
+        "message": "Halaman di balik kode QR ini sudah tidak tersedia."
+      },
+      "paused": {
+        "title": "Kampanye ini dijeda",
+        "message": "Halaman di balik kode QR ini sedang tidak tersedia."
+      }
+    },
+    "password": {
+      "title": "Kode QR ini dilindungi kata sandi",
+      "intro": "Masukkan kata sandi yang diberikan kepada Anda untuk melanjutkan.",
+      "label": "Kata sandi",
+      "submit": "Lanjutkan",
+      "missing": "Masukkan kata sandi.",
+      "wrong": "Kata sandi tidak benar. Silakan coba lagi.",
+      "tooManyAttempts": "Terlalu banyak percobaan. Harap tunggu beberapa menit lalu coba lagi."
+    },
+    "location": {
+      "title": "Bagikan lokasi Anda?",
+      "body": "Pemilik kode QR ini ingin melihat perkiraan lokasi pemindaian. Browser Anda akan bertanya terlebih dahulu, dan lokasi dibulatkan hingga sekitar 100 m.",
+      "allow": "Izinkan",
+      "skip": "Lewati",
+      "continueTo": "Anda tetap akan diarahkan ke {host}.",
+      "waiting": "Menunggu browser Anda…",
+      "opening": "Terima kasih. Membuka halaman…",
+      "locating": "Mendapatkan lokasi Anda…"
+    },
+    "hosted": {
+      "notFoundTitle": "Halaman tidak ditemukan",
+      "notFoundMessage": "Tautan ini tidak mengarah ke halaman mana pun. Pemiliknya mungkin telah menghapusnya, atau tautannya salah ketik.",
+      "passwordProtected": "Dilindungi kata sandi",
+      "madeWithQrdx": "Dibuat dengan QRdx",
+      "share": "Bagikan",
+      "linkCopied": "Tautan disalin",
+      "copyThisLink": "Salin tautan ini",
+      "details": "Detail",
+      "links": "Tautan",
+      "socialProfiles": "Profil sosial",
+      "mapOf": "Peta {place}",
+      "hours": {
+        "openingHours": "Jam buka",
+        "openUntil": "Buka · hingga {time}",
+        "closedOpens": "Tutup · buka {day} {time}",
+        "closed": "Tutup"
+      },
+      "contact": {
+        "contact": "Kontak",
+        "call": "Telepon",
+        "email": "Email",
+        "website": "Situs web",
+        "directions": "Petunjuk arah",
+        "address": "Alamat",
+        "saveContact": "Simpan kontak",
+        "phoneTypes": {
+          "mobile": "Seluler",
+          "work": "Kantor",
+          "home": "Rumah",
+          "fax": "Faks",
+          "other": "Telepon"
+        },
+        "emailTypes": {
+          "work": "Kantor",
+          "home": "Pribadi",
+          "other": "Email"
+        }
+      },
+      "event": {
+        "ended": "Acara ini telah berakhir.",
+        "allDay": "Sepanjang hari",
+        "openInMaps": "Buka di Maps",
+        "joinOnline": "Gabung online",
+        "hostedBy": "Diselenggarakan oleh <organizer></organizer>",
+        "addToCalendar": "Tambah ke kalender"
+      },
+      "coupon": {
+        "coupon": "Kupon",
+        "code": "Kode:",
+        "copyCode": "Salin kode kupon",
+        "copy": "Salin",
+        "copied": "Tersalin",
+        "expired": "Kupon ini telah kedaluwarsa.",
+        "notYet": "Kupon ini belum dapat ditukarkan.",
+        "terms": "Syarat dan ketentuan",
+        "expiredOn": "Kedaluwarsa pada {date}",
+        "validRange": "Berlaku {from} – {until}",
+        "validFrom": "Berlaku mulai {date}",
+        "validUntil": "Berlaku hingga {date}",
+        "redeemed": "Ditukarkan {time}",
+        "instructions": "Tunjukkan layar ini kepada staf, lalu ketuk <strong>Tukarkan sekarang</strong>.",
+        "cancel": "Batal",
+        "redeemNow": "Tukarkan sekarang",
+        "redeem": "Tukarkan kupon"
+      },
+      "wifi": {
+        "network": "Jaringan",
+        "networkHidden": "Jaringan (tersembunyi)",
+        "password": "Kata sandi",
+        "noPassword": "Tidak ada, langsung sambung",
+        "copyNetwork": "Salin nama jaringan",
+        "copyPassword": "Salin kata sandi"
+      },
+      "payment": {
+        "types": {
+          "bank": "Transfer bank",
+          "other": "Lainnya"
+        },
+        "actions": {
+          "pay": "Bayar",
+          "donate": "Donasi",
+          "tip": "Tip"
+        },
+        "actionsWith": {
+          "pay": "Bayar dengan {method}",
+          "donate": "Donasi dengan {method}",
+          "tip": "Tip dengan {method}"
+        },
+        "copyLine": "Salin {label}"
+      },
+      "files": {
+        "downloads": "Unduhan",
+        "fileNumber": "File {number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "Gambar",
+          "audio": "Audio",
+          "video": "Video",
+          "file": "File"
+        },
+        "opensInNewTab": "{kind} · dibuka di tab baru",
+        "open": "Buka",
+        "download": "Unduh",
+        "pdfDocument": "Dokumen PDF",
+        "openPdf": "Buka PDF"
+      },
+      "media": {
+        "download": "Unduh {title}",
+        "play": "Putar {title}",
+        "trackUnavailable": "Lagu ini tidak tersedia.",
+        "playlist": "Playlist",
+        "unavailable": "Tidak tersedia",
+        "video": "Video",
+        "videoUnavailable": "Video tidak tersedia",
+        "providerVideo": "Video {provider}",
+        "playVideo": "Putar video",
+        "playVideoTitle": "Putar video: {title}",
+        "playsFrom": "Diputar dari {provider}"
+      },
+      "gallery": {
+        "openPhoto": "Buka foto {number} dari {total}",
+        "openPhotoAlt": "Buka foto {number} dari {total}: {alt}",
+        "photoOf": "Foto {number} dari {total}",
+        "viewer": "Penampil foto",
+        "close": "Tutup",
+        "previous": "Foto sebelumnya",
+        "next": "Foto berikutnya",
+        "imageUnavailable": "Gambar tidak tersedia"
+      },
+      "apps": {
+        "getTheApp": "Dapatkan aplikasi",
+        "appStore": "Unduh di App Store",
+        "googlePlay": "Dapatkan di Google Play",
+        "openInBrowser": "Buka di browser Anda"
+      },
+      "menu": {
+        "menu": "Menu",
+        "sections": "Bagian menu",
+        "soldOut": "Habis",
+        "dietary": "Informasi diet",
+        "aboutDish": "Tentang hidangan ini",
+        "contains": "<label>Mengandung:</label> {list}",
+        "diet": {
+          "vegetarian": "Vegetarian",
+          "vegan": "Vegan",
+          "gluten-free": "Bebas gluten",
+          "dairy-free": "Bebas susu",
+          "halal": "Halal",
+          "kosher": "Kosher",
+          "spicy": "Pedas",
+          "organic": "Organik"
+        },
+        "allergens": {
+          "gluten": "Gluten",
+          "crustaceans": "Krustasea",
+          "eggs": "Telur",
+          "fish": "Ikan",
+          "peanuts": "Kacang tanah",
+          "soy": "Kedelai",
+          "milk": "Susu",
+          "nuts": "Kacang pohon",
+          "celery": "Seledri",
+          "mustard": "Mustard",
+          "sesame": "Wijen",
+          "sulphites": "Sulfit",
+          "lupin": "Lupin",
+          "molluscs": "Moluska"
+        }
+      },
+      "product": {
+        "details": "Detail produk",
+        "certifications": "Sertifikasi",
+        "ingredients": "Bahan",
+        "allergens": "Alergen",
+        "nutrition": "Nutrisi",
+        "nutritionPer": "Nutrisi, {basis}"
+      },
+      "reviews": {
+        "reviews": "Ulasan",
+        "leaveReview": "Tulis ulasan",
+        "reviewUsOn": "Ulas kami di {platform}"
+      },
+      "form": {
+        "form": "Formulir",
+        "send": "Kirim",
+        "thanks": "Terima kasih! Jawaban Anda telah terkirim.",
+        "starsOf": "{score} dari {max} bintang",
+        "sending": "Mengirim…",
+        "answerOne": "Jawab setidaknya satu pertanyaan sebelum mengirim.",
+        "preview": "Ini adalah pratinjau. Jawaban dikumpulkan di halaman yang dipublikasikan.",
+        "securityCheck": "Harap selesaikan pemeriksaan keamanan di atas, lalu kirim lagi.",
+        "tooMany": "Terlalu banyak jawaban dari perangkat ini. Harap tunggu satu menit lalu coba lagi.",
+        "couldntSend": "Jawaban Anda tidak dapat dikirim. Silakan coba lagi.",
+        "offline": "Anda sepertinya sedang offline. Jawaban Anda masih tersimpan di sini; coba lagi sebentar lagi.",
+        "demo": "Demo: tidak ada yang dikirim.",
+        "honeypot": "Biarkan kolom ini kosong",
+        "closed": "Formulir ini sedang tidak menerima jawaban. Silakan coba lagi nanti.",
+        "errors": {
+          "required": "Kolom ini wajib diisi",
+          "consentRequired": "Centang kotak ini untuk melanjutkan",
+          "enterText": "Masukkan teks",
+          "tooLong": "Maksimal {max} karakter",
+          "email": "Masukkan alamat email yang valid",
+          "phone": "Masukkan nomor telepon yang valid",
+          "stars": "Pilih 1 sampai {max} bintang",
+          "nps": "Pilih skor dari 0 sampai 10",
+          "choices": "Pilih dari opsi yang tersedia",
+          "choice": "Pilih salah satu opsi",
+          "invalid": "Nilai tidak valid"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "Pembuat Barcode Gratis: EAN-13, UPC, Code 128",
     "metaDescription": "Buat EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix, dan lainnya: {count, number} jenis barcode dengan digit pemeriksa yang dihitung otomatis untuk Anda. PNG, JPG, SVG, PDF, dan EPS. Gratis, tanpa daftar.",

@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight, Link2 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   buttonClass,
@@ -222,6 +223,7 @@ function LinkRows({ id, props }: { id: string; props: LinksProps }) {
 }
 
 function LinksBlock({ id, props, context }: BlockRenderProps<LinksProps>) {
+  const t = useTranslations("scanPages.hosted");
   if (props.items.length === 0) return null;
   const shape = buttonShapeClass(context.theme);
   const list =
@@ -231,7 +233,7 @@ function LinksBlock({ id, props, context }: BlockRenderProps<LinksProps>) {
       <LinkRows id={id} props={props} />
     ) : null;
   return (
-    <nav aria-label={props.title || "Links"} className="space-y-3">
+    <nav aria-label={props.title || t("links")} className="space-y-3">
       {props.title && (
         <LpHeading
           as="h2"

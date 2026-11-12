@@ -15,6 +15,7 @@ import {
   useRef,
   useState,
 } from "react";
+import { fillText } from "@/components/landing/fill-text";
 
 export interface GalleryGridImage {
   id: string;
@@ -35,8 +36,10 @@ function Thumbnail({
   image,
   shape,
   lead,
+  unavailableLabel,
 }: {
   image: GalleryGridImage;
+  unavailableLabel: string;
   shape: "square" | "original";
   /** In the page's lead row: "high" loads eagerly and first, "eager" eagerly. */
   lead?: "high" | "eager";
@@ -54,7 +57,7 @@ function Thumbnail({
     return (
       <span className="flex aspect-square w-full flex-col items-center justify-center gap-1 bg-(--lp-muted) text-(--lp-muted-fg) text-xs">
         <ImageOff aria-hidden="true" className="size-5" />
-        Image unavailable
+        {unavailableLabel}
       </span>
     );
   }
@@ -80,14 +83,31 @@ function Thumbnail({
  * (focus trap, Esc to close, arrow keys and swipe to browse, focus returns
  * to the photo).
  */
+/** The viewer's words, translated by the block ("{number}" templates). */
+export interface GalleryText {
+  /** "Open photo {number} of {total}" */
+  openPhoto: string;
+  /** "Open photo {number} of {total}: {alt}" */
+  openPhotoAlt: string;
+  /** "Photo {number} of {total}" */
+  photoOf: string;
+  viewer: string;
+  close: string;
+  previous: string;
+  next: string;
+  imageUnavailable: string;
+}
+
 export function GalleryGrid({
   images,
   columns,
   shape,
   blockId,
   leadImage = false,
+  text,
 }: {
   images: GalleryGridImage[];
+  text: GalleryText;
   columns: 1 | 2 | 3;
   shape: "square" | "original";
   blockId: string;
@@ -162,7 +182,14 @@ export function GalleryGrid({
         {images.map((image, i) => (
           <li key={image.id}>
             <button
-              aria-label={`Open photo ${i + 1} of ${images.length}${image.alt ? `: ${image.alt}` : ""}`}
+              aria-label={fillText(
+                image.alt ? text.openPhotoAlt : text.openPhoto,
+                {
+                  number: i + 1,
+                  total: images.length,
+                  alt: image.alt,
+                },
+              )}
               className="block w-full overflow-hidden rounded-(--lp-radius) focus-visible:outline-2 focus-visible:outline-(--lp-primary) focus-visible:outline-offset-2"
               data-lp-block={blockId}
               data-lp-target={`photo-${i + 1}`}
@@ -182,6 +209,7 @@ export function GalleryGrid({
                       : "eager"
                 }
                 shape={shape}
+                unavailableLabel={text.imageUnavailable}
               />
             </button>
             {image.caption && columns === 1 && (
@@ -196,8 +224,11 @@ export function GalleryGrid({
       <dialog
         aria-label={
           current
-            ? `Photo ${(index ?? 0) + 1} of ${images.length}`
-            : "Photo viewer"
+            ? fillText(text.photoOf, {
+                number: (index ?? 0) + 1,
+                total: images.length,
+              })
+            : text.viewer
         }
         className="fixed inset-0 m-0 h-dvh max-h-none w-screen max-w-none border-0 bg-black/95 p-0 text-white backdrop:bg-black/60 open:flex open:flex-col"
         onClick={(event) => {
@@ -219,7 +250,7 @@ export function GalleryGrid({
             {current && many ? `${(index ?? 0) + 1} / ${images.length}` : ""}
           </span>
           <button
-            aria-label="Close"
+            aria-label={text.close}
             className="flex size-11 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 focus-visible:outline-2 focus-visible:outline-white"
             onClick={close}
             type="button"
@@ -243,7 +274,7 @@ export function GalleryGrid({
           {many && (
             <>
               <button
-                aria-label="Previous photo"
+                aria-label={text.previous}
                 className="-translate-y-1/2 absolute top-1/2 left-2 flex size-11 items-center justify-center rounded-full bg-black/50 hover:bg-black/70 focus-visible:outline-2 focus-visible:outline-white"
                 onClick={() => step(-1)}
                 type="button"
@@ -251,7 +282,7 @@ export function GalleryGrid({
                 <ChevronLeft aria-hidden="true" className="size-6" />
               </button>
               <button
-                aria-label="Next photo"
+                aria-label={text.next}
                 className="-translate-y-1/2 absolute top-1/2 right-2 flex size-11 items-center justify-center rounded-full bg-black/50 hover:bg-black/70 focus-visible:outline-2 focus-visible:outline-white"
                 onClick={() => step(1)}
                 type="button"

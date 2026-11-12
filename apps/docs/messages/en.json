@@ -1580,6 +1580,280 @@
       "report": "Report this code"
     }
   },
+  "scanPages": {
+    "reportAbuse": "Report abuse",
+    "privacy": "Privacy",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "Make your own QR code with QRdx",
+      "inactive": {
+        "title": "This QR code is no longer active",
+        "message": "This code has been turned off and no longer leads anywhere."
+      },
+      "notFound": {
+        "title": "QR code not found",
+        "message": "This link doesn't lead to a QR code. Its owner may have removed it, or the link was mistyped."
+      },
+      "rateLimited": {
+        "title": "Too many requests",
+        "message": "This network opened a lot of QR codes in a short time. Please try again in a few seconds."
+      },
+      "invalidGs1": {
+        "title": "This product link isn't valid",
+        "message": "Its product number (GTIN) or batch details can't be read. Check the link, or scan the code on the pack again."
+      },
+      "unavailable": {
+        "title": "Something went wrong",
+        "message": "We couldn't open this QR code right now. Please scan it again in a moment."
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "This campaign hasn't started yet",
+        "message": "Please scan this code again later."
+      },
+      "expired": {
+        "title": "This campaign has ended",
+        "message": "The page behind this QR code is no longer available."
+      },
+      "paused": {
+        "title": "This campaign is paused",
+        "message": "The page behind this QR code isn't available right now."
+      }
+    },
+    "password": {
+      "title": "This QR code is password protected",
+      "intro": "Enter the password you were given to continue.",
+      "label": "Password",
+      "submit": "Continue",
+      "missing": "Enter the password.",
+      "wrong": "That password isn't right. Please try again.",
+      "tooManyAttempts": "Too many attempts. Please wait a few minutes and try again."
+    },
+    "location": {
+      "title": "Share your location?",
+      "body": "The owner of this QR code would like to see roughly where it's scanned. Your browser asks you first, and the location is rounded to about 100 m.",
+      "allow": "Allow",
+      "skip": "Skip",
+      "continueTo": "You'll continue to {host} either way.",
+      "waiting": "Waiting for your browser…",
+      "opening": "Thanks. Opening the page…",
+      "locating": "Getting your location…"
+    },
+    "hosted": {
+      "notFoundTitle": "Page not found",
+      "notFoundMessage": "This link doesn't lead to a page. Its owner may have removed it, or the link was mistyped.",
+      "passwordProtected": "Password protected",
+      "madeWithQrdx": "Made with QRdx",
+      "share": "Share",
+      "linkCopied": "Link copied",
+      "copyThisLink": "Copy this link",
+      "details": "Details",
+      "links": "Links",
+      "socialProfiles": "Social profiles",
+      "mapOf": "Map of {place}",
+      "hours": {
+        "openingHours": "Opening hours",
+        "openUntil": "Open now · until {time}",
+        "closedOpens": "Closed · opens {day} {time}",
+        "closed": "Closed"
+      },
+      "contact": {
+        "contact": "Contact",
+        "call": "Call",
+        "email": "Email",
+        "website": "Website",
+        "directions": "Directions",
+        "address": "Address",
+        "saveContact": "Save contact",
+        "phoneTypes": {
+          "mobile": "Mobile",
+          "work": "Work",
+          "home": "Home",
+          "fax": "Fax",
+          "other": "Phone"
+        },
+        "emailTypes": {
+          "work": "Work",
+          "home": "Personal",
+          "other": "Email"
+        }
+      },
+      "event": {
+        "ended": "This event has ended.",
+        "allDay": "All day",
+        "openInMaps": "Open in Maps",
+        "joinOnline": "Join online",
+        "hostedBy": "Hosted by <organizer></organizer>",
+        "addToCalendar": "Add to calendar"
+      },
+      "coupon": {
+        "coupon": "Coupon",
+        "code": "Code:",
+        "copyCode": "Copy coupon code",
+        "copy": "Copy",
+        "copied": "Copied",
+        "expired": "This coupon has expired.",
+        "notYet": "This coupon can't be redeemed yet.",
+        "terms": "Terms and conditions",
+        "expiredOn": "Expired on {date}",
+        "validRange": "Valid {from} – {until}",
+        "validFrom": "Valid from {date}",
+        "validUntil": "Valid until {date}",
+        "redeemed": "Redeemed {time}",
+        "instructions": "Show this screen to staff, then tap <strong>Redeem now</strong>.",
+        "cancel": "Cancel",
+        "redeemNow": "Redeem now",
+        "redeem": "Redeem coupon"
+      },
+      "wifi": {
+        "network": "Network",
+        "networkHidden": "Network (hidden)",
+        "password": "Password",
+        "noPassword": "None, just connect",
+        "copyNetwork": "Copy network name",
+        "copyPassword": "Copy password"
+      },
+      "payment": {
+        "types": {
+          "bank": "Bank transfer",
+          "other": "Other"
+        },
+        "actions": {
+          "pay": "Pay",
+          "donate": "Donate",
+          "tip": "Tip"
+        },
+        "actionsWith": {
+          "pay": "Pay with {method}",
+          "donate": "Donate with {method}",
+          "tip": "Tip with {method}"
+        },
+        "copyLine": "Copy {label}"
+      },
+      "files": {
+        "downloads": "Downloads",
+        "fileNumber": "File {number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "Image",
+          "audio": "Audio",
+          "video": "Video",
+          "file": "File"
+        },
+        "opensInNewTab": "{kind} · opens in a new tab",
+        "open": "Open",
+        "download": "Download",
+        "pdfDocument": "PDF document",
+        "openPdf": "Open PDF"
+      },
+      "media": {
+        "download": "Download {title}",
+        "play": "Play {title}",
+        "trackUnavailable": "This track is unavailable.",
+        "playlist": "Playlist",
+        "unavailable": "Unavailable",
+        "video": "Video",
+        "videoUnavailable": "Video unavailable",
+        "providerVideo": "{provider} video",
+        "playVideo": "Play video",
+        "playVideoTitle": "Play video: {title}",
+        "playsFrom": "Plays from {provider}"
+      },
+      "gallery": {
+        "openPhoto": "Open photo {number} of {total}",
+        "openPhotoAlt": "Open photo {number} of {total}: {alt}",
+        "photoOf": "Photo {number} of {total}",
+        "viewer": "Photo viewer",
+        "close": "Close",
+        "previous": "Previous photo",
+        "next": "Next photo",
+        "imageUnavailable": "Image unavailable"
+      },
+      "apps": {
+        "getTheApp": "Get the app",
+        "appStore": "Download on the App Store",
+        "googlePlay": "Get it on Google Play",
+        "openInBrowser": "Open in your browser"
+      },
+      "menu": {
+        "menu": "Menu",
+        "sections": "Menu sections",
+        "soldOut": "Sold out",
+        "dietary": "Dietary information",
+        "aboutDish": "About this dish",
+        "contains": "<label>Contains:</label> {list}",
+        "diet": {
+          "vegetarian": "Vegetarian",
+          "vegan": "Vegan",
+          "gluten-free": "Gluten-free",
+          "dairy-free": "Dairy-free",
+          "halal": "Halal",
+          "kosher": "Kosher",
+          "spicy": "Spicy",
+          "organic": "Organic"
+        },
+        "allergens": {
+          "gluten": "Gluten",
+          "crustaceans": "Crustaceans",
+          "eggs": "Eggs",
+          "fish": "Fish",
+          "peanuts": "Peanuts",
+          "soy": "Soy",
+          "milk": "Milk",
+          "nuts": "Tree nuts",
+          "celery": "Celery",
+          "mustard": "Mustard",
+          "sesame": "Sesame",
+          "sulphites": "Sulphites",
+          "lupin": "Lupin",
+          "molluscs": "Molluscs"
+        }
+      },
+      "product": {
+        "details": "Product details",
+        "certifications": "Certifications",
+        "ingredients": "Ingredients",
+        "allergens": "Allergens",
+        "nutrition": "Nutrition",
+        "nutritionPer": "Nutrition, {basis}"
+      },
+      "reviews": {
+        "reviews": "Reviews",
+        "leaveReview": "Leave a review",
+        "reviewUsOn": "Review us on {platform}"
+      },
+      "form": {
+        "form": "Form",
+        "send": "Send",
+        "thanks": "Thank you! Your response has been sent.",
+        "starsOf": "{score} of {max} stars",
+        "sending": "Sending…",
+        "answerOne": "Answer at least one question before sending.",
+        "preview": "This is a preview. Responses are collected on the published page.",
+        "securityCheck": "Please complete the security check above, then send again.",
+        "tooMany": "Too many responses from this device. Please wait a minute and try again.",
+        "couldntSend": "Your response couldn't be sent. Please try again.",
+        "offline": "You seem to be offline. Your answers are still here; try again in a moment.",
+        "demo": "Demo: nothing is sent.",
+        "honeypot": "Leave this field empty",
+        "closed": "This form isn't accepting responses right now. Please try again later.",
+        "errors": {
+          "required": "This field is required",
+          "consentRequired": "Please tick this box to continue",
+          "enterText": "Enter text",
+          "tooLong": "Keep it under {max} characters",
+          "email": "Enter a valid email address",
+          "phone": "Enter a valid phone number",
+          "stars": "Choose 1 to {max} stars",
+          "nps": "Choose a score from 0 to 10",
+          "choices": "Choose from the options",
+          "choice": "Choose one of the options",
+          "invalid": "Invalid value"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "Free Barcode Generator: EAN-13, UPC, Code 128",
     "metaDescription": "Make EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix and more: {count, number} barcode types with check digits worked out for you. PNG, JPG, SVG, PDF and EPS. Free, no signup.",

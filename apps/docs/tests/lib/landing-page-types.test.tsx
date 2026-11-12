@@ -1,7 +1,6 @@
 // The hosted page types added for packaging, listings, tags and payments:
 // their blocks' props (product, details, payment, the socials list style),
 // how they render on a live page, and the picker entries that offer them.
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 import { LandingRender } from "@/components/landing/render";
 import { getBlock, parseLandingPageContent } from "@/lib/landing/blocks";
@@ -13,6 +12,7 @@ import {
   listTemplates,
 } from "@/lib/landing/templates";
 import { DEFAULT_LANDING_THEME, type LandingBlock } from "@/types/landing";
+import { renderIntl } from "../support/intl";
 
 // next/font only works inside Next's compiler.
 vi.mock("next/font/google", () => {
@@ -53,7 +53,7 @@ function render(blocks: LandingBlock[]): string {
     blocks,
   });
   if (!parsed.success) throw new Error(parsed.error.issues[0]?.message);
-  return renderToStaticMarkup(
+  return renderIntl(
     <LandingRender
       content={parsed.data}
       context={{

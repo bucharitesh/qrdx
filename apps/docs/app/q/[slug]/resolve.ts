@@ -3,6 +3,7 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, asc, eq, isNull } from "drizzle-orm";
 import { after, type NextRequest } from "next/server";
 import { CUSTOM_DOMAIN_HEADER } from "@/app/(app)/dashboard/domains/_lib/hostname";
+import { scanPagesIntlFor } from "@/lib/i18n/scan-pages";
 // NFC taps: `?nfc` on the short link marks the scan as a tap (lib/nfc/links.ts).
 import { scanSourceOf } from "@/lib/nfc/links";
 import { type RedirectCode, redirectCodeColumns } from "@/lib/redirect/code";
@@ -28,7 +29,7 @@ import { signLocationToken } from "@/lib/scan-location/token";
 import { createScanId, isRecordableVisit, recordScan } from "@/lib/scans";
 import { isValidSlug } from "@/lib/short-links";
 import { slugWhere } from "@/lib/slug-claims";
-import { statusPage } from "./status-page";
+import { type StatusPageKind, statusPage } from "./status-page";
 
 // The redirect pipeline behind /q/<slug> (route.ts) and, on custom domains,
 // GS1 Digital Links (app/gs1/[...path]/route.ts): lookup → on/off checks →
@@ -94,6 +95,17 @@ function redirect(location: string, status: 302 | 303): Response {
 }
 
 /**
+ * A status page in the scanner's language (Accept-Language). Only pages
+ * look it up; redirects never wait on it.
+ */
+async function scanStatusPage(
+  request: NextRequest,
+  kind: StatusPageKind,
+): Promise<Response> {
+  return statusPage(kind, { intl: await scanPagesIntlFor(request) });
+}
+
+/**
  * The redirect pipeline: lookup → on/off checks → lifecycle
  * (lib/redirect/lifecycle.ts) → page or routing (lib/redirect/routing.ts).
  */
@@ -103,7 +115,7 @@ export async function resolveShortLink(
   { record }: { record: boolean },
 ): Promise<Response> {
   if ("slug" in lookup && !isValidSlug(lookup.slug)) {
-    return statusPage("not-found");
+    return scanStatusPage(request, "not-found");
   }
   // The limiter runs alongside the lookup so scans don't wait on it.
   const limited = isRateLimited(request);
@@ -125,19 +137,19 @@ export async function resolveShortLink(
     }
   } catch (error) {
     console.error("Short link lookup failed:", error);
-    return statusPage("unavailable");
+    return scanStatusPage(request, "unavailable");
   }
 
   if (await limited) {
-    return statusPage("rate-limited");
+    return scanStatusPage(request, "rate-limited");
   }
   if (!code) {
-    return statusPage("not-found");
+    return scanStatusPage(request, "not-found");
   }
   // Only the owner archiving or trashing, or an admin disabling, turns a code
   // off; plan changes never do.
   if (!code.isActive || code.archivedAt || code.deletedAt) {
-    return statusPage("inactive");
+    return scanStatusPage(request, "inactive");
   }
 
   let lifecycle: LifecycleResult;
@@ -146,7 +158,7 @@ export async function resolveShortLink(
   } catch (error) {
     // Fail closed: a broken check must not skip a password gate.
     console.error("Short link lifecycle check failed:", error);
-    return statusPage("unavailable");
+    return scanStatusPage(request, "unavailable");
   }
 
   const now = new Date();
@@ -186,7 +198,7 @@ export async function resolveShortLink(
       return await gateResponse(code, request, lifecycle.reason);
     } catch (error) {
       console.error("Short link gate failed:", error);
-      return statusPage("unavailable");
+      return scanStatusPage(request, "unavailable");
     }
   }
 
@@ -194,7 +206,7 @@ export async function resolveShortLink(
   if (lifecycle.action === "ended") {
     return lifecycle.fallbackUrl
       ? redirect(lifecycle.fallbackUrl, status)
-      : endedPage(lifecycle.reason, code.slug);
+      : endedPage(lifecycle.reason, code.slug, await scanPagesIntlFor(request));
   }
 
   if (code.kind === "page") {
@@ -226,6 +238,7 @@ export async function resolveShortLink(
         token: signLocationToken(scanId, code.id, now),
         next: destination,
         slug: code.slug,
+        intl: await scanPagesIntlFor(request),
       });
     } catch (error) {
       console.error("Location step failed:", error);

@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Location as MapPin, Routing as Navigation } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   addressSchema,
@@ -32,6 +33,7 @@ function AddressMapBlock({
   props,
   context,
 }: BlockRenderProps<AddressMapProps>) {
+  const t = useTranslations("scanPages.hosted");
   const lines = formatAddress(props.address);
   if (lines.length === 0) {
     return context.mode === "preview" ? (
@@ -84,7 +86,7 @@ function AddressMapBlock({
           loading="lazy"
           referrerPolicy="no-referrer-when-downgrade"
           src={maps.embed}
-          title={`Map of ${query}`}
+          title={t("mapOf", { place: query })}
         />
       )}
       <div className="grid grid-cols-2 gap-2">

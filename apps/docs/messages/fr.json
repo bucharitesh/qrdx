@@ -1435,6 +1435,280 @@
       "report": "Signaler ce code"
     }
   },
+  "scanPages": {
+    "reportAbuse": "Signaler un abus",
+    "privacy": "Confidentialité",
+    "status": {
+      "titleSuffix": "{title} | QRdx",
+      "makeYourOwn": "Créez votre propre QR code avec QRdx",
+      "inactive": {
+        "title": "Ce QR code n’est plus actif",
+        "message": "Ce code a été désactivé et ne mène plus nulle part."
+      },
+      "notFound": {
+        "title": "QR code introuvable",
+        "message": "Ce lien ne mène à aucun QR code. Son propriétaire l’a peut-être supprimé, ou le lien a été mal saisi."
+      },
+      "rateLimited": {
+        "title": "Trop de requêtes",
+        "message": "Ce réseau a ouvert beaucoup de QR codes en peu de temps. Veuillez réessayer dans quelques secondes."
+      },
+      "invalidGs1": {
+        "title": "Ce lien produit n’est pas valide",
+        "message": "Impossible de lire son numéro de produit (GTIN) ou les détails du lot. Vérifiez le lien ou scannez à nouveau le code sur l’emballage."
+      },
+      "unavailable": {
+        "title": "Une erreur s’est produite",
+        "message": "Nous n’avons pas pu ouvrir ce QR code pour le moment. Veuillez le scanner à nouveau dans un instant."
+      }
+    },
+    "ended": {
+      "notStarted": {
+        "title": "Cette campagne n’a pas encore commencé",
+        "message": "Veuillez scanner ce code à nouveau plus tard."
+      },
+      "expired": {
+        "title": "Cette campagne est terminée",
+        "message": "La page associée à ce QR code n’est plus disponible."
+      },
+      "paused": {
+        "title": "Cette campagne est en pause",
+        "message": "La page associée à ce QR code n’est pas disponible pour le moment."
+      }
+    },
+    "password": {
+      "title": "Ce QR code est protégé par un mot de passe",
+      "intro": "Saisissez le mot de passe qui vous a été communiqué pour continuer.",
+      "label": "Mot de passe",
+      "submit": "Continuer",
+      "missing": "Saisissez le mot de passe.",
+      "wrong": "Ce mot de passe n’est pas correct. Veuillez réessayer.",
+      "tooManyAttempts": "Trop de tentatives. Veuillez patienter quelques minutes avant de réessayer."
+    },
+    "location": {
+      "title": "Partager votre position ?",
+      "body": "Le propriétaire de ce QR code souhaite voir approximativement où il est scanné. Votre navigateur vous demande d’abord votre accord, et la position est arrondie à environ 100 m.",
+      "allow": "Autoriser",
+      "skip": "Passer",
+      "continueTo": "Vous serez redirigé vers {host} dans les deux cas.",
+      "waiting": "En attente de votre navigateur…",
+      "opening": "Merci. Ouverture de la page…",
+      "locating": "Récupération de votre position…"
+    },
+    "hosted": {
+      "notFoundTitle": "Page introuvable",
+      "notFoundMessage": "Ce lien ne mène à aucune page. Son propriétaire l’a peut-être supprimée, ou le lien contient une faute de frappe.",
+      "passwordProtected": "Protégé par mot de passe",
+      "madeWithQrdx": "Créé avec QRdx",
+      "share": "Partager",
+      "linkCopied": "Lien copié",
+      "copyThisLink": "Copier ce lien",
+      "details": "Détails",
+      "links": "Liens",
+      "socialProfiles": "Réseaux sociaux",
+      "mapOf": "Carte de {place}",
+      "hours": {
+        "openingHours": "Horaires d’ouverture",
+        "openUntil": "Ouvert · jusqu’à {time}",
+        "closedOpens": "Fermé · ouvre {day} {time}",
+        "closed": "Fermé"
+      },
+      "contact": {
+        "contact": "Contact",
+        "call": "Appeler",
+        "email": "E-mail",
+        "website": "Site web",
+        "directions": "Itinéraire",
+        "address": "Adresse",
+        "saveContact": "Enregistrer le contact",
+        "phoneTypes": {
+          "mobile": "Mobile",
+          "work": "Travail",
+          "home": "Domicile",
+          "fax": "Fax",
+          "other": "Téléphone"
+        },
+        "emailTypes": {
+          "work": "Travail",
+          "home": "Personnel",
+          "other": "E-mail"
+        }
+      },
+      "event": {
+        "ended": "Cet événement est terminé.",
+        "allDay": "Toute la journée",
+        "openInMaps": "Ouvrir dans Plans",
+        "joinOnline": "Rejoindre en ligne",
+        "hostedBy": "Organisé par <organizer></organizer>",
+        "addToCalendar": "Ajouter au calendrier"
+      },
+      "coupon": {
+        "coupon": "Coupon",
+        "code": "Code :",
+        "copyCode": "Copier le code promo",
+        "copy": "Copier",
+        "copied": "Copié",
+        "expired": "Ce coupon a expiré.",
+        "notYet": "Ce coupon n’est pas encore utilisable.",
+        "terms": "Conditions générales",
+        "expiredOn": "Expiré le {date}",
+        "validRange": "Valable {from} – {until}",
+        "validFrom": "Valable à partir du {date}",
+        "validUntil": "Valable jusqu’au {date}",
+        "redeemed": "Utilisé {time}",
+        "instructions": "Montrez cet écran au personnel, puis appuyez sur <strong>Utiliser maintenant</strong>.",
+        "cancel": "Annuler",
+        "redeemNow": "Utiliser maintenant",
+        "redeem": "Utiliser le coupon"
+      },
+      "wifi": {
+        "network": "Réseau",
+        "networkHidden": "Réseau (masqué)",
+        "password": "Mot de passe",
+        "noPassword": "Aucun, connectez-vous",
+        "copyNetwork": "Copier le nom du réseau",
+        "copyPassword": "Copier le mot de passe"
+      },
+      "payment": {
+        "types": {
+          "bank": "Virement bancaire",
+          "other": "Autre"
+        },
+        "actions": {
+          "pay": "Payer",
+          "donate": "Faire un don",
+          "tip": "Pourboire"
+        },
+        "actionsWith": {
+          "pay": "Payer avec {method}",
+          "donate": "Donner avec {method}",
+          "tip": "Pourboire avec {method}"
+        },
+        "copyLine": "Copier {label}"
+      },
+      "files": {
+        "downloads": "Téléchargements",
+        "fileNumber": "Fichier {number}",
+        "kinds": {
+          "pdf": "PDF",
+          "image": "Image",
+          "audio": "Audio",
+          "video": "Vidéo",
+          "file": "Fichier"
+        },
+        "opensInNewTab": "{kind} · s’ouvre dans un nouvel onglet",
+        "open": "Ouvrir",
+        "download": "Télécharger",
+        "pdfDocument": "Document PDF",
+        "openPdf": "Ouvrir le PDF"
+      },
+      "media": {
+        "download": "Télécharger {title}",
+        "play": "Lire {title}",
+        "trackUnavailable": "Ce titre n’est pas disponible.",
+        "playlist": "Playlist",
+        "unavailable": "Indisponible",
+        "video": "Vidéo",
+        "videoUnavailable": "Vidéo indisponible",
+        "providerVideo": "Vidéo {provider}",
+        "playVideo": "Lire la vidéo",
+        "playVideoTitle": "Lire la vidéo : {title}",
+        "playsFrom": "Lecture depuis {provider}"
+      },
+      "gallery": {
+        "openPhoto": "Ouvrir la photo {number} sur {total}",
+        "openPhotoAlt": "Ouvrir la photo {number} sur {total} : {alt}",
+        "photoOf": "Photo {number} sur {total}",
+        "viewer": "Visionneuse de photos",
+        "close": "Fermer",
+        "previous": "Photo précédente",
+        "next": "Photo suivante",
+        "imageUnavailable": "Image indisponible"
+      },
+      "apps": {
+        "getTheApp": "Obtenir l’app",
+        "appStore": "Télécharger sur l’App Store",
+        "googlePlay": "Disponible sur Google Play",
+        "openInBrowser": "Ouvrir dans le navigateur"
+      },
+      "menu": {
+        "menu": "Menu",
+        "sections": "Sections du menu",
+        "soldOut": "Épuisé",
+        "dietary": "Informations alimentaires",
+        "aboutDish": "À propos de ce plat",
+        "contains": "<label>Contient :</label> {list}",
+        "diet": {
+          "vegetarian": "Végétarien",
+          "vegan": "Végan",
+          "gluten-free": "Sans gluten",
+          "dairy-free": "Sans produits laitiers",
+          "halal": "Halal",
+          "kosher": "Casher",
+          "spicy": "Épicé",
+          "organic": "Bio"
+        },
+        "allergens": {
+          "gluten": "Gluten",
+          "crustaceans": "Crustacés",
+          "eggs": "Œufs",
+          "fish": "Poisson",
+          "peanuts": "Arachides",
+          "soy": "Soja",
+          "milk": "Lait",
+          "nuts": "Fruits à coque",
+          "celery": "Céleri",
+          "mustard": "Moutarde",
+          "sesame": "Sésame",
+          "sulphites": "Sulfites",
+          "lupin": "Lupin",
+          "molluscs": "Mollusques"
+        }
+      },
+      "product": {
+        "details": "Détails du produit",
+        "certifications": "Certifications",
+        "ingredients": "Ingrédients",
+        "allergens": "Allergènes",
+        "nutrition": "Nutrition",
+        "nutritionPer": "Nutrition, {basis}"
+      },
+      "reviews": {
+        "reviews": "Avis",
+        "leaveReview": "Laisser un avis",
+        "reviewUsOn": "Donnez votre avis sur {platform}"
+      },
+      "form": {
+        "form": "Formulaire",
+        "send": "Envoyer",
+        "thanks": "Merci ! Votre réponse a bien été envoyée.",
+        "starsOf": "{score} étoiles sur {max}",
+        "sending": "Envoi en cours…",
+        "answerOne": "Répondez à au moins une question avant d’envoyer.",
+        "preview": "Ceci est un aperçu. Les réponses sont collectées sur la page publiée.",
+        "securityCheck": "Veuillez effectuer la vérification de sécurité ci-dessus, puis envoyer à nouveau.",
+        "tooMany": "Trop de réponses depuis cet appareil. Veuillez patienter une minute et réessayer.",
+        "couldntSend": "Votre réponse n’a pas pu être envoyée. Veuillez réessayer.",
+        "offline": "Vous semblez être hors ligne. Vos réponses sont toujours là ; réessayez dans un instant.",
+        "demo": "Démo : rien n’est envoyé.",
+        "honeypot": "Laissez ce champ vide",
+        "closed": "Ce formulaire n’accepte pas de réponses pour le moment. Veuillez réessayer plus tard.",
+        "errors": {
+          "required": "Ce champ est obligatoire",
+          "consentRequired": "Cochez cette case pour continuer",
+          "enterText": "Saisissez du texte",
+          "tooLong": "Limitez-vous à {max} caractères",
+          "email": "Saisissez une adresse e-mail valide",
+          "phone": "Saisissez un numéro de téléphone valide",
+          "stars": "Choisissez de 1 à {max} étoiles",
+          "nps": "Choisissez une note de 0 à 10",
+          "choices": "Choisissez parmi les options",
+          "choice": "Choisissez l’une des options",
+          "invalid": "Valeur non valide"
+        }
+      }
+    }
+  },
   "barcodeGenerator": {
     "metaTitle": "Générateur de codes-barres gratuit : EAN-13, UPC, Code 128",
     "metaDescription": "Créez des codes EAN-13, UPC-A, Code 128, GS1-128, ITF-14, Data Matrix et plus encore : {count, number} types de codes-barres, avec chiffre de contrôle calculé pour vous. PNG, JPG, SVG, PDF et EPS. Gratuit, sans inscription.",

@@ -1,4 +1,5 @@
 import { Gallery as Images } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   itemIdSchema,
@@ -37,6 +38,7 @@ function GalleryBlock({
   props,
   context,
 }: BlockRenderProps<GalleryBlockProps>) {
+  const t = useTranslations("scanPages.hosted.gallery");
   const images = props.images.flatMap((image) => {
     const src = sourceUrl(image.source, context);
     return src
@@ -63,6 +65,16 @@ function GalleryBlock({
         images={images}
         leadImage={context.leadImage}
         shape={props.shape}
+        text={{
+          openPhoto: t.raw("openPhoto") as string,
+          openPhotoAlt: t.raw("openPhotoAlt") as string,
+          photoOf: t.raw("photoOf") as string,
+          viewer: t("viewer"),
+          close: t("close"),
+          previous: t("previous"),
+          next: t("next"),
+          imageUnavailable: t("imageUnavailable"),
+        }}
       />
     </section>
   );

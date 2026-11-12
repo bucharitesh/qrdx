@@ -1,4 +1,5 @@
 import { Music } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { z } from "zod";
 import {
   itemIdSchema,
@@ -36,6 +37,7 @@ const withoutExtension = (name: string) =>
   name.replace(/\.[a-z0-9]{2,4}$/i, "");
 
 function AudioBlock({ id, props, context }: BlockRenderProps<AudioBlockProps>) {
+  const t = useTranslations("scanPages.hosted.media");
   const tracks = props.tracks.flatMap((track) => {
     const src = sourceUrl(track.source, context);
     if (!src) return [];
@@ -74,6 +76,13 @@ function AudioBlock({ id, props, context }: BlockRenderProps<AudioBlockProps>) {
         blockId={id}
         cover={sourceUrl(props.cover, context)}
         coverAlt={props.title}
+        text={{
+          download: t.raw("download") as string,
+          play: t.raw("play") as string,
+          trackUnavailable: t("trackUnavailable"),
+          playlist: t("playlist"),
+          unavailable: t("unavailable"),
+        }}
         tracks={tracks}
       />
     </section>

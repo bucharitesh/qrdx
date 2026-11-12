@@ -1,6 +1,7 @@
 import "server-only";
 
 import { randomBytes } from "node:crypto";
+import { ENGLISH_SCAN_PAGES, type ScanPagesIntl } from "@/lib/i18n/scan-pages";
 import { baseUrl } from "@/lib/metadata";
 import { escapeHtml, reportAbuseUrl } from "@/lib/redirect/pages";
 import { LOCATION_DECIMALS, LOCATION_ENDPOINT } from "./geo";
@@ -47,8 +48,9 @@ const scriptJson = (value: unknown) =>
     .replace(/\u2028/g, "\\u2028")
     .replace(/\u2029/g, "\\u2029");
 
-// ES5, no dependencies. `d` = { token, next, endpoint, wait, send, digits }.
-const SCRIPT = `(function(){var d=window.__qrdxLocation,done=false,timer=0;var allow=document.getElementById("allow"),status=document.getElementById("status");function go(url){if(done)return;done=true;clearTimeout(timer);location.replace(url||d.next)}function say(text){if(status)status.textContent=text}function round(v){var f=Math.pow(10,d.digits);return Math.round(v*f)/f}function send(pos){var c=pos.coords;say("Thanks. Opening the page\\u2026");var ctl=window.AbortController?new AbortController():null;timer=setTimeout(function(){if(ctl)ctl.abort();go()},d.send);try{fetch(d.endpoint,{method:"POST",headers:{"Content-Type":"application/json"},credentials:"omit",cache:"no-store",signal:ctl?ctl.signal:undefined,body:JSON.stringify({token:d.token,latitude:round(c.latitude),longitude:round(c.longitude),accuracy:Math.round(c.accuracy)})}).then(function(r){return r.ok?r.json():null}).then(function(j){go(j&&typeof j.url==="string"?j.url:null)},function(){go()})}catch(e){go()}}function ask(){if(done)return;if(allow){allow.disabled=true;allow.textContent="Waiting for your browser\\u2026"}clearTimeout(timer);timer=setTimeout(function(){go()},d.wait);try{navigator.geolocation.getCurrentPosition(function(p){clearTimeout(timer);send(p)},function(){go()},{enableHighAccuracy:false,maximumAge:300000,timeout:d.wait})}catch(e){go()}}if(!("geolocation" in navigator)){go();return}if(allow)allow.addEventListener("click",ask);window.addEventListener("pageshow",function(e){if(e.persisted){done=false;if(allow){allow.disabled=false;allow.textContent="Allow"}say("")}});try{navigator.permissions.query({name:"geolocation"}).then(function(s){if(s.state==="granted"){say("Getting your location\\u2026");ask()}else if(s.state==="denied"){go()}},function(){})}catch(e){}})();`;
+// ES5, no dependencies. `d` = { token, next, endpoint, wait, send, digits,
+// text: { allow, waiting, opening, locating } } (the scanner's language).
+const SCRIPT = `(function(){var d=window.__qrdxLocation,done=false,timer=0;var allow=document.getElementById("allow"),status=document.getElementById("status");function go(url){if(done)return;done=true;clearTimeout(timer);location.replace(url||d.next)}function say(text){if(status)status.textContent=text}function round(v){var f=Math.pow(10,d.digits);return Math.round(v*f)/f}function send(pos){var c=pos.coords;say(d.text.opening);var ctl=window.AbortController?new AbortController():null;timer=setTimeout(function(){if(ctl)ctl.abort();go()},d.send);try{fetch(d.endpoint,{method:"POST",headers:{"Content-Type":"application/json"},credentials:"omit",cache:"no-store",signal:ctl?ctl.signal:undefined,body:JSON.stringify({token:d.token,latitude:round(c.latitude),longitude:round(c.longitude),accuracy:Math.round(c.accuracy)})}).then(function(r){return r.ok?r.json():null}).then(function(j){go(j&&typeof j.url==="string"?j.url:null)},function(){go()})}catch(e){go()}}function ask(){if(done)return;if(allow){allow.disabled=true;allow.textContent=d.text.waiting}clearTimeout(timer);timer=setTimeout(function(){go()},d.wait);try{navigator.geolocation.getCurrentPosition(function(p){clearTimeout(timer);send(p)},function(){go()},{enableHighAccuracy:false,maximumAge:300000,timeout:d.wait})}catch(e){go()}}if(!("geolocation" in navigator)){go();return}if(allow)allow.addEventListener("click",ask);window.addEventListener("pageshow",function(e){if(e.persisted){done=false;if(allow){allow.disabled=false;allow.textContent=d.text.allow}say("")}});try{navigator.permissions.query({name:"geolocation"}).then(function(s){if(s.state==="granted"){say(d.text.locating);ask()}else if(s.state==="denied"){go()}},function(){})}catch(e){}})();`;
 
 /** Only absolute http(s) URLs are ever followed or linked. */
 function safeUrl(value: string): string | null {
@@ -71,11 +73,24 @@ export function locationStepPage({
   token,
   next,
   slug,
+  intl = ENGLISH_SCAN_PAGES,
 }: {
   token: string;
   next: string;
   slug: string;
+  /** The scanner's language (lib/i18n/scan-pages.ts). */
+  intl?: ScanPagesIntl;
 }): Response {
+  const { t, locale } = intl;
+  const text = (
+    key:
+      | "location.title"
+      | "location.body"
+      | "location.allow"
+      | "location.skip"
+      | "privacy"
+      | "reportAbuse",
+  ) => escapeHtml(t(key));
   const destination = safeUrl(next);
   if (!destination) {
     throw new Error("The location step needs an http(s) destination");
@@ -89,19 +104,31 @@ export function locationStepPage({
     wait: WAIT_MS,
     send: SEND_TIMEOUT_MS,
     digits: LOCATION_DECIMALS,
+    text: {
+      allow: t("location.allow"),
+      waiting: t("location.waiting"),
+      opening: t("location.opening"),
+      locating: t("location.locating"),
+    },
   };
   const privacyUrl = new URL("/legal/privacy-policy#precise-location", baseUrl)
     .href;
   const href = escapeHtml(destination);
 
+  // The host is set in bold inside the translated sentence.
+  const HOST = "\u0000host\u0000";
+  const continueTo = escapeHtml(
+    t("location.continueTo", { host: HOST }),
+  ).replace(HOST, `<strong>${escapeHtml(host)}</strong>`);
+
   const html = `<!doctype html>
-<html lang="en">
+<html lang="${locale}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
 <meta name="referrer" content="no-referrer">
-<title>Share your location?</title>
+<title>${text("location.title")}</title>
 <noscript><meta http-equiv="refresh" content="0;url=${href}"></noscript>
 <style>
 ${STYLES}
@@ -109,16 +136,16 @@ ${STYLES}
 </head>
 <body>
 <main>
-<h1>Share your location?</h1>
-<p>The owner of this QR code would like to see roughly where it's scanned. Your browser asks you first, and the location is rounded to about 100&nbsp;m.</p>
+<h1>${text("location.title")}</h1>
+<p>${text("location.body")}</p>
 <div class="actions">
-<button id="allow" type="button">Allow</button>
-<a id="skip" href="${href}" rel="noreferrer">Skip</a>
+<button id="allow" type="button">${text("location.allow")}</button>
+<a id="skip" href="${href}" rel="noreferrer">${text("location.skip")}</a>
 </div>
 <p class="status" id="status" role="status" aria-live="polite"></p>
-<p class="next">You'll continue to <strong>${escapeHtml(host)}</strong> either way.</p>
+<p class="next">${continueTo}</p>
 </main>
-<footer><a href="${escapeHtml(privacyUrl)}" rel="nofollow">Privacy</a><a href="${escapeHtml(reportAbuseUrl(slug))}" rel="nofollow">Report abuse</a></footer>
+<footer><a href="${escapeHtml(privacyUrl)}" rel="nofollow">${text("privacy")}</a><a href="${escapeHtml(reportAbuseUrl(slug))}" rel="nofollow">${text("reportAbuse")}</a></footer>
 <script nonce="${nonce}">window.__qrdxLocation=${scriptJson(data)};${SCRIPT}</script>
 </body>
 </html>`;
@@ -128,6 +155,9 @@ ${STYLES}
     headers: {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
+      // The language follows Accept-Language (never cached anyway).
+      "Content-Language": locale,
+      Vary: "Accept-Language",
       "X-Robots-Tag": "noindex",
       "Referrer-Policy": "no-referrer",
       "Content-Security-Policy": `default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-${nonce}'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'none'`,

@@ -87,6 +87,9 @@ export const DASHBOARD_NAMESPACES = [
   // Workspace settings (dashboard/<slug>/settings) use the account
   // settings' developer components.
   "app.settings.developers",
+  // Hosted-page blocks in the page editor's preview and the template picker.
+  "scanPages.hosted",
+  "scanPages.reportAbuse",
 ] as const;
 
 /** Settings: the app and the settings pages. */
