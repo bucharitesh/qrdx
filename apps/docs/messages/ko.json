@@ -77,6 +77,14 @@
         "name": "MCP 서버",
         "description": "Claude, ChatGPT, Cursor에서 QR 코드를 만들어요"
       },
+      "qrCodeApi": {
+        "name": "무료 QR 코드 API",
+        "description": "키나 가입 없이 URL 하나로 QR 코드 이미지를 만들어요"
+      },
+      "nextjs": {
+        "name": "Next.js 가이드",
+        "description": "서버 및 클라이언트 컴포넌트에서 QR 코드 사용하기"
+      },
       "imageApi": {
         "name": "Image API",
         "description": "API 키 없이 URL로 QR 코드 이미지를 받아요"
@@ -184,10 +192,15 @@
       "scanChecker": "스캔 검사기",
       "printSize": "인쇄 크기 계산기",
       "barcode": "바코드 생성기",
+      "pdfQr": "PDF QR 코드",
+      "businessCard": "디지털 명함",
+      "menuQr": "메뉴 QR 코드",
       "scanner": "QR 코드 스캐너",
       "allTools": "모든 도구",
       "docs": "문서",
       "apiReference": "API 레퍼런스",
+      "qrCodeApi": "무료 QR 코드 API",
+      "nextjs": "Next.js 가이드",
       "imageApi": "Image API",
       "mcp": "MCP 서버",
       "shadcn": "shadcn/ui 레지스트리",

@@ -77,6 +77,14 @@
         "name": "MCP 服务器",
         "description": "在 Claude、ChatGPT 或 Cursor 中生成二维码"
       },
+      "qrCodeApi": {
+        "name": "免费二维码 API",
+        "description": "只需一个 URL 即可生成二维码图片，无需密钥或注册"
+      },
+      "nextjs": {
+        "name": "Next.js 指南",
+        "description": "在服务端组件和客户端组件中使用二维码"
+      },
       "imageApi": {
         "name": "Image API",
         "description": "通过 URL 获取二维码图片，无需 API 密钥"
@@ -184,10 +192,15 @@
       "scanChecker": "扫描检测",
       "printSize": "打印尺寸计算器",
       "barcode": "条形码生成器",
+      "pdfQr": "PDF 二维码",
+      "businessCard": "电子名片",
+      "menuQr": "菜单二维码",
       "scanner": "二维码扫描器",
       "allTools": "全部工具",
       "docs": "文档",
       "apiReference": "API 参考",
+      "qrCodeApi": "免费二维码 API",
+      "nextjs": "Next.js 指南",
       "imageApi": "Image API",
       "mcp": "MCP 服务器",
       "shadcn": "shadcn/ui 注册表",

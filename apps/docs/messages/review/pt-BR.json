@@ -167,6 +167,22 @@
     "source": "977b2c1d5ca1",
     "status": "machine"
   },
+  "nav.items.qrCodeApi.name": {
+    "source": "f04a8a45ca80",
+    "status": "machine"
+  },
+  "nav.items.qrCodeApi.description": {
+    "source": "35a969b520cc",
+    "status": "machine"
+  },
+  "nav.items.nextjs.name": {
+    "source": "0f3633c8f553",
+    "status": "machine"
+  },
+  "nav.items.nextjs.description": {
+    "source": "14638c3c59b8",
+    "status": "machine"
+  },
   "nav.items.imageApi.name": {
     "source": "6856e461415d",
     "status": "machine"
@@ -443,6 +459,18 @@
     "source": "4717ee594681",
     "status": "machine"
   },
+  "footer.links.pdfQr": {
+    "source": "121fe1fb37e8",
+    "status": "machine"
+  },
+  "footer.links.businessCard": {
+    "source": "16267e06af8f",
+    "status": "machine"
+  },
+  "footer.links.menuQr": {
+    "source": "658c43b0ede6",
+    "status": "machine"
+  },
   "footer.links.scanner": {
     "source": "f96c48da96ed",
     "status": "machine"
@@ -457,6 +485,14 @@
   },
   "footer.links.apiReference": {
     "source": "484ee9bb6e51",
+    "status": "machine"
+  },
+  "footer.links.qrCodeApi": {
+    "source": "f04a8a45ca80",
+    "status": "machine"
+  },
+  "footer.links.nextjs": {
+    "source": "0f3633c8f553",
     "status": "machine"
   },
   "footer.links.imageApi": {

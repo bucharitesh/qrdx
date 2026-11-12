@@ -77,6 +77,14 @@
         "name": "Server MCP",
         "description": "Buat kode QR dari Claude, ChatGPT, atau Cursor"
       },
+      "qrCodeApi": {
+        "name": "API kode QR gratis",
+        "description": "Gambar kode QR dari satu URL, tanpa kunci atau pendaftaran"
+      },
+      "nextjs": {
+        "name": "Panduan Next.js",
+        "description": "Kode QR di Server dan Client Components"
+      },
       "imageApi": {
         "name": "Image API",
         "description": "Gambar kode QR dari sebuah URL, tanpa API key"
@@ -184,10 +192,15 @@
       "scanChecker": "Pemeriksa pemindaian",
       "printSize": "Kalkulator ukuran cetak",
       "barcode": "Generator barcode",
+      "pdfQr": "Kode QR PDF",
+      "businessCard": "Kartu nama digital",
+      "menuQr": "Kode QR menu",
       "scanner": "Pemindai kode QR",
       "allTools": "Semua alat",
       "docs": "Dokumentasi",
       "apiReference": "Referensi API",
+      "qrCodeApi": "API kode QR gratis",
+      "nextjs": "Panduan Next.js",
       "imageApi": "Image API",
       "mcp": "Server MCP",
       "shadcn": "Registry shadcn/ui",
