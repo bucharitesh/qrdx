@@ -1,0 +1,72 @@
+---
+title: "Google Chart QR 코드 API 대체하기"
+description: "chart.googleapis.com의 QR 코드는 이제 404를 반환합니다. chl, chs, chld를 무료 QRdx Image API에 맞게 바꾸고, 명령 하나로 기존 URL을 업데이트하세요."
+icon: Wrench
+---
+
+Google은 2012년 4월에 Image Charts를 지원 중단했고, 여기에는 `chart.googleapis.com/chart?cht=qr`의 QR 코드도 포함되었습니다. 이 엔드포인트는 현재 `404`를 반환합니다(2026년 11월 13일에 확인했습니다). 그래서 이를 사용하던 기존 `<img>` 태그, 이메일, 스프레드시트에는 깨진 이미지가 표시됩니다.
+
+QRdx [Image API](/docs/developers/image-api)도 같은 방식으로 동작합니다. 이미지를 반환하는 `GET` URL이며, 계정이나 키가 필요 없습니다. 호스트를 바꾸고 파라미터 세 개의 이름만 바꾸면 됩니다.
+
+## 변경 전과 후 [#before-and-after]
+
+```txt
+https://chart.googleapis.com/chart?cht=qr&chs=300x300&chl=https%3A%2F%2Fexample.com&chld=M|2
+https://api.qrdx.dev/v1/qr?format=png&size=300&data=https%3A%2F%2Fexample.com&level=M&margin=2
+```
+
+둘 다 `https://example.com`을 오류 정정 수준 M, 여백 2모듈로 300 × 300 PNG에 그립니다.
+
+## 파라미터 매핑 [#parameter-mapping]
+
+| Google Chart | QRdx | 참고 |
+| --- | --- | --- |
+| `cht=qr` | 필요 없음 | 이 엔드포인트는 QR 코드만 그립니다. 넣어도 무시됩니다. |
+| `chl=<data>` | `data=<data>` | 같은 방식으로 URL 인코딩하며, 최대 2048자입니다. |
+| `chs=<width>x<height>` | `size=<width>` | QR 코드는 정사각형이므로 숫자 하나만 씁니다. `64`~`2048` 픽셀입니다. |
+| `chld=<level>\|<margin>` | `level=<level>&margin=<margin>` | 같은 글자인 `L`, `M`, `Q`, `H`를 씁니다. 여백은 모듈 단위로 `0`~`16`입니다. |
+| `choe=UTF-8` | 필요 없음 | QRdx는 항상 텍스트를 UTF-8로 인코딩하며, 이는 Google의 기본값이었습니다. Shift_JIS나 ISO-8859-1 옵션은 없습니다. 넣어도 무시됩니다. |
+| 항상 PNG | `format=png` | QRdx는 `png`, `webp`, `eps`를 요청하지 않으면 SVG를 반환합니다. 많은 이메일 클라이언트가 SVG를 표시하지 못하므로 이메일에는 PNG를 쓰세요. |
+
+기본값 두 가지가 다릅니다. `chld`가 없으면 Google은 오류 정정 수준 `L`을 사용했지만, QRdx는 `Q`를 사용합니다. `Q`는 손상에 더 잘 견디지만 코드가 더 촘촘해집니다. 예전 모양이 필요하면 `level=L`을 추가하세요. 여백의 기본값은 둘 다 4모듈입니다.
+
+## 명령 하나로 마이그레이션하기 [#migrate-with-one-command]
+
+지정한 파일에 있는 모든 Google Chart QR URL을 다시 작성하며, 오래된 `chart.apis.google.com` 호스트도 포함합니다. 호스트와 경로를 바꾸고, `chl`, `chs`, `chld`의 이름을 바꾸며, 이미지가 계속 PNG로 나오도록 `format=png`를 추가합니다. Perl은 macOS와 대부분의 Linux 배포판에 기본으로 들어 있습니다.
+
+```bash
+perl -pi -e 's{https?://chart\.(?:googleapis|apis\.google)\.com/chart\?([^\s"\x27<>)]*)}{my $q = $1; $q =~ s/(^|[&;])chl=/${1}data=/; $q =~ s/(^|[&;])chs=(\d+)x\d+/${1}size=$2/; $q =~ s/(^|[&;])chld=([LMQH])(?:\||%7C)(\d+)/${1}level=$2&margin=$3/i; $q =~ s/(^|[&;])chld=([LMQH])/${1}level=$2/i; "https://api.qrdx.dev/v1/qr?format=png&$q"}ge' index.html
+```
+
+git checkout처럼 변경 사항을 검토할 수 있는 곳에서 실행하고 diff를 확인하세요. 아직 예전 API를 사용하는 파일을 찾으려면 다음을 실행하세요.
+
+```bash
+grep -rlE "chart\.(googleapis|apis\.google)\.com/chart" .
+```
+
+`chs`가 64픽셀 미만(`50x50`)이거나 2048을 넘으면 QRdx가 `400`을 반환하므로, 이런 크기는 직접 바꾸세요.
+
+## 코드에서 [#in-code]
+
+```js
+// Before
+const src = `https://chart.googleapis.com/chart?cht=qr&chs=200x200&chl=${encodeURIComponent(link)}`;
+
+// After
+const src = `https://api.qrdx.dev/v1/qr?format=png&size=200&data=${encodeURIComponent(link)}`;
+```
+
+Google Sheets에서는 다음과 같이 합니다.
+
+```txt
+=IMAGE("https://api.qrdx.dev/v1/qr?format=png&size=150&data="&ENCODEURL(A2))
+```
+
+Sheets는 Google 자체 서버를 통해 이미지를 불러오므로, 코드가 수백 개인 시트는 아래의 IP별 제한에 걸릴 수 있습니다. 목록이 크다면 [대량 생성기](/tools/bulk)나 [CLI](/docs/developers/cli)의 `qrdx batch`로 파일을 한 번에 만드세요.
+
+## 알아 둘 점 [#what-else-to-know]
+
+- **요청 제한:** IP 주소당 분당 {facts.imageApiPerMinute}회 요청할 수 있습니다. 초과하면 `Retry-After` 헤더와 함께 `429`가 반환됩니다.
+- **캐싱:** 같은 URL은 항상 같은 바이트를 반환하므로 응답은 1년간 캐시됩니다(`Cache-Control: public, max-age=31536000, immutable`).
+- **추가 옵션:** 색상(`fg`, `bg`), 모듈과 눈 모양, 로고 아이콘(`logoIcon`), 프레임을 쓸 수 있습니다. [URL 빌더](/qr-code-api)에서 사용해 보거나 [파라미터](/docs/developers/image-api#parameters) 문서를 읽어 보세요.
+- **셀프 호스팅:** [셀프 호스팅](/docs/self-hosting)한 QRdx는 자체 도메인의 `/api/v1/qr`에서 같은 API를 제공합니다.

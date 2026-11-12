@@ -16,12 +16,13 @@
     "build-an-integration",
     "---도구---",
     "image-api",
+    "google-chart-api",
     "barcode-api",
     "mcp",
     "ai-agents",
     "cli",
     "n8n",
     "---더 보기---",
-    "[변경 내역](/changelogs)"
+    "[변경 이력](/changelogs)"
   ]
 }
