@@ -1,0 +1,83 @@
+---
+title: "Bot Telegram"
+description: "Buat dan atur gaya kode QR di Telegram. Kirim tautan ke bot QRdx, panggil secara inline di obrolan mana pun, atau gunakan /qr di grup. Tanpa perlu akun."
+icon: Bot
+---
+
+Bot QRdx mengubah tautan atau teks apa pun menjadi kode QR di dalam Telegram. Bot ini gratis, dan Anda tidak memerlukan akun QRdx.
+
+<IfAvailable feature="telegramBot">
+Untuk memulai, klik **Buka di Telegram** di [halaman integrasi Telegram](/integrations/telegram), lalu ketuk **Start** di obrolan bot.
+</IfAvailable>
+
+## Obrolan pribadi [#private-chat]
+
+Kirim tautan atau teks ke bot, dan bot membalas dengan kode QR beserta empat tombol:
+
+- **Download PNG** membuka gambar, siap disimpan atau dibagikan.
+- **Download SVG** membuka versi vektor untuk alat cetak dan desain.
+- **Buka di editor** membuka editor QRdx dengan desain yang sama. Alamat web ikut terbawa. Teks lainnya tidak, jadi tempelkan sendiri ke editor.
+- **Gaya** mengubah tampilan kode langsung di obrolan (lihat di bawah).
+
+Kode berisi persis apa yang Anda kirim, termasuk jeda baris. Kirim `/help` (atau `/start`) untuk melihat cara menggunakan bot. Jika teks terlalu panjang untuk satu kode QR, bot akan memberi tahu; tautan ke halaman berisi teks lengkap menghasilkan kode yang lebih kecil dan lebih mudah dipindai.
+
+## Atur gaya kode Anda [#style-your-code]
+
+Ketuk **Gaya** di bawah kode, lalu empat tombol menggantikan tombol lainnya: **Tampilan**, **Warna**, **Bingkai**, dan **Logo**. Masing-masing membuka pilihannya, dengan tanda ✓ di samping pilihan yang sedang dipakai kode. Ketuk sebuah pilihan dan bot menggambar ulang fotonya. **Kembali** membawa Anda ke empat grup dan **Selesai** memunculkan kembali tombol unduh. Setiap perubahan dibuat di atas kode yang ada saat ini. Di grup, hanya orang yang meminta kode yang dapat mengubah gayanya; orang lain yang mengetuk akan mendapat catatan singkat.
+
+Tampilannya adalah sebagian desain bawaan editor yang mudah dibaca pada ukuran kecil, dan **Polos** mengembalikan ke hitam di atas putih. Sebuah warna membuat seluruh kode berwarna itu di atas latar putih. Bingkainya menambahkan label "Scan me", dan logonya adalah ikon cepat dari editor.
+
+Anda juga dapat mengatur gaya kode saat membuatnya dengan menambahkan opsi setelah tautan atau teks, dengan nama yang sama seperti [QRdx CLI](/docs/developers/cli). Ini berfungsi di obrolan pribadi, setelah `/qr` di grup, dan dalam mode inline, yang menjadi satu-satunya cara mengatur gaya kode karena belum ada pesan yang bisa diubah:
+
+```text
+qrdx.dev --look modern --fg 0051ff --frame banner-bottom --frame-text "Scan me"
+```
+
+Semua yang ada sebelum opsi pertama adalah isi kode. Tampilan diterapkan lebih dulu dan opsi lainnya di atasnya, sehingga `--look royal --fg 0051ff` mempertahankan bentuk Royal dalam warna biru. Jika ponsel Anda mengubah `--` menjadi tanda hubung panjang, itu juga berfungsi. Opsi atau nilai yang salah akan dibalas dengan daftar nilai yang diterima.
+
+| Opsi | Yang diubah | Nilai |
+| --- | --- | --- |
+| `--look` | Seluruh desain, dari salah satu preset editor | `plain`, `classic`, `modern`, `royal`, `folio`, `caffeine`, `retro`, `bordeaux`, `blossom` |
+| `--fg` (atau `--color`) | Titik-titik, serta mata sudut kecuali Anda juga mengaturnya | Warna hex seperti `0051ff`, atau `black`, `blue`, `green`, `red`, `purple`, `orange` |
+| `--bg` | Latar belakang | Sama seperti `--fg` |
+| `--eye-color` | Ketiga mata sudut | Sama seperti `--fg` |
+| `--dot-color` | Bagian tengah mata sudut | Sama seperti `--fg` |
+| `--body` | Bentuk titik-titik | Salah satu dari {facts.bodyPatterns} bentuk titik di editor, seperti `rounded`, `circle`, atau `classy` |
+| `--eye` | Bentuk mata sudut | Salah satu dari {facts.eyeShapes} bentuk mata, seperti `square`, `rounded`, atau `gear` |
+| `--dot` | Bentuk bagian tengah mata | Salah satu dari {facts.eyeCentres} bentuk bagian tengah, seperti `square`, `rounded`, atau `circle` |
+| `--frame` | Bingkai di sekeliling kode | `none` atau salah satu dari {facts.frameStyles} bingkai bawaan, seperti `banner-bottom`, `banner-top`, `speech-bubble`, atau `polaroid` |
+| `--frame-text` | Label bingkai, hingga 24 karakter | Teks apa pun, diberi tanda kutip jika mengandung spasi. Tanpa `--frame`, teks ditaruh di spanduk di bawah kode |
+| `--template` | Border dekoratif | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, atau `Halloween` |
+| `--logo` | Ikon di bagian tengah | `link`, `wifi`, `location`, `phone`, `email`, `whatsapp`, `instagram`, `file`, `calendar`, atau `none` |
+
+Sebelum bot mengirim kode yang sudah diberi gaya, QRdx memeriksanya dengan skor pemindaian yang sama seperti di editor. Jika sebuah desain akan sulit dibaca ponsel, QRdx menyesuaikannya (warna lebih gelap, bentuk lebih polos, atau koreksi kesalahan lebih tinggi) dan menyebutkannya di keterangan. Jika itu masih belum cukup, biasanya karena isinya panjang, Anda akan menerima kode hitam di atas putih beserta catatan.
+
+**Buka di editor** membuka editor dengan desain yang sama: warna, bentuk, bingkai, dan border. Ikon logo tidak ikut terbawa di tautan, jadi pilih lagi di editor.
+
+## Mode inline di obrolan mana pun [#inline-mode-in-any-chat]
+
+Anda dapat mengirim kode ke obrolan mana pun tanpa menambahkan bot ke dalamnya. Di kolom pesan, ketik `@`, nama pengguna bot, spasi, lalu tautan atau teks. Kode muncul di atas kolom setelah beberapa saat. Ketuk untuk mengirimnya, dengan tiga tombol yang sama. Orang yang Anda ajak bicara tidak memerlukan bot.
+
+## Grup [#groups]
+
+Tambahkan bot ke grup, lalu kirim `/qr` diikuti tautan atau teks, misalnya `/qr https://example.com/menu`. Bot membalas pesan Anda dengan kodenya.
+
+Bot di grup secara default memiliki mode privasi aktif, dan bot ini tetap mengaktifkannya, jadi bot tidak melihat percakapan grup. Telegram hanya meneruskan perintah yang ditujukan kepadanya dan balasan atas pesannya sendiri. Bot menjawab `/qr`, `/start`, dan `/help` serta mengabaikan yang lainnya. Jika grup memiliki lebih dari satu bot, atau bot tidak menjawab `/qr` biasa, tambahkan nama penggunanya ke perintah: `/qr@` diikuti nama pengguna, lalu tautan atau teks.
+
+## Privasi [#privacy]
+
+QRdx tidak menyimpan kode yang Anda buat, dan bot membaca setiap pesan hanya untuk menjawabnya.
+
+Isinya masuk ke tautan gambar: Telegram memuat gambar setiap kode dari tautan QRdx yang berisi teks Anda, serta desain yang Anda pilih. Mengubah gaya kode membaca keduanya kembali dari tautan itu, jadi QRdx tidak menyimpan kode untuk mengubah gayanya. Seperti tautan lainnya, tautan ini bisa berakhir di log dan cache, jadi jangan membuat kode dari kata sandi atau rahasia lainnya. Telegram menyimpan pesan di obrolan, seperti untuk pesan apa pun.
+
+Jika Anda membuat banyak kode dalam waktu singkat, bot meminta Anda menunggu semenit sebelum kode berikutnya. Setiap perubahan gaya dihitung sebagai satu kode. Ketika banyak orang menggunakannya sekaligus, bot mungkin menyatakan sedang sibuk. Coba lagi semenit kemudian.
+
+## Hapus bot [#remove-the-bot]
+
+Di obrolan pribadi, buka profil bot lalu blokir, atau hapus obrolannya. Di grup, admin menghapus bot dari daftar anggota.
+
+Kode yang sudah dikirim bot tetap ada di obrolan. Tombolnya tetap berfungsi, karena langsung terhubung ke QRdx.
+
+## Hosting mandiri [#self-hosting]
+
+Server QRdx yang di-hosting sendiri dapat menjalankan bot-nya sendiri. Buat bot dengan [@BotFather](https://t.me/BotFather), atur `TELEGRAM_BOT_TOKEN`, `TELEGRAM_WEBHOOK_SECRET`, dan `TELEGRAM_BOT_USERNAME` di server, lalu jalankan skrip penyiapan. Langkah-langkahnya ada di [`plugins/telegram/README.md`](https://github.com/bucharitesh/qrdx/blob/main/plugins/telegram/README.md). Sampai ketiga variabel diatur, rute bot menjawab 404 dan situs Anda tidak mencantumkan bot.

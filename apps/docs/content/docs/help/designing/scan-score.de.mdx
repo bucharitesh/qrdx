@@ -1,0 +1,41 @@
+---
+title: "Design mit dem Scan-Score prüfen"
+description: "Der Scan-Score testet dein Design so, wie eine Handykamera es sieht, und zeigt dir, was du korrigieren solltest."
+---
+
+Jedes Design im Playground bekommt einen **Scan-Score** von 0 bis 100. Er wird unter der Vorschau angezeigt, zum Beispiel „Scan-Score 92 · Great".
+
+## Was der Score bedeutet [#what-the-score-means]
+
+- **Great** (85 oder mehr): bereit zum Drucken.
+- **OK** (65 bis 84): Er sollte sich scannen lassen, aber prüfe die Warnungen.
+- **Risky** (unter 65): Korrigiere die mit einem Kreuz markierten Prüfungen.
+- **Fails**: Der Code wurde im Test nicht dekodiert, oder der Kontrast ist viel zu niedrig. Drucke ihn nicht.
+
+## Sieh, was zu korrigieren ist [#see-what-to-fix]
+
+Klicke auf den Score. Das Panel **Will it scan?** listet alle Prüfungen auf, die fehlgeschlagenen zuerst.
+
+Der Score prüft Folgendes:
+
+- **Decoding**: Der Code wird in kleinen Größen mit einer kameraähnlichen Unschärfe gelesen.
+- **Contrast**: Code und Hintergrund sollten sich um mindestens 4.5:1 unterscheiden.
+- **Dark on light**: Dunkle Codes auf hellem Hintergrund lassen sich in mehr Apps scannen.
+- **Logo size**: Ein Logo darf nicht mehr abdecken, als die Fehlerkorrektur wiederherstellen kann.
+- **Eye shape**: Runde und geschwungene Augen scheitern in manchen Scanner-Apps.
+- **Clear space**: der leere Rand um den Code. Vier Module sind ideal.
+
+## Schnelle Lösungen [#quick-fixes]
+
+- Niedriger Kontrast: Mach den Code dunkler oder den Hintergrund heller. Siehe [Farben wählen, die sich scannen lassen](/docs/help/designing/colors-and-contrast).
+- Logo verdeckt zu viel: Stelle **Error correction** auf **High**. Siehe [Logo hinzufügen](/docs/help/designing/logos).
+- Augen: Wechsle zu quadratischen, abgerundeten oder zahnradförmigen Augen.
+- Ruhezone: Stelle **Padding** auf **Standard** oder **Large**.
+
+## Gedruckten Code prüfen [#check-a-printed-code]
+
+Der Score testet das Design auf dem Bildschirm. Um einen bereits gedruckten Code zu testen, mach ein Foto und ziehe es in den [Scan-Checker](/tools/scan-checker). Das Bild verlässt dein Gerät nie.
+
+## Verwandte Themen [#related]
+
+- [Ein Code lässt sich nicht scannen](/docs/help/troubleshooting/wont-scan)

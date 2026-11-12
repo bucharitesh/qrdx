@@ -1,0 +1,110 @@
+---
+title: "Halaman landing"
+description: "Buat halaman seluler untuk kode QR dari blok-blok, tanpa perlu situs web. Daftar tautan, halaman bisnis, vCard Plus, halaman produk, dan total {facts.hostedPageTypes} jenis halaman."
+icon: PanelsTopLeft
+---
+
+Halaman landing yang di-hosting adalah halaman seluler yang disajikan QRdx untuk Anda di `https://qrdx.dev/p/<slug>` (atau di [domain kustom](/docs/custom-domains) Anda). Setiap halaman dilengkapi [kode QR dinamis](/docs/dynamic-qr-codes), sehingga Anda tetap dapat mengedit halaman setelah kode dicetak dan melihat setiap pemindaian.
+
+## Membuat halaman [#create-a-page]
+
+1. Buka [Dasbor → Halaman & formulir](/dashboard?to=pages) lalu klik **Halaman baru**, atau klik **Kode baru** pada daftar kode dan pilih jenis halaman sebagai ganti **Tautan situs web**.
+2. Pilih salah satu dari {facts.hostedPageTypes} [jenis halaman](#page-types) dan sebuah templat dari galerinya.
+3. Klik **Buat halaman**. Editor terbuka dengan blok-blok dari templat, dan kode QR siap diunduh dari **Kode QR**.
+
+Sudah mencetak kode yang membuka situs web? Buka kode tersebut lalu klik **Ubah jenis** untuk mengubahnya menjadi halaman dengan tautan pendek yang sama. Lihat [Mengubah yang dibuka oleh kode yang sudah dicetak](/docs/help/dynamic-codes/change-the-type).
+
+Templat dimulai dengan contoh nama, harga, angka, dan foto agar Anda dapat melihat bagaimana halaman tersusun. Sebelum Anda mempublikasikan untuk pertama kali, editor akan mengingatkan Anda untuk menggantinya dengan milik Anda sendiri.
+
+## Jenis halaman [#page-types]
+
+Setiap jenis halaman hanyalah titik awal: blok apa pun dapat ditambahkan ke halaman mana pun, dan halaman yang dibuat dari satu jenis dapat terlihat seperti jenis lain.
+
+| Jenis halaman | Cocok untuk | Dimulai dengan |
+| --- | --- | --- |
+| **Daftar tautan** | Link in bio, kreator, podcast | Header profil, tautan, ikon sosial |
+| **Media sosial** | Semua profil dalam satu kode | Header profil, satu baris per jaringan dengan nama akun Anda |
+| **Bisnis** | Toko, salon, kantor | Jam buka, alamat dan peta, kontak, ajakan bertindak |
+| **vCard Plus** | Kartu nama digital | Kartu kontak dengan **Simpan kontak** |
+| **Menu** | Kafe, restoran, bar | Menu, Wi-Fi, jam buka ([selengkapnya](/docs/forms-and-pages#menu)) |
+| **Kupon** | Diskon dan hadiah gratis | Kupon dengan barcode dan **Tukarkan** ([selengkapnya](/docs/forms-and-pages#coupon)) |
+| **Acara** | Pesta, konferensi, webinar, pernikahan | Acara dengan tambah ke kalender ([selengkapnya](/docs/forms-and-pages#event)) |
+| **Unduh aplikasi** | Satu kode untuk semua toko aplikasi | Unduh aplikasi ([selengkapnya](/docs/forms-and-pages#app-download)) |
+| **Umpan balik & formulir** | Ulasan, survei NPS, pendaftaran | Formulir dan tautan ulasan ([selengkapnya](/docs/forms-and-pages#forms)) |
+| **Produk** | Kemasan, label, hang tag | Bahan, alergen, nutrisi, sertifikasi, perawatan, GS1 Digital Link ([selengkapnya](/docs/product-pages)) |
+| **Janji temu** | Salon, klinik, tutor | Layanan dan harga, formulir permintaan pemesanan, jam buka |
+| **Pembayaran & tip** | Kotak tip, donasi, faktur | Tautan pembayaran dan detail bank untuk disalin |
+| **Listing properti** | Rumah dijual atau disewakan, open house | Harga dan fakta, foto, agen, formulir permintaan kunjungan atau buku tamu |
+| **Tag ID hewan peliharaan** | Tag kalung, poster hewan hilang | Tombol telepon, detail hewan, formulir "saya menemukannya" |
+| **ID medis** | Tag, gelang, kartu alergi | Kontak darurat, kondisi medis, alergi, obat |
+| **PDF** | Brosur, manual, pustaka dokumen | Sebuah PDF untuk dibaca atau diunduh, atau beberapa berkas |
+| **Gambar** | Galeri dan portofolio | Galeri foto |
+| **MP3 / Audio** | Musik, podcast, pesan suara | Pemutar audio |
+| **Video** | Video produk, klip | Video |
+| **Playlist** | Mix, tur audio, buku audio | Beberapa trek yang diputar berurutan |
+| **Halaman kustom** | Hal lainnya | Halaman kosong atau pengumuman |
+
+Jika unggah berkas belum disiapkan, jenis yang berbasis unggahan (PDF, Gambar, MP3 / Audio, Video, dan Playlist) disembunyikan dari pilihan.
+
+**Janji temu** mengirim permintaan pemesanan ke [respons](/docs/forms-and-pages#responses) halaman dan notifikasi, dan dapat menautkan ke alat pemesanan Anda. Jenis ini tidak menampilkan kalender langsung berisi waktu yang kosong: Anda mengonfirmasi setiap permintaan sendiri.
+
+**Pembayaran & tip** tidak pernah memproses pembayaran. Setiap tombol membuka halaman aplikasi pembayaran itu sendiri (PayPal, Venmo, Cash App, Revolut, Wise), dan detail bank, ID UPI, serta alamat dompet memiliki tombol salin.
+
+Halaman **Tag ID hewan peliharaan** dan **ID medis** dapat dibaca oleh siapa pun yang memindai kodenya. Tambahkan hanya hal yang membantu orang yang menemukan hewan peliharaan Anda atau menolong Anda dalam keadaan darurat.
+
+## Edit dan publikasikan [#edit-and-publish]
+
+Editor memiliki tiga tab dan pratinjau ponsel langsung. Ketuk sebuah blok di pratinjau untuk langsung menuju pengaturannya.
+
+- **Blok**: tambahkan blok dengan **Tambah blok**, ubah urutannya dengan menyeret (atau dengan tombol panah), sembunyikan blok tanpa menghapusnya, gandakan, atau hapus. Setiap blok memiliki formulirnya sendiri; masalah (misalnya tautan tanpa `https://`) ditandai pada blok dan harus diperbaiki sebelum dipublikasikan.
+- **Desain**: gunakan warna dari salah satu [tema QR tersimpan](/dashboard?to=themes) Anda agar halaman serasi dengan kode yang dicetak, pilih palet bawaan, atau atur setiap warna sendiri. Pilih font, radius sudut, latar belakang solid, gradien, atau gambar, dan logo opsional. **Cocokkan warna** menurunkan warna teks dan kartu yang mudah dibaca dari latar belakang dan warna aksen Anda, dan peringatan muncul saat kontras teks rendah.
+- **Pengaturan**: deskripsi dan gambar pratinjau berbagi, apakah mesin pencari boleh mengindeks halaman (nonaktif secara bawaan), dan CSS kustom pada Bisnis.
+
+Klik **Publikasikan** (atau tekan <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>S</kbd>) untuk menayangkan perubahan Anda. Tidak ada yang berubah bagi pengunjung sampai Anda mempublikasikan; suntingan yang belum dipublikasikan disimpan di browser Anda sehingga dapat dipulihkan setelah tab ditutup. Setiap publikasi disimpan sebagai versi. Jika rekan tim mempublikasikan halaman yang sama saat Anda sedang mengedit, QRdx meminta Anda memuat ulang alih-alih menimpa perubahan mereka.
+
+## Blok inti [#core-blocks]
+
+| Blok | Yang ditampilkan |
+| --- | --- |
+| Header profil | Foto atau logo, nama, bio, dan gambar sampul opsional |
+| Teks | Judul dan paragraf (jeda baris dipertahankan) |
+| Tombol | Satu ajakan bertindak: tautan web, alamat email, atau nomor telepon |
+| Daftar tautan | Susunan tombol tautan, dengan ikon situs untuk Instagram, YouTube, WhatsApp, dan lainnya |
+| Ikon sosial | Profil sebagai ikon bulat, tombol, atau daftar dengan setiap nama akun |
+| Gambar | Foto atau banner, dapat ditautkan |
+| Video | Video YouTube, Vimeo, atau Loom. Video dimuat dari situs video hanya setelah pengunjung mengetuk putar |
+| Kartu kontak | Nama, jabatan, telepon, email, situs web, alamat, aksi cepat (telepon, WhatsApp, email, petunjuk arah), **Simpan kontak**, dan **Bagikan** |
+| Alamat & peta | Alamat Anda dengan petunjuk arah Google Maps dan Apple Maps, serta peta tersemat opsional |
+| Jam buka | Jam per hari (termasuk shift terpisah dan jam lewat tengah malam) dengan lencana **Buka sekarang** sesuai zona waktu Anda |
+| Detail | Label dan nilai sebagai daftar atau kisi kartu (kamar tidur, ras, golongan darah, berat bersih) |
+| Detail produk | Sertifikasi, bahan, alergen, tabel nutrisi, bagian yang terbuka saat diketuk, dan GTIN ([selengkapnya](/docs/product-pages)) |
+| Tautan pembayaran | PayPal, Venmo, Cash App, Revolut, Wise, UPI, transfer bank, dan dompet kripto. Tombol membuka setiap aplikasi; detail memiliki tombol salin. Halaman tidak pernah memproses pembayaran. |
+| Pembatas, Spasi | Pembantu tata letak |
+
+### vCard Plus dan Simpan kontak [#vcard-plus-and-save-contact]
+
+**Simpan kontak** mengunduh berkas vCard 3.0 (`.vcf`) yang dibuka ponsel di aplikasi kontaknya. Berkas ini berisi nama, perusahaan, jabatan, telepon, email, situs web, alamat, bio, profil sosial halaman, dan foto. Foto yang diunggah ke penyimpanan QRdx disematkan di dalam berkas; foto yang ditautkan dari situs lain disertakan sebagai tautan (QRdx tidak pernah mengunduh gambar dari situs lain). **Bagikan** membuka lembar berbagi ponsel, atau menyalin tautan halaman di komputer.
+
+## Paket [#plans]
+
+| | Gratis | Pro | Business |
+| --- | --- | --- | --- |
+| Halaman yang di-hosting | 3 | Tanpa batas | Tanpa batas |
+| Footer "Made with QRdx" | Ditampilkan | Dihapus | Dihapus |
+| White-label (logo Anda sebagai ikon browser, tanpa branding QRdx) | — | — | ✓ |
+| CSS kustom | — | — | ✓ |
+
+Batas hanya mencegah Anda membuat halaman baru. Halaman yang sudah Anda miliki tetap berfungsi di semua paket, termasuk setelah downgrade; pada downgrade dari Business, CSS kustom hanya berhenti diterapkan. Setiap halaman juga menggunakan satu dari kode dinamis di paket Anda. Lihat [Paket dan batas](/docs/plans-and-limits).
+
+### CSS kustom (Business) [#custom-css-business]
+
+Tulis CSS biasa di **Settings → Custom CSS**. Aturan hanya berlaku di dalam halaman Anda: setiap selektor dibatasi pada konten halaman, dan setiap blok dapat ditargetkan dengan `.lp-block-<type>`, misalnya `.lp-block-links a` atau `.lp-block-contact h1`. Demi keamanan, CSS tidak dapat memuat file (`url()`, `@import`, `@font-face`), tidak dapat menggunakan escape garis miring terbalik, dan hanya mendukung at-rule `@media`, `@supports`, `@container`, dan `@keyframes`.
+
+## Yang didapat pengunjung [#what-visitors-get]
+
+- Halaman cepat yang dirender di server dan dibuat untuk ponsel, tanpa skrip analitik atau obrolan QRdx. Piksel pelacakan hanya dimuat jika Anda menambahkannya sendiri ke kode.
+- Disembunyikan dari mesin pencari kecuali Anda mengaktifkan **Show in search engines**.
+- Pratinjau berbagi (judul, deskripsi, gambar) untuk aplikasi obrolan dan jejaring sosial. Kode yang dilindungi kata sandi tidak pernah menampilkan detail halaman dalam pratinjau.
+- Tautan kecil **Report abuse** di setiap halaman, termasuk halaman white-label.
+
+Perlindungan kata sandi, tanggal mulai dan berakhir, batas pemindaian, dan fitur jeda dari [kontrol kode](/docs/code-controls) juga berlaku untuk halaman dan file **Save contact**-nya, termasuk saat seseorang membuka tautan halaman secara langsung.

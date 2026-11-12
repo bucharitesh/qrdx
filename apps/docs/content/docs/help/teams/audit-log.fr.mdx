@@ -1,0 +1,69 @@
+---
+title: "Journal d'audit"
+description: "Voyez qui a modifié quoi dans votre espace de travail et quand, filtrez ces modifications et exportez-les en CSV. Inclus dans le plan Business."
+---
+
+Le journal d'audit est une fonctionnalité Business relevant de la licence commerciale de QRdx. Un serveur QRdx auto-hébergé a besoin d'une clé de licence (`QRDX_EE_LICENSE`) pour l'activer ; consultez [Auto-hébergement](/docs/self-hosting#optional-services).
+
+<IfAvailable feature="auditLog">
+
+Le journal d'audit recense les modifications effectuées dans un espace de travail : qui les a faites, ce qui a changé et quand. Les propriétaires et les administrateurs le consultent dans **Paramètres** → **Journal d'audit**, où ils peuvent le filtrer et l'exporter en fichier CSV.
+
+## Qui y a accès [#who-has-it]
+
+Le journal d'audit fait partie du plan **Business**. Un espace de travail en bénéficie lorsqu'un de ses propriétaires ou membres de facturation est sur Business. Consultez [Postes et limites de l'espace de travail](/docs/help/teams/seats).
+
+L'historique commence au moment où l'espace de travail passe à Business. Les modifications effectuées avant, ou pendant que l'espace de travail était sur un autre plan, ne sont pas enregistrées. Si l'espace de travail quitte Business, l'enregistrement s'arrête ; les entrées déjà conservées restent jusqu'à ce qu'elles aient {facts.auditLogRetentionDays} jours, et vous pouvez les revoir si l'espace de travail repasse à Business.
+
+Seuls les **propriétaires** et les **administrateurs** peuvent ouvrir le journal d'audit et l'exporter. Les membres, les lecteurs et les membres de facturation ne le peuvent pas. Consultez [Rôles](/docs/help/teams/roles).
+
+## Ce qui est enregistré [#whats-recorded]
+
+Chaque entrée indique l'heure, l'auteur de la modification, ce qui a été modifié et la cible (un code, une page, une personne, un domaine). Lorsque c'est pertinent, l'entrée conserve l'ancienne et la nouvelle valeur, comme l'ancienne et la nouvelle destination d'un code. Cliquez sur la flèche d'une entrée pour les afficher.
+
+L'auteur de la modification est une personne, ou une clé API ou une application agissant pour une personne. Les modifications effectuées via la [REST API](/docs/developers/rest-api) avec une clé API affichent le nom de la clé ; celles effectuées via une application que vous avez autorisée affichent le nom de l'application.<IfAvailable feature="slackBot"> Les codes créés dans Slack avec `/qr track` affichent la personne liée « via Slack », avec les identifiants de l'utilisateur Slack et de l'espace de travail Slack. Lorsqu'un propriétaire ou un administrateur révoque la liaison d'un compte Slack dans [Paramètres → Clés API et applications](/dashboard?to=settings/developers), cela est enregistré sous Développeurs.</IfAvailable>
+
+Chaque entrée conserve aussi l'adresse IP et l'appareil de la requête, c'est-à-dire le navigateur et le système, par exemple « Chrome sur macOS ». Les modifications effectuées par le système, comme un changement de plan depuis la facturation, n'ont ni l'une ni l'autre.
+
+Ces modifications sont enregistrées :
+
+- **Codes :** création (y compris les imports et les copies), changement de destination, renommage, changement de design, changement de lien court, changement des contrôles du lien (mot de passe activé ou désactivé, dates de début et de fin, limite de scans, URL de secours), changement des règles de routage, mise en pause ou reprise, archivage ou désarchivage, déplacement dans la corbeille, restauration, suppression définitive, restauration d'une version antérieure, déplacement vers un autre dossier, déplacement vers ou depuis un autre espace de travail. Création, renommage ou suppression de dossiers et d'étiquettes.
+- **Pages :** création, publication, suppression.
+- **Équipe :** invitations envoyées et révoquées, personnes qui rejoignent via une invitation, le lien d'adhésion ou l'authentification unique, changements de rôle, personnes retirées, personnes qui partent, et lien d'adhésion activé, modifié ou désactivé. Ces événements sont enregistrés quelle que soit la manière dont la modification a été faite, dans QRdx ou via son API.
+- **Sécurité :** « Exiger la vérification en deux étapes » et « Exiger l'authentification unique » activés ou désactivés (l'activation de l'authentification unique indique aussi combien de sessions ont été déconnectées), authentification unique configurée, modifiée, vérifiée ou supprimée, rôle attribué aux nouvelles personnes lors de leur première connexion par authentification unique, et exports du journal d'audit.
+- **Développeurs :** clés API créées et révoquées (leur nom et leurs portées), applications autorisées ou révoquées, points de terminaison webhook ajoutés, modifiés ou supprimés, et secret de signature d'un webhook remplacé. Pour un point de terminaison, le journal ne conserve que son serveur, comme `https://hooks.zapier.com/…`, car le reste de l'URL d'un webhook est souvent secret.
+- **Domaines :** domaines personnalisés ajoutés, vérifiés ou supprimés.
+- **Espace de travail :** nom ou URL modifié, et passage de l'espace de travail à Business (enregistré sous « Facturation »).
+
+Le journal d'audit ne conserve jamais une clé API, un jeton OAuth, un mot de passe, le chemin ou la chaîne de requête d'une URL de webhook, un secret de signature de webhook, ni un secret client ou un certificat d'authentification unique. Il enregistre qu'un élément a été créé, remplacé ou supprimé, pas sa valeur.
+
+Les applications que vous autorisez agissent sur votre propre espace de travail ; leur autorisation ou leur révocation y est donc enregistrée.
+
+Ne figurent pas dans le journal d'audit :
+
+- les scans, les réponses aux formulaires et les statistiques, qui ne sont pas des modifications de l'espace de travail (consultez-les dans Statistiques et Réponses) ;
+- les modifications de votre propre compte, comme votre nom, votre e-mail ou la vérification en deux étapes.
+
+## Filtrer le journal [#filter-the-log]
+
+Les modifications les plus récentes apparaissent en premier, 50 à la fois. Cliquez sur **Charger plus** en bas pour afficher les plus anciennes.
+
+- **Qui** : une personne, avec les clés API et les applications qui agissent pour elle.
+- **Catégorie** : Codes (avec dossiers et étiquettes), Pages, Équipe, Sécurité, Développeurs, Domaines ou Espace de travail.
+- **Du** et **Au** : le premier et le dernier jour à afficher. Les jours sont en UTC ; les heures de chaque entrée sont dans votre fuseau horaire.
+
+## Exporter en CSV [#export-as-csv]
+
+Cliquez sur **Exporter en CSV** pour télécharger ce qu'affichent les filtres, des plus récentes aux plus anciennes. Un export contient jusqu'à {facts.auditLogExportRows} entrées. Pour en obtenir davantage, exportez une période plus courte à la fois.
+
+Le fichier contient une ligne par modification : l'heure en UTC, la catégorie, l'action, une phrase la décrivant, son auteur (et la clé API ou l'application, le cas échéant), la cible, l'adresse IP, l'appareil, ainsi que l'ancienne et la nouvelle valeur en JSON.
+
+L'export est lui aussi enregistré, avec les filtres utilisés.
+
+## Durée de conservation des entrées [#how-long-entries-are-kept]
+
+Les entrées sont conservées pendant {facts.auditLogRetentionDays} jours, puis supprimées. La suppression d'un espace de travail supprime aussi son journal d'audit.
+
+Les adresses IP et les appareils figurant dans le journal d'audit sont des données personnelles des personnes qui travaillent dans l'espace de travail. La [politique de confidentialité](/legal/privacy-policy) explique comment QRdx les traite.
+
+</IfAvailable>

@@ -154,7 +154,7 @@ A maintainer applies schema changes to the production database before the code t
 
 ## Translating QRdx
 
-English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page, `/pricing` and the other marketing pages listed in `apps/docs/lib/i18n/localized-paths.json` (tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, AI and the comparison index). A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The docs are also in Spanish, Brazilian Portuguese, Japanese and Simplified Chinese (see [Docs](#docs) below). The blog, the legal pages, the comparison pages themselves and the signed-in app are English only.
+English is the source and keeps the unprefixed URLs (`/pricing`). Every other language lives under its own lowercase segment: `/es/pricing`, `/pt-br/pricing`, `/zh-hans`. Translated so far: the header, the footer, the cookie banner and its dialog, the home page, `/pricing` and the other marketing pages listed in `apps/docs/lib/i18n/localized-paths.json` (tools, scanner, generators, industry and placement guides, templates, integrations, plugins, MCP, AI and the comparison index). A dynamic route is listed the way its folder is named (`/qr-code-generator/[type]`). The docs are in every one of these languages too (see [Docs](#docs) below). The blog, the legal pages, the comparison pages themselves and the signed-in app are English only.
 
 The copy is in `apps/docs/messages/`:
 
@@ -217,7 +217,7 @@ It fails on keys that English doesn't have, on placeholders or tags that changed
 
 ### Docs
 
-The docs (`apps/docs/content/docs`) are translated into the languages whose entry in `lib/i18n/config.ts` has `docs: true`: today `es`, `pt-BR`, `ja` and `zh-Hans`. Their pages live at `/es/docs/...`, `/pt-br/docs/...`, `/ja/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. Other languages link to the English docs.
+The docs (`apps/docs/content/docs`) are translated into the languages whose entry in `lib/i18n/config.ts` has `docs: true`: today all of them, `es`, `pt-BR`, `fr`, `de`, `it`, `ja`, `ko`, `zh-Hans`, `id` and `hi`. Their pages live under the language's segment, such as `/es/docs/...`, `/pt-br/docs/...` and `/zh-hans/docs/...`; English keeps `/docs/...`. A language added without `docs: true` links to the English docs.
 
 | File | What it holds |
 | --- | --- |

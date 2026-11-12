@@ -1,0 +1,53 @@
+---
+title: "Invia le scansioni a link diversi"
+description: "Indirizza ogni scansione in base a dispositivo, paese, area, lingua od orario ed esegui test A/B con il routing intelligente."
+---
+
+Il routing intelligente invia ogni scansione di un QR code dinamico a un link diverso, in base alle regole che imposti. Solo per Pro e Business.
+
+## Aggiungi una regola [#add-a-rule]
+
+1. Apri il codice da **Codici**.
+2. In **Impostazioni**, apri **Routing intelligente**.
+3. Fai clic su **Aggiungi regola**, oppure parti da un modello.
+4. Scegli una condizione e il link che si apre per le scansioni corrispondenti.
+5. Fai clic su **Salva regole**.
+
+Le scansioni che non corrispondono a nessuna regola aprono la destinazione normale del codice.
+
+## Condizioni che puoi usare [#conditions-you-can-use]
+
+Dispositivo, sistema operativo, paese, regione, area, lingua, ora del giorno, intervallo di date e numero di scansioni. Ogni condizione può anche essere invertita con **non è**.
+
+Un'**area** è un punto con un raggio. Usa la posizione condivisa da chi esegue la scansione quando la [posizione precisa](/docs/precise-location) è attiva, altrimenti la posizione approssimativa della sua rete.
+
+Una regola può avere fino a 8 condizioni. Un codice può avere fino a 20 regole.
+
+## Modelli [#templates]
+
+- **Link intelligente all'app**: iPhone all'App Store, telefoni Android a Google Play.
+- **Paese** e **Lingua del visitatore**.
+- **Orario di lavoro**.
+- **Intervallo di date** per una campagna.
+- **Prime scansioni**: un link diverso per le prime scansioni.
+- **Dentro un'area**: un link diverso per le scansioni vicino a un luogo.
+- **Suddivisione A/B**: distribuisce le scansioni tra un massimo di 5 versioni.
+
+## Vince la prima regola corrispondente [#the-first-matching-rule-wins]
+
+Le regole vengono controllate dall'alto verso il basso. Metti per prime le regole più specifiche.
+
+Fai clic su **Testa le tue regole** per vedere dove andrebbe una scansione prima di salvare.
+
+## Test A/B [#ab-tests]
+
+Una suddivisione A/B invia ogni visitatore a una versione. Lo stesso visitatore vede la stessa versione per il resto della giornata. La pagina del codice mostra come si distribuiscono le scansioni tra le versioni.
+
+## Dopo un downgrade [#after-a-downgrade]
+
+Le regole salvate continuano a funzionare.
+
+## Correlati [#related]
+
+- [Guida al routing intelligente](/docs/smart-routing)
+- [Un codice apre la pagina sbagliata](/docs/help/troubleshooting/wrong-destination)

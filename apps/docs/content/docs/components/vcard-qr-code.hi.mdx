@@ -1,0 +1,52 @@
+---
+title: "vCard QR कोड"
+description: "एक QR कोड जो स्कैन करने पर कॉन्टैक्ट कार्ड सेव करता है, टाइप्ड vCard 3.0 बिल्डर के साथ।"
+icon: Users
+---
+
+<ComponentLinks name="vcard-qr-code" />
+
+<ComponentPreview name="vcard-qr-code-demo" />
+
+## इंस्टॉलेशन [#installation]
+
+<InstallationTabs name="vcard-qr-code" />
+
+## उपयोग [#usage]
+
+```tsx
+import { VCardQrCode } from "@/components/vcard-qr-code";
+```
+
+```tsx
+<VCardQrCode
+  contact={{
+    firstName: "Ada",
+    lastName: "Lovelace",
+    organization: "Analytical Engines",
+    email: "ada@example.com",
+  }}
+/>
+```
+
+फ़ोन के कैमरे कोड स्कैन करने पर कॉन्टैक्ट सेव करने का विकल्प देते हैं। खाली फ़ील्ड छोड़ दिए जाते हैं, जिससे कोड छोटा रहता है और जल्दी स्कैन होता है।
+
+## उदाहरण [#examples]
+
+### vCard बिल्डर [#vcard-builder]
+
+`buildVCard` वही vCard 3.0 टेक्स्ट लौटाता है जिसे कोड एन्कोड करता है। इसमें कॉमा, सेमीकोलन, बैकस्लैश और लाइन ब्रेक एस्केप किए जाते हैं। इसे किसी भी QR रेंडरर के साथ इस्तेमाल करें, या उसी कॉन्टैक्ट को `.vcf` डाउनलोड के रूप में देने के लिए।
+
+<ComponentPreview name="vcard-qr-code-payload" />
+
+कॉन्टैक्ट कार्ड में लिंक से ज़्यादा टेक्स्ट होता है, इसलिए कॉम्पोनेंट मॉड्यूल बड़े रखने के लिए एरर करेक्शन लेवल `M` इस्तेमाल करता है। सिर्फ़ वही फ़ील्ड जोड़ें जिनकी लोगों को ज़रूरत है, और प्रिंट में कितना बड़ा रखना है यह [प्रिंट साइज़ कैलकुलेटर](/tools/print-size) से जाँचें।
+
+## API संदर्भ [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" type="{ [K in keyof VCardQrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: VCardQrCodeProps[K] }" />
+
+कोई भी अन्य prop, जैसे `className`, रैप करने वाले `<figure>` को पास किया जाता है।
+
+### VCardContact [#vcardcontact]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" name="VCardContact" />

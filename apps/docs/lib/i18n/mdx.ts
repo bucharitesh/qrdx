@@ -166,9 +166,26 @@ export interface MdxShape {
   listItems: number;
   tableRows: number;
   numbers: string[];
+  /** Numbers glued to a unit (200MB): a translation may write "200 MB" so. */
+  unitNumbers: string[];
 }
 
 const sorted = (values: string[]) => [...values].sort();
+
+/** 1,00,000 and 12,34,567: lakh and crore grouping, as Hindi writes them. */
+const INDIAN_GROUPING = /^\d{1,2}(?:,\d{2})+,\d{3}(?:\.\d+)?$/;
+
+/**
+ * 10,000, 10.000 and 10 000 are the same number, and so is 10,000 in Indian
+ * grouping; 1.5 and 1,5 are too.
+ */
+function normalizeNumber(raw: string): string {
+  return INDIAN_GROUPING.test(raw)
+    ? raw.replace(/,/g, "")
+    : raw
+        .replace(/[., \u00A0\u202F\u2009](?=\d{3}(?:\D|$))/g, "")
+        .replace(",", ".");
+}
 
 /** What must survive translation unchanged, read from masked MDX. */
 export function mdxShape(masked: string): MdxShape {
@@ -225,19 +242,25 @@ export function mdxShape(masked: string): MdxShape {
   ).length;
   const tableRows = lines.filter((line) => /^\s*\|/.test(line)).length;
   // Numbers in the copy, without URLs, slots and thousands separators.
+  const copy = prose
+    .replace(/\]\([^)]*\)/g, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(SLOT, " ")
+    .replace(/\{facts\.\w+\}/g, " ")
+    .replace(/https?:\/\/\S+/g, " ");
   const numbers = [
-    ...prose
-      .replace(/\]\([^)]*\)/g, " ")
-      .replace(/<[^>]*>/g, " ")
-      .replace(SLOT, " ")
-      .replace(/\{facts\.\w+\}/g, " ")
-      .replace(/https?:\/\/\S+/g, " ")
-      // Not digits inside a name (n8n, GA4, 2FA).
-      .matchAll(/(?<![A-Za-z])\d+(?:[.,]\d{3})*(?:[.,]\d+)?(?![A-Za-z])/g),
-  ].map((match) =>
-    // 10,000 and 10.000 are the same number; so are 1.5 and 1,5.
-    match[0].replace(/[.,](?=\d{3}(?:\D|$))/g, "").replace(",", "."),
-  );
+    // Not digits inside a name (n8n, GA4, 2FA). Thousands may be grouped
+    // with a space (French 10 000) or the Indian way (1,00,000).
+    ...copy.matchAll(
+      /(?<![A-Za-z])(?:\d{1,2}(?:,\d{2})+,\d{3}|\d+(?:[., \u00A0\u202F\u2009]\d{3})*)(?:[.,]\d+)?(?![A-Za-z])/g,
+    ),
+  ].map((match) => normalizeNumber(match[0]));
+  // Numbers written against their unit (200MB, 0.353mm), as Korean does.
+  const unitNumbers = [
+    ...copy.matchAll(
+      /(?<![A-Za-z\d])\d+(?:[.,]\d{3})*(?:[.,]\d+)?(?=[A-Za-z])/g,
+    ),
+  ].map((match) => normalizeNumber(match[0]));
 
   return {
     slots,
@@ -250,6 +273,7 @@ export function mdxShape(masked: string): MdxShape {
     listItems,
     tableRows,
     numbers: sorted(numbers),
+    unitNumbers: sorted(unitNumbers),
   };
 }
 
@@ -322,7 +346,10 @@ export function shapeProblems(
       `table rows changed: expected ${english.tableRows}, got ${translated.tableRows}`,
     );
   }
-  const lostNumbers = missingFrom(english.numbers, translated.numbers);
+  const lostNumbers = missingFrom(english.numbers, [
+    ...translated.numbers,
+    ...translated.unitNumbers,
+  ]);
   if (lostNumbers.length) {
     problems.push(`numbers missing: ${list(lostNumbers)}`);
   }

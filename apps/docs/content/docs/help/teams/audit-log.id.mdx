@@ -1,0 +1,69 @@
+---
+title: "Log audit"
+description: "Lihat siapa mengubah apa di workspace Anda dan kapan, saring datanya, lalu ekspor sebagai CSV. Bagian dari paket Business."
+---
+
+Log audit adalah fitur Business di bawah lisensi komersial QRdx. Server QRdx yang di-hosting sendiri memerlukan kunci lisensi (`QRDX_EE_LICENSE`) untuk mengaktifkannya; lihat [Hosting mandiri](/docs/self-hosting#optional-services).
+
+<IfAvailable feature="auditLog">
+
+Log audit mencantumkan perubahan yang dilakukan orang di sebuah workspace: siapa pelakunya, apa yang berubah, dan kapan. Pemilik dan admin dapat membacanya di **Settings** → **Audit log**, tempat mereka dapat menyaringnya dan mengekspornya sebagai berkas CSV.
+
+## Siapa yang memilikinya [#who-has-it]
+
+Log audit adalah bagian dari paket **Business**. Sebuah workspace memilikinya ketika salah satu pemilik atau anggota penagihannya menggunakan Business. Lihat [Kursi dan batas workspace](/docs/help/teams/seats).
+
+Riwayat dimulai saat workspace mendapatkan Business. Perubahan yang dibuat sebelum itu, atau saat workspace masih menggunakan paket lain, tidak dicatat. Jika workspace keluar dari Business, pencatatan berhenti; entri yang sudah tersimpan tetap ada sampai berusia {facts.auditLogRetentionDays} hari, dan Anda dapat melihatnya lagi jika workspace kembali ke Business.
+
+Hanya **pemilik** dan **admin** yang dapat membuka log audit dan mengekspornya. Anggota, penampil, dan anggota penagihan tidak bisa. Lihat [Peran](/docs/help/teams/roles).
+
+## Apa yang dicatat [#whats-recorded]
+
+Setiap entri memuat waktu, siapa yang melakukan perubahan, apa yang diubah, dan targetnya (kode, halaman, orang, atau domain). Jika relevan, entri menyimpan nilai lama dan nilai baru, seperti tujuan lama dan baru sebuah kode. Klik panah pada entri untuk melihatnya.
+
+Pelaku perubahan adalah seseorang, atau kunci API atau aplikasi yang bertindak atas nama seseorang. Perubahan yang dibuat melalui [REST API](/docs/developers/rest-api) dengan kunci API menampilkan nama kunci tersebut; perubahan yang dibuat melalui aplikasi yang Anda otorisasi menampilkan nama aplikasinya.<IfAvailable feature="slackBot"> Kode yang dibuat di Slack dengan `/qr track` menampilkan orang yang tertaut dengan keterangan "via Slack", beserta id pengguna dan workspace Slack. Ketika pemilik atau admin mencabut tautan akun Slack di [Settings → API keys & apps](/dashboard?to=settings/developers), hal itu dicatat di bawah Developers.</IfAvailable>
+
+Setiap entri juga menyimpan alamat IP dan perangkat dari permintaan tersebut, yaitu peramban dan sistem seperti "Chrome on macOS". Perubahan yang dibuat oleh sistem, seperti perubahan paket dari penagihan, tidak memiliki keduanya.
+
+Perubahan berikut dicatat:
+
+- **Kode:** dibuat (termasuk impor dan salinan), tujuan diubah, diganti nama, desain diubah, tautan pendek diubah, kontrol tautan diubah (kata sandi aktif atau nonaktif, tanggal mulai dan berakhir, batas pemindaian, URL cadangan), aturan perutean diubah, dijeda atau dilanjutkan, diarsipkan atau dikeluarkan dari arsip, dipindahkan ke tempat sampah, dipulihkan, dihapus permanen, versi sebelumnya dipulihkan, dipindahkan ke folder lain, dipindahkan ke atau dari workspace lain. Folder dan tag dibuat, diganti nama, atau dihapus.
+- **Halaman:** dibuat, dipublikasikan, dihapus.
+- **Tim:** undangan dikirim dan dicabut, orang bergabung melalui undangan, tautan bergabung, atau single sign-on, perubahan peran, orang dikeluarkan, orang keluar sendiri, dan tautan bergabung diaktifkan, diubah, atau dinonaktifkan. Semua ini dicatat apa pun cara perubahannya, di QRdx maupun melalui API-nya.
+- **Keamanan:** "Require two-step verification" dan "Require single sign-on" diaktifkan atau dinonaktifkan (mengaktifkan single sign-on juga mencatat berapa sesi yang dikeluarkan olehnya), single sign-on disiapkan, diubah, diverifikasi, atau dihapus, peran yang diterima orang baru saat pertama kali masuk dengan single sign-on, dan ekspor log audit.
+- **Developers:** kunci API dibuat dan dicabut (nama dan cakupannya), aplikasi diotorisasi atau dicabut, endpoint webhook ditambahkan, diubah, atau dihapus, dan rahasia penandatanganan webhook diganti. Untuk sebuah endpoint, log hanya menyimpan servernya, seperti `https://hooks.zapier.com/…`, karena bagian lain dari URL webhook sering kali rahasia.
+- **Domain:** domain kustom ditambahkan, diverifikasi, atau dihapus.
+- **Workspace:** nama atau URL diubah, dan workspace beralih ke Business (dicatat sebagai "Billing").
+
+Log audit tidak pernah menyimpan kunci API, token OAuth, kata sandi, path atau query URL webhook, rahasia penandatanganan webhook, maupun rahasia klien atau sertifikat single sign-on. Log hanya mencatat bahwa hal tersebut dibuat, diganti, atau dihapus, bukan nilainya.
+
+Aplikasi yang Anda otorisasi bertindak atas workspace Anda sendiri, sehingga pemberian atau pencabutan otorisasi aplikasi dicatat di sana.
+
+Hal berikut tidak ada di log audit:
+
+- pemindaian, respons formulir, dan analitik, karena bukan perubahan pada workspace (lihat di Analytics dan Responses);
+- perubahan pada akun Anda sendiri, seperti nama, email, atau verifikasi dua langkah.
+
+## Menyaring log [#filter-the-log]
+
+Perubahan terbaru muncul lebih dulu, 50 sekaligus. Klik **Load more** di bagian bawah untuk melihat yang lebih lama.
+
+- **Who**: satu orang, beserta kunci API dan aplikasi yang bertindak atas namanya.
+- **Category**: Codes (beserta folder dan tag), Pages, Team, Security, Developers, Domains, atau Workspace.
+- **From** dan **To**: hari pertama dan terakhir yang ditampilkan. Hari mengikuti UTC; waktu pada setiap entri mengikuti zona waktu Anda.
+
+## Ekspor sebagai CSV [#export-as-csv]
+
+Klik **Export CSV** untuk mengunduh data yang ditampilkan oleh filter, dengan yang terbaru lebih dulu. Satu ekspor memuat hingga {facts.auditLogExportRows} entri. Untuk lebih banyak, ekspor rentang tanggal yang lebih pendek satu per satu.
+
+Berkas ini memiliki satu baris per perubahan: waktu dalam UTC, kategori, tindakan, kalimat yang menjelaskannya, pelakunya (beserta kunci API atau aplikasi, jika ada), target, alamat IP, perangkat, serta nilai lama dan baru dalam format JSON.
+
+Ekspor juga dicatat, beserta filter yang digunakan.
+
+## Berapa lama entri disimpan [#how-long-entries-are-kept]
+
+Entri disimpan selama {facts.auditLogRetentionDays} hari, lalu dihapus. Menghapus workspace akan menghapus log auditnya juga.
+
+Alamat IP dan perangkat di log audit adalah data pribadi orang-orang yang bekerja di workspace. [Kebijakan privasi](/legal/privacy-policy) menjelaskan cara QRdx menanganinya.
+
+</IfAvailable>

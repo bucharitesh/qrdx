@@ -750,6 +750,99 @@
       "signInNote": "Nous envoyons la facture pour l’espace de travail de votre compte : connectez-vous d’abord."
     }
   },
+  "docs": {
+    "meta": {
+      "titleSuffix": "Docs QRdx"
+    },
+    "breadcrumb": {
+      "home": "Accueil",
+      "docs": "Docs"
+    },
+    "untranslated": {
+      "title": "Cette page n’est pas encore traduite",
+      "body": "Vous lisez la version anglaise."
+    },
+    "client": {
+      "actions": {
+        "copyMarkdown": "Copier en Markdown",
+        "open": "Ouvrir",
+        "openIn": "Ouvrir dans {app}",
+        "askPrompt": "Lis {url}, je veux poser des questions à ce sujet."
+      },
+      "search": {
+        "jumpTo": "Aller à <page>{name}</page>"
+      },
+      "language": {
+        "label": "Langue des docs",
+        "note": "La documentation est disponible dans ces langues. Les autres langues affichent la documentation en anglais."
+      }
+    },
+    "help": {
+      "search": "Rechercher dans l’aide et les docs",
+      "stillStuck": {
+        "title": "Toujours bloqué ?",
+        "body": "Dites-nous ce que vous essayiez de faire et ce qui s’est passé. Indiquez le lien court du code si cela concerne un code.",
+        "widget": "Le widget d’assistance sur qrdx.dev, une fois les cookies de fonctionnalité autorisés.",
+        "github": "Signaler un bug sur GitHub",
+        "contact": "Toutes les façons de nous contacter"
+      }
+    },
+    "notFound": {
+      "title": "Cette page n’existe pas dans les docs",
+      "body": "Elle a peut-être été déplacée ou renommée. Recherchez dans les docs ou partez de l’une de ces pages.",
+      "places": {
+        "gettingStarted": {
+          "title": "Prise en main",
+          "description": "Créez et téléchargez votre premier code."
+        },
+        "dynamic": {
+          "title": "QR codes dynamiques",
+          "description": "Des liens courts modifiables après l’impression."
+        },
+        "restApi": {
+          "title": "REST API",
+          "description": "Créez et gérez des codes depuis votre propre application."
+        },
+        "components": {
+          "title": "Composants",
+          "description": "Composants React et shadcn/ui pour les QR codes."
+        }
+      }
+    },
+    "ui": {
+      "search": "Rechercher",
+      "searchPlaceholder": "Rechercher",
+      "openSearch": "Ouvrir la recherche",
+      "closeSearch": "Fermer la recherche",
+      "noResults": "Aucun résultat",
+      "searchFailed": "Échec de la recherche",
+      "onThisPage": "Sur cette page",
+      "noHeadings": "Aucun titre",
+      "tableOfContents": "Table des matières",
+      "lastUpdated": "Dernière mise à jour le",
+      "previousPage": "Page précédente",
+      "nextPage": "Page suivante",
+      "copyCode": "Copier le texte",
+      "copiedCode": "Texte copié",
+      "copyAnchor": "Copier le lien d’ancre",
+      "copiedAnchor": "Lien d’ancre copié",
+      "copyLink": "Copier le lien",
+      "copiedLink": "Lien copié",
+      "toggleMenu": "Afficher le menu",
+      "toggleTheme": "Changer de thème",
+      "themeLight": "Clair",
+      "themeDark": "Sombre",
+      "themeSystem": "Système",
+      "openSidebar": "Ouvrir la barre latérale",
+      "closeSidebar": "Fermer la barre latérale",
+      "collapseSidebar": "Réduire la barre latérale",
+      "typeTableProp": "Propriété",
+      "typeTableType": "Type",
+      "typeTableDefault": "Défaut",
+      "typeTableParameters": "Paramètres",
+      "typeTableReturns": "Retourne"
+    }
+  },
   "common": {
     "breadcrumb": "Fil d'Ariane",
     "home": "Accueil",

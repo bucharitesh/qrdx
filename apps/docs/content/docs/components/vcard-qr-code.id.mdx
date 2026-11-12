@@ -1,0 +1,52 @@
+---
+title: "Kode QR vCard"
+description: "Kode QR yang menyimpan kartu kontak saat dipindai, dengan pembuat vCard 3.0 bertipe."
+icon: Users
+---
+
+<ComponentLinks name="vcard-qr-code" />
+
+<ComponentPreview name="vcard-qr-code-demo" />
+
+## Instalasi [#installation]
+
+<InstallationTabs name="vcard-qr-code" />
+
+## Penggunaan [#usage]
+
+```tsx
+import { VCardQrCode } from "@/components/vcard-qr-code";
+```
+
+```tsx
+<VCardQrCode
+  contact={{
+    firstName: "Ada",
+    lastName: "Lovelace",
+    organization: "Analytical Engines",
+    email: "ada@example.com",
+  }}
+/>
+```
+
+Kamera ponsel akan menawarkan untuk menyimpan kontak saat memindai kode tersebut. Kolom yang kosong dihilangkan, sehingga kode tetap kecil dan cepat dipindai.
+
+## Contoh [#examples]
+
+### Pembuat vCard [#vcard-builder]
+
+`buildVCard` mengembalikan teks vCard 3.0 yang dienkode oleh kode tersebut, dengan koma, titik koma, garis miring terbalik, dan jeda baris yang sudah di-escape. Gunakan dengan pustaka render QR apa pun, atau untuk menyediakan kontak yang sama sebagai unduhan `.vcf`.
+
+<ComponentPreview name="vcard-qr-code-payload" />
+
+Kartu kontak memuat lebih banyak teks daripada sebuah tautan, sehingga komponen ini memakai tingkat koreksi kesalahan `M` agar modul tetap besar. Tambahkan hanya kolom yang dibutuhkan orang, dan periksa ukuran cetaknya dengan [kalkulator ukuran cetak](/tools/print-size).
+
+## Referensi API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" type="{ [K in keyof VCardQrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: VCardQrCodeProps[K] }" />
+
+Prop lainnya, seperti `className`, diteruskan ke `<figure>` pembungkus.
+
+### VCardContact [#vcardcontact]
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" name="VCardContact" />

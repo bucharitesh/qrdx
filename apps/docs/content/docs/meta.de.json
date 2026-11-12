@@ -1,0 +1,12 @@
+{
+  "$schema": "../../.source/json-schema/docs.meta.json",
+  "title": "Dokumentation",
+  "pages": [
+    "index",
+    "help",
+    "(guides)",
+    "developers",
+    "(react)",
+    "(self-hosting)"
+  ]
+}

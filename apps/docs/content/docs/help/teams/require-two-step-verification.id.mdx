@@ -1,0 +1,48 @@
+---
+title: "Wajibkan verifikasi dua langkah"
+description: "Wajibkan semua orang di sebuah ruang kerja mengaktifkan verifikasi dua langkah sebelum dapat membukanya. Bagian dari paket Business."
+---
+
+Pemilik dan admin dapat mewajibkan semua orang di sebuah ruang kerja menggunakan [verifikasi dua langkah](/docs/help/privacy-and-security/two-step-verification). Anggota yang belum mengaktifkannya tidak dapat membuka ruang kerja sampai mereka mengaktifkannya, sehingga mengakses email seseorang saja tidak cukup untuk masuk ke ruang kerja Anda.
+
+Mewajibkan verifikasi dua langkah adalah bagian dari paket **Business**. Sebuah ruang kerja memilikinya jika salah satu pemilik atau anggota penagihannya menggunakan Business. Lihat [Kursi dan batas ruang kerja](/docs/help/teams/seats).
+
+## Aktifkan [#turn-it-on]
+
+1. Aktifkan dulu verifikasi dua langkah untuk akun Anda sendiri, di **Pengaturan** → **Profil & keamanan**. Anda tidak dapat mewajibkannya tanpa mengaktifkannya sendiri.
+2. Di ruang kerja, buka **Pengaturan** → **Tim**.
+3. Di bagian **Verifikasi dua langkah**, aktifkan **Wajibkan verifikasi dua langkah**.
+4. Jika ada anggota yang belum mengaktifkannya, QRdx memberi tahu jumlahnya dan meminta persetujuan Anda sebelum melanjutkan.
+5. [Konfirmasi bahwa ini Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+
+Hanya pemilik dan admin yang dapat mengubahnya, dan untuk mengaktifkan atau menonaktifkannya Anda diminta mengonfirmasi bahwa ini Anda.
+
+Tidak ada email yang dikirim. Anggota tanpa verifikasi dua langkah akan mengetahuinya saat berikutnya membuka ruang kerja.
+
+## Lihat siapa yang sudah mengaktifkan [#see-who-has-it-on]
+
+Di halaman **Pengaturan** → **Tim**, pemilik dan admin dapat melihat apakah verifikasi dua langkah setiap anggota **Aktif** atau **Nonaktif**. Di ponsel, statusnya ada di bawah alamat email masing-masing orang.
+
+## Yang dilihat anggota yang belum mengaktifkannya [#what-members-without-it-see]
+
+Saat membuka ruang kerja, mereka melihat bahwa ruang kerja tersebut mewajibkan verifikasi dua langkah, lengkap dengan tombol **Aktifkan verifikasi dua langkah**. Tombol itu membawa mereka ke **Pengaturan** → **Profil & keamanan**, dan setelah verifikasi aktif, **Kembali ke** ruang kerja membawa mereka ke halaman yang sebelumnya mereka buka.
+
+Sampai saat itu, mereka tidak dapat melihat atau mengubah apa pun di ruang kerja tersebut. Ruang kerja mereka yang lain tetap berfungsi seperti biasa.
+
+Itu termasuk apa yang dikirim ruang kerja kepada mereka. Peringatan email, ringkasan mingguan, serta peringatan Slack atau Discord untuk ruang kerja itu berhenti, dan mereka tidak dapat menambahkan yang baru. Sinkronisasi yang mereka siapkan untuk mengirim data ruang kerja ke alat lain dijeda. Peringatan akan berjalan lagi setelah verifikasi dua langkah aktif; sinkronisasi yang dijeda perlu diaktifkan kembali.
+
+Jika seseorang menonaktifkan verifikasi dua langkah di kemudian hari, ruang kerja kembali tertutup bagi mereka sampai mereka mengaktifkannya lagi. Ini berlaku juga untuk pemilik dan admin.
+
+## Kunci API [#api-keys]
+
+Kunci API yang dibuat di ruang kerja tetap berfungsi bagi orang yang membuatnya, dengan atau tanpa verifikasi dua langkah. Verifikasi dua langkah melindungi proses masuk, dan kunci adalah kredensial tersendiri. Tidak ada yang dapat membuat kunci baru di ruang kerja tanpa bisa membukanya, dan pemilik serta admin dapat melihat dan mencabut kunci semua orang di **Pengaturan** → **Pengembang** milik ruang kerja.
+
+Aplikasi yang terhubung ke akun seseorang melalui OAuth hanya berfungsi di ruang kerja pribadi orang itu, sehingga tidak pernah menjangkau ruang kerja tim.
+
+## Jika ruang kerja tidak lagi menggunakan Business [#if-the-workspace-leaves-business]
+
+Kewajiban ini berhenti berlaku, dan pengaturannya ditampilkan nonaktif. Jika ruang kerja kembali ke Business, kewajiban ini berlaku lagi.
+
+## Nonaktifkan [#turn-it-off]
+
+Di halaman **Pengaturan** → **Tim**, nonaktifkan **Wajibkan verifikasi dua langkah** dan konfirmasi bahwa ini Anda. Anggota tanpa verifikasi dua langkah dapat langsung membuka ruang kerja lagi.

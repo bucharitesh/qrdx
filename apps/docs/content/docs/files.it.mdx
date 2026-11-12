@@ -1,0 +1,106 @@
+---
+title: "File"
+description: "Carica PDF, immagini, audio e video per le tue pagine ospitate e configura l'archiviazione dei file quando fai self-hosting."
+icon: FolderOpen
+---
+
+Le pagine ospitate possono mostrare i file che carichi su QRdx: un menu o una brochure in PDF, una galleria di foto, musica o un podcast, oppure un video. I file caricati si trovano in **Dashboard → File**, appartengono al workspace in cui li carichi e ognuno ha un link stabile che continua a funzionare quando sostituisci il file.
+
+## Cosa puoi caricare [#what-you-can-upload]
+
+| Tipo | Formati |
+| --- | --- |
+| PDF | PDF |
+| Immagini | JPEG, PNG, WebP, GIF, AVIF |
+| Audio | MP3, M4A, AAC, Ogg, WAV |
+| Video | MP4, WebM, MOV |
+
+Gli MP4 con video H.264 si riproducono in ogni browser. Di solito anche i file MOV dei telefoni funzionano, ma se un browser non riesce a riprodurne uno convertilo in MP4. Non si possono caricare SVG, HTML, archivi e documenti office, così nulla di ciò che viene servito dall'archiviazione può eseguire codice nel browser di un visitatore.
+
+Ogni caricamento viene controllato prima di essere usato: la dimensione deve corrispondere a quella dichiarata e i primi byte devono essere davvero quelli di un file di quel tipo (una pagina HTML rinominata `.pdf` viene rifiutata). I caricamenti rifiutati vengono eliminati dall'archiviazione e compaiono come **Bloccato**.
+
+## Limiti per piano [#limits-per-plan]
+
+| Piano | Archiviazione per workspace | File più grande |
+| --- | --- | --- |
+| Gratuito | 50 MB | 10 MB |
+| Pro | 5 GB | 100 MB |
+| Business | 50 GB | 250 MB |
+
+Un workspace usa il piano migliore tra quelli dei suoi proprietari. I limiti bloccano solo i nuovi caricamenti: dopo un downgrade, o quando un workspace supera lo spazio disponibile, ogni file già caricato continua a essere servito in tutte le pagine che lo usano. Elimina i file che non ti servono più (oppure passa a un piano superiore) per caricarne di nuovi.
+
+## Usare i file in una pagina [#use-files-on-a-page]
+
+Cinque blocchi mostrano file. Ognuno può usare un file caricato o un link a un file ospitato altrove:
+
+- **PDF** mostra il documento direttamente nella pagina su tablet e computer, con i pulsanti **Apri PDF** (visualizzatore a schermo intero su telefono) e **Scarica**.
+- **Galleria** mostra le foto in una griglia di 1–3 colonne. Toccando una foto si apre a schermo intero; scorri o usa i tasti freccia per sfogliare.
+- **Audio** riproduce i brani con copertina e playlist; quando un brano finisce parte il successivo. Il pulsante di download è facoltativo.
+- **File video** riproduce un MP4 o WebM che carichi, facoltativamente senza audio e in loop come una GIF. Per YouTube, Vimeo o Loom usa invece il blocco **Video**: incorpora il video senza caricare nulla da YouTube finché qualcuno non tocca play.
+- **Download** elenca i file che le persone possono salvare, ognuno con la propria etichetta.
+
+I tipi di pagina **PDF**, **Immagini**, **MP3 / Audio** e **Video** in **Nuovo codice** partono già con questi blocchi.
+
+In un blocco scegli **Carica** per aggiungere un file dal tuo dispositivo, **Dai tuoi file** per riutilizzarne uno caricato in precedenza, oppure incolla un link.
+
+## Sostituire o eliminare un file [#replace-or-delete-a-file]
+
+Apri **Dashboard → File** e usa il menu accanto a un file:
+
+- **Copia link** copia il link del file (`https://qrdx.dev/api/files/<id>`). Puoi usarlo anche come destinazione di un QR code dinamico.
+- **Sostituisci file** carica nuovo contenuto dietro lo stesso link, per esempio il menu della prossima stagione. Le pagine e i codici che usano il file mostrano la nuova versione entro un minuto. Un file può essere sostituito solo da uno dello stesso tipo (un PDF da un PDF).
+- **Elimina** rimuove il file definitivamente. Se pagine o codici lo usano ancora, QRdx prima te li elenca; dopo l'eliminazione, quelle pagine mostrano "File non disponibile" al posto del file.
+
+I membri possono sostituire ed eliminare i file che hanno caricato; proprietari e amministratori possono gestire tutti i file del workspace.
+
+## File segnalati [#reported-files]
+
+Ogni pagina ospitata ha un link **Segnala abuso**. Se un file viola le regole o il titolare di un copyright ne chiede la rimozione, QRdx può bloccarlo. Un file bloccato smette di essere servito in ogni pagina e tramite il suo link QRdx entro un minuto (le pagine mostrano "File non disponibile") e le sue copie identiche (fino a 25 MB) non possono essere caricate di nuovo.
+
+## Configurare l'archiviazione (self-hosting) [#set-up-storage-self-hosting]
+
+Il caricamento dei file usa [Cloudflare R2](https://developers.cloudflare.com/r2/). Senza di esso, la pagina File mostra "Archiviazione non configurata su questo server", l'API di caricamento risponde `503` e i blocchi possono comunque usare link a file ospitati altrove.
+
+1. Nella dashboard di Cloudflare apri **R2** e crea un bucket, per esempio `qrdx-files`.
+2. In **R2 → Manage API tokens** crea un token con **Object Read & Write** su quel bucket.
+3. Imposta queste variabili d'ambiente e riavvia:
+
+   ```bash
+   R2_ACCOUNT_ID=your-cloudflare-account-id
+   R2_ACCESS_KEY_ID=token-access-key-id
+   R2_SECRET_ACCESS_KEY=token-secret-access-key
+   R2_BUCKET=qrdx-files
+   # Optional: serve files from a public bucket URL or custom domain
+   R2_PUBLIC_BASE_URL=https://files.example.com
+   ```
+
+4. Aggiungi una policy CORS al bucket (**Settings → CORS policy**). I browser caricano direttamente su R2, quindi il bucket deve accettare richieste `PUT` con un header `Content-Type` dall'origine della tua app:
+
+   ```json
+   [
+     {
+       "AllowedOrigins": ["https://qrdx.example.com", "http://localhost:3000"],
+       "AllowedMethods": ["PUT", "GET", "HEAD"],
+       "AllowedHeaders": ["Content-Type"],
+       "ExposeHeaders": ["ETag"],
+       "MaxAgeSeconds": 3600
+     }
+   ]
+   ```
+
+   Sostituisci `https://qrdx.example.com` con l'origine che le persone usano per aprire la tua dashboard (schema e host, senza barra finale). Mantieni `http://localhost:3000` solo se carichi file da un server di sviluppo locale.
+
+### File pubblici o link prefirmati [#public-files-or-presigned-links]
+
+I visitatori aprono sempre i file tramite `/api/files/<id>`, che reindirizza all'oggetto archiviato:
+
+- Con `R2_PUBLIC_BASE_URL` impostato (un dominio personalizzato collegato al bucket, oppure il suo URL `r2.dev`, che Cloudflare limita nel numero di richieste e consiglia solo per i test), reindirizza all'URL pubblico. Le chiavi degli oggetti contengono un id casuale, quindi i file non possono essere elencati né indovinati.
+- Senza di esso, il bucket resta privato e ogni reindirizzamento è un link prefirmato che scade dopo un'ora.
+
+In entrambi i casi, un file sostituito, eliminato o bloccato smette di essere servito tramite il suo link QRdx entro un minuto. Un file bloccato lascia subito anche il suo URL pubblico: il suo oggetto viene spostato in una chiave `quarantine/` con una parte casuale (conservato così che un amministratore possa ripristinarlo) e il suo link QRdx risponde `410 Gone`.
+
+I browser caricano su una chiave `staging/`. Una volta controllato il caricamento, QRdx copia esattamente la versione controllata nella chiave del file, così un link di caricamento ancora valido non può sostituire un file già controllato.
+
+<Callout type="info">
+  Un caricamento che non viene mai completato smette di contare nello spazio di archiviazione dopo due ore e viene ripulito la prossima volta che qualcuno carica un file in quel workspace. Aggiungi al bucket una regola di ciclo di vita degli oggetti (**Settings → Object lifecycle rules**) che elimini dopo un giorno gli oggetti con prefisso `staging/`, così spariscono anche gli avanzi dei caricamenti abbandonati.
+</Callout>

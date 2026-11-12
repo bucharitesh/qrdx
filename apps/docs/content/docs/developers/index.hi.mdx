@@ -1,0 +1,110 @@
+---
+title: "डेवलपर्स"
+description: "QRdx के साथ बनाने के सभी तरीके: बिना key वाले इमेज URL से लेकर REST API, webhooks, MCP और CLI तक।"
+icon: Terminal
+---
+
+वह तरीका चुनिए जो आपके प्रोजेक्ट के लिए सही हो। पहले तीन के लिए न अकाउंट चाहिए, न key।
+
+## key की ज़रूरत नहीं [#no-key-needed]
+
+<Cards>
+  <Card
+    icon={<ImageDown />}
+    href="/docs/developers/image-api"
+    title="QR कोड इमेज API"
+    description="URL से QR कोड इमेज। इसे Markdown, HTML या ईमेल में पेस्ट करें।"
+  />
+  <Card
+    icon={<Bot />}
+    href="/docs/developers/mcp"
+    title="MCP सर्वर"
+    description="Claude, Cursor, VS Code और दूसरे AI टूल से स्टाइल वाले QR कोड बनवाइए।"
+  />
+  <Card
+    icon={<Terminal />}
+    href="/docs/developers/cli"
+    title="CLI"
+    description="अपने टर्मिनल या CI से SVG, PNG, WebP या EPS QR कोड बनाइए।"
+  />
+</Cards>
+
+## अकाउंट के साथ [#with-an-account]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/developers/quickstart"
+    title="क्विकस्टार्ट"
+    description="दो मिनट से कम में अपना पहला API रिक्वेस्ट, फिर एक API key और एक डायनेमिक कोड।"
+  />
+  <Card
+    icon={<LockKeyhole />}
+    href="/docs/developers/api-keys"
+    title="API keys"
+    description="अपने सर्वर और स्क्रिप्ट के लिए `qrdx_` key बनाइए, जो एक वर्कस्पेस तक सीमित रहती है।"
+  />
+  <Card
+    icon={<Code />}
+    href="/docs/developers/rest-api"
+    title="REST API और OAuth"
+    description="HTTP से डायनेमिक कोड बनाइए और एडिट कीजिए, स्कैन पढ़िए और कन्वर्ज़न रिपोर्ट कीजिए।"
+  />
+  <Card
+    icon={<FileCode />}
+    href="/docs/developers/api"
+    title="API रेफ़रेंस"
+    description="हर endpoint, curl, JavaScript और Python के सैंपल और Try it पैनल के साथ।"
+  />
+  <Card
+    icon={<Webhook />}
+    href="/docs/webhooks"
+    title="Webhooks"
+    description="स्कैन, कोड में बदलाव और फ़ॉर्म रिस्पॉन्स के लिए साइन किए गए इवेंट। Zapier, Make और n8n के साथ काम करता है।"
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/n8n"
+    title="n8n"
+    description="n8n के लिए QRdx नोड: QR इमेज, डायनेमिक कोड, स्कैन और QRdx इवेंट के लिए ट्रिगर।"
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/build-an-integration"
+    title="इंटीग्रेशन बनाइए"
+    description="OAuth 2.0 और PKCE से लोगों को अपना QRdx अकाउंट आपके app से जोड़ने दीजिए।"
+  />
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/developers/errors"
+    title="एरर"
+    description="API जो भी एरर लौटाता है, उसका मतलब क्या है और उसे कैसे ठीक करें।"
+  />
+</Cards>
+
+## अपने कोड में [#in-your-own-code]
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/getting-started"
+    title="React लाइब्रेरी"
+    description="`qrdx` पैकेज से स्टाइल वाले QR कोड रेंडर और एक्सपोर्ट कीजिए।"
+  />
+  <Card
+    icon={<Server />}
+    href="/docs/self-hosting"
+    title="सेल्फ़-होस्टिंग"
+    description="डायनेमिक कोड समेत पूरा app अपने सर्वर पर चलाइए।"
+  />
+</Cards>
+
+## Base URL और ऑथेंटिकेशन [#base-url-and-authentication]
+
+REST API `https://api.qrdx.dev/v1` पर चलता है। यही routes `https://qrdx.dev/api/v1` पर भी जवाब देते हैं।
+
+रिक्वेस्ट `Authorization: Bearer` हेडर में [API key](/docs/developers/api-keys) से ऑथेंटिकेट होते हैं। जो app दूसरे QRdx यूज़र्स की ओर से काम करते हैं, वे वहाँ [OAuth 2.0 access token](/docs/developers/rest-api#get-an-access-token) भेजते हैं। [क्विकस्टार्ट](/docs/developers/quickstart#create-an-api-key) में key बनाई जाती है और पहला रिक्वेस्ट किया जाता है।
+
+## अपडेट रहिए [#stay-up-to-date]
+
+लाइब्रेरी, CLI और API के बदलाव [changelog](/changelogs) में हैं। सोर्स कोड [GitHub](https://github.com/bucharitesh/qrdx) पर है।

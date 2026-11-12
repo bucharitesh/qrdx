@@ -1,0 +1,94 @@
+---
+title: "Tracking e conversioni"
+description: "Aggiungi i tuoi pixel di analytics e retargeting alle pagine ospitate, scopri quando e come le persone fanno la scansione e attribuisci vendite e iscrizioni alle scansioni dei QR code."
+icon: Target
+---
+
+Ogni [QR code dinamico](/docs/dynamic-qr-codes) registra le scansioni senza cookie. In più puoi caricare i tuoi pixel sulle pagine ospitate (Pro) e attribuire le conversioni, come gli acquisti, alla scansione che ha portato il visitatore (Business). Entrambe le funzioni si configurano nella pagina del codice nella [dashboard](/dashboard?to=codes), nella scheda **Impostazioni**.
+
+## Analytics su ogni codice [#analytics-on-every-code]
+
+Oltre alle scansioni nel tempo, ai paesi, alle città, ai dispositivi, ai sistemi operativi, ai browser e ai referrer, la pagina di ogni codice mostra:
+
+- **Quando scansionano le persone:** scansioni per ora del giorno e per giorno della settimana, in UTC o nel tuo fuso orario.
+- **Lingue:** la lingua preferita del browser di ogni visitatore ("Sconosciuta" quando il browser non ne invia una, e per le scansioni precedenti alla registrazione delle lingue).
+- **Suddivisioni A/B:** scansioni per variante per ogni [regola di suddivisione A/B](/docs/smart-routing#ab-tests).
+- **Attività della pagina** (pagine ospitate): visualizzazioni di pagina, visitatori unici, tap e i link e i pulsanti più toccati.
+- **Conversioni**, quando il codice ne ha.
+
+[Dashboard → Analytics](/dashboard?to=analytics) somma tutti i codici dello spazio di lavoro: totali, scansioni nel tempo, codici più scansionati, paesi, dispositivi, lingue, orari delle scansioni e un confronto fianco a fianco fino a 4 codici.
+
+I bot e le anteprime dei link non vengono conteggiati, e per gli "unici" un visitatore conta una volta al giorno. Gli indirizzi IP non vengono mai memorizzati.
+
+## Pixel di tracciamento sulle pagine ospitate (Pro) [#tracking-pixels-on-hosted-pages-pro]
+
+Per i codici che aprono una pagina ospitata, il pannello **Pixel di tracciamento** carica i tuoi tag su quella pagina:
+
+| Provider | Formato dell'ID |
+| --- | --- |
+| Google Analytics 4 | `G-XXXXXXXXXX` |
+| Google Tag Manager | `GTM-XXXXXXX` |
+| Pixel Meta (Facebook) | 6–20 cifre |
+| Pixel TikTok | 10–30 lettere e cifre |
+| LinkedIn Insight Tag | ID partner, 3–12 cifre |
+
+I pixel vengono caricati solo se li configuri tu; QRdx non aggiunge alle pagine ospitate alcuno script di terze parti.
+
+Google Tag Manager viene caricato solo quando la pagina si apre su uno dei tuoi [domini personalizzati](/docs/custom-domains). Un container può eseguire qualsiasi script, quindi non viene mai eseguito su qrdx.dev, dove i visitatori potrebbero aver effettuato l'accesso a QRdx.
+
+**Consenso.** I pixel non vengono mai caricati prima che il visitatore dia il consenso:
+
+- **Dove richiesto** (predefinito): i visitatori di UE/SEE, Regno Unito e Svizzera, e quelli la cui posizione è sconosciuta, vedono un breve banner con i nomi dei tuoi provider e scelgono **Accetta** o **Rifiuta**. La scelta viene ricordata per quella pagina e **Impostazioni cookie** permette di cambiarla. Altrove i pixel vengono caricati subito, tranne che sui browser che inviano il segnale Global Privacy Control.
+- **Per ogni visitatore:** tutti vedono prima il banner.
+
+Resti responsabile della tua informativa sulla privacy e dell'uso dei dati raccolti dai tuoi pixel.
+
+I codici che aprono il tuo sito web portano direttamente lì, quindi aggiungi i pixel al tuo sito.
+
+## Tracciamento delle conversioni (Business) [#conversion-tracking-business]
+
+Il tracciamento delle conversioni ti dice quali scansioni hanno portato a una vendita, a un'iscrizione o a qualsiasi altro obiettivo, con i relativi ricavi.
+
+1. Su un codice che apre il tuo sito web, attiva **Tracciamento delle conversioni**. Da quel momento ogni scansione apre il tuo URL con l'aggiunta di un parametro `qrdx_sid` firmato, per esempio `https://shop.example/?qrdx_sid=…`.
+2. Aggiungi lo snippet alle pagine di arrivo e alla pagina in cui avviene la conversione:
+
+```html
+<script async src="https://qrdx.dev/conversions.js"></script>
+<script>
+  window.qrdx = window.qrdx || function () {
+    (window.qrdx.q = window.qrdx.q || []).push(arguments);
+  };
+  // Where the conversion happens, e.g. your order confirmation page:
+  qrdx("conversion", { name: "purchase", value: 49.99, currency: "USD", id: "ORDER-1234" });
+</script>
+```
+
+Lo script memorizza `qrdx_sid` in un cookie first-party sul tuo dominio per 30 giorni (aggiungi `data-storage="session"` al tag script per conservarlo solo per la sessione del browser) e lo rimuove dalla barra degli indirizzi. Le conversioni vengono inviate solo per i visitatori arrivati da una scansione, quindi gli altri visitatori non vengono mai tracciati.
+
+| Campo | Significato |
+| --- | --- |
+| `name` | Cosa è successo, ad es. `purchase` o `signup` (predefinito `conversion`) |
+| `value` | Importo, fino a 2 decimali (facoltativo) |
+| `currency` | Codice ISO 4217 come `USD`; se è indicato un valore, il predefinito è `USD` |
+| `id` | Il tuo ID di ordine o evento: inviare due volte lo stesso ID lo registra una sola volta |
+| `metadata` | Fino a 20 coppie chiave/valore aggiuntive (facoltative) |
+
+### Dal tuo server [#from-your-server]
+
+Per segnalare le conversioni dal tuo backend (più affidabile del browser), conserva `qrdx_sid` insieme all'ordine e chiama l'API con una [chiave API](/docs/developers/api-keys) o un [token di accesso OAuth](/docs/developers/rest-api#get-an-access-token) con lo scope `codes:write`:
+
+```bash
+curl -X POST https://api.qrdx.dev/v1/conversions \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sid": "<qrdx_sid>", "name": "purchase", "value": 49.99, "currency": "USD", "id": "ORDER-1234"}'
+```
+
+Con un token puoi anche inviare `"code": "<code id>"` al posto di `sid` quando la scansione non è nota. L'API risponde `201` per una nuova conversione e `200` con `"duplicate": true` quando l'`id` era già stato registrato.
+
+### Limiti [#limits]
+
+- Una scansione può essere attribuita per 30 giorni dopo che è avvenuta.
+- `qrdx_sid` è firmato, quindi non può essere indovinato né modificato per puntare a un altro codice.
+- Le segnalazioni dal browser richiedono che il tracciamento delle conversioni sia attivo per il codice, e ogni scansione può segnalare un numero limitato di conversioni all'ora.
+- Le conversioni smettono di essere registrate se lo spazio di lavoro esce da Business; quelle esistenti restano nelle tue analytics, e disattivare il tracciamento è sempre possibile.

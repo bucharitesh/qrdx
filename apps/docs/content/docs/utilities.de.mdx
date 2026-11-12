@@ -1,0 +1,180 @@
+---
+title: "Hilfsfunktionen"
+description: "Hilfsfunktionen für Farben, Kontrast, Größenvalidierung und Feature-Erkennung, die von qrdx exportiert werden."
+icon: Wrench
+---
+
+Hilfsfunktionen für Farben, Kontrast und die Verarbeitung von QR-Codes.
+
+## Farbfunktionen [#color-utilities]
+
+### getSolidColor [#getsolidcolor]
+
+Extrahiere eine einfarbige Farbe aus einer beliebigen Farbkonfiguration:
+
+```tsx
+import { getSolidColor } from 'qrdx';
+
+const color = getSolidColor({
+  type: 'linear',
+  stops: [
+    { offset: 0, color: '#ff6b6b' },
+    { offset: 1, color: '#4ecdc4' }
+  ],
+  x1: 0, y1: 0, x2: 1, y2: 1
+});
+// Returns: "#ff6b6b"
+```
+
+### hexToRgb [#hextorgb]
+
+Konvertiere Hex in RGB:
+
+```tsx
+import { hexToRgb } from 'qrdx';
+
+const rgb = hexToRgb('#ff6b6b');
+// Returns: { r: 255, g: 107, b: 107 }
+```
+
+## Kontrastprüfung [#contrast-checking]
+
+### getContrastRatio [#getcontrastratio]
+
+Berechne das WCAG-Kontrastverhältnis:
+
+```tsx
+import { getContrastRatio } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21
+```
+
+### getContrastLevel [#getcontrastlevel]
+
+Hole die Kontrastbewertung:
+
+```tsx
+import { getContrastLevel } from 'qrdx';
+
+const level = getContrastLevel(4.5);
+// Returns: { level: 'AA', warning: false, message: 'Good contrast' }
+```
+
+**Kontrastrichtlinien:**
+- **`AAA` (7.0 und höher)** — Hervorragender Kontrast
+- **`AA` (4.5 – 7.0)** — Guter Kontrast
+- **`AA Large` (3.0 – 4.5)** — Niedriger Kontrast, `warning: true`, kann schwer zu scannen sein
+- **`Fail` (unter 3.0)** — Nicht empfohlen, `warning: true`
+
+### getLuminance [#getluminance]
+
+Berechne die relative Luminanz:
+
+```tsx
+import { getLuminance } from 'qrdx';
+
+const luminance = getLuminance(255, 255, 255);
+// Returns: 1.0 (white)
+```
+
+## Validierung [#validation]
+
+### validateSize [#validatesize]
+
+Validiere die Abmessungen für den Download:
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Valid size");
+} else {
+  console.error(validation.error);
+}
+```
+
+## Feature-Erkennung [#feature-detection]
+
+### SUPPORTS_PATH2D [#supports_path2d]
+
+Prüfe die Unterstützung für Path2D:
+
+```tsx
+import { SUPPORTS_PATH2D } from 'qrdx';
+
+if (SUPPORTS_PATH2D) {
+  // Use optimized rendering
+} else {
+  // Use fallback
+}
+```
+
+## Beispiel: Kontrastprüfer [#example-contrast-checker]
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+import { useState } from 'react';
+
+export default function ContrastChecker() {
+  const [fgColor, setFgColor] = useState('#000000');
+  const [bgColor, setBgColor] = useState('#ffffff');
+
+  const ratio = getContrastRatio(fgColor, bgColor);
+  const level = getContrastLevel(ratio);
+
+  return (
+    <div>
+      <input
+        type="color"
+        value={fgColor}
+        onChange={(e) => setFgColor(e.target.value)}
+      />
+      <input
+        type="color"
+        value={bgColor}
+        onChange={(e) => setBgColor(e.target.value)}
+      />
+      <p>Ratio: {ratio.toFixed(2)}:1</p>
+      <p>Level: {level.level}</p>
+      <p>{level.message}</p>
+    </div>
+  );
+}
+```
+
+## Beispiel: Größenrechner [#example-size-calculator]
+
+```tsx
+import { validateSize } from 'qrdx';
+import { useState } from 'react';
+
+export default function SizeCalculator() {
+  const [width, setWidth] = useState(512);
+  const [height, setHeight] = useState(512);
+
+  const validation = validateSize(width, height);
+
+  return (
+    <div>
+      <input
+        type="number"
+        value={width}
+        onChange={(e) => setWidth(Number(e.target.value))}
+      />
+      <input
+        type="number"
+        value={height}
+        onChange={(e) => setHeight(Number(e.target.value))}
+      />
+      <p>{validation.isValid ? 'Valid' : validation.error}</p>
+    </div>
+  );
+}
+```
+
+## Nächste Schritte [#next-steps]
+
+- [Nutzung](/docs/usage) — Wende Hilfsfunktionen auf QR-Codes an
+- [API-Referenz](/docs/api-reference) — Vollständige Referenz der Hilfsfunktionen

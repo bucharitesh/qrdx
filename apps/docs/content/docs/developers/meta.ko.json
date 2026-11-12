@@ -1,0 +1,27 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "개발자",
+  "description": "REST API, 웹훅, MCP, CLI",
+  "icon": "Terminal",
+  "root": true,
+  "pages": [
+    "index",
+    "---REST API---",
+    "quickstart",
+    "api-keys",
+    "rest-api",
+    "api",
+    "errors",
+    "../webhooks",
+    "build-an-integration",
+    "---도구---",
+    "image-api",
+    "barcode-api",
+    "mcp",
+    "ai-agents",
+    "cli",
+    "n8n",
+    "---더 보기---",
+    "[변경 내역](/changelogs)"
+  ]
+}

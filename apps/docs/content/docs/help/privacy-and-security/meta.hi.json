@@ -1,0 +1,12 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "प्राइवेसी और सिक्योरिटी",
+  "icon": "ShieldCheck",
+  "pages": [
+    "scan-data",
+    "account-security",
+    "two-step-verification",
+    "passkeys",
+    "report-abuse"
+  ]
+}

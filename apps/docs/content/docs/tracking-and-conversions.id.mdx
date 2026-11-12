@@ -1,0 +1,94 @@
+---
+title: "Pelacakan dan konversi"
+description: "Tambahkan piksel analitik dan retargeting Anda ke halaman yang di-hosting, lihat kapan dan bagaimana orang melakukan pemindaian, serta atribusikan penjualan dan pendaftaran ke pemindaian kode QR."
+icon: Target
+---
+
+Setiap [kode QR dinamis](/docs/dynamic-qr-codes) mencatat pemindaian tanpa cookie. Selain itu, Anda dapat memuat piksel milik Anda sendiri di halaman yang di-hosting (Pro) dan mengatribusikan konversi, seperti pembelian, ke pemindaian yang membawa pengunjung tersebut (Business). Keduanya diatur di halaman kode pada [dasbor](/dashboard?to=codes), di tab **Settings**.
+
+## Analitik pada setiap kode [#analytics-on-every-code]
+
+Selain pemindaian dari waktu ke waktu, negara, kota, perangkat, sistem operasi, browser, dan perujuk, halaman setiap kode menampilkan:
+
+- **Kapan orang melakukan pemindaian:** pemindaian berdasarkan jam dalam sehari dan hari dalam seminggu, dalam UTC atau zona waktu Anda sendiri.
+- **Bahasa:** bahasa browser pilihan setiap pengunjung ("Unknown" jika browser tidak mengirimkannya, dan untuk pemindaian sebelum bahasa mulai dicatat).
+- **Pembagian A/B:** pemindaian per varian untuk setiap [aturan pembagian A/B](/docs/smart-routing#ab-tests).
+- **Aktivitas halaman** (halaman yang di-hosting): tampilan halaman, penonton unik, ketukan, serta tautan dan tombol yang paling sering diketuk.
+- **Konversi**, jika kode tersebut memilikinya.
+
+[Dasbor → Analytics](/dashboard?to=analytics) menjumlahkan semua kode di workspace: total, pemindaian dari waktu ke waktu, kode teratas, negara, perangkat, bahasa, waktu pemindaian, dan perbandingan hingga 4 kode secara berdampingan.
+
+Bot dan pratinjau tautan tidak dihitung, dan pengunjung dihitung satu kali per hari untuk metrik "unik". Alamat IP tidak pernah disimpan.
+
+## Piksel pelacakan di halaman yang di-hosting (Pro) [#tracking-pixels-on-hosted-pages-pro]
+
+Untuk kode yang membuka halaman yang di-hosting, panel **Tracking pixels** memuat tag Anda sendiri di halaman tersebut:
+
+| Penyedia | Format ID |
+| --- | --- |
+| Google Analytics 4 | `G-XXXXXXXXXX` |
+| Google Tag Manager | `GTM-XXXXXXX` |
+| Piksel Meta (Facebook) | 6–20 digit |
+| Piksel TikTok | 10–30 huruf dan angka |
+| LinkedIn Insight Tag | ID mitra, 3–12 digit |
+
+Piksel hanya dimuat jika Anda mengaturnya; QRdx tidak menambahkan skrip pihak ketiga miliknya sendiri ke halaman yang di-hosting.
+
+Google Tag Manager hanya dimuat saat halaman dibuka di salah satu [domain kustom](/docs/custom-domains) Anda. Sebuah container dapat menjalankan skrip apa pun, sehingga tidak pernah dijalankan di qrdx.dev, tempat pengunjung mungkin sedang masuk ke QRdx.
+
+**Persetujuan.** Piksel tidak pernah dimuat sebelum pengunjung menyetujuinya:
+
+- **Jika diwajibkan** (default): pengunjung di UE/EEA, Inggris, dan Swiss, serta pengunjung yang lokasinya tidak diketahui, melihat banner singkat yang menyebutkan penyedia Anda dan memilih **Accept** atau **Decline**. Pilihan tersebut diingat untuk halaman itu, dan **Cookie settings** memungkinkan mereka mengubahnya. Di tempat lain, piksel langsung dimuat, kecuali pada browser yang mengirim sinyal Global Privacy Control.
+- **Untuk setiap pengunjung:** semua orang melihat banner terlebih dahulu.
+
+Anda tetap bertanggung jawab atas kebijakan privasi Anda sendiri dan atas cara Anda menggunakan data yang dikumpulkan piksel Anda.
+
+Kode yang membuka situs web Anda sendiri langsung menuju ke sana, jadi tambahkan piksel Anda ke situs Anda.
+
+## Pelacakan konversi (Business) [#conversion-tracking-business]
+
+Pelacakan konversi memberi tahu Anda pemindaian mana yang menghasilkan penjualan, pendaftaran, atau tujuan lain, beserta pendapatannya.
+
+1. Pada kode yang membuka situs web Anda, aktifkan **Conversion tracking**. Setiap pemindaian kemudian membuka URL Anda dengan parameter `qrdx_sid` bertanda tangan yang ditambahkan, misalnya `https://shop.example/?qrdx_sid=…`.
+2. Tambahkan cuplikan ke halaman tujuan pengunjung dan halaman tempat mereka melakukan konversi:
+
+```html
+<script async src="https://qrdx.dev/conversions.js"></script>
+<script>
+  window.qrdx = window.qrdx || function () {
+    (window.qrdx.q = window.qrdx.q || []).push(arguments);
+  };
+  // Where the conversion happens, e.g. your order confirmation page:
+  qrdx("conversion", { name: "purchase", value: 49.99, currency: "USD", id: "ORDER-1234" });
+</script>
+```
+
+Skrip menyimpan `qrdx_sid` dalam cookie first-party di domain Anda selama 30 hari (tambahkan `data-storage="session"` ke tag skrip untuk menyimpannya hanya selama sesi browser) dan menghapusnya dari bilah alamat. Konversi hanya dikirim untuk pengunjung yang datang dari pemindaian, sehingga pengunjung lain tidak pernah dilacak.
+
+| Kolom | Arti |
+| --- | --- |
+| `name` | Apa yang terjadi, mis. `purchase` atau `signup` (default `conversion`) |
+| `value` | Jumlah, hingga 2 desimal (opsional) |
+| `currency` | Kode ISO 4217 seperti `USD`; default `USD` jika nilai diberikan |
+| `id` | ID pesanan atau peristiwa Anda: mengirim ID yang sama dua kali hanya dicatat sekali |
+| `metadata` | Hingga 20 pasangan kunci/nilai tambahan (opsional) |
+
+### Dari server Anda [#from-your-server]
+
+Untuk melaporkan konversi dari backend Anda (lebih andal daripada browser), simpan `qrdx_sid` bersama pesanan dan panggil API dengan [kunci API](/docs/developers/api-keys) atau [token akses OAuth](/docs/developers/rest-api#get-an-access-token) yang memiliki cakupan `codes:write`:
+
+```bash
+curl -X POST https://api.qrdx.dev/v1/conversions \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sid": "<qrdx_sid>", "name": "purchase", "value": 49.99, "currency": "USD", "id": "ORDER-1234"}'
+```
+
+Dengan token, Anda juga dapat mengirim `"code": "<code id>"` sebagai pengganti `sid` jika pemindaiannya tidak diketahui. API menjawab `201` untuk konversi baru dan `200` dengan `"duplicate": true` jika `id` sudah pernah dicatat.
+
+### Batasan [#limits]
+
+- Sebuah pemindaian dapat diatribusikan hingga 30 hari setelah terjadi.
+- `qrdx_sid` bertanda tangan, sehingga tidak dapat ditebak atau diubah untuk menunjuk ke kode lain.
+- Laporan dari browser memerlukan pelacakan konversi yang aktif untuk kode tersebut, dan setiap pemindaian dapat melaporkan sejumlah konversi terbatas per jam.
+- Konversi berhenti dicatat jika workspace keluar dari Business; konversi yang sudah ada tetap berada di analitik Anda, dan pelacakan selalu dapat dimatikan.

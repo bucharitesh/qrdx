@@ -1,0 +1,162 @@
+---
+title: "Single Sign-on (SSO)"
+description: "Lass dein Team sich mit dem Identitätsanbieter deines Unternehmens per OIDC oder SAML 2.0 bei QRdx anmelden. Teil des Business-Plans."
+---
+
+Mit Single Sign-on melden sich die Personen in deinem Unternehmen über deinen Identitätsanbieter bei QRdx an, statt mit einem E-Mail-Code, Google oder GitHub. Du richtest eine Verbindung für eine E-Mail-Domain ein und bestätigst, dass dir die Domain gehört. Danach wird den Personen mit dieser Domain Single Sign-on angeboten, sobald sie zum Anmelden ihre Arbeits-E-Mail-Adresse eingeben. Wer sich so anmeldet, wird Mitglied deines Workspace. Du kannst Single Sign-on auch [verpflichtend machen](#require-single-sign-on). Dann ist dein Identitätsanbieter der einzige Zugang für diese Domain.
+
+Single Sign-on ist Teil des **Business**-Plans. Ein Workspace hat es, wenn einer seiner Inhaber oder Abrechnungsmitglieder Business nutzt. Siehe [Plätze und Workspace-Limits](/docs/help/teams/seats).
+
+Single Sign-on ist ein Business-Feature unter der kommerziellen QRdx-Lizenz. Ein selbst gehosteter QRdx-Server braucht zum Aktivieren einen Lizenzschlüssel (`QRDX_EE_LICENSE`). Siehe [Self-Hosting](/docs/self-hosting#optional-services).
+
+## Bevor du anfängst [#before-you-start]
+
+- Du musst **Inhaber** oder **Admin** des Workspace sein.
+- Du musst einen DNS-Eintrag für deine E-Mail-Domain hinzufügen können, zum Beispiel `acme.com`.
+- Beim Einrichten, Ändern, Verifizieren oder Entfernen der Verbindung und beim Verpflichtend-Machen von Single Sign-on musst du zuerst [bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you). Das geht mit deinem Passkey oder einem Code der Zwei-Faktor-Authentifizierung. Ist sie ausgeschaltet, bestätigst du mit einem Code, den wir dir per E-Mail schicken, oder bei einer OIDC-Verbindung, indem du dich noch einmal darüber anmeldest. Eine Bestätigung gilt für deine Änderungen in den nächsten 10 Minuten.
+
+QRdx verwendet die üblichen OIDC- und SAML-2.0-Einstellungen, die Identitätsanbieter verlangen. Die folgenden Schritte nennen die Werte. Wo du sie einfügst, hängt von deinem Anbieter ab.
+
+## Mit OIDC einrichten [#set-up-with-oidc]
+
+1. Gehe im Workspace zu **Einstellungen** → **Single Sign-on**. **OIDC** ist ausgewählt.
+2. Erstelle in deinem Identitätsanbieter eine Web-App (OIDC-Client) für QRdx und trage die auf der Seite angezeigte **Redirect-URI** als erlaubte Weiterleitung ein.
+3. Fülle zurück in QRdx Folgendes aus:
+   - **E-Mail-Domain**: die Domain deines Unternehmens, zum Beispiel `acme.com`.
+   - **Issuer-URL**: der Issuer deines Anbieters. QRdx liest den Rest aus `<issuer>/.well-known/openid-configuration`, deshalb muss der Issuer exakt zu diesem Dokument passen.
+   - **Client-ID** und **Client-Secret** aus der App, die du erstellt hast.
+4. Klicke auf **Verbindung speichern**.
+
+QRdx fordert die Scopes `openid`, `email` und `profile` an und verwendet PKCE. Der Issuer muss aus dem Internet über HTTPS erreichbar sein. Identitätsanbieter in einem privaten Netzwerk werden nicht unterstützt.
+
+## Mit SAML 2.0 einrichten [#set-up-with-saml-20]
+
+1. Gehe im Workspace zu **Einstellungen** → **Single Sign-on** und wähle **SAML 2.0**.
+2. Erstelle in deinem Identitätsanbieter eine SAML-App für QRdx mit den auf der Seite angezeigten Werten:
+   - **Assertion Consumer Service (ACS) URL**
+   - **Entity-ID (Audience)**
+   - **Metadaten-URL**, falls dein Anbieter die QRdx-Einstellungen aus einer URL lesen kann
+3. Sende die E-Mail-Adresse der Person als **NameID** (E-Mail-Format) oder als Attribut mit dem Namen `email`. Für den Namen sendest du `givenName` und `surname` (oder `firstName` und `lastName`, oder die X.500-Namen `urn:oid:2.5.4.42` und `urn:oid:2.5.4.4`) oder einen Anzeigenamen (`displayName`, `name` oder `urn:oid:2.16.840.1.113730.3.1.241`). Ohne Namen verwendet QRdx den Teil der Adresse vor dem @.
+4. Gib zurück in QRdx deine **E-Mail-Domain** ein und füge die **Metadaten-XML** deines Anbieters ein. Oder klicke auf **Stattdessen Details eingeben** und fülle die **Anmelde-URL (SSO-URL)**, die **Entity-ID** des Anbieters und sein **Signaturzertifikat** aus.
+5. Klicke auf **Verbindung speichern**.
+
+Dein Anbieter muss seine Antworten signieren und eine Anmelde-URL mit HTTP-Redirect angeben. QRdx weist Antworten ohne gültige Signatur oder ohne Gültigkeitszeiten (`NotBefore` und `NotOnOrAfter`) ab.
+
+Signaturen müssen SHA-256 oder stärker verwenden. QRdx weist Antworten ab, die mit SHA-1 signiert oder gehasht sind. Ist dein Anbieter für die QRdx-App auf SHA-1 eingestellt, stelle ihn auf SHA-256 um.
+
+QRdx signiert seine Anmeldeanfragen nicht. Verlangt dein Anbieter für die QRdx-App signierte Anfragen, schalte das aus, sonst werden Personen abgewiesen, bevor sie sich anmelden können.
+
+## Domain verifizieren [#verify-your-domain]
+
+Niemand kann sich über die Verbindung anmelden, bevor du bestätigt hast, dass dir die Domain gehört.
+
+1. Kopiere auf der Single-Sign-on-Seite unter **Verifizieren** den **Namen** und den **Wert** des TXT-Eintrags.
+2. Füge den TXT-Eintrag bei deinem DNS-Anbieter hinzu.
+3. Klicke auf **Verifizieren**. Neue Einträge können einige Minuten, manchmal länger, brauchen, bis sie sichtbar sind. Findet QRdx den Eintrag noch nicht, sagt es dir das. Warte dann kurz und versuche es erneut.
+
+Der Verifizierungswert ist 7 Tage gültig. Läuft er ab, lade die Seite neu, um einen neuen zu erhalten, und aktualisiere den Eintrag.
+
+Eine verifizierte Domain deckt auch ihre Subdomains ab, `acme.com` also auch `eu.acme.com`. Eine Domain kann nur in einem Workspace für Single Sign-on verifiziert werden. Hat ein anderer Workspace sie oder eine sich überschneidende Domain bereits verifiziert, sagt QRdx dir das beim Speichern oder Verifizieren.
+
+## Was dein Team sieht [#what-your-team-sees]
+
+1. Auf der Anmeldeseite geben die Personen ihre Arbeits-E-Mail-Adresse ein und klicken auf **Code per E-Mail senden**, wie bei jeder Anmeldung per E-Mail.
+2. Bevor QRdx einen Code sendet, prüft es die Domain der Adresse. Bei deiner verifizierten Domain weist es darauf hin, dass sich dein Unternehmen mit Single Sign-on anmeldet, und bietet **Weiter mit SSO** an. Es wird kein Code gesendet, solange ihn niemand anfordert.
+3. **Weiter mit SSO** führt zu deinem Identitätsanbieter und danach zurück zu QRdx, angemeldet und in deinem Workspace.
+
+Sie können stattdessen **Code per E-Mail senden** wählen, es sei denn, du [verlangst Single Sign-on](#require-single-sign-on). Auch **Mit SSO anmelden** unter dem E-Mail-Feld funktioniert weiterhin: Es fragt nach der Arbeits-E-Mail-Adresse und führt direkt zu deinem Identitätsanbieter.
+
+QRdx bietet Single Sign-on nur an, solange die Domain verifiziert ist und der Workspace Business nutzt. Die Prüfung betrachtet nur die Domain, sie zeigt also nie, ob jemand ein QRdx-Konto hat.
+
+Hat jemand die [Zwei-Faktor-Authentifizierung](/docs/help/privacy-and-security/two-step-verification) aktiviert, fragt QRdx nach der Anmeldung über deinen Identitätsanbieter trotzdem nach dem zweiten Schritt, es sei denn, die Person hat auf diesem Gerät gewählt, nicht erneut gefragt zu werden. Das gilt genauso, wenn Single Sign-on verpflichtend ist.
+
+Jede SSO-Anmeldung stellt sicher, dass die Person in deinem Workspace ist:
+
+- Wer noch kein Mitglied ist, tritt mit der Rolle bei, die du unter **Neue Mitglieder** festlegst: **Mitglied** (Standard) oder **Betrachter**.
+- Wer eine offene Einladung zum Workspace hat, tritt mit der Rolle der Einladung bei, und die Einladung wird als angenommen markiert.
+- Mitglieder behalten ihre Rolle. Du kannst die Rolle jeder Person auf der Seite **Team** ändern.
+
+Das gilt auch für Personen, die du aus dem Workspace entfernt hast: Sie treten bei der nächsten SSO-Anmeldung wieder bei.
+
+Hat jemand bereits ein QRdx-Konto mit derselben E-Mail-Adresse, verwendet die SSO-Anmeldung dieses Konto. Die Person behält ihren eigenen Workspace und alles darin.
+
+QRdx meldet jemanden nur dann über deine Verbindung an, wenn die Adresse, die dein Anbieter sendet, zu deiner verifizierten Domain gehört. Die anderen Anmeldewege, etwa ein E-Mail-Code an dieselbe Adresse, funktionieren weiter, es sei denn, du verlangst Single Sign-on.
+
+E-Mail-Adressen müssen in deinem Identitätsanbieter verifiziert sein. Meldet er QRdx, dass eine Adresse nicht verifiziert ist (der OIDC-Claim `email_verified` oder ein SAML-Attribut `email_verified` oder `emailVerified` ist auf false gesetzt), meldet QRdx die Person nicht an, erstellt kein Konto für sie und verknüpft kein bestehendes. Sie sieht eine Meldung, dass dein Admin dort Adressen verifizieren soll. Macht dein Anbieter keine Angabe dazu, vertraut QRdx ihm für deine verifizierte Domain.
+
+Wer sich bei QRdx abmeldet, wird dadurch nicht bei deinem Identitätsanbieter abgemeldet. Solange die Person dort noch angemeldet ist, läuft die nächste SSO-Anmeldung ohne Passwortabfrage durch. Melde dich auf einem gemeinsam genutzten Computer auch bei deinem Identitätsanbieter ab.
+
+## QRdx über deinen Identity Provider öffnen [#open-qrdx-from-your-identity-provider]
+
+Mit einer SAML-Verbindung können sich Personen auch direkt über deinen Identity Provider anmelden: Ein Klick auf die QRdx-App im App-Dashboard des Identity Providers meldet sie bei QRdx an, ohne dass sie die Anmeldeseite von QRdx durchlaufen. Das nennt man oft IdP-initiierte Anmeldung.
+
+Öffne in deinem Identity Provider die SAML-App, die du für QRdx erstellt hast, und stelle sicher, dass sie Personen im App-Dashboard angezeigt wird und dass sie eine vom Identity Provider gestartete Anmeldung erlaubt. Die Personen landen im Dashboard deines Workspace. QRdx ignoriert jeden **RelayState**, den die App sendet, damit eine Anmeldung, die QRdx nicht angefordert hat, nie bestimmt, welche Seite sich öffnet.
+
+Es gelten dieselben Regeln wie bei einer Anmeldung, die bei QRdx beginnt: Die Domain muss verifiziert sein, der Workspace muss den Business-Plan haben, und die Antwort muss mit SHA-256 oder stärker signiert sein. Außerdem verlangt QRdx:
+
+- genau eine Assertion mit einer ID, die nicht verschlüsselt ist;
+- ein Ablaufdatum der Assertion (`NotOnOrAfter` in ihren `Conditions`), das die meisten Identity Provider standardmäßig senden.
+
+Jede Antwort meldet eine Person nur einmal an. Trifft dieselbe Antwort erneut ein, weist QRdx sie ab und bittet die Person, sich noch einmal anzumelden. Hat jemand die Bestätigung in zwei Schritten aktiviert, fragt QRdx zuerst nach dem zweiten Schritt und leitet die Person dann zum Dashboard weiter.
+
+Eine Anmeldung über das App-Dashboard zählt nicht als [Bestätigung, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), es sei denn, die Person hat ihren zweiten Schritt beantwortet, weil QRdx ihn nicht verlangt hat. Vor einer Änderung, die danach fragt, bestätigt sie wie gewohnt.
+
+Eine OIDC-Verbindung beginnt immer bei QRdx. Um QRdx im App-Dashboard deines Identity Providers anzuzeigen, füge es als Link zur Anmeldeseite von QRdx hinzu.
+
+## Single Sign-on erzwingen [#require-single-sign-on]
+
+Sobald deine Domain verifiziert ist, kannst du deinen Identity Provider zum einzigen Zugang für Personen mit einer Adresse dieser Domain machen. Aktiviere auf der Seite **Single sign-on** die Option **Require single sign-on for** deine Domain. Sie gilt wie die Verbindung auch für Subdomains.
+
+Solange sie aktiviert ist, gilt für eine Adresse deiner Domain:
+
+- E-Mail-Codes, Google und GitHub melden sie nicht an<IfAvailable feature="passkeys">, ebenso wenig **Continue with passkey**</IfAvailable>. Sie sehen den Hinweis, dass dein Unternehmen Single Sign-on verlangt, und **Continue with SSO**.
+- Ihre [Bestätigung in zwei Schritten](/docs/help/privacy-and-security/two-step-verification) gilt weiterhin, nachdem dein Identity Provider sie angemeldet hat.<IfAvailable feature="passkeys"> Ein Passkey funktioniert weiterhin als zweiter Schritt.</IfAvailable>
+- Eine Anmeldung dauert höchstens 24 Stunden. Danach laufen die Personen erneut über deinen Identity Provider. Wer dort nicht mehr zugewiesen ist, kann sich also nicht erneut bei QRdx anmelden und wird innerhalb eines Tages abgemeldet.
+- Ihre QRdx-E-Mail-Adresse lässt sich nicht auf eine Adresse außerhalb deiner Domain ändern, und niemand sonst kann seine auf eine Adresse deiner Domain ändern. Eine Adresse dort gelangt nur per Single Sign-on in QRdx.
+
+Wenn du die Option aktivierst, werden alle Personen deiner Domain aus Sitzungen abgemeldet, die nicht per Single Sign-on begonnen haben, und Sitzungen, die so begonnen haben, enden 24 Stunden nach dieser Anmeldung. Niemand erhält dazu eine E-Mail; beim nächsten Mal werden sie gebeten, sich mit SSO anzumelden.
+
+**Owner behalten ihre anderen Anmeldewege.** Nichts davon gilt für die Owner des Workspace: Sie können weiterhin einen E-Mail-Code, Google oder GitHub<IfAvailable feature="passkeys"> oder einen Passkey</IfAvailable> nutzen, ihre Sitzungen werden nicht verkürzt, und sie können ihre E-Mail-Adresse ändern. So kann ein Problem mit deinem Identity Provider nicht alle von dieser Einstellung aussperren. Beschränke die Owner-Rolle auf die wenigen Personen, die sie brauchen.
+
+So aktivierst du sie:
+
+- Du musst **Owner** oder **Admin** im Business-Plan sein, eine verifizierte Domain haben und wirst gebeten, [zu bestätigen, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+- Wenn du Admin mit einer Adresse in dieser Domain bist, melde dich zuerst per Single Sign-on an. Sonst würdest du beim Aktivieren abgemeldet, und die Anmeldung auf diesem Weg zeigt, dass die Verbindung funktioniert.
+
+Wenn du die Option deaktivierst, die Verbindung entfernst oder der Workspace Business verlässt, wird Single Sign-on nicht mehr verlangt. Die Personen behalten ihre Sitzungen und können sich wieder auf ihren anderen Wegen anmelden. Es kann bis zu eine Minute dauern, bis alle QRdx-Server davon wissen: Wer sich in dieser Minute auf anderem Weg anmeldet, wird eventuell sofort wieder abgemeldet und kann sich eine Minute später erneut anmelden.
+
+Single Sign-on betrifft die Anmeldung. API-Keys sind keine Anmeldungen, daher stoppt die Pflicht sie nicht; wenn du jemanden auf der Seite **Team** entfernst, stoppt das die API-Keys, die diese Person für den Workspace erstellt hat.
+
+## Jemanden dauerhaft entfernen [#remove-someone-for-good]
+
+Weil jede SSO-Anmeldung die Person wieder hinzufügt, reicht es nicht, sie nur auf der Seite **Team** zu entfernen:
+
+1. Hebe in deinem Identity Provider die Zuweisung der Person zur QRdx-App auf (oder deaktiviere dort ihr Konto), damit sie sich nicht mehr bei QRdx anmelden kann.
+2. Entferne sie dann auf der Seite **Team**. Der Dialog zum Entfernen erinnert dich daran, wenn die Adresse der Person in deiner verifizierten Domain liegt.
+
+Wenn du [Single Sign-on erzwingst](#require-single-sign-on), meldet Schritt 1 die Person außerdem innerhalb von 24 Stunden von QRdx ab. Entferne sie zusätzlich auf der Seite **Team**, damit sie kein Mitglied mehr ist und ihre API-Keys für den Workspace nicht mehr funktionieren.
+
+Wenn du jemanden aus dem Workspace entfernst, wird sein QRdx-Konto nicht gelöscht. Sofern Single Sign-on für die Adresse nicht erzwungen wird, kann sich die Person weiterhin mit einem E-Mail-Code, Google oder GitHub in ihrem eigenen Workspace anmelden.
+
+## Verbindung ändern oder entfernen [#change-or-remove-the-connection]
+
+- **Replace secret** (OIDC) oder **Replace certificate** (SAML) aktualisiert die Verbindung, wenn du sie bei deinem Identity Provider rotierst. Eine SAML-Verbindung, die über Metadaten-XML eingerichtet wurde, änderst du, indem du sie entfernst und neu einrichtest.
+- **Remove** schaltet Single Sign-on aus und beendet die Pflicht dazu. Alle bleiben im Workspace und können sich mit einem E-Mail-Code, Google oder GitHub anmelden.
+
+## Wenn sich der Plan ändert [#if-the-plan-changes]
+
+Wenn der Workspace nicht mehr den Business-Plan hat, kann sich niemand mehr mit SSO anmelden, auch nicht mitten in einer Anmeldung, und Single Sign-on wird nicht mehr erzwungen. Die Personen sehen eine Meldung und können sich auf anderem Weg anmelden. Die Verbindung und ihre Einstellungen bleiben erhalten, sodass sie wieder funktionieren, sobald der Workspace wieder Business hat, und du sie weiterhin entfernen kannst.
+
+## Was nicht unterstützt wird [#what-isnt-supported]
+
+- Automatische Bereitstellung und Entfernung (SCIM). Wenn du jemanden aus deinem Identity Provider entfernst, wird die Person nicht aus dem Workspace entfernt. Ohne [erzwungenes Single Sign-on](#require-single-sign-on) beendet das auch ihre QRdx-Sitzungen nicht; entferne sie zusätzlich auf der Seite **Team** (siehe [Jemanden dauerhaft entfernen](#remove-someone-for-good)).
+- Rollen oder Gruppen aus deinem Identity Provider. Alle treten mit der Rolle unter **New members** bei.
+- Mehr als eine Verbindung oder mehr als eine Domain pro Workspace.
+- Vom Identity Provider gestartete Anmeldung mit einer OIDC-Verbindung (mit SAML funktioniert sie: siehe [QRdx über deinen Identity Provider öffnen](#open-qrdx-from-your-identity-provider)), SAML Single Logout und verschlüsselte Assertions.
+- Identity Provider, die nicht aus dem Internet erreichbar sind.
+
+## Verwandte Themen [#related]
+
+- [Team-Rollen](/docs/help/teams/roles)
+- [Seats und Workspace-Limits](/docs/help/teams/seats)
+- [Workspace erstellen und Personen einladen](/docs/help/teams/create-and-invite)
