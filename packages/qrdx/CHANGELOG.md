@@ -2,6 +2,12 @@
 
 Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
 
+## Unreleased
+
+### Part markers
+
+- **`partMarkers`** on `QRCode` and `QRCodeSVG` marks each drawn part of the code for an editor's live preview: every finder eye's outer ring and centre (`data-qrdx-part="eye-outer"` / `"eye-centre"`, with `data-qrdx-eye` saying `"top-left"`, `"top-right"` or `"bottom-left"`), the dots (`"body"`), the logo (`"logo"`) and the background (`"background"`). `QR_PART_ATTRIBUTE`, `QR_EYE_ATTRIBUTE` and `QR_PARTS` name them. Like `frameLabelMarkers`, it is off by default, the markup without it is unchanged, and every export drops it.
+
 ## 0.0.49
 
 ### Frame library

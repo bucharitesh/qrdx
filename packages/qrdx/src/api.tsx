@@ -43,6 +43,7 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     eyeColors: _eyeColors,
     moduleScale: _moduleScale,
     frameLabelMarkers: _frameLabelMarkers,
+    partMarkers: _partMarkers,
     autoLevel,
     ...otherProps
   } = props;
