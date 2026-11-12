@@ -1314,6 +1314,13 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["ethereum", "paypal", "upi", "text"],
+    details: {
+      title: "Lightning, testnet and address checks",
+      paragraphs: [
+        "This is an on-chain request: the wallet pays your address on the Bitcoin blockchain. Lightning-only wallets can't pay it, and this generator doesn't add a lightning= invoice to the URI, so for Lightning payments share an invoice or Lightning address from your wallet instead.",
+        "The generator checks the address's length (26 to 62 characters), not its checksum, and it can't tell mainnet from testnet: a testnet address (starting with tb1, m, n or 2) makes a code no ordinary wallet can pay. Scan the preview with the wallet that will pay before you print.",
+      ],
+    },
   },
   {
     type: "ethereum",
@@ -1361,6 +1368,13 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["bitcoin", "paypal", "venmo", "text"],
+    details: {
+      title: "Address checks and ENS names",
+      paragraphs: [
+        "The generator checks that the address is 0x followed by 40 hexadecimal characters. It doesn't check the mixed-case EIP-55 checksum; wallets check that when they scan, so paste the address exactly as your wallet shows it rather than typing it.",
+        "ENS names such as name.eth aren't accepted. EIP-681 allows them, but the payer's wallet would have to look the name up; a 0x address works in every wallet that reads the code.",
+      ],
+    },
   },
   {
     type: "etsy",
@@ -2486,6 +2500,13 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["bitcoin", "dogecoin", "bitcoincash", "ethereum"],
+    details: {
+      title: "Which Litecoin addresses work",
+      paragraphs: [
+        "Addresses starting with L (legacy), M (P2SH), 3 (older P2SH) and ltc1 (SegWit) are accepted. M and 3 are the same kind of address: Litecoin moved P2SH addresses from 3 to M so they aren't mistaken for Bitcoin addresses, and some older wallets still show 3.",
+        "MWEB addresses (starting with ltcmweb1), used for Litecoin's private payments, aren't accepted here. Use one of your wallet's regular receiving addresses for a printed code.",
+      ],
+    },
   },
   {
     type: "dogecoin",
@@ -2521,6 +2542,13 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["litecoin", "bitcoin", "solana", "ethereum"],
+    details: {
+      title: "Which Dogecoin addresses work",
+      paragraphs: [
+        "Standard Dogecoin addresses start with D, and multisig (P2SH) addresses with A or 9; the generator accepts these. Testnet addresses, which start with n or 2, are rejected, so a test address can't end up on a printed sign by mistake.",
+        "For a tip jar, leave the amount empty: each person types what they want to give, and one printed code takes any number of payments.",
+      ],
+    },
   },
   {
     type: "bitcoincash",
@@ -2557,6 +2585,14 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["bitcoin", "litecoin", "dogecoin", "ethereum"],
+    details: {
+      title: "CashAddr, legacy and token addresses",
+      paragraphs: [
+        "Paste the address with or without its bitcoincash: prefix. The generator removes a pasted prefix and writes it once, as the start of the URI.",
+        "Token-aware addresses (starting with z or r), used for CashTokens, aren't accepted. Use your wallet's regular q address for BCH payments.",
+        "Legacy addresses starting with 1 or 3 look exactly like Bitcoin addresses, which makes it easy to send coins from the wrong network. Prefer CashAddr on anything you print.",
+      ],
+    },
   },
   {
     type: "solana",
@@ -2592,6 +2628,13 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["ethereum", "bitcoin", "litecoin", "monero"],
+    details: {
+      title: "What this Solana Pay code includes",
+      paragraphs: [
+        "It's a Solana Pay transfer request: the recipient, an amount in SOL, a label and a message. Solana Pay also defines spl-token for token payments and reference for matching a payment to an order; this generator adds neither, so use your point-of-sale tool when you need them.",
+        "Solana Pay transaction requests, where the code holds a link to your server and the server builds the transaction, aren't made here either.",
+      ],
+    },
   },
   {
     type: "monero",
@@ -2628,6 +2671,13 @@ export const QR_TYPES: QrTypeContent[] = [
       },
     ],
     related: ["bitcoin", "litecoin", "solana", "ethereum"],
+    details: {
+      title: "Standard address, subaddress or integrated address",
+      paragraphs: [
+        "Standard addresses start with 4 and are 95 characters long, subaddresses start with 8, and integrated addresses start with 4 and are 106 characters because they carry a payment ID. The generator accepts all three.",
+        "Separate payment IDs are deprecated in Monero, so the generator doesn't add one. Use a subaddress for each customer or code, or the integrated address an exchange or shop gives you.",
+      ],
+    },
   },
 ];
 

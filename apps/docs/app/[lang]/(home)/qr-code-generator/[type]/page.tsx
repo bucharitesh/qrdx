@@ -190,6 +190,27 @@ export default async function QrTypePage({ params }: PageProps) {
         </div>
       </section>
 
+      {content.details && (
+        <section
+          aria-labelledby="details"
+          className="w-full px-10 py-10 flex flex-col gap-4"
+        >
+          <h2 id="details" className="text-2xl font-medium tracking-tighter">
+            {content.details.title}
+          </h2>
+          <div className="flex max-w-3xl flex-col gap-3">
+            {content.details.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph}
+                className="text-muted-foreground leading-relaxed text-pretty"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </section>
+      )}
+
       <FaqList title={t("type.faqTitle", { name })} faqs={content.faqs} />
 
       <section className="w-full px-10 py-10 flex flex-col gap-5">
