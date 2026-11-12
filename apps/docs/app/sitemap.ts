@@ -12,6 +12,10 @@ import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import {
+  HOSTED_TYPE_SLUGS,
+  hostedTypePath,
+} from "@/lib/qr-types-content-hosted";
 import { industries, placements } from "@/lib/seo-content";
 import {
   gitLastModified,
@@ -19,6 +23,7 @@ import {
   trustedLastModified,
 } from "@/lib/seo-dates";
 import {
+  HOSTED_TYPES_SOURCE,
   PAGE_SOURCES,
   QR_TYPES_SOURCE,
   seoGroupSource,
@@ -66,6 +71,7 @@ function entries(): Entry[] {
   );
   const fileDates = gitLastModified([
     QR_TYPES_SOURCE,
+    HOSTED_TYPES_SOURCE,
     ...groupFiles,
     ...Object.values(PAGE_SOURCES).flat(),
   ]);
@@ -271,6 +277,18 @@ function entries(): Entry[] {
         ({
           url: url(`/qr-code-generator/${type}`),
           lastModified: typesDate,
+          changeFrequency: "monthly",
+          priority: 0.7,
+        }) satisfies Entry,
+    ),
+    // Codes that open a hosted page; the PDF one needs file storage.
+    ...HOSTED_TYPE_SLUGS.filter((slug) =>
+      isPathAvailable(hostedTypePath(slug)),
+    ).map(
+      (slug) =>
+        ({
+          url: url(hostedTypePath(slug)),
+          lastModified: fileDates.get(HOSTED_TYPES_SOURCE),
           changeFrequency: "monthly",
           priority: 0.7,
         }) satisfies Entry,

@@ -7,12 +7,17 @@ import { GeneratorHubStrip } from "@/components/sections/page-codes/page-code-se
 import { SectionHeader } from "@/components/sections/section-header";
 import { CardGrid, LinkCard } from "@/components/sections/tools/cards";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
-import { QR_TYPE_ICONS } from "@/components/sections/tools/topic-icons";
-import { QR_TYPE_RULES } from "@/lib/i18n/content-rules";
+import {
+  PAGE_TYPE_ICONS,
+  QR_TYPE_ICONS,
+} from "@/components/sections/tools/topic-icons";
+import { isPathAvailable } from "@/lib/feature-availability";
+import { HOSTED_TYPE_RULES, QR_TYPE_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { requireLocale } from "@/lib/i18n/server";
 import { QR_TYPE_GROUPS, QR_TYPES } from "@/lib/qr-types-content";
+import { HOSTED_QR_TYPES, hostedTypePath } from "@/lib/qr-types-content-hosted";
 
 const count = QR_TYPES.length;
 
@@ -31,13 +36,20 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function QrTypesHubPage() {
   const locale = await requireLocale();
-  const [t, common, { groups, types }] = await Promise.all([
+  const [t, common, { groups, types }, hosted] = await Promise.all([
     getTranslations({ locale, namespace: "qrGenerator" }),
     getTranslations({ locale, namespace: "common" }),
     localizeContent(
       { groups: QR_TYPE_GROUPS, types: QR_TYPES },
       locale,
       QR_TYPE_RULES,
+    ),
+    localizeContent(
+      HOSTED_QR_TYPES.filter((item) =>
+        isPathAvailable(hostedTypePath(item.slug)),
+      ),
+      locale,
+      HOSTED_TYPE_RULES,
     ),
   ]);
   return (
@@ -100,6 +112,42 @@ export default async function QrTypesHubPage() {
           </section>
         );
       })}
+
+      <section
+        aria-labelledby="hosted"
+        className="flex flex-col items-center w-full"
+      >
+        <SectionHeader>
+          <h2
+            id="hosted"
+            className="text-2xl md:text-3xl font-medium tracking-tighter text-center text-balance"
+          >
+            {t("hub.hostedTitle")}
+          </h2>
+          <p className="text-muted-foreground text-center text-balance font-medium text-sm">
+            {t("hub.hostedDescription")}
+          </p>
+        </SectionHeader>
+        <div className="w-full px-10 py-10">
+          <CardGrid count={hosted.length + 1}>
+            {hosted.map((item) => (
+              <LinkCard
+                key={item.slug}
+                href={hostedTypePath(item.slug)}
+                icon={PAGE_TYPE_ICONS[item.page]}
+                title={t("hub.cardTitle", { name: item.name })}
+                description={item.summary}
+              />
+            ))}
+            <LinkCard
+              href="/qr-codes-on/menus"
+              icon={PAGE_TYPE_ICONS.menu}
+              title={t("hub.menuTitle")}
+              description={t("hub.menuDescription")}
+            />
+          </CardGrid>
+        </div>
+      </section>
 
       <section aria-label={t("hub.moreTools")} className="w-full px-10 py-10">
         <CardGrid count={2} max={2}>
