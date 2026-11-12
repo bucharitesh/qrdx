@@ -8,6 +8,7 @@ import { HairlineFigure } from "@/components/mockups/hairline";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import { localizedMetadata } from "@/lib/i18n/metadata";
+import { AI_CHAT_NAMESPACES } from "@/lib/i18n/playground";
 import { requireLocale } from "@/lib/i18n/server";
 import { AIAnnouncement } from "./components/ai-announcement";
 import { AIChatHero } from "./components/ai-chat-hero";
@@ -49,7 +50,7 @@ export default async function AiPage() {
             className="[mask-image:radial-gradient(ellipse_70%_85%_at_50%_45%,rgba(0,0,0,0.3)_20%,black_55%,transparent_85%)]"
           />
         </Backdrop>
-        <ClientMessages namespaces={["ai.chat"]}>
+        <ClientMessages namespaces={AI_CHAT_NAMESPACES}>
           <AIAnnouncement />
           <AIChatHero />
         </ClientMessages>

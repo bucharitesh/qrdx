@@ -17,6 +17,7 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
 import { Copy, Share, Sms } from "iconsax-reactjs";
+import { useFormatter, useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrdx";
 import { type ComponentType, useEffect, useState } from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
@@ -39,24 +40,14 @@ interface QRShareDialogProps {
   onSaveAsTheme?: () => void;
 }
 
-const OMITTED_NAMES: Record<OmittedPart, string> = {
-  logo: "your logo",
-  art: "the art",
-  frame: "the custom frame",
-  image: "your image fills",
-  silhouette: "your code shape",
-};
-
 /** "Your logo and the art aren't in the link." */
-function omittedNote(parts: OmittedPart[]): string | null {
+function useOmittedNote(parts: OmittedPart[]): string | null {
+  const t = useTranslations("editor.qrShareDialog");
+  const format = useFormatter();
   if (parts.length === 0) return null;
-  const names = parts.map((part) => OMITTED_NAMES[part]);
-  const list =
-    names.length === 1
-      ? names[0]
-      : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
-  const verb = names.length === 1 ? "isn't" : "aren't";
-  return `${list.charAt(0).toUpperCase()}${list.slice(1)} ${verb} in the link.`;
+  const list = format.list(parts.map((part) => t(`omitted.${part}`)));
+  const note = t("omittedNote", { count: parts.length, list });
+  return `${note.charAt(0).toUpperCase()}${note.slice(1)}`;
 }
 
 const SAMPLE_VALUE = "https://qrdx.dev";
@@ -70,32 +61,33 @@ function shareTargets(url: string, title: string) {
   const text = encodeURIComponent(title);
   return [
     {
-      label: "Post on X",
+      id: "x",
       Icon: XLogo,
       href: `https://x.com/intent/post?url=${link}&text=${text}`,
     },
     {
-      label: "Share on LinkedIn",
+      id: "linkedin",
       Icon: LinkedinLogo,
       href: `https://www.linkedin.com/sharing/share-offsite/?url=${link}`,
     },
     {
-      label: "Share on Facebook",
+      id: "facebook",
       Icon: FacebookMark,
       href: `https://www.facebook.com/sharer/sharer.php?u=${link}`,
     },
     {
-      label: "Send on WhatsApp",
+      id: "whatsapp",
       Icon: WhatsappMark,
       href: `https://wa.me/?text=${text}%20${link}`,
     },
     {
-      label: "Send by email",
+      id: "email",
       Icon: Sms,
       href: `mailto:?subject=${text}&body=${link}`,
     },
-  ] satisfies {
-    label: string;
+  ] as const satisfies readonly {
+    /** Its name: editor.qrShareDialog.targets.<id>. */
+    id: string;
     Icon: ComponentType<{ className?: string }>;
     href: string;
   }[];
@@ -108,6 +100,7 @@ export function QRShareDialog({
   omitted = [],
   onSaveAsTheme,
 }: QRShareDialogProps) {
+  const t = useTranslations("editor.qrShareDialog");
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
   const value = useQREditorStore((state) => state.value);
@@ -116,10 +109,10 @@ export function QRShareDialog({
     themeState.preset ? state.getPreset(themeState.preset) : undefined,
   );
   const style = themeState.styles;
-  const name = preset?.label ?? "My QR design";
-  const note = omittedNote(omitted);
+  const name = preset?.label ?? t("myQrDesign");
+  const note = useOmittedNote(omitted);
   const longLink = url.length > 120;
-  const title = `${name} · a QR code design on QRdx`;
+  const title = t("shareTitle", { name });
 
   useEffect(() => {
     setCanShare(typeof navigator !== "undefined" && "share" in navigator);
@@ -136,7 +129,7 @@ export function QRShareDialog({
       emitSound("copy");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Couldn't copy the link");
+      toast.error(t("couldntCopyTheLink"));
     }
   };
 
@@ -154,10 +147,11 @@ export function QRShareDialog({
         <div className="flex max-h-[inherit] min-h-0 flex-col">
           <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
             <div className="min-w-0 flex-1 space-y-1">
-              <ResponsiveDialogTitle>Share this design</ResponsiveDialogTitle>
+              <ResponsiveDialogTitle>
+                {t("shareThisDesign")}
+              </ResponsiveDialogTitle>
               <ResponsiveDialogDescription>
-                The link opens this style in the playground, so anyone can use
-                it for their own code. Your content isn&apos;t included.
+                {t("theLinkOpensThisStyle")}
               </ResponsiveDialogDescription>
             </div>
             <DialogCloseButton className="-mt-1 -mr-2 hidden sm:inline-flex" />
@@ -186,7 +180,7 @@ export function QRShareDialog({
               <figcaption className="space-y-0.5">
                 <p className="truncate text-sm font-medium">{name}</p>
                 <p className="text-muted-foreground text-xs">
-                  Style preview · opens in the QRdx playground
+                  {t("stylePreviewOpensInThe")}
                 </p>
               </figcaption>
             </figure>
@@ -194,7 +188,7 @@ export function QRShareDialog({
             <div className="min-w-0 space-y-6">
               <div>
                 <p className="text-muted-foreground mb-2.5 text-xs font-medium">
-                  <span id="share-link-label">Link</span>{" "}
+                  <span id="share-link-label">{t("link")}</span>{" "}
                   <InfoHint align="start" id="share-design" />
                 </p>
                 <div className="flex flex-col gap-2">
@@ -207,7 +201,7 @@ export function QRShareDialog({
                   />
                   <Button onClick={handleCopy}>
                     {copied ? <Tick /> : <Copy />}
-                    {copied ? "Copied" : "Copy link to this design"}
+                    {copied ? t("copied") : t("copyLinkToThisDesign")}
                   </Button>
                 </div>
                 {(note || onSaveAsTheme) && (
@@ -220,9 +214,7 @@ export function QRShareDialog({
                         onClick={onSaveAsTheme}
                         type="button"
                       >
-                        {note
-                          ? "Save it as a theme instead"
-                          : "Save it as a theme for a shorter link"}
+                        {note ? t("saveItAsATheme") : t("saveItAsATheme2")}
                       </button>
                     )}
                   </p>
@@ -231,7 +223,7 @@ export function QRShareDialog({
 
               <div>
                 <p className="text-muted-foreground mb-2.5 text-xs font-medium">
-                  Share to
+                  {t("shareTo")}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {canShare && (
@@ -241,18 +233,18 @@ export function QRShareDialog({
                       variant="outline"
                     >
                       <Share />
-                      More…
+                      {t("more")}
                     </Button>
                   )}
                   {shareTargets(url, title).map((target) => (
                     <TooltipWrapper
                       asChild
-                      key={target.label}
-                      label={target.label}
+                      key={target.id}
+                      label={t(`targets.${target.id}`)}
                     >
                       <Button asChild size="icon" variant="outline">
                         <a
-                          aria-label={target.label}
+                          aria-label={t(`targets.${target.id}`)}
                           href={target.href}
                           rel="noopener noreferrer"
                           target="_blank"
@@ -281,9 +273,9 @@ export function QRShareDialog({
                   />
                 </div>
                 <div className="min-w-0 space-y-0.5">
-                  <p className="text-sm font-medium">Open on your phone</p>
+                  <p className="text-sm font-medium">{t("openOnYourPhone")}</p>
                   <p className="text-muted-foreground text-xs text-pretty">
-                    Scan this code to open the share link on another device.
+                    {t("scanThisCodeToOpen")}
                   </p>
                 </div>
               </div>

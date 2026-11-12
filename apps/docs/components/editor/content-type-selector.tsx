@@ -2,14 +2,18 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowSwapHorizontal } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { TypeIconTile } from "@/components/editor/content-type-icons";
 import { ContentTypeModal } from "@/components/editor/content-type-modal";
+import { useContentText } from "@/components/i18n/content-text";
 import { useQREditorStore } from "@/store/editor-store";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
 
 /** Compact "current QR type" row at the top of the Content tab; opens the type picker. */
 export function ContentTypeSelector({ className }: { className?: string }) {
+  const t = useTranslations("editor.contentTypeSelector");
+  const tc = useContentText();
   const contentType = useQREditorStore((state) => state.contentType);
   const [modalOpen, setModalOpen] = React.useState(false);
 
@@ -32,21 +36,21 @@ export function ContentTypeSelector({ className }: { className?: string }) {
         <TypeIconTile icon={currentType?.icon} type={currentType?.type} />
         <span className="min-w-0 flex-1">
           <span className="text-muted-foreground block text-[11px] leading-4 font-medium tracking-wider uppercase">
-            QR code type
+            {t("qrCodeType")}
           </span>
           <span className="block truncate text-sm leading-5 font-medium">
-            {currentType?.label ?? "Choose a type"}
+            {currentType ? tc(currentType.label) : t("chooseAType")}
             {currentType && (
               <span className="text-muted-foreground font-normal">
                 {" "}
-                · {currentType.description}
+                · {tc(currentType.description)}
               </span>
             )}
           </span>
         </span>
         <span className="text-muted-foreground group-hover:text-foreground flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors">
           <ArrowSwapHorizontal className="size-3.5" />
-          Change
+          {t("change")}
         </span>
       </button>
 

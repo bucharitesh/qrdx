@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { BitcoinFormData } from "@/lib/validations/qr-content";
 import { bitcoinSchema } from "@/lib/validations/qr-content";
@@ -10,6 +11,7 @@ import type { BitcoinContent } from "@/types/qr-content";
 import { encodeBitcoin } from "@/utils/qr-content-encoder";
 
 export function BitcoinForm() {
+  const t = useTranslations("editor.contentForms.bitcoinForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -48,12 +50,12 @@ export function BitcoinForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="bitcoin-address">
-          Bitcoin address *
+          {t("bitcoinAddress")}
         </Label>
         <Input
           id="bitcoin-address"
           type="text"
-          placeholder="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+          placeholder={t("n1a1zp1ep5qgefi2dmptftl5slmv7divfna")}
           value={bitcoinData.address}
           onChange={(e) =>
             setBitcoinData({ ...bitcoinData, address: e.target.value })
@@ -67,7 +69,7 @@ export function BitcoinForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="bitcoin-amount">
-          Amount (BTC)
+          {t("amountBtc")}
         </Label>
         <Input
           id="bitcoin-amount"
@@ -86,12 +88,12 @@ export function BitcoinForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="bitcoin-label">
-          Label
+          {t("label")}
         </Label>
         <Input
           id="bitcoin-label"
           type="text"
-          placeholder="Payment label"
+          placeholder={t("paymentLabel")}
           value={bitcoinData.label}
           onChange={(e) =>
             setBitcoinData({ ...bitcoinData, label: e.target.value })
@@ -101,12 +103,12 @@ export function BitcoinForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="bitcoin-message">
-          Message
+          {t("message")}
         </Label>
         <Input
           id="bitcoin-message"
           type="text"
-          placeholder="Payment message"
+          placeholder={t("paymentMessage")}
           value={bitcoinData.message}
           onChange={(e) =>
             setBitcoinData({ ...bitcoinData, message: e.target.value })
@@ -115,7 +117,7 @@ export function BitcoinForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open a Bitcoin wallet with these payment details
+        {t("scanningWillOpenABitcoin")}
       </p>
     </div>
   );

@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { EtsyFormData } from "@/lib/validations/qr-content";
 import { etsySchema } from "@/lib/validations/qr-content";
@@ -10,6 +11,7 @@ import type { EtsyContent } from "@/types/qr-content";
 import { encodeEtsy } from "@/utils/qr-content-encoder";
 
 export function EtsyForm() {
+  const t = useTranslations("editor.contentForms.etsyForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -43,7 +45,7 @@ export function EtsyForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="etsy-shop-url">
-          Etsy shop URL *
+          {t("etsyShopUrl")}
         </Label>
         <Input
           id="etsy-shop-url"
@@ -59,7 +61,7 @@ export function EtsyForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Etsy shop or product page
+        {t("scanningWillOpenYourEtsy")}
       </p>
     </div>
   );

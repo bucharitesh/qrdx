@@ -1,6 +1,7 @@
 "use client";
 
 import { Warning2 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { getContrastRatio } from "qrdx";
 import { IconPicker } from "../control-sections/custom-frame-fields";
 import { PaintPanel } from "../paint-picker/paint-panel";
@@ -22,6 +23,7 @@ export function labelContrast(
 
 /** "Low contrast" line, shown under a color when the label may be hard to read. */
 export function ContrastNote({ ratio }: { ratio: number | null }) {
+  const t = useTranslations("editor.frameInline.frameTextMenu");
   if (ratio === null || ratio >= MIN_LABEL_CONTRAST) return null;
   return (
     <p
@@ -30,8 +32,10 @@ export function ContrastNote({ ratio }: { ratio: number | null }) {
     >
       <Warning2 aria-hidden className="mt-px size-3.5 shrink-0" />
       <span>
-        Low contrast ({ratio.toFixed(1)}:1). The text may be hard to read; aim
-        for {MIN_LABEL_CONTRAST}:1.
+        {t("lowContrastValue1The", {
+          value: ratio.toFixed(1),
+          MIN_LABEL_CONTRAST,
+        })}
       </span>
     </p>
   );

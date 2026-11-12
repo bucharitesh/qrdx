@@ -4,6 +4,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { Global, InfoCircle, Warning2 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import {
   checkUrl,
@@ -16,6 +17,7 @@ import { useQREditorStore } from "@/store/editor-store";
 import type { UrlContent } from "@/types/qr-content";
 
 export function UrlForm() {
+  const t = useTranslations("editor.contentForms.urlForm");
   const storedUrl = useQREditorStore(
     (state) => (state.contentConfigs.url as UrlContent | undefined)?.url ?? "",
   );
@@ -66,7 +68,7 @@ export function UrlForm() {
         {/* A fixed-height row: the menu shows up once accounts load, and
             must not push the form down when it does. */}
         <div className="flex min-h-7 items-center justify-between gap-2">
-          <Label htmlFor="url-input">Website address</Label>
+          <Label htmlFor="url-input">{t("websiteAddress")}</Label>
           <LinkSourceMenu />
         </div>
         <Input
@@ -110,11 +112,12 @@ export function UrlForm() {
             <>
               <Global className="mt-px size-3.5 shrink-0" />
               <span className="min-w-0 truncate">
-                Scans open <span className="text-foreground">{check.host}</span>
+                {t("scansOpen")}{" "}
+                <span className="text-foreground">{check.host}</span>
               </span>
             </>
           ) : (
-            "Paste any link. Social and WhatsApp links get their own type."
+            t("pasteAnyLinkSocialAnd")
           )}
         </p>
       </div>

@@ -4,6 +4,7 @@ import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { TickCircle } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useMemo, useState } from "react";
 import { PublishDesignDialog } from "@/components/community/publish-design-dialog";
 import { communityDraft } from "@/lib/community/draft";
@@ -30,6 +31,7 @@ export function PublishToCommunityCard({
   part: PublishPart;
   superseded: boolean;
 }) {
+  const t = useTranslations("editor.ai.publishCard");
   const { addToolApprovalResponse, status } = useChatContext();
   const designs = useDesigns();
   const editorStyles = useQREditorStore((state) => state.themeState.styles);
@@ -89,7 +91,7 @@ export function PublishToCommunityCard({
         />
         <div className="min-w-0 flex-1 space-y-1">
           <p className="text-sm font-medium leading-snug break-words">
-            Publish “{draft.name}” to the community
+            {t("publishNameToTheCommunity", { name: draft.name })}
           </p>
           {draft.description && (
             <p className="text-muted-foreground text-xs leading-5 break-words">
@@ -102,8 +104,7 @@ export function PublishToCommunityCard({
             </p>
           )}
           <p className="text-muted-foreground text-xs leading-5">
-            A theme anyone can use, free under {COMMUNITY_LICENSE_NAME}. You
-            edit the details before it goes out.
+            {t("aThemeAnyoneCanUse", { COMMUNITY_LICENSE_NAME })}
           </p>
         </div>
       </div>
@@ -111,7 +112,7 @@ export function PublishToCommunityCard({
         {asking && approvalId ? (
           <>
             <span className="text-muted-foreground text-xs">
-              Share it in the community?
+              {t("shareItInTheCommunity")}
             </span>
             <div className="flex gap-1.5">
               <Button
@@ -120,7 +121,7 @@ export function PublishToCommunityCard({
                 onClick={() => setDialogOpen(true)}
                 size="sm"
               >
-                Edit and publish
+                {t("editAndPublish")}
               </Button>
               <Button
                 className="h-8 shadow-none"
@@ -134,7 +135,7 @@ export function PublishToCommunityCard({
                 size="sm"
                 variant="ghost"
               >
-                Not now
+                {t("notNow")}
               </Button>
             </div>
           </>
@@ -142,7 +143,7 @@ export function PublishToCommunityCard({
           <>
             <span className="inline-flex items-center gap-1.5 text-xs">
               <TickCircle className="size-3.5" />
-              Published
+              {t("published")}
             </span>
             <Button
               asChild
@@ -150,28 +151,30 @@ export function PublishToCommunityCard({
               size="sm"
               variant="ghost"
             >
-              <Link href={output.url}>View it</Link>
+              <Link href={output.url}>{t("viewIt")}</Link>
             </Button>
           </>
         ) : output && !output.ok ? (
           <span className="text-muted-foreground text-xs">
-            Not published. Nothing was shared.
+            {t("notPublishedNothingWasShared")}
           </span>
         ) : denied ? (
           <span className="text-muted-foreground text-xs">
-            {automaticReason ?? "Not published. Nothing was shared."}
+            {automaticReason ?? t("notPublishedNothingWasShared")}
           </span>
         ) : state === "approval-responded" ? (
           <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
             <Spinner className="size-3.5" />
-            Checking…
+            {t("checking")}
           </span>
         ) : state === "output-error" ? (
           <span className="text-muted-foreground text-xs">
-            Couldn't check it. Look for it on your community profile.
+            {t("couldntCheckItLookFor")}
           </span>
         ) : (
-          <span className="text-muted-foreground text-xs">Not published</span>
+          <span className="text-muted-foreground text-xs">
+            {t("notPublished")}
+          </span>
         )}
       </div>
 

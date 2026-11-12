@@ -1,9 +1,11 @@
 // A server component (no "use client"): page template cards render their
 // page preview here, so the page itself never goes to the browser.
+
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { cn } from "@repo/design-system/lib/utils";
 import { Heart } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { TemplatePreview } from "@/components/landing/template-preview";
 import {
   type CommunityItemCard,
@@ -30,6 +32,7 @@ export function ItemCard({
   card: CommunityItemCard;
   className?: string;
 }) {
+  const t = useTranslations("community.itemCard");
   const stack = card.type === "collection" ? (card.stack ?? []) : [];
   // Page previews have links of their own, so the card's link is stretched
   // over the card instead of wrapping it (nested <a> is invalid HTML and
@@ -51,7 +54,9 @@ export function ItemCard({
         {card.type === "collection" ? (
           <div className="absolute inset-5 grid place-items-center">
             {stack.length === 0 ? (
-              <span className="text-muted-foreground text-xs">Empty</span>
+              <span className="text-muted-foreground text-xs">
+                {t("empty")}
+              </span>
             ) : (
               stack.map((style, index) => (
                 <div
@@ -102,7 +107,7 @@ export function ItemCard({
             className="bg-background/90 text-foreground absolute top-2 left-2 border px-1.5 py-0 text-[10px] shadow-xs"
             variant="outline"
           >
-            Official
+            {t("official")}
           </Badge>
         )}
       </div>
@@ -121,12 +126,14 @@ export function ItemCard({
             <span className="text-muted-foreground flex shrink-0 items-center gap-2 text-xs tabular-nums">
               {card.likeCount > 0 && (
                 <span className="flex items-center gap-0.5">
-                  <Heart aria-label="Likes" className="size-3" />
+                  <Heart aria-label={t("likes")} className="size-3" />
                   {COUNT.format(card.likeCount)}
                 </span>
               )}
               {card.useCount > 0 && (
-                <span>{COUNT.format(card.useCount)} uses</span>
+                <span>
+                  {t("usecountUses", { useCount: COUNT.format(card.useCount) })}
+                </span>
               )}
             </span>
           )}
@@ -148,6 +155,7 @@ export function ItemRow({
   href?: string;
   cards: CommunityItemCard[];
 }) {
+  const t = useTranslations("community.itemCard");
   if (cards.length === 0) return null;
   return (
     <section className="space-y-3">
@@ -161,7 +169,7 @@ export function ItemRow({
             className="text-muted-foreground hover:text-foreground text-sm"
             href={href}
           >
-            See all
+            {t("seeAll")}
           </Link>
         )}
       </div>

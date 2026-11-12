@@ -127,6 +127,32 @@
       "star": "Star",
       "starOnGithub": "GitHub에서 QRdx에 Star 주기",
       "starOnGithubCount": "GitHub에서 QRdx에 Star 주기 (Star {count}개)"
+    },
+    "userProfileDropdown": {
+      "tryThePlayground": "Playground 체험하기",
+      "signIn": "로그인",
+      "dashboard": "대시보드",
+      "accountSettings": "계정 설정",
+      "manageBilling": "결제 관리",
+      "upgradeToPro": "Pro로 업그레이드",
+      "admin": "관리자",
+      "privacyPolicy": "개인정보 처리방침",
+      "signOut": "로그아웃"
+    },
+    "getProCta": {
+      "getPro": "Pro 시작하기"
+    },
+    "getProDialog": {
+      "upgradeToValue": "{value}(으)로 업그레이드",
+      "unlocksThis": "이 기능이 열려요",
+      "staticQrCodesStayFree": "정적 QR 코드는 계속 무료이고, 구독을 취소해도 만든 QR 코드는 계속 작동해요. <link>보장 내용 보기</link>",
+      "comparePlansAndPrices": "요금제와 가격 비교하기",
+      "maybeLater": "나중에 할게요",
+      "thisFeatureIsPartOf": "이 기능은 Business 요금제에 포함되어 있어요.",
+      "thisFeatureIsPartOf2": "이 기능은 Pro와 Business에 포함되어 있어요."
+    },
+    "themeToggle": {
+      "toggleTheme": "테마 전환"
     }
   },
   "footer": {
@@ -999,7 +1025,7 @@
       "toolLabel": "인쇄 크기 계산기",
       "howTitle": "크기를 계산하는 방법",
       "how1": "내용이 QR 버전을 결정해요. 계산기는 QRdx 인코더와 같은 용량표를 사용해, 선택한 오류 정정 수준에서 텍스트를 담을 수 있는 가장 작은 버전(1~40)을 골라요. 버전 n의 가로 길이는 17 + 4n 모듈이에요.",
-      "how2": "거리가 모듈 크기를 결정해요. {ratio, number}:1 경험칙은 단순한 {reference, number} × {reference, number} 코드를 기준으로 한다고 보고, 각 모듈은 최소 거리 ÷ ({divisor, number}) 이상이어야 하며 {minimum, number}mm보다 작아서는 안 돼요.",
+      "how2": "거리에 따라 모듈 크기가 정해져요. 경험칙인 {ratio, number}:1 규칙은 단순한 {reference, number, ::group-off} × {reference, number} 코드를 기준으로 하므로, 각 모듈은 최소한 거리 ÷ ({divisor, number}) 이상이어야 하고 {minimum, number} mm보다 작아서는 안 돼요.",
       "how3": "모듈 크기 × 한 변의 모듈 수가 코드 크기가 돼요. 양쪽에 빈 모듈을 {quiet, number}개씩 더하면 코드가 페이지에서 차지하는 공간이 나와요.",
       "tipsTitle": "잘 스캔되는 코드를 위한 팁",
       "tip1": "내용을 짧게 유지하세요. 링크가 짧으면 버전이 낮아져서 같은 인쇄 크기에서 모듈이 더 커져요.",
@@ -1054,7 +1080,7 @@
         "resultTitle": "최소 인쇄 크기",
         "errorDistance": "스캔 거리를 0보다 크게 입력해 주세요.",
         "codeSize": "코드 크기(가장자리 기준)",
-        "codeSizeHint": "버전 {version, number}, {modules, number} × {modules, number} 모듈",
+        "codeSizeHint": "버전 {version, number}, {modules, number, ::group-off} × {modules, number} 모듈",
         "withQuietZone": "{modules, number}모듈 여백 포함",
         "withQuietZoneHint": "스캐너가 인식하려면 코드 주변에 필요한 빈 여백이에요",
         "moduleSize": "모듈(사각형 하나) 크기",
@@ -1452,7 +1478,7 @@
     "alt": "{value}용 {format} 바코드",
     "loadFailed": "바코드 그리기 코드를 불러오지 못했어요. 연결 상태를 확인하고 페이지를 새로고침해 주세요.",
     "fixInput": "바코드를 보려면 강조된 입력값을 고쳐 주세요.",
-    "sizes": "PNG, JPG, WebP, AVIF는 {width, number} × {height, number}px예요. SVG, PDF, EPS는 {widthMm} × {heightMm}mm 크기의 벡터이고 모듈은 {moduleMm}mm예요. 필요에 따라 레이아웃에서 크기를 조정하세요.",
+    "sizes": "PNG, JPG, WebP, AVIF는 {width, number, ::group-off} × {height, number, ::group-off} px입니다. SVG, PDF, EPS는 벡터 형식이며 크기는 {widthMm} × {heightMm} mm, 모듈은 {moduleMm} mm입니다. 레이아웃에서 필요에 맞게 크기를 조정하세요.",
     "more": "더 보기",
     "moreFormats": "더 많은 형식",
     "footnote": "바코드는 브라우저에서 만들어지며, 입력한 내용은 QRdx로 전송되지 않아요. WebP와 AVIF는 선택할 때 QRdx 서버에서 인코딩하며, 아무것도 저장되지 않아요.",
@@ -1821,7 +1847,23 @@
     "artLink": "또는 링크를 스캔 가능한 AI QR 아트로 만들어 보세요",
     "chat": {
       "upgrade": "Pro로 업그레이드하고 무제한으로 요청하세요",
-      "heading": "어떤 QR 코드를 만들어 드릴까요?"
+      "heading": "어떤 QR 코드를 만들어 드릴까요?",
+      "aiChatForm": {
+        "generate": "생성하기"
+      },
+      "communityThemeCard": {
+        "viewDetails": "자세히 보기",
+        "viewInEditor": "에디터에서 보기",
+        "unknownCreationDate": "생성일 알 수 없음"
+      },
+      "communityThemes": {
+        "fromTheCommunity": "커뮤니티 테마",
+        "viewAll": "모두 보기",
+        "exploreTheThemesTheCommunity": "커뮤니티가 tweakcn으로 만들고 있는 테마를 둘러보세요."
+      },
+      "suggestedPillActions": {
+        "fromAnImage": "이미지로 만들기"
+      }
     }
   },
   "aiArt": {
@@ -1859,6 +1901,111 @@
     "faq": {
       "title": "AI QR 아트 FAQ",
       "description": "스캔되는 아트워크를 만드는 방법, 비용, 인쇄 전에 확인할 사항을 안내해요."
+    },
+    "aiArtPresetGallery": {
+      "noStylesMatchQueryDescribe": "“{query}”와(과) 일치하는 스타일이 없어요. 대신 프롬프트에 직접 설명해 보세요.",
+      "clearSearch": "검색어 지우기",
+      "theStylesDidntLoad": "스타일을 불러오지 못했어요.",
+      "tryAgain": "다시 시도",
+      "pickingOneFillsInThe": "스타일을 선택하면 프롬프트가 채워져요. 자유롭게 수정할 수 있어요.",
+      "searchStyles": "스타일 검색",
+      "searchStylesCatsGoldTiles": "스타일 검색: 고양이, 금색, 타일…",
+      "styleCategories": "스타일 카테고리",
+      "featured": "추천",
+      "all": "전체",
+      "someStyles": "스타일 {total, number}개 중 {shown, number}개",
+      "allStyles": "스타일 {total, number}개"
+    },
+    "aiArtResult": {
+      "yourQrArtWillAppear": "QR 아트가 여기에 표시돼요",
+      "generating": "생성 중",
+      "eachImageIsCheckedTo": "모든 이미지는 표시되기 전에 스캔되는지 확인해요. 최대 1분 정도 걸릴 수 있어요.",
+      "bestScannable": "스캔 최적",
+      "download": "다운로드",
+      "printSize": "인쇄 크기(",
+      "px": "px)",
+      "retryWithAClearerCode": "더 선명한 코드로 다시 시도",
+      "lockSeedSeed": "시드 {seed, number, ::group-off} 고정",
+      "scanScoreScore": "스캔 점수 {score, number}",
+      "bestOfThisRun": "이번 생성 중 최고",
+      "theModelsImageDidntScan": "모델이 만든 이미지가 그대로는 스캔되지 않아, QRdx가 스캔될 만큼만 눈 모양 모서리 패턴과 테두리, 필요한 경우 모듈을 보강했어요(블렌드 강도 {value, number}%).",
+      "theModelsImageDidntScan2": "코드를 보강해도 모델이 만든 이미지가 스캔되지 않아, QRdx가 그림이 비치도록 Image QR 코드로 다시 그렸어요.",
+      "aiGeneratedQrCodeArtwork": "{text}을(를) 담은 AI 생성 QR 코드 아트워크",
+      "variations": "변형",
+      "variationValueSeedSeed": "변형 {value, number}, 시드 {seed, number, ::group-off}",
+      "variationValue": "변형 {value, number}",
+      "pendingvariationsVariations": "변형 {pendingVariations, number}개",
+      "yourArtwork": "내 작품",
+      "downloadTheWidthPxImage": "대신 {width, number, ::group-off}px 이미지를 다운로드하세요.",
+      "thePrintSizeCopyDidnt": "인쇄 크기 사본이 스캔 검사를 통과하지 못했어요",
+      "couldntPrepareThePrintSize": "인쇄 크기 이미지를 준비하지 못했어요",
+      "status": {
+        "checking": {
+          "title": "스캔 점수 계산 중…",
+          "description": "서버에서 해독했고, 이제 축소하고 흐리게 한 상태로 테스트하고 있어요."
+        },
+        "scannable": {
+          "title": "스캔 확인 완료",
+          "description": "서버와 브라우저에서 모두 입력한 내용으로 해독되었어요. 인쇄하기 전에 휴대폰 카메라로 꼭 한 번 더 테스트해 보세요."
+        },
+        "unreadable": {
+          "title": "작게 보면 읽기 어려워요. 더 선명한 코드를 사용해 보세요",
+          "description": "서버에서는 해독되었지만 브라우저 테스트에서는 해독되지 않았어요. QR 가시성을 높이거나, 사용하기 전에 휴대폰 카메라로 테스트해 보세요."
+        },
+        "mismatch": {
+          "title": "다른 내용으로 스캔돼요. 더 선명한 코드를 사용해 보세요",
+          "description": "해독된 텍스트가 입력한 내용과 일치하지 않아요. 이 이미지는 사용하지 마세요."
+        },
+        "unverified": {
+          "title": "브라우저 검사를 실행하지 못했어요",
+          "description": "서버에서는 해독되었어요. 인쇄하거나 공유하기 전에 휴대폰 카메라로 테스트해 보세요."
+        }
+      },
+      "resultSummary": "QR 가시성 {visibility, number} · 창의성 {creativity, number} · {width, number, ::group-off}px{failed, plural, =0 {} other { · 변형 #개 실패, 크레딧 사용 안 됨}}. 이미지 한 장당 AI 아트 크레딧 1개가 사용되며, 인쇄 크기 다운로드는 무료예요."
+    },
+    "aiArtStudio": {
+      "linkOrText": "링크 또는 텍스트",
+      "shorterContentMeansFewerLarger": "내용이 짧을수록 모듈이 적고 커져서 아트가 더 깔끔하고 스캔도 더 안정적이에요.",
+      "style": "스타일",
+      "variations": "변형 수",
+      "eachVariationIsItsOwn": "변형은 각각 별도의 이미지이며 크레딧 1개가 사용돼요. 모든 이미지는 표시되기 전에 스캔 확인을 거치고, 그중 가장 좋은 이미지가 자동으로 선택돼요.",
+      "negativePrompt": "네거티브 프롬프트",
+      "theModelIsAskedTo": "모델이 이 요소들을 이미지에서 제외하도록 요청받아요.",
+      "seed": "시드",
+      "lockSeed": "시드 고정",
+      "theSameSeedAndSettings": "같은 시드와 설정이면 비슷한 이미지가 나와요(모델이 다르게 만들 수도 있어요). 변형은 시드, 시드 + 1, …을 사용해요.",
+      "referenceImage": "참고 이미지",
+      "remove": "삭제",
+      "uploadReference": "참고 이미지 업로드",
+      "optionalALogoPhotoOr": "선택 사항이에요. 모델이 작품에 녹여낼 로고, 사진 또는 팔레트로, 색상과 형태가 그대로 반영돼요. 브라우저에서 크기가 조정된 후 프롬프트와 함께 Vercel AI Gateway를 통해 {ART_MODEL_LABEL}에 전송돼요.",
+      "cancel": "취소",
+      "aiArtCodesAreStatic": "<span>AI 아트 QR 코드는 정적 QR 코드예요.</span> 콘텐츠가 이미지에 포함되어 있어서 공유한 뒤에는 바꿀 수 없어요. 나중에 수정할 수 있는 링크와 스캔 분석이 필요하다면 <signInLink>동적 QR 코드</signInLink>를 만들고 그 짧은 링크를 여기에서 사용하세요.",
+      "alreadyDesigningACode": "이미 코드를 디자인 중인가요?",
+      "toPaintItsContentDynamic": "동적 링크를 포함해 코드의 콘텐츠를 아트로 만들어 보세요.",
+      "openInPlayground": "Playground에서 열기",
+      "signInToGeneratePlans": "생성하려면 로그인하세요. {plans}",
+      "eachImageUses1Ai": "이미지 한 장마다 AI 아트 크레딧 1개가 사용되며, 실패한 이미지는 환불돼요. {plans}",
+      "unlimitedAiArtOnYour": "현재 플랜에서는 AI 아트를 무제한으로 쓸 수 있어요. 이번 실행에서는 {variations, number}개를 사용해요.",
+      "describeASceneEG": "장면을 설명해 보세요. 예: 해 질 녘 바위 해안의 등대, 유화",
+      "qrVisibility": "QR 가시성",
+      "creativity": "창의성",
+      "thingsToAvoidEG": "피할 요소 (예: 사람, 건물, 어두운 색상)",
+      "randomEachRun": "실행마다 무작위",
+      "uploadAReferenceImage": "참고 이미지 업로드",
+      "reference": "참고 이미지",
+      "advancedNegativePromptSeedReference": "고급: 네거티브 프롬프트, 시드, 참고 이미지",
+      "advancedNegativePromptReferenceImage": "고급: 네거티브 프롬프트, 참고 이미지",
+      "generating": "생성 중…",
+      "findItUnderAdvanced": "고급 설정에서 찾을 수 있어요.",
+      "seedValueLocked": "시드 {value, number} 고정됨",
+      "creditsLeft": "이번 달 AI 아트 이미지가 <count>{limit, number}개 중 {remaining, number}개</count> 남았어요{pooled, select, yes { (팀 공동 사용)} other {}}. {resets}에 초기화돼요. 이번 실행에서는 {variations, number}개를 사용하고, 실패한 이미지는 환불돼요.",
+      "notEnoughLeft": "{variations, number}개를 만들기에는 남은 크레딧이 부족해요. 변형 수를 줄여 주세요.",
+      "notEnoughLeftOrUpgrade": "{variations, number}개를 만들기에는 남은 크레딧이 부족해요. 변형 수를 줄이거나 업그레이드해 주세요.",
+      "moreArtistic": "더 예술적으로",
+      "clearerCode": "더 선명한 코드",
+      "followsYourPrompt": "프롬프트에 충실",
+      "interpretsFreely": "자유롭게 해석",
+      "generateVariations": "{count, plural, one {QR 아트 생성} other {변형 #개 생성}}"
     }
   },
   "compare": {
@@ -1877,6 +2024,1880 @@
         "heading": "React 및 JavaScript QR 코드 라이브러리",
         "intro": "내 앱에서 QR 코드를 렌더링하려고 npm으로 설치하는 패키지예요. 둘 다 QRdx의 npm 패키지보다 훨씬 널리 쓰여요."
       }
+    }
+  },
+  "editor": {
+    "actionBar": {
+      "codeButton": {
+        "code": "코드",
+        "getCode": "코드 받기"
+      },
+      "copySvgButton": {
+        "copied": "복사됨",
+        "copySvg": "SVG 복사",
+        "svgCopiedToClipboard": "SVG를 클립보드에 복사했어요",
+        "failedToCopySvg": "SVG를 복사하지 못했어요"
+      },
+      "downloadButton": {
+        "download": "다운로드",
+        "downloadQrCode": "QR 코드 다운로드"
+      },
+      "downloadDialog": {
+        "addContentToSeeYour": "콘텐츠를 추가하면 코드가 표시돼요.",
+        "format": "형식",
+        "pixels": "픽셀",
+        "at300Dpi": "300dpi 기준",
+        "width": "너비",
+        "color": "색상",
+        "bleed": "블리드",
+        "downloadQrCode": "QR 코드 다운로드",
+        "imageFile": "이미지 파일",
+        "printReady": "인쇄용",
+        "size": "크기",
+        "custom": "직접 입력",
+        "px": "px",
+        "widthAndHeight": "너비와 높이",
+        "scale": "배율",
+        "transparentBackground": "투명 배경",
+        "makeManyFromACsv": "이 스타일로 CSV에서 여러 개 만들기",
+        "scannedFromAbout": "스캔 가능 거리 약",
+        "setsTheCodeWidthBelow": "아래에서 코드 너비를 설정해요.",
+        "codeWidth": "코드 너비",
+        "unit": "단위",
+        "mm": "mm",
+        "inches": "인치",
+        "colorMode": "색상 모드",
+        "none": "없음",
+        "n3Mm": "3mm",
+        "cropMarksPdf": "재단선 (PDF)",
+        "scansFromUpToAbout": "최대 약 {value} 거리에서 스캔돼요(점 하나 크기의 약 250배).",
+        "under2CmIsHard": "2cm 미만은 휴대폰으로 스캔하기 어려워요. 가능하면 더 크게 만드세요.",
+        "eachDotIsOnlyValue": "점 하나가 {value, number}mm밖에 안 돼서 인쇄할 때 번질 수 있어요. 코드를 더 크게 만들거나 내용을 줄여 보세요.",
+        "cmykUsesASimpleConversion": "CMYK는 색상 프로필 없이 간단한 방식으로 변환해요. 브랜드 색상이 정확해야 한다면 인쇄소에 문의하세요.",
+        "pdfAndEpsDrawEvery": "PDF와 EPS는 모든 점을 벡터 도형으로 그리며, 선형 및 방사형 그라데이션도 부드러운 벡터 셰이딩으로 유지해요.",
+        "jpgCantBeTransparent": "JPG는 투명하게 만들 수 없어요",
+        "vector": " · 벡터",
+        "anySize": "원하는 크기",
+        "printbleedMm": "{printBleed, number} mm",
+        "vectorPdfOrEpsAt": "정확한 실제 크기의 벡터 PDF 또는 EPS로, 인쇄소에 바로 보낼 수 있어요.",
+        "pickAFormatAndSize": "형식과 크기를 선택하세요. 미리보기에서 결과를 확인할 수 있어요.",
+        "svgCopied": "SVG를 복사했어요",
+        "copySvg": "SVG 복사",
+        "preparing": "준비 중…",
+        "downloadFilename": "{filename} 다운로드",
+        "downloadQrCodePrintPrintsize": "qr-code-print-{printSize, number}{printUnit}.pdf 다운로드",
+        "enterMinMaxUnitOr": "{min, number}–{max, number} {unit} 또는 {distanceMin, number}–{distanceMax, number} {distanceUnit} 거리를 입력하세요.",
+        "enterMinMaxUnit": "{min, number}–{max, number} {unit}을(를) 입력하세요.",
+        "downloadedFilename": "{filename}을(를) 다운로드했어요",
+        "failedToDownloadQrCode": "QR 코드를 다운로드하지 못했어요",
+        "downloadedPrintfilename": "{printFilename}을(를) 다운로드했어요",
+        "failedToCreatePrintFile": "인쇄 파일을 만들지 못했어요",
+        "couldntCopyTheSvg": "SVG를 복사하지 못했어요",
+        "formatHints": {
+          "png": "웹, 문서, 슬라이드에 가장 좋아요.",
+          "jpg": "이메일과 작은 파일에 가장 좋아요.",
+          "webp": "빠르게 로딩되는 웹사이트에 가장 좋아요 · 무손실이며 보통 PNG보다 작아요.",
+          "svg": "Figma, Illustrator, 웹사이트에 가장 좋아요 · 어떤 크기에서도 선명해요.",
+          "pdf": "문서와 간단한 인쇄에 가장 좋아요 · 벡터 PDF가 필요하면 인쇄용을 사용하세요.",
+          "eps": "인쇄소와 벡터 앱에 가장 좋아요 · 어떤 크기에서도 선명해요."
+        },
+        "sizePresets": {
+          "small": "이메일",
+          "medium": "웹",
+          "large": "소셜",
+          "xlarge": "인쇄",
+          "3xl": "포스터"
+        },
+        "finishedSize": "완성 크기 {width} × {height}",
+        "finishedSizeOnPage": "완성 크기 {width} × {height} (페이지 {pageWidth} × {pageHeight})"
+      },
+      "editButton": {
+        "edit": "편집",
+        "editTheme": "테마 편집"
+      },
+      "moreMenu": {
+        "more": "더보기",
+        "moreThingsToDoWith": "이 디자인으로 할 수 있는 다른 작업",
+        "makeManyFromACsv": "CSV로 여러 개 만들기",
+        "checkAPhotoOfThe": "인쇄물 사진 확인하기",
+        "publishToCommunity": "커뮤니티에 게시",
+        "useQrdxInFigmaAnd": "Figma 등에서 QRdx 사용하기",
+        "keyboardShortcuts": "키보드 단축키",
+        "makeItDynamic": "동적으로 만들기…",
+        "linkOptions": "링크 옵션…",
+        "oneCodePerRowOf": "CSV의 각 행마다 이 스타일로 코드를 하나씩 만들어요.",
+        "makeSureThePrintedCode": "인쇄한 코드가 이 코드처럼 스캔되는지 확인해요.",
+        "shareThisStyleForOthers": "다른 사람이 적용할 수 있도록 이 스타일을 공유해요.",
+        "itsShortLinkFolderTags": "단축 링크, 폴더, 태그, 라우팅 설정이에요.",
+        "changeWhereItPointsAfter": "인쇄한 후에도 연결 위치를 바꾸고 스캔 수를 확인할 수 있어요.",
+        "signInToChangeWhere": "인쇄한 후에도 연결 위치를 바꾸려면 로그인하세요.",
+        "pluginsHint": {
+          "noneListed": "아직 각 스토어에 없어요. 소스에서 설치하세요.",
+          "someListed": "일부는 지금은 소스에서 설치해요."
+        }
+      },
+      "publishButton": {
+        "published": "게시됨",
+        "publish": "게시",
+        "publishedToCommunity": "커뮤니티에 게시됨",
+        "publishToCommunity": "커뮤니티에 게시"
+      },
+      "qrCodeDialog": {
+        "getCode": "코드 받기",
+        "useThisDesignInYour": "이 디자인을 앱, 웹 페이지, API 또는 AI 어시스턴트에서 사용해 보세요.",
+        "installTheOpenSourceQrdx": "오픈 소스 <code>qrdx</code> 패키지(npm {version})를 설치하고 이 컴포넌트를 추가하세요.",
+        "addTheQrCodeComponent": "QRdx 레지스트리에서 QR Code 컴포넌트를 추가한 뒤 이 디자인으로 사용하세요.",
+        "aPublicImageOfThis": "어디에나 삽입할 수 있는 이 코드의 공개 이미지예요. API 키는 필요 없어요.",
+        "createsADynamicCodeWith": "이 디자인으로 동적 QR 코드를 만들어요. <link>API 키</link>가 필요해요.",
+        "addThisServerToYour": "이 서버를 AI 어시스턴트에 추가하세요. 키는 필요 없어요. <link>설정하기</link>",
+        "askUseQrdxDesignQr": "“이 인자로 QRdx design_qr를 사용해 줘.”라고 요청하세요. 코드가 잘 스캔될 때까지 QRdx가 스타일을 변경할 수 있어요.",
+        "writesThisDesignToQr": "이 디자인을 qr.svg에 저장해요.",
+        "developerDocs": "개발자 문서",
+        "pluginsForFigmaCanvaRaycast": "Figma, Canva, Raycast, Chrome용 플러그인",
+        "leftOutValue": "제외됨: {value}",
+        "imageUrl": "이미지 URL",
+        "terminal": "터미널",
+        "designQrArguments": "design_qr 인자",
+        "labelCopied": "{label} 복사됨",
+        "copyLabel": "{label} 복사",
+        "command": "명령어",
+        "address": "주소",
+        "line": "줄",
+        "lines": "줄",
+        "copied": "복사됨",
+        "copy": "복사",
+        "couldntCopyToTheClipboard": "클립보드에 복사하지 못했어요"
+      },
+      "resetButton": {
+        "reset": "초기화",
+        "resetToPresetDefaults": "프리셋 기본값으로 초기화"
+      },
+      "saveButton": {
+        "save": "저장",
+        "saveDesign": "디자인 저장"
+      },
+      "shareButton": {
+        "share": "공유",
+        "shareDesign": "디자인 공유"
+      },
+      "undoRedoButtons": {
+        "undo": "실행 취소",
+        "redo": "다시 실행"
+      }
+    },
+    "ai": {
+      "agentParts": {
+        "scanScoreScoreValue": "스캔 점수 {score, number} · {value}",
+        "theDesignStepFailedTry": "디자인 단계에 실패했어요. 다시 시도해 주세요.",
+        "theContentNeedsAFix": "콘텐츠를 수정해야 해요: {value}",
+        "setTheContentContentline": "콘텐츠 설정: {contentLine}",
+        "checkedScanScoreScoreValue": "스캔 점수 확인 완료: {score, number} · {value}",
+        "repairing": "복구하는 중…",
+        "stop": "중지",
+        "checkedScanScore": "스캔 점수 확인 완료:",
+        "youAnsweredAnswered": "선택한 답변: {answered}",
+        "notAnswered": "답변 없음",
+        "send": "보내기",
+        "reject": "거절",
+        "changedToGetThere": "여기까지 바꾼 내용:",
+        "scoredWithASampleLink": "콘텐츠를 추가하기 전까지는 샘플 링크로 점수를 매겼어요.",
+        "replacesTheContentWithSummary": "콘텐츠를 {summary}(으)로 바꿔요",
+        "turnsOffTheLogoQr": "Logo QR / Image QR 아트를 꺼요",
+        "applyToYourEditor": "에디터에 적용할까요?",
+        "undone": "실행 취소됨",
+        "applyAgain": "다시 적용",
+        "applied": "적용됨",
+        "undo": "실행 취소",
+        "applying": "적용하는 중…",
+        "couldntApplyItTryAgain": "적용하지 못했어요. 다시 시도해 주세요.",
+        "notApplied": "적용 안 됨",
+        "templateName": "템플릿 “{name}”",
+        "savesTheLookToYour": "색상, 모양, 프레임과 프레임 텍스트, 테두리, 로고까지 룩을 내 테마에 저장해요. 콘텐츠는 저장되지 않아요.",
+        "saveToYourAccount": "내 계정에 저장할까요?",
+        "savedToYourThemes": "내 테마에 저장했어요",
+        "openThemes": "테마 열기",
+        "upgrade": "업그레이드",
+        "saving": "저장 중…",
+        "notSaved": "저장 안 됨",
+        "steps": "단계",
+        "yourAnswer": "내 답변",
+        "orTypeYourAnswer": "또는 답변을 입력하세요",
+        "designingTheStyle": "스타일 디자인 중…",
+        "designedTheStyle": "스타일을 디자인했어요",
+        "fellBackToAClassic": "흰 바탕에 검은색인 클래식 코드로 되돌렸어요",
+        "repairedValue": "복구됨: {value}",
+        "couldntCheckTheScanScore": "스캔 점수를 확인하지 못했어요",
+        "checkingTheScanScore": "스캔 점수 확인 중…",
+        "showLess": "접기",
+        "showValueMore": "{value, number}개 더 보기",
+        "applyThisDesign": "이 디자인 적용",
+        "notAppliedYourEditorIs": "적용하지 않았어요. 에디터는 그대로예요."
+      },
+      "aiBotBadge": {
+        "qrdxAi": "QRdx AI"
+      },
+      "aiChatFormBody": {
+        "chatInput": "채팅 입력"
+      },
+      "aiSendButton": {
+        "stop": "중지",
+        "labelEnter": "{label} (Enter)"
+      },
+      "alertBanner": {
+        "youHaveFreepromessagesleftFreePro": "무료<span> Pro </span>메시지가 {freeProMessagesLeft, number}개 남았어요.",
+        "upgradeToProToUnlock": "<span>Pro</span>로 업그레이드하면 무제한 요청을 이용할 수 있어요.",
+        "upgrade": "업그레이드"
+      },
+      "chatImagePreview": {
+        "imagePreview": "이미지 미리보기",
+        "imagePreview2": "이미지 미리보기",
+        "fullImagePreview": "전체 이미지 미리보기"
+      },
+      "chatInput": {
+        "designingYourCode": "코드를 디자인하는 중…",
+        "newChat": "새 채팅",
+        "toSend": "전송",
+        "newLine": "줄바꿈",
+        "startANewChat": "새 채팅 시작",
+        "generate": "생성"
+      },
+      "chatInterface": {
+        "seemsLikeThisMessageIs": "이 메시지는 더 이상 사용할 수 없는 것 같아요.",
+        "cannotRetryThisMessage": "이 메시지는 다시 시도할 수 없어요"
+      },
+      "chatThemePreview": {
+        "stoppedOrFailedRetryFrom": "중지되었거나 실패했어요. 위의 메시지에서 다시 시도해 주세요.",
+        "apply": "적용",
+        "collapseSection": "섹션 접기",
+        "expandSection": "섹션 펼치기",
+        "feedback": {
+          "colors": "스캔되는 색상을 고르는 중…",
+          "shapes": "점과 눈 모양을 다듬는 중…",
+          "contrast": "대비를 확인하는 중…",
+          "almost": "거의 다 됐어요…"
+        }
+      },
+      "closeableSuggestedPillActions": {
+        "suggestions": "추천",
+        "hideSuggestions": "추천 숨기기"
+      },
+      "contentDialog": {
+        "whatShouldTheCodeOpen": "코드가 무엇을 열어야 하나요?",
+        "addALinkOrChoose": "링크를 추가하거나 유형을 선택하세요. 디자인은 바로 이어서 진행돼요.",
+        "link": "링크",
+        "scansOpen": "스캔 시 열림",
+        "orChooseAType": "또는 유형 선택",
+        "lengthMoreTypes": "{length, number}개 유형 더 보기",
+        "cancel": "취소",
+        "continue": "계속",
+        "backToAllTypes": "모든 유형으로 돌아가기",
+        "aWebsiteAMenuA": "웹사이트, 메뉴, 양식 등 모든 웹 주소를 사용할 수 있어요."
+      },
+      "dragAndDropImageUploader": {
+        "dropImagesHere": "여기에 이미지를 놓으세요"
+      },
+      "enhancePromptButton": {
+        "stop": "중지",
+        "enhancePrompt": "프롬프트 개선"
+      },
+      "imageParts": {
+        "useIt": "사용하기",
+        "addContent": "콘텐츠 추가",
+        "notAdded": "추가 안 됨",
+        "whatShouldTheCodeOpen": "코드가 무엇을 열어야 하나요?",
+        "undone": "실행 취소됨",
+        "applyAgain": "다시 적용",
+        "applied": "적용됨",
+        "undo": "실행 취소",
+        "openedAiArtInThe": "Art 탭에서 AI 아트를 열었어요",
+        "notAppliedYourEditorIs": "적용하지 않았어요. 에디터는 그대로예요.",
+        "placedAsValue": "{value}(으)로 배치했어요",
+        "applyToYourEditor": "에디터에 적용할까요?",
+        "apply": "적용",
+        "reject": "거절",
+        "notGreatYetTryAnother": "아직 만족스럽지 않아요. 위의 다른 방법을 시도해 보세요.",
+        "keepMyCode": "내 코드 유지",
+        "addWhatTheCodeOpens": "먼저 코드가 열 내용을 추가하세요.",
+        "placingYourPicture": "사진을 배치하는 중…",
+        "asValueWithNoAi": "{value}(으)로, AI 크레딧 없이",
+        "replacesTheContentWithSummary": "콘텐츠를 {summary}(으)로 바꿔요",
+        "openAiArt": "AI 아트 열기",
+        "aiArtIsntOnHere": "AI 아트가 꺼져 있어요. Image QR은 AI 없이 내 사진을 사용해요.",
+        "useAsImageQr": "Image QR로 사용",
+        "aiPaintsANewScene": "AI가 내 사진을 참고해 코드 안에 새로운 장면을 그려요.",
+        "steps": "단계",
+        "addedValue": "추가됨: {value}",
+        "noContentAdded": "추가된 콘텐츠 없음",
+        "yourEditorHasContentNow": "이제 에디터에 콘텐츠가 있어요.",
+        "noContentYet": "아직 콘텐츠가 없어요.",
+        "addALinkOrChoose": "링크를 추가하거나 유형을 선택하세요 {reason}.",
+        "addALinkOrChoose2": "링크를 추가하거나 유형을 선택하면 디자인을 이어갈 수 있어요.",
+        "placedYourPicture": "사진을 배치했어요",
+        "youStartItInThe": "Art 탭에서 시작해요. AI 아트 크레딧이 사용돼요.",
+        "checkedScore": "확인 완료, 스캔 점수: {score, number}",
+        "repairedThenCheckedScore": "복구 후 확인 완료, 스캔 점수: {score, number}",
+        "place": {
+          "logo": "로고로 사용",
+          "logo_qr": "Logo QR로 사용",
+          "image_qr": "Image QR로 사용",
+          "background": "배경으로 사용",
+          "dots": "도트에 사용"
+        }
+      },
+      "imageUploader": {
+        "image": "이미지",
+        "uploadImageForThemeGeneration": "테마 생성용 이미지 업로드",
+        "attachImage": "이미지 첨부"
+      },
+      "messageActions": {
+        "retry": "다시 시도",
+        "edit": "수정"
+      },
+      "messageEditForm": {
+        "cancelEdit": "수정 취소",
+        "confirmEdit": "수정 확인"
+      },
+      "message": {
+        "qrdxAi": "QRdx AI",
+        "imagePreview": "이미지 미리보기"
+      },
+      "messages": {
+        "clearError": "오류 지우기"
+      },
+      "noMessagesPlaceholder": {
+        "recentGenerations": "최근 생성 내역",
+        "applyValue": "적용: {value}",
+        "applyThisGeneratedTheme": "생성된 테마 적용",
+        "modes": {
+          "create": {
+            "label": "만들기",
+            "description": "처음부터 시작해요. 열리는 대상과 분위기, 브랜드 또는 무드를 알려 주세요."
+          },
+          "remix": {
+            "label": "리믹스",
+            "description": "프리셋을 골라 새로운 느낌으로 바꿔 보세요."
+          },
+          "tweak": {
+            "label": "미세 조정",
+            "description": "지금 만든 디자인을 조정해요."
+          }
+        },
+        "greeting": "어떤 테마를 도와드릴까요?",
+        "greetingName": "{name}님, 어떤 테마를 도와드릴까요?"
+      },
+      "publishCard": {
+        "publishNameToTheCommunity": "“{name}” 커뮤니티에 게시",
+        "aThemeAnyoneCanUse": "누구나 사용할 수 있는 테마로, {COMMUNITY_LICENSE_NAME}에 따라 무료예요. 게시 전에 세부 정보를 수정할 수 있어요.",
+        "shareItInTheCommunity": "커뮤니티에 공유할까요?",
+        "editAndPublish": "편집 후 게시",
+        "notNow": "나중에",
+        "published": "게시됨",
+        "viewIt": "보기",
+        "notPublishedNothingWasShared": "게시하지 않았어요. 공유된 내용은 없어요.",
+        "checking": "확인 중…",
+        "couldntCheckItLookFor": "확인하지 못했어요. 커뮤니티 프로필에서 찾아보세요.",
+        "notPublished": "게시되지 않음"
+      },
+      "suggestionChips": {
+        "suggestions": "추천",
+        "chips": {
+          "differentStyle": "다른 스타일로 해보기",
+          "frameText": "프레임 문구 바꾸기",
+          "addFrame": "“Scan me” 프레임 추가",
+          "darker": "더 어둡게 만들기",
+          "lighter": "더 밝게 만들기",
+          "removeLogo": "로고 제거",
+          "addLogo": "로고 추가",
+          "saveTemplate": "템플릿으로 저장",
+          "keepColors": "색은 유지하고 모양만 바꾸기",
+          "behindCode": "대신 코드 뒤에 넣기",
+          "asLogo": "대신 로고로 사용",
+          "variation": "변형 만들기",
+          "darkVersion": "다크 버전 만들기"
+        }
+      },
+      "uploadedImagePreview": {
+        "uploadedPreview": "업로드 미리보기",
+        "removeImage": "이미지 제거",
+        "uploadedPreviewEnlarged": "확대된 업로드 미리보기"
+      }
+    },
+    "art": {
+      "aiArtDownload": {
+        "downloadAiArt": "AI 아트 다운로드",
+        "widthPx": "{width, number, ::group-off} px",
+        "printPng": "인쇄용 PNG",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, 재확인 완료",
+        "useAsImageQr": "Image QR로 사용",
+        "aiGeneratedQrCodeArtwork": "{text}을(를) 담은 AI 생성 QR 코드 아트워크",
+        "format": "형식",
+        "downloadPng": "PNG 다운로드",
+        "downloadPrintPng": "인쇄용 PNG 다운로드",
+        "downloadTheWidthPxImage": "대신 {width, number, ::group-off} px 이미지를 다운로드하세요.",
+        "pickSvgPdfOrEps": "이 경우 SVG, PDF 또는 EPS를 선택하세요.",
+        "thePrintSizeCopyDidnt": "인쇄 크기 사본이 스캔 검사를 통과하지 못했어요",
+        "couldntPrepareThePrintSize": "인쇄 크기 이미지를 준비하지 못했어요",
+        "nowAnImageQrCode": "이제 Image QR 코드예요",
+        "couldntTurnThisImageInto": "이 이미지를 Image QR 코드로 바꾸지 못했어요"
+      },
+      "aiArtPanel": {
+        "style": "스타일",
+        "variations": "변형",
+        "eachVariationIsItsOwn": "각 변형은 별도의 이미지이며 크레딧 1개를 사용해요. 스캔하기 가장 좋은 이미지는 자동으로 골라 드려요.",
+        "cancel": "취소",
+        "addYourContentFirstAi": "먼저 콘텐츠를 추가해 주세요. AI 아트는 지금 편집 중인 코드에 그림을 그려요.",
+        "addContent": "콘텐츠 추가",
+        "aiArtFitsUpTo": "AI 아트는 최대 {ART_TEXT_MAX_LENGTH, number}자까지 넣을 수 있는데, 이 코드는 {length, number}자예요. 더 짧은 링크나 동적 QR 코드의 짧은 링크라면 들어갈 수 있어요.",
+        "encodesYourDynamicLinkValue": "동적 링크 <span>{value}</span>이(가) 인코딩돼요. 인쇄한 후에도 연결 위치를 바꿀 수 있어요.",
+        "encodesValueFixedOncePrinted": "<span>{value}</span>이(가) 인코딩되며, 인쇄하면 변경할 수 없어요. 나중에 바꾸려면 콘텐츠에서 동적으로 설정하세요.",
+        "encodesYourLabelDetailsFixed": "{label} 정보가 인코딩되며, 인쇄하면 변경할 수 없어요.",
+        "thingsToAvoid": "피할 요소",
+        "seed": "시드",
+        "lockSeed": "시드 고정",
+        "referenceImage": "참조 이미지",
+        "useMyLogoAsReference": "내 로고를 참조로 사용",
+        "remove": "제거",
+        "uploadReference": "참조 업로드",
+        "optionalItsColorsAndShapes": "선택 사항이에요. 이미지의 색상과 형태가 작품에 반영돼요. 이미지는 브라우저에서 크기가 조정되고, 프롬프트와 함께 Vercel AI Gateway를 거쳐 {ART_MODEL_LABEL}에 전송돼요.",
+        "signInToGenerateEvery": "생성하려면 로그인하세요. 모든 플랜에는 매달 AI 아트 이미지가 포함돼요. <link>플랜 보기</link>",
+        "eachImageUses1Ai": "이미지 한 장당 AI 아트 크레딧 1개를 사용하며, 실패한 이미지는 환불돼요.",
+        "unlimitedAiArtOnYour": "현재 플랜에서는 AI 아트를 무제한으로 쓸 수 있어요. 이번에는 {variations, number}개를 사용해요.",
+        "describeASceneEG": "장면을 설명해 보세요. 예: 해 질 녘 바위 해안의 등대, 유화",
+        "qrVisibility": "QR 가시성",
+        "creativity": "창의성",
+        "eGPeopleBuildingsDark": "예: 사람, 건물, 어두운 색상",
+        "randomEachRun": "실행할 때마다 무작위",
+        "uploadAReferenceImage": "참조 이미지 업로드",
+        "reference": "참조",
+        "generating": "생성 중…",
+        "signInToGenerate": "로그인하여 생성",
+        "advancedCreativitySeedReference": "고급: 창의성, 시드, 참조",
+        "advancedCreativityReference": "고급: 창의성, 참조",
+        "uploadItAsAReference": "대신 참조 이미지로 업로드해 주세요.",
+        "couldntUseYourLogo": "로고를 사용할 수 없어요",
+        "creditsLeft": "이번 달 AI 아트 이미지가 <count>{limit, number}개 중 {remaining, number}개</count> 남았어요{pooled, select, yes { (팀 공유)} other {}}. {resets}에 초기화돼요. 이번 실행에는 {variations, number}개를 사용해요.",
+        "notEnoughLeft": "남은 횟수가 부족해요. 변형 수를 줄여 주세요.",
+        "notEnoughLeftOrUpgrade": "남은 횟수가 부족해요. 변형 수를 줄이거나 업그레이드해 주세요.",
+        "showResults": "{count, plural, one {결과 보기} other {결과 보기}}",
+        "moreArtistic": "더 예술적으로",
+        "clearerCode": "더 선명한 코드",
+        "followsYourPrompt": "프롬프트에 충실",
+        "interpretsFreely": "자유롭게 해석",
+        "generateVariations": "{count, plural, one {QR 아트 생성} other {변형 #개 생성}}"
+      },
+      "artCanvas": {
+        "downloadPng": "PNG 다운로드",
+        "printPng": "PNG 인쇄",
+        "useAsImageQr": "Image QR로 사용",
+        "retryClearer": "더 선명하게 다시 시도",
+        "aiArt": "AI 아트",
+        "encodesValue": "{value} 인코딩",
+        "backToCode": "코드로 돌아가기",
+        "eachImageIsCheckedTo": "각 이미지는 표시되기 전에 스캔되는지 확인해요. 최대 1분까지 걸릴 수 있어요.",
+        "printPngArtPrintSize": "PNG 인쇄, {ART_PRINT_SIZE, number, ::group-off} px",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, 스캔 여부 다시 확인됨",
+        "variations": "변형",
+        "aiArtResult": "AI 아트 결과",
+        "aiGeneratedQrCodeArtwork": "{text}을(를) 인코딩한 AI 생성 QR 코드 아트워크",
+        "verifiedToScanScanScore": "스캔 확인됨 · 스캔 점수 {score, number}",
+        "checkBeforePrinting": "인쇄 전에 확인하세요",
+        "scoringTheScan": "스캔 점수 계산 중…",
+        "downloadTheWidthPxImage": "대신 {width, number, ::group-off} px 이미지를 다운로드하세요.",
+        "itsVectorArtDownloadIt": "벡터 아트예요. SVG, PDF 또는 EPS로 다운로드하세요.",
+        "undo": "실행 취소",
+        "thePrintSizeCopyDidnt": "인쇄 크기 사본이 스캔 확인을 통과하지 못했어요",
+        "couldntPrepareThePrintSize": "인쇄 크기 이미지를 준비하지 못했어요",
+        "nowAnImageQrCode": "이제 Image QR 코드예요",
+        "couldntTurnThisImageInto": "이 이미지를 Image QR 코드로 바꾸지 못했어요",
+        "generatingVariations": "변형 {count, number}개를 생성하는 중…",
+        "generatingYourArtwork": "아트워크를 생성하는 중…",
+        "resultSummary": "QR 가시성 {visibility, number} · 창의성 {creativity, number} · PNG {width, number, ::group-off}px, 인쇄용 PNG {printSize, number, ::group-off}px{failed, plural, =0 {} other { · 변형 #개가 실패했으며 크레딧은 사용되지 않았어요}}. SVG, PDF, EPS가 필요하면 Image QR로 사용하세요."
+      },
+      "artPanel": {
+        "art": "아트",
+        "off": "끔",
+        "logoQr": "Logo QR",
+        "imageQr": "Image QR",
+        "aiArt": "AI 아트",
+        "artMode": "아트 모드",
+        "modes": {
+          "off": "기본 코드예요. Logo QR과 Image QR은 AI 없이 모든 형식에서 이미지를 점 안에 자연스럽게 담아요.",
+          "logo": "AI 없이 로고가 모든 형식에서 코드의 일부가 돼요.",
+          "halftone": "AI 없이 사진이 모든 형식에서 코드의 일부가 돼요.",
+          "ai": "AI가 코드 안에 장면을 그려요. 모든 이미지는 스캔되는지 확인해요."
+        }
+      }
+    },
+    "brandLogos": {
+      "brandLogoGallery": {
+        "brandLogos": "브랜드 로고",
+        "theBrandLogosDidntLoad": "브랜드 로고를 불러오지 못했어요.",
+        "tryAgain": "다시 시도",
+        "noBrandMatchesQuerySome": "“{query}”에 맞는 브랜드가 없어요. 일부 브랜드는 Simple Icons에 로고 삭제를 요청해서 여기에 없어요.",
+        "allBrandsAToZ": "전체 브랜드, 가나다순",
+        "logosFromSimpleIconsCc0": "로고 출처는 Simple Icons(CC0)예요. 브랜드 마크는 각 소유자의 상표이며, 해당 브랜드를 안내하는 용도로 사용하세요.",
+        "showMore": "더 보기",
+        "searchBrands": "브랜드 검색",
+        "searchSpotifyPaypalGoogleMaps": "검색: Spotify, PayPal, Google Maps…",
+        "logoColor": "로고 색상",
+        "results": "검색 결과",
+        "titleLogo": "{title} 로고",
+        "valueBrandsFromSimpleIcons": "Simple Icons의 브랜드 {value}개예요. 각 마크는 소유자에게 권리가 있어요.",
+        "brandsFromSimpleIconsEach": "Simple Icons의 브랜드입니다. 각 마크의 권리는 소유자에게 있습니다.",
+        "plateNeededForWhite": "플레이트(흰색에 필요)",
+        "plate": "플레이트",
+        "n1Brand": "브랜드 1개",
+        "valueBrands": "브랜드 {value}개"
+      }
+    },
+    "communitySheet": {
+      "communityThemes": "커뮤니티 테마",
+      "freeToUseUnderCc0": "CC0에 따라 자유롭게 사용할 수 있어요. 적용해도 내 콘텐츠는 그대로 유지돼요.",
+      "sort": "정렬",
+      "allTags": "모든 태그",
+      "tryAgain": "다시 시도",
+      "clearSearch": "검색어 지우기",
+      "showAllTags": "모든 태그 보기",
+      "searchCoversTheFirstLength": "검색은 처음 {length, number}개 테마까지만 대상으로 해요.",
+      "saveAndContinue": "저장 후 계속",
+      "publishingSharesASavedTheme": "게시하면 저장된 테마가 공유돼요. 계속하려면 이 스타일의 이름을 지어 주세요.",
+      "saveToPublish": "저장하고 게시",
+      "searchCommunityThemes": "커뮤니티 테마 검색",
+      "searchThemes": "테마 검색",
+      "loadingThemes": "테마 불러오는 중",
+      "couldntLoadCommunityThemes": "커뮤니티 테마를 불러오지 못했어요",
+      "noThemesMatchQuery": "\"{query}\"와(과) 일치하는 테마가 없어요",
+      "noThemesTaggedTagYet": "{tag} 태그가 붙은 테마가 아직 없어요",
+      "noCommunityThemesYet": "아직 커뮤니티 테마가 없어요",
+      "applyName": "{name} 적용",
+      "official": "공식",
+      "unlikeName": "{name} 좋아요 취소",
+      "likeName": "{name} 좋아요",
+      "likes": "좋아요",
+      "published": "게시됨",
+      "publishThisStyle": "이 스타일 게시",
+      "tags": "태그",
+      "undo": "실행 취소",
+      "likedName": "\"{name}\" 좋아요 표시함",
+      "liked": "좋아요 표시함",
+      "sorts": {
+        "popular": "인기순",
+        "newest": "최신순"
+      }
+    },
+    "contentForms": {
+      "amazonForm": {
+        "amazonProductUrl": "Amazon 상품 URL *",
+        "scanningWillOpenYourAmazon": "스캔하면 Amazon 상품 또는 스토어가 열려요"
+      },
+      "attendanceForm": {
+        "googleFormUrl": "Google Form URL *",
+        "scanningWillOpenYourAttendance": "스캔하면 출석 양식이 열려요",
+        "httpsFormsGleOrHttps": "https://forms.gle/... 또는 https://docs.google.com/forms/..."
+      },
+      "bitcoinForm": {
+        "bitcoinAddress": "Bitcoin 주소 *",
+        "amountBtc": "금액(BTC)",
+        "label": "라벨",
+        "message": "메시지",
+        "scanningWillOpenABitcoin": "스캔하면 이 결제 정보가 입력된 Bitcoin 지갑이 열려요",
+        "n1a1zp1ep5qgefi2dmptftl5slmv7divfna": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+        "paymentLabel": "결제 라벨",
+        "paymentMessage": "결제 메시지"
+      },
+      "calcomForm": {
+        "calComBookingUrl": "Cal.com 예약 URL *",
+        "scanningWillOpenYourCal": "스캔하면 Cal.com 예약 페이지가 열려요"
+      },
+      "dubshForm": {
+        "dubShortLink": "Dub 단축 링크 *",
+        "scanningWillOpenYourDub": "스캔하면 Dub 단축 링크가 열려요.",
+        "connectDub": "Dub 연결",
+        "connectDubToCreatePick": "Dub를 연결하면 여기에서 Dub 링크를 만들고, 선택하고, 추적할 수 있어요.",
+        "enterManually": "직접 입력",
+        "createNew": "새로 만들기",
+        "selectExisting": "기존 링크 선택",
+        "pasteALink": "링크 붙여넣기",
+        "destinationUrl": "대상 URL *",
+        "domain": "도메인",
+        "customEnding": "사용자 지정 끝부분",
+        "title": "제목",
+        "description": "설명",
+        "createDubLink": "Dub 링크 만들기",
+        "loadingYourDubLinks": "Dub 링크를 불러오는 중…",
+        "clicksClicks": "(클릭 {clicks, number}회)",
+        "selectAShortLink": "단축 링크 선택…",
+        "noLinksFound": "링크를 찾을 수 없어요.",
+        "scansGoToUrl": "스캔하면 {url}(으)로 이동해요",
+        "campaign": "캠페인",
+        "springCampaign": "봄 캠페인",
+        "optionalInternalNote": "내부용 메모(선택)",
+        "searchLinks": "링크 검색…",
+        "failedToConnectDub": "Dub를 연결하지 못했어요",
+        "dubLinkCreated": "Dub 링크를 만들었어요",
+        "failedToCreateDubLink": "Dub 링크를 만들지 못했어요"
+      },
+      "emailForm": {
+        "recipientEmail": "받는 사람 이메일 *",
+        "subject": "제목",
+        "message": "메시지",
+        "scanningWillOpenAnEmail": "스캔하면 이 주소로 보내는 이메일 초안이 열립니다",
+        "contactExampleCom": "contact@example.com",
+        "emailSubject": "이메일 제목",
+        "emailMessage": "이메일 메시지"
+      },
+      "ethereumForm": {
+        "ethereumAddress": "Ethereum 주소 *",
+        "amountEth": "금액(ETH)",
+        "gasLimit": "가스 한도",
+        "scanningWillOpenAnEthereum": "스캔하면 이 결제 정보가 입력된 Ethereum 지갑이 열립니다",
+        "n0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359": "0xfb6916095ca1df60bb79Ce92ce3ea74c37c5d359"
+      },
+      "etsyForm": {
+        "etsyShopUrl": "Etsy 상점 URL *",
+        "scanningWillOpenYourEtsy": "스캔하면 Etsy 상점 또는 상품 페이지가 열립니다"
+      },
+      "exampleForm": {
+        "exampleDataReplaceItWith": "예시 데이터예요. 직접 입력한 내용으로 바꿔 주세요.",
+        "clear": "지우기",
+        "tryAnExample": "예시 사용해 보기"
+      },
+      "facebookForm": {
+        "facebookProfileUrl": "Facebook 프로필 URL *",
+        "scanningWillOpenYourFacebook": "스캔하면 Facebook 프로필 또는 페이지가 열립니다"
+      },
+      "flipkartForm": {
+        "flipkartProductUrl": "Flipkart 상품 URL *",
+        "scanningWillOpenYourFlipkart": "스캔하면 Flipkart 상품 또는 스토어가 열립니다"
+      },
+      "googleDriveForm": {
+        "connectGoogleDriveToPick": "Google Drive를 연결해 파일을 선택하거나 아래에 링크를 붙여넣으세요.",
+        "connectGoogleDrive": "Google Drive 연결",
+        "googleDriveUrl": "Google Drive URL *",
+        "scanningWillOpenTheSelected": "스캔하면 선택한 Google Drive 파일 또는 폴더가 열립니다.",
+        "search": "검색",
+        "loadMore": "더 보기",
+        "searchDriveFilesAndFolders": "Drive 파일 및 폴더 검색",
+        "failedToConnectGoogleDrive": "Google Drive 연결에 실패했어요"
+      },
+      "googleReviewForm": {
+        "googlePlaceId": "Google Place ID *",
+        "findYoursWithTheGoogle": "<link>Google Place ID Finder</link>에서 찾을 수 있어요",
+        "scanningWillOpenGoogleTo": "스캔하면 Google이 열리고 내 비즈니스를 리뷰할 수 있어요",
+        "chijn1tTdeuemsrusoyg83fry4": "ChIJN1t_tDeuEmsRUsoyG83frY4"
+      },
+      "instagramForm": {
+        "instagramUsername": "Instagram 사용자 이름 *",
+        "scanningWillOpenYourInstagram": "스캔하면 내 Instagram 프로필이 열려요",
+        "usernameOrUsername": "username 또는 @username"
+      },
+      "linkedinForm": {
+        "linkedinProfileUrl": "LinkedIn 프로필 URL *",
+        "scanningWillOpenYourLinkedin": "스캔하면 내 LinkedIn 프로필 또는 회사 페이지가 열려요"
+      },
+      "mapsForm": {
+        "location": "위치 *",
+        "scanningWillOpenThisPlace": "스캔하면 Google Maps에서 이 장소가 열려요",
+        "addressOrCoordinates407128": "주소 또는 좌표 (40.7128, -74.0060)"
+      },
+      "paypalForm": {
+        "paypalMeUrlOrPayment": "PayPal.Me URL 또는 결제 링크 *",
+        "scanningWillOpenThePaypal": "스캔하면 PayPal 결제 페이지가 열려요",
+        "httpsPaypalMeUsernameOr": "https://paypal.me/username 또는 결제 링크"
+      },
+      "phoneForm": {
+        "phoneNumber": "전화번호 *",
+        "includeTheCountryCodeLike": "+1처럼 국가 코드를 포함해 주세요. 스캔하면 통화가 시작돼요."
+      },
+      "pinterestForm": {
+        "pinterestUsername": "Pinterest 사용자 이름 *",
+        "scanningWillOpenYourPinterest": "스캔하면 내 Pinterest 프로필이 열려요",
+        "username": "username"
+      },
+      "redditForm": {
+        "redditUsername": "Reddit 사용자 이름",
+        "subreddit": "서브레딧",
+        "fillInOneIfBoth": "하나만 입력해 주세요. 둘 다 입력하면 서브레딧이 사용돼요.",
+        "scanningWillOpenTheReddit": "스캔하면 Reddit 프로필 또는 서브레딧이 열려요",
+        "usernameOrUUsername": "username 또는 u/username",
+        "subredditOrRSubreddit": "subreddit 또는 r/subreddit"
+      },
+      "smsForm": {
+        "phoneNumber": "전화번호 *",
+        "message": "메시지",
+        "scanningWillOpenAText": "스캔하면 이 번호로 보내는 문자 메시지가 열려요",
+        "preFilledSmsMessage": "미리 입력된 SMS 메시지"
+      },
+      "snapchatForm": {
+        "snapchatUsername": "Snapchat 사용자 이름 *",
+        "scanningWillOpenYourSnapchat": "스캔하면 내 Snapchat 친구 추가 페이지가 열려요",
+        "username": "username"
+      },
+      "spotifyForm": {
+        "spotifyUriOrUrl": "Spotify URI 또는 URL *",
+        "scanningWillOpenTheContent": "스캔하면 Spotify에서 콘텐츠가 열려요",
+        "spotifyTrackOrHttpsOpen": "spotify:track:... 또는 https://open.spotify.com/..."
+      },
+      "textForm": {
+        "textContent": "텍스트 내용 *",
+        "pasteALinkAndIt": "링크를 붙여넣으면 알맞은 유형으로 전환돼요.",
+        "enterAnyText": "텍스트를 입력하세요…"
+      },
+      "threadsForm": {
+        "threadsUsername": "Threads 사용자 이름 *",
+        "scanningWillOpenYourThreads": "스캔하면 내 Threads 프로필이 열려요",
+        "usernameOrUsername": "username 또는 @username"
+      },
+      "tiktokForm": {
+        "tiktokUsername": "TikTok 사용자 이름 *",
+        "scanningWillOpenYourTiktok": "스캔하면 내 TikTok 프로필이 열려요",
+        "usernameOrUsername": "username 또는 @username"
+      },
+      "twitterForm": {
+        "twitterXUsername": "Twitter / X 사용자 이름 *",
+        "scanningWillOpenYourTwitter": "스캔하면 내 Twitter / X 프로필이 열려요",
+        "usernameOrUsername": "username 또는 @username"
+      },
+      "upiForm": {
+        "upiId": "UPI ID *",
+        "payeeName": "수취인 이름",
+        "amount": "금액 (₹)",
+        "note": "메모",
+        "scanningWillOpenAUpi": "스캔하면 이 결제 정보와 함께 UPI 앱이 열려요",
+        "usernameBankname": "username@bankname",
+        "yourName": "내 이름",
+        "paymentFor": "결제 내용..."
+      },
+      "urlForm": {
+        "websiteAddress": "웹사이트 주소",
+        "scansOpen": "스캔하면 열려요",
+        "pasteAnyLinkSocialAnd": "링크를 붙여넣으세요. 소셜 링크와 WhatsApp 링크는 별도의 유형으로 지원돼요."
+      },
+      "vcardForm": {
+        "firstName": "이름 *",
+        "lastName": "성",
+        "organization": "소속",
+        "phone": "전화번호",
+        "email": "이메일",
+        "website": "웹사이트",
+        "address": "주소",
+        "note": "메모",
+        "scanningWillOfferToSave": "스캔하면 이 연락처를 저장할 수 있어요",
+        "john": "길동",
+        "doe": "홍",
+        "companyName": "회사 이름",
+        "johnExampleCom": "john@example.com",
+        "n123MainStCityCountry": "서울시 중구 세종대로 123",
+        "additionalNotes": "추가 메모"
+      },
+      "venmoForm": {
+        "venmoUsername": "Venmo 사용자 이름 *",
+        "amount": "금액 ($)",
+        "note": "메모",
+        "scanningWillOpenVenmoWith": "스캔하면 이 결제 정보로 Venmo가 열려요",
+        "username": "@사용자이름",
+        "paymentFor": "결제 내용..."
+      },
+      "whatsappForm": {
+        "phoneNumber": "전화번호 *",
+        "includeCountryCodeWithoutSpaces": "공백이나 기호 없이 국가 코드를 포함하세요",
+        "message": "메시지",
+        "scanningWillOpenAWhatsapp": "스캔하면 이 번호로 WhatsApp 채팅이 열려요",
+        "preFilledWhatsappMessage": "미리 입력된 WhatsApp 메시지"
+      },
+      "wifiForm": {
+        "networkName": "네트워크 이름 *",
+        "security": "보안",
+        "wpaWpa2": "WPA/WPA2",
+        "noPassword": "비밀번호 없음",
+        "password": "비밀번호 *",
+        "hiddenNetwork": "숨겨진 네트워크",
+        "scanningWillOfferToJoin": "스캔하면 이 Wi-Fi 네트워크에 연결할 수 있어요",
+        "myWiFiNetwork": "내 Wi-Fi 네트워크",
+        "networkPassword": "네트워크 비밀번호"
+      },
+      "youtubeForm": {
+        "videoUrl": "동영상 URL",
+        "channelUrl": "채널 URL",
+        "fillInOneIfBoth": "하나만 입력해 주세요. 둘 다 입력하면 동영상이 사용돼요.",
+        "scanningWillOpenTheYoutube": "스캔하면 YouTube 동영상 또는 채널이 열려요"
+      },
+      "cryptoForms": {
+        "scanningOpensAWalletWith": "스캔하면 이 결제 요청으로 {wallet}을(를) 열어요. 주소를 두 번 확인하세요. 암호화폐 결제는 되돌릴 수 없어요."
+      },
+      "linkForms": {
+        "scanningOpensTelegramOrT": "스캔하면 Telegram이 열리고, 앱이 설치되어 있지 않으면 브라우저에서 t.me가 열려요.",
+        "scanningOpensAChatIn": "스캔하면 Signal에서 채팅이 열려요.",
+        "scanningOpensTheInviteIn": "스캔하면 Discord에서 초대가 열리고, 앱이 없으면 브라우저에서 열려요.",
+        "scanningOpensLineToAdd": "스캔하면 LINE이 열리고 친구로 추가할 수 있어요.",
+        "scanningOpensTheProfileOn": "스캔하면 Bluesky에서 프로필이 열려요.",
+        "scanningOpensTheProfileOn2": "스캔하면 해당 서버에서 프로필이 열려요.",
+        "scanningOpensTheChannelOn": "스캔하면 Twitch에서 채널이 열려요.",
+        "scanningOpensSoundcloud": "스캔하면 SoundCloud가 열려요.",
+        "scanningOpensTheMeetingIn": "스캔하면 Zoom에서 미팅이 열려요.",
+        "scanningOpensTheCallIn": "스캔하면 Google Meet에서 통화가 열려요.",
+        "scanningOpensWazeOrWaze": "스캔하면 Waze가 열리고, 앱이 설치되어 있지 않으면 waze.com이 열려요.",
+        "scanningOpensYourCashApp": "스캔하면 다른 사람이 결제할 수 있는 내 Cash App 프로필이 열려요.",
+        "scanningOpensYourRevolutMe": "스캔하면 다른 사람이 결제할 수 있는 내 revolut.me 페이지가 열려요.",
+        "usernameChannelOrGroup": "사용자 이름, 채널 또는 그룹",
+        "usernameOrATMe": "@username 또는 t.me 링크",
+        "aPublicUsernameOrPaste": "공개 사용자 이름을 입력하거나, 비공개 그룹은 초대 링크(t.me/+…)를 붙여넣으세요.",
+        "phoneNumber": "전화번호",
+        "withTheCountryCodeIt": "국가 코드를 포함하세요. 상대방의 개인정보 설정이 허용하면 채팅이 열려요.",
+        "open": "열기",
+        "aUsernameChannelOrGroup": "사용자 이름, 채널 또는 그룹",
+        "aChatWithAPhone": "전화번호로 채팅",
+        "withTheCountryCode": "국가 코드를 포함하세요.",
+        "usernameOrGroupLink": "사용자 이름 또는 그룹 링크",
+        "usernamesCantBeTurnedInto": "사용자 이름은 Signal 밖에서는 링크로 만들 수 없어요. Signal에서 설정 › 프로필 › 사용자 이름 › QR 코드 또는 링크에서 내 링크를 복사하세요. 그룹은 그룹 설정에서 링크를 복사하세요.",
+        "aUsernameOrGroupLink": "사용자 이름 또는 그룹 링크",
+        "inviteLinkOrCode": "초대 링크 또는 코드",
+        "discordGgAbc123": "discord.gg/abc123",
+        "invitesExpireAfter7Days": "초대를 만들 때 만료 기간을 없음으로 설정하지 않으면 초대는 7일 후 만료돼요.",
+        "lineId": "LINE ID",
+        "yourLineIdOrOfficial": "your-line-id 또는 @official",
+        "officialAccountsStartWithYou": "공식 계정은 @로 시작해요. line.me 링크를 붙여넣어도 돼요.",
+        "handle": "핸들",
+        "aCustomDomainHandleWorks": "사용자 지정 도메인 핸들도 사용할 수 있어요.",
+        "youMastodonSocial": "@you@mastodon.social",
+        "yourFullHandleServerIncluded": "서버까지 포함한 전체 핸들 또는 프로필 링크예요.",
+        "twitchUsername": "Twitch 사용자 이름",
+        "yourchannel": "yourchannel",
+        "profileNameOrLink": "프로필 이름 또는 링크",
+        "yournameOrATrackLink": "yourname 또는 트랙 링크",
+        "pasteATrackOrPlaylist": "트랙이나 플레이리스트 링크를 붙여넣으면 바로 열려요.",
+        "meetingIdOrInviteLink": "회의 ID 또는 초대 링크",
+        "pasteTheInviteLinkTo": "초대 링크를 붙여넣으면 암호가 유지돼요. ID만 입력하면 Zoom에서 암호를 물어봐요.",
+        "meetingCodeOrLink": "회의 코드 또는 링크",
+        "abcDefgHij": "abc-defg-hij",
+        "addressOrCoordinates": "주소 또는 좌표",
+        "pikePlaceMarketSeattleOr": "Pike Place Market, Seattle 또는 47.6097, -122.3422",
+        "startDirectionsRightAway": "바로 길 안내 시작",
+        "cashtag": "$Cashtag",
+        "yourcashtag": "$yourcashtag",
+        "revolutUsername": "Revolut 사용자 이름",
+        "yourname": "@yourname",
+        "yourRevtagAsInRevolut": "revolut.me/yourname처럼 Revtag를 입력해요."
+      },
+      "paymentForms": {
+        "theEpcGuidelinesAskFor": "EPC 가이드라인은 오류 정정 레벨 M을 요구해요. 이 디자인에서 사용 중인 레벨:",
+        "useLevelM": "레벨 M 사용",
+        "scanningOpensThePayersBank": "스캔하면 결제자의 은행 앱이 열리고 Pix 결제 정보가 채워져요. Pix copia e cola도 같은 텍스트를 사용해요.",
+        "scanningFillsInAEuro": "스캔하면 EPC 코드를 읽는 뱅킹 앱(흔히 GiroCode라고 해요)에 유로 송금 정보가 채워져요.",
+        "scanningOpensPaynowInAny": "스캔하면 싱가포르의 모든 뱅킹 앱에서 PayNow가 열리고 이 정보가 채워져요.",
+        "scanningOpensAPromptpayTransfer": "스캔하면 태국의 모든 뱅킹 앱에서 PromptPay 송금 화면이 열려요.",
+        "scanningOpensATransferIn": "스캔하면 VietQR을 읽는 베트남 뱅킹 앱에서 송금 화면이 열려요."
+      },
+      "schemaForm": {
+        "fields": {
+          "k1gxuvm9": "Pix 키",
+          "k166v0c5": "CPF, CNPJ, +55 전화번호, 이메일 또는 임의 키",
+          "k1yiqnlw": "은행에 등록한 키예요.",
+          "k6ynt77": "수취인 이름",
+          "k6umxxr": "계좌에 등록된 이름",
+          "k144ewn1": "최대 25자예요. 은행 기준에 맞춰 악센트는 제거돼요.",
+          "k142k4ma": "도시",
+          "k1tyryef": "최대 15자까지 입력해요.",
+          "kc0qpqq": "금액 (R$)",
+          "k175bjom": "비워 두면 결제하는 사람이 직접 입력해요",
+          "k1cam7ic": "메시지",
+          "k1x302fo": "일부 앱에서 결제하는 사람에게 표시돼요",
+          "k1ysrm3g": "거래 ID",
+          "k1lj6rfz": "명세서의 결제 내역과 대조할 수 있도록 문자와 숫자로 입력해요. 선택 사항이에요.",
+          "k1iiuca1": "수취인 이름",
+          "k16irq05": "IBAN",
+          "k1p6l5b9": "BIC",
+          "k8mfsk5": "EEA 내에서는 선택 사항",
+          "k1xwl2j6": "금액 (€)",
+          "k19b4i3s": "결제 참조",
+          "k1nk11j3": "최대 140자이며 양쪽 명세서에 모두 표시돼요.",
+          "kl0fvir": "채권자 참조 (RF)",
+          "kh5cvh0": "청구서에 구조화된 RF 참조를 사용하는 경우에만 입력해요. 이 항목과 결제 참조 중 하나만 사용해요.",
+          "kuuj6iu": "수취인",
+          "k391cj4": "휴대전화 번호",
+          "k1ebmfz4": "사업자 (UEN)",
+          "k1edxmpf": "UEN",
+          "k4el6o6": "이름",
+          "k1xb7fm6": "결제하는 사람의 앱에 표시돼요",
+          "khgxhnp": "금액 (S$)",
+          "k7ookpt": "결제자가 금액을 변경할 수 있음",
+          "k1c7vrcq": "참조 번호",
+          "k1gasst3": "명세서에 표시되어 결제 내역을 쉽게 확인할 수 있어요.",
+          "k1jee0pv": "만료일",
+          "k4p9tvj": "선택 사항이에요. 이 날짜가 지나면 뱅킹 앱에서 코드를 거부해요.",
+          "k1ly5lrh": "주민등록번호 또는 세금 ID",
+          "k1o1f07v": "전자지갑 ID",
+          "k1hezgmh": "13자리",
+          "k1ybz3bn": "15자리",
+          "k1y8bu9t": "금액 (฿)",
+          "k1fdra2f": "금액을 입력하면 태국 QR 표준에 따라 코드가 1회 결제용으로 표시돼요.",
+          "k192q8xj": "은행",
+          "k15nzl7f": "은행 선택",
+          "klce4ed": "계좌번호",
+          "kcdfio8": "카드 번호",
+          "kvoy7pr": "16~19자리",
+          "k179drfx": "금액 (₫)",
+          "kxyipuq": "최대 25자까지 입력할 수 있어요. 은행 규정에 따라 베트남어 성조 부호는 제거돼요.",
+          "k1pt9yc": "지갑 주소",
+          "kke7891": "결제를 받는 대상(예: 상점 이름)",
+          "k10mfi45": "결제 목적",
+          "k19wsrr1": "금액 (LTC)",
+          "k43xjmr": "금액 (DOGE)",
+          "k1l4nd21": "금액 (BCH)",
+          "k5h39gc": "금액 (SOL)",
+          "kicvyhv": "금액 (XMR)",
+          "k1827q8t": "라벨",
+          "k1c3pxvv": "수취인 이름",
+          "ksjj37t": "설명",
+          "kb8wbld": "Solana 주소"
+        }
+      }
+    },
+    "contentTypeModal": {
+      "current": "현재",
+      "chooseAQrCodeType": "QR 코드 유형 선택",
+      "whatShouldHappenWhenSomeone": "누군가 내 코드를 스캔하면 어떻게 될까요?",
+      "toPick": "선택",
+      "recent": "최근",
+      "noTypeMatchesQueryA": "“{query}”와(과) 일치하는 유형이 없어요. URL 코드는 모든 웹 주소에 사용할 수 있어요.",
+      "useAUrlCode": "URL 코드 사용",
+      "previewEveryTemplate": "모든 템플릿 미리보기",
+      "move": "이동",
+      "pick": "선택",
+      "escClose": "<kbd>esc</kbd> 닫기",
+      "searchQrCodeTypes": "QR 코드 유형 검색",
+      "searchWiFiMenuGpay": "검색: Wi-Fi, 메뉴, gpay, 명함…",
+      "categories": "카테고리",
+      "hostedPages": "호스팅 페이지",
+      "mobilePagesQrdxHostsFor": "QRdx가 대신 호스팅해 주는 모바일 페이지예요. 각 페이지에는 이 디자인의 동적 QR 코드가 포함돼요. 페이지는 대시보드에서 수정할 수 있어요.",
+      "mobilePagesQrdxHostsFor2": "QRdx가 대신 호스팅해 주는 모바일 페이지예요. 각 페이지에는 이 디자인의 동적 QR 코드가 포함돼요. 만들려면 로그인해 주세요.",
+      "matchesFor": "{count, plural, one {“{query}” 검색 결과 #개} other {“{query}” 검색 결과 #개}}"
+    },
+    "contentTypeSelector": {
+      "qrCodeType": "QR 코드 유형",
+      "change": "변경",
+      "chooseAType": "유형 선택"
+    },
+    "contrastChecker": {
+      "contrastChecker": "대비 검사기",
+      "wcag20AaRequires": "WCAG 2.0 AA는 최소 {MIN_CONTRAST_RATIO, number}:1 이상의 대비율을 요구합니다 • <link>자세히 알아보기</link>",
+      "toggleTheme": "테마 전환",
+      "all": "전체",
+      "issuesTotalissues": "문제 ({totalIssues, number})",
+      "background": "배경",
+      "foreground": "전경",
+      "aa": "Aa",
+      "sampleText": "샘플 텍스트",
+      "preview": "미리보기",
+      "openContrastChecker": "대비 검사기 열기",
+      "qrCodeBase": "QR 코드 기본",
+      "cornerEyes": "모서리 눈",
+      "eyeDots": "눈 점",
+      "nameEye": "{name} 눈",
+      "nameEyeDot": "{name} 눈 점",
+      "learnMoreAboutWcagContrast": "WCAG 대비 요구 사항 자세히 알아보기",
+      "eyePositions": {
+        "topLeft": "왼쪽 위",
+        "topRight": "오른쪽 위",
+        "bottomLeft": "왼쪽 아래"
+      }
+    },
+    "controlSections": {
+      "artControls": {
+        "hintFinderAlignmentAndFormat": "{hint} 파인더, 얼라인먼트, 포맷 패턴은 선명하게 유지돼요.",
+        "useMyLogo": "내 로고 사용",
+        "uploadPngJpgWebpOr": "{upload}. PNG, JPG, WebP 또는 SVG, 최대 {value, number}MB. 이미지는 브라우저에만 보관되며 작은 색상 격자만 저장돼요.",
+        "look": "스타일",
+        "eyesMatchTheLogo": "눈을 로고와 맞추기",
+        "usesHighErrorCorrectionAnd": "높은 오류 보정과 여백을 사용해 스캔이 잘 되도록 해요.",
+        "artScansBestWithHigh": "아트는 높은 오류 보정과 충분한 여백에서 가장 잘 스캔돼요.<button>적용</button>",
+        "removeArt": "아트 제거",
+        "strength": "강도",
+        "fineTune": "세부 조정",
+        "easierToScan": "스캔이 더 쉬움",
+        "moreArt": "아트 강화",
+        "scanCheck": "스캔 확인",
+        "checking": "확인 중…",
+        "artLook": "아트 스타일",
+        "artStrength": "아트 강도",
+        "swapDotAndBackgroundColors": "점과 배경 색상 바꾸기",
+        "putTheDotsOnWhite": "점을 흰색 위에 놓기",
+        "uploadAnother": "다른 이미지 업로드",
+        "uploadYourOwn": "직접 업로드",
+        "decodedInYourBrowserAt": "브라우저에서 세 가지 크기로 디코딩했어요.",
+        "addContentToCheckYour": "실제 코드를 확인하려면 콘텐츠를 추가하세요.",
+        "checkYourConnectionAndTry": "연결 상태를 확인하고 다시 시도하거나 직접 이미지를 업로드하세요.",
+        "tryAPngOrJpg": "PNG 또는 JPG를 사용해 보세요.",
+        "useAPngJpgWebp": "PNG, JPG, WebP 또는 SVG 이미지를 사용하세요.",
+        "imagesMustBeValueMb": "이미지는 {value, number}MB 이하여야 해요.",
+        "couldntLoadThisSample": "샘플을 불러오지 못했어요",
+        "couldntUseThisImage": "이 이미지를 사용할 수 없어요",
+        "unsupportedImageFormat": "지원하지 않는 이미지 형식",
+        "imageIsTooLarge": "이미지가 너무 커요",
+        "modeCopy": {
+          "logo": {
+            "upload": "투명한 PNG 또는 SVG 로고가 가장 좋아요",
+            "samples": "샘플 로고 사용해 보기"
+          },
+          "halftone": {
+            "upload": "뚜렷한 피사체가 하나인 사진이 가장 좋아요",
+            "samples": "샘플 사진 사용해 보기"
+          }
+        }
+      },
+      "colorPresets": {
+        "lightCodeOnADark": "어두운 배경에 밝은 코드는 오래된 휴대폰에서 스캔되지 않을 수 있어요.",
+        "colorPalettes": "색상 팔레트",
+        "lightCodeOnDarkMay": "어두운 배경에 밝은 코드예요. 오래된 휴대폰에서 스캔되지 않을 수 있어요."
+      },
+      "contentControls": {
+        "startFromAStyle": "스타일로 시작하기",
+        "browseAllLength": "전체 {length, number}개 보기",
+        "fineTuneColorsDotsAnd": "색상, 점, 로고를 세밀하게 조정해요",
+        "applyTheLabelStyle": "{label} 스타일 적용"
+      },
+      "customFrameFields": {
+        "thisFrameHasNoLabels": "이 프레임에는 편집할 라벨이 없어요.",
+        "icon": "아이콘",
+        "label": "라벨",
+        "leaveEmptyForNoLabel": "라벨을 없애려면 비워 두세요",
+        "secondLine": "두 번째 줄",
+        "leaveEmptyToHideIt": "숨기려면 비워 두세요",
+        "frameColor": "프레임 색상",
+        "textColor": "텍스트 색상",
+        "accentColor": "강조 색상"
+      },
+      "designControls": {
+        "colors": "색상",
+        "background": "배경",
+        "foreground": "전경",
+        "eyes": "눈",
+        "dots": "점",
+        "frame": "프레임",
+        "padding": "여백",
+        "errorCorrection": "오류 정정",
+        "border": "테두리",
+        "none": "없음"
+      },
+      "dotSizeSection": {
+        "sizeOfEachDot": "각 점의 크기",
+        "dotSize": "점 크기",
+        "valueDotsKeepTheirFull": "{value} 점은 원래 크기를 유지해요. 더 작아지면 스캔되지 않아요.",
+        "smallerDotsGiveALighter": "점이 작을수록 더 가벼운 느낌이 나요. {value} 점은 스캔이 가능한 최소 크기인 {floor, number}%까지 줄어들어요."
+      },
+      "eyeColorsSection": {
+        "giveEachCornerEyeIts": "각 코너 눈에 프레임과 중심 색상을 따로 지정해 보세요. 그대로 둔 눈은 눈 색상과 점 색상을 사용해요.",
+        "useTheSameColorsFor": "모든 눈에 같은 색상 사용",
+        "sameForAll": "모두 동일하게",
+        "eyeColors": "눈 색상",
+        "frame": "프레임",
+        "center": "중앙",
+        "positions": {
+          "topLeft": "왼쪽 위",
+          "topRight": "오른쪽 위",
+          "bottomLeft": "왼쪽 아래"
+        }
+      },
+      "frameControls": {
+        "customise": "맞춤 설정",
+        "importSvg": "SVG 가져오기",
+        "publishFrame": "프레임 게시",
+        "theFrameIsAddedAround": "프레임은 코드 바깥쪽에 추가되므로 다운로드한 이미지는 더 커지고, 코드 자체는 계속 스캔할 수 있어요.",
+        "label": "라벨",
+        "secondLine": "두 번째 줄",
+        "leaveEmptyForNoLabel": "라벨이 필요 없으면 비워 두세요",
+        "pickAFrameFirst": "먼저 프레임을 선택하세요",
+        "frameColor": "프레임 색상",
+        "textColor": "텍스트 색상",
+        "endColor": "끝 색상",
+        "optionalEGYourWebsite": "선택 사항, 예: 내 웹사이트",
+        "none": "없음"
+      },
+      "frameFields": {
+        "textSize": "텍스트 크기"
+      },
+      "framePicker": {
+        "more": "더 보기",
+        "showAll": "모두 보기",
+        "frame": "프레임",
+        "moreFrames": "프레임 더 보기",
+        "allTotalFrames": "프레임 {total, number}개 모두 보기",
+        "allFrames": "모든 프레임",
+        "searchFrames": "프레임 검색",
+        "searchTotalFrames": "프레임 {total, number}개 검색",
+        "closeFrames": "프레임 닫기",
+        "filterFrames": "프레임 필터",
+        "labelFrames": "{label} 프레임",
+        "commonFrames": "자주 쓰는 프레임",
+        "everyFrameBuiltInStyles": "모든 프레임: 기본 제공 스타일, QRdx 공식 프레임, 직접 저장한 프레임이 있어요. 하나를 고르면 바로 적용돼요.",
+        "less": "간략히",
+        "all": "전체",
+        "noFramesMatchQuery": "\"{query}\"에 맞는 프레임이 없어요.",
+        "loadingFrames": "프레임 불러오는 중…",
+        "comingUp": "곧 출시",
+        "builtIn": "기본 제공",
+        "saved": "저장됨",
+        "results": "검색 결과"
+      },
+      "frameShapes": {
+        "shapedCode": "모양 코드",
+        "pngJpegOrSvgA": "PNG, JPEG 또는 SVG: 밝거나 투명한 배경 위의 어둡거나 단색인 모양이어야 해요.",
+        "remove": "삭제",
+        "uploadASilhouette": "실루엣 업로드",
+        "tracing": "윤곽 추출 중…",
+        "replace": "교체",
+        "uploadAShape": "모양 업로드",
+        "shapeHelp": {
+          "circle": "코드가 장식용 점으로 이루어진 원 안에 들어가고, 그 주위에 빈 여백 링이 있어요. 스캐너는 가운데 코드만 읽기 때문에, 같은 스캔 거리를 위해 원이 조금 더 커요.",
+          "heart": "코드가 장식용 점으로 이루어진 하트 안에 들어가고, 그 주위에 빈 여백 링이 있어요. 스캐너는 가운데 코드만 읽기 때문에, 같은 스캔 거리를 위해 정사각형 코드보다 하트를 더 크게 인쇄하세요.",
+          "silhouette": "코드가 업로드한 모양에서 가장 넓은 가운데 부분에 들어가고, 그 주위에 빈 여백 링이 있어요. 윤곽선만 사용하고 그림은 저장하지 않으며, 링크, 커뮤니티, 스니펫은 정사각형 코드를 사용해요."
+        },
+        "names": {
+          "circle": "점 원형",
+          "heart": "하트",
+          "silhouette": "실루엣"
+        }
+      },
+      "frameTextPresets": {
+        "labelIdeas": "라벨 아이디어"
+      },
+      "logoControls": {
+        "logoInTheCenter": "가운데 로고",
+        "coversAFewDotsError": "점 몇 개를 가리지만 오류 정정이 채워줘요.",
+        "quickIcons": "빠른 아이콘",
+        "brandLogos": "브랜드 로고",
+        "pngJpgWebpOrSvg": "PNG, JPG, WebP 또는 SVG, 최대 {value, number}MB. 여백이 약간 있는 정사각형 이미지가 가장 좋아요.",
+        "remove": "삭제",
+        "off": "끔",
+        "logo": "로고",
+        "uploadLogo": "로고 업로드",
+        "brandLogosBrandbuttonlabel": "브랜드 로고: {brandButtonLabel}",
+        "replace": "교체",
+        "uploadYourLogo": "내 로고 업로드",
+        "useAPngJpgWebp": "PNG, JPG, WebP 또는 SVG 이미지를 사용하세요.",
+        "logosMustBeValueMb": "로고는 {value, number}MB 이하여야 해요.",
+        "unsupportedLogoFormat": "지원하지 않는 로고 형식",
+        "logoIsTooLarge": "로고가 너무 커요",
+        "failedToReadLogoFile": "로고 파일을 읽지 못했어요"
+      },
+      "logoCropControls": {
+        "shape": "모양",
+        "plateBehindTheLogo": "로고 뒤 받침",
+        "aSolidValueTheLogo": "로고가 놓이는 단색 {value}입니다.",
+        "removeBackground": "배경 제거",
+        "logoShape": "로고 모양",
+        "plateColor": "받침 색상",
+        "backgroundRemovedUndoBringsIt": "배경을 제거했어요. 실행 취소하면 되돌려요.",
+        "yourLogoHasNoSolid": "로고에 제거할 단색 배경이 없어요.",
+        "removeTheSolidBackgroundAround": "로고 주변의 단색 배경을 제거해요.",
+        "backgroundRemoved": "배경을 제거했어요",
+        "plateNouns": {
+          "square": "사각형",
+          "rounded": "둥근 사각형",
+          "circle": "원"
+        },
+        "shapes": {
+          "square": "사각형",
+          "rounded": "둥근 사각형",
+          "circle": "원"
+        }
+      },
+      "logoOptionsSection": {
+        "position": "위치",
+        "center": "가운데",
+        "keepTheLogoOffThe": "로고가 세 개의 모서리 눈과 오른쪽 아래 모서리 근처의 작은 사각형을 가리지 않게 하세요. 가리면 스캔 점수가 경고해요.",
+        "raiseErrorCorrectionForBig": "큰 로고는 오류 정정 수준을 높이세요",
+        "switchesToLevelHWhen": "로고가 코드의 {value, number}% 넘게 가리면 오류 정정 수준 H로 전환돼요.",
+        "logoOptions": "로고 옵션",
+        "size": "크기",
+        "logoSize": "로고 크기",
+        "clearSpace": "여백",
+        "clearSpaceAroundTheLogo": "로고 주변 여백",
+        "leftToRight": "왼쪽에서 오른쪽",
+        "logoPositionLeftToRight": "로고 위치, 왼쪽에서 오른쪽",
+        "topToBottom": "위에서 아래",
+        "logoPositionTopToBottom": "로고 위치, 위에서 아래",
+        "upToMaxpercentForThis": "이 코드는 최대 {maxPercent, number}%까지 가능해요. 로고가 더 크면 오류 정정으로 복구할 수 있는 범위보다 더 많이 가려져요.",
+        "thisCodeIsTooSmall": "이 코드는 너무 작아서 로고를 넣을 수 없어요.",
+        "shorterContentMakesRoom": "내용을 줄이면 공간이 생겨요.",
+        "levelHOrShorterContent": "수준 H를 쓰거나 내용을 줄이면 공간이 생겨요."
+      },
+      "logoPresets": {
+        "quickLogoIcons": "빠른 로고 아이콘",
+        "nameIcon": "{name} 아이콘",
+        "uploadYourLogo": "내 로고 업로드",
+        "yourLogo": "내 로고"
+      },
+      "optionTiles": {
+        "more": "더보기",
+        "noNounMatchQueryShow": "\"{query}\"와 일치하는 {noun}이(가) 없어요.<button>모두 보기</button>",
+        "mayNotScan": "스캔 안 될 수 있음",
+        "nameWontScanWithThis": "{name}, 이 스타일은 스캔되지 않음",
+        "nameMayNotScan": "{name}, 스캔 안 될 수 있음",
+        "nameWontScanWithThis2": "{name}: 이 스타일은 스캔되지 않음",
+        "nameMayNotScan2": "{name}: 스캔 안 될 수 있음",
+        "moreNoun": "{noun} 더보기",
+        "allLengthNoun": "{noun} {length, number}개 모두 보기",
+        "searchNoun": "{noun} 검색",
+        "searchLengthNoun": "{noun} {length, number}개 검색",
+        "closeNoun": "{noun} 닫기",
+        "filterNoun": "{noun} 필터",
+        "commonNoun": "자주 쓰는 {noun}",
+        "allLengthNounPickingOne": "{noun} {length, number}개를 모두 보여줘요. 하나를 고르면 바로 적용돼요.",
+        "less": "간단히",
+        "all": "전체",
+        "wontScanHere": "스캔 불가"
+      },
+      "paddingControls": {
+        "quietZoneAroundTheCode": "코드 주변 여백",
+        "scannersNeedABlankBorder": "스캐너가 인식하려면 코드 주변에 빈 테두리가 필요해요. 복잡하거나 어두운 배경에 인쇄할 때는 4모듈(QR 표준)을 사용하세요.",
+        "padding": "여백",
+        "module": "모듈",
+        "modules": "모듈",
+        "presets": {
+          "none": "없음",
+          "small": "작게",
+          "standard": "표준",
+          "large": "크게"
+        }
+      },
+      "patternControls": {
+        "customizeOuterAndCenter": "바깥쪽과 중앙 맞춤 설정",
+        "border": "테두리",
+        "higherLevelsSurviveScratchesAnd": "높은 수준일수록 긁힘이나 로고에 강하지만 점이 더 많아져요. 로고를 추가할 때는 H를 사용하세요.",
+        "dotShape": "점 모양",
+        "dotShapes": "점 모양",
+        "eyeStyle": "눈 스타일",
+        "eyeStyles": "눈 스타일",
+        "outerEyeShape": "바깥쪽 눈 모양",
+        "outerShapes": "바깥쪽 모양",
+        "innerEyeShape": "안쪽 눈 모양",
+        "centerShapes": "중앙 모양",
+        "errorCorrection": "오류 정정"
+      },
+      "sidePanel": {
+        "closeTitle": "{title} 닫기"
+      }
+    },
+    "customTextarea": {
+      "thePastedContentWouldExceed": "붙여넣은 내용이 {characterLimit, number}자 제한을 초과해요.",
+      "textTooLong": "텍스트가 너무 길어요",
+      "describeYourTheme": "원하는 테마를 설명해 주세요…"
+    },
+    "dialogCloseButton": {
+      "close": "닫기"
+    },
+    "dynamicLinkToggle": {
+      "upgradeToPro": "Pro로 업그레이드",
+      "manageCodes": "코드 관리",
+      "static": "정적",
+      "fixedOncePrinted": "인쇄 후 고정",
+      "dynamic": "동적",
+      "editLaterCountScans": "나중에 수정, 스캔 집계",
+      "linkOptions": "링크 옵션…",
+      "printedCodesStillOpenDestinationurl": "인쇄된 코드는 계속 <span>{destinationUrl}</span>을(를) 열어요.",
+      "pointItToTheNew": "새 주소로 연결하기",
+      "scansSettings": "스캔 및 설정",
+      "staticOrDynamicQrCode": "정적 또는 동적 QR 코드",
+      "shortLinkCopied": "짧은 링크를 복사했어요",
+      "copyShortLink": "짧은 링크 복사",
+      "designSaved": "디자인을 저장했어요",
+      "saveDesignToCode": "코드에 디자인 저장",
+      "theQrCodeShowsYour": "QR 코드가 다시 URL을 직접 표시해요.",
+      "changeWhereItPointsAt": "연결 대상은 언제든지 바꿀 수 있어요. 로고가 너무 커서 코드와 함께 저장하지 못했어요.",
+      "changeWhereItPointsAt2": "연결 대상은 대시보드에서 언제든지 바꿀 수 있어요.",
+      "theDynamicCodeStaysIn": "동적 코드는 대시보드에 그대로 남아 있어요.",
+      "printedCopiesOfThisCode": "이 코드를 인쇄한 사본은 이제 새 URL을 열어요.",
+      "yourLogoWasTooLarge": "로고가 너무 커서 저장하지 못하고 제외했어요.",
+      "dashboardPreviewsAndDownloadsUse": "대시보드 미리보기와 다운로드에 이 디자인이 사용돼요.",
+      "thisDynamicCodeIsNo": "이 동적 코드는 더 이상 사용할 수 없어요",
+      "yourQrCodeIsNow": "QR 코드가 이제 동적이 되었어요",
+      "destinationUpdated": "대상을 업데이트했어요",
+      "designSavedToTheCode": "코드에 디자인을 저장했어요",
+      "couldntCopyTheShortLink": "짧은 링크를 복사하지 못했어요"
+    },
+    "frameInline": {
+      "frameTextMenu": {
+        "lowContrastValue1The": "대비가 낮아요({value}:1). 텍스트를 읽기 어려울 수 있어요. {MIN_LABEL_CONTRAST, number}:1 이상을 권장해요."
+      },
+      "frameTextOverlay": {
+        "editFrameTextValue": "프레임 텍스트 편집: {value}",
+        "editText": "텍스트 편집"
+      },
+      "frameTextSheet": {
+        "editFrameText": "프레임 텍스트 편집",
+        "changesShowOnTheCode": "입력하는 대로 코드에 변경 사항이 표시돼요. 완료를 누르면 변경 사항이 유지돼요.",
+        "valueLeft": "{value, number}자 남음",
+        "moreFrameOptions": "프레임 옵션 더 보기",
+        "done": "완료"
+      },
+      "inlineFrameEditor": {
+        "leftLeft": "{left, number}자 남음",
+        "frameTextName": "프레임 텍스트: {name}",
+        "frameTextOptions": "프레임 텍스트 옵션",
+        "textSize": "텍스트 크기",
+        "textColor": "텍스트 색상",
+        "frameColor": "프레임 색상",
+        "icon": "아이콘",
+        "moreFrameOptions": "프레임 옵션 더 보기"
+      }
+    },
+    "gradientPicker": {
+      "pickASolidColorA": "{label}에 사용할 단색, 그라데이션 또는 견본을 선택하세요."
+    },
+    "linkSourceMenu": {
+      "useALinkFrom": "링크 가져오기…",
+      "yourAccounts": "내 계정",
+      "connectAnAccount": "계정 연결",
+      "undo": "실행 취소"
+    },
+    "mentionList": {
+      "noResult": "결과 없음"
+    },
+    "paintPicker": {
+      "controls": {
+        "saturationAndBrightness": "채도 및 명도",
+        "saturationValueBrightnessValue2": "채도 {value, number}%, 명도 {value2, number}%"
+      },
+      "gradientEditor": {
+        "clickToAddAStop": "클릭해서 정지점 추가",
+        "stopValueColor": "정지점 {value, number}, {color}",
+        "startAngle": "시작 각도",
+        "angle": "각도",
+        "startAngleInDegrees": "시작 각도(도 단위)",
+        "angleInDegrees": "각도(도 단위)",
+        "anglePresets": "각도 프리셋",
+        "rotate90": "90° 회전",
+        "reverseTheGradient": "그라데이션 반전",
+        "reverse": "반전",
+        "removeTheSelectedStop": "선택한 정지점 삭제",
+        "removeStopDelete": "정지점 삭제(Delete)",
+        "aGradientKeepsMinStops": "그라데이션에는 정지점이 최소 {MIN_STOPS, number}개 필요해요"
+      },
+      "imageFill": {
+        "paintAPictureThroughThese": "이 도형들을 통해 사진을 채워 보세요. PNG, JPEG, WebP 형식, 최대 10MB까지 지원해요.",
+        "chooseAPicture": "사진 선택",
+        "underlay": "밑판",
+        "none": "없음",
+        "replace": "교체",
+        "thePictureStaysWithThis": "사진은 로고처럼 이 디자인에만 저장돼요. 링크나 공개 스타일에는 공유되지 않으며, EPS에는 포함할 수 없어요.",
+        "aSolidColorUnderThe": "사진 아래에 깔리는 단색이에요. 불투명도에 따라 사진 아래로 비쳐 보여요",
+        "howThePictureFillsThe": "사진이 코드를 채우는 방식",
+        "position": "위치",
+        "tileSize": "타일 크기",
+        "scale": "크기 비율",
+        "opacity": "불투명도",
+        "fits": {
+          "cover": "채우기",
+          "contain": "맞추기",
+          "tile": "타일"
+        },
+        "positions": {
+          "top-left": "왼쪽 위",
+          "top": "위",
+          "top-right": "오른쪽 위",
+          "left": "왼쪽",
+          "center": "가운데",
+          "right": "오른쪽",
+          "bottom-left": "왼쪽 아래",
+          "bottom": "아래",
+          "bottom-right": "오른쪽 아래"
+        }
+      },
+      "paintPanel": {
+        "measuringThePicturesContrast": "사진 대비를 측정하는 중…",
+        "contrastAgainst": "{against} 대비",
+        "makeItScannable": "스캔되게 만들기",
+        "hexOrAnyCssColor": "Hex 또는 CSS 색상",
+        "hexOrPasteAnyCss": "Hex 또는 CSS 색상(rgb, hsl, oklch, 색상 이름)을 붙여넣으세요",
+        "swatches": "색상 견본",
+        "fillType": "채우기 유형",
+        "pickAColorFromThe": "화면에서 색상 고르기",
+        "pickFromTheScreen": "화면에서 고르기",
+        "hue": "색조",
+        "opacity": "불투명도",
+        "colorModel": "색상 모델",
+        "opacityPercent": "불투명도(퍼센트)",
+        "removeThisColorFromSaved": "저장된 색상에서 삭제",
+        "saveThisColor": "이 색상 저장",
+        "savedClickToRemove": "저장됨: 클릭하면 삭제돼요",
+        "lightenTheBackground": "배경 밝게 하기",
+        "darkenTheCode": "코드 어둡게 하기",
+        "kinds": {
+          "solid": "단색",
+          "linear": "선형",
+          "radial": "원형",
+          "angular": "각도형",
+          "image": "이미지"
+        },
+        "sources": {
+          "design": "이 디자인에서",
+          "saved": "저장됨",
+          "recent": "최근",
+          "theme": "테마",
+          "suggested": "기본값"
+        },
+        "imageOpacity": "이미지 · {percent, number}%"
+      }
+    },
+    "photoScanDialog": {
+      "checkAPhotoOfThe": "인쇄물 사진 확인하기",
+      "checkedInYourBrowserThe": "브라우저에서 확인해요. 이미지는 업로드되지 않아요.",
+      "fullScanChecker": "전체 스캔 검사기"
+    },
+    "qrEditActions": {
+      "options": "옵션",
+      "resetToCurrentPreset": "현재 프리셋으로 초기화",
+      "resetToCurrentPreset2": "현재 프리셋으로 초기화",
+      "noChangesFromPreset": "프리셋에서 변경된 내용 없음",
+      "resetToDefaultTheme": "기본 테마로 초기화",
+      "resetToBaseTheme": "기본 테마로 초기화",
+      "noChangesToReset": "초기화할 변경 내용 없음"
+    },
+    "qrPresetSelect": {
+      "theme": "테마",
+      "browseAll": "모두 보기",
+      "noThemesFound": "테마를 찾을 수 없어요.",
+      "manage": "관리",
+      "default": "기본",
+      "new": "새로 만들기",
+      "save": "저장",
+      "aThemeToFindIt": "테마를 저장하면 여기에서 찾을 수 있어요.",
+      "discoverMoreThemes": "더 많은 테마 보기 →",
+      "shuffleANewTheme": "새 테마 무작위 적용",
+      "previousTheme": "이전 테마",
+      "nextTheme": "다음 테마",
+      "searchThemes": "테마 검색...",
+      "builtInThemes": "기본 제공 테마",
+      "default2": "기본",
+      "sharedThemes": "공유된 테마",
+      "yourThemes": "내 테마",
+      "savedThemes": "저장된 테마"
+    },
+    "qrSaveDialog": {
+      "updating": "업데이트 중",
+      "updateExistingthemename": "“{existingThemeName}” 업데이트",
+      "orSaveAsANew": "또는 새 테마로 저장",
+      "name": "이름",
+      "cancel": "취소",
+      "saving": "저장 중",
+      "myAwesomeTheme": "나의 멋진 테마",
+      "saveAsNew": "새로 저장",
+      "defaultTitle": "QR 코드 테마 저장",
+      "defaultDescription": "QR 코드 디자인을 테마로 저장해 나중에 다시 사용하세요.",
+      "defaultCta": "테마 저장"
+    },
+    "qrShareDialog": {
+      "shareThisDesign": "이 디자인 공유",
+      "theLinkOpensThisStyle": "이 링크를 열면 이 스타일이 Playground에서 열려서 누구나 자신의 코드에 사용할 수 있어요. 내 콘텐츠는 포함되지 않아요.",
+      "stylePreviewOpensInThe": "스타일 미리보기 · QRdx Playground에서 열려요",
+      "link": "링크",
+      "shareTo": "공유 대상",
+      "more": "더 보기…",
+      "openOnYourPhone": "휴대폰에서 열기",
+      "scanThisCodeToOpen": "이 코드를 스캔하면 다른 기기에서 공유 링크를 열 수 있어요.",
+      "copied": "복사됨",
+      "copyLinkToThisDesign": "이 디자인 링크 복사",
+      "saveItAsATheme": "대신 테마로 저장하기",
+      "saveItAsATheme2": "테마로 저장하면 더 짧은 링크를 쓸 수 있어요",
+      "couldntCopyTheLink": "링크를 복사하지 못했어요",
+      "omitted": {
+        "logo": "내 로고",
+        "art": "아트",
+        "frame": "사용자 지정 프레임",
+        "image": "내 이미지 채우기",
+        "silhouette": "내 코드 모양"
+      },
+      "omittedNote": "{count, plural, one {{list}은(는) 링크에 포함되지 않아요.} other {{list}은(는) 링크에 포함되지 않아요.}}",
+      "targets": {
+        "x": "X에 게시",
+        "linkedin": "LinkedIn에 공유",
+        "facebook": "Facebook에 공유",
+        "whatsapp": "WhatsApp으로 보내기",
+        "email": "이메일로 보내기"
+      },
+      "myQrDesign": "내 QR 디자인",
+      "shareTitle": "{name} · QRdx의 QR 코드 디자인"
+    },
+    "scanScore": {
+      "willItScan": "스캔될까요?",
+      "decodingYourDesignAtA": "여러 크기로 디자인을 해독하는 중…",
+      "simulatedInYourBrowserWith": "오픈소스 jsQR 디코더로 카메라 흐림 효과를 적용해 여러 크기에서 브라우저 안에서 시뮬레이션했어요. 휴대폰 앱마다 다를 수 있으니 인쇄 전에 직접 스캔해 보세요.",
+      "checkAPhotoOfThe": "인쇄물 사진으로 확인하기",
+      "notChecked": "확인하지 않음",
+      "scanScoreScoreValueShow": "스캔 점수 {score, number}, {value}. 검사 항목 보기",
+      "checkingScanScore": "스캔 점수 확인 중",
+      "scanScoreScoreValue": "스캔 점수 {score, number} · {value}",
+      "checkingScan": "스캔 확인 중…",
+      "fullScanChecker": "전체 스캔 검사기",
+      "checkAPrintedCode": "인쇄된 코드 확인",
+      "grades": {
+        "great": "매우 좋음",
+        "ok": "양호",
+        "risky": "위험",
+        "fails": "실패"
+      }
+    },
+    "themeGallery": {
+      "shuffled": "무작위 ·",
+      "back": "뒤로",
+      "themes": "테마",
+      "lengthBuiltInLooksEach": "스캔 테스트를 거친 기본 제공 스타일 {length, number}개가 있어요. 새 스타일을 무작위로 골라 볼 수도 있어요.",
+      "shuffle": "무작위",
+      "lightCodesOnADark": "어두운 배경에 밝은 코드예요. {DARK_THEME_NOTE}, 그러니 사용자가 쓰는 휴대폰으로 테스트해 보세요.",
+      "noThemeMatchesQuery": "“{query}”와 일치하는 테마가 없어요.",
+      "shuffleOneInstead": "대신 무작위로 고르기",
+      "toMove": "이동",
+      "toApply": "적용",
+      "toShuffle": "무작위 선택",
+      "escToClose": "<kbd>esc</kbd>로 닫기",
+      "searchThemes": "테마 검색",
+      "searchMenuGoldPastelDots": "검색: 메뉴, 골드, 파스텔, 점…",
+      "categories": "카테고리",
+      "all": "전체"
+    },
+    "themePreview": {
+      "colorPreview": {
+        "primaryThemeColors": "주요 테마 색상",
+        "editColor": "색상 편집",
+        "background": "배경",
+        "foreground": "전경",
+        "dotColor": "점 색상",
+        "eyeColor": "눈 색상"
+      }
+    },
+    "editor": {
+      "loadingTheEditor": "에디터를 불러오는 중…",
+      "fetchedQrPresetDataIs": "가져온 QR 프리셋 데이터가 올바르지 않아요."
+    },
+    "qrControlPanel": {
+      "generate": "생성",
+      "content": "콘텐츠",
+      "design": "디자인",
+      "art": "아트"
+    },
+    "qrPreviewPanel": {
+      "sample": "샘플",
+      "addYourLinkToMake": "링크를 추가해 나만의 QR 코드를 만드세요",
+      "addYourDetailsToMake": "정보를 추가해 나만의 QR 코드를 만드세요"
+    },
+    "keyboardShortcutsModal": {
+      "keyboardShortcuts": "키보드 단축키",
+      "keyboardShortcutsAreCurrentlyDisabled": "키보드 단축키가 현재 비활성화되어 있어요. 단축키를 사용하려면 설정에서 활성화하세요.",
+      "quickReferenceForAllAvailable": "사용할 수 있는 모든 키보드 단축키를 한눈에 확인하세요",
+      "proTipPressAnytimeTo": "<span>Pro 팁:</span> 언제든 <kbd>?</kbd> 키를 누르면 이 대화상자를 볼 수 있어요",
+      "categories": {
+        "navigation": "탐색",
+        "actions": "작업",
+        "themeAppearance": "테마 및 외관",
+        "patternCustomization": "패턴 사용자 지정",
+        "help": "도움말"
+      },
+      "shortcuts": {
+        "openContentTab": "콘텐츠 탭 열기",
+        "openDesignTab": "디자인 탭 열기",
+        "openArtTab": "아트 탭 열기",
+        "openGenerateAiTab": "생성(AI) 탭 열기",
+        "saveQrTheme": "QR 테마 저장",
+        "downloadQrCode": "QR 코드 다운로드",
+        "copySvgToClipboard": "SVG를 클립보드에 복사",
+        "viewCode": "코드 보기",
+        "shareQrCode": "QR 코드 공유",
+        "resetToPresetDefaults": "프리셋 기본값으로 재설정",
+        "shuffleANewTheme": "새 테마 랜덤 적용",
+        "toggleLightDarkMode": "라이트/다크 모드 전환",
+        "previousThemePreset": "이전 테마 프리셋",
+        "nextThemePreset": "다음 테마 프리셋",
+        "cycleDotPatterns": "점 패턴 순환",
+        "cycleCornerEyePatterns": "모서리 눈 패턴 순환",
+        "cycleInternalEyePatterns": "내부 눈 패턴 순환",
+        "cycleFrames": "프레임 순환",
+        "showThisShortcutsDialog": "단축키 대화상자 표시"
+      }
+    },
+    "soundSwitch": {
+      "sounds": "소리"
+    },
+    "hooks": {
+      "chatEngine": {
+        "tryAgainInAMoment": "잠시 후 다시 시도해 주세요.",
+        "anErrorOccurred": "오류가 발생했어요",
+        "theAiStoppedResponding": "AI가 응답하지 않아요"
+      },
+      "useCommunityThemes": {
+        "yourThemeIsNowVisible": "내 테마가 이제 커뮤니티에 표시돼요.",
+        "anUnexpectedErrorOccurred": "예기치 않은 오류가 발생했어요.",
+        "yourThemeHasBeenRemoved": "내 테마가 커뮤니티에서 삭제되었어요.",
+        "yourThemeTagsHaveBeen": "테마 태그를 업데이트했어요.",
+        "themePublished": "테마를 게시했어요",
+        "failedToPublishTheme": "테마를 게시하지 못했어요",
+        "themeUnpublished": "테마 게시를 취소했어요",
+        "failedToUnpublishTheme": "테마 게시를 취소하지 못했어요",
+        "failedToUpdateLike": "좋아요를 업데이트하지 못했어요",
+        "tagsUpdated": "태그를 업데이트했어요",
+        "failedToUpdateTags": "태그를 업데이트하지 못했어요"
+      },
+      "useThemeMutations": {
+        "nameHasBeenCreatedSuccessfully": "\"{name}\" 테마를 만들었어요.",
+        "nameHasBeenUpdatedSuccessfully": "\"{name}\" 테마를 업데이트했어요.",
+        "nameHasBeenDeletedSuccessfully": "\"{name}\" 테마를 삭제했어요.",
+        "themeLimitReached": "테마 한도에 도달했어요",
+        "themeCreated": "테마를 만들었어요",
+        "themeUpdated": "테마를 업데이트했어요",
+        "themeDeleted": "테마를 삭제했어요",
+        "errors": {
+          "signIn": "계속하려면 로그인해 주세요.",
+          "invalidInput": "입력값이 올바르지 않아요.",
+          "notFound": "테마를 찾을 수 없어요.",
+          "unexpected": "예기치 않은 오류가 발생했어요. 다시 시도해 주세요."
+        },
+        "failed": {
+          "create": "테마를 만들지 못했어요",
+          "update": "테마를 업데이트하지 못했어요",
+          "delete": "테마를 삭제하지 못했어요"
+        }
+      },
+      "useAiEnhancePrompt": {
+        "anErrorOccurred": "오류가 발생했어요"
+      },
+      "useDialogActions": {
+        "saveToShare": {
+          "title": "공유하려면 저장하세요",
+          "description": "다른 사람과 공유하려면 먼저 테마를 저장해 주세요.",
+          "ctaLabel": "저장 및 공유"
+        }
+      },
+      "useImageUpload": {
+        "youCanOnlyUploadUp": "이미지는 최대 {maxFiles, number}개까지만 업로드할 수 있어요.",
+        "nameIsNotSupportedPlease": "\"{name}\" 파일은 지원하지 않아요. JPG, PNG, WebP 또는 SVG 파일을 사용해 주세요.",
+        "imageNameExceedsTheValue": "이미지 \"{name}\"이(가) {value, number}MB 크기 제한을 초과했어요.",
+        "nameMayContainUnsafeContent": "\"{name}\"에 안전하지 않은 콘텐츠가 있을 수 있지만 그대로 처리할게요.",
+        "failedToReadNamePlease": "\"{name}\" 파일을 읽지 못했어요. 다시 시도해 주세요.",
+        "imageUploadLimitReached": "이미지 업로드 한도에 도달했어요",
+        "unsupportedFileType": "지원하지 않는 파일 형식",
+        "fileTooLarge": "파일이 너무 커요",
+        "potentiallyUnsafeSvg": "안전하지 않을 수 있는 SVG",
+        "fileReadError": "파일 읽기 오류"
+      },
+      "usePlaygroundParams": {
+        "undo": "실행 취소"
+      },
+      "usePlaygroundShortcuts": {
+        "svgCopiedToClipboard": "SVG를 클립보드에 복사했어요",
+        "failedToCopySvg": "SVG를 복사하지 못했어요"
+      }
+    }
+  },
+  "playground": {
+    "heading": "맞춤 QR 코드 디자이너",
+    "loading": "Playground 불러오는 중...",
+    "metaTitle": "맞춤 QR 코드 디자이너: 로고, 색상, 프레임",
+    "metaDescription": "로고, 색상, 그라데이션, 점 패턴, 프레임으로 나만의 QR 코드를 디자인하고 PNG, SVG, PDF, EPS로 다운로드하세요. 무료이며 가입이나 워터마크가 없어요.",
+    "intro": {
+      "label": "QR 코드 디자이너 소개",
+      "summary": "맞춤 QR 코드 디자이너예요. 로고, 색상, 프레임을 넣은 정적 QR 코드를 무료로 만들 수 있어요. 가입도 워터마크도 없어요.",
+      "types": "링크, Wi-Fi 네트워크, 연락처, 결제 등 {types, number}가지 콘텐츠 유형의 QR 코드를 만들 수 있어요. {bodyPatterns, number}가지 점 패턴, {eyeShapes, number}가지 모서리 눈 모양, 단색 또는 그라데이션 색상, 중앙 로고, {frames, number}가지 행동 유도 프레임으로 스타일을 꾸며 보세요. 스캔 점수로 인쇄 전에 얼마나 잘 인식될지 가늠해 볼 수 있어요.",
+      "downloads": "PNG, JPG, WebP, SVG로 다운로드하거나 정확한 크기의 인쇄용 PDF 또는 EPS로 받을 수 있어요. 정적 QR 코드는 무료이며 만료되지 않아요. 로그인하면 인쇄 후에도 수정할 수 있고 스캔을 추적할 수 있는 동적 QR 코드를 만들 수 있어요.",
+      "links": {
+        "allTypes": "모든 QR 코드 유형",
+        "scanChecker": "스캔 검사기",
+        "printSize": "인쇄 크기 계산기",
+        "styleGuide": "스타일 가이드"
+      }
+    },
+    "presetSelector": {
+      "presets": "프리셋"
+    },
+    "themeSaveDialog": {
+      "name": "이름",
+      "cancel": "취소",
+      "saving": "저장 중",
+      "myAwesomeTheme": "나만의 멋진 테마",
+      "defaultTitle": "테마 저장",
+      "defaultDescription": "나중에 쉽게 찾을 수 있도록 테마 이름을 입력하세요.",
+      "defaultCta": "테마 저장"
+    }
+  },
+  "limits": {
+    "capMeter": {
+      "labelUsed": "{label} 사용량"
+    },
+    "limitCard": {
+      "planUsage": "요금제 및 사용량",
+      "notNow": "나중에 할게요",
+      "labelUsed": "{label} 사용량"
+    },
+    "limitDialog": {
+      "limitReached": "한도에 도달했어요"
+    }
+  },
+  "community": {
+    "browseLayout": {
+      "filters": "필터"
+    },
+    "communityTabs": {
+      "community": "커뮤니티"
+    },
+    "createBundle": {
+      "published": "게시됨",
+      "nameIsLiveInThe": "{name}이(가) 커뮤니티에 게시되었어요.",
+      "viewIt": "보러 가기",
+      "whatToMake": "만들 항목",
+      "itemsYouSaveInThe": "커뮤니티에 저장하거나 직접 게시한 항목이 여기에 표시돼요. <link>커뮤니티 둘러보기</link>",
+      "itemsLengthPicked": "항목<span>{length, number}개 선택됨</span>",
+      "optional": "(선택)",
+      "name": "이름",
+      "description": "설명",
+      "seeIt": "보기",
+      "eGEverythingForA": "예: 카페를 위한 모든 것",
+      "eGCaféTableKit": "예: 카페 테이블 키트",
+      "optionalWhatItsFor": "선택 사항: 용도를 적어 주세요",
+      "collection": "컬렉션",
+      "kit": "키트",
+      "groupFramesThemesAndPage": "프레임, 테마, 페이지 템플릿을 함께 묶어 사람들이 한 번에 둘러볼 수 있어요. 예를 들면 카페를 위한 모든 것이 있어요. 2개 이상 선택하세요.",
+      "aPageTemplateAndThe": "페이지 템플릿과 어울리는 스타일을 함께 묶어요. 키트를 사용하면 페이지는 초안으로, 스타일은 저장된 테마로 복사돼요.",
+      "yours": "내 것",
+      "noSavedMany": "저장된 {many} 없음",
+      "none": "없음",
+      "pickOne": "하나 선택",
+      "publishing": "게시 중",
+      "publishCollection": "컬렉션 게시",
+      "publishKit": "키트 게시"
+    },
+    "creatorLine": {
+      "verified": "인증됨"
+    },
+    "importFrameDialog": {
+      "importAnSvgFrame": "SVG 프레임 가져오기",
+      "shapesAndColorsBecomeA": "도형과 색상이 프레임으로 변환돼요. 텍스트, 이미지, 효과는 제외돼요.",
+      "colors": "색상",
+      "whatChanged": "변경된 내용",
+      "cancel": "취소",
+      "useThisFrame": "이 프레임 사용",
+      "chooseAnSvgFileUp": "SVG 파일을 선택하세요(최대 200 KB)",
+      "refs": {
+        "frame": "프레임 색상",
+        "accent": "강조 색상",
+        "fixed": "그대로 유지돼요"
+      }
+    },
+    "itemActions": {
+      "useInEditor": "에디터에서 사용",
+      "copyToWorkspace": "워크스페이스로 복사",
+      "unpublish": "게시 취소",
+      "removeFromTheCommunity": "커뮤니티에서 삭제할까요?",
+      "itLeavesTheCommunityAt": "커뮤니티에서 바로 사라져요. 이미 사용한 사람들은 복사본을 그대로 가지고 있어요. CC0로 공유된 항목이기 때문이에요.",
+      "cancel": "취소",
+      "removeFromSaved": "저장 취소",
+      "save": "저장",
+      "unlike": "좋아요 취소",
+      "like": "좋아요",
+      "useKit": "키트 사용",
+      "useTemplate": "템플릿 사용",
+      "saved": "저장됨",
+      "open": "열기",
+      "nameIsInYourPages": "\"{name}\"이(가) 내 페이지에 초안으로, 그 스타일이 내 테마에 추가되었어요.",
+      "nameIsInYourPages2": "\"{name}\"이(가) 내 페이지에 초안으로 추가되었어요.",
+      "savedItsInTheEditors": "저장했어요. 에디터의 프레임 선택기에서 확인할 수 있어요.",
+      "saved2": "저장했어요.",
+      "removedFromSaved": "저장을 취소했어요.",
+      "copiedToWhereAsName": "{where}에 \"{name}\" 이름으로 복사했어요",
+      "nameIsNoLongerIn": "\"{name}\"은(는) 더 이상 커뮤니티에 없어요."
+    },
+    "itemCard": {
+      "empty": "비어 있음",
+      "official": "공식",
+      "usecountUses": "{useCount}회 사용",
+      "seeAll": "모두 보기",
+      "likes": "좋아요"
+    },
+    "itemPages": {
+      "previous": "이전",
+      "pagePageOfPages": "{pages, number}페이지 중 {page, number}페이지",
+      "next": "다음",
+      "pages": "페이지"
+    },
+    "licenceConfirm": {
+      "licence": "라이선스:"
+    },
+    "newBundle": {
+      "signInToMakeA": "저장한 항목으로 컬렉션이나 키트를 만들려면 로그인하세요.",
+      "signIn": "로그인"
+    },
+    "publishDesignDialog": {
+      "published": "게시됨",
+      "valueIsLiveInThe": "{value}이(가) 커뮤니티에 게시되었어요.",
+      "done": "완료",
+      "viewIt": "보기",
+      "publishToTheCommunity": "커뮤니티에 게시",
+      "theChatDraftedTheseDetails": "채팅에서 이 정보를 작성했어요. 원하는 대로 바꾸셔도 되며, 게시하기 전에는 아무것도 공유되지 않아요.",
+      "name": "이름",
+      "description": "설명",
+      "seeIt": "보기",
+      "cancel": "취소",
+      "optionalWhatItSuits": "선택 사항: 어울리는 용도",
+      "checkingAndPublishing": "확인 및 게시 중",
+      "publish": "게시"
+    },
+    "publishFrameDialog": {
+      "published": "게시됨",
+      "valueIsLiveInThe": "{value}이(가) 커뮤니티에 게시되었어요.",
+      "done": "완료",
+      "viewIt": "보기",
+      "publishThisFrame": "이 프레임 게시",
+      "anyoneCanFindItIn": "누구나 커뮤니티에서 찾아 자신의 코드에 사용할 수 있어요.",
+      "name": "이름",
+      "description": "설명",
+      "seeIt": "미리 보기",
+      "cancel": "취소",
+      "eGCaféTableCard": "예: 카페 테이블 카드",
+      "optionalWhatItsFor": "선택 사항: 용도",
+      "checkingAndPublishing": "확인 후 게시하는 중",
+      "publish": "게시"
+    },
+    "publishPageDialog": {
+      "published": "게시됨",
+      "valueIsLiveInThe": "{value}이(가) 커뮤니티에 게시되었어요. 내 페이지는 그대로예요.",
+      "done": "완료",
+      "viewIt": "보기",
+      "shareAsAPageTemplate": "페이지 템플릿으로 공유",
+      "step1Of2This": "2단계 중 1단계 · 다른 사람들이 받게 될 내용이에요. 내 정보는 먼저 제거돼요.",
+      "whatWeChanged": "변경한 내용",
+      "checkingThePage": "페이지 확인 중",
+      "yourTextIsReplacedWith": "작성한 텍스트는 샘플 텍스트로 바뀌어요. 필드를 선택하면 작성한 그대로 게시해요.",
+      "everyPhotoIsTakenOut": "모든 사진은 제거되므로 사용자가 직접 추가해요. 유지하는 텍스트에는 링크, 이메일, 전화번호, 주소를 넣을 수 없어요.",
+      "nothingIsLeftToShare": "내 정보를 제거하면 공유할 내용이 남지 않아요.",
+      "cancel": "취소",
+      "continue": "계속",
+      "step2Of2Details": "2단계 중 2단계 · 세부 정보. 커뮤니티에 바로 게시되고, 내 페이지는 그대로 유지돼요.",
+      "name": "이름",
+      "description": "설명",
+      "seeIt": "미리 보기",
+      "back": "뒤로",
+      "eGCaféMenu": "예: 카페 메뉴",
+      "optionalWhatItsFor": "선택 사항: 용도",
+      "kept": " · 유지됨",
+      "empty": "(비어 있음)",
+      "publishing": "게시하는 중",
+      "publish": "게시"
+    },
+    "publishThemeDialog": {
+      "anyoneCanFindItIn": "누구나 커뮤니티 갤러리에서 찾아 사용할 수 있어요. 언제든지 게시를 취소할 수 있어요.",
+      "cancel": "취소",
+      "publishThemenameToTheCommunity": "\"{themeName}\" 커뮤니티에 게시",
+      "publishToTheCommunity": "커뮤니티에 게시",
+      "checkingAndPublishing": "확인 및 게시 중",
+      "publish": "게시",
+      "publishedUnderYourProfile": "내 프로필 아래에 게시되며, 테마는 이 워크스페이스에 그대로 남아 있어요."
+    },
+    "removeItemButton": {
+      "remove": "삭제",
+      "removeFromTheCommunity": "커뮤니티에서 삭제",
+      "removedNameFromTheCommunity": "커뮤니티에서 \"{name}\"을(를) 삭제했어요"
+    },
+    "tryIt": {
+      "tryItWithYourLink": "내 링크로 사용해 보기",
+      "drawnInYourBrowserNothing": "브라우저에서 그려져요. 전송되는 정보는 없어요."
     }
   }
 }

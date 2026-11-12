@@ -271,6 +271,78 @@
     "source": "20417aca9e57",
     "status": "machine"
   },
+  "nav.userProfileDropdown.tryThePlayground": {
+    "source": "9a49d38f2987",
+    "status": "machine"
+  },
+  "nav.userProfileDropdown.signIn": {
+    "source": "bfd402b2f6f3",
+    "status": "machine"
+  },
+  "nav.userProfileDropdown.dashboard": {
+    "source": "67b696468610",
+    "status": "machine"
+  },
+  "nav.userProfileDropdown.accountSettings": {
+    "source": "a587aa1f4ffc",
+    "status": "machine"
+  },
+  "nav.userProfileDropdown.manageBilling": {
+    "source": "7ea27c63aff1",
+    "status": "machine"
+  },
+  "nav.userProfileDropdown.upgradeToPro": {
+    "source": "acb320d7f3e3",
+    "status": "machine"
+  },
+  "nav.userProfileDropdown.admin": {
+    "source": "c1c224b03cd9",
+    "status": "machine"
+  },
+  "nav.userProfileDropdown.privacyPolicy": {
+    "source": "ba445cff3898",
+    "status": "machine"
+  },
+  "nav.userProfileDropdown.signOut": {
+    "source": "48f0d3d397d4",
+    "status": "machine"
+  },
+  "nav.getProCta.getPro": {
+    "source": "12657108fe56",
+    "status": "machine"
+  },
+  "nav.getProDialog.upgradeToValue": {
+    "source": "0cad1cf6201f",
+    "status": "machine"
+  },
+  "nav.getProDialog.unlocksThis": {
+    "source": "56de799023cb",
+    "status": "machine"
+  },
+  "nav.getProDialog.staticQrCodesStayFree": {
+    "source": "9191583cae3a",
+    "status": "machine"
+  },
+  "nav.getProDialog.comparePlansAndPrices": {
+    "source": "d26966ee0f0a",
+    "status": "machine"
+  },
+  "nav.getProDialog.maybeLater": {
+    "source": "2ac741e6203a",
+    "status": "machine"
+  },
+  "nav.getProDialog.thisFeatureIsPartOf": {
+    "source": "a8f7987c880e",
+    "status": "machine"
+  },
+  "nav.getProDialog.thisFeatureIsPartOf2": {
+    "source": "0fa42daac73b",
+    "status": "machine"
+  },
+  "nav.themeToggle.toggleTheme": {
+    "source": "6026719f081a",
+    "status": "machine"
+  },
   "footer.description": {
     "source": "78e26afcf37f",
     "status": "machine"
@@ -2760,7 +2832,7 @@
     "status": "machine"
   },
   "tools.printSize.how2": {
-    "source": "912121cb0cc9",
+    "source": "5ac971557ff9",
     "status": "machine"
   },
   "tools.printSize.how3": {
@@ -2944,7 +3016,7 @@
     "status": "machine"
   },
   "tools.printSize.calculator.codeSizeHint": {
-    "source": "27ea761eb396",
+    "source": "72ac8444f1ba",
     "status": "machine"
   },
   "tools.printSize.calculator.withQuietZone": {
@@ -4272,7 +4344,7 @@
     "status": "machine"
   },
   "barcodeTool.sizes": {
-    "source": "f279320f3163",
+    "source": "a003a144e754",
     "status": "machine"
   },
   "barcodeTool.more": {
@@ -5387,6 +5459,38 @@
     "source": "e92cd9144e16",
     "status": "machine"
   },
+  "ai.chat.aiChatForm.generate": {
+    "source": "49e49bb4401e",
+    "status": "machine"
+  },
+  "ai.chat.communityThemeCard.viewDetails": {
+    "source": "90789c12d073",
+    "status": "machine"
+  },
+  "ai.chat.communityThemeCard.viewInEditor": {
+    "source": "b427c36b87b2",
+    "status": "machine"
+  },
+  "ai.chat.communityThemeCard.unknownCreationDate": {
+    "source": "f7c404da909d",
+    "status": "machine"
+  },
+  "ai.chat.communityThemes.fromTheCommunity": {
+    "source": "fb4606a9b1da",
+    "status": "machine"
+  },
+  "ai.chat.communityThemes.viewAll": {
+    "source": "ff5573a6f287",
+    "status": "machine"
+  },
+  "ai.chat.communityThemes.exploreTheThemesTheCommunity": {
+    "source": "b8c8d6748a82",
+    "status": "machine"
+  },
+  "ai.chat.suggestedPillActions.fromAnImage": {
+    "source": "dda4c7392ada",
+    "status": "machine"
+  },
   "aiArt.metaTitle": {
     "source": "d2a87704b6e0",
     "status": "machine"
@@ -5503,6 +5607,354 @@
     "source": "5a70bf17a984",
     "status": "machine"
   },
+  "aiArt.aiArtPresetGallery.noStylesMatchQueryDescribe": {
+    "source": "d48394d80744",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.clearSearch": {
+    "source": "3b7ea51793e9",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.theStylesDidntLoad": {
+    "source": "2f48485116ad",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.tryAgain": {
+    "source": "d8b8392e2c54",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.pickingOneFillsInThe": {
+    "source": "1b26fd0f5a64",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.searchStyles": {
+    "source": "73e1c1718458",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.searchStylesCatsGoldTiles": {
+    "source": "2fb30534b6aa",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.styleCategories": {
+    "source": "909d57fce310",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.featured": {
+    "source": "c533cafab69e",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.all": {
+    "source": "a52ace420f21",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.someStyles": {
+    "source": "fbb8fd55a460",
+    "status": "machine"
+  },
+  "aiArt.aiArtPresetGallery.allStyles": {
+    "source": "eacdb070abc4",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.yourQrArtWillAppear": {
+    "source": "f42bafc87112",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.generating": {
+    "source": "3607d4f487c6",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.eachImageIsCheckedTo": {
+    "source": "86445300a646",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.bestScannable": {
+    "source": "eacb6a6b8b90",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.download": {
+    "source": "d6eafe823591",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.printSize": {
+    "source": "5fb33b15dce5",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.px": {
+    "source": "fdae95321815",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.retryWithAClearerCode": {
+    "source": "051c6aea6403",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.lockSeedSeed": {
+    "source": "be43d52111b4",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.scanScoreScore": {
+    "source": "a44594d93d5d",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.bestOfThisRun": {
+    "source": "c3c026ccd348",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.theModelsImageDidntScan": {
+    "source": "f02fd3dbc863",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.theModelsImageDidntScan2": {
+    "source": "bf1e79d843b7",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.aiGeneratedQrCodeArtwork": {
+    "source": "e89a11393347",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.variations": {
+    "source": "949500761d36",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.variationValueSeedSeed": {
+    "source": "41662b389cf5",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.variationValue": {
+    "source": "3475d1c46632",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.pendingvariationsVariations": {
+    "source": "b5a71109753d",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.yourArtwork": {
+    "source": "d2db9511eda1",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.downloadTheWidthPxImage": {
+    "source": "e5b48adadd18",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.thePrintSizeCopyDidnt": {
+    "source": "f5dfbd5ebe96",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.couldntPrepareThePrintSize": {
+    "source": "2c1f9abf3f99",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.checking.title": {
+    "source": "781acbe8a572",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.checking.description": {
+    "source": "e5f0838e23dc",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.scannable.title": {
+    "source": "8bb385cce50f",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.scannable.description": {
+    "source": "cd9b242c3951",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.unreadable.title": {
+    "source": "70ac25c78e21",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.unreadable.description": {
+    "source": "75316ffc33d7",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.mismatch.title": {
+    "source": "b03592327b0c",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.mismatch.description": {
+    "source": "c9b608f47ff9",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.unverified.title": {
+    "source": "4ff8f4c50e62",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.status.unverified.description": {
+    "source": "37b129f245ad",
+    "status": "machine"
+  },
+  "aiArt.aiArtResult.resultSummary": {
+    "source": "5f227673a135",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.linkOrText": {
+    "source": "862570702426",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.shorterContentMeansFewerLarger": {
+    "source": "5cfe2db88e00",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.style": {
+    "source": "7e744141b40e",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.variations": {
+    "source": "949500761d36",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.eachVariationIsItsOwn": {
+    "source": "8d6a36b80841",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.negativePrompt": {
+    "source": "a231335539bf",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.theModelIsAskedTo": {
+    "source": "cd63f1aff9ff",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.seed": {
+    "source": "367ef06b8fbf",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.lockSeed": {
+    "source": "cd193bb0d569",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.theSameSeedAndSettings": {
+    "source": "3bb732e67e54",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.referenceImage": {
+    "source": "1a11982bb733",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.remove": {
+    "source": "c3812fc4acb8",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.uploadReference": {
+    "source": "ee177292e31b",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.optionalALogoPhotoOr": {
+    "source": "15611fd346b0",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.aiArtCodesAreStatic": {
+    "source": "767dd676892b",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.alreadyDesigningACode": {
+    "source": "8019b24fc6de",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.toPaintItsContentDynamic": {
+    "source": "938f10eb45ef",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.openInPlayground": {
+    "source": "449b0c98e4dc",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.signInToGeneratePlans": {
+    "source": "654576112243",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.eachImageUses1Ai": {
+    "source": "10e783242986",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.unlimitedAiArtOnYour": {
+    "source": "e33d74af1047",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.describeASceneEG": {
+    "source": "d9412853f4f7",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.qrVisibility": {
+    "source": "274c630ad998",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.creativity": {
+    "source": "1c9fe98ba9e0",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.thingsToAvoidEG": {
+    "source": "5ec10548520c",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.randomEachRun": {
+    "source": "ad05d5bf92cb",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.uploadAReferenceImage": {
+    "source": "3c8446c5ecf3",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.reference": {
+    "source": "71bf90935fc2",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.advancedNegativePromptSeedReference": {
+    "source": "dbbfc9f18cc5",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.advancedNegativePromptReferenceImage": {
+    "source": "845053770c9d",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.generating": {
+    "source": "d20a4476a0a8",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.findItUnderAdvanced": {
+    "source": "a2c18847d1cd",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.seedValueLocked": {
+    "source": "c07da55960ef",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.creditsLeft": {
+    "source": "a035dc8d2797",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.notEnoughLeft": {
+    "source": "6ff36498b030",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.notEnoughLeftOrUpgrade": {
+    "source": "ee15fcbec3b3",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.moreArtistic": {
+    "source": "eb94394c75f9",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.clearerCode": {
+    "source": "bca70b226bbd",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.followsYourPrompt": {
+    "source": "aee7b93745db",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.interpretsFreely": {
+    "source": "83210c378596",
+    "status": "machine"
+  },
+  "aiArt.aiArtStudio.generateVariations": {
+    "source": "ce25a29da4a6",
+    "status": "machine"
+  },
   "compare.metaTitle": {
     "source": "c1f2a0f4f44e",
     "status": "machine"
@@ -5541,6 +5993,5822 @@
   },
   "compare.groups.library.intro": {
     "source": "35c5fb276baf",
+    "status": "machine"
+  },
+  "editor.actionBar.codeButton.code": {
+    "source": "340f463033e0",
+    "status": "machine"
+  },
+  "editor.actionBar.codeButton.getCode": {
+    "source": "a971de4d1aa6",
+    "status": "machine"
+  },
+  "editor.actionBar.copySvgButton.copied": {
+    "source": "8d525e5f158b",
+    "status": "machine"
+  },
+  "editor.actionBar.copySvgButton.copySvg": {
+    "source": "fde90b751ff2",
+    "status": "machine"
+  },
+  "editor.actionBar.copySvgButton.svgCopiedToClipboard": {
+    "source": "e0e56a46c8bd",
+    "status": "machine"
+  },
+  "editor.actionBar.copySvgButton.failedToCopySvg": {
+    "source": "901ebadb12ed",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadButton.download": {
+    "source": "d6eafe823591",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadButton.downloadQrCode": {
+    "source": "41ac000a0c49",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.addContentToSeeYour": {
+    "source": "29e1617ab2d0",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.format": {
+    "source": "2f343666aaa8",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.pixels": {
+    "source": "48b027ebcdab",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.at300Dpi": {
+    "source": "ef6ad231179c",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.width": {
+    "source": "3019947b6daf",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.color": {
+    "source": "6b73191a0a4b",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.bleed": {
+    "source": "2574b5ca76b0",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.downloadQrCode": {
+    "source": "41ac000a0c49",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.imageFile": {
+    "source": "1b59aba273be",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.printReady": {
+    "source": "f34970edd3b5",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.size": {
+    "source": "1af851907331",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.custom": {
+    "source": "494ca78f7374",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.px": {
+    "source": "6ee2cc105a67",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.widthAndHeight": {
+    "source": "ab2e707307ce",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.scale": {
+    "source": "f102986b39ef",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.transparentBackground": {
+    "source": "0fcc9d09de99",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.makeManyFromACsv": {
+    "source": "2af7ba1369bb",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.scannedFromAbout": {
+    "source": "c500cad2e01a",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.setsTheCodeWidthBelow": {
+    "source": "97cd13f60cfb",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.codeWidth": {
+    "source": "7398bd6d54ab",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.unit": {
+    "source": "4e545960f1bf",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.mm": {
+    "source": "8fa1dddd5360",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.inches": {
+    "source": "56bcdb725a57",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.colorMode": {
+    "source": "9f1e7d7d98b2",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.none": {
+    "source": "dc937b598926",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.n3Mm": {
+    "source": "97697cf8f1d3",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.cropMarksPdf": {
+    "source": "8b6cab080d79",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.scansFromUpToAbout": {
+    "source": "99e74f9cf857",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.under2CmIsHard": {
+    "source": "ba3608d51272",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.eachDotIsOnlyValue": {
+    "source": "d66299273b61",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.cmykUsesASimpleConversion": {
+    "source": "91869279b491",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.pdfAndEpsDrawEvery": {
+    "source": "6c97721875d9",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.jpgCantBeTransparent": {
+    "source": "10c4e899d0fc",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.vector": {
+    "source": "01d613f5adf8",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.anySize": {
+    "source": "9f46b4f2f671",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.printbleedMm": {
+    "source": "38f6b055893d",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.vectorPdfOrEpsAt": {
+    "source": "1f93d4ff9db4",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.pickAFormatAndSize": {
+    "source": "701fe8782ac6",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.svgCopied": {
+    "source": "6515bbefa5f5",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.copySvg": {
+    "source": "fde90b751ff2",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.preparing": {
+    "source": "5d1fa38bcf0d",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.downloadFilename": {
+    "source": "0d79fab080c1",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.downloadQrCodePrintPrintsize": {
+    "source": "52b503db7ff6",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.enterMinMaxUnitOr": {
+    "source": "8b77cb07474b",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.enterMinMaxUnit": {
+    "source": "cb8e35d12193",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.downloadedFilename": {
+    "source": "a4a059e4cca5",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.failedToDownloadQrCode": {
+    "source": "198aed433606",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.downloadedPrintfilename": {
+    "source": "3125dbf7b703",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.failedToCreatePrintFile": {
+    "source": "25df4e0bb397",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.couldntCopyTheSvg": {
+    "source": "5211026b8509",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.formatHints.png": {
+    "source": "bf9aa5d60c41",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.formatHints.jpg": {
+    "source": "047738997c7a",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.formatHints.webp": {
+    "source": "4e898f2a82cf",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.formatHints.svg": {
+    "source": "c28d6cf67df9",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.formatHints.pdf": {
+    "source": "0a2f4df35fb5",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.formatHints.eps": {
+    "source": "cbb437e7eb22",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.sizePresets.small": {
+    "source": "969ccbd3cf63",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.sizePresets.medium": {
+    "source": "2975104784a4",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.sizePresets.large": {
+    "source": "f1b7505afa5c",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.sizePresets.xlarge": {
+    "source": "df0fe79898ef",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.sizePresets.3xl": {
+    "source": "1ba76ea7e3d9",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.finishedSize": {
+    "source": "e1599939ba8c",
+    "status": "machine"
+  },
+  "editor.actionBar.downloadDialog.finishedSizeOnPage": {
+    "source": "af4705c86c34",
+    "status": "machine"
+  },
+  "editor.actionBar.editButton.edit": {
+    "source": "464c4ffd019e",
+    "status": "machine"
+  },
+  "editor.actionBar.editButton.editTheme": {
+    "source": "b5b64652b00a",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.more": {
+    "source": "d47d7cb0e4f8",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.moreThingsToDoWith": {
+    "source": "7cbbe7dad5da",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.makeManyFromACsv": {
+    "source": "919971ce3bd1",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.checkAPhotoOfThe": {
+    "source": "c285e1be9ef8",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.publishToCommunity": {
+    "source": "94b019246ca5",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.useQrdxInFigmaAnd": {
+    "source": "f1015e2ce3eb",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.keyboardShortcuts": {
+    "source": "e9bef0b0f3c2",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.makeItDynamic": {
+    "source": "b82ce7a07f64",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.linkOptions": {
+    "source": "854665437a38",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.oneCodePerRowOf": {
+    "source": "6a3518aeb1d3",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.makeSureThePrintedCode": {
+    "source": "38d003b944b6",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.shareThisStyleForOthers": {
+    "source": "9c562727c0dd",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.itsShortLinkFolderTags": {
+    "source": "c9deef25f9c8",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.changeWhereItPointsAfter": {
+    "source": "2bbec364af71",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.signInToChangeWhere": {
+    "source": "f945b3aa38a9",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.pluginsHint.noneListed": {
+    "source": "2ead58e14438",
+    "status": "machine"
+  },
+  "editor.actionBar.moreMenu.pluginsHint.someListed": {
+    "source": "0756c2683ed2",
+    "status": "machine"
+  },
+  "editor.actionBar.publishButton.published": {
+    "source": "2ef42ec21d93",
+    "status": "machine"
+  },
+  "editor.actionBar.publishButton.publish": {
+    "source": "859390eb495b",
+    "status": "machine"
+  },
+  "editor.actionBar.publishButton.publishedToCommunity": {
+    "source": "a981c9662b3f",
+    "status": "machine"
+  },
+  "editor.actionBar.publishButton.publishToCommunity": {
+    "source": "94b019246ca5",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.getCode": {
+    "source": "a971de4d1aa6",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.useThisDesignInYour": {
+    "source": "494576e1b1f5",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.installTheOpenSourceQrdx": {
+    "source": "cbb3d770df82",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.addTheQrCodeComponent": {
+    "source": "d3cf10dd6a3a",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.aPublicImageOfThis": {
+    "source": "c536164c4349",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.createsADynamicCodeWith": {
+    "source": "e373b077c3fc",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.addThisServerToYour": {
+    "source": "6e7959713721",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.askUseQrdxDesignQr": {
+    "source": "f2b22edd8cdf",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.writesThisDesignToQr": {
+    "source": "577ca5a98624",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.developerDocs": {
+    "source": "68cfb8137789",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.pluginsForFigmaCanvaRaycast": {
+    "source": "2f9732f3dea2",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.leftOutValue": {
+    "source": "b0507139996a",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.imageUrl": {
+    "source": "e55026675e45",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.terminal": {
+    "source": "e0926fdac700",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.designQrArguments": {
+    "source": "55c020c9ac45",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.labelCopied": {
+    "source": "135b808fb418",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.copyLabel": {
+    "source": "63ba394601c5",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.command": {
+    "source": "5d347fd948b6",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.address": {
+    "source": "d80c9bf910f1",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.line": {
+    "source": "38a9c1e72158",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.lines": {
+    "source": "5ea44c3961f1",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.copied": {
+    "source": "8d525e5f158b",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.copy": {
+    "source": "e21f935f11d7",
+    "status": "machine"
+  },
+  "editor.actionBar.qrCodeDialog.couldntCopyToTheClipboard": {
+    "source": "703e95e30ea6",
+    "status": "machine"
+  },
+  "editor.actionBar.resetButton.reset": {
+    "source": "daee7606b339",
+    "status": "machine"
+  },
+  "editor.actionBar.resetButton.resetToPresetDefaults": {
+    "source": "6fcf97b79ad9",
+    "status": "machine"
+  },
+  "editor.actionBar.saveButton.save": {
+    "source": "1509f561f241",
+    "status": "machine"
+  },
+  "editor.actionBar.saveButton.saveDesign": {
+    "source": "039de9dce407",
+    "status": "machine"
+  },
+  "editor.actionBar.shareButton.share": {
+    "source": "29887a5ff984",
+    "status": "machine"
+  },
+  "editor.actionBar.shareButton.shareDesign": {
+    "source": "1212c82a074e",
+    "status": "machine"
+  },
+  "editor.actionBar.undoRedoButtons.undo": {
+    "source": "a8283ade3185",
+    "status": "machine"
+  },
+  "editor.actionBar.undoRedoButtons.redo": {
+    "source": "74273989b096",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.scanScoreScoreValue": {
+    "source": "60ac5f5cdbba",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.theDesignStepFailedTry": {
+    "source": "d3d122b5b152",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.theContentNeedsAFix": {
+    "source": "a4327b0799a1",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.setTheContentContentline": {
+    "source": "eea48db8667d",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.checkedScanScoreScoreValue": {
+    "source": "0be0c62f29b8",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.repairing": {
+    "source": "fb4c616eb490",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.stop": {
+    "source": "cae7d57bc067",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.checkedScanScore": {
+    "source": "b8303102b708",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.youAnsweredAnswered": {
+    "source": "ed9de78f2cb0",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.notAnswered": {
+    "source": "1d4ffa2b3478",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.send": {
+    "source": "f6f4688ff23d",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.reject": {
+    "source": "ab604a360777",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.changedToGetThere": {
+    "source": "a615db45e2f6",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.scoredWithASampleLink": {
+    "source": "a670862090db",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.replacesTheContentWithSummary": {
+    "source": "1ef538b194c3",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.turnsOffTheLogoQr": {
+    "source": "d2870d75a07c",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.applyToYourEditor": {
+    "source": "7bd35961a8d1",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.undone": {
+    "source": "dcccf568dff9",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.applyAgain": {
+    "source": "7cb21272ccf4",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.applied": {
+    "source": "0c79a9c22284",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.undo": {
+    "source": "a8283ade3185",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.applying": {
+    "source": "3329a9bb48b9",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.couldntApplyItTryAgain": {
+    "source": "f4baeffad91b",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.notApplied": {
+    "source": "3de0546b8c29",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.templateName": {
+    "source": "9f0b0629df26",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.savesTheLookToYour": {
+    "source": "668eda73f1a6",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.saveToYourAccount": {
+    "source": "6291009be423",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.savedToYourThemes": {
+    "source": "eabb93433cff",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.openThemes": {
+    "source": "22612838fd57",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.upgrade": {
+    "source": "7ec0261b8e8a",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.saving": {
+    "source": "23e39291d613",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.notSaved": {
+    "source": "22b3467c1ba9",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.steps": {
+    "source": "1de3df70ddf4",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.yourAnswer": {
+    "source": "d0e869b777a6",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.orTypeYourAnswer": {
+    "source": "98e7c406f21e",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.designingTheStyle": {
+    "source": "562e390954e7",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.designedTheStyle": {
+    "source": "09113cad5b41",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.fellBackToAClassic": {
+    "source": "79f8cdec07b2",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.repairedValue": {
+    "source": "b58b07264dad",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.couldntCheckTheScanScore": {
+    "source": "b1d3609b7c7d",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.checkingTheScanScore": {
+    "source": "3f508edb3153",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.showLess": {
+    "source": "94ea9b1d33a0",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.showValueMore": {
+    "source": "cd296f5f8eb7",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.applyThisDesign": {
+    "source": "51e8e6f08a82",
+    "status": "machine"
+  },
+  "editor.ai.agentParts.notAppliedYourEditorIs": {
+    "source": "72abd9953a02",
+    "status": "machine"
+  },
+  "editor.ai.aiBotBadge.qrdxAi": {
+    "source": "64ae4f0723f4",
+    "status": "machine"
+  },
+  "editor.ai.aiChatFormBody.chatInput": {
+    "source": "a33cb48eae0a",
+    "status": "machine"
+  },
+  "editor.ai.aiSendButton.stop": {
+    "source": "cae7d57bc067",
+    "status": "machine"
+  },
+  "editor.ai.aiSendButton.labelEnter": {
+    "source": "d135db271d10",
+    "status": "machine"
+  },
+  "editor.ai.alertBanner.youHaveFreepromessagesleftFreePro": {
+    "source": "a50aecb6f40b",
+    "status": "machine"
+  },
+  "editor.ai.alertBanner.upgradeToProToUnlock": {
+    "source": "7120dec29835",
+    "status": "machine"
+  },
+  "editor.ai.alertBanner.upgrade": {
+    "source": "7ec0261b8e8a",
+    "status": "machine"
+  },
+  "editor.ai.chatImagePreview.imagePreview": {
+    "source": "eec6294ab84f",
+    "status": "machine"
+  },
+  "editor.ai.chatImagePreview.imagePreview2": {
+    "source": "f09247433bef",
+    "status": "machine"
+  },
+  "editor.ai.chatImagePreview.fullImagePreview": {
+    "source": "a4526623d5f9",
+    "status": "machine"
+  },
+  "editor.ai.chatInput.designingYourCode": {
+    "source": "4d3bca2917f6",
+    "status": "machine"
+  },
+  "editor.ai.chatInput.newChat": {
+    "source": "db18382a249e",
+    "status": "machine"
+  },
+  "editor.ai.chatInput.toSend": {
+    "source": "1044b2d7aa48",
+    "status": "machine"
+  },
+  "editor.ai.chatInput.newLine": {
+    "source": "42b2829d7d41",
+    "status": "machine"
+  },
+  "editor.ai.chatInput.startANewChat": {
+    "source": "61025e4f8790",
+    "status": "machine"
+  },
+  "editor.ai.chatInput.generate": {
+    "source": "49e49bb4401e",
+    "status": "machine"
+  },
+  "editor.ai.chatInterface.seemsLikeThisMessageIs": {
+    "source": "966620d943ad",
+    "status": "machine"
+  },
+  "editor.ai.chatInterface.cannotRetryThisMessage": {
+    "source": "6a53991485b7",
+    "status": "machine"
+  },
+  "editor.ai.chatThemePreview.stoppedOrFailedRetryFrom": {
+    "source": "6da73e815950",
+    "status": "machine"
+  },
+  "editor.ai.chatThemePreview.apply": {
+    "source": "31e392d1c037",
+    "status": "machine"
+  },
+  "editor.ai.chatThemePreview.collapseSection": {
+    "source": "e11e72f5e09d",
+    "status": "machine"
+  },
+  "editor.ai.chatThemePreview.expandSection": {
+    "source": "259fb3ec04e5",
+    "status": "machine"
+  },
+  "editor.ai.chatThemePreview.feedback.colors": {
+    "source": "415e6bf319ec",
+    "status": "machine"
+  },
+  "editor.ai.chatThemePreview.feedback.shapes": {
+    "source": "944cb124fcbb",
+    "status": "machine"
+  },
+  "editor.ai.chatThemePreview.feedback.contrast": {
+    "source": "a3065a78796d",
+    "status": "machine"
+  },
+  "editor.ai.chatThemePreview.feedback.almost": {
+    "source": "f30ebd69d503",
+    "status": "machine"
+  },
+  "editor.ai.closeableSuggestedPillActions.suggestions": {
+    "source": "16c1d601fc66",
+    "status": "machine"
+  },
+  "editor.ai.closeableSuggestedPillActions.hideSuggestions": {
+    "source": "f63bdb0a5ac2",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.whatShouldTheCodeOpen": {
+    "source": "b1096eb85948",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.addALinkOrChoose": {
+    "source": "07b267e91847",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.link": {
+    "source": "a6a32dbc5618",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.scansOpen": {
+    "source": "2424859e059d",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.orChooseAType": {
+    "source": "459baf9e17b8",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.lengthMoreTypes": {
+    "source": "6a0a24a25ae4",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.continue": {
+    "source": "31fbef162594",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.backToAllTypes": {
+    "source": "00c5b41476a9",
+    "status": "machine"
+  },
+  "editor.ai.contentDialog.aWebsiteAMenuA": {
+    "source": "36ea1df6189d",
+    "status": "machine"
+  },
+  "editor.ai.dragAndDropImageUploader.dropImagesHere": {
+    "source": "4f3699e97dff",
+    "status": "machine"
+  },
+  "editor.ai.enhancePromptButton.stop": {
+    "source": "cae7d57bc067",
+    "status": "machine"
+  },
+  "editor.ai.enhancePromptButton.enhancePrompt": {
+    "source": "d01dd3258618",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.useIt": {
+    "source": "57a64561af08",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.addContent": {
+    "source": "006e1fbb95ac",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.notAdded": {
+    "source": "2460c620beba",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.whatShouldTheCodeOpen": {
+    "source": "b1096eb85948",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.undone": {
+    "source": "dcccf568dff9",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.applyAgain": {
+    "source": "7cb21272ccf4",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.applied": {
+    "source": "0c79a9c22284",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.undo": {
+    "source": "a8283ade3185",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.openedAiArtInThe": {
+    "source": "c8f15a85f911",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.notAppliedYourEditorIs": {
+    "source": "72abd9953a02",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.placedAsValue": {
+    "source": "99b156457845",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.applyToYourEditor": {
+    "source": "7bd35961a8d1",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.apply": {
+    "source": "31e392d1c037",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.reject": {
+    "source": "ab604a360777",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.notGreatYetTryAnother": {
+    "source": "9f21918aafc8",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.keepMyCode": {
+    "source": "43c134d506bb",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.addWhatTheCodeOpens": {
+    "source": "2e9500929732",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.placingYourPicture": {
+    "source": "f042edde241e",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.asValueWithNoAi": {
+    "source": "bd6558c87595",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.replacesTheContentWithSummary": {
+    "source": "1ef538b194c3",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.openAiArt": {
+    "source": "30ff9c26cbb4",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.aiArtIsntOnHere": {
+    "source": "f3647b3898a1",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.useAsImageQr": {
+    "source": "bf9a9ebec638",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.aiPaintsANewScene": {
+    "source": "2429463fa7ab",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.steps": {
+    "source": "1de3df70ddf4",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.addedValue": {
+    "source": "d28ecb7d0f9a",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.noContentAdded": {
+    "source": "20dfff8e2b22",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.yourEditorHasContentNow": {
+    "source": "d707f51de2a7",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.noContentYet": {
+    "source": "8807a6269414",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.addALinkOrChoose": {
+    "source": "0e4b2a1e86e2",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.addALinkOrChoose2": {
+    "source": "dc53b922d2c5",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.placedYourPicture": {
+    "source": "765271fd0d01",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.youStartItInThe": {
+    "source": "07cc9a149d3c",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.checkedScore": {
+    "source": "66690c324201",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.repairedThenCheckedScore": {
+    "source": "ec39ec27f1b1",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.place.logo": {
+    "source": "9f23e9f43fb1",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.place.logo_qr": {
+    "source": "f772edba88ef",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.place.image_qr": {
+    "source": "bf9a9ebec638",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.place.background": {
+    "source": "737e4e56d847",
+    "status": "machine"
+  },
+  "editor.ai.imageParts.place.dots": {
+    "source": "06efeda928fd",
+    "status": "machine"
+  },
+  "editor.ai.imageUploader.image": {
+    "source": "1aa4cb0bcca7",
+    "status": "machine"
+  },
+  "editor.ai.imageUploader.uploadImageForThemeGeneration": {
+    "source": "d7fe884863b5",
+    "status": "machine"
+  },
+  "editor.ai.imageUploader.attachImage": {
+    "source": "2eacc5e02758",
+    "status": "machine"
+  },
+  "editor.ai.messageActions.retry": {
+    "source": "942087cc2d41",
+    "status": "machine"
+  },
+  "editor.ai.messageActions.edit": {
+    "source": "464c4ffd019e",
+    "status": "machine"
+  },
+  "editor.ai.messageEditForm.cancelEdit": {
+    "source": "6fa271453f8a",
+    "status": "machine"
+  },
+  "editor.ai.messageEditForm.confirmEdit": {
+    "source": "c6a61ccc50d4",
+    "status": "machine"
+  },
+  "editor.ai.message.qrdxAi": {
+    "source": "64ae4f0723f4",
+    "status": "machine"
+  },
+  "editor.ai.message.imagePreview": {
+    "source": "f09247433bef",
+    "status": "machine"
+  },
+  "editor.ai.messages.clearError": {
+    "source": "62eb53cf43f8",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.recentGenerations": {
+    "source": "f191a6457e7e",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.applyValue": {
+    "source": "0d170a29fbeb",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.applyThisGeneratedTheme": {
+    "source": "99acdfe9a08f",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.modes.create.label": {
+    "source": "4759498ac2a7",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.modes.create.description": {
+    "source": "2a6c4930c37d",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.modes.remix.label": {
+    "source": "f84ed4375595",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.modes.remix.description": {
+    "source": "489ec352c099",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.modes.tweak.label": {
+    "source": "004f1c973fa3",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.modes.tweak.description": {
+    "source": "132eba97a365",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.greeting": {
+    "source": "ab5084a9a464",
+    "status": "machine"
+  },
+  "editor.ai.noMessagesPlaceholder.greetingName": {
+    "source": "e64a081be942",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.publishNameToTheCommunity": {
+    "source": "bd8238a96fa8",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.aThemeAnyoneCanUse": {
+    "source": "96543b13bf24",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.shareItInTheCommunity": {
+    "source": "46becf6255cd",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.editAndPublish": {
+    "source": "5df511d1a686",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.notNow": {
+    "source": "a0e63d7c7125",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.published": {
+    "source": "2ef42ec21d93",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.viewIt": {
+    "source": "57e5c0af4521",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.notPublishedNothingWasShared": {
+    "source": "0e5d6b711ead",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.checking": {
+    "source": "ec963ffc911b",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.couldntCheckItLookFor": {
+    "source": "f69ccef52b6b",
+    "status": "machine"
+  },
+  "editor.ai.publishCard.notPublished": {
+    "source": "c652001687f1",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.suggestions": {
+    "source": "16c1d601fc66",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.differentStyle": {
+    "source": "8ea29a9a5ef4",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.frameText": {
+    "source": "d9cc18c2f09c",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.addFrame": {
+    "source": "29058aaba5e2",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.darker": {
+    "source": "57b4e37c5e45",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.lighter": {
+    "source": "bad52cff1c6c",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.removeLogo": {
+    "source": "5dea6cec0713",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.addLogo": {
+    "source": "502b7ebeac95",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.saveTemplate": {
+    "source": "3b665762651a",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.keepColors": {
+    "source": "7473f233ff29",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.behindCode": {
+    "source": "72554a1b70ad",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.asLogo": {
+    "source": "98c7c4211858",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.variation": {
+    "source": "1ef183ac1635",
+    "status": "machine"
+  },
+  "editor.ai.suggestionChips.chips.darkVersion": {
+    "source": "376686893909",
+    "status": "machine"
+  },
+  "editor.ai.uploadedImagePreview.uploadedPreview": {
+    "source": "94db5915022d",
+    "status": "machine"
+  },
+  "editor.ai.uploadedImagePreview.removeImage": {
+    "source": "da7acac19683",
+    "status": "machine"
+  },
+  "editor.ai.uploadedImagePreview.uploadedPreviewEnlarged": {
+    "source": "35f693b84f29",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.downloadAiArt": {
+    "source": "b10a24387871",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.widthPx": {
+    "source": "94d5cac54b73",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.printPng": {
+    "source": "0a86ade48418",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.artPrintSizePxChecked": {
+    "source": "66efd10f8dd0",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.useAsImageQr": {
+    "source": "bf9a9ebec638",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.aiGeneratedQrCodeArtwork": {
+    "source": "e89a11393347",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.format": {
+    "source": "2f343666aaa8",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.downloadPng": {
+    "source": "c61867c5855b",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.downloadPrintPng": {
+    "source": "8e9fc0b1d9c3",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.downloadTheWidthPxImage": {
+    "source": "e5b48adadd18",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.pickSvgPdfOrEps": {
+    "source": "a5f1aa5b6c2b",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.thePrintSizeCopyDidnt": {
+    "source": "f5dfbd5ebe96",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.couldntPrepareThePrintSize": {
+    "source": "2c1f9abf3f99",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.nowAnImageQrCode": {
+    "source": "f929dbfe173b",
+    "status": "machine"
+  },
+  "editor.art.aiArtDownload.couldntTurnThisImageInto": {
+    "source": "7dd641c48261",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.style": {
+    "source": "7e744141b40e",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.variations": {
+    "source": "949500761d36",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.eachVariationIsItsOwn": {
+    "source": "92b916a17c4f",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.addYourContentFirstAi": {
+    "source": "071a3dc13537",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.addContent": {
+    "source": "006e1fbb95ac",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.aiArtFitsUpTo": {
+    "source": "3386bc1d7093",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.encodesYourDynamicLinkValue": {
+    "source": "e2751a3e42f1",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.encodesValueFixedOncePrinted": {
+    "source": "f1f0f7f81d1a",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.encodesYourLabelDetailsFixed": {
+    "source": "8f4c07aaa132",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.thingsToAvoid": {
+    "source": "e81487295701",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.seed": {
+    "source": "367ef06b8fbf",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.lockSeed": {
+    "source": "cd193bb0d569",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.referenceImage": {
+    "source": "1a11982bb733",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.useMyLogoAsReference": {
+    "source": "9c7ff653d5af",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.remove": {
+    "source": "c3812fc4acb8",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.uploadReference": {
+    "source": "ee177292e31b",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.optionalItsColorsAndShapes": {
+    "source": "20230cc68140",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.signInToGenerateEvery": {
+    "source": "8d2e6bd5e030",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.eachImageUses1Ai": {
+    "source": "d221c53480f2",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.unlimitedAiArtOnYour": {
+    "source": "e33d74af1047",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.describeASceneEG": {
+    "source": "d9412853f4f7",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.qrVisibility": {
+    "source": "274c630ad998",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.creativity": {
+    "source": "1c9fe98ba9e0",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.eGPeopleBuildingsDark": {
+    "source": "e2934d5f91e4",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.randomEachRun": {
+    "source": "ad05d5bf92cb",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.uploadAReferenceImage": {
+    "source": "3c8446c5ecf3",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.reference": {
+    "source": "71bf90935fc2",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.generating": {
+    "source": "d20a4476a0a8",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.signInToGenerate": {
+    "source": "103482d06618",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.advancedCreativitySeedReference": {
+    "source": "1f6acb6845b8",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.advancedCreativityReference": {
+    "source": "42e0eb23d532",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.uploadItAsAReference": {
+    "source": "150f3e55e195",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.couldntUseYourLogo": {
+    "source": "7f3b91439dd2",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.creditsLeft": {
+    "source": "2a1288b79ae3",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.notEnoughLeft": {
+    "source": "6515c40f9de1",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.notEnoughLeftOrUpgrade": {
+    "source": "bc75c784391e",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.showResults": {
+    "source": "77e09b6d6725",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.moreArtistic": {
+    "source": "eb94394c75f9",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.clearerCode": {
+    "source": "bca70b226bbd",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.followsYourPrompt": {
+    "source": "aee7b93745db",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.interpretsFreely": {
+    "source": "83210c378596",
+    "status": "machine"
+  },
+  "editor.art.aiArtPanel.generateVariations": {
+    "source": "ce25a29da4a6",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.downloadPng": {
+    "source": "c61867c5855b",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.printPng": {
+    "source": "0a86ade48418",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.useAsImageQr": {
+    "source": "bf9a9ebec638",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.retryClearer": {
+    "source": "0a57c9c5ec6d",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.aiArt": {
+    "source": "c08f6cd236cd",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.encodesValue": {
+    "source": "768985064da6",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.backToCode": {
+    "source": "9945fb1d5075",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.eachImageIsCheckedTo": {
+    "source": "86445300a646",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.printPngArtPrintSize": {
+    "source": "fedbd79a07f8",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.artPrintSizePxChecked": {
+    "source": "ac9ebacf53b4",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.variations": {
+    "source": "949500761d36",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.aiArtResult": {
+    "source": "d06640a92160",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.aiGeneratedQrCodeArtwork": {
+    "source": "e89a11393347",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.verifiedToScanScanScore": {
+    "source": "2a48f10f32b3",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.checkBeforePrinting": {
+    "source": "6a8edb5bcb5c",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.scoringTheScan": {
+    "source": "781acbe8a572",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.downloadTheWidthPxImage": {
+    "source": "e5b48adadd18",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.itsVectorArtDownloadIt": {
+    "source": "d3e6f189a317",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.undo": {
+    "source": "a8283ade3185",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.thePrintSizeCopyDidnt": {
+    "source": "f5dfbd5ebe96",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.couldntPrepareThePrintSize": {
+    "source": "2c1f9abf3f99",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.nowAnImageQrCode": {
+    "source": "f929dbfe173b",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.couldntTurnThisImageInto": {
+    "source": "7dd641c48261",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.generatingVariations": {
+    "source": "76705d3b8cfa",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.generatingYourArtwork": {
+    "source": "8b807b9ba70a",
+    "status": "machine"
+  },
+  "editor.art.artCanvas.resultSummary": {
+    "source": "930fb1c9b63c",
+    "status": "machine"
+  },
+  "editor.art.artPanel.art": {
+    "source": "75df3579c730",
+    "status": "machine"
+  },
+  "editor.art.artPanel.off": {
+    "source": "ca7981b46ecf",
+    "status": "machine"
+  },
+  "editor.art.artPanel.logoQr": {
+    "source": "8600fef0b73c",
+    "status": "machine"
+  },
+  "editor.art.artPanel.imageQr": {
+    "source": "fb145ec36764",
+    "status": "machine"
+  },
+  "editor.art.artPanel.aiArt": {
+    "source": "c08f6cd236cd",
+    "status": "machine"
+  },
+  "editor.art.artPanel.artMode": {
+    "source": "a725db498255",
+    "status": "machine"
+  },
+  "editor.art.artPanel.modes.off": {
+    "source": "1af1a73b4370",
+    "status": "machine"
+  },
+  "editor.art.artPanel.modes.logo": {
+    "source": "237a7e1a365a",
+    "status": "machine"
+  },
+  "editor.art.artPanel.modes.halftone": {
+    "source": "91a81ddfcdba",
+    "status": "machine"
+  },
+  "editor.art.artPanel.modes.ai": {
+    "source": "423600bc9155",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.brandLogos": {
+    "source": "23b80754a615",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.theBrandLogosDidntLoad": {
+    "source": "addcef53ffd5",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.tryAgain": {
+    "source": "d8b8392e2c54",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.noBrandMatchesQuerySome": {
+    "source": "e032f5eadf77",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.allBrandsAToZ": {
+    "source": "bbab4f758081",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.logosFromSimpleIconsCc0": {
+    "source": "e6a7bca7564f",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.showMore": {
+    "source": "f5c9bd131486",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.searchBrands": {
+    "source": "50539c73c2f1",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.searchSpotifyPaypalGoogleMaps": {
+    "source": "566207125ede",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.logoColor": {
+    "source": "cecae35b7903",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.results": {
+    "source": "219c4a6c86a7",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.titleLogo": {
+    "source": "39aba16dd02e",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.valueBrandsFromSimpleIcons": {
+    "source": "54ba0ed0655a",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.brandsFromSimpleIconsEach": {
+    "source": "1cad95ba877b",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.plateNeededForWhite": {
+    "source": "90ca5ed6658e",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.plate": {
+    "source": "a7cd5d8f8422",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.n1Brand": {
+    "source": "f631ef3a9788",
+    "status": "machine"
+  },
+  "editor.brandLogos.brandLogoGallery.valueBrands": {
+    "source": "a5a9a92c3d34",
+    "status": "machine"
+  },
+  "editor.communitySheet.communityThemes": {
+    "source": "037a4b1636b8",
+    "status": "machine"
+  },
+  "editor.communitySheet.freeToUseUnderCc0": {
+    "source": "3f5c293e4962",
+    "status": "machine"
+  },
+  "editor.communitySheet.sort": {
+    "source": "bec69036aa27",
+    "status": "machine"
+  },
+  "editor.communitySheet.allTags": {
+    "source": "7c39c16dce73",
+    "status": "machine"
+  },
+  "editor.communitySheet.tryAgain": {
+    "source": "d8b8392e2c54",
+    "status": "machine"
+  },
+  "editor.communitySheet.clearSearch": {
+    "source": "3b7ea51793e9",
+    "status": "machine"
+  },
+  "editor.communitySheet.showAllTags": {
+    "source": "874991190055",
+    "status": "machine"
+  },
+  "editor.communitySheet.searchCoversTheFirstLength": {
+    "source": "1d68fb2b83b4",
+    "status": "machine"
+  },
+  "editor.communitySheet.saveAndContinue": {
+    "source": "6880daf172a2",
+    "status": "machine"
+  },
+  "editor.communitySheet.publishingSharesASavedTheme": {
+    "source": "30705a93ec36",
+    "status": "machine"
+  },
+  "editor.communitySheet.saveToPublish": {
+    "source": "cb1bb341ed1d",
+    "status": "machine"
+  },
+  "editor.communitySheet.searchCommunityThemes": {
+    "source": "4ce050676baa",
+    "status": "machine"
+  },
+  "editor.communitySheet.searchThemes": {
+    "source": "22da14c0ca6f",
+    "status": "machine"
+  },
+  "editor.communitySheet.loadingThemes": {
+    "source": "68dba03bacf2",
+    "status": "machine"
+  },
+  "editor.communitySheet.couldntLoadCommunityThemes": {
+    "source": "1031d8393b54",
+    "status": "machine"
+  },
+  "editor.communitySheet.noThemesMatchQuery": {
+    "source": "668e12c83a47",
+    "status": "machine"
+  },
+  "editor.communitySheet.noThemesTaggedTagYet": {
+    "source": "e81401142bcc",
+    "status": "machine"
+  },
+  "editor.communitySheet.noCommunityThemesYet": {
+    "source": "19f78317657f",
+    "status": "machine"
+  },
+  "editor.communitySheet.applyName": {
+    "source": "e4805502064f",
+    "status": "machine"
+  },
+  "editor.communitySheet.official": {
+    "source": "c409c66f71f2",
+    "status": "machine"
+  },
+  "editor.communitySheet.unlikeName": {
+    "source": "e485aec8475c",
+    "status": "machine"
+  },
+  "editor.communitySheet.likeName": {
+    "source": "ab415519f882",
+    "status": "machine"
+  },
+  "editor.communitySheet.likes": {
+    "source": "cca0662f9ddd",
+    "status": "machine"
+  },
+  "editor.communitySheet.published": {
+    "source": "2ef42ec21d93",
+    "status": "machine"
+  },
+  "editor.communitySheet.publishThisStyle": {
+    "source": "d46b25845baa",
+    "status": "machine"
+  },
+  "editor.communitySheet.tags": {
+    "source": "1331275bc537",
+    "status": "machine"
+  },
+  "editor.communitySheet.undo": {
+    "source": "a8283ade3185",
+    "status": "machine"
+  },
+  "editor.communitySheet.likedName": {
+    "source": "3d7fa69b1385",
+    "status": "machine"
+  },
+  "editor.communitySheet.liked": {
+    "source": "33cc9fde1cc2",
+    "status": "machine"
+  },
+  "editor.communitySheet.sorts.popular": {
+    "source": "76327dec9ae3",
+    "status": "machine"
+  },
+  "editor.communitySheet.sorts.newest": {
+    "source": "d15efa178cf6",
+    "status": "machine"
+  },
+  "editor.contentForms.amazonForm.amazonProductUrl": {
+    "source": "cc497bb00d96",
+    "status": "machine"
+  },
+  "editor.contentForms.amazonForm.scanningWillOpenYourAmazon": {
+    "source": "fe19f0ce415e",
+    "status": "machine"
+  },
+  "editor.contentForms.attendanceForm.googleFormUrl": {
+    "source": "b66f6e0e7770",
+    "status": "machine"
+  },
+  "editor.contentForms.attendanceForm.scanningWillOpenYourAttendance": {
+    "source": "3a128f7a42aa",
+    "status": "machine"
+  },
+  "editor.contentForms.attendanceForm.httpsFormsGleOrHttps": {
+    "source": "fd6a07d58050",
+    "status": "machine"
+  },
+  "editor.contentForms.bitcoinForm.bitcoinAddress": {
+    "source": "7b6a5107d195",
+    "status": "machine"
+  },
+  "editor.contentForms.bitcoinForm.amountBtc": {
+    "source": "2dce96fbef31",
+    "status": "machine"
+  },
+  "editor.contentForms.bitcoinForm.label": {
+    "source": "0e66373f45dc",
+    "status": "machine"
+  },
+  "editor.contentForms.bitcoinForm.message": {
+    "source": "2f77668a9dfb",
+    "status": "machine"
+  },
+  "editor.contentForms.bitcoinForm.scanningWillOpenABitcoin": {
+    "source": "1704607eb355",
+    "status": "machine"
+  },
+  "editor.contentForms.bitcoinForm.n1a1zp1ep5qgefi2dmptftl5slmv7divfna": {
+    "source": "31a9d2e8a70a",
+    "status": "machine"
+  },
+  "editor.contentForms.bitcoinForm.paymentLabel": {
+    "source": "0aeca193eca3",
+    "status": "machine"
+  },
+  "editor.contentForms.bitcoinForm.paymentMessage": {
+    "source": "ea356ebad579",
+    "status": "machine"
+  },
+  "editor.contentForms.calcomForm.calComBookingUrl": {
+    "source": "5c862845bcef",
+    "status": "machine"
+  },
+  "editor.contentForms.calcomForm.scanningWillOpenYourCal": {
+    "source": "ab28ed71c5a0",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.dubShortLink": {
+    "source": "f3d8cc6a8025",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.scanningWillOpenYourDub": {
+    "source": "67f7f7115314",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.connectDub": {
+    "source": "051a5bd8fbfd",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.connectDubToCreatePick": {
+    "source": "6dc944a6f2bf",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.enterManually": {
+    "source": "ad876beba8ac",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.createNew": {
+    "source": "9f3df753a41a",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.selectExisting": {
+    "source": "b7bb9b69c48c",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.pasteALink": {
+    "source": "8275f7c22a05",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.destinationUrl": {
+    "source": "c3c0ab7515f4",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.domain": {
+    "source": "79fa33618d8e",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.customEnding": {
+    "source": "65c5a49bf29c",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.title": {
+    "source": "7e8cd2056da7",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.description": {
+    "source": "526e0087cc3f",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.createDubLink": {
+    "source": "25d36cdb90f5",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.loadingYourDubLinks": {
+    "source": "64881c6e6738",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.clicksClicks": {
+    "source": "a152162d4111",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.selectAShortLink": {
+    "source": "a0c41ca4384e",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.noLinksFound": {
+    "source": "fb874cfa672b",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.scansGoToUrl": {
+    "source": "c8945cee1879",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.campaign": {
+    "source": "3dc260b24720",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.springCampaign": {
+    "source": "4d3550c0027c",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.optionalInternalNote": {
+    "source": "8308a6714f80",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.searchLinks": {
+    "source": "32df885dec43",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.failedToConnectDub": {
+    "source": "4f742d496a24",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.dubLinkCreated": {
+    "source": "5e2f6e97aa9c",
+    "status": "machine"
+  },
+  "editor.contentForms.dubshForm.failedToCreateDubLink": {
+    "source": "15f465440f68",
+    "status": "machine"
+  },
+  "editor.contentForms.emailForm.recipientEmail": {
+    "source": "cfcb8db45c49",
+    "status": "machine"
+  },
+  "editor.contentForms.emailForm.subject": {
+    "source": "68971283841a",
+    "status": "machine"
+  },
+  "editor.contentForms.emailForm.message": {
+    "source": "2f77668a9dfb",
+    "status": "machine"
+  },
+  "editor.contentForms.emailForm.scanningWillOpenAnEmail": {
+    "source": "2d78f9fc7e86",
+    "status": "machine"
+  },
+  "editor.contentForms.emailForm.contactExampleCom": {
+    "source": "a41cd188c7ed",
+    "status": "machine"
+  },
+  "editor.contentForms.emailForm.emailSubject": {
+    "source": "848f0ca2c125",
+    "status": "machine"
+  },
+  "editor.contentForms.emailForm.emailMessage": {
+    "source": "eb653a6eee22",
+    "status": "machine"
+  },
+  "editor.contentForms.ethereumForm.ethereumAddress": {
+    "source": "12f557331067",
+    "status": "machine"
+  },
+  "editor.contentForms.ethereumForm.amountEth": {
+    "source": "93b994703f35",
+    "status": "machine"
+  },
+  "editor.contentForms.ethereumForm.gasLimit": {
+    "source": "d049facb6e11",
+    "status": "machine"
+  },
+  "editor.contentForms.ethereumForm.scanningWillOpenAnEthereum": {
+    "source": "587dbe585397",
+    "status": "machine"
+  },
+  "editor.contentForms.ethereumForm.n0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359": {
+    "source": "ea9bf4640ade",
+    "status": "machine"
+  },
+  "editor.contentForms.etsyForm.etsyShopUrl": {
+    "source": "06f9af9a962c",
+    "status": "machine"
+  },
+  "editor.contentForms.etsyForm.scanningWillOpenYourEtsy": {
+    "source": "e10c9779d5e1",
+    "status": "machine"
+  },
+  "editor.contentForms.exampleForm.exampleDataReplaceItWith": {
+    "source": "e1348ca93759",
+    "status": "machine"
+  },
+  "editor.contentForms.exampleForm.clear": {
+    "source": "83b12c2216ef",
+    "status": "machine"
+  },
+  "editor.contentForms.exampleForm.tryAnExample": {
+    "source": "2530c04512b7",
+    "status": "machine"
+  },
+  "editor.contentForms.facebookForm.facebookProfileUrl": {
+    "source": "aa4ac3952662",
+    "status": "machine"
+  },
+  "editor.contentForms.facebookForm.scanningWillOpenYourFacebook": {
+    "source": "64f58aa695b6",
+    "status": "machine"
+  },
+  "editor.contentForms.flipkartForm.flipkartProductUrl": {
+    "source": "63eb99b462e8",
+    "status": "machine"
+  },
+  "editor.contentForms.flipkartForm.scanningWillOpenYourFlipkart": {
+    "source": "79ed93eb1c8a",
+    "status": "machine"
+  },
+  "editor.contentForms.googleDriveForm.connectGoogleDriveToPick": {
+    "source": "bcd09912d6c0",
+    "status": "machine"
+  },
+  "editor.contentForms.googleDriveForm.connectGoogleDrive": {
+    "source": "4406cf53eddd",
+    "status": "machine"
+  },
+  "editor.contentForms.googleDriveForm.googleDriveUrl": {
+    "source": "20fb79a4fcb8",
+    "status": "machine"
+  },
+  "editor.contentForms.googleDriveForm.scanningWillOpenTheSelected": {
+    "source": "33fa3051d474",
+    "status": "machine"
+  },
+  "editor.contentForms.googleDriveForm.search": {
+    "source": "49c266baaaa7",
+    "status": "machine"
+  },
+  "editor.contentForms.googleDriveForm.loadMore": {
+    "source": "ac8991ef0101",
+    "status": "machine"
+  },
+  "editor.contentForms.googleDriveForm.searchDriveFilesAndFolders": {
+    "source": "5cbad767a029",
+    "status": "machine"
+  },
+  "editor.contentForms.googleDriveForm.failedToConnectGoogleDrive": {
+    "source": "46d411ee0a11",
+    "status": "machine"
+  },
+  "editor.contentForms.googleReviewForm.googlePlaceId": {
+    "source": "e6aa98281bd0",
+    "status": "machine"
+  },
+  "editor.contentForms.googleReviewForm.findYoursWithTheGoogle": {
+    "source": "1f12516690c1",
+    "status": "machine"
+  },
+  "editor.contentForms.googleReviewForm.scanningWillOpenGoogleTo": {
+    "source": "5e7a75c11c54",
+    "status": "machine"
+  },
+  "editor.contentForms.googleReviewForm.chijn1tTdeuemsrusoyg83fry4": {
+    "source": "52791f4bf8f0",
+    "status": "machine"
+  },
+  "editor.contentForms.instagramForm.instagramUsername": {
+    "source": "837f151e98f6",
+    "status": "machine"
+  },
+  "editor.contentForms.instagramForm.scanningWillOpenYourInstagram": {
+    "source": "ddd24aa188e7",
+    "status": "machine"
+  },
+  "editor.contentForms.instagramForm.usernameOrUsername": {
+    "source": "3e0831edfb5f",
+    "status": "machine"
+  },
+  "editor.contentForms.linkedinForm.linkedinProfileUrl": {
+    "source": "ef0f1c903cfd",
+    "status": "machine"
+  },
+  "editor.contentForms.linkedinForm.scanningWillOpenYourLinkedin": {
+    "source": "0bf83de4a7aa",
+    "status": "machine"
+  },
+  "editor.contentForms.mapsForm.location": {
+    "source": "692d4cc7005a",
+    "status": "machine"
+  },
+  "editor.contentForms.mapsForm.scanningWillOpenThisPlace": {
+    "source": "4bcaa988535c",
+    "status": "machine"
+  },
+  "editor.contentForms.mapsForm.addressOrCoordinates407128": {
+    "source": "feb9272b9c14",
+    "status": "machine"
+  },
+  "editor.contentForms.paypalForm.paypalMeUrlOrPayment": {
+    "source": "569ec9d03b01",
+    "status": "machine"
+  },
+  "editor.contentForms.paypalForm.scanningWillOpenThePaypal": {
+    "source": "3b3fc4d3f6e1",
+    "status": "machine"
+  },
+  "editor.contentForms.paypalForm.httpsPaypalMeUsernameOr": {
+    "source": "2593b5d3083f",
+    "status": "machine"
+  },
+  "editor.contentForms.phoneForm.phoneNumber": {
+    "source": "28a750edc101",
+    "status": "machine"
+  },
+  "editor.contentForms.phoneForm.includeTheCountryCodeLike": {
+    "source": "7e0433888cd2",
+    "status": "machine"
+  },
+  "editor.contentForms.pinterestForm.pinterestUsername": {
+    "source": "ad5f8f01cd02",
+    "status": "machine"
+  },
+  "editor.contentForms.pinterestForm.scanningWillOpenYourPinterest": {
+    "source": "904b867beedf",
+    "status": "machine"
+  },
+  "editor.contentForms.pinterestForm.username": {
+    "source": "16f78a7d6317",
+    "status": "machine"
+  },
+  "editor.contentForms.redditForm.redditUsername": {
+    "source": "f1c21a0f7f8d",
+    "status": "machine"
+  },
+  "editor.contentForms.redditForm.subreddit": {
+    "source": "91899645c50e",
+    "status": "machine"
+  },
+  "editor.contentForms.redditForm.fillInOneIfBoth": {
+    "source": "17584e8c48ab",
+    "status": "machine"
+  },
+  "editor.contentForms.redditForm.scanningWillOpenTheReddit": {
+    "source": "04bb4d287d13",
+    "status": "machine"
+  },
+  "editor.contentForms.redditForm.usernameOrUUsername": {
+    "source": "ee34b485fe0b",
+    "status": "machine"
+  },
+  "editor.contentForms.redditForm.subredditOrRSubreddit": {
+    "source": "4b12c55a0601",
+    "status": "machine"
+  },
+  "editor.contentForms.smsForm.phoneNumber": {
+    "source": "28a750edc101",
+    "status": "machine"
+  },
+  "editor.contentForms.smsForm.message": {
+    "source": "2f77668a9dfb",
+    "status": "machine"
+  },
+  "editor.contentForms.smsForm.scanningWillOpenAText": {
+    "source": "f544afa8be5e",
+    "status": "machine"
+  },
+  "editor.contentForms.smsForm.preFilledSmsMessage": {
+    "source": "c7cfe4a9fd91",
+    "status": "machine"
+  },
+  "editor.contentForms.snapchatForm.snapchatUsername": {
+    "source": "f485372ce0f4",
+    "status": "machine"
+  },
+  "editor.contentForms.snapchatForm.scanningWillOpenYourSnapchat": {
+    "source": "3425c0d2ff14",
+    "status": "machine"
+  },
+  "editor.contentForms.snapchatForm.username": {
+    "source": "16f78a7d6317",
+    "status": "machine"
+  },
+  "editor.contentForms.spotifyForm.spotifyUriOrUrl": {
+    "source": "b44c8492935e",
+    "status": "machine"
+  },
+  "editor.contentForms.spotifyForm.scanningWillOpenTheContent": {
+    "source": "63e310576a95",
+    "status": "machine"
+  },
+  "editor.contentForms.spotifyForm.spotifyTrackOrHttpsOpen": {
+    "source": "e6c87f1943ca",
+    "status": "machine"
+  },
+  "editor.contentForms.textForm.textContent": {
+    "source": "82a78041b035",
+    "status": "machine"
+  },
+  "editor.contentForms.textForm.pasteALinkAndIt": {
+    "source": "351efa4891c2",
+    "status": "machine"
+  },
+  "editor.contentForms.textForm.enterAnyText": {
+    "source": "dcd1d0733b08",
+    "status": "machine"
+  },
+  "editor.contentForms.threadsForm.threadsUsername": {
+    "source": "74a1f8b83213",
+    "status": "machine"
+  },
+  "editor.contentForms.threadsForm.scanningWillOpenYourThreads": {
+    "source": "9535c43e4ee3",
+    "status": "machine"
+  },
+  "editor.contentForms.threadsForm.usernameOrUsername": {
+    "source": "3e0831edfb5f",
+    "status": "machine"
+  },
+  "editor.contentForms.tiktokForm.tiktokUsername": {
+    "source": "27fe1ff8f882",
+    "status": "machine"
+  },
+  "editor.contentForms.tiktokForm.scanningWillOpenYourTiktok": {
+    "source": "2f9e24b25ca4",
+    "status": "machine"
+  },
+  "editor.contentForms.tiktokForm.usernameOrUsername": {
+    "source": "3e0831edfb5f",
+    "status": "machine"
+  },
+  "editor.contentForms.twitterForm.twitterXUsername": {
+    "source": "3cf895dee30f",
+    "status": "machine"
+  },
+  "editor.contentForms.twitterForm.scanningWillOpenYourTwitter": {
+    "source": "547e8dedbc42",
+    "status": "machine"
+  },
+  "editor.contentForms.twitterForm.usernameOrUsername": {
+    "source": "3e0831edfb5f",
+    "status": "machine"
+  },
+  "editor.contentForms.upiForm.upiId": {
+    "source": "bdd54cf6a00e",
+    "status": "machine"
+  },
+  "editor.contentForms.upiForm.payeeName": {
+    "source": "1f1955027eb7",
+    "status": "machine"
+  },
+  "editor.contentForms.upiForm.amount": {
+    "source": "fcbb0bc384ee",
+    "status": "machine"
+  },
+  "editor.contentForms.upiForm.note": {
+    "source": "d8da2c49df39",
+    "status": "machine"
+  },
+  "editor.contentForms.upiForm.scanningWillOpenAUpi": {
+    "source": "5d74f9e69c84",
+    "status": "machine"
+  },
+  "editor.contentForms.upiForm.usernameBankname": {
+    "source": "7a7332d1ddd5",
+    "status": "machine"
+  },
+  "editor.contentForms.upiForm.yourName": {
+    "source": "2c6b2e253c01",
+    "status": "machine"
+  },
+  "editor.contentForms.upiForm.paymentFor": {
+    "source": "82b5382b10d7",
+    "status": "machine"
+  },
+  "editor.contentForms.urlForm.websiteAddress": {
+    "source": "82b2a6fe809d",
+    "status": "machine"
+  },
+  "editor.contentForms.urlForm.scansOpen": {
+    "source": "2424859e059d",
+    "status": "machine"
+  },
+  "editor.contentForms.urlForm.pasteAnyLinkSocialAnd": {
+    "source": "5eac400d3419",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.firstName": {
+    "source": "0db7d3c7da0f",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.lastName": {
+    "source": "7b4888049459",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.organization": {
+    "source": "d764d42592fc",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.phone": {
+    "source": "63dceb8800b2",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.email": {
+    "source": "969ccbd3cf63",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.website": {
+    "source": "b5a229ac8bec",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.address": {
+    "source": "56ef8f20955f",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.note": {
+    "source": "d8da2c49df39",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.scanningWillOfferToSave": {
+    "source": "3aa60b39c4cb",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.john": {
+    "source": "a8cfcd748320",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.doe": {
+    "source": "fd53ef835b15",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.companyName": {
+    "source": "6dfada13d2f4",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.johnExampleCom": {
+    "source": "855f96e983f1",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.n123MainStCityCountry": {
+    "source": "935901cbaea6",
+    "status": "machine"
+  },
+  "editor.contentForms.vcardForm.additionalNotes": {
+    "source": "5871e1abaa63",
+    "status": "machine"
+  },
+  "editor.contentForms.venmoForm.venmoUsername": {
+    "source": "43e0aa40af19",
+    "status": "machine"
+  },
+  "editor.contentForms.venmoForm.amount": {
+    "source": "7d24cd9f65ef",
+    "status": "machine"
+  },
+  "editor.contentForms.venmoForm.note": {
+    "source": "d8da2c49df39",
+    "status": "machine"
+  },
+  "editor.contentForms.venmoForm.scanningWillOpenVenmoWith": {
+    "source": "59773952acc2",
+    "status": "machine"
+  },
+  "editor.contentForms.venmoForm.username": {
+    "source": "93100fc44c0a",
+    "status": "machine"
+  },
+  "editor.contentForms.venmoForm.paymentFor": {
+    "source": "82b5382b10d7",
+    "status": "machine"
+  },
+  "editor.contentForms.whatsappForm.phoneNumber": {
+    "source": "28a750edc101",
+    "status": "machine"
+  },
+  "editor.contentForms.whatsappForm.includeCountryCodeWithoutSpaces": {
+    "source": "8aa0b1d8728d",
+    "status": "machine"
+  },
+  "editor.contentForms.whatsappForm.message": {
+    "source": "2f77668a9dfb",
+    "status": "machine"
+  },
+  "editor.contentForms.whatsappForm.scanningWillOpenAWhatsapp": {
+    "source": "c4d833ed7087",
+    "status": "machine"
+  },
+  "editor.contentForms.whatsappForm.preFilledWhatsappMessage": {
+    "source": "ae3c3653ae27",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.networkName": {
+    "source": "7d4e1959966c",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.security": {
+    "source": "8f6fb4eb7f42",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.wpaWpa2": {
+    "source": "cdfad93add38",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.noPassword": {
+    "source": "56b9e00d72e7",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.password": {
+    "source": "7c6dc119843f",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.hiddenNetwork": {
+    "source": "366763cbc9fd",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.scanningWillOfferToJoin": {
+    "source": "b0357ea736fe",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.myWiFiNetwork": {
+    "source": "b9957520afa7",
+    "status": "machine"
+  },
+  "editor.contentForms.wifiForm.networkPassword": {
+    "source": "62116477742b",
+    "status": "machine"
+  },
+  "editor.contentForms.youtubeForm.videoUrl": {
+    "source": "f094b14a517a",
+    "status": "machine"
+  },
+  "editor.contentForms.youtubeForm.channelUrl": {
+    "source": "8f5235ecb45d",
+    "status": "machine"
+  },
+  "editor.contentForms.youtubeForm.fillInOneIfBoth": {
+    "source": "5907e156c092",
+    "status": "machine"
+  },
+  "editor.contentForms.youtubeForm.scanningWillOpenTheYoutube": {
+    "source": "83489b301d96",
+    "status": "machine"
+  },
+  "editor.contentForms.cryptoForms.scanningOpensAWalletWith": {
+    "source": "079d96d0a913",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTelegramOrT": {
+    "source": "d09a803b7b84",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensAChatIn": {
+    "source": "95059d63cd24",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheInviteIn": {
+    "source": "3aa7f393a01e",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensLineToAdd": {
+    "source": "57e78bbdb8be",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheProfileOn": {
+    "source": "c06e93836689",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheProfileOn2": {
+    "source": "d0994e490c52",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheChannelOn": {
+    "source": "6150219b39b9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensSoundcloud": {
+    "source": "3f244f4ea7a4",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheMeetingIn": {
+    "source": "49d033feac5a",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensTheCallIn": {
+    "source": "d68e42271fed",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensWazeOrWaze": {
+    "source": "38b86953b6f9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensYourCashApp": {
+    "source": "655b40813b2a",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.scanningOpensYourRevolutMe": {
+    "source": "9311caa35d4d",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.usernameChannelOrGroup": {
+    "source": "f21280ff19a7",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.usernameOrATMe": {
+    "source": "9946446d9f6b",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aPublicUsernameOrPaste": {
+    "source": "f0c722e98aca",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.phoneNumber": {
+    "source": "306f1bb20677",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.withTheCountryCodeIt": {
+    "source": "df2972864eef",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.open": {
+    "source": "ed077f3d8125",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aUsernameChannelOrGroup": {
+    "source": "0c2bdce608e8",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aChatWithAPhone": {
+    "source": "2e2dca9de1bc",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.withTheCountryCode": {
+    "source": "ec3710b81e18",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.usernameOrGroupLink": {
+    "source": "fdc382d2eb7e",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.usernamesCantBeTurnedInto": {
+    "source": "ae81d07f2f41",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aUsernameOrGroupLink": {
+    "source": "952c35bd1f5e",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.inviteLinkOrCode": {
+    "source": "0526669d8182",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.discordGgAbc123": {
+    "source": "ff528ef9a03b",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.invitesExpireAfter7Days": {
+    "source": "3fffcc6869e5",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.lineId": {
+    "source": "4a5f5e5b9ded",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourLineIdOrOfficial": {
+    "source": "409b20d855db",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.officialAccountsStartWithYou": {
+    "source": "8d30e915ccae",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.handle": {
+    "source": "fa04ae3d5198",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.aCustomDomainHandleWorks": {
+    "source": "261bce98e841",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.youMastodonSocial": {
+    "source": "b28d2150b83b",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourFullHandleServerIncluded": {
+    "source": "1df103c85ce5",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.twitchUsername": {
+    "source": "dbc7734c4de8",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourchannel": {
+    "source": "a9d1b858c0d9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.profileNameOrLink": {
+    "source": "21e84003127f",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yournameOrATrackLink": {
+    "source": "1608ad0ecc1a",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.pasteATrackOrPlaylist": {
+    "source": "7f5c0d249313",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.meetingIdOrInviteLink": {
+    "source": "cce3f1ddc271",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.pasteTheInviteLinkTo": {
+    "source": "b2c4e2eb17c9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.meetingCodeOrLink": {
+    "source": "aa8ea9359c4f",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.abcDefgHij": {
+    "source": "fbc346f7fdf4",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.addressOrCoordinates": {
+    "source": "15b6d0fe989c",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.pikePlaceMarketSeattleOr": {
+    "source": "ddf59524b7ba",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.startDirectionsRightAway": {
+    "source": "21fa9c259feb",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.cashtag": {
+    "source": "548ead8bc820",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourcashtag": {
+    "source": "6da0d05b77c2",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.revolutUsername": {
+    "source": "099e0d173d8c",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourname": {
+    "source": "90d48ef59ea9",
+    "status": "machine"
+  },
+  "editor.contentForms.linkForms.yourRevtagAsInRevolut": {
+    "source": "f0a8964345f6",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.theEpcGuidelinesAskFor": {
+    "source": "30b1bdd7ea33",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.useLevelM": {
+    "source": "48284992731a",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningOpensThePayersBank": {
+    "source": "6641cd33d7ed",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningFillsInAEuro": {
+    "source": "c7d8de980ef1",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningOpensPaynowInAny": {
+    "source": "9374c0a0e999",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningOpensAPromptpayTransfer": {
+    "source": "6ab8dfeddfa0",
+    "status": "machine"
+  },
+  "editor.contentForms.paymentForms.scanningOpensATransferIn": {
+    "source": "444259b213a8",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1gxuvm9": {
+    "source": "4d5e4c9cde53",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k166v0c5": {
+    "source": "d485aa669f02",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1yiqnlw": {
+    "source": "5b0baced219a",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k6ynt77": {
+    "source": "69083b7fe01a",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k6umxxr": {
+    "source": "14f6e90c19f1",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k144ewn1": {
+    "source": "b59dd1c1c16e",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k142k4ma": {
+    "source": "fc33f73246f4",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1tyryef": {
+    "source": "7deb57b123ab",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kc0qpqq": {
+    "source": "893050feed01",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k175bjom": {
+    "source": "7e280711764d",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1cam7ic": {
+    "source": "2f77668a9dfb",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1x302fo": {
+    "source": "7f51a9fea1ad",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1ysrm3g": {
+    "source": "be8c62270423",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1lj6rfz": {
+    "source": "ee6812d2a6a7",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1iiuca1": {
+    "source": "f841ff2db34f",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k16irq05": {
+    "source": "7e345c3ba789",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1p6l5b9": {
+    "source": "d81cfa4b0fd0",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k8mfsk5": {
+    "source": "f9f9b6e83c04",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1xwl2j6": {
+    "source": "f43cc75965b7",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k19b4i3s": {
+    "source": "cca7c457de7c",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1nk11j3": {
+    "source": "a4624d383d26",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kl0fvir": {
+    "source": "92e59410be41",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kh5cvh0": {
+    "source": "c8d1e8ad9359",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kuuj6iu": {
+    "source": "2b5a33062b70",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k391cj4": {
+    "source": "187e80ba4d8a",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1ebmfz4": {
+    "source": "9e67dc155680",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1edxmpf": {
+    "source": "8d28f8465445",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k4el6o6": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1xb7fm6": {
+    "source": "7c40a2f42721",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.khgxhnp": {
+    "source": "81e26101cddd",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k7ookpt": {
+    "source": "bcf8937924f8",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1c7vrcq": {
+    "source": "71bf90935fc2",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1gasst3": {
+    "source": "be7dd84648f8",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1jee0pv": {
+    "source": "f6725f3af08a",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k4p9tvj": {
+    "source": "fba4e115d625",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1ly5lrh": {
+    "source": "72cc607b1ea0",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1o1f07v": {
+    "source": "55656cc5e356",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1hezgmh": {
+    "source": "994a693fdbdc",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1ybz3bn": {
+    "source": "c7fe78cc2b02",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1y8bu9t": {
+    "source": "3e076fa17d55",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1fdra2f": {
+    "source": "d46b89eee26e",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k192q8xj": {
+    "source": "676c471bc8dc",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k15nzl7f": {
+    "source": "d65a164d69aa",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.klce4ed": {
+    "source": "f7573b7f5db0",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kcdfio8": {
+    "source": "816fca150c81",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kvoy7pr": {
+    "source": "fdc5bd9c975e",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k179drfx": {
+    "source": "7e34fed62a64",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kxyipuq": {
+    "source": "8ae4367452d2",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1pt9yc": {
+    "source": "5c498d0d2aff",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kke7891": {
+    "source": "bbfb500d2e37",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k10mfi45": {
+    "source": "fe7023d0846f",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k19wsrr1": {
+    "source": "50357352cbdc",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k43xjmr": {
+    "source": "fb1f8c8516c3",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1l4nd21": {
+    "source": "8914127e0ca5",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k5h39gc": {
+    "source": "14b6cfc74a3b",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kicvyhv": {
+    "source": "232f5dc34c93",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1827q8t": {
+    "source": "0e66373f45dc",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.k1c3pxvv": {
+    "source": "e6c386e0a680",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.ksjj37t": {
+    "source": "526e0087cc3f",
+    "status": "machine"
+  },
+  "editor.contentForms.schemaForm.fields.kb8wbld": {
+    "source": "28591dd9143e",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.current": {
+    "source": "e0d1b68224bf",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.chooseAQrCodeType": {
+    "source": "69d6a01369a5",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.whatShouldHappenWhenSomeone": {
+    "source": "b5f51df5f675",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.toPick": {
+    "source": "6eb366e49665",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.recent": {
+    "source": "690dbe9dc099",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.noTypeMatchesQueryA": {
+    "source": "f4831d364014",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.useAUrlCode": {
+    "source": "f7eabc494565",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.previewEveryTemplate": {
+    "source": "1b1ded4a7bc5",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.move": {
+    "source": "683a62ce15fb",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.pick": {
+    "source": "8ce33c6c86e9",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.escClose": {
+    "source": "9f686bc0a079",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.searchQrCodeTypes": {
+    "source": "d42d8987e814",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.searchWiFiMenuGpay": {
+    "source": "814a81bbea4c",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.categories": {
+    "source": "b8b1d894c683",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.hostedPages": {
+    "source": "7ad82d962d9e",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.mobilePagesQrdxHostsFor": {
+    "source": "ea7c2090863b",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.mobilePagesQrdxHostsFor2": {
+    "source": "12a847945266",
+    "status": "machine"
+  },
+  "editor.contentTypeModal.matchesFor": {
+    "source": "b21c97dcc52d",
+    "status": "machine"
+  },
+  "editor.contentTypeSelector.qrCodeType": {
+    "source": "6109c3ce54c9",
+    "status": "machine"
+  },
+  "editor.contentTypeSelector.change": {
+    "source": "c0bf75bd78bf",
+    "status": "machine"
+  },
+  "editor.contentTypeSelector.chooseAType": {
+    "source": "251f71e358e4",
+    "status": "machine"
+  },
+  "editor.contrastChecker.contrastChecker": {
+    "source": "2b005d65cf3c",
+    "status": "machine"
+  },
+  "editor.contrastChecker.wcag20AaRequires": {
+    "source": "b541523f347e",
+    "status": "machine"
+  },
+  "editor.contrastChecker.toggleTheme": {
+    "source": "6026719f081a",
+    "status": "machine"
+  },
+  "editor.contrastChecker.all": {
+    "source": "a52ace420f21",
+    "status": "machine"
+  },
+  "editor.contrastChecker.issuesTotalissues": {
+    "source": "93279865f6f7",
+    "status": "machine"
+  },
+  "editor.contrastChecker.background": {
+    "source": "ea2b8a878841",
+    "status": "machine"
+  },
+  "editor.contrastChecker.foreground": {
+    "source": "ad4e241834ec",
+    "status": "machine"
+  },
+  "editor.contrastChecker.aa": {
+    "source": "81acaafba961",
+    "status": "machine"
+  },
+  "editor.contrastChecker.sampleText": {
+    "source": "35ae8855db11",
+    "status": "machine"
+  },
+  "editor.contrastChecker.preview": {
+    "source": "324b134f57c7",
+    "status": "machine"
+  },
+  "editor.contrastChecker.openContrastChecker": {
+    "source": "c1f3831d7d7a",
+    "status": "machine"
+  },
+  "editor.contrastChecker.qrCodeBase": {
+    "source": "497629977f26",
+    "status": "machine"
+  },
+  "editor.contrastChecker.cornerEyes": {
+    "source": "83bc18dca510",
+    "status": "machine"
+  },
+  "editor.contrastChecker.eyeDots": {
+    "source": "90a71c76eb09",
+    "status": "machine"
+  },
+  "editor.contrastChecker.nameEye": {
+    "source": "b8c5342a906d",
+    "status": "machine"
+  },
+  "editor.contrastChecker.nameEyeDot": {
+    "source": "0cebd1e50afb",
+    "status": "machine"
+  },
+  "editor.contrastChecker.learnMoreAboutWcagContrast": {
+    "source": "4f10741dc46e",
+    "status": "machine"
+  },
+  "editor.contrastChecker.eyePositions.topLeft": {
+    "source": "1e7c96330cd3",
+    "status": "machine"
+  },
+  "editor.contrastChecker.eyePositions.topRight": {
+    "source": "d7741dc9d691",
+    "status": "machine"
+  },
+  "editor.contrastChecker.eyePositions.bottomLeft": {
+    "source": "16c48ba9f2c6",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.hintFinderAlignmentAndFormat": {
+    "source": "47107cbed54c",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.useMyLogo": {
+    "source": "2a8199adb1f6",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.uploadPngJpgWebpOr": {
+    "source": "f5c16c53919d",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.look": {
+    "source": "a0de5719f595",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.eyesMatchTheLogo": {
+    "source": "ca090b2a6a48",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.usesHighErrorCorrectionAnd": {
+    "source": "0cdeedadf1fa",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.artScansBestWithHigh": {
+    "source": "c563b5a54d46",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.removeArt": {
+    "source": "80b8ce228e2c",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.strength": {
+    "source": "63ee3a1b965a",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.fineTune": {
+    "source": "f86315eb2e7c",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.easierToScan": {
+    "source": "21fb0ceb3748",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.moreArt": {
+    "source": "3abede23fcdb",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.scanCheck": {
+    "source": "31d78d35c70a",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.checking": {
+    "source": "ec963ffc911b",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.artLook": {
+    "source": "d0f88590e987",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.artStrength": {
+    "source": "e973d9309708",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.swapDotAndBackgroundColors": {
+    "source": "d80c3275d8f2",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.putTheDotsOnWhite": {
+    "source": "d1501f678275",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.uploadAnother": {
+    "source": "8e5d61496470",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.uploadYourOwn": {
+    "source": "6142ae2eda1e",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.decodedInYourBrowserAt": {
+    "source": "3b0b2ca7ca0f",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.addContentToCheckYour": {
+    "source": "f3a59ff05c28",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.checkYourConnectionAndTry": {
+    "source": "f27c1f7888d8",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.tryAPngOrJpg": {
+    "source": "35c35d5a55a1",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.useAPngJpgWebp": {
+    "source": "23387b51da00",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.imagesMustBeValueMb": {
+    "source": "7af0173cd521",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.couldntLoadThisSample": {
+    "source": "f7c148314283",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.couldntUseThisImage": {
+    "source": "3a33bd67642b",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.unsupportedImageFormat": {
+    "source": "8438ac9ced67",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.imageIsTooLarge": {
+    "source": "58de1ebe9dd1",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.modeCopy.logo.upload": {
+    "source": "b7103353b60c",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.modeCopy.logo.samples": {
+    "source": "058541cceb80",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.modeCopy.halftone.upload": {
+    "source": "4a49c509e0db",
+    "status": "machine"
+  },
+  "editor.controlSections.artControls.modeCopy.halftone.samples": {
+    "source": "7f6ed1236288",
+    "status": "machine"
+  },
+  "editor.controlSections.colorPresets.lightCodeOnADark": {
+    "source": "576299043ca5",
+    "status": "machine"
+  },
+  "editor.controlSections.colorPresets.colorPalettes": {
+    "source": "780c822f073d",
+    "status": "machine"
+  },
+  "editor.controlSections.colorPresets.lightCodeOnDarkMay": {
+    "source": "3c9dd6646898",
+    "status": "machine"
+  },
+  "editor.controlSections.contentControls.startFromAStyle": {
+    "source": "7fbf2fefadb3",
+    "status": "machine"
+  },
+  "editor.controlSections.contentControls.browseAllLength": {
+    "source": "e30f56862ff7",
+    "status": "machine"
+  },
+  "editor.controlSections.contentControls.fineTuneColorsDotsAnd": {
+    "source": "cde5b0f0ec33",
+    "status": "machine"
+  },
+  "editor.controlSections.contentControls.applyTheLabelStyle": {
+    "source": "7b558ef2d4c6",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.thisFrameHasNoLabels": {
+    "source": "c1cf5411ec6b",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.icon": {
+    "source": "a35abcd6dac9",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.label": {
+    "source": "0e66373f45dc",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.leaveEmptyForNoLabel": {
+    "source": "664c33884a79",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.secondLine": {
+    "source": "c8b588f708d6",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.leaveEmptyToHideIt": {
+    "source": "7283314bf629",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.frameColor": {
+    "source": "2d7228cc6b77",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.textColor": {
+    "source": "4a69d0166046",
+    "status": "machine"
+  },
+  "editor.controlSections.customFrameFields.accentColor": {
+    "source": "baeefbad50a3",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.colors": {
+    "source": "88c45d9e526c",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.background": {
+    "source": "ea2b8a878841",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.foreground": {
+    "source": "ad4e241834ec",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.eyes": {
+    "source": "a39e9d9816a9",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.dots": {
+    "source": "6de335fa213a",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.frame": {
+    "source": "d0b50e064a4f",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.padding": {
+    "source": "ee0d7af0bffd",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.errorCorrection": {
+    "source": "c7bdad567af2",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.border": {
+    "source": "3b4bdff339e9",
+    "status": "machine"
+  },
+  "editor.controlSections.designControls.none": {
+    "source": "dc937b598926",
+    "status": "machine"
+  },
+  "editor.controlSections.dotSizeSection.sizeOfEachDot": {
+    "source": "493697265178",
+    "status": "machine"
+  },
+  "editor.controlSections.dotSizeSection.dotSize": {
+    "source": "97c5bc43ff30",
+    "status": "machine"
+  },
+  "editor.controlSections.dotSizeSection.valueDotsKeepTheirFull": {
+    "source": "635035ab583b",
+    "status": "machine"
+  },
+  "editor.controlSections.dotSizeSection.smallerDotsGiveALighter": {
+    "source": "8c7779dc7bf8",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.giveEachCornerEyeIts": {
+    "source": "5eee541b6f15",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.useTheSameColorsFor": {
+    "source": "bd7e5439f1da",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.sameForAll": {
+    "source": "6bd067dacf3c",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.eyeColors": {
+    "source": "781566d5eda5",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.frame": {
+    "source": "d0b50e064a4f",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.center": {
+    "source": "d946067427e9",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.positions.topLeft": {
+    "source": "a0eda50fb155",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.positions.topRight": {
+    "source": "d83cbef9db1b",
+    "status": "machine"
+  },
+  "editor.controlSections.eyeColorsSection.positions.bottomLeft": {
+    "source": "f5a57b969150",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.customise": {
+    "source": "1bed90804c20",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.importSvg": {
+    "source": "88575ae0c628",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.publishFrame": {
+    "source": "c63ba3afe4f5",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.theFrameIsAddedAround": {
+    "source": "7d22dbfcf002",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.label": {
+    "source": "0e66373f45dc",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.secondLine": {
+    "source": "c8b588f708d6",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.leaveEmptyForNoLabel": {
+    "source": "664c33884a79",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.pickAFrameFirst": {
+    "source": "4aede128d746",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.frameColor": {
+    "source": "2d7228cc6b77",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.textColor": {
+    "source": "4a69d0166046",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.endColor": {
+    "source": "da2d25d0b723",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.optionalEGYourWebsite": {
+    "source": "f7f267b95bd4",
+    "status": "machine"
+  },
+  "editor.controlSections.frameControls.none": {
+    "source": "dc937b598926",
+    "status": "machine"
+  },
+  "editor.controlSections.frameFields.textSize": {
+    "source": "d68761cc1eb2",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.more": {
+    "source": "d47d7cb0e4f8",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.showAll": {
+    "source": "2150d8df37e4",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.frame": {
+    "source": "d0b50e064a4f",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.moreFrames": {
+    "source": "40c979613836",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.allTotalFrames": {
+    "source": "f7d30aed62b4",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.allFrames": {
+    "source": "5fcbddfb6256",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.searchFrames": {
+    "source": "5ed62fabbc22",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.searchTotalFrames": {
+    "source": "47673afc88b7",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.closeFrames": {
+    "source": "d31d0c2f9088",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.filterFrames": {
+    "source": "42d8c95ad102",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.labelFrames": {
+    "source": "800e6f3afaaf",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.commonFrames": {
+    "source": "ca35ed18a577",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.everyFrameBuiltInStyles": {
+    "source": "40954525a2f2",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.less": {
+    "source": "ae5239ec63f2",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.all": {
+    "source": "a52ace420f21",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.noFramesMatchQuery": {
+    "source": "0285390a031a",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.loadingFrames": {
+    "source": "af4f270d9074",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.comingUp": {
+    "source": "b743c760826c",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.builtIn": {
+    "source": "1f43948106d1",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.saved": {
+    "source": "b5c120b316c2",
+    "status": "machine"
+  },
+  "editor.controlSections.framePicker.results": {
+    "source": "219c4a6c86a7",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.shapedCode": {
+    "source": "acb256d2cddf",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.pngJpegOrSvgA": {
+    "source": "75ff18c68375",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.remove": {
+    "source": "c3812fc4acb8",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.uploadASilhouette": {
+    "source": "88fc43a794b1",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.tracing": {
+    "source": "543e49c806da",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.replace": {
+    "source": "95e154398a4b",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.uploadAShape": {
+    "source": "9891aa51c50a",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.shapeHelp.circle": {
+    "source": "67b7d98ddc74",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.shapeHelp.heart": {
+    "source": "336286c46139",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.shapeHelp.silhouette": {
+    "source": "8aaaa4c71e5e",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.names.circle": {
+    "source": "12ab884b40f8",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.names.heart": {
+    "source": "770af9d18037",
+    "status": "machine"
+  },
+  "editor.controlSections.frameShapes.names.silhouette": {
+    "source": "af465c1fd49a",
+    "status": "machine"
+  },
+  "editor.controlSections.frameTextPresets.labelIdeas": {
+    "source": "ae6c79dcf0e6",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.logoInTheCenter": {
+    "source": "129d57e86db3",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.coversAFewDotsError": {
+    "source": "10d3f5c4e7f2",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.quickIcons": {
+    "source": "4f438e913206",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.brandLogos": {
+    "source": "23b80754a615",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.pngJpgWebpOrSvg": {
+    "source": "b46547fa0f4e",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.remove": {
+    "source": "c3812fc4acb8",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.off": {
+    "source": "ca7981b46ecf",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.logo": {
+    "source": "d707dc2f1936",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.uploadLogo": {
+    "source": "c33300828178",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.brandLogosBrandbuttonlabel": {
+    "source": "a05291e7781f",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.replace": {
+    "source": "95e154398a4b",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.uploadYourLogo": {
+    "source": "52eabd01906c",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.useAPngJpgWebp": {
+    "source": "23387b51da00",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.logosMustBeValueMb": {
+    "source": "cc8e3948c9df",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.unsupportedLogoFormat": {
+    "source": "f86cc9658aec",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.logoIsTooLarge": {
+    "source": "7ece69fff43b",
+    "status": "machine"
+  },
+  "editor.controlSections.logoControls.failedToReadLogoFile": {
+    "source": "ff84c0e7b80c",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.shape": {
+    "source": "e0e492707f85",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.plateBehindTheLogo": {
+    "source": "c642da8babcc",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.aSolidValueTheLogo": {
+    "source": "36fb16a2863a",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.removeBackground": {
+    "source": "a8d1ab54b32c",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.logoShape": {
+    "source": "ae70b68e29ac",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.plateColor": {
+    "source": "50ea3d701716",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.backgroundRemovedUndoBringsIt": {
+    "source": "865622007ee0",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.yourLogoHasNoSolid": {
+    "source": "66950d26eec4",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.removeTheSolidBackgroundAround": {
+    "source": "1201c63997c1",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.backgroundRemoved": {
+    "source": "e95894d57742",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.plateNouns.square": {
+    "source": "4ba3e8e3765f",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.plateNouns.rounded": {
+    "source": "30d1d9707c5f",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.plateNouns.circle": {
+    "source": "8a39178d327e",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.shapes.square": {
+    "source": "c11092bc0861",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.shapes.rounded": {
+    "source": "0a62cd800f27",
+    "status": "machine"
+  },
+  "editor.controlSections.logoCropControls.shapes.circle": {
+    "source": "b93d3bcecff5",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.position": {
+    "source": "6d031af10da7",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.center": {
+    "source": "d946067427e9",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.keepTheLogoOffThe": {
+    "source": "094a033f3309",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.raiseErrorCorrectionForBig": {
+    "source": "80c8425cfaf1",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.switchesToLevelHWhen": {
+    "source": "b2838fa3ba3b",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.logoOptions": {
+    "source": "7d59ee50382b",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.size": {
+    "source": "1af851907331",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.logoSize": {
+    "source": "1483ec4e73dc",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.clearSpace": {
+    "source": "5921f132532e",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.clearSpaceAroundTheLogo": {
+    "source": "9d33835cd035",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.leftToRight": {
+    "source": "d6c332630f19",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.logoPositionLeftToRight": {
+    "source": "4690bf7ed305",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.topToBottom": {
+    "source": "e74bb68625d6",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.logoPositionTopToBottom": {
+    "source": "5a03f45e969a",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.upToMaxpercentForThis": {
+    "source": "bb65b41655a9",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.thisCodeIsTooSmall": {
+    "source": "4f1fc144c519",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.shorterContentMakesRoom": {
+    "source": "990b639f66eb",
+    "status": "machine"
+  },
+  "editor.controlSections.logoOptionsSection.levelHOrShorterContent": {
+    "source": "d1c6469dd5da",
+    "status": "machine"
+  },
+  "editor.controlSections.logoPresets.quickLogoIcons": {
+    "source": "4476ad3f28d7",
+    "status": "machine"
+  },
+  "editor.controlSections.logoPresets.nameIcon": {
+    "source": "73fc0acf6fdf",
+    "status": "machine"
+  },
+  "editor.controlSections.logoPresets.uploadYourLogo": {
+    "source": "52eabd01906c",
+    "status": "machine"
+  },
+  "editor.controlSections.logoPresets.yourLogo": {
+    "source": "4258df88ded1",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.more": {
+    "source": "d47d7cb0e4f8",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.noNounMatchQueryShow": {
+    "source": "c6d75215ea7e",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.mayNotScan": {
+    "source": "156f77a997b1",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.nameWontScanWithThis": {
+    "source": "b63d3613cb16",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.nameMayNotScan": {
+    "source": "65bd4ba68eec",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.nameWontScanWithThis2": {
+    "source": "2bfe0b0855a1",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.nameMayNotScan2": {
+    "source": "2911b4adf17b",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.moreNoun": {
+    "source": "174a0acd0c16",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.allLengthNoun": {
+    "source": "1981bc52e756",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.searchNoun": {
+    "source": "ae6d95f07572",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.searchLengthNoun": {
+    "source": "40f918696267",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.closeNoun": {
+    "source": "12d52575f340",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.filterNoun": {
+    "source": "a39166a5d554",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.commonNoun": {
+    "source": "8d01a2a567eb",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.allLengthNounPickingOne": {
+    "source": "cf5e9343a5b8",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.less": {
+    "source": "ae5239ec63f2",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.all": {
+    "source": "a52ace420f21",
+    "status": "machine"
+  },
+  "editor.controlSections.optionTiles.wontScanHere": {
+    "source": "131d3e133c8d",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.quietZoneAroundTheCode": {
+    "source": "8f90bce6785c",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.scannersNeedABlankBorder": {
+    "source": "a0071c77b672",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.padding": {
+    "source": "ee0d7af0bffd",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.module": {
+    "source": "120970d81283",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.modules": {
+    "source": "fbc6c1d4c3b6",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.presets.none": {
+    "source": "dc937b598926",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.presets.small": {
+    "source": "5263293fc202",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.presets.standard": {
+    "source": "ef6691545d2c",
+    "status": "machine"
+  },
+  "editor.controlSections.paddingControls.presets.large": {
+    "source": "ab80540d98d2",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.customizeOuterAndCenter": {
+    "source": "b779d19aaffb",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.border": {
+    "source": "3b4bdff339e9",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.higherLevelsSurviveScratchesAnd": {
+    "source": "03d2ec1d1e70",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.dotShape": {
+    "source": "4ccbd16ed41e",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.dotShapes": {
+    "source": "a80a45ea2c8b",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.eyeStyle": {
+    "source": "10af1298f816",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.eyeStyles": {
+    "source": "795e0e0d1edc",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.outerEyeShape": {
+    "source": "4adb08b79862",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.outerShapes": {
+    "source": "f0f218b9122d",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.innerEyeShape": {
+    "source": "9fd4c0643370",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.centerShapes": {
+    "source": "d71333620b9c",
+    "status": "machine"
+  },
+  "editor.controlSections.patternControls.errorCorrection": {
+    "source": "c7bdad567af2",
+    "status": "machine"
+  },
+  "editor.controlSections.sidePanel.closeTitle": {
+    "source": "6301612e18a5",
+    "status": "machine"
+  },
+  "editor.customTextarea.thePastedContentWouldExceed": {
+    "source": "ad578683469b",
+    "status": "machine"
+  },
+  "editor.customTextarea.textTooLong": {
+    "source": "5c3cb8152a31",
+    "status": "machine"
+  },
+  "editor.customTextarea.describeYourTheme": {
+    "source": "7058354eba6c",
+    "status": "machine"
+  },
+  "editor.dialogCloseButton.close": {
+    "source": "7d9eb7acb13e",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.upgradeToPro": {
+    "source": "acb320d7f3e3",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.manageCodes": {
+    "source": "193210d36452",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.static": {
+    "source": "1d2c73dc01f2",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.fixedOncePrinted": {
+    "source": "c211599d1701",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.dynamic": {
+    "source": "b6ee7b3e8d9c",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.editLaterCountScans": {
+    "source": "c0b79d9087df",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.linkOptions": {
+    "source": "854665437a38",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.printedCodesStillOpenDestinationurl": {
+    "source": "08b5ab3062c4",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.pointItToTheNew": {
+    "source": "0c0e05de0165",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.scansSettings": {
+    "source": "9fbd138141f5",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.staticOrDynamicQrCode": {
+    "source": "58975fbe94fd",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.shortLinkCopied": {
+    "source": "6b62bcc79bd7",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.copyShortLink": {
+    "source": "54dce7bb7e5f",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.designSaved": {
+    "source": "548672040b27",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.saveDesignToCode": {
+    "source": "3b0812dffad5",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.theQrCodeShowsYour": {
+    "source": "ca29b4a3e1b7",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.changeWhereItPointsAt": {
+    "source": "15db980db76a",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.changeWhereItPointsAt2": {
+    "source": "036f59ba8220",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.theDynamicCodeStaysIn": {
+    "source": "c350c6c92346",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.printedCopiesOfThisCode": {
+    "source": "61cf31cab40f",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.yourLogoWasTooLarge": {
+    "source": "bf03bcab6937",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.dashboardPreviewsAndDownloadsUse": {
+    "source": "c6673aa78459",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.thisDynamicCodeIsNo": {
+    "source": "ac017933fefb",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.yourQrCodeIsNow": {
+    "source": "2b74f95aa247",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.destinationUpdated": {
+    "source": "991c1cb5fef6",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.designSavedToTheCode": {
+    "source": "29de3b72fc36",
+    "status": "machine"
+  },
+  "editor.dynamicLinkToggle.couldntCopyTheShortLink": {
+    "source": "82484d20f5c1",
+    "status": "machine"
+  },
+  "editor.frameInline.frameTextMenu.lowContrastValue1The": {
+    "source": "ddb0baf919f0",
+    "status": "machine"
+  },
+  "editor.frameInline.frameTextOverlay.editFrameTextValue": {
+    "source": "cb3c286a63b1",
+    "status": "machine"
+  },
+  "editor.frameInline.frameTextOverlay.editText": {
+    "source": "7967d9448995",
+    "status": "machine"
+  },
+  "editor.frameInline.frameTextSheet.editFrameText": {
+    "source": "4a2152e0f9f7",
+    "status": "machine"
+  },
+  "editor.frameInline.frameTextSheet.changesShowOnTheCode": {
+    "source": "dbac16db0be0",
+    "status": "machine"
+  },
+  "editor.frameInline.frameTextSheet.valueLeft": {
+    "source": "931362b92ee8",
+    "status": "machine"
+  },
+  "editor.frameInline.frameTextSheet.moreFrameOptions": {
+    "source": "84853fb7f0ef",
+    "status": "machine"
+  },
+  "editor.frameInline.frameTextSheet.done": {
+    "source": "11a6767d5674",
+    "status": "machine"
+  },
+  "editor.frameInline.inlineFrameEditor.leftLeft": {
+    "source": "3fa84b2208a6",
+    "status": "machine"
+  },
+  "editor.frameInline.inlineFrameEditor.frameTextName": {
+    "source": "9f0cda8c6a66",
+    "status": "machine"
+  },
+  "editor.frameInline.inlineFrameEditor.frameTextOptions": {
+    "source": "c0fc3f7ccf7a",
+    "status": "machine"
+  },
+  "editor.frameInline.inlineFrameEditor.textSize": {
+    "source": "d68761cc1eb2",
+    "status": "machine"
+  },
+  "editor.frameInline.inlineFrameEditor.textColor": {
+    "source": "4a69d0166046",
+    "status": "machine"
+  },
+  "editor.frameInline.inlineFrameEditor.frameColor": {
+    "source": "2d7228cc6b77",
+    "status": "machine"
+  },
+  "editor.frameInline.inlineFrameEditor.icon": {
+    "source": "a35abcd6dac9",
+    "status": "machine"
+  },
+  "editor.frameInline.inlineFrameEditor.moreFrameOptions": {
+    "source": "84853fb7f0ef",
+    "status": "machine"
+  },
+  "editor.gradientPicker.pickASolidColorA": {
+    "source": "af7f9357f50f",
+    "status": "machine"
+  },
+  "editor.linkSourceMenu.useALinkFrom": {
+    "source": "d7cf5ab65e8a",
+    "status": "machine"
+  },
+  "editor.linkSourceMenu.yourAccounts": {
+    "source": "fdd5abec2f9f",
+    "status": "machine"
+  },
+  "editor.linkSourceMenu.connectAnAccount": {
+    "source": "efeac437f989",
+    "status": "machine"
+  },
+  "editor.linkSourceMenu.undo": {
+    "source": "a8283ade3185",
+    "status": "machine"
+  },
+  "editor.mentionList.noResult": {
+    "source": "c6008b5b55ec",
+    "status": "machine"
+  },
+  "editor.paintPicker.controls.saturationAndBrightness": {
+    "source": "5b1d3a046c94",
+    "status": "machine"
+  },
+  "editor.paintPicker.controls.saturationValueBrightnessValue2": {
+    "source": "11508593e289",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.clickToAddAStop": {
+    "source": "73dfe36bc8a9",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.stopValueColor": {
+    "source": "e347d1982eab",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.startAngle": {
+    "source": "d7659be024f2",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.angle": {
+    "source": "1968034b13f8",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.startAngleInDegrees": {
+    "source": "2a9dd7cccc24",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.angleInDegrees": {
+    "source": "1633b85a3442",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.anglePresets": {
+    "source": "c6f19d595130",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.rotate90": {
+    "source": "77ec2f384588",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.reverseTheGradient": {
+    "source": "656362629c72",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.reverse": {
+    "source": "fae1c6f105d6",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.removeTheSelectedStop": {
+    "source": "0b6966fa1743",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.removeStopDelete": {
+    "source": "8e9a886c2b43",
+    "status": "machine"
+  },
+  "editor.paintPicker.gradientEditor.aGradientKeepsMinStops": {
+    "source": "0fd350ccb7ce",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.paintAPictureThroughThese": {
+    "source": "a6d04567564a",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.chooseAPicture": {
+    "source": "2132f6046063",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.underlay": {
+    "source": "134d9a8dde61",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.none": {
+    "source": "dc937b598926",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.replace": {
+    "source": "95e154398a4b",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.thePictureStaysWithThis": {
+    "source": "abfffda0dabd",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.aSolidColorUnderThe": {
+    "source": "f5f4f47a6f13",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.howThePictureFillsThe": {
+    "source": "b980fc97cc5b",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.position": {
+    "source": "6d031af10da7",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.tileSize": {
+    "source": "621d3ac8a0e5",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.scale": {
+    "source": "f102986b39ef",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.opacity": {
+    "source": "6062652e10dd",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.fits.cover": {
+    "source": "033955d469b6",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.fits.contain": {
+    "source": "9f872ed43d00",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.fits.tile": {
+    "source": "6ea3c1948e82",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.top-left": {
+    "source": "a0eda50fb155",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.top": {
+    "source": "d5cdfcf7ff75",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.top-right": {
+    "source": "d83cbef9db1b",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.left": {
+    "source": "58eb9032e3bb",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.center": {
+    "source": "d946067427e9",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.right": {
+    "source": "883361d5d682",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.bottom-left": {
+    "source": "f5a57b969150",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.bottom": {
+    "source": "479ad21ac909",
+    "status": "machine"
+  },
+  "editor.paintPicker.imageFill.positions.bottom-right": {
+    "source": "b4b7cb63bc9b",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.measuringThePicturesContrast": {
+    "source": "7adb310effef",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.contrastAgainst": {
+    "source": "ed259f1c9df5",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.makeItScannable": {
+    "source": "c68e9bbe296f",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.hexOrAnyCssColor": {
+    "source": "ad47636f07fe",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.hexOrPasteAnyCss": {
+    "source": "b6b445b368eb",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.swatches": {
+    "source": "5784cf17b926",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.fillType": {
+    "source": "3798a3776c33",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.pickAColorFromThe": {
+    "source": "f9e885161e18",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.pickFromTheScreen": {
+    "source": "fc0c46e99344",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.hue": {
+    "source": "4d7056f0e9be",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.opacity": {
+    "source": "6062652e10dd",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.colorModel": {
+    "source": "e7431fec01d9",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.opacityPercent": {
+    "source": "7e8c93c3ab3c",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.removeThisColorFromSaved": {
+    "source": "71b7dec9efeb",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.saveThisColor": {
+    "source": "71521e89e52a",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.savedClickToRemove": {
+    "source": "476e409d0d77",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.lightenTheBackground": {
+    "source": "4f894e5c0bb8",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.darkenTheCode": {
+    "source": "daea7d298bb0",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.kinds.solid": {
+    "source": "b8b311b0f273",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.kinds.linear": {
+    "source": "e6950b45d25c",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.kinds.radial": {
+    "source": "02693d5af964",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.kinds.angular": {
+    "source": "e790528b3879",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.kinds.image": {
+    "source": "1aa4cb0bcca7",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.sources.design": {
+    "source": "74becc15edcc",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.sources.saved": {
+    "source": "b5c120b316c2",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.sources.recent": {
+    "source": "690dbe9dc099",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.sources.theme": {
+    "source": "efb52e7172b7",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.sources.suggested": {
+    "source": "610b7468ce69",
+    "status": "machine"
+  },
+  "editor.paintPicker.paintPanel.imageOpacity": {
+    "source": "2be92ac552f4",
+    "status": "machine"
+  },
+  "editor.photoScanDialog.checkAPhotoOfThe": {
+    "source": "c285e1be9ef8",
+    "status": "machine"
+  },
+  "editor.photoScanDialog.checkedInYourBrowserThe": {
+    "source": "03e1b784c637",
+    "status": "machine"
+  },
+  "editor.photoScanDialog.fullScanChecker": {
+    "source": "82f80a3d6d43",
+    "status": "machine"
+  },
+  "editor.qrEditActions.options": {
+    "source": "d0db8b5e364b",
+    "status": "machine"
+  },
+  "editor.qrEditActions.resetToCurrentPreset": {
+    "source": "4992d05af04a",
+    "status": "machine"
+  },
+  "editor.qrEditActions.resetToCurrentPreset2": {
+    "source": "7f5a63ad2661",
+    "status": "machine"
+  },
+  "editor.qrEditActions.noChangesFromPreset": {
+    "source": "6f41eb1f5751",
+    "status": "machine"
+  },
+  "editor.qrEditActions.resetToDefaultTheme": {
+    "source": "8d548fd726d6",
+    "status": "machine"
+  },
+  "editor.qrEditActions.resetToBaseTheme": {
+    "source": "5e19fe77016c",
+    "status": "machine"
+  },
+  "editor.qrEditActions.noChangesToReset": {
+    "source": "786cdf9ed116",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.theme": {
+    "source": "3cb8201e7ff1",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.browseAll": {
+    "source": "723735c4aab6",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.noThemesFound": {
+    "source": "4e6f818db398",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.manage": {
+    "source": "5a23444828db",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.default": {
+    "source": "21b111cbfe6e",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.new": {
+    "source": "18fdd549b2ed",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.save": {
+    "source": "1509f561f241",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.aThemeToFindIt": {
+    "source": "3e2c0f110ab6",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.discoverMoreThemes": {
+    "source": "5153160985b5",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.shuffleANewTheme": {
+    "source": "14ca8b2ff43a",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.previousTheme": {
+    "source": "16e226d98a79",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.nextTheme": {
+    "source": "3990d273331e",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.searchThemes": {
+    "source": "a650e7455b7c",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.builtInThemes": {
+    "source": "2b045a856dc9",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.default2": {
+    "source": "37a8eec1ce19",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.sharedThemes": {
+    "source": "dd4475678bf3",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.yourThemes": {
+    "source": "d0ff1ec1e0eb",
+    "status": "machine"
+  },
+  "editor.qrPresetSelect.savedThemes": {
+    "source": "ea4937b0f00a",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.updating": {
+    "source": "0b5260e1b405",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.updateExistingthemename": {
+    "source": "01579e0fa092",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.orSaveAsANew": {
+    "source": "fd8f4500c4ee",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.name": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.saving": {
+    "source": "096b73624b09",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.myAwesomeTheme": {
+    "source": "395c7ec722b4",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.saveAsNew": {
+    "source": "f089c1a7e9d9",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.defaultTitle": {
+    "source": "e4f55c1c137e",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.defaultDescription": {
+    "source": "92a27f6c017d",
+    "status": "machine"
+  },
+  "editor.qrSaveDialog.defaultCta": {
+    "source": "e5424fa75195",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.shareThisDesign": {
+    "source": "69128aacff51",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.theLinkOpensThisStyle": {
+    "source": "2594df83da09",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.stylePreviewOpensInThe": {
+    "source": "156986e21f26",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.link": {
+    "source": "a6a32dbc5618",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.shareTo": {
+    "source": "1b29b5750404",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.more": {
+    "source": "1b420bb001b4",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.openOnYourPhone": {
+    "source": "2ee5206f1240",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.scanThisCodeToOpen": {
+    "source": "4a688312c817",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.copied": {
+    "source": "8d525e5f158b",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.copyLinkToThisDesign": {
+    "source": "e2575ec79e99",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.saveItAsATheme": {
+    "source": "6c9dbd26e2f8",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.saveItAsATheme2": {
+    "source": "ac251eafdb67",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.couldntCopyTheLink": {
+    "source": "6bad7bdb27b7",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.omitted.logo": {
+    "source": "7f58b356e28b",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.omitted.art": {
+    "source": "d26ad797eaa0",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.omitted.frame": {
+    "source": "27a34d1f9d93",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.omitted.image": {
+    "source": "97700a8e98a2",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.omitted.silhouette": {
+    "source": "fabf56436718",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.omittedNote": {
+    "source": "764d47fb83ac",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.targets.x": {
+    "source": "fc112e0f80bb",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.targets.linkedin": {
+    "source": "ab87c050148b",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.targets.facebook": {
+    "source": "27065eecbccd",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.targets.whatsapp": {
+    "source": "58c2988739e4",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.targets.email": {
+    "source": "436a04aeb728",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.myQrDesign": {
+    "source": "65c83b8af742",
+    "status": "machine"
+  },
+  "editor.qrShareDialog.shareTitle": {
+    "source": "13adcc9db9c4",
+    "status": "machine"
+  },
+  "editor.scanScore.willItScan": {
+    "source": "148a5d69ae78",
+    "status": "machine"
+  },
+  "editor.scanScore.decodingYourDesignAtA": {
+    "source": "55ac5621d7e8",
+    "status": "machine"
+  },
+  "editor.scanScore.simulatedInYourBrowserWith": {
+    "source": "f1062792ed69",
+    "status": "machine"
+  },
+  "editor.scanScore.checkAPhotoOfThe": {
+    "source": "c285e1be9ef8",
+    "status": "machine"
+  },
+  "editor.scanScore.notChecked": {
+    "source": "d16948e73a68",
+    "status": "machine"
+  },
+  "editor.scanScore.scanScoreScoreValueShow": {
+    "source": "1444cc2350d8",
+    "status": "machine"
+  },
+  "editor.scanScore.checkingScanScore": {
+    "source": "7a8390c16c28",
+    "status": "machine"
+  },
+  "editor.scanScore.scanScoreScoreValue": {
+    "source": "60ac5f5cdbba",
+    "status": "machine"
+  },
+  "editor.scanScore.checkingScan": {
+    "source": "277116a7f008",
+    "status": "machine"
+  },
+  "editor.scanScore.fullScanChecker": {
+    "source": "82f80a3d6d43",
+    "status": "machine"
+  },
+  "editor.scanScore.checkAPrintedCode": {
+    "source": "87763218505a",
+    "status": "machine"
+  },
+  "editor.scanScore.grades.great": {
+    "source": "c8cc1c7bb662",
+    "status": "machine"
+  },
+  "editor.scanScore.grades.ok": {
+    "source": "565339bc4d33",
+    "status": "machine"
+  },
+  "editor.scanScore.grades.risky": {
+    "source": "8637dd6cdae6",
+    "status": "machine"
+  },
+  "editor.scanScore.grades.fails": {
+    "source": "c5d507708563",
+    "status": "machine"
+  },
+  "editor.themeGallery.shuffled": {
+    "source": "934a9c12e968",
+    "status": "machine"
+  },
+  "editor.themeGallery.back": {
+    "source": "76900f1bfd16",
+    "status": "machine"
+  },
+  "editor.themeGallery.themes": {
+    "source": "43ae3265b99f",
+    "status": "machine"
+  },
+  "editor.themeGallery.lengthBuiltInLooksEach": {
+    "source": "5b1b9364bbfc",
+    "status": "machine"
+  },
+  "editor.themeGallery.shuffle": {
+    "source": "317cb3a7efad",
+    "status": "machine"
+  },
+  "editor.themeGallery.lightCodesOnADark": {
+    "source": "3de22856a634",
+    "status": "machine"
+  },
+  "editor.themeGallery.noThemeMatchesQuery": {
+    "source": "9cf6ba017c7f",
+    "status": "machine"
+  },
+  "editor.themeGallery.shuffleOneInstead": {
+    "source": "6935da03176d",
+    "status": "machine"
+  },
+  "editor.themeGallery.toMove": {
+    "source": "b65e70379dfa",
+    "status": "machine"
+  },
+  "editor.themeGallery.toApply": {
+    "source": "5a7cbb9c6db3",
+    "status": "machine"
+  },
+  "editor.themeGallery.toShuffle": {
+    "source": "3fdedae8d0a8",
+    "status": "machine"
+  },
+  "editor.themeGallery.escToClose": {
+    "source": "85275a9366a4",
+    "status": "machine"
+  },
+  "editor.themeGallery.searchThemes": {
+    "source": "22da14c0ca6f",
+    "status": "machine"
+  },
+  "editor.themeGallery.searchMenuGoldPastelDots": {
+    "source": "d8ed1044d853",
+    "status": "machine"
+  },
+  "editor.themeGallery.categories": {
+    "source": "b8b1d894c683",
+    "status": "machine"
+  },
+  "editor.themeGallery.all": {
+    "source": "a52ace420f21",
+    "status": "machine"
+  },
+  "editor.themePreview.colorPreview.primaryThemeColors": {
+    "source": "946a2dbff2dd",
+    "status": "machine"
+  },
+  "editor.themePreview.colorPreview.editColor": {
+    "source": "0ef086274345",
+    "status": "machine"
+  },
+  "editor.themePreview.colorPreview.background": {
+    "source": "ea2b8a878841",
+    "status": "machine"
+  },
+  "editor.themePreview.colorPreview.foreground": {
+    "source": "ad4e241834ec",
+    "status": "machine"
+  },
+  "editor.themePreview.colorPreview.dotColor": {
+    "source": "82602812893d",
+    "status": "machine"
+  },
+  "editor.themePreview.colorPreview.eyeColor": {
+    "source": "61520202f278",
+    "status": "machine"
+  },
+  "editor.editor.loadingTheEditor": {
+    "source": "2190d6a317ba",
+    "status": "machine"
+  },
+  "editor.editor.fetchedQrPresetDataIs": {
+    "source": "448c592e6a97",
+    "status": "machine"
+  },
+  "editor.qrControlPanel.generate": {
+    "source": "49e49bb4401e",
+    "status": "machine"
+  },
+  "editor.qrControlPanel.content": {
+    "source": "47bd29075f8b",
+    "status": "machine"
+  },
+  "editor.qrControlPanel.design": {
+    "source": "0072e6b93494",
+    "status": "machine"
+  },
+  "editor.qrControlPanel.art": {
+    "source": "75df3579c730",
+    "status": "machine"
+  },
+  "editor.qrPreviewPanel.sample": {
+    "source": "95a2f1edb08a",
+    "status": "machine"
+  },
+  "editor.qrPreviewPanel.addYourLinkToMake": {
+    "source": "1091497660a2",
+    "status": "machine"
+  },
+  "editor.qrPreviewPanel.addYourDetailsToMake": {
+    "source": "c3caf19740b1",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.keyboardShortcuts": {
+    "source": "59cdaa26dd9d",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.keyboardShortcutsAreCurrentlyDisabled": {
+    "source": "229b80910aec",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.quickReferenceForAllAvailable": {
+    "source": "c2212bbc1647",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.proTipPressAnytimeTo": {
+    "source": "85aab0298be5",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.categories.navigation": {
+    "source": "3db65f8c2a7d",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.categories.actions": {
+    "source": "ff8059dc6752",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.categories.themeAppearance": {
+    "source": "33947e018bc1",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.categories.patternCustomization": {
+    "source": "4353ae15ce2a",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.categories.help": {
+    "source": "b79cac926e0b",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.openContentTab": {
+    "source": "be8685add838",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.openDesignTab": {
+    "source": "4408aadb39f3",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.openArtTab": {
+    "source": "0db0ce209954",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.openGenerateAiTab": {
+    "source": "e6a0673ddcde",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.saveQrTheme": {
+    "source": "309300eb2a63",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.downloadQrCode": {
+    "source": "41ac000a0c49",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.copySvgToClipboard": {
+    "source": "8e6e6b4b4fee",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.viewCode": {
+    "source": "e8b18c6caf4b",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.shareQrCode": {
+    "source": "6423eb525012",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.resetToPresetDefaults": {
+    "source": "6fcf97b79ad9",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.shuffleANewTheme": {
+    "source": "14ca8b2ff43a",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.toggleLightDarkMode": {
+    "source": "1c32589cd7a6",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.previousThemePreset": {
+    "source": "f3e2c5adfd4f",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.nextThemePreset": {
+    "source": "d8d7ade1a670",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.cycleDotPatterns": {
+    "source": "3154963ed92e",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.cycleCornerEyePatterns": {
+    "source": "ba451adad178",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.cycleInternalEyePatterns": {
+    "source": "c4ecd6274303",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.cycleFrames": {
+    "source": "d27fb3edbeaa",
+    "status": "machine"
+  },
+  "editor.keyboardShortcutsModal.shortcuts.showThisShortcutsDialog": {
+    "source": "ddefcf6aec3e",
+    "status": "machine"
+  },
+  "editor.soundSwitch.sounds": {
+    "source": "6f305c4b1874",
+    "status": "machine"
+  },
+  "editor.hooks.chatEngine.tryAgainInAMoment": {
+    "source": "29cc3339fce9",
+    "status": "machine"
+  },
+  "editor.hooks.chatEngine.anErrorOccurred": {
+    "source": "ddf785b79c42",
+    "status": "machine"
+  },
+  "editor.hooks.chatEngine.theAiStoppedResponding": {
+    "source": "666a5175ae77",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.yourThemeIsNowVisible": {
+    "source": "c8ba82d8f43a",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.anUnexpectedErrorOccurred": {
+    "source": "7053d12aceb5",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.yourThemeHasBeenRemoved": {
+    "source": "4894b3fa094d",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.yourThemeTagsHaveBeen": {
+    "source": "08543868b6fa",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.themePublished": {
+    "source": "5ee33455b518",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.failedToPublishTheme": {
+    "source": "f06e6708b6c3",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.themeUnpublished": {
+    "source": "ab863a267029",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.failedToUnpublishTheme": {
+    "source": "7ec495b08ce0",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.failedToUpdateLike": {
+    "source": "987367d5bee9",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.tagsUpdated": {
+    "source": "20f944884fcf",
+    "status": "machine"
+  },
+  "editor.hooks.useCommunityThemes.failedToUpdateTags": {
+    "source": "970a593a5fa9",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.nameHasBeenCreatedSuccessfully": {
+    "source": "8d38ebafa11c",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.nameHasBeenUpdatedSuccessfully": {
+    "source": "1b3535852648",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.nameHasBeenDeletedSuccessfully": {
+    "source": "d3d042b08709",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.themeLimitReached": {
+    "source": "1fc1f93e2d2a",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.themeCreated": {
+    "source": "01bd169c3f27",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.themeUpdated": {
+    "source": "d748d8591510",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.themeDeleted": {
+    "source": "0701ae826f06",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.errors.signIn": {
+    "source": "ecbd45b6cea4",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.errors.invalidInput": {
+    "source": "e9aeee9e326c",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.errors.notFound": {
+    "source": "3d8f8d0799e6",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.errors.unexpected": {
+    "source": "e198269c2a19",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.failed.create": {
+    "source": "757c03d900b2",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.failed.update": {
+    "source": "ea0d4750c761",
+    "status": "machine"
+  },
+  "editor.hooks.useThemeMutations.failed.delete": {
+    "source": "895fb63883b1",
+    "status": "machine"
+  },
+  "editor.hooks.useAiEnhancePrompt.anErrorOccurred": {
+    "source": "ddf785b79c42",
+    "status": "machine"
+  },
+  "editor.hooks.useDialogActions.saveToShare.title": {
+    "source": "ecbca02d5c02",
+    "status": "machine"
+  },
+  "editor.hooks.useDialogActions.saveToShare.description": {
+    "source": "a64936ec5319",
+    "status": "machine"
+  },
+  "editor.hooks.useDialogActions.saveToShare.ctaLabel": {
+    "source": "4a201b35f11a",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.youCanOnlyUploadUp": {
+    "source": "64f57b2ce5d9",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.nameIsNotSupportedPlease": {
+    "source": "daa34b0dbe5b",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.imageNameExceedsTheValue": {
+    "source": "453860e3e43f",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.nameMayContainUnsafeContent": {
+    "source": "38aa8e682918",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.failedToReadNamePlease": {
+    "source": "86317206515d",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.imageUploadLimitReached": {
+    "source": "99d72bddd815",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.unsupportedFileType": {
+    "source": "c24bdea9bf1a",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.fileTooLarge": {
+    "source": "8a2819cae213",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.potentiallyUnsafeSvg": {
+    "source": "c04fa65d0863",
+    "status": "machine"
+  },
+  "editor.hooks.useImageUpload.fileReadError": {
+    "source": "9553c287ddbe",
+    "status": "machine"
+  },
+  "editor.hooks.usePlaygroundParams.undo": {
+    "source": "a8283ade3185",
+    "status": "machine"
+  },
+  "editor.hooks.usePlaygroundShortcuts.svgCopiedToClipboard": {
+    "source": "e0e56a46c8bd",
+    "status": "machine"
+  },
+  "editor.hooks.usePlaygroundShortcuts.failedToCopySvg": {
+    "source": "901ebadb12ed",
+    "status": "machine"
+  },
+  "playground.heading": {
+    "source": "4b6c38e8419d",
+    "status": "machine"
+  },
+  "playground.loading": {
+    "source": "2352ef52f6b8",
+    "status": "machine"
+  },
+  "playground.metaTitle": {
+    "source": "1cad446dca26",
+    "status": "machine"
+  },
+  "playground.metaDescription": {
+    "source": "360b0ea43586",
+    "status": "machine"
+  },
+  "playground.intro.label": {
+    "source": "85201b9d7acc",
+    "status": "machine"
+  },
+  "playground.intro.summary": {
+    "source": "5e338a60e139",
+    "status": "machine"
+  },
+  "playground.intro.types": {
+    "source": "a5165044a71e",
+    "status": "machine"
+  },
+  "playground.intro.downloads": {
+    "source": "5f189de09bc1",
+    "status": "machine"
+  },
+  "playground.intro.links.allTypes": {
+    "source": "e6f59995fd26",
+    "status": "machine"
+  },
+  "playground.intro.links.scanChecker": {
+    "source": "208aae4852a3",
+    "status": "machine"
+  },
+  "playground.intro.links.printSize": {
+    "source": "457447ccdac3",
+    "status": "machine"
+  },
+  "playground.intro.links.styleGuide": {
+    "source": "ffbe1bf10800",
+    "status": "machine"
+  },
+  "playground.presetSelector.presets": {
+    "source": "954f93fe1c66",
+    "status": "machine"
+  },
+  "playground.themeSaveDialog.name": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "playground.themeSaveDialog.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "playground.themeSaveDialog.saving": {
+    "source": "096b73624b09",
+    "status": "machine"
+  },
+  "playground.themeSaveDialog.myAwesomeTheme": {
+    "source": "395c7ec722b4",
+    "status": "machine"
+  },
+  "playground.themeSaveDialog.defaultTitle": {
+    "source": "e5424fa75195",
+    "status": "machine"
+  },
+  "playground.themeSaveDialog.defaultDescription": {
+    "source": "aa01da757e8a",
+    "status": "machine"
+  },
+  "playground.themeSaveDialog.defaultCta": {
+    "source": "e5424fa75195",
+    "status": "machine"
+  },
+  "limits.capMeter.labelUsed": {
+    "source": "515626cd8fe0",
+    "status": "machine"
+  },
+  "limits.limitCard.planUsage": {
+    "source": "9556e350ef76",
+    "status": "machine"
+  },
+  "limits.limitCard.notNow": {
+    "source": "a0e63d7c7125",
+    "status": "machine"
+  },
+  "limits.limitCard.labelUsed": {
+    "source": "515626cd8fe0",
+    "status": "machine"
+  },
+  "limits.limitDialog.limitReached": {
+    "source": "6a1ca519b730",
+    "status": "machine"
+  },
+  "community.browseLayout.filters": {
+    "source": "546ebb8eb993",
+    "status": "machine"
+  },
+  "community.communityTabs.community": {
+    "source": "bb501d7877eb",
+    "status": "machine"
+  },
+  "community.createBundle.published": {
+    "source": "2ef42ec21d93",
+    "status": "machine"
+  },
+  "community.createBundle.nameIsLiveInThe": {
+    "source": "c8042614917e",
+    "status": "machine"
+  },
+  "community.createBundle.viewIt": {
+    "source": "57e5c0af4521",
+    "status": "machine"
+  },
+  "community.createBundle.whatToMake": {
+    "source": "c505c0c71890",
+    "status": "machine"
+  },
+  "community.createBundle.itemsYouSaveInThe": {
+    "source": "eb9ba874f92b",
+    "status": "machine"
+  },
+  "community.createBundle.itemsLengthPicked": {
+    "source": "4adff7453ebf",
+    "status": "machine"
+  },
+  "community.createBundle.optional": {
+    "source": "0059798b7f70",
+    "status": "machine"
+  },
+  "community.createBundle.name": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "community.createBundle.description": {
+    "source": "526e0087cc3f",
+    "status": "machine"
+  },
+  "community.createBundle.seeIt": {
+    "source": "90eb7554daf5",
+    "status": "machine"
+  },
+  "community.createBundle.eGEverythingForA": {
+    "source": "a099266a5398",
+    "status": "machine"
+  },
+  "community.createBundle.eGCaféTableKit": {
+    "source": "9d7ee081768d",
+    "status": "machine"
+  },
+  "community.createBundle.optionalWhatItsFor": {
+    "source": "b15efcf4a745",
+    "status": "machine"
+  },
+  "community.createBundle.collection": {
+    "source": "7b790708ff1b",
+    "status": "machine"
+  },
+  "community.createBundle.kit": {
+    "source": "875d60ed20f4",
+    "status": "machine"
+  },
+  "community.createBundle.groupFramesThemesAndPage": {
+    "source": "9ae1d1ccad12",
+    "status": "machine"
+  },
+  "community.createBundle.aPageTemplateAndThe": {
+    "source": "640cc730b17d",
+    "status": "machine"
+  },
+  "community.createBundle.yours": {
+    "source": "5eb2da9c26b6",
+    "status": "machine"
+  },
+  "community.createBundle.noSavedMany": {
+    "source": "41c176d1d47f",
+    "status": "machine"
+  },
+  "community.createBundle.none": {
+    "source": "dc937b598926",
+    "status": "machine"
+  },
+  "community.createBundle.pickOne": {
+    "source": "a880a59db4d3",
+    "status": "machine"
+  },
+  "community.createBundle.publishing": {
+    "source": "26c81739396d",
+    "status": "machine"
+  },
+  "community.createBundle.publishCollection": {
+    "source": "5937e95914c6",
+    "status": "machine"
+  },
+  "community.createBundle.publishKit": {
+    "source": "035c3b9f98b5",
+    "status": "machine"
+  },
+  "community.creatorLine.verified": {
+    "source": "4f7838402f37",
+    "status": "machine"
+  },
+  "community.importFrameDialog.importAnSvgFrame": {
+    "source": "d44eb80a2268",
+    "status": "machine"
+  },
+  "community.importFrameDialog.shapesAndColorsBecomeA": {
+    "source": "0965b1cee9bf",
+    "status": "machine"
+  },
+  "community.importFrameDialog.colors": {
+    "source": "88c45d9e526c",
+    "status": "machine"
+  },
+  "community.importFrameDialog.whatChanged": {
+    "source": "1bcbf1dcad4f",
+    "status": "machine"
+  },
+  "community.importFrameDialog.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "community.importFrameDialog.useThisFrame": {
+    "source": "d38f959e6b8b",
+    "status": "machine"
+  },
+  "community.importFrameDialog.chooseAnSvgFileUp": {
+    "source": "06cd57438507",
+    "status": "machine"
+  },
+  "community.importFrameDialog.refs.frame": {
+    "source": "2d7228cc6b77",
+    "status": "machine"
+  },
+  "community.importFrameDialog.refs.accent": {
+    "source": "baeefbad50a3",
+    "status": "machine"
+  },
+  "community.importFrameDialog.refs.fixed": {
+    "source": "199135237cd4",
+    "status": "machine"
+  },
+  "community.itemActions.useInEditor": {
+    "source": "77f6831f9b37",
+    "status": "machine"
+  },
+  "community.itemActions.copyToWorkspace": {
+    "source": "aa6335433fbb",
+    "status": "machine"
+  },
+  "community.itemActions.unpublish": {
+    "source": "2db04a54fa74",
+    "status": "machine"
+  },
+  "community.itemActions.removeFromTheCommunity": {
+    "source": "5cedffa908b1",
+    "status": "machine"
+  },
+  "community.itemActions.itLeavesTheCommunityAt": {
+    "source": "60d199c6d1ef",
+    "status": "machine"
+  },
+  "community.itemActions.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "community.itemActions.removeFromSaved": {
+    "source": "4115ec23ac38",
+    "status": "machine"
+  },
+  "community.itemActions.save": {
+    "source": "1509f561f241",
+    "status": "machine"
+  },
+  "community.itemActions.unlike": {
+    "source": "eaa881c359cf",
+    "status": "machine"
+  },
+  "community.itemActions.like": {
+    "source": "64f915cb8bfc",
+    "status": "machine"
+  },
+  "community.itemActions.useKit": {
+    "source": "3b6db1b46a7a",
+    "status": "machine"
+  },
+  "community.itemActions.useTemplate": {
+    "source": "351dd54e5327",
+    "status": "machine"
+  },
+  "community.itemActions.saved": {
+    "source": "b5c120b316c2",
+    "status": "machine"
+  },
+  "community.itemActions.open": {
+    "source": "ed077f3d8125",
+    "status": "machine"
+  },
+  "community.itemActions.nameIsInYourPages": {
+    "source": "b637ca2ba1ad",
+    "status": "machine"
+  },
+  "community.itemActions.nameIsInYourPages2": {
+    "source": "3dd736a2502f",
+    "status": "machine"
+  },
+  "community.itemActions.savedItsInTheEditors": {
+    "source": "1cdeb7714173",
+    "status": "machine"
+  },
+  "community.itemActions.saved2": {
+    "source": "fca046ccd586",
+    "status": "machine"
+  },
+  "community.itemActions.removedFromSaved": {
+    "source": "ad211b77cf43",
+    "status": "machine"
+  },
+  "community.itemActions.copiedToWhereAsName": {
+    "source": "16e2b5b78582",
+    "status": "machine"
+  },
+  "community.itemActions.nameIsNoLongerIn": {
+    "source": "483180c56746",
+    "status": "machine"
+  },
+  "community.itemCard.empty": {
+    "source": "c6c094bc0054",
+    "status": "machine"
+  },
+  "community.itemCard.official": {
+    "source": "c409c66f71f2",
+    "status": "machine"
+  },
+  "community.itemCard.usecountUses": {
+    "source": "74be4a4a2b30",
+    "status": "machine"
+  },
+  "community.itemCard.seeAll": {
+    "source": "d7a8c446069a",
+    "status": "machine"
+  },
+  "community.itemCard.likes": {
+    "source": "cca0662f9ddd",
+    "status": "machine"
+  },
+  "community.itemPages.previous": {
+    "source": "a57b08a480b8",
+    "status": "machine"
+  },
+  "community.itemPages.pagePageOfPages": {
+    "source": "358e7bd1cd24",
+    "status": "machine"
+  },
+  "community.itemPages.next": {
+    "source": "1ff57a29d7c9",
+    "status": "machine"
+  },
+  "community.itemPages.pages": {
+    "source": "9046da16aea9",
+    "status": "machine"
+  },
+  "community.licenceConfirm.licence": {
+    "source": "42b4fb88ee3a",
+    "status": "machine"
+  },
+  "community.newBundle.signInToMakeA": {
+    "source": "5ea430dba6d7",
+    "status": "machine"
+  },
+  "community.newBundle.signIn": {
+    "source": "bfd402b2f6f3",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.published": {
+    "source": "2ef42ec21d93",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.valueIsLiveInThe": {
+    "source": "b3dc10ac4f0f",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.done": {
+    "source": "11a6767d5674",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.viewIt": {
+    "source": "57e5c0af4521",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.publishToTheCommunity": {
+    "source": "7b1d2b5a8d4a",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.theChatDraftedTheseDetails": {
+    "source": "a62660e6ed31",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.name": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.description": {
+    "source": "526e0087cc3f",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.seeIt": {
+    "source": "90eb7554daf5",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.optionalWhatItSuits": {
+    "source": "220e3f35af9c",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.checkingAndPublishing": {
+    "source": "f0fb033affca",
+    "status": "machine"
+  },
+  "community.publishDesignDialog.publish": {
+    "source": "859390eb495b",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.published": {
+    "source": "2ef42ec21d93",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.valueIsLiveInThe": {
+    "source": "b3dc10ac4f0f",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.done": {
+    "source": "11a6767d5674",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.viewIt": {
+    "source": "57e5c0af4521",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.publishThisFrame": {
+    "source": "2fd61953b98b",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.anyoneCanFindItIn": {
+    "source": "f190b8606989",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.name": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.description": {
+    "source": "526e0087cc3f",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.seeIt": {
+    "source": "90eb7554daf5",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.eGCaféTableCard": {
+    "source": "efabbd188cd3",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.optionalWhatItsFor": {
+    "source": "b15efcf4a745",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.checkingAndPublishing": {
+    "source": "f0fb033affca",
+    "status": "machine"
+  },
+  "community.publishFrameDialog.publish": {
+    "source": "859390eb495b",
+    "status": "machine"
+  },
+  "community.publishPageDialog.published": {
+    "source": "2ef42ec21d93",
+    "status": "machine"
+  },
+  "community.publishPageDialog.valueIsLiveInThe": {
+    "source": "1c4e2ae25c3e",
+    "status": "machine"
+  },
+  "community.publishPageDialog.done": {
+    "source": "11a6767d5674",
+    "status": "machine"
+  },
+  "community.publishPageDialog.viewIt": {
+    "source": "57e5c0af4521",
+    "status": "machine"
+  },
+  "community.publishPageDialog.shareAsAPageTemplate": {
+    "source": "88bd2a2e6b88",
+    "status": "machine"
+  },
+  "community.publishPageDialog.step1Of2This": {
+    "source": "26b28d4b40ec",
+    "status": "machine"
+  },
+  "community.publishPageDialog.whatWeChanged": {
+    "source": "7f8dba873497",
+    "status": "machine"
+  },
+  "community.publishPageDialog.checkingThePage": {
+    "source": "0ed008ac684b",
+    "status": "machine"
+  },
+  "community.publishPageDialog.yourTextIsReplacedWith": {
+    "source": "114f4156d0cc",
+    "status": "machine"
+  },
+  "community.publishPageDialog.everyPhotoIsTakenOut": {
+    "source": "b970b8fdc774",
+    "status": "machine"
+  },
+  "community.publishPageDialog.nothingIsLeftToShare": {
+    "source": "98178be4a6d4",
+    "status": "machine"
+  },
+  "community.publishPageDialog.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "community.publishPageDialog.continue": {
+    "source": "31fbef162594",
+    "status": "machine"
+  },
+  "community.publishPageDialog.step2Of2Details": {
+    "source": "c24ddd66ddac",
+    "status": "machine"
+  },
+  "community.publishPageDialog.name": {
+    "source": "dcd1d5223f73",
+    "status": "machine"
+  },
+  "community.publishPageDialog.description": {
+    "source": "526e0087cc3f",
+    "status": "machine"
+  },
+  "community.publishPageDialog.seeIt": {
+    "source": "90eb7554daf5",
+    "status": "machine"
+  },
+  "community.publishPageDialog.back": {
+    "source": "76900f1bfd16",
+    "status": "machine"
+  },
+  "community.publishPageDialog.eGCaféMenu": {
+    "source": "c2e11e715ecc",
+    "status": "machine"
+  },
+  "community.publishPageDialog.optionalWhatItsFor": {
+    "source": "b15efcf4a745",
+    "status": "machine"
+  },
+  "community.publishPageDialog.kept": {
+    "source": "0c741c9fa7c4",
+    "status": "machine"
+  },
+  "community.publishPageDialog.empty": {
+    "source": "d29a0939bcb5",
+    "status": "machine"
+  },
+  "community.publishPageDialog.publishing": {
+    "source": "26c81739396d",
+    "status": "machine"
+  },
+  "community.publishPageDialog.publish": {
+    "source": "859390eb495b",
+    "status": "machine"
+  },
+  "community.publishThemeDialog.anyoneCanFindItIn": {
+    "source": "70c7e324672e",
+    "status": "machine"
+  },
+  "community.publishThemeDialog.cancel": {
+    "source": "19766ed6ccb2",
+    "status": "machine"
+  },
+  "community.publishThemeDialog.publishThemenameToTheCommunity": {
+    "source": "f4ea2c8d2647",
+    "status": "machine"
+  },
+  "community.publishThemeDialog.publishToTheCommunity": {
+    "source": "7b1d2b5a8d4a",
+    "status": "machine"
+  },
+  "community.publishThemeDialog.checkingAndPublishing": {
+    "source": "f0fb033affca",
+    "status": "machine"
+  },
+  "community.publishThemeDialog.publish": {
+    "source": "859390eb495b",
+    "status": "machine"
+  },
+  "community.publishThemeDialog.publishedUnderYourProfile": {
+    "source": "245e1fd61c22",
+    "status": "machine"
+  },
+  "community.removeItemButton.remove": {
+    "source": "c3812fc4acb8",
+    "status": "machine"
+  },
+  "community.removeItemButton.removeFromTheCommunity": {
+    "source": "859625ae4102",
+    "status": "machine"
+  },
+  "community.removeItemButton.removedNameFromTheCommunity": {
+    "source": "0de052128098",
+    "status": "machine"
+  },
+  "community.tryIt.tryItWithYourLink": {
+    "source": "5c3bc0219454",
+    "status": "machine"
+  },
+  "community.tryIt.drawnInYourBrowserNothing": {
+    "source": "c6eb34ea06b3",
     "status": "machine"
   }
 }

@@ -13,6 +13,7 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { cn } from "@repo/design-system/lib/utils";
 import { Filter } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 
 export function BrowseLayout({
@@ -34,12 +35,13 @@ export function BrowseLayout({
   sheetTitle: string;
   children: ReactNode;
 }) {
+  const t = useTranslations("community.browseLayout");
   const [open, setOpen] = useState(false);
 
   return (
     <div className="flex min-h-[60vh] w-full">
       <aside className="hidden w-60 shrink-0 border-r lg:block">
-        <nav aria-label="Filters" className="space-y-1 p-3">
+        <nav aria-label={t("filters")} className="space-y-1 p-3">
           {sidebar}
         </nav>
       </aside>
@@ -58,7 +60,7 @@ export function BrowseLayout({
                   variant="outline"
                 >
                   <Filter aria-hidden className="size-3.5" />
-                  Filters
+                  {t("filters")}
                   {activeFilters > 0 && (
                     <span className="bg-foreground text-background flex size-4 items-center justify-center rounded-full text-[10px] font-semibold tabular-nums">
                       {activeFilters}
@@ -72,7 +74,7 @@ export function BrowseLayout({
                 </SheetHeader>
                 {/* Choosing a filter closes the sheet, so the results show. */}
                 <nav
-                  aria-label="Filters"
+                  aria-label={t("filters")}
                   className="space-y-1 overflow-y-auto p-4"
                   onClickCapture={(event) => {
                     if ((event.target as Element).closest("a, button")) {

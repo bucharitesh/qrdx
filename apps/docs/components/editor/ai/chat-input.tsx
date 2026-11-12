@@ -4,6 +4,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { cn } from "@repo/design-system/lib/utils";
 import { Add as Plus } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { useAIChatForm } from "@/lib/hooks/use-ai-chat-form";
@@ -42,6 +43,7 @@ export function ChatInput({
   isGeneratingTheme,
   onCancelThemeGeneration,
 }: ChatInputProps) {
+  const t = useTranslations("editor.ai.chatInput");
   const { messages, startNewChat, themeInFlight } = useChatContext();
   const guards = useGuards();
   // Dev-only `?ai-mock=` replays a response without signing in.
@@ -146,7 +148,7 @@ export function ChatInput({
         <div className="flex size-full items-center gap-2">
           <AnimatedBot className="size-4" thinking />
           <ShineText className="text-xs font-medium">
-            Designing your code…
+            {t("designingYourCode")}
           </ShineText>
         </div>
       </BannerWrapper>
@@ -191,7 +193,7 @@ export function ChatInput({
         />
         <div className="@container/form flex items-center justify-between gap-1">
           <div className="flex items-center gap-0.5">
-            <TooltipWrapper label="Start a new chat" asChild>
+            <TooltipWrapper label={t("startANewChat")} asChild>
               <Button
                 variant="ghost"
                 size="sm"
@@ -206,7 +208,9 @@ export function ChatInput({
                 className="text-muted-foreground hover:text-foreground gap-1.5 shadow-none"
               >
                 <Plus />
-                <span className="hidden @[300px]/form:inline">New chat</span>
+                <span className="hidden @[300px]/form:inline">
+                  {t("newChat")}
+                </span>
               </Button>
             </TooltipWrapper>
 
@@ -237,7 +241,7 @@ export function ChatInput({
             <AISendButton
               disabled={!canSend}
               generating={isGeneratingTheme}
-              label="Generate"
+              label={t("generate")}
               onClick={handleGenerateSubmit}
               onStop={onCancelThemeGeneration}
             />
@@ -245,9 +249,9 @@ export function ChatInput({
         </div>
       </div>
       <p className="text-muted-foreground/80 mt-1.5 hidden items-center justify-end gap-1 px-1 text-[11px] sm:flex">
-        <Kbd className="h-4 min-w-4 text-[10px]">⏎</Kbd> to send
+        <Kbd className="h-4 min-w-4 text-[10px]">⏎</Kbd> {t("toSend")}
         <span aria-hidden>·</span>
-        <Kbd className="h-4 min-w-4 text-[10px]">⇧⏎</Kbd> new line
+        <Kbd className="h-4 min-w-4 text-[10px]">⇧⏎</Kbd> {t("newLine")}
       </p>
     </div>
   );

@@ -8,6 +8,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Gallery as ImageIcon } from "iconsax-reactjs";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import type { ComponentProps } from "react";
 
 interface ChatImagePreviewProps extends ComponentProps<typeof Image> {
@@ -21,6 +22,7 @@ export function ChatImagePreview({
   alt,
   ...props
 }: ChatImagePreviewProps) {
+  const t = useTranslations("editor.ai.chatImagePreview");
   return (
     <ResponsiveDialog onlyDialog>
       <ResponsiveDialogTrigger asChild>
@@ -33,7 +35,7 @@ export function ChatImagePreview({
               "h-auto max-h-[250px] w-auto max-w-[250px] object-cover object-center",
               className,
             )}
-            alt={alt || "Image preview"}
+            alt={alt || t("imagePreview2")}
             title={name}
             {...props}
           />
@@ -49,13 +51,13 @@ export function ChatImagePreview({
         className="size-fit max-h-[80dvh] overflow-hidden sm:max-w-[80vw]"
       >
         <ResponsiveDialogHeader className="sr-only">
-          <ResponsiveDialogTitle>Image Preview</ResponsiveDialogTitle>
+          <ResponsiveDialogTitle>{t("imagePreview")}</ResponsiveDialogTitle>
         </ResponsiveDialogHeader>
         <Image
           src={src}
           width={500}
           height={500}
-          alt="Full image preview"
+          alt={t("fullImagePreview")}
           className="size-auto max-h-[80vh] max-w-[80vw] object-contain"
         />
       </ResponsiveDialogContent>

@@ -14,6 +14,7 @@ import {
   Scan,
   ScanBarcode,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { loadQRArtImage } from "qrdx";
 import { useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
@@ -153,6 +154,7 @@ export function ArtResultActions({
   variant: AIArtVariant;
   className?: string;
 }) {
+  const t = useTranslations("editor.art.artCanvas");
   const art = useAIArtRun({ store: useArtSessionStore });
   const [busy, setBusy] = useState<"print" | "image-qr" | null>(null);
 
@@ -170,15 +172,15 @@ export function ArtResultActions({
         ART_PRINT_SIZE,
       );
       if (!blob) {
-        toast.error("The print-size copy didn't pass the scan check", {
-          description: `Download the ${variant.width} px image instead.`,
+        toast.error(t("thePrintSizeCopyDidnt"), {
+          description: t("downloadTheWidthPxImage", { width: variant.width }),
         });
         return;
       }
       saveBlob(blob, `qrdx-ai-art-${variant.seed}-${ART_PRINT_SIZE}px`);
       track("qr_downloaded", { format: "ai-art-print", source: "playground" });
     } catch {
-      toast.error("Couldn't prepare the print-size image");
+      toast.error(t("couldntPrepareThePrintSize"));
     } finally {
       setBusy(null);
     }
@@ -189,15 +191,15 @@ export function ArtResultActions({
     try {
       await applyResultAsImageQR(variant.imageUrl);
       soundEvent("apply");
-      toast.success("Now an Image QR code", {
-        description: "It's vector art: download it as SVG, PDF or EPS.",
+      toast.success(t("nowAnImageQrCode"), {
+        description: t("itsVectorArtDownloadIt"),
         action: {
-          label: "Undo",
+          label: t("undo"),
           onClick: () => useQREditorStore.getState().undo(),
         },
       });
     } catch {
-      toast.error("Couldn't turn this image into an Image QR code");
+      toast.error(t("couldntTurnThisImageInto"));
     } finally {
       setBusy(null);
     }
@@ -214,18 +216,18 @@ export function ArtResultActions({
     <div className={cn("flex flex-wrap gap-2", className)}>
       <Button onClick={download} size="sm">
         <Import />
-        Download PNG
+        {t("downloadPng")}
       </Button>
       <Button
-        aria-label={`Print PNG, ${ART_PRINT_SIZE} px`}
+        aria-label={t("printPngArtPrintSize", { ART_PRINT_SIZE })}
         disabled={busy !== null}
         onClick={downloadPrint}
         size="sm"
-        title={`${ART_PRINT_SIZE} px, checked to scan again`}
+        title={t("artPrintSizePxChecked", { ART_PRINT_SIZE })}
         variant="outline"
       >
         {busy === "print" ? <Spinner /> : <DocumentDownload />}
-        Print PNG
+        {t("printPng")}
       </Button>
       <Button
         disabled={busy !== null}
@@ -234,7 +236,7 @@ export function ArtResultActions({
         variant="outline"
       >
         {busy === "image-qr" ? <Spinner /> : <Gallery />}
-        Use as Image QR
+        {t("useAsImageQr")}
       </Button>
       {result.visibility < ART_QR_VISIBILITY.max && (
         <Button
@@ -244,7 +246,7 @@ export function ArtResultActions({
           variant="outline"
         >
           <ScanBarcode />
-          Retry clearer
+          {t("retryClearer")}
         </Button>
       )}
     </div>
@@ -265,11 +267,12 @@ function VariantStrip({
   best: number;
   compact: boolean;
 }) {
+  const t = useTranslations("editor.art.artCanvas");
   const select = useArtSessionStore((state) => state.select);
   if (result.variants.length < 2) return null;
   return (
     <div
-      aria-label="Variations"
+      aria-label={t("variations")}
       className={cn("flex gap-2", compact ? "justify-start" : "justify-center")}
       role="listbox"
     >
@@ -303,6 +306,7 @@ function VariantStrip({
  * phones, where the preview is short) and Back to code.
  */
 export function ArtCanvas() {
+  const t = useTranslations("editor.art.artCanvas");
   const shown = useShownArt();
   const isMobile = useIsMobile();
   const selected = useArtSessionStore((state) => state.selected);
@@ -316,21 +320,21 @@ export function ArtCanvas() {
 
   return (
     <section
-      aria-label="AI art result"
+      aria-label={t("aiArtResult")}
       className="bg-background absolute inset-0 z-20 flex flex-col"
     >
       <div className="flex items-center gap-3 px-4 pt-3 md:pt-4">
         <div className="min-w-0 flex-1">
-          <h2 className="text-sm font-medium">AI art</h2>
+          <h2 className="text-sm font-medium">{t("aiArt")}</h2>
           {result && (
             <p className="text-muted-foreground truncate text-xs">
-              Encodes {displayLink(result.text)}
+              {t("encodesValue", { value: displayLink(result.text) })}
             </p>
           )}
         </div>
         {isMobile ? (
           <Button
-            aria-label="Back to code"
+            aria-label={t("backToCode")}
             onClick={back}
             size="icon-sm"
             variant="ghost"
@@ -340,7 +344,7 @@ export function ArtCanvas() {
         ) : (
           <Button onClick={back} size="sm" variant="ghost">
             <ArrowLeft />
-            Back to code
+            {t("backToCode")}
           </Button>
         )}
       </div>
@@ -355,7 +359,7 @@ export function ArtCanvas() {
         >
           {variant && result ? (
             <img
-              alt={`AI-generated QR code artwork that encodes ${result.text}`}
+              alt={t("aiGeneratedQrCodeArtwork", { text: result.text })}
               className="size-full object-cover"
               height={variant.height}
               src={variant.imageUrl}
@@ -370,16 +374,15 @@ export function ArtCanvas() {
             <div className="bg-background/80 absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center backdrop-blur-sm">
               <Spinner className="size-5" />
               <p className="text-sm font-medium">
-                Generating{" "}
                 {shown.pendingVariations > 1
-                  ? `${shown.pendingVariations} variations`
-                  : "your artwork"}
-                …
+                  ? t("generatingVariations", {
+                      count: shown.pendingVariations,
+                    })
+                  : t("generatingYourArtwork")}
               </p>
               {!isMobile && (
                 <p className="text-muted-foreground max-w-60 text-xs text-pretty">
-                  Each image is checked to scan before you see it. This can take
-                  up to a minute.
+                  {t("eachImageIsCheckedTo")}
                 </p>
               )}
             </div>
@@ -417,10 +420,10 @@ export function ArtCanvas() {
               />
               <span className="truncate">
                 {check?.status === "scannable"
-                  ? `Verified to scan · Scan score ${check.score}`
+                  ? t("verifiedToScanScanScore", { score: check.score ?? 0 })
                   : check
-                    ? "Check before printing"
-                    : "Scoring the scan…"}
+                    ? t("checkBeforePrinting")
+                    : t("scoringTheScan")}
               </span>
             </p>
           ) : (
@@ -440,13 +443,13 @@ export function ArtCanvas() {
                 />
               )}
               <p className="text-muted-foreground text-center text-xs text-pretty">
-                QR visibility {result.visibility} · Creativity{" "}
-                {result.creativity} · PNG {variant.width} px, Print PNG{" "}
-                {ART_PRINT_SIZE} px
-                {result.failed > 0
-                  ? ` · ${result.failed} variation${result.failed > 1 ? "s" : ""} failed and used no credit`
-                  : ""}
-                . For SVG, PDF or EPS, use it as Image QR.
+                {t("resultSummary", {
+                  visibility: result.visibility,
+                  creativity: result.creativity,
+                  width: variant.width,
+                  printSize: ART_PRINT_SIZE,
+                  failed: result.failed,
+                })}
               </p>
             </>
           )}

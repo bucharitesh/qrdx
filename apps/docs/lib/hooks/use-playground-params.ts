@@ -3,6 +3,7 @@
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { openPlaygroundBuilder } from "@/components/code-builder/in-place";
@@ -57,6 +58,7 @@ function handoffReferrer(origin: string): string {
 export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
   settled: boolean;
 } {
+  const t = useTranslations("editor.hooks.usePlaygroundParams");
   const { data: session, isPending: sessionPending } = authClient.useSession();
   const { has } = useAvailability();
   const aiAvailable = has("aiThemes");
@@ -195,7 +197,7 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     }
     if (outcome.replaced && outcome.message) {
       toast(outcome.message, {
-        action: { label: "Undo", onClick: outcome.undo },
+        action: { label: t("undo"), onClick: outcome.undo },
       });
     } else if (outcome.needsContent) {
       toast("Add your content first, then download it.");

@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import { useId, useState } from "react";
 import type { ThemeStyles } from "@/types/theme";
 import { DesignQr } from "./design-qr";
@@ -10,6 +11,7 @@ const SAMPLE = "https://qrdx.dev/community";
 
 /** The item's design with the visitor's own link, drawn in the browser. */
 export function TryIt({ style }: { style: ThemeStyles }) {
+  const t = useTranslations("community.tryIt");
   const id = useId();
   const [value, setValue] = useState("");
   return (
@@ -25,7 +27,7 @@ export function TryIt({ style }: { style: ThemeStyles }) {
       </div>
       <div className="space-y-1.5">
         <Label className="text-xs" htmlFor={id}>
-          Try it with your link
+          {t("tryItWithYourLink")}
         </Label>
         <Input
           id={id}
@@ -36,7 +38,7 @@ export function TryIt({ style }: { style: ThemeStyles }) {
           value={value}
         />
         <p className="text-muted-foreground text-xs">
-          Drawn in your browser. Nothing is sent.
+          {t("drawnInYourBrowserNothing")}
         </p>
       </div>
     </div>

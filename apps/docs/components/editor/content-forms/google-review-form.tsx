@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { GoogleReviewFormData } from "@/lib/validations/qr-content";
 import { googleReviewSchema } from "@/lib/validations/qr-content";
@@ -10,6 +11,7 @@ import type { GoogleReviewContent } from "@/types/qr-content";
 import { encodeGoogleReview } from "@/utils/qr-content-encoder";
 
 export function GoogleReviewForm() {
+  const t = useTranslations("editor.contentForms.googleReviewForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -48,12 +50,12 @@ export function GoogleReviewForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="place-id">
-          Google Place ID *
+          {t("googlePlaceId")}
         </Label>
         <Input
           id="place-id"
           type="text"
-          placeholder="ChIJN1t_tDeuEmsRUsoyG83frY4"
+          placeholder={t("chijn1tTdeuemsrusoyg83fry4")}
           value={reviewData.placeId}
           onChange={(e) => setReviewData({ placeId: e.target.value })}
           className={errors.placeId ? "border-destructive" : ""}
@@ -63,21 +65,24 @@ export function GoogleReviewForm() {
         )}
         {!errors.placeId && (
           <p className="text-muted-foreground text-[11px]">
-            Find yours with the{" "}
-            <a
-              href="https://developers.google.com/maps/documentation/places/web-service/place-id"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline"
-            >
-              Google Place ID Finder
-            </a>
+            {t.rich("findYoursWithTheGoogle", {
+              link: (chunks) => (
+                <a
+                  href="https://developers.google.com/maps/documentation/places/web-service/place-id"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline"
+                >
+                  {chunks}
+                </a>
+              ),
+            })}
           </p>
         )}
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open Google to review your business
+        {t("scanningWillOpenGoogleTo")}
       </p>
     </div>
   );

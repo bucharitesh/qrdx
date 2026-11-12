@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { PinterestContent } from "@/types/qr-content";
 import { encodePinterest } from "@/utils/qr-content-encoder";
 
 export function PinterestForm() {
+  const t = useTranslations("editor.contentForms.pinterestForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -31,12 +33,12 @@ export function PinterestForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="pinterest-username">
-          Pinterest username *
+          {t("pinterestUsername")}
         </Label>
         <Input
           id="pinterest-username"
           type="text"
-          placeholder="username"
+          placeholder={t("username")}
           value={pinterestData.username}
           onChange={(e) =>
             setPinterestData({ ...pinterestData, username: e.target.value })
@@ -45,7 +47,7 @@ export function PinterestForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Pinterest profile
+        {t("scanningWillOpenYourPinterest")}
       </p>
     </div>
   );

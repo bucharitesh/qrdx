@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { type KeyboardEvent, type PointerEvent, useRef } from "react";
 import {
   clamp,
@@ -43,6 +44,7 @@ export function ColorArea({
   color: HSBA;
   onChange: (color: HSBA) => void;
 }) {
+  const t = useTranslations("editor.paintPicker.controls");
   const ref = useRef<HTMLDivElement>(null);
   // Key repeats can land before the next render: step from the latest value
   const latest = useRef(color);
@@ -80,11 +82,14 @@ export function ColorArea({
 
   return (
     <div
-      aria-label="Saturation and brightness"
+      aria-label={t("saturationAndBrightness")}
       aria-valuemax={100}
       aria-valuemin={0}
       aria-valuenow={round(color.s)}
-      aria-valuetext={`Saturation ${round(color.s)}%, brightness ${round(color.b)}%`}
+      aria-valuetext={t("saturationValueBrightnessValue2", {
+        value: round(color.s),
+        value2: round(color.b),
+      })}
       className="focus-visible:ring-ring/50 relative h-36 w-full cursor-crosshair touch-none rounded-md outline-none focus-visible:ring-[3px]"
       onKeyDown={onKeyDown}
       onPointerDown={(event) => {

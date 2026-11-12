@@ -1,4 +1,5 @@
 import { authClient } from "@repo/auth/client";
+import { useTranslations } from "next-intl";
 import { createContext, type ReactNode, useContext, useState } from "react";
 // import { QRCodeDialog } from "@/components/editor/qr";
 import { QRSaveDialog } from "@/components/editor/qr-save-dialog";
@@ -22,13 +23,16 @@ import { useThemePresetStore } from "@/store/theme-preset-store";
 type PendingAction = "share" | null;
 
 // Get contextual copy for the save dialog based on the pending action
-function getSaveDialogCopy(pendingAction: PendingAction) {
+function getSaveDialogCopy(
+  pendingAction: PendingAction,
+  t: ReturnType<typeof useTranslations<"editor.hooks.useDialogActions">>,
+) {
   switch (pendingAction) {
     case "share":
       return {
-        title: "Save to share",
-        description: "Save your theme first to share it with others.",
-        ctaLabel: "Save & Share",
+        title: t("saveToShare.title"),
+        description: t("saveToShare.description"),
+        ctaLabel: t("saveToShare.ctaLabel"),
       };
     default:
       return {};
@@ -311,6 +315,7 @@ export const DialogActionsContext =
   createContext<DialogActionsContextType | null>(null);
 
 export function DialogActionsProvider({ children }: { children: ReactNode }) {
+  const t = useTranslations("editor.hooks.useDialogActions");
   const store = useDialogActionsStore();
 
   return (
@@ -330,7 +335,7 @@ export function DialogActionsProvider({ children }: { children: ReactNode }) {
         existingThemeName={store.existingThemeName}
         onUpdateExisting={store.handleUpdateExisting}
         isUpdating={store.isUpdatingTheme}
-        {...getSaveDialogCopy(store.pendingAction)}
+        {...getSaveDialogCopy(store.pendingAction, t)}
       />
       <QRShareDialog
         omitted={store.shareOmitted}

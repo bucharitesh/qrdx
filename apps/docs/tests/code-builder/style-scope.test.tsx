@@ -2,8 +2,9 @@
 // QRStyleScopeProvider the playground's pickers show and edit the scope's
 // design and never touch the playground's saved editor state; outside one
 // they behave exactly as before.
-import { renderToStaticMarkup } from "react-dom/server";
+
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { renderIntl } from "../support/intl";
 
 // The editor store persists to window.localStorage, which Node doesn't have.
 // Every write is recorded, so a test can prove the builder wrote nothing.
@@ -80,7 +81,7 @@ function Probe({ onRender }: { onRender: (captured: Captured) => void }) {
 
 function capture(node: (probe: React.ReactNode) => React.ReactNode): Captured {
   let captured: Captured | null = null;
-  renderToStaticMarkup(
+  renderIntl(
     node(
       <Probe
         onRender={(next) => {
@@ -145,7 +146,7 @@ describe("inside a QRStyleScopeProvider", () => {
   });
 
   it("renders the real pickers with the scope's picks", () => {
-    const markup = renderToStaticMarkup(
+    const markup = renderIntl(
       <QRStyleScopeProvider onChange={() => {}} style={BUILDER}>
         <DotPatternControl />
         <EyeControls />
@@ -174,7 +175,7 @@ describe("outside a provider (the playground)", () => {
   });
 
   it("renders the pickers with the playground's picks", () => {
-    const pressed = pressedNames(renderToStaticMarkup(<DotPatternControl />));
+    const pressed = pressedNames(renderIntl(<DotPatternControl />));
     expect(pressed).toContain("Circle");
     expect(pressed).not.toContain("Rounded");
   });

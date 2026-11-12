@@ -2,6 +2,7 @@
 
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import { useId } from "react";
 import {
   COMMUNITY_LICENSE_NAME,
@@ -20,12 +21,13 @@ export function LicenceConfirm({
   onCheckedChange: (checked: boolean) => void;
   disabled?: boolean;
 }) {
+  const t = useTranslations("community.licenceConfirm");
   const id = useId();
   return (
     <div className="space-y-3 rounded-lg border p-3">
       <div className="space-y-1">
         <p className="text-sm font-medium">
-          Licence:{" "}
+          {t("licence")}
           <a
             className="underline underline-offset-2"
             href={COMMUNITY_LICENSE_URL}

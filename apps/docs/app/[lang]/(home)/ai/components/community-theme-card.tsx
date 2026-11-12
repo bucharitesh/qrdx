@@ -4,6 +4,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
 import { Moon, More as MoreVertical, Sun1 as Sun } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import type { ThemePreset, ThemeStyles } from "@/types/theme";
 
@@ -24,15 +25,16 @@ export function CommunityThemeCard({
 }: {
   themePreset: ThemePreset;
 }) {
+  const t = useTranslations("ai.chat.communityThemeCard");
   return (
     <div className="group/card relative flex flex-col gap-2">
       <div className="group/preview relative flex h-56 overflow-hidden rounded-lg border">
         <div className="from-foreground/20 to-foreground-10 absolute inset-0 z-1 flex flex-col items-center justify-center gap-2 bg-gradient-to-b opacity-0 transition-opacity duration-300 ease-in-out group-hover/preview:opacity-100">
           <Button variant="outline" size="sm" className="w-28 drop-shadow">
-            View Details
+            {t("viewDetails")}
           </Button>
           <Button size="sm" className="w-28 drop-shadow">
-            View in Editor
+            {t("viewInEditor")}
           </Button>
         </div>
 
@@ -94,7 +96,7 @@ export function CommunityThemeCard({
             {themePreset.label}
           </h3>
           <p className="text-muted-foreground line-clamp-1 text-xs">
-            {themePreset.createdAt ?? "Unknown creation date"}
+            {themePreset.createdAt ?? t("unknownCreationDate")}
           </p>
         </div>
 

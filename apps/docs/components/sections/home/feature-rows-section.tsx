@@ -1,9 +1,9 @@
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import type { ReactNode } from "react";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { BrowserFrame } from "@/components/mockups/browser-frame";
 import { LoopVideo } from "@/components/mockups/loop-video";
 import { McpTerminal } from "@/components/mockups/mcp-terminal";
@@ -23,7 +23,7 @@ const FREE = PLAN_LIMITS.free;
 
 function MoreLink({ href, children }: { href: string; children: ReactNode }) {
   return (
-    <Link
+    <LocaleLink
       href={href}
       className="group/link inline-flex w-fit items-center gap-1.5 rounded-sm text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
@@ -32,7 +32,7 @@ function MoreLink({ href, children }: { href: string; children: ReactNode }) {
         aria-hidden="true"
         className="size-3.5 transition-transform duration-200 ease-[cubic-bezier(.32,.72,0,1)] group-hover/link:translate-x-0.5 motion-reduce:transition-none"
       />
-    </Link>
+    </LocaleLink>
   );
 }
 

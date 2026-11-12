@@ -51,7 +51,11 @@ export default async function ScanCheckerPage() {
 
       <section aria-label={t("toolLabel")} className="w-full px-10 py-10">
         <ClientMessages
-          namespaces={["scanChecker", "tools.scanChecker.restyle"]}
+          namespaces={[
+            "scanChecker",
+            "tools.scanChecker.restyle",
+            "editor.scanScore",
+          ]}
         >
           <PageScanChecker />
         </ClientMessages>

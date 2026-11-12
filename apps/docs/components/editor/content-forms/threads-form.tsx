@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThreadsContent } from "@/types/qr-content";
 import { encodeThreads } from "@/utils/qr-content-encoder";
 
 export function ThreadsForm() {
+  const t = useTranslations("editor.contentForms.threadsForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -31,12 +33,12 @@ export function ThreadsForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="threads-username">
-          Threads username *
+          {t("threadsUsername")}
         </Label>
         <Input
           id="threads-username"
           type="text"
-          placeholder="username or @username"
+          placeholder={t("usernameOrUsername")}
           value={threadsData.username}
           onChange={(e) =>
             setThreadsData({ ...threadsData, username: e.target.value })
@@ -45,7 +47,7 @@ export function ThreadsForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Threads profile
+        {t("scanningWillOpenYourThreads")}
       </p>
     </div>
   );

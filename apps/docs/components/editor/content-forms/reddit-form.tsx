@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { RedditContent } from "@/types/qr-content";
 import { encodeReddit } from "@/utils/qr-content-encoder";
 
 export function RedditForm() {
+  const t = useTranslations("editor.contentForms.redditForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -30,12 +32,12 @@ export function RedditForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="reddit-username">
-          Reddit username
+          {t("redditUsername")}
         </Label>
         <Input
           id="reddit-username"
           type="text"
-          placeholder="username or u/username"
+          placeholder={t("usernameOrUUsername")}
           value={redditData.username}
           onChange={(e) =>
             setRedditData({ ...redditData, username: e.target.value })
@@ -45,24 +47,24 @@ export function RedditForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="reddit-subreddit">
-          Subreddit
+          {t("subreddit")}
         </Label>
         <Input
           id="reddit-subreddit"
           type="text"
-          placeholder="subreddit or r/subreddit"
+          placeholder={t("subredditOrRSubreddit")}
           value={redditData.subreddit}
           onChange={(e) =>
             setRedditData({ ...redditData, subreddit: e.target.value })
           }
         />
         <p className="text-muted-foreground text-[11px]">
-          Fill in one. If both are filled, the subreddit is used.
+          {t("fillInOneIfBoth")}
         </p>
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the Reddit profile or subreddit
+        {t("scanningWillOpenTheReddit")}
       </p>
     </div>
   );

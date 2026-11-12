@@ -20,6 +20,11 @@ const SHARED_CLIENT_MESSAGES = [
   "barcodeTool",
   // components/landing/demo/demo-qr-button.tsx, on the template demo pages.
   "templateDemo",
+  // components/community and its likes, on the community pages.
+  "community",
+  "editor.hooks.useCommunityThemes",
+  // components/limits: plan limit notices.
+  "limits",
 ];
 
 export default function Layout({ children }: LayoutProps<"/">) {

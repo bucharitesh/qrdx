@@ -20,6 +20,7 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
+import { useTranslations } from "next-intl";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -45,10 +46,14 @@ export function ThemeSaveDialog({
   onSave,
   isSaving,
   initialThemeName = "",
-  ctaLabel = "Save Theme",
-  title = "Save Theme",
-  description = "Enter a name for your theme so you can find it later.",
+  ctaLabel: ctaLabelProp,
+  title: titleProp,
+  description: descriptionProp,
 }: ThemeSaveDialogProps) {
+  const t = useTranslations("playground.themeSaveDialog");
+  const title = titleProp ?? t("defaultTitle");
+  const description = descriptionProp ?? t("defaultDescription");
+  const ctaLabel = ctaLabelProp ?? t("defaultCta");
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -88,9 +93,9 @@ export function ThemeSaveDialog({
                 name="themeName"
                 render={({ field }) => (
                   <FormItem className="grid">
-                    <FormLabel>Name</FormLabel>
+                    <FormLabel>{t("name")}</FormLabel>
                     <FormControl>
-                      <Input placeholder="My Awesome Theme" {...field} />
+                      <Input placeholder={t("myAwesomeTheme")} {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -106,7 +111,7 @@ export function ThemeSaveDialog({
             variant="ghost"
             onClick={() => onOpenChange(false)}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             size="sm"
@@ -119,7 +124,7 @@ export function ThemeSaveDialog({
             {isSaving || form.formState.isSubmitting ? (
               <>
                 <Spinner className="mr-1 size-4 animate-spin" />
-                Saving
+                {t("saving")}
               </>
             ) : (
               ctaLabel

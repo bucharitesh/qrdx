@@ -4,12 +4,14 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Diamonds } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { track } from "@/lib/analytics";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
 interface GetProCTAProps extends React.ComponentProps<typeof Button> {}
 
 export function GetProCTA({ className, ...props }: GetProCTAProps) {
+  const t = useTranslations("nav.getProCta");
   const { subscriptionStatus, isPending } = useSubscription();
   const isPro = subscriptionStatus?.isSubscribed ?? false;
 
@@ -32,7 +34,7 @@ export function GetProCTA({ className, ...props }: GetProCTAProps) {
         onClick={() => track("upgrade_clicked", { source: "header" })}
       >
         <Diamonds className="h-4 w-4" />
-        Get Pro
+        {t("getPro")}
       </Link>
     </Button>
   );

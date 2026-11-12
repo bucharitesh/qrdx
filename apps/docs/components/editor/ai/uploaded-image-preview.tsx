@@ -8,6 +8,7 @@ import {
   HoverCardTrigger,
 } from "@repo/design-system/components/ui/hover-card";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface ImagePreviewProps {
@@ -23,6 +24,7 @@ export function UploadedImagePreview({
   handleImageRemove,
   showPreviewOnHover = true,
 }: ImagePreviewProps) {
+  const t = useTranslations("editor.ai.uploadedImagePreview");
   if (isImageLoading) {
     return (
       <div className="bg-muted flex size-14 items-center justify-center rounded-md border">
@@ -43,15 +45,15 @@ export function UploadedImagePreview({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={src}
-            alt="Uploaded preview"
+            alt={t("uploadedPreview")}
             className="size-full rounded-sm object-cover"
           />
 
-          <TooltipWrapper label="Remove image" asChild>
+          <TooltipWrapper label={t("removeImage")} asChild>
             <Button
               variant="destructive"
               size="icon"
-              aria-label="Remove image"
+              aria-label={t("removeImage")}
               className={cn(
                 "absolute top-1 right-1 size-4 rounded-full transition-all",
               )}
@@ -73,7 +75,7 @@ export function UploadedImagePreview({
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={src}
-              alt="Uploaded preview enlarged"
+              alt={t("uploadedPreviewEnlarged")}
               className="h-auto max-h-[300px] w-auto max-w-[300px] object-contain"
             />
           </div>

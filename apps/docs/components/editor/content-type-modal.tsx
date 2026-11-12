@@ -18,6 +18,7 @@ import {
   type Icon,
   SearchNormal1,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useAvailability } from "@/components/availability-provider";
 import {
@@ -31,6 +32,7 @@ import {
 } from "@/components/editor/content-type-icons";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { InfoHint } from "@/components/help/info-hint";
+import { useContentText } from "@/components/i18n/content-text";
 import { offeredPageTypes } from "@/lib/landing/file-page-types";
 import type { BlockIcon } from "@/lib/landing/registry";
 import { soundEvent } from "@/lib/sound/emit";
@@ -281,6 +283,9 @@ export function ContentTypeModal({
   open,
   onOpenChange,
 }: ContentTypeModalProps) {
+  const t = useTranslations("editor.contentTypeModal");
+  // Type names, descriptions and groups: lib/i18n/content-sources.ts.
+  const tc = useContentText();
   const { data: session } = authClient.useSession();
   const openAuthDialog = useAuthStore((state) => state.openAuthDialog);
   const fileStorage = useAvailability().has("fileStorage");
@@ -323,15 +328,15 @@ export function ContentTypeModal({
       ...TYPE_SECTIONS,
       {
         id: PAGES_SECTION,
-        label: "Hosted pages",
+        label: t("hostedPages"),
         Icon: Element4,
         description: session?.user
-          ? "Mobile pages QRdx hosts for you, each with a dynamic QR code in this design. You edit the page in your dashboard."
-          : "Mobile pages QRdx hosts for you, each with a dynamic QR code in this design. Sign in to make one.",
+          ? t("mobilePagesQrdxHostsFor")
+          : t("mobilePagesQrdxHostsFor2"),
         items: pageItems,
       },
     ];
-  }, [pageItems, session?.user]);
+  }, [pageItems, session?.user, t]);
 
   const results = React.useMemo(() => {
     if (!tokens.length) return [];
@@ -520,15 +525,15 @@ export function ContentTypeModal({
         )}
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2 text-sm leading-5 font-medium">
-            <span className="truncate">{item.label}</span>
+            <span className="truncate">{tc(item.label)}</span>
             {isCurrent && (
               <span className="text-muted-foreground shrink-0 rounded-full border px-1.5 text-[10px] leading-4 font-medium">
-                Current
+                {t("current")}
               </span>
             )}
           </span>
           <span className="text-muted-foreground block truncate text-xs leading-4">
-            {item.description}
+            {tc(item.description)}
           </span>
         </span>
         {item.kind === "page" ? (
@@ -551,12 +556,12 @@ export function ContentTypeModal({
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
                 <ResponsiveDialogTitle className="text-base">
-                  Choose a QR code type
+                  {t("chooseAQrCodeType")}
                 </ResponsiveDialogTitle>
                 <InfoHint align="start" id="qr-types" side="bottom" />
               </div>
               <ResponsiveDialogDescription className="mt-1 text-xs">
-                What should happen when someone scans your code?
+                {t("whatShouldHappenWhenSomeone")}
               </ResponsiveDialogDescription>
             </div>
             <DialogCloseButton className="-mt-1 -mr-1 hidden sm:inline-flex" />
@@ -566,18 +571,18 @@ export function ContentTypeModal({
             <div className="relative">
               <SearchNormal1 className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
               <Input
-                aria-label="Search QR code types"
+                aria-label={t("searchQrCodeTypes")}
                 className="h-10 pr-24 pl-9"
                 onChange={(event) => setQuery(event.target.value)}
                 onKeyDown={handleSearchKeyDown}
-                placeholder="Search: Wi-Fi, menu, gpay, business card…"
+                placeholder={t("searchWiFiMenuGpay")}
                 ref={inputRef}
                 type="search"
                 value={query}
               />
               {tokens.length > 0 && results.length > 0 && (
                 <span className="text-muted-foreground pointer-events-none absolute top-1/2 right-3 hidden -translate-y-1/2 items-center gap-1 text-xs sm:flex">
-                  <Kbd>↵</Kbd> to pick
+                  <Kbd>↵</Kbd> {t("toPick")}
                 </span>
               )}
             </div>
@@ -586,7 +591,7 @@ export function ContentTypeModal({
               <div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none]">
                 <span className="text-muted-foreground flex shrink-0 items-center gap-1 text-xs">
                   <Clock className="size-3.5" />
-                  Recent
+                  {t("recent")}
                 </span>
                 {recentItems.map((item) => {
                   const ItemIcon = getTypeIcon(item.icon);
@@ -603,7 +608,7 @@ export function ContentTypeModal({
                       variant="outline"
                     >
                       <ItemIcon className="size-3.5" />
-                      {item.label}
+                      {tc(item.label)}
                     </Button>
                   );
                 })}
@@ -612,7 +617,7 @@ export function ContentTypeModal({
 
             {!tokens.length && (
               <nav
-                aria-label="Categories"
+                aria-label={t("categories")}
                 className="-mx-4 flex gap-1.5 overflow-x-auto px-4 [mask-image:linear-gradient(to_right,transparent,black_16px,black_calc(100%-24px),transparent)] [scrollbar-width:none] sm:hidden"
               >
                 {sections.map((section) => (
@@ -626,7 +631,7 @@ export function ContentTypeModal({
                       activeSection === section.id ? "secondary" : "outline"
                     }
                   >
-                    {section.label}
+                    {tc(section.label)}
                   </Button>
                 ))}
               </nav>
@@ -635,7 +640,7 @@ export function ContentTypeModal({
 
           <div className="flex min-h-0 flex-1">
             <nav
-              aria-label="Categories"
+              aria-label={t("categories")}
               className="hidden w-52 shrink-0 flex-col gap-0.5 overflow-y-auto border-r p-2 sm:flex"
             >
               {sections.map((section) => {
@@ -655,7 +660,7 @@ export function ContentTypeModal({
                   >
                     <section.Icon className="size-4" />
                     <span className="flex-1 truncate text-left">
-                      {section.label}
+                      {tc(section.label)}
                     </span>
                     <span className="text-muted-foreground/70 text-xs tabular-nums">
                       {section.items.length}
@@ -675,9 +680,10 @@ export function ContentTypeModal({
                 results.length ? (
                   <section>
                     <h3 className="text-muted-foreground mb-2 text-xs font-medium">
-                      {results.length}{" "}
-                      {results.length === 1 ? "match" : "matches"} for “
-                      {query.trim()}”
+                      {t("matchesFor", {
+                        count: results.length,
+                        query: query.trim(),
+                      })}
                     </h3>
                     <div className={grid}>
                       {results.map((item, index) =>
@@ -691,8 +697,7 @@ export function ContentTypeModal({
                       <SearchNormal1 className="size-4" />
                     </span>
                     <p className="text-muted-foreground max-w-64 text-sm text-pretty">
-                      No type matches “{query.trim()}”. A URL code works for any
-                      web address.
+                      {t("noTypeMatchesQueryA", { query: query.trim() })}
                     </p>
                     <Button
                       onClick={() => {
@@ -703,7 +708,7 @@ export function ContentTypeModal({
                       type="button"
                       variant="outline"
                     >
-                      Use a URL code
+                      {t("useAUrlCode")}
                     </Button>
                   </div>
                 )
@@ -721,11 +726,11 @@ export function ContentTypeModal({
                           className="text-muted-foreground text-xs font-medium tracking-wider uppercase"
                           id={`picker-${section.id}`}
                         >
-                          {section.label}
+                          {tc(section.label)}
                         </h3>
                         {section.description && (
                           <p className="text-muted-foreground mt-1 text-xs text-pretty">
-                            {section.description}
+                            {tc(section.description)}
                           </p>
                         )}
                         {section.id === PAGES_SECTION && (
@@ -735,7 +740,7 @@ export function ContentTypeModal({
                             rel="noopener"
                             target="_blank"
                           >
-                            Preview every template
+                            {t("previewEveryTemplate")}
                           </a>
                         )}
                       </div>
@@ -756,13 +761,13 @@ export function ContentTypeModal({
               <Kbd>↓</Kbd>
               <Kbd>←</Kbd>
               <Kbd>→</Kbd>
-              move
+              {t("move")}
             </span>
             <span className="flex items-center gap-1">
-              <Kbd>↵</Kbd> pick
+              <Kbd>↵</Kbd> {t("pick")}
             </span>
             <span className="flex items-center gap-1">
-              <Kbd>esc</Kbd> close
+              {t.rich("escClose", { kbd: (chunks) => <Kbd>{chunks}</Kbd> })}
             </span>
           </div>
         </div>

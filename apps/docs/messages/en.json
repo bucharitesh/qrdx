@@ -127,6 +127,32 @@
       "star": "Star",
       "starOnGithub": "Star QRdx on GitHub",
       "starOnGithubCount": "Star QRdx on GitHub ({count} stars)"
+    },
+    "userProfileDropdown": {
+      "tryThePlayground": "Try the Playground",
+      "signIn": "Sign in",
+      "dashboard": "Dashboard",
+      "accountSettings": "Account settings",
+      "manageBilling": "Manage billing",
+      "upgradeToPro": "Upgrade to Pro",
+      "admin": "Admin",
+      "privacyPolicy": "Privacy policy",
+      "signOut": "Sign out"
+    },
+    "getProCta": {
+      "getPro": "Get Pro"
+    },
+    "getProDialog": {
+      "upgradeToValue": "Upgrade to {value}",
+      "unlocksThis": "Unlocks this",
+      "staticQrCodesStayFree": "Static QR codes stay free, and your codes keep working if you ever cancel. <link>Our guarantee</link>",
+      "comparePlansAndPrices": "Compare plans and prices",
+      "maybeLater": "Maybe later",
+      "thisFeatureIsPartOf": "This feature is part of the Business plan.",
+      "thisFeatureIsPartOf2": "This feature is part of Pro and Business."
+    },
+    "themeToggle": {
+      "toggleTheme": "Toggle theme"
     }
   },
   "footer": {
@@ -1092,7 +1118,7 @@
       "toolLabel": "Print size calculator",
       "howTitle": "How the size is calculated",
       "how1": "The content decides the QR version. The calculator picks the smallest version (1 to 40) that holds your text at the chosen error-correction level, using the same capacity tables as the QRdx encoder. Version n is 17 + 4n modules wide.",
-      "how2": "The distance decides the module size. The {ratio, number}:1 rule of thumb is treated as describing a simple {reference, number} × {reference, number} code, so each module must be at least distance ÷ ({divisor, number}), and never less than {minimum, number} mm.",
+      "how2": "The distance decides the module size. The {ratio, number}:1 rule of thumb is treated as describing a simple {reference, number, ::group-off} × {reference, number} code, so each module must be at least distance ÷ ({divisor, number}), and never less than {minimum, number} mm.",
       "how3": "Module size × modules per side gives the code size. Adding {quiet, number} blank modules on each side gives the space the code needs on the page.",
       "tipsTitle": "Tips for codes that scan",
       "tip1": "Keep the content short. A shorter link means a lower version, so the same printed size gives bigger modules.",
@@ -1147,7 +1173,7 @@
         "resultTitle": "Minimum printed size",
         "errorDistance": "Enter a scanning distance greater than zero.",
         "codeSize": "Code size (edge to edge)",
-        "codeSizeHint": "Version {version, number}, {modules, number} × {modules, number} modules",
+        "codeSizeHint": "Version {version, number}, {modules, number, ::group-off} × {modules, number} modules",
         "withQuietZone": "With {modules, number}-module quiet zone",
         "withQuietZoneHint": "The blank margin scanners need around the code",
         "moduleSize": "Module (single square) size",
@@ -1545,7 +1571,7 @@
     "alt": "{format} barcode for {value}",
     "loadFailed": "The barcode drawing code didn't load. Check your connection and reload the page.",
     "fixInput": "Fix the highlighted input to see the barcode.",
-    "sizes": "PNG, JPG, WebP and AVIF {width, number} × {height, number} px. SVG, PDF and EPS are vectors sized {widthMm} × {heightMm} mm, with a {moduleMm} mm module; scale them in your layout as needed.",
+    "sizes": "PNG, JPG, WebP and AVIF {width, number, ::group-off} × {height, number, ::group-off} px. SVG, PDF and EPS are vectors sized {widthMm} × {heightMm} mm, with a {moduleMm} mm module; scale them in your layout as needed.",
     "more": "More",
     "moreFormats": "More formats",
     "footnote": "Made in your browser; nothing you type is sent to QRdx. WebP and AVIF are encoded by QRdx's server when you pick them, and nothing is kept.",
@@ -1914,7 +1940,26 @@
     "artLink": "Or turn a link into scannable AI QR art",
     "chat": {
       "upgrade": "Upgrade to Pro for unlimited requests",
-      "heading": "What QR code can I make for you?"
+      "heading": "What QR code can I make for you?",
+      "aiAnnouncement": {},
+      "aiChatForm": {
+        "generate": "Generate"
+      },
+      "aiChatHero": {},
+      "chatHeading": {},
+      "communityThemeCard": {
+        "viewDetails": "View Details",
+        "viewInEditor": "View in Editor",
+        "unknownCreationDate": "Unknown creation date"
+      },
+      "communityThemes": {
+        "fromTheCommunity": "From the Community",
+        "viewAll": "View All",
+        "exploreTheThemesTheCommunity": "Explore the themes the community is creating with tweakcn."
+      },
+      "suggestedPillActions": {
+        "fromAnImage": "From an Image"
+      }
     }
   },
   "aiArt": {
@@ -1952,7 +1997,115 @@
     "faq": {
       "title": "AI QR art FAQ",
       "description": "How scannable artwork is made, what it costs and what to check before you print."
-    }
+    },
+    "aiArtComingSoon": {},
+    "aiArtFaq": {},
+    "aiArtPresetGallery": {
+      "noStylesMatchQueryDescribe": "No styles match “{query}”. Describe it in the prompt instead.",
+      "clearSearch": "Clear search",
+      "theStylesDidntLoad": "The styles didn't load.",
+      "tryAgain": "Try again",
+      "pickingOneFillsInThe": "Picking one fills in the prompt; edit it freely.",
+      "searchStyles": "Search styles",
+      "searchStylesCatsGoldTiles": "Search styles: cats, gold, tiles…",
+      "styleCategories": "Style categories",
+      "featured": "Featured",
+      "all": "All",
+      "someStyles": "{shown, number} of {total, number} styles.",
+      "allStyles": "{total, number} styles."
+    },
+    "aiArtResult": {
+      "yourQrArtWillAppear": "Your QR art will appear here",
+      "generating": "Generating",
+      "eachImageIsCheckedTo": "Each image is checked to scan before you see it. This can take up to a minute.",
+      "bestScannable": "Best scannable",
+      "download": "Download",
+      "printSize": "Print size (",
+      "px": "px)",
+      "retryWithAClearerCode": "Retry with a clearer code",
+      "lockSeedSeed": "Lock seed {seed, number, ::group-off}",
+      "scanScoreScore": "Scan score {score, number}",
+      "bestOfThisRun": "Best of this run",
+      "theModelsImageDidntScan": "The model's image didn't scan as drawn, so QRdx strengthened its corner eyes, its border and, where needed, its modules, just enough to scan (blend strength {value, number}%).",
+      "theModelsImageDidntScan2": "The model's image didn't scan even with its code strengthened, so QRdx redrew it as an Image QR code, with the picture showing through.",
+      "aiGeneratedQrCodeArtwork": "AI-generated QR code artwork that encodes {text}",
+      "variations": "Variations",
+      "variationValueSeedSeed": "Variation {value, number}, seed {seed, number, ::group-off}",
+      "variationValue": "Variation {value, number}",
+      "pendingvariationsVariations": "{pendingVariations, number} variations",
+      "yourArtwork": "your artwork",
+      "downloadTheWidthPxImage": "Download the {width, number, ::group-off} px image instead.",
+      "thePrintSizeCopyDidnt": "The print-size copy didn't pass the scan check",
+      "couldntPrepareThePrintSize": "Couldn't prepare the print-size image",
+      "status": {
+        "checking": {
+          "title": "Scoring the scan…",
+          "description": "Decoded on the server; now testing it shrunk and blurred."
+        },
+        "scannable": {
+          "title": "Verified to scan",
+          "description": "Decoded to your content on our server and again in your browser. Still test it with a phone camera before printing."
+        },
+        "unreadable": {
+          "title": "Hard to read when small — try a clearer code",
+          "description": "It decoded on our server, but not in the in-browser test. Raise QR visibility, or test with a phone camera before using it."
+        },
+        "mismatch": {
+          "title": "Scans to different content — try a clearer code",
+          "description": "The decoded text doesn't match what you entered. Don't use this image."
+        },
+        "unverified": {
+          "title": "Couldn't run the in-browser check",
+          "description": "It decoded on our server. Test it with a phone camera before printing or sharing it."
+        }
+      },
+      "resultSummary": "QR visibility {visibility, number} · Creativity {creativity, number} · {width, number, ::group-off} px{failed, plural, =0 {} one { · # variation failed and used no credit} other { · # variations failed and used no credit}}. Each image uses 1 AI art credit; the print-size download is free."
+    },
+    "aiArtStudio": {
+      "linkOrText": "Link or text",
+      "shorterContentMeansFewerLarger": "Shorter content means fewer, larger modules: cleaner art and more reliable scans.",
+      "style": "Style",
+      "variations": "Variations",
+      "eachVariationIsItsOwn": "Each variation is its own image and uses 1 credit. Every image is verified to scan before you see it, and the best one is picked for you.",
+      "negativePrompt": "Negative prompt",
+      "theModelIsAskedTo": "The model is asked to keep these out of the image.",
+      "seed": "Seed",
+      "lockSeed": "Lock seed",
+      "theSameSeedAndSettings": "The same seed and settings give a similar image (the model can still vary it); variations use seed, seed + 1, …",
+      "referenceImage": "Reference image",
+      "remove": "Remove",
+      "uploadReference": "Upload reference",
+      "optionalALogoPhotoOr": "Optional. A logo, photo or palette for the model to work into the artwork: its colors and shapes carry over. It's resized in your browser and sent with your prompt through Vercel AI Gateway to {ART_MODEL_LABEL}.",
+      "cancel": "Cancel",
+      "aiArtCodesAreStatic": "<span>AI art codes are static.</span> The content is baked into the image and can't be changed after you share it. For a link you can edit later, with scan analytics, create a <signInLink>dynamic code</signInLink> and use its short link here.",
+      "alreadyDesigningACode": "Already designing a code?",
+      "toPaintItsContentDynamic": "to paint its content, dynamic link included.",
+      "openInPlayground": "Open in playground",
+      "signInToGeneratePlans": "Sign in to generate. {plans}",
+      "eachImageUses1Ai": "Each image uses 1 AI art credit; failed images are refunded. {plans}",
+      "unlimitedAiArtOnYour": "Unlimited AI art on your plan. This run uses {variations, number}.",
+      "describeASceneEG": "Describe a scene, e.g. a lighthouse on a rocky coast at sunset, oil painting",
+      "qrVisibility": "QR visibility",
+      "creativity": "Creativity",
+      "thingsToAvoidEG": "Things to avoid, e.g. people, buildings, dark colors",
+      "randomEachRun": "Random each run",
+      "uploadAReferenceImage": "Upload a reference image",
+      "reference": "Reference",
+      "advancedNegativePromptSeedReference": "Advanced: negative prompt, seed, reference image",
+      "advancedNegativePromptReferenceImage": "Advanced: negative prompt, reference image",
+      "generating": "Generating…",
+      "findItUnderAdvanced": "Find it under Advanced.",
+      "seedValueLocked": "Seed {value, number} locked",
+      "creditsLeft": "<count>{remaining, number} of {limit, number}</count> AI art images left this month{pooled, select, yes { (shared by your team)} other {}}, resets {resets}. This run uses {variations, number}; failed images are refunded.",
+      "notEnoughLeft": "Not enough left for {variations, number}: pick fewer variations.",
+      "notEnoughLeftOrUpgrade": "Not enough left for {variations, number}: pick fewer variations or upgrade.",
+      "moreArtistic": "More artistic",
+      "clearerCode": "Clearer code",
+      "followsYourPrompt": "Follows your prompt",
+      "interpretsFreely": "Interprets freely",
+      "generateVariations": "{count, plural, one {Generate QR art} other {Generate # variations}}"
+    },
+    "vectorArtExamples": {}
   },
   "compare": {
     "metaTitle": "QRdx vs Other QR Code Generators and React QR Libraries",
@@ -1970,6 +2123,1936 @@
         "heading": "React and JavaScript QR code libraries",
         "intro": "Packages you install from npm to render QR codes in your own app. Both are far more widely used than QRdx's npm package."
       }
+    }
+  },
+  "editor": {
+    "actionBar": {
+      "actionBarButtons": {},
+      "codeButton": {
+        "code": "Code",
+        "getCode": "Get code"
+      },
+      "copySvgButton": {
+        "copied": "Copied",
+        "copySvg": "Copy SVG",
+        "svgCopiedToClipboard": "SVG copied to clipboard",
+        "failedToCopySvg": "Failed to copy SVG"
+      },
+      "downloadButton": {
+        "download": "Download",
+        "downloadQrCode": "Download QR code"
+      },
+      "downloadDialog": {
+        "addContentToSeeYour": "Add content to see your code.",
+        "format": "Format",
+        "pixels": "Pixels",
+        "at300Dpi": "At 300 dpi",
+        "width": "Width",
+        "color": "Color",
+        "bleed": "Bleed",
+        "downloadQrCode": "Download QR code",
+        "imageFile": "Image file",
+        "printReady": "Print-ready",
+        "size": "Size",
+        "custom": "Custom",
+        "px": "px",
+        "widthAndHeight": "Width and height",
+        "scale": "Scale",
+        "transparentBackground": "Transparent background",
+        "makeManyFromACsv": "Make many from a CSV with this style",
+        "scannedFromAbout": "Scanned from about",
+        "setsTheCodeWidthBelow": "Sets the code width below.",
+        "codeWidth": "Code width",
+        "unit": "Unit",
+        "mm": "mm",
+        "inches": "inches",
+        "colorMode": "Color mode",
+        "none": "None",
+        "n3Mm": "3 mm",
+        "cropMarksPdf": "Crop marks (PDF)",
+        "scansFromUpToAbout": "Scans from up to about {value} away (about 250× the size of one dot).",
+        "under2CmIsHard": "Under 2 cm is hard for phones to scan; go bigger if you can.",
+        "eachDotIsOnlyValue": "Each dot is only {value, number} mm and may smear in print. Make the code bigger or shorten its content.",
+        "cmykUsesASimpleConversion": "CMYK uses a simple conversion without a color profile; ask your printer if exact brand colors matter.",
+        "pdfAndEpsDrawEvery": "PDF and EPS draw every dot as a vector shape and keep linear and radial gradients as smooth vector shadings.",
+        "jpgCantBeTransparent": "JPG can't be transparent",
+        "vector": " · vector",
+        "anySize": "Any size",
+        "printbleedMm": "{printBleed, number} mm",
+        "vectorPdfOrEpsAt": "Vector PDF or EPS at an exact physical size, ready for a print shop.",
+        "pickAFormatAndSize": "Pick a format and size. The preview shows what you get.",
+        "svgCopied": "SVG copied",
+        "copySvg": "Copy SVG",
+        "preparing": "Preparing…",
+        "downloadFilename": "Download {filename}",
+        "downloadQrCodePrintPrintsize": "Download qr-code-print-{printSize, number}{printUnit}.pdf",
+        "enterMinMaxUnitOr": "Enter {min, number}–{max, number} {unit}, or a distance of {distanceMin, number}–{distanceMax, number} {distanceUnit}.",
+        "enterMinMaxUnit": "Enter {min, number}–{max, number} {unit}.",
+        "downloadedFilename": "Downloaded {filename}",
+        "failedToDownloadQrCode": "Failed to download QR code",
+        "downloadedPrintfilename": "Downloaded {printFilename}",
+        "failedToCreatePrintFile": "Failed to create print file",
+        "couldntCopyTheSvg": "Couldn't copy the SVG",
+        "formatHints": {
+          "png": "Best for web, docs and slides.",
+          "jpg": "Best for email and small files.",
+          "webp": "Best for fast-loading websites · lossless, usually smaller than PNG.",
+          "svg": "Best for Figma, Illustrator, websites · stays sharp at any size.",
+          "pdf": "Best for documents and quick prints · for a vector PDF, use Print-ready.",
+          "eps": "Best for print shops and vector apps · stays sharp at any size."
+        },
+        "sizePresets": {
+          "small": "Email",
+          "medium": "Web",
+          "large": "Social",
+          "xlarge": "Print",
+          "3xl": "Poster"
+        },
+        "finishedSize": "Finished size {width} × {height}",
+        "finishedSizeOnPage": "Finished size {width} × {height} (page {pageWidth} × {pageHeight})"
+      },
+      "editButton": {
+        "edit": "Edit",
+        "editTheme": "Edit theme"
+      },
+      "moreMenu": {
+        "more": "More",
+        "moreThingsToDoWith": "More things to do with this design",
+        "makeManyFromACsv": "Make many from a CSV",
+        "checkAPhotoOfThe": "Check a photo of the print",
+        "publishToCommunity": "Publish to community",
+        "useQrdxInFigmaAnd": "Use QRdx in Figma and more",
+        "keyboardShortcuts": "Keyboard shortcuts",
+        "makeItDynamic": "Make it dynamic…",
+        "linkOptions": "Link options…",
+        "oneCodePerRowOf": "One code per row of your CSV, in this style.",
+        "makeSureThePrintedCode": "Make sure the printed code scans like this one.",
+        "shareThisStyleForOthers": "Share this style for others to apply.",
+        "itsShortLinkFolderTags": "Its short link, folder, tags and routing.",
+        "changeWhereItPointsAfter": "Change where it points after printing, and count scans.",
+        "signInToChangeWhere": "Sign in to change where it points after printing.",
+        "pluginsHint": {
+          "noneListed": "Not in their stores yet: install from source.",
+          "someListed": "Some install from source for now."
+        }
+      },
+      "publishButton": {
+        "published": "Published",
+        "publish": "Publish",
+        "publishedToCommunity": "Published to community",
+        "publishToCommunity": "Publish to community"
+      },
+      "qrCodeDialog": {
+        "getCode": "Get code",
+        "useThisDesignInYour": "Use this design in your app, on a web page, through the API or with an AI assistant.",
+        "installTheOpenSourceQrdx": "Install the open-source <code>qrdx</code> package ({version} on npm) and drop in this component.",
+        "addTheQrCodeComponent": "Add the QR Code component from the QRdx registry, then use it with this design.",
+        "aPublicImageOfThis": "A public image of this code to embed anywhere. No API key needed.",
+        "createsADynamicCodeWith": "Creates a dynamic code with this design. It needs an <link>API key</link>.",
+        "addThisServerToYour": "Add this server to your AI assistant; no key needed. <link>Set it up</link>",
+        "askUseQrdxDesignQr": "Ask: “Use QRdx design_qr with these arguments.” QRdx may change the style until the code scans well.",
+        "writesThisDesignToQr": "Writes this design to qr.svg.",
+        "developerDocs": "Developer docs",
+        "pluginsForFigmaCanvaRaycast": "Plugins for Figma, Canva, Raycast and Chrome",
+        "leftOutValue": "Left out: {value}.",
+        "imageUrl": "Image URL",
+        "terminal": "Terminal",
+        "designQrArguments": "design_qr arguments",
+        "labelCopied": "{label} copied",
+        "copyLabel": "Copy {label}",
+        "command": "command",
+        "address": "address",
+        "line": "line",
+        "lines": "lines",
+        "copied": "Copied",
+        "copy": "Copy",
+        "couldntCopyToTheClipboard": "Couldn't copy to the clipboard"
+      },
+      "resetButton": {
+        "reset": "Reset",
+        "resetToPresetDefaults": "Reset to preset defaults"
+      },
+      "saveButton": {
+        "save": "Save",
+        "saveDesign": "Save design"
+      },
+      "shareButton": {
+        "share": "Share",
+        "shareDesign": "Share design"
+      },
+      "undoRedoButtons": {
+        "undo": "Undo",
+        "redo": "Redo"
+      }
+    },
+    "ai": {
+      "agentParts": {
+        "scanScoreScoreValue": "Scan score {score, number} · {value}",
+        "theDesignStepFailedTry": "The design step failed. Try again.",
+        "theContentNeedsAFix": "The content needs a fix: {value}",
+        "setTheContentContentline": "Set the content: {contentLine}",
+        "checkedScanScoreScoreValue": "Checked scan score: {score, number} · {value}",
+        "repairing": "Repairing…",
+        "stop": "Stop",
+        "checkedScanScore": "Checked scan score:",
+        "youAnsweredAnswered": "You answered: {answered}",
+        "notAnswered": "Not answered",
+        "send": "Send",
+        "reject": "Reject",
+        "changedToGetThere": "Changed to get there:",
+        "scoredWithASampleLink": "Scored with a sample link until you add content.",
+        "replacesTheContentWithSummary": "Replaces the content with {summary}",
+        "turnsOffTheLogoQr": "Turns off the Logo QR / Image QR art",
+        "applyToYourEditor": "Apply to your editor?",
+        "undone": "Undone",
+        "applyAgain": "Apply again",
+        "applied": "Applied",
+        "undo": "Undo",
+        "applying": "Applying…",
+        "couldntApplyItTryAgain": "Couldn't apply it. Try again.",
+        "notApplied": "Not applied",
+        "templateName": "Template “{name}”",
+        "savesTheLookToYour": "Saves the look to your themes: colors, shapes, frame and its text, border and logo. Not the content.",
+        "saveToYourAccount": "Save to your account?",
+        "savedToYourThemes": "Saved to your themes",
+        "openThemes": "Open themes",
+        "upgrade": "Upgrade",
+        "saving": "Saving…",
+        "notSaved": "Not saved",
+        "steps": "Steps",
+        "yourAnswer": "Your answer",
+        "orTypeYourAnswer": "Or type your answer",
+        "designingTheStyle": "Designing the style…",
+        "designedTheStyle": "Designed the style",
+        "fellBackToAClassic": "Fell back to a classic black-on-white code",
+        "repairedValue": "Repaired: {value}",
+        "couldntCheckTheScanScore": "Couldn't check the scan score",
+        "checkingTheScanScore": "Checking the scan score…",
+        "showLess": "Show less",
+        "showValueMore": "Show {value, number} more",
+        "applyThisDesign": "Apply this design",
+        "notAppliedYourEditorIs": "Not applied. Your editor is unchanged."
+      },
+      "aiBotBadge": {
+        "qrdxAi": "QRdx AI"
+      },
+      "aiChatFormBody": {
+        "chatInput": "Chat Input"
+      },
+      "aiHero": {},
+      "aiSendButton": {
+        "stop": "Stop",
+        "labelEnter": "{label} (Enter)"
+      },
+      "aiWorkingGlow": {},
+      "alertBanner": {
+        "youHaveFreepromessagesleftFreePro": "You have {freeProMessagesLeft, number} Free<span> Pro </span>messages left.",
+        "upgradeToProToUnlock": "Upgrade to <span>Pro</span> to unlock unlimited requests.",
+        "upgrade": "Upgrade"
+      },
+      "animatedBot": {},
+      "aurora": {},
+      "chatImagePreview": {
+        "imagePreview": "Image Preview",
+        "imagePreview2": "Image preview",
+        "fullImagePreview": "Full image preview"
+      },
+      "chatInput": {
+        "designingYourCode": "Designing your code…",
+        "newChat": "New chat",
+        "toSend": "to send",
+        "newLine": "new line",
+        "startANewChat": "Start a new chat",
+        "generate": "Generate"
+      },
+      "chatInterface": {
+        "seemsLikeThisMessageIs": "Seems like this message is not longer available.",
+        "cannotRetryThisMessage": "Cannot retry this message"
+      },
+      "chatThemePreview": {
+        "stoppedOrFailedRetryFrom": "Stopped or failed. Retry from the message above.",
+        "apply": "Apply",
+        "collapseSection": "Collapse section",
+        "expandSection": "Expand section",
+        "feedback": {
+          "colors": "Picking colors that scan…",
+          "shapes": "Shaping the dots and eyes…",
+          "contrast": "Checking contrast…",
+          "almost": "Almost there…"
+        }
+      },
+      "closeableSuggestedPillActions": {
+        "suggestions": "Suggestions",
+        "hideSuggestions": "Hide suggestions"
+      },
+      "contentDialog": {
+        "whatShouldTheCodeOpen": "What should the code open?",
+        "addALinkOrChoose": "Add a link or choose a type. Your design continues right after.",
+        "link": "Link",
+        "scansOpen": "Scans open",
+        "orChooseAType": "or choose a type",
+        "lengthMoreTypes": "{length, number} more types",
+        "cancel": "Cancel",
+        "continue": "Continue",
+        "backToAllTypes": "Back to all types",
+        "aWebsiteAMenuA": "A website, a menu, a form: any web address."
+      },
+      "dragAndDropImageUploader": {
+        "dropImagesHere": "Drop images here"
+      },
+      "enhancePromptButton": {
+        "stop": "Stop",
+        "enhancePrompt": "Enhance prompt"
+      },
+      "imageParts": {
+        "useIt": "Use it",
+        "addContent": "Add content",
+        "notAdded": "Not added",
+        "whatShouldTheCodeOpen": "What should the code open?",
+        "undone": "Undone",
+        "applyAgain": "Apply again",
+        "applied": "Applied",
+        "undo": "Undo",
+        "openedAiArtInThe": "Opened AI art in the Art tab",
+        "notAppliedYourEditorIs": "Not applied. Your editor is unchanged.",
+        "placedAsValue": "Placed as {value}",
+        "applyToYourEditor": "Apply to your editor?",
+        "apply": "Apply",
+        "reject": "Reject",
+        "notGreatYetTryAnother": "Not Great yet. Try another way above.",
+        "keepMyCode": "Keep my code",
+        "addWhatTheCodeOpens": "Add what the code opens first.",
+        "placingYourPicture": "Placing your picture…",
+        "asValueWithNoAi": "As {value}, with no AI credits",
+        "replacesTheContentWithSummary": "Replaces the content with {summary}",
+        "openAiArt": "Open AI art",
+        "aiArtIsntOnHere": "AI art isn't on here. Image QR uses your picture with no AI.",
+        "useAsImageQr": "Use as Image QR",
+        "aiPaintsANewScene": "AI paints a new scene into your code, with your picture as the reference.",
+        "steps": "Steps",
+        "addedValue": "Added: {value}",
+        "noContentAdded": "No content added",
+        "yourEditorHasContentNow": "Your editor has content now.",
+        "noContentYet": "No content yet.",
+        "addALinkOrChoose": "Add a link or choose a type {reason}.",
+        "addALinkOrChoose2": "Add a link or choose a type, then the design continues.",
+        "placedYourPicture": "Placed your picture",
+        "youStartItInThe": "You start it in the Art tab. It uses AI art credits.",
+        "checkedScore": "Checked, scan score: {score, number}",
+        "repairedThenCheckedScore": "Repaired, then checked, scan score: {score, number}",
+        "place": {
+          "logo": "Use as the logo",
+          "logo_qr": "Use as Logo QR",
+          "image_qr": "Use as Image QR",
+          "background": "Use as the background",
+          "dots": "Use in the dots"
+        }
+      },
+      "imageUploader": {
+        "image": "Image",
+        "uploadImageForThemeGeneration": "Upload image for theme generation",
+        "attachImage": "Attach image"
+      },
+      "loadingLogo": {},
+      "messageActions": {
+        "retry": "Retry",
+        "edit": "Edit"
+      },
+      "messageEditForm": {
+        "cancelEdit": "Cancel edit",
+        "confirmEdit": "Confirm edit"
+      },
+      "message": {
+        "qrdxAi": "QRdx AI",
+        "imagePreview": "Image preview"
+      },
+      "messages": {
+        "clearError": "Clear error"
+      },
+      "noMessagesPlaceholder": {
+        "recentGenerations": "Recent generations",
+        "applyValue": "Apply: {value}",
+        "applyThisGeneratedTheme": "Apply this generated theme",
+        "modes": {
+          "create": {
+            "label": "Create",
+            "description": "Start fresh: what it opens, and a vibe, a brand or a mood."
+          },
+          "remix": {
+            "label": "Remix",
+            "description": "Take a preset and push it somewhere new."
+          },
+          "tweak": {
+            "label": "Tweak",
+            "description": "Adjust the design you have right now."
+          }
+        },
+        "greeting": "What can I help you theme?",
+        "greetingName": "What can I help you theme, {name}?"
+      },
+      "pillActionButton": {},
+      "promptCard": {},
+      "promptSwatch": {},
+      "publishCard": {
+        "publishNameToTheCommunity": "Publish “{name}” to the community",
+        "aThemeAnyoneCanUse": "A theme anyone can use, free under {COMMUNITY_LICENSE_NAME}. You edit the details before it goes out.",
+        "shareItInTheCommunity": "Share it in the community?",
+        "editAndPublish": "Edit and publish",
+        "notNow": "Not now",
+        "published": "Published",
+        "viewIt": "View it",
+        "notPublishedNothingWasShared": "Not published. Nothing was shared.",
+        "checking": "Checking…",
+        "couldntCheckItLookFor": "Couldn't check it. Look for it on your community profile.",
+        "notPublished": "Not published"
+      },
+      "shineBorder": {},
+      "streamText": {},
+      "suggestionChips": {
+        "suggestions": "Suggestions",
+        "chips": {
+          "differentStyle": "Try a different style",
+          "frameText": "Change the frame text",
+          "addFrame": "Add a frame with “Scan me”",
+          "darker": "Make it darker",
+          "lighter": "Make it lighter",
+          "removeLogo": "Remove the logo",
+          "addLogo": "Add a logo",
+          "saveTemplate": "Save it as a template",
+          "keepColors": "Keep the colors, change the shapes",
+          "behindCode": "Put it behind the code instead",
+          "asLogo": "Use it as the logo instead",
+          "variation": "Make a variation",
+          "darkVersion": "Make a dark version"
+        }
+      },
+      "uploadedImagePreview": {
+        "uploadedPreview": "Uploaded preview",
+        "removeImage": "Remove image",
+        "uploadedPreviewEnlarged": "Uploaded preview enlarged"
+      },
+      "useContentDialog": {}
+    },
+    "art": {
+      "aiArtDownload": {
+        "downloadAiArt": "Download AI art",
+        "widthPx": "{width, number, ::group-off} px",
+        "printPng": "Print PNG",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, checked again",
+        "useAsImageQr": "Use as Image QR",
+        "aiGeneratedQrCodeArtwork": "AI-generated QR code artwork that encodes {text}",
+        "format": "Format",
+        "downloadPng": "Download PNG",
+        "downloadPrintPng": "Download print PNG",
+        "downloadTheWidthPxImage": "Download the {width, number, ::group-off} px image instead.",
+        "pickSvgPdfOrEps": "Pick SVG, PDF or EPS for it.",
+        "thePrintSizeCopyDidnt": "The print-size copy didn't pass the scan check",
+        "couldntPrepareThePrintSize": "Couldn't prepare the print-size image",
+        "nowAnImageQrCode": "Now an Image QR code",
+        "couldntTurnThisImageInto": "Couldn't turn this image into an Image QR code"
+      },
+      "aiArtPanel": {
+        "style": "Style",
+        "variations": "Variations",
+        "eachVariationIsItsOwn": "Each variation is its own image and uses 1 credit. The best one to scan is picked for you.",
+        "cancel": "Cancel",
+        "addYourContentFirstAi": "Add your content first: AI art paints the code you're editing.",
+        "addContent": "Add content",
+        "aiArtFitsUpTo": "AI art fits up to {ART_TEXT_MAX_LENGTH, number} characters, and this code has {length, number}. A shorter link, or a dynamic code's short link, fits.",
+        "encodesYourDynamicLinkValue": "Encodes your dynamic link <span>{value}</span>, so you can change where it points after printing.",
+        "encodesValueFixedOncePrinted": "Encodes <span>{value}</span>, fixed once printed. Make it dynamic in Content to change it later.",
+        "encodesYourLabelDetailsFixed": "Encodes your {label} details, fixed once printed.",
+        "thingsToAvoid": "Things to avoid",
+        "seed": "Seed",
+        "lockSeed": "Lock seed",
+        "referenceImage": "Reference image",
+        "useMyLogoAsReference": "Use my logo as reference",
+        "remove": "Remove",
+        "uploadReference": "Upload reference",
+        "optionalItsColorsAndShapes": "Optional. Its colors and shapes carry over into the artwork. It's resized in your browser and sent with your prompt through Vercel AI Gateway to {ART_MODEL_LABEL}.",
+        "signInToGenerateEvery": "Sign in to generate. Every plan includes AI art images each month; <link>see plans</link>.",
+        "eachImageUses1Ai": "Each image uses 1 AI art credit; failed images are refunded.",
+        "unlimitedAiArtOnYour": "Unlimited AI art on your plan. This run uses {variations, number}.",
+        "describeASceneEG": "Describe a scene, e.g. a lighthouse on a rocky coast at sunset, oil painting",
+        "qrVisibility": "QR visibility",
+        "creativity": "Creativity",
+        "eGPeopleBuildingsDark": "e.g. people, buildings, dark colors",
+        "randomEachRun": "Random each run",
+        "uploadAReferenceImage": "Upload a reference image",
+        "reference": "Reference",
+        "generating": "Generating…",
+        "signInToGenerate": "Sign in to generate",
+        "advancedCreativitySeedReference": "Advanced: creativity, seed, reference",
+        "advancedCreativityReference": "Advanced: creativity, reference",
+        "uploadItAsAReference": "Upload it as a reference image instead.",
+        "couldntUseYourLogo": "Couldn't use your logo",
+        "creditsLeft": "<count>{remaining, number} of {limit, number}</count> AI art images left this month{pooled, select, yes { (shared by your team)} other {}}, resets {resets}. This run uses {variations, number}.",
+        "notEnoughLeft": "Not enough left: pick fewer variations.",
+        "notEnoughLeftOrUpgrade": "Not enough left: pick fewer variations or upgrade.",
+        "showResults": "{count, plural, one {Show your result} other {Show your results}}",
+        "moreArtistic": "More artistic",
+        "clearerCode": "Clearer code",
+        "followsYourPrompt": "Follows your prompt",
+        "interpretsFreely": "Interprets freely",
+        "generateVariations": "{count, plural, one {Generate QR art} other {Generate # variations}}"
+      },
+      "artCanvas": {
+        "downloadPng": "Download PNG",
+        "printPng": "Print PNG",
+        "useAsImageQr": "Use as Image QR",
+        "retryClearer": "Retry clearer",
+        "aiArt": "AI art",
+        "encodesValue": "Encodes {value}",
+        "backToCode": "Back to code",
+        "eachImageIsCheckedTo": "Each image is checked to scan before you see it. This can take up to a minute.",
+        "printPngArtPrintSize": "Print PNG, {ART_PRINT_SIZE, number, ::group-off} px",
+        "artPrintSizePxChecked": "{ART_PRINT_SIZE, number, ::group-off} px, checked to scan again",
+        "variations": "Variations",
+        "aiArtResult": "AI art result",
+        "aiGeneratedQrCodeArtwork": "AI-generated QR code artwork that encodes {text}",
+        "verifiedToScanScanScore": "Verified to scan · Scan score {score, number}",
+        "checkBeforePrinting": "Check before printing",
+        "scoringTheScan": "Scoring the scan…",
+        "downloadTheWidthPxImage": "Download the {width, number, ::group-off} px image instead.",
+        "itsVectorArtDownloadIt": "It's vector art: download it as SVG, PDF or EPS.",
+        "undo": "Undo",
+        "thePrintSizeCopyDidnt": "The print-size copy didn't pass the scan check",
+        "couldntPrepareThePrintSize": "Couldn't prepare the print-size image",
+        "nowAnImageQrCode": "Now an Image QR code",
+        "couldntTurnThisImageInto": "Couldn't turn this image into an Image QR code",
+        "generatingVariations": "Generating {count, number} variations…",
+        "generatingYourArtwork": "Generating your artwork…",
+        "resultSummary": "QR visibility {visibility, number} · Creativity {creativity, number} · PNG {width, number, ::group-off} px, Print PNG {printSize, number, ::group-off} px{failed, plural, =0 {} one { · # variation failed and used no credit} other { · # variations failed and used no credit}}. For SVG, PDF or EPS, use it as Image QR."
+      },
+      "artPanel": {
+        "art": "Art",
+        "off": "Off",
+        "logoQr": "Logo QR",
+        "imageQr": "Image QR",
+        "aiArt": "AI art",
+        "artMode": "Art mode",
+        "modes": {
+          "off": "A plain code. Logo QR and Image QR blend a picture into the dots, with no AI, in every format.",
+          "logo": "No AI: your logo becomes part of the code, in every format.",
+          "halftone": "No AI: your photo becomes part of the code, in every format.",
+          "ai": "AI paints a scene into your code. Every image is checked to scan."
+        }
+      }
+    },
+    "brandLogos": {
+      "brandLogoGallery": {
+        "brandLogos": "Brand logos",
+        "theBrandLogosDidntLoad": "The brand logos didn't load.",
+        "tryAgain": "Try again",
+        "noBrandMatchesQuerySome": "No brand matches “{query}”. Some brands asked Simple Icons to remove their marks, so they aren't here.",
+        "allBrandsAToZ": "All brands, A to Z",
+        "logosFromSimpleIconsCc0": "Logos from Simple Icons (CC0). Brand marks are trademarks of their owners; use one to point people to that brand.",
+        "showMore": "Show more",
+        "searchBrands": "Search brands",
+        "searchSpotifyPaypalGoogleMaps": "Search: Spotify, PayPal, Google Maps…",
+        "logoColor": "Logo color",
+        "results": "Results",
+        "titleLogo": "{title} logo",
+        "valueBrandsFromSimpleIcons": "{value} brands from Simple Icons. Each mark belongs to its owner.",
+        "brandsFromSimpleIconsEach": "Brands from Simple Icons. Each mark belongs to its owner.",
+        "plateNeededForWhite": "Plate (needed for white)",
+        "plate": "Plate",
+        "n1Brand": "1 brand",
+        "valueBrands": "{value} brands"
+      }
+    },
+    "communitySheet": {
+      "communityThemes": "Community themes",
+      "freeToUseUnderCc0": "Free to use under CC0. Applying keeps your content.",
+      "sort": "Sort",
+      "allTags": "All tags",
+      "tryAgain": "Try again",
+      "clearSearch": "Clear search",
+      "showAllTags": "Show all tags",
+      "searchCoversTheFirstLength": "Search covers the first {length, number} themes.",
+      "saveAndContinue": "Save and continue",
+      "publishingSharesASavedTheme": "Publishing shares a saved theme. Name this look to continue.",
+      "saveToPublish": "Save to publish",
+      "searchCommunityThemes": "Search community themes",
+      "searchThemes": "Search themes",
+      "loadingThemes": "Loading themes",
+      "couldntLoadCommunityThemes": "Couldn't load community themes",
+      "noThemesMatchQuery": "No themes match \"{query}\"",
+      "noThemesTaggedTagYet": "No themes tagged {tag} yet",
+      "noCommunityThemesYet": "No community themes yet",
+      "applyName": "Apply {name}",
+      "official": "Official",
+      "unlikeName": "Unlike {name}",
+      "likeName": "Like {name}",
+      "likes": "Likes",
+      "published": "Published",
+      "publishThisStyle": "Publish this style",
+      "tags": "Tags",
+      "undo": "Undo",
+      "likedName": "Liked \"{name}\"",
+      "liked": "Liked",
+      "sorts": {
+        "popular": "Popular",
+        "newest": "Newest"
+      }
+    },
+    "contentForms": {
+      "amazonForm": {
+        "amazonProductUrl": "Amazon product URL *",
+        "scanningWillOpenYourAmazon": "Scanning will open your Amazon product or store"
+      },
+      "attendanceForm": {
+        "googleFormUrl": "Google Form URL *",
+        "scanningWillOpenYourAttendance": "Scanning will open your attendance form",
+        "httpsFormsGleOrHttps": "https://forms.gle/... or https://docs.google.com/forms/..."
+      },
+      "bitcoinForm": {
+        "bitcoinAddress": "Bitcoin address *",
+        "amountBtc": "Amount (BTC)",
+        "label": "Label",
+        "message": "Message",
+        "scanningWillOpenABitcoin": "Scanning will open a Bitcoin wallet with these payment details",
+        "n1a1zp1ep5qgefi2dmptftl5slmv7divfna": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+        "paymentLabel": "Payment label",
+        "paymentMessage": "Payment message"
+      },
+      "calcomForm": {
+        "calComBookingUrl": "Cal.com booking URL *",
+        "scanningWillOpenYourCal": "Scanning will open your Cal.com booking page"
+      },
+      "dubshForm": {
+        "dubShortLink": "Dub short link *",
+        "scanningWillOpenYourDub": "Scanning will open your Dub short link.",
+        "connectDub": "Connect Dub",
+        "connectDubToCreatePick": "Connect Dub to create, pick and track Dub links here.",
+        "enterManually": "Enter manually",
+        "createNew": "Create new",
+        "selectExisting": "Select existing",
+        "pasteALink": "Paste a link",
+        "destinationUrl": "Destination URL *",
+        "domain": "Domain",
+        "customEnding": "Custom ending",
+        "title": "Title",
+        "description": "Description",
+        "createDubLink": "Create Dub link",
+        "loadingYourDubLinks": "Loading your Dub links…",
+        "clicksClicks": "({clicks, number} clicks)",
+        "selectAShortLink": "Select a short link…",
+        "noLinksFound": "No links found.",
+        "scansGoToUrl": "Scans go to {url}",
+        "campaign": "campaign",
+        "springCampaign": "Spring campaign",
+        "optionalInternalNote": "Optional internal note",
+        "searchLinks": "Search links…",
+        "failedToConnectDub": "Failed to connect Dub",
+        "dubLinkCreated": "Dub link created",
+        "failedToCreateDubLink": "Failed to create Dub link"
+      },
+      "emailForm": {
+        "recipientEmail": "Recipient email *",
+        "subject": "Subject",
+        "message": "Message",
+        "scanningWillOpenAnEmail": "Scanning will open an email draft to this address",
+        "contactExampleCom": "contact@example.com",
+        "emailSubject": "Email subject",
+        "emailMessage": "Email message"
+      },
+      "ethereumForm": {
+        "ethereumAddress": "Ethereum address *",
+        "amountEth": "Amount (ETH)",
+        "gasLimit": "Gas limit",
+        "scanningWillOpenAnEthereum": "Scanning will open an Ethereum wallet with these payment details",
+        "n0xfb6916095ca1df60bb79ce92ce3ea74c37c5d359": "0xfb6916095ca1df60bb79Ce92ce3ea74c37c5d359"
+      },
+      "etsyForm": {
+        "etsyShopUrl": "Etsy shop URL *",
+        "scanningWillOpenYourEtsy": "Scanning will open your Etsy shop or product page"
+      },
+      "exampleForm": {
+        "exampleDataReplaceItWith": "Example data. Replace it with your own.",
+        "clear": "Clear",
+        "tryAnExample": "Try an example"
+      },
+      "facebookForm": {
+        "facebookProfileUrl": "Facebook profile URL *",
+        "scanningWillOpenYourFacebook": "Scanning will open your Facebook profile or page"
+      },
+      "flipkartForm": {
+        "flipkartProductUrl": "Flipkart product URL *",
+        "scanningWillOpenYourFlipkart": "Scanning will open your Flipkart product or store"
+      },
+      "googleDriveForm": {
+        "connectGoogleDriveToPick": "Connect Google Drive to pick a file, or paste a link below.",
+        "connectGoogleDrive": "Connect Google Drive",
+        "googleDriveUrl": "Google Drive URL *",
+        "scanningWillOpenTheSelected": "Scanning will open the selected Google Drive file or folder.",
+        "search": "Search",
+        "loadMore": "Load more",
+        "searchDriveFilesAndFolders": "Search Drive files and folders",
+        "failedToConnectGoogleDrive": "Failed to connect Google Drive"
+      },
+      "googleReviewForm": {
+        "googlePlaceId": "Google Place ID *",
+        "findYoursWithTheGoogle": "Find yours with the <link>Google Place ID Finder</link>",
+        "scanningWillOpenGoogleTo": "Scanning will open Google to review your business",
+        "chijn1tTdeuemsrusoyg83fry4": "ChIJN1t_tDeuEmsRUsoyG83frY4"
+      },
+      "instagramForm": {
+        "instagramUsername": "Instagram username *",
+        "scanningWillOpenYourInstagram": "Scanning will open your Instagram profile",
+        "usernameOrUsername": "username or @username"
+      },
+      "linkedinForm": {
+        "linkedinProfileUrl": "LinkedIn profile URL *",
+        "scanningWillOpenYourLinkedin": "Scanning will open your LinkedIn profile or company page"
+      },
+      "mapsForm": {
+        "location": "Location *",
+        "scanningWillOpenThisPlace": "Scanning will open this place in Google Maps",
+        "addressOrCoordinates407128": "Address or coordinates (40.7128, -74.0060)"
+      },
+      "paypalForm": {
+        "paypalMeUrlOrPayment": "PayPal.Me URL or payment link *",
+        "scanningWillOpenThePaypal": "Scanning will open the PayPal payment page",
+        "httpsPaypalMeUsernameOr": "https://paypal.me/username or payment link"
+      },
+      "phoneForm": {
+        "phoneNumber": "Phone number *",
+        "includeTheCountryCodeLike": "Include the country code, like +1. Scanning starts a call."
+      },
+      "pinterestForm": {
+        "pinterestUsername": "Pinterest username *",
+        "scanningWillOpenYourPinterest": "Scanning will open your Pinterest profile",
+        "username": "username"
+      },
+      "redditForm": {
+        "redditUsername": "Reddit username",
+        "subreddit": "Subreddit",
+        "fillInOneIfBoth": "Fill in one. If both are filled, the subreddit is used.",
+        "scanningWillOpenTheReddit": "Scanning will open the Reddit profile or subreddit",
+        "usernameOrUUsername": "username or u/username",
+        "subredditOrRSubreddit": "subreddit or r/subreddit"
+      },
+      "smsForm": {
+        "phoneNumber": "Phone number *",
+        "message": "Message",
+        "scanningWillOpenAText": "Scanning will open a text message to this number",
+        "preFilledSmsMessage": "Pre-filled SMS message"
+      },
+      "snapchatForm": {
+        "snapchatUsername": "Snapchat username *",
+        "scanningWillOpenYourSnapchat": "Scanning will open your Snapchat add-friend page",
+        "username": "username"
+      },
+      "spotifyForm": {
+        "spotifyUriOrUrl": "Spotify URI or URL *",
+        "scanningWillOpenTheContent": "Scanning will open the content in Spotify",
+        "spotifyTrackOrHttpsOpen": "spotify:track:... or https://open.spotify.com/..."
+      },
+      "textForm": {
+        "textContent": "Text content *",
+        "pasteALinkAndIt": "Paste a link and it switches to the matching type.",
+        "enterAnyText": "Enter any text…"
+      },
+      "threadsForm": {
+        "threadsUsername": "Threads username *",
+        "scanningWillOpenYourThreads": "Scanning will open your Threads profile",
+        "usernameOrUsername": "username or @username"
+      },
+      "tiktokForm": {
+        "tiktokUsername": "TikTok username *",
+        "scanningWillOpenYourTiktok": "Scanning will open your TikTok profile",
+        "usernameOrUsername": "username or @username"
+      },
+      "twitterForm": {
+        "twitterXUsername": "Twitter / X username *",
+        "scanningWillOpenYourTwitter": "Scanning will open your Twitter / X profile",
+        "usernameOrUsername": "username or @username"
+      },
+      "upiForm": {
+        "upiId": "UPI ID *",
+        "payeeName": "Payee name",
+        "amount": "Amount (₹)",
+        "note": "Note",
+        "scanningWillOpenAUpi": "Scanning will open a UPI app with these payment details",
+        "usernameBankname": "username@bankname",
+        "yourName": "Your name",
+        "paymentFor": "Payment for..."
+      },
+      "urlForm": {
+        "websiteAddress": "Website address",
+        "scansOpen": "Scans open",
+        "pasteAnyLinkSocialAnd": "Paste any link. Social and WhatsApp links get their own type."
+      },
+      "vcardForm": {
+        "firstName": "First name *",
+        "lastName": "Last name",
+        "organization": "Organization",
+        "phone": "Phone",
+        "email": "Email",
+        "website": "Website",
+        "address": "Address",
+        "note": "Note",
+        "scanningWillOfferToSave": "Scanning will offer to save this contact",
+        "john": "John",
+        "doe": "Doe",
+        "companyName": "Company name",
+        "johnExampleCom": "john@example.com",
+        "n123MainStCityCountry": "123 Main St, City, Country",
+        "additionalNotes": "Additional notes"
+      },
+      "venmoForm": {
+        "venmoUsername": "Venmo username *",
+        "amount": "Amount ($)",
+        "note": "Note",
+        "scanningWillOpenVenmoWith": "Scanning will open Venmo with these payment details",
+        "username": "@username",
+        "paymentFor": "Payment for..."
+      },
+      "whatsappForm": {
+        "phoneNumber": "Phone number *",
+        "includeCountryCodeWithoutSpaces": "Include country code without spaces or symbols",
+        "message": "Message",
+        "scanningWillOpenAWhatsapp": "Scanning will open a WhatsApp chat with this number",
+        "preFilledWhatsappMessage": "Pre-filled WhatsApp message"
+      },
+      "wifiForm": {
+        "networkName": "Network name *",
+        "security": "Security",
+        "wpaWpa2": "WPA/WPA2",
+        "noPassword": "No password",
+        "password": "Password *",
+        "hiddenNetwork": "Hidden network",
+        "scanningWillOfferToJoin": "Scanning will offer to join this Wi-Fi network",
+        "myWiFiNetwork": "My Wi-Fi network",
+        "networkPassword": "Network password"
+      },
+      "youtubeForm": {
+        "videoUrl": "Video URL",
+        "channelUrl": "Channel URL",
+        "fillInOneIfBoth": "Fill in one. If both are filled, the video is used.",
+        "scanningWillOpenTheYoutube": "Scanning will open the YouTube video or channel"
+      },
+      "cryptoForms": {
+        "scanningOpensAWalletWith": "Scanning opens a {wallet} with this payment request. Check the address twice: crypto payments can't be reversed."
+      },
+      "linkForms": {
+        "scanningOpensTelegramOrT": "Scanning opens Telegram, or t.me in the browser when the app isn't installed.",
+        "scanningOpensAChatIn": "Scanning opens a chat in Signal.",
+        "scanningOpensTheInviteIn": "Scanning opens the invite in Discord, or in the browser without the app.",
+        "scanningOpensLineToAdd": "Scanning opens LINE to add you as a friend.",
+        "scanningOpensTheProfileOn": "Scanning opens the profile on Bluesky.",
+        "scanningOpensTheProfileOn2": "Scanning opens the profile on its server.",
+        "scanningOpensTheChannelOn": "Scanning opens the channel on Twitch.",
+        "scanningOpensSoundcloud": "Scanning opens SoundCloud.",
+        "scanningOpensTheMeetingIn": "Scanning opens the meeting in Zoom.",
+        "scanningOpensTheCallIn": "Scanning opens the call in Google Meet.",
+        "scanningOpensWazeOrWaze": "Scanning opens Waze, or waze.com when the app isn't installed.",
+        "scanningOpensYourCashApp": "Scanning opens your Cash App profile, where people can pay you.",
+        "scanningOpensYourRevolutMe": "Scanning opens your revolut.me page, where people can pay you.",
+        "usernameChannelOrGroup": "Username, channel or group",
+        "usernameOrATMe": "@username or a t.me link",
+        "aPublicUsernameOrPaste": "A public username, or paste an invite link (t.me/+…) for a private group.",
+        "phoneNumber": "Phone number",
+        "withTheCountryCodeIt": "With the country code. It opens a chat if that person's privacy settings allow it.",
+        "open": "Open",
+        "aUsernameChannelOrGroup": "A username, channel or group",
+        "aChatWithAPhone": "A chat with a phone number",
+        "withTheCountryCode": "With the country code.",
+        "usernameOrGroupLink": "Username or group link",
+        "usernamesCantBeTurnedInto": "Usernames can't be turned into links outside Signal. Copy yours in Signal: Settings › Profile › Username › QR code or link. For a group, copy its link in the group's settings.",
+        "aUsernameOrGroupLink": "A username or group link",
+        "inviteLinkOrCode": "Invite link or code",
+        "discordGgAbc123": "discord.gg/abc123",
+        "invitesExpireAfter7Days": "Invites expire after 7 days unless you set Expire after to Never when you create the invite.",
+        "lineId": "LINE ID",
+        "yourLineIdOrOfficial": "your-line-id or @official",
+        "officialAccountsStartWithYou": "Official accounts start with @. You can also paste a line.me link.",
+        "handle": "Handle",
+        "aCustomDomainHandleWorks": "A custom domain handle works too.",
+        "youMastodonSocial": "@you@mastodon.social",
+        "yourFullHandleServerIncluded": "Your full handle, server included, or your profile link.",
+        "twitchUsername": "Twitch username",
+        "yourchannel": "yourchannel",
+        "profileNameOrLink": "Profile name or link",
+        "yournameOrATrackLink": "yourname, or a track link",
+        "pasteATrackOrPlaylist": "Paste a track or playlist link to open it directly.",
+        "meetingIdOrInviteLink": "Meeting ID or invite link",
+        "pasteTheInviteLinkTo": "Paste the invite link to keep its passcode. With just the ID, Zoom asks for the passcode.",
+        "meetingCodeOrLink": "Meeting code or link",
+        "abcDefgHij": "abc-defg-hij",
+        "addressOrCoordinates": "Address or coordinates",
+        "pikePlaceMarketSeattleOr": "Pike Place Market, Seattle, or 47.6097, -122.3422",
+        "startDirectionsRightAway": "Start directions right away",
+        "cashtag": "$Cashtag",
+        "yourcashtag": "$yourcashtag",
+        "revolutUsername": "Revolut username",
+        "yourname": "@yourname",
+        "yourRevtagAsInRevolut": "Your Revtag, as in revolut.me/yourname."
+      },
+      "paymentForms": {
+        "theEpcGuidelinesAskFor": "The EPC guidelines ask for error correction level M. This design uses",
+        "useLevelM": "Use level M",
+        "scanningOpensThePayersBank": "Scanning opens the payer's bank app with a Pix payment filled in. Pix copia e cola uses the same text.",
+        "scanningFillsInAEuro": "Scanning fills in a euro transfer in banking apps that read EPC codes (often called GiroCode).",
+        "scanningOpensPaynowInAny": "Scanning opens PayNow in any Singapore banking app, with these details filled in.",
+        "scanningOpensAPromptpayTransfer": "Scanning opens a PromptPay transfer in any Thai banking app.",
+        "scanningOpensATransferIn": "Scanning opens a transfer in Vietnamese banking apps that read VietQR."
+      },
+      "schemaForm": {
+        "fields": {
+          "k1gxuvm9": "Pix key",
+          "k166v0c5": "CPF, CNPJ, +55 phone, email or random key",
+          "k1yiqnlw": "The key you registered at your bank.",
+          "k6ynt77": "Receiver name",
+          "k6umxxr": "Name on the account",
+          "k144ewn1": "Up to 25 characters. Accents are dropped, as banks expect.",
+          "k142k4ma": "City",
+          "k1tyryef": "Up to 15 characters.",
+          "kc0qpqq": "Amount (R$)",
+          "k175bjom": "Leave empty to let the payer choose",
+          "k1cam7ic": "Message",
+          "k1x302fo": "Shown to the payer in some apps",
+          "k1ysrm3g": "Transaction ID",
+          "k1lj6rfz": "Letters and digits, to match payments in your statement. Optional.",
+          "k1iiuca1": "Beneficiary name",
+          "k16irq05": "IBAN",
+          "k1p6l5b9": "BIC",
+          "k8mfsk5": "Optional inside the EEA",
+          "k1xwl2j6": "Amount (€)",
+          "k19b4i3s": "Payment reference",
+          "k1nk11j3": "Up to 140 characters, shown on both statements.",
+          "kl0fvir": "Creditor reference (RF)",
+          "kh5cvh0": "Only if your invoices use a structured RF reference. Use it or a payment reference, not both.",
+          "kuuj6iu": "Pay to",
+          "k391cj4": "Mobile number",
+          "k1ebmfz4": "Business (UEN)",
+          "k1edxmpf": "UEN",
+          "k4el6o6": "Name",
+          "k1xb7fm6": "Shown in the payer's app",
+          "khgxhnp": "Amount (S$)",
+          "k7ookpt": "Payer can change the amount",
+          "k1c7vrcq": "Reference",
+          "k1gasst3": "Shows on your statement, so you can match the payment.",
+          "k1jee0pv": "Expires",
+          "k4p9tvj": "Optional. Banking apps refuse the code after this day.",
+          "k1ly5lrh": "National ID or tax ID",
+          "k1o1f07v": "E-wallet ID",
+          "k1hezgmh": "13 digits",
+          "k1ybz3bn": "15 digits",
+          "k1y8bu9t": "Amount (฿)",
+          "k1fdra2f": "With an amount, the Thai QR standard marks the code for a single payment.",
+          "k192q8xj": "Bank",
+          "k15nzl7f": "Choose the bank",
+          "klce4ed": "Account number",
+          "kcdfio8": "Card number",
+          "kvoy7pr": "16 to 19 digits",
+          "k179drfx": "Amount (₫)",
+          "kxyipuq": "Up to 25 characters. Vietnamese accents are dropped, as banks expect.",
+          "k1pt9yc": "Wallet address",
+          "kke7891": "Who gets paid, like a shop name",
+          "k10mfi45": "What the payment is for",
+          "k19wsrr1": "Amount (LTC)",
+          "k43xjmr": "Amount (DOGE)",
+          "k1l4nd21": "Amount (BCH)",
+          "k5h39gc": "Amount (SOL)",
+          "kicvyhv": "Amount (XMR)",
+          "k1827q8t": "Label",
+          "k1c3pxvv": "Recipient name",
+          "ksjj37t": "Description",
+          "kb8wbld": "Solana address"
+        }
+      }
+    },
+    "contentTypeIcons": {},
+    "contentTypeModal": {
+      "current": "Current",
+      "chooseAQrCodeType": "Choose a QR code type",
+      "whatShouldHappenWhenSomeone": "What should happen when someone scans your code?",
+      "toPick": "to pick",
+      "recent": "Recent",
+      "noTypeMatchesQueryA": "No type matches “{query}”. A URL code works for any web address.",
+      "useAUrlCode": "Use a URL code",
+      "previewEveryTemplate": "Preview every template",
+      "move": "move",
+      "pick": "pick",
+      "escClose": "<kbd>esc</kbd> close",
+      "searchQrCodeTypes": "Search QR code types",
+      "searchWiFiMenuGpay": "Search: Wi-Fi, menu, gpay, business card…",
+      "categories": "Categories",
+      "hostedPages": "Hosted pages",
+      "mobilePagesQrdxHostsFor": "Mobile pages QRdx hosts for you, each with a dynamic QR code in this design. You edit the page in your dashboard.",
+      "mobilePagesQrdxHostsFor2": "Mobile pages QRdx hosts for you, each with a dynamic QR code in this design. Sign in to make one.",
+      "matchesFor": "{count, plural, one {# match} other {# matches}} for “{query}”"
+    },
+    "contentTypeSelector": {
+      "qrCodeType": "QR code type",
+      "change": "Change",
+      "chooseAType": "Choose a type"
+    },
+    "contrastChecker": {
+      "contrastChecker": "Contrast Checker",
+      "wcag20AaRequires": "WCAG 2.0 AA requires a contrast ratio of at least {MIN_CONTRAST_RATIO, number}:1 • <link>Learn more</link>",
+      "toggleTheme": "Toggle theme",
+      "all": "All",
+      "issuesTotalissues": "Issues ({totalIssues, number})",
+      "background": "Background",
+      "foreground": "Foreground",
+      "aa": "Aa",
+      "sampleText": "Sample Text",
+      "preview": "Preview",
+      "openContrastChecker": "Open contrast checker",
+      "qrCodeBase": "QR Code Base",
+      "cornerEyes": "Corner Eyes",
+      "eyeDots": "Eye Dots",
+      "nameEye": "{name} eye",
+      "nameEyeDot": "{name} eye dot",
+      "learnMoreAboutWcagContrast": "Learn more about WCAG contrast requirements",
+      "eyePositions": {
+        "topLeft": "Top-left",
+        "topRight": "Top-right",
+        "bottomLeft": "Bottom-left"
+      }
+    },
+    "controlSection": {},
+    "controlSections": {
+      "artControls": {
+        "hintFinderAlignmentAndFormat": "{hint} Finder, alignment and format patterns stay crisp.",
+        "useMyLogo": "Use my logo",
+        "uploadPngJpgWebpOr": "{upload}. PNG, JPG, WebP or SVG, up to {value, number}MB. Your image stays in your browser; only a small color grid is saved.",
+        "look": "Look",
+        "eyesMatchTheLogo": "Eyes match the logo",
+        "usesHighErrorCorrectionAnd": "Uses high error correction and a clear border so it still scans.",
+        "artScansBestWithHigh": "Art scans best with high error correction and a clear border.<button>Apply</button>",
+        "removeArt": "Remove art",
+        "strength": "Strength",
+        "fineTune": "Fine-tune",
+        "easierToScan": "Easier to scan",
+        "moreArt": "More art",
+        "scanCheck": "Scan check",
+        "checking": "Checking…",
+        "artLook": "Art look",
+        "artStrength": "Art strength",
+        "swapDotAndBackgroundColors": "Swap dot and background colors",
+        "putTheDotsOnWhite": "Put the dots on white",
+        "uploadAnother": "Upload another",
+        "uploadYourOwn": "Upload your own",
+        "decodedInYourBrowserAt": "Decoded in your browser at three sizes.",
+        "addContentToCheckYour": "Add content to check your real code.",
+        "checkYourConnectionAndTry": "Check your connection and try again, or upload your own image.",
+        "tryAPngOrJpg": "Try a PNG or JPG instead.",
+        "useAPngJpgWebp": "Use a PNG, JPG, WebP or SVG image.",
+        "imagesMustBeValueMb": "Images must be {value, number}MB or smaller.",
+        "couldntLoadThisSample": "Couldn't load this sample",
+        "couldntUseThisImage": "Couldn't use this image",
+        "unsupportedImageFormat": "Unsupported image format",
+        "imageIsTooLarge": "Image is too large",
+        "modeCopy": {
+          "logo": {
+            "upload": "Transparent PNG or SVG logos work best",
+            "samples": "Try a sample logo"
+          },
+          "halftone": {
+            "upload": "Photos with one clear subject work best",
+            "samples": "Try a sample photo"
+          }
+        }
+      },
+      "colorPresets": {
+        "lightCodeOnADark": "Light code on a dark background may not scan on older phones.",
+        "colorPalettes": "Color palettes",
+        "lightCodeOnDarkMay": "Light code on dark. May not scan on older phones."
+      },
+      "contentControls": {
+        "startFromAStyle": "Start from a style",
+        "browseAllLength": "Browse all {length, number}",
+        "fineTuneColorsDotsAnd": "Fine-tune colors, dots and logo",
+        "applyTheLabelStyle": "Apply the {label} style"
+      },
+      "customFrameFields": {
+        "thisFrameHasNoLabels": "This frame has no labels to edit.",
+        "icon": "Icon",
+        "label": "Label",
+        "leaveEmptyForNoLabel": "Leave empty for no label",
+        "secondLine": "Second line",
+        "leaveEmptyToHideIt": "Leave empty to hide it",
+        "frameColor": "Frame color",
+        "textColor": "Text color",
+        "accentColor": "Accent color"
+      },
+      "customizationSections": {},
+      "designControls": {
+        "colors": "Colors",
+        "background": "Background",
+        "foreground": "Foreground",
+        "eyes": "Eyes",
+        "dots": "Dots",
+        "frame": "Frame",
+        "padding": "Padding",
+        "errorCorrection": "Error correction",
+        "border": "Border",
+        "none": "None"
+      },
+      "dotSizeSection": {
+        "sizeOfEachDot": "Size of each dot",
+        "dotSize": "Dot size",
+        "valueDotsKeepTheirFull": "{value} dots keep their full size: smaller ones stop scanning.",
+        "smallerDotsGiveALighter": "Smaller dots give a lighter look. {value} dots go down to {floor, number}%, the smallest size that still scans."
+      },
+      "eyeColorsSection": {
+        "giveEachCornerEyeIts": "Give each corner eye its own frame and center color. Eyes you leave alone use the Eyes and Dots colors.",
+        "useTheSameColorsFor": "Use the same colors for all eyes",
+        "sameForAll": "Same for all",
+        "eyeColors": "Eye colors",
+        "frame": "Frame",
+        "center": "Center",
+        "positions": {
+          "topLeft": "Top left",
+          "topRight": "Top right",
+          "bottomLeft": "Bottom left"
+        }
+      },
+      "frameControls": {
+        "customise": "Customise",
+        "importSvg": "Import SVG",
+        "publishFrame": "Publish frame",
+        "theFrameIsAddedAround": "The frame is added around the code, so the downloaded image gets bigger and the code itself stays scannable.",
+        "label": "Label",
+        "secondLine": "Second line",
+        "leaveEmptyForNoLabel": "Leave empty for no label",
+        "pickAFrameFirst": "Pick a frame first",
+        "frameColor": "Frame color",
+        "textColor": "Text color",
+        "endColor": "End color",
+        "optionalEGYourWebsite": "Optional, e.g. your website",
+        "none": "None"
+      },
+      "frameFields": {
+        "textSize": "Text size"
+      },
+      "framePicker": {
+        "more": "More",
+        "showAll": "Show all",
+        "frame": "Frame",
+        "moreFrames": "More frames",
+        "allTotalFrames": "All {total, number} frames",
+        "allFrames": "All frames",
+        "searchFrames": "Search frames",
+        "searchTotalFrames": "Search {total, number} frames",
+        "closeFrames": "Close frames",
+        "filterFrames": "Filter frames",
+        "labelFrames": "{label} frames",
+        "commonFrames": "Common frames",
+        "everyFrameBuiltInStyles": "Every frame: built-in styles, QRdx's official frames and the frames you saved. Picking one applies it right away.",
+        "less": "Less",
+        "all": "All",
+        "noFramesMatchQuery": "No frames match \"{query}\".",
+        "loadingFrames": "Loading frames…",
+        "comingUp": "Coming up",
+        "builtIn": "Built-in",
+        "saved": "Saved",
+        "results": "Results"
+      },
+      "frameShapes": {
+        "shapedCode": "Shaped code",
+        "pngJpegOrSvgA": "PNG, JPEG or SVG: a dark or solid shape on a light or clear background.",
+        "remove": "Remove",
+        "uploadASilhouette": "Upload a silhouette",
+        "tracing": "Tracing…",
+        "replace": "Replace",
+        "uploadAShape": "Upload a shape",
+        "shapeHelp": {
+          "circle": "The code sits in a circle of decorative dots, with a clear ring around it. Scanners read only the code in the middle, so the circle is a little bigger for the same scan distance.",
+          "heart": "The code sits in a heart of decorative dots, with a clear ring around it. Scanners read only the code in the middle, so print a heart larger than a square code for the same scan distance.",
+          "silhouette": "The code sits in the roomiest middle part of your shape, with a clear ring around it. Only the outline is kept, never the picture, and links, the community and snippets use a square code."
+        },
+        "names": {
+          "circle": "Dot circle",
+          "heart": "Heart",
+          "silhouette": "Silhouette"
+        }
+      },
+      "frameTextPresets": {
+        "labelIdeas": "Label ideas"
+      },
+      "logoControls": {
+        "logoInTheCenter": "Logo in the center",
+        "coversAFewDotsError": "Covers a few dots; error correction fills them in.",
+        "quickIcons": "Quick icons",
+        "brandLogos": "Brand logos",
+        "pngJpgWebpOrSvg": "PNG, JPG, WebP or SVG, up to {value, number}MB. Square images with some padding look best.",
+        "remove": "Remove",
+        "off": "Off",
+        "logo": "Logo",
+        "uploadLogo": "Upload logo",
+        "brandLogosBrandbuttonlabel": "Brand logos: {brandButtonLabel}",
+        "replace": "Replace",
+        "uploadYourLogo": "Upload your logo",
+        "useAPngJpgWebp": "Use a PNG, JPG, WebP or SVG image.",
+        "logosMustBeValueMb": "Logos must be {value, number}MB or smaller.",
+        "unsupportedLogoFormat": "Unsupported logo format",
+        "logoIsTooLarge": "Logo is too large",
+        "failedToReadLogoFile": "Failed to read logo file"
+      },
+      "logoCropControls": {
+        "shape": "Shape",
+        "plateBehindTheLogo": "Plate behind the logo",
+        "aSolidValueTheLogo": "A solid {value} the logo sits on.",
+        "removeBackground": "Remove background",
+        "logoShape": "Logo shape",
+        "plateColor": "Plate color",
+        "backgroundRemovedUndoBringsIt": "Background removed. Undo brings it back.",
+        "yourLogoHasNoSolid": "Your logo has no solid background to remove.",
+        "removeTheSolidBackgroundAround": "Remove the solid background around your logo.",
+        "backgroundRemoved": "Background removed",
+        "plateNouns": {
+          "square": "square",
+          "rounded": "rounded square",
+          "circle": "circle"
+        },
+        "shapes": {
+          "square": "Square",
+          "rounded": "Rounded",
+          "circle": "Circle"
+        }
+      },
+      "logoOptionsSection": {
+        "position": "Position",
+        "center": "Center",
+        "keepTheLogoOffThe": "Keep the logo off the three corner eyes and the small square near the bottom-right corner. The scan score warns when it covers one.",
+        "raiseErrorCorrectionForBig": "Raise error correction for big logos",
+        "switchesToLevelHWhen": "Switches to level H when the logo covers more than {value, number}% of the code.",
+        "logoOptions": "Logo options",
+        "size": "Size",
+        "logoSize": "Logo size",
+        "clearSpace": "Clear space",
+        "clearSpaceAroundTheLogo": "Clear space around the logo",
+        "leftToRight": "Left to right",
+        "logoPositionLeftToRight": "Logo position, left to right",
+        "topToBottom": "Top to bottom",
+        "logoPositionTopToBottom": "Logo position, top to bottom",
+        "upToMaxpercentForThis": "Up to {maxPercent, number}% for this code: a bigger logo would hide more than its error correction can repair.",
+        "thisCodeIsTooSmall": "This code is too small to hold a logo.",
+        "shorterContentMakesRoom": "Shorter content makes room.",
+        "levelHOrShorterContent": "Level H or shorter content makes room."
+      },
+      "logoPresets": {
+        "quickLogoIcons": "Quick logo icons",
+        "nameIcon": "{name} icon",
+        "uploadYourLogo": "Upload your logo",
+        "yourLogo": "Your logo"
+      },
+      "optionTiles": {
+        "more": "More",
+        "noNounMatchQueryShow": "No {noun} match \"{query}\".<button>Show all</button>",
+        "mayNotScan": "May not scan",
+        "nameWontScanWithThis": "{name}, won't scan with this style",
+        "nameMayNotScan": "{name}, may not scan",
+        "nameWontScanWithThis2": "{name}: won't scan with this style",
+        "nameMayNotScan2": "{name}: may not scan",
+        "moreNoun": "More {noun}",
+        "allLengthNoun": "All {length, number} {noun}",
+        "searchNoun": "Search {noun}",
+        "searchLengthNoun": "Search {length, number} {noun}",
+        "closeNoun": "Close {noun}",
+        "filterNoun": "Filter {noun}",
+        "commonNoun": "Common {noun}",
+        "allLengthNounPickingOne": "All {length, number} {noun}. Picking one applies it right away.",
+        "less": "Less",
+        "all": "All",
+        "wontScanHere": "Won't scan here"
+      },
+      "paddingControls": {
+        "quietZoneAroundTheCode": "Quiet zone around the code",
+        "scannersNeedABlankBorder": "Scanners need a blank border around the code. Use 4 modules (the QR standard) when printing on busy or dark backgrounds.",
+        "padding": "Padding",
+        "module": "module",
+        "modules": "modules",
+        "presets": {
+          "none": "None",
+          "small": "Small",
+          "standard": "Standard",
+          "large": "Large"
+        }
+      },
+      "patternControls": {
+        "customizeOuterAndCenter": "Customize outer and center",
+        "border": "Border",
+        "higherLevelsSurviveScratchesAnd": "Higher levels survive scratches and logos but add more dots. Use H when you add a logo.",
+        "dotShape": "Dot shape",
+        "dotShapes": "dot shapes",
+        "eyeStyle": "Eye style",
+        "eyeStyles": "eye styles",
+        "outerEyeShape": "Outer eye shape",
+        "outerShapes": "outer shapes",
+        "innerEyeShape": "Inner eye shape",
+        "centerShapes": "center shapes",
+        "errorCorrection": "Error correction"
+      },
+      "sidePanel": {
+        "closeTitle": "Close {title}"
+      }
+    },
+    "customTextarea": {
+      "thePastedContentWouldExceed": "The pasted content would exceed the {characterLimit, number} character limit.",
+      "textTooLong": "Text too long",
+      "describeYourTheme": "Describe your theme…"
+    },
+    "dialogCloseButton": {
+      "close": "Close"
+    },
+    "dynamicLinkToggle": {
+      "upgradeToPro": "Upgrade to Pro",
+      "manageCodes": "Manage codes",
+      "static": "Static",
+      "fixedOncePrinted": "Fixed once printed",
+      "dynamic": "Dynamic",
+      "editLaterCountScans": "Edit later, count scans",
+      "linkOptions": "Link options…",
+      "printedCodesStillOpenDestinationurl": "Printed codes still open <span>{destinationUrl}</span>.",
+      "pointItToTheNew": "Point it to the new address",
+      "scansSettings": "Scans & settings",
+      "staticOrDynamicQrCode": "Static or dynamic QR code",
+      "shortLinkCopied": "Short link copied",
+      "copyShortLink": "Copy short link",
+      "designSaved": "Design saved",
+      "saveDesignToCode": "Save design to code",
+      "theQrCodeShowsYour": "The QR code shows your URL directly again.",
+      "changeWhereItPointsAt": "Change where it points at any time. Your logo was too large to save with the code.",
+      "changeWhereItPointsAt2": "Change where it points at any time from your dashboard.",
+      "theDynamicCodeStaysIn": "The dynamic code stays in your dashboard.",
+      "printedCopiesOfThisCode": "Printed copies of this code now open the new URL.",
+      "yourLogoWasTooLarge": "Your logo was too large to save and was left out.",
+      "dashboardPreviewsAndDownloadsUse": "Dashboard previews and downloads use this design.",
+      "thisDynamicCodeIsNo": "This dynamic code is no longer available",
+      "yourQrCodeIsNow": "Your QR code is now dynamic",
+      "destinationUpdated": "Destination updated",
+      "designSavedToTheCode": "Design saved to the code",
+      "couldntCopyTheShortLink": "Couldn't copy the short link"
+    },
+    "frameInline": {
+      "frameTextMenu": {
+        "lowContrastValue1The": "Low contrast ({value}:1). The text may be hard to read; aim for {MIN_LABEL_CONTRAST, number}:1."
+      },
+      "frameTextOverlay": {
+        "editFrameTextValue": "Edit frame text: {value}",
+        "editText": "Edit text"
+      },
+      "frameTextSheet": {
+        "editFrameText": "Edit frame text",
+        "changesShowOnTheCode": "Changes show on the code as you type. Done keeps them.",
+        "valueLeft": "{value, number} left",
+        "moreFrameOptions": "More frame options",
+        "done": "Done"
+      },
+      "inlineFrameEditor": {
+        "leftLeft": "{left, number} left",
+        "frameTextName": "Frame text: {name}",
+        "frameTextOptions": "Frame text options",
+        "textSize": "Text size",
+        "textColor": "Text color",
+        "frameColor": "Frame color",
+        "icon": "Icon",
+        "moreFrameOptions": "More frame options"
+      }
+    },
+    "gradientPicker": {
+      "pickASolidColorA": "Pick a solid color, a gradient or a swatch for {label}."
+    },
+    "linkSourceMenu": {
+      "useALinkFrom": "Use a link from…",
+      "yourAccounts": "Your accounts",
+      "connectAnAccount": "Connect an account",
+      "undo": "Undo"
+    },
+    "mentionList": {
+      "noResult": "No result"
+    },
+    "mentionSuggestion": {},
+    "paintPicker": {
+      "controls": {
+        "saturationAndBrightness": "Saturation and brightness",
+        "saturationValueBrightnessValue2": "Saturation {value, number}%, brightness {value2, number}%"
+      },
+      "gradientEditor": {
+        "clickToAddAStop": "Click to add a stop",
+        "stopValueColor": "Stop {value, number}, {color}",
+        "startAngle": "Start angle",
+        "angle": "Angle",
+        "startAngleInDegrees": "Start angle in degrees",
+        "angleInDegrees": "Angle in degrees",
+        "anglePresets": "Angle presets",
+        "rotate90": "Rotate 90°",
+        "reverseTheGradient": "Reverse the gradient",
+        "reverse": "Reverse",
+        "removeTheSelectedStop": "Remove the selected stop",
+        "removeStopDelete": "Remove stop (Delete)",
+        "aGradientKeepsMinStops": "A gradient keeps {MIN_STOPS, number} stops"
+      },
+      "imageFill": {
+        "paintAPictureThroughThese": "Paint a picture through these shapes. PNG, JPEG or WebP, up to 10 MB.",
+        "chooseAPicture": "Choose a picture",
+        "underlay": "Underlay",
+        "none": "None",
+        "replace": "Replace",
+        "thePictureStaysWithThis": "The picture stays with this design, like a logo: it isn't shared in links or published styles, and EPS can't carry it.",
+        "aSolidColorUnderThe": "A solid color under the picture; its opacity lets it through",
+        "howThePictureFillsThe": "How the picture fills the code",
+        "position": "Position",
+        "tileSize": "Tile size",
+        "scale": "Scale",
+        "opacity": "Opacity",
+        "fits": {
+          "cover": "Fill",
+          "contain": "Fit",
+          "tile": "Tile"
+        },
+        "positions": {
+          "top-left": "Top left",
+          "top": "Top",
+          "top-right": "Top right",
+          "left": "Left",
+          "center": "Center",
+          "right": "Right",
+          "bottom-left": "Bottom left",
+          "bottom": "Bottom",
+          "bottom-right": "Bottom right"
+        }
+      },
+      "paintPanel": {
+        "measuringThePicturesContrast": "Measuring the picture's contrast…",
+        "contrastAgainst": "Contrast {against}",
+        "makeItScannable": "Make it scannable",
+        "hexOrAnyCssColor": "Hex or any CSS color",
+        "hexOrPasteAnyCss": "Hex, or paste any CSS color (rgb, hsl, oklch, a name)",
+        "swatches": "Swatches",
+        "fillType": "Fill type",
+        "pickAColorFromThe": "Pick a color from the screen",
+        "pickFromTheScreen": "Pick from the screen",
+        "hue": "Hue",
+        "opacity": "Opacity",
+        "colorModel": "Color model",
+        "opacityPercent": "Opacity, percent",
+        "removeThisColorFromSaved": "Remove this color from saved",
+        "saveThisColor": "Save this color",
+        "savedClickToRemove": "Saved: click to remove",
+        "lightenTheBackground": "Lighten the background",
+        "darkenTheCode": "Darken the code",
+        "kinds": {
+          "solid": "Solid",
+          "linear": "Linear",
+          "radial": "Radial",
+          "angular": "Angular",
+          "image": "Image"
+        },
+        "sources": {
+          "design": "In this design",
+          "saved": "Saved",
+          "recent": "Recent",
+          "theme": "Theme",
+          "suggested": "Defaults"
+        },
+        "imageOpacity": "Image · {percent, number}%"
+      }
+    },
+    "photoScanDialog": {
+      "checkAPhotoOfThe": "Check a photo of the print",
+      "checkedInYourBrowserThe": "Checked in your browser. The image is never uploaded.",
+      "fullScanChecker": "Full scan checker"
+    },
+    "qrEditActions": {
+      "options": "Options",
+      "resetToCurrentPreset": "Reset to Current Preset",
+      "resetToCurrentPreset2": "Reset to current preset",
+      "noChangesFromPreset": "No changes from preset",
+      "resetToDefaultTheme": "Reset to Default Theme",
+      "resetToBaseTheme": "Reset to base theme",
+      "noChangesToReset": "No changes to reset"
+    },
+    "qrPresetSelect": {
+      "theme": "theme",
+      "browseAll": "Browse all",
+      "noThemesFound": "No themes found.",
+      "manage": "Manage",
+      "default": "Default",
+      "new": "New",
+      "save": "Save",
+      "aThemeToFindIt": "a theme to find it here.",
+      "discoverMoreThemes": "Discover more themes →",
+      "shuffleANewTheme": "Shuffle a new theme",
+      "previousTheme": "Previous theme",
+      "nextTheme": "Next theme",
+      "searchThemes": "Search themes...",
+      "builtInThemes": "Built-in Themes",
+      "default2": "default",
+      "sharedThemes": "Shared themes",
+      "yourThemes": "Your themes",
+      "savedThemes": "Saved themes"
+    },
+    "qrSaveDialog": {
+      "updating": "Updating",
+      "updateExistingthemename": "Update “{existingThemeName}”",
+      "orSaveAsANew": "or save as a new theme",
+      "name": "Name",
+      "cancel": "Cancel",
+      "saving": "Saving",
+      "myAwesomeTheme": "My Awesome Theme",
+      "saveAsNew": "Save as New",
+      "defaultTitle": "Save QR Code Theme",
+      "defaultDescription": "Save your QR code design as a theme to reuse later.",
+      "defaultCta": "Save Theme"
+    },
+    "qrShareDialog": {
+      "shareThisDesign": "Share this design",
+      "theLinkOpensThisStyle": "The link opens this style in the playground, so anyone can use it for their own code. Your content isn't included.",
+      "stylePreviewOpensInThe": "Style preview · opens in the QRdx playground",
+      "link": "Link",
+      "shareTo": "Share to",
+      "more": "More…",
+      "openOnYourPhone": "Open on your phone",
+      "scanThisCodeToOpen": "Scan this code to open the share link on another device.",
+      "copied": "Copied",
+      "copyLinkToThisDesign": "Copy link to this design",
+      "saveItAsATheme": "Save it as a theme instead",
+      "saveItAsATheme2": "Save it as a theme for a shorter link",
+      "couldntCopyTheLink": "Couldn't copy the link",
+      "omitted": {
+        "logo": "your logo",
+        "art": "the art",
+        "frame": "the custom frame",
+        "image": "your image fills",
+        "silhouette": "your code shape"
+      },
+      "omittedNote": "{count, plural, one {{list} isn't in the link.} other {{list} aren't in the link.}}",
+      "targets": {
+        "x": "Post on X",
+        "linkedin": "Share on LinkedIn",
+        "facebook": "Share on Facebook",
+        "whatsapp": "Send on WhatsApp",
+        "email": "Send by email"
+      },
+      "myQrDesign": "My QR design",
+      "shareTitle": "{name} · a QR code design on QRdx"
+    },
+    "scanScore": {
+      "willItScan": "Will it scan?",
+      "decodingYourDesignAtA": "Decoding your design at a few sizes…",
+      "simulatedInYourBrowserWith": "Simulated in your browser with the open-source jsQR decoder at a few sizes with camera blur. Phone apps vary, so test-scan before you print.",
+      "checkAPhotoOfThe": "Check a photo of the print",
+      "notChecked": "Not checked",
+      "scanScoreScoreValueShow": "Scan score {score, number}, {value}. Show checks",
+      "checkingScanScore": "Checking scan score",
+      "scanScoreScoreValue": "Scan score {score, number} · {value}",
+      "checkingScan": "Checking scan…",
+      "fullScanChecker": "Full scan checker",
+      "checkAPrintedCode": "Check a printed code",
+      "grades": {
+        "great": "Great",
+        "ok": "OK",
+        "risky": "Risky",
+        "fails": "Fails"
+      }
+    },
+    "sectionContext": {},
+    "styleScope": {},
+    "themeGallery": {
+      "shuffled": "Shuffled ·",
+      "back": "Back",
+      "themes": "Themes",
+      "lengthBuiltInLooksEach": "{length, number} built-in looks, each tested to scan. Or shuffle a new one.",
+      "shuffle": "Shuffle",
+      "lightCodesOnADark": "Light codes on a dark background. {DARK_THEME_NOTE}, so test with the phones your audience uses.",
+      "noThemeMatchesQuery": "No theme matches “{query}”.",
+      "shuffleOneInstead": "Shuffle one instead",
+      "toMove": "to move",
+      "toApply": "to apply",
+      "toShuffle": "to shuffle",
+      "escToClose": "<kbd>esc</kbd> to close",
+      "searchThemes": "Search themes",
+      "searchMenuGoldPastelDots": "Search: menu, gold, pastel, dots…",
+      "categories": "Categories",
+      "all": "All"
+    },
+    "themePreview": {
+      "colorPreview": {
+        "primaryThemeColors": "Primary Theme Colors",
+        "editColor": "Edit color",
+        "background": "Background",
+        "foreground": "Foreground",
+        "dotColor": "Dot Color",
+        "eyeColor": "Eye Color"
+      },
+      "examplesPreviewContainer": {},
+      "tabsTriggerPill": {}
+    },
+    "editor": {
+      "loadingTheEditor": "Loading the editor…",
+      "fetchedQrPresetDataIs": "Fetched QR preset data is invalid."
+    },
+    "qrControlPanel": {
+      "generate": "Generate",
+      "content": "Content",
+      "design": "Design",
+      "art": "Art"
+    },
+    "qrPreviewPanel": {
+      "sample": "Sample",
+      "addYourLinkToMake": "Add your link to make it yours",
+      "addYourDetailsToMake": "Add your details to make it yours"
+    },
+    "keyboardShortcutsModal": {
+      "keyboardShortcuts": "Keyboard Shortcuts",
+      "keyboardShortcutsAreCurrentlyDisabled": "Keyboard shortcuts are currently disabled. Enable them in settings to use these shortcuts.",
+      "quickReferenceForAllAvailable": "Quick reference for all available keyboard shortcuts",
+      "proTipPressAnytimeTo": "<span>Pro tip:</span> Press <kbd>?</kbd> anytime to view this dialog",
+      "categories": {
+        "navigation": "Navigation",
+        "actions": "Actions",
+        "themeAppearance": "Theme & Appearance",
+        "patternCustomization": "Pattern Customization",
+        "help": "Help"
+      },
+      "shortcuts": {
+        "openContentTab": "Open Content tab",
+        "openDesignTab": "Open Design tab",
+        "openArtTab": "Open Art tab",
+        "openGenerateAiTab": "Open Generate (AI) tab",
+        "saveQrTheme": "Save QR theme",
+        "downloadQrCode": "Download QR code",
+        "copySvgToClipboard": "Copy SVG to clipboard",
+        "viewCode": "View code",
+        "shareQrCode": "Share QR code",
+        "resetToPresetDefaults": "Reset to preset defaults",
+        "shuffleANewTheme": "Shuffle a new theme",
+        "toggleLightDarkMode": "Toggle light/dark mode",
+        "previousThemePreset": "Previous theme preset",
+        "nextThemePreset": "Next theme preset",
+        "cycleDotPatterns": "Cycle dot patterns",
+        "cycleCornerEyePatterns": "Cycle corner eye patterns",
+        "cycleInternalEyePatterns": "Cycle internal eye patterns",
+        "cycleFrames": "Cycle frames",
+        "showThisShortcutsDialog": "Show this shortcuts dialog"
+      }
+    },
+    "soundSwitch": {
+      "sounds": "Sounds"
+    },
+    "hooks": {
+      "chatEngine": {
+        "tryAgainInAMoment": "Try again in a moment.",
+        "anErrorOccurred": "An error occurred",
+        "theAiStoppedResponding": "The AI stopped responding"
+      },
+      "useCommunityThemes": {
+        "yourThemeIsNowVisible": "Your theme is now visible in the community.",
+        "anUnexpectedErrorOccurred": "An unexpected error occurred.",
+        "yourThemeHasBeenRemoved": "Your theme has been removed from the community.",
+        "yourThemeTagsHaveBeen": "Your theme tags have been updated.",
+        "themePublished": "Theme published",
+        "failedToPublishTheme": "Failed to publish theme",
+        "themeUnpublished": "Theme unpublished",
+        "failedToUnpublishTheme": "Failed to unpublish theme",
+        "failedToUpdateLike": "Failed to update like",
+        "tagsUpdated": "Tags updated",
+        "failedToUpdateTags": "Failed to update tags"
+      },
+      "useThemeMutations": {
+        "nameHasBeenCreatedSuccessfully": "\"{name}\" has been created successfully.",
+        "nameHasBeenUpdatedSuccessfully": "\"{name}\" has been updated successfully.",
+        "nameHasBeenDeletedSuccessfully": "\"{name}\" has been deleted successfully.",
+        "themeLimitReached": "Theme limit reached",
+        "themeCreated": "Theme created",
+        "themeUpdated": "Theme updated",
+        "themeDeleted": "Theme deleted",
+        "errors": {
+          "signIn": "Please sign in to continue.",
+          "invalidInput": "Invalid input provided.",
+          "notFound": "Theme not found.",
+          "unexpected": "An unexpected error occurred. Please try again."
+        },
+        "failed": {
+          "create": "Failed to create theme",
+          "update": "Failed to update theme",
+          "delete": "Failed to delete theme"
+        }
+      },
+      "useThemesData": {},
+      "useAiChatForm": {},
+      "useAiEnhancePrompt": {
+        "anErrorOccurred": "An error occurred"
+      },
+      "useAiQrGenerationCore": {},
+      "useChatContext": {},
+      "useContrastChecker": {},
+      "useControlsTabFromUrl": {},
+      "useDialogActions": {
+        "saveToShare": {
+          "title": "Save to share",
+          "description": "Save your theme first to share it with others.",
+          "ctaLabel": "Save & Share"
+        }
+      },
+      "useDocumentDragAndDropIntent": {},
+      "useDubIntegration": {},
+      "useFeedbackText": {},
+      "useGaurds": {},
+      "useGoogleDriveIntegration": {},
+      "useImageUploadReducer": {},
+      "useImageUpload": {
+        "youCanOnlyUploadUp": "You can only upload up to {maxFiles, number} images.",
+        "nameIsNotSupportedPlease": "\"{name}\" is not supported. Please use JPG, PNG, WebP, or SVG files.",
+        "imageNameExceedsTheValue": "Image \"{name}\" exceeds the {value, number}MB size limit.",
+        "nameMayContainUnsafeContent": "\"{name}\" may contain unsafe content but will be processed anyway.",
+        "failedToReadNamePlease": "Failed to read \"{name}\". Please try again.",
+        "imageUploadLimitReached": "Image upload limit reached",
+        "unsupportedFileType": "Unsupported file type",
+        "fileTooLarge": "File too large",
+        "potentiallyUnsafeSvg": "Potentially unsafe SVG",
+        "fileReadError": "File read error"
+      },
+      "useIntegrationAvailability": {},
+      "useKeyboardShortcuts": {},
+      "useMounted": {},
+      "usePlaygroundParams": {
+        "undo": "Undo"
+      },
+      "usePlaygroundShortcuts": {
+        "svgCopiedToClipboard": "SVG copied to clipboard",
+        "failedToCopySvg": "Failed to copy SVG"
+      },
+      "usePostLoginAction": {},
+      "useScrollStartEnd": {},
+      "useSmartPaste": {},
+      "useSubscription": {},
+      "useThemeShuffle": {},
+      "useUserSettings": {}
+    }
+  },
+  "playground": {
+    "heading": "Custom QR code designer",
+    "loading": "Loading Playground...",
+    "metaTitle": "Custom QR Code Designer: Logo, Colors, Frames",
+    "metaDescription": "Design a custom QR code with your logo, colors, gradients, dot patterns and frames, then download PNG, SVG, PDF or EPS. Free, no signup, no watermark.",
+    "intro": {
+      "label": "About the QR code designer",
+      "summary": "Custom QR code designer. Free static codes with your logo, colors and frames. No signup, no watermark.",
+      "types": "Make a QR code for a link, Wi-Fi network, contact card, payment or any of {types, number} content types. Style it with {bodyPatterns, number} dot patterns, {eyeShapes, number} corner-eye shapes, solid or gradient colors, a center logo and {frames, number} call-to-action frames. The scan score estimates how well it will read before you print.",
+      "downloads": "Download PNG, JPG, WebP or SVG, or a print-ready PDF or EPS at an exact size. Static codes are free and never expire. Sign in to make a dynamic code you can edit after printing and track scans.",
+      "links": {
+        "allTypes": "All QR code types",
+        "scanChecker": "Scan checker",
+        "printSize": "Print size calculator",
+        "styleGuide": "Style guide"
+      }
+    },
+    "cornerEyeDotPatternSelector": {},
+    "cornerEyePatternSelector": {},
+    "errorLevelSelector": {},
+    "patternSelector": {},
+    "playgroundProviders": {},
+    "playgroundShell": {},
+    "presetLink": {},
+    "presetSelector": {
+      "presets": "Presets"
+    },
+    "templateSelector": {},
+    "themeSaveDialog": {
+      "name": "Name",
+      "cancel": "Cancel",
+      "saving": "Saving",
+      "myAwesomeTheme": "My Awesome Theme",
+      "defaultTitle": "Save Theme",
+      "defaultDescription": "Enter a name for your theme so you can find it later.",
+      "defaultCta": "Save Theme"
+    }
+  },
+  "limits": {
+    "capMeter": {
+      "labelUsed": "{label} used"
+    },
+    "inlineLimit": {},
+    "limitCard": {
+      "planUsage": "Plan & usage",
+      "notNow": "Not now",
+      "labelUsed": "{label} used"
+    },
+    "limitDialog": {
+      "limitReached": "Limit reached"
+    },
+    "planLimitsProvider": {},
+    "upgradeButton": {}
+  },
+  "community": {
+    "browseLayout": {
+      "filters": "Filters"
+    },
+    "browseSidebar": {},
+    "communityTabs": {
+      "community": "Community"
+    },
+    "createBundle": {
+      "published": "Published",
+      "nameIsLiveInThe": "{name} is live in the community.",
+      "viewIt": "View it",
+      "whatToMake": "What to make",
+      "itemsYouSaveInThe": "Items you save in the community or publish yourself show up here. <link>Browse the community</link>",
+      "itemsLengthPicked": "Items<span>{length, number} picked</span>",
+      "optional": "(optional)",
+      "name": "Name",
+      "description": "Description",
+      "seeIt": "See it",
+      "eGEverythingForA": "e.g. Everything for a café",
+      "eGCaféTableKit": "e.g. Café table kit",
+      "optionalWhatItsFor": "Optional: what it's for",
+      "collection": "Collection",
+      "kit": "Kit",
+      "groupFramesThemesAndPage": "Group frames, themes and page templates people can browse together, for example everything for a café. Pick 2 or more.",
+      "aPageTemplateAndThe": "A page template and the look it goes with. Using a kit copies the page as a draft and the look as a saved theme.",
+      "yours": "yours",
+      "noSavedMany": "No saved {many}",
+      "none": "None",
+      "pickOne": "Pick one",
+      "publishing": "Publishing",
+      "publishCollection": "Publish collection",
+      "publishKit": "Publish kit"
+    },
+    "creatorLine": {
+      "verified": "Verified"
+    },
+    "designQr": {},
+    "importFrameDialog": {
+      "importAnSvgFrame": "Import an SVG frame",
+      "shapesAndColorsBecomeA": "Shapes and colors become a frame. Text, images and effects are left out.",
+      "colors": "Colors",
+      "whatChanged": "What changed",
+      "cancel": "Cancel",
+      "useThisFrame": "Use this frame",
+      "chooseAnSvgFileUp": "Choose an SVG file (up to 200 KB)",
+      "refs": {
+        "frame": "Frame color",
+        "accent": "Accent color",
+        "fixed": "Stays as it is"
+      }
+    },
+    "itemActions": {
+      "useInEditor": "Use in editor",
+      "copyToWorkspace": "Copy to workspace",
+      "unpublish": "Unpublish",
+      "removeFromTheCommunity": "Remove from the community?",
+      "itLeavesTheCommunityAt": "It leaves the community at once. People who already used it keep their copies: it was shared under CC0.",
+      "cancel": "Cancel",
+      "removeFromSaved": "Remove from saved",
+      "save": "Save",
+      "unlike": "Unlike",
+      "like": "Like",
+      "useKit": "Use kit",
+      "useTemplate": "Use template",
+      "saved": "Saved",
+      "open": "Open",
+      "nameIsInYourPages": "\"{name}\" is in your pages as a draft, and its look in your themes.",
+      "nameIsInYourPages2": "\"{name}\" is in your pages as a draft.",
+      "savedItsInTheEditors": "Saved. It's in the editor's frame picker.",
+      "saved2": "Saved.",
+      "removedFromSaved": "Removed from saved.",
+      "copiedToWhereAsName": "Copied to {where} as \"{name}\"",
+      "nameIsNoLongerIn": "\"{name}\" is no longer in the community."
+    },
+    "itemCard": {
+      "empty": "Empty",
+      "official": "Official",
+      "usecountUses": "{useCount} uses",
+      "seeAll": "See all",
+      "likes": "Likes"
+    },
+    "itemPages": {
+      "previous": "Previous",
+      "pagePageOfPages": "Page {page, number} of {pages, number}",
+      "next": "Next",
+      "pages": "Pages"
+    },
+    "licenceConfirm": {
+      "licence": "Licence:"
+    },
+    "newBundle": {
+      "signInToMakeA": "Sign in to make a collection or kit from items you saved.",
+      "signIn": "Sign in"
+    },
+    "pagePreview": {},
+    "publishDesignDialog": {
+      "published": "Published",
+      "valueIsLiveInThe": "{value} is live in the community.",
+      "done": "Done",
+      "viewIt": "View it",
+      "publishToTheCommunity": "Publish to the community",
+      "theChatDraftedTheseDetails": "The chat drafted these details. Change anything you like; nothing is shared until you publish.",
+      "name": "Name",
+      "description": "Description",
+      "seeIt": "See it",
+      "cancel": "Cancel",
+      "optionalWhatItSuits": "Optional: what it suits",
+      "checkingAndPublishing": "Checking and publishing",
+      "publish": "Publish"
+    },
+    "publishFrameDialog": {
+      "published": "Published",
+      "valueIsLiveInThe": "{value} is live in the community.",
+      "done": "Done",
+      "viewIt": "View it",
+      "publishThisFrame": "Publish this frame",
+      "anyoneCanFindItIn": "Anyone can find it in the community and use it with their own codes.",
+      "name": "Name",
+      "description": "Description",
+      "seeIt": "See it",
+      "cancel": "Cancel",
+      "eGCaféTableCard": "e.g. Café table card",
+      "optionalWhatItsFor": "Optional: what it's for",
+      "checkingAndPublishing": "Checking and publishing",
+      "publish": "Publish"
+    },
+    "publishPageDialog": {
+      "published": "Published",
+      "valueIsLiveInThe": "{value} is live in the community. Your page itself hasn't changed.",
+      "done": "Done",
+      "viewIt": "View it",
+      "shareAsAPageTemplate": "Share as a page template",
+      "step1Of2This": "Step 1 of 2 · This is what people get. Your own details are taken out first.",
+      "whatWeChanged": "What we changed",
+      "checkingThePage": "Checking the page",
+      "yourTextIsReplacedWith": "Your text is replaced with sample text. Tick a field to publish it as you wrote it.",
+      "everyPhotoIsTakenOut": "Every photo is taken out, so people add their own. Text you keep can't hold links, emails, phone numbers or addresses.",
+      "nothingIsLeftToShare": "Nothing is left to share once your details are taken out.",
+      "cancel": "Cancel",
+      "continue": "Continue",
+      "step2Of2Details": "Step 2 of 2 · Details. It goes live in the community at once, and your page stays as it is.",
+      "name": "Name",
+      "description": "Description",
+      "seeIt": "See it",
+      "back": "Back",
+      "eGCaféMenu": "e.g. Café menu",
+      "optionalWhatItsFor": "Optional: what it's for",
+      "kept": " · kept",
+      "empty": "(empty)",
+      "publishing": "Publishing",
+      "publish": "Publish"
+    },
+    "publishThemeDialog": {
+      "anyoneCanFindItIn": "Anyone can find it in the community gallery and use it. You can unpublish it at any time.",
+      "cancel": "Cancel",
+      "publishThemenameToTheCommunity": "Publish \"{themeName}\" to the community",
+      "publishToTheCommunity": "Publish to the community",
+      "checkingAndPublishing": "Checking and publishing",
+      "publish": "Publish",
+      "publishedUnderYourProfile": "It's published under your profile; the theme stays in this workspace."
+    },
+    "removeItemButton": {
+      "remove": "Remove",
+      "removeFromTheCommunity": "Remove from the community",
+      "removedNameFromTheCommunity": "Removed \"{name}\" from the community"
+    },
+    "routeModal": {},
+    "tryIt": {
+      "tryItWithYourLink": "Try it with your link",
+      "drawnInYourBrowserNothing": "Drawn in your browser. Nothing is sent."
     }
   }
 }

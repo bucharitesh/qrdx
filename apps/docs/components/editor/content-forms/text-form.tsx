@@ -2,6 +2,7 @@
 
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useSmartPaste } from "@/lib/hooks/use-smart-paste";
 import type { TextFormData } from "@/lib/validations/qr-content";
@@ -12,6 +13,7 @@ import { encodeText } from "@/utils/qr-content-encoder";
 import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function TextForm() {
+  const t = useTranslations("editor.contentForms.textForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
   const { handlePaste } = useSmartPaste();
 
@@ -52,11 +54,11 @@ export function TextForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="text-input">
-          Text content *
+          {t("textContent")}
         </Label>
         <Textarea
           id="text-input"
-          placeholder="Enter any text…"
+          placeholder={t("enterAnyText")}
           value={textData.text}
           onChange={(e) => setTextData({ text: e.target.value })}
           onPaste={handlePaste}
@@ -68,7 +70,7 @@ export function TextForm() {
         )}
         {!errors.text && (
           <p className="text-muted-foreground text-[11px]">
-            Paste a link and it switches to the matching type.
+            {t("pasteALinkAndIt")}
           </p>
         )}
       </div>

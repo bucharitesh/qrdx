@@ -10,6 +10,7 @@ import {
 } from "@repo/design-system/components/ui/toggle-group";
 import { ArrowRight, Copy, Flash, Setting4 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   useCallback,
   useEffect,
@@ -184,15 +185,16 @@ export function DynamicLimitCard({
   message: string;
   onUpgrade: () => void;
 }) {
+  const t = useTranslations("editor.dynamicLinkToggle");
   return (
     <div className="bg-muted/50 space-y-2 rounded-lg p-3 text-xs">
       <p>{message}</p>
       <div className="flex flex-wrap gap-2">
         <Button onClick={onUpgrade} size="sm">
-          Upgrade to Pro
+          {t("upgradeToPro")}
         </Button>
         <Button asChild size="sm" variant="outline">
-          <Link href={dashboardEntry("codes")}>Manage codes</Link>
+          <Link href={dashboardEntry("codes")}>{t("manageCodes")}</Link>
         </Button>
       </div>
     </div>
@@ -212,6 +214,7 @@ const choiceItemClass =
  * back-half, folder and tags (creating the code, or editing the linked one).
  */
 export function DynamicLinkToggle() {
+  const t = useTranslations("editor.dynamicLinkToggle");
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
   const userId = session?.user?.id ?? null;
@@ -265,8 +268,8 @@ export function DynamicLinkToggle() {
   const forgetMissingCode = () => {
     unlink();
     setValue(url);
-    toast.error("This dynamic code is no longer available", {
-      description: "The QR code shows your URL directly again.",
+    toast.error(t("thisDynamicCodeIsNo"), {
+      description: t("theQrCodeShowsYour"),
     });
   };
 
@@ -305,10 +308,10 @@ export function DynamicLinkToggle() {
       setValue(outcome.code.shortLink);
       emitSound("success");
       track("dynamic_code_created", { source: "playground" });
-      toast.success("Your QR code is now dynamic", {
+      toast.success(t("yourQrCodeIsNow"), {
         description: outcome.trimmed
-          ? "Change where it points at any time. Your logo was too large to save with the code."
-          : "Change where it points at any time from your dashboard.",
+          ? t("changeWhereItPointsAt")
+          : t("changeWhereItPointsAt2"),
       });
     });
   };
@@ -340,7 +343,7 @@ export function DynamicLinkToggle() {
     unlink();
     setValue(url);
     toast("Back to a static QR code", {
-      description: "The dynamic code stays in your dashboard.",
+      description: t("theDynamicCodeStaysIn"),
     });
   };
 
@@ -357,8 +360,8 @@ export function DynamicLinkToggle() {
       }
       link({ ...linked, destinationUrl: result.data.destinationUrl });
       emitSound("apply");
-      toast.success("Destination updated", {
-        description: "Printed copies of this code now open the new URL.",
+      toast.success(t("destinationUpdated"), {
+        description: t("printedCopiesOfThisCode"),
       });
     });
   };
@@ -378,10 +381,10 @@ export function DynamicLinkToggle() {
       setDesignSaved(true);
       emitSound("apply");
       setTimeout(() => setDesignSaved(false), 2500);
-      toast.success("Design saved to the code", {
+      toast.success(t("designSavedToTheCode"), {
         description: trimmed
-          ? "Your logo was too large to save and was left out."
-          : "Dashboard previews and downloads use this design.",
+          ? t("yourLogoWasTooLarge")
+          : t("dashboardPreviewsAndDownloadsUse"),
       });
     });
   };
@@ -394,7 +397,7 @@ export function DynamicLinkToggle() {
       emitSound("copy");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Couldn't copy the short link");
+      toast.error(t("couldntCopyTheShortLink"));
     }
   };
 
@@ -404,10 +407,10 @@ export function DynamicLinkToggle() {
   const creating = isPending && !linked;
 
   return (
-    <section aria-label="Static or dynamic QR code" className="space-y-3">
+    <section aria-label={t("staticOrDynamicQrCode")} className="space-y-3">
       <div className="flex items-start gap-1.5">
         <ToggleGroup
-          aria-label="Static or dynamic QR code"
+          aria-label={t("staticOrDynamicQrCode")}
           className="grid flex-1 grid-cols-2 gap-2"
           onValueChange={(next) => {
             if (next === "dynamic" && !linked) enable();
@@ -423,9 +426,9 @@ export function DynamicLinkToggle() {
             disabled={isPending}
             value="static"
           >
-            <span className="text-sm font-medium">Static</span>
+            <span className="text-sm font-medium">{t("static")}</span>
             <span className="text-muted-foreground text-xs font-normal">
-              Fixed once printed
+              {t("fixedOncePrinted")}
             </span>
           </ToggleGroupItem>
           <ToggleGroupItem
@@ -442,10 +445,10 @@ export function DynamicLinkToggle() {
                   variant={linked ? "Bold" : "Linear"}
                 />
               )}
-              Dynamic
+              {t("dynamic")}
             </span>
             <span className="text-muted-foreground text-xs font-normal">
-              Edit later, count scans
+              {t("editLaterCountScans")}
             </span>
           </ToggleGroupItem>
         </ToggleGroup>
@@ -465,7 +468,7 @@ export function DynamicLinkToggle() {
           variant="ghost"
         >
           <Setting4 className="size-3.5" />
-          Link options…
+          {t("linkOptions")}
         </Button>
       )}
 
@@ -476,7 +479,7 @@ export function DynamicLinkToggle() {
               {linked.shortLink.replace(/^https?:\/\//, "")}
             </code>
             <Button
-              aria-label={copied ? "Short link copied" : "Copy short link"}
+              aria-label={copied ? t("shortLinkCopied") : t("copyShortLink")}
               className="text-muted-foreground hover:text-foreground"
               onClick={copyShortLink}
               size="icon-sm"
@@ -493,11 +496,12 @@ export function DynamicLinkToggle() {
           {destinationChanged && (
             <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs">
               <p className="text-pretty">
-                Printed codes still open{" "}
-                <span className="font-medium break-all">
-                  {linked.destinationUrl}
-                </span>
-                .
+                {t.rich("printedCodesStillOpenDestinationurl", {
+                  destinationUrl: linked.destinationUrl,
+                  span: (chunks) => (
+                    <span className="font-medium break-all">{chunks}</span>
+                  ),
+                })}
               </p>
               <Button
                 disabled={isPending}
@@ -506,7 +510,7 @@ export function DynamicLinkToggle() {
                 variant="outline"
               >
                 {isPending && <Spinner />}
-                Point it to the new address
+                {t("pointItToTheNew")}
               </Button>
             </div>
           )}
@@ -520,7 +524,7 @@ export function DynamicLinkToggle() {
                 variant="outline"
               >
                 {designSaved ? <Tick /> : isPending ? <Spinner /> : null}
-                {designSaved ? "Design saved" : "Save design to code"}
+                {designSaved ? t("designSaved") : t("saveDesignToCode")}
               </Button>
               <Button
                 disabled={isPending}
@@ -529,12 +533,12 @@ export function DynamicLinkToggle() {
                 variant="outline"
               >
                 <Setting4 />
-                Link options…
+                {t("linkOptions")}
               </Button>
             </div>
             <Button asChild className="-ml-2.5" size="sm" variant="ghost">
               <Link href={dashboardEntry(`codes/${linked.id}`)}>
-                Scans & settings
+                {t("scansSettings")}
                 <ArrowRight />
               </Link>
             </Button>

@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { AttendanceFormData } from "@/lib/validations/qr-content";
 import { attendanceSchema } from "@/lib/validations/qr-content";
@@ -10,6 +11,7 @@ import type { AttendanceContent } from "@/types/qr-content";
 import { encodeAttendance } from "@/utils/qr-content-encoder";
 
 export function AttendanceForm() {
+  const t = useTranslations("editor.contentForms.attendanceForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -46,12 +48,12 @@ export function AttendanceForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="attendance-form-url">
-          Google Form URL *
+          {t("googleFormUrl")}
         </Label>
         <Input
           id="attendance-form-url"
           type="url"
-          placeholder="https://forms.gle/... or https://docs.google.com/forms/..."
+          placeholder={t("httpsFormsGleOrHttps")}
           value={attendanceData.formUrl}
           onChange={(e) => setAttendanceData({ formUrl: e.target.value })}
           className={errors.formUrl ? "border-destructive" : ""}
@@ -62,7 +64,7 @@ export function AttendanceForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your attendance form
+        {t("scanningWillOpenYourAttendance")}
       </p>
     </div>
   );

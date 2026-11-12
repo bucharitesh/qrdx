@@ -159,7 +159,8 @@ describe("Organization schema", () => {
       "app/(app)/(home)/layout.tsx",
       "app/[lang]/(home)/layout.tsx",
       "app/[lang]/docs/layout.tsx",
-      "app/(app)/playground/layout.tsx",
+      // Both playground layouts render it (/playground and shared themes).
+      "components/playground/playground-shell.tsx",
     ]) {
       expect(readFileSync(join(APP, layout), "utf8")).toContain(
         "<JsonLd data={organizationSchema} />",
@@ -205,13 +206,17 @@ describe("per-page Open Graph images", () => {
   });
 
   it("gives /playground its image and keeps the default on shared theme links", () => {
-    const metadata = readFileSync(
-      join(APP, "app/(app)/playground/metadata.ts"),
+    const page = readFileSync(
+      join(APP, "app/[lang]/playground/(editor)/page.tsx"),
       "utf8",
     );
-    expect(metadata).toMatch(
-      /playgroundMetadata[\s\S]*?ownOgImage: true[\s\S]*?sharedThemeMetadata/,
-    );
+    expect(page).toMatch(/localizedMetadata\([\s\S]*?ownOgImage: true/);
+    expect(
+      readFileSync(
+        join(APP, "components/playground/playground-metadata.ts"),
+        "utf8",
+      ),
+    ).not.toContain("ownOgImage");
     expect(
       readFileSync(
         join(APP, "app/(app)/playground/[...qrId]/page.tsx"),

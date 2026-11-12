@@ -1,7 +1,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowDown, ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { AsciiField } from "@/components/fx";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { CompareHeroLogos } from "@/components/sections/compare/compare-hero-logos";
 import { CompareMigrateButton } from "@/components/sections/compare/compare-migrate-button";
@@ -44,10 +44,10 @@ export function CompareHero({ slug, competitor, tagline }: CompareHeroProps) {
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
           <Button asChild>
-            <Link href={playgroundHref()}>
+            <LocaleLink href={playgroundHref()}>
               Try the Playground
               <ArrowRight aria-hidden />
-            </Link>
+            </LocaleLink>
           </Button>
           <Button asChild variant="outline">
             <a href="#at-a-glance">

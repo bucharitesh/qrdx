@@ -4,9 +4,10 @@
 // by itself with the same prompt and pictures; Cancel puts the editor back.
 // The server side of the same flow is in tests/api/ai-agent.test.ts
 // ("pictures and missing content"); the clicks run in a real browser.
-import { renderToStaticMarkup } from "react-dom/server";
+
 import { describe, expect, it, vi } from "vitest";
 import type { ChatMessage } from "@/types/ai";
+import { renderIntl } from "../support/intl";
 
 vi.hoisted(() => {
   const items = new Map<string, string>();
@@ -104,7 +105,7 @@ describe("the content dialog", () => {
 
   it("shows the link field first, then the content types", () => {
     empty();
-    const html = renderToStaticMarkup(
+    const html = renderIntl(
       <ResponsiveDialog open>
         <ContentDialogBody
           onCancel={() => {}}

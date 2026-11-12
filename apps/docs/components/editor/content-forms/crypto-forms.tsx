@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // Payment requests for Litecoin, Dogecoin, Bitcoin Cash, Solana (Solana Pay)
 // and Monero: one wallet address, an optional amount and descriptions.
@@ -58,10 +59,11 @@ function CryptoForm({
   fields: FormField[];
   wallet: string;
 }) {
+  const t = useTranslations("editor.contentForms.cryptoForms");
   return (
     <SchemaForm
       fields={fields}
-      note={`Scanning opens a ${wallet} with this payment request. Check the address twice: crypto payments can't be reversed.`}
+      note={t("scanningOpensAWalletWith", { wallet })}
       schema={schema}
       type={type}
     />

@@ -3,10 +3,12 @@
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { useSound } from "@/lib/sound";
 
 /** Compact "Sounds" row for the playground's shortcuts dialog. */
 export function SoundSwitch({ className }: { className?: string }) {
+  const t = useTranslations("editor.soundSwitch");
   const { muted, setMuted } = useSound();
 
   return (
@@ -20,7 +22,7 @@ export function SoundSwitch({ className }: { className?: string }) {
         htmlFor="playground-sounds"
         className="text-sm font-normal text-muted-foreground"
       >
-        Sounds
+        {t("sounds")}
       </Label>
       <Switch
         id="playground-sounds"
