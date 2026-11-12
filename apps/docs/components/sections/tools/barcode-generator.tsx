@@ -49,6 +49,10 @@ import {
 import { useContentText } from "@/components/i18n/content-text";
 import { track } from "@/lib/analytics";
 import {
+  useTrackBarcodeGenerated,
+  useTrackEditorOpened,
+} from "@/lib/analytics/react";
+import {
   barcodeColorWarnings,
   type ColorWarning,
   HEX_COLOR,
@@ -395,6 +399,17 @@ export function BarcodeGenerator({
     () => (rendered && value ? { format: formatId, value, style } : null),
     [rendered, value, formatId, style],
   );
+
+  // The funnel's first two steps: the public generator opened, and a
+  // barcode other than the page's own drawn (never its value).
+  useTrackEditorOpened("barcode", source === "generator");
+  useTrackBarcodeGenerated({
+    source,
+    symbology: formatId,
+    value: input,
+    rendered: Boolean(rendered),
+    initial: { symbology: start.format, value: start.value },
+  });
 
   // Scan check: decode the exact pixels the PNG download would have.
   useEffect(() => {
