@@ -5467,7 +5467,6 @@
           "youHaveViewOnlyAccess": "You have view-only access: download this barcode, but it can't be changed.",
           "planBarcodesAreStaticThey": "{plan} plan. Barcodes are static: they never expire and work on every plan.",
           "noBarcodesYet": "No barcodes yet",
-          "newBarcode": "New barcode",
           "openTheFreeGenerator": "Open the free generator",
           "barcodesInTheTrashDont": "Barcodes in the trash don't count toward your plan. Restore them, or delete them for good.",
           "showAllBarcodes": "Show all barcodes",
@@ -5482,13 +5481,6 @@
           "noBarcodesMatchQ": "No barcodes match \"{q}\".",
           "noBarcodesHereYet": "No barcodes here yet.",
           "noBarcodesMatchTheseFilters": "No barcodes match these filters."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "All barcodes",
-            "newBarcode": "New barcode",
-            "pickTheTypeEnterThe": "Pick the type, enter the number or text, and save it to edit and download again later."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplicate",
@@ -5507,11 +5499,34 @@
           "fixTheHighlightedInputTo": "Fix the highlighted input to save.",
           "unsavedChanges": "Unsaved changes",
           "allChangesSaved": "All changes saved",
-          "notSavedYet": "Not saved yet",
           "saveChanges": "Save changes",
-          "saveBarcode": "Save barcode",
           "couldntSaveTheBarcode": "Couldn't save the barcode",
           "barcodeSaved": "Barcode saved"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "New barcode",
+          "pickTheTypeEnterThe": "Pick the type, enter the number or text, and save it to edit and download again later.",
+          "yourBarcodeIsSaved": "Your barcode is saved",
+          "downloadItNowOrOpen": "Download it now, or open it later from Barcodes to edit and download again.",
+          "design": "Design",
+          "back": "Back",
+          "close": "Close",
+          "value": "Value",
+          "valueCopied": "Value copied",
+          "type": "Type",
+          "title": "Title",
+          "openTheBarcode": "Open the barcode",
+          "foldersDidntLoad": "Folders didn't load, so this barcode is saved without one.",
+          "couldntReachQrdx": "Couldn't reach QRdx. Check your connection and try again.",
+          "fixTheHighlightedInputTo": "Fix the highlighted input to save.",
+          "saveBarcode": "Save barcode",
+          "saving": "Saving...",
+          "createAnother": "Create another",
+          "done": "Done",
+          "closeWithoutSaving": "Close without saving?",
+          "thisBarcodeIsntSavedYet": "This barcode isn't saved yet, so what you entered will be lost.",
+          "keepEditing": "Keep editing",
+          "discard": "Discard"
         },
         "barcodesHeader": {
           "barcodes": "Barcodes:",
@@ -7326,6 +7341,7 @@
         "newDynamicQrCode": "New dynamic QR code",
         "newLandingPage": "New landing page",
         "newForm": "New form",
+        "newBarcode": "New barcode",
         "importCodesFromACsv": "Import codes from a CSV file",
         "inviteATeammate": "Invite a teammate",
         "connectADomain": "Connect a domain",
@@ -7336,6 +7352,7 @@
         "dynamicQrCode": "Dynamic QR code",
         "landingPage": "Landing page",
         "form": "Form",
+        "barcode": "Barcode",
         "importCodes": "Import codes",
         "openTheEditor": "Open the editor",
         "newDynamicQrCode": "New dynamic QR code",

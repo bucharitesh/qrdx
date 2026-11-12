@@ -5467,7 +5467,6 @@
           "youHaveViewOnlyAccess": "閲覧のみの権限です。このバーコードはダウンロードできますが、変更はできません。",
           "planBarcodesAreStaticThey": "{plan}プラン。バーコードは静的なので、期限切れになることはなく、どのプランでも使えます。",
           "noBarcodesYet": "バーコードはまだありません",
-          "newBarcode": "新規バーコード",
           "openTheFreeGenerator": "無料ジェネレーターを開く",
           "barcodesInTheTrashDont": "ゴミ箱内のバーコードはプランの対象数にカウントされません。復元するか、完全に削除してください。",
           "showAllBarcodes": "すべてのバーコードを表示",
@@ -5482,13 +5481,6 @@
           "noBarcodesMatchQ": "「{q}」に一致するバーコードはありません。",
           "noBarcodesHereYet": "バーコードはまだありません。",
           "noBarcodesMatchTheseFilters": "これらのフィルターに一致するバーコードはありません。"
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "すべてのバーコード",
-            "newBarcode": "新規バーコード",
-            "pickTheTypeEnterThe": "種類を選び、番号またはテキストを入力して保存すると、あとから編集やダウンロードができます。"
-          }
         },
         "barcodeActions": {
           "duplicate": "複製",
@@ -5507,11 +5499,14 @@
           "fixTheHighlightedInputTo": "保存するには、強調表示された入力を修正してください。",
           "unsavedChanges": "未保存の変更があります",
           "allChangesSaved": "すべての変更を保存しました",
-          "notSavedYet": "まだ保存されていません",
           "saveChanges": "変更を保存",
-          "saveBarcode": "バーコードを保存",
           "couldntSaveTheBarcode": "バーコードを保存できませんでした",
           "barcodeSaved": "バーコードを保存しました"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "新規バーコード",
+          "pickTheTypeEnterThe": "種類を選び、番号またはテキストを入力して保存すると、あとから編集やダウンロードができます。",
+          "saveBarcode": "バーコードを保存"
         },
         "barcodesHeader": {
           "barcodes": "バーコード:",

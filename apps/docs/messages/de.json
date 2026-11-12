@@ -5374,7 +5374,6 @@
           "youHaveViewOnlyAccess": "Du hast nur Leserechte: Du kannst diesen Barcode herunterladen, aber nicht ändern.",
           "planBarcodesAreStaticThey": "Tarif {plan}. Barcodes sind statisch: Sie laufen nie ab und funktionieren in jedem Tarif.",
           "noBarcodesYet": "Noch keine Barcodes",
-          "newBarcode": "Neuer Barcode",
           "openTheFreeGenerator": "Kostenlosen Generator öffnen",
           "barcodesInTheTrashDont": "Barcodes im Papierkorb zählen nicht zu deinem Tarif. Stelle sie wieder her oder lösche sie endgültig.",
           "showAllBarcodes": "Alle Barcodes anzeigen",
@@ -5389,13 +5388,6 @@
           "noBarcodesMatchQ": "Keine Barcodes passen zu „{q}“.",
           "noBarcodesHereYet": "Noch keine Barcodes vorhanden.",
           "noBarcodesMatchTheseFilters": "Keine Barcodes passen zu diesen Filtern."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Alle Barcodes",
-            "newBarcode": "Neuer Barcode",
-            "pickTheTypeEnterThe": "Wähle den Typ, gib die Nummer oder den Text ein und speichere ihn, um ihn später zu bearbeiten und erneut herunterzuladen."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplizieren",
@@ -5414,11 +5406,14 @@
           "fixTheHighlightedInputTo": "Korrigiere die markierte Eingabe, um zu speichern.",
           "unsavedChanges": "Ungespeicherte Änderungen",
           "allChangesSaved": "Alle Änderungen gespeichert",
-          "notSavedYet": "Noch nicht gespeichert",
           "saveChanges": "Änderungen speichern",
-          "saveBarcode": "Barcode speichern",
           "couldntSaveTheBarcode": "Barcode konnte nicht gespeichert werden",
           "barcodeSaved": "Barcode gespeichert"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Neuer Barcode",
+          "pickTheTypeEnterThe": "Wähle den Typ, gib die Nummer oder den Text ein und speichere ihn, um ihn später zu bearbeiten und erneut herunterzuladen.",
+          "saveBarcode": "Barcode speichern"
         },
         "barcodesHeader": {
           "barcodes": "Barcodes:",

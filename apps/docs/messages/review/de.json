@@ -16603,10 +16603,6 @@
     "source": "398eb5fb95a6",
     "status": "machine"
   },
-  "app.dashboard.barcodes.page.newBarcode": {
-    "source": "4820c2686d7d",
-    "status": "machine"
-  },
   "app.dashboard.barcodes.page.openTheFreeGenerator": {
     "source": "fbbf8567ca11",
     "status": "machine"
@@ -16663,15 +16659,11 @@
     "source": "206660802867",
     "status": "machine"
   },
-  "app.dashboard.barcodes.new.page.allBarcodes": {
-    "source": "8f26addb57cb",
-    "status": "machine"
-  },
-  "app.dashboard.barcodes.new.page.newBarcode": {
+  "app.dashboard.barcodes.barcodeBuilder.newBarcode": {
     "source": "4820c2686d7d",
     "status": "machine"
   },
-  "app.dashboard.barcodes.new.page.pickTheTypeEnterThe": {
+  "app.dashboard.barcodes.barcodeBuilder.pickTheTypeEnterThe": {
     "source": "f9db5e565e45",
     "status": "machine"
   },
@@ -16731,15 +16723,11 @@
     "source": "fc2f5a475297",
     "status": "machine"
   },
-  "app.dashboard.barcodes.barcodeEditor.notSavedYet": {
-    "source": "35c5fe43950d",
-    "status": "machine"
-  },
   "app.dashboard.barcodes.barcodeEditor.saveChanges": {
     "source": "dd0ae7a5cbcf",
     "status": "machine"
   },
-  "app.dashboard.barcodes.barcodeEditor.saveBarcode": {
+  "app.dashboard.barcodes.barcodeBuilder.saveBarcode": {
     "source": "2c052df33b87",
     "status": "machine"
   },

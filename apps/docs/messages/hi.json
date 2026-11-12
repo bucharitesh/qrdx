@@ -5374,7 +5374,6 @@
           "youHaveViewOnlyAccess": "आपके पास सिर्फ़ देखने का एक्सेस है: इस बारकोड को डाउनलोड कर सकते हैं, पर बदल नहीं सकते।",
           "planBarcodesAreStaticThey": "{plan} प्लान। बारकोड स्टैटिक होते हैं: ये कभी एक्सपायर नहीं होते और हर प्लान पर काम करते हैं।",
           "noBarcodesYet": "अभी कोई बारकोड नहीं",
-          "newBarcode": "नया बारकोड",
           "openTheFreeGenerator": "फ़्री जनरेटर खोलें",
           "barcodesInTheTrashDont": "ट्रैश में रखे बारकोड आपके प्लान की गिनती में नहीं आते। उन्हें रिस्टोर करें या हमेशा के लिए डिलीट कर दें।",
           "showAllBarcodes": "सभी बारकोड दिखाएँ",
@@ -5389,13 +5388,6 @@
           "noBarcodesMatchQ": "\"{q}\" से कोई बारकोड नहीं मिला।",
           "noBarcodesHereYet": "यहाँ अभी कोई बारकोड नहीं है।",
           "noBarcodesMatchTheseFilters": "इन फ़िल्टर से कोई बारकोड नहीं मिला।"
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "सभी बारकोड",
-            "newBarcode": "नया बारकोड",
-            "pickTheTypeEnterThe": "टाइप चुनें, नंबर या टेक्स्ट डालें और सेव करें, ताकि बाद में उसे फिर से एडिट और डाउनलोड कर सकें।"
-          }
         },
         "barcodeActions": {
           "duplicate": "डुप्लिकेट करें",
@@ -5414,11 +5406,14 @@
           "fixTheHighlightedInputTo": "सेव करने के लिए हाइलाइट किया गया इनपुट ठीक करें।",
           "unsavedChanges": "बदलाव सेव नहीं हुए",
           "allChangesSaved": "सभी बदलाव सेव हो गए",
-          "notSavedYet": "अभी सेव नहीं हुआ",
           "saveChanges": "बदलाव सेव करें",
-          "saveBarcode": "बारकोड सेव करें",
           "couldntSaveTheBarcode": "बारकोड सेव नहीं हो सका",
           "barcodeSaved": "बारकोड सेव हो गया"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "नया बारकोड",
+          "pickTheTypeEnterThe": "टाइप चुनें, नंबर या टेक्स्ट डालें और सेव करें, ताकि बाद में उसे फिर से एडिट और डाउनलोड कर सकें।",
+          "saveBarcode": "बारकोड सेव करें"
         },
         "barcodesHeader": {
           "barcodes": "बारकोड:",

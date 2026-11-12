@@ -5374,7 +5374,6 @@
           "youHaveViewOnlyAccess": "Vous avez un accès en lecture seule : vous pouvez télécharger ce code-barres, mais pas le modifier.",
           "planBarcodesAreStaticThey": "Forfait {plan}. Les codes-barres sont statiques : ils n’expirent jamais et fonctionnent avec tous les forfaits.",
           "noBarcodesYet": "Aucun code-barres",
-          "newBarcode": "Nouveau code-barres",
           "openTheFreeGenerator": "Ouvrir le générateur gratuit",
           "barcodesInTheTrashDont": "Les codes-barres de la corbeille ne comptent pas dans votre offre. Restaurez-les ou supprimez-les définitivement.",
           "showAllBarcodes": "Afficher tous les codes-barres",
@@ -5389,13 +5388,6 @@
           "noBarcodesMatchQ": "Aucun code-barres ne correspond à « {q} ».",
           "noBarcodesHereYet": "Aucun code-barres pour le moment.",
           "noBarcodesMatchTheseFilters": "Aucun code-barres ne correspond à ces filtres."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Tous les codes-barres",
-            "newBarcode": "Nouveau code-barres",
-            "pickTheTypeEnterThe": "Choisissez le type, saisissez le numéro ou le texte, puis enregistrez-le pour le modifier et le télécharger à nouveau plus tard."
-          }
         },
         "barcodeActions": {
           "duplicate": "Dupliquer",
@@ -5414,11 +5406,14 @@
           "fixTheHighlightedInputTo": "Corrigez le champ en surbrillance pour enregistrer.",
           "unsavedChanges": "Modifications non enregistrées",
           "allChangesSaved": "Toutes les modifications sont enregistrées",
-          "notSavedYet": "Pas encore enregistré",
           "saveChanges": "Enregistrer les modifications",
-          "saveBarcode": "Enregistrer le code-barres",
           "couldntSaveTheBarcode": "Impossible d’enregistrer le code-barres",
           "barcodeSaved": "Code-barres enregistré"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Nouveau code-barres",
+          "pickTheTypeEnterThe": "Choisissez le type, saisissez le numéro ou le texte, puis enregistrez-le pour le modifier et le télécharger à nouveau plus tard.",
+          "saveBarcode": "Enregistrer le code-barres"
         },
         "barcodesHeader": {
           "barcodes": "Codes-barres :",

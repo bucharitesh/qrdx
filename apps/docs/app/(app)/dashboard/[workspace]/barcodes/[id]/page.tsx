@@ -5,7 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BarcodeActions } from "@/app/(app)/dashboard/barcodes/_components/barcode-actions";
 import { BarcodeEditor } from "@/app/(app)/dashboard/barcodes/_components/barcode-editor";
-import { folderOptions } from "@/app/(app)/dashboard/barcodes/_lib/cards";
+import { folderOptions } from "@/app/(app)/dashboard/barcodes/_lib/filters";
 import { formatDate } from "@/app/(app)/dashboard/codes/_components/format";
 import { listFolders } from "@/app/(app)/dashboard/codes/_lib/organize";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
@@ -82,7 +82,6 @@ export default async function BarcodePage({
         )}
       </div>
       <BarcodeEditor
-        basePath={basePath}
         folders={folderOptions(folders)}
         readOnly={!canWrite}
         saved={{

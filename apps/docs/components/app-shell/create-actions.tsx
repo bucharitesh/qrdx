@@ -20,14 +20,14 @@ import { usePasteToCreate } from "./paste-to-create";
 import type { ShellData } from "./shell-data";
 
 /** What the Create menu, ⌘K and the `c` key can start. */
-export type CreateKind = "code" | "page" | "form";
+export type CreateKind = "code" | "page" | "form" | "barcode";
 
 /** The page template that collects responses (lib/landing/templates/feedback). */
 export const FORM_PAGE_TYPE = "feedback";
 
 const CreateContext = createContext<((kind: CreateKind) => void) | null>(null);
 
-/** Starts creating a dynamic code, landing page or form from anywhere in the app. */
+/** Starts creating a dynamic code, landing page, form or barcode from anywhere in the app. */
 export function useCreate() {
   const start = useContext(CreateContext);
   if (!start) throw new Error("useCreate must be used inside CreateProvider");
@@ -36,9 +36,10 @@ export function useCreate() {
 
 /**
  * Holds what the app chrome opens: the code builder for a new dynamic code
- * (also from a pasted web address) and the page gallery for a landing page
- * or form. At the plan's cap (the server would answer LIMIT_REACHED), a new
- * code shows the limit card instead, like the codes list.
+ * (also from a pasted web address) or a barcode, and the page gallery for a
+ * landing page or form. At the plan's cap (the server would answer
+ * LIMIT_REACHED), a new code shows the limit card instead, like the codes
+ * list.
  */
 export function CreateProvider({
   codes,
@@ -48,7 +49,8 @@ export function CreateProvider({
   children: ReactNode;
 }) {
   // The kind outlives `open`, so the dialog doesn't change while it closes.
-  const [kind, setKind] = useState<Exclude<CreateKind, "code">>("page");
+  const [kind, setKind] =
+    useState<Exclude<CreateKind, "code" | "barcode">>("page");
   const [open, setOpen] = useState(false);
   const showLimit = useShowLimit();
   const pathname = usePathname();
@@ -91,6 +93,10 @@ export function CreateProvider({
         startCode();
         return;
       }
+      if (next === "barcode") {
+        openCodeBuilder({ mode: "barcode" });
+        return;
+      }
       setKind(next);
       setOpen(true);
     },
@@ -105,7 +111,7 @@ export function CreateProvider({
   return (
     <CreateContext.Provider value={start}>
       {children}
-      {/* New dynamic codes open the code builder; pages and forms the gallery. */}
+      {/* New dynamic codes and barcodes open the code builder's host; pages and forms the gallery. */}
       <CodeBuilderHost usage={codes} />
       <NewCodeDialog
         initialType={kind === "form" ? FORM_PAGE_TYPE : null}
