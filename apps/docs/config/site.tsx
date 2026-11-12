@@ -856,6 +856,8 @@ export const siteConfig = {
         { id: 4, label: "Bitly QR", url: "/compare/bitly-qr" },
         { id: 5, label: "Flowcode", url: "/compare/flowcode" },
         { id: 7, label: "QRFY", url: "/compare/qrfy" },
+        { id: 8, label: "Uniqode", url: "/compare/uniqode" },
+        { id: 9, label: "QR-Verse", url: "/compare/qr-verse" },
         { id: 6, key: "allComparisons", url: "/compare" },
       ],
     },
