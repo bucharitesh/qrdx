@@ -93,6 +93,7 @@ export function FormBlock({ id, props, context }: BlockRenderProps<FormProps>) {
             choice: errors("choice"),
             invalid: errors("invalid"),
           },
+          checkAnswer: t("checkAnswer"),
           starsOf: t.raw("starsOf") as string,
           sending: t("sending"),
           answerOne: t("answerOne"),

@@ -148,23 +148,23 @@ export function CodeActionsMenu({
   const toggleFavorite = () =>
     run(() => setQrCodesFavorite({ ids, favorite: !code.isFavorite }), {
       success: code.isFavorite
-        ? "Removed from favorites"
-        : "Added to favorites",
+        ? t("removedFromFavorites")
+        : t("addedToFavorites"),
     });
 
   const duplicate = () =>
     run(() => duplicateQrCode({ id: code.id }), {
-      success: "Copy created",
+      success: t("copyCreated"),
       description: (copy) =>
         code.kind === "page"
-          ? `New short link ${copy.shortLink}. It opens the same landing page.`
-          : `New short link ${copy.shortLink}. Scans start from zero.`,
+          ? t("copyOpensSamePage", { link: copy.shortLink })
+          : t("copyScansFromZero", { link: copy.shortLink }),
     });
 
   const trash = async () => {
     const result = await run(() => trashQrCodes({ ids }), {
       refresh: !afterDelete,
-      success: ({ updated }) => (updated > 0 ? "Moved to trash" : null),
+      success: ({ updated }) => (updated > 0 ? t("movedToTrash") : null),
       description: t("scansShowANoLonger2"),
       undo: () => restoreQrCodes({ ids }),
     });
@@ -177,7 +177,7 @@ export function CodeActionsMenu({
 
   const restore = () =>
     run(() => restoreQrCodes({ ids }), {
-      success: "Code restored",
+      success: t("codeRestored"),
       description: archived ? t("itsBackInArchived") : t("scansRedirectAgain"),
     });
 

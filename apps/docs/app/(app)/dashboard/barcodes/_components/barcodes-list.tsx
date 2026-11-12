@@ -83,9 +83,6 @@ import type { BarcodeStatus } from "@/lib/barcodes/schema";
 import { soundEvent } from "@/lib/sound/emit";
 import type { BarcodeCard, FolderOption } from "../_lib/filters";
 
-const plural = (count: number) =>
-  `${count} ${count === 1 ? "barcode" : "barcodes"}`;
-
 interface ListContextValue {
   selection: ListSelectionApi;
   selectable: ReadonlySet<string>;
@@ -207,8 +204,8 @@ export function BarcodesList({
       ({ updated, skipped }) => {
         clear();
         return skipped > 0
-          ? `Moved ${plural(updated)} to the trash. ${skipped} made by others stayed: only owners and admins can delete them.`
-          : `Moved ${plural(updated)} to the trash`;
+          ? t("movedToTrashSkipped", { count: updated, skipped })
+          : t("movedToTrash", { count: updated });
       },
     );
   const restore = (ids: string[]) =>
@@ -216,7 +213,7 @@ export function BarcodesList({
       () => restoreSavedBarcodes({ ids }),
       ({ updated }) => {
         clear();
-        return `Restored ${plural(updated)}`;
+        return t("restored", { count: updated });
       },
     );
   const move = (ids: string[], folderId: string | null) =>
@@ -226,8 +223,8 @@ export function BarcodesList({
         clear();
         const name = folders.find((row) => row.id === folderId)?.name;
         return name
-          ? `Moved ${plural(updated)} to ${name}`
-          : `Took ${plural(updated)} out of folders`;
+          ? t("movedToFolder", { count: updated, name })
+          : t("tookOutOfFolders", { count: updated });
       },
     );
   const purge = (ids: string[]) =>
@@ -236,7 +233,7 @@ export function BarcodesList({
       ({ updated }) => {
         clear();
         setConfirm(null);
-        return `Deleted ${plural(updated)} for good`;
+        return t("deletedForGood", { count: updated });
       },
     );
   const emptyTrash = () =>
@@ -245,7 +242,7 @@ export function BarcodesList({
       ({ updated }) => {
         clear();
         setConfirm(null);
-        return `Deleted ${plural(updated)} for good`;
+        return t("deletedForGood", { count: updated });
       },
     );
 
@@ -422,7 +419,7 @@ export function BarcodesList({
             <AlertDialogTitle>
               {confirm === "empty"
                 ? t("emptyTheTrash")
-                : t("deleteValueForGood", { value: plural(count) })}
+                : t("deleteValueForGood", { count })}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {t("printedCopiesKeepWorkingBarcodes")}

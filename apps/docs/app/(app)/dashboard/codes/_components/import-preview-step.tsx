@@ -45,7 +45,7 @@ import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { formatPlanList } from "../_lib/code-options";
 import { useKnownCodeOptionPlans } from "./code-options";
-import { Note, plural, Stat, StepLayout } from "./import-shared";
+import { Note, Stat, StepLayout } from "./import-shared";
 
 const STATUS_TEXT: Record<PlannedItem["status"], string> = {
   create: "New code",
@@ -205,8 +205,8 @@ export function PreviewStep({
               {creates === 0
                 ? t("nothingToImport")
                 : limited
-                  ? t("importTheFirstValue", { value: plural(creates, "code") })
-                  : t("importValue", { value: plural(creates, "code") })}
+                  ? t("importTheFirstValue", { count: creates })
+                  : t("importValue", { count: creates })}
             </Button>
           </div>
         </>
