@@ -167,6 +167,16 @@ function entries(): Entry[] {
       changeFrequency: "yearly",
       priority: 0.6,
     },
+    ...localizedEntries("/enterprise", {
+      lastModified: pageDate("/enterprise"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    }),
+    ...localizedEntries("/security", {
+      lastModified: pageDate("/security"),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }),
     ...(isPathAvailable("/affiliates")
       ? [
           {
