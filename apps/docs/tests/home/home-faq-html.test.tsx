@@ -8,13 +8,20 @@ import { renderIntl } from "../support/intl";
 const html = renderIntl(<FAQSection />);
 
 /** Text of `html` with tags dropped and entities decoded. */
-const text = (fragment: string) =>
-  fragment
-    .replace(/<[^>]+>/g, "")
-    .replaceAll("&amp;", "&")
+const text = (fragment: string) => {
+  // Strip until nothing changes, so no tag survives a partial match.
+  let stripped = fragment;
+  for (let previous = ""; stripped !== previous; ) {
+    previous = stripped;
+    stripped = stripped.replace(/<[^>]*>/g, "");
+  }
+  // `&amp;` last, so "&amp;quot;" becomes "&quot;" and not a quote.
+  return stripped
     .replaceAll("&#x27;", "'")
     .replaceAll("&quot;", '"')
+    .replaceAll("&amp;", "&")
     .trim();
+};
 
 const schema = JSON.parse(
   html.match(
