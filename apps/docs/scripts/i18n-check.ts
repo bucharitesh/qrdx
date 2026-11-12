@@ -7,12 +7,24 @@
 // Warnings (listed with --verbose): the same gaps in a locale that isn't
 // reviewed yet, where they show in English and the pages stay noindex.
 //
+// The content catalogs (copy in TypeScript data, lib/i18n/content.ts) get
+// the same treatment: messages/content/<locale>.json against the English
+// in lib/i18n/content-sources.ts, numbers checked, gaps warned about.
+//
 // Fill gaps with `bun run --filter docs i18n:translate --locale <locale>`, or
 // translate by hand and record it with `i18n:translate --record`.
+import "./i18n-env";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
-import { type Catalog, checkLocale, type ReviewFile } from "@/lib/i18n/catalog";
+import {
+  type Catalog,
+  checkContent,
+  checkLocale,
+  type ReviewFile,
+} from "@/lib/i18n/catalog";
 import { TRANSLATED_LOCALES } from "@/lib/i18n/config";
+import type { TranslationMemory } from "@/lib/i18n/content";
+import { contentEnglish } from "@/lib/i18n/content-sources";
 import {
   DOCS_LOCALES,
   englishFile,
@@ -134,6 +146,27 @@ for (const locale of DOCS_LOCALES) {
     report.counts;
   console.log(
     `docs ${locale.padEnd(8)} ${translated} of ${pages} pages translated: ${reviewed} reviewed, ${machine} machine, ${stale} stale, ${missing} in English`,
+  );
+}
+
+// Content: one translation memory per locale, against the sources' English.
+const contentStrings = contentEnglish();
+for (const locale of TRANSLATED_LOCALES) {
+  const file = `content/${locale}.json`;
+  const memory = existsSync(path.join(MESSAGES, file))
+    ? read<TranslationMemory>(file)
+    : {};
+  const report = checkContent({
+    locale,
+    english: contentStrings,
+    memory,
+    state: REVIEW[locale],
+  });
+  errors.push(...report.errors);
+  warnings.push(...report.warnings);
+  const { strings, machine, reviewed, missing, unused } = report.counts;
+  console.log(
+    `${locale.padEnd(8)} content   ${strings} strings: ${reviewed} reviewed, ${machine} machine, ${missing} missing, ${unused} unused`,
   );
 }
 

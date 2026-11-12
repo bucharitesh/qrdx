@@ -1,6 +1,8 @@
+import { useLocale } from "next-intl";
 import type { ReactNode } from "react";
 import { AsciiField, type AsciiVariant, Backdrop } from "@/components/fx";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
+import { localizeHref } from "@/lib/i18n/paths";
 import { breadcrumbSchema, type Crumb, JsonLd } from "./json-ld";
 
 interface ToolHeroProps {
@@ -30,9 +32,16 @@ export function ToolHero({
   focus,
   children,
 }: ToolHeroProps) {
+  // The structured data names this language's URLs; the visible trail
+  // localizes its own links.
+  const locale = useLocale();
+  const trail = crumbs.map((crumb) => ({
+    ...crumb,
+    path: localizeHref(crumb.path, locale),
+  }));
   return (
     <section className="w-full relative">
-      <JsonLd data={breadcrumbSchema(crumbs)} />
+      <JsonLd data={breadcrumbSchema(trail)} />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full [background:radial-gradient(120%_100%_at_50%_0%,transparent_50%,color-mix(in_oklab,var(--foreground)_2.5%,transparent)_100%)] dark:[background:radial-gradient(120%_100%_at_50%_0%,transparent_50%,color-mix(in_oklab,var(--foreground)_6%,transparent)_100%)]"

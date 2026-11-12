@@ -4,6 +4,7 @@ import { Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Copy } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-clipboard";
 
 export function CopyButton({
@@ -16,6 +17,7 @@ export function CopyButton({
   label: string;
   className?: string;
 }) {
+  const t = useTranslations("codeSnippet");
   const { copyToClipboard, hasCopied } = useCopyToClipboard();
 
   return (
@@ -25,14 +27,14 @@ export function CopyButton({
       variant="ghost"
       className={cn("h-7 gap-1.5 px-2.5 text-xs", className)}
       onClick={() => copyToClipboard(text)}
-      aria-label={hasCopied ? "Copied" : `Copy ${label}`}
+      aria-label={hasCopied ? t("copied") : t("copyLabel", { label })}
     >
       {hasCopied ? (
         <Tick className="size-3.5" />
       ) : (
         <Copy aria-hidden className="size-3.5" />
       )}
-      {hasCopied ? "Copied" : "Copy"}
+      {hasCopied ? t("copied") : t("copy")}
     </Button>
   );
 }
@@ -52,6 +54,7 @@ export function CodeSnippet({
   wrap = false,
   className,
 }: CodeSnippetProps) {
+  const t = useTranslations("codeSnippet");
   return (
     <div
       className={cn(
@@ -61,9 +64,9 @@ export function CodeSnippet({
     >
       <div className="flex items-center justify-between gap-2 border-b py-1 pr-1 pl-3.5">
         <span className="truncate font-mono text-xs text-muted-foreground">
-          {label ?? "Code"}
+          {label ?? t("code")}
         </span>
-        <CopyButton text={code} label={label ?? "code"} />
+        <CopyButton text={code} label={label ?? t("codeLower")} />
       </div>
       <pre
         className={cn(

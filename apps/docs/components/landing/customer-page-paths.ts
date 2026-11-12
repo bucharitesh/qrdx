@@ -1,3 +1,5 @@
+import { splitLocale } from "@/lib/i18n/paths";
+
 /**
  * Paths where QRdx's own analytics (PostHog) and support widget (Featurebase)
  * must never load:
@@ -13,14 +15,17 @@
  *   white-label view for its clients.
  */
 const UNTRACKED_PATHS = ["/p", "/q", "/ended", "/scan", "/stats", "/portal"];
+
+// Translated pages (/es/scan) count as their English path (lib/i18n/paths.ts).
 const TEMPLATE_DEMO_PATH = /^\/templates\/[^/]+\/[^/]+\/?$/;
 
 export function isUntrackedPath(pathname: string | null): boolean {
   if (!pathname) return false;
+  const { path } = splitLocale(pathname);
   return (
-    TEMPLATE_DEMO_PATH.test(pathname) ||
+    TEMPLATE_DEMO_PATH.test(path) ||
     UNTRACKED_PATHS.some(
-      (path) => pathname === path || pathname.startsWith(`${path}/`),
+      (untracked) => path === untracked || path.startsWith(`${untracked}/`),
     )
   );
 }

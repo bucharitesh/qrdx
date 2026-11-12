@@ -546,7 +546,10 @@
       "auditLog": "审计日志，支持 CSV 导出",
       "conversions": "转化追踪",
       "webhooks": "Webhook、Zapier 和 Slack",
-      "aiArt": "每月 {count} 张 AI 艺术图片，团队共享额度"
+      "aiArt": "每月 {count} 张 AI 艺术图片，团队共享额度",
+      "clientReports": "客户品牌统计页面",
+      "clientWork": "客户门户和无品牌标识的客户报告",
+      "invoiceBilling": "按年开具发票付款"
     },
     "comparison": {
       "title": "套餐对比",
@@ -560,7 +563,8 @@
         "analytics": "分析和链接控制",
         "brand": "品牌和团队",
         "files": "文件和表单",
-        "automation": "自动化和 API"
+        "automation": "自动化和 API",
+        "agency": "客户项目"
       },
       "rows": {
         "price": "价格",
@@ -593,7 +597,12 @@
         "formResponses": "每月表单回复数",
         "emailAlerts": "邮件摘要和提醒",
         "webhooks": "Webhook、Zapier 和 Slack",
-        "apiRequests": "每日 API 请求数"
+        "apiRequests": "每日 API 请求数",
+        "clientReports": "客户品牌统计页面",
+        "clientReportsHint": "在二维码的共享统计页面上显示客户的名称、标志和颜色",
+        "clientPortal": "客户门户",
+        "clientPortalHint": "以你的品牌为客户提供所共享文件夹的只读访问",
+        "invoiceBilling": "按年开具发票付款"
       },
       "cells": {
         "pricePaid": "{monthly}/月或 {yearly}/年",
@@ -606,7 +615,9 @@
         "aiArtPooled": "{count}，团队内共用",
         "noTeams": "1（无团队）",
         "storage": "{size}（每个文件 {perFile}）",
-        "apiBulk": "{count} + 批量创建"
+        "apiBulk": "{count} + 批量创建",
+        "clientReportsBadge": "页脚带有小字署名",
+        "clientReportsWhiteLabel": "白标"
       }
     },
     "guarantee": {
@@ -679,6 +690,25 @@
           "answer": "付款由 Polar（polar.sh）处理，它是登记商户（merchant of record），负责处理销售税、VAT 和 GST。QRdx 不会接触到您的银行卡信息。"
         }
       }
+    },
+    "invoice": {
+      "open": "改用发票付款",
+      "title": "通过发票支付 {plan}",
+      "description": "结账支持银行卡和电子钱包。如需通过银行转账或发票支付一年的 {plan} 费用，请把账单信息发给我们。发票由我们人工安排，并通过电子邮件回复。",
+      "company": "公司",
+      "billingEmail": "账单邮箱",
+      "country": "国家或地区",
+      "taxId": "税号或 VAT 号（选填）",
+      "address": "账单地址（选填）",
+      "notes": "其他说明（选填）",
+      "notesPlaceholder": "例如采购订单号，或发票的接收人",
+      "submit": "发送申请",
+      "sending": "发送中…",
+      "sentTitle": "申请已发送",
+      "sent": "我们会把发票和付款方式回复到 {email}。目前尚未扣款。",
+      "close": "关闭",
+      "signIn": "登录后申请发票",
+      "signInNote": "发票会开给你账户的工作区，请先登录。"
     }
   },
   "docs": {
@@ -772,6 +802,1174 @@
       "typeTableDefault": "默认值",
       "typeTableParameters": "参数",
       "typeTableReturns": "返回值"
+    }
+  },
+  "common": {
+    "breadcrumb": "面包屑导航",
+    "home": "首页",
+    "pricing": "定价",
+    "tools": "工具",
+    "seeAll": "查看全部",
+    "faq": "常见问题",
+    "designFree": "设计免费二维码",
+    "createDynamic": "创建动态二维码"
+  },
+  "pageCodes": {
+    "sampleNote": "以下为内置主题的示例。每个二维码都可以扫描，但都不指向真实账户。",
+    "startNote": "选择一个，即可在 Playground 中以它为起点开始设计。",
+    "typeDesigns": "{name}二维码设计",
+    "topicSamples": "{noun}二维码示例",
+    "generatorSamples": "各生成器的二维码示例",
+    "industrySamples": "按行业划分的二维码示例",
+    "placementSamples": "按投放位置划分的二维码示例",
+    "sizesTitle": "按投放位置查看尺寸",
+    "sizesDescription": "每份投放位置指南都附有尺寸表，对应人们扫描时的不同距离。",
+    "sizesLabel": "附尺寸表的投放位置指南",
+    "alt": "{type}二维码，{theme}主题",
+    "altFramed": "{type}二维码，{theme}主题，带{frame}边框"
+  },
+  "qrGenerator": {
+    "crumb": "二维码生成器",
+    "hub": {
+      "metaTitle": "二维码类型：{count, number} 种免费生成器（Wi-Fi、vCard、UPI）",
+      "metaDescription": "{count, number} 种二维码类型，每种都有免费生成器：Wi-Fi、vCard、WhatsApp、UPI、电子邮件、社交主页和支付。每个页面都会列出其确切的数据格式。",
+      "title": "适用于各类内容的二维码生成器",
+      "intro1": "二维码的用途不只是打开网站。根据其中的文本内容，手机可以加入 Wi-Fi 网络、保存联系人、发起支付或打开聊天。从下面 {count, number} 种类型中任选一种，即可使用带有对应字段的生成器，并获得实时预览和 PNG、WebP 或 SVG 下载。",
+      "intro2": "默认情况下，这些页面生成的是静态二维码：内容直接编码在图案中，因此可以离线使用、永不过期，也没有扫描次数限制。每个页面还会说明其写入的确切格式，让你清楚扫描器会读取到什么。",
+      "cardTitle": "{name}二维码生成器",
+      "moreTools": "更多工具",
+      "bulkTitle": "需要上百个二维码？使用批量生成器",
+      "bulkDescription": "上传 CSV 文件，即可将所有二维码以 PNG、WebP 或 SVG 格式打包成一个 ZIP 文件下载，全程在浏览器中生成。",
+      "printTitle": "要打印二维码？先确认尺寸",
+      "printDescription": "根据扫描距离和二维码包含的数据量，计算最小打印尺寸。"
+    },
+    "type": {
+      "title": "免费{name}二维码生成器",
+      "generatorLabel": "{name}二维码生成器",
+      "howTo": "如何创建{name}二维码",
+      "format": "{name}二维码格式",
+      "formatLabel": "格式",
+      "exampleLabel": "示例",
+      "faqTitle": "{name}二维码常见问题",
+      "related": "相关二维码生成器",
+      "allTypes": "全部 {count, number} 种类型",
+      "relatedCard": "{name}二维码"
+    }
+  },
+  "typeGenerator": {
+    "invalidLink": "链接无效",
+    "dubLabel": "Dub 短链接 *",
+    "driveLabel": "Google Drive 链接 *",
+    "dubHelp": "粘贴已有的短链接。在完整编辑器中连接 Dub，即可选择或创建链接。",
+    "driveHelp": "粘贴 Drive、Docs、Sheets 或 Slides 链接。在完整编辑器中连接 Google Drive，即可浏览你的文件。",
+    "downloadFailed": "下载失败",
+    "detected": "检测到 {type} 链接。",
+    "about": "关于 {type} 二维码",
+    "back": "返回 {type}",
+    "empty": "填写表单即可查看你的二维码。",
+    "quietZone": "静区（空白边框）",
+    "customize": "在完整编辑器中自定义",
+    "showEncoded": "显示编码内容",
+    "footnote": "在浏览器中生成。样式取自你的编辑器设置。"
+  },
+  "seoTopics": {
+    "related": "相关指南与工具",
+    "faqTitle": "{hub}：常见问题",
+    "industries": {
+      "hubName": "按行业选二维码",
+      "ideasHeading": "{noun}二维码创意",
+      "faqTitle": "{noun}二维码：常见问题",
+      "metaTitle": "按行业选二维码：创意与印刷尺寸",
+      "metaDescription": "涵盖 {count, number} 个行业的二维码创意，从餐厅、零售到医疗和建筑：该用哪种二维码类型、印刷尺寸以及行动号召文案。",
+      "title": "按行业选二维码",
+      "intro1": "餐厅需要能在下午 6 点随时修改的菜单，建筑工地需要把安全文件放在防风雨的标牌后面，博物馆需要提供四种语言的语音导览。合适的二维码取决于具体用途，所以下面每篇指南只讲一个行业：该行业的商家通常链接到什么、适合用哪种 QRdx 二维码类型、印多大，以及在二维码旁边写什么。",
+      "intro2": "生成器中的静态二维码免费，无需账号。动态二维码和托管页面在印刷后仍可修改，并会统计每次扫描，而且在所有套餐下都能持续使用。",
+      "placementsTitle": "按投放位置浏览",
+      "placementsDescription": "名片、包装、广告牌、小票，以及另外 {count, number} 种载体，每种都附有尺寸建议。",
+      "generatorsTitle": "按类型选择免费生成器",
+      "generatorsDescription": "Wi-Fi、vCard、UPI、WhatsApp、Google 评价等，每种都说明其编码的具体格式。",
+      "dynamicTitle": "动态二维码的工作原理",
+      "dynamicDescription": "印刷后仍可重新指向的短链接，附带扫描分析，且不限扫描次数。",
+      "faq": {
+        "benefitQuestion": "哪些行业最适合使用二维码？",
+        "benefitAnswer": "凡是印制了顾客会拿在手里或从旁经过的物品的企业都适合：菜单、包装、标牌、票券、标签和直邮。信息在印刷后会变化的场景（菜单、价格、时间表、文件）回报最高，因为动态二维码无需重新印刷就能更新。",
+        "staticQuestion": "企业应该用静态二维码还是动态二维码？",
+        "staticAnswer": "内容永远不变的场景用静态二维码，例如 Wi-Fi 登录信息、收款账号或联系人名片，因为它们免费，而且无需任何中间服务就能使用。批量印刷或要使用数月的内容则用动态二维码，这样可以修正错误链接、更改目标地址并统计扫描次数。",
+        "cancelQuestion": "取消订阅后，QRdx 二维码会失效吗？",
+        "cancelAnswer": "不会。静态二维码永不过期。动态二维码在所有套餐下都会持续跳转，包括降级、付款失败或取消订阅之后，也不会出现广告或中间页面。套餐限额只会限制你创建新的二维码。"
+      }
+    },
+    "placements": {
+      "hubName": "按投放位置选二维码",
+      "ideasHeading": "{noun}上的二维码可以链接到什么",
+      "faqTitle": "{noun}上的二维码：常见问题",
+      "metaTitle": "二维码放哪里：各种位置的尺寸建议",
+      "metaDescription": "名片、包装、菜单、广告牌、小票以及另外 {count, number} 种位置上的二维码：链接什么内容、印多大、放在哪里。",
+      "title": "按投放位置选二维码",
+      "intro1": "二维码放在哪里，几乎决定了它的一切：必须多大、需要什么材质、要持续使用多久。小票上的二维码在 30 厘米的距离扫描，当天就被丢弃；建筑物上的标牌则要在几米之外被人阅读，并持续数年。下面每篇指南只讲一种载体，并附有按人们实际扫描距离列出的尺寸表。",
+      "intro2": "尺寸采用与 QRdx 印刷尺寸计算器相同的公式计算，针对纠错等级为 Q 的动态短链接。内含更多数据的静态二维码需要更大的尺寸。",
+      "industriesTitle": "按行业浏览",
+      "industriesDescription": "餐厅、零售、房地产、医疗，以及另外 {count, number} 个行业，并列出各行业常用的二维码类型。",
+      "printTitle": "打印尺寸计算器",
+      "printDescription": "根据您的具体内容、扫描距离和纠错等级，计算所需的最小尺寸。",
+      "checkerTitle": "扫描检测器",
+      "checkerDescription": "上传您的设计进行解码，并在打印前检查对比度、静区和模块大小。",
+      "faq": {
+        "sizeQuestion": "二维码应该多大？",
+        "sizeAnswer": "大约是扫描距离的十分之一，码越密集则要稍大一些：手持卡片约 2.5 到 3 厘米，2 米外的海报为 23 厘米，6 米外的标牌约 70 厘米。每个模块至少 0.4 毫米，并在二维码四周留出相当于四个模块宽度的空白边距。",
+        "failQuestion": "印刷出来的二维码为什么会扫描失败？",
+        "failAnswer": "常见原因包括：对比度过低（颜色浅淡或反色）、缺少静区、相对于扫描距离印得太小、亮面材质反光，以及放在曲面、折痕或接缝处。请测试印刷出来的样张，而不仅仅是电子文件。",
+        "formatQuestion": "应该把哪种文件格式发给印刷厂？",
+        "formatAnswer": "矢量格式：SVG 或可直接印刷的 CMYK PDF，QRdx 均可免费导出。矢量图在任何尺寸下都保持清晰，无论是 2 厘米的标签还是 2 米的横幅。"
+      }
+    },
+    "topic": {
+      "badgeStatic": "静态 · 免费，无需账号",
+      "staticTitle": "{name}二维码",
+      "staticLink": "打开{name}生成器",
+      "badgeDynamic": "动态 · 可编辑，可追踪",
+      "dynamicLink": "创建动态二维码",
+      "badgePage": "托管页面 · 可编辑，可追踪",
+      "pageLink": "查看在线模板",
+      "typesTitle": "该用哪种二维码",
+      "typesDescription": "静态二维码免费且无需账号，但印刷后无法更改。动态二维码和托管页面可随时编辑，统计每一次扫描，并且在所有套餐中都能持续使用，即使您取消订阅也一样。",
+      "sizingTitle": "打印多大合适",
+      "sizingCaption": "按扫描距离划分的二维码最小打印尺寸",
+      "colWhere": "扫描场景",
+      "colDistance": "距离",
+      "colMinimum": "二维码最小宽度",
+      "sizingNote": "以纠错等级 Q 的动态短链接（如 <code>{link}</code>）为例，不含空白边距。静态 Wi-Fi、vCard 或长 URL 二维码承载的数据更多，需要更大的尺寸。请使用<size>打印尺寸计算器</size>和<checker>扫描检测器</checker>检查您的二维码。",
+      "tipsTitle": "摆放建议",
+      "ctaTitle": "行动号召文案",
+      "ctaDescription": "旁边配上扫描理由的二维码，比单独一个二维码获得更多扫描。可以印在二维码旁边的文案：",
+      "moreIn": "更多{group}内容"
+    }
+  },
+  "tools": {
+    "hub": {
+      "metaTitle": "免费二维码工具",
+      "metaDescription": "免费的二维码和条形码工具:CSV 批量生成器、扫描检测器、打印尺寸计算器、条形码生成器、Wi-Fi 和 vCard 生成器,以及二维码图片 API。",
+      "title": "免费二维码工具",
+      "intro": "围绕二维码的各种小而专注的工具:一次生成多个二维码、按打印需求确定尺寸、检查能否扫描,还有适用于商品和标签的条形码生成器。这些工具免费使用,无需账号,直接在浏览器中运行。",
+      "listLabel": "工具",
+      "items": {
+        "scanner": {
+          "title": "二维码扫描器",
+          "description": "用摄像头或图片扫描二维码和条形码,打开任何内容之前先预览链接是否安全。"
+        },
+        "bulk": {
+          "title": "二维码批量生成器",
+          "description": "上传 CSV 文件,即可在浏览器中生成最多 {rows, number} 个带样式的二维码,并以 PNG 或 SVG 格式打包下载。"
+        },
+        "scanChecker": {
+          "title": "二维码扫描检测器",
+          "description": "上传二维码图片进行解码,并检查它的扫描可靠性。"
+        },
+        "printSize": {
+          "title": "打印尺寸计算器",
+          "description": "根据扫描距离、数据长度和纠错级别,计算最小打印尺寸。"
+        },
+        "barcode": {
+          "title": "条形码生成器",
+          "description": "EAN-13、UPC、Code 128、GS1-128、ITF-14、Data Matrix 等 {count, number} 种格式,可导出为 PNG、SVG 或 EPS,并自动计算校验位。"
+        },
+        "wifi": {
+          "title": "Wi-Fi 二维码生成器",
+          "description": "访客扫描一次即可加入网络,无需再输入密码。"
+        },
+        "vcard": {
+          "title": "vCard 二维码生成器",
+          "description": "把联系方式放到名片上,扫描后可直接保存到手机。"
+        },
+        "types": {
+          "title": "全部 {count, number} 种二维码类型",
+          "description": "支持 WhatsApp、UPI、电子邮件、短信、社交主页、支付等多种生成器。"
+        },
+        "imageApi": {
+          "title": "二维码图片 API",
+          "description": "通过 URL 获取二维码图片,可用于 README、邮件和 HTML,无需 API 密钥。"
+        }
+      }
+    },
+    "bulk": {
+      "metaTitle": "免费 CSV 二维码批量生成器",
+      "metaDescription": "通过 CSV 文件最多生成 {rows, number} 个二维码,并以 PNG 或 SVG 格式打包下载。支持自定义样式和文件名,全程在浏览器中运行。",
+      "crumb": "批量生成器",
+      "title": "二维码批量生成器",
+      "intro1": "一次把电子表格变成成百上千个二维码:商品标签、活动门票、资产标签、桌号或个性化邮寄资料都适用。上传 CSV 文件,匹配列,选择样式,即可将所有二维码以 PNG、WebP 或 SVG 格式打包下载。",
+      "intro2": "所有操作都在浏览器中完成。CSV 文件不会被上传,无需注册,没有水印,也不按二维码数量收费。",
+      "toolLabel": "二维码批量生成器",
+      "howTitle": "使用方法",
+      "steps": {
+        "prepare": {
+          "title": "准备 CSV 文件",
+          "body": "每行对应一个二维码。将内容（链接、Wi-Fi 字符串、电话号码或任意文本）放在一列，也可以选择把想要的文件名放在另一列。下载示例 CSV 可查看格式。"
+        },
+        "map": {
+          "title": "映射列",
+          "body": "选择哪一列是二维码内容，哪一列用于命名文件。如果没有文件名列，二维码将按行顺序编号为 qr-0001、qr-0002，依此类推。"
+        },
+        "style": {
+          "title": "选择样式和格式",
+          "body": "可选择内置预设、你上次在编辑器中使用的样式，登录后也可选择已保存的主题。SVG 最适合印刷；PNG 适合屏幕和文档；WebP 适合网站。"
+        },
+        "download": {
+          "title": "生成并下载",
+          "body": "二维码会分批逐步渲染并显示进度条，生成后随即放入 ZIP。超大批量会保存为多个约 500 MB 的 ZIP 文件。无法编码的行会被跳过，并列在 errors.csv 中。"
+        }
+      },
+      "faqTitle": "批量二维码常见问题",
+      "faq": {
+        "uploadQuestion": "我的 CSV 会被上传到别处吗？",
+        "uploadAnswer": "不会。读取文件、绘制二维码和打包 ZIP 都在你的浏览器中完成。不会向 QRdx 的服务器发送任何内容，因此用于内部链接、Wi-Fi 密码或客户数据也很安全。",
+        "howManyQuestion": "一次最多可以生成多少个二维码？",
+        "howManyAnswer": "每个文件最多 {rows, number} 行；如需更多，可拆分 CSV，或使用 CLI 的 qrdx batch 命令，该命令没有数量限制。在笔记本电脑上，一个 512 px 的 PNG 大约需要 20 毫秒，因此完整的 {rows, number} 行需要几分钟。更大的 PNG 耗时更长，文件也更大，所以除非有需要，请选择 512 px。",
+        "rowQuestion": "每行可以包含什么内容？",
+        "rowAnswer": "只要不超过二维码的容量上限，任何文本都可以：链接、纯文本，或 WIFI:...、mailto:...、tel:...、BEGIN:VCARD 等格式的内容。内容会与单元格中的文字完全一致地进行编码。",
+        "staticQuestion": "生成的二维码是静态的还是动态的？",
+        "staticAnswer": "静态。每个二维码直接包含对应行的内容，可离线使用，永不过期，但印刷后无法修改。如需可编辑且带扫描统计的二维码，请在 QRdx 控制台中创建动态二维码。",
+        "namesQuestion": "文件名重复或无效时会怎样？",
+        "namesAnswer": "文件名中不允许的字符会替换为连字符，重复的名称会加上数字后缀（menu.png、menu-2.png），因此不会覆盖任何文件。"
+      },
+      "generator": {
+        "errorTooMuch": "数据量过大，一个二维码放不下",
+        "errorFailed": "无法生成",
+        "errorEmpty": "文件为空。",
+        "errorTooLarge": "文件超过 10 MB。",
+        "errorEmptyValue": "值为空",
+        "errorNone": "无法从此文件生成任何二维码。",
+        "logoFailed": "无法加载徽标，因此生成的二维码不含徽标。",
+        "editorStyle": "我的编辑器样式",
+        "stepUpload": "1. 上传 CSV",
+        "sampleCsv": "示例 CSV",
+        "fileRows": "{file} · {count, plural, one {# 行} other {# 行}}",
+        "removeFile": "移除文件",
+        "drop": "将 CSV 文件拖放到此处，或点击选择文件",
+        "dropHelp": "最多 {rows, number} 行，文件大小不超过 10 MB。文件仅保留在你的设备上。",
+        "truncated": "此文件超过 {rows, number} 行，仅会使用前 {rows, number} 行。",
+        "header": "第一行为列名",
+        "stepMap": "2. 映射列",
+        "valueColumn": "二维码内容",
+        "filenameColumn": "文件名（可选）",
+        "numbered": "按序号（qr-0001）",
+        "stepStyle": "{step, number}. 选择样式",
+        "style": "样式",
+        "yours": "我的",
+        "presets": "预设",
+        "savedMissing": "在你的账户中未找到该已保存主题。",
+        "savedSignIn": "登录后即可使用你保存的主题。",
+        "editStyle": "在 Playground 中编辑此样式",
+        "ecc": "纠错级别",
+        "eccFromStyle": "沿用样式",
+        "format": "格式",
+        "formatPng": "PNG（图片）",
+        "formatWebp": "WebP（图片，体积更小）",
+        "formatSvg": "SVG（矢量，适合印刷）",
+        "size": "{format} 尺寸",
+        "quietZone": "添加 {modules, number} 个模块宽度的静区（印刷时推荐）",
+        "empty": "上传 CSV 文件即可预览第一个二维码。",
+        "cancel": "取消",
+        "generate": "生成二维码",
+        "generateCount": "生成 {count, plural, one {# 个二维码} other {# 个二维码}}",
+        "preparing": "正在准备…",
+        "doneParts": "完成：{count, plural, one {# 个二维码} other {# 个二维码}}，共 {parts, number} 个 ZIP 文件（大批量任务会在生成过程中分段保存）。",
+        "done": "完成：{count, plural, one {# 个二维码} other {# 个二维码}}，保存在 {file} 中。",
+        "downloadPartAgain": "再次下载第 {part, number} 部分",
+        "downloadAgain": "再次下载",
+        "skipped": "{count, plural, one {已跳过 # 行} other {已跳过 # 行}}：",
+        "skippedListed": "{count, plural, one {已跳过 # 行} other {已跳过 # 行}}（已列在 errors.csv 中）：",
+        "line": "第 {row, number} 行：{error}",
+        "private": "所有处理都在你的浏览器中完成。你的 CSV 和生成的二维码绝不会被上传。"
+      }
+    },
+    "printSize": {
+      "metaTitle": "二维码打印尺寸计算器",
+      "metaDescription": "根据扫描距离、二维码所含数据及纠错级别，计算二维码的最小打印尺寸。结果以毫米和英寸显示。",
+      "crumb": "打印尺寸计算器",
+      "title": "二维码打印尺寸计算器",
+      "intro1": "二维码印得太小，往往会在最关键的地方失效：房间另一头的海报、路边的标牌，或是拥挤货架上的标签。输入扫描者所在的距离和二维码的内容，计算器就会算出仍能可靠扫描的最小尺寸。",
+      "intro2": "它不止于简单的“距离 ÷ 10”规则，还会考虑二维码的密度：长链接或 vCard 比短网址需要更多模块，因此每个模块乃至整个二维码都要印得更大。",
+      "toolLabel": "打印尺寸计算器",
+      "howTitle": "尺寸是如何计算的",
+      "how1": "内容决定二维码的版本。计算器会使用与 QRdx 编码器相同的容量表，在所选纠错级别下选出能容纳你的文本的最小版本（1 到 40）。版本 n 的宽度为 17 + 4n 个模块。",
+      "how2": "距离决定模块大小。经验法则 {ratio, number}:1 被视为针对简单的 {reference, number} × {reference, number} 二维码，因此每个模块至少为距离 ÷ ({divisor, number})，且不小于 {minimum, number} 毫米。",
+      "how3": "模块大小 × 每边模块数即为二维码尺寸。在每一边加上 {quiet, number} 个空白模块，就是二维码在页面上所需的空间。",
+      "tipsTitle": "让二维码顺利扫描的小贴士",
+      "tip1": "内容尽量简短。链接越短，版本越低，相同的打印尺寸下模块就越大。",
+      "tip2": "使用浅色背景上的深色模块，并保持强对比；反色或粉彩色的二维码在某些扫描器上会失效。",
+      "tip3": "大批量印刷之前，请用多部手机在实际距离和光线下测试打印出的二维码。",
+      "tip4": "还没有二维码？请使用<generators>二维码生成器</generators>或<editor>完整编辑器</editor>，然后导出为 SVG 用于打印。",
+      "faqTitle": "二维码尺寸常见问题",
+      "faq": {
+        "minimumQuestion": "二维码的最小尺寸是多少？",
+        "minimumAnswer": "这取决于扫描距离和二维码的密度。对于从约 25 厘米处扫描的短链接，约 2.5 厘米（1 英寸）就足够了。无论距离多远，每个模块的宽度都应至少为 {minimum, number} 毫米，以便打印机和摄像头能够分辨。",
+        "ruleQuestion": "二维码的 10:1 规则是什么？",
+        "ruleAnswer": "一条常见的经验法则是：二维码可以在其宽度约十倍的距离外被扫描，因此 10 厘米宽的二维码可在约 1 米处使用。这条规则假定二维码相对简单；数据更多的二维码需要印得更大，本计算器正是据此进行调整的。",
+        "logoQuestion": "Logo 或更高的纠错级别会改变尺寸吗？",
+        "logoAnswer": "更高的纠错级别会增加冗余，因此相同内容需要更高的版本、更多的模块，打印尺寸也就更大。logo 不会改变模块数量，但会遮住部分模块，所以添加 logo 时请使用 Q 或 H 级。",
+        "quietQuestion": "静区算在尺寸内吗？",
+        "quietAnswer": "显示的二维码尺寸是边到边的尺寸。扫描器还需要在每一侧留出 {quiet, number} 个模块宽度的空白边距，第二个数值已包含这部分。除非开启静区，否则 QRdx 下载的二维码不带边距，请在排版时在二维码四周留出这部分空间。",
+        "resolutionQuestion": "打印时应导出多高的分辨率？",
+        "resolutionAnswer": "尽量使用 SVG：它是矢量格式，任何尺寸下都保持清晰。如果使用 PNG，请至少按所示的像素宽度导出，对应 300 DPI，这是打印通常的最低要求。"
+      },
+      "calculator": {
+        "units": {
+          "cm": "厘米",
+          "m": "米",
+          "in": "英寸",
+          "ft": "英尺"
+        },
+        "eccLevels": {
+          "L": "L，可恢复约 7%",
+          "M": "M，可恢复约 15%",
+          "Q": "Q，可恢复约 25%（QRdx 默认）",
+          "H": "H，可恢复约 30%"
+        },
+        "modes": {
+          "numeric": "数字",
+          "alphanumeric": "字母数字",
+          "byte": "字节"
+        },
+        "errorNoContent": "请输入二维码要包含的内容。",
+        "errorTooMuch": "在 {ecc} 级下，数据量超出单个二维码的容量：上限为 {limit, number} {bytes, select, yes {字节} other {个字符}}。",
+        "errorVersion": "请输入 1 到 40 之间的版本。",
+        "distance": "扫描距离",
+        "unit": "距离单位",
+        "distanceHelp": "扫描者所在的最远距离：桌卡约 20–30 厘米，海报 1–2 米，标牌则更远。",
+        "ecc": "纠错级别",
+        "fromContent": "按内容",
+        "fromVersion": "按二维码版本",
+        "content": "二维码内容",
+        "contentLength": "{mode}模式下共 {count, number} {bytes, select, yes {字节} other {个字符}}。",
+        "contentHelp": "粘贴二维码将包含的确切文本、链接或数据。",
+        "version": "二维码版本（1–40）",
+        "versionHelp": "版本 n 每边有 17 + 4n 个模块：版本 1 为 21 × 21，版本 40 为 177 × 177。",
+        "resultTitle": "最小打印尺寸",
+        "errorDistance": "请输入大于零的扫描距离。",
+        "codeSize": "二维码尺寸（边到边）",
+        "codeSizeHint": "版本 {version, number}，{modules, number} × {modules, number} 个模块",
+        "withQuietZone": "含 {modules, number} 个模块宽的静区",
+        "withQuietZoneHint": "扫描器需要在二维码四周留出的空白边距",
+        "moduleSize": "模块（单个方块）尺寸",
+        "moduleRaised": "已提高到 {mm, number} mm 的最小值，以保证打印可靠",
+        "moduleByDistance": "由扫描距离决定",
+        "export": "以 300 DPI 导出",
+        "exportHint": "含静区的最小图片宽度",
+        "capacity": "在 {ecc} 级别下，版本 {version, number} 在{mode}模式中最多可容纳 {count, number} 个{bytes, select, yes {字节} other {字符}}。",
+        "ruleOfThumb": "作为对比，按简单的“距离 ÷ 10”经验法则，尺寸为 {size}。若打印在曲面上，或对比度低、材质反光、光线不佳，请打印得比最小尺寸更大。",
+        "makeCode": "生成此尺寸的二维码",
+        "makeCodeHint": "打开编辑器的可直接印刷下载，尺寸适配 {distance} 的扫描距离。"
+      }
+    },
+    "scanChecker": {
+      "metaTitle": "二维码扫描检测工具",
+      "metaDescription": "添加二维码图片即可读取内容，并测试它在小尺寸、模糊和低对比度下的扫描可靠性。在浏览器中运行，不会上传任何内容。",
+      "crumb": "扫描检测",
+      "title": "二维码扫描检测工具",
+      "intro1": "能扫出来吗？上传、拖入或粘贴任意二维码的截图或照片，在它印到菜单、海报或包装上之前，看看里面是什么内容、读取是否可靠。",
+      "intro2": "检测工具会先解码，再像手机摄像头那样将二维码缩小并模糊，在多种尺寸下再次测试，同时检查对比度、留白和分辨率。所有处理都在浏览器中完成。",
+      "toolLabel": "二维码扫描检测工具",
+      "testsTitle": "检测内容",
+      "test1": "在 96、160 和 320 像素宽度下，加入模拟的摄像头模糊进行解码，大致对应较小或较远的印刷品、常规手机距离和近距离拍摄。",
+      "test2": "深色与浅色模块之间的对比度，根据图片像素测得。",
+      "test3": "极性：并非所有扫描应用都能读取深色背景上的浅色二维码。",
+      "test4": "二维码周围的留白（静区），前提是图片中包含这部分。",
+      "test5": "图片分辨率：每个模块占多少像素。",
+      "designTitle": "正在设计新的二维码？",
+      "design": "<editor>QRdx 编辑器</editor>会在你设计时显示实时扫描评分，提示有风险的码眼样式和过大的 Logo，并可导出可直接印刷的矢量 PDF。使用<size>打印尺寸计算器</size>来确定要打印多大。",
+      "restyle": "在 Playground 中重新设计此链接的样式",
+      "faqTitle": "扫描检测器常见问题",
+      "faq": {
+        "uploadQuestion": "我的图片会被上传到别处吗？",
+        "uploadAnswer": "不会。检测器完全通过 JavaScript 在你的浏览器中运行。图片只在你的设备上读取，不会发送到服务器。",
+        "scoreQuestion": "扫描评分是如何计算的？",
+        "scoreAnswer": "检测器使用开源的 jsQR 解码器找到二维码，将其缩小到 96、160 和 320 像素宽，加入类似相机拍摄的模糊和对比度损失，并在每种尺寸下尝试解码几次。随后，它会测量深色与浅色模块之间的对比度、二维码是否为浅底深码、周围的留白以及图片分辨率。每出现一个问题，分数就会从 100 分中扣减。",
+        "lowQuestion": "我的二维码评分很低，但用手机可以扫描，这是为什么？",
+        "lowAnswer": "手机相机应用通常比 jsQR 更宽容，而且照片可能会损失印刷后的二维码本身不会损失的对比度或清晰度。请把低分当作一个警示：性能较弱的扫描器、较小的印刷尺寸或光线不佳时，可能无法扫描。大批量印刷之前，请用几部手机试扫。",
+        "sizeQuestion": "印刷的二维码应该多大？",
+        "sizeAnswer": "常用的经验法则是：宽度 ≈ 扫描距离 ÷ 10，因此从 20 厘米处扫描的二维码，宽度应约为 2 厘米。承载数据越多的二维码需要越大；打印尺寸计算器可以帮你算出来。",
+        "fixQuestion": "如何提高较低的评分？",
+        "fixAnswer": "请使用浅色背景上的深色二维码，并保证强烈的对比度；在二维码周围保留留白；选择简单的方形或圆角定位点；如果带有 Logo，请选择更高的纠错级别；缩短内容，或者印得更大一些。"
+      }
+    }
+  },
+  "scanChecker": {
+    "errors": {
+      "notImage": "这不是图片。请使用 PNG、JPG、WebP 或 GIF 格式。",
+      "tooBig": "这张图片超过 20 MB。请换一张更小的。",
+      "unreadable": "无法读取这张图片。请尝试 PNG 或 JPG 格式。"
+    },
+    "noClipboardImage": "剪贴板中没有图片",
+    "clipboardBlocked": "剪贴板访问被阻止。请改按 Ctrl+V 或 ⌘V。",
+    "copied": "已复制",
+    "copyFailed": "复制失败",
+    "copy": "复制",
+    "openLink": "打开链接",
+    "checkAddress": "打开前请先核对地址：二维码可以指向任何地方。",
+    "checking": "正在解码并测试…",
+    "imageLabel": "二维码图片",
+    "dropCompact": "将二维码照片拖放到此处、粘贴或选择文件",
+    "drop": "将二维码图片拖放到此处、选择文件或粘贴",
+    "dropHelp": "截图和照片都可以。按 Ctrl+V 或 ⌘V 粘贴。",
+    "choose": "选择图片",
+    "paste": "粘贴图片",
+    "private": "在浏览器中检测，图片不会被上传。",
+    "previewAltCompact": "你添加的二维码",
+    "previewAlt": "已上传的二维码",
+    "decoded": "解码内容",
+    "decodedVersion": "解码内容 · 版本 {version, number}",
+    "footnote": "使用开源的 jsQR 解码器测试。手机相机应用的容错能力通常更强，因此分数偏低时请视为警告，并在打印前实际测试扫描。",
+    "opens": "<muted>打开</muted> <strong>{link}</strong>",
+    "matches": "与此设计一致",
+    "differentLink": "这张照片打开的是另一个链接",
+    "differentContent": "这张照片包含的内容不同",
+    "designOpens": "此设计打开 {link}"
+  },
+  "scan": {
+    "metaTitle": "在线二维码扫描器",
+    "metaDescription": "免费在线二维码和条形码扫描器。可用摄像头或图片扫描，并在链接打开之前查看它真正的去向。无需安装应用，无需注册。",
+    "crumb": "二维码扫描器",
+    "title": "在线二维码扫描器",
+    "intro1": "用手机或笔记本电脑的摄像头，或者通过截图和照片，扫描二维码和条形码。免费，无需安装应用，无需注册。",
+    "intro2": "链接在打开之前会先显示安全预览：扫描器会显示链接最终指向的位置{webRisk, select, yes {，通过 Google Web Risk 进行检查} other {}}，并标出常见的钓鱼手法。二维码在你的设备上解码，历史记录只保存在当前浏览器中。",
+    "toolLabel": "二维码扫描器",
+    "formatsEyebrow": "支持格式",
+    "readsTitle": "可识别的内容",
+    "readsDescription": "{formats}。同一画面或图片中的多个码会一起读取，每种内容都有对应的操作。",
+    "formatQr": "二维码",
+    "formatEan": "EAN-13 和 EAN-8",
+    "formatUpc": "UPC-A 和 UPC-E",
+    "types": {
+      "links": {
+        "name": "链接",
+        "detail": "先显示安全预览，只有点击“打开”后才会打开。"
+      },
+      "wifi": {
+        "name": "Wi-Fi",
+        "detail": "显示网络名称、加密方式，并可复制密码。"
+      },
+      "contacts": {
+        "name": "联系人（vCard、MeCard）",
+        "detail": "直接保存为 .vcf 文件。"
+      },
+      "events": {
+        "name": "日历事件",
+        "detail": "以 .ics 文件添加到你的日历。"
+      },
+      "locations": {
+        "name": "位置",
+        "detail": "在 Google Maps 或 OpenStreetMap 中打开。"
+      },
+      "phone": {
+        "name": "电话、短信和邮件",
+        "detail": "发起通话、短信或邮件。"
+      },
+      "payments": {
+        "name": "支付",
+        "detail": "支持 UPI、Pix、PayNow、PromptPay、VietQR 和 SEPA (EPC) 二维码，以及 PayPal、Venmo 和加密货币钱包，并且始终会有确认步骤。"
+      },
+      "products": {
+        "name": "商品码",
+        "detail": "EAN/UPC 号码和 GS1 数据（GTIN、批号、有效期），包括 GS1 Digital Link。"
+      },
+      "text": {
+        "name": "纯文本",
+        "detail": "读取并复制。"
+      }
+    },
+    "safetyEyebrow": "安全",
+    "safetyTitle": "每个链接都有安全预览",
+    "safetyDescription": "想制作二维码？请使用<generators>二维码生成器</generators>或<editor>编辑器</editor>，并在打印前用<checker>扫描检测工具</checker>测试设计。",
+    "safety1": "先显示链接，并突出显示其域名。不会自动打开任何内容。",
+    "safety2": "QRdx 会从服务器跟踪重定向（最多五次，不下载页面内容），并显示链接最终指向的位置。",
+    "safety3": "{webRisk, select, yes {每个地址都会通过 Google Web Risk 检查是否涉及网络钓鱼和恶意软件，并检查常见的欺骗手法} other {每个地址都会检查常见的欺骗手法}}：形近字符、IP 地址、短链接、隐藏的用户名、出现在无关域名上的品牌名称、未加密页面和应用下载。",
+    "safety4": "真实且有效的 QRdx 二维码会显示“已验证 QRdx 二维码”徽章。受密码保护的二维码会隐藏其目标地址。",
+    "safety5": "发现诈骗？请在结果页点击<report>举报此二维码</report>。",
+    "faqTitle": "二维码扫描器常见问题",
+    "faq": {
+      "howQuestion": "如何在线扫描二维码？",
+      "howAnswer": "打开本页面，点击“启动相机”并允许访问相机，然后将相机对准二维码。在笔记本电脑上，或二维码已在屏幕上时，请切换到“图片”，上传、拖入或粘贴截图。结果会显示在扫描器下方。只有在你点击“打开”后，链接才会打开。",
+      "safeQuestion": "打开二维码中的链接安全吗？",
+      "safeAnswer": "通常是安全的，但将假二维码贴在真二维码上（“二维码钓鱼”，即 quishing）是一种常见骗局。在你打开链接之前，扫描器会跟踪其重定向（最多五次），显示它最终指向的位置{webRisk, select, yes {，通过 Google Web Risk 检查每个地址} other {}}，并查找常见的欺骗手法：来自其他字母表的形近字符、纯 IP 地址、短链接、隐藏在 @ 前的假网站名称、出现在无关域名上的品牌名称、未加密页面和应用下载。没有任何检查能发现所有问题，因此在登录和支付页面上仍请保持谨慎。",
+      "verifiedQuestion": "“已验证 QRdx 二维码”是什么意思？",
+      "verifiedAnswer": "该链接是使用 QRdx 创建的真实有效的动态二维码（qrdx.dev/q/ 链接{domains, select, yes {或已验证的自定义域名} other {}}），且没有未处理的滥用举报。这说明该二维码是真实的，且未被停用；但二维码的所有者仍可决定它指向哪里，因此其他安全检查依然适用。",
+      "privateQuestion": "我扫描的内容会被上传或保存吗？",
+      "privateAnswer": "不会。相机画面和图片都在你的浏览器中解码，不会离开你的设备。你的扫描历史仅保存在此浏览器中（IndexedDB）；你可以关闭它、删除单条扫描记录或全部清除。预览链接时，只有该地址会发送给 QRdx{webRisk, select, yes {和 Google Web Risk} other {}}，QRdx 不会保留它。你扫描的内容不会计入网站分析。",
+      "wifiQuestion": "为什么扫描器不能替我加入 Wi-Fi 网络？",
+      "wifiAnswer": "网页浏览器无权更改你设备的 Wi-Fi 设置。扫描器会显示网络名称，并让你复制密码，这样你就可以把它粘贴到 Wi-Fi 设置中。手机自带的相机应用通常可以直接加入 Wi-Fi 二维码。",
+      "batchQuestion": "可以连续扫描多个二维码吗？",
+      "batchAnswer": "可以。开启“批量模式”，持续将相机对准二维码，或一次添加多张图片。每个新二维码只会加入列表一次，你可以将这一批或全部历史记录导出为 CSV 文件。",
+      "offlineQuestion": "可以离线使用吗？",
+      "offlineAnswer": "使用过一次后，浏览器会保留扫描器页面及其解码器，因此无需联网即可打开并读取二维码。链接安全检查需要联网，离线发现的链接可以稍后在历史记录中检查。",
+      "browsersQuestion": "支持哪些浏览器？",
+      "browsersAnswer": "任何支持访问相机的现代浏览器：手机和电脑上的 Chrome、Edge、Safari 和 Firefox。内置条码读取器的浏览器（Android 和 macOS 上的 Chrome）会直接使用它；其他浏览器会在你首次扫描时下载开源解码器（ZXing，编译为 WebAssembly，来自 jsDelivr CDN，约 1 MB）。相机需要 https 页面和你的授权。",
+      "installQuestion": "可以把扫描器安装为应用吗？",
+      "installAnswer": "可以。在此页面使用浏览器的“安装”或“添加到主屏幕”选项，即可获得一个直接打开相机的扫描器图标。"
+    }
+  },
+  "scanner": {
+    "kinds": {
+      "url": "链接",
+      "wifi": "Wi-Fi 网络",
+      "contact": "联系人",
+      "event": "日历事件",
+      "geo": "位置",
+      "phone": "电话号码",
+      "sms": "短信",
+      "email": "电子邮件",
+      "payment": "付款",
+      "gs1": "GS1 商品数据",
+      "product": "商品条形码",
+      "text": "文本"
+    },
+    "main": {
+      "camera": "相机",
+      "image": "图片",
+      "batch": "批量模式",
+      "batchHint": "持续扫描，导出 CSV",
+      "thisBatch": "本批次",
+      "exportCsv": "导出 CSV",
+      "clear": "清除",
+      "batchEmpty": "请持续将相机对准二维码或条形码，或添加图片。每个新码只会添加一次，点按其中一个即可查看它的作用。",
+      "result": "扫描结果",
+      "found": "找到 {count, plural, other {# 个码}}",
+      "scanAnother": "继续扫描",
+      "history": "历史记录",
+      "saveHistory": "在此设备上保存扫描记录",
+      "clearAll": "全部清除",
+      "clearTitle": "清除扫描历史记录？",
+      "clearDescription": "这将删除此设备上保存的全部 {count, plural, other {# 条扫描记录}}，且无法撤销。",
+      "cancel": "取消",
+      "clearHistory": "清除历史记录",
+      "showMore": "显示更多",
+      "historyLoading": "正在加载历史记录…",
+      "historyEmpty": "您扫描过的码会显示在这里。历史记录仅保存在此设备的当前浏览器中。",
+      "historyOff": "历史记录已关闭。扫描内容不会保存在任何地方。",
+      "privacy": "摄像头画面和图片均在您的设备上解码，绝不会上传。检查链接时，只会将链接地址发送给 QRdx（以及 Google Web Risk），且不会被存储。您扫描的内容不会计入网站分析。",
+      "detailsTitle": "扫描详情",
+      "detailsDescription": "所扫描的码包含的内容，以及您可以进行的操作。",
+      "remove": "从历史记录中移除 {summary}",
+      "removeScan": "从历史记录中移除此扫描",
+      "copy": "复制",
+      "copied": "已复制",
+      "copyFailed": "无法复制。请选中文本后手动复制。"
+    },
+    "camera": {
+      "errors": {
+        "blocked": "摄像头访问被阻止。请在浏览器设置中允许此网站使用摄像头，或改为扫描图片。",
+        "notFound": "未找到摄像头。请改为扫描图片。",
+        "busy": "摄像头正被其他应用或标签页占用。请将其关闭后重试。",
+        "failed": "摄像头无法启动。请重试，或改为扫描图片。",
+        "loadFailed": "扫描器无法加载。请检查网络连接后重试。",
+        "unsupported": "此浏览器无法使用摄像头。请改为扫描图片。",
+        "insecure": "摄像头仅能在安全（https）页面上使用。请改为扫描图片。"
+      },
+      "preview": "摄像头预览",
+      "starting": "正在启动摄像头…",
+      "idle": "将摄像头对准二维码或条形码。在您选择之前，不会打开任何内容。",
+      "retry": "重试",
+      "start": "启动摄像头",
+      "loading": "正在加载扫描器…",
+      "torchOn": "打开手电筒",
+      "torchOff": "关闭手电筒",
+      "switch": "切换摄像头",
+      "stop": "停止摄像头",
+      "zoom": "缩放"
+    },
+    "image": {
+      "notImage": "这不是图片。请使用 PNG、JPG、WebP 或 GIF 格式。",
+      "firstOnly": "仅扫描了前 {count, number} 张图片。",
+      "noCode": "此图片中未找到码。请换一张更清晰、距离更近且完整显示整个码的图片再试。",
+      "noCodeSome": "{count, plural, one {有 # 张图片} other {有 # 张图片}}未找到码。",
+      "unreadable": "{count, plural, one {有 1 张图片} other {有 # 张图片}}无法读取（超过 20 MB，或格式不受支持）。",
+      "noClipboardImage": "剪贴板中没有图片",
+      "clipboardBlocked": "剪贴板访问被阻止。请改按 Ctrl+V 或 ⌘V。",
+      "inputLabel": "含二维码或条形码的图片",
+      "reading": "正在读取码…",
+      "drop": "将图片拖放到此处、选择文件或粘贴",
+      "dropHelp": "截图和照片均可，每张图片可包含多个码。",
+      "choose": "选择图片",
+      "paste": "粘贴图片"
+    },
+    "result": {
+      "starts": "开始",
+      "ends": "结束",
+      "where": "地点",
+      "details": "详情",
+      "ssid": "网络 (SSID)",
+      "security": "安全性",
+      "hidden": "隐藏网络",
+      "yes": "是",
+      "password": "密码",
+      "hidePassword": "隐藏密码",
+      "showPassword": "显示密码",
+      "copyPassword": "复制密码",
+      "copyNetwork": "复制网络名称",
+      "wifiNote": "浏览器无权替你加入 Wi-Fi 网络。请复制密码，打开 Wi-Fi 设置并选择“{ssid}”。使用手机自带的相机应用通常一键即可加入。",
+      "payTitle": "打开 {name} 向 {payee} 付款？",
+      "payBody": "你即将把这笔付款交给 {name} 应用处理。贴纸和海报上的二维码有时会被骗子调换。",
+      "payBodyAmount": "你即将把这笔 {amount} 的付款交给 {name} 应用处理。贴纸和海报上的二维码有时会被骗子调换。",
+      "payCheck": "确认前，请先在应用中核对收款方和金额。",
+      "payOpen": "打开 {name}",
+      "payWith": "使用 {name} 付款",
+      "copyUpi": "复制 UPI ID",
+      "copyAddress": "复制地址",
+      "copyLink": "复制链接",
+      "copyUsername": "复制用户名",
+      "copyIban": "复制 IBAN",
+      "copyPixKey": "复制 Pix 密钥",
+      "copyNumber": "复制号码",
+      "copyAccount": "复制账户",
+      "copyMerchant": "复制商户",
+      "epcNote": "欧元区的银行应用可以直接扫描此二维码。你也可以把 IBAN 复制到新的转账中。",
+      "bankAppNote": "请使用支持 {name} 的银行应用扫描该二维码进行支付。",
+      "upiNote": "在装有 UPI 应用（Google Pay、PhonePe、Paytm、BHIM……）的手机上，会打开相应应用。",
+      "restyle": "在 Playground 中重新设计样式",
+      "name": "姓名",
+      "organization": "单位",
+      "jobTitle": "职位",
+      "phone": "电话",
+      "phoneN": "电话 {n, number}",
+      "email": "邮箱",
+      "emailN": "邮箱 {n, number}",
+      "website": "网站",
+      "websiteN": "网站 {n, number}",
+      "address": "地址",
+      "note": "备注",
+      "saveContact": "保存联系人（.vcf）",
+      "event": "活动",
+      "addToCalendar": "添加到日历（.ics）",
+      "place": "地点",
+      "coordinates": "坐标",
+      "copyCoordinates": "复制坐标",
+      "number": "号码",
+      "call": "拨打",
+      "to": "收件人",
+      "message": "短信内容",
+      "writeText": "编写短信",
+      "smsNote": "将打开你的信息应用，并已填好内容。在你点击发送之前，不会发出任何信息。",
+      "subject": "主题",
+      "writeEmail": "撰写邮件",
+      "checkDigit": "校验位",
+      "checkDigitBad": "校验不一致。该码可能被误读，请重新扫描。",
+      "searchWeb": "在网上搜索",
+      "copyText": "复制文本",
+      "raw": "原始内容",
+      "copyRaw": "复制原始内容"
+    },
+    "link": {
+      "verdicts": {
+        "verified": {
+          "title": "已验证的 QRdx 二维码",
+          "body": "这是一个由 QRdx 制作、真实且有效的二维码，没有未处理的滥用举报。跳转到哪里由它的所有者决定。"
+        },
+        "ok": {
+          "title": "未发现警告",
+          "body": "我们检查的项目均未发现问题。登录或付款前，仍请先看一下网址。"
+        },
+        "caution": {
+          "title": "请小心",
+          "body": "这个链接有些地方值得在打开前再仔细看看。"
+        },
+        "danger": {
+          "title": "请勿打开此链接",
+          "body": "这个链接有明显的网络钓鱼、恶意软件或伪装网址迹象。"
+        },
+        "unknown": {
+          "title": "无法检查此链接",
+          "body": "打开前请仔细核对网址。"
+        }
+      },
+      "dangerTitle": "要打开危险链接吗？",
+      "dangerBody": "此链接已被标记为危险。只有在你清楚知道它指向哪里时才继续，并且切勿在那里输入密码或支付信息。",
+      "openAnyway": "仍然打开",
+      "uncheckedTitle": "未经安全检查就打开吗？",
+      "uncheckedBody": "我们无法检查此链接。请先仔细阅读网址。",
+      "open": "打开链接",
+      "offline": "你似乎已离线，因此无法检查该链接。",
+      "checking": "正在检查此链接的去向…",
+      "checkingBody": "正在跟踪重定向并检查地址。在你做出选择之前，不会打开任何内容。",
+      "passwordHidden": "输入该二维码的密码后，才会显示目标地址。",
+      "endsUpAt": "最终跳转到",
+      "redirects": "{count, plural, one {# 次重定向} other {# 次重定向}}",
+      "redirectsIncomplete": "{count, plural, one {# 次重定向} other {# 次重定向}}（未跟踪到最后）",
+      "checkedWebRisk": "已通过 Google Web Risk 和 QRdx 自有检查进行检测。",
+      "webRiskUnavailable": "无法连接 Google Web Risk，已运行 QRdx 自有检查。",
+      "checkedOwn": "已通过 QRdx 自有检查进行检测。",
+      "noCheckCatchesAll": "没有任何检查能发现所有风险。",
+      "copy": "复制链接",
+      "retry": "重试",
+      "report": "举报此二维码"
+    }
+  },
+  "barcodeGenerator": {
+    "metaTitle": "免费条形码生成器：EAN-13、UPC、Code 128",
+    "metaDescription": "可生成 EAN-13、UPC-A、Code 128、GS1-128、ITF-14、Data Matrix 等 {count, number} 种条形码，校验位自动计算。支持 PNG、JPG、SVG、PDF 和 EPS。免费使用，无需注册。",
+    "crumb": "条形码生成器",
+    "title": "免费条形码生成器",
+    "intro1": "支持 {count, number} 种格式，可制作零售、物流和库存条形码，从 EAN-13、UPC-A 到 Code 128、GS1-128、ITF-14 和 Data Matrix。输入号码，校验位自动计算；校验位有误，打印前就会发现。",
+    "intro2": "每个条形码都在浏览器中绘制并完成扫描检查，可保存为适合屏幕使用的 PNG 或 JPG，也可保存为适合印刷的 SVG、PDF 和 EPS。免费使用，无需账号，没有水印。登录后可将条形码保存在控制台，以后随时编辑。",
+    "toolLabel": "条形码生成器",
+    "formatsEyebrow": "格式",
+    "whichTitle": "我该用哪种条形码？",
+    "whichDescription": "在商店销售？请使用零售商要求的类型：EAN-13 几乎通用，UPC-A 用于美国和加拿大，两者都带有 GS1 分配的 GTIN。向他们发货？纸箱用 ITF-14，物流标签用 GS1-128。给自己的物品贴标？用 Code 128。",
+    "linear": "一维码",
+    "printingEyebrow": "打印",
+    "tipsTitle": "让条形码顺利扫描的小贴士",
+    "tipsDescription": "条形码是静态的：号码或文字就在条纹里，因此可离线使用，永不过期，也没有扫描统计。需要让人用手机扫描的链接？请使用<generators>二维码生成器</generators>。要读取条形码，请打开<scanner>扫描器</scanner>。",
+    "credits": "条形码由 <bwip>bwip-js</bwip>（MIT 许可证）绘制，扫描检查使用编译为 WebAssembly 的 <zxing>ZXing</zxing>，首次运行时会从 jsDelivr CDN 下载。",
+    "faqTitle": "条形码生成器常见问题"
+  },
+  "barcodeTool": {
+    "pickColor": "选择{label}",
+    "drawFailed": "无法绘制此条形码。",
+    "fixFirst": "请先修正输入内容。",
+    "serverFailed": "服务器无法生成此文件。",
+    "downloadFailed": "下载失败",
+    "type": "条形码类型",
+    "linear": "一维码（1D）",
+    "linearInput": "要编码的数字或文本",
+    "textInput": "要编码的文本",
+    "barColor": "条码颜色",
+    "background": "背景",
+    "barHeight": "条码高度",
+    "quietZone": "静区",
+    "modules": "{count, plural, one {# 个模块} other {# 个模块}}",
+    "quietZoneLow": "{format} 至少需要 {min, number} 个模块宽的空白区域，{kind, select, linear {左右两侧各留} other {四周均需留出}}。如果在此处缩小静区，请在排版中补足。",
+    "quietZoneHelp": "{kind, select, linear {条码左右两侧} other {码周围}}的空白边距，单位为模块（即最窄{kind, select, linear {条} other {条或一个单元格}}的宽度）。{format} 的要求：{min, plural, =0 {无} other {至少 #}}。",
+    "imageSize": "图片尺寸",
+    "showText": "在条码下方显示文本",
+    "showDigits": "在条码下方显示数字",
+    "rotation": "旋转",
+    "degrees": "{angle, number} 度",
+    "alt": "{value} 的 {format} 条形码",
+    "loadFailed": "条形码绘制代码未能加载。请检查网络连接后重新加载页面。",
+    "fixInput": "请修正高亮的输入内容，以查看条形码。",
+    "sizes": "PNG、JPG、WebP 和 AVIF 的尺寸为 {width, number} × {height, number} 像素。SVG、PDF 和 EPS 为矢量格式，尺寸为 {widthMm} × {heightMm} 毫米，模块宽 {moduleMm} 毫米；可在排版中按需缩放。",
+    "more": "更多",
+    "moreFormats": "更多格式",
+    "footnote": "在浏览器中生成；你输入的任何内容都不会发送到 QRdx。选择 WebP 和 AVIF 时，由 QRdx 的服务器编码，且不会保留任何内容。",
+    "scan": {
+      "checking": "正在用条形码读取器检查 PNG…",
+      "unavailable": "扫描检查未能加载解码器，因此此条形码未经检查。请用扫码器测试打印出来的条码。",
+      "passed": "扫描检测通过：条码阅读器将该 PNG 解码为 {label} <mono>{value}</mono>",
+      "mismatch": "扫描检测未通过：阅读器读取到的是“{decoded}”，与此 {label} 不一致。",
+      "failed": "扫描检测未通过：阅读器无法解码此 {label}。请提高对比度、增大尺寸或加宽静区。"
+    },
+    "save": {
+      "signIn": "<link>登录</link>后即可将条码保存到控制台，日后随时编辑。",
+      "failed": "无法保存条码",
+      "saved": "已保存到 {workspace}",
+      "savedDescription": "可在控制台的“条码”中找到。",
+      "open": "打开",
+      "save": "保存到控制台"
+    }
+  },
+  "guarantee": {
+    "metaTitle": "Never-Hostage 保障：您的二维码持续有效",
+    "metaDescription": "QRdx 绝不拿二维码做人质：降级、付款失败或取消订阅后，动态二维码依然会继续跳转。不暂停、无广告、可完整导出。",
+    "crumb": "Never-Hostage 保障",
+    "title": "Never-Hostage 保障",
+    "intro1": "印刷出来的二维码，无法在订阅结束时重新印刷。因此在 QRdx 上，无论您的套餐发生什么变化，您用在包装、菜单和海报上的二维码都会持续有效。",
+    "intro2": "这适用于所有账户，包括免费版。",
+    "seePricing": "查看价格",
+    "selfHosting": "自托管指南",
+    "promisesTitle": "我们的承诺",
+    "scenariosTitle": "如果发生以下情况",
+    "scenarios": {
+      "cancel": {
+        "when": "您取消订阅",
+        "outcome": "您的套餐会保持有效，直到已付费周期结束，之后账户转为免费版。所有动态二维码都会继续跳转，每次扫描仍会被记录。"
+      },
+      "failed": {
+        "when": "付款失败",
+        "outcome": "订阅失效后，处理方式与取消订阅相同。在处理账单问题期间，二维码绝不会被暂停。"
+      },
+      "downgrade": {
+        "when": "您切换到更低的套餐",
+        "outcome": "现有二维码、落地页{domains, select, yes {和已验证的自定义域名} other {}}都会继续有效。数据分析会显示新套餐所包含的历史数据。"
+      },
+      "limit": {
+        "when": "超出限额",
+        "outcome": "在回到限额以内之前，您无法再创建新的二维码。但您仍可以修改现有二维码的指向、归档并导出它们。"
+      },
+      "team": {
+        "when": "团队所有者的套餐发生变化",
+        "outcome": "团队的二维码会继续有效，现有成员也会保留。团队的限额以所有者中最高的套餐为准。"
+      },
+      "ended": {
+        "when": "您设定了定时、暂停或次数上限的二维码到期结束",
+        "outcome": "扫描者会前往您选择的备用网址，或一个中性的“此活动已结束”页面，绝不会跳转到 QRdx 的注册页或升级推销页。"
+      },
+      "shutdown": {
+        "when": "QRdx 停止运营",
+        "outcome": "我们至少会提前 12 个月通知您，留出时间导出全部内容，并提供有文档说明的方法，让您在自己的服务器上运行这款开源应用。"
+      }
+    },
+    "exceptionTitle": "唯一的例外：滥用",
+    "exception": "只有当二维码违反我们的<terms>服务条款</terms>时，我们才会停用它，例如指向钓鱼网站或恶意软件。这是在收到举报或经过审核后做出的安全决定，与账单无关。任何人都可以<report>举报二维码</report>。",
+    "questions": "对这项保障有疑问？请发送邮件至 <mail>{email}</mail>。最后更新于 <time>{date, date, long}</time>。"
+  },
+  "templates": {
+    "metaTitle": "二维码落地页模板，支持在线演示",
+    "metaDescription": "{count, number} 个免费二维码落地页模板：链接聚合页、名片、菜单、优惠券、活动、表单、PDF、图集、音频和视频。先打开在线演示看看效果。",
+    "crumb": "模板",
+    "title": "为你的二维码准备的页面模板",
+    "intro": "{templates, number} 个模板，涵盖 {types, number} 种页面类型，每个都有各自的版式、配色和图片。打开在线演示，或用手机扫描，然后改成你自己的：每个区块、颜色和文字都可以修改，印刷之后也一样。",
+    "count": "{count, plural, other {# 个模板}}",
+    "faqTitle": "模板常见问题",
+    "faq": {
+      "freeQuestion": "模板是免费的吗？",
+      "freeAnswer": "是的。所有模板都可以免费使用。免费版包含 3 个托管页面；Pro 和 Business 不限制页面数量。",
+      "changeQuestion": "印刷二维码之后还能修改页面吗？",
+      "changeAnswer": "可以。每个页面都有一个动态二维码，始终指向同一个短链接，因此你可以随时修改区块、颜色和文字，无需重新印刷。",
+      "photosQuestion": "可以使用自己的图片和字体吗？",
+      "photosAnswer": "可以。你可以把任意图片换成自己的，为正文和标题选择系统字体或网络字体，并在页面编辑器中调整颜色、圆角、按钮和间距。",
+      "websiteQuestion": "我需要有网站吗？",
+      "websiteAnswer": "不需要。QRdx 会通过短链接为你托管页面。{domains, select, yes {Pro 和 Business 还可以使用自己的域名。} other {}}",
+      "dataQuestion": "演示页面会收集数据吗？",
+      "dataAnswer": "不会。演示页面上的表单只会显示感谢信息，不会发送任何内容，演示也不会记录浏览或点击。在你自己的页面上，表单回复会发送到你的控制台。"
+    },
+    "filter": {
+      "all": "全部",
+      "label": "页面类型",
+      "showingAll": "显示全部 {count, number} 个模板",
+      "showing": "显示{type}模板"
+    },
+    "card": {
+      "viewLabel": "查看{name}演示",
+      "view": "查看演示",
+      "use": "使用模板"
+    }
+  },
+  "templateDemo": {
+    "showQr": "显示二维码，在手机上打开 {name} 演示",
+    "scan": "扫描",
+    "qrLabel": "{name} 演示的二维码",
+    "scanHint": "用手机相机扫描，即可打开在线演示。"
+  },
+  "integrations": {
+    "metaTitle": "集成",
+    "metaDescription": "将 QRdx 连接到 {names} 等工具：共 {count, number} 个集成，附详细设置步骤。",
+    "hero": {
+      "eyebrow": "集成",
+      "title": "将 QRdx 连接到 {names}",
+      "titleMore": "将 QRdx 连接到 {names}，以及另外 {count, plural, other {# 个工具}}",
+      "description": "把扫描里程碑和表单回复发送到团队聊天工具，在每个事件上运行 Zapier、Make 和 n8n 工作流，为托管页面添加你自己的分析像素，还能把账号里已有的内容转成二维码。每个集成都附有详细设置步骤。",
+      "browse": "浏览集成",
+      "build": "用 QRdx 开发",
+      "stats": {
+        "integrations": "{count, plural, other {个集成}}",
+        "categories": "{count, plural, other {个分类}}",
+        "builtIn": "内置"
+      }
+    },
+    "directory": {
+      "onMcp": "见 MCP 服务器页面",
+      "onPlugins": "见插件页面",
+      "inDocs": "见文档",
+      "all": "全部",
+      "categoriesLabel": "集成分类",
+      "categories": "分类",
+      "alsoOn": "QRdx 的更多内容",
+      "more": {
+        "ai": "AI 助手",
+        "plugins": "插件",
+        "build": "用 QRdx 开发"
+      },
+      "searchPlaceholder": "搜索 Zapier、Discord、Stripe、像素…",
+      "searchLabel": "搜索集成",
+      "allTitle": "全部集成",
+      "allDescription": "内置集成、一键连接和分步指南。",
+      "shown": "{count, plural, other {显示 # 个集成}}",
+      "elsewhere": "“{query}”在另一个页面",
+      "noMatch": "没有与“{query}”匹配的内容",
+      "noMatchIn": "在{category}中没有与“{query}”匹配的内容",
+      "elsewhereHelp": "此列表涵盖第三方工具。AI 助手、插件和开发者工具有各自的页面。",
+      "noMatchHelp": "任何支持 webhook 或可调用 REST API 的工具，仍然可以连接 QRdx。",
+      "clear": "清除搜索",
+      "webhooks": "查看 webhook"
+    },
+    "more": {
+      "label": "AI 助手与插件",
+      "mcpEyebrow": "MCP 服务器 · 免费，无需账号",
+      "mcpTitle": "在 AI 助手中使用 QRdx",
+      "mcpDescription": "Claude、ChatGPT、Cursor、VS Code 等 MCP 应用可以在对话中生成带样式的二维码，以及 Wi-Fi、联系人和电子邮件内容的二维码。",
+      "pluginsEyebrow": "{count, number} 个插件 · 开源",
+      "pluginsTitle": "在 Chrome、Figma、Raycast 和 Canva 中使用 QRdx",
+      "pluginsDescription": "为当前页面生成二维码，将矢量二维码插入设计稿，或从启动器中直接生成。",
+      "buildEyebrow": "开发者",
+      "buildTitle": "使用 QRdx 开发",
+      "buildDescription": "没找到你的工具？任何支持 webhook 或可调用 HTTP API 的工具都能与 QRdx 配合使用，你也可以在平台上发布自己的集成。",
+      "buildOwn": "构建你自己的集成",
+      "request": "申请新的集成",
+      "build": {
+        "restApi": "管理二维码并读取扫描数据",
+        "webhooks": "向你的 URL 发送签名事件",
+        "imageApi": "通过 URL 获取二维码图片",
+        "react": "适用于你应用的组件",
+        "cli": "在终端或 CI 中生成二维码",
+        "shadcn": "一条命令添加组件"
+      }
+    },
+    "detail": {
+      "metaTitle": "{name} 集成",
+      "crumb": "集成",
+      "copied": "已复制到剪贴板",
+      "noAccount": "无需账号",
+      "planBadge": "{plan} 方案",
+      "about": "功能介绍",
+      "setup": "设置方法",
+      "capabilities": "你能获得什么",
+      "type": "类型",
+      "category": "分类",
+      "plan": "套餐",
+      "builtBy": "开发者",
+      "website": "官网",
+      "docs": "文档",
+      "readGuide": "阅读指南",
+      "related": "相关集成",
+      "all": "全部集成"
+    }
+  },
+  "codeSnippet": {
+    "copied": "已复制",
+    "copy": "复制",
+    "copyLabel": "复制{label}",
+    "code": "代码",
+    "codeLower": "代码",
+    "copyFailed": "无法复制，请选中文本后手动复制。"
+  },
+  "plugins": {
+    "metaTitle": "适用于 Chrome、Figma、Raycast 和 Canva 的二维码插件",
+    "metaDescription": "不离开常用工具,就能生成带样式的二维码:Chrome 扩展、Figma 插件、Raycast 扩展和 Canva 应用。免费开源,无需账号。",
+    "crumb": "插件",
+    "title": "在你常用的应用里生成二维码",
+    "intro": "在 Chrome 中为当前页面生成二维码,在 Figma 设计中插入矢量二维码,从 Raycast 启动器生成二维码,或者把二维码添加到 Canva 设计中。这四款插件都免费开源,也都不需要 QRdx 账号。",
+    "badges": "免费 · 无需账号 · 开源(MIT)",
+    "kinds": {
+      "chrome": "浏览器扩展",
+      "figma": "Figma 插件",
+      "raycast": "Raycast 扩展",
+      "canva": "Canva 应用"
+    },
+    "runsOn": "运行于",
+    "getIt": "前往 {store} 获取",
+    "installSource": "从源码安装",
+    "setupSteps": "设置步骤",
+    "notListed": "尚未上架 {store}。",
+    "install": "安装",
+    "onGithub": "GitHub 上的 {path}",
+    "moreEyebrow": "更多使用 QRdx 的方式",
+    "moreTitle": "这不是你常用的应用?",
+    "moreWithBots": "在聊天应用中生成二维码,向 AI 助手发出请求,连接团队使用的工具,或基于 API 进行开发。",
+    "more": "向 AI 助手发出请求,连接团队使用的工具,或基于 API 进行开发。",
+    "request": "没有你需要的插件?<link>提交需求</link>。",
+    "aiTitle": "AI 助手",
+    "aiDescription": "Claude、ChatGPT、Cursor 和 VS Code 可通过免费的 MCP 服务器生成二维码。",
+    "integrationsTitle": "集成",
+    "integrationsDescription": "Zapier、Make、Discord、分析像素,以及 QRdx 连接的其他工具。",
+    "buildTitle": "构建你自己的集成",
+    "buildDescription": "通过 REST API、Webhook 和 OAuth 应用,打造属于你自己的插件。",
+    "library": "更喜欢写代码?驱动所有插件的 <link>qrdx React 库</link>已发布在 npm 上。",
+    "faqTitle": "插件常见问题",
+    "faq": {
+      "storeAll": "为什么要从源码安装？",
+      "storeSome": "为什么有些插件要从源码安装？",
+      "storeListed": "{names}{count, plural, one {已上架{store}} other {已上架各自的商店}}。",
+      "storeSource": "{names}{count, plural, one {尚未上架} other {尚未上架}}。在此之前，可以通过几条命令，从开源的 QRdx 仓库自行构建；具体步骤见本页，以及 GitHub 上各插件的文件夹。",
+      "accountQuestion": "需要 QRdx 账号吗？",
+      "accountAnswer": "不需要。这些插件免费，无需账号即可使用。每个插件都链接到 qrdx.dev 上的完整编辑器（Chrome 和 Raycast 中为“Open in QRdx”，Figma 和 Canva 中为“More options”），你可以在那里登录，使用印刷后仍可编辑的动态二维码。",
+      "dataQuestion": "插件会把我的数据发送到别处吗？",
+      "dataAnswer": "Chrome 扩展和 Figma 插件不会发出任何网络请求：二维码由 qrdx 库在你的设备上绘制。Raycast 扩展将保存的二维码存放在 Raycast 的本地存储中，而“Generate QR with AI”会把你的描述发送给 Raycast AI。Canva 应用在其面板中绘制二维码，并以图片形式添加到你的设计中。从插件打开 Playground 时，只会附带一个网址，位于链接中的 # 之后，浏览器不会把这部分内容发送到服务器。",
+      "changeQuestion": "添加二维码后还能修改吗？",
+      "changeAnswer": "在 Figma 中，选中二维码后点击“Edit QR code”，或使用“Replace selected QR”以保留其大小和位置。在 Raycast 中，已保存的二维码可以编辑并再次导出。在 Chrome 和 Canva 中，请重新生成二维码；如果已印刷的二维码日后需要更改链接，请使用 QRdx 控制台中的动态二维码。"
+    }
+  },
+  "mcp": {
+    "metaTitle": "适用于 Claude、ChatGPT 和 Cursor 的二维码 MCP 服务器",
+    "metaDescription": "将 Claude、ChatGPT、Cursor、VS Code 或任意 MCP 应用连接到免费的 QRdx MCP 服务器，即可生成带样式的二维码、Wi-Fi、vCard 等内容。无需账号或 API 密钥。",
+    "crumb": "MCP 服务器",
+    "title": "在 AI 助手中生成二维码",
+    "facts": {
+      "free": "免费",
+      "noKey": "无需账号或 API 密钥",
+      "readOnly": "只读工具"
+    },
+    "docs": "MCP 文档",
+    "playground": "在 Playground 中试用",
+    "promptsEyebrow": "试一试",
+    "promptsTitle": "从这些提示词开始",
+    "promptsDescription": "每条提示词都基于 QRdx 工具的实际功能：颜色与形状、Wi-Fi、联系人、电子邮件、短信和地图内容，以及 SVG、PNG、WebP 或 EPS 链接。可以在你的助手中打开，也可以复制。",
+    "howEyebrow": "使用方式",
+    "howTitle": "三步设置，之后只管提问",
+    "howDescription": "你的助手会替你调用 QRdx 工具，你无需接触任何 API。",
+    "toolsEyebrow": "工具",
+    "toolsTitle": "你的助手可以调用什么",
+    "toolsDescription": "共 {count, number} 个工具。除 save_template 和 save_barcode 外，其余均为只读，无需密钥：它们可以渲染图片、格式化文本并读取公开社区内容。完整参数请见 <link>MCP 服务器文档</link>。",
+    "faqTitle": "MCP 服务器常见问题",
+    "connect": {
+      "copyFailed": "复制失败，请选中文本后手动复制。",
+      "copyLabel": "复制{label}",
+      "copied": "已复制",
+      "copy": "复制",
+      "terminal": "终端",
+      "serverUrl": "服务器 URL：",
+      "serverUrlLabel": "服务器 URL",
+      "urlCopied": "URL 已复制。",
+      "local": "本地测试？请使用 <code>{url}</code>",
+      "how": "如何连接？",
+      "app": "AI 应用",
+      "more": "更多",
+      "moreClients": "更多客户端",
+      "back": "返回所有客户端",
+      "connect": "连接 {name}",
+      "anotherTitle": "连接其他客户端",
+      "anotherDescription": "任何支持 MCP 的应用都可以使用 QRdx。选择你的应用，查看具体设置方法。",
+      "search": "搜索客户端",
+      "noMatch": "没有客户端匹配“{query}”。请使用 <any>任意 MCP 客户端</any>并填入服务器 URL。",
+      "connectHint": "如果 QRdx 尚未连接，请先在 {where} 中使用 {url} 添加。",
+      "quoted": "“{prompt}”",
+      "tryIn": "在 {app} 中试用",
+      "promptLabel": "提示词：{title}",
+      "promptCopied": "提示词已复制。",
+      "copyPrompt": "复制提示词",
+      "clients": {
+        "claude": {
+          "title": "在 Claude 中用 QRdx 制作二维码",
+          "lead": "点击一次即可打开 Claude 的“添加连接器”对话框，QRdx 和服务器 URL 已预先填好。点击“添加”，然后让它生成二维码。",
+          "toast": "正在打开 Claude。URL 也已复制，以备不时之需。",
+          "action": "连接到 Claude",
+          "steps": {
+            "1": "点击“连接到 Claude”。Claude 会打开“自定义 → 连接器”，并在“添加自定义连接器”对话框中预先填好名称 QRdx 和服务器 URL。",
+            "2": "核对信息，并将高级（OAuth）字段留空：该服务器无需登录。如果字段为空，请粘贴 URL（已在你的剪贴板中），并将其命名为 QRdx。",
+            "3": "点击“添加”，然后在对话的工具菜单中开启 QRdx。",
+            "4": "让它生成二维码。Claude 免费版可添加一个自定义连接器；Team 和 Enterprise 套餐则由所有者为整个组织添加。"
+          }
+        },
+        "chatgpt": {
+          "title": "在 ChatGPT 中用 QRdx 制作二维码",
+          "lead": "点击一次即可复制服务器 URL 并打开 ChatGPT 的“插件”页面，你可以在那里将 QRdx 添加为自定义 MCP 服务器。",
+          "toast": "URL 已复制。请粘贴到 ChatGPT 中。",
+          "action": "连接到 ChatGPT",
+          "steps": {
+            "1": "点击“连接到 ChatGPT”。服务器 URL 会被复制，ChatGPT 随即打开“插件”页面。",
+            "2": "点击 +，选择“添加自定义 MCP 服务器”。将其命名为 QRdx，并在“连接”下粘贴 URL。",
+            "3": "选择无身份验证，接受警告并创建。",
+            "4": "在新对话中输入 @，选择 QRdx，然后让它生成二维码。是否允许使用自定义 MCP 服务器，取决于你的 ChatGPT 套餐和工作区设置。"
+          }
+        },
+        "claude-code": {
+          "title": "在 Claude Code 中用 QRdx 制作二维码",
+          "lead": "在终端中运行一条命令，之后每个 Claude Code 会话都可以使用该服务器。",
+          "toast": "命令已复制，请在终端中运行。",
+          "action": "复制安装命令",
+          "steps": {
+            "1": "点击“复制安装命令”，然后在终端中运行。",
+            "2": "启动 Claude Code 并运行 /mcp，检查 qrdx 是否已连接。",
+            "3": "请求生成二维码。Claude Code 还可以把图片或 SVG 保存到你的项目中。"
+          }
+        },
+        "cursor": {
+          "title": "在 Cursor 中用 QRdx 制作二维码",
+          "lead": "点击一下即可打开 Cursor，QRdx 服务器已准备好安装。",
+          "action": "添加到 Cursor",
+          "steps": {
+            "1": "点击“添加到 Cursor”，并允许浏览器打开 Cursor。",
+            "2": "Cursor 会显示 qrdx 服务器：点击“安装”。",
+            "3": "在 Cursor Settings → MCP 中确认它已开启，然后让智能体生成二维码。",
+            "4": "更喜欢使用配置文件？把上方的代码片段添加到 ~/.cursor/mcp.json（适用于所有项目），或添加到 .cursor/mcp.json（仅适用于一个项目）。"
+          }
+        },
+        "vscode": {
+          "title": "在 VS Code 中用 QRdx 制作二维码",
+          "lead": "点击一下即可打开 VS Code 中 QRdx 服务器的安装页面。可在智能体模式下通过 Copilot Chat 使用。",
+          "action": "在 VS Code 中安装",
+          "direct": "直接打开 VS Code",
+          "steps": {
+            "1": "点击“在 VS Code 中安装”。页面会跳转到 VS Code，并显示 qrdx 服务器。",
+            "2": "点击“安装”。",
+            "3": "在 Copilot Chat 中切换到智能体模式，打开工具选择器，确认 qrdx 已开启，然后请求生成二维码。",
+            "4": "更喜欢使用配置文件？把上方的代码片段添加到工作区的 .vscode/mcp.json 中。"
+          }
+        },
+        "windsurf": {
+          "title": "在 Windsurf 中用 QRdx 制作二维码",
+          "lead": "Windsurf 现已更名为 Devin Desktop。把配置复制到其 MCP 设置中，智能体就可以调用 QRdx 工具。",
+          "toast": "Windsurf 配置已复制。",
+          "action": "复制 Windsurf 配置",
+          "steps": {
+            "1": "点击“复制 Windsurf 配置”。",
+            "2": "在 Devin Desktop 中，把它粘贴到 ~/.config/devin/mcp_config.json（若仅用于一个项目，则粘贴到 .devin/mcp_config.json）。如果已有服务器，请将其合并到 mcpServers 中。",
+            "3": "较旧的 Windsurf 版本读取 ~/.codeium/windsurf/mcp_config.json，并要求用 serverUrl 代替 url。",
+            "4": "刷新 MCP 服务器，确认 qrdx 已开启，然后让智能体生成二维码。"
+          }
+        }
+      }
+    }
+  },
+  "ai": {
+    "metaTitle": "AI 二维码生成器——用一句提示词设计二维码",
+    "metaDescription": "告诉 QRdx 的 AI 二维码要打开什么（链接、Wi-Fi、名片等）以及外观要求。它会检查扫描评分，反复修复设计直到达到“优秀”，并在修改你的编辑器之前先征求你的同意。免费账户包含 {count, number} 次 AI 请求；Pro 可解锁无限次。",
+    "artLink": "或者把链接变成可扫描的 AI 二维码艺术图",
+    "chat": {
+      "upgrade": "升级到 Pro，享无限次请求",
+      "heading": "想让我为你做什么样的二维码？"
+    }
+  },
+  "aiArt": {
+    "metaTitle": "AI 二维码艺术生成器：可扫描的艺术二维码",
+    "metaDescription": "用 {model} 把链接变成可扫描的 AI 艺术图：{styles, number} 种风格，每次最多生成 4 个变体，每张都经过扫描检测。免费账户每月可生成 {free, number} 张。",
+    "metaTitleSoon": "二维码艺术：Logo QR 和 Image QR",
+    "metaDescriptionSoon": "在 QRdx Playground 中免费把你的 Logo 或照片融入可扫描的矢量二维码，并导出 SVG、PDF 或 EPS。AI 绘制的二维码艺术即将推出。",
+    "eyebrow": "二维码艺术",
+    "title": "把任何链接变成可扫描的二维码艺术",
+    "intro": "从 {styles, number} 种风格中任选一种，或描述你自己的场景，{model} 会把它绘制进你的二维码。每张图片在呈现给你之前都已通过扫描检测。登录后即可生成：免费账户每月 {free, number} 张图片，Pro 为 {pro, number} 张，Business 为 {business, number} 张，由团队共享。",
+    "introSoon": "在 Playground 中免费把你的 Logo 或照片融入仍可扫描的矢量二维码。AI 绘制的作品即将推出。",
+    "make": "制作二维码艺术",
+    "examples": "查看示例",
+    "howTitle": "AI 二维码艺术如何生成",
+    "vectorEyebrowLead": "现已推出，免费使用",
+    "vectorEyebrow": "无需 AI",
+    "vectorTitleLead": "Logo QR 和 Image QR",
+    "vectorTitle": "想要一定能扫描的矢量二维码？",
+    "vectorDescription": "把 Logo 或照片融入二维码本身。它以矢量绘制，保持扫描器所依赖的图案清晰完整，也无需消耗额度。",
+    "openArt": "打开“艺术”标签页",
+    "vector": {
+      "badge": "矢量",
+      "logo": "Logo 的颜色会流入其轮廓内的模块，定位图案保持实心。",
+      "image": "照片透过每个模块显现，中心区域保证二维码可被扫描。",
+      "open": "在 Playground 中打开"
+    },
+    "comingSoon": {
+      "title": "AI 绘制的二维码艺术",
+      "badge": "即将推出",
+      "description": "描述一个场景，或从 {count, number} 种风格中任选一种，图像模型会把它绘制在你的二维码周围。每个结果在下载前都会进行扫描检测。",
+      "styles": "部分风格",
+      "makeNow": "立即制作 Logo QR 或 Image QR",
+      "theme": "用 AI 生成主题"
+    },
+    "faq": {
+      "title": "AI 二维码艺术常见问题",
+      "description": "可扫描的艺术作品如何制作、费用多少，以及打印前需要检查什么。"
+    }
+  },
+  "compare": {
+    "metaTitle": "QRdx 与其他二维码生成器及 React 二维码库对比",
+    "metaDescription": "QRdx 与 QR Code Monkey、QR TIGER、Canva、Bitly、Flowcode、qrcode.react 等工具的对比：价格、免费额度，以及各自更适合的场景。",
+    "crumb": "对比",
+    "eyebrow": "{count, plural, other {# 项坦诚对比}}",
+    "title": "QRdx 与其他二维码生成器对比",
+    "intro": "QRdx 是一款免费的开源二维码生成器（AGPL-3.0-or-later），并提供采用 MIT 许可的 React 库。每个页面都会将它与人们常拿来比较的工具进行对比，包括对方更合适的场景。竞品的价格和限制均已在其官网核实。",
+    "groups": {
+      "generator": {
+        "heading": "二维码生成器",
+        "intro": "可在浏览器中制作二维码的托管工具。多数工具销售动态（可编辑、可追踪）二维码；QRdx 提供免费的静态二维码，动态二维码和托管页面在所有套餐中都能持续使用。"
+      },
+      "library": {
+        "heading": "React 和 JavaScript 二维码库",
+        "intro": "可从 npm 安装、在自己的应用中生成二维码的软件包。这两个库的使用范围都比 QRdx 的 npm 包广得多。"
+      }
     }
   }
 }

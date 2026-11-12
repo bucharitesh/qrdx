@@ -1,11 +1,12 @@
 // Catalog bookkeeping for scripts/i18n-check.ts, scripts/i18n-translate.ts
-// and their tests. Node only (node:crypto); never imported by pages.
+// and their tests. Node only (node:crypto): pages reach sourceHash() only on
+// the server, through lib/i18n/content-server.ts.
 //
 // messages/review/<locale>.json records, per key, the hash of the English it
 // was translated from and its review status. A translation is "stale" when
 // the English has changed since; i18n:translate redoes those.
 import { createHash } from "node:crypto";
-import { shapeMismatch } from "./icu";
+import { numberMismatch, shapeMismatch } from "./icu";
 import type { ReviewState } from "./review";
 
 export type Catalog = { [key: string]: string | Catalog };
@@ -143,6 +144,96 @@ export function checkLocale({
   for (const key of Object.keys(review)) {
     if (!source.has(key)) {
       report.warnings.push(`${locale}: review entry ${key} isn't in English`);
+    }
+  }
+  return report;
+}
+
+export interface ContentReport {
+  errors: string[];
+  warnings: string[];
+  counts: {
+    strings: number;
+    missing: number;
+    machine: number;
+    reviewed: number;
+    unused: number;
+  };
+}
+
+/**
+ * Checks one locale's translation memory (lib/i18n/content.ts) against the
+ * English the sources hold now. Errors: a translation that lost a number,
+ * or an entry filed under the wrong hash. Missing strings show in English
+ * and are warnings, unless the locale is marked "reviewed"; so are entries
+ * no source uses any more (`i18n:translate --prune` drops them).
+ */
+export function checkContent({
+  locale,
+  english,
+  memory,
+  state,
+}: {
+  locale: string;
+  english: readonly { english: string; context: string }[];
+  memory: Record<
+    string,
+    { source: string; text: string; status: ReviewStatus; context?: string }
+  >;
+  state: ReviewState;
+}): ContentReport {
+  const report: ContentReport = {
+    errors: [],
+    warnings: [],
+    counts: {
+      strings: english.length,
+      missing: 0,
+      machine: 0,
+      reviewed: 0,
+      unused: 0,
+    },
+  };
+  const strict = state === "reviewed";
+  const soft = (message: string) =>
+    (strict ? report.errors : report.warnings).push(message);
+  const used = new Set<string>();
+  for (const { english: source, context } of english) {
+    const hash = sourceHash(source);
+    used.add(hash);
+    const entry = memory[hash];
+    if (!entry?.text.trim()) {
+      report.counts.missing++;
+      soft(`${locale}: content ${context} is missing (shows in English)`);
+      continue;
+    }
+    if (entry.status === "reviewed") report.counts.reviewed++;
+    else {
+      report.counts.machine++;
+      if (strict) {
+        report.errors.push(
+          `${locale}: content ${context} isn't reviewed, but ${locale} is marked reviewed`,
+        );
+      }
+    }
+  }
+  for (const [hash, entry] of Object.entries(memory)) {
+    if (sourceHash(entry.source) !== hash) {
+      report.errors.push(
+        `${locale}: content entry ${hash} doesn't match its English ("${entry.source.slice(0, 40)}…")`,
+      );
+      continue;
+    }
+    const mismatch = numberMismatch(entry.source, entry.text);
+    if (mismatch) {
+      report.errors.push(
+        `${locale}: content ${entry.context ?? hash}: ${mismatch}`,
+      );
+    }
+    if (!used.has(hash)) {
+      report.counts.unused++;
+      report.warnings.push(
+        `${locale}: content entry ${entry.context ?? hash} isn't used any more`,
+      );
     }
   }
   return report;

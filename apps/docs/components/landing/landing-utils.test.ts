@@ -165,11 +165,16 @@ describe("helpers", () => {
       "/scan",
       "/scan/history",
       "/templates/links/creator",
+      // The translated scanner, and the route English prerenders as.
+      "/es/scan",
+      "/ja/scan",
+      "/en/scan",
     ]) {
       assert.ok(isUntrackedPath(path), path);
     }
     for (const path of [
       "/pricing",
+      "/es/tools",
       "/playground",
       "/scanner-tips",
       "/",
