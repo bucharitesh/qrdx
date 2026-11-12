@@ -1,0 +1,68 @@
+---
+title: "Anmeldemethoden und E-Mail-Adresse"
+description: "Melde dich mit Google, GitHub oder einem E-Mail-Code an, verknüpfe Anmeldemethoden, ändere deine E-Mail-Adresse und erfahre, was du tun kannst, wenn du den Zugriff auf deine E-Mail verloren hast."
+---
+
+## Möglichkeiten zur Anmeldung [#ways-to-sign-in]
+
+- **Google** oder **GitHub**.
+- **E-Mail-Code**: Gib deine E-Mail-Adresse ein und tippe dann den 6-stelligen Code ein, den wir dir senden. Ein Code ist 5 Minuten lang gültig.
+
+<IfAvailable feature="passkeys">
+Sobald du [einen Passkey hinzugefügt](/docs/help/privacy-and-security/passkeys) hast, kannst du dich auch mit Fingerabdruck, Gesicht oder Bildschirmsperre anmelden.
+</IfAvailable>
+
+Bei deiner ersten Anmeldung erstellt QRdx dein Konto. Du musst dir kein Passwort merken.
+
+Bei Google oder GitHub erstellt QRdx das Konto nur, wenn dort deine E-Mail-Adresse verifiziert wurde. Ist deine dort nicht verifiziert, verifiziere sie zuerst (GitHub listet deine Adressen unter **Settings** → **Emails** auf) oder melde dich stattdessen mit einem E-Mail-Code an.
+
+## Ein Konto für deine Adresse, das du nicht erstellt hast [#an-account-for-your-address-you-didnt-make]
+
+Wenn QRdx bereits ein Konto für deine Adresse hat und du es nicht erstellt hast, melde dich mit einem E-Mail-Code an. Sobald damit bewiesen ist, dass die Adresse dir gehört, entfernt QRdx alles, womit die frühere Registrierung wieder Zugang bekommen oder weiter Daten des Kontos abrufen könnte:
+
+- die Verknüpfungen mit Google und GitHub sowie alle Sitzungen;
+- die Zwei-Faktor-Authentifizierung und vertrauenswürdige Geräte<IfAvailable feature="passkeys"> sowie die Passkeys</IfAvailable>;
+- die API-Schlüssel und die Apps, denen der Zugriff auf das Konto erlaubt wurde;
+- die eingerichteten Webhooks sowie Slack- und Discord-Benachrichtigungen und alle eingerichteten Synchronisierungen, die Scans oder Formularantworten an ein anderes Tool senden.
+
+Alles andere im Konto bleibt erhalten. Prüfe danach also die Workspaces und deren Mitglieder.
+
+## Google oder GitHub verknüpfen [#link-google-or-github]
+
+Gehe zu **Settings** → **Profile & security** → **Sign-in methods**.
+
+- **Email code** ist immer aktiviert.
+- Verknüpfe Google oder GitHub, um dich mit einem Klick anzumelden. Das Konto muss dieselbe E-Mail-Adresse wie dein QRdx-Konto verwenden.
+- Klicke auf **Unlink**, um eine Verknüpfung zu entfernen.
+
+## E-Mail-Adresse ändern [#change-your-email-address]
+
+1. Gehe zu **Settings** → **Profile & security**.
+2. Klicke neben **Email** auf **Change** und [bestätige, dass du es bist](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+3. Gib die neue Adresse ein und tippe den Code ein, den wir an sie senden.
+
+Danach meldet QRdx dich auf allen anderen Geräten und in allen anderen Browsern ab. Deine alte Adresse erhält eine E-Mail, dass das Konto umgezogen ist, mit einer Möglichkeit, den Support zu kontaktieren, falls du das nicht warst.
+
+## Zugriff auf die E-Mail verloren [#lost-access-to-your-email]
+
+Wenn du noch in QRdx hineinkommst, ändere deine E-Mail-Adresse wie oben beschrieben selbst. Um ohne dein Postfach zu bestätigen, dass du es bist, nutze <IfAvailable feature="passkeys">deinen Passkey, </IfAvailable>ein verknüpftes Google- oder GitHub-Konto oder deine Methode für die Zwei-Faktor-Authentifizierung, falls sie aktiviert ist. Bist du abgemeldet? Melde dich zuerst mit <IfAvailable feature="passkeys">deinem Passkey oder </IfAvailable>einem verknüpften Google- oder GitHub-Konto an.
+
+Wenn nichts davon funktioniert, schreibe von der Adresse, die du künftig verwenden möchtest, eine E-Mail an [support@qrdx.dev](mailto:support@qrdx.dev). Ein Konto auf eine neue Adresse umzuziehen ist das Heikelste, was der Support tut. Deshalb gilt:
+
+- **Wir brauchen einen Nachweis, dass das Konto dir gehört.** Wir fragen nach der E-Mail-Adresse des Kontos und nach einem der folgenden Nachweise:
+  - wenn du für QRdx bezahlt hast, die Nummer einer deiner [Rechnungen](/docs/help/account-and-billing/invoices) und ungefähr, wann du bezahlt hast;
+  - wenn ein Workspace in deinem Konto eine eigene [Domain](/docs/help/domains/custom-domains) verwendet, ein DNS-Eintrag, den wir dir senden und den du dieser Domain hinzufügst.
+- **Wir informieren die alte Adresse und warten 7 Tage.** Wenn in dieser Zeit jemand von dort antwortet und widerspricht, brechen wir ab.
+- **Dann ziehen wir das Konto um.** Wir ändern die E-Mail-Adresse auf die neue, melden das Konto überall ab und schreiben an die alte Adresse. Melde dich mit einem Code an, der an die neue Adresse gesendet wird. Deine Zwei-Faktor-Authentifizierung bleibt, falls aktiviert, unverändert.
+
+Wenn wir nicht bestätigen können, dass das Konto dir gehört, ziehen wir es nicht um, auch wenn es dadurch unerreichbar bleibt. Es der falschen Person zu übergeben wäre schlimmer.
+
+Bevor deine alte Adresse nicht mehr funktioniert, füge einen Passkey hinzu oder verknüpfe Google oder GitHub, damit du immer bestätigen kannst, dass du es bist.
+
+## Von anderen Geräten abmelden [#sign-out-of-other-devices]
+
+Unter **Sessions** in **Settings** → **Profile & security** kannst du dich von einem Gerät abmelden oder auf **Sign out everywhere else** klicken.
+
+## Probleme bei der Anmeldung [#trouble-signing-in]
+
+Siehe [Anmeldecodes oder E-Mails kommen nicht an](/docs/help/troubleshooting/emails).

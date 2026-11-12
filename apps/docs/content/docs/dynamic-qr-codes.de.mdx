@@ -1,0 +1,187 @@
+---
+title: "Dynamische QR-Codes"
+description: "Drucke einen QR-Code einmal, ändere später sein Ziel und sieh, wie oft er gescannt wird."
+icon: QrCode
+---
+
+Ein dynamischer QR-Code kodiert einen Kurzlink wie `https://qrdx.dev/q/aB3dE5f` statt deiner endgültigen URL. Beim Scan wird der Kurzlink geöffnet, der zu dem von dir festgelegten Ziel weiterleitet. Du kannst das Ziel jederzeit ändern, sodass gedruckte Codes nie veralten, und jeder Scan wird gezählt.
+
+Statische QR-Codes aus dem Playground und der `qrdx`-Bibliothek bleiben kostenlos und unbegrenzt. Für dynamische Codes brauchst du ein QRdx-Konto.
+
+## Einen dynamischen Code erstellen [#create-a-dynamic-code]
+
+- **Dashboard:** Öffne das [Dashboard](/dashboard), klicke auf **New code**, gib die Ziel-URL und optional einen Titel ein. Lade den Code als PNG, WebP oder SVG herunter.
+- **Playground:** Wähle den Inhaltstyp **URL**, gib deinen Link ein und aktiviere **Make it dynamic**. Der QR-Code wechselt zu einem Kurzlink und behält dein Design. Wenn du die URL danach bearbeitest, klicke auf **Point it to the new URL**, um das Ziel zu aktualisieren. **Save design to code** speichert das aktuelle Design mit dem Code.
+
+Ziele müssen `http://`- oder `https://`-Links sein. Links mit Benutzername oder Passwort sowie Links zu anderen QRdx-Kurzlinks werden abgelehnt.
+
+## Eigene Back-Halves [#custom-back-halves]
+
+Jeder Code erhält eine zufällige Back-Half mit 7 Zeichen, also den Teil nach `/q/`. Mit Pro und Business kannst du stattdessen eine eigene wählen, zum Beispiel `https://qrdx.dev/q/spring-menu`: Fülle **Custom back-half** aus, wenn du einen Code erstellst oder bearbeitest. Der Dialog zeigt dir schon während der Eingabe, ob sie frei ist.
+
+- 3 bis 64 Zeichen: Buchstaben, Ziffern, `-` und `_`, ohne `-` am Anfang oder Ende.
+- Bei Back-Halves wird wie bei generierten zwischen Groß- und Kleinschreibung unterschieden: `Spring-Menu` und `spring-menu` sind zwei verschiedene Links.
+- Auf `qrdx.dev` ist eine Back-Half in ganz QRdx einmalig, und Wörter, die wie QRdx-Seiten aussehen (`admin`, `api`, `docs`, `login`, `pricing`, `settings`, ...), sind reserviert.
+- Auf deiner eigenen [eigenen Domain](/docs/custom-domains) muss sie nur auf dieser Domain einmalig sein, und nur `api`, `p` und `q` sind reserviert, sodass `go.yourbrand.com/pricing` funktioniert. Eine solche Back-Half gehört zur Domain: Es gibt dafür keinen `qrdx.dev/q/`-Link.
+- Wenn du die Back-Half eines Codes änderst, ändert sich sein Link: Mit der alten Back-Half gedruckte QR-Codes funktionieren dann nicht mehr, lade den Code also erneut herunter.
+
+## Codes verwalten [#manage-codes]
+
+Im Dashboard kannst du Folgendes tun:
+
+- **Edit link:** Ziel oder Titel ändern. Der gedruckte Code funktioniert weiter und öffnet beim nächsten Scan das neue Ziel.
+- **Change type:** Einen Website-Link in eine [gehostete Seite](/docs/landing-pages) umwandeln, eine Seite zurück in einen Link oder eine Seite in einen anderen Seitentyp. Der Kurzlink und die Scans bleiben erhalten. Siehe [Ändern, was ein gedruckter Code öffnet](/docs/help/dynamic-codes/change-the-type).
+- **Edit design in playground:** Öffnet den Code im Editor, weiterhin mit seinem Kurzlink verbunden.
+- **Archive:** Der Kurzlink zeigt eine Seite „nicht mehr aktiv“, bis du den Code wiederherstellst. Archivierte Codes zählen nicht auf das Limit deines Tarifs.
+- **Move to trash:** Der Kurzlink zeigt eine Seite „nicht mehr aktiv“ (HTTP 410), und der Code zählt nicht mehr auf deinen Tarif. Stelle ihn im **Trash** wieder her oder lösche ihn dort endgültig, wodurch auch sein Scan-Verlauf entfernt wird; der Kurzlink zeigt dann eine Seite „QR-Code nicht gefunden“. Das Löschen über die API (`DELETE /v1/codes/{id}`) ist sofort endgültig.
+- **Duplicate:** Kopiert Ziel, Design, Ordner, Tags und Notizen in einen neuen Code mit neuem Kurzlink und ohne Scans.
+- **Version history:** Jede Änderung wird auf der Seite des Codes festgehalten; beim Wiederherstellen einer Version werden zuerst die aktuellen Einstellungen gespeichert, sodass sich eine Wiederherstellung rückgängig machen lässt.
+
+## Codes organisieren [#organize-codes]
+
+- **Folders:** Bis zu 5 Ebenen tief verschachtelbar. Ziehe Codes auf einen Ordner oder nutze **Move to folder**. Wenn du einen Ordner löschst, wandern seine Codes und Unterordner eine Ebene nach oben.
+- **Tags:** Filtere nach mehreren Tags, um Codes zu sehen, die alle davon haben.
+- **Favoriten und Notizen:** Markiere Codes mit einem Stern und führe private Notizen; Notizen sind durchsuchbar.
+- **Die Suche** umfasst Titel, Ziele, Notizen, Tags und Back-Halves (füge einen Kurzlink ein, um seinen Code zu finden).
+- **Massenaktionen:** Wähle Codes aus, um sie zu verschieben, zu taggen, zu pausieren, zu archivieren, zu favorisieren, in den Papierkorb zu legen oder als ZIP mit PNG-, WebP- oder SVG-Dateien herunterzuladen.
+- **CSV-Import:** **Codes → Import** erstellt aus einer CSV bis zu {facts.importRows} dynamische QR-Codes (Ziel, Titel, Ordner, Tags, optional eine eigene Back-Half in der Spalte `slug`) und kann jeden Code in einen Ordner ablegen und allen Tags hinzufügen. Ein langer Import lässt sich pausieren und wird nach einem Neuladen oder einer unterbrochenen Verbindung fortgesetzt, ohne einen Code doppelt zu erstellen. Am Ende steht eine Ergebnis-CSV (mit dem Kurzlink jeder Zeile) und ein ZIP der Codes als PNG oder SVG. Für den Import von mehr als einer Zeile und für eigene Back-Halves brauchst du Pro.
+
+Codes gehören zu dem Workspace, in dem sie erstellt wurden. Jedes Mitglied des Workspace kann sie erstellen und bearbeiten; Mitglieder können ihre eigenen Codes löschen, Inhaber und Admins jeden Code im Workspace.
+
+<Callout type="info">
+  Codes sterben nie: Ein Downgrade deines Tarifs deaktiviert bestehende Codes nie. Über dem Limit kannst du Codes weiterhin bearbeiten und archivieren, aber keine weiteren erstellen oder wiederherstellen, bis du wieder darunter liegst.
+</Callout>
+
+## Tarife [#plans]
+
+| | Kostenlos | Pro | Business |
+| --- | --- | --- | --- |
+| Aktive dynamische QR-Codes | 10 | Unbegrenzt | Unbegrenzt |
+| Scans | Unbegrenzt | Unbegrenzt | Unbegrenzt |
+| Scan-Verlauf | 90 Tage | 3 Jahre | Unbegrenzt |
+| Massenerstellung über die API | Nein | Bis zu {facts.apiBatchCodes} pro Anfrage | Bis zu {facts.apiBatchCodes} pro Anfrage |
+
+Die Codes eines Workspace nutzen den besten Tarif unter seinen Inhabern. Alles Weitere, was jeder Tarif enthält, findest du unter [Tarife und Limits](/docs/plans-and-limits).
+
+## Scan-Analysen [#scan-analytics]
+
+Jeder Code hat eine Analyseseite mit Scans im Zeitverlauf, eindeutigen Besuchern, Top-Ländern und -Städten, Geräten, Betriebssystemen, Browsern und Referrern für die letzten 7, 30 oder 90 Tage, 1 Jahr oder 3 Jahre (begrenzt durch den Verlauf deines Tarifs). Du kannst die Scans im gewählten Zeitraum als CSV exportieren.
+
+Das wird bei jedem Scan erfasst:
+
+- Zeit (UTC) sowie Land, Region und Stadt, wenn die Hosting-Plattform sie liefert (Vercel-Geo-Header auf qrdx.dev)
+- Gerätetyp, Betriebssystem und Browser, aus dem User-Agent erkannt
+- Nur der Hostname des Referrers, nie die vollständige URL. Die meisten QR-Scans haben keinen Referrer.
+- Ein Besucher-Hash: ein gesalzenes SHA-256 aus IP-Adresse, User-Agent und Tag. Er zählt eindeutige Besucher pro Tag; die IP-Adresse selbst wird nie gespeichert.
+- Bei Pro und Business, wenn der Code [den genauen Standort abfragt](/docs/precise-location) und die scannende Person es erlaubt: ihr Standort auf 3 Dezimalstellen gerundet (etwa 100 m) und die Genauigkeit, die ihr Browser gemeldet hat
+
+Bekannte Bots, Link-Vorschauen und Browser-Prefetches werden nicht gezählt.
+
+## REST API [#rest-api]
+
+Verwalte Codes programmatisch unter `https://api.qrdx.dev/v1/codes`. Anfragen werden mit einem [API-Schlüssel](/docs/developers/api-keys) oder einem OAuth-Zugriffstoken authentifiziert (`Authorization: Bearer <key or token>`), das den Scope `codes:read` oder `codes:write` hat. Wie du einen bekommst, steht unter [REST API](/docs/developers/rest-api). Ein Schlüssel wirkt auf den Workspace, in dem er erstellt wurde; Anfragen mit einem Token wirken auf deinen eigenen Workspace. Anfragen aus einer angemeldeten Browser-Sitzung funktionieren ebenfalls und wirken auf den Workspace, den du zuletzt im Dashboard geöffnet hast.
+
+| Methode | Pfad | Beschreibung |
+| --- | --- | --- |
+| `GET` | `/v1/codes` | Codes auflisten. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
+| `POST` | `/v1/codes` | Einen Code oder ein Array mit bis zu 100 Codes erstellen (Arrays erfordern Pro). Body: `destinationUrl`, optional `title`, `style`, `domainId` und `slug` |
+| `GET` | `/v1/codes/{id}` | Einen Code abrufen |
+| `PATCH` | `/v1/codes/{id}` | `destinationUrl`, `title`, `style`, `domainId` ([eigene Domains](/docs/custom-domains)), `slug` oder `archived` aktualisieren, oder `kind` zwischen `redirect` und `page` wechseln |
+| `DELETE` | `/v1/codes/{id}` | Einen Code und seine Scans löschen |
+| `GET` | `/v1/codes/{id}/scans` | Analysen für `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; begrenzt durch den Verlauf deines Plans). Mit `limit` (≤ 500) erhältst du einzelne Scans, mit `before` (dem letzten `scannedAt`) die nächste Seite |
+
+Einen Code erstellen:
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'
+```
+
+```json
+{
+  "data": {
+    "id": "cm3x...",
+    "slug": "aB3dE5f",
+    "shortLink": "https://qrdx.dev/q/aB3dE5f",
+    "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+    "domain": null,
+    "destinationUrl": "https://example.com/menu",
+    "title": "Spring menu",
+    "contentType": "url",
+    "kind": "redirect",
+    "pageId": null,
+    "status": "active",
+    "style": null,
+    "scanCount": 0,
+    "lastScannedAt": null,
+    "archivedAt": null,
+    "createdAt": "2026-10-31T12:00:00.000Z",
+    "updatedAt": "2026-10-31T12:00:00.000Z",
+    "organizationId": null
+  }
+}
+```
+
+Übergib `slug`, um den hinteren Teil des Links zu wählen (Pro und Business; die Regeln findest du unter [eigene Back-Halves](#custom-back-halves)). Mit einer `domainId` wird er auf dieser Domain geprüft, sonst auf `qrdx.dev`:
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
+```
+
+Die Antwort enthält dann `"slug": "spring-menu"` und `"shortLink": "https://qrdx.dev/q/spring-menu"`. Ein Back-Half, der auf einer eigenen Domain gewählt wurde, hat `"defaultShortLink": null`, weil er nur auf dieser Domain existiert. In einem Array muss jeder `slug` unterschiedlich sein.
+
+### Viele Codes in einer Anfrage [#many-codes-in-one-request]
+
+Mit Pro und Business kannst du ein Array mit bis zu {facts.apiBatchCodes} Codes senden. Generierte Back-Halves wiederholen sich innerhalb des Batches nie und kollidieren nicht mit bestehenden Codes. Links, die Google Web Risk nicht rechtzeitig prüfen kann, werden kurz nach dem Erstellen des Batches erneut geprüft, und ein Code, dessen Link dort gelistet ist, wird deaktiviert ([Sicherheitsprüfungen für Links](/docs/code-controls#safety-checks-on-links)). Ein Batch gilt ganz oder gar nicht: Hat eine Zeile ein Problem (ein ungültiges Ziel, ein vergebener oder reservierter `slug`, ein unsicherer Link), wird nichts erstellt, und `data.details` im Fehler listet jedes Problem nach `index` auf, also der Position der Zeile im Array (ab 0).
+
+Sende einen `Idempotency-Key`-Header mit einem für den Batch eindeutigen Wert, etwa einer UUID. Wenn die Anfrage in ein Timeout läuft oder die Verbindung abbricht, sende dieselbe Anfrage mit demselben Schlüssel erneut: Du erhältst die Codes zurück, die der erste Versuch erstellt hat, mit dem Header `Idempotent-Replayed: true`. Ein Versuch, der mittendrin abgebrochen wurde, wird abgeschlossen, ohne dass ein Code doppelt entsteht.
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: 6f1c2a9e-spring-tables" \
+  -H "Prefer: return=minimal" \
+  -d '[{"destinationUrl": "https://example.com/table/1", "title": "Table 1"},
+       {"destinationUrl": "https://example.com/table/2", "title": "Table 2"}]'
+```
+
+Jeder Code wird mit seinem Design zurückgegeben. Wenn das Standard-Theme deines Workspaces ein Logo einbettet, summiert sich das bei einem großen Batch: Sende `Prefer: return=minimal`, um jeden Code ohne `style` zu erhalten (mit ID, Slug, Links, Ziel, Titel, Status und Erstellungszeit). Ein Batch, dessen Antwort nicht in 4 MB passen würde, wird mit `PAYLOAD_TOO_LARGE` abgelehnt, bevor etwas erstellt wird.
+
+Das Ziel ändern:
+
+```bash
+curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/summer-menu"}'
+```
+
+`style` nimmt dieselben Design-Felder wie der Playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). Für ein Logo sendest du `logoIcon`<IfAvailable feature="fileStorage"> oder die `logoFileId` einer hochgeladenen Datei</IfAvailable> ([Logos im Style eines Codes](/docs/developers/rest-api#code-logos)). Kodiere `shortLink` in deinem QR-Code, zum Beispiel mit der [`qrdx`-Bibliothek](/docs/getting-started) oder der [Image API](/docs/developers/image-api).
+
+Fehler verwenden eine einheitliche JSON-Form, `{ "code": "...", "message": "...", "status": 400 }`, plus einen `docs`-Link, wenn eine Seite die Lösung erklärt:
+
+| Status | Code | Wann |
+| --- | --- | --- |
+| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Ungültiger Body oder ungültige Query (Details in `data`, in einem Batch nach `index`), oder ein `slug`, der gegen die Regeln verstößt oder reserviert ist |
+| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | Kein `Authorization: Bearer`-Token, oder ein ungültiges, abgelaufenes oder widerrufenes ([Token erhalten](/docs/developers/rest-api#get-an-access-token)) |
+| 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Das Limit aktiver Codes deines Plans ist überschritten, oder Massenerstellung bzw. ein eigener `slug` ohne Pro |
+| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token ohne den nötigen Scope, oder eine Workspace-Rolle, die das nicht darf |
+| 404 | `NOT_FOUND` | Der Code existiert nicht oder gehört dir nicht, oder der Endpunkt existiert nicht |
+| 409 | `SLUG_TAKEN` | Ein anderer Code verwendet diesen `slug` bereits (auf `qrdx.dev` oder auf der eigenen Domain) |
+| 429 | `RATE_LIMITED` | Zu viele Anfragen; wiederhole sie nach dem `Retry-After`-Header |
+
+## Self-Hosting [#self-hosting]
+
+Dynamische QR-Codes funktionieren auch auf selbst gehosteten Instanzen:
+
+- `NEXT_PUBLIC_SHORT_LINK_BASE_URL` legt den Origin der Short Links fest. Standardmäßig ist es deine App-URL.
+- `SCAN_HASH_SALT` legt den geheimen Salt für Besucher-Hashes fest. Ohne ihn wird einer aus `BETTER_AUTH_SECRET` abgeleitet.
+- Land, Region und Stadt stammen aus den Geo-Headern von Vercel. Hinter Cloudflare ist nur das Land verfügbar (`CF-IPCountry`); anderswo werden Standorte als unbekannt angezeigt.
+- Gebietsregeln verwenden die IP-Koordinaten von Vercel (`x-vercel-ip-latitude`, `x-vercel-ip-longitude`), wenn ein Scanner keinen Standort geteilt hat. Anderswo greifen sie nur bei Scans mit geteiltem Standort.
+- Rate Limits gelten, wenn Upstash Redis konfiguriert ist.

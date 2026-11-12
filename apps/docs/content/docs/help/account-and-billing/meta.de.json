@@ -1,0 +1,17 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Konto und Abrechnung",
+  "icon": "CreditCard",
+  "pages": [
+    "plans",
+    "change-plan",
+    "invoices",
+    "pay-by-invoice",
+    "cancel",
+    "never-hostage",
+    "affiliate-program",
+    "sign-in",
+    "export-your-data",
+    "delete-your-account"
+  ]
+}

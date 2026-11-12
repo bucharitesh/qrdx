@@ -1,0 +1,60 @@
+---
+title: "QR-Code-Karte"
+description: "Eine Karte mit einem QR-Code in einem „Scan me\"-Rahmen, einem Titel, einer Beschreibung und Platz für Aktionen."
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## Installation [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## Verwendung [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+Alles, was du als Children übergibst, wird im Footer der Karte angezeigt, zum Beispiel ein Kopier-Button oder ein [Download-Menü](/docs/components/qr-code-download).
+
+## Beispiele [#examples]
+
+### Rahmen [#frames]
+
+`frame` setzt den Call-to-Action unter den Code (`"bottom"`), über den Code (`"top"`) oder lässt den Rahmen weg (`"none"`). Mit `cta` änderst du das Label, und mit `frameClassName` gestaltest du den Rahmen um, zum Beispiel in deiner Markenfarbe.
+
+<ComponentPreview name="qr-code-card-frames" />
+
+Der Rahmen verwendet standardmäßig die Farben `foreground` und `background` deines Themes und bleibt dadurch im hellen und im dunklen Modus gut lesbar. Der Code selbst behält einen hellen Hintergrund, den jeder Scanner lesen kann.
+
+### Den Code gestalten [#styling-the-code]
+
+`qr` akzeptiert jede qrdx-Stiloption: `fgColor`, `bgColor`, Verläufe, `bodyPattern`, Eckenmuster, `logo` und `templateId`.
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## API-Referenz [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+Alle weiteren Props, etwa `className`, werden an die [Card](https://ui.shadcn.com/docs/components/card) weitergegeben.

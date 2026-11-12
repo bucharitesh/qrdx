@@ -1,0 +1,153 @@
+---
+title: "Rahmen & Druck"
+description: "Call-to-Action-Rahmen, die offizielle Rahmenbibliothek, ein „Wird er gescannt?\"-Score und druckfertiger PDF-Export."
+icon: Frame
+---
+
+Füge einen „Scan me"-Rahmen hinzu, prüfe vor der Veröffentlichung, ob ein Design sich scannen lässt, und exportiere eine Vektordatei in exakter physischer Größe.
+
+## Call-to-Action-Rahmen [#call-to-action-frames]
+
+Die Prop `frame` zeichnet einen Rahmen mit einem kurzen Text um den Code. Sie funktioniert bei `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` und allen Download-Helfern.
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com/menu"
+  frame={{ style: "banner-bottom", text: "Scan for the menu", color: "#1e3a8a" }}
+/>
+```
+
+Der Rahmen wird **um** den Code herum hinzugefügt: Die Ausgabe wird größer, und die QR-Module und die Ruhezone werden nie überdeckt, daher bleibt die Scanbarkeit unverändert. Ein heller Abstand in der Hintergrundfarbe des Codes trennt den Code vom Rahmen.
+
+| Option | Standard | Hinweise |
+| --- | --- | --- |
+| `style` | — | Einer der {facts.frameStyles} Stile unten oder `none` (`FRAME_STYLES`) |
+| `text` | `"Scan me"` | Bis zu 24 Zeichen. Mit `""` blendest du den Text aus |
+| `color` | `#000000` | Rahmenfarbe (`gradient-border`: Startfarbe, Standard Violett) |
+| `textColor` | Weiß auf dem Rahmen, `color` auf hellen Flächen | Textfarbe |
+| `secondaryText` | keiner | Zweiter Text, bis zu 24 Zeichen: das untere Band von `banner-top-bottom`, der untere Bogen von `circle`, die Fußzeile von `menu-card` |
+| `secondaryColor` | `#db2777` | Endfarbe von `gradient-border` |
+| `fontScale` | `1` | Textgröße von 0.5 bis 1.5; Texte werden trotzdem verkleinert, damit sie passen |
+
+Stile:
+
+- Banner und Rahmenlinien: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (Eckklammern)
+- Sprechblasen: `speech-bubble`, `speech-bubble-top`, `chat-bubble`
+- Abzeichen: `circle` (Text rund um einen Ring), `badge` (Band), `sticker` (ausgestanzt mit Schatten)
+- Objekte: `polaroid`, `phone`, `ticket`, `tag` (Anhänger mit Loch), `envelope`, `menu-card`
+
+Alle Stile siehst du, direkt in deinem Browser dekodiert, unter [Formen, Augen und Rahmen](/docs/styles#frames). Jeder Rahmen besteht aus einfachen Formen und Text mit deckenden Farben, deshalb stimmen SVG-, PNG-, PDF- und EPS-Exporte überein (der Verlaufsrahmen wird in feinen einfarbigen Stufen gezeichnet, und die gebogenen Buchstaben des Rahmens `circle` sind in jedem Format gedrehter Text).
+
+```tsx
+<QRCode
+  value="https://example.com"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com", fontScale: 1.2 }}
+/>
+```
+
+Der Text verwendet den Systemschrift-Stack, es wird also nichts heruntergeladen. Weil die Ausgabe größer wird, nutze `getFrameDimensions(size, frame)`, wenn du die endgültige Breite und Höhe brauchst:
+
+```ts
+import { getFrameDimensions } from "qrdx";
+
+getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
+```
+
+`FRAME_STYLES`, `frameSchema` (zod) und die Typen `QRFrame` / `FrameStyle` werden außerdem aus `qrdx/types` exportiert, für die serverseitige Validierung.
+
+### In der CLI [#in-the-cli]
+
+```bash
+qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
+```
+
+`--frame-color` und `--frame-text-color` erwarten Hex-Farben. Wenn du Text oder Farben ohne `--frame` angibst, wird `banner-bottom` verwendet.
+
+## Offizielle Rahmen [#official-frames]
+
+Zusätzlich zu den integrierten Stilen bietet QRdx {facts.officialFrames} offizielle Rahmen: fertige Designs für Call-to-Actions, Restaurants und Cafés, Geschäfte und Verpackungen, Events und Hochzeiten, Hotels, Reisen und Immobilien, Gesundheit, Fitness und Bildung sowie Business und Social. {facts.seasonalFrames} davon sind für Feiertage und Jahreszeiten, vom Mondneujahr, Holi, Eid und Diwali bis zu Hanukkah, Ostern, Thanksgiving und Weihnachten. Jeder ist eine Rahmenspezifikation mit Texten und Farben, die du ändern kannst, steht unter CC0, und jeder wurde darauf getestet, dass er sich aus Handy-Entfernung scannen lässt.
+
+Öffne im [Playground](/playground) **Rahmen** und dann **Mehr**. Suche nach Name, Verwendungszweck oder Feiertag oder wähle eine Gruppe. Rahmen für die anstehenden Feiertage und Jahreszeiten stehen zuerst. Du findest sie auch in der [Community](/community/frames), veröffentlicht von @qrdx.
+
+Die Engine exportiert sie als `OFFICIAL_FRAMES`:
+
+```tsx
+import { getOfficialFrame, QRCode } from "qrdx";
+
+const diwali = getOfficialFrame("diwali-diya"); // undefined for an unknown id
+
+{diwali && (
+  <QRCode
+    value="https://example.com/offers"
+    frame={{ style: "custom", spec: diwali.spec, text: "Scan for offers" }}
+  />
+)}
+```
+
+`OFFICIAL_FRAME_INDEX` listet jeden Rahmen ohne seine Spezifikation auf, sodass eine Auswahl die ganze Bibliothek anzeigen und die Spezifikationen erst bei Bedarf laden kann. In der [Image API](/docs/developers/image-api#community-items) und im [MCP-Server](/docs/developers/mcp) verwendest du einen offiziellen Rahmen als Community-Element, zum Beispiel `item=frame:diwali-diya`.
+
+## Wird er gescannt? [#will-it-scan]
+
+`getScanScore` schätzt, wie zuverlässig sich ein Design scannen lässt. Die Funktion läuft im Browser und lädt [jsQR](https://github.com/cozmo/jsQR) bei Bedarf nach.
+
+```ts
+import { getScanScore } from "qrdx";
+
+const { score, grade, checks } = await getScanScore({
+  value: "https://example.com",
+  bodyPattern: "circle",
+  cornerEyePattern: "gear",
+});
+// score: 0–100, grade: "great" | "ok" | "risky" | "fails"
+// checks: [{ id, passed, message, fix? }]
+```
+
+Das wird geprüft:
+
+- **Dekodierung bei 96, 160 und 320 px.** Das Design wird in jeder Breite gerendert, mit kameraähnlicher Unschärfe und Kontrastverlust versehen und einige Male in leicht abweichenden Maßstäben dekodiert.
+- **Kontrast** zwischen jeder Codefarbe (einschließlich Verlaufsstopps, Augen- und Punktfarben) und dem Hintergrund sowie ob der Code dunkel auf hell ist.
+- **Logo-Abdeckung** im Vergleich zu dem, was die Fehlerkorrekturstufe wiederherstellen kann.
+- **Ruhezone**: der Rand plus der Abstand, den ein Rahmen hinzufügt.
+- **Risiko durch die Augenform**: `circle`-Augen werden von manchen Scanner-Apps womöglich nicht erkannt (und die eingestellten `curly`-Augen scheitern an strengen Dekodern, falls ein gespeichertes Design sie noch verwendet).
+- **Stilpaare** (`style-pair`): Formen, die in unseren Dekodiertests zusammen scheitern, etwa `small-square`-Punkte neben eckigen Augen, sowie eingestellte Zentren in gespeicherten Designs (siehe `getStylePairRisk`).
+
+`getImageScanScore(fileOrImage)` macht dasselbe für ein vorhandenes Bild: Die Funktion liefert den dekodierten Inhalt sowie Prüfungen zu Dekodierung, Kontrast, Polarität, Ruhezone und Auflösung, gemessen an den Pixeln. Der [Scan-Checker](/tools/scan-checker) baut darauf auf.
+
+<Callout type="info">
+  Der Score ist eine Heuristik auf Basis eines einzigen Open-Source-Decoders. Kamera-Apps auf dem Handy sind oft nachsichtiger. Verstehe ihn also als Orientierung und teste wichtige Drucke mit einem Probe-Scan.
+</Callout>
+
+## Druckfertiger Export [#print-ready-export]
+
+`downloadPrintPDF` schreibt ein Vektor-PDF in exakter physischer Größe. Module, Augen und Rahmen sind Vektorpfade (ein Logo bleibt ein Rasterbild).
+
+```ts
+import { downloadPrintPDF, downloadPrintSVG, getPrintLayout } from "qrdx";
+
+const props = { value: "https://example.com", frame: { style: "banner-bottom" } } as const;
+
+await downloadPrintPDF(props, {
+  size: 40, // width of the code itself
+  unit: "mm", // or "in"
+  bleed: 3, // millimetres on every side
+  cropMarks: true,
+  colorMode: "cmyk",
+});
+
+await downloadPrintSVG(props, { size: 1.5, unit: "in" }); // width="…in" height="…in"
+
+const layout = getPrintLayout(props, { size: 40 });
+layout.trimWidth; // finished width in mm, frame included
+layout.maxScanDistance; // 400 (mm)
+```
+
+- `size` ist die Breite des Codes; ein Rahmen vergrößert das fertige Maß.
+- Mit Beschnitt reicht der Hintergrund (oder die Farbe eines eckigen Rahmens) über die Schnittkante hinaus, sodass beim Zuschneiden kein weißer Streifen bleibt. Schnittmarken liegen außerhalb des Beschnitts.
+- `colorMode: "cmyk"` verwendet eine einfache Umrechnung (`rgbToCmyk`: K = 1 − max(R, G, B), kein ICC-Profil; reines Schwarz wird nur mit K gedruckt). Bitte deine Druckerei um eine farbverwaltete Umrechnung, wenn exakte Markenfarben wichtig sind.
+- Lineare und radiale Verläufe werden im PDF als weiche Verläufe gedruckt, in CMYK, wenn das PDF CMYK ist; das Druck-SVG behält sie, bleibt aber RGB.
+- Rahmentext im PDF verwendet Helvetica Bold, daher werden Zeichen außerhalb von Latin-1 womöglich nicht dargestellt. Nutze für andere Schriften das SVG.
+- `getQRAsPrintPDF` und `getQRAsPrintPDFBuffer` geben die Datei zurück, statt sie herunterzuladen, und funktionieren auch in Node.
+
+**Wie groß du drucken solltest:** Ein Code lässt sich aus etwa dem Zehnfachen seiner Breite scannen, also Größe ≈ Scan-Entfernung ÷ 10 (2 cm breit für 20 cm). Dichtere Codes brauchen mehr; der [Druckgrößen-Rechner](/tools/print-size) berücksichtigt das.

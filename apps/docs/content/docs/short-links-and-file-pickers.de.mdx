@@ -1,0 +1,95 @@
+---
+title: "Kurzlinks und Dateiauswahl"
+description: "Kürze den Link eines QR-Codes mit deinem eigenen Bitly-, Rebrandly- oder Short.io-Konto oder codiere einen Dropbox-Freigabelink."
+icon: Blocks
+---
+
+Verbinde ein Konto unter [Einstellungen → Integrationen](/settings/integrations). Es erscheint dann im QR-Editor beim Typ **URL**, im Menü **Link verwenden aus…** neben dem Feld **Website-Adresse**. Unter **Deine Konten** steht bei jedem Dienst, was er kann:
+
+- **Kürzen**: Bitly, Rebrandly oder Short.io. Erstelle einen Link unter **Neu erstellen** oder wähle unter **Vorhandenen verwenden** einen, den du schon hast. Der QR-Code codiert diesen Kurzlink. Du kannst also später in diesem Dienst ändern, wohin er zeigt, und der Dienst zählt die Klicks.
+- **Datei**: Dropbox<IfAvailable integration="onedrive">, OneDrive</IfAvailable><IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>. Durchsuche deine Dateien oder suche gezielt und wähle dann eine Datei oder einen Ordner. QRdx erstellt den Freigabelink des Elements und der QR-Code codiert ihn.
+
+Dienste, die du noch nicht verbunden hast, findest du unten im selben Menü unter **Konto verbinden**.
+
+Auch gehostete Seiten können Dateien aus der Cloud nutzen: Bei PDF-, Audio-, Video- und Download-Blöcken gibt es neben den Upload-Buttons **Aus Dropbox**<IfAvailable integration="onedrive">, **Aus OneDrive**</IfAvailable><IfAvailable integration="box">, **Aus Box**</IfAvailable>.
+
+Integrationen gehören zu deinem Benutzerkonto. Token und API-Schlüssel werden verschlüsselt gespeichert und du kannst die Verbindung jederzeit trennen.
+
+## Kurzlinks [#short-links]
+
+| Dienst | So verbindest du | Domains | Back-Half |
+| --- | --- | --- | --- |
+| Bitly | Mit Bitly anmelden oder ein generisches Zugriffstoken einfügen (Settings → Developer settings → API) | bit.ly und deine eigenen Domains | Wird von Bitly vergeben |
+| Rebrandly | API-Schlüssel einfügen (Account → API keys) | rebrand.ly und deine eigenen Domains | Dein eigener Slashtag oder zufällig |
+| Short.io | Geheimen API-Schlüssel einfügen (Integrations & API → API) | Deine Short.io-Domains | Dein eigener Pfad oder zufällig |
+
+Auf der Einstellungsseite jeder Integration siehst du deine Domains und kannst die Standard-Domain für neue Links festlegen. Du kannst pro Link trotzdem eine andere Domain wählen.
+
+<Callout type="info" title="Ziel später ändern">
+QRdx erstellt den Link. Das Ziel änderst du in Bitly, Rebrandly oder Short.io. Bei Bitly können nur kostenpflichtige Tarife das Ziel eines Links ändern.
+</Callout>
+
+Wenn du das Ziel lieber direkt in QRdx bearbeiten möchtest, mit Scan-Statistiken, nutze stattdessen einen [dynamischen QR-Code](/docs/dynamic-qr-codes).
+
+## Dateiauswahl [#file-pickers]
+
+**Dropbox** codiert einen Freigabelink (neu erstellt oder den vorhandenen wiederverwendet). Jeder mit dem Link kann ihn öffnen, außer dein Team erlaubt nur Team-Links.
+
+<IfAvailable integration="onedrive">
+
+**OneDrive** codiert einen Freigabelink mit reinem Leserecht. Jeder mit dem Link kann ihn öffnen. Nur deine Organisation kann das, wenn dein Admin „Jeder“-Links deaktiviert hat.
+
+</IfAvailable>
+
+<IfAvailable integration="box">
+
+**Box** codiert den Freigabelink des Elements, eingestellt auf „Personen mit dem Link“. Jeder mit dem Link kann ihn öffnen. Nur dein Unternehmen kann das, wenn dein Admin es so vorschreibt.
+
+</IfAvailable>
+
+<IfAvailable integration="notion">
+
+**Notion** codiert den „Im Web veröffentlichen“-Link der Seite. Jeder kann sie öffnen, sobald die Seite veröffentlicht ist.
+
+</IfAvailable>
+
+Wenn nicht jeder den Link öffnen kann, weist QRdx direkt nach der Auswahl darauf hin. So führt ein gedruckter Code niemanden auf eine Anmeldeseite.
+
+<IfAvailable integration="notion">
+
+**Notion-Seiten.** QRdx sieht nur die Seiten, die du mit ihm teilst: Notion fragt beim Verbinden, welche das sein sollen. Um später weitere hinzuzufügen, öffne die Seite in Notion, klicke auf **•••** → **Verbindungen** und füge QRdx hinzu (oder verbinde das Konto neu und wähle sie aus).
+
+Die Notion-API kann keine Seite veröffentlichen. Veröffentliche sie selbst (**Teilen** → **Veröffentlichen** → **Im Web veröffentlichen**) und wähle sie dann erneut aus, damit QRdx den öffentlichen Link verwendet.
+
+</IfAvailable>
+
+### Dateien auf gehosteten Seiten [#files-on-hosted-pages]
+
+Bei Dropbox<IfAvailable integration="box"> und Box</IfAvailable> erhalten Seitenblöcke einen direkten Link zur Datei, damit Audio- und Videoplayer und der PDF-Viewer sie laden können.<IfAvailable integration="onedrive"> OneDrive-Freigabelinks öffnen den OneDrive-Viewer, deshalb zeigt ein Block sie als Link an.</IfAvailable>
+
+## Verbindung trennen [#disconnecting]
+
+Beim Trennen wird das gespeicherte Token gelöscht. Bei Dropbox<IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable> widerruft QRdx es außerdem beim Dienst. Bei Bitly, Rebrandly und Short.io löschst du den Schlüssel zusätzlich im jeweiligen Dienst, wenn du ihn nicht mehr brauchst<IfAvailable integration="onedrive">; bei OneDrive entfernst du QRdx aus den App-Berechtigungen deines Microsoft-Kontos</IfAvailable>.
+
+Bereits erstellte QR-Codes funktionieren weiter: Sie enthalten den Kurzlink oder Freigabelink, nicht dein Token.
+
+## Self-Hosting [#self-hosting]
+
+Rebrandly und Short.io brauchen auf dem Server nichts. Die anderen brauchen in jedem Dienst eine App, deren Client-ID und Secret in der Umgebung hinterlegt sind. Ohne sie zeigt die Integration „Nicht konfiguriert“. Bitly funktioniert auch ohne sie, über eingefügte Zugriffstoken.
+
+| Integration | Variablen | Redirect-URI |
+| --- | --- | --- |
+| Bitly (Anmeldung) | `BITLY_CLIENT_ID`, `BITLY_CLIENT_SECRET` | `<app url>/api/integrations/bitly/callback` |
+| Dropbox | `DROPBOX_CLIENT_ID`, `DROPBOX_CLIENT_SECRET` | `<app url>/api/integrations/dropbox/callback` |
+| OneDrive | `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET` | `<app url>/api/integrations/onedrive/callback` |
+| Box | `BOX_CLIENT_ID`, `BOX_CLIENT_SECRET` | `<app url>/api/integrations/box/callback` |
+| Notion | `NOTION_CLIENT_ID`, `NOTION_CLIENT_SECRET` | `<app url>/api/integrations/notion/callback` |
+
+`<app url>` ist in der Entwicklung `http://localhost:3000`, sonst deine Produktions-URL. Jede Integration braucht in der Produktion außerdem `INTEGRATION_ENCRYPTION_KEY`, der gespeicherte Token und Schlüssel verschlüsselt.
+
+Anzufordernde Scopes:
+
+- **Dropbox:** `account_info.read`, `files.metadata.read`, `sharing.read`, `sharing.write`
+- **OneDrive:** `offline_access`, `Files.ReadWrite` (Microsoft Graph braucht Schreibzugriff, um Freigabelinks zu erstellen)
+- **Box:** Alle Dateien und Ordner lesen und schreiben (`root_readwrite`)
+- **Bitly, Notion:** keine Scopes. Notion fragt die Nutzer, welche Seiten sie teilen möchten

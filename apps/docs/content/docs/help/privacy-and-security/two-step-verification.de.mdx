@@ -1,0 +1,133 @@
+---
+title: "Zwei-Schritt-Verifizierung"
+description: "Füge jeder Anmeldung einen zweiten Schritt mit einem Passkey oder einer Authenticator-App hinzu, bewahre Backup-Codes auf und komm wieder rein, wenn du dein Handy verlierst."
+---
+
+Die Zwei-Schritt-Verifizierung (auch 2FA genannt) fügt der Anmeldung einen zweiten Schritt hinzu. Nachdem du dich mit einem E-Mail-Code, Google oder GitHub<IfAvailable feature="sso"> (oder dem Single Sign-on deines Workspace)</IfAvailable> angemeldet hast, fragt QRdx nach <IfAvailable feature="passkeys">deinem Passkey oder </IfAvailable>einem 6-stelligen Code aus einer Authenticator-App. Wer Zugriff auf dein E-Mail-Postfach oder dein Google-Konto bekommt, kommt ohne diesen Schritt trotzdem nicht in QRdx hinein.
+
+<IfAvailable feature="passkeys">
+Ein [Passkey](/docs/help/privacy-and-security/passkeys) bestätigt mit deinem Fingerabdruck, deinem Gesicht, deiner Bildschirmsperre oder einem Sicherheitsschlüssel, dass du es bist. Er funktioniert nur auf der eigenen Website von QRdx, deshalb kann eine täuschend ähnliche Seite ihn nicht abgreifen.
+</IfAvailable>
+
+Eine Authenticator-App funktioniert ebenfalls: jede App, die 6-stellige Codes anzeigt, die sich alle 30 Sekunden ändern, auch die Funktion für Einmalcodes in den meisten Passwortmanagern. QRdx schickt keine Codes für den zweiten Schritt per E-Mail oder SMS.
+
+Du kannst beides einrichten und bei der Anmeldung die Methode nutzen, die gerade griffbereit ist.
+
+## Aktivieren [#turn-it-on]
+
+1. Gehe zu **Einstellungen** → **Profil & Sicherheit**.
+2. Klicke unter **Zwei-Schritt-Verifizierung** auf **Aktivieren** und [bestätige, dass du es bist](#confirm-its-you).
+3. Richte deinen zweiten Schritt ein<IfAvailable feature="passkeys">: Wähle **Passkey** oder **Authenticator-App**</IfAvailable>, wie unten beschrieben.
+4. Speichere deine 10 Backup-Codes. Kopiere sie oder lade sie als Textdatei herunter und bewahre sie an einem sicheren Ort auf, zum Beispiel in einem Passwortmanager. QRdx zeigt sie nur einmal an. Setze den Haken bei **Ich habe meine Backup-Codes gespeichert** und klicke auf **Fertig**.
+
+<IfAvailable feature="passkeys">
+Für einen Passkey behältst du den vorgeschlagenen Namen (dein Browser und System, z. B. „Chrome on macOS“) oder gibst einen eigenen ein, klickst auf **Weiter** und lässt deinen Browser den Passkey speichern.
+</IfAvailable>
+
+Für eine Authenticator-App scannst du den QR-Code mit der App oder gibst den darunter angezeigten Schlüssel ein. Gib den 6-stelligen Code ein, den die App anzeigt, und klicke auf **Verifizieren**.
+
+Die Zwei-Schritt-Verifizierung ist jetzt aktiv, und alle anderen Browser und Geräte, die bei deinem Konto angemeldet sind, werden abgemeldet. Jedes muss sich neu anmelden, jetzt mit dem zweiten Schritt. Der Browser, in dem du sie aktiviert hast, bleibt angemeldet.<IfAvailable feature="passkeys"> Um die andere Methode später hinzuzufügen, nutze denselben Bereich. Deine vorhandenen Backup-Codes bleiben erhalten, und niemand wird abgemeldet.</IfAvailable>
+
+<IfAvailable feature="passkeys">
+Wenn du einen Passkey hinzugefügt hast, bevor die Zwei-Schritt-Verifizierung einen nutzen konnte, steht in den Einstellungen **Dein Passkey kann dein zweiter Schritt sein**. Klicke auf **Aktivieren**, bestätige, dass du es bist, bestätige mit diesem Passkey, dass du es bist, und speichere deine Backup-Codes. Dadurch werden auch deine anderen Geräte abgemeldet.
+</IfAvailable>
+
+Wir schicken eine E-Mail an die Adresse deines Kontos, wenn die Zwei-Schritt-Verifizierung aktiviert oder deaktiviert wird, eine Methode hinzugefügt oder entfernt wird, neue Backup-Codes erstellt werden oder ein Backup-Code verwendet wird. Wir schicken sie auch, wenn der Support darum gebeten wird, die Zwei-Schritt-Verifizierung für dich zu deaktivieren.
+
+## Damit anmelden [#sign-in-with-it]
+
+Melde dich so an, wie du es immer tust. Danach fragt QRdx nach dem zweiten Schritt.
+
+<IfAvailable feature="passkeys">
+Wenn du einen Passkey hast, öffnet sich die Passkey-Abfrage deines Browsers von selbst. Manche Browser öffnen sie erst nach einem Klick: Klicke dann auf **Mit Passkey fortfahren**. Wenn du die Abfrage geschlossen hast oder sie abgelaufen ist, versuche es erneut oder wähle eine andere Methode.
+</IfAvailable>
+
+Unterhalb des Schritts wechselst du mit **Authenticator-Code verwenden** und **Backup-Code verwenden** zu den anderen Methoden, die du hast. QRdx merkt sich in diesem Browser, welche du zuletzt genutzt hast, und beginnt beim nächsten Mal damit.
+
+Authenticator-Codes ändern sich alle 30 Sekunden. Wenn einer abgelehnt wird, warte also auf den nächsten.
+
+Jeder Anmeldeschritt erlaubt 5 falsche Codes<IfAvailable feature="passkeys">, und ein Passkey, der die Verifizierung nicht besteht, zählt als einer</IfAvailable>. Danach musst du die Anmeldung neu starten. Nach 10 falschen Codes in Folge nimmt QRdx für dein Konto 15 Minuten lang keine Codes mehr an.
+
+Der Schritt läuft nach 10 Minuten ab. Melde dich in dem Fall erneut an.
+
+## Backup-Codes [#backup-codes]
+
+Ein Backup-Code ersetzt deinen zweiten Schritt, falls du dein Handy<IfAvailable feature="passkeys"> oder deinen Passkey</IfAvailable> nicht zur Hand hast. Klicke beim zweiten Schritt auf **Backup-Code verwenden** und gib einen ein. Die Codes sehen so aus: `ABCDE-FGH23`: Großbuchstaben und die Ziffern 2 bis 9, ohne 0, O, 1 oder I, die sich verwechseln lassen. Du kannst sie in Kleinbuchstaben und mit oder ohne Bindestrich eingeben. Jeder Code funktioniert nur einmal.
+
+Jedes Mal, wenn ein Backup-Code verwendet wird, sei es zur Anmeldung oder um zu bestätigen, dass du es bist, schicken wir eine E-Mail an die Adresse deines Kontos mit der Anzahl der Codes, die du noch hast. Wenn du es nicht warst, hat jemand deine Backup-Codes: Wende dich sofort an den Support.
+
+In den Einstellungen siehst du, wie viele Codes du noch hast. Wenn nur noch 2 oder weniger übrig sind, erstelle neue: Klicke auf **Neue Codes** und bestätige, dass du es bist. Deine alten Codes funktionieren dann nicht mehr.
+
+## Vertrauenswürdige Geräte [#trusted-devices]
+
+Setze beim zweiten Schritt den Haken bei **Auf diesem Gerät 30 Tage lang nicht mehr fragen**, um ihn in diesem Browser 30 Tage lang zu überspringen. Nutze das nur auf einem Gerät, das dir gehört. Wenn du die Zwei-Schritt-Verifizierung deaktivierst, werden alle vertrauenswürdigen Geräte vergessen.
+
+## Welche Anmeldungen danach fragen [#which-sign-ins-ask-for-it]
+
+Alle: E-Mail-Codes, Google und GitHub<IfAvailable feature="sso"> sowie Workspace-Single-Sign-on</IfAvailable>. Das schließt auch die erneute Anmeldung in einem Browser ein, in dem du bereits angemeldet bist.
+
+<IfAvailable feature="passkeys">
+Die Anmeldung mit **Mit Passkey fortfahren** ist die Ausnahme. Eine Passkey-Anmeldung nutzt bereits zwei Faktoren, das Gerät und deinen Fingerabdruck, dein Gesicht oder deine Bildschirmsperre, deshalb fragt QRdx nicht nach einem zweiten Schritt. QRdx akzeptiert nur Passkeys, die dich auf diese Weise prüfen.
+</IfAvailable>
+
+## Methoden ändern [#change-your-methods]
+
+Unter **Einstellungen** → **Profil & Sicherheit** richtest du unter **Zwei-Schritt-Verifizierung** die Authenticator-App ein oder entfernst sie<IfAvailable feature="passkeys"> und fügst Passkeys hinzu, benennst sie um oder entfernst sie</IfAvailable>. Bei jeder Änderung musst du bestätigen, dass du es bist.
+
+Wenn du deine letzte Methode entfernst, wird die Zwei-Schritt-Verifizierung deaktiviert und deine Backup-Codes funktionieren nicht mehr. QRdx weist dich darauf hin, bevor du bestätigst.
+
+## Bestätigen, dass du es bist [#confirm-its-you]
+
+Vor einer Änderung an der Sicherheit deines Kontos bittet QRdx dich zu bestätigen, dass du es bist, auch wenn du angemeldet bist. Das gilt für:
+
+- das Ändern deiner E-Mail-Adresse;
+- das Löschen deines Kontos;
+- das Aktivieren oder Deaktivieren der Zwei-Schritt-Verifizierung und neue Backup-Codes;
+- das Hinzufügen oder Entfernen der Authenticator-App<IfAvailable feature="passkeys"> sowie das Hinzufügen, Umbenennen oder Entfernen eines Passkeys</IfAvailable>;
+- das Verknüpfen oder Trennen eines Google- oder GitHub-Kontos;
+- das Erstellen eines API-Schlüssels, das Erstellen einer OAuth-App oder das Erzeugen eines neuen Client-Secrets dafür;
+- das Genehmigen einer App, die dein QRdx-Konto nutzen möchte, auf dem Bildschirm **Autorisieren**;
+- das Hinzufügen eines Webhook-Endpunkts, das Ändern der URL eines Endpunkts sowie das Anzeigen oder Rotieren seines Signing-Secrets;
+- das Hinzufügen eines Slack- oder Discord-Benachrichtigungs-Webhooks oder das Verbinden einer Integration, die deine Scans oder Formularantworten an ein anderes Tool sendet;
+- in einem Workspace: ihn löschen, die Rolle einer Person ändern, jemanden entfernen, einen Admin per E-Mail oder mit einem Beitrittslink einladen und die [Zwei-Schritt-Verifizierung verpflichtend machen](/docs/help/teams/require-two-step-verification) oder nicht mehr verlangen.
+
+<IfAvailable feature="sso">
+Dasselbe gilt für das Erstellen, Bearbeiten, Verifizieren oder Löschen der Single-Sign-on-Verbindung eines Workspace sowie für das Verlangen von Single Sign-on.
+</IfAvailable>
+
+Bei aktivierter Zwei-Schritt-Verifizierung bestätigst du mit <IfAvailable feature="passkeys">deinem Passkey, </IfAvailable>einem Code aus deiner Authenticator-App oder einem Backup-Code (der dann verbraucht ist). QRdx bietet hier keinen per E-Mail gesendeten Code an, deshalb reicht der Zugriff auf dein Postfach nicht, um deine Sicherheitseinstellungen zu ändern.
+
+Bei deaktivierter Zwei-Schritt-Verifizierung bestätigst du mit einer dieser Möglichkeiten:
+
+- einem 6-stelligen Code, den QRdx dir per E-Mail schickt;
+- einer erneuten Anmeldung mit einem Google- oder GitHub-Konto, das du verknüpft hast<IfAvailable feature="sso">, oder mit dem Single Sign-on deines Workspace, wenn er OIDC nutzt</IfAvailable>.
+
+<IfAvailable feature="passkeys">
+Auch dein Passkey funktioniert, falls du einen hast.
+</IfAvailable>
+
+Die erneute Anmeldung führt dich zu dieser Anmeldung, wo du aufgefordert wirst, dein Konto auszuwählen oder dich bei ihm anzumelden, und dann zurück zur selben Seite. Deine Änderung wird nicht gespeichert, während du weg bist, nimm sie also nach deiner Rückkehr erneut vor. Nutze das Konto, das du verknüpft hast: QRdx wechselt nicht zu einem anderen Konto und erstellt auch keins.
+
+Wenn du also nicht auf dein Postfach zugreifen kannst, kannst du trotzdem auf andere Weise bestätigen. Wenn dir keine davon möglich ist, lies [Zugriff auf deine E-Mail verloren](/docs/help/account-and-billing/sign-in#lost-access-to-your-email).
+
+Eine Bestätigung gilt 10 Minuten lang in diesem Browser, mehrere Änderungen hintereinander verlangen sie also nur einmal.
+
+Auch eine Anmeldung zählt 10 Minuten lang in diesem Browser als Bestätigung. Bei aktivierter Zwei-Schritt-Verifizierung gilt das nur für eine Anmeldung, bei der du den zweiten Schritt beantwortet hast<IfAvailable feature="passkeys"> oder **Mit Passkey fortfahren** genutzt hast</IfAvailable>, nicht für eine, bei der ein vertrauenswürdiges Gerät ihn übersprungen hat.<IfAvailable feature="sso"> QRdx über das App-Dashboard deines Identity Providers zu öffnen zählt ebenfalls nicht, es sei denn, du hast deinen zweiten Schritt beantwortet.</IfAvailable>
+
+Das Abmelden deiner anderen Geräte verlangt nie eine Bestätigung. Wenn also jemand anderes in dein Konto gelangt ist, kannst du ihn sofort abmelden.
+
+## Ausschalten [#turn-it-off]
+
+Gehe zu **Einstellungen** → **Profil & Sicherheit**, klicke unter **Bestätigung in zwei Schritten** auf **Ausschalten** und bestätige, dass du es bist. Deine Backup-Codes und, falls vorhanden, die Einrichtung deiner Authenticator-App werden gelöscht.
+
+Wenn ein Workspace, in dem du Mitglied bist, [die Bestätigung in zwei Schritten vorschreibt](/docs/help/teams/require-two-step-verification), kannst du ihn erst wieder öffnen, nachdem du sie erneut eingeschaltet hast.
+
+## Handy und Backup-Codes verloren [#lost-your-phone-and-your-backup-codes]
+
+Wenn du noch <IfAvailable feature="passkeys">einen Passkey, </IfAvailable>deine Authenticator-App oder einen Backup-Code hast, melde dich damit an und ändere deine Methoden in den Einstellungen.
+
+Wenn du jede Möglichkeit für den zweiten Schritt verloren hast, schreibe von der E-Mail-Adresse deines Kontos aus an [support@qrdx.dev](mailto:support@qrdx.dev) und schildere uns, was passiert ist. Wer uns schreibt, bist vielleicht nicht du. Sobald wir bestätigt haben, dass die Anfrage von dieser Adresse kam, wird das Ausschalten durch den Support deshalb 7 Tage lang zurückgestellt:
+
+- **Wir schicken noch am selben Tag eine E-Mail an diese Adresse.** Bis dahin ändert sich nichts, und du bleibst dort angemeldet, wo du es gerade bist.
+- **Wenn du das nicht angefordert hast, stoppe es.** Melde dich mit deiner Authenticator-App oder einem Backup-Code an: Das bricht den Vorgang ab.<IfAvailable feature="passkeys"> Eine Anmeldung mit einem Passkey tut das nicht, weil das Zurücksetzen für ein verlorenes Gerät gedacht ist und ein Passkey darauf gespeichert sein kann.</IfAvailable> Du kannst auch unter **Bestätigung in zwei Schritten** in **Einstellungen** → **Profil & Sicherheit** auf **Abbrechen** klicken und [bestätigen, dass du es bist](#confirm-its-you), oder auf die E-Mail antworten. Wir schicken dir eine E-Mail, wenn der Vorgang abgebrochen wurde.
+- **An diesem Tag wird die Bestätigung in zwei Schritten ausgeschaltet.** Die Einrichtung deiner Authenticator-App, deine Backup-Codes und deine vertrauenswürdigen Geräte werden gelöscht,<IfAvailable feature="passkeys"> deine Passkeys bleiben erhalten,</IfAvailable> dein Konto wird auf allen Geräten abgemeldet, und wir schicken dir dazu eine E-Mail. Danach meldest du dich wie gewohnt an und schaltest sie wieder ein.

@@ -1,0 +1,49 @@
+---
+title: "Ändern, was ein gedruckter Code öffnet"
+description: "Wandle einen Code mit Website-Link in eine gehostete Seite um, oder eine Seite zurück in einen Link. Der gedruckte Code funktioniert weiter."
+---
+
+Ein dynamischer QR-Code öffnet entweder einen Website-Link oder eine gehostete Seite, und du kannst nach dem Druck zwischen beiden wechseln. Der Kurzlink bleibt gleich. Deshalb öffnet jede gedruckte Kopie beim nächsten Scan die neue Seite oder den neuen Link, und die Scans werden weiter auf demselben Code gezählt.
+
+## Einen Website-Link in eine Seite umwandeln [#turn-a-website-link-into-a-page]
+
+1. Öffne den Code unter **Codes** und klicke auf **Typ ändern**.
+2. Wähle einen Seitentyp und dann eine Vorlage.
+3. Klicke auf **Weiter zum Editor** und erstelle die Seite.
+4. Klicke auf **Veröffentlichen**.
+
+Scans führen weiter zum alten Link, bis du veröffentlichst. Wenn du den Editor verlässt, ohne zu veröffentlichen, ändert sich nichts. Deine unveröffentlichten Änderungen bleiben in diesem Browser gespeichert.
+
+## Eine Seite zurück in einen Link umwandeln [#turn-a-page-back-into-a-link]
+
+1. Öffne den Code und klicke auf **Typ ändern**.
+2. Wähle **Website-Link**, gib die Adresse ein und klicke auf **Zu Website-Link wechseln**.
+
+Die Seite bleibt unter **Seiten** erhalten. Um sie zurückzuholen, öffne **Typ ändern** noch einmal und wähle sie unter **Zurückwechseln** aus.
+
+## Zu einem anderen Seitentyp wechseln [#switch-to-another-page-type]
+
+Wähle unter **Anderer Seitentyp** einen Typ aus. Die neue Seite beginnt mit der Vorlage, die du wählst, und übernimmt aus der alten Seite, was passt: den Seitennamen, die Einstellungen und das Logo sowie alle Blöcke, die auch die Vorlage hat, etwa Kopfbereich, Links oder Kontaktdaten. Der Dialog listet auf, was nicht passt. Das bleibt auf der alten Seite, die unter **Seiten** aufbewahrt wird.
+
+## Was gleich bleibt [#what-stays-the-same]
+
+Kurzlink, Scan-Verlauf, Ordner, Tags, Notizen, QR-Design, Passwort, Zeitplan und Scan-Limit ändern sich nicht.
+
+Manche Einstellungen funktionieren nur mit einem Typ:
+
+- Smart Routing, A/B-Tests, UTM-Parameter und Conversion-Tracking gelten nur für Website-Links.
+- Tracking-Pixel werden nur auf gehosteten Seiten geladen.
+
+Sie bleiben beim Wechsel erhalten und funktionieren wieder, wenn du zurückwechselst. Auf dem Tab **Einstellungen** des Codes steht, welche gespeichert, aber gerade nicht in Gebrauch sind.
+
+## Tarife [#plans]
+
+Eine neue Seite zählt wie jede Seite, die du erstellst, zu den gehosteten Seiten deines Tarifs. Eine Seite, die der Code nicht mehr öffnet, zählt weiter, bis du sie unter **Seiten** löschst. Wenn du zu einer Seite zurückwechselst, die du schon hast, erhöht sich die Zahl nicht. Siehe [Tarife und Limits](/docs/plans-and-limits).
+
+## Einen Wechsel rückgängig machen [#undo-a-switch]
+
+Jeder Wechsel speichert die vorherigen Einstellungen des Codes im **Versionsverlauf**. Wenn du eine frühere Version wiederherstellst, wechselt der Typ zurück, solange die Seite, die der Code geöffnet hat, noch existiert.
+
+## Über die API [#from-the-api]
+
+Sende `kind` mit `PATCH /v1/codes/{id}`. Siehe [Einen Code aktualisieren](/docs/developers/api/update-code).
