@@ -47,6 +47,11 @@ export const MCP_TOOLS: {
   title: string;
   description: string;
   icon: CardIcon;
+  /**
+   * Needs a QRdx API key on the connection. The rest work without one
+   * (tests/api/mcp.test.ts checks this against the registered tools).
+   */
+  needsKey?: true;
 }[] = [
   {
     name: "design_qr",
@@ -89,6 +94,7 @@ export const MCP_TOOLS: {
     description:
       "Saves a design as a theme in your workspace, under the plan's saved-theme limit. Needs a QRdx API key on the connection; every other tool works without one.",
     icon: Save2,
+    needsKey: true,
   },
   {
     name: "generate_barcode",
@@ -103,6 +109,7 @@ export const MCP_TOOLS: {
     description:
       "Keeps a barcode in your workspace's Barcodes to edit and download later. Needs a QRdx API key on the connection.",
     icon: ArchiveAdd,
+    needsKey: true,
   },
   {
     name: "list_qr_styles",
@@ -155,7 +162,17 @@ export const MCP_TOOLS: {
 
 export const MCP_FAQS: { question: string; answer: string }[] = [
   {
-    question: "Do I need an account or an API key?",
+    question: "Can Claude make a QR code?",
+    answer:
+      "Yes, with the QRdx MCP server connected. A language model can't work out a QR code's pattern in its head, so a code it draws on its own rarely scans. Connected to QRdx, Claude calls a tool that renders a real, standard code and shows it in the chat. Add the server URL as a custom connector in Claude, or run the claude mcp add command in Claude Code; ChatGPT, Cursor and VS Code connect the same way.",
+  },
+  {
+    question: "Is the QRdx MCP server free?",
+    answer:
+      "Yes. It's free and open source, and designing, rendering and checking codes needs no account. The codes it makes are static, so they never expire and have no scan limits.",
+  },
+  {
+    question: "Does it need an API key?",
     answer:
       "No, for designing and rendering codes and browsing the community: the QRdx MCP server is public and free, and it keeps no session state. Saving a design to your themes (save_template), saving a barcode (save_barcode) and using a logo you uploaded need a QRdx API key, sent as Authorization: Bearer qrdx_… in your app's settings for the server.",
   },
@@ -188,6 +205,11 @@ export const MCP_FAQS: { question: string; answer: string }[] = [
     question: "Are there limits?",
     answer:
       "Requests are limited to 120 per minute per IP address, and design_qr to 20. Calls with an API key also count toward the workspace's daily API quota. Very long data may not fit in a QR code; the tool then returns an error suggesting a lower error correction level.",
+  },
+  {
+    question: "Is it in the MCP Registry?",
+    answer:
+      "Yes. The hosted server is listed in the official MCP Registry as io.github.bucharitesh/qrdx, so apps and directories that read the registry can find it there.",
   },
   {
     question: "Can I run it myself?",

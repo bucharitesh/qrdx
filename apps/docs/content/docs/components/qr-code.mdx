@@ -76,6 +76,104 @@ The default white background is the safest choice in dark themes: dark modules o
 
 <ComponentPreview name="qr-code-dark-mode" />
 
+## In a Next.js page
+
+`QrCode` is a Client Component (its file starts with `"use client"` because of the download buttons), so a Server Component page can import it and pass server data as props:
+
+```tsx title="app/menu/page.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export default function MenuPage() {
+  return (
+    <QrCode
+      value="https://example.com/menu"
+      caption="Scan to see the menu"
+      filename="menu-qr"
+    />
+  );
+}
+```
+
+The code itself is still rendered on the server, so it's in the page's HTML before the buttons become interactive. For more on rendering codes in the App Router, see [QR codes in Next.js](/docs/nextjs).
+
+## Any content, not only links
+
+`value` is encoded exactly as you pass it, so any QR payload works: a Wi-Fi network, a contact card, `mailto:`, `tel:` or plain text. Set `label` so screen readers announce what the code does rather than the raw payload, which for Wi-Fi includes the password.
+
+```tsx title="components/guest-wifi.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function GuestWifi() {
+  return (
+    <QrCode
+      value="WIFI:T:WPA;S:Cafe Guest;P:sunshine123;;"
+      label="QR code to join the Cafe Guest Wi-Fi"
+      caption="Cafe Guest Wi-Fi"
+    />
+  );
+}
+```
+
+To build the payload from a form, use [Wi-Fi QR Code](/docs/components/wifi-qr-code) or [vCard QR Code](/docs/components/vcard-qr-code), which escape special characters for you.
+
+## A value from an input
+
+```tsx title="components/link-qr-code.tsx"
+"use client";
+
+import { useState } from "react";
+import { QrCode } from "@/components/qr-code";
+
+export function LinkQrCode() {
+  const [value, setValue] = useState("https://example.com");
+  return (
+    <div className="grid justify-items-center gap-4">
+      <input
+        aria-label="Link"
+        className="w-full rounded-md border px-3 py-2"
+        value={value}
+        onChange={(event) => setValue(event.target.value)}
+      />
+      {value ? <QrCode value={value} downloadFormats={[]} /> : null}
+    </div>
+  );
+}
+```
+
+`downloadFormats={[]}` hides the buttons while someone is still typing; show them once the value is final.
+
+## Print-ready downloads
+
+```tsx title="components/table-code.tsx"
+import { QrCode } from "@/components/qr-code";
+
+export function TableCode() {
+  return (
+    <QrCode
+      value="https://example.com/order?table=12"
+      level="H"
+      margin={4}
+      downloadFormats={["svg", "png", "pdf"]}
+      downloadSize={2048}
+      filename="table-12"
+    />
+  );
+}
+```
+
+- **SVG** scales to any size without blurring, so it's the best file for a print shop or a design tool.
+- **PNG** at `downloadSize={2048}` prints sharply up to about 17 cm (6.8 inches) wide at 300 pixels per inch. `downloadSize` takes 50 to 5000 pixels.
+- **PDF** needs the optional `jspdf` package (`npm install jspdf`).
+- `filename` names the file without its extension: `table-12.svg`, `table-12.png`.
+
+## Make sure it scans
+
+- **Contrast.** Dark modules on a light background scan with every reader. A light code on a dark background works on most phone cameras but not on some older scanners.
+- **Quiet zone.** `margin` defaults to 2 modules. Use 4 when the code sits on a photo, a pattern or a dark page.
+- **Logos.** Use `level="H"` with a `logo`, so the code survives the modules the logo covers.
+- **Print size.** A short link scanned from about 25 cm needs a code about 2.5 cm wide; the [print size calculator](/tools/print-size) works it out for other distances.
+- **Test it.** Scan the finished code with a few phones, or upload an image to the [scan checker](/tools/scan-checker).
+
 ## API Reference
 
 <auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />

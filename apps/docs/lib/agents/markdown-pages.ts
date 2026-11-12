@@ -149,7 +149,7 @@ export function mcpMarkdown(origin: URL): string {
     `> ${MCP_INTRO}`,
     [
       `- Endpoint: \`${url}\` (Streamable HTTP)`,
-      "- No account or API key for designing, rendering and the community. Only save_template writes (a theme in an API key's workspace); the server keeps no other data.",
+      "- No account or API key for designing, rendering and the community. Only save_template and save_barcode write (a theme or a barcode in an API key's workspace); the server keeps no other data.",
       `- Connect page: ${abs("/mcp")}`,
       `- Docs: ${abs("/docs/developers/mcp")}`,
       `- Server card: ${mcpServerCardUrl(origin)}`,
@@ -162,7 +162,8 @@ export function mcpMarkdown(origin: URL): string {
     connect,
     "## Tools",
     MCP_TOOLS.map(
-      (tool) => `- \`${tool.name}\` (${tool.title}): ${tool.description}`,
+      (tool) =>
+        `- \`${tool.name}\` (${tool.title}${tool.needsKey ? ", needs an API key" : ", no key"}): ${tool.description}`,
     ).join("\n"),
     "## FAQ",
     faqSection(MCP_FAQS),

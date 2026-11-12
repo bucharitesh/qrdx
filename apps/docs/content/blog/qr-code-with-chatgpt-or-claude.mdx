@@ -1,0 +1,115 @@
+---
+title: "How to Make a QR Code with ChatGPT or Claude (That Actually Scans)"
+description: "Image models draw QR codes that don't hold your link. Connect the free QRdx MCP server to ChatGPT or Claude, or have the assistant write an image URL, then check the code before you print it."
+date: "2026-11-13"
+author: ["ritesh-bucha"]
+category: Education
+tags: ["chatgpt qr code", "claude qr code", "ai qr code generator", "mcp server", "qr code api"]
+image: /blog/qr-code-with-chatgpt-or-claude/cover.svg
+imageAlt: Line drawing of a chat window where an assistant calls the design_qr tool, beside a styled QR code on a stand
+related: ["qr-code-api-guide", "how-big-should-a-qr-code-be"]
+published: true
+---
+
+**Ask ChatGPT or Claude for a QR code and you'll usually get a picture of one, not a code that opens your link.** The fix is to give the assistant a tool that makes real codes. Connect the free QRdx MCP server and the assistant renders a standard QR code in the chat, checks that it scans and gives you SVG and PNG files. If you can't add a connector, the assistant can still write an image URL that returns a real code.
+
+## Why the code in the picture doesn't scan
+
+A QR code is data laid out on a grid. The black and white squares, called modules, spell out your link in binary. Around them sit error-correction bytes calculated from that data, and format bits that tell the scanner how to read the rest. Get enough modules wrong and the error correction can't repair them, so the scanner gives up.
+
+An image model does none of that. It has learned what QR codes look like (three square eyes in the corners, a field of dots between them) and it paints that. Nothing in the process turns your link into bits, so the picture can't contain it. A scanner will usually find nothing, and if it does read something, it won't be your URL.
+
+A chat model that tries to work out the pattern itself, say by writing the SVG by hand, has a different problem. The encoding is exact arithmetic over hundreds of modules, and one wrong bit breaks it. If your assistant can run code, asking it to use a QR library, such as Python's `qrcode` package, does work for a plain black-and-white code. For a styled code, or when you want proof that it scans, use a tool built for the job.
+
+## Connect QRdx to your assistant
+
+MCP (Model Context Protocol) is the open standard that lets AI assistants call outside tools. The QRdx MCP server is free, needs no account or API key, and lives at:
+
+```txt
+https://mcp.qrdx.dev/mcp
+```
+
+The [connect page](/mcp) has one-click buttons for the main apps; the steps below do the same by hand.
+
+### Claude
+
+In Claude on the web or the desktop app, open Customize → Connectors → Add custom connector. Name it QRdx and paste the URL. Leave the advanced OAuth fields empty, since the server needs no sign-in, click Add, and turn QRdx on from the tools menu of a chat. Free plans can add one custom connector. On Team and Enterprise plans, an owner adds it for the organization.
+
+### ChatGPT
+
+Go to chatgpt.com/plugins, click + and choose Add custom MCP server. Name it QRdx, paste the URL under Connection, choose no authentication, accept the warning and create it. In a new chat, type @, pick QRdx and ask for your code. Your ChatGPT plan and workspace settings decide whether custom MCP servers are allowed.
+
+### Claude Code, Cursor and VS Code
+
+Claude Code takes one command:
+
+```bash
+claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
+```
+
+Cursor reads `~/.cursor/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "qrdx": {
+      "url": "https://mcp.qrdx.dev/mcp"
+    }
+  }
+}
+```
+
+VS Code reads `.vscode/mcp.json` in your workspace:
+
+```json
+{
+  "servers": {
+    "qrdx": {
+      "type": "http",
+      "url": "https://mcp.qrdx.dev/mcp"
+    }
+  }
+}
+```
+
+Other apps, and apps that only run local servers, are covered in the [MCP server docs](/docs/developers/mcp).
+
+## What to ask for
+
+Ask in plain words, with the link or details and any colors you want:
+
+- "Make a QR code for https://example.com/menu in black and gold, #c9a227 on #111111, with rounded modules."
+- "Create a Wi-Fi QR code for the network Guest with the WPA password welcome-2026."
+- "Make a contact QR code for Ada Lovelace, ada@example.com, in our brand blue #155dfc."
+
+For requests like these the assistant usually calls `design_qr`. It checks the content first, so a WPA password shorter than 8 characters is refused with the reason. Then it draws the code, decodes it at 96, 160 and 320 pixels through a model of a phone camera, and if the scan score is below Great, adjusts the style (darker colors that keep their hue, a safer eye shape) and tries again. You get the score, a PNG in the chat, the SVG and a link that opens the design in the QRdx playground.
+
+`generate_qr_code` is the quicker tool. It skips the check and returns a PNG plus public SVG, PNG, WebP and EPS links you can paste into Markdown or HTML. Those links contain whatever the code encodes, so don't share them for a Wi-Fi code with a password you want to keep private.
+
+## No connector? Ask for an image URL
+
+If you can't add a connector, the assistant can still produce a real code, because the [QRdx image API](/qr-code-api) turns a URL into a QR code image with no key. Ask something like:
+
+> Give me a Markdown image whose URL is https://api.qrdx.dev/v1/qr?data= followed by https://example.com/menu, URL-encoded, then &format=png.
+
+You should get back:
+
+```md
+![QR code for our menu](https://api.qrdx.dev/v1/qr?data=https%3A%2F%2Fexample.com%2Fmenu&format=png)
+```
+
+Some chat apps show Markdown images inline and some only show the link. Either way the URL is the image: open it in a browser and save it. The server renders the code, so the pattern is correct as long as the URL-encoding is. That's the part to check, because an unencoded `&` or `#` in your link cuts off everything after it. The API allows {facts.imageApiPerMinute} requests a minute per IP address, which is plenty for this.
+
+You can also skip the assistant and build the URL yourself in the [URL builder](/qr-code-api).
+
+## Check the code before you use it
+
+Whichever way you made it, test it the way people will use it:
+
+- Scan it with your phone's camera from the screen, and again from a test print. Check that it opens the exact link you meant, not just that something opens.
+- Upload the image to the [scan checker](/tools/scan-checker) to see how reliably it reads.
+- Most failures come from low contrast, a missing blank margin around the code, or printing it too small. [How big should a QR code be?](/blog/how-big-should-a-qr-code-be) has a table of sizes by scanning distance.
+
+## These codes are static
+
+A code made this way holds your link in its pattern. It never expires and has no scan limit, but you can't change where it points after printing. The MCP server only makes static codes. If you need a code you can repoint later, with scan counts, create a [dynamic code](/docs/dynamic-qr-codes) in QRdx: the free plan includes some, with unlimited scans.
