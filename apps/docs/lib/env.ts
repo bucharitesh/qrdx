@@ -107,6 +107,11 @@ export const env = createEnv({
     // Google Web Risk lookups of destination URLs
     WEB_RISK_API_KEY: z.string().min(1).optional(),
 
+    // Search Console on /admin/growth: a Google service account's JSON key
+    // (one line) with read access to sc-domain:qrdx.dev. Read server-side
+    // only, never logged; the section explains the setup without it.
+    GSC_SERVICE_ACCOUNT_JSON: z.string().min(1).optional(),
+
     // Cloudflare Turnstile verification (pairs with NEXT_PUBLIC_TURNSTILE_SITE_KEY)
     TURNSTILE_SECRET_KEY: z.string().min(1).optional(),
 
@@ -190,6 +195,7 @@ export const env = createEnv({
     RESEND_API_KEY: process.env.RESEND_API_KEY,
     EMAIL_FROM: process.env.EMAIL_FROM,
     WEB_RISK_API_KEY: process.env.WEB_RISK_API_KEY,
+    GSC_SERVICE_ACCOUNT_JSON: process.env.GSC_SERVICE_ACCOUNT_JSON,
     TURNSTILE_SECRET_KEY: process.env.TURNSTILE_SECRET_KEY,
     CRON_SECRET: process.env.CRON_SECRET,
     NODE_ENV: process.env.NODE_ENV,

@@ -18,6 +18,14 @@ export function formatDateTime(value: DateInput) {
 
 export const formatNumber = (value: number) => value.toLocaleString("en-US");
 
+/** A week by its Monday (YYYY-MM-DD), e.g. "Nov 10". */
+export const formatWeek = (week: string) =>
+  new Date(`${week}T00:00:00Z`).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
+
 /** Polar amounts are stored in minor units (cents). */
 export function formatMoney(cents: number, currency: string) {
   try {
