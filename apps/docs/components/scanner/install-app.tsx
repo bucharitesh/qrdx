@@ -128,7 +128,11 @@ export function InstallScanner() {
           {manual === "ios" ? t("iosButton") : t("macButton")}
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="end" className="w-80 text-sm">
+      <PopoverContent
+        align="end"
+        className="w-[min(20rem,calc(100vw-2rem))] text-sm"
+        collisionPadding={16}
+      >
         <p className="font-medium">
           {manual === "ios" ? t("iosTitle") : t("macTitle")}
         </p>
