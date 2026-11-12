@@ -5374,7 +5374,6 @@
           "youHaveViewOnlyAccess": "Anda hanya memiliki akses lihat: Anda dapat mengunduh barcode ini, tetapi tidak dapat mengubahnya.",
           "planBarcodesAreStaticThey": "Paket {plan}. Barcode bersifat statis: tidak pernah kedaluwarsa dan berfungsi di semua paket.",
           "noBarcodesYet": "Belum ada barcode",
-          "newBarcode": "Barcode baru",
           "openTheFreeGenerator": "Buka generator gratis",
           "barcodesInTheTrashDont": "Barcode di tempat sampah tidak dihitung dalam paket Anda. Pulihkan, atau hapus secara permanen.",
           "showAllBarcodes": "Tampilkan semua barcode",
@@ -5389,13 +5388,6 @@
           "noBarcodesMatchQ": "Tidak ada barcode yang cocok dengan \"{q}\".",
           "noBarcodesHereYet": "Belum ada barcode di sini.",
           "noBarcodesMatchTheseFilters": "Tidak ada barcode yang cocok dengan filter ini."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Semua barcode",
-            "newBarcode": "Barcode baru",
-            "pickTheTypeEnterThe": "Pilih jenisnya, masukkan angka atau teks, lalu simpan agar bisa diedit dan diunduh lagi nanti."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplikat",
@@ -5414,11 +5406,14 @@
           "fixTheHighlightedInputTo": "Perbaiki input yang disorot untuk menyimpan.",
           "unsavedChanges": "Perubahan belum disimpan",
           "allChangesSaved": "Semua perubahan tersimpan",
-          "notSavedYet": "Belum disimpan",
           "saveChanges": "Simpan perubahan",
-          "saveBarcode": "Simpan barcode",
           "couldntSaveTheBarcode": "Barcode tidak dapat disimpan",
           "barcodeSaved": "Barcode tersimpan"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Barcode baru",
+          "pickTheTypeEnterThe": "Pilih jenisnya, masukkan angka atau teks, lalu simpan agar bisa diedit dan diunduh lagi nanti.",
+          "saveBarcode": "Simpan barcode"
         },
         "barcodesHeader": {
           "barcodes": "Barcode:",

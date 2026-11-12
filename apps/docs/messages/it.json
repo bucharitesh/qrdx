@@ -5374,7 +5374,6 @@
           "youHaveViewOnlyAccess": "Hai accesso in sola lettura: puoi scaricare questo barcode, ma non modificarlo.",
           "planBarcodesAreStaticThey": "Piano {plan}. I codici a barre sono statici: non scadono mai e funzionano con ogni piano.",
           "noBarcodesYet": "Ancora nessun barcode",
-          "newBarcode": "Nuovo barcode",
           "openTheFreeGenerator": "Apri il generatore gratuito",
           "barcodesInTheTrashDont": "I barcode nel cestino non contano nel tuo piano. Ripristinali oppure eliminali definitivamente.",
           "showAllBarcodes": "Mostra tutti i barcode",
@@ -5389,13 +5388,6 @@
           "noBarcodesMatchQ": "Nessun codice a barre corrisponde a \"{q}\".",
           "noBarcodesHereYet": "Ancora nessun codice a barre.",
           "noBarcodesMatchTheseFilters": "Nessun codice a barre corrisponde a questi filtri."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Tutti i codici a barre",
-            "newBarcode": "Nuovo codice a barre",
-            "pickTheTypeEnterThe": "Scegli il tipo, inserisci il numero o il testo e salvalo per modificarlo e scaricarlo di nuovo più avanti."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplica",
@@ -5414,11 +5406,14 @@
           "fixTheHighlightedInputTo": "Correggi il campo evidenziato per salvare.",
           "unsavedChanges": "Modifiche non salvate",
           "allChangesSaved": "Tutte le modifiche salvate",
-          "notSavedYet": "Non ancora salvato",
           "saveChanges": "Salva le modifiche",
-          "saveBarcode": "Salva codice a barre",
           "couldntSaveTheBarcode": "Impossibile salvare il codice a barre",
           "barcodeSaved": "Codice a barre salvato"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Nuovo codice a barre",
+          "pickTheTypeEnterThe": "Scegli il tipo, inserisci il numero o il testo e salvalo per modificarlo e scaricarlo di nuovo più avanti.",
+          "saveBarcode": "Salva codice a barre"
         },
         "barcodesHeader": {
           "barcodes": "Barcode:",

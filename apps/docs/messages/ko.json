@@ -5374,7 +5374,6 @@
           "youHaveViewOnlyAccess": "보기 전용 권한이에요. 이 바코드를 다운로드할 수는 있지만 변경할 수는 없어요.",
           "planBarcodesAreStaticThey": "{plan} 플랜이에요. 바코드는 정적이라 만료되지 않으며 모든 플랜에서 사용할 수 있어요.",
           "noBarcodesYet": "아직 바코드가 없어요",
-          "newBarcode": "새 바코드",
           "openTheFreeGenerator": "무료 생성기 열기",
           "barcodesInTheTrashDont": "휴지통에 있는 바코드는 플랜 사용량에 포함되지 않아요. 복원하거나 완전히 삭제하세요.",
           "showAllBarcodes": "모든 바코드 보기",
@@ -5389,13 +5388,6 @@
           "noBarcodesMatchQ": "\"{q}\"와(과) 일치하는 바코드가 없어요.",
           "noBarcodesHereYet": "아직 바코드가 없어요.",
           "noBarcodesMatchTheseFilters": "이 필터와 일치하는 바코드가 없어요."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "모든 바코드",
-            "newBarcode": "새 바코드",
-            "pickTheTypeEnterThe": "유형을 고르고 숫자나 텍스트를 입력한 뒤 저장하면 나중에 다시 편집하고 다운로드할 수 있어요."
-          }
         },
         "barcodeActions": {
           "duplicate": "복제",
@@ -5414,11 +5406,14 @@
           "fixTheHighlightedInputTo": "저장하려면 강조 표시된 입력란을 수정해 주세요.",
           "unsavedChanges": "저장하지 않은 변경 사항",
           "allChangesSaved": "모든 변경 사항 저장됨",
-          "notSavedYet": "아직 저장되지 않았어요",
           "saveChanges": "변경 사항 저장",
-          "saveBarcode": "바코드 저장",
           "couldntSaveTheBarcode": "바코드를 저장하지 못했어요",
           "barcodeSaved": "바코드를 저장했어요"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "새 바코드",
+          "pickTheTypeEnterThe": "유형을 고르고 숫자나 텍스트를 입력한 뒤 저장하면 나중에 다시 편집하고 다운로드할 수 있어요.",
+          "saveBarcode": "바코드 저장"
         },
         "barcodesHeader": {
           "barcodes": "바코드:",

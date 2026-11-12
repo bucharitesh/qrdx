@@ -5467,7 +5467,6 @@
           "youHaveViewOnlyAccess": "Você tem acesso somente para visualização: pode baixar este código de barras, mas não alterá-lo.",
           "planBarcodesAreStaticThey": "Plano {plan}. Os códigos de barras são estáticos: nunca expiram e funcionam em todos os planos.",
           "noBarcodesYet": "Nenhum código de barras ainda",
-          "newBarcode": "Novo código de barras",
           "openTheFreeGenerator": "Abrir o gerador grátis",
           "barcodesInTheTrashDont": "Códigos de barras na lixeira não contam no seu plano. Restaure-os ou exclua de vez.",
           "showAllBarcodes": "Mostrar todos os códigos de barras",
@@ -5482,13 +5481,6 @@
           "noBarcodesMatchQ": "Nenhum código de barras corresponde a \"{q}\".",
           "noBarcodesHereYet": "Nenhum código de barras por aqui ainda.",
           "noBarcodesMatchTheseFilters": "Nenhum código de barras corresponde a esses filtros."
-        },
-        "new": {
-          "page": {
-            "allBarcodes": "Todos os códigos de barras",
-            "newBarcode": "Novo código de barras",
-            "pickTheTypeEnterThe": "Escolha o tipo, digite o número ou o texto e salve para editar e baixar de novo depois."
-          }
         },
         "barcodeActions": {
           "duplicate": "Duplicar",
@@ -5507,11 +5499,14 @@
           "fixTheHighlightedInputTo": "Corrija o campo destacado para salvar.",
           "unsavedChanges": "Alterações não salvas",
           "allChangesSaved": "Todas as alterações salvas",
-          "notSavedYet": "Ainda não salvo",
           "saveChanges": "Salvar alterações",
-          "saveBarcode": "Salvar código de barras",
           "couldntSaveTheBarcode": "Não foi possível salvar o código de barras",
           "barcodeSaved": "Código de barras salvo"
+        },
+        "barcodeBuilder": {
+          "newBarcode": "Novo código de barras",
+          "pickTheTypeEnterThe": "Escolha o tipo, digite o número ou o texto e salve para editar e baixar de novo depois.",
+          "saveBarcode": "Salvar código de barras"
         },
         "barcodesHeader": {
           "barcodes": "Códigos de barras:",

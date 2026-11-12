@@ -1,5 +1,10 @@
 // The Barcodes list's filters, kept in the URL (?q=&format=&folder=&status=&page=),
 // and what each card shows. Pure and client-safe.
+import {
+  buildFolderTree,
+  type FolderRow,
+  flattenFolderTree,
+} from "@/app/(app)/dashboard/codes/_lib/organize-shared";
 import { type BarcodeFormatId, isBarcodeFormatId } from "@/lib/barcode/formats";
 import type { BarcodeStatus } from "@/lib/barcodes/schema";
 
@@ -75,4 +80,13 @@ export interface FolderOption {
   id: string;
   name: string;
   depth: number;
+}
+
+/** The workspace's folders in tree order, for pickers. */
+export function folderOptions(rows: FolderRow[]): FolderOption[] {
+  return flattenFolderTree(buildFolderTree(rows)).map((node) => ({
+    id: node.id,
+    name: node.name,
+    depth: node.depth,
+  }));
 }

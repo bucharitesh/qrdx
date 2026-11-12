@@ -12,6 +12,10 @@ import { useCodeBuilderHostSlot, useCodeBuilderStore } from "./store";
 const CodeBuilderModal = dynamic(() => import("./code-builder-modal"), {
   ssr: false,
 });
+// The barcode drawing (bwip-js) too: only once a new barcode is asked for.
+const BarcodeBuilderModal = dynamic(() => import("./barcode-builder-modal"), {
+  ssr: false,
+});
 
 /** What the page gallery opens at. */
 interface PageGallery {
@@ -21,8 +25,9 @@ interface PageGallery {
 }
 
 /**
- * The builder and the hosted page gallery, as the store asks. Rendered by
- * the active host only (CodeBuilderHost here, or the playground's).
+ * The builder, the new-barcode modal and the hosted page gallery, as the
+ * store asks. Rendered by the active host only (CodeBuilderHost here, or the
+ * playground's).
  */
 export function CodeBuilderSurfaces({ usage }: { usage: ShellData["codes"] }) {
   const request = useCodeBuilderStore((state) => state.request);
@@ -61,7 +66,7 @@ export function CodeBuilderSurfaces({ usage }: { usage: ShellData["codes"] }) {
 
   return (
     <>
-      {request && request.mode !== "page" && (
+      {(request?.mode === "create" || request?.mode === "edit") && (
         <CodeBuilderModal
           key={session}
           onChoosePageType={onChoosePageType}
@@ -69,6 +74,9 @@ export function CodeBuilderSurfaces({ usage }: { usage: ShellData["codes"] }) {
           request={request}
           usage={usage}
         />
+      )}
+      {request?.mode === "barcode" && (
+        <BarcodeBuilderModal key={session} onClosed={close} request={request} />
       )}
       <NewCodeDialog
         initialType={page.type}

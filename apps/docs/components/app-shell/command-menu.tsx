@@ -19,6 +19,7 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import {
   Add,
+  Barcode,
   Brush2,
   DocumentText1,
   DocumentUpload,
@@ -250,6 +251,13 @@ export function CommandMenu() {
       icon: TaskSquare,
       keywords: ["create", "survey", "feedback", "responses"],
       run: startCreate("form"),
+    },
+    {
+      id: "new-barcode",
+      label: t("newBarcode"),
+      icon: Barcode,
+      keywords: ["create", "ean", "upc", "code 128", "data matrix"],
+      run: startCreate("barcode"),
     },
     {
       id: "import",
