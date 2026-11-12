@@ -12,15 +12,23 @@ import {
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
-import { QR_TYPE_ICONS } from "@/components/sections/tools/topic-icons";
+import {
+  PAGE_TYPE_ICONS,
+  QR_TYPE_ICONS,
+} from "@/components/sections/tools/topic-icons";
 import { TypeGenerator } from "@/components/sections/tools/type-generator";
-import { QR_TYPE_RULES } from "@/lib/i18n/content-rules";
+import { HOSTED_TYPE_RULES, QR_TYPE_RULES } from "@/lib/i18n/content-rules";
 import { localizeContent } from "@/lib/i18n/content-server";
 import { localizedMetadata } from "@/lib/i18n/metadata";
 import { CONTENT_FORM_NAMESPACES } from "@/lib/i18n/playground";
 import { requireLocale } from "@/lib/i18n/server";
 import { getQrType, QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import {
+  HOSTED_TYPE_SLUGS,
+  hostedTypePath,
+} from "@/lib/qr-types-content-hosted";
 import { buildTimeParams } from "@/lib/static-params";
+import { availableHostedType, HostedTypePage } from "./hosted-type-page";
 
 interface PageProps {
   params: Promise<{ type: string }>;
@@ -30,23 +38,43 @@ interface PageProps {
 async function load(params: PageProps["params"]) {
   const [{ type }, locale] = await Promise.all([params, requireLocale()]);
   const source = getQrType(type);
-  if (!source) notFound();
+  if (!source) {
+    // The PDF and business card pages open a hosted page instead.
+    const hosted = availableHostedType(type);
+    if (!hosted) notFound();
+    return {
+      locale,
+      hosted: await localizeContent(hosted, locale, HOSTED_TYPE_RULES),
+    } as const;
+  }
   const [content, t] = await Promise.all([
     localizeContent(source, locale, QR_TYPE_RULES),
     getTranslations({ locale, namespace: "qrGenerator" }),
   ]);
-  return { locale, content, t };
+  return { locale, content, t, hosted: null } as const;
 }
 
 // Unknown types render notFound() below (lib/static-params.ts).
 export function generateStaticParams() {
-  return buildTimeParams(() => QR_TYPE_SLUGS.map((type) => ({ type })));
+  return buildTimeParams(() =>
+    [...QR_TYPE_SLUGS, ...HOSTED_TYPE_SLUGS].map((type) => ({ type })),
+  );
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { locale, content, t } = await load(params);
+  const loaded = await load(params);
+  if (loaded.hosted) {
+    return localizedMetadata({
+      locale: loaded.locale,
+      path: hostedTypePath(loaded.hosted.slug),
+      title: loaded.hosted.title,
+      description: loaded.hosted.metaDescription,
+      ownOgImage: true,
+    });
+  }
+  const { locale, content, t } = loaded;
   return localizedMetadata({
     locale,
     path: `/qr-code-generator/${content.type}`,
@@ -57,10 +85,20 @@ export async function generateMetadata({
 }
 
 export default async function QrTypePage({ params }: PageProps) {
-  const { locale, content, t } = await load(params);
+  const loaded = await load(params);
+  if (loaded.hosted) {
+    return <HostedTypePage content={loaded.hosted} locale={loaded.locale} />;
+  }
+  const { locale, content, t } = loaded;
   const common = await getTranslations({ locale, namespace: "common" });
 
   const { name, payload } = content;
+  const hostedSource = content.hosted
+    ? availableHostedType(content.hosted)
+    : undefined;
+  const hosted = hostedSource
+    ? await localizeContent(hostedSource, locale, HOSTED_TYPE_RULES)
+    : undefined;
   const related = await localizeContent(
     content.related
       .map((slug) => getQrType(slug))
@@ -152,6 +190,27 @@ export default async function QrTypePage({ params }: PageProps) {
         </div>
       </section>
 
+      {content.details && (
+        <section
+          aria-labelledby="details"
+          className="w-full px-10 py-10 flex flex-col gap-4"
+        >
+          <h2 id="details" className="text-2xl font-medium tracking-tighter">
+            {content.details.title}
+          </h2>
+          <div className="flex max-w-3xl flex-col gap-3">
+            {content.details.paragraphs.map((paragraph) => (
+              <p
+                key={paragraph}
+                className="text-muted-foreground leading-relaxed text-pretty"
+              >
+                {paragraph}
+              </p>
+            ))}
+          </div>
+        </section>
+      )}
+
       <FaqList title={t("type.faqTitle", { name })} faqs={content.faqs} />
 
       <section className="w-full px-10 py-10 flex flex-col gap-5">
@@ -163,7 +222,15 @@ export default async function QrTypePage({ params }: PageProps) {
             {t("type.allTypes", { count: QR_TYPE_SLUGS.length })}
           </SectionLink>
         </div>
-        <CardGrid count={related.length}>
+        <CardGrid count={related.length + (hosted ? 1 : 0)}>
+          {hosted && (
+            <LinkCard
+              href={hostedTypePath(hosted.slug)}
+              icon={PAGE_TYPE_ICONS[hosted.page]}
+              title={t("type.hostedCard", { name: hosted.name })}
+              description={hosted.summary}
+            />
+          )}
           {related.map((item) => (
             <LinkCard
               key={item.type}

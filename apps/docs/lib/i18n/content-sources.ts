@@ -20,6 +20,10 @@ import {
   VECTOR_STEPS as ART_VECTOR_STEPS,
 } from "@/app/[lang]/(home)/ai/art/content";
 import {
+  BARCODE_FORMAT_PAGES,
+  GS1_AI_NAMES,
+} from "@/app/[lang]/(home)/barcode-generator/[format]/content";
+import {
   BARCODE_FAQS,
   BARCODE_TIPS,
   BARCODE_USES,
@@ -41,6 +45,7 @@ import { listTemplates } from "@/lib/landing/templates";
 import { mcpMoreClients, mcpServerUrl } from "@/lib/mcp-clients";
 import { baseUrl } from "@/lib/metadata";
 import { QR_TYPE_GROUPS, QR_TYPES } from "@/lib/qr-types-content";
+import { HOSTED_QR_TYPES } from "@/lib/qr-types-content-hosted";
 import { topicForDeployment } from "@/lib/seo-content/availability";
 import { INDUSTRY_GROUPS } from "@/lib/seo-content/industries";
 import { PAGE_TYPES } from "@/lib/seo-content/page-types";
@@ -53,6 +58,7 @@ import {
   BARCODE_CONTENT_RULES,
   EDITOR_CONTENT,
   EDITOR_CONTENT_RULES,
+  HOSTED_TYPE_RULES,
   INTEGRATION_RULES,
   MCP_RULES,
   PAGE_CODE_RULES,
@@ -106,6 +112,13 @@ export const CONTENT_SOURCES: readonly ContentSource[] = [
     rules: QR_TYPE_RULES,
   },
   {
+    namespace: "hostedTypes",
+    surface:
+      "the QR code generator pages whose code opens a hosted page (/qr-code-generator/pdf and /qr-code-generator/business-card): the page title, a card summary, the button, intro, steps, what people see when they scan, how to change it after printing, a comparison with a static code, and an FAQ. Plan names (Free, Pro, Business), button and menu names quoted from the app (Save contact, Replace file, Dashboard → Files) and file sizes stay as written",
+    data: () => HOSTED_QR_TYPES,
+    rules: HOSTED_TYPE_RULES,
+  },
+  {
     namespace: "industries",
     surface:
       "the 'QR codes for <industry>' landing pages (/qr-codes-for/<industry>): how a business in that industry uses QR codes, recommended code types, where people stand when they scan, printing tips, short call-to-action lines printed beside a code, and an FAQ",
@@ -142,6 +155,12 @@ export const CONTENT_SOURCES: readonly ContentSource[] = [
       faqs: BARCODE_FAQS,
     }),
     rules: BARCODE_CONTENT_RULES,
+  },
+  {
+    namespace: "barcodeFormats",
+    surface:
+      "one barcode generator page per barcode type (/barcode-generator/<type>): the title, where that barcode is used, whether it needs GS1 numbers, how its input and check digit work, print sizes, names of GS1 Application Identifiers and an FAQ. Barcode names (EAN-13, Code 128), GS1 terms (GTIN, SSCC), sample values and measurements stay exactly as written",
+    data: () => ({ pages: BARCODE_FORMAT_PAGES, ais: GS1_AI_NAMES }),
   },
   {
     namespace: "templates",

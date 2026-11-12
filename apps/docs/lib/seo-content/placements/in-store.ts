@@ -10,14 +10,14 @@ export const inStore: SeoGroup = {
       slug: "menus",
       name: "Menus",
       noun: "menus",
-      title: "QR code menus",
-      seoTitle: "QR Code Menus: Digital Menus You Can Edit Anytime",
+      title: "Menu QR code generator",
+      seoTitle: "Menu QR Code Generator: Digital Menus You Can Edit",
       metaDescription:
-        "Create a QR code menu you can update without reprinting: hosted menu pages with prices, photos, allergens and sold-out items, plus table sizes and tips.",
+        "Make a menu QR code you can update without reprinting: a hosted menu page with prices, photos, allergens and sold-out items, plus table sizes and tips.",
       summary:
         "Hosted menus with prices, allergens and sold-out items, edited live.",
       intro: [
-        "A QR code menu is only as good as what it opens. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm. A hosted menu page behind a dynamic code can do both: edit an item from your phone and every table sees it on the next scan.",
+        "A QR code menu is only as good as what it opens. Build a menu page on QRdx, with sections, prices, photos, allergen tags and sold-out flags, and print its code: edit an item from your phone and every table sees it on the next scan. A static code linking to a PDF looks fine on day one, then breaks when the file is renamed and can't show that the salmon sold out at 8 pm.",
         "Guests scan menus at the table, often in low light, sometimes with a weak signal. A good QR menu loads in a second, reads well on a small screen and keeps allergen information clear.",
       ],
       useCases: [
@@ -90,8 +90,40 @@ export const inStore: SeoGroup = {
           answer:
             "No. Phone cameras open the menu in the browser. Guests don't install anything and don't need an account.",
         },
+        {
+          question: "Is the menu QR code generator free?",
+          answer:
+            'Yes, with a free QRdx account: a menu page is one of the hosted pages the Free plan includes. Pro removes the page limit and the small "Made with QRdx" footer. If you cancel a paid plan, the menu and its code keep working.',
+        },
       ],
       related: ["restaurants", "bars", "coffee-shops", "hotels"],
+      startPage: { page: "menu", label: "Build a menu page" },
+      guides: [
+        {
+          href: "/blog/qr-codes-for-restaurant-menus",
+          title: "QR codes for restaurant menus: a practical guide",
+          description:
+            "Where to put the code, how big to print it, Wi-Fi, accessibility and allergens.",
+        },
+        {
+          href: "/tools/print-size",
+          title: "Print size calculator",
+          description:
+            "The smallest code that scans from across the table or the counter.",
+        },
+        {
+          href: "/qr-code-generator/pdf",
+          title: "PDF QR code generator",
+          description:
+            "Already have a designed PDF menu? Host it and replace the file each season.",
+        },
+        {
+          href: "/qr-codes-for/restaurants",
+          title: "QR codes for restaurants",
+          description:
+            "Menus, guest Wi-Fi, review requests and table ordering in one place.",
+        },
+      ],
     },
     {
       slug: "table-tents",

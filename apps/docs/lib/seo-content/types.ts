@@ -57,6 +57,13 @@ export interface SeoTopic {
   faqs: SeoFaq[];
   /** Slugs in the other collection (industry → placements and back). */
   related: string[];
+  /**
+   * A hosted page type the hero's button starts in the dashboard, for the
+   * topic that owns "<page> QR code generator" (menus → menu page).
+   */
+  startPage?: { page: PageTypeId; label: string };
+  /** Guides and tools beside the FAQ: blog posts, calculators, other pages. */
+  guides?: { href: string; title: string; description: string }[];
   image?: keyof typeof useCaseImages;
 }
 
