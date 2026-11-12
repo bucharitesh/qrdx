@@ -11,10 +11,12 @@ export const baseUrl =
 
 export const siteName = "QRdx";
 
-export const siteTitle = "Free QR Code Generator & Dynamic QR Codes | QRdx";
+// Brand first: "qrdx" is the site's biggest search query.
+export const siteTitle =
+  "QRdx: Free QR Code Generator with Logos and Dynamic Codes";
 
 export const siteDescription =
-  "Unlimited free QR codes with logos, colors and patterns, no signup or watermark. Plus editable dynamic codes, hosted pages and scan analytics. Open source.";
+  "Free, open-source QR code generator: unlimited codes with logos, colors and frames, no signup or watermark. Plus dynamic codes and scan analytics.";
 
 /** Root-layout `keywords`; search engines mostly ignore them, so keep them few and accurate. */
 export const siteKeywords = [
