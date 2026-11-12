@@ -184,6 +184,7 @@
       "pageTemplates": "Plantillas de página",
       "pricing": "Precios",
       "guarantee": "Garantía Never-Hostage",
+      "enterprise": "Empresas",
       "slackBot": "Bot de Slack",
       "telegramBot": "Bot de Telegram",
       "discordBot": "Bot de Discord",
@@ -227,6 +228,7 @@
       "refunds": "Reembolsos",
       "affiliateTerms": "Términos de afiliados",
       "security": "Seguridad",
+      "securityPolicy": "Política de seguridad",
       "allComparisons": "Todas las comparativas"
     }
   },
@@ -748,6 +750,21 @@
       "close": "Cerrar",
       "signIn": "Inicia sesión para pedir una factura",
       "signInNote": "Enviamos la factura para el espacio de trabajo de tu cuenta, así que primero inicia sesión."
+    },
+    "enterprise": {
+      "name": "Enterprise",
+      "tagline": "Para empresas que necesitan un contrato y una revisión de seguridad",
+      "price": "A medida",
+      "priceNote": "Contrato anual, pago con factura",
+      "cta": "Contáctanos",
+      "lead": "Todo lo de Business, y además:",
+      "adds": {
+        "contract": "Un contrato anual, pagado con factura",
+        "replies": "Respuesta en {hours, plural, one {# hora laborable} other {# horas laborables}} cuando los códigos dejan de funcionar",
+        "review": "Respuestas para tu revisión de seguridad",
+        "selfHost": "SSO y registro de auditoría en tu propio servidor"
+      },
+      "security": "Seguridad en QRdx"
     }
   },
   "docs": {
@@ -2029,6 +2046,316 @@
     "exceptionTitle": "La única excepción: el abuso",
     "exception": "Solo desactivamos un código cuando incumple nuestros <terms>términos del servicio</terms>, por ejemplo si apunta a phishing o malware. Es una decisión de seguridad tomada tras una denuncia o una revisión, nunca por motivos de facturación. Cualquiera puede <report>denunciar un código</report>.",
     "questions": "¿Tienes preguntas sobre la garantía? Escribe a <mail>{email}</mail>. Última actualización: <time>{date, date, long}</time>."
+  },
+  "enterprise": {
+    "metaTitle": "QRdx Enterprise: SSO, registro de auditoría, contratos y tiempos de respuesta",
+    "metaDescription": "QRdx para equipos grandes: inicio de sesión único, registro de auditoría con exportación a CSV, roles, dominios propios y un portal para clientes, con contrato anual, tiempos de respuesta por escrito y pago con factura.",
+    "crumb": "Enterprise",
+    "title": "QRdx para equipos enterprise",
+    "intro1": "Para empresas que ponen códigos QR en envases, carteles y campañas en muchos equipos, marcas o clientes, y necesitan inicio de sesión único, un registro de auditoría y un contrato antes de desplegarlos.",
+    "intro2": "Enterprise es el plan Business con un contrato alrededor: tiempos de respuesta por escrito, pago con factura y respuestas para tu revisión de seguridad.",
+    "contactCta": "Contáctanos",
+    "securityCta": "Cómo gestionamos la seguridad",
+    "whoTitle": "Para quién es",
+    "who": {
+      "brands": {
+        "title": "Marcas y minoristas",
+        "body": "Códigos en envases, menús y carteles en muchos lugares, gestionados por varios equipos que necesitan su propio acceso."
+      },
+      "agencies": {
+        "title": "Agencias",
+        "body": "Un espacio de trabajo por cliente, un portal de solo lectura para cada cliente y páginas de estadísticas con su marca."
+      },
+      "security": {
+        "title": "Equipos de TI y seguridad",
+        "body": "Un proveedor que inicia la sesión de las personas a través de tu proveedor de identidad, registra quién cambió qué y responde a tu cuestionario de seguridad."
+      }
+    },
+    "featuresTitle": "Qué obtienes",
+    "featuresIntro": "Todo lo del plan Business. Cada elemento funciona hoy en qrdx.dev.",
+    "features": {
+      "sso": {
+        "title": "Inicio de sesión único",
+        "body": "OIDC o SAML 2.0 para el dominio de tu correo, verificado con un registro DNS. Si lo exiges, tu proveedor de identidad será la única forma de entrar para ese dominio."
+      },
+      "auditLog": {
+        "title": "Registro de auditoría",
+        "body": "Quién cambió qué código, página, miembro, dominio, clave de API o ajuste, y cuándo. Fíltralo, exporta hasta {rows, number} filas en CSV y conserva {days, number} días de historial."
+      },
+      "roles": {
+        "title": "Roles y verificación en dos pasos",
+        "body": "Propietarios, administradores, miembros, miembros de facturación y lectores de solo lectura. Los espacios de trabajo pueden exigir la verificación en dos pasos a todos sus integrantes."
+      },
+      "seats": {
+        "title": "Espacios de trabajo y puestos",
+        "body": "Miembros ilimitados, con un espacio de trabajo distinto para cada equipo, marca o cliente, y roles propios en cada uno."
+      },
+      "domains": {
+        "title": "Dominios propios",
+        "body": "Enlaces cortos y páginas alojadas en hasta {count, number} dominios tuyos."
+      },
+      "clients": {
+        "title": "Portal de clientes y estadísticas con su marca",
+        "body": "Un portal de solo lectura donde los clientes ven las carpetas que compartes con ellos, y páginas de estadísticas con su marca y sin la marca de QRdx."
+      },
+      "api": {
+        "title": "API y creación en bloque",
+        "body": "{requests, number} solicitudes a la API al día, hasta {batch, number} códigos en una sola llamada a la API e importaciones CSV de hasta {importRows, number} filas."
+      },
+      "export": {
+        "title": "Tus datos, exportables",
+        "body": "Descarga todo el contenido de tu cuenta en un ZIP y exporta escaneos, respuestas de formularios y el registro de auditoría en CSV."
+      }
+    },
+    "contractTitle": "Lo que añade el contrato",
+    "contractIntro": "Además del plan Business:",
+    "contract": {
+      "replies": {
+        "title": "Tiempos de respuesta por escrito",
+        "body": "En un plazo de {outage, plural, one {# hora laborable} other {# horas laborables}} cuando tus códigos o páginas alojadas dejan de funcionar, y de {other, plural, one {# día laborable} other {# días laborables}} para todo lo demás."
+      },
+      "invoice": {
+        "title": "Contrato anual, pago con factura",
+        "body": "Paga por transferencia bancaria en lugar de con tarjeta, con los datos de tu empresa, el número de identificación fiscal y el número de orden de compra en la factura."
+      },
+      "review": {
+        "title": "Respuestas para tu revisión de seguridad",
+        "body": "Completamos tu cuestionario de seguridad y te enviamos una copia firmada del Anexo de Tratamiento de Datos."
+      },
+      "selfHost": {
+        "title": "Inicio de sesión único y registro de auditoría si alojas tú mismo",
+        "body": "QRdx es de código abierto, pero el inicio de sesión único y el registro de auditoría están bajo la licencia comercial de QRdx. Un acuerdo Enterprise te permite ejecutarlos en tu propio servidor con una clave de licencia."
+      }
+    },
+    "limitsNote": "En qrdx.dev, los espacios de trabajo Enterprise tienen los límites del plan Business. Si necesitas más de algo, indícalo en el formulario.",
+    "repliesTitle": "Tiempos de respuesta",
+    "replies": {
+      "when": "Cuándo",
+      "enterprise": "Enterprise",
+      "business": "Business",
+      "outage": "Tus códigos o páginas alojadas dejan de funcionar",
+      "other": "Todo lo demás",
+      "hours": "En un plazo de {count, plural, one {# hora laborable} other {# horas laborables}}",
+      "days": "En un plazo de {count, plural, one {# día laborable} other {# días laborables}}"
+    },
+    "repliesNote": "El horario laborable es de lunes a viernes, hora de la India. Son tiempos de respuesta: QRdx no ofrece garantía de disponibilidad.",
+    "buyTitle": "Cómo comprar",
+    "buy": {
+      "ask": {
+        "title": "Cuéntanos qué necesitas",
+        "body": "Usa el formulario de abajo o escribe a {email}. Indica el tamaño de tu equipo y todo lo que pida tu revisión de seguridad."
+      },
+      "quote": {
+        "title": "Recibe respuestas y un precio",
+        "body": "Te respondemos por correo con las respuestas a tus preguntas y un precio anual."
+      },
+      "sign": {
+        "title": "Firma y paga con factura",
+        "body": "Cuando se firma el contrato, pasamos tu espacio de trabajo al plan Business y te enviamos la factura."
+      }
+    },
+    "formTitle": "Habla con nosotros",
+    "formIntro": "Cuéntanos sobre tu equipo y lo que necesitas. Te respondemos por correo electrónico.",
+    "form": {
+      "name": "Nombre",
+      "email": "Correo de trabajo",
+      "company": "Empresa",
+      "teamSize": "Tamaño del equipo",
+      "teamSizePlaceholder": "Elige un tamaño",
+      "sizes": {
+        "1-10": "De 1 a 10 personas",
+        "11-50": "De 11 a 50 personas",
+        "51-200": "De 51 a 200 personas",
+        "201-1000": "De 201 a 1.000 personas",
+        "1000+": "Más de 1.000 personas"
+      },
+      "need": "¿Qué necesitas?",
+      "needPlaceholder": "Por ejemplo: inicio de sesión único para 300 personas, una factura anual, nuestro cuestionario de seguridad",
+      "submit": "Enviar",
+      "sending": "Enviando…",
+      "sentTitle": "Mensaje enviado",
+      "sent": "Gracias. Te responderemos a {email}.",
+      "privacy": "Usamos estos datos solo para responderte. Consulta nuestra <privacy>política de privacidad</privacy>.",
+      "errors": {
+        "name": "Escribe tu nombre.",
+        "email": "Escribe un correo de trabajo válido.",
+        "company": "Escribe el nombre de tu empresa.",
+        "teamSize": "Elige el tamaño de tu equipo.",
+        "need": "Cuéntanos qué necesitas.",
+        "rateLimited": "Ya has enviado varios mensajes. Responderemos a esos o escribe a {email}.",
+        "check": "Completa la verificación que está sobre el botón y vuelve a enviar.",
+        "notSent": "No pudimos enviar tu mensaje. Escribe a {email}.",
+        "unavailable": "Este formulario no está disponible aquí. Escribe a {email}.",
+        "unknown": "Algo salió mal. Escribe a {email}."
+      }
+    },
+    "orEmail": "¿Prefieres el correo? Escribe a <mail>{email}</mail>.",
+    "relatedTitle": "Más información",
+    "related": {
+      "security": "Seguridad en QRdx",
+      "dpa": "Adenda de tratamiento de datos",
+      "subprocessors": "Subencargados",
+      "pricing": "Precios"
+    }
+  },
+  "security": {
+    "metaTitle": "Seguridad en QRdx: inicio de sesión, almacenamiento de datos y cómo informar de problemas",
+    "metaDescription": "Cómo protege QRdx las cuentas y los datos: HTTPS con HSTS, una política de seguridad de contenido, llaves de acceso y verificación en dos pasos, inicio de sesión único, un registro de auditoría, comprobación de enlaces, dónde se almacenan los datos y cómo informar de una vulnerabilidad.",
+    "crumb": "Seguridad",
+    "title": "Seguridad en QRdx",
+    "intro1": "Lo que hace QRdx para proteger tu cuenta, tus códigos y los datos de tus visitantes. Cada punto describe algo que funciona hoy en qrdx.dev, y el código es abierto, así que puedes comprobarlo.",
+    "intro2": "QRdx no tiene la certificación SOC 2 ni HIPAA, ni ninguna otra certificación de seguridad, y no promete tenerla.",
+    "reportCta": "Informar de una vulnerabilidad",
+    "enterpriseCta": "¿Revisión de seguridad? Escríbenos",
+    "sections": {
+      "transport": {
+        "title": "Conexiones y navegadores",
+        "items": {
+          "https": {
+            "title": "HTTPS en todas partes",
+            "body": "Todas las páginas y llamadas a la API se sirven por HTTPS, y se indica a los navegadores que sigan usando HTTPS para qrdx.dev durante dos años (HSTS)."
+          },
+          "csp": {
+            "title": "Política de seguridad de contenido",
+            "body": "Las páginas propias de QRdx limitan qué scripts, marcos y conexiones pueden cargar. Las páginas que muestran los datos de tu cuenta reciben un nonce nuevo en cada solicitud, así que un script inyectado en ellas no se ejecuta."
+          },
+          "framing": {
+            "title": "Sin marcos de otros sitios",
+            "body": "Las páginas propias de QRdx no se pueden mostrar dentro del marco de otro sitio, y la pantalla en la que apruebas una aplicación no se puede enmarcar en ningún caso. También se indica a los navegadores que no adivinen los tipos de archivo."
+          }
+        }
+      },
+      "signIn": {
+        "title": "Inicio de sesión",
+        "items": {
+          "passwords": {
+            "title": "Sin contraseñas",
+            "body": "Inicias sesión con Google, GitHub o un código de un solo uso por correo{passkeys, select, yes {, o con una llave de acceso} other {}}. QRdx no guarda contraseñas que puedan filtrarse."
+          },
+          "twoFactor": {
+            "title": "Verificación en dos pasos",
+            "body": "Un segundo paso con una aplicación de autenticación{passkeys, select, yes { o una llave de acceso} other {}}, con códigos de respaldo para cuando no puedas usarla. Los espacios de trabajo en Business pueden exigirla a todos los miembros."
+          },
+          "confirm": {
+            "title": "Confirma que eres tú",
+            "body": "Los cambios de seguridad, las claves de API y webhooks nuevos, los cambios de rol y la eliminación de un espacio de trabajo te piden confirmar que eres tú, aunque ya hayas iniciado sesión. Una confirmación dura 10 minutos."
+          },
+          "alerts": {
+            "title": "Alertas de nuevo inicio de sesión",
+            "body": "Te enviamos un correo cuando un navegador o dispositivo inicia sesión en tu cuenta por primera vez, y cuando cambia la configuración de tu verificación en dos pasos."
+          },
+          "sessions": {
+            "title": "Sesiones que caducan",
+            "body": "Una sesión dura 30 días como máximo, y menos si dejas de usarla. Si se usa desde un país nuevo y un navegador nuevo, debe confirmar que eres tú, y puedes cerrar la sesión en todos los demás dispositivos a la vez."
+          }
+        }
+      },
+      "workspaces": {
+        "title": "Espacios de trabajo y equipos",
+        "items": {
+          "sso": {
+            "title": "Inicio de sesión único",
+            "body": "OIDC o SAML 2.0 en Business, para un dominio de correo que demuestras con un registro DNS. Las respuestas SAML deben estar firmadas con SHA-256 o superior. Cuando un espacio de trabajo lo exige, se cierran todas las demás vías de acceso para ese dominio y las sesiones duran 24 horas como máximo."
+          },
+          "roles": {
+            "title": "Roles",
+            "body": "Propietario, administrador, miembro, facturación y lector. Solo los propietarios y administradores gestionan personas, dominios y ajustes, y los miembros de facturación y los lectores no pueden cambiar los códigos."
+          },
+          "auditLog": {
+            "title": "Registro de auditoría",
+            "body": "En Business, los propietarios y administradores ven quién cambió qué código, página, miembro, dominio, clave de API o ajuste, y pueden exportarlo como CSV. Las filas se conservan durante {days, number} días."
+          },
+          "staff": {
+            "title": "Acceso del personal",
+            "body": "Solo las cuentas del personal de QRdx pueden abrir las herramientas de administración, y cada acción del personal en ellas queda registrada en un registro de auditoría."
+          }
+        }
+      },
+      "secrets": {
+        "title": "Claves y secretos",
+        "items": {
+          "hashed": {
+            "title": "Claves y tokens con hash",
+            "body": "Las claves de API y los tokens de acceso de OAuth se guardan solo como hashes SHA-256, así que una copia de la base de datos no los revela. Las contraseñas de los códigos protegidos también se guardan como hashes."
+          },
+          "encrypted": {
+            "title": "Tokens de integración cifrados",
+            "body": "Los tokens de las herramientas que conectas, como Google Drive o Slack, se cifran con AES-256-GCM."
+          },
+          "webhooks": {
+            "title": "Webhooks firmados",
+            "body": "Cada endpoint de webhook tiene su propio secreto y cada payload se firma con él, para que tu servidor pueda comprobar que viene de QRdx."
+          }
+        }
+      },
+      "abuse": {
+        "title": "Abuso y seguridad de enlaces",
+        "items": {
+          "linkChecks": {
+            "title": "Revisión de enlaces",
+            "body": "Cuando se define el destino de un código dinámico, QRdx lo comprueba en las listas de sitios de malware y phishing de Google Web Risk y rechaza los marcados. Un destino que no se pudo comprobar a tiempo se vuelve a comprobar y, si resulta marcado, su código se desactiva."
+          },
+          "rateLimits": {
+            "title": "Límites de uso",
+            "body": "La API, el servidor MCP, los formularios y otros endpoints públicos tienen límites de uso por clave, cuenta o dirección IP."
+          },
+          "bots": {
+            "title": "Control de bots en formularios",
+            "body": "Los formularios públicos usan Cloudflare Turnstile y campos ocultos que solo rellenan los bots."
+          },
+          "reports": {
+            "title": "Denunciar códigos dañinos",
+            "body": "Cualquiera puede <report>denunciar un código QR</report> que lleve a phishing, malware o una estafa. Los códigos que incumplen las normas se desactivan."
+          }
+        }
+      },
+      "storage": {
+        "title": "Dónde se almacenan los datos",
+        "items": {
+          "hosting": {
+            "title": "Alojamiento",
+            "body": "La aplicación se ejecuta en Vercel. Sus funciones de servidor se ejecutan en Washington, D. C., en Estados Unidos, detrás de la red global de borde de Vercel."
+          },
+          "database": {
+            "title": "Base de datos",
+            "body": "Las cuentas, los códigos, los escaneos y las respuestas de formularios se guardan en una base de datos Neon Postgres en AWS US East (N. Virginia). Neon <neon>cifra los datos en reposo</neon> con AES-256 y conserva copias de seguridad cifradas."
+          },
+          "files": {
+            "title": "Archivos subidos",
+            "body": "Los archivos que subes se almacenan en Cloudflare R2, en su región de Asia-Pacífico."
+          },
+          "scans": {
+            "title": "Datos de escaneo",
+            "body": "Las direcciones IP de quienes escanean nunca se almacenan. Los visitantes únicos se cuentan con un hash que cambia cada día."
+          }
+        }
+      },
+      "yourData": {
+        "title": "Tus datos y los documentos legales",
+        "items": {
+          "export": {
+            "title": "Exportación",
+            "body": "Descarga desde Ajustes todo lo que QRdx guarda sobre tu cuenta en un ZIP, y exporta los escaneos, las respuestas de formularios y el registro de auditoría en CSV."
+          },
+          "delete": {
+            "title": "Eliminación",
+            "body": "Elimina códigos, páginas, archivos y respuestas de formularios en cualquier momento, o toda tu cuenta. Los datos eliminados pueden permanecer durante un breve periodo en el historial de recuperación del proveedor de la base de datos."
+          },
+          "dpa": {
+            "title": "Adenda de tratamiento de datos",
+            "body": "El <dpa>DPA</dpa> forma parte de los Términos para todos los clientes e incluye las Cláusulas Contractuales Tipo. Pide una copia firmada si la necesitas."
+          },
+          "subprocessors": {
+            "title": "Subencargados",
+            "body": "La <list>lista de subencargados</list> indica todos los servicios que tratan datos personales para QRdx, qué hacen y dónde. La actualizamos al menos 30 días antes de que empiece a operar uno nuevo."
+          }
+        }
+      }
+    },
+    "reportTitle": "Informa de una vulnerabilidad",
+    "report": "Escribe a <mail>{email}</mail> con un asunto que empiece por [security] y, por favor, no lo publiques en una incidencia pública de GitHub. Nuestra <policy>política de seguridad</policy> cubre el alcance y el puerto seguro, y <txt>security.txt</txt> incluye los mismos datos de contacto.",
+    "reviewTitle": "¿Haces una revisión de seguridad?",
+    "review": "Envíanos tu cuestionario. Los contratos <enterprise>Enterprise</enterprise> incluyen respuestas para tu revisión y un DPA firmado."
   },
   "templates": {
     "metaTitle": "Plantillas de páginas para códigos QR con demos en vivo",
