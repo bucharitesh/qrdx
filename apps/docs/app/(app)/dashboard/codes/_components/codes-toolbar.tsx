@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The codes list's toolbar: Filter and Display on the left, a live search on the
 // right, and the filters in use as removable chips below. Every filter lives
@@ -93,6 +94,7 @@ function ManageTagsDialog({
   onOpenChange: (open: boolean) => void;
   tags: TagRow[];
 }) {
+  const t = useTranslations("app.dashboard.codes.codesToolbar");
   const [editing, setEditing] = useState<TagRow | null>(null);
   const [deleting, setDeleting] = useState<TagRow | null>(null);
   const router = useRouter();
@@ -101,13 +103,13 @@ function ManageTagsDialog({
       <Dialog onOpenChange={onOpenChange} open={open}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Tags</DialogTitle>
+            <DialogTitle>{t("tags")}</DialogTitle>
             <DialogDescription>
-              Rename, recolor or delete tags. Deleting a tag keeps its codes.
+              {t("renameRecolorOrDeleteTags")}
             </DialogDescription>
           </DialogHeader>
           {tags.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No tags yet.</p>
+            <p className="text-muted-foreground text-sm">{t("noTagsYet")}</p>
           ) : (
             <ul className="max-h-80 divide-y overflow-y-auto rounded-lg border">
               {tags.map((tag) => (
@@ -120,7 +122,7 @@ function ManageTagsDialog({
                     {plural(tag.codeCount, "code")}
                   </span>
                   <Button
-                    aria-label={`Edit ${tag.name}`}
+                    aria-label={t("editName", { name: tag.name })}
                     className="size-7"
                     onClick={() => setEditing(tag)}
                     size="icon"
@@ -129,7 +131,7 @@ function ManageTagsDialog({
                     <Edit2 aria-hidden />
                   </Button>
                   <Button
-                    aria-label={`Delete ${tag.name}`}
+                    aria-label={t("deleteName", { name: tag.name })}
                     className="size-7"
                     onClick={() => setDeleting(tag)}
                     size="icon"
@@ -171,6 +173,7 @@ export function CodesToolbar({
   domains: DomainFilterOptions;
   trashCount: number;
 }) {
+  const t = useTranslations("app.dashboard.codes.codesToolbar");
   const router = useRouter();
   const [, startTransition] = useTransition();
   const { run, isPending } = useOrganizeAction();
@@ -220,7 +223,7 @@ export function CodesToolbar({
     >
       {label}
       <X aria-hidden />
-      <span className="sr-only">Remove filter</span>
+      <span className="sr-only">{t("removeFilter")}</span>
     </Button>
   );
 
@@ -232,7 +235,7 @@ export function CodesToolbar({
             <DropdownMenuTrigger asChild>
               <Button variant="outline">
                 <Filter aria-hidden />
-                Filter
+                {t("filter")}
                 {activeCount > 0 && (
                   <span className="bg-foreground text-background rounded-full px-1.5 text-[11px] leading-4 font-medium tabular-nums">
                     {activeCount}
@@ -244,7 +247,7 @@ export function CodesToolbar({
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <ArchiveBox aria-hidden />
-                  Status
+                  {t("status")}
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuRadioGroup
@@ -271,12 +274,12 @@ export function CodesToolbar({
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <Tag2 aria-hidden />
-                  Tags
+                  {t("tags")}
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className="max-h-80 w-56 overflow-y-auto">
                   {tags.length === 0 && (
                     <p className="text-muted-foreground px-2 py-1.5 text-xs">
-                      No tags yet.
+                      {t("noTagsYet")}
                     </p>
                   )}
                   {tags.map((tag) => (
@@ -300,11 +303,11 @@ export function CodesToolbar({
                     <>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onSelect={() => setNewTag(true)}>
-                        New tag…
+                        {t("newTag")}
                       </DropdownMenuItem>
                       {tags.length > 0 && (
                         <DropdownMenuItem onSelect={() => setManageTags(true)}>
-                          Edit tags…
+                          {t("editTags")}
                         </DropdownMenuItem>
                       )}
                     </>
@@ -314,7 +317,7 @@ export function CodesToolbar({
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <Category aria-hidden />
-                  Type
+                  {t("type")}
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent>
                   <DropdownMenuRadioGroup
@@ -327,7 +330,7 @@ export function CodesToolbar({
                     value={filters.type ?? "any"}
                   >
                     <DropdownMenuRadioItem value="any">
-                      Any type
+                      {t("anyType")}
                     </DropdownMenuRadioItem>
                     {(Object.keys(TYPE_LABELS) as CodeTypeFilter[]).map(
                       (type) => (
@@ -343,7 +346,7 @@ export function CodesToolbar({
                 <DropdownMenuSub>
                   <DropdownMenuSubTrigger>
                     <Global aria-hidden />
-                    Domain
+                    {t("domain")}
                   </DropdownMenuSubTrigger>
                   <DropdownMenuSubContent>
                     <DropdownMenuRadioGroup
@@ -353,7 +356,7 @@ export function CodesToolbar({
                       value={filters.domain ?? "any"}
                     >
                       <DropdownMenuRadioItem value="any">
-                        Any domain
+                        {t("anyDomain")}
                       </DropdownMenuRadioItem>
                       <DropdownMenuRadioItem value={DEFAULT_DOMAIN_FILTER}>
                         {domains.defaultHost}
@@ -378,9 +381,9 @@ export function CodesToolbar({
                   aria-hidden
                   variant={filters.favorites ? "Bold" : "Linear"}
                 />
-                Favorites only
+                {t("favoritesOnly")}
                 {filters.favorites && (
-                  <Tick aria-label="(on)" className="ml-auto size-4" />
+                  <Tick aria-label={t("on")} className="ml-auto size-4" />
                 )}
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -402,15 +405,15 @@ export function CodesToolbar({
               variant="outline"
             >
               <Trash2 aria-hidden />
-              Empty trash
+              {t("emptyTrash")}
             </Button>
           )}
         </div>
         <ListSearch
           className="flex-1 sm:ml-auto sm:max-w-sm"
-          label="Search codes"
+          label={t("searchCodes")}
           onSearch={(q) => go({ q }, true)}
-          placeholder="Search title, link, notes or tags"
+          placeholder={t("searchTitleLinkNotesOr")}
           value={filters.q}
         />
       </div>
@@ -449,12 +452,12 @@ export function CodesToolbar({
               size="sm"
               variant="ghost"
             >
-              Clear all
+              {t("clearAll")}
             </Button>
           )}
           {selectedTags.length > 1 && (
             <span className="text-muted-foreground text-xs">
-              Codes with all of these tags
+              {t("codesWithAllOfThese")}
             </span>
           )}
         </div>
@@ -473,21 +476,23 @@ export function CodesToolbar({
       <AlertDialog onOpenChange={setConfirmEmpty} open={confirmEmpty}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Empty the trash?</AlertDialogTitle>
+            <AlertDialogTitle>{t("emptyTheTrash")}</AlertDialogTitle>
             <AlertDialogDescription>
-              {plural(trashCount, "code")} and their scan history are deleted
-              forever. Printed copies show a "QR code not found" page. This
-              can't be undone.
+              {t("valueAndTheirScanHistory", {
+                value: plural(trashCount, "code"),
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button
               disabled={isPending}
               onClick={emptyTrash}
               variant="destructive"
             >
-              Empty trash
+              {t("emptyTrash")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

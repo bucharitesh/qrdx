@@ -25,6 +25,8 @@ import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { AnalyticsExtra } from "@/app/(app)/dashboard/codes/[id]/_components/analytics-extra";
 import { PreciseLocationsCard } from "@/app/(app)/dashboard/codes/[id]/_components/precise-locations-card";
 import { SheetsExport } from "@/components/data-connections/sheets-export";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
+import type { Translator } from "@/lib/i18n/translator";
 import { PLAN_LIMITS, PLANS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import {
@@ -69,13 +71,16 @@ const toItems = (
   }));
 
 /** "3 years of scan history", "every scan" (lib/plans.ts). */
-function retentionText(days: number): string {
-  if (!Number.isFinite(days)) return "every scan";
+function retentionText(
+  days: number,
+  t: Translator<"app.dashboard.codes.analyticsTab">,
+): string {
+  if (!Number.isFinite(days)) return t("everyScan");
   if (days >= 365) {
     const years = Math.round(days / 365);
     return `${years} year${years === 1 ? "" : "s"} of scan history`;
   }
-  return `${days} days of scan history`;
+  return t("daysDaysOfScanHistory", { days });
 }
 
 /** The cheapest plan that keeps at least `days` of scans. */
@@ -83,15 +88,23 @@ const planKeeping = (days: number) =>
   PLANS.find((plan) => PLAN_LIMITS[plan].analyticsRetentionDays >= days);
 
 /** "Pro keeps 3 years of scan history and Business keeps every scan." */
-function upgradeRetentionText(retentionDays: number): string {
+function upgradeRetentionText(
+  retentionDays: number,
+  t: Translator<"app.dashboard.codes.analyticsTab">,
+): string {
   const longer = PLANS.filter(
     (plan) => PLAN_LIMITS[plan].analyticsRetentionDays > retentionDays,
-  ).map(
-    (plan) =>
-      `${PLAN_NAMES[plan]} keeps ${retentionText(PLAN_LIMITS[plan].analyticsRetentionDays)}`,
+  ).map((plan) =>
+    t("valueKeepsValue2", {
+      value: PLAN_NAMES[plan],
+      value2: retentionText(PLAN_LIMITS[plan].analyticsRetentionDays, t),
+    }),
   );
   return longer.length > 1
-    ? `${longer.slice(0, -1).join(", ")} and ${longer.at(-1)}.`
+    ? t("valueAndValue2", {
+        value: longer.slice(0, -1).join(", "),
+        value2: longer.at(-1) ?? "",
+      })
     : `${longer[0] ?? ""}.`;
 }
 
@@ -132,6 +145,7 @@ export async function AnalyticsTab({
   retentionDays: number;
   query: Query;
 }) {
+  const t = await getAppTranslations("app.dashboard.codes.analyticsTab");
   const { range, days } = resolveScanRange(query.range, retentionDays);
   const [analytics, slug] = await Promise.all([
     getScanAnalytics(code.id, days),
@@ -148,7 +162,7 @@ export async function AnalyticsTab({
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <nav aria-label="Date range" className="flex flex-wrap gap-1">
+        <nav aria-label={t("dateRange")} className="flex flex-wrap gap-1">
           {SCAN_RANGE_KEYS.map((key) => {
             const keeping = planKeeping(SCAN_RANGES[key]);
             return SCAN_RANGES[key] > retentionDays ? (
@@ -158,7 +172,10 @@ export async function AnalyticsTab({
                 size="sm"
                 title={
                   keeping
-                    ? `${PLAN_NAMES[keeping]} keeps ${scanRangeLabel(key)} of scan history`
+                    ? t("valueKeepsValue2OfScan", {
+                        value: PLAN_NAMES[keeping],
+                        value2: scanRangeLabel(key),
+                      })
                     : undefined
                 }
                 variant="ghost"
@@ -190,7 +207,7 @@ export async function AnalyticsTab({
           <Button asChild size="sm" variant="outline">
             <a download href={exportHref}>
               <Download />
-              Export CSV
+              {t("exportCsv")}
             </a>
           </Button>
           <SheetsExport codeId={code.id} />
@@ -198,31 +215,35 @@ export async function AnalyticsTab({
       </div>
       {lockedRanges && (
         <p className="text-muted-foreground -mt-3 text-xs">
-          Your plan keeps {retentionText(retentionDays)}.{" "}
-          {upgradeRetentionText(retentionDays)}{" "}
-          <Link className="underline" href="/pricing">
-            Compare plans
-          </Link>
+          {t.rich("yourPlanKeepsValueValue2", {
+            value: retentionText(retentionDays, t),
+            value2: upgradeRetentionText(retentionDays, t),
+            link: (chunks) => (
+              <Link className="underline" href="/pricing">
+                {chunks}
+              </Link>
+            ),
+          })}
         </p>
       )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Metric
           hint="Since the code was created"
-          label="Total scans"
+          label={t("totalScans")}
           value={formatNumber(code.scanCount)}
         />
         <Metric
           hint={`Last ${days} days (UTC)`}
-          label="Scans in range"
+          label={t("scansInRange")}
           value={formatNumber(analytics.total)}
         />
         <Metric
           hint="Each visitor counts once per day"
-          label="Unique visitors"
+          label={t("uniqueVisitors")}
           value={formatNumber(analytics.unique)}
         />
-        <Metric label="Last scan" value={formatDate(code.lastScannedAt)} />
+        <Metric label={t("lastScan")} value={formatDate(code.lastScannedAt)} />
       </div>
 
       {/* NFC (feat/nfc) */}
@@ -235,19 +256,19 @@ export async function AnalyticsTab({
               size="sm"
               variant="ghost"
             >
-              <Link href={nfcPageHref(slug, code.id)}>Use with NFC</Link>
+              <Link href={nfcPageHref(slug, code.id)}>{t("useWithNfc")}</Link>
             </Button>
           )
         }
-        description={`Last ${days} days. Taps come through the code's NFC link.`}
+        description={t("lastDaysDaysTapsCome", { days })}
         sources={analytics.sources}
       />
 
       <Card className="gap-4 py-4">
         <CardHeader className="px-4">
-          <CardTitle>Scans over time</CardTitle>
+          <CardTitle>{t("scansOverTime")}</CardTitle>
           <CardDescription>
-            Scans per day, last {days} days (UTC)
+            {t("scansPerDayLastDays", { days })}
           </CardDescription>
         </CardHeader>
         <CardContent className="px-2 sm:px-4">
@@ -261,7 +282,7 @@ export async function AnalyticsTab({
             analytics.countries,
             (value) => countryName(value) ?? value,
           )}
-          title="Top countries"
+          title={t("topCountries")}
           total={analytics.total}
         />
         <BreakdownCard
@@ -271,12 +292,12 @@ export async function AnalyticsTab({
               label: row.city
                 ? [row.city, country].filter(Boolean).join(", ")
                 : country
-                  ? `Unknown city (${country})`
-                  : "Unknown",
+                  ? t("unknownCityCountry", { country })
+                  : t("unknown"),
               count: row.count,
             };
           })}
-          title="Top cities"
+          title={t("topCities")}
           total={analytics.total}
         />
         <BreakdownCard
@@ -284,17 +305,17 @@ export async function AnalyticsTab({
             analytics.devices,
             (value) => DEVICE_LABELS[value] ?? value,
           )}
-          title="Devices"
+          title={t("devices")}
           total={analytics.total}
         />
         <BreakdownCard
           items={toItems(analytics.os)}
-          title="Operating systems"
+          title={t("operatingSystems")}
           total={analytics.total}
         />
         <BreakdownCard
           items={toItems(analytics.browsers)}
-          title="Browsers"
+          title={t("browsers")}
           total={analytics.total}
         />
         <BreakdownCard
@@ -303,7 +324,7 @@ export async function AnalyticsTab({
             undefined,
             "Direct (no referrer)",
           )}
-          title="Referrers"
+          title={t("referrers")}
           total={analytics.total}
         />
       </div>
@@ -316,9 +337,7 @@ export async function AnalyticsTab({
       />
       <AnalyticsExtra codeId={code.id} days={days} query={query} />
       <p className="text-muted-foreground text-xs">
-        Bots and link previews are not counted. Countries and cities come from
-        the visitor's IP address, which is never stored; precise locations only
-        from scanners who chose to share them.
+        {t("botsAndLinkPreviewsAre")}
       </p>
     </div>
   );

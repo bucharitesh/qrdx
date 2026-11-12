@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // The Barcodes page's header: the folder switcher as its title (the codes'
 // folders), the count, and New barcode.
@@ -40,6 +41,7 @@ export function BarcodesHeader({
   /** Barcodes matching the filters */
   total: number;
 }) {
+  const t = useTranslations("app.dashboard.barcodes.barcodesHeader");
   const canWrite = useCan("content.write");
   const current = folders.find((row) => row.id === filters.folder) ?? null;
   const title = current
@@ -56,7 +58,7 @@ export function BarcodesHeader({
     <div className="flex items-center gap-3">
       <div className="flex min-w-0 flex-1 items-baseline gap-2">
         <h1 className="-ml-2 min-w-0 text-2xl font-semibold tracking-tight">
-          <span className="sr-only">Barcodes: </span>
+          <span className="sr-only">{t("barcodes")} </span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
@@ -73,7 +75,7 @@ export function BarcodesHeader({
                   aria-hidden
                   className="text-muted-foreground size-4 shrink-0"
                 />
-                <span className="sr-only">, change folder</span>
+                <span className="sr-only">{t("changeFolder")}</span>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -83,20 +85,20 @@ export function BarcodesHeader({
               <DropdownMenuItem asChild>
                 <Link href={to(null)}>
                   <Category aria-hidden />
-                  All barcodes
+                  {t("allBarcodes")}
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link href={to("none")}>
                   <FolderMinus aria-hidden />
-                  Not in a folder
+                  {t("notInAFolder")}
                 </Link>
               </DropdownMenuItem>
               {folders.length > 0 && (
                 <>
                   <DropdownMenuSeparator />
                   <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-                    Folders (shared with codes)
+                    {t("foldersSharedWithCodes")}
                   </DropdownMenuLabel>
                   {folders.map((folder) => (
                     <DropdownMenuItem asChild key={folder.id}>
@@ -117,15 +119,15 @@ export function BarcodesHeader({
           </DropdownMenu>
         </h1>
         <span className="text-muted-foreground hidden shrink-0 text-sm tabular-nums sm:inline">
-          {formatNumber(total)} {total === 1 ? "barcode" : "barcodes"}
+          {formatNumber(total)} {total === 1 ? t("barcode") : t("barcodes2")}
         </span>
       </div>
       {canWrite && (
         <Button asChild>
           <Link href={`${basePath}/new`}>
             <Add aria-hidden />
-            <span className="max-sm:hidden">New barcode</span>
-            <span className="sm:hidden">New</span>
+            <span className="max-sm:hidden">{t("newBarcode")}</span>
+            <span className="sm:hidden">{t("new")}</span>
           </Link>
         </Button>
       )}

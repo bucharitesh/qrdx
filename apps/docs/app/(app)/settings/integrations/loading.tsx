@@ -1,12 +1,15 @@
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
+import { use } from "react";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { SettingsHeader } from "../components/settings-header";
 
 export default function IntegrationsLoading() {
+  const t = use(getAppTranslations("app.settings.integrations.loading"));
   return (
     <div className="space-y-6">
       <SettingsHeader
-        title="Integrations"
-        description="Connect third-party services to enhance your QR codes"
+        title={t("integrations")}
+        description={t("connectThirdPartyServicesTo")}
       />
 
       <div className="space-y-8">

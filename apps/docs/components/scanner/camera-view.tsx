@@ -12,6 +12,7 @@ import {
   Repeat as SwitchCamera,
   SearchZoomIn as ZoomIn,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type DetectedCode, detectCodes, getDetector } from "./detector";
 
@@ -32,18 +33,24 @@ const SCAN_INTERVAL_MS = 120;
 /** In batch mode the same value is reported again only after this long. */
 const REPEAT_COOLDOWN_MS = 3000;
 
-function cameraError(error: unknown): string {
+/** Why the camera isn't running: scanner.camera.errors.<key>. */
+type CameraError =
+  | "blocked"
+  | "notFound"
+  | "busy"
+  | "failed"
+  | "loadFailed"
+  | "unsupported"
+  | "insecure";
+
+function cameraError(error: unknown): CameraError {
   const name = (error as { name?: string })?.name;
-  if (name === "NotAllowedError" || name === "SecurityError") {
-    return "Camera access was blocked. Allow the camera for this site in your browser settings, or scan a picture instead.";
-  }
+  if (name === "NotAllowedError" || name === "SecurityError") return "blocked";
   if (name === "NotFoundError" || name === "OverconstrainedError") {
-    return "No camera was found. Scan a picture instead.";
+    return "notFound";
   }
-  if (name === "NotReadableError" || name === "AbortError") {
-    return "The camera is busy in another app or tab. Close it and try again.";
-  }
-  return "The camera couldn't start. Try again, or scan a picture instead.";
+  if (name === "NotReadableError" || name === "AbortError") return "busy";
+  return "failed";
 }
 
 export function CameraView({
@@ -66,7 +73,8 @@ export function CameraView({
   const [status, setStatus] = useState<
     "idle" | "starting" | "running" | "error"
   >("idle");
-  const [error, setError] = useState<string | null>(null);
+  const t = useTranslations("scanner.camera");
+  const [error, setError] = useState<CameraError | null>(null);
   const [ready, setReady] = useState(false);
   const [boxes, setBoxes] = useState<DetectedCode[]>([]);
   const [frame, setFrame] = useState({ width: 0, height: 0 });
@@ -146,9 +154,7 @@ export function CameraView({
           if (!loaded && ++failures >= 3) {
             stop();
             setStatus("error");
-            setError(
-              "The scanner couldn't load. Check your connection and try again.",
-            );
+            setError("loadFailed");
             onActiveChange(false);
             return;
           }
@@ -163,11 +169,7 @@ export function CameraView({
       setReady(false);
       if (!navigator.mediaDevices?.getUserMedia) {
         setStatus("error");
-        setError(
-          window.isSecureContext
-            ? "This browser can't use the camera. Scan a picture instead."
-            : "The camera only works on a secure (https) page. Scan a picture instead.",
-        );
+        setError(window.isSecureContext ? "unsupported" : "insecure");
         onActiveChange(false);
         return;
       }
@@ -230,7 +232,7 @@ export function CameraView({
         setError(
           (startError as Error)?.message?.includes("import") ||
             (startError as Error)?.name === "ChunkLoadError"
-            ? "The scanner couldn't load. Check your connection and try again."
+            ? "loadFailed"
             : cameraError(startError),
         );
         onActiveChange(false);
@@ -285,7 +287,7 @@ export function CameraView({
     <div className="flex flex-col gap-3">
       <div className="relative mx-auto aspect-[3/4] max-h-[70vh] w-full overflow-hidden rounded-xl bg-neutral-950 sm:aspect-video">
         <video
-          aria-label="Camera preview"
+          aria-label={t("preview")}
           className={cn(
             "absolute inset-0 size-full object-cover",
             !running && "opacity-0",
@@ -337,18 +339,17 @@ export function CameraView({
             {status === "starting" ? (
               <>
                 <LoaderCircle aria-hidden className="size-8 animate-spin" />
-                <p className="text-sm">Starting the camera…</p>
+                <p className="text-sm">{t("starting")}</p>
               </>
             ) : (
               <>
                 <Camera aria-hidden className="size-10 opacity-80" />
                 <p className="max-w-sm text-sm text-white/80">
-                  {error ??
-                    "Point your camera at a QR code or barcode. Nothing opens until you choose to."}
+                  {error ? t(`errors.${error}`) : t("idle")}
                 </p>
                 <Button onClick={() => onActiveChange(true)} type="button">
                   <Camera className="size-4" />
-                  {error ? "Try again" : "Start camera"}
+                  {t(error ? "retry" : "start")}
                 </Button>
               </>
             )}
@@ -357,7 +358,7 @@ export function CameraView({
 
         {running && !ready && (
           <p className="absolute inset-x-0 top-3 mx-auto w-fit rounded-full bg-black/60 px-3 py-1 text-xs text-white">
-            Loading the scanner…
+            {t("loading")}
           </p>
         )}
 
@@ -365,9 +366,7 @@ export function CameraView({
           <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 bg-gradient-to-t from-black/70 to-transparent p-3">
             {torch.supported && (
               <Button
-                aria-label={
-                  torch.on ? "Turn flashlight off" : "Turn flashlight on"
-                }
+                aria-label={t(torch.on ? "torchOff" : "torchOn")}
                 aria-pressed={torch.on}
                 className="bg-black/50 text-white hover:bg-black/70 hover:text-white"
                 onClick={toggleTorch}
@@ -380,7 +379,7 @@ export function CameraView({
             )}
             {devices.length > 1 && (
               <Button
-                aria-label="Switch camera"
+                aria-label={t("switch")}
                 className="bg-black/50 text-white hover:bg-black/70 hover:text-white"
                 onClick={switchCamera}
                 size="icon"
@@ -391,7 +390,7 @@ export function CameraView({
               </Button>
             )}
             <Button
-              aria-label="Stop camera"
+              aria-label={t("stop")}
               className="bg-black/50 text-white hover:bg-black/70 hover:text-white"
               onClick={() => onActiveChange(false)}
               size="icon"
@@ -411,7 +410,7 @@ export function CameraView({
             className="text-muted-foreground size-4 shrink-0"
           />
           <Slider
-            aria-label="Zoom"
+            aria-label={t("zoom")}
             max={zoom.max}
             min={zoom.min}
             onValueChange={([value]) => {

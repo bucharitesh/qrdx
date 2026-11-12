@@ -1,5 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export type CommunityTab =
   | "home"
@@ -38,8 +39,9 @@ export function CommunityTabs({
   /** Shown once a kit is published (or on its own page) */
   showKits?: boolean;
 }) {
+  const t = useTranslations("community.communityTabs");
   return (
-    <nav aria-label="Community" className="border-b">
+    <nav aria-label={t("community")} className="border-b">
       <div
         className={cn(
           "no-scrollbar flex gap-1 overflow-x-auto",

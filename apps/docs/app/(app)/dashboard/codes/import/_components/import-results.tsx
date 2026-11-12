@@ -22,6 +22,7 @@ import {
   Gallery as Images,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import Papa from "papaparse";
 import { useEffect, useRef, useState } from "react";
 import { plural } from "@/app/(app)/dashboard/codes/_components/use-organize-action";
@@ -70,6 +71,7 @@ export function ImportResults({
   basePath: string;
   onReset: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.import.importResults");
   const progress = jobProgress(job);
   const failed = Object.values(job.results).filter((row) => !row.ok);
   const notes = Object.values(job.results).filter(
@@ -174,8 +176,8 @@ export function ImportResults({
         {progress.created > 0 ? <CircleCheck /> : <CircleAlert />}
         <AlertTitle>
           {progress.created > 0
-            ? `Created ${plural(progress.created, "code")}`
-            : "No codes were created"}
+            ? t("createdValue", { value: plural(progress.created, "code") })
+            : t("noCodesWereCreated")}
         </AlertTitle>
         <AlertDescription>
           {[
@@ -187,7 +189,7 @@ export function ImportResults({
               `${plural(job.skipped.length, "row")} with problems in the file ${job.skipped.length === 1 ? "was" : "were"} skipped.`,
           ]
             .filter(Boolean)
-            .join(" ") || "Every row was imported."}
+            .join(" ") || t("everyRowWasImported")}
         </AlertDescription>
       </Alert>
 
@@ -195,7 +197,9 @@ export function ImportResults({
         <ul className="max-h-60 space-y-1 overflow-auto rounded-lg border p-3 text-sm">
           {[...failed, ...notes].slice(0, 50).map((result) => (
             <li key={result.line}>
-              <span className="text-muted-foreground">Line {result.line}:</span>{" "}
+              <span className="text-muted-foreground">
+                {t("lineLine", { line: result.line })}
+              </span>{" "}
               {result.message}
             </li>
           ))}
@@ -204,7 +208,7 @@ export function ImportResults({
 
       <div className="flex flex-wrap gap-2">
         <Button asChild>
-          <Link href={basePath}>View codes</Link>
+          <Link href={basePath}>{t("viewCodes")}</Link>
         </Button>
         <Button
           onClick={() =>
@@ -213,32 +217,37 @@ export function ImportResults({
           variant="outline"
         >
           <Download />
-          Results CSV
+          {t("resultsCsv")}
         </Button>
         <Button onClick={onReset} variant="ghost">
-          Import another file
+          {t("importAnotherFile")}
         </Button>
       </div>
 
       {progress.created > 0 && (
         <section className="space-y-3 rounded-lg border p-4">
           <div>
-            <h2 className="text-sm font-semibold">Images of the new codes</h2>
+            <h2 className="text-sm font-semibold">
+              {t("imagesOfTheNewCodes")}
+            </h2>
             <p className="text-muted-foreground text-xs">
-              {formatCount(progress.created)} files, drawn in your browser with
-              the workspace's default design, plus a codes.csv index. Large
-              batches are saved in parts of about 500 MB.
+              {t("createdFilesDrawnInYour", {
+                created: formatCount(progress.created),
+              })}
             </p>
           </div>
           {zipping ? (
             <div className="space-y-2">
               <Progress
-                aria-label="Images progress"
+                aria-label={t("imagesProgress")}
                 value={(zipping.done / Math.max(1, zipping.total)) * 100}
               />
               <div className="text-muted-foreground flex items-center justify-between text-xs tabular-nums">
                 <span>
-                  {formatCount(zipping.done)} of {formatCount(zipping.total)}
+                  {t("doneOfTotal", {
+                    done: formatCount(zipping.done),
+                    total: formatCount(zipping.total),
+                  })}
                 </span>
                 <Button
                   onClick={() => {
@@ -247,7 +256,7 @@ export function ImportResults({
                   size="sm"
                   variant="ghost"
                 >
-                  Cancel
+                  {t("cancel")}
                 </Button>
               </div>
             </div>
@@ -257,17 +266,17 @@ export function ImportResults({
                 onValueChange={(value) => setFormat(value as ImageFormat)}
                 value={format}
               >
-                <SelectTrigger aria-label="Image format" className="w-44">
+                <SelectTrigger aria-label={t("imageFormat")} className="w-44">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="png">PNG (1024 px)</SelectItem>
-                  <SelectItem value="svg">SVG (vector)</SelectItem>
+                  <SelectItem value="png">{t("png1024Px")}</SelectItem>
+                  <SelectItem value="svg">{t("svgVector")}</SelectItem>
                 </SelectContent>
               </Select>
               <Button onClick={downloadImages} variant="outline">
                 <Images />
-                Download images
+                {t("downloadImages")}
               </Button>
             </div>
           )}

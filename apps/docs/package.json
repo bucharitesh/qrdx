@@ -20,6 +20,7 @@
     "postinstall": "fumadocs-mdx",
     "format": "ultracite fix",
     "i18n:check": "tsx scripts/i18n-check.ts",
+    "i18n:extract": "tsx scripts/i18n-extract.ts",
     "i18n:translate": "tsx scripts/i18n-translate.ts",
     "i18n:docs": "tsx scripts/i18n-translate-docs.ts",
     "i18n:split": "node scripts/i18n-split-roots.mjs"
@@ -121,6 +122,7 @@
     "tldts": "7.4.19",
     "twoslash": "^0.3.9",
     "unist-util-visit": "^5.2.0",
+    "use-intl": "4.14.9",
     "use-stick-to-bottom": "^1.1.6",
     "zod": "^4.6.7",
     "zustand": "^5.0.16"

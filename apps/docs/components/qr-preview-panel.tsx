@@ -2,6 +2,7 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import { getFrameDimensions, isFrameActive } from "qrdx";
 import type React from "react";
 import { lazy, useRef } from "react";
@@ -26,10 +27,10 @@ const QRCode = lazy(() =>
 );
 
 /**
- * What the preview encodes until there's content: our own site, so the
- * sample scans to something real. It is shown faded and labelled, and it
- * never reaches a download (Download, Copy SVG and the dialog read the store's
- * value, which stays empty).
+ * What the preview encodes until there's content: our own site. It is shown
+ * blurred past scanning, faded and labelled, and it never reaches a download
+ * (Download, Copy SVG and the dialog read the store's value, which stays
+ * empty).
  */
 export const SAMPLE_PREVIEW_VALUE = "https://qrdx.dev";
 
@@ -37,6 +38,7 @@ export const SAMPLE_PREVIEW_VALUE = "https://qrdx.dev";
 const openPhotoCheck = () => usePhotoScanDialogStore.getState().setOpen(true);
 
 function SampleLabel({ className }: { className?: string }) {
+  const t = useTranslations("editor.qrPreviewPanel");
   const contentType = useQREditorStore((state) => state.contentType);
   return (
     <p
@@ -46,12 +48,12 @@ function SampleLabel({ className }: { className?: string }) {
       )}
     >
       <span className="bg-muted text-foreground rounded-full px-2 py-0.5 text-[11px] font-medium">
-        Sample
+        {t("sample")}
       </span>
       <span className="truncate">
         {contentType === "url"
-          ? "Add your link to make it yours"
-          : "Add your details to make it yours"}
+          ? t("addYourLinkToMake")
+          : t("addYourDetailsToMake")}
       </span>
     </p>
   );
@@ -90,12 +92,15 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
               >
                 {/* Fit the whole code (and frame) in the panel: on phones the
                     editor sheet leaves a short area, and a fixed 512px code
-                    was cropped at the bottom. The SVG scales by its viewBox. */}
+                    was cropped at the bottom. The SVG scales by its viewBox.
+                    The sample is blurred so nobody takes it for a real code.
+                    The blur scales with the code (cqmin): about 16px on a
+                    desktop, where zbar stops reading at 12 to 14px. */}
                 <div
                   aria-hidden={hasContent ? undefined : true}
                   className={cn(
-                    "flex items-center justify-center transition-opacity [&>svg]:size-full",
-                    !hasContent && "opacity-40",
+                    "flex items-center justify-center transition-[opacity,filter] [&>svg]:size-full",
+                    !hasContent && "opacity-40 blur-[2.5cqmin]",
                   )}
                   data-preview-code=""
                   style={{

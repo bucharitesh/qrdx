@@ -1,8 +1,10 @@
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { OFFICIAL_FRAME_RESOLVER } from "@/lib/community/catalog";
+import { localized } from "@/lib/i18n/content-server";
 import {
   codeStyles,
   frameName,
@@ -43,11 +45,29 @@ export function codePlaygroundHref(code: PageCode): string {
   });
 }
 
-/** "Wi-Fi QR code, Harbor theme with a Rounded frame". */
-export function codeAlt(code: PageCode): string {
-  const type = getQrType(code.type)?.name ?? "QR";
-  const frame = frameName(code);
-  return `${type} QR code, ${themeName(code)} theme${frame ? ` with a ${frame} frame` : ""}`;
+type AltText = (code: PageCode) => string;
+
+/**
+ * "Wi-Fi QR code, Harbor theme with a Rounded frame", in the page's
+ * language. Theme and frame names are product names and stay English.
+ */
+async function altText(codes: readonly PageCode[]): Promise<AltText> {
+  const types = [...new Set(codes.map((code) => code.type))];
+  const [t, names] = await Promise.all([
+    getTranslations("pageCodes"),
+    localized(
+      types.map((type) => ({ type, name: getQrType(type)?.name ?? "QR" })),
+    ),
+  ]);
+  const nameOf = new Map(names.map(({ type, name }) => [type, name]));
+  return (code) => {
+    const frame = frameName(code);
+    const values = {
+      type: nameOf.get(code.type) ?? "QR",
+      theme: themeName(code) ?? "",
+    };
+    return frame ? t("altFramed", { ...values, frame }) : t("alt", values);
+  };
 }
 
 const TILE_LINK =
@@ -57,10 +77,12 @@ function CodeTile({
   item,
   heading,
   compact,
+  alt,
 }: {
   item: CodeTileItem;
   heading: boolean;
   compact: boolean;
+  alt: AltText;
 }) {
   const { code } = item;
   const image = pageCodeImage(code);
@@ -69,7 +91,7 @@ function CodeTile({
   const Label = heading ? "h3" : "p";
   return (
     // No prefetch: a page of links to the playground bundle.
-    <Link
+    <LocaleLink
       href={item.href ?? codePlaygroundHref(code)}
       prefetch={false}
       className={TILE_LINK}
@@ -79,7 +101,7 @@ function CodeTile({
           <div className="relative aspect-square overflow-hidden rounded-[14px] bg-muted/60 dark:bg-muted/50">
             <img
               src={image.src}
-              alt={codeAlt(code)}
+              alt={alt(code)}
               width={image.width}
               height={image.height}
               loading="lazy"
@@ -110,7 +132,7 @@ function CodeTile({
           </p>
         </div>
       </Card>
-    </Link>
+    </LocaleLink>
   );
 }
 
@@ -119,7 +141,7 @@ function CodeTile({
  * with an h2). `compact`: smaller captions with the theme only, for the
  * six-across hub rows.
  */
-export function CodeTiles({
+export async function CodeTiles({
   items,
   label,
   heading = false,
@@ -133,11 +155,12 @@ export function CodeTiles({
   compact?: boolean;
   className?: string;
 }) {
+  const alt = await altText(items.map((item) => item.code));
   return (
     <ul aria-label={label} className={cn("grid w-full gap-3", className)}>
       {items.map((item) => (
         <li key={item.code.id} className="min-w-0">
-          <CodeTile item={item} heading={heading} compact={compact} />
+          <CodeTile item={item} heading={heading} compact={compact} alt={alt} />
         </li>
       ))}
     </ul>

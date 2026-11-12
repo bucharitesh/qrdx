@@ -8,9 +8,10 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { sendEmail } from "@/lib/email/send";
 import {
-  EMAIL_CHANGE_CODE_SUBJECT,
   EmailChangeCodeEmail,
+  emailChangeCodeSubject,
 } from "@/lib/email/templates/email-change";
+import { emailIntlForAddress } from "@/lib/i18n/email-locale";
 import {
   addressKey,
   addressMayRequestCode,
@@ -44,6 +45,8 @@ export const sendEmailChangeCode: EmailChangeCodeSender = async ({
     perAddressDailyLimiter,
   ]);
   if (!allowed) throw signInCodeRateLimited();
+  // The new address has no account yet: the language the request was in.
+  const intl = await emailIntlForAddress(email);
   await deliverSignInCode(
     { email, otp },
     {
@@ -53,8 +56,8 @@ export const sendEmailChangeCode: EmailChangeCodeSender = async ({
       send: () =>
         sendEmail({
           to: email,
-          subject: EMAIL_CHANGE_CODE_SUBJECT,
-          react: <EmailChangeCodeEmail code={otp} />,
+          subject: emailChangeCodeSubject(intl),
+          react: <EmailChangeCodeEmail code={otp} intl={intl} />,
           tags: [{ name: "category", value: "email_change_code" }],
         }),
     },

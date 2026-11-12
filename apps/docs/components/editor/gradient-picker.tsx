@@ -16,6 +16,7 @@ import {
 } from "@repo/design-system/components/ui/popover";
 import useMediaQuery from "@repo/design-system/hooks/use-media-query";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import type { ColorConfig } from "qrdx/types";
 import {
   forwardRef,
@@ -40,8 +41,8 @@ import {
   type PaintKind,
   PaintPanel,
   paintBackground,
-  paintSummary,
   QR_PAINT_KINDS,
+  usePaintSummary,
 } from "./paint-picker/paint-panel";
 import { SectionContext } from "./section-context";
 
@@ -75,6 +76,7 @@ function PaintPopover({
   open,
   onOpenChange,
 }: PaintPopoverProps) {
+  const t = useTranslations("editor.gradientPicker");
   const sheet = useMediaQuery(SHEET_QUERY) ?? false;
   const bannerInset = useConsentBannerInset();
   if (sheet) {
@@ -86,7 +88,7 @@ function PaintPopover({
           <DrawerHeader className="pb-1 text-left">
             <DrawerTitle className="text-sm">{label}</DrawerTitle>
             <DrawerDescription className="sr-only">
-              Pick a solid color, a gradient or a swatch for {label}.
+              {t("pickASolidColorA", { label })}
             </DrawerDescription>
           </DrawerHeader>
           <div className="overflow-y-auto px-4 pb-6">{children}</div>
@@ -178,6 +180,7 @@ export function GradientPicker({
   kinds = QR_PAINT_KINDS,
   alpha = true,
 }: GradientPickerProps) {
+  const paintSummary = usePaintSummary();
   const [open, setOpen] = useState(false);
   const recentOnClose = useRecentOnClose(value);
   const fallback = name === "bgColor" ? "#ffffff" : "#000000";
@@ -297,6 +300,7 @@ export function SolidColorField({
   design = true,
   className,
 }: SolidColorFieldProps) {
+  const paintSummary = usePaintSummary();
   const [open, setOpen] = useState(false);
   const recentOnClose = useRecentOnClose(value);
   return (

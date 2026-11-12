@@ -21,6 +21,7 @@ import {
   Warning2,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { useWorkspaceHref } from "@/components/workspace-provider";
@@ -87,6 +88,7 @@ export function PreviewStep({
   onBack: () => void;
   onStarted: (job: JobSummary) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.importPreviewStep");
   const inWorkspace = useWorkspaceHref();
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
@@ -194,13 +196,13 @@ export function PreviewStep({
         <>
           <Button onClick={onBack} size="sm" variant="ghost">
             <ArrowLeft />
-            Back
+            {t("back")}
           </Button>
           <div className="flex items-center gap-2">
             {limited && (
               <Button onClick={openGetProDialog} variant="outline">
                 <Diamonds />
-                Upgrade
+                {t("upgrade")}
               </Button>
             )}
             <Button
@@ -209,10 +211,10 @@ export function PreviewStep({
             >
               {starting && <Spinner className="animate-spin" />}
               {creates === 0
-                ? "Nothing to import"
+                ? t("nothingToImport")
                 : limited
-                  ? `Import the first ${plural(creates, "code")}`
-                  : `Import ${plural(creates, "code")}`}
+                  ? t("importTheFirstValue", { value: plural(creates, "code") })
+                  : t("importValue", { value: plural(creates, "code") })}
             </Button>
           </div>
         </>
@@ -225,19 +227,19 @@ export function PreviewStep({
             loading && "opacity-60",
           )}
         >
-          <Stat label="New codes" value={preview ? creates : "…"} />
+          <Stat label={t("newCodes")} value={preview ? creates : "…"} />
           <Stat
-            label="Already imported"
+            label={t("alreadyImported")}
             muted
             value={preview ? preview.alreadyImported : "…"}
           />
           <Stat
-            label="Same destination exists"
+            label={t("sameDestinationExists")}
             muted
             value={preview ? preview.duplicates : "…"}
           />
           <Stat
-            label={limited ? "Over plan limit" : "Can't import"}
+            label={limited ? t("overPlanLimit") : t("cantImport")}
             muted
             value={
               preview ? (limited ? preview.overLimit : preview.invalid) : "…"
@@ -248,12 +250,12 @@ export function PreviewStep({
         {limited && preview && (
           <Note icon={<Warning2 />} tone="warning">
             <p>
-              Your plan has room for{" "}
-              {plural(preview.remaining ?? 0, "more active code")}, and{" "}
-              {plural(preview.wanted, "link")}{" "}
-              {preview.wanted === 1 ? "is" : "are"} ready to import. Import the
-              first {creates} now, or upgrade for unlimited dynamic codes.
-              Archiving codes frees slots too.
+              {t("yourPlanHasRoomFor")}{" "}
+              {plural(preview.remaining ?? 0, "more active code")}
+              {t("and")} {plural(preview.wanted, "link")}{" "}
+              {preview.wanted === 1 ? t("is") : t("are")}{" "}
+              {t("readyToImportImportThe")} {creates}{" "}
+              {t("nowOrUpgradeForUnlimited")}
             </p>
           </Note>
         )}
@@ -275,10 +277,10 @@ export function PreviewStep({
                 onCheckedChange={(value) => setUseFolder(value === true)}
               />
               <Folder2 aria-hidden className="size-4 text-foreground/70" />
-              Put the new codes in a folder
+              {t("putTheNewCodesIn")}
             </label>
             <Input
-              aria-label="Folder name"
+              aria-label={t("folderName")}
               className="h-8 sm:w-60"
               disabled={!useFolder}
               maxLength={60}
@@ -298,7 +300,7 @@ export function PreviewStep({
                 onCheckedChange={(value) => set({ carryTags: value === true })}
               />
               <Tag aria-hidden className="size-4 text-foreground/70" />
-              Carry over tags
+              {t("carryOverTags")}
             </label>
             {options.carryTags &&
               preview &&
@@ -318,7 +320,7 @@ export function PreviewStep({
                       className="text-muted-foreground rounded-full border border-dashed px-2 py-0.5 text-xs"
                       key={name}
                     >
-                      {name} · new
+                      {t("nameNew", { name })}
                     </span>
                   ))}
                 </div>
@@ -339,11 +341,10 @@ export function PreviewStep({
             />
             <span>
               <span className="font-medium">
-                Also import links whose destination already has a QRdx code
+                {t("alsoImportLinksWhoseDestination")}
               </span>
               <span className="text-muted-foreground block text-xs">
-                Off: they're skipped, and their old links can still point at the
-                existing code. Links imported before are always skipped.
+                {t("offTheyreSkippedAndTheir")}
               </span>
             </span>
           </label>
@@ -367,7 +368,7 @@ export function PreviewStep({
                   }
                 />
                 <Global aria-hidden className="size-4 text-foreground/70" />
-                Keep the original back-halves
+                {t("keepTheOriginalBackHalves")}
                 {!canKeep && slugPlans[0] && (
                   <span className="text-muted-foreground rounded-full border px-1.5 py-px text-[11px] font-medium">
                     {PLAN_NAMES[slugPlans[0]]}
@@ -375,13 +376,11 @@ export function PreviewStep({
                 )}
               </label>
               <p className="text-muted-foreground pl-6 text-xs">
-                Each code keeps its old back-half when it's free, so
-                bit.ly/spring-menu becomes qrdx.dev/q/spring-menu. The others
-                get a generated one, listed below.
+                {t("eachCodeKeepsItsOld")}
               </p>
               {keeping && branded.length > 0 && (
                 <div className="flex flex-col gap-2 pl-6 sm:flex-row sm:items-center">
-                  <span className="text-sm">Links on</span>
+                  <span className="text-sm">{t("linksOn")}</span>
                   <Select
                     onValueChange={(value) =>
                       set({
@@ -391,7 +390,7 @@ export function PreviewStep({
                     value={options.backHalfDomain ?? SHARED_ONLY}
                   >
                     <SelectTrigger
-                      aria-label="Your domain"
+                      aria-label={t("yourDomain")}
                       className="h-8 sm:w-56"
                     >
                       <SelectValue />
@@ -403,14 +402,14 @@ export function PreviewStep({
                         </SelectItem>
                       ))}
                       <SelectItem value={SHARED_ONLY}>
-                        None of my domains
+                        {t("noneOfMyDomains")}
                       </SelectItem>
                     </SelectContent>
                   </Select>
                   <span className="text-muted-foreground text-xs sm:flex-1">
                     {options.backHalfDomain
-                      ? "keep theirs on that domain, so printed codes work again after its DNS moves to QRdx."
-                      : "Every back-half is kept on qrdx.dev."}
+                      ? t("keepTheirsOnThatDomain")
+                      : t("everyBackHalfIsKept")}
                   </span>
                 </div>
               )}
@@ -420,15 +419,18 @@ export function PreviewStep({
                     <Note icon={<Info />}>
                       <p>
                         <span className="text-foreground font-medium">
-                          {plural(
-                            preview.backHalves.kept,
-                            "back-half",
-                            "back-halves",
-                          )}{" "}
-                          kept
+                          {t("valueKept", {
+                            value: plural(
+                              preview.backHalves.kept,
+                              "back-half",
+                              "back-halves",
+                            ),
+                          })}
                         </span>
                         {preview.backHalves.conflicts > 0 &&
-                          `, ${preview.backHalves.conflicts} with a generated one (listed below)`}
+                          t("conflictsWithAGeneratedOne", {
+                            conflicts: preview.backHalves.conflicts,
+                          })}
                         .
                         {preview.backHalves.domain &&
                           preview.backHalves.qrdx && (
@@ -446,7 +448,7 @@ export function PreviewStep({
                             className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
                             href={inWorkspace("/settings/domains")}
                           >
-                            Open Domains
+                            {t("openDomains")}
                           </Link>
                         )}
                     </Note>
@@ -454,16 +456,18 @@ export function PreviewStep({
                     <Note icon={<Diamonds />}>
                       <p>
                         {slugPlans.length > 0
-                          ? `Keeping back-halves is part of ${formatPlanList(slugPlans)}.`
-                          : "Your plan doesn't keep back-halves."}{" "}
-                        Without it, every code gets a generated back-half.
+                          ? t("keepingBackHalvesIsPart", {
+                              slugPlans: formatPlanList(slugPlans),
+                            })
+                          : t("yourPlanDoesntKeepBack")}{" "}
+                        {t("withoutItEveryCodeGets")}
                       </p>
                       <button
                         className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
                         onClick={openGetProDialog}
                         type="button"
                       >
-                        Upgrade
+                        {t("upgrade")}
                       </button>
                     </Note>
                   )}
@@ -476,7 +480,7 @@ export function PreviewStep({
         {notable.length > 0 && (
           <div className="space-y-2">
             <h3 className="text-sm font-semibold">
-              Needs a look{" "}
+              {t("needsALook")}
               <span className="text-muted-foreground font-normal">
                 · {notable.length}
               </span>
@@ -500,9 +504,9 @@ export function PreviewStep({
                             {link.backHalf}
                           </code>
                           <span aria-hidden>→</span>
-                          <span className="sr-only">becomes</span>
+                          <span className="sr-only">{t("becomes")}</span>
                           <code className="bg-muted text-foreground shrink-0 rounded px-1 py-px">
-                            {item.backHalf.slug ?? "random"}
+                            {item.backHalf.slug ?? t("random")}
                           </code>
                         </div>
                         {item.reason && (
@@ -521,7 +525,7 @@ export function PreviewStep({
                   </div>
                   <span className="text-muted-foreground shrink-0 rounded-full border px-2 py-0.5 text-xs">
                     {item.status === "create"
-                      ? "Back-half"
+                      ? t("backHalf")
                       : STATUS_TEXT[item.status]}
                   </span>
                 </li>
@@ -531,9 +535,7 @@ export function PreviewStep({
         )}
 
         <p className="text-muted-foreground text-xs">
-          Each code gets the link's destination and title, and notes saying
-          where and when it came from, including the original creation date.
-          Nothing changes in your old account.
+          {t("eachCodeGetsTheLinks")}
         </p>
       </div>
     </StepLayout>

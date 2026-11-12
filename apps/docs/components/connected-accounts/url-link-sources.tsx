@@ -10,6 +10,7 @@ import {
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { DocumentCloud, Scissor, Warning2 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { emitSound } from "@/components/editor/sound";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
@@ -45,6 +46,7 @@ function ProviderMenu({
   providers: ConnectedProvider[];
   onSelect: (provider: ConnectedProvider) => void;
 }) {
+  const t = useTranslations("editor.connections.urlLinkSources");
   if (providers.length === 1) {
     const [only] = providers as [ConnectedProvider];
     return (
@@ -55,7 +57,7 @@ function ProviderMenu({
         variant="outline"
       >
         {icon}
-        {label} with {only.name}
+        {t("labelWithName", { label, name: only.name })}
       </Button>
     );
   }
@@ -69,7 +71,7 @@ function ProviderMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
         <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-          Your accounts
+          {t("yourAccounts")}
         </DropdownMenuLabel>
         {providers.map((provider) => (
           <DropdownMenuItem
@@ -97,6 +99,7 @@ function ProviderMenu({
  * nothing shows when there are none. Hidden when signed out.
  */
 export function UrlLinkSources() {
+  const t = useTranslations("editor.connections.urlLinkSources");
   const providers = useConnections();
   const url = useQREditorStore(
     (state) => (state.contentConfigs.url as UrlContent | undefined)?.url ?? "",
@@ -128,7 +131,7 @@ export function UrlLinkSources() {
       <p className="text-muted-foreground text-xs text-pretty">
         {hint}:{" "}
         <Link className={linkClass} href="/settings/integrations">
-          connect an account
+          {t("connectAnAccount")}
         </Link>
         .
       </p>
@@ -141,7 +144,7 @@ export function UrlLinkSources() {
         {shorteners.length > 0 && (
           <ProviderMenu
             icon={<Scissor aria-hidden className="size-4" />}
-            label="Shorten"
+            label={t("shorten")}
             onSelect={(provider) =>
               setDialog({ kind: "short-links", provider })
             }
@@ -151,7 +154,7 @@ export function UrlLinkSources() {
         {pickers.length > 0 && (
           <ProviderMenu
             icon={<DocumentCloud aria-hidden className="size-4" />}
-            label="Pick a file"
+            label={t("pickAFile")}
             onSelect={(provider) => setDialog({ kind: "files", provider })}
             providers={pickers}
           />
@@ -170,7 +173,7 @@ export function UrlLinkSources() {
               }}
               type="button"
             >
-              Undo
+              {t("undo")}
             </button>
           </p>
           {note.warning && (

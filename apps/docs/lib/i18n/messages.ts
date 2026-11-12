@@ -70,4 +70,6 @@ export const CHROME_NAMESPACES = [
   "footer",
   "localeSwitcher",
   "consent",
+  // The sign-in dialog and "Confirm it's you", mounted on every page.
+  "auth",
 ] as const;

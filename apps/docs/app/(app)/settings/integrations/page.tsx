@@ -8,6 +8,7 @@ import {
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { env } from "@/lib/env";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import {
   getIntegrationAvailability,
   getStoredConnections,
@@ -29,6 +30,7 @@ import {
 initializeIntegrations();
 
 export default async function IntegrationsPage() {
+  const t = await getAppTranslations("app.settings.integrations.page");
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -137,8 +139,8 @@ export default async function IntegrationsPage() {
   return (
     <div className="space-y-6">
       <SettingsHeader
-        title="Integrations"
-        description="Connect third-party services to enhance your QR codes"
+        title={t("integrations")}
+        description={t("connectThirdPartyServicesTo")}
       />
       <IntegrationsClient
         integrations={[...integrationStatuses, ...noLongerAvailable]}

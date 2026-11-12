@@ -7,6 +7,7 @@ import { BarcodeEditor } from "@/app/(app)/dashboard/barcodes/_components/barcod
 import { folderOptions } from "@/app/(app)/dashboard/barcodes/_lib/cards";
 import { listFolders } from "@/app/(app)/dashboard/codes/_lib/organize";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can } from "@/lib/permissions";
 import { workspaceHref } from "@/lib/workspace-paths";
 
@@ -20,6 +21,7 @@ export default async function NewBarcodePage({
 }: {
   params: Promise<{ workspace: string }>;
 }) {
+  const t = await getAppTranslations("app.dashboard.barcodes.new.page");
   const [scope, { workspace: slug }] = await Promise.all([
     requireDashboardScope(),
     params,
@@ -35,14 +37,15 @@ export default async function NewBarcodePage({
         <Button asChild className="-ml-2" size="sm" variant="ghost">
           <Link href={basePath}>
             <ArrowLeft />
-            All barcodes
+            {t("allBarcodes")}
           </Link>
         </Button>
         <div className="space-y-1">
-          <h1 className="text-2xl font-semibold tracking-tight">New barcode</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            {t("newBarcode")}
+          </h1>
           <p className="text-muted-foreground text-sm">
-            Pick the type, enter the number or text, and save it to edit and
-            download again later.
+            {t("pickTheTypeEnterThe")}
           </p>
         </div>
       </div>

@@ -5,6 +5,7 @@ import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { isPathAvailable } from "@/lib/feature-availability";
 import { docsSitemapEntries } from "@/lib/i18n/docs-seo";
+import { isLocalizedPath } from "@/lib/i18n/paths";
 import { localizedEntries } from "@/lib/i18n/sitemap";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
@@ -36,7 +37,25 @@ export const revalidate = false;
 type Entry = MetadataRoute.Sitemap[number];
 
 // lastmod is a real date or absent, never the build time (lib/seo-dates.ts).
+/**
+ * Every translated page (lib/i18n/localized-paths.json) as its languages:
+ * one entry per indexable language, with hreflang alternates (lib/i18n/
+ * sitemap.ts). Languages a native reviewer hasn't signed off stay out.
+ */
+function withTranslations(entries: Entry[]): Entry[] {
+  return entries.flatMap((entry) => {
+    const path = new URL(entry.url).pathname;
+    if (entry.alternates || !isLocalizedPath(path)) return [entry];
+    const { url: _url, ...rest } = entry;
+    return localizedEntries(path, rest);
+  });
+}
+
 export default function sitemap(): MetadataRoute.Sitemap {
+  return withTranslations(entries());
+}
+
+function entries(): Entry[] {
   const url = (path: string): string => new URL(path, baseUrl).toString();
 
   // TypeScript-written pages: the git date of the file that holds the copy.

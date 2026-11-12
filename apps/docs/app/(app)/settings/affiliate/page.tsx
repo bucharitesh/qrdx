@@ -13,6 +13,7 @@ import type { Metadata } from "next";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { use } from "react";
 import {
   SettingsRow,
   SettingsSection,
@@ -33,6 +34,7 @@ import {
   formatMinorAmount,
 } from "@/lib/affiliates/terms";
 import { isFeatureAvailable } from "@/lib/feature-availability";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { signInPath } from "@/lib/safe-redirect";
 import { SettingsHeader } from "../components/settings-header";
 import {
@@ -54,9 +56,10 @@ const dateFormat = new Intl.DateTimeFormat("en-US", {
 });
 
 function Amounts({ totals }: { totals: ByCurrency }) {
+  const t = use(getAppTranslations("app.settings.affiliate.page"));
   const entries = currencyEntries(totals).filter(([, amount]) => amount > 0);
   if (entries.length === 0) {
-    return <span className="text-muted-foreground">None</span>;
+    return <span className="text-muted-foreground">{t("none")}</span>;
   }
   return (
     <span className="tabular-nums">
@@ -92,6 +95,7 @@ const VOID_LABELS: Record<string, string> = {
 
 export default async function AffiliateSettingsPage() {
   if (!isFeatureAvailable("affiliates")) notFound();
+  const t = await getAppTranslations("app.settings.affiliate.page");
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect(signInPath("/settings/affiliate"));
 
@@ -101,12 +105,15 @@ export default async function AffiliateSettingsPage() {
     <ConfirmIdentityProvider>
       <div className="space-y-6">
         <SettingsHeader
-          description={`Earn ${AFFILIATE_COMMISSION_PERCENT}% of what the customers you refer pay in their first ${AFFILIATE_COMMISSION_MONTHS} months.`}
-          title="Affiliate program"
+          description={t("earnAffiliateCommissionPercentOf", {
+            AFFILIATE_COMMISSION_PERCENT,
+            AFFILIATE_COMMISSION_MONTHS,
+          })}
+          title={t("affiliateProgram")}
         />
         {!loaded.ready ? (
           <p className="bg-muted/40 rounded-lg border p-4 text-sm">
-            The affiliate program isn't available yet. Please check back soon.
+            {t("theAffiliateProgramIsntAvailable")}
           </p>
         ) : (
           <Dashboard dashboard={loaded.value} />
@@ -117,22 +124,22 @@ export default async function AffiliateSettingsPage() {
 }
 
 function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
+  const t = use(getAppTranslations("app.settings.affiliate.page"));
   const row = dashboard.affiliate;
   if (!row) {
     return (
       <SettingsSection
-        description="Share QRdx and earn a commission on what the people you refer pay."
+        description={t("shareQrdxAndEarnA")}
         id="apply"
-        title="You're not an affiliate yet"
+        title={t("youreNotAnAffiliateYet")}
       >
-        <SettingsRow label="Apply">
+        <SettingsRow label={t("apply")}>
           <div className="space-y-3">
             <p className="text-muted-foreground text-sm text-pretty">
-              Read how it works and apply in a minute. We review each
-              application by hand.
+              {t("readHowItWorksAnd")}
             </p>
             <Button asChild>
-              <Link href="/affiliates#apply">Read the terms and apply</Link>
+              <Link href="/affiliates#apply">{t("readTheTermsAndApply")}</Link>
             </Button>
           </div>
         </SettingsRow>
@@ -145,17 +152,17 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
       <SettingsSection
         description={
           row.status === "pending"
-            ? "Thanks for applying. We review each application by hand and you'll see the answer here."
-            : "Your application wasn't accepted, so there's no referral link for this account."
+            ? t("thanksForApplyingWeReview")
+            : t("yourApplicationWasntAcceptedSo")
         }
         id="status"
         title={
           row.status === "pending"
-            ? "Your application is being reviewed"
-            : "Application not accepted"
+            ? t("yourApplicationIsBeingReviewed")
+            : t("applicationNotAccepted")
         }
       >
-        <SettingsRow label="Applied">
+        <SettingsRow label={t("applied")}>
           <p className="text-sm">{dateFormat.format(row.createdAt)}</p>
         </SettingsRow>
       </SettingsSection>
@@ -168,31 +175,28 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
       <SettingsSection
         action={
           <Badge variant={suspended ? "outline" : "default"}>
-            {suspended ? "Suspended" : "Approved"}
+            {suspended ? t("suspended") : t("approved")}
           </Badge>
         }
         description={
           suspended
-            ? "Your account is suspended: new orders from your referrals don't earn a commission, and your link doesn't count visits. Commissions already recorded are shown below."
-            : "Share this link. People who create a QRdx account through it are your referrals."
+            ? t("yourAccountIsSuspendedNew")
+            : t("shareThisLinkPeopleWho")
         }
         id="link"
-        title="Your referral link"
+        title={t("yourReferralLink")}
       >
-        <SettingsRow
-          description="A sign-up counts when it happens in the same visit as the click. Visits are counted without cookies; repeat visits count again."
-          label="Link"
-        >
+        <SettingsRow description={t("aSignUpCountsWhen")} label={t("link")}>
           <ReferralLinkField link={referralLink(row.code)} />
         </SettingsRow>
         {!suspended && (
           <SettingsRow
             description={
               row.previousCode
-                ? `You chose this code. Links with your first code (${row.previousCode}) still work.`
-                : "Your code is random. You can change it once to one you choose; links with this one keep working."
+                ? t("youChoseThisCodeLinks", { previousCode: row.previousCode })
+                : t("yourCodeIsRandomYou")
             }
-            label="Code"
+            label={t("code")}
           >
             {row.previousCode ? (
               <p className="font-mono text-sm">{row.code}</p>
@@ -203,64 +207,66 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
         )}
         <div className="grid grid-cols-1 gap-3 px-5 py-5 sm:grid-cols-3 sm:px-6">
           <Stat
-            label="Link visits"
+            label={t("linkVisits")}
             value={dashboard.clicks.toLocaleString("en-US")}
           />
           <Stat
-            label="Sign-ups"
+            label={t("signUps")}
             value={dashboard.signUps.toLocaleString("en-US")}
           />
           <Stat
-            label="Paying customers"
+            label={t("payingCustomers")}
             value={dashboard.payingCustomers.toLocaleString("en-US")}
           />
         </div>
       </SettingsSection>
 
       <SettingsSection
-        description={`Each commission waits ${AFFILIATE_HOLD_DAYS} days; a refund or chargeback in that time cancels it. Commissions show in the currency the customer paid in; payouts are in US dollars.`}
+        description={t("eachCommissionWaitsAffiliateHold", {
+          AFFILIATE_HOLD_DAYS,
+        })}
         id="earnings"
-        title="Earnings"
+        title={t("earnings")}
       >
         <div className="grid grid-cols-1 gap-3 px-5 py-5 sm:grid-cols-3 sm:px-6">
           <Stat
-            label="On hold"
+            label={t("onHold")}
             value={<Amounts totals={dashboard.totals.pending} />}
           />
           <Stat
-            label="Payable"
+            label={t("payable")}
             value={<Amounts totals={dashboard.totals.payable} />}
           />
           <Stat
-            label="Paid"
+            label={t("paid")}
             value={<Amounts totals={dashboard.totals.paid} />}
           />
         </div>
         <SettingsRow
-          description={`Payouts go out by hand through PayPal once a month, in US dollars, once everything payable reaches ${AFFILIATE_MIN_PAYOUT_LABEL}. Commissions in other currencies count at the European Central Bank's rate on the payout date. We email you whenever this address changes.`}
-          label="PayPal email"
+          description={t("payoutsGoOutByHand", { AFFILIATE_MIN_PAYOUT_LABEL })}
+          label={t("paypalEmail")}
         >
           {suspended ? (
-            <p className="text-sm">{row.paypalEmail ?? "Not set"}</p>
+            <p className="text-sm">{row.paypalEmail ?? t("notSet")}</p>
           ) : (
             <PaypalEmailForm current={row.paypalEmail} />
           )}
         </SettingsRow>
       </SettingsSection>
 
-      <SettingsSection id="payouts" title="Payouts">
+      <SettingsSection id="payouts" title={t("payouts")}>
         {dashboard.payouts.length === 0 ? (
           <p className="text-muted-foreground px-5 py-5 text-sm sm:px-6">
-            No payouts yet.
+            {t("noPayoutsYet")}
           </p>
         ) : (
           <div className="px-5 py-3 sm:px-6">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>PayPal transaction</TableHead>
+                  <TableHead>{t("date")}</TableHead>
+                  <TableHead>{t("amount")}</TableHead>
+                  <TableHead>{t("paypalTransaction")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -271,13 +277,15 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
                       {formatMinorAmount(payout.amount, payout.currency)}
                       {payout.fxRates && payout.fxDate && (
                         <span className="text-muted-foreground block text-xs">
-                          {Object.entries(payout.fxRates)
-                            .map(
-                              ([currency, rate]) =>
-                                `${currency.toUpperCase()} at ${rate} US$ each`,
-                            )
-                            .join(", ")}{" "}
-                          (ECB, {payout.fxDate})
+                          {t("valueEcbFxdate", {
+                            value: Object.entries(payout.fxRates)
+                              .map(
+                                ([currency, rate]) =>
+                                  `${currency.toUpperCase()} at ${rate} US$ each`,
+                              )
+                              .join(", "),
+                            fxDate: payout.fxDate,
+                          })}
                         </span>
                       )}
                     </TableCell>
@@ -293,23 +301,23 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
       </SettingsSection>
 
       <SettingsSection
-        description="One per payment by a customer you referred. Who they are stays private."
+        description={t("onePerPaymentByA")}
         id="commissions"
-        title="Commissions"
+        title={t("commissions")}
       >
         {dashboard.commissions.length === 0 ? (
           <p className="text-muted-foreground px-5 py-5 text-sm sm:px-6">
-            No commissions yet. They appear here when someone you referred pays.
+            {t("noCommissionsYetTheyAppear")}
           </p>
         ) : (
           <div className="px-5 py-3 sm:px-6">
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Payment</TableHead>
-                  <TableHead>Commission</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Payable from</TableHead>
+                  <TableHead>{t("payment")}</TableHead>
+                  <TableHead>{t("commission")}</TableHead>
+                  <TableHead>{t("status")}</TableHead>
+                  <TableHead>{t("payableFrom")}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -350,21 +358,24 @@ function Dashboard({ dashboard }: { dashboard: AffiliateDashboard }) {
       </SettingsSection>
 
       <p className="text-muted-foreground text-sm">
-        The full terms are in the{" "}
-        <Link
-          className="underline underline-offset-4"
-          href="/legal/affiliate-terms"
-        >
-          affiliate terms
-        </Link>
-        . Questions:{" "}
-        <a
-          className="underline underline-offset-4"
-          href="mailto:support@qrdx.dev"
-        >
-          support@qrdx.dev
-        </a>
-        .
+        {t.rich("theFullTermsAreIn", {
+          link: (chunks) => (
+            <Link
+              className="underline underline-offset-4"
+              href="/legal/affiliate-terms"
+            >
+              {chunks}
+            </Link>
+          ),
+          link2: (chunks) => (
+            <a
+              className="underline underline-offset-4"
+              href="mailto:support@qrdx.dev"
+            >
+              {chunks}
+            </a>
+          ),
+        })}
       </p>
     </>
   );

@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import {
   MediaLinkAssist,
@@ -13,6 +14,7 @@ import { encodeYouTube } from "@/utils/qr-content-encoder";
 import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function YouTubeForm() {
+  const t = useTranslations("editor.contentForms.youtubeForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -46,7 +48,7 @@ export function YouTubeForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="youtube-video">
-          Video URL
+          {t("videoUrl")}
         </Label>
         <Input
           id="youtube-video"
@@ -61,7 +63,7 @@ export function YouTubeForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="youtube-channel">
-          Channel URL
+          {t("channelUrl")}
         </Label>
         <Input
           id="youtube-channel"
@@ -73,7 +75,7 @@ export function YouTubeForm() {
           }
         />
         <p className="text-muted-foreground text-[11px]">
-          Fill in one. If both are filled, the video is used.
+          {t("fillInOneIfBoth")}
         </p>
       </div>
       <MediaLinkAssist
@@ -83,7 +85,7 @@ export function YouTubeForm() {
       />
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the YouTube video or channel
+        {t("scanningWillOpenTheYoutube")}
       </p>
     </div>
   );

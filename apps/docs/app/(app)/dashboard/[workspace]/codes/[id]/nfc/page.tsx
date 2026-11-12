@@ -23,6 +23,7 @@ import {
 } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
 import { HttpError } from "@/lib/error-response";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { baseUrl } from "@/lib/metadata";
 import { ndefUrlBytes, nfcLink } from "@/lib/nfc/links";
 import { workspaceHref } from "@/lib/workspace-paths";
@@ -41,6 +42,7 @@ export default async function CodeNfcPage({
 }: {
   params: Promise<{ workspace: string; id: string }>;
 }) {
+  const t = await getAppTranslations("app.dashboard.codes.nfc.page");
   const scope = await requireDashboardScope();
   const { workspace, id } = await params;
   const code = await getCode(scope, id).catch((error: unknown) => {
@@ -60,28 +62,22 @@ export default async function CodeNfcPage({
       <Button asChild className="-ml-2" size="sm" variant="ghost">
         <Link href={codeHref}>
           <ArrowLeft />
-          Back to code
+          {t("backToCode")}
         </Link>
       </Button>
       <PageHeader
         description={
-          businessCard
-            ? "Write this contact page to an NFC card or sticker. A tap opens the same page as the QR code, and taps are counted apart from scans."
-            : "Write this code's link to an NFC tag. A tap opens the same place as the QR code, and taps are counted apart from scans."
+          businessCard ? t("writeThisContactPageTo") : t("writeThisCodesLinkTo")
         }
-        title={businessCard ? "Put this card on NFC" : "Use with NFC"}
+        title={businessCard ? t("putThisCardOnNfc") : t("useWithNfc")}
       />
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
         <div className="min-w-0 space-y-4">
           <Card className="gap-3 py-5">
             <CardHeader className="px-5">
-              <CardTitle className="text-base">NFC link</CardTitle>
-              <CardDescription>
-                The code's short link with ?nfc on the end. It opens the same
-                place; the ending tells analytics it was a tap. The printed QR
-                code keeps its own link.
-              </CardDescription>
+              <CardTitle className="text-base">{t("nfcLink")}</CardTitle>
+              <CardDescription>{t("theCodesShortLinkWith")}</CardDescription>
             </CardHeader>
             <CardContent className="px-5">
               <div className="flex items-center gap-1">
@@ -90,7 +86,7 @@ export default async function CodeNfcPage({
                 </code>
                 <CopyButton
                   className="size-8"
-                  successMessage={{ title: "NFC link copied" }}
+                  successMessage={{ title: t("nfcLinkCopied") }}
                   textToCopy={link}
                 />
               </div>
@@ -99,7 +95,7 @@ export default async function CodeNfcPage({
 
           <Card className="gap-4 py-5">
             <CardHeader className="px-5">
-              <CardTitle className="text-base">Write to a tag</CardTitle>
+              <CardTitle className="text-base">{t("writeToATag")}</CardTitle>
             </CardHeader>
             <CardContent className="px-5">
               <NfcWritePanel nfcUrl={link} pageUrl={pageUrl} />

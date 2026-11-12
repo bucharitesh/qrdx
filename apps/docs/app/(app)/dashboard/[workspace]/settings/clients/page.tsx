@@ -33,6 +33,7 @@ import {
   ClientBrandsUnavailableError,
   findPortalBrand,
 } from "@/lib/client-brands";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { can, forbiddenMessage } from "@/lib/permissions";
 import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
 import {
@@ -55,6 +56,7 @@ const DOCS_HREF = "/docs/client-portal";
  * and branding, and the clients invited to it with their folders.
  */
 export default async function ClientPortalSettingsPage() {
+  const t = await getAppTranslations("app.dashboard.settings.clients.page");
   const scope = await requireDashboardScope();
   const [team, plan] = await Promise.all([
     getTeam(scope.organizationId),
@@ -66,8 +68,8 @@ export default async function ClientPortalSettingsPage() {
 
   const header = (
     <SettingsHeader
-      description="Give clients a read-only view of the folders you choose, under your own name and logo."
-      title="Client portal"
+      description={t("giveClientsAReadOnly")}
+      title={t("clientPortal")}
     />
   );
 
@@ -97,7 +99,7 @@ export default async function ClientPortalSettingsPage() {
       <div className="space-y-6">
         {header}
         <p className="text-muted-foreground rounded-lg border p-4 text-sm">
-          The client portal isn't available on this server yet.
+          {t("theClientPortalIsntAvailable")}
         </p>
       </div>
     );
@@ -110,12 +112,10 @@ export default async function ClientPortalSettingsPage() {
         <Empty className="border">
           <EmptyHeader>
             <EmptyTitle>
-              The client portal is part of {PLAN_NAMES.business}
+              {t("theClientPortalIsPart", { business: PLAN_NAMES.business })}
             </EmptyTitle>
             <EmptyDescription className="text-pretty">
-              Invite a client by email and choose the folders they see: their
-              codes, scan analytics and hosted pages, read-only, under your
-              name, logo and color.
+              {t("inviteAClientByEmail")}
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
@@ -123,14 +123,14 @@ export default async function ClientPortalSettingsPage() {
               <UpgradePlanButton plan="business" />
             ) : (
               <p className="text-muted-foreground text-sm">
-                Ask a workspace owner or billing member to upgrade.
+                {t("askAWorkspaceOwnerOr")}
               </p>
             )}
             <Link
               className="text-muted-foreground text-xs underline"
               href={DOCS_HREF}
             >
-              How the client portal works
+              {t("howTheClientPortalWorks")}
             </Link>
           </EmptyContent>
         </Empty>
@@ -167,9 +167,7 @@ export default async function ClientPortalSettingsPage() {
       {!allowed && (
         <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
           <p className="text-sm text-pretty">
-            This workspace's plan no longer includes the client portal. Clients
-            can't open it until the workspace is on {PLAN_NAMES.business} again.
-            You can still remove them.
+            {t("thisWorkspacesPlanNoLonger", { business: PLAN_NAMES.business })}
           </p>
           {can(scope.role, "billing.manage") && (
             <UpgradePlanButton plan="business" size="sm" />
@@ -179,10 +177,9 @@ export default async function ClientPortalSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Portal address</CardTitle>
+          <CardTitle>{t("portalAddress")}</CardTitle>
           <CardDescription className="text-pretty">
-            Clients sign in here with a one-time code sent to the address you
-            invited. They see only their folders, and can't change anything.
+            {t("clientsSignInHereWith")}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex items-center gap-1">
@@ -191,12 +188,12 @@ export default async function ClientPortalSettingsPage() {
           </code>
           <CopyButton
             className="size-9 shrink-0 [&>svg]:size-4"
-            successMessage={{ title: "Portal link copied" }}
+            successMessage={{ title: t("portalLinkCopied") }}
             textToCopy={portalUrl}
           />
           <Button asChild size="icon" variant="ghost">
             <a
-              aria-label="Open the portal"
+              aria-label={t("openThePortal")}
               href={portalUrl}
               rel="noopener noreferrer"
               target="_blank"
@@ -209,9 +206,9 @@ export default async function ClientPortalSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Branding</CardTitle>
+          <CardTitle>{t("branding")}</CardTitle>
           <CardDescription className="text-pretty">
-            The portal shows this name, logo and color instead of QRdx.
+            {t("thePortalShowsThisName")}
             {canEditBrand
               ? ""
               : ` ${forbiddenMessage(scope.role, "workspace.update")}`}
@@ -228,10 +225,9 @@ export default async function ClientPortalSettingsPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Clients</CardTitle>
+          <CardTitle>{t("clients")}</CardTitle>
           <CardDescription className="text-pretty">
-            Clients aren't members of the workspace and don't take a seat.
-            Removing one takes their access away at once.
+            {t("clientsArentMembersOfThe")}
           </CardDescription>
         </CardHeader>
         <CardContent>

@@ -4,15 +4,21 @@ import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import type { SyncState } from "@repo/integrations";
+import { useTranslations } from "next-intl";
+import type { Translator } from "@/lib/i18n/translator";
 
 const relative = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" });
 
 /** "4 minutes ago" / "in 3 minutes" */
-export function timeFrom(iso: string | null, now = Date.now()): string {
+export function timeFrom(
+  iso: string | null,
+  now = Date.now(),
+  t: Translator<"editor.connections.syncStatus">,
+): string {
   if (!iso) return "never";
   const seconds = Math.round((Date.parse(iso) - now) / 1000);
   const abs = Math.abs(seconds);
-  if (abs < 45) return seconds <= 0 ? "just now" : "in a moment";
+  if (abs < 45) return seconds <= 0 ? t("justNow") : t("inAMoment");
   if (abs < 3600) return relative.format(Math.round(seconds / 60), "minute");
   if (abs < 86_400) return relative.format(Math.round(seconds / 3600), "hour");
   return relative.format(Math.round(seconds / 86_400), "day");
@@ -49,6 +55,7 @@ export function SyncStatus({
   onRetry,
   retrying,
 }: SyncStatusProps) {
+  const t = useTranslations("editor.connections.syncStatus");
   if (!state) return null;
   const status = state.enabled ? state.status : "paused";
   return (
@@ -70,42 +77,47 @@ export function SyncStatus({
             variant="outline"
           >
             {retrying && <Spinner className="size-3.5" />}
-            Retry now
+            {t("retryNow")}
           </Button>
         )}
       </div>
       <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs sm:grid-cols-4">
         <div>
-          <dt className="text-muted-foreground">Last sync</dt>
-          <dd className="font-medium">{timeFrom(state.lastSuccessAt)}</dd>
+          <dt className="text-muted-foreground">{t("lastSync")}</dt>
+          <dd className="font-medium">
+            {timeFrom(state.lastSuccessAt, undefined, t)}
+          </dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Sent</dt>
+          <dt className="text-muted-foreground">{t("sent")}</dt>
           <dd className="font-medium tabular-nums">
             {state.delivered.toLocaleString()} {noun}
           </dd>
         </div>
         <div>
-          <dt className="text-muted-foreground">Skipped</dt>
+          <dt className="text-muted-foreground">{t("skipped")}</dt>
           <dd className="font-medium tabular-nums">
             {state.skipped.toLocaleString()}
           </dd>
         </div>
         <div>
           <dt className="text-muted-foreground">
-            {status === "retrying" ? "Next try" : "Last try"}
+            {status === "retrying" ? t("nextTry") : t("lastTry")}
           </dt>
           <dd className="font-medium">
             {status === "retrying"
-              ? timeFrom(state.nextAttemptAt)
-              : timeFrom(state.lastAttemptAt)}
+              ? timeFrom(state.nextAttemptAt, undefined, t)
+              : timeFrom(state.lastAttemptAt, undefined, t)}
           </dd>
         </div>
       </dl>
       {state.lastError && status !== "ok" && (
         <p className="text-muted-foreground text-xs text-pretty">
-          Last error: {state.lastError}
-          {status === "retrying" ? ` (try ${state.attempts} of 8)` : ""}.
+          {t("lastError")} {state.lastError}
+          {status === "retrying"
+            ? t("tryAttemptsOf8", { attempts: state.attempts })
+            : ""}
+          .
         </p>
       )}
     </div>

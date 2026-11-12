@@ -45,5 +45,11 @@ export const viewport: Viewport = rootViewport;
 
 export default async function Layout({ children }: LayoutProps<"/[lang]">) {
   await rootLocale();
-  return <RootDocument messages={["home.editor"]}>{children}</RootDocument>;
+  return (
+    <RootDocument
+      messages={["home.editor", "editor.scanScore", "editor.connections"]}
+    >
+      {children}
+    </RootDocument>
+  );
 }

@@ -2,8 +2,18 @@
 // shipped but switched off (no DISCORD_APPLICATION_ID or DISCORD_PUBLIC_KEY).
 // /discord is a 404 and the other pages don't link to it; the Telegram
 // integration page links to /telegram. Every value below is a fake.
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
+import { renderIntl } from "../support/intl";
+
+// /plugins and /integrations/<slug> are translated pages (lib/i18n).
+vi.mock(
+  "next-intl/server",
+  async () => (await import("../support/intl")).intlServer,
+);
+vi.mock(
+  "@/lib/i18n/server",
+  async () => (await import("../support/intl")).i18nServer,
+);
 
 vi.hoisted(() => {
   Object.assign(process.env, {
@@ -28,10 +38,10 @@ vi.mock("next/navigation", async (importOriginal) => ({
 
 import DiscordImage from "@/app/(app)/(home)/discord/opengraph-image";
 import DiscordPage from "@/app/(app)/(home)/discord/page";
-import IntegrationDetailPage from "@/app/(app)/(home)/integrations/[slug]/page";
-import PluginsPage from "@/app/(app)/(home)/plugins/page";
 import SlackPage from "@/app/(app)/(home)/slack/page";
 import TelegramPage from "@/app/(app)/(home)/telegram/page";
+import IntegrationDetailPage from "@/app/[lang]/(home)/integrations/[slug]/page";
+import PluginsPage from "@/app/[lang]/(home)/plugins/page";
 import { isPathAvailable } from "@/lib/feature-availability";
 
 const hrefs = (markup: string) =>
@@ -40,7 +50,7 @@ const hrefs = (markup: string) =>
   );
 
 const integrationPage = async (slug: string) =>
-  renderToStaticMarkup(
+  renderIntl(
     await IntegrationDetailPage({ params: Promise.resolve({ slug }) }),
   );
 
@@ -51,14 +61,14 @@ describe("with the Discord bot off and the others on", () => {
     expect(() => DiscordImage()).toThrow("NEXT_NOT_FOUND");
   });
 
-  it("links only the bots that are set up", () => {
-    const slack = hrefs(renderToStaticMarkup(SlackPage()));
+  it("links only the bots that are set up", async () => {
+    const slack = hrefs(renderIntl(SlackPage()));
     expect(slack).toContain("/telegram");
     expect(slack).not.toContain("/discord");
-    const telegram = hrefs(renderToStaticMarkup(TelegramPage()));
+    const telegram = hrefs(renderIntl(TelegramPage()));
     expect(telegram).toContain("/slack");
     expect(telegram).not.toContain("/discord");
-    const plugins = hrefs(renderToStaticMarkup(PluginsPage()));
+    const plugins = hrefs(renderIntl(await PluginsPage()));
     expect(plugins).toEqual(expect.arrayContaining(["/slack", "/telegram"]));
     expect(plugins).not.toContain("/discord");
   });

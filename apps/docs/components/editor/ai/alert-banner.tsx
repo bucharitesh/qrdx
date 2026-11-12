@@ -5,11 +5,13 @@ import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
 export function AlertBanner() {
+  const t = useTranslations("editor.ai.alertBanner");
   const [showBanner, setShowBanner] = useState(false);
 
   const { data: session } = authClient.useSession();
@@ -41,9 +43,12 @@ export function AlertBanner() {
     if (isLoggedIn && !isPro && freeProMessagesLeft > 0) {
       return (
         <span>
-          You have {freeProMessagesLeft} Free
-          <span className="text-primary font-medium">{` Pro `}</span>
-          messages left.
+          {t.rich("youHaveFreepromessagesleftFreePro", {
+            freeProMessagesLeft,
+            span: (chunks) => (
+              <span className="text-primary font-medium">{chunks}</span>
+            ),
+          })}
         </span>
       );
     }
@@ -51,8 +56,11 @@ export function AlertBanner() {
     if (isLoggedIn && !isPro && freeProMessagesLeft <= 0) {
       return (
         <span>
-          Upgrade to <span className="text-primary font-medium">Pro</span> to
-          unlock unlimited requests.
+          {t.rich("upgradeToProToUnlock", {
+            span: (chunks) => (
+              <span className="text-primary font-medium">{chunks}</span>
+            ),
+          })}
         </span>
       );
     }
@@ -73,7 +81,7 @@ export function AlertBanner() {
               size="sm"
               className="h-fit @2xl/alert-banner:text-sm"
             >
-              Upgrade
+              {t("upgrade")}
             </Button>
           </Link>
 

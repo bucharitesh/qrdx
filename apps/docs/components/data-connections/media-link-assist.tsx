@@ -20,6 +20,7 @@ import {
 } from "@repo/integrations/src/sources/oembed";
 import { httpsOrUndefined } from "@repo/integrations/src/sources/types";
 import { InfoCircle, MagicStar } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import { emitSound } from "@/components/editor/sound";
 import { isIntegrationsMock } from "@/lib/data-connections/client";
@@ -85,6 +86,7 @@ export function MediaLinkAssist({
   value,
   onApply,
 }: MediaLinkAssistProps) {
+  const t = useTranslations("editor.connections.mediaLinkAssist");
   const text = value.trim();
   const parsed: ParsedMediaLink | null = useMemo(
     () =>
@@ -139,10 +141,10 @@ export function MediaLinkAssist({
         <p className="flex items-start gap-1.5 text-muted-foreground text-xs text-pretty">
           <InfoCircle aria-hidden className="mt-px size-3.5 shrink-0" />
           {shortSpotify
-            ? "spotify.link short links can't be checked. Open it and copy the full open.spotify.com link instead."
+            ? t("spotifyLinkShortLinksCant")
             : kind === "youtube"
-              ? "Not a YouTube video, Short, playlist or channel link."
-              : "Not a Spotify song, album, artist, playlist or podcast link."}
+              ? t("notAYoutubeVideoShort")
+              : t("notASpotifySongAlbum")}
         </p>
         {picker}
       </div>
@@ -191,7 +193,7 @@ export function MediaLinkAssist({
         >
           <MagicStar aria-hidden className="size-4 shrink-0" />
           <span className="min-w-0 break-all">
-            Use the clean link{" "}
+            {t("useTheCleanLink")}
             <span className="text-muted-foreground">
               {parsed.url.replace(/^https:\/\//, "")}
             </span>

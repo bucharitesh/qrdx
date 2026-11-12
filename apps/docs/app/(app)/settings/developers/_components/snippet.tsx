@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import { useId } from "react";
 import { CopyButton } from "@/app/(app)/dashboard/webhooks/_components/event-checkboxes";
 
@@ -15,13 +16,14 @@ export function Snippet({
   code: string;
   copy?: string;
 }) {
+  const t = useTranslations("app.settings.developers.snippet");
   return (
     <div className="overflow-hidden rounded-lg border">
       <div className="bg-muted/40 flex items-center justify-between gap-2 border-b py-1.5 pr-1.5 pl-3">
         <p className="text-muted-foreground text-xs font-medium">{label}</p>
         <CopyButton
           className="size-7"
-          label={`Copy ${label.toLowerCase()}`}
+          label={t("copyLabel", { label: label.toLowerCase() })}
           value={copy}
         />
       </div>
@@ -34,6 +36,7 @@ export function Snippet({
 
 /** A read-only value to copy, such as a secret shown once. */
 export function CopyField({ label, value }: { label: string; value: string }) {
+  const t = useTranslations("app.settings.developers.snippet");
   const id = useId();
   return (
     <div className="space-y-1.5">
@@ -46,7 +49,10 @@ export function CopyField({ label, value }: { label: string; value: string }) {
           readOnly
           value={value}
         />
-        <CopyButton label={`Copy ${label.toLowerCase()}`} value={value} />
+        <CopyButton
+          label={t("copyLabel", { label: label.toLowerCase() })}
+          value={value}
+        />
       </div>
     </div>
   );

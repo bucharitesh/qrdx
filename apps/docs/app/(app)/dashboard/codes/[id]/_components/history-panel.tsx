@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
+import { use } from "react";
 import { displayUrl } from "@/app/(app)/dashboard/codes/_components/format";
 import { requireDashboardScope } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import type {
@@ -12,6 +13,8 @@ import type {
   VersionField,
 } from "@/app/(app)/dashboard/codes/_lib/version-diff";
 import { listCodeVersions } from "@/lib/code-versions";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
+import type { Translator } from "@/lib/i18n/translator";
 import { HistoryRestoreButton } from "./history-restore-button";
 
 const SHOWN = 30;
@@ -22,8 +25,10 @@ const timeFormat = new Intl.DateTimeFormat("en-US", {
   timeStyle: "short",
   timeZone: "UTC",
 });
-const when = (value: Date | string) =>
-  `${timeFormat.format(new Date(value))} UTC`;
+const when = (
+  value: Date | string,
+  t: Translator<"app.dashboard.codes.historyPanel">,
+) => t("valueUtc", { value: timeFormat.format(new Date(value)) });
 
 const EMPTY: Partial<Record<VersionField, string>> = {
   title: "no title",
@@ -31,33 +36,43 @@ const EMPTY: Partial<Record<VersionField, string>> = {
   scanLimit: "no limit",
 };
 
-function value(change: VersionChange, raw: string | null | undefined): string {
+function value(
+  change: VersionChange,
+  raw: string | null | undefined,
+  t: Translator<"app.dashboard.codes.historyPanel">,
+): string {
   if (raw === null || raw === undefined) return EMPTY[change.field] ?? "none";
-  if (change.kind === "date") return when(raw);
+  if (change.kind === "date") return when(raw, t);
   if (change.kind === "url") return displayUrl(raw);
   return raw;
 }
 
 function ChangeLine({ change }: { change: VersionChange }) {
+  const t = use(getAppTranslations("app.dashboard.codes.historyPanel"));
   if (change.kind === "opaque") {
-    return <li>{change.label} changed</li>;
+    return <li>{t("labelChanged", { label: change.label })}</li>;
   }
   if (change.field === "hasPassword") {
-    return <li>Password turned {change.to === "On" ? "on" : "off"}</li>;
+    return (
+      <li>
+        {t("passwordTurned")} {change.to === "On" ? t("on") : t("off")}
+      </li>
+    );
   }
   return (
     <li className="min-w-0">
       {change.label}:{" "}
       <span className="text-muted-foreground break-all line-through decoration-1">
-        {value(change, change.from)}
+        {value(change, change.from, t)}
       </span>{" "}
-      → <span className="break-all">{value(change, change.to)}</span>
+      → <span className="break-all">{value(change, change.to, t)}</span>
     </li>
   );
 }
 
 /** Settings history with diff summaries; restoring creates a new version. */
 export async function HistoryPanel({ codeId }: { codeId: string }) {
+  const t = await getAppTranslations("app.dashboard.codes.historyPanel");
   const scope = await requireDashboardScope();
   let history: Awaited<ReturnType<typeof listCodeVersions>>;
   try {
@@ -70,18 +85,13 @@ export async function HistoryPanel({ codeId }: { codeId: string }) {
   return (
     <Card className="gap-4 py-4" id="history">
       <CardHeader className="px-4">
-        <CardTitle>Version history</CardTitle>
-        <CardDescription>
-          Each edit to the type, destination, title, design, domain, schedule,
-          routing or pixels saves the previous settings here. Restoring a
-          version saves the current settings first, so it can be undone.
-        </CardDescription>
+        <CardTitle>{t("versionHistory")}</CardTitle>
+        <CardDescription>{t("eachEditToTheType")}</CardDescription>
       </CardHeader>
       <CardContent className="px-4">
         {entries.length === 0 ? (
           <p className="text-muted-foreground rounded-lg border border-dashed p-4 text-sm">
-            No changes yet. When you edit this code, its earlier settings show
-            up here.
+            {t("noChangesYetWhenYou")}
           </p>
         ) : (
           <ol className="divide-y rounded-lg border">
@@ -91,7 +101,7 @@ export async function HistoryPanel({ codeId }: { codeId: string }) {
                 : entry.actor.id === scope.userId
                   ? "You"
                   : entry.actor.name;
-              const changeWhen = when(entry.createdAt);
+              const changeWhen = when(entry.createdAt, t);
               return (
                 <li
                   className="flex flex-col gap-3 p-3 sm:flex-row sm:items-start sm:justify-between"
@@ -101,7 +111,7 @@ export async function HistoryPanel({ codeId }: { codeId: string }) {
                     <p>
                       <span className="font-medium">{actor}</span>{" "}
                       <span className="text-muted-foreground">
-                        changed on {changeWhen}
+                        {t("changedOnChangewhen", { changeWhen })}
                       </span>
                     </p>
                     <ul className="space-y-0.5">
@@ -127,8 +137,7 @@ export async function HistoryPanel({ codeId }: { codeId: string }) {
         )}
         {total > SHOWN && (
           <p className="text-muted-foreground mt-2 text-xs">
-            Showing the latest {SHOWN} of {total} versions. Up to 100 are kept
-            per code.
+            {t("showingTheLatestShownOf", { SHOWN, total })}
           </p>
         )}
       </CardContent>

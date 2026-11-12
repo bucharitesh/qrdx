@@ -16,10 +16,21 @@ const dateFormat = new Intl.DateTimeFormat("en-US", {
   timeZone: "UTC",
 });
 
-export const formatCount = (value: number) => numberFormat.format(value);
+export const formatCount = (value: number, locale?: string) =>
+  locale
+    ? new Intl.NumberFormat(locale).format(value)
+    : numberFormat.format(value);
 
-export const formatEmailDateTime = (value: Date | string) =>
-  `${dateTimeFormat.format(new Date(value))} UTC`;
+export const formatEmailDateTime = (value: Date | string, locale?: string) =>
+  `${(
+    locale
+      ? new Intl.DateTimeFormat(locale, {
+          dateStyle: "medium",
+          timeStyle: "short",
+          timeZone: "UTC",
+        })
+      : dateTimeFormat
+  ).format(new Date(value))} UTC`;
 
 export const formatEmailDate = (value: Date | string) =>
   dateFormat.format(new Date(value));

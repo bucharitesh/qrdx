@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { InstagramFormData } from "@/lib/validations/qr-content";
 import { instagramSchema } from "@/lib/validations/qr-content";
@@ -11,6 +12,7 @@ import { encodeInstagram } from "@/utils/qr-content-encoder";
 import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function InstagramForm() {
+  const t = useTranslations("editor.contentForms.instagramForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -52,12 +54,12 @@ export function InstagramForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="instagram-username">
-          Instagram username *
+          {t("instagramUsername")}
         </Label>
         <Input
           id="instagram-username"
           type="text"
-          placeholder="username or @username"
+          placeholder={t("usernameOrUsername")}
           value={instagramData.username}
           onChange={(e) =>
             setInstagramData({ ...instagramData, username: e.target.value })
@@ -70,7 +72,7 @@ export function InstagramForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Instagram profile
+        {t("scanningWillOpenYourInstagram")}
       </p>
     </div>
   );

@@ -3,6 +3,7 @@
 import { useCompletion } from "@ai-sdk/react";
 import { toast } from "@repo/design-system";
 import type { JSONContent } from "@tiptap/react";
+import { useTranslations } from "next-intl";
 import { useCallback, useMemo, useRef } from "react";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { track } from "@/lib/analytics";
@@ -13,6 +14,7 @@ import type { ThemeStyles } from "@/types/theme";
 import { convertPromptDataToJSONContent } from "@/utils/ai/ai-prompt";
 
 export function useAIEnhancePrompt() {
+  const t = useTranslations("editor.hooks.useAiEnhancePrompt");
   const { openGetProDialog } = useGetProDialogStore();
   const { complete, completion, isLoading, stop, setCompletion } =
     useCompletion({
@@ -30,7 +32,7 @@ export function useAIEnhancePrompt() {
           openGetProDialog();
         }
 
-        toast.error("An error occurred", {
+        toast.error(t("anErrorOccurred"), {
           description: normalized.message,
         });
       },

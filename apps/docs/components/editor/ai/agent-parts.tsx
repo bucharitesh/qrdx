@@ -12,9 +12,10 @@ import {
   TickCircle,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { QRCodeSVG, type ScanGrade } from "qrdx";
 import { Fragment, type ReactNode, useMemo, useState } from "react";
-import { GRADE_COLORS, GRADE_LABELS } from "@/components/editor/scan-score";
+import { GRADE_COLORS, useGradeLabels } from "@/components/editor/scan-score";
 import type {
   DesignLogo,
   DesignProgress,
@@ -68,6 +69,8 @@ export function ScoreLabel({
   grade: ScanGrade;
   className?: string;
 }) {
+  const gradeLabels = useGradeLabels();
+  const t = useTranslations("editor.ai.agentParts");
   return (
     <span
       className={cn(
@@ -76,7 +79,7 @@ export function ScoreLabel({
       )}
     >
       <span className={cn("size-2 rounded-full", GRADE_COLORS[grade])} />
-      Scan score {score} · {GRADE_LABELS[grade]}
+      {t("scanScoreScoreValue", { score, value: gradeLabels[grade] })}
     </span>
   );
 }
@@ -163,6 +166,8 @@ export function DesignSteps({
   /** A later design_qr call in the same message followed this one */
   retried?: boolean;
 }) {
+  const gradeLabels = useGradeLabels();
+  const t = useTranslations("editor.ai.agentParts");
   const { designProgress, stop } = useChatContext();
   const live: DesignProgress[] = designProgress[part.toolCallId] ?? [];
   const output = part.state === "output-available" ? part.output : null;
@@ -176,7 +181,7 @@ export function DesignSteps({
   if (part.state === "output-error") {
     return retried ? null : (
       <ul>
-        <StepLine status="failed">The design step failed. Try again.</StepLine>
+        <StepLine status="failed">{t("theDesignStepFailedTry")}</StepLine>
       </ul>
     );
   }
@@ -185,8 +190,9 @@ export function DesignSteps({
     return (
       <ul className="space-y-0.5">
         <StepLine status="failed">
-          The content needs a fix:{" "}
-          {output.issues.map((issue) => issue.message).join("; ")}
+          {t("theContentNeedsAFix", {
+            value: output.issues.map((issue) => issue.message).join("; "),
+          })}
         </StepLine>
       </ul>
     );
@@ -198,29 +204,34 @@ export function DesignSteps({
   const designing = running && attempts.length === 0;
 
   return (
-    <ul aria-label="Steps" className="space-y-0.5">
+    <ul aria-label={t("steps")} className="space-y-0.5">
       {contentLine && (
-        <StepLine status="done">Set the content: {contentLine}</StepLine>
+        <StepLine status="done">
+          {t("setTheContentContentline", { contentLine })}
+        </StepLine>
       )}
       <StepLine status={designing ? "running" : "done"}>
-        {designing ? "Designing the style…" : "Designed the style"}
+        {designing ? t("designingTheStyle") : t("designedTheStyle")}
       </StepLine>
       {attempts.map((attempt, index) => (
         <Fragment key={`${index}-${attempt.score}`}>
           {attempt.by !== "initial" && attempt.changes.length > 0 && (
             <StepLine status="done">
               {attempt.by === "fallback"
-                ? "Fell back to a classic black-on-white code"
-                : `Repaired: ${shortChanges(attempt.changes)}`}
+                ? t("fellBackToAClassic")
+                : t("repairedValue", { value: shortChanges(attempt.changes) })}
             </StepLine>
           )}
           <StepLine status="done">
-            Checked scan score: {attempt.score} · {GRADE_LABELS[attempt.grade]}
+            {t("checkedScanScoreScoreValue", {
+              score: attempt.score,
+              value: gradeLabels[attempt.grade],
+            })}
           </StepLine>
         </Fragment>
       ))}
       {running && attempts.length > 0 && attempts.at(-1)?.grade !== "great" && (
-        <StepLine status="running">Repairing…</StepLine>
+        <StepLine status="running">{t("repairing")}</StepLine>
       )}
       {running && (
         <li className="pl-7">
@@ -229,7 +240,7 @@ export function DesignSteps({
             onClick={() => stop()}
             type="button"
           >
-            Stop
+            {t("stop")}
           </button>
         </li>
       )}
@@ -242,13 +253,15 @@ export function ScoreCheckStep({
 }: {
   part: PartOf<"tool-check_scan_score">;
 }) {
+  const gradeLabels = useGradeLabels();
+  const t = useTranslations("editor.ai.agentParts");
   if (part.state !== "output-available") {
     return (
       <ul>
         <StepLine status={part.state === "output-error" ? "failed" : "running"}>
           {part.state === "output-error"
-            ? "Couldn't check the scan score"
-            : "Checking the scan score…"}
+            ? t("couldntCheckTheScanScore")
+            : t("checkingTheScanScore")}
         </StepLine>
       </ul>
     );
@@ -257,7 +270,7 @@ export function ScoreCheckStep({
   return (
     <ul className="space-y-0.5">
       <StepLine status="done">
-        Checked scan score: {score} · {GRADE_LABELS[grade]}
+        {t("checkedScanScore")} {score} · {gradeLabels[grade]}
         {failed.length > 0 && (
           <span className="block">
             {failed.map((check) => check.message).join("; ")}
@@ -278,6 +291,7 @@ export function AskUserCard({
   /** The user wrote something else instead of answering */
   superseded: boolean;
 }) {
+  const t = useTranslations("editor.ai.agentParts");
   const { addToolOutput, status } = useChatContext();
   const [other, setOther] = useState("");
   const busy = status === "submitted" || status === "streaming";
@@ -309,10 +323,10 @@ export function AskUserCard({
       </p>
       {answered !== null ? (
         <p className="text-muted-foreground pl-6 text-xs">
-          You answered: {answered}
+          {t("youAnsweredAnswered", { answered })}
         </p>
       ) : !open ? (
-        <p className="text-muted-foreground pl-6 text-xs">Not answered</p>
+        <p className="text-muted-foreground pl-6 text-xs">{t("notAnswered")}</p>
       ) : (
         <div className="space-y-2 pl-6">
           <div className="flex flex-wrap gap-1.5">
@@ -338,11 +352,11 @@ export function AskUserCard({
               }}
             >
               <Input
-                aria-label="Your answer"
+                aria-label={t("yourAnswer")}
                 className="h-8 text-xs"
                 disabled={busy}
                 onChange={(event) => setOther(event.target.value)}
-                placeholder="Or type your answer"
+                placeholder={t("orTypeYourAnswer")}
                 value={other}
               />
               <Button
@@ -352,7 +366,7 @@ export function AskUserCard({
                 type="submit"
                 variant="outline"
               >
-                Send
+                {t("send")}
               </Button>
             </form>
           )}
@@ -371,6 +385,7 @@ function ApprovalButtons({
   approvalId: string;
   approveLabel: string;
 }) {
+  const t = useTranslations("editor.ai.agentParts");
   const { addToolApprovalResponse, status } = useChatContext();
   const busy = status === "submitted" || status === "streaming";
   return (
@@ -394,19 +409,20 @@ function ApprovalButtons({
         size="sm"
         variant="ghost"
       >
-        Reject
+        {t("reject")}
       </Button>
     </div>
   );
 }
 
 export function Changes({ changes }: { changes: string[] }) {
+  const t = useTranslations("editor.ai.agentParts");
   const [open, setOpen] = useState(false);
   if (changes.length === 0) return null;
   const shown = open ? changes : changes.slice(0, 3);
   return (
     <div className="space-y-1">
-      <p className="text-muted-foreground text-xs">Changed to get there:</p>
+      <p className="text-muted-foreground text-xs">{t("changedToGetThere")}</p>
       <ul className="text-muted-foreground list-disc space-y-0.5 pl-4 text-xs leading-5">
         {shown.map((change) => (
           <li key={change}>{change}</li>
@@ -418,7 +434,9 @@ export function Changes({ changes }: { changes: string[] }) {
           onClick={() => setOpen(!open)}
           type="button"
         >
-          {open ? "Show less" : `Show ${changes.length - 3} more`}
+          {open
+            ? t("showLess")
+            : t("showValueMore", { value: changes.length - 3 })}
         </button>
       )}
     </div>
@@ -432,6 +450,7 @@ export function ApplyDesignCard({
   part: PartOf<"tool-apply_design">;
   superseded: boolean;
 }) {
+  const t = useTranslations("editor.ai.agentParts");
   const designs = useDesigns();
   const { applied, undoApplied, redoApplied } = useChatContext();
   const design = part.input?.design_id
@@ -461,22 +480,24 @@ export function ApplyDesignCard({
         <div className="min-w-0 flex-1 space-y-2">
           <div className="space-y-1">
             <p className="text-sm font-medium leading-snug">
-              {part.input?.summary || "Apply this design"}
+              {part.input?.summary || t("applyThisDesign")}
             </p>
             <ScoreLabel grade={design.grade} score={design.score} />
             {design.scoredWithSample && (
               <p className="text-muted-foreground text-xs">
-                Scored with a sample link until you add content.
+                {t("scoredWithASampleLink")}
               </p>
             )}
           </div>
           {design.content && (
             <p className="text-xs">
-              Replaces the content with {design.content.summary}
+              {t("replacesTheContentWithSummary", {
+                summary: design.content.summary,
+              })}
             </p>
           )}
           {design.replacesArt && (
-            <p className="text-xs">Turns off the Logo QR / Image QR art</p>
+            <p className="text-xs">{t("turnsOffTheLogoQr")}</p>
           )}
           <Changes changes={design.changes} />
         </div>
@@ -487,7 +508,7 @@ export function ApplyDesignCard({
         !part.approval.isAutomatic ? (
           <>
             <span className="text-muted-foreground text-xs">
-              Apply to your editor?
+              {t("applyToYourEditor")}
             </span>
             <ApprovalButtons
               approvalId={part.approval.id}
@@ -497,7 +518,9 @@ export function ApplyDesignCard({
         ) : state === "output-available" && part.output.ok ? (
           outcome === "undone" ? (
             <>
-              <span className="text-muted-foreground text-xs">Undone</span>
+              <span className="text-muted-foreground text-xs">
+                {t("undone")}
+              </span>
               <Button
                 className="h-7 gap-1.5 shadow-none"
                 onClick={() => redoApplied(part.toolCallId)}
@@ -505,14 +528,14 @@ export function ApplyDesignCard({
                 variant="ghost"
               >
                 <RotateRight className="size-3.5" />
-                Apply again
+                {t("applyAgain")}
               </Button>
             </>
           ) : (
             <>
               <span className="inline-flex items-center gap-1.5 text-xs">
                 <TickCircle className="size-3.5" />
-                Applied
+                {t("applied")}
               </span>
               {outcome === "applied" && (
                 <Button
@@ -522,26 +545,28 @@ export function ApplyDesignCard({
                   variant="ghost"
                 >
                   <RotateLeft className="size-3.5" />
-                  Undo
+                  {t("undo")}
                 </Button>
               )}
             </>
           )
         ) : denied ? (
           <span className="text-muted-foreground text-xs">
-            {automaticReason ?? "Not applied. Your editor is unchanged."}
+            {automaticReason ?? t("notAppliedYourEditorIs")}
           </span>
         ) : state === "approval-responded" ? (
           <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
             <Spinner className="size-3.5" />
-            Applying…
+            {t("applying")}
           </span>
         ) : state === "output-error" ? (
           <span className="text-muted-foreground text-xs">
-            Couldn't apply it. Try again.
+            {t("couldntApplyItTryAgain")}
           </span>
         ) : (
-          <span className="text-muted-foreground text-xs">Not applied</span>
+          <span className="text-muted-foreground text-xs">
+            {t("notApplied")}
+          </span>
         )}
       </div>
     </div>
@@ -555,6 +580,7 @@ export function SaveTemplateCard({
   part: PartOf<"tool-save_template">;
   superseded: boolean;
 }) {
+  const t = useTranslations("editor.ai.agentParts");
   const designs = useDesigns();
   const editorStyles = useQREditorStore((state) => state.themeState.styles);
   const editorValue = useQREditorStore((state) => state.value);
@@ -591,10 +617,11 @@ export function SaveTemplateCard({
           value={design?.value ?? (editorValue || "https://qrdx.dev")}
         />
         <div className="min-w-0 flex-1 space-y-1">
-          <p className="text-sm font-medium leading-snug">Template “{name}”</p>
+          <p className="text-sm font-medium leading-snug">
+            {t("templateName", { name })}
+          </p>
           <p className="text-muted-foreground text-xs leading-5">
-            Saves the look to your themes: colors, shapes, frame and its text,
-            border and logo. Not the content.
+            {t("savesTheLookToYour")}
           </p>
         </div>
       </div>
@@ -604,7 +631,7 @@ export function SaveTemplateCard({
         !part.approval.isAutomatic ? (
           <>
             <span className="text-muted-foreground text-xs">
-              Save to your account?
+              {t("saveToYourAccount")}
             </span>
             <ApprovalButtons
               approvalId={part.approval.id}
@@ -615,7 +642,7 @@ export function SaveTemplateCard({
           <>
             <span className="inline-flex items-center gap-1.5 text-xs">
               <TickCircle className="size-3.5" />
-              Saved to your themes
+              {t("savedToYourThemes")}
             </span>
             <Button
               asChild
@@ -623,7 +650,7 @@ export function SaveTemplateCard({
               size="sm"
               variant="ghost"
             >
-              <Link href={dashboardEntry("themes")}>Open themes</Link>
+              <Link href={dashboardEntry("themes")}>{t("openThemes")}</Link>
             </Button>
           </>
         ) : limitReached ? (
@@ -637,7 +664,7 @@ export function SaveTemplateCard({
               size="sm"
               variant="outline"
             >
-              <Link href="/pricing">Upgrade</Link>
+              <Link href="/pricing">{t("upgrade")}</Link>
             </Button>
           </>
         ) : output && !output.ok ? (
@@ -647,10 +674,10 @@ export function SaveTemplateCard({
         ) : part.state === "approval-responded" && part.approval.approved ? (
           <span className="text-muted-foreground inline-flex items-center gap-1.5 text-xs">
             <Spinner className="size-3.5" />
-            Saving…
+            {t("saving")}
           </span>
         ) : (
-          <span className="text-muted-foreground text-xs">Not saved</span>
+          <span className="text-muted-foreground text-xs">{t("notSaved")}</span>
         )}
       </div>
     </div>

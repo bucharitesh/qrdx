@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { MediaLinkAssist } from "@/components/data-connections/media-link-assist";
 import type { SpotifyFormData } from "@/lib/validations/qr-content";
@@ -12,6 +13,7 @@ import { encodeSpotify } from "@/utils/qr-content-encoder";
 import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function SpotifyForm() {
+  const t = useTranslations("editor.contentForms.spotifyForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -53,12 +55,12 @@ export function SpotifyForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="spotify-uri">
-          Spotify URI or URL *
+          {t("spotifyUriOrUrl")}
         </Label>
         <Input
           id="spotify-uri"
           type="text"
-          placeholder="spotify:track:... or https://open.spotify.com/..."
+          placeholder={t("spotifyTrackOrHttpsOpen")}
           value={spotifyData.uri}
           onChange={(e) => setSpotifyData({ uri: e.target.value })}
           className={errors.uri ? "border-destructive" : ""}
@@ -74,7 +76,7 @@ export function SpotifyForm() {
       />
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the content in Spotify
+        {t("scanningWillOpenTheContent")}
       </p>
     </div>
   );

@@ -46,6 +46,7 @@ import {
   Trash as Trash2,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   type ReactNode,
   Suspense,
@@ -65,6 +66,7 @@ import {
 } from "@/actions/code-marketing";
 import { InfoHint } from "@/components/help/info-hint";
 import type { HintId } from "@/lib/help/hints";
+import type { Translator } from "@/lib/i18n/translator";
 import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import type {
   RoutingCondition,
@@ -149,6 +151,7 @@ export function PlanLock({
   plan: PaidPlan;
   children: ReactNode;
 }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
   return (
     <div className="bg-muted/50 flex flex-col gap-3 rounded-lg border border-dashed p-4 sm:flex-row sm:items-center sm:justify-between">
@@ -162,7 +165,7 @@ export function PlanLock({
         size="sm"
       >
         <Gem />
-        Upgrade to {PLAN_NAMES[plan]}
+        {t("upgradeToValue", { value: PLAN_NAMES[plan] })}
       </Button>
     </div>
   );
@@ -487,19 +490,22 @@ function geofenceRadius(draft: DraftCondition): number {
 }
 
 /** What the server would refuse in an area condition, said plainly; null = fine. */
-function geofenceProblem(rules: DraftRule[]): string | null {
+function geofenceProblem(
+  rules: DraftRule[],
+  t: Translator<"app.dashboard.codes.routingPanel">,
+): string | null {
   for (const [index, rule] of rules.entries()) {
     for (const condition of rule.conditions) {
       if (condition.type !== "geofence") continue;
-      const label = rule.name.trim() || `Rule ${index + 1}`;
+      const label = rule.name.trim() || t("ruleValue", { value: index + 1 });
       if (!parseLatLng(condition.point)) {
-        return `${label}: enter the area's center as latitude, longitude, like 40.7128, -74.0060.`;
+        return t("labelEnterTheAreasCenter", { label });
       }
       const radius = geofenceRadius(condition);
       if (
         !(radius >= MIN_GEOFENCE_RADIUS_M && radius <= MAX_GEOFENCE_RADIUS_M)
       ) {
-        return `${label}: the radius must be between 100 m and 500 km.`;
+        return t("labelTheRadiusMustBe", { label });
       }
     }
   }
@@ -650,6 +656,7 @@ function TimeZoneInput({
   disabled?: boolean;
   id: string;
 }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   const [zones, setZones] = useState<string[]>([]);
   useEffect(() => {
     try {
@@ -661,7 +668,7 @@ function TimeZoneInput({
   return (
     <>
       <Input
-        aria-label="Time zone"
+        aria-label={t("timeZone")}
         className="h-8 w-52"
         disabled={disabled}
         id={id}
@@ -721,6 +728,7 @@ function GeofenceEditor({
   locked: boolean;
   id: string;
 }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   const point = parseLatLng(condition.point);
   const { state, locate } = useCurrentLocation((text) =>
     onChange({ point: text }),
@@ -731,7 +739,7 @@ function GeofenceEditor({
         <Input
           aria-describedby={`${id}-point-hint`}
           aria-invalid={condition.point.trim() !== "" && !point}
-          aria-label="Center of the area (latitude, longitude)"
+          aria-label={t("centerOfTheAreaLatitude")}
           className="h-8 w-60"
           disabled={locked}
           inputMode="decimal"
@@ -748,13 +756,13 @@ function GeofenceEditor({
           variant="outline"
         >
           <Gps />
-          {state === "busy" ? "Locating…" : "Use my location"}
+          {state === "busy" ? t("locating") : t("useMyLocation")}
         </Button>
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-muted-foreground text-sm">within</span>
+        <span className="text-muted-foreground text-sm">{t("within")}</span>
         <Input
-          aria-label="Radius"
+          aria-label={t("radius")}
           className="h-8 w-24"
           disabled={locked}
           inputMode="decimal"
@@ -769,7 +777,7 @@ function GeofenceEditor({
           value={condition.radiusUnit}
         >
           <SelectTrigger
-            aria-label="Radius unit"
+            aria-label={t("radiusUnit")}
             className="h-8 w-20"
             size="sm"
           >
@@ -777,7 +785,7 @@ function GeofenceEditor({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="m">m</SelectItem>
-            <SelectItem value="km">km</SelectItem>
+            <SelectItem value="km">{t("km")}</SelectItem>
           </SelectContent>
         </Select>
         {point && (
@@ -787,15 +795,15 @@ function GeofenceEditor({
             rel="noopener noreferrer"
             target="_blank"
           >
-            Check on a map
+            {t("checkOnAMap")}
             <ExportSquare className="size-3" />
           </a>
         )}
       </div>
       <p className="text-muted-foreground text-xs" id={`${id}-point-hint`}>
         {state === "failed"
-          ? "Your browser didn't share a location. Paste the center from a map app instead (right-click a place to copy its coordinates)."
-          : "Paste coordinates from a map app (right-click a place to copy them). 100 m to 500 km."}
+          ? t("yourBrowserDidntShareA")
+          : t("pasteCoordinatesFromAMap")}
       </p>
     </div>
   );
@@ -812,6 +820,7 @@ function ConditionEditor({
   onRemove: () => void;
   locked: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   const id = useId();
   let editor: ReactNode;
   switch (condition.type) {
@@ -819,7 +828,7 @@ function ConditionEditor({
       editor = (
         <ToggleChips
           disabled={locked}
-          label="Devices"
+          label={t("devices")}
           onChange={(devices) => onChange({ devices })}
           options={DEVICES}
           value={condition.devices}
@@ -830,7 +839,7 @@ function ConditionEditor({
       editor = (
         <ToggleChips
           disabled={locked}
-          label="Operating systems"
+          label={t("operatingSystems")}
           onChange={(os) => onChange({ os })}
           options={OS_OPTIONS.map((os) => ({ value: os, label: os }))}
           value={condition.os}
@@ -842,7 +851,9 @@ function ConditionEditor({
     case "language":
       editor = (
         <Input
-          aria-label={`${CONDITION_LABELS[condition.type]} codes`}
+          aria-label={t("valueCodes", {
+            value: CONDITION_LABELS[condition.type],
+          })}
           className="h-8 max-w-sm"
           disabled={locked}
           onChange={(event) => onChange({ text: event.target.value })}
@@ -856,22 +867,22 @@ function ConditionEditor({
         <div className="flex flex-wrap items-center gap-2">
           <ToggleChips
             disabled={locked}
-            label="Days"
+            label={t("days")}
             onChange={(days) => onChange({ days })}
             options={WEEKDAYS.map((label, value) => ({ value, label }))}
             value={condition.days}
           />
           <Input
-            aria-label="From"
+            aria-label={t("from")}
             className="h-8 w-28"
             disabled={locked}
             onChange={(event) => onChange({ start: event.target.value })}
             type="time"
             value={condition.start}
           />
-          <span className="text-muted-foreground text-sm">to</span>
+          <span className="text-muted-foreground text-sm">{t("to")}</span>
           <Input
-            aria-label="Until"
+            aria-label={t("until2")}
             className="h-8 w-28"
             disabled={locked}
             onChange={(event) => onChange({ end: event.target.value })}
@@ -891,16 +902,16 @@ function ConditionEditor({
       editor = (
         <div className="flex flex-wrap items-center gap-2">
           <Input
-            aria-label="From"
+            aria-label={t("from")}
             className="h-8 w-56"
             disabled={locked}
             onChange={(event) => onChange({ from: event.target.value })}
             type="datetime-local"
             value={condition.from}
           />
-          <span className="text-muted-foreground text-sm">until</span>
+          <span className="text-muted-foreground text-sm">{t("until")}</span>
           <Input
-            aria-label="Until"
+            aria-label={t("until2")}
             className="h-8 w-56"
             disabled={locked}
             onChange={(event) => onChange({ to: event.target.value })}
@@ -908,7 +919,7 @@ function ConditionEditor({
             value={condition.to}
           />
           <span className="text-muted-foreground text-xs">
-            Your time zone; leave one side empty for open-ended
+            {t("yourTimeZoneLeaveOne")}
           </span>
         </div>
       );
@@ -934,19 +945,19 @@ function ConditionEditor({
             value={condition.operator}
           >
             <SelectTrigger
-              aria-label="Which scans"
+              aria-label={t("whichScans")}
               className="h-8 w-36"
               size="sm"
             >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="first">The first</SelectItem>
-              <SelectItem value="after">Every scan after</SelectItem>
+              <SelectItem value="first">{t("theFirst")}</SelectItem>
+              <SelectItem value="after">{t("everyScanAfter")}</SelectItem>
             </SelectContent>
           </Select>
           <Input
-            aria-label="Number of scans"
+            aria-label={t("numberOfScans")}
             className="h-8 w-28"
             disabled={locked}
             min={1}
@@ -954,7 +965,7 @@ function ConditionEditor({
             type="number"
             value={condition.count}
           />
-          <span className="text-muted-foreground text-sm">scans</span>
+          <span className="text-muted-foreground text-sm">{t("scans")}</span>
         </div>
       );
       break;
@@ -972,12 +983,14 @@ function ConditionEditor({
             disabled={locked}
             onCheckedChange={(checked) => onChange({ not: checked === true })}
           />
-          is not
+          {t("isNot")}
         </Label>
       </div>
       <div className="min-w-0 flex-1">{editor}</div>
       <Button
-        aria-label={`Remove ${CONDITION_LABELS[condition.type]} condition`}
+        aria-label={t("removeValueCondition", {
+          value: CONDITION_LABELS[condition.type],
+        })}
         className="self-end sm:self-start"
         disabled={locked}
         onClick={onRemove}
@@ -1000,6 +1013,7 @@ function VariantsEditor({
   onChange: (variants: DraftVariant[]) => void;
   locked: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   const total = rule.variants.reduce(
     (sum, variant) => sum + (Number(variant.weight) || 0),
     0,
@@ -1016,7 +1030,7 @@ function VariantsEditor({
         {rule.variants.map((variant, index) => (
           <li className="flex flex-wrap items-center gap-2" key={variant.id}>
             <Input
-              aria-label="Variant name"
+              aria-label={t("variantName")}
               className="h-8 w-20"
               disabled={locked}
               maxLength={40}
@@ -1025,7 +1039,7 @@ function VariantsEditor({
               value={variant.name}
             />
             <Input
-              aria-label="Variant URL"
+              aria-label={t("variantUrl")}
               className="h-8 min-w-48 flex-1"
               disabled={locked}
               inputMode="url"
@@ -1034,7 +1048,7 @@ function VariantsEditor({
               value={variant.url}
             />
             <Input
-              aria-label="Weight"
+              aria-label={t("weight")}
               className="h-8 w-20"
               disabled={locked}
               max={100}
@@ -1051,7 +1065,7 @@ function VariantsEditor({
                 : "—"}
             </span>
             <Button
-              aria-label="Remove variant"
+              aria-label={t("removeVariant")}
               disabled={locked || rule.variants.length <= 2}
               onClick={() =>
                 onChange(rule.variants.filter((_, i) => i !== index))
@@ -1083,12 +1097,14 @@ function VariantsEditor({
           variant="outline"
         >
           <Plus />
-          Add variant
+          {t("addVariant")}
         </Button>
         <p className="text-muted-foreground text-xs">
-          Each visitor keeps their variant for the day.
+          {t("eachVisitorKeepsTheirVariant")}
           {rule.since &&
-            ` Running since ${new Date(rule.since).toLocaleDateString()}.`}
+            t("runningSinceValue", {
+              value: new Date(rule.since).toLocaleDateString(),
+            })}
         </p>
       </div>
     </div>
@@ -1112,6 +1128,7 @@ function RuleCard({
   onMove: (offset: -1 | 1) => void;
   onRemove: () => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   const id = useId();
   const updateCondition = (key: string, patch: Partial<DraftCondition>) =>
     onChange({
@@ -1132,12 +1149,12 @@ function RuleCard({
           {index + 1}
         </Badge>
         <Input
-          aria-label="Rule name"
+          aria-label={t("ruleName")}
           className="h-8 min-w-40 flex-1"
           disabled={locked}
           maxLength={60}
           onChange={(event) => onChange({ name: event.target.value })}
-          placeholder={`Rule ${index + 1}`}
+          placeholder={t("ruleValue", { value: index + 1 })}
           value={rule.name}
         />
         <Label
@@ -1150,11 +1167,11 @@ function RuleCard({
             id={`${id}-on`}
             onCheckedChange={(enabled) => onChange({ enabled })}
           />
-          {rule.enabled ? "On" : "Off"}
+          {rule.enabled ? t("on") : t("off")}
         </Label>
         <div className="flex">
           <Button
-            aria-label="Move rule up"
+            aria-label={t("moveRuleUp")}
             disabled={locked || index === 0}
             onClick={() => onMove(-1)}
             size="icon-sm"
@@ -1164,7 +1181,7 @@ function RuleCard({
             <ArrowUp />
           </Button>
           <Button
-            aria-label="Move rule down"
+            aria-label={t("moveRuleDown")}
             disabled={locked || index === count - 1}
             onClick={() => onMove(1)}
             size="icon-sm"
@@ -1174,7 +1191,7 @@ function RuleCard({
             <ArrowDown />
           </Button>
           <Button
-            aria-label="Delete rule"
+            aria-label={t("deleteRule")}
             onClick={onRemove}
             size="icon-sm"
             type="button"
@@ -1188,8 +1205,8 @@ function RuleCard({
       <div className="space-y-2">
         <p className="text-muted-foreground text-xs font-medium uppercase">
           {rule.conditions.length === 0
-            ? "When: every scan"
-            : "When all of these match"}
+            ? t("whenEveryScan")
+            : t("whenAllOfTheseMatch")}
         </p>
         {rule.conditions.length > 0 && (
           <ul className="space-y-2">
@@ -1219,7 +1236,7 @@ function RuleCard({
               variant="outline"
             >
               <Plus />
-              Add condition
+              {t("addCondition")}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
@@ -1242,7 +1259,7 @@ function RuleCard({
       <div className="space-y-2">
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-muted-foreground text-xs font-medium uppercase">
-            Then
+            {t("then")}
           </p>
           <Select
             disabled={locked}
@@ -1251,18 +1268,22 @@ function RuleCard({
             }
             value={rule.mode}
           >
-            <SelectTrigger aria-label="Action" className="h-8 w-44" size="sm">
+            <SelectTrigger
+              aria-label={t("action")}
+              className="h-8 w-44"
+              size="sm"
+            >
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="redirect">Send to a URL</SelectItem>
-              <SelectItem value="split">Split between URLs (A/B)</SelectItem>
+              <SelectItem value="redirect">{t("sendToAUrl")}</SelectItem>
+              <SelectItem value="split">{t("splitBetweenUrlsAB")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         {rule.mode === "redirect" ? (
           <Input
-            aria-label="Destination URL"
+            aria-label={t("destinationUrl")}
             className="h-8"
             disabled={locked}
             inputMode="url"
@@ -1285,6 +1306,7 @@ function RuleCard({
 // ─── Rule tester ─────────────────────────────────────────────────────────────
 
 function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   const id = useId();
   const [sample, setSample] = useState({
     device: "mobile",
@@ -1312,7 +1334,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
 
   const run = () => {
     setError(null);
-    const problem = geofenceProblem(rules);
+    const problem = geofenceProblem(rules, t);
     const point = sample.location.trim() ? parseLatLng(sample.location) : null;
     if (problem || (sample.location.trim() && !point)) {
       setResult(null);
@@ -1357,15 +1379,18 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
     <details className="group rounded-lg border">
       <summary className="flex cursor-pointer list-none items-center gap-2 px-3 py-2 text-sm font-medium">
         <FlaskConical className="size-4" />
-        Test your rules
-        <span className="text-muted-foreground text-xs font-normal">
-          (uses unsaved changes)
-        </span>
+        {t.rich("testYourRulesUsesUnsaved", {
+          span: (chunks) => (
+            <span className="text-muted-foreground text-xs font-normal">
+              {chunks}
+            </span>
+          ),
+        })}
       </summary>
       <div className="space-y-3 border-t p-3">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <div className="space-y-1">
-            <Label htmlFor={`${id}-device`}>Device</Label>
+            <Label htmlFor={`${id}-device`}>{t("device")}</Label>
             <Select
               onValueChange={(device) => set({ device })}
               value={sample.device}
@@ -1383,7 +1408,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
             </Select>
           </div>
           <div className="space-y-1">
-            <Label htmlFor={`${id}-os`}>Operating system</Label>
+            <Label htmlFor={`${id}-os`}>{t("operatingSystem")}</Label>
             <Select onValueChange={(os) => set({ os })} value={sample.os}>
               <SelectTrigger className="w-full" id={`${id}-os`}>
                 <SelectValue />
@@ -1394,12 +1419,12 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
                     {os}
                   </SelectItem>
                 ))}
-                <SelectItem value="unknown">Unknown</SelectItem>
+                <SelectItem value="unknown">{t("unknown")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-1">
-            <Label htmlFor={`${id}-country`}>Country</Label>
+            <Label htmlFor={`${id}-country`}>{t("country")}</Label>
             <Input
               id={`${id}-country`}
               maxLength={2}
@@ -1409,7 +1434,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor={`${id}-region`}>Region</Label>
+            <Label htmlFor={`${id}-region`}>{t("region")}</Label>
             <Input
               id={`${id}-region`}
               maxLength={6}
@@ -1419,17 +1444,17 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor={`${id}-language`}>Language</Label>
+            <Label htmlFor={`${id}-language`}>{t("language")}</Label>
             <Input
               id={`${id}-language`}
               maxLength={35}
               onChange={(event) => set({ language: event.target.value })}
-              placeholder="en-US"
+              placeholder={t("enUs")}
               value={sample.language}
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor={`${id}-at`}>Date and time</Label>
+            <Label htmlFor={`${id}-at`}>{t("dateAndTime")}</Label>
             <Input
               id={`${id}-at`}
               onChange={(event) => set({ at: event.target.value })}
@@ -1438,7 +1463,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor={`${id}-scan`}>Scan number</Label>
+            <Label htmlFor={`${id}-scan`}>{t("scanNumber")}</Label>
             <Input
               id={`${id}-scan`}
               min={1}
@@ -1448,7 +1473,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
             />
           </div>
           <div className="space-y-1">
-            <Label htmlFor={`${id}-visitor`}>Visitor (for A/B)</Label>
+            <Label htmlFor={`${id}-visitor`}>{t("visitorForAB")}</Label>
             <Input
               id={`${id}-visitor`}
               maxLength={100}
@@ -1457,13 +1482,13 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
             />
           </div>
           <div className="space-y-1 sm:col-span-2 lg:col-span-1">
-            <Label htmlFor={`${id}-location`}>Location (for areas)</Label>
+            <Label htmlFor={`${id}-location`}>{t("locationForAreas")}</Label>
             <Input
               id={`${id}-location`}
               inputMode="decimal"
               maxLength={60}
               onChange={(event) => set({ location: event.target.value })}
-              placeholder="Latitude, longitude"
+              placeholder={t("latitudeLongitude")}
               spellCheck={false}
               value={sample.location}
             />
@@ -1471,7 +1496,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
         </div>
         <Button disabled={isPending} onClick={run} size="sm" type="button">
           <FlaskConical />
-          {isPending ? "Testing…" : "Run test"}
+          {isPending ? t("testing") : t("runTest")}
         </Button>
         {error && <PanelError message={error} />}
         {result && (
@@ -1482,7 +1507,9 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
             <p className="font-medium">
               {ruleLabel(result.ruleId)}
               {result.variantId &&
-                ` · variant ${result.variantId.toUpperCase()}`}
+                t("variantVariantid", {
+                  variantId: result.variantId.toUpperCase(),
+                })}
             </p>
             <p className="font-mono text-xs break-all">{result.url}</p>
             {result.trace.length > 0 && (
@@ -1494,17 +1521,19 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
                     ) : (
                       <CircleSlash className="size-3.5" />
                     )}
-                    Rule {index + 1}:{" "}
+                    {t("rule")} {index + 1}:{" "}
                     {!step.enabled
-                      ? "off"
+                      ? t("off2")
                       : step.matched
-                        ? "matched"
-                        : `no match (${step.conditions
-                            .filter((condition) => !condition.matched)
-                            .map(
-                              (condition) => CONDITION_LABELS[condition.type],
-                            )
-                            .join(", ")})`}
+                        ? t("matched")
+                        : t("noMatchValue", {
+                            value: step.conditions
+                              .filter((condition) => !condition.matched)
+                              .map(
+                                (condition) => CONDITION_LABELS[condition.type],
+                              )
+                              .join(", "),
+                          })}
                   </li>
                 ))}
               </ul>
@@ -1525,6 +1554,7 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
 function initialRules(
   initial: CodeMarketingSettings,
   startWith: "split" | undefined,
+  t: Translator<"app.dashboard.codes.routingPanel">,
 ): DraftRule[] {
   const saved = toDraft(initial.routing);
   if (
@@ -1535,7 +1565,7 @@ function initialRules(
   ) {
     return saved;
   }
-  return [...saved, newRule({ name: "A/B test", mode: "split" })];
+  return [...saved, newRule({ name: t("aBTest"), mode: "split" })];
 }
 
 function RoutingEditor({
@@ -1547,8 +1577,9 @@ function RoutingEditor({
   plan: PaidPlan | null;
   startWith?: "split";
 }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   const [settings, setSettings] = useState(initial);
-  const [rules, setRules] = useState(() => initialRules(initial, startWith));
+  const [rules, setRules] = useState(() => initialRules(initial, startWith, t));
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const locked = !settings.features.routing;
@@ -1574,7 +1605,7 @@ function RoutingEditor({
 
   const save = () => {
     setError(null);
-    const problem = geofenceProblem(rules);
+    const problem = geofenceProblem(rules, t);
     if (problem) {
       setError(problem);
       return;
@@ -1587,7 +1618,7 @@ function RoutingEditor({
       if (result.success) {
         setSettings(result.data);
         setRules(toDraft(result.data.routing));
-        toast.success("Routing rules saved");
+        toast.success(t("routingRulesSaved"));
       } else {
         setError(result.error.message);
       }
@@ -1600,24 +1631,20 @@ function RoutingEditor({
   return (
     <PanelCard
       badge={plan}
-      description={
-        <>
-          Send each scan to a different URL by device, country, area, language,
-          time or scan count, or split traffic for A/B tests. Rules run top to
-          bottom; the first match wins, otherwise scans go to the main
-          destination.{" "}
+      description={t.rich("sendEachScanToA", {
+        link: (chunks) => (
           <Link className="underline" href="/docs/smart-routing">
-            How it works
+            {chunks}
           </Link>
-        </>
-      }
-      title="Smart routing"
+        ),
+      })}
+      title={t("smartRouting")}
     >
       {locked && plan && (
         <PlanLock plan={plan}>
           {rules.length > 0
-            ? `Your plan doesn't include smart routing. These rules keep working; you can turn them off or delete them, and editing them needs ${PLAN_NAMES[plan]}.`
-            : `Smart routing (smart app links, country, language, time rules and A/B splits) is part of ${PLAN_NAMES[plan]}.`}
+            ? t("yourPlanDoesntIncludeSmart", { value: PLAN_NAMES[plan] })
+            : t("smartRoutingSmartAppLinks", { value: PLAN_NAMES[plan] })}
         </PlanLock>
       )}
 
@@ -1650,11 +1677,11 @@ function RoutingEditor({
               variant="outline"
             >
               <Plus />
-              Add rule
+              {t("addRule")}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuLabel>Start from</DropdownMenuLabel>
+            <DropdownMenuLabel>{t("startFrom")}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {PRESETS.map((preset) => (
               <DropdownMenuItem
@@ -1674,7 +1701,7 @@ function RoutingEditor({
           {dirty && (
             <>
               <span className="text-muted-foreground text-xs">
-                Unsaved changes
+                {t("unsavedChanges")}
               </span>
               <Button
                 disabled={isPending}
@@ -1686,7 +1713,7 @@ function RoutingEditor({
                 type="button"
                 variant="ghost"
               >
-                Discard
+                {t("discard")}
               </Button>
             </>
           )}
@@ -1696,7 +1723,7 @@ function RoutingEditor({
             size="sm"
             type="button"
           >
-            {isPending ? "Saving…" : "Save rules"}
+            {isPending ? t("saving") : t("saveRules")}
           </Button>
         </div>
       </div>
@@ -1706,14 +1733,13 @@ function RoutingEditor({
         <RuleTester codeId={settings.codeId} rules={rules} />
       )}
       <p className="text-muted-foreground text-xs">
-        Country and region come from the scanner's IP address (never stored);
-        language from their browser settings. Areas use the location a scanner
-        shares when{" "}
-        <a className="underline" href="#location">
-          precise location
-        </a>{" "}
-        is on, otherwise the approximate location of their IP address. UTM
-        parameters are added after routing.
+        {t.rich("countryAndRegionComeFrom", {
+          link: (chunks) => (
+            <a className="underline" href="#location">
+              {chunks}
+            </a>
+          ),
+        })}
       </p>
     </PanelCard>
   );
@@ -1731,9 +1757,10 @@ export function RoutingPanel({
   /** "split": add an unsaved A/B split when the code has none */
   startWith?: "split";
 }) {
+  const t = useTranslations("app.dashboard.codes.routingPanel");
   return (
     <Suspense fallback={<PanelFallback />}>
-      <MarketingSettingsGate settings={settings} title="Smart routing">
+      <MarketingSettingsGate settings={settings} title={t("smartRouting")}>
         {(data) => (
           <RoutingEditor initial={data} plan={plan} startWith={startWith} />
         )}

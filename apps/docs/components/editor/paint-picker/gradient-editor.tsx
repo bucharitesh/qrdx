@@ -15,6 +15,7 @@ import {
   RotateRight,
   Trash,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import type { GradientStop } from "qrdx/types";
 import {
   type KeyboardEvent,
@@ -59,6 +60,7 @@ export function GradientBar({
   onSelect: (index: number) => void;
   onChange: (stops: GradientStop[], selected: number) => void;
 }) {
+  const t = useTranslations("editor.paintPicker.gradientEditor");
   const barRef = useRef<HTMLDivElement>(null);
   const handleRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const [dragging, setDragging] = useState<number | null>(null);
@@ -131,7 +133,7 @@ export function GradientBar({
         onPointerDown={onBarPointerDown}
         ref={barRef}
         style={CHECKER_STYLE}
-        title="Click to add a stop"
+        title={t("clickToAddAStop")}
       >
         <span
           className="absolute inset-0 rounded-md shadow-[inset_0_0_0_1px_rgb(0_0_0/0.1)]"
@@ -140,7 +142,10 @@ export function GradientBar({
       </div>
       {stops.map((stop, index) => (
         <button
-          aria-label={`Stop ${index + 1}, ${stop.color}`}
+          aria-label={t("stopValueColor", {
+            value: index + 1,
+            color: stop.color,
+          })}
           aria-valuemax={100}
           aria-valuemin={0}
           aria-valuenow={round(stop.offset)}
@@ -289,6 +294,7 @@ export function GradientToolbar({
   onRemove: () => void;
   canRemove: boolean;
 }) {
+  const t = useTranslations("editor.paintPicker.gradientEditor");
   const [draft, setDraft] = useState(String(angle));
   useEffect(() => setDraft(String(angle)), [angle]);
   const commit = () => {
@@ -303,13 +309,13 @@ export function GradientToolbar({
           <AngleDial
             angle={angle}
             fromTop={fromTop}
-            label={fromTop ? "Start angle" : "Angle"}
+            label={fromTop ? t("startAngle") : t("angle")}
             onChange={onAngle}
           />
           <div className="relative w-16">
             <Input
               aria-label={
-                fromTop ? "Start angle in degrees" : "Angle in degrees"
+                fromTop ? t("startAngleInDegrees") : t("angleInDegrees")
               }
               className="h-8 pr-5 text-xs tabular-nums"
               inputMode="decimal"
@@ -334,7 +340,7 @@ export function GradientToolbar({
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
-                aria-label="Angle presets"
+                aria-label={t("anglePresets")}
                 className="size-8"
                 size="icon"
                 type="button"
@@ -366,11 +372,11 @@ export function GradientToolbar({
             </DropdownMenuContent>
           </DropdownMenu>
           <Button
-            aria-label="Rotate 90°"
+            aria-label={t("rotate90")}
             className="size-8"
             onClick={() => onAngle(rotateAngle(angle, 90))}
             size="icon"
-            title="Rotate 90°"
+            title={t("rotate90")}
             type="button"
             variant="ghost"
           >
@@ -379,26 +385,26 @@ export function GradientToolbar({
         </>
       )}
       <Button
-        aria-label="Reverse the gradient"
+        aria-label={t("reverseTheGradient")}
         className="size-8"
         onClick={onReverse}
         size="icon"
-        title="Reverse"
+        title={t("reverse")}
         type="button"
         variant="ghost"
       >
         <ArrowSwapHorizontal className="size-4" />
       </Button>
       <Button
-        aria-label="Remove the selected stop"
+        aria-label={t("removeTheSelectedStop")}
         className="ml-auto size-8"
         disabled={!canRemove}
         onClick={onRemove}
         size="icon"
         title={
           canRemove
-            ? "Remove stop (Delete)"
-            : `A gradient keeps ${MIN_STOPS} stops`
+            ? t("removeStopDelete")
+            : t("aGradientKeepsMinStops", { MIN_STOPS })
         }
         type="button"
         variant="ghost"

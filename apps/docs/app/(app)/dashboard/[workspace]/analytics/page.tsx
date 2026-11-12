@@ -16,6 +16,7 @@ import {
 import { Lock } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { use } from "react";
 import { PageHeader } from "@/app/(app)/dashboard/_components/page-header";
 import { CompareChart } from "@/app/(app)/dashboard/analytics/_components/charts";
 import { ComparePicker } from "@/app/(app)/dashboard/analytics/_components/compare-picker";
@@ -44,6 +45,7 @@ import {
 } from "@/app/(app)/dashboard/codes/[id]/_components/analytics-extra";
 import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import {
   getLanguageBreakdown,
@@ -154,18 +156,17 @@ function ConversionsSummary({
 }: {
   conversions: ConversionSummary;
 }) {
+  const t = use(getAppTranslations("app.dashboard.analytics.page"));
   const revenue = conversions.revenue.filter((row) => Number(row.total) > 0);
   return (
     <Card className="gap-3 py-4">
       <CardHeader className="px-4">
-        <CardTitle>Conversions</CardTitle>
-        <CardDescription>
-          Sales and sign-ups attributed to scans
-        </CardDescription>
+        <CardTitle>{t("conversions")}</CardTitle>
+        <CardDescription>{t("salesAndSignUpsAttributed")}</CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap gap-6 px-4">
         <div>
-          <p className="text-muted-foreground text-xs">Conversions</p>
+          <p className="text-muted-foreground text-xs">{t("conversions")}</p>
           <p className="text-xl font-bold tabular-nums">
             {formatNumber(conversions.count)}
           </p>
@@ -173,7 +174,8 @@ function ConversionsSummary({
         {revenue.map((row) => (
           <div key={row.currency ?? "none"}>
             <p className="text-muted-foreground text-xs">
-              Revenue{row.currency ? ` (${row.currency})` : ""}
+              {t("revenue")}
+              {row.currency ? ` (${row.currency})` : ""}
             </p>
             <p className="text-xl font-bold tabular-nums">
               {Number(row.total).toLocaleString("en-US", {
@@ -195,6 +197,7 @@ export default async function AnalyticsPage({
   params: Promise<{ workspace: string }>;
   searchParams: Promise<Query>;
 }) {
+  const t = await getAppTranslations("app.dashboard.analytics.page");
   const scope = await requireDashboardScope();
   const [query, { workspace }] = await Promise.all([searchParams, routeParams]);
   const href = (path: string) => workspaceHref(workspace, path);
@@ -241,10 +244,11 @@ export default async function AnalyticsPage({
 
   const header = (
     <PageHeader
-      description="Scans across every dynamic code in this workspace."
+      description={t("scansAcrossEveryDynamicCode")}
       title={
         <>
-          Analytics <InfoHint align="start" id="scan-analytics" side="bottom" />
+          {t("analytics")}{" "}
+          <InfoHint align="start" id="scan-analytics" side="bottom" />
         </>
       }
     />
@@ -257,15 +261,12 @@ export default async function AnalyticsPage({
         <Empty className="border">
           <EmptyHeader>
             <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Chart" />
-            <EmptyTitle>No dynamic codes yet</EmptyTitle>
-            <EmptyDescription>
-              Create a dynamic QR code and its scans show up here, next to every
-              other code in this workspace.
-            </EmptyDescription>
+            <EmptyTitle>{t("noDynamicCodesYet")}</EmptyTitle>
+            <EmptyDescription>{t("createADynamicQrCode")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button asChild>
-              <Link href={href("/codes")}>Go to codes</Link>
+              <Link href={href("/codes")}>{t("goToCodes")}</Link>
             </Button>
           </EmptyContent>
         </Empty>
@@ -278,7 +279,7 @@ export default async function AnalyticsPage({
     label: (value: string) => string,
   ): BreakdownItem[] =>
     rows.map((row) => ({
-      label: row.value ? label(row.value) : "Unknown",
+      label: row.value ? label(row.value) : t("unknown"),
       count: row.count,
     }));
 
@@ -286,14 +287,14 @@ export default async function AnalyticsPage({
     <div className="space-y-6">
       {header}
 
-      <nav aria-label="Date range" className="flex flex-wrap gap-1">
+      <nav aria-label={t("dateRange")} className="flex flex-wrap gap-1">
         {SCAN_RANGE_KEYS.map((key) =>
           SCAN_RANGES[key] > retentionDays ? (
             <Button
               disabled
               key={key}
               size="sm"
-              title="Your plan keeps a shorter scan history"
+              title={t("yourPlanKeepsAShorter")}
               variant="ghost"
             >
               {scanRangeLabel(key)}
@@ -319,36 +320,42 @@ export default async function AnalyticsPage({
       </nav>
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        <Metric label="Dynamic codes" value={formatNumber(overview.codes)} />
+        <Metric
+          label={t("dynamicCodes")}
+          value={formatNumber(overview.codes)}
+        />
         <Metric
           hint="Since each code was created"
-          label="Total scans"
+          label={t("totalScans")}
           value={formatNumber(overview.allTimeScans)}
         />
         <Metric
           hint={`Last ${scanRangeLabel(range).replace(/^1 /, "")} (UTC)`}
-          label="Scans in range"
+          label={t("scansInRange")}
           value={formatNumber(overview.total)}
         />
         <Metric
           hint="Each visitor counts once per day"
-          label="Unique visitors"
+          label={t("uniqueVisitors")}
           value={formatNumber(overview.unique)}
         />
       </div>
 
       {/* NFC (feat/nfc) */}
       <ScanSourceCard
-        description={`All codes, last ${scanRangeLabel(range).replace(/^1 /, "")}`}
+        description={t("allCodesLastValue", {
+          value: scanRangeLabel(range).replace(/^1 /, ""),
+        })}
         sources={overview.sources}
       />
 
       <Card className="gap-4 py-4">
         <CardHeader className="px-4">
-          <CardTitle>Scans over time</CardTitle>
+          <CardTitle>{t("scansOverTime")}</CardTitle>
           <CardDescription>
-            All codes, per day, last {scanRangeLabel(range).replace(/^1 /, "")}{" "}
-            (UTC)
+            {t("allCodesPerDayLast", {
+              value: scanRangeLabel(range).replace(/^1 /, ""),
+            })}
           </CardDescription>
         </CardHeader>
         <CardContent className="px-2 sm:px-4">
@@ -359,12 +366,12 @@ export default async function AnalyticsPage({
       <div className="grid gap-4 md:grid-cols-2">
         <Card className="gap-3 py-4">
           <CardHeader className="px-4">
-            <CardTitle className="text-sm">Top codes</CardTitle>
+            <CardTitle className="text-sm">{t("topCodes")}</CardTitle>
           </CardHeader>
           <CardContent className="px-4">
             {overview.topCodes.length === 0 ? (
               <p className="text-muted-foreground py-4 text-center text-sm">
-                No scans in this period
+                {t("noScansInThisPeriod")}
               </p>
             ) : (
               <ol className="space-y-1.5">
@@ -390,7 +397,7 @@ export default async function AnalyticsPage({
         </Card>
         <BreakdownCard
           items={toItems(overview.countries, countryName)}
-          title="Top countries"
+          title={t("topCountries")}
           total={overview.total}
         />
         <BreakdownCard
@@ -398,7 +405,7 @@ export default async function AnalyticsPage({
             overview.devices,
             (value) => DEVICE_LABELS[value] ?? value,
           )}
-          title="Devices"
+          title={t("devices")}
           total={overview.total}
         />
         {languages && <LanguagesCard languages={languages} />}
@@ -420,9 +427,9 @@ export default async function AnalyticsPage({
 
       <Card className="gap-4 py-4">
         <CardHeader className="px-4">
-          <CardTitle>Compare codes</CardTitle>
+          <CardTitle>{t("compareCodes")}</CardTitle>
           <CardDescription>
-            Daily scans of up to {MAX_COMPARE} codes side by side (UTC).
+            {t("dailyScansOfUpTo", { MAX_COMPARE })}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 px-2 sm:px-4">
@@ -457,8 +464,10 @@ export default async function AnalyticsPage({
                         {optionLabels.get(id) ?? id}
                       </Link>
                       <p className="text-muted-foreground tabular-nums">
-                        {formatNumber(totals?.scans ?? 0)} scans ·{" "}
-                        {formatNumber(totals?.unique ?? 0)} unique
+                        {t("valueScansValue2Unique", {
+                          value: formatNumber(totals?.scans ?? 0),
+                          value2: formatNumber(totals?.unique ?? 0),
+                        })}
                       </p>
                     </li>
                   );
@@ -467,7 +476,7 @@ export default async function AnalyticsPage({
             </>
           ) : (
             <p className="text-muted-foreground px-2 text-sm sm:px-0">
-              Pick codes above to compare them.
+              {t("pickCodesAboveToCompare")}
             </p>
           )}
         </CardContent>
@@ -477,8 +486,7 @@ export default async function AnalyticsPage({
         <ConversionsSummary conversions={conversions} />
       )}
       <p className="text-muted-foreground text-xs">
-        Bots and link previews are not counted. Locations come from the
-        visitor's IP address, which is never stored.
+        {t("botsAndLinkPreviewsAre")}
       </p>
     </div>
   );

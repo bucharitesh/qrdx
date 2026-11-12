@@ -7,6 +7,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import type { IntegrationApiKeyConfig } from "@repo/integrations";
 import { ExportSquare, Lock1 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import { toast } from "sonner";
 import { emitSound } from "@/components/editor/sound";
@@ -30,6 +31,7 @@ export function ApiKeyConnect({
   asAlternative = false,
   reconnect = false,
 }: ApiKeyConnectProps) {
+  const t = useTranslations("app.settings.integrations.apiKeyConnect");
   const router = useRouter();
   const id = useId();
   const [value, setValue] = useState("");
@@ -46,7 +48,7 @@ export function ApiKeyConnect({
         setValue("");
         emitSound("success");
         track("integration_connected", { provider: slug });
-        toast.success(`${name} connected`);
+        toast.success(t("nameConnected", { name }));
         router.refresh();
       } else {
         setError(result.error);
@@ -63,10 +65,12 @@ export function ApiKeyConnect({
       <div className="space-y-1">
         <h2 className="text-base font-semibold">
           {asAlternative
-            ? `Or connect with a ${apiKey.label.toLowerCase()}`
+            ? t("orConnectWithALabel", { label: apiKey.label.toLowerCase() })
             : reconnect
-              ? `Replace your ${apiKey.label.toLowerCase()}`
-              : `Connect with your ${apiKey.label.toLowerCase()}`}
+              ? t("replaceYourLabel", { label: apiKey.label.toLowerCase() })
+              : t("connectWithYourLabel", {
+                  label: apiKey.label.toLowerCase(),
+                })}
         </h2>
         <p className="text-sm text-muted-foreground text-pretty">
           {apiKey.helpText}{" "}
@@ -76,7 +80,7 @@ export function ApiKeyConnect({
             rel="noopener noreferrer"
             target="_blank"
           >
-            Open {name}
+            {t("openName", { name })}
             <ExportSquare aria-hidden className="size-3.5" />
           </a>
         </p>
@@ -99,7 +103,7 @@ export function ApiKeyConnect({
           />
           <Button disabled={pending || value.trim().length < 8} type="submit">
             {pending && <Spinner className="size-4 animate-spin" />}
-            {reconnect ? "Save" : "Connect"}
+            {reconnect ? t("save") : t("connect")}
           </Button>
         </div>
         {error ? (
@@ -116,8 +120,7 @@ export function ApiKeyConnect({
             id={`${id}-hint`}
           >
             <Lock1 aria-hidden className="size-3.5 shrink-0" />
-            QRdx checks the key with {name}, then stores it encrypted. It's
-            never shown again.
+            {t("qrdxChecksTheKeyWith", { name })}
           </p>
         )}
       </div>

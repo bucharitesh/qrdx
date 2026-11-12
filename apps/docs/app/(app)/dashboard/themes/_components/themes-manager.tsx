@@ -17,6 +17,7 @@ import {
   SearchNormal1 as Search,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { playgroundHref } from "@/lib/playground-links";
@@ -110,6 +111,7 @@ export function ThemesManager({
   teamThemes,
   team,
 }: ThemesManagerProps) {
+  const t = useTranslations("app.dashboard.themes.themesManager");
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState<SortOption>("default");
 
@@ -137,10 +139,10 @@ export function ThemesManager({
           <div className="relative w-full sm:w-64">
             <Search className="text-muted-foreground pointer-events-none absolute top-2.5 left-2.5 size-4" />
             <Input
-              aria-label="Search themes"
+              aria-label={t("searchThemes")}
               className="pl-8"
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Search themes..."
+              placeholder={t("searchThemes2")}
               value={search}
             />
           </div>
@@ -148,15 +150,15 @@ export function ThemesManager({
             onValueChange={(value) => setSort(value as SortOption)}
             value={sort}
           >
-            <SelectTrigger aria-label="Sort themes" className="w-44 gap-2">
+            <SelectTrigger aria-label={t("sortThemes")} className="w-44 gap-2">
               <ArrowUpDown className="text-muted-foreground size-4" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="default">Default first</SelectItem>
-              <SelectItem value="newest">Newest first</SelectItem>
-              <SelectItem value="oldest">Oldest first</SelectItem>
-              <SelectItem value="name">Name (A-Z)</SelectItem>
+              <SelectItem value="default">{t("defaultFirst")}</SelectItem>
+              <SelectItem value="newest">{t("newestFirst")}</SelectItem>
+              <SelectItem value="oldest">{t("oldestFirst")}</SelectItem>
+              <SelectItem value="name">{t("nameAZ")}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -166,9 +168,9 @@ export function ThemesManager({
         <Card className="items-center py-12 text-center">
           <Search className="text-muted-foreground size-10" />
           <div>
-            <h3 className="text-lg font-medium">No themes found</h3>
+            <h3 className="text-lg font-medium">{t("noThemesFound")}</h3>
             <p className="text-muted-foreground text-sm text-pretty">
-              No themes match &quot;{search.trim()}&quot;.
+              {t("noThemesMatchSearch", { search: search.trim() })}
             </p>
           </div>
         </Card>
@@ -179,12 +181,12 @@ export function ThemesManager({
           <SectionHeading
             description={
               team.canManage
-                ? `Shared with everyone in ${team.name}. As an owner or admin you can edit them and pick its default.`
+                ? t("sharedWithEveryoneInName", { name: team.name })
                 : team.readOnly
-                  ? `Shared with everyone in ${team.name}. You have view-only access here; its owners and admins edit them.`
-                  : `Shared with everyone in ${team.name}. Its owners and admins can edit them.`
+                  ? t("sharedWithEveryoneInName2", { name: team.name })
+                  : t("sharedWithEveryoneInName3", { name: team.name })
             }
-            title="Shared themes"
+            title={t("sharedThemes")}
           />
           {shownTeam.length > 0 ? (
             <>
@@ -195,16 +197,17 @@ export function ThemesManager({
               />
               {!team.themesAllowed && (
                 <p className="text-muted-foreground text-sm">
-                  Existing shared themes keep working. Adding new ones needs the{" "}
-                  {team.planName} plan.
+                  {t("existingSharedThemesKeepWorking", {
+                    planName: team.planName,
+                  })}
                 </p>
               )}
             </>
           ) : query ? null : team.themesAllowed ? (
             <Card className="text-muted-foreground px-6 py-8 text-center text-sm">
               {team.canManage
-                ? 'No shared themes yet. Use "Copy to this workspace" on one of your themes below.'
-                : "No shared themes yet. Owners and admins can share themes here."}
+                ? t("noSharedThemesYetUse")
+                : t("noSharedThemesYetOwners")}
             </Card>
           ) : (
             <Card className="flex-col items-start gap-3 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
@@ -214,18 +217,17 @@ export function ThemesManager({
                 </div>
                 <div className="space-y-0.5">
                   <p className="font-medium">
-                    Share themes with this workspace
+                    {t("shareThemesWithThisWorkspace")}
                   </p>
                   <p className="text-muted-foreground text-sm text-pretty">
-                    Shared themes are part of the {team.planName} plan: everyone
-                    in {team.name} can pick them in the editor, and its default
-                    applies to new codes.
-                    {!team.canUpgrade && " Ask a workspace owner to upgrade."}
+                    {t("sharedThemesArePartOf")} {team.planName}{" "}
+                    {t("planEveryoneIn")} {team.name} {t("canPickThemInThe")}
+                    {!team.canUpgrade && t("askAWorkspaceOwnerTo")}
                   </p>
                 </div>
               </div>
               {team.canUpgrade && (
-                <UpgradeButton size="sm">Upgrade</UpgradeButton>
+                <UpgradeButton size="sm">{t("upgrade")}</UpgradeButton>
               )}
             </Card>
           )}
@@ -236,8 +238,8 @@ export function ThemesManager({
         <section className="space-y-4">
           {team && (
             <SectionHeading
-              description="Saved in your own workspace. You can pick them in every workspace."
-              title="Your themes"
+              description={t("savedInYourOwnWorkspace")}
+              title={t("yourThemes")}
             />
           )}
           {shownPersonal.length > 0 ? (
@@ -250,17 +252,17 @@ export function ThemesManager({
             <Card className="items-center gap-4 px-6 py-12 text-center">
               <HairlineFigure className="aspect-square w-32" figure="Palette" />
               <div className="space-y-1">
-                <h3 className="text-lg font-semibold">No saved themes yet</h3>
+                <h3 className="text-lg font-semibold">
+                  {t("noSavedThemesYet")}
+                </h3>
                 <p className="text-muted-foreground mx-auto max-w-md text-sm text-pretty">
-                  Design a QR code in the playground and click Save to keep its
-                  colors, patterns and logo here. Set one as default and new
-                  codes start from it.
+                  {t("designAQrCodeIn")}
                 </p>
               </div>
               <Button asChild>
                 <Link href={playgroundHref({ tab: "design" })}>
                   <Plus className="size-4" />
-                  Create a theme
+                  {t("createATheme")}
                 </Link>
               </Button>
             </Card>

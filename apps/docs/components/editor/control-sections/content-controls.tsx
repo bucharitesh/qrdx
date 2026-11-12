@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight, Element3 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { QRCodeSVG } from "qrdx";
 import type * as React from "react";
 import { useMemo, useState } from "react";
@@ -140,6 +141,7 @@ const QUICK_STYLE_COUNT = 8;
 
 /** A row of built-in presets, so a first-time user gets a look in one click. */
 function QuickStyles() {
+  const t = useTranslations("editor.controlSections.contentControls");
   const presets = useThemePresetStore((store) => store.presets);
   const activePreset = useQREditorStore((state) => state.themeState.preset);
   const applyThemePreset = useQREditorStore((state) => state.applyThemePreset);
@@ -161,7 +163,7 @@ function QuickStyles() {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="text-sm font-medium">Start from a style</h3>
+        <h3 className="text-sm font-medium">{t("startFromAStyle")}</h3>
         <Button
           className="text-muted-foreground hover:text-foreground -mr-2 h-7 gap-1 px-2 text-xs"
           onClick={() => setGalleryOpen(true)}
@@ -170,7 +172,7 @@ function QuickStyles() {
           variant="ghost"
         >
           <Element3 className="size-3.5" />
-          Browse all {builtIn.length}
+          {t("browseAllLength", { length: builtIn.length })}
         </Button>
         <ThemeGallery onOpenChange={setGalleryOpen} open={galleryOpen} />
       </div>
@@ -182,7 +184,7 @@ function QuickStyles() {
           const selected = (activePreset ?? "default") === id;
           return (
             <button
-              aria-label={`Apply the ${label} style`}
+              aria-label={t("applyTheLabelStyle", { label })}
               aria-pressed={selected}
               className={cn(
                 "group bg-card flex min-w-0 flex-col items-center gap-1.5 rounded-lg border p-1.5 pb-2 transition-[background-color,border-color,transform] outline-none active:scale-[0.97]",
@@ -234,6 +236,7 @@ function QuickStyles() {
  * the Design tab.
  */
 export function ContentControls({ onNext }: { onNext?: () => void }) {
+  const t = useTranslations("editor.controlSections.contentControls");
   const contentType = useQREditorStore((state) => state.contentType);
   const Form = FORMS[contentType];
 
@@ -248,7 +251,7 @@ export function ContentControls({ onNext }: { onNext?: () => void }) {
         <QuickStyles />
         {onNext && (
           <Button className="w-full" onClick={onNext} variant="outline">
-            Fine-tune colors, dots and logo
+            {t("fineTuneColorsDotsAnd")}
             <ArrowRight />
           </Button>
         )}

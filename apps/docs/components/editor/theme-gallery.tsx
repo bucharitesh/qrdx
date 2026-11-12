@@ -12,6 +12,7 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRotateLeft, SearchNormal1, Shuffle } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { QRCodeSVG, type QRProps, withQRSize } from "qrdx";
 import * as React from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
@@ -215,6 +216,7 @@ function nextTile(tiles: HTMLElement[], from: HTMLElement, key: string) {
 
 /** The look Shuffle just applied, with a way back. */
 function ShuffleCard({ seed }: { seed: number }) {
+  const t = useTranslations("editor.themeGallery");
   const theme = shuffleTheme(seed);
   const { back, canGoBack } = useThemeShuffle();
   const goBack = () => {
@@ -229,7 +231,7 @@ function ShuffleCard({ seed }: { seed: number }) {
       <span className="min-w-0 flex-1">
         <span className="block truncate text-sm font-medium">{theme.name}</span>
         <span className="text-muted-foreground block truncate text-xs">
-          Shuffled · {CATEGORY_LABELS[theme.category]}
+          {t("shuffled")} {CATEGORY_LABELS[theme.category]}
           {theme.inverted ? ` · ${DARK_THEME_NOTE.toLowerCase()}` : ""}
         </span>
       </span>
@@ -241,7 +243,7 @@ function ShuffleCard({ seed }: { seed: number }) {
         variant="ghost"
       >
         <ArrowRotateLeft className="size-4" />
-        Back
+        {t("back")}
       </Button>
     </div>
   );
@@ -254,6 +256,7 @@ interface ThemeGalleryProps {
 
 /** Every built-in theme as a live QR thumbnail, plus Shuffle. */
 export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
+  const t = useTranslations("editor.themeGallery");
   const currentId = useQREditorStore((state) => state.themeState.preset);
   const applyThemePreset = useQREditorStore((state) => state.applyThemePreset);
   const { shuffle: shuffleNext } = useThemeShuffle();
@@ -371,11 +374,10 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
           <div className="flex items-start gap-3 px-4 pt-1 pb-3 sm:px-5 sm:pt-4">
             <div className="min-w-0 flex-1">
               <ResponsiveDialogTitle className="text-base">
-                Themes
+                {t("themes")}
               </ResponsiveDialogTitle>
               <ResponsiveDialogDescription className="mt-1 text-xs">
-                {ITEMS.length} built-in looks, each tested to scan. Or shuffle a
-                new one.
+                {t("lengthBuiltInLooksEach", { length: ITEMS.length })}
               </ResponsiveDialogDescription>
             </div>
             <DialogCloseButton className="-mt-1 -mr-1 hidden sm:inline-flex" />
@@ -386,11 +388,11 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
               <div className="relative min-w-0 flex-1">
                 <SearchNormal1 className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" />
                 <Input
-                  aria-label="Search themes"
+                  aria-label={t("searchThemes")}
                   className="h-10 pl-9"
                   onChange={(event) => setQuery(event.target.value)}
                   onKeyDown={handleSearchKeyDown}
-                  placeholder="Search: menu, gold, pastel, dots…"
+                  placeholder={t("searchMenuGoldPastelDots")}
                   ref={inputRef}
                   type="search"
                   value={query}
@@ -403,14 +405,14 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
                 variant="outline"
               >
                 <Shuffle className="size-4" />
-                Shuffle
+                {t("shuffle")}
               </Button>
             </div>
 
             {shuffled !== null && <ShuffleCard seed={shuffled} />}
 
             <div
-              aria-label="Categories"
+              aria-label={t("categories")}
               className="-mx-4 flex gap-1.5 overflow-x-auto px-4 [mask-image:linear-gradient(to_right,transparent,black_16px,black_calc(100%-24px),transparent)] [scrollbar-width:none] sm:-mx-5 sm:px-5"
               role="toolbar"
             >
@@ -433,7 +435,7 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
                     type="button"
                     variant={active ? "secondary" : "ghost"}
                   >
-                    {id === "all" ? "All" : CATEGORY_LABELS[id]}
+                    {id === "all" ? t("all") : CATEGORY_LABELS[id]}
                     <span className="text-muted-foreground/70 tabular-nums">
                       {id === "all" ? ITEMS.length : countFor(id)}
                     </span>
@@ -451,8 +453,7 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
           >
             {category === "dark" && !tokens.length && (
               <p className="text-muted-foreground px-1.5 pb-2 text-xs">
-                Light codes on a dark background. {DARK_THEME_NOTE}, so test
-                with the phones your audience uses.
+                {t("lightCodesOnADark", { DARK_THEME_NOTE })}
               </p>
             )}
             {items.length ? (
@@ -469,7 +470,7 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
             ) : (
               <div className="flex h-full flex-col items-center justify-center gap-3 py-10 text-center">
                 <p className="text-muted-foreground max-w-64 text-sm text-pretty">
-                  No theme matches “{query.trim()}”.
+                  {t("noThemeMatchesQuery", { query: query.trim() })}
                 </p>
                 <Button
                   onClick={shuffle}
@@ -478,7 +479,7 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
                   variant="outline"
                 >
                   <Shuffle className="size-4" />
-                  Shuffle one instead
+                  {t("shuffleOneInstead")}
                 </Button>
               </div>
             )}
@@ -490,16 +491,16 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
               <Kbd>→</Kbd>
               <Kbd>↑</Kbd>
               <Kbd>↓</Kbd>
-              to move
+              {t("toMove")}
             </span>
             <span className="flex items-center gap-1">
-              <Kbd>↵</Kbd> to apply
+              <Kbd>↵</Kbd> {t("toApply")}
             </span>
             <span className="flex items-center gap-1">
-              <Kbd>T</Kbd> to shuffle
+              <Kbd>T</Kbd> {t("toShuffle")}
             </span>
             <span className="ml-auto flex items-center gap-1">
-              <Kbd>esc</Kbd> to close
+              {t.rich("escToClose", { kbd: (chunks) => <Kbd>{chunks}</Kbd> })}
             </span>
           </div>
         </div>

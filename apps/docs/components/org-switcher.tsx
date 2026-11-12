@@ -27,6 +27,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useCallback, useState } from "react";
 import type {
   ShellData,
@@ -81,6 +82,7 @@ export function OrgSwitcher({
   /** Called when a menu link is followed (e.g. to close the mobile sheet). */
   onNavigate?: () => void;
 }) {
+  const t = useTranslations("app.workspaces.orgSwitcher");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [creating, setCreating] = useState(false);
@@ -99,7 +101,10 @@ export function OrgSwitcher({
     setOpen(false);
     if (!shell.canCreateWorkspace) {
       toast.error(
-        `More workspaces are part of ${PLAN_NAMES.pro} and ${PLAN_NAMES.business}.`,
+        t("moreWorkspacesArePartOf", {
+          pro: PLAN_NAMES.pro,
+          business: PLAN_NAMES.business,
+        }),
       );
       openGetProDialog();
       return;
@@ -110,7 +115,7 @@ export function OrgSwitcher({
   const trigger = (
     <DropdownMenuTrigger asChild>
       <button
-        aria-label={`Switch workspace (now ${active.name})`}
+        aria-label={t("switchWorkspaceNowName", { name: active.name })}
         className={cn(
           "hover:bg-foreground/[0.05] focus-visible:ring-ring/50 flex items-center rounded-lg text-left outline-none transition-colors focus-visible:ring-[3px]",
           collapsed ? "size-10 justify-center" : "h-11 w-full gap-2.5 px-1.5",
@@ -156,7 +161,7 @@ export function OrgSwitcher({
           side={collapsed ? "right" : side}
         >
           <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-            Workspaces
+            {t("workspaces")}
           </DropdownMenuLabel>
           {shell.workspaces.map((workspace) => (
             <DropdownMenuItem asChild key={workspace.id}>
@@ -178,7 +183,7 @@ export function OrgSwitcher({
           ))}
           <DropdownMenuItem onSelect={startCreate}>
             <Plus className="size-4" />
-            Create workspace
+            {t("createWorkspace")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
@@ -187,7 +192,7 @@ export function OrgSwitcher({
               onClick={follow}
             >
               <Gauge className="size-4" />
-              Plan & usage
+              {t("planUsage")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
@@ -196,7 +201,7 @@ export function OrgSwitcher({
               onClick={follow}
             >
               <People className="size-4" />
-              Team members
+              {t("teamMembers")}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
@@ -205,7 +210,7 @@ export function OrgSwitcher({
               onClick={follow}
             >
               <Settings className="size-4" />
-              Settings
+              {t("settings")}
             </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>

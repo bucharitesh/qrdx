@@ -16,6 +16,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import {
   type CommunityPagePreview,
@@ -60,6 +61,7 @@ export function PublishPageDialog({
   onOpenChange: (open: boolean) => void;
   pageId: string;
 }) {
+  const t = useTranslations("community.publishPageDialog");
   const nameId = useId();
   const descriptionId = useId();
   const [step, setStep] = useState<Step>("review");
@@ -165,30 +167,28 @@ export function PublishPageDialog({
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <Tick aria-hidden className="size-5" />
-                Published
+                {t("published")}
               </DialogTitle>
               <DialogDescription>
-                {name.trim() || "Your template"} is live in the community. Your
-                page itself hasn't changed.
+                {t("valueIsLiveInThe", {
+                  value: name.trim() || "Your template",
+                })}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button onClick={() => onOpenChange(false)} variant="outline">
-                Done
+                {t("done")}
               </Button>
               <Button asChild>
-                <Link href={published}>View it</Link>
+                <Link href={published}>{t("viewIt")}</Link>
               </Button>
             </DialogFooter>
           </>
         ) : step === "review" ? (
           <>
             <DialogHeader>
-              <DialogTitle>Share as a page template</DialogTitle>
-              <DialogDescription>
-                Step 1 of 2 · This is what people get. Your own details are
-                taken out first.
-              </DialogDescription>
+              <DialogTitle>{t("shareAsAPageTemplate")}</DialogTitle>
+              <DialogDescription>{t("step1Of2This")}</DialogDescription>
             </DialogHeader>
 
             {loadError ? (
@@ -205,11 +205,11 @@ export function PublishPageDialog({
                   )}
                 </div>
                 <div className="min-w-0 space-y-3 text-sm">
-                  <p className="font-medium">What we changed</p>
+                  <p className="font-medium">{t("whatWeChanged")}</p>
                   {preview === null ? (
                     <p className="text-muted-foreground flex items-center gap-2">
                       <Spinner className="size-4" />
-                      Checking the page
+                      {t("checkingThePage")}
                     </p>
                   ) : (
                     <ul className="space-y-1.5">
@@ -227,8 +227,7 @@ export function PublishPageDialog({
                   {preview && preview.fields.length > 0 && (
                     <fieldset className="space-y-2">
                       <legend className="text-muted-foreground mb-1 text-xs">
-                        Your text is replaced with sample text. Tick a field to
-                        publish it as you wrote it.
+                        {t("yourTextIsReplacedWith")}
                       </legend>
                       <ul className="max-h-56 divide-y overflow-y-auto rounded-lg border">
                         {preview.fields.map((field) => {
@@ -254,12 +253,12 @@ export function PublishPageDialog({
                               >
                                 <span className="text-muted-foreground block">
                                   {field.block} · {field.field}
-                                  {kept ? " · kept" : ""}
+                                  {kept ? t("kept") : ""}
                                 </span>
                                 <span className="block break-words">
                                   {kept
                                     ? field.original
-                                    : field.sample || "(empty)"}
+                                    : field.sample || t("empty")}
                                 </span>
                                 {!kept && (
                                   <span className="text-muted-foreground block break-words line-through">
@@ -283,15 +282,11 @@ export function PublishPageDialog({
                   )}
                   <p className="text-muted-foreground flex gap-2 text-xs leading-relaxed">
                     <Info aria-hidden className="mt-0.5 size-3.5 shrink-0" />
-                    <span>
-                      Every photo is taken out, so people add their own. Text
-                      you keep can't hold links, emails, phone numbers or
-                      addresses.
-                    </span>
+                    <span>{t("everyPhotoIsTakenOut")}</span>
                   </p>
                   {empty && (
                     <p className="text-destructive text-sm" role="alert">
-                      Nothing is left to share once your details are taken out.
+                      {t("nothingIsLeftToShare")}
                     </p>
                   )}
                 </div>
@@ -300,7 +295,7 @@ export function PublishPageDialog({
 
             <DialogFooter>
               <Button onClick={() => onOpenChange(false)} variant="outline">
-                Cancel
+                {t("cancel")}
               </Button>
               <Button
                 disabled={
@@ -308,24 +303,21 @@ export function PublishPageDialog({
                 }
                 onClick={() => setStep("details")}
               >
-                Continue
+                {t("continue")}
               </Button>
             </DialogFooter>
           </>
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Share as a page template</DialogTitle>
-              <DialogDescription>
-                Step 2 of 2 · Details. It goes live in the community at once,
-                and your page stays as it is.
-              </DialogDescription>
+              <DialogTitle>{t("shareAsAPageTemplate")}</DialogTitle>
+              <DialogDescription>{t("step2Of2Details")}</DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor={nameId}>Name</Label>
+                  <Label htmlFor={nameId}>{t("name")}</Label>
                   <span className="text-muted-foreground text-xs tabular-nums">
                     {name.length}/{NAME_MAX_LENGTH}
                   </span>
@@ -335,13 +327,13 @@ export function PublishPageDialog({
                   id={nameId}
                   maxLength={NAME_MAX_LENGTH}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="e.g. Café menu"
+                  placeholder={t("eGCaféMenu")}
                   value={name}
                 />
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <Label htmlFor={descriptionId}>Description</Label>
+                  <Label htmlFor={descriptionId}>{t("description")}</Label>
                   <span className="text-muted-foreground text-xs tabular-nums">
                     {description.length}/{DESCRIPTION_MAX_LENGTH}
                   </span>
@@ -351,7 +343,7 @@ export function PublishPageDialog({
                   id={descriptionId}
                   maxLength={DESCRIPTION_MAX_LENGTH}
                   onChange={(event) => setDescription(event.target.value)}
-                  placeholder="Optional: what it's for"
+                  placeholder={t("optionalWhatItsFor")}
                   rows={3}
                   value={description}
                 />
@@ -375,7 +367,7 @@ export function PublishPageDialog({
                       className="underline underline-offset-2"
                       href={refusal.href}
                     >
-                      See it
+                      {t("seeIt")}
                     </Link>
                   )}
                 </p>
@@ -388,14 +380,14 @@ export function PublishPageDialog({
                 onClick={() => setStep("review")}
                 variant="outline"
               >
-                Back
+                {t("back")}
               </Button>
               <Button
                 disabled={!(accepted && name.trim()) || pending}
                 onClick={submit}
               >
                 {pending && <Spinner className="size-4" />}
-                {pending ? "Publishing" : "Publish"}
+                {pending ? t("publishing") : t("publish")}
               </Button>
             </DialogFooter>
           </>

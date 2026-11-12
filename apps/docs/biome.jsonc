@@ -21,7 +21,9 @@
       "!styles/loaders.css",
       "!styles/styles.css",
       "!tests/lib/fixtures",
-      "!public/**/*.svg"
+      "!public/**/*.svg",
+      // Translation memories scripts/i18n-translate.ts writes (over 1 MiB each)
+      "!messages/content"
     ]
   },
   "formatter": {

@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import {
   API_KEY_EXPIRY_DAYS,
@@ -62,6 +63,7 @@ export function CreateApiKeyForm({
   onSubmit: (input: ApiKeyInput) => Promise<string | null>;
   onCancel: () => void;
 }) {
+  const t = useTranslations("app.settings.developers.createApiKeyForm");
   const id = useId();
   const [name, setName] = useState(defaultName);
   const [access, setAccess] = useState<ApiKeyAccess>("full");
@@ -95,23 +97,23 @@ export function CreateApiKeyForm({
   return (
     <form className="space-y-5" noValidate onSubmit={submit}>
       <div className="space-y-1.5">
-        <Label htmlFor={`${id}-name`}>Name</Label>
+        <Label htmlFor={`${id}-name`}>{t("name")}</Label>
         <Input
           autoComplete="off"
           autoFocus
           id={`${id}-name`}
           maxLength={64}
           onChange={(event) => setName(event.target.value)}
-          placeholder="Production server"
+          placeholder={t("productionServer")}
           value={name}
         />
         <p className="text-muted-foreground text-xs">
-          Where the key is used, so you know which one to revoke.
+          {t("whereTheKeyIsUsed")}
         </p>
       </div>
 
       <fieldset className="space-y-2">
-        <legend className="mb-2 text-sm font-medium">Access</legend>
+        <legend className="mb-2 text-sm font-medium">{t("access")}</legend>
         <RadioGroup
           className="gap-2"
           onValueChange={(value) => setAccess(value as ApiKeyAccess)}
@@ -171,13 +173,13 @@ export function CreateApiKeyForm({
       </fieldset>
 
       <div className="space-y-1.5">
-        <Label htmlFor={`${id}-expiry`}>Expires</Label>
+        <Label htmlFor={`${id}-expiry`}>{t("expires")}</Label>
         <Select onValueChange={setExpiry} value={expiry}>
           <SelectTrigger className="w-full" id={`${id}-expiry`}>
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NEVER}>Never</SelectItem>
+            <SelectItem value={NEVER}>{t("never")}</SelectItem>
             {API_KEY_EXPIRY_DAYS.map((days) => (
               <SelectItem key={days} value={String(days)}>
                 {EXPIRY_LABELS[days]}
@@ -200,10 +202,10 @@ export function CreateApiKeyForm({
           type="button"
           variant="outline"
         >
-          Cancel
+          {t("cancel")}
         </Button>
         <Button disabled={pending} type="submit">
-          {pending ? "Creating…" : "Create key"}
+          {pending ? t("creating") : t("createKey")}
         </Button>
       </DialogFooter>
     </form>

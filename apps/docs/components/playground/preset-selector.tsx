@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 import { QRCodeSVG } from "qrdx";
 import type React from "react";
@@ -7,6 +8,7 @@ import { useQREditorStore } from "@/store/editor-store";
 import { defaultPresets } from "@/utils/qr-presets";
 
 export const PresetSelector: React.FC = () => {
+  const t = useTranslations("playground.presetSelector");
   const { themeState, applyThemePreset } = useQREditorStore();
 
   const presets = Object.entries(defaultPresets).map(([id, preset]) => ({
@@ -18,7 +20,7 @@ export const PresetSelector: React.FC = () => {
 
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold text-lg">Presets</h2>
+      <h2 className="font-semibold text-lg">{t("presets")}</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {presets.map((preset) => {
           const isSelected = themeState.preset === preset.id;

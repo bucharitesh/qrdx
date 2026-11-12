@@ -1,8 +1,8 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight } from "iconsax-reactjs";
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { AsciiField } from "@/components/fx/ascii-field";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { playgroundHref } from "@/lib/playground-links";
 
 /** Closing call to action: a dark stage in both themes, with a live ASCII field. */
@@ -26,10 +26,10 @@ export function CTASection() {
             asChild
             className="border-white bg-white text-neutral-950 hover:bg-white/90 dark:text-neutral-950"
           >
-            <Link href={playgroundHref()}>
+            <LocaleLink href={playgroundHref()}>
               {t("button")}
               <ArrowRight className="size-4" />
-            </Link>
+            </LocaleLink>
           </Button>
         </div>
       </div>

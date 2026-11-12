@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import type { ScanScoreResult } from "qrdx";
 import type { ReactNode } from "react";
 import { CodeQr } from "@/app/(app)/dashboard/codes/_components/code-qr";
@@ -34,6 +35,7 @@ export function BuilderPreview({
   /** Phones: a button under the score (e.g. "Design") */
   action?: ReactNode;
 }) {
+  const t = useTranslations("codeBuilder.builderPreview");
   if (compact) {
     return (
       <div className="flex items-center gap-3">
@@ -71,7 +73,7 @@ export function BuilderPreview({
       )}
       {isPreview && (
         <p className="text-muted-foreground text-center text-xs">
-          Preview. The link works once you create the code.
+          {t("previewTheLinkWorksOnce")}
         </p>
       )}
     </div>

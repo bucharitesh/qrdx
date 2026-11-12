@@ -5,6 +5,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Slider } from "@repo/design-system/components/ui/slider";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Gps } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { getLogoSizeLimit } from "qrdx";
 import {
   AUTO_LEVEL_LOGO_COVERAGE,
@@ -18,7 +19,7 @@ import * as React from "react";
 import ControlSection from "@/components/editor/control-section";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
-import { LOGO_SHAPE_NAMES, LogoCropControls } from "./logo-crop-controls";
+import { LogoCropControls, useLogoShapeNames } from "./logo-crop-controls";
 
 const percent = (share: number) => Math.round(share * 100);
 
@@ -57,6 +58,8 @@ export function LogoOptionsSection({
   style,
   onChange,
 }: LogoOptionsSectionProps) {
+  const logoShapeNames = useLogoShapeNames();
+  const t = useTranslations("editor.controlSections.logoOptionsSection");
   const options = style.logoOptions ?? {};
   const size = options.size ?? LOGO_SIZE_DEFAULT;
   const padding = options.padding ?? 0;
@@ -120,12 +123,12 @@ export function LogoOptionsSection({
       summary={[
         // The size it is drawn at (capped to what the code can repair)
         `${shown}%`,
-        shape !== "square" && LOGO_SHAPE_NAMES[shape].toLowerCase(),
+        shape !== "square" && logoShapeNames[shape].toLowerCase(),
         !centered && "moved",
       ]
         .filter(Boolean)
         .join(" · ")}
-      title="Logo options"
+      title={t("logoOptions")}
     >
       <LogoCropControls
         onChange={onChange}
@@ -133,9 +136,9 @@ export function LogoOptionsSection({
         style={style}
       />
 
-      <SliderRow label="Size" value={`${shown}% of the code`}>
+      <SliderRow label={t("size")} value={`${shown}% of the code`}>
         <Slider
-          aria-label="Logo size"
+          aria-label={t("logoSize")}
           disabled={maxPercent <= minPercent}
           max={Math.max(maxPercent, minPercent + 1)}
           min={minPercent}
@@ -148,21 +151,21 @@ export function LogoOptionsSection({
         {capped && (
           <p className="text-muted-foreground text-xs text-pretty">
             {maxPercent > 0
-              ? `Up to ${maxPercent}% for this code: a bigger logo would hide more than its error correction can repair.`
-              : "This code is too small to hold a logo."}{" "}
+              ? t("upToMaxpercentForThis", { maxPercent })
+              : t("thisCodeIsTooSmall")}{" "}
             {style.level === "H"
-              ? "Shorter content makes room."
-              : "Level H or shorter content makes room."}
+              ? t("shorterContentMakesRoom")
+              : t("levelHOrShorterContent")}
           </p>
         )}
       </SliderRow>
 
       <SliderRow
-        label="Clear space"
+        label={t("clearSpace")}
         value={`${padding} ${padding === 1 ? "module" : "modules"}`}
       >
         <Slider
-          aria-label="Clear space around the logo"
+          aria-label={t("clearSpaceAroundTheLogo")}
           max={LOGO_PADDING_MAX}
           min={0}
           onValueChange={([next]) => setOptions({ padding: next ?? 0 })}
@@ -173,7 +176,7 @@ export function LogoOptionsSection({
 
       <div className="space-y-3">
         <div className="flex items-center justify-between gap-3">
-          <span className="text-muted-foreground text-sm">Position</span>
+          <span className="text-muted-foreground text-sm">{t("position")}</span>
           <Button
             disabled={centered}
             onClick={() => setOptions({ x: 0.5, y: 0.5 })}
@@ -182,12 +185,12 @@ export function LogoOptionsSection({
             variant="outline"
           >
             <Gps />
-            Center
+            {t("center")}
           </Button>
         </div>
-        <SliderRow label="Left to right" value={`${percent(x)}%`}>
+        <SliderRow label={t("leftToRight")} value={`${percent(x)}%`}>
           <Slider
-            aria-label="Logo position, left to right"
+            aria-label={t("logoPositionLeftToRight")}
             max={100}
             min={0}
             onValueChange={([next]) => setOptions({ x: (next ?? 50) / 100 })}
@@ -195,9 +198,9 @@ export function LogoOptionsSection({
             value={[percent(x)]}
           />
         </SliderRow>
-        <SliderRow label="Top to bottom" value={`${percent(y)}%`}>
+        <SliderRow label={t("topToBottom")} value={`${percent(y)}%`}>
           <Slider
-            aria-label="Logo position, top to bottom"
+            aria-label={t("logoPositionTopToBottom")}
             max={100}
             min={0}
             onValueChange={([next]) => setOptions({ y: (next ?? 50) / 100 })}
@@ -206,19 +209,19 @@ export function LogoOptionsSection({
           />
         </SliderRow>
         <p className="text-muted-foreground text-xs text-pretty">
-          Keep the logo off the three corner eyes and the small square near the
-          bottom-right corner. The scan score warns when it covers one.
+          {t("keepTheLogoOffThe")}
         </p>
       </div>
 
       <div className="flex items-center justify-between gap-3">
         <div className="space-y-0.5">
           <Label className="cursor-pointer text-sm" htmlFor="logo-auto-level">
-            Raise error correction for big logos
+            {t("raiseErrorCorrectionForBig")}
           </Label>
           <p className="text-muted-foreground text-xs">
-            Switches to level H when the logo covers more than{" "}
-            {percent(AUTO_LEVEL_LOGO_COVERAGE)}% of the code.
+            {t("switchesToLevelHWhen", {
+              value: percent(AUTO_LEVEL_LOGO_COVERAGE),
+            })}
           </p>
         </div>
         <Switch

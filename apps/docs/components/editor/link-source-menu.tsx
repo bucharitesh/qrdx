@@ -15,6 +15,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Add, ArrowDown2 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useMemo, useState } from "react";
 import {
   CloudPickerDialog,
@@ -73,6 +74,7 @@ function useUrlSources(signedIn: boolean): SourceStatusView[] | null {
  * sits in the label row, so appearing late never moves the form.
  */
 export function LinkSourceMenu({ className }: { className?: string }) {
+  const t = useTranslations("editor.linkSourceMenu");
   const { data: session } = authClient.useSession();
   const signedIn = Boolean(session?.user) || isIntegrationsMock();
   const connections = useConnections();
@@ -102,7 +104,7 @@ export function LinkSourceMenu({ className }: { className?: string }) {
     setContentConfig("url", { type: "url", url: next });
     if (chime) emitSound("success");
     const undo = {
-      label: "Undo",
+      label: t("undo"),
       onClick: () => setContentConfig("url", { type: "url", url: previous }),
     };
     if (warning) toast.warning(text, { description: warning, action: undo });
@@ -132,7 +134,7 @@ export function LinkSourceMenu({ className }: { className?: string }) {
             type="button"
             variant="ghost"
           >
-            Use a link from…
+            {t("useALinkFrom")}
             <ArrowDown2 aria-hidden className="size-3.5" />
           </Button>
         </DropdownMenuTrigger>
@@ -140,7 +142,7 @@ export function LinkSourceMenu({ className }: { className?: string }) {
           {menu.ready.length > 0 && (
             <DropdownMenuGroup>
               <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
-                Your accounts
+                {t("yourAccounts")}
               </DropdownMenuLabel>
               {menu.ready.map((option) => (
                 <DropdownMenuItem
@@ -170,7 +172,7 @@ export function LinkSourceMenu({ className }: { className?: string }) {
               <Link className="items-start" href="/settings/integrations">
                 <Add aria-hidden className="mt-0.5 size-4" />
                 <span className="min-w-0 flex-1">
-                  <span className="block">Connect an account</span>
+                  <span className="block">{t("connectAnAccount")}</span>
                   <span className="text-muted-foreground block truncate text-xs">
                     {connectableSummary(menu.connectable)}
                   </span>

@@ -11,6 +11,7 @@ import {
 } from "@repo/design-system/components/ui/table";
 import { Folder2 as Folder, Notepad2 as NotebookPen } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   LIST_TABLE_ROW_FOCUS,
   type ListSelectionApi,
@@ -55,6 +56,7 @@ export function CodesTable({
   /** Columns shown (the Display menu) */
   properties?: CodeProperty[];
 }) {
+  const t = useTranslations("app.dashboard.codes.codesTable");
   const shows = (property: CodeProperty) => properties.includes(property);
   const inWorkspace = useWorkspaceHref();
   const modKey = useModKey();
@@ -78,10 +80,10 @@ export function CodesTable({
             <TableHead className="w-8 pr-0">
               <TooltipWrapper
                 kbd={keyboardShortcuts ? [modKey, "A"] : undefined}
-                label="Select all on this page"
+                label={t("selectAllOnThisPage")}
               >
                 <Checkbox
-                  aria-label="Select all codes on this page"
+                  aria-label={t("selectAllCodesOnThis")}
                   checked={
                     allSelected ? true : someSelected ? "indeterminate" : false
                   }
@@ -95,25 +97,29 @@ export function CodesTable({
               </TooltipWrapper>
             </TableHead>
           )}
-          <TableHead>Code</TableHead>
+          <TableHead>{t("code")}</TableHead>
           {/* Phones: code, status and actions fit without scrolling sideways;
               the code's page has its link, scans and dates. */}
           {shows("shortLink") && (
-            <TableHead className="hidden sm:table-cell">Short link</TableHead>
+            <TableHead className="hidden sm:table-cell">
+              {t("shortLink")}
+            </TableHead>
           )}
           {shows("scans") && (
             <TableHead className="hidden text-right sm:table-cell">
-              Scans <span className="font-normal">· 7 days</span>
+              {t.rich("scans7Days", {
+                span: (chunks) => <span className="font-normal">{chunks}</span>,
+              })}
             </TableHead>
           )}
           {shows("created") && (
             <TableHead className="hidden sm:table-cell">
-              {trash ? "Deleted" : "Created"}
+              {trash ? t("deleted") : t("created")}
             </TableHead>
           )}
-          <TableHead>Status</TableHead>
+          <TableHead>{t("status")}</TableHead>
           <TableHead>
-            <span className="sr-only">Actions</span>
+            <span className="sr-only">{t("actions")}</span>
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -135,7 +141,7 @@ export function CodesTable({
               {selection && (
                 <TableCell className="w-8 pr-0">
                   <Checkbox
-                    aria-label={`Select ${title}`}
+                    aria-label={t("selectTitle", { title })}
                     {...selection.checkboxProps(code.id)}
                   />
                 </TableCell>
@@ -164,7 +170,7 @@ export function CodesTable({
                     {shows("destination") && (
                       <span className="text-muted-foreground block truncate text-xs">
                         {code.kind === "page"
-                          ? "Hosted page"
+                          ? t("hostedPage")
                           : displayUrl(code.destinationUrl)}
                       </span>
                     )}
@@ -194,7 +200,9 @@ export function CodesTable({
                               aria-hidden="true"
                               className="size-3"
                             />
-                            <span className="sr-only">Notes: {code.notes}</span>
+                            <span className="sr-only">
+                              {t("notesNotes", { notes: code.notes })}
+                            </span>
                           </span>
                         )}
                       </div>
@@ -209,7 +217,7 @@ export function CodesTable({
                       {displayUrl(code.shortLink)}
                     </span>
                     <CopyButton
-                      successMessage={{ title: "Short link copied" }}
+                      successMessage={{ title: t("shortLinkCopied") }}
                       textToCopy={code.shortLink}
                     />
                   </div>
@@ -220,7 +228,7 @@ export function CodesTable({
                   {/* The trend only when there were scans: a flat line says nothing. */}
                   <div
                     className="flex items-center justify-end gap-3"
-                    title="All-time scans, with the last 7 days"
+                    title={t("allTimeScansWithThe")}
                   >
                     {(sparklines[code.id] ?? []).some((value) => value > 0) && (
                       <Sparkline

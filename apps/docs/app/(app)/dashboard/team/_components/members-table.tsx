@@ -23,6 +23,7 @@ import {
   TableRow,
 } from "@repo/design-system/components/ui/table";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { removeMember, updateMemberRole } from "@/actions/organizations";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -43,8 +44,11 @@ export interface MemberRow {
 
 /** "On" / "Off" for the members list (owners and admins see it). */
 function TwoFactorBadge({ on }: { on: boolean }) {
+  const t = useTranslations("app.dashboard.team.membersTable");
   return (
-    <Badge variant={on ? "secondary" : "outline"}>{on ? "On" : "Off"}</Badge>
+    <Badge variant={on ? "secondary" : "outline"}>
+      {on ? t("on") : t("off")}
+    </Badge>
   );
 }
 
@@ -60,6 +64,7 @@ export function MembersTable({
   /** Verified SSO domains of this Business workspace (packages/auth/ee/sso.ts). */
   ssoDomains?: string[];
 }) {
+  const t = useTranslations("app.dashboard.team.membersTable");
   const router = useRouter();
   // Role changes and removals ask "Confirm it's you" first when this session
   // hasn't recently (the page's ConfirmIdentityProvider).
@@ -101,7 +106,10 @@ export function MembersTable({
         return;
       }
       toast.success(
-        `${target.name || target.email} is now ${TEAM_ROLE_LABELS[role].toLowerCase()}`,
+        t("valueIsNowValue2", {
+          value: target.name || target.email,
+          value2: TEAM_ROLE_LABELS[role].toLowerCase(),
+        }),
       );
       router.refresh();
     });
@@ -125,7 +133,7 @@ export function MembersTable({
         return;
       }
       setRemoving(null);
-      toast.success(`Removed ${target.name || target.email}`);
+      toast.success(t("removedValue", { value: target.name || target.email }));
       router.refresh();
     });
   };
@@ -135,18 +143,20 @@ export function MembersTable({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Member</TableHead>
-            <TableHead>Role</TableHead>
+            <TableHead>{t("member")}</TableHead>
+            <TableHead>{t("role")}</TableHead>
             {/* Phones: name, email and role fit without scrolling sideways. */}
             {showTwoFactor && (
               <TableHead className="hidden sm:table-cell">
-                Two-step verification
+                {t("twoStepVerification")}
               </TableHead>
             )}
-            <TableHead className="hidden sm:table-cell">Joined</TableHead>
+            <TableHead className="hidden sm:table-cell">
+              {t("joined")}
+            </TableHead>
             {canManage && (
               <TableHead className="text-right">
-                <span className="max-sm:sr-only">Actions</span>
+                <span className="max-sm:sr-only">{t("actions")}</span>
               </TableHead>
             )}
           </TableRow>
@@ -159,8 +169,7 @@ export function MembersTable({
                   {member.name || member.email}
                   {member.userId === currentUserId && (
                     <span className="text-muted-foreground font-normal">
-                      {" "}
-                      (you)
+                      {t("you")}
                     </span>
                   )}
                 </div>
@@ -169,7 +178,8 @@ export function MembersTable({
                 </div>
                 {member.twoFactor !== undefined && (
                   <div className="text-muted-foreground text-xs sm:hidden">
-                    Two-step verification {member.twoFactor ? "on" : "off"}
+                    {t("twoStepVerification")}{" "}
+                    {member.twoFactor ? t("on2") : t("off2")}
                   </div>
                 )}
               </TableCell>
@@ -178,7 +188,7 @@ export function MembersTable({
                   <RoleSelect
                     className="h-8"
                     disabled={isPending}
-                    label={`Role for ${member.email}`}
+                    label={t("roleForEmail", { email: member.email })}
                     onChange={(role) => changeRole(member, role)}
                     roles={rolesFor(member)}
                     value={member.role}
@@ -210,7 +220,7 @@ export function MembersTable({
                       size="sm"
                       variant="ghost"
                     >
-                      Remove
+                      {t("remove")}
                     </Button>
                   )}
                 </TableCell>
@@ -227,26 +237,25 @@ export function MembersTable({
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>
-              Remove {removing?.name || removing?.email}?
+              {t("removeValue", {
+                value: (removing?.name || removing?.email) ?? "",
+              })}
             </AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-2">
-                <p>
-                  They lose access to this workspace right away. Dynamic QR
-                  codes and themes they created stay with it and keep working.
-                </p>
+                <p>{t("theyLoseAccessToThis")}</p>
                 {rejoinsWithSso(removing) && (
                   <p className="text-pretty">
-                    {removing?.email} can sign in with single sign-on, so
-                    they'll rejoin the next time they do, unless you unassign
-                    them from QRdx in your identity provider first.
+                    {t("emailCanSignInWith", { email: removing?.email ?? "" })}
                   </p>
                 )}
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               disabled={isPending}
               onClick={(event) => {
@@ -254,7 +263,7 @@ export function MembersTable({
                 confirmRemove();
               }}
             >
-              Remove member
+              {t("removeMember")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

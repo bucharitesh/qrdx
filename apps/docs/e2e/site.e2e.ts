@@ -13,6 +13,10 @@
 //   mcp     the MCP endpoint initializes over POST, lists and calls its
 //           tools, sends browsers to /mcp and answers CORS preflights
 //   legal   the legal pages render, unknown paths are 404s (never 500s)
+//   i18n    every translated page (lib/i18n/localized-paths.json) answers in
+//           each language with its <html lang>, a self canonical and noindex
+//           while unreviewed; a sample loads in Chrome without console errors
+//           or hydration warnings; /en/... redirects to the English URL
 //
 //   bun run --filter docs test:e2e:site           (E2E_BASE_URL defaults to :3000)
 //   E2E_SUITES=image,mcp bun run --filter docs test:e2e:site
@@ -33,6 +37,9 @@ import {
   rasterizeSvg,
 } from "../../../packages/qrdx/tests/support/raster";
 import { xmlProblems } from "../../../packages/qrdx/tests/support/xml";
+import { LOCALE_INFO, type Locale } from "../lib/i18n/config";
+import { LOCALIZED_PATHS, localizePath } from "../lib/i18n/paths";
+import { REVIEW } from "../lib/i18n/review";
 import { findChrome, launch, serverIsUp } from "./cdp.mjs";
 
 const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
@@ -1223,6 +1230,73 @@ async function testLegal() {
   });
 }
 
+// ── i18n ───────────────────────────────────────────────────────────────────
+
+/** A real page for each dynamic route in localized-paths.json. */
+const I18N_SAMPLES: Record<string, string> = {
+  "/qr-code-generator/[type]": "/qr-code-generator/wifi",
+  "/qr-codes-for/[slug]": "/qr-codes-for/restaurants",
+  "/qr-codes-on/[slug]": "/qr-codes-on/business-cards",
+  "/integrations/[slug]": "/integrations/zapier",
+};
+
+const I18N_LOCALES: Locale[] = ["es", "ja", "de", "hi"];
+
+async function testI18n(page: Page) {
+  const paths = LOCALIZED_PATHS.flatMap((path) =>
+    path.includes("[") ? (I18N_SAMPLES[path] ?? []) : [path],
+  );
+  const pages = I18N_LOCALES.flatMap((locale) =>
+    paths.map((path) => ({ locale, path, href: localizePath(path, locale) })),
+  );
+  await pool(pages, HTTP_CONCURRENCY, async ({ locale, path, href }) => {
+    await check("i18n", href, async () => {
+      const response = await get(href);
+      if (response.status !== 200) return [false, `HTTP ${response.status}`];
+      const html = await response.text();
+      const lang = html.match(/<html[^>]*\slang="([^"]+)"/)?.[1];
+      const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+      const noindex = /<meta name="robots" content="noindex/.test(html);
+      const shouldIndex =
+        REVIEW[locale as Exclude<Locale, "en">] === "reviewed";
+      const problems = [
+        lang !== locale && `lang=${lang}`,
+        !canonical?.endsWith(href) && `canonical ${canonical}`,
+        noindex === shouldIndex && (noindex ? "noindex" : "indexable"),
+      ].filter(Boolean);
+      return [problems.length === 0, problems.join(", ") || path];
+    });
+  });
+  await check("i18n", "/en/tools redirects to /tools", async () => {
+    const response = await get("/en/tools");
+    return [
+      response.status === 308 && response.headers.get("location") === "/tools",
+      `${response.status} ${response.headers.get("location")}`,
+    ];
+  });
+
+  // Every translated page in Spanish, and a few in the others, in Chrome.
+  const watch = watchConsole(page);
+  await page.cdp.send("Log.enable");
+  const browse = pages.filter(
+    ({ locale, path }) =>
+      locale === "es" ||
+      ["/", "/tools", "/qr-code-generator/wifi"].includes(path),
+  );
+  for (const { href, locale } of browse) {
+    watch.reset();
+    await page.goto(url(href), { wait: 2500 });
+    const lang = await page.evaluate("() => document.documentElement.lang");
+    const errors = watch.take();
+    record(
+      "i18n",
+      `browser: ${href}`,
+      errors.length === 0 && lang === locale,
+      errors.slice(0, 3).join(" | ") || `${LOCALE_INFO[locale].name}`,
+    );
+  }
+}
+
 // ── Main ───────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -1234,7 +1308,7 @@ async function main() {
   }
   const selected = process.env.E2E_SUITES?.split(",").map((s) => s.trim());
   const wants = (name: string) => !selected || selected.includes(name);
-  if (wants("routes") && !findChrome()) {
+  if ((wants("routes") || wants("i18n")) && !findChrome()) {
     console.log("SKIP: Chrome not found (set CHROME_PATH)");
     return 0;
   }
@@ -1244,6 +1318,17 @@ async function main() {
     ["image", testImageApi],
     ["mcp", testMcp],
     ["legal", testLegal],
+    [
+      "i18n",
+      async () => {
+        const page = await launch();
+        try {
+          await testI18n(page);
+        } finally {
+          await page.close();
+        }
+      },
+    ],
     [
       "routes",
       async () => {

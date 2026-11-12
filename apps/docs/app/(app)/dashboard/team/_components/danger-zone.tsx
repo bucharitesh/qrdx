@@ -16,6 +16,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState, useTransition } from "react";
 import { deleteTeam, leaveTeam } from "@/actions/organizations";
 import {
@@ -34,6 +35,7 @@ export function LeaveTeamButton({
   /** Shown instead of the button, e.g. for the only owner */
   disabledReason?: string;
 }) {
+  const t = useTranslations("app.dashboard.team.dangerZone");
   const refresh = useRefreshTeams();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -47,7 +49,7 @@ export function LeaveTeamButton({
         return;
       }
       setOpen(false);
-      toast.success(`You left ${teamName}`);
+      toast.success(t("youLeftTeamname", { teamName }));
       // This workspace's pages are closed to you now: go to your default.
       router.replace("/dashboard");
       refresh();
@@ -60,18 +62,21 @@ export function LeaveTeamButton({
   return (
     <AlertDialog onOpenChange={setOpen} open={open}>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">Leave workspace</Button>
+        <Button variant="outline">{t("leaveWorkspace")}</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Leave {teamName}?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t("leaveTeamname", { teamName })}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            You lose access to its codes, pages and themes. What you created
-            stays in the workspace. You need a new invitation to rejoin.
+            {t("youLoseAccessToIts")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>
+            {t("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             disabled={isPending}
             onClick={(event) => {
@@ -79,7 +84,7 @@ export function LeaveTeamButton({
               leave();
             }}
           >
-            Leave workspace
+            {t("leaveWorkspace")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -112,6 +117,7 @@ function DeleteTeamDialog({
   teamName: string;
   teamSlug: string;
 }) {
+  const t = useTranslations("app.dashboard.team.dangerZone");
   const refresh = useRefreshTeams();
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
@@ -131,7 +137,7 @@ function DeleteTeamDialog({
         return;
       }
       setOpen(false);
-      toast.success(`Deleted ${teamName}`);
+      toast.success(t("deletedTeamname", { teamName }));
       router.replace("/dashboard");
       refresh();
     });
@@ -145,21 +151,22 @@ function DeleteTeamDialog({
       open={open}
     >
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">Delete workspace</Button>
+        <Button variant="destructive">{t("deleteWorkspace")}</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete {teamName}?</AlertDialogTitle>
+          <AlertDialogTitle>
+            {t("deleteTeamname", { teamName })}
+          </AlertDialogTitle>
           <AlertDialogDescription>
-            This removes the workspace, its members and pending invitations. Its
-            dynamic QR codes keep redirecting: each code, page, theme and domain
-            moves to the own workspace of the member who created it.
+            {t("thisRemovesTheWorkspaceIts")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="space-y-1.5">
           <Label htmlFor="confirm-team-slug">
-            Type <span className="font-mono font-semibold">{teamSlug}</span> to
-            confirm
+            {t("type")}{" "}
+            <span className="font-mono font-semibold">{teamSlug}</span>{" "}
+            {t("toConfirm")}
           </Label>
           <Input
             autoComplete="off"
@@ -169,7 +176,9 @@ function DeleteTeamDialog({
           />
         </div>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isPending}>
+            {t("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction
             className="bg-destructive hover:bg-destructive/90 text-white"
             disabled={isPending || confirmSlug !== teamSlug}
@@ -178,7 +187,7 @@ function DeleteTeamDialog({
               remove();
             }}
           >
-            {isPending ? "Deleting..." : "Delete workspace"}
+            {isPending ? t("deleting") : t("deleteWorkspace")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -27,6 +27,7 @@ import {
   suggestConsentField,
   suggestMapping,
 } from "@repo/integrations/src/sinks/mapping";
+import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { SyncStatus } from "@/components/data-connections/sync-status";
@@ -55,6 +56,7 @@ interface ResponseSinkPanelProps {
  * and the last sync.
  */
 export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
+  const t = useTranslations("app.settings.integrations.responseSinkPanel");
   const id = useId();
   const [view, setView] = useState<SinkViewData | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -188,9 +190,9 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
       });
       setView(next);
       emitSound("success");
-      toast.success(enabled ? `${name} sync is on` : "Saved");
+      toast.success(enabled ? t("nameSyncIsOn", { name }) : t("saved"));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't save");
+      toast.error(err instanceof Error ? err.message : t("couldntSave"));
     } finally {
       setSaving(false);
     }
@@ -201,7 +203,7 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
     try {
       setView(await retrySinkNow(provider));
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Retry failed");
+      toast.error(err instanceof Error ? err.message : t("retryFailed"));
     } finally {
       setRetrying(false);
     }
@@ -224,12 +226,12 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="space-y-1">
           <h2 className="text-base font-semibold">
-            Send form responses to {name}
+            {t("sendFormResponsesToName", { name })}
           </h2>
           <p className="text-muted-foreground text-sm text-pretty">
             {isMailchimp
-              ? "New responses add or update a member of the audience. Only answered, mapped questions are sent."
-              : "New responses create or update a contact by email. Only answered, mapped questions are sent."}
+              ? t("newResponsesAddOrUpdate")
+              : t("newResponsesCreateOrUpdate")}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -238,12 +240,12 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
             id={`${id}-on`}
             onCheckedChange={setEnabled}
           />
-          <Label htmlFor={`${id}-on`}>{enabled ? "On" : "Off"}</Label>
+          <Label htmlFor={`${id}-on`}>{enabled ? t("on") : t("off")}</Label>
         </div>
       </div>
 
       <SyncStatus
-        noun={isMailchimp ? "members" : "contacts"}
+        noun={isMailchimp ? t("members") : t("contacts")}
         onRetry={retry}
         retrying={retrying}
         state={view.sync}
@@ -252,13 +254,13 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
       {isMailchimp && (
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor={`${id}-audience`}>Audience</Label>
+            <Label htmlFor={`${id}-audience`}>{t("audience")}</Label>
             <Select
               onValueChange={setAudienceId}
               value={audienceId || undefined}
             >
               <SelectTrigger className="w-full" id={`${id}-audience`}>
-                <SelectValue placeholder="Pick an audience" />
+                <SelectValue placeholder={t("pickAnAudience")} />
               </SelectTrigger>
               <SelectContent>
                 {audiences.map((audience) => (
@@ -270,17 +272,17 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`${id}-tags`}>Tags</Label>
+            <Label htmlFor={`${id}-tags`}>{t("tags")}</Label>
             <Input
               id={`${id}-tags`}
               onChange={(event) => setTags(event.target.value)}
-              placeholder="qr, spring-menu"
+              placeholder={t("qrSpringMenu")}
               value={tags}
             />
           </div>
           <div className="space-y-2 sm:col-span-2">
             <Label htmlFor={`${id}-consent`}>
-              Forms without a consent checkbox
+              {t("formsWithoutAConsentCheckbox")}
             </Label>
             <Select
               onValueChange={(value) =>
@@ -293,21 +295,20 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="pending">
-                  Ask them to confirm by email (double opt-in)
+                  {t("askThemToConfirmBy")}
                 </SelectItem>
-                <SelectItem value="skip">Don't add them</SelectItem>
+                <SelectItem value="skip">{t("dontAddThem")}</SelectItem>
               </SelectContent>
             </Select>
             <p className="text-muted-foreground text-xs text-pretty">
-              With a consent checkbox mapped, only people who ticked it are
-              subscribed. People who unsubscribed are never re-subscribed.
+              {t("withAConsentCheckboxMapped")}
             </p>
           </div>
         </div>
       )}
 
       <fieldset className="space-y-3">
-        <legend className="text-sm font-medium">Pages</legend>
+        <legend className="text-sm font-medium">{t("pages")}</legend>
         <div className="flex items-center gap-2">
           <Checkbox
             checked={allPages}
@@ -315,7 +316,7 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
             onCheckedChange={(value) => setAllPages(value === true)}
           />
           <Label className="font-normal" htmlFor={`${id}-all`}>
-            Every page with a form, including new ones
+            {t("everyPageWithAForm")}
           </Label>
         </div>
         {!allPages && (
@@ -334,7 +335,7 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
                   }
                 />
                 <Label className="font-normal" htmlFor={`${id}-${page.id}`}>
-                  {page.title || "Untitled page"}
+                  {page.title || t("untitledPage")}
                 </Label>
               </div>
             ))}
@@ -342,7 +343,7 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
         )}
         {pages.length === 0 && (
           <p className="text-muted-foreground text-sm">
-            No hosted pages with a form in this workspace yet.
+            {t("noHostedPagesWithA")}
           </p>
         )}
       </fieldset>
@@ -359,11 +360,11 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
             <div className="space-y-3 rounded-lg border p-4" key={key}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-sm font-medium">
-                  {page.title || "Untitled page"} · {form.title}
+                  {page.title || t("untitledPage")} · {form.title}
                 </p>
                 {!saved && (
                   <Badge className="font-normal" variant="outline">
-                    Suggested
+                    {t("suggested")}
                   </Badge>
                 )}
               </div>
@@ -389,13 +390,16 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
                         value={mapping.fields[field.id] || SKIP}
                       >
                         <SelectTrigger
-                          aria-label={`${name} field for ${field.label}`}
+                          aria-label={t("nameFieldForLabel", {
+                            name,
+                            label: field.label,
+                          })}
                           className="w-full sm:w-56"
                         >
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value={SKIP}>Don't send</SelectItem>
+                          <SelectItem value={SKIP}>{t("dontSend")}</SelectItem>
                           {targets.map((target) => (
                             <SelectItem key={target.id} value={target.id}>
                               {target.label}
@@ -407,7 +411,7 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
                   ))}
                 {isMailchimp && (
                   <div className="flex flex-col gap-2 py-2 sm:flex-row sm:items-center sm:justify-between">
-                    <span className="text-sm">Marketing consent</span>
+                    <span className="text-sm">{t("marketingConsent")}</span>
                     <Select
                       onValueChange={(value) =>
                         setForms((current) => ({
@@ -421,14 +425,14 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
                       value={mapping.consentFieldId ?? NO_CONSENT}
                     >
                       <SelectTrigger
-                        aria-label="Consent checkbox"
+                        aria-label={t("consentCheckbox")}
                         className="w-full sm:w-56"
                       >
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value={NO_CONSENT}>
-                          No consent checkbox
+                          {t("noConsentCheckbox")}
                         </SelectItem>
                         {consentFields.map((field) => (
                           <SelectItem key={field.id} value={field.id}>
@@ -452,7 +456,7 @@ export function ResponseSinkPanel({ provider, name }: ResponseSinkPanelProps) {
           type="button"
         >
           {saving && <Spinner className="size-4" />}
-          Save
+          {t("save")}
         </Button>
       </div>
     </div>

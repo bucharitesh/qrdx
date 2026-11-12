@@ -1,0 +1,24 @@
+import { ogSize, renderPageOgImage } from "@/app/og/brand";
+import { MAX_BULK_ROWS } from "@/components/sections/tools/bulk-utils";
+import { localeParams, requireLocaleParam } from "@/lib/i18n/static-params";
+
+export const alt = "QRdx bulk QR code generator";
+export const size = ogSize;
+export const contentType = "image/png";
+
+export function generateStaticParams() {
+  return localeParams();
+}
+
+export default async function Image({
+  params,
+}: {
+  params: Promise<{ lang: string }>;
+}) {
+  await requireLocaleParam(params);
+  return renderPageOgImage({
+    label: "Tools",
+    title: "Bulk QR codes from a CSV file",
+    description: `Up to ${MAX_BULK_ROWS.toLocaleString("en-US")} codes as PNG or SVG, zipped, made in your browser.`,
+  });
+}

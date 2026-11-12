@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Import } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useQREditorStore } from "@/store/editor-store";
 import { useDownloadDialogStore } from "./download-dialog-store";
@@ -23,6 +24,7 @@ export function DownloadButton({
   size = "sm",
   tooltip = true,
 }: DownloadButtonProps) {
+  const t = useTranslations("editor.actionBar.downloadButton");
   const hasContent = useQREditorStore((state) => state.value.trim() !== "");
   const setOpen = useDownloadDialogStore((state) => state.setOpen);
 
@@ -34,13 +36,13 @@ export function DownloadButton({
       size={size}
     >
       <Import className="size-4" />
-      Download
+      {t("download")}
     </Button>
   );
 
   if (!(hasContent && tooltip)) return button;
   return (
-    <TooltipWrapper label="Download QR code" kbd="D" asChild>
+    <TooltipWrapper label={t("downloadQrCode")} kbd="D" asChild>
       {button}
     </TooltipWrapper>
   );

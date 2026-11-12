@@ -1,4 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { AnimatedBot } from "./animated-bot";
 import { Aurora } from "./aurora";
 
@@ -10,11 +11,16 @@ export function AIBotBadge({
   thinking?: boolean;
   className?: string;
 }) {
+  const t = useTranslations("editor.ai.aiBotBadge");
   return (
     <span className={cn("relative grid size-14 place-items-center", className)}>
       <Aurora className="-inset-5" />
       <span className="bg-background/70 relative grid size-12 place-items-center rounded-full border border-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.15),0_8px_20px_-8px_rgba(139,92,246,0.45)] backdrop-blur-md">
-        <AnimatedBot className="size-7" thinking={thinking} title="QRdx AI" />
+        <AnimatedBot
+          className="size-7"
+          thinking={thinking}
+          title={t("qrdxAi")}
+        />
       </span>
     </span>
   );

@@ -10,7 +10,9 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Import } from "iconsax-reactjs";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import type { Translator } from "@/lib/i18n/translator";
 import { httpClient, type MigrateClient } from "@/lib/migrate/client";
 import {
   type ApiProviderId,
@@ -53,49 +55,56 @@ function stepFor(provider: ProviderId | null): Step {
     : { name: "file", provider };
 }
 
-function heading(step: Step): { title: string; description: string } {
+function heading(
+  step: Step,
+  t: Translator<"app.dashboard.codes.importDialog">,
+): { title: string; description: string } {
   switch (step.name) {
     case "links":
       return {
-        title: `Import from ${providerName(step.provider)}`,
-        description:
-          "Choose the links to bring over. Nothing changes in your old account.",
+        title: t("importFromValue", { value: providerName(step.provider) }),
+        description: t("chooseTheLinksToBring"),
       };
     case "file": {
       const name = getProvider(step.provider).name;
       return {
         title:
           step.provider === "csv"
-            ? "Import from a file"
-            : `Import from ${name}`,
-        description: "Upload the export, check the columns, then preview.",
+            ? t("importFromAFile")
+            : t("importFromName", { name }),
+        description: t("uploadTheExportCheckThe"),
       };
     }
     case "preview":
       return {
-        title: "Preview the import",
-        description: "Nothing is created until you confirm.",
+        title: t("previewTheImport"),
+        description: t("nothingIsCreatedUntilYou"),
       };
     case "run":
       return {
-        title: `Import from ${providerName(step.provider)}`,
-        description: "New dynamic codes, with notes on where each came from.",
+        title: t("importFromValue", { value: providerName(step.provider) }),
+        description: t("newDynamicCodesWithNotes"),
       };
     case "redirects":
       return isRetiredProvider(step.provider)
         ? {
-            title: `Undo changes in ${providerName(step.provider)}`,
-            description: `Put the original destinations back on your old ${providerName(step.provider)} links.`,
+            title: t("undoChangesInValue", {
+              value: providerName(step.provider),
+            }),
+            description: t("putTheOriginalDestinationsBack", {
+              value: providerName(step.provider),
+            }),
           }
         : {
-            title: "Keep my printed codes working",
-            description: `Point old ${providerName(step.provider)} links at their new QRdx codes.`,
+            title: t("keepMyPrintedCodesWorking"),
+            description: t("pointOldValueLinksAt", {
+              value: providerName(step.provider),
+            }),
           };
     default:
       return {
-        title: "Import codes",
-        description:
-          "Move your short links and dynamic QR codes to QRdx from another provider.",
+        title: t("importCodes"),
+        description: t("moveYourShortLinksAnd"),
       };
   }
 }
@@ -113,6 +122,7 @@ function ImportDialogInner({
   /** The opener lives elsewhere: no Import button here */
   hideTrigger?: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.importDialog");
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -203,7 +213,7 @@ function ImportDialogInner({
     if (!client?.mock) router.refresh();
   };
 
-  const { title, description } = heading(step);
+  const { title, description } = heading(step, t);
   const status = (provider: ApiProviderId) =>
     info?.providers.find((entry) => entry.id === provider);
 
@@ -215,7 +225,7 @@ function ImportDialogInner({
         variant="outline"
       >
         <Import />
-        Import
+        {t("import")}
       </Button>
       <DialogContent
         className="flex max-h-[min(90dvh,48rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl"
@@ -232,7 +242,7 @@ function ImportDialogInner({
 
         {!client ? (
           <div className="text-muted-foreground px-6 py-16 text-center text-sm">
-            Loading…
+            {t("loading")}
           </div>
         ) : step.name === "pick" ? (
           <ProviderStep
@@ -342,13 +352,14 @@ export function ImportDialog(props: {
   openSignal?: number;
   hideTrigger?: boolean;
 }) {
+  const t = useTranslations("app.dashboard.codes.importDialog");
   return (
     <Suspense
       fallback={
         props.hideTrigger ? null : (
           <Button disabled variant="outline">
             <Import />
-            Import
+            {t("import")}
           </Button>
         )
       }

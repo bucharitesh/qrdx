@@ -5,6 +5,7 @@ import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ExportSquare, InfoCircle } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useRef, useState } from "react";
 import { ensureConfirmed } from "@/components/confirm-identity/actions";
 import { useConfirmation } from "@/components/confirm-identity/provider";
@@ -21,14 +22,16 @@ export function AuthorizeShell({ children }: { children: ReactNode }) {
 }
 
 export function OAuthRequestError({ description }: { description: string }) {
+  const t = useTranslations("app.oauth.authorize.oauthConsent");
   return (
     <AuthorizeShell>
       <div className="space-y-2 text-center">
-        <h1 className="text-lg font-semibold">This link can't be used</h1>
+        <h1 className="text-lg font-semibold">{t("thisLinkCantBeUsed")}</h1>
         <p className="text-muted-foreground text-sm">
-          The app that sent you here made an invalid request:{" "}
-          <span className="text-foreground">{description}</span>. Go back to the
-          app and try again, or contact its developer.
+          {t.rich("theAppThatSentYou", {
+            description,
+            span: (chunks) => <span className="text-foreground">{chunks}</span>,
+          })}
         </p>
       </div>
     </AuthorizeShell>
@@ -42,10 +45,11 @@ export function ScopeList({
   appName: string;
   scopes: readonly OAuthScope[];
 }) {
+  const t = useTranslations("app.oauth.authorize.oauthConsent");
   return (
-    <section aria-label="Requested permissions" className="space-y-2.5">
+    <section aria-label={t("requestedPermissions")} className="space-y-2.5">
       <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-        {appName} will be able to
+        {t("appnameWillBeAbleTo", { appName })}
       </p>
       <ul className="divide-y rounded-lg border">
         {scopes.map((scope) => (
@@ -100,6 +104,7 @@ export function OAuthConsent({
   fields: [string, string][];
   redirectHost: string;
 }) {
+  const t = useTranslations("app.oauth.authorize.oauthConsent");
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
   const submitted = useRef(false);
@@ -128,7 +133,7 @@ export function OAuthConsent({
       }
       if (result) toast.error(result.error);
     } catch {
-      toast.error("Something went wrong. Check your connection and try again.");
+      toast.error(t("somethingWentWrongCheckYour"));
     }
     setDecision(null);
   };
@@ -154,10 +159,10 @@ export function OAuthConsent({
           </span>
         </div>
         <h1 className="mt-6 text-lg font-semibold text-balance">
-          {app.name} wants to access your QRdx account
+          {t("nameWantsToAccessYour", { name: app.name })}
         </h1>
         <p className="text-muted-foreground mt-1.5 text-sm text-pretty">
-          Built by <span className="text-foreground">{app.builtBy}</span>
+          {t("builtBy")} <span className="text-foreground">{app.builtBy}</span>
           {app.websiteUrl && (
             <>
               {" · "}
@@ -187,10 +192,12 @@ export function OAuthConsent({
             className="text-muted-foreground mt-0.5 size-4 shrink-0"
           />
           <p className="text-pretty">
-            <span className="font-medium">Unverified app.</span>{" "}
+            <span className="font-medium">{t("unverifiedApp")}</span>{" "}
             <span className="text-muted-foreground">
-              QRdx hasn't reviewed {app.name}. Only continue if you trust{" "}
-              {app.builtBy}.
+              {t("qrdxHasntReviewedNameOnly", {
+                name: app.name,
+                builtBy: app.builtBy,
+              })}
             </span>
           </p>
         </div>
@@ -226,7 +233,7 @@ export function OAuthConsent({
           type="button"
           variant="ghost"
         >
-          Switch
+          {t("switch")}
         </Button>
       </div>
 
@@ -262,7 +269,7 @@ export function OAuthConsent({
             value="deny"
             variant="outline"
           >
-            {decision === "deny" ? "Cancelling…" : "Cancel"}
+            {decision === "deny" ? t("cancelling") : t("cancel")}
           </Button>
           <Button
             aria-busy={decision === "allow"}
@@ -270,16 +277,18 @@ export function OAuthConsent({
             type="submit"
             value="allow"
           >
-            {decision === "allow" ? "Authorizing…" : "Authorize"}
+            {decision === "allow" ? t("authorizing") : t("authorize")}
           </Button>
         </div>
       </form>
 
       <p className="text-muted-foreground mt-4 text-center text-xs text-pretty">
-        You'll be sent back to{" "}
-        <span className="text-foreground font-medium">{redirectHost}</span>.
-        Only authorize apps you trust with your QRdx data. You can revoke access
-        at any time in Settings → Authorized apps.
+        {t.rich("youllBeSentBackTo", {
+          redirectHost,
+          span: (chunks) => (
+            <span className="text-foreground font-medium">{chunks}</span>
+          ),
+        })}
       </p>
     </AuthorizeShell>
   );

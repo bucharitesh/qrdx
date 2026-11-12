@@ -32,6 +32,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ComponentProps, useEffect, useState, useTransition } from "react";
 import {
   createLandingPageCode,
@@ -116,11 +117,12 @@ export function NewPageButton({
 }
 
 export function PageUsageMeter({ usage }: { usage: PageUsage }) {
+  const t = useTranslations("app.dashboard.pages.pageListControls");
   if (usage.limit === null) {
     return (
       <p className="text-muted-foreground text-sm">
-        {usage.used} {usage.used === 1 ? "page" : "pages"} ·{" "}
-        {PLAN_NAMES[usage.plan]} plan, unlimited pages
+        {usage.used} {usage.used === 1 ? t("page") : t("pages")} ·{" "}
+        {PLAN_NAMES[usage.plan]} {t("planUnlimitedPages")}
       </p>
     );
   }
@@ -145,6 +147,7 @@ export function PageActions({
   page: LandingPageListItem;
   canDelete: boolean;
 }) {
+  const t = useTranslations("app.dashboard.pages.pageListControls");
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const showLimit = useShowLimit();
@@ -166,7 +169,7 @@ export function PageActions({
         return;
       }
       setConfirm(false);
-      toast.success("Page deleted");
+      toast.success(t("pageDeleted"));
       router.refresh();
     });
 
@@ -182,7 +185,7 @@ export function PageActions({
         return;
       }
       track("dynamic_code_created", { source: "page" });
-      toast.success("QR code created");
+      toast.success(t("qrCodeCreated"));
       router.push(
         inWorkspace(`/codes/${encodeURIComponent(result.data.codeId)}`),
       );
@@ -195,7 +198,7 @@ export function PageActions({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button aria-label="More actions" size="icon" variant="ghost">
+          <Button aria-label={t("moreActions")} size="icon" variant="ghost">
             <MoreHorizontal />
           </Button>
         </DropdownMenuTrigger>
@@ -205,26 +208,26 @@ export function PageActions({
               <DropdownMenuItem asChild>
                 <a href={code.pageUrl} rel="noopener" target="_blank">
                   <ExternalLink />
-                  View live page
+                  {t("viewLivePage")}
                 </a>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onSelect={() => {
                   navigator.clipboard
                     .writeText(code.shortLink)
-                    .then(() => toast.success("Short link copied"))
-                    .catch(() => toast.error("Couldn't copy the link"));
+                    .then(() => toast.success(t("shortLinkCopied")))
+                    .catch(() => toast.error(t("couldntCopyTheLink")));
                 }}
               >
                 <Copy />
-                Copy short link
+                {t("copyShortLink")}
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
                 <Link
                   href={inWorkspace(`/codes/${encodeURIComponent(code.id)}`)}
                 >
                   <ChartNoAxesColumn />
-                  QR code & analytics
+                  {t("qrCodeAnalytics")}
                 </Link>
               </DropdownMenuItem>
             </>
@@ -232,7 +235,7 @@ export function PageActions({
             canWrite && (
               <DropdownMenuItem disabled={isPending} onSelect={createCode}>
                 <QrCode />
-                Create a QR code
+                {t("createAQrCode")}
               </DropdownMenuItem>
             )
           )}
@@ -244,14 +247,14 @@ export function PageActions({
                 )}
               >
                 <Inbox />
-                Responses
+                {t("responses")}
               </Link>
             </DropdownMenuItem>
           )}
           {canPublish && (
             <DropdownMenuItem onSelect={() => setPublishing(true)}>
               <Globe />
-              Publish to community
+              {t("publishToCommunity")}
             </DropdownMenuItem>
           )}
           {canDelete && (
@@ -262,7 +265,7 @@ export function PageActions({
                 onSelect={() => setConfirm(true)}
               >
                 <Trash2 />
-                Delete page
+                {t("deletePage")}
               </DropdownMenuItem>
             </>
           )}
@@ -272,15 +275,17 @@ export function PageActions({
       <AlertDialog onOpenChange={setConfirm} open={confirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this page?</AlertDialogTitle>
+            <AlertDialogTitle>{t("deleteThisPage")}</AlertDialogTitle>
             <AlertDialogDescription>
               {page.codes.length > 0
                 ? `Its ${page.codes.length === 1 ? "QR code is" : `${page.codes.length} QR codes are`} deleted too, with their scan history. Printed copies will stop working. This can't be undone.`
-                : "This can't be undone."}
+                : t("thisCantBeUndone")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive hover:bg-destructive/90 text-white"
               disabled={isPending}
@@ -289,7 +294,7 @@ export function PageActions({
                 remove();
               }}
             >
-              {isPending ? "Deleting..." : "Delete page"}
+              {isPending ? t("deleting") : t("deletePage")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

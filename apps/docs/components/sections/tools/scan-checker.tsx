@@ -13,6 +13,7 @@ import {
   GalleryExport as ImageUp,
   ShieldTick as ShieldCheck,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { getImageScanScore, type ImageScanScoreResult } from "qrdx";
 import {
   type ReactNode,
@@ -25,8 +26,8 @@ import {
 import { useDropzone } from "react-dropzone";
 import {
   GRADE_COLORS,
-  GRADE_LABELS,
   ScanCheckList,
+  useGradeLabels,
 } from "@/components/editor/scan-score";
 import { InfoHint } from "@/components/help/info-hint";
 import { compareDecoded, type DecodedMatch } from "@/lib/scan-match";
@@ -38,7 +39,7 @@ type Status =
   | { phase: "idle" }
   | { phase: "checking" }
   | { phase: "done"; result: ImageScanScoreResult }
-  | { phase: "error"; message: string };
+  | { phase: "error"; message: "notImage" | "tooBig" | "unreadable" };
 
 function safeLink(data: string): string | null {
   try {
@@ -77,6 +78,8 @@ export function ScanChecker({
   expected,
   renderLinkAction,
 }: ScanCheckerProps) {
+  const gradeLabels = useGradeLabels();
+  const t = useTranslations("scanChecker");
   const [status, setStatus] = useState<Status>({ phase: "idle" });
   const [preview, setPreview] = useState<string | null>(null);
   const previewRef = useRef<string | null>(null);
@@ -92,14 +95,14 @@ export function ScanChecker({
     if (!file.type.startsWith("image/")) {
       setStatus({
         phase: "error",
-        message: "That isn't an image. Use a PNG, JPG, WebP or GIF.",
+        message: "notImage",
       });
       return;
     }
     if (file.size > MAX_IMAGE_BYTES) {
       setStatus({
         phase: "error",
-        message: "That image is over 20 MB. Use a smaller one.",
+        message: "tooBig",
       });
       return;
     }
@@ -125,7 +128,7 @@ export function ScanChecker({
       if (run === runRef.current) {
         setStatus({
           phase: "error",
-          message: "Couldn't read this image. Try a PNG or JPG.",
+          message: "unreadable",
         });
       }
     }
@@ -164,9 +167,9 @@ export function ScanChecker({
           return;
         }
       }
-      toast.error("No image on the clipboard");
+      toast.error(t("noClipboardImage"));
     } catch {
-      toast.error("Clipboard access was blocked. Press Ctrl+V or ⌘V instead.");
+      toast.error(t("clipboardBlocked"));
     }
   };
 
@@ -199,10 +202,10 @@ export function ScanChecker({
           onClick={async () => {
             try {
               await navigator.clipboard.writeText(result.data ?? "");
-              toast.success("Copied");
+              toast.success(t("copied"));
               soundEvent("copy");
             } catch {
-              toast.error("Couldn't copy");
+              toast.error(t("copyFailed"));
             }
           }}
           size="sm"
@@ -210,22 +213,20 @@ export function ScanChecker({
           variant="outline"
         >
           <Copy className="size-3.5" />
-          Copy
+          {t("copy")}
         </Button>
         {link && (
           <Button asChild size="sm" variant="outline">
             <a href={link} rel="noopener noreferrer nofollow" target="_blank">
               <ExternalLink className="size-3.5" />
-              Open link
+              {t("openLink")}
             </a>
           </Button>
         )}
         {link && renderLinkAction?.(link)}
       </div>
       {link && !match?.matches && (
-        <p className="text-muted-foreground text-xs">
-          Check the address before you open it: QR codes can point anywhere.
-        </p>
+        <p className="text-muted-foreground text-xs">{t("checkAddress")}</p>
       )}
     </div>
   );
@@ -244,7 +245,7 @@ export function ScanChecker({
         <span
           className={cn("size-2 rounded-full", GRADE_COLORS[result.grade])}
         />
-        {GRADE_LABELS[result.grade]}
+        {gradeLabels[result.grade]}
       </span>
     </div>
   );
@@ -252,7 +253,7 @@ export function ScanChecker({
   const checking = status.phase === "checking" && (
     <p className="text-muted-foreground flex items-center gap-2 text-sm">
       <LoaderCircle className="size-4 animate-spin" />
-      Decoding and testing…
+      {t("checking")}
     </p>
   );
 
@@ -277,7 +278,7 @@ export function ScanChecker({
           isDragActive ? "border-foreground/30 bg-muted/50" : "border-border",
         )}
       >
-        <input {...getInputProps()} aria-label="QR code image" />
+        <input {...getInputProps()} aria-label={t("imageLabel")} />
         {!slim && (
           <ImageUp
             aria-hidden
@@ -289,17 +290,14 @@ export function ScanChecker({
         )}
         {compact ? (
           <p className={cn("text-sm font-medium", slim && "sr-only")}>
-            Drop a photo of the code here, paste it or choose a file
+            {t("dropCompact")}
           </p>
         ) : (
           <div className="space-y-1">
             <p className="font-medium">
-              Drop a QR code image here, choose a file or paste it{" "}
-              <InfoHint id="scan-checker" />
+              {t("drop")} <InfoHint id="scan-checker" />
             </p>
-            <p className="text-muted-foreground text-sm">
-              Screenshots and photos work. Press Ctrl+V or ⌘V to paste.
-            </p>
+            <p className="text-muted-foreground text-sm">{t("dropHelp")}</p>
           </div>
         )}
         <div className="flex flex-wrap justify-center gap-2">
@@ -309,7 +307,7 @@ export function ScanChecker({
             type="button"
           >
             <ImageUp className="size-4" />
-            Choose image
+            {t("choose")}
           </Button>
           <Button
             onClick={pasteFromClipboard}
@@ -318,13 +316,13 @@ export function ScanChecker({
             variant="outline"
           >
             <ClipboardPaste className="size-4" />
-            Paste image
+            {t("paste")}
           </Button>
         </div>
         {!compact && (
           <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
             <ShieldCheck aria-hidden className="size-3.5" />
-            Checked in your browser. The image is never uploaded.
+            {t("private")}
           </p>
         )}
       </div>
@@ -334,7 +332,7 @@ export function ScanChecker({
           className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950/50 dark:text-red-200"
           role="alert"
         >
-          {status.message}
+          {t(`errors.${status.message}`)}
         </div>
       )}
 
@@ -346,7 +344,7 @@ export function ScanChecker({
           <div className="flex items-center gap-3">
             <div className="bg-muted/40 grid size-20 shrink-0 place-items-center overflow-hidden rounded-md p-1">
               <img
-                alt="The code you added"
+                alt={t("previewAltCompact")}
                 className="max-h-full max-w-full object-contain"
                 src={preview}
               />
@@ -373,7 +371,7 @@ export function ScanChecker({
         <div className="grid gap-6 rounded-xl border p-4 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] md:p-6">
           <div className="bg-muted/40 flex items-center justify-center rounded-lg p-3">
             <img
-              alt="Uploaded QR code"
+              alt={t("previewAlt")}
               className="max-h-80 w-auto object-contain"
               src={preview}
             />
@@ -393,8 +391,9 @@ export function ScanChecker({
                 {result.data !== null ? (
                   <div className="space-y-2">
                     <p className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
-                      Decoded content
-                      {result.version ? ` · version ${result.version}` : ""}
+                      {result.version
+                        ? t("decodedVersion", { version: result.version })
+                        : t("decoded")}
                     </p>
                     <p className="bg-muted/50 max-h-40 overflow-auto rounded-md p-3 font-mono text-sm break-all whitespace-pre-wrap">
                       {result.data}
@@ -406,9 +405,7 @@ export function ScanChecker({
                 <ScanCheckList checks={result.checks} />
 
                 <p className="text-muted-foreground border-t pt-3 text-xs leading-relaxed">
-                  Tested with the open-source jsQR decoder. Phone camera apps
-                  are often more forgiving, so treat a low score as a warning
-                  and test-scan before printing.
+                  {t("footnote")}
                 </p>
               </>
             )}
@@ -421,11 +418,17 @@ export function ScanChecker({
 
 /** "Opens https://…" for a link, else the start of the decoded text. */
 function DecodedSummary({ data, link }: { data: string; link: string | null }) {
+  const t = useTranslations("scanChecker");
   if (link) {
     return (
       <p className="line-clamp-2 text-sm [overflow-wrap:anywhere]" title={link}>
-        <span className="text-muted-foreground">Opens </span>
-        <span className="font-medium">{link}</span>
+        {t.rich("opens", {
+          link,
+          muted: (chunks) => (
+            <span className="text-muted-foreground">{chunks}</span>
+          ),
+          strong: (chunks) => <span className="font-medium">{chunks}</span>,
+        })}
       </p>
     );
   }
@@ -447,6 +450,7 @@ function MatchRow({
   match: DecodedMatch;
   expected: string;
 }) {
+  const t = useTranslations("scanChecker");
   if (match.matches) {
     return (
       <p className="flex gap-2 text-sm font-medium">
@@ -454,7 +458,7 @@ function MatchRow({
           className="mt-0.5 size-4 shrink-0 text-emerald-500"
           variant="Bold"
         />
-        Matches this design
+        {t("matches")}
       </p>
     );
   }
@@ -463,16 +467,14 @@ function MatchRow({
       <CircleX className="mt-0.5 size-4 shrink-0 text-red-500" variant="Bold" />
       <div className="min-w-0">
         <p className="font-medium leading-snug">
-          {match.decodedIsLink
-            ? "This photo opens a different link"
-            : "This photo holds different content"}
+          {t(match.decodedIsLink ? "differentLink" : "differentContent")}
         </p>
         {match.expectedIsLink && (
           <p
             className="text-muted-foreground mt-0.5 line-clamp-2 text-xs leading-snug [overflow-wrap:anywhere]"
             title={expected.trim()}
           >
-            This design opens {expected.trim()}
+            {t("designOpens", { link: expected.trim() })}
           </p>
         )}
       </div>

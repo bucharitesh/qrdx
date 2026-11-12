@@ -35,6 +35,7 @@ import {
   ShieldTick as ShieldCheck,
   Trash as Trash2,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { CameraView } from "./camera-view";
@@ -60,6 +61,7 @@ const entryKey = (entry: { format: string; value: string }) =>
   `${entry.format}\u0000${entry.value}`;
 
 export function Scanner() {
+  const t = useTranslations("scanner.main");
   const [tab, setTab] = useState<"camera" | "image">("camera");
   const [cameraOn, setCameraOn] = useState(false);
   const [batch, setBatch] = useState(false);
@@ -186,11 +188,11 @@ export function Scanner() {
           <TabsList>
             <TabsTrigger value="camera">
               <Camera />
-              Camera
+              {t("camera")}
             </TabsTrigger>
             <TabsTrigger value="image">
               <ImageUp />
-              Image
+              {t("image")}
             </TabsTrigger>
           </TabsList>
           <div className="flex items-center gap-2 text-sm">
@@ -200,10 +202,10 @@ export function Scanner() {
               onCheckedChange={toggleBatch}
             />
             <label className="cursor-pointer" htmlFor="scan-batch-mode">
-              Batch mode
+              {t("batch")}
               <span className="text-muted-foreground hidden sm:inline">
                 {" "}
-                · keep scanning, export CSV
+                · {t("batchHint")}
               </span>
             </label>
           </div>
@@ -230,7 +232,7 @@ export function Scanner() {
               id="scan-batch"
             >
               <Layers aria-hidden className="size-4" />
-              This batch
+              {t("thisBatch")}
               <span className="text-muted-foreground text-sm font-normal tabular-nums">
                 ({batchItems.length})
               </span>
@@ -244,7 +246,7 @@ export function Scanner() {
                 variant="outline"
               >
                 <Download className="size-3.5" />
-                Export CSV
+                {t("exportCsv")}
               </Button>
               <Button
                 disabled={batchItems.length === 0}
@@ -253,7 +255,7 @@ export function Scanner() {
                 type="button"
                 variant="ghost"
               >
-                Clear
+                {t("clear")}
               </Button>
             </div>
           </div>
@@ -261,8 +263,7 @@ export function Scanner() {
             <EntryList entries={batchItems} onOpen={setViewing} />
           ) : (
             <p className="text-muted-foreground rounded-xl border border-dashed p-6 text-center text-sm">
-              Keep pointing the camera at codes, or add images. Each new code is
-              added once; tap one to see what it does.
+              {t("batchEmpty")}
             </p>
           )}
         </section>
@@ -279,8 +280,8 @@ export function Scanner() {
             >
               <ScanLine aria-hidden className="size-4" />
               {results.length === 1
-                ? "Scan result"
-                : `Found ${results.length} codes`}
+                ? t("result")
+                : t("found", { count: results.length })}
             </h2>
             <Button
               onClick={scanAgain}
@@ -293,7 +294,7 @@ export function Scanner() {
               ) : (
                 <ImageUp className="size-3.5" />
               )}
-              Scan another
+              {t("scanAnother")}
             </Button>
           </div>
           <div className="grid gap-4">
@@ -315,7 +316,7 @@ export function Scanner() {
             id="scan-history"
           >
             <History aria-hidden className="size-4" />
-            History
+            {t("history")}
             {history.length > 0 && (
               <span className="text-muted-foreground text-sm font-normal tabular-nums">
                 ({history.length})
@@ -330,7 +331,7 @@ export function Scanner() {
                 onCheckedChange={toggleSaveHistory}
               />
               <label className="cursor-pointer" htmlFor="scan-save-history">
-                Save scans on this device
+                {t("saveHistory")}
               </label>
             </div>
             <Button
@@ -341,7 +342,7 @@ export function Scanner() {
               variant="outline"
             >
               <Download className="size-3.5" />
-              Export CSV
+              {t("exportCsv")}
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
@@ -352,21 +353,20 @@ export function Scanner() {
                   variant="ghost"
                 >
                   <Trash2 className="size-3.5" />
-                  Clear all
+                  {t("clearAll")}
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent className="ph-no-capture">
                 <AlertDialogHeader>
-                  <AlertDialogTitle>Clear scan history?</AlertDialogTitle>
+                  <AlertDialogTitle>{t("clearTitle")}</AlertDialogTitle>
                   <AlertDialogDescription>
-                    This deletes all {history.length} saved scans from this
-                    device. It can't be undone.
+                    {t("clearDescription", { count: history.length })}
                   </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel>{t("cancel")}</AlertDialogCancel>
                   <AlertDialogAction onClick={clearAll}>
-                    Clear history
+                    {t("clearHistory")}
                   </AlertDialogAction>
                 </AlertDialogFooter>
               </AlertDialogContent>
@@ -390,7 +390,7 @@ export function Scanner() {
                 type="button"
                 variant="ghost"
               >
-                Show more
+                {t("showMore")}
               </Button>
             )}
           </>
@@ -402,10 +402,10 @@ export function Scanner() {
             />
             <p className="text-muted-foreground text-sm">
               {!historyLoaded
-                ? "Loading history…"
+                ? t("historyLoading")
                 : saveHistory
-                  ? "Codes you scan show up here. History is kept only in this browser, on this device."
-                  : "History is off. Scans aren't saved anywhere."}
+                  ? t("historyEmpty")
+                  : t("historyOff")}
             </p>
           </div>
         )}
@@ -413,9 +413,7 @@ export function Scanner() {
 
       <p className="text-muted-foreground flex items-start gap-2 text-xs leading-relaxed">
         <ShieldCheck aria-hidden className="mt-0.5 size-3.5 shrink-0" />
-        Camera frames and images are decoded on your device and never uploaded.
-        To check a link, only its address is sent to QRdx (and to Google Web
-        Risk) and it isn't stored. What you scan is kept out of site analytics.
+        {t("privacy")}
       </p>
 
       <Dialog
@@ -423,9 +421,9 @@ export function Scanner() {
         open={viewing !== null}
       >
         <DialogContent className="ph-no-capture max-h-[90vh] overflow-y-auto p-4 sm:max-w-xl sm:p-6">
-          <DialogTitle className="sr-only">Scan details</DialogTitle>
+          <DialogTitle className="sr-only">{t("detailsTitle")}</DialogTitle>
           <DialogDescription className="sr-only">
-            What the scanned code contains and what you can do with it.
+            {t("detailsDescription")}
           </DialogDescription>
           {viewing && (
             <ResultCard

@@ -2,6 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Back } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
@@ -12,15 +13,16 @@ export function UndoRedoButtons({
   disabled = false,
   ...props
 }: UndoRedoButtonsProps) {
+  const t = useTranslations("editor.actionBar.undoRedoButtons");
   const { undo, redo, canUndo, canRedo } = useQREditorStore();
 
   return (
     <div className="flex items-center gap-1">
-      <TooltipWrapper label="Undo" asChild>
+      <TooltipWrapper label={t("undo")} asChild>
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Undo"
+          aria-label={t("undo")}
           disabled={disabled || !canUndo()}
           {...props}
           onClick={() => {
@@ -32,11 +34,11 @@ export function UndoRedoButtons({
         </Button>
       </TooltipWrapper>
 
-      <TooltipWrapper label="Redo" asChild>
+      <TooltipWrapper label={t("redo")} asChild>
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Redo"
+          aria-label={t("redo")}
           disabled={disabled || !canRedo()}
           {...props}
           onClick={() => {

@@ -2,6 +2,7 @@
 
 import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import { useTranslations } from "next-intl";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { AIPromptData } from "@/types/ai";
@@ -17,6 +18,7 @@ export function ClosableSuggestedPillActions({
   onGenerateTheme: (promptData: AIPromptData) => void;
   isGeneratingTheme: boolean;
 }) {
+  const t = useTranslations("editor.ai.closeableSuggestedPillActions");
   const { chatSuggestionsOpen, setChatSuggestionsOpen } = usePreferencesStore();
   const isMounted = useMounted();
 
@@ -30,9 +32,9 @@ export function ClosableSuggestedPillActions({
   return (
     <div className="relative flex flex-col items-center justify-center">
       <div className="text-muted-foreground flex w-full items-center justify-between gap-4">
-        <h3 className="text-xs">Suggestions</h3>
+        <h3 className="text-xs">{t("suggestions")}</h3>
         <Button
-          aria-label="Hide suggestions"
+          aria-label={t("hideSuggestions")}
           variant="ghost"
           size="icon-sm"
           className="size-6 [&>svg]:size-3.5"

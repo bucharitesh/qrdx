@@ -1,4 +1,5 @@
 import { toast } from "@repo/design-system";
+import { useTranslations } from "next-intl";
 import { useRef } from "react";
 import { MAX_SVG_FILE_SIZE } from "@/lib/constants";
 import type { PromptImage } from "@/types/ai";
@@ -31,6 +32,7 @@ export function useImageUpload({
   images,
   dispatch,
 }: UseImageUploadOptions) {
+  const t = useTranslations("editor.hooks.useImageUpload");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImagesUpload = (files: File[]) => {
@@ -40,8 +42,8 @@ export function useImageUpload({
     const totalImages = images.length;
 
     if (totalImages + fileArray.length > maxFiles) {
-      toast.error("Image upload limit reached", {
-        description: `You can only upload up to ${maxFiles} images.`,
+      toast.error(t("imageUploadLimitReached"), {
+        description: t("youCanOnlyUploadUp", { maxFiles }),
       });
       fileArray = fileArray.slice(0, maxFiles - totalImages);
       if (fileArray.length <= 0) return;
@@ -49,15 +51,18 @@ export function useImageUpload({
 
     const validFiles = fileArray.filter((file) => {
       if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-        toast.error("Unsupported file type", {
-          description: `"${file.name}" is not supported. Please use JPG, PNG, WebP, or SVG files.`,
+        toast.error(t("unsupportedFileType"), {
+          description: t("nameIsNotSupportedPlease", { name: file.name }),
         });
         return false;
       }
 
       if (file.size > maxFileSize) {
-        toast.error("File too large", {
-          description: `Image "${file.name}" exceeds the ${maxFileSize / 1024 / 1024}MB size limit.`,
+        toast.error(t("fileTooLarge"), {
+          description: t("imageNameExceedsTheValue", {
+            name: file.name,
+            value: maxFileSize / 1024 / 1024,
+          }),
         });
         return false;
       }
@@ -83,8 +88,10 @@ export function useImageUpload({
           try {
             const isValidSvg = validateSvgContent(result);
             if (!isValidSvg) {
-              toast.warning("Potentially unsafe SVG", {
-                description: `"${file.name}" may contain unsafe content but will be processed anyway.`,
+              toast.warning(t("potentiallyUnsafeSvg"), {
+                description: t("nameMayContainUnsafeContent", {
+                  name: file.name,
+                }),
               });
             }
 
@@ -110,8 +117,8 @@ export function useImageUpload({
       };
 
       const handleError = () => {
-        toast.error("File read error", {
-          description: `Failed to read "${file.name}". Please try again.`,
+        toast.error(t("fileReadError"), {
+          description: t("failedToReadNamePlease", { name: file.name }),
         });
 
         dispatch({

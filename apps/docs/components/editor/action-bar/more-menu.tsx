@@ -31,8 +31,9 @@ import {
   TableDocument,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
-import { PLUGINS } from "@/app/(app)/(home)/plugins/plugin-data";
+import { PLUGINS } from "@/app/[lang]/(home)/plugins/plugin-data";
 import {
   currentBuilderRequest,
   openPlaygroundBuilder,
@@ -57,9 +58,9 @@ const listedPlugins = PLUGINS.filter((plugin) => plugin.storeUrl).length;
 /** Honest about where the plugins install from until each store listing is live. */
 const PLUGINS_HINT =
   listedPlugins === 0
-    ? "Not in their stores yet: install from source."
+    ? "noneListed"
     : listedPlugins < PLUGINS.length
-      ? "Some install from source for now."
+      ? "someListed"
       : undefined;
 
 interface MoreItem {
@@ -87,6 +88,8 @@ interface MoreMenuProps {
  * of their own. A dropdown on desktop, a bottom drawer on phones.
  */
 export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
+  const tx = useTranslations("editor.actionBar.moreMenu");
+  const t = useTranslations("editor.actionBar.moreMenu");
   const [open, setOpen] = useState(false);
   const { setOpen: openShortcuts } = useKeyboardShortcutsModal();
   const { settings } = useUserSettings();
@@ -97,29 +100,29 @@ export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
     dynamicItem,
     {
       id: "bulk",
-      label: "Make many from a CSV",
-      hint: "One code per row of your CSV, in this style.",
+      label: t("makeManyFromACsv"),
+      hint: tx("oneCodePerRowOf"),
       icon: TableDocument,
       href: BULK_FROM_EDITOR_HREF,
     },
     {
       id: "photo-check",
-      label: "Check a photo of the print",
-      hint: "Make sure the printed code scans like this one.",
+      label: t("checkAPhotoOfThe"),
+      hint: tx("makeSureThePrintedCode"),
       icon: ScanBarcode,
       run: () => usePhotoScanDialogStore.getState().setOpen(true),
     },
     {
       id: "publish",
-      label: "Publish to community",
-      hint: "Share this style for others to apply.",
+      label: t("publishToCommunity"),
+      hint: tx("shareThisStyleForOthers"),
       icon: People,
       run: () => useCommunitySheetStore.getState().requestPublish(),
     },
     {
       id: "plugins",
-      label: "Use QRdx in Figma and more",
-      hint: PLUGINS_HINT,
+      label: t("useQrdxInFigmaAnd"),
+      hint: PLUGINS_HINT && t(`pluginsHint.${PLUGINS_HINT}`),
       icon: Element3,
       href: "/plugins",
       separated: true,
@@ -129,7 +132,7 @@ export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
       ? [
           {
             id: "shortcuts",
-            label: "Keyboard shortcuts",
+            label: t("keyboardShortcuts"),
             icon: Keyboard,
             kbd: (settings?.keyboardShortcuts ?? true) ? "?" : undefined,
             run: () => openShortcuts(true),
@@ -139,7 +142,7 @@ export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
   ];
 
   const trigger = (
-    <Button aria-label="More" size="sm" variant="ghost">
+    <Button aria-label={t("more")} size="sm" variant="ghost">
       <More className="size-4" />
     </Button>
   );
@@ -147,14 +150,14 @@ export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
   if (!desktop) {
     return (
       <Drawer onOpenChange={setOpen} open={open}>
-        <TooltipWrapper label="More" asChild>
+        <TooltipWrapper label={t("more")} asChild>
           <DrawerTrigger asChild>{trigger}</DrawerTrigger>
         </TooltipWrapper>
         <DrawerContent>
           <DrawerHeader className="px-5 pt-3 pb-1 text-left group-data-[vaul-drawer-direction=bottom]/drawer-content:text-left">
-            <DrawerTitle>More</DrawerTitle>
+            <DrawerTitle>{t("more")}</DrawerTitle>
             <DrawerDescription className="sr-only">
-              More things to do with this design
+              {t("moreThingsToDoWith")}
             </DrawerDescription>
           </DrawerHeader>
           <ul className="flex flex-col px-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
@@ -193,7 +196,7 @@ export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
   return (
     // Not modal, so a dialog opened from an item gets the page back cleanly.
     <DropdownMenu modal={false} onOpenChange={setOpen} open={open}>
-      <TooltipWrapper label="More" asChild>
+      <TooltipWrapper label={t("more")} asChild>
         <DropdownMenuTrigger asChild>{trigger}</DropdownMenuTrigger>
       </TooltipWrapper>
       <DropdownMenuContent align="end" className="w-76 p-1.5">
@@ -214,6 +217,8 @@ const drawerRowClass =
  * opens that code's link options. Other types say why they can't be.
  */
 function useMakeDynamicItem(): MoreItem {
+  const tx = useTranslations("editor.actionBar.moreMenu");
+  const t = useTranslations("editor.actionBar.moreMenu");
   const { data: session, isPending } = authClient.useSession();
   const userId = session?.user?.id ?? null;
   const contentType = useQREditorStore((state) => state.contentType);
@@ -226,7 +231,7 @@ function useMakeDynamicItem(): MoreItem {
   if (blocked) {
     return {
       id: "dynamic",
-      label: "Make it dynamic…",
+      label: t("makeItDynamic"),
       hint: blocked,
       icon: Flash,
       disabled: true,
@@ -247,18 +252,16 @@ function useMakeDynamicItem(): MoreItem {
   if (linked) {
     return {
       id: "dynamic",
-      label: "Link options…",
-      hint: "Its short link, folder, tags and routing.",
+      label: t("linkOptions"),
+      hint: tx("itsShortLinkFolderTags"),
       icon: Flash,
       run: open,
     };
   }
   return {
     id: "dynamic",
-    label: "Make it dynamic…",
-    hint: userId
-      ? "Change where it points after printing, and count scans."
-      : "Sign in to change where it points after printing.",
+    label: t("makeItDynamic"),
+    hint: userId ? tx("changeWhereItPointsAfter") : tx("signInToChangeWhere"),
     icon: Flash,
     run: open,
     disabled: isPending,

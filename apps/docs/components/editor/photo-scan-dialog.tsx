@@ -9,6 +9,7 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { usePhotoScanDialogStore } from "@/components/editor/photo-scan-dialog-store";
 import { ScanChecker } from "@/components/sections/tools/scan-checker";
@@ -22,6 +23,7 @@ import { useQREditorStore } from "@/store/editor-store";
  * playground link's open=photo-check); mounted once by components/editor.tsx.
  */
 export function PhotoScanDialog() {
+  const t = useTranslations("editor.photoScanDialog");
   const open = usePhotoScanDialogStore((state) => state.open);
   const setOpen = usePhotoScanDialogStore((state) => state.setOpen);
 
@@ -32,10 +34,10 @@ export function PhotoScanDialog() {
           <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
             <div className="min-w-0 flex-1 space-y-1">
               <ResponsiveDialogTitle>
-                Check a photo of the print
+                {t("checkAPhotoOfThe")}
               </ResponsiveDialogTitle>
               <ResponsiveDialogDescription>
-                Checked in your browser. The image is never uploaded.
+                {t("checkedInYourBrowserThe")}
               </ResponsiveDialogDescription>
             </div>
             <DialogCloseButton className="-mt-1 -mr-2 hidden sm:inline-flex" />
@@ -53,7 +55,7 @@ export function PhotoScanDialog() {
               href="/tools/scan-checker"
               onClick={() => setOpen(false)}
             >
-              Full scan checker
+              {t("fullScanChecker")}
               <ArrowRight className="size-4" />
             </Link>
           </div>

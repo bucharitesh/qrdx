@@ -10,75 +10,81 @@ import {
 import { Kbd, KbdGroup } from "@repo/design-system/components/ui/kbd";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { Keyboard } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useAvailability } from "@/components/availability-provider";
 import { SoundSwitch } from "@/components/sound/sound-switch";
 import type { FeatureId } from "@/lib/feature-availability-rules";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
+import type { Messages } from "@/lib/i18n/messages";
 
 interface KeyboardShortcutsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
+type Labels = Messages["editor"]["keyboardShortcutsModal"];
+
 interface ShortcutItem {
   keys: string[];
-  description: string;
+  id: keyof Labels["shortcuts"];
   /** Left out where this deployment can't offer the feature */
   feature?: FeatureId;
 }
 
 interface ShortcutCategory {
-  title: string;
+  id: keyof Labels["categories"];
   shortcuts: ShortcutItem[];
 }
 
+// Names in messages/en.json: editor.keyboardShortcutsModal.categories and
+// .shortcuts, by id.
 const shortcutCategories: ShortcutCategory[] = [
   {
-    title: "Navigation",
+    id: "navigation",
     shortcuts: [
-      { keys: ["1"], description: "Open Content tab" },
-      { keys: ["2"], description: "Open Design tab" },
-      { keys: ["3"], description: "Open Art tab" },
+      { keys: ["1"], id: "openContentTab" },
+      { keys: ["2"], id: "openDesignTab" },
+      { keys: ["3"], id: "openArtTab" },
       {
         keys: ["4"],
-        description: "Open Generate (AI) tab",
+        id: "openGenerateAiTab",
         feature: "aiThemes",
       },
     ],
   },
   {
-    title: "Actions",
+    id: "actions",
     shortcuts: [
-      { keys: ["S"], description: "Save QR theme" },
-      { keys: ["D"], description: "Download QR code" },
-      { keys: ["C"], description: "Copy SVG to clipboard" },
-      { keys: ["V"], description: "View code" },
-      { keys: ["X"], description: "Share QR code" },
-      { keys: ["R"], description: "Reset to preset defaults" },
+      { keys: ["S"], id: "saveQrTheme" },
+      { keys: ["D"], id: "downloadQrCode" },
+      { keys: ["C"], id: "copySvgToClipboard" },
+      { keys: ["V"], id: "viewCode" },
+      { keys: ["X"], id: "shareQrCode" },
+      { keys: ["R"], id: "resetToPresetDefaults" },
     ],
   },
   {
-    title: "Theme & Appearance",
+    id: "themeAppearance",
     shortcuts: [
-      { keys: ["T"], description: "Shuffle a new theme" },
-      { keys: ["L"], description: "Toggle light/dark mode" },
-      { keys: ["←"], description: "Previous theme preset" },
-      { keys: ["→"], description: "Next theme preset" },
+      { keys: ["T"], id: "shuffleANewTheme" },
+      { keys: ["L"], id: "toggleLightDarkMode" },
+      { keys: ["←"], id: "previousThemePreset" },
+      { keys: ["→"], id: "nextThemePreset" },
     ],
   },
   {
-    title: "Pattern Customization",
+    id: "patternCustomization",
     shortcuts: [
-      { keys: [","], description: "Cycle dot patterns" },
-      { keys: ["."], description: "Cycle corner eye patterns" },
-      { keys: ["/"], description: "Cycle internal eye patterns" },
-      { keys: ["F"], description: "Cycle frames" },
+      { keys: [","], id: "cycleDotPatterns" },
+      { keys: ["."], id: "cycleCornerEyePatterns" },
+      { keys: ["/"], id: "cycleInternalEyePatterns" },
+      { keys: ["F"], id: "cycleFrames" },
     ],
   },
   {
-    title: "Help",
-    shortcuts: [{ keys: ["?"], description: "Show this shortcuts dialog" }],
+    id: "help",
+    shortcuts: [{ keys: ["?"], id: "showThisShortcutsDialog" }],
   },
 ];
 
@@ -86,6 +92,7 @@ export function KeyboardShortcutsModal({
   open,
   onOpenChange,
 }: KeyboardShortcutsModalProps) {
+  const t = useTranslations("editor.keyboardShortcutsModal");
   const { settings } = useUserSettings();
   const shortcutsEnabled = settings?.keyboardShortcuts ?? true;
   const { has } = useAvailability();
@@ -106,11 +113,10 @@ export function KeyboardShortcutsModal({
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Keyboard className="size-5" />
-              Keyboard Shortcuts
+              {t("keyboardShortcuts")}
             </DialogTitle>
             <DialogDescription>
-              Keyboard shortcuts are currently disabled. Enable them in settings
-              to use these shortcuts.
+              {t("keyboardShortcutsAreCurrentlyDisabled")}
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -124,19 +130,19 @@ export function KeyboardShortcutsModal({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Keyboard className="size-5" />
-            Keyboard Shortcuts
+            {t("keyboardShortcuts")}
           </DialogTitle>
           <DialogDescription>
-            Quick reference for all available keyboard shortcuts
+            {t("quickReferenceForAllAvailable")}
           </DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="max-h-[calc(85vh-120px)] pr-4">
           <div className="space-y-6">
             {shortcutCategories.map((category) => (
-              <div key={category.title} className="space-y-3">
+              <div key={category.id} className="space-y-3">
                 <h3 className="text-sm font-semibold text-foreground">
-                  {category.title}
+                  {t(`categories.${category.id}`)}
                 </h3>
                 <div className="space-y-2">
                   {category.shortcuts
@@ -149,7 +155,7 @@ export function KeyboardShortcutsModal({
                         className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/30 px-4 py-2.5 transition-colors hover:bg-muted/50"
                       >
                         <span className="text-sm text-muted-foreground">
-                          {shortcut.description}
+                          {t(`shortcuts.${shortcut.id}`)}
                         </span>
                         <KbdGroup>
                           {shortcut.keys.map((key, keyIndex) => (
@@ -168,9 +174,12 @@ export function KeyboardShortcutsModal({
 
         <div className="rounded-lg border border-border bg-muted/30 px-4 py-3">
           <p className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">Pro tip:</span>{" "}
-            Press <Kbd className="inline-flex mx-1">?</Kbd> anytime to view this
-            dialog
+            {t.rich("proTipPressAnytimeTo", {
+              span: (chunks) => (
+                <span className="font-semibold text-foreground">{chunks}</span>
+              ),
+              kbd: (chunks) => <Kbd className="inline-flex mx-1">{chunks}</Kbd>,
+            })}
           </p>
         </div>
       </DialogContent>

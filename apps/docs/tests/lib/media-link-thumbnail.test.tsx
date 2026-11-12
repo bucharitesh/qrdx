@@ -2,8 +2,9 @@
 // media-link-assist.tsx) only shows an https thumbnail, whatever the
 // provider's oEmbed reply or the parsed link handed it. Rendered to static
 // markup, so the oEmbed preview (an effect) isn't fetched here.
-import { renderToStaticMarkup } from "react-dom/server";
+
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { renderIntl } from "../support/intl";
 
 /** What youTubeThumbnailUrl returns in a test; null: the real one. */
 let thumbnailOverride: string | null = null;
@@ -37,7 +38,7 @@ const { MediaLinkAssist } = await import(
 
 const VIDEO = "https://www.youtube.com/watch?v=dQw4w9WgXcQ";
 const html = () =>
-  renderToStaticMarkup(
+  renderIntl(
     <MediaLinkAssist kind="youtube" onApply={() => {}} value={VIDEO} />,
   );
 

@@ -2,6 +2,7 @@ import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Heart } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface SaveButtonProps extends React.ComponentProps<typeof Button> {
@@ -14,8 +15,9 @@ export function SaveButton({
   className,
   ...props
 }: SaveButtonProps) {
+  const t = useTranslations("editor.actionBar.saveButton");
   return (
-    <TooltipWrapper label="Save design" kbd="S" asChild>
+    <TooltipWrapper label={t("saveDesign")} kbd="S" asChild>
       <Button
         variant="ghost"
         size="sm"
@@ -28,7 +30,7 @@ export function SaveButton({
         ) : (
           <Heart className="size-4" />
         )}
-        <span className="hidden text-sm md:block sr-only">Save</span>
+        <span className="hidden text-sm md:block sr-only">{t("save")}</span>
       </Button>
     </TooltipWrapper>
   );

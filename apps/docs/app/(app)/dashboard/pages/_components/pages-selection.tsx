@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // Selecting pages in the Pages list, and deleting them together. The rows
 // stay server-rendered (page.tsx); these wrap them with the checkbox, the
@@ -94,6 +95,7 @@ export function PagesSelection({
   keyboardShortcuts: boolean;
   children: ReactNode;
 }) {
+  const t = useTranslations("app.dashboard.pages.pagesSelection");
   const router = useRouter();
   const canWrite = useCan("content.write");
   const listRef = useRef<HTMLDivElement>(null);
@@ -139,10 +141,10 @@ export function PagesSelection({
       const { deleted, skipped } = result.data;
       setConfirm(false);
       if (deleted === 0) {
-        toast.error(`All selected pages ${OTHERS_SKIPPED}`);
+        toast.error(t("allSelectedPagesOthersSkipped", { OTHERS_SKIPPED }));
       } else {
         toast.success(
-          `Deleted ${pagesLabel(deleted)}`,
+          t("deletedValue", { value: pagesLabel(deleted) }),
           skipped > 0
             ? { description: `${skipped} ${OTHERS_SKIPPED}` }
             : undefined,
@@ -160,16 +162,16 @@ export function PagesSelection({
         <SelectionStatus count={count} noun={["page", "pages"]} />
         {count > 0 && (
           <div
-            aria-label="Bulk actions"
+            aria-label={t("bulkActions")}
             className="bg-background/95 supports-[backdrop-filter]:bg-background/80 sticky top-2 z-10 flex flex-wrap items-center gap-1 rounded-lg border p-1.5 shadow-sm backdrop-blur"
             role="toolbar"
           >
             <span className="px-2 text-sm font-medium tabular-nums">
-              {count} selected
+              {t("countSelected", { count })}
             </span>
-            <TooltipWrapper kbd="Esc" label="Clear selection">
+            <TooltipWrapper kbd="Esc" label={t("clearSelection")}>
               <Button
-                aria-label="Clear selection"
+                aria-label={t("clearSelection")}
                 onClick={clear}
                 size="icon-sm"
                 variant="ghost"
@@ -178,7 +180,7 @@ export function PagesSelection({
               </Button>
             </TooltipWrapper>
             <div className="bg-border mx-1 h-5 w-px" />
-            <TooltipWrapper kbd={deleteHint} label="Delete">
+            <TooltipWrapper kbd={deleteHint} label={t("delete")}>
               <Button
                 disabled={isPending}
                 onClick={() => setConfirm(true)}
@@ -186,13 +188,13 @@ export function PagesSelection({
                 variant="ghost"
               >
                 <Trash2 />
-                Delete
+                {t("delete")}
               </Button>
             </TooltipWrapper>
             {keyboardShortcuts && (
               <div className="ml-auto">
                 <ListShortcuts
-                  actions={[{ label: "Delete", keys: [deleteHint] }]}
+                  actions={[{ label: t("delete"), keys: [deleteHint] }]}
                 />
               </div>
             )}
@@ -204,17 +206,23 @@ export function PagesSelection({
       <AlertDialog onOpenChange={setConfirm} open={confirm}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete {pagesLabel(count)}?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("deleteValue", { value: pagesLabel(count) })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
               {codes > 0
                 ? `Their ${codes === 1 ? "QR code is" : `${codes} QR codes are`} deleted too, with their scan history. Printed copies will stop working. This can't be undone.`
-                : "This can't be undone."}
+                : t("thisCantBeUndone")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button disabled={isPending} onClick={remove} variant="destructive">
-              {isPending ? "Deleting..." : `Delete ${pagesLabel(count)}`}
+              {isPending
+                ? t("deleting")
+                : t("deleteValue2", { value: pagesLabel(count) })}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -274,6 +282,7 @@ export function PageCheckbox({
   title: string;
   className?: string;
 }) {
+  const t = useTranslations("app.dashboard.pages.pagesSelection");
   const { selection, deletable } = usePagesSelection();
   if (deletable.size === 0) return null;
   if (!deletable.has(id)) {
@@ -281,7 +290,7 @@ export function PageCheckbox({
   }
   return (
     <Checkbox
-      aria-label={`Select ${title}`}
+      aria-label={t("selectTitle", { title })}
       className={className}
       {...selection.checkboxProps(id)}
     />
@@ -295,6 +304,7 @@ export function usePagesSelectable(): boolean {
 
 /** The table header's checkbox: every page on screen this person may delete. */
 export function PagesSelectAll() {
+  const t = useTranslations("app.dashboard.pages.pagesSelection");
   const { selection, deletable } = usePagesSelection();
   const modKey = useModKey();
   if (deletable.size === 0) return null;
@@ -302,9 +312,9 @@ export function PagesSelectAll() {
   const all = ids.every((id) => selection.isSelected(id));
   const some = !all && ids.some((id) => selection.isSelected(id));
   return (
-    <TooltipWrapper kbd={[modKey, "A"]} label="Select all on this page">
+    <TooltipWrapper kbd={[modKey, "A"]} label={t("selectAllOnThisPage")}>
       <Checkbox
-        aria-label="Select all pages"
+        aria-label={t("selectAllPages")}
         checked={all ? true : some ? "indeterminate" : false}
         onCheckedChange={(checked) => selection.setMany(ids, checked === true)}
       />

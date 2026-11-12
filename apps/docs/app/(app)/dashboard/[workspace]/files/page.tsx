@@ -22,6 +22,7 @@ import {
   getStorageOverview,
   listFiles,
 } from "@/lib/files/service";
+import { getAppTranslations } from "@/lib/i18n/app-locale";
 import { isOwnWorkspaceScope } from "@/lib/own-workspace";
 import { can } from "@/lib/permissions";
 
@@ -33,14 +34,12 @@ export const metadata: Metadata = {
 const DOCS_HREF = "/docs/files";
 
 export default async function FilesPage() {
+  const t = await getAppTranslations("app.dashboard.files.page");
   const scope = await requireDashboardScope();
   const overview = await getStorageOverview(scope);
 
   const header = (
-    <PageHeader
-      description="PDFs, images, audio and video for your hosted pages. Every file keeps its link, even when you replace it."
-      title="Files"
-    >
+    <PageHeader description={t("pdfsImagesAudioAndVideo")} title={t("files")}>
       <Badge variant={overview.plan !== "free" ? "default" : "secondary"}>
         {overview.planName}
       </Badge>
@@ -56,15 +55,12 @@ export default async function FilesPage() {
             <EmptyMedia variant="icon">
               <ServerCog />
             </EmptyMedia>
-            <EmptyTitle>File uploads aren't available yet</EmptyTitle>
-            <EmptyDescription>
-              Until they are, your pages can still link to files hosted
-              elsewhere. Self-hosting? Uploads need a Cloudflare R2 bucket.
-            </EmptyDescription>
+            <EmptyTitle>{t("fileUploadsArentAvailableYet")}</EmptyTitle>
+            <EmptyDescription>{t("untilTheyAreYourPages")}</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button asChild variant="outline">
-              <Link href={DOCS_HREF}>Set up file storage</Link>
+              <Link href={DOCS_HREF}>{t("setUpFileStorage")}</Link>
             </Button>
           </EmptyContent>
         </Empty>

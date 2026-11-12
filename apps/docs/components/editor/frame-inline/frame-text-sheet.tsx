@@ -11,6 +11,7 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { cn } from "@repo/design-system/lib/utils";
 import { Setting4 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { useId, useRef, useState } from "react";
 import { FrameTextSize } from "../control-sections/frame-fields";
 import {
@@ -56,6 +57,7 @@ export function FrameTextSheet({
   onCancel: () => void;
   onMoreOptions: () => void;
 }) {
+  const t = useTranslations("editor.frameInline.frameTextSheet");
   const inputId = useId();
   const counterId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -102,9 +104,9 @@ export function FrameTextSheet({
         side="bottom"
       >
         <div className="px-4 pt-4 pr-12 pb-2">
-          <SheetTitle className="text-sm">Edit frame text</SheetTitle>
+          <SheetTitle className="text-sm">{t("editFrameText")}</SheetTitle>
           <SheetDescription className="sr-only">
-            Changes show on the code as you type. Done keeps them.
+            {t("changesShowOnTheCode")}
           </SheetDescription>
         </div>
 
@@ -119,7 +121,9 @@ export function FrameTextSheet({
                   className="text-muted-foreground text-xs tabular-nums"
                   id={counterId}
                 >
-                  {charactersLeft(text, target.maxLength)} left
+                  {t("valueLeft", {
+                    value: charactersLeft(text, target.maxLength),
+                  })}
                 </span>
               )}
             </div>
@@ -202,10 +206,10 @@ export function FrameTextSheet({
             variant="ghost"
           >
             <Setting4 aria-hidden className="size-4" />
-            More frame options
+            {t("moreFrameOptions")}
           </Button>
           <Button onClick={onCommit} size="sm" type="button">
-            Done
+            {t("done")}
           </Button>
         </div>
       </SheetContent>

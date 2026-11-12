@@ -8,6 +8,7 @@ import {
   ColorSwatch as Palette,
   Edit2 as Pencil,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useState } from "react";
 import type { QrCodeView } from "@/app/(app)/dashboard/codes/_lib/qr-codes";
 import { openCodeBuilder } from "@/components/code-builder/store";
@@ -29,6 +30,7 @@ const STATUS_NOTES = {
 
 /** Title, status and actions of the code page, above its tabs. */
 export function CodeHeader({ code }: { code: QrCodeView }) {
+  const t = useTranslations("app.dashboard.codes.codeOverview");
   const inWorkspace = useWorkspaceHref();
   // Viewers and billing members read only (lib/permissions.ts).
   const canWrite = useCan("content.write");
@@ -56,7 +58,7 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
               size="sm"
             >
               <Pencil />
-              Edit link
+              {t("editLink")}
             </Button>
           )}
           {canWrite && (
@@ -66,7 +68,7 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
               variant="outline"
             >
               <ArrowSwapHorizontal />
-              Change type
+              {t("changeType")}
             </Button>
           )}
           <CodeActionsMenu
@@ -103,6 +105,7 @@ export function CodeOverview({
   code: QrCodeView;
   children?: ReactNode;
 }) {
+  const t = useTranslations("app.dashboard.codes.codeOverview");
   const openInPlayground = useOpenInPlayground();
   // Editing the design saves it back to the code: not for read-only roles.
   const canWrite = useCan("content.write");
@@ -115,7 +118,7 @@ export function CodeOverview({
         <CardContent className="space-y-4 px-5">
           <div className="space-y-1">
             <p className="text-muted-foreground text-xs font-medium uppercase">
-              Short link (encoded in the QR code)
+              {t("shortLinkEncodedInThe")}
             </p>
             <div className="flex items-center gap-1">
               <code className="bg-muted min-w-0 truncate rounded-md px-2 py-1 text-sm">
@@ -123,14 +126,14 @@ export function CodeOverview({
               </code>
               <CopyButton
                 className="size-8"
-                successMessage={{ title: "Short link copied" }}
+                successMessage={{ title: t("shortLinkCopied") }}
                 textToCopy={code.shortLink}
               />
             </div>
           </div>
           <div className="space-y-1">
             <p className="text-muted-foreground text-xs font-medium uppercase">
-              Opens
+              {t("opens")}
             </p>
             <a
               className="inline-flex max-w-full items-center gap-1 text-sm break-all hover:underline"
@@ -161,7 +164,7 @@ export function CodeOverview({
               variant="ghost"
             >
               <Palette />
-              Edit design in playground
+              {t("editDesignInPlayground")}
             </Button>
           )}
         </CardContent>

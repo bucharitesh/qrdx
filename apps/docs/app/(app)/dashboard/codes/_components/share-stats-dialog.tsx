@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // "Share analytics…" from a code's row menu: turns the code's public,
 // read-only analytics page (/stats/<token>, lib/public-stats.ts) on or off,
@@ -39,6 +40,7 @@ export function ShareStatsDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
+  const t = useTranslations("app.dashboard.codes.shareStatsDialog");
   const id = useId();
   const [share, setShare] = useState<PublicStatsShare | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -77,10 +79,10 @@ export function ShareStatsDialog({
         }
         setShare(result.data);
         toast.success(
-          on ? "Analytics page is on" : "Analytics page is off",
+          on ? t("analyticsPageIsOn") : t("analyticsPageIsOff"),
           on
-            ? { description: "Anyone with the link can see it." }
-            : { description: "Its link no longer works." },
+            ? { description: t("anyoneWithTheLinkCan") }
+            : { description: t("itsLinkNoLongerWorks") },
         );
       } catch {
         setError("Couldn't change sharing. Try again.");
@@ -98,8 +100,8 @@ export function ShareStatsDialog({
           return;
         }
         setShare(result.data);
-        toast.success("New link made", {
-          description: "The old link no longer works.",
+        toast.success(t("newLinkMade"), {
+          description: t("theOldLinkNoLonger"),
         });
       } catch {
         setError("Couldn't reset the link. Try again.");
@@ -114,11 +116,9 @@ export function ShareStatsDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Share analytics</DialogTitle>
+          <DialogTitle>{t("shareAnalytics")}</DialogTitle>
           <DialogDescription>
-            A public, read-only page for {name}: scans over time, top countries,
-            devices and referrers. It never shows the destination's details or
-            anything about the people who scanned.
+            {t("aPublicReadOnlyPage", { name })}
           </DialogDescription>
         </DialogHeader>
 
@@ -129,17 +129,17 @@ export function ShareStatsDialog({
           </div>
         ) : share && !share.available ? (
           <p className="bg-muted/50 text-muted-foreground rounded-md p-3 text-sm">
-            Sharing analytics isn't available on this server yet.
+            {t("sharingAnalyticsIsntAvailableOn")}
           </p>
         ) : share ? (
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-4 rounded-lg border p-3">
               <div className="space-y-0.5">
-                <Label htmlFor={`${id}-on`}>Public analytics page</Label>
+                <Label htmlFor={`${id}-on`}>{t("publicAnalyticsPage")}</Label>
                 <p className="text-muted-foreground text-xs">
                   {share.canManage
-                    ? "Turn it off any time; the link stops working at once."
-                    : "Only owners and editors can change this."}
+                    ? t("turnItOffAnyTime")
+                    : t("onlyOwnersAndEditorsCan")}
                 </p>
               </div>
               <Switch
@@ -151,7 +151,7 @@ export function ShareStatsDialog({
             </div>
             {share.url && (
               <div className="space-y-1.5">
-                <Label htmlFor={`${id}-link`}>Link</Label>
+                <Label htmlFor={`${id}-link`}>{t("link")}</Label>
                 <div className="flex items-center gap-1">
                   <Input
                     className="font-mono text-xs"
@@ -162,12 +162,12 @@ export function ShareStatsDialog({
                   />
                   <CopyButton
                     className="size-9 shrink-0 [&>svg]:size-4"
-                    successMessage={{ title: "Link copied" }}
+                    successMessage={{ title: t("linkCopied") }}
                     textToCopy={share.url}
                   />
                   <Button asChild size="icon" variant="ghost">
                     <a
-                      aria-label="Open the analytics page"
+                      aria-label={t("openTheAnalyticsPage")}
                       href={share.url}
                       rel="noopener noreferrer"
                       target="_blank"
@@ -177,8 +177,7 @@ export function ShareStatsDialog({
                   </Button>
                 </div>
                 <p className="text-muted-foreground text-xs">
-                  Search engines don't index it. Numbers can be up to 5 minutes
-                  old.
+                  {t("searchEnginesDontIndexIt")}
                 </p>
               </div>
             )}
@@ -204,13 +203,13 @@ export function ShareStatsDialog({
               variant="ghost"
             >
               <Refresh2 />
-              Reset link
+              {t("resetLink")}
             </Button>
           ) : (
             <span />
           )}
           <Button onClick={() => onOpenChange(false)} type="button">
-            Done
+            {t("done")}
           </Button>
         </DialogFooter>
       </DialogContent>

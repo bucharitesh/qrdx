@@ -4,6 +4,7 @@ import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Import as Download } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { downloadQRCode, getQRData, QRCode } from "qrdx";
 import { useState } from "react";
 import { defaultThemeState } from "@/config/qr";
@@ -113,6 +114,7 @@ export function CodeDownloadButtons({
   code: { slug: string; shortLink: string; style: ThemeStyles | null };
   className?: string;
 }) {
+  const t = useTranslations("app.dashboard.codes.codeQr");
   const [pending, setPending] = useState<CodeImageFormat | null>(null);
 
   const download = async (format: CodeImageFormat) => {
@@ -120,7 +122,7 @@ export function CodeDownloadButtons({
     try {
       await downloadCodeQr(code, format);
     } catch {
-      toast.error("Download failed. Please try again.");
+      toast.error(t("downloadFailedPleaseTryAgain"));
     } finally {
       setPending(null);
     }

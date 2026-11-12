@@ -4,6 +4,7 @@ import {
   StopCircle as CircleStop,
   Magicpen as WandSparkles,
 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface EnhancePromptButtonProps extends React.ComponentProps<typeof Button> {
@@ -20,8 +21,12 @@ export function EnhancePromptButton({
   onStop,
   ...props
 }: EnhancePromptButtonProps) {
+  const t = useTranslations("editor.ai.enhancePromptButton");
   return (
-    <TooltipWrapper label={isEnhancing ? "Stop" : "Enhance prompt"} asChild>
+    <TooltipWrapper
+      label={isEnhancing ? t("stop") : t("enhancePrompt")}
+      asChild
+    >
       <Button
         size="icon"
         variant={isEnhancing ? "destructive" : "outline"}

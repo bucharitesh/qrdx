@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { PayPalContent } from "@/types/qr-content";
 import { encodePayPal } from "@/utils/qr-content-encoder";
 
 export function PayPalForm() {
+  const t = useTranslations("editor.contentForms.paypalForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -29,12 +31,12 @@ export function PayPalForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="paypal-url">
-          PayPal.Me URL or payment link *
+          {t("paypalMeUrlOrPayment")}
         </Label>
         <Input
           id="paypal-url"
           type="url"
-          placeholder="https://paypal.me/username or payment link"
+          placeholder={t("httpsPaypalMeUsernameOr")}
           value={paypalData.paypalUrl}
           onChange={(e) =>
             setPaypalData({ ...paypalData, paypalUrl: e.target.value })
@@ -43,7 +45,7 @@ export function PayPalForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the PayPal payment page
+        {t("scanningWillOpenThePaypal")}
       </p>
     </div>
   );

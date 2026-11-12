@@ -16,6 +16,7 @@ import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { cn } from "@repo/design-system/lib/utils";
 import { Trash as Trash2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useId, useState, useTransition } from "react";
 import { deleteFormResponses } from "@/actions/form-responses";
 import {
@@ -74,6 +75,7 @@ export function ResponsesList({
   items: ResponseItem[];
   canDelete: boolean;
 }) {
+  const t = useTranslations("app.dashboard.pages.responses.responsesList");
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [pendingDelete, setPendingDelete] = useState<string[] | null>(null);
@@ -100,8 +102,8 @@ export function ResponsesList({
       }
       toast.success(
         result.data.deleted === 1
-          ? "Response deleted"
-          : `${result.data.deleted} responses deleted`,
+          ? t("responseDeleted")
+          : t("deletedResponsesDeleted", { deleted: result.data.deleted }),
       );
       setSelected((current) => {
         const next = new Set(current);
@@ -127,7 +129,7 @@ export function ResponsesList({
                 )
               }
             />
-            <label htmlFor={selectAllId}>Select all on this page</label>
+            <label htmlFor={selectAllId}>{t("selectAllOnThisPage")}</label>
           </div>
           {selected.size > 0 && (
             <Button
@@ -136,7 +138,7 @@ export function ResponsesList({
               variant="outline"
             >
               <Trash2 />
-              Delete {selected.size}
+              {t("deleteSize", { size: selected.size })}
             </Button>
           )}
         </div>
@@ -154,7 +156,7 @@ export function ResponsesList({
             <div className="mb-3 flex items-start gap-3">
               {canDelete && (
                 <Checkbox
-                  aria-label="Select response"
+                  aria-label={t("selectResponse")}
                   checked={selected.has(item.id)}
                   className="mt-0.5"
                   onCheckedChange={(checked) =>
@@ -171,13 +173,13 @@ export function ResponsesList({
                 )}
                 {item.codeSlug && (
                   <span className="text-muted-foreground font-mono text-xs">
-                    via {item.codeSlug}
+                    {t("viaCodeslug", { codeSlug: item.codeSlug })}
                   </span>
                 )}
               </div>
               {canDelete && (
                 <Button
-                  aria-label="Delete response"
+                  aria-label={t("deleteResponse")}
                   className="size-8"
                   onClick={() => setPendingDelete([item.id])}
                   size="icon"
@@ -199,7 +201,7 @@ export function ResponsesList({
                 ))}
               </dl>
             ) : (
-              <p className="text-muted-foreground text-sm">No answers</p>
+              <p className="text-muted-foreground text-sm">{t("noAnswers")}</p>
             )}
           </li>
         ))}
@@ -213,22 +215,25 @@ export function ResponsesList({
           <AlertDialogHeader>
             <AlertDialogTitle>
               {pendingDelete?.length === 1
-                ? "Delete this response?"
-                : `Delete ${pendingDelete?.length ?? 0} responses?`}
+                ? t("deleteThisResponse")
+                : t("deleteValueResponses", {
+                    value: pendingDelete?.length ?? 0,
+                  })}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Deleted responses can't be recovered and won't be in future CSV
-              exports. Export first if you want to keep a copy.
+              {t("deletedResponsesCantBeRecovered")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isPending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button
               disabled={isPending}
               onClick={confirmDelete}
               variant="destructive"
             >
-              {isPending ? "Deleting…" : "Delete"}
+              {isPending ? t("deleting") : t("delete")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

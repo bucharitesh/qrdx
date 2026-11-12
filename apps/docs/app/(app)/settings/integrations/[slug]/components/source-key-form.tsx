@@ -11,6 +11,7 @@ import {
 import type { IntegrationApiKeyConfig } from "@repo/integrations";
 import { ExportSquare, Lock1 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useId, useState } from "react";
 import { toast } from "sonner";
 import { emitSound } from "@/components/editor/sound";
@@ -52,6 +53,7 @@ export function SourceKeyForm({
   apiKey,
   reconnect = false,
 }: SourceKeyFormProps) {
+  const t = useTranslations("app.settings.integrations.sourceKeyForm");
   const router = useRouter();
   const id = useId();
   const [key, setKey] = useState("");
@@ -91,7 +93,7 @@ export function SourceKeyForm({
         setClientSecret("");
         emitSound("success");
         track("integration_connected", { provider: slug });
-        toast.success(`${name} connected`);
+        toast.success(t("nameConnected", { name }));
         router.refresh();
       } else {
         setError(result.error);
@@ -107,7 +109,9 @@ export function SourceKeyForm({
     <form className="space-y-5 rounded-xl border bg-card p-6" onSubmit={submit}>
       <div className="space-y-2">
         <h2 className="text-base font-semibold">
-          {reconnect ? `Reconnect ${name}` : `Connect ${name}`}
+          {reconnect
+            ? t("reconnectName", { name })
+            : t("connectName", { name })}
         </h2>
         <ol className="list-decimal space-y-1 pl-5 text-muted-foreground text-sm text-pretty">
           {KEY_STEPS[slug]?.map((step) => (
@@ -121,7 +125,7 @@ export function SourceKeyForm({
             rel="noopener noreferrer"
             target="_blank"
           >
-            Open {name}
+            {t("openName", { name })}
             <ExportSquare aria-hidden className="size-3.5" />
           </a>
         )}
@@ -130,7 +134,7 @@ export function SourceKeyForm({
       {slug === "shopify" && (
         <>
           <div className="space-y-2">
-            <Label htmlFor={`${id}-shop`}>Store domain</Label>
+            <Label htmlFor={`${id}-shop`}>{t("storeDomain")}</Label>
             <Input
               autoComplete="off"
               id={`${id}-shop`}
@@ -141,7 +145,7 @@ export function SourceKeyForm({
             />
           </div>
           <ToggleGroup
-            aria-label="How the app connects"
+            aria-label={t("howTheAppConnects")}
             className="justify-start"
             onValueChange={(value) =>
               value && setMode(value as "client" | "token")
@@ -151,10 +155,10 @@ export function SourceKeyForm({
             variant="outline"
           >
             <ToggleGroupItem value="client">
-              Client ID and secret
+              {t("clientIdAndSecret")}
             </ToggleGroupItem>
             <ToggleGroupItem value="token">
-              Admin API access token
+              {t("adminApiAccessToken")}
             </ToggleGroupItem>
           </ToggleGroup>
         </>
@@ -163,7 +167,7 @@ export function SourceKeyForm({
       {slug === "shopify" && mode === "client" ? (
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-2">
-            <Label htmlFor={`${id}-client`}>Client ID</Label>
+            <Label htmlFor={`${id}-client`}>{t("clientId")}</Label>
             <Input
               autoComplete="off"
               className="font-mono"
@@ -174,7 +178,7 @@ export function SourceKeyForm({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor={`${id}-secret`}>Client secret</Label>
+            <Label htmlFor={`${id}-secret`}>{t("clientSecret")}</Label>
             <Input
               autoComplete="off"
               className="font-mono"
@@ -190,15 +194,15 @@ export function SourceKeyForm({
         <div className="space-y-2">
           <Label htmlFor={`${id}-key`}>
             {slug === "shopify"
-              ? "Admin API access token"
-              : (apiKey?.label ?? "API key")}
+              ? t("adminApiAccessToken")
+              : (apiKey?.label ?? t("apiKey"))}
           </Label>
           <Input
             autoComplete="off"
             className="font-mono"
             id={`${id}-key`}
             onChange={(event) => setKey(event.target.value)}
-            placeholder={slug === "shopify" ? "shpat_…" : apiKey?.placeholder}
+            placeholder={slug === "shopify" ? t("shpat") : apiKey?.placeholder}
             spellCheck={false}
             type="password"
             value={key}
@@ -214,13 +218,12 @@ export function SourceKeyForm({
         ) : (
           <p className="flex items-center gap-1.5 text-muted-foreground text-xs text-pretty">
             <Lock1 aria-hidden className="size-3.5 shrink-0" />
-            Checked with one read call, then stored encrypted. Never shown
-            again.
+            {t("checkedWithOneReadCall")}
           </p>
         )}
         <Button disabled={pending || !ready} type="submit">
           {pending && <Spinner className="size-4" />}
-          {reconnect ? "Save" : "Connect"}
+          {reconnect ? t("save") : t("connect")}
         </Button>
       </div>
     </form>

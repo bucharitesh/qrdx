@@ -23,6 +23,7 @@ import {
 import { Add } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useState, useTransition } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import type { ApiKeyView } from "@/lib/api-keys/service";
@@ -62,6 +63,7 @@ function KeyList({
   keys: ApiKeyView[];
   onRevoke: (key: ApiKeyView) => void;
 }) {
+  const t = useTranslations("app.settings.developers.apiKeysSection");
   return (
     <ul className="divide-y overflow-hidden rounded-xl border">
       {keys.map((apiKey) => (
@@ -69,7 +71,9 @@ function KeyList({
           <div className="min-w-0 flex-1 space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <p className="truncate text-sm font-medium">{apiKey.name}</p>
-              {apiKey.expired && <Badge variant="outline">Expired</Badge>}
+              {apiKey.expired && (
+                <Badge variant="outline">{t("expired")}</Badge>
+              )}
             </div>
             <p className="text-muted-foreground font-mono text-xs">
               {maskedKey(apiKey.start)}
@@ -78,7 +82,7 @@ function KeyList({
           </div>
           {apiKey.canRevoke && (
             <Button onClick={() => onRevoke(apiKey)} size="sm" variant="ghost">
-              Revoke
+              {t("revoke")}
             </Button>
           )}
         </li>
@@ -97,6 +101,7 @@ function KeyCreatedDialog({
   apiBase: string;
   onClose: () => void;
 }) {
+  const t = useTranslations("app.settings.developers.apiKeysSection");
   const sample = created
     ? firstRequest(apiBase, created.key, created.apiKey.scopes)
     : null;
@@ -108,20 +113,17 @@ function KeyCreatedDialog({
         onInteractOutside={(event) => event.preventDefault()}
       >
         <DialogHeader>
-          <DialogTitle>Copy your API key</DialogTitle>
-          <DialogDescription>
-            It's shown only this once. Keep it on your server, never in a
-            browser or an app.
-          </DialogDescription>
+          <DialogTitle>{t("copyYourApiKey")}</DialogTitle>
+          <DialogDescription>{t("itsShownOnlyThisOnce")}</DialogDescription>
         </DialogHeader>
         {created && sample && (
           <div className="min-w-0 space-y-4">
-            <CopyField label="API key" value={created.key} />
+            <CopyField label={t("apiKey")} value={created.key} />
             <Snippet code={sample.command} label={sample.description} />
           </div>
         )}
         <DialogFooter>
-          <Button onClick={onClose}>Done</Button>
+          <Button onClick={onClose}>{t("done")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -146,6 +148,7 @@ export function ApiKeysSection({
   openCreate: boolean;
   emptyFigure: ReactNode;
 }) {
+  const t = useTranslations("app.settings.developers.apiKeysSection");
   const router = useRouter();
   const pathname = usePathname();
   const { withConfirmation } = useConfirmation();
@@ -173,7 +176,7 @@ export function ApiKeysSection({
         return;
       }
       setRevoking(null);
-      toast.success("Key revoked");
+      toast.success(t("keyRevoked"));
       router.refresh();
     });
 
@@ -182,44 +185,44 @@ export function ApiKeysSection({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="space-y-1">
           <h2 className="text-base font-semibold" id="api-keys-heading">
-            API keys
+            {t("apiKeys")}
           </h2>
           <p className="text-muted-foreground text-sm">
-            Call the REST API from your servers and scripts. Keys act as you in{" "}
+            {t("callTheRestApiFrom")}{" "}
             <span className="text-foreground font-medium">{workspaceName}</span>
-            {isTeam ? ", with your role there." : "."}
+            {isTeam ? t("withYourRoleThere") : "."}
           </p>
         </div>
         {state.available && keys.length > 0 && (
           <Button onClick={() => setCreating(true)} size="sm">
             <Add />
-            Create key
+            {t("createKey")}
           </Button>
         )}
       </div>
 
       {!state.available ? (
         <p className="text-muted-foreground rounded-xl border p-4 text-sm">
-          API keys aren't available on this deployment yet.
+          {t("apiKeysArentAvailableOn")}
         </p>
       ) : keys.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-xl border px-6 py-10 text-center">
           {emptyFigure}
           <div className="space-y-1">
-            <p className="text-sm font-medium">No API keys yet</p>
+            <p className="text-sm font-medium">{t("noApiKeysYet")}</p>
             <p className="text-muted-foreground text-sm">
-              Create a key, then make your first request with one curl command.
+              {t("createAKeyThenMake")}
             </p>
           </div>
           <Button onClick={() => setCreating(true)}>
             <Add />
-            Create key
+            {t("createKey")}
           </Button>
           <Link
             className="text-muted-foreground text-xs underline underline-offset-4"
             href={QUICKSTART_HREF}
           >
-            Read the quickstart
+            {t("readTheQuickstart")}
           </Link>
         </div>
       ) : (
@@ -229,11 +232,11 @@ export function ApiKeysSection({
       <Dialog onOpenChange={setCreating} open={creating}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Create API key</DialogTitle>
+            <DialogTitle>{t("createApiKey")}</DialogTitle>
             <DialogDescription>
               {isTeam
-                ? `For ${workspaceName}. It can do what your role allows, within its scopes.`
-                : "For your own workspace, within the scopes you choose."}
+                ? t("forWorkspacenameItCanDo", { workspaceName })
+                : t("forYourOwnWorkspaceWithin")}
             </DialogDescription>
           </DialogHeader>
           <CreateApiKeyForm
@@ -267,19 +270,23 @@ export function ApiKeysSection({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Revoke “{revoking?.name}”?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("revokeName", { name: revoking?.name ?? "" })}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              Requests with this key fail from now on. This can't be undone.
+              {t("requestsWithThisKeyFail")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={pending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <Button
               disabled={pending}
               onClick={() => revoking && revoke(revoking)}
               variant="destructive"
             >
-              Revoke key
+              {t("revokeKey")}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>

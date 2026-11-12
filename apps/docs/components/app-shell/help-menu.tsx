@@ -9,6 +9,7 @@ import {
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { MessageQuestion } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { unreadLabel } from "@/lib/changelog-feed";
 import { HELP_LINKS } from "./help-links";
 import { useWhatsNew } from "./whats-new";
@@ -20,6 +21,7 @@ import { useWhatsNew } from "./whats-new";
  * dot while something is unread.
  */
 export function HelpMenu() {
+  const t = useTranslations("app.shell.helpMenu");
   const whatsNew = useWhatsNew();
   const unread = whatsNew?.unread ?? 0;
 
@@ -28,7 +30,9 @@ export function HelpMenu() {
       <DropdownMenuTrigger asChild>
         <Button
           aria-label={
-            unread > 0 ? `Help, ${unreadLabel(unread)} new updates` : "Help"
+            unread > 0
+              ? t("helpValueNewUpdates", { value: unreadLabel(unread) })
+              : t("help")
           }
           className="relative size-8"
           size="icon"

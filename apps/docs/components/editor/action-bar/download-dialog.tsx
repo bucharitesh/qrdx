@@ -42,6 +42,7 @@ import {
   TableDocument,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import {
   type DownloadSize,
   downloadPrintEPS,
@@ -128,25 +129,20 @@ type SizePreset = DownloadOptionsType["sizePreset"];
 const FORMATS: {
   id: ImageFormat;
   label: string;
-  bestFor: string;
   Icon: Icon;
   vector?: boolean;
-  /** Shown after "Best for …", lower case */
-  note?: string;
 }[] = [
-  { id: "png", label: "PNG", bestFor: "Web, docs and slides", Icon: Gallery },
-  { id: "jpg", label: "JPG", bestFor: "Email and small files", Icon: Image },
+  // What each is best for: editor.actionBar.downloadDialog.formatHints.
+  { id: "png", label: "PNG", Icon: Gallery },
+  { id: "jpg", label: "JPG", Icon: Image },
   {
     id: "webp",
     label: "WebP",
-    bestFor: "Fast-loading websites",
     Icon: Global,
-    note: "lossless, usually smaller than PNG",
   },
   {
     id: "svg",
     label: "SVG",
-    bestFor: "Figma, Illustrator, websites",
     Icon: Bezier,
     vector: true,
   },
@@ -154,27 +150,25 @@ const FORMATS: {
     id: "pdf",
     label: "PDF",
     // A PNG on a PDF page (packages/qrdx download.tsx), so not vector: the
-    // Print-ready tab makes the vector PDF.
-    bestFor: "Documents and quick prints",
+    // Print-ready tab makes the vector PDF (see its hint).
     Icon: DocumentText,
-    note: "for a vector PDF, use Print-ready",
   },
   {
     id: "eps",
     label: "EPS",
-    bestFor: "Print shops and vector apps",
     Icon: Printer,
     vector: true,
   },
 ];
 
-const SIZE_PRESETS: { id: Exclude<SizePreset, "custom">; label: string }[] = [
-  { id: "small", label: "Email" },
-  { id: "medium", label: "Web" },
-  { id: "large", label: "Social" },
-  { id: "xlarge", label: "Print" },
-  { id: "3xl", label: "Poster" },
-];
+// Names in messages/en.json: editor.actionBar.downloadDialog.sizePresets.
+const SIZE_PRESETS = [
+  { id: "small" },
+  { id: "medium" },
+  { id: "large" },
+  { id: "xlarge" },
+  { id: "3xl" },
+] as const satisfies readonly { id: Exclude<SizePreset, "custom"> }[];
 
 const SCALES = [1, 2, 3, 4];
 const PRINT_DPI = 300;
@@ -194,6 +188,7 @@ const CHECKERBOARD: React.CSSProperties = {
 };
 
 export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
+  const t = useTranslations("editor.actionBar.downloadDialog");
   const { value, themeState } = useQREditorStore();
   // An AI art result over the preview is an image: PNG and Print PNG only.
   const shownArt = useShownArt();
@@ -362,12 +357,12 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         source: "playground",
         content_type: useQREditorStore.getState().contentType,
       });
-      toast.success(`Downloaded ${filename}`);
+      toast.success(t("downloadedFilename", { filename }));
       onOpenChange(false);
     } catch (error) {
       console.error("Error downloading QR code:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to download QR code",
+        error instanceof Error ? error.message : t("failedToDownloadQrCode"),
       );
     } finally {
       setIsDownloading(false);
@@ -411,12 +406,12 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         source: "playground",
         content_type: useQREditorStore.getState().contentType,
       });
-      toast.success(`Downloaded ${printFilename}`);
+      toast.success(t("downloadedPrintfilename", { printFilename }));
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating print file:", error);
       toast.error(
-        error instanceof Error ? error.message : "Failed to create print file",
+        error instanceof Error ? error.message : t("failedToCreatePrintFile"),
       );
     } finally {
       setIsDownloading(false);
@@ -431,7 +426,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       track("qr_copied", { format: "svg", source: "playground" });
       setTimeout(() => setSvgCopied(false), 2000);
     } catch {
-      toast.error("Couldn't copy the SVG");
+      toast.error(t("couldntCopyTheSvg"));
     }
   };
 
@@ -449,40 +444,40 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
           <QRCodeSVG {...(tab === "print" ? printProps : qrProps)} size={220} />
         ) : (
           <p className="text-muted-foreground px-4 text-center text-xs">
-            Add content to see your code.
+            {t("addContentToSeeYour")}
           </p>
         )}
       </div>
       <dl className="text-muted-foreground grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-xs">
         {tab === "image" ? (
           <>
-            <dt>Format</dt>
+            <dt>{t("format")}</dt>
             <dd className="text-foreground text-right">
               {formatInfo?.label}
-              {formatInfo?.vector ? " · vector" : ""}
+              {formatInfo?.vector ? t("vector") : ""}
             </dd>
-            <dt>Pixels</dt>
+            <dt>{t("pixels")}</dt>
             <dd className="text-foreground text-right tabular-nums">
               {outputWidth} × {outputHeight}
             </dd>
-            <dt>At 300 dpi</dt>
+            <dt>{t("at300Dpi")}</dt>
             <dd className="text-foreground text-right tabular-nums">
-              {formatInfo?.vector ? "Any size" : physicalSize(outputWidth)}
+              {formatInfo?.vector ? t("anySize") : physicalSize(outputWidth)}
             </dd>
           </>
         ) : (
           <>
-            <dt>Width</dt>
+            <dt>{t("width")}</dt>
             <dd className="text-foreground text-right tabular-nums">
               {printSize} {printUnit}
             </dd>
-            <dt>Color</dt>
+            <dt>{t("color")}</dt>
             <dd className="text-foreground text-right uppercase">
               {colorMode}
             </dd>
-            <dt>Bleed</dt>
+            <dt>{t("bleed")}</dt>
             <dd className="text-foreground text-right">
-              {printBleed ? `${printBleed} mm` : "None"}
+              {printBleed ? t("printbleedMm", { printBleed }) : t("none")}
             </dd>
           </>
         )}
@@ -509,11 +504,13 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         <div className="flex max-h-[inherit] min-h-0 flex-col">
           <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
             <div className="min-w-0 flex-1 space-y-1">
-              <ResponsiveDialogTitle>Download QR code</ResponsiveDialogTitle>
+              <ResponsiveDialogTitle>
+                {t("downloadQrCode")}
+              </ResponsiveDialogTitle>
               <ResponsiveDialogDescription>
                 {tab === "print"
-                  ? "Vector PDF or EPS at an exact physical size, ready for a print shop."
-                  : "Pick a format and size. The preview shows what you get."}
+                  ? t("vectorPdfOrEpsAt")
+                  : t("pickAFormatAndSize")}
               </ResponsiveDialogDescription>
             </div>
             <DialogCloseButton className="-mt-1 -mr-2 hidden sm:inline-flex" />
@@ -528,11 +525,11 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
               <TabsList className="grid w-full grid-cols-2 sm:w-72">
                 <TabsTrigger value="image">
                   <Gallery className="size-4" />
-                  Image file
+                  {t("imageFile")}
                 </TabsTrigger>
                 <TabsTrigger value="print">
                   <Printer className="size-4" />
-                  Print-ready
+                  {t("printReady")}
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -543,7 +540,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
               <TabsContent className="mt-0 min-w-0 space-y-6" value="image">
                 <section>
                   <span className={sectionLabel}>
-                    <span id="dl-format">Format</span>{" "}
+                    <span id="dl-format">{t("format")}</span>{" "}
                     <InfoHint align="start" id="download-formats" />
                   </span>
                   <ToggleGroup
@@ -575,9 +572,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                     ))}
                   </ToggleGroup>
                   <p className="text-muted-foreground mt-2 text-xs text-pretty">
-                    Best for {formatInfo?.bestFor.toLowerCase()}
-                    {formatInfo?.vector ? " · stays sharp at any size" : ""}
-                    {formatInfo?.note ? ` · ${formatInfo.note}` : ""}.
+                    {t(`formatHints.${formatInfo?.id ?? "png"}`)}
                   </p>
                   {epsBlocked && (
                     <p className="text-muted-foreground mt-1 text-xs text-pretty">
@@ -588,7 +583,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
 
                 <section>
                   <span className={sectionLabel} id="dl-size">
-                    Size
+                    {t("size")}
                   </span>
                   <ToggleGroup
                     aria-labelledby="dl-size"
@@ -608,7 +603,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                         value={preset.id}
                       >
                         <span className="text-xs font-medium">
-                          {preset.label}
+                          {t(`sizePresets.${preset.id}`)}
                         </span>
                         <span className="text-muted-foreground text-[11px] tabular-nums">
                           {PRESET_SIZES[preset.id]?.width}
@@ -619,16 +614,16 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                       className="h-14 flex-col gap-0.5 px-1"
                       value="custom"
                     >
-                      <span className="text-xs font-medium">Custom</span>
+                      <span className="text-xs font-medium">{t("custom")}</span>
                       <span className="text-muted-foreground text-[11px]">
-                        px
+                        {t("px")}
                       </span>
                     </ToggleGroupItem>
                   </ToggleGroup>
                   {downloadOptions.sizePreset === "custom" && (
                     <div className="mt-2.5 flex items-center gap-2">
                       <Label className="text-xs" htmlFor="custom-size">
-                        Width and height
+                        {t("widthAndHeight")}
                       </Label>
                       <InputGroup className="w-36">
                         <InputGroupInput
@@ -645,7 +640,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                           value={downloadOptions.width}
                         />
                         <InputGroupAddon align="inline-end">
-                          <InputGroupText>px</InputGroupText>
+                          <InputGroupText>{t("px")}</InputGroupText>
                         </InputGroupAddon>
                       </InputGroup>
                     </div>
@@ -658,7 +653,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                       className="text-muted-foreground text-xs font-medium"
                       id="dl-scale"
                     >
-                      Scale
+                      {t("scale")}
                     </span>
                     <ToggleGroup
                       aria-labelledby="dl-scale"
@@ -696,12 +691,10 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                       className="cursor-pointer text-xs"
                       htmlFor="transparent-bg"
                       title={
-                        canBeTransparent
-                          ? undefined
-                          : "JPG can't be transparent"
+                        canBeTransparent ? undefined : t("jpgCantBeTransparent")
                       }
                     >
-                      Transparent background
+                      {t("transparentBackground")}
                     </Label>
                   </div>
                 </section>
@@ -748,7 +741,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                     variant="ghost"
                   >
                     {svgCopied ? <Tick /> : <Copy />}
-                    {svgCopied ? "SVG copied" : "Copy SVG"}
+                    {svgCopied ? t("svgCopied") : t("copySvg")}
                   </Button>
                   <Button
                     className="min-w-0 sm:flex-1"
@@ -757,7 +750,9 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   >
                     {isDownloading ? <Spinner /> : <Import />}
                     <span className="truncate">
-                      {isDownloading ? "Preparing…" : `Download ${filename}`}
+                      {isDownloading
+                        ? t("preparing")
+                        : t("downloadFilename", { filename })}
                     </span>
                   </Button>
                 </>
@@ -790,8 +785,11 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                     {isDownloading ? <Spinner /> : <Import />}
                     <span className="truncate">
                       {isDownloading
-                        ? "Preparing…"
-                        : `Download qr-code-print-${printSize}${printUnit}.pdf`}
+                        ? t("preparing")
+                        : t("downloadQrCodePrintPrintsize", {
+                            printSize,
+                            printUnit,
+                          })}
                     </span>
                   </Button>
                 </>
@@ -804,7 +802,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 onNavigate={() => onOpenChange(false)}
               >
                 <TableDocument className="size-3.5 shrink-0" />
-                Make many from a CSV with this style
+                {t("makeManyFromACsv")}
               </Link>
             </div>
           </Tabs>
@@ -853,6 +851,7 @@ function PrintOptions({
   onCropMarksChange,
   onColorModeChange,
 }: PrintOptionsProps) {
+  const t = useTranslations("editor.actionBar.downloadDialog");
   const limits = PRINT_SIZE_LIMITS[unit];
   const label = "text-muted-foreground mb-2.5 block text-xs font-medium";
 
@@ -905,7 +904,7 @@ function PrintOptions({
       <section className="grid grid-cols-2 items-end gap-2">
         <div>
           <Label className={label} htmlFor="print-distance">
-            Scanned from about
+            {t("scannedFromAbout")}
           </Label>
           <InputGroup>
             <InputGroupInput
@@ -945,14 +944,14 @@ function PrintOptions({
           </InputGroup>
         </div>
         <p className="text-muted-foreground pb-3 text-xs">
-          Sets the code width below.
+          {t("setsTheCodeWidthBelow")}
         </p>
       </section>
 
       <section className="grid grid-cols-2 gap-2">
         <div>
           <Label className={label} htmlFor="print-size">
-            Code width
+            {t("codeWidth")}
           </Label>
           <InputGroup>
             <InputGroupInput
@@ -974,7 +973,7 @@ function PrintOptions({
         </div>
         <div>
           <span className={label} id="print-unit">
-            Unit
+            {t("unit")}
           </span>
           <ToggleGroup
             aria-labelledby="print-unit"
@@ -989,10 +988,10 @@ function PrintOptions({
             variant="outline"
           >
             <ToggleGroupItem className="text-xs" value="mm">
-              mm
+              {t("mm")}
             </ToggleGroupItem>
             <ToggleGroupItem className="text-xs" value="in">
-              inches
+              {t("inches")}
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
@@ -1001,7 +1000,7 @@ function PrintOptions({
       <section className="grid grid-cols-2 gap-2">
         <div>
           <span className={label} id="print-color-mode">
-            Color mode
+            {t("colorMode")}
           </span>
           <ToggleGroup
             aria-labelledby="print-color-mode"
@@ -1023,7 +1022,7 @@ function PrintOptions({
         </div>
         <div>
           <span className={label}>
-            <span id="print-bleed">Bleed</span>{" "}
+            <span id="print-bleed">{t("bleed")}</span>{" "}
             <InfoHint align="end" id="print-ready" />
           </span>
           <ToggleGroup
@@ -1037,10 +1036,10 @@ function PrintOptions({
             variant="outline"
           >
             <ToggleGroupItem className="text-xs" value="0">
-              None
+              {t("none")}
             </ToggleGroupItem>
             <ToggleGroupItem className="text-xs" value="3">
-              3 mm
+              {t("n3Mm")}
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
@@ -1053,55 +1052,64 @@ function PrintOptions({
           onCheckedChange={onCropMarksChange}
         />
         <Label className="cursor-pointer text-xs" htmlFor="print-crop-marks">
-          Crop marks (PDF)
+          {t("cropMarksPdf")}
         </Label>
       </section>
 
       {layout ? (
         <section className="text-muted-foreground space-y-1.5 text-xs">
           <p className="text-foreground">
-            Finished size {formatLength(layout.trimWidth, unit)} ×{" "}
-            {formatLength(layout.trimHeight, unit)}
-            {layout.pageWidth !== layout.trimWidth &&
-              ` (page ${formatLength(layout.pageWidth, unit)} × ${formatLength(layout.pageHeight, unit)})`}
+            {layout.pageWidth === layout.trimWidth
+              ? t("finishedSize", {
+                  width: formatLength(layout.trimWidth, unit),
+                  height: formatLength(layout.trimHeight, unit),
+                })
+              : t("finishedSizeOnPage", {
+                  width: formatLength(layout.trimWidth, unit),
+                  height: formatLength(layout.trimHeight, unit),
+                  pageWidth: formatLength(layout.pageWidth, unit),
+                  pageHeight: formatLength(layout.pageHeight, unit),
+                })}
           </p>
           {layout.moduleSize >= MIN_MODULE_MM - 1e-9 && (
             <p>
-              Scans from up to about{" "}
-              {formatDistance(scanDistanceForModule(layout.moduleSize), unit)}{" "}
-              away (about 250× the size of one dot).
+              {t("scansFromUpToAbout", {
+                value: formatDistance(
+                  scanDistanceForModule(layout.moduleSize),
+                  unit,
+                ),
+              })}
             </p>
           )}
           {layout.codeWidth < 20 && (
             <p className="text-amber-700 dark:text-amber-400">
-              Under 2 cm is hard for phones to scan; go bigger if you can.
+              {t("under2CmIsHard")}
             </p>
           )}
           {layout.moduleSize < MIN_MODULE_MM - 1e-9 && (
             <p className="text-amber-700 dark:text-amber-400">
-              Each dot is only {Math.round(layout.moduleSize * 100) / 100} mm
-              and may smear in print. Make the code bigger or shorten its
-              content.
+              {t("eachDotIsOnlyValue", {
+                value: Math.round(layout.moduleSize * 100) / 100,
+              })}
             </p>
           )}
-          {colorMode === "cmyk" && (
-            <p>
-              CMYK uses a simple conversion without a color profile; ask your
-              printer if exact brand colors matter.
-            </p>
-          )}
-          <p>
-            PDF and EPS draw every dot as a vector shape and keep linear and
-            radial gradients as smooth vector shadings.
-          </p>
+          {colorMode === "cmyk" && <p>{t("cmykUsesASimpleConversion")}</p>}
+          <p>{t("pdfAndEpsDrawEvery")}</p>
         </section>
       ) : (
         <p className="text-destructive flex items-center gap-1.5 text-sm">
           <InfoCircle className="size-4 shrink-0" />
           {outOfRange
             ? distanceMin !== null && distanceMax !== null
-              ? `Enter ${limits.min}–${limits.max} ${unit}, or a distance of ${distanceMin}–${distanceMax} ${distanceUnit}.`
-              : `Enter ${limits.min}–${limits.max} ${unit}.`
+              ? t("enterMinMaxUnitOr", {
+                  min: limits.min,
+                  max: limits.max,
+                  unit,
+                  distanceMin,
+                  distanceMax,
+                  distanceUnit,
+                })
+              : t("enterMinMaxUnit", { min: limits.min, max: limits.max, unit })
             : layoutError}
         </p>
       )}

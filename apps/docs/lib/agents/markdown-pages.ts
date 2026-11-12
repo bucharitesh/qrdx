@@ -5,7 +5,7 @@ import {
   MCP_INTRO,
   MCP_STEPS,
   MCP_TOOLS,
-} from "@/app/(app)/(home)/mcp/content";
+} from "@/app/[lang]/(home)/mcp/content";
 import {
   GUARANTEE_NAME,
   GUARANTEE_PROMISES,

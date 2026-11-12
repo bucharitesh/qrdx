@@ -2,6 +2,7 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import type { VenmoFormData } from "@/lib/validations/qr-content";
 import { venmoSchema } from "@/lib/validations/qr-content";
@@ -10,6 +11,7 @@ import type { VenmoContent } from "@/types/qr-content";
 import { encodeVenmo } from "@/utils/qr-content-encoder";
 
 export function VenmoForm() {
+  const t = useTranslations("editor.contentForms.venmoForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -45,12 +47,12 @@ export function VenmoForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="venmo-username">
-          Venmo username *
+          {t("venmoUsername")}
         </Label>
         <Input
           id="venmo-username"
           type="text"
-          placeholder="@username"
+          placeholder={t("username")}
           value={venmoData.username}
           onChange={(e) =>
             setVenmoData({ ...venmoData, username: e.target.value })
@@ -64,7 +66,7 @@ export function VenmoForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="venmo-amount">
-          Amount ($)
+          {t("amount")}
         </Label>
         <Input
           id="venmo-amount"
@@ -83,19 +85,19 @@ export function VenmoForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="venmo-note">
-          Note
+          {t("note")}
         </Label>
         <Input
           id="venmo-note"
           type="text"
-          placeholder="Payment for..."
+          placeholder={t("paymentFor")}
           value={venmoData.note}
           onChange={(e) => setVenmoData({ ...venmoData, note: e.target.value })}
         />
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open Venmo with these payment details
+        {t("scanningWillOpenVenmoWith")}
       </p>
     </div>
   );

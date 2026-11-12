@@ -1,6 +1,7 @@
 import { toast } from "@repo/design-system";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createTheme, deleteTheme, updateTheme } from "@/actions/qr-themes";
 import { track } from "@/lib/analytics";
 import { isUnauthorized } from "@/lib/handle-unauthorized";
@@ -10,7 +11,15 @@ import { ErrorCode } from "@/types/errors";
 import type { Theme, ThemeStyles } from "@/types/theme";
 import { themeKeys } from "./use-themes-data";
 
-function handleMutationError(error: Error, operation: string) {
+type Translate = ReturnType<
+  typeof useTranslations<"editor.hooks.useThemeMutations">
+>;
+
+function handleMutationError(
+  error: Error,
+  operation: "create" | "update" | "delete",
+  t: Translate,
+) {
   if (isUnauthorized(error)) {
     return error;
   }
@@ -26,17 +35,17 @@ function handleMutationError(error: Error, operation: string) {
   const getErrorMessage = (error: Error) => {
     switch (error.name) {
       case "UnauthorizedError":
-        return "Please sign in to continue.";
+        return t("errors.signIn");
       case "ValidationError":
-        return error.message || "Invalid input provided.";
+        return error.message || t("errors.invalidInput");
       case "ThemeNotFoundError":
-        return "Theme not found.";
+        return t("errors.notFound");
       default:
-        return "An unexpected error occurred. Please try again.";
+        return t("errors.unexpected");
     }
   };
 
-  toast.error(`Failed to ${operation} theme`, {
+  toast.error(t(`failed.${operation}`), {
     description: getErrorMessage(error),
   });
 
@@ -44,6 +53,7 @@ function handleMutationError(error: Error, operation: string) {
 }
 
 export function useCreateTheme() {
+  const t = useTranslations("editor.hooks.useThemeMutations");
   const queryClient = useQueryClient();
   const { registerPreset } = useThemePresetStore();
   const { openGetProDialog } = useGetProDialogStore();
@@ -55,7 +65,7 @@ export function useCreateTheme() {
       // Handle theme limit error explicitly (returns ActionResult, not thrown)
       if (!result.success) {
         if (result.error.code === ErrorCode.THEME_LIMIT_REACHED) {
-          toast.error("Theme limit reached", {
+          toast.error(t("themeLimitReached"), {
             description: result.error.message,
           });
           openGetProDialog();
@@ -83,8 +93,8 @@ export function useCreateTheme() {
         canEdit: true,
       });
 
-      toast.success("Theme created", {
-        description: `"${data.name}" has been created successfully.`,
+      toast.success(t("themeCreated"), {
+        description: t("nameHasBeenCreatedSuccessfully", { name: data.name }),
       });
     },
     onError: (error) => {
@@ -92,7 +102,7 @@ export function useCreateTheme() {
       if ((error as Error).message.includes("limit")) {
         return;
       }
-      handleMutationError(error as Error, "create");
+      handleMutationError(error as Error, "create", t);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: themeKeys.lists() });
@@ -101,6 +111,7 @@ export function useCreateTheme() {
 }
 
 export function useUpdateTheme() {
+  const t = useTranslations("editor.hooks.useThemeMutations");
   const queryClient = useQueryClient();
   const { updatePreset } = useThemePresetStore();
 
@@ -154,8 +165,8 @@ export function useUpdateTheme() {
         styles: data.style,
       });
 
-      toast.success("Theme updated", {
-        description: `"${data.name}" has been updated successfully.`,
+      toast.success(t("themeUpdated"), {
+        description: t("nameHasBeenUpdatedSuccessfully", { name: data.name }),
       });
     },
     onError: (error, variables, context) => {
@@ -168,7 +179,7 @@ export function useUpdateTheme() {
           context.previousTheme,
         );
       }
-      handleMutationError(error as Error, "update");
+      handleMutationError(error as Error, "update", t);
     },
     onSettled: (_data, _error, variables) => {
       queryClient.invalidateQueries({ queryKey: themeKeys.lists() });
@@ -180,6 +191,7 @@ export function useUpdateTheme() {
 }
 
 export function useDeleteTheme() {
+  const t = useTranslations("editor.hooks.useThemeMutations");
   const queryClient = useQueryClient();
   const { unregisterPreset } = useThemePresetStore();
   const router = useRouter();
@@ -203,8 +215,8 @@ export function useDeleteTheme() {
       unregisterPreset(themeId);
       queryClient.removeQueries({ queryKey: themeKeys.detail(themeId) });
 
-      toast.success("Theme deleted", {
-        description: `"${data.name}" has been deleted successfully.`,
+      toast.success(t("themeDeleted"), {
+        description: t("nameHasBeenDeletedSuccessfully", { name: data.name }),
       });
       router.refresh();
     },
@@ -212,7 +224,7 @@ export function useDeleteTheme() {
       if (context?.previousThemes) {
         queryClient.setQueryData(themeKeys.lists(), context.previousThemes);
       }
-      handleMutationError(error as Error, "delete");
+      handleMutationError(error as Error, "delete", t);
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: themeKeys.lists() });

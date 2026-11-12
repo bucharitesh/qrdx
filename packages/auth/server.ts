@@ -69,6 +69,7 @@ import {
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
+import { saveSignUpLocale } from "./sign-up-locale";
 import { twoFactorResetCancel } from "./two-factor-reset";
 import { unprovenAccessCleanup } from "./unproven-access";
 import { allUserInfoChecks, validateSocialSignUp } from "./verified-sign-up";
@@ -242,6 +243,8 @@ export const auth = betterAuth({
           } catch (error) {
             console.error("Could not create the new user's workspace", error);
           }
+          // The site's language at sign-up becomes the app's (./sign-up-locale.ts).
+          await saveSignUpLocale(user.id, ctx);
           // An affiliate referral the sign-up carried, for the app to check
           // and record (./referral.ts). Never throws, never waits.
           recordNewUserReferral(user, ctx);

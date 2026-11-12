@@ -8,6 +8,7 @@ import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { checkWorkspaceSlug } from "@/actions/organizations";
 
@@ -90,10 +91,11 @@ export function WorkspaceSlugField({
   hint: string;
   disabled?: boolean;
 }) {
+  const t = useTranslations("app.workspaces.workspaceSlugField");
   const describedBy = `${id}-status`;
   return (
     <div className="space-y-1.5">
-      <Label htmlFor={id}>Workspace URL</Label>
+      <Label htmlFor={id}>{t("workspaceUrl")}</Label>
       <div
         className={cn(
           "border-input focus-within:ring-ring/50 focus-within:border-ring flex h-9 items-center overflow-hidden rounded-md border shadow-xs transition-[color,box-shadow] focus-within:ring-[3px] dark:bg-input/30",
@@ -140,9 +142,9 @@ export function WorkspaceSlugField({
         {status.state === "blocked" || status.state === "unknown"
           ? status.message
           : status.state === "available"
-            ? "Available."
+            ? t("available")
             : status.state === "checking"
-              ? "Checking…"
+              ? t("checking")
               : hint}
       </p>
     </div>

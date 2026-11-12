@@ -8,7 +8,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { ArrowRight, Import as Download } from "iconsax-reactjs";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { downloadQRCode, QRCode } from "qrdx";
 import { type ComponentType, useEffect, useState } from "react";
 import { CopyButton } from "@/components/copy-button";
@@ -73,6 +73,7 @@ import { WhatsAppForm } from "@/components/editor/content-forms/whatsapp-form";
 import { WifiForm } from "@/components/editor/content-forms/wifi-form";
 import { YouTubeForm } from "@/components/editor/content-forms/youtube-form";
 import { InfoHint } from "@/components/help/info-hint";
+import { LocaleLink } from "@/components/i18n/locale-link";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { track } from "@/lib/analytics";
 import { useTrackQrGenerated } from "@/lib/analytics/react";
@@ -154,6 +155,7 @@ const FORMS: Partial<Record<ContentType, ComponentType>> = {
 };
 
 function LinkOnlyForm({ type }: { type: "dubsh" | "google-drive" }) {
+  const t = useTranslations("typeGenerator");
   const stored = useQREditorStore((state) => state.contentConfigs[type]);
   const initial =
     type === "dubsh"
@@ -176,21 +178,21 @@ function LinkOnlyForm({ type }: { type: "dubsh" | "google-drive" }) {
         : googleDriveSchema.safeParse(config);
 
     if (trimmed && !result.success) {
-      setError(result.error.issues[0]?.message ?? "Invalid link");
+      setError(result.error.issues[0]?.message ?? t("invalidLink"));
       return;
     }
 
     setError(null);
     setContentConfig(type, config);
     setValue(encodeQRContent(config));
-  }, [link, type]);
+  }, [link, type, t]);
 
   const isDub = type === "dubsh";
 
   return (
     <div className="space-y-2">
       <Label className="text-xs" htmlFor={`${type}-link`}>
-        {isDub ? "Dub short link *" : "Google Drive link *"}
+        {t(isDub ? "dubLabel" : "driveLabel")}
       </Label>
       <Input
         id={`${type}-link`}
@@ -208,9 +210,7 @@ function LinkOnlyForm({ type }: { type: "dubsh" | "google-drive" }) {
         <p className="text-destructive text-[11px]">{error}</p>
       ) : (
         <p className="text-muted-foreground text-[11px]">
-          {isDub
-            ? "Paste an existing short link. Connect Dub in the full editor to pick or create links."
-            : "Paste a Drive, Docs, Sheets or Slides link. Connect Google Drive in the full editor to browse your files."}
+          {t(isDub ? "dubHelp" : "driveHelp")}
         </p>
       )}
     </div>
@@ -243,6 +243,7 @@ const labelFor = (type: ContentType) =>
   CONTENT_TYPES_METADATA.find((meta) => meta.type === type)?.label ?? type;
 
 export function TypeGenerator({ type }: { type: ContentType }) {
+  const t = useTranslations("typeGenerator");
   const [ready, setReady] = useState(false);
   const [quietZone, setQuietZone] = useState(true);
   const [downloading, setDownloading] = useState<ImageFormat | null>(null);
@@ -305,7 +306,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         content_type: activeType,
       });
     } catch (error) {
-      toast.error("Download failed", {
+      toast.error(t("downloadFailed"), {
         description: error instanceof Error ? error.message : undefined,
       });
     } finally {
@@ -319,13 +320,13 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         {switched && (
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border bg-muted px-3 py-2 text-xs">
             <span>
-              Detected a {labelFor(activeType)} link.{" "}
-              <Link
+              {t("detected", { type: labelFor(activeType) })}{" "}
+              <LocaleLink
                 href={`/qr-code-generator/${activeType}`}
                 className="underline underline-offset-2"
               >
-                About {labelFor(activeType)} QR codes
-              </Link>
+                {t("about", { type: labelFor(activeType) })}
+              </LocaleLink>
             </span>
             <Button
               size="sm"
@@ -337,7 +338,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
                 }
               }}
             >
-              Back to {labelFor(type)}
+              {t("back", { type: labelFor(type) })}
             </Button>
           </div>
         )}
@@ -374,9 +375,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
           ) : (
             <div className="flex flex-col items-center gap-3 px-6 text-center">
               <HairlineFigure figure="Loupe" className="aspect-square w-28" />
-              <p className="text-sm text-muted-foreground">
-                Fill in the form to see your QR code.
-              </p>
+              <p className="text-sm text-muted-foreground">{t("empty")}</p>
             </div>
           )}
         </div>
@@ -384,7 +383,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         <div className="flex w-full items-center justify-between gap-3">
           <span className="flex items-center gap-1.5">
             <Label htmlFor="quiet-zone" className="text-xs">
-              Quiet zone (blank border)
+              {t("quietZone")}
             </Label>
             <InfoHint align="start" id="quiet-zone" />
           </span>
@@ -416,7 +415,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         <Button asChild variant="ghost" className="w-full">
           {/* The link names the type; what was typed stays in this browser's
               editor store, never in the address. */}
-          <Link
+          <LocaleLink
             href={playgroundHref({
               type: LINK_ONLY.has(activeType) ? "url" : activeType,
             })}
@@ -430,15 +429,15 @@ export function TypeGenerator({ type }: { type: ContentType }) {
               if (payload && activeType !== "url") store.setValue(payload);
             }}
           >
-            Customize in the full editor
+            {t("customize")}
             <ArrowRight className="size-4" />
-          </Link>
+          </LocaleLink>
         </Button>
 
         {payload && (
           <details className="w-full text-xs">
             <summary className="cursor-pointer text-muted-foreground">
-              Show encoded content
+              {t("showEncoded")}
             </summary>
             <div className="mt-2 flex items-start gap-1 rounded-md bg-muted p-2">
               <pre className="min-w-0 flex-1 whitespace-pre-wrap break-all font-mono">
@@ -450,7 +449,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         )}
 
         <p className="text-center text-[11px] text-muted-foreground">
-          Generated in your browser. The style comes from your editor settings.
+          {t("footnote")}
         </p>
       </div>
     </div>

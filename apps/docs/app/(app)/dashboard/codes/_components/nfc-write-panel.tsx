@@ -1,6 +1,7 @@
 "use client";
 
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
+import { useTranslations } from "next-intl";
 import { CodeQr } from "./code-qr";
 import { NfcWriter, useWebNfcSupport } from "./nfc-writer";
 
@@ -25,6 +26,7 @@ export function NfcWritePanel({
   /** This page's absolute URL, for the "open on Android" QR code */
   pageUrl: string;
 }) {
+  const t = useTranslations("app.dashboard.codes.nfcWritePanel");
   const { support, canLock } = useWebNfcSupport();
 
   if (support === "checking") {
@@ -46,22 +48,20 @@ export function NfcWritePanel({
     <div className="grid gap-6 sm:grid-cols-[1fr_auto]">
       <div className="min-w-0 space-y-4">
         <div className="space-y-1">
-          <p className="text-sm font-medium">This browser can't write tags</p>
+          <p className="text-sm font-medium">{t("thisBrowserCantWriteTags")}</p>
           <p className="text-muted-foreground text-sm">
-            Chrome on Android writes tags straight from this page. Scan the code
-            with an Android phone that has NFC, sign in, and write the tag
-            there.
+            {t("chromeOnAndroidWritesTags")}
           </p>
         </div>
         <div className="space-y-2">
-          <p className="text-sm font-medium">On iPhone</p>
+          <p className="text-sm font-medium">{t("onIphone")}</p>
           <ol className="text-muted-foreground list-decimal space-y-1.5 pl-5 text-sm marker:tabular-nums">
             {IPHONE_STEPS.map((step) => (
               <li key={step}>{step}</li>
             ))}
           </ol>
           <p className="text-muted-foreground text-xs">
-            Writing needs an iPhone 7 or later on iOS 13 or later.
+            {t("writingNeedsAnIphone7")}
           </p>
         </div>
       </div>
@@ -72,7 +72,7 @@ export function NfcWritePanel({
           value={pageUrl}
         />
         <figcaption className="text-muted-foreground text-center text-xs">
-          Open this page on an Android phone
+          {t("openThisPageOnAn")}
         </figcaption>
       </figure>
     </div>

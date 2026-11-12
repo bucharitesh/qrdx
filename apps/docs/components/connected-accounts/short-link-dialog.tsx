@@ -32,6 +32,7 @@ import {
   SLUG_SUPPORT,
 } from "@repo/integrations/src/capabilities/providers";
 import { SearchNormal1 } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useId, useRef, useState } from "react";
 import {
   createShortLink,
@@ -72,6 +73,7 @@ export function ShortLinkDialog({
   initialUrl = "",
   onDone,
 }: ShortLinkDialogProps) {
+  const t = useTranslations("editor.connections.shortLinkDialog");
   const ids = useId();
   const slugSupported =
     isShortLinkProvider(provider.slug) && SLUG_SUPPORT[provider.slug];
@@ -202,11 +204,10 @@ export function ShortLinkDialog({
                 src={provider.logo}
               />
             </span>
-            Short link with {provider.name}
+            {t("shortLinkWithName", { name: provider.name })}
           </DialogTitle>
           <DialogDescription>
-            The QR code encodes the short link. Change where it points later in{" "}
-            {provider.name}.
+            {t("theQrCodeEncodesThe", { name: provider.name })}
           </DialogDescription>
         </DialogHeader>
 
@@ -215,20 +216,20 @@ export function ShortLinkDialog({
           value={tab}
         >
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="create">Create new</TabsTrigger>
-            <TabsTrigger value="existing">Use existing</TabsTrigger>
+            <TabsTrigger value="create">{t("createNew")}</TabsTrigger>
+            <TabsTrigger value="existing">{t("useExisting")}</TabsTrigger>
           </TabsList>
 
           <TabsContent className="pt-2" value="create">
             <form className="space-y-4" onSubmit={create}>
               <div className="space-y-2">
-                <Label htmlFor={`${ids}-dest`}>Destination</Label>
+                <Label htmlFor={`${ids}-dest`}>{t("destination")}</Label>
                 <Input
                   autoCapitalize="none"
                   id={`${ids}-dest`}
                   inputMode="url"
                   onChange={(event) => setDestination(event.target.value)}
-                  placeholder="example.com/spring-menu"
+                  placeholder={t("exampleComSpringMenu")}
                   spellCheck={false}
                   value={destination}
                 />
@@ -236,7 +237,7 @@ export function ShortLinkDialog({
 
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-2">
-                  <Label htmlFor={`${ids}-domain`}>Domain</Label>
+                  <Label htmlFor={`${ids}-domain`}>{t("domain")}</Label>
                   {domains === null ? (
                     <Skeleton className="h-9 w-full rounded-full" />
                   ) : (
@@ -246,7 +247,7 @@ export function ShortLinkDialog({
                       value={domainId}
                     >
                       <SelectTrigger className="w-full" id={`${ids}-domain`}>
-                        <SelectValue placeholder="Default domain" />
+                        <SelectValue placeholder={t("defaultDomain")} />
                       </SelectTrigger>
                       <SelectContent>
                         {domains.map((domain) => (
@@ -259,13 +260,13 @@ export function ShortLinkDialog({
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor={`${ids}-slug`}>Back-half</Label>
+                  <Label htmlFor={`${ids}-slug`}>{t("backHalf")}</Label>
                   <Input
                     disabled={!slugSupported}
                     id={`${ids}-slug`}
                     onChange={(event) => setSlug(event.target.value)}
                     placeholder={
-                      slugSupported ? "spring-menu" : "Picked by Bitly"
+                      slugSupported ? t("springMenu") : t("pickedByBitly")
                     }
                     spellCheck={false}
                     value={slug}
@@ -274,18 +275,18 @@ export function ShortLinkDialog({
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor={`${ids}-title`}>Title</Label>
+                <Label htmlFor={`${ids}-title`}>{t("title")}</Label>
                 <Input
                   id={`${ids}-title`}
                   onChange={(event) => setTitle(event.target.value)}
-                  placeholder="Optional, shown in your dashboard"
+                  placeholder={t("optionalShownInYourDashboard")}
                   value={title}
                 />
               </div>
 
               {hostname && (
                 <p className="text-muted-foreground text-xs">
-                  Your link will look like{" "}
+                  {t("yourLinkWillLookLike")}
                   <span className="font-mono text-foreground">
                     {hostname}/
                     {slugSupported && slug.trim() ? slug.trim() : "…"}
@@ -302,7 +303,7 @@ export function ShortLinkDialog({
               <div className="flex justify-end">
                 <Button disabled={creating || !destinationUrl} type="submit">
                   {creating && <Spinner className="size-4 animate-spin" />}
-                  Create link
+                  {t("createLink")}
                 </Button>
               </div>
             </form>
@@ -315,10 +316,10 @@ export function ShortLinkDialog({
                 className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
               />
               <Input
-                aria-label={`Search ${provider.name} links`}
+                aria-label={t("searchNameLinks", { name: provider.name })}
                 className="pl-9"
                 onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search links"
+                placeholder={t("searchLinks")}
                 value={search}
               />
             </div>
@@ -336,7 +337,7 @@ export function ShortLinkDialog({
                 </div>
               ) : links.length === 0 ? (
                 <p className="p-6 text-center text-muted-foreground text-sm">
-                  {search.trim() ? "No links match." : "No links yet."}
+                  {search.trim() ? t("noLinksMatch") : t("noLinksYet")}
                 </p>
               ) : (
                 <ul className="flex flex-col p-1.5">
@@ -372,7 +373,7 @@ export function ShortLinkDialog({
                     variant="outline"
                   >
                     {listing && <Spinner className="size-3.5 animate-spin" />}
-                    Load more
+                    {t("loadMore")}
                   </Button>
                 </div>
               )}

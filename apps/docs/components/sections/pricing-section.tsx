@@ -409,9 +409,9 @@ export function PricingSection({
       action: {
         button: (
           <Button asChild className="w-full" variant="outline">
-            <Link href={isSignedIn ? "/dashboard" : playgroundHref()}>
+            <LocaleLink href={isSignedIn ? "/dashboard" : playgroundHref()}>
               {isSignedIn ? t("cards.goToDashboard") : t("tiers.free.cta")}
-            </Link>
+            </LocaleLink>
           </Button>
         ),
         caption: currentPlan === "free" ? t("cards.current") : undefined,

@@ -8,6 +8,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { GalleryEdit } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type FormEvent, useRef, useState } from "react";
 import {
   AVATAR_INPUT_ACCEPT,
@@ -62,6 +63,7 @@ function Avatar({
 }
 
 function AvatarField({ profile }: { profile: ProfileView }) {
+  const t = useTranslations("app.settings.account.profileSection");
   const router = useRouter();
   const { refetch } = authClient.useSession();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -78,7 +80,7 @@ function AvatarField({ profile }: { profile: ProfileView }) {
   const onFile = async (file: File | undefined) => {
     if (!file) return;
     if (file.size > AVATAR_INPUT_MAX_BYTES) {
-      toast.error("Choose a picture under 10 MB.");
+      toast.error(t("chooseAPictureUnder10"));
       return;
     }
     setBusy("upload");
@@ -87,11 +89,11 @@ function AvatarField({ profile }: { profile: ProfileView }) {
       try {
         blob = await squareImage(file, AVATAR_PIXELS);
       } catch {
-        toast.error("We couldn't read that picture. Try a PNG or JPEG.");
+        toast.error(t("weCouldntReadThatPicture"));
         return;
       }
       if (blob.size > AVATAR_MAX_BYTES) {
-        toast.error("That picture is too large. Try a smaller one.");
+        toast.error(t("thatPictureIsTooLarge"));
         return;
       }
       const form = new FormData();
@@ -151,7 +153,7 @@ function AvatarField({ profile }: { profile: ProfileView }) {
                 ) : (
                   <GalleryEdit aria-hidden />
                 )}
-                {image ? "Change picture" : "Upload picture"}
+                {image ? t("changePicture") : t("uploadPicture")}
               </Button>
             </>
           )}
@@ -163,16 +165,16 @@ function AvatarField({ profile }: { profile: ProfileView }) {
               variant="ghost"
             >
               {busy === "remove" && <Spinner className="animate-spin" />}
-              Remove
+              {t("remove")}
             </Button>
           )}
         </div>
         <p className="text-muted-foreground text-xs">
           {profile.canUpload
-            ? "PNG, JPEG or WebP. We crop it to a square."
+            ? t("pngJpegOrWebpWe")
             : image
-              ? "Picture uploads aren't set up on this server."
-              : "Your initials are shown. Picture uploads aren't set up on this server."}
+              ? t("pictureUploadsArentSetUp")
+              : t("yourInitialsAreShownPicture")}
         </p>
       </div>
     </div>
@@ -180,6 +182,7 @@ function AvatarField({ profile }: { profile: ProfileView }) {
 }
 
 function NameField({ initialName }: { initialName: string }) {
+  const t = useTranslations("app.settings.account.profileSection");
   const router = useRouter();
   const { refetch } = authClient.useSession();
   const [saved, setSaved] = useState(initialName);
@@ -200,11 +203,11 @@ function NameField({ initialName }: { initialName: string }) {
         }
         setSaved(trimmed);
         setName(trimmed);
-        toast.success("Name updated");
+        toast.success(t("nameUpdated"));
         void refetch();
         router.refresh();
       })
-      .catch(() => toast.error("Something went wrong. Please try again."))
+      .catch(() => toast.error(t("somethingWentWrongPleaseTry")))
       .finally(() => setPending(false));
   };
 
@@ -216,7 +219,7 @@ function NameField({ initialName }: { initialName: string }) {
         id="profile-name"
         maxLength={64}
         onChange={(event) => setName(event.target.value)}
-        placeholder="Your name"
+        placeholder={t("yourName")}
         value={name}
       />
       <Button
@@ -226,40 +229,33 @@ function NameField({ initialName }: { initialName: string }) {
         variant={changed && trimmed ? "default" : "outline"}
       >
         {pending && <Spinner className="animate-spin" />}
-        Save
+        {t("save")}
       </Button>
     </form>
   );
 }
 
 export function ProfileSection({ profile }: { profile: ProfileView }) {
+  const t = useTranslations("app.settings.account.profileSection");
   return (
     <SettingsSection
-      description="How you appear in QRdx and to people in your teams."
+      description={t("howYouAppearInQrdx")}
       id="profile"
-      title="Profile"
+      title={t("profile")}
     >
-      <SettingsRow
-        description="Shown in the header and in team member lists."
-        label="Picture"
-      >
+      <SettingsRow description={t("shownInTheHeaderAnd")} label={t("picture")}>
         <AvatarField profile={profile} />
       </SettingsRow>
       <SettingsRow
         description={
-          <span id="profile-name-help">
-            Your name or the name your team knows you by.
-          </span>
+          <span id="profile-name-help">{t("yourNameOrTheName")}</span>
         }
         htmlFor="profile-name"
-        label="Name"
+        label={t("name")}
       >
         <NameField initialName={profile.name} />
       </SettingsRow>
-      <SettingsRow
-        description="Sign-in codes and team invitations go here."
-        label="Email"
-      >
+      <SettingsRow description={t("signInCodesAndTeam")} label={t("email")}>
         <EmailField profile={profile} />
       </SettingsRow>
     </SettingsSection>
@@ -267,6 +263,7 @@ export function ProfileSection({ profile }: { profile: ProfileView }) {
 }
 
 function EmailField({ profile }: { profile: ProfileView }) {
+  const t = useTranslations("app.settings.account.profileSection");
   const [open, setOpen] = useState(false);
   return (
     <>
@@ -276,18 +273,18 @@ function EmailField({ profile }: { profile: ProfileView }) {
           {profile.emailVerified ? (
             <Badge variant="secondary">
               <Tick aria-hidden />
-              Verified
+              {t("verified")}
             </Badge>
           ) : (
-            <Badge variant="outline">Not verified</Badge>
+            <Badge variant="outline">{t("notVerified")}</Badge>
           )}
         </div>
         <Button onClick={() => setOpen(true)} size="sm" variant="outline">
-          Change
+          {t("change")}
         </Button>
       </div>
       <p className="text-muted-foreground mt-2 text-xs text-pretty">
-        Member since {profile.memberSince}.
+        {t("memberSinceMembersince", { memberSince: profile.memberSince })}
       </p>
       <ChangeEmailDialog
         currentEmail={profile.email}

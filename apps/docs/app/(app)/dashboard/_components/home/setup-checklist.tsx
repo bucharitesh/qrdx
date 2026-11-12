@@ -11,6 +11,7 @@ import { Progress } from "@repo/design-system/components/ui/progress";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight2, TickCircle } from "iconsax-reactjs";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useEffect, useState } from "react";
 import { useCreate } from "@/components/app-shell/create-actions";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
@@ -44,6 +45,7 @@ function TaskRow({
   label: string;
   action: ReactNode;
 }) {
+  const t = useTranslations("app.dashboard.home.setupChecklist");
   return (
     <li className="flex min-h-11 items-center gap-3 py-1.5">
       {done ? (
@@ -65,7 +67,7 @@ function TaskRow({
         )}
       >
         {label}
-        {done && <span className="sr-only"> (done)</span>}
+        {done && <span className="sr-only"> {t("done")}</span>}
       </span>
       {!done && action}
     </li>
@@ -88,6 +90,7 @@ function TaskLink({ href, children }: { href: string; children: ReactNode }) {
  * once everything is done, or after Hide (remembered in this browser).
  */
 export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
+  const t = useTranslations("app.dashboard.home.setupChecklist");
   const create = useCreate();
   const href = useWorkspaceHref();
   // Setting up is for people who can create; viewers just read.
@@ -100,7 +103,7 @@ export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
 
   const rows: Record<SetupTask["id"], { label: string; action: ReactNode }> = {
     code: {
-      label: "Create a dynamic QR code",
+      label: t("createADynamicQrCode"),
       action: (
         <Button
           className="shrink-0"
@@ -108,13 +111,13 @@ export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
           size="sm"
           variant="ghost"
         >
-          Create
+          {t("create")}
           <ArrowRight2 aria-hidden className="size-3.5" />
         </Button>
       ),
     },
     page: {
-      label: "Make a landing page or form",
+      label: t("makeALandingPageOr"),
       action: (
         <Button
           className="shrink-0"
@@ -122,26 +125,28 @@ export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
           size="sm"
           variant="ghost"
         >
-          Start
+          {t("start")}
           <ArrowRight2 aria-hidden className="size-3.5" />
         </Button>
       ),
     },
     theme: {
-      label: "Save a theme with your logo and colors",
+      label: t("saveAThemeWithYour"),
       action: (
         <TaskLink href={playgroundHref({ tab: "design", section: "logo" })}>
-          Design
+          {t("design")}
         </TaskLink>
       ),
     },
     team: {
-      label: "Invite a teammate",
-      action: <TaskLink href={href("/settings/team")}>Invite</TaskLink>,
+      label: t("inviteATeammate"),
+      action: <TaskLink href={href("/settings/team")}>{t("invite")}</TaskLink>,
     },
     domain: {
-      label: "Connect a custom domain",
-      action: <TaskLink href={href("/settings/domains")}>Connect</TaskLink>,
+      label: t("connectACustomDomain"),
+      action: (
+        <TaskLink href={href("/settings/domains")}>{t("connect")}</TaskLink>
+      ),
     },
   };
 
@@ -149,15 +154,15 @@ export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
     <Card>
       <CardHeader className="flex flex-row items-center justify-between gap-4">
         <div className="min-w-0 flex-1 space-y-2">
-          <CardTitle className="text-base">Get set up</CardTitle>
+          <CardTitle className="text-base">{t("getSetUp")}</CardTitle>
           <div className="flex items-center gap-3">
             <Progress
-              aria-label="Setup tasks done"
+              aria-label={t("setupTasksDone")}
               className="bg-muted h-1.5 max-w-48"
               value={(done / tasks.length) * 100}
             />
             <span className="text-muted-foreground shrink-0 text-xs">
-              {done} of {tasks.length} done
+              {t("doneOfLengthDone", { done, length: tasks.length })}
             </span>
           </div>
         </div>
@@ -170,7 +175,7 @@ export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
           size="sm"
           variant="ghost"
         >
-          Hide
+          {t("hide")}
         </Button>
       </CardHeader>
       <CardContent className="pt-0">

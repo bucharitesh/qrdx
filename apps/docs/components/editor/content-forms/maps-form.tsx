@@ -2,12 +2,14 @@
 
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useTranslations } from "next-intl";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { MapsContent } from "@/types/qr-content";
 import { encodeMaps } from "@/utils/qr-content-encoder";
 
 export function MapsForm() {
+  const t = useTranslations("editor.contentForms.mapsForm");
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
@@ -26,17 +28,17 @@ export function MapsForm() {
   return (
     <div className="space-y-2">
       <Label className="text-xs" htmlFor="maps-location">
-        Location *
+        {t("location")}
       </Label>
       <Input
         id="maps-location"
         type="text"
-        placeholder="Address or coordinates (40.7128, -74.0060)"
+        placeholder={t("addressOrCoordinates407128")}
         value={mapsData.location}
         onChange={(e) => setMapsData({ location: e.target.value })}
       />
       <p className="text-muted-foreground text-xs">
-        Scanning will open this place in Google Maps
+        {t("scanningWillOpenThisPlace")}
       </p>
     </div>
   );

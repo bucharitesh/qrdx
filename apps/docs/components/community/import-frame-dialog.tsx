@@ -11,6 +11,7 @@ import {
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
 import { DocumentUpload } from "iconsax-reactjs";
+import { useTranslations } from "next-intl";
 import { type FrameSpec, QRCodeSVG } from "qrdx";
 import { useEffect, useId, useRef, useState } from "react";
 import {
@@ -19,12 +20,6 @@ import {
 } from "@/actions/community";
 
 const MAX_BYTES = 200_000;
-
-const REF_LABELS = {
-  frame: "Frame color",
-  accent: "Accent color",
-  fixed: "Stays as it is",
-} as const;
 
 /**
  * Import an SVG as a frame: the file is converted on the server
@@ -40,6 +35,7 @@ export function ImportFrameDialog({
   onOpenChange: (open: boolean) => void;
   onImported: (spec: FrameSpec) => void;
 }) {
+  const t = useTranslations("community.importFrameDialog");
   const inputId = useId();
   const input = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState<string | null>(null);
@@ -80,11 +76,8 @@ export function ImportFrameDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Import an SVG frame</DialogTitle>
-          <DialogDescription>
-            Shapes and colors become a frame. Text, images and effects are left
-            out.
-          </DialogDescription>
+          <DialogTitle>{t("importAnSvgFrame")}</DialogTitle>
+          <DialogDescription>{t("shapesAndColorsBecomeA")}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
@@ -94,7 +87,7 @@ export function ImportFrameDialog({
           >
             <DocumentUpload aria-hidden className="size-5 shrink-0" />
             <span className="min-w-0 flex-1 truncate">
-              {fileName ?? "Choose an SVG file (up to 200 KB)"}
+              {fileName ?? t("chooseAnSvgFileUp")}
             </span>
             {pending && <Spinner className="size-4" />}
           </label>
@@ -135,7 +128,7 @@ export function ImportFrameDialog({
               <div className="min-w-0 space-y-3 text-xs">
                 {result.palette.length > 0 && (
                   <div className="space-y-1.5">
-                    <p className="font-medium">Colors</p>
+                    <p className="font-medium">{t("colors")}</p>
                     <ul className="space-y-1">
                       {result.palette.map((color) => (
                         <li
@@ -148,7 +141,7 @@ export function ImportFrameDialog({
                           />
                           <span className="font-mono">{color.color}</span>
                           <span className="text-muted-foreground">
-                            {REF_LABELS[color.ref]}
+                            {t(`refs.${color.ref}`)}
                           </span>
                         </li>
                       ))}
@@ -157,7 +150,7 @@ export function ImportFrameDialog({
                 )}
                 {result.warnings.length > 0 && (
                   <div className="space-y-1.5">
-                    <p className="font-medium">What changed</p>
+                    <p className="font-medium">{t("whatChanged")}</p>
                     <ul className="text-muted-foreground space-y-1">
                       {result.warnings.map((warning) => (
                         <li className="flex gap-1.5" key={warning.code}>
@@ -178,7 +171,7 @@ export function ImportFrameDialog({
 
         <DialogFooter>
           <Button onClick={() => onOpenChange(false)} variant="outline">
-            Cancel
+            {t("cancel")}
           </Button>
           <Button
             disabled={!result}
@@ -188,7 +181,7 @@ export function ImportFrameDialog({
               onOpenChange(false);
             }}
           >
-            Use this frame
+            {t("useThisFrame")}
           </Button>
         </DialogFooter>
       </DialogContent>

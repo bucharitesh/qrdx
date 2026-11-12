@@ -22,6 +22,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { type ReactNode, useState, useTransition } from "react";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
@@ -66,6 +67,7 @@ export function TwoFactorRequirementCard({
   /** Members without two-step verification (owners and admins only) */
   membersWithout: number | null;
 }) {
+  const t = useTranslations("app.dashboard.team.twoFactorRequirementCard");
   const router = useRouter();
   const { withConfirmation } = useConfirmation();
   const [pending, startTransition] = useTransition();
@@ -98,9 +100,7 @@ export function TwoFactorRequirementCard({
         return;
       }
       toast.success(
-        next
-          ? "Two-step verification is now required"
-          : "Two-step verification is no longer required",
+        next ? t("twoStepVerificationIsNow") : t("twoStepVerificationIsNo"),
       );
       router.refresh();
     });
@@ -119,27 +119,26 @@ export function TwoFactorRequirementCard({
     note = (
       <>
         {stored
-          ? `It's off while this workspace isn't on ${planName}, and applies again if it moves back.`
-          : `Requiring two-step verification comes with ${planName}.`}{" "}
+          ? t("itsOffWhileThisWorkspace", { planName })
+          : t("requiringTwoStepVerificationComes", { planName })}{" "}
         <Link className={`py-3 ${LINK}`} href="/pricing">
-          See plans
+          {t("seePlans")}
         </Link>
       </>
     );
   } else if (!canChange) {
     note = forbidden;
   } else if (!required && !viewerHasTwoFactor) {
-    note = (
-      <>
-        Turn on two-step verification for your own account first.{" "}
+    note = t.rich("turnOnTwoStepVerification", {
+      link: (chunks) => (
         <Link
           className={`py-3 ${LINK}`}
           href={`${TWO_FACTOR_SETTINGS_PATH}#${TWO_FACTOR_SECTION_ID}`}
         >
-          Profile & security
+          {chunks}
         </Link>
-      </>
-    );
+      ),
+    });
   } else if (required && membersWithout !== null) {
     note =
       membersWithout === 0
@@ -150,22 +149,19 @@ export function TwoFactorRequirementCard({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Two-step verification</CardTitle>
+        <CardTitle>{t("twoStepVerification")}</CardTitle>
         <CardDescription className="text-pretty">
-          Ask everyone in {workspaceName} to sign in with a second step, a
-          passkey or an authenticator app, so access to their email alone isn't
-          enough.
+          {t("askEveryoneInWorkspacenameTo", { workspaceName })}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="flex items-start justify-between gap-4">
           <div className="space-y-1">
             <Label htmlFor="require-two-factor">
-              Require two-step verification
+              {t("requireTwoStepVerification")}
             </Label>
             <p className="text-muted-foreground text-sm text-pretty">
-              Members without it can't open this workspace until they turn it
-              on. Nobody is emailed: they're told when they next open it.
+              {t("membersWithoutItCantOpen")}
             </p>
           </div>
           <Switch
@@ -188,15 +184,20 @@ export function TwoFactorRequirementCard({
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Require two-step verification?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t("requireTwoStepVerification2")}
+            </AlertDialogTitle>
             <AlertDialogDescription className="text-pretty">
-              {membersWithoutTwoFactor(membersWithout ?? 0)} They can't open{" "}
-              {workspaceName} until they do. Nobody is emailed; they're told
-              when they next open it.
+              {t("valueTheyCantOpenWorkspacename", {
+                value: membersWithoutTwoFactor(membersWithout ?? 0),
+                workspaceName,
+              })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={pending}>
+              {t("cancel")}
+            </AlertDialogCancel>
             <AlertDialogAction
               disabled={pending}
               onClick={(event) => {
@@ -204,7 +205,7 @@ export function TwoFactorRequirementCard({
                 save(true);
               }}
             >
-              Require
+              {t("require")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

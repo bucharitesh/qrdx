@@ -1,4 +1,5 @@
 "use client";
+import { useTranslations } from "next-intl";
 
 // "Suggest" next to the builder's back-half and tags fields. One request
 // fills both: up to three free back-halves and up to three tags, shown as
@@ -127,13 +128,14 @@ export function SuggestButton({
   /** For screen readers: "Suggest back-halves" */
   label: string;
 }) {
+  const t = useTranslations("codeBuilder.builderSuggest");
   return (
     <button
       aria-label={label}
       className="text-muted-foreground hover:text-foreground focus-visible:ring-ring/50 inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-xs font-medium transition-colors outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50"
       disabled={disabled || loading}
       onClick={onClick}
-      title={disabled ? "Enter a destination first" : undefined}
+      title={disabled ? t("enterADestinationFirst") : undefined}
       type="button"
     >
       {loading ? (
@@ -141,7 +143,7 @@ export function SuggestButton({
       ) : (
         <Magicpen aria-hidden className="size-3.5" />
       )}
-      Suggest
+      {t("suggest")}
     </button>
   );
 }
@@ -186,6 +188,7 @@ export function SlugSuggestions({
   value: string;
   onPick: (slug: string) => void;
 }) {
+  const t = useTranslations("codeBuilder.builderSuggest");
   if (!(suggestions || error)) return null;
   return (
     <ChipRow
@@ -195,7 +198,7 @@ export function SlugSuggestions({
           ? "No free back-halves came up. Try typing one."
           : null)
       }
-      label="Suggested back-halves"
+      label={t("suggestedBackHalves")}
     >
       {suggestions?.map((slug) => (
         <button
@@ -231,6 +234,7 @@ export function TagSuggestions({
   onChange: (tagIds: string[]) => void;
   onCreated: (tag: TagRow) => void;
 }) {
+  const t = useTranslations("codeBuilder.builderSuggest");
   const [isPending, startTransition] = useTransition();
   if (!(suggestions || error)) return null;
   const byName = new Map(
@@ -258,7 +262,7 @@ export function TagSuggestions({
         onCreated(result.data);
         onChange([...value, result.data.id]);
       } catch {
-        toast.error("Couldn't create the tag. Try again.");
+        toast.error(t("couldntCreateTheTagTry"));
       }
     });
   };
@@ -269,7 +273,7 @@ export function TagSuggestions({
         error ??
         (suggestions?.length === 0 ? "No tag ideas for this link." : null)
       }
-      label="Suggested tags"
+      label={t("suggestedTags")}
     >
       {open.map((name) => (
         <button
@@ -285,7 +289,7 @@ export function TagSuggestions({
       ))}
       {open.length === 0 && (suggestions?.length ?? 0) > 0 && (
         <span className="text-muted-foreground text-xs">
-          All suggested tags added.
+          {t("allSuggestedTagsAdded")}
         </span>
       )}
     </ChipRow>
