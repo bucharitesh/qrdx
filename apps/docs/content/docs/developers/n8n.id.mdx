@@ -1,0 +1,77 @@
+---
+title: "n8n"
+description: "Buat kode QR, kelola kode dinamis, baca pemindaian, dan jalankan alur kerja n8n dari peristiwa QRdx dengan node komunitas QRdx untuk n8n."
+icon: Blocks
+---
+
+Paket `@qrdx/n8n-nodes-qrdx` menambahkan dua node ke [n8n](https://n8n.io):
+
+- **QRdx** membuat gambar kode QR, membuat dan mengedit [kode dinamis](/docs/dynamic-qr-codes), serta membaca pemindaian dan tema tersimpan Anda. Agen AI n8n dapat menggunakannya sebagai alat.
+- **QRdx Trigger** menjalankan alur kerja saat kode Anda dipindai, dibuat, atau diubah, atau saat seseorang mengirim formulir di [halaman yang di-hosting](/docs/forms-and-pages).
+
+Paket ini tersedia di npm sebagai [`@qrdx/n8n-nodes-qrdx`](https://www.npmjs.com/package/@qrdx/n8n-nodes-qrdx) dan dipasang di n8n yang di-host sendiri. n8n Cloud hanya menjalankan node komunitas yang sudah diverifikasi oleh n8n, dan node ini belum diverifikasi.
+
+Untuk menerima peristiwa tanpa memasang apa pun, gunakan [node Webhook](#without-the-package).
+
+## Pasang [#install]
+
+Di n8n, buka **Settings → Community Nodes**, klik **Install**, masukkan `@qrdx/n8n-nodes-qrdx`, setujui catatan tentang node komunitas, lalu klik **Install**. Setelah itu, cari **QRdx** di panel node.
+
+Jika n8n Anda menyembunyikan halaman tersebut, atau Anda mengelolanya lewat baris perintah, pasang paket di folder `nodes` pada folder pengguna n8n Anda, lalu mulai ulang n8n:
+
+```bash
+mkdir -p ~/.n8n/nodes
+cd ~/.n8n/nodes
+npm install @qrdx/n8n-nodes-qrdx
+```
+
+Jika n8n berjalan di Docker, jalankan perintah yang sama di dalam kontainer (`docker exec -it n8n sh`) atau atur di image Anda.
+
+## Hubungkan workspace Anda [#connect-your-workspace]
+
+Buat [kunci API](/docs/developers/api-keys) di [Settings → API keys & apps](/dashboard?to=settings/developers), lalu tambahkan kredensial **QRdx API** di n8n dengan kunci tersebut. Biarkan **Base URL** tetap `https://api.qrdx.dev/v1` kecuali Anda [meng-host sendiri](/docs/self-hosting) QRdx; jika demikian, gunakan alamat Anda diikuti `/api/v1`.
+
+n8n menguji kredensial dengan membaca profil Anda, yang memerlukan cakupan Profile, jadi kunci dengan akses penuh paling mudah. Kunci bekerja pada workspace tempat kunci itu dibuat. Membuat gambar QR sama sekali tidak memerlukan kredensial.
+
+## Node QRdx [#the-qrdx-node]
+
+| Sumber daya | Operasi |
+| --- | --- |
+| QR Image | Membuat gambar PNG, WebP, SVG, atau EPS. Tanpa kunci API, tanpa akun |
+| Code | Create, Get, Get Many, Update (termasuk arsipkan dan pulihkan), Delete |
+| Scan | Get Many (pemindaian individual, terbaru lebih dulu), Get Summary (total, jumlah harian, serta negara, kota, perangkat, browser, dan perujuk teratas) |
+| Theme | Get, Get Many |
+
+**Generate** menaruh gambar di bidang biner yang dapat Anda lampirkan ke email atau unggah ke mana saja. Anda dapat mengatur ukuran, warna, bentuk body, mata, dan titik mata, koreksi kesalahan, margin, [bingkai](/docs/features/frames) beserta labelnya, dan ikon logo. Keluarannya juga memuat `url`: tautan ke gambar yang sama dari [Image API](/docs/developers/image-api), siap dipakai di tag `<img>`.
+
+Operasi kode dan pemindaian memanggil [REST API](/docs/developers/rest-api) dengan kunci Anda dan dihitung dalam kuota API harian workspace. **Get Many** menelusuri halaman hasil untuk Anda. Galat mempertahankan pesan asli QRdx; misalnya, back-half kustom memerlukan Pro atau Business, dan node menampilkan [galat](/docs/developers/errors) yang dikembalikan QRdx pada paket Gratis.
+
+## Node QRdx Trigger [#the-qrdx-trigger-node]
+
+Pilih peristiwanya, lalu aktifkan alur kerja. Node berlangganan melalui [REST Hooks API](/docs/webhooks#zapier-make-and-n8n-rest-hooks) dan berhenti berlangganan saat Anda menonaktifkan alur kerja. Langganan tampil di Settings → Webhooks selama aktif.
+
+| Peristiwa | Kapan |
+| --- | --- |
+| Scans | Kode dipindai. Pengiriman dikelompokkan: satu per menit dengan hingga 100 pemindaian dan jumlah pastinya |
+| Scan Milestones | Pemindaian pertama sebuah kode, lalu pemindaian ke-10, 100, 500, 1.000, dan seterusnya |
+| New Codes | Kode dinamis dibuat |
+| Code Changes | Tujuan, judul, desain, atau domain sebuah kode berubah |
+| Form Submissions | Seseorang mengirim formulir di halaman yang di-hosting |
+
+Node memeriksa `X-QRdx-Signature` pada setiap pengiriman dengan rahasia penandatanganan yang dikembalikan QRdx saat berlangganan, dan menjawab `401` untuk apa pun yang tidak cocok. Aktifkan **Output One Item per Scan** untuk mendapatkan kelompok Scans sebagai item terpisah, dan **Include Test Events** untuk menjalankan alur kerja saat Anda mengklik **Send test** di Settings → Webhooks. Payload-nya sama seperti yang dijelaskan di [Webhook](/docs/webhooks#payloads).
+
+Trigger memerlukan:
+
+- paket Business, karena [webhook](/docs/webhooks) termasuk di dalamnya
+- kunci API dengan cakupan Manage codes
+- n8n pada alamat `https://` publik, karena QRdx tidak mengirim ke `localhost` atau jaringan privat. Jika di belakang proxy, atur `WEBHOOK_URL` n8n. Ini juga berlaku untuk URL uji yang digunakan n8n saat Anda mengklik **Listen for test event**
+
+## Tanpa paket [#without-the-package]
+
+QRdx dapat mengirim peristiwa langsung ke node **Webhook** n8n, di n8n Cloud maupun n8n yang di-host sendiri:
+
+1. Tambahkan node Webhook, atur metode HTTP-nya ke `POST`, lalu salin URL produksinya.
+2. Aktifkan alur kerja. URL produksi hanya merespons saat alur kerja aktif.
+3. Di [Settings → Webhooks](/dashboard?to=settings/webhooks), klik **Add endpoint**, tempel URL tersebut, dan pilih peristiwanya.
+
+Setiap peristiwa menjalankan alur kerja dengan payload JSON. Untuk memeriksa tanda tangan, baca `X-QRdx-Signature` di node Code dan [verifikasi](/docs/webhooks#verify-signatures) dengan rahasia penandatanganan endpoint.

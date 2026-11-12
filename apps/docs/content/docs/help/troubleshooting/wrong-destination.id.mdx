@@ -1,0 +1,45 @@
+---
+title: "Kode membuka halaman yang salah"
+description: "Mengapa kode QR membuka tautan lama atau tidak terduga, dan cara mengetahui isi sebenarnya dari kode tersebut."
+---
+
+## Pertama, lihat isi kode [#first-see-what-the-code-holds]
+
+Foto kode yang sudah dicetak, lalu unggah ke [pemeriksa pemindaian](/tools/scan-checker). Alat ini menampilkan dengan tepat apa isi kode tersebut.
+
+- Jika yang muncul adalah alamat situs web Anda, kode tersebut **statis**.
+- Jika yang muncul adalah tautan pendek seperti `qrdx.dev/q/…`, kode tersebut **dinamis**.
+
+## Kode statis [#a-static-code]
+
+Kode statis menyimpan tautan di dalam kodenya. Tautan ini tidak dapat diubah setelah dicetak.
+
+Hal ini terjadi jika kode diunduh sebelum dijadikan dinamis. Untuk memperbaikinya, cetak versi dinamisnya. Lihat [Membuat kode QR dinamis](/docs/help/dynamic-codes/create).
+
+## Kode dinamis [#a-dynamic-code]
+
+Buka kode di **Codes** lalu periksa setiap hal berikut.
+
+### Tujuan baru belum tersimpan [#the-new-destination-wasnt-saved]
+
+Di Playground, mengubah alamat saja tidak cukup: klik **Point it to the new address**. Di dasbor, gunakan **Edit link** dan **Save changes**. Lihat [Mengubah tujuan kode](/docs/help/dynamic-codes/change-the-link).
+
+### Aturan smart routing cocok [#a-smart-routing-rule-matched]
+
+Aturan dapat mengarahkan sebagian pemindaian ke tempat lain, misalnya berdasarkan perangkat atau negara. Aturan pertama yang cocok yang berlaku. Buka **Smart routing** lalu klik **Test your rules**.
+
+### Uji A/B sedang berjalan [#an-ab-test-is-running]
+
+Setiap pengunjung melihat satu versi untuk hari itu. Orang lain mungkin melihat halaman yang berbeda.
+
+### Kode dijeda atau telah berakhir [#the-code-is-paused-or-ended]
+
+Kode yang dijeda atau berakhir akan membuka **Fallback URL**, jika Anda telah mengaturnya. Periksa **Access & schedule**.
+
+### Parameter UTM ditambahkan [#utm-parameters-were-added]
+
+Jika Anda mengatur parameter UTM, pemindaian akan membuka tautan Anda dengan tag `utm_` tambahan. Ini wajar, dan halamannya tetap sama.
+
+## Masih melihat halaman lama? [#still-seeing-the-old-page]
+
+QRdx tidak menyimpan cache pengalihan, sehingga pemindaian berikutnya menggunakan tujuan yang baru. Jika ponsel Anda menampilkan versi lama dari halaman itu sendiri, muat ulang halaman tersebut di browser.

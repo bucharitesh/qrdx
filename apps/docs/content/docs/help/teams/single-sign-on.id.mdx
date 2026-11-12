@@ -1,0 +1,162 @@
+---
+title: "Single sign-on (SSO)"
+description: "Biarkan tim Anda masuk ke QRdx dengan penyedia identitas perusahaan Anda, melalui OIDC atau SAML 2.0. Bagian dari paket Business."
+---
+
+Single sign-on memungkinkan orang di perusahaan Anda masuk ke QRdx melalui penyedia identitas Anda, bukan dengan kode email, Google, atau GitHub. Anda menyiapkan satu koneksi untuk satu domain email, membuktikan bahwa Anda memiliki domain tersebut, lalu orang di domain itu akan ditawari single sign-on saat memasukkan email kerja mereka untuk masuk. Masuk dengan cara ini menjadikan mereka anggota ruang kerja Anda. Anda juga dapat [mewajibkannya](#require-single-sign-on), sehingga penyedia identitas Anda menjadi satu-satunya jalur masuk untuk domain tersebut.
+
+Single sign-on adalah bagian dari paket **Business**. Sebuah ruang kerja memilikinya jika salah satu pemilik atau anggota penagihannya menggunakan Business. Lihat [Kursi dan batas ruang kerja](/docs/help/teams/seats).
+
+Single sign-on adalah fitur Business di bawah lisensi komersial QRdx. Server QRdx yang di-hosting sendiri memerlukan kunci lisensi (`QRDX_EE_LICENSE`) untuk mengaktifkannya; lihat [Hosting mandiri](/docs/self-hosting#optional-services).
+
+## Sebelum memulai [#before-you-start]
+
+- Anda harus menjadi **pemilik** atau **admin** ruang kerja.
+- Anda harus dapat menambahkan catatan DNS untuk domain email Anda, seperti `acme.com`.
+- Menyiapkan, mengubah, memverifikasi, atau menghapus koneksi, serta mewajibkan single sign-on, akan meminta Anda [mengonfirmasi bahwa ini Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) terlebih dahulu: dengan passkey atau kode verifikasi dua langkah Anda, atau, jika verifikasi dua langkah nonaktif, dengan kode yang kami kirim lewat email atau, untuk koneksi OIDC, dengan masuk kembali melaluinya. Satu konfirmasi berlaku untuk perubahan Anda selama 10 menit berikutnya.
+
+QRdx menggunakan pengaturan standar OIDC dan SAML 2.0 yang diminta penyedia identitas. Langkah-langkah di bawah mencantumkan nilainya; tempat menempelkannya bergantung pada penyedia Anda.
+
+## Penyiapan dengan OIDC [#set-up-with-oidc]
+
+1. Di ruang kerja, buka **Settings** → **Single sign-on**. **OIDC** terpilih.
+2. Di penyedia identitas Anda, buat aplikasi web (klien OIDC) untuk QRdx dan tambahkan **Redirect URI** yang ditampilkan di halaman sebagai pengalihan yang diizinkan.
+3. Kembali di QRdx, isi:
+   - **Email domain**: domain perusahaan Anda, seperti `acme.com`.
+   - **Issuer URL**: issuer penyedia Anda. QRdx membaca sisanya dari `<issuer>/.well-known/openid-configuration`, jadi issuer harus sama persis dengan dokumen tersebut.
+   - **Client ID** dan **Client secret** dari aplikasi yang Anda buat.
+4. Klik **Save connection**.
+
+QRdx meminta cakupan (scope) `openid`, `email`, dan `profile` serta menggunakan PKCE. Issuer harus dapat dijangkau melalui HTTPS dari internet; penyedia identitas di jaringan privat tidak didukung.
+
+## Penyiapan dengan SAML 2.0 [#set-up-with-saml-20]
+
+1. Di ruang kerja, buka **Settings** → **Single sign-on** dan pilih **SAML 2.0**.
+2. Di penyedia identitas Anda, buat aplikasi SAML untuk QRdx dengan nilai yang ditampilkan di halaman:
+   - **Assertion Consumer Service (ACS) URL**
+   - **Entity ID (audience)**
+   - **Metadata URL**, jika penyedia Anda dapat membaca pengaturan QRdx dari sebuah URL
+3. Kirim alamat email orang tersebut sebagai **NameID** (format email) atau sebagai atribut bernama `email`. Untuk nama mereka, kirim `givenName` dan `surname` (atau `firstName` dan `lastName`, atau nama X.500 `urn:oid:2.5.4.42` dan `urn:oid:2.5.4.4`), atau nama tampilan (`displayName`, `name`, atau `urn:oid:2.16.840.1.113730.3.1.241`). Tanpa nama, QRdx menggunakan bagian alamat sebelum tanda @.
+4. Kembali di QRdx, masukkan **Email domain** Anda dan tempelkan **metadata XML** penyedia Anda. Atau klik **Enter the details instead** dan isi **Sign-in URL (SSO URL)**, **entity ID** penyedia, dan **signing certificate**-nya.
+5. Klik **Save connection**.
+
+Penyedia Anda harus menandatangani responsnya dan menyertakan URL masuk HTTP-Redirect. QRdx menolak respons tanpa tanda tangan yang valid atau tanpa waktu validitas (`NotBefore` dan `NotOnOrAfter`).
+
+Tanda tangan harus menggunakan SHA-256 atau yang lebih kuat. QRdx menolak respons yang ditandatangani atau di-digest dengan SHA-1; jika penyedia Anda diatur ke SHA-1 untuk aplikasi QRdx, ubah ke SHA-256.
+
+QRdx tidak menandatangani permintaan masuknya. Jika penyedia Anda diatur untuk mewajibkan permintaan bertanda tangan dari aplikasi QRdx, nonaktifkan pengaturan itu, atau orang akan ditolak sebelum sempat masuk.
+
+## Verifikasi domain Anda [#verify-your-domain]
+
+Tidak ada yang dapat masuk melalui koneksi ini sampai Anda membuktikan bahwa Anda memiliki domain tersebut.
+
+1. Di bagian **Verify** pada halaman Single sign-on, salin **Name** dan **Value** catatan TXT.
+2. Tambahkan catatan TXT di penyedia DNS Anda.
+3. Klik **Verify**. Catatan baru dapat memerlukan beberapa menit, kadang lebih lama, untuk muncul. Jika QRdx belum menemukan catatannya, QRdx akan memberi tahu; tunggu lalu coba lagi.
+
+Nilai verifikasi berlaku selama 7 hari. Jika kedaluwarsa, muat ulang halaman untuk mendapatkan nilai baru dan perbarui catatannya.
+
+Domain yang terverifikasi juga mencakup subdomainnya, jadi `acme.com` juga mencakup `eu.acme.com`. Sebuah domain hanya dapat diverifikasi untuk single sign-on di satu ruang kerja. Jika ruang kerja lain sudah memverifikasinya, atau domain yang tumpang tindih dengannya, QRdx akan memberi tahu Anda saat Anda menyimpan atau memverifikasi.
+
+## Yang dilihat tim Anda [#what-your-team-sees]
+
+1. Di halaman masuk, mereka memasukkan email kerja dan mengklik **Email me a code**, seperti masuk dengan email pada umumnya.
+2. Sebelum mengirim kode, QRdx memeriksa domain alamat tersebut. Untuk domain Anda yang terverifikasi, QRdx menyatakan bahwa perusahaan Anda masuk dengan single sign-on dan menawarkan **Continue with SSO**. Tidak ada kode yang dikirim kecuali mereka memintanya.
+3. **Continue with SSO** mengarahkan mereka ke penyedia identitas Anda, lalu kembali ke QRdx, sudah masuk dan berada di ruang kerja Anda.
+
+Mereka dapat memilih **Email me a code** sebagai gantinya, kecuali Anda [mewajibkan single sign-on](#require-single-sign-on). **Sign in with SSO**, di bawah kolom email, juga tetap berfungsi: tombol ini meminta email kerja mereka dan langsung menuju penyedia identitas Anda.
+
+QRdx menawarkan single sign-on hanya selama domain terverifikasi dan ruang kerja menggunakan paket Business. Pemeriksaan ini hanya melihat domain, sehingga tidak pernah menunjukkan apakah seseorang memiliki akun QRdx.
+
+Jika seseorang mengaktifkan [verifikasi dua langkah](/docs/help/privacy-and-security/two-step-verification), QRdx tetap meminta langkah kedua setelah penyedia identitas Anda memasukkan mereka, kecuali mereka memilih untuk tidak ditanya lagi di perangkat itu. Hal yang sama berlaku saat single sign-on diwajibkan.
+
+Setiap proses masuk SSO memastikan orang tersebut berada di ruang kerja Anda:
+
+- Orang yang bukan anggota bergabung dengan peran yang Anda pilih di **New members**: **Member** (bawaan) atau **Viewer**.
+- Orang dengan undangan tertunda ke ruang kerja bergabung dengan peran dalam undangan, dan undangan ditandai diterima.
+- Anggota tetap memiliki peran yang sudah mereka miliki. Anda dapat mengubah peran siapa pun di halaman **Team**.
+
+Ini termasuk orang yang pernah Anda keluarkan dari ruang kerja: mereka bergabung kembali saat masuk dengan SSO berikutnya.
+
+Jika seseorang sudah memiliki akun QRdx dengan alamat email yang sama, masuk dengan SSO akan menggunakan akun tersebut. Mereka tetap memiliki ruang kerja sendiri beserta seluruh isinya.
+
+QRdx hanya memasukkan seseorang melalui koneksi Anda jika alamat yang dikirim penyedia Anda berada di domain Anda yang terverifikasi. Cara masuk mereka yang lain, seperti kode email ke alamat yang sama, tetap berfungsi kecuali Anda mewajibkan single sign-on.
+
+Alamat email harus diverifikasi di penyedia identitas Anda. Jika penyedia memberi tahu QRdx bahwa alamat belum diverifikasi (klaim `email_verified` OIDC, atau atribut SAML `email_verified` atau `emailVerified`, bernilai false), QRdx tidak memasukkan orang tersebut, tidak membuat akun untuknya, dan tidak menautkan akun yang sudah ada. Mereka akan melihat pesan yang meminta admin Anda memverifikasi alamat di sana. Jika penyedia Anda tidak menyatakan keduanya, QRdx memercayainya untuk domain Anda yang terverifikasi.
+
+Keluar dari QRdx tidak mengeluarkan siapa pun dari penyedia identitas Anda. Selama mereka masih masuk di sana, proses masuk SSO berikutnya langsung berhasil tanpa meminta kata sandi. Di komputer bersama, keluar juga dari penyedia identitas Anda.
+
+## Membuka QRdx dari penyedia identitas Anda [#open-qrdx-from-your-identity-provider]
+
+Dengan koneksi SAML, orang juga dapat memulai dari penyedia identitas Anda: mengeklik aplikasi QRdx di dasbor aplikasinya akan memasukkan mereka ke QRdx tanpa melalui halaman masuk QRdx. Hal ini sering disebut sebagai proses masuk yang dimulai dari IdP (IdP-initiated sign-in).
+
+Di penyedia identitas Anda, buka aplikasi SAML yang Anda buat untuk QRdx dan pastikan aplikasi tersebut ditampilkan kepada orang-orang di dasbor aplikasi serta mengizinkan proses masuk yang dimulai dari penyedia identitas. Orang akan masuk ke dasbor di workspace Anda. QRdx mengabaikan **RelayState** apa pun yang dikirim aplikasi, sehingga proses masuk yang tidak diminta QRdx tidak akan pernah menentukan halaman yang terbuka.
+
+Aturan yang sama berlaku seperti saat proses masuk dimulai dari QRdx: domain harus terverifikasi, workspace harus menggunakan Business, dan respons harus ditandatangani dengan SHA-256 atau yang lebih kuat. QRdx juga memerlukan:
+
+- tepat satu assertion, dengan ID, yang tidak terenkripsi;
+- masa berlaku pada assertion (`NotOnOrAfter` di dalam `Conditions`-nya), yang dikirim oleh sebagian besar penyedia identitas secara default.
+
+Setiap respons hanya dapat digunakan untuk masuk satu kali. Jika respons yang sama tiba lagi, QRdx menolaknya dan meminta orang tersebut untuk masuk lagi. Jika seseorang mengaktifkan verifikasi dua langkah, QRdx meminta langkah keduanya terlebih dahulu, lalu mengarahkan mereka ke dasbor.
+
+Proses masuk dari dasbor aplikasi tidak dihitung sebagai [konfirmasi bahwa ini memang Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you) kecuali orang tersebut menjawab langkah keduanya, karena QRdx tidak memintanya. Sebelum perubahan yang memerlukan konfirmasi, mereka tetap mengonfirmasi seperti biasa.
+
+Koneksi OIDC selalu dimulai dari QRdx. Untuk menempatkan QRdx di dasbor aplikasi penyedia identitas Anda, tambahkan sebagai tautan ke halaman masuk QRdx.
+
+## Mewajibkan single sign-on [#require-single-sign-on]
+
+Setelah domain Anda terverifikasi, Anda dapat menjadikan penyedia identitas sebagai satu-satunya jalur masuk bagi orang-orang di domain tersebut. Di halaman **Single sign-on**, aktifkan **Require single sign-on for** domain Anda. Pengaturan ini juga mencakup subdomain, seperti koneksinya.
+
+Selama pengaturan ini aktif, untuk alamat di domain Anda:
+
+- Kode email, Google, dan GitHub tidak dapat digunakan untuk masuk<IfAvailable feature="passkeys">, begitu pula **Continue with passkey**</IfAvailable>. Mereka akan melihat bahwa perusahaan Anda mewajibkan single sign-on, dan **Continue with SSO**.
+- [Verifikasi dua langkah](/docs/help/privacy-and-security/two-step-verification) mereka tetap berlaku setelah penyedia identitas Anda memasukkan mereka.<IfAvailable feature="passkeys"> Passkey tetap dapat digunakan sebagai langkah kedua tersebut.</IfAvailable>
+- Sesi masuk berlangsung paling lama 24 jam. Setelah itu mereka melalui penyedia identitas Anda lagi, sehingga orang yang Anda batalkan penugasannya di sana tidak dapat masuk ke QRdx lagi, dan akan keluar dalam waktu sehari.
+- Email QRdx mereka tidak dapat diubah ke alamat di tempat lain, dan email orang lain tidak dapat diubah ke alamat di domain Anda. Masuk dengan single sign-on adalah satu-satunya cara alamat di domain tersebut masuk ke QRdx.
+
+Mengaktifkannya akan mengeluarkan semua orang di domain Anda dari sesi yang tidak dimulai dengan single sign-on, dan sesi yang dimulai dengan single sign-on berakhir 24 jam setelah proses masuk tersebut. Tidak ada yang menerima email tentang hal ini; mereka diminta masuk dengan SSO pada kesempatan berikutnya.
+
+**Pemilik tetap memiliki cara masuk lainnya.** Semua ini tidak berlaku bagi pemilik workspace: mereka tetap dapat menggunakan kode email, Google, atau GitHub<IfAvailable feature="passkeys">, atau passkey</IfAvailable>, sesi mereka tidak dipersingkat, dan mereka dapat mengubah email. Jadi masalah pada penyedia identitas Anda tidak dapat mengunci semua orang dari pengaturan ini. Batasi peran pemilik hanya untuk beberapa orang yang membutuhkannya.
+
+Untuk mengaktifkannya:
+
+- Anda harus menjadi **owner** atau **admin** pada paket Business, dengan domain terverifikasi, dan Anda akan diminta [mengonfirmasi bahwa ini memang Anda](/docs/help/privacy-and-security/two-step-verification#confirm-its-you).
+- Jika Anda admin dengan alamat di domain tersebut, masuklah dengan single sign-on terlebih dahulu. Jika tidak, mengaktifkannya akan mengeluarkan Anda, dan masuk dengan cara itu membuktikan bahwa koneksi berfungsi.
+
+Menonaktifkannya, menghapus koneksi, atau workspace keluar dari Business akan menghentikan kewajiban ini. Orang tetap memiliki sesi yang sedang berjalan, dan dapat menggunakan cara masuk lainnya lagi. Perubahan ini dapat memerlukan hingga satu menit untuk sampai ke semua server QRdx: orang yang masuk dengan cara lain dalam satu menit itu mungkin langsung dikeluarkan lagi, dan dapat masuk lagi satu menit kemudian.
+
+Single sign-on berkaitan dengan proses masuk. Kunci API bukan proses masuk, jadi mewajibkannya tidak menghentikan kunci API; menghapus seseorang di halaman **Team** akan menghentikan kunci API yang mereka buat untuk workspace.
+
+## Menghapus seseorang secara permanen [#remove-someone-for-good]
+
+Karena setiap proses masuk SSO menambahkan orang tersebut kembali, menghapus mereka di halaman **Team** saja tidak cukup:
+
+1. Di penyedia identitas Anda, batalkan penugasan mereka dari aplikasi QRdx (atau nonaktifkan akun mereka di sana), sehingga mereka tidak dapat masuk ke QRdx.
+2. Lalu hapus mereka di halaman **Team**. Dialog penghapusan akan mengingatkan Anda jika alamat orang tersebut berada di domain terverifikasi Anda.
+
+Jika Anda [mewajibkan single sign-on](#require-single-sign-on), langkah 1 juga mengeluarkan mereka dari QRdx dalam 24 jam. Hapus mereka juga di halaman **Team**, agar mereka tidak lagi menjadi anggota dan kunci API mereka untuk workspace berhenti berfungsi.
+
+Menghapus seseorang dari workspace tidak menghapus akun QRdx mereka. Kecuali single sign-on diwajibkan untuk alamat mereka, mereka tetap dapat masuk ke workspace mereka sendiri dengan kode email, Google, atau GitHub.
+
+## Mengubah atau menghapus koneksi [#change-or-remove-the-connection]
+
+- **Replace secret** (OIDC) atau **Replace certificate** (SAML) memperbarui koneksi saat Anda merotasinya di penyedia identitas. Koneksi SAML yang disiapkan dari XML metadata diubah dengan menghapusnya lalu menyiapkannya kembali.
+- **Remove** menonaktifkan single sign-on, dan menghentikan kewajibannya. Semua orang tetap berada di workspace dan dapat masuk dengan kode email, Google, atau GitHub.
+
+## Jika paket berubah [#if-the-plan-changes]
+
+Jika workspace tidak lagi menggunakan Business, tidak ada yang dapat masuk dengan SSO, termasuk di tengah proses masuk, dan single sign-on tidak lagi diwajibkan. Orang akan melihat pesan dan dapat masuk dengan cara lain. Koneksi dan pengaturannya tetap disimpan, sehingga berfungsi kembali saat workspace kembali ke Business, dan Anda tetap dapat menghapusnya.
+
+## Yang tidak didukung [#what-isnt-supported]
+
+- Penyediaan dan penghapusan otomatis (SCIM). Menghapus seseorang dari penyedia identitas Anda tidak menghapus mereka dari workspace. Tanpa [single sign-on yang diwajibkan](#require-single-sign-on), sesi QRdx mereka juga tidak berakhir; hapus mereka juga di halaman **Team** (lihat [Menghapus seseorang secara permanen](#remove-someone-for-good)).
+- Peran atau grup dari penyedia identitas Anda. Semua orang bergabung dengan peran yang ditetapkan di **New members**.
+- Lebih dari satu koneksi, atau lebih dari satu domain, per workspace.
+- Proses masuk yang dimulai dari penyedia identitas Anda dengan koneksi OIDC (hal ini berfungsi dengan SAML: lihat [Membuka QRdx dari penyedia identitas Anda](#open-qrdx-from-your-identity-provider)), SAML single logout, dan assertion terenkripsi.
+- Penyedia identitas yang tidak dapat dijangkau dari internet.
+
+## Terkait [#related]
+
+- [Peran tim](/docs/help/teams/roles)
+- [Kursi dan batas workspace](/docs/help/teams/seats)
+- [Membuat workspace dan mengundang orang](/docs/help/teams/create-and-invite)

@@ -1,0 +1,53 @@
+---
+title: "Arahkan pemindaian ke tautan yang berbeda"
+description: "Arahkan setiap pemindaian berdasarkan perangkat, negara, area, bahasa, atau waktu, dan jalankan uji A/B dengan perutean cerdas."
+---
+
+Perutean cerdas mengarahkan setiap pemindaian kode QR dinamis ke tautan yang berbeda, berdasarkan aturan yang Anda tetapkan. Hanya untuk Pro dan Business.
+
+## Tambahkan aturan [#add-a-rule]
+
+1. Buka kode dari **Codes**.
+2. Di bawah **Settings**, buka **Smart routing**.
+3. Klik **Add rule**, atau mulai dari templat.
+4. Pilih kondisi dan tautan yang dibuka oleh pemindaian yang cocok.
+5. Klik **Save rules**.
+
+Pemindaian yang tidak cocok dengan aturan apa pun akan membuka tujuan normal kode tersebut.
+
+## Kondisi yang dapat digunakan [#conditions-you-can-use]
+
+Perangkat, sistem operasi, negara, wilayah, area, bahasa, waktu dalam sehari, rentang tanggal, dan jumlah pemindaian. Setiap kondisi juga dapat dibalik dengan **is not**.
+
+Sebuah **area** adalah satu titik dan satu radius. Area menggunakan lokasi yang dibagikan pemindai saat [lokasi presisi](/docs/precise-location) aktif, dan jika tidak, menggunakan perkiraan lokasi jaringan mereka.
+
+Satu aturan dapat memiliki hingga 8 kondisi. Satu kode dapat memiliki hingga 20 aturan.
+
+## Templat [#templates]
+
+- **Smart app link**: iPhone ke App Store, ponsel Android ke Google Play.
+- **Country** dan **Visitor language**.
+- **Business hours**.
+- **Date range** untuk sebuah kampanye.
+- **First scans**: tautan berbeda untuk beberapa pemindaian pertama.
+- **Inside an area**: tautan berbeda untuk pemindaian di dekat suatu tempat.
+- **A/B split**: bagi pemindaian di antara hingga 5 versi.
+
+## Aturan pertama yang cocok yang berlaku [#the-first-matching-rule-wins]
+
+Aturan diperiksa dari atas ke bawah. Letakkan aturan yang paling spesifik di urutan pertama.
+
+Klik **Test your rules** untuk melihat ke mana sebuah pemindaian akan diarahkan sebelum Anda menyimpan.
+
+## Uji A/B [#ab-tests]
+
+A/B split mengarahkan setiap pengunjung ke satu versi. Pengunjung yang sama akan melihat versi yang sama selama sisa hari itu. Halaman kode menunjukkan bagaimana pemindaian terbagi di antara versi.
+
+## Setelah penurunan paket [#after-a-downgrade]
+
+Aturan yang tersimpan tetap berfungsi.
+
+## Terkait [#related]
+
+- [Panduan perutean cerdas](/docs/smart-routing)
+- [Kode membuka halaman yang salah](/docs/help/troubleshooting/wrong-destination)

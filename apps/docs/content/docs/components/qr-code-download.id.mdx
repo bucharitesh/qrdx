@@ -1,0 +1,50 @@
+---
+title: "Unduhan Kode QR"
+description: "Menu unduhan yang mengekspor kode QR sebagai PNG, SVG, JPG, atau PDF dengan ukuran pilihan Anda, atau menyalinnya sebagai gambar."
+icon: Download
+---
+
+<ComponentLinks name="qr-code-download" />
+
+<ComponentPreview name="qr-code-download-demo" />
+
+## Instalasi [#installation]
+
+<InstallationTabs name="qr-code-download" />
+
+## Penggunaan [#usage]
+
+```tsx
+import { QrCodeDownload } from "@/components/qr-code-download";
+```
+
+```tsx
+<QrCodeDownload value="https://qrdx.dev" />
+```
+
+Menu ini mencantumkan setiap format beserta petunjuk singkat, pemilih ukuran, dan "Salin gambar", yang menempatkan PNG ke papan klip. File dirender di browser; tidak ada yang diunggah.
+
+## Contoh [#examples]
+
+### Ekspor dengan gaya [#styled-export]
+
+Berikan `qr` objek gaya yang sama dengan yang Anda render di layar, sehingga setiap file yang diekspor sama dengan pratinjau. `formats`, `sizes`, `label`, dan `variant` membentuk menu dan tombolnya.
+
+<ComponentPreview name="qr-code-download-styled" />
+
+### Format [#formats]
+
+| Format | Keluaran |
+|--------|--------|
+| `png` | Gambar dengan latar belakang kode |
+| `jpg` | Gambar dengan latar belakang solid |
+| `svg` | Vektor yang dapat diskalakan ke ukuran apa pun |
+| `pdf` | Dokumen satu halaman. Memerlukan paket opsional `jspdf` (`npm install jspdf`) |
+
+Ukuran raster berkisar dari 50 hingga 5000 piksel. Berikan satu entri pada `sizes` untuk menyembunyikan pemilih ukuran.
+
+## Referensi API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-download.tsx" type="{ [K in keyof QrCodeDownloadProps as K extends Exclude<keyof ComponentProps<'div'>, 'onError'> ? never : K]: QrCodeDownloadProps[K] }" />
+
+Prop lain apa pun, seperti `className`, diteruskan ke `<div>` pembungkus.

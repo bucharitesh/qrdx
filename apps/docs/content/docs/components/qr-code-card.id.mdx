@@ -1,0 +1,60 @@
+---
+title: "QR Code Card"
+description: "Kartu dengan kode QR di dalam bingkai \"Scan me\", lengkap dengan judul, deskripsi, dan ruang untuk aksi."
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## Instalasi [#installation]
+
+<InstallationTabs name="qr-code-card" />
+
+## Penggunaan [#usage]
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+Apa pun yang Anda berikan sebagai children akan dirender di footer kartu, misalnya tombol salin atau [menu unduh](/docs/components/qr-code-download).
+
+## Contoh [#examples]
+
+### Bingkai [#frames]
+
+`frame` menempatkan ajakan bertindak di bawah kode (`"bottom"`), di atasnya (`"top"`), atau menghilangkan bingkai (`"none"`). `cta` mengubah labelnya, dan `frameClassName` mengubah gaya bingkai, misalnya dengan warna merek Anda.
+
+<ComponentPreview name="qr-code-card-frames" />
+
+Secara default, bingkai memakai warna `foreground` dan `background` dari tema Anda, sehingga tetap terbaca dalam mode terang maupun gelap. Kodenya sendiri tetap berlatar terang, yang dapat dibaca oleh semua pemindai.
+
+### Menata gaya kode [#styling-the-code]
+
+`qr` menerima semua opsi gaya qrdx: `fgColor`, `bgColor`, gradien, `bodyPattern`, pola sudut, `logo`, dan `templateId`.
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## Referensi API [#api-reference]
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+Prop lain apa pun, seperti `className`, diteruskan ke [Card](https://ui.shadcn.com/docs/components/card).
