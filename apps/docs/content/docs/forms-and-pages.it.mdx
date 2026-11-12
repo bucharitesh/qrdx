@@ -1,0 +1,127 @@
+---
+title: "Menu, coupon, eventi e moduli"
+description: "Tipi di pagina ospitata per ristoranti, offerte, eventi e download di app, più moduli che raccolgono feedback in una casella di risposte."
+icon: ClipboardList
+---
+
+Un QR code dinamico può aprire una pagina ospitata invece di un sito web. Oltre a elenchi di link, pagine aziendali e vCard, QRdx offre cinque tipi di pagina per i lavori di stampa più comuni. Ognuno parte da un modello che puoi modificare blocco per blocco nell'editor di pagine, con anteprima dal vivo sul telefono.
+
+| Tipo di pagina | Pensata per | Blocchi iniziali |
+| --- | --- | --- |
+| **Menu** | Caffè, ristoranti, bar | Menu, Wi-Fi, orari di apertura, mappa |
+| **Coupon** | Sconti e omaggi | Coupon con codice a barre e pulsante Riscatta |
+| **Evento** | Feste, conferenze, webinar | Evento con aggiunta al calendario |
+| **Download app** | Un solo codice per tutti gli app store | Download app |
+| **Feedback e moduli** | Recensioni, sondaggi NPS, iscrizioni | Modulo, link alle recensioni |
+
+Ogni blocco qui sotto può essere aggiunto anche a qualsiasi altra pagina.
+
+## Menu [#menu]
+
+Il blocco **Menu** elenca sezioni (Antipasti, Primi, ...) con le relative voci. Ogni voce può avere una descrizione, un prezzo, una nota dopo il prezzo ("al bicchiere", "Prezzo di mercato"), una foto, un breve badge ("Scelta dello chef") e:
+
+- **Tag alimentari:** vegetariano, vegano, senza glutine, senza latticini, halal, kosher, piccante, biologico.
+- **Allergeni:** i 14 allergeni che le attività alimentari devono dichiarare nell'UE e nel Regno Unito (glutine, crostacei, uova, pesce, arachidi, soia, latte, frutta a guscio, sedano, senape, sesamo, solfiti, lupino, molluschi), mostrati come "Contiene: …".
+- **Esaurito:** la voce resta nel menu, attenuata e contrassegnata come esaurita.
+
+Tutti i prezzi di un menu usano la valuta che scegli. Con due o più sezioni, in alto compaiono dei chip di scelta rapida per passare a ciascuna sezione. Un menu può contenere fino a 30 sezioni e 300 voci.
+
+Il blocco **Wi-Fi** mostra il nome della rete e la password con pulsanti di copia. I telefoni non possono collegarsi a una rete da una pagina web, quindi gli ospiti copiano la password e la incollano nelle impostazioni Wi-Fi. Chiunque apra la pagina può vedere la password.
+
+## Coupon [#coupon]
+
+Il blocco **Coupon** mostra un titolo, il codice con un pulsante di copia e, se vuoi, un codice a barre che la tua cassa può leggere:
+
+- **Code 128** codifica fino a 48 lettere, cifre e simboli (niente accenti né emoji).
+- **EAN-13** accetta 12 cifre (QRdx aggiunge la cifra di controllo) oppure tutte e 13. I numeri che iniziano con 20–29 sono riservati all'uso interno ai negozi, adatto ai codici coupon.
+
+Per impostazione predefinita il codice a barre codifica il codice del coupon; imposta **Valore del codice a barre** per codificare altro, per esempio il tuo numero di punto vendita.
+
+**Valido dal** e **Valido fino al** sono giorni di calendario. Un coupon risulta iniziato quando il suo primo giorno è cominciato in qualsiasi parte del mondo e scaduto solo dopo che l'ultimo giorno è finito ovunque, così nessuno vede "scaduto" in anticipo a causa del fuso orario. I coupon scaduti restano visibili, contrassegnati come scaduti.
+
+Attiva il **Pulsante Riscatta** per contare i riscatti: il visitatore mostra lo schermo al tuo personale e tocca **Riscatta ora**. La pagina mostra allora "Riscattato" con l'ora su quel telefono, e il conteggio compare nella schermata [Risposte](#responses) della pagina. Non può impedire che lo stesso codice venga mostrato su un altro telefono, quindi consideralo un contatore, non un blocco.
+
+## Evento [#event]
+
+Il blocco **Evento** mostra data e ora, luogo e indirizzo (con un link **Apri in Mappe**), un link online, l'organizzatore e un pulsante come **Acquista i biglietti**. Gli orari si inseriscono nel fuso orario dell'evento e vengono mostrati ai visitatori in quel fuso, per esempio "7:00 – 10:00 PM GMT+1". Sono supportati eventi di un giorno intero e di più giorni; senza un orario di fine, un evento dura un'ora.
+
+**Aggiungi al calendario** offre Google Calendar, Apple Calendar (un file `.ics`), Outlook.com e Yahoo Calendar. Il download `.ics` viene servito dall'indirizzo della tua pagina, quindi funziona anche su un [dominio personalizzato](/docs/custom-domains); nell'anteprima dell'editor è disattivato finché la pagina non è pubblicata. Quando l'evento è finito, il blocco lo indica e nasconde il pulsante del calendario.
+
+## Download app [#app-download]
+
+Il blocco **Download app** richiede il link all'App Store (`apps.apple.com`), il link a Google Play (`play.google.com`) e un sito web. Lo store del visitatore viene per primo: chi usa iPhone e iPad vede in alto il pulsante App Store, chi usa Android Google Play, tutti gli altri il tuo sito web. Gli altri link restano sotto, così nessuno rimane bloccato.
+
+## Moduli [#forms]
+
+Il blocco **Modulo** raccoglie risposte. Le domande possono essere di questi tipi:
+
+| Tipo | I visitatori rispondono con |
+| --- | --- |
+| Testo | Una risposta breve o lunga (imposti tu la lunghezza massima) |
+| Email | Un indirizzo email |
+| Telefono | Un numero di telefono |
+| Valutazione a stelle | Stelle, su una scala da 3 a 10 (scegli tu; 5 per impostazione predefinita) |
+| NPS | Un punteggio da 0 a 10 su "quanto è probabile che ci consiglieresti" |
+| Scelta | Un'opzione, o più opzioni quando **Consenti più risposte** è attivo |
+| Casella di controllo | Una spunta, per esempio il consenso a essere contattati |
+
+Contrassegna le domande come **Obbligatoria** per renderle obbligatorie. I visitatori vedono gli errori accanto alla domanda e un messaggio di ringraziamento, scritto da te, dopo l'invio. Chiedi solo ciò che ti serve e spiega come userai i dati di contatto.
+
+La protezione antispam è integrata: un campo nascosto che compilano solo i bot e limiti sulla frequenza con cui un dispositivo può inviare un modulo. Quando il server ha le chiavi di [Cloudflare Turnstile](#cloudflare-turnstile), i moduli eseguono anche il controllo invisibile di Turnstile.
+
+### Link alle recensioni [#review-links]
+
+Il blocco **Link alle recensioni** mostra i pulsanti "Recensiscici su Google" (e Tripadvisor, Yelp, Facebook, Trustpilot o qualsiasi altro sito). Viene mostrato a ogni visitatore, qualunque cosa abbia risposto in un modulo. I siti di recensioni, Google compreso, non permettono di mostrare i link alle recensioni solo a chi ti ha valutato bene, quindi QRdx non li nasconde mai in base a una valutazione.
+
+In Google Business Profile, scegli **Chiedi recensioni** per copiare il tuo link alle recensioni.
+
+## Risposte [#responses]
+
+Apri una pagina in **Dashboard → Pagine e moduli** e scegli **Risposte** (oppure vai a `/dashboard/<workspace>/pages/<page id>/responses`). Le risposte sono elencate dalla più recente, 25 per schermata, con l'ora (UTC), il codice di cui il visitatore ha fatto la scansione e ogni risposta. Gli indirizzi email e i numeri di telefono sono link.
+
+- **Più moduli in una pagina:** le schede filtrano per modulo.
+- **Esporta CSV:** una riga per risposta e una colonna per domanda. Le colonne seguono le domande attuali, poi le domande che hai rimosso ma che hanno ancora risposte. Rinominare una domanda mantiene la sua colonna.
+- **Elimina:** seleziona le risposte, oppure usa il pulsante cestino su una singola risposta. L'eliminazione non può essere annullata. I membri possono eliminare le risposte delle pagine che hanno creato; i proprietari e gli amministratori quelle di qualsiasi pagina dello spazio di lavoro.
+
+Le risposte appartengono alla pagina. Eliminare la pagina elimina le sue risposte.
+
+### Limiti mensili [#monthly-limits]
+
+| Piano | Risposte al mese |
+| --- | --- |
+| Gratuito | 50 |
+| Pro | 1.000 |
+| Business | 10.000 |
+
+Il limite conta le risposte ricevute da tutte le pagine dello spazio di lavoro, per mese di calendario (UTC), e ricomincia il giorno 1. La schermata Risposte mostra quante ne hai usate.
+
+Quando il limite è raggiunto, i moduli mostrano "Questo modulo al momento non accetta risposte" e conservano ciò che il visitatore ha digitato. Le risposte che hai già non vengono mai eliminate né nascoste, con nessun piano, nemmeno dopo un downgrade.
+
+## Regole di accesso [#access-rules]
+
+I moduli e i file del calendario seguono i [controlli del codice](/docs/code-controls) della pagina: finché un codice è in pausa, programmato per più tardi, scaduto o oltre il limite di scansioni, il suo modulo smette di accettare risposte e il file `.ics` non viene servito. In una pagina protetta da password funzionano dopo che il visitatore ha inserito la password.
+
+## Notifiche e webhook [#notifications-and-webhooks]
+
+Ogni risposta invia un evento `form.submitted` con le risposte. Usalo per le [notifiche via email o Slack/Discord](/docs/notifications) e per i [webhook](/docs/webhooks) (Zapier, Make, il tuo server).
+
+## Privacy [#privacy]
+
+Le risposte sono archiviate con la pagina nel tuo spazio di lavoro. QRdx non archivia gli indirizzi IP dei visitatori insieme alle risposte: ogni risposta conserva solo un hash salato dell'indirizzo IP e del browser per quel giorno, che non può essere riconvertito in nessuno dei due.
+
+## Self-hosting [#self-hosting]
+
+### Cloudflare Turnstile [#cloudflare-turnstile]
+
+Imposta entrambe le variabili per proteggere i moduli con [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/):
+
+```bash
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
+TURNSTILE_SECRET_KEY=0x4AAAAAAA...
+```
+
+Se ne è impostata solo una, Turnstile resta disattivato. Lo script di Turnstile si carica quando un visitatore tocca per la prima volta un modulo, non insieme alla pagina, e funziona in modo invisibile a meno che Cloudflare non richieda un clic al visitatore. Se Cloudflare non è raggiungibile, le risposte vengono comunque accettate, così non perdi mai un feedback; le altre protezioni antispam restano attive.
+
+### Domini personalizzati [#custom-domains]
+
+Su un [dominio personalizzato](/docs/custom-domains) verificato, l'endpoint dei moduli (`/api/forms/...`) e i file del calendario (`/api/calendar/...`) vengono serviti accanto alle tue pagine, quindi moduli e aggiunta al calendario funzionano senza configurazioni aggiuntive.

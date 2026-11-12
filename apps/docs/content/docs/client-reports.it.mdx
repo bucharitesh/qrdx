@@ -1,0 +1,63 @@
+---
+title: "Report per i clienti"
+description: "Condividi con un cliente le statistiche delle scansioni di un codice su una pagina che mostra il suo nome, il suo logo e il suo colore."
+icon: ChartLine
+---
+
+Ogni QR code dinamico può avere una pagina di statistiche condivisa: una pagina di sola lettura all'indirizzo `/stats/<token>` con le scansioni nel tempo, i paesi principali, i dispositivi e i siti di provenienza. Chiunque abbia il link può aprirla. I motori di ricerca non la indicizzano e non mostra nulla sulle persone che hanno effettuato la scansione.
+
+Con Pro e Business puoi applicare il brand di un cliente a questa pagina. In alto mostra il nome, il logo e il colore d'accento del cliente, e il nome del cliente compare nella scheda del browser e nelle anteprime dei link, così puoi inviargliela come suo report.
+
+| | Gratuito | Pro | Business |
+| --- | --- | --- | --- |
+| Pagina di statistiche condivisa | Sì | Sì | Sì |
+| Nome, logo e colore del cliente | No | Sì | Sì |
+| QRdx sulla pagina | Intestazione e piè di pagina | Un piccolo "Made with QRdx" in fondo | Nessuno |
+| Link sul tuo dominio | No | No | Sì |
+
+## Condividere le statistiche di un codice [#share-a-codes-stats]
+
+1. In [Codici](/dashboard?to=codes), apri il menu **⋯** del codice e scegli **Condividi statistiche**.
+2. Attiva **Pagina di statistiche pubblica** e copia il link.
+
+**Reimposta link** crea un nuovo link e disattiva subito quello vecchio, mantenendo il brand della pagina. Se disattivi la pagina, il suo link restituisce un 404 e il brand viene rimosso dalla pagina; il brand in sé resta salvato.
+
+## Aggiungere il brand del cliente [#add-the-clients-brand]
+
+Quando la pagina è attiva, la stessa finestra mostra una sezione **Brand del cliente**.
+
+1. Apri il menu e scegli **Nuovo brand cliente**.
+2. Inserisci il nome del cliente, aggiungi un logo (carica un'immagine o incolla l'URL `https` di un'immagine) e, se vuoi, un colore d'accento.
+3. Fai clic su **Aggiungi e usa**. La pagina mostra subito il brand.
+
+I brand vengono salvati nel workspace, quindi per il prossimo codice dello stesso cliente basta sceglierne il brand dal menu. Il pulsante con la matita modifica il brand selezionato ovunque venga usato. Se elimini un brand, tutte le pagine che lo usavano tornano a essere pagine semplici.
+
+Il colore d'accento viene usato con parsimonia: nel grafico delle scansioni e nel riquadro del logo. Se il colore risulterebbe poco visibile su uno sfondo bianco o nero, quel tema mantiene il grafico nel colore del testo della pagina. Lascia vuoto l'accento per una pagina completamente monocromatica.
+
+Proprietari, amministratori e membri possono applicare il brand a una pagina. Gli osservatori e i membri della fatturazione vedono l'impostazione ma non possono modificarla.
+
+## Business: senza marchio QRdx, sul tuo dominio [#business-no-qrdx-mark-on-your-domain]
+
+Con Business una pagina con il brand del cliente non ha il marchio QRdx: niente logo QRdx nell'intestazione, niente crediti nel piè di pagina e niente "QRdx" nel titolo della scheda. La scheda del browser mostra il logo del cliente o la sua iniziale. Se il link breve del codice è sul dominio di QRdx, la pagina non lo mostra.
+
+<IfAvailable feature="customDomains" id="serve-the-page-on-your-domain" title="Servi la pagina sul tuo dominio">
+
+Un workspace Business con un [dominio personalizzato](/docs/custom-domains) verificato può servire la pagina su quel dominio. Nella finestra, scegli il dominio sotto **Indirizzo del link**. Il link diventa `https://<your domain>/stats/<token>`.
+
+Il dominio serve solo le pagine che gli hai assegnato, e solo finché il workspace è su Business. Anche l'indirizzo QRdx della stessa pagina continua a funzionare.
+
+</IfAvailable>
+
+## Cosa mostra la pagina [#what-the-page-shows]
+
+- Scansioni e visitatori unici degli ultimi 7, 30 o 90 giorni, per quanto indietro il piano del workspace conserva lo storico
+- Scansioni di QR e tocchi NFC
+- Scansioni al giorno, paesi principali, tipi di dispositivo e siti di provenienza
+
+Non mostra mai il percorso o la query string della destinazione, le città, le posizioni precise né nulla su una singola scansione. I numeri possono avere fino a 5 minuti di ritardo.
+
+## Se il piano cambia [#if-the-plan-changes]
+
+Il brand viene conservato, ma compare solo finché il piano lo include. Quando un workspace Business passa a Pro, le sue pagine mostrano di nuovo il piccolo "Made with QRdx" e i link sul dominio personalizzato smettono di funzionare; l'indirizzo QRdx continua a funzionare. Con Gratuito la pagina non mostra alcun brand del cliente. Con un nuovo upgrade tornano entrambi.
+
+Per offrire a un cliente una vista di molti codici insieme, con le loro statistiche e le pagine ospitate, usa il [portale clienti](/docs/client-portal) con Business.

@@ -1,0 +1,65 @@
+---
+title: "Controlli del codice"
+description: "Metti in pausa un QR code dinamico, proteggilo con una password, programmalo, limita le scansioni e scegli dove mandare le persone quando un codice è terminato."
+icon: LockKeyhole
+---
+
+Ogni [QR code dinamico](/docs/dynamic-qr-codes) ha un pannello **Accesso e programmazione** nella sua pagina della [dashboard](/dashboard?to=codes) (apri un codice, poi apri la scheda **Impostazioni**). Le modifiche si applicano alla scansione successiva: non devi mai ristampare il codice.
+
+| Controllo | Cosa vedono gli utenti che scansionano | Piano |
+| --- | --- | --- |
+| Pausa | Il tuo URL di riserva, oppure una pagina neutra "questa campagna è in pausa" | Tutti i piani |
+| Password | Una schermata con la richiesta di password; la password corretta apre il codice | Pro e Business |
+| Inizio | Prima dell'inizio: una pagina "non è ancora iniziata" | Pro e Business |
+| Fine | Dopo la fine: il tuo URL di riserva, oppure una pagina neutra "la campagna è terminata" | Pro e Business |
+| Limite di scansioni | Una volta raggiunto il limite: il tuo URL di riserva, oppure la pagina "terminata" | Pro e Business |
+| URL di riserva | Dove vengono mandate le persone dai codici in pausa, terminati o oltre il limite | Pro e Business |
+
+## Pausa [#pause]
+
+Attiva **Metti in pausa il codice** per fermare temporaneamente un codice, ad esempio tra due eventi, e disattivalo per riprendere. Le scansioni durante la pausa vanno al tuo URL di riserva, se ne hai impostato uno, altrimenti a una semplice pagina che indica che la campagna è in pausa. La pausa è gratuita su tutti i piani.
+
+## Password [#password]
+
+Imposta una password (almeno 4 caratteri) e chiunque scansioni il codice vedrà prima una schermata di richiesta password. Dopo aver inserito la password corretta, quel browser resta sbloccato per 6 ore, sia sul link breve sia sulla pagina ospitata che apre. Se cambi o rimuovi la password, tutti i browser che avevano sbloccato quella precedente vengono bloccati.
+
+Le password sono salvate come hash bcrypt; QRdx non può mostrartela in seguito, solo sostituirla. I tentativi sbagliati ripetuti da un singolo visitatore vengono rallentati.
+
+## Date di inizio e fine [#start-and-end-dates]
+
+- **Inizio:** fino a quel momento, le scansioni mostrano "Questa campagna non è ancora iniziata. Scansiona di nuovo questo codice più tardi."
+- **Fine:** da quel momento in poi, le scansioni vanno al tuo URL di riserva, oppure mostrano "Questa campagna è terminata".
+
+Le date si inseriscono nel tuo fuso orario e vengono salvate come momenti esatti, quindi un codice termina nello stesso istante ovunque. La fine deve essere successiva all'inizio.
+
+## Limite di scansioni [#scan-limit]
+
+Il limite conta le scansioni nello stesso modo delle tue statistiche: bot, anteprime dei link e scansioni ripetute in rapida successione dallo stesso dispositivo non vengono contati. Quando il codice ha raggiunto il limite, le scansioni successive vanno al tuo URL di riserva o alla pagina "terminata". Aumenta o rimuovi il limite per riaprire il codice.
+
+## URL di riserva [#fallback-url]
+
+L'indirizzo a cui vengono mandate le persone dai codici in pausa, scaduti o oltre il limite, ad esempio la tua homepage o la campagna successiva. Se non ne imposti uno, chi scansiona vede una piccola pagina neutra. Quella pagina non mostra mai pubblicità, promozioni di QRdx o inviti a registrarsi, ma solo lo stato della campagna e un link "Segnala abuso".
+
+L'URL di riserva è sottoposto agli stessi controlli di sicurezza della destinazione di un codice.
+
+## Piani e downgrade [#plans-and-downgrades]
+
+- La pausa funziona su tutti i piani.
+- Impostare o modificare una password, le date, un limite di scansioni o un URL di riserva richiede Pro o Business.
+- **Un downgrade non termina né blocca mai un codice.** I controlli impostati mentre eri su Pro continuano a funzionare esattamente come configurati e puoi rimuoverli in qualsiasi piano.
+
+## Controlli di sicurezza sui link [#safety-checks-on-links]
+
+QRdx controlla ogni destinazione e ogni URL di riserva quando li salvi:
+
+- i link segnalati da [Google Web Risk](https://cloud.google.com/web-risk) come malware, phishing o software indesiderato vengono rifiutati (quando il server ha una chiave Web Risk). Quando Web Risk non riesce a rispondere in tempo, come può accadere in un lotto di grandi dimensioni, il codice viene creato e il suo link viene controllato di nuovo poco dopo; se a quel punto Web Risk lo segnala, il codice viene disattivato e lo esamina un revisore;
+- i link `javascript:`, `data:` e altri link non web vengono rifiutati;
+- durante i primi 7 giorni di un account, i codici che puntano a servizi di accorciamento degli URL, a indirizzi IP semplici o a domini simili a quelli noti (omoglifi) vengono salvati disattivati e **in attesa di revisione**. Il pannello lo indica; non devi fare altro, e un revisore attiva il codice una volta verificato. I nuovi account possono inoltre creare fino a 30 codici dinamici all'ora, oppure {facts.newPaidAccountHourlyCodes} in un workspace con un piano a pagamento. Oltre questo limite, l'errore indica quanti minuti mancano prima di poterne creare altri, e un'importazione dalla dashboard si ferma fino a quel momento.
+
+Chiunque può segnalare un codice su [qrdx.dev/report-abuse](/report-abuse). I codici disattivati dopo una revisione smettono di funzionare per tutti e il loro proprietario non può riattivarli.
+
+## Self-hosting [#self-hosting]
+
+- `WEB_RISK_API_KEY`: una chiave API di Google Cloud con la Web Risk API abilitata. Senza di essa, i link vengono controllati solo con le regole offline descritte sopra.
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` e `TURNSTILE_SECRET_KEY`: Cloudflare Turnstile sul modulo pubblico di segnalazione (facoltativo).
+- I cookie di sblocco sono firmati con `BETTER_AUTH_SECRET`.
